@@ -1,0 +1,93 @@
+<div class="sgi-dialog-header" fxLayout="row" fxLayoutGap="20px">
+  <span fxFlexAlign="center" mat-mat-dialog-title role="heading" aria-level="3" fxFlex>{{title}}</span>
+  <button fxFlex="nogrow" mat-icon-button mat-dialog-close>
+    <mat-icon class="close-icon">close</mat-icon>
+  </button>
+</div>
+<mat-dialog-content>
+  <form [formGroup]="formGroup">
+    <!-- Tipo de fase -->
+    <div [fxLayout.xs]="fxLayoutProperties.xs" [fxLayout]="fxLayoutProperties.layout"
+      [fxLayoutGap]="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
+      <mat-form-field>
+        <mat-label>{{'csp.proyecto.plazo.tipo-fase' | translate}}</mat-label>
+        <input matInput formControlName="tipoFase" type="text" required
+          placeholder="{{'csp.proyecto.plazo.tipo-fase' | translate}}" [matAutocomplete]="autoPlazosFase" required>
+        <mat-autocomplete #autoPlazosFase="matAutocomplete" [displayWith]="getTipoPlazosFase">
+          <mat-option *ngFor="let modeloTipoFase of modeloTipoFases$ | async" [value]="modeloTipoFase.tipoFase">
+            {{modeloTipoFase.tipoFase.nombre}}
+          </mat-option>
+        </mat-autocomplete>
+        <mat-error *ngIf="formGroup.controls.tipoFase.errors?.required">
+          {{'error.required.entity' | translate:msgParamTipoFaseEntity}}
+        </mat-error>
+      </mat-form-field>
+    </div>
+    <!-- Fecha de inicio -->
+    <div [fxLayout.xs]="fxLayoutProperties2.xs" [fxLayout]="fxLayoutProperties2.layout"
+      [fxLayoutGap]="fxLayoutProperties2.gap" ngClass.gt-xs="ml-10">
+      <div>
+        <mat-form-field>
+          <input matInput formControlName="fechaInicio" [ngxMatDatetimePicker]="pickerFechaInicio"
+            placeholder="{{'csp.proyecto.plazo.fecha-inicio' | translate}}" required>
+          <mat-datepicker-toggle matSuffix [for]="pickerFechaInicio"></mat-datepicker-toggle>
+          <ngx-mat-datetime-picker #pickerFechaInicio showSeconds="true" [defaultTime]="[0,0,0]">
+          </ngx-mat-datetime-picker>
+          <mat-error *ngIf="formGroup.controls.fechaInicio.errors?.required">
+            {{'error.required.entity' | translate:msgParamFechaInicioEntity}}
+          </mat-error>
+          <mat-error *ngIf="formGroup.controls.fechaInicio.errors?.before">
+            {{'error.before.fecha-inicio' | translate}}
+          </mat-error>
+          <mat-error *ngIf="formGroup.controls.fechaInicio.errors?.overlapped">
+            {{'error.csp.proyecto.plazo.overlapping.range' | translate}}
+          </mat-error>
+        </mat-form-field>
+      </div>
+      <div>
+        <mat-form-field>
+          <input matInput formControlName="fechaFin" [ngxMatDatetimePicker]="pickerFechaFin"
+            placeholder="{{'csp.proyecto.plazo.fecha-fin' | translate}}" required>
+          <mat-datepicker-toggle matSuffix [for]="pickerFechaFin"></mat-datepicker-toggle>
+          <ngx-mat-datetime-picker #pickerFechaFin showSeconds="true" [defaultTime]="[23,59,59]">
+          </ngx-mat-datetime-picker>
+          <mat-error *ngIf="formGroup.controls.fechaFin.errors?.required">
+            {{'error.required.entity' | translate:msgParamFechaFinEntity}}
+          </mat-error>
+          <mat-error *ngIf="formGroup.controls.fechaFin.errors?.after">
+            {{'error.after.fecha-fin' | translate}}
+          </mat-error>
+          <mat-error *ngIf="formGroup.controls.fechaFin.errors?.overlapped">
+            {{'error.csp.proyecto.plazo.overlapping.range' | translate}}
+          </mat-error>
+        </mat-form-field>
+      </div>
+    </div>
+    <!-- Observaciones -->
+    <div [fxLayout.xs]="fxLayoutProperties.xs" [fxLayout]="fxLayoutProperties.layout"
+      [fxLayoutGap]="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
+      <mat-form-field>
+        <mat-label>{{'csp.proyecto.plazo.observaciones' | translate}}</mat-label>
+        <textarea matInput formControlName="observaciones" type="text"
+          placeholder="{{'csp.proyecto.plazo.observaciones' | translate}}">
+            </textarea>
+        <mat-error *ngIf="formGroup.get('observaciones').errors?.maxlength">
+          {{'error.maxlength.entity' | translate:msgParamObservacionesEntity}}
+        </mat-error>
+      </mat-form-field>
+    </div>
+    <!-- Aviso -->
+    <div [fxLayout]="fxLayoutProperties.layout" class="checkbox">
+      <mat-checkbox color="primary" formControlName="generaAviso" id="generaAviso">
+        {{'csp.proyecto.plazo.aviso' | translate}}</mat-checkbox>
+    </div>
+  </form>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <button color="accent" (click)="saveOrUpdate()" mat-raised-button type="submit" *ngIf="!data.readonly">
+    <mat-icon class="save-icon">save</mat-icon>{{textSaveOrUpdate |
+    translate}}
+  </button>
+  <button class="link-cancelar" mat-button type="button" mat-dialog-close>{{'btn.cancel' |
+    translate}}</button>
+</mat-dialog-actions>

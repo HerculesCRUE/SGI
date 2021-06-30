@@ -1,0 +1,15 @@
+<sgi-action [actionService]="actionService">
+  <ng-container menu>
+    <sgi-action-fragment-menu-item [route]="[PROYECTO_CONCEPTO_GASTO_ROUTE_NAMES.DATOS_GENERALES]"
+      [title]="'label.datos-generales' | translate"
+      [fragment]="actionService.getFragment(actionService.FRAGMENT.DATOS_GENERALES)">
+    </sgi-action-fragment-menu-item>
+    <sgi-action-fragment-menu-item [route]="[PROYECTO_CONCEPTO_GASTO_ROUTE_NAMES.CODIGOS_ECONOMICOS]"
+      [title]="'csp.proyecto-concepto-gasto-codigo-economico' | translate:MSG_PARAMS.CARDINALIRY.PLURAL"
+      [fragment]="actionService.getFragment(actionService.FRAGMENT.CODIGOS_ECONOMICOS)">
+    </sgi-action-fragment-menu-item>
+  </ng-container>
+  <ng-container footer>
+    <sgi-action-footer [texto]="textoEditar" [actionService]="actionService"></sgi-action-footer>
+  </ng-container>
+</sgi-action>

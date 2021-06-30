@@ -1,0 +1,53 @@
+<section class="comentarios-listado">
+  <h2>{{'eti.comentario' | translate:MSG_PARAMS.CARDINALIRY.PLURAL}}</h2>
+  <!-- Comentario listado -->
+  <div>
+    <table mat-table [dataSource]="dataSource" matSort class="mat-elevation-z8 table-unidad">
+      <!-- Bloque Column -->
+      <ng-container matColumnDef="apartado.bloque">
+        <th mat-header-cell *matHeaderCellDef>{{'eti.comentario.bloque' | translate}}</th>
+        <td mat-cell *matCellDef="let wrapper"> {{wrapper.value.apartado?.bloque?.nombre}}
+        </td>
+      </ng-container>
+
+      <!-- Apartado Column -->
+      <ng-container matColumnDef="apartado.padre">
+        <th mat-header-cell *matHeaderCellDef>{{'eti.comentario.apartado' | translate}}</th>
+        <td mat-cell *matCellDef="let wrapper">{{getApartadoNombre(wrapper.value)}} </td>
+      </ng-container>
+
+      <!-- Subapartado Column -->
+      <ng-container matColumnDef="apartado">
+        <th mat-header-cell *matHeaderCellDef>{{'eti.comentario.subapartado' | translate}}</th>
+        <td mat-cell *matCellDef="let wrapper">{{getSubApartadoNombre(wrapper.value)}}
+        </td>
+      </ng-container>
+
+      <!-- Comentarios Column -->
+      <ng-container matColumnDef="texto">
+        <th mat-header-cell *matHeaderCellDef>{{'eti.comentario' | translate:MSG_PARAMS.CARDINALIRY.PLURAL}}</th>
+        <td mat-cell *matCellDef="let wrapper"> {{wrapper.value.texto}} </td>
+      </ng-container>
+
+      <!-- Acciones Column -->
+      <ng-container matColumnDef="acciones">
+        <th mat-header-cell *matHeaderCellDef>{{'label.actions' | translate}}</th>
+        <td mat-cell *matCellDef="let wrapper">
+          <button mat-button matTooltip="{{'btn.edit' | translate}}" (click)="openEditModal(wrapper)">
+            <mat-icon color="primary">border_color</mat-icon>
+          </button>
+          <button color="warn" mat-button matTooltip="{{'btn.delete' | translate}}" (click)="deleteComentario(wrapper)">
+            <mat-icon>highlight_off</mat-icon>
+          </button>
+        </td>
+      </ng-container>
+      <tr mat-header-row *matHeaderRowDef="columnas"></tr>
+      <tr mat-row *matRowDef="let row; columns: columnas;"></tr>
+    </table>
+    <div class="separation-button">
+      <button color="three" (click)="openCreateModal()" mat-raised-button>
+        <mat-icon>add_box</mat-icon> {{'btn.add.entity' | translate:msgParamEntity}}
+      </button>
+    </div>
+  </div>
+</section>

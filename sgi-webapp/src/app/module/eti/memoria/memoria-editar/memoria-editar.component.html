@@ -1,0 +1,41 @@
+<sgi-action [actionService]="actionService">
+  <ng-container menu>
+    <sgi-action-fragment-menu-item [route]="[MEMORIA_ROUTE_NAMES.DATOS_GENERALES]"
+      [title]="'label.datos-generales' | translate"
+      [fragment]="actionService.getFragment(actionService.FRAGMENT.DATOS_GENERALES)">
+    </sgi-action-fragment-menu-item>
+    <sgi-action-fragment-menu-item [route]="[MEMORIA_ROUTE_NAMES.FORMULARIO]"
+      [title]="'eti.memoria.formulario' | translate"
+      [fragment]="actionService.getFragment(actionService.FRAGMENT.FORMULARIO)">
+    </sgi-action-fragment-menu-item>
+    <sgi-action-fragment-menu-item [route]="[MEMORIA_ROUTE_NAMES.DOCUMENTACION]"
+      [title]="'eti.documentacion' | translate"
+      [fragment]="actionService.getFragment(actionService.FRAGMENT.DOCUMENTACION)">
+    </sgi-action-fragment-menu-item>
+    <sgi-action-fragment-menu-item [route]="[MEMORIA_ROUTE_NAMES.SEGUIMIENTO_ANUAL]"
+      [title]="'eti.memoria.seguimiento-anual' | translate"
+      [fragment]="actionService.getFragment(actionService.FRAGMENT.SEGUIMIENTO_ANUAL)">
+    </sgi-action-fragment-menu-item>
+    <sgi-action-fragment-menu-item [route]="[MEMORIA_ROUTE_NAMES.SEGUIMIENTO_FINAL]"
+      [title]="'eti.memoria.seguimiento-final' | translate"
+      [fragment]="actionService.getFragment(actionService.FRAGMENT.SEGUIMIENTO_FINAL)">
+    </sgi-action-fragment-menu-item>
+    <sgi-action-fragment-menu-item
+      *ngIf="actionService.memoria.comite.id === COMITE.CEEA && actionService.memoria.requiereRetrospectiva"
+      [route]="[MEMORIA_ROUTE_NAMES.RETROSPECTIVA]" [title]="'eti.memoria.retrospectiva' | translate"
+      [fragment]="actionService.getFragment(actionService.FRAGMENT.RETROSPECTIVA)">
+    </sgi-action-fragment-menu-item>
+    <sgi-action-fragment-menu-item [route]="[MEMORIA_ROUTE_NAMES.EVALUACIONES]"
+      [title]="'eti.memoria.evaluacion' | translate:MSG_PARAMS.CARDINALIRY.PLURAL"
+      [fragment]="actionService.getFragment(actionService.FRAGMENT.EVALUACIONES)">
+    </sgi-action-fragment-menu-item>
+    <sgi-action-fragment-menu-item [route]="[MEMORIA_ROUTE_NAMES.VERSIONES]"
+      [title]="'eti.memoria.version' | translate:MSG_PARAMS.CARDINALIRY.PLURAL"
+      [fragment]="actionService.getFragment(actionService.FRAGMENT.VERSIONES)">
+    </sgi-action-fragment-menu-item>
+  </ng-container>
+  <ng-container footer>
+    <sgi-action-footer [texto]="textoActualizar" [actionService]="actionService">
+    </sgi-action-footer>
+  </ng-container>
+</sgi-action>

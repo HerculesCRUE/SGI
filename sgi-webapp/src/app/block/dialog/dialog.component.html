@@ -1,0 +1,8 @@
+<mat-dialog-content align="center">
+  {{message | translate:params}}
+</mat-dialog-content>
+<mat-dialog-actions align="center">
+  <button color="accent" mat-raised-button (click)="confirmacionClick()" mat-dialog-close
+    tabindex="-1">{{continuarButtonText | translate}}</button>
+  <button class="link-cancelar" mat-button mat-dialog-close tabindex="-1">{{cancelButtonText | translate}}</button>
+</mat-dialog-actions>

@@ -1,0 +1,75 @@
+<div class="sgi-dialog-header" fxLayout="row" fxLayoutGap="20px">
+  <span fxFlexAlign="center" mat-mat-dialog-title role="heading" aria-level="3" fxFlex>{{title}}</span>
+  <button fxFlex="nogrow" mat-icon-button mat-dialog-close>
+    <mat-icon class="close-icon">close</mat-icon>
+  </button>
+</div>
+<mat-dialog-content>
+  <form [formGroup]="formGroup">
+    <!-- Empresa económica -->
+    <div [fxLayout]="fxLayoutProperties.layout" [fxLayoutAlign]="fxLayoutProperties.layoutAlign">
+      <mat-form-field>
+        <mat-label>{{'csp.entidad-financiadora.empresa-economica' | translate}}</mat-label>
+        <sgi-select-empresa formControlName="empresa"
+          placeholder="{{'csp.entidad-financiadora.empresa-economica' | translate}}"
+          [selectedEmpresas]="data.selectedEmpresas" required>
+        </sgi-select-empresa>
+        <mat-error *ngIf="formGroup.controls.empresa.errors?.required">
+          {{ 'error.required.entity' | translate:msgParamEmpresaEntity }}
+        </mat-error>
+      </mat-form-field>
+    </div>
+    <!-- Fuente de financiación -->
+    <div [fxLayout]="fxLayoutProperties.layout" [fxLayoutAlign]="fxLayoutProperties.layoutAlign">
+      <mat-form-field>
+        <mat-label>{{'csp.entidad-financiadora.fuente-financiacion' | translate}}</mat-label>
+        <sgi-select-fuente-financiacion formControlName="fuenteFinanciacion"></sgi-select-fuente-financiacion>
+      </mat-form-field>
+    </div>
+    <!-- Tipo de financiación -->
+    <div [fxLayout]="fxLayoutProperties.layout" [fxLayoutAlign]="fxLayoutProperties.layoutAlign">
+      <mat-form-field>
+        <mat-label>{{'csp.entidad-financiadora.tipo-financiacion' | translate}}</mat-label>
+        <sgi-select-entity formControlName="tipoFinanciacion" [options]="tiposFinanciacion$ | async">
+        </sgi-select-entity>
+      </mat-form-field>
+    </div>
+    <!-- Porcentaje de financiación -->
+    <div [fxLayout]="fxLayoutProperties.layout" [fxLayoutAlign]="fxLayoutProperties.layoutAlign">
+      <mat-form-field>
+        <mat-label>{{'csp.entidad-financiadora.porcentaje-financiacion' | translate}}
+        </mat-label>
+        <input matInput formControlName="porcentajeFinanciacion" type="number" id="porcentajeFinanciacion" min="0"
+          max="100" step="1" placeholder="{{'csp.entidad-financiadora.porcentaje-financiacion' | translate}}">
+        <mat-error *ngIf="formGroup.controls.porcentajeFinanciacion.errors?.min">
+          {{ 'error.min.entity' | translate:msgParamPorcentajeFinanciacionEntity }}
+        </mat-error>
+        <mat-error *ngIf="formGroup.controls.porcentajeFinanciacion.errors?.max">
+          {{ 'error.max.entity' | translate:msgParamPorcentajeFinanciacionEntity }}
+        </mat-error>
+      </mat-form-field>
+    </div>
+    <!-- Importe de financiación -->
+    <div [fxLayout]="fxLayoutProperties.layout" [fxLayoutAlign]="fxLayoutProperties.layoutAlign">
+      <mat-form-field>
+        <mat-label>{{'csp.entidad-financiadora.importe-financiacion' | translate}}
+        </mat-label>
+        <input matInput formControlName="importeFinanciacion" type="number" id="importeFinanciacion" min="0" step="1"
+          placeholder="{{'csp.entidad-financiadora.importe-financiacion' | translate}}">
+        <mat-error *ngIf="formGroup.controls.importeFinanciacion.errors?.min">
+          {{ 'error.min.entity' | translate:msgParamImporteFinanciacionEntity }}
+        </mat-error>
+        <mat-error *ngIf="formGroup.controls.importeFinanciacion.errors?.max">
+          {{ 'error.max.entity' | translate:msgParamImporteFinanciacionEntity }}
+        </mat-error>
+      </mat-form-field>
+    </div>
+  </form>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <button color="accent" (click)="saveOrUpdate()" mat-raised-button type="submit" *ngIf="!data.readonly">
+    <mat-icon class="save-icon">save</mat-icon>{{textSaveOrUpdate | translate}}
+  </button>
+  <button class="link-cancelar" mat-button type="button" mat-dialog-close>{{'btn.cancel' |
+    translate}}</button>
+</mat-dialog-actions>

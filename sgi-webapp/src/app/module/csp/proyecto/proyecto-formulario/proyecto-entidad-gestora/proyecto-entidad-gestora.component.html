@@ -1,0 +1,162 @@
+<section class="proyecto-ficha-general">
+  <h2>{{'menu.csp.proyectos.entidades' | translate}} - {{'menu.csp.proyectos.entidades-gestoras' | translate}}</h2>
+
+  <form [formGroup]="formGroup">
+
+    <div [fxLayout.xs]="fxLayoutProperties.xs" [fxLayout]="fxLayoutProperties.layout"
+      [fxLayoutGap]="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
+      <!-- Entidad gestora -->
+      <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
+        [fxFlexOrder]="fxFlexProperties.order">
+        <mat-form-field class="input-form">
+          <mat-label>{{'csp.proyecto-entidad-gestora.entidad-gestora' | translate}}</mat-label>
+          <sgi-select-empresa placeholder="{{'csp.proyecto-entidad-gestora.entidad-gestora' | translate}}"
+            formControlName="entidadGestora">
+          </sgi-select-empresa>
+        </mat-form-field>
+      </div>
+    </div>
+
+    <div class="fieldset-form">
+      <h3>{{'title.csp.proyecto-entidad-gestora.detalle' | translate}}</h3>
+    </div>
+
+    <div [fxLayout.xs]="fxLayoutProperties.xs" [fxLayout]="fxLayoutProperties.layout"
+      [fxLayoutGap]="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
+      <!-- Tipo de indentificador fiscal -->
+      <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
+        [fxFlexOrder]="fxFlexProperties.order">
+        <mat-form-field>
+          <mat-label>{{'csp.proyecto-entidad-gestora.identificador-fiscal.tipo' | translate}}</mat-label>
+          <input type="text" placeholder="{{'csp.proyecto-entidad-gestora.identificador-fiscal.tipo' | translate}}"
+            matInput formControlName="identificadorFiscal">
+        </mat-form-field>
+      </div>
+
+      <!-- Número identificacion -->
+      <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
+        [fxFlexOrder]="fxFlexProperties.order">
+        <mat-form-field>
+          <mat-label>{{'csp.proyecto-entidad-gestora.identificador-fiscal.numero' | translate}}</mat-label>
+          <input type="text" placeholder="{{'csp.proyecto-entidad-gestora.identificador-fiscal.numero' | translate}}"
+            matInput formControlName="numeroIdentificadorFiscal">
+        </mat-form-field>
+      </div>
+    </div>
+
+
+    <div [fxLayout.xs]="fxLayoutProperties.xs" [fxLayout]="fxLayoutProperties.layout"
+      [fxLayoutGap]="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
+      <!-- Nombre -->
+      <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
+        [fxFlexOrder]="fxFlexProperties.order">
+        <mat-form-field>
+          <mat-label>{{'csp.proyecto-entidad-gestora.nombre' | translate}}</mat-label>
+          <input type="text" placeholder="{{'csp.proyecto-entidad-gestora.nombre' | translate}}" matInput
+            formControlName="nombre">
+        </mat-form-field>
+      </div>
+    </div>
+
+    <div [fxLayout.xs]="fxLayoutProperties.xs" [fxLayout]="fxLayoutProperties.layout"
+      [fxLayoutGap]="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
+      <!-- Razon social -->
+      <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
+        [fxFlexOrder]="fxFlexProperties.order">
+        <mat-form-field>
+          <mat-label>{{'csp.proyecto-entidad-gestora.razon-social' | translate}}</mat-label>
+          <input type="text" placeholder="{{'csp.proyecto-entidad-gestora.razon-social' | translate}}" matInput
+            formControlName="razonSocial">
+        </mat-form-field>
+      </div>
+    </div>
+
+
+    <div [fxLayout.xs]="fxLayoutProperties.xs" [fxLayout]="fxLayoutProperties.layout"
+      [fxLayoutGap]="fxLayoutProperties.gap" ngClass.gt-xs="ml-10 separation-button">
+
+      <!-- Entidad -->
+      <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
+        [fxFlexOrder]="fxFlexProperties.order">
+        <mat-radio-group class="radio-inline" name="entidad" formControlName="entidad">
+          <mat-radio-button color="primary" class="radio" *ngFor="let entidad of entidades" name="entidad"
+            [value]="entidad.value">
+            {{entidad.label}}
+          </mat-radio-button>
+        </mat-radio-group>
+      </div>
+
+      <!-- codigo subidentidad -->
+      <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
+        [fxFlexOrder]="fxFlexProperties.order" *ngIf="formPart.ocultarSubEntidad">
+        <mat-form-field>
+          <mat-label>{{'csp.proyecto-entidad-gestora.codigo-subentidad' | translate}}</mat-label>
+          <input type="text" placeholder="{{'csp.proyecto-entidad-gestora.codigo-subentidad' | translate}}" matInput
+            formControlName="codigoSubentidad">
+        </mat-form-field>
+      </div>
+    </div>
+
+
+    <div [fxLayout.xs]="fxLayoutProperties.xs" [fxLayout]="fxLayoutProperties.layout"
+      [fxLayoutGap]="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
+      <!-- Dirección postal -->
+      <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
+        [fxFlexOrder]="fxFlexProperties.order">
+        <mat-form-field>
+          <mat-label>{{'csp.proyecto-entidad-gestora.direccion-postal' | translate}}</mat-label>
+          <input type="text" placeholder="{{'csp.proyecto-entidad-gestora.direccion-postal' | translate}}" matInput
+            formControlName="direccionPostal">
+        </mat-form-field>
+      </div>
+    </div>
+
+    <div [fxLayout.xs]="fxLayoutProperties.xs" [fxLayout]="fxLayoutProperties.layout"
+      [fxLayoutGap]="fxLayoutProperties.gap" ngClass.gt-xs="ml-10 separation-button">
+      <!-- tipo empresa -->
+      <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
+        [fxFlexOrder]="fxFlexProperties.order">
+        <mat-form-field>
+          <mat-label>{{'csp.proyecto-entidad-gestora.tipo-empresa' | translate}}</mat-label>
+          <input type="text" placeholder="{{'csp.proyecto-entidad-gestora.tipo-empresa' | translate}}" matInput
+            formControlName="tipoEmpresa">
+        </mat-form-field>
+      </div>
+    </div>
+
+    <div class="fieldset-form" *ngIf="formPart.ocultarSubEntidad">
+      <h3>{{'title.csp.proyecto-entidad-gestora.entidad-principal' | translate}}</h3>
+    </div>
+
+    <div [fxLayout.xs]="fxLayoutProperties.xs" [fxLayout]="fxLayoutProperties.layout"
+      [fxLayoutGap]="fxLayoutProperties.gap" ngClass.gt-xs="ml-10" *ngIf="formPart.ocultarSubEntidad">
+      <!-- nombre Principal  -->
+      <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
+        [fxFlexOrder]="fxFlexProperties.order">
+        <mat-form-field>
+          <mat-label>{{'csp.proyecto-entidad-gestora.entidad-principal.nombre' | translate}}</mat-label>
+          <input type="text" placeholder="{{'csp.proyecto-entidad-gestora.entidad-principal.nombre' | translate}}"
+            matInput formControlName="nombrePrincipal">
+        </mat-form-field>
+      </div>
+    </div>
+
+
+    <div [fxLayout.xs]="fxLayoutProperties.xs" [fxLayout]="fxLayoutProperties.layout"
+      [fxLayoutGap]="fxLayoutProperties.gap" ngClass.gt-xs="ml-10" *ngIf="formPart.ocultarSubEntidad">
+      <!-- Razon social Principal-->
+      <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
+        [fxFlexOrder]="fxFlexProperties.order">
+        <mat-form-field>
+          <mat-label>{{'csp.proyecto-entidad-gestora.entidad-principal.razon-social' | translate}}</mat-label>
+          <input type="text" placeholder="{{'csp.proyecto-entidad-gestora.entidad-principal.razon-social' | translate}}"
+            matInput formControlName="razonSocialPrincipal">
+        </mat-form-field>
+      </div>
+    </div>
+
+
+
+  </form>
+
+</section>

@@ -1,0 +1,91 @@
+<div class="opciones-menu">
+  <a class="item" mat-list-item
+    *sgiHasAnyAuthorityForAnyUO="['CSP-CON-V', 'CSP-CON-C', 'CSP-CON-E','CSP-CON-B','CSP-CON-R']"
+    [routerLink]="[CSP_ROUTE_NAMES.CONVOCATORIA]" [routerLinkActive]="['is-active']">
+    <mat-icon color="primary" mat-list-icon>assignment_ind</mat-icon>
+    <p matLine *ngIf="opened">{{'csp.convocatoria' | translate:MSG_PARAMS.CARDINALIRY.PLURAL}}</p>
+  </a>
+  <a class="item" mat-list-item
+    *sgiHasAnyAuthorityForAnyUO="['CSP-SOL-V', 'CSP-SOL-E', 'CSP-SOL-C', 'CSP-SOL-B', 'CSP-SOL-R', 'CSP-PRO-C']"
+    [routerLink]="[CSP_ROUTE_NAMES.SOLICITUD]" [routerLinkActive]="['is-active']">
+    <mat-icon color="primary" mat-list-icon>description</mat-icon>
+    <p matLine *ngIf="opened">{{'csp.solicitud' | translate:MSG_PARAMS.CARDINALIRY.PLURAL}}</p>
+  </a>
+  <a class="item" mat-list-item
+    *sgiHasAnyAuthorityForAnyUO="['CSP-PRO-V', 'CSP-PRO-C', 'CSP-PRO-E', 'CSP-PRO-B', 'CSP-PRO-R']"
+    [routerLink]="[CSP_ROUTE_NAMES.PROYECTO]" [routerLinkActive]="['is-active']">
+    <mat-icon color="primary" mat-list-icon>work</mat-icon>
+    <p matLine *ngIf="opened">{{'csp.proyecto' | translate:MSG_PARAMS.CARDINALIRY.PLURAL}}</p>
+  </a>
+  <a class="item" mat-list-item *sgiHasAnyAuthorityForAnyUO="['CSP-EJEC-V', 'CSP-EJEC-E']"
+    [routerLink]="[CSP_ROUTE_NAMES.EJECUCION_ECONOMICA]" [routerLinkActive]="['is-active']">
+    <mat-icon color="primary" mat-list-icon>attach_money</mat-icon>
+    <p matLine *ngIf="opened">{{'menu.csp.ejecucion-economica' | translate}}</p>
+  </a>
+  <a class="item" mat-list-item *sgiHasAuthorityForAnyUO="'AUTH'" [routerLinkActive]="['is-active']">
+    <mat-icon color="primary" mat-list-icon>insert_invitation</mat-icon>
+    <p matLine *ngIf="opened">{{'menu.csp.timesheet' | translate}}</p>
+  </a>
+  <a class="item" mat-list-item *sgiHasAuthorityForAnyUO="'AUTH'" [routerLinkActive]="['is-active']">
+    <mat-icon color="primary" mat-list-icon>local_library</mat-icon>
+    <p matLine *ngIf="opened">{{'menu.csp.contratos' | translate}}</p>
+  </a>
+  <ng-container *sgiHasAnyAuthorityForAnyUO="['CSP-TFASE-V', 'CSP-TFASE-C', 'CSP-TFASE-E','CSP-TFASE-B', 'CSP-TFASE-R','CSP-TFIN-V', 'CSP-TFIN-C','CSP-TFIN-E', 
+    'CSP-TFIN-B', 'CSP-TFIN-R', 'CSP-TDOC-V', 'CSP-TDOC-C', 'CSP-TDOC-E', 'CSP-TDOC-B', 'CSP-TDOC-R', 'CSP-TENL-V', 'CSP-TENL-C', 'CSP-TENL-E',
+     'CSP-TENL-B', 'CSP-TENL-R', 'CSP-THITO-V', 'CSP-THITO-C', 'CSP-THITO-E', 'CSP-THITO-B', 'CSP-THITO-R', 'CSP-ME-V', 'CSP-ME-C', 'CSP-ME-E',
+     'CSP-ME-B', 'CSP-ME-R', 'CSP-PRG-V', 'CSP-PRG-C', 'CSP-PRG-E', 'CSP-PRG-B', 'CSP-PRG-R', 'CSP-AREA-V', 'CSP-AREA-C', 'CSP-AREA-E', 'CSP-AREA-B',
+     'CSP-AREA-R', 'CSP-FNT-V', 'CSP-FNT-C', 'CSP-FNT-E', 'CSP-FNT-B', 'CSP-FNT-R', 'CSP-TFNA-V', 'CSP-TFNA-C', 'CSP-TFNA-E', 'CSP-TFNA-B', 'CSP-TFNA-R',
+     'CSP-TGTO-V', 'CSP-TGTO-C', 'CSP-TGTO-E', 'CSP-TGTO-B', 'CSP-TGTO-R']">
+    <mat-accordion #accordion="matAccordion" class="acordeon-sidenav">
+      <mat-expansion-panel #expPanel class="panel"
+        [expanded]="panelDesplegado && opened ? !panelDesplegado : panelDesplegado">
+        <mat-expansion-panel-header class="header item" (click)="activarAcordeon($event)">
+          <mat-panel-title class="titulo">
+            <mat-icon color="primary" mat-list-icon>list_alt</mat-icon>
+            <span *ngIf="opened">{{'menu.csp.configuraciones' | translate}}</span>
+          </mat-panel-title>
+        </mat-expansion-panel-header>
+        <div class="opciones-accordion" *ngIf="opened">
+          <a mat-list-item
+            *sgiHasAnyAuthority="['CSP-TFASE-V', 'CSP-TFASE-C', 'CSP-TFASE-E','CSP-TFASE-B','CSP-TFASE-R']"
+            [routerLink]="[CSP_ROUTE_NAMES.TIPO_FASE]" [routerLinkActive]="['is-active']">{{'csp.tipo-fase' |
+            translate:MSG_PARAMS.CARDINALIRY.PLURAL}}</a>
+          <a mat-list-item *sgiHasAnyAuthority="['CSP-TFIN-V','CSP-TFIN-C','CSP-TFIN-E', 'CSP-TFIN-B', 'CSP-TFIN-R']"
+            [routerLink]="[CSP_ROUTE_NAMES.TIPO_FINALIDAD]" [routerLinkActive]="['is-active']">{{'csp.tipo-finalidad' |
+            translate:MSG_PARAMS.CARDINALIRY.PLURAL}}</a>
+          <a mat-list-item *sgiHasAnyAuthority="['CSP-TDOC-V', 'CSP-TDOC-C', 'CSP-TDOC-E', 'CSP-TDOC-B', 'CSP-TDOC-R']"
+            [routerLink]="[CSP_ROUTE_NAMES.TIPO_DOCUMENTO]" [routerLinkActive]="['is-active']">{{'csp.tipo-documento' |
+            translate:MSG_PARAMS.CARDINALIRY.PLURAL}}</a>
+          <a mat-list-item *sgiHasAnyAuthority="['CSP-TENL-V', 'CSP-TENL-C', 'CSP-TENL-E', 'CSP-TENL-B', 'CSP-TENL-R']"
+            [routerLink]="[CSP_ROUTE_NAMES.TIPO_ENLACE]" [routerLinkActive]="['is-active']">{{'csp.tipo-enlace' |
+            translate:MSG_PARAMS.CARDINALIRY.PLURAL}}</a>
+          <a mat-list-item
+            *sgiHasAnyAuthority="['CSP-THITO-V', 'CSP-THITO-C', 'CSP-THITO-E', 'CSP-THITO-B', 'CSP-THITO-R']"
+            [routerLink]="[CSP_ROUTE_NAMES.TIPO_HITO]" [routerLinkActive]="['is-active']">{{'csp.tipo-hito' |
+            translate:MSG_PARAMS.CARDINALIRY.PLURAL}}</a>
+          <a mat-list-item *sgiHasAnyAuthorityForAnyUO="['CSP-ME-V', 'CSP-ME-C', 'CSP-ME-E', 'CSP-ME-B', 'CSP-ME-R']"
+            [routerLink]="[CSP_ROUTE_NAMES.MODELO_EJECUCION]"
+            [routerLinkActive]="['is-active']">{{'menu.csp.configuraciones.modelos-ejecucion' | translate}}</a>
+          <a mat-list-item *sgiHasAnyAuthority="['CSP-PRG-V', 'CSP-PRG-C', 'CSP-PRG-E', 'CSP-PRG-B', 'CSP-PRG-R']"
+            [routerLink]="[CSP_ROUTE_NAMES.PLANES_INVESTIGACION]"
+            [routerLinkActive]="['is-active']">{{'menu.csp.configuraciones.planes-investigacion' | translate}}</a>
+          <a mat-list-item *sgiHasAnyAuthority="['CSP-AREA-V', 'CSP-AREA-C', 'CSP-AREA-E', 'CSP-AREA-B', 'CSP-AREA-R']"
+            [routerLink]="[CSP_ROUTE_NAMES.AREA_TEMATICA]" [routerLinkActive]="['is-active']">{{'csp.area-tematica' |
+            translate:MSG_PARAMS.CARDINALIRY.PLURAL}}</a>
+          <a mat-list-item *sgiHasAnyAuthority="['CSP-FNT-V', 'CSP-FNT-C', 'CSP-FNT-E', 'CSP-FNT-B', 'CSP-FNT-R']"
+            [routerLink]="[CSP_ROUTE_NAMES.FUENTE_FINANCIACION]"
+            [routerLinkActive]="['is-active']">{{'menu.csp.configuraciones.fuentes-financiacion' | translate}}</a>
+          <a mat-list-item *sgiHasAnyAuthority="['CSP-TFNA-V', 'CSP-TFNA-C', 'CSP-TFNA-E', 'CSP-TFNA-B', 'CSP-TFNA-R']"
+            [routerLink]="[CSP_ROUTE_NAMES.TIPO_FINANCIACION]"
+            [routerLinkActive]="['is-active']">{{'menu.csp.configuraciones.tipos-financiacion' | translate}}</a>
+          <a mat-list-item
+            *sgiHasAnyAuthorityForAnyUO="['CSP-TGTO-V', 'CSP-TGTO-C', 'CSP-TGTO-E', 'CSP-TGTO-B', 'CSP-TGTO-R']"
+            [routerLink]="[CSP_ROUTE_NAMES.CONCEPTO_GASTO]"
+            [routerLinkActive]="['is-active']">{{'menu.csp.configuraciones.conceptos-gasto' | translate}}</a>
+        </div>
+      </mat-expansion-panel>
+
+    </mat-accordion>
+  </ng-container>
+</div>
+<!-- FIN Menu principal -->

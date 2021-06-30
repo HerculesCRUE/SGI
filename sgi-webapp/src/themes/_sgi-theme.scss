@@ -1,0 +1,87 @@
+// instead of creating a theme with mat-light-theme like a sane person, we will create our own theme-creating function that lets us apply our own foreground and background palettes.
+// Creates a container object for a light theme to be given to individual component theme mixins.
+@function mat-custom-light-theme(
+  $primary,
+  $accent,
+  $warn: mat-palette($mat-red),
+  $foreground: $mat-light-theme-foreground,
+  $background: $mat-light-theme-background
+) {
+  @return (
+    primary: $primary,
+    accent: $accent,
+    warn: $warn,
+    is-dark: false,
+    foreground: $foreground,
+    background: $background
+  );
+}
+
+@import "colors.scss";
+
+// Define the palettes for your theme using the Material Design palettes available in palette.scss
+// (imported above). For each palette, you can optionally specify a default, lighter, and darker
+// hue. Available color palettes: https://material.io/design/color/
+$sgi-primary: mat-palette($palette-primary);
+$sgi-accent: mat-palette($palette-accent);
+
+// The warn palette is optional (defaults to red).
+$sgi-warn: mat-palette($palette-warn);
+
+// Foreground palette for light themes.
+$sgi-foreground: (
+  base: mat-color($sgi-primary, 500),
+  divider: $dark-dividers,
+  dividers: $dark-dividers,
+  disabled: $dark-disabled-text,
+  disabled-button: rgba(black, 0.26),
+  disabled-text: $dark-disabled-text,
+  elevation: black,
+  hint-text: $dark-disabled-text,
+  secondary-text: $dark-secondary-text,
+  icon: mat-color($sgi-primary, 500),
+  icons: mat-color($sgi-primary, 500),
+  text: rgba(black, 0.87),
+  slider-min: rgba(black, 0.87),
+  slider-off: rgba(black, 0.26),
+  slider-off-active: rgba(black, 0.38),
+);
+
+// Background palette for light themes.
+$sgi-background: (
+  status-bar: black,
+  app-bar: map_get($sgi-primary, 500),
+  background: white,
+  hover: rgba(white, 0.04),
+  // TODO(kara): check style with Material Design UX
+    card: white,
+  dialog: white,
+  disabled-button: rgba(map-get($palette-grease, 600), 0.12),
+  raised-button: map-get($sgi-accent, 200),
+  focused-button: $light-focused,
+  selected-button: map_get($sgi-accent, 200),
+  selected-disabled-button: map_get($sgi-accent, 200),
+  disabled-button-toggle: black,
+  unselected-chip: map_get($sgi-accent, 100),
+  disabled-list-option: black,
+  tooltip: map-get($palette-grease, 600),
+);
+
+// Create the theme object (a Sass map containing all of the palettes).
+$sgi-theme: mat-custom-light-theme($sgi-primary, $sgi-accent, $sgi-warn, $sgi-foreground, $sgi-background);
+
+// Create map-merge global three color variable
+$sgi-theme: map-merge(
+  $sgi-theme,
+  (
+    palette-grease: $palette-grease,
+  )
+);
+
+// Create map-merge global color custom variables
+$sgi-theme: map-merge(
+  $sgi-theme,
+  (
+    custom-colors: $custom-colors,
+  )
+);

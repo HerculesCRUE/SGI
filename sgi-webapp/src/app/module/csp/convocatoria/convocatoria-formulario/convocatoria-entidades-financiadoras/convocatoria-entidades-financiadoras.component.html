@@ -1,0 +1,86 @@
+<section class="entidades-financiadoras-listado">
+  <h2>{{'csp.convocatoria-entidad-financiadora' | translate:MSG_PARAMS.CARDINALIRY.PLURAL}}</h2>
+  <!-- Entidades financiadora listado -->
+  <div>
+    <table mat-table [dataSource]="dataSource" matSort class="mat-elevation-z8 table-unidad">
+      <!-- Nombre Column -->
+      <ng-container matColumnDef="nombre">
+        <th mat-header-cell *matHeaderCellDef>{{'csp.convocatoria-entidad-financiadora.nombre' | translate}}</th>
+        <td mat-cell *matCellDef="let wrapper"> {{wrapper.value.empresa?.nombre}}
+        </td>
+      </ng-container>
+
+      <!-- Cif Column -->
+      <ng-container matColumnDef="cif">
+        <th mat-header-cell *matHeaderCellDef>{{'csp.convocatoria-entidad-financiadora.cif' | translate}}</th>
+        <td mat-cell *matCellDef="let wrapper"> {{wrapper.value.empresa?.numeroIdentificacion}}
+        </td>
+      </ng-container>
+
+      <!-- Fuente financiación Column -->
+      <ng-container matColumnDef="fuenteFinanciacion">
+        <th mat-header-cell *matHeaderCellDef>
+          {{'csp.convocatoria-entidad-financiadora.fuente-financiacion' | translate}}</th>
+        <td mat-cell *matCellDef="let wrapper"> {{wrapper.value.fuenteFinanciacion?.nombre}}
+        </td>
+      </ng-container>
+
+      <!-- Ambito Column -->
+      <ng-container matColumnDef="ambito">
+        <th mat-header-cell *matHeaderCellDef>
+          {{'csp.convocatoria-entidad-financiadora.ambito' | translate}}</th>
+        <td mat-cell *matCellDef="let wrapper">
+          {{wrapper.value.fuenteFinanciacion?.tipoAmbitoGeografico?.nombre}}
+        </td>
+      </ng-container>
+
+      <!-- Tipo financiación Column -->
+      <ng-container matColumnDef="tipoFinanciacion">
+        <th mat-header-cell *matHeaderCellDef>
+          {{'csp.convocatoria-entidad-financiadora.tipo-financiacion' | translate}}</th>
+        <td mat-cell *matCellDef="let wrapper"> {{wrapper.value.tipoFinanciacion?.nombre}} </td>
+      </ng-container>
+
+      <!-- Porcentaje financiación Column -->
+      <ng-container matColumnDef="porcentajeFinanciacion">
+        <th mat-header-cell *matHeaderCellDef>
+          {{'csp.convocatoria-entidad-financiadora.porcentaje-financiacion' | translate}}
+        </th>
+        <td mat-cell *matCellDef="let wrapper"> {{wrapper.value.porcentajeFinanciacion}} </td>
+      </ng-container>
+
+      <!-- Importe financiación Column -->
+      <ng-container matColumnDef="importeFinanciacion">
+        <th mat-header-cell *matHeaderCellDef>
+          {{'csp.convocatoria-entidad-financiadora.importe-financiacion' | translate}}
+        </th>
+        <td mat-cell *matCellDef="let wrapper"> {{wrapper.value.importeFinanciacion}} </td>
+      </ng-container>
+
+      <!-- Acciones Column -->
+      <ng-container matColumnDef="acciones">
+        <th mat-header-cell *matHeaderCellDef>{{'label.actions' | translate}}</th>
+        <td mat-cell *matCellDef="let wrapper">
+          <button mat-button matTooltip="{{'btn.edit' | translate}}" *ngIf="!formPart.readonly"
+            (click)="openModal(wrapper)">
+            <mat-icon color="primary">border_color</mat-icon>
+          </button>
+          <button mat-button matTooltip="{{'btn.delete' | translate}}" *ngIf="!formPart.readonly"
+            (click)="deleteConvocatoriaEntidadFinanciadora(wrapper)">
+            <mat-icon color="warn">highlight_off</mat-icon>
+          </button>
+        </td>
+      </ng-container>
+      <tr mat-header-row *matHeaderRowDef="columns"></tr>
+      <tr mat-row *matRowDef="let row; columns: columns;"></tr>
+    </table>
+    <mat-paginator [pageSizeOptions]="elementsPage" showFirstLastButtons>
+    </mat-paginator>
+  </div>
+  <div class="separation-button">
+    <button color="three" mat-button mat-raised-button *ngIf="!formPart.readonly" (click)="openModal()">
+      <mat-icon color="accent">add_circle</mat-icon>
+      {{ 'btn.add.entity' | translate:msgParamEntity }}
+    </button>
+  </div>
+</section>

@@ -1,0 +1,166 @@
+server:
+  port : 4281
+  error:
+    whitelabel:
+      # Disble the default error page displayed in browsers in case of a server error
+      enabled: false
+
+spring:
+  profiles:
+    # Set spring-profile using maven
+    include: @spring.profiles.active@
+  jpa:
+    properties:
+      hibernate:
+        jdbc:
+          # see: https://vladmihalcea.com/how-to-store-date-time-and-timestamps-in-utc-time-zone-with-jdbc-and-hibernate/
+          time_zone: UTC
+      javax:
+        persistence:
+          # Disable Hibernate validation in JPA
+          validation:
+            mode: "none"
+    # Disable Open Session In View
+    open-in-view: false
+  liquibase:
+    # No Liquibase contexts
+    contexts: none
+  mvc:
+    # Whether a "NoHandlerFoundException" should be thrown if no Handler was found to process a request
+    throw-exception-if-no-handler-found: true
+  resources:
+    # Disable the static resource handling
+    add-mappings: false
+---
+spring:
+  profiles: dev
+  datasource:
+    # Make sure database schema is created (schema.sql is executed)
+    initialization-mode: always
+    # We use a H2 in file database with PostgreSQL compatibility mode
+    url: "jdbc:h2:./target/db/pii;MODE=PostgreSQL;DB_CLOSE_ON_EXIT=FALSE"
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+  liquibase:
+    # Enable Liquibase
+    enabled: true
+    # Default database schema
+    default-schema: pii
+    # Schema to use for Liquibase objects
+    liquibase-schema: pii
+    # Set Liquibase contexts same as spring profiles
+    contexts: dev
+  jpa:
+    hibernate:
+      # Make sure Hibernate will not use the entities to create, update or validate the database
+      # validate | update | create | create-drop
+      ddl-auto: none
+    properties:
+      hibernate:
+        # We use a H2 database with PostgreSQL compatibility mode
+        dialect: org.hibernate.dialect.H2Dialect
+        # Set default Hibernate schema
+        default_schema: pii
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          # JSON Web Key endpoint (with the cryptographic key to validate JSON Web Signature)
+          jwk-set-uri: http://sgi-auth:8080/auth/realms/sgi/protocol/openid-connect/certs
+          user-name-claim: user_ref_id
+      client:
+        registration:
+          # "sgi" is the id used inside the redirect-uri-template, must be the same as your realm
+          sgi:
+            client-id: front
+            provider: keycloak
+            scope: "openid,profile"
+            redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
+            authorization-grant-type: authorization_code
+        provider:
+          keycloak:
+            issuer-uri: http://sgi-auth:8080/auth/realms/sgi
+            user-name-attribute: user_ref_id
+      # Enable login page if JWT not provided (enable only for development)
+      #enable-login: true
+    # Disable CSRF (disable only for development)
+    #csrf:
+      #enable: false
+    # Disable X-Frame-Options (disable only for development)
+    #frameoptions:
+      #enable: false
+  # H2 console
+  h2:
+    console:
+      enabled: false
+      #path: /h2-console
+      #settings:
+        #web-allow-others: true
+
+logging:
+  level:
+    org:
+      hibernate:
+        # Log the SQL statements
+        SQL: DEBUG
+        type:
+          descriptor:
+            sql:
+              # Log SQL query parameter binding
+              BasicBinder: TRACE
+      springframework:
+        jdbc:
+          core:
+            # Log JdbcTemplate Queries
+            JdbcTemplate: DEBUG
+            StatementCreatorUtils: TRACE
+---
+spring:
+  profiles: prod
+  datasource:
+    # Make sure database schema is created (schema.sql is executed)
+    initialization-mode: always
+    # We use PostgreSQL database
+    url: "jdbc:postgresql://postgres:5432/pii"
+    driver-class-name: org.postgresql.Driver
+    username: postgres
+    password: admin
+  liquibase:
+    # Enable Liquibase
+    enabled: true
+    # Default database schema
+    default-schema: pii
+    # Schema to use for Liquibase objects
+    liquibase-schema: pii
+  jpa:
+    hibernate:
+      # Hibernate will use the entities to validate the database
+      # validate | update | create | create-drop
+      ddl-auto: none
+    properties:
+      hibernate:
+        # We use a PostgreSQL database
+        dialect: org.hibernate.dialect.PostgreSQL95Dialect
+        # Set default Hibernate Schema
+        default_schema: pii
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          # JSON Web Key endpoint (with the cryptographic key to validate JSON Web Signature)
+          jwk-set-uri: http://sgi-auth:8080/auth/realms/sgi/protocol/openid-connect/certs
+          user-name-claim: user_ref_id
+      client:
+        registration:
+          # "sgi" is the id used inside the redirect-uri-template, must be the same as your realm
+          sgi:
+            client-id: front
+            provider: keycloak
+            scope: "openid,profile"
+            redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
+            authorization-grant-type: authorization_code
+        provider:
+          keycloak:
+            issuer-uri: http://sgi-auth:8080/auth/realms/sgi
+            user-name-attribute: user_ref_id

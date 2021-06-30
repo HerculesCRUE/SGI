@@ -1,0 +1,56 @@
+<div class="sgi-dialog-header" fxLayout="row" fxLayoutGap="20px">
+  <span fxFlexAlign="center" mat-mat-dialog-title role="heading" aria-level="3" fxFlex>
+    {{'sgo.area-conocimiento' | translate:MSG_PARAMS.CARDINALIRY.PLURAL}}
+  </span>
+  <button fxFlex="nogrow" mat-icon-button mat-dialog-close>
+    <mat-icon class="close-icon">close</mat-icon>
+  </button>
+</div>
+<mat-dialog-content>
+  <div class="programa">
+    <div class="arbol">
+      <mat-tree [dataSource]="dataSource" [treeControl]="treeControl" class="arbol-tree">
+        <mat-tree-node *matTreeNodeDef="let node" matTreeNodeToggle matTreeNodePadding>
+          <li class="mat-tree-node">
+            <button mat-icon-button disabled></button>
+
+            <mat-checkbox class="checkbox" color="primary" [checked]="node.checked" (change)="onCheckNode(node, $event)"
+              [disabled]="node.disabled">
+              {{node.areaConocimiento.nombre}}
+            </mat-checkbox>
+          </li>
+        </mat-tree-node>
+        <mat-tree-node *matTreeNodeDef="let node; when: hasChild" matTreeNodePadding>
+          <li>
+            <div class="mat-tree-node">
+              <button mat-icon-button matTreeNodeToggle [attr.aria-label]="'Toggle ' + node.areaConocimiento.nombre"
+                (click)="onToggleNode(node)">
+                <mat-icon color="primary" class="mat-icon-rtl-mirror">
+                  {{treeControl.isExpanded(node) ? 'expand_more' : 'chevron_right'}}
+                </mat-icon>
+              </button>
+
+              <mat-checkbox class="checkbox" color="primary" [checked]="node.checked"
+                (change)="onCheckNode(node, $event)" [disabled]="node.disabled">
+                {{node.areaConocimiento.nombre}}
+              </mat-checkbox>
+            </div>
+            <ul [class.arbol-invisible]="!treeControl.isExpanded(node)">
+              <ng-container matTreeNodeOutlet></ng-container>
+            </ul>
+          </li>
+        </mat-tree-node>
+      </mat-tree>
+    </div>
+  </div>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <button color="accent" (click)="saveOrUpdate()" [disabled]="selectedAreasConocimiento.length === 0" mat-raised-button
+    type="submit">
+    <mat-icon class="save-icon">save</mat-icon>
+    {{'btn.ok' | translate}}
+  </button>
+  <button class="link-cancelar" mat-button type="button" mat-dialog-close>
+    {{'btn.cancel' | translate}}
+  </button>
+</mat-dialog-actions>

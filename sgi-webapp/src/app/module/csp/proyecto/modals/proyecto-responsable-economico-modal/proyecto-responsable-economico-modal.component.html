@@ -1,0 +1,81 @@
+<div class="sgi-dialog-header" fxLayout="row" fxLayoutGap="20px">
+  <span fxFlexAlign="center" mat-mat-dialog-title role="heading" aria-level="3" fxFlex>{{title}}</span>
+  <button fxFlex="nogrow" mat-icon-button mat-dialog-close>
+    <mat-icon class="close-icon">close</mat-icon>
+  </button>
+</div>
+<mat-dialog-content>
+  <form [formGroup]="formGroup">
+    <!-- Responsable -->
+    <div [fxLayout]="fxLayoutProperties.layout" [fxLayoutAlign]="fxLayoutProperties.layoutAlign">
+      <mat-form-field>
+        <mat-label>
+          {{'csp.proyecto-responsable-economico' | translate}}
+        </mat-label>
+        <sgi-select-persona placeholder="{{'csp.proyecto-responsable-economico' | translate}}"
+          formControlName="responsable" [tipoColectivo]="TipoColectivo.RESPONSABLE_ECONOMICO_CSP" required>
+        </sgi-select-persona>
+        <mat-error *ngIf="formGroup.controls.responsable.errors?.required">
+          {{'error.required.entity' | translate:msgParamEntity}}
+        </mat-error>
+      </mat-form-field>
+    </div>
+    <!-- Fechas -->
+    <div class="fieldset-form">
+      {{'title.csp.proyecto-responsable-economico.periodo-participacion' | translate}}
+    </div>
+    <div [fxLayout.xs]="fxLayoutProperties.xs" [fxLayout]="fxLayoutProperties.layout"
+      [fxLayoutGap]="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
+      <!-- Fecha inicio -->
+      <div>
+        <mat-form-field>
+          <mat-label>{{'csp.proyecto-responsable-economico.fecha-inicio' | translate}}</mat-label>
+          <input matInput formControlName="fechaInicio" [ngxMatDatetimePicker]="picker1"
+            [required]="requiredFechaInicio">
+          <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
+          <ngx-mat-datetime-picker #picker1 showSeconds="true" [defaultTime]="[0,0,0]"></ngx-mat-datetime-picker>
+          <mat-error *ngIf="formGroup.controls.fechaInicio.errors?.required">
+            {{'error.required.entity' | translate:msgParamFechaInicio}}
+          </mat-error>
+          <mat-error *ngIf="formGroup.controls.fechaInicio.errors?.overlaps">
+            {{'error.overlapping.record.entity' | translate:msgParamEntity}}
+          </mat-error>
+          <mat-error *ngIf="formGroup.controls.fechaInicio.errors?.invalid">
+            {{'error.csp.proyecto-responsable-economico.fecha.invalid' | translate}}
+          </mat-error>
+        </mat-form-field>
+      </div>
+      <!-- Fecha fin -->
+      <div>
+        <mat-form-field>
+          <mat-label>{{'csp.proyecto-responsable-economico.fecha-fin' | translate}}</mat-label>
+          <input matInput formControlName="fechaFin" [ngxMatDatetimePicker]="picker2" [required]="requiredFechaFin">
+          <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
+          <ngx-mat-datetime-picker #picker2 showSeconds="true" [defaultTime]="[23,59,59]"></ngx-mat-datetime-picker>
+          <mat-error *ngIf="formGroup.controls.fechaFin.errors?.required">
+            {{'error.required.entity' | translate:msgParamFechaFin}}
+          </mat-error>
+          <mat-error *ngIf="formGroup.controls.fechaFin.errors?.after">
+            {{'error.after.fecha-fin' | translate}}
+          </mat-error>
+          <mat-error *ngIf="formGroup.controls.fechaFin.errors?.overlaps">
+            {{'error.overlapping.record.entity' | translate:msgParamEntity}}
+          </mat-error>
+          <mat-error *ngIf="formGroup.controls.fechaFin.errors?.invalid">
+            {{'error.csp.proyecto-responsable-economico.fecha.invalid' | translate}}
+          </mat-error>
+        </mat-form-field>
+      </div>
+    </div>
+  </form>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <button color="accent" (click)="saveOrUpdate()" mat-raised-button type="submit" *ngIf="!data.readonly"
+    [disabled]="saveDisabled">
+    <mat-icon class="save-icon">save</mat-icon>
+    {{textSaveOrUpdate | translate}}
+  </button>
+  <button class="link-cancelar" mat-button type="button" mat-dialog-close>
+    {{'btn.cancel' | translate}}
+  </button>
+</mat-dialog-actions>

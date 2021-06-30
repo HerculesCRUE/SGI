@@ -1,0 +1,6 @@
+@import 'colors.scss';
+
+.confirmacion-dialog .mat-dialog-container{
+  width: 325px;
+  background: map-get($palette-accent, 100);
+}

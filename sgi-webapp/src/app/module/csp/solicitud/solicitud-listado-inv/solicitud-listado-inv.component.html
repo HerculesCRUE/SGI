@@ -1,0 +1,139 @@
+<!-- Solicitudes listado -->
+<div class="scrollable-panel-with-footer">
+  <section class="solicitud-listado">
+
+    <!-- Buscador de solicitudes -->
+    <form class="mat-elevation-z8 formulario" [formGroup]="formGroup" [fxLayout.xs]="fxLayoutProperties.xs"
+      [fxLayout]="fxLayoutProperties.layout" fxLayoutGap="fxLayoutProperties.gap">
+
+      <div fxFlex="73%" fxFlex.sm="50%" fxFlex.md="53%" [fxLayout.xs]="fxLayoutProperties.xs"
+        [fxLayout]="fxLayoutProperties.layout" fxLayoutGap="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
+        <!-- Convocatoria -->
+        <div class="col">
+          <mat-form-field>
+            <mat-label>{{'csp.solicitud.convocatoria' | translate}}</mat-label>
+            <sgi-select-convocatoria placeholder="{{'csp.solicitud.convocatoria' | translate}}"
+              formControlName="convocatoria" investigador="true">
+            </sgi-select-convocatoria>
+          </mat-form-field>
+        </div>
+
+        <!-- Estado solicitud -->
+        <div class="col">
+          <mat-form-field>
+            <mat-label>{{'csp.solicitud.estado-solicitud' | translate}}</mat-label>
+            <sgi-select-enum formControlName="estadoSolicitud" [enumMap]="ESTADO_MAP"></sgi-select-enum>
+          </mat-form-field>
+        </div>
+      </div>
+
+      <!-- Acciones -->
+      <div class="buttons-final">
+        <div class="col filter-button">
+          <button color="primary" aria-label="Center Align" mat-raised-button (click)="onSearch()">
+            <mat-icon>search</mat-icon> {{'btn.search'| translate}}
+          </button>
+          <button color="warn" aria-label="Center Align" (click)="onClearFilters()" mat-button>
+            {{'btn.clean'| translate}}
+          </button>
+        </div>
+      </div>
+    </form>
+
+    <!-- Tabla solicitudes -->
+    <table class="mat-elevation-z8 table-solicitud" mat-table [dataSource]="solicitudes$ | async" matSort
+      matSortActive="estado.fechaEstado" matSortDirection="desc" matSortDisableClear>
+
+      <!-- Codigo interno Column -->
+      <ng-container matColumnDef="codigoRegistroInterno">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>
+          {{'csp.solicitud.codigo' | translate}}
+        </th>
+        <td mat-cell *matCellDef="let element">
+          {{ element.codigoRegistroInterno}}
+        </td>
+      </ng-container>
+
+      <!-- Codigo interno Column -->
+      <ng-container matColumnDef="codigoExterno">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>
+          {{'csp.solicitud.codigo-externo' | translate}}
+        </th>
+        <td mat-cell *matCellDef="let element">
+          {{ element.codigoExterno}}
+        </td>
+      </ng-container>
+
+      <!-- Titulo convocatoria Column -->
+      <ng-container matColumnDef="convocatoria.titulo">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>
+          {{'csp.solicitud.titulo-convocatoria' | translate}}
+        </th>
+        <td mat-cell *matCellDef="let element">
+          {{ element.convocatoria?.titulo}}
+        </td>
+      </ng-container>
+
+      <!-- Referencia convocatoria Column -->
+      <ng-container matColumnDef="referencia">
+        <th mat-header-cell *matHeaderCellDef>
+          {{'csp.solicitud.referencia-convocatoria' | translate}}
+        </th>
+        <td mat-cell *matCellDef="let element">
+          {{ element.convocatoria ? element.convocatoria.codigo : element.convocatoriaExterna}}
+        </td>
+      </ng-container>
+
+      <!-- Estado solicitud Column -->
+      <ng-container matColumnDef="estado.estado">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>
+          {{'csp.solicitud.estado' | translate}}
+        </th>
+        <td mat-cell *matCellDef="let element">
+          {{ESTADO_MAP.get(element.estado?.estado) | translate}}
+        </td>
+      </ng-container>
+
+      <!-- Fecha estado Column -->
+      <ng-container matColumnDef="estado.fechaEstado">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>
+          {{'csp.solicitud.estado-solicitud.fecha' | translate}}
+        </th>
+        <td mat-cell *matCellDef="let element">
+          {{ element.estado?.fechaEstado | luxon:'short' }}
+        </td>
+      </ng-container>
+
+      <!-- Acciones Column -->
+      <ng-container matColumnDef="acciones">
+        <th mat-header-cell *matHeaderCellDef> {{'label.actions' | translate}} </th>
+        <td mat-cell *matCellDef="let element">
+          <ng-container *sgiHasAnyAuthority="['CSP-SOL-INV-ER', 'CSP-SOL-INV-BR']">
+            <button mat-button matTooltip="{{'btn.view' | translate}}" *ngIf="!element.modificable"
+              [routerLink]="[element.id]">
+              <mat-icon color="primary">visibility</mat-icon>
+            </button>
+          </ng-container>
+          <ng-container *sgiHasAnyAuthority="['CSP-SOL-INV-ER']">
+            <button *ngIf="element.modificable" mat-button matTooltip="{{'btn.edit' | translate}}"
+              [routerLink]="[element.id]">
+              <mat-icon color="primary">border_color</mat-icon>
+            </button>
+          </ng-container>
+          <ng-container *sgiHasAnyAuthority="['CSP-SOL-INV-BR']">
+            <button *ngIf="element.eliminable" mat-button matTooltip="{{'btn.delete' | translate}}"
+              (click)="deactivateSolicitud(element)">
+              <mat-icon color="warn">highlight_off</mat-icon>
+            </button>
+          </ng-container>
+        </td>
+      </ng-container>
+      <tr mat-header-row *matHeaderRowDef="columnas"></tr>
+      <tr mat-row *matRowDef="let row; columns: columnas;"></tr>
+    </table>
+
+    <mat-paginator [pageSizeOptions]="elementosPagina" [length]="totalElementos" showFirstLastButtons>
+    </mat-paginator>
+  </section>
+
+</div>

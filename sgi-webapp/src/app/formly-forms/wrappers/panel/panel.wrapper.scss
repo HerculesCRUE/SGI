@@ -1,0 +1,29 @@
+ @import "colors.scss";
+.mat-expansion-panel {
+  margin-bottom: 1em;
+}
+mat-icon.warning {
+  color: map-get($custom-colors, warning);
+}
+mat-icon.error {
+  color: map-get($custom-colors, danger);
+}
+.mat-expansion-panel-header-title {
+  align-items: center;
+  font-weight: 600;
+}
+.mat-expansion-panel-header-description {
+  flex-basis: 0;
+}
+.mat-expansion-panel-header-description {
+  justify-content: space-between;
+  align-items: center;
+}
+.comentario {
+  border-style: solid;
+  border-width: 2px;
+  padding: 1em;
+  margin-bottom: 2em;
+  border-color: map-get($custom-colors, warning);
+  background-color: rgba(map-get($custom-colors, warning), 0.1);
+}

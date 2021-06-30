@@ -1,0 +1,3 @@
+export const SOLICITUD_PROYECTO_PRESUPUESTO_ROUTE_PARAMS = {
+  EMPRESA_REF: 'empresaRef'
+};

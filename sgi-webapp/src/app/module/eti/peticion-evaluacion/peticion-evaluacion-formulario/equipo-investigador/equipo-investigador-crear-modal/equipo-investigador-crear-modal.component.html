@@ -1,0 +1,63 @@
+<div class="sgi-dialog-header" fxLayout="row" fxLayoutGap="20px">
+  <span fxFlexAlign="center" mat-mat-dialog-title role="heading" aria-level="3" fxFlex>{{'title.new.entity' |
+    translate:msgParamEntity}}</span>
+  <button fxFlex="nogrow" mat-icon-button mat-dialog-close>
+    <mat-icon class="close-icon">close</mat-icon>
+  </button>
+</div>
+<mat-dialog-content>
+  <form [formGroup]="formGroup">
+    <!--Persona-->
+    <div [fxLayout]="fxLayoutProperties.layout" [fxLayoutAlign]="fxLayoutProperties.layoutAlign">
+      <mat-form-field>
+        <mat-label>{{'eti.peticion-evaluacion.equipo-investigador.persona' | translate}}</mat-label>
+        <sgi-select-persona placeholder="{{'eti.peticion-evaluacion.equipo-investigador.persona' | translate}}"
+          formControlName="persona" [tipoColectivo]="tipoColectivoPersona" required>
+        </sgi-select-persona>
+        <mat-error *ngIf="formGroup.controls.persona.errors?.required">
+          {{'error.required.entity' | translate:msgParamEntity}}
+        </mat-error>
+      </mat-form-field>
+    </div>
+    <!--Número documento -->
+    <div [fxLayout]="fxLayoutProperties.layout" [fxLayoutAlign]="fxLayoutProperties.layoutAlign">
+      <mat-form-field>
+        <mat-label>{{'eti.peticion-evaluacion.equipo-investigador.numero-documento' | translate}}
+        </mat-label>
+        <input matInput formControlName="numDocumento" type="text" />
+      </mat-form-field>
+    </div>
+    <!--Nombre completo-->
+    <div [fxLayout]="fxLayoutProperties.layout" [fxLayoutAlign]="fxLayoutProperties.layoutAlign">
+      <mat-form-field>
+        <mat-label>{{'eti.peticion-evaluacion.equipo-investigador.nombre-completo' | translate}}
+        </mat-label>
+        <input matInput formControlName="nombreCompleto" type="text" />
+      </mat-form-field>
+    </div>
+    <!--Vinculación-->
+    <div [fxLayout]="fxLayoutProperties.layout" [fxLayoutAlign]="fxLayoutProperties.layoutAlign">
+      <mat-form-field>
+        <mat-label>{{'eti.peticion-evaluacion.equipo-investigador.vinculacion' | translate}}
+        </mat-label>
+        <input matInput formControlName="vinculacion" type="text" />
+      </mat-form-field>
+    </div>
+    <!--Nivel académico -->
+    <div [fxLayout]="fxLayoutProperties.layout" [fxLayoutAlign]="fxLayoutProperties.layoutAlign">
+      <mat-form-field>
+        <mat-label>{{'eti.peticion-evaluacion.equipo-investigador.nivel-academico' | translate}}
+        </mat-label>
+        <input matInput formControlName="nivelAcademico" type="text" />
+      </mat-form-field>
+    </div>
+  </form>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <button color="accent" (click)="saveOrUpdate()" mat-raised-button type="submit">
+    <mat-icon class="save-icon">save</mat-icon>{{'btn.add'
+    | translate}}
+  </button>
+  <button class="link-cancelar" mat-button type="button" mat-dialog-close>{{'btn.cancel' |
+    translate}}</button>
+</mat-dialog-actions>

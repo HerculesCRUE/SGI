@@ -1,0 +1,12 @@
+<sgi-action [actionService]="actionService">
+  <ng-container menu>
+    <sgi-action-fragment-menu-item [route]="[PROYECTO_ROUTE_NAMES.FICHA_GENERAL]"
+      [title]="'label.ficha-general' | translate"
+      [fragment]="actionService.getFragment(actionService.FRAGMENT.FICHA_GENERAL)">
+    </sgi-action-fragment-menu-item>
+  </ng-container>
+  <ng-container footer>
+    <sgi-action-footer [texto]="textoCrear" [actionService]="actionService">
+    </sgi-action-footer>
+  </ng-container>
+</sgi-action>

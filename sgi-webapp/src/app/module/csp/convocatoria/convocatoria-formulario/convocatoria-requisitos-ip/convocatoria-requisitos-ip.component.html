@@ -1,0 +1,197 @@
+<section class="convocatoria-requisitos-ip">
+  <h2>{{'csp.convocatoria-requisito-ip' | translate}}</h2>
+
+  <form [formGroup]="formGroup" [fxLayout.xs]="fxLayoutProperties.xs" [fxLayout]="fxLayoutProperties.layout"
+    [fxLayoutGap]="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
+
+    <!-- Número Máximo IPs -->
+    <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
+      [fxFlexOrder]="fxFlexProperties.order">
+      <mat-form-field class="input-form">
+        <mat-label>{{'csp.convocatoria-requisito-ip.numero-maximo' | translate}}</mat-label>
+        <input matInput formControlName="numMaximoIP" type="number" id="numMaximoIP" min="0"
+          placeholder="{{'csp.convocatoria-requisito-ip.numero-maximo' | translate}}">
+        <mat-error *ngIf="formGroup.controls.numMaximoIP.hasError('max')">
+          {{'error.max.digit' | translate}}
+        </mat-error>
+        <mat-error *ngIf="formGroup.controls.numMaximoIP.hasError('min')">
+          {{'error.min.digit' | translate}}
+        </mat-error>
+      </mat-form-field>
+    </div>
+
+    <!-- Nivel académico TODO reemplazar cuando se tenga el servicio correspondiente-->
+    <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
+      [fxFlexOrder]="fxFlexProperties.order">
+      <mat-form-field>
+        <mat-label>{{'csp.convocatoria-requisito-ip.nivel-academico' | translate}}</mat-label>
+        <input matInput formControlName="nivelAcademicoRef" id="nivelAcademicoRef"
+          placeholder="{{'csp.convocatoria-requisito-ip.nivel-academico' | translate}}" />
+        <mat-error *ngIf="formGroup.controls.nivelAcademicoRef.hasError('maxlength')">
+          {{'error.maxlength.entity' | translate:msgParamNivelAcademicoEntity}}
+        </mat-error>
+      </mat-form-field>
+    </div>
+
+    <!-- Antigüedad nivel académico -->
+    <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
+      [fxFlexOrder]="fxFlexProperties.order">
+      <mat-form-field class="input-form">
+        <mat-label>{{'csp.convocatoria-requisito-ip.nivel-academico.anios' | translate}}</mat-label>
+        <input matInput formControlName="aniosNivelAcademico" type="number" id="aniosNivelAcademico" min="0"
+          placeholder="{{'csp.convocatoria-requisito-ip.nivel-academico.anios' | translate}}">
+        <mat-error *ngIf="formGroup.controls.aniosNivelAcademico.hasError('max')">
+          {{'error.max.digit' | translate}}
+        </mat-error>
+        <mat-error *ngIf="formGroup.controls.aniosNivelAcademico.hasError('min')">
+          {{'error.min.digit' | translate}}
+        </mat-error>
+      </mat-form-field>
+    </div>
+
+    <!-- Edad máxima -->
+    <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
+      [fxFlexOrder]="fxFlexProperties.order">
+      <mat-form-field class="input-form">
+        <mat-label>{{'csp.convocatoria-requisito-ip.edad-maxima' | translate}}</mat-label>
+        <input matInput formControlName="edadMaxima" type="number" id="edadMaxima" min="0"
+          placeholder="{{'csp.convocatoria-requisito-ip.edad-maxima' | translate}}">
+        <mat-error *ngIf="formGroup.controls.edadMaxima.hasError('max')">
+          {{'error.max.digit' | translate}}
+        </mat-error>
+        <mat-error *ngIf="formGroup.controls.edadMaxima.hasError('min')">
+          {{'error.min.digit' | translate}}
+        </mat-error>
+      </mat-form-field>
+    </div>
+
+    <!-- Sexo -->
+    <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
+      [fxFlexOrder]="fxFlexProperties.order">
+      <mat-form-field class="input-form">
+        <mat-label>{{'csp.convocatoria-requisito-ip.sexo' | translate}}</mat-label>
+        <!-- TODO: Convertir en enumerado -->
+        <mat-select matNativeControl formControlName="sexo">
+          <mat-option [value]="null"></mat-option>
+          <mat-option [value]="'label.sexo.hombre' | translate">{{'label.sexo.hombre' | translate}}</mat-option>
+          <mat-option [value]="'label.sexo.mujer' | translate">{{'label.sexo.mujer' | translate}}</mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+
+    <!-- Vinculación con universidad -->
+    <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
+      [fxFlexOrder]="fxFlexProperties.order">
+      <mat-form-field class="input-form">
+        <mat-label>{{'csp.convocatoria-requisito-ip.vinculacion-universidad' | translate}}</mat-label>
+        <sgi-select-boolean formControlName="vinculacionUniversidad"></sgi-select-boolean>
+      </mat-form-field>
+    </div>
+
+    <!-- Años vinculación -->
+    <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
+      [fxFlexOrder]="fxFlexProperties.order">
+      <mat-form-field class="input-form">
+        <mat-label>{{'csp.convocatoria-requisito-ip.vinculacion-anios' | translate}}</mat-label>
+        <input matInput formControlName="aniosVinculacion" type="number" id="aniosVinculacion" min="0"
+          placeholder="{{'csp.convocatoria-requisito-ip.vinculacion-anios' | translate}}">
+        <mat-error *ngIf="formGroup.controls.aniosVinculacion.hasError('max')">
+          {{'error.max.digit' | translate}}
+        </mat-error>
+        <mat-error *ngIf="formGroup.controls.aniosVinculacion.hasError('min')">
+          {{'error.min.digit' | translate}}
+        </mat-error>
+      </mat-form-field>
+    </div>
+
+    <!-- Modalidad de contrato TODO reemplazar cuando se tenga el servicio correspondiente -->
+    <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
+      [fxFlexOrder]="fxFlexProperties.order">
+      <mat-form-field>
+        <mat-label>{{'csp.convocatoria-requisito-ip.modalidad-contratos' | translate}}</mat-label>
+        <input matInput formControlName="modalidadContratoRef" id="modalidadContratoRef"
+          placeholder="{{'csp.convocatoria-requisito-ip.modalidad-contratos' | translate}}" />
+        <mat-error *ngIf="formGroup.controls.modalidadContratoRef.hasError('maxlength')">
+          {{'error.maxlength.entity' | translate:msgParamModalidadContratoEntity}}
+        </mat-error>
+      </mat-form-field>
+    </div>
+
+    <!-- Número proyectos competitivos mínimos -->
+    <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
+      [fxFlexOrder]="fxFlexProperties.order">
+      <mat-form-field class="input-form">
+        <mat-label>{{'csp.convocatoria-requisito-ip.proyecto-competitivo.minimo' | translate}}</mat-label>
+        <input matInput formControlName="numMinimoCompetitivos" type="number" id="numMinimoCompetitivos" min="0"
+          placeholder="{{'csp.convocatoria-requisito-ip.proyecto-competitivo.minimo' | translate}}">
+        <mat-error *ngIf="formGroup.controls.numMinimoCompetitivos.hasError('max')">
+          {{'error.max.digit' | translate}}
+        </mat-error>
+        <mat-error *ngIf="formGroup.controls.numMinimoCompetitivos.hasError('min')">
+          {{'error.min.digit' | translate}}
+        </mat-error>
+      </mat-form-field>
+    </div>
+
+    <!-- Número proyectos NO competitivos mínimos -->
+    <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
+      [fxFlexOrder]="fxFlexProperties.order">
+      <mat-form-field class="input-form">
+        <mat-label>{{'csp.convocatoria-requisito-ip.proyecto-no-competitivo.minimo' | translate}}</mat-label>
+        <input matInput formControlName="numMinimoNoCompetitivos" type="number" id="numMinimoNoCompetitivos" min="0"
+          placeholder="{{'csp.convocatoria-requisito-ip.proyecto-no-competitivo.minimo' | translate}}">
+        <mat-error *ngIf="formGroup.controls.numMinimoNoCompetitivos.hasError('max')">
+          {{'error.max.digit' | translate}}
+        </mat-error>
+        <mat-error *ngIf="formGroup.controls.numMinimoNoCompetitivos.hasError('min')">
+          {{'error.min.digit' | translate}}
+        </mat-error>
+      </mat-form-field>
+    </div>
+
+    <!-- Número proyectos competitivos activos máximos -->
+    <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
+      [fxFlexOrder]="fxFlexProperties.order">
+      <mat-form-field class="input-form">
+        <mat-label>{{'csp.convocatoria-requisito-ip.proyecto-competitivo.maximo' | translate}}</mat-label>
+        <input matInput formControlName="numMaximoCompetitivosActivos" type="number" id="numMaximoCompetitivosActivos"
+          min="0" placeholder="{{'csp.convocatoria-requisito-ip.proyecto-competitivo.maximo' | translate}}">
+        <mat-error *ngIf="formGroup.controls.numMaximoCompetitivosActivos.hasError('max')">
+          {{'error.max.digit' | translate}}
+        </mat-error>
+        <mat-error *ngIf="formGroup.controls.numMaximoCompetitivosActivos.hasError('min')">
+          {{'error.min.digit' | translate}}
+        </mat-error>
+      </mat-form-field>
+    </div>
+
+    <!-- Número proyectos NO competitivos activos máximos -->
+    <div [fxFlex.sm]=" fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
+      [fxFlexOrder]="fxFlexProperties.order">
+      <mat-form-field class="input-form">
+        <mat-label>{{'csp.convocatoria-requisito-ip.proyecto-no-competitivo.maximo' | translate}}</mat-label>
+        <input matInput formControlName="numMaximoNoCompetitivosActivos" type="number" min="0"
+          id="numMaximoNoCompetitivosActivos"
+          placeholder="{{'csp.convocatoria-requisito-ip.proyecto-no-competitivo.maximo' | translate}}">
+        <mat-error *ngIf="formGroup.controls.numMaximoNoCompetitivosActivos.hasError('max')">
+          {{'error.max.digit' | translate}}
+        </mat-error>
+        <mat-error *ngIf="formGroup.controls.numMaximoNoCompetitivosActivos.hasError('min')">
+          {{'error.min.digit' | translate}}
+        </mat-error>
+      </mat-form-field>
+    </div>
+
+    <!-- Otros requisitos -->
+    <div [fxFlex.sm]="fxFlexPropertiesInline.sm" [fxFlex.md]="fxFlexPropertiesInline.md"
+      [fxFlex.gt-md]="fxFlexPropertiesInline.gtMd" [fxFlexOrder]="fxFlexPropertiesInline.order">
+      <mat-form-field>
+        <mat-label>{{'csp.convocatoria-requisito-ip.otros-requisitos' | translate}}</mat-label>
+        <textarea #resumen matInput formControlName="otrosRequisitos" id="otrosRequisitos"
+          placeholder="{{'csp.convocatoria-requisito-ip.otros-requisitos' | translate}}" maxlength="250"></textarea>
+        <mat-hint>{{resumen.value.length}} / 250</mat-hint>
+      </mat-form-field>
+    </div>
+  </form>
+
+</section>

@@ -1,0 +1,25 @@
+@import "colors.scss";
+
+.evaluador-datos-generales {
+  .footer-button {
+    padding-top: 15px;
+    button {
+      margin-right: 15px;
+    }
+  }
+  .separacion {
+    padding-top: 10px;
+    padding-bottom: 20px;
+  }
+}
+
+.disabled
+{
+  pointer-events: none;
+  /* for "disabled" effect */
+  opacity: 0.5; 
+}
+
+#buttons {
+  margin-top: 20px;
+}

@@ -1,0 +1,66 @@
+{
+  "properties": [
+    {
+      "name": "spring.security.csrf.enable",
+      "type": "java.lang.Boolean",
+      "defaultValue": "true"
+    },
+    {
+      "name": "spring.security.frameoptions.enable",
+      "type": "java.lang.Boolean",
+      "defaultValue": "true"
+    },
+    {
+      "name": "spring.security.oauth2.enable-login",
+      "type": "java.lang.Boolean",
+      "defaultValue": "false"
+    },
+    {
+      "name": "spring.security.oauth2.resourceserver.jwt.user-name-claim",
+      "type": "java.lang.String",
+      "description": "JWT claim that contains the user name.",
+      "defaultValue": "sub"
+    }
+  ],
+  "hints": [
+    {
+      "name": "spring.security.csrf.enable",
+      "values": [
+        {
+          "value": "true",
+          "description": "Enables CSRF protection."
+        },
+        {
+          "value": "false",
+          "description": "Disable CSRF protection."
+        }
+      ]
+    },
+    {
+      "name": "spring.security.frameoptions.enable",
+      "values": [
+        {
+          "value": "true",
+          "description": "Enables X-Frame-Options header options."
+        },
+        {
+          "value": "false",
+          "description": "Disable X-Frame-Options header options."
+        }
+      ]
+    },
+    {
+      "name": "spring.security.oauth2.enable-login",
+      "values": [
+        {
+          "value": "true",
+          "description": "Enables OAuth2 login page if JWT is not pressent."
+        },
+        {
+          "value": "false",
+          "description": "Do not enable OAuth2 login page despite JWT presence."
+        }
+      ]
+    }
+  ]
+}

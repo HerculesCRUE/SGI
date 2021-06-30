@@ -1,0 +1,25 @@
+<mat-expansion-panel [expanded]="to.expanded">
+  <mat-expansion-panel-header>
+    <mat-panel-title>{{ to.label | uppercase }}</mat-panel-title>
+    <mat-panel-description>
+      &nbsp;
+      <span>
+        <mat-icon *ngIf="locked">lock</mat-icon>
+        <mat-icon *ngIf="comments" class="warning">feedback</mat-icon>
+        <mat-icon *ngIf="changes && !errors" class="warning">error_outline</mat-icon>
+        <mat-icon *ngIf="errors" class="error">warning</mat-icon>
+      </span>
+    </mat-panel-description>
+  </mat-expansion-panel-header>
+  <div>
+    <div *ngIf="to.comentario" fxLayout="row" fxLayoutGap="10px" class="comentario">
+      <div>
+        <mat-icon class="warning">feedback</mat-icon>
+      </div>
+      <div fxFlex>
+        {{ to.comentario?.texto }}
+      </div>
+    </div>
+    <ng-container #fieldComponent></ng-container>
+  </div>
+</mat-expansion-panel>

@@ -1,0 +1,48 @@
+<div class="sgi-dialog-header" fxLayout="row" fxLayoutGap="20px">
+  <span fxFlexAlign="center" mat-mat-dialog-title role="heading" aria-level="3" fxFlex>{{title}}</span>
+  <button fxFlex="nogrow" mat-icon-button mat-dialog-close>
+    <mat-icon class="close-icon">close</mat-icon>
+  </button>
+</div>
+<mat-dialog-content>
+  <form [formGroup]="formGroup">
+    <!-- Tipo de Hito -->
+    <div [fxLayout]="fxLayoutProperties.layout" [fxLayoutAlign]="fxLayoutProperties.layoutAlign">
+      <mat-form-field>
+        <mat-label>{{'csp.modelo-ejecucion-tipo-hito.tipo' | translate}}</mat-label>
+            <sgi-select-entity formControlName="tipoHito" required [options]="tipoHitos$ | async"></sgi-select-entity>
+        <mat-error *ngIf="formGroup.controls.tipoHito.errors?.required">
+          {{'error.required.entity' | translate:msgParamTipoEntity}}
+        </mat-error>
+      </mat-form-field>
+    </div>
+    <!-- Disponibilidad -->
+    <div [fxLayout]="fxLayoutProperties.layout" [fxLayoutAlign]="fxLayoutProperties.layoutAlign">
+      <label>{{'csp.modelo-ejecucion-tipo-hito.disponible' | translate}}</label>
+    </div>
+    <div [fxLayout]="fxLayoutProperties.layout" [fxLayoutAlign]="fxLayoutProperties.layoutAlign">
+      <div class="checkbox-inline" formGroupName="disponible">
+        <!-- Convocatoria-->
+        <mat-checkbox color="primary" class="checkbox" formControlName="convocatoria">
+          {{'csp.modelo-ejecucion-tipo-hito.convocatorias' | translate}}
+        </mat-checkbox>
+        <!-- Solicitud -->
+        <mat-checkbox color="primary" class="checkbox" formControlName="solicitud">
+          {{'csp.modelo-ejecucion-tipo-hito.solicitudes' | translate}}</mat-checkbox>
+        <!-- Proyecto -->
+        <mat-checkbox color="primary" class="checkbox" formControlName="proyecto">
+          {{'csp.modelo-ejecucion-tipo-hito.proyectos' | translate}}</mat-checkbox>
+        <mat-error *ngIf="formGroup.controls.disponible.errors?.requiredChecked">
+          {{'error.required.entity' | translate:msgParamProyectosEntity}}
+        </mat-error>
+      </div>
+    </div>
+  </form>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <button color="accent" (click)="saveOrUpdate()" mat-raised-button type="submit">
+    <mat-icon class="save-icon">save</mat-icon>{{textSaveOrUpdate | translate}}
+  </button>
+  <button class="link-cancelar" mat-button type="button" mat-dialog-close>{{'btn.cancel' |
+    translate}}</button>
+</mat-dialog-actions>

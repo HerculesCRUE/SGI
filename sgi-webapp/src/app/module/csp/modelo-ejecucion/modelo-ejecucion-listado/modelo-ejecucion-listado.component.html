@@ -1,0 +1,101 @@
+<div class="scrollable-panel-with-footer">
+  <section class="modelo-ejecucion-listado">
+    <!-- Buscador de modelos de ejecución -->
+    <form class="formulario mat-elevation-z8" [formGroup]=" formGroup" [fxLayout.xs]="fxLayoutProperties.xs"
+      [fxLayout]="fxLayoutProperties.layout" [fxLayoutGap]="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
+
+      <div fxFlex="84%" fxFlex.sm="50%" fxFlex.md="72%" [fxLayout.xs]="fxLayoutProperties.xs"
+        [fxLayout]="fxLayoutProperties.layout" fxLayoutGap="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
+        <!-- Nombre -->
+        <div class="col">
+          <mat-form-field>
+            <mat-label>{{'csp.modelo-ejecucion.nombre' | translate}}</mat-label>
+            <input matInput placeholder="{{'csp.modelo-ejecucion.nombre' | translate}}" formControlName="nombre">
+          </mat-form-field>
+        </div>
+
+        <!-- Activo -->
+        <ng-container *sgiHasAuthorityForAnyUO="'CSP-ME-R'">
+        <div class="col">
+          <mat-form-field>
+            <mat-label>{{'label.activo' | translate}}</mat-label>
+            <sgi-select-boolean formControlName="activo"></sgi-select-boolean>
+          </mat-form-field>
+        </div>
+        </ng-container>
+      </div>
+
+      <div class="buttons-final">
+        <div class="col filter-button">
+          <button color="primary" aria-label="Center Align" mat-raised-button (click)="onSearch()">
+            <mat-icon>search</mat-icon> {{'btn.search'| translate}}
+          </button>
+          <button color="warn" aria-label="Center Align" (click)="onClearFilters()" mat-button>{{'btn.clean'|
+            translate}}
+          </button>
+        </div>
+      </div>
+    </form>
+    <!-- FIN Buscador de modelos de ejecución -->
+
+    <!-- Listado de modelos de ejecución -->
+    <table mat-table class="mat-elevation-z8 table-unidad" [dataSource]="modeloEjecucion$ | async" matSort
+      matSortActive="id" matSortDirection="asc" matSortDisableClear>
+      <!-- Nombre -->
+      <ng-container matColumnDef="nombre">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'csp.modelo-ejecucion.nombre' | translate}}
+        </th>
+        <td mat-cell *matCellDef="let modeloEjecucion">{{modeloEjecucion.nombre}}</td>
+      </ng-container>
+
+      <!-- Descripción -->
+      <ng-container matColumnDef="descripcion">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'csp.modelo-ejecucion.descripcion' | translate}}
+        </th>
+        <td mat-cell *matCellDef="let modeloEjecucion">{{modeloEjecucion.descripcion}}</td>
+      </ng-container>
+
+      <!-- Activo -->
+      <ng-container matColumnDef="activo" *sgiHasAuthorityForAnyUO="'CSP-ME-R'">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'label.activo' | translate}}
+        </th>
+        <td mat-cell *matCellDef="let modeloEjecucion">
+          {{(modeloEjecucion.activo ? 'label.si' : 'label.no') | translate}}
+        </td>
+      </ng-container>
+
+      <!-- Acciones -->
+      <ng-container matColumnDef="acciones">
+        <th mat-header-cell *matHeaderCellDef> {{'label.actions' | translate}} </th>
+        <td mat-cell *matCellDef="let modeloEjecucion">
+          <ng-container *sgiHasAuthorityForAnyUO="'CSP-ME-E'">
+            <button *ngIf="modeloEjecucion.activo === true" mat-button matTooltip="{{'btn.edit' | translate}}"
+              [routerLink]="[modeloEjecucion.id]">
+              <mat-icon color="primary">border_color</mat-icon>
+            </button>
+          </ng-container>
+          <ng-container *sgiHasAuthorityForAnyUO="'CSP-ME-B'">
+            <button *ngIf="modeloEjecucion.activo === true" mat-button matTooltip="{{'btn.edit' | translate}}"
+              (click)="deactivateModeloEjecucion(modeloEjecucion)">
+              <mat-icon color="warn">highlight_off</mat-icon>
+            </button>
+          </ng-container>
+          <ng-container *sgiHasAuthorityForAnyUO="'CSP-ME-R'">
+            <button *ngIf="modeloEjecucion.activo === false" mat-button matTooltip="{{'btn.recover' | translate}}"
+              (click)="activateModeloEjecucion(modeloEjecucion)">
+              <mat-icon color="accent">add_circle_outline</mat-icon>
+            </button>
+          </ng-container>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="columnas"></tr>
+      <tr mat-row *matRowDef="let row; columns: columnas;"></tr>
+    </table>
+    <mat-paginator [pageSizeOptions]="elementosPagina" [length]="totalElementos" showFirstLastButtons>
+    </mat-paginator>
+  </section>
+</div>
+<ng-container *sgiHasAuthorityForAnyUO="'CSP-ME-C'">
+  <sgi-footer-crear [texto]="textoCrear" [route]="ROUTE_NAMES.NEW"></sgi-footer-crear>
+</ng-container>

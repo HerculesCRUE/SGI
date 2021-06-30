@@ -1,0 +1,192 @@
+<section>
+  <h2>{{'csp.proyecto-elegibilidad' | translate}} - {{'label.datos-generales' | translate}}</h2>
+
+  <form [formGroup]="formGroup">
+    <div fxFlex>
+      <!-- Concepto Gasto -->
+      <div [fxLayout]="fxLayoutProperties.layout" [fxLayoutAlign]="fxLayoutProperties.layoutAlign">
+        <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
+          [fxFlexOrder]="fxFlexProperties.order">
+          <mat-form-field fxFill>
+            <mat-label>
+              {{'csp.proyecto-concepto-gasto' | translate:MSG_PARAMS.CARDINALIRY.SINGULAR}}
+            </mat-label>
+            <sgi-select-entity formControlName="conceptoGasto" required [options]="conceptosGasto$ | async">
+            </sgi-select-entity>
+            <mat-error *ngIf="formGroup.controls.conceptoGasto.errors?.required">
+              {{'error.invalid.entity' | translate:msgParamConceptoGastoEntity}}
+            </mat-error>
+          </mat-form-field>
+        </div>
+      </div>
+
+      <!-- Importe máximo -->
+      <div [fxLayout]="fxLayoutProperties.layout" [fxLayoutAlign]="fxLayoutProperties.layoutAlign"
+        *ngIf="actionService.permitido">
+        <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
+          [fxFlexOrder]="fxFlexProperties.order">
+          <mat-form-field fxFill>
+            <mat-label>
+              {{'csp.proyecto-concepto-gasto.importe-maximo' | translate}}
+            </mat-label>
+            <input matInput formControlName="importeMaximo" type="number" min="0"
+              placeholder="{{'csp.proyecto-concepto-gasto.importe-maximo' | translate}}">
+            <mat-error *ngIf="formGroup.controls.importeMaximo.hasError('max')">
+              {{'error.max.digit' | translate}}
+            </mat-error>
+            <mat-error *ngIf="formGroup.controls.importeMaximo.hasError('min')">
+              {{'error.min.digit' | translate}}
+            </mat-error>
+          </mat-form-field>
+        </div>
+      </div>
+
+      <!-- Fecha de inicio -->
+      <div [fxLayout]="fxLayoutProperties.layout" [fxLayoutAlign]="fxLayoutProperties.layoutAlign">
+        <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
+          [fxFlexOrder]="fxFlexProperties.order">
+          <mat-form-field>
+            <mat-label>{{'csp.proyecto-concepto-gasto.fecha-inicio' | translate}}</mat-label>
+            <input matInput formControlName="fechaInicio" [ngxMatDatetimePicker]="picker1">
+            <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
+            <ngx-mat-datetime-picker #picker1 showSeconds="true" [defaultTime]="[0,0,0]"></ngx-mat-datetime-picker>
+            <mat-error *ngIf="formGroup.controls.fechaInicio.hasError('overlapped')">
+              {{'error.overlapping.record.entity' | translate:msgParamConceptoGastoEntity}}
+            </mat-error>
+            <mat-error *ngIf="formGroup.controls.fechaInicio.errors?.minDate">
+              {{'error.csp.proyecto-concepto-gasto.fecha-inicio.min' | translate}}
+            </mat-error>
+            <mat-error *ngIf="formGroup.controls.fechaInicio.errors?.maxDate">
+              {{'error.csp.proyecto-concepto-gasto.fecha-inicio.max' | translate}}
+            </mat-error>
+          </mat-form-field>
+        </div>
+      </div>
+
+      <!-- Fecha de fin -->
+      <div [fxLayout]="fxLayoutProperties.layout" [fxLayoutAlign]="fxLayoutProperties.layoutAlign">
+        <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
+          [fxFlexOrder]="fxFlexProperties.order">
+          <mat-form-field fxFill>
+            <mat-label>{{'csp.proyecto-concepto-gasto.fecha-fin' | translate}}</mat-label>
+            <input matInput formControlName="fechaFin" [ngxMatDatetimePicker]="picker2">
+            <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
+            <ngx-mat-datetime-picker #picker2 showSeconds="true" [defaultTime]="[23,59,59]"></ngx-mat-datetime-picker>
+            <mat-error *ngIf="formGroup.controls.fechaFin.hasError('after')">
+              {{'error.after.mes-final' | translate}}
+            </mat-error>
+            <mat-error *ngIf="formGroup.controls.fechaFin.hasError('overlapped')">
+              {{'error.overlapping.record.entity' | translate:msgParamConceptoGastoEntity}}
+            </mat-error>
+            <mat-error *ngIf="formGroup.controls.fechaFin.errors?.minDate">
+              {{'error.csp.proyecto-concepto-gasto.fecha-fin.min' | translate}}
+            </mat-error>
+            <mat-error *ngIf="formGroup.controls.fechaFin.errors?.maxDate">
+              {{'error.csp.proyecto-concepto-gasto.fecha-fin.max' | translate}}
+            </mat-error>
+          </mat-form-field>
+        </div>
+      </div>
+
+      <!-- Observaciones -->
+      <div [fxLayout]="fxLayoutProperties.layout" [fxLayoutAlign]="fxLayoutProperties.layoutAlign">
+        <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
+          [fxFlexOrder]="fxFlexProperties.order">
+          <mat-form-field fxFill>
+            <mat-label>
+              {{'csp.proyecto-concepto-gasto.observaciones' | translate}}
+            </mat-label>
+            <textarea #obs matInput formControlName="observaciones" type="text"
+              placeholder="{{'csp.proyecto-concepto-gasto.observaciones' | translate}}" maxlength="250">
+          </textarea>
+            <mat-hint>{{obs.value.length}} / 250</mat-hint>
+          </mat-form-field>
+        </div>
+      </div>
+    </div>
+
+    <!-- Datos de la convocatoria -->
+    <div fxFlex="50" *ngIf="formPart.showDatosConvocatoriaConceptoGasto">
+      <h3>{{'info.csp.datos-convocatoria' | translate}}</h3>
+
+      <!-- Concepto Gasto Convocatoria -->
+      <div [fxLayout]="fxLayoutProperties.layout" [fxLayoutAlign]="fxLayoutProperties.layoutAlign">
+        <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
+          [fxFlexOrder]="fxFlexProperties.order">
+          <mat-form-field fxFill>
+            <mat-label>
+              {{'csp.proyecto-concepto-gasto' | translate:MSG_PARAMS.CARDINALIRY.SINGULAR}}
+            </mat-label>
+            <sgi-select-entity formControlName="conceptoGastoConvocatoria" [options]="conceptosGasto$ | async">
+            </sgi-select-entity>
+          </mat-form-field>
+        </div>
+      </div>
+
+      <!-- Importe máximo Convocatoria -->
+      <div [fxLayout]="fxLayoutProperties.layout" [fxLayoutAlign]="fxLayoutProperties.layoutAlign"
+        *ngIf="actionService.permitido">
+        <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
+          [fxFlexOrder]="fxFlexProperties.order">
+          <mat-form-field fxFill>
+            <mat-label>
+              {{'csp.proyecto-concepto-gasto.importe-maximo' | translate}}
+            </mat-label>
+            <input matInput formControlName="importeMaximoConvocatoria" type="number" min="0"
+              placeholder="{{'csp.proyecto-concepto-gasto.importe-maximo' | translate}}">
+          </mat-form-field>
+        </div>
+      </div>
+
+      <!-- Fecha de inicio Convocatoria -->
+      <div [fxLayout]="fxLayoutProperties.layout" [fxLayoutAlign]="fxLayoutProperties.layoutAlign">
+        <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
+          [fxFlexOrder]="fxFlexProperties.order">
+          <mat-form-field>
+            <mat-label>{{'csp.proyecto-concepto-gasto.fecha-inicio' | translate}}</mat-label>
+            <input matInput formControlName="fechaInicioConvocatoria" [ngxMatDatetimePicker]="picker1Convocatoria">
+            <mat-datepicker-toggle matSuffix [for]="picker1Convocatoria"></mat-datepicker-toggle>
+            <ngx-mat-datetime-picker #picker1Convocatoria showSeconds="true" [defaultTime]="[0,0,0]">
+            </ngx-mat-datetime-picker>
+          </mat-form-field>
+        </div>
+      </div>
+
+      <!-- Fecha de fin Convocatoria -->
+      <div [fxLayout]="fxLayoutProperties.layout" [fxLayoutAlign]="fxLayoutProperties.layoutAlign">
+        <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
+          [fxFlexOrder]="fxFlexProperties.order">
+          <mat-form-field fxFill>
+            <mat-label>{{'csp.proyecto-concepto-gasto.fecha-fin' | translate}}</mat-label>
+            <input matInput formControlName="fechaFinConvocatoria" [ngxMatDatetimePicker]="picker2Convocatoria">
+            <mat-datepicker-toggle matSuffix [for]="picker2Convocatoria"></mat-datepicker-toggle>
+            <ngx-mat-datetime-picker #picker2Convocatoria showSeconds="true" [defaultTime]="[23,59,59]">
+            </ngx-mat-datetime-picker>
+          </mat-form-field>
+        </div>
+      </div>
+
+      <!-- Observaciones Convocatoria -->
+      <div [fxLayout]="fxLayoutProperties.layout" [fxLayoutAlign]="fxLayoutProperties.layoutAlign">
+        <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
+          [fxFlexOrder]="fxFlexProperties.order">
+          <mat-form-field fxFill>
+            <mat-label>
+              {{'csp.proyecto-concepto-gasto.observaciones' | translate}}
+            </mat-label>
+            <textarea #obs matInput formControlName="observacionesConvocatoria" type="text"
+              placeholder="{{'csp.proyecto-concepto-gasto.observaciones' | translate}}" maxlength="250">
+            </textarea>
+            <mat-hint>{{obs.value.length}} / 250</mat-hint>
+          </mat-form-field>
+        </div>
+      </div>
+
+      <div class="separation-button">
+        <button color="primary" aria-label="Center Align" mat-raised-button (click)="copyToProyecto()">
+          {{'label.csp.proyecto-concepto-gasto'| translate}}
+        </button>
+      </div>
+    </div>
+  </form>
+</section>

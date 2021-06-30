@@ -1,0 +1,70 @@
+<section class="tipo-hito-listado">
+  <h2>{{'csp.tipo-hito' | translate:MSG_PARAMS.CARDINALIRY.PLURAL}}</h2>
+  <!-- Listado de tipos de hito -->
+  <table mat-table class="mat-elevation-z8 table-unidad" [dataSource]="modelosTipoHitos" matSort matSortActive="id"
+    matSortDirection="asc" matSortDisableClear>
+    <!-- Nombre -->
+    <ng-container matColumnDef="nombre">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'csp.tipo-hito.nombre' | translate}}
+      </th>
+      <td mat-cell *matCellDef="let wrapper">{{wrapper.value.tipoHito.nombre}}</td>
+    </ng-container>
+
+    <!-- Descripción -->
+    <ng-container matColumnDef="descripcion">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'csp.tipo-hito.descripcion' | translate}}
+      </th>
+      <td mat-cell *matCellDef="let wrapper">{{wrapper.value.tipoHito.descripcion}}</td>
+    </ng-container>
+
+    <!-- Convocatorias -->
+    <ng-container matColumnDef="convocatorias">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'csp.tipo-hito.convocatorias' | translate}}
+      </th>
+      <td mat-cell *matCellDef="let wrapper">
+        {{wrapper.value.convocatoria ? ('label.si'|translate) : ('label.no'|translate)}}</td>
+    </ng-container>
+
+    <!-- Solicitudes -->
+    <ng-container matColumnDef="solicitudes">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'csp.tipo-hito.solicitudes' | translate}}
+      </th>
+      <td mat-cell *matCellDef="let wrapper">
+        {{wrapper.value.solicitud ? ('label.si'|translate) : ('label.no'|translate)}}</td>
+    </ng-container>
+
+    <!-- Proyectos -->
+    <ng-container matColumnDef="proyectos">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'csp.tipo-hito.proyectos' | translate}}
+      </th>
+      <td mat-cell *matCellDef="let wrapper">
+        {{wrapper.value.proyecto ? ('label.si'|translate) : ('label.no'|translate)}}</td>
+    </ng-container>
+
+    <!-- Acciones -->
+    <ng-container matColumnDef="acciones">
+      <th mat-header-cell *matHeaderCellDef> {{'label.actions' | translate}} </th>
+      <td mat-cell *matCellDef="let wrapper">
+        <button mat-button matTooltip="{{'btn.edit' | translate}}" (click)="openModal(wrapper)">
+          <mat-icon color="primary">border_color</mat-icon>
+        </button>
+        <button mat-button matTooltip="{{'btn.delete' | translate}}" (click)="deleteModeloTipoHito(wrapper)">
+          <mat-icon color="warn">highlight_off</mat-icon>
+        </button>
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="columns"></tr>
+    <tr mat-row *matRowDef="let row; columns: columns;"></tr>
+  </table>
+  <mat-paginator [pageSizeOptions]="numPage" [length]="totalElements" showFirstLastButtons>
+  </mat-paginator>
+
+  <div class="separation-button">
+    <button color="three" aria-label="Center Align" mat-raised-button (click)="openModal()">
+      <mat-icon color="accent">add_circle</mat-icon>
+      {{ 'btn.add.entity' | translate:msgParamEntity }}
+    </button>
+  </div>
+
+</section>

@@ -1,0 +1,226 @@
+<section class="solicitud-proyecto-datos">
+  <h2>{{'label.datos-generales' | translate}} - {{'label.ficha-general' | translate}}</h2>
+
+  <form [formGroup]="formGroup">
+
+    <div [fxLayout.xs]="fxLayoutProperties.xs" [fxLayout]="fxLayoutProperties.layout"
+      [fxLayoutGap]="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
+
+      <!-- Título -->
+      <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
+        [fxFlexOrder]="fxFlexProperties.order">
+        <mat-form-field class="input-form">
+          <mat-label>{{'csp.solicitud-datos-proyecto-ficha-general.titulo' | translate}}</mat-label>
+          <input matInput formControlName="titulo" type="text" id="titulo"
+            placeholder="{{'csp.solicitud-datos-proyecto-ficha-general.titulo' | translate}}" required>
+          <mat-error *ngIf="formGroup.controls.titulo.errors?.required">
+            {{'error.required.entity' | translate:msgParamTituloEntity}}
+          </mat-error>
+          <mat-error *ngIf="formGroup.controls.titulo.errors?.maxlength">
+            {{'error.maxlength.entity' | translate:msgParamTituloEntity}}
+          </mat-error>
+        </mat-form-field>
+      </div>
+
+      <!-- Acronimo -->
+      <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
+        [fxFlexOrder]="fxFlexProperties.order">
+        <mat-form-field class="input-form">
+          <mat-label>{{'csp.solicitud-datos-proyecto-ficha-general.acronimo' | translate}}</mat-label>
+          <input matInput formControlName="acronimo" type="text" id="acronimo"
+            placeholder="{{'csp.solicitud-datos-proyecto-ficha-general.acronimo' | translate}}">
+          <mat-error *ngIf="formGroup.controls.acronimo.errors?.maxlength">
+            {{'error.maxlength.entity' | translate:msgParamAcronimoEntity}}
+          </mat-error>
+        </mat-form-field>
+      </div>
+
+
+    </div>
+
+    <div [fxLayout.xs]="fxLayoutProperties.xs" [fxLayout]="fxLayoutProperties.layout"
+      [fxLayoutGap]="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
+      <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
+        [fxFlexOrder]="fxFlexProperties.order">
+        <mat-form-field class="input-form">
+          <mat-label>{{'csp.solicitud-datos-proyecto-ficha-general.codigo-externo' | translate}}</mat-label>
+          <input matInput formControlName="codExterno" type="text"
+            placeholder="{{'csp.solicitud-datos-proyecto-ficha-general.codigo-externo' | translate}}">
+          <mat-error *ngIf="formGroup.controls.codExterno.errors?.maxlength">
+            {{'error.maxlength.entity' | translate:msgParamCodExternoEntity}}
+          </mat-error>
+        </mat-form-field>
+      </div>
+    </div>
+
+    <div [fxLayout.xs]="fxLayoutProperties.xs" [fxLayout]="fxLayoutProperties.layout"
+      [fxLayoutGap]="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
+
+      <!-- Duración -->
+      <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
+        [fxFlexOrder]="fxFlexProperties.order">
+        <mat-form-field class="input-form">
+          <mat-label>{{'csp.solicitud-datos-proyecto-ficha-general.duracion' | translate}}</mat-label>
+          <input matInput formControlName="duracion" type="number" id="duracion" min="0" step="1"
+            placeholder="{{'csp.solicitud-datos-proyecto-ficha-general.duracion' | translate}}">
+          <mat-error *ngIf="formGroup.controls.duracion.errors?.min">
+            {{'error.csp.solicitud-datos-proyecto-ficha-general.duracion.min' | translate}}
+          </mat-error>
+          <mat-error *ngIf="formGroup.controls.duracion.errors?.max">
+            {{'error.csp.solicitud-datos-proyecto-ficha-general.duracion.max' | translate}}
+          </mat-error>
+        </mat-form-field>
+      </div>
+
+    </div>
+
+    <div [fxLayout.xs]="fxLayoutProperties.xs" [fxLayout]="fxLayoutProperties.layout"
+      [fxLayoutGap]="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
+
+      <!-- Colaborativo -->
+      <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
+        [fxFlexOrder]="fxFlexProperties.order">
+        <mat-form-field class="input-form">
+          <mat-label>{{'csp.solicitud-datos-proyecto-ficha-general.proyecto-colaborativo' | translate}}</mat-label>
+          <mat-select matNativeControl formControlName="colaborativo" required>
+            <mat-option [value]="true">{{'label.si' | translate}}</mat-option>
+            <mat-option [value]="false">{{'label.no' | translate}}</mat-option>
+          </mat-select>
+          <mat-error *ngIf="formGroup.controls.colaborativo.errors?.required">
+            {{'error.required.entity' | translate:msgParamColaborativoEntity}}
+          </mat-error>
+        </mat-form-field>
+      </div>
+
+      <!-- Coordinador Externo -->
+      <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
+        [fxFlexOrder]="fxFlexProperties.order" *ngIf="formGroup.controls.colaborativo.value">
+        <mat-form-field class="input-form">
+          <mat-label>{{'csp.solicitud-datos-proyecto-ficha-general.coordinador-externo' | translate}}</mat-label>
+          <mat-select matNativeControl formControlName="coordinadorExterno"
+            [required]="formGroup.controls.colaborativo.value">
+            <mat-option [value]="true">{{'label.si' | translate}}</mat-option>
+            <mat-option [value]="false">{{'label.no' | translate}}</mat-option>
+          </mat-select>
+          <mat-error *ngIf="formGroup.controls.coordinadorExterno.errors?.required">
+            {{'error.required.entity' | translate:msgParamCoordinadorExternoEntity}}
+          </mat-error>
+        </mat-form-field>
+      </div>
+
+    </div>
+
+    <div [fxLayout.xs]="fxLayoutProperties.xs" [fxLayout]="fxLayoutProperties.layout"
+      [fxLayoutGap]="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
+
+      <!-- Tipo desglose presupuesto-->
+      <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
+        [fxFlexOrder]="fxFlexProperties.order">
+        <mat-form-field class="input-form">
+          <mat-label>{{'csp.solicitud-datos-proyecto-ficha-general.tipo-desglose-presupuesto' | translate}}</mat-label>
+          <sgi-select-enum formControlName="tipoDesglosePresupuesto" [enumMap]="TIPO_PRESUPUESTO_MAP">
+          </sgi-select-enum>
+          <mat-error *ngIf="formGroup.controls.tipoDesglosePresupuesto.errors?.required">
+            {{'error.required.entity' | translate:msgParamTipoDesglosePresupuestoEntity}}
+          </mat-error>
+        </mat-form-field>
+      </div>
+
+    </div>
+
+    <div>
+
+      <!-- Objetivos -->
+      <div [fxLayout]="fxLayoutProperties.layout" [fxLayoutAlign]="fxLayoutProperties.layoutAlign">
+
+        <div [fxFlex.sm]="fxFlexProperties100.sm" [fxFlex.md]="fxFlexProperties100.md"
+          [fxFlex.gt-md]="fxFlexProperties100.gtMd" [fxFlexOrder]="fxFlexProperties100.order">
+          <mat-form-field fxFill>
+            <mat-label>{{'csp.solicitud-datos-proyecto-ficha-general.objetivos' | translate}}</mat-label>
+            <textarea matInput formControlName="objetivos" id="objetivos"
+              placeholder="{{'csp.solicitud-datos-proyecto-ficha-general.objetivos' | translate}}"></textarea>
+          </mat-form-field>
+        </div>
+
+      </div>
+
+    </div>
+
+    <div>
+
+      <!-- Interesés -->
+      <div [fxLayout]="fxLayoutProperties.layout" [fxLayoutAlign]="fxLayoutProperties.layoutAlign">
+
+        <div [fxFlex.sm]="fxFlexProperties100.sm" [fxFlex.md]="fxFlexProperties100.md"
+          [fxFlex.gt-md]="fxFlexProperties100.gtMd" [fxFlexOrder]="fxFlexProperties100.order">
+          <mat-form-field fxFill>
+            <mat-label>{{'csp.solicitud-datos-proyecto-ficha-general.justificacion-interes' | translate}}</mat-label>
+            <textarea matInput formControlName="intereses" id="intereses"
+              placeholder="{{'csp.solicitud-datos-proyecto-ficha-general.justificacion-interes' | translate}}"></textarea>
+          </mat-form-field>
+        </div>
+
+      </div>
+
+    </div>
+
+    <div>
+
+      <!-- Resultados Previstos -->
+      <div [fxLayout]="fxLayoutProperties.layout" [fxLayoutAlign]="fxLayoutProperties.layoutAlign">
+
+        <div [fxFlex.sm]="fxFlexProperties100.sm" [fxFlex.md]="fxFlexProperties100.md"
+          [fxFlex.gt-md]="fxFlexProperties100.gtMd" [fxFlexOrder]="fxFlexProperties100.order">
+          <mat-form-field fxFill>
+            <mat-label>{{'csp.solicitud-datos-proyecto-ficha-general.resultados' | translate}}</mat-label>
+            <textarea matInput formControlName="resultadosPrevistos" id="resultadosPrevistos"
+              placeholder="{{'csp.solicitud-datos-proyecto-ficha-general.resultados' | translate}}"></textarea>
+          </mat-form-field>
+        </div>
+
+      </div>
+
+    </div>
+
+  </form>
+
+  <!-- Áreas temáticas -->
+  <div class="separation-button" *ngIf="formPart.hasConvocatoria">
+    <h3>{{'list.entity' | translate:msgParamAreaTematicaEntities}}</h3>
+    <table class="mat-elevation-z8 table-acta" mat-table [dataSource]="convocatoriaAreaTematicas" matSort
+      matSortActive="id" matSortDirection="asc" matSortDisableClear>
+      <ng-container matColumnDef="nombreRaizArbol">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>
+          {{'list.entity' | translate:msgParamAreaEntities}}
+        </th>
+        <td mat-cell *matCellDef="let data">{{data.rootTree?.nombre}}</td>
+      </ng-container>
+      <ng-container matColumnDef="areaTematicaConvocatoria">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>
+          {{'csp.area-tematica.nombre.convocatoria' | translate}}
+        </th>
+        <td mat-cell *matCellDef="let data"> {{data.areaTematicaConvocatoria?.nombre}} </td>
+      </ng-container>
+      <ng-container matColumnDef="areaTematicaSolicitud">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>
+          {{'csp.area-tematica.nombre.solicitud' | translate}}
+        </th>
+        <td mat-cell *matCellDef="let data"> {{data.areaTematicaSolicitud?.nombre}} </td>
+      </ng-container>
+      <ng-container matColumnDef="acciones">
+        <th mat-header-cell *matHeaderCellDef>{{'label.actions' | translate}}
+        </th>
+        <td mat-cell *matCellDef="let data">
+          <ng-container>
+            <button *ngIf="!this.formPart.readonly" mat-button matTooltip="{{'csp.solicitud.select-area' | translate}}"
+              (click)="openModal(data)">
+              <mat-icon color="primary">border_color</mat-icon>
+            </button>
+          </ng-container>
+        </td>
+      </ng-container>
+      <tr mat-header-row *matHeaderRowDef="columns"></tr>
+      <tr mat-row *matRowDef="let row; columns: columns;"></tr>
+    </table>
+  </div>
+</section>

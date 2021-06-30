@@ -1,0 +1,56 @@
+<section class="acta-asistentes">
+  <h2>{{'eti.acta.asistente' | translate:MSG_PARAMS.CARDINALIRY.PLURAL}}</h2>
+  <table class="mat-elevation-z8 table-acta" mat-table [dataSource]="asistentes$ | async" matSort matSortActive="id"
+    matSortDirection="asc" matSortDisableClear>
+
+    <!-- Numero documento Column -->
+    <ng-container matColumnDef="evaluador.numeroDocumento">
+      <th mat-header-cell *matHeaderCellDef> {{'eti.acta.asistente.nif' | translate}} </th>
+      <td mat-cell *matCellDef="let wrapper"> {{wrapper.value.evaluador.persona.numeroDocumento}} </td>
+    </ng-container>
+
+    <!-- Fecha evaluacion Column -->
+    <ng-container matColumnDef="evaluador.nombre">
+      <th mat-header-cell *matHeaderCellDef> {{'eti.acta.asistente.nombre-apellidos' | translate}}
+      </th>
+      <td mat-cell *matCellDef="let wrapper">
+        {{wrapper.value.evaluador.persona.nombre}} {{wrapper.value.evaluador.persona.apellidos}}
+      </td>
+    </ng-container>
+
+    <!-- Numero acta Column -->
+    <ng-container matColumnDef="asistencia">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>
+        {{'eti.acta.asistente.asistencia' | translate}}
+      </th>
+      <td mat-cell *matCellDef="let wrapper">
+        {{ wrapper.value.asistencia === true ? ('label.si' | translate) :
+        'label.no' | translate}}
+      </td>
+    </ng-container>
+
+    <!-- Convocatoria Column -->
+    <ng-container matColumnDef="motivo">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'eti.acta.asistente.motivo' | translate}} </th>
+      <td mat-cell *matCellDef="let wrapper"> {{wrapper.value.motivo}} </td>
+    </ng-container>
+
+
+    <!-- Acciones Column -->
+    <ng-container matColumnDef="acciones">
+      <th mat-header-cell *matHeaderCellDef> {{'label.actions' | translate}} </th>
+      <td mat-cell *matCellDef="let wrapper;let i=index;">
+        <ng-container *ngIf="!readonly">
+          <button (click)="openUpdateModal(wrapper)" mat-button matTooltip="{{'btn.edit' | translate}}">
+            <mat-icon color="primary">border_color</mat-icon>
+          </button>
+        </ng-container>
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+  </table>
+
+
+</section>

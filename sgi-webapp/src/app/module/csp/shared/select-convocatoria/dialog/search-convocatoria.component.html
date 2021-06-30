@@ -1,0 +1,134 @@
+<div class="sgi-dialog-header" fxLayout="row" fxLayoutGap="20px">
+  <span fxFlexAlign="center" mat-mat-dialog-title role="heading" aria-level="3" fxFlex>{{'csp.convocatoria' |
+    translate:MSG_PARAMS.CARDINALIRY.PLURAL}}</span>
+  <button fxFlex="nogrow" mat-icon-button mat-dialog-close>
+    <mat-icon class="close-icon">close</mat-icon>
+  </button>
+</div>
+<mat-dialog-content>
+  <!-- Buscador -->
+  <form [formGroup]="formGroup">
+    <!-- Título -->
+    <mat-form-field>
+      <mat-label>{{'csp.convocatoria' | translate:MSG_PARAMS.CARDINALIRY.SINGULAR}}</mat-label>
+      <input matInput formControlName="titulo" matInput type="text"
+        placeholder="{{'csp.convocatoria.titulo' | translate}}">
+    </mat-form-field>
+    <!-- Referencia -->
+    <mat-form-field>
+      <mat-label>{{'csp.convocatoria.codigo' | translate}}</mat-label>
+      <input matInput formControlName="codigo" type="text" placeholder="{{'csp.convocatoria.referencia' | translate}}">
+    </mat-form-field>
+    <div class="fieldset-form">
+      {{'csp.convocatoria.fecha-publicacion' | translate}}
+    </div>
+    <!-- Fecha desde -->
+    <mat-form-field>
+      <mat-label>{{'csp.convocatoria.fecha-publicacion-desde' | translate}}</mat-label>
+      <input matInput formControlName="fechaPublicacionDesde" [ngxMatDatetimePicker]="pickerFechaPublicacionDesde"
+        [placeholder]="'csp.convocatoria.fecha-publicacion-desde' | translate">
+      <mat-datepicker-toggle matSuffix [for]="pickerFechaPublicacionDesde"></mat-datepicker-toggle>
+      <ngx-mat-datetime-picker #pickerFechaPublicacionDesde showSeconds="true" [defaultTime]="[0,0,0]">
+      </ngx-mat-datetime-picker>
+    </mat-form-field>
+    <!-- Fecha hasta -->
+    <mat-form-field>
+      <mat-label>{{'csp.convocatoria.fecha-publicacion-hasta' | translate}}</mat-label>
+      <input matInput formControlName="fechaPublicacionHasta" [ngxMatDatetimePicker]="pickerFechaPublicacionHasta"
+        [placeholder]="'csp.convocatoria.fecha-publicacion-hasta' | translate">
+      <mat-datepicker-toggle matSuffix [for]="pickerFechaPublicacionHasta"></mat-datepicker-toggle>
+      <ngx-mat-datetime-picker #pickerFechaPublicacionHasta showSeconds="true" [defaultTime]="[0,0,0]">
+      </ngx-mat-datetime-picker>
+    </mat-form-field>
+    <mat-checkbox formControlName="abiertoPlazoPresentacionSolicitud">
+      {{'csp.convocatoria.plazo-abierto' | translate}}</mat-checkbox>
+    <div class="separacion">
+      <button color="primary" md-button mat-raised-button (click)="buscarConvocatorias(true)">{{'btn.search' |
+        translate}}</button>
+    </div>
+  </form>
+  <!-- Tabla resultados -->
+  <table class="mat-elevation-z8 table-convocatorias" mat-table [dataSource]="convocatorias$ | async" matSort
+    matSortActive="codigo" matSortDirection="asc" matSortDisableClear>
+    <!-- Codigo Column -->
+    <ng-container matColumnDef="codigo">
+      <th mat-header-cell *matHeaderCellDef>
+        {{'csp.convocatoria.codigo' | translate}}
+      </th>
+      <td mat-cell *matCellDef="let element">
+        {{ element.convocatoria.codigo }}
+      </td>
+    </ng-container>
+    <!-- Titulo Column -->
+    <ng-container matColumnDef="titulo">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>
+        {{'csp.convocatoria.titulo' | translate}}
+      </th>
+      <td mat-cell *matCellDef="let element">
+        {{ element.convocatoria.titulo }}
+      </td>
+    </ng-container>
+    <!-- Fecha inicio solicitud Column -->
+    <ng-container matColumnDef="fechaInicioSolicitud">
+      <th mat-header-cell *matHeaderCellDef>
+        {{'csp.convocatoria.solicitud.fecha-inicio' | translate}}
+      </th>
+      <td mat-cell *matCellDef="let element">
+        {{element.fase.fechaInicio | luxon:'short'}}
+      </td>
+    </ng-container>
+    <!-- Fecha fin solicitud Column -->
+    <ng-container matColumnDef="fechaFinSolicitud">
+      <th mat-header-cell *matHeaderCellDef>
+        {{'csp.convocatoria.solicitud.fecha-fin' | translate}}
+      </th>
+      <td mat-cell *matCellDef="let element">
+        {{element.fase.fechaFin | luxon:'short'}}
+      </td>
+    </ng-container>
+    <!-- Entidad convocante Column -->
+    <ng-container matColumnDef="entidadConvocante">
+      <th mat-header-cell *matHeaderCellDef>
+        {{'csp.convocatoria-entidad-convocante' | translate:MSG_PARAMS.CARDINALIRY.SINGULAR}}
+      </th>
+      <td mat-cell *matCellDef="let element">
+        {{element.entidadConvocanteEmpresa.nombre}}
+      </td>
+    </ng-container>
+    <!-- Plan Investigacion Column -->
+    <ng-container matColumnDef="planInvestigacion">
+      <th mat-header-cell *matHeaderCellDef>
+        {{'csp.convocatoria.plan-investigacion' | translate}}
+      </th>
+      <td mat-cell *matCellDef="let element">
+        {{element.entidadConvocante.programa?.nombre}}
+      </td>
+    </ng-container>
+    <!-- Entidad Financiadora Column -->
+    <ng-container matColumnDef="entidadFinanciadora">
+      <th mat-header-cell *matHeaderCellDef>
+        {{'csp.convocatoria-entidad-financiadora' | translate:MSG_PARAMS.CARDINALIRY.SINGULAR}}
+      </th>
+      <td mat-cell *matCellDef="let element">
+        {{element.entidadFinanciadoraEmpresa.nombre}}
+      </td>
+    </ng-container>
+    <!-- Fuente Financiacion Column -->
+    <ng-container matColumnDef="fuenteFinanciacion">
+      <th mat-header-cell *matHeaderCellDef>
+        {{'csp.convocatoria.fuente-financiacion' | translate}}
+      </th>
+      <td mat-cell *matCellDef="let element">
+        {{element.entidadFinanciadora.fuenteFinanciacion?.nombre}}
+      </td>
+    </ng-container>
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;" [mat-dialog-close]="row.convocatoria"></tr>
+  </table>
+  <mat-paginator [pageSizeOptions]="elementosPagina" [length]="totalElementos" showFirstLastButtons>
+  </mat-paginator>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <button class="link-cancelar" mat-button type="button" mat-dialog-close>{{'btn.cancel' |
+    translate}}</button>
+</mat-dialog-actions>

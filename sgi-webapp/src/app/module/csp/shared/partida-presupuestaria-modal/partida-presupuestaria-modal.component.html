@@ -1,0 +1,114 @@
+<div class="sgi-dialog-header" fxLayout="row" fxLayoutGap="20px">
+  <span fxFlexAlign="center" mat-mat-dialog-title role="heading" aria-level="3" fxFlex>{{title}}</span>
+  <button fxFlex="nogrow" mat-icon-button mat-dialog-close>
+    <mat-icon class="close-icon">close</mat-icon>
+  </button>
+</div>
+<mat-dialog-content>
+  <form [formGroup]="formGroup">
+    <div fxFlex>
+      <!-- Codigo -->
+      <div [fxLayout.xs]="fxLayoutProperties.xs" [fxLayout]="fxLayoutProperties.layout"
+        [fxLayoutGap]="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
+
+        <mat-form-field>
+          <mat-label>{{'csp.proyecto-partida-presupuestaria.codigo' | translate}}
+          </mat-label>
+          <input matInput formControlName="codigo" type="text" required
+            placeholder="{{'csp.proyecto-partida-presupuestaria.codigo' | translate}}">
+          <mat-error *ngIf="formGroup.controls.codigo.errors?.required">
+            {{'error.required.entity' | translate:msgParamCodigoEntity}}
+          </mat-error>
+          <mat-error *ngIf="formGroup.controls.codigo.errors?.pattern">
+            {{'error.csp.proyecto-partida-presupuestaria.codigo.invalid-format' | translate}}
+          </mat-error>
+          <mat-error *ngIf="formGroup.controls.codigo.errors?.maxlength">
+            {{'error.maxlength.entity' | translate:msgParamCodigoEntity}}
+          </mat-error>
+          <mat-error *ngIf="formGroup.controls.codigo.errors?.duplicated">
+            {{'error.csp.proyecto-partida-presupuestaria.codigo.duplicated' | translate}}
+          </mat-error>
+        </mat-form-field>
+      </div>
+
+      <!-- Tipo -->
+      <div [fxLayout.xs]="fxLayoutProperties.xs" [fxLayout]="fxLayoutProperties.layout"
+        [fxLayoutGap]="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
+
+        <mat-form-field>
+          <mat-label>{{'csp.proyecto-partida-presupuestaria.tipo-partida' | translate}}</mat-label>
+          <sgi-select-enum formControlName="tipo" [enumMap]="TIPO_PARTIDA_MAP" required></sgi-select-enum>
+          <mat-error *ngIf="formGroup.controls.tipo.errors?.required">
+            {{'error.required.entity' | translate:msgParamTipoEntity}}
+          </mat-error>
+        </mat-form-field>
+      </div>
+
+      <!-- Descripcion -->
+      <div [fxLayout.xs]="fxLayoutProperties.xs" [fxLayout]="fxLayoutProperties.layout"
+        [fxLayoutGap]="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
+        <mat-form-field>
+          <mat-label>{{'csp.proyecto-partida-presupuestaria.descripcion' | translate}}</mat-label>
+          <textarea matInput formControlName="descripcion" type="text"
+            placeholder="{{'csp.proyecto-partida-presupuestaria.descripcion' | translate}}">
+            </textarea>
+          <mat-error *ngIf="formGroup.get('descripcion').errors?.maxlength">
+            {{'error.maxlength.entity' | translate:msgParamDescripcionEntity}}
+          </mat-error>
+        </mat-form-field>
+      </div>
+    </div>
+
+    <!-- Datos de la convocatoria -->
+    <div fxFlex="50" *ngIf="showDatosPartidaPresupuestaria">
+      <h4>{{'info.csp.datos-convocatoria' | translate}}</h4>
+
+      <!-- Codigo convocatoria-->
+      <div [fxLayout.xs]="fxLayoutProperties.xs" [fxLayout]="fxLayoutProperties.layout"
+        [fxLayoutGap]="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
+
+        <mat-form-field>
+          <mat-label>{{'csp.proyecto-partida-presupuestaria.codigo' | translate}}
+          </mat-label>
+          <input matInput formControlName="codigoConvocatoria" type="text" required
+            placeholder="{{'csp.proyecto-partida-presupuestaria.codigo' | translate}}">
+        </mat-form-field>
+      </div>
+
+      <!-- Tipo convocatoria-->
+      <div [fxLayout.xs]="fxLayoutProperties.xs" [fxLayout]="fxLayoutProperties.layout"
+        [fxLayoutGap]="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
+
+        <mat-form-field>
+          <mat-label>{{'csp.proyecto-partida-presupuestaria.tipo-partida' | translate}}</mat-label>
+          <sgi-select-enum formControlName="tipoConvocatoria" [enumMap]="TIPO_PARTIDA_MAP" required></sgi-select-enum>
+        </mat-form-field>
+      </div>
+
+      <!-- Descripcion convocatoria-->
+      <div [fxLayout.xs]="fxLayoutProperties.xs" [fxLayout]="fxLayoutProperties.layout"
+        [fxLayoutGap]="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
+        <mat-form-field>
+          <mat-label>{{'csp.proyecto-partida-presupuestaria.descripcion' | translate}}</mat-label>
+          <textarea matInput formControlName="descripcionConvocatoria" type="text"
+            placeholder="{{'csp.proyecto-partida-presupuestaria.descripcion' | translate}}">
+                      </textarea>
+        </mat-form-field>
+      </div>
+      <div class="separation-button">
+        <button color="primary" aria-label="Center Align" mat-raised-button (click)="copyToProyecto()">
+          {{'label.csp.proyecto-partida-presupuestaria'| translate}}
+        </button>
+      </div>
+    </div>
+  </form>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <button color="accent" (click)="saveOrUpdate()" mat-raised-button type="submit" *ngIf="data.canEdit">
+    <mat-icon class="save-icon">save</mat-icon>
+    {{textSaveOrUpdate | translate}}
+  </button>
+  <button class="link-cancelar" mat-button type="button" mat-dialog-close>
+    {{'btn.cancel' | translate}}
+  </button>
+</mat-dialog-actions>

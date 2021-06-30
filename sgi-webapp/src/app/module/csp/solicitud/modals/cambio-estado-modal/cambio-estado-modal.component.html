@@ -1,0 +1,52 @@
+<div class="sgi-dialog-header" fxLayout="row" fxLayoutGap="20px">
+  <span fxFlexAlign="center" mat-mat-dialog-title role="heading" aria-level="3"
+    fxFlex>{{'title.csp.solicitud.cambio-estado' | translate}}</span>
+  <button fxFlex="nogrow" mat-icon-button mat-dialog-close>
+    <mat-icon class="close-icon">close</mat-icon>
+  </button>
+</div>
+<mat-dialog-content>
+  <form [formGroup]="formGroup">
+    <div [fxLayout]="fxLayoutProperties.layout" [fxLayoutAlign]="fxLayoutProperties.layoutAlign"
+      [fxLayoutGap]="fxLayoutProperties.gap">
+      <!-- Estado actual -->
+      <div>
+        <mat-form-field>
+          <mat-label>{{'csp.solicitud.cambio-estado.actual' | translate}}</mat-label>
+          <sgi-select-enum formControlName="estadoActual" [enumMap]="ESTADO_MAP">
+          </sgi-select-enum>
+        </mat-form-field>
+      </div>
+    </div>
+    <div [fxLayout]="fxLayoutProperties.layout" [fxLayoutAlign]="fxLayoutProperties.layoutAlign"
+      [fxLayoutGap]="fxLayoutProperties.gap">
+      <!-- Estado nuevo -->
+      <div>
+        <mat-form-field>
+          <mat-label>{{'csp.solicitud.cambio-estado.nuevo' | translate}}</mat-label>
+          <sgi-select-enum formControlName="estadoNuevo" [enumMap]="estadosNuevos">
+          </sgi-select-enum>
+        </mat-form-field>
+      </div>
+    </div>
+    <!-- Comentario -->
+    <div [fxLayout]="fxLayoutProperties.layout" [fxLayoutAlign]="fxLayoutProperties.layoutAlign">
+      <span class="mat-small">{{'csp.solicitud.cambio-estado.comentario' | translate}}</span>
+      <mat-form-field fxFill>
+        <textarea matInput formControlName="comentario" type="text">
+            </textarea>
+        <mat-error *ngIf="formGroup.get('comentario').errors?.maxlength">
+          {{'error.maxlength.entity' | translate:msgParamComentarioEntity}}
+        </mat-error>
+      </mat-form-field>
+    </div>
+  </form>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <button color="accent" (click)="saveOrUpdate()" mat-raised-button type="submit">
+    <mat-icon class="save-icon">save</mat-icon>{{'btn.ok' |
+    translate}}
+  </button>
+  <button class="link-cancelar" mat-button type="button" mat-dialog-close>{{'btn.cancel' |
+    translate}}</button>
+</mat-dialog-actions>

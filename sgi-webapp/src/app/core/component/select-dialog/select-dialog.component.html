@@ -1,0 +1,13 @@
+<div class="mat-select-trigger">
+  <div class="mat-select-value" fxFlex="grow" [ngSwitch]="empty" [attr.id]="_valueId">
+    <span class="mat-select-placeholder" *ngSwitchCase="true">{{placeholder || '\u00A0'}}</span>
+    <span *ngSwitchCase="false" [ngSwitch]="!!value">
+      <input type="text" class="mat-input-element" tabindex="-1" readonly *ngSwitchDefault
+        [value]="displayValue || '\u00A0'">
+    </span>
+  </div>
+
+  <div class="icon-wrapper" fxFlexAlign="center" [class.disabled]="disabled" (click)="showDialog()">
+    <mat-icon>search</mat-icon>
+  </div>
+</div>

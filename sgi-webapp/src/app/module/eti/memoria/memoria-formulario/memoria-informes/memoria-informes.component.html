@@ -1,0 +1,28 @@
+<section class="memoria-informes-listado">
+  <h2>{{'eti.memoria.version' | translate:MSG_PARAMS.CARDINALIRY.PLURAL}}</h2>
+  <table class="mat-elevation-z8 table-informes" mat-table [dataSource]="dataSourceInforme" matSort
+    matSortActive="version" matSortDirection="asc" matSortDisableClear>
+    <ng-container matColumnDef="version">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>
+        {{'eti.memoria' | translate:MSG_PARAMS.CARDINALIRY.SINGULAR}}
+        {{'eti.memoria.version' | translate:MSG_PARAMS.CARDINALIRY.SINGULAR}}
+      </th>
+      <td mat-cell *matCellDef="let wrapper">
+        {{getVersion(wrapper.value)}}
+      </td>
+    </ng-container>
+    <ng-container matColumnDef="acciones">
+      <th mat-header-cell *matHeaderCellDef> {{'label.actions' | translate}} </th>
+      <td mat-cell *matCellDef="let wrapper;let i=index;">
+        <button mat-button matTooltip="{{'btn.show.file' | translate}}"
+          (click)="visualizarInforme(wrapper.value.documentoRef)">
+          <mat-icon color="primary">picture_as_pdf</mat-icon>
+        </button>
+      </td>
+    </ng-container>
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+  </table>
+  <mat-paginator [pageSizeOptions]="elementosPagina" showFirstLastButtons>
+  </mat-paginator>
+</section>

@@ -1,0 +1,245 @@
+<section>
+  <h2>{{'menu.csp.proyectos.configuracion-economica' | translate}} - {{'csp.proyecto-elegibilidad' | translate}}</h2>
+
+  <!-- Conceptos de gasto permitidos-->
+  <h3>{{'csp.proyecto-concepto-gasto-permitido' | translate: MSG_PARAMS.CARDINALIRY.PLURAL}}</h3>
+  <table class="mat-elevation-z8" mat-table [dataSource]="dataSourcePermitidos" matSort matSortDisableClear
+    #sortPermitidos="matSort">
+    <!-- Icono ayuda -->
+    <ng-container matColumnDef="helpIcon">
+      <th mat-header-cell *matHeaderCellDef>
+      </th>
+      <td mat-cell *matCellDef="let element">
+        <mat-icon *ngIf="element.help" class="{{element.help.class}}" matTooltip="{{element.help.tooltip | translate}}">
+          help</mat-icon>
+      </td>
+    </ng-container>
+
+    <!-- Nombre concepto gasto -->
+    <ng-container matColumnDef="conceptoGasto.nombre">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>
+        {{'csp.proyecto-concepto-gasto' | translate}} </th>
+      <td mat-cell *matCellDef="let element">
+        {{element.conceptoGasto}}
+      </td>
+    </ng-container>
+
+    <!-- Descripción -->
+    <ng-container matColumnDef="conceptoGasto.descripcion">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>
+        {{'csp.proyecto-concepto-gasto.descripcion' | translate}} </th>
+      <td mat-cell *matCellDef="let element">
+        {{element.descripcion}}
+      </td>
+    </ng-container>
+
+    <!-- Importe máximo -->
+    <ng-container matColumnDef="importeMaximo">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>
+        {{'csp.proyecto-concepto-gasto.importe-maximo' | translate}} </th>
+      <td mat-cell *matCellDef="let element">
+        {{element.importeMaximo}}
+      </td>
+    </ng-container>
+
+    <!-- Fecha inicio -->
+    <ng-container matColumnDef="fechaInicio">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>
+        {{'csp.proyecto-concepto-gasto.fecha-inicio' | translate}} </th>
+      <td mat-cell *matCellDef="let element">
+        {{element.fechaInicio | luxon:'short'}}
+      </td>
+    </ng-container>
+
+    <!-- Fecha fin -->
+    <ng-container matColumnDef="fechaFin">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>
+        {{'csp.proyecto-concepto-gasto.fecha-fin' | translate}} </th>
+      <td mat-cell *matCellDef="let element">
+        {{element.fechaFin | luxon:'short'}}
+      </td>
+    </ng-container>
+
+    <!-- Observaciones -->
+    <ng-container matColumnDef="observaciones">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>
+        {{'csp.proyecto-concepto-gasto.observaciones' | translate}} </th>
+      <td mat-cell *matCellDef="let element">
+        {{element.observaciones}}
+      </td>
+    </ng-container>
+
+    <!-- Acciones Column -->
+    <ng-container matColumnDef="acciones">
+      <th mat-header-cell *matHeaderCellDef> {{'label.actions' | translate}} </th>
+      <td mat-cell *matCellDef="let element">
+        <button mat-button matTooltip="{{'btn.edit' | translate}}" *ngIf="element.proyectoConceptoGasto"
+          [routerLink]="['../', PROYECTO_ROUTE_NAMES.CONCEPTO_GATO_PERMITIDO, element.proyectoConceptoGasto?.value?.id]"
+          [state]="getConvocatoriaConceptoGastoState(element.convocatoriaConceptoGasto?.id)">
+          <mat-icon color="primary">border_color</mat-icon>
+        </button>
+        <button mat-button matTooltip="{{'btn.edit' | translate}}" *ngIf="!element.proyectoConceptoGasto"
+          [routerLink]="['../', PROYECTO_ROUTE_NAMES.CONCEPTO_GATO_PERMITIDO, ROUTE_NAMES.NEW]"
+          [state]="getConvocatoriaConceptoGastoState(element.convocatoriaConceptoGasto?.id)">
+          <mat-icon color="primary">border_color</mat-icon>
+        </button>
+        <button mat-button matTooltip="{{'btn.delete' | translate}}" *ngIf="element.proyectoConceptoGasto"
+          (click)="deleteConceptoGasto(element.proyectoConceptoGasto)">
+          <mat-icon color="warn">highlight_off</mat-icon>
+        </button>
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumnsPermitidos"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumnsPermitidos"></tr>
+
+  </table>
+
+  <mat-paginator #paginatorPermitidos [pageSizeOptions]="elementosPagina" showFirstLastButtons>
+  </mat-paginator>
+
+  <div class="separation-button">
+    <button color="three" aria-label="Center Align" mat-raised-button
+      [routerLink]="['../', PROYECTO_ROUTE_NAMES.CONCEPTO_GATO_PERMITIDO, ROUTE_NAMES.NEW]">
+      <mat-icon color="accent">add_circle</mat-icon>
+      {{ 'btn.add.entity' | translate:msgParamEntityPermitido }}
+    </button>
+  </div>
+</section>
+
+<mat-divider></mat-divider>
+
+<!-- Costes indirectos -->
+<section>
+  <h3>{{'title.csp.proyecto-concepto-gasto.costes-indirectos' | translate}}</h3>
+  <form [formGroup]="formGroup" [fxLayout.xs]="fxLayoutProperties.xs" [fxLayout]="fxLayoutProperties.layout"
+    [fxLayoutGap]="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
+
+    <!-- Costes indirectos -->
+    <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
+      [fxFlexOrder]="fxFlexProperties.order">
+      <mat-form-field>
+        <mat-label>{{'csp.proyecto-concepto-gasto.costes-indirectos.concepto' | translate}}</mat-label>
+        <sgi-select-entity formControlName="costeIndirecto" [options]="costesIndirectos$ | async"
+          [displayWith]="displayerCosteIndirecto">
+        </sgi-select-entity>
+      </mat-form-field>
+    </div>
+
+    <!-- porcentajeCosteIndirecto -->
+    <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
+      [fxFlexOrder]="fxFlexProperties.order">
+      <mat-form-field fxFill>
+        <mat-label>{{'csp.proyecto-concepto-gasto.costes-indirectos.porcentaje' | translate}}</mat-label>
+        <input matInput formControlName="porcentajeCosteIndirecto" type="number" id="porcentajeCosteIndirecto" min="0"
+          placeholder="{{'csp.proyecto-concepto-gasto.costes-indirectos.porcentaje' | translate}}">
+        <mat-error *ngIf="formGroup.controls.porcentajeCosteIndirecto.hasError('max')">
+          {{'error.max.digit' | translate}}
+        </mat-error>
+        <mat-error *ngIf="formGroup.controls.porcentajeCosteIndirecto.hasError('min')">
+          {{'error.csp.proyecto-concepto-gasto.min' | translate}}
+        </mat-error>
+      </mat-form-field>
+    </div>
+
+  </form>
+</section>
+
+<mat-divider></mat-divider>
+
+<!-- Conceptos de gasto no permitidos-->
+<section>
+  <h3>{{'csp.proyecto-concepto-gasto-no-permitido' | translate: MSG_PARAMS.CARDINALIRY.PLURAL}}</h3>
+  <table class="mat-elevation-z8" mat-table [dataSource]="dataSourceNoPermitidos" matSort matSortDisableClear
+    #sortNoPermitidos="matSort">
+    <!-- Icono ayuda -->
+    <ng-container matColumnDef="helpIcon">
+      <th mat-header-cell *matHeaderCellDef>
+      </th>
+      <td mat-cell *matCellDef="let element">
+        <mat-icon *ngIf="element.help" class="{{element.help.class}}" matTooltip="{{element.help.tooltip | translate}}">
+          help</mat-icon>
+      </td>
+    </ng-container>
+
+    <!-- Nombre concepto gasto -->
+    <ng-container matColumnDef="conceptoGasto.nombre">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>
+        {{'csp.proyecto-concepto-gasto' | translate}} </th>
+      <td mat-cell *matCellDef="let element">
+        {{element.conceptoGasto}}
+      </td>
+    </ng-container>
+
+    <!-- Descripción -->
+    <ng-container matColumnDef="conceptoGasto.descripcion">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>
+        {{'csp.proyecto-concepto-gasto.descripcion' | translate}} </th>
+      <td mat-cell *matCellDef="let element">
+        {{element.descripcion}}
+      </td>
+    </ng-container>
+
+    <!-- Fecha inicio -->
+    <ng-container matColumnDef="fechaInicio">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>
+        {{'csp.proyecto-concepto-gasto.fecha-inicio' | translate}} </th>
+      <td mat-cell *matCellDef="let element">
+        {{element.fechaInicio | luxon:'short'}}
+      </td>
+    </ng-container>
+
+    <!-- Fecha fin -->
+    <ng-container matColumnDef="fechaFin">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>
+        {{'csp.proyecto-concepto-gasto.fecha-fin' | translate}} </th>
+      <td mat-cell *matCellDef="let element">
+        {{element.fechaFin | luxon:'short'}}
+      </td>
+    </ng-container>
+
+    <!-- Observaciones -->
+    <ng-container matColumnDef="observaciones">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>
+        {{'csp.proyecto-concepto-gasto.observaciones' | translate}} </th>
+      <td mat-cell *matCellDef="let element">
+        {{element.observaciones}}
+      </td>
+    </ng-container>
+
+    <!-- Acciones Column -->
+    <ng-container matColumnDef="acciones">
+      <th mat-header-cell *matHeaderCellDef> {{'label.actions' | translate}} </th>
+      <td mat-cell *matCellDef="let element">
+        <button mat-button matTooltip="{{'btn.edit' | translate}}" *ngIf="element.proyectoConceptoGasto"
+          [routerLink]="['../', PROYECTO_ROUTE_NAMES.CONCEPTO_GATO_NO_PERMITIDO, element.proyectoConceptoGasto?.value?.id]"
+          [state]="getConvocatoriaConceptoGastoState(element.convocatoriaConceptoGasto?.id)">
+          <mat-icon color="primary">border_color</mat-icon>
+        </button>
+        <button mat-button matTooltip="{{'btn.edit' | translate}}" *ngIf="!element.proyectoConceptoGasto"
+          [routerLink]="['../', PROYECTO_ROUTE_NAMES.CONCEPTO_GATO_NO_PERMITIDO, ROUTE_NAMES.NEW]"
+          [state]="getConvocatoriaConceptoGastoState(element.convocatoriaConceptoGasto?.id)">
+          <mat-icon color="primary">border_color</mat-icon>
+        </button>
+        <button mat-button matTooltip="{{'btn.delete' | translate}}" *ngIf="element.proyectoConceptoGasto"
+          (click)="deleteConceptoGasto(element.proyectoConceptoGasto)">
+          <mat-icon color="warn">highlight_off</mat-icon>
+        </button>
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumnsNoPermitidos"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumnsNoPermitidos"></tr>
+  </table>
+
+  <mat-paginator #paginatorNoPermitidos [pageSizeOptions]="elementosPagina" showFirstLastButtons>
+  </mat-paginator>
+
+  <div class="separation-button">
+    <button color="three" aria-label="Center Align" mat-raised-button
+      [routerLink]="['../', PROYECTO_ROUTE_NAMES.CONCEPTO_GATO_NO_PERMITIDO, ROUTE_NAMES.NEW]">
+      <mat-icon color="accent">add_circle</mat-icon>
+      {{ 'btn.add.entity' | translate:msgParamEntityNoPermitido }}
+    </button>
+  </div>
+</section>

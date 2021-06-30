@@ -1,0 +1,151 @@
+<!-- Memorias listado -->
+<div class="scrollable-panel">
+  <section class="memoria-listado-inv">
+
+    <form class="formulario mat-elevation-z8" [formGroup]="formGroup" [fxLayout.xs]="fxLayoutProperties.xs"
+      [fxLayout]="fxLayoutProperties.layout" fxLayoutGap="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
+
+      <div fxFlex="85%" fxFlex.sm="50%" fxFlex.md="73%" [fxLayout.xs]="fxLayoutProperties.xs"
+        [fxLayout]="fxLayoutProperties.layout" fxLayoutGap="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
+        <!-- Título proyecto -->
+        <div class="col">
+          <mat-form-field>
+            <mat-label>{{'eti.memoria.proyecto-titulo' | translate}}</mat-label>
+            <input matInput type="text" placeholder="{{'eti.memoria.proyecto-titulo' | translate}}"
+              formControlName="titulo">
+          </mat-form-field>
+        </div>
+
+        <!-- Comité -->
+        <div class="col">
+          <mat-form-field class="input-form">
+            <mat-label>{{'label.eti.comite' | translate}}</mat-label>
+            <input type="text" [placeholder]="'label.eti.comite' | translate" arial-label="Number" matInput
+              formControlName="comite" [matAutocomplete]="autocompleteComite">
+            <mat-autocomplete #autocompleteComite="matAutocomplete" [displayWith]="getComite">
+              <mat-option *ngFor="let comite of filteredComites | async" [value]="comite">
+                {{comite.comite}}
+              </mat-option>
+            </mat-autocomplete>
+          </mat-form-field>
+        </div>
+
+        <!-- Referencia memoria-->
+        <div class="col">
+          <mat-form-field>
+            <mat-label>{{'eti.memoria.referencia' | translate}}</mat-label>
+            <input matInput type="text" placeholder="{{'eti.memoria.referencia' | translate}}"
+              formControlName="numReferencia">
+          </mat-form-field>
+        </div>
+
+        <!-- Estado Memoria -->
+        <div class="col">
+          <mat-form-field class="input-form">
+            <mat-label>{{'eti.memoria.estado' | translate}}</mat-label>
+            <input type="text" [placeholder]="'eti.memoria.estado' | translate" arial-label="Number" matInput
+              formControlName="tipoEstadoMemoria" [matAutocomplete]="autocompleteEstadoMemoria">
+            <mat-autocomplete #autocompleteEstadoMemoria="matAutocomplete" [displayWith]="getEstadoMemoria">
+              <mat-option *ngFor="let tipoEstadoMemoria of filteredEstadosMemoria | async" [value]="tipoEstadoMemoria">
+                {{tipoEstadoMemoria.nombre}}
+              </mat-option>
+            </mat-autocomplete>
+          </mat-form-field>
+        </div>
+      </div>
+
+      <div class="buttons-final">
+        <div class="col filter-button">
+          <button color="primary" aria-label="Center Align" mat-raised-button (click)="onSearch()">
+            <mat-icon>search</mat-icon> {{'btn.search'| translate}}
+          </button>
+          <button color="warn" aria-label="Center Align" (click)="onClearFilters()" mat-button>{{'btn.clean'|
+            translate}}
+          </button>
+        </div>
+      </div>
+
+    </form>
+
+    <table class="mat-elevation-z8 table-memoria" mat-table [dataSource]="memorias$ | async" matSort matSortActive="id"
+      matSortDirection="asc" matSortDisableClear>
+
+      <!-- Referencia memoria -->
+      <ng-container matColumnDef="numReferencia">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'eti.memoria.referencia' | translate}}
+        </th>
+        <td mat-cell *matCellDef="let memoria"> {{memoria.numReferencia}} </td>
+      </ng-container>
+
+      <!-- Comité -->
+      <ng-container matColumnDef="comite">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>
+          {{'label.eti.comite' | translate}}
+        </th>
+        <td mat-cell *matCellDef="let memoria">{{memoria.comite?.comite}}</td>
+      </ng-container>
+
+      <!-- Estado memoria -->
+      <ng-container matColumnDef="estadoActual">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>
+          {{'eti.memoria.estado' | translate}}
+        </th>
+        <td mat-cell *matCellDef="let memoria"> {{memoria.estadoActual?.nombre}} </td>
+      </ng-container>
+
+      <!-- Fecha evaluacion -->
+      <ng-container matColumnDef="fechaEvaluacion">
+        <th mat-header-cell *matHeaderCellDef>
+          {{'eti.memoria.fecha-evaluacion' | translate}}
+        </th>
+        <td mat-cell *matCellDef="let memoria"> {{memoria.fechaEvaluacion | luxon:'short'}} </td>
+      </ng-container>
+
+      <!-- Fecha límite -->
+      <ng-container matColumnDef="fechaLimite">
+        <th mat-header-cell *matHeaderCellDef>
+          {{'eti.memoria.fecha-limite' | translate}}
+        </th>
+        <td mat-cell *matCellDef="let memoria"> {{memoria.fechaLimite | luxon: 'shortDate'}} </td>
+      </ng-container>
+
+      <!-- Acciones Column -->
+      <ng-container matColumnDef="acciones" class="acciones">
+        <th mat-header-cell *matHeaderCellDef> {{'label.actions' | translate}} </th>
+        <td mat-cell *matCellDef="let memoria;let i=index;">
+          <ng-container>
+            <button mat-button [routerLink]="[memoria.id]" matTooltip="{{'btn.edit' | translate}}">
+              <mat-icon color="primary">border_color</mat-icon>
+            </button>
+            <ng-container *ngIf="hasPermisoEliminar(memoria.estadoActual.id)">
+              <button mat-button (click)="delete(memoria.id)" matTooltip="{{'btn.delete' | translate}}">
+                <mat-icon color="warn">highlight_off</mat-icon>
+              </button>
+            </ng-container>
+            <ng-container *ngIf="hasPermisoEnviarSecretaria(memoria.estadoActual.id, memoria.responsable)">
+              <button mat-button *sgiHasAnyAuthorityForAnyUO="['ETI-PEV-C-INV', 'ETI-PEV-ER-INV']"
+                (click)="enviarSecretaria(memoria)" matTooltip="{{'btn.eti.memoria.enviar' | translate}}">
+                <mat-icon color="primary">send</mat-icon>
+              </button>
+            </ng-container>
+            <ng-container *ngIf="hasPermisoEnviarSecretariaRetrospectiva(memoria, memoria.responsable)">
+              <button mat-button *sgiHasAnyAuthorityForAnyUO="['ETI-PEV-C-INV', 'ETI-PEV-ER-INV']"
+                (click)="enviarSecretariaRetrospectiva(memoria)"
+                matTooltip="{{'btn.eti.memoria.enviar-retrospectiva' | translate}}">
+                <mat-icon color="primary">assignment</mat-icon>
+              </button>
+            </ng-container>
+          </ng-container>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+    </table>
+
+    <mat-paginator [pageSizeOptions]="elementosPagina" [length]="totalElementos" showFirstLastButtons>
+    </mat-paginator>
+
+  </section>
+</div>
+<!-- FIN Memorias listado-->

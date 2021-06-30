@@ -1,0 +1,46 @@
+@import "colors.scss";
+@import "typography.scss";
+
+// TODO: Buscar alternativa para no usar ng-deep y no tener que cambiar la encapsulación del componente
+:host ::ng-deep .mat-expansion-panel-body {
+  padding: 0;
+  padding-left: 14px;
+}
+
+mat-expansion-panel {
+  background-color: transparent;
+  box-shadow: none;
+  border-radius: 0;
+  &.is-active {
+    background-color: map-get($custom-colors, white);
+    .mat-expansion-panel-header {
+      font-weight: bold;
+    }
+  }
+  &:not([class*=mat-elevation-z]) {
+    box-shadow: none;
+  }
+
+  mat-expansion-panel-header {
+    padding: 0 16px;
+    font-size: mat-font-size($custom-typography, body-1);
+    div {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      width: 100%;
+      padding-right: 14px;
+      align-items: center;
+
+      .warning-icon {
+        color: map-get($custom-colors, warning);
+      }
+
+      .danger-icon {
+        color: map-get($custom-colors, danger);
+      }
+    }
+  }
+}
+
+

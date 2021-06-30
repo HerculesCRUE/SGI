@@ -1,0 +1,73 @@
+<div class="sgi-dialog-header" fxLayout="row" fxLayoutGap="20px">
+  <span fxFlexAlign="center" mat-mat-dialog-title role="heading" aria-level="3" fxFlex>{{title}}</span>
+  <button fxFlex="nogrow" mat-icon-button mat-dialog-close>
+    <mat-icon class="close-icon">close</mat-icon>
+  </button>
+</div>
+<mat-dialog-content>
+  <form [formGroup]="formGroup">
+    <!-- Tipo de hito -->
+    <div [fxLayout.xs]="fxLayoutProperties.xs" [fxLayout]="fxLayoutProperties.layout"
+      [fxLayoutGap]="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
+      <mat-form-field>
+        <mat-label>{{'csp.proyecto-hito.tipo' | translate}}</mat-label>
+        <input matInput formControlName="tipoHito" type="text" placeholder="{{'csp.proyecto-hito.tipo' | translate}}"
+          required [matAutocomplete]="auto">
+        <mat-autocomplete #auto="matAutocomplete" [displayWith]="getTipoHito">
+          <mat-option *ngFor="let modeloTipoHito of modeloTiposHito$ | async" [value]="modeloTipoHito.tipoHito">
+            {{modeloTipoHito.tipoHito.nombre}}
+          </mat-option>
+        </mat-autocomplete>
+        <mat-error *ngIf="formGroup.controls.tipoHito.errors?.required">
+          {{'error.required.entity' | translate:msgParamTipoEntity}}
+        </mat-error>
+        <mat-error *ngIf="formGroup.controls.tipoHito.errors?.invalid">
+          {{'error.invalid.entity' | translate:msgParamTipoEntity}}
+        </mat-error>
+      </mat-form-field>
+    </div>
+    <!-- Fecha -->
+    <div [fxLayout.xs]="fxLayoutProperties.xs" [fxLayout]="fxLayoutProperties.layout"
+      [fxLayoutGap]="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
+      <mat-form-field>
+        <mat-label>{{'csp.proyecto-hito.fecha'| translate}}</mat-label>
+        <input matInput [ngxMatDatetimePicker]="pickerFecha" formControlName="fecha" required>
+        <mat-datepicker-toggle class="fechaIcon" matSuffix [for]="pickerFecha"></mat-datepicker-toggle>
+        <ngx-mat-datetime-picker #pickerFecha showSeconds="true" [defaultTime]="[0,0,0]">
+        </ngx-mat-datetime-picker>
+        <mat-error *ngIf="formGroup.controls.fecha.errors?.required">
+          {{'error.required.entity' | translate:msgParamFechaEntity}}
+        </mat-error>
+        <mat-error *ngIf="formGroup.controls.fecha.errors?.notIn">
+          {{'error.csp.proyecto-hito.duplicate' | translate}}
+        </mat-error>
+      </mat-form-field>
+    </div>
+    <!-- Comentario -->
+    <div [fxLayout.xs]="fxLayoutProperties.xs" [fxLayout]="fxLayoutProperties.layout"
+      [fxLayoutGap]="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
+      <mat-form-field>
+        <mat-label>{{'csp.proyecto-hito.comentario' | translate}}</mat-label>
+        <textarea matInput formControlName="comentario" type="text"
+          placeholder="{{'csp.proyecto-hito.comentario' | translate}}">
+            </textarea>
+        <mat-error *ngIf="formGroup.get('comentario').errors?.maxlength">
+          {{'error.maxlength.entity' | translate:msgParamComentarioEntity}}
+        </mat-error>
+      </mat-form-field>
+    </div>
+    <!-- Aviso -->
+    <div [fxLayout]="fxLayoutProperties.layout" class="checkbox">
+      <mat-checkbox color="primary" formControlName="aviso">
+        {{'csp.proyecto-hito.aviso' | translate}}</mat-checkbox>
+    </div>
+  </form>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <button color="accent" (click)="saveOrUpdate()" mat-raised-button type="submit" *ngIf="!data.readonly">
+    <mat-icon class="save-icon">save</mat-icon>{{textSaveOrUpdate |
+    translate}}
+  </button>
+  <button class="link-cancelar" mat-button type="button" mat-dialog-close>{{'btn.cancel' |
+    translate}}</button>
+</mat-dialog-actions>

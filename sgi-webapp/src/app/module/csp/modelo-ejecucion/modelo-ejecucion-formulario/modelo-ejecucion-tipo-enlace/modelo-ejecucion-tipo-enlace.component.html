@@ -1,0 +1,43 @@
+<section class="tipo-enlace-listado">
+  <h2>{{'csp.tipo-enlace' | translate:MSG_PARAMS.CARDINALIRY.PLURAL}}</h2>
+  <!-- Listado de tipos de enlace -->
+  <table mat-table class="mat-elevation-z8 table-unidad" [dataSource]="modelosTipoEnlaces" matSort matSortActive="id"
+    matSortDirection="asc" matSortDisableClear>
+    <!-- Nombre -->
+    <ng-container matColumnDef="nombre">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'csp.tipo-enlace.nombre' | translate}}
+      </th>
+      <td mat-cell *matCellDef="let wrapper">{{wrapper.value.tipoEnlace.nombre}}</td>
+    </ng-container>
+
+    <!-- Descripción -->
+    <ng-container matColumnDef="descripcion">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'csp.tipo-enlace.descripcion' | translate}}
+      </th>
+      <td mat-cell *matCellDef="let wrapper">{{wrapper.value.tipoEnlace.descripcion}}</td>
+    </ng-container>
+
+    <!-- Acciones -->
+    <ng-container matColumnDef="acciones">
+      <th mat-header-cell *matHeaderCellDef> {{'label.actions' | translate}} </th>
+      <td mat-cell *matCellDef="let wrapper">
+        <button mat-button matTooltip="{{'btn.delete' | translate}}" (click)="deleteModeloTipoEnlace(wrapper)">
+          <mat-icon color="warn">highlight_off</mat-icon>
+        </button>
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="columns"></tr>
+    <tr mat-row *matRowDef="let row; columns: columns;"></tr>
+  </table>
+  <mat-paginator [pageSizeOptions]="numPage" [length]="totalElements" showFirstLastButtons>
+  </mat-paginator>
+
+  <div class="separation-button">
+    <button color="three" aria-label="Center Align" mat-raised-button (click)="openModal()">
+      <mat-icon color="accent">add_circle</mat-icon>
+      {{ 'btn.add.entity' | translate:msgParamEntity }}
+    </button>
+  </div>
+
+</section>

@@ -1,0 +1,50 @@
+@import "colors.scss";
+
+$variable1: 28;
+
+.navbar-icon {
+  .nav-item {
+    border-radius: $variable1 + px;
+    margin: 10px 10px 10px 0px;
+    padding: 11px 13px 9px 13px;
+    background-color: map-get($palette-primary, 50);
+    height: $variable1 + px;
+    cursor: pointer;
+    &:hover,
+    &:focus {
+      background-color: map-get($palette-primary, 500);
+      mat-icon {
+        color: map-get($palette-primary, 50);
+      }
+      -moz-transition: all 0.51s;
+      -o-transition: all 0.51s;
+      -webkit-transition: all 0.51s;
+      transition: all 0.51s;
+    }
+    .nav-link {
+      .posicion {
+        vertical-align: super;
+      }
+    }
+    &.modulo {
+      background-color: map-get($palette-primary, 400);
+      mat-icon {
+        color: map-get($palette-primary, 50);
+      }
+      &:hover,
+      &:focus {
+        background-color: map-get($palette-primary, 50);
+        mat-icon {
+          color: map-get($palette-primary, 500);
+        }
+      }
+    }
+  }
+  &.modulo {
+    border-left: 1px solid map-get($palette-primary, 50);
+  }
+  &.modulo,
+  &:first-child {
+    padding-left: 10px;
+  }
+}

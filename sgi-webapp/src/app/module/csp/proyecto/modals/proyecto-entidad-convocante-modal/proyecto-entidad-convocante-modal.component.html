@@ -1,0 +1,90 @@
+<div class="sgi-dialog-header" fxLayout="row" fxLayoutGap="20px">
+  <span fxFlexAlign="center" mat-mat-dialog-title role="heading" aria-level="3" fxFlex>{{title}}</span>
+  <button fxFlex="nogrow" mat-icon-button mat-dialog-close>
+    <mat-icon class="close-icon">close</mat-icon>
+  </button>
+</div>
+<mat-dialog-content>
+  <form [formGroup]="formGroup">
+    <!-- Entidad -->
+    <div [fxLayout]="fxLayoutProperties.layout" [fxLayoutAlign]="fxLayoutProperties.layoutAlign">
+      <mat-form-field class="input-form">
+        <mat-label>{{ 'csp.proyecto-entidad-convocante' | translate:MSG_PARAMS.CARDINALIRY.SINGULAR }}</mat-label>
+        <sgi-select-empresa formControlName="entidad"
+          placeholder="{{ 'csp.proyecto-entidad-convocante' | translate:MSG_PARAMS.CARDINALIRY.SINGULAR }}"
+          [selectedEmpresas]="data.selectedEmpresas" required>
+        </sgi-select-empresa>
+        <mat-error *ngIf="formGroup.controls.entidad.errors?.required">
+          {{ 'error.required.entity' | translate:msgParamEntity }}
+        </mat-error>
+      </mat-form-field>
+    </div>
+    <!-- Plan -->
+    <div>
+      <mat-form-field class="input-form">
+        <mat-label>{{ 'csp.proyecto-entidad-convocante.programa.plan' | translate }}</mat-label>
+        <input matInput type="text" placeholder="{{ 'csp.proyecto-entidad-convocante.programa.plan' | translate }}"
+          formControlName="plan" [matAutocomplete]="auto">
+        <mat-autocomplete #auto="matAutocomplete" [displayWith]="getNombrePlan">
+          <mat-option *ngFor="let plan of planes$ | async" [value]="plan">
+            {{ plan.nombre }}
+          </mat-option>
+        </mat-autocomplete>
+        <mat-error *ngIf="formGroup.controls.plan.errors?.invalid">
+          {{ 'error.invalid.entity' | translate:msgParamPlanEntity }}
+        </mat-error>
+      </mat-form-field>
+    </div>
+    <!-- Programa -->
+    <mat-label>{{ 'csp.proyecto-entidad-convocante.programa.programa' | translate }}</mat-label>
+    <div class="programa" [fxLayout.xs]="fxLayoutProperties.xs" [fxLayout]="fxLayoutProperties.layout"
+      [fxLayoutGap]="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
+      <div class="arbol">
+        <mat-tree [dataSource]="dataSource" [treeControl]="treeControl" class="arbol-tree">
+          <mat-tree-node *matTreeNodeDef="let node" matTreeNodeToggle>
+            <li class="mat-tree-node">
+              <button mat-icon-button disabled></button>
+              <mat-label *ngIf="node.programa.id === data.proyectoEntidadConvocante.programaConvocatoria?.id">
+                {{node.programa.nombre}}
+              </mat-label>
+              <mat-checkbox *ngIf="node.programa.id !== data.proyectoEntidadConvocante.programaConvocatoria?.id"
+                class="checkbox" color="primary" [checked]="node === checkedNode" (change)="onCheckNode(node, $event)">
+                {{ node.programa.nombre }}
+              </mat-checkbox>
+            </li>
+          </mat-tree-node>
+          <mat-nested-tree-node *matTreeNodeDef="let node; when: hasChild">
+            <li>
+              <div class="mat-tree-node">
+                <button mat-icon-button matTreeNodeToggle>
+                  <mat-icon color="primary" class="mat-icon-rtl-mirror">
+                    {{treeControl.isExpanded(node) ? 'expand_more' : 'chevron_right'}}
+                  </mat-icon>
+                </button>
+                <mat-label *ngIf="node.programa.id === data.proyectoEntidadConvocante.programaConvocatoria?.id">
+                  {{node.programa.nombre}}
+                </mat-label>
+                <mat-checkbox *ngIf="node.programa.id !== data.proyectoEntidadConvocante.programaConvocatoria?.id"
+                  class="checkbox" color="primary" [checked]="node === checkedNode"
+                  (change)="onCheckNode(node, $event)">
+                  {{ node.programa.nombre }}
+                </mat-checkbox>
+              </div>
+              <ul [class.arbol-invisible]="!treeControl.isExpanded(node)">
+                <ng-container matTreeNodeOutlet></ng-container>
+              </ul>
+            </li>
+          </mat-nested-tree-node>
+        </mat-tree>
+      </div>
+    </div>
+  </form>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <button color="accent" (click)="saveOrUpdate()" mat-raised-button type="submit">
+    <mat-icon class="save-icon">save</mat-icon>{{
+    (create ? 'btn.add.entity' :'btn.ok') | translate:msgParamEntity }}
+  </button>
+  <button class="link-cancelar" mat-button type="button" mat-dialog-close>{{'btn.cancel' |
+    translate}}</button>
+</mat-dialog-actions>

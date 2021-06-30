@@ -1,0 +1,72 @@
+<div class="sgi-dialog-header" fxLayout="row" fxLayoutGap="20px">
+  <span fxFlexAlign="center" mat-mat-dialog-title role="heading" aria-level="3" fxFlex>{{title}}</span>
+  <button fxFlex="nogrow" mat-icon-button mat-dialog-close>
+    <mat-icon class="close-icon">close</mat-icon>
+  </button>
+</div>
+<mat-dialog-content>
+  <form [formGroup]="formGroup">
+    <!-- numPeriodo -->
+    <div *ngIf="data.isEdit" [fxLayout]="fxLayoutProperties.layout" [fxLayoutAlign]="fxLayoutProperties.layoutAlign">
+      <mat-form-field>
+        <mat-label>{{'csp.proyecto-socio.periodo-pago.numero-periodo' | translate}}</mat-label>
+        <input matInput formControlName="numPeriodo" type="number"
+          placeholder="{{'csp.proyecto-socio.periodo-pago.numero-periodo' | translate}}">
+      </mat-form-field>
+    </div>
+    <!-- fechaPrevistaPago -->
+    <div [fxLayout]="fxLayoutProperties.layout" [fxLayoutAlign]="fxLayoutProperties.layoutAlign">
+      <mat-form-field>
+        <mat-label>{{'csp.proyecto-socio.periodo-pago.fecha-prevista.texto' | translate}}</mat-label>
+        <input matInput [ngxMatDatetimePicker]="fechaPrevistaPago" formControlName="fechaPrevistaPago" required
+          placeholder="{{'csp.proyecto-socio.periodo-pago.fecha-prevista.texto' | translate}}">
+        <mat-datepicker-toggle matSuffix [for]="fechaPrevistaPago"></mat-datepicker-toggle>
+        <ngx-mat-datetime-picker #fechaPrevistaPago showSeconds="true" [defaultTime]="[0,0,0]">
+        </ngx-mat-datetime-picker>
+        <mat-error *ngIf="formGroup.controls.fechaPrevistaPago.errors?.required">
+          {{'error.required.entity' | translate:msgParamFechaPrevistaEntity}}
+        </mat-error>
+        <mat-error *ngIf="formGroup.controls.fechaPrevistaPago.errors?.minDate">
+          {{'error.csp.proyecto-socio.periodo-pago.fecha-prevista.min' | translate}}
+        </mat-error>
+        <mat-error *ngIf="formGroup.controls.fechaPrevistaPago.errors?.maxDate">
+          {{'error.csp.proyecto-socio.periodo-pago.fecha-prevista.max' | translate}}
+        </mat-error>
+      </mat-form-field>
+    </div>
+    <!-- importe -->
+    <div [fxLayout]="fxLayoutProperties.layout" [fxLayoutAlign]="fxLayoutProperties.layoutAlign">
+      <mat-form-field>
+        <mat-label>{{'csp.proyecto-socio.periodo-pago.importe' | translate}}</mat-label>
+        <input matInput formControlName="importe" type="number" required
+          placeholder="{{'csp.proyecto-socio.periodo-pago.importe' | translate}}">
+        <mat-error *ngIf="formGroup.controls.importe.errors?.min">
+          {{'error.min.entity' | translate:msgParamImporteEntity}}
+        </mat-error>
+        <mat-error *ngIf="formGroup.controls.importe.errors?.max">
+          {{'error.max.entity' | translate:msgParamImporteEntity}}
+        </mat-error>
+        <mat-error *ngIf="formGroup.controls.importe.errors?.required">
+          {{'error.required.entity' | translate:msgParamImporteEntity}}
+        </mat-error>
+      </mat-form-field>
+    </div>
+    <!-- fechaPago -->
+    <div [fxLayout]="fxLayoutProperties.layout" [fxLayoutAlign]="fxLayoutProperties.layoutAlign">
+      <mat-form-field fxFill>
+        <mat-label>{{'csp.proyecto-socio.periodo-pago.fecha.texto' | translate}}</mat-label>
+        <input matInput [ngxMatDatetimePicker]="fechaPago" formControlName="fechaPago"
+          placeholder="{{'csp.proyecto-socio.periodo-pago.fecha.texto' | translate}}">
+        <mat-datepicker-toggle matSuffix [for]="fechaPago"></mat-datepicker-toggle>
+        <ngx-mat-datetime-picker #fechaPago showSeconds="true" [defaultTime]="[0,0,0]"></ngx-mat-datetime-picker>
+      </mat-form-field>
+    </div>
+  </form>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <button color="accent" (click)="saveOrUpdate()" mat-raised-button type="submit">
+    <mat-icon class="save-icon">save</mat-icon>{{textSaveOrUpdate | translate}}
+  </button>
+  <button class="link-cancelar" mat-button type="button" mat-dialog-close>{{'btn.cancel' |
+    translate}}</button>
+</mat-dialog-actions>

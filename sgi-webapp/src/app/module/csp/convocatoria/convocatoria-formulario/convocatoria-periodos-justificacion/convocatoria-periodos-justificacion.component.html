@@ -1,0 +1,113 @@
+<!-- Convocatoria enlace -->
+<section class="convocatoria-periodo-justificacion">
+
+  <h2>{{'csp.convocatoria-periodo-justificacion' | translate:MSG_PARAMS.CARDINALIRY.PLURAL}}</h2>
+
+  <table mat-table [dataSource]="dataSource" matSort class="mat-elevation-z8 table-convocatoria-periodo-justificacion">
+
+    <!-- Num Periodo Column -->
+    <ng-container matColumnDef="numPeriodo">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>
+        {{'csp.convocatoria-periodo-justificacion.periodo' | translate}}
+      </th>
+      <td mat-cell *matCellDef="let periodoJustificacion">
+        {{ periodoJustificacion.value.numPeriodo }}
+      </td>
+    </ng-container>
+
+    <!-- Mes inicial Column -->
+    <ng-container matColumnDef="mesInicial">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>
+        {{'csp.convocatoria-periodo-justificacion.mes-inicial' | translate}}
+      </th>
+      <td mat-cell *matCellDef="let periodoJustificacion">
+        {{ periodoJustificacion.value.mesInicial }}
+      </td>
+    </ng-container>
+
+    <!-- Mes final Column -->
+    <ng-container matColumnDef="mesFinal">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>
+        {{'csp.convocatoria-periodo-justificacion.mes-final' | translate}}
+      </th>
+      <td mat-cell *matCellDef="let periodoJustificacion">
+        {{ periodoJustificacion.value.mesFinal }}
+      </td>
+    </ng-container>
+
+    <!-- Fecha inicio Column -->
+    <ng-container matColumnDef="fechaInicioPresentacion">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>
+        {{'csp.convocatoria-periodo-justificacion.fecha-inicio' | translate}}
+      </th>
+      <td mat-cell *matCellDef="let periodoJustificacion">
+        {{ periodoJustificacion.value.fechaInicioPresentacion | luxon:'short' }}
+      </td>
+    </ng-container>
+
+    <!-- Fecha fin Column -->
+    <ng-container matColumnDef="fechaFinPresentacion">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>
+        {{'csp.convocatoria-periodo-justificacion.fecha-fin' | translate}}
+      </th>
+      <td mat-cell *matCellDef="let periodoJustificacion">
+        {{ periodoJustificacion.value.fechaFinPresentacion | luxon:'short' }}
+      </td>
+    </ng-container>
+
+    <!-- Tipo Column -->
+    <ng-container matColumnDef="tipo">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>
+        {{'csp.convocatoria-periodo-justificacion.tipo' | translate}}
+      </th>
+      <td mat-cell *matCellDef="let periodoJustificacion">
+        {{ periodoJustificacion.value.tipo }}
+      </td>
+    </ng-container>
+
+    <!-- Observaciones Column -->
+    <ng-container matColumnDef="observaciones">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>
+        {{'csp.convocatoria-periodo-justificacion.observaciones' | translate}}
+      </th>
+      <td mat-cell *matCellDef="let periodoJustificacion">
+        {{ periodoJustificacion.value.observaciones }}
+      </td>
+    </ng-container>
+
+    <!-- Acciones Column -->
+    <ng-container matColumnDef="acciones">
+      <th mat-header-cell *matHeaderCellDef> {{'label.actions' | translate}} </th>
+      <td mat-cell *matCellDef="let periodoJustificacion">
+        <ng-container>
+          <button mat-button matTooltip="{{'btn.edit' | translate}}" *ngIf="!formPart.readonly"
+            (click)="openModalPeriodoJustificacion(periodoJustificacion)">
+            <mat-icon color="primary">border_color</mat-icon>
+          </button>
+        </ng-container>
+        <ng-container>
+          <button mat-button matTooltip="{{'btn.delete' | translate}}" *ngIf="!formPart.readonly"
+            (click)="deletePeriodoJustificacion(periodoJustificacion)">
+            <mat-icon color="warn">highlight_off</mat-icon>
+          </button>
+        </ng-container>
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+
+  </table>
+
+
+  <mat-paginator [pageSizeOptions]="elementosPagina" showFirstLastButtons> </mat-paginator>
+
+  <div class="separation-button">
+    <button color="three" aria-label="Center Align" mat-raised-button *ngIf="!formPart.readonly"
+      (click)="openModalPeriodoJustificacion()">
+      <mat-icon color="accent">add_circle</mat-icon>
+      {{ 'btn.add.entity' | translate:msgParamEntity }}
+    </button>
+  </div>
+
+</section>

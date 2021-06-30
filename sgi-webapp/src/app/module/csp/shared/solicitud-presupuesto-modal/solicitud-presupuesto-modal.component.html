@@ -1,0 +1,69 @@
+<div class="sgi-dialog-header" fxLayout="row" fxLayoutGap="20px">
+  <span fxFlexAlign="center" mat-mat-dialog-title role="heading" aria-level="3" fxFlex>{{title | translate}}</span>
+  <button fxFlex="nogrow" mat-icon-button mat-dialog-close>
+    <mat-icon class="close-icon">close</mat-icon>
+  </button>
+</div>
+<mat-dialog-content>
+  <mat-table [dataSource]="dataSource" multiTemplateDataRows>
+
+    <ng-container matColumnDef="anualidad">
+      <mat-header-cell *matHeaderCellDef>{{'csp.solicitud-proyecto-presupuesto.anualidad' | translate}}
+      </mat-header-cell>
+      <mat-cell *matCellDef="let element">
+        <mat-icon color="primary" *ngIf="element.level === 0 && element.childs.length > 0"
+          (click)="element.expanded ? element.collapse() : element.expand()">
+          {{element.expanded ? 'expand_more' : 'chevron_right'}}
+        </mat-icon>
+        {{element.level === 0 ? element.item.anualidad : '' }}
+      </mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="nombre">
+      <mat-header-cell *matHeaderCellDef>{{'csp.solicitud-proyecto-presupuesto.empresa' | translate}}
+      </mat-header-cell>
+      <mat-cell *matCellDef="let element">
+        <mat-icon color="primary" *ngIf="element.level > 0 && element.childs.length > 0"
+          (click)="element.expanded ? element.collapse() : element.expand()">
+          {{element.expanded ? 'expand_more' : 'chevron_right'}}
+        </mat-icon>
+        {{element.level > 0 && element.childs.length ? element.item.empresa?.nombre : '' }}
+      </mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="ajena">
+      <mat-header-cell *matHeaderCellDef>{{'csp.solicitud-proyecto-presupuesto.financiacion-ajena' | translate}}
+      </mat-header-cell>
+      <mat-cell *matCellDef="let element">{{element.level > 0 && element.childs.length ?
+        ((element.item.financiacionAjena ? 'label.si' : 'label.no') | translate) : ''}}</mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="conceptoGasto">
+      <mat-header-cell *matHeaderCellDef>{{'csp.solicitud-proyecto-presupuesto.concepto-gasto' | translate}}
+      </mat-header-cell>
+      <mat-cell *matCellDef="let element">{{!!!element.childs.length ?
+        element.item.conceptoGasto.nombre: ''}}</mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="observaciones">
+      <mat-header-cell *matHeaderCellDef>{{'csp.solicitud-proyecto-presupuesto.observaciones' | translate}}
+      </mat-header-cell>
+      <mat-cell *matCellDef="let element">{{!!!element.childs.length ? element.item.observaciones :
+        ''}}</mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="importePresupuestado">
+      <mat-header-cell *matHeaderCellDef>{{'csp.solicitud-proyecto-presupuesto.importe-presupuestado' | translate}}
+      </mat-header-cell>
+      <mat-cell *matCellDef="let element">{{element.item.importePresupuestado}}</mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="importeSolicitado">
+      <mat-header-cell *matHeaderCellDef>{{'csp.solicitud-proyecto-presupuesto.importe-solicitado' | translate}}
+      </mat-header-cell>
+      <mat-cell *matCellDef="let element">{{element.item.importeSolicitado}}</mat-cell>
+    </ng-container>
+
+    <mat-header-row *matHeaderRowDef="columnas"></mat-header-row>
+    <mat-row *matRowDef="let row; columns: columnas;" [class.expanded-row]="!!row.parent && !!!row.parent?.expanded">
+    </mat-row>
+  </mat-table>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <button class="link-cancelar" mat-button type="button" mat-dialog-close>{{'btn.cancel' |
+    translate}}</button>
+</mat-dialog-actions>

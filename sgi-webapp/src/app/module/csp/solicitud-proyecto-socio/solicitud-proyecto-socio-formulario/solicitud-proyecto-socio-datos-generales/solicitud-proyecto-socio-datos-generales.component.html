@@ -1,0 +1,141 @@
+<section class="solicitud.proyecto-socio.datos-generales">
+  <h2>{{'label.datos-generales' | translate}}</h2>
+  <form [formGroup]="formGroup">
+    <!-- Socio -->
+    <div [fxLayout]="fxLayoutProperties.layout" [fxLayoutAlign]="fxLayoutProperties.layoutAlign">
+      <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
+        [fxFlexOrder]="fxFlexProperties.order">
+        <mat-form-field class="input-form">
+          <mat-label>{{'csp.proyecto-socio.socio' | translate}}</mat-label>
+          <sgi-select-empresa formControlName="empresa" placeholder="{{'csp.proyecto-socio.socio' | translate}}"
+            required>
+          </sgi-select-empresa>
+          <mat-error *ngIf="formGroup.controls.empresa.errors?.required">
+            {{'error.required.entity' | translate:msgParamSocioEntity}}
+          </mat-error>
+          <mat-error *ngIf="formGroup.controls.empresa.errors?.contains">
+            {{'error.csp.empresa.duplicate' | translate}}
+          </mat-error>
+        </mat-form-field>
+      </div>
+    </div>
+    <!-- Rol de socio -->
+    <div [fxLayout]="fxLayoutProperties.layout" [fxLayoutAlign]="fxLayoutProperties.layoutAlign">
+      <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
+        [fxFlexOrder]="fxFlexProperties.order">
+        <mat-form-field fxFill>
+          <mat-label>{{'csp.proyecto-socio.rol-socio' | translate}}</mat-label>
+          <input matInput formControlName="rolSocio" type="text" id="rolSocio"
+            placeholder="{{'csp.proyecto-socio.rol-socio' | translate}}" [matAutocomplete]="autoRolSocio" required>
+          <mat-autocomplete #autoRolSocio="matAutocomplete" [displayWith]="getNombreRolSocio">
+            <mat-option *ngFor="let rolSocio of rolSocios$ | async" [value]="rolSocio">
+              {{rolSocio.nombre}}
+            </mat-option>
+          </mat-autocomplete>
+          <mat-error *ngIf="formGroup.controls.rolSocio.errors?.required">
+            {{'error.required.entity' | translate:msgParamRolSocioEntity}}
+          </mat-error>
+          <mat-error *ngIf="formGroup.controls.rolSocio.errors?.invalid">
+            {{'error.invalid.entity' | translate:msgParamRolSocioEntity}}
+          </mat-error>
+        </mat-form-field>
+      </div>
+    </div>
+    <!-- Número de investigadores -->
+    <div [fxLayout.xs]="fxLayoutProperties.xs" [fxLayout]="fxLayoutProperties.layout"
+      [fxLayoutGap]="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
+      <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
+        [fxFlexOrder]="fxFlexProperties.order">
+        <mat-form-field fxFill>
+          <mat-label>{{'csp.proyecto-socio.num-investigadores' | translate}}</mat-label>
+          <input matInput formControlName="numInvestigadores" type="number" id="numInvestigadores"
+            placeholder="{{'csp.proyecto-socio.num-investigadores' | translate}}">
+          <mat-error *ngIf="formGroup.controls.numInvestigadores.errors?.min">
+            {{'error.min.entity' | translate:msgParamNumInvestigadoresEntity}}
+          </mat-error>
+          <mat-error *ngIf="formGroup.controls.numInvestigadores.errors?.max">
+            {{'error.max.entity' | translate:msgParamNumInvestigadoresEntity}}
+          </mat-error>
+        </mat-form-field>
+      </div>
+    </div>
+    <!-- Importe solicitado -->
+    <div [fxLayout.xs]="fxLayoutProperties.xs" [fxLayout]="fxLayoutProperties.layout"
+      [fxLayoutGap]="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
+      <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
+        [fxFlexOrder]="fxFlexProperties.order">
+        <mat-form-field fxFill>
+          <mat-label>{{'csp.proyecto-socio.importe-solicitado' | translate}}</mat-label>
+          <input matInput formControlName="importeSolicitado" type="number" id="numInvestigadores"
+            placeholder="{{'csp.proyecto-socio.importe-solicitado' | translate}}">
+          <mat-error *ngIf="formGroup.controls.importeSolicitado.errors?.min">
+            {{'error.min.entity' | translate:msgParamImporteSolicitadoEntity}}
+          </mat-error>
+          <mat-error *ngIf="formGroup.controls.importeSolicitado.errors?.max">
+            {{'error.max.entity' | translate:msgParamImporteSolicitadoEntity}}
+          </mat-error>
+        </mat-form-field>
+      </div>
+      <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
+        [fxFlexOrder]="fxFlexProperties.order">
+        <mat-form-field fxFill>
+          <mat-label>{{'csp.proyecto-socio.importe-presupuestado' | translate}}</mat-label>
+          <input matInput formControlName="importePresupuestado" type="number" id="numInvestigadores"
+            placeholder="{{'csp.proyecto-socio.importe-presupuestado' | translate}}">
+          <mat-error *ngIf="formGroup.controls.importePresupuestado.errors?.min">
+            {{'error.min.entity' | translate:msgParamImportePresupuestadoEntity}}
+          </mat-error>
+          <mat-error *ngIf="formGroup.controls.importePresupuestado.errors?.max">
+            {{'error.max.entity' | translate:msgParamImportePresupuestadoEntity}}
+          </mat-error>
+        </mat-form-field>
+      </div>
+    </div>
+    <div class="fieldset-form">
+      {{'title.csp.proyecto-socio.periodo-participacion-previsto' | translate}}
+    </div>
+    <div [fxLayout.xs]="fxLayoutProperties.xs" [fxLayout]="fxLayoutProperties.layout"
+      [fxLayoutGap]="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
+      <!-- Mes inicial -->
+      <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
+        [fxFlexOrder]="fxFlexProperties.order">
+        <mat-form-field fxFill>
+          <mat-label>{{'csp.proyecto-socio.mes-inicio' | translate}}</mat-label>
+          <input matInput formControlName="mesInicio" type="number" id="mesInicio"
+            placeholder="{{'csp.proyecto-socio.mes-inicio' | translate}}">
+          <mat-error *ngIf="formGroup.controls.mesInicio.errors?.min">
+            {{'error.min.mes-desde' | translate}}
+          </mat-error>
+          <mat-error *ngIf="formGroup.controls.mesInicio.errors?.range">
+            {{'error.overlapping.record.entity' | translate:msgParamEntity}}
+          </mat-error>
+          <mat-error *ngIf="formGroup.controls.mesInicio.errors?.max">
+            {{'error.max.entity' | translate:msgParamMesInicioEntity}}
+          </mat-error>
+        </mat-form-field>
+      </div>
+
+      <!-- Mes final -->
+      <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
+        [fxFlexOrder]="fxFlexProperties.order">
+        <mat-form-field fxFill>
+          <mat-label>{{'csp.proyecto-socio.mes-fin' | translate}}</mat-label>
+          <input matInput formControlName="mesFin" type="number" id="mesFin"
+            placeholder="{{'csp.proyecto-socio.mes-fin' | translate}}">
+          <mat-error *ngIf="formGroup.controls.mesFin.errors?.min">
+            {{'error.min.entity' | translate:msgParamMesFinEntity}}
+          </mat-error>
+          <mat-error *ngIf="formGroup.controls.mesFin.errors?.after">
+            {{'error.after.mes-final' | translate}}
+          </mat-error>
+          <mat-error *ngIf="formGroup.controls.mesFin.errors?.range">
+            {{'error.overlapping.record.entity' | translate:msgParamEntity}}
+          </mat-error>
+          <mat-error *ngIf="formGroup.controls.mesFin.errors?.max">
+            {{'error.max.entity' | translate:msgParamMesFinEntity}}
+          </mat-error>
+        </mat-form-field>
+      </div>
+    </div>
+  </form>
+</section>

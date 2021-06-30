@@ -1,0 +1,119 @@
+<section>
+  <h2>{{'label.datos-generales' | translate}}</h2>
+  <form [formGroup]="formGroup">
+
+    <!-- Número de prórroga -->
+    <div *ngIf="this.formPart.isEdit()" [fxLayout.xs]="fxLayoutProperties.xs" [fxLayout]="fxLayoutProperties.layout"
+      [fxLayoutGap]="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
+      <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
+        [fxFlexOrder]="fxFlexProperties.order">
+        <mat-form-field fxFill>
+          <mat-label>{{'csp.proyecto-prorroga.numero-prorroga' | translate}}</mat-label>
+          <input matInput formControlName="numProrroga" type="number" id="numProrroga"
+            placeholder="{{'csp.proyecto-prorroga.numero-prorroga' | translate}}">
+        </mat-form-field>
+      </div>
+    </div>
+
+
+    <!-- Fecha de concesión -->
+    <div [fxLayout.xs]="fxLayoutProperties.xs" [fxLayout]="fxLayoutProperties.layout"
+      [fxLayoutGap]="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
+      <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
+        [fxFlexOrder]="fxFlexProperties.order">
+        <mat-form-field fxFill>
+          <mat-label>{{'csp.proyecto-prorroga.fecha-concesion'|
+            translate}}</mat-label>
+          <input matInput [ngxMatDatetimePicker]="pickerFechaConcesion" formControlName="fechaConcesion" required>
+          <mat-datepicker-toggle class="fechaIcon" matSuffix [for]="pickerFechaConcesion"></mat-datepicker-toggle>
+          <ngx-mat-datetime-picker #pickerFechaConcesion showSeconds="true" [defaultTime]="[0,0,0]">
+          </ngx-mat-datetime-picker>
+          <mat-error *ngIf="formGroup.controls.fechaConcesion.errors?.after">
+            {{'error.csp.proyecto-seguimiento-cientifico.fecha-concesion.after'
+            |
+            translate}}
+          </mat-error>
+        </mat-form-field>
+      </div>
+    </div>
+
+    <!-- Tipo de prórroga -->
+    <div [fxLayout.xs]="fxLayoutProperties.xs" [fxLayout]="fxLayoutProperties.layout"
+      [fxLayoutGap]="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
+      <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
+        [fxFlexOrder]="fxFlexProperties.order">
+        <mat-form-field>
+          <mat-label>{{'csp.prorroga.tipoProrroga' | translate}}</mat-label>
+          <mat-select matNativeControl formControlName="tipo" required>
+            <mat-option *ngFor="let tipo of TIPO_MAP | keyvalue" [value]="tipo.key">
+              {{ tipo.value | translate}}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+    </div>
+
+    <!-- Fecha de fin -->
+    <div [fxLayout.xs]="fxLayoutProperties.xs" [fxLayout]="fxLayoutProperties.layout"
+      [fxLayoutGap]="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
+      <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
+        [fxFlexOrder]="fxFlexProperties.order">
+        <mat-form-field fxFill>
+          <mat-label>{{'csp.proyecto-prorroga.fecha-fin' |
+            translate}}</mat-label>
+          <input matInput [ngxMatDatetimePicker]="pickerFechaFin" formControlName="fechaFin"
+            [required]="FormGroupUtil.hasValidator(this.formGroup,'fechaFin','required')">
+          <mat-datepicker-toggle class="fechaIcon" matSuffix [for]="pickerFechaFin"></mat-datepicker-toggle>
+          <ngx-mat-datetime-picker #pickerFechaFin showSeconds="true" [defaultTime]="[23,59,59]">
+          </ngx-mat-datetime-picker>
+          <mat-error *ngIf="formGroup.controls.fechaFin.errors?.after">
+            {{'error.after.fecha-fin-proyecto' | translate}}
+          </mat-error>
+          <mat-error *ngIf="formGroup.controls.fechaFin.errors?.afterDefinitiva">
+            {{'error.after.fecha-fin-definitiva-proyecto' | translate}}
+          </mat-error>
+        </mat-form-field>
+      </div>
+    </div>
+
+    <!-- Importe -->
+    <div [fxLayout.xs]="fxLayoutProperties.xs" [fxLayout]="fxLayoutProperties.layout"
+      [fxLayoutGap]="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
+      <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
+        [fxFlexOrder]="fxFlexProperties.order">
+        <mat-form-field fxFill>
+          <mat-label>{{'csp.proyecto-prorroga.importe' | translate}}</mat-label>
+          <input matInput formControlName="importe" type="number"
+            placeholder="{{'csp.proyecto-prorroga.importe' | translate}}"
+            [required]="FormGroupUtil.hasValidator(this.formGroup,'importe','required')" min="0">
+          <mat-error *ngIf="formGroup.controls.importe.errors?.min">
+            {{'error.min.digit' | translate}}
+          </mat-error>
+          <mat-error *ngIf="formGroup.controls.importe.errors?.max">
+            {{'error.max.digit' | translate}}
+          </mat-error>
+        </mat-form-field>
+      </div>
+    </div>
+
+    <!-- Observaciones -->
+    <div [fxLayout.xs]="fxLayoutProperties.xs" [fxLayout]="fxLayoutProperties.layout"
+      [fxLayoutGap]="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
+
+      <div [fxFlex.sm]="fxFlexProperties3.sm" [fxFlex.md]="fxFlexProperties3.md" [fxFlex.gt-md]="fxFlexProperties3.gtMd"
+        [fxFlexOrder]="fxFlexProperties3.order">
+        <mat-form-field fxFill>
+          <mat-label>{{'csp.proyecto-prorroga.observaciones' | translate}}</mat-label>
+          <textarea matInput formControlName="observaciones" type="text" id="observaciones"
+            placeholder="{{'csp.proyecto-prorroga.observaciones' | translate}}">
+                      </textarea>
+          <mat-error *ngIf="formGroup.controls.observaciones.errors?.maxlength">
+            {{'error.maxlength.entity' | translate:msgParamOvservaciones}}
+          </mat-error>
+        </mat-form-field>
+
+      </div>
+    </div>
+
+  </form>
+</section>

@@ -1,0 +1,23 @@
+@import "~@angular/material/theming";
+
+.mat-select-trigger {
+  cursor: default;
+
+  .mat-select-value {
+    .mat-input-element {
+      cursor: default;
+    }
+    .mat-select-placeholder {
+      @include user-select(none);
+    }
+  }
+
+  .icon-wrapper {
+    cursor: pointer;
+    color: rgba(0, 0, 0, 0.54);
+    &.disabled {
+      cursor: default;
+      color: rgba(0, 0, 0, 0.38);
+    }
+  }
+}

@@ -1,0 +1,13 @@
+@import "colors.scss";
+
+.error-snack-bar {
+  background-color: map-get($custom-colors, danger);
+  color: map-get($custom-colors, white);
+  text-align: center;
+}
+
+.success-snack-bar {
+  background-color: map-get($custom-colors, success);
+  color: map-get($custom-colors, white);
+  text-align: center;
+}

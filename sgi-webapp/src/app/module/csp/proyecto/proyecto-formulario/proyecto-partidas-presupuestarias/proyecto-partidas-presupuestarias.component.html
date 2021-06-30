@@ -1,0 +1,82 @@
+<section>
+  <h2>{{'menu.csp.proyectos.configuracion-economica' | translate}} - {{'csp.proyecto-partida-presupuestaria' |
+    translate:MSG_PARAMS.CARDINALIRY.PLURAL}}</h2>
+
+  <table class="mat-elevation-z8" mat-table [dataSource]="dataSource" matSort matSortActive="codigo"
+    matSortDirection="asc" matSortDisableClear>
+
+    <!-- Icono ayuda -->
+    <ng-container matColumnDef="helpIcon">
+      <th mat-header-cell *matHeaderCellDef>
+      </th>
+      <td mat-cell *matCellDef="let element">
+        <mat-icon *ngIf="element.help" class="{{element.help.class}}" matTooltip="{{element.help.tooltip | translate}}">
+          help</mat-icon>
+      </td>
+    </ng-container>
+
+    <!-- Codigo Column -->
+    <ng-container matColumnDef="codigo">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>
+        {{'csp.proyecto-partida-presupuestaria.codigo' | translate}}
+      </th>
+      <td mat-cell *matCellDef="let element">
+        {{element.codigo}}
+      </td>
+    </ng-container>
+
+    <!-- Tipo Column -->
+    <ng-container matColumnDef="tipoPartida">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>
+        {{'csp.proyecto-partida-presupuestaria.tipo-partida' | translate}}
+      </th>
+      <td mat-cell *matCellDef="let element">
+        {{TIPO_PARTIDA_MAP.get(element.tipoPartida) | translate}}
+      </td>
+    </ng-container>
+
+    <!-- Descripcion Column -->
+    <ng-container matColumnDef="descripcion">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>
+        {{'csp.proyecto-partida-presupuestaria.descripcion' | translate}}
+      </th>
+      <td mat-cell *matCellDef="let element">
+        {{element.descripcion}}
+      </td>
+    </ng-container>
+
+    <!-- Acciones Column -->
+    <ng-container matColumnDef="acciones">
+      <th mat-header-cell *matHeaderCellDef> {{'label.actions' | translate}} </th>
+      <td mat-cell *matCellDef="let element; let i = index">
+        <ng-container *sgiHasAuthorityForAnyUO="'CSP-PRO-E'">
+          <button mat-button matTooltip="{{'btn.edit' | translate}}"
+            (click)="openModal(element.partidaPresupuestaria, element.convocatoriaPartidaPresupuestaria, i)">
+            <mat-icon color="primary">border_color</mat-icon>
+          </button>
+        </ng-container>
+        <ng-container *sgiHasAuthorityForAnyUO="'CSP-PRO-E'">
+          <button *ngIf="element.partidaPresupuestaria" mat-button matTooltip="{{'btn.delete' | translate}}"
+            (click)="deletePartidaPresupuestaria(element.partidaPresupuestaria)">
+            <mat-icon color="warn">highlight_off</mat-icon>
+          </button>
+        </ng-container>
+      </td>
+    </ng-container>
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+
+  </table>
+
+  <mat-paginator [pageSizeOptions]="elementosPagina" showFirstLastButtons>
+  </mat-paginator>
+
+  <ng-container *sgiHasAuthorityForAnyUO="'CSP-PRO-E'">
+    <div class="separation-button">
+      <button color="three" mat-button mat-raised-button (click)="openModal(null)">
+        <mat-icon color="accent">add_circle</mat-icon>
+        {{ 'btn.add.entity' | translate:msgParamEntity }}
+      </button>
+    </div>
+  </ng-container>
+</section>

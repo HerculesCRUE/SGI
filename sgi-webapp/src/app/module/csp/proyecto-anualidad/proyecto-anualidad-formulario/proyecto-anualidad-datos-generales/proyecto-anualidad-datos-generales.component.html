@@ -1,0 +1,66 @@
+<section>
+  <h2>{{'label.datos-generales' | translate}}</h2>
+  <form [formGroup]="formGroup">
+
+    <!-- Anualidad -->
+    <div [fxLayout]="fxLayoutProperties.layout" [fxLayoutAlign]="fxLayoutProperties.layoutAlign"
+      *ngIf="!this.formPart.isAnualidadGenerica">
+      <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
+        [fxFlexOrder]="fxFlexProperties.order">
+        <mat-form-field fxFill>
+          <mat-label>{{'csp.proyecto-presupuesto.anualidad' |
+            translate:MSG_PARAMS.CARDINALIRY.SINGULAR}}</mat-label>
+          <input matInput formControlName="anualidad" type="number"
+            placeholder="{{'csp.proyecto-presupuesto.anualidad' | translate:MSG_PARAMS.CARDINALIRY.SINGULAR}}">
+          <mat-error *ngIf="formGroup.controls.anualidad.errors?.duplicate">
+            {{'error.duplicate.anualidad' | translate}}
+          </mat-error>
+        </mat-form-field>
+      </div>
+    </div>
+
+    <!-- Fecha de Inicio -->
+    <div [fxLayout]="fxLayoutProperties.layout" [fxLayoutAlign]="fxLayoutProperties.layoutAlign">
+      <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
+        [fxFlexOrder]="fxFlexProperties.order">
+        <mat-form-field fxFill>
+          <mat-label>{{'csp.proyecto-anualidad.fecha-inicio' | translate}}</mat-label>
+          <input matInput [ngxMatDatetimePicker]="pickerFechaInicio" formControlName="fechaInicio">
+          <mat-datepicker-toggle class="fechaIcon" matSuffix [for]="pickerFechaInicio"></mat-datepicker-toggle>
+          <ngx-mat-datetime-picker #pickerFechaInicio showSeconds="true" [defaultTime]="[0,0,0]">
+          </ngx-mat-datetime-picker>
+        </mat-form-field>
+
+      </div>
+
+      <!-- Fecha de fin -->
+      <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
+        [fxFlexOrder]="fxFlexProperties.order">
+        <mat-form-field fxFill>
+          <mat-label>{{'csp.proyecto-anualidad.fecha-fin' | translate}}</mat-label>
+          <input matInput [ngxMatDatetimePicker]="pickerFechaFin" formControlName="fechaFin">
+          <mat-datepicker-toggle class="fechaIcon" matSuffix [for]="pickerFechaFin"></mat-datepicker-toggle>
+          <ngx-mat-datetime-picker #pickerFechaFin showSeconds="true" [defaultTime]="[23,59,59]">
+          </ngx-mat-datetime-picker>
+          <mat-error *ngIf="formGroup.controls.fechaFin.errors?.after">
+            {{'error.after.fecha-fin' | translate}}
+          </mat-error>
+
+        </mat-form-field>
+      </div>
+    </div>
+
+    <div [fxLayout]="fxLayoutProperties.layout" [fxLayoutAlign]="fxLayoutProperties.layoutAlign">
+      <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
+        [fxFlexOrder]="fxFlexProperties.order">
+        <!-- Presupuestar -->
+        <mat-form-field class="input-form">
+          <mat-label>{{'csp.proyecto-anualidad.presupuestar' | translate}}
+          </mat-label>
+          <sgi-select-boolean formControlName="presupuestar" required></sgi-select-boolean>
+        </mat-form-field>
+      </div>
+    </div>
+
+  </form>
+</section>

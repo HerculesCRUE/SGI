@@ -1,0 +1,35 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:pro="http://www.liquibase.org/xml/ns/pro" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-3.8.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+  <changeSet context="!unit-test AND !integration-test" author="master" id="0000000000000-unidad">
+    <insert tableName="unidad">
+      <column name="id" valueSequenceNext="unidad_seq" />
+      <column name="nombre" value="OTRI" />
+      <column name="acronimo" value="OTRI" />
+      <column name="descripcion" value="Oficina de Transferencia de Resultados de Investigación" />
+      <column name="activo" value="true" />
+    </insert>
+    <insert tableName="unidad">
+      <column name="id" valueSequenceNext="unidad_seq" />
+      <column name="nombre" value="OPE" />
+      <column name="acronimo" value="OPE" />
+      <column name="descripcion" value="Oficina de Proyectos Europeos" />
+      <column name="activo" value="true" />
+    </insert>
+    <insert tableName="unidad">
+      <column name="id" valueSequenceNext="unidad_seq" />
+      <column name="nombre" value="UGI" />
+      <column name="acronimo" value="UGI" />
+      <column name="descripcion" value="Unidad de Gestión de la Investigación" />
+      <column name="activo" value="true" />
+    </insert>
+    <insert tableName="unidad">
+      <column name="id" valueSequenceNext="unidad_seq" />
+      <column name="nombre" value="CAT" />
+      <column name="acronimo" value="CAT" />
+      <column name="descripcion" value="Centro de Apoyo Tecnológico" />
+      <column name="activo" value="false" />
+    </insert>
+  </changeSet>
+
+</databaseChangeLog>

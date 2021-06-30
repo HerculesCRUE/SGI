@@ -1,0 +1,55 @@
+<div class="sgi-dialog-header" fxLayout="row" fxLayoutGap="20px">
+  <span fxFlexAlign="center" mat-mat-dialog-title role="heading" aria-level="3" fxFlex>{{title}}</span>
+  <button fxFlex="nogrow" mat-icon-button mat-dialog-close>
+    <mat-icon class="close-icon">close</mat-icon>
+  </button>
+</div>
+<mat-dialog-content>
+  <form [formGroup]="formGroup">
+    <!-- URL -->
+    <div [fxLayout]="fxLayoutProperties.layout" [fxLayoutAlign]="fxLayoutProperties.layoutAlign">
+      <mat-form-field fxFill>
+        <mat-label>{{'csp.convocatoria-enlace.url' | translate}}
+        </mat-label>
+        <input matInput formControlName="url" type="text" required
+          placeholder="{{'csp.convocatoria-enlace.url' | translate}}">
+        <mat-error *ngIf="formGroup.controls.url.errors?.required">
+          {{ 'error.required.entity' | translate:msgParamUrlEntity }}
+        </mat-error>
+        <mat-error *ngIf="formGroup.get('url').errors?.maxlength">
+          {{ 'error.maxlength.entity' | translate:msgParamUrlEntity }}
+        </mat-error>
+        <mat-error *ngIf="formGroup.get('url').errors?.notAllowed">
+          {{'error.csp.convocatoria-enlace.url.duplicate' | translate}}
+        </mat-error>
+      </mat-form-field>
+    </div>
+    <!-- Descripción -->
+    <div [fxLayout]="fxLayoutProperties.layout" [fxLayoutAlign]="fxLayoutProperties.layoutAlign">
+      <mat-form-field fxFill>
+        <mat-label>{{'csp.convocatoria-enlace.descripcion' | translate}}
+        </mat-label>
+        <textarea matInput formControlName="descripcion" type="text"
+          placeholder="{{'csp.convocatoria-enlace.descripcion' | translate}}">
+             </textarea>
+        <mat-error *ngIf="formGroup.get('descripcion').errors?.maxlength">
+          {{ 'error.maxlength.entity' | translate:msgParamDescripcionEntity }}
+        </mat-error>
+      </mat-form-field>
+    </div>
+    <!-- Tipo de enlace -->
+    <div [fxLayout]="fxLayoutProperties.layout" [fxLayoutAlign]="fxLayoutProperties.layoutAlign">
+      <mat-form-field fxFill>
+        <mat-label>{{'csp.convocatoria-enlace.tipo-enlace' | translate}}</mat-label>
+        <sgi-select-entity formControlName="tipoEnlace" [options]="tiposEnlace$ |async"></sgi-select-entity>
+      </mat-form-field>
+    </div>
+  </form>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <button color="accent" (click)="saveOrUpdate()" mat-raised-button type="submit" *ngIf="data.canEdit">
+    <mat-icon class="save-icon">save</mat-icon>{{textSaveOrUpdate | translate}}
+  </button>
+  <button class="link-cancelar" mat-button type="button" mat-dialog-close>{{'btn.cancel' |
+    translate}}</button>
+</mat-dialog-actions>

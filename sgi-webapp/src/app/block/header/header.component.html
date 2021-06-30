@@ -1,0 +1,46 @@
+<header class="navbar header">
+  <div fxLayout.xs="row wrap" fxLayout="row wrap">
+    <!-- Columna menu movil (xs-sm) y logos-->
+    <div class="logos" fxLayoutAlign="start center" fxFlex="initial" fxLayoutGap="5px">
+      <img src="assets/img/logo_ministerio.png" srcset="assets/img/logo_ministerio@2x.png 2x,
+                     assets/img/logo_ministerio@3x.png 3x" class="logo-ministerio">
+      <img src="assets/img/logo_feder.png" srcset="assets/img/logo_feder@2x.png 2x,
+                     assets/img/logo_feder@3x.png 3x" class="logo-feder">
+      <img src="assets/img/logo_ue.png" srcset="assets/img/logo_ue@2x.png 2x,
+                     assets/img/logo_ue@3x.png 3x" class="logo-ue">
+    </div>
+    <div class="select-modulo" id="seleccionarModulo" fxLayoutAlign="center center" fxFlex fxHide.xs fxHide.sm>
+      <h2 *ngIf="module !== Module.INV">{{module?.title | translate}}</h2>
+    </div>
+
+    <!-- FIN Columna menu movil (xs-sm) y logos-->
+    <div fxFlex="nogrow">
+      <!-- navbar movil (xs-sm) -->
+      <div fxHide fxShow.xs fxLayoutAlign="flex-end" class="icons-options devices">
+        <button mat-icon-button [matMenuTriggerFor]="menu">
+          <mat-icon>more_vert</mat-icon>
+        </button>
+        <mat-menu class="mat-menu" #menu="matMenu">
+          <sgi-navbar class="icons-responsive"></sgi-navbar>
+        </mat-menu>
+      </div>
+      <!-- FIN navbar (xs-sm) -->
+
+      <!-- navbar pantallas grandes -->
+      <div fxHide fxShow.sm>
+        <div fxLayoutAlign="flex-end" class="icons-options desktop">
+          <sgi-navbar class="inline"></sgi-navbar>
+        </div>
+      </div>
+      <!-- FIN navbar pantallas grandes -->
+
+      <!-- Menu secundario pantallas grandes (md,lg,xl) -->
+      <div fxHide fxShow.md fxShow.lg fxShow.xl>
+        <div fxLayoutAlign="flex-end" class="icons-options desktop">
+          <sgi-navbar class="inline"></sgi-navbar>
+        </div>
+      </div>
+    </div>
+    <!-- FIN Menu secundario pantallas grandes (md,lg,xl) -->
+  </div>
+</header>

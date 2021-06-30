@@ -1,0 +1,20 @@
+<sgi-action [actionService]="actionService">
+  <ng-container menu>
+    <sgi-action-fragment-menu-item [route]="[SEGUIMIENTO_ROUTE_NAMES.MEMORIA]"
+      [title]="'eti.seguimiento.datos-memoria' | translate"
+      [fragment]="actionService.getFragment(actionService.FRAGMENT.MEMORIA)">
+    </sgi-action-fragment-menu-item>
+    <sgi-action-fragment-menu-item [route]="[SEGUIMIENTO_ROUTE_NAMES.DOCUMENTACION]"
+      [title]="'eti.documentacion' | translate"
+      [fragment]="actionService.getFragment(actionService.FRAGMENT.DOCUMENTACION)">
+    </sgi-action-fragment-menu-item>
+    <sgi-action-fragment-menu-item [route]="[SEGUIMIENTO_ROUTE_NAMES.COMENTARIOS]"
+      [title]="'eti.seguimiento.comentario' | translate"
+      [fragment]="actionService.getFragment(actionService.FRAGMENT.COMENTARIOS)">
+    </sgi-action-fragment-menu-item>
+  </ng-container>
+  <ng-container footer>
+    <sgi-action-footer [texto]="textoCrear" [actionService]="actionService">
+    </sgi-action-footer>
+  </ng-container>
+</sgi-action>

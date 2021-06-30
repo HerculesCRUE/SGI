@@ -1,0 +1,102 @@
+<div class="scrollable-panel">
+  <section class="concepto-gasto-listado">
+    <!-- Buscador de conceptos de gasto -->
+    <form class="formulario mat-elevation-z8" [formGroup]=" formGroup" [fxLayout.xs]="fxLayoutProperties.xs"
+      [fxLayout]="fxLayoutProperties.layout" [fxLayoutGap]="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
+
+      <div fxFlex="84%" fxFlex.sm="50%" fxFlex.md="72%" [fxLayout.xs]="fxLayoutProperties.xs"
+        [fxLayout]="fxLayoutProperties.layout" fxLayoutGap="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
+        <!-- Activo -->
+        <ng-container *sgiHasAuthority="'CSP-TGTO-R'">
+          <div class="col">
+            <mat-form-field>
+              <mat-label>{{'label.activo' | translate}}</mat-label>
+              <mat-select matNativeControl formControlName="activo">
+                <mat-option value="todos">{{'label.todos' | translate}}</mat-option>
+                <mat-option value="true">{{'label.si' | translate}}</mat-option>
+                <mat-option value="false">{{'label.no' | translate}}</mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+        </ng-container>
+      </div>
+
+      <!-- botón de buscar-->
+      <div class="buttons-final">
+        <div class="col filter-button">
+          <button color="primary" aria-label="Center Align" mat-raised-button (click)="onSearch()">
+            <mat-icon>search</mat-icon> {{'btn.search'| translate}}
+          </button>
+          <button color="warn" aria-label="Center Align" (click)="onClearFilters()" mat-button>{{'btn.clean'|
+            translate}}
+          </button>
+        </div>
+      </div>
+    </form>
+
+
+    <table mat-table class="mat-elevation-z8 table-unidad" [dataSource]="conceptosGasto$| async" matSort
+      matSortActive="id" matSortDirection="asc" matSortDisableClear>
+      <!-- Nombre -->
+      <ng-container matColumnDef="nombre">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'csp.concepto-gasto.nombre' | translate}}
+        </th>
+        <td mat-cell *matCellDef="let conceptoGasto">{{conceptoGasto.nombre}}</td>
+      </ng-container>
+
+      <!-- Descripción -->
+      <ng-container matColumnDef="descripcion">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'csp.concepto-gasto.descripcion' | translate}}
+        </th>
+        <td mat-cell *matCellDef="let conceptoGasto">{{conceptoGasto.descripcion}}</td>
+      </ng-container>
+
+      <!-- Activo -->
+      <ng-container matColumnDef="activo" *sgiHasAuthority="'CSP-TGTO-R'">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'label.activo' | translate}}
+        </th>
+        <td mat-cell *matCellDef="let conceptoGasto">{{(conceptoGasto.activo ? 'label.si' : 'label.no') | translate}}
+        </td>
+      </ng-container>
+
+      <!-- Acciones -->
+      <ng-container matColumnDef="acciones">
+        <th mat-header-cell *matHeaderCellDef> {{'label.actions' | translate }}
+        </th>
+        <td mat-cell *matCellDef="let conceptoGasto">
+          <ng-container *sgiHasAuthority="'CSP-TGTO-E'">
+            <button mat-button matTooltip="{{'btn.edit' | translate}}" (click)="openModal(conceptoGasto)"
+              *ngIf="conceptoGasto.activo">
+              <mat-icon color="primary">border_color</mat-icon>
+            </button>
+          </ng-container>
+          <ng-container *sgiHasAuthority="'CSP-TGTO-B'">
+            <button *ngIf="conceptoGasto.activo === true" mat-button matTooltip="{{'btn.edit' | translate}}"
+              (click)="deactivateConceptoGasto(conceptoGasto)">
+              <mat-icon color="warn">highlight_off</mat-icon>
+            </button>
+          </ng-container>
+          <ng-container *sgiHasAuthority="'CSP-TGTO-R'">
+            <button *ngIf="conceptoGasto.activo === false" mat-button matTooltip="{{'btn.recover' | translate}}"
+              (click)="activateConceptoGasto(conceptoGasto)">
+              <mat-icon color="accent">add_circle_outline</mat-icon>
+            </button>
+          </ng-container>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="columnas"></tr>
+      <tr mat-row *matRowDef="let row; columns: columnas;"></tr>
+    </table>
+    <mat-paginator [pageSizeOptions]="elementosPagina" [length]="totalElementos" showFirstLastButtons>
+    </mat-paginator>
+    <ng-container *sgiHasAuthority="'CSP-TGTO-C'">
+      <div class="separation-button">
+        <button color="three" aria-label="Center Align" mat-raised-button (click)="openModal()">
+          <mat-icon color="accent">add_circle</mat-icon>
+          {{ 'btn.add.entity' | translate:msgParamEntity }}
+        </button>
+      </div>
+    </ng-container>
+  </section>
+</div>

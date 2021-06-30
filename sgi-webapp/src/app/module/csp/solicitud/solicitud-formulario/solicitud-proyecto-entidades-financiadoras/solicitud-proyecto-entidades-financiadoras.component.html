@@ -1,0 +1,206 @@
+<section class="solicitud-proyecto-entidades-financiadoras">
+
+  <h2>{{'menu.csp.solicitudes.entidades-financiadoras' | translate}}</h2>
+
+  <!-- Entidades financiadoras convocatoria -->
+  <div class="entidades-financiadoras-convocatoria">
+    <mat-label>{{'list.entity' | translate:msgParamConvocatoriaEntity}}</mat-label>
+
+    <table class="mat-elevation-z8 table-entidades-financiadoras-convocatoria" mat-table
+      [dataSource]="dataSourceEntidadesFinanciadorasConvocatoria" matSort
+      #sortEntidadesFinanciadorasConvocatoria="matSort" matSortActive="id" matSortDirection="asc" matSortDisableClear>
+
+      <!-- Nombre Column -->
+      <ng-container matColumnDef="nombre">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>
+          {{'csp.solicitud-entidad-financiadora.nombre' | translate}}
+        </th>
+        <td mat-cell *matCellDef="let element">
+          {{element.empresa?.nombre}}
+        </td>
+      </ng-container>
+
+      <!-- CIF Column -->
+      <ng-container matColumnDef="cif">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>
+          {{'csp.solicitud-entidad-financiadora.cif' | translate}}
+        </th>
+        <td mat-cell *matCellDef="let element">
+          {{element.empresa?.numeroIdentificacion}}
+        </td>
+      </ng-container>
+
+      <!-- Fuente financiacion Column -->
+      <ng-container matColumnDef="fuenteFinanciacion">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>
+          {{'csp.solicitud-entidad-financiadora.fuente-financiacion' | translate}}
+        </th>
+        <td mat-cell *matCellDef="let element">
+          {{element.fuenteFinanciacion?.nombre}}
+        </td>
+      </ng-container>
+
+      <!-- Ambito Column -->
+      <ng-container matColumnDef="ambito">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>
+          {{'csp.solicitud-entidad-financiadora.ambito' | translate}}
+        </th>
+        <td mat-cell *matCellDef="let element">
+          {{element.fuenteFinanciacion?.tipoAmbitoGeografico?.nombre}}
+        </td>
+      </ng-container>
+
+      <!-- Tipo financiacion Column -->
+      <ng-container matColumnDef="tipoFinanciacion">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>
+          {{'csp.solicitud-entidad-financiadora.tipo-financiacion' | translate}}
+        </th>
+        <td mat-cell *matCellDef="let element">
+          {{element.tipoFinanciacion?.nombre}}
+        </td>
+      </ng-container>
+
+      <!-- Porcentaje financiacion Column -->
+      <ng-container matColumnDef="porcentajeFinanciacion">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>
+          {{'csp.solicitud-entidad-financiadora.porcentaje-financiacion' | translate}}
+        </th>
+        <td mat-cell *matCellDef="let element">
+          {{element.porcentajeFinanciacion}}
+        </td>
+      </ng-container>
+
+      <!-- Importe financiacion Column -->
+      <ng-container matColumnDef="importeFinanciacion">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>
+          {{'csp.solicitud-entidad-financiadora.importe-financiacion' | translate}}
+        </th>
+        <td mat-cell *matCellDef="let element">
+          {{element.importeFinanciacion}}
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumnsEntidadesFinanciadorasConvocatoria"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumnsEntidadesFinanciadorasConvocatoria;"></tr>
+    </table>
+    <mat-paginator #paginatorEntidadesFinanciadorasConvocatoria [pageSizeOptions]="elementosPagina"
+      showFirstLastButtons>
+    </mat-paginator>
+
+  </div>
+
+  <hr />
+
+  <!-- Entidades financiadoras solicitud -->
+  <div class="entidades-financiadoras-ajenas">
+    <mat-label>{{'list.entity' | translate:msgParamAjenaEntity}}</mat-label>
+
+    <table class="mat-elevation-z8 table-entidades-financiadoras-ajenas" mat-table
+      [dataSource]="dataSourceEntidadesFinanciadorasAjenas" matSort #sortEntidadesFinanciadorasAjenas="matSort"
+      matSortActive="id" matSortDirection="asc" matSortDisableClear>
+
+      <!-- Nombre Column -->
+      <ng-container matColumnDef="nombre">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>
+          {{'csp.solicitud-entidad-financiadora.nombre' | translate}}
+        </th>
+        <td mat-cell *matCellDef="let wrapper">
+          {{wrapper.value.empresa?.nombre}}
+        </td>
+      </ng-container>
+
+      <!-- CIF Column -->
+      <ng-container matColumnDef="cif">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>
+          {{'csp.solicitud-entidad-financiadora.cif' | translate}}
+        </th>
+        <td mat-cell *matCellDef="let wrapper">
+          {{wrapper.value.empresa?.numeroIdentificacion}}
+        </td>
+      </ng-container>
+
+      <!-- Fuente financiacion Column -->
+      <ng-container matColumnDef="fuenteFinanciacion">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>
+          {{'csp.solicitud-entidad-financiadora.fuente-financiacion' | translate}}
+        </th>
+        <td mat-cell *matCellDef="let wrapper">
+          {{wrapper.value.fuenteFinanciacion?.nombre}}
+        </td>
+      </ng-container>
+
+      <!-- Ambito Column -->
+      <ng-container matColumnDef="ambito">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>
+          {{'csp.solicitud-entidad-financiadora.ambito' | translate}}
+        </th>
+        <td mat-cell *matCellDef="let wrapper">
+          {{wrapper.value.fuenteFinanciacion?.tipoAmbitoGeografico?.nombre}}
+        </td>
+      </ng-container>
+
+      <!-- Tipo financiacion Column -->
+      <ng-container matColumnDef="tipoFinanciacion">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>
+          {{'csp.solicitud-entidad-financiadora.tipo-financiacion' | translate}}
+        </th>
+        <td mat-cell *matCellDef="let wrapper">
+          {{wrapper.value.tipoFinanciacion?.nombre}}
+        </td>
+      </ng-container>
+
+      <!-- Porcentaje financiacion Column -->
+      <ng-container matColumnDef="porcentajeFinanciacion">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>
+          {{'csp.solicitud-entidad-financiadora.porcentaje-financiacion' | translate}}
+        </th>
+        <td mat-cell *matCellDef="let wrapper">
+          {{wrapper.value.porcentajeFinanciacion}}
+        </td>
+      </ng-container>
+
+      <!-- Importe financiacion Column -->
+      <ng-container matColumnDef="importeFinanciacion">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>
+          {{'csp.solicitud-entidad-financiadora.importe-financiacion' | translate}}
+        </th>
+        <td mat-cell *matCellDef="let wrapper">
+          {{wrapper.value.importeFinanciacion}}
+        </td>
+      </ng-container>
+
+      <!-- Acciones Column -->
+      <ng-container matColumnDef="acciones">
+        <th mat-header-cell *matHeaderCellDef> {{'label.actions' | translate}} </th>
+        <td mat-cell *matCellDef="let wrapper">
+          <ng-container>
+            <button *ngIf="this.formPart.readonly" mat-button matTooltip="{{'btn.view' | translate}}"
+              (click)="openModal(wrapper)">
+              <mat-icon color="primary">visibility</mat-icon>
+            </button>
+            <button *ngIf="!this.formPart.readonly" mat-button matTooltip="{{'btn.edit' | translate}}"
+              (click)="openModal(wrapper)">
+              <mat-icon color="primary">border_color</mat-icon>
+            </button>
+            <button *ngIf="!this.formPart.readonly" mat-button matTooltip="{{'btn.delete' | translate}}"
+              (click)="deleteEntidadFinanciadora(wrapper)">
+              <mat-icon color="warn">highlight_off</mat-icon>
+            </button>
+          </ng-container>
+        </td>
+      </ng-container>
+      <tr mat-header-row *matHeaderRowDef="displayedColumnsEntidadesFinanciadorasAjenas"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumnsEntidadesFinanciadorasAjenas;"></tr>
+    </table>
+    <mat-paginator #paginatorEntidadesFinanciadorasAjenas [pageSizeOptions]="elementosPagina" showFirstLastButtons>
+    </mat-paginator>
+
+    <div class="separation-button" *ngIf="!formPart.readonly">
+      <button color="three" mat-button mat-raised-button (click)="openModal()">
+        <mat-icon color="accent">add_circle</mat-icon>
+        {{ 'btn.add.entity' | translate:msgParamEntity }}
+      </button>
+    </div>
+  </div>
+
+</section>

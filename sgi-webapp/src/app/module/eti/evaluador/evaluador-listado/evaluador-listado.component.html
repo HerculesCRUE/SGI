@@ -1,0 +1,137 @@
+<!-- Evaluadores listado -->
+<div class="scrollable-panel-with-footer">
+  <section class="evaluador-listado">
+
+    <!-- Buscador de comités -->
+
+    <form class="formulario mat-elevation-z8" [formGroup]="formGroup" [fxLayout.xs]="fxLayoutProperties.xs"
+      [fxLayout]="fxLayoutProperties.layout" fxLayoutGap="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
+
+      <div fxFlex="85%" fxFlex.sm="50%" fxFlex.md="73%" [fxLayout.xs]="fxLayoutProperties.xs"
+        [fxLayout]="fxLayoutProperties.layout" fxLayoutGap="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
+        <!--Persona-->
+        <div class="col">
+          <mat-form-field fxFill>
+            <mat-label>{{'title.eti.search.solicitante' | translate}}</mat-label>
+            <sgi-select-persona placeholder="{{'title.eti.search.solicitante' | translate}}"
+              formControlName="solicitante" [tipoColectivo]="tipoColectivoEvaluador">
+            </sgi-select-persona>
+          </mat-form-field>
+        </div>
+
+        <!-- Comité -->
+        <div class="col">
+          <mat-form-field class="input-form">
+            <mat-label>{{'label.eti.comite' | translate}}</mat-label>
+            <input type="text" [placeholder]="'label.eti.comite' | translate" arial-label="Number" matInput
+              formControlName="comite" [matAutocomplete]="autocompleteComite">
+            <mat-autocomplete #autocompleteComite="matAutocomplete" [displayWith]="getComite">
+              <mat-option *ngFor="let comite of filteredComites | async" [value]="comite">
+                {{comite.comite}}
+              </mat-option>
+            </mat-autocomplete>
+          </mat-form-field>
+        </div>
+
+        <!-- Estado -->
+        <div class="col checkbox">
+          <mat-checkbox color="primary" formControlName="estado" type="text" id="estado">
+            {{'label.activo' | translate}}</mat-checkbox>
+        </div>
+      </div>
+
+      <div class="buttons-final">
+        <div class="col filter-button">
+          <button color="primary" aria-label="Center Align" mat-raised-button (click)="onSearch()">
+            <mat-icon>search</mat-icon> {{'btn.search'| translate}}
+          </button>
+          <button color="warn" aria-label="Center Align" (click)="onClearFilters()" mat-button>{{'btn.clean'|
+            translate}}
+          </button>
+        </div>
+      </div>
+
+    </form>
+
+    <table class="mat-elevation-z8 table-evaluador" mat-table [dataSource]="evaluadores$ | async" matSort
+      matSortActive="id" matSortDirection="asc" matSortDisableClear>
+
+      <!-- Nombre y apellidos persona -->
+      <ng-container matColumnDef="nombre">
+        <th mat-header-cell *matHeaderCellDef> {{'eti.evaluador.conflicto-interes.persona' | translate}}
+        </th>
+        <td mat-cell *matCellDef="let evaluador">
+          {{evaluador.persona?.nombre}} {{evaluador.persona?.apellidos}}
+        </td>
+      </ng-container>
+
+      <!-- Numero documento -->
+      <ng-container matColumnDef="numeroDocumento">
+        <th mat-header-cell *matHeaderCellDef>
+          {{'eti.evaluador.numero-documento' | translate}}
+        </th>
+        <td mat-cell *matCellDef="let evaluador">
+          {{evaluador.persona?.numeroDocumento}}</td>
+      </ng-container>
+
+      <!-- Comite Column -->
+      <ng-container matColumnDef="comite">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'label.eti.comite' | translate}} </th>
+        <td mat-cell *matCellDef="let evaluador"> {{evaluador.comite.comite}} </td>
+      </ng-container>
+
+      <!-- Cargo comite Column -->
+      <ng-container matColumnDef="cargoComite">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'eti.evaluador.cargo-comite' | translate}} </th>
+        <td mat-cell *matCellDef="let evaluador"> {{evaluador.cargoComite?.nombre}} </td>
+      </ng-container>
+
+      <!-- Fecha alta Column -->
+      <ng-container matColumnDef="fechaAlta">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'eti.evaluador.fecha-alta' | translate}} </th>
+        <td mat-cell *matCellDef="let evaluador"> {{evaluador.fechaAlta | luxon: 'shortDate'}} </td>
+      </ng-container>
+
+      <!-- Fecha baja Column -->
+      <ng-container matColumnDef="fechaBaja">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'eti.evaluador.fecha-baja' | translate}} </th>
+        <td mat-cell *matCellDef="let evaluador"> {{evaluador.fechaBaja | luxon: 'shortDate'}} </td>
+      </ng-container>
+
+      <!-- Estado activo/inactivo Column -->
+      <ng-container matColumnDef="estado">
+        <th mat-header-cell *matHeaderCellDef> {{'eti.evaluador.estado' | translate}}
+        </th>
+        <td mat-cell *matCellDef="let evaluador">
+          {{evaluador.activo === true ? ('label.activo' | translate) :
+          ('eti.evaluador.estado.inactivo' | translate)}}
+        </td>
+      </ng-container>
+
+      <!-- Acciones Column -->
+      <ng-container matColumnDef="acciones" class="acciones">
+        <th mat-header-cell *matHeaderCellDef> {{'label.actions' | translate}} </th>
+        <td mat-cell *matCellDef="let evaluador;let i=index;">
+          <ng-container *sgiHasAuthorityForAnyUO="'ETI-EVR-E'">
+            <button mat-button [routerLink]="[evaluador.id]" matTooltip="{{'btn.edit' | translate}}">
+              <mat-icon color="primary">border_color</mat-icon>
+            </button>
+            <button mat-button *sgiHasAuthorityForAnyUO="'ETI-EVR-B'" matTooltip="{{'btn.delete' | translate}}"
+              (click)="borrar(evaluador.id, $event)">
+              <mat-icon color="warn">highlight_off</mat-icon>
+            </button>
+          </ng-container>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+    </table>
+
+    <mat-paginator [pageSizeOptions]="elementosPagina" [length]="totalElementos" showFirstLastButtons>
+    </mat-paginator>
+  </section>
+</div>
+<sgi-footer-crear *sgiHasAuthorityForAnyUO="'ETI-EVR-C'" [texto]="textoCrear" [route]="ROUTE_NAMES.NEW">
+</sgi-footer-crear>
+<!-- FIN evaluadores listado-->

@@ -1,0 +1,82 @@
+<div class="sgi-dialog-header" fxLayout="row" fxLayoutGap="20px">
+  <span fxFlexAlign="center" mat-mat-dialog-title role="heading" aria-level="3" fxFlex>{{title}}</span>
+  <button fxFlex="nogrow" mat-icon-button mat-dialog-close>
+    <mat-icon class="close-icon">close</mat-icon>
+  </button>
+</div>
+<mat-dialog-content>
+  <form [formGroup]="formGroup">
+    <!-- Nombre -->
+    <div [fxLayout]="fxLayoutProperties.layout" [fxLayoutAlign]="fxLayoutProperties.layoutAlign">
+      <mat-form-field>
+        <mat-label>{{'csp.fuente-financiacion.nombre' | translate}}</mat-label>
+        <input matInput formControlName="nombre" type="text" id="nombre"
+          placeholder="{{'csp.fuente-financiacion.nombre' | translate}}" required>
+        <mat-error *ngIf="formGroup.controls.nombre.errors?.required">
+          {{'error.required.entity' | translate:msgParamNombreEntity}}
+        </mat-error>
+      </mat-form-field>
+    </div>
+    <!-- Descripción -->
+    <div [fxLayout]="fxLayoutProperties.layout" [fxLayoutAlign]="fxLayoutProperties.layoutAlign">
+      <mat-form-field>
+        <mat-label>{{'csp.fuente-financiacion.descripcion' | translate}}</mat-label>
+        <textarea matInput formControlName="descripcion" id="descripcion"
+          placeholder="{{'csp.fuente-financiacion.descripcion' | translate}}"></textarea>
+      </mat-form-field>
+    </div>
+    <!--Ambito geográfico-->
+    <div [fxLayout]="fxLayoutProperties.layout" [fxLayoutAlign]="fxLayoutProperties.layoutAlign">
+      <mat-form-field>
+        <mat-label>{{'csp.fuente-financiacion.ambito-geografico' | translate}}</mat-label>
+        <input matInput formControlName="ambitoGeografico" type="text" id="ambitoGeografico"
+          placeholder="{{'csp.fuente-financiacion.ambito-geografico' | translate}}" maxlength="100"
+          [matAutocomplete]="autoAmbitoGeografico" required>
+        <mat-autocomplete #autoAmbitoGeografico="matAutocomplete" [displayWith]="getAmbitoGeografico">
+          <mat-option *ngFor="let ambitoGeografico of ambitosGeograficos | async" [value]="ambitoGeografico">
+            {{ambitoGeografico.nombre}}
+          </mat-option>
+        </mat-autocomplete>
+        <mat-error *ngIf="formGroup.controls.ambitoGeografico.errors?.required">
+          {{'error.required.entity' | translate:msgParamAmbitoEntity}}
+        </mat-error>
+      </mat-form-field>
+    </div>
+    <!--Origen-->
+    <div [fxLayout]="fxLayoutProperties.layout" [fxLayoutAlign]="fxLayoutProperties.layoutAlign">
+      <mat-form-field>
+        <mat-label>{{'csp.fuente-financiacion.origen' | translate}}</mat-label>
+        <input matInput formControlName="origen" type="text" id="origen" required
+          placeholder="{{'csp.fuente-financiacion.origen' | translate}}" maxlength="100" [matAutocomplete]="origen">
+        <mat-autocomplete #origen="matAutocomplete" [displayWith]="getOrigen">
+          <mat-option *ngFor="let origen of origenes | async" [value]="origen">
+            {{origen.nombre}}
+          </mat-option>
+        </mat-autocomplete>
+        <mat-error *ngIf="formGroup.controls.origen.errors?.required">
+          {{'error.required.entity' | translate:msgParamOrigenEntity}}
+        </mat-error>
+      </mat-form-field>
+    </div>
+    <!-- Fondo Estructural -->
+    <div [fxLayout]="fxLayoutProperties.layout" [fxLayoutAlign]="fxLayoutProperties.layoutAlign">
+      <mat-form-field>
+        <mat-label>{{'csp.fuente-financiacion.fondo-estructural' | translate}}</mat-label>
+        <mat-select matNativeControl formControlName="fondoEstructural" required>
+          <mat-option [value]="true">{{'label.si' | translate}}</mat-option>
+          <mat-option [value]="false">{{'label.no' | translate}}</mat-option>
+        </mat-select>
+        <mat-error *ngIf="formGroup.controls.fondoEstructural.errors?.required">
+          {{'error.required.entity' | translate:msgParamFondoEstructuralEntity}}
+        </mat-error>
+      </mat-form-field>
+    </div>
+  </form>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <button color="accent" (click)="saveOrUpdate()" mat-raised-button type="submit">
+    <mat-icon class="save-icon">save</mat-icon>{{textSaveOrUpdate | translate}}
+  </button>
+  <button class="link-cancelar" mat-button type="button" mat-dialog-close>{{'btn.cancel' |
+    translate}}</button>
+</mat-dialog-actions>

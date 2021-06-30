@@ -1,0 +1,73 @@
+<div class="sgi-dialog-header" fxLayout="row" fxLayoutGap="20px">
+  <span fxFlexAlign="center" mat-mat-dialog-title role="heading" aria-level="3" fxFlex>{{title | translate}}</span>
+  <button fxFlex="nogrow" mat-icon-button mat-dialog-close>
+    <mat-icon class="close-icon">close</mat-icon>
+  </button>
+</div>
+<mat-dialog-content>
+  <form [formGroup]="formGroup">
+    <!-- Memoria -->
+    <div [fxLayout.xs]="fxLayoutProperties.xs" [fxLayout]="fxLayoutProperties.layout"
+      [fxLayoutGap]="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
+      <div>
+        <mat-form-field class="input-form">
+          <mat-label>{{'eti.memoria' | translate:MSG_PARAMS.CARDINALIRY.SINGULAR}}</mat-label>
+          <input type="text" [placeholder]="'eti.memoria' | translate:MSG_PARAMS.CARDINALIRY.SINGULAR"
+            arial-label="Number" matInput formControlName="memoria" [matAutocomplete]="autocompleteMemoria" required>
+          <mat-autocomplete #autocompleteMemoria="matAutocomplete" [displayWith]="getMemoria">
+            <mat-option *ngFor="let memoria of filteredMemorias | async" [value]="memoria">
+              {{memoria.numReferencia}}{{(memoria.titulo ? ' - ' + memoria.titulo : '')}}
+            </mat-option>
+          </mat-autocomplete>
+          <mat-error *ngIf="formGroup.controls.memoria.errors?.required">
+            {{'error.required.entity' | translate:msgParamMemoriaEntity}}
+          </mat-error>
+        </mat-form-field>
+      </div>
+      <!-- Evaluador 1 -->
+      <div>
+        <mat-form-field>
+          <mat-label>{{'eti.convocatoria-reunion.memoria.evaludador-1' | translate}}
+          </mat-label>
+          <input type="text" [placeholder]="'eti.convocatoria-reunion.memoria.evaludador-1' | translate"
+            arial-label="Number" matInput formControlName="evaluador1" [matAutocomplete]="autocompleteEvaluador1"
+            required>
+          <mat-autocomplete #autocompleteEvaluador1="matAutocomplete" [displayWith]="getEvaluador">
+            <mat-option *ngFor="let evaluador of filteredEvaluadoresEvaluador1 | async" [value]="evaluador">
+              {{evaluador?.persona?.nombre}} {{evaluador?.persona?.apellidos}}
+            </mat-option>
+          </mat-autocomplete>
+          <mat-error *ngIf="formGroup.controls.evaluador1.errors?.required">
+            {{'error.required.entity' | translate:msgParamEvaludador1Entity}}
+          </mat-error>
+        </mat-form-field>
+      </div>
+      <!-- Evaluador 2 -->
+      <div>
+        <mat-form-field>
+          <mat-label>{{'eti.convocatoria-reunion.memoria.evaludador-2' | translate}}
+          </mat-label>
+          <input type="text" [placeholder]="'eti.convocatoria-reunion.memoria.evaludador-2' | translate"
+            arial-label="Number" matInput formControlName="evaluador2" [matAutocomplete]="autocompleteEvaluador2"
+            required>
+          <mat-autocomplete #autocompleteEvaluador2="matAutocomplete" [displayWith]="getEvaluador">
+            <mat-option *ngFor="let evaluador of filteredEvaluadoresEvaluador2 | async" [value]="evaluador">
+              {{evaluador?.persona?.nombre}} {{evaluador?.persona?.apellidos}}
+            </mat-option>
+          </mat-autocomplete>
+          <mat-error *ngIf="formGroup.controls.evaluador2.errors?.required">
+            {{'error.required.entity' | translate:msgParamEvaludador2Entity}}
+          </mat-error>
+        </mat-form-field>
+      </div>
+    </div>
+  </form>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <button color="accent" (click)="saveOrUpdate()" mat-raised-button type="submit" [disabled]="this.data.readonly">
+    <mat-icon class="save-icon">save</mat-icon>{{isEdit ? ('btn.ok' |
+    translate) : ('btn.add'| translate)}}
+  </button>
+  <button class="link-cancelar" mat-button type="button" mat-dialog-close>{{'btn.cancel' |
+    translate}}</button>
+</mat-dialog-actions>

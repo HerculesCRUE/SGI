@@ -1,0 +1,5 @@
+<ng-container *ngFor="let module of modules">
+  <mat-card *sgiHasModuleAccess="module.code" class="mat-elevation-z4 module">
+    <a mat-button color="primary" class="module-content" [routerLink]="[module.path]">{{module.title | translate}}</a>
+  </mat-card>
+</ng-container>

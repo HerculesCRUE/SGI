@@ -1,0 +1,125 @@
+<section class="plan-investigacion-programa">
+  <h2>{{'csp.plan-investigacion.programa' | translate}} {{actionService.getPrograma.nombre}}</h2>
+
+  <!-- Validacion si no tiene programa -->
+  <div *ngIf="dataSource.data.length === 0" class="vacio">
+    <p>{{'info.csp.plan-investigacion.programa.no-padre' | translate}}</p>
+  </div>
+
+  <div class="programa" fxLayout="row" fxLayout.xs="column" fxLayoutGap="10px">
+    <div class="arbol" fxFlex="50%" fxFlex.xs="100%">
+      <mat-tree [dataSource]="dataSource" [treeControl]="treeControl" class="arbol-tree">
+        <mat-tree-node *matTreeNodeDef="let node" matTreeNodeToggle>
+          <li class="mat-tree-node">
+            <button mat-icon-button disabled></button>
+            <mat-checkbox *ngIf="viewMode === 'new'" class="checkbox" color="primary" [checked]="node === checkedNode"
+              (change)="onCheckNode(node, $event)">
+              {{node.programa.value.nombre}}
+            </mat-checkbox>
+            <button mat-icon-button *ngIf="(viewMode !== 'new' && node !== viewingNode)"
+              (click)="showNodeDetails(node)">
+              <mat-icon color="primary" class="mat-icon-rtl-mirror">
+                {{ 'visibility'}}
+              </mat-icon>
+              {{node.programa.value.nombre}}
+            </button>
+            <button mat-icon-button *ngIf="(viewMode !== 'new' && node === viewingNode)" (click)="hideNodeDetails()">
+              <mat-icon color="primary" class="mat-icon-rtl-mirror">
+                {{ 'visibility_off'}}
+              </mat-icon>
+              {{node.programa.value.nombre}}
+            </button>
+          </li>
+        </mat-tree-node>
+        <mat-nested-tree-node *matTreeNodeDef="let node; when: hasChild">
+          <li>
+            <div class="mat-tree-node">
+              <button mat-icon-button matTreeNodeToggle [attr.aria-label]="'Toggle ' + node.programa.value.nombre">
+                <mat-icon color="primary" class="mat-icon-rtl-mirror">
+                  {{treeControl.isExpanded(node) ? 'expand_more' : 'chevron_right'}}
+                </mat-icon>
+              </button>
+              <mat-checkbox *ngIf="viewMode === 'new'" class="checkbox" color="primary" [checked]="node === checkedNode"
+                (change)="onCheckNode(node, $event)">
+                {{node.programa.value.nombre}}
+              </mat-checkbox>
+              <button mat-icon-button *ngIf="(viewMode !== 'new' && node !== viewingNode)"
+                (click)="showNodeDetails(node)">
+                <mat-icon color="primary" class="mat-icon-rtl-mirror">
+                  {{ 'visibility'}}
+                </mat-icon>
+                {{node.programa.value.nombre}}
+              </button>
+              <button mat-icon-button *ngIf="(viewMode !== 'new' && node === viewingNode)" (click)="hideNodeDetails()">
+                <mat-icon color="primary" class="mat-icon-rtl-mirror">
+                  {{ 'visibility_off'}}
+                </mat-icon>
+                {{node.programa.value.nombre}}
+              </button>
+            </div>
+            <ul [class.arbol-invisible]="!treeControl.isExpanded(node)">
+              <ng-container matTreeNodeOutlet></ng-container>
+            </ul>
+          </li>
+        </mat-nested-tree-node>
+      </mat-tree>
+    </div>
+
+    <!-- Visualizacion crear/editar/detalle -->
+    <form [formGroup]="formGroup" class="visualizacion" fxFlex="50%" fxFlex.xs="100%" *ngIf="viewMode !== ''">
+      <h3 *ngIf="viewMode === 'new'">{{'btn.add.entity' | translate:msgParamEntity}}</h3>
+      <h3 *ngIf="viewMode === 'edit'">{{'csp.plan.investigador.programa.actualizar' | translate}}</h3>
+      <h3 *ngIf="viewMode === 'view'">{{'csp.plan.investigador.programa.datos' | translate}}</h3>
+      <div fxLayout="row" fxLayout.xs="column" fxLayoutGap="10px">
+        <div fxFlex="50%" fxFlex.xs="100%">
+          <mat-form-field class="input-form">
+            <mat-label>{{'csp.plan-investigacion-programa.nombre' | translate}}</mat-label>
+            <input matInput type="text" placeholder="{{'csp.plan-investigacion.programa.nombre' | translate}}"
+              formControlName="nombre" required>
+            <mat-error *ngIf="formGroup.get('nombre').errors?.required">
+              {{'error.required.entity' | translate:msgParamNombreEntity}}
+            </mat-error>
+            <mat-error *ngIf="formGroup.get('nombre').errors?.maxlength">
+              {{'error.maxlength.entity' | translate:msgParamNombreEntity}}
+            </mat-error>
+          </mat-form-field>
+        </div>
+      </div>
+      <div fxLayout="row" fxLayout.xs="column" fxLayoutGap="10px">
+        <div fxFlex="50%" fxFlex.xs="100%">
+          <mat-form-field class="input-form">
+            <mat-label>{{'csp.plan-investigacion-programa.descripcion' | translate}}</mat-label>
+            <textarea matInput type="text" placeholder="{{'csp.plan-investigacion-programa.descripcion' | translate}}"
+              formControlName="descripcion"></textarea>
+            <mat-error *ngIf="formGroup.get('descripcion').errors?.maxlength">
+              {{'error.maxlength.entity' | translate:msgParamDescripcionEntity}}
+            </mat-error>
+          </mat-form-field>
+        </div>
+      </div>
+      <div class="separation-button">
+        <button *ngIf="viewMode === 'new' || viewMode === 'edit'" color="accent" mat-raised-button
+          (click)="acceptDetail()">{{'btn.ok' | translate}}</button>
+        <button *ngIf="viewMode === 'new' || viewMode === 'edit'" class="link-cancelar" mat-button><span
+            class="underline" (click)="cancelDetail()">{{'btn.cancel' | translate}}</span></button>
+        <button *ngIf="viewMode === 'view'" color="accent" mat-raised-button
+          (click)="switchToEdit()">{{'btn.edit.entity'| translate:msgParamEntity}}</button>
+        <button *ngIf="viewMode === 'view'" color="warn" aria-label="Center Align" mat-raised-button
+          (click)="deleteDetail()">
+          {{'btn.delete.entity' | translate:msgParamEntity}}
+        </button>
+      </div>
+    </form>
+
+    <!-- FIN Visualizacion crear/editar/detalle -->
+
+  </div>
+
+  <div class="separation-button">
+    <button color="three" aria-label="Center Align" mat-raised-button (click)="switchToNew()">
+      <mat-icon color="accent">add_circle</mat-icon>
+      {{ 'btn.add.entity' | translate:msgParamEntity }}
+    </button>
+  </div>
+
+</section>

@@ -1,0 +1,138 @@
+<div class="sgi-dialog-header" fxLayout="row" fxLayoutGap="20px">
+  <span fxFlexAlign="center" mat-mat-dialog-title role="heading" aria-level="3" fxFlex>{{title | translate}}</span>
+  <button fxFlex="nogrow" mat-icon-button mat-dialog-close>
+    <mat-icon class="close-icon">close</mat-icon>
+  </button>
+</div>
+<mat-dialog-content>
+  <form [formGroup]="formGroup">
+    <!-- Número del periodo -->
+    <div *ngIf="data?.convocatoriaSeguimientoCientifico?.mesInicial" [fxLayout.xs]="fxLayoutProperties.xs"
+      [fxLayout]="fxLayoutProperties.layout" [fxLayoutGap]="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
+      <mat-form-field>
+        <mat-label>{{'csp.convocatoria-seguimiento-cientifico.numero-periodo' | translate}}</mat-label>
+        <input matInput formControlName="numPeriodo" type="text"
+          placeholder="{{'csp.convocatoria-seguimiento-cientifico.numero-periodo' | translate}}" readonly
+          maxlength="100">
+        <mat-error *ngIf="formGroup.controls.numPeriodo.errors?.required">
+          {{'error.required.entity' | translate:msgParamNumeroPeriodoEntity}}
+        </mat-error>
+      </mat-form-field>
+    </div>
+
+    <!-- Tipo de Seguimiento-->
+    <div [fxLayout.xs]="fxLayoutProperties.xs" [fxLayout]="fxLayoutProperties.layout"
+      [fxLayoutGap]="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
+      <mat-form-field>
+        <mat-label>{{'csp.convocatoria-seguimiento-cientifico.tipo-seguimiento' | translate}}</mat-label>
+        <sgi-select-enum formControlName="tipoSeguimiento" required [enumMap]="TIPO_SEGUIMIENTO_MAP"></sgi-select-enum>
+        <mat-error *ngIf="formGroup.controls.tipoSeguimiento.errors?.required">
+          {{ 'error.required.entity' | translate:msgParamTipoSeguimiento }}
+        </mat-error>
+        <mat-error *ngIf="formGroup.controls.tipoSeguimiento.errors?.notAllowed">
+          {{'error.csp.convocatoria-seguimiento-cientifico.tipoSeguimiento.duplicate' | translate}}
+        </mat-error>
+      </mat-form-field>
+    </div>
+
+    <div class="fieldset-form">
+      {{'label.csp.convocatoria-seguimiento-cientifico.periodo-justificar' | translate}}
+    </div>
+
+    <!-- Mes desde -->
+    <div [fxLayout.xs]="fxLayoutProperties.xs" [fxLayout]="fxLayoutProperties.layout"
+      [fxLayoutGap]="fxLayoutProperties.gap">
+      <div>
+        <mat-form-field>
+          <mat-label>{{'csp.convocatoria-seguimiento-cientifico.desde-mes' | translate}}</mat-label>
+          <input matInput formControlName="desdeMes" type="number"
+            placeholder="{{'csp.convocatoria-seguimiento-cientifico.desde-mes' | translate}}" required
+            (blur)="recalcularNumPeriodo()">
+          <mat-error *ngIf="formGroup.controls.desdeMes.errors?.required">
+            {{ 'error.required.entity' | translate:msgParamMesInicioEntity }}
+          </mat-error>
+          <mat-error *ngIf="formGroup.controls.desdeMes.errors?.min">
+            {{ 'error.min.mes-desde' | translate }}
+          </mat-error>
+          <mat-error *ngIf="formGroup.controls.desdeMes.errors?.max">
+            {{ 'error.start.period' | translate }}
+          </mat-error>
+          <mat-error *ngIf="formGroup.controls.desdeMes.errors?.overlapped">
+            {{ 'error.overlapping.range' | translate }}
+          </mat-error>
+        </mat-form-field>
+      </div>
+      <!-- Mes hasta -->
+      <div>
+        <mat-form-field>
+          <mat-label>{{'csp.convocatoria-seguimiento-cientifico.hasta-mes' | translate}}</mat-label>
+          <input matInput formControlName="hastaMes" type="number"
+            placeholder="{{'csp.convocatoria-seguimiento-cientifico.hasta-mes' | translate}}" required maxlength="100">
+          <mat-error *ngIf="formGroup.controls.hastaMes.errors?.required">
+            {{ 'error.required.entity' | translate:msgParamMesFinEntity }}
+          </mat-error>
+          <mat-error *ngIf="formGroup.controls.hastaMes.errors?.min">
+            {{ 'error.min.mes-hasta' | translate }}
+          </mat-error>
+          <mat-error *ngIf="formGroup.controls.hastaMes.errors?.after">
+            {{'error.after.param' | translate:msgParamMesInicioEntity}}
+          </mat-error>
+          <mat-error *ngIf="formGroup.controls.hastaMes.errors?.max">
+            {{'error.csp.convocatoria-seguimiento-cientifico.duracion' | translate}}
+          </mat-error>
+          <mat-error *ngIf="formGroup.controls.hastaMes.errors?.overlapped">
+            {{ 'error.overlapping.range' | translate }}
+          </mat-error>
+        </mat-form-field>
+      </div>
+    </div>
+
+    <div class="fieldset-form">
+      {{'csp.convocatoria-seguimiento-cientifico.periodo-entrega-seguimiento' | translate}}
+    </div>
+    <!-- Fecha inicio -->
+    <div [fxLayout.xs]="fxLayoutProperties.xs" [fxLayout]="fxLayoutProperties.layout"
+      [fxLayoutGap]="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
+      <div>
+        <mat-form-field color="primary">
+          <mat-label>{{'csp.convocatoria-seguimiento-cientifico.fecha-inicio-presentacion' | translate}}</mat-label>
+          <input matInput formControlName="fechaInicio" [ngxMatDatetimePicker]="picker1">
+          <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
+          <ngx-mat-datetime-picker #picker1 showSeconds="true" [defaultTime]="[0,0,0]"></ngx-mat-datetime-picker>
+        </mat-form-field>
+      </div>
+      <!-- Fecha fin -->
+      <div>
+        <mat-form-field color="primary">
+          <mat-label>{{'csp.convocatoria-seguimiento-cientifico.fecha-fin-presentacion' | translate}}</mat-label>
+          <input matInput formControlName="fechaFin" [ngxMatDatetimePicker]="picker2">
+          <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
+          <ngx-mat-datetime-picker #picker2 showSeconds="true" [defaultTime]="[23,59,59]"></ngx-mat-datetime-picker>
+          <mat-error *ngIf="formGroup.controls.fechaFin.errors?.after">
+            {{'error.after.fecha-fin' | translate}}
+          </mat-error>
+        </mat-form-field>
+      </div>
+    </div>
+    <!-- Observaciones -->
+    <div [fxLayout.xs]="fxLayoutProperties.xs" [fxLayout]="fxLayoutProperties.layout"
+      [fxLayoutGap]="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
+      <mat-form-field>
+        <mat-label>{{'csp.convocatoria-seguimiento-cientifico.observaciones' | translate}}</mat-label>
+        <textarea matInput formControlName="observaciones" type="text" id="observaciones"
+          placeholder="{{'csp.convocatoria-seguimiento-cientifico.observaciones' | translate}}">
+                </textarea>
+        <mat-error *ngIf="formGroup.controls.observaciones.errors?.maxlength">
+          {{'error.maxlength.entity' | translate:msgParamObservacionesEntity}}
+        </mat-error>
+      </mat-form-field>
+    </div>
+  </form>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <button color="accent" (click)="saveOrUpdate()" mat-raised-button type="submit">
+    <mat-icon class="save-icon">save</mat-icon>{{textSaveOrUpdate | translate}}
+  </button>
+  <button class="link-cancelar" mat-button type="button" mat-dialog-close>{{'btn.cancel' |
+    translate}}</button>
+</mat-dialog-actions>

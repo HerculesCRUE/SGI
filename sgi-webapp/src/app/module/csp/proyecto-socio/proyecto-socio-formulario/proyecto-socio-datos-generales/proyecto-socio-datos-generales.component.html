@@ -1,0 +1,148 @@
+<section class="proyecto-socio-datos-generales">
+  <h2>{{'label.datos-generales' | translate}}</h2>
+  <form [formGroup]="formGroup">
+
+    <!-- Socio -->
+    <div [fxLayout]="fxLayoutProperties.layout" [fxLayoutAlign]="fxLayoutProperties.layoutAlign">
+      <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
+        [fxFlexOrder]="fxFlexProperties.order">
+        <mat-form-field class="input-form">
+          <mat-label>{{'csp.proyecto-socio.socio' | translate}}</mat-label>
+          <sgi-select-empresa formControlName="empresa" placeholder="{{'csp.proyecto-socio.socio' | translate}}"
+            required>
+          </sgi-select-empresa>
+          <mat-error *ngIf="formGroup.controls.empresa.errors?.required">
+            {{'error.required.entity' | translate:msgParamEntity}}
+          </mat-error>
+          <mat-error *ngIf="formGroup.controls.empresa.errors?.overlapped">
+            {{'error.overlapping.record.entity' | translate:msgParamPeriodoParticipacionEntity}}
+          </mat-error>
+        </mat-form-field>
+      </div>
+    </div>
+
+    <!-- Rol del socio -->
+    <div [fxLayout]="fxLayoutProperties.layout" [fxLayoutAlign]="fxLayoutProperties.layoutAlign">
+      <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
+        [fxFlexOrder]="fxFlexProperties.order">
+        <mat-form-field fxFill>
+          <mat-label>{{'csp.proyecto-socio.rol-socio' | translate}}</mat-label>
+          <input matInput formControlName="rolSocio" type="text" id="rolSocio"
+            placeholder="{{'csp.proyecto-socio.rol-socio' | translate}}" [matAutocomplete]="autoRolSocio" required>
+          <mat-autocomplete #autoRolSocio="matAutocomplete" [displayWith]="getNombreRolSocio">
+            <mat-option *ngFor="let rolSocio of rolSocios$ | async" [value]="rolSocio">
+              {{rolSocio.nombre}}
+            </mat-option>
+          </mat-autocomplete>
+          <mat-error *ngIf="formGroup.controls.rolSocio.errors?.required">
+            {{'error.required.entity' | translate:msgParamRolSocioEntity}}
+          </mat-error>
+          <mat-error *ngIf="formGroup.controls.rolSocio.errors?.invalid">
+            {{'error.invalid.entity' | translate:msgParamRolSocioEntity}}
+          </mat-error>
+        </mat-form-field>
+      </div>
+    </div>
+
+    <!-- Número de investigadores -->
+    <div [fxLayout.xs]="fxLayoutProperties.xs" [fxLayout]="fxLayoutProperties.layout"
+      [fxLayoutGap]="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
+      <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
+        [fxFlexOrder]="fxFlexProperties.order">
+        <mat-form-field fxFill>
+          <mat-label>{{'csp.proyecto-socio.num-investigadores' | translate}}</mat-label>
+          <input matInput formControlName="numInvestigadores" type="number"
+            placeholder="{{'csp.proyecto-socio.num-investigadores' | translate}}">
+          <mat-error *ngIf="formGroup.controls.numInvestigadores.errors?.min">
+            {{'error.min.entity' | translate:msgParamNumInvestigadoresEntity}}
+          </mat-error>
+          <mat-error *ngIf="formGroup.controls.numInvestigadores.errors?.max">
+            {{'error.max.entity' | translate:msgParamNumInvestigadoresEntity}}
+          </mat-error>
+        </mat-form-field>
+      </div>
+    </div>
+
+    <!-- Importe presupuesto -->
+    <div [fxLayout.xs]="fxLayoutProperties.xs" [fxLayout]="fxLayoutProperties.layout"
+      [fxLayoutGap]="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
+      <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
+        [fxFlexOrder]="fxFlexProperties.order">
+        <mat-form-field fxFill>
+          <mat-label>{{'csp.proyecto-socio.importe-presupuesto' | translate}}</mat-label>
+          <input matInput formControlName="importePresupuesto" type="number"
+            placeholder="{{'csp.proyecto-socio.importe-presupuesto' | translate}}">
+          <mat-error *ngIf="formGroup.controls.importePresupuesto.errors?.min">
+            {{'error.min.entity' | translate:msgParamImportePresupuestoEntity}}
+          </mat-error>
+          <mat-error *ngIf="formGroup.controls.importePresupuesto.errors?.max">
+            {{'error.max.entity' | translate:msgParamImportePresupuestoEntity}}
+          </mat-error>
+        </mat-form-field>
+      </div>
+    </div>
+
+    <!-- Importe concedido -->
+    <div [fxLayout.xs]="fxLayoutProperties.xs" [fxLayout]="fxLayoutProperties.layout"
+      [fxLayoutGap]="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
+      <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
+        [fxFlexOrder]="fxFlexProperties.order">
+        <mat-form-field fxFill>
+          <mat-label>{{'csp.proyecto-socio.importe-concedido' | translate}}</mat-label>
+          <input matInput formControlName="importeConcedido" type="number"
+            placeholder="{{'csp.proyecto-socio.importe-concedido' | translate}}">
+          <mat-error *ngIf="formGroup.controls.importeConcedido.errors?.min">
+            {{'error.min.entity' | translate:msgParamImporteConcedidoEntity}}
+          </mat-error>
+          <mat-error *ngIf="formGroup.controls.importeConcedido.errors?.max">
+            {{'error.max.entity' | translate:msgParamImporteConcedidoEntity}}
+          </mat-error>
+        </mat-form-field>
+      </div>
+    </div>
+
+    <!-- Periodo de participacion -->
+    <div class="fieldset-form">
+      {{'title.csp.proyecto-socio.periodo-participacion' | translate}}
+    </div>
+
+    <div [fxLayout.xs]="fxLayoutProperties.xs" [fxLayout]="fxLayoutProperties.layout"
+      [fxLayoutGap]="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
+
+      <!-- Fecha de inicio -->
+      <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
+        [fxFlexOrder]="fxFlexProperties.order">
+        <mat-form-field fxFill>
+          <mat-label>{{'csp.proyecto-socio.fecha-inicio'| translate}}</mat-label>
+          <input matInput [ngxMatDatetimePicker]="pickerFechaInicio" formControlName="fechaInicio">
+          <mat-datepicker-toggle class="fechaIcon" matSuffix [for]="pickerFechaInicio"></mat-datepicker-toggle>
+          <ngx-mat-datetime-picker #pickerFechaInicio showSeconds="true" [defaultTime]="[0,0,0]">
+          </ngx-mat-datetime-picker>
+          <mat-error *ngIf="formGroup.controls.fechaInicio.errors?.overlapped">
+            {{'error.overlapping.record.entity' | translate:msgParamPeriodoParticipacionEntity}}
+          </mat-error>
+        </mat-form-field>
+      </div>
+
+      <!-- Fecha de fin -->
+      <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
+        [fxFlexOrder]="fxFlexProperties.order">
+        <mat-form-field fxFill>
+          <mat-label>{{'csp.proyecto-socio.fecha-fin' | translate}}</mat-label>
+          <input matInput [ngxMatDatetimePicker]="pickerFechaFin" formControlName="fechaFin">
+          <mat-datepicker-toggle class="fechaIcon" matSuffix [for]="pickerFechaFin"></mat-datepicker-toggle>
+          <ngx-mat-datetime-picker #pickerFechaFin showSeconds="true" [defaultTime]="[23,59,59]">
+          </ngx-mat-datetime-picker>
+          <mat-error *ngIf="formGroup.controls.fechaFin.errors?.after">
+            {{'error.after.fecha-fin' | translate}}
+          </mat-error>
+          <mat-error *ngIf="formGroup.controls.fechaFin.errors?.overlapped">
+            {{'error.overlapping.record.entity' | translate:msgParamPeriodoParticipacionEntity}}
+          </mat-error>
+        </mat-form-field>
+      </div>
+
+    </div>
+
+  </form>
+</section>

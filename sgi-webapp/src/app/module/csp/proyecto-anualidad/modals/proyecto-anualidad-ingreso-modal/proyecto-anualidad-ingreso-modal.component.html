@@ -1,0 +1,80 @@
+<div class="sgi-dialog-header" fxLayout="row" fxLayoutGap="20px">
+  <span fxFlexAlign="center" mat-mat-dialog-title role="heading" aria-level="3" fxFlex>{{title}}</span>
+  <button fxFlex="nogrow" mat-icon-button mat-dialog-close>
+    <mat-icon class="close-icon">close</mat-icon>
+  </button>
+</div>
+<mat-dialog-content>
+  <form [formGroup]="formGroup">
+    <!-- Identificador SGE -->
+    <div [fxLayout.xs]="fxLayoutProperties.xs" [fxLayout]="fxLayoutProperties.layout"
+      [fxLayoutGap]="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
+      <mat-form-field>
+        <mat-label>{{'csp.proyecto-anualidad.partida-ingreso.identificador-sge' |
+          translate:MSG_PARAMS.CARDINALIRY.SINGULAR}}</mat-label>
+        <sgi-select formControlName="identificadorSge" [options]=" proyectosSge$ | async" required
+          [displayWith]="displayerIdentificadorSge" [compareWith]="comparerIdentificadorSge"
+          [sortWith]="sorterIdentificadorSge">
+        </sgi-select>
+        <mat-error *ngIf="formGroup.controls.identificadorSge.errors?.required">
+          {{'error.required.entity' | translate:msgParamIdentificadorSge}}
+        </mat-error>
+      </mat-form-field>
+    </div>
+
+    <!-- Código económico-->
+    <div [fxLayout.xs]="fxLayoutProperties.xs" [fxLayout]="fxLayoutProperties.layout"
+      [fxLayoutGap]="fxLayoutProperties.gap" ngClass.gt-xs="ml-10 separation-button">
+      <mat-form-field>
+        <mat-label>{{'csp.convocatoria-elegibilidad.codigo-economico.sge' | translate}}</mat-label>
+        <sgi-select formControlName="codigoEconomicoRef" required [options]="codigosEconomicos$ | async"
+          [compareWith]="comparerCodigoEconomico" [displayWith]="displayerCodigoEconomico"
+          [sortWith]="sorterCodigoEconomico">
+        </sgi-select>
+      </mat-form-field>
+
+    </div>
+
+    <!-- Partida presupuestaria -->
+    <div [fxLayout.xs]="fxLayoutProperties.xs" [fxLayout]="fxLayoutProperties.layout"
+      [fxLayoutGap]="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
+      <mat-form-field>
+        <mat-label>{{'csp.proyecto-anualidad.partida.partida-presupuestaria' |
+          translate:MSG_PARAMS.CARDINALIRY.SINGULAR}}</mat-label>
+        <sgi-select-entity formControlName="proyectoPartida" [options]=" proyectoPartida$ | async" required
+          [displayWith]="displayerProyectoPartida">
+        </sgi-select-entity>
+        <mat-error *ngIf="formGroup.controls.proyectoPartida.errors?.required">
+          {{'error.required.entity' | translate:msgParamPartidaPresupuestaria}}
+        </mat-error>
+      </mat-form-field>
+    </div>
+
+    <!-- Importe concedido -->
+    <div [fxLayout.xs]="fxLayoutProperties.xs" [fxLayout]="fxLayoutProperties.layout"
+      [fxLayoutGap]="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
+
+      <mat-form-field fxFill>
+        <mat-label>{{'csp.proyecto-anualidad.partida-ingreso.importe-concedido' | translate}}</mat-label>
+        <input matInput formControlName="importeConcedido" type="number"
+          placeholder="{{'csp.proyecto-anualidad.partida-ingreso.importe-concedido' | translate}}" required min="0">
+        <mat-error *ngIf="formGroup.controls.importeConcedido.errors?.min">
+          {{'error.min.digit' | translate}}
+        </mat-error>
+        <mat-error *ngIf="formGroup.controls.importeConcedido.errors?.max">
+          {{'error.max.digit' | translate}}
+        </mat-error>
+      </mat-form-field>
+
+    </div>
+
+
+  </form>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <button color="accent" (click)="saveOrUpdate()" mat-raised-button type="submit">
+    <mat-icon class="save-icon">save</mat-icon>{{textSaveOrUpdate | translate}}
+  </button>
+  <button class="link-cancelar" mat-button type="button" mat-dialog-close>{{'btn.cancel' |
+    translate}}</button>
+</mat-dialog-actions>

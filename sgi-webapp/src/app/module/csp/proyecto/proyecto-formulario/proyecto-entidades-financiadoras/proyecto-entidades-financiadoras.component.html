@@ -1,0 +1,196 @@
+<section class="entidades-financiadoras-listado">
+  <h2>{{'menu.csp.proyectos.entidades' | translate}} - {{'menu.csp.proyectos.entidades-financiadoras' | translate}}</h2>
+  <div>
+    <div>
+      <h1>{{ 'title.csp.proyecto-entidad-financiadora' | translate }}</h1>
+      <table mat-table [dataSource]="dataSourcePropias" #sortPropias="matSort" matSort
+        class="mat-elevation-z8 table-unidad">
+        <!-- Nombre Column -->
+        <ng-container matColumnDef="nombre">
+          <th mat-header-cell *matHeaderCellDef>{{'csp.proyecto-entidad-financiadora.nombre' | translate}}</th>
+          <td mat-cell *matCellDef="let wrapper"> {{wrapper.value.empresa?.nombre}}
+          </td>
+        </ng-container>
+
+        <!-- Cif Column -->
+        <ng-container matColumnDef="cif">
+          <th mat-header-cell *matHeaderCellDef>{{'csp.proyecto-entidad-financiadora.cif' | translate}}</th>
+          <td mat-cell *matCellDef="let wrapper"> {{wrapper.value.empresa?.numeroIdentificacion}}
+          </td>
+        </ng-container>
+
+        <!-- Fuente financiación Column -->
+        <ng-container matColumnDef="fuenteFinanciacion">
+          <th mat-header-cell *matHeaderCellDef>
+            {{'csp.proyecto-entidad-financiadora.fuente-financiacion' | translate}}</th>
+          <td mat-cell *matCellDef="let wrapper"> {{wrapper.value.fuenteFinanciacion?.nombre}}
+          </td>
+        </ng-container>
+
+        <!-- Ambito Column -->
+        <ng-container matColumnDef="ambito">
+          <th mat-header-cell *matHeaderCellDef>
+            {{'csp.proyecto-entidad-financiadora.ambito' | translate}}</th>
+          <td mat-cell *matCellDef="let wrapper">
+            {{wrapper.value.fuenteFinanciacion?.tipoAmbitoGeografico?.nombre}}
+          </td>
+        </ng-container>
+
+        <!-- Tipo financiación Column -->
+        <ng-container matColumnDef="tipoFinanciacion">
+          <th mat-header-cell *matHeaderCellDef>
+            {{'csp.proyecto-entidad-financiadora.tipo-financiacion' | translate}}</th>
+          <td mat-cell *matCellDef="let wrapper"> {{wrapper.value.tipoFinanciacion?.nombre}} </td>
+        </ng-container>
+
+        <!-- Porcentaje financiación Column -->
+        <ng-container matColumnDef="porcentajeFinanciacion">
+          <th mat-header-cell *matHeaderCellDef>
+            {{'csp.proyecto-entidad-financiadora.porcentaje-financiacion' | translate}}
+          </th>
+          <td mat-cell *matCellDef="let wrapper"> {{wrapper.value.porcentajeFinanciacion}} </td>
+        </ng-container>
+
+        <!-- Importe financiación Column -->
+        <ng-container matColumnDef="importeFinanciacion">
+          <th mat-header-cell *matHeaderCellDef>
+            {{'csp.proyecto-entidad-financiadora.importe-financiacion' | translate}}
+          </th>
+          <td mat-cell *matCellDef="let wrapper"> {{wrapper.value.importeFinanciacion}} </td>
+        </ng-container>
+
+        <!-- Acciones Column -->
+        <ng-container matColumnDef="acciones">
+          <th mat-header-cell *matHeaderCellDef>{{'label.actions' | translate}}</th>
+          <td mat-cell *matCellDef="let wrapper">
+            <ng-container *sgiHasAuthorityForAnyUO="'CSP-PRO-E'">
+              <button mat-button matTooltip="{{'btn.edit' | translate}}" *ngIf="!formPart.readonly"
+                (click)="openModal(true, wrapper)">
+                <mat-icon color="primary">border_color</mat-icon>
+              </button>
+            </ng-container>
+            <ng-container *sgiHasAuthorityForAnyUO="'CSP-PRO-E'">
+              <button mat-button matTooltip="{{'btn.delete' | translate}}" *ngIf="!formPart.readonly"
+                (click)="deleteEntidadFinanciadora(true, wrapper)">
+                <mat-icon color="warn">highlight_off</mat-icon>
+              </button>
+            </ng-container>
+            <button mat-button matTooltip="{{'csp.proyecto-entidad-financiadora.presupuesto' | translate}}"
+              *ngIf="wrapper.value.hasPresupuesto" (click)="showPresupuesto(wrapper)">
+              <mat-icon color="primary">cases</mat-icon>
+            </button>
+          </td>
+        </ng-container>
+        <tr mat-header-row *matHeaderRowDef="columnsPropias"></tr>
+        <tr mat-row *matRowDef="let row; columns: columnsPropias;"></tr>
+      </table>
+      <mat-paginator #paginatorPropias [pageSizeOptions]="elementsPagePropias" showFirstLastButtons>
+      </mat-paginator>
+    </div>
+    <ng-container *sgiHasAuthorityForAnyUO="'CSP-PRO-E'">
+      <div class="separation-button">
+        <button color="three" mat-button mat-raised-button *ngIf="!formPart.readonly" (click)="openModal(true)">
+          <mat-icon color="accent">add_circle</mat-icon>
+          {{ 'btn.add.entity' | translate:msgParamEntity }}
+        </button>
+      </div>
+    </ng-container>
+  </div>
+
+  <div style="padding-top:15px;">
+    <div>
+      <h1>{{ 'title.csp.proyecto-entidad-financiadora-ajena' | translate }}</h1>
+      <table mat-table [dataSource]="dataSourceAjenas" #sortAjenas="matSort" matSort
+        class="mat-elevation-z8 table-unidad">
+        <!-- Nombre Column -->
+        <ng-container matColumnDef="nombre">
+          <th mat-header-cell *matHeaderCellDef>{{'csp.proyecto-entidad-financiadora.nombre' | translate}}</th>
+          <td mat-cell *matCellDef="let wrapper"> {{wrapper.value.empresa?.nombre}}
+          </td>
+        </ng-container>
+
+        <!-- Cif Column -->
+        <ng-container matColumnDef="cif">
+          <th mat-header-cell *matHeaderCellDef>{{'csp.proyecto-entidad-financiadora.cif' | translate}}</th>
+          <td mat-cell *matCellDef="let wrapper"> {{wrapper.value.empresa?.numeroIdentificacion}}
+          </td>
+        </ng-container>
+
+        <!-- Fuente financiación Column -->
+        <ng-container matColumnDef="fuenteFinanciacion">
+          <th mat-header-cell *matHeaderCellDef>
+            {{'csp.proyecto-entidad-financiadora.fuente-financiacion' | translate}}</th>
+          <td mat-cell *matCellDef="let wrapper"> {{wrapper.value.fuenteFinanciacion?.nombre}}
+          </td>
+        </ng-container>
+
+        <!-- Ambito Column -->
+        <ng-container matColumnDef="ambito">
+          <th mat-header-cell *matHeaderCellDef>
+            {{'csp.proyecto-entidad-financiadora.ambito' | translate}}</th>
+          <td mat-cell *matCellDef="let wrapper">
+            {{wrapper.value.fuenteFinanciacion?.tipoAmbitoGeografico?.nombre}}
+          </td>
+        </ng-container>
+
+        <!-- Tipo financiación Column -->
+        <ng-container matColumnDef="tipoFinanciacion">
+          <th mat-header-cell *matHeaderCellDef>
+            {{'csp.proyecto-entidad-financiadora.tipo-financiacion' | translate}}</th>
+          <td mat-cell *matCellDef="let wrapper"> {{wrapper.value.tipoFinanciacion?.nombre}} </td>
+        </ng-container>
+
+        <!-- Porcentaje financiación Column -->
+        <ng-container matColumnDef="porcentajeFinanciacion">
+          <th mat-header-cell *matHeaderCellDef>
+            {{'csp.proyecto-entidad-financiadora.porcentaje-financiacion' | translate}}
+          </th>
+          <td mat-cell *matCellDef="let wrapper"> {{wrapper.value.porcentajeFinanciacion}} </td>
+        </ng-container>
+
+        <!-- Importe financiación Column -->
+        <ng-container matColumnDef="importeFinanciacion">
+          <th mat-header-cell *matHeaderCellDef>
+            {{'csp.proyecto-entidad-financiadora.importe-financiacion' | translate}}
+          </th>
+          <td mat-cell *matCellDef="let wrapper"> {{wrapper.value.importeFinanciacion}} </td>
+        </ng-container>
+
+        <!-- Acciones Column -->
+        <ng-container matColumnDef="acciones">
+          <th mat-header-cell *matHeaderCellDef>{{'label.actions' | translate}}</th>
+          <td mat-cell *matCellDef="let wrapper">
+            <ng-container *sgiHasAuthorityForAnyUO="'CSP-PRO-E'">
+              <button mat-button matTooltip="{{'btn.edit' | translate}}" *ngIf="!formPart.readonly"
+                (click)="openModal(false, wrapper)">
+                <mat-icon color="primary">border_color</mat-icon>
+              </button>
+            </ng-container>
+            <ng-container *sgiHasAuthorityForAnyUO="'CSP-PRO-E'">
+              <button mat-button matTooltip="{{'btn.delete' | translate}}" *ngIf="!formPart.readonly"
+                (click)="deleteEntidadFinanciadora(false, wrapper)">
+                <mat-icon color="warn">highlight_off</mat-icon>
+              </button>
+            </ng-container>
+            <button mat-button matTooltip="{{'csp.proyecto-entidad-financiadora.presupuesto' | translate}}"
+              *ngIf="wrapper.value.hasPresupuesto" (click)="showPresupuesto(wrapper)">
+              <mat-icon color="primary">cases</mat-icon>
+            </button>
+          </td>
+        </ng-container>
+        <tr mat-header-row *matHeaderRowDef="columnsAjenas"></tr>
+        <tr mat-row *matRowDef="let row; columns: columnsAjenas;"></tr>
+      </table>
+      <mat-paginator #paginatorAjenas [pageSizeOptions]="elementsPageAjenas" showFirstLastButtons>
+      </mat-paginator>
+    </div>
+    <ng-container *sgiHasAuthorityForAnyUO="'CSP-PRO-E'">
+      <div class="separation-button">
+        <button color="three" mat-button mat-raised-button *ngIf="!formPart.readonly" (click)="openModal(false)">
+          <mat-icon color="accent">add_circle</mat-icon>
+          {{ 'btn.add.entity' | translate:msgParamEntityAjena }}
+        </button>
+      </div>
+    </ng-container>
+  </div>
+</section>

@@ -1,0 +1,151 @@
+<div class="scrollable-panel">
+  <section class="invencion-listado">
+
+    <!-- Buscador de invenciones -->
+    <form class="formulario mat-elevation-z8" [formGroup]=" formGroup" [fxLayout.xs]="fxLayoutProperties.xs"
+      [fxLayout]="fxLayoutProperties.layout" fxLayoutGap="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
+
+      <div fxFlex="85%" fxFlex.sm="50%" fxFlex.md="73%" [fxLayout.xs]="fxLayoutProperties.xs"
+        [fxLayout]="fxLayoutProperties.layout" fxLayoutGap="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
+        <!-- Nº de invención-->
+        <div class="col">
+          <mat-form-field>
+            <mat-label>{{'pii.invencion.numero-invencion' | translate}}</mat-label>
+            <input matInput placeholder="{{'pii.invencion.numero-invencion' | translate}}" formControlName="id">
+          </mat-form-field>
+        </div>
+        <div class="ml-10 col" [fxLayout.xs]="fxLayoutProperties.xs" [fxLayout]="fxLayoutProperties.layout"
+          [fxLayoutGap]="fxLayoutProperties.gap">
+
+          <!-- Fecha de Comunicación Desde -->
+          <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md"
+            [fxFlex.gt-md]="fxFlexProperties.gtMd" [fxFlexOrder]="fxFlexProperties.order">
+            <mat-form-field class=" input-form">
+              <mat-label>{{'pii.invencion.fecha-comunicacion-desde' | translate}}</mat-label>
+              <input matInput formControlName="fechaComunicacionDesde" [matDatepicker]="fechaComunicacionDesde">
+              <mat-datepicker-toggle matSuffix [for]="fechaComunicacionDesde"></mat-datepicker-toggle>
+              <mat-datepicker #fechaComunicacionDesde></mat-datepicker>
+            </mat-form-field>
+          </div>
+
+          <!-- Fecha de Comunicacion Hasta -->
+          <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md"
+            [fxFlex.gt-md]="fxFlexProperties.gtMd" [fxFlexOrder]="fxFlexProperties.order">
+            <mat-form-field class="input-form">
+              <mat-label>{{'pii.invencion.fecha-comunicacion-hasta' | translate}}</mat-label>
+              <input matInput formControlName="fechaComunicacionHasta" [matDatepicker]="fechaComunicacionHasta">
+              <mat-datepicker-toggle matSuffix [for]="fechaComunicacionHasta"></mat-datepicker-toggle>
+              <mat-datepicker #fechaComunicacionHasta></mat-datepicker>
+            </mat-form-field>
+          </div>
+        </div>
+
+        <!-- Tipo de Protección -->
+        <div class="col">
+          <mat-form-field class="input-form">
+            <mat-label>{{'pii.invencion.tipo-proteccion' | translate}}</mat-label>
+            <sgi-select-entity formControlName="tipoProteccion" [options]=" tiposProteccion$ | async">
+            </sgi-select-entity>
+          </mat-form-field>
+        </div>
+
+        <!-- Sector de Aplicación -->
+        <div class="col">
+          <mat-form-field class="input-form">
+            <mat-label>{{'pii.invencion.sector-aplicacion' | translate}}</mat-label>
+            <sgi-select-entity formControlName="sectorAplicacion" [options]=" sectoresAplicacion$ | async">
+            </sgi-select-entity>
+          </mat-form-field>
+        </div>
+
+        <!--Título-->
+        <div class="col">
+          <mat-form-field>
+            <mat-label>{{'pii.invencion.titulo' | translate}}</mat-label>
+            <input matInput placeholder="{{'pii.invencion.titulo' | translate}}" formControlName="titulo">
+          </mat-form-field>
+        </div>
+
+        <!--Persona-->
+        <div class="col">
+          <mat-form-field>
+            <mat-label>{{'pii.invencion.inventor' | translate}}</mat-label>
+            <sgi-select-persona placeholder="{{'pii.invencion.inventor' | translate}}" formControlName="inventor"
+              [tipoColectivo]="TipoColectivo.AUTOR_INVENCION">
+            </sgi-select-persona>
+          </mat-form-field>
+        </div>
+      </div>
+
+      <div class="buttons-final">
+        <div class="col filter-button">
+          <button color="primary" aria-label="Center Align" mat-raised-button (click)="onSearch()">
+            <mat-icon>search</mat-icon> {{'btn.search'| translate}}
+          </button>
+          <button color="warn" aria-label="Center Align" (click)="onClearFilters()" mat-button>{{'btn.clean'|
+            translate}}
+          </button>
+        </div>
+      </div>
+    </form>
+    <!-- FIN Buscador de invenciones -->
+
+    <!-- Listado de invenciones -->
+    <table mat-table class="mat-elevation-z8 table-unidad" [dataSource]="invencion$ | async" matSort matSortActive="id"
+      matSortDirection="asc" matSortDisableClear>
+      <!-- Nº de Invención -->
+      <ng-container matColumnDef="id">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'pii.invencion.numero-invencion' | translate}}
+        </th>
+        <td mat-cell *matCellDef="let invencion">{{invencion.id}}</td>
+      </ng-container>
+
+      <!-- Fecha comunicación -->
+      <ng-container matColumnDef="fechaComunicacion">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'pii.invencion.fecha-comunicacion' | translate}}
+        </th>
+        <td mat-cell *matCellDef="let invencion">{{invencion.fechaComunicacion | luxon:'shortDate'}}</td>
+      </ng-container>
+
+      <!--Título-->
+      <ng-container matColumnDef="titulo">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>
+          {{'pii.invencion.titulo' | translate}}
+        </th>
+        <td mat-cell *matCellDef="let invencion">
+          {{invencion.titulo}}</td>
+      </ng-container>
+
+      <!--Tipo de protección-->
+      <ng-container matColumnDef="tipoProteccion.nombre">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>
+          {{'pii.invencion.tipo-proteccion.nombre' | translate}}
+        </th>
+        <td mat-cell *matCellDef="let invencion">
+          {{invencion.tipoProteccion?.nombre}}</td>
+      </ng-container>
+
+      <!-- Activo -->
+      <ng-container matColumnDef="activo">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'label.activo' | translate}}
+        </th>
+        <td mat-cell *matCellDef="let invencion">
+          {{(invencion.activo ? 'label.si' : 'label.no') | translate}}
+        </td>
+      </ng-container>
+
+      <!-- Acciones -->
+      <ng-container matColumnDef="acciones">
+        <th mat-header-cell *matHeaderCellDef> {{'label.actions' | translate}} </th>
+        <td mat-cell *matCellDef="let invencion">
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="columnas"></tr>
+      <tr mat-row *matRowDef="let row; columns: columnas;"></tr>
+    </table>
+    <mat-paginator [pageSizeOptions]="elementosPagina" [length]="totalElementos" showFirstLastButtons>
+    </mat-paginator>
+
+  </section>
+</div>

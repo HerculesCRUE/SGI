@@ -1,0 +1,109 @@
+<!-- Evaluador datos generales -->
+<section class="evaluador-datos-generales">
+  <h2>{{'label.datos-generales' | translate}}</h2>
+
+  <form [formGroup]="formGroup" [fxLayout.xs]="fxLayoutProperties.xs" [fxLayout]="fxLayoutProperties.layout"
+    [fxLayoutGap]="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
+
+    <!--Persona-->
+    <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
+      [fxFlexOrder]="fxFlexProperties.order" [ngClass]="{'disabled': isEditForm}">
+      <mat-form-field fxFill>
+        <mat-label>{{'title.eti.search.user' | translate}}</mat-label>
+        <sgi-select-persona placeholder="{{'title.eti.search.user' | translate}}" formControlName="persona"
+          [tipoColectivo]="tipoColectivoEvaluador" required>
+        </sgi-select-persona>
+        <mat-error *ngIf="formGroup.controls.persona.errors?.required">
+          {{'error.required.entity' | translate:msgParamPersonaEntity}}
+        </mat-error>
+      </mat-form-field>
+    </div>
+
+    <!-- Comité -->
+    <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
+      [fxFlexOrder]="fxFlexProperties.order">
+      <mat-form-field>
+        <mat-label>{{'label.eti.comite' | translate}}</mat-label>
+        <input type="text" [placeholder]="'label.eti.comite' | translate" arial-label="Number" matInput
+          formControlName="comite" [matAutocomplete]="autocompleteComite" required>
+        <mat-autocomplete #autocompleteComite="matAutocomplete" [displayWith]="getComite">
+          <mat-option *ngFor="let c of filteredComites | async" [value]="c">
+            {{c.comite}}
+          </mat-option>
+        </mat-autocomplete>
+        <mat-error *ngIf="formGroup.controls.comite.errors?.required">
+          {{'error.required.entity' | translate:msgParamComiteEntity}}
+        </mat-error>
+      </mat-form-field>
+    </div>
+
+    <!-- Fecha de alta -->
+    <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
+      [fxFlexOrder]="fxFlexProperties.order">
+      <mat-form-field>
+        <mat-label>{{'eti.evaluador.fecha-alta' | translate}}</mat-label>
+        <input matInput [matDatepicker]="pickerFechaAlta" formControlName="fechaAlta"
+          placeholder="{{'eti.evaluador.fecha-alta' | translate}}" required>
+        <mat-datepicker-toggle class="fechaIcon" matSuffix [for]="pickerFechaAlta">
+        </mat-datepicker-toggle>
+        <mat-datepicker #pickerFechaAlta></mat-datepicker>
+        <mat-error *ngIf="formGroup.controls.fechaAlta.errors?.required">
+          {{'error.required.entity' | translate:msgParamFechaAltaEntity}}
+        </mat-error>
+      </mat-form-field>
+    </div>
+
+    <!-- Fecha de baja -->
+    <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
+      [fxFlexOrder]="fxFlexProperties.order">
+      <mat-form-field>
+        <mat-label>{{'eti.evaluador.fecha-baja' | translate}}</mat-label>
+        <input matInput [matDatepicker]="pickerFechaBaja" formControlName="fechaBaja"
+          placeholder="{{'eti.evaluador.fecha-baja' | translate}}">
+        <mat-datepicker-toggle class="fechaIcon" matSuffix [for]="pickerFechaBaja">
+        </mat-datepicker-toggle>
+        <mat-datepicker #pickerFechaBaja></mat-datepicker>
+        <mat-error *ngIf="formGroup.controls.fechaBaja.errors?.required">
+          {{'error.required.entity' | translate:msgParamFechaBajaEntity}}
+        </mat-error>
+      </mat-form-field>
+    </div>
+
+    <!-- Cargo comité -->
+    <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
+      [fxFlexOrder]="fxFlexProperties.order">
+      <mat-form-field>
+        <mat-label>{{'eti.evaluador.cargo-comite' | translate}}</mat-label>
+        <input type="text" [placeholder]="'eti.evaluador.cargo-comite' | translate" arial-label="Number" matInput
+          formControlName="cargoComite" [matAutocomplete]="autocompleteCargoComite" required>
+        <mat-autocomplete #autocompleteCargoComite="matAutocomplete" [displayWith]="getCargoComite">
+          <mat-option *ngFor="let cargoComite of filteredCargosComite | async" [value]="cargoComite">
+            {{cargoComite.nombre}}
+          </mat-option>
+        </mat-autocomplete>
+        <mat-error *ngIf="formGroup.controls.cargoComite.errors?.required">
+          {{'error.required.entity' | translate:msgParamCargoComiteEntity}}
+        </mat-error>
+      </mat-form-field>
+    </div>
+
+    <!-- Resumen -->
+    <div [fxFlex.sm]="fxFlexPropertiesInline.sm" [fxFlex.md]="fxFlexPropertiesInline.md"
+      [fxFlex.gt-md]="fxFlexPropertiesInline.gtMd" [fxFlexOrder]="fxFlexPropertiesInline.order">
+      <mat-form-field>
+        <mat-label>{{'eti.evaluador.resumen' | translate}}</mat-label>
+        <textarea #resumen matInput formControlName="resumen" id="resumen"
+          placeholder="{{'eti.evaluador.resumen' | translate}}" maxlength="8000"></textarea>
+        <mat-hint>{{resumen.value.length}} / 8000</mat-hint>
+        <mat-error *ngIf="formGroup.controls.resumen.errors?.required">
+          {{'error.required.entity' | translate:msgParamResumenEntity}}
+        </mat-error>
+        <mat-error *ngIf="formGroup.controls.resumen.errors?.maxlength">
+          {{'error.maxlength.entity' | translate:msgParamResumenEntity}}
+        </mat-error>
+      </mat-form-field>
+    </div>
+
+  </form>
+</section>
+<!-- Evaluador crear -->

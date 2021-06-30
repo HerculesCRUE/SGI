@@ -1,0 +1,35 @@
+<sgi-action [actionService]="actionService">
+  <ng-container menu>
+    <sgi-action-fragment-menu-item [route]="[MODELO_EJECUCION_ROUTE_NAMES.DATOS_GENERALES]"
+      *sgiHasAuthorityForAnyUO="'CSP-ME-C'" [title]="'label.datos-generales' | translate"
+      [fragment]="actionService.getFragment(actionService.FRAGMENT.DATOS_GENERALES)">
+    </sgi-action-fragment-menu-item>
+    <sgi-action-fragment-menu-item [route]="[MODELO_EJECUCION_ROUTE_NAMES.TIPO_FASES]"
+      *sgiHasAuthorityForAnyUO="'CSP-ME-C'" [title]="'csp.tipo-fase' | translate:MSG_PARAMS.CARDINALIRY.PLURAL"
+      [fragment]="actionService.getFragment(actionService.FRAGMENT.TIPO_FASES)">
+    </sgi-action-fragment-menu-item>
+    <sgi-action-fragment-menu-item [route]="[MODELO_EJECUCION_ROUTE_NAMES.TIPO_DOCUMENTOS]"
+      *sgiHasAuthorityForAnyUO="'CSP-ME-C'" [title]="'csp.tipo-documento' | translate:MSG_PARAMS.CARDINALIRY.PLURAL"
+      [fragment]="actionService.getFragment(actionService.FRAGMENT.TIPO_DOCUMENTOS)">
+    </sgi-action-fragment-menu-item>
+    <sgi-action-fragment-menu-item [route]="[MODELO_EJECUCION_ROUTE_NAMES.TIPO_ENLACES]"
+      *sgiHasAuthorityForAnyUO="'CSP-ME-C'" [title]="'csp.tipo-enlace' | translate:MSG_PARAMS.CARDINALIRY.PLURAL"
+      [fragment]="actionService.getFragment(actionService.FRAGMENT.TIPO_ENLACES)">
+    </sgi-action-fragment-menu-item>
+    <sgi-action-fragment-menu-item [route]="[MODELO_EJECUCION_ROUTE_NAMES.TIPO_FINALIDADES]"
+      *sgiHasAuthorityForAnyUO="'CSP-ME-C'" [title]="'csp.tipo-finalidad' | translate:MSG_PARAMS.CARDINALIRY.PLURAL"
+      [fragment]="actionService.getFragment(actionService.FRAGMENT.TIPO_FINALIDADES)">
+    </sgi-action-fragment-menu-item>
+    <sgi-action-fragment-menu-item [route]="[MODELO_EJECUCION_ROUTE_NAMES.TIPO_HITOS]"
+      *sgiHasAuthorityForAnyUO="'CSP-ME-C'" [title]="'csp.tipo-hito' | translate:MSG_PARAMS.CARDINALIRY.PLURAL"
+      [fragment]="actionService.getFragment(actionService.FRAGMENT.TIPO_HITOS)">
+    </sgi-action-fragment-menu-item>
+    <sgi-action-fragment-menu-item [route]="[MODELO_EJECUCION_ROUTE_NAMES.UNIDAD_GESTION]"
+      *sgiHasAuthorityForAnyUO="'CSP-ME-C'" [title]="'csp.unidad-gestion' | translate:MSG_PARAMS.CARDINALIRY.PLURAL"
+      [fragment]="actionService.getFragment(actionService.FRAGMENT.UNIDAD_GESTION)">
+    </sgi-action-fragment-menu-item>
+  </ng-container>
+  <ng-container footer>
+    <sgi-action-footer [texto]="textoCrear" [actionService]="actionService"></sgi-action-footer>
+  </ng-container>
+</sgi-action>

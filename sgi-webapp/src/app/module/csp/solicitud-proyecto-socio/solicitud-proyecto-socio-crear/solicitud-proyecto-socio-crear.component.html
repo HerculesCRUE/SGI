@@ -1,0 +1,25 @@
+<sgi-action [actionService]="actionService">
+  <ng-container menu>
+    <sgi-action-fragment-menu-item [route]="[SOLICITUD_PROYECTO_SOCIO_ROUTE_NAMES.DATOS_GENERALES]"
+      [title]="'label.datos-generales' | translate"
+      [fragment]="actionService.getFragment(actionService.FRAGMENT.DATOS_GENERALES)">
+    </sgi-action-fragment-menu-item>
+    <sgi-action-fragment-menu-item [route]="[SOLICITUD_PROYECTO_SOCIO_ROUTE_NAMES.EQUIPO]"
+      [title]="'csp.solicitud-proyecto-socio.equipos-socio' | translate"
+      [fragment]="actionService.getFragment(actionService.FRAGMENT.EQUIPO)">
+    </sgi-action-fragment-menu-item>
+    <sgi-action-fragment-menu-item [route]="[SOLICITUD_PROYECTO_SOCIO_ROUTE_NAMES.PERIODOS_PAGOS]"
+      *ngIf="!actionService.solicitudProyectoCoordinadorExterno"
+      [title]="'csp.solicitud-proyecto-socio.periodos-pago' | translate"
+      [fragment]="actionService.getFragment(actionService.FRAGMENT.PERIODOS_PAGOS)">
+    </sgi-action-fragment-menu-item>
+    <sgi-action-fragment-menu-item [route]="[SOLICITUD_PROYECTO_SOCIO_ROUTE_NAMES.PERIODOS_JUSTIFICACION]"
+      [title]="'csp.solicitud-proyecto-socio.periodos-justificacion' | translate"
+      *ngIf="!actionService.solicitudProyectoCoordinadorExterno"
+      [fragment]="actionService.getFragment(actionService.FRAGMENT.PERIODOS_JUSTIFICACION)">
+    </sgi-action-fragment-menu-item>
+  </ng-container>
+  <ng-container footer>
+    <sgi-action-footer [texto]="textoCrear" [actionService]="actionService"></sgi-action-footer>
+  </ng-container>
+</sgi-action>

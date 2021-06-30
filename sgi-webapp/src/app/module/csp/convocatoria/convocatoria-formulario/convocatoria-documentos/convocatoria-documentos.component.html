@@ -1,0 +1,120 @@
+<section>
+  <h2>{{'csp.documentos' | translate}}</h2>
+
+  <div class="programa" fxLayout="row" fxLayout.xs="column" fxLayoutGap="10px">
+    <div class="arbol" fxFlex>
+      <mat-tree [dataSource]="dataSource" [treeControl]="treeControl" class="arbol-tree">
+        <mat-tree-node *matTreeNodeDef="let node" matTreeNodeToggle matTreeNodePadding>
+          <button mat-icon-button *ngIf="(node.level === 2 && viewMode === 'new')">
+            {{node.title}}
+          </button>
+          <button mat-icon-button *ngIf="(node.level === 2 && viewMode !== 'new' && node !== viewingNode)"
+            (click)="showNodeDetails(node)">
+            {{node.title}}
+            <mat-icon color="primary" class="mat-icon-rtl-mirror">
+              {{ 'visibility'}}
+            </mat-icon>
+          </button>
+          <button mat-icon-button *ngIf="(node.level === 2 && viewMode !== 'new' && node === viewingNode)"
+            (click)="hideNodeDetails()">
+            {{node.title}}
+            <mat-icon color="primary" class="mat-icon-rtl-mirror">
+              {{ 'visibility_off'}}
+            </mat-icon>
+          </button>
+        </mat-tree-node>
+        <mat-tree-node *matTreeNodeDef="let node; when: hasChild" matTreeNodePadding>
+          <button mat-icon-button matTreeNodeToggle [attr.aria-label]="'Toggle ' + node.documento?.value?.nombre">
+            <mat-icon color="primary" class="mat-icon-rtl-mirror">
+              {{treeControl.isExpanded(node) ? 'expand_more' : 'chevron_right'}}
+            </mat-icon>
+            {{node.title | translate}}
+          </button>
+        </mat-tree-node>
+      </mat-tree>
+    </div>
+
+    <!-- Visualizacion crear/editar/detalle -->
+    <form [formGroup]="formGroup" class="visualizacion" fxFlex="50" *ngIf="viewMode !== ''">
+      <h3 *ngIf="viewMode === 'new'">{{'btn.add.entity' | translate:msgParamEntity }}</h3>
+      <h3 *ngIf="viewMode === 'edit'">{{'btn.edit.entity' | translate:msgParamEntity}}</h3>
+      <h3 *ngIf="viewMode === 'view'">{{'btn.view.entity' | translate:msgParamEntity}}</h3>
+      <div fxLayout="column" fxLayout.xs="column" fxLayoutGap="10px">
+        <mat-form-field class="input-form">
+          <mat-label>{{'csp.documento.nombre' | translate}}</mat-label>
+          <input matInput type="text" placeholder="{{'csp.documento.nombre' | translate}}" formControlName="nombre"
+            required>
+          <mat-error *ngIf="formGroup.get('nombre').errors?.required">
+            {{'error.required.entity' | translate:msgParamNombreEntity}}
+          </mat-error>
+          <mat-error *ngIf="formGroup.get('nombre').errors?.maxlength">
+            {{ 'error.maxlength.entity' | translate:msgParamNombreEntity }}
+          </mat-error>
+        </mat-form-field>
+        <mat-form-field class="input-form">
+          <mat-label>{{'csp.convocatoria-documento.fichero' | translate}}</mat-label>
+          <sgi-file-upload #uploader placeholder="{{'csp.convocatoria-documento.fichero' | translate}}"
+            formControlName="fichero" required autoUpload="false" (uploadEventChange)="onUploadProgress($event)">
+          </sgi-file-upload>
+          <mat-error *ngIf="formGroup.get('fichero').errors?.required">
+            {{'error.required.entity' | translate:msgParamFicheroEntity}}
+          </mat-error>
+        </mat-form-field>
+        <mat-form-field class="input-form">
+          <mat-label>{{'csp.convocatoria-documento.fase' | translate}}</mat-label>
+          <sgi-select-entity #fase formControlName="fase" [options]="tipoFases$ | async">
+          </sgi-select-entity>
+        </mat-form-field>
+        <mat-form-field class="input-form">
+          <mat-label>{{'csp.documento.tipo' | translate}}</mat-label>
+          <sgi-select-entity formControlName="tipoDocumento" [options]="tiposDocumento$ | async"
+            [resetOnChange]="fase.selectionChange">
+          </sgi-select-entity>
+        </mat-form-field>
+        <mat-form-field class="input-form">
+          <mat-label>{{'csp.convocatoria-documento.publico' | translate}}</mat-label>
+          <sgi-select-boolean formControlName="publico" required></sgi-select-boolean>
+          <mat-error *ngIf="formGroup.get('publico').errors?.required">
+            {{'error.required.entity' | translate:msgParamPublicoEntity}}
+          </mat-error>
+        </mat-form-field>
+        <mat-form-field class="input-form">
+          <mat-label>{{'csp.convocatoria-documento.observaciones' | translate}}</mat-label>
+          <textarea matInput type="text" placeholder="{{'csp.convocatoria-documento.observaciones' | translate}}"
+            formControlName="observaciones"></textarea>
+        </mat-form-field>
+      </div>
+      <div class="separation-button" *ngIf="group.status$ | async as status">
+        <button *ngIf="viewMode === 'view'" mat-button mat-raised-button color="primary" class="rounded"
+          [disabled]="!viewingNode.fichero" (click)="downloadFile(viewingNode)">
+          <mat-icon>arrow_downward</mat-icon>
+          {{'btn.download.file' | translate}}
+        </button>
+        <button *ngIf="formPart.canEdit && viewMode === 'new' || viewMode === 'edit'" color="accent" mat-button
+          mat-raised-button (click)="acceptDetail()"
+          [disabled]="!status.complete || (status.complete && uploading)">{{'btn.ok' | translate}}</button>
+        <button *ngIf="formPart.canEdit && viewMode === 'new' || viewMode === 'edit'" class="link-cancelar"
+          mat-button><span class="underline" (click)="cancelDetail()">{{'btn.cancel' | translate}}</span></button>
+        <button *ngIf="formPart.canEdit && viewMode === 'view'" color="accent" class="rounded" mat-button
+          mat-raised-button (click)="switchToEdit()">
+          <mat-icon>edit</mat-icon>
+          {{'btn.edit.entity'| translate:msgParamEntity}}
+        </button>
+        <button *ngIf="formPart.canEdit && viewMode === 'view'" color="warn" class="rounded" mat-button
+          mat-raised-button (click)="deleteDetail()">
+          <mat-icon>close</mat-icon>
+          {{'btn.delete.entity' | translate:msgParamEntity}}
+        </button>
+      </div>
+    </form>
+    <!-- FIN Visualizacion crear/editar/detalle -->
+  </div>
+
+  <div class="separation-button" *ngIf="formPart.canEdit">
+    <button color="three" aria-label="Center Align" mat-button mat-raised-button (click)="switchToNew()">
+      <mat-icon color="accent">add_circle</mat-icon>
+      {{ 'btn.add.entity' | translate:msgParamEntity }}
+    </button>
+  </div>
+
+</section>

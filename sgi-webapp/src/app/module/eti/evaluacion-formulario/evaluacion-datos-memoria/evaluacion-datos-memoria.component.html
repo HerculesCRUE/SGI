@@ -1,0 +1,47 @@
+<section class="evaluacion-datos-memoria">
+  <h2>{{'eti.memoria' | translate:MSG_PARAMS.CARDINALIRY.SINGULAR}}</h2>
+  <form [formGroup]="formGroup" [fxLayout.xs]="fxLayoutProperties.xs" [fxLayout]="fxLayoutProperties.layout"
+    [fxLayoutGap]="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
+    <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
+      [fxFlexOrder]="fxFlexProperties.order">
+      <mat-form-field>
+        <mat-label>{{'label.eti.comite' | translate}}</mat-label>
+        <input type="text" placeholder="{{'label.eti.comite' | translate}}" arial-label="Number" matInput
+          formControlName="comite">
+      </mat-form-field>
+    </div>
+    <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
+      [fxFlexOrder]="fxFlexProperties.order">
+      <mat-form-field color="primary">
+        <mat-label>{{'eti.evaluacion.fecha-evaluacion'| translate}}</mat-label>
+        <input matInput [ngxMatDatetimePicker]="fechaEvaluacion" formControlName="fechaEvaluacion">
+        <mat-datepicker-toggle class="fechaIcon" matSuffix [for]="fechaEvaluacion"></mat-datepicker-toggle>
+        <ngx-mat-datetime-picker #fechaEvaluacion showSeconds="true" [defaultTime]="[0,0,0]"></ngx-mat-datetime-picker>
+      </mat-form-field>
+    </div>
+    <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
+      [fxFlexOrder]="fxFlexProperties.order">
+      <mat-form-field>
+        <mat-label>{{'eti.memoria.referencia' | translate}}</mat-label>
+        <input matInput formControlName="referenciaMemoria" placeholder="{{'eti.memoria.referencia' | translate}}">
+      </mat-form-field>
+    </div>
+    <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
+      [fxFlexOrder]="fxFlexProperties.order">
+      <mat-form-field>
+        <mat-label>{{'eti.solicitante' | translate}}</mat-label>
+        <input matInput formControlName="solicitante" placeholder="{{'eti.solicitante' | translate}}">
+      </mat-form-field>
+    </div>
+    <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
+      [fxFlexOrder]="fxFlexProperties.order">
+      <mat-form-field>
+        <mat-label>{{'eti.evaluacion-evaluador.memoria.version' | translate}}</mat-label>
+        <input matInput formControlName="version"
+          placeholder="{{'eti.evaluacion-evaluador.memoria.version' | translate}}">
+      </mat-form-field>
+    </div>
+  </form>
+  <sgi-evaluacion-listado-anterior-memoria #evaluaciones [rol]="this.actionService.getRol()">
+  </sgi-evaluacion-listado-anterior-memoria>
+</section>

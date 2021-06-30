@@ -1,0 +1,44 @@
+<section class="memoria-formulario">
+  <h2>{{'eti.memoria.formulario' | translate}}</h2>
+  <mat-horizontal-stepper [linear]="true" labelPosition="bottom" (selectionChange)="onStepChange($event)">
+    <ng-container *ngFor="let block of blocks; let step_index = index; let last = last;">
+      <mat-step [stepControl]="block.formlyData.formGroup">
+        <ng-template matStepLabel>{{block.bloque.nombre}}</ng-template>
+        <ng-container *ngIf="block.selected">
+          <div class="upper-buttons" fxLayout="row">
+            <button *ngIf="step_index > 0" mat-button (click)="previousStep()" class="left" fxFlex="auto">
+              <mat-icon>arrow_back</mat-icon>
+              {{'btn.before' | translate}}
+            </button>
+            <div fxFlex="grow"></div>
+            <button *ngIf="!last" mat-button (click)="nextStep()" class="right" dir="rtl" fxFlex="auto">
+              <mat-icon>arrow_forward</mat-icon>
+              {{'btn.next' | translate}}
+            </button>
+          </div>
+          <div class="formly">
+            <form [formGroup]="block.formlyData.formGroup">
+              <formly-form [model]="block.formlyData.model" [fields]="block.formlyData.fields"
+                [options]="block.formlyData.options" [form]="block.formlyData.formGroup">
+              </formly-form>
+            </form>
+          </div>
+          <div class="upper-buttons" fxLayout="row">
+            <button *ngIf="step_index > 0" mat-raised-button (click)="previousStep()" class="rounded left"
+              color="primary" fxFlex="auto">
+              <mat-icon>arrow_back</mat-icon>
+              {{'btn.before' | translate}}
+            </button>
+            <div fxFlex="grow"></div>
+            <button *ngIf="!last" mat-raised-button (click)="nextStep()" class="rounded right" color="primary" dir="rtl"
+              fxFlex="auto">
+              <mat-icon>arrow_forward</mat-icon>
+              {{'btn.next' | translate}}
+            </button>
+          </div>
+        </ng-container>
+      </mat-step>
+    </ng-container>
+
+  </mat-horizontal-stepper>
+</section>

@@ -1,0 +1,32 @@
+<section class="plan-investigacion-datos-generales">
+  <h2>{{'label.datos-generales' | translate}}</h2>
+  <form [formGroup]="formGroup">
+    <!-- Nombre -->
+    <div [fxLayout]="fxLayoutProperties.layout" [fxLayoutAlign]="fxLayoutProperties.layoutAlign">
+      <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
+        [fxFlexOrder]="fxFlexProperties.order">
+        <mat-form-field fxFill>
+          <mat-label>{{'csp.plan-investigacion.nombre' | translate}}</mat-label>
+          <input matInput formControlName="nombre" type="text" id="nombre"
+            placeholder="{{'csp.plan-investigacion.nombre' | translate}}" required>
+          <mat-error *ngIf="formGroup.controls.nombre.errors?.required">
+            {{'error.required.entity' | translate:msgParamNombreEntity}}
+          </mat-error>
+        </mat-form-field>
+      </div>
+    </div>
+
+    <!-- Descripción -->
+    <div [fxLayout]="fxLayoutProperties.layout" [fxLayoutAlign]="fxLayoutProperties.layoutAlign">
+      <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
+        [fxFlexOrder]="fxFlexProperties.order">
+        <mat-form-field fxFill>
+          <mat-label>{{'csp.plan-investigacion.descripcion' | translate}}</mat-label>
+          <textarea matInput formControlName="descripcion" id="descripcion"
+            placeholder="{{'csp.plan-investigacion.descripcion' | translate}}"></textarea>
+        </mat-form-field>
+      </div>
+    </div>
+
+  </form>
+</section>

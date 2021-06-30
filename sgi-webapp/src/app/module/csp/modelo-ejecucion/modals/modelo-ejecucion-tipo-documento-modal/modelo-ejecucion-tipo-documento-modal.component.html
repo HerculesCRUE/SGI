@@ -1,0 +1,41 @@
+<div class="sgi-dialog-header" fxLayout="row" fxLayoutGap="20px">
+  <span fxFlexAlign="center" mat-mat-dialog-title role="heading" aria-level="3" fxFlex>{{title | translate}}</span>
+  <button fxFlex="nogrow" mat-icon-button mat-dialog-close>
+    <mat-icon class="close-icon">close</mat-icon>
+  </button>
+</div>
+<mat-dialog-content>
+  <form [formGroup]="formGroup">
+    <!-- Tipo de documento -->
+    <div [fxLayout]="fxLayoutProperties.layout" [fxLayoutAlign]="fxLayoutProperties.layoutAlign">
+      <mat-form-field>
+        <mat-label>{{'csp.documento.tipo' | translate}}</mat-label>
+            <sgi-select-entity #tipoDocumento formControlName="tipoDocumento" required
+              [options]="tipoDocumentos$ | async">
+            </sgi-select-entity>
+        <mat-error *ngIf="formGroup.controls.tipoDocumento.errors?.required">
+          {{'error.required.entity' | translate:msgParamTipoEntiy}}
+        </mat-error>
+      </mat-form-field>
+    </div>
+    <!-- Tipo de fase -->
+    <div [fxLayout]="fxLayoutProperties.layout" [fxLayoutAlign]="fxLayoutProperties.layoutAlign">
+      <mat-form-field>
+        <mat-label>{{'csp.modelo-ejecucion-tipo-documento.fase' | translate}}</mat-label>
+            <sgi-select-entity formControlName="tipoFase" [required]="isFaseRequired" [options]="tipoFases$ | async"
+              [resetOnChange]="tipoDocumento.selectionChange">
+            </sgi-select-entity>
+        <mat-error *ngIf="formGroup.controls.tipoFase.errors?.required">
+          {{'error.required.entity' | translate:msgParamFaseEntiy}}
+        </mat-error>
+      </mat-form-field>
+    </div>
+  </form>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <button color="accent" (click)="saveOrUpdate()" mat-raised-button type="submit">
+    <mat-icon class="save-icon">save</mat-icon>{{textSaveOrUpdate | translate}}
+  </button>
+  <button class="link-cancelar" mat-button type="button" mat-dialog-close>{{'btn.cancel' |
+    translate}}</button>
+</mat-dialog-actions>

@@ -1,0 +1,10 @@
+:host ::ng-deep {
+  formly-field-mat-multicheckbox mat-checkbox {
+    display: block;
+  }
+
+  formly-validation-message {
+    color: #c11b4a;
+    font-size: 75%;
+  }
+}

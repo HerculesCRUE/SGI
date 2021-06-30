@@ -1,0 +1,22 @@
+-- TIPO ESTADO MEMORIA 
+INSERT INTO eti.tipo_estado_memoria (id, nombre, activo) VALUES (1, 'En elaboración', true);
+INSERT INTO eti.tipo_estado_memoria (id, nombre, activo) VALUES (2, 'Completada', true);
+INSERT INTO eti.tipo_estado_memoria (id, nombre, activo) VALUES (3, 'En secretaría', true);
+INSERT INTO eti.tipo_estado_memoria (id, nombre, activo) VALUES (4, 'En secretaría revisión mínima', true);
+INSERT INTO eti.tipo_estado_memoria (id, nombre, activo) VALUES (5, 'En evaluación', true);
+INSERT INTO eti.tipo_estado_memoria (id, nombre, activo) VALUES (6, 'Favorable pendiente de modificaciones minimas', true);
+INSERT INTO eti.tipo_estado_memoria (id, nombre, activo) VALUES (7, 'Pendiente de correcciones', true);
+INSERT INTO eti.tipo_estado_memoria (id, nombre, activo) VALUES (8, 'No procede evaluar', true);
+INSERT INTO eti.tipo_estado_memoria (id, nombre, activo) VALUES (9, 'Fin evaluación', true);
+INSERT INTO eti.tipo_estado_memoria (id, nombre, activo) VALUES (10, 'Archivado', true);
+INSERT INTO eti.tipo_estado_memoria (id, nombre, activo) VALUES (11, 'Completada seguimiento anual', true);
+INSERT INTO eti.tipo_estado_memoria (id, nombre, activo) VALUES (12, 'En secretaría seguimiento anual', true);
+INSERT INTO eti.tipo_estado_memoria (id, nombre, activo) VALUES (13, 'En evaluación seguimiento anual', true);
+INSERT INTO eti.tipo_estado_memoria (id, nombre, activo) VALUES (14, 'Fin evaluación seguimiento anual', true);
+INSERT INTO eti.tipo_estado_memoria (id, nombre, activo) VALUES (15, 'Solicitud modificación', true);
+INSERT INTO eti.tipo_estado_memoria (id, nombre, activo) VALUES (16, 'Completada seguimiento final', true);
+INSERT INTO eti.tipo_estado_memoria (id, nombre, activo) VALUES (17, 'En secretaría seguimiento final', true);
+INSERT INTO eti.tipo_estado_memoria (id, nombre, activo) VALUES (18, 'En secretaría seguimiento final aclaraciones', true);
+INSERT INTO eti.tipo_estado_memoria (id, nombre, activo) VALUES (19, 'En evaluación seguimiento final', true);
+INSERT INTO eti.tipo_estado_memoria (id, nombre, activo) VALUES (20, 'Fin evaluación seguimiento final', true);
+INSERT INTO eti.tipo_estado_memoria (id, nombre, activo) VALUES (21, 'En aclaración seguimiento final', true);

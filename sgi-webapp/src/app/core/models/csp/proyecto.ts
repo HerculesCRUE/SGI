@@ -1,0 +1,112 @@
+import { marker } from '@biesbjerg/ngx-translate-extract-marker';
+import { ClasificacionCVN } from '@core/enums/clasificacion-cvn';
+import { TipoSeguimiento } from '@core/enums/tipo-seguimiento';
+import { DateTime } from 'luxon';
+import { IUnidadGestion } from '../usr/unidad-gestion';
+import { IEstadoProyecto } from './estado-proyecto';
+import { IProyectoIVA } from './proyecto-iva';
+import { ITipoAmbitoGeografico } from './tipo-ambito-geografico';
+import { IModeloEjecucion, ITipoFinalidad } from './tipos-configuracion';
+
+export interface IProyecto {
+  /** Id */
+  id: number;
+  /** EstadoProyecto */
+  estado: IEstadoProyecto;
+  /** Titulo */
+  titulo: string;
+  /** Acronimo */
+  acronimo: string;
+  /** codigoExterno */
+  codigoExterno: string;
+  /** Fecha Inicio */
+  fechaInicio: DateTime;
+  /** Fecha Fin */
+  fechaFin: DateTime;
+  /** Fecha Fin Definitiva */
+  fechaFinDefinitiva: DateTime;
+  /** Comentario */
+  comentario: string;
+  /** Unidad gestion */
+  unidadGestion: IUnidadGestion;
+  /** modelo ejecucion */
+  modeloEjecucion: IModeloEjecucion;
+  /** convocatoriaExterna */
+  convocatoriaExterna: string;
+  /** finalidad */
+  finalidad: ITipoFinalidad;
+  /** Id de Convocatoria */
+  convocatoriaId: number;
+  /** Id de Solicitud */
+  solicitudId: number;
+  /** ambitoGeografico */
+  ambitoGeografico: ITipoAmbitoGeografico;
+  /** confidencial */
+  confidencial: boolean;
+  /** clasificacionCVN */
+  clasificacionCVN: ClasificacionCVN;
+  /** colaborativo */
+  colaborativo: boolean;
+  /** coordinadorExterno */
+  coordinadorExterno: boolean;
+  /** timesheet */
+  timesheet: boolean;
+  /** permitePaquetesTrabajo */
+  permitePaquetesTrabajo: boolean;
+  /** costeHora */
+  costeHora: boolean;
+  /** tipoHorasAnuales */
+  tipoHorasAnuales: TipoHorasAnuales;
+  /** iva */
+  iva: IProyectoIVA;
+  /** causaExencion */
+  causaExencion: CausaExencion;
+  /** observaciones */
+  observaciones: string;
+  /** anualidades */
+  anualidades: boolean;
+  /** activo  */
+  activo: boolean;
+  /** Tipo de Seguimiento */
+  tipoSeguimiento: TipoSeguimiento;
+  /** Fecha Base */
+  fechaBase: DateTime;
+  /** Importe presupuesto */
+  importePresupuesto: number;
+  /** Importe concedido */
+  importeConcedido: number;
+  /** Importe presupuesto socios */
+  importePresupuestoSocios: number;
+  /** Importe concedido socios */
+  importeConcedidoSocios: number;
+  /** total Importe presupuesto */
+  totalImportePresupuesto: number;
+  /** total Importe concedido */
+  totalImporteConcedido: number;
+}
+
+export enum TipoHorasAnuales {
+  FIJO = 'FIJO',
+  REAL = 'REAL',
+  CATEGORIA = 'CATEGORIA'
+}
+
+export const TIPO_HORAS_ANUALES_MAP: Map<TipoHorasAnuales, string> = new Map([
+  [TipoHorasAnuales.FIJO, marker('csp.proyecto.tipo-horas-anuales.FIJO')],
+  [TipoHorasAnuales.REAL, marker('csp.proyecto.tipo-horas-anuales.REAL')],
+  [TipoHorasAnuales.CATEGORIA, marker('csp.proyecto.tipo-horas-anuales.CATEGORIA')]
+]);
+
+export enum CausaExencion {
+  SUJETO_EXENTO = 'SUJETO_EXENTO',
+  NO_SUJETO = 'NO_SUJETO',
+  NO_SUJETO_SIN_DEDUCCION = 'NO_SUJETO_SIN_DEDUCCION',
+  NO_SUJETO_CON_DEDUCCION = 'NO_SUJETO_CON_DEDUCCION'
+}
+
+export const CAUSA_EXENCION_MAP: Map<CausaExencion, string> = new Map([
+  [CausaExencion.SUJETO_EXENTO, marker('csp.proyecto.causa-exencion.SUJETO_EXENTO')],
+  [CausaExencion.NO_SUJETO, marker('csp.proyecto.causa-exencion.NO_SUJETO')],
+  [CausaExencion.NO_SUJETO_SIN_DEDUCCION, marker('csp.proyecto.causa-exencion.NO_SUJETO_SIN_DEDUCCION')],
+  [CausaExencion.NO_SUJETO_CON_DEDUCCION, marker('csp.proyecto.causa-exencion.NO_SUJETO_CON_DEDUCCION')]
+]);

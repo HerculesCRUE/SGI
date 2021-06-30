@@ -1,0 +1,12 @@
+<section class="memoria-formulario">
+  <h2>{{'eti.memoria.retrospectiva' | translate}}</h2>
+
+  <div class="formly" *ngIf=block?.loaded>
+    <form [formGroup]="block.formlyData.formGroup">
+      <formly-form [model]="block.formlyData.model" [fields]="block.formlyData.fields"
+        [options]="block.formlyData.options" [form]="block.formlyData.formGroup">
+      </formly-form>
+    </form>
+  </div>
+
+</section>

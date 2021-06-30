@@ -1,0 +1,14 @@
+.module {
+  justify-content: center;
+  align-items: center;
+  display: flex;
+  margin: 2em;
+  max-width: 200px;
+  min-height: 200px;
+}
+
+.module .module-content {
+  width: 100%;
+  line-height: 200px;
+  text-align: center;
+}

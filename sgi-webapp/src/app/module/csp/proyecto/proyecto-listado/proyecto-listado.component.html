@@ -1,0 +1,456 @@
+<div class="scrollable-panel-with-footer">
+  <section class="proyecto-listado">
+
+    <!-- Buscador de proyectos - Unidades de gestión -->
+    <div [ngClass]="busquedaAvanzada ? 'mat-elevation-z8 caja-busqueda-avanzada' : ''">
+      <form [ngClass]="busquedaAvanzada ? '' : 'formulario'" [formGroup]="formGroup"
+        [fxLayout.xs]="fxLayoutProperties.xs" [fxLayout]="fxLayoutProperties.layout"
+        fxLayoutGap="fxLayoutProperties.gap">
+
+        <div fxFlex="73%" fxFlex.sm="50%" fxFlex.md="53%" [fxLayout.xs]="fxLayoutProperties.xs"
+          [fxLayout]="fxLayoutProperties.layout" fxLayoutGap="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
+
+          <!-- Titulo -->
+          <div class="col">
+            <mat-form-field>
+              <mat-label>{{'csp.proyecto.titulo' | translate}}</mat-label>
+              <input matInput placeholder="{{'csp.proyecto.titulo' | translate}}" formControlName="titulo">
+            </mat-form-field>
+          </div>
+
+          <!-- Acronimo -->
+          <div class="col">
+            <mat-form-field>
+              <mat-label>{{'csp.proyecto.acronimo' | translate}}</mat-label>
+              <input matInput placeholder="{{'csp.proyecto.acronimo' | translate}}" formControlName="acronimo">
+            </mat-form-field>
+          </div>
+
+          <!-- Código Externo -->
+          <div class="col">
+            <mat-form-field>
+              <mat-label>{{'csp.proyecto.codigo-externo' | translate}}</mat-label>
+              <input matInput placeholder="{{'csp.proyecto.codigo-externo' | translate}}"
+                formControlName="codigoExterno">
+            </mat-form-field>
+          </div>
+
+          <!-- Estado -->
+          <ng-container>
+            <div class="col">
+              <mat-form-field>
+                <mat-label>{{'csp.proyecto.estado' | translate}}</mat-label>
+                <mat-select matNativeControl formControlName="estado">
+                  <mat-option [value]="undefined"></mat-option>
+                  <mat-option *ngFor="let estado of ESTADO_MAP |  keyvalue" [value]="estado.key">
+                    {{ estado.value | translate}}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
+          </ng-container>
+
+        </div>
+
+        <div class="buttons-final" *ngIf="!busquedaAvanzada">
+          <div class="col filter-button">
+            <button color="primary" aria-label="Center Align" mat-raised-button (click)="onSearch()">
+              <mat-icon>search</mat-icon> {{'btn.search'| translate}}
+            </button>
+            <button class="link-busqueda underline" aria-label="Center Align" mat-button
+              (click)="toggleBusquedaAvanzada()">
+              {{'btn.search.advanced'| translate}}
+            </button>
+            <button color="warn" aria-label="Center Align" (click)="onClearFilters()" mat-button>{{'btn.clean'|
+              translate}}
+            </button>
+          </div>
+        </div>
+
+      </form>
+
+      <form *ngIf="busquedaAvanzada" [ngClass]="busquedaAvanzada ? 'busqueda-avanzada' : ''" [formGroup]="formGroup">
+
+        <div [fxLayout.xs]="fxLayoutProperties.xs" [fxLayout]="fxLayoutProperties.layout"
+          [fxLayoutGap]="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
+
+          <ng-container *sgiHasAuthorityForAnyUO="'CSP-PRO-R'">
+            <!-- Activo -->
+            <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md"
+              [fxFlex.gt-md]="fxFlexProperties.gtMd" [fxFlexOrder]="fxFlexProperties.order">
+              <mat-form-field>
+                <mat-label>{{'label.activo' | translate}}</mat-label>
+                <mat-select matNativeControl formControlName="activo">
+                  <mat-option value="todos">{{'label.todos' | translate}}</mat-option>
+                  <mat-option value="true">{{'label.si' | translate}}</mat-option>
+                  <mat-option value="false">{{'label.no' | translate}}</mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
+          </ng-container>
+
+          <!-- Unidad de gestión -->
+          <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md"
+            [fxFlex.gt-md]="fxFlexProperties.gtMd" [fxFlexOrder]="fxFlexProperties.order">
+            <mat-form-field class="input-form">
+              <mat-label>{{'csp.proyecto.unidad-gestion' | translate}}</mat-label>
+              <input matInput formControlName="unidadGestion" type="text" id="unidadGestion"
+                placeholder="{{'csp.proyecto.unidad-gestion' | translate}}" [matAutocomplete]="autoUnidadGestion">
+              <mat-autocomplete #autoUnidadGestion="matAutocomplete" [displayWith]="getUnidadGestion">
+                <mat-option *ngFor="let unidadGestion of unidadesGestion$ | async" [value]="unidadGestion">
+                  {{unidadGestion.nombre}}
+                </mat-option>
+              </mat-autocomplete>
+            </mat-form-field>
+          </div>
+
+          <!-- Finalizado -->
+          <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md"
+            [fxFlex.gt-md]="fxFlexProperties.gtMd" [fxFlexOrder]="fxFlexProperties.order">
+            <mat-form-field>
+              <mat-label>{{'csp.proyecto.finalizado' | translate}}</mat-label>
+              <sgi-select-boolean formControlName="finalizado">
+              </sgi-select-boolean>
+            </mat-form-field>
+          </div>
+
+          <!-- Prorrogado -->
+          <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md"
+            [fxFlex.gt-md]="fxFlexProperties.gtMd" [fxFlexOrder]="fxFlexProperties.order">
+            <mat-form-field>
+              <mat-label>{{'csp.proyecto.prorrogado' | translate}}</mat-label>
+              <sgi-select-boolean formControlName="prorrogado">
+              </sgi-select-boolean>
+            </mat-form-field>
+          </div>
+
+        </div>
+
+        <div class="ml-10" [fxLayout.xs]="fxLayoutProperties.xs" [fxLayout]="fxLayoutProperties.layout"
+          [fxLayoutGap]="fxLayoutProperties.gap">
+
+          <!-- fechaInicioDesde -->
+          <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md"
+            [fxFlex.gt-md]="fxFlexProperties.gtMd" [fxFlexOrder]="fxFlexProperties.order">
+            <mat-form-field class=" input-form">
+              <mat-label>{{'csp.proyecto.fecha-inicio-desde' | translate}}</mat-label>
+              <input matInput formControlName="fechaInicioDesde" [ngxMatDatetimePicker]="fechaInicioDesde">
+              <mat-datepicker-toggle matSuffix [for]="fechaInicioDesde"></mat-datepicker-toggle>
+              <ngx-mat-datetime-picker #fechaInicioDesde showSeconds="true" [defaultTime]="[0,0,0]">
+              </ngx-mat-datetime-picker>
+            </mat-form-field>
+          </div>
+
+          <!-- fechaInicioHasta -->
+          <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md"
+            [fxFlex.gt-md]="fxFlexProperties.gtMd" [fxFlexOrder]="fxFlexProperties.order">
+            <mat-form-field class="input-form">
+              <mat-label>{{'csp.proyecto.fecha-inicio-hasta' | translate}}</mat-label>
+              <input matInput formControlName="fechaInicioHasta" [ngxMatDatetimePicker]="fechaInicioHasta">
+              <mat-datepicker-toggle matSuffix [for]="fechaInicioHasta"></mat-datepicker-toggle>
+              <ngx-mat-datetime-picker #fechaInicioHasta showSeconds="true" [defaultTime]="[23,59,59]">
+              </ngx-mat-datetime-picker>
+            </mat-form-field>
+          </div>
+
+          <!-- fechaFinDesde -->
+          <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md"
+            [fxFlex.gt-md]="fxFlexProperties.gtMd" [fxFlexOrder]="fxFlexProperties.order">
+            <mat-form-field class="input-form">
+              <mat-label>{{'csp.proyecto.fecha-fin-desde' | translate}}</mat-label>
+              <input matInput formControlName="fechaFinDesde" [ngxMatDatetimePicker]="fechaFinDesde">
+              <mat-datepicker-toggle matSuffix [for]="fechaFinDesde"></mat-datepicker-toggle>
+              <ngx-mat-datetime-picker #fechaFinDesde showSeconds="true" [defaultTime]="[0,0,0]">
+              </ngx-mat-datetime-picker>
+            </mat-form-field>
+          </div>
+
+          <!-- fechaFinHasta -->
+          <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md"
+            [fxFlex.gt-md]="fxFlexProperties.gtMd" [fxFlexOrder]="fxFlexProperties.order">
+            <mat-form-field class="input-form">
+              <mat-label>{{'csp.proyecto.fecha-fin-hasta' | translate}}</mat-label>
+              <input matInput formControlName="fechaFinHasta" [ngxMatDatetimePicker]="fechaFinHasta">
+              <mat-datepicker-toggle matSuffix [for]="fechaFinHasta"></mat-datepicker-toggle>
+              <ngx-mat-datetime-picker #fechaFinHasta showSeconds="true" [defaultTime]="[23,59,59]">
+              </ngx-mat-datetime-picker>
+            </mat-form-field>
+          </div>
+        </div>
+
+        <div [fxLayout.xs]="fxLayoutProperties.xs" [fxLayout]="fxLayoutProperties.layout"
+          [fxLayoutGap]="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
+          <!-- Ámbito geográfico -->
+          <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md"
+            [fxFlex.gt-md]="fxFlexProperties.gtMd" [fxFlexOrder]="fxFlexProperties.order">
+            <mat-form-field class="input-form">
+              <mat-label>{{'csp.proyecto.ambito-geografico' | translate}}</mat-label>
+              <input matInput formControlName="ambitoGeografico" type="text" id="ambitoGeografico"
+                placeholder="{{'csp.proyecto.ambito-geografico' | translate}}" [matAutocomplete]="autoAmbitoGeografico">
+              <mat-autocomplete #autoAmbitoGeografico="matAutocomplete" [displayWith]="getAmbitoGeografico">
+                <mat-option *ngFor="let ambitoGeografico of ambitoGeografico$ | async" [value]="ambitoGeografico">
+                  {{ambitoGeografico.nombre}}
+                </mat-option>
+              </mat-autocomplete>
+            </mat-form-field>
+          </div>
+        </div>
+        <div [fxLayout.xs]="fxLayoutProperties.xs" [fxLayout]="fxLayoutProperties.layout"
+          [fxLayoutGap]="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
+          <!-- Responsable de proyecto -->
+          <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md"
+            [fxFlex.gt-md]="fxFlexProperties.gtMd" [fxFlexOrder]="fxFlexProperties.order">
+            <mat-form-field class="input-form">
+              <mat-label>{{'csp.proyecto.responsable' | translate}}</mat-label>
+              <sgi-select-persona placeholder="{{'csp.proyecto.responsable' | translate}}"
+                formControlName="responsableProyecto" [colectivos]="colectivosResponsableProyecto"></sgi-select-persona>
+            </mat-form-field>
+          </div>
+          <!-- Miembro de equipo -->
+          <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md"
+            [fxFlex.gt-md]="fxFlexProperties.gtMd" [fxFlexOrder]="fxFlexProperties.order">
+            <mat-form-field class="input-form">
+              <mat-label>{{'csp.proyecto.miembro-equipo' | translate}}</mat-label>
+              <sgi-select-persona placeholder="{{'csp.proyecto.miembro-equipo' | translate}}"
+                formControlName="miembroEquipo" [colectivos]="colectivosMiembroEquipo"></sgi-select-persona>
+            </mat-form-field>
+          </div>
+        </div>
+        <div [fxLayout.xs]="fxLayoutProperties.xs" [fxLayout]="fxLayoutProperties.layout"
+          [fxLayoutGap]="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
+          <!-- Socio colaborador -->
+          <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md"
+            [fxFlex.gt-md]="fxFlexProperties.gtMd" [fxFlexOrder]="fxFlexProperties.order">
+            <mat-form-field class="input-form">
+              <mat-label>{{'csp.proyecto-socio' | translate:MSG_PARAMS.CARDINALIRY.SINGULAR}}</mat-label>
+              <sgi-select-empresa placeholder="{{'csp.proyecto-socio' | translate:MSG_PARAMS.CARDINALIRY.SINGULAR}}"
+                formControlName="socioColaborador">
+              </sgi-select-empresa>
+            </mat-form-field>
+          </div>
+        </div>
+        <div [fxLayout.xs]="fxLayoutProperties.xs" [fxLayout]="fxLayoutProperties.layout"
+          [fxLayoutGap]="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
+          <!-- Convocatoria -->
+          <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md"
+            [fxFlex.gt-md]="fxFlexProperties.gtMd" [fxFlexOrder]="fxFlexProperties.order">
+            <mat-form-field class="input-form">
+              <mat-label>{{'csp.proyecto.convocatoria' | translate}}</mat-label>
+              <sgi-select-convocatoria [authorities]="['CSP-PRO-V', ' CSP-PRO-E', 'CSP-PRO-B', 'CSP-PRO-R']"
+                placeholder="{{'csp.proyecto.convocatoria' | translate}}" formControlName="convocatoria">
+              </sgi-select-convocatoria>
+            </mat-form-field>
+          </div>
+        </div>
+        <div [fxLayout.xs]="fxLayoutProperties.xs" [fxLayout]="fxLayoutProperties.layout"
+          [fxLayoutGap]="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
+          <!-- Entidad convocante -->
+          <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md"
+            [fxFlex.gt-md]="fxFlexProperties.gtMd" [fxFlexOrder]="fxFlexProperties.order">
+            <mat-form-field class="input-form">
+              <mat-label>{{'csp.proyecto-entidad-convocante.programa' | translate}}</mat-label>
+              <sgi-select-empresa placeholder="{{'csp.proyecto-entidad-convocante.programa' | translate}}"
+                formControlName="entidadConvocante">
+              </sgi-select-empresa>
+            </mat-form-field>
+          </div>
+          <!-- Plan de investigación -->
+          <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md"
+            [fxFlex.gt-md]="fxFlexProperties.gtMd" [fxFlexOrder]="fxFlexProperties.order">
+            <mat-form-field class="input-form">
+              <mat-label>{{'csp.proyecto.plan-investigacion' | translate}}</mat-label>
+              <input matInput formControlName="planInvestigacion" type="text" id="planInvestigacion"
+                placeholder="{{'csp.proyecto.plan-investigacion' | translate}}" maxlength="100"
+                [matAutocomplete]="autoPlanInvestigacion">
+              <mat-autocomplete #autoPlanInvestigacion="matAutocomplete" [displayWith]="getPlanInvestigacion">
+                <mat-option *ngFor="let planInvestigacion of planInvestigacion$ | async" [value]="planInvestigacion">
+                  {{planInvestigacion.nombre}}
+                </mat-option>
+              </mat-autocomplete>
+            </mat-form-field>
+          </div>
+        </div>
+
+        <div [fxLayout.xs]="fxLayoutProperties.xs" [fxLayout]="fxLayoutProperties.layout"
+          [fxLayoutGap]="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
+
+          <!-- Entidad financiadora -->
+          <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md"
+            [fxFlex.gt-md]="fxFlexProperties.gtMd" [fxFlexOrder]="fxFlexProperties.order">
+            <mat-form-field class="input-form">
+              <mat-label>{{'csp.proyecto-entidad-financiadora' | translate}}</mat-label>
+              <sgi-select-empresa placeholder="{{'csp.proyecto-entidad-financiadora' | translate}}"
+                formControlName="entidadFinanciadora">
+              </sgi-select-empresa>
+            </mat-form-field>
+          </div>
+
+          <!-- Fuente financiacion -->
+          <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md"
+            [fxFlex.gt-md]="fxFlexProperties.gtMd" [fxFlexOrder]="fxFlexProperties.order">
+            <mat-form-field class="input-form">
+              <mat-label>{{'csp.proyecto.fuente-financiacion' | translate}}</mat-label>
+              <input matInput formControlName="fuenteFinanciacion" type="text" id="fuente"
+                placeholder="{{'csp.proyecto.fuente-financiacion' | translate}}" maxlength="100"
+                [matAutocomplete]="fuente">
+              <mat-autocomplete #fuente="matAutocomplete" [displayWith]="getFuenteFinanciacion">
+                <mat-option *ngFor="let fuente of fuenteFinanciacion$ | async" [value]="fuente">
+                  {{fuente.nombre}}
+                </mat-option>
+              </mat-autocomplete>
+            </mat-form-field>
+          </div>
+
+        </div>
+
+        <div class="buttons-final">
+          <div class="col filter-button">
+            <button color="primary" aria-label="Center Align" mat-raised-button (click)="onSearch()">
+              <mat-icon>search</mat-icon> {{'btn.search'| translate}}
+            </button>
+            <button class="link-busqueda underline" aria-label="Center Align" mat-button
+              (click)="toggleBusquedaAvanzada()">
+              {{'btn.search.simple'| translate}}
+            </button>
+            <button color="warn" aria-label="Center Align" (click)="onClearFilters()" mat-button>{{'btn.clean'|
+              translate}}
+            </button>
+          </div>
+        </div>
+
+      </form>
+    </div>
+    <!-- FIN Buscador de proyectos -->
+
+    <!-- Listado de proyectos -->
+    <table mat-table class="mat-elevation-z8 table-unidad" [dataSource]="proyecto$ | async" matSort matSortActive="id"
+      matSortDirection="asc" matSortDisableClear>
+
+      <!-- Titulo -->
+      <ng-container matColumnDef="titulo">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'csp.proyecto.titulo' | translate}}
+        </th>
+        <td mat-cell *matCellDef="let proyecto">{{proyecto.titulo}}</td>
+      </ng-container>
+
+      <!-- Acronimo -->
+      <ng-container matColumnDef="acronimo">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'csp.proyecto.acronimo' | translate}}
+        </th>
+        <td mat-cell *matCellDef="let proyecto">{{proyecto.acronimo}}</td>
+      </ng-container>
+
+      <!-- Referencia en entidad convocante -->
+      <ng-container matColumnDef="codigoExterno">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'csp.proyecto.ref-codigo-externo' | translate}}
+        </th>
+        <td mat-cell *matCellDef="let proyecto">{{proyecto.codigoExterno}}</td>
+      </ng-container>
+
+      <!-- Fecha inicio -->
+      <ng-container matColumnDef="fechaInicio">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>
+          {{'csp.proyecto.fecha-inicio' | translate}} </th>
+        <td mat-cell *matCellDef="let proyecto">
+          {{proyecto.fechaInicio | luxon:'short'}}
+        </td>
+      </ng-container>
+
+      <!-- Fecha fin -->
+      <ng-container matColumnDef="fechaFin">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>
+          {{'csp.proyecto.fecha-fin' | translate}} </th>
+        <td mat-cell *matCellDef="let proyecto">
+          {{proyecto.fechaFin | luxon:'short'}}
+        </td>
+      </ng-container>
+
+      <!-- Fecha fin definitiva -->
+      <ng-container matColumnDef="fechaFinDefinitiva">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>
+          {{'csp.proyecto.fecha-fin-definitiva' | translate}} </th>
+        <td mat-cell *matCellDef="let proyecto">
+          {{proyecto.fechaFinDefinitiva | luxon:'short'}}
+        </td>
+      </ng-container>
+
+      <!-- Finalizado -->
+      <ng-container matColumnDef="finalizado">
+        <th mat-header-cell *matHeaderCellDef>
+          {{'csp.proyecto.finalizado' | translate}} </th>
+        <td mat-cell *matCellDef="let proyecto">
+          {{(proyecto.fechaFinDefinitiva ? proyecto.fechaFinDefinitiva < this.fechaActual ? 'label.si' : 'label.no' :
+            proyecto.fechaFin < this.fechaActual ? 'label.si' : 'label.no' ) | translate}} </td>
+      </ng-container>
+
+      <!-- Prorrogado -->
+      <ng-container matColumnDef="prorrogado">
+        <th mat-header-cell *matHeaderCellDef>
+          {{'csp.proyecto.prorrogado' | translate}} </th>
+        <td mat-cell *matCellDef="let proyecto">
+          {{(proyecto.prorrogado ? 'label.si' : 'label.no') | translate}}
+        </td>
+      </ng-container>
+
+      <!-- Estado proyecto -->
+      <ng-container matColumnDef="estado">
+        <th mat-header-cell *matHeaderCellDef> {{'csp.proyecto.estado' | translate}} </th>
+        <td mat-cell *matCellDef="let proyecto">
+          {{ESTADO_MAP.get(proyecto.estado.estado) | translate}}
+        </td>
+      </ng-container>
+
+      <!-- Activo  -->
+      <ng-container matColumnDef="activo" *sgiHasAuthorityForAnyUO="'CSP-PRO-R'">
+        <ng-container>
+          <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'label.activo' | translate}}
+          </th>
+          <td mat-cell *matCellDef="let proyecto">{{(proyecto.activo ? 'label.si' : 'label.no') | translate}}
+          </td>
+        </ng-container>
+      </ng-container>
+
+      <!-- Acciones -->
+      <ng-container matColumnDef="acciones">
+        <th mat-header-cell *matHeaderCellDef> {{'label.actions' | translate}} </th>
+        <td mat-cell *matCellDef="let proyecto">
+          <ng-container *sgiHasAnyAuthority="['CSP-PRO-V', 'CSP-PRO-V_' + proyecto.unidadGestion.id ]">
+            <button *ngIf="(proyecto.estado.estado === Estado.CONCEDIDO)" mat-button
+              matTooltip="{{'btn.view' | translate}}" [routerLink]="[proyecto.id]">
+              <mat-icon color="primary">visibility</mat-icon>
+            </button>
+          </ng-container>
+          <ng-container *sgiHasAnyAuthority="['CSP-PRO-E', 'CSP-PRO-E_' + proyecto.unidadGestion.id ]">
+            <button *ngIf="proyecto.activo && 
+                        (proyecto.estado.estado === Estado.CONCEDIDO || 
+                        proyecto.estado.estado === Estado.BORRADOR || 
+                        proyecto.estado.estado === Estado.RENUNCIADO || 
+                        proyecto.estado.estado === Estado.RESCINDIDO)" mat-button
+              matTooltip="{{'btn.edit' | translate}}" [routerLink]="[proyecto.id]">
+              <mat-icon color="primary">border_color</mat-icon>
+            </button>
+          </ng-container>
+          <ng-container *sgiHasAnyAuthority="['CSP-PRO-B', 'CSP-PRO-B_' + proyecto.unidadGestion.id ]">
+            <button *ngIf="proyecto.activo ? true : false" mat-button matTooltip="{{'btn.edit' | translate}}"
+              (click)="deactivateProyecto(proyecto)">
+              <mat-icon color="warn">highlight_off</mat-icon>
+            </button>
+          </ng-container>
+          <ng-container *sgiHasAnyAuthority="['CSP-PRO-R', 'CSP-PRO-R_' + proyecto.unidadGestion.id ]">
+            <button *ngIf="(proyecto.estado.estado === Estado.BORRADOR && proyecto.activo === false)"
+              (click)="activateProyecto(proyecto)" mat-button matTooltip="{{'btn.recover' | translate}}">
+              <mat-icon color="accent">add_circle_outline</mat-icon>
+            </button>
+          </ng-container>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="columnas"></tr>
+      <tr mat-row *matRowDef="let row; columns: columnas;"></tr>
+    </table>
+    <mat-paginator [pageSizeOptions]="elementosPagina" [length]="totalElementos" showFirstLastButtons>
+    </mat-paginator>
+  </section>
+</div>
+<sgi-footer-crear *sgiHasAuthorityForAnyUO="'CSP-PRO-C'" [texto]="textoCrear" [route]="ROUTE_NAMES.NEW">
+</sgi-footer-crear>

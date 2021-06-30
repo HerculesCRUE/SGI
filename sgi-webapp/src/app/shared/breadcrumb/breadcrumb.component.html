@@ -1,0 +1,21 @@
+<!-- BREADCRUMB -->
+<div class="breadcrumbComponent">
+  <div class="migas">
+    <nav class="breadcrumb" *ngIf="data">
+      <ol class="breadcrumb__list r-list">
+        <li class="breadcrumb__group" *ngFor="let segment of data let i = index">
+          <a [routerLink]="segment.path" class="breadcrumb__point r-link">{{segment.title.key |
+            translate:segment.title.params}}</a>
+          <span class="breadcrumb__divider" aria-hidden="true" *ngIf="i < data.length - 1">
+            <img class="chevron" src="assets/icons/chevron_right.svg" alt="" />
+          </span>
+        </li>
+      </ol>
+    </nav>
+    <div class="title" *ngIf="title">
+      <h2 style="margin: 0">
+        {{title.key | translate:title.params}}
+      </h2>
+    </div>
+  </div>
+</div>

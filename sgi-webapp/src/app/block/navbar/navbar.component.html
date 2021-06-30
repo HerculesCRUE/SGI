@@ -1,0 +1,64 @@
+<!-- Menu secundario -->
+
+<div class="navbar-icon">
+  <div class="nav-item" matTooltip="{{'menu.secundario.graficas' | translate}}">
+    <a class="nav-link" href="">
+      <mat-icon color="primary"> pie_chart</mat-icon>
+      <span fxHide fxShow.xs class="posicion">{{'menu.secundario.graficas' | translate}}</span>
+    </a>
+  </div>
+</div>
+
+<div class="navbar-icon">
+  <div class="nav-item" matTooltip="{{'menu.secundario.cuenta' | translate}}">
+    <a class="nav-link" [matMenuTriggerFor]="account">
+      <mat-icon color="primary">person</mat-icon>
+    </a>
+    <mat-menu #account="matMenu">
+      <button mat-menu-item>
+        <span>{{'menu.secundario.cuenta' | translate}}</span>
+      </button>
+      <button mat-menu-item (click)="authService.logout('/')">
+        <span>{{'menu.secundario.cuenta.logout' | translate}}</span>
+      </button>
+    </mat-menu>
+  </div>
+</div>
+
+<div class="navbar-icon">
+  <div class="nav-item" matTooltip="{{'menu.secundario.ajustes' | translate}}">
+    <a class="nav-link" href="">
+      <mat-icon color="primary">settings</mat-icon>
+      <span fxHide fxShow.xs class="posicion">{{'menu.secundario.ajustes' | translate}}</span>
+    </a>
+  </div>
+</div>
+
+<div class="navbar-icon">
+  <div class="nav-item" matTooltip="{{'menu.secundario.listados' | translate}}">
+    <a class="nav-link" href="">
+      <mat-icon color="primary">assignment</mat-icon>
+      <span fxHide fxShow.xs class="posicion">{{'menu.secundario.listados' | translate}}</span>
+    </a>
+  </div>
+</div>
+
+<div class="navbar-icon">
+  <div class="nav-item" matTooltip="{{'menu.secundario.notificaciones' | translate}}">
+    <a class="nav-link" href="">
+      <mat-icon color="primary">notifications</mat-icon>
+      <span fxHide fxShow.xs class="posicion">{{'menu.secundario.notificaciones' | translate}}</span>
+    </a>
+  </div>
+</div>
+
+<div class="navbar-icon modulo">
+  <div class="nav-item modulo" matTooltip="{{'menu.secundario.selector-modulo' | translate}}"
+    (click)="selectorModulo()">
+    <a class="nav-link">
+      <mat-icon color="primary">border_all</mat-icon>
+      <span fxHide fxShow.xs class="posicion">{{'menu.secundario.selector-modulo' | translate}}</span>
+    </a>
+  </div>
+</div>
+<!-- FIN Menu secundario -->

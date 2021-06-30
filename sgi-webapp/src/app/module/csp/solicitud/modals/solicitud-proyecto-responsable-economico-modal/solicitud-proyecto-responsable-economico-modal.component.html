@@ -1,0 +1,81 @@
+<div class="sgi-dialog-header" fxLayout="row" fxLayoutGap="20px">
+  <span fxFlexAlign="center" mat-mat-dialog-title role="heading" aria-level="3" fxFlex>{{title}}</span>
+  <button fxFlex="nogrow" mat-icon-button mat-dialog-close>
+    <mat-icon class="close-icon">close</mat-icon>
+  </button>
+</div>
+<mat-dialog-content>
+  <form [formGroup]="formGroup">
+    <!-- Responsable -->
+    <div [fxLayout]="fxLayoutProperties.layout" [fxLayoutAlign]="fxLayoutProperties.layoutAlign">
+      <mat-form-field>
+        <mat-label>
+          {{'csp.solicitud-proyecto-responsable-economico' | translate}}
+        </mat-label>
+        <sgi-select-persona placeholder="{{'csp.solicitud-proyecto-responsable-economico' | translate}}"
+          formControlName="responsable" [tipoColectivo]="tipoColectivoResponsableEconomico" required>
+        </sgi-select-persona>
+        <mat-error *ngIf="formGroup.controls.responsable.errors?.required">
+          {{'error.required.entity' | translate:msgParamEntity}}
+        </mat-error>
+        <mat-error *ngIf="formGroup.controls.responsable.errors?.contains">
+          {{'error.csp.solicitud-proyecto-responsable-economico.duplicate' | translate}}
+        </mat-error>
+      </mat-form-field>
+    </div>
+    <!-- Meses -->
+    <div class="fieldset-form">
+      {{'title.csp.solicitud-proyecto-responsable-economico.periodo-participacion' | translate}}
+    </div>
+    <div [fxLayout.xs]="fxLayoutProperties.xs" [fxLayout]="fxLayoutProperties.layout"
+      [fxLayoutGap]="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
+      <!-- Mes inicial -->
+      <div>
+        <mat-form-field>
+          <mat-label>{{'csp.solicitud-proyecto-responsable-economico.mes-inicial' | translate}}</mat-label>
+          <input matInput formControlName="mesInicio" type="number" id="mesInicio"
+            placeholder="{{'csp.solicitud-proyecto-responsable-economico.mes-inicial' | translate}}">
+          <mat-error *ngIf="formGroup.controls.mesInicio.errors?.range">
+            {{'error.overlapping.record.entity' | translate:msgParamEntity}}
+          </mat-error>
+          <mat-error *ngIf="formGroup.controls.mesInicio.errors?.min">
+            {{'error.min.mes-desde' | translate}}
+          </mat-error>
+          <mat-error *ngIf="formGroup.controls.mesInicio.errors?.max">
+            {{'error.csp.solicitud-proyecto-responsable-economico.mes-inicio.max' | translate}}
+          </mat-error>
+        </mat-form-field>
+      </div>
+      <!-- Mes final -->
+      <div>
+        <mat-form-field>
+          <mat-label>{{'csp.solicitud-proyecto-responsable-economico.mes-final' | translate}}</mat-label>
+          <input matInput formControlName="mesFin" type="number" id="mesFin"
+            placeholder="{{'csp.solicitud-proyecto-responsable-economico.mes-final' | translate}}">
+          <mat-error *ngIf="formGroup.controls.mesFin.errors?.after">
+            {{'error.after.mes-final' | translate}}
+          </mat-error>
+          <mat-error *ngIf="formGroup.controls.mesFin.errors?.range">
+            {{'error.overlapping.record.entity' | translate:msgParamEntity}}
+          </mat-error>
+          <mat-error *ngIf="formGroup.controls.mesFin.errors?.min">
+            {{'error.min.mes-desde' | translate}}
+          </mat-error>
+          <mat-error *ngIf="formGroup.controls.mesFin.errors?.max">
+            {{'error.csp.solicitud-proyecto-responsable-economico.mes-fin.max' | translate}}
+          </mat-error>
+        </mat-form-field>
+      </div>
+    </div>
+  </form>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <button color="accent" (click)="saveOrUpdate()" mat-raised-button type="submit" *ngIf="!data.readonly"
+    [disabled]="saveDisabled">
+    <mat-icon class="save-icon">save</mat-icon>
+    {{textSaveOrUpdate | translate}}
+  </button>
+  <button class="link-cancelar" mat-button type="button" mat-dialog-close>
+    {{'btn.cancel' | translate}}
+  </button>
+</mat-dialog-actions>

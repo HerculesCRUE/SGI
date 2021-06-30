@@ -1,0 +1,16 @@
+<sgi-action [actionService]="actionService">
+  <ng-container menu>
+    <sgi-action-fragment-menu-item [route]="[EVALUADOR_ROUTE_NAMES.DATOS_GENERALES]"
+      [title]="'label.datos-generales' | translate"
+      [fragment]="actionService.getFragment(actionService.FRAGMENT.DATOS_GENERALES)">
+    </sgi-action-fragment-menu-item>
+    <sgi-action-fragment-menu-item [route]="[EVALUADOR_ROUTE_NAMES.CONFLICTOS_INTERES]"
+      [title]="'eti.evaluador.conflicto-interes' | translate:MSG_PARMS.CARDINALIRY.PLURAL"
+      [fragment]="actionService.getFragment(actionService.FRAGMENT.CONFLICTO_INTERES)">
+    </sgi-action-fragment-menu-item>
+  </ng-container>
+  <ng-container footer>
+    <sgi-action-footer [texto]="textoCrear" [actionService]="actionService">
+    </sgi-action-footer>
+  </ng-container>
+</sgi-action>

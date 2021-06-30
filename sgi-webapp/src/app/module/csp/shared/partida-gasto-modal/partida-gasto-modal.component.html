@@ -1,0 +1,200 @@
+<div class="sgi-dialog-header" fxLayout="row" fxLayoutGap="20px">
+  <span fxFlexAlign="center" mat-mat-dialog-title role="heading" aria-level="3" fxFlex>{{title | translate}}</span>
+  <button fxFlex="nogrow" mat-icon-button mat-dialog-close>
+    <mat-icon class="close-icon">close</mat-icon>
+  </button>
+</div>
+<mat-dialog-content>
+  <form [formGroup]="formGroup">
+    <!-- Concepto gasto -->
+    <div [fxLayout]="fxLayoutProperties.layout" [fxLayoutAlign]="fxLayoutProperties.layoutAlign">
+      <mat-form-field>
+        <mat-label>{{'csp.solicitud-proyecto-presupuesto.concepto-gasto' | translate}}
+        </mat-label>
+        <sgi-select-entity formControlName="conceptoGasto" required [options]="conceptosGasto$ | async">
+        </sgi-select-entity>
+        <mat-error *ngIf="formGroup.controls.conceptoGasto.errors?.required">
+          {{'error.required.entity' | translate:msgParaConceptoGastoEntity}}
+        </mat-error>
+      </mat-form-field>
+    </div>
+    <div *ngIf="showCodigosEconomicosInfo">
+      <!-- Codigos Economicos Permitidos -->
+      <ng-container *ngIf="dataSourceCodigosEconomicosPermitidos?.data?.length == 0; else codigosEconomicosPermitidos">
+      </ng-container>
+
+      <!-- Codigos Economicos No Permitidos -->
+      <ng-container
+        *ngIf="dataSourceCodigosEconomicosNoPermitidos?.data?.length == 0; else codigosEconomicosNoPermitidos">
+      </ng-container>
+    </div>
+    <!-- Anualidad -->
+    <div [fxLayout]="fxLayoutProperties.layout" [fxLayoutAlign]="fxLayoutProperties.layoutAlign">
+      <mat-form-field>
+        <mat-label>{{'csp.solicitud-proyecto-presupuesto.anualidad' | translate}}
+        </mat-label>
+        <input matInput formControlName="anualidad" type="number" min="0" step="1"
+          placeholder="{{'csp.solicitud-proyecto-presupuesto.anualidad' | translate}}">
+        <mat-error *ngIf="formGroup.controls.anualidad.errors?.min">
+          {{'error.csp.solicitud-proyecto-presupuesto.anualidad.min' | translate}}
+        </mat-error>
+        <mat-error *ngIf="formGroup.controls.anualidad.errors?.max">
+          {{'error.csp.solicitud-proyecto-presupuesto.anualidad.max' | translate}}
+        </mat-error>
+      </mat-form-field>
+    </div>
+    <div [fxLayout]="fxLayoutProperties.layout" [fxLayoutAlign]="fxLayoutProperties.layoutAlign">
+      <!-- Importe presupuestado -->
+      <div>
+        <mat-form-field>
+          <mat-label>{{'csp.solicitud-proyecto-presupuesto.importe-presupuestado' | translate}}
+          </mat-label>
+          <input matInput formControlName="importePresupuestado" type="number" min="0" step="1"
+            placeholder="{{'csp.solicitud-proyecto-presupuesto.importe-presupuestado' | translate}}" required>
+          <mat-error *ngIf="formGroup.controls.importePresupuestado.errors?.required">
+            {{'error.required.entity' | translate:msgParamImportePresupuestadoEntity}}
+          </mat-error>
+          <mat-error *ngIf="formGroup.controls.importePresupuestado.errors?.min">
+            {{'error.csp.solicitud-proyecto-presupuesto.importe-presupuestado.min' | translate}}
+          </mat-error>
+          <mat-error *ngIf="formGroup.controls.importePresupuestado.errors?.max">
+            {{'error.csp.solicitud-proyecto-presupuesto.importe-presupuestado.max' | translate}}
+          </mat-error>
+        </mat-form-field>
+      </div>
+      <!-- Importe solicitado -->
+      <div>
+        <mat-form-field>
+          <mat-label>{{'csp.solicitud-proyecto-presupuesto.importe-solicitado' | translate}}
+          </mat-label>
+          <input matInput formControlName="importeSolicitado" type="number" min="0" step="1"
+            placeholder="{{'csp.solicitud-proyecto-presupuesto.importe-solicitado' | translate}}" required>
+          <mat-error *ngIf="formGroup.controls.importeSolicitado.errors?.required">
+            {{'error.required.entity' | translate:msgParamImporteEntity}}
+          </mat-error>
+          <mat-error *ngIf="formGroup.controls.importeSolicitado.errors?.min">
+            {{'error.csp.solicitud-proyecto-presupuesto.importe-solicitado.min' | translate}}
+          </mat-error>
+          <mat-error *ngIf="formGroup.controls.importeSolicitado.errors?.max">
+            {{'error.csp.solicitud-proyecto-presupuesto.importe-solicitado.max' | translate}}
+          </mat-error>
+        </mat-form-field>
+      </div>
+    </div>
+    <!-- Observaciones -->
+    <div [fxLayout]="fxLayoutProperties.layout" [fxLayoutAlign]="fxLayoutProperties.layoutAlign">
+      <mat-form-field>
+        <mat-label>{{'csp.solicitud-proyecto-presupuesto.observaciones' | translate}}</mat-label>
+        <textarea matInput formControlName="observaciones" type="text"
+          placeholder="{{'csp.solicitud-proyecto-presupuesto.observaciones' | translate}}">
+                    </textarea>
+        <mat-error *ngIf="formGroup.controls.observaciones.errors?.maxlength">
+          {{'error.maxlength.entity' | translate:msgParamObservacionesEntity}}
+        </mat-error>
+      </mat-form-field>
+    </div>
+  </form>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <button color="accent" (click)="saveOrUpdate()" mat-raised-button type="submit" *ngIf="!data.readonly">
+    <mat-icon class="save-icon">save</mat-icon>{{textSaveOrUpdate | translate}}
+  </button>
+  <button class="link-cancelar" mat-button type="button" mat-dialog-close>{{'btn.cancel' |
+    translate}}</button>
+</mat-dialog-actions>
+
+<ng-template #codigosEconomicosPermitidos>
+  <mat-label>
+    {{'csp.partida-gasto.codigos-economicos-permitidos' | translate}}
+  </mat-label>
+
+  <table class="mat-elevation-z8" mat-table [dataSource]="dataSourceCodigosEconomicosPermitidos" matSort
+    #sortCodigosEconomicosPermitidos="matSort" matSortActive="permitidoDesde" matSortDirection="asc"
+    matSortDisableClear>
+    <ng-container matColumnDef="conceptoGasto">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>
+        {{'csp.partida-gasto.codigo-economico.concepto-gasto' | translate}}
+      </th>
+      <td mat-cell *matCellDef="let data">
+        {{data.convocatoriaConceptoGasto?.conceptoGasto.nombre}}
+      </td>
+    </ng-container>
+    <ng-container matColumnDef="importeMaximo">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>
+        {{'csp.partida-gasto.codigo-economico.importe-maximo' | translate}}
+      </th>
+      <td mat-cell *matCellDef="let data">
+        {{data.convocatoriaConceptoGasto?.importeMaximo}}
+      </td>
+    </ng-container>
+    <ng-container matColumnDef="permitidoDesde">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>
+        {{'csp.partida-gasto.codigo-economico.permitido-desde' | translate}}
+      </th>
+      <td mat-cell *matCellDef="let data">
+        {{data.convocatoriaConceptoGasto?.mesInicial}}
+      </td>
+    </ng-container>
+    <ng-container matColumnDef="permitidoHasta">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>
+        {{'csp.partida-gasto.codigo-economico.permitido-hasta' | translate}}
+      </th>
+      <td mat-cell *matCellDef="let data">
+        {{data.convocatoriaConceptoGasto?.mesFinal}}
+      </td>
+    </ng-container>
+    <ng-container matColumnDef="codigoEconomico">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>
+        {{'csp.partida-gasto.codigo-economico' | translate}}
+      </th>
+      <td mat-cell *matCellDef="let data">
+        {{data.codigoEconomicoRef}}
+      </td>
+    </ng-container>
+    <tr mat-header-row *matHeaderRowDef="columnsCodigosEconomicosPermitidos"></tr>
+    <tr mat-row *matRowDef="let row; columns: columnsCodigosEconomicosPermitidos;"></tr>
+  </table>
+</ng-template>
+<ng-template #codigosEconomicosNoPermitidos>
+  <mat-label>
+    {{'csp.partida-gasto.codigos-economicos-no-permitidos' | translate}}
+  </mat-label>
+  <table class="mat-elevation-z8" mat-table [dataSource]="dataSourceCodigosEconomicosNoPermitidos" matSort
+    #sortCodigosEconomicosNoPermitidos="matSort" matSortActive="noPermitidoDesde" matSortDirection="asc"
+    matSortDisableClear>
+    <ng-container matColumnDef="conceptoGasto">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>
+        {{'csp.partida-gasto.codigo-economico.concepto-gasto' | translate}}
+      </th>
+      <td mat-cell *matCellDef="let data">
+        {{data.convocatoriaConceptoGasto?.conceptoGasto.nombre}}
+      </td>
+    </ng-container>
+    <ng-container matColumnDef="noPermitidoDesde">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>
+        {{'csp.partida-gasto.codigo-economico.no-permitido-desde' | translate}}
+      </th>
+      <td mat-cell *matCellDef="let data">
+        {{data.convocatoriaConceptoGasto?.mesInicial}}
+      </td>
+    </ng-container>
+    <ng-container matColumnDef="noPermitidoHasta">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>
+        {{'csp.partida-gasto.codigo-economico.no-permitido-hasta' | translate}}
+      </th>
+      <td mat-cell *matCellDef="let data">
+        {{data.convocatoriaConceptoGasto?.mesFinal}}
+      </td>
+    </ng-container>
+    <ng-container matColumnDef="codigoEconomico">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>
+        {{'csp.partida-gasto.codigo-economico' | translate}}
+      </th>
+      <td mat-cell *matCellDef="let data">
+        {{data.codigoEconomicoRef}}
+      </td>
+    </ng-container>
+    <tr mat-header-row *matHeaderRowDef="columnsCodigosEconomicosNoPermitidos"></tr>
+    <tr mat-row *matRowDef="let row; columns: columnsCodigosEconomicosNoPermitidos;"></tr>
+  </table>
+</ng-template>

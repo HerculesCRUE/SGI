@@ -1,0 +1,11 @@
+<a mat-list-item [routerLink]="route" [routerLinkActive]="['is-active']">
+  <div>
+    <span>{{title}}</span>
+    <span *ngIf="fragment?.status$ | async as status;">
+      <mat-icon *ngIf="status.changes && !status.errors" class="warning-icon">
+        error_outline</mat-icon>
+      <mat-icon *ngIf="status.errors" class="danger-icon">
+        error</mat-icon>
+    </span>
+  </div>
+</a>

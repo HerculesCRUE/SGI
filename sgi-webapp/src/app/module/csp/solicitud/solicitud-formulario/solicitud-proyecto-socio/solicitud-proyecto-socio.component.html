@@ -1,0 +1,95 @@
+<section class="solicitud-socio-colaborador">
+
+  <h2>{{'csp.solicitud-proyecto-socio' | translate:msgParamEntities}}</h2>
+
+  <table class="mat-elevation-z8 table-acta" mat-table [dataSource]="dataSource" matSort matSortActive="id"
+    matSortDirection="asc" matSortDisableClear>
+    <!-- Nombre Column -->
+    <ng-container matColumnDef="empresa">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'csp.solicitud-socio-colaborador.nombre' |
+        translate}}
+      </th>
+      <td mat-cell *matCellDef="let wrapper"> {{ wrapper.value.empresa?.nombre }} </td>
+    </ng-container>
+
+    <!-- Nombre Column -->
+    <ng-container matColumnDef="rolSocio">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'csp.solicitud-socio-colaborador.rol-socio' | translate}}
+      </th>
+      <td mat-cell *matCellDef="let wrapper"> {{wrapper.value.rolSocio.nombre | translate}} </td>
+    </ng-container>
+
+    <!-- Número de investigadores Column -->
+    <ng-container matColumnDef="numInvestigadores">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'csp.solicitud-socio-colaborador.num-investigadores' |
+        translate}}
+      </th>
+      <td mat-cell *matCellDef="let wrapper"> {{wrapper.value.numInvestigadores}} </td>
+    </ng-container>
+
+    <!-- Mes de inicio Column -->
+    <ng-container matColumnDef="mesInicio">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'csp.solicitud-socio-colaborador.mes-inicio' |
+        translate}}
+      </th>
+      <td mat-cell *matCellDef="let wrapper"> {{wrapper.value.mesInicio}}
+      </td>
+    </ng-container>
+
+    <!-- Mes de fin Column -->
+    <ng-container matColumnDef="mesFin">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'csp.solicitud-socio-colaborador.mes-fin' |
+        translate}}
+      </th>
+      <td mat-cell *matCellDef="let wrapper"> {{wrapper.value.mesFin}}
+      </td>
+    </ng-container>
+
+    <!-- Importe presupuestado Column -->
+    <ng-container matColumnDef="importePresupuestado">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'csp.solicitud-socio-colaborador.importe-presupuestado' |
+        translate}}
+      </th>
+      <td mat-cell *matCellDef="let wrapper"> {{wrapper.value.importePresupuestado}}
+      </td>
+    </ng-container>
+
+    <!-- Importe solicitado Column -->
+    <ng-container matColumnDef="importeSolicitado">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'csp.solicitud-socio-colaborador.importe-solicitado' |
+        translate}}
+      </th>
+      <td mat-cell *matCellDef="let wrapper"> {{wrapper.value.importeSolicitado}}
+      </td>
+    </ng-container>
+
+    <!-- Acciones Column -->
+    <ng-container matColumnDef="acciones">
+      <th mat-header-cell *matHeaderCellDef> {{'label.actions' | translate}} </th>
+      <td mat-cell *matCellDef="let wrapper">
+        <ng-container>
+          <button *ngIf="this.formPart.readonly" mat-button matTooltip="{{'btn.view' | translate}}"
+            [routerLink]="[wrapper.value.id]">
+            <mat-icon color="primary">visibility</mat-icon>
+          </button>
+          <button *ngIf="!this.formPart.readonly" mat-button matTooltip="{{'btn.edit' | translate}}"
+            [routerLink]="[wrapper.value.id]">
+            <mat-icon color="primary">border_color</mat-icon>
+          </button>
+          <button *ngIf="!this.formPart.readonly" mat-button matTooltip="{{'btn.delete' | translate}}"
+            (click)="deleteProyectoSocio(wrapper)">
+            <mat-icon color="warn">highlight_off</mat-icon>
+          </button>
+        </ng-container>
+      </td>
+    </ng-container>
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+  </table>
+  <div class="separation-button" *ngIf="!this.formPart.readonly">
+    <button color="three" mat-button mat-raised-button [routerLink]="[ROUTE_NAMES.NEW]">
+      <mat-icon color="accent">add_circle</mat-icon>
+      {{ 'btn.add.entity' | translate:msgParamEntity }}
+    </button>
+  </div>
+</section>

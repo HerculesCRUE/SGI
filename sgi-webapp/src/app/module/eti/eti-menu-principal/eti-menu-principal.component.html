@@ -1,0 +1,63 @@
+<div class="opciones-menu">
+  <a class="item" mat-list-item *sgiHasAuthorityForAnyUO="'ETI-PEV-V'"
+    [routerLink]="[ETI_ROUTE_NAMES.PETICIONES_EVALUACION]" [routerLinkActive]="['is-active']">
+    <mat-icon color="primary" mat-list-icon>content_paste</mat-icon>
+    <p matLine *ngIf="opened">{{'eti.peticion-evaluacion' | translate:MSG_PARAMS.CARDINALIRY.PLURAL}}</p>
+  </a>
+
+  <a class="item" mat-list-item *sgiHasAuthorityForAnyUO="'ETI-PEV-V'" [routerLink]="[ETI_ROUTE_NAMES.MEMORIAS]"
+    [routerLinkActive]="['is-active']">
+    <mat-icon color="primary" mat-list-icon>file_copy</mat-icon>
+    <p matLine *ngIf="opened">{{'eti.memoria' | translate:MSG_PARAMS.CARDINALIRY.PLURAL}}</p>
+  </a>
+
+  <a class="item" mat-list-item *sgiHasAuthorityForAnyUO="'ETI-CNV-V'"
+    [routerLink]="[ETI_ROUTE_NAMES.SOLICITUDES_CONVOCATORIA]" [routerLinkActive]="['is-active']">
+    <mat-icon color="primary" mat-list-icon>equalizer</mat-icon>
+    <p matLine *ngIf="opened">{{'eti.convocatoria-reunion' | translate:MSG_PARAMS.CARDINALIRY.PLURAL}}</p>
+  </a>
+
+  <a class="item" mat-list-item *sgiHasAuthorityForAnyUO="'ETI-EVC-V'" [routerLink]="[ETI_ROUTE_NAMES.EVALUACIONES]"
+    [routerLinkActive]="['is-active']">
+    <mat-icon color="primary" mat-list-icon>list_alt</mat-icon>
+    <p matLine *ngIf="opened">{{'eti.evaluacion' | translate:MSG_PARAMS.CARDINALIRY.PLURAL}}</p>
+  </a>
+
+  <a class="item" mat-list-item *sgiHasAuthorityForAnyUO="'ETI-EVC-V', 'ETI-EVC-EVAL'"
+    [routerLink]="[ETI_ROUTE_NAMES.GESTION_SEGUIMIENTO]" [routerLinkActive]="['is-active']">
+    <mat-icon color="primary" mat-list-icon>supervised_user_circle</mat-icon>
+    <p matLine *ngIf="opened">{{'eti.seguimiento' | translate:MSG_PARAMS.CARDINALIRY.PLURAL}}</p>
+  </a>
+
+  <a class="item" mat-list-item *sgiHasAuthorityForAnyUO="'ETI-ACT-V'" [routerLink]="[ETI_ROUTE_NAMES.ACTAS]"
+    [routerLinkActive]="['is-active']">
+    <mat-icon color="primary" mat-list-icon>assignment</mat-icon>
+    <p matLine *ngIf="opened">{{'eti.acta' | translate:MSG_PARAMS.CARDINALIRY.PLURAL}}</p>
+  </a>
+
+  <a class="item" mat-list-item *sgiHasAuthorityForAnyUO="'ETI-EVR-V'" [routerLink]="[ETI_ROUTE_NAMES.EVALUADORES]"
+    [routerLinkActive]="['is-active']">
+    <mat-icon color="primary" mat-list-icon>supervised_user_circle</mat-icon>
+    <p matLine *ngIf="opened">{{'eti.evaluador' | translate:MSG_PARAMS.CARDINALIRY.PLURAL}}</p>
+  </a>
+
+  <a class="item" mat-list-item *sgiHasAnyAuthorityForAnyUO="['ETI-EVC-V', 'ETI-EVC-VR']"
+    [routerLink]="[ETI_ROUTE_NAMES.EVALUACIONES_EVALUADOR]" [routerLinkActive]="['is-active']">
+    <mat-icon color="primary" mat-list-icon>list_alt</mat-icon>
+    <p matLine *ngIf="opened">{{'menu.eti.evaluacion-evaluador' | translate}}</p>
+  </a>
+
+  <a class="item" mat-list-item *sgiHasAnyAuthorityForAnyUO="['ETI-EVC-V', 'ETI-EVC-VR']"
+    [routerLink]="[ETI_ROUTE_NAMES.SEGUIMIENTOS]" [routerLinkActive]="['is-active']">
+    <mat-icon color="primary" mat-list-icon>verified_user</mat-icon>
+    <p matLine *ngIf="opened">{{'menu.eti.seguimiento-evaluador' | translate:MSG_PARAMS.CARDINALIRY.PLURAL}}</p>
+  </a>
+
+  <a class="item" mat-list-item *sgiHasAuthorityForAnyUO="'ETI-CNF-E'" [routerLink]="[ETI_ROUTE_NAMES.CONFIGURACIONES]"
+    [routerLinkActive]="['is-active']">
+    <mat-icon color="primary" mat-list-icon>settings</mat-icon>
+    <p matLine *ngIf="opened">{{'eti.configuracion' | translate:MSG_PARAMS.CARDINALIRY.PLURAL}}</p>
+  </a>
+
+</div>
+<!-- FIN Menu principal -->

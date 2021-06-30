@@ -1,0 +1,104 @@
+<section class="solicitud-proyecto-presupuesto-datos-generales">
+  <h2>{{'label.datos-generales' | translate}}</h2>
+  <form [formGroup]="formGroup">
+
+    <!-- Nombre -->
+    <div [fxLayout.xs]="fxLayoutProperties.xs" [fxLayout]="fxLayoutProperties.layout"
+      [fxLayoutGap]="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
+      <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
+        [fxFlexOrder]="fxFlexProperties.order">
+        <mat-form-field fxFill>
+          <mat-label>{{'csp.solicitud-proyecto-presupuesto.datos-generales.nombre' | translate}}</mat-label>
+          <input matInput formControlName="nombre" type="text" id="nombre"
+            placeholder="{{'csp.solicitud-proyecto-presupuesto.datos-generales.nombre' | translate}}">
+        </mat-form-field>
+      </div>
+    </div>
+
+    <!-- CIF -->
+    <div [fxLayout.xs]="fxLayoutProperties.xs" [fxLayout]="fxLayoutProperties.layout"
+      [fxLayoutGap]="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
+      <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
+        [fxFlexOrder]="fxFlexProperties.order">
+        <mat-form-field fxFill>
+          <mat-label>{{'csp.solicitud-proyecto-presupuesto.datos-generales.cif' | translate}}</mat-label>
+          <input matInput formControlName="cif" type="text" id="cif"
+            placeholder="{{'csp.solicitud-proyecto-presupuesto.datos-generales.cif' | translate}}">
+        </mat-form-field>
+      </div>
+    </div>
+
+    <!-- Campos visibles solo si es una entidad financiadora -->
+    <ng-container *ngIf="formPart.financiadora">
+      <!-- Fuente financiacion -->
+      <div [fxLayout.xs]="fxLayoutProperties.xs" [fxLayout]="fxLayoutProperties.layout"
+        [fxLayoutGap]="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
+        <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
+          [fxFlexOrder]="fxFlexProperties.order">
+          <mat-form-field fxFill>
+            <mat-label>{{'csp.solicitud-proyecto-presupuesto.datos-generales.fuente-financiacion' | translate}}
+            </mat-label>
+            <input matInput formControlName="fuenteFinanciacion" type="text" id="fuenteFinanciacion"
+              placeholder="{{'csp.solicitud-proyecto-presupuesto.datos-generales.fuente-financiacion' | translate}}">
+          </mat-form-field>
+        </div>
+      </div>
+
+      <!-- Ambito -->
+      <div [fxLayout.xs]="fxLayoutProperties.xs" [fxLayout]="fxLayoutProperties.layout"
+        [fxLayoutGap]="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
+        <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
+          [fxFlexOrder]="fxFlexProperties.order">
+          <mat-form-field fxFill>
+            <mat-label>{{'csp.solicitud-proyecto-presupuesto.datos-generales.ambito' | translate}}</mat-label>
+            <input matInput formControlName="ambito" type="text" id="ambito"
+              placeholder="{{'csp.solicitud-proyecto-presupuesto.datos-generales.ambito' | translate}}">
+          </mat-form-field>
+        </div>
+      </div>
+
+      <!-- Tipo financiacion -->
+      <div [fxLayout.xs]="fxLayoutProperties.xs" [fxLayout]="fxLayoutProperties.layout"
+        [fxLayoutGap]="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
+        <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
+          [fxFlexOrder]="fxFlexProperties.order">
+          <mat-form-field fxFill>
+            <mat-label>{{'csp.solicitud-proyecto-presupuesto.datos-generales.tipo-financiacion' | translate}}
+            </mat-label>
+            <input matInput formControlName="tipoFinanciacion" type="text" id="tipoFinanciacion"
+              placeholder="{{'csp.solicitud-proyecto-presupuesto.datos-generales.tipo-financiacion' | translate}}">
+          </mat-form-field>
+        </div>
+      </div>
+
+      <!-- Porcentaje financiacion -->
+      <div [fxLayout.xs]="fxLayoutProperties.xs" [fxLayout]="fxLayoutProperties.layout"
+        [fxLayoutGap]="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
+        <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
+          [fxFlexOrder]="fxFlexProperties.order">
+          <mat-form-field fxFill>
+            <mat-label>{{'csp.solicitud-proyecto-presupuesto.datos-generales.porcentaje-financiacion' | translate}}
+            </mat-label>
+            <input matInput formControlName="porcentajeFinanciacion" type="number" id="porcentajeFinanciacion"
+              placeholder="{{'csp.solicitud-proyecto-presupuesto.datos-generales.porcentaje-financiacion' | translate}}">
+          </mat-form-field>
+        </div>
+      </div>
+
+      <!-- Importe financiacion -->
+      <div [fxLayout.xs]="fxLayoutProperties.xs" [fxLayout]="fxLayoutProperties.layout"
+        [fxLayoutGap]="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
+        <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
+          [fxFlexOrder]="fxFlexProperties.order">
+          <mat-form-field fxFill>
+            <mat-label>{{'csp.solicitud-proyecto-presupuesto.datos-generales.importe-financiacion' | translate}}
+            </mat-label>
+            <input matInput formControlName="importeFinanciacion" type="number" id="importeFinanciacion"
+              placeholder="{{'csp.solicitud-proyecto-presupuesto.datos-generales.importe-financiacion' | translate}}">
+          </mat-form-field>
+        </div>
+      </div>
+    </ng-container>
+
+  </form>
+</section>

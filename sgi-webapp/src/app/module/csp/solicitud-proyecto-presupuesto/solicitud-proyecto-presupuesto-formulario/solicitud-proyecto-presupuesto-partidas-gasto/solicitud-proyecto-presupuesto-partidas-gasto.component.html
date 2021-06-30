@@ -1,0 +1,88 @@
+<section class="solicitud-proyecto-desglose-presupuesto-partidas-gasto">
+
+  <mat-label>{{'menu.csp.proyectos.proyecto-presupuesto.partidas-gasto' | translate}}</mat-label>
+
+  <table class="mat-elevation-z8 table-desglose-presupuesto-global" mat-table [dataSource]="dataSource" matSort
+    matSortActive="id" matSortDirection="asc" matSortDisableClear>
+    <!-- Concepto de gasto Column -->
+    <ng-container matColumnDef="conceptoGasto">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>
+        {{'csp.solicitud-proyecto-presupuesto.partida-gasto.concepto-gasto' | translate}}
+      </th>
+      <td mat-cell *matCellDef="let wrapper">
+        {{wrapper.partidaGasto.value.conceptoGasto.nombre}}
+      </td>
+    </ng-container>
+
+    <!-- Anualidad Column -->
+    <ng-container matColumnDef="anualidad">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>
+        {{'csp.solicitud-proyecto-presupuesto.partida-gasto.anualidad' | translate}}
+      </th>
+      <td mat-cell *matCellDef="let wrapper">
+        {{wrapper.partidaGasto.value.anualidad | translate}}
+      </td>
+    </ng-container>
+
+    <!-- Importe Column -->
+    <ng-container matColumnDef="importe">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>
+        {{'csp.solicitud-proyecto-presupuesto.partida-gasto.importe' | translate}}
+      </th>
+      <td mat-cell *matCellDef="let wrapper">
+        {{wrapper.partidaGasto.value.importeSolicitado}}
+      </td>
+    </ng-container>
+
+    <!-- Importe total del presupuesto Column -->
+    <ng-container matColumnDef="importeTotal">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>
+        {{'csp.solicitud-proyecto-presupuesto.partida-gasto.importe-total' | translate}}
+      </th>
+      <td mat-cell *matCellDef="let wrapper">
+        {{wrapper.importeTotalConceptoGasto}}
+      </td>
+    </ng-container>
+
+    <!-- Observaciones Column -->
+    <ng-container matColumnDef="observaciones">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>
+        {{'csp.solicitud-proyecto-presupuesto.partida-gasto.observaciones' | translate}}
+      </th>
+      <td mat-cell *matCellDef="let wrapper">
+        {{wrapper.partidaGasto.value.observaciones}}
+      </td>
+    </ng-container>
+
+    <!-- Acciones Column -->
+    <ng-container matColumnDef="acciones">
+      <th mat-header-cell *matHeaderCellDef> {{'label.actions' | translate}} </th>
+      <td mat-cell *matCellDef="let wrapper">
+        <ng-container *ngIf="!this.formPart.readonly">
+          <button mat-button matTooltip="{{'btn.edit' | translate}}" (click)="openModal(wrapper)">
+            <mat-icon color="primary">border_color</mat-icon>
+          </button>
+        </ng-container>
+        <ng-container *ngIf="!this.formPart.readonly">
+          <button mat-button matTooltip="{{'btn.delete' | translate}}" (click)="deletePartidaGasto(wrapper)">
+            <mat-icon color="warn">highlight_off</mat-icon>
+          </button>
+        </ng-container>
+      </td>
+    </ng-container>
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+  </table>
+
+  <mat-paginator [pageSizeOptions]="elementsPage" showFirstLastButtons>
+  </mat-paginator>
+
+  <div class="separation-button" *ngIf="!this.formPart.readonly">
+    <button color="three" mat-button mat-raised-button (click)="openModal()">
+      <mat-icon color="accent">add_circle</mat-icon>
+      {{'csp.solicitud-proyecto-presupuesto.partida-gasto.add' | translate}}
+    </button>
+  </div>
+
+
+</section>

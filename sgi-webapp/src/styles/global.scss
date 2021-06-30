@@ -1,0 +1,342 @@
+@import "vars.scss";
+
+/**/
+/** CUERPO HTML */
+/**/
+html,
+body {
+  height: 100%;
+}
+body {
+  margin: 0;
+}
+
+/**/
+/** FIN CUERPO HTML */
+/**/
+
+/**/
+/** Layout contenido */
+/**/
+
+// Mostramos scroll dentro del contenido del componente con footer //
+.scrollable-panel-with-footer{
+  max-height: calc(100vh - #{$headerHeight} - #{$breadcrumHeight} - #{$footerHeight});
+  overflow: auto;
+}
+
+// Mostramos scroll dentro del contenido del componente SIN footer //
+.scrollable-panel{
+  max-height: calc(100vh - #{$headerHeight} - #{$breadcrumHeight});
+  overflow: auto;
+}
+
+
+/**/
+/** Layout contenido */
+/**/
+
+
+/**/
+/** MENU DERECHO SIDENAV */
+/**/
+
+// Puntos de menu simples
+.opciones-menu {
+  .item {
+    font-size: mat-font-size($custom-typography, body-2);
+    border-bottom: 1px solid map-get($palette-grease, 100);
+    box-shadow: none;
+    border-radius: 0px;
+    p {
+      //Si es grande el titulo en 2 líneas
+      width: 10em;
+      white-space: normal;
+    }
+    &:hover,
+    &:focus {
+      &:before {
+        @extend .border-seleccion;
+      }
+    }
+    &.is-active {
+      &:before {
+        @extend .border-seleccion;
+      }
+    }
+  }
+  // extensiones
+  .border-seleccion {
+    content: "";
+    position: absolute;
+    height: 100%;
+    border-left: 3px solid map-get($palette-primary, 500);
+  }
+}
+
+// Puntos de menu accordeon
+.acordeon-sidenav{
+  .panel {
+    border-radius: 0px;
+    .header {
+      padding: 4px 7px 4px 20px;
+      &.item {
+        padding: 4px 7px 4px 0px;
+        .titulo {
+          padding: 4px 7px 4px 20px;
+        }
+      }
+      .titulo {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        box-sizing: border-box;
+        position: relative;
+        height: inherit;
+      }
+    }
+    .mat-expansion-panel-body {
+      background:map-get($palette-primary, 50);
+    }
+    .opciones-accordion {
+      padding-top: 5px;
+      a {
+        font-size: mat-font-size($custom-typography, caption);
+        color: map-get($custom-colors, black);
+        background: map-get($custom-colors, white);
+        height: 25px;
+        border-radius: 18px;
+        padding: 2px 0px 2px 0px;
+        margin-top: 5px;
+        line-height: 12px;
+        &:hover,
+        &:focus {
+          font-weight: bold;
+        }
+        mat-icon {
+          color: map-get($custom-colors, success);
+          display: flex;
+          width: 100%;
+          justify-content: flex-end;
+        }
+        &.is-active{
+          font-weight: bold;
+        }
+      }
+    }
+  }
+}
+
+/**/
+/** TABLES */
+/**/
+
+.mat-table {
+  .mat-header-row {
+    background-color: map-get($palette-primary, 50);
+  }
+  width: 100%;
+}
+
+/**/
+/** FIN TABLES */
+/**/
+
+/**/
+/** RADIOBUTTON */
+/**/
+mat-radio-group.radio-inline{
+  mat-radio-button{
+    padding: 5px 15px 0px 0px;
+  }
+}
+/**/
+/** RADIOBUTTON */
+/**/
+
+/**/
+/** INPUT */
+/**/
+
+// todos los input al 100%
+mat-form-field {
+  width: 100%;
+}
+
+/**/
+/** FIN INPUT */
+/**/
+
+/**/
+/** MENSAJES */
+/**/
+
+// todos los input al 100%
+.info-message {
+  margin: 13px 0;
+  padding: 10px;
+  border-radius: 5px;
+  color: map-get($palette-primary, 500);
+  background-color: map-get($palette-primary, 100);
+  text-align: center;
+  -webkit-box-shadow: 0 5px 6px -6px map-get($palette-grease, 200);
+   -moz-box-shadow: 0 5px 6px -6px map-get($palette-grease, 200);
+        box-shadow: 0 5px 6px -6px map-get($palette-grease, 200);
+}
+
+/**/
+/** FIN MENSAJES */
+/**/
+
+/**/
+/** BOTONES */
+/**/
+
+// Botones disabled
+.mat-raised-button.mat-accent[disabled] {
+  color: map-get($custom-colors, white);
+  background: map-get($palette-accent, 500);
+  opacity: 0.5;
+}
+
+.mat-raised-button.mat-primary[disabled] {
+  color: map-get($custom-colors, white);
+  background: map-get($palette-primary, 500);
+  opacity: 0.5;
+}
+
+// Link cancelar en el footer. Negrita y subrayado
+.link-cancelar {
+  cursor: pointer;
+  font-weight: bold;
+  color: map-get($custom-colors, black);
+  .underline{
+    text-decoration: underline;
+  }
+}
+
+.link-busqueda{
+  cursor: pointer;
+  font-weight: bold;
+  color: map-get($custom-colors, primary);
+  &.underline{
+    text-decoration: underline;
+  }
+}
+
+.separation-button {
+  padding-top: 15px;
+  padding-bottom: 15px;
+  button ~ button {
+     margin-left: 10px;
+  }
+  button.rounded {
+    border-radius: 1.5em;
+    padding-right: 1.2em;
+    mat-icon {
+      margin-left: -.2em;
+      padding-right: .1em;
+    }
+  }
+  // Boton verde terciario
+  .mat-three {
+    background-color: map-get($custom-colors, three-buton);
+    color: map-get($palette-grease, 900);
+    font-size: mat-font-size($custom-typography, body-1);
+    border-radius: 20px;
+    min-width: 150px;
+    &:has([mat-icon]) {
+      text-align: left;
+      padding-right: 35px;
+    }
+  }
+  // Boton danger
+  .mat-danger {
+    background-color: map-get($palette-warn, 100);
+    color: map-get($palette-grease, 900);
+    font-size: mat-font-size($custom-typography, body-1);
+    border-radius: 20px;
+    min-width: 150px;
+    &:has([mat-icon]) {
+      color: map-get($palette-warn, 500);
+      font-weight: bold;
+      text-align: left;
+      padding-right: 35px;
+    }
+  }
+  // Boton primario con border y posibilidad icono
+  .mat-four {
+    background-color: map-get($palette-primary, 500);
+    color: map-get($custom-colors, white);
+    font-size: mat-font-size($custom-typography, body-1);
+    border-radius: 20px;
+    min-width: 150px;
+    &:has([mat-icon]) {
+      float: right;
+      padding: 6px;
+      text-align: left;
+      padding-right: 35px;
+    }
+  }
+}
+
+/**/
+/** FIN BOTONES */
+/**/
+
+/**/
+/** MODALES */
+/**/
+.sgi-dialog-container {
+  .mat-dialog-container{
+    padding: 0;
+    .mat-dialog-content, .mat-dialog-actions {
+      margin: 0;
+      padding: 10px;
+    }
+    .mat-dialog-content{
+      .form-inline{
+        display: block;
+      }
+      .programa{
+        .arbol{
+          padding: 10px;
+          border: 1px solid map-get($palette-grease, 100);
+          margin: 10px 0px 10px 0px;
+          .mat-tree-node{
+            button {
+              font-weight: 400;
+            }
+          }
+          .arbol-invisible {
+            display: none;
+          }
+          .arbol-tree ul,
+          .arbol-tree li {
+            margin-top: 0;
+            margin-bottom: 0;
+            list-style-type: none;
+          }
+        }
+        .visualizacion{
+          h3 {
+            font-weight: bold;
+          }
+          background: map-get($palette-primary, 50);
+          padding: 30px;
+        }
+      }
+    }
+  }
+  .sgi-dialog-header{
+    font-size: 20px;
+    color: white;
+    background-color: #5472c9;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    padding-left: 10px;
+  }
+}
+/**/
+/** FIN MODALES */
+/**/

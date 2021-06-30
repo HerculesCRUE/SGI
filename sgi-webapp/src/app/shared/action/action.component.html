@@ -1,0 +1,18 @@
+<mat-drawer-container autosize>
+  <mat-drawer mode="side" opened>
+    <mat-list>
+      <ng-content select="[menu]"></ng-content>
+    </mat-list>
+    <mat-list *ngIf="actionService?.getActionLinks().length" class="links">
+      <sgi-action-fragment-link-item *ngFor="let action of actionService?.getActionLinks()"
+        [title]="action.title | translate:action.titleParams" [route]="action.routerLink">
+      </sgi-action-fragment-link-item>
+    </mat-list>
+  </mat-drawer>
+  <mat-drawer-content>
+    <div>
+      <router-outlet></router-outlet>
+    </div>
+    <ng-content select="[footer]"></ng-content>
+  </mat-drawer-content>
+</mat-drawer-container>

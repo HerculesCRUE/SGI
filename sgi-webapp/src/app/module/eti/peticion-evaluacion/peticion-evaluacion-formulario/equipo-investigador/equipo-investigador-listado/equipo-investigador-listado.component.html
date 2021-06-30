@@ -1,0 +1,74 @@
+<section class="equipo-investigador-listado">
+  <h2>{{'eti.peticion-evaluacion.equipo-investigador' | translate}}</h2>
+
+  <table class="mat-elevation-z8 table-equipo-investigador" mat-table [dataSource]="datasource" matSort
+    matSortDirection="asc" matSortDisableClear>
+
+    <!-- Nº documento -->
+    <ng-container matColumnDef="numDocumento">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>
+        {{'eti.peticion-evaluacion.equipo-investigador.numero-documento' | translate}} </th>
+      <td mat-cell *matCellDef="let wrapper">
+        {{wrapper.value?.persona?.numeroDocumento}} </td>
+    </ng-container>
+
+    <!-- Nombre y apellidos -->
+    <ng-container matColumnDef="nombreCompleto">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>
+        {{'eti.peticion-evaluacion.equipo-investigador.nombre-completo' | translate}}
+      </th>
+      <td mat-cell *matCellDef="let wrapper">
+        {{wrapper.value?.persona?.nombre}} {{wrapper.value?.persona?.apellidos}}
+      </td>
+    </ng-container>
+
+    <!-- Vinculacion -->
+    <ng-container matColumnDef="vinculacion">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>
+        {{'eti.peticion-evaluacion.equipo-investigador.vinculacion' | translate}}
+      </th>
+      <td mat-cell *matCellDef="let wrapper">
+        {{wrapper.value?.persona?.vinculacion?.categoriaProfesional.nombre}}
+      </td>
+    </ng-container>
+
+    <!-- Nivel academico -->
+    <ng-container matColumnDef="nivelAcademico">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>
+        {{'eti.peticion-evaluacion.equipo-investigador.nivel-academico' | translate}}
+      </th>
+      <td mat-cell *matCellDef="let wrapper">
+        {{wrapper.value?.persona?.datosAcademicos?.nivelAcademico.nombre}}
+      </td>
+    </ng-container>
+
+    <!-- Acciones Column -->
+    <ng-container matColumnDef="acciones">
+      <th mat-header-cell *matHeaderCellDef>
+        {{'label.actions' | translate}} </th>
+      <td mat-cell *matCellDef="let wrapper;let i=index;">
+        <ng-container>
+          <button mat-button *sgiHasAnyAuthorityForAnyUO="['ETI-PEV-C-INV', 'ETI-PEV-ER-INV']"
+            matTooltip="{{'btn.delete' | translate}}" (click)="delete(wrapper)">
+            <mat-icon color="warn">highlight_off</mat-icon>
+          </button>
+        </ng-container>
+      </td>
+    </ng-container>
+
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+  </table>
+  <mat-paginator [pageSizeOptions]="elementosPagina" showFirstLastButtons>
+  </mat-paginator>
+  <!-- Botón añadir equipo trabajo -->
+  <div class="separation-button">
+    <button color="three" *sgiHasAnyAuthorityForAnyUO="['ETI-PEV-C-INV', 'ETI-PEV-ER-INV']"
+      (click)="openModalAddEquipoTrabajo()" mat-raised-button>
+      <mat-icon>add_box</mat-icon>
+      {{'btn.add.entity' | translate:msgParamEntity}}
+    </button>
+  </div>
+
+</section>

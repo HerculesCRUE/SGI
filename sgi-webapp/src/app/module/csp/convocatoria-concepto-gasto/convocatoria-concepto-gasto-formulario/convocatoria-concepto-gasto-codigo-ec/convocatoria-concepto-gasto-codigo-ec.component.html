@@ -1,0 +1,106 @@
+<!-- Convocatoria concepto-gasto-codigo-ec -->
+<section class="convocatoriaConceptoGasto">
+  <h2>{{'title.csp.convocatoria-elegibilidad.codigo-economico' | translate}}</h2>
+
+  <h3>
+    {{( actionService.permitido ? 'label.csp.convocatoria-elegibilidad.codigo-economico.permitido' :
+    'label.csp.convocatoria-elegibilidad.codigo-economico.no-permitido') | translate}}
+  </h3>
+
+  <div *ngIf="actionService.blockAddCodigosEconomicos$ | async" class="info-message">
+    {{'info.csp.convocatoria-elegibilidad.codigo-economico' | translate}}
+  </div>
+
+  <table class="mat-elevation-z8 table-convocatoriaConceptoGastoCodigoEc-permitidos" mat-table [dataSource]="dataSource"
+    matSort matSortDisableClear #sort="matSort">
+    <!-- Nombre concepto gasto -->
+    <ng-container matColumnDef="convocatoriaConceptoGasto.conceptoGasto.nombre">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>
+        {{'csp.convocatoria-elegibilidad.codigo-economico.nombre' | translate}} </th>
+      <td mat-cell *matCellDef="let convocatoriaConceptoGastoCodigoEc">
+        {{convocatoriaConceptoGastoCodigoEc.value.convocatoriaConceptoGasto?.conceptoGasto.nombre}}
+      </td>
+    </ng-container>
+
+    <!-- Código económico -->
+    <ng-container matColumnDef="codigoEconomicoRef">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>
+        {{'csp.convocatoria-elegibilidad.codigo-economico' | translate}} </th>
+      <td mat-cell *matCellDef="let convocatoriaConceptoGastoCodigoEc">
+        {{convocatoriaConceptoGastoCodigoEc.value.codigoEconomicoRef}}
+      </td>
+    </ng-container>
+
+    <!-- Fecha inicio -->
+    <ng-container matColumnDef="fechaInicio">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>
+        {{'csp.convocatoria-elegibilidad.codigo-economico.fecha-inicio' | translate}} </th>
+      <td mat-cell *matCellDef="let convocatoriaConceptoGastoCodigoEc">
+        {{convocatoriaConceptoGastoCodigoEc.value.fechaInicio | luxon:'short'}}
+      </td>
+    </ng-container>
+
+    <!-- Fecha fin -->
+    <ng-container matColumnDef="fechaFin">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>
+        {{'csp.convocatoria-elegibilidad.codigo-economico.fecha-fin' | translate}} </th>
+      <td mat-cell *matCellDef="let convocatoriaConceptoGastoCodigoEc">
+        {{convocatoriaConceptoGastoCodigoEc.value.fechaFin | luxon:'short'}}
+      </td>
+    </ng-container>
+
+    <!-- Observaciones -->
+    <ng-container matColumnDef="convocatoriaConceptoGasto.observaciones">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>
+        {{'csp.convocatoria-elegibilidad.codigo-economico.observaciones' | translate}} </th>
+      <td mat-cell *matCellDef="let convocatoriaConceptoGastoCodigoEc">
+        {{convocatoriaConceptoGastoCodigoEc.value.observaciones}}
+      </td>
+    </ng-container>
+
+    <!-- Acciones Column -->
+    <ng-container matColumnDef="acciones">
+      <th mat-header-cell *matHeaderCellDef>
+        {{'label.actions' | translate}} </th>
+      <td mat-cell *matCellDef="let convocatoriaConceptoGastoCodigoEc;let i=index;">
+        <ng-container>
+          <button mat-button matTooltip="{{'btn.view' | translate}}" *ngIf="formPart.readonly"
+            (click)="openModal(convocatoriaConceptoGastoCodigoEc)">
+            <mat-icon color="primary">visibility</mat-icon>
+          </button>
+          <button mat-button matTooltip="{{'btn.edit' | translate}}" *ngIf="!formPart.readonly"
+            (click)="openModal(convocatoriaConceptoGastoCodigoEc, i)"
+            [disabled]="actionService.blockAddCodigosEconomicos$ | async">
+            <mat-icon color="primary">border_color</mat-icon>
+          </button>
+          <button mat-button matTooltip="{{'btn.delete' | translate}}" *ngIf="!formPart.readonly"
+            (click)="deleteConvocatoriaConceptoGastoCodigoEc(convocatoriaConceptoGastoCodigoEc)">
+            <mat-icon color="warn">highlight_off</mat-icon>
+          </button>
+        </ng-container>
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+
+  </table>
+
+  <mat-paginator #paginator [pageSizeOptions]="elementosPagina" showFirstLastButtons>
+  </mat-paginator>
+
+  <div class="separation-button" *ngIf="!formPart.readonly && actionService.permitido">
+    <button color="three" aria-label="Center Align" mat-raised-button (click)="openModalCrear(true)"
+      [disabled]="actionService.blockAddCodigosEconomicos$ | async">
+      <mat-icon color="accent">add_circle</mat-icon>
+      {{'btn.add.entity'| translate:msgParamCodigoPermitidoEntity}}
+    </button>
+  </div>
+  <div class="separation-button" *ngIf="!formPart.readonly && !actionService.permitido">
+    <button color="three" aria-label="Center Align" mat-raised-button (click)="openModalCrear(false)"
+      [disabled]="actionService.blockAddCodigosEconomicos$ | async">
+      <mat-icon color="accent">add_circle</mat-icon>
+      {{'btn.add.entity'| translate:msgParamCodigoNoPermitidoEntity}}
+    </button>
+  </div>
+</section>

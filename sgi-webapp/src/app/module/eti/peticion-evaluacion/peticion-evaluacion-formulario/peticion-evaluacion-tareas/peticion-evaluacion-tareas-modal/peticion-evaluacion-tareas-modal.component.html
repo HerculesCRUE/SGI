@@ -1,0 +1,102 @@
+<div class="sgi-dialog-header" fxLayout="row" fxLayoutGap="20px">
+  <span fxFlexAlign="center" mat-mat-dialog-title role="heading" aria-level="3" fxFlex>{{title}}</span>
+  <button fxFlex="nogrow" mat-icon-button mat-dialog-close>
+    <mat-icon class="close-icon">close</mat-icon>
+  </button>
+</div>
+<mat-dialog-content>
+  <form [formGroup]="formGroup">
+    <!-- Persona equipo trabajo -->
+    <div [fxLayout]="fxLayoutProperties.layout" [fxLayoutAlign]="fxLayoutProperties.layoutAlign">
+      <mat-form-field>
+        <mat-label>{{'eti.peticion-evaluacion.tarea.persona' | translate}}</mat-label>
+        <sgi-select-entity placeholder="{{'eti.peticion-evaluacion.tarea.persona' | translate}}"
+          formControlName="equipoTrabajo" [options]="this.personas$ | async"
+          [displayWith]="displayerPersonaEquipoTrabajo" required>
+        </sgi-select-entity>
+        <mat-error *ngIf="formGroup.controls.equipoTrabajo.errors?.required">
+          {{'error.required.entity' | translate:msgParamEquipoTrabajoEntity}}
+        </mat-error>
+      </mat-form-field>
+    </div>
+    <!-- Memoria -->
+    <div [fxLayout]="fxLayoutProperties.layout" [fxLayoutAlign]="fxLayoutProperties.layoutAlign">
+      <mat-form-field>
+        <mat-label>{{'eti.memoria' | translate:MSG_PARAMS.CARDINALIRY.SINGULAR}}</mat-label>
+        <sgi-select-entity formControlName="memoria" [options]="this.data.memorias" [displayWith]="displayerMemoria"
+          required>
+        </sgi-select-entity>
+        <mat-error *ngIf="formGroup.controls.memoria.errors?.required">
+          {{'error.required.entity' | translate:msgParamMemoriaEntity}}
+        </mat-error>
+      </mat-form-field>
+    </div>
+    <!-- Tarea -->
+    <div [fxLayout]="fxLayoutProperties.layout" [fxLayoutAlign]="fxLayoutProperties.layoutAlign">
+      <mat-form-field [ngClass]="!tareaYformacionTexto ? '' : 'ocultarCampo'">
+        <mat-label>{{'eti.peticion-evaluacion.tarea'| translate:MSG_PARAMS.CARDINALIRY.SINGULAR}}</mat-label>
+        <sgi-select-entity formControlName="tipoTarea" [options]="this.tipoTareas$ | async" required>
+        </sgi-select-entity>
+        <mat-error *ngIf="formGroup.controls.tipoTarea.errors?.required">
+          {{'error.required.entity' | translate:msgParamTareaEntity}}
+        </mat-error>
+      </mat-form-field>
+      <mat-form-field [ngClass]="tareaYformacionTexto ? '' : 'ocultarCampo'">
+        <mat-label>{{'eti.peticion-evaluacion.tarea' | translate:MSG_PARAMS.CARDINALIRY.SINGULAR}}</mat-label>
+        <input matInput formControlName="tarea" type="text"
+          [placeholder]="'eti.peticion-evaluacion.tarea' | translate:MSG_PARAMS.CARDINALIRY.SINGULAR" required />
+        <mat-error *ngIf="formGroup.controls.tarea.errors?.required">
+          {{'error.required.entity' | translate:msgParamTareaEntity}}
+        </mat-error>
+      </mat-form-field>
+    </div>
+    <!-- Formación específica -->
+    <div [fxLayout]="fxLayoutProperties.layout" [fxLayoutAlign]="fxLayoutProperties.layoutAlign">
+      <mat-form-field [ngClass]="!tareaYformacionTexto ? '' : 'ocultarCampo'">
+        <mat-label>{{'eti.peticion-evaluacion.tarea.formacion-especifica' | translate}}</mat-label>
+        <sgi-select-entity formControlName="formacionEspecifica" [options]="this.formaciones$ | async" required>
+        </sgi-select-entity>
+        <mat-error *ngIf="formGroup.controls.formacionEspecifica.errors?.required">
+          {{'error.required.entity' | translate:msgParamFormacionEntity}}
+        </mat-error>
+      </mat-form-field>
+      <mat-form-field [ngClass]="tareaYformacionTexto ? '' : 'ocultarCampo'">
+        <mat-label>{{'eti.peticion-evaluacion.tarea.formacion-especifica' | translate}}</mat-label>
+        <input matInput formControlName="formacion" type="text"
+          [placeholder]="'eti.peticion-evaluacion.tarea.formacion-especifica' | translate" required />
+        <mat-error *ngIf="formGroup.controls.formacion.errors?.required">
+          {{'error.required.entity' | translate:msgParamFormacionEntity}}
+        </mat-error>
+      </mat-form-field>
+    </div>
+    <!-- Año -->
+    <div [fxLayout]="fxLayoutProperties.layout" [fxLayoutAlign]="fxLayoutProperties.layoutAlign">
+      <mat-form-field [ngClass]="mostrarOrganismoYanio ? '' : 'ocultarCampo'">
+        <mat-label>{{'eti.peticion-evaluacion.tarea.anio' | translate}}</mat-label>
+        <input matInput formControlName="anio" type="number"
+          [placeholder]="'eti.peticion-evaluacion.tarea.anio' | translate" required />
+        <mat-error *ngIf="formGroup.controls.anio.errors?.required">
+          {{'error.required.entity' | translate:msgParamAnioEntity}}
+        </mat-error>
+      </mat-form-field>
+    </div>
+    <!-- Organismo -->
+    <div [fxLayout]="fxLayoutProperties.layout" [fxLayoutAlign]="fxLayoutProperties.layoutAlign">
+      <mat-form-field [ngClass]="mostrarOrganismoYanio ? '' : 'ocultarCampo'">
+        <mat-label>{{'eti.peticion-evaluacion.tarea.organismo' | translate}}</mat-label>
+        <input matInput formControlName="organismo" type="text"
+          [placeholder]="'eti.peticion-evaluacion.tarea.organismo' | translate" required />
+        <mat-error *ngIf="formGroup.controls.organismo.errors?.required">
+          {{'error.required.entity' | translate:msgParamOrganismoEntity}}
+        </mat-error>
+      </mat-form-field>
+    </div>
+  </form>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <button color="accent" (click)="saveOrUpdate()" mat-raised-button type="submit">
+    <mat-icon class="save-icon">save</mat-icon>{{textoAceptar}}
+  </button>
+  <button class="link-cancelar" mat-button type="button" mat-dialog-close>{{'btn.cancel' |
+    translate}}</button>
+</mat-dialog-actions>

@@ -1,0 +1,240 @@
+<div class="scrollable-panel-with-footer">
+  <section class="ejecucion-economica-listado">
+
+    <!-- Buscador -->
+    <div [ngClass]="busquedaAvanzada ? 'mat-elevation-z8 caja-busqueda-avanzada' : ''">
+      <form [ngClass]="busquedaAvanzada ? '' : 'mat-elevation-z8 formulario'" [formGroup]="formGroup"
+        [fxLayout.xs]="fxLayoutProperties.xs" [fxLayout]="fxLayoutProperties.layout"
+        fxLayoutGap="fxLayoutProperties.gap">
+
+        <div fxFlex="73%" fxFlex.sm="50%" fxFlex.md="53%" [fxLayout.xs]="fxLayoutProperties.xs"
+          [fxLayout]="fxLayoutProperties.layout" fxLayoutGap="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
+
+          <!-- Titulo proyecto -->
+          <div class="col">
+            <mat-form-field class="input-form">
+              <mat-label>{{'csp.ejecucion-economica.titulo' | translate}}</mat-label>
+              <input matInput formControlName="tituloProyecto" type="text"
+                placeholder="{{'csp.ejecucion-economica.titulo' | translate}}">
+            </mat-form-field>
+          </div>
+
+          <!-- Indentificador SGE -->
+          <div class="col">
+            <mat-form-field class="input-form">
+              <mat-label>{{'csp.ejecucion-economica.numero-identificacion-sge' | translate}}</mat-label>
+              <input matInput formControlName="identificadorSge" type="text"
+                placeholder="{{'csp.ejecucion-economica.numero-identificacion-sge' | translate}}">
+            </mat-form-field>
+          </div>
+
+          <!-- Fecha Inicio Desde -->
+          <div class="col">
+            <mat-form-field class=" input-form">
+              <mat-label>{{'csp.ejecucion-economica.fecha-inicio-desde' | translate}}</mat-label>
+              <input matInput formControlName="fechaInicioDesde" [ngxMatDatetimePicker]="fechaInicioDesde">
+              <mat-datepicker-toggle matSuffix [for]="fechaInicioDesde"></mat-datepicker-toggle>
+              <ngx-mat-datetime-picker #fechaInicioDesde showSeconds="true" [defaultTime]="[0,0,0]">
+              </ngx-mat-datetime-picker>
+            </mat-form-field>
+          </div>
+
+          <!-- Fecha Inicio Hasta -->
+          <div class="col">
+            <mat-form-field class="input-form">
+              <mat-label>{{'csp.ejecucion-economica.fecha-inicio-hasta' | translate}}</mat-label>
+              <input matInput formControlName="fechaInicioHasta" [ngxMatDatetimePicker]="fechaInicioHasta">
+              <mat-datepicker-toggle matSuffix [for]="fechaInicioHasta"></mat-datepicker-toggle>
+              <ngx-mat-datetime-picker #fechaInicioHasta showSeconds="true" [defaultTime]="[23,59,59]">
+              </ngx-mat-datetime-picker>
+            </mat-form-field>
+          </div>
+
+          <!-- Fecha Fin Desde -->
+          <div class="col">
+            <mat-form-field class="input-form">
+              <mat-label>{{'csp.ejecucion-economica.fecha-fin-desde' | translate}}</mat-label>
+              <input matInput formControlName="fechaFinDesde" [ngxMatDatetimePicker]="fechaFinDesde">
+              <mat-datepicker-toggle matSuffix [for]="fechaFinDesde"></mat-datepicker-toggle>
+              <ngx-mat-datetime-picker #fechaFinDesde showSeconds="true" [defaultTime]="[0,0,0]">
+              </ngx-mat-datetime-picker>
+            </mat-form-field>
+          </div>
+
+          <!-- Fecha Fin Hasta -->
+          <div class="col">
+            <mat-form-field class="input-form">
+              <mat-label>{{'csp.ejecucion-economica.fecha-fin-hasta' | translate}}</mat-label>
+              <input matInput formControlName="fechaFinHasta" [ngxMatDatetimePicker]="fechaFinHasta">
+              <mat-datepicker-toggle matSuffix [for]="fechaFinHasta"></mat-datepicker-toggle>
+              <ngx-mat-datetime-picker #fechaFinHasta showSeconds="true" [defaultTime]="[23,59,59]">
+              </ngx-mat-datetime-picker>
+            </mat-form-field>
+          </div>
+        </div>
+
+        <!-- Acciones -->
+        <div class="buttons-final" *ngIf="!busquedaAvanzada">
+          <div class="col filter-button">
+            <button color="primary" aria-label="Center Align" mat-raised-button (click)="onSearch()">
+              <mat-icon>search</mat-icon> {{'btn.search'| translate}}
+            </button>
+            <button class="link-busqueda underline" aria-label="Center Align" mat-button
+              (click)="toggleBusquedaAvanzada()">
+              {{'btn.search.advanced'| translate}}
+            </button>
+            <button color="warn" aria-label="Center Align" (click)="onClearFilters()" mat-button>{{'btn.clean'|
+              translate}}
+            </button>
+          </div>
+        </div>
+      </form>
+
+      <form *ngIf="busquedaAvanzada" [ngClass]="busquedaAvanzada ? 'busqueda-avanzada' : ''" [formGroup]="formGroup">
+
+        <div [fxLayout.xs]="fxLayoutProperties.xs" [fxLayout]="fxLayoutProperties.layout"
+          [fxLayoutGap]="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
+
+          <!-- Acronimo -->
+          <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md"
+            [fxFlex.gt-md]="fxFlexProperties.gtMd" [fxFlexOrder]="fxFlexProperties.order">
+            <mat-form-field class="input-form">
+              <mat-label>{{'csp.ejecucion-economica.acronimo' | translate}}</mat-label>
+              <input matInput formControlName="acronimo" type="text"
+                placeholder="{{'csp.ejecucion-economica.acronimo' | translate}}">
+            </mat-form-field>
+          </div>
+
+          <!-- Estado proyecto -->
+          <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md"
+            [fxFlex.gt-md]="fxFlexProperties.gtMd" [fxFlexOrder]="fxFlexProperties.order">
+            <mat-form-field>
+              <mat-label>{{'csp.ejecucion-economica.estado' | translate}}</mat-label>
+              <sgi-select-enum formControlName="estadoProyecto" [enumMap]="ESTADO_MAP">
+              </sgi-select-enum>
+            </mat-form-field>
+          </div>
+        </div>
+
+        <div [fxLayout.xs]="fxLayoutProperties.xs" [fxLayout]="fxLayoutProperties.layout"
+          [fxLayoutGap]="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
+
+          <!-- Convocatoria -->
+          <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md"
+            [fxFlex.gt-md]="fxFlexProperties.gtMd" [fxFlexOrder]="fxFlexProperties.order">
+            <mat-form-field>
+              <mat-label>{{'csp.ejecucion-economica.convocatoria' | translate}}</mat-label>
+              <sgi-select-convocatoria placeholder="{{'csp.ejecucion-economica.convocatoria' | translate}}"
+                formControlName="convocatoria">
+              </sgi-select-convocatoria>
+            </mat-form-field>
+          </div>
+
+          <!-- Responsable proyecto -->
+          <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md"
+            [fxFlex.gt-md]="fxFlexProperties.gtMd" [fxFlexOrder]="fxFlexProperties.order">
+            <mat-form-field>
+              <mat-label>{{'csp.ejecucion-economica.responsable' | translate}}</mat-label>
+              <sgi-select-persona placeholder="{{'csp.ejecucion-economica.responsable' | translate}}"
+                formControlName="responsableProyecto" [colectivos]="colectivosResponsableProyecto"></sgi-select-persona>
+            </mat-form-field>
+          </div>
+        </div>
+
+        <!-- Acciones -->
+        <div class="buttons-final">
+          <div class="col filter-button">
+            <button color="primary" aria-label="Center Align" mat-raised-button (click)="onSearch()">
+              <mat-icon>search</mat-icon> {{'btn.search'| translate}}
+            </button>
+            <button class="link-busqueda underline" aria-label="Center Align" mat-button
+              (click)="toggleBusquedaAvanzada()">
+              {{'btn.search.simple'| translate}}
+            </button>
+            <button color="warn" aria-label="Center Align" (click)="onClearFilters()" mat-button>{{'btn.clean'|
+              translate}}
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+
+    <!-- Tabla -->
+    <table class="mat-elevation-z8" mat-table [dataSource]="dataSource$ | async" matSort matSortActive="id"
+      matSortDirection="asc" matSortDisableClear>
+
+      <!-- Titulo Column -->
+      <ng-container matColumnDef="proyecto.titulo">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>
+          {{'csp.ejecucion-economica.titulo' | translate}}
+        </th>
+        <td mat-cell *matCellDef="let element">
+          {{element.proyecto?.titulo}}
+        </td>
+      </ng-container>
+
+      <!-- Acronimo Column -->
+      <ng-container matColumnDef="proyecto.acronimo">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>
+          {{'csp.ejecucion-economica.acronimo' | translate}}
+        </th>
+        <td mat-cell *matCellDef="let element">
+          {{element.proyecto?.acronimo}}
+        </td>
+      </ng-container>
+
+      <!-- Fecha inicio Column -->
+      <ng-container matColumnDef="proyecto.fechaInicio">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>
+          {{'csp.ejecucion-economica.fecha-inicio' | translate}}
+        </th>
+        <td mat-cell *matCellDef="let element">
+          {{element.proyecto?.fechaInicio | luxon:'short'}}
+        </td>
+      </ng-container>
+
+      <!-- Fecha fin Column -->
+      <ng-container matColumnDef="proyecto.fechaFin">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>
+          {{'csp.ejecucion-economica.fecha-fin' | translate}}
+        </th>
+        <td mat-cell *matCellDef="let element">
+          {{element.proyecto?.fechaFin | luxon:'short'}}
+        </td>
+      </ng-container>
+
+      <!-- Estado proyecto Column -->
+      <ng-container matColumnDef="proyecto.estado.estado">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>
+          {{'csp.ejecucion-economica.estado-proyecto' | translate}}
+        </th>
+        <td mat-cell *matCellDef="let element">
+          {{ESTADO_MAP.get(element.proyecto?.estado?.estado) | translate}}
+        </td>
+      </ng-container>
+
+      <!-- Identificador SGE Column -->
+      <ng-container matColumnDef="proyectoSgeRef">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>
+          {{'csp.ejecucion-economica.identificador-sge' | translate}}
+        </th>
+        <td mat-cell *matCellDef="let element">
+          {{element.proyectoSge?.id}}
+        </td>
+      </ng-container>
+
+      <!-- Acciones Column -->
+      <ng-container matColumnDef="acciones">
+        <th mat-header-cell *matHeaderCellDef> {{'label.actions' | translate}} </th>
+        <td mat-cell *matCellDef="let element">
+        </td>
+      </ng-container>
+      <tr mat-header-row *matHeaderRowDef="columnas"></tr>
+      <tr mat-row *matRowDef="let row; columns: columnas;"></tr>
+    </table>
+
+    <mat-paginator [pageSizeOptions]="elementosPagina" [length]="totalElementos" showFirstLastButtons>
+    </mat-paginator>
+  </section>
+
+</div>

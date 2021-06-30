@@ -1,0 +1,42 @@
+<!-- Historico datos -->
+<div class="scrollable-panel">
+  <section class="convocatoria-historico-datos">
+
+    <h2>{{'menu.csp.solicitudes.historicos-estados' | translate}}</h2>
+
+    <table class="mat-elevation-z8 table-historico" mat-table [dataSource]="dataSource" matSort matSortActive="id"
+      matSortDirection="asc" matSortDisableClear>
+
+      <!-- Estado Column -->
+      <ng-container matColumnDef="estado">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>
+          {{'csp.solicitud-historico-estado.estado' | translate}} </th>
+        <td mat-cell *matCellDef="let wrapper">{{ESTADO_MAP.get(wrapper.value.estado) | translate}}</td>
+      </ng-container>
+
+      <!-- Fecha estado Column -->
+      <ng-container matColumnDef="fechaEstado">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>
+          {{'csp.solicitud-historico-estado.fecha' | translate}}
+        </th>
+        <td mat-cell *matCellDef="let wrapper"> {{wrapper.value.fechaEstado | luxon:'short'}}</td>
+      </ng-container>
+
+      <!-- Comentario Column -->
+      <ng-container matColumnDef="comentario">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>
+          {{'csp.solicitud-historico-estado.comentario' | translate}} </th>
+        <td mat-cell *matCellDef="let wrapper">{{wrapper.value.comentario}}</td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+
+    </table>
+
+
+    <mat-paginator [pageSizeOptions]="elementosPagina" showFirstLastButtons>
+    </mat-paginator>
+
+  </section>
+</div>

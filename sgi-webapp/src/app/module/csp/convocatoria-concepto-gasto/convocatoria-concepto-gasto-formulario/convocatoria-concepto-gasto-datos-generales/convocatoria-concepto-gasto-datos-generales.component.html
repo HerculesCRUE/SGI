@@ -1,0 +1,115 @@
+<section class="convocatoria-datos-generales">
+  <h2>{{'label.datos-generales' | translate}}</h2>
+
+  <form [formGroup]="formGroup">
+    <!-- Concepto Gasto -->
+    <div [fxLayout]="fxLayoutProperties.layout" [fxLayoutAlign]="fxLayoutProperties.layoutAlign">
+      <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
+        [fxFlexOrder]="fxFlexProperties.order">
+        <mat-form-field fxFill>
+          <mat-label>{{'csp.convocatoria-elegibilidad.concepto-gasto.concepto-gasto' | translate}}</mat-label>
+          <sgi-select-entity formControlName="conceptoGasto" required [options]="conceptosGasto$ | async">
+          </sgi-select-entity>
+          <mat-error *ngIf="formGroup.controls.conceptoGasto.errors?.required">
+            {{'error.invalid.entity' | translate:msgParamConceptoGastoEntity}}
+          </mat-error>
+        </mat-form-field>
+      </div>
+    </div>
+
+    <!-- Importe máximo -->
+    <div [fxLayout]="fxLayoutProperties.layout" [fxLayoutAlign]="fxLayoutProperties.layoutAlign"
+      *ngIf="actionService.permitido">
+      <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
+        [fxFlexOrder]="fxFlexProperties.order">
+        <mat-form-field fxFill>
+          <mat-label>{{'csp.convocatoria-elegibilidad.concepto-gasto.importe-maximo' | translate}}
+          </mat-label>
+          <input matInput formControlName="importeMaximo" type="number" id="importeMaximo" min="0"
+            placeholder="{{'csp.convocatoria-elegibilidad.concepto-gasto.importe-maximo' | translate}}">
+          <mat-error *ngIf="formGroup.controls.importeMaximo.hasError('max')">
+            {{'error.max.digit' | translate}}
+          </mat-error>
+          <mat-error *ngIf="formGroup.controls.importeMaximo.hasError('min')">
+            {{'error.min.digit' | translate}}
+          </mat-error>
+        </mat-form-field>
+      </div>
+    </div>
+
+    <!-- Número de meses -->
+    <div [fxLayout]="fxLayoutProperties.layout" [fxLayoutAlign]="fxLayoutProperties.layoutAlign">
+      <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
+        [fxFlexOrder]="fxFlexProperties.order">
+        <mat-form-field fxFill>
+          <mat-label>{{'csp.convocatoria-elegibilidad.concepto-gasto.mes-inicial' | translate}}
+          </mat-label>
+          <input matInput formControlName="mesInicial" type="number" id="mesInicial" min="0"
+            placeholder="{{'csp.convocatoria-elegibilidad.concepto-gasto.mes-inicial' | translate}}">
+          <mat-error *ngIf="formGroup.controls.mesInicial.hasError('max')">
+            {{'error.csp.convocatoria-elegibilidad-concepto-gasto.mes-inicial.max' | translate}}
+          </mat-error>
+          <mat-error *ngIf="formGroup.controls.mesInicial.hasError('min')">
+            {{'error.csp.convocatoria-elegibilidad-concepto-gasto.mes-inicial.min' | translate}}
+          </mat-error>
+          <mat-error *ngIf="formGroup.controls.mesInicial.hasError('integer')">
+            {{'error.csp.convocatoria-elegibilidad-concepto-gasto.mes-inicial.integer' | translate}}
+          </mat-error>
+          <mat-error *ngIf="formGroup.controls.mesInicial.hasError('before')">
+            {{'error.csp.convocatoria-elegibilidad-concepto-gasto.mes-inicial.duracion' | translate}}
+          </mat-error>
+          <mat-error *ngIf="formGroup.controls.mesInicial.hasError('overlapped')">
+            {{'error.csp.convocatoria-elegibilidad-concepto-gasto.mes-inicial.overlapping' | translate}}
+          </mat-error>
+        </mat-form-field>
+      </div>
+    </div>
+
+    <!-- Mes final -->
+    <div [fxLayout]="fxLayoutProperties.layout" [fxLayoutAlign]="fxLayoutProperties.layoutAlign">
+      <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
+        [fxFlexOrder]="fxFlexProperties.order">
+        <mat-form-field fxFill>
+          <mat-label>{{'csp.convocatoria-elegibilidad.concepto-gasto.mes-final' | translate}}
+          </mat-label>
+          <input matInput formControlName="mesFinal" type="number" id="mesFinal" min="0"
+            placeholder="{{'csp.convocatoria-elegibilidad.concepto-gasto.mes-final' | translate}}">
+          <mat-error *ngIf="formGroup.controls.mesFinal.hasError('max')">
+            {{'error.csp.convocatoria-elegibilidad-concepto-gasto.mes-final.max' | translate}}
+          </mat-error>
+          <mat-error *ngIf="formGroup.controls.mesFinal.hasError('min')">
+            {{'error.csp.convocatoria-elegibilidad-concepto-gasto.mes-final.min' | translate}}
+          </mat-error>
+          <mat-error *ngIf="formGroup.controls.mesFinal.hasError('integer')">
+            {{'error.csp.convocatoria-elegibilidad-concepto-gasto.mes-final.integer' | translate}}
+          </mat-error>
+          <mat-error *ngIf="formGroup.controls.mesFinal.hasError('after')">
+            {{'error.after.mes-final' | translate}}
+          </mat-error>
+          <mat-error *ngIf="formGroup.controls.mesFinal.hasError('before')">
+            {{'error.csp.convocatoria-elegibilidad-concepto-gasto.mes-final.before' | translate}}
+          </mat-error>
+          <mat-error *ngIf="formGroup.controls.mesFinal.hasError('overlapped')">
+            {{'error.csp.convocatoria-elegibilidad-concepto-gasto.mes-final.overlapping' | translate}}
+          </mat-error>
+        </mat-form-field>
+      </div>
+    </div>
+
+    <!-- Observaciones -->
+    <div [fxLayout]="fxLayoutProperties.layout" [fxLayoutAlign]="fxLayoutProperties.layoutAlign">
+      <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
+        [fxFlexOrder]="fxFlexProperties.order">
+        <mat-form-field fxFill>
+          <mat-label>{{'error.csp.convocatoria-elegibilidad-concepto-gasto.observaciones' | translate}}
+          </mat-label>
+          <textarea #obs matInput formControlName="observaciones" type="text" id="observaciones"
+            placeholder="{{'error.csp.convocatoria-elegibilidad-concepto-gasto.observaciones' | translate}}"
+            maxlength="250">
+                         </textarea>
+          <mat-hint>{{obs.value.length}} / 250</mat-hint>
+        </mat-form-field>
+      </div>
+    </div>
+  </form>
+</section>

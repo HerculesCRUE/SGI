@@ -1,0 +1,197 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:pro="http://www.liquibase.org/xml/ns/pro" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-3.8.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+  <changeSet context="dev" author="master" id="0000000000000-resultado_informe_patentabilidad">
+    <insert tableName="resultado_informe_patentabilidad">
+      <column name="id" valueSequenceNext="resultado_informe_patentabilidad_seq" />
+      <column name="nombre" value="Resultado1-Activo" />
+      <column name="descripcion" value="Veniam nostrud laboris laborum sit aute deserunt irure Lorem cillum nostrud aliquip." />
+      <column name="activo" value="true" />
+    </insert>
+    <insert tableName="resultado_informe_patentabilidad">
+      <column name="id" valueSequenceNext="resultado_informe_patentabilidad_seq" />
+      <column name="nombre" value="Resultado2-Inactivo" />
+      <column name="descripcion" value="Aliquip irure aliqua cupidatat eu reprehenderit." />
+      <column name="activo" value="false" />
+    </insert>
+    <insert tableName="resultado_informe_patentabilidad">
+      <column name="id" valueSequenceNext="resultado_informe_patentabilidad_seq" />
+      <column name="nombre" value="Resultado3-Activo" />
+      <column name="descripcion" value="Non do consectetur pariatur deserunt aliquip aliquip est nostrud ad amet consequat sit." />
+      <column name="activo" value="true" />
+    </insert>
+    <insert tableName="resultado_informe_patentabilidad">
+      <column name="id" valueSequenceNext="resultado_informe_patentabilidad_seq" />
+      <column name="nombre" value="Resultado4-Inactivo" />
+      <column name="descripcion" value="Irure voluptate incididunt sint enim dolor." />
+      <column name="activo" value="false" />
+    </insert>
+    <insert tableName="resultado_informe_patentabilidad">
+      <column name="id" valueSequenceNext="resultado_informe_patentabilidad_seq" />
+      <column name="nombre" value="Resultado5-Activo" />
+      <column name="descripcion" value="Adipisicing mollit mollit laborum id in amet dolore excepteur." />
+      <column name="activo" value="true" />
+    </insert>
+    <insert tableName="resultado_informe_patentabilidad">
+      <column name="id" valueSequenceNext="resultado_informe_patentabilidad_seq" />
+      <column name="nombre" value="Resultado6-Inactivo" />
+      <column name="descripcion" value="Deserunt anim mollit magna veniam." />
+      <column name="activo" value="false" />
+    </insert>
+    <insert tableName="resultado_informe_patentabilidad">
+      <column name="id" valueSequenceNext="resultado_informe_patentabilidad_seq" />
+      <column name="nombre" value="Resultado7-Activo" />
+      <column name="descripcion" value="Consequat veniam ad incididunt elit mollit ex ex et do." />
+      <column name="activo" value="true" />
+    </insert>
+    <insert tableName="resultado_informe_patentabilidad">
+      <column name="id" valueSequenceNext="resultado_informe_patentabilidad_seq" />
+      <column name="nombre" value="Resultado8-Inactivo" />
+      <column name="descripcion" value="Sunt proident dolor consequat officia minim velit in anim aliquip consectetur." />
+      <column name="activo" value="false" />
+    </insert>
+    <insert tableName="resultado_informe_patentabilidad">
+      <column name="id" valueSequenceNext="resultado_informe_patentabilidad_seq" />
+      <column name="nombre" value="Resultado9-Activo" />
+      <column name="descripcion" value="Eiusmod enim eu non id veniam ullamco enim ex ea quis commodo dolor labore ut." />
+      <column name="activo" value="true" />
+    </insert>
+  </changeSet>
+
+  <changeSet context="dev" author="master" id="0000000000000-solicitud">
+    <insert tableName="tipo_proteccion">
+      <column name="id" valueSequenceNext="tipo_proteccion_seq" />
+      <column name="nombre" value="TipoProteccion1" />
+      <column name="descripcion" value="Duis elit aliqua eiusmod et qui mollit." />
+      <column name="tipo_propiedad" value="INDUSTRIAL" />
+    </insert>
+    <insert tableName="tipo_proteccion">
+      <column name="id" valueSequenceNext="tipo_proteccion_seq" />
+      <column name="nombre" value="TipoProteccion2" />
+      <column name="descripcion" value="Cillum adipisicing consequat sunt excepteur non aliquip sint." />
+      <column name="tipo_propiedad" value="INTELECTUAL" />
+    </insert>
+    <insert tableName="tipo_proteccion">
+      <column name="id" valueSequenceNext="tipo_proteccion_seq" />
+      <column name="nombre" value="TipoProteccion3" />
+      <column name="descripcion" value="Elit duis irure in eiusmod proident non mollit." />
+      <column name="tipo_propiedad" value="INDUSTRIAL" />
+    </insert>
+    <insert tableName="tipo_proteccion">
+      <column name="id" valueSequenceNext="tipo_proteccion_seq" />
+      <column name="nombre" value="TipoProteccion4" />
+      <column name="descripcion" value="Dolor duis cupidatat enim aliqua proident veniam." />
+      <column name="tipo_propiedad" value="INTELECTUAL" />
+    </insert>
+    <insert tableName="tipo_proteccion">
+      <column name="id" valueSequenceNext="tipo_proteccion_seq" />
+      <column name="nombre" value="TipoProteccion5" />
+      <column name="descripcion" value="Irure eiusmod velit in cupidatat quis fugiat reprehenderit aute." />
+      <column name="tipo_propiedad" value="INDUSTRIAL" />
+    </insert>
+    <insert tableName="tipo_proteccion">
+      <column name="id" valueSequenceNext="tipo_proteccion_seq" />
+      <column name="nombre" value="TipoProteccion6" />
+      <column name="descripcion" value="Consequat adipisicing eu culpa quis elit anim magna." />
+      <column name="tipo_propiedad" value="INTELECTUAL" />
+    </insert>
+  </changeSet>
+
+  <changeSet context="dev" author="master" id="0000000000000-invencion">
+    <insert tableName="invencion">
+      <column name="id" valueSequenceNext="invencion_seq" />
+      <column name="titulo" value="Invencion 1" />
+      <column name="fecha_comunicacion" value="2021-06-22T15:00:00Z" />
+      <column name="descripcion" value="Invención numero uno" />
+      <column name="comentarios" value="" />
+      <column name="tipo_proteccion_id" value="1" />
+      <column name="activo" value="true" />
+    </insert>
+    <insert tableName="invencion">
+      <column name="id" valueSequenceNext="invencion_seq" />
+      <column name="titulo" value="Invencion 2" />
+      <column name="fecha_comunicacion" value="2021-06-22T16:00:00Z" />
+      <column name="descripcion" value="Invención numero dos" />
+      <column name="comentarios" value="" />
+      <column name="tipo_proteccion_id" value="1" />
+      <column name="activo" value="true" />
+    </insert>
+    <insert tableName="invencion">
+      <column name="id" valueSequenceNext="invencion_seq" />
+      <column name="titulo" value="Invencion 3" />
+      <column name="fecha_comunicacion" value="2021-06-22T17:00:00Z" />
+      <column name="descripcion" value="Invención numero tres" />
+      <column name="comentarios" value="" />
+      <column name="tipo_proteccion_id" value="2" />
+      <column name="activo" value="true" />
+    </insert>
+    <insert tableName="invencion">
+      <column name="id" valueSequenceNext="invencion_seq" />
+      <column name="titulo" value="Invencion 4" />
+      <column name="fecha_comunicacion" value="2021-06-22T18:00:00Z" />
+      <column name="descripcion" value="Invención numero cuatro" />
+      <column name="comentarios" value="" />
+      <column name="tipo_proteccion_id" value="3" />
+      <column name="activo" value="true" />
+    </insert>
+    <insert tableName="invencion">
+      <column name="id" valueSequenceNext="invencion_seq" />
+      <column name="titulo" value="Invencion con comentarios" />
+      <column name="fecha_comunicacion" value="2021-06-22T20:00:00Z" />
+      <column name="descripcion" value="Invención con comentarios especiales" />
+      <column name="comentarios" value="Este es un comentario especial" />
+      <column name="tipo_proteccion_id" value="4" />
+      <column name="activo" value="true" />
+    </insert>
+  </changeSet>
+
+  <changeSet context="dev" author="master" id="0000000000000-sector_aplicacion">
+    <insert tableName="sector_aplicacion">
+      <column name="id" valueSequenceNext="sector_aplicacion_seq" />
+      <column name="nombre" value="Turismo" />
+      <column name="descripcion" value="Aplicación en hostelería/restauración" />
+      <column name="activo" value="true" />
+    </insert>
+    <insert tableName="sector_aplicacion">
+      <column name="id" valueSequenceNext="sector_aplicacion_seq" />
+      <column name="nombre" value="Industria química y farmacéutica" />
+      <column name="descripcion" value="Aplicación en industia química/farmacéutica" />
+      <column name="activo" value="true" />
+    </insert>
+    <insert tableName="sector_aplicacion">
+      <column name="id" valueSequenceNext="sector_aplicacion_seq" />
+      <column name="nombre" value="Producción y transformación de materiales" />
+      <column name="descripcion" value="Aplicación en producción y transformación de materiales" />
+      <column name="activo" value="true" />
+    </insert>
+  </changeSet>
+
+  <changeSet context="dev" author="master" id="0000000000000-invencion_sector_aplicacion">
+    <insert tableName="invencion_sector_aplicacion">
+      <column name="id" valueSequenceNext="invencion_sector_aplicacion_seq" />
+      <column name="sector_aplicacion_id" value="1" />
+      <column name="invencion_id" value="1" />
+    </insert>
+    <insert tableName="invencion_sector_aplicacion">
+      <column name="id" valueSequenceNext="invencion_sector_aplicacion_seq" />
+      <column name="sector_aplicacion_id" value="1" />
+      <column name="invencion_id" value="2" />
+    </insert>
+    <insert tableName="invencion_sector_aplicacion">
+      <column name="id" valueSequenceNext="invencion_sector_aplicacion_seq" />
+      <column name="sector_aplicacion_id" value="1" />
+      <column name="invencion_id" value="3" />
+    </insert>
+    <insert tableName="invencion_sector_aplicacion">
+      <column name="id" valueSequenceNext="invencion_sector_aplicacion_seq" />
+      <column name="sector_aplicacion_id" value="2" />
+      <column name="invencion_id" value="4" />
+    </insert>
+    <insert tableName="invencion_sector_aplicacion">
+      <column name="id" valueSequenceNext="invencion_sector_aplicacion_seq" />
+      <column name="sector_aplicacion_id" value="3" />
+      <column name="invencion_id" value="5" />
+    </insert>
+  </changeSet>
+
+</databaseChangeLog>

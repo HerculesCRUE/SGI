@@ -1,0 +1,114 @@
+<section class="proyecto-contexto">
+  <h2>{{'label.datos-generales' | translate}} - {{'csp.proyecto-contexto' | translate}}</h2>
+
+  <form [formGroup]="formGroup">
+
+
+    <div [fxLayout.xs]="fxLayoutProperties.xs" [fxLayout]="fxLayoutProperties.layout"
+      [fxLayoutGap]="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
+
+      <!-- Objetivos del proyecto -->
+      <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
+        [fxFlexOrder]="fxFlexProperties.order">
+        <mat-form-field fxFill>
+          <mat-label>{{'csp.proyecto.contexto.objetivos' | translate}}</mat-label>
+          <textarea matInput formControlName="objetivos" id="objetivos"
+            placeholder="{{'csp.proyecto.contexto.objetivos' | translate}}"></textarea>
+          <mat-error *ngIf="formGroup.controls.objetivos.errors?.maxlength">
+            {{'error.maxlength.entity' | translate:msgParamObjetivosEntity}}
+          </mat-error>
+        </mat-form-field>
+      </div>
+
+      <!-- intereses -->
+      <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
+        [fxFlexOrder]="fxFlexProperties.order">
+        <mat-form-field fxFill>
+          <mat-label>{{'csp.proyecto.contexto.intereses' | translate}}</mat-label>
+          <textarea matInput formControlName="intereses" id="intereses"
+            placeholder="{{'csp.proyecto.contexto.intereses' | translate}}"></textarea>
+          <mat-error *ngIf="formGroup.controls.intereses.errors?.maxlength">
+            {{'error.maxlength.entity' | translate:msgParamInteresesEntity}}
+          </mat-error>
+        </mat-form-field>
+      </div>
+
+      <!-- Resultados esperados -->
+      <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
+        [fxFlexOrder]="fxFlexProperties.order">
+        <mat-form-field fxFill>
+          <mat-label>{{'csp.proyecto.contexto.resultados' | translate}}</mat-label>
+          <textarea matInput formControlName="resultados_previstos" id="resultados_previstos"
+            placeholder="{{'csp.proyecto.contexto.resultados' | translate}}"></textarea>
+          <mat-error *ngIf="formGroup.controls.resultados_previstos.errors?.maxlength">
+            {{'error.maxlength.entity' | translate:msgParamResultadosEntity}}
+          </mat-error>
+        </mat-form-field>
+      </div>
+
+      <!-- Propiedad de los resultados -->
+      <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
+        [fxFlexOrder]="fxFlexProperties.order">
+        <mat-form-field>
+          <mat-label>{{'csp.proyecto.contexto.resultados-propiedad' | translate}}</mat-label>
+          <mat-select matNativeControl formControlName="propiedadResultados">
+            <mat-option *ngFor="let propiedadResultados of PROPIEDAD_RESULTADOS_MAP | keyvalue"
+              [value]="propiedadResultados.key">
+              {{ propiedadResultados.value | translate}}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+    </div>
+
+    <!-- Áreas temáticas -->
+    <div class="separation-button">
+      <h3>{{'list.entity' | translate:msgParamAreaTematicaEntities}}</h3>
+      <table class="mat-elevation-z8 table-acta" mat-table [dataSource]="convocatoriaAreaTematicas" matSort
+        matSortActive="id" matSortDirection="asc" matSortDisableClear *ngIf="convocatoriaAreaTematicas.data.length > 0">
+        <ng-container matColumnDef="nombreRaizArbol">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>
+            {{'list.entity' | translate:msgParamAreaEntities}}
+          </th>
+          <td mat-cell *matCellDef="let data">{{data.root?.nombre}}</td>
+        </ng-container>
+        <ng-container matColumnDef="areaTematicaConvocatoria">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>
+            {{'csp.area-tematica.nombre.convocatoria' | translate}}
+          </th>
+          <td mat-cell *matCellDef="let data"> {{formPart.convocatoriaAreaTematica?.nombre}} </td>
+        </ng-container>
+        <ng-container matColumnDef="areaTematicaProyecto">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>
+            {{'csp.area-tematica.proyecto' | translate}}
+          </th>
+          <td mat-cell *matCellDef="let data"> {{data.areaTematica?.nombre}} </td>
+        </ng-container>
+        <ng-container matColumnDef="acciones">
+          <th mat-header-cell *matHeaderCellDef>{{'label.actions' | translate}}
+          </th>
+          <td mat-cell *matCellDef="let data">
+            <ng-container *sgiHasAuthorityForAnyUO="'CSP-PRO-E'">
+              <button color="four" (click)="openModal(data)"
+                mat-raised-button>{{'csp.proyecto-contexto.add.area.selecciona' | translate}}</button>
+            </ng-container>
+          </td>
+        </ng-container>
+        <tr mat-header-row *matHeaderRowDef="columns"></tr>
+        <tr mat-row *matRowDef="let row; columns: columns;"></tr>
+      </table>
+    </div>
+
+    <ng-container *sgiHasAuthorityForAnyUO="'CSP-PRO-E'">
+      <div class="separation-button" *ngIf="convocatoriaAreaTematicas.data.length === 0">
+        <!-- Botón añadir areas tematicas -->
+        <button color="three" mat-button mat-raised-button (click)="openModal()">
+          <mat-icon color="accent">add_circle</mat-icon>
+          {{ 'btn.add.entity' | translate:msgParamAreaTematicaEntity }}
+        </button>
+      </div>
+    </ng-container>
+
+  </form>
+
+</section>

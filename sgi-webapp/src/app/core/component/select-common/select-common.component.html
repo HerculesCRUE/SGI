@@ -1,0 +1,6 @@
+<mat-select tabindex="0">
+  <mat-option *ngIf="!required" [value]="null"></mat-option>
+  <mat-option *ngFor="let value of selectValues" [value]="value.item" [class.missing]="value.missing">{{
+    value.displayText
+    }}</mat-option>
+</mat-select>

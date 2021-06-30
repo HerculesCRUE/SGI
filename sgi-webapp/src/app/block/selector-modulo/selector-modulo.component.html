@@ -1,0 +1,10 @@
+<h3 mat-dialog-title>{{'title.modulo.select'| translate}}</h3>
+<mat-dialog-content class="mat-typography">
+  <ng-container *ngFor="let modulo of modulos">
+    <button *sgiHasModuleAccess="modulo.module.code" mat-button
+      (click)="openModulo(modulo.module.path)">{{modulo.nombre | translate}}</button>
+  </ng-container>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button color="warn" (click)="closeModal()" mat-button cdkFocusInitial>{{'btn.cancel'| translate}}</button>
+</mat-dialog-actions>

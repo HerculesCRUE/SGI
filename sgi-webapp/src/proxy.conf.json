@@ -1,0 +1,77 @@
+{
+  "/api/eti": {
+    "target": "http://sgi-eti-service:4280",
+    "pathRewrite": {
+      "^/api/eti": ""
+    },
+    "changeOrigin": true,
+    "secure": false,
+    "logLevel": "debug"
+  },
+  "/api/csp": {
+    "target": "http://sgi-csp-service:4281",
+    "pathRewrite": {
+      "^/api/csp": ""
+    },
+    "changeOrigin": true,
+    "secure": false,
+    "logLevel": "debug"
+  },
+  "/api/pii": {
+    "target": "http://sgi-pii-service:4281",
+    "pathRewrite": {
+      "^/api/pii": ""
+    },
+    "changeOrigin": true,
+    "secure": false,
+    "logLevel": "debug"
+  },
+  "/api/usr": {
+    "target": "http://sgi-usr-service:4282",
+    "pathRewrite": {
+      "^/api/usr": ""
+    },
+    "changeOrigin": true,
+    "secure": false,
+    "logLevel": "debug"
+  },
+  "/api/sgp": {
+    "target": "http://sgi-esb:8080",
+    "changeOrigin": true,
+    "secure": false,
+    "logLevel": "debug"
+  },
+  "/api/sge/": {
+    "target": "http://sgi-esb:8080",
+    "changeOrigin": true,
+    "secure": false,
+    "logLevel": "debug"
+  },
+  "/api/sgemp": {
+    "target": "http://sgi-esb:8080",
+    "changeOrigin": true,
+    "secure": false,
+    "logLevel": "debug"
+  },
+  "/api/sgdoc": {
+    "target": "http://sgi-esb:8080",
+    "pathRewrite": {
+      "^/api/sgdoc": "/sgdoc"
+    },
+    "changeOrigin": true,
+    "secure": false,
+    "logLevel": "debug"
+  },
+  "/api/sgo": {
+    "target": "http://sgi-esb:8080",
+    "changeOrigin": true,
+    "secure": false,
+    "logLevel": "debug"
+  },
+  "/pentaho": {
+    "target": "http://sgi-reporting:8080",
+    "changeOrigin": true,
+    "secure": false,
+    "logLevel": "debug"
+  }
+}

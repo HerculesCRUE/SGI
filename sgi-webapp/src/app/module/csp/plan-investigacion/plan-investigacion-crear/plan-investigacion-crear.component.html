@@ -1,0 +1,16 @@
+<sgi-action [actionService]="actionService">
+  <ng-container menu>
+    <sgi-action-fragment-menu-item [route]="[PLAN_INVESTIGACION_ROUTE_NAMES.DATOS_GENERALES]"
+      *sgiHasAuthorityForAnyUO="'CSP-PRG-C'" [title]="'label.datos-generales' | translate"
+      [fragment]="actionService.getFragment(actionService.FRAGMENT.DATOS_GENERALES)">
+    </sgi-action-fragment-menu-item>
+    <sgi-action-fragment-menu-item [route]="[PLAN_INVESTIGACION_ROUTE_NAMES.PROGRAMAS]"
+      *sgiHasAuthorityForAnyUO="'CSP-PRG-C'"
+      [title]="'menu.csp.configuraciones.planes-investigacion.programas' | translate"
+      [fragment]="actionService.getFragment(actionService.FRAGMENT.PROGRAMAS)">
+    </sgi-action-fragment-menu-item>
+  </ng-container>
+  <ng-container footer>
+    <sgi-action-footer [texto]="textoCrear" [actionService]="actionService"></sgi-action-footer>
+  </ng-container>
+</sgi-action>

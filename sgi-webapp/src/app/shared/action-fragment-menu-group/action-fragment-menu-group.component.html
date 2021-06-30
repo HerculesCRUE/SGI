@@ -1,0 +1,16 @@
+<div [@.disabled]="disableAnimation">
+  <mat-expansion-panel [class.is-active]="isChildActive">
+    <mat-expansion-panel-header collapsedHeight="48px" expandedHeight="48px">
+      <div>
+        <span>{{title}}</span>
+        <span *ngIf="status$ | async as status;">
+          <mat-icon *ngIf="status.changes && !status.errors" aria-hidden="false" class="icons warning-icon">
+            error_outline</mat-icon>
+          <mat-icon *ngIf="status.errors" aria-hidden="false" class="icons danger-icon">
+            error</mat-icon>
+        </span>
+      </div>
+    </mat-expansion-panel-header>
+    <ng-content></ng-content>
+  </mat-expansion-panel>
+</div>

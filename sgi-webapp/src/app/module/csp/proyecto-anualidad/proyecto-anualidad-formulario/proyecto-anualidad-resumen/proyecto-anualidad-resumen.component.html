@@ -1,0 +1,45 @@
+<!-- Historico estados -->
+<div class="scrollable-panel">
+  <section class="proyecto-historico-estados">
+    <h2>{{'csp.proyecto-anualidad.resumen' | translate}}</h2>
+    <table class="mat-elevation-z8 table-historico" mat-table [dataSource]="dataSource" matSort matSortActive="tipo"
+      matSortDirection="asc" matSortDisableClear>
+
+      <!-- Tipo -->
+      <ng-container matColumnDef="tipo">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>
+          {{'csp.proyecto-anualidad.resumen.tipo-partida' | translate}} </th>
+        <td mat-cell *matCellDef="let anualidad">{{TIPO_PARTIDA_MAP.get(anualidad.tipo) | translate}}</td>
+      </ng-container>
+
+      <!-- Partida presupuestaria -->
+      <ng-container matColumnDef="partidaPresupuestaria">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>
+          {{'csp.proyecto-anualidad.resumen.partida-presupuestaria' | translate}}
+        </th>
+        <td mat-cell *matCellDef="let anualidad"> {{anualidad.codigoPartidaPresupuestaria }}</td>
+      </ng-container>
+
+      <!-- Importe presupuesto -->
+      <ng-container matColumnDef="importePresupuesto">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>
+          {{'csp.proyecto-anualidad.resumen.importe-presupuesto' | translate}}
+        </th>
+        <td mat-cell *matCellDef="let anualidad"> {{anualidad.importePresupuesto ? anualidad.importePresupuesto : '-'}}</td>
+      </ng-container>
+
+      <!-- Importe concedido -->
+      <ng-container matColumnDef="importeConcedido">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>
+          {{'csp.proyecto-anualidad.resumen.importe-concedido' | translate}}
+        </th>
+        <td mat-cell *matCellDef="let anualidad"> {{anualidad.importeConcedido }}</td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+
+    </table>
+
+  </section>
+</div>

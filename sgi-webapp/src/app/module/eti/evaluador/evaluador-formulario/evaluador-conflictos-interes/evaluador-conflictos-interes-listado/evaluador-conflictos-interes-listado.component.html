@@ -1,0 +1,51 @@
+<section class="evaluador-conflictos-interes">
+  <table class="mat-elevation-z8 table-evaluador-conflictos-interes" mat-table [dataSource]="datasource" matSort
+    matSortActive="id" matSortDirection="asc" matSortDisableClear>
+
+    <!-- Persona identificador -->
+    <ng-container matColumnDef="identificador">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>
+        {{'eti.evaluador.conflicto-interes.identificador' | translate}}
+      </th>
+      <td mat-cell *matCellDef="let wrapper">
+        {{wrapper.value.personaConflicto?.numeroDocumento}}
+      </td>
+    </ng-container>
+
+    <!-- Persona nombre y apellidos -->
+    <ng-container matColumnDef="nombreCompleto">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>
+        {{'eti.evaluador.conflicto-interes.persona' | translate}}
+      </th>
+      <td mat-cell *matCellDef="let wrapper">
+        {{wrapper.value.personaConflicto?.nombre}}
+        {{wrapper.value.personaConflicto?.apellidos}}
+      </td>
+    </ng-container>
+
+    <!-- Acciones Column -->
+    <ng-container matColumnDef="acciones">
+      <th mat-header-cell *matHeaderCellDef> {{'label.actions' | translate}} </th>
+      <td mat-cell *matCellDef="let wrapper;let i=index;">
+        <ng-container>
+          <button mat-button color="warn" *sgiHasAuthorityForAnyUO="'ETI-EVR-E'"
+            matTooltip="{{'btn.delete' | translate}}" (click)="delete(wrapper)">
+            <mat-icon>highlight_off</mat-icon>
+          </button>
+        </ng-container>
+
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+  </table>
+  <!-- Botón añadir petición de evaluación -->
+  <div class="separation-button">
+    <button color="three" (click)="openModalAddConflicto()" mat-raised-button>
+      <mat-icon>add_box</mat-icon>
+      {{'btn.add.entity' | translate:msgParamConflictoInteresEntity}}
+    </button>
+  </div>
+
+</section>

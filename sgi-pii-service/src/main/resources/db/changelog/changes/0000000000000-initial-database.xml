@@ -1,0 +1,160 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:pro="http://www.liquibase.org/xml/ns/pro" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-4.1.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.1.xsd">
+    <changeSet author="user (generated)" id="0000000000000-1">
+        <createSequence incrementBy="1" sequenceName="invencion_inventor_seq" startValue="1"/>
+    </changeSet>
+    <changeSet author="user (generated)" id="0000000000000-2">
+        <createSequence incrementBy="1" sequenceName="invencion_sector_aplicacion_seq" startValue="1"/>
+    </changeSet>
+    <changeSet author="user (generated)" id="0000000000000-3">
+        <createSequence incrementBy="1" sequenceName="invencion_seq" startValue="1"/>
+    </changeSet>
+    <changeSet author="user (generated)" id="0000000000000-4">
+        <createSequence incrementBy="1" sequenceName="resultado_informe_patentabilidad_seq" startValue="1"/>
+    </changeSet>
+    <changeSet author="user (generated)" id="0000000000000-5">
+        <createSequence incrementBy="1" sequenceName="sector_aplicacion_seq" startValue="1"/>
+    </changeSet>
+    <changeSet author="user (generated)" id="0000000000000-6">
+        <createSequence incrementBy="1" sequenceName="tipo_proteccion_seq" startValue="1"/>
+    </changeSet>
+    <changeSet author="user (generated)" id="0000000000000-7">
+        <createTable tableName="invencion">
+            <column name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="invencionPK"/>
+            </column>
+            <column name="created_by" type="VARCHAR(255)"/>
+            <column name="creation_date" type="TIMESTAMP"/>
+            <column name="last_modified_by" type="VARCHAR(255)"/>
+            <column name="last_modified_date" type="TIMESTAMP"/>
+            <column defaultValueBoolean="true" name="activo" type="BOOLEAN">
+                <constraints nullable="false"/>
+            </column>
+            <column name="comentarios" type="VARCHAR(250)"/>
+            <column name="descripcion" type="VARCHAR(250)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="fecha_comunicacion" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="titulo" type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="tipo_proteccion_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="user (generated)" id="0000000000000-8">
+        <createTable tableName="invencion_inventor">
+            <column name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="invencion_inventorPK"/>
+            </column>
+            <column name="created_by" type="VARCHAR(255)"/>
+            <column name="creation_date" type="TIMESTAMP"/>
+            <column name="last_modified_by" type="VARCHAR(255)"/>
+            <column name="last_modified_date" type="TIMESTAMP"/>
+            <column name="invencion_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="inventor_ref" type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="participacion" type="INT">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="user (generated)" id="0000000000000-9">
+        <createTable tableName="invencion_sector_aplicacion">
+            <column name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="invencion_sector_aplicacionPK"/>
+            </column>
+            <column name="created_by" type="VARCHAR(255)"/>
+            <column name="creation_date" type="TIMESTAMP"/>
+            <column name="last_modified_by" type="VARCHAR(255)"/>
+            <column name="last_modified_date" type="TIMESTAMP"/>
+            <column name="invencion_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="sector_aplicacion_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="user (generated)" id="0000000000000-10">
+        <createTable tableName="resultado_informe_patentabilidad">
+            <column name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="resultado_informe_patentabilidadPK"/>
+            </column>
+            <column name="created_by" type="VARCHAR(255)"/>
+            <column name="creation_date" type="TIMESTAMP"/>
+            <column name="last_modified_by" type="VARCHAR(255)"/>
+            <column name="last_modified_date" type="TIMESTAMP"/>
+            <column defaultValueBoolean="true" name="activo" type="BOOLEAN">
+                <constraints nullable="false"/>
+            </column>
+            <column name="descripcion" type="VARCHAR(250)"/>
+            <column name="nombre" type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="user (generated)" id="0000000000000-11">
+        <createTable tableName="sector_aplicacion">
+            <column name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="sector_aplicacionPK"/>
+            </column>
+            <column name="created_by" type="VARCHAR(255)"/>
+            <column name="creation_date" type="TIMESTAMP"/>
+            <column name="last_modified_by" type="VARCHAR(255)"/>
+            <column name="last_modified_date" type="TIMESTAMP"/>
+            <column defaultValueBoolean="true" name="activo" type="BOOLEAN">
+                <constraints nullable="false"/>
+            </column>
+            <column name="descripcion" type="VARCHAR(250)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="nombre" type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="user (generated)" id="0000000000000-12">
+        <createTable tableName="tipo_proteccion">
+            <column name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="tipo_proteccionPK"/>
+            </column>
+            <column name="created_by" type="VARCHAR(255)"/>
+            <column name="creation_date" type="TIMESTAMP"/>
+            <column name="last_modified_by" type="VARCHAR(255)"/>
+            <column name="last_modified_date" type="TIMESTAMP"/>
+            <column defaultValueBoolean="true" name="activo" type="BOOLEAN">
+                <constraints nullable="false"/>
+            </column>
+            <column name="descripcion" type="VARCHAR(250)"/>
+            <column name="nombre" type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="tipo_propiedad" type="VARCHAR(20)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="tipo_proteccion_padre_id" type="BIGINT"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="user (generated)" id="0000000000000-13">
+        <addForeignKeyConstraint baseColumnNames="invencion_id" baseTableName="invencion_inventor" constraintName="FK_INVENCIONINVENTOR_INVENCION" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableName="invencion" validate="true"/>
+    </changeSet>
+    <changeSet author="user (generated)" id="0000000000000-14">
+        <addForeignKeyConstraint baseColumnNames="invencion_id" baseTableName="invencion_sector_aplicacion" constraintName="FK_INVENCIONSECTORAPLICACION_INVENCION" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableName="invencion" validate="true"/>
+    </changeSet>
+    <changeSet author="user (generated)" id="0000000000000-15">
+        <addForeignKeyConstraint baseColumnNames="sector_aplicacion_id" baseTableName="invencion_sector_aplicacion" constraintName="FK_INVENCIONSECTORAPLICACION_SECTORAPLICACION" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableName="sector_aplicacion" validate="true"/>
+    </changeSet>
+    <changeSet author="user (generated)" id="0000000000000-16">
+        <addForeignKeyConstraint baseColumnNames="tipo_proteccion_id" baseTableName="invencion" constraintName="FK_INVENCION_TIPOPROTECCION" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableName="tipo_proteccion" validate="true"/>
+    </changeSet>
+    <changeSet author="user (generated)" id="0000000000000-17">
+        <addForeignKeyConstraint baseColumnNames="tipo_proteccion_padre_id" baseTableName="tipo_proteccion" constraintName="FK_TIPO_PROTECCION_PADRE" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableName="tipo_proteccion" validate="true"/>
+    </changeSet>
+</databaseChangeLog>

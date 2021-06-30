@@ -1,0 +1,78 @@
+<div class="sgi-dialog-header" fxLayout="row" fxLayoutGap="20px">
+  <span fxFlexAlign="center" mat-mat-dialog-title role="heading" aria-level="3" fxFlex>{{title | translate}}</span>
+  <button fxFlex="nogrow" mat-icon-button mat-dialog-close>
+    <mat-icon class="close-icon">close</mat-icon>
+  </button>
+</div>
+<mat-dialog-content>
+  <form [formGroup]="formGroup">
+    <!-- Código Económico -->
+    <div [fxLayout]="fxLayoutProperties.layout" [fxLayoutAlign]="fxLayoutProperties.layoutAlign">
+      <mat-form-field>
+        <mat-label>{{'csp.convocatoria-elegibilidad.codigo-economico.sge' | translate}}</mat-label>
+        <sgi-select formControlName="codigoEconomicoRef" required [options]="codigosEconomicos$ | async"
+          [compareWith]="comparerCodigoEconomico" [displayWith]="displayerCodigoEconomico"
+          [sortWith]="sorterCodigoEconomico"></sgi-select>
+        <mat-error *ngIf="formGroup.controls.codigoEconomicoRef.errors?.required">
+          {{'error.required.entity' | translate:msgParamCodigoEconomigoSgeEntity}}
+        </mat-error>
+      </mat-form-field>
+    </div>
+    <h5>{{'label.csp.convocatoria-elegibilidad.codigo-economico.vigencia' | translate}}</h5>
+    <mat-divider></mat-divider>
+    <!-- Fecha inicio -->
+    <div [fxLayout.xs]="fxLayoutProperties.xs" [fxLayout]="fxLayoutProperties.layout"
+      [fxLayoutGap]="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
+      <div>
+        <mat-form-field>
+          <mat-label>{{'csp.convocatoria-elegibilidad.codigo-economico.fecha-inicio'| translate}}</mat-label>
+          <input matInput [ngxMatDatetimePicker]="pickerFechaInicio" formControlName="fechaInicio">
+          <mat-datepicker-toggle class="fechaIcon" matSuffix [for]="pickerFechaInicio"></mat-datepicker-toggle>
+          <ngx-mat-datetime-picker #pickerFechaInicio showSeconds="true" [defaultTime]="[0,0,0]">
+          </ngx-mat-datetime-picker>
+          <mat-error *ngIf="formGroup.controls.fechaInicio.errors?.before">
+            {{'error.before.fecha-inicio' | translate}}
+          </mat-error>
+          <mat-error *ngIf="formGroup.controls.fechaInicio.errors?.overlapped">
+            {{'error.overlapping.record.entity' | translate:msgParamEntity}}
+          </mat-error>
+        </mat-form-field>
+      </div>
+      <!-- Fecha fin -->
+      <div>
+        <mat-form-field>
+          <input matInput [ngxMatDatetimePicker]="pickerFechaFin" formControlName="fechaFin">
+          <mat-label>{{'csp.convocatoria-elegibilidad.codigo-economico.fecha-fin'| translate}}</mat-label>
+          <mat-datepicker-toggle class="fechaIcon" matSuffix [for]="pickerFechaFin"></mat-datepicker-toggle>
+          <ngx-mat-datetime-picker #pickerFechaFin showSeconds="true" [defaultTime]="[23,59,59]">
+          </ngx-mat-datetime-picker>
+          <mat-error *ngIf="formGroup.controls.fechaFin.errors?.after">
+            {{'error.after.fecha-fin' | translate}}
+          </mat-error>
+          <mat-error *ngIf="formGroup.controls.fechaFin.errors?.overlapped">
+            {{'error.overlapping.record.entity' | translate:msgParamEntity}}
+          </mat-error>
+        </mat-form-field>
+      </div>
+    </div>
+    <mat-divider></mat-divider>
+    <!-- Observaciones -->
+    <div [fxLayout]="fxLayoutProperties.layout" [fxLayoutAlign]="fxLayoutProperties.layoutAlign">
+      <mat-form-field>
+        <mat-label>{{'csp.convocatoria-elegibilidad.codigo-economico.observaciones' | translate}}
+        </mat-label>
+        <textarea #obs matInput formControlName="observaciones" type="text"
+          placeholder="{{'csp.convocatoria-elegibilidad.codigo-economico.observaciones' | translate}}" maxlength="250">
+                         </textarea>
+        <mat-hint>{{obs.value.length}} / 250</mat-hint>
+      </mat-form-field>
+    </div>
+  </form>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <button color="accent" (click)="saveOrUpdate()" mat-raised-button type="submit" *ngIf="!data.readonly">
+    <mat-icon class="save-icon">save</mat-icon>{{textSaveOrUpdate | translate}}
+  </button>
+  <button class="link-cancelar" mat-button type="button" mat-dialog-close>{{'btn.cancel' |
+    translate}}</button>
+</mat-dialog-actions>

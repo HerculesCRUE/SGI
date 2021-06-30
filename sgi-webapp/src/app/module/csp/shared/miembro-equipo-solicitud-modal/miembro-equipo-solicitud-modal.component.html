@@ -1,0 +1,92 @@
+<div class="sgi-dialog-header" fxLayout="row" fxLayoutGap="20px">
+  <span fxFlexAlign="center" mat-mat-dialog-title role="heading" aria-level="3" fxFlex>{{title}}</span>
+  <button fxFlex="nogrow" mat-icon-button mat-dialog-close>
+    <mat-icon class="close-icon">close</mat-icon>
+  </button>
+</div>
+<mat-dialog-content>
+  <form [formGroup]="formGroup">
+    <!-- Rol de participacion -->
+    <div [fxLayout]="fxLayoutProperties.layout" [fxLayoutAlign]="fxLayoutProperties.layoutAlign">
+      <mat-form-field>
+        <mat-label>
+          {{'csp.miembro-equipo-solicitud.rol-participacion' | translate}}
+        </mat-label>
+        <sgi-select-entity formControlName="rolProyecto" required [options]="rolesProyecto$ | async">
+        </sgi-select-entity>
+        <mat-error *ngIf="formGroup.controls.rolProyecto.errors?.required">
+          {{'error.required.entity' | translate:msgParamRolParticipacionEntity}}
+        </mat-error>
+      </mat-form-field>
+    </div>
+    <!-- Miembro -->
+    <div [fxLayout]="fxLayoutProperties.layout" [fxLayoutAlign]="fxLayoutProperties.layoutAlign">
+      <mat-form-field>
+        <mat-label>
+          {{'csp.miembro-equipo-solicitud.miembro' | translate}}
+        </mat-label>
+        <sgi-select-persona placeholder="{{'csp.miembro-equipo-solicitud.miembro' | translate}}"
+          formControlName="miembro" [colectivos]="colectivosIdRolParticipacion" required>
+        </sgi-select-persona>
+        <mat-error *ngIf="formGroup.controls.miembro.errors?.required">
+          {{'error.required.entity' | translate:msgParamMiembroEntity}}
+        </mat-error>
+        <mat-error *ngIf="formGroup.controls.miembro.errors?.contains">
+          {{'error.csp.persona-equipo.duplicate' | translate}}
+        </mat-error>
+      </mat-form-field>
+    </div>
+    <!-- Meses -->
+    <div class="fieldset-form">
+      {{'title.csp.miembro-equipo-solicitud.periodo-participacion' | translate}}
+    </div>
+    <div [fxLayout.xs]="fxLayoutProperties.xs" [fxLayout]="fxLayoutProperties.layout"
+      [fxLayoutGap]="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
+      <!-- Mes inicial -->
+      <div>
+        <mat-form-field>
+          <mat-label>{{'csp.miembro-equipo-solicitud.mes-inicial' | translate}}</mat-label>
+          <input matInput formControlName="mesInicio" type="number" id="mesInicio"
+            placeholder="{{'csp.miembro-equipo-solicitud.mes-inicial' | translate}}">
+          <mat-error *ngIf="formGroup.controls.mesInicio.errors?.min">
+            {{'error.csp.miembro-equipo-solicitud.mes-inicio.min' | translate}}
+          </mat-error>
+          <mat-error *ngIf="formGroup.controls.mesInicio.errors?.range">
+            {{'error.overlapping.record.entity' | translate:msgParamEntity}}
+          </mat-error>
+          <mat-error *ngIf="formGroup.controls.mesInicio.errors?.max">
+            {{'error.csp.miembro-equipo-solicitud.mes-inicio.max' | translate}}
+          </mat-error>
+        </mat-form-field>
+      </div>
+      <!-- Mes final -->
+      <div>
+        <mat-form-field>
+          <mat-label>{{'csp.miembro-equipo-solicitud.mes-final' | translate}}</mat-label>
+          <input matInput formControlName="mesFin" type="number" id="mesFin"
+            placeholder="{{'csp.miembro-equipo-solicitud.mes-final' | translate}}">
+          <mat-error *ngIf="formGroup.controls.mesFin.errors?.min">
+            {{'error.csp.miembro-equipo-solicitud.mes-fin.min' | translate}}
+          </mat-error>
+          <mat-error *ngIf="formGroup.controls.mesFin.errors?.after">
+            {{'error.after.mes-final' | translate}}
+          </mat-error>
+          <mat-error *ngIf="formGroup.controls.mesFin.errors?.range">
+            {{'error.overlapping.record.entity' | translate:msgParamEntity}}
+          </mat-error>
+          <mat-error *ngIf="formGroup.controls.mesFin.errors?.max">
+            {{'error.csp.miembro-equipo-solicitud.mes-fin.max' | translate}}
+          </mat-error>
+        </mat-form-field>
+      </div>
+    </div>
+  </form>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <button color="accent" (click)="saveOrUpdate()" mat-raised-button type="submit" *ngIf="!data.readonly"
+    [disabled]="saveDisabled">
+    <mat-icon class="save-icon">save</mat-icon>{{textSaveOrUpdate | translate}}
+  </button>
+  <button class="link-cancelar" mat-button type="button" mat-dialog-close>{{'btn.cancel' |
+    translate}}</button>
+</mat-dialog-actions>

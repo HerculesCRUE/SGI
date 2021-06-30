@@ -1,0 +1,82 @@
+<div class="sgi-dialog-header" fxLayout="row" fxLayoutGap="20px">
+  <span fxFlexAlign="center" mat-mat-dialog-title role="heading" aria-level="3" fxFlex>{{title | translate}}</span>
+  <button fxFlex="nogrow" mat-icon-button mat-dialog-close>
+    <mat-icon class="close-icon">close</mat-icon>
+  </button>
+</div>
+<mat-dialog-content>
+  <form [formGroup]="formGroup">
+    <!-- Fecha de inicio -->
+    <div [fxLayout.xs]="fxLayoutProperties2.xs" [fxLayout]="fxLayoutProperties2.layout"
+      [fxLayoutGap]="fxLayoutProperties2.gap" ngClass.gt-xs="ml-10">
+      <div>
+        <mat-form-field>
+          <mat-label>{{'csp.convocatoria-fase.fecha-inicio' | translate}}</mat-label>
+          <input matInput formControlName="fechaInicio" [ngxMatDatetimePicker]="picker1"
+            placeholder="{{'csp.convocatoria-fase.fecha-inicio' | translate}}" required>
+          <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
+          <ngx-mat-datetime-picker #picker1 showSeconds="true" [defaultTime]="[0,0,0]"></ngx-mat-datetime-picker>
+          <mat-error *ngIf="formGroup.controls.fechaInicio.errors?.required">
+            {{'error.required.entity' | translate:msgParamFechaInicioEntity}}
+          </mat-error>
+          <mat-error *ngIf="formGroup.controls.fechaInicio.errors?.before">
+            {{'error.before.fecha-inicio' | translate}}
+          </mat-error>
+          <mat-error *ngIf="formGroup.controls.fechaInicio.errors?.overlapped">
+            {{'error.overlapping.record.entity' | translate}}
+          </mat-error>
+        </mat-form-field>
+      </div>
+      <!-- Fecha de fin -->
+      <div>
+        <mat-form-field>
+          <mat-label>{{'csp.convocatoria-fase.fecha-fin' | translate}}</mat-label>
+          <input matInput formControlName="fechaFin" [ngxMatDatetimePicker]="picker2"
+            placeholder="{{'csp.convocatoria-fase.fecha-fin' | translate}}" required>
+          <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
+          <ngx-mat-datetime-picker #picker2 showSeconds="true" [defaultTime]="[23,59,59]"></ngx-mat-datetime-picker>
+          <mat-error *ngIf="formGroup.controls.fechaFin.errors?.required">
+            {{'error.required.entity' | translate:msgParamFechaFinEntity}}
+          </mat-error>
+          <mat-error *ngIf="formGroup.controls.fechaFin.errors?.after">
+            {{'error.after.fecha-fin' | translate}}
+          </mat-error>
+          <mat-error *ngIf="formGroup.controls.fechaFin.errors?.overlapped">
+            {{'error.overlapping.record.entity' | translate}}
+          </mat-error>
+        </mat-form-field>
+      </div>
+    </div>
+    <!-- Tipo de fase -->
+    <div [fxLayout.xs]="fxLayoutProperties.xs" [fxLayout]="fxLayoutProperties.layout"
+      [fxLayoutGap]="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
+      <mat-form-field>
+        <mat-label>{{'csp.convocatoria-fase.tipo' | translate}}</mat-label>
+        <sgi-select-entity formControlName="tipoFase" required [options]="tiposFases$ | async"></sgi-select-entity>
+        <mat-error *ngIf="formGroup.controls.tipoFase.errors?.required">
+          {{'error.required.entity' | translate:msgParamTipoEntity}}
+        </mat-error>
+      </mat-form-field>
+    </div>
+    <!-- Observaciones -->
+    <div [fxLayout.xs]="fxLayoutProperties.xs" [fxLayout]="fxLayoutProperties.layout"
+      [fxLayoutGap]="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
+      <mat-form-field>
+        <mat-label>{{'csp.convocatoria-fase.observaciones' | translate}}</mat-label>
+        <textarea matInput formControlName="observaciones" type="text"
+          placeholder="{{'csp.convocatoria-fase.observaciones' | translate}}">
+            </textarea>
+        <mat-error *ngIf="formGroup.get('observaciones').errors?.maxlength">
+          {{'error.maxlength.entity' | translate:msgParamObservacionesEntity}}
+        </mat-error>
+      </mat-form-field>
+    </div>
+  </form>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <button color="accent" (click)="saveOrUpdate()" mat-raised-button type="submit" *ngIf="data.canEdit">
+    <mat-icon class="save-icon">save</mat-icon>{{textSaveOrUpdate | translate}}
+  </button>
+  <button class="link-cancelar" mat-button type="button" mat-dialog-close>{{'btn.cancel' |
+    translate}}</button>
+</mat-dialog-actions>

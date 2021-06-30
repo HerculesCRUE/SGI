@@ -1,0 +1,110 @@
+<div class="scrollable-panel">
+  <section class="tipo-fase-listado">
+    <!-- Buscador de tipos de fase -->
+    <form class="formulario mat-elevation-z8" [formGroup]="formGroup" [fxLayout.xs]="fxLayoutProperties.xs"
+      [fxLayout]="fxLayoutProperties.layout" fxLayoutGap="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
+
+      <div fxFlex="85%" fxFlex.sm="50%" fxFlex.md="73%" [fxLayout.xs]="fxLayoutProperties.xs"
+        [fxLayout]="fxLayoutProperties.layout" fxLayoutGap="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
+        <!-- Nombre-->
+        <div class="col">
+          <mat-form-field>
+            <mat-label>{{'csp.tipo-fase.nombre' | translate}}</mat-label>
+            <input matInput placeholder="{{'csp.tipo-fase.nombre' | translate}}" formControlName="nombre">
+          </mat-form-field>
+        </div>
+
+        <!-- Activo -->
+        <ng-container *sgiHasAuthority="'CSP-TFASE-R'">
+          <div class="col">
+            <mat-form-field>
+              <mat-label>{{'label.activo' | translate}}</mat-label>
+              <mat-select matNativeControl formControlName="activo">
+                <mat-option value="todos">{{'label.todos' | translate}}</mat-option>
+                <mat-option value="true">{{'label.si' | translate}}</mat-option>
+                <mat-option value="false">{{'label.no' | translate}}</mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+        </ng-container>
+      </div>
+
+      <div class="buttons-final">
+        <div class="col filter-button">
+          <button color="primary" aria-label="Center Align" mat-raised-button (click)="onSearch()">
+            <mat-icon>search</mat-icon> {{'btn.search'| translate}}
+          </button>
+          <button color="warn" aria-label="Center Align" (click)="onClearFilters()" mat-button>{{'btn.clean'|
+            translate}}
+          </button>
+        </div>
+      </div>
+    </form>
+    <!-- FIN Buscador de tipos de fase -->
+
+    <!-- Listado de tipos de fase -->
+    <table mat-table class="mat-elevation-z8 table-unidad" [dataSource]="tiposFase$ | async" matSort matSortActive="id"
+      matSortDirection="asc" matSortDisableClear>
+      <!-- Nombre -->
+      <ng-container matColumnDef="nombre">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'csp.tipo-fase.nombre' | translate}}
+        </th>
+        <td mat-cell *matCellDef="let tipoFase">{{tipoFase.nombre}}</td>
+      </ng-container>
+
+      <!-- Descripción -->
+      <ng-container matColumnDef="descripcion">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'csp.tipo-fase.descripcion' | translate}}
+        </th>
+        <td mat-cell *matCellDef="let tipoFase">{{tipoFase.descripcion}}</td>
+      </ng-container>
+
+      <!-- Activo -->
+      <ng-container *sgiHasAuthority="'CSP-TFASE-R'" matColumnDef="activo">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'label.activo' | translate}}
+        </th>
+        <td mat-cell *matCellDef="let tipoFase">{{(tipoFase.activo ? 'label.si' : 'label.no') | translate}}
+        </td>
+      </ng-container>
+
+      <!-- Acciones -->
+      <ng-container matColumnDef="acciones">
+        <th mat-header-cell *matHeaderCellDef> {{'label.actions' | translate}} </th>
+        <td mat-cell *matCellDef="let tipoFase">
+          <ng-container *sgiHasAuthority="'CSP-TFASE-E'">
+            <button *ngIf="tipoFase.activo === true" mat-button matTooltip="{{'btn.edit' | translate}}"
+              (click)="openModal(tipoFase)">
+              <mat-icon color="primary">border_color</mat-icon>
+            </button>
+          </ng-container>
+          <ng-container *sgiHasAuthority="'CSP-TFASE-B'">
+            <button *ngIf="tipoFase.activo === true" mat-button matTooltip="{{'btn.delete' | translate}}"
+              (click)="deactivateTipoFase(tipoFase)">
+              <mat-icon color="warn">highlight_off</mat-icon>
+            </button>
+          </ng-container>
+          <ng-container *sgiHasAuthority="'CSP-TFASE-R'">
+            <button *ngIf="tipoFase.activo === false" mat-button matTooltip="{{'btn.recover' | translate}}"
+              (click)="activateTipoFase(tipoFase)">
+              <mat-icon color="accent">add_circle_outline</mat-icon>
+            </button>
+          </ng-container>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="columnas"></tr>
+      <tr mat-row *matRowDef="let row; columns: columnas;"></tr>
+    </table>
+    <mat-paginator [pageSizeOptions]="elementosPagina" [length]="totalElementos" showFirstLastButtons>
+    </mat-paginator>
+
+    <ng-container *sgiHasAuthority="'CSP-TFASE-C'">
+    <div class="separation-button">
+      <button color="three" aria-label="Center Align" mat-raised-button (click)="openModal()">
+        <mat-icon color="accent">add_circle</mat-icon>
+        {{ 'btn.add.entity' | translate:msgParamEntity }}
+      </button>
+    </div>
+    </ng-container>
+  </section>
+</div>

@@ -1,0 +1,41 @@
+mat-table {
+  min-width: 75vw;
+  .expanded-row {
+    height: 0;
+    min-height: 0;
+    border-bottom-width: 0;
+    .mat-cell {
+      border-bottom-width: 0;
+      overflow: hidden;
+      display: flex;
+      height: 0;
+      min-height: 0;
+    }
+  }
+  .mat-cell {
+    .mat-icon {
+      cursor: pointer;
+    }
+  }
+  .mat-column-anualidad {
+    flex: 0.3;
+  }
+  .mat-column-nombre {
+    flex: 0.7;
+  }
+  .mat-column-ajena {
+    flex: 0.3;
+  }
+  .mat-column-conceptoGasto {
+    flex: 0.5;
+  }
+  .mat-column-observaciones {
+    flex: 1;
+  }
+  .mat-column-importePresupuestado {
+    flex: 0.5;
+  }
+  .mat-column-importeSolicitado {
+    flex: 0.5;
+  }
+}

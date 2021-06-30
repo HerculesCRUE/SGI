@@ -1,0 +1,163 @@
+package org.crue.hercules.sgi.csp.service;
+
+import java.util.List;
+import java.util.Set;
+
+import javax.validation.ConstraintViolation;
+import javax.validation.ConstraintViolationException;
+import javax.validation.Validator;
+
+import org.crue.hercules.sgi.csp.dto.AnualidadResumen;
+import org.crue.hercules.sgi.csp.dto.ProyectoAnualidadResumen;
+import org.crue.hercules.sgi.csp.exceptions.ProyectoAnualidadAnioUniqueException;
+import org.crue.hercules.sgi.csp.exceptions.ProyectoAnualidadNotFoundException;
+import org.crue.hercules.sgi.csp.exceptions.ProyectoNotFoundException;
+import org.crue.hercules.sgi.csp.model.AnualidadGasto;
+import org.crue.hercules.sgi.csp.model.AnualidadIngreso;
+import org.crue.hercules.sgi.csp.model.Proyecto;
+import org.crue.hercules.sgi.csp.model.ProyectoAnualidad;
+import org.crue.hercules.sgi.csp.model.ProyectoAnualidad.OnCrear;
+import org.crue.hercules.sgi.csp.repository.AnualidadGastoRepository;
+import org.crue.hercules.sgi.csp.repository.AnualidadIngresoRepository;
+import org.crue.hercules.sgi.csp.repository.ProyectoAnualidadRepository;
+import org.crue.hercules.sgi.csp.repository.ProyectoRepository;
+import org.crue.hercules.sgi.framework.problem.message.ProblemMessage;
+import org.crue.hercules.sgi.framework.spring.context.support.ApplicationContextSupport;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.Assert;
+import org.springframework.validation.annotation.Validated;
+
+import lombok.extern.slf4j.Slf4j;
+
+/**
+ * Service Implementation para la gestión de {@link ProyectoAnualidad}.
+ */
+@Service
+@Slf4j
+@Transactional(readOnly = true)
+@Validated
+public class ProyectoAnualidadService {
+  private final Validator validator;
+
+  private final ProyectoAnualidadRepository repository;
+  private final ProyectoRepository proyectoRepository;
+  private final AnualidadGastoRepository anualidadGastoRepository;
+  private final AnualidadIngresoRepository anualidadIngresoRepository;
+
+  public ProyectoAnualidadService(Validator validator, ProyectoAnualidadRepository proyectoAnualidadepository,
+      ProyectoRepository proyectoRepository, AnualidadGastoRepository anualidadGastoRepository,
+      AnualidadIngresoRepository anualidadIngresoRepository) {
+    this.validator = validator;
+    this.repository = proyectoAnualidadepository;
+    this.proyectoRepository = proyectoRepository;
+    this.anualidadGastoRepository = anualidadGastoRepository;
+    this.anualidadIngresoRepository = anualidadIngresoRepository;
+  }
+
+  /**
+   * Crea un {@link ProyectoAnualidad} para un {@link Proyecto}.
+   * 
+   * @param proyectoAnualidad {@link ProyectoAnualidad}
+   * @return {@link ProyectoAnualidad} creado.
+   */
+  @Transactional
+  @Validated({ ProyectoAnualidad.OnCrear.class })
+  public ProyectoAnualidad create(ProyectoAnualidad proyectoAnualidad) {
+    log.debug("create(ProyectoAnualidad proyectoAnualidad) - start");
+
+    Assert.isNull(proyectoAnualidad.getId(),
+        ProblemMessage.builder().key(Assert.class, "isNull")
+            .parameter("field", ApplicationContextSupport.getMessage("id"))
+            .parameter("entity", ApplicationContextSupport.getMessage(ProyectoAnualidad.class)).build());
+    Assert.notNull(proyectoAnualidad.getProyectoId(),
+        ProblemMessage.builder().key(Assert.class, "notNull")
+            .parameter("field", ApplicationContextSupport.getMessage("id"))
+            .parameter("entity", ApplicationContextSupport.getMessage(ProyectoAnualidad.class)).build());
+
+    // Invocar validaciones asociadas a OnCrear
+    Set<ConstraintViolation<ProyectoAnualidad>> result = validator.validate(proyectoAnualidad, OnCrear.class);
+    if (!result.isEmpty()) {
+      throw new ConstraintViolationException(result);
+    }
+
+    // En caso de que el proyecto tenga anualidad genérica no se guardarán la fecha
+    // de inicio y fecha fin ya que se tendrán en cuenta las del proyecto.
+    proyectoRepository.findById(proyectoAnualidad.getProyectoId()).map(proyecto -> {
+      if (!proyecto.getAnualidades()) {
+        proyectoAnualidad.setFechaInicio(null);
+        proyectoAnualidad.setFechaFin(null);
+      } else {
+        Assert.notNull(proyectoAnualidad.getAnio(),
+            ProblemMessage.builder().key(Assert.class, "notNull")
+                .parameter("field", ApplicationContextSupport.getMessage("anio"))
+                .parameter("entity", ApplicationContextSupport.getMessage(ProyectoAnualidad.class)).build());
+
+        if (repository.findByAnioAndProyectoId(proyectoAnualidad.getAnio(), proyecto.getId()).isPresent()) {
+          throw new ProyectoAnualidadAnioUniqueException();
+        }
+      }
+      return proyecto;
+    }).orElseThrow(() -> new ProyectoNotFoundException(proyectoAnualidad.getId()));
+
+    ProyectoAnualidad returnValue = repository.save(proyectoAnualidad);
+
+    log.debug("create(ProyectoAnualidad proyectoAnualidad) - end");
+    return returnValue;
+  }
+
+  /**
+   * Elimina la {@link ProyectoAnualidad}.
+   *
+   * @param id Id del {@link ProyectoAnualidad}.
+   */
+  @Transactional
+  public void delete(Long id) {
+    log.debug("delete(Long id) - start");
+
+    Assert.notNull(id, "ProyectoAnualidad id no puede ser null para eliminar un ProyectoAnualidad");
+
+    if (!repository.findById(id).isPresent()) {
+      throw new ProyectoAnualidadNotFoundException(id);
+    }
+
+    anualidadGastoRepository.deleteByProyectoAnualidadId(id);
+    anualidadIngresoRepository.deleteByProyectoAnualidadId(id);
+
+    repository.deleteById(id);
+    log.debug("delete(Long id) - end");
+  }
+
+  public Page<ProyectoAnualidadResumen> findAllResumenByProyecto(Long proyectoId, Pageable pageable) {
+    log.debug("create(ProyectoAnualidad proyectoAnualidad) - start");
+    Page<ProyectoAnualidadResumen> returnValue = repository.findAllResumenByProyectoId(proyectoId, pageable);
+
+    log.debug("create(ProyectoAnualidad proyectoAnualidad) - end");
+    return returnValue;
+  }
+
+  public ProyectoAnualidad findById(Long id) {
+    log.debug("findById(Long id) - start");
+    final ProyectoAnualidad returnValue = repository.findById(id)
+        .orElseThrow(() -> new ProyectoAnualidadNotFoundException(id));
+    log.debug("findById(Long id) - end");
+    return returnValue;
+  }
+
+  /**
+   * Recupera el resumen de {@link AnualidadGasto} y {@link AnualidadIngreso}
+   * ({@link AnualidadResumen}) de una {@link ProyectoAnualidad}.
+   * 
+   * @param proyectoAnualidadId Identificador de {@link ProyectoAnualidad}.
+   * @return Listado del resumen de {@link AnualidadResumen}.
+   */
+  public List<AnualidadResumen> getPartidasResumen(Long proyectoAnualidadId) {
+    log.debug("getPartidasResumen(Long proyectoAnualidadId) - start");
+    List<AnualidadResumen> anulidadResumen = repository.getPartidasResumen(proyectoAnualidadId);
+    log.debug("getPartidasResumen(Long proyectoAnualidadId) - end");
+    return anulidadResumen;
+  }
+
+}

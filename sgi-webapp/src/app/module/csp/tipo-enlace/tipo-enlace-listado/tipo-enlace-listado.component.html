@@ -1,0 +1,110 @@
+<div class="scrollable-panel">
+  <section class="tipo-enlace-listado">
+    <!-- Buscador de tipos de enlace -->
+    <form class="formulario mat-elevation-z8" [formGroup]=" formGroup" [fxLayout.xs]="fxLayoutProperties.xs"
+      [fxLayout]="fxLayoutProperties.layout" fxLayoutGap="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
+
+      <div fxFlex="84%" fxFlex.sm="50%" fxFlex.md="72%" [fxLayout.xs]="fxLayoutProperties.xs"
+        [fxLayout]="fxLayoutProperties.layout" fxLayoutGap="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
+        <!-- Nombre -->
+        <div class="col">
+          <mat-form-field>
+            <mat-label>{{'csp.tipo-enlace.nombre' | translate}}</mat-label>
+            <input matInput placeholder="{{'csp.tipo-enlace.nombre' | translate}}" formControlName="nombre">
+          </mat-form-field>
+        </div>
+
+        <!-- Activo -->
+        <ng-container *sgiHasAuthority="'CSP-TENL-R'">
+          <div class="col">
+            <mat-form-field>
+              <mat-label>{{'label.activo' | translate}}</mat-label>
+              <mat-select matNativeControl formControlName="activo">
+                <mat-option value="todos">{{'label.todos' | translate}}</mat-option>
+                <mat-option value="true">{{'label.si' | translate}}</mat-option>
+                <mat-option value="false">{{'label.no' | translate}}</mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+        </ng-container>
+      </div>
+
+
+      <div class="buttons-final">
+        <div class="col filter-button">
+          <button color="primary" aria-label="Center Align" mat-raised-button (click)="onSearch()">
+            <mat-icon>search</mat-icon> {{'btn.search'| translate}}
+          </button>
+          <button color="warn" aria-label="Center Align" (click)="onClearFilters()" mat-button>{{'btn.clean'|
+            translate}}
+          </button>
+        </div>
+      </div>
+    </form>
+    <!-- FIN Buscador de tipos de enlace -->
+
+    <!-- Listado de tipos de enlace -->
+    <table mat-table class="mat-elevation-z8 table-unidad" [dataSource]="tipoEnlace$ | async" matSort matSortActive="id"
+      matSortDirection="asc" matSortDisableClear>
+      <!-- Nombre -->
+      <ng-container matColumnDef="nombre">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'csp.tipo-enlace.nombre' | translate}}
+        </th>
+        <td mat-cell *matCellDef="let tipoEnlace">{{tipoEnlace.nombre}}</td>
+      </ng-container>
+
+      <!-- Descripción -->
+      <ng-container matColumnDef="descripcion">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'csp.tipo-enlace.descripcion' | translate}}
+        </th>
+        <td mat-cell *matCellDef="let tipoEnlace">{{tipoEnlace.descripcion}}</td>
+      </ng-container>
+
+      <!-- Activo -->
+      <ng-container matColumnDef="activo" *sgiHasAuthority="'CSP-TENL-R'">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'label.activo' | translate}}
+        </th>
+        <td mat-cell *matCellDef="let tipoEnlace">{{(tipoEnlace.activo ? 'label.si' : 'label.no') | translate}}
+        </td>
+      </ng-container>
+
+      <!-- Acciones -->
+      <ng-container matColumnDef="acciones">
+        <th mat-header-cell *matHeaderCellDef> {{'label.actions' | translate}} </th>
+        <td mat-cell *matCellDef="let tipoEnlace">
+          <ng-container *sgiHasAuthority="'CSP-TENL-E'">
+            <button *ngIf="tipoEnlace.activo === true" mat-button matTooltip="{{'btn.edit' | translate}}"
+              (click)="openModal(tipoEnlace)">
+              <mat-icon color="primary">border_color</mat-icon>
+            </button>
+          </ng-container>
+          <ng-container *sgiHasAuthority="'CSP-TENL-B'">
+            <button *ngIf="tipoEnlace.activo === true" mat-button matTooltip="{{'btn.delete' | translate}}"
+              (click)="deactivateTipoEnlace(tipoEnlace)">
+              <mat-icon color="warn">highlight_off</mat-icon>
+            </button>
+          </ng-container>
+          <ng-container *sgiHasAuthority="'CSP-TENL-R'">
+            <button *ngIf="tipoEnlace.activo === false" mat-button matTooltip="{{'btn.recover' | translate}}"
+              (click)="activateTipoEnlace(tipoEnlace)">
+              <mat-icon color="accent">add_circle_outline</mat-icon>
+            </button>
+          </ng-container>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="columnas"></tr>
+      <tr mat-row *matRowDef="let row; columns: columnas;"></tr>
+    </table>
+    <mat-paginator [pageSizeOptions]="elementosPagina" [length]="totalElementos" showFirstLastButtons>
+    </mat-paginator>
+    <ng-container *sgiHasAuthority="'CSP-TENL-C'">
+    <div class="separation-button">
+      <button color="three" aria-label="Center Align" mat-raised-button (click)="openModal()">
+        <mat-icon color="accent">add_circle</mat-icon>
+        {{ 'btn.add.entity' | translate:msgParamEntity }}
+      </button>
+    </div>
+    </ng-container>
+  </section>
+</div>
