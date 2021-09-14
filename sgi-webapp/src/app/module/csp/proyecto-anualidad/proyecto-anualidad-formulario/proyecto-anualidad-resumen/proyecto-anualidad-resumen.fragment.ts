@@ -27,10 +27,7 @@ export class ProyectoAnualidadResumenFragment extends Fragment {
   protected onInitialize(): void {
     if (this.getKey()) {
       this.subscriptions.push(this.proyectoAnualidadService.getAnualidadesResumen(this.getKey() as number)
-        .subscribe((anualidadesResumen) => {
-          console.log(anualidadesResumen);
-          this.anualidades$.next(anualidadesResumen.items);
-        }));
+        .subscribe((anualidadesResumen) => this.anualidades$.next(anualidadesResumen.items)));
     }
   }
 

@@ -24,7 +24,7 @@ export interface ConvocatoriaConfiguracionSolicitudesModalData {
   documentoRequerido: IDocumentoRequeridoSolicitud;
   tipoFaseId: number;
   modeloEjecucionId: number;
-  readonly: boolean;
+  isConvocatoriaVinculada: boolean;
 }
 
 @Component({
@@ -109,7 +109,7 @@ export class ConvocatoriaConfiguracionSolicitudesModalComponent
       tipoDocumento: new FormControl(this.data.documentoRequerido.tipoDocumento, Validators.required),
       observaciones: new FormControl(this.data.documentoRequerido.observaciones),
     });
-    if (this.data.readonly) {
+    if (this.data.isConvocatoriaVinculada) {
       formGroup.disable();
     }
     return formGroup;

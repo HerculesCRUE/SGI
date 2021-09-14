@@ -1,7 +1,6 @@
-<section>
-  <h2>{{'csp.proyecto-elegibilidad' | translate}} - {{( actionService.permitido ?
+<sgi-fragment title="{{'csp.proyecto-elegibilidad' | translate}} - {{( actionService.permitido ?
     'label.csp.proyecto-concepto-gasto-codigo-economico.permitido' :
-    'label.csp.proyecto-concepto-gasto-codigo-economico.no-permitido') | translate}}</h2>
+    'label.csp.proyecto-concepto-gasto-codigo-economico.no-permitido') | translate}}">
 
 
 
@@ -9,83 +8,87 @@
     {{'info.csp.proyecto-concepto-gasto-codigo-economico.concepto-obligatorio' | translate}}
   </div>
 
-  <table class="mat-elevation-z8" mat-table [dataSource]="dataSource" matSort matSortDisableClear #sort="matSort">
-    <!-- Icono ayuda -->
-    <ng-container matColumnDef="helpIcon">
-      <th mat-header-cell *matHeaderCellDef>
-      </th>
-      <td mat-cell *matCellDef="let element">
-        <mat-icon *ngIf="element.help" class="{{element.help.class}}" matTooltip="{{element.help.tooltip | translate}}">
-          help</mat-icon>
-      </td>
-    </ng-container>
+  <div class="mat-elevation-z4">
+    <table mat-table [dataSource]="dataSource" matSort matSortDisableClear #sort="matSort">
+      <!-- Icono ayuda -->
+      <ng-container matColumnDef="helpIcon">
+        <th mat-header-cell *matHeaderCellDef>
+        </th>
+        <td mat-cell *matCellDef="let element">
+          <mat-icon *ngIf="element.help" class="{{element.help.class}}"
+            matTooltip="{{element.help.tooltip | translate}}">
+            help</mat-icon>
+        </td>
+      </ng-container>
 
-    <!-- Código económico -->
-    <ng-container matColumnDef="codigoEconomico">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header>
-        {{'csp.proyecto-concepto-gasto-codigo-economico' | translate:MSG_PARAMS.CARDINALIRY.SINGULAR}} </th>
-      <td mat-cell *matCellDef="let element">
-        {{element.codigoEconomico}}
-      </td>
-    </ng-container>
+      <!-- Código económico -->
+      <ng-container matColumnDef="codigoEconomico">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>
+          {{'csp.proyecto-concepto-gasto-codigo-economico' | translate:MSG_PARAMS.CARDINALIRY.SINGULAR}} </th>
+        <td mat-cell *matCellDef="let element">
+          {{element.codigoEconomico?.id}}
+          {{element.codigoEconomico?.nombre ? ' - ' + element.codigoEconomico.nombre : '' }}
+        </td>
+      </ng-container>
 
-    <!-- Fecha inicio -->
-    <ng-container matColumnDef="fechaInicio">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header>
-        {{'csp.proyecto-concepto-gasto-codigo-economico.fecha-inicio' | translate}} </th>
-      <td mat-cell *matCellDef="let element">
-        {{element.fechaInicio | luxon:'short'}}
-      </td>
-    </ng-container>
+      <!-- Fecha inicio -->
+      <ng-container matColumnDef="fechaInicio">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>
+          {{'csp.proyecto-concepto-gasto-codigo-economico.fecha-inicio' | translate}} </th>
+        <td mat-cell *matCellDef="let element">
+          {{element.fechaInicio | luxon:'shortDate'}}
+        </td>
+      </ng-container>
 
-    <!-- Fecha fin -->
-    <ng-container matColumnDef="fechaFin">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header>
-        {{'csp.proyecto-concepto-gasto-codigo-economico.fecha-fin' | translate}} </th>
-      <td mat-cell *matCellDef="let element">
-        {{element.fechaFin | luxon:'short'}}
-      </td>
-    </ng-container>
+      <!-- Fecha fin -->
+      <ng-container matColumnDef="fechaFin">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>
+          {{'csp.proyecto-concepto-gasto-codigo-economico.fecha-fin' | translate}} </th>
+        <td mat-cell *matCellDef="let element">
+          {{element.fechaFin | luxon:'shortDate'}}
+        </td>
+      </ng-container>
 
-    <!-- Observaciones -->
-    <ng-container matColumnDef="observaciones">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header>
-        {{'csp.proyecto-concepto-gasto-codigo-economico.observaciones' | translate}} </th>
-      <td mat-cell *matCellDef="let element">
-        {{element.observaciones}}
-      </td>
-    </ng-container>
+      <!-- Observaciones -->
+      <ng-container matColumnDef="observaciones">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>
+          {{'csp.proyecto-concepto-gasto-codigo-economico.observaciones' | translate}} </th>
+        <td mat-cell *matCellDef="let element">
+          {{element.observaciones}}
+        </td>
+      </ng-container>
 
-    <!-- Acciones Column -->
-    <ng-container matColumnDef="acciones">
-      <th mat-header-cell *matHeaderCellDef>
-        {{'label.actions' | translate}} </th>
-      <td mat-cell *matCellDef="let element;let i=index;">
-        <ng-container>
-          <button mat-button matTooltip="{{'btn.view' | translate}}" *ngIf="formPart.readonly"
-            (click)="openModal(element)">
-            <mat-icon color="primary">visibility</mat-icon>
-          </button>
-          <button mat-button matTooltip="{{'btn.edit' | translate}}" *ngIf="!formPart.readonly"
-            (click)="openModal(element, i)" [disabled]="actionService.blockAddCodigosEconomicos$ | async">
-            <mat-icon color="primary">border_color</mat-icon>
-          </button>
-          <button mat-button matTooltip="{{'btn.delete' | translate}}"
-            *ngIf="element.proyectoCodigoEconomico && !formPart.readonly"
-            (click)="deleteCodigoEconomico(element.proyectoCodigoEconomico)">
-            <mat-icon color="warn">highlight_off</mat-icon>
-          </button>
-        </ng-container>
-      </td>
-    </ng-container>
+      <!-- Acciones Column -->
+      <ng-container matColumnDef="acciones">
+        <th mat-header-cell *matHeaderCellDef>
+          {{'label.actions' | translate}} </th>
+        <td mat-cell *matCellDef="let element;let i=index;">
+          <ng-container>
+            <button mat-button matTooltip="{{'btn.view' | translate}}" *ngIf="formPart.readonly"
+              (click)="openModal(element)">
+              <mat-icon color="primary">visibility</mat-icon>
+            </button>
+            <button mat-button matTooltip="{{'btn.edit' | translate}}" *ngIf="!formPart.readonly"
+              (click)="openModal(element, i)" [disabled]="actionService.blockAddCodigosEconomicos$ | async">
+              <mat-icon color="primary">border_color</mat-icon>
+            </button>
+            <button mat-button matTooltip="{{'btn.delete' | translate}}"
+              *ngIf="element.proyectoCodigoEconomico && !formPart.readonly"
+              (click)="deleteCodigoEconomico(element.proyectoCodigoEconomico)">
+              <mat-icon color="warn">highlight_off</mat-icon>
+            </button>
+          </ng-container>
+        </td>
+      </ng-container>
 
-    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-    <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
 
-  </table>
+    </table>
 
-  <mat-paginator #paginator [pageSizeOptions]="elementosPagina" showFirstLastButtons>
-  </mat-paginator>
+    <mat-paginator #paginator [pageSizeOptions]="elementosPagina" showFirstLastButtons>
+    </mat-paginator>
+  </div>
 
   <div class="separation-button" *ngIf="!formPart.readonly && actionService.permitido">
     <button color="three" aria-label="Center Align" mat-raised-button (click)="openModalCrear(true)"
@@ -101,4 +104,4 @@
       {{'btn.add.entity'| translate:msgParamCodigoNoPermitidoEntity}}
     </button>
   </div>
-</section>
+</sgi-fragment>

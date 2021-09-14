@@ -43,6 +43,10 @@ export class EvaluadorConflictosInteresListadoComponent extends FragmentComponen
   textoDelete: string;
   msgParamConflictoInteresEntity = {};
 
+  get MSG_PARAMS() {
+    return MSG_PARAMS;
+  }
+
   constructor(
     protected readonly dialogService: DialogService,
     protected readonly convocatoriaReunionService: ConvocatoriaReunionService,

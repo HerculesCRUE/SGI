@@ -1,6 +1,5 @@
 <!-- Memoria datos generales -->
-<section>
-  <h2>{{'label.datos-generales' | translate}}</h2>
+<sgi-fragment title="{{'label.datos-generales' | translate}}">
   <form [formGroup]="formGroup" [fxLayout.xs]="fxLayoutProperties.xs" [fxLayout]="fxLayoutProperties.layout"
     [fxLayoutGap]="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
     <!-- Referencia de la memoria -->
@@ -59,12 +58,17 @@
 
     <!-- Título -->
     <ng-container *ngIf="this.datosGeneralesFragment.showTitulo">
-      <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
-        [fxFlexOrder]="fxFlexProperties.order">
+      <div [fxFlex.sm]="fxFlexPropertiesTextarea.sm" [fxFlex.md]="fxFlexPropertiesTextarea.md"
+        [fxFlex.gt-md]="fxFlexPropertiesTextarea.gtMd" [fxFlexOrder]="fxFlexPropertiesTextarea.order">
         <mat-form-field>
-          <mat-label>{{'eti.memoria.titulo' | translate}}</mat-label>
-          <input type="text" [placeholder]="'eti.memoria.titulo' | translate" arial-label="Number" matInput
-            formControlName="titulo">
+          <mat-label>{{'eti.memoria.titulo-descriptivo' | translate}}</mat-label>
+          <textarea matInput [placeholder]="'eti.memoria.titulo-descriptivo' | translate"
+            formControlName="titulo"></textarea>
+          <sgi-field-info matSuffix [visible]="true" message="{{textoInfoTituloDescriptivo}}">
+          </sgi-field-info>
+          <mat-error *ngIf="formGroup.controls.titulo.hasError('maxlength')">
+            {{'error.maxlength.entity' | translate:msgParamTituloDescriptivoEntity}}
+          </mat-error>
         </mat-form-field>
       </div>
     </ng-container>
@@ -95,4 +99,4 @@
       </div>
     </ng-container>
   </form>
-</section>
+</sgi-fragment>

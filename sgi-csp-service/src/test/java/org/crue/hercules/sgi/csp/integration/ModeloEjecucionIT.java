@@ -42,7 +42,8 @@ public class ModeloEjecucionIT extends BaseIT {
     headers.set("Authorization",
         String.format("bearer %s",
             tokenBuilder.buildToken("user", "CSP-ME-V", "CSP-ME-C", "CSP-ME-E", "CSP-ME-B", "CSP-ME-R", "CSP-PRO-C",
-                "CSP-CON-C", "CSP-CON-E", "CSP-CON-V", "CSP-PRO-E", "CSP-SOL-E", "CSP-SOL-V", "AUTH")));
+                "CSP-CON-C", "CSP-CON-E", "CSP-CON-V", "CSP-PRO-E", "CSP-SOL-E", "CSP-SOL-V", "AUTH",
+                "CSP-PRO-MOD-V")));
 
     HttpEntity<ModeloEjecucion> request = new HttpEntity<>(entity, headers);
     return request;

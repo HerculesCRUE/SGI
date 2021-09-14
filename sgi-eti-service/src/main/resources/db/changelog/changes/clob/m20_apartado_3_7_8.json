@@ -1,0 +1,70 @@
+[
+  {
+    "key": "ap3_7_8",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "label": "3.7.8 Agentes biológicos"
+    },
+    "fieldGroup": [
+      {
+        "template": "¿El proceso de experimentación incluye la inoculación de agentes biológicos?"
+      },
+      {
+        "key": "agentesBiologicosRadio",
+        "type": "radio",
+        "templateOptions": {
+          "label": "Elige opción:",
+          "required": true,
+          "options": [
+            {
+              "value": "no",
+              "label": "No"
+            },
+            {
+              "value": "si",
+              "label": "Sí"
+            }
+          ]
+        }
+      },
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "<p>Requiere informe del CBE</p>"
+      },
+      {
+        "key": "tipoAgenteBiologico",
+        "type": "input",
+        "hideExpression": "!model.agentesBiologicosRadio || model.agentesBiologicosRadio === 'no'",
+        "templateOptions": {
+          "label": "Tipo de agente biológico",
+          "required": true,
+          "placeholder": "Tipo"
+        }
+      },
+      {
+        "key": "nivelBioseguridad",
+        "type": "input",
+        "hideExpression": "!model.agentesBiologicosRadio || model.agentesBiologicosRadio === 'no'",
+        "templateOptions": {
+          "label": "Nivel de bioseguridad",
+          "required": true,
+          "placeholder": "Nivel"
+        }
+      },
+      {
+        "key": "administracion",
+        "type": "input",
+        "hideExpression": "!model.agentesBiologicosRadio || model.agentesBiologicosRadio === 'no'",
+        "templateOptions": {
+          "label": "Dosis y vía de administración",
+          "required": true,
+          "placeholder": "Dosis"
+        }
+      }
+    ]
+  }
+]

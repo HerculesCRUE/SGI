@@ -2,38 +2,16 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { IAnualidadGasto } from '@core/models/csp/anualidad-gasto';
 import { environment } from '@env';
-import {
-  CreateCtor,
-  FindByIdCtor,
-  mixinCreate,
-  mixinFindById,
-  mixinUpdate, SgiRestBaseService, UpdateCtor
-} from '@sgi/framework/http';
+import { FindAllCtor, mixinFindAll, SgiRestBaseService } from '@sgi/framework/http';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { ANUALIDAD_GASTO_REQUEST_CONVERTER } from './anualidad-gasto-request.converter';
-import { ANUALIDAD_GASTO_RESPONSE_CONVERTER } from './anualidad-gasto-response.converter';
-import { IAnualidadGastoRequest } from './anualidad-gasto-request';
 import { IAnualidadGastoResponse } from './anualidad-gasto-response';
-
+import { ANUALIDAD_GASTO_RESPONSE_CONVERTER } from './anualidad-gasto-response.converter';
 
 // tslint:disable-next-line: variable-name
 const _AnualidadGastoServiceMixinBase:
-  CreateCtor<IAnualidadGasto, IAnualidadGasto, IAnualidadGastoRequest, IAnualidadGastoResponse> &
-  UpdateCtor<number, IAnualidadGasto, IAnualidadGasto, IAnualidadGastoRequest, IAnualidadGastoResponse> &
-  FindByIdCtor<number, IAnualidadGasto, IAnualidadGastoResponse> &
-  typeof SgiRestBaseService = mixinFindById(
-    mixinUpdate(
-      mixinCreate(
-        SgiRestBaseService,
-        ANUALIDAD_GASTO_REQUEST_CONVERTER,
-        ANUALIDAD_GASTO_RESPONSE_CONVERTER
-      ),
-      ANUALIDAD_GASTO_REQUEST_CONVERTER,
-      ANUALIDAD_GASTO_RESPONSE_CONVERTER
-    ),
-    ANUALIDAD_GASTO_REQUEST_CONVERTER
-  );
+  FindAllCtor<IAnualidadGasto, IAnualidadGastoResponse> &
+  typeof SgiRestBaseService = mixinFindAll(SgiRestBaseService, ANUALIDAD_GASTO_RESPONSE_CONVERTER);
 
 @Injectable({
   providedIn: 'root'

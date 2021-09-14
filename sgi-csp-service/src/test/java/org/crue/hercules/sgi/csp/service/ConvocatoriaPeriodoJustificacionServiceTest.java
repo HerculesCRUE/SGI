@@ -8,21 +8,27 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import javax.validation.ConstraintViolationException;
+
 import org.assertj.core.api.Assertions;
 import org.crue.hercules.sgi.csp.exceptions.ConvocatoriaNotFoundException;
 import org.crue.hercules.sgi.csp.exceptions.ConvocatoriaPeriodoJustificacionNotFoundException;
+import org.crue.hercules.sgi.csp.exceptions.PeriodoLongerThanConvocatoriaException;
+import org.crue.hercules.sgi.csp.exceptions.PeriodoWrongOrderException;
+import org.crue.hercules.sgi.csp.exceptions.TipoFinalException;
 import org.crue.hercules.sgi.csp.model.Convocatoria;
 import org.crue.hercules.sgi.csp.model.ConvocatoriaPeriodoJustificacion;
 import org.crue.hercules.sgi.csp.repository.ConvocatoriaPeriodoJustificacionRepository;
 import org.crue.hercules.sgi.csp.repository.ConvocatoriaRepository;
 import org.crue.hercules.sgi.csp.service.impl.ConvocatoriaPeriodoJustificacionServiceImpl;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
 import org.mockito.BDDMockito;
-import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -32,21 +38,19 @@ import org.springframework.data.jpa.domain.Specification;
 /**
  * ConvocatoriaPeriodoJustificacionServiceTest
  */
+@Import({ ConvocatoriaPeriodoJustificacionServiceImpl.class })
 public class ConvocatoriaPeriodoJustificacionServiceTest extends BaseServiceTest {
 
-  @Mock
+  @MockBean
   private ConvocatoriaPeriodoJustificacionRepository repository;
-  @Mock
+  @MockBean
   private ConvocatoriaRepository convocatoriaRepository;
-  @Mock
+  @MockBean
   private ConvocatoriaService convocatoriaService;
 
+  // This bean must be created by Spring so validations can be applied
+  @Autowired
   private ConvocatoriaPeriodoJustificacionService service;
-
-  @BeforeEach
-  public void setUp() throws Exception {
-    service = new ConvocatoriaPeriodoJustificacionServiceImpl(repository, convocatoriaRepository, convocatoriaService);
-  }
 
   @Test
   public void updateConvocatoriaPeriodoJustificacionesConvocatoria_ReturnsConvocatoriaPeriodoJustificacionList() {
@@ -73,9 +77,6 @@ public class ConvocatoriaPeriodoJustificacionServiceTest extends BaseServiceTest
 
     BDDMockito.given(convocatoriaRepository.findById(ArgumentMatchers.anyLong()))
         .willReturn(Optional.of(generarMockConvocatoria(convocatoriaId)));
-
-    BDDMockito.given(convocatoriaService.modificable(ArgumentMatchers.<Long>any(), ArgumentMatchers.<String>any(),
-        ArgumentMatchers.<String[]>any())).willReturn(Boolean.TRUE);
 
     BDDMockito.given(repository.findAllByConvocatoriaId(ArgumentMatchers.anyLong()))
         .willReturn(peridosJustificiacionExistentes);
@@ -172,9 +173,6 @@ public class ConvocatoriaPeriodoJustificacionServiceTest extends BaseServiceTest
     BDDMockito.given(convocatoriaRepository.findById(ArgumentMatchers.anyLong()))
         .willReturn(Optional.of(generarMockConvocatoria(convocatoriaId)));
 
-    BDDMockito.given(convocatoriaService.modificable(ArgumentMatchers.<Long>any(), ArgumentMatchers.<String>any(),
-        ArgumentMatchers.<String[]>any())).willReturn(Boolean.TRUE);
-
     BDDMockito.given(repository.findAllByConvocatoriaId(ArgumentMatchers.anyLong())).willReturn(new ArrayList<>());
 
     // when:updateConvocatoriaPeriodoJustificacionesConvocatoria
@@ -187,7 +185,7 @@ public class ConvocatoriaPeriodoJustificacionServiceTest extends BaseServiceTest
   }
 
   @Test
-  public void updateConvocatoriaPeriodoJustificacionesConvocatoria_WithMesFinalLowerThanMesInicial_ThrowsIllegalArgumentException() {
+  public void updateConvocatoriaPeriodoJustificacionesConvocatoria_WithMesFinalLowerThanMesInicial_ThrowsConstraintViolationException() {
     // given: a ConvocatoriaPeriodoJustificacion with mesFinal lower than mesInicial
     Long convocatoriaId = 1L;
     ConvocatoriaPeriodoJustificacion convocatoriaPeriodoJustificacion = generarMockConvocatoriaPeriodoJustificacion(1L);
@@ -195,9 +193,6 @@ public class ConvocatoriaPeriodoJustificacionServiceTest extends BaseServiceTest
 
     BDDMockito.given(convocatoriaRepository.findById(ArgumentMatchers.anyLong()))
         .willReturn(Optional.of(generarMockConvocatoria(convocatoriaId)));
-
-    BDDMockito.given(convocatoriaService.modificable(ArgumentMatchers.<Long>any(), ArgumentMatchers.<String>any(),
-        ArgumentMatchers.<String[]>any())).willReturn(Boolean.TRUE);
 
     BDDMockito.given(repository.findAllByConvocatoriaId(ArgumentMatchers.anyLong()))
         .willReturn(Arrays.asList(convocatoriaPeriodoJustificacion));
@@ -207,11 +202,12 @@ public class ConvocatoriaPeriodoJustificacionServiceTest extends BaseServiceTest
         () -> service.updateConvocatoriaPeriodoJustificacionesConvocatoria(convocatoriaId,
             Arrays.asList(convocatoriaPeriodoJustificacion)))
         // then: throw exception
-        .isInstanceOf(IllegalArgumentException.class).hasMessage("El mes final tiene que ser posterior al mes inicial");
+        .isInstanceOf(ConstraintViolationException.class)
+        .hasMessageContaining("End month must be bigger or equal than initial month");
   }
 
   @Test
-  public void updateConvocatoriaPeriodoJustificacionesConvocatoria_WithFechaFinBeforeFechaInicio_ThrowsIllegalArgumentException() {
+  public void updateConvocatoriaPeriodoJustificacionesConvocatoria_WithFechaFinBeforeFechaInicio_ThrowsConstraintViolationException() {
     // given: a ConvocatoriaPeriodoJustificacion with FechaFinPresentacion before
     // FechaInicioPresentacion
     Long convocatoriaId = 1L;
@@ -222,9 +218,6 @@ public class ConvocatoriaPeriodoJustificacionServiceTest extends BaseServiceTest
     BDDMockito.given(convocatoriaRepository.findById(ArgumentMatchers.anyLong()))
         .willReturn(Optional.of(generarMockConvocatoria(convocatoriaId)));
 
-    BDDMockito.given(convocatoriaService.modificable(ArgumentMatchers.<Long>any(), ArgumentMatchers.<String>any(),
-        ArgumentMatchers.<String[]>any())).willReturn(Boolean.TRUE);
-
     BDDMockito.given(repository.findAllByConvocatoriaId(ArgumentMatchers.anyLong()))
         .willReturn(Arrays.asList(convocatoriaPeriodoJustificacion));
 
@@ -233,12 +226,12 @@ public class ConvocatoriaPeriodoJustificacionServiceTest extends BaseServiceTest
         () -> service.updateConvocatoriaPeriodoJustificacionesConvocatoria(convocatoriaId,
             Arrays.asList(convocatoriaPeriodoJustificacion)))
         // then: throw exception
-        .isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("La fecha de fin tiene que ser posterior a la fecha de inicio");
+        .isInstanceOf(ConstraintViolationException.class)
+        .hasMessageContaining("End date must be bigger or equal than initial date");
   }
 
   @Test
-  public void updateConvocatoriaPeriodoJustificacionesConvocatoria_WithMesFinalGreaterThanDuracionConvocatoria_ThrowsIllegalArgumentException() {
+  public void updateConvocatoriaPeriodoJustificacionesConvocatoria_WithMesFinalGreaterThanDuracionConvocatoria_ThrowsPeriodoLongerThanConvocatoriaException() {
     // given: a ConvocatoriaPeriodoJustificacion with mesFinal greater than duracion
     // convocatoria
     Long convocatoriaId = 1L;
@@ -249,9 +242,6 @@ public class ConvocatoriaPeriodoJustificacionServiceTest extends BaseServiceTest
 
     BDDMockito.given(convocatoriaRepository.findById(ArgumentMatchers.anyLong())).willReturn(Optional.of(convocatoria));
 
-    BDDMockito.given(convocatoriaService.modificable(ArgumentMatchers.<Long>any(), ArgumentMatchers.<String>any(),
-        ArgumentMatchers.<String[]>any())).willReturn(Boolean.TRUE);
-
     BDDMockito.given(repository.findAllByConvocatoriaId(ArgumentMatchers.anyLong()))
         .willReturn(Arrays.asList(convocatoriaPeriodoJustificacion));
 
@@ -260,12 +250,12 @@ public class ConvocatoriaPeriodoJustificacionServiceTest extends BaseServiceTest
         () -> service.updateConvocatoriaPeriodoJustificacionesConvocatoria(convocatoriaId,
             Arrays.asList(convocatoriaPeriodoJustificacion)))
         // then: throw exception
-        .isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("El mes final no puede ser superior a la duración en meses indicada en la Convocatoria");
+        .isInstanceOf(PeriodoLongerThanConvocatoriaException.class)
+        .hasMessage("The Period goes beyond the duration of the Call");
   }
 
   @Test
-  public void updateConvocatoriaPeriodoJustificacionesConvocatoria_WithMesSolapado_ThrowsIllegalArgumentException() {
+  public void updateConvocatoriaPeriodoJustificacionesConvocatoria_WithMesSolapado_ThrowsPeriodoWrongOrderException() {
     // given: a ConvocatoriaPeriodoJustificacion with mesFinal greater than duracion
     // convocatoria
     Long convocatoriaId = 1L;
@@ -277,9 +267,6 @@ public class ConvocatoriaPeriodoJustificacionServiceTest extends BaseServiceTest
     BDDMockito.given(convocatoriaRepository.findById(ArgumentMatchers.anyLong()))
         .willReturn(Optional.of(generarMockConvocatoria(convocatoriaId)));
 
-    BDDMockito.given(convocatoriaService.modificable(ArgumentMatchers.<Long>any(), ArgumentMatchers.<String>any(),
-        ArgumentMatchers.<String[]>any())).willReturn(Boolean.TRUE);
-
     BDDMockito.given(repository.findAllByConvocatoriaId(ArgumentMatchers.anyLong()))
         .willReturn(Arrays.asList(convocatoriaPeriodoJustificacion1, convocatoriaPeriodoJustificacion2));
 
@@ -288,24 +275,22 @@ public class ConvocatoriaPeriodoJustificacionServiceTest extends BaseServiceTest
         () -> service.updateConvocatoriaPeriodoJustificacionesConvocatoria(convocatoriaId,
             Arrays.asList(convocatoriaPeriodoJustificacion1, convocatoriaPeriodoJustificacion2)))
         // then: throw exception
-        .isInstanceOf(IllegalArgumentException.class).hasMessage("El periodo se solapa con otro existente");
+        .isInstanceOf(PeriodoWrongOrderException.class)
+        .hasMessage("The first Period must start in month 1 and all Periods must be consecutive, with no gaps");
   }
 
   @Test
-  public void updateConvocatoriaPeriodoJustificacionesConvocatori_WithMesesAfterConvocatoriaPeriodoJustificacionFinal_ThrowsIllegalArgumentException() {
+  public void updateConvocatoriaPeriodoJustificacionesConvocatoria_WithMesesAfterConvocatoriaPeriodoJustificacionFinal_ThrowsTipoFinalException() {
     // given: a ConvocatoriaPeriodoJustificacion with mesInicial greater than
     // ConvocatoriaPeriodoJustificacion FINAL
     Long convocatoriaId = 1L;
     ConvocatoriaPeriodoJustificacion convocatoriaPeriodoJustificacion1 = generarMockConvocatoriaPeriodoJustificacion(1L,
-        1, 5, ConvocatoriaPeriodoJustificacion.Tipo.FINAL, 1L);
+        1, 7, ConvocatoriaPeriodoJustificacion.Tipo.FINAL, 1L);
     ConvocatoriaPeriodoJustificacion convocatoriaPeriodoJustificacion2 = generarMockConvocatoriaPeriodoJustificacion(2L,
         8, 15, ConvocatoriaPeriodoJustificacion.Tipo.PERIODICO, 1L);
 
     BDDMockito.given(convocatoriaRepository.findById(ArgumentMatchers.anyLong()))
         .willReturn(Optional.of(generarMockConvocatoria(convocatoriaId)));
-
-    BDDMockito.given(convocatoriaService.modificable(ArgumentMatchers.<Long>any(), ArgumentMatchers.<String>any(),
-        ArgumentMatchers.<String[]>any())).willReturn(Boolean.TRUE);
 
     BDDMockito.given(repository.findAllByConvocatoriaId(ArgumentMatchers.anyLong()))
         .willReturn(Arrays.asList(convocatoriaPeriodoJustificacion1, convocatoriaPeriodoJustificacion2));
@@ -315,28 +300,8 @@ public class ConvocatoriaPeriodoJustificacionServiceTest extends BaseServiceTest
         () -> service.updateConvocatoriaPeriodoJustificacionesConvocatoria(convocatoriaId,
             Arrays.asList(convocatoriaPeriodoJustificacion1, convocatoriaPeriodoJustificacion2)))
         // then: throw exception
-        .isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("El ConvocatoriaPeriodoJustificacion de tipo final tiene que ser el último");
-  }
-
-  @Test
-  public void update_WhenModificableReturnsFalse_ThrowsIllegalArgumentException() {
-    // given: a ConvocatoriaPeriodoJustificacion when modificable return false
-    Convocatoria convocatoria = generarMockConvocatoria(1L);
-    ConvocatoriaPeriodoJustificacion convocatoriaPeriodoJustificacion = generarMockConvocatoriaPeriodoJustificacion(1L);
-
-    BDDMockito.given(convocatoriaRepository.findById(ArgumentMatchers.anyLong())).willReturn(Optional.of(convocatoria));
-
-    BDDMockito.given(convocatoriaService.modificable(ArgumentMatchers.anyLong(), ArgumentMatchers.<String>any(),
-        ArgumentMatchers.<String[]>any())).willReturn(Boolean.FALSE);
-
-    Assertions.assertThatThrownBy(
-        // when: update ConvocatoriaPeriodoJustificacion
-        () -> service.updateConvocatoriaPeriodoJustificacionesConvocatoria(1L,
-            Arrays.asList(convocatoriaPeriodoJustificacion)))
-        // then: throw exception as Convocatoria is not modificable
-        .isInstanceOf(IllegalArgumentException.class).hasMessage(
-            "No se puede modificar ConvocatoriaPeriodoJustificacion. No tiene los permisos necesarios o la convocatoria está registrada y cuenta con solicitudes o proyectos asociados");
+        .isInstanceOf(TipoFinalException.class)
+        .hasMessage("There must not be more than one final period, and it must be the last one");
   }
 
   @Test

@@ -10,6 +10,7 @@ import { MaterialDesignModule } from '@material/material-design.module';
 import { SgiAuthService } from '@sgi/framework/auth';
 import { SharedModule } from '@shared/shared.module';
 import { LoggerTestingModule } from 'ngx-logger/testing';
+import { SgpSharedModule } from 'src/app/esb/sgp/shared/sgp-shared.module';
 import { PeticionEvaluacionListadoGesComponent } from './peticion-evaluacion-listado-ges.component';
 
 describe('PeticionEvaluacionListadoGesComponent', () => {
@@ -28,7 +29,8 @@ describe('PeticionEvaluacionListadoGesComponent', () => {
         FlexLayoutModule,
         FormsModule,
         ReactiveFormsModule,
-        SharedModule
+        SharedModule,
+        SgpSharedModule
       ],
       providers: [
         { provide: SnackBarService, useValue: TestUtils.getSnackBarServiceSpy() }

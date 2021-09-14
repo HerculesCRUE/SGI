@@ -1,0 +1,141 @@
+[
+  {
+    "key": "ap1_3",
+    "wrappers": [
+      "expansion-panel"
+    ],
+    "templateOptions": {
+      "label": "Severidad",
+      "expanded": true
+    },
+    "fieldGroup": [
+      {
+        "template": "<p>¿Cuántos animales se han utilizado en total?</p>"
+      },
+      {
+        "key": "numAnimalesUtilizados",
+        "type": "input",
+        "templateOptions": {
+          "label": "Número de animales utilizados",
+          "placeholder": "",
+          "description": "",
+          "required": true
+        }
+      },
+      {
+        "template": "<p>¿Cuántos animales han llegado hasta el final del experimento?</p>"
+      },
+      {
+        "key": "numAnimalesFinal",
+        "type": "input",
+        "templateOptions": {
+          "label": "Número de animales final",
+          "placeholder": "",
+          "description": "",
+          "required": true
+        }
+      },
+      {
+        "template": "<p>¿Qué nivel de severidad real han sufrido los animales, diferenciando si fuera preciso a unos de otros, p.ej. los controles?</p>"
+      },
+      {
+        "key": "nivelSeveridadSufrido",
+        "type": "textarea",
+        "templateOptions": {
+          "placeholder": "Descripción",
+          "label": "Descripción",
+          "required": true,
+          "autosize": true,
+          "autosizeMinRows": "1",
+          "autosizeMaxRows": "20"
+        }
+      },
+      {
+        "template": "<p>¿Cuántos animales se han retirado del experimento porque el proceso técnico no ha ido bien y se han tenido que desechar?</p>"
+      },
+      {
+        "key": "numAnimalesRetirados",
+        "type": "input",
+        "templateOptions": {
+          "label": "Número de animales retirados",
+          "placeholder": "",
+          "description": "",
+          "required": true
+        }
+      },
+      {
+        "template": "<p>Describa las razones, el momento y nivel de severidad alcanzado:</p>"
+      },
+      {
+        "key": "nivelSeveridadAlcanzado",
+        "type": "textarea",
+        "templateOptions": {
+          "placeholder": "Descripción",
+          "label": "Descripción",
+          "required": true,
+          "autosize": true,
+          "autosizeMinRows": "1",
+          "autosizeMaxRows": "20"
+        }
+      },
+      {
+        "template": "<p>¿A cuántos animales se ha aplicado el criterio de punto final?</p>"
+      },
+      {
+        "key": "numAnimalesPuntoFinal",
+        "type": "input",
+        "templateOptions": {
+          "label": "Número de animales punto final",
+          "placeholder": "",
+          "description": "",
+          "required": true
+        }
+      },
+      {
+        "template": "<p>Señale el momento de aplicación:</p>"
+      },
+      {
+        "key": "aplicacion",
+        "type": "textarea",
+        "templateOptions": {
+          "placeholder": "Descripción",
+          "label": "Descripción",
+          "required": true,
+          "autosize": true,
+          "autosizeMinRows": "1",
+          "autosizeMaxRows": "20"
+        }
+      },
+      {
+        "template": "<p>Describa cualquier otra cuestión que considere de interés sobre los animales y el desarrollo de los experimentos de su investigación.</p>"
+      },
+      {
+        "key": "descripcion",
+        "type": "textarea",
+        "templateOptions": {
+          "placeholder": "Descripción",
+          "label": "Descripción",
+          "required": true,
+          "autosize": true,
+          "autosizeMinRows": "1",
+          "autosizeMaxRows": "20"
+        }
+      },
+      {
+        "template": "<p>Señale las medidas adoptadas para el cumplimiento de los requisitos éticos en la investigación.</p>"
+      },
+      {
+        "key": "medidas",
+        "type": "textarea",
+        "templateOptions": {
+          "placeholder": "Descripción",
+          "label": "Descripción",
+          "required": true,
+          "autosize": true,
+          "autosizeMinRows": "1",
+          "autosizeMaxRows": "20"
+        }
+      }
+    ]
+  }
+]

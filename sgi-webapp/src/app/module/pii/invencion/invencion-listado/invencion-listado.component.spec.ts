@@ -10,8 +10,9 @@ import { MaterialDesignModule } from '@material/material-design.module';
 import { SgiAuthModule, SgiAuthService } from '@sgi/framework/auth';
 import { SharedModule } from '@shared/shared.module';
 import { LoggerTestingModule } from 'ngx-logger/testing';
-
+import { SgpSharedModule } from 'src/app/esb/sgp/shared/sgp-shared.module';
 import { InvencionListadoComponent } from './invencion-listado.component';
+
 
 describe('InvencionListadoComponent', () => {
   let component: InvencionListadoComponent;
@@ -33,6 +34,7 @@ describe('InvencionListadoComponent', () => {
         FormsModule,
         ReactiveFormsModule,
         SharedModule,
+        SgpSharedModule,
         SgiAuthModule
       ],
       providers: [

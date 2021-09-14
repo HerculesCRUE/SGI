@@ -98,8 +98,16 @@ public class ProyectoProyectoSgeServiceImpl implements ProyectoProyectoSgeServic
   @Override
   public ProyectoProyectoSge findById(Long id) {
     log.debug("findById(Long id)  - start");
-    final ProyectoProyectoSge returnValue = repository.findById(id)
-        .orElseThrow(() -> new ProyectoProyectoSgeNotFoundException(id));
+    // No tiene acceso a todos los UO
+    List<String> unidadesGestion = SgiSecurityContextHolder
+        .getUOsForAnyAuthority(new String[] { "CSP-EJEC-V", "CSP-EJEC-E", "CSP-PRO-E" });
+    ProyectoProyectoSge returnValue = null;
+    if (!CollectionUtils.isEmpty(unidadesGestion)) {
+      returnValue = repository.findByIdAndProyectoUnidadGestionRefIn(id, unidadesGestion)
+          .orElseThrow(() -> new ProyectoProyectoSgeNotFoundException(id));
+    } else {
+      returnValue = repository.findById(id).orElseThrow(() -> new ProyectoProyectoSgeNotFoundException(id));
+    }
     log.debug("findById(Long id)  - end");
     return returnValue;
 
@@ -151,6 +159,20 @@ public class ProyectoProyectoSgeServiceImpl implements ProyectoProyectoSgeServic
 
     Page<ProyectoProyectoSge> returnValue = repository.findAll(specs, pageable);
     log.debug("findAll(String query, Pageable pageable) - end");
+    return returnValue;
+  }
+
+  /**
+   * Indica si existen {@link ProyectoProyectoSge} de un {@link Proyecto}
+   * 
+   * @param proyectoId identificador de la {@link Proyecto}
+   * @return si existen {@link ProyectoProyectoSge}
+   */
+  @Override
+  public boolean existsByProyecto(Long proyectoId) {
+    log.debug("existsByProyecto(Long proyectoId) - start");
+    boolean returnValue = repository.existsByProyectoId(proyectoId);
+    log.debug("existsByProyecto(Long proyectoId) - end");
     return returnValue;
   }
 

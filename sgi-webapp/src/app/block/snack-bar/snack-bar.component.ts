@@ -1,8 +1,10 @@
-import { Component, OnInit, Inject, ViewEncapsulation } from '@angular/core';
-import { MAT_SNACK_BAR_DATA } from '@angular/material/snack-bar';
+import { Component, Inject, OnInit, ViewEncapsulation } from '@angular/core';
+import { MatSnackBarRef, MAT_SNACK_BAR_DATA } from '@angular/material/snack-bar';
+import { Problem } from '@core/errors/http-problem';
 
 export interface SnackBarData {
   msg: string;
+  error?: Problem;
   params: {};
 }
 
@@ -13,9 +15,16 @@ export interface SnackBarData {
 })
 export class SnackBarComponent implements OnInit {
 
-  constructor(@Inject(MAT_SNACK_BAR_DATA) public data: SnackBarData) { }
+  constructor(
+    private matSnackBarRef: MatSnackBarRef<any>,
+    @Inject(MAT_SNACK_BAR_DATA) public data: SnackBarData
+  ) { }
 
   ngOnInit(): void {
+  }
+
+  dismiss(): void {
+    this.matSnackBarRef.dismiss();
   }
 
 }

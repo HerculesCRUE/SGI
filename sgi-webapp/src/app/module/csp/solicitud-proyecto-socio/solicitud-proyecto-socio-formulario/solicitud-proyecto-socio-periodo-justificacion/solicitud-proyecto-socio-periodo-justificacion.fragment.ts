@@ -90,6 +90,7 @@ export class SolicitudProyectoSocioPeriodoJustificacionFragment extends Fragment
     current.forEach(element => element.value.numPeriodo = numPeriodo++);
     this.periodoJustificaciones$.next(current);
     this.setChanges(true);
+    this.checkFirstPeriodoStartsAtOne();
   }
 
   updatePeriodoJustificacion(wrapper: StatusWrapper<ISolicitudProyectoSocioPeriodoJustificacion>): void {
@@ -98,5 +99,14 @@ export class SolicitudProyectoSocioPeriodoJustificacionFragment extends Fragment
     }
     const current = this.periodoJustificaciones$.value;
     this.recalcularNumPeriodos(current);
+  }
+
+  private checkFirstPeriodoStartsAtOne() {
+    if (this.periodoJustificaciones$.value.length > 0
+      && this.periodoJustificaciones$.value[0].value.mesInicial !== 1) {
+      this.setErrors(true);
+    } else {
+      this.setErrors(false);
+    }
   }
 }

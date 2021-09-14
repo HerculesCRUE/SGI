@@ -123,7 +123,6 @@ public class ConvocatoriaConceptoGastoRepositoryTest extends BaseRepositoryTest 
         .observaciones("observaciones" + suffix)
         .finalidad(modeloTipoFinalidad.getTipoFinalidad())
         .regimenConcurrencia(tipoRegimenConcurrencia)
-        .colaborativos(Boolean.TRUE)
         .estado(Convocatoria.Estado.REGISTRADA)
         .duracion(12)
         .ambitoGeografico(tipoAmbitoGeografico)
@@ -135,6 +134,7 @@ public class ConvocatoriaConceptoGastoRepositoryTest extends BaseRepositoryTest 
     ConceptoGasto conceptoGasto = ConceptoGasto.builder()
         .nombre("nombreConceptoGasto" + suffix)
         .activo(Boolean.TRUE)
+        .costesIndirectos(true)
         .build();
     entityManager.persistAndFlush(conceptoGasto);
 

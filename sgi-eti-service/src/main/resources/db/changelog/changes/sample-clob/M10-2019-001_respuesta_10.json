@@ -1,0 +1,11 @@
+{
+  "ap3_5_1": {
+    "recogidasExpresamente": true,
+    "recogidasApartirDeMuestras": true,
+    "especificarRecogidasApartirDeMuestras": "Especificación de muestras recogidas de otro proceso",
+    "procedentesBiobanco": true,
+    "especificarProcedentesBiobanco": "Especificación de muestras procedentes de un biobanco",
+    "procedentesColeccion": true,
+    "especificarProcedentesColeccion": "Especificación de muestras procedentes de otra colección"
+  }
+}

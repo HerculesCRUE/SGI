@@ -1,4 +1,5 @@
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
+import { TipoPropiedad } from '@core/enums/tipo-propiedad';
 
 export interface ITipoProteccion {
   id: number;
@@ -8,13 +9,3 @@ export interface ITipoProteccion {
   padre: ITipoProteccion;
   activo: boolean;
 }
-
-export enum TipoPropiedad {
-  INTELECTUAL = 'INTELECTUAL',
-  INDUSTRIAL = 'INDUSTRIAL',
-}
-
-export const TIPO_PROPIEDAD_MAP: Map<TipoPropiedad, string> = new Map([
-  [TipoPropiedad.INTELECTUAL, marker('pii.tipo-propiedad.INTELECTUAL')],
-  [TipoPropiedad.INDUSTRIAL, marker('pii.tipo-propiedad.INDUSTRIAL')],
-]);

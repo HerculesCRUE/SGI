@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { CONVOCATORIA_AREA_TEMATICA_CONVERTER } from '@core/converters/csp/convocatoria-area-tematica.converter';
 import { CONVOCATORIA_CONCEPTO_GASTO_CODIGO_EC_CONVERTER } from '@core/converters/csp/convocatoria-concepto-gasto-codigo-ec.converter';
@@ -42,16 +42,23 @@ import { IConvocatoriaHito } from '@core/models/csp/convocatoria-hito';
 import { IConvocatoriaPartidaPresupuestaria } from '@core/models/csp/convocatoria-partida-presupuestaria';
 import { IConvocatoriaPeriodoJustificacion } from '@core/models/csp/convocatoria-periodo-justificacion';
 import { IConvocatoriaPeriodoSeguimientoCientifico } from '@core/models/csp/convocatoria-periodo-seguimiento-cientifico';
+import { IRequisitoEquipoCategoriaProfesional } from '@core/models/csp/requisito-equipo-categoria-profesional';
+import { IRequisitoEquipoNivelAcademico } from '@core/models/csp/requisito-equipo-nivel-academico';
 import { IModeloEjecucion } from '@core/models/csp/tipos-configuracion';
 import { environment } from '@env';
 import { SgiMutableRestService, SgiRestFindOptions, SgiRestListResult } from '@sgi/framework/http/';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { IRequisitoEquipoCategoriaProfesionalResponse } from './requisito-equipo-categoria-profesional/requisito-equipo-categoria-profesional-response';
+import { REQUISITO_EQUIPO_CATEGORIA_PROFESIONAL_RESPONSE_CONVERTER } from './requisito-equipo-categoria-profesional/requisito-equipo-categoria-profesional-response.converter';
+import { IRequisitoEquipoNivelAcademicoResponse } from './requisito-equipo-nivel-academico/requisito-equipo-nivel-academico-response';
+import { REQUISITO_EQUIPO_NIVELACADEMICO_RESPONSE_CONVERTER } from './requisito-equipo-nivel-academico/requisito-equipo-nivel-academico-response.converter';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ConvocatoriaService extends SgiMutableRestService<number, IConvocatoriaBackend, IConvocatoria> {
+
   private static readonly MAPPING = '/convocatorias';
 
   constructor(protected http: HttpClient) {
@@ -403,6 +410,56 @@ export class ConvocatoriaService extends SgiMutableRestService<number, IConvocat
     return this.http.head(url, { observe: 'response' }).pipe(
       map(response => response.status === 200)
     );
+  }
+
+  public hasSolicitudesReferenced(convocatoriaId: number): Observable<boolean> {
+    const url = `${this.endpointUrl}/${convocatoriaId}/solicitudesreferenced`;
+    return this.http.head(url, { observe: 'response' }).pipe(
+      map(response => response.status === 200)
+    );
+  }
+
+  public hasProyectosReferenced(convocatoriaId: number): Observable<boolean> {
+    const url = `${this.endpointUrl}/${convocatoriaId}/proyectosreferenced`;
+    return this.http.head(url, { observe: 'response' }).pipe(
+      map(response => response.status === 200)
+    );
+  }
+
+  /**
+   * Recupera los niveles académicos asociados a la Convocatoria con el id indicado
+   * @param id Identificador de la Convocatoria
+   */
+  findNivelesAcademicos(id: number): Observable<IRequisitoEquipoNivelAcademico[]> {
+    const endpointUrl = `${this.endpointUrl}/${id}/niveles`;
+    const params = new HttpParams().set('id', id.toString());
+    return this.http.get<IRequisitoEquipoNivelAcademicoResponse[]>(endpointUrl, { params })
+      .pipe(
+        map(r => {
+          return REQUISITO_EQUIPO_NIVELACADEMICO_RESPONSE_CONVERTER.toTargetArray(r);
+        })
+      );
+  }
+
+
+  /**
+   * Recupera las categorías asociadas a la Convocatoria con el id indicado
+   * @param id Identificador de la Convocatoria
+   */
+  findCategoriasProfesionales(id: number): Observable<IRequisitoEquipoCategoriaProfesional[]> {
+    const endpointUrl = `${this.endpointUrl}/${id}/categoriasprofesionales`;
+    const params = new HttpParams().set('id', id.toString());
+    return this.http.get<IRequisitoEquipoCategoriaProfesionalResponse[]>(endpointUrl, { params })
+      .pipe(
+        map(r => {
+          return REQUISITO_EQUIPO_CATEGORIA_PROFESIONAL_RESPONSE_CONVERTER.toTargetArray(r);
+        })
+      );
+  }
+
+  public clone(convocatoriaId: number): Observable<number> {
+    const url = `${this.endpointUrl}/${convocatoriaId}/clone`;
+    return this.http.post<number>(url, {});
   }
 
 }

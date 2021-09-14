@@ -1,0 +1,128 @@
+[
+  {
+    "key": "ap4_5",
+    "wrappers": [
+      "expansion-panel"
+    ],
+    "templateOptions": {
+      "expressionLock": "formState.memoria.tipoMemoria.id === 3",
+      "label": "4.5 Estudios genéticos"
+    },
+    "fieldGroup": [
+      {
+        "template": "<p>¿Se va a realizar algún tipo de prueba predictiva genética?</p>"
+      },
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "<p><strong>Límites que deben respetarse en los análisis genéticos.</strong> Sólo podrán hacerse pruebas predictivas genéticas para el estudio de:</p><ul><li>enfermedades genéticas o que permitan identificar al sujeto como portador de un gen responsable de una enfermedad, o detectar una predisposición o una susceptibilidad genética a una enfermedad, con fines médicos o de investigación médica y con un asesoramiento genético, cuando esté indicado</li><li>diferencias inter-individuales en la respuesta a los fármacos</li><li>interacciones genético-ambientales</li><li>bases moleculares de las enfermedades</li></ul><p>Todo lo relacionado con la regulación de los análisis genéticos, sus límites, principios rectores, información etc, se halla contenido en la <a href='http://www.boe.es/buscar/act.php?id=BOE-A-2007-12945&p=20110602&tn=2' target='_blank'>Ley de Investigación Biomédica</a> 14/2007 (consultar el <a href='http://www.boe.es/buscar/act.php?id=BOE-A-2007-12945&p=20110602&tn=1#a9' target='_blank'>artículo 9</a>, <a href='http://www.boe.es/buscar/act.php?id=BOE-A-2007-12945&p=20110602&tn=1#tv' target='_blank'>Título V</a>)</p>"
+      },
+      {
+        "key": "estudiosGeneticosRadio",
+        "type": "radio",
+        "templateOptions": {
+          "required": true,
+          "label": "Elige opción:",
+          "options": [
+            {
+              "value": "no",
+              "label": "No"
+            },
+            {
+              "value": "si",
+              "label": "Sí"
+            }
+          ]
+        }
+      },
+      {
+        "template": "<p>Tipo de prueba predictiva</p>",
+        "hideExpression": "!(model.estudiosGeneticosRadio && model.estudiosGeneticosRadio === 'si')"
+      },
+      {
+        "key": "pruebaPredectivaRadio",
+        "type": "radio",
+        "className": "vertical-radio",
+        "hideExpression": "!(model.estudiosGeneticosRadio && model.estudiosGeneticosRadio === 'si')",
+        "required": true,
+        "templateOptions": {
+          "label": "Tipo",
+          "options": [
+            {
+              "value": "enfermedadGenetica",
+              "label": "Enfermedad genética"
+            },
+            {
+              "value": "genResponsable",
+              "label": "Identificación de un gen responsable de enfermedad"
+            },
+            {
+              "value": "predisposicionSusceptibilidad",
+              "label": "Predisposición o susceptibilidad a una enfermedad"
+            },
+            {
+              "value": "otra",
+              "label": "Otra"
+            }
+          ]
+        }
+      },
+      {
+        "key": "otraPruebaPredictiva",
+        "type": "textarea",
+        "hideExpression": "!(model.estudiosGeneticosRadio && model.estudiosGeneticosRadio === 'si' && model.pruebaPredectivaRadio && model.pruebaPredectivaRadio === 'otra')",
+        "templateOptions": {
+          "label": "Especificar",
+          "required": true,
+          "autosize": true,
+          "autosizeMinRows": "1",
+          "autosizeMaxRows": "10"
+        }
+      },
+      {
+        "template": "<p>Fines</p>",
+        "hideExpression": "!(model.estudiosGeneticosRadio && model.estudiosGeneticosRadio === 'si')"
+      },
+      {
+        "key": "finesRadio",
+        "type": "radio",
+        "hideExpression": "!(model.estudiosGeneticosRadio && model.estudiosGeneticosRadio === 'si')",
+        "className": "vertical-radio",
+        "templateOptions": {
+          "label": "Fines",
+          "options": [
+            {
+              "value": "terapeutico",
+              "label": "Terapéutico"
+            },
+            {
+              "value": "investigacionMedica",
+              "label": "Investigación médica"
+            },
+            {
+              "value": "investigacionBasica",
+              "label": "Investigación básica"
+            },
+            {
+              "value": "otros",
+              "label": "Otros"
+            }
+          ]
+        }
+      },
+      {
+        "key": "otrosFines",
+        "type": "textarea",
+        "hideExpression": "!(model.estudiosGeneticosRadio && model.estudiosGeneticosRadio === 'si' && model.finesRadio && model.finesRadio === 'otros')",
+        "templateOptions": {
+          "label": "Especificar",
+          "required": true,
+          "autosize": true,
+          "autosizeMinRows": "1",
+          "autosizeMaxRows": "10"
+        }
+      }
+    ]
+  }
+]

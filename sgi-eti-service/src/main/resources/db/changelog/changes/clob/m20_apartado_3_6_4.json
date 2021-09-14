@@ -1,0 +1,22 @@
+[
+  {
+    "key": "ap3_6_4",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "label": "3.6.4 Número de animales a utilizar"
+    },
+    "fieldGroup": [
+      {
+        "key": "totalAnimalesUtilizar",
+        "type": "input",
+        "templateOptions": {
+          "required": true,
+          "label": "Total",
+          "placeholder": "Total"
+        }
+      }
+    ]
+  }
+]

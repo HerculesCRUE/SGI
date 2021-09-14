@@ -138,7 +138,14 @@ export class ProyectoEntidadesConvocantesFragment extends Fragment {
               let current: IProyectoEntidadConvocante[] = this.proyectoEntidadConvocantes$.value;
               current = current.map((proyectoEntidadConvocante) =>
                 proyectoEntidadConvocante.id === updatedEntidad.id ? updatedEntidad : proyectoEntidadConvocante);
-              this.proyectoEntidadConvocantes$.next(current);
+              this.proyectoEntidadConvocantes$.next(
+                current.map((value) => {
+                  if (!value.entidad.nombre) {
+                    value.entidad = data.entidad;
+                  }
+                  return value;
+                })
+              );
             })
           );
       })
@@ -157,7 +164,12 @@ export class ProyectoEntidadesConvocantesFragment extends Fragment {
             let current: IProyectoEntidadConvocante[] = this.proyectoEntidadConvocantes$.value;
             current = current.map((proyectoEntidadConvocante) =>
               proyectoEntidadConvocante === data ? createdEntidad : proyectoEntidadConvocante);
-            this.proyectoEntidadConvocantes$.next(current);
+            this.proyectoEntidadConvocantes$.next(current.map((value) => {
+              if (!value.entidad.nombre) {
+                value.entidad = data.entidad;
+              }
+              return value;
+            }));
           })
         );
       })

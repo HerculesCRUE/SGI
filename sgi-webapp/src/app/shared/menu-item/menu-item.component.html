@@ -1,0 +1,6 @@
+<a [routerLink]="route" [routerLinkActive]="['is-active']">
+  <div>
+    <mat-icon *ngIf="icon" color="primary">{{icon}}</mat-icon>
+    <span *ngIf="opened">{{title}}</span>
+  </div>
+</a>

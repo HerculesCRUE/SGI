@@ -1,50 +1,50 @@
-<div class="scrollable-panel-with-footer">
-  <section class="planes-investigacion-listado">
-    <!-- Buscador de planes de investigación -->
-    <form class="formulario mat-elevation-z8" [formGroup]="formGroup" [fxLayout.xs]="fxLayoutProperties.xs"
-      [fxLayout]="fxLayoutProperties.layout" [fxLayoutGap]="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
+<sgi-menu-content>
+  <!-- Buscador de planes de investigación -->
+  <form class="formulario mat-elevation-z8" [formGroup]="formGroup" [fxLayout.xs]="fxLayoutProperties.xs"
+    [fxLayout]="fxLayoutProperties.layout" [fxLayoutGap]="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
 
-      <div fxFlex="84%" fxFlex.sm="50%" fxFlex.md="72%" [fxLayout.xs]="fxLayoutProperties.xs"
-        [fxLayout]="fxLayoutProperties.layout" fxLayoutGap="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
-        <!-- Nombre -->
+    <div fxFlex="84%" fxFlex.sm="50%" fxFlex.md="72%" [fxLayout.xs]="fxLayoutProperties.xs"
+      [fxLayout]="fxLayoutProperties.layout" fxLayoutGap="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
+      <!-- Nombre -->
+      <div class="col">
+        <mat-form-field>
+          <mat-label>{{'csp.plan-investigacion.nombre' | translate}}</mat-label>
+          <input matInput placeholder="{{'csp.plan-investigacion.nombre' | translate}}" formControlName="nombre">
+        </mat-form-field>
+      </div>
+
+      <!-- Activo -->
+      <ng-container *sgiHasAuthority="'CSP-PRG-R'">
         <div class="col">
           <mat-form-field>
-            <mat-label>{{'csp.plan-investigacion.nombre' | translate}}</mat-label>
-            <input matInput placeholder="{{'csp.plan-investigacion.nombre' | translate}}" formControlName="nombre">
+            <mat-label>{{'label.activo' | translate}}</mat-label>
+            <mat-select matNativeControl formControlName="activo">
+              <mat-option value="todos">{{'label.todos' | translate}}</mat-option>
+              <mat-option value="true">{{'label.si' | translate}}</mat-option>
+              <mat-option value="false">{{'label.no' | translate}}</mat-option>
+            </mat-select>
           </mat-form-field>
         </div>
+      </ng-container>
+    </div>
 
-        <!-- Activo -->
-        <ng-container *sgiHasAuthority="'CSP-PRG-R'">
-          <div class="col">
-            <mat-form-field>
-              <mat-label>{{'label.activo' | translate}}</mat-label>
-              <mat-select matNativeControl formControlName="activo">
-                <mat-option value="todos">{{'label.todos' | translate}}</mat-option>
-                <mat-option value="true">{{'label.si' | translate}}</mat-option>
-                <mat-option value="false">{{'label.no' | translate}}</mat-option>
-              </mat-select>
-            </mat-form-field>
-          </div>
-        </ng-container>
+    <div class="buttons-final">
+      <div class="col filter-button">
+        <button color="primary" aria-label="Center Align" mat-raised-button (click)="onSearch()">
+          <mat-icon>search</mat-icon> {{'btn.search'| translate}}
+        </button>
+        <button color="warn" aria-label="Center Align" (click)="onClearFilters()" mat-button>{{'btn.clean'|
+          translate}}
+        </button>
       </div>
+    </div>
+  </form>
+  <!-- FIN Buscador de planes de investigación -->
 
-      <div class="buttons-final">
-        <div class="col filter-button">
-          <button color="primary" aria-label="Center Align" mat-raised-button (click)="onSearch()">
-            <mat-icon>search</mat-icon> {{'btn.search'| translate}}
-          </button>
-          <button color="warn" aria-label="Center Align" (click)="onClearFilters()" mat-button>{{'btn.clean'|
-            translate}}
-          </button>
-        </div>
-      </div>
-    </form>
-    <!-- FIN Buscador de planes de investigación -->
-
-    <!-- Listado de planes de investigación -->
-    <table mat-table class="mat-elevation-z8 table-unidad" [dataSource]="programas$ | async" matSort matSortActive="id"
-      matSortDirection="asc" matSortDisableClear>
+  <!-- Listado de planes de investigación -->
+  <div class="mat-elevation-z4">
+    <table mat-table [dataSource]="programas$ | async" matSort matSortActive="id" matSortDirection="asc"
+      matSortDisableClear>
       <!-- Nombre -->
       <ng-container matColumnDef="nombre">
         <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'csp.plan-investigacion.nombre' | translate}}
@@ -80,7 +80,7 @@
             </button>
           </ng-container>
           <ng-container *sgiHasAuthority="'CSP-PRG-B'">
-            <button *ngIf="programa.activo === true" mat-button matTooltip="{{'btn.edit' | translate}}"
+            <button *ngIf="programa.activo === true" mat-button matTooltip="{{'btn.delete' | translate}}"
               (click)="desactivePlan(programa)">
               <mat-icon color="warn">highlight_off</mat-icon>
             </button>
@@ -99,8 +99,8 @@
     </table>
     <mat-paginator [pageSizeOptions]="elementosPagina" [length]="totalElementos" showFirstLastButtons>
     </mat-paginator>
-  </section>
-</div>
-<ng-container *sgiHasAuthority="'CSP-PRG-C'">
-  <sgi-footer-crear [texto]="textoCrear" [route]="ROUTE_NAMES.NEW"></sgi-footer-crear>
-</ng-container>
+  </div>
+  <sgi-menu-content-footer *sgiHasAuthority="'CSP-PRG-C'">
+    <sgi-footer-crear [texto]="textoCrear" [route]="ROUTE_NAMES.NEW"></sgi-footer-crear>
+  </sgi-menu-content-footer>
+</sgi-menu-content>

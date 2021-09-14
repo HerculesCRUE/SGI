@@ -5,6 +5,7 @@ import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { FragmentComponent } from '@core/component/fragment.component';
+import { HttpProblem } from '@core/errors/http-problem';
 import { MSG_PARAMS } from '@core/i18n';
 import { IProyectoSocio } from '@core/models/csp/proyecto-socio';
 import { FxFlexProperties } from '@core/models/shared/flexLayout/fx-flex-properties';
@@ -109,8 +110,13 @@ export class ProyectoSociosComponent extends FragmentComponent implements OnInit
             this.formPart.deleteProyectoSocio(wrapper);
           }
         },
-        () => {
-          this.snackBarService.showError(MSG_ERROR);
+        (error) => {
+          if (error instanceof HttpProblem) {
+            this.snackBarService.showError(error);
+          }
+          else {
+            this.snackBarService.showError(MSG_ERROR);
+          }
         }
       )
     );

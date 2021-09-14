@@ -61,7 +61,7 @@ public class ConvocatoriaAreaTematicaServiceImpl implements ConvocatoriaAreaTema
 
     // comprobar si convocatoria es modificable
     Assert.isTrue(
-        convocatoriaService.modificable(convocatoriaAreaTematica.getConvocatoriaId(), null,
+        convocatoriaService.isRegistradaConSolicitudesOProyectos(convocatoriaAreaTematica.getConvocatoriaId(), null,
             new String[] { "CSP-CON-E", "CSP-CON-C" }),
         "No se puede crear ConvocatoriaAreaTematica. No tiene los permisos necesarios o la convocatoria está registrada y cuenta con solicitudes o proyectos asociados");
 
@@ -98,12 +98,6 @@ public class ConvocatoriaAreaTematicaServiceImpl implements ConvocatoriaAreaTema
 
     return repository.findById(convocatoriaAreaTematicaActualizar.getId()).map(convocatoriaAreaTematica -> {
 
-      // comprobar si convocatoria es modificable
-      Assert.isTrue(
-          convocatoriaService.modificable(convocatoriaAreaTematica.getConvocatoriaId(), null,
-              new String[] { "CSP-CON-E" }),
-          "No se puede modificar ConvocatoriaAreaTematica. No tiene los permisos necesarios o la convocatoria está registrada y cuenta con solicitudes o proyectos asociados");
-
       convocatoriaAreaTematica.setObservaciones(convocatoriaAreaTematicaActualizar.getObservaciones());
       ConvocatoriaAreaTematica returnValue = repository.save(convocatoriaAreaTematicaActualizar);
       log.debug("update(ConvocatoriaAreaTematica convocatoriaAreaTematicaActualizar) - end");
@@ -127,7 +121,7 @@ public class ConvocatoriaAreaTematicaServiceImpl implements ConvocatoriaAreaTema
 
       // comprobar si convocatoria es modificable
       Assert.isTrue(
-          convocatoriaService.modificable(convocatoriaAreaTematica.getConvocatoriaId(), null,
+          convocatoriaService.isRegistradaConSolicitudesOProyectos(convocatoriaAreaTematica.getConvocatoriaId(), null,
               new String[] { "CSP-CON-E" }),
           "No se puede eliminar ConvocatoriaAreaTematica. No tiene los permisos necesarios o la convocatoria está registrada y cuenta con solicitudes o proyectos asociados");
 

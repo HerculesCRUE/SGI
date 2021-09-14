@@ -2,7 +2,6 @@ import { Component, Inject, OnInit, ViewChild } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
-import { MatRadioChange } from '@angular/material/radio';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
@@ -40,6 +39,7 @@ const CODIGO_ECONOMICO_PERMITIDO_KEY = marker('csp.proyecto-anualidad.partida-ga
 const CONCEPTO_GASTO_KEY = marker('csp.proyecto-anualidad.partida-gasto.concepto-gasto');
 const PARTIDA_PRESUPUESTARIA_KEY = marker('csp.proyecto-anualidad.partida.partida-presupuestaria');
 const PROYECTO_PARTIDA_GASTO_KEY = marker('csp.proyecto-anualidad.partida-gasto');
+const PROYECTO_SGE_KEY = marker('csp.proyecto-anualidad.partida-gasto.identificador-sge');
 const TITLE_NEW_ENTITY = marker('title.new.entity');
 
 export interface ProyectoAnualidadGastoModalData {
@@ -48,6 +48,7 @@ export interface ProyectoAnualidadGastoModalData {
   fechaInicioAnualidad: DateTime;
   fechaFinAnualidad: DateTime;
   isEdit: boolean;
+  readonly: boolean;
 }
 
 export enum ConceptoGastoTipo {
@@ -86,6 +87,7 @@ export class ProyectoAnualidadGastoModalComponent extends
   msgParamPartidaPresupuestariaEntity = {};
   msgParamImporteEntity = {};
   msgParamFechaPrevistaEntity = {};
+  msgParamProyectoSgeEntity = {};
   title: string;
 
   optionsConceptoGasto: string[];
@@ -95,7 +97,7 @@ export class ProyectoAnualidadGastoModalComponent extends
   proyectosPartida$ = new BehaviorSubject<IProyectoPartida[]>([]);
 
   conceptosGasto$: Observable<IConceptoGasto[] | IProyectoConceptoGasto[]>;
-  codigosEconomicos$: Observable<IProyectoConceptoGastoCodigoEc[] | ICodigoEconomicoGasto[]>;
+  codigosEconomicos$: Observable<ICodigoEconomicoGasto[]>;
 
   conceptosGastoCodigoEcPermitidos = new MatTableDataSource<IProyectoConceptoGastoCodigoEc>();
   conceptosGastoCodigoEcNoPermitidos = new MatTableDataSource<IProyectoConceptoGastoCodigoEc>();
@@ -197,13 +199,20 @@ export class ProyectoAnualidadGastoModalComponent extends
     this.translate.get(
       PARTIDA_PRESUPUESTARIA_KEY,
       MSG_PARAMS.CARDINALIRY.SINGULAR
-    ).subscribe((value) => this.msgParamPartidaPresupuestariaEntity = { entity: value, ...MSG_PARAMS.GENDER.FEMALE });
+    ).subscribe((value) => this.msgParamPartidaPresupuestariaEntity = {
+      entity: value,
+      ...MSG_PARAMS.CARDINALIRY.SINGULAR, ...MSG_PARAMS.GENDER.FEMALE
+    });
+
+    this.translate.get(
+      PROYECTO_SGE_KEY,
+      MSG_PARAMS.CARDINALIRY.SINGULAR
+    ).subscribe((value) => this.msgParamProyectoSgeEntity = { entity: value, ...MSG_PARAMS.GENDER.MALE });
   }
 
   protected getDatosForm(): ProyectoAnualidadGastoModalData {
     this.data.anualidadGasto.proyectoSgeRef = this.formGroup.controls.identificadorSge.value.proyectoSge.id;
-    this.data.anualidadGasto.codigoEconomicoRef =
-      this.formGroup.controls.codigoEconomico.value?.id;
+    this.data.anualidadGasto.codigoEconomico = this.formGroup.controls.codigoEconomico.value;
     this.data.anualidadGasto.importeConcedido = this.formGroup.controls.importeConcedido.value;
     this.data.anualidadGasto.importePresupuesto = this.formGroup.controls.importePresupuesto.value;
     this.data.anualidadGasto.proyectoPartida = this.formGroup.controls.partidaPresupuestaria.value;
@@ -214,9 +223,6 @@ export class ProyectoAnualidadGastoModalComponent extends
   }
 
   protected getFormGroup(): FormGroup {
-    const codigoEconomico = this.data.anualidadGasto?.codigoEconomicoRef
-      ? { id: this.data.anualidadGasto?.codigoEconomicoRef } as ICodigoEconomicoGasto
-      : null;
     const identificadorSge = this.data.anualidadGasto?.proyectoSgeRef
       ? {
         proyectoSge:
@@ -225,9 +231,7 @@ export class ProyectoAnualidadGastoModalComponent extends
           } as IProyectoSge
       } as IProyectoProyectoSge
       : null;
-    const proyectoPartida = this.data.anualidadGasto?.proyectoPartida
-      ? { id: this.data.anualidadGasto?.proyectoPartida.id } as IProyectoPartida
-      : null;
+    const proyectoPartida = this.data.anualidadGasto?.proyectoPartida ?? null;
 
     const conceptoGasto = this.data.anualidadGasto?.conceptoGasto
       ? {
@@ -254,7 +258,7 @@ export class ProyectoAnualidadGastoModalComponent extends
         conceptoGastoFiltro: new FormControl(conceptoGastoFiltro),
         conceptoGasto: new FormControl(conceptoGasto, Validators.required),
         codigoEconomicoFiltro: new FormControl(codigoEconomicoFiltro),
-        codigoEconomico: new FormControl(codigoEconomico),
+        codigoEconomico: new FormControl(this.data.anualidadGasto?.codigoEconomico),
         partidaPresupuestaria: new FormControl(proyectoPartida, Validators.required),
         importePresupuesto: new FormControl(this.data.anualidadGasto.importePresupuesto, Validators.required),
         importeConcedido: new FormControl(this.data.anualidadGasto.importeConcedido, Validators.required),
@@ -267,14 +271,32 @@ export class ProyectoAnualidadGastoModalComponent extends
 
     this.subscriptions.push(
       this.proyectoService.findAllProyectoPartidas(this.data.proyectoId, optionsProyectoPartida)
-        .subscribe((response) => {
-          if (response.items.length === 1 && !identificadorSge) {
-            formGroup.controls.identificadorSge.setValue(response.items[0].id);
-          }
-          this.proyectosPartida$.next(response.items);
-        }
-        )
+        .subscribe((response) => this.proyectosPartida$.next(response.items))
     );
+
+    if (!this.data.anualidadGasto?.proyectoSgeRef) {
+      this.subscriptions.push(
+        this.proyectosSge$.subscribe((values) => {
+          if (values.length === 1) {
+            this.formGroup.controls.identificadorSge.setValue(values[0]);
+          }
+        })
+      );
+    }
+
+    if (!this.data.anualidadGasto?.proyectoPartida) {
+      this.subscriptions.push(
+        this.proyectosPartida$.subscribe((values) => {
+          if (values.length === 1) {
+            this.formGroup.controls.partidaPresupuestaria.setValue(values[0]);
+          }
+        })
+      );
+    }
+
+    if (this.data.readonly) {
+      formGroup.disable();
+    }
 
     return formGroup;
   }
@@ -283,13 +305,13 @@ export class ProyectoAnualidadGastoModalComponent extends
     return proyectoSge?.proyectoSge?.id;
   }
 
-  sorterIdentificadorSge(o1: SelectValue<IProyectoSge>, o2: SelectValue<IProyectoSge>): number {
+  sorterIdentificadorSge(o1: SelectValue<IProyectoProyectoSge>, o2: SelectValue<IProyectoProyectoSge>): number {
     return o1?.displayText.toString().localeCompare(o2?.displayText.toString());
   }
 
-  comparerIdentificadorSge(o1: IProyectoSge, o2: IProyectoSge): boolean {
+  comparerIdentificadorSge(o1: IProyectoProyectoSge, o2: IProyectoProyectoSge): boolean {
     if (o1 && o2) {
-      return o1?.id === o2?.id;
+      return o1?.proyectoSge?.id === o2?.proyectoSge?.id;
     }
     return o1 === o2;
   }
@@ -361,6 +383,15 @@ export class ProyectoAnualidadGastoModalComponent extends
                   codigoEconomico.proyectoConceptoGasto = proyectoConceptoGasto;
                   return codigoEconomico;
                 }),
+                switchMap(proyectoConceptoGastoCodgioEc => {
+                  return this.codigoEconomicoGastoService.findById(proyectoConceptoGastoCodgioEc.codigoEconomico.id)
+                    .pipe(
+                      map(response => {
+                        proyectoConceptoGastoCodgioEc.codigoEconomico = response;
+                        return proyectoConceptoGastoCodgioEc;
+                      })
+                    );
+                })
               );
             });
 
@@ -398,6 +429,15 @@ export class ProyectoAnualidadGastoModalComponent extends
                   codogoEconomico.proyectoConceptoGasto = proyectoConceptoGasto;
                   return codogoEconomico;
                 }),
+                switchMap(proyectoConceptoGastoCodigoEc => {
+                  return this.codigoEconomicoGastoService.findById(proyectoConceptoGastoCodigoEc.codigoEconomico.id)
+                    .pipe(
+                      map(response => {
+                        proyectoConceptoGastoCodigoEc.codigoEconomico = response;
+                        return proyectoConceptoGastoCodigoEc;
+                      })
+                    );
+                })
               );
             });
 
@@ -423,7 +463,11 @@ export class ProyectoAnualidadGastoModalComponent extends
     });
 
     if (codigoEconomicoTipo === CodigoEconomicoTipo.PERMITIDO) {
-      this.codigosEconomicos$ = of(this.conceptosGastoCodigoEcPermitidos.data);
+      this.codigosEconomicos$ = of(this.conceptosGastoCodigoEcPermitidos.data).pipe(
+        map(proyectoConceptoGastoCodigoEcs =>
+          proyectoConceptoGastoCodigoEcs.map(proyectoConceptoGastoCodigoEc => proyectoConceptoGastoCodigoEc.codigoEconomico)
+        )
+      );
     } else {
       this.codigosEconomicos$ = this.codigoEconomicoGastoService.findAll().pipe(
         map(response => response.items)
@@ -431,9 +475,8 @@ export class ProyectoAnualidadGastoModalComponent extends
     }
   }
 
-  displayerCodigoEconomico(codigoEconomico: IProyectoConceptoGastoCodigoEc | ICodigoEconomicoGasto): string {
-    return 'proyectoConceptoGasto' in codigoEconomico ?
-      codigoEconomico?.codigoEconomicoRef : codigoEconomico.id.toString();
+  displayerCodigoEconomico(codigoEconomico: ICodigoEconomicoGasto): string {
+    return `${codigoEconomico?.id} - ${codigoEconomico?.nombre ?? ''}` ?? '';
   }
 
   displayerProyectoPartida(proyectoPartida: IProyectoPartida): string {

@@ -28,12 +28,6 @@ export interface SolicitudModalidadEntidadConvocanteListado {
   modalidad: StatusWrapper<ISolicitudModalidad>;
 }
 
-export interface SolicitudModalidadEntidadConvocanteListado {
-  entidadConvocante: IConvocatoriaEntidadConvocante;
-  plan: IPrograma;
-  modalidad: StatusWrapper<ISolicitudModalidad>;
-}
-
 export interface SolicitudDatosGenerales extends ISolicitud {
   convocatoria: IConvocatoria;
 }
@@ -128,6 +122,7 @@ export class SolicitudDatosGeneralesFragment extends FormFragment<ISolicitud> {
     if (this.isInvestigador) {
       const form = new FormGroup({
         estado: new FormControl({ value: Estado.BORRADOR, disabled: true }),
+        titulo: new FormControl('', [Validators.required, Validators.maxLength(250)]),
         convocatoria: new FormControl({ value: '', disabled: true }),
         codigoExterno: new FormControl('', Validators.maxLength(50)),
         observaciones: new FormControl('', Validators.maxLength(2000))
@@ -138,6 +133,7 @@ export class SolicitudDatosGeneralesFragment extends FormFragment<ISolicitud> {
     } else {
       const form = new FormGroup({
         estado: new FormControl({ value: Estado.BORRADOR, disabled: true }),
+        titulo: new FormControl(undefined, [Validators.required, Validators.maxLength(250)]),
         solicitante: new FormControl('', Validators.required),
         convocatoria: new FormControl({ value: '', disabled: this.isEdit() }),
         comentariosEstado: new FormControl({ value: '', disabled: true }),
@@ -182,6 +178,7 @@ export class SolicitudDatosGeneralesFragment extends FormFragment<ISolicitud> {
     if (this.isInvestigador) {
       const result = {
         estado: solicitud.estado?.estado,
+        titulo: solicitud.titulo,
         convocatoria: solicitud.convocatoria,
         codigoExterno: solicitud.codigoExterno,
         observaciones: solicitud.observaciones
@@ -190,6 +187,7 @@ export class SolicitudDatosGeneralesFragment extends FormFragment<ISolicitud> {
     } else {
       const result = {
         estado: solicitud.estado?.estado,
+        titulo: solicitud.titulo,
         comentariosEstado: solicitud.estado?.comentario,
         solicitante: solicitud.solicitante,
         convocatoria: solicitud.convocatoria,
@@ -208,11 +206,13 @@ export class SolicitudDatosGeneralesFragment extends FormFragment<ISolicitud> {
     const form = this.getFormGroup().controls;
     if (this.isInvestigador) {
       this.solicitud.solicitante = {} as IPersona;
+      this.solicitud.titulo = form.titulo.value;
       this.solicitud.solicitante.id = this.authService.authStatus$?.getValue()?.userRefId;
       this.solicitud.observaciones = form.observaciones.value;
       this.solicitud.codigoExterno = form.codigoExterno.value;
     } else {
       this.solicitud.solicitante = form.solicitante.value;
+      this.solicitud.titulo = form.titulo.value;
       this.solicitud.convocatoriaId = form.convocatoria.value?.id;
       this.solicitud.convocatoriaExterna = form.convocatoriaExterna.value;
       this.solicitud.formularioSolicitud = form.formularioSolicitud.value;
@@ -226,6 +226,13 @@ export class SolicitudDatosGeneralesFragment extends FormFragment<ISolicitud> {
 
   saveOrUpdate(): Observable<number> {
     const datosGenerales = this.getValue();
+
+    return this.saveOrUpdateSolicitud(datosGenerales);
+
+  }
+
+  saveOrUpdateSolicitud(datosGenerales: ISolicitud): Observable<number> {
+
     const obs = this.isEdit() ? this.service.update(datosGenerales.id, datosGenerales) :
       this.service.create(datosGenerales);
     return obs.pipe(
@@ -435,7 +442,10 @@ export class SolicitudDatosGeneralesFragment extends FormFragment<ISolicitud> {
       );
 
       this.subscriptions.push(
-        this.loadEntidadesConvocantesModalidad(this.getValue().id, convocatoria.id).subscribe()
+        this.loadEntidadesConvocantesModalidad(this.getValue().id, convocatoria.id)
+          .subscribe((entidadesConvocantes) =>
+            this.entidadesConvocantesModalidad$.next(entidadesConvocantes)
+          )
       );
     } else if (!this.isEdit()) {
       // Clean dependencies
@@ -615,5 +625,6 @@ export class SolicitudDatosGeneralesFragment extends FormFragment<ISolicitud> {
     this.convocatoriaRequired = !convocatoriaExternaSolicitud;
     this.convocatoriaExternaRequired = !convocatoriaSolicitud;
   }
-
 }
+
+

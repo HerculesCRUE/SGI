@@ -12,6 +12,7 @@ import { EvaluacionEvaluarComponent } from './evaluacion-evaluar/evaluacion-eval
 import { EvaluacionFormularioModule } from '../evaluacion-formulario/evaluacion-formulario.module';
 import { EvaluacionResolver } from '../evaluacion/evaluacion.resolver';
 import { EvaluacionListadoAnteriorMemoriaComponent } from '../evaluacion-formulario/evaluacion-listado-anterior-memoria/evaluacion-listado-anterior-memoria.component';
+import { SgpSharedModule } from 'src/app/esb/sgp/shared/sgp-shared.module';
 
 @NgModule({
   declarations: [
@@ -27,7 +28,8 @@ import { EvaluacionListadoAnteriorMemoriaComponent } from '../evaluacion-formula
     EvaluacionFormularioModule,
     SgiAuthModule,
     FormsModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    SgpSharedModule
   ],
   exports: [
     EvaluacionListadoAnteriorMemoriaComponent,

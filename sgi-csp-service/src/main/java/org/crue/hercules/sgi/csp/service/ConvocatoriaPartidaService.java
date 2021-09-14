@@ -53,4 +53,16 @@ public interface ConvocatoriaPartidaService {
    */
   Page<ConvocatoriaPartida> findAllByConvocatoria(Long idConvocatoria, String query, Pageable pageable);
 
+  /**
+   * Hace las comprobaciones necesarias para determinar si la
+   * {@link ConvocatoriaPartida} puede ser modificada. También se utilizará para
+   * permitir la creación, modificación o eliminación de ciertas entidades
+   * relacionadas con la propia {@link ConvocatoriaPartida}.
+   *
+   * @param id        Id de la {@link ConvocatoriaPartida}.
+   * @param authority Authority a validar
+   * @return true si puede ser modificada / false si no puede ser modificada
+   */
+  boolean modificable(Long id, String authority);
+
 }

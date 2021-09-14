@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { ActionComponent } from '@core/component/action.component';
+import { HttpProblem } from '@core/errors/http-problem';
 import { MSG_PARAMS } from '@core/i18n';
 import { DialogService } from '@core/services/dialog.service';
 import { SnackBarService } from '@core/services/snack-bar.service';
@@ -99,11 +100,17 @@ export class AreaTematicaEditarComponent extends ActionComponent {
       () => { },
       (err) => {
         this.logger.error(err);
-        this.snackBarService.showError(this.textoUpdateError);
+        if (err instanceof HttpProblem) {
+          if (!!!err.managed) {
+            this.snackBarService.showError(err);
+          }
+        }
+        else {
+          this.snackBarService.showError(this.textoUpdateError);
+        }
       },
       () => {
         this.snackBarService.showSuccess(this.textoUpdateSuccess);
-        this.router.navigate(['../'], { relativeTo: this.route });
       }
     );
   }

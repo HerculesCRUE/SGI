@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<template name="sgi-auth-sequence-template" xmlns="http://ws.apache.org/ns/synapse">
+  <parameter defaultValue="" isMandatory="false" name="requiredAuthorities"/>
+
+  <sequence>
+    <property name="requiredAuthorities" expression="$func:requiredAuthorities"/>
+    <class description="Auth" name="org.crue.hercules.sgi.esb.mediator.SgiAuthorizationMediator" />
+  </sequence>
+</template>

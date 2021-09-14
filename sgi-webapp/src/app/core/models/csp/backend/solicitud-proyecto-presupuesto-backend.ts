@@ -1,4 +1,4 @@
-import { IConceptoGasto } from '../tipos-configuracion';
+import { IConceptoGasto } from '../concepto-gasto';
 
 export interface ISolicitudProyectoPresupuestoBackend {
   id: number;

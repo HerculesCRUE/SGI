@@ -133,7 +133,7 @@ public class PeticionEvaluacion extends BaseEntity {
   private Instant fechaFin;
 
   /** Resumen */
-  @Column(name = "resumen", length = 8000)
+  @Column(name = "resumen", length = 4000)
   private String resumen;
 
   /** Valor social */

@@ -2,6 +2,7 @@ import { Component, ViewEncapsulation } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { ActionComponent } from '@core/component/action.component';
+import { HttpProblem } from '@core/errors/http-problem';
 import { MSG_PARAMS } from '@core/i18n';
 import { ActionService } from '@core/services/action-service';
 import { DialogService } from '@core/services/dialog.service';
@@ -15,7 +16,8 @@ import { ActaActionService } from '../acta.action.service';
 const MSG_BUTTON_SAVE = marker('btn.save');
 const MSG_SUCCESS = marker('msg.update.entity.success');
 const MSG_ERROR = marker('error.update.entity');
-const ACTA_KEY = marker('eti.acta')
+const ACTA_KEY = marker('eti.acta');
+
 @Component({
   selector: 'sgi-acta-editar',
   templateUrl: './acta-editar.component.html',
@@ -89,11 +91,17 @@ export class ActaEditarComponent extends ActionComponent {
       () => { },
       (error) => {
         this.logger.error(error);
-        this.snackBarService.showError(this.textoError);
+        if (error instanceof HttpProblem) {
+          if (!!!error.managed) {
+            this.snackBarService.showError(error);
+          }
+        }
+        else {
+          this.snackBarService.showError(this.textoError);
+        }
       },
       () => {
         this.snackBarService.showSuccess(this.textoSuccess);
-        this.router.navigate(['../'], { relativeTo: this.activatedRoute });
       }
     );
   }

@@ -1,12 +1,16 @@
-<section>
-  <h2>{{'csp.documentos' | translate}}</h2>
+<sgi-fragment title="{{'csp.documentos' | translate}}">
   <div class="programa" fxLayout="row" fxLayout.xs="column" fxLayoutGap="10px">
     <div class="arbol" fxFlex>
       <mat-tree [dataSource]="dataSource" [treeControl]="treeControl" class="arbol-tree">
         <mat-tree-node *matTreeNodeDef="let node" matTreeNodeToggle matTreeNodePadding>
 
           <ng-container *ngIf="!node.documento">
-            <mat-label>{{node.title}}{{node.required ? '\*' : ''}}</mat-label>
+            <button mat-icon-button matTreeNodeToggle>
+              <mat-icon color="primary" class="mat-icon-rtl-mirror">
+                {{treeControl.isExpanded(node) ? 'expand_more' : 'chevron_right'}}
+              </mat-icon>
+              {{node.title}}{{node.required ? '\*' : ''}}
+            </button>
           </ng-container>
 
           <ng-container *ngIf="!!node.documento">
@@ -116,4 +120,4 @@
     </button>
   </div>
 
-</section>
+</sgi-fragment>

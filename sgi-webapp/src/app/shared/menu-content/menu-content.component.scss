@@ -1,0 +1,17 @@
+@import "vars.scss";
+
+:host {
+  div {
+    &.scrollable-panel-with-footer{
+      max-height: calc(100vh - #{$headerHeight} - #{$breadcrumHeight} - #{$footerHeight});
+      overflow: auto;
+    }
+    &.scrollable-panel{
+      max-height: calc(100vh - #{$headerHeight} - #{$breadcrumHeight});
+      overflow: auto;
+    }
+    div {
+      padding: 15px 25px 25px 25px;
+    }
+  }
+}

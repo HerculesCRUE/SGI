@@ -1,0 +1,55 @@
+@import "colors.scss";
+@import "typography.scss";
+
+:host {
+  // TODO: Buscar alternativa para no usar ng-deep y no tener que cambiar la encapsulación del componente
+  ::ng-deep .mat-expansion-panel-body {
+    padding: 0;
+    padding-left: 9px;
+    padding-right: 9px;
+  }
+
+  mat-expansion-panel {
+    background-color: rgb(243, 246, 249);
+    box-shadow: none;
+    border-radius: 0;
+    &:not([class*="mat-elevation-z"]) {
+      box-shadow: none;
+    }
+    &.mat-expanded {
+      border-bottom: 1px solid map-get($palette-grey, 300);
+      padding-bottom: 5px;
+    }
+    &.is-closed {
+      padding-bottom: 0px;
+      border-bottom: none;
+    }
+
+    mat-expansion-panel-header {
+      padding: 0;
+      padding-left: 8px;
+      padding-right: 8px;
+      font-size: map-get($sgi-typography-size, menu-secondary);
+      border-bottom: 1px solid map-get($palette-grey, 300);
+      background: map-get($sgi-custom-colors, white);
+
+      div {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        span {
+          padding-left: 8px;
+        }
+      }
+
+      &:focus,
+      &.is-active,
+      &:hover,
+      &:not(.mat-expanded):hover {
+        border-left: 3px solid map-get($palette-primary, 400);
+        background: map-get($sgi-custom-colors, white);
+        padding-left: 5px;
+      }
+    }
+  }
+}

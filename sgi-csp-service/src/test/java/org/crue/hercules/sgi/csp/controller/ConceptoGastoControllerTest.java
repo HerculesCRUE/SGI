@@ -436,6 +436,7 @@ public class ConceptoGastoControllerTest extends BaseControllerTest {
     conceptoGasto.setNombre(nombre);
     conceptoGasto.setDescripcion("descripcion-" + id);
     conceptoGasto.setActivo(true);
+    conceptoGasto.setCostesIndirectos(true);
 
     return conceptoGasto;
   }

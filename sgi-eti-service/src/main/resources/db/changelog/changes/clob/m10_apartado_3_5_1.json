@@ -1,0 +1,101 @@
+[
+  {
+    "key": "ap3_5_1",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "expressionLock": "formState.memoria.tipoMemoria.id === 3",
+      "label": "3.5.1 Origen de las muestras"
+    },
+    "hideExpression": "!formState.mainModel.ap3_5.muestrasBiologicasRadio || formState.mainModel.ap3_5.muestrasBiologicasRadio === 'no'",
+    "fieldGroup": [
+      {
+        "template": "¿Como se han obtenido las muestras?"
+      },
+      {
+        "fieldGroup": [
+          {
+            "key": "recogidasExpresamente",
+            "type": "checkbox",
+            "templateOptions": {
+              "indeterminate": false,
+              "label": "Recogidas expresamente para este proyecto con intervención del sujeto de estudio (debe contestar afirmativamente a la pregunta 3.4)"
+            }
+          },
+          {
+            "key": "recogidasApartirDeMuestras",
+            "type": "checkbox",
+            "templateOptions": {
+              "indeterminate": false,
+              "label": "Recogidas a partir de muestras ya obtenidas en otro proceso (ej. clínico-asistencial, autopsia)*"
+            }
+          },
+          {
+            "key": "especificarRecogidasApartirDeMuestras",
+            "type": "textarea",
+            "hideExpression": "!model.recogidasApartirDeMuestras",
+            "templateOptions": {
+              "label": "Especificar",
+              "placeholder": "Especificar",
+              "required": true,
+              "autosize": true,
+              "autosizeMinRows": "1",
+              "autosizeMaxRows": "10"
+            }
+          },
+          {
+            "key": "procedentesBiobanco",
+            "type": "checkbox",
+            "templateOptions": {
+              "indeterminate": false,
+              "label": "Procedentes de Biobanco*"
+            }
+          },
+          {
+            "key": "especificarProcedentesBiobanco",
+            "type": "textarea",
+            "hideExpression": "!model.procedentesBiobanco",
+            "templateOptions": {
+              "label": "Especificar",
+              "placeholder": "Especificar",
+              "required": true,
+              "autosize": true,
+              "autosizeMinRows": "1",
+              "autosizeMaxRows": "10"
+            }
+          },
+          {
+            "key": "procedentesColeccion",
+            "type": "checkbox",
+            "templateOptions": {
+              "indeterminate": false,
+              "label": "Procedentes de una colección de muestras*"
+            }
+          },
+          {
+            "key": "especificarProcedentesColeccion",
+            "type": "textarea",
+            "hideExpression": "!model.procedentesColeccion",
+            "templateOptions": {
+              "label": "Especificar:",
+              "required": true,
+              "autosize": true,
+              "autosizeMinRows": "1",
+              "autosizeMaxRows": "10"
+            }
+          }
+        ],
+        "validators": [
+          "requiredChecked"
+        ]
+      },
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "<p>Nota: Las opciones marcadas con (*) requiren MTA o convenio que debe aportarse en el apartado 5.5.</p>"
+      }
+    ]
+  }
+]

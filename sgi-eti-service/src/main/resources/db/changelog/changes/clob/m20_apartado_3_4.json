@@ -1,0 +1,38 @@
+[
+  {
+    "key": "ap3_4",
+    "wrappers": [
+      "expansion-panel"
+    ],
+    "templateOptions": {
+      "label": "3.4 Tipo de proyecto"
+    },
+    "fieldGroup": [
+      {
+        "template": "<p>Indique el tipo de proyecto (según el artículo 31 del RD 53/2013).</p>"
+      },
+      {
+        "key": "tipoProyecto",
+        "type": "select",
+        "templateOptions": {
+          "label": "Seleccione",
+          "required": true,
+          "options": [
+            {
+              "label": "Tipo 1",
+              "value": "1"
+            },
+            {
+              "label": "Tipo 2",
+              "value": "2"
+            },
+            {
+              "label": "Tipo 3",
+              "value": "3"
+            }
+          ]
+        }
+      }
+    ]
+  }
+]

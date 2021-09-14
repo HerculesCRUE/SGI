@@ -63,7 +63,7 @@ public class Memoria extends BaseEntity {
   private Comite comite;
 
   /** Título */
-  @Column(name = "titulo", length = 250, nullable = true)
+  @Column(name = "titulo", length = 2000, nullable = true)
   private String titulo;
 
   /** Referencia usuario */

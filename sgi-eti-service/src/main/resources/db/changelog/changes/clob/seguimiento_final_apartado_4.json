@@ -1,0 +1,35 @@
+[
+  {
+    "key": "ap1_4",
+    "wrappers": [
+      "expansion-panel"
+    ],
+    "templateOptions": {
+      "label": "Aspectos éticos específicos",
+      "expanded": true
+    },
+    "fieldGroup": [
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "<p>La descripción respecto a los aspectos éticos específicos dependerá del comité al que se dirige el informe anual y recogerá lo ocurrido en el año objeto del informe.<ul><li>Para el CEI el desarrollo y los problemas surgidos con los aspectos relativos al riesgo/beneficio, a la información y consentimiento, a la confidencialidad, etc.</li><li>Para el CEEA el desarrollo y los problemas surgidos en torno al reemplazo, al refinamiento y a la reducción.</li><li>Para el CBE el desarrollo y los problemas surgidos en torno a la prevención de los riesgos para la salud o para el medioambiente relacionados con los agentes biológicos u OMG con los que se investiga.</li></ul></p>"
+      },
+      {
+        "template": "Describa brevemente cómo se van desarrollando los aspectos éticos del proyecto y señale los problemas encontrados y sus soluciones, si los ha habido."
+      },
+      {
+        "key": "aspectosEticos",
+        "type": "textarea",
+        "templateOptions": {
+          "placeholder": "Descripción",
+          "label": "Descripción",
+          "required": false,
+          "autosize": true,
+          "autosizeMinRows": "1",
+          "autosizeMaxRows": "20"
+        }
+      }
+    ]
+  }
+]

@@ -1,0 +1,31 @@
+[
+  {
+    "key": "ap3_6_5",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "label": "3.6.5 Periodo del proyecto durante el que se utilizarán los animales"
+    },
+    "fieldGroup": [
+      {
+        "key": "fechaUsoAnimalesDesde",
+        "type": "datepicker",
+        "templateOptions": {
+          "required": true,
+          "type": "text",
+          "label": "Desde"
+        }
+      },
+      {
+        "key": "fechaUsoAnimalesHasta",
+        "type": "datepicker",
+        "templateOptions": {
+          "required": true,
+          "type": "text",
+          "label": "Hasta"
+        }
+      }
+    ]
+  }
+]

@@ -19,7 +19,6 @@ export interface IConvocatoria {
   observaciones: string;
   finalidad: ITipoFinalidad;
   regimenConcurrencia: ITipoRegimenConcurrencia;
-  colaborativos: boolean;
   estado: Estado;
   duracion: number;
   abiertoPlazoPresentacionSolicitud: boolean;

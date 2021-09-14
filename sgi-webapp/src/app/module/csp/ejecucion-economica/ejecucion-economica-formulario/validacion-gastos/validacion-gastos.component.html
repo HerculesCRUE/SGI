@@ -1,0 +1,160 @@
+<sgi-fragment title="{{'menu.csp.ejecucion-economica.validacion-gastos' | translate}}">
+  <!-- Buscador -->
+  <div>
+    <form [formGroup]="formGroup">
+      <div fxLayout="column" fxLayout.gt-sm="row" fxLayoutAlign="start center" fxLayoutGap="10px">
+
+        <!-- Estado -->
+        <mat-card fxLayout="column">
+          <mat-card-title>
+            {{'csp.ejecucion-economica.validacion-gastos.estado' | translate}}
+          </mat-card-title>
+          <mat-card-content fxLayout="column" fxLayout.gt-md="row" fxLayoutGap="10px">
+            <div class="radio-button-container">
+              <mat-radio-group class="radio-inline" name="estado" formControlName="estado" required>
+                <mat-radio-button color="primary" class="radio"
+                  *ngFor="let estado of formPart.ESTADO_TIPO_MAP | keyvalue" [value]="estado.key" name="estado">
+                  {{estado.value | translate}}
+                </mat-radio-button>
+              </mat-radio-group>
+            </div>
+          </mat-card-content>
+        </mat-card>
+
+        <!-- Fecha gasto -->
+        <mat-card fxLayout="column">
+          <mat-card-title>
+            {{'csp.ejecucion-economica.validacion-gastos.fecha-gasto' | translate}}
+          </mat-card-title>
+          <mat-card-content fxLayout="column" fxLayout.gt-md="row" fxLayoutGap="10px">
+            <mat-form-field>
+              <mat-label>
+                {{'label.desde' | translate}}
+              </mat-label>
+              <input matInput [ngxMatDatetimePicker]="pickerFechaDesde" formControlName="fechaDesde">
+              <mat-datepicker-toggle matSuffix [for]="pickerFechaDesde"></mat-datepicker-toggle>
+              <ngx-mat-datetime-picker #pickerFechaDesde showSeconds="true" [defaultTime]="[0,0,0]">
+              </ngx-mat-datetime-picker>
+            </mat-form-field>
+            <mat-form-field>
+              <mat-label>
+                {{'label.hasta' | translate}}
+              </mat-label>
+              <input matInput [ngxMatDatetimePicker]="pickerFechaHasta" formControlName="fechaHasta">
+              <mat-datepicker-toggle matSuffix [for]="pickerFechaHasta"></mat-datepicker-toggle>
+              <ngx-mat-datetime-picker #pickerFechaHasta showSeconds="true" [defaultTime]="[23,59,59]">
+              </ngx-mat-datetime-picker>
+            </mat-form-field>
+          </mat-card-content>
+        </mat-card>
+      </div>
+
+      <div class="separation-button">
+        <button type="submit" color="primary" mat-raised-button (click)="onSearch()">
+          <mat-icon>search</mat-icon>
+          {{'btn.search'| translate}}
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Listado gastos -->
+  <div>
+    <h1>{{ 'csp.ejecucion-economica.validacion-gastos.listado-gastos' | translate }}</h1>
+    <div class="mat-elevation-z4">
+      <mat-table [dataSource]="dataSource" matSort class=" listado-gastos">
+        <!-- Anualidad Column -->
+        <ng-container matColumnDef="anualidad">
+          <mat-header-cell mat-header-cell *matHeaderCellDef mat-sort-header>
+            {{'sge.dato-economico.anualidad' | translate}}
+          </mat-header-cell>
+          <mat-cell mat-cell *matCellDef="let element">
+            {{ element.anualidad }}
+          </mat-cell>
+        </ng-container>
+
+        <!-- Proyecto Column -->
+        <ng-container matColumnDef="proyecto">
+          <mat-header-cell mat-header-cell *matHeaderCellDef mat-sort-header>
+            {{'sge.dato-economico.proyecto' | translate}}
+          </mat-header-cell>
+          <mat-cell mat-cell *matCellDef="let element">
+            {{element.proyecto?.titulo }}
+          </mat-cell>
+        </ng-container>
+
+        <!-- Agrupacion gasto Column -->
+        <ng-container matColumnDef="agrupacionGasto">
+          <mat-header-cell mat-header-cell *matHeaderCellDef mat-sort-header>
+            {{'sge.dato-economico.agrupacion-gasto' | translate}}
+          </mat-header-cell>
+          <mat-cell mat-cell *matCellDef="let element">
+            {{ element.agrupacionGasto?.nombre }}
+          </mat-cell>
+        </ng-container>
+
+        <!-- Concepto gasto Column -->
+        <ng-container matColumnDef="conceptoGasto">
+          <mat-header-cell mat-header-cell *matHeaderCellDef mat-sort-header>
+            {{'sge.dato-economico.concepto-gasto' | translate}}
+          </mat-header-cell>
+          <mat-cell mat-cell *matCellDef="let element">
+            {{ element.conceptoGasto?.nombre }}
+          </mat-cell>
+        </ng-container>
+
+        <!-- Aplicacion presupuestaria Column -->
+        <ng-container matColumnDef="aplicacionPresupuestaria">
+          <mat-header-cell mat-header-cell *matHeaderCellDef mat-sort-header>
+            {{'sge.dato-economico.partida-presupuestaria' | translate}}
+          </mat-header-cell>
+          <mat-cell mat-cell *matCellDef="let element">
+            {{ element.partidaPresupuestaria }}
+          </mat-cell>
+        </ng-container>
+
+        <!-- Codigo economico Column -->
+        <ng-container matColumnDef="codigoEconomico">
+          <mat-header-cell mat-header-cell *matHeaderCellDef mat-sort-header>
+            {{'sge.dato-economico.codigo-economico' | translate}}
+          </mat-header-cell>
+          <mat-cell mat-cell *matCellDef="let element">
+            {{ element.codigoEconomico?.id }}
+            {{ element.codigoEconomico?.nombre ? ' - ' + element.codigoEconomico?.nombre : '' }}
+          </mat-cell>
+        </ng-container>
+
+        <!-- Columnas dinamicas -->
+        <ng-container *ngFor="let column of formPart.columns" [matColumnDef]="column.id">
+          <mat-header-cell *matHeaderCellDef [class.computed]="column.compute" mat-sort-header>
+            {{column.name}}
+          </mat-header-cell>
+          <mat-cell *matCellDef="let element" [class.computed]="column.compute">
+            <ng-container *ngIf="column.compute">
+              {{element?.columnas[column.id] | number: '1.2-2'}}
+            </ng-container>
+            <ng-container *ngIf="!column.compute">
+              {{element?.columnas[column.id]}}
+            </ng-container>
+          </mat-cell>
+        </ng-container>
+
+        <!-- Acciones Column -->
+        <ng-container matColumnDef="acciones">
+          <mat-header-cell mat-header-cell *matHeaderCellDef>
+            {{ 'label.actions' | translate }}
+          </mat-header-cell>
+          <mat-cell mat-cell *matCellDef="let element">
+            <button mat-button (click)="showDetail(element)">
+              <mat-icon color="primary">visibility</mat-icon>
+            </button>
+          </mat-cell>
+        </ng-container>
+
+        <mat-header-row *matHeaderRowDef="formPart.displayColumns"></mat-header-row>
+        <mat-row *matRowDef="let row; columns: formPart.displayColumns;"></mat-row>
+      </mat-table>
+      <mat-paginator [pageSizeOptions]="elementsPage" showFirstLastButtons></mat-paginator>
+    </div>
+  </div>
+</sgi-fragment>

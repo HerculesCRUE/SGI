@@ -15,6 +15,9 @@
         <mat-error *ngIf="formGroup.controls.nombre.errors?.required">
           {{'error.required.entity' | translate:msgParamNombreEntity}}
         </mat-error>
+        <mat-error *ngIf="formGroup.controls.nombre.errors?.maxlength">
+          {{'error.maxlength.entity' | translate:msgParamNombreEntity}}
+        </mat-error>
       </mat-form-field>
     </div>
     <!-- Descripción -->
@@ -25,6 +28,9 @@
           placeholder="{{'pii.sector-aplicacion.descripcion' | translate}}" required></textarea>
         <mat-error *ngIf="formGroup.controls.descripcion.errors?.required">
           {{'error.required.entity' | translate:msgParamDescripcionEntity}}
+        </mat-error>
+        <mat-error *ngIf="formGroup.controls.descripcion.errors?.maxlength">
+          {{'error.maxlength.entity' | translate:msgParamDescripcionEntity}}
         </mat-error>
       </mat-form-field>
     </div>

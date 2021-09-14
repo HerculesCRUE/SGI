@@ -4,6 +4,9 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MaterialDesignModule } from '@material/material-design.module';
 import { TranslateModule } from '@ngx-translate/core';
 import { SharedModule } from '@shared/shared.module';
+import { SgeFormlyFormsModule } from 'src/app/esb/sge/formly-forms/sge-formly-forms.module';
+import { SgempSharedModule } from 'src/app/esb/sgemp/shared/sgemp-shared.module';
+import { SgpSharedModule } from 'src/app/esb/sgp/shared/sgp-shared.module';
 import { EntidadFinanciadoraModalComponent } from './entidad-financiadora-modal/entidad-financiadora-modal.component';
 import { MiembroEquipoProyectoModalComponent } from './miembro-equipo-proyecto-modal/miembro-equipo-proyecto-modal.component';
 import { MiembroEquipoSolicitudModalComponent } from './miembro-equipo-solicitud-modal/miembro-equipo-solicitud-modal.component';
@@ -51,6 +54,9 @@ import { SolicitiudPresupuestoModalComponent } from './solicitud-presupuesto-mod
     MaterialDesignModule,
     FormsModule,
     ReactiveFormsModule,
+    SgeFormlyFormsModule,
+    SgempSharedModule,
+    SgpSharedModule
   ],
   exports: [
     EntidadFinanciadoraModalComponent,

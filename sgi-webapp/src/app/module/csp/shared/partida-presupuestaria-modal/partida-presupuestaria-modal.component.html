@@ -16,6 +16,9 @@
           </mat-label>
           <input matInput formControlName="codigo" type="text" required
             placeholder="{{'csp.proyecto-partida-presupuestaria.codigo' | translate}}">
+          <sgi-field-info matSuffix [visible]="true"
+            message="{{'csp.partida-presupuestaria.codigo-tooltip' | translate:msgTooltip}}">
+          </sgi-field-info>
           <mat-error *ngIf="formGroup.controls.codigo.errors?.required">
             {{'error.required.entity' | translate:msgParamCodigoEntity}}
           </mat-error>

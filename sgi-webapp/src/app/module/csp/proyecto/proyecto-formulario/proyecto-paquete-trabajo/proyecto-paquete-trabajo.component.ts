@@ -110,7 +110,8 @@ export class ProyectoPaqueteTrabajoComponent extends FragmentComponent implement
       paquetesTrabajo: this.dataSource.data.map(paquetes => paquetes.value),
       paqueteTrabajo: wrapper ? wrapper.value : {} as IProyectoPaqueteTrabajo,
       fechaInicio: this.actionService.proyecto.fechaInicio,
-      fechaFin: this.actionService.proyecto.fechaFin
+      fechaFin: this.actionService.proyecto.fechaFin,
+      readonly: this.actionService.readonly
     };
 
     if (wrapper) {

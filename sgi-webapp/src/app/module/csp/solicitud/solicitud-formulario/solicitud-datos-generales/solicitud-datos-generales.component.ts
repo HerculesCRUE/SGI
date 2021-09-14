@@ -15,7 +15,7 @@ import { IUnidadGestion } from '@core/models/usr/unidad-gestion';
 import { UnidadGestionService } from '@core/services/csp/unidad-gestion.service';
 import { SnackBarService } from '@core/services/snack-bar.service';
 import { TranslateService } from '@ngx-translate/core';
-import { TipoColectivo } from '@shared/select-persona/select-persona.component';
+import { TipoColectivo } from 'src/app/esb/sgp/shared/select-persona/select-persona.component';
 import { NGXLogger } from 'ngx-logger';
 import { Observable, Subscription } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
@@ -29,6 +29,7 @@ const SOLICITUD_CONVOCATORIA_EXTERNA_KEY = marker('csp.solicitud.convocatoria-ex
 const SOLICITUD_OBSERVACIONES_KEY = marker('csp.solicitud.observaciones');
 const SOLICITUD_UNIDAD_GESTION_KEY = marker('csp.solicitud.unidad-gestion');
 const SOLICITUD_ENTIDAD_CONVOCANTE_KEY = marker('csp.solicitud-entidad-convocante');
+const SOLICITUD_TITULO_KEY = marker('csp.solicitud.titulo');
 
 @Component({
   selector: 'sgi-solicitud-datos-generales',
@@ -57,6 +58,7 @@ export class SolicitudDatosGeneralesComponent extends FormFragmentComponent<ISol
   msgParamEntidadConvocanteEntity = {};
   msgParamObservacionesEntity = {};
   msgParamUnidadGestionEntity = {};
+  msgParamTituloEntity = {};
 
   dataSourceEntidadesConvocantes: MatTableDataSource<SolicitudModalidadEntidadConvocanteListado>;
   @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
@@ -170,7 +172,8 @@ export class SolicitudDatosGeneralesComponent extends FormFragmentComponent<ISol
     this.translate.get(
       SOLICITUD_CONVOCATORIA_EXTERNA_KEY,
       MSG_PARAMS.CARDINALIRY.SINGULAR
-    ).subscribe((value) => this.msgParamConvocatoriaExternaEntity = { entity: value, ...MSG_PARAMS.GENDER.FEMALE, ...MSG_PARAMS.CARDINALIRY.SINGULAR });
+    ).subscribe((value) => this.msgParamConvocatoriaExternaEntity =
+      { entity: value, ...MSG_PARAMS.GENDER.FEMALE, ...MSG_PARAMS.CARDINALIRY.SINGULAR });
 
     this.translate.get(
       SOLICITUD_OBSERVACIONES_KEY,
@@ -181,12 +184,18 @@ export class SolicitudDatosGeneralesComponent extends FormFragmentComponent<ISol
     this.translate.get(
       SOLICITUD_UNIDAD_GESTION_KEY,
       MSG_PARAMS.CARDINALIRY.SINGULAR
-    ).subscribe((value) => this.msgParamUnidadGestionEntity = { entity: value, ...MSG_PARAMS.GENDER.FEMALE, ...MSG_PARAMS.CARDINALIRY.SINGULAR });
+    ).subscribe((value) => this.msgParamUnidadGestionEntity =
+      { entity: value, ...MSG_PARAMS.GENDER.FEMALE, ...MSG_PARAMS.CARDINALIRY.SINGULAR });
 
     this.translate.get(
       SOLICITUD_ENTIDAD_CONVOCANTE_KEY,
       MSG_PARAMS.CARDINALIRY.PLURAL
     ).subscribe((value) => this.msgParamEntidadConvocanteEntity = { entity: value, ...MSG_PARAMS.GENDER.FEMALE });
+
+    this.translate.get(
+      SOLICITUD_TITULO_KEY,
+      MSG_PARAMS.CARDINALIRY.SINGULAR
+    ).subscribe((value) => this.msgParamTituloEntity = { entity: value, ...MSG_PARAMS.GENDER.MALE, ...MSG_PARAMS.CARDINALIRY.SINGULAR });
   }
 
   ngOnDestroy(): void {

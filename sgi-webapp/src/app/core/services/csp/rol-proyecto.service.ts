@@ -1,9 +1,10 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { IRolProyecto } from '@core/models/csp/rol-proyecto';
+import { IRolProyecto, Orden } from '@core/models/csp/rol-proyecto';
 import { environment } from '@env';
 import { SgiReadOnlyMutableRestService, SgiRestListResult } from '@sgi/framework/http';
-import { Observable } from 'rxjs';
+import { Observable, throwError } from 'rxjs';
+import { catchError, map } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -18,6 +19,18 @@ export class RolProyectoService extends SgiReadOnlyMutableRestService<number, IR
       http,
       null
     );
+  }
+
+  findPrincipal(): Observable<IRolProyecto> {
+    return this.http.get<IRolProyecto>(`${this.endpointUrl}/principal`).pipe(
+      catchError((error: HttpErrorResponse) => {
+        return throwError(error);
+      }),
+      map(response => {
+        return response;
+      })
+    );
+
   }
 
   /**

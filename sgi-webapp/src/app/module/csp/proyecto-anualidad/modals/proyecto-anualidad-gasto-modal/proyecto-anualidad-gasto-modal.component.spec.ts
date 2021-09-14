@@ -23,6 +23,7 @@ describe('ProyectoAnualidadGastoModalComponent', () => {
     proyectoId: 1,
     fechaInicioAnualidad: null,
     fechaFinAnualidad: null,
+    readonly: false
   };
 
   beforeEach(waitForAsync(() => {

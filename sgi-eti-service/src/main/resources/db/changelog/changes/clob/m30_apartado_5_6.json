@@ -1,0 +1,28 @@
+[
+  {
+    "key": "ap5_6",
+    "wrappers": [
+      "expansion-panel"
+    ],
+    "templateOptions": {
+      "label": "5.6 Aclaraciones al comité"
+    },
+    "fieldGroup": [
+      {
+        "template": "Incluir a continuación cualquier otra aclaración que se considere necesaria para el comité."
+      },
+      {
+        "key": "aclaracionesComite",
+        "type": "textarea",
+        "templateOptions": {
+          "label": "Aclaraciones",
+          "placeholder": "Aclaraciones",
+          "required": false,
+          "autosize": true,
+          "autosizeMinRows": "1",
+          "autosizeMaxRows": "10"
+        }
+      }
+    ]
+  }
+]

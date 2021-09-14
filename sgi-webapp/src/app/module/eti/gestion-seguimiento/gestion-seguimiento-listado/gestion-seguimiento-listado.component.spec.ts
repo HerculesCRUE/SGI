@@ -10,6 +10,8 @@ import { MaterialDesignModule } from '@material/material-design.module';
 import { SgiAuthService } from '@sgi/framework/auth';
 import { SharedModule } from '@shared/shared.module';
 import { LoggerTestingModule } from 'ngx-logger/testing';
+import { SgempFormlyFormsModule } from 'src/app/esb/sgemp/formly-forms/sgemp-formly-forms.module';
+import { SgpSharedModule } from 'src/app/esb/sgp/shared/sgp-shared.module';
 
 import { GestionSeguimientoListadoComponent } from './gestion-seguimiento-listado.component';
 
@@ -30,7 +32,8 @@ describe('GestionSeguimientoListadoComponent', () => {
         FlexLayoutModule,
         FormsModule,
         ReactiveFormsModule,
-        SharedModule
+        SharedModule,
+        SgpSharedModule
       ],
       providers: [
         { provide: SnackBarService, useValue: TestUtils.getSnackBarServiceSpy() },

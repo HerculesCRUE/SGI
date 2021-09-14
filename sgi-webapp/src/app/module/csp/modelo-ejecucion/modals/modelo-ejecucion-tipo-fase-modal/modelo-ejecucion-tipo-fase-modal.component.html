@@ -10,7 +10,7 @@
     <div [fxLayout]="fxLayoutProperties.layout" [fxLayoutAlign]="fxLayoutProperties.layoutAlign">
       <mat-form-field>
         <mat-label>{{'csp.modelo-ejecucion-tipo-fase.tipo' | translate}}</mat-label>
-            <sgi-select-entity formControlName="tipoFase" required [options]="tipoFases$ | async"></sgi-select-entity>
+        <sgi-select-entity formControlName="tipoFase" required [options]="tipoFases$ | async"></sgi-select-entity>
         <mat-error *ngIf="formGroup.controls.tipoFase.errors?.required">
           {{'error.required.entity' | translate:msgParamTipoEntiy}}
         </mat-error>
@@ -30,7 +30,7 @@
         <mat-checkbox color="primary" class="checkbox" formControlName="proyecto">
           {{'csp.modelo-ejecucion-tipo-fase.proyecto' | translate}}</mat-checkbox>
         <mat-error *ngIf="formGroup.controls.disponible.errors?.requiredChecked">
-          {{'error.required.entity' | translate:msgParamProyectoEntiy}}
+          {{'csp.modelo-ejecucion-tipo-fase.requiredChecked' | translate}}
         </mat-error>
       </div>
     </div>

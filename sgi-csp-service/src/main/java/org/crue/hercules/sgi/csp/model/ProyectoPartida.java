@@ -81,5 +81,4 @@ public class ProyectoPartida extends BaseEntity {
   @Getter(AccessLevel.NONE)
   @Setter(AccessLevel.NONE)
   private final Proyecto proyecto = null;
-
 }

@@ -1,0 +1,17 @@
+[
+  {
+    "key": "ap3_6",
+    "wrappers": [
+      "expansion-panel"
+    ],
+    "templateOptions": {
+      "expressionLock": "formState.memoria.tipoMemoria.id === 3",
+      "label": "3.6 Datos de carácter personal"
+    },
+    "fieldGroup": [
+      {
+        "template": "<p>Para dar debido cumplimiento a lo referido a la protección de datos de carácter personal, deberá rellenar la siguiente <a href='https://encuestas.um.es/encuestas/protecciondedatosproyectos.cc' target='_blank'>encuesta</a></p>"
+      }
+    ]
+  }
+]

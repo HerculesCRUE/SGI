@@ -30,7 +30,7 @@
     <div [fxLayout.xs]="fxLayoutProperties.xs" [fxLayout]="fxLayoutProperties.layout"
       [fxLayoutGap]="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
       <mat-form-field>
-        <mat-label>{{'csp.solicitud-hito.fecha-inicio'| translate}}</mat-label>
+        <mat-label>{{'csp.solicitud-hito.fecha'| translate}}</mat-label>
         <input matInput [ngxMatDatetimePicker]="pickerFechaInicio" formControlName="fechaInicio" required>
         <mat-datepicker-toggle class="fechaIcon" matSuffix [for]="pickerFechaInicio"></mat-datepicker-toggle>
         <ngx-mat-datetime-picker #pickerFechaInicio showSeconds="true" [defaultTime]="[0,0,0]">
@@ -39,7 +39,7 @@
           {{'error.required.entity' | translate:msgParamFechaInicioEntity}}
         </mat-error>
         <mat-error *ngIf="formGroup.controls.fechaInicio.errors?.notIn">
-          {{'error.csp.solicitud-hito.fecha-inicio.duplicate' | translate}}
+          {{'error.csp.solicitud-hito.fecha.duplicate' | translate}}
         </mat-error>
       </mat-form-field>
     </div>
@@ -56,6 +56,7 @@
         </mat-error>
       </mat-form-field>
     </div>
+    <!-- Aviso -->
     <div [fxLayout]="fxLayoutProperties.layout" class="checkbox">
       <mat-checkbox color="primary" formControlName="aviso" id="aviso">
         {{'csp.solicitud-hito.genera-aviso' | translate}}</mat-checkbox>

@@ -1,0 +1,47 @@
+[
+  {
+    "key": "ap4_1_5",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "label": "4.1.5 Tratamiento profiláctico disponible"
+    },
+    "fieldGroup": [
+      {
+        "template": "<p>¿Existe vacuna eficaz o tratamiento profiláctico disponible?</p>"
+      },
+      {
+        "key": "vacunaEficaz",
+        "type": "radio",
+        "templateOptions": {
+          "label": "Elige opción:",
+          "required": true,
+          "options": [
+            {
+              "value": "no",
+              "label": "No"
+            },
+            {
+              "value": "si",
+              "label": "Sí"
+            }
+          ]
+        }
+      },
+      {
+        "key": "especificarVacunaEficaz",
+        "type": "textarea",
+        "hideExpression": "!model.vacunaEficaz || model.vacunaEficaz === 'no'",
+        "templateOptions": {
+          "label": "Especificar",
+          "placeholder": "Especificar",
+          "required": true,
+          "autosize": true,
+          "autosizeMinRows": "1",
+          "autosizeMaxRows": "10"
+        }
+      }
+    ]
+  }
+]

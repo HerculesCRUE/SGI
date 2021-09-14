@@ -5,7 +5,9 @@ import { MaterialDesignModule } from '@material/material-design.module';
 import { TranslateModule } from '@ngx-translate/core';
 import { SgiAuthModule } from '@sgi/framework/auth';
 import { SharedModule } from '@shared/shared.module';
+import { SgempSharedModule } from 'src/app/esb/sgemp/shared/sgemp-shared.module';
 import { SgoSharedModule } from 'src/app/esb/sgo/shared/sgo-shared.module';
+import { SgpSharedModule } from 'src/app/esb/sgp/shared/sgp-shared.module';
 import { CspSharedModule } from '../shared/csp-shared.module';
 import { CambioEstadoModalComponent } from './modals/proyecto-cambio-estado-modal/cambio-estado-modal.component';
 import { ProyectoContextoModalComponent } from './modals/proyecto-contexto-modal/proyecto-contexto-modal.component';
@@ -18,6 +20,7 @@ import { ProyectoEntidadConvocantePlanPipe } from './pipes/proyecto-entidad-conv
 import { ProyectoCrearComponent } from './proyecto-crear/proyecto-crear.component';
 import { ProyectoDataResolver } from './proyecto-data.resolver';
 import { ProyectoEditarComponent } from './proyecto-editar/proyecto-editar.component';
+import { ProyectoAgrupacionesGastoComponent } from './proyecto-formulario/proyecto-agrupaciones-gasto/proyecto-agrupaciones-gasto.component';
 import { ProyectoAreaConocimientoComponent } from './proyecto-formulario/proyecto-area-conocimiento/proyecto-area-conocimiento.component';
 import { ProyectoClasificacionesComponent } from './proyecto-formulario/proyecto-clasificaciones/proyecto-clasificaciones.component';
 import { ProyectoConceptosGastoComponent } from './proyecto-formulario/proyecto-conceptos-gasto/proyecto-conceptos-gasto.component';
@@ -41,6 +44,8 @@ import { ProyectoResponsableEconomicoComponent } from './proyecto-formulario/pro
 import { ProyectoSociosComponent } from './proyecto-formulario/proyecto-socios/proyecto-socios.component';
 import { ProyectoListadoComponent } from './proyecto-listado/proyecto-listado.component';
 import { ProyectoRoutingModule } from './proyecto-routing.module';
+import { ProyectoCalendarioJustificacionComponent } from './proyecto-formulario/proyecto-calendario-justificacion/proyecto-calendario-justificacion.component';
+import { ProyectoPeriodoJustificacionModalComponent } from './modals/proyecto-periodo-justificacion-modal/proyecto-periodo-justificacion-modal/proyecto-periodo-justificacion-modal.component';
 
 @NgModule({
   declarations: [
@@ -75,7 +80,10 @@ import { ProyectoRoutingModule } from './proyecto-routing.module';
     ProyectoConceptosGastoComponent,
     ProyectoPresupuestoComponent,
     ProyectoResponsableEconomicoComponent,
-    ProyectoResponsableEconomicoModalComponent
+    ProyectoResponsableEconomicoModalComponent,
+    ProyectoAgrupacionesGastoComponent,
+    ProyectoCalendarioJustificacionComponent,
+    ProyectoPeriodoJustificacionModalComponent
   ],
   imports: [
     SharedModule,
@@ -87,7 +95,9 @@ import { ProyectoRoutingModule } from './proyecto-routing.module';
     FormsModule,
     ReactiveFormsModule,
     CspSharedModule,
-    SgoSharedModule
+    SgoSharedModule,
+    SgpSharedModule,
+    SgempSharedModule
   ],
   providers: [
     ProyectoDataResolver,

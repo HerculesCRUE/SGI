@@ -8,11 +8,11 @@ export function compareConceptoGastoCodigoEc(
   convocatoriaCodigoEconomico: IConvocatoriaConceptoGastoCodigoEc,
   proyectoCodigoEconomico: IProyectoConceptoGastoCodigoEc): boolean {
 
-  return proyectoCodigoEconomico.codigoEconomicoRef !== convocatoriaCodigoEconomico.codigoEconomicoRef
-    || proyectoCodigoEconomico.fechaInicio?.toMillis() !== convocatoriaCodigoEconomico.fechaInicio?.toMillis()
-    || proyectoCodigoEconomico.fechaFin?.toMillis() !== convocatoriaCodigoEconomico.fechaFin?.toMillis()
-    || (!!proyectoCodigoEconomico.observaciones !== !!convocatoriaCodigoEconomico.observaciones
-      && proyectoCodigoEconomico.observaciones !== convocatoriaCodigoEconomico.observaciones);
+  return proyectoCodigoEconomico?.codigoEconomico?.id !== convocatoriaCodigoEconomico?.codigoEconomico.id
+    || proyectoCodigoEconomico?.fechaInicio?.toMillis() !== convocatoriaCodigoEconomico?.fechaInicio?.toMillis()
+    || proyectoCodigoEconomico?.fechaFin?.toMillis() !== convocatoriaCodigoEconomico?.fechaFin?.toMillis()
+    || (!!proyectoCodigoEconomico?.observaciones !== !!convocatoriaCodigoEconomico?.observaciones
+      && proyectoCodigoEconomico?.observaciones !== convocatoriaCodigoEconomico?.observaciones);
 }
 
 export function compareConceptoGasto(
@@ -22,23 +22,23 @@ export function compareConceptoGasto(
   fechaFinProyecto: DateTime): boolean {
 
   let fechaInicioConvocatoriaConceptoGasto: DateTime;
-  if (convocatoriaConceptoGasto.mesInicial) {
+  if (convocatoriaConceptoGasto?.mesInicial) {
     fechaInicioConvocatoriaConceptoGasto =
       getFechaInicioConceptoGasto(fechaInicioProyecto, convocatoriaConceptoGasto.mesInicial);
   }
 
   let fechaFinConvocatoriaConceptoGasto: DateTime;
-  if (convocatoriaConceptoGasto.mesFinal) {
+  if (convocatoriaConceptoGasto?.mesFinal) {
     fechaFinConvocatoriaConceptoGasto = getFechaFinConceptoGasto(fechaInicioProyecto, fechaFinProyecto,
       convocatoriaConceptoGasto.mesFinal, fechaInicioConvocatoriaConceptoGasto);
   }
 
-  return proyectoConceptoGasto.conceptoGasto?.id !== convocatoriaConceptoGasto.conceptoGasto.id
-    || proyectoConceptoGasto.importeMaximo !== convocatoriaConceptoGasto.importeMaximo
+  return proyectoConceptoGasto.conceptoGasto?.id !== convocatoriaConceptoGasto?.conceptoGasto.id
+    || proyectoConceptoGasto.importeMaximo !== convocatoriaConceptoGasto?.importeMaximo
     || proyectoConceptoGasto.fechaInicio?.toMillis() !== fechaInicioConvocatoriaConceptoGasto?.toMillis()
     || proyectoConceptoGasto.fechaFin?.toMillis() !== fechaFinConvocatoriaConceptoGasto?.toMillis()
-    || (!!proyectoConceptoGasto.observaciones !== !!convocatoriaConceptoGasto.observaciones
-      && proyectoConceptoGasto.observaciones !== convocatoriaConceptoGasto.observaciones);
+    || (!!proyectoConceptoGasto.observaciones !== !!convocatoriaConceptoGasto?.observaciones
+      && proyectoConceptoGasto.observaciones !== convocatoriaConceptoGasto?.observaciones);
 }
 
 /**

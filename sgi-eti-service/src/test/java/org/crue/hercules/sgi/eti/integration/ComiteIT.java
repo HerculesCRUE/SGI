@@ -50,6 +50,8 @@ import org.springframework.web.util.UriComponentsBuilder;
 public class ComiteIT extends BaseIT {
 
   private static final String PATH_PARAMETER_ID = "/{id}";
+  private static final String PATH_PARAMETER_ID_COMITE = "/{idComite}";
+  private static final String PATH_PARAMETER_ID_PETICION_EVALUACION = "/{idPeticionEvaluacion}";
   private static final String COMITE_CONTROLLER_BASE_PATH = "/comites";
 
   private HttpEntity<Comite> buildRequest(HttpHeaders headers, Comite entity) throws Exception {
@@ -299,9 +301,10 @@ public class ComiteIT extends BaseIT {
         String.format("bearer %s", tokenBuilder.buildToken("user", "ETI-PEV-C-INV", "ETI-PEV-ER-INV")));
 
     final ResponseEntity<List<Memoria>> response = restTemplate.exchange(
-        COMITE_CONTROLLER_BASE_PATH + PATH_PARAMETER_ID + "/memorias", HttpMethod.GET,
-        buildRequestMemoria(headers, null), new ParameterizedTypeReference<List<Memoria>>() {
-        }, 1L);
+        COMITE_CONTROLLER_BASE_PATH + PATH_PARAMETER_ID_COMITE + "/memorias-peticion-evaluacion/"
+            + PATH_PARAMETER_ID_PETICION_EVALUACION,
+        HttpMethod.GET, buildRequestMemoria(headers, null), new ParameterizedTypeReference<List<Memoria>>() {
+        }, 1L, 2L);
 
     // then: Obtiene las memorias del comité 2.
     Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -332,9 +335,10 @@ public class ComiteIT extends BaseIT {
         String.format("bearer %s", tokenBuilder.buildToken("user", "ETI-PEV-C-INV", "ETI-PEV-ER-INV")));
 
     final ResponseEntity<List<Memoria>> response = restTemplate.exchange(
-        COMITE_CONTROLLER_BASE_PATH + PATH_PARAMETER_ID + "/memorias", HttpMethod.GET,
-        buildRequestMemoria(headers, null), new ParameterizedTypeReference<List<Memoria>>() {
-        }, 3L);
+        COMITE_CONTROLLER_BASE_PATH + PATH_PARAMETER_ID_COMITE + "/memorias-peticion-evaluacion/"
+            + PATH_PARAMETER_ID_PETICION_EVALUACION,
+        HttpMethod.GET, buildRequestMemoria(headers, null), new ParameterizedTypeReference<List<Memoria>>() {
+        }, 3L, 2L);
 
     // then: No existen memorias.
     Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);

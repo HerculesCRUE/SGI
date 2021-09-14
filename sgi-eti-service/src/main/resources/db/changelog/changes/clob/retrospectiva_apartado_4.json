@@ -1,0 +1,59 @@
+[
+  {
+    "key": "ap1_4",
+    "wrappers": [
+      "expansion-panel"
+    ],
+    "templateOptions": {
+      "label": "Reducción, reemplazo y refinamiento",
+      "expanded": true
+    },
+    "fieldGroup": [
+      {
+        "template": "<p>Indique aquellas propuestas que considere que pueden contribuir a una mejor aplicación de la reducción, el reemplazo y el refinamiento en el uso de animales en investigación: </p><p>Reducción.</p>"
+      },
+      {
+        "key": "reduccion",
+        "type": "textarea",
+        "templateOptions": {
+          "placeholder": "Descripción",
+          "label": "Descripción",
+          "required": true,
+          "autosize": true,
+          "autosizeMinRows": "1",
+          "autosizeMaxRows": "20"
+        }
+      },
+      {
+        "template": "<p>Reemplazo.</p>"
+      },
+      {
+        "key": "reemplazo",
+        "type": "textarea",
+        "templateOptions": {
+          "placeholder": "Descripción",
+          "label": "Descripción",
+          "required": true,
+          "autosize": true,
+          "autosizeMinRows": "1",
+          "autosizeMaxRows": "20"
+        }
+      },
+      {
+        "template": "<p>Refinamiento.</p>"
+      },
+      {
+        "key": "refinamiento",
+        "type": "textarea",
+        "templateOptions": {
+          "placeholder": "Descripción",
+          "label": "Descripción",
+          "required": true,
+          "autosize": true,
+          "autosizeMinRows": "1",
+          "autosizeMaxRows": "20"
+        }
+      }
+    ]
+  }
+]

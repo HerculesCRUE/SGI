@@ -1,0 +1,26 @@
+[
+  {
+    "key": "ap1_5",
+    "wrappers": [
+      "expansion-panel"
+    ],
+    "templateOptions": {
+      "label": "Aclaraciones",
+      "expanded": true
+    },
+    "fieldGroup": [
+      {
+        "key": "aclaraciones",
+        "type": "textarea",
+        "templateOptions": {
+          "placeholder": "Descripción",
+          "label": "",
+          "required": false,
+          "autosize": true,
+          "autosizeMinRows": "1",
+          "autosizeMaxRows": "20"
+        }
+      }
+    ]
+  }
+]

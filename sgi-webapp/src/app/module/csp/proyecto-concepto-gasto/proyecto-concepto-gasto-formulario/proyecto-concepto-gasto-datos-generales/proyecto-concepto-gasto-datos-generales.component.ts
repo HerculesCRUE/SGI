@@ -10,13 +10,14 @@ import { ConceptoGastoService } from '@core/services/csp/concepto-gasto.service'
 import { TranslateService } from '@ngx-translate/core';
 import { Observable, Subscription } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { comparePartidaPresupuestaria } from '../../../proyecto/proyecto-formulario/proyecto-partidas-presupuestarias/proyecto-partida-presupuestaria.utils';
 import { ProyectoConceptoGastoActionService } from '../../proyecto-concepto-gasto.action.service';
 import { ProyectoConceptoGastoDatosGeneralesFragment } from './proyecto-concepto-gasto-datos-generales.fragment';
 
 const MSG_ANADIR = marker('btn.add');
 const MSG_ACEPTAR = marker('btn.ok');
 const PROYECTO_CONCEPTO_GASTO_KEY = marker('csp.proyecto-concepto-gasto');
+const PROYECTO_CONCEPTO_GASTO_COSTES_INDIRECTOS_KEY = marker('csp.proyecto-concepto-gasto.costes-indirectos');
+
 
 @Component({
   templateUrl: './proyecto-concepto-gasto-datos-generales.component.html',
@@ -34,6 +35,9 @@ export class ProyectoConceptoGastoDatosGeneralesComponent
   textSaveOrUpdate: string;
 
   msgParamConceptoGastoEntity = {};
+  msgParamCostesIndirectos = {};
+
+  textoToolTip: string;
 
   get MSG_PARAMS() {
     return MSG_PARAMS;
@@ -76,6 +80,9 @@ export class ProyectoConceptoGastoDatosGeneralesComponent
     this.formPart.getFormGroup().controls.fechaInicio.setValue(this.formPart.getFormGroup().controls.fechaInicioConvocatoria.value);
     this.formPart.getFormGroup().controls.fechaFin.setValue(this.formPart.getFormGroup().controls.fechaFinConvocatoria.value);
     this.formPart.getFormGroup().controls.observaciones.setValue(this.formPart.getFormGroup().controls.observacionesConvocatoria.value);
+
+    this.formPart.getFormGroup().controls.costesIndirectos.setValue(
+      this.formPart.getFormGroup().controls.costesIndirectosConvocatoria.value);
   }
 
   private setupI18N(): void {
@@ -83,6 +90,13 @@ export class ProyectoConceptoGastoDatosGeneralesComponent
       PROYECTO_CONCEPTO_GASTO_KEY,
       MSG_PARAMS.CARDINALIRY.SINGULAR
     ).subscribe((value) => this.msgParamConceptoGastoEntity = { entity: value, ...MSG_PARAMS.GENDER.MALE });
+
+    this.translate.get(
+      PROYECTO_CONCEPTO_GASTO_COSTES_INDIRECTOS_KEY,
+      MSG_PARAMS.CARDINALIRY.SINGULAR
+    ).subscribe((value) => this.msgParamConceptoGastoEntity = { entity: value, ...MSG_PARAMS.GENDER.MALE });
+
+
   }
 
   ngOnDestroy(): void {

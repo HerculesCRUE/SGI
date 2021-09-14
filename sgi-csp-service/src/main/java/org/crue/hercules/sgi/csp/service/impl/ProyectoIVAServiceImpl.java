@@ -1,6 +1,5 @@
 package org.crue.hercules.sgi.csp.service.impl;
 
-import org.crue.hercules.sgi.csp.exceptions.ProyectoIVANotFoundException;
 import org.crue.hercules.sgi.csp.model.ProyectoIVA;
 import org.crue.hercules.sgi.csp.repository.ProyectoIVARepository;
 import org.crue.hercules.sgi.csp.service.ProyectoIVAService;

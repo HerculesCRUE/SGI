@@ -101,6 +101,10 @@ export class ProyectoProrrogasComponent extends FragmentComponent implements OnI
             if (aceptado) {
               this.formPart.deleteProrroga(wrapper);
               this.recalcularNumProrrogas();
+              const ultimaProrroga =
+                this.formPart.prorrogas$.value.length > 0 ?
+                this.formPart.prorrogas$.value[this.formPart.prorrogas$.value.length - 1].value : null;
+              this.formPart.ultimaProrroga$.next(ultimaProrroga);
             }
           }
         )

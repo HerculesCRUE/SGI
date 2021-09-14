@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.assertj.core.api.Assertions;
+import org.crue.hercules.sgi.eti.config.SgiConfigProperties;
 import org.crue.hercules.sgi.eti.dto.MemoriaPeticionEvaluacion;
 import org.crue.hercules.sgi.eti.exceptions.ComiteNotFoundException;
 import org.crue.hercules.sgi.eti.exceptions.MemoriaNotFoundException;
@@ -39,6 +40,7 @@ import org.crue.hercules.sgi.eti.repository.EvaluacionRepository;
 import org.crue.hercules.sgi.eti.repository.MemoriaRepository;
 import org.crue.hercules.sgi.eti.repository.PeticionEvaluacionRepository;
 import org.crue.hercules.sgi.eti.repository.RespuestaRepository;
+import org.crue.hercules.sgi.eti.repository.TareaRepository;
 import org.crue.hercules.sgi.eti.service.impl.MemoriaServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -47,6 +49,7 @@ import org.mockito.BDDMockito;
 import org.mockito.Mock;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -91,11 +94,18 @@ public class MemoriaServiceTest extends BaseServiceTest {
   @Mock
   private InformeService informeFormularioService;
 
+  @Mock
+  private TareaRepository tareaRepository;
+
+  @Autowired
+  private SgiConfigProperties sgiConfigProperties;
+
   @BeforeEach
   public void setUp() throws Exception {
-    memoriaService = new MemoriaServiceImpl(memoriaRepository, estadoMemoriaRepository, estadoRetrospectivaRepository,
-        evaluacionRepository, comentarioRepository, informeFormularioService, peticionEvaluacionRepository,
-        comiteRepository, documentacionMemoriaRepository, respuestaRepository);
+    memoriaService = new MemoriaServiceImpl(sgiConfigProperties, memoriaRepository, estadoMemoriaRepository,
+        estadoRetrospectivaRepository, evaluacionRepository, comentarioRepository, informeFormularioService,
+        peticionEvaluacionRepository, comiteRepository, documentacionMemoriaRepository, respuestaRepository,
+        tareaRepository);
   }
 
   @Test
@@ -131,11 +141,11 @@ public class MemoriaServiceTest extends BaseServiceTest {
           "Memoria" + String.format("%03d", i), 1, 1L));
     }
 
-    BDDMockito.given(memoriaRepository.findByComiteIdAndActivoTrueAndComiteActivoTrue(1L, Pageable.unpaged()))
-        .willReturn(new PageImpl<>(memorias));
+    BDDMockito.given(memoriaRepository.findByComiteIdAndPeticionEvaluacionIdAndActivoTrueAndComiteActivoTrue(1L, 1L,
+        Pageable.unpaged())).willReturn(new PageImpl<>(memorias));
 
     // when: find unlimited
-    Page<Memoria> page = memoriaService.findByComite(1L, Pageable.unpaged());
+    Page<Memoria> page = memoriaService.findByComiteAndPeticionEvaluacion(1L, 1L, Pageable.unpaged());
     // then: Get a page with one hundred Memorias
     Assertions.assertThat(page.getContent().size()).isEqualTo(100);
     Assertions.assertThat(page.getNumber()).isEqualTo(0);
@@ -148,21 +158,36 @@ public class MemoriaServiceTest extends BaseServiceTest {
   public void findByComite_NotFound_ThrowsComiteNotFoundException() throws Exception {
     BDDMockito.given(comiteRepository.findByIdAndActivoTrue(1L)).willReturn(Optional.empty());
 
-    Assertions.assertThatThrownBy(() -> memoriaService.findByComite(1L, null))
+    Assertions.assertThatThrownBy(() -> memoriaService.findByComiteAndPeticionEvaluacion(1L, 1L, null))
         .isInstanceOf(ComiteNotFoundException.class);
   }
 
   @Test
-  public void findByComite_ComiteIdNull() throws Exception {
+  public void findByComiteAndPeticionEvaluacion_ComiteIdNull() throws Exception {
 
     try {
       // when: Creamos la memoria
-      memoriaService.findByComite(null, null);
+      memoriaService.findByComiteAndPeticionEvaluacion(null, 1L, null);
       Assertions.fail("El identificador del comité no puede ser null para recuperar sus tipos de memoria asociados.");
       // then: se debe lanzar una excepción
     } catch (final IllegalArgumentException e) {
       Assertions.assertThat(e.getMessage())
           .isEqualTo("El identificador del comité no puede ser null para recuperar sus tipos de memoria asociados.");
+    }
+  }
+
+  @Test
+  public void findByComiteAndPeticionEvaluacion_PeticionEvaluacionIdNull() throws Exception {
+
+    try {
+      // when: Creamos la memoria
+      memoriaService.findByComiteAndPeticionEvaluacion(1L, null, null);
+      Assertions.fail(
+          "El identificador de la petición de evaluación no puede ser null para recuperar sus tipos de memoria asociados.");
+      // then: se debe lanzar una excepción
+    } catch (final IllegalArgumentException e) {
+      Assertions.assertThat(e.getMessage()).isEqualTo(
+          "El identificador de la petición de evaluación no puede ser null para recuperar sus tipos de memoria asociados.");
     }
   }
 

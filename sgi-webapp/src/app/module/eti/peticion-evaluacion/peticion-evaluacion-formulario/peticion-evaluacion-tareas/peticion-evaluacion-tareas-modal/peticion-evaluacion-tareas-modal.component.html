@@ -53,7 +53,7 @@
     <!-- Formación específica -->
     <div [fxLayout]="fxLayoutProperties.layout" [fxLayoutAlign]="fxLayoutProperties.layoutAlign">
       <mat-form-field [ngClass]="!tareaYformacionTexto ? '' : 'ocultarCampo'">
-        <mat-label>{{'eti.peticion-evaluacion.tarea.formacion-especifica' | translate}}</mat-label>
+        <mat-label>{{textoFormacionExperiencia$ | async}}</mat-label>
         <sgi-select-entity formControlName="formacionEspecifica" [options]="this.formaciones$ | async" required>
         </sgi-select-entity>
         <mat-error *ngIf="formGroup.controls.formacionEspecifica.errors?.required">
@@ -61,7 +61,7 @@
         </mat-error>
       </mat-form-field>
       <mat-form-field [ngClass]="tareaYformacionTexto ? '' : 'ocultarCampo'">
-        <mat-label>{{'eti.peticion-evaluacion.tarea.formacion-especifica' | translate}}</mat-label>
+        <mat-label>{{textoFormacionExperiencia$ | async}}</mat-label>
         <input matInput formControlName="formacion" type="text"
           [placeholder]="'eti.peticion-evaluacion.tarea.formacion-especifica' | translate" required />
         <mat-error *ngIf="formGroup.controls.formacion.errors?.required">

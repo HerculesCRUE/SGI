@@ -1,8 +1,8 @@
-<div class="scrollable-panel">
-  <section class="resultado-informe-patentabilidad-listado">
-    <!-- Listado de Resultados de Informes de Patentabilidad-->
-    <table mat-table class="mat-elevation-z8 table-unidad" [dataSource]="resultadoInformePatentabilidad$ | async"
-      matSort matSortActive="id" matSortDirection="asc" matSortDisableClear>
+<sgi-menu-content>
+  <!-- Listado de Resultados de Informes de Patentabilidad-->
+  <div class="mat-elevation-z4">
+    <table mat-table [dataSource]="resultadoInformePatentabilidad$ | async" matSort matSortActive="id"
+      matSortDirection="asc" matSortDisableClear>
       <!-- Nombre -->
       <ng-container matColumnDef="nombre">
         <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'pii.resultado-informe-patentabilidad.nombre' |
@@ -20,12 +20,21 @@
         </td>
       </ng-container>
 
+      <!-- Activo -->
+      <ng-container matColumnDef="activo">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'label.activo' | translate}}
+        </th>
+        <td mat-cell *matCellDef="let tipoProteccion">{{(tipoProteccion.activo ? 'label.si' : 'label.no') | translate}}
+        </td>
+      </ng-container>
+
       <!-- Acciones -->
       <ng-container matColumnDef="acciones">
         <th mat-header-cell *matHeaderCellDef> {{'label.actions' | translate}} </th>
         <td mat-cell *matCellDef="let resultadoInformePatentabilidad">
           <ng-container *sgiHasAuthority="'PII-RIP-E'">
-            <button *ngIf="resultadoInformePatentabilidad.activo" mat-button matTooltip="{{'btn.edit' | translate}}">
+            <button *ngIf="resultadoInformePatentabilidad.activo" mat-button matTooltip="{{'btn.edit' | translate}}"
+              (click)="openModal(resultadoInformePatentabilidad)">
               <mat-icon color="primary">border_color</mat-icon>
             </button>
           </ng-container>
@@ -49,15 +58,15 @@
     </table>
     <mat-paginator [pageSizeOptions]="elementosPagina" [length]="totalElementos" showFirstLastButtons>
     </mat-paginator>
+  </div>
+  <ng-container *sgiHasAuthority="'PII-RIP-C'">
+    <div class="separation-button">
+      <button color="three" attr.aria-label="{{ 'btn.add.entity' | translate:msgParamEntity }}" md-button
+        mat-raised-button (click)="openModal()">
+        <mat-icon color="accent">add_circle</mat-icon>
+        {{ 'btn.add.entity' | translate:msgParamEntity }}
+      </button>
+    </div>
+  </ng-container>
 
-    <ng-container *sgiHasAuthority="'PII-RIP-C'">
-      <div class="separation-button">
-        <button color="three" aria-label="Center Align" md-button mat-raised-button>
-          <mat-icon color="accent">add_circle</mat-icon>
-          {{ 'btn.add.entity' | translate:msgParamEntity }}
-        </button>
-      </div>
-    </ng-container>
-
-  </section>
-</div>
+</sgi-menu-content>

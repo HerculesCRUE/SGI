@@ -1,0 +1,35 @@
+[
+  {
+    "key": "ap1_3",
+    "wrappers": [
+      "expansion-panel"
+    ],
+    "templateOptions": {
+      "label": "Diseño metodológico",
+      "expanded": true
+    },
+    "fieldGroup": [
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "<p>La descripción respecto al diseño metodológico dependerá del comité al que se dirige el informe anual.<ul><li>Para el CEI, describiendo la muestra actual (características y tamaño) y el desarrollo del proyecto, indicando si han surgido problemas y cómo se han resuelto.</li><li>Para el CEEA, describiendo la muestra (Nº total de animales utilizados hasta la fecha) y el desarrollo del proyecto, indicando si han surgido problemas y cómo se han resuelto.</li><li>Para el CBE, el desarrollo del proyecto, indicando si han surgido problemas y cómo se han resuelto.</li></ul></p>"
+      },
+      {
+        "template": "Describa brevemente cómo se va desarrollando metodológicamente el proyecto y señale los problemas encontrados y sus soluciones, si los ha habido."
+      },
+      {
+        "key": "disenioMetodologico",
+        "type": "textarea",
+        "templateOptions": {
+          "placeholder": "Descripción",
+          "label": "Descripción",
+          "required": false,
+          "autosize": true,
+          "autosizeMinRows": "1",
+          "autosizeMaxRows": "20"
+        }
+      }
+    ]
+  }
+]

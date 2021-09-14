@@ -6,6 +6,7 @@ import { IConvocatoriaConceptoGasto } from '@core/models/csp/convocatoria-concep
 import { ActionService } from '@core/services/action-service';
 import { ConvocatoriaConceptoGastoCodigoEcService } from '@core/services/csp/convocatoria-concepto-gasto-codigo-ec.service';
 import { ConvocatoriaConceptoGastoService } from '@core/services/csp/convocatoria-concepto-gasto.service';
+import { CodigoEconomicoGastoService } from '@core/services/sge/codigo-economico-gasto.service';
 import { BehaviorSubject, Subject } from 'rxjs';
 import { CONVOCATORIA_CONCEPTO_GASTO_DATA_KEY } from './convocatoria-concepto-gasto-data.resolver';
 import { ConvocatoriaConceptoGastoCodigoEcFragment } from './convocatoria-concepto-gasto-formulario/convocatoria-concepto-gasto-codigo-ec/convocatoria-concepto-gasto-codigo-ec.fragment';
@@ -50,7 +51,8 @@ export class ConvocatoriaConceptoGastoActionService extends ActionService {
   constructor(
     route: ActivatedRoute,
     convocatoriaConceptoGastoService: ConvocatoriaConceptoGastoService,
-    convocatoriaConceptoGastoCodigoEcService: ConvocatoriaConceptoGastoCodigoEcService
+    convocatoriaConceptoGastoCodigoEcService: ConvocatoriaConceptoGastoCodigoEcService,
+    codigoEconomicoGastoService: CodigoEconomicoGastoService
   ) {
     super();
     this.data = route.snapshot.data[CONVOCATORIA_CONCEPTO_GASTO_DATA_KEY];
@@ -66,7 +68,7 @@ export class ConvocatoriaConceptoGastoActionService extends ActionService {
       convocatoriaConceptoGastoService, this.convocatoriaConceptoGastos, this.data.permitido, this.data.canEdit);
 
     this.codigosEconomicos = new ConvocatoriaConceptoGastoCodigoEcFragment(id,
-      convocatoriaConceptoGastoService, convocatoriaConceptoGastoCodigoEcService, !this.data.canEdit);
+      convocatoriaConceptoGastoService, convocatoriaConceptoGastoCodigoEcService, codigoEconomicoGastoService, !this.data.canEdit);
 
     this.addFragment(this.FRAGMENT.DATOS_GENERALES, this.datosGenerales);
     this.addFragment(this.FRAGMENT.CODIGOS_ECONOMICOS, this.codigosEconomicos);

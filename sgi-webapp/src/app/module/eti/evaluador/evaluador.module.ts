@@ -14,6 +14,7 @@ import { EvaluadorRoutingModule } from './evaluador-routing.module';
 import { EvaluadorResolver } from './evaluador.resolver';
 import { EvaluadorConflictosInteresListadoComponent } from './evaluador-formulario/evaluador-conflictos-interes/evaluador-conflictos-interes-listado/evaluador-conflictos-interes-listado.component';
 import { EvaluadorConflictosInteresModalComponent } from './evaluador-formulario/evaluador-conflictos-interes/evaluador-conflictos-interes-modal/evaluador-conflictos-interes-modal.component';
+import { SgpSharedModule } from 'src/app/esb/sgp/shared/sgp-shared.module';
 
 @NgModule({
   declarations: [
@@ -32,7 +33,8 @@ import { EvaluadorConflictosInteresModalComponent } from './evaluador-formulario
     MaterialDesignModule,
     FormsModule,
     ReactiveFormsModule,
-    SgiAuthModule
+    SgiAuthModule,
+    SgpSharedModule
   ],
   providers: [
     EvaluadorResolver

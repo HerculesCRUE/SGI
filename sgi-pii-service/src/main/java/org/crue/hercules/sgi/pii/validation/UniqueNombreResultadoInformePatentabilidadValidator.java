@@ -14,9 +14,16 @@ public class UniqueNombreResultadoInformePatentabilidadValidator
     implements ConstraintValidator<UniqueNombreResultadoInformePatentabilidad, ResultadoInformePatentabilidad> {
 
   private ResultadoInformePatentabilidadRepository repository;
+  private String field;
 
   public UniqueNombreResultadoInformePatentabilidadValidator(ResultadoInformePatentabilidadRepository repository) {
     this.repository = repository;
+  }
+
+  @Override
+  public void initialize(UniqueNombreResultadoInformePatentabilidad constraintAnnotation) {
+    ConstraintValidator.super.initialize(constraintAnnotation);
+    field = constraintAnnotation.field();
   }
 
   @Override
@@ -41,6 +48,12 @@ public class UniqueNombreResultadoInformePatentabilidadValidator
     HibernateConstraintValidatorContext hibernateContext = context.unwrap(HibernateConstraintValidatorContext.class);
     hibernateContext.addMessageParameter("entity",
         ApplicationContextSupport.getMessage(ResultadoInformePatentabilidad.class));
+
+    // Disable default message to allow binding the message to a property
+    hibernateContext.disableDefaultConstraintViolation();
+    // Build a custom message for a property using the default message
+    hibernateContext.buildConstraintViolationWithTemplate(context.getDefaultConstraintMessageTemplate())
+        .addPropertyNode(ApplicationContextSupport.getMessage(field)).addConstraintViolation();
   }
 
 }

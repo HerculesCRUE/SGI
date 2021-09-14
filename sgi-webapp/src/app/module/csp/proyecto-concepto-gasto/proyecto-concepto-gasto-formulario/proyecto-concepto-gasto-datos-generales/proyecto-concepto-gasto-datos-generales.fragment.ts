@@ -18,6 +18,8 @@ export class ProyectoConceptoGastoDatosGeneralesFragment extends FormFragment<IP
   public readonly conceptoGasto$: Subject<IConceptoGasto> = new BehaviorSubject<IConceptoGasto>(null);
 
   showDatosConvocatoriaConceptoGasto = false;
+  disabledCopy = false;
+  convocatoriaConceptoGasto: IConvocatoriaConceptoGasto;
 
   constructor(
     key: number,
@@ -25,7 +27,7 @@ export class ProyectoConceptoGastoDatosGeneralesFragment extends FormFragment<IP
     private service: ProyectoConceptoGastoService,
     private selectedProyectoConceptosGasto: IProyectoConceptoGasto[],
     private permitido: boolean,
-    private readonly
+    public readonly: boolean
   ) {
     super(key);
     this.proyectoConceptoGasto = {
@@ -41,6 +43,8 @@ export class ProyectoConceptoGastoDatosGeneralesFragment extends FormFragment<IP
         conceptoGasto: new FormControl(undefined, [
           Validators.required
         ]),
+        costesIndirectos: new FormControl({ value: null, disabled: true },
+          Validators.required),
         fechaInicio: new FormControl(null, [
           DateValidator.minDate(this.proyecto?.fechaInicio),
           DateValidator.maxDate(this.proyecto?.fechaFin)
@@ -51,6 +55,12 @@ export class ProyectoConceptoGastoDatosGeneralesFragment extends FormFragment<IP
         ]),
         observaciones: new FormControl(undefined),
         conceptoGastoConvocatoria: new FormControl({ value: null, disabled: true }),
+        costesIndirectosConvocatoria: new FormControl({
+          value: this.convocatoriaConceptoGasto?.conceptoGasto?.costesIndirectos === undefined ?
+            null : this.convocatoriaConceptoGasto?.conceptoGasto?.costesIndirectos,
+          disabled: true
+        },
+          Validators.required),
         fechaInicioConvocatoria: new FormControl({ value: null, disabled: true }),
         fechaFinConvocatoria: new FormControl({ value: null, disabled: true }),
         observacionesConvocatoria: new FormControl({ value: null, disabled: true })
@@ -76,7 +86,16 @@ export class ProyectoConceptoGastoDatosGeneralesFragment extends FormFragment<IP
     }
 
     this.subscriptions.push(form.controls.conceptoGasto.valueChanges.subscribe(
-      (value) => this.conceptoGasto$.next(value)
+      (value) => {
+        form.controls.costesIndirectos.setValue(form.controls.conceptoGasto?.value?.costesIndirectos);
+        this.conceptoGasto$.next(value);
+      }));
+
+    this.subscriptions.push(form.valueChanges.subscribe(
+      () => {
+        this.disabledCopy = !compareConceptoGasto(this.convocatoriaConceptoGasto, this.getValue(),
+          this.proyecto.fechaInicio, this.proyecto.fechaFin);
+      }
     ));
 
     return form;
@@ -90,6 +109,7 @@ export class ProyectoConceptoGastoDatosGeneralesFragment extends FormFragment<IP
       fechaInicio: proyectoConceptoGasto.fechaInicio,
       fechaFin: proyectoConceptoGasto.fechaFin,
       observaciones: proyectoConceptoGasto.observaciones,
+      costesIndirectos: proyectoConceptoGasto.conceptoGasto.costesIndirectos,
       permitido: proyectoConceptoGasto.permitido
     };
     return result;
@@ -114,6 +134,8 @@ export class ProyectoConceptoGastoDatosGeneralesFragment extends FormFragment<IP
   }
 
   setDatosConvocatoriaConceptoGasto(convocatoriaConceptoGasto: IConvocatoriaConceptoGasto) {
+    this.convocatoriaConceptoGasto = convocatoriaConceptoGasto;
+
     this.subscriptions.push(
       this.initialized$.pipe(
         skipWhile(initialized => !initialized)
@@ -129,6 +151,7 @@ export class ProyectoConceptoGastoDatosGeneralesFragment extends FormFragment<IP
           this.showDatosConvocatoriaConceptoGasto = true;
           this.getFormGroup().controls.conceptoGastoConvocatoria.setValue(convocatoriaConceptoGasto.conceptoGasto);
           this.getFormGroup().controls.observacionesConvocatoria.setValue(convocatoriaConceptoGasto.observaciones);
+          this.getFormGroup().controls.costesIndirectosConvocatoria.setValue(convocatoriaConceptoGasto.conceptoGasto.costesIndirectos);
 
           if (this.permitido) {
             this.getFormGroup().controls.importeMaximoConvocatoria.setValue(convocatoriaConceptoGasto.importeMaximo);
@@ -150,6 +173,13 @@ export class ProyectoConceptoGastoDatosGeneralesFragment extends FormFragment<IP
             this.refreshInitialState();
           } else {
             this.getFormGroup().controls.conceptoGasto.setValue(convocatoriaConceptoGasto.conceptoGasto);
+            this.disabledCopy = !compareConceptoGasto(this.convocatoriaConceptoGasto,
+              {
+                conceptoGasto: this.convocatoriaConceptoGasto.conceptoGasto,
+                importeMaximo: null,
+                observaciones: null
+              } as IProyectoConceptoGasto,
+              this.proyecto.fechaInicio, this.proyecto.fechaFin);
           }
         }
       })

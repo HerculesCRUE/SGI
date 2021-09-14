@@ -15,6 +15,9 @@ import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
+import org.crue.hercules.sgi.pii.model.Invencion.OnActualizar;
+import org.crue.hercules.sgi.pii.validation.EntidadActiva;
+
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -29,9 +32,11 @@ import lombok.experimental.SuperBuilder;
 @EqualsAndHashCode(callSuper = false)
 @NoArgsConstructor
 @SuperBuilder
+@EntidadActiva(entityClass = Invencion.class, groups = { OnActualizar.class })
 public class Invencion extends BaseActivableEntity {
-  public static final int TITULO_LENGTH = 50;
-  public static final int LONG_TEXT_LENGTH = 250;
+  public static final int REF_LENGTH = 50;
+  public static final int TITULO_LENGTH = 250;
+  public static final int LONG_TEXT_LENGTH = 2000;
 
   /** Id */
   @Id
@@ -56,9 +61,14 @@ public class Invencion extends BaseActivableEntity {
   @Column(name = "comentarios", length = LONG_TEXT_LENGTH, nullable = true)
   private String comentarios;
 
+  /** Proyecto ref */
+  @Column(name = "proyecto_ref", length = REF_LENGTH, nullable = true)
+  private String proyectoRef;
+
   /** Tipo de protección. */
   @ManyToOne
   @JoinColumn(name = "tipo_proteccion_id", nullable = false, foreignKey = @ForeignKey(name = "FK_INVENCION_TIPOPROTECCION"))
+  @EntidadActiva(entityClass = TipoProteccion.class, groups = { OnCrear.class, OnActualizarTipoProteccion.class })
   private TipoProteccion tipoProteccion;
 
   // Relation mappings for JPA metamodel generation only
@@ -71,4 +81,28 @@ public class Invencion extends BaseActivableEntity {
   @Getter(AccessLevel.NONE)
   @Setter(AccessLevel.NONE)
   private final List<InvencionInventor> inventores = null;
+
+  @OneToMany(mappedBy = "invencion")
+  @Getter(AccessLevel.NONE)
+  @Setter(AccessLevel.NONE)
+  private final List<SolicitudProteccion> solicitudesProteccion = null;
+
+  /**
+   * Interfaz para marcar validaciones en la creacion de la entidad.
+   */
+  public interface OnCrear {
+  }
+
+  /**
+   * Interfaz para marcar validaciones en la actualizacion de la entidad.
+   */
+  public interface OnActualizar {
+  }
+
+  /**
+   * Interfaz para marcar validaciones en la actualizacion del campo
+   * TipoProteccion de la entidad.
+   */
+  public interface OnActualizarTipoProteccion {
+  }
 }

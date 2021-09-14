@@ -34,6 +34,7 @@ const MSG_DELETE = marker('msg.delete.entity');
 const DOCUMENTO_KEY = marker('csp.documento');
 const PROYECTO_DOCUMENTO_FICHERO_KEY = marker('csp.proyecto-documento.fichero');
 const PROYECTO_DOCUMENTO_NOMBRE_KEY = marker('csp.documento.nombre');
+const PROYECTO_VISIBLE_KEY = marker('csp.proyecto-documento.visible');
 
 enum VIEW_MODE {
   NONE = '',
@@ -72,6 +73,7 @@ export class ProyectoDocumentosComponent extends FragmentComponent implements On
   msgParamEntity = {};
   msgParamFicheroEntity = {};
   msgParamNombreEntity = {};
+  msgParamVisibleEntity = {};
   textoDelete: string;
 
   private tipoDocumentosFase = new Map<number, ITipoDocumento[]>();
@@ -143,6 +145,11 @@ export class ProyectoDocumentosComponent extends FragmentComponent implements On
       comentarios: new FormControl(''),
       visible: new FormControl('')
     }));
+
+    if (this.actionService.readonly) {
+      this.group.form.disable();
+    }
+
     this.group.initialize();
 
     const idModeloEjecucion = this.actionService.modeloEjecucionId;
@@ -206,6 +213,11 @@ export class ProyectoDocumentosComponent extends FragmentComponent implements On
         );
       })
     ).subscribe((value) => this.textoDelete = value);
+
+    this.translate.get(
+      PROYECTO_VISIBLE_KEY,
+      MSG_PARAMS.CARDINALIRY.SINGULAR
+    ).subscribe((value) => this.msgParamVisibleEntity = { entity: value, ...MSG_PARAMS.GENDER.MALE, ...MSG_PARAMS.CARDINALIRY.SINGULAR });
   }
 
   ngOnDestroy(): void {
@@ -354,6 +366,7 @@ export class ProyectoDocumentosComponent extends FragmentComponent implements On
 
   switchToNew(): void {
     const wrapper = new StatusWrapper<IProyectoDocumento>({} as IProyectoDocumento);
+    wrapper.value.visible = true;
     const newNode: NodeDocumento = new NodeDocumento(null, undefined, 2, wrapper);
     this.viewMode = VIEW_MODE.NEW;
     this.viewingNode = newNode;

@@ -1,12 +1,12 @@
-.solicitud-proyecto-desglose-presupuesto-global{
-  .label{
-    width: 300px; 
-    text-align:right; 
+:host {
+  .label {
+    width: 450px;
+    text-align: right;
     line-height: 3.5em;
   }
-  .cabecera{
-    width: 180px; 
-    text-align:center; 
+  .cabecera {
+    width: 180px;
+    text-align: center;
     line-height: 3em;
   }
 }

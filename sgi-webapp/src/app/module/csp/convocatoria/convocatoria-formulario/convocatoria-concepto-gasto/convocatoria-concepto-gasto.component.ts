@@ -3,7 +3,7 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
-import { FormFragmentComponent } from '@core/component/fragment.component';
+import { FragmentComponent } from '@core/component/fragment.component';
 import { MSG_PARAMS } from '@core/i18n';
 import { IConvocatoriaConceptoGasto } from '@core/models/csp/convocatoria-concepto-gasto';
 import { FxFlexProperties } from '@core/models/shared/flexLayout/fx-flex-properties';
@@ -30,7 +30,7 @@ const CONVOCATORIA_CONCEPTO_GASTO_NO_PERMITIDO_KEY = marker('csp.convocatoria-co
   styleUrls: ['./convocatoria-concepto-gasto.component.scss']
 })
 
-export class ConvocatoriaConceptoGastoComponent extends FormFragmentComponent<IConvocatoriaConceptoGasto[]> implements OnInit, OnDestroy {
+export class ConvocatoriaConceptoGastoComponent extends FragmentComponent implements OnInit, OnDestroy {
   ROUTE_NAMES = ROUTE_NAMES;
 
   get CONVOCATORIA_ROUTE_NAMES() {
@@ -50,13 +50,14 @@ export class ConvocatoriaConceptoGastoComponent extends FormFragmentComponent<IC
 
   elementosPagina = [5, 10, 25, 100];
   displayedColumnsPermitidos =
-    ['conceptoGasto.nombre', 'conceptoGasto.descripcion', 'importeMaximo', 'mesInicial', 'mesFinal', 'observaciones', 'acciones'];
+    ['conceptoGasto.nombre', 'conceptoGasto.descripcion', 'conceptoGasto.costesIndirectos', 'importeMaximo', 'mesInicial', 'mesFinal', 'observaciones', 'acciones'];
   displayedColumnsNoPermitidos =
-    ['conceptoGasto.nombre', 'conceptoGasto.descripcion', 'mesInicial', 'mesFinal', 'observaciones', 'acciones'];
+    ['conceptoGasto.nombre', 'conceptoGasto.descripcion', 'conceptoGasto.costesIndirectos', 'mesInicial', 'mesFinal', 'observaciones', 'acciones'];
 
   msgParamEntityPermitido = {};
   msgParamEntityNoPermitido = {};
-  textoDelete: string;
+  textoDeletePermitido: string;
+  textoDeleteNoPermitido: string;
 
   dataSourcePermitidos = new MatTableDataSource<StatusWrapper<IConvocatoriaConceptoGasto>>();
   dataSourceNoPermitidos = new MatTableDataSource<StatusWrapper<IConvocatoriaConceptoGasto>>();
@@ -133,6 +134,18 @@ export class ConvocatoriaConceptoGastoComponent extends FormFragmentComponent<IC
 
 
     this.translate.get(
+      CONVOCATORIA_CONCEPTO_GASTO_PERMITIDO_KEY,
+      MSG_PARAMS.CARDINALIRY.SINGULAR
+    ).pipe(
+      switchMap((value) => {
+        return this.translate.get(
+          MSG_DELETE,
+          { entity: value, ...MSG_PARAMS.GENDER.MALE }
+        );
+      })
+    ).subscribe((value) => this.textoDeletePermitido = value);
+
+    this.translate.get(
       CONVOCATORIA_CONCEPTO_GASTO_NO_PERMITIDO_KEY,
       MSG_PARAMS.CARDINALIRY.SINGULAR
     ).pipe(
@@ -142,10 +155,10 @@ export class ConvocatoriaConceptoGastoComponent extends FormFragmentComponent<IC
           { entity: value, ...MSG_PARAMS.GENDER.MALE }
         );
       })
-    ).subscribe((value) => this.textoDelete = value);
+    ).subscribe((value) => this.textoDeleteNoPermitido = value);
   }
 
-  deleteConvocatoriaConceptoGasto(wrapper: StatusWrapper<IConvocatoriaConceptoGasto>) {
+  deleteConvocatoriaConceptoGasto(wrapper: StatusWrapper<IConvocatoriaConceptoGasto>, isPermitido: boolean) {
     this.convocatoriaConceptoGastoService.existsCodigosEconomicos(wrapper.value.id).subscribe(res => {
       if (res) {
         this.subscriptions.push(
@@ -158,8 +171,9 @@ export class ConvocatoriaConceptoGastoComponent extends FormFragmentComponent<IC
           )
         );
       } else {
+        const messageConfirmation = isPermitido ? this.textoDeletePermitido : this.textoDeleteNoPermitido;
         this.subscriptions.push(
-          this.dialogService.showConfirmation(this.textoDelete).subscribe(
+          this.dialogService.showConfirmation(messageConfirmation).subscribe(
             (aceptado: boolean) => {
               if (aceptado) {
                 this.formPart.deleteConvocatoriaConceptoGasto(wrapper);

@@ -1,0 +1,54 @@
+<sgi-fragment title="{{ 'pii.invencion-gasto' | translate: MSG_PARAMS.CARDINALIRY.PLURAL }}">
+  <div class="mat-elevation-z4">
+    <mat-table [dataSource]="dataSource" matSort>
+
+      <!-- Columnas dinamicas -->
+      <ng-container *ngFor="let column of formPart.columns" [matColumnDef]="column.id">
+        <mat-header-cell *matHeaderCellDef [class.computed]="column.compute" mat-sort-header>
+          {{column.name}}
+        </mat-header-cell>
+        <mat-cell *matCellDef="let wrapper" [class.computed]="column.compute">
+          <ng-container *ngIf="column.compute">
+            {{wrapper?.value.gasto.columnas[column.id] | number: '1.2-2'}}
+          </ng-container>
+          <ng-container *ngIf="!column.compute">
+            {{wrapper?.value.gasto.columnas[column.id]}}
+          </ng-container>
+        </mat-cell>
+      </ng-container>
+
+      <!-- Deducido Column -->
+      <ng-container matColumnDef="estado">
+        <mat-header-cell mat-header-cell *matHeaderCellDef mat-sort-header>
+          {{'pii.invencion-gasto.estado' | translate}}
+        </mat-header-cell>
+        <mat-cell mat-cell *matCellDef="let wrapper">
+          {{ ESTADO_MAP.get(wrapper.value.estado) | translate }}
+        </mat-cell>
+      </ng-container>
+
+      <!-- Solicitud de Proteccion Column -->
+      <ng-container matColumnDef="solicitudProteccion">
+        <mat-header-cell mat-header-cell *matHeaderCellDef mat-sort-header>
+          {{'pii.invencion-gasto.solicitud-proteccion' | translate}}
+        </mat-header-cell>
+        <mat-cell mat-cell *matCellDef="let wrapper">
+          {{wrapper.value.solicitudProteccion?.titulo }}
+        </mat-cell>
+      </ng-container>
+
+      <!-- Acciones Column -->
+      <ng-container matColumnDef="acciones">
+        <mat-header-cell mat-header-cell *matHeaderCellDef>
+          {{ 'label.actions' | translate }}
+        </mat-header-cell>
+        <mat-cell mat-cell *matCellDef="let gasto">
+        </mat-cell>
+      </ng-container>
+      <mat-header-row *matHeaderRowDef="formPart.displayColumns"></mat-header-row>
+      <mat-row *matRowDef="let row; columns: formPart.displayColumns;"></mat-row>
+    </mat-table>
+    <mat-paginator [pageSizeOptions]="elementsPage" showFirstLastButtons></mat-paginator>
+  </div>
+
+</sgi-fragment>

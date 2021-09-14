@@ -5,6 +5,9 @@ server:
       # Disble the default error page displayed in browsers in case of a server error
       enabled: false
 
+sgi:
+  time-zone: "Europe/Madrid"
+
 spring:
   profiles:
     # Set spring-profile using maven
@@ -14,7 +17,7 @@ spring:
       hibernate:
         jdbc:
           # see: https://vladmihalcea.com/how-to-store-date-time-and-timestamps-in-utc-time-zone-with-jdbc-and-hibernate/
-          time_zone: UTC
+          '[time_zone]': UTC
     # Disable Open Session In View
     open-in-view: false
   liquibase:
@@ -33,7 +36,7 @@ spring:
     # Make sure database schema is created (schema.sql is executed)
     initialization-mode: always
     # We use a H2 in file database with PostgreSQL compatibility mode
-    url: "jdbc:h2:./target/db/eti;MODE=PostgreSQL;DB_CLOSE_ON_EXIT=FALSE"
+    url: "jdbc:h2:./target/db/eti;INIT=CREATE SCHEMA IF NOT EXISTS eti\\;SET SCHEMA eti;MODE=PostgreSQL;DB_CLOSE_ON_EXIT=FALSE"
     driver-class-name: org.h2.Driver
     username: sa
     password:
@@ -56,7 +59,7 @@ spring:
         # We use a H2 database with PostgreSQL compatibility mode
         dialect: org.hibernate.dialect.H2Dialect
         # Set default Hibernate schema
-        default_schema: eti
+        '[default_schema]': eti
   security:
     oauth2:
       resourceserver:
@@ -117,7 +120,7 @@ spring:
     # Make sure database schema is created (schema.sql is executed)
     initialization-mode: always
     # We use PostgreSQL database
-    url: "jdbc:postgresql://postgres:5432/eti"
+    url: "jdbc:postgresql://postgres:5432/eti?currentSchema=eti"
     driver-class-name: org.postgresql.Driver
     username: postgres
     password: admin
@@ -138,7 +141,7 @@ spring:
         # We use a PostgreSQL database
         dialect: org.hibernate.dialect.PostgreSQL95Dialect
         # Set default Hibernate Schema
-        default_schema: eti
+        '[default_schema]': eti
   security:
     oauth2:
       resourceserver:

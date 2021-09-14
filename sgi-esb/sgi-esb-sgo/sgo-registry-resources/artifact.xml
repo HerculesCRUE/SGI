@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?><artifacts>
+  <artifact name="clasificacion-ids-transformer-mediator" groupId="org.crue.hercules.sgi.esb.sgo.resource" version="0.0.1" type="registry/resource" serverRole="EnterpriseIntegrator">
+    <item>
+      <file>clasificacion-ids-transformer-mediator.js</file>
+      <path>/_system/governance/scripts/sgo</path>
+      <mediaType>application/javascript</mediaType>
+    </item>
+  </artifact>
+  <artifact name="get-clasificacion-prefix-query-param-mediator" groupId="org.crue.hercules.sgi.esb.sgo.resource" version="0.0.1" type="registry/resource" serverRole="EnterpriseIntegrator">
+    <item>
+      <file>get-clasificacion-prefix-query-param-mediator.js</file>
+      <path>/_system/governance/scripts/sgo</path>
+      <mediaType>application/javascript</mediaType>
+    </item>
+  </artifact>
+  <artifact name="remove-clasificacion-prefix-query-param-mediator" groupId="org.crue.hercules.sgi.esb.sgo.resource" version="0.0.1" type="registry/resource" serverRole="EnterpriseIntegrator">
+    <item>
+      <file>remove-clasificacion-prefix-query-param-mediator.js</file>
+      <path>/_system/governance/scripts/sgo</path>
+      <mediaType>application/javascript</mediaType>
+    </item>
+  </artifact>
+</artifacts>

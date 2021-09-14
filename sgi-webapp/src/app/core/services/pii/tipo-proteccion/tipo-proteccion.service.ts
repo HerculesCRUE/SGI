@@ -9,9 +9,7 @@ import {
   mixinCreate,
   mixinFindAll,
   mixinFindById,
-  mixinUpdate,
-  SgiRestBaseService,
-  SgiRestFindOptions,
+  mixinUpdate, RSQLSgiRestFilter, SgiRestBaseService, SgiRestFilterOperator, SgiRestFindOptions,
   SgiRestListResult,
   UpdateCtor
 } from '@sgi/framework/http';
@@ -56,6 +54,18 @@ export class TipoProteccionService extends _TipoProteccionServiceMixinBase {
     );
   }
 
+  private tiposProteccionSearchByNombre(nombre: string, padreId?: number): SgiRestFindOptions {
+    const filter = new RSQLSgiRestFilter('nombre', SgiRestFilterOperator.EQUALS, `${nombre}`);
+    if (padreId) {
+      filter.and('padreId', SgiRestFilterOperator.EQUALS, `${padreId}`);
+    }
+    const options: SgiRestFindOptions = {
+      filter
+    };
+
+    return options;
+  }
+
   /**
    * Muestra activos y no activos
    *
@@ -70,10 +80,71 @@ export class TipoProteccionService extends _TipoProteccionServiceMixinBase {
   }
 
   /**
+   * Busca los Subtipos pertenecientes al {@link ITipoProteccion} pasado por parámetro.
+   *
+   * @param id del {@link ITipoProteccion} padre 
+   * @returns lista de {@link ITipoProteccion}.
+   */
+  findSubtipos(id: number, options?: SgiRestFindOptions): Observable<SgiRestListResult<ITipoProteccion>> {
+    return this.find<ITipoProteccionResponse, ITipoProteccion>(
+      `${this.endpointUrl}/${id}/subtipos`,
+      options,
+      TIPO_PROTECCION_RESPONSE_CONVERTER
+    );
+  }
+
+  /**
+   * Busca los Subtipos pertenecientes al {@link ITipoProteccion} pasado por parámetro sin importar su estado.
+   *
+   * @param id del {@link ITipoProteccion} padre
+   * @returns lista de {@link ITipoProteccion}.
+   */
+  findAllSubtipos(id: number, options?: SgiRestFindOptions): Observable<SgiRestListResult<ITipoProteccion>> {
+    return this.find<ITipoProteccionResponse, ITipoProteccion>(
+      `${this.endpointUrl}/${id}/subtipos/todos`,
+      options,
+      TIPO_PROTECCION_RESPONSE_CONVERTER
+    );
+  }
+
+  /**
+   * Busca los {@link ITipoProteccion} con el nombre pasado por parámetro.
+   *
+   * @param idTipoProteccion Id del {@link ITipoProteccion} padre.
+   * @param nombre Nombre del {@link ITipoProteccion}
+   * @returns Entidad {@link ITipoProteccion} encontrada.
+   */
+  finTiposProteccionByNombre(idTipoProteccion: number, nombre: string): Observable<SgiRestListResult<ITipoProteccion>> {
+
+    return this.find<ITipoProteccionResponse, ITipoProteccion>(
+      `${this.endpointUrl}/${idTipoProteccion}/subtipos`,
+      this.tiposProteccionSearchByNombre(nombre),
+      TIPO_PROTECCION_RESPONSE_CONVERTER
+    );
+  }
+
+  /**
+   * Busca los {@link ITipoProteccion} que sean Subtipos con el nombre y el padre pasados por parámetro.
+   *
+   * @param nombre Nombre del {@link ITipoProteccion}
+   * @param padreId Id del {@link ITipoProteccion} padre
+   * @returns Entidades {@link ITipoProteccion} encontradas.
+   */
+  findSubtiposProteccionByNombre(nombre: string, padreId: number):
+    Observable<SgiRestListResult<ITipoProteccion>> {
+
+    return this.find<ITipoProteccionResponse, ITipoProteccion>(
+      `${this.endpointUrl}/`,
+      this.tiposProteccionSearchByNombre(nombre, padreId),
+      TIPO_PROTECCION_RESPONSE_CONVERTER
+    );
+  }
+
+  /**
    * Activar un Tipo de Resultado
    * @param options opciones de búsqueda.
    */
-  activar(id: number): Observable<void> {
+  activate(id: number): Observable<void> {
     return this.http.patch<void>(`${this.endpointUrl}/${id}/activar`, { id });
   }
 
@@ -81,8 +152,17 @@ export class TipoProteccionService extends _TipoProteccionServiceMixinBase {
    * Desactivar Tipo de Protección
    * @param options Opciones de búsqueda.
    */
-  desactivar(id: number): Observable<void> {
+  deactivate(id: number): Observable<void> {
     return this.http.patch<void>(`${this.endpointUrl}/${id}/desactivar`, { id });
+  }
+
+  /**
+   * TODO FIXME Implementar metodo consultando Backend
+   * Retorna un {@link boolean} con valor True si se puede editar el {@link ITipoPropiedad} al editar un {@link ITipoProteccion}
+   * @param options Opciones de búsqueda.
+   */
+  hasAssociatedSolicitudProteccion(id: number): boolean {
+    return false;
   }
 
 }

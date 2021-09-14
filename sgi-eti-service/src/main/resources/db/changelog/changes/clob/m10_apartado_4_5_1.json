@@ -1,0 +1,52 @@
+[
+  {
+    "key": "ap4_5_1",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "expressionLock": "formState.memoria.tipoMemoria.id === 3",
+      "label": "4.5.1 Resultado del estudio genético"
+    },
+    "hideExpression": "!formState.mainModel.ap4_5.estudiosGeneticosRadio || formState.mainModel.ap4_5.estudiosGeneticosRadio === 'no'",
+    "fieldGroup": [
+      {
+        "template": "<p>¿Se puede obtener alguna información relevante para la vida o la salud del sujeto participante?</p>"
+      },
+      {
+        "key": "resultadoEstudioGeneticoRadio",
+        "type": "radio",
+        "templateOptions": {
+          "required": true,
+          "label": "Elige opción:",
+          "options": [
+            {
+              "value": "no",
+              "label": "No"
+            },
+            {
+              "value": "si",
+              "label": "Sí"
+            }
+          ]
+        }
+      },
+      {
+        "template": "<p>En caso afirmativo especificar</p>",
+        "hideExpression": "!model.resultadoEstudioGeneticoRadio || model.resultadoEstudioGeneticoRadio === 'no'"
+      },
+      {
+        "key": "especificarResultadoEstudioGenetico",
+        "type": "textarea",
+        "hideExpression": "!model.resultadoEstudioGeneticoRadio || model.resultadoEstudioGeneticoRadio === 'no'",
+        "templateOptions": {
+          "label": "Especificar",
+          "required": true,
+          "autosize": true,
+          "autosizeMinRows": "1",
+          "autosizeMaxRows": "10"
+        }
+      }
+    ]
+  }
+]

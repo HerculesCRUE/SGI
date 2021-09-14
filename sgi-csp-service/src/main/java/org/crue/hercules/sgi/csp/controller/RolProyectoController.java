@@ -62,6 +62,20 @@ public class RolProyectoController {
   }
 
   /**
+   * Devuelve el {@link RolProyecto} Principal.
+   * 
+   * @return RolProyecto {@link RolProyecto} correspondiente al orden "PRINCIPAL"
+   */
+  @GetMapping("/principal")
+  @PreAuthorize("hasAuthorityForAnyUO('CSP-SOL-E')")
+  RolProyecto findPrincipal() {
+    log.debug("RolProyecto findById() - start");
+    RolProyecto returnValue = service.findPrincipal();
+    log.debug("RolProyecto findById() - end");
+    return returnValue;
+  }
+
+  /**
    * Devuelve una lista paginada y filtrada {@link RolProyecto} activas.
    * 
    * @param query  filtro de búsqueda.

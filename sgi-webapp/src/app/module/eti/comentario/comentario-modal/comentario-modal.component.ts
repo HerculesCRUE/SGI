@@ -58,24 +58,24 @@ class NodeApartado {
     child.parent = this;
     child.apartado.value.padre = this.apartado.value;
     this._childs.push(child);
-    this.sortChildsByName();
+    this.sortChildsByOrden();
   }
 
   removeChild(child: NodeApartado) {
     this._childs = this._childs.filter((apartado) => apartado !== child);
   }
 
-  sortChildsByName(): void {
-    this._childs = sortByName(this._childs);
+  sortChildsByOrden(): void {
+    this._childs = sortByOrden(this._childs);
   }
 }
 
-function sortByName(nodes: NodeApartado[]): NodeApartado[] {
+function sortByOrden(nodes: NodeApartado[]): NodeApartado[] {
   return nodes.sort((a, b) => {
-    if (a.apartado.value.nombre < b.apartado.value.nombre) {
+    if (a.apartado.value.orden < b.apartado.value.orden) {
       return -1;
     }
-    if (a.apartado.value.nombre > b.apartado.value.nombre) {
+    if (a.apartado.value.orden > b.apartado.value.orden) {
       return 1;
     }
     return 0;
@@ -223,9 +223,11 @@ export class ComentarioModalComponent extends
           const current = this.dataSource.data ? this.dataSource.data : [];
           current.push(result);
           this.publishNodes(current);
-          this.checkedNode = this.nodeMap.get(this.data.evaluacion.tipoEvaluacion.id);
-          if (this.checkedNode) {
-            this.expandNodes(this.checkedNode);
+          if (this.data.comentario?.apartado) {
+            this.checkedNode = this.nodeMap.get(this.data.comentario.apartado.id);
+            if (this.checkedNode) {
+              this.expandNodes(this.checkedNode);
+            }
           }
         },
         (error) => {
@@ -254,7 +256,7 @@ export class ComentarioModalComponent extends
       }),
       switchMap((nodes) => {
         parent.childs.push(...nodes);
-        parent.sortChildsByName();
+        parent.sortChildsByOrden();
         if (nodes.length > 0) {
           return from(nodes).pipe(
             mergeMap((node) => {
@@ -279,7 +281,7 @@ export class ComentarioModalComponent extends
 
   private publishNodes(rootNodes?: NodeApartado[]) {
     let nodes = rootNodes ? rootNodes : this.dataSource.data;
-    nodes = sortByName(nodes);
+    nodes = sortByOrden(nodes);
     this.dataSource.data = nodes;
   }
 

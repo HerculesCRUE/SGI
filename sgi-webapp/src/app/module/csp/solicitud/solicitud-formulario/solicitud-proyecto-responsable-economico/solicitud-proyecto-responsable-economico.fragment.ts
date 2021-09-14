@@ -55,8 +55,14 @@ export class SolicitudProyectoResponsableEconomicoFragment extends Fragment {
       .pipe(
         map((responsablesEconomicosActualizados) => {
           this.responsablesEconomicos$.next(
-            responsablesEconomicosActualizados
-              .map(responsableEconomico => new StatusWrapper<ISolicitudProyectoResponsableEconomico>(responsableEconomico)));
+            responsablesEconomicosActualizados.map(
+              (responsableEconomico) => {
+                responsableEconomico.persona = responsablesEconomicos.find(
+                  responsable => responsable.persona.id === responsableEconomico.persona.id
+                ).persona;
+                return new StatusWrapper<ISolicitudProyectoResponsableEconomico>(responsableEconomico);
+              })
+          );
         }),
         tap(() => {
           if (this.isSaveOrUpdateComplete()) {

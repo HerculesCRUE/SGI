@@ -1,0 +1,53 @@
+[
+  {
+    "key": "ap4_6_5",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "expressionLock": "formState.memoria.tipoMemoria.id === 3",
+      "label": "4.6.5 Uso de tiempo lectivo"
+    },
+    "hideExpression": "!formState.mainModel.ap4_6.estudiantesSujetosInvestigacionRadio || formState.mainModel.ap4_6.estudiantesSujetosInvestigacionRadio === 'no'",
+    "fieldGroup": [
+      {
+        "template": "<p>¿Las pruebas en las que participarán los estudiantes como sujetos de investigación se realizarán durante el tiempo lectivo?</p>"
+      },
+      {
+        "key": "usoTiempoLectivoRadio",
+        "type": "radio",
+        "templateOptions": {
+          "required": true,
+          "label": "Elige opción:",
+          "options": [
+            {
+              "value": "no",
+              "label": "No"
+            },
+            {
+              "value": "si",
+              "label": "Sí"
+            }
+          ]
+        }
+      },
+      {
+        "template": "Horario y duración",
+        "hideExpression": "!model.usoTiempoLectivoRadio || model.usoTiempoLectivoRadio === 'no'"
+      },
+      {
+        "key": "horarioYduracion",
+        "type": "textarea",
+        "hideExpression": "!model.usoTiempoLectivoRadio || model.usoTiempoLectivoRadio === 'no'",
+        "templateOptions": {
+          "label": "Especificar",
+          "placeholder": "Especificiar",
+          "required": true,
+          "autosize": true,
+          "autosizeMinRows": "1",
+          "autosizeMaxRows": "10"
+        }
+      }
+    ]
+  }
+]

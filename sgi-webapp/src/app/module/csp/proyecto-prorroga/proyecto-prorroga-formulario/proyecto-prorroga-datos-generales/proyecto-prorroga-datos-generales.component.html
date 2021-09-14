@@ -1,5 +1,4 @@
-<section>
-  <h2>{{'label.datos-generales' | translate}}</h2>
+<sgi-fragment title="{{'label.datos-generales' | translate}}">
   <form [formGroup]="formGroup">
 
     <!-- Número de prórroga -->
@@ -24,10 +23,10 @@
         <mat-form-field fxFill>
           <mat-label>{{'csp.proyecto-prorroga.fecha-concesion'|
             translate}}</mat-label>
-          <input matInput [ngxMatDatetimePicker]="pickerFechaConcesion" formControlName="fechaConcesion" required>
+          <input matInput [matDatepicker]="pickerFechaConcesion" formControlName="fechaConcesion" required>
           <mat-datepicker-toggle class="fechaIcon" matSuffix [for]="pickerFechaConcesion"></mat-datepicker-toggle>
-          <ngx-mat-datetime-picker #pickerFechaConcesion showSeconds="true" [defaultTime]="[0,0,0]">
-          </ngx-mat-datetime-picker>
+          <mat-datepicker #pickerFechaConcesion>
+          </mat-datepicker>
           <mat-error *ngIf="formGroup.controls.fechaConcesion.errors?.after">
             {{'error.csp.proyecto-seguimiento-cientifico.fecha-concesion.after'
             |
@@ -58,14 +57,14 @@
       [fxLayoutGap]="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
       <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
         [fxFlexOrder]="fxFlexProperties.order">
-        <mat-form-field fxFill>
+        <mat-form-field fxFill sgiEndDate>
           <mat-label>{{'csp.proyecto-prorroga.fecha-fin' |
             translate}}</mat-label>
-          <input matInput [ngxMatDatetimePicker]="pickerFechaFin" formControlName="fechaFin"
+          <input matInput [matDatepicker]="pickerFechaFin" formControlName="fechaFin"
             [required]="FormGroupUtil.hasValidator(this.formGroup,'fechaFin','required')">
           <mat-datepicker-toggle class="fechaIcon" matSuffix [for]="pickerFechaFin"></mat-datepicker-toggle>
-          <ngx-mat-datetime-picker #pickerFechaFin showSeconds="true" [defaultTime]="[23,59,59]">
-          </ngx-mat-datetime-picker>
+          <mat-datepicker #pickerFechaFin>
+          </mat-datepicker>
           <mat-error *ngIf="formGroup.controls.fechaFin.errors?.after">
             {{'error.after.fecha-fin-proyecto' | translate}}
           </mat-error>
@@ -116,4 +115,4 @@
     </div>
 
   </form>
-</section>
+</sgi-fragment>

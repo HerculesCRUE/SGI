@@ -1,5 +1,4 @@
-<section class="convocatoria-datos-generales">
-  <h2>{{'label.datos-generales' | translate}}</h2>
+<sgi-fragment title="{{'label.datos-generales' | translate}}">
 
   <form [formGroup]="formGroup">
     <!-- Concepto Gasto -->
@@ -12,6 +11,20 @@
           </sgi-select-entity>
           <mat-error *ngIf="formGroup.controls.conceptoGasto.errors?.required">
             {{'error.invalid.entity' | translate:msgParamConceptoGastoEntity}}
+          </mat-error>
+        </mat-form-field>
+      </div>
+
+      <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
+        [fxFlexOrder]="fxFlexProperties.order">
+        <!--Costes Indirectos-->
+        <mat-form-field>
+          <mat-label>{{'label.csp.concepto-gasto.costes-indirectos' | translate}}
+          </mat-label>
+          <sgi-select-boolean formControlName="costesIndirectos" required></sgi-select-boolean>
+
+          <mat-error *ngIf="formGroup.controls.costesIndirectos.errors?.required">
+            {{'error.required.entity' | translate:msgParamCostesIndirectos}}
           </mat-error>
         </mat-form-field>
       </div>
@@ -112,4 +125,4 @@
       </div>
     </div>
   </form>
-</section>
+</sgi-fragment>

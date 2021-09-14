@@ -4,7 +4,6 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { LoggerTestingModule } from 'ngx-logger/testing';
 import { TipoProteccionService } from './tipo-proteccion.service';
 
-
 describe('TipoProteccionService', () => {
   let service: TipoProteccionService;
 

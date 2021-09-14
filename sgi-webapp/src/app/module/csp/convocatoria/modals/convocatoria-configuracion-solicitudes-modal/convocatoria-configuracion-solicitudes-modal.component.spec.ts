@@ -35,7 +35,7 @@ describe('ConvocatoriaConfiguracionSolicitudesModalComponent', () => {
     documentoRequerido,
     tipoFaseId: 1,
     modeloEjecucionId: 1,
-    readonly: false
+    isConvocatoriaVinculada: false
   };
 
   beforeEach(waitForAsync(() => {

@@ -75,7 +75,7 @@
   </ng-container>
   <ng-container footer>
     <sgi-action-footer [texto]="textoCrear" [actionService]="actionService">
-      <ng-container *sgiHasAuthorityForAnyUO="'CSP-SOL-E'">
+      <ng-container *sgiHasAnyAuthorityForAnyUO="['CSP-SOL-E', 'CSP-SOL-INV-ER']">
         <!-- Cambio estado-->
         <sgi-action-footer-button color="primary" [text]="textoCambioEstado" (buttonClick)="openCambioEstado()"
           [disabled]="disableCambioEstado">

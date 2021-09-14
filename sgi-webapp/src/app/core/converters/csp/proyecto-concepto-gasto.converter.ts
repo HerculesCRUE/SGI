@@ -18,7 +18,6 @@ class ProyectoConceptoGastoConverter extends SgiBaseConverter<IProyectoConceptoG
       permitido: value.permitido,
       fechaInicio: LuxonUtils.fromBackend(value.fechaInicio),
       fechaFin: LuxonUtils.fromBackend(value.fechaFin),
-      porcentajeCosteIndirecto: value.porcentajeCosteIndirecto,
       convocatoriaConceptoGastoId: value.convocatoriaConceptoGastoId
     };
   }
@@ -36,7 +35,6 @@ class ProyectoConceptoGastoConverter extends SgiBaseConverter<IProyectoConceptoG
       permitido: value.permitido,
       fechaInicio: LuxonUtils.toBackend(value.fechaInicio),
       fechaFin: LuxonUtils.toBackend(value.fechaFin),
-      porcentajeCosteIndirecto: value.porcentajeCosteIndirecto,
       convocatoriaConceptoGastoId: value.convocatoriaConceptoGastoId
     };
   }

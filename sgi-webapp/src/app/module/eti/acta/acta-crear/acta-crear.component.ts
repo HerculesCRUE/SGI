@@ -2,6 +2,7 @@ import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { ActionComponent } from '@core/component/action.component';
+import { HttpProblem } from '@core/errors/http-problem';
 import { MSG_PARAMS } from '@core/i18n';
 import { DialogService } from '@core/services/dialog.service';
 import { SnackBarService } from '@core/services/snack-bar.service';
@@ -14,7 +15,8 @@ import { ActaActionService } from '../acta.action.service';
 const MSG_BUTTON_SAVE = marker('btn.save');
 const MSG_SUCCESS = marker('msg.save.entity.success');
 const MSG_ERROR = marker('error.save.entity');
-const ACTA_KEY = marker('eti.acta')
+const ACTA_KEY = marker('eti.acta');
+
 @Component({
   selector: 'sgi-acta-crear',
   templateUrl: './acta-crear.component.html',
@@ -84,11 +86,19 @@ export class ActaCrearComponent extends ActionComponent implements OnInit {
       () => { },
       (error) => {
         this.logger.error(error);
-        this.snackBarService.showError(this.textoError);
+        if (error instanceof HttpProblem) {
+          if (!!!error.managed) {
+            this.snackBarService.showError(error);
+          }
+        }
+        else {
+          this.snackBarService.showError(this.textoError);
+        }
       },
       () => {
         this.snackBarService.showSuccess(this.textoSuccess);
-        this.router.navigate(['../'], { relativeTo: this.activatedRoute });
+        const actaId = this.actionService.getFragment(this.actionService.FRAGMENT.DATOS_GENERALES).getKey();
+        this.router.navigate([`../${actaId}`], { relativeTo: this.activatedRoute });
       }
     );
   }

@@ -1,10 +1,12 @@
 import { ISolicitudProyectoEquipo } from '@core/models/csp/solicitud-proyecto-equipo';
 import { Fragment } from '@core/services/action-service';
+import { RolProyectoService } from '@core/services/csp/rol-proyecto.service';
 import { SolicitudProyectoEquipoService } from '@core/services/csp/solicitud-proyecto-equipo.service';
 import { SolicitudService } from '@core/services/csp/solicitud.service';
 import { StatusWrapper } from '@core/utils/status-wrapper';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
+import { SolicitudActionService } from '../../solicitud.action.service';
 
 export class SolicitudEquipoProyectoFragment extends Fragment {
   proyectoEquipos$ = new BehaviorSubject<StatusWrapper<ISolicitudProyectoEquipo>[]>([]);
@@ -13,6 +15,8 @@ export class SolicitudEquipoProyectoFragment extends Fragment {
     key: number,
     private solicitudService: SolicitudService,
     private solicitudProyectoEquipoService: SolicitudProyectoEquipoService,
+    public actionService: SolicitudActionService,
+    public rolProyectoService: RolProyectoService,
     public readonly: boolean
   ) {
     super(key);
@@ -22,6 +26,19 @@ export class SolicitudEquipoProyectoFragment extends Fragment {
   protected onInitialize(): void {
     const id = this.getKey() as number;
     if (id) {
+      this.solicitudService.existSolicitanteInSolicitudProyectoEquipo(id).subscribe(result => {
+        if (!result) {
+          this.rolProyectoService.findPrincipal().subscribe(rol => {
+            const solictudProyectoEquipo = {
+              solicitudProyectoId: id,
+              rolProyecto: rol,
+              persona: this.actionService.solicitante
+            } as ISolicitudProyectoEquipo;
+            this.addProyectoEquipo(solictudProyectoEquipo);
+          });
+        }
+      });
+
       const subscription = this.solicitudService.findAllSolicitudProyectoEquipo(id).pipe(
         map(result => result.items.map(solicitudProyectoEquipo =>
           new StatusWrapper<ISolicitudProyectoEquipo>(solicitudProyectoEquipo)
@@ -77,8 +94,11 @@ export class SolicitudEquipoProyectoFragment extends Fragment {
     ).pipe(
       map((peridosJustificacionActualizados) => {
         this.proyectoEquipos$.next(
-          peridosJustificacionActualizados
-            .map(solicitudProyectoEquipo => new StatusWrapper<ISolicitudProyectoEquipo>(solicitudProyectoEquipo)));
+          peridosJustificacionActualizados.map((solicitudProyectoEquipo) => {
+            solicitudProyectoEquipo.persona = solicitudProyectoEquipos.find(
+              equipo => equipo.persona.id === solicitudProyectoEquipo.persona.id).persona;
+            return new StatusWrapper<ISolicitudProyectoEquipo>(solicitudProyectoEquipo);
+          }));
       }),
       tap(() => {
         if (this.isSaveOrUpdateComplete()) {

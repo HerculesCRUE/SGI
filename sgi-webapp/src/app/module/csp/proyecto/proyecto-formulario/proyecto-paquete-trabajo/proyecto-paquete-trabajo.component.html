@@ -1,68 +1,72 @@
-<section class="proyecto-paquete-trabajo">
-  <h2>{{'menu.csp.proyectos.configuracion-paquetes-trabajo' | translate}} -
-    {{'menu.csp.proyectos.paquetes-trabajo' | translate}}</h2>
+<sgi-fragment title="{{'menu.csp.proyectos.configuracion-paquetes-trabajo' | translate}} -
+    {{'menu.csp.proyectos.paquetes-trabajo' | translate}}">
 
-  <table class="mat-elevation-z8 table-acta" mat-table [dataSource]="dataSource" matSort matSortActive="id"
-    matSortDirection="asc" matSortDisableClear>
+  <div class="mat-elevation-z4">
+    <table mat-table [dataSource]="dataSource" matSort matSortActive="id" matSortDirection="asc" matSortDisableClear>
 
-    <!-- Nombre Column -->
-    <ng-container matColumnDef="nombre">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'csp.proyecto-paquete-trabajo.nombre' | translate}} </th>
-      <td mat-cell *matCellDef="let wrapper"> {{wrapper.value.nombre}} </td>
-    </ng-container>
+      <!-- Nombre Column -->
+      <ng-container matColumnDef="nombre">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'csp.proyecto-paquete-trabajo.nombre' | translate}}
+        </th>
+        <td mat-cell *matCellDef="let wrapper"> {{wrapper.value.nombre}} </td>
+      </ng-container>
 
-    <!-- Fecha inicio Column -->
-    <ng-container matColumnDef="fechaInicio">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'csp.proyecto-paquete-trabajo.fecha-inicio' | translate}}
-      </th>
-      <td mat-cell *matCellDef="let wrapper"> {{wrapper.value.fechaInicio | luxon:'short'}} </td>
-    </ng-container>
+      <!-- Fecha inicio Column -->
+      <ng-container matColumnDef="fechaInicio">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'csp.proyecto-paquete-trabajo.fecha-inicio' |
+          translate}}
+        </th>
+        <td mat-cell *matCellDef="let wrapper"> {{wrapper.value.fechaInicio | luxon:'shortDate'}} </td>
+      </ng-container>
 
-    <!-- Fecha fin Column -->
-    <ng-container matColumnDef="fechaFin">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'csp.proyecto-paquete-trabajo.fecha-fin' | translate}}
-      </th>
-      <td mat-cell *matCellDef="let wrapper"> {{wrapper.value.fechaFin | luxon:'short'}} </td>
-    </ng-container>
+      <!-- Fecha fin Column -->
+      <ng-container matColumnDef="fechaFin">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'csp.proyecto-paquete-trabajo.fecha-fin' | translate}}
+        </th>
+        <td mat-cell *matCellDef="let wrapper"> {{wrapper.value.fechaFin | luxon:'shortDate'}} </td>
+      </ng-container>
 
-    <!-- Personas/mes Column -->
-    <ng-container matColumnDef="personaMes">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'csp.proyecto-paquete-trabajo.persona-mes' | translate}}
-      </th>
-      <td mat-cell *matCellDef="let wrapper"> {{wrapper.value.personaMes}} </td>
-    </ng-container>
+      <!-- Personas/mes Column -->
+      <ng-container matColumnDef="personaMes">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'csp.proyecto-paquete-trabajo.persona-mes' |
+          translate}}
+        </th>
+        <td mat-cell *matCellDef="let wrapper"> {{wrapper.value.personaMes}} </td>
+      </ng-container>
 
-    <!-- Descripcion Column -->
-    <ng-container matColumnDef="descripcion">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'csp.proyecto-paquete-trabajo.descripcion' | translate}}
-      </th>
-      <td mat-cell *matCellDef="let wrapper"> {{wrapper.value.descripcion}} </td>
-    </ng-container>
+      <!-- Descripcion Column -->
+      <ng-container matColumnDef="descripcion">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'csp.proyecto-paquete-trabajo.descripcion' |
+          translate}}
+        </th>
+        <td mat-cell *matCellDef="let wrapper"> {{wrapper.value.descripcion}} </td>
+      </ng-container>
 
-    <!-- Acciones Column -->
-    <ng-container matColumnDef="acciones">
-      <th mat-header-cell *matHeaderCellDef> {{'label.actions' | translate}} </th>
-      <td mat-cell *matCellDef="let wrapper">
-        <ng-container *sgiHasAuthorityForAnyUO="'CSP-PRO-E'">
-          <button mat-button matTooltip="{{'btn.edit' | translate}}" *ngIf="!actionService.readonly"
-            (click)="openModal(wrapper)">
-            <mat-icon color="primary">border_color</mat-icon>
-          </button>
-        </ng-container>
-        <ng-container *sgiHasAuthorityForAnyUO="'CSP-PRO-E'">
-          <button mat-button matTooltip="{{'btn.delete' | translate}}" (click)="deletePaqueteTrabajo(wrapper)">
-            <mat-icon color="warn">highlight_off</mat-icon>
-          </button>
-        </ng-container>
-      </td>
-    </ng-container>
-    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+      <!-- Acciones Column -->
+      <ng-container matColumnDef="acciones">
+        <th mat-header-cell *matHeaderCellDef> {{'label.actions' | translate}} </th>
+        <td mat-cell *matCellDef="let wrapper">
+          <ng-container *sgiHasAuthorityForAnyUO="'CSP-PRO-E'">
+            <button mat-button matTooltip="{{'btn.edit' | translate}}" *ngIf="!actionService.readonly"
+              (click)="openModal(wrapper)">
+              <mat-icon color="primary">border_color</mat-icon>
+            </button>
+          </ng-container>
+          <ng-container *sgiHasAuthorityForAnyUO="'CSP-PRO-E'">
+            <button mat-button matTooltip="{{'btn.delete' | translate}}" (click)="deletePaqueteTrabajo(wrapper)">
+              <mat-icon color="warn">highlight_off</mat-icon>
+            </button>
+          </ng-container>
+        </td>
+      </ng-container>
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
 
-  </table>
+    </table>
 
-  <mat-paginator [pageSizeOptions]="elementosPagina" showFirstLastButtons>
-  </mat-paginator>
+    <mat-paginator [pageSizeOptions]="elementosPagina" showFirstLastButtons>
+    </mat-paginator>
+  </div>
 
   <ng-container *sgiHasAuthorityForAnyUO="'CSP-PRO-E'">
     <div class="separation-button">
@@ -73,4 +77,4 @@
       </button>
     </div>
   </ng-container>
-</section>
+</sgi-fragment>

@@ -1,0 +1,36 @@
+[
+  {
+    "key": "ap4_5_3",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "expressionLock": "formState.memoria.tipoMemoria.id === 3",
+      "label": "4.5.3 No discriminación por motivos genéticos"
+    },
+    "hideExpression": "!formState.mainModel.ap4_5.estudiosGeneticosRadio || formState.mainModel.ap4_5.estudiosGeneticosRadio === 'no'",
+    "fieldGroup": [
+      {
+        "template": "<p>Especificar las medidas previstas para evitar la discriminación o el daño que pudieran derivarse de los resultados de los estudios genéticos</p>"
+      },
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "<p>El <a href='http://www.boe.es/buscar/act.php?id=BOE-A-2007-12945&p=20110602&tn=1#a45' target='_blank'>Artículo 45</a> de la <a href='http://www.boe.es/buscar/act.php?id=BOE-A-2007-12945&p=20110602&tn=2' target='_blank'>LIB 14/2007</a> establece los siguientes principios para los anális genéticos:</p><ul><li>Accesibilidad y equidad</li><li>Protección de datos</li><li>Gratuidad</li><li>Consentimiento</li><li>Calidad de los datos</li></ul><p>A lo que hay que añadir lo establecido en los artículos <a href='http://www.boe.es/buscar/act.php?id=BOE-A-2007-12945&p=20110602&tn=1#a9' target='_blank'>9</a> y <a href='http://www.boe.es/buscar/act.php?id=BOE-A-2007-12945&p=20110602&tn=1#a6' target='_blank'>6</a>.</p><ul><li>Los análisis genéticos se llevarán a cabo con criterios de pertinencia, calidad, equidad y accesibilidad</li><li>No discriminación</li></ul>"
+      },
+      {
+        "key": "noDiscriminacionMotivosGeneticos",
+        "type": "textarea",
+        "templateOptions": {
+          "label": "Medidas",
+          "placeholder": "Medidas",
+          "required": true,
+          "autosize": true,
+          "autosizeMinRows": "1",
+          "autosizeMaxRows": "10"
+        }
+      }
+    ]
+  }
+]

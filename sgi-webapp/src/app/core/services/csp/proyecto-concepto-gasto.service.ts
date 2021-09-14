@@ -75,5 +75,4 @@ export class ProyectoConceptoGastoService
       map(response => response.status === 200)
     );
   }
-
 }

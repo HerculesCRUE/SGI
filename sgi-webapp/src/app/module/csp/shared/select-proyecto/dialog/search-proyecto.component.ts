@@ -18,7 +18,7 @@ import { tap } from 'rxjs/operators';
 export class SearchProyectoModalComponent implements OnInit, AfterViewInit, OnDestroy {
   formGroup: FormGroup;
   displayedColumns = ['titulo', 'acronimo', 'codigoExterno', 'fechaInicio',
-    'fechaFin', 'fechaFinDefinitiva', 'modeloEjecucion'];
+    'fechaFin', 'fechaFinDefinitiva', 'modeloEjecucion', 'acciones'];
   elementosPagina = [5, 10, 25, 100];
   totalElementos = 0;
   @ViewChild(MatSort, { static: true }) private sort: MatSort;
@@ -111,5 +111,9 @@ export class SearchProyectoModalComponent implements OnInit, AfterViewInit, OnDe
       .and('convocatoria.id', SgiRestFilterOperator.EQUALS, controls.convocatoria.value?.id?.toString())
       .and('entidadesFinanciadoras.id', SgiRestFilterOperator.EQUALS, controls.entidadFinanciadora.value?.id?.toString());
     return filter;
+  }
+
+  closeModal(proyecto?: IProyecto): void {
+    this.dialogRef.close(proyecto);
   }
 }

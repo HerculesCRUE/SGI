@@ -15,14 +15,18 @@ export class ProyectoSociosFragment extends Fragment {
     key: number,
     private empresaService: EmpresaService,
     private proyectoService: ProyectoService,
-    private proyectoSocioService: ProyectoSocioService
+    private proyectoSocioService: ProyectoSocioService,
+    public hasAnyProyectoSocioWithRolCoordinador$: BehaviorSubject<boolean>,
+    public hasProyectoCoordinadoAndCoordinadorExterno$: BehaviorSubject<boolean>
   ) {
     super(key);
     this.setComplete(true);
   }
 
   protected onInitialize(): void {
+
     const id = this.getKey() as number;
+
     if (id) {
       const subscription = this.proyectoService.findAllProyectoSocioProyecto(id)
         .pipe(

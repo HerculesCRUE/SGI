@@ -33,11 +33,14 @@ export interface IPartidaPresupuestariaListado {
   codigo: string;
   descripcion: string;
   tipoPartida: TipoPartida;
+  canEdit: boolean;
 }
 
 export class ProyectoPartidasPresupuestariasFragment extends Fragment {
   partidasPresupuestarias$ = new BehaviorSubject<IPartidaPresupuestariaListado[]>([]);
   private partidasPresupuestariasEliminadas: IPartidaPresupuestariaListado[] = [];
+
+  mapModificable: Map<number, boolean> = new Map();
 
   constructor(
     key: number,
@@ -101,8 +104,27 @@ export class ProyectoPartidasPresupuestariasFragment extends Fragment {
             }
             return requestConvocatoriaPartidaPresupuestaria;
           }),
+          switchMap((partidasPresupuestarias) => {
+            if (partidasPresupuestarias) {
+              partidasPresupuestarias.forEach(partida => {
+                if (!this.readonly) {
+                  if (partida.partidaPresupuestaria) {
+                    this.subscriptions.push(this.proyectoPartidaService.modificable(partida.partidaPresupuestaria.value.id).subscribe((value) => {
+                      this.mapModificable.set(partida.partidaPresupuestaria.value.id, value);
+                    }));
+                  }
+                } else {
+                  this.mapModificable.set(partida.partidaPresupuestaria?.value.id, false);
+                }
+              });
+            }
+            return of(partidasPresupuestarias);
+          })
         ).subscribe((response) => {
           response.forEach(element => this.fillListadoFields(element));
+          response.map(partida => {
+            this.checkCanEditPartida(partida);
+          });
           this.partidasPresupuestarias$.next(response);
         }));
     }
@@ -321,6 +343,13 @@ export class ProyectoPartidasPresupuestariasFragment extends Fragment {
         tooltip: PARTIDA_PRESUPUESTARIA_NO_PROYECTO_KEY
       };
     }
+  }
+
+  private checkCanEditPartida(partida: IPartidaPresupuestariaListado): void {
+    this.subscriptions.push(
+      this.proyectoPartidaService.hasAnyAnualidadAssociated(partida.partidaPresupuestaria?.value.id)
+        .subscribe((hasAnualidades: boolean) => partida.canEdit = !hasAnualidades)
+    );
   }
 
 }

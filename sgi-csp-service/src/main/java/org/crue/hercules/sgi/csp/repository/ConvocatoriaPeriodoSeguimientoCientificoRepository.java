@@ -5,11 +5,13 @@ import java.util.List;
 import org.crue.hercules.sgi.csp.model.Convocatoria;
 import org.crue.hercules.sgi.csp.model.ConvocatoriaEntidadGestora;
 import org.crue.hercules.sgi.csp.model.ConvocatoriaPeriodoSeguimientoCientifico;
+import org.crue.hercules.sgi.csp.repository.custom.CustomConvocatoriaPeriodoSeguimientoCientificoRepository;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
 public interface ConvocatoriaPeriodoSeguimientoCientificoRepository
-    extends JpaRepository<ConvocatoriaPeriodoSeguimientoCientifico, Long>,
+    extends CustomConvocatoriaPeriodoSeguimientoCientificoRepository,
+    JpaRepository<ConvocatoriaPeriodoSeguimientoCientifico, Long>,
     JpaSpecificationExecutor<ConvocatoriaPeriodoSeguimientoCientifico> {
 
   /**

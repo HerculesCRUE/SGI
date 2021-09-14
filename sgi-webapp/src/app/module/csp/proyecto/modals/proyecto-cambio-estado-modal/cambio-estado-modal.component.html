@@ -24,8 +24,11 @@
       <div>
         <mat-form-field>
           <mat-label>{{'csp.proyecto.cambio-estado.nuevo' | translate}}</mat-label>
-          <sgi-select-enum formControlName="estadoNuevo" [enumMap]="estadosNuevos">
+          <sgi-select-enum formControlName="estadoNuevo" [enumMap]="estadosNuevos" required>
           </sgi-select-enum>
+          <mat-error *ngIf="formGroup.get('estadoNuevo').errors?.required">
+            {{'error.required.entity' | translate:msgParamNuevoEstadoEntity}}
+          </mat-error>
         </mat-form-field>
       </div>
     </div>

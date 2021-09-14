@@ -37,30 +37,62 @@ public class RequisitoEquipoRepositoryTest {
         .activo(Boolean.TRUE)
         .build());
     // @formatter:on
-    RequisitoEquipo requisitoEquipo1 = entityManager.persistAndFlush(new RequisitoEquipo(null, convocatoria1.getId(),
-        "na-001", 4, 48, 6, false, "mc-001", 2, 10, 10, 15, 15, "otros"));
+
+    // @formatter:off
+    RequisitoEquipo requisitoEquipo1 = entityManager.persistAndFlush(RequisitoEquipo.builder()
+        .id(convocatoria1.getId())
+        .fechaMinimaNivelAcademico(null)
+        .fechaMaximaNivelAcademico(null)
+        .edadMaxima(48)
+        .ratioSexo(6)
+        .sexoRef("sexo-ref")
+        .vinculacionUniversidad(false)
+        .fechaMinimaCategoriaProfesional(null)
+        .fechaMaximaCategoriaProfesional(null)
+        .numMinimoCompetitivos(10)
+        .numMinimoNoCompetitivos(10)
+        .numMaximoCompetitivosActivos(15)
+        .numMaximoNoCompetitivosActivos(15)
+        .otrosRequisitos("otros")
+        .build());
+    // @formatter:on
 
     // @formatter:on
     Convocatoria convocatoria2 = entityManager.persistAndFlush(
         Convocatoria.builder().estado(Convocatoria.Estado.BORRADOR).codigo("codigo-2").unidadGestionRef("2")
             .fechaPublicacion(Instant.parse("2021-08-01T00:00:00Z")).titulo("titulo").activo(Boolean.TRUE).build());
     // @formatter:on
-    entityManager.persistAndFlush(new RequisitoEquipo(null, convocatoria2.getId(), "na-001", 4, 48, 6, false, "mc-001",
-        2, 10, 10, 15, 15, "otros"));
+
+    // @formatter:off
+    entityManager.persistAndFlush(RequisitoEquipo.builder()
+        .id(convocatoria2.getId())
+        .fechaMinimaNivelAcademico(null)
+        .fechaMaximaNivelAcademico(null)
+        .edadMaxima(48)
+        .ratioSexo(6)
+        .sexoRef("sexo-ref")
+        .vinculacionUniversidad(false)
+        .fechaMinimaCategoriaProfesional(null)
+        .fechaMaximaCategoriaProfesional(null)
+        .numMinimoCompetitivos(10)
+        .numMinimoNoCompetitivos(10)
+        .numMaximoCompetitivosActivos(15)
+        .numMaximoNoCompetitivosActivos(15)
+        .otrosRequisitos("otros")
+        .build());
+    // @formatter:on
 
     Long convocatoriaIdBuscada = convocatoria1.getId();
 
     // when: se busca el RequisitoEquipopor idConvocatoria
-    RequisitoEquipo requisitoEquipoEncontrado = repository.findByConvocatoriaId(convocatoriaIdBuscada).get();
+    RequisitoEquipo requisitoEquipoEncontrado = repository.findById(convocatoriaIdBuscada).get();
 
     // then: Se recupera el RequisitoEquipo con el idConvocatoria buscado
     Assertions.assertThat(requisitoEquipoEncontrado.getId()).as("getId").isNotNull();
-    Assertions.assertThat(requisitoEquipoEncontrado.getRatioMujeres()).as("getRatioMujeres")
-        .isEqualTo(requisitoEquipo1.getRatioMujeres());
+    Assertions.assertThat(requisitoEquipoEncontrado.getRatioSexo()).as("getRatioSexo")
+        .isEqualTo(requisitoEquipo1.getRatioSexo());
     Assertions.assertThat(requisitoEquipoEncontrado.getEdadMaxima()).as("getEdadMaxima")
         .isEqualTo(requisitoEquipo1.getEdadMaxima());
-    Assertions.assertThat(requisitoEquipoEncontrado.getModalidadContratoRef()).as("getModalidadContratoRef")
-        .isEqualTo(requisitoEquipo1.getModalidadContratoRef());
   }
 
   @Test
@@ -78,8 +110,24 @@ public class RequisitoEquipoRepositoryTest {
         .build());
     // @formatter:on
 
-    entityManager.persistAndFlush(new RequisitoEquipo(null, convocatoria1.getId(), "na-001", 4, 48, 6, false, "mc-001",
-        2, 10, 10, 15, 15, "otros"));
+    // @formatter:off
+    entityManager.persistAndFlush(RequisitoEquipo.builder()
+        .id(convocatoria1.getId())
+        .fechaMinimaNivelAcademico(null)
+        .fechaMaximaNivelAcademico(null)
+        .edadMaxima(48)
+        .ratioSexo(6)
+        .sexoRef("sexo-ref")
+        .vinculacionUniversidad(false)
+        .fechaMinimaCategoriaProfesional(null)
+        .fechaMaximaCategoriaProfesional(null)
+        .numMinimoCompetitivos(10)
+        .numMinimoNoCompetitivos(10)
+        .numMaximoCompetitivosActivos(15)
+        .numMaximoNoCompetitivosActivos(15)
+        .otrosRequisitos("otros")
+        .build());
+    // @formatter:on
 
     // @formatter:off
     Convocatoria convocatoria2 = entityManager.persistAndFlush(Convocatoria.builder()
@@ -91,13 +139,29 @@ public class RequisitoEquipoRepositoryTest {
         .activo(Boolean.TRUE)
         .build());
     // @formatter:on
-    entityManager.persistAndFlush(new RequisitoEquipo(null, convocatoria2.getId(), "na-001", 4, 48, 6, false, "mc-001",
-        2, 10, 10, 15, 15, "otros"));
+    // @formatter:off
+    entityManager.persistAndFlush(RequisitoEquipo.builder()
+        .id(convocatoria2.getId())
+        .fechaMinimaNivelAcademico(null)
+        .fechaMaximaNivelAcademico(null)
+        .edadMaxima(48)
+        .ratioSexo(6)
+        .sexoRef("sexo-ref")
+        .vinculacionUniversidad(false)
+        .fechaMinimaCategoriaProfesional(null)
+        .fechaMaximaCategoriaProfesional(null)
+        .numMinimoCompetitivos(10)
+        .numMinimoNoCompetitivos(10)
+        .numMaximoCompetitivosActivos(15)
+        .numMaximoNoCompetitivosActivos(15)
+        .otrosRequisitos("otros")
+        .build());
+    // @formatter:on
 
     Long convocatoriaIdBuscada = 99999L;
 
     // when: se busca el RequisitoEquipo por idConvocatoria
-    Optional<RequisitoEquipo> requisitoEquipoEncontrado = repository.findByConvocatoriaId(convocatoriaIdBuscada);
+    Optional<RequisitoEquipo> requisitoEquipoEncontrado = repository.findById(convocatoriaIdBuscada);
 
     // then: Se recupera el RequisitoEquipo con el idConvocatoria buscado
     Assertions.assertThat(requisitoEquipoEncontrado).isEqualTo(Optional.empty());

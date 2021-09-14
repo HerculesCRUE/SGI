@@ -1,0 +1,26 @@
+<div class="sgi-dialog-header" fxLayout="row" fxLayoutGap="20px">
+  <span fxFlexAlign="center" mat-mat-dialog-title role="heading" aria-level="3" fxFlex>{{title}}</span>
+  <button fxFlex="nogrow" mat-icon-button mat-dialog-close>
+    <mat-icon class="close-icon">close</mat-icon>
+  </button>
+</div>
+<mat-dialog-content>
+  <form [formGroup]="formGroup">
+    <div>
+      <mat-form-field>
+        <mat-label>{{tableCRUDOneElementModalData.label}}</mat-label>
+        <input matInput formControlName="item" type="text" [placeholder]="tableCRUDOneElementModalData.placeholder"
+          required>
+        <mat-error *ngIf="formGroup.controls.item.errors?.required">
+          {{tableCRUDOneElementModalData.requiredMessage?tableCRUDOneElementModalData.requiredMessage: msgRequired}}
+        </mat-error>
+      </mat-form-field>
+    </div>
+  </form>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <button color="accent" (click)="saveOrUpdate()" mat-raised-button type="submit">
+    <mat-icon class="save-icon">save</mat-icon>{{'btn.add' | translate}}
+  </button>
+  <button class="link-cancelar" mat-button type="button" mat-dialog-close>{{'btn.cancel' | translate}}</button>
+</mat-dialog-actions>

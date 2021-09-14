@@ -1,16 +1,17 @@
 import { Component, Inject, OnInit } from '@angular/core';
-import { FormControl, FormGroup } from '@angular/forms';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { BaseModalComponent } from '@core/component/base-modal.component';
 import { MSG_PARAMS } from '@core/i18n';
-import { IConceptoGasto } from '@core/models/csp/tipos-configuracion';
+import { IConceptoGasto } from '@core/models/csp/concepto-gasto';
 import { SnackBarService } from '@core/services/snack-bar.service';
 import { TranslateService } from '@ngx-translate/core';
 import { switchMap } from 'rxjs/operators';
 
 const CONCEPTO_GASTO_KEY = marker('csp.concepto-gasto');
 const CONCEPTO_GASTO_NOMBRE_KEY = marker('csp.concepto-gasto.nombre');
+const CONCEPTO_GASTO_COSTES_INDIRECTOS = marker('label.costes-indirectos');
 const TITLE_NEW_ENTITY = marker('title.new.entity');
 const MSG_ANADIR = marker('btn.add');
 const MSG_ACEPTAR = marker('btn.ok');
@@ -24,7 +25,9 @@ export class ConceptoGastoModalComponent extends
   BaseModalComponent<IConceptoGasto, ConceptoGastoModalComponent> implements OnInit {
 
   msgParamNombreEntity = {};
+  msgParamCostesIndirectos = {};
   title: string;
+  textoToolTip: string;
   textSaveOrUpdate: string;
 
   constructor(
@@ -48,6 +51,7 @@ export class ConceptoGastoModalComponent extends
     this.formGroup = new FormGroup({
       nombre: new FormControl(this.conceptoGasto?.nombre),
       descripcion: new FormControl(this.conceptoGasto?.descripcion),
+      costesIndirectos: new FormControl(this.conceptoGasto?.costesIndirectos, Validators.required)
     });
   }
 
@@ -56,6 +60,10 @@ export class ConceptoGastoModalComponent extends
       CONCEPTO_GASTO_NOMBRE_KEY,
       MSG_PARAMS.CARDINALIRY.SINGULAR
     ).subscribe((value) => this.msgParamNombreEntity = { entity: value, ...MSG_PARAMS.GENDER.MALE, ...MSG_PARAMS.CARDINALIRY.SINGULAR });
+
+    this.translate.get(
+      CONCEPTO_GASTO_COSTES_INDIRECTOS,
+    ).subscribe((value) => this.msgParamCostesIndirectos = { entity: value, ...MSG_PARAMS.GENDER.MALE, ...MSG_PARAMS.CARDINALIRY.PLURAL });
 
     if (this.conceptoGasto.nombre) {
       this.translate.get(
@@ -85,13 +93,15 @@ export class ConceptoGastoModalComponent extends
     const conceptoGasto = this.conceptoGasto;
     conceptoGasto.nombre = this.formGroup.get('nombre').value;
     conceptoGasto.descripcion = this.formGroup.get('descripcion').value;
+    conceptoGasto.costesIndirectos = this.formGroup.get('costesIndirectos').value;
     return conceptoGasto;
   }
 
   protected getFormGroup(): FormGroup {
     return new FormGroup({
       nombre: new FormControl(this.conceptoGasto?.nombre),
-      descripcion: new FormControl(this.conceptoGasto?.descripcion)
+      descripcion: new FormControl(this.conceptoGasto?.descripcion),
+      costesIndirectos: new FormControl({ value: this.conceptoGasto?.costesIndirectos, disabled: true }, Validators.required)
     });
   }
 

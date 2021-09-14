@@ -83,11 +83,6 @@ public class SolicitudModalidadServiceImpl implements SolicitudModalidadService 
     Assert.isTrue(convocatoriaEntidadConvocante.isPresent(),
         "No existe ninguna ConvocatoriaEntidadConvocante con el entidadRef para la convocatoria seleccionada");
 
-    // Comprobar que la modalidad seleccionada no es el nodo raiz del arbol
-    Assert.isTrue(
-        !solicitudModalidad.getPrograma().getId().equals(convocatoriaEntidadConvocante.get().getPrograma().getId()),
-        "La modalidad seleccionada es el nodo raiz del arbol");
-
     Assert.isTrue(
         isModalidadDescencientePrograma(solicitudModalidad.getPrograma(),
             convocatoriaEntidadConvocante.get().getPrograma()),

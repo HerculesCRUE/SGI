@@ -18,70 +18,112 @@
 }
 
 @import "colors.scss";
+@import "typography.scss";
 
 // Define the palettes for your theme using the Material Design palettes available in palette.scss
 // (imported above). For each palette, you can optionally specify a default, lighter, and darker
 // hue. Available color palettes: https://material.io/design/color/
-$sgi-primary: mat-palette($palette-primary);
-$sgi-accent: mat-palette($palette-accent);
 
-// The warn palette is optional (defaults to red).
-$sgi-warn: mat-palette($palette-warn);
+// Definimos los colores primarios, secundarios y de aviso, con sus variantes light y dark
+$sgi-primary: mat-palette($palette-primary, $primary-color, $primary-light-color, $primary-dark-color);
+$sgi-accent: mat-palette($palette-accent, $accent-color, $accent-light-color, $accent-dark-color);
+$sgi-warn: mat-palette($palette-warn, $warn-color, $warn-light-color, $warn-dark-color);
 
 // Foreground palette for light themes.
+// Cambia las propiedades color, background o background-color
 $sgi-foreground: (
-  base: mat-color($sgi-primary, 500),
+  // Se utiliza en mat-ripple, mat-checkbox, mat-chip, mat-form-field,mat-slide, mat-slide-toggle, mat-radio (ripple)
+  base: black,
+  // Se utiliza como border en mat-button, button-toggle, datepicker, divider, expansion, sidenav, stepper, table (header --> border-bottom-color), tabs ((header --> border-bottom)
   divider: $dark-dividers,
+  // No he encontrado referencias a este campo
   dividers: $dark-dividers,
+  // Se utiliza en mat-radio (border-color) y mat-slide-toggle-bar (background-color)
   disabled: $dark-disabled-text,
+  // Se utiliza en mat-badge-disabled (background), mat-button-disabled, mat-button-toggle-disabled y mat-expansion-panel-header(color)
   disabled-button: rgba(black, 0.26),
+  // Se utiliza en mat-badge-disabled, mat-date-range-input-inner[disabled], mat-form-field-disabled, mat-select-disabled .mat-select-value, mat-tab-disabled, mat-calendar-body-disabled  (color)
   disabled-text: $dark-disabled-text,
+  // Color de sombra, se utiliza en la mayoría de componentes
   elevation: black,
+  // Se utiliza en mat-button-toggle (color), mat-optgroup-disabled .mat-optgroup-label (color), mat-option-disabled, mat-calendar-table-header, mat-calendar-body-today, mat-calendar-body-disabled
   hint-text: $dark-disabled-text,
+  // Se utiliza como color en múltiples componentes
   secondary-text: $dark-secondary-text,
-  icon: mat-color($sgi-primary, 500),
-  icons: mat-color($sgi-primary, 500),
+  // Se utiliza en mat-calendar-arrow (border-top-color), mat-datepicker-content (color)
+  icon: rgba(black, 0.54),
+  // No he encontrado referencias a este campo
+  icons: rgba(black, 0.54),
+  // Se utiliza como color en múltiples componentes
   text: rgba(black, 0.87),
+  // Se utiliza en mat-slider
   slider-min: rgba(black, 0.87),
+  // Se utiliza en mat-slider
   slider-off: rgba(black, 0.26),
-  slider-off-active: rgba(black, 0.38),
+  // Se utiliza en mat-slider
+  slider-off-active: rgba(black, 0.38)
 );
 
 // Background palette for light themes.
+// Cambia las propiedades background o background-color
 $sgi-background: (
-  status-bar: black,
-  app-bar: map_get($sgi-primary, 500),
+  // No he encontrado referencias a este campo
+  status-bar: map-get($palette-grey, 300),
+  // Solo se utiliza en mat-toolbar
+  app-bar: map-get($palette-grey, 100),
+  // Se utiliza en múltiples componentes
+  // Por defecto map-get($mat-grey, 50),
   background: white,
-  hover: rgba(white, 0.04),
-  // TODO(kara): check style with Material Design UX
-    card: white,
+  // Se utiliza en map-option, map-list, mat-menu-item:hover, mat-select-panel
+  hover: rgba(black, 0.04),
+  // Se utiliza en múltiples componentes
+  card: white,
+  // Se utiliza en dialog, botton-sheet y sidenav (mat-drawer y mat-drawer-container)
   dialog: white,
-  disabled-button: rgba(map-get($palette-grease, 600), 0.12),
-  raised-button: map-get($sgi-accent, 200),
-  focused-button: $light-focused,
-  selected-button: map_get($sgi-accent, 200),
-  selected-disabled-button: map_get($sgi-accent, 200),
-  disabled-button-toggle: black,
-  unselected-chip: map_get($sgi-accent, 100),
-  disabled-list-option: black,
-  tooltip: map-get($palette-grease, 600),
+  // Se utiliza en mat-badge, mat-button-disabled, mat-button-toggle-disabled y mat-expansion-panel-header[aria-disabled='true'])
+  disabled-button: rgba(black, 0.12),
+  // Se utiliza en mat-flat-button, .mat-raised-button, .mat-fab, .mat-mini-fab
+  raised-button: white,
+  // Se utiliza en mat-button-toggle
+  focused-button: $dark-focused,
+  // Se utiliza en mat-button-toggle-checked
+  selected-button: map-get($palette-grey, 300),
+  // Se utiliza en mat-button-toggle-checked
+  selected-disabled-button: map-get($palette-grey, 400),
+  // Se utiliza en mat-button-toggle-disabled
+  disabled-button-toggle: map-get($palette-grey, 200),
+  // Se utiliza en mat-chip.mat-standard-chip
+  unselected-chip: map-get($palette-grey, 300),
+  // Se utiliza en mat-list-item-disabled
+  disabled-list-option: map-get($palette-grey, 200),
+  // Se utiliza en mat-tooltip
+  tooltip: map-get($palette-grey, 700)
 );
 
 // Create the theme object (a Sass map containing all of the palettes).
+// $sgi-theme: mat-custom-light-theme($sgi-primary, $sgi-accent, $sgi-warn);
 $sgi-theme: mat-custom-light-theme($sgi-primary, $sgi-accent, $sgi-warn, $sgi-foreground, $sgi-background);
 
-// Create map-merge global three color variable
+// Se añade paleta de grises modificada por valores necesarios del mockup
 $sgi-theme: map-merge(
   $sgi-theme,
   (
-    palette-grease: $palette-grease,
+    palette-grease: $palette-grey,
   )
 );
 
-// Create map-merge global color custom variables
+// Se añade paleta de colores personalizados donde no se pueda obtener correspondencia de las paletas primary, accent, warn y grey
 $sgi-theme: map-merge(
   $sgi-theme,
   (
-    custom-colors: $custom-colors,
+    sgi-custom-colors: $sgi-custom-colors,
+  )
+);
+
+// Se añade tamaños de letra personalizados donde no se pueda obtener correspondencia con custom-typography
+$sgi-theme: map-merge(
+  $sgi-theme,
+  (
+    sgi-typography-size: $sgi-typography-size,
   )
 );

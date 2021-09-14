@@ -108,19 +108,23 @@ export class ProyectoPartidasPresupuestariasComponent extends FragmentComponent 
    * @param idEquipo Identificador de equipo a editar.
    */
   openModal(proyectoPartida: StatusWrapper<IProyectoPartida>, convocatoriaPartida?: IConvocatoriaPartidaPresupuestaria,
-    rowIndex?: number): void {
+    rowIndex?: number, canEdit?: boolean): void {
+
+    // Necesario para sincronizar los cambios de orden de registros dependiendo de la ordenación y paginación
+    this.dataSource.sortData(this.dataSource.filteredData, this.dataSource.sort);
+    const row = (this.paginator.pageSize * this.paginator.pageIndex) + rowIndex;
 
     const proyectoPartidaPresupuestariaTabla = this.dataSource.data
       .filter(partidaPresupuestaria => partidaPresupuestaria.partidaPresupuestaria)
       .map(partidaPresupuestaria => partidaPresupuestaria.partidaPresupuestaria.value);
 
-    proyectoPartidaPresupuestariaTabla.splice(rowIndex, 1);
+    proyectoPartidaPresupuestariaTabla.splice(row, 1);
     const data: PartidaPresupuestariaModalComponentData = {
       partidaPresupuestaria: proyectoPartida?.value ?? {} as IProyectoPartida,
       partidasPresupuestarias: proyectoPartidaPresupuestariaTabla,
       convocatoriaPartidaPresupuestaria: convocatoriaPartida,
       readonly: this.formPart.readonly,
-      canEdit: !this.formPart.readonly
+      canEdit: canEdit ?? true
     };
 
     const config = {
@@ -134,7 +138,7 @@ export class ProyectoPartidasPresupuestariasComponent extends FragmentComponent 
           this.formPart.addPartidaPresupuestaria(partidaPresupuestaria, convocatoriaPartida);
         } else {
           const wrapperUpdated = new StatusWrapper<IProyectoPartida>(partidaPresupuestaria);
-          this.formPart.updatePartidaPresupuestaria(wrapperUpdated, rowIndex);
+          this.formPart.updatePartidaPresupuestaria(wrapperUpdated, row);
         }
       }
     });

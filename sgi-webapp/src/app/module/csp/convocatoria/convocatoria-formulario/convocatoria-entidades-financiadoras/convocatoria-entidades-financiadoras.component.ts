@@ -137,7 +137,7 @@ export class ConvocatoriaEntidadesFinanciadorasComponent extends FragmentCompone
       title: wrapper ? this.textoTitleModal : this.textoTitleModalNew,
       entidad: wrapper ? wrapper.value : {} as IConvocatoriaEntidadFinanciadora,
       selectedEmpresas: this.selectedEmpresas,
-      readonly: this.formPart.readonly
+      readonly: this.formPart.isConvocatoriaVinculada
     };
     const config = {
       panelClass: 'sgi-dialog-container',

@@ -31,6 +31,7 @@ import org.crue.hercules.sgi.csp.model.TipoHito;
 import org.crue.hercules.sgi.csp.service.EstadoProyectoService;
 import org.crue.hercules.sgi.csp.service.ProrrogaDocumentoService;
 import org.crue.hercules.sgi.csp.service.ProyectoAnualidadService;
+import org.crue.hercules.sgi.csp.service.ProyectoAgrupacionGastoService;
 import org.crue.hercules.sgi.csp.service.ProyectoAreaConocimientoService;
 import org.crue.hercules.sgi.csp.service.ProyectoClasificacionService;
 import org.crue.hercules.sgi.csp.service.ProyectoConceptoGastoService;
@@ -42,6 +43,7 @@ import org.crue.hercules.sgi.csp.service.ProyectoFaseService;
 import org.crue.hercules.sgi.csp.service.ProyectoHitoService;
 import org.crue.hercules.sgi.csp.service.ProyectoPaqueteTrabajoService;
 import org.crue.hercules.sgi.csp.service.ProyectoPartidaService;
+import org.crue.hercules.sgi.csp.service.ProyectoPeriodoJustificacionService;
 import org.crue.hercules.sgi.csp.service.ProyectoPeriodoSeguimientoDocumentoService;
 import org.crue.hercules.sgi.csp.service.ProyectoPeriodoSeguimientoService;
 import org.crue.hercules.sgi.csp.service.ProyectoProrrogaService;
@@ -132,6 +134,12 @@ public class ProyectoControllerTest extends BaseControllerTest {
 
   @MockBean
   private ProyectoResponsableEconomicoService proyectoResponsableEconomicoService;
+
+  @MockBean
+  private ProyectoAgrupacionGastoService proyectoAgrupacionGastoService;
+
+  @MockBean
+  private ProyectoPeriodoJustificacionService proyectoPeriodoJustificacionService;
 
   private static final String PATH_PARAMETER_ID = "/{id}";
   private static final String PATH_PARAMETER_DESACTIVAR = "/desactivar";
@@ -1273,7 +1281,6 @@ public class ProyectoControllerTest extends BaseControllerTest {
     proyecto.setAmbitoGeografico(tipoAmbitoGeografico);
     proyecto.setConfidencial(Boolean.FALSE);
     proyecto.setActivo(true);
-    proyecto.setFechaBase(Instant.now());
 
     if (id != null) {
       proyecto.setEstado(estadoProyecto);

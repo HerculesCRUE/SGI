@@ -1,0 +1,8 @@
+{
+  "ap4_1_2": {
+    "valoracionRiesgosMolestiasCheck": [
+      "riesgoSuperior"
+    ],
+    "riesgoSuperiorTexto": "Justificación riesgo superior al mínimo"
+  }
+}

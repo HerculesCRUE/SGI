@@ -34,12 +34,13 @@ export class ComiteService extends SgiReadOnlyRestService<number, IComite> {
 
   /**
    * Recupera la lista paginada de las  memorias en función del comité recibido.
-   * @param id Identificador del comité.
+   * @param idComite Identificador del comité.
+   * @param idPeticionEvaluacion Identificador de la petición de evaluación.
    * @param options Opciones de búsqueda.
    */
-  findMemorias(id: number, options?: SgiRestFindOptions): Observable<SgiRestListResult<IMemoria>> {
+  findMemoriasComitePeticionEvaluacion(idComite: number, idPeticionEvaluacion: number, options?: SgiRestFindOptions): Observable<SgiRestListResult<IMemoria>> {
     return this.find<IMemoriaBackend, IMemoria>(
-      `${this.endpointUrl}/${id}/memorias`,
+      `${this.endpointUrl}/${idComite}/memorias-peticion-evaluacion/${idPeticionEvaluacion}`,
       options,
       MEMORIA_CONVERTER
     );

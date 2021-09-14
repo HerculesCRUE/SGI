@@ -13,6 +13,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
+import org.crue.hercules.sgi.pii.enums.TipoPropiedad;
 import org.crue.hercules.sgi.pii.model.TipoProteccion.OnActivar;
 import org.crue.hercules.sgi.pii.model.TipoProteccion.OnActualizar;
 import org.crue.hercules.sgi.pii.model.TipoProteccion.OnCrear;
@@ -38,14 +39,6 @@ public class TipoProteccion extends BaseActivableEntity {
 
   public static final int NOMBRE_LENGTH = 50;
   public static final int DESCRIPCION_LENGTH = 250;
-
-  /** Estados de los Tipos de Propiedad */
-  public enum TipoPropiedad {
-    /** Propiedad Industrial */
-    INDUSTRIAL,
-    /** Propiedad Intelectual */
-    INTELECTUAL
-  }
 
   /** Id */
   @Id

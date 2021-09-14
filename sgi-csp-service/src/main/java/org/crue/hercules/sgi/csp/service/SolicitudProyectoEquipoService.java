@@ -34,6 +34,16 @@ public interface SolicitudProyectoEquipoService {
   Page<SolicitudProyectoEquipo> findAllBySolicitud(Long solicitudId, String query, Pageable pageable);
 
   /**
+   * Comprueba si existe la SolicitudProyectoEquipo con el solicitante de la
+   * solicitud.
+   * 
+   * @param solicitudId id de la solicitud.
+   * 
+   * @return true si existe false si no existe.
+   */
+  boolean existsSolicitanteInSolicitudProyectoEquipo(Long solicitudId);
+
+  /**
    * Actualiza la lista de {@link SolicitudProyectoEquipo} del
    * {@link SolicitudProyecto}, elimina los que no están en la lista actual pero
    * tienen el mismo solicitudProyectoId , añade los que no tienen id y actualiza

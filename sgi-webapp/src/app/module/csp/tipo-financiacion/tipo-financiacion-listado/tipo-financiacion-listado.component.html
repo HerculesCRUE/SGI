@@ -1,42 +1,42 @@
-<div class="scrollable-panel">
-  <section class="tipo-financiacion-listado">
-    <!-- Buscador de tipos de financiacion -->
-    <form class="formulario mat-elevation-z8" [formGroup]=" formGroup" [fxLayout.xs]="fxLayoutProperties.xs"
-      [fxLayout]="fxLayoutProperties.layout" [fxLayoutGap]="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
+<sgi-menu-content>
+  <!-- Buscador de tipos de financiacion -->
+  <form class="formulario mat-elevation-z8" [formGroup]=" formGroup" [fxLayout.xs]="fxLayoutProperties.xs"
+    [fxLayout]="fxLayoutProperties.layout" [fxLayoutGap]="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
 
-      <div fxFlex="84%" fxFlex.sm="50%" fxFlex.md="72%" [fxLayout.xs]="fxLayoutProperties.xs"
-        [fxLayout]="fxLayoutProperties.layout" fxLayoutGap="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
-        <!-- Activo -->
-        <ng-container *sgiHasAuthority="'CSP-TFNA-R'">
-          <div class="col">
-            <mat-form-field>
-              <mat-label>{{'label.activo' | translate}}</mat-label>
-              <mat-select matNativeControl formControlName="activo">
-                <mat-option value="todos">{{'label.todos' | translate}}</mat-option>
-                <mat-option value="true">{{'label.si' | translate}}</mat-option>
-                <mat-option value="false">{{'label.no' | translate}}</mat-option>
-              </mat-select>
-            </mat-form-field>
-          </div>
-        </ng-container>
-      </div>
-
-      <div class="buttons-final">
-        <div class="col filter-button">
-          <button color="primary" aria-label="Center Align" mat-raised-button (click)="onSearch()">
-            <mat-icon>search</mat-icon> {{'btn.search'| translate}}
-          </button>
-          <button color="warn" aria-label="Center Align" (click)="onClearFilters()" mat-button>{{'btn.clean'|
-            translate}}
-          </button>
+    <div fxFlex="84%" fxFlex.sm="50%" fxFlex.md="72%" [fxLayout.xs]="fxLayoutProperties.xs"
+      [fxLayout]="fxLayoutProperties.layout" fxLayoutGap="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
+      <!-- Activo -->
+      <ng-container *sgiHasAuthority="'CSP-TFNA-R'">
+        <div class="col">
+          <mat-form-field>
+            <mat-label>{{'label.activo' | translate}}</mat-label>
+            <mat-select matNativeControl formControlName="activo">
+              <mat-option value="todos">{{'label.todos' | translate}}</mat-option>
+              <mat-option value="true">{{'label.si' | translate}}</mat-option>
+              <mat-option value="false">{{'label.no' | translate}}</mat-option>
+            </mat-select>
+          </mat-form-field>
         </div>
-      </div>
-    </form>
-    <!-- FIN Buscador de tipos de finalidad -->
+      </ng-container>
+    </div>
 
-    <!-- Listado de tipos de finalidad -->
-    <table mat-table class="mat-elevation-z8 table-unidad" [dataSource]="tipoFinanciaciones$ | async" matSort
-      matSortActive="id" matSortDirection="asc" matSortDisableClear>
+    <div class="buttons-final">
+      <div class="col filter-button">
+        <button color="primary" aria-label="Center Align" mat-raised-button (click)="onSearch()">
+          <mat-icon>search</mat-icon> {{'btn.search'| translate}}
+        </button>
+        <button color="warn" aria-label="Center Align" (click)="onClearFilters()" mat-button>{{'btn.clean'|
+          translate}}
+        </button>
+      </div>
+    </div>
+  </form>
+  <!-- FIN Buscador de tipos de financiacion -->
+
+  <!-- Listado de tipos de financiacion -->
+  <div class="mat-elevation-z4">
+    <table mat-table [dataSource]="tipoFinanciaciones$ | async" matSort matSortActive="id" matSortDirection="asc"
+      matSortDisableClear>
       <!-- Nombre -->
       <ng-container matColumnDef="nombre">
         <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'csp.tipo-financiacion.nombre' | translate}}
@@ -71,7 +71,7 @@
             </button>
           </ng-container>
           <ng-container *sgiHasAuthority="'CSP-TFNA-B'">
-            <button *ngIf="tipoFinanciacion.activo === true" mat-button matTooltip="{{'btn.edit' | translate}}"
+            <button *ngIf="tipoFinanciacion.activo === true" mat-button matTooltip="{{'btn.delete' | translate}}"
               (click)="deactivateTipoFinanciacion(tipoFinanciacion)">
               <mat-icon color="warn">highlight_off</mat-icon>
             </button>
@@ -90,13 +90,13 @@
     </table>
     <mat-paginator [pageSizeOptions]="elementosPagina" [length]="totalElementos" showFirstLastButtons>
     </mat-paginator>
-    <ng-container *sgiHasAuthority="'CSP-TFNA-C'">
-      <div class="separation-button">
-        <button color="three" aria-label="Center Align" mat-raised-button (click)="openModal()">
-          <mat-icon color="accent">add_circle</mat-icon>
-          {{ 'btn.add.entity' | translate:msgParamEntity }}
-        </button>
-      </div>
-    </ng-container>
-  </section>
-</div>
+  </div>
+  <ng-container *sgiHasAuthority="'CSP-TFNA-C'">
+    <div class="separation-button">
+      <button color="three" aria-label="Center Align" mat-raised-button (click)="openModal()">
+        <mat-icon color="accent">add_circle</mat-icon>
+        {{ 'btn.add.entity' | translate:msgParamEntity }}
+      </button>
+    </div>
+  </ng-container>
+</sgi-menu-content>

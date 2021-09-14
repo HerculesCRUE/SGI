@@ -146,7 +146,7 @@ export class ConvocatoriaSeguimientoCientificoModalComponent
         disabled: true
       }),
       desdeMes: new FormControl(this.data.convocatoriaSeguimientoCientifico?.mesInicial, [Validators.required, Validators.min(1)]),
-      hastaMes: new FormControl(this.data.convocatoriaSeguimientoCientifico?.mesFinal, [Validators.required, Validators.min(2)]),
+      hastaMes: new FormControl(this.data.convocatoriaSeguimientoCientifico?.mesFinal, [Validators.required, Validators.min(1)]),
       fechaInicio: new FormControl(this.data.convocatoriaSeguimientoCientifico?.fechaInicioPresentacion, []),
       fechaFin: new FormControl(this.data.convocatoriaSeguimientoCientifico?.fechaFinPresentacion, []),
       tipoSeguimiento: new FormControl(this.data.convocatoriaSeguimientoCientifico?.tipoSeguimiento, [Validators.required]),
@@ -154,7 +154,7 @@ export class ConvocatoriaSeguimientoCientificoModalComponent
     }, {
       validators: [
         this.isFinalUltimoPeriodo(ultimoseguimientoCientificoNoFinal?.value.mesFinal),
-        NumberValidator.isAfter('desdeMes', 'hastaMes'),
+        NumberValidator.isAfterOrEqual('desdeMes', 'hastaMes'),
         RangeValidator.notOverlaps('desdeMes', 'hastaMes', rangosPeriodosExistentes),
         DateValidator.isAfter('fechaInicio', 'fechaFin')]
     });
@@ -166,6 +166,46 @@ export class ConvocatoriaSeguimientoCientificoModalComponent
         formGroup.get('hastaMes').validator
       ]);
     }
+
+    // Si es el primer periodo este ha de comenzar en el mes 1
+    // Si no es es el primero, deberá ser siempre consecutivo al anterior periodo de justificación
+    const desdeMesControl = formGroup.get('desdeMes');
+    const hastaMesControl = formGroup.get('hastaMes');
+    this.subscriptions.push(desdeMesControl.valueChanges.subscribe(value => {
+      if (this.data.convocatoriaSeguimientoCientificoList.length === 0
+        || this.data.convocatoriaSeguimientoCientificoList[0].value.mesInicial !== 1) {
+        if (value && value > 1) {
+          desdeMesControl.setErrors({ initial: true });
+          desdeMesControl.markAsTouched({ onlySelf: true });
+        } else if (desdeMesControl.errors) {
+          delete desdeMesControl.errors.initial;
+          desdeMesControl.updateValueAndValidity({ onlySelf: true, emitEvent: false });
+        }
+      } else {
+        if (value && (
+          (this.data.convocatoriaSeguimientoCientifico.numPeriodo > 1
+            && value !== this.data.convocatoriaSeguimientoCientificoList[
+              this.data.convocatoriaSeguimientoCientifico.numPeriodo - 2].value.mesFinal + 1)
+          || ((this.data.convocatoriaSeguimientoCientifico.numPeriodo < 1
+            || this.data.convocatoriaSeguimientoCientifico.numPeriodo == null)
+            && value !== this.data.convocatoriaSeguimientoCientificoList[
+              this.data.convocatoriaSeguimientoCientificoList.length - 1].value.mesFinal + 1)
+        )) {
+          desdeMesControl.setErrors({ wrongOrder: true });
+          desdeMesControl.markAsTouched({ onlySelf: true });
+        } else if (desdeMesControl.errors) {
+          delete desdeMesControl.errors.wrongOrder;
+          desdeMesControl.updateValueAndValidity({ onlySelf: true, emitEvent: false });
+        }
+      }
+      if (value && value > hastaMesControl.value) {
+        hastaMesControl.setErrors({ afterOrEqual: true });
+        hastaMesControl.markAsTouched({ onlySelf: true });
+      } else if (hastaMesControl.errors) {
+        delete hastaMesControl.errors.afterOrEqual;
+        hastaMesControl.updateValueAndValidity({ onlySelf: true, emitEvent: false });
+      }
+    }));
 
     // Si ya existe un periodo final tiene que ser el ultimo y solo puede haber uno
     if (periodoSeguimientoFinal) {

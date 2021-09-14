@@ -126,6 +126,7 @@ public class SolicitudControllerTest extends BaseControllerTest {
       Solicitud newSolicitud = new Solicitud();
       BeanUtils.copyProperties(invocation.getArgument(0), newSolicitud);
       newSolicitud.setId(1L);
+      newSolicitud.setTitulo("titulo");
       return newSolicitud;
     });
 
@@ -138,6 +139,7 @@ public class SolicitudControllerTest extends BaseControllerTest {
         // then: new Solicitud is created
         .andExpect(MockMvcResultMatchers.status().isCreated())
         .andExpect(MockMvcResultMatchers.jsonPath("id").isNotEmpty())
+        .andExpect(MockMvcResultMatchers.jsonPath("titulo").isNotEmpty())
         .andExpect(MockMvcResultMatchers.jsonPath("codigoRegistroInterno").isNotEmpty())
         .andExpect(MockMvcResultMatchers.jsonPath("estado.id").isNotEmpty())
         .andExpect(MockMvcResultMatchers.jsonPath("convocatoriaId").value(solicitud.getConvocatoriaId()))
@@ -185,6 +187,7 @@ public class SolicitudControllerTest extends BaseControllerTest {
         // then: Solicitud is updated
         .andExpect(MockMvcResultMatchers.status().isOk())
         .andExpect(MockMvcResultMatchers.jsonPath("id").value(solicitudExistente.getId()))
+        .andExpect(MockMvcResultMatchers.jsonPath("titulo").value(solicitudExistente.getTitulo()))
         .andExpect(MockMvcResultMatchers.jsonPath("codigoRegistroInterno")
             .value(solicitudExistente.getCodigoRegistroInterno()))
         .andExpect(MockMvcResultMatchers.jsonPath("estado.id").value(solicitudExistente.getEstado().getId()))
@@ -862,7 +865,6 @@ public class SolicitudControllerTest extends BaseControllerTest {
         .andExpect(MockMvcResultMatchers.status().isOk())
         // and the requested Solicitud is resturned as JSON object
         .andExpect(MockMvcResultMatchers.jsonPath("id").value(1L))
-        .andExpect(MockMvcResultMatchers.jsonPath("titulo").value("titulo-1"))
         .andExpect(MockMvcResultMatchers.jsonPath("colaborativo").value(Boolean.TRUE))
         .andExpect(MockMvcResultMatchers.jsonPath("tipoPresupuesto").value(TipoPresupuesto.GLOBAL.toString()));
   }
@@ -1194,6 +1196,7 @@ public class SolicitudControllerTest extends BaseControllerTest {
 
     Solicitud solicitud = new Solicitud();
     solicitud.setId(id);
+    solicitud.setTitulo("titulo");
     solicitud.setCodigoExterno(null);
     solicitud.setConvocatoriaId(1L);
     solicitud.setSolicitanteRef("usr-002");
@@ -1293,8 +1296,8 @@ public class SolicitudControllerTest extends BaseControllerTest {
   private SolicitudProyecto generarSolicitudProyecto(Long solicitudProyectoId, Long solicitudId) {
 
     SolicitudProyecto solicitudProyecto = SolicitudProyecto.builder().id(solicitudProyectoId)
-        .titulo("titulo-" + solicitudProyectoId).acronimo("acronimo-" + solicitudProyectoId).colaborativo(Boolean.TRUE)
-        .tipoPresupuesto(TipoPresupuesto.GLOBAL).build();
+        .acronimo("acronimo-" + solicitudProyectoId).colaborativo(Boolean.TRUE).tipoPresupuesto(TipoPresupuesto.GLOBAL)
+        .build();
 
     return solicitudProyecto;
   }
@@ -1346,7 +1349,7 @@ public class SolicitudControllerTest extends BaseControllerTest {
         .entidadRef("entidad-" + (id == null ? 0 : String.format("%03d", id)))
         .fuenteFinanciacion(fuenteFinanciacion)
         .tipoFinanciacion(tipoFinanciacion)
-        .porcentajeFinanciacion(50)
+        .porcentajeFinanciacion(BigDecimal.valueOf(50))
         .build();
     // @formatter:on
 

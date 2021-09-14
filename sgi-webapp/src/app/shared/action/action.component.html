@@ -5,7 +5,8 @@
     </mat-list>
     <mat-list *ngIf="actionService?.getActionLinks().length" class="links">
       <sgi-action-fragment-link-item *ngFor="let action of actionService?.getActionLinks()"
-        [title]="action.title | translate:action.titleParams" [route]="action.routerLink">
+        [title]="action.title | translate:action.titleParams" [route]="action.routerLink"
+        [queryParams]="action.queryParams">
       </sgi-action-fragment-link-item>
     </mat-list>
   </mat-drawer>

@@ -30,6 +30,7 @@ public class SolicitudProyectoSocioEquipoRepositoryTest extends BaseRepositoryTe
     // @formatter:off
     Solicitud solicitud1 = entityManager.persistAndFlush(Solicitud.builder()
         .creadorRef("user-001")
+        .titulo("titulo")
         .solicitanteRef("user-002")
         .unidadGestionRef("1")
         .formularioSolicitud(FormularioSolicitud.AYUDAS_GRUPOS)
@@ -37,8 +38,8 @@ public class SolicitudProyectoSocioEquipoRepositoryTest extends BaseRepositoryTe
         .build());
     // @formatter:on
     SolicitudProyecto solicitudProyecto = entityManager.persistAndFlush(
-        new SolicitudProyecto(solicitud1.getId(), "solicitud1", null, null, null, Boolean.TRUE, Boolean.TRUE, null,
-            null, null, null, null, null, TipoPresupuesto.GLOBAL, null, null, null, null, null, null));
+        new SolicitudProyecto(solicitud1.getId(), null, null, null, Boolean.TRUE, Boolean.TRUE, Boolean.FALSE, null,
+            null, null, null, null, null, TipoPresupuesto.GLOBAL, null, null, null, null, null, null, null, null));
 
     // @formatter:off
     RolSocio rolSocio = RolSocio.builder()

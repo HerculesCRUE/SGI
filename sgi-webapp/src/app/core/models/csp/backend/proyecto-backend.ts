@@ -39,6 +39,8 @@ export interface IProyectoBackend {
   clasificacionCVN: ClasificacionCVN;
   /** convocatoriaExterna */
   convocatoriaExterna: string;
+  /** coordinado */
+  coordinado: boolean;
   /** colaborativo */
   colaborativo: boolean;
   /** coordinadorExterno */
@@ -65,12 +67,14 @@ export interface IProyectoBackend {
   activo: boolean;
   /** Tipo de seguimiento */
   tipoSeguimiento: TipoSeguimiento;
-  /** Fecha Base */
-  fechaBase: string;
   /** Importe presupuesto */
   importePresupuesto: number;
+  /** Importe presupuesto Costes Indirectos */
+  importePresupuestoCostesIndirectos: number;
   /** Importe concedido */
   importeConcedido: number;
+  /** Importe concedido Costes Indirectos */
+  importeConcedidoCostesIndirectos: number;
   /** Importe presupuesto socios */
   importePresupuestoSocios: number;
   /** Importe concedido socios */

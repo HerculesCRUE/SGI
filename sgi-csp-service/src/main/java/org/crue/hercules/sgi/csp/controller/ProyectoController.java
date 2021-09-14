@@ -5,14 +5,17 @@ import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
+import org.crue.hercules.sgi.csp.dto.ProyectoAgrupacionGastoOutput;
 import org.crue.hercules.sgi.csp.dto.ProyectoAnualidadOutput;
 import org.crue.hercules.sgi.csp.dto.ProyectoAnualidadResumen;
 import org.crue.hercules.sgi.csp.dto.ProyectoPresupuestoTotales;
 import org.crue.hercules.sgi.csp.dto.ProyectoResponsableEconomicoOutput;
+import org.crue.hercules.sgi.csp.model.AnualidadGasto;
 import org.crue.hercules.sgi.csp.model.Convocatoria;
 import org.crue.hercules.sgi.csp.model.ConvocatoriaConceptoGasto;
 import org.crue.hercules.sgi.csp.model.EstadoProyecto;
 import org.crue.hercules.sgi.csp.model.Proyecto;
+import org.crue.hercules.sgi.csp.model.ProyectoAgrupacionGasto;
 import org.crue.hercules.sgi.csp.model.ProyectoAreaConocimiento;
 import org.crue.hercules.sgi.csp.model.ProyectoClasificacion;
 import org.crue.hercules.sgi.csp.model.ProyectoConceptoGasto;
@@ -24,6 +27,7 @@ import org.crue.hercules.sgi.csp.model.ProyectoFase;
 import org.crue.hercules.sgi.csp.model.ProyectoHito;
 import org.crue.hercules.sgi.csp.model.ProyectoPaqueteTrabajo;
 import org.crue.hercules.sgi.csp.model.ProyectoPartida;
+import org.crue.hercules.sgi.csp.model.ProyectoPeriodoJustificacion;
 import org.crue.hercules.sgi.csp.model.ProyectoPeriodoSeguimiento;
 import org.crue.hercules.sgi.csp.model.ProyectoProrroga;
 import org.crue.hercules.sgi.csp.model.ProyectoProyectoSge;
@@ -32,6 +36,7 @@ import org.crue.hercules.sgi.csp.model.ProyectoSocio;
 import org.crue.hercules.sgi.csp.model.Solicitud;
 import org.crue.hercules.sgi.csp.service.EstadoProyectoService;
 import org.crue.hercules.sgi.csp.service.ProrrogaDocumentoService;
+import org.crue.hercules.sgi.csp.service.ProyectoAgrupacionGastoService;
 import org.crue.hercules.sgi.csp.service.ProyectoAnualidadService;
 import org.crue.hercules.sgi.csp.service.ProyectoAreaConocimientoService;
 import org.crue.hercules.sgi.csp.service.ProyectoClasificacionService;
@@ -44,6 +49,7 @@ import org.crue.hercules.sgi.csp.service.ProyectoFaseService;
 import org.crue.hercules.sgi.csp.service.ProyectoHitoService;
 import org.crue.hercules.sgi.csp.service.ProyectoPaqueteTrabajoService;
 import org.crue.hercules.sgi.csp.service.ProyectoPartidaService;
+import org.crue.hercules.sgi.csp.service.ProyectoPeriodoJustificacionService;
 import org.crue.hercules.sgi.csp.service.ProyectoPeriodoSeguimientoDocumentoService;
 import org.crue.hercules.sgi.csp.service.ProyectoPeriodoSeguimientoService;
 import org.crue.hercules.sgi.csp.service.ProyectoProrrogaService;
@@ -146,12 +152,17 @@ public class ProyectoController {
 
   /** ProyectoPartidaService service */
   private final ProyectoPartidaService proyectoPartidaService;
+  /** ProyectoAgrupacionGasto Service */
+  private final ProyectoAgrupacionGastoService proyectoAgrupacionGastoService;
 
   /** ProyectoConceptoGasto service */
   private final ProyectoConceptoGastoService proyectoConceptoGastoService;
 
   /** ProyectoResponsableEconomicoService */
   private final ProyectoResponsableEconomicoService proyectoResponsableEconomicoService;
+
+  /** ProyectoPeriodoJustificacionService */
+  private final ProyectoPeriodoJustificacionService proyectoPeriodoJustificacionService;
 
   /**
    * Instancia un nuevo ProyectoController.
@@ -180,6 +191,8 @@ public class ProyectoController {
    * @param proyectoPartidaService                            {@link ProyectoPartidaService}.
    * @param proyectoConceptoGastoService                      {@link ProyectoConceptoGastoService}.
    * @param proyectoResponsableEconomicoService               {@link ProyectoResponsableEconomicoService}.
+   * @param proyectoAgrupacionGastoService                    {@link ProyectoAgrupacionGastoService}.
+   * @param proyectoPeriodoJustificacionService               {@link ProyectoPeriodoJustificacionService}.
    */
   public ProyectoController(ModelMapper modelMapper, ProyectoService proyectoService,
       ProyectoHitoService proyectoHitoService, ProyectoFaseService proyectoFaseService,
@@ -195,7 +208,9 @@ public class ProyectoController {
       ProyectoAreaConocimientoService proyectoAreaConocimientoService,
       ProyectoProyectoSgeService proyectoProyectoSgeService, ProyectoPartidaService proyectoPartidaService,
       ProyectoConceptoGastoService proyectoConceptoGastoService, ProyectoAnualidadService proyectoAnualidadService,
-      ProyectoResponsableEconomicoService proyectoResponsableEconomicoService) {
+      ProyectoResponsableEconomicoService proyectoResponsableEconomicoService,
+      ProyectoAgrupacionGastoService proyectoAgrupacionGastoService,
+      ProyectoPeriodoJustificacionService proyectoPeriodoJustificacionService) {
     this.modelMapper = modelMapper;
     this.service = proyectoService;
     this.proyectoHitoService = proyectoHitoService;
@@ -219,6 +234,8 @@ public class ProyectoController {
     this.proyectoPartidaService = proyectoPartidaService;
     this.proyectoConceptoGastoService = proyectoConceptoGastoService;
     this.proyectoResponsableEconomicoService = proyectoResponsableEconomicoService;
+    this.proyectoAgrupacionGastoService = proyectoAgrupacionGastoService;
+    this.proyectoPeriodoJustificacionService = proyectoPeriodoJustificacionService;
   }
 
   /**
@@ -293,7 +310,7 @@ public class ProyectoController {
    * @return Proyecto {@link Proyecto} correspondiente al id
    */
   @GetMapping("/{id}")
-  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-PRO-V', 'CSP-PRO-E')")
+  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-PRO-V', 'CSP-PRO-E', 'CSP-PRO-MOD-V')")
   Proyecto findById(@PathVariable Long id) {
     log.debug("Proyecto findById(Long id) - start");
 
@@ -312,7 +329,7 @@ public class ProyectoController {
    *         filtradas.
    */
   @GetMapping()
-  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-PRO-V', 'CSP-PRO-C', 'CSP-PRO-E', 'CSP-PRO-B')")
+  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-PRO-V', 'CSP-PRO-C', 'CSP-PRO-E', 'CSP-PRO-B', 'CSP-PRO-MOD-V')")
   ResponseEntity<Page<Proyecto>> findAll(@RequestParam(name = "q", required = false) String query,
       @RequestPageable(sort = "s") Pageable paging) {
     log.debug("findAll(String query, Pageable paging) - start");
@@ -831,7 +848,7 @@ public class ProyectoController {
    * @param query  filtro de búsqueda.
    * @param paging pageable.
    */
-  @GetMapping("/{id}/proyectos-sge")
+  @GetMapping("/{id}/proyectossge")
   @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-PRO-V','CSP-PRO-E')")
   ResponseEntity<Page<ProyectoProyectoSge>> findAllProyectoProyectosSge(@PathVariable Long id,
       @RequestParam(name = "q", required = false) String query, @RequestPageable(sort = "s") Pageable paging) {
@@ -867,6 +884,29 @@ public class ProyectoController {
     }
 
     log.debug("findAllProyectoAnualidadResumen(Long id, String query, Pageable paging) - end");
+    return new ResponseEntity<>(page, HttpStatus.OK);
+  }
+
+  /**
+   * Devuelve una lista paginada de {@link AnualidadGasto}
+   * 
+   * @param id     Identificador de {@link Proyecto}.
+   * @param query  filtro de búsqueda.
+   * @param paging pageable.
+   */
+  @GetMapping("/{id}/anualidadesgasto")
+  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-PRO-V','CSP-PRO-E')")
+  ResponseEntity<Page<AnualidadGasto>> findAllProyectoAnualidadGasto(@PathVariable Long id,
+      @RequestPageable(sort = "s") Pageable paging) {
+    log.debug("findAllProyectoAnualidadGasto(Long id, String query, Pageable paging) - start");
+    Page<AnualidadGasto> page = proyectoAnualidadService.findAllProyectoAnualidadGasto(id, paging);
+
+    if (page.isEmpty()) {
+      log.debug("findAllProyectoAnualidadGasto(Long id, String query, Pageable paging) - end");
+      return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    log.debug("findAllProyectoAnualidadGasto(Long id, String query, Pageable paging) - end");
     return new ResponseEntity<>(page, HttpStatus.OK);
   }
 
@@ -1000,6 +1040,90 @@ public class ProyectoController {
     return new ResponseEntity<>(convert(page), HttpStatus.OK);
   }
 
+  /**
+   * Devuelve una lista de {@link ProyectoAgrupacionGastoOutput} con una
+   * {@link Proyecto} con id indicado.
+   * 
+   * @param id Identificador de {@link Proyecto}.
+   * @return Lista de {@link ProyectoAgrupacionGastoOutput} correspondiente al id
+   */
+
+  @GetMapping("/{id}/proyectoagrupaciongasto")
+  ResponseEntity<Page<ProyectoAgrupacionGastoOutput>> findAllProyectoAgrupacionGastoByProyectoId(@PathVariable Long id,
+      @RequestParam(name = "q", required = false) String query, @RequestPageable(sort = "s") Pageable paging) {
+    log.debug("findAllProyectoAgrupacionGastoByProyectoId(Long id, String query, Pageable paging) - start");
+    Page<ProyectoAgrupacionGastoOutput> page = convertProyectoAgrupacionGastoOutput(
+        proyectoAgrupacionGastoService.findAllByProyectoId(id, query, paging));
+
+    if (page.isEmpty()) {
+      log.debug("findAllProyectoAgrupacionGastoByProyectoId(Long id, String query, Pageable paging) - end");
+      return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    log.debug("findAllProyectoAgrupacionGastoByProyectoId(Long id, String query, Pageable paging) - end");
+    return new ResponseEntity<>(page, HttpStatus.OK);
+  }
+
+  /**
+   * Devuelve una lista paginada de todos los
+   * {@link ProyectoPeriodoJustificacion}.
+   * 
+   * @param query  filtro de búsqueda.
+   * @param paging pageable.
+   */
+  @GetMapping("/{id}/proyectoperiodojustificacion")
+  @PreAuthorize("hasAuthorityForAnyUO('CSP-PRO-E')")
+  ResponseEntity<Page<ProyectoPeriodoJustificacion>> findAllPeriodoJustificacionByProyectoId(@PathVariable Long id,
+      @RequestParam(name = "q", required = false) String query, @RequestPageable(sort = "s") Pageable paging) {
+    log.debug("findAllPeriodoJustificacionByProyectoId(Long id, String query, Pageable paging) - start");
+    Page<ProyectoPeriodoJustificacion> page = proyectoPeriodoJustificacionService.findAllByProyectoId(id, query,
+        paging);
+
+    if (page.isEmpty()) {
+      log.debug("findAllPeriodoJustificacionByProyectoId(Long id, String query, Pageable paging) - end");
+      return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    log.debug("findAllPeriodoJustificacionByProyectoId(Long id, String query, Pageable paging) - end");
+    return new ResponseEntity<>(page, HttpStatus.OK);
+  }
+
+  @RequestMapping(path = "/{proyectoId}/proyectosocios", method = RequestMethod.HEAD)
+  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-SOL-E', 'CSP-SOL-V')")
+  public ResponseEntity<Object> hasAnyProyectoSocio(@PathVariable(required = true) Long proyectoId) {
+
+    return this.proyectoSocioService.hasAnyProyectoSocioWithProyectoId(proyectoId) ? ResponseEntity.ok().build()
+        : ResponseEntity.noContent().build();
+  }
+
+  @RequestMapping(path = "/{proyectoId}/proyectosocios/coordinador", method = RequestMethod.HEAD)
+  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-SOL-E', 'CSP-SOL-V')")
+  public ResponseEntity<Object> hasAnyProyectoSocioWithRolCoordinador(@PathVariable(required = true) Long proyectoId) {
+
+    return this.proyectoSocioService.hasAnyProyectoSocioWithRolCoordinador(proyectoId) ? ResponseEntity.ok().build()
+        : ResponseEntity.noContent().build();
+  }
+
+  @RequestMapping(path = "/{proyectoId}/proyectosocios/periodospago", method = RequestMethod.HEAD)
+  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-SOL-E', 'CSP-SOL-V')")
+  public ResponseEntity<Object> existsProyectoSocioPeriodoPagoByProyectoSocioId(
+      @PathVariable(required = true) Long proyectoId) {
+
+    return this.proyectoSocioService.existsProyectoSocioPeriodoPagoByProyectoSocioId(proyectoId)
+        ? ResponseEntity.ok().build()
+        : ResponseEntity.noContent().build();
+  }
+
+  @RequestMapping(path = "/{proyectoId}/proyectosocios/periodosjustificacion", method = RequestMethod.HEAD)
+  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-SOL-E', 'CSP-SOL-V')")
+  public ResponseEntity<Object> existsProyectoSocioPeriodoJustificacionByProyectoSocioId(
+      @PathVariable(required = true) Long proyectoId) {
+
+    return this.proyectoSocioService.existsProyectoSocioPeriodoJustificacionByProyectoSocioId(proyectoId)
+        ? ResponseEntity.ok().build()
+        : ResponseEntity.noContent().build();
+  }
+
   private ProyectoResponsableEconomicoOutput convert(ProyectoResponsableEconomico responsableEconomico) {
     return modelMapper.map(responsableEconomico, ProyectoResponsableEconomicoOutput.class);
   }
@@ -1009,6 +1133,76 @@ public class ProyectoController {
         .map((responsableEconomico) -> convert(responsableEconomico)).collect(Collectors.toList());
 
     return new PageImpl<>(content, page.getPageable(), page.getTotalElements());
+
+  }
+
+  private ProyectoAgrupacionGastoOutput convertProyectoAgrupacionGastoOutput(
+      ProyectoAgrupacionGasto proyectoAgrupacionGasto) {
+    return modelMapper.map(proyectoAgrupacionGasto, ProyectoAgrupacionGastoOutput.class);
+  }
+
+  private Page<ProyectoAgrupacionGastoOutput> convertProyectoAgrupacionGastoOutput(Page<ProyectoAgrupacionGasto> page) {
+    List<ProyectoAgrupacionGastoOutput> content = page.getContent().stream()
+        .map((proyectoAgrupacionGasto) -> convertProyectoAgrupacionGastoOutput(proyectoAgrupacionGasto))
+        .collect(Collectors.toList());
+
+    return new PageImpl<>(content, page.getPageable(), page.getTotalElements());
+
+  }
+
+  /**
+   * Hace las comprobaciones necesarias para determinar si el {@link Proyecto}
+   * puede ser modificada.
+   * 
+   * @param id Id del {@link Proyecto}.
+   * @return HTTP-200 Si se permite modificación / HTTP-204 Si no se permite
+   *         modificación
+   */
+  @RequestMapping(path = "/{id}/modificable", method = RequestMethod.HEAD)
+  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-PRO-E', 'CSP-PRO-V')")
+  ResponseEntity<Convocatoria> modificable(@PathVariable Long id) {
+    log.debug("modificable(Long id) - start");
+    boolean returnValue = service.modificable(id, new String[] { "CSP-PRO-E", "CSP-PRO-V" });
+    log.debug("modificable(Long id) - end");
+    return returnValue ? new ResponseEntity<>(HttpStatus.OK) : new ResponseEntity<>(HttpStatus.NO_CONTENT);
+  }
+
+  /**
+   * Comprueba si existen datos vinculados a {@link Proyecto} de
+   * {@link ProyectoFase}
+   *
+   * @param id Id del {@link Proyecto}.
+   * @return HTTP 200 si existe y HTTP 204 si no.
+   */
+  @RequestMapping(path = "/{id}/proyectossge", method = RequestMethod.HEAD)
+  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-PRO-V', 'CSP-PRO-E')")
+  ResponseEntity<Proyecto> hasProyectosSge(@PathVariable Long id) {
+    log.debug("hasProyectosSge(Long id) - start");
+    boolean returnValue = proyectoProyectoSgeService.existsByProyecto(id);
+    log.debug("hasProyectosSge(Long id) - end");
+    return returnValue ? new ResponseEntity<>(HttpStatus.OK) : new ResponseEntity<>(HttpStatus.NO_CONTENT);
+  }
+
+  /**
+   * Obtiene los ids de {@link Proyecto} que cumplan las condiciones indicadas en
+   * el filtro de búsqueda
+   * 
+   * @param query filtro de búsqueda.
+   * @return lista de ids de {@link Proyecto}.
+   */
+  @GetMapping("/modificados-ids")
+  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-PRO-V')")
+  ResponseEntity<List<Long>> findIds(@RequestParam(name = "q", required = false) String query) {
+    log.debug("findIds(String query) - start");
+
+    List<Long> returnValue = service.findIds(query);
+
+    if (returnValue.isEmpty()) {
+      log.debug("findIds(String query) - end");
+      return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+    log.debug("findIds(String query) - end");
+    return new ResponseEntity<>(returnValue, HttpStatus.OK);
   }
 
 }

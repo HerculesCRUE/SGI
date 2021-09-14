@@ -12,6 +12,7 @@ import TestUtils from '@core/utils/test-utils';
 import { MaterialDesignModule } from '@material/material-design.module';
 import { SharedModule } from '@shared/shared.module';
 import { LoggerTestingModule } from 'ngx-logger/testing';
+import { SgpSharedModule } from 'src/app/esb/sgp/shared/sgp-shared.module';
 import { MiembroEquipoSolicitudModalComponent, MiembroEquipoSolicitudModalData } from './miembro-equipo-solicitud-modal.component';
 
 describe('MiembroEquipoSolicitudModalComponent', () => {
@@ -45,6 +46,7 @@ describe('MiembroEquipoSolicitudModalComponent', () => {
         TestUtils.getIdiomas(),
         RouterTestingModule,
         ReactiveFormsModule,
+        SgpSharedModule
       ],
       providers: [
         { provide: SnackBarService, useValue: TestUtils.getSnackBarServiceSpy() },

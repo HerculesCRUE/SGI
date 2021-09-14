@@ -1,0 +1,108 @@
+[
+  {
+    "key": "ap4_2_1_1",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "label": "4.2.1.1 Laboratorio de la Universidad"
+    },
+    "fieldGroup": [
+      {
+        "template": "<p>A continuación especificar en qué local de la Universidad se realizarán las tareas con agentes, material biológico, OMG, Sustancias Químicas Peligrosas , Sustancias Radiactivas y/o Nanopartículas</p>"
+      },
+      {
+        "type": "table-crud",
+        "key": "laboratorioLocalTable",
+        "templateOptions": {
+          "entity": "local",
+          "gender": "male"
+        },
+        "fieldArray": {
+          "templateOptions": {
+            "text": "Local"
+          },
+          "fieldGroup": [
+            {
+              "key": "local",
+              "type": "input",
+              "templateOptions": {
+                "label": "Local",
+                "order": 10
+              }
+            },
+            {
+              "key": "nivelContencion",
+              "type": "select",
+              "templateOptions": {
+                "label": "Nivel contención",
+                "order": 20,
+                "options": [
+                  {
+                    "value": "1",
+                    "label": "C1"
+                  },
+                  {
+                    "value": "2",
+                    "label": "C2"
+                  },
+                  {
+                    "value": "3",
+                    "label": "C3"
+                  },
+                  {
+                    "value": "4",
+                    "label": "C4"
+                  }
+                ]
+              }
+            },
+            {
+              "key": "ubicacion",
+              "type": "input",
+              "templateOptions": {
+                "label": "Ubicación",
+                "order": 30
+              }
+            },
+            {
+              "key": "certificadoIdoneidad",
+              "type": "select",
+              "templateOptions": {
+                "label": "Certificado idoneidad",
+                "order": 40,
+                "options": [
+                  {
+                    "value": "1",
+                    "label": "Sí"
+                  },
+                  {
+                    "value": "2",
+                    "label": "No"
+                  }
+                ]
+              }
+            },
+            {
+              "key": "numeroRegistroServicioPrevencion",
+              "type": "input",
+              "templateOptions": {
+                "label": "No. Reg. Servicio Prevención",
+                "order": 50
+              }
+            },
+            {
+              "key": "fecha",
+              "type": "datepicker",
+              "templateOptions": {
+                "label": "Fecha",
+                "luxonFormat": "shortDate",
+                "order": 60
+              }
+            }
+          ]
+        }
+      }
+    ]
+  }
+]

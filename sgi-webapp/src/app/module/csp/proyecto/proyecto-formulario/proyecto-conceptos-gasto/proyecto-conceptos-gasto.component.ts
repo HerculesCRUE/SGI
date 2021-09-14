@@ -3,7 +3,7 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
-import { FormFragmentComponent } from '@core/component/fragment.component';
+import { FragmentComponent } from '@core/component/fragment.component';
 import { MSG_PARAMS } from '@core/i18n';
 import { IProyectoConceptoGasto } from '@core/models/csp/proyecto-concepto-gasto';
 import { FxFlexProperties } from '@core/models/shared/flexLayout/fx-flex-properties';
@@ -24,13 +24,14 @@ const MSG_DELETE = marker('msg.delete.entity');
 const MSG_DELETE_CODIGO_ECONOMICO = marker('msg.csp.proyecto-concepto-gasto.listado.codigo-economico.delete');
 const PROYECTO_CONCEPTO_GASTO_PERMITIDO_KEY = marker('csp.proyecto-concepto-gasto-permitido');
 const PROYECTO_CONCEPTO_GASTO_NO_PERMITIDO_KEY = marker('csp.proyecto-concepto-gasto-no-permitido');
+const PORCENTAJE_COSTES_INDIRECTOS_KEY = marker('csp.convocatoria-elegibilidad-concepto-gasto.costes-indirectos.porcentaje');
 
 @Component({
   selector: 'sgi-proyecto-concepto-gasto',
   templateUrl: './proyecto-conceptos-gasto.component.html',
   styleUrls: ['./proyecto-conceptos-gasto.component.scss']
 })
-export class ProyectoConceptosGastoComponent extends FormFragmentComponent<ConceptoGastoListado[]> implements OnInit, OnDestroy {
+export class ProyectoConceptosGastoComponent extends FragmentComponent implements OnInit, OnDestroy {
   ROUTE_NAMES = ROUTE_NAMES;
 
   get PROYECTO_ROUTE_NAMES() {
@@ -50,13 +51,15 @@ export class ProyectoConceptosGastoComponent extends FormFragmentComponent<Conce
 
   elementosPagina = [5, 10, 25, 100];
   displayedColumnsPermitidos =
-    ['helpIcon', 'conceptoGasto.nombre', 'conceptoGasto.descripcion', 'importeMaximo', 'fechaInicio', 'fechaFin', 'observaciones', 'acciones'];
+    ['helpIcon', 'conceptoGasto.nombre', 'conceptoGasto.descripcion', 'conceptoGasto.costesIndirectos', 'importeMaximo', 'fechaInicio', 'fechaFin', 'observaciones', 'acciones'];
   displayedColumnsNoPermitidos =
-    ['helpIcon', 'conceptoGasto.nombre', 'conceptoGasto.descripcion', 'fechaInicio', 'fechaFin', 'observaciones', 'acciones'];
+    ['helpIcon', 'conceptoGasto.nombre', 'conceptoGasto.descripcion', 'conceptoGasto.costesIndirectos', 'fechaInicio', 'fechaFin', 'observaciones', 'acciones'];
 
   msgParamEntityPermitido = {};
   msgParamEntityNoPermitido = {};
-  textoDelete: string;
+  msgParamEntityPorcentajeCostesIndirectos = {};
+  textoDeletePermitido: string;
+  textoDeleteNoPermitido: string;
 
   dataSourcePermitidos = new MatTableDataSource<ConceptoGastoListado>();
   dataSourceNoPermitidos = new MatTableDataSource<ConceptoGastoListado>();
@@ -134,6 +137,18 @@ export class ProyectoConceptosGastoComponent extends FormFragmentComponent<Conce
 
 
     this.translate.get(
+      PROYECTO_CONCEPTO_GASTO_PERMITIDO_KEY,
+      MSG_PARAMS.CARDINALIRY.SINGULAR
+    ).pipe(
+      switchMap((value) => {
+        return this.translate.get(
+          MSG_DELETE,
+          { entity: value, ...MSG_PARAMS.GENDER.MALE }
+        );
+      })
+    ).subscribe((value) => this.textoDeletePermitido = value);
+
+    this.translate.get(
       PROYECTO_CONCEPTO_GASTO_NO_PERMITIDO_KEY,
       MSG_PARAMS.CARDINALIRY.SINGULAR
     ).pipe(
@@ -143,10 +158,15 @@ export class ProyectoConceptosGastoComponent extends FormFragmentComponent<Conce
           { entity: value, ...MSG_PARAMS.GENDER.MALE }
         );
       })
-    ).subscribe((value) => this.textoDelete = value);
+    ).subscribe((value) => this.textoDeleteNoPermitido = value);
+
+    this.translate.get(
+      PORCENTAJE_COSTES_INDIRECTOS_KEY
+    ).subscribe((value) => this.msgParamEntityPorcentajeCostesIndirectos = { entity: value, ...MSG_PARAMS.GENDER.MALE });
+
   }
 
-  deleteConceptoGasto(wrapper: StatusWrapper<IProyectoConceptoGasto>) {
+  deleteConceptoGasto(wrapper: StatusWrapper<IProyectoConceptoGasto>, isPermitido: boolean) {
     this.proyectoConceptoGastoService.hasCodigosEconomicos(wrapper.value.id).subscribe(res => {
       if (res) {
         this.subscriptions.push(
@@ -159,8 +179,9 @@ export class ProyectoConceptosGastoComponent extends FormFragmentComponent<Conce
           )
         );
       } else {
+        const messageConfirmation = isPermitido ? this.textoDeletePermitido : this.textoDeleteNoPermitido;
         this.subscriptions.push(
-          this.dialogService.showConfirmation(this.textoDelete).subscribe(
+          this.dialogService.showConfirmation(messageConfirmation).subscribe(
             (aceptado: boolean) => {
               if (aceptado) {
                 this.formPart.deleteProyectoConceptoGasto(wrapper);

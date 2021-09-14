@@ -1,142 +1,196 @@
-/* Color primario */
+/********************************************************************************
+Se establecen los colores primary, accent y warn con sus respectivos lighter y darker.
+Angular material solo utiliza estos 3 variaciones de colores dentro de sus estilos y sus contrastres
+los demás colores de la paleta no se utilizarán.
+Los colores no parten del 500 porque desde https://material.io/design/color/the-color-system.html#tools-for-picking-colors
+al introducir los colores principales los define en otra escala, por ejemplo #5472c9
+lo define como 400 en lugar de 500
+********************************************************************************/
+/*
+Definición de colores principales de la paleta
+*/
+$primary-color: 400; // Viene de mockup zeplin #5472c9
+$primary-light-color: 100; // Viene de mockup zeplin #c9d6ff
+$primary-dark-color: 900;
+$accent-color: 700; // Viene de mockup zeplin #008a19
+$accent-light-color: 100; // Viene de mockup zeplin #c8fbdf contrast #5a5a5a ($dark-secondary-text)
+$accent-dark-color: 900;
+$warn-color: 400; // Viene de mockup zeplin #ea5555
+$warn-light-color: 100; // Viene de mockup zeplin #ffcbd1
+$warn-dark-color: 900;
+
+/*
+ Variables de colores de contraste por defecto obtenidos de 
+ https://github.com/angular/components/blob/master/src/material/core/theming/_palette.scss
+ */
+$dark-primary-text: #000; // Por defecto rgba(black, 0.87);
+$dark-secondary-text: #5a5a5a; // Por defecto rgba(black, 0.54);
+$dark-disabled-text: #8a8a8a; // Por defecto rgba(black, 0.38);
+$dark-dividers: rgba(black, 0.12);
+$dark-focused: rgba(black, 0.12);
+$light-primary-text: white;
+$light-secondary-text: rgba(white, 0.7);
+$light-disabled-text: rgba(white, 0.5);
+$light-dividers: rgba(white, 0.12);
+$light-focused: rgba(white, 0.12);
+
+/* Primary color 
+created from https://material.io/design/color/the-color-system.html#tools-for-picking-colors
+A100, A200 ... created from http://mcg.mbitson.com/#!?mcgpalette0=%232f58c0
+constrast created from indigo palette by similarity
+Change 100: c4ccec -> 100: c9d6ff (mockup)
+*/
 $palette-primary: (
-  50: #f3f6f9,
-  100: #ccd5ef,
-  200: #aab9e4,
-  300: #879cd9,
-  400: #6e87d1,
-  500: #5472c9,
-  600: #4d6ac3,
-  700: #435fbc,
-  800: #3a55b5,
-  900: #2942a9,
-  A100: #eaedff,
-  A200: #b7c3ff,
-  A400: #8499ff,
-  A700: #6a84ff,
+  50: #e8ebf7,
+  100: #c9d6ff,
+  200: #9dacdf,
+  300: #758bd2,
+  400: #5472c9,
+  500: #2f58c0,
+  600: #2950b5,
+  700: #1d46a9,
+  800: #113c9d,
+  900: #002a88,
+  A100: #ced6ff,
+  A200: #9babff,
+  A400: #6880ff,
+  A700: #4e6bff,
   contrast: (
-    50: rgba(black, 0.87),
-    100: rgba(black, 0.87),
-    200: rgba(black, 0.87),
-    300: rgba(black, 0.87),
-    400: rgba(black, 0.87),
-    500: white,
-    600: white,
-    700: white,
-    800: rgba(white, 0.87),
-    900: rgba(white, 0.87),
-    A100: rgba(black, 0.87),
-    A200: white,
-    A400: white,
-    A700: white,
+    50: $dark-primary-text,
+    100: $dark-primary-text,
+    200: $dark-primary-text,
+    300: $light-primary-text,
+    400: $light-primary-text,
+    500: $light-primary-text,
+    600: $light-primary-text,
+    700: $light-primary-text,
+    800: $light-primary-text,
+    900: $light-primary-text,
+    A100: $dark-primary-text,
+    A200: $light-primary-text,
+    A400: $light-primary-text,
+    A700: $light-primary-text,
   ),
 );
 
-/* Color secundario */
+/* Accent color (secondary) 
+created from https://material.io/design/color/the-color-system.html#tools-for-picking-colors
+A100, A200, ... and contrast created from light-green palette by similarity
+Change 100: c2e5c1 -> 100: c8fbdf (mockup) and $dark-primary-text --> contrast #5a5a5a ($dark-secondary-text)
+*/
 $palette-accent: (
-  50: #e0f1e3,
-  100: #b3dcba,
-  200: #80c58c,
-  300: #4dad5e,
-  400: #269c3c,
-  500: #008a19,
-  600: #008216,
-  700: #007712,
-  800: #006d0e,
-  900: #005a08,
-  A100: #8bff8f,
-  A200: #58ff5d,
-  A400: #25ff2b,
-  A700: #0cff12,
+  50: #e6f5e6,
+  100: #c8fbdf,
+  200: #9ad499,
+  300: #70c470,
+  400: #4db750,
+  500: #24aa2e,
+  600: #189c25,
+  700: #008a19,
+  800: #00790b,
+  900: #005b00,
+  A100: #b9f6ca,
+  A200: #69f0ae,
+  A400: #00e676,
+  A700: #00c853,
   contrast: (
-    50: rgba(black, 0.87),
-    100: rgba(black, 0.87),
-    200: rgba(black, 0.87),
-    300: rgba(black, 0.87),
-    400: rgba(black, 0.87),
-    500: white,
-    600: white,
-    700: white,
-    800: rgba(white, 0.87),
-    900: rgba(white, 0.87),
-    A100: rgba(black, 0.87),
-    A200: white,
-    A400: white,
-    A700: white,
+    50: $dark-primary-text,
+    100: $dark-secondary-text,
+    200: $dark-primary-text,
+    300: $dark-primary-text,
+    400: $dark-primary-text,
+    500: $dark-primary-text,
+    600: $dark-primary-text,
+    700: $light-primary-text,
+    800: $light-primary-text,
+    900: $light-primary-text,
+    A100: $dark-primary-text,
+    A200: $dark-primary-text,
+    A400: $dark-primary-text,
+    A700: $dark-primary-text,
   ),
 );
 
-/* Color terciario */
+/* Warn color (terciary) 
+created from https://material.io/design/color/the-color-system.html#tools-for-picking-colors
+A100, A200, ... and contrast created from red palette by similarity
+Change 100: fccdd3 -> 100: ffcbd1 (mockup)
+*/
 $palette-warn: (
-  50: #fde4e9,
+  50: #feebee,
   100: #ffcbd1,
-  200: #f68ea5,
-  300: #f16181,
-  400: #ec4167,
-  500: #c11b4a,
-  600: #d6214d,
-  700: #c11b4a,
-  800: #ad1447,
-  900: #8a0942,
-  A100: #f68ea5,
-  A200: #c11b4a,
-  A400: #c11b4a,
-  A700: #8a0942,
+  200: #eb9a9c,
+  300: #e07476,
+  400: #ea5555,
+  500: #ef453d,
+  600: #e03c3b,
+  700: #ce3335,
+  800: #c12c2e,
+  900: #b22122,
+  A100: #ff8a80,
+  A200: #ff5252,
+  A400: #ff1744,
+  A700: #d50000,
   contrast: (
-    50: rgba(black, 0.87),
-    100: rgba(black, 0.87),
-    200: rgba(black, 0.87),
-    300: rgba(black, 0.87),
-    400: rgba(black, 0.87),
-    500: white,
-    600: white,
-    700: white,
-    800: rgba(white, 0.87),
-    900: rgba(white, 0.87),
-    A100: rgba(black, 0.87),
-    A200: white,
-    A400: white,
-    A700: white,
+    50: dark-primary-text,
+    100: dark-primary-text,
+    200: dark-primary-text,
+    300: dark-primary-text,
+    400: $light-primary-text,
+    500: $light-primary-text,
+    600: $light-primary-text,
+    700: $light-primary-text,
+    800: $light-secondary-text,
+    900: $light-secondary-text,
+    A100: $dark-primary-text,
+    A200: $light-primary-text,
+    A400: $light-primary-text,
+    A700: $light-primary-text,
   ),
 );
 
-/* Color cuarto */
-$palette-grease: (
-  50: #f1f1f1,
-  100: #dcdcdc,
-  200: #c5c5c5,
-  300: #adadad,
-  400: #9c9c9c,
-  500: #8a8a8a,
-  600: #828282,
-  700: #777777,
-  800: #6d6d6d,
-  900: #5a5a5a,
-  A100: #777777,
-  A200: #5a5a5a,
-  A400: #6d6d6d,
-  A700: #777777,
+/**
+* Se parte de grey-pallete de angular material y se tocan los estilos necesarios para aproximarse al mockup
+*/
+$palette-grey: (
+  50: #fafafa,
+  100: #f5f5f5,
+  200: #eeeeee,
+  300: #e0e0e0,
+  400: #bdbdbd,
+  500: #9e9e9e,
+  600: #757575,
+  700: #616161,
+  800: #424242,
+  900: #212121,
+  A100: #ffffff,
+  A200: #eeeeee,
+  A400: #bdbdbd,
+  A700: #616161,
   contrast: (
-    50: rgba(black, 0.87),
-    100: rgba(black, 0.87),
-    200: rgba(black, 0.87),
-    300: rgba(black, 0.87),
-    400: rgba(black, 0.87),
-    500: white,
-    600: white,
-    700: white,
-    800: rgba(white, 0.87),
-    900: rgba(white, 0.87),
-    A100: rgba(black, 0.87),
-    A200: white,
-    A400: white,
-    A700: white,
+    50: $dark-primary-text,
+    100: $dark-primary-text,
+    200: $dark-primary-text,
+    300: $dark-primary-text,
+    400: $dark-primary-text,
+    500: $dark-primary-text,
+    600: $light-primary-text,
+    700: $light-primary-text,
+    800: $light-primary-text,
+    900: $light-primary-text,
+    A100: $dark-primary-text,
+    A200: $dark-primary-text,
+    A400: $dark-primary-text,
+    A700: $light-primary-text,
   ),
 );
 
 /* Colores personalizados */
-$custom-colors: (
-  primary: #768dd2,
+$sgi-custom-colors: (
+  bg: #f3f6f9,
+  divider: #ebedf3,
+  bg-action-footer-message: #fff8ea,
+  bg-confirmation-dialog: #b3dcba,
   three-buton: #c8fbdf,
   warning: #a35f00,
   success: #28c76f,

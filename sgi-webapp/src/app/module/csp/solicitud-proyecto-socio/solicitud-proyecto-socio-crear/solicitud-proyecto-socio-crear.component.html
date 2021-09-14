@@ -9,13 +9,12 @@
       [fragment]="actionService.getFragment(actionService.FRAGMENT.EQUIPO)">
     </sgi-action-fragment-menu-item>
     <sgi-action-fragment-menu-item [route]="[SOLICITUD_PROYECTO_SOCIO_ROUTE_NAMES.PERIODOS_PAGOS]"
-      *ngIf="!actionService.solicitudProyectoCoordinadorExterno"
-      [title]="'csp.solicitud-proyecto-socio.periodos-pago' | translate"
+      *ngIf="actionService.showPeriodoPago" [title]="'csp.solicitud-proyecto-socio.periodos-pago' | translate"
       [fragment]="actionService.getFragment(actionService.FRAGMENT.PERIODOS_PAGOS)">
     </sgi-action-fragment-menu-item>
     <sgi-action-fragment-menu-item [route]="[SOLICITUD_PROYECTO_SOCIO_ROUTE_NAMES.PERIODOS_JUSTIFICACION]"
       [title]="'csp.solicitud-proyecto-socio.periodos-justificacion' | translate"
-      *ngIf="!actionService.solicitudProyectoCoordinadorExterno"
+      *ngIf="actionService.showPeriodoJustificacion"
       [fragment]="actionService.getFragment(actionService.FRAGMENT.PERIODOS_JUSTIFICACION)">
     </sgi-action-fragment-menu-item>
   </ng-container>

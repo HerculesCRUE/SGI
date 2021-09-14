@@ -167,8 +167,10 @@ export class SolicitudProyectoEntidadesFinanciadorasFragment extends Fragment {
         entidadFinanciadora.solicitudProyectoId = this.getKey() as number;
         return this.solicitudProyectoEntidadFinanciadoraService.create(entidadFinanciadora).pipe(
           map((updated) => {
+            updated.empresa = wrapped.value.empresa;
             const index = this.entidadesFinanciadoras$.value.findIndex((current) => current === wrapped);
             this.entidadesFinanciadoras$.value[index] = new StatusWrapper<ISolicitudProyectoEntidadFinanciadoraAjena>(updated);
+            this.entidadesFinanciadoras$.next(this.entidadesFinanciadoras$.value);
           })
         );
       }),

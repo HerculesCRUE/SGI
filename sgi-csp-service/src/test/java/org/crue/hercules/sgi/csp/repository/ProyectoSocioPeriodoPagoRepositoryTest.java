@@ -44,7 +44,6 @@ public class ProyectoSocioPeriodoPagoRepositoryTest {
         .unidadGestionRef("2")
         .modeloEjecucion(modeloEjecucion1)
         .activo(Boolean.TRUE)
-        .fechaBase(Instant.parse("2020-11-01T00:00:00Z"))
         .build());
 
     RolSocio rolSocio = entityManager.persistAndFlush(RolSocio.builder().abreviatura("001").nombre("nombre-001")

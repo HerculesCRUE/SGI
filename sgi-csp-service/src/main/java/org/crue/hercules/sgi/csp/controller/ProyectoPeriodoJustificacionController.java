@@ -1,0 +1,156 @@
+package org.crue.hercules.sgi.csp.controller;
+
+import java.util.List;
+import java.util.stream.Collectors;
+
+import com.fasterxml.jackson.databind.ser.std.StdKeySerializers.Default;
+
+import org.crue.hercules.sgi.csp.dto.ProyectoPeriodoJustificacionInput;
+import org.crue.hercules.sgi.csp.dto.ProyectoPeriodoJustificacionOutput;
+import org.crue.hercules.sgi.csp.model.BaseEntity.Update;
+import org.crue.hercules.sgi.csp.model.ProyectoPeriodoJustificacion;
+import org.crue.hercules.sgi.csp.service.ProyectoPeriodoJustificacionService;
+import org.crue.hercules.sgi.framework.web.bind.annotation.RequestPageable;
+import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+import lombok.extern.slf4j.Slf4j;
+
+/**
+ * ProyectoPeriodoJustificacionController
+ */
+@RestController
+@RequestMapping(ProyectoPeriodoJustificacionController.REQUEST_MAPPING)
+@Slf4j
+public class ProyectoPeriodoJustificacionController {
+
+  public static final String REQUEST_MAPPING = "/proyectoperiodosjustificacion";
+
+  ModelMapper modelMapper;
+
+  /** ProyectoPeriodoSeguimiento service */
+  private final ProyectoPeriodoJustificacionService service;
+
+  /**
+   * Instancia un nuevo ProyectoPeriodoSeguimientoController.
+   * 
+   * @param service     {@link ProyectoPeriodoJustificacionService}
+   * @param modelMapper {@link ModelMapper}
+   */
+  public ProyectoPeriodoJustificacionController(ProyectoPeriodoJustificacionService service, ModelMapper modelMapper) {
+    this.modelMapper = modelMapper;
+    this.service = service;
+  }
+
+  /**
+   * Actualiza el {@link ProyectoPeriodoJustificacion} con el id indicado.
+   * 
+   * @param proyectoPeriodoJustificacion {@link ProyectoPeriodoJustificacion} a
+   *                                     actualizar.
+   * @param id                           id {@link ProyectoPeriodoJustificacion} a
+   *                                     actualizar.
+   * @return lista de {@link ProyectoPeriodoJustificacion} actualizado.
+   */
+  @PatchMapping("/{proyectoId}")
+  @PreAuthorize("hasAuthorityForAnyUO('CSP-PRO-E')")
+  List<ProyectoPeriodoJustificacionOutput> update(
+      @Validated({ Update.class,
+          Default.class }) @RequestBody List<ProyectoPeriodoJustificacionInput> proyectoPeriodoJustificaciones,
+      @PathVariable Long proyectoId) {
+    log.debug("update(List ProyectoPeriodoJustificacion proyectoPeriodoJustificacion, Long id) - start");
+
+    proyectoPeriodoJustificaciones.stream().filter(periodo -> periodo.getProyectoId() == null)
+        .forEach(periodo -> periodo.setProyectoId(proyectoId));
+    List<ProyectoPeriodoJustificacion> returnValue = service.update(proyectoId,
+        convert(proyectoPeriodoJustificaciones));
+
+    log.debug("update(List ProyectoPeriodoJustificacion proyectoPeriodoJustificacion, Long id) - end");
+
+    return convertToOutput(returnValue);
+  }
+
+  /**
+   * Devuelve el {@link ProyectoPeriodoJustificacion} con el id indicado.
+   * 
+   * @param id Identificador de {@link ProyectoPeriodoJustificacion}.
+   * @return {@link ProyectoPeriodoJustificacion} correspondiente al id.
+   */
+  @GetMapping("/{id}")
+  @PreAuthorize("hasAuthorityForAnyUO('CSP-PRO-E')")
+  ProyectoPeriodoJustificacionOutput findById(@PathVariable Long id) {
+    log.debug("findById(Long id) - start");
+    ProyectoPeriodoJustificacionOutput returnValue = convert(service.findById(id));
+    log.debug("findById(Long id) - end");
+    return returnValue;
+  }
+
+  /**
+   * Devuelve una lista paginada de todos los
+   * {@link ProyectoPeriodoJustificacion}.
+   * 
+   * @param query  filtro de búsqueda.
+   * @param paging pageable.
+   */
+  @GetMapping("/{id}/proyectoperiodojustificacion")
+  @PreAuthorize("hasAuthorityForAnyUO('CSP-PRO-E')")
+  ResponseEntity<Page<ProyectoPeriodoJustificacionOutput>> findAll(@PathVariable Long id,
+      @RequestParam(name = "q", required = false) String query, @RequestPageable(sort = "s") Pageable paging) {
+    log.debug("findAll(Long id, String query, Pageable paging) - start");
+    Page<ProyectoPeriodoJustificacion> page = service.findAllByProyectoId(id, query, paging);
+
+    if (page.isEmpty()) {
+      log.debug("findAll(Long id, String query, Pageable paging) - end");
+      return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    log.debug("findAll(Long id, String query, Pageable paging) - end");
+    return new ResponseEntity<>(convert(page), HttpStatus.OK);
+  }
+
+  private ProyectoPeriodoJustificacionOutput convert(ProyectoPeriodoJustificacion proyectoPeriodoJustificacion) {
+    return modelMapper.map(proyectoPeriodoJustificacion, ProyectoPeriodoJustificacionOutput.class);
+  }
+
+  private ProyectoPeriodoJustificacion convert(ProyectoPeriodoJustificacionInput proyectoPeriodoJustificacionInput) {
+    ProyectoPeriodoJustificacion agrupacionGastoConcepto = modelMapper.map(proyectoPeriodoJustificacionInput,
+        ProyectoPeriodoJustificacion.class);
+    return agrupacionGastoConcepto;
+  }
+
+  private Page<ProyectoPeriodoJustificacionOutput> convert(Page<ProyectoPeriodoJustificacion> page) {
+    List<ProyectoPeriodoJustificacionOutput> content = page.getContent().stream()
+        .map((proyectoPeriodoJustificacion) -> convert(proyectoPeriodoJustificacion)).collect(Collectors.toList());
+
+    return new PageImpl<>(content, page.getPageable(), page.getTotalElements());
+  }
+
+  private List<ProyectoPeriodoJustificacion> convert(List<ProyectoPeriodoJustificacionInput> list) {
+
+    List<ProyectoPeriodoJustificacion> rerunValue = list.stream()
+        .map((proyectoPeriodoJustificacion) -> convert(proyectoPeriodoJustificacion)).collect(Collectors.toList());
+
+    return rerunValue;
+  }
+
+  private List<ProyectoPeriodoJustificacionOutput> convertToOutput(List<ProyectoPeriodoJustificacion> lista) {
+
+    List<ProyectoPeriodoJustificacionOutput> rerunValue = lista.stream()
+        .map((proyectoPeriodoJustificacion) -> convert(proyectoPeriodoJustificacion)).collect(Collectors.toList());
+
+    return rerunValue;
+  }
+
+}

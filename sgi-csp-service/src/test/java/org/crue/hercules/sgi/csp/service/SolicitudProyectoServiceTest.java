@@ -62,8 +62,6 @@ public class SolicitudProyectoServiceTest {
     // then: El SolicitudProyecto se crea correctamente
     Assertions.assertThat(solicitudProyectoCreado).as("isNotNull()").isNotNull();
     Assertions.assertThat(solicitudProyectoCreado.getId()).as("getId()").isEqualTo(1L);
-    Assertions.assertThat(solicitudProyectoCreado.getTitulo()).as("getTitulo()")
-        .isEqualTo(solicitudProyecto.getTitulo());
     Assertions.assertThat(solicitudProyectoCreado.getColaborativo()).as("getColaborativo()")
         .isEqualTo(solicitudProyecto.getColaborativo());
   }
@@ -77,19 +75,6 @@ public class SolicitudProyectoServiceTest {
     // then: Lanza una excepcion porque el SolicitudProyecto ya tiene id
     Assertions.assertThatThrownBy(() -> service.create(solicitudProyecto)).isInstanceOf(IllegalArgumentException.class)
         .hasMessage("El id no puede ser null para realizar la acción sobre SolicitudProyecto");
-  }
-
-  @Test
-  public void create_WithoutTitulo_ThrowsIllegalArgumentException() {
-    // given: Un nuevo SolicitudProyecto que no tiene titulo
-    SolicitudProyecto solicitudProyecto = generarSolicitudProyecto(1L);
-
-    solicitudProyecto.setTitulo(null);
-
-    // when: Creamos el SolicitudProyecto
-    // then: Lanza una excepcion porque no tiene titulo
-    Assertions.assertThatThrownBy(() -> service.create(solicitudProyecto)).isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("El título no puede ser null para realizar la acción sobre SolicitudProyecto");
   }
 
   @Test
@@ -125,8 +110,6 @@ public class SolicitudProyectoServiceTest {
 
     SolicitudProyecto solicitudProyectoActualizado = generarSolicitudProyecto(3L);
 
-    solicitudProyectoActualizado.setTitulo("titulo-actualizado");
-
     BDDMockito.given(solicitudRepository.existsById(ArgumentMatchers.anyLong())).willReturn(Boolean.TRUE);
 
     BDDMockito.given(repository.findById(ArgumentMatchers.anyLong())).willReturn(Optional.of(solicitudProyecto));
@@ -141,8 +124,6 @@ public class SolicitudProyectoServiceTest {
     // then: El SolicitudProyecto se actualiza correctamente.
     Assertions.assertThat(solicitudProyectoActualizada).as("isNotNull()").isNotNull();
     Assertions.assertThat(solicitudProyectoActualizada.getId()).as("getId()").isEqualTo(solicitudProyecto.getId());
-    Assertions.assertThat(solicitudProyectoActualizada.getTitulo()).as("getTitulo()")
-        .isEqualTo(solicitudProyecto.getTitulo());
 
   }
 
@@ -174,19 +155,6 @@ public class SolicitudProyectoServiceTest {
     // then: Lanza una excepcion porque el SolicitudProyecto no existe
     Assertions.assertThatThrownBy(() -> service.update(solicitudProyecto))
         .isInstanceOf(SolicitudProyectoNotFoundException.class);
-  }
-
-  @Test
-  public void update_WithoutTitulo_ThrowsIllegalArgumentException() {
-    // given: Un nuevo SolicitudProyecto que no tiene titulo
-    SolicitudProyecto solicitudProyecto = generarSolicitudProyecto(1L);
-
-    solicitudProyecto.setTitulo(null);
-
-    // when: Actualizamos el SolicitudProyecto
-    // then: Lanza una excepcion porque no tiene titulo
-    Assertions.assertThatThrownBy(() -> service.update(solicitudProyecto)).isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("El título no puede ser null para realizar la acción sobre SolicitudProyecto");
   }
 
   @Test
@@ -294,8 +262,8 @@ public class SolicitudProyectoServiceTest {
   private SolicitudProyecto generarSolicitudProyecto(Long solicitudProyectoId) {
 
     SolicitudProyecto solicitudProyecto = SolicitudProyecto.builder().id(solicitudProyectoId)
-        .titulo("titulo-" + solicitudProyectoId).acronimo("acronimo-" + solicitudProyectoId).colaborativo(Boolean.TRUE)
-        .tipoPresupuesto(TipoPresupuesto.GLOBAL).build();
+        .acronimo("acronimo-" + solicitudProyectoId).colaborativo(Boolean.TRUE).tipoPresupuesto(TipoPresupuesto.GLOBAL)
+        .build();
 
     return solicitudProyecto;
   }

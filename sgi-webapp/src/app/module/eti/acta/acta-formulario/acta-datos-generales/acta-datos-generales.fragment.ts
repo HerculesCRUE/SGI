@@ -2,12 +2,8 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { IActa } from '@core/models/eti/acta';
 import { FormFragment } from '@core/services/action-service';
 import { ActaService } from '@core/services/eti/acta.service';
-import { LuxonUtils } from '@core/utils/luxon-utils';
-import { DateGreatValidator } from '@core/validators/date-greater-validator';
-import { HoraValidador } from '@core/validators/hora-validator';
-import { MinutoValidador } from '@core/validators/minuto-validator';
-import { NullIdValidador } from '@core/validators/null-id-validador';
-import { EMPTY, Observable, of } from 'rxjs';
+import { TimeValidator } from '@core/validators/time-validator';
+import { EMPTY, merge, Observable, of } from 'rxjs';
 import { catchError, map, switchMap } from 'rxjs/operators';
 
 export class ActaDatosGeneralesFragment extends FormFragment<IActa> {
@@ -26,14 +22,31 @@ export class ActaDatosGeneralesFragment extends FormFragment<IActa> {
       convocatoriaReunion: [null],
       fechaInicio: [null],
       fechaFin: [null],
-      horaInicio: ['', new HoraValidador().isValid()],
-      minutoInicio: ['', new MinutoValidador().isValid()],
-      horaFin: ['', new HoraValidador().isValid()],
-      minutoFin: ['', new MinutoValidador().isValid()],
+      horaInicio: [null],
+      horaFin: [null],
       resumen: ['', Validators.required]
-    }, {
-      validators: [DateGreatValidator('horaInicio', 'horaFin', 'minutoInicio', 'minutoFin')]
-    }
+    });
+
+    const horaInicio = fb.controls.horaInicio;
+    const horaFin = fb.controls.horaFin;
+
+    horaInicio.setValidators([Validators.required, TimeValidator.isBeforeOther(horaFin)]);
+    horaFin.setValidators([Validators.required, TimeValidator.isAfterOther(horaInicio)]);
+
+    this.subscriptions.push(
+      merge(
+        horaInicio.valueChanges,
+        horaFin.valueChanges
+      ).subscribe(
+        (value) => {
+          if (horaInicio.valid && value === horaInicio.value && horaFin.value && horaFin.errors) {
+            horaFin.updateValueAndValidity();
+          }
+          if (horaFin.valid && value === horaFin.value && horaInicio.value && horaInicio.errors) {
+            horaInicio.updateValueAndValidity();
+          }
+        }
+      )
     );
 
     return fb;
@@ -52,13 +65,20 @@ export class ActaDatosGeneralesFragment extends FormFragment<IActa> {
     );
   }
 
+  private getDate(hours: number, minutes: number): Date {
+    const date = new Date();
+    date.setHours(hours);
+    date.setMinutes(minutes);
+    date.setSeconds(0);
+    date.setMilliseconds(0);
+    return date;
+  }
+
   buildPatch(value: IActa): { [key: string]: any } {
     return {
       convocatoriaReunion: value.convocatoriaReunion,
-      horaInicio: value.horaInicio,
-      minutoInicio: value.minutoInicio,
-      horaFin: value.horaFin,
-      minutoFin: value.minutoFin,
+      horaInicio: this.getDate(value.horaInicio, value.minutoInicio),
+      horaFin: this.getDate(value.horaFin, value.minutoFin),
       resumen: value.resumen
     };
   }
@@ -66,10 +86,10 @@ export class ActaDatosGeneralesFragment extends FormFragment<IActa> {
   getValue(): IActa {
     const form = this.getFormGroup().value;
     this.acta.convocatoriaReunion = form.convocatoriaReunion;
-    this.acta.horaInicio = form.horaInicio;
-    this.acta.minutoInicio = form.minutoInicio;
-    this.acta.horaFin = form.horaFin;
-    this.acta.minutoFin = form.minutoFin;
+    this.acta.horaInicio = form.horaInicio?.getHours();
+    this.acta.minutoInicio = form.horaInicio?.getMinutes();
+    this.acta.horaFin = form.horaFin?.getHours();
+    this.acta.minutoFin = form.horaFin?.getMinutes();
     this.acta.resumen = form.resumen;
     this.acta.numero = this.acta.convocatoriaReunion.numeroActa;
     return this.acta;

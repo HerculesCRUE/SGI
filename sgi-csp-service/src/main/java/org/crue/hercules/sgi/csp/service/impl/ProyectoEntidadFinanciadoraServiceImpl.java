@@ -180,7 +180,7 @@ public class ProyectoEntidadFinanciadoraServiceImpl implements ProyectoEntidadFi
   private void validateData(ProyectoEntidadFinanciadora proyectoEntidadFinanciadora) {
     Assert.isTrue(
         proyectoEntidadFinanciadora.getPorcentajeFinanciacion() == null
-            || proyectoEntidadFinanciadora.getPorcentajeFinanciacion() >= 0,
+            || proyectoEntidadFinanciadora.getPorcentajeFinanciacion().floatValue() >= 0,
         "PorcentajeFinanciacion no puede ser negativo");
 
     if (proyectoEntidadFinanciadora.getFuenteFinanciacion() != null) {

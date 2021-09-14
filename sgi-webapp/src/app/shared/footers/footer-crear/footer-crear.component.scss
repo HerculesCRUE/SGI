@@ -7,11 +7,11 @@
     position: fixed;
     bottom: 0px;
     width: 100%;
-    box-shadow: inset 0px 14px 12px -12px map-get($palette-grease, 100);
-    background: map-get($custom-colors, white);
+    box-shadow: inset 0px 14px 12px -12px map-get($palette-grey, 300);
+    background: map-get($sgi-custom-colors, white);
   }
   .boton {
     height: 100%;
-    padding-left: 32px;
+    padding-left: 5px;
   }
 }

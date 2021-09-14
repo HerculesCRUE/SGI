@@ -125,7 +125,6 @@ public class ProyectoRepositoryTest extends BaseRepositoryTest {
         .fechaInicio(Instant.parse("2020-01-01T00:00:00Z"))
         .fechaFin(Instant.parse("2020-12-31T23:59:59Z"))
         .activo(Boolean.TRUE)
-        .fechaBase(Instant.parse("2020-01-01T00:00:00Z"))
         .build();
     // @formatter:on
     return entityManager.persistAndFlush(proyecto);

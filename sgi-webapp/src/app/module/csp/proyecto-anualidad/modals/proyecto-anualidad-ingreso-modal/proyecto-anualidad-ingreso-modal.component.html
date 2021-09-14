@@ -27,7 +27,7 @@
       [fxLayoutGap]="fxLayoutProperties.gap" ngClass.gt-xs="ml-10 separation-button">
       <mat-form-field>
         <mat-label>{{'csp.convocatoria-elegibilidad.codigo-economico.sge' | translate}}</mat-label>
-        <sgi-select formControlName="codigoEconomicoRef" required [options]="codigosEconomicos$ | async"
+        <sgi-select formControlName="codigoEconomico" [options]="codigosEconomicos$ | async"
           [compareWith]="comparerCodigoEconomico" [displayWith]="displayerCodigoEconomico"
           [sortWith]="sorterCodigoEconomico">
         </sgi-select>
@@ -72,7 +72,7 @@
   </form>
 </mat-dialog-content>
 <mat-dialog-actions>
-  <button color="accent" (click)="saveOrUpdate()" mat-raised-button type="submit">
+  <button *ngIf="!data.readonly" color="accent" (click)="saveOrUpdate()" mat-raised-button type="submit">
     <mat-icon class="save-icon">save</mat-icon>{{textSaveOrUpdate | translate}}
   </button>
   <button class="link-cancelar" mat-button type="button" mat-dialog-close>{{'btn.cancel' |

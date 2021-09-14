@@ -1,0 +1,30 @@
+[
+  {
+    "key": "ap4_6_7",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "expressionLock": "formState.memoria.tipoMemoria.id === 3",
+      "label": "4.6.7 Protección de la privacidad"
+    },
+    "hideExpression": "!formState.mainModel.ap4_6.estudiantesSujetosInvestigacionRadio || formState.mainModel.ap4_6.estudiantesSujetosInvestigacionRadio === 'no'",
+    "fieldGroup": [
+      {
+        "template": "¿Qué medidas se van a adoptar para asegurar la privacidad de cada alumno/a fuente frente al grupo durante la recogida de datos, la realización de pruebas y/o revocación del consentimiento?"
+      },
+      {
+        "key": "proteccionPrivacidad",
+        "type": "textarea",
+        "templateOptions": {
+          "label": "Medidas",
+          "placeholder": "Medidas",
+          "required": true,
+          "autosize": true,
+          "autosizeMinRows": "1",
+          "autosizeMaxRows": "10"
+        }
+      }
+    ]
+  }
+]

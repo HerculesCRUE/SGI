@@ -14,7 +14,8 @@ export class ConvocatoriaEntidadesFinanciadorasFragment extends Fragment {
     key: number,
     private convocatoriaService: ConvocatoriaService,
     private convocatoriaEntidadFinanciadoraService: ConvocatoriaEntidadFinanciadoraService,
-    public readonly: boolean
+    public isConvocatoriaVinculada: boolean,
+    public hasEditPerm: boolean
   ) {
     super(key);
     this.setComplete(true);

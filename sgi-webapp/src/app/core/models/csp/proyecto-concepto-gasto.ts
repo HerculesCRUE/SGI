@@ -10,6 +10,5 @@ export interface IProyectoConceptoGasto {
   fechaInicio: DateTime;
   fechaFin: DateTime;
   observaciones: string;
-  porcentajeCosteIndirecto: number;
   convocatoriaConceptoGastoId: number;
 }

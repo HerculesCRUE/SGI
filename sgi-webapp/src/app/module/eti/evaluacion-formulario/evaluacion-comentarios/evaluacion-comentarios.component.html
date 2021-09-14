@@ -1,8 +1,7 @@
-<section class="comentarios-listado">
-  <h2>{{'eti.comentario' | translate:MSG_PARAMS.CARDINALIRY.PLURAL}}</h2>
+<sgi-fragment title="{{'eti.comentario' | translate:MSG_PARAMS.CARDINALIRY.PLURAL}}">
   <!-- Comentario listado -->
-  <div>
-    <table mat-table [dataSource]="dataSource" matSort class="mat-elevation-z8 table-unidad" matSortDisableClear>
+  <div class="mat-elevation-z4">
+    <table mat-table [dataSource]="dataSource" matSort matSortDisableClear>
       <!-- Bloque Column -->
       <ng-container matColumnDef="apartado.bloque">
         <th mat-header-cell *matHeaderCellDef mat-sort-header>{{'eti.comentario.bloque' | translate}}</th>
@@ -56,4 +55,4 @@
   <div *ngIf="fragment.hasErrors()">
     <mat-error>{{'error.eti.evaluacion.evaluar.comentarios' | translate}}</mat-error>
   </div>
-</section>
+</sgi-fragment>

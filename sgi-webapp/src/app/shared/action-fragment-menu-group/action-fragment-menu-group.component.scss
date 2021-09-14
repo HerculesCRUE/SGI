@@ -12,18 +12,18 @@ mat-expansion-panel {
   box-shadow: none;
   border-radius: 0;
   &.is-active {
-    background-color: map-get($custom-colors, white);
+    background-color: map-get($sgi-custom-colors, white);
     .mat-expansion-panel-header {
       font-weight: bold;
     }
   }
-  &:not([class*=mat-elevation-z]) {
+  &:not([class*="mat-elevation-z"]) {
     box-shadow: none;
   }
 
   mat-expansion-panel-header {
     padding: 0 16px;
-    font-size: mat-font-size($custom-typography, body-1);
+    font-size: map-get($sgi-typography-size, menu-secondary);
     div {
       display: flex;
       flex-direction: row;
@@ -31,16 +31,6 @@ mat-expansion-panel {
       width: 100%;
       padding-right: 14px;
       align-items: center;
-
-      .warning-icon {
-        color: map-get($custom-colors, warning);
-      }
-
-      .danger-icon {
-        color: map-get($custom-colors, danger);
-      }
     }
   }
 }
-
-

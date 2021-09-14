@@ -75,7 +75,7 @@ public class SectorAplicacionService {
    */
   @Transactional
   @Validated({ SectorAplicacion.OnActualizar.class })
-  public SectorAplicacion update(SectorAplicacion sectorAplicacion) {
+  public SectorAplicacion update(@Valid SectorAplicacion sectorAplicacion) {
     log.debug("update(SectorAplicacion sectorAplicacion) - start");
 
     Assert.notNull(sectorAplicacion.getId(),

@@ -5,1272 +5,1533 @@
       <column name="id" valueSequenceNext="peticion_evaluacion_seq" />
       <column name="codigo" value="PR_1" />
       <column name="titulo" value="PeticionEvaluacion1" />
-      <column name="tipo_actividad_id" valueComputed="(select id from eti.tipo_actividad where nombre='Proyecto de investigación')" />
-      <column name="existe_financiacion" value="false" />
-      <column name="fecha_inicio" value="2019-09-01T00:00:00Z" />
-      <column name="fecha_fin" value="2019-10-01T23:59:59Z" />
+      <column name="tipo_actividad_id" valueComputed="(select id from tipo_actividad where nombre='Proyecto de investigación')" />
+      <column name="existe_financiacion" valueBoolean="false" />
+      <column name="fecha_inicio" valueDate="2019-09-01T00:00:00" />
+      <column name="fecha_fin" valueDate="2019-10-01T23:59:59" />
       <column name="resumen" value="Resumen" />
       <column name="valor_social" value="INVESTIGACION_FUNDAMENTAL" />
       <column name="objetivos" value="Objetivos" />
       <column name="dis_metodologico" value="Diseño metodológico" />
-      <column name="externo" value="false" />
-      <column name="tiene_fondos_propios" value="false" />
-      <column name="persona_ref" value="5" />
-      <column name="activo" value="true" />
+      <column name="externo" valueBoolean="false" />
+      <column name="tiene_fondos_propios" valueBoolean="false" />
+      <column name="persona_ref" value="48517010" />
+      <column name="activo" valueBoolean="true" />
     </insert>
     <insert tableName="peticion_evaluacion">
       <column name="id" valueSequenceNext="peticion_evaluacion_seq" />
       <column name="codigo" value="PR_2" />
       <column name="titulo" value="PeticionEvaluacion2" />
-      <column name="tipo_actividad_id" valueComputed="(select id from eti.tipo_actividad where nombre='Proyecto de investigación')" />
-      <column name="existe_financiacion" value="false" />
-      <column name="fecha_inicio" value="2020-07-09T00:00:00Z" />
-      <column name="fecha_fin" value="2021-07-09T23:59:59Z" />
+      <column name="tipo_actividad_id" valueComputed="(select id from tipo_actividad where nombre='Proyecto de investigación')" />
+      <column name="existe_financiacion" valueBoolean="false" />
+      <column name="fecha_inicio" valueDate="2020-07-09T00:00:00" />
+      <column name="fecha_fin" valueDate="2021-07-09T23:59:59" />
       <column name="resumen" value="Resumen" />
       <column name="valor_social" value="INVESTIGACION_FUNDAMENTAL" />
       <column name="objetivos" value="Objetivos" />
       <column name="dis_metodologico" value="Diseño metodológico" />
-      <column name="externo" value="false" />
-      <column name="tiene_fondos_propios" value="false" />
-      <column name="persona_ref" value="6" />
-      <column name="activo" value="true" />
+      <column name="externo" valueBoolean="false" />
+      <column name="tiene_fondos_propios" valueBoolean="false" />
+      <column name="persona_ref" value="52364567" />
+      <column name="activo" valueBoolean="true" />
     </insert>
     <insert tableName="peticion_evaluacion">
       <column name="id" valueSequenceNext="peticion_evaluacion_seq" />
       <column name="codigo" value="PR_3" />
       <column name="titulo" value="PeticionEvaluacion3" />
-      <column name="tipo_actividad_id" valueComputed="(select id from eti.tipo_actividad where nombre='Práctica docente')" />
-      <column name="existe_financiacion" value="false" />
-      <column name="fecha_inicio" value="2020-07-09T00:00:00Z" />
-      <column name="fecha_fin" value="2021-07-09T23:59:59Z" />
+      <column name="tipo_actividad_id" valueComputed="(select id from tipo_actividad where nombre='Práctica docente')" />
+      <column name="existe_financiacion" valueBoolean="false" />
+      <column name="fecha_inicio" valueDate="2020-07-09T00:00:00" />
+      <column name="fecha_fin" valueDate="2021-07-09T23:59:59" />
       <column name="resumen" value="Resumen" />
       <column name="valor_social" value="INVESTIGACION_FUNDAMENTAL" />
       <column name="objetivos" value="Objetivos" />
       <column name="dis_metodologico" value="Diseño metodológico" />
-      <column name="externo" value="false" />
-      <column name="tiene_fondos_propios" value="false" />
-      <column name="persona_ref" value="3" />
-      <column name="activo" value="true" />
+      <column name="externo" valueBoolean="false" />
+      <column name="tiene_fondos_propios" valueBoolean="false" />
+      <column name="persona_ref" value="22481020" />
+      <column name="activo" valueBoolean="true" />
     </insert>
     <insert tableName="peticion_evaluacion">
       <column name="id" valueSequenceNext="peticion_evaluacion_seq" />
       <column name="codigo" value="PR_4" />
       <column name="titulo" value="PeticionEvaluacion4" />
-      <column name="tipo_actividad_id" valueComputed="(select id from eti.tipo_actividad where nombre='Práctica docente')" />
-      <column name="existe_financiacion" value="false" />
-      <column name="fecha_inicio" value="2020-07-09T00:00:00Z" />
-      <column name="fecha_fin" value="2021-07-09T23:59:59Z" />
+      <column name="tipo_actividad_id" valueComputed="(select id from tipo_actividad where nombre='Práctica docente')" />
+      <column name="existe_financiacion" valueBoolean="false" />
+      <column name="fecha_inicio" valueDate="2020-07-09T00:00:00" />
+      <column name="fecha_fin" valueDate="2021-07-09T23:59:59" />
       <column name="resumen" value="Resumen" />
       <column name="valor_social" value="INVESTIGACION_FUNDAMENTAL" />
       <column name="objetivos" value="Objetivos" />
       <column name="dis_metodologico" value="Diseño metodológico" />
-      <column name="externo" value="false" />
-      <column name="tiene_fondos_propios" value="false" />
-      <column name="persona_ref" value="3" />
-      <column name="activo" value="true" />
+      <column name="externo" valueBoolean="false" />
+      <column name="tiene_fondos_propios" valueBoolean="false" />
+      <column name="persona_ref" value="22481020" />
+      <column name="activo" valueBoolean="true" />
     </insert>
     <insert tableName="peticion_evaluacion">
       <column name="id" valueSequenceNext="peticion_evaluacion_seq" />
       <column name="codigo" value="PR_5" />
       <column name="titulo" value="PeticionEvaluacion5" />
       <column name="solicitud_convocatoria_ref" value="CONV_REF_001" />
-      <column name="tipo_actividad_id" valueComputed="(select id from eti.tipo_actividad where nombre='Práctica docente')" />
-      <column name="existe_financiacion" value="false" />
-      <column name="fecha_inicio" value="2020-07-09T00:00:00Z" />
-      <column name="fecha_fin" value="2021-07-09T23:59:59Z" />
+      <column name="tipo_actividad_id" valueComputed="(select id from tipo_actividad where nombre='Práctica docente')" />
+      <column name="existe_financiacion" valueBoolean="false" />
+      <column name="fecha_inicio" valueDate="2020-07-09T00:00:00" />
+      <column name="fecha_fin" valueDate="2021-07-09T23:59:59" />
       <column name="resumen" value="Resumen" />
       <column name="valor_social" value="INVESTIGACION_FUNDAMENTAL" />
       <column name="objetivos" value="Objetivos" />
       <column name="dis_metodologico" value="Diseño metodológico" />
-      <column name="externo" value="false" />
-      <column name="tiene_fondos_propios" value="false" />
-      <column name="persona_ref" value="5" />
-      <column name="activo" value="true" />
+      <column name="externo" valueBoolean="false" />
+      <column name="tiene_fondos_propios" valueBoolean="false" />
+      <column name="persona_ref" value="48517010" />
+      <column name="activo" valueBoolean="true" />
     </insert>
   </changeSet>
+
   <changeSet context="dev" author="master" id="0000000000000-equipo_trabajo">
     <insert tableName="equipo_trabajo">
       <column name="id" valueSequenceNext="equipo_trabajo_seq" />
-      <column name="peticion_evaluacion_id" valueComputed="(select id from eti.peticion_evaluacion where titulo='PeticionEvaluacion1')" />
-      <column name="persona_ref" value="5" />
+      <column name="peticion_evaluacion_id" valueComputed="(select id from peticion_evaluacion where titulo='PeticionEvaluacion1')" />
+      <column name="persona_ref" value="48517010" />
     </insert>
     <insert tableName="equipo_trabajo">
       <column name="id" valueSequenceNext="equipo_trabajo_seq" />
-      <column name="peticion_evaluacion_id" valueComputed="(select id from eti.peticion_evaluacion where titulo='PeticionEvaluacion1')" />
-      <column name="persona_ref" value="7" />
+      <column name="peticion_evaluacion_id" valueComputed="(select id from peticion_evaluacion where titulo='PeticionEvaluacion1')" />
+      <column name="persona_ref" value="02221287" />
     </insert>
     <insert tableName="equipo_trabajo">
       <column name="id" valueSequenceNext="equipo_trabajo_seq" />
-      <column name="peticion_evaluacion_id" valueComputed="(select id from eti.peticion_evaluacion where titulo='PeticionEvaluacion2')" />
-      <column name="persona_ref" value="6" />
+      <column name="peticion_evaluacion_id" valueComputed="(select id from peticion_evaluacion where titulo='PeticionEvaluacion2')" />
+      <column name="persona_ref" value="52364567" />
     </insert>
     <insert tableName="equipo_trabajo">
       <column name="id" valueSequenceNext="equipo_trabajo_seq" />
-      <column name="peticion_evaluacion_id" valueComputed="(select id from eti.peticion_evaluacion where titulo='PeticionEvaluacion3')" />
-      <column name="persona_ref" value="3" />
+      <column name="peticion_evaluacion_id" valueComputed="(select id from peticion_evaluacion where titulo='PeticionEvaluacion3')" />
+      <column name="persona_ref" value="22481020" />
     </insert>
     <insert tableName="equipo_trabajo">
       <column name="id" valueSequenceNext="equipo_trabajo_seq" />
-      <column name="peticion_evaluacion_id" valueComputed="(select id from eti.peticion_evaluacion where titulo='PeticionEvaluacion4')" />
-      <column name="persona_ref" value="3" />
+      <column name="peticion_evaluacion_id" valueComputed="(select id from peticion_evaluacion where titulo='PeticionEvaluacion4')" />
+      <column name="persona_ref" value="22481020" />
     </insert>
   </changeSet>
+
   <changeSet context="dev" author="master" id="0000000000000-retrospectiva">
     <insert tableName="retrospectiva">
       <column name="id" valueSequenceNext="retrospectiva_seq" />
       <column name="estado_retrospectiva_id" value="1" />
-      <column name="fecha_retrospectiva" value="2020-12-01T00:00:00Z" />
+      <column name="fecha_retrospectiva" valueDate="2020-12-01T00:00:00" />
     </insert>
   </changeSet>
+
   <changeSet context="dev" author="master" id="0000000000000-memoria">
     <insert tableName="memoria">
       <column name="id" valueSequenceNext="memoria_seq" />
       <column name="num_referencia" value="M10/2019/001" />
-      <column name="peticion_evaluacion_id" valueComputed="(select id from eti.peticion_evaluacion where titulo='PeticionEvaluacion1')" />
-      <column name="comite_id" valueComputed="(select id from eti.comite where comite='CEISH')" />
+      <column name="peticion_evaluacion_id" valueComputed="(select id from peticion_evaluacion where titulo='PeticionEvaluacion1')" />
+      <column name="comite_id" valueComputed="(select id from comite where comite='CEISH')" />
       <column name="titulo" value="Título M10/2019/001" />
-      <column name="persona_ref" value="7" />
+      <column name="persona_ref" value="02221287" />
       <column name="tipo_memoria_id" value="1" />
       <column name="estado_actual_id" value="12" />
-      <column name="fecha_envio_secretaria" value="2020-10-01T00:00:00Z" />
-      <column name="requiere_retrospectiva" value="false" />
+      <column name="fecha_envio_secretaria" valueDate="2020-10-01T00:00:00" />
+      <column name="requiere_retrospectiva" valueBoolean="false" />
       <column name="version" value="2" />
-      <column name="activo" value="true" />
+      <column name="activo" valueBoolean="true" />
     </insert>
     <insert tableName="memoria">
       <column name="id" valueSequenceNext="memoria_seq" />
       <column name="num_referencia" value="M20/2020/001" />
-      <column name="peticion_evaluacion_id" valueComputed="(select id from eti.peticion_evaluacion where titulo='PeticionEvaluacion2')" />
-      <column name="comite_id" valueComputed="(select id from eti.comite where comite='CEEA')" />
+      <column name="peticion_evaluacion_id" valueComputed="(select id from peticion_evaluacion where titulo='PeticionEvaluacion2')" />
+      <column name="comite_id" valueComputed="(select id from comite where comite='CEEA')" />
       <column name="titulo" value="Título M20/2020/001" />
       <column name="tipo_memoria_id" value="1" />
       <column name="estado_actual_id" value="5" />
-      <column name="fecha_envio_secretaria" value="2020-10-01T00:00:00Z" />
-      <column name="requiere_retrospectiva" value="true" />
-      <column name="retrospectiva_id" valueComputed="(select id from eti.retrospectiva where fecha_retrospectiva='2020-12-01T00:00:00Z')" />
+      <column name="fecha_envio_secretaria" valueDate="2020-10-01T00:00:00" />
+      <column name="requiere_retrospectiva" valueBoolean="true" />
+      <column name="retrospectiva_id" valueComputed="(select max(id) from retrospectiva)" />
       <column name="version" value="2" />
       <column name="cod_organo_competente" value="CodOrganoCompetente" />
-      <column name="activo" value="true" />
+      <column name="activo" valueBoolean="true" />
     </insert>
     <insert tableName="memoria">
       <column name="id" valueSequenceNext="memoria_seq" />
       <column name="num_referencia" value="M20/2020/002" />
-      <column name="peticion_evaluacion_id" valueComputed="(select id from eti.peticion_evaluacion where titulo='PeticionEvaluacion3')" />
-      <column name="comite_id" valueComputed="(select id from eti.comite where comite='CEEA')" />
+      <column name="peticion_evaluacion_id" valueComputed="(select id from peticion_evaluacion where titulo='PeticionEvaluacion3')" />
+      <column name="comite_id" valueComputed="(select id from comite where comite='CEEA')" />
       <column name="titulo" value="Título M20/2020/002" />
-      <column name="persona_ref" value="7" />
+      <column name="persona_ref" value="02221287" />
       <column name="tipo_memoria_id" value="1" />
       <column name="estado_actual_id" value="3" />
-      <column name="fecha_envio_secretaria" value="2020-10-01T00:00:00Z" />
-      <column name="requiere_retrospectiva" value="false" />
+      <column name="fecha_envio_secretaria" valueDate="2020-10-01T00:00:00" />
+      <column name="requiere_retrospectiva" valueBoolean="false" />
       <column name="version" value="0" />
-      <column name="activo" value="true" />
+      <column name="activo" valueBoolean="true" />
     </insert>
     <insert tableName="memoria">
       <column name="id" valueSequenceNext="memoria_seq" />
       <column name="num_referencia" value="M10/2020/001" />
-      <column name="peticion_evaluacion_id" valueComputed="(select id from eti.peticion_evaluacion where titulo='PeticionEvaluacion4')" />
-      <column name="comite_id" valueComputed="(select id from eti.comite where comite='CEISH')" />
+      <column name="peticion_evaluacion_id" valueComputed="(select id from peticion_evaluacion where titulo='PeticionEvaluacion4')" />
+      <column name="comite_id" valueComputed="(select id from comite where comite='CEISH')" />
       <column name="titulo" value="Título M10/2020/001" />
       <column name="tipo_memoria_id" value="1" />
       <column name="estado_actual_id" value="1" />
-      <column name="requiere_retrospectiva" value="false" />
+      <column name="requiere_retrospectiva" valueBoolean="false" />
       <column name="version" value="0" />
-      <column name="activo" value="true" />
+      <column name="activo" valueBoolean="true" />
     </insert>
   </changeSet>
+
   <changeSet context="dev" author="master" id="0000000000000-estado_memoria">
     <insert tableName="estado_memoria">
       <column name="id" valueSequenceNext="estado_memoria_seq" />
-      <column name="memoria_id" valueComputed="(select id from eti.memoria where num_referencia='M10/2019/001')" />
-      <column name="tipo_estado_memoria_id" valueComputed="(select id from eti.tipo_estado_memoria where nombre='En elaboración')" />
-      <column name="fecha_estado" value="2019-06-15T00:00:00Z" />
+      <column name="memoria_id" valueComputed="(select id from memoria where num_referencia='M10/2019/001')" />
+      <column name="tipo_estado_memoria_id" valueComputed="(select id from tipo_estado_memoria where nombre='En elaboración')" />
+      <column name="fecha_estado" valueDate="2019-06-15T00:00:00" />
     </insert>
     <insert tableName="estado_memoria">
       <column name="id" valueSequenceNext="estado_memoria_seq" />
-      <column name="memoria_id" valueComputed="(select id from eti.memoria where num_referencia='M10/2019/001')" />
-      <column name="tipo_estado_memoria_id" valueComputed="(select id from eti.tipo_estado_memoria where nombre='Completada')" />
-      <column name="fecha_estado" value="2019-06-18T00:00:00Z" />
+      <column name="memoria_id" valueComputed="(select id from memoria where num_referencia='M10/2019/001')" />
+      <column name="tipo_estado_memoria_id" valueComputed="(select id from tipo_estado_memoria where nombre='Completada')" />
+      <column name="fecha_estado" valueDate="2019-06-18T00:00:00" />
     </insert>
     <insert tableName="estado_memoria">
       <column name="id" valueSequenceNext="estado_memoria_seq" />
-      <column name="memoria_id" valueComputed="(select id from eti.memoria where num_referencia='M10/2019/001')" />
-      <column name="tipo_estado_memoria_id" valueComputed="(select id from eti.tipo_estado_memoria where nombre='En secretaría')" />
-      <column name="fecha_estado" value="2019-07-20T00:00:00Z" />
+      <column name="memoria_id" valueComputed="(select id from memoria where num_referencia='M10/2019/001')" />
+      <column name="tipo_estado_memoria_id" valueComputed="(select id from tipo_estado_memoria where nombre='En secretaría')" />
+      <column name="fecha_estado" valueDate="2019-07-20T00:00:00" />
     </insert>
     <insert tableName="estado_memoria">
       <column name="id" valueSequenceNext="estado_memoria_seq" />
-      <column name="memoria_id" valueComputed="(select id from eti.memoria where num_referencia='M10/2019/001')" />
-      <column name="tipo_estado_memoria_id" valueComputed="(select id from eti.tipo_estado_memoria where nombre='En evaluación')" />
-      <column name="fecha_estado" value="2019-08-01T00:00:00Z" />
+      <column name="memoria_id" valueComputed="(select id from memoria where num_referencia='M10/2019/001')" />
+      <column name="tipo_estado_memoria_id" valueComputed="(select id from tipo_estado_memoria where nombre='En evaluación')" />
+      <column name="fecha_estado" valueDate="2019-08-01T00:00:00" />
     </insert>
     <insert tableName="estado_memoria">
       <column name="id" valueSequenceNext="estado_memoria_seq" />
-      <column name="memoria_id" valueComputed="(select id from eti.memoria where num_referencia='M10/2019/001')" />
-      <column name="tipo_estado_memoria_id" valueComputed="(select id from eti.tipo_estado_memoria where nombre='Favorable Pendiente de Modificaciones Mínimas')" />
-      <column name="fecha_estado" value="2019-08-25T00:00:00Z" />
+      <column name="memoria_id" valueComputed="(select id from memoria where num_referencia='M10/2019/001')" />
+      <column name="tipo_estado_memoria_id" valueComputed="(select id from tipo_estado_memoria where nombre='Favorable Pendiente de Modificaciones Mínimas')" />
+      <column name="fecha_estado" valueDate="2019-08-25T00:00:00" />
     </insert>
     <insert tableName="estado_memoria">
       <column name="id" valueSequenceNext="estado_memoria_seq" />
-      <column name="memoria_id" valueComputed="(select id from eti.memoria where num_referencia='M10/2019/001')" />
-      <column name="tipo_estado_memoria_id" valueComputed="(select id from eti.tipo_estado_memoria where nombre='En secretaría revisión mínima')" />
-      <column name="fecha_estado" value="2019-08-28T00:00:00Z" />
+      <column name="memoria_id" valueComputed="(select id from memoria where num_referencia='M10/2019/001')" />
+      <column name="tipo_estado_memoria_id" valueComputed="(select id from tipo_estado_memoria where nombre='En secretaría revisión mínima')" />
+      <column name="fecha_estado" valueDate="2019-08-28T00:00:00" />
     </insert>
     <insert tableName="estado_memoria">
       <column name="id" valueSequenceNext="estado_memoria_seq" />
-      <column name="memoria_id" valueComputed="(select id from eti.memoria where num_referencia='M10/2019/001')" />
-      <column name="tipo_estado_memoria_id" valueComputed="(select id from eti.tipo_estado_memoria where nombre='Fin evaluación')" />
-      <column name="fecha_estado" value="2019-08-30T00:00:00Z" />
+      <column name="memoria_id" valueComputed="(select id from memoria where num_referencia='M10/2019/001')" />
+      <column name="tipo_estado_memoria_id" valueComputed="(select id from tipo_estado_memoria where nombre='Fin evaluación')" />
+      <column name="fecha_estado" valueDate="2019-08-30T00:00:00" />
     </insert>
     <insert tableName="estado_memoria">
       <column name="id" valueSequenceNext="estado_memoria_seq" />
-      <column name="memoria_id" valueComputed="(select id from eti.memoria where num_referencia='M10/2019/001')" />
-      <column name="tipo_estado_memoria_id" valueComputed="(select id from eti.tipo_estado_memoria where nombre='Completada seguimiento anual')" />
-      <column name="fecha_estado" value="2020-10-01T00:00:00Z" />
+      <column name="memoria_id" valueComputed="(select id from memoria where num_referencia='M10/2019/001')" />
+      <column name="tipo_estado_memoria_id" valueComputed="(select id from tipo_estado_memoria where nombre='Completada seguimiento anual')" />
+      <column name="fecha_estado" valueDate="2020-10-01T00:00:00" />
     </insert>
     <insert tableName="estado_memoria">
       <column name="id" valueSequenceNext="estado_memoria_seq" />
-      <column name="memoria_id" valueComputed="(select id from eti.memoria where num_referencia='M10/2019/001')" />
-      <column name="tipo_estado_memoria_id" valueComputed="(select id from eti.tipo_estado_memoria where nombre='En secretaría seguimiento anual')" />
-      <column name="fecha_estado" value="2020-10-02T00:00:00Z" />
+      <column name="memoria_id" valueComputed="(select id from memoria where num_referencia='M10/2019/001')" />
+      <column name="tipo_estado_memoria_id" valueComputed="(select id from tipo_estado_memoria where nombre='En secretaría seguimiento anual')" />
+      <column name="fecha_estado" valueDate="2020-10-02T00:00:00" />
     </insert>
     <insert tableName="estado_memoria">
       <column name="id" valueSequenceNext="estado_memoria_seq" />
-      <column name="memoria_id" valueComputed="(select id from eti.memoria where num_referencia='M20/2020/001')" />
-      <column name="tipo_estado_memoria_id" valueComputed="(select id from eti.tipo_estado_memoria where nombre='En elaboración')" />
-      <column name="fecha_estado" value="2020-06-15T00:00:00Z" />
+      <column name="memoria_id" valueComputed="(select id from memoria where num_referencia='M20/2020/001')" />
+      <column name="tipo_estado_memoria_id" valueComputed="(select id from tipo_estado_memoria where nombre='En elaboración')" />
+      <column name="fecha_estado" valueDate="2020-06-15T00:00:00" />
     </insert>
     <insert tableName="estado_memoria">
       <column name="id" valueSequenceNext="estado_memoria_seq" />
-      <column name="memoria_id" valueComputed="(select id from eti.memoria where num_referencia='M20/2020/001')" />
-      <column name="tipo_estado_memoria_id" valueComputed="(select id from eti.tipo_estado_memoria where nombre='Completada')" />
-      <column name="fecha_estado" value="2020-06-18T00:00:00Z" />
+      <column name="memoria_id" valueComputed="(select id from memoria where num_referencia='M20/2020/001')" />
+      <column name="tipo_estado_memoria_id" valueComputed="(select id from tipo_estado_memoria where nombre='Completada')" />
+      <column name="fecha_estado" valueDate="2020-06-18T00:00:00" />
     </insert>
     <insert tableName="estado_memoria">
       <column name="id" valueSequenceNext="estado_memoria_seq" />
-      <column name="memoria_id" valueComputed="(select id from eti.memoria where num_referencia='M20/2020/001')" />
-      <column name="tipo_estado_memoria_id" valueComputed="(select id from eti.tipo_estado_memoria where nombre='En secretaría')" />
-      <column name="fecha_estado" value="2020-08-20T00:00:00Z" />
+      <column name="memoria_id" valueComputed="(select id from memoria where num_referencia='M20/2020/001')" />
+      <column name="tipo_estado_memoria_id" valueComputed="(select id from tipo_estado_memoria where nombre='En secretaría')" />
+      <column name="fecha_estado" valueDate="2020-08-20T00:00:00" />
     </insert>
     <insert tableName="estado_memoria">
       <column name="id" valueSequenceNext="estado_memoria_seq" />
-      <column name="memoria_id" valueComputed="(select id from eti.memoria where num_referencia='M20/2020/001')" />
-      <column name="tipo_estado_memoria_id" valueComputed="(select id from eti.tipo_estado_memoria where nombre='En evaluación')" />
-      <column name="fecha_estado" value="2020-09-01T00:00:00Z" />
+      <column name="memoria_id" valueComputed="(select id from memoria where num_referencia='M20/2020/001')" />
+      <column name="tipo_estado_memoria_id" valueComputed="(select id from tipo_estado_memoria where nombre='En evaluación')" />
+      <column name="fecha_estado" valueDate="2020-09-01T00:00:00" />
     </insert>
     <insert tableName="estado_memoria">
       <column name="id" valueSequenceNext="estado_memoria_seq" />
-      <column name="memoria_id" valueComputed="(select id from eti.memoria where num_referencia='M20/2020/001')" />
-      <column name="tipo_estado_memoria_id" valueComputed="(select id from eti.tipo_estado_memoria where nombre='Pendiente de correcciones')" />
-      <column name="fecha_estado" value="2020-09-25T00:00:00Z" />
+      <column name="memoria_id" valueComputed="(select id from memoria where num_referencia='M20/2020/001')" />
+      <column name="tipo_estado_memoria_id" valueComputed="(select id from tipo_estado_memoria where nombre='Pendiente de correcciones')" />
+      <column name="fecha_estado" valueDate="2020-09-25T00:00:00" />
     </insert>
     <insert tableName="estado_memoria">
       <column name="id" valueSequenceNext="estado_memoria_seq" />
-      <column name="memoria_id" valueComputed="(select id from eti.memoria where num_referencia='M20/2020/001')" />
-      <column name="tipo_estado_memoria_id" valueComputed="(select id from eti.tipo_estado_memoria where nombre='En secretaría')" />
-      <column name="fecha_estado" value="2020-10-01T00:00:00Z" />
+      <column name="memoria_id" valueComputed="(select id from memoria where num_referencia='M20/2020/001')" />
+      <column name="tipo_estado_memoria_id" valueComputed="(select id from tipo_estado_memoria where nombre='En secretaría')" />
+      <column name="fecha_estado" valueDate="2020-10-01T00:00:00" />
     </insert>
     <insert tableName="estado_memoria">
       <column name="id" valueSequenceNext="estado_memoria_seq" />
-      <column name="memoria_id" valueComputed="(select id from eti.memoria where num_referencia='M20/2020/001')" />
-      <column name="tipo_estado_memoria_id" valueComputed="(select id from eti.tipo_estado_memoria where nombre='En evaluación')" />
-      <column name="fecha_estado" value="2020-10-05T00:00:00Z" />
+      <column name="memoria_id" valueComputed="(select id from memoria where num_referencia='M20/2020/001')" />
+      <column name="tipo_estado_memoria_id" valueComputed="(select id from tipo_estado_memoria where nombre='En evaluación')" />
+      <column name="fecha_estado" valueDate="2020-10-05T00:00:00" />
     </insert>
     <insert tableName="estado_memoria">
       <column name="id" valueSequenceNext="estado_memoria_seq" />
-      <column name="memoria_id" valueComputed="(select id from eti.memoria where num_referencia='M20/2020/002')" />
-      <column name="tipo_estado_memoria_id" valueComputed="(select id from eti.tipo_estado_memoria where nombre='En elaboración')" />
-      <column name="fecha_estado" value="2020-09-15T00:00:00Z" />
+      <column name="memoria_id" valueComputed="(select id from memoria where num_referencia='M20/2020/002')" />
+      <column name="tipo_estado_memoria_id" valueComputed="(select id from tipo_estado_memoria where nombre='En elaboración')" />
+      <column name="fecha_estado" valueDate="2020-09-15T00:00:00" />
     </insert>
     <insert tableName="estado_memoria">
       <column name="id" valueSequenceNext="estado_memoria_seq" />
-      <column name="memoria_id" valueComputed="(select id from eti.memoria where num_referencia='M20/2020/002')" />
-      <column name="tipo_estado_memoria_id" valueComputed="(select id from eti.tipo_estado_memoria where nombre='Completada')" />
-      <column name="fecha_estado" value="2020-09-18T00:00:00Z" />
+      <column name="memoria_id" valueComputed="(select id from memoria where num_referencia='M20/2020/002')" />
+      <column name="tipo_estado_memoria_id" valueComputed="(select id from tipo_estado_memoria where nombre='Completada')" />
+      <column name="fecha_estado" valueDate="2020-09-18T00:00:00" />
     </insert>
     <insert tableName="estado_memoria">
       <column name="id" valueSequenceNext="estado_memoria_seq" />
-      <column name="memoria_id" valueComputed="(select id from eti.memoria where num_referencia='M20/2020/002')" />
-      <column name="tipo_estado_memoria_id" valueComputed="(select id from eti.tipo_estado_memoria where nombre='En secretaría')" />
-      <column name="fecha_estado" value="2020-10-01T00:00:00Z" />
+      <column name="memoria_id" valueComputed="(select id from memoria where num_referencia='M20/2020/002')" />
+      <column name="tipo_estado_memoria_id" valueComputed="(select id from tipo_estado_memoria where nombre='En secretaría')" />
+      <column name="fecha_estado" valueDate="2020-10-01T00:00:00" />
     </insert>
     <insert tableName="estado_memoria">
       <column name="id" valueSequenceNext="estado_memoria_seq" />
-      <column name="memoria_id" valueComputed="(select id from eti.memoria where num_referencia='M10/2020/001')" />
-      <column name="tipo_estado_memoria_id" valueComputed="(select id from eti.tipo_estado_memoria where nombre='En elaboración')" />
-      <column name="fecha_estado" value="2019-06-15T00:00:00Z" />
+      <column name="memoria_id" valueComputed="(select id from memoria where num_referencia='M10/2020/001')" />
+      <column name="tipo_estado_memoria_id" valueComputed="(select id from tipo_estado_memoria where nombre='En elaboración')" />
+      <column name="fecha_estado" valueDate="2019-06-15T00:00:00" />
     </insert>
   </changeSet>
+
   <changeSet context="dev" author="master" id="0000000000000-evaluador">
     <insert tableName="evaluador">
       <column name="id" valueSequenceNext="evaluador_seq" />
-      <column name="comite_id" valueComputed="(select id from eti.comite where comite='CEISH')" />
-      <column name="cargo_comite_id" valueComputed="(select id from eti.cargo_comite where nombre='PRESIDENTE')" />
-      <column name="fecha_alta" value="2020-07-09T00:00:00Z" />
+      <column name="comite_id" valueComputed="(select id from comite where comite='CEISH')" />
+      <column name="cargo_comite_id" valueComputed="(select id from cargo_comite where nombre='PRESIDENTE')" />
+      <column name="fecha_alta" valueDate="2020-07-09T00:00:00" />
       <column name="resumen" value="Evaluador1" />
-      <column name="persona_ref" value="5" />
-      <column name="activo" value="true" />
+      <column name="persona_ref" value="48517010" />
+      <column name="activo" valueBoolean="true" />
     </insert>
     <insert tableName="evaluador">
       <column name="id" valueSequenceNext="evaluador_seq" />
-      <column name="comite_id" valueComputed="(select id from eti.comite where comite='CEISH')" />
-      <column name="cargo_comite_id" valueComputed="(select id from eti.cargo_comite where nombre='VOCAL')" />
-      <column name="fecha_alta" value="2020-07-09T00:00:00Z" />
-      <column name="fecha_baja" value="2021-07-09T23:59:59Z" />
+      <column name="comite_id" valueComputed="(select id from comite where comite='CEISH')" />
+      <column name="cargo_comite_id" valueComputed="(select id from cargo_comite where nombre='VOCAL')" />
+      <column name="fecha_alta" valueDate="2020-07-09T00:00:00" />
+      <column name="fecha_baja" valueDate="2021-07-09T23:59:59" />
       <column name="resumen" value="Evaluador2" />
-      <column name="persona_ref" value="6" />
-      <column name="activo" value="true" />
+      <column name="persona_ref" value="52364567" />
+      <column name="activo" valueBoolean="true" />
     </insert>
     <insert tableName="evaluador">
       <column name="id" valueSequenceNext="evaluador_seq" />
-      <column name="comite_id" valueComputed="(select id from eti.comite where comite='CEEA')" />
-      <column name="cargo_comite_id" valueComputed="(select id from eti.cargo_comite where nombre='VOCAL')" />
-      <column name="fecha_alta" value="2020-07-09T00:00:00Z" />
+      <column name="comite_id" valueComputed="(select id from comite where comite='CEEA')" />
+      <column name="cargo_comite_id" valueComputed="(select id from cargo_comite where nombre='VOCAL')" />
+      <column name="fecha_alta" valueDate="2020-07-09T00:00:00" />
       <column name="resumen" value="Evaluador3" />
-      <column name="persona_ref" value="3" />
-      <column name="activo" value="true" />
+      <column name="persona_ref" value="22481020" />
+      <column name="activo" valueBoolean="true" />
     </insert>
     <insert tableName="evaluador">
       <column name="id" valueSequenceNext="evaluador_seq" />
-      <column name="comite_id" valueComputed="(select id from eti.comite where comite='CEEA')" />
-      <column name="cargo_comite_id" valueComputed="(select id from eti.cargo_comite where nombre='PRESIDENTE')" />
-      <column name="fecha_alta" value="2020-07-10T00:00:00Z" />
+      <column name="comite_id" valueComputed="(select id from comite where comite='CEEA')" />
+      <column name="cargo_comite_id" valueComputed="(select id from cargo_comite where nombre='PRESIDENTE')" />
+      <column name="fecha_alta" valueDate="2020-07-10T00:00:00" />
       <column name="resumen" value="Evaluador4" />
-      <column name="persona_ref" value="4" />
-      <column name="activo" value="true" />
+      <column name="persona_ref" value="02591317" />
+      <column name="activo" valueBoolean="true" />
     </insert>
     <insert tableName="evaluador">
       <column name="id" valueSequenceNext="evaluador_seq" />
-      <column name="comite_id" valueComputed="(select id from eti.comite where comite='CEEA')" />
-      <column name="cargo_comite_id" valueComputed="(select id from eti.cargo_comite where nombre='VOCAL')" />
-      <column name="fecha_alta" value="2020-07-09T00:00:00Z" />
-      <column name="fecha_baja" value="2021-07-09T23:59:59Z" />
+      <column name="comite_id" valueComputed="(select id from comite where comite='CEEA')" />
+      <column name="cargo_comite_id" valueComputed="(select id from cargo_comite where nombre='VOCAL')" />
+      <column name="fecha_alta" valueDate="2020-07-09T00:00:00" />
+      <column name="fecha_baja" valueDate="2021-07-09T23:59:59" />
       <column name="resumen" value="Evaluador5" />
-      <column name="persona_ref" value="7" />
-      <column name="activo" value="true" />
+      <column name="persona_ref" value="02221287" />
+      <column name="activo" valueBoolean="true" />
     </insert>
     <insert tableName="evaluador">
       <column name="id" valueSequenceNext="evaluador_seq" />
-      <column name="comite_id" valueComputed="(select id from eti.comite where comite='CEEA')" />
-      <column name="cargo_comite_id" valueComputed="(select id from eti.cargo_comite where nombre='PRESIDENTE')" />
-      <column name="fecha_alta" value="2019-07-09T00:00:00Z" />
-      <column name="fecha_baja" value="2020-07-09T23:59:59Z" />
+      <column name="comite_id" valueComputed="(select id from comite where comite='CEEA')" />
+      <column name="cargo_comite_id" valueComputed="(select id from cargo_comite where nombre='PRESIDENTE')" />
+      <column name="fecha_alta" valueDate="2019-07-09T00:00:00" />
+      <column name="fecha_baja" valueDate="2020-07-09T23:59:59" />
       <column name="resumen" value="Evaluador6" />
-      <column name="persona_ref" value="3" />
-      <column name="activo" value="true" />
+      <column name="persona_ref" value="22481020" />
+      <column name="activo" valueBoolean="true" />
     </insert>
     <insert tableName="evaluador">
       <column name="id" valueSequenceNext="evaluador_seq" />
-      <column name="comite_id" valueComputed="(select id from eti.comite where comite='CEIAB')" />
-      <column name="cargo_comite_id" valueComputed="(select id from eti.cargo_comite where nombre='VOCAL')" />
-      <column name="fecha_alta" value="2020-07-09T00:00:00Z" />
-      <column name="fecha_baja" value="2021-07-09T23:59:59Z" />
+      <column name="comite_id" valueComputed="(select id from comite where comite='CEIAB')" />
+      <column name="cargo_comite_id" valueComputed="(select id from cargo_comite where nombre='VOCAL')" />
+      <column name="fecha_alta" valueDate="2020-07-09T00:00:00" />
+      <column name="fecha_baja" valueDate="2021-07-09T23:59:59" />
       <column name="resumen" value="Evaluador7" />
-      <column name="persona_ref" value="1" />
-      <column name="activo" value="true" />
+      <column name="persona_ref" value="01889311" />
+      <column name="activo" valueBoolean="true" />
     </insert>
     <insert tableName="evaluador">
       <column name="id" valueSequenceNext="evaluador_seq" />
-      <column name="comite_id" valueComputed="(select id from eti.comite where comite='CEIAB')" />
-      <column name="cargo_comite_id" valueComputed="(select id from eti.cargo_comite where nombre='PRESIDENTE')" />
-      <column name="fecha_alta" value="2020-07-09T00:00:00Z" />
-      <column name="fecha_baja" value="2021-07-09T23:59:59Z" />
+      <column name="comite_id" valueComputed="(select id from comite where comite='CEIAB')" />
+      <column name="cargo_comite_id" valueComputed="(select id from cargo_comite where nombre='PRESIDENTE')" />
+      <column name="fecha_alta" valueDate="2020-07-09T00:00:00" />
+      <column name="fecha_baja" valueDate="2021-07-09T23:59:59" />
       <column name="resumen" value="Evaluador8" />
-      <column name="persona_ref" value="6" />
-      <column name="activo" value="true" />
+      <column name="persona_ref" value="52364567" />
+      <column name="activo" valueBoolean="true" />
     </insert>
   </changeSet>
+
   <changeSet context="dev" author="master" id="0000000000000-tarea">
     <insert tableName="tarea">
       <column name="id" valueSequenceNext="tarea_seq" />
-      <column name="equipo_trabajo_id" valueComputed="(select id from eti.equipo_trabajo where persona_ref='5')" />
-      <column name="memoria_id" valueComputed="(select id from eti.memoria where num_referencia='M10/2019/001')" />
+      <column name="equipo_trabajo_id" valueComputed="(select id from equipo_trabajo where persona_ref='48517010')" />
+      <column name="memoria_id" valueComputed="(select id from memoria where num_referencia='M10/2019/001')" />
       <column name="formacion" value="Experiencia1" />
       <column name="tarea" value="Tarea1" />
     </insert>
     <insert tableName="tarea">
       <column name="id" valueSequenceNext="tarea_seq" />
-      <column name="equipo_trabajo_id" valueComputed="(select id from eti.equipo_trabajo where persona_ref='7')" />
-      <column name="memoria_id" valueComputed="(select id from eti.memoria where num_referencia='M10/2019/001')" />
+      <column name="equipo_trabajo_id" valueComputed="(select id from equipo_trabajo where persona_ref='02221287')" />
+      <column name="memoria_id" valueComputed="(select id from memoria where num_referencia='M10/2019/001')" />
       <column name="formacion" value="Experiencia2" />
       <column name="tarea" value="Tarea2" />
     </insert>
     <insert tableName="tarea">
       <column name="id" valueSequenceNext="tarea_seq" />
-      <column name="equipo_trabajo_id" valueComputed="(select id from eti.equipo_trabajo where persona_ref='6')" />
-      <column name="memoria_id" valueComputed="(select id from eti.memoria where num_referencia='M20/2020/001')" />
-      <column name="formacion_especifica_id" valueComputed="(select id from eti.formacion_especifica where id=3)" />
+      <column name="equipo_trabajo_id" valueComputed="(select id from equipo_trabajo where persona_ref='52364567')" />
+      <column name="memoria_id" valueComputed="(select id from memoria where num_referencia='M20/2020/001')" />
+      <column name="formacion_especifica_id" valueComputed="(select id from formacion_especifica where id=3)" />
       <column name="organismo" value="Organismo3" />
       <column name="anio" value="2018" />
-      <column name="tipo_tarea_id" valueComputed="(select id from eti.tipo_tarea where nombre='Manipulación de animales')" />
+      <column name="tipo_tarea_id" valueComputed="(select id from tipo_tarea where nombre='Manipulación de animales')" />
     </insert>
     <insert tableName="tarea">
       <column name="id" valueSequenceNext="tarea_seq" />
-      <column name="equipo_trabajo_id" valueComputed="(select id from eti.equipo_trabajo where persona_ref='3' limit 1)" />
-      <column name="memoria_id" valueComputed="(select id from eti.memoria where num_referencia='M20/2020/002')" />
-      <column name="formacion_especifica_id" valueComputed="(select id from eti.formacion_especifica where id=4)" />
+      <column name="equipo_trabajo_id" valueComputed="(select max(id) from equipo_trabajo where persona_ref='22481020' )" />
+      <column name="memoria_id" valueComputed="(select id from memoria where num_referencia='M20/2020/002')" />
+      <column name="formacion_especifica_id" valueComputed="(select id from formacion_especifica where id=4)" />
       <column name="organismo" value="Organismo4" />
       <column name="anio" value="2018" />
-      <column name="tipo_tarea_id" valueComputed="(select id from eti.tipo_tarea where nombre='Eutanasia')" />
+      <column name="tipo_tarea_id" valueComputed="(select id from tipo_tarea where nombre='Eutanasia')" />
     </insert>
     <insert tableName="tarea">
       <column name="id" valueSequenceNext="tarea_seq" />
-      <column name="equipo_trabajo_id" valueComputed="(select id from eti.equipo_trabajo where persona_ref='3' limit 1)" />
-      <column name="memoria_id" valueComputed="(select id from eti.memoria where num_referencia='M10/2020/001')" />
+      <column name="equipo_trabajo_id" valueComputed="(select max(id) from equipo_trabajo where persona_ref='22481020' )" />
+      <column name="memoria_id" valueComputed="(select id from memoria where num_referencia='M10/2020/001')" />
       <column name="formacion" value="Experiencia1" />
       <column name="tarea" value="Tarea1" />
     </insert>
   </changeSet>
+
   <changeSet context="dev" author="master" id="0000000000000-documentacion_memoria">
     <insert tableName="documentacion_memoria">
       <column name="id" valueSequenceNext="documentacion_memoria_seq" />
-      <column name="memoria_id" valueComputed="(select id from eti.memoria where num_referencia='M10/2019/001')" />
+      <column name="memoria_id" valueComputed="(select id from memoria where num_referencia='M10/2019/001')" />
       <column name="tipo_documento_id" value="4" />
       <column name="documento_ref" value="DocumentoRef1_M10/2019/001" />
       <column name="nombre" value="Documento 1" />
     </insert>
     <insert tableName="documentacion_memoria">
       <column name="id" valueSequenceNext="documentacion_memoria_seq" />
-      <column name="memoria_id" valueComputed="(select id from eti.memoria where num_referencia='M10/2019/001')" />
+      <column name="memoria_id" valueComputed="(select id from memoria where num_referencia='M10/2019/001')" />
       <column name="tipo_documento_id" value="5" />
       <column name="documento_ref" value="DocumentoRef2_M10/2019/001" />
       <column name="nombre" value="Documento 2" />
     </insert>
     <insert tableName="documentacion_memoria">
       <column name="id" valueSequenceNext="documentacion_memoria_seq" />
-      <column name="memoria_id" valueComputed="(select id from eti.memoria where num_referencia='M10/2019/001')" />
+      <column name="memoria_id" valueComputed="(select id from memoria where num_referencia='M10/2019/001')" />
       <column name="tipo_documento_id" value="6" />
       <column name="documento_ref" value="DocumentoRef3_M10/2019/001" />
       <column name="nombre" value="Documento 3" />
     </insert>
     <insert tableName="documentacion_memoria">
       <column name="id" valueSequenceNext="documentacion_memoria_seq" />
-      <column name="memoria_id" valueComputed="(select id from eti.memoria where num_referencia='M10/2019/001')" />
+      <column name="memoria_id" valueComputed="(select id from memoria where num_referencia='M10/2019/001')" />
       <column name="tipo_documento_id" value="7" />
       <column name="documento_ref" value="DocumentoRef4_M10/2019/001" />
       <column name="nombre" value="Documento 4" />
     </insert>
     <insert tableName="documentacion_memoria">
       <column name="id" valueSequenceNext="documentacion_memoria_seq" />
-      <column name="memoria_id" valueComputed="(select id from eti.memoria where num_referencia='M10/2019/001')" />
+      <column name="memoria_id" valueComputed="(select id from memoria where num_referencia='M10/2019/001')" />
       <column name="tipo_documento_id" value="8" />
       <column name="documento_ref" value="DocumentoRef5_M10/2019/001" />
       <column name="nombre" value="Documento 5" />
     </insert>
     <insert tableName="documentacion_memoria">
       <column name="id" valueSequenceNext="documentacion_memoria_seq" />
-      <column name="memoria_id" valueComputed="(select id from eti.memoria where num_referencia='M10/2019/001')" />
+      <column name="memoria_id" valueComputed="(select id from memoria where num_referencia='M10/2019/001')" />
       <column name="tipo_documento_id" value="9" />
       <column name="documento_ref" value="DocumentoRef6_M10/2019/001" />
       <column name="nombre" value="Documento 6" />
     </insert>
     <insert tableName="documentacion_memoria">
       <column name="id" valueSequenceNext="documentacion_memoria_seq" />
-      <column name="memoria_id" valueComputed="(select id from eti.memoria where num_referencia='M10/2019/001')" />
+      <column name="memoria_id" valueComputed="(select id from memoria where num_referencia='M10/2019/001')" />
       <column name="tipo_documento_id" value="10" />
       <column name="documento_ref" value="DocumentoRef7_M10/2019/001" />
       <column name="nombre" value="Documento 7" />
     </insert>
     <insert tableName="documentacion_memoria">
       <column name="id" valueSequenceNext="documentacion_memoria_seq" />
-      <column name="memoria_id" valueComputed="(select id from eti.memoria where num_referencia='M10/2019/001')" />
+      <column name="memoria_id" valueComputed="(select id from memoria where num_referencia='M10/2019/001')" />
       <column name="tipo_documento_id" value="11" />
       <column name="documento_ref" value="DocumentoRef8_M10/2019/001" />
       <column name="nombre" value="Documento 8" />
     </insert>
     <insert tableName="documentacion_memoria">
       <column name="id" valueSequenceNext="documentacion_memoria_seq" />
-      <column name="memoria_id" valueComputed="(select id from eti.memoria where num_referencia='M20/2020/001')" />
+      <column name="memoria_id" valueComputed="(select id from memoria where num_referencia='M20/2020/001')" />
       <column name="tipo_documento_id" value="12" />
       <column name="documento_ref" value="DocumentoRef1_M20/2020/001" />
       <column name="nombre" value="Documento 1" />
     </insert>
     <insert tableName="documentacion_memoria">
       <column name="id" valueSequenceNext="documentacion_memoria_seq" />
-      <column name="memoria_id" valueComputed="(select id from eti.memoria where num_referencia='M20/2020/001')" />
+      <column name="memoria_id" valueComputed="(select id from memoria where num_referencia='M20/2020/001')" />
       <column name="tipo_documento_id" value="13" />
       <column name="documento_ref" value="DocumentoRef2_M20/2020/001" />
       <column name="nombre" value="Documento 2" />
     </insert>
     <insert tableName="documentacion_memoria">
       <column name="id" valueSequenceNext="documentacion_memoria_seq" />
-      <column name="memoria_id" valueComputed="(select id from eti.memoria where num_referencia='M20/2020/001')" />
+      <column name="memoria_id" valueComputed="(select id from memoria where num_referencia='M20/2020/001')" />
       <column name="tipo_documento_id" value="14" />
       <column name="documento_ref" value="DocumentoRef3_M20/2020/001" />
       <column name="nombre" value="Documento 3" />
     </insert>
     <insert tableName="documentacion_memoria">
       <column name="id" valueSequenceNext="documentacion_memoria_seq" />
-      <column name="memoria_id" valueComputed="(select id from eti.memoria where num_referencia='M20/2020/001')" />
+      <column name="memoria_id" valueComputed="(select id from memoria where num_referencia='M20/2020/001')" />
       <column name="tipo_documento_id" value="15" />
       <column name="documento_ref" value="DocumentoRef4_M20/2020/001" />
       <column name="nombre" value="Documento 4" />
     </insert>
     <insert tableName="documentacion_memoria">
       <column name="id" valueSequenceNext="documentacion_memoria_seq" />
-      <column name="memoria_id" valueComputed="(select id from eti.memoria where num_referencia='M20/2020/001')" />
+      <column name="memoria_id" valueComputed="(select id from memoria where num_referencia='M20/2020/001')" />
       <column name="tipo_documento_id" value="16" />
       <column name="documento_ref" value="DocumentoRef5_M20/2020/001" />
       <column name="nombre" value="Documento 5" />
     </insert>
     <insert tableName="documentacion_memoria">
       <column name="id" valueSequenceNext="documentacion_memoria_seq" />
-      <column name="memoria_id" valueComputed="(select id from eti.memoria where num_referencia='M20/2020/002')" />
+      <column name="memoria_id" valueComputed="(select id from memoria where num_referencia='M20/2020/002')" />
       <column name="tipo_documento_id" value="12" />
       <column name="documento_ref" value="DocumentoRef1_M20/2020/002" />
       <column name="nombre" value="Documento 1" />
     </insert>
     <insert tableName="documentacion_memoria">
       <column name="id" valueSequenceNext="documentacion_memoria_seq" />
-      <column name="memoria_id" valueComputed="(select id from eti.memoria where num_referencia='M20/2020/002')" />
+      <column name="memoria_id" valueComputed="(select id from memoria where num_referencia='M20/2020/002')" />
       <column name="tipo_documento_id" value="13" />
       <column name="documento_ref" value="DocumentoRef2_M20/2020/002" />
       <column name="nombre" value="Documento 2" />
     </insert>
     <insert tableName="documentacion_memoria">
       <column name="id" valueSequenceNext="documentacion_memoria_seq" />
-      <column name="memoria_id" valueComputed="(select id from eti.memoria where num_referencia='M20/2020/002')" />
+      <column name="memoria_id" valueComputed="(select id from memoria where num_referencia='M20/2020/002')" />
       <column name="tipo_documento_id" value="14" />
       <column name="documento_ref" value="DocumentoRef3_M20/2020/002" />
       <column name="nombre" value="Documento 3" />
     </insert>
     <insert tableName="documentacion_memoria">
       <column name="id" valueSequenceNext="documentacion_memoria_seq" />
-      <column name="memoria_id" valueComputed="(select id from eti.memoria where num_referencia='M20/2020/002')" />
+      <column name="memoria_id" valueComputed="(select id from memoria where num_referencia='M20/2020/002')" />
       <column name="tipo_documento_id" value="15" />
       <column name="documento_ref" value="DocumentoRef4_M20/2020/002" />
       <column name="nombre" value="Documento 4" />
     </insert>
     <insert tableName="documentacion_memoria">
       <column name="id" valueSequenceNext="documentacion_memoria_seq" />
-      <column name="memoria_id" valueComputed="(select id from eti.memoria where num_referencia='M20/2020/002')" />
+      <column name="memoria_id" valueComputed="(select id from memoria where num_referencia='M20/2020/002')" />
       <column name="tipo_documento_id" value="16" />
       <column name="documento_ref" value="DocumentoRef5_M20/2020/002" />
       <column name="nombre" value="Documento 5" />
     </insert>
     <insert tableName="documentacion_memoria">
       <column name="id" valueSequenceNext="documentacion_memoria_seq" />
-      <column name="memoria_id" valueComputed="(select id from eti.memoria where num_referencia='M20/2020/002')" />
+      <column name="memoria_id" valueComputed="(select id from memoria where num_referencia='M20/2020/002')" />
       <column name="tipo_documento_id" value="16" />
       <column name="documento_ref" value="DocumentoRef6_M20/2020/002" />
       <column name="nombre" value="Documento 6" />
     </insert>
     <insert tableName="documentacion_memoria">
       <column name="id" valueSequenceNext="documentacion_memoria_seq" />
-      <column name="memoria_id" valueComputed="(select id from eti.memoria where num_referencia='M20/2020/002')" />
+      <column name="memoria_id" valueComputed="(select id from memoria where num_referencia='M20/2020/002')" />
       <column name="tipo_documento_id" value="16" />
       <column name="documento_ref" value="DocumentoRef7_M20/2020/002" />
       <column name="nombre" value="Documento 7" />
     </insert>
   </changeSet>
+
   <changeSet context="dev" author="master" id="0000000000000-convocatoria_reunion">
     <insert tableName="convocatoria_reunion">
       <column name="id" valueSequenceNext="convocatoria_reunion_seq" />
-      <column name="comite_id" valueComputed="(select id from eti.comite where comite='CEISH')" />
-      <column name="fecha_evaluacion" value="2019-08-25T00:00:00Z" />
-      <column name="fecha_limite" value="2019-08-15T23:59:59Z" />
+      <column name="comite_id" valueComputed="(select id from comite where comite='CEISH')" />
+      <column name="fecha_evaluacion" valueDate="2019-08-25T00:00:00" />
+      <column name="fecha_limite" valueDate="2019-08-15T23:59:59" />
       <column name="lugar" value="Lugar 1" />
       <column name="orden_dia" value="Orden del día convocatoria reunión 1" />
       <column name="anio" value="2019" />
       <column name="numero_acta" value="1" />
-      <column name="tipo_convocatoria_reunion_id" valueComputed="(select id from eti.tipo_convocatoria_reunion where nombre='Ordinaria')" />
+      <column name="tipo_convocatoria_reunion_id" valueComputed="(select id from tipo_convocatoria_reunion where nombre='Ordinaria')" />
       <column name="hora_inicio" value="8" />
       <column name="minuto_inicio" value="30" />
-      <column name="fecha_envio" value="2019-07-13T00:00:00Z" />
-      <column name="activo" value="true" />
+      <column name="fecha_envio" valueDate="2019-07-13T00:00:00" />
+      <column name="activo" valueBoolean="true" />
     </insert>
     <insert tableName="convocatoria_reunion">
       <column name="id" valueSequenceNext="convocatoria_reunion_seq" />
-      <column name="comite_id" valueComputed="(select id from eti.comite where comite='CEEA')" />
-      <column name="fecha_evaluacion" value="2020-09-20T00:00:00Z" />
-      <column name="fecha_limite" value="2020-09-10T23:59:59Z" />
+      <column name="comite_id" valueComputed="(select id from comite where comite='CEEA')" />
+      <column name="fecha_evaluacion" valueDate="2020-09-20T00:00:00" />
+      <column name="fecha_limite" valueDate="2020-09-10T23:59:59" />
       <column name="lugar" value="Lugar 2" />
       <column name="orden_dia" value="Orden del día convocatoria reunión 2" />
       <column name="anio" value="2020" />
       <column name="numero_acta" value="1" />
-      <column name="tipo_convocatoria_reunion_id" valueComputed="(select id from eti.tipo_convocatoria_reunion where nombre='Ordinaria')" />
+      <column name="tipo_convocatoria_reunion_id" valueComputed="(select id from tipo_convocatoria_reunion where nombre='Ordinaria')" />
       <column name="hora_inicio" value="16" />
       <column name="minuto_inicio" value="00" />
-      <column name="fecha_envio" value="2020-08-13T00:00:00Z" />
-      <column name="activo" value="true" />
+      <column name="fecha_envio" valueDate="2020-08-13T00:00:00" />
+      <column name="activo" valueBoolean="true" />
     </insert>
     <insert tableName="convocatoria_reunion">
       <column name="id" valueSequenceNext="convocatoria_reunion_seq" />
-      <column name="comite_id" valueComputed="(select id from eti.comite where comite='CEEA')" />
-      <column name="fecha_evaluacion" value="2020-12-25T00:00:00Z" />
-      <column name="fecha_limite" value="2020-12-15T23:59:59Z" />
+      <column name="comite_id" valueComputed="(select id from comite where comite='CEEA')" />
+      <column name="fecha_evaluacion" valueDate="2020-12-25T00:00:00" />
+      <column name="fecha_limite" valueDate="2020-12-15T23:59:59" />
       <column name="lugar" value="Lugar 3" />
       <column name="orden_dia" value="Orden del día convocatoria reunión 3" />
       <column name="anio" value="2020" />
       <column name="numero_acta" value="2" />
-      <column name="tipo_convocatoria_reunion_id" valueComputed="(select id from eti.tipo_convocatoria_reunion where nombre='Ordinaria')" />
+      <column name="tipo_convocatoria_reunion_id" valueComputed="(select id from tipo_convocatoria_reunion where nombre='Ordinaria')" />
       <column name="hora_inicio" value="10" />
       <column name="minuto_inicio" value="30" />
-      <column name="fecha_envio" value="2020-09-13T00:00:00Z" />
-      <column name="activo" value="true" />
+      <column name="fecha_envio" valueDate="2020-09-13T00:00:00" />
+      <column name="activo" valueBoolean="true" />
     </insert>
     <insert tableName="convocatoria_reunion">
       <column name="id" valueSequenceNext="convocatoria_reunion_seq" />
-      <column name="comite_id" valueComputed="(select id from eti.comite where comite='CEISH')" />
-      <column name="fecha_evaluacion" value="2021-05-23T00:00:00Z" />
-      <column name="fecha_limite" value="2021-05-13T23:59:59Z" />
+      <column name="comite_id" valueComputed="(select id from comite where comite='CEISH')" />
+      <column name="fecha_evaluacion" valueDate="2021-05-23T00:00:00" />
+      <column name="fecha_limite" valueDate="2021-05-13T23:59:59" />
       <column name="lugar" value="Lugar 4" />
       <column name="orden_dia" value="Orden del día convocatoria reunión 4" />
       <column name="anio" value="2020" />
       <column name="numero_acta" value="2" />
-      <column name="tipo_convocatoria_reunion_id" valueComputed="(select id from eti.tipo_convocatoria_reunion where nombre='Seguimiento')" />
+      <column name="tipo_convocatoria_reunion_id" valueComputed="(select id from tipo_convocatoria_reunion where nombre='Seguimiento')" />
       <column name="hora_inicio" value="17" />
       <column name="minuto_inicio" value="00" />
-      <column name="fecha_envio" value="2020-09-13T00:00:00Z" />
-      <column name="activo" value="true" />
+      <column name="fecha_envio" valueDate="2020-09-13T00:00:00" />
+      <column name="activo" valueBoolean="true" />
     </insert>
   </changeSet>
+
   <changeSet context="dev" author="master" id="0000000000000-acta">
     <insert tableName="acta">
       <column name="id" valueSequenceNext="acta_seq" />
-      <column name="convocatoria_reunion_id" valueComputed="(select id from eti.convocatoria_reunion where orden_dia='Orden del día convocatoria reunión 1')" />
+      <column name="convocatoria_reunion_id" valueComputed="(select id from convocatoria_reunion where orden_dia='Orden del día convocatoria reunión 1')" />
       <column name="hora_inicio" value="8" />
       <column name="minuto_inicio" value="30" />
       <column name="hora_fin" value="12" />
       <column name="minuto_fin" value="0" />
       <column name="resumen" value="Resumen1" />
-      <column name="numero" valueComputed="(select numero_acta from eti.convocatoria_reunion where orden_dia='Orden del día convocatoria reunión 1')" />
-      <column name="estado_actual_id" valueComputed="(select id from eti.tipo_estado_acta where nombre='Finalizada')" />
-      <column name="inactiva" value="true" />
-      <column name="activo" value="true" />
+      <column name="numero" valueComputed="(select numero_acta from convocatoria_reunion where orden_dia='Orden del día convocatoria reunión 1')" />
+      <column name="estado_actual_id" valueComputed="(select id from tipo_estado_acta where nombre='Finalizada')" />
+      <column name="inactiva" valueBoolean="true" />
+      <column name="activo" valueBoolean="true" />
     </insert>
     <insert tableName="acta">
       <column name="id" valueSequenceNext="acta_seq" />
-      <column name="convocatoria_reunion_id" valueComputed="(select id from eti.convocatoria_reunion where orden_dia='Orden del día convocatoria reunión 2')" />
+      <column name="convocatoria_reunion_id" valueComputed="(select id from convocatoria_reunion where orden_dia='Orden del día convocatoria reunión 2')" />
       <column name="hora_inicio" value="16" />
       <column name="minuto_inicio" value="0" />
       <column name="hora_fin" value="19" />
       <column name="minuto_fin" value="45" />
       <column name="resumen" value="Resumen2" />
-      <column name="numero" valueComputed="(select numero_acta from eti.convocatoria_reunion where orden_dia='Orden del día convocatoria reunión 2')" />
-      <column name="estado_actual_id" valueComputed="(select id from eti.tipo_estado_acta where nombre='Finalizada')" />
-      <column name="inactiva" value="true" />
-      <column name="activo" value="true" />
+      <column name="numero" valueComputed="(select numero_acta from convocatoria_reunion where orden_dia='Orden del día convocatoria reunión 2')" />
+      <column name="estado_actual_id" valueComputed="(select id from tipo_estado_acta where nombre='Finalizada')" />
+      <column name="inactiva" valueBoolean="true" />
+      <column name="activo" valueBoolean="true" />
     </insert>
     <insert tableName="acta">
       <column name="id" valueSequenceNext="acta_seq" />
-      <column name="convocatoria_reunion_id" valueComputed="(select id from eti.convocatoria_reunion where orden_dia='Orden del día convocatoria reunión 3')" />
+      <column name="convocatoria_reunion_id" valueComputed="(select id from convocatoria_reunion where orden_dia='Orden del día convocatoria reunión 3')" />
       <column name="hora_inicio" value="10" />
       <column name="minuto_inicio" value="30" />
       <column name="hora_fin" value="12" />
       <column name="minuto_fin" value="30" />
       <column name="resumen" value="Resumen3" />
-      <column name="numero" valueComputed="(select numero_acta from eti.convocatoria_reunion where orden_dia='Orden del día convocatoria reunión 3')" />
-      <column name="estado_actual_id" valueComputed="(select id from eti.tipo_estado_acta where nombre='En elaboración')" />
-      <column name="inactiva" value="false" />
-      <column name="activo" value="true" />
+      <column name="numero" valueComputed="(select numero_acta from convocatoria_reunion where orden_dia='Orden del día convocatoria reunión 3')" />
+      <column name="estado_actual_id" valueComputed="(select id from tipo_estado_acta where nombre='En elaboración')" />
+      <column name="inactiva" valueBoolean="false" />
+      <column name="activo" valueBoolean="true" />
     </insert>
     <insert tableName="acta">
       <column name="id" valueSequenceNext="acta_seq" />
-      <column name="convocatoria_reunion_id" valueComputed="(select id from eti.convocatoria_reunion where orden_dia='Orden del día convocatoria reunión 4')" />
+      <column name="convocatoria_reunion_id" valueComputed="(select id from convocatoria_reunion where orden_dia='Orden del día convocatoria reunión 4')" />
       <column name="hora_inicio" value="17" />
       <column name="minuto_inicio" value="0" />
       <column name="hora_fin" value="20" />
       <column name="minuto_fin" value="0" />
       <column name="resumen" value="Resumen4" />
-      <column name="numero" valueComputed="(select numero_acta from eti.convocatoria_reunion where orden_dia='Orden del día convocatoria reunión 4')" />
-      <column name="estado_actual_id" valueComputed="(select id from eti.tipo_estado_acta where nombre='En elaboración')" />
-      <column name="inactiva" value="false" />
-      <column name="activo" value="true" />
+      <column name="numero" valueComputed="(select numero_acta from convocatoria_reunion where orden_dia='Orden del día convocatoria reunión 4')" />
+      <column name="estado_actual_id" valueComputed="(select id from tipo_estado_acta where nombre='En elaboración')" />
+      <column name="inactiva" valueBoolean="false" />
+      <column name="activo" valueBoolean="true" />
     </insert>
   </changeSet>
+
   <changeSet context="dev" author="master" id="0000000000000-estado-acta">
     <insert tableName="estado_acta">
       <column name="id" valueSequenceNext="estado_acta_seq" />
-      <column name="acta_id" valueComputed="(select id from eti.acta where resumen='Resumen1')" />
-      <column name="tipo_estado_acta_id" valueComputed="(select id from eti.tipo_estado_acta where nombre='En elaboración')" />
-      <column name="fecha_estado" value="2019-07-13T00:00:00Z" />
+      <column name="acta_id" valueComputed="(select id from acta where resumen='Resumen1')" />
+      <column name="tipo_estado_acta_id" valueComputed="(select id from tipo_estado_acta where nombre='En elaboración')" />
+      <column name="fecha_estado" valueDate="2019-07-13T00:00:00" />
     </insert>
     <insert tableName="estado_acta">
       <column name="id" valueSequenceNext="estado_acta_seq" />
-      <column name="acta_id" valueComputed="(select id from eti.acta where resumen='Resumen1')" />
-      <column name="tipo_estado_acta_id" valueComputed="(select id from eti.tipo_estado_acta where nombre='Finalizada')" />
-      <column name="fecha_estado" value="2019-08-25T00:00:00Z" />
+      <column name="acta_id" valueComputed="(select id from acta where resumen='Resumen1')" />
+      <column name="tipo_estado_acta_id" valueComputed="(select id from tipo_estado_acta where nombre='Finalizada')" />
+      <column name="fecha_estado" valueDate="2019-08-25T00:00:00" />
     </insert>
     <insert tableName="estado_acta">
       <column name="id" valueSequenceNext="estado_acta_seq" />
-      <column name="acta_id" valueComputed="(select id from eti.acta where resumen='Resumen2')" />
-      <column name="tipo_estado_acta_id" valueComputed="(select id from eti.tipo_estado_acta where nombre='En elaboración')" />
-      <column name="fecha_estado" value="2020-08-13T00:00:00Z" />
+      <column name="acta_id" valueComputed="(select id from acta where resumen='Resumen2')" />
+      <column name="tipo_estado_acta_id" valueComputed="(select id from tipo_estado_acta where nombre='En elaboración')" />
+      <column name="fecha_estado" valueDate="2020-08-13T00:00:00" />
     </insert>
     <insert tableName="estado_acta">
       <column name="id" valueSequenceNext="estado_acta_seq" />
-      <column name="acta_id" valueComputed="(select id from eti.acta where resumen='Resumen2')" />
-      <column name="tipo_estado_acta_id" valueComputed="(select id from eti.tipo_estado_acta where nombre='Finalizada')" />
-      <column name="fecha_estado" value="2020-09-20T00:00:00Z" />
+      <column name="acta_id" valueComputed="(select id from acta where resumen='Resumen2')" />
+      <column name="tipo_estado_acta_id" valueComputed="(select id from tipo_estado_acta where nombre='Finalizada')" />
+      <column name="fecha_estado" valueDate="2020-09-20T00:00:00" />
     </insert>
     <insert tableName="estado_acta">
       <column name="id" valueSequenceNext="estado_acta_seq" />
-      <column name="acta_id" valueComputed="(select id from eti.acta where resumen='Resumen3')" />
-      <column name="tipo_estado_acta_id" valueComputed="(select id from eti.tipo_estado_acta where nombre='En elaboración')" />
-      <column name="fecha_estado" value="2020-09-13T00:00:00Z" />
+      <column name="acta_id" valueComputed="(select id from acta where resumen='Resumen3')" />
+      <column name="tipo_estado_acta_id" valueComputed="(select id from tipo_estado_acta where nombre='En elaboración')" />
+      <column name="fecha_estado" valueDate="2020-09-13T00:00:00" />
     </insert>
     <insert tableName="estado_acta">
       <column name="id" valueSequenceNext="estado_acta_seq" />
-      <column name="acta_id" valueComputed="(select id from eti.acta where resumen='Resumen4')" />
-      <column name="tipo_estado_acta_id" valueComputed="(select id from eti.tipo_estado_acta where nombre='En elaboración')" />
-      <column name="fecha_estado" value="2020-09-13T00:00:00Z" />
+      <column name="acta_id" valueComputed="(select id from acta where resumen='Resumen4')" />
+      <column name="tipo_estado_acta_id" valueComputed="(select id from tipo_estado_acta where nombre='En elaboración')" />
+      <column name="fecha_estado" valueDate="2020-09-13T00:00:00" />
     </insert>
   </changeSet>
+
   <changeSet context="dev" author="master" id="0000000000000-asistentes">
     <insert tableName="asistentes">
       <column name="id" valueSequenceNext="asistentes_seq" />
-      <column name="evaluador_id" valueComputed="(select id from eti.evaluador where resumen='Evaluador1')" />
+      <column name="evaluador_id" valueComputed="(select id from evaluador where resumen='Evaluador1')" />
       <column name="convocatoria_reunion_id" value="1" />
-      <column name="asistencia" value="true" />
+      <column name="asistencia" valueBoolean="true" />
     </insert>
     <insert tableName="asistentes">
       <column name="id" valueSequenceNext="asistentes_seq" />
-      <column name="evaluador_id" valueComputed="(select id from eti.evaluador where resumen='Evaluador2')" />
+      <column name="evaluador_id" valueComputed="(select id from evaluador where resumen='Evaluador2')" />
       <column name="convocatoria_reunion_id" value="1" />
-      <column name="asistencia" value="true" />
+      <column name="asistencia" valueBoolean="true" />
     </insert>
     <insert tableName="asistentes">
       <column name="id" valueSequenceNext="asistentes_seq" />
-      <column name="evaluador_id" valueComputed="(select id from eti.evaluador where resumen='Evaluador3')" />
+      <column name="evaluador_id" valueComputed="(select id from evaluador where resumen='Evaluador3')" />
       <column name="convocatoria_reunion_id" value="2" />
-      <column name="asistencia" value="true" />
+      <column name="asistencia" valueBoolean="true" />
     </insert>
     <insert tableName="asistentes">
       <column name="id" valueSequenceNext="asistentes_seq" />
-      <column name="evaluador_id" valueComputed="(select id from eti.evaluador where resumen='Evaluador4')" />
+      <column name="evaluador_id" valueComputed="(select id from evaluador where resumen='Evaluador4')" />
       <column name="convocatoria_reunion_id" value="2" />
-      <column name="asistencia" value="true" />
+      <column name="asistencia" valueBoolean="true" />
     </insert>
     <insert tableName="asistentes">
       <column name="id" valueSequenceNext="asistentes_seq" />
-      <column name="evaluador_id" valueComputed="(select id from eti.evaluador where resumen='Evaluador5')" />
+      <column name="evaluador_id" valueComputed="(select id from evaluador where resumen='Evaluador5')" />
       <column name="convocatoria_reunion_id" value="2" />
-      <column name="asistencia" value="true" />
+      <column name="asistencia" valueBoolean="true" />
     </insert>
     <insert tableName="asistentes">
       <column name="id" valueSequenceNext="asistentes_seq" />
-      <column name="evaluador_id" valueComputed="(select id from eti.evaluador where resumen='Evaluador3')" />
+      <column name="evaluador_id" valueComputed="(select id from evaluador where resumen='Evaluador3')" />
       <column name="convocatoria_reunion_id" value="3" />
-      <column name="asistencia" value="true" />
+      <column name="asistencia" valueBoolean="true" />
     </insert>
     <insert tableName="asistentes">
       <column name="id" valueSequenceNext="asistentes_seq" />
-      <column name="evaluador_id" valueComputed="(select id from eti.evaluador where resumen='Evaluador4')" />
+      <column name="evaluador_id" valueComputed="(select id from evaluador where resumen='Evaluador4')" />
       <column name="convocatoria_reunion_id" value="3" />
-      <column name="asistencia" value="true" />
+      <column name="asistencia" valueBoolean="true" />
     </insert>
     <insert tableName="asistentes">
       <column name="id" valueSequenceNext="asistentes_seq" />
-      <column name="evaluador_id" valueComputed="(select id from eti.evaluador where resumen='Evaluador5')" />
+      <column name="evaluador_id" valueComputed="(select id from evaluador where resumen='Evaluador5')" />
       <column name="convocatoria_reunion_id" value="3" />
-      <column name="asistencia" value="true" />
+      <column name="asistencia" valueBoolean="true" />
     </insert>
     <insert tableName="asistentes">
       <column name="id" valueSequenceNext="asistentes_seq" />
-      <column name="evaluador_id" valueComputed="(select id from eti.evaluador where resumen='Evaluador1')" />
+      <column name="evaluador_id" valueComputed="(select id from evaluador where resumen='Evaluador1')" />
       <column name="convocatoria_reunion_id" value="4" />
-      <column name="asistencia" value="true" />
+      <column name="asistencia" valueBoolean="true" />
     </insert>
     <insert tableName="asistentes">
       <column name="id" valueSequenceNext="asistentes_seq" />
-      <column name="evaluador_id" valueComputed="(select id from eti.evaluador where resumen='Evaluador2')" />
+      <column name="evaluador_id" valueComputed="(select id from evaluador where resumen='Evaluador2')" />
       <column name="convocatoria_reunion_id" value="4" />
-      <column name="asistencia" value="true" />
+      <column name="asistencia" valueBoolean="true" />
     </insert>
   </changeSet>
+
   <changeSet context="dev" author="master" id="0000000000000-evaluacion">
     <insert tableName="evaluacion">
       <column name="id" valueSequenceNext="evaluacion_seq" />
-      <column name="memoria_id" valueComputed="(select id from eti.memoria where num_referencia='M10/2019/001')" />
+      <column name="memoria_id" valueComputed="(select id from memoria where num_referencia='M10/2019/001')" />
       <column name="convocatoria_reunion_id" value="1" />
       <column name="dictamen_id" value="2" />
-      <column name="tipo_evaluacion_id" valueComputed="(select id from eti.tipo_evaluacion where nombre='Memoria')" />
-      <column name="evaluador1_id" valueComputed="(select id from eti.evaluador where resumen='Evaluador1')" />
-      <column name="evaluador2_id" valueComputed="(select id from eti.evaluador where resumen='Evaluador2')" />
-      <column name="fecha_dictamen" value="2019-08-25T00:00:00Z" />
-      <column name="es_rev_minima" value="false" />
+      <column name="tipo_evaluacion_id" valueComputed="(select id from tipo_evaluacion where nombre='Memoria')" />
+      <column name="evaluador1_id" valueComputed="(select id from evaluador where resumen='Evaluador1')" />
+      <column name="evaluador2_id" valueComputed="(select id from evaluador where resumen='Evaluador2')" />
+      <column name="fecha_dictamen" valueDate="2019-08-25T00:00:00" />
+      <column name="es_rev_minima" valueBoolean="false" />
       <column name="version" value="1" />
-      <column name="activo" value="true" />
+      <column name="activo" valueBoolean="true" />
     </insert>
     <insert tableName="evaluacion">
       <column name="id" valueSequenceNext="evaluacion_seq" />
-      <column name="memoria_id" valueComputed="(select id from eti.memoria where num_referencia='M10/2019/001')" />
+      <column name="memoria_id" valueComputed="(select id from memoria where num_referencia='M10/2019/001')" />
       <column name="dictamen_id" value="1" />
       <column name="convocatoria_reunion_id" value="1" />
-      <column name="tipo_evaluacion_id" valueComputed="(select id from eti.tipo_evaluacion where nombre='Memoria')" />
-      <column name="evaluador1_id" valueComputed="(select id from eti.evaluador where resumen='Evaluador1')" />
-      <column name="evaluador2_id" valueComputed="(select id from eti.evaluador where resumen='Evaluador2')" />
-      <column name="fecha_dictamen" value="2019-08-28T00:00:00Z" />
-      <column name="es_rev_minima" value="true" />
+      <column name="tipo_evaluacion_id" valueComputed="(select id from tipo_evaluacion where nombre='Memoria')" />
+      <column name="evaluador1_id" valueComputed="(select id from evaluador where resumen='Evaluador1')" />
+      <column name="evaluador2_id" valueComputed="(select id from evaluador where resumen='Evaluador2')" />
+      <column name="fecha_dictamen" valueDate="2019-08-28T00:00:00" />
+      <column name="es_rev_minima" valueBoolean="true" />
       <column name="version" value="2" />
-      <column name="activo" value="true" />
+      <column name="activo" valueBoolean="true" />
     </insert>
     <insert tableName="evaluacion">
       <column name="id" valueSequenceNext="evaluacion_seq" />
-      <column name="memoria_id" valueComputed="(select id from eti.memoria where num_referencia='M20/2020/001')" />
+      <column name="memoria_id" valueComputed="(select id from memoria where num_referencia='M20/2020/001')" />
       <column name="dictamen_id" value="3" />
       <column name="convocatoria_reunion_id" value="2" />
-      <column name="tipo_evaluacion_id" valueComputed="(select id from eti.tipo_evaluacion where nombre='Memoria')" />
-      <column name="evaluador1_id" valueComputed="(select id from eti.evaluador where resumen='Evaluador3')" />
-      <column name="evaluador2_id" valueComputed="(select id from eti.evaluador where resumen='Evaluador4')" />
-      <column name="fecha_dictamen" value="2020-09-20T00:00:00Z" />
-      <column name="es_rev_minima" value="false" />
+      <column name="tipo_evaluacion_id" valueComputed="(select id from tipo_evaluacion where nombre='Memoria')" />
+      <column name="evaluador1_id" valueComputed="(select id from evaluador where resumen='Evaluador3')" />
+      <column name="evaluador2_id" valueComputed="(select id from evaluador where resumen='Evaluador4')" />
+      <column name="fecha_dictamen" valueDate="2020-09-20T00:00:00" />
+      <column name="es_rev_minima" valueBoolean="false" />
       <column name="version" value="1" />
-      <column name="activo" value="true" />
+      <column name="activo" valueBoolean="true" />
     </insert>
     <insert tableName="evaluacion">
       <column name="id" valueSequenceNext="evaluacion_seq" />
-      <column name="memoria_id" valueComputed="(select id from eti.memoria where num_referencia='M20/2020/001')" />
+      <column name="memoria_id" valueComputed="(select id from memoria where num_referencia='M20/2020/001')" />
       <column name="convocatoria_reunion_id" value="3" />
-      <column name="tipo_evaluacion_id" valueComputed="(select id from eti.tipo_evaluacion where nombre='Memoria')" />
-      <column name="evaluador1_id" valueComputed="(select id from eti.evaluador where resumen='Evaluador3')" />
-      <column name="evaluador2_id" valueComputed="(select id from eti.evaluador where resumen='Evaluador4')" />
-      <column name="fecha_dictamen" value="2020-12-25T00:00:00Z" />
-      <column name="es_rev_minima" value="false" />
+      <column name="tipo_evaluacion_id" valueComputed="(select id from tipo_evaluacion where nombre='Memoria')" />
+      <column name="evaluador1_id" valueComputed="(select id from evaluador where resumen='Evaluador3')" />
+      <column name="evaluador2_id" valueComputed="(select id from evaluador where resumen='Evaluador4')" />
+      <column name="fecha_dictamen" valueDate="2020-12-25T00:00:00" />
+      <column name="es_rev_minima" valueBoolean="false" />
       <column name="version" value="2" />
-      <column name="activo" value="true" />
+      <column name="activo" valueBoolean="true" />
     </insert>
   </changeSet>
+
   <changeSet context="dev" author="master" id="0000000000000-informe">
     <insert tableName="informe">
       <column name="id" valueSequenceNext="informe_seq" />
-      <column name="memoria_id" valueComputed="(select id from eti.memoria where num_referencia='M10/2019/001')" />
+      <column name="memoria_id" valueComputed="(select id from memoria where num_referencia='M10/2019/001')" />
       <column name="documento_ref" value="M10/2019/001_v1" />
       <column name="version" value="1" />
-      <column name="tipo_evaluacion_id" valueComputed="(select id from eti.tipo_evaluacion where nombre='Memoria')" />
+      <column name="tipo_evaluacion_id" valueComputed="(select id from tipo_evaluacion where nombre='Memoria')" />
     </insert>
     <insert tableName="informe">
       <column name="id" valueSequenceNext="informe_seq" />
-      <column name="memoria_id" valueComputed="(select id from eti.memoria where num_referencia='M10/2019/001')" />
+      <column name="memoria_id" valueComputed="(select id from memoria where num_referencia='M10/2019/001')" />
       <column name="documento_ref" value="M10/2019/001_v2" />
       <column name="version" value="2" />
-      <column name="tipo_evaluacion_id" valueComputed="(select id from eti.tipo_evaluacion where nombre='Memoria')" />
+      <column name="tipo_evaluacion_id" valueComputed="(select id from tipo_evaluacion where nombre='Memoria')" />
     </insert>
     <insert tableName="informe">
       <column name="id" valueSequenceNext="informe_seq" />
-      <column name="memoria_id" valueComputed="(select id from eti.memoria where num_referencia='M10/2019/001')" />
+      <column name="memoria_id" valueComputed="(select id from memoria where num_referencia='M10/2019/001')" />
       <column name="documento_ref" value="M10/2019/001_SA_v1" />
       <column name="version" value="1" />
-      <column name="tipo_evaluacion_id" valueComputed="(select id from eti.tipo_evaluacion where nombre='Seguimiento anual')" />
+      <column name="tipo_evaluacion_id" valueComputed="(select id from tipo_evaluacion where nombre='Seguimiento anual')" />
     </insert>
     <insert tableName="informe">
       <column name="id" valueSequenceNext="informe_seq" />
-      <column name="memoria_id" valueComputed="(select id from eti.memoria where num_referencia='M20/2020/001')" />
+      <column name="memoria_id" valueComputed="(select id from memoria where num_referencia='M20/2020/001')" />
       <column name="documento_ref" value="M20/2020/001_v1" />
       <column name="version" value="1" />
-      <column name="tipo_evaluacion_id" valueComputed="(select id from eti.tipo_evaluacion where nombre='Memoria')" />
+      <column name="tipo_evaluacion_id" valueComputed="(select id from tipo_evaluacion where nombre='Memoria')" />
     </insert>
     <insert tableName="informe">
       <column name="id" valueSequenceNext="informe_seq" />
-      <column name="memoria_id" valueComputed="(select id from eti.memoria where num_referencia='M20/2020/001')" />
+      <column name="memoria_id" valueComputed="(select id from memoria where num_referencia='M20/2020/001')" />
       <column name="documento_ref" value="M20/2020/001_v2" />
       <column name="version" value="2" />
-      <column name="tipo_evaluacion_id" valueComputed="(select id from eti.tipo_evaluacion where nombre='Memoria')" />
+      <column name="tipo_evaluacion_id" valueComputed="(select id from tipo_evaluacion where nombre='Memoria')" />
     </insert>
     <insert tableName="informe">
       <column name="id" valueSequenceNext="informe_seq" />
-      <column name="memoria_id" valueComputed="(select id from eti.memoria where num_referencia='M20/2020/002')" />
+      <column name="memoria_id" valueComputed="(select id from memoria where num_referencia='M20/2020/002')" />
       <column name="documento_ref" value="M20/2020/002_v1" />
       <column name="version" value="1" />
-      <column name="tipo_evaluacion_id" valueComputed="(select id from eti.tipo_evaluacion where nombre='Memoria')" />
+      <column name="tipo_evaluacion_id" valueComputed="(select id from tipo_evaluacion where nombre='Memoria')" />
     </insert>
   </changeSet>
+
   <changeSet context="dev" author="master" id="0000000000000-comentario">
     <insert tableName="comentario">
       <column name="id" valueSequenceNext="comentario_seq" />
-      <column name="apartado_id" valueComputed="(select id from eti.apartado where nombre='Justificación del uso de seres humanos')" />
-      <column name="memoria_id" valueComputed="(select id from eti.memoria where num_referencia='M10/2019/001')" />
-      <column name="evaluacion_id" valueComputed="(select e.id from eti.evaluacion e join eti.memoria m on e.memoria_id=m.id where m.num_referencia='M10/2019/001' and e.version=1)" />
-      <column name="tipo_comentario_id" valueComputed="(select id from eti.tipo_comentario where nombre='GESTOR')" />
+      <column name="apartado_id" valueComputed="(select id from apartado where nombre='Justificación del uso de seres humanos')" />
+      <column name="memoria_id" valueComputed="(select id from memoria where num_referencia='M10/2019/001')" />
+      <column name="evaluacion_id" valueComputed="(select e.id from evaluacion e join memoria m on e.memoria_id=m.id where m.num_referencia='M10/2019/001' and e.version=1)" />
+      <column name="tipo_comentario_id" valueComputed="(select id from tipo_comentario where nombre='GESTOR')" />
       <column name="texto" value="Comentario1" />
     </insert>
     <insert tableName="comentario">
       <column name="id" valueSequenceNext="comentario_seq" />
-      <column name="apartado_id" valueComputed="(select id from eti.apartado where nombre='Personal que llevará a cabo las tareas con seres humanos, sus muestras y/o sus datos')" />
-      <column name="memoria_id" valueComputed="(select id from eti.memoria where num_referencia='M10/2019/001')" />
-      <column name="evaluacion_id" valueComputed="(select e.id from eti.evaluacion e join eti.memoria m on e.memoria_id=m.id where m.num_referencia='M10/2019/001' and e.version=1)" />
-      <column name="tipo_comentario_id" valueComputed="(select id from eti.tipo_comentario where nombre='GESTOR')" />
+      <column name="apartado_id" valueComputed="(select id from apartado where nombre='Personal que llevará a cabo las tareas con seres humanos, sus muestras y/o sus datos')" />
+      <column name="memoria_id" valueComputed="(select id from memoria where num_referencia='M10/2019/001')" />
+      <column name="evaluacion_id" valueComputed="(select e.id from evaluacion e join memoria m on e.memoria_id=m.id where m.num_referencia='M10/2019/001' and e.version=1)" />
+      <column name="tipo_comentario_id" valueComputed="(select id from tipo_comentario where nombre='GESTOR')" />
       <column name="texto" value="Comentario2" />
     </insert>
     <insert tableName="comentario">
       <column name="id" valueSequenceNext="comentario_seq" />
-      <column name="apartado_id" valueComputed="(select id from eti.apartado where nombre='Justificación del uso de animales')" />
-      <column name="memoria_id" valueComputed="(select id from eti.memoria where num_referencia='M10/2019/001')" />
-      <column name="evaluacion_id" valueComputed="(select e.id from eti.evaluacion e join eti.memoria m on e.memoria_id=m.id where m.num_referencia='M10/2019/001' and e.version=1)" />
-      <column name="tipo_comentario_id" valueComputed="(select id from eti.tipo_comentario where nombre='GESTOR')" />
+      <column name="apartado_id" valueComputed="(select id from apartado where nombre='Justificación del uso de animales')" />
+      <column name="memoria_id" valueComputed="(select id from memoria where num_referencia='M10/2019/001')" />
+      <column name="evaluacion_id" valueComputed="(select e.id from evaluacion e join memoria m on e.memoria_id=m.id where m.num_referencia='M10/2019/001' and e.version=1)" />
+      <column name="tipo_comentario_id" valueComputed="(select id from tipo_comentario where nombre='GESTOR')" />
       <column name="texto" value="Comentario2" />
     </insert>
     <insert tableName="comentario">
       <column name="id" valueSequenceNext="comentario_seq" />
-      <column name="apartado_id" valueComputed="(select id from eti.apartado where nombre='Referencias de publicaciones científicas' and bloque_id=(select id from eti.bloque where orden = '3' and formulario_id = (select id from eti.formulario where nombre = 'M10')))" />
-      <column name="memoria_id" valueComputed="(select id from eti.memoria where num_referencia='M10/2019/001')" />
-      <column name="evaluacion_id" valueComputed="(select e.id from eti.evaluacion e join eti.memoria m on e.memoria_id=m.id where m.num_referencia='M10/2019/001' and e.version=1)" />
-      <column name="tipo_comentario_id" valueComputed="(select id from eti.tipo_comentario where nombre='GESTOR')" />
+      <column name="apartado_id" valueComputed="(select id from apartado where nombre='Referencias de publicaciones científicas' and bloque_id=(select id from bloque where orden = '3' and formulario_id = (select id from formulario where nombre = 'M10')))" />
+      <column name="memoria_id" valueComputed="(select id from memoria where num_referencia='M10/2019/001')" />
+      <column name="evaluacion_id" valueComputed="(select e.id from evaluacion e join memoria m on e.memoria_id=m.id where m.num_referencia='M10/2019/001' and e.version=1)" />
+      <column name="tipo_comentario_id" valueComputed="(select id from tipo_comentario where nombre='GESTOR')" />
       <column name="texto" value="Comentario3" />
     </insert>
     <insert tableName="comentario">
       <column name="id" valueSequenceNext="comentario_seq" />
-      <column name="apartado_id" valueComputed="(select id from eti.apartado where nombre='Reclutamiento realizado por personal ajeno al equipo investigado')" />
-      <column name="memoria_id" valueComputed="(select id from eti.memoria where num_referencia='M10/2019/001')" />
-      <column name="evaluacion_id" valueComputed="(select e.id from eti.evaluacion e join eti.memoria m on e.memoria_id=m.id where m.num_referencia='M10/2019/001' and e.version=1)" />
-      <column name="tipo_comentario_id" valueComputed="(select id from eti.tipo_comentario where nombre='GESTOR')" />
+      <column name="apartado_id" valueComputed="(select id from apartado where nombre='Reclutamiento realizado por personal ajeno al equipo investigado')" />
+      <column name="memoria_id" valueComputed="(select id from memoria where num_referencia='M10/2019/001')" />
+      <column name="evaluacion_id" valueComputed="(select e.id from evaluacion e join memoria m on e.memoria_id=m.id where m.num_referencia='M10/2019/001' and e.version=1)" />
+      <column name="tipo_comentario_id" valueComputed="(select id from tipo_comentario where nombre='GESTOR')" />
       <column name="texto" value="Comentario4" />
     </insert>
   </changeSet>
+
   <changeSet context="dev" author="master" id="0000000000000-respuesta">
     <insert tableName="respuesta">
       <column name="id" valueSequenceNext="respuesta_seq" />
-      <column name="apartado_id" valueComputed="(select id from eti.apartado where nombre='Justificación del uso de seres humanos' and bloque_id=(select id from eti.bloque where orden = '1' and formulario_id = (select id from eti.formulario where nombre = 'M10')))" />
-      <column name="memoria_id" valueComputed="(select id from eti.memoria where num_referencia='M10/2019/001')" />
-      <column name="valor">
-        <![CDATA[ {"justificacion": "Justificación de prueba"} ]]>
-      </column>
+      <column name="apartado_id" valueComputed="(select id from apartado where nombre='Justificación del uso de seres humanos' and bloque_id=(select id from bloque where orden = '1' and formulario_id = (select id from formulario where nombre = 'M10')))" />
+      <column name="memoria_id" valueComputed="(select id from memoria where num_referencia='M10/2019/001')" />
+      <column name="valor" value="{}" />
     </insert>
+    <update tableName="respuesta">
+      <column name="valor" valueClobFile="sample-clob/M10-2019-001_respuesta_01.json" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueComputed="(select max(id) from respuesta)" />
+      </whereParams>
+    </update>
+
     <insert tableName="respuesta">
       <column name="id" valueSequenceNext="respuesta_seq" />
-      <column name="apartado_id" valueComputed="(select id from eti.apartado where nombre='Personal que llevará a cabo las tareas con seres humanos, sus muestras y/o sus datos' and bloque_id=(select id from eti.bloque where orden = '2' and formulario_id = (select id from eti.formulario where nombre = 'M10')))" />
-      <column name="memoria_id" valueComputed="(select id from eti.memoria where num_referencia='M10/2019/001')" />
-      <column name="valor">
-        <![CDATA[ {"equipoInvestigador": [ { "nombre": "nombre-005", "nif": "00000005M", "vinculacion": "PDI", "nivelAcademico": null, "tarea": "Tarea1", "experiencia": "Experiencia1" }, { "nombre": "nombre-007", "nif": "00000007F", "vinculacion": "PDI", "nivelAcademico": null, "tarea": "Tarea2", "experiencia": "Experiencia2" } ]} ]]>
-      </column>
+      <column name="apartado_id" valueComputed="(select id from apartado where nombre='Personal que llevará a cabo las tareas con seres humanos, sus muestras y/o sus datos' and bloque_id=(select id from bloque where orden = '2' and formulario_id = (select id from formulario where nombre = 'M10')))" />
+      <column name="memoria_id" valueComputed="(select id from memoria where num_referencia='M10/2019/001')" />
+      <column name="valor" value="{}" />
     </insert>
+    <update tableName="respuesta">
+      <column name="valor" valueClobFile="sample-clob/M10-2019-001_respuesta_02.json" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueComputed="(select max(id) from respuesta)" />
+      </whereParams>
+    </update>
+
     <insert tableName="respuesta">
       <column name="id" valueSequenceNext="respuesta_seq" />
-      <column name="apartado_id" valueComputed="(select id from eti.apartado where nombre='Referencias de publicaciones científicas' and bloque_id=(select id from eti.bloque where orden = '3' and formulario_id = (select id from eti.formulario where nombre = 'M10')))" />
-      <column name="memoria_id" valueComputed="(select id from eti.memoria where num_referencia='M10/2019/001')" />
-      <column name="valor">
-        <![CDATA[ {"referenciasPublicaciones": "Referencias de publicaciones científicas"} ]]>
-      </column>
+      <column name="apartado_id" valueComputed="(select id from apartado where nombre='Referencias de publicaciones científicas' and bloque_id=(select id from bloque where orden = '3' and formulario_id = (select id from formulario where nombre = 'M10')))" />
+      <column name="memoria_id" valueComputed="(select id from memoria where num_referencia='M10/2019/001')" />
+      <column name="valor" value="{}" />
     </insert>
+    <update tableName="respuesta">
+      <column name="valor" valueClobFile="sample-clob/M10-2019-001_respuesta_03.json" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueComputed="(select max(id) from respuesta)" />
+      </whereParams>
+    </update>
+
     <insert tableName="respuesta">
       <column name="id" valueSequenceNext="respuesta_seq" />
-      <column name="apartado_id" valueComputed="(select id from eti.apartado where nombre='Intervenciones o pruebas en seres humanos' and bloque_id=(select id from eti.bloque where orden = '3' and formulario_id = (select id from eti.formulario where nombre = 'M10')))" />
-      <column name="memoria_id" valueComputed="(select id from eti.memoria where num_referencia='M10/2019/001')" />
-      <column name="valor">
-        <![CDATA[ {"intervencionesSeresHumanosRadio": "si", "intervencionesSeresHumanosCheck": [ "entrevistasEncuestas", "otras" ], "otrasTexto": "Otra intervención o prueba en seres humanos"} ]]>
-      </column>
+      <column name="apartado_id" valueComputed="(select id from apartado where nombre='Intervenciones o pruebas en seres humanos' and bloque_id=(select id from bloque where orden = '3' and formulario_id = (select id from formulario where nombre = 'M10')))" />
+      <column name="memoria_id" valueComputed="(select id from memoria where num_referencia='M10/2019/001')" />
+      <column name="valor" value="{}" />
     </insert>
+    <update tableName="respuesta">
+      <column name="valor" valueClobFile="sample-clob/M10-2019-001_respuesta_04.json" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueComputed="(select max(id) from respuesta)" />
+      </whereParams>
+    </update>
+
     <insert tableName="respuesta">
       <column name="id" valueSequenceNext="respuesta_seq" />
-      <column name="apartado_id" valueComputed="(select id from eti.apartado where nombre='Proceso de reclutamiento' and bloque_id=(select id from eti.bloque where orden = '3' and formulario_id = (select id from eti.formulario where nombre = 'M10')))" />
-      <column name="memoria_id" valueComputed="(select id from eti.memoria where num_referencia='M10/2019/001')" />
-      <column name="valor">
-        <![CDATA[ {"ap3_4_1": {"descripcionProcesoReclutamiento": "Proceso de reclutamiento", "fechaReclutamiento": "2020-10-29T00:00:00Z"}} ]]>
-      </column>
+      <column name="apartado_id" valueComputed="(select id from apartado where nombre='Proceso de reclutamiento' and bloque_id=(select id from bloque where orden = '3' and formulario_id = (select id from formulario where nombre = 'M10')))" />
+      <column name="memoria_id" valueComputed="(select id from memoria where num_referencia='M10/2019/001')" />
+      <column name="valor" value="{}" />
     </insert>
+    <update tableName="respuesta">
+      <column name="valor" valueClobFile="sample-clob/M10-2019-001_respuesta_05.json" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueComputed="(select max(id) from respuesta)" />
+      </whereParams>
+    </update>
+
     <insert tableName="respuesta">
       <column name="id" valueSequenceNext="respuesta_seq" />
-      <column name="apartado_id" valueComputed="(select id from eti.apartado where nombre='Reclutamiento realizado por personal ajeno al equipo investigado' and bloque_id=(select id from eti.bloque where orden = '3' and formulario_id = (select id from eti.formulario where nombre = 'M10')))" />
-      <column name="memoria_id" valueComputed="(select id from eti.memoria where num_referencia='M10/2019/001')" />
-      <column name="valor">
-        <![CDATA[ {"ap3_4_2": {"reclutamientoPersonalAjenoRadio": "si", "tipoCompensacionRadio": "si", "tipoCompensacionTexto": "El reclutamiento recibe compensación especial"}} ]]>
-      </column>
+      <column name="apartado_id" valueComputed="(select id from apartado where nombre='Reclutamiento realizado por personal ajeno al equipo investigado' and bloque_id=(select id from bloque where orden = '3' and formulario_id = (select id from formulario where nombre = 'M10')))" />
+      <column name="memoria_id" valueComputed="(select id from memoria where num_referencia='M10/2019/001')" />
+      <column name="valor" value="{}" />
     </insert>
+    <update tableName="respuesta">
+      <column name="valor" valueClobFile="sample-clob/M10-2019-001_respuesta_06.json" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueComputed="(select max(id) from respuesta)" />
+      </whereParams>
+    </update>
+
     <insert tableName="respuesta">
       <column name="id" valueSequenceNext="respuesta_seq" />
-      <column name="apartado_id" valueComputed="(select id from eti.apartado where nombre='Descripción de las intervenciones o pruebas' and bloque_id=(select id from eti.bloque where orden = '3' and formulario_id = (select id from eti.formulario where nombre = 'M10')))" />
-      <column name="memoria_id" valueComputed="(select id from eti.memoria where num_referencia='M10/2019/001')" />
-      <column name="valor">
-        <![CDATA[ {"ap3_4_3": {"descripcionIntervenciones": "Intervenciones de prueba"}} ]]>
-      </column>
+      <column name="apartado_id" valueComputed="(select id from apartado where nombre='Descripción de las intervenciones o pruebas' and bloque_id=(select id from bloque where orden = '3' and formulario_id = (select id from formulario where nombre = 'M10')))" />
+      <column name="memoria_id" valueComputed="(select id from memoria where num_referencia='M10/2019/001')" />
+      <column name="valor" value="{}" />
     </insert>
+    <update tableName="respuesta">
+      <column name="valor" valueClobFile="sample-clob/M10-2019-001_respuesta_07.json" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueComputed="(select max(id) from respuesta)" />
+      </whereParams>
+    </update>
+
     <insert tableName="respuesta">
       <column name="id" valueSequenceNext="respuesta_seq" />
-      <column name="apartado_id" valueComputed="(select id from eti.apartado where nombre='Incentivos para la participación' and bloque_id=(select id from eti.bloque where orden = '3' and formulario_id = (select id from eti.formulario where nombre = 'M10')))" />
-      <column name="memoria_id" valueComputed="(select id from eti.memoria where num_referencia='M10/2019/001')" />
-      <column name="valor">
-        <![CDATA[ {"ap3_4_4": {"incentivosParticipacionRadio": "si", "incentivosParticipacionTexto": "Se llevan un incentivo por participar"}} ]]>
-      </column>
+      <column name="apartado_id" valueComputed="(select id from apartado where nombre='Incentivos para la participación' and bloque_id=(select id from bloque where orden = '3' and formulario_id = (select id from formulario where nombre = 'M10')))" />
+      <column name="memoria_id" valueComputed="(select id from memoria where num_referencia='M10/2019/001')" />
+      <column name="valor" value="{}" />
     </insert>
+    <update tableName="respuesta">
+      <column name="valor" valueClobFile="sample-clob/M10-2019-001_respuesta_08.json" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueComputed="(select max(id) from respuesta)" />
+      </whereParams>
+    </update>
+
     <insert tableName="respuesta">
       <column name="id" valueSequenceNext="respuesta_seq" />
-      <column name="apartado_id" valueComputed="(select id from eti.apartado where nombre='Muestras biológicas de origen humano' and bloque_id=(select id from eti.bloque where orden = '3' and formulario_id = (select id from eti.formulario where nombre = 'M10')))" />
-      <column name="memoria_id" valueComputed="(select id from eti.memoria where num_referencia='M10/2019/001')" />
-      <column name="valor">
-        <![CDATA[ {"muestrasBiologicasRadio": "si", "muestrasBiologicasCheck": ["celulasgerminales"]} ]]>
-      </column>
+      <column name="apartado_id" valueComputed="(select id from apartado where nombre='Muestras biológicas de origen humano' and bloque_id=(select id from bloque where orden = '3' and formulario_id = (select id from formulario where nombre = 'M10')))" />
+      <column name="memoria_id" valueComputed="(select id from memoria where num_referencia='M10/2019/001')" />
+      <column name="valor" value="{}" />
     </insert>
+    <update tableName="respuesta">
+      <column name="valor" valueClobFile="sample-clob/M10-2019-001_respuesta_09.json" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueComputed="(select max(id) from respuesta)" />
+      </whereParams>
+    </update>
+
     <insert tableName="respuesta">
       <column name="id" valueSequenceNext="respuesta_seq" />
-      <column name="apartado_id" valueComputed="(select id from eti.apartado where nombre='Origen de las muestras' and bloque_id=(select id from eti.bloque where orden = '3' and formulario_id = (select id from eti.formulario where nombre = 'M10')))" />
-      <column name="memoria_id" valueComputed="(select id from eti.memoria where num_referencia='M10/2019/001')" />
-      <column name="valor">
-        <![CDATA[ {"ap3_5_1": { "recogidasExpresamente": true, "recogidasApartirDeMuestras": true, "especificarRecogidasApartirDeMuestras": "Especificación de muestras recogidas de otro proceso", "procedentesBiobanco": true, "especificarProcedentesBiobanco": "Especificación de muestras procedentes de un biobanco", "procedentesColeccion": true, "especificarProcedentesColeccion": "Especificación de muestras procedentes de otra colección" }} ]]>
-      </column>
+      <column name="apartado_id" valueComputed="(select id from apartado where nombre='Origen de las muestras' and bloque_id=(select id from bloque where orden = '3' and formulario_id = (select id from formulario where nombre = 'M10')))" />
+      <column name="memoria_id" valueComputed="(select id from memoria where num_referencia='M10/2019/001')" />
+      <column name="valor" value="{}" />
     </insert>
+    <update tableName="respuesta">
+      <column name="valor" valueClobFile="sample-clob/M10-2019-001_respuesta_10.json" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueComputed="(select max(id) from respuesta)" />
+      </whereParams>
+    </update>
+
     <insert tableName="respuesta">
       <column name="id" valueSequenceNext="respuesta_seq" />
-      <column name="apartado_id" valueComputed="(select id from eti.apartado where nombre='Destino de las muestras de origen humano' and bloque_id=(select id from eti.bloque where orden = '3' and formulario_id = (select id from eti.formulario where nombre = 'M10')))" />
-      <column name="memoria_id" valueComputed="(select id from eti.memoria where num_referencia='M10/2019/001')" />
-      <column name="valor">
-        <![CDATA[ {"ap3_5_2": { "destruccion": true, "especificarDestruccion": "Especificación de como se destruiran las muestras", "conservacion": true, "cesionBiobanco": true, "especificarCesionBiobanco": "Especificación de como se cederán las muestras a un biobanco", "usoColeccionMuestras": true, "especificarUsoColeccionMuestras": "Especificación de como se integraran las muestras en una colección", "incorporacionColeccionMuestras": true, "especificarIncorporacionColeccionMuestras": "Especificación de como se incorporaran las muestras a otra colección de muestras" }} ]]>
-      </column>
+      <column name="apartado_id" valueComputed="(select id from apartado where nombre='Destino de las muestras de origen humano' and bloque_id=(select id from bloque where orden = '3' and formulario_id = (select id from formulario where nombre = 'M10')))" />
+      <column name="memoria_id" valueComputed="(select id from memoria where num_referencia='M10/2019/001')" />
+      <column name="valor" value="{}" />
     </insert>
+    <update tableName="respuesta">
+      <column name="valor" valueClobFile="sample-clob/M10-2019-001_respuesta_11.json" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueComputed="(select max(id) from respuesta)" />
+      </whereParams>
+    </update>
+
     <insert tableName="respuesta">
       <column name="id" valueSequenceNext="respuesta_seq" />
-      <column name="apartado_id" valueComputed="(select id from eti.apartado where nombre='Datos de carácter personal' and bloque_id=(select id from eti.bloque where orden = '3' and formulario_id = (select id from eti.formulario where nombre = 'M10')))" />
-      <column name="memoria_id" valueComputed="(select id from eti.memoria where num_referencia='M10/2019/001')" />
-      <column name="valor">
-        <![CDATA[ {"datosCaracterPersonalRadio": "si", "numeroRegistrosTratamientoDatos": "Registro 334747"} ]]>
-      </column>
+      <column name="apartado_id" valueComputed="(select id from apartado where nombre='Datos de carácter personal' and bloque_id=(select id from bloque where orden = '3' and formulario_id = (select id from formulario where nombre = 'M10')))" />
+      <column name="memoria_id" valueComputed="(select id from memoria where num_referencia='M10/2019/001')" />
+      <column name="valor" value="{}" />
     </insert>
+    <update tableName="respuesta">
+      <column name="valor" valueClobFile="sample-clob/M10-2019-001_respuesta_12.json" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueComputed="(select max(id) from respuesta)" />
+      </whereParams>
+    </update>
+
     <insert tableName="respuesta">
       <column name="id" valueSequenceNext="respuesta_seq" />
-      <column name="apartado_id" valueComputed="(select id from eti.apartado where nombre='Tipo de riesgos o molestias' and bloque_id=(select id from eti.bloque where orden = '4' and formulario_id = (select id from eti.formulario where nombre = 'M10')))" />
-      <column name="memoria_id" valueComputed="(select id from eti.memoria where num_referencia='M10/2019/001')" />
-      <column name="valor">
-        <![CDATA[ {"ap4_1_1": { "tipoRiesgosOMolestiasCheck": [ "intromisionIntimidad" ] }} ]]>
-      </column>
+      <column name="apartado_id" valueComputed="(select id from apartado where nombre='Tipo de riesgos o molestias' and bloque_id=(select id from bloque where orden = '4' and formulario_id = (select id from formulario where nombre = 'M10')))" />
+      <column name="memoria_id" valueComputed="(select id from memoria where num_referencia='M10/2019/001')" />
+      <column name="valor" value="{}" />
     </insert>
+    <update tableName="respuesta">
+      <column name="valor" valueClobFile="sample-clob/M10-2019-001_respuesta_13.json" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueComputed="(select max(id) from respuesta)" />
+      </whereParams>
+    </update>
+
     <insert tableName="respuesta">
       <column name="id" valueSequenceNext="respuesta_seq" />
-      <column name="apartado_id" valueComputed="(select id from eti.apartado where nombre='Valoración de los riesgos o molestias' and bloque_id=(select id from eti.bloque where orden = '4' and formulario_id = (select id from eti.formulario where nombre = 'M10')))" />
-      <column name="memoria_id" valueComputed="(select id from eti.memoria where num_referencia='M10/2019/001')" />
-      <column name="valor">
-        <![CDATA[ {"ap4_1_2": { "valoracionRiesgosMolestiasCheck": [ "riesgoSuperior"], "riesgoSuperiorTexto": "Justificación riesgo superior al mínimo"}} ]]>
-      </column>
+      <column name="apartado_id" valueComputed="(select id from apartado where nombre='Valoración de los riesgos o molestias' and bloque_id=(select id from bloque where orden = '4' and formulario_id = (select id from formulario where nombre = 'M10')))" />
+      <column name="memoria_id" valueComputed="(select id from memoria where num_referencia='M10/2019/001')" />
+      <column name="valor" value="{}" />
     </insert>
+    <update tableName="respuesta">
+      <column name="valor" valueClobFile="sample-clob/M10-2019-001_respuesta_14.json" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueComputed="(select max(id) from respuesta)" />
+      </whereParams>
+    </update>
+
     <insert tableName="respuesta">
       <column name="id" valueSequenceNext="respuesta_seq" />
-      <column name="apartado_id" valueComputed="(select id from eti.apartado where nombre='Minimización del riesgo o molestias superiores al mínimo' and bloque_id=(select id from eti.bloque where orden = '4' and formulario_id = (select id from eti.formulario where nombre = 'M10')))" />
-      <column name="memoria_id" valueComputed="(select id from eti.memoria where num_referencia='M10/2019/001')" />
-      <column name="valor">
-        <![CDATA[ {"ap4_1_3": { "minimizacionRiesgo": "Mecanismos de reducción del riesgo"}} ]]>
-      </column>
+      <column name="apartado_id" valueComputed="(select id from apartado where nombre='Minimización del riesgo o molestias superiores al mínimo' and bloque_id=(select id from bloque where orden = '4' and formulario_id = (select id from formulario where nombre = 'M10')))" />
+      <column name="memoria_id" valueComputed="(select id from memoria where num_referencia='M10/2019/001')" />
+      <column name="valor" value="{}" />
     </insert>
+    <update tableName="respuesta">
+      <column name="valor" valueClobFile="sample-clob/M10-2019-001_respuesta_15.json" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueComputed="(select max(id) from respuesta)" />
+      </whereParams>
+    </update>
+
     <insert tableName="respuesta">
       <column name="id" valueSequenceNext="respuesta_seq" />
-      <column name="apartado_id" valueComputed="(select id from eti.apartado where nombre='Aseguramiento del daño' and bloque_id=(select id from eti.bloque where orden = '4' and formulario_id = (select id from eti.formulario where nombre = 'M10')))" />
-      <column name="memoria_id" valueComputed="(select id from eti.memoria where num_referencia='M10/2019/001')" />
-      <column name="valor">
-        <![CDATA[ {"ap4_1_4": { "aseguramientoDanoRadio": "si", "numPoliza": "POLIZA-3443"}} ]]>
-      </column>
+      <column name="apartado_id" valueComputed="(select id from apartado where nombre='Aseguramiento del daño' and bloque_id=(select id from bloque where orden = '4' and formulario_id = (select id from formulario where nombre = 'M10')))" />
+      <column name="memoria_id" valueComputed="(select id from memoria where num_referencia='M10/2019/001')" />
+      <column name="valor" value="{}" />
     </insert>
+    <update tableName="respuesta">
+      <column name="valor" valueClobFile="sample-clob/M10-2019-001_respuesta_16.json" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueComputed="(select max(id) from respuesta)" />
+      </whereParams>
+    </update>
+
     <insert tableName="respuesta">
       <column name="id" valueSequenceNext="respuesta_seq" />
-      <column name="apartado_id" valueComputed="(select id from eti.apartado where nombre='Selección equitativa de la muestra' and bloque_id=(select id from eti.bloque where orden = '4' and formulario_id = (select id from eti.formulario where nombre = 'M10')))" />
-      <column name="memoria_id" valueComputed="(select id from eti.memoria where num_referencia='M10/2019/001')" />
-      <column name="valor">
-        <![CDATA[ {"equitativaMuestra": "Justificación selección equitativa de la muestra"} ]]>
-      </column>
+      <column name="apartado_id" valueComputed="(select id from apartado where nombre='Selección equitativa de la muestra' and bloque_id=(select id from bloque where orden = '4' and formulario_id = (select id from formulario where nombre = 'M10')))" />
+      <column name="memoria_id" valueComputed="(select id from memoria where num_referencia='M10/2019/001')" />
+      <column name="valor" value="{}" />
     </insert>
+    <update tableName="respuesta">
+      <column name="valor" valueClobFile="sample-clob/M10-2019-001_respuesta_17.json" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueComputed="(select max(id) from respuesta)" />
+      </whereParams>
+    </update>
+
     <insert tableName="respuesta">
       <column name="id" valueSequenceNext="respuesta_seq" />
-      <column name="apartado_id" valueComputed="(select id from eti.apartado where nombre='Protección de grupos vulnerables' and bloque_id=(select id from eti.bloque where orden = '4' and formulario_id = (select id from eti.formulario where nombre = 'M10')))" />
-      <column name="memoria_id" valueComputed="(select id from eti.memoria where num_referencia='M10/2019/001')" />
-      <column name="valor">
-        <![CDATA[ {"gruposVulnerablesRadio": "si", "especificarColectivoVulnerables": "Colectivo de personas vulnerables", "justificarPersonasMenosVulnerables": "Justifación de no utilizar personas menos vulnerables", "especificarBeneficiosInvestigacionVulnerables": "Beneficios de la investigación con personas vulnerables"} ]]>
-      </column>
+      <column name="apartado_id" valueComputed="(select id from apartado where nombre='Protección de grupos vulnerables' and bloque_id=(select id from bloque where orden = '4' and formulario_id = (select id from formulario where nombre = 'M10')))" />
+      <column name="memoria_id" valueComputed="(select id from memoria where num_referencia='M10/2019/001')" />
+      <column name="valor" value="{}" />
     </insert>
+    <update tableName="respuesta">
+      <column name="valor" valueClobFile="sample-clob/M10-2019-001_respuesta_18.json" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueComputed="(select max(id) from respuesta)" />
+      </whereParams>
+    </update>
+
     <insert tableName="respuesta">
       <column name="id" valueSequenceNext="respuesta_seq" />
-      <column name="apartado_id" valueComputed="(select id from eti.apartado where nombre='Información y consentimiento' and bloque_id=(select id from eti.bloque where orden = '4' and formulario_id = (select id from eti.formulario where nombre = 'M10')))" />
-      <column name="memoria_id" valueComputed="(select id from eti.memoria where num_referencia='M10/2019/001')" />
-      <column name="valor">
-        <![CDATA[ {"informacionConsentimientoRadio": "si", "informacionConsentimientoMotivoTexto": "Motivo por el que se solicita consentimiento"} ]]>
-      </column>
+      <column name="apartado_id" valueComputed="(select id from apartado where nombre='Información y consentimiento' and bloque_id=(select id from bloque where orden = '4' and formulario_id = (select id from formulario where nombre = 'M10')))" />
+      <column name="memoria_id" valueComputed="(select id from memoria where num_referencia='M10/2019/001')" />
+      <column name="valor" value="{}" />
     </insert>
+    <update tableName="respuesta">
+      <column name="valor" valueClobFile="sample-clob/M10-2019-001_respuesta_19.json" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueComputed="(select max(id) from respuesta)" />
+      </whereParams>
+    </update>
+
     <insert tableName="respuesta">
       <column name="id" valueSequenceNext="respuesta_seq" />
-      <column name="apartado_id" valueComputed="(select id from eti.apartado where nombre='Tipo de consentimiento' and bloque_id=(select id from eti.bloque where orden = '4' and formulario_id = (select id from eti.formulario where nombre = 'M10')))" />
-      <column name="memoria_id" valueComputed="(select id from eti.memoria where num_referencia='M10/2019/001')" />
-      <column name="valor">
-        <![CDATA[ {"ap4_4_1": { "tipoConsentimientoCheck": [ "cesion" ]}} ]]>
-      </column>
+      <column name="apartado_id" valueComputed="(select id from apartado where nombre='Tipo de consentimiento' and bloque_id=(select id from bloque where orden = '4' and formulario_id = (select id from formulario where nombre = 'M10')))" />
+      <column name="memoria_id" valueComputed="(select id from memoria where num_referencia='M10/2019/001')" />
+      <column name="valor" value="{}" />
     </insert>
+    <update tableName="respuesta">
+      <column name="valor" valueClobFile="sample-clob/M10-2019-001_respuesta_20.json" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueComputed="(select max(id) from respuesta)" />
+      </whereParams>
+    </update>
+
     <insert tableName="respuesta">
       <column name="id" valueSequenceNext="respuesta_seq" />
-      <column name="apartado_id" valueComputed="(select id from eti.apartado where nombre='Estudios genéticos' and bloque_id=(select id from eti.bloque where orden = '4' and formulario_id = (select id from eti.formulario where nombre = 'M10')))" />
-      <column name="memoria_id" valueComputed="(select id from eti.memoria where num_referencia='M10/2019/001')" />
-      <column name="valor">
-        <![CDATA[ {"estudiosGeneticosRadio": "si", "pruebaPredectivaRadio": "otra", "otraPruebaPredictiva": "Otra prueba predictiva", "finesRadio": "otros", "otrosFines": "Otro fin" } ]]>
-      </column>
+      <column name="apartado_id" valueComputed="(select id from apartado where nombre='Estudios genéticos' and bloque_id=(select id from bloque where orden = '4' and formulario_id = (select id from formulario where nombre = 'M10')))" />
+      <column name="memoria_id" valueComputed="(select id from memoria where num_referencia='M10/2019/001')" />
+      <column name="valor" value="{}" />
     </insert>
+    <update tableName="respuesta">
+      <column name="valor" valueClobFile="sample-clob/M10-2019-001_respuesta_21.json" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueComputed="(select max(id) from respuesta)" />
+      </whereParams>
+    </update>
+
     <insert tableName="respuesta">
       <column name="id" valueSequenceNext="respuesta_seq" />
-      <column name="apartado_id" valueComputed="(select id from eti.apartado where nombre='Resultado del estudio genético' and bloque_id=(select id from eti.bloque where orden = '4' and formulario_id = (select id from eti.formulario where nombre = 'M10')))" />
-      <column name="memoria_id" valueComputed="(select id from eti.memoria where num_referencia='M10/2019/001')" />
-      <column name="valor">
-        <![CDATA[ {"ap4_5_1": { "resultadoEstudioGeneticoRadio": "si", "especificarResultadoEstudioGenetico": "Información relevante del estudio genético"}} ]]>
-      </column>
+      <column name="apartado_id" valueComputed="(select id from apartado where nombre='Resultado del estudio genético' and bloque_id=(select id from bloque where orden = '4' and formulario_id = (select id from formulario where nombre = 'M10')))" />
+      <column name="memoria_id" valueComputed="(select id from memoria where num_referencia='M10/2019/001')" />
+      <column name="valor" value="{}" />
     </insert>
+    <update tableName="respuesta">
+      <column name="valor" valueClobFile="sample-clob/M10-2019-001_respuesta_22.json" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueComputed="(select max(id) from respuesta)" />
+      </whereParams>
+    </update>
+
     <insert tableName="respuesta">
       <column name="id" valueSequenceNext="respuesta_seq" />
-      <column name="apartado_id" valueComputed="(select id from eti.apartado where nombre='Consejo genético' and bloque_id=(select id from eti.bloque where orden = '4' and formulario_id = (select id from eti.formulario where nombre = 'M10')))" />
-      <column name="memoria_id" valueComputed="(select id from eti.memoria where num_referencia='M10/2019/001')" />
-      <column name="valor">
-        <![CDATA[ {"ap4_5_2": { "proporcionarConsejoGeneticoRadio": "si", "personaExpertaConsejoGeneticoRadio": "si", "documentoConsejoGeneticoRadio": "si"}} ]]>
-      </column>
+      <column name="apartado_id" valueComputed="(select id from apartado where nombre='Consejo genético' and bloque_id=(select id from bloque where orden = '4' and formulario_id = (select id from formulario where nombre = 'M10')))" />
+      <column name="memoria_id" valueComputed="(select id from memoria where num_referencia='M10/2019/001')" />
+      <column name="valor" value="{}" />
     </insert>
+    <update tableName="respuesta">
+      <column name="valor" valueClobFile="sample-clob/M10-2019-001_respuesta_23.json" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueComputed="(select max(id) from respuesta)" />
+      </whereParams>
+    </update>
+
     <insert tableName="respuesta">
       <column name="id" valueSequenceNext="respuesta_seq" />
-      <column name="apartado_id" valueComputed="(select id from eti.apartado where nombre='No discriminación por motivos genéticos' and bloque_id=(select id from eti.bloque where orden = '4' and formulario_id = (select id from eti.formulario where nombre = 'M10')))" />
-      <column name="memoria_id" valueComputed="(select id from eti.memoria where num_referencia='M10/2019/001')" />
-      <column name="valor">
-        <![CDATA[ {"ap4_5_3": { "noDiscriminacionMotivosGeneticos": "Medidas de prevención de la discriminación por motivos genéticos"}} ]]>
-      </column>
+      <column name="apartado_id" valueComputed="(select id from apartado where nombre='No discriminación por motivos genéticos' and bloque_id=(select id from bloque where orden = '4' and formulario_id = (select id from formulario where nombre = 'M10')))" />
+      <column name="memoria_id" valueComputed="(select id from memoria where num_referencia='M10/2019/001')" />
+      <column name="valor" value="{}" />
     </insert>
+    <update tableName="respuesta">
+      <column name="valor" valueClobFile="sample-clob/M10-2019-001_respuesta_24.json" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueComputed="(select max(id) from respuesta)" />
+      </whereParams>
+    </update>
+
     <insert tableName="respuesta">
       <column name="id" valueSequenceNext="respuesta_seq" />
-      <column name="apartado_id" valueComputed="(select id from eti.apartado where nombre='Estudiantes como sujetos de investigación' and bloque_id=(select id from eti.bloque where orden = '4' and formulario_id = (select id from eti.formulario where nombre = 'M10')))" />
-      <column name="memoria_id" valueComputed="(select id from eti.memoria where num_referencia='M10/2019/001')" />
-      <column name="valor">
-        <![CDATA[ {"estudiantesSujetosInvestigacionRadio": "si", "especificarEstudiantesSujetosInvestigacion": "Estudiantes de la facultad de medicina", "justificarEstudiantesSujetosInvestigacion": "Justificación de estudiantes como sujetos de investigación"} ]]>
-      </column>
+      <column name="apartado_id" valueComputed="(select id from apartado where nombre='Estudiantes como sujetos de investigación' and bloque_id=(select id from bloque where orden = '4' and formulario_id = (select id from formulario where nombre = 'M10')))" />
+      <column name="memoria_id" valueComputed="(select id from memoria where num_referencia='M10/2019/001')" />
+      <column name="valor" value="{}" />
     </insert>
+    <update tableName="respuesta">
+      <column name="valor" valueClobFile="sample-clob/M10-2019-001_respuesta_25.json" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueComputed="(select max(id) from respuesta)" />
+      </whereParams>
+    </update>
+
     <insert tableName="respuesta">
       <column name="id" valueSequenceNext="respuesta_seq" />
-      <column name="apartado_id" valueComputed="(select id from eti.apartado where nombre='Justificación del uso de estudiantes' and bloque_id=(select id from eti.bloque where orden = '4' and formulario_id = (select id from eti.formulario where nombre = 'M10')))" />
-      <column name="memoria_id" valueComputed="(select id from eti.memoria where num_referencia='M10/2019/001')" />
-      <column name="valor">
-        <![CDATA[ {"ap4_6_1": { "justificacionUsoEstudiantesRadio": "no", "motivosNoPlanteamientoSustitucion": "Motivo por el que los estudiantes no son un grupo especifico"}} ]]>
-      </column>
+      <column name="apartado_id" valueComputed="(select id from apartado where nombre='Justificación del uso de estudiantes' and bloque_id=(select id from bloque where orden = '4' and formulario_id = (select id from formulario where nombre = 'M10')))" />
+      <column name="memoria_id" valueComputed="(select id from memoria where num_referencia='M10/2019/001')" />
+      <column name="valor" value="{}" />
     </insert>
+    <update tableName="respuesta">
+      <column name="valor" valueClobFile="sample-clob/M10-2019-001_respuesta_26.json" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueComputed="(select max(id) from respuesta)" />
+      </whereParams>
+    </update>
+
     <insert tableName="respuesta">
       <column name="id" valueSequenceNext="respuesta_seq" />
-      <column name="apartado_id" valueComputed="(select id from eti.apartado where nombre='Beneficio formativo para el estudiante' and bloque_id=(select id from eti.bloque where orden = '4' and formulario_id = (select id from eti.formulario where nombre = 'M10')))" />
-      <column name="memoria_id" valueComputed="(select id from eti.memoria where num_referencia='M10/2019/001')" />
-      <column name="valor">
-        <![CDATA[ {"ap4_6_2": { "beneficioFormativoEstudianteRadio": "si", "especificarBeneficioFormativo": "Beneficio del estudiante"}} ]]>
-      </column>
+      <column name="apartado_id" valueComputed="(select id from apartado where nombre='Beneficio formativo para el estudiante' and bloque_id=(select id from bloque where orden = '4' and formulario_id = (select id from formulario where nombre = 'M10')))" />
+      <column name="memoria_id" valueComputed="(select id from memoria where num_referencia='M10/2019/001')" />
+      <column name="valor" value="{}" />
     </insert>
+    <update tableName="respuesta">
+      <column name="valor" valueClobFile="sample-clob/M10-2019-001_respuesta_27.json" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueComputed="(select max(id) from respuesta)" />
+      </whereParams>
+    </update>
+
     <insert tableName="respuesta">
       <column name="id" valueSequenceNext="respuesta_seq" />
-      <column name="apartado_id" valueComputed="(select id from eti.apartado where nombre='Vinculación académica con el equipo investigador' and bloque_id=(select id from eti.bloque where orden = '4' and formulario_id = (select id from eti.formulario where nombre = 'M10')))" />
-      <column name="memoria_id" valueComputed="(select id from eti.memoria where num_referencia='M10/2019/001')" />
-      <column name="valor">
-        <![CDATA[ {"ap4_6_3": { "vinculacionAcademicaEquipoInvestigadorRadio": "si", "especificarVinculacion": "Vinculación academica con la investigación", "calificacionEstudiantesRadio": "no", "medidasEspecialesEquipoInvestigadorRadio": "otras","especificarOtras": "Medidas especiales para la protección de la voluntariedad de los alumnos"}} ]]>
-      </column>
+      <column name="apartado_id" valueComputed="(select id from apartado where nombre='Vinculación académica con el equipo investigador' and bloque_id=(select id from bloque where orden = '4' and formulario_id = (select id from formulario where nombre = 'M10')))" />
+      <column name="memoria_id" valueComputed="(select id from memoria where num_referencia='M10/2019/001')" />
+      <column name="valor" value="{}" />
     </insert>
+    <update tableName="respuesta">
+      <column name="valor" valueClobFile="sample-clob/M10-2019-001_respuesta_28.json" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueComputed="(select max(id) from respuesta)" />
+      </whereParams>
+    </update>
+
     <insert tableName="respuesta">
       <column name="id" valueSequenceNext="respuesta_seq" />
-      <column name="apartado_id" valueComputed="(select id from eti.apartado where nombre='Incentivos académicos' and bloque_id=(select id from eti.bloque where orden = '4' and formulario_id = (select id from eti.formulario where nombre = 'M10')))" />
-      <column name="memoria_id" valueComputed="(select id from eti.memoria where num_referencia='M10/2019/001')" />
-      <column name="valor">
-        <![CDATA[ {"ap4_6_4": { "incentivosAcademicosRadio": "si", "describirIncentivos": "Incentivos académicos"}} ]]>
-      </column>
+      <column name="apartado_id" valueComputed="(select id from apartado where nombre='Incentivos académicos' and bloque_id=(select id from bloque where orden = '4' and formulario_id = (select id from formulario where nombre = 'M10')))" />
+      <column name="memoria_id" valueComputed="(select id from memoria where num_referencia='M10/2019/001')" />
+      <column name="valor" value="{}" />
     </insert>
+    <update tableName="respuesta">
+      <column name="valor" valueClobFile="sample-clob/M10-2019-001_respuesta_29.json" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueComputed="(select max(id) from respuesta)" />
+      </whereParams>
+    </update>
+
     <insert tableName="respuesta">
       <column name="id" valueSequenceNext="respuesta_seq" />
-      <column name="apartado_id" valueComputed="(select id from eti.apartado where nombre='Uso de tiempo lectivo' and bloque_id=(select id from eti.bloque where orden = '4' and formulario_id = (select id from eti.formulario where nombre = 'M10')))" />
-      <column name="memoria_id" valueComputed="(select id from eti.memoria where num_referencia='M10/2019/001')" />
-      <column name="valor">
-        <![CDATA[ {"ap4_6_5": { "usoTiempoLectivoRadio": "si", "horarioYduracion": "Horario lectivo"}} ]]>
-      </column>
+      <column name="apartado_id" valueComputed="(select id from apartado where nombre='Uso de tiempo lectivo' and bloque_id=(select id from bloque where orden = '4' and formulario_id = (select id from formulario where nombre = 'M10')))" />
+      <column name="memoria_id" valueComputed="(select id from memoria where num_referencia='M10/2019/001')" />
+      <column name="valor" value="{}" />
     </insert>
+    <update tableName="respuesta">
+      <column name="valor" valueClobFile="sample-clob/M10-2019-001_respuesta_30.json" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueComputed="(select max(id) from respuesta)" />
+      </whereParams>
+    </update>
+
     <insert tableName="respuesta">
       <column name="id" valueSequenceNext="respuesta_seq" />
-      <column name="apartado_id" valueComputed="(select id from eti.apartado where nombre='Actividades alternativas' and bloque_id=(select id from eti.bloque where orden = '4' and formulario_id = (select id from eti.formulario where nombre = 'M10')))" />
-      <column name="memoria_id" valueComputed="(select id from eti.memoria where num_referencia='M10/2019/001')" />
-      <column name="valor">
-        <![CDATA[ {"ap4_6_6": { "actividadesAlternativas": "Actividades alternativas"}} ]]>
-      </column>
+      <column name="apartado_id" valueComputed="(select id from apartado where nombre='Actividades alternativas' and bloque_id=(select id from bloque where orden = '4' and formulario_id = (select id from formulario where nombre = 'M10')))" />
+      <column name="memoria_id" valueComputed="(select id from memoria where num_referencia='M10/2019/001')" />
+      <column name="valor" value="{}" />
     </insert>
+    <update tableName="respuesta">
+      <column name="valor" valueClobFile="sample-clob/M10-2019-001_respuesta_31.json" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueComputed="(select max(id) from respuesta)" />
+      </whereParams>
+    </update>
+
     <insert tableName="respuesta">
       <column name="id" valueSequenceNext="respuesta_seq" />
-      <column name="apartado_id" valueComputed="(select id from eti.apartado where nombre='Protección de la privacidad' and bloque_id=(select id from eti.bloque where orden = '4' and formulario_id = (select id from eti.formulario where nombre = 'M10')))" />
-      <column name="memoria_id" valueComputed="(select id from eti.memoria where num_referencia='M10/2019/001')" />
-      <column name="valor">
-        <![CDATA[ {"ap4_6_7": { "proteccionPrivacidad": "Medidas de protección de la privacidad"}} ]]>
-      </column>
+      <column name="apartado_id" valueComputed="(select id from apartado where nombre='Protección de la privacidad' and bloque_id=(select id from bloque where orden = '4' and formulario_id = (select id from formulario where nombre = 'M10')))" />
+      <column name="memoria_id" valueComputed="(select id from memoria where num_referencia='M10/2019/001')" />
+      <column name="valor" value="{}" />
     </insert>
+    <update tableName="respuesta">
+      <column name="valor" valueClobFile="sample-clob/M10-2019-001_respuesta_32.json" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueComputed="(select max(id) from respuesta)" />
+      </whereParams>
+    </update>
+
     <insert tableName="respuesta">
       <column name="id" valueSequenceNext="respuesta_seq" />
-      <column name="apartado_id" valueComputed="(select id from eti.apartado where nombre='Documento de consentimiento' and bloque_id=(select id from eti.bloque where orden = '5' and formulario_id = (select id from eti.formulario where nombre = 'M10')))" />
-      <column name="memoria_id" valueComputed="(select id from eti.memoria where num_referencia='M10/2019/001')" />
+      <column name="apartado_id" valueComputed="(select id from apartado where nombre='Documento de consentimiento' and bloque_id=(select id from bloque where orden = '5' and formulario_id = (select id from formulario where nombre = 'M10')))" />
+      <column name="memoria_id" valueComputed="(select id from memoria where num_referencia='M10/2019/001')" />
       <column name="tipo_documento_id" value="4" />
-      <column name="valor">
-        <![CDATA[ { "documentoConsentimiento": 4 } ]]>
-      </column>
+      <column name="valor" value="{}" />
     </insert>
+    <update tableName="respuesta">
+      <column name="valor" valueClobFile="sample-clob/M10-2019-001_respuesta_33.json" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueComputed="(select max(id) from respuesta)" />
+      </whereParams>
+    </update>
+
     <insert tableName="respuesta">
       <column name="id" valueSequenceNext="respuesta_seq" />
-      <column name="apartado_id" valueComputed="(select id from eti.apartado where nombre='Documento de cesión de datos' and bloque_id=(select id from eti.bloque where orden = '5' and formulario_id = (select id from eti.formulario where nombre = 'M10')))" />
-      <column name="memoria_id" valueComputed="(select id from eti.memoria where num_referencia='M10/2019/001')" />
+      <column name="apartado_id" valueComputed="(select id from apartado where nombre='Documento de cesión de datos' and bloque_id=(select id from bloque where orden = '5' and formulario_id = (select id from formulario where nombre = 'M10')))" />
+      <column name="memoria_id" valueComputed="(select id from memoria where num_referencia='M10/2019/001')" />
       <column name="tipo_documento_id" value="5" />
-      <column name="valor">
-        <![CDATA[ {"documentoCesion": 5 } ]]>
-      </column>
+      <column name="valor" value="{}" />
     </insert>
+    <update tableName="respuesta">
+      <column name="valor" valueClobFile="sample-clob/M10-2019-001_respuesta_34.json" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueComputed="(select max(id) from respuesta)" />
+      </whereParams>
+    </update>
+
     <insert tableName="respuesta">
       <column name="id" valueSequenceNext="respuesta_seq" />
-      <column name="apartado_id" valueComputed="(select id from eti.apartado where nombre='Documento de autorización' and bloque_id=(select id from eti.bloque where orden = '5' and formulario_id = (select id from eti.formulario where nombre = 'M10')))" />
-      <column name="memoria_id" valueComputed="(select id from eti.memoria where num_referencia='M10/2019/001')" />
+      <column name="apartado_id" valueComputed="(select id from apartado where nombre='Documento de autorización' and bloque_id=(select id from bloque where orden = '5' and formulario_id = (select id from formulario where nombre = 'M10')))" />
+      <column name="memoria_id" valueComputed="(select id from memoria where num_referencia='M10/2019/001')" />
       <column name="tipo_documento_id" value="6" />
-      <column name="valor">
-        <![CDATA[ {"documentoAutorizacion": 6 } ]]>
-      </column>
+      <column name="valor" value="{}" />
     </insert>
+    <update tableName="respuesta">
+      <column name="valor" valueClobFile="sample-clob/M10-2019-001_respuesta_35.json" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueComputed="(select max(id) from respuesta)" />
+      </whereParams>
+    </update>
+
     <insert tableName="respuesta">
       <column name="id" valueSequenceNext="respuesta_seq" />
-      <column name="apartado_id" valueComputed="(select id from eti.apartado where nombre='Documento de aceptación de colaboración' and bloque_id=(select id from eti.bloque where orden = '5' and formulario_id = (select id from eti.formulario where nombre = 'M10')))" />
-      <column name="memoria_id" valueComputed="(select id from eti.memoria where num_referencia='M10/2019/001')" />
+      <column name="apartado_id" valueComputed="(select id from apartado where nombre='Documento de aceptación de colaboración' and bloque_id=(select id from bloque where orden = '5' and formulario_id = (select id from formulario where nombre = 'M10')))" />
+      <column name="memoria_id" valueComputed="(select id from memoria where num_referencia='M10/2019/001')" />
       <column name="tipo_documento_id" value="7" />
-      <column name="valor">
-        <![CDATA[ {"documentoAceptacionColaboracion": 7 } ]]>
-      </column>
+      <column name="valor" value="{}" />
     </insert>
+    <update tableName="respuesta">
+      <column name="valor" valueClobFile="sample-clob/M10-2019-001_respuesta_36.json" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueComputed="(select max(id) from respuesta)" />
+      </whereParams>
+    </update>
+
     <insert tableName="respuesta">
       <column name="id" valueSequenceNext="respuesta_seq" />
-      <column name="apartado_id" valueComputed="(select id from eti.apartado where nombre='Informe de la Comisión de Garantías' and bloque_id=(select id from eti.bloque where orden = '5' and formulario_id = (select id from eti.formulario where nombre = 'M10')))" />
-      <column name="memoria_id" valueComputed="(select id from eti.memoria where num_referencia='M10/2019/001')" />
+      <column name="apartado_id" valueComputed="(select id from apartado where nombre='Informe de la Comisión de Garantías' and bloque_id=(select id from bloque where orden = '5' and formulario_id = (select id from formulario where nombre = 'M10')))" />
+      <column name="memoria_id" valueComputed="(select id from memoria where num_referencia='M10/2019/001')" />
       <column name="tipo_documento_id" value="8" />
-      <column name="valor">
-        <![CDATA[ {"informeComisionGarantiasRadio": 8 } ]]>
-      </column>
+      <column name="valor" value="{}" />
     </insert>
+    <update tableName="respuesta">
+      <column name="valor" valueClobFile="sample-clob/M10-2019-001_respuesta_37.json" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueComputed="(select max(id) from respuesta)" />
+      </whereParams>
+    </update>
+
     <insert tableName="respuesta">
       <column name="id" valueSequenceNext="respuesta_seq" />
-      <column name="apartado_id" valueComputed="(select id from eti.apartado where nombre='Acuerdo de transferencia de muestras' and bloque_id=(select id from eti.bloque where orden = '5' and formulario_id = (select id from eti.formulario where nombre = 'M10')))" />
-      <column name="memoria_id" valueComputed="(select id from eti.memoria where num_referencia='M10/2019/001')" />
+      <column name="apartado_id" valueComputed="(select id from apartado where nombre='Acuerdo de transferencia de muestras' and bloque_id=(select id from bloque where orden = '5' and formulario_id = (select id from formulario where nombre = 'M10')))" />
+      <column name="memoria_id" valueComputed="(select id from memoria where num_referencia='M10/2019/001')" />
       <column name="tipo_documento_id" value="9" />
-      <column name="valor">
-        <![CDATA[ {"acuerdoTransferenciaMuestras": 9 } ]]>
-      </column>
+      <column name="valor" value="{}" />
     </insert>
+    <update tableName="respuesta">
+      <column name="valor" valueClobFile="sample-clob/M10-2019-001_respuesta_38.json" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueComputed="(select max(id) from respuesta)" />
+      </whereParams>
+    </update>
+
     <insert tableName="respuesta">
       <column name="id" valueSequenceNext="respuesta_seq" />
-      <column name="apartado_id" valueComputed="(select id from eti.apartado where nombre='Documento de registro de tratamiento de datos' and bloque_id=(select id from eti.bloque where orden = '5' and formulario_id = (select id from eti.formulario where nombre = 'M10')))" />
-      <column name="memoria_id" valueComputed="(select id from eti.memoria where num_referencia='M10/2019/001')" />
+      <column name="apartado_id" valueComputed="(select id from apartado where nombre='Documento de registro de tratamiento de datos' and bloque_id=(select id from bloque where orden = '5' and formulario_id = (select id from formulario where nombre = 'M10')))" />
+      <column name="memoria_id" valueComputed="(select id from memoria where num_referencia='M10/2019/001')" />
       <column name="tipo_documento_id" value="10" />
-      <column name="valor">
-        <![CDATA[ {"documentoRegistroTratamientoDatos": 10 } ]]>
-      </column>
+      <column name="valor" value="{}" />
     </insert>
+    <update tableName="respuesta">
+      <column name="valor" valueClobFile="sample-clob/M10-2019-001_respuesta_39.json" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueComputed="(select max(id) from respuesta)" />
+      </whereParams>
+    </update>
+
     <insert tableName="respuesta">
       <column name="id" valueSequenceNext="respuesta_seq" />
-      <column name="apartado_id" valueComputed="(select id from eti.apartado where nombre='Documentación adicional' and bloque_id=(select id from eti.bloque where orden = '5' and formulario_id = (select id from eti.formulario where nombre = 'M10')))" />
-      <column name="memoria_id" valueComputed="(select id from eti.memoria where num_referencia='M10/2019/001')" />
+      <column name="apartado_id" valueComputed="(select id from apartado where nombre='Documentación adicional' and bloque_id=(select id from bloque where orden = '5' and formulario_id = (select id from formulario where nombre = 'M10')))" />
+      <column name="memoria_id" valueComputed="(select id from memoria where num_referencia='M10/2019/001')" />
       <column name="tipo_documento_id" value="11" />
-      <column name="valor">
-        <![CDATA[ {"documentacionAdicional": 11 } ]]>
-      </column>
+      <column name="valor" value="{}" />
     </insert>
+    <update tableName="respuesta">
+      <column name="valor" valueClobFile="sample-clob/M10-2019-001_respuesta_40.json" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueComputed="(select max(id) from respuesta)" />
+      </whereParams>
+    </update>
+
     <insert tableName="respuesta">
       <column name="id" valueSequenceNext="respuesta_seq" />
-      <column name="apartado_id" valueComputed="(select id from eti.apartado where nombre='Aclaraciones al comité' and bloque_id=(select id from eti.bloque where orden = '5' and formulario_id = (select id from eti.formulario where nombre = 'M10')))" />
-      <column name="memoria_id" valueComputed="(select id from eti.memoria where num_referencia='M10/2019/001')" />
-      <column name="valor">
-        <![CDATA[ {"aclaracionesComite": "Aclaraciones al comité" } ]]>
-      </column>
+      <column name="apartado_id" valueComputed="(select id from apartado where nombre='Aclaraciones al comité' and bloque_id=(select id from bloque where orden = '5' and formulario_id = (select id from formulario where nombre = 'M10')))" />
+      <column name="memoria_id" valueComputed="(select id from memoria where num_referencia='M10/2019/001')" />
+      <column name="valor" value="{}" />
     </insert>
+    <update tableName="respuesta">
+      <column name="valor" valueClobFile="sample-clob/M10-2019-001_respuesta_41.json" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueComputed="(select max(id) from respuesta)" />
+      </whereParams>
+    </update>
   </changeSet>
+
   <changeSet context="dev" author="master" id="0000000000000-conflicto_interes">
     <insert tableName="conflicto_interes">
       <column name="id" valueSequenceNext="conflicto_interes_seq" />
-      <column name="evaluador_id" valueComputed="(select id from eti.evaluador where resumen='Evaluador1')" />
-      <column name="persona_conflicto_ref" value="12" />
+      <column name="evaluador_id" valueComputed="(select id from evaluador where resumen='Evaluador1')" />
+      <column name="persona_conflicto_ref" value="02221287" />
     </insert>
     <insert tableName="conflicto_interes">
       <column name="id" valueSequenceNext="conflicto_interes_seq" />
-      <column name="evaluador_id" valueComputed="(select id from eti.evaluador where resumen='Evaluador2')" />
-      <column name="persona_conflicto_ref" value="22" />
+      <column name="evaluador_id" valueComputed="(select id from evaluador where resumen='Evaluador2')" />
+      <column name="persona_conflicto_ref" value="15480657" />
     </insert>
     <insert tableName="conflicto_interes">
       <column name="id" valueSequenceNext="conflicto_interes_seq" />
-      <column name="evaluador_id" valueComputed="(select id from eti.evaluador where resumen='Evaluador3')" />
-      <column name="persona_conflicto_ref" value="32" />
+      <column name="evaluador_id" valueComputed="(select id from evaluador where resumen='Evaluador3')" />
+      <column name="persona_conflicto_ref" value="15484897" />
     </insert>
   </changeSet>
 </databaseChangeLog>

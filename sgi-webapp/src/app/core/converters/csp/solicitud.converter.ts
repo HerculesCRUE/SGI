@@ -13,6 +13,7 @@ class SolicitudConverter extends SgiBaseConverter<ISolicitudBackend, ISolicitud>
     }
     return {
       id: value.id,
+      titulo: value.titulo,
       activo: value.activo,
       codigoExterno: value.codigoExterno,
       codigoRegistroInterno: value.codigoRegistroInterno,
@@ -33,6 +34,7 @@ class SolicitudConverter extends SgiBaseConverter<ISolicitudBackend, ISolicitud>
     }
     return {
       id: value.id,
+      titulo: value.titulo,
       activo: value.activo,
       codigoExterno: value.codigoExterno,
       codigoRegistroInterno: value.codigoRegistroInterno,

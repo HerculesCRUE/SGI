@@ -18,7 +18,8 @@ export class ProyectoSocioPeriodoJustificacionDatosGeneralesFragment extends For
     private service: ProyectoSocioPeriodoJustificacionService,
     private proyectoSocio: IProyectoSocio,
     private proyectoEstado: IEstadoProyecto,
-    private selectedPeriodosJustificacion: IProyectoSocioPeriodoJustificacion[]
+    private selectedPeriodosJustificacion: IProyectoSocioPeriodoJustificacion[],
+    private readonly: boolean
   ) {
     super(key);
     this.periodoJustificacion = {} as IProyectoSocioPeriodoJustificacion;
@@ -73,6 +74,10 @@ export class ProyectoSocioPeriodoJustificacionDatosGeneralesFragment extends For
       DateValidator.maxDate(this.proyectoSocio?.fechaFin)]);
       form.controls.fechaFin.setValidators([Validators.required, DateValidator.minDate(this.proyectoSocio?.fechaInicio),
       DateValidator.maxDate(this.proyectoSocio?.fechaFin)]);
+    }
+
+    if (this.readonly) {
+      form.disable();
     }
 
     return form;

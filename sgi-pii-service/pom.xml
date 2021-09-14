@@ -9,7 +9,7 @@
   </parent>
   <groupId>org.crue.hercules.sgi</groupId>
   <artifactId>sgi-pii-service</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
+  <version>0.0.1</version>
   <name>sgi-pii-service</name>
   <description>Servicio de Propiedad industrial e intelectual SGI HERCULES</description>
 
@@ -30,6 +30,21 @@
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-actuator</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-configuration-processor</artifactId>
+      <optional>true</optional>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-context-indexer</artifactId>
+      <optional>true</optional>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-devtools</artifactId>
+      <scope>runtime</scope>
     </dependency>
     <dependency>
       <groupId>com.h2database</groupId>
@@ -80,11 +95,6 @@
       <optional>true</optional>
     </dependency>
     <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-devtools</artifactId>
-      <scope>runtime</scope>
-    </dependency>
-    <dependency>
       <groupId>org.apache.commons</groupId>
       <artifactId>commons-lang3</artifactId>
     </dependency>
@@ -124,7 +134,7 @@
 
   <properties>
     <java.version>1.8</java.version>
-    <sgi-framework-spring.version>0.0.3-SNAPSHOT</sgi-framework-spring.version>
+    <sgi-framework-spring.version>0.0.3</sgi-framework-spring.version>
     <wiremock.version>2.27.1</wiremock.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
@@ -330,6 +340,7 @@
         <artifactId>maven-help-plugin</artifactId>
         <executions>
           <execution>
+            <?m2e ignore?>
             <id>show-profiles</id>
             <phase>compile</phase>
             <goals>
@@ -358,6 +369,12 @@
               <groupId>org.hibernate</groupId>
               <artifactId>hibernate-jpamodelgen</artifactId>
               <version>${org.hibernate-jpamodelgen.version}</version>
+            </path>
+            <!-- Spring Configuration Metadata Generator -->
+            <path>
+              <groupId>org.springframework.boot</groupId>
+              <artifactId>spring-boot-configuration-processor</artifactId>
+              <version>${project.parent.version}</version>
             </path>
           </annotationProcessorPaths>
         </configuration>

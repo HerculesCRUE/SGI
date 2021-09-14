@@ -1,5 +1,5 @@
 import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
-import { FormControl, FormGroup } from '@angular/forms';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { BaseModalComponent } from '@core/component/base-modal.component';
@@ -99,8 +99,8 @@ export class SectorAplicacionModalComponent extends BaseModalComponent<ISectorAp
 
   protected getFormGroup(): FormGroup {
     const formGroup = new FormGroup({
-      nombre: new FormControl(this.sectorAplicacion?.nombre),
-      descripcion: new FormControl(this.sectorAplicacion?.descripcion),
+      nombre: new FormControl(this.sectorAplicacion?.nombre, [Validators.maxLength(50)]),
+      descripcion: new FormControl(this.sectorAplicacion?.descripcion, [Validators.maxLength(250)]),
     });
     return formGroup;
   }

@@ -1,10 +1,10 @@
 @import "colors.scss";
 @import "typography.scss";
 
-.solicitud-listado {
- .caja-busqueda-avanzada {
+:host {
+  .caja-busqueda-avanzada {
     padding: 10px 20px 10px 20px;
-    .col {  
+    .col {
       padding-right: 15px;
     }
     .buttons-final {
@@ -15,17 +15,18 @@
         }
       }
     }
-    .input-right{
+    .input-right {
       float: left;
       width: 65%;
     }
-    .boton-left{
+    .boton-left {
       float: right;
     }
-    .fieldset-form{
+
+    .fieldset-form {
       padding-bottom: 10px;
       padding-top: 10px;
-      font-size: mat-font-size($custom-typography, body-2);
+      font-size: map-get($sgi-typography-size, form-fieldset);
     }
   }
   .formulario {

@@ -20,10 +20,10 @@ public class ConceptoGastoRespositoryTest extends BaseRepositoryTest {
   @Test
   public void findByNombreAndActivoIsTrue_ReturnsConceptoGasto() throws Exception {
     // given: 2 ConceptoGasto de los que 1 coincide con el nombre buscado
-    ConceptoGasto conceptoGasto1 = new ConceptoGasto(null, "nombre-1", "descripcion-1", true);
+    ConceptoGasto conceptoGasto1 = new ConceptoGasto(null, "nombre-1", "descripcion-1", true, true);
     entityManager.persistAndFlush(conceptoGasto1);
 
-    ConceptoGasto conceptoGasto2 = new ConceptoGasto(null, "nombre-2", "descripcion-2", true);
+    ConceptoGasto conceptoGasto2 = new ConceptoGasto(null, "nombre-2", "descripcion-2", true, false);
     entityManager.persistAndFlush(conceptoGasto2);
 
     String nombreBuscado = "nombre-1";
@@ -42,10 +42,10 @@ public class ConceptoGastoRespositoryTest extends BaseRepositoryTest {
   @Test
   public void findByNombreAndActivoIsTrue_NoExiste_ReturnsNull() throws Exception {
     // given: 2 ConceptoGasto que no coinciden con el nombre buscado
-    ConceptoGasto conceptoGasto1 = new ConceptoGasto(null, "nombre-1", "descripcion-1", true);
+    ConceptoGasto conceptoGasto1 = new ConceptoGasto(null, "nombre-1", "descripcion-1", true, true);
     entityManager.persistAndFlush(conceptoGasto1);
 
-    ConceptoGasto conceptoGasto2 = new ConceptoGasto(null, "nombre-2", "descripcion-2", true);
+    ConceptoGasto conceptoGasto2 = new ConceptoGasto(null, "nombre-2", "descripcion-2", true, false);
     entityManager.persistAndFlush(conceptoGasto2);
 
     String nombreBuscado = "nombre-noexiste";

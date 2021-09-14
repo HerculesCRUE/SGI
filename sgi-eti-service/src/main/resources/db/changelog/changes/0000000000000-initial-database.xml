@@ -102,7 +102,7 @@
             <column name="numero" type="INT">
                 <constraints nullable="false"/>
             </column>
-            <column name="resumen" type="VARCHAR(8000)">
+            <column name="resumen" type="VARCHAR(4000)">
                 <constraints nullable="false"/>
             </column>
             <column name="convocatoria_reunion_id" type="BIGINT">
@@ -512,7 +512,7 @@
             <column name="persona_ref" type="VARCHAR(250)">
                 <constraints nullable="false"/>
             </column>
-            <column name="resumen" type="VARCHAR(8000)">
+            <column name="resumen" type="VARCHAR(4000)">
                 <constraints nullable="false"/>
             </column>
             <column name="cargo_comite_id" type="BIGINT">
@@ -619,7 +619,7 @@
             <column defaultValueBoolean="false" name="requiere_retrospectiva" type="BOOLEAN">
                 <constraints nullable="false"/>
             </column>
-            <column name="titulo" type="VARCHAR(250)"/>
+            <column name="titulo" type="VARCHAR(2000)"/>
             <column name="version" type="INT">
                 <constraints nullable="false"/>
             </column>
@@ -670,7 +670,7 @@
             <column name="persona_ref" type="VARCHAR(250)">
                 <constraints nullable="false"/>
             </column>
-            <column name="resumen" type="VARCHAR(8000)"/>
+            <column name="resumen" type="VARCHAR(4000)"/>
             <column name="solicitud_convocatoria_ref" type="VARCHAR(250)"/>
             <column defaultValueBoolean="false" name="tiene_fondos_propios" type="BOOLEAN"/>
             <column name="titulo" type="VARCHAR(250)">

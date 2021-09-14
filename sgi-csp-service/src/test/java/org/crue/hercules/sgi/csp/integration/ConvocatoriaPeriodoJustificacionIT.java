@@ -63,7 +63,7 @@ public class ConvocatoriaPeriodoJustificacionIT extends BaseIT {
     ConvocatoriaPeriodoJustificacion newConvocatoriaPeriodoJustificacion = generarMockConvocatoriaPeriodoJustificacion(
         null, 27, 30, ConvocatoriaPeriodoJustificacion.Tipo.FINAL, 1L);
     ConvocatoriaPeriodoJustificacion updatedConvocatoriaPeriodoJustificacion = generarMockConvocatoriaPeriodoJustificacion(
-        4L, 24, 26, ConvocatoriaPeriodoJustificacion.Tipo.PERIODICO, 1L);
+        4L, 1, 26, ConvocatoriaPeriodoJustificacion.Tipo.PERIODICO, 1L);
 
     List<ConvocatoriaPeriodoJustificacion> convocatoriaPeriodoJustificaciones = Arrays
         .asList(newConvocatoriaPeriodoJustificacion, updatedConvocatoriaPeriodoJustificacion);

@@ -1,0 +1,18 @@
+[
+  {
+    "key": "ap4_4_2",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "expressionLock": "formState.memoria.tipoMemoria.id === 3",
+      "label": "4.4.2 Información obligatoria mínima"
+    },
+    "hideExpression": "!formState.mainModel.ap4_4.informacionConsentimientoRadio || formState.mainModel.ap4_4.informacionConsentimientoRadio === 'no'",
+    "fieldGroup": [
+      {
+        "template": "<p>El documento de consentimiento debe llevar los logos de la Universidad y de otras instituciones si procede.</p><p>Los datos identificativos y de contacto deben coincidir con los aportados previamente en esta memoria</p><p>A continuación, se le facilita la información que debe incluir en el documento de consentimiento para su proyecto de investigación.</p><p><a href='https://www.um.es/web/comision-etica-investigacion/comision-etica/ceic' target='_blank'>Modelos de la Universidad de Murcia de Hoja de Información y de Consentimiento Informado</a></p>"
+      }
+    ]
+  }
+]

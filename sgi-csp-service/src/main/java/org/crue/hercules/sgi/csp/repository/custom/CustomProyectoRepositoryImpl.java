@@ -1,6 +1,7 @@
 package org.crue.hercules.sgi.csp.repository.custom;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Optional;
 
 import javax.persistence.EntityManager;
@@ -22,6 +23,7 @@ import org.crue.hercules.sgi.csp.model.ProyectoPaqueteTrabajo;
 import org.crue.hercules.sgi.csp.model.ProyectoSocio;
 import org.crue.hercules.sgi.csp.model.ProyectoSocio_;
 import org.crue.hercules.sgi.csp.model.Proyecto_;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
 
 import lombok.extern.slf4j.Slf4j;
@@ -142,11 +144,11 @@ public class CustomProyectoRepositoryImpl implements CustomProyectoRepository {
     // Define DTO projection
     cq.multiselect(
         // Total presupuesto universidad
-        cb.coalesce(sqlTotalConcedidoUniversidad.getSelection(), new BigDecimal(0)),
-        // Total concedido universidad
-        cb.coalesce(sqlTotalConcedidoUniversidad.getSelection(), new BigDecimal(0)),
+        cb.coalesce(sqlTotalPresupuestoUniversidad.getSelection(), new BigDecimal(0)),
         // Total presupuesto socio
         cb.coalesce(sqTotalPresupuestoSocio.getSelection(), new BigDecimal(0)),
+        // Total concedido universidad
+        cb.coalesce(sqlTotalConcedidoUniversidad.getSelection(), new BigDecimal(0)),
         // Total concedido socio
         cb.coalesce(sqTotalConcedidoSocio.getSelection(), new BigDecimal(0)));
     // Execute query
@@ -156,5 +158,20 @@ public class CustomProyectoRepositoryImpl implements CustomProyectoRepository {
 
     log.debug("ProyectoPresupuestoTotales getTotales(Long proyectoId) - end");
     return result;
+  }
+
+  @Override
+  public List<Long> findIds(Specification<Proyecto> specification) {
+    log.debug("List<Long> findIds(Specification<Proyecto> specification) - start");
+
+    CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+    CriteriaQuery<Long> cq = cb.createQuery(Long.class);
+    Root<Proyecto> root = cq.from(Proyecto.class);
+
+    cq.select(root.get(Proyecto_.id)).distinct(true).where(specification.toPredicate(root, cq, cb));
+
+    log.debug("List<Long> findIds(Specification<Proyecto> specification) - end");
+
+    return entityManager.createQuery(cq).getResultList();
   }
 }

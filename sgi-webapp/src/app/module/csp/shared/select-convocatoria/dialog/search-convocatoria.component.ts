@@ -45,7 +45,7 @@ export class SearchConvocatoriaModalComponent implements AfterViewInit {
   formGroup: FormGroup;
   displayedColumns = ['codigo', 'titulo', 'fechaInicioSolicitud', 'fechaFinSolicitud',
     'entidadConvocante', 'planInvestigacion', 'entidadFinanciadora',
-    'fuenteFinanciacion'];
+    'fuenteFinanciacion', 'acciones'];
   elementosPagina = [5, 10, 25, 100];
   totalElementos = 0;
   @ViewChild(MatSort, { static: true }) sort: MatSort;
@@ -200,5 +200,9 @@ export class SearchConvocatoriaModalComponent implements AfterViewInit {
       filter.and('unidadGestionRef', SgiRestFilterOperator.IN, this.data.unidadesGestion);
     }
     return filter;
+  }
+
+  closeModal(convocatoria?: IConvocatoria): void {
+    this.dialogRef.close(convocatoria);
   }
 }

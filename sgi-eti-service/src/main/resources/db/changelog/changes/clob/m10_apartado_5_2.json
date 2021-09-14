@@ -1,0 +1,41 @@
+[
+  {
+    "key": "ap5_2",
+    "wrappers": [
+      "expansion-panel"
+    ],
+    "templateOptions": {
+      "expressionLock": "formState.memoria.tipoMemoria.id === 3",
+      "label": "5.2 Documento de cesión de datos"
+    },
+    "fieldGroup": [
+      {
+        "template": "¿Su proyecto requiere la autorización de la Agencia Española de Protección de Datos (AEPD) para cesión de datos?"
+      },
+      {
+        "key": "documentoCesion",
+        "type": "documento",
+        "templateOptions": {
+          "label": "Indicar",
+          "required": true,
+          "options": [
+            {
+              "value": 0,
+              "label": "No"
+            },
+            {
+              "value": 5,
+              "label": "Sí"
+            }
+          ]
+        }
+      },
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "<p>Nota: ver apartado '3.6.3 Cesión a terceros de los datos de carácter personal'.</p>"
+      }
+    ]
+  }
+]

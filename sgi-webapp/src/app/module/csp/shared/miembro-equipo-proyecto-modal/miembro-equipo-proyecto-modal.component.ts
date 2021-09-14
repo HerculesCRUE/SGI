@@ -35,6 +35,7 @@ export interface MiembroEquipoProyectoModalData {
   fechaFinMax: DateTime;
   showHorasDedicacion: boolean;
   isEdit: boolean;
+  readonly: boolean;
 }
 
 @Component({
@@ -190,6 +191,10 @@ export class MiembroEquipoProyectoModalComponent extends
         Validators.min(0),
         Validators.max(9999)
       ]));
+    }
+
+    if (this.data.readonly) {
+      formGroup.disable();
     }
 
     return formGroup;

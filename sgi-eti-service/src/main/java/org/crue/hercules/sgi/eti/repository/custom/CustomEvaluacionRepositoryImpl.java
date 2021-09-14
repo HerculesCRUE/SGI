@@ -324,14 +324,16 @@ public class CustomEvaluacionRepositoryImpl implements CustomEvaluacionRepositor
     }
 
     // Filtros
-    cq.where(listPredicates.toArray(new Predicate[] {}));
+    cq.where(cb.and(listPredicates.toArray(new Predicate[] {})),
+        cb.equal(rootEvaluacion.get(Evaluacion_.activo), Boolean.TRUE));
 
     // Ordenación
     List<Order> orders = QueryUtils.toOrders(pageable.getSort(), rootEvaluacion, cb);
     cq.orderBy(orders);
 
     // Número de registros totales para la paginación
-    countQuery.where(listPredicatesCount.toArray(new Predicate[] {}));
+    countQuery.where(cb.and(listPredicatesCount.toArray(new Predicate[] {})),
+        cb.equal(rootCount.get(Evaluacion_.activo), Boolean.TRUE));
     Long count = entityManager.createQuery(countQuery).getSingleResult();
 
     // Paginación

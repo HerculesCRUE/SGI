@@ -4,6 +4,8 @@ import javax.validation.Valid;
 import javax.validation.groups.Default;
 
 import org.crue.hercules.sgi.csp.model.BaseEntity.Update;
+import org.crue.hercules.sgi.csp.model.AnualidadGasto;
+import org.crue.hercules.sgi.csp.model.AnualidadIngreso;
 import org.crue.hercules.sgi.csp.model.ProyectoPartida;
 import org.crue.hercules.sgi.csp.service.ProyectoPartidaService;
 import org.springframework.http.HttpStatus;
@@ -121,6 +123,40 @@ public class ProyectoPartidaController {
     ProyectoPartida returnValue = service.findById(id);
     log.debug("findById(Long id) - end");
     return returnValue;
+  }
+
+  /**
+   * Hace las comprobaciones necesarias para determinar si la
+   * {@link ProyectoPartida} puede ser modificada.
+   * 
+   * @param id Id de la {@link ProyectoPartida}.
+   * @return HTTP-200 Si se permite modificación / HTTP-204 Si no se permite
+   *         modificación
+   */
+  @RequestMapping(path = "/{id}/modificable", method = RequestMethod.HEAD)
+  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-PRO-E', 'CSP-PRO-V')")
+  ResponseEntity<ProyectoPartida> modificable(@PathVariable Long id) {
+    log.debug("modificable(Long id) - start");
+    boolean returnValue = service.modificable(id, "CSP-PRO-E");
+    log.debug("modificable(Long id) - end");
+    return returnValue ? new ResponseEntity<>(HttpStatus.OK) : new ResponseEntity<>(HttpStatus.NO_CONTENT);
+  }
+
+  /**
+   * Comprueba si algún objeto de tipo {@link AnualidadIngreso} o de tipo
+   * {@link AnualidadGasto} está asociado a la partida con el id indicado.
+   * 
+   * @param id Identificador de {@link ProyectoPartida}.
+   * @return HTTP 200 si existe y HTTP 204 si no.
+   */
+  @RequestMapping(path = "/{id}/anualidades", method = RequestMethod.HEAD)
+  @PreAuthorize("hasAuthorityForAnyUO('CSP-PRO-E')")
+  public ResponseEntity<Object> existsAnyAnualidad(@PathVariable Long id) {
+
+    if (service.existsAnyAnualidad(id)) {
+      return new ResponseEntity<>(HttpStatus.OK);
+    }
+    return new ResponseEntity<>(HttpStatus.NO_CONTENT);
   }
 
 }

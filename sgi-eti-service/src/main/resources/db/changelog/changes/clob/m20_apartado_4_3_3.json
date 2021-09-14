@@ -1,0 +1,28 @@
+[
+  {
+    "key": "ap4_3_3",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "label": "4.3.3 Mantenimiento con vida"
+    },
+    "hideExpression": "!formState.mainModel.ap4_3.ap4_3_2.reutilizacionRadio || formState.mainModel.ap4_3.ap4_3_2.reutilizacionRadio === 'no'",
+    "fieldGroup": [
+      {
+        "template": "Si los animales han sido utilizados anteriormente o van a ser reutilizados con posterioridad explique si se dan las circunstancias marcadas por la ley o justifique la excepción"
+      },
+      {
+        "key": "excepcionReutilizacion",
+        "type": "textarea",
+        "templateOptions": {
+          "label": "Justificar",
+          "required": true,
+          "autosize": true,
+          "autosizeMinRows": "1",
+          "autosizeMaxRows": "10"
+        }
+      }
+    ]
+  }
+]

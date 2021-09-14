@@ -1,6 +1,7 @@
 package org.crue.hercules.sgi.csp.service.impl;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import com.nimbusds.oauth2.sdk.util.CollectionUtils;
 
@@ -255,6 +256,30 @@ public class SolicitudProyectoSocioServiceImpl implements SolicitudProyectoSocio
     Boolean returnValue = CollectionUtils.isNotEmpty(solicitudProyectoSocios);
     log.debug("hasSolicitudSocio(Long id) - end");
     return returnValue;
+  }
+
+  @Override
+  public boolean existsSolicitudProyectoSocioPeriodoPagoBySolicitudProyectoSocioId(Long solicitudProyectoId) {
+
+    return !this.repository.findAllBySolicitudProyectoId(solicitudProyectoId).stream()
+        .filter(soliciturProyectoSocio -> this.solicitudProyectoSocioPeriodoPagoRepository
+            .existsBySolicitudProyectoSocioId(soliciturProyectoSocio.getId()))
+        .collect(Collectors.toList()).isEmpty();
+  }
+
+  @Override
+  public boolean existsSolicitudProyectoSocioPeriodoJustificacionBySolicitudProyectoSocioId(Long solicitudProyectoId) {
+
+    return !this.repository.findAllBySolicitudProyectoId(solicitudProyectoId).stream()
+        .filter(soliciturProyectoSocio -> this.solicitudProyectoSocioPeriodoJustificacionRepository
+            .existsBySolicitudProyectoSocioId(soliciturProyectoSocio.getId()))
+        .collect(Collectors.toList()).isEmpty();
+  }
+
+  @Override
+  public boolean hasAnySolicitudProyectoSocioWithRolCoordinador(Long idSolicitudProyecto) {
+
+    return this.repository.existsBySolicitudProyectoIdAndRolSocioCoordinador(idSolicitudProyecto, Boolean.TRUE);
   }
 
 }

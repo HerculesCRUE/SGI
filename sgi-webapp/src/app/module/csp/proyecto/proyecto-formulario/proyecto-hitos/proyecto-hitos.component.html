@@ -1,60 +1,63 @@
-<section class="proyecto-hitos">
-  <h2>{{'menu.csp.proyectos.fases-hitos' | translate}} - {{ 'menu.csp.proyectos.hitos' | translate }}</h2>
+<sgi-fragment title="{{'menu.csp.proyectos.fases-hitos' | translate}} - {{ 'menu.csp.proyectos.hitos' | translate }}">
 
-  <table class="mat-elevation-z8 table-acta" mat-table [dataSource]="dataSource" matSort matSortActive="id"
-    matSortDirection="asc" matSortDisableClear>
+  <div class="mat-elevation-z4">
+    <table mat-table [dataSource]="dataSource" matSort matSortActive="id" matSortDirection="asc" matSortDisableClear>
 
-    <!-- Tipo hito Column -->
-    <ng-container matColumnDef="tipoHito">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'csp.proyecto-hito.tipo' | translate}} </th>
-      <td mat-cell *matCellDef="let wrapper"> {{wrapper.value.tipoHito.nombre}} </td>
-    </ng-container>
+      <!-- Tipo hito Column -->
+      <ng-container matColumnDef="tipoHito">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'csp.proyecto-hito.tipo' | translate}} </th>
+        <td mat-cell *matCellDef="let wrapper"> {{wrapper.value.tipoHito.nombre}} </td>
+      </ng-container>
 
-    <!-- Fecha Column -->
-    <ng-container matColumnDef="fecha">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'csp.proyecto-hito.fecha' | translate}} </th>
-      <td mat-cell *matCellDef="let wrapper"> {{wrapper.value.fecha | luxon:'short'}} </td>
-    </ng-container>
+      <!-- Fecha Column -->
+      <ng-container matColumnDef="fecha">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'csp.proyecto-hito.fecha' | translate}} </th>
+        <td mat-cell *matCellDef="let wrapper"> {{wrapper.value.fecha | luxon:'short'}} </td>
+      </ng-container>
 
-    <!-- Comentario Column -->
-    <ng-container matColumnDef="comentario">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'csp.proyecto-hito.comentario' | translate}} </th>
-      <td mat-cell *matCellDef="let wrapper"> {{wrapper.value.comentario}} </td>
-    </ng-container>
+      <!-- Comentario Column -->
+      <ng-container matColumnDef="comentario">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'csp.proyecto-hito.comentario' | translate}} </th>
+        <td mat-cell *matCellDef="let wrapper"> {{wrapper.value.comentario}} </td>
+      </ng-container>
 
-    <!-- Aviso Column -->
-    <ng-container matColumnDef="aviso">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'csp.proyecto-hito.aviso' | translate}} </th>
-      <td mat-cell *matCellDef="let wrapper">
-        {{wrapper.value.generaAviso ? ('label.si' | translate) : 'label.no' | translate}} </td>
-    </ng-container>
+      <!-- Aviso Column -->
+      <ng-container matColumnDef="aviso">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'csp.proyecto-hito.aviso' | translate}} </th>
+        <td mat-cell *matCellDef="let wrapper">
+          {{wrapper.value.generaAviso ? ('label.si' | translate) : 'label.no' | translate}} </td>
+      </ng-container>
 
-    <!-- Acciones Column -->
-    <ng-container matColumnDef="acciones">
-      <th mat-header-cell *matHeaderCellDef> {{'label.actions' | translate}} </th>
-      <td mat-cell *matCellDef="let hito">
-        <ng-container *sgiHasAuthorityForAnyUO="'CSP-PRO-E'">
-          <button mat-button matTooltip="{{'btn.edit' | translate}}" *ngIf="!actionService.readonly"
-            (click)="openModal(hito)">
-            <mat-icon color="primary">border_color</mat-icon>
-          </button>
-        </ng-container>
-        <ng-container *sgiHasAuthorityForAnyUO="'CSP-PRO-E'">
-          <button mat-button matTooltip="{{'btn.delete' | translate}}" *ngIf="!actionService.readonly"
-            (click)="deleteHito(hito)">
-            <mat-icon color="warn">highlight_off</mat-icon>
-          </button>
-        </ng-container>
-      </td>
-    </ng-container>
-    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+      <!-- Acciones Column -->
+      <ng-container matColumnDef="acciones">
+        <th mat-header-cell *matHeaderCellDef> {{'label.actions' | translate}} </th>
+        <td mat-cell *matCellDef="let hito">
+          <ng-container *sgiHasAuthorityForAnyUO="'CSP-PRO-E'">
+            <button mat-button matTooltip="{{'btn.edit' | translate}}" *ngIf="!actionService.readonly"
+              (click)="openModal(hito)">
+              <mat-icon color="primary">border_color</mat-icon>
+            </button>
+            <button mat-button matTooltip="{{'btn.view' | translate}}" *ngIf="actionService.readonly"
+              (click)="openModal(hito)">
+              <mat-icon color="primary">visibility</mat-icon>
+            </button>
+          </ng-container>
+          <ng-container *sgiHasAuthorityForAnyUO="'CSP-PRO-E'">
+            <button mat-button matTooltip="{{'btn.delete' | translate}}" *ngIf="!actionService.readonly"
+              (click)="deleteHito(hito)">
+              <mat-icon color="warn">highlight_off</mat-icon>
+            </button>
+          </ng-container>
+        </td>
+      </ng-container>
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
 
-  </table>
+    </table>
 
-  <mat-paginator [pageSizeOptions]="elementosPagina" showFirstLastButtons>
-  </mat-paginator>
-
+    <mat-paginator [pageSizeOptions]="elementosPagina" showFirstLastButtons>
+    </mat-paginator>
+  </div>
   <ng-container *sgiHasAuthorityForAnyUO="'CSP-PRO-E'">
     <div class="separation-button">
       <!-- Botón añadir hitos -->
@@ -64,4 +67,4 @@
       </button>
     </div>
   </ng-container>
-</section>
+</sgi-fragment>

@@ -1,0 +1,108 @@
+[
+  {
+    "key": "ap3_5_2",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "label": "3.5.2 Cultivos celulares"
+    },
+    "fieldGroup": [
+      {
+        "type": "table-crud",
+        "key": "cultivosCelularesTable",
+        "templateOptions": {
+          "entity": "cultivo celular",
+          "gender": "male"
+        },
+        "fieldArray": {
+          "templateOptions": {
+            "text": "Cultivo celular"
+          },
+          "fieldGroup": [
+            {
+              "key": "tipoCultivo",
+              "type": "select",
+              "templateOptions": {
+                "label": "Tipo de cultivo",
+                "order": 10,
+                "options": [
+                  {
+                    "value": "1",
+                    "label": "Líneas celulares bien caracterizadas de origen humano o de simios"
+                  },
+                  {
+                    "value": "2",
+                    "label": "Líneas celulares bien caracterizadas de origen no humano ni de simios, con bajo riesgo de infección endógena con patógenos humanos"
+                  },
+                  {
+                    "value": "3",
+                    "label": "Líneas celulares o cepas no totalmente caracterizadas o autentificadas"
+                  },
+                  {
+                    "value": "4",
+                    "label": "Células con patógenos endógenos y células deliberadamente infectadas"
+                  },
+                  {
+                    "value": "5",
+                    "label": "Células sanguíneas, linfoides, tejido nervioso, etc. de origen humano o simio"
+                  },
+                  {
+                    "value": "6",
+                    "label": "Otra sustancia del proceso de experimentación"
+                  },
+                  {
+                    "value": "7",
+                    "label": "Células sanguíneas, linfoides, tejido nervioso, etc., de origen no humano ni de simio"
+                  }
+                ]
+              }
+            },
+            {
+              "key": "descripcionCaracteristicas",
+              "type": "input",
+              "templateOptions": {
+                "label": "Descripción/Características",
+                "order": 20
+              }
+            },
+            {
+              "key": "grupoRiesgo",
+              "type": "select",
+              "templateOptions": {
+                "label": "Grupo de riesgo",
+                "order": 30,
+                "options": [
+                  {
+                    "value": "1",
+                    "label": "Grupo 1"
+                  },
+                  {
+                    "value": "2",
+                    "label": "Grupo 2"
+                  },
+                  {
+                    "value": "3",
+                    "label": "Grupo 3"
+                  },
+                  {
+                    "value": "4",
+                    "label": "Grupo 4"
+                  }
+                ]
+              }
+            },
+            {
+              "key": "volumenMaximo",
+              "type": "input",
+              "templateOptions": {
+                "label": "Volumen máximo de muestra que se maneja en cada vez o número de animales",
+                "order": 40
+              }
+            }
+          ]
+        }
+      }
+    ]
+  }
+]

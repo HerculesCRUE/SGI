@@ -1,19 +1,18 @@
 @import "colors.scss";
 @import "vars.scss";
 
-$padding: 15px;
-$config: mat-typography-config();
+$border-color: map-get($sgi-custom-colors, divider);
 
 /* HEADER */
 .header {
-  border-bottom: #{$borderWidth} solid map-get($palette-primary, 50);
+  border-bottom: #{$borderWidth} solid $border-color;
   padding: 0px 0px 0px 0px;
   height: calc(#{$headerHeight} - #{$borderWidth * 1});
 
   .logos {
     padding-left: 7px;
     padding-right: 7px;
-    border-right: 1px solid map-get($palette-primary, 50);
+    border-right: 1px solid $border-color;
     .logo-ministerio {
       width: 188px;
       height: 58px;
@@ -35,18 +34,17 @@ $config: mat-typography-config();
       display: flex;
     }
   }
-  #seleccionarModulo {
-    border-right: 1px solid map-get($palette-primary, 50);
+  .select-modulo {
+    border-right: 1px solid $border-color;
     padding: 7px;
     text-align: center;
     h2 {
-      font-size: mat-font-size($config, caption);
       font-weight: bold;
       margin: 0px;
     }
   }
   .mat-menu {
-    padding: $padding;
+    padding: 15px;
   }
 }
 /* FIN HEADER */

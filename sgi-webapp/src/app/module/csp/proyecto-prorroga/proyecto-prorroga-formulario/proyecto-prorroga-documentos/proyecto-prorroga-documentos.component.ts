@@ -88,7 +88,7 @@ export class ProyectoProrrogaDocumentosComponent extends FragmentComponent imple
 
   constructor(
     private dialogService: DialogService,
-    public actionService: ProyectoProrrogaActionService,
+    private actionService: ProyectoProrrogaActionService,
     private modeloEjecucionService: ModeloEjecucionService,
     private documentoService: DocumentoService,
     private snackBar: SnackBarService,
@@ -209,6 +209,7 @@ export class ProyectoProrrogaDocumentosComponent extends FragmentComponent imple
 
   switchToNew() {
     const wrapper = new StatusWrapper<IProyectoProrrogaDocumento>({} as IProyectoProrrogaDocumento);
+    wrapper.value.visible = true;
     const newNode: NodeDocumento = new NodeDocumento(null, undefined, 2, wrapper);
     this.viewMode = VIEW_MODE.NEW;
     this.viewingNode = newNode;

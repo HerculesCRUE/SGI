@@ -1,91 +1,88 @@
 <!-- Seguimiento listado -->
-<div class="scrollable-panel">
-  <section class="seguimiento-listado">
-    <!-- Buscador de seguimientos -->
-    <form class="formulario mat-elevation-z8" [formGroup]=" formGroup" [fxLayout.xs]="fxLayoutProperties.xs"
+<sgi-menu-content>
+  <!-- Buscador de seguimientos -->
+  <form class="formulario mat-elevation-z8" [formGroup]=" formGroup" [fxLayout.xs]="fxLayoutProperties.xs"
+    [fxLayout]="fxLayoutProperties.layout" fxLayoutGap="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
+
+    <div fxFlex="85%" fxFlex.sm="50%" fxFlex.md="73%" [fxLayout.xs]="fxLayoutProperties.xs"
       [fxLayout]="fxLayoutProperties.layout" fxLayoutGap="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
-
-      <div fxFlex="85%" fxFlex.sm="50%" fxFlex.md="73%" [fxLayout.xs]="fxLayoutProperties.xs"
-        [fxLayout]="fxLayoutProperties.layout" fxLayoutGap="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
-        <!-- Comité -->
-        <div class="col">
-          <mat-form-field class="input-form">
-            <mat-label>{{'label.eti.comite' | translate}}</mat-label>
-            <input type="text" [placeholder]="'label.eti.comite' | translate" arial-label="Number" matInput
-              formControlName="comite" [matAutocomplete]="autocompleteComite">
-            <mat-autocomplete #autocompleteComite="matAutocomplete" [displayWith]="getNombreComite">
-              <mat-option *ngFor="let comite of comitesFiltrados | async" [value]="comite">
-                {{comite.comite}}
-              </mat-option>
-            </mat-autocomplete>
-          </mat-form-field>
-        </div>
-
-        <!-- Tipo Evaluación -->
-        <div class="col">
-          <mat-form-field class="input-form">
-            <mat-label>{{'eti.seguimiento.tipo-evaluacion' | translate}}</mat-label>
-            <input type="text" [placeholder]="'eti.seguimiento.tipo-evaluacion' | translate" arial-label="Number"
-              matInput formControlName="tipoEvaluacion" [matAutocomplete]="autocompleteTipoEvaluacion">
-            <mat-autocomplete #autocompleteTipoEvaluacion="matAutocomplete" [displayWith]="getNombreTipoEvaluacion">
-              <mat-option *ngFor="let tipoEvaluacion of tipoEvaluacionFiltrados | async" [value]="tipoEvaluacion">
-                {{tipoEvaluacion.nombre}}
-              </mat-option>
-            </mat-autocomplete>
-          </mat-form-field>
-        </div>
-
-        <!-- Fecha inicio-->
-        <div class="col">
-          <mat-form-field color="primary">
-            <mat-label>{{'eti.seguimiento.datos-memoria.fecha-evaluacion.inicio'| translate}}</mat-label>
-            <input matInput [ngxMatDatetimePicker]="pickerFechaEvaluacionInicio"
-              formControlName="fechaEvaluacionInicio">
-            <mat-datepicker-toggle class="fechaIcon" matSuffix [for]="pickerFechaEvaluacionInicio">
-            </mat-datepicker-toggle>
-            <ngx-mat-datetime-picker #pickerFechaEvaluacionInicio showSeconds="true" [defaultTime]="[0,0,0]">
-            </ngx-mat-datetime-picker>
-          </mat-form-field>
-        </div>
-
-        <!-- Fecha fin-->
-        <div class="col">
-          <mat-form-field color="primary">
-            <mat-label>{{'eti.seguimiento.datos-memoria.fecha-evaluacion.fin'| translate}}</mat-label>
-            <input matInput [ngxMatDatetimePicker]="pickerFechaEvaluacionFin" formControlName="fechaEvaluacionFin">
-            <mat-datepicker-toggle class="fechaIcon" matSuffix [for]="pickerFechaEvaluacionFin"></mat-datepicker-toggle>
-            <ngx-mat-datetime-picker #pickerFechaEvaluacionFin showSeconds="true" [defaultTime]="[23,59,59]">
-            </ngx-mat-datetime-picker>
-          </mat-form-field>
-        </div>
-
-        <!-- Referencia memoria -->
-        <div class="col">
-          <mat-form-field>
-            <mat-label>{{'eti.memoria.referencia' | translate}}</mat-label>
-            <input matInput placeholder="{{'eti.memoria.referencia' | translate}}"
-              formControlName="memoriaNumReferencia">
-          </mat-form-field>
-        </div>
+      <!-- Comité -->
+      <div class="col">
+        <mat-form-field class="input-form">
+          <mat-label>{{'label.eti.comite' | translate}}</mat-label>
+          <input type="text" [placeholder]="'label.eti.comite' | translate" arial-label="Number" matInput
+            formControlName="comite" [matAutocomplete]="autocompleteComite">
+          <mat-autocomplete #autocompleteComite="matAutocomplete" [displayWith]="getNombreComite">
+            <mat-option *ngFor="let comite of comitesFiltrados | async" [value]="comite">
+              {{comite.comite}}
+            </mat-option>
+          </mat-autocomplete>
+        </mat-form-field>
       </div>
 
-      <div class="buttons-final">
-        <div class="col filter-button">
-          <button color="primary" aria-label="Center Align" mat-raised-button (click)="onSearch()">
-            <mat-icon>search</mat-icon> {{'btn.search'| translate}}
-          </button>
-          <button color="warn" aria-label="Center Align" (click)="onClearFilters()" mat-button>{{'btn.clean'|
-            translate}}
-          </button>
-        </div>
+      <!-- Tipo Evaluación -->
+      <div class="col">
+        <mat-form-field class="input-form">
+          <mat-label>{{'eti.seguimiento.tipo-evaluacion' | translate}}</mat-label>
+          <input type="text" [placeholder]="'eti.seguimiento.tipo-evaluacion' | translate" arial-label="Number" matInput
+            formControlName="tipoEvaluacion" [matAutocomplete]="autocompleteTipoEvaluacion">
+          <mat-autocomplete #autocompleteTipoEvaluacion="matAutocomplete" [displayWith]="getNombreTipoEvaluacion">
+            <mat-option *ngFor="let tipoEvaluacion of tipoEvaluacionFiltrados | async" [value]="tipoEvaluacion">
+              {{tipoEvaluacion.nombre}}
+            </mat-option>
+          </mat-autocomplete>
+        </mat-form-field>
       </div>
-    </form>
 
-    <!-- FIN Buscador de seguimientos -->
+      <!-- Fecha inicio-->
+      <div class="col">
+        <mat-form-field color="primary">
+          <mat-label>{{'eti.seguimiento.datos-memoria.fecha-evaluacion.inicio'| translate}}</mat-label>
+          <input matInput [ngxMatDatetimePicker]="pickerFechaEvaluacionInicio" formControlName="fechaEvaluacionInicio">
+          <mat-datepicker-toggle class="fechaIcon" matSuffix [for]="pickerFechaEvaluacionInicio">
+          </mat-datepicker-toggle>
+          <ngx-mat-datetime-picker #pickerFechaEvaluacionInicio showSeconds="true" [defaultTime]="[0,0,0]">
+          </ngx-mat-datetime-picker>
+        </mat-form-field>
+      </div>
 
-    <!-- Listado de seguimientos -->
-    <table mat-table class="mat-elevation-z8 table-unidad" [dataSource]="evaluaciones" matSort matSortActive="id"
-      matSortDirection="asc" matSortDisableClear>
+      <!-- Fecha fin-->
+      <div class="col">
+        <mat-form-field color="primary">
+          <mat-label>{{'eti.seguimiento.datos-memoria.fecha-evaluacion.fin'| translate}}</mat-label>
+          <input matInput [ngxMatDatetimePicker]="pickerFechaEvaluacionFin" formControlName="fechaEvaluacionFin">
+          <mat-datepicker-toggle class="fechaIcon" matSuffix [for]="pickerFechaEvaluacionFin"></mat-datepicker-toggle>
+          <ngx-mat-datetime-picker #pickerFechaEvaluacionFin showSeconds="true" [defaultTime]="[23,59,59]">
+          </ngx-mat-datetime-picker>
+        </mat-form-field>
+      </div>
+
+      <!-- Referencia memoria -->
+      <div class="col">
+        <mat-form-field>
+          <mat-label>{{'eti.memoria.referencia' | translate}}</mat-label>
+          <input matInput placeholder="{{'eti.memoria.referencia' | translate}}" formControlName="memoriaNumReferencia">
+        </mat-form-field>
+      </div>
+    </div>
+
+    <div class="buttons-final">
+      <div class="col filter-button">
+        <button color="primary" aria-label="Center Align" mat-raised-button (click)="onSearch()">
+          <mat-icon>search</mat-icon> {{'btn.search'| translate}}
+        </button>
+        <button color="warn" aria-label="Center Align" (click)="onClearFilters()" mat-button>{{'btn.clean'|
+          translate}}
+        </button>
+      </div>
+    </div>
+  </form>
+
+  <!-- FIN Buscador de seguimientos -->
+
+  <!-- Listado de seguimientos -->
+  <div class="mat-elevation-z4">
+    <table mat-table [dataSource]="evaluaciones" matSort matSortActive="id" matSortDirection="asc" matSortDisableClear>
       <!-- Comite -->
       <ng-container matColumnDef="memoria.comite.comite">
         <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'label.eti.comite' | translate}}
@@ -153,6 +150,6 @@
     </table>
     <mat-paginator [pageSizeOptions]="elementosPagina" [length]="totalElementos" showFirstLastButtons>
     </mat-paginator>
-  </section>
-</div>
+  </div>
+</sgi-menu-content>
 <!-- FIN listado de seguimientos -->

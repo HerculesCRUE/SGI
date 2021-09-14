@@ -33,11 +33,11 @@
             <mat-label>
               {{'csp.proyecto-concepto-gasto-codigo-economico.fecha-inicio'| translate}}
             </mat-label>
-            <input matInput [ngxMatDatetimePicker]="pickerFechaInicio" formControlName="fechaInicio">
+            <input matInput [matDatepicker]="pickerFechaInicio" formControlName="fechaInicio">
             <mat-datepicker-toggle class="fechaIcon" matSuffix [for]="pickerFechaInicio">
             </mat-datepicker-toggle>
-            <ngx-mat-datetime-picker #pickerFechaInicio showSeconds="true" [defaultTime]="[0,0,0]">
-            </ngx-mat-datetime-picker>
+            <mat-datepicker #pickerFechaInicio>
+            </mat-datepicker>
             <mat-error *ngIf="formGroup.controls.fechaInicio.errors?.before">
               {{'error.before.fecha-inicio' | translate}}
             </mat-error>
@@ -48,15 +48,15 @@
         </div>
         <!-- Fecha fin -->
         <div>
-          <mat-form-field>
-            <input matInput [ngxMatDatetimePicker]="pickerFechaFin" formControlName="fechaFin">
+          <mat-form-field sgiEndDate>
+            <input matInput [matDatepicker]="pickerFechaFin" formControlName="fechaFin">
             <mat-label>
               {{'csp.proyecto-concepto-gasto-codigo-economico.fecha-fin'| translate}}
             </mat-label>
             <mat-datepicker-toggle class="fechaIcon" matSuffix [for]="pickerFechaFin">
             </mat-datepicker-toggle>
-            <ngx-mat-datetime-picker #pickerFechaFin showSeconds="true" [defaultTime]="[23,59,59]">
-            </ngx-mat-datetime-picker>
+            <mat-datepicker #pickerFechaFin>
+            </mat-datepicker>
             <mat-error *ngIf="formGroup.controls.fechaFin.errors?.after">
               {{'error.after.fecha-fin' | translate}}
             </mat-error>
@@ -151,7 +151,8 @@
       </div>
 
       <div class="separation-button">
-        <button color="primary" aria-label="Center Align" mat-raised-button (click)="copyToProyecto()">
+        <button color="primary" aria-label="Center Align" mat-raised-button (click)="copyToProyecto()"
+          [disabled]="disabledCopy">
           {{'label.csp.proyecto-concepto-gasto'| translate}}
         </button>
       </div>

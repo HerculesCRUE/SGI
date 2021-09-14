@@ -5,20 +5,20 @@ export interface IConvocatoriaRequisitoIPBackend {
   convocatoriaId: number;
   /** Número máximo ip */
   numMaximoIP: number;
-  /** Referencia nivel académico */
-  nivelAcademicoRef: string;
-  /** Años nivel académico */
-  aniosNivelAcademico: number;
+  /** Fecha máxima nivel académico */
+  fechaMaximaNivelAcademico: string;
+  /** Fecha máxima nivel académico */
+  fechaMinimaNivelAcademico: string;
   /** Edad máxima */
   edadMaxima: number;
   /** Sexo */
-  sexo: string;
+  sexoRef: string;
   /** Vinculación universidad */
   vinculacionUniversidad: boolean;
-  /** Referencia modalidad contrato */
-  modalidadContratoRef: string;
-  /** Años vinculación */
-  aniosVinculacion: number;
+  /** Fecha máxima categoria profesional */
+  fechaMaximaCategoriaProfesional: string;
+  /** Fecha mínima categoria profesional */
+  fechaMinimaCategoriaProfesional: string;
   /** Número mínimo proyectos competitivos */
   numMinimoCompetitivos: number;
   /** Número mínimo proyectos NO competitivos */

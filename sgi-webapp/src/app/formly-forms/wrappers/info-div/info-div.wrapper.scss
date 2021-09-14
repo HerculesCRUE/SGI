@@ -1,9 +1,10 @@
+@import "colors.scss";
 
 .info {
   mat-icon {
-    color: #5472c9;
+    color: map-get($palette-primary, 400);
   }
   padding: 1em;
   margin-bottom: 2em;
-  background-color: #f3f6f9;
+  background-color: map-get($sgi-custom-colors, bg);
 }

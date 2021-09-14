@@ -1,0 +1,7 @@
+<div [ngClass]="!!content ? 'scrollable-panel-with-footer' : 'scrollable-panel'">
+  <div>
+    <sgi-fragment-title></sgi-fragment-title>
+    <ng-content></ng-content>
+  </div>
+</div>
+<ng-content select=sgi-menu-content-footer></ng-content>

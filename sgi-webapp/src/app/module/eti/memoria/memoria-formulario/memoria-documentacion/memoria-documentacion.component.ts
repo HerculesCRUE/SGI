@@ -231,7 +231,8 @@ export class MemoriaDocumentacionComponent extends FragmentComponent implements 
           : this.estadoMemoria.id === ESTADO_MEMORIA.EN_ELABORACION
           || this.estadoMemoria.id === ESTADO_MEMORIA.COMPLETADA
           || this.estadoMemoria.id === ESTADO_MEMORIA.FAVORABLE_PENDIENTE_MODIFICACIONES_MINIMAS
-          || this.estadoMemoria.id === ESTADO_MEMORIA.PENDIENTE_CORRECCIONES;
+          || this.estadoMemoria.id === ESTADO_MEMORIA.PENDIENTE_CORRECCIONES
+          || this.estadoMemoria.id >= ESTADO_MEMORIA.FIN_EVALUACION;
       case TIPO_DOCUMENTACION.SEGUIMIENTO_ANUAL:
         return this.estadoMemoria.id === ESTADO_MEMORIA.FIN_EVALUACION
           || this.estadoMemoria.id === ESTADO_MEMORIA.COMPLETADA_SEGUIMIENTO_ANUAL;

@@ -1,5 +1,6 @@
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
@@ -35,8 +36,11 @@ export class SolicitudProyectoSocioEquipoComponent extends FragmentComponent imp
   modalTitleEntity: string;
   textoDelete: string;
 
+  elementsPage = [5, 10, 25, 100];
+
   dataSource = new MatTableDataSource<StatusWrapper<ISolicitudProyectoSocioEquipo>>();
   @ViewChild(MatSort, { static: true }) sort: MatSort;
+  @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
 
   constructor(
     private actionService: SolicitudProyectoSocioActionService,
@@ -102,7 +106,11 @@ export class SolicitudProyectoSocioEquipoComponent extends FragmentComponent imp
     this.subscriptions.forEach(subscription => subscription.unsubscribe());
   }
 
-  openModal(wrapper?: StatusWrapper<ISolicitudProyectoSocioEquipo>, position?: number): void {
+  openModal(wrapper?: StatusWrapper<ISolicitudProyectoSocioEquipo>, rowIndex?: number): void {
+    // Necesario para sincronizar los cambios de orden de registros dependiendo de la ordenación y paginación
+    this.dataSource.sortData(this.dataSource.filteredData, this.dataSource.sort);
+    const row = (this.paginator.pageSize * this.paginator.pageIndex) + rowIndex;
+
     const data: MiembroEquipoSolicitudModalData = {
       titleEntity: this.modalTitleEntity,
       entidad: wrapper?.value ?? {} as ISolicitudProyectoSocioEquipo,
@@ -110,12 +118,12 @@ export class SolicitudProyectoSocioEquipoComponent extends FragmentComponent imp
       mesInicialMin: this.actionService.mesInicio,
       mesFinalMax: this.actionService.mesFin ?? this.actionService.solicitudProyectoDuracion,
       isEdit: Boolean(wrapper),
-      index: position,
+      index: row,
       readonly: this.formPart.readonly
     };
 
     if (wrapper) {
-      data.selectedEntidades.splice(position, 1);
+      data.selectedEntidades.splice(row, 1);
     }
 
     const config = {

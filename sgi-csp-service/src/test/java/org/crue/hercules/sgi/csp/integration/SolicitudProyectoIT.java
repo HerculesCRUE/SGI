@@ -40,8 +40,8 @@ public class SolicitudProyectoIT {
     headers = (headers != null ? headers : new HttpHeaders());
     headers.setContentType(MediaType.APPLICATION_JSON);
     headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
-    headers.set("Authorization",
-        String.format("bearer %s", tokenBuilder.buildToken("user", "AUTH", "CSP-SOL-C", "CSP-SOL-E")));
+    headers.set("Authorization", String.format("bearer %s",
+        tokenBuilder.buildToken("user", "AUTH", "CSP-SOL-C", "CSP-SOL-E", "CSP-PRO-E", "CSP-PRO-MOD-V")));
 
     HttpEntity<SolicitudProyecto> request = new HttpEntity<>(entity, headers);
     return request;
@@ -61,8 +61,6 @@ public class SolicitudProyectoIT {
 
     SolicitudProyecto solicitudProyectoCreado = response.getBody();
     Assertions.assertThat(solicitudProyectoCreado.getId()).as("getId()").isNotNull();
-    Assertions.assertThat(solicitudProyectoCreado.getTitulo()).as("getTitulo()")
-        .isEqualTo(solicitudProyecto.getTitulo());
     Assertions.assertThat(solicitudProyectoCreado.getColaborativo()).as("getColaborativo()")
         .isEqualTo(solicitudProyecto.getColaborativo());
   }
@@ -73,7 +71,6 @@ public class SolicitudProyectoIT {
   public void update_ReturnsSolicitudProyecto() throws Exception {
     Long idSolicitudProyecto = 1L;
     SolicitudProyecto solicitudProyecto = generarSolicitudProyecto(1L);
-    solicitudProyecto.setTitulo("titulo-modificado");
 
     final ResponseEntity<SolicitudProyecto> response = restTemplate.exchange(CONTROLLER_BASE_PATH + PATH_PARAMETER_ID,
         HttpMethod.PUT, buildRequest(null, solicitudProyecto), SolicitudProyecto.class, idSolicitudProyecto);
@@ -82,8 +79,6 @@ public class SolicitudProyectoIT {
 
     SolicitudProyecto solicitudProyectoActualizado = response.getBody();
     Assertions.assertThat(solicitudProyectoActualizado.getId()).as("getId()").isEqualTo(solicitudProyecto.getId());
-    Assertions.assertThat(solicitudProyectoActualizado.getTitulo()).as("getTitulo()")
-        .isEqualTo(solicitudProyecto.getTitulo());
 
   }
 
@@ -115,7 +110,6 @@ public class SolicitudProyectoIT {
     Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     SolicitudProyecto solicitudProyecto = response.getBody();
     Assertions.assertThat(solicitudProyecto.getId()).as("getId()").isEqualTo(idSolicitudProyecto);
-    Assertions.assertThat(solicitudProyecto.getTitulo()).as("getTitulo()").isEqualTo("titulo-1");
   }
 
   /**
@@ -125,11 +119,11 @@ public class SolicitudProyectoIT {
    * @return el objeto SolicitudProyecto
    */
   private SolicitudProyecto generarSolicitudProyecto(Long solicitudProyectoId) {
-
+    // formatter: off
     SolicitudProyecto solicitudProyecto = SolicitudProyecto.builder().id(solicitudProyectoId)
-        .titulo("titulo-" + solicitudProyectoId).acronimo("acronimo-" + solicitudProyectoId).colaborativo(Boolean.TRUE)
-        .tipoPresupuesto(TipoPresupuesto.GLOBAL).build();
-
+        .acronimo("acronimo-" + solicitudProyectoId).colaborativo(Boolean.TRUE).tipoPresupuesto(TipoPresupuesto.GLOBAL)
+        .coordinado(Boolean.TRUE).build();
+    // formatter: on
     return solicitudProyecto;
   }
 

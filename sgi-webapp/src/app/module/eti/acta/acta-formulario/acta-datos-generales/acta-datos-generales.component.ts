@@ -21,9 +21,8 @@ const MSG_ERROR_INIT = marker('error.load');
 const ACTA_CONVOCATORIA_REUNION_KEY = marker('eti.acta.convocatoria-reunion');
 const ACTA_HORA_INICIO_KEY = marker('eti.acta.hora-inicio');
 const ACTA_HORA_FIN_KEY = marker('eti.acta.hora-fin');
-const ACTA_MINUTO_INICIO_KEY = marker('eti.acta.minuto-inicio');
-const ACTA_MINUTO_FIN_KEY = marker('eti.acta.minuto-fin');
 const ACTA_RESUMEN_KEY = marker('eti.acta.resumen');
+
 @Component({
   selector: 'sgi-acta-datos-generales',
   templateUrl: './acta-datos-generales.component.html',
@@ -46,8 +45,6 @@ export class ActaDatosGeneralesComponent extends FormFragmentComponent<IActa> im
   msgParamConvocatoriaReunionEntity = {};
   msgParamHoraInicioEntity = {};
   msgParamHoraFinEntity = {};
-  msgParamMinutoInicioEntity = {};
-  msgParamMinutoFinEntity = {};
   msgParamResumenEntity = {};
 
   constructor(
@@ -116,16 +113,6 @@ export class ActaDatosGeneralesComponent extends FormFragmentComponent<IActa> im
       ACTA_HORA_FIN_KEY,
       MSG_PARAMS.CARDINALIRY.SINGULAR
     ).subscribe((value) => this.msgParamHoraFinEntity = { entity: value, ...MSG_PARAMS.GENDER.FEMALE, ...MSG_PARAMS.CARDINALIRY.SINGULAR });
-
-    this.translate.get(
-      ACTA_MINUTO_INICIO_KEY,
-      MSG_PARAMS.CARDINALIRY.SINGULAR
-    ).subscribe((value) => this.msgParamMinutoInicioEntity = { entity: value, ...MSG_PARAMS.GENDER.MALE, ...MSG_PARAMS.CARDINALIRY.SINGULAR });
-
-    this.translate.get(
-      ACTA_MINUTO_FIN_KEY,
-      MSG_PARAMS.CARDINALIRY.SINGULAR
-    ).subscribe((value) => this.msgParamMinutoFinEntity = { entity: value, ...MSG_PARAMS.GENDER.MALE, ...MSG_PARAMS.CARDINALIRY.SINGULAR });
 
     this.translate.get(
       ACTA_RESUMEN_KEY,

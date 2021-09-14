@@ -1,0 +1,43 @@
+[
+  {
+    "key": "ap4_1_1",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "label": "4.1.1 Nivel de riesgo"
+    },
+    "fieldGroup": [
+      {
+        "template": "<p>Señalar el nivel de riesgo global de la actividad. En caso de manejo de varios agentes de distinto nivel de riesgo considérese el de nivel superior</p>"
+      },
+      {
+        "key": "nivelRiesgo",
+        "type": "radio",
+        "className": "vertical-radio",
+        "templateOptions": {
+          "label": "Elige opción:",
+          "required": true,
+          "options": [
+            {
+              "value": "nivel_1",
+              "label": "Nivel I: Riesgo individual y poblacional escaso o nulo. Microorganismos que tienen pocas probabilidades de provocar enfermedades en el ser humano o los animales."
+            },
+            {
+              "value": "nivel_2",
+              "label": "Nivel II: Riesgo individual moderado, riesgo poblacional bajo. Los agentes patógenos que pueden provocar enfermedades humanas o animales pero que tienen pocas probabilidades de entrañar un riesgo grave para el personal de laboratorio, la población, el ganado o el medio ambiente. La exposición en el laboratorio puede provocar una infección grave, pero existen medidas preventivas y terapéuticas eficaces y el riesgo de propagación es limitado."
+            },
+            {
+              "value": "nivel_3",
+              "label": "Nivel III: Riesgo individual elevado, riesgo poblacional bajo. Agentes patógenos que suelen provocar enfermedades humanas o animales graves, pero que de ordinario no se propagan de un individuo a otro. Existen medidas preventivas y terapéuticas eficaces."
+            },
+            {
+              "value": "nivel_4",
+              "label": "Nivel IV: Riesgo individual y poblacional elevado. Agentes patógenos que suelen provocar enfermedades graves en el ser humano o los animales y que se transmiten fácilmente de un individuo a otro, directa o indirectamente. Normalmente no existen medidas preventivas y terapéuticas eficaces."
+            }
+          ]
+        }
+      }
+    ]
+  }
+]

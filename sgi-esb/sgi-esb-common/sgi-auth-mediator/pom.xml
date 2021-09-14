@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+   	<groupId>org.crue.hercules.sgi.esb</groupId>
+   	<artifactId>sgi-esb-common</artifactId>
+   	<version>0.0.1</version>
+  </parent>
+  <groupId>org.crue.hercules.sgi.esb</groupId>
+  <artifactId>sgi-auth-mediator</artifactId>
+  <packaging>bundle</packaging>
+  <name>sgi-auth-mediator</name>
+  <description>sgi-auth-mediator</description>
+
+  <properties>
+    <CApp.type>lib/synapse/mediator</CApp.type>
+    <java.version>1.8</java.version>
+    <maven.compiler.source>${java.version}</maven.compiler.source>
+    <maven.compiler.target>${java.version}</maven.compiler.target>
+    <timestamp>${maven.build.timestamp}</timestamp>
+    <maven.build.timestamp.format>dd-MM-yyyy HH:mm</maven.build.timestamp.format>
+    <synpase.core.version>2.1.7-wso2v182</synpase.core.version>
+  </properties>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.apache.synapse</groupId>
+      <artifactId>synapse-core</artifactId>
+      <version>${synpase.core.version}</version>
+      <scope>provided</scope>
+    </dependency>
+
+    <!-- https://mvnrepository.com/artifact/org.keycloak/keycloak-core -->
+    <dependency>
+      <groupId>org.keycloak</groupId>
+      <artifactId>keycloak-core</artifactId>
+      <version>12.0.4</version>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <resources>
+      <resource>
+        <filtering>true</filtering>
+        <directory>src/main/resources</directory>
+      </resource>
+    </resources>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.felix</groupId>
+        <artifactId>maven-bundle-plugin</artifactId>
+        <extensions>true</extensions>
+        <configuration>
+          <instructions>
+            <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
+            <Bundle-Name>${project.artifactId}</Bundle-Name>
+            <Import-Package>
+              *; resolution:=optional
+            </Import-Package>
+            <Export-Package>
+              org.crue.hercules.sgi.esb.mediator
+            </Export-Package>
+            <Private-Package>
+              org.crue.hercules.sgi.esb.keycloak.*,
+              org.crue.hercules.sgi.esb.response.*,
+              org.keycloak.*
+            </Private-Package>
+          </instructions>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+</project>

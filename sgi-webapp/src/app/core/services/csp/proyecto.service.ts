@@ -19,6 +19,7 @@ import { PROYECTO_PRORROGA_CONVERTER } from '@core/converters/csp/proyecto-prorr
 import { PROYECTO_PROYECTO_SGE_CONVERTER } from '@core/converters/csp/proyecto-proyecto-sge.converter';
 import { PROYECTO_SOCIO_CONVERTER } from '@core/converters/csp/proyecto-socio.converter';
 import { PROYECTO_CONVERTER } from '@core/converters/csp/proyecto.converter';
+import { IAnualidadGasto } from '@core/models/csp/anualidad-gasto';
 import { IEstadoProyectoBackend } from '@core/models/csp/backend/estado-proyecto-backend';
 import { IProyectoAreaConocimientoBackend } from '@core/models/csp/backend/proyecto-area-conocimiento-backend';
 import { IProyectoBackend } from '@core/models/csp/backend/proyecto-backend';
@@ -41,6 +42,7 @@ import { IProyectoSocioBackend } from '@core/models/csp/backend/proyecto-socio-b
 import { IEstadoProyecto } from '@core/models/csp/estado-proyecto';
 import { IPrograma } from '@core/models/csp/programa';
 import { IProyecto } from '@core/models/csp/proyecto';
+import { IProyectoAgrupacionGasto } from '@core/models/csp/proyecto-agrupacion-gasto';
 import { IProyectoAnualidadResumen } from '@core/models/csp/proyecto-anualidad-resumen';
 import { IProyectoAreaConocimiento } from '@core/models/csp/proyecto-area-conocimiento';
 import { IProyectoClasificacion } from '@core/models/csp/proyecto-clasificacion';
@@ -55,6 +57,7 @@ import { IProyectoHito } from '@core/models/csp/proyecto-hito';
 import { IProyectoIVA } from '@core/models/csp/proyecto-iva';
 import { IProyectoPaqueteTrabajo } from '@core/models/csp/proyecto-paquete-trabajo';
 import { IProyectoPartida } from '@core/models/csp/proyecto-partida';
+import { IProyectoPeriodoJustificacion } from '@core/models/csp/proyecto-periodo-justificacion';
 import { IProyectoPeriodoSeguimiento } from '@core/models/csp/proyecto-periodo-seguimiento';
 import { IProyectoPlazos } from '@core/models/csp/proyecto-plazo';
 import { IProyectoPresupuestoTotales } from '@core/models/csp/proyecto-presupuesto-totales';
@@ -63,6 +66,7 @@ import { IProyectoProyectoSge } from '@core/models/csp/proyecto-proyecto-sge';
 import { IProyectoResponsableEconomico } from '@core/models/csp/proyecto-responsable-economico';
 import { IProyectoSocio } from '@core/models/csp/proyecto-socio';
 import { environment } from '@env';
+import { FormlyFieldConfig } from '@ngx-formly/core';
 import {
   RSQLSgiRestFilter,
   SgiMutableRestService,
@@ -73,8 +77,14 @@ import {
 import { NGXLogger } from 'ngx-logger';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { IAnualidadGastoResponse } from './anualidad-gasto/anualidad-gasto-response';
+import { ANUALIDAD_GASTO_RESPONSE_CONVERTER } from './anualidad-gasto/anualidad-gasto-response.converter';
+import { IProyectoAgrupacionGastoResponse } from './proyecto-agrupacion-gasto/proyecto-agrupacion-gasto-response';
+import { PROYECTO_AGRUPACION_GASTO_RESPONSE_CONVERTER } from './proyecto-agrupacion-gasto/proyecto-agrupacion-gasto-response.converter';
 import { IProyectoAnualidadResumenResponse } from './proyecto-anualidad/proyecto-anualidad-resumen-response';
 import { PROYECTO_ANUALIDAD_RESUMEN_RESPONSE_CONVERTER } from './proyecto-anualidad/proyecto-anualidad-resumen-response.converter';
+import { IProyectoPeriodoJustificacionResponse } from './proyecto-periodo-justificacion/proyecto-periodo-justificacion-response';
+import { PROYECTO_PERIODO_JUSTIFICACION_RESPONSE_CONVERTER } from './proyecto-periodo-justificacion/proyecto-periodo-justificacion-response.converter';
 import { IProyectoResponsableEconomicoResponse } from './proyecto-responsable-economico/proyecto-responsable-economico-response';
 import { PROYECTO_RESPONSABLE_ECONOMICO_RESPONSE_CONVERTER } from './proyecto-responsable-economico/proyecto-responsable-economico-response.converter';
 
@@ -339,10 +349,10 @@ export class ProyectoService extends SgiMutableRestService<number, IProyectoBack
   }
 
   /**
- * Recupera listado de proyectoIVA
- * @param id proyecto
- * @param options opciones de búsqueda.
- */
+   * Recupera listado de proyectoIVA
+   * @param id proyecto
+   * @param options opciones de búsqueda.
+   */
   findProyectoIVA(proyectoId: number, options?: SgiRestFindOptions): Observable<SgiRestListResult<IProyectoIVA>> {
     return this.find<IProyectoIVABackend, IProyectoIVA>(
       `${this.endpointUrl}/${proyectoId}/proyectoiva`,
@@ -431,12 +441,12 @@ export class ProyectoService extends SgiMutableRestService<number, IProyectoBack
   }
 
   /**
- * Comprueba si Proyecto tiene ProyectosSGE relacionados
- *
- * @param id Proyecto
- */
-  hasProyectoSGE(id: number): Observable<boolean> {
-    const url = `${this.endpointUrl}/${id}/proyectos-sge`;
+   * Comprueba si Proyecto tiene ProyectosSGE relacionados
+   *
+   * @param id Proyecto
+   */
+  hasProyectosSGE(id: number): Observable<boolean> {
+    const url = `${this.endpointUrl}/${id}/proyectossge`;
     return this.http.head(url, { observe: 'response' }).pipe(
       map(response => response.status === 200)
     );
@@ -468,7 +478,7 @@ export class ProyectoService extends SgiMutableRestService<number, IProyectoBack
   findAllProyectosSgeProyecto(proyectoId: number, options?: SgiRestFindOptions):
     Observable<SgiRestListResult<IProyectoProyectoSge>> {
     return this.find<IProyectoProyectoSgeBackend, IProyectoProyectoSge>(
-      `${this.endpointUrl}/${proyectoId}/proyectos-sge`,
+      `${this.endpointUrl}/${proyectoId}/proyectossge`,
       options,
       PROYECTO_PROYECTO_SGE_CONVERTER
     );
@@ -537,12 +547,49 @@ export class ProyectoService extends SgiMutableRestService<number, IProyectoBack
     return this.http.patch<void>(`${this.endpointUrl}/${id}/cambiar-estado`, estadoProyecto);
   }
 
+  hasAnyProyectoSocio(proyectoId: number): Observable<boolean> {
+    const url = `${this.endpointUrl}/${proyectoId}/proyectosocios`;
+    return this.http.head(url, { observe: 'response' }).pipe(
+      map(response => response.status === 200)
+    );
+  }
+
+  hasPeriodosPago(proyectoId: number): Observable<boolean> {
+    const url = `${this.endpointUrl}/${proyectoId}/proyectosocios/periodospago`;
+    return this.http.head(url, { observe: 'response' }).pipe(
+      map(response => response.status === 200)
+    );
+  }
+
+  hasPeriodosJustificacion(proyectoId: number): Observable<boolean> {
+    const url = `${this.endpointUrl}/${proyectoId}/proyectosocios/periodosjustificacion`;
+    return this.http.head(url, { observe: 'response' }).pipe(
+      map(response => response.status === 200)
+    );
+  }
+
+  hasAnyProyectoSocioWithRolCoordinador(proyectoId: number): Observable<boolean> {
+    const url = `${this.endpointUrl}/${proyectoId}/proyectosocios/coordinador`;
+    return this.http.head(url, { observe: 'response' }).pipe(
+      map(response => response.status === 200)
+    );
+  }
+
   findAllProyectoAnualidades(proyectoId: number, options?: SgiRestFindOptions):
     Observable<SgiRestListResult<IProyectoAnualidadResumen>> {
     return this.find<IProyectoAnualidadResumenResponse, IProyectoAnualidadResumen>(
       `${this.endpointUrl}/${proyectoId}/anualidades`,
       options,
       PROYECTO_ANUALIDAD_RESUMEN_RESPONSE_CONVERTER
+    );
+  }
+
+  findAllProyectoAnualidadesGasto(proyectoId: number, options?: SgiRestFindOptions):
+    Observable<SgiRestListResult<IAnualidadGasto>> {
+    return this.find<IAnualidadGastoResponse, IAnualidadGasto>(
+      `${this.endpointUrl}/${proyectoId}/anualidadesgasto`,
+      options,
+      ANUALIDAD_GASTO_RESPONSE_CONVERTER
     );
   }
 
@@ -553,6 +600,35 @@ export class ProyectoService extends SgiMutableRestService<number, IProyectoBack
    */
   getProyectoPresupuestoTotales(proyectoId: number): Observable<IProyectoPresupuestoTotales> {
     return this.http.get<IProyectoPresupuestoTotales>(`${this.endpointUrl}/${proyectoId}/presupuesto-totales`);
+  }
+  /**
+   * Recupera las agrupaciones de gasto del proyecto.
+   *
+   * @param proyectoId Id del proyecto
+   * @param options opciones de busqueda
+   * @returns observable con laagrupaciones de gasto del poryecto
+   */
+  findAllAgrupacionesGasto(proyectoId: number, options?: SgiRestFindOptions):
+    Observable<SgiRestListResult<IProyectoAgrupacionGasto>> {
+    return this.find<IProyectoAgrupacionGastoResponse, IProyectoAgrupacionGasto>(
+      `${this.endpointUrl}/${proyectoId}/proyectoagrupaciongasto`,
+      options,
+      PROYECTO_AGRUPACION_GASTO_RESPONSE_CONVERTER
+    );
+  }
+
+  /**
+   * Devuelve el listado de IProyectoPeriodoJustificacion de un IProyecto
+   *
+   * @param id Id del IProyecto
+   */
+  findAllPeriodoJustificacion(proyectoId: number, options?: SgiRestFindOptions)
+    : Observable<SgiRestListResult<IProyectoPeriodoJustificacion>> {
+    return this.find<IProyectoPeriodoJustificacionResponse, IProyectoPeriodoJustificacion>(
+      `${this.endpointUrl}/${proyectoId}/proyectoperiodojustificacion`,
+      options,
+      PROYECTO_PERIODO_JUSTIFICACION_RESPONSE_CONVERTER
+    );
   }
 
   /**
@@ -569,4 +645,37 @@ export class ProyectoService extends SgiMutableRestService<number, IProyectoBack
     );
   }
 
+  /**
+   * Busca todos los proyectos que tengan la convocatoria asociada.
+   *
+   * @param id identificador de la convocatoria
+   * @returns la lista de Proyectos
+   */
+  findAllProyectosByConvocatoria(id: number): Observable<SgiRestListResult<IProyecto>> {
+    let options: SgiRestFindOptions;
+    options = {
+      filter: new RSQLSgiRestFilter('convocatoria.id', SgiRestFilterOperator.EQUALS, id.toString())
+    };
+    return this.findTodos(options);
+  }
+
+  createProyecto(model: any): Observable<void> {
+    return this.http.post<void>(`${this.endpointUrl}`, model);
+  }
+
+  getFormlyCreate(): Observable<FormlyFieldConfig[]> {
+    return this.http.get<FormlyFieldConfig[]>(`${this.endpointUrl}/formly/create`);
+  }
+
+  /**
+   * Comprueba si tiene permisos de edición del proyecto
+   *
+   * @param id Id del proyecto
+   */
+  modificable(id: number): Observable<boolean> {
+    const url = `${this.endpointUrl}/${id}/modificable`;
+    return this.http.head(url, { observe: 'response' }).pipe(
+      map(response => response.status === 200)
+    );
+  }
 }

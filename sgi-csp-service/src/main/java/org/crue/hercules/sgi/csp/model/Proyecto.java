@@ -109,11 +109,6 @@ public class Proyecto extends BaseEntity {
   @NotNull
   private Instant fechaInicio;
 
-  /** Fecha Base. */
-  @Column(name = "fecha_base", nullable = false)
-  @NotNull
-  private Instant fechaBase;
-
   /** Fecha Fin. */
   @Column(name = "fecha_fin", nullable = false)
   @NotNull
@@ -158,6 +153,10 @@ public class Proyecto extends BaseEntity {
   @Column(name = "clasificacion_cvn", length = 50, nullable = true)
   @Enumerated(EnumType.STRING)
   private ClasificacionCVN clasificacionCVN;
+
+  /** Coordinado */
+  @Column(name = "coordinado", nullable = true)
+  private Boolean coordinado;
 
   /** Colaborativo */
   @Column(name = "colaborativo", nullable = true)
@@ -207,9 +206,17 @@ public class Proyecto extends BaseEntity {
   @Column(name = "importe_presupuesto", nullable = true)
   private BigDecimal importePresupuesto;
 
+  /** Importe presupuesto Costes Indirectos */
+  @Column(name = "importe_presupuesto_costes_indirectos", nullable = true)
+  private BigDecimal importePresupuestoCostesIndirectos;
+
   /** Importe concedido */
   @Column(name = "importe_concedido", nullable = true)
   private BigDecimal importeConcedido;
+
+  /** Importe concedido Costes Indirectos */
+  @Column(name = "importe_concedido_costes_indirectos", nullable = true)
+  private BigDecimal importeConcedidoCostesIndirectos;
 
   /** Importe presupuesta socios */
   @Column(name = "importe_presupuesto_socios", nullable = true)
@@ -314,5 +321,10 @@ public class Proyecto extends BaseEntity {
   @Getter(AccessLevel.NONE)
   @Setter(AccessLevel.NONE)
   private final List<ProyectoIVA> ivas = null;
+
+  @OneToMany(mappedBy = "proyecto")
+  @Getter(AccessLevel.NONE)
+  @Setter(AccessLevel.NONE)
+  private final List<ProyectoProyectoSge> identificadoresSge = null;
 
 }

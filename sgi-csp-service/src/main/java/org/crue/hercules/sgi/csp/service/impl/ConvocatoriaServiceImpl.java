@@ -12,6 +12,8 @@ import org.crue.hercules.sgi.csp.model.Convocatoria;
 import org.crue.hercules.sgi.csp.model.ConvocatoriaPeriodoSeguimientoCientifico;
 import org.crue.hercules.sgi.csp.model.ModeloTipoFinalidad;
 import org.crue.hercules.sgi.csp.model.ModeloUnidad;
+import org.crue.hercules.sgi.csp.model.Proyecto;
+import org.crue.hercules.sgi.csp.model.Solicitud;
 import org.crue.hercules.sgi.csp.model.TipoAmbitoGeografico;
 import org.crue.hercules.sgi.csp.model.TipoDocumento;
 import org.crue.hercules.sgi.csp.model.TipoEnlace;
@@ -24,10 +26,13 @@ import org.crue.hercules.sgi.csp.repository.ConvocatoriaPeriodoSeguimientoCienti
 import org.crue.hercules.sgi.csp.repository.ConvocatoriaRepository;
 import org.crue.hercules.sgi.csp.repository.ModeloTipoFinalidadRepository;
 import org.crue.hercules.sgi.csp.repository.ModeloUnidadRepository;
+import org.crue.hercules.sgi.csp.repository.ProyectoRepository;
+import org.crue.hercules.sgi.csp.repository.SolicitudRepository;
 import org.crue.hercules.sgi.csp.repository.TipoAmbitoGeograficoRepository;
 import org.crue.hercules.sgi.csp.repository.TipoRegimenConcurrenciaRepository;
 import org.crue.hercules.sgi.csp.repository.predicate.ConvocatoriaPredicateResolver;
 import org.crue.hercules.sgi.csp.repository.specification.ConvocatoriaSpecifications;
+import org.crue.hercules.sgi.csp.service.ConvocatoriaClonerService;
 import org.crue.hercules.sgi.csp.service.ConvocatoriaService;
 import org.crue.hercules.sgi.framework.rsql.SgiRSQLJPASupport;
 import org.crue.hercules.sgi.framework.security.core.context.SgiSecurityContextHolder;
@@ -57,6 +62,9 @@ public class ConvocatoriaServiceImpl implements ConvocatoriaService {
   private final TipoAmbitoGeograficoRepository tipoAmbitoGeograficoRepository;
   private final ConvocatoriaPeriodoSeguimientoCientificoRepository convocatoriaPeriodoSeguimientoCientificoRepository;
   private final ConfiguracionSolicitudRepository configuracionSolicitudRepository;
+  private final SolicitudRepository solicitudRepository;
+  private final ProyectoRepository proyectoRepository;
+  private final ConvocatoriaClonerService convocatoriaClonerService;
 
   public ConvocatoriaServiceImpl(ConvocatoriaRepository repository,
       ConvocatoriaPeriodoJustificacionRepository convocatoriaPeriodoJustificacionRepository,
@@ -64,7 +72,8 @@ public class ConvocatoriaServiceImpl implements ConvocatoriaService {
       TipoRegimenConcurrenciaRepository tipoRegimenConcurrenciaRepository,
       TipoAmbitoGeograficoRepository tipoAmbitoGeograficoRepository,
       ConvocatoriaPeriodoSeguimientoCientificoRepository convocatoriaPeriodoSeguimientoCientificoRepository,
-      ConfiguracionSolicitudRepository configuracionSolicitudRepository) {
+      ConfiguracionSolicitudRepository configuracionSolicitudRepository, final SolicitudRepository solicitudRepository,
+      final ProyectoRepository proyectoRepository, final ConvocatoriaClonerService convocatoriaClonerService) {
     this.repository = repository;
     this.convocatoriaPeriodoJustificacionRepository = convocatoriaPeriodoJustificacionRepository;
     this.modeloUnidadRepository = modeloUnidadRepository;
@@ -73,6 +82,9 @@ public class ConvocatoriaServiceImpl implements ConvocatoriaService {
     this.tipoAmbitoGeograficoRepository = tipoAmbitoGeograficoRepository;
     this.convocatoriaPeriodoSeguimientoCientificoRepository = convocatoriaPeriodoSeguimientoCientificoRepository;
     this.configuracionSolicitudRepository = configuracionSolicitudRepository;
+    this.solicitudRepository = solicitudRepository;
+    this.proyectoRepository = proyectoRepository;
+    this.convocatoriaClonerService = convocatoriaClonerService;
   }
 
   /**
@@ -122,10 +134,6 @@ public class ConvocatoriaServiceImpl implements ConvocatoriaService {
 
     return repository.findById(convocatoria.getId()).map((data) -> {
 
-      // comprobar si es modificable
-      Assert.isTrue(this.modificable(data.getId(), data.getUnidadGestionRef(), new String[] { "CSP-CON-E" }),
-          "No se puede modificar Convocatoria. No tiene los permisos necesarios o está registrada y cuenta con solicitudes o proyectos asociados");
-
       Convocatoria validConvocatoria = validarDatosConvocatoria(convocatoria, data);
 
       data.setUnidadGestionRef(validConvocatoria.getUnidadGestionRef());
@@ -139,7 +147,6 @@ public class ConvocatoriaServiceImpl implements ConvocatoriaService {
       data.setObservaciones(validConvocatoria.getObservaciones());
       data.setFinalidad(validConvocatoria.getFinalidad());
       data.setRegimenConcurrencia(validConvocatoria.getRegimenConcurrencia());
-      data.setColaborativos(validConvocatoria.getColaborativos());
       data.setDuracion(validConvocatoria.getDuracion());
       data.setAmbitoGeografico(validConvocatoria.getAmbitoGeografico());
       data.setClasificacionCVN(validConvocatoria.getClasificacionCVN());
@@ -229,7 +236,7 @@ public class ConvocatoriaServiceImpl implements ConvocatoriaService {
       Assert.isTrue(
           (SgiSecurityContextHolder.hasAuthority(authority)
               || SgiSecurityContextHolder.hasAuthorityForUO(authority, convocatoria.getUnidadGestionRef()))
-              && !repository.esRegistradaConSolicitudesOProyectos(id),
+              && !repository.isRegistradaConSolicitudesOProyectos(id),
           "No se puede eliminar Convocatoria. No tiene los permisos necesarios o está registrada y cuenta con solicitudes o proyectos asociados");
 
       convocatoria.setActivo(Boolean.FALSE);
@@ -266,8 +273,8 @@ public class ConvocatoriaServiceImpl implements ConvocatoriaService {
    * @return true si puede ser modificada / false si no puede ser modificada
    */
   @Override
-  public boolean modificable(Long id, String unidadConvocatoria, String[] atuhorities) {
-    log.debug("modificable(Long id, String unidadConvocatoria) - start");
+  public boolean isRegistradaConSolicitudesOProyectos(Long id, String unidadConvocatoria, String[] atuhorities) {
+    log.debug("isRegistradaConSolicitudesOProyectos(Long id, String unidadConvocatoria) - start");
 
     if (StringUtils.isEmpty(unidadConvocatoria)) {
       unidadConvocatoria = repository.findById(id).map(convocatoria -> convocatoria.getUnidadGestionRef())
@@ -276,10 +283,10 @@ public class ConvocatoriaServiceImpl implements ConvocatoriaService {
 
     if (SgiSecurityContextHolder.hasAnyAuthorityForUO(atuhorities, unidadConvocatoria)) {
       // Será modificable si no tiene solicitudes o proyectos asociados
-      return !(repository.esRegistradaConSolicitudesOProyectos(id));
+      return !(repository.isRegistradaConSolicitudesOProyectos(id));
     }
 
-    log.debug("modificable(Long id, String unidadConvocatoria) - end");
+    log.debug("isRegistradaConSolicitudesOProyectos(Long id, String unidadConvocatoria) - end");
     return false;
   }
 
@@ -304,7 +311,6 @@ public class ConvocatoriaServiceImpl implements ConvocatoriaService {
 
         // Campos requeridos a nivel de convocatoria
         if (convocatoria.get().getUnidadGestionRef() != null && convocatoria.get().getModeloEjecucion() != null
-            && convocatoria.get().getFechaPublicacion() != null && convocatoria.get().getTitulo() != null
             && convocatoria.get().getFinalidad() != null && convocatoria.get().getAmbitoGeografico() != null) {
 
           Optional<ConfiguracionSolicitud> configuracionSolicitud = configuracionSolicitudRepository
@@ -660,8 +666,6 @@ public class ConvocatoriaServiceImpl implements ConvocatoriaService {
     Assert.notNull(datosConvocatoria.getModeloEjecucion(), "ModeloEjecucion no puede ser null en la Convocatoria");
     // Codigo
     Assert.notNull(datosConvocatoria.getCodigo(), "Codigo no puede ser null en la Convocatoria");
-    // FechaPublicacion
-    Assert.notNull(datosConvocatoria.getFechaPublicacion(), "Fecha publicación no puede ser null en la Convocatoria");
     // Titulo
     Assert.notNull(datosConvocatoria.getTitulo(), "Titulo no puede ser null en la Convocatoria");
     // TipoFinalidad
@@ -688,8 +692,6 @@ public class ConvocatoriaServiceImpl implements ConvocatoriaService {
     Assert.notNull(datosConvocatoria.getUnidadGestionRef(), "UnidadGestionRef no puede ser null en la Convocatoria");
     // Codigo
     Assert.notNull(datosConvocatoria.getCodigo(), "Codigo no puede ser null en la Convocatoria");
-    // FechaPublicacion
-    Assert.notNull(datosConvocatoria.getFechaPublicacion(), "Fecha publicación no puede ser null en la Convocatoria");
     // Titulo
     Assert.notNull(datosConvocatoria.getTitulo(), "Titulo no puede ser null en la Convocatoria");
 
@@ -723,4 +725,67 @@ public class ConvocatoriaServiceImpl implements ConvocatoriaService {
 
     log.debug("validarRequeridosConfiguracionSolicitudConvocatoriaRegistrada(Convocatoria datosConvocatoria) - end");
   }
+
+  /**
+   * Devuelve si tiene alguna {@link Solicitud} asociada
+   * 
+   * @param convocatoriaId id de la {@link Convocatoria}
+   * @return true o false
+   */
+  @Override
+  public boolean hasAnySolicitudReferenced(Long convocatoriaId) {
+    return this.solicitudRepository.existsByConvocatoriaId(convocatoriaId);
+  }
+
+  /**
+   * Devuelve si tiene algún {@link Proyecto} asociado
+   * 
+   * @param convocatoriaId id de la {@link Convocatoria}
+   * @return true o false
+   */
+  @Override
+  public boolean hasAnyProyectoReferenced(Long convocatoriaId) {
+    return this.proyectoRepository.existsByConvocatoriaId(convocatoriaId);
+  }
+
+  /**
+   * Clona una {@link Convocatoria} cuya fuente es la que corresponde con el id
+   * pasado por parámetro
+   * 
+   * @param convocatoriaId Id de la convocatoria a clonar
+   * @return un objeto de tipo {@link Convocatoria}
+   */
+  @Transactional
+  @Override
+  public Convocatoria clone(Long convocatoriaId) {
+
+    Convocatoria toClone = repository.findById(convocatoriaId)
+        .orElseThrow(() -> new ConvocatoriaNotFoundException(convocatoriaId));
+
+    Convocatoria cloned = this.repository.save(this.convocatoriaClonerService.cloneBasicConvocatoriaData(toClone));
+
+    this.convocatoriaClonerService.cloneEntidadesGestoras(convocatoriaId, cloned.getId());
+
+    this.convocatoriaClonerService.cloneConvocatoriaAreasTematicas(convocatoriaId, cloned);
+
+    this.convocatoriaClonerService.cloneConvocatoriasEntidadesConvocantes(convocatoriaId, cloned.getId());
+
+    this.convocatoriaClonerService.cloneConvocatoriasEntidadesFinanciadoras(convocatoriaId, cloned.getId());
+
+    this.convocatoriaClonerService.clonePeriodosJustificacion(convocatoriaId, cloned.getId());
+
+    this.convocatoriaClonerService.cloneConvocatoriaPeriodosSeguimientoCientifico(convocatoriaId, cloned.getId());
+
+    this.convocatoriaClonerService.cloneRequisitoIP(convocatoriaId, cloned.getId());
+
+    this.convocatoriaClonerService.cloneRequisitosEquipo(convocatoriaId, cloned.getId());
+
+    this.convocatoriaClonerService.cloneConvocatoriaConceptosGastosAndConvocatoriaConceptoCodigosEc(convocatoriaId,
+        cloned.getId());
+
+    this.convocatoriaClonerService.clonePartidasPresupuestarias(convocatoriaId, cloned.getId());
+
+    return cloned;
+  }
+
 }

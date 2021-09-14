@@ -1,0 +1,19 @@
+[
+  {
+    "key": "ap4_2",
+    "wrappers": [
+      "expansion-panel"
+    ],
+    "templateOptions": {
+      "label": "4.2 Refinamiento"
+    },
+    "fieldGroup": [
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "<p>Se entiende por refinamiento la utilización de sistemas que permitan disminuir la severidad del daño infringido a los animales así como aliviar o reducir el posible dolor o malestar que vayan a padecer. Entre dichas estrategias se incluye la clasificación de la severidad, el control del padecimiento, el uso de medidas corretoras como anestesia y analgesia así como la “eutanasia humanitaria” programada y no programada.</p>"
+      }
+    ]
+  }
+]

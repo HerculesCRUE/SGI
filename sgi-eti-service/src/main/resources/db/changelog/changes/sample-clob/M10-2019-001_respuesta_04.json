@@ -1,0 +1,8 @@
+{
+  "intervencionesSeresHumanosRadio": "si",
+  "intervencionesSeresHumanosCheck": [
+    "entrevistasEncuestas",
+    "otras"
+  ],
+  "otrasTexto": "Otra intervención o prueba en seres humanos"
+}

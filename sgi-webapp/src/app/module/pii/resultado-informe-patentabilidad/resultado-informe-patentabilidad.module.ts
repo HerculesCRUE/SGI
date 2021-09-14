@@ -7,9 +7,10 @@ import { SgiAuthModule } from '@sgi/framework/auth';
 import { SharedModule } from '@shared/shared.module';
 import { ResultadoInformePatentabilidadRoutingModule } from './resultado-informe-patentabilidad-routing.module';
 import { ResultadoInformePatentabilidadListadoComponent } from './resultado-informe-patentabilidad-listado/resultado-informe-patentabilidad-listado.component';
+import { ResultadoInformePatentabilidadModalComponent } from './resultado-informe-patentabilidad-modal/resultado-informe-patentabilidad-modal.component';
 
 @NgModule({
-  declarations: [ResultadoInformePatentabilidadListadoComponent],
+  declarations: [ResultadoInformePatentabilidadListadoComponent, ResultadoInformePatentabilidadModalComponent],
   imports: [
     CommonModule,
     SharedModule,

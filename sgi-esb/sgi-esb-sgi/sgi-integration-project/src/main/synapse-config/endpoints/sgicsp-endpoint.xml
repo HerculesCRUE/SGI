@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<endpoint name="sgicsp-endpoint" xmlns="http://ws.apache.org/ns/synapse">
+  <address uri="$SYSTEM:SGI_ESB_SGICSP_SERVICE_URL">
+    <timeout>
+      <duration>60000</duration>
+      <responseAction>fault</responseAction>
+    </timeout>
+    <suspendOnFailure>
+      <initialDuration>-1</initialDuration>
+      <progressionFactor>1.0</progressionFactor>
+    </suspendOnFailure>
+    <markForSuspension>
+      <retriesBeforeSuspension>0</retriesBeforeSuspension>
+    </markForSuspension>
+  </address>
+</endpoint>

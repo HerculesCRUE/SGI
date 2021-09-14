@@ -435,8 +435,6 @@ public class SolicitudIT {
         SolicitudProyecto.class, idSolicitud);
 
     Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-    SolicitudProyecto solicitudProyecto = response.getBody();
-    Assertions.assertThat(solicitudProyecto.getTitulo()).as("getTitulo()").isEqualTo("titulo-1");
   }
 
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
@@ -628,6 +626,7 @@ public class SolicitudIT {
 
     Solicitud solicitud = new Solicitud();
     solicitud.setId(id);
+    solicitud.setTitulo("titulo");
     solicitud.setCodigoExterno(null);
     solicitud.setConvocatoriaId(1L);
     solicitud.setSolicitanteRef("usr-002");

@@ -387,4 +387,17 @@ export class MemoriaService extends SgiMutableRestService<number, IMemoriaBacken
     );
   }
 
+  /**
+   * Comprobación de si están o no los documentos obligatorios aportados para
+   * pasar la memoria al estado en secretaría
+   *
+   *  @param id Id de la memoria
+   */
+  checkDatosAdjuntosEnviarSecretariaExists(id: number): Observable<boolean> {
+    const url = `${this.endpointUrl}/${id}/enviar-secretaria`;
+    return this.http.head(url, { observe: 'response' }).pipe(
+      map(response => response.status === 200)
+    );
+  }
+
 }

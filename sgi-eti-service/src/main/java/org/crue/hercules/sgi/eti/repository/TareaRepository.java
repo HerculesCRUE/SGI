@@ -7,11 +7,11 @@ import org.crue.hercules.sgi.eti.model.Memoria;
 import org.crue.hercules.sgi.eti.model.Tarea;
 import org.crue.hercules.sgi.eti.model.TipoEstadoMemoria;
 import org.crue.hercules.sgi.eti.repository.custom.CustomTareaRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Repository;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 
 /**
  * Spring Data JPA repository para {@link Tarea}.
@@ -58,5 +58,14 @@ public interface TareaRepository
    */
 
   Page<Tarea> findAllByEquipoTrabajoPeticionEvaluacionId(Long idPeticionEvaluacion, Pageable pageable);
+
+  /**
+   * Busca las tareas de una {@link Memoria}
+   * 
+   * @param idMemoria el id de la {@link Memoria}
+   * @return la lista de tareas de la {@link Memoria}
+   */
+
+  List<Tarea> findAllByMemoriaId(Long idMemoria);
 
 }

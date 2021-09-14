@@ -19,6 +19,13 @@ public interface RolProyectoService {
   RolProyecto findById(final Long id);
 
   /**
+   * Obtiene una entidad {@link RolProyecto} por orden Principal.
+   * 
+   * @return RolProyecto la entidad {@link RolProyecto}.
+   */
+  RolProyecto findPrincipal();
+
+  /**
    * Obtiene todas las entidades {@link RolProyecto} activas paginadas y
    * filtradas.
    *

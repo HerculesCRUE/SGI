@@ -665,7 +665,6 @@ public class ConvocatoriaHitoServiceTest extends BaseServiceTest {
         .observaciones("observaciones-" + String.format("%03d", convocatoriaId))
         .finalidad((modeloTipoFinalidad == null) ? null : modeloTipoFinalidad.getTipoFinalidad())
         .regimenConcurrencia(tipoRegimenConcurrencia)
-        .colaborativos(Boolean.TRUE)
         .estado(Convocatoria.Estado.REGISTRADA)
         .duracion(12)
         .ambitoGeografico(tipoAmbitoGeografico)

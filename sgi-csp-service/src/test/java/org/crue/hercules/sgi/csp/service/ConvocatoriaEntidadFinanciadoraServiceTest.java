@@ -1,5 +1,6 @@
 package org.crue.hercules.sgi.csp.service;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -64,8 +65,8 @@ public class ConvocatoriaEntidadFinanciadoraServiceTest extends BaseServiceTest 
         convocatoriaId);
 
     BDDMockito.given(convocatoriaRepository.findById(ArgumentMatchers.anyLong())).willReturn(Optional.of(convocatoria));
-    BDDMockito.given(convocatoriaService.modificable(ArgumentMatchers.<Long>any(), ArgumentMatchers.<String>any(),
-        ArgumentMatchers.<String[]>any())).willReturn(Boolean.TRUE);
+    BDDMockito.given(convocatoriaService.isRegistradaConSolicitudesOProyectos(ArgumentMatchers.<Long>any(),
+        ArgumentMatchers.<String>any(), ArgumentMatchers.<String[]>any())).willReturn(Boolean.TRUE);
     BDDMockito.given(fuenteFinanciacionRepository.findById(ArgumentMatchers.anyLong()))
         .willReturn(Optional.of(convocatoriaEntidadFinanciadora.getFuenteFinanciacion()));
     BDDMockito.given(tipoFinanciacionRepository.findById(ArgumentMatchers.anyLong()))
@@ -118,7 +119,7 @@ public class ConvocatoriaEntidadFinanciadoraServiceTest extends BaseServiceTest 
     Long convocatoriaId = 1L;
     ConvocatoriaEntidadFinanciadora convocatoriaEntidadFinanciadora = generarMockConvocatoriaEntidadFinanciadora(null,
         convocatoriaId);
-    convocatoriaEntidadFinanciadora.setPorcentajeFinanciacion(-10);
+    convocatoriaEntidadFinanciadora.setPorcentajeFinanciacion(BigDecimal.valueOf(-10));
 
     // when: Creamos el ConvocatoriaEntidadFinanciadora
     // then: Lanza una excepcion porque el PorcentajeFinanciacion es negativo
@@ -165,8 +166,8 @@ public class ConvocatoriaEntidadFinanciadoraServiceTest extends BaseServiceTest 
         convocatoriaId);
 
     BDDMockito.given(convocatoriaRepository.findById(ArgumentMatchers.anyLong())).willReturn(Optional.of(convocatoria));
-    BDDMockito.given(convocatoriaService.modificable(ArgumentMatchers.<Long>any(), ArgumentMatchers.<String>any(),
-        ArgumentMatchers.<String[]>any())).willReturn(Boolean.TRUE);
+    BDDMockito.given(convocatoriaService.isRegistradaConSolicitudesOProyectos(ArgumentMatchers.<Long>any(),
+        ArgumentMatchers.<String>any(), ArgumentMatchers.<String[]>any())).willReturn(Boolean.TRUE);
     BDDMockito.given(fuenteFinanciacionRepository.findById(ArgumentMatchers.anyLong())).willReturn(Optional.empty());
 
     Assertions.assertThatThrownBy(
@@ -186,8 +187,8 @@ public class ConvocatoriaEntidadFinanciadoraServiceTest extends BaseServiceTest 
     convocatoriaEntidadFinanciadora.getFuenteFinanciacion().setActivo(false);
 
     BDDMockito.given(convocatoriaRepository.findById(ArgumentMatchers.anyLong())).willReturn(Optional.of(convocatoria));
-    BDDMockito.given(convocatoriaService.modificable(ArgumentMatchers.<Long>any(), ArgumentMatchers.<String>any(),
-        ArgumentMatchers.<String[]>any())).willReturn(Boolean.TRUE);
+    BDDMockito.given(convocatoriaService.isRegistradaConSolicitudesOProyectos(ArgumentMatchers.<Long>any(),
+        ArgumentMatchers.<String>any(), ArgumentMatchers.<String[]>any())).willReturn(Boolean.TRUE);
     BDDMockito.given(fuenteFinanciacionRepository.findById(ArgumentMatchers.anyLong()))
         .willReturn(Optional.of(convocatoriaEntidadFinanciadora.getFuenteFinanciacion()));
 
@@ -207,8 +208,8 @@ public class ConvocatoriaEntidadFinanciadoraServiceTest extends BaseServiceTest 
         convocatoriaId);
 
     BDDMockito.given(convocatoriaRepository.findById(ArgumentMatchers.anyLong())).willReturn(Optional.of(convocatoria));
-    BDDMockito.given(convocatoriaService.modificable(ArgumentMatchers.<Long>any(), ArgumentMatchers.<String>any(),
-        ArgumentMatchers.<String[]>any())).willReturn(Boolean.TRUE);
+    BDDMockito.given(convocatoriaService.isRegistradaConSolicitudesOProyectos(ArgumentMatchers.<Long>any(),
+        ArgumentMatchers.<String>any(), ArgumentMatchers.<String[]>any())).willReturn(Boolean.TRUE);
     BDDMockito.given(fuenteFinanciacionRepository.findById(ArgumentMatchers.anyLong()))
         .willReturn(Optional.of(convocatoriaEntidadFinanciadora.getFuenteFinanciacion()));
     BDDMockito.given(tipoFinanciacionRepository.findById(ArgumentMatchers.anyLong())).willReturn(Optional.empty());
@@ -230,8 +231,8 @@ public class ConvocatoriaEntidadFinanciadoraServiceTest extends BaseServiceTest 
     convocatoriaEntidadFinanciadora.getTipoFinanciacion().setActivo(false);
 
     BDDMockito.given(convocatoriaRepository.findById(ArgumentMatchers.anyLong())).willReturn(Optional.of(convocatoria));
-    BDDMockito.given(convocatoriaService.modificable(ArgumentMatchers.<Long>any(), ArgumentMatchers.<String>any(),
-        ArgumentMatchers.<String[]>any())).willReturn(Boolean.TRUE);
+    BDDMockito.given(convocatoriaService.isRegistradaConSolicitudesOProyectos(ArgumentMatchers.<Long>any(),
+        ArgumentMatchers.<String>any(), ArgumentMatchers.<String[]>any())).willReturn(Boolean.TRUE);
     BDDMockito.given(fuenteFinanciacionRepository.findById(ArgumentMatchers.anyLong()))
         .willReturn(Optional.of(convocatoriaEntidadFinanciadora.getFuenteFinanciacion()));
     BDDMockito.given(tipoFinanciacionRepository.findById(ArgumentMatchers.anyLong()))
@@ -255,8 +256,8 @@ public class ConvocatoriaEntidadFinanciadoraServiceTest extends BaseServiceTest 
     convocatoria.setEstado(Convocatoria.Estado.REGISTRADA);
 
     BDDMockito.given(convocatoriaRepository.findById(ArgumentMatchers.anyLong())).willReturn(Optional.of(convocatoria));
-    BDDMockito.given(convocatoriaService.modificable(ArgumentMatchers.<Long>any(), ArgumentMatchers.<String>any(),
-        ArgumentMatchers.<String[]>any())).willReturn(Boolean.FALSE);
+    BDDMockito.given(convocatoriaService.isRegistradaConSolicitudesOProyectos(ArgumentMatchers.<Long>any(),
+        ArgumentMatchers.<String>any(), ArgumentMatchers.<String[]>any())).willReturn(Boolean.FALSE);
 
     Assertions.assertThatThrownBy(
         // when: create ConvocatoriaEntidadFinanciadora
@@ -274,7 +275,7 @@ public class ConvocatoriaEntidadFinanciadoraServiceTest extends BaseServiceTest 
         convocatoriaId);
     ConvocatoriaEntidadFinanciadora convocatoriaEntidadFinanciadoraPorcentajeActualizado = generarMockConvocatoriaEntidadFinanciadora(
         1L, convocatoriaId);
-    convocatoriaEntidadFinanciadoraPorcentajeActualizado.setPorcentajeFinanciacion(1);
+    convocatoriaEntidadFinanciadoraPorcentajeActualizado.setPorcentajeFinanciacion(BigDecimal.valueOf(1));
 
     BDDMockito.given(fuenteFinanciacionRepository.findById(ArgumentMatchers.anyLong()))
         .willReturn(Optional.of(convocatoriaEntidadFinanciadora.getFuenteFinanciacion()));
@@ -283,8 +284,8 @@ public class ConvocatoriaEntidadFinanciadoraServiceTest extends BaseServiceTest 
 
     BDDMockito.given(repository.findById(ArgumentMatchers.<Long>any()))
         .willReturn(Optional.of(convocatoriaEntidadFinanciadora));
-    BDDMockito.given(convocatoriaService.modificable(ArgumentMatchers.<Long>any(), ArgumentMatchers.<String>any(),
-        ArgumentMatchers.<String[]>any())).willReturn(Boolean.TRUE);
+    BDDMockito.given(convocatoriaService.isRegistradaConSolicitudesOProyectos(ArgumentMatchers.<Long>any(),
+        ArgumentMatchers.<String>any(), ArgumentMatchers.<String[]>any())).willReturn(Boolean.TRUE);
 
     BDDMockito.given(repository.save(ArgumentMatchers.<ConvocatoriaEntidadFinanciadora>any()))
         .will((InvocationOnMock invocation) -> invocation.getArgument(0));
@@ -317,7 +318,7 @@ public class ConvocatoriaEntidadFinanciadoraServiceTest extends BaseServiceTest 
     Long convocatoriaId = 1L;
     ConvocatoriaEntidadFinanciadora convocatoriaEntidadFinanciadora = generarMockConvocatoriaEntidadFinanciadora(1L,
         convocatoriaId);
-    convocatoriaEntidadFinanciadora.setPorcentajeFinanciacion(-10);
+    convocatoriaEntidadFinanciadora.setPorcentajeFinanciacion(BigDecimal.valueOf(-10));
 
     // when: Actualizamos el ConvocatoriaEntidadFinanciadora
     // then: Lanza una excepcion porque el PorcentajeFinanciacion es negativo
@@ -448,8 +449,8 @@ public class ConvocatoriaEntidadFinanciadoraServiceTest extends BaseServiceTest 
     BDDMockito.given(tipoFinanciacionRepository.findById(ArgumentMatchers.anyLong()))
         .willReturn(Optional.of(convocatoriaEntidadFinanciadora.getTipoFinanciacion()));
 
-    BDDMockito.given(convocatoriaService.modificable(ArgumentMatchers.anyLong(), ArgumentMatchers.<String>any(),
-        ArgumentMatchers.<String[]>any())).willReturn(Boolean.FALSE);
+    BDDMockito.given(convocatoriaService.isRegistradaConSolicitudesOProyectos(ArgumentMatchers.anyLong(),
+        ArgumentMatchers.<String>any(), ArgumentMatchers.<String[]>any())).willReturn(Boolean.FALSE);
 
     Assertions.assertThatThrownBy(
         // when: update ConvocatoriaEntidadFinanciadora
@@ -467,9 +468,8 @@ public class ConvocatoriaEntidadFinanciadoraServiceTest extends BaseServiceTest 
 
     BDDMockito.given(repository.findById(ArgumentMatchers.anyLong()))
         .willReturn(Optional.of(generarMockConvocatoriaEntidadFinanciadora(id, convocatoriaId)));
-    BDDMockito.given(convocatoriaService.modificable(ArgumentMatchers.<Long>any(), ArgumentMatchers.<String>any(),
-        ArgumentMatchers.<String[]>any()))
-        .willReturn(Boolean.TRUE);
+    BDDMockito.given(convocatoriaService.isRegistradaConSolicitudesOProyectos(ArgumentMatchers.<Long>any(),
+        ArgumentMatchers.<String>any(), ArgumentMatchers.<String[]>any())).willReturn(Boolean.TRUE);
     BDDMockito.doNothing().when(repository).deleteById(ArgumentMatchers.anyLong());
 
     Assertions.assertThatCode(
@@ -502,9 +502,8 @@ public class ConvocatoriaEntidadFinanciadoraServiceTest extends BaseServiceTest 
 
     BDDMockito.given(repository.findById(ArgumentMatchers.anyLong()))
         .willReturn(Optional.of(generarMockConvocatoriaEntidadFinanciadora(1L, convocatoriaId)));
-    BDDMockito.given(convocatoriaService.modificable(ArgumentMatchers.<Long>any(), ArgumentMatchers.<String>any(),
-        ArgumentMatchers.<String[]>any()))
-        .willReturn(Boolean.FALSE);
+    BDDMockito.given(convocatoriaService.isRegistradaConSolicitudesOProyectos(ArgumentMatchers.<Long>any(),
+        ArgumentMatchers.<String>any(), ArgumentMatchers.<String[]>any())).willReturn(Boolean.FALSE);
 
     Assertions.assertThatCode(
         // when: delete by existing id
@@ -614,7 +613,7 @@ public class ConvocatoriaEntidadFinanciadoraServiceTest extends BaseServiceTest 
     convocatoriaEntidadFinanciadora.setEntidadRef("entidad-" + (id == null ? 0 : id));
     convocatoriaEntidadFinanciadora.setFuenteFinanciacion(fuenteFinanciacion);
     convocatoriaEntidadFinanciadora.setTipoFinanciacion(tipoFinanciacion);
-    convocatoriaEntidadFinanciadora.setPorcentajeFinanciacion(50);
+    convocatoriaEntidadFinanciadora.setPorcentajeFinanciacion(BigDecimal.valueOf(50));
 
     return convocatoriaEntidadFinanciadora;
   }

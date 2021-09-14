@@ -36,6 +36,7 @@ public class EstadoSolicitudRepositoryTest extends BaseRepositoryTest {
   private Solicitud generarMockSolicitud() {
     Solicitud solicitud = new Solicitud();
     solicitud.setCreadorRef("usr-001");
+    solicitud.setTitulo("titulo");
     solicitud.setSolicitanteRef("usr-002");
     solicitud.setUnidadGestionRef("2");
     solicitud.setFormularioSolicitud(FormularioSolicitud.RRHH);

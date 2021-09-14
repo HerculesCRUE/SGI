@@ -1,3 +1,4 @@
+import { IProyecto } from "@core/models/csp/proyecto";
 import { IInvencion } from "@core/models/pii/invencion";
 import { ITipoProteccion } from "@core/models/pii/tipo-proteccion";
 import { LuxonUtils } from "@core/utils/luxon-utils";
@@ -15,9 +16,15 @@ class InvencionResponseConverter extends SgiBaseConverter<IInvencionResponse, II
       titulo: value.titulo,
       descripcion: value.descripcion,
       comentarios: value.comentarios,
+      proyecto: value.proyectoRef !== null ? { id: +value.proyectoRef } as IProyecto : null,
       tipoProteccion: {
         id: value.tipoProteccion.id,
-        nombre: value.tipoProteccion.nombre
+        nombre: value.tipoProteccion.nombre,
+        padre: value.tipoProteccion.padre !== null ? {
+          id: value.tipoProteccion.padre?.id,
+          nombre: value.tipoProteccion.padre?.nombre
+        } : null,
+        tipoPropiedad: value.tipoProteccion.tipoPropiedad
       } as ITipoProteccion,
       activo: value.activo
     };
@@ -32,9 +39,15 @@ class InvencionResponseConverter extends SgiBaseConverter<IInvencionResponse, II
       titulo: value.titulo,
       descripcion: value.descripcion,
       comentarios: value.comentarios,
+      proyectoRef: value.proyecto?.id?.toString(),
       tipoProteccion: {
         id: value.tipoProteccion.id,
-        nombre: value.tipoProteccion.nombre
+        nombre: value.tipoProteccion.nombre,
+        padre: value.tipoProteccion.padre !== null ? {
+          id: value.tipoProteccion.padre?.id,
+          nombre: value.tipoProteccion.padre?.nombre
+        } : null,
+        tipoPropiedad: value.tipoProteccion.tipoPropiedad
       },
       activo: value.activo
     };

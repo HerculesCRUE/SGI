@@ -1,0 +1,41 @@
+[
+  {
+    "key": "ap5_7",
+    "wrappers": [
+      "expansion-panel"
+    ],
+    "templateOptions": {
+      "expressionLock": "formState.memoria.tipoMemoria.id === 3",
+      "label": "5.7 Documento de registro de tratamiento de datos"
+    },
+    "fieldGroup": [
+      {
+        "template": "¿Su proyecto requiere el registro de un tratamiento de datos? (Apartado '3.6 Datos de carácter personal')."
+      },
+      {
+        "key": "documentoRegistroTratamientoDatos",
+        "type": "documento",
+        "templateOptions": {
+          "label": "Indicar",
+          "required": true,
+          "options": [
+            {
+              "value": 0,
+              "label": "No"
+            },
+            {
+              "value": 10,
+              "label": "Sí"
+            }
+          ]
+        }
+      },
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "<p>Nota: Si la respuesta es afirmativa adjuntar en el apartado de 'Documentación'.</p>"
+      }
+    ]
+  }
+]

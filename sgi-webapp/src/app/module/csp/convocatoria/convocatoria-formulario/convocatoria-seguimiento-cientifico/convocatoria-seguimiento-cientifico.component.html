@@ -1,9 +1,12 @@
-<section class="seguimientos-cientificos-listado">
-  <h2>{{'csp.convocatoria-seguimiento-cientifico' | translate}}</h2>
-  <!-- Entidades convocantes listado -->
-  <div>
-    <table mat-table [dataSource]="dataSource" class="mat-elevation-z8 table-unidad" matSort matSortActive="id"
-      matSortDirection="asc" matSortDisableClear>
+<sgi-fragment title="{{'csp.convocatoria-seguimiento-cientifico' | translate}}">
+  <!-- Error primer periodo no empieza en el mes 1 -->
+  <div *ngIf="formPart.hasErrors()" class="info-message">
+    {{'error.csp.periodos-justificacion.primer-periodo' | translate}}
+  </div>
+
+  <!-- Seguimiento Científico listado -->
+  <div class="mat-elevation-z4">
+    <table mat-table [dataSource]="dataSource" matSort matSortActive="id" matSortDirection="asc" matSortDisableClear>
       <!-- numPeriodo Column -->
       <ng-container matColumnDef="numPeriodo">
         <th mat-header-cell *matHeaderCellDef mat-sort-header>
@@ -68,12 +71,12 @@
       <ng-container matColumnDef="acciones">
         <th mat-header-cell *matHeaderCellDef>{{'label.actions' | translate}}</th>
         <td mat-cell *matCellDef="let wrapper">
-          <button mat-button matTooltip="{{'btn.edit' | translate}}" *ngIf="!formPart.readonly"
-            (click)="openModalSeguimientoCientifico(wrapper)">
+          <button mat-button matTooltip="{{'btn.edit' | translate}}" (click)="openModalSeguimientoCientifico(wrapper)"
+            *sgiHasAnyAuthorityForAnyUO="['CSP-CON-C', 'CSP-CON-E']">
             <mat-icon color="primary">border_color</mat-icon>
           </button>
-          <button mat-button matTooltip="{{'btn.delete' | translate}}" *ngIf="!formPart.readonly"
-            (click)="deleteSeguimientoCientifico(wrapper)">
+          <button mat-button matTooltip="{{'btn.delete' | translate}}" (click)="deleteSeguimientoCientifico(wrapper)"
+            *sgiHasAnyAuthorityForAnyUO="['CSP-CON-C', 'CSP-CON-E']">
             <mat-icon color="warn">highlight_off</mat-icon>
           </button>
         </td>
@@ -85,9 +88,10 @@
     </mat-paginator>
   </div>
   <div class="separation-button">
-    <button color="three" mat-button mat-raised-button (click)="openModalSeguimientoCientifico()">
+    <button color="three" mat-button mat-raised-button (click)="openModalSeguimientoCientifico()"
+      *sgiHasAnyAuthorityForAnyUO="['CSP-CON-C', 'CSP-CON-E']">
       <mat-icon color="accent">add_circle</mat-icon>
       {{ 'btn.add.entity' | translate:msgParamEntity }}
     </button>
   </div>
-</section>
+</sgi-fragment>

@@ -1,0 +1,11 @@
+<div [@.disabled]="disableAnimation">
+  <mat-expansion-panel [hideToggle]="!opened" [class.is-closed]="!opened">
+    <mat-expansion-panel-header collapsedHeight="49px" expandedHeight="49px" [class.is-active]="isChildActive">
+      <div>
+        <mat-icon color="primary" mat-list-icon>{{icon}}</mat-icon>
+        <span *ngIf="opened">{{title}}</span>
+      </div>
+    </mat-expansion-panel-header>
+    <ng-content></ng-content>
+  </mat-expansion-panel>
+</div>

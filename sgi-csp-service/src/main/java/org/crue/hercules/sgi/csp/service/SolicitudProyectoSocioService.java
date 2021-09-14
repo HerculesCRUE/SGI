@@ -92,4 +92,10 @@ public interface SolicitudProyectoSocioService {
    */
   Boolean hasSolicitudSocio(Long id);
 
+  boolean existsSolicitudProyectoSocioPeriodoPagoBySolicitudProyectoSocioId(Long idSolicitudProyecto);
+
+  boolean existsSolicitudProyectoSocioPeriodoJustificacionBySolicitudProyectoSocioId(Long idSolicitudProyecto);
+
+  boolean hasAnySolicitudProyectoSocioWithRolCoordinador(Long idSolicitudProyecto);
+
 }

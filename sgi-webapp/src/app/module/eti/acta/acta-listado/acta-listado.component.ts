@@ -4,6 +4,7 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { AbstractTablePaginationComponent } from '@core/component/abstract-table-pagination.component';
+import { HttpProblem } from '@core/errors/http-problem';
 import { MSG_PARAMS } from '@core/i18n';
 import { IActaWithNumEvaluaciones } from '@core/models/eti/acta-with-num-evaluaciones';
 import { IComite } from '@core/models/eti/comite';
@@ -258,7 +259,12 @@ export class ActaListadoComponent extends AbstractTablePaginationComponent<IActa
         // On error reset pagination values
         this.paginator.firstPage();
         this.totalElementos = 0;
-        this.snackBarService.showError(MSG_FINALIZAR_ERROR);
+        if (error instanceof HttpProblem) {
+          this.snackBarService.showError(error);
+        }
+        else {
+          this.snackBarService.showError(MSG_FINALIZAR_ERROR);
+        }
         return of([]);
       }));
   }
@@ -269,7 +275,7 @@ export class ActaListadoComponent extends AbstractTablePaginationComponent<IActa
    * @return indicador de si el acta se encuentra finalizada.
    */
   isFinalizada(acta: IActaWithNumEvaluaciones): boolean {
-    return acta.estadoActa.id === 2;
+    return acta.estadoActa?.id === 2;
   }
 
   /**

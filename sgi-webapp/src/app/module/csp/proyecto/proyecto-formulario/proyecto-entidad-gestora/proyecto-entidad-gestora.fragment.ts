@@ -20,7 +20,8 @@ export class ProyectoEntidadGestoraFragment extends FormFragment<IProyectoEntida
     private proyectoService: ProyectoService,
     private proyectoEntidadGestoraService: ProyectoEntidadGestoraService,
     private empresaService: EmpresaService,
-    public readonly: boolean
+    public readonly: boolean,
+    public isVisor: boolean,
   ) {
     super(key, true);
     this.setComplete(true);
@@ -94,12 +95,19 @@ export class ProyectoEntidadGestoraFragment extends FormFragment<IProyectoEntida
         disabled: true
       })
     });
+    if (this.isVisor) {
+      form.disable();
+    }
 
     this.subscriptions.push(
       form.controls.entidadGestora.valueChanges.subscribe(
         (entidadGestora) => this.onEntidadGestoraChange(entidadGestora)
       )
     );
+
+    if (this.readonly) {
+      form.disable();
+    }
 
     return form;
   }

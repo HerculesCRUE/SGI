@@ -1,0 +1,41 @@
+[
+  {
+    "key": "ap5_4",
+    "wrappers": [
+      "expansion-panel"
+    ],
+    "templateOptions": {
+      "expressionLock": "formState.memoria.tipoMemoria.id === 3",
+      "label": "5.4 Documento de aceptación de colaboración"
+    },
+    "fieldGroup": [
+      {
+        "template": "Si el reclutamiento de las personas participantes va a ser realizado por alguien ajeno al equipo investigador ¿dispone del documento de aceptación de colaboración?"
+      },
+      {
+        "key": "documentoAceptacionColaboracion",
+        "type": "documento",
+        "templateOptions": {
+          "label": "Indicar",
+          "required": true,
+          "options": [
+            {
+              "value": 0,
+              "label": "No"
+            },
+            {
+              "value": 7,
+              "label": "Sí"
+            }
+          ]
+        }
+      },
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "<p>Nota: ver apartado '3,4.2 Reclutamiento realizado por personal ajeno al equipo investigador'.</p>"
+      }
+    ]
+  }
+]

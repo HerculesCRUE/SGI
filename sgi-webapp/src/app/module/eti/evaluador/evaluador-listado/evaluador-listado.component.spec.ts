@@ -9,6 +9,7 @@ import { MaterialDesignModule } from '@material/material-design.module';
 import { SgiAuthModule, SgiAuthService } from '@sgi/framework/auth';
 import { SharedModule } from '@shared/shared.module';
 import { LoggerTestingModule } from 'ngx-logger/testing';
+import { SgpSharedModule } from 'src/app/esb/sgp/shared/sgp-shared.module';
 import { EvaluadorListadoComponent } from './evaluador-listado.component';
 
 describe('EvaluadorListadoComponent', () => {
@@ -30,7 +31,8 @@ describe('EvaluadorListadoComponent', () => {
         FormsModule,
         ReactiveFormsModule,
         SharedModule,
-        SgiAuthModule
+        SgiAuthModule,
+        SgpSharedModule
       ],
       providers: [
         { provide: SnackBarService, useValue: TestUtils.getSnackBarServiceSpy() },

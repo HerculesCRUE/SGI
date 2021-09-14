@@ -1,13 +1,18 @@
 package org.crue.hercules.sgi.csp.service.impl;
 
 import org.crue.hercules.sgi.csp.exceptions.ProyectoPartidaNotFoundException;
+import org.crue.hercules.sgi.csp.model.AnualidadGasto;
+import org.crue.hercules.sgi.csp.model.AnualidadIngreso;
 import org.crue.hercules.sgi.csp.model.Proyecto;
 import org.crue.hercules.sgi.csp.model.ProyectoPartida;
+import org.crue.hercules.sgi.csp.repository.AnualidadGastoRepository;
+import org.crue.hercules.sgi.csp.repository.AnualidadIngresoRepository;
 import org.crue.hercules.sgi.csp.repository.ConfiguracionRepository;
 import org.crue.hercules.sgi.csp.repository.ProyectoPartidaRepository;
 import org.crue.hercules.sgi.csp.repository.specification.ProyectoPartidaSpecifications;
 import org.crue.hercules.sgi.csp.service.ProyectoPartidaService;
 import org.crue.hercules.sgi.framework.rsql.SgiRSQLJPASupport;
+import org.crue.hercules.sgi.framework.security.core.context.SgiSecurityContextHolder;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -27,11 +32,16 @@ public class ProyectoPartidaServiceImpl implements ProyectoPartidaService {
 
   private final ProyectoPartidaRepository repository;
   private final ConfiguracionRepository configuracionRepository;
+  private final AnualidadGastoRepository anualidadGastoRepository;
+  private final AnualidadIngresoRepository anualidadIngresoRepository;
 
   public ProyectoPartidaServiceImpl(ProyectoPartidaRepository proyectoPartidaRepository,
-      ConfiguracionRepository configuracionRepository) {
+      ConfiguracionRepository configuracionRepository, AnualidadGastoRepository anualidadGastoRepository,
+      AnualidadIngresoRepository anualidadIngresoRepository) {
     this.repository = proyectoPartidaRepository;
     this.configuracionRepository = configuracionRepository;
+    this.anualidadGastoRepository = anualidadGastoRepository;
+    this.anualidadIngresoRepository = anualidadIngresoRepository;
   }
 
   /**
@@ -175,7 +185,56 @@ public class ProyectoPartidaServiceImpl implements ProyectoPartidaService {
           "Formato de codigo no valido");
     });
 
+    Assert.isTrue(this.modificable(proyectoPartida.getId(), "CSP-PRO-E"),
+        "No se puede modificar ProyectoPartida. No tiene los permisos necesarios o el proyecto tiene presupuestos anuales enviados al SGE.");
+
     log.debug("validate(ProyectoPartida proyectoPartida) - end");
+  }
+
+  /**
+   * Hace las comprobaciones necesarias para determinar si la
+   * {@link ProyectoPartida} puede ser modificada. También se utilizará para
+   * permitir la creación, modificación o eliminación de ciertas entidades
+   * relacionadas con la propia {@link ProyectoPartida}.
+   *
+   * @param id        Id de la {@link ProyectoPartida}.
+   * @param authority Authority a validar
+   * @return true si puede ser modificada / false si no puede ser modificada
+   */
+  @Override
+  public boolean modificable(Long id, String authority) {
+    log.debug("modificable(Long id, String unidadConvocatoria) - start");
+
+    if (SgiSecurityContextHolder.hasAuthorityForAnyUO(authority)) {
+      // Será modificable si no tiene anualidades asociadas
+      if (id != null && (anualidadGastoRepository.existsByProyectoPartidaIdAndProyectoAnualidadEnviadoSgeIsTrue(id)
+          || anualidadIngresoRepository.existsByProyectoPartidaIdAndProyectoAnualidadEnviadoSgeIsTrue(id))) {
+        return false;
+      }
+      return true;
+    }
+
+    log.debug("modificable(Long id, String unidadConvocatoria) - end");
+    return false;
+  }
+
+  /**
+   * Devuelve un boolean indicando si la paritda indicada por el parámetro
+   * proyectoPartidaId, tiene asociada alguna {@link AnualidadIngreso} o alguna
+   * {@link AnualidadGasto}
+   * 
+   * @param proyectoPartidaId Id de la {@link ProyectoPartida}
+   * @return boolean respuesta en función de si hay o no objetos de tipo
+   *         {@link AnualidadIngreso} o alguna {@link AnualidadGasto} asociadas
+   */
+  @Override
+  public boolean existsAnyAnualidad(Long proyectoPartidaId) {
+
+    return this.anualidadIngresoRepository.findByProyectoPartidaId(proyectoPartidaId)
+        .map(anualidades -> !anualidades.isEmpty()).orElse(false)
+        || this.anualidadGastoRepository.findByProyectoPartidaId(proyectoPartidaId)
+            .map(anualidades -> !anualidades.isEmpty()).orElse(false);
+
   }
 
 }

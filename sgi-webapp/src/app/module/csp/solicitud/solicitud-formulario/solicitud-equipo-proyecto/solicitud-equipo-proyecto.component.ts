@@ -36,6 +36,7 @@ export class SolicitudEquipoProyectoComponent extends FragmentComponent implemen
   fxFlexProperties: FxFlexProperties;
   fxLayoutProperties: FxLayoutProperties;
 
+  elementosPagina = [5, 10, 25, 100];
   displayedColumns = ['persona', 'nombre', 'apellidos', 'rolProyecto', 'acciones'];
 
   msgParamEntity = {};
@@ -61,6 +62,25 @@ export class SolicitudEquipoProyectoComponent extends FragmentComponent implemen
   ngOnInit(): void {
     super.ngOnInit();
     this.setupI18N();
+
+    this.dataSource.paginator = this.paginator;
+    this.dataSource.sort = this.sort;
+    this.dataSource.sortingDataAccessor =
+      (wrapper: StatusWrapper<ISolicitudProyectoEquipo>, property: string) => {
+        switch (property) {
+          case 'persona':
+            return wrapper.value.persona.numeroDocumento;
+          case 'nombre':
+            return wrapper.value.persona.nombre;
+          case 'apellidos':
+            return wrapper.value.persona.apellidos;
+          case 'rolProyecto':
+            return wrapper.value.rolProyecto.nombre;
+          default:
+            return wrapper[property];
+        }
+      };
+
     this.actionService.datosProyectoComplete$.pipe(
       take(1)
     ).subscribe(
@@ -113,7 +133,11 @@ export class SolicitudEquipoProyectoComponent extends FragmentComponent implemen
     this.subscriptions.forEach(subscription => subscription.unsubscribe());
   }
 
-  openModal(wrapper?: StatusWrapper<ISolicitudProyectoEquipo>, position?: number): void {
+  openModal(wrapper?: StatusWrapper<ISolicitudProyectoEquipo>, rowIndex?: number): void {
+    // Necesario para sincronizar los cambios de orden de registros dependiendo de la ordenación y paginación
+    this.dataSource.sortData(this.dataSource.filteredData, this.dataSource.sort);
+    const row = (this.paginator.pageSize * this.paginator.pageIndex) + rowIndex;
+
     const data: MiembroEquipoSolicitudModalData = {
       titleEntity: this.modalTitleEntity,
       entidad: wrapper?.value ?? {} as ISolicitudProyectoEquipo,
@@ -121,13 +145,13 @@ export class SolicitudEquipoProyectoComponent extends FragmentComponent implemen
       mesInicialMin: 1,
       mesFinalMax: this.actionService.duracionProyecto,
       isEdit: Boolean(wrapper),
-      index: position,
+      index: row,
       readonly: this.formPart.readonly
     };
 
     if (wrapper) {
       const filtered = Object.assign([], data.selectedEntidades);
-      filtered.splice(position, 1);
+      filtered.splice(row, 1);
       data.selectedEntidades = filtered;
     }
 

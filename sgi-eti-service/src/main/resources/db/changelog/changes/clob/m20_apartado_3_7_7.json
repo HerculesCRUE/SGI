@@ -1,0 +1,52 @@
+[
+  {
+    "key": "ap3_7_7",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "label": "3.7.7 Administración de sustancias"
+    },
+    "fieldGroup": [
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "No se suministrará a un animal ningún medicamento que impida o restrinja sus manifestaciones de dolor, salvo que haya recibido una dosis adecuada de anestesia o analgesia. En caso de que se suministre ese tipo de medicamentos deberá proporcionarse una justificación científica acompañada de una descripción del tratamiento por anestesia o analgesia, que estará a disposición del órgano competente (<a href='https://www.boe.es/buscar/act.php?id=BOE-A-2013-1337&p=20130208&tn=1#a26'>art. 26.4 RD 53/2013</a>)."
+      },
+      {
+        "template": "¿Se va a administrar al animal algún tipo de sustancia en algún momento del proceso de experimentación? (No incluir anestesia o analgesia en este apartado)"
+      },
+      {
+        "key": "sustanciasRadio",
+        "type": "radio",
+        "templateOptions": {
+          "label": "Elige opción:",
+          "required": true,
+          "options": [
+            {
+              "value": "no",
+              "label": "No"
+            },
+            {
+              "value": "si",
+              "label": "Sí"
+            }
+          ]
+        }
+      },
+      {
+        "key": "justificarSustancias",
+        "type": "textarea",
+        "hideExpression": "!model.sustanciasRadio || model.sustanciasRadio === 'no'",
+        "templateOptions": {
+          "label": "Justificación",
+          "required": true,
+          "autosize": true,
+          "autosizeMinRows": "1",
+          "autosizeMaxRows": "10"
+        }
+      }
+    ]
+  }
+]

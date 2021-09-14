@@ -4,6 +4,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MaterialDesignModule } from '@material/material-design.module';
 import { TranslateModule } from '@ngx-translate/core';
 import { SharedModule } from '@shared/shared.module';
+import { SgoFormlyFormsModule } from '../formly-forms/sgo-formly-forms.module';
 import { AreaConocimientoModalComponent } from './area-conocimiento-modal/area-conocimiento-modal.component';
 import { ClasificacionModalComponent } from './clasificacion-modal/clasificacion-modal.component';
 
@@ -19,6 +20,7 @@ import { ClasificacionModalComponent } from './clasificacion-modal/clasificacion
     MaterialDesignModule,
     FormsModule,
     ReactiveFormsModule,
+    SgoFormlyFormsModule
   ],
   exports: [
     AreaConocimientoModalComponent,

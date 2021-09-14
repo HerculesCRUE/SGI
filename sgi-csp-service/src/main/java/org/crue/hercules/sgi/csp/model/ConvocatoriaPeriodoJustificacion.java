@@ -18,8 +18,11 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import org.hibernate.validator.constraints.ScriptAssert;
+
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -32,6 +35,12 @@ import lombok.Setter;
 @EqualsAndHashCode(callSuper = false)
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
+@ScriptAssert.List({
+    // Validacion de meses
+    @ScriptAssert(lang = "spel", alias = "_this", script = "#_this.getMesInicial() == null || #_this.getMesFinal() == null || #_this.getMesFinal().compareTo(#_this.getMesInicial()) >= 0", reportOn = "mesFinal", message = "{org.crue.hercules.sgi.csp.validation.MesInicialMayorMesFinal.message}"),
+    // Validacion de fechas de presentación
+    @ScriptAssert(lang = "spel", alias = "_this", script = "#_this.getFechaInicioPresentacion() == null || #_this.getFechaFinPresentacion() == null || #_this.getFechaFinPresentacion().compareTo(#_this.getFechaInicioPresentacion()) >= 0", reportOn = "fechaFinPresentacion", message = "{org.crue.hercules.sgi.csp.validation.FechaInicialMayorFechaFinal.message}") })
 public class ConvocatoriaPeriodoJustificacion extends BaseEntity {
 
   /**

@@ -29,4 +29,14 @@ public interface SolicitudProyectoEquipoRepository
    */
   List<SolicitudProyectoEquipo> findAllBySolicitudProyectoId(Long solicitudProyectoId);
 
+  /**
+   * Compruba si existe una {@link SolicitudProyectoEquipo} con el
+   * solicitudProyectoId y personaRef indicados
+   * 
+   * @param solicitudProyectoId id del {@link SolicitudProyecto}.
+   * @param personaRef          ref de la persona.
+   * @return true si existe false si no existe.
+   */
+  boolean existsBySolicitudProyectoIdAndPersonaRef(Long solicitudProyectoId, String personaRef);
+
 }

@@ -361,7 +361,7 @@ public class DocumentacionMemoriaServiceTest extends BaseServiceTest {
   @Test
   public void createDocumentacionInicial_failStatusMemoria() {
     // given: Una nueva documentación
-    Memoria memoria = generarMockMemoria(1L, "Memoria1", 14L);
+    Memoria memoria = generarMockMemoria(1L, "Memoria1", 4L);
     DocumentacionMemoria documentacionMemoriaNew = generarMockDocumentacionMemoria(null, memoria,
         generarMockTipoDocumento(4L));
 

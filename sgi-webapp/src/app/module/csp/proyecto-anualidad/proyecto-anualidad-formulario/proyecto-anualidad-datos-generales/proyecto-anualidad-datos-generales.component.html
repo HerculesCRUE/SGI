@@ -1,5 +1,4 @@
-<section>
-  <h2>{{'label.datos-generales' | translate}}</h2>
+<sgi-fragment title="{{'label.datos-generales' | translate}}">
   <form [formGroup]="formGroup">
 
     <!-- Anualidad -->
@@ -25,10 +24,10 @@
         [fxFlexOrder]="fxFlexProperties.order">
         <mat-form-field fxFill>
           <mat-label>{{'csp.proyecto-anualidad.fecha-inicio' | translate}}</mat-label>
-          <input matInput [ngxMatDatetimePicker]="pickerFechaInicio" formControlName="fechaInicio">
+          <input matInput [matDatepicker]="pickerFechaInicio" formControlName="fechaInicio">
           <mat-datepicker-toggle class="fechaIcon" matSuffix [for]="pickerFechaInicio"></mat-datepicker-toggle>
-          <ngx-mat-datetime-picker #pickerFechaInicio showSeconds="true" [defaultTime]="[0,0,0]">
-          </ngx-mat-datetime-picker>
+          <mat-datepicker #pickerFechaInicio>
+          </mat-datepicker>
         </mat-form-field>
 
       </div>
@@ -36,12 +35,12 @@
       <!-- Fecha de fin -->
       <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
         [fxFlexOrder]="fxFlexProperties.order">
-        <mat-form-field fxFill>
+        <mat-form-field fxFill sgiEndDate>
           <mat-label>{{'csp.proyecto-anualidad.fecha-fin' | translate}}</mat-label>
-          <input matInput [ngxMatDatetimePicker]="pickerFechaFin" formControlName="fechaFin">
+          <input matInput [matDatepicker]="pickerFechaFin" formControlName="fechaFin">
           <mat-datepicker-toggle class="fechaIcon" matSuffix [for]="pickerFechaFin"></mat-datepicker-toggle>
-          <ngx-mat-datetime-picker #pickerFechaFin showSeconds="true" [defaultTime]="[23,59,59]">
-          </ngx-mat-datetime-picker>
+          <mat-datepicker #pickerFechaFin>
+          </mat-datepicker>
           <mat-error *ngIf="formGroup.controls.fechaFin.errors?.after">
             {{'error.after.fecha-fin' | translate}}
           </mat-error>
@@ -63,4 +62,4 @@
     </div>
 
   </form>
-</section>
+</sgi-fragment>

@@ -23,7 +23,7 @@
       [fxLayoutGap]="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
       <mat-form-field>
         <mat-label>{{'csp.convocatoria-periodo-justificacion.tipo' | translate}}</mat-label>
-        <sgi-select-enum formControlName="tipo" required [enumMap]="TIPO_MAP"></sgi-select-enum>
+        <sgi-select-enum formControlName="tipo" required [enumMap]="TIPO_JUSTIFICACION_MAP"></sgi-select-enum>
         <mat-error *ngIf="formGroup.controls.tipo.errors?.required">
           {{ 'error.required.entity' | translate:msgParamTipoEntity }}
         </mat-error>
@@ -60,6 +60,12 @@
           <mat-error *ngIf="formGroup.controls.desdeMes.errors?.overlapped">
             {{ 'error.overlapping.range' | translate }}
           </mat-error>
+          <mat-error *ngIf="formGroup.controls.desdeMes.errors?.initial">
+            {{ 'error.initial.mes-desde' | translate }}
+          </mat-error>
+          <mat-error *ngIf="formGroup.controls.desdeMes.errors?.wrongOrder">
+            {{ 'error.wrongOrder.mes-desde' | translate }}
+          </mat-error>
         </mat-form-field>
       </div>
       <!-- Mes fin -->
@@ -74,8 +80,8 @@
           <mat-error *ngIf="formGroup.controls.hastaMes.errors?.min">
             {{ 'error.min.mes-hasta' | translate }}
           </mat-error>
-          <mat-error *ngIf="formGroup.controls.hastaMes.errors?.after">
-            {{'error.after.param' | translate:msgParamMesInicioEntity}}
+          <mat-error *ngIf="formGroup.controls.hastaMes.errors?.afterOrEqual">
+            {{'error.afterOrEqual.param' | translate:msgParamMesInicioEntity}}
           </mat-error>
           <mat-error *ngIf="formGroup.controls.hastaMes.errors?.max">
             {{'error.csp.convocatoria-periodo-justificacion.duracion' | translate}}
@@ -133,7 +139,8 @@
   </form>
 </mat-dialog-content>
 <mat-dialog-actions>
-  <button color="accent" (click)="saveOrUpdate()" mat-raised-button type="submit" *ngIf="!data.readonly">
+  <button color="accent" (click)="saveOrUpdate()" mat-raised-button type="submit"
+    *sgiHasAnyAuthorityForAnyUO="['CSP-CON-C', 'CSP-CON-E']">
     <mat-icon class="save-icon">save</mat-icon>{{textSaveOrUpdate | translate}}
   </button>
   <button class="link-cancelar" mat-button type="button" mat-dialog-close>{{'btn.cancel' |

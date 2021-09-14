@@ -26,7 +26,8 @@ export class ProyectoClasificacionesFragment extends Fragment {
     private service: ProyectoClasificacionService,
     private proyectoService: ProyectoService,
     private clasificacionService: ClasificacionService,
-    public readonly: boolean
+    public readonly: boolean,
+    public isVisor: boolean
   ) {
     super(key);
     this.setComplete(true);

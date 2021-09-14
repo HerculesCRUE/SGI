@@ -3,18 +3,22 @@ export interface IConvocatoriaRequisitoEquipoBackend {
   id: number;
   /** Id de Convocatoria */
   convocatoriaId: number;
-  /** Referencia nivel académico */
-  nivelAcademicoRef: string;
-  /** Años nivel académico */
-  aniosNivelAcademico: number;
+  /** Fecha máxima nivel académico */
+  fechaMaximaNivelAcademico: string;
+  /** Fecha máxima nivel académico */
+  fechaMinimaNivelAcademico: string;
   /** Ratio máxima */
   edadMaxima: number;
   /** Vinculación universidad */
   vinculacionUniversidad: boolean;
-  /** Referencia modalidad contrato */
-  modalidadContratoRef: string;
-  /** Años vinculación */
-  aniosVinculacion: number;
+  /** Sexo */
+  sexoRef: string;
+  /** Ratio Sexo */
+  ratioSexo: number;
+  /** Fecha máxima categoria profesional */
+  fechaMaximaCategoriaProfesional: string;
+  /** Fecha mínima categoria profesional */
+  fechaMinimaCategoriaProfesional: string;
   /** Número mínimo proyectos competitivos */
   numMinimoCompetitivos: number;
   /** Número mínimo proyectos NO competitivos */

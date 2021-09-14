@@ -79,7 +79,7 @@ public class ProyectoAnualidadController {
    * @return Nuevo {@link ProyectoAnualidad} creado.
    */
   @PostMapping
-  @PreAuthorize("hasAuthority('CSP-PRO-E')")
+  @PreAuthorize("hasAuthorityForAnyUO('CSP-PRO-E')")
   ResponseEntity<ProyectoAnualidadOutput> create(@Valid @RequestBody ProyectoAnualidadInput proyectoAnualidad) {
     log.debug("create(ProyectoAnualidad proyectoAnualidad) - start");
     ProyectoAnualidad returnValue = service.create(convert(proyectoAnualidad));
@@ -110,7 +110,7 @@ public class ProyectoAnualidadController {
    * @param paging pageable.
    */
   @GetMapping("/{id}/anualidadgastos")
-  @PreAuthorize("hasAuthority('CSP-PRO-E')")
+  @PreAuthorize("hasAuthorityForAnyUO('CSP-PRO-E')")
   ResponseEntity<Page<AnualidadGastoOutput>> findAllAnualidadGasto(@PathVariable Long id,
       @RequestParam(name = "q", required = false) String query, @RequestPageable(sort = "s") Pageable paging) {
     log.debug("findAllAnualidadGasto(Long id, String query, Pageable paging) - start");
@@ -134,7 +134,7 @@ public class ProyectoAnualidadController {
    * @param paging pageable.
    */
   @GetMapping("/{id}/anualidadingresos")
-  @PreAuthorize("hasAuthority('CSP-PRO-E')")
+  @PreAuthorize("hasAuthorityForAnyUO('CSP-PRO-E')")
   ResponseEntity<Page<AnualidadIngresoOutput>> findAllAnualidadIngreso(@PathVariable Long id,
       @RequestParam(name = "q", required = false) String query, @RequestPageable(sort = "s") Pageable paging) {
     log.debug("findAllAnualidadIngreso(Long id, String query, Pageable paging) - start");
@@ -147,6 +147,28 @@ public class ProyectoAnualidadController {
 
     log.debug("findAllAnualidadIngreso(Long id, String query, Pageable paging) - end");
     return new ResponseEntity<>(convertPageAnualidadIngreso(page), HttpStatus.OK);
+  }
+
+  /**
+   * Devuelve una lista paginada y filtrada de {@link ProyectoAnualidad}
+   * 
+   * @param query  filtro de búsqueda.
+   * @param paging pageable.
+   */
+  @GetMapping()
+  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-EJEC-E', 'CSP-EJEC-V', 'CSP-EJEC-INV-VR')")
+  ResponseEntity<Page<ProyectoAnualidadOutput>> findAll(@RequestParam(name = "q", required = false) String query,
+      @RequestPageable(sort = "s") Pageable paging) {
+    log.debug("findAll(String query, Pageable paging) - start");
+    Page<ProyectoAnualidad> page = service.findAll(query, paging);
+
+    if (page.isEmpty()) {
+      log.debug("findAll(String query, Pageable paging) - end");
+      return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    log.debug("findAll(String query, Pageable paging) - end");
+    return new ResponseEntity<>(convert(page), HttpStatus.OK);
   }
 
   /**
@@ -198,6 +220,13 @@ public class ProyectoAnualidadController {
     return proyectoAnualidad;
   }
 
+  private Page<ProyectoAnualidadOutput> convert(Page<ProyectoAnualidad> page) {
+    List<ProyectoAnualidadOutput> content = page.getContent().stream()
+        .map((proyectoAnualidad) -> convert(proyectoAnualidad)).collect(Collectors.toList());
+
+    return new PageImpl<>(content, page.getPageable(), page.getTotalElements());
+  }
+
   private Page<AnualidadGastoOutput> convertPageAnualidadGasto(Page<AnualidadGasto> page) {
     List<AnualidadGastoOutput> content = page.getContent().stream().map((anualidadGasto) -> {
       return modelMapper.map(anualidadGasto, AnualidadGastoOutput.class);
@@ -213,4 +242,5 @@ public class ProyectoAnualidadController {
 
     return new PageImpl<>(content, page.getPageable(), page.getTotalElements());
   }
+
 }

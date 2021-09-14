@@ -14,6 +14,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { SeguimientoEvaluacionComponent } from '../seguimiento-formulario/seguimiento-evaluacion/seguimiento-evaluacion.component';
 import { SeguimientoEvaluarActionService } from '../seguimiento/seguimiento-evaluar.action.service';
 import { SeguimientoFormularioModule } from '../seguimiento-formulario/seguimiento-formulario.module';
+import { SgpSharedModule } from 'src/app/esb/sgp/shared/sgp-shared.module';
 
 
 @NgModule({
@@ -30,7 +31,8 @@ import { SeguimientoFormularioModule } from '../seguimiento-formulario/seguimien
     MaterialDesignModule,
     TranslateModule,
     FormsModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    SgpSharedModule
   ],
   exports: [
     SeguimientoListadoAnteriorMemoriaComponent,

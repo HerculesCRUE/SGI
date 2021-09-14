@@ -40,7 +40,7 @@ export class ProyectoEntidadesConvocantesComponent extends FragmentComponent imp
   @ViewChild(MatSort, { static: true }) sort: MatSort;
 
   constructor(
-    protected actionService: ProyectoActionService,
+    public actionService: ProyectoActionService,
     private matDialog: MatDialog,
     private dialogService: DialogService,
     private readonly translate: TranslateService,
@@ -99,7 +99,8 @@ export class ProyectoEntidadesConvocantesComponent extends FragmentComponent imp
     const data: ProyectoEntidadConvocanteModalData = {
       proyectoEntidadConvocante: value,
       selectedEmpresas: this.proyectoEntidadesConvocantesFragment.
-        proyectoEntidadConvocantes$.value.map((convocanteData) => convocanteData.entidad)
+        proyectoEntidadConvocantes$.value.map((convocanteData) => convocanteData.entidad),
+      readonly: this.actionService.readonly
     };
     const config = {
       panelClass: 'sgi-dialog-container',

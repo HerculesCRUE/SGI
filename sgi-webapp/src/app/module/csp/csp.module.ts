@@ -1,17 +1,19 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MaterialDesignModule } from '@material/material-design.module';
 import { TranslateModule } from '@ngx-translate/core';
-import { SharedModule } from '@shared/shared.module';
-import { CspRoutingModule } from './csp-routing.module';
-import { CspRootComponent } from './csp-root/csp-root.component';
-import { CspMenuPrincipalComponent } from './csp-menu-principal/csp-menu-principal.component';
 import { SgiAuthModule } from '@sgi/framework/auth';
+import { SharedModule } from '@shared/shared.module';
 import { CspInicioComponent } from './csp-inicio/csp-inicio.component';
-import { ReactiveFormsModule, FormsModule } from '@angular/forms';
+import { CspRootComponent } from './csp-root/csp-root.component';
+import { CspRoutingModule } from './csp-routing.module';
 
 @NgModule({
-  declarations: [CspRootComponent, CspMenuPrincipalComponent, CspInicioComponent],
+  declarations: [
+    CspRootComponent,
+    CspInicioComponent
+  ],
   imports: [
     SharedModule,
     CommonModule,
@@ -24,5 +26,4 @@ import { ReactiveFormsModule, FormsModule } from '@angular/forms';
   ],
   providers: []
 })
-export class CspModule {
-}
+export class CspModule { }

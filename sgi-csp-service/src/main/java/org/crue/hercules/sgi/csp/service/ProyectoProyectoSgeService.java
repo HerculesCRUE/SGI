@@ -62,4 +62,12 @@ public interface ProyectoProyectoSgeService {
    */
   Page<ProyectoProyectoSge> findAll(String query, Pageable pageable);
 
+  /**
+   * Indica si existen {@link ProyectoProyectoSge} de un {@link Proyecto}
+   * 
+   * @param proyectoId identificador de la {@link Proyecto}
+   * @return si existen {@link ProyectoProyectoSge}
+   */
+  boolean existsByProyecto(Long proyectoId);
+
 }

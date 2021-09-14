@@ -1,0 +1,487 @@
+[
+  {
+    "key": "ap4_1",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "label": "4.2.1.1.1 Medidas de contención"
+    }
+  },
+  {
+    "template": "<p>El lugar de trabajo se encontrará separado de toda actividad que se desarrolle en el mismo edificio (Exigencias según la Guía del <b>R.D.664/97</b>)</p>"
+  },
+  {
+    "key": "lugarTrabajoSeparado",
+    "type": "radio",
+    "templateOptions": {
+      "label": "Elige opción",
+      "required": true,
+      "options": [
+        {
+          "value": "no",
+          "label": "No"
+        },
+        {
+          "value": "si",
+          "label": "Sí"
+        }
+      ]
+    }
+  },
+  {
+    "key": "observaciones_lugarTrabajoSeparado",
+    "type": "textarea",
+    "templateOptions": {
+      "label": "Observaciones",
+      "placeholder": "Observaciones",
+      "required": false,
+      "disabled": false,
+      "autosize": true,
+      "autosizeMinRows": "1",
+      "autosizeMaxRows": "10"
+    }
+  },
+  {
+    "template": "<p>El aire introducido y extraído del lugar de trabajo se filtrará mediante la utilización de filtros de alta eficacia para partículas en elaire (HEPA) ode forma similar.(Exigencias según la Guía del <b>R.D. 664/97:No</b>)</p>"
+  },
+  {
+    "key": "filtroAltaEficacia",
+    "type": "radio",
+    "templateOptions": {
+      "required": true,
+      "label": "Elige opción",
+      "options": [
+        {
+          "value": "no",
+          "label": "No"
+        },
+        {
+          "value": "si",
+          "label": "Sí"
+        }
+      ]
+    }
+  },
+  {
+    "key": "observaciones_filtroAltaEficacia",
+    "type": "textarea",
+    "templateOptions": {
+      "label": "Observaciones",
+      "placeholder": "Observaciones",
+      "required": false,
+      "disabled": false,
+      "autosize": true,
+      "autosizeMinRows": "1",
+      "autosizeMaxRows": "10"
+    }
+  },
+  {
+    "template": "<p>Solamente se permitirá el acceso al personal designado. (Exigencias según la Guía del <b>R.D. 664/97</b>:Aconsejable.)</p>"
+  },
+  {
+    "key": "accesoPersonal",
+    "type": "radio",
+    "templateOptions": {
+      "required": true,
+      "label": "Elige opción",
+      "options": [
+        {
+          "value": "no",
+          "label": "No"
+        },
+        {
+          "value": "si",
+          "label": "Sí"
+        }
+      ]
+    }
+  },
+  {
+    "key": "observaciones_accesoPersonal",
+    "type": "textarea",
+    "templateOptions": {
+      "label": "Observaciones",
+      "placeholder": "Observaciones",
+      "required": false,
+      "disabled": false,
+      "autosize": true,
+      "autosizeMinRows": "1",
+      "autosizeMaxRows": "10"
+    }
+  },
+  {
+    "template": "<p>El lugar de trabajo deberá poder precintarse para permitir su desinfección.(Exigencias según la Guía del <b>R.D. 664/97</b>:No)</p>"
+  },
+  {
+    "key": "lugarTrabajo",
+    "type": "radio",
+    "templateOptions": {
+      "required": true,
+      "label": "Elige opción",
+      "options": [
+        {
+          "value": "no",
+          "label": "No"
+        },
+        {
+          "value": "si",
+          "label": "Sí"
+        }
+      ]
+    }
+  },
+  {
+    "key": "observaciones_lugarTrabajo",
+    "type": "textarea",
+    "templateOptions": {
+      "label": "Observaciones",
+      "placeholder": "Observaciones",
+      "required": false,
+      "disabled": false,
+      "autosize": true,
+      "autosizeMinRows": "1",
+      "autosizeMaxRows": "10"
+    }
+  },
+  {
+    "template": "<p>Procedimientos de desinfección especificados. (Exigencias según la Guía del <b>R.D. 664/97</b>:Si)</p>"
+  },
+  {
+    "key": "procedimientosDesinfeccion",
+    "type": "radio",
+    "templateOptions": {
+      "required": true,
+      "label": "Elige opción",
+      "options": [
+        {
+          "value": "no",
+          "label": "No"
+        },
+        {
+          "value": "si",
+          "label": "Sí"
+        }
+      ]
+    }
+  },
+  {
+    "key": "observaciones_procedimientosDesinfeccion",
+    "type": "textarea",
+    "templateOptions": {
+      "label": "Observaciones",
+      "placeholder": "Observaciones",
+      "required": false,
+      "disabled": false,
+      "autosize": true,
+      "autosizeMinRows": "1",
+      "autosizeMaxRows": "10"
+    }
+  },
+  {
+    "template": "<p>El lugar de trabajo se mantendrá con una presión negativa respecto a la presión atmosférica. (Exigencias según la Guía del <b>R.D. 664/97</b>:Si)</p>"
+  },
+  {
+    "key": "presionNegativa",
+    "type": "radio",
+    "templateOptions": {
+      "required": true,
+      "label": "Elige opción",
+      "options": [
+        {
+          "value": "no",
+          "label": "No"
+        },
+        {
+          "value": "si",
+          "label": "Sí"
+        }
+      ]
+    }
+  },
+  {
+    "key": "observaciones_presionNegativa",
+    "type": "textarea",
+    "templateOptions": {
+      "label": "Observaciones",
+      "placeholder": "Observaciones",
+      "required": false,
+      "disabled": false,
+      "autosize": true,
+      "autosizeMinRows": "1",
+      "autosizeMaxRows": "10"
+    }
+  },
+  {
+    "template": "<p>Control eficiente de vectores, por ejemplo, de roedores e insectos. (Exigencias según la Guía del <b>R.D. 664/97</b>:Aconsejable)</p>"
+  },
+  {
+    "key": "roedoresInsectos",
+    "type": "radio",
+    "templateOptions": {
+      "required": true,
+      "label": "Elige opción",
+      "options": [
+        {
+          "value": "no",
+          "label": "No"
+        },
+        {
+          "value": "si",
+          "label": "Sí"
+        }
+      ]
+    }
+  },
+  {
+    "key": "observaciones_roedoresInsectos",
+    "type": "textarea",
+    "templateOptions": {
+      "label": "Observaciones",
+      "placeholder": "Observaciones",
+      "required": false,
+      "disabled": false,
+      "autosize": true,
+      "autosizeMinRows": "1",
+      "autosizeMaxRows": "10"
+    }
+  },
+  {
+    "template": "<p>Superficies impermeables al agua y de fácil limpieza.(Exigencias según la Guía del <b>R.D. 664/97</b>:Sí, para el banco de pruebas o mesa de trabajo)</p>"
+  },
+  {
+    "key": "superficiesImpermeables",
+    "type": "radio",
+    "templateOptions": {
+      "required": true,
+      "label": "Elige opción",
+      "options": [
+        {
+          "value": "no",
+          "label": "No"
+        },
+        {
+          "value": "si",
+          "label": "Sí"
+        }
+      ]
+    }
+  },
+  {
+    "key": "observaciones_superficiesImpermeables",
+    "type": "textarea",
+    "templateOptions": {
+      "label": "Observaciones",
+      "placeholder": "Observaciones",
+      "required": false,
+      "disabled": false,
+      "autosize": true,
+      "autosizeMinRows": "1",
+      "autosizeMaxRows": "10"
+    }
+  },
+  {
+    "template": "<p>Superficies resistentes a ácidos, álcalis, disolventes y desinfectantes.(Exigencias según la Guía del <b>R.D. 664/97</b>:Aconsejable)</p>"
+  },
+  {
+    "key": "superficiesResistentes",
+    "type": "radio",
+    "templateOptions": {
+      "required": true,
+      "label": "Elige opción",
+      "options": [
+        {
+          "value": "no",
+          "label": "No"
+        },
+        {
+          "value": "si",
+          "label": "Sí"
+        }
+      ]
+    }
+  },
+  {
+    "key": "observaciones_superficiesResistentes",
+    "type": "textarea",
+    "templateOptions": {
+      "label": "Observaciones",
+      "placeholder": "Observaciones",
+      "required": false,
+      "disabled": false,
+      "autosize": true,
+      "autosizeMinRows": "1",
+      "autosizeMaxRows": "10"
+    }
+  },
+  {
+    "template": "<p>Almacenamiento de seguridad para agentes biológicos.(Exigencias según la Guía del <b>R.D. 664/97</b>:Si)</p>"
+  },
+  {
+    "key": "almacenamientoSeguridad",
+    "type": "radio",
+    "templateOptions": {
+      "required": true,
+      "label": "Elige opción",
+      "options": [
+        {
+          "value": "no",
+          "label": "No"
+        },
+        {
+          "value": "si",
+          "label": "Sí"
+        }
+      ]
+    }
+  },
+  {
+    "key": "observaciones_almacenamientoSeguridad",
+    "type": "textarea",
+    "templateOptions": {
+      "label": "Observaciones",
+      "placeholder": "Observaciones",
+      "required": false,
+      "disabled": false,
+      "autosize": true,
+      "autosizeMinRows": "1",
+      "autosizeMaxRows": "10"
+    }
+  },
+  {
+    "template": "<p>Se instalará una ventanilla de observación o un dispositivo alternativo en las zonas de manera que se pueda ver a sus ocupantes.(Exigenciassegún la Guía del <b>R.D. 664/97</b>:Aconsejable)</p>"
+  },
+  {
+    "key": "ventanillaObservacion",
+    "type": "radio",
+    "templateOptions": {
+      "required": true,
+      "label": "Elige opción",
+      "options": [
+        {
+          "value": "no",
+          "label": "No"
+        },
+        {
+          "value": "si",
+          "label": "Sí"
+        }
+      ]
+    }
+  },
+  {
+    "key": "observaciones_ventanillaObservacion",
+    "type": "textarea",
+    "templateOptions": {
+      "label": "Observaciones",
+      "placeholder": "Observaciones",
+      "required": false,
+      "disabled": false,
+      "autosize": true,
+      "autosizeMinRows": "1",
+      "autosizeMaxRows": "10"
+    }
+  },
+  {
+    "template": "<p>Laboratorio con equipo propio.(Exigencias según la Guía del <b>R.D. 664/97</b>:No)</p>"
+  },
+  {
+    "key": "laboratorioEquipo",
+    "type": "radio",
+    "templateOptions": {
+      "required": true,
+      "label": "Elige opción",
+      "options": [
+        {
+          "value": "no",
+          "label": "No"
+        },
+        {
+          "value": "si",
+          "label": "Sí"
+        }
+      ]
+    }
+  },
+  {
+    "key": "observaciones_laboratorioEquipo",
+    "type": "textarea",
+    "templateOptions": {
+      "label": "Observaciones",
+      "placeholder": "Observaciones",
+      "required": false,
+      "disabled": false,
+      "autosize": true,
+      "autosizeMinRows": "1",
+      "autosizeMaxRows": "10"
+    }
+  },
+  {
+    "template": "<p>El material infectado, animales incluidos, deberá manejarse en una cabina de seguridad biológica o en un aislador u otra contenciónapropiada.(Exigencias según la <b>Guía del R.D. 664/97</b>:cuando proceda)</p>"
+  },
+  {
+    "key": "materialInfectado",
+    "type": "radio",
+    "templateOptions": {
+      "required": true,
+      "label": "Elige opción",
+      "options": [
+        {
+          "value": "no",
+          "label": "No"
+        },
+        {
+          "value": "si",
+          "label": "Sí"
+        }
+      ]
+    }
+  },
+  {
+    "key": "observaciones_materialInfectado",
+    "type": "textarea",
+    "templateOptions": {
+      "label": "Observaciones",
+      "placeholder": "Observaciones",
+      "required": false,
+      "disabled": false,
+      "autosize": true,
+      "autosizeMinRows": "1",
+      "autosizeMaxRows": "10"
+    }
+  },
+  {
+    "template": "<p>Incinerador para destrucción de animales muertos.(Exigencias según la <b>Guía del R.D. 664/97</b>:Aconsejable)</p>"
+  },
+  {
+    "key": "animalesMuertos",
+    "type": "radio",
+    "templateOptions": {
+      "required": true,
+      "label": "Elige opción",
+      "options": [
+        {
+          "value": "no",
+          "label": "No"
+        },
+        {
+          "value": "si",
+          "label": "Sí"
+        }
+      ]
+    }
+  },
+  {
+    "key": "observaciones_animalesMuertos",
+    "type": "textarea",
+    "templateOptions": {
+      "label": "Observaciones",
+      "placeholder": "Observaciones",
+      "required": false,
+      "disabled": false,
+      "autosize": true,
+      "autosizeMinRows": "1",
+      "autosizeMaxRows": "10"
+    }
+  }
+]

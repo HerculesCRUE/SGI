@@ -1,60 +1,59 @@
 <!-- Evaluadores listado -->
-<div class="scrollable-panel-with-footer">
-  <section class="evaluador-listado">
+<sgi-menu-content>
+  <!-- Buscador de comités -->
 
-    <!-- Buscador de comités -->
+  <form class="formulario mat-elevation-z8" [formGroup]="formGroup" [fxLayout.xs]="fxLayoutProperties.xs"
+    [fxLayout]="fxLayoutProperties.layout" fxLayoutGap="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
 
-    <form class="formulario mat-elevation-z8" [formGroup]="formGroup" [fxLayout.xs]="fxLayoutProperties.xs"
+    <div fxFlex="85%" fxFlex.sm="50%" fxFlex.md="73%" [fxLayout.xs]="fxLayoutProperties.xs"
       [fxLayout]="fxLayoutProperties.layout" fxLayoutGap="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
-
-      <div fxFlex="85%" fxFlex.sm="50%" fxFlex.md="73%" [fxLayout.xs]="fxLayoutProperties.xs"
-        [fxLayout]="fxLayoutProperties.layout" fxLayoutGap="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
-        <!--Persona-->
-        <div class="col">
-          <mat-form-field fxFill>
-            <mat-label>{{'title.eti.search.solicitante' | translate}}</mat-label>
-            <sgi-select-persona placeholder="{{'title.eti.search.solicitante' | translate}}"
-              formControlName="solicitante" [tipoColectivo]="tipoColectivoEvaluador">
-            </sgi-select-persona>
-          </mat-form-field>
-        </div>
-
-        <!-- Comité -->
-        <div class="col">
-          <mat-form-field class="input-form">
-            <mat-label>{{'label.eti.comite' | translate}}</mat-label>
-            <input type="text" [placeholder]="'label.eti.comite' | translate" arial-label="Number" matInput
-              formControlName="comite" [matAutocomplete]="autocompleteComite">
-            <mat-autocomplete #autocompleteComite="matAutocomplete" [displayWith]="getComite">
-              <mat-option *ngFor="let comite of filteredComites | async" [value]="comite">
-                {{comite.comite}}
-              </mat-option>
-            </mat-autocomplete>
-          </mat-form-field>
-        </div>
-
-        <!-- Estado -->
-        <div class="col checkbox">
-          <mat-checkbox color="primary" formControlName="estado" type="text" id="estado">
-            {{'label.activo' | translate}}</mat-checkbox>
-        </div>
+      <!--Persona-->
+      <div class="col">
+        <mat-form-field fxFill>
+          <mat-label>{{'title.eti.search.solicitante' | translate}}</mat-label>
+          <sgi-select-persona placeholder="{{'title.eti.search.solicitante' | translate}}" formControlName="solicitante"
+            [tipoColectivo]="tipoColectivoEvaluador">
+          </sgi-select-persona>
+        </mat-form-field>
       </div>
 
-      <div class="buttons-final">
-        <div class="col filter-button">
-          <button color="primary" aria-label="Center Align" mat-raised-button (click)="onSearch()">
-            <mat-icon>search</mat-icon> {{'btn.search'| translate}}
-          </button>
-          <button color="warn" aria-label="Center Align" (click)="onClearFilters()" mat-button>{{'btn.clean'|
-            translate}}
-          </button>
-        </div>
+      <!-- Comité -->
+      <div class="col">
+        <mat-form-field class="input-form">
+          <mat-label>{{'label.eti.comite' | translate}}</mat-label>
+          <input type="text" [placeholder]="'label.eti.comite' | translate" arial-label="Number" matInput
+            formControlName="comite" [matAutocomplete]="autocompleteComite">
+          <mat-autocomplete #autocompleteComite="matAutocomplete" [displayWith]="getComite">
+            <mat-option *ngFor="let comite of filteredComites | async" [value]="comite">
+              {{comite.comite}}
+            </mat-option>
+          </mat-autocomplete>
+        </mat-form-field>
       </div>
 
-    </form>
+      <!-- Estado -->
+      <div class="col checkbox">
+        <mat-checkbox color="primary" formControlName="estado" type="text" id="estado">
+          {{'label.activo' | translate}}</mat-checkbox>
+      </div>
+    </div>
 
-    <table class="mat-elevation-z8 table-evaluador" mat-table [dataSource]="evaluadores$ | async" matSort
-      matSortActive="id" matSortDirection="asc" matSortDisableClear>
+    <div class="buttons-final">
+      <div class="col filter-button">
+        <button color="primary" aria-label="Center Align" mat-raised-button (click)="onSearch()">
+          <mat-icon>search</mat-icon> {{'btn.search'| translate}}
+        </button>
+        <button color="warn" aria-label="Center Align" (click)="onClearFilters()" mat-button>{{'btn.clean'|
+          translate}}
+        </button>
+      </div>
+    </div>
+
+  </form>
+
+  <div class="mat-elevation-z4">
+    <table mat-table [dataSource]="evaluadores$ | async" matSort matSortActive="id" matSortDirection="asc"
+      matSortDisableClear>
 
       <!-- Nombre y apellidos persona -->
       <ng-container matColumnDef="nombre">
@@ -130,8 +129,10 @@
 
     <mat-paginator [pageSizeOptions]="elementosPagina" [length]="totalElementos" showFirstLastButtons>
     </mat-paginator>
-  </section>
-</div>
-<sgi-footer-crear *sgiHasAuthorityForAnyUO="'ETI-EVR-C'" [texto]="textoCrear" [route]="ROUTE_NAMES.NEW">
-</sgi-footer-crear>
+  </div>
+  <sgi-menu-content-footer *sgiHasAuthorityForAnyUO="'ETI-EVR-C'">
+    <sgi-footer-crear [texto]="textoCrear" [route]="ROUTE_NAMES.NEW">
+    </sgi-footer-crear>
+  </sgi-menu-content-footer>
+</sgi-menu-content>
 <!-- FIN evaluadores listado-->

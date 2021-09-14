@@ -45,6 +45,8 @@ export interface IProyecto {
   confidencial: boolean;
   /** clasificacionCVN */
   clasificacionCVN: ClasificacionCVN;
+  /** coordinado */
+  coordinado: boolean;
   /** colaborativo */
   colaborativo: boolean;
   /** coordinadorExterno */
@@ -69,12 +71,14 @@ export interface IProyecto {
   activo: boolean;
   /** Tipo de Seguimiento */
   tipoSeguimiento: TipoSeguimiento;
-  /** Fecha Base */
-  fechaBase: DateTime;
   /** Importe presupuesto */
   importePresupuesto: number;
+  /** Importe presupuesto Costes Indirectos */
+  importePresupuestoCostesIndirectos: number;
   /** Importe concedido */
   importeConcedido: number;
+  /** Importe concedido Costes Indirectos */
+  importeConcedidoCostesIndirectos: number;
   /** Importe presupuesto socios */
   importePresupuestoSocios: number;
   /** Importe concedido socios */

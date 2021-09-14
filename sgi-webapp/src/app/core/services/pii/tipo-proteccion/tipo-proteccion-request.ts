@@ -1,5 +1,4 @@
-import { TipoPropiedad } from '@core/models/pii/tipo-proteccion';
-
+import { TipoPropiedad } from '@core/enums/tipo-propiedad';
 
 export interface ITipoProteccionRequest {
 
@@ -9,5 +8,3 @@ export interface ITipoProteccionRequest {
   padreId?: number;
 
 }
-
-

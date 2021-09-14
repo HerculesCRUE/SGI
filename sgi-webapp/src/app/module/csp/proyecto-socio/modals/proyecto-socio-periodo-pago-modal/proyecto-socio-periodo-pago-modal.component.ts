@@ -25,6 +25,7 @@ export interface ProyectoSocioPeriodoPagoModalData {
   fechaInicioProyectoSocio: DateTime;
   fechaFinProyectoSocio: DateTime;
   isEdit: boolean;
+  readonly: boolean;
 }
 
 @Component({
@@ -125,6 +126,11 @@ export class ProyectoSocioPeriodoPagoModalComponent extends
         fechaPago: new FormControl(this.data.proyectoSocioPeriodoPago.fechaPago, []),
       }
     );
+
+    if (this.data.readonly) {
+      formGroup.disable();
+    }
+
     return formGroup;
   }
 }

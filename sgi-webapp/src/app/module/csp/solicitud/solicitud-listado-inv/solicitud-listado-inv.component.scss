@@ -1,7 +1,7 @@
 @import "colors.scss";
 @import "typography.scss";
 
-.solicitud-listado {
+:host {
   .formulario {
     padding: 10px 20px 10px 20px;
     .col {

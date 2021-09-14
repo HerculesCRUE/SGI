@@ -1,0 +1,29 @@
+[
+  {
+    "key": "ap1_1",
+    "wrappers": [
+      "expansion-panel"
+    ],
+    "templateOptions": {
+      "label": "Fecha  de inicio de la actividad de investigación",
+      "expanded": true
+    },
+    "fieldGroup": [
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "<p>Rellene este punto en función del comité al que se dirige su informe:<ul><li>Para el CEI fecha de inicio del reclutamiento.</li><li>Para el CEEA fecha de inicio de uso de animales de experimentación.</li><li>Para el CBE fecha de inicio de manipulación de agentes biológicos u OMG, SQP, SR.</li></ul></p>"
+      },
+      {
+        "key": "fechaInicio",
+        "type": "datepicker",
+        "templateOptions": {
+          "required": true,
+          "type": "text",
+          "label": "Fecha"
+        }
+      }
+    ]
+  }
+]

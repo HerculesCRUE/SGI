@@ -57,7 +57,7 @@ public class AnualidadGastoController {
    * @return {@link AnualidadGasto} actualizado.
    */
   @PatchMapping("/{proyectoAnualidadId}")
-  @PreAuthorize("hasAuthority('CSP-PRO-E')")
+  @PreAuthorize("hasAuthorityForAnyUO('CSP-PRO-E')")
   public ResponseEntity<List<AnualidadGastoOutput>> update(@PathVariable Long proyectoAnualidadId,
       @Valid @RequestBody List<AnualidadGastoInput> anualidadGasto) {
     log.debug("update(Long convocatoriaId, List<AnualidadGastoInput> anualidadGasto) - start");

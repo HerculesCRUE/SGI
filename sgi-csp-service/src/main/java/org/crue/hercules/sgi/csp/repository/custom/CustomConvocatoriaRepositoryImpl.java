@@ -114,8 +114,8 @@ public class CustomConvocatoriaRepositoryImpl implements CustomConvocatoriaRepos
    *         datos vinculados.
    */
   @Override
-  public Boolean esRegistradaConSolicitudesOProyectos(Long id) {
-    log.debug("esRegistradaConSolicitudesOProyectos(Long id) - start");
+  public Boolean isRegistradaConSolicitudesOProyectos(Long id) {
+    log.debug("isRegistradaConSolicitudesOProyectos(Long id) - start");
 
     CriteriaBuilder cb = entityManager.getCriteriaBuilder();
     CriteriaQuery<Long> cq = cb.createQuery(Long.class);
@@ -147,7 +147,7 @@ public class CustomConvocatoriaRepositoryImpl implements CustomConvocatoriaRepos
 
     Boolean returnValue = entityManager.createQuery(cq).getResultList().size() > 0;
 
-    log.debug("esRegistradaConSolicitudesOProyectos(Long id) - end");
+    log.debug("isRegistradaConSolicitudesOProyectos(Long id) - end");
     return returnValue;
   }
 

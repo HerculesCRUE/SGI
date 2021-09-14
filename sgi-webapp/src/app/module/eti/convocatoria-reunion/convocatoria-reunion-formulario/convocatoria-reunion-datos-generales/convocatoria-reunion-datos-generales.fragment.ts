@@ -10,8 +10,6 @@ import { ConvocatoriaReunionService } from '@core/services/eti/convocatoria-reun
 import { EvaluadorService } from '@core/services/eti/evaluador.service';
 import { PersonaService } from '@core/services/sgp/persona.service';
 import { DateValidator } from '@core/validators/date-validator';
-import { HoraValidador } from '@core/validators/hora-validator';
-import { MinutoValidador } from '@core/validators/minuto-validator';
 import { NullIdValidador } from '@core/validators/null-id-validador';
 import { RSQLSgiRestFilter, SgiRestFilterOperator, SgiRestFindOptions, SgiRestListResult } from '@sgi/framework/http';
 import { NGXLogger } from 'ngx-logger';
@@ -44,8 +42,7 @@ export class ConvocatoriaReunionDatosGeneralesFragment extends FormFragment<ICon
       fechaEvaluacion: [null, Validators.required],
       fechaLimite: [null, Validators.required],
       tipoConvocatoriaReunion: ['', new NullIdValidador().isValid()],
-      horaInicio: ['', new HoraValidador().isValid()],
-      minutoInicio: ['', new MinutoValidador().isValid()],
+      horaInicio: [null, Validators.required],
       lugar: ['', Validators.required],
       ordenDia: ['', Validators.required],
       convocantes: ['', Validators.required],
@@ -140,6 +137,15 @@ export class ConvocatoriaReunionDatosGeneralesFragment extends FormFragment<ICon
     );
   }
 
+  private getDate(hours: number, minutes: number): Date {
+    const date = new Date();
+    date.setHours(hours);
+    date.setMinutes(minutes);
+    date.setSeconds(0);
+    date.setMilliseconds(0);
+    return date;
+  }
+
   buildPatch(value: IConvocatoriaReunionDatosGenerales): { [key: string]: any } {
     const result = {
       codigo: value.codigo,
@@ -147,8 +153,7 @@ export class ConvocatoriaReunionDatosGeneralesFragment extends FormFragment<ICon
       fechaEvaluacion: value.fechaEvaluacion,
       fechaLimite: value.fechaLimite?.minus({ hours: 23, minutes: 59, seconds: 59 }),
       tipoConvocatoriaReunion: value.tipoConvocatoriaReunion,
-      horaInicio: value.horaInicio,
-      minutoInicio: value.minutoInicio,
+      horaInicio: this.getDate(value.horaInicio, value.minutoInicio),
       lugar: value.lugar,
       ordenDia: value.ordenDia,
     };
@@ -160,7 +165,6 @@ export class ConvocatoriaReunionDatosGeneralesFragment extends FormFragment<ICon
       this.getFormGroup().controls.fechaLimite.disable({ onlySelf: true });
       this.getFormGroup().controls.tipoConvocatoriaReunion.disable({ onlySelf: true });
       this.getFormGroup().controls.horaInicio.disable({ onlySelf: true });
-      this.getFormGroup().controls.minutoInicio.disable({ onlySelf: true });
       this.getFormGroup().controls.convocantes.disable({ onlySelf: true });
     } else {
       // Para que en la carga inicial no se permita editar si hay evaluaciones asignadas.
@@ -198,8 +202,8 @@ export class ConvocatoriaReunionDatosGeneralesFragment extends FormFragment<ICon
       form.controls.fechaLimite.value.plus({ hours: 23, minutes: 59, seconds: 59 });
     this.convocatoriaReunion.tipoConvocatoriaReunion = (this.getFormGroup().controls.tipoConvocatoriaReunion.disabled) ?
       this.getFormGroup().controls.tipoConvocatoriaReunion.value : form.controls.tipoConvocatoriaReunion.value;
-    this.convocatoriaReunion.horaInicio = form.controls.horaInicio.value;
-    this.convocatoriaReunion.minutoInicio = form.controls.minutoInicio.value;
+    this.convocatoriaReunion.horaInicio = form.controls.horaInicio.value?.getHours();
+    this.convocatoriaReunion.minutoInicio = form.controls.horaInicio.value?.getMinutes();
     this.convocatoriaReunion.lugar = form.controls.lugar.value;
     this.convocatoriaReunion.ordenDia = form.controls.ordenDia.value;
     return this.convocatoriaReunion;

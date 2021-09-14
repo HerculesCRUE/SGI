@@ -1,0 +1,101 @@
+[
+  {
+    "key": "ap3_4_4",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "label": "3.4.4 Sustancias químicas peligrosas"
+    },
+    "fieldGroup": [
+      {
+        "template": "<p>En esta actividad ¿se utilizan Sustancias Químicas Peligrosas?</p>"
+      },
+      {
+        "key": "sustanciasQuimicasPeligrosas",
+        "type": "radio",
+        "templateOptions": {
+          "label": "Elige opción:",
+          "required": true,
+          "options": [
+            {
+              "value": "no",
+              "label": "No"
+            },
+            {
+              "value": "si",
+              "label": "Sí"
+            }
+          ]
+        }
+      },
+      {
+        "template": "Tipo de Sustancia Química Peligrosa que se utiliza:",
+        "hideExpression": "!model.sustanciasQuimicasPeligrosas || model.sustanciasQuimicasPeligrosas === 'no'"
+      },
+      {
+        "type": "multicheckbox",
+        "key": "tiposSustanciasQuimicas",
+        "hideExpression": "!model.sustanciasQuimicasPeligrosas || model.sustanciasQuimicasPeligrosas === 'no'",
+        "templateOptions": {
+          "label": "Opciones:",
+          "type": "array",
+          "required": true,
+          "options": [
+            {
+              "value": "inflamable",
+              "label": "Inflamable"
+            },
+            {
+              "value": "explosiva",
+              "label": "Explosiva"
+            },
+            {
+              "value": "corrosiva",
+              "label": "Corrosiva"
+            },
+            {
+              "value": "toxica",
+              "label": "Tóxica"
+            },
+            {
+              "value": "cancerigena",
+              "label": "Cancerígena"
+            },
+            {
+              "value": "mutagena",
+              "label": "Mutágena"
+            },
+            {
+              "value": "irritante",
+              "label": "Irritante"
+            },
+            {
+              "value": "otra",
+              "label": "Otra"
+            }
+          ]
+        }
+      },
+      {
+        "key": "otraTexto",
+        "type": "textarea",
+        "hideExpression": "model.sustanciasQuimicasPeligrosas==='no' || (!model.tiposSustanciasQuimicas || !model.tiposSustanciasQuimicas.find((c) => c === 'otra'))",
+        "templateOptions": {
+          "placeholder": "Especificar",
+          "label": "Especificar",
+          "required": true,
+          "autosize": true,
+          "autosizeMinRows": "1",
+          "autosizeMaxRows": "10"
+        }
+      },
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "Nota: Debe adjuntar la Ficha de Seguridad en Documentación Adicional."
+      }
+    ]
+  }
+]

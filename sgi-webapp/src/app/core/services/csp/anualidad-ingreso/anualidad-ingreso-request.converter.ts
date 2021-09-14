@@ -1,6 +1,7 @@
 import { IAnualidadIngreso } from '@core/models/csp/anualidad-ingreso';
 import { IProyectoAnualidad } from '@core/models/csp/proyecto-anualidad';
 import { IProyectoPartida } from '@core/models/csp/proyecto-partida';
+import { ICodigoEconomicoIngreso } from '@core/models/sge/codigo-economico-ingreso';
 import { SgiBaseConverter } from '@sgi/framework/core';
 import { IAnualidadIngresoRequest } from './anualidad-ingreso-request';
 
@@ -12,7 +13,7 @@ class AnualidadIngresoRequestConverter extends SgiBaseConverter<IAnualidadIngres
     return {
       id: undefined,
       proyectoAnualidad: { id: value.proyectoAnualidadId } as IProyectoAnualidad,
-      codigoEconomicoRef: value.codigoEconomicoRef,
+      codigoEconomico: { id: value.codigoEconomicoRef } as ICodigoEconomicoIngreso,
       proyectoPartida: {
         id: value.proyectoPartidaId
       } as IProyectoPartida,
@@ -26,7 +27,7 @@ class AnualidadIngresoRequestConverter extends SgiBaseConverter<IAnualidadIngres
     }
     return {
       proyectoAnualidadId: value.proyectoAnualidad?.id,
-      codigoEconomicoRef: value.codigoEconomicoRef,
+      codigoEconomicoRef: value.codigoEconomico?.id,
       proyectoPartidaId: value.proyectoPartida.id,
       importeConcedido: value.importeConcedido,
       proyectoSgeRef: value.proyectoSgeRef

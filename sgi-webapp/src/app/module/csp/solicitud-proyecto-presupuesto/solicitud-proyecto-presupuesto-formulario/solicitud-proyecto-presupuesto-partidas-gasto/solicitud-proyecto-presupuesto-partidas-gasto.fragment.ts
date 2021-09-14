@@ -11,7 +11,9 @@ import { map, mergeMap, switchMap, takeLast, tap } from 'rxjs/operators';
 export interface SolicitudProyectoPresupuestoListado {
   partidaGasto: StatusWrapper<ISolicitudProyectoPresupuesto>;
   importeSolicitadoPrevio: number;
-  importeTotalConceptoGasto: number;
+  importeTotalSolicitadoConceptoGasto: number;
+  importePresupuestadoPrevio: number;
+  importeTotalPresupuestadoConceptoGasto: number;
   index: number;
 }
 
@@ -62,8 +64,10 @@ export class SolicitudProyectoPresupuestoPartidasGastoFragment extends Fragment 
                             return {
                               partidaGasto: new StatusWrapper<ISolicitudProyectoPresupuesto>(element),
                               importeSolicitadoPrevio: element.importeSolicitado,
-                              importeTotalConceptoGasto: solicitudProyectoPresupuestoTotalesConceptoGasto
-                                .find(concepto => concepto.conceptoGasto.id === element.conceptoGasto.id)?.importeTotal,
+                              importeTotalSolicitadoConceptoGasto: solicitudProyectoPresupuestoTotalesConceptoGasto
+                                .find(concepto => concepto.conceptoGasto.id === element.conceptoGasto.id)?.importeTotalSolicitado,
+                              importeTotalPresupuestadoConceptoGasto: solicitudProyectoPresupuestoTotalesConceptoGasto
+                                .find(concepto => concepto.conceptoGasto.id === element.conceptoGasto.id)?.importeTotalPresupuestado,
                               index
                             } as SolicitudProyectoPresupuestoListado;
                           });
@@ -113,12 +117,14 @@ export class SolicitudProyectoPresupuestoPartidasGastoFragment extends Fragment 
 
       const solicitudProyectoPresupuestoTotalesConceptoGasto = this.solicitudProyectoPresupuestoTotalesConceptoGasto
         .find(concepto => concepto.conceptoGasto.id === wrapper.partidaGasto.value.conceptoGasto.id);
-      solicitudProyectoPresupuestoTotalesConceptoGasto.importeTotal -= wrapper.partidaGasto.value.importeSolicitado;
+      solicitudProyectoPresupuestoTotalesConceptoGasto.importeTotalSolicitado -= wrapper.partidaGasto.value.importeSolicitado;
+      solicitudProyectoPresupuestoTotalesConceptoGasto.importeTotalPresupuestado -= wrapper.partidaGasto.value.importePresupuestado;
 
       current
         .filter(value => value.partidaGasto.value.conceptoGasto.id === wrapper.partidaGasto.value.conceptoGasto.id)
         .map(value => {
-          value.importeTotalConceptoGasto = solicitudProyectoPresupuestoTotalesConceptoGasto?.importeTotal;
+          value.importeTotalSolicitadoConceptoGasto = solicitudProyectoPresupuestoTotalesConceptoGasto?.importeTotalSolicitado;
+          value.importeTotalPresupuestadoConceptoGasto = solicitudProyectoPresupuestoTotalesConceptoGasto?.importeTotalPresupuestado;
         });
 
       current.splice(index, 1);
@@ -141,31 +147,39 @@ export class SolicitudProyectoPresupuestoPartidasGastoFragment extends Fragment 
     if (!solicitudProyectoPresupuestoTotalesConceptoGasto) {
       solicitudProyectoPresupuestoTotalesConceptoGasto = {
         conceptoGasto: partidaGasto.conceptoGasto,
-        importeTotal: 0
+        importeTotalSolicitado: 0,
+        importeTotalPresupuestado: 0
       };
 
       this.solicitudProyectoPresupuestoTotalesConceptoGasto.push(solicitudProyectoPresupuestoTotalesConceptoGasto);
     }
 
-    const importeTotalconceptoGasto = solicitudProyectoPresupuestoTotalesConceptoGasto?.importeTotal + partidaGasto.importeSolicitado;
+    const importeTotalSolicitadoConceptoGasto =
+      solicitudProyectoPresupuestoTotalesConceptoGasto?.importeTotalSolicitado + partidaGasto.importeSolicitado;
+    const importeTotalPresupuestadoConceptoGasto =
+      solicitudProyectoPresupuestoTotalesConceptoGasto?.importeTotalPresupuestado + partidaGasto.importePresupuestado;
 
     const current = this.partidasGastos$.value;
     const solicitudProyectoPresupuestoListado = {
       partidaGasto: wrapped,
       importeSolicitadoPrevio: partidaGasto.importeSolicitado,
-      importeTotalConceptoGasto: importeTotalconceptoGasto,
+      importeTotalSolicitadoConceptoGasto,
+      importePresupuestadoPrevio: partidaGasto.importePresupuestado,
+      importeTotalPresupuestadoConceptoGasto,
       index: current.reduce((prev, acu) => ((prev.index > acu.index) ? prev : acu), { index: 0 }).index + 1
     } as SolicitudProyectoPresupuestoListado;
 
     current.push(solicitudProyectoPresupuestoListado);
     this.partidasGastos$.next(current);
-    solicitudProyectoPresupuestoTotalesConceptoGasto.importeTotal = importeTotalconceptoGasto;
+    solicitudProyectoPresupuestoTotalesConceptoGasto.importeTotalSolicitado = importeTotalSolicitadoConceptoGasto;
+    solicitudProyectoPresupuestoTotalesConceptoGasto.importeTotalPresupuestado = importeTotalPresupuestadoConceptoGasto;
     this.setChanges(true);
 
     current
       .filter(value => value.partidaGasto.value.conceptoGasto.id === partidaGasto.conceptoGasto.id)
       .map(value => {
-        value.importeTotalConceptoGasto = solicitudProyectoPresupuestoTotalesConceptoGasto?.importeTotal;
+        value.importeTotalSolicitadoConceptoGasto = solicitudProyectoPresupuestoTotalesConceptoGasto?.importeTotalSolicitado;
+        value.importeTotalPresupuestadoConceptoGasto = solicitudProyectoPresupuestoTotalesConceptoGasto?.importeTotalPresupuestado;
       });
   }
 
@@ -179,17 +193,24 @@ export class SolicitudProyectoPresupuestoPartidasGastoFragment extends Fragment 
       if (!solicitudProyectoPresupuestoTotalesConceptoGasto) {
         this.solicitudProyectoPresupuestoTotalesConceptoGasto.push({
           conceptoGasto: solicitudProyectoPresupuestoListado.partidaGasto.value.conceptoGasto,
-          importeTotal: 0
+          importeTotalSolicitado: 0,
+          importeTotalPresupuestado: 0
         });
       }
 
-      const importeTotalconceptoGasto = solicitudProyectoPresupuestoListado.partidaGasto.value.importeSolicitado
-        + solicitudProyectoPresupuestoTotalesConceptoGasto?.importeTotal
+      const importeTotalSolicitadoConceptoGasto = solicitudProyectoPresupuestoListado.partidaGasto.value.importeSolicitado
+        + solicitudProyectoPresupuestoTotalesConceptoGasto?.importeTotalSolicitado
         - this.partidasGastos$.value[index].importeSolicitadoPrevio;
+
+      const importeTotalPresupuestadoConceptoGasto = solicitudProyectoPresupuestoListado.partidaGasto.value.importePresupuestado
+        + solicitudProyectoPresupuestoTotalesConceptoGasto?.importeTotalPresupuestado
+        - this.partidasGastos$.value[index].importePresupuestadoPrevio;
 
       this.partidasGastos$.value[index].partidaGasto = solicitudProyectoPresupuestoListado.partidaGasto;
       this.partidasGastos$.value[index].importeSolicitadoPrevio = solicitudProyectoPresupuestoListado.partidaGasto.value.importeSolicitado;
-      solicitudProyectoPresupuestoTotalesConceptoGasto.importeTotal = importeTotalconceptoGasto;
+      solicitudProyectoPresupuestoTotalesConceptoGasto.importeTotalSolicitado = importeTotalSolicitadoConceptoGasto;
+      this.partidasGastos$.value[index].importePresupuestadoPrevio = solicitudProyectoPresupuestoListado.partidaGasto.value.importePresupuestado;
+      solicitudProyectoPresupuestoTotalesConceptoGasto.importeTotalPresupuestado = importeTotalPresupuestadoConceptoGasto;
       this.setChanges(true);
 
       // Actualiza el importe total de todos las partidas de gasto con el mismo concepto de gasto
@@ -198,7 +219,8 @@ export class SolicitudProyectoPresupuestoPartidasGastoFragment extends Fragment 
           value.partidaGasto.value.conceptoGasto.id === solicitudProyectoPresupuestoListado.partidaGasto.value.conceptoGasto.id
         )
         .map(value => {
-          value.importeTotalConceptoGasto = importeTotalconceptoGasto;
+          value.importeTotalSolicitadoConceptoGasto = importeTotalSolicitadoConceptoGasto;
+          value.importeTotalPresupuestadoConceptoGasto = importeTotalPresupuestadoConceptoGasto;
         });
     }
   }
@@ -213,17 +235,24 @@ export class SolicitudProyectoPresupuestoPartidasGastoFragment extends Fragment 
       if (!solicitudProyectoPresupuestoTotalesConceptoGasto) {
         this.solicitudProyectoPresupuestoTotalesConceptoGasto.push({
           conceptoGasto: wrapper.value.conceptoGasto,
-          importeTotal: 0
+          importeTotalSolicitado: 0,
+          importeTotalPresupuestado: 0
         });
       }
 
-      const importeTotalconceptoGasto = wrapper.value.importeSolicitado
-        + solicitudProyectoPresupuestoTotalesConceptoGasto?.importeTotal
+      const importeTotalSolicitadoConceptoGasto = wrapper.value.importeSolicitado
+        + solicitudProyectoPresupuestoTotalesConceptoGasto?.importeTotalSolicitado
         - this.partidasGastos$.value[index].importeSolicitadoPrevio;
+
+      const importeTotalPresupuestadoConceptoGasto = wrapper.value.importePresupuestado
+        + solicitudProyectoPresupuestoTotalesConceptoGasto?.importeTotalPresupuestado
+        - this.partidasGastos$.value[index].importePresupuestadoPrevio;
 
       this.partidasGastos$.value[index].partidaGasto = wrapper;
       this.partidasGastos$.value[index].importeSolicitadoPrevio = wrapper.value.importeSolicitado;
-      solicitudProyectoPresupuestoTotalesConceptoGasto.importeTotal = importeTotalconceptoGasto;
+      solicitudProyectoPresupuestoTotalesConceptoGasto.importeTotalSolicitado = importeTotalSolicitadoConceptoGasto;
+      this.partidasGastos$.value[index].importePresupuestadoPrevio = wrapper.value.importePresupuestado;
+      solicitudProyectoPresupuestoTotalesConceptoGasto.importeTotalPresupuestado = importeTotalPresupuestadoConceptoGasto;
 
       wrapper.setEdited();
       this.setChanges(true);
@@ -232,7 +261,8 @@ export class SolicitudProyectoPresupuestoPartidasGastoFragment extends Fragment 
       current
         .filter(value => value.partidaGasto.value.conceptoGasto.id === wrapper.value.conceptoGasto.id)
         .map(value => {
-          value.importeTotalConceptoGasto = importeTotalconceptoGasto;
+          value.importeTotalSolicitadoConceptoGasto = importeTotalSolicitadoConceptoGasto;
+          value.importeTotalPresupuestadoConceptoGasto = importeTotalPresupuestadoConceptoGasto;
         });
     }
   }

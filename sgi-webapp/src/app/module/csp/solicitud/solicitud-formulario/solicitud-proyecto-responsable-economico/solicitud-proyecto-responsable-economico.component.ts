@@ -102,7 +102,11 @@ export class SolicitudProyectoResponsableEconomicoComponent extends FragmentComp
     this.subscriptions.forEach(subscription => subscription.unsubscribe());
   }
 
-  openModal(wrapper?: StatusWrapper<ISolicitudProyectoResponsableEconomico>, position?: number): void {
+  openModal(wrapper?: StatusWrapper<ISolicitudProyectoResponsableEconomico>, rowIndex?: number): void {
+    // Necesario para sincronizar los cambios de orden de registros dependiendo de la ordenación y paginación
+    this.dataSource.sortData(this.dataSource.filteredData, this.dataSource.sort);
+    const row = (this.paginator.pageSize * this.paginator.pageIndex) + rowIndex;
+
     const data: SolicitudProyectoResponsableEconomicoModalData = {
       entidad: wrapper?.value ?? {} as ISolicitudProyectoResponsableEconomico,
       selectedEntidades: this.dataSource.data.map(element => element.value),
@@ -113,7 +117,7 @@ export class SolicitudProyectoResponsableEconomicoComponent extends FragmentComp
 
     if (wrapper) {
       const filtered = Object.assign([], data.selectedEntidades);
-      filtered.splice(position, 1);
+      filtered.splice(row, 1);
       data.selectedEntidades = filtered;
     }
 

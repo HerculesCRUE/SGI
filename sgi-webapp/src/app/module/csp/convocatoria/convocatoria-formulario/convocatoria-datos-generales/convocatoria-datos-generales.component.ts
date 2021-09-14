@@ -7,7 +7,7 @@ import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { FormFragmentComponent } from '@core/component/fragment.component';
 import { CLASIFICACION_CVN_MAP } from '@core/enums/clasificacion-cvn';
 import { MSG_PARAMS } from '@core/i18n';
-import { IConvocatoria } from '@core/models/csp/convocatoria';
+import { ESTADO_MAP, IConvocatoria } from '@core/models/csp/convocatoria';
 import { IConvocatoriaAreaTematica } from '@core/models/csp/convocatoria-area-tematica';
 import { ITipoRegimenConcurrencia } from '@core/models/csp/tipo-regimen-concurrencia';
 import { FxFlexProperties } from '@core/models/shared/flexLayout/fx-flex-properties';
@@ -49,6 +49,7 @@ export class ConvocatoriaDatosGeneralesComponent extends FormFragmentComponent<I
   regimenesConcurrencia$: Observable<ITipoRegimenConcurrencia[]>;
 
   fxFlexProperties: FxFlexProperties;
+  fxFlexProperties2: FxFlexProperties;
   fxFlexPropertiesOne: FxFlexProperties;
   fxLayoutProperties: FxLayoutProperties;
   fxFlexPropertiesInline: FxFlexProperties;
@@ -68,7 +69,6 @@ export class ConvocatoriaDatosGeneralesComponent extends FormFragmentComponent<I
   msgParamObservacionesEntity = {};
   msgParamFechaConcesionEntity = {};
   msgParamFechaProvisionalEntity = {};
-  msgParamFechaPublicacionEntity = {};
   msgParamTituloEntity = {};
   msgParamUnidadGestionEntity = {};
   textoDeleteAreaTematica: string;
@@ -82,6 +82,10 @@ export class ConvocatoriaDatosGeneralesComponent extends FormFragmentComponent<I
     return CLASIFICACION_CVN_MAP;
   }
 
+  get ESTADO_MAP() {
+    return ESTADO_MAP;
+  }
+
   constructor(
     protected actionService: ConvocatoriaActionService,
     private matDialog: MatDialog,
@@ -92,11 +96,11 @@ export class ConvocatoriaDatosGeneralesComponent extends FormFragmentComponent<I
     super(actionService.FRAGMENT.DATOS_GENERALES, actionService);
     this.formPart = this.fragment as ConvocatoriaDatosGeneralesFragment;
 
-    this.fxFlexProperties = new FxFlexProperties();
-    this.fxFlexProperties.sm = '0 1 calc(50%-10px)';
-    this.fxFlexProperties.md = '0 1 calc(33%-10px)';
-    this.fxFlexProperties.gtMd = '0 1 calc(32%-10px)';
-    this.fxFlexProperties.order = '2';
+    this.fxFlexProperties2 = new FxFlexProperties();
+    this.fxFlexProperties2.sm = '0 1 calc(72%)';
+    this.fxFlexProperties2.md = '0 1 calc(66%)';
+    this.fxFlexProperties2.gtMd = '0 1 calc(64%)';
+    this.fxFlexProperties2.order = '2';
 
     this.fxFlexPropertiesEntidad = new FxFlexProperties();
     this.fxFlexPropertiesEntidad.sm = '0 1 calc(36%-10px)';
@@ -129,13 +133,11 @@ export class ConvocatoriaDatosGeneralesComponent extends FormFragmentComponent<I
   ngOnInit() {
     super.ngOnInit();
     this.setupI18N();
-    if (!this.formPart.readonly) {
-      this.convocatoriaAreaTematicas.paginator = this.paginator;
-      this.convocatoriaAreaTematicas.sort = this.sort;
-      this.subscriptions.push(this.formPart.areasTematicas$.subscribe(
-        data => this.convocatoriaAreaTematicas.data = data
-      ));
-    }
+    this.convocatoriaAreaTematicas.paginator = this.paginator;
+    this.convocatoriaAreaTematicas.sort = this.sort;
+    this.subscriptions.push(this.formPart.areasTematicas$.subscribe(
+      data => this.convocatoriaAreaTematicas.data = data
+    ));
   }
 
   private setupI18N(): void {
@@ -164,12 +166,8 @@ export class ConvocatoriaDatosGeneralesComponent extends FormFragmentComponent<I
     this.translate.get(
       CONVOCATORIA_UNIDAD_GESTION_KEY,
       MSG_PARAMS.CARDINALIRY.SINGULAR
-    ).subscribe((value) => this.msgParamUnidadGestionEntity = { entity: value, ...MSG_PARAMS.GENDER.FEMALE, ...MSG_PARAMS.CARDINALIRY.SINGULAR });
-
-    this.translate.get(
-      CONVOCATORIA_FECHA_PUBLICACION_KEY,
-      MSG_PARAMS.CARDINALIRY.SINGULAR
-    ).subscribe((value) => this.msgParamFechaPublicacionEntity = { entity: value, ...MSG_PARAMS.GENDER.FEMALE, ...MSG_PARAMS.CARDINALIRY.SINGULAR });
+    ).subscribe((value) => this.msgParamUnidadGestionEntity =
+      { entity: value, ...MSG_PARAMS.GENDER.FEMALE, ...MSG_PARAMS.CARDINALIRY.SINGULAR });
 
     this.translate.get(
       CONVOCATORIA_FECHA_PROVISIONAL_KEY,
@@ -189,7 +187,8 @@ export class ConvocatoriaDatosGeneralesComponent extends FormFragmentComponent<I
     this.translate.get(
       CONVOCATORIA_MODELO_EJECUCION_KEY,
       MSG_PARAMS.CARDINALIRY.SINGULAR
-    ).subscribe((value) => this.msgParamModeloEjecucionEntity = { entity: value, ...MSG_PARAMS.GENDER.MALE, ...MSG_PARAMS.CARDINALIRY.SINGULAR });
+    ).subscribe((value) => this.msgParamModeloEjecucionEntity =
+      { entity: value, ...MSG_PARAMS.GENDER.MALE, ...MSG_PARAMS.CARDINALIRY.SINGULAR });
 
     this.translate.get(
       CONVOCATORIA_MODELO_EJECUCION_KEY,
@@ -199,7 +198,8 @@ export class ConvocatoriaDatosGeneralesComponent extends FormFragmentComponent<I
     this.translate.get(
       CONVOCATORIA_FINALIDAD_KEY,
       MSG_PARAMS.CARDINALIRY.SINGULAR
-    ).subscribe((value) => this.msgParamFinalidadEntity = { entity: value, ...MSG_PARAMS.GENDER.FEMALE, ...MSG_PARAMS.CARDINALIRY.SINGULAR });
+    ).subscribe((value) => this.msgParamFinalidadEntity =
+      { entity: value, ...MSG_PARAMS.GENDER.FEMALE, ...MSG_PARAMS.CARDINALIRY.SINGULAR });
 
     this.translate.get(
       CONVOCATORIA_DURACION_KEY,
@@ -209,7 +209,8 @@ export class ConvocatoriaDatosGeneralesComponent extends FormFragmentComponent<I
     this.translate.get(
       CONVOCATORIA_AMBITO_GEOGRAFICO_KEY,
       MSG_PARAMS.CARDINALIRY.SINGULAR
-    ).subscribe((value) => this.msgParamAmbitoGeograficoEntity = { entity: value, ...MSG_PARAMS.GENDER.MALE, ...MSG_PARAMS.CARDINALIRY.SINGULAR });
+    ).subscribe((value) => this.msgParamAmbitoGeograficoEntity =
+      { entity: value, ...MSG_PARAMS.GENDER.MALE, ...MSG_PARAMS.CARDINALIRY.SINGULAR });
 
     this.translate.get(
       CONVOCATORIA_DESCRIPCION_KEY,

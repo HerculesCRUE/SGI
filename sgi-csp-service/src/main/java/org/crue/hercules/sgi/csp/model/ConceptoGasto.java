@@ -50,6 +50,11 @@ public class ConceptoGasto extends BaseEntity {
   @Size(max = 250)
   private String descripcion;
 
+  /** Costes indirectos */
+  @Column(name = "costes_indirectos", columnDefinition = "boolean default false", nullable = false)
+  @NotNull(groups = { Update.class })
+  private Boolean costesIndirectos;
+
   /** Activo */
   @Column(name = "activo", columnDefinition = "boolean default true", nullable = false)
   @NotNull(groups = { Update.class })

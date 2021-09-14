@@ -37,8 +37,10 @@ export class SolicitudProyectoPresupuestoPartidasGastoComponent extends Fragment
   displayedColumns = [
     'conceptoGasto',
     'anualidad',
-    'importe',
-    'importeTotal',
+    'importePresupuestado',
+    'importeSolicitado',
+    'importeTotalPresupuestado',
+    'importeTotalSolicitado',
     'observaciones',
     'acciones'
   ];
@@ -85,10 +87,14 @@ export class SolicitudProyectoPresupuestoPartidasGastoComponent extends Fragment
             return element.partidaGasto.value.conceptoGasto?.nombre;
           case 'anualidad':
             return element.partidaGasto.value.anualidad;
-          case 'importe':
+          case 'importePresupuestado':
+            return element.partidaGasto.value.importePresupuestado;
+          case 'importeSolicitado':
             return element.partidaGasto.value.importeSolicitado;
-          case 'importeTotal':
-            return element.importeTotalConceptoGasto;
+          case 'importeTotalPresupuestado':
+            return element.importeTotalPresupuestadoConceptoGasto;
+          case 'importeTotalSolicitado':
+            return element.importeTotalSolicitadoConceptoGasto;
           case 'observaciones':
             return element.partidaGasto.value.observaciones;
           default:

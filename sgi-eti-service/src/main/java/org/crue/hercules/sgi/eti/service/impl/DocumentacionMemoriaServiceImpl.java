@@ -84,7 +84,8 @@ public class DocumentacionMemoriaServiceImpl implements DocumentacionMemoriaServ
           (estado == TipoEstadoMemoria.Tipo.EN_ELABORACION || estado == TipoEstadoMemoria.Tipo.COMPLETADA
               || estado == TipoEstadoMemoria.Tipo.FAVORABLE_PENDIENTE_MODIFICACIONES_MINIMAS
               || estado == TipoEstadoMemoria.Tipo.PENDIENTE_CORRECCIONES
-              || estado == TipoEstadoMemoria.Tipo.NO_PROCEDE_EVALUAR),
+              || estado == TipoEstadoMemoria.Tipo.NO_PROCEDE_EVALUAR
+              || estado.getId() >= TipoEstadoMemoria.Tipo.FIN_EVALUACION.getId()),
           "La memoria no se encuentra en un estado adecuado para añadir documentación.");
 
       documentacionMemoria.setMemoria(memoria);
@@ -532,7 +533,8 @@ public class DocumentacionMemoriaServiceImpl implements DocumentacionMemoriaServ
           (estado == TipoEstadoMemoria.Tipo.EN_ELABORACION || estado == TipoEstadoMemoria.Tipo.COMPLETADA
               || estado == TipoEstadoMemoria.Tipo.FAVORABLE_PENDIENTE_MODIFICACIONES_MINIMAS
               || estado == TipoEstadoMemoria.Tipo.PENDIENTE_CORRECCIONES
-              || estado == TipoEstadoMemoria.Tipo.NO_PROCEDE_EVALUAR),
+              || estado == TipoEstadoMemoria.Tipo.NO_PROCEDE_EVALUAR
+              || estado.getId() >= TipoEstadoMemoria.Tipo.FIN_EVALUACION.getId()),
           "La memoria no se encuentra en un estado adecuado para eliminar documentación inicial");
 
       Formulario formulario = formularioRepository.findByMemoriaId(idMemoria);

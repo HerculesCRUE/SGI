@@ -61,9 +61,9 @@
       <div>
         <mat-form-field color="primary">
           <mat-label>{{'csp.miembro-equipo-proyecto.fecha-inicio' | translate}}</mat-label>
-          <input matInput formControlName="fechaInicio" [ngxMatDatetimePicker]="picker1">
+          <input matInput formControlName="fechaInicio" [matDatepicker]="picker1">
           <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
-          <ngx-mat-datetime-picker #picker1 showSeconds="true" [defaultTime]="[0,0,0]"></ngx-mat-datetime-picker>
+          <mat-datepicker #picker1></mat-datepicker>
           <mat-error *ngIf="formGroup.controls.fechaInicio.errors?.range">
             {{'error.overlapping.record.entity' | translate:msgParamFechaInicioEntity}}
           </mat-error>
@@ -74,11 +74,11 @@
       </div>
       <!-- Fecha fin -->
       <div>
-        <mat-form-field color="primary">
+        <mat-form-field color="primary" sgiEndDate>
           <mat-label>{{'csp.miembro-equipo-proyecto.fecha-fin' | translate}}</mat-label>
-          <input matInput formControlName="fechaFin" [ngxMatDatetimePicker]="picker2">
+          <input matInput formControlName="fechaFin" [matDatepicker]="picker2">
           <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
-          <ngx-mat-datetime-picker #picker2 showSeconds="true" [defaultTime]="[23,59,59]"></ngx-mat-datetime-picker>
+          <mat-datepicker #picker2></mat-datepicker>
           <mat-error *ngIf="formGroup.controls.fechaFin.errors?.after">
             {{'error.after.fecha-fin' | translate}}
           </mat-error>
@@ -94,7 +94,8 @@
   </form>
 </mat-dialog-content>
 <mat-dialog-actions>
-  <button color="accent" (click)="saveOrUpdate()" mat-raised-button type="submit" [disabled]="saveDisabled">
+  <button *ngIf="!this.data.readonly" color="accent" (click)="saveOrUpdate()" mat-raised-button type="submit"
+    [disabled]="saveDisabled">
     <mat-icon class="save-icon">save</mat-icon>{{textSaveOrUpdate | translate}}
   </button>
   <button class="link-cancelar" mat-button type="button" mat-dialog-close>{{'btn.cancel' |

@@ -290,7 +290,7 @@ public class ModeloEjecucionControllerTest extends BaseControllerTest {
   }
 
   @Test
-  @WithMockUser(username = "user", authorities = { "AUTH" })
+  @WithMockUser(username = "user", authorities = { "CSP-PRO-MOD-V" })
   public void findAll_ReturnsPage() throws Exception {
     // given: Una lista con 37 ModeloEjecucion
     List<ModeloEjecucion> modelosEjecucion = new ArrayList<>();
@@ -343,7 +343,7 @@ public class ModeloEjecucionControllerTest extends BaseControllerTest {
   }
 
   @Test
-  @WithMockUser(username = "user", authorities = { "AUTH" })
+  @WithMockUser(username = "user", authorities = { "CSP-PRO-MOD-V" })
   public void findAll_EmptyList_Returns204() throws Exception {
     // given: Una lista vacia de ModeloEjecucion
     List<ModeloEjecucion> modelosEjecucion = new ArrayList<>();

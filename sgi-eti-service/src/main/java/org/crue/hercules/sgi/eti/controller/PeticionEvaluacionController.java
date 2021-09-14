@@ -247,7 +247,7 @@ public class PeticionEvaluacionController {
    * @return Nuevo {@link EquipoTrabajo} creado.
    */
   @PostMapping("/{id}/equipos-trabajo")
-  @PreAuthorize("hasAnyAuthorityForAnyUO('ETI-PEV-C-INV', 'ETI-PEV-ER-INV')")
+  @PreAuthorize("hasAnyAuthorityForAnyUO('ETI-PEV-V', 'ETI-PEV-VR-INV', 'ETI-PEV-C-INV', 'ETI-PEV-ER-INV', 'ETI-PEV-MOD-C')")
   public ResponseEntity<EquipoTrabajo> createEquipoTrabajo(@PathVariable Long id,
       @Valid @RequestBody EquipoTrabajo nuevoEquipoTrabajo) {
     log.debug("createEquipoTrabajo(Long id, EquipoTrabajo nuevoEquipoTrabajo) - start");

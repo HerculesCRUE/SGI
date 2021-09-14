@@ -256,6 +256,21 @@ export class SolicitudService extends SgiMutableRestService<number, ISolicitudBa
   }
 
   /**
+   * Recupera los ISolicitudProyectoSocio de la solicitud
+   *
+   * @param id Id de la solicitud
+   * @param options opciones de busqueda
+   * @returns observable con la lista de ISolicitudProyectoSocio de la solicitud
+   */
+  existSolicitanteInSolicitudProyectoEquipo(id: number): Observable<boolean> {
+    const url = `${this.endpointUrl}/${id}/existssolicitante`;
+    return this.http.head(url, { observe: 'response' }).pipe(
+      map(x => x.status === 200)
+    );
+  }
+
+
+  /**
    * Devuelve las entidades financiadoras de una solicitud
    *
    * @param solicitudId Id de la solicitud
@@ -391,10 +406,13 @@ export class SolicitudService extends SgiMutableRestService<number, ISolicitudBa
    * @param estadoSolicitud Nuevo estado de la solicitud.
    */
 
-  cambiarEstado(id: number, estadoSolicitud: IEstadoSolicitud): Observable<void> {
-    return this.http.patch<void>(`${this.endpointUrl}/${id}/cambiar-estado`, estadoSolicitud);
+  cambiarEstado(id: number, estadoSolicitud: IEstadoSolicitud): Observable<IEstadoSolicitud> {
+    return this.http.patch<IEstadoSolicitudBackend>(`${this.endpointUrl}/${id}/cambiar-estado`,
+      ESTADO_SOLICITUD_CONVERTER.fromTarget(estadoSolicitud)
+    ).pipe(
+      map((response => ESTADO_SOLICITUD_CONVERTER.toTarget(response)))
+    );
   }
-
   /**
    * Devuelve el listado de solicitudes que puede ver un investigador
    *
@@ -431,6 +449,30 @@ export class SolicitudService extends SgiMutableRestService<number, ISolicitudBa
       `${this.endpointUrl}/${solicitudId}/solicitudproyectoresponsableseconomicos`,
       undefined,
       SOLICITUD_PROYECTO_RESPONSABLE_ECONOMICO_RESPONSE_CONVERTER
+    );
+  }
+
+  /**
+   * Comprueba si existen SolicitudProyectoPresupuesto asociada a una solicitud
+   *
+   * @param id Id de la solicitud
+   */
+  existsSolictudProyectoPresupuesto(id: number): Observable<boolean> {
+    const url = `${this.endpointUrl}/${id}/solicitudproyectopresupuestos`;
+    return this.http.head(url, { observe: 'response' }).pipe(
+      map(x => x.status === 200)
+    );
+  }
+
+  /**
+   * Comprueba si la solicitud proyecto de la solicitud es de tipo Global
+   *
+   * @param id Id de la Solicitud
+   */
+  hasSolicitudProyectoGlobal(id: number): Observable<boolean> {
+    const url = `${this.endpointUrl}/${id}/solicitudproyecto-global`;
+    return this.http.head(url, { observe: 'response' }).pipe(
+      map(x => x.status === 200)
     );
   }
 

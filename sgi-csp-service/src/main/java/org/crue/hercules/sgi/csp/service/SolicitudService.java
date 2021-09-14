@@ -2,25 +2,29 @@ package org.crue.hercules.sgi.csp.service;
 
 import java.math.BigDecimal;
 import java.time.Instant;
-import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
-import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
-import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 
-import org.apache.commons.lang3.StringUtils;
 import org.crue.hercules.sgi.csp.config.RestApiProperties;
-import org.crue.hercules.sgi.csp.dto.eti.ChecklistInput;
+import org.crue.hercules.sgi.csp.config.SgiConfigProperties;
 import org.crue.hercules.sgi.csp.dto.eti.ChecklistOutput;
+import org.crue.hercules.sgi.csp.dto.eti.EquipoTrabajo;
 import org.crue.hercules.sgi.csp.dto.eti.PeticionEvaluacion;
 import org.crue.hercules.sgi.csp.dto.eti.PeticionEvaluacion.EstadoFinanciacion;
 import org.crue.hercules.sgi.csp.enums.FormularioSolicitud;
+import org.crue.hercules.sgi.csp.exceptions.ColaborativoWithoutCoordinadorExternoException;
 import org.crue.hercules.sgi.csp.exceptions.ConfiguracionSolicitudNotFoundException;
 import org.crue.hercules.sgi.csp.exceptions.ConvocatoriaNotFoundException;
+import org.crue.hercules.sgi.csp.exceptions.EstadoSolicitudNotUpdatedException;
+import org.crue.hercules.sgi.csp.exceptions.MissingInvestigadorPrincipalInSolicitudProyectoEquipoException;
 import org.crue.hercules.sgi.csp.exceptions.SolicitudNotFoundException;
+import org.crue.hercules.sgi.csp.exceptions.SolicitudProyectoNotFoundException;
+import org.crue.hercules.sgi.csp.exceptions.SolicitudProyectoWithoutSocioCoordinadorException;
+import org.crue.hercules.sgi.csp.exceptions.SolicitudWithoutRequeridedDocumentationException;
+import org.crue.hercules.sgi.csp.exceptions.UserNotAuthorizedToModifySolicitudException;
 import org.crue.hercules.sgi.csp.exceptions.eti.GetPeticionEvaluacionException;
 import org.crue.hercules.sgi.csp.model.ConfiguracionSolicitud;
 import org.crue.hercules.sgi.csp.model.Convocatoria;
@@ -48,16 +52,13 @@ import org.crue.hercules.sgi.csp.repository.SolicitudRepository;
 import org.crue.hercules.sgi.csp.repository.predicate.SolicitudPredicateResolver;
 import org.crue.hercules.sgi.csp.repository.specification.DocumentoRequeridoSolicitudSpecifications;
 import org.crue.hercules.sgi.csp.repository.specification.SolicitudSpecifications;
-import org.crue.hercules.sgi.csp.service.SolicitudService;
+import org.crue.hercules.sgi.framework.http.HttpEntityBuilder;
 import org.crue.hercules.sgi.framework.rsql.SgiRSQLJPASupport;
 import org.crue.hercules.sgi.framework.security.core.context.SgiSecurityContextHolder;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -65,9 +66,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -77,8 +77,10 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 @Slf4j
 @Transactional(readOnly = true)
+@Validated
 public class SolicitudService {
 
+  private final SgiConfigProperties sgiConfigProperties;
   private final RestApiProperties restApiProperties;
   private final RestTemplate restTemplate;
   private final SolicitudRepository repository;
@@ -94,8 +96,8 @@ public class SolicitudService {
   private final ConvocatoriaRepository convocatoriaRepository;
   private final ConvocatoriaEntidadFinanciadoraRepository convocatoriaEntidadFinanciadoraRepository;
 
-  public SolicitudService(RestApiProperties restApiProperties, RestTemplate restTemplate,
-      SolicitudRepository repository, EstadoSolicitudRepository estadoSolicitudRepository,
+  public SolicitudService(SgiConfigProperties sgiConfigProperties, RestApiProperties restApiProperties,
+      RestTemplate restTemplate, SolicitudRepository repository, EstadoSolicitudRepository estadoSolicitudRepository,
       ConfiguracionSolicitudRepository configuracionSolicitudRepository, ProyectoRepository proyectoRepository,
       SolicitudProyectoRepository solicitudProyectoRepository,
       DocumentoRequeridoSolicitudRepository documentoRequeridoSolicitudRepository,
@@ -105,6 +107,7 @@ public class SolicitudService {
       SolicitudProyectoPresupuestoRepository solicitudProyectoPresupuestoRepository,
       ConvocatoriaRepository convocatoriaRepository,
       ConvocatoriaEntidadFinanciadoraRepository convocatoriaEntidadFinanciadoraRepository) {
+    this.sgiConfigProperties = sgiConfigProperties;
     this.restApiProperties = restApiProperties;
     this.restTemplate = restTemplate;
     this.repository = repository;
@@ -191,6 +194,8 @@ public class SolicitudService {
 
     Assert.notNull(solicitud.getId(), "Id no puede ser null para actualizar Solicitud");
 
+    Assert.notNull(solicitud.getTitulo(), "Titulo no puede ser null para actualizar Solicitud");
+
     Assert.notNull(solicitud.getSolicitanteRef(), "El solicitante no puede ser null para actualizar Solicitud");
 
     Assert.isTrue(
@@ -211,6 +216,7 @@ public class SolicitudService {
       data.setSolicitanteRef(solicitud.getSolicitanteRef());
       data.setCodigoExterno(solicitud.getCodigoExterno());
       data.setObservaciones(solicitud.getObservaciones());
+      data.setTitulo(solicitud.getTitulo());
 
       if (null == data.getConvocatoriaId()) {
         data.setConvocatoriaExterna(solicitud.getConvocatoriaExterna());
@@ -413,7 +419,7 @@ public class SolicitudService {
    * @return {@link Solicitud} actualizado.
    */
   @Transactional
-  public Solicitud cambiarEstado(Long id, EstadoSolicitud estadoSolicitud) {
+  public Solicitud cambiarEstado(Long id, @Valid EstadoSolicitud estadoSolicitud) {
     log.debug("cambiarEstado(Long id, EstadoSolicitud estadoSolicitud) - start");
 
     Solicitud solicitud = repository.findById(id).orElseThrow(() -> new SolicitudNotFoundException(id));
@@ -423,25 +429,24 @@ public class SolicitudService {
     // VALIDACIONES
 
     // Permisos
-    Assert.isTrue(hasPermisosEdicion(solicitud.getUnidadGestionRef()),
-        "El usuario no tiene permisos para presentar la solicitud.");
+    if (!hasPermisosEdicion(solicitud.getUnidadGestionRef())) {
+      throw new UserNotAuthorizedToModifySolicitudException();
+    }
 
     // El nuevo estado es diferente al estado actual de la solicitud
     if (estadoSolicitud.getEstado().equals(solicitud.getEstado().getEstado())) {
-      throw new IllegalArgumentException("La solicitud ya se encuentra en el estado al que se quiere modificar.");
+      throw new EstadoSolicitudNotUpdatedException();
     }
 
     // En caso de pasar de cualquier estado a cualquier otro estado que no sea
     // Desistida ni Renunciada se deben realizar validaciones
     if ((!estadoSolicitud.getEstado().equals(EstadoSolicitud.Estado.DESISTIDA)
-        && !estadoSolicitud.getEstado().equals(EstadoSolicitud.Estado.RENUNCIADA))
-        && !isValidCambioNoDesistidaRenunciada(solicitud)) {
-      throw new IllegalArgumentException("No se puede cambiar el estado de la Solicitud al estado seleccionado.");
+        && !estadoSolicitud.getEstado().equals(EstadoSolicitud.Estado.RENUNCIADA))) {
+      validateCambioNoDesistidaRenunciada(solicitud);
     }
 
     // Se cambia el estado de la solicitud
     // Actualiza el estado actual de la solicitud con el nuevo estado
-    estadoSolicitud.setFechaEstado(Instant.now());
     estadoSolicitud = estadoSolicitudRepository.save(estadoSolicitud);
     solicitud.setEstado(estadoSolicitud);
 
@@ -460,7 +465,7 @@ public class SolicitudService {
           if (peticionEvaluacionRef == null) {
             final ResponseEntity<ChecklistOutput> responseChecklistOutput = restTemplate.exchange(
                 restApiProperties.getEtiUrl() + "/checklists/{id}", HttpMethod.GET,
-                buildRequest(null, (ChecklistInput) null), ChecklistOutput.class, idChecklist);
+                new HttpEntityBuilder<>().withCurrentUserAuthorization().build(), ChecklistOutput.class, idChecklist);
 
             ChecklistOutput checklistOutput = responseChecklistOutput.getBody();
             // En el caso que que en la Pestaña de Autoevaluación ética exista una respuesta
@@ -470,7 +475,7 @@ public class SolicitudService {
               // Se creará un registro en la tabla "PeticionEvaluacion" del módulo de ética
               PeticionEvaluacion peticionEvaluacionRequest = PeticionEvaluacion.builder()
                   .solicitudConvocatoriaRef(solicitud.getId().toString()).checklistId(checklistOutput.getId())
-                  .personaRef(solicitud.getSolicitanteRef()).titulo(solicitudProyecto.getTitulo())
+                  .personaRef(solicitud.getSolicitanteRef()).titulo(solicitud.getTitulo())
                   // Si hay entidades financiadoras (registros en la tabla "Convocatoria
                   // Entidad Financiadora" de la convocatoria asociada a la solicitud) valor "Sí",
                   // en otro caso valor "No"
@@ -492,13 +497,19 @@ public class SolicitudService {
 
               ResponseEntity<PeticionEvaluacion> responsePeticionEvaluacion = restTemplate.exchange(
                   restApiProperties.getEtiUrl() + "/peticionevaluaciones", HttpMethod.POST,
-                  buildRequest(null, peticionEvaluacionRequest), PeticionEvaluacion.class);
+                  new HttpEntityBuilder<>(peticionEvaluacionRequest).withCurrentUserAuthorization().build(),
+                  PeticionEvaluacion.class);
 
               // Guardar el PeticionEvaluacion.id
               PeticionEvaluacion peticionEvaluacion = responsePeticionEvaluacion.getBody();
               if (peticionEvaluacion != null) {
                 solicitudProyecto.setPeticionEvaluacionRef(String.valueOf(peticionEvaluacion.getId()));
                 solicitudProyecto = solicitudProyectoRepository.save(solicitudProyecto);
+
+                // Copiamos el equipo de trabajo de una solicitud (personaRef
+                // SolicitudProyectoEquipo)
+                // a una petición de evalaución (personaRef EquipoTrabajo)
+                copyMiembrosEquipoSolicitudToPeticionEvaluacion(peticionEvaluacion, solicitudProyecto.getId());
               } else {
                 // throw exception
                 throw new GetPeticionEvaluacionException();
@@ -514,7 +525,8 @@ public class SolicitudService {
                 // campo "estadoFinanciacion" a "Denegado"
                 ResponseEntity<PeticionEvaluacion> responsePeticionEvaluacionDenegada = restTemplate.exchange(
                     restApiProperties.getEtiUrl() + "/peticionevaluaciones/{id}", HttpMethod.GET,
-                    buildRequest(null, null), PeticionEvaluacion.class, peticionEvaluacionRef);
+                    new HttpEntityBuilder<>().withCurrentUserAuthorization().build(), PeticionEvaluacion.class,
+                    peticionEvaluacionRef);
 
                 PeticionEvaluacion peticionEvaluacionDenegada = responsePeticionEvaluacionDenegada.getBody();
                 if (peticionEvaluacionDenegada != null) {
@@ -522,7 +534,8 @@ public class SolicitudService {
 
                   responsePeticionEvaluacionDenegada = restTemplate.exchange(
                       restApiProperties.getEtiUrl() + "/peticionevaluaciones/{id}", HttpMethod.PUT,
-                      buildRequest(null, peticionEvaluacionDenegada), PeticionEvaluacion.class, peticionEvaluacionRef);
+                      new HttpEntityBuilder<>(peticionEvaluacionDenegada).withCurrentUserAuthorization().build(),
+                      PeticionEvaluacion.class, peticionEvaluacionRef);
                 } else {
                   // throw exception
                   throw new GetPeticionEvaluacionException();
@@ -536,7 +549,8 @@ public class SolicitudService {
                 // campo "estadoFinanciacion" a "Concedido"
                 ResponseEntity<PeticionEvaluacion> responsePeticionEvaluacionConcedida = restTemplate.exchange(
                     restApiProperties.getEtiUrl() + "/peticionevaluaciones/{id}", HttpMethod.GET,
-                    buildRequest(null, null), PeticionEvaluacion.class, peticionEvaluacionRef);
+                    new HttpEntityBuilder<>().withCurrentUserAuthorization().build(), PeticionEvaluacion.class,
+                    peticionEvaluacionRef);
 
                 PeticionEvaluacion peticionEvaluacionConcedida = responsePeticionEvaluacionConcedida.getBody();
                 if (peticionEvaluacionConcedida != null) {
@@ -544,7 +558,8 @@ public class SolicitudService {
 
                   responsePeticionEvaluacionConcedida = restTemplate.exchange(
                       restApiProperties.getEtiUrl() + "/peticionevaluaciones/{id}", HttpMethod.PUT,
-                      buildRequest(null, peticionEvaluacionConcedida), PeticionEvaluacion.class, peticionEvaluacionRef);
+                      new HttpEntityBuilder<>(peticionEvaluacionConcedida).withCurrentUserAuthorization().build(),
+                      PeticionEvaluacion.class, peticionEvaluacionRef);
                 } else {
                   // throw exception
                   throw new GetPeticionEvaluacionException();
@@ -562,6 +577,40 @@ public class SolicitudService {
 
     log.debug("cambiarEstado(Long id, EstadoSolicitud estadoSolicitud) - end");
     return returnValue;
+  }
+
+  /**
+   * Copia todos los miembros del equipo de una {@link Solicitud} a un Equipo de
+   * Trabajo de una Petición de Evaluación Ética
+   *
+   * @param proyecto entidad {@link Proyecto}
+   */
+  private void copyMiembrosEquipoSolicitudToPeticionEvaluacion(PeticionEvaluacion peticionEvaluacion,
+      Long solicitudProyectoId) {
+
+    log.debug(
+        "copyMiembrosEquipoSolicitudToPeticionEvaluacion(PeticionEvaluacion peticionEvaluacion, Long solicitudProyectoId) - start");
+
+    solicitudProyectoEquipoRepository.findAllBySolicitudProyectoId(solicitudProyectoId).stream()
+        .map((solicitudProyectoEquipo) -> {
+          log.debug("Copy SolicitudProyectoEquipo with id: {0}", solicitudProyectoEquipo.getId());
+          EquipoTrabajo.EquipoTrabajoBuilder equipoTrabajo = EquipoTrabajo.builder();
+          equipoTrabajo.peticionEvaluacion(peticionEvaluacion);
+          equipoTrabajo.personaRef(solicitudProyectoEquipo.getPersonaRef());
+          return equipoTrabajo.build();
+        }).distinct().forEach((equipoTrabajo) -> {
+          ResponseEntity<EquipoTrabajo> responseEquipoTrabajo = restTemplate.exchange(
+              restApiProperties.getEtiUrl() + "/peticionevaluaciones/" + peticionEvaluacion.getId()
+                  + "/equipos-trabajo",
+              HttpMethod.POST, new HttpEntityBuilder<>(equipoTrabajo).withCurrentUserAuthorization().build(),
+              EquipoTrabajo.class);
+          if (responseEquipoTrabajo == null) {
+            // throw exception
+            throw new GetPeticionEvaluacionException();
+          }
+        });
+    log.debug(
+        "copyMiembrosEquipoSolicitudToPeticionEvaluacion(PeticionEvaluacion peticionEvaluacion, Long solicitudProyectoId) - end");
   }
 
   /**
@@ -625,7 +674,8 @@ public class SolicitudService {
 
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
 
-    String codigoRegistroInterno = "SGI_SLC" + solicitudId + formatter.format(Instant.now().atZone(ZoneOffset.UTC));
+    String codigoRegistroInterno = "SGI_SLC" + solicitudId
+        + formatter.format(Instant.now().atZone(sgiConfigProperties.getTimeZone().toZoneId()));
 
     log.debug("generateCodigoRegistroInterno(Long solicitudId) - end");
     return codigoRegistroInterno;
@@ -734,8 +784,8 @@ public class SolicitudService {
    */
   private boolean hasPermisosEdicion(String unidadGestionRef) {
     String authority = "CSP-SOL-E";
-    return SgiSecurityContextHolder.hasAuthority(authority)
-        || SgiSecurityContextHolder.hasAuthorityForUO(authority, unidadGestionRef);
+    return SgiSecurityContextHolder.hasAuthority(authority) || SgiSecurityContextHolder
+        .hasAnyAuthorityForUO(new String[] { "CSP-SOL-E", "CSP-SOL-INV-ER" }, unidadGestionRef);
   }
 
   /**
@@ -747,13 +797,13 @@ public class SolicitudService {
    * @return <code>true</code> Cumple condiciones para el cambio de estado.
    *         <code>false</code>No cumple condiciones.
    */
-  private boolean isValidCambioNoDesistidaRenunciada(Solicitud solicitud) {
-    log.debug("isValidCambioNoDesistidaRenunciada(Solicitud solicitud) - start");
+  private void validateCambioNoDesistidaRenunciada(Solicitud solicitud) {
+    log.debug("validateCambioNoDesistidaRenunciada(Solicitud solicitud) - start");
 
     if (solicitud.getConvocatoriaId() != null
         && !hasDocumentacionRequerida(solicitud.getId(), solicitud.getConvocatoriaId())) {
-      log.debug("isValidCambioNoDesistidaRenunciada(Solicitud solicitud) - end");
-      return false;
+      log.debug("validateCambioNoDesistidaRenunciada(Solicitud solicitud) - end");
+      throw new SolicitudWithoutRequeridedDocumentationException();
     }
 
     // Si el formulario es de tipo Estándar
@@ -761,33 +811,32 @@ public class SolicitudService {
 
       SolicitudProyecto solicitudProyecto = solicitudProyectoRepository.findById(solicitud.getId()).orElse(null);
       if (solicitudProyecto == null) {
-        log.debug("isValidCambioNoDesistidaRenunciada(Solicitud solicitud) - end");
-        return false;
+        log.debug("validateCambioNoDesistidaRenunciada(Solicitud solicitud) - end");
+        throw new SolicitudProyectoNotFoundException(solicitud.getId());
       }
 
-      // En caso de que no tenga titulo o sea colaborativo y no tenga coordinador
-      // externo releno
-      if (StringUtils.isEmpty(solicitudProyecto.getTitulo())
-          || (solicitudProyecto.getColaborativo() && solicitudProyecto.getCoordinadorExterno() == null)) {
-        log.debug("isValidCambioNoDesistidaRenunciada(Solicitud solicitud) - end");
-        return false;
+      // En caso de sea colaborativo y no tenga coordinador externo
+      if (solicitudProyecto.getColaborativo() && solicitudProyecto.getCoordinadorExterno() == null) {
+        log.debug("validateCambioNoDesistidaRenunciada(Solicitud solicitud) - end");
+        throw new ColaborativoWithoutCoordinadorExternoException();
       }
 
       if (!isSolicitanteMiembroEquipo(solicitudProyecto.getId(), solicitud.getSolicitanteRef())) {
-        log.debug("isValidCambioNoDesistidaRenunciada(Solicitud solicitud) - end");
-        return false;
+        log.debug("validateCambioNoDesistidaRenunciada(Solicitud solicitud) - end");
+        throw new MissingInvestigadorPrincipalInSolicitudProyectoEquipoException();
       }
 
       if (solicitudProyecto.getColaborativo() && solicitudProyecto.getCoordinadorExterno()) {
         List<SolicitudProyectoSocio> solicitudProyectoSocios = solicitudProyectoSocioRepository
             .findAllBySolicitudProyectoIdAndRolSocioCoordinadorTrue(solicitudProyecto.getId());
-        log.debug("isValidCambioNoDesistidaRenunciada(Solicitud solicitud) - end");
-        return !CollectionUtils.isEmpty(solicitudProyectoSocios);
 
+        if (CollectionUtils.isEmpty(solicitudProyectoSocios)) {
+          log.debug("validateCambioNoDesistidaRenunciada(Solicitud solicitud) - end");
+          throw new SolicitudProyectoWithoutSocioCoordinadorException();
+        }
       }
     }
-    log.debug("isValidCambioNoDesistidaRenunciada(Solicitud solicitud) - end");
-    return true;
+    log.debug("validateCambioNoDesistidaRenunciada(Solicitud solicitud) - end");
   }
 
   private boolean isEntidadFinanciadora(Solicitud solicitud) {
@@ -827,31 +876,6 @@ public class SolicitudService {
     // finanicacionAjena = false)
     return solicitudProyectoPresupuestoRepository
         .sumImporteSolicitadoBySolicitudIdAndFinanciacionAjenaIsFalse(solicitud.getId());
-  }
-
-  private <T> HttpEntity<T> buildRequest(HttpHeaders headers, T entity) {
-    headers = (headers != null ? headers : new HttpHeaders());
-    headers.setContentType(MediaType.APPLICATION_JSON);
-    headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
-
-    // Reutilizamos las credenciales del usuario
-    Optional<HttpServletRequest> req = getCurrentHttpRequest();
-    if (req.isPresent()) {
-      HttpServletRequest httpServletRequest = req.get();
-      String authorization = httpServletRequest.getHeader(HttpHeaders.AUTHORIZATION);
-      if (authorization != null) {
-        headers.set(HttpHeaders.AUTHORIZATION, authorization);
-      }
-    }
-
-    HttpEntity<T> request = new HttpEntity<>(entity, headers);
-    return request;
-  }
-
-  private static Optional<HttpServletRequest> getCurrentHttpRequest() {
-    return Optional.ofNullable(RequestContextHolder.getRequestAttributes())
-        .filter(ServletRequestAttributes.class::isInstance).map(ServletRequestAttributes.class::cast)
-        .map(ServletRequestAttributes::getRequest);
   }
 
 }

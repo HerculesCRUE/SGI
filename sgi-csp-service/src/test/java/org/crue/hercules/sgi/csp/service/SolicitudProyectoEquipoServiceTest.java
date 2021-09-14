@@ -12,6 +12,7 @@ import org.crue.hercules.sgi.csp.model.RolProyecto;
 import org.crue.hercules.sgi.csp.model.SolicitudProyectoEquipo;
 import org.crue.hercules.sgi.csp.repository.RolProyectoRepository;
 import org.crue.hercules.sgi.csp.repository.SolicitudProyectoEquipoRepository;
+import org.crue.hercules.sgi.csp.repository.SolicitudProyectoRepository;
 import org.crue.hercules.sgi.csp.repository.SolicitudRepository;
 import org.crue.hercules.sgi.csp.service.impl.SolicitudProyectoEquipoServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
@@ -48,13 +49,17 @@ public class SolicitudProyectoEquipoServiceTest {
   private SolicitudRepository solicitudRepository;
 
   @Mock
+  SolicitudProyectoRepository solicitudProyectoRepository;
+
+  @Mock
   private Validator validator;
 
   private SolicitudProyectoEquipoService service;
 
   @BeforeEach
   public void setUp() throws Exception {
-    service = new SolicitudProyectoEquipoServiceImpl(validator, repository, rolProyectoRepository, solicitudRepository);
+    service = new SolicitudProyectoEquipoServiceImpl(validator, repository, rolProyectoRepository, solicitudRepository,
+        solicitudProyectoRepository);
   }
 
   @Test

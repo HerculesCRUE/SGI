@@ -21,7 +21,7 @@
     <div [fxLayout.xs]="fxLayoutProperties.xs" [fxLayout]="fxLayoutProperties.layout"
       [fxLayoutGap]="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
       <mat-form-field color="primary">
-        <mat-label>{{'csp.hito.fecha-inicio'| translate}}</mat-label>
+        <mat-label>{{'csp.hito.fecha'| translate}}</mat-label>
         <input matInput [ngxMatDatetimePicker]="pickerFechaInicio" formControlName="fechaInicio" required>
         <mat-datepicker-toggle class="fechaIcon" matSuffix [for]="pickerFechaInicio"></mat-datepicker-toggle>
         <ngx-mat-datetime-picker #pickerFechaInicio showSeconds="true" [defaultTime]="[0,0,0]">
@@ -30,7 +30,7 @@
           {{'error.required.entity' | translate:msgParamFechaInicioEntity}}
         </mat-error>
         <mat-error *ngIf="formGroup.controls.fechaInicio.errors?.notIn">
-          {{'msg.csp.hito.fecha-inicio.duplicate' | translate}}
+          {{'msg.csp.hito.fecha.duplicate' | translate}}
         </mat-error>
       </mat-form-field>
     </div>

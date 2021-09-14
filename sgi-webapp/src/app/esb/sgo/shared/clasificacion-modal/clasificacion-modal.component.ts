@@ -11,8 +11,8 @@ import { IClasificacion } from '@core/models/sgo/clasificacion';
 import { ClasificacionService } from '@core/services/sgo/clasificacion.service';
 import { SnackBarService } from '@core/services/snack-bar.service';
 import { NGXLogger } from 'ngx-logger';
-import { BehaviorSubject, Observable } from 'rxjs';
-import { map, switchMap, tap } from 'rxjs/operators';
+import { BehaviorSubject } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 const MSG_ERROR_LOAD = marker('error.load');
 
@@ -199,19 +199,18 @@ export class ClasificacionModalComponent
   }
 
   /**
-   * Recupera los hijos de los hijos del nodo expandido si no se han cargado previamente.
+   * Recupera los hijos del nodo expandido si no se han cargado previamente.
    *
    * @param node node del arbol expandido o colapsado.
    */
   onToggleNode(node: NodeClasificacion): void {
     if (this.treeControl.isExpanded(node)) {
-      if (node.childs.some(child => !child.childsLoaded)) {
-        this.clasificacionService.findAllHijos(node.childs.filter(child => !child.childsLoaded).map(c => c.clasificacion.id))
-          .pipe(
-            tap((clasificacion) => this.buildTree(clasificacion.items))
-          ).subscribe(
-            () => {
-              node.childs.forEach(childNode => childNode.setChildsLoaded());
+      if (!node.childsLoaded) {
+        this.clasificacionService.findAllHijos(node.clasificacion.id)
+          .subscribe(
+            (clasificacion) => {
+              this.buildTree(clasificacion.items);
+              node.setChildsLoaded();
               this.publishNodes();
             },
             (error) => {
@@ -239,18 +238,7 @@ export class ClasificacionModalComponent
             .pipe(
               map((ramasConocimiento) => ramasConocimiento.items.map(
                 (ramaConocimiento) => new NodeClasificacion(ramaConocimiento, 0))
-              ),
-              tap((nodes) => this.publishNodes(nodes)),
-              switchMap((nodes) => {
-                const ids = nodes.map(node => node.clasificacion.id);
-                return this.clasificacionService.findAllHijos(ids).pipe(
-                  map((clasificaciones) => {
-                    nodes.forEach(node => node.childs.forEach(childNode => childNode.setChildsLoaded()));
-                    this.buildTree(clasificaciones.items);
-                    return nodes;
-                  })
-                );
-              })
+              )
             ).subscribe(
               (nodes) => {
                 this.publishNodes(nodes, true);

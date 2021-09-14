@@ -1,0 +1,34 @@
+[
+  {
+    "key": "ap5_8",
+    "wrappers": [
+      "expansion-panel"
+    ],
+    "templateOptions": {
+      "label": "5.8 Documentación adicional"
+    },
+    "fieldGroup": [
+      {
+        "template": "¿Dispone de alguna otra documentación adicional para su proyecto?"
+      },
+      {
+        "key": "documentacionAdicional",
+        "type": "documento",
+        "templateOptions": {
+          "label": "Indicar",
+          "required": true,
+          "options": [
+            {
+              "value": 0,
+              "label": "No"
+            },
+            {
+              "value": 11,
+              "label": "Sí"
+            }
+          ]
+        }
+      }
+    ]
+  }
+]

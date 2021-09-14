@@ -1,5 +1,4 @@
-<section>
-  <h2>{{'label.datos-generales' | translate}}</h2>
+<sgi-fragment title="{{'label.datos-generales' | translate}}">
   <form [formGroup]="formGroup">
     <div fxFlex>
       <!-- Número de período -->
@@ -42,10 +41,10 @@
           <mat-form-field>
             <mat-label>{{'csp.proyecto-periodo-seguimiento-cientifico.fecha-inicio'|
               translate}}</mat-label>
-            <input matInput [ngxMatDatetimePicker]="pickerFechaInicio" formControlName="fechaInicio" required>
+            <input matInput [matDatepicker]="pickerFechaInicio" formControlName="fechaInicio" required>
             <mat-datepicker-toggle class="fechaIcon" matSuffix [for]="pickerFechaInicio"></mat-datepicker-toggle>
-            <ngx-mat-datetime-picker #pickerFechaInicio showSeconds="true" [defaultTime]="[0,0,0]">
-            </ngx-mat-datetime-picker>
+            <mat-datepicker #pickerFechaInicio>
+            </mat-datepicker>
             <mat-error *ngIf="formGroup.controls.fechaInicio.errors?.afterOrEqual">
               {{'error.csp.proyecto-periodo-seguimiento-cientifico.fecha-inicio.after' | translate}}
             </mat-error>
@@ -60,13 +59,13 @@
         <!-- Fecha de fin -->
         <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
           [fxFlexOrder]="fxFlexProperties.order">
-          <mat-form-field>
+          <mat-form-field sgiEndDate>
             <mat-label>{{'csp.proyecto-periodo-seguimiento-cientifico.fecha-fin' |
               translate}}</mat-label>
-            <input matInput [ngxMatDatetimePicker]="pickerFechaFin" formControlName="fechaFin" required>
+            <input matInput [matDatepicker]="pickerFechaFin" formControlName="fechaFin" required>
             <mat-datepicker-toggle class="fechaIcon" matSuffix [for]="pickerFechaFin"></mat-datepicker-toggle>
-            <ngx-mat-datetime-picker #pickerFechaFin showSeconds="true" [defaultTime]="[23,59,59]">
-            </ngx-mat-datetime-picker>
+            <mat-datepicker #pickerFechaFin>
+            </mat-datepicker>
             <mat-error *ngIf="formGroup.controls.fechaFin.errors?.before">
               {{'error.csp.proyecto-periodo-seguimiento-cientifico.fecha-fin.before' | translate}}
             </mat-error>
@@ -235,7 +234,7 @@
         </mat-form-field>
       </div>
 
-      <div class="separation-button">
+      <div class="separation-button" *ngIf="!this.formPart.readonly">
         <button color="primary" aria-label="Center Align" mat-raised-button (click)="copyToProyecto()">
           {{'label.csp.proyecto-concepto-gasto'| translate}}
         </button>
@@ -243,4 +242,4 @@
     </div>
 
   </form>
-</section>
+</sgi-fragment>

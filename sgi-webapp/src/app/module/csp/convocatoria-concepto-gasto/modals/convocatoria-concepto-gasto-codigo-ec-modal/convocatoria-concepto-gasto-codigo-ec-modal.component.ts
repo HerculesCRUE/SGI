@@ -74,20 +74,17 @@ export class ConvocatoriaConceptoGastoCodigoEcModalComponent extends
   ngOnInit(): void {
     super.ngOnInit();
     this.setupI18N();
-    this.textSaveOrUpdate = this.data.convocatoriaConceptoGastoCodigoEc.codigoEconomicoRef ? MSG_ACEPTAR : MSG_ANADIR;
+    this.textSaveOrUpdate = this.data.convocatoriaConceptoGastoCodigoEc.codigoEconomico ? MSG_ACEPTAR : MSG_ANADIR;
 
     this.subscriptions.push(this.codigosEconomicos$.subscribe(
-      (codigosEconomicos) => this.formGroup.controls.codigoEconomicoRef.setValidators(
+      (codigosEconomicos) => this.formGroup.controls.codigoEconomico.setValidators(
         SelectValidator.isSelectOption(codigosEconomicos.map(cod => cod.id), true)
       )
     ));
 
-    this.subscriptions.push(this.formGroup.controls.codigoEconomicoRef.valueChanges.subscribe(
+    this.subscriptions.push(this.formGroup.controls.codigoEconomico.valueChanges.subscribe(
       (value) => {
-        if (!this.formGroup.controls.codigoEconomicoRef.disabled
-          && !!!this.formGroup.controls.fechaInicio.value
-          && !!!this.formGroup.controls.fechaInicio.value
-        ) {
+        if (!this.formGroup.controls.codigoEconomico.disabled) {
           this.formGroup.controls.fechaInicio.setValue(value.fechaInicio);
           this.formGroup.controls.fechaFin.setValue(value.fechaFin);
         }
@@ -109,17 +106,17 @@ export class ConvocatoriaConceptoGastoCodigoEcModalComponent extends
       MSG_PARAMS.CARDINALIRY.SINGULAR
     ).subscribe((value) => this.msgParamEntity = { entity: value, ...MSG_PARAMS.GENDER.MALE });
 
-    if (this.data.convocatoriaConceptoGastoCodigoEc.codigoEconomicoRef && this.data.permitido) {
+    if (this.data.convocatoriaConceptoGastoCodigoEc.codigoEconomico && this.data.permitido) {
       this.translate.get(
         CONVOCATORIA_ELEGIBILIDAD_CODIGO_ECONOMICO_PERMITIDO_KEY,
         MSG_PARAMS.CARDINALIRY.SINGULAR
       ).subscribe((value) => this.title = value);
-    } else if (this.data.convocatoriaConceptoGastoCodigoEc.codigoEconomicoRef && !this.data.permitido) {
+    } else if (this.data.convocatoriaConceptoGastoCodigoEc.codigoEconomico && !this.data.permitido) {
       this.translate.get(
         CONVOCATORIA_ELEGIBILIDAD_CODIGO_ECONOMICO_NO_PERMITIDO_KEY,
         MSG_PARAMS.CARDINALIRY.SINGULAR
       ).subscribe((value) => this.title = value);
-    } else if (!this.data.convocatoriaConceptoGastoCodigoEc.codigoEconomicoRef && this.data.permitido) {
+    } else if (!this.data.convocatoriaConceptoGastoCodigoEc.codigoEconomico && this.data.permitido) {
       this.translate.get(
         CONVOCATORIA_ELEGIBILIDAD_CODIGO_ECONOMICO_PERMITIDO_KEY,
         MSG_PARAMS.CARDINALIRY.SINGULAR
@@ -154,7 +151,7 @@ export class ConvocatoriaConceptoGastoCodigoEcModalComponent extends
   }
 
   displayerCodigoEconomico(codigoEconomico: ICodigoEconomicoGasto) {
-    return codigoEconomico?.id ?? '';
+    return `${codigoEconomico?.id} - ${codigoEconomico?.nombre}` ?? '';
   }
 
   sorterCodigoEconomico(o1: SelectValue<ICodigoEconomicoGasto>, o2: SelectValue<ICodigoEconomicoGasto>): number {
@@ -162,7 +159,7 @@ export class ConvocatoriaConceptoGastoCodigoEcModalComponent extends
   }
 
   protected getDatosForm(): IConvocatoriaConceptoGastoCodigoEcModalComponent {
-    this.data.convocatoriaConceptoGastoCodigoEc.codigoEconomicoRef = this.formGroup.controls.codigoEconomicoRef.value?.id;
+    this.data.convocatoriaConceptoGastoCodigoEc.codigoEconomico = this.formGroup.controls.codigoEconomico.value;
     this.data.convocatoriaConceptoGastoCodigoEc.observaciones = this.formGroup.controls.observaciones.value;
     this.data.convocatoriaConceptoGastoCodigoEc.fechaInicio = this.formGroup.controls.fechaInicio.value;
     this.data.convocatoriaConceptoGastoCodigoEc.fechaFin = this.formGroup.controls.fechaFin.value;
@@ -170,12 +167,10 @@ export class ConvocatoriaConceptoGastoCodigoEcModalComponent extends
   }
 
   protected getFormGroup(): FormGroup {
-    const codigoEconomico = this.data.convocatoriaConceptoGastoCodigoEc?.codigoEconomicoRef
-      ? { id: this.data.convocatoriaConceptoGastoCodigoEc?.codigoEconomicoRef } as ICodigoEconomicoGasto
-      : null;
+    const codigoEconomico = this.data.convocatoriaConceptoGastoCodigoEc?.codigoEconomico ?? null;
     const formGroup = new FormGroup(
       {
-        codigoEconomicoRef: new FormControl(codigoEconomico),
+        codigoEconomico: new FormControl(codigoEconomico),
         fechaInicio: new FormControl(this.data.convocatoriaConceptoGastoCodigoEc?.fechaInicio),
         fechaFin: new FormControl(this.data.convocatoriaConceptoGastoCodigoEc?.fechaFin),
         observaciones: new FormControl(this.data.convocatoriaConceptoGastoCodigoEc?.observaciones),
@@ -184,7 +179,7 @@ export class ConvocatoriaConceptoGastoCodigoEcModalComponent extends
         validators: [
           DateValidator.isBefore('fechaFin', 'fechaInicio'),
           DateValidator.isAfter('fechaInicio', 'fechaFin'),
-          this.notOverlapsSameCodigoEconomico('fechaInicio', 'fechaFin', 'codigoEconomicoRef')
+          this.notOverlapsSameCodigoEconomico('fechaInicio', 'fechaFin', 'codigoEconomico')
         ]
       }
     );
@@ -192,7 +187,7 @@ export class ConvocatoriaConceptoGastoCodigoEcModalComponent extends
       formGroup.disable();
     }
     if (this.data.editModal) {
-      formGroup.controls.codigoEconomicoRef.disable();
+      formGroup.controls.codigoEconomico.disable();
       formGroup.controls.observaciones.disable();
     }
 
@@ -228,7 +223,7 @@ export class ConvocatoriaConceptoGastoCodigoEcModalComponent extends
         const finRangoNumber = finRangoControl.value ? finRangoControl.value.toMillis() : Number.MAX_VALUE;
 
         const ranges = this.data.convocatoriaConceptoGastoCodigoEcsTabla.filter(
-          conceptoGasto => conceptoGasto.codigoEconomicoRef === filterFieldControl.value.id
+          conceptoGasto => conceptoGasto.codigoEconomico.id === filterFieldControl.value.id
         ).map(conceptoGasto => {
           return {
             inicio: conceptoGasto.fechaInicio ? conceptoGasto.fechaInicio.toMillis() : Number.MIN_VALUE,

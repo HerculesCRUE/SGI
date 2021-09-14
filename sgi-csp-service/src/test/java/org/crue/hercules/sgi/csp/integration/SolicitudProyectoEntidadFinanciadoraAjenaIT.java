@@ -1,5 +1,6 @@
 package org.crue.hercules.sgi.csp.integration;
 
+import java.math.BigDecimal;
 import java.util.Collections;
 
 import org.assertj.core.api.Assertions;
@@ -139,8 +140,8 @@ public class SolicitudProyectoEntidadFinanciadoraAjenaIT extends BaseIT {
         .as("getFuenteFinanciacion().getId()").isEqualTo(1L);
     Assertions.assertThat(solicitudProyectoEntidadFinanciadoraAjena.getTipoFinanciacion().getId())
         .as("getTipoFinanciacion().getId()").isEqualTo(1L);
-    Assertions.assertThat(solicitudProyectoEntidadFinanciadoraAjena.getPorcentajeFinanciacion())
-        .as("getPorcentajeFinanciacion()").isEqualTo(20);
+    Assertions.assertThat(solicitudProyectoEntidadFinanciadoraAjena.getPorcentajeFinanciacion().floatValue())
+        .as("getPorcentajeFinanciacion()").isEqualTo(20F);
   }
 
   /**
@@ -169,7 +170,7 @@ public class SolicitudProyectoEntidadFinanciadoraAjenaIT extends BaseIT {
         .entidadRef("entidad-" + (id == null ? 0 : String.format("%03d", id)))
         .fuenteFinanciacion(fuenteFinanciacion)
         .tipoFinanciacion(tipoFinanciacion)
-        .porcentajeFinanciacion(50)
+        .porcentajeFinanciacion(BigDecimal.valueOf(50))
         .build();
     // @formatter:on
 

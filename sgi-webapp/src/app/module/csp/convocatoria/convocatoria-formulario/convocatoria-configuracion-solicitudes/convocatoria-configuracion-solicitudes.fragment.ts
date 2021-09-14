@@ -21,7 +21,8 @@ export class ConvocatoriaConfiguracionSolicitudesFragment extends FormFragment<I
     key: number,
     private configuracionSolicitudService: ConfiguracionSolicitudService,
     private documentoRequeridoSolicitudService: DocumentoRequeridoSolicitudService,
-    public readonly: boolean
+    public isConvocatoriaVinculada: boolean,
+    public hasEditPerm: boolean
   ) {
     super(key, true);
     this.setComplete(true);
@@ -37,8 +38,10 @@ export class ConvocatoriaConfiguracionSolicitudesFragment extends FormFragment<I
       fechaFinFase: new FormControl({ value: null, disabled: true }),
       importeMaximoSolicitud: new FormControl(null, Validators.maxLength(50)),
     });
-    if (this.readonly) {
+    if (!this.hasEditPerm) {
       form.disable();
+    } else if (this.isConvocatoriaVinculada) {
+      form.controls.formularioSolicitud.disable();
     }
 
     this.subscriptions.push(form.controls.tramitacionSGI.valueChanges.subscribe(
@@ -57,8 +60,8 @@ export class ConvocatoriaConfiguracionSolicitudesFragment extends FormFragment<I
     this.subscriptions.push(form.controls.fasePresentacionSolicitudes.valueChanges.subscribe(
       (value) => {
         if (value) {
-          form.controls.fechaInicioFase.setValue(value?.fechaInicio);
-          form.controls.fechaFinFase.setValue(value?.fechaFin);
+          form.controls.fechaInicioFase.setValue(value?.fechaInicio ?? null);
+          form.controls.fechaFinFase.setValue(value?.fechaFin ?? null);
         } else {
           form.controls.fechaInicioFase.setValue(null);
           form.controls.fechaFinFase.setValue(null);
@@ -71,12 +74,12 @@ export class ConvocatoriaConfiguracionSolicitudesFragment extends FormFragment<I
 
   protected buildPatch(configuracionSolicitud: IConfiguracionSolicitud): { [key: string]: any; } {
     return {
-      tramitacionSGI: configuracionSolicitud ? configuracionSolicitud?.tramitacionSGI : false,
-      fasePresentacionSolicitudes: configuracionSolicitud ? configuracionSolicitud?.fasePresentacionSolicitudes : null,
-      fechaInicioFase: configuracionSolicitud?.fasePresentacionSolicitudes?.fechaInicio,
-      fechaFinFase: configuracionSolicitud?.fasePresentacionSolicitudes?.fechaFin,
-      importeMaximoSolicitud: configuracionSolicitud ? configuracionSolicitud?.importeMaximoSolicitud : null,
-      formularioSolicitud: configuracionSolicitud ? configuracionSolicitud?.formularioSolicitud : null
+      tramitacionSGI: configuracionSolicitud?.tramitacionSGI ?? false,
+      fasePresentacionSolicitudes: configuracionSolicitud?.fasePresentacionSolicitudes ?? null,
+      fechaInicioFase: configuracionSolicitud?.fasePresentacionSolicitudes?.fechaInicio ?? null,
+      fechaFinFase: configuracionSolicitud?.fasePresentacionSolicitudes?.fechaFin ?? null,
+      importeMaximoSolicitud: configuracionSolicitud?.importeMaximoSolicitud ?? null,
+      formularioSolicitud: configuracionSolicitud?.formularioSolicitud ?? null
     };
   }
 

@@ -1,221 +1,213 @@
 <!-- Convocatorias listado investigador -->
-<div class="scrollable-panel">
-  <section class="convocatoria-listado-inv">
+<sgi-menu-content>
+  <!-- Buscador de convocatorias -->
+  <div [ngClass]="busquedaAvanzada ? 'mat-elevation-z8 caja-busqueda-avanzada' : ''">
+    <form [ngClass]="busquedaAvanzada ? '' : 'formulario'" [formGroup]="formGroup" [fxLayout.xs]="fxLayoutProperties.xs"
+      [fxLayout]="fxLayoutProperties.layout" fxLayoutGap="fxLayoutProperties.gap">
 
-    <!-- Buscador de convocatorias -->
-    <div [ngClass]="busquedaAvanzada ? 'mat-elevation-z8 caja-busqueda-avanzada' : ''">
-      <form [ngClass]="busquedaAvanzada ? '' : 'formulario'" [formGroup]="formGroup"
-        [fxLayout.xs]="fxLayoutProperties.xs" [fxLayout]="fxLayoutProperties.layout"
-        fxLayoutGap="fxLayoutProperties.gap">
-
-        <div fxFlex="73%" fxFlex.sm="50%" fxFlex.md="53%" [fxLayout.xs]="fxLayoutProperties.xs"
-          [fxLayout]="fxLayoutProperties.layout" fxLayoutGap="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
-          <!-- Aplicar Filtro -->
-          <div class="col">
-            <div class="checkbox">
-              <mat-checkbox color="primary" formControlName="aplicarFiltro" id="aplicarFiltro">
-                {{'csp.convocatoria.aplicar.filtro' | translate}}</mat-checkbox>
-            </div>
-          </div>
-
-          <!-- Abierto plazo -->
-          <div class="col">
-            <div class="checkbox">
-              <mat-checkbox color="primary" formControlName="abiertoPlazoPresentacionSolicitud"
-                id="abiertoPlazoPresentacionSolicitud">
-                {{'csp.convocatoria.plazo-abierto' | translate}}</mat-checkbox>
-            </div>
+      <div fxFlex="73%" fxFlex.sm="50%" fxFlex.md="53%" [fxLayout.xs]="fxLayoutProperties.xs"
+        [fxLayout]="fxLayoutProperties.layout" fxLayoutGap="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
+        <!-- Aplicar Filtro -->
+        <div class="col">
+          <div class="checkbox">
+            <mat-checkbox color="primary" formControlName="aplicarFiltro" id="aplicarFiltro">
+              {{'csp.convocatoria.aplicar.filtro' | translate}}</mat-checkbox>
           </div>
         </div>
 
-        <div class="buttons-final" *ngIf="!busquedaAvanzada">
-          <div class="col filter-button">
-            <button color="primary" aria-label="Center Align" mat-raised-button (click)="onSearch()">
-              <mat-icon>search</mat-icon> {{'btn.search'| translate}}
-            </button>
-            <button class="link-busqueda underline" aria-label="Center Align" mat-button
-              (click)="toggleBusquedaAvanzada()">
-              {{'btn.search.advanced'| translate}}
-            </button>
-            <button color="warn" aria-label="Center Align" (click)="onClearFilters()" mat-button>{{'btn.clean'|
-              translate}}
-            </button>
+        <!-- Abierto plazo -->
+        <div class="col">
+          <div class="checkbox">
+            <mat-checkbox color="primary" formControlName="abiertoPlazoPresentacionSolicitud"
+              id="abiertoPlazoPresentacionSolicitud">
+              {{'csp.convocatoria.plazo-abierto' | translate}}</mat-checkbox>
           </div>
         </div>
-      </form>
+      </div>
 
-      <form *ngIf="busquedaAvanzada" [ngClass]="busquedaAvanzada ? 'busqueda-avanzada' : ''" [formGroup]="formGroup">
+      <div class="buttons-final" *ngIf="!busquedaAvanzada">
+        <div class="col filter-button">
+          <button color="primary" aria-label="Center Align" mat-raised-button (click)="onSearch()">
+            <mat-icon>search</mat-icon> {{'btn.search'| translate}}
+          </button>
+          <button class="link-busqueda underline" aria-label="Center Align" mat-button
+            (click)="toggleBusquedaAvanzada()">
+            {{'btn.search.advanced'| translate}}
+          </button>
+          <button color="warn" aria-label="Center Align" (click)="onClearFilters()" mat-button>{{'btn.clean'|
+            translate}}
+          </button>
+        </div>
+      </div>
+    </form>
 
-        <div [fxLayout.xs]="fxLayoutProperties.xs" [fxLayout]="fxLayoutProperties.layout"
-          [fxLayoutGap]="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
+    <form *ngIf="busquedaAvanzada" [ngClass]="busquedaAvanzada ? 'busqueda-avanzada' : ''" [formGroup]="formGroup">
 
-          <!-- Titulo -->
-          <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md"
-            [fxFlex.gt-md]="fxFlexProperties.gtMd" [fxFlexOrder]="fxFlexProperties.order">
-            <mat-form-field>
-              <mat-label>{{'csp.convocatoria.titulo' | translate}}</mat-label>
-              <input matInput type="text" placeholder="{{'csp.convocatoria.titulo' | translate}}"
-                formControlName="titulo">
-            </mat-form-field>
-          </div>
+      <div [fxLayout.xs]="fxLayoutProperties.xs" [fxLayout]="fxLayoutProperties.layout"
+        [fxLayoutGap]="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
 
-          <!-- Referencia -->
-          <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md"
-            [fxFlex.gt-md]="fxFlexProperties.gtMd" [fxFlexOrder]="fxFlexProperties.order">
-            <mat-form-field>
-              <mat-label>{{'csp.convocatoria.referencia' | translate}}</mat-label>
-              <input matInput type="text" placeholder="{{'csp.convocatoria.referencia' | translate}}"
-                formControlName="codigo">
-            </mat-form-field>
-          </div>
-
-
+        <!-- Titulo -->
+        <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
+          [fxFlexOrder]="fxFlexProperties.order">
+          <mat-form-field>
+            <mat-label>{{'csp.convocatoria.titulo' | translate}}</mat-label>
+            <input matInput type="text" placeholder="{{'csp.convocatoria.titulo' | translate}}"
+              formControlName="titulo">
+          </mat-form-field>
         </div>
 
-        <div [fxLayout.xs]="fxLayoutProperties.xs" [fxLayout]="fxLayoutProperties.layout"
-          [fxLayoutGap]="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
-
-          <!-- Finalidades -->
-          <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md"
-            [fxFlex.gt-md]="fxFlexProperties.gtMd" [fxFlexOrder]="fxFlexProperties.order">
-            <mat-form-field class="input-form">
-              <mat-label>{{'csp.convocatoria.finalidad' | translate}}</mat-label>
-              <sgi-select-tipo-finalidad formControlName="finalidad">
-              </sgi-select-tipo-finalidad>
-            </mat-form-field>
-          </div>
+        <!-- Referencia -->
+        <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
+          [fxFlexOrder]="fxFlexProperties.order">
+          <mat-form-field>
+            <mat-label>{{'csp.convocatoria.referencia' | translate}}</mat-label>
+            <input matInput type="text" placeholder="{{'csp.convocatoria.referencia' | translate}}"
+              formControlName="codigo">
+          </mat-form-field>
         </div>
 
-        <div class="fieldset-form">
-          {{'csp.convocatoria.fecha-publicacion' | translate}}
+
+      </div>
+
+      <div [fxLayout.xs]="fxLayoutProperties.xs" [fxLayout]="fxLayoutProperties.layout"
+        [fxLayoutGap]="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
+
+        <!-- Finalidades -->
+        <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
+          [fxFlexOrder]="fxFlexProperties.order">
+          <mat-form-field class="input-form">
+            <mat-label>{{'csp.convocatoria.finalidad' | translate}}</mat-label>
+            <sgi-select-tipo-finalidad formControlName="finalidad">
+            </sgi-select-tipo-finalidad>
+          </mat-form-field>
+        </div>
+      </div>
+
+      <div class="fieldset-form">
+        {{'csp.convocatoria.fecha-publicacion' | translate}}
+      </div>
+
+      <div [fxLayout.xs]="fxLayoutProperties.xs" [fxLayout]="fxLayoutProperties.layout"
+        [fxLayoutGap]="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
+
+        <!-- Fecha publicacion desde-->
+        <div class="col">
+          <mat-form-field>
+            <mat-label>{{'csp.convocatoria.fecha-publicacion-desde' | translate}}</mat-label>
+            <input matInput formControlName="fechaPublicacionDesde" [matDatepicker]="pickerFechaPublicacionDesde"
+              [placeholder]="'csp.convocatoria.fecha-publicacion-desde' | translate">
+            <mat-datepicker-toggle matSuffix [for]="pickerFechaPublicacionDesde"></mat-datepicker-toggle>
+            <mat-datepicker #pickerFechaPublicacionDesde>
+            </mat-datepicker>
+          </mat-form-field>
         </div>
 
-        <div [fxLayout.xs]="fxLayoutProperties.xs" [fxLayout]="fxLayoutProperties.layout"
-          [fxLayoutGap]="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
-
-          <!-- Fecha publicacion desde-->
-          <div class="col">
-            <mat-form-field>
-              <mat-label>{{'csp.convocatoria.fecha-publicacion-desde' | translate}}</mat-label>
-              <input matInput formControlName="fechaPublicacionDesde"
-                [ngxMatDatetimePicker]="pickerFechaPublicacionDesde"
-                [placeholder]="'csp.convocatoria.fecha-publicacion-desde' | translate">
-              <mat-datepicker-toggle matSuffix [for]="pickerFechaPublicacionDesde"></mat-datepicker-toggle>
-              <ngx-mat-datetime-picker #pickerFechaPublicacionDesde showSeconds="true" [defaultTime]="[0,0,0]">
-              </ngx-mat-datetime-picker>
-            </mat-form-field>
-          </div>
-
-          <!-- Fecha publicacion hasta-->
-          <div class="col">
-            <mat-form-field>
-              <mat-label>{{'csp.convocatoria.fecha-publicacion-hasta' | translate}}</mat-label>
-              <input matInput formControlName="fechaPublicacionHasta"
-                [ngxMatDatetimePicker]="pickerFechaPublicacionHasta"
-                [placeholder]="'csp.convocatoria.fecha-publicacion-hasta' | translate">
-              <mat-datepicker-toggle matSuffix [for]="pickerFechaPublicacionHasta"></mat-datepicker-toggle>
-              <ngx-mat-datetime-picker #pickerFechaPublicacionHasta showSeconds="true" [defaultTime]="[0,0,0]">
-              </ngx-mat-datetime-picker>
-            </mat-form-field>
-          </div>
-
+        <!-- Fecha publicacion hasta-->
+        <div class="col">
+          <mat-form-field sgiEndDate>
+            <mat-label>{{'csp.convocatoria.fecha-publicacion-hasta' | translate}}</mat-label>
+            <input matInput formControlName="fechaPublicacionHasta" [matDatepicker]="pickerFechaPublicacionHasta"
+              [placeholder]="'csp.convocatoria.fecha-publicacion-hasta' | translate">
+            <mat-datepicker-toggle matSuffix [for]="pickerFechaPublicacionHasta"></mat-datepicker-toggle>
+            <mat-datepicker #pickerFechaPublicacionHasta>
+            </mat-datepicker>
+          </mat-form-field>
         </div>
 
-        <div [fxLayout.xs]="fxLayoutProperties.xs" [fxLayout]="fxLayoutProperties.layout"
-          [fxLayoutGap]="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
+      </div>
 
-          <!-- Entidad convocantes -->
-          <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md"
-            [fxFlex.gt-md]="fxFlexProperties.gtMd" [fxFlexOrder]="fxFlexProperties.order">
-            <mat-form-field class="input-form">
-              <mat-label>{{'csp.convocatoria-entidad-convocante' | translate:MSG_PARAMS.CARDINALIRY.SINGULAR}}
-              </mat-label>
-              <sgi-select-empresa
-                placeholder="{{'csp.convocatoria-entidad-convocante' | translate:MSG_PARAMS.CARDINALIRY.SINGULAR}}"
-                formControlName="entidadConvocante">
-              </sgi-select-empresa>
-            </mat-form-field>
-          </div>
+      <div [fxLayout.xs]="fxLayoutProperties.xs" [fxLayout]="fxLayoutProperties.layout"
+        [fxLayoutGap]="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
 
+        <!-- Entidad convocantes -->
+        <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
+          [fxFlexOrder]="fxFlexProperties.order">
+          <mat-form-field class="input-form">
+            <mat-label>{{'csp.convocatoria-entidad-convocante' | translate:MSG_PARAMS.CARDINALIRY.SINGULAR}}
+            </mat-label>
+            <sgi-select-empresa
+              placeholder="{{'csp.convocatoria-entidad-convocante' | translate:MSG_PARAMS.CARDINALIRY.SINGULAR}}"
+              formControlName="entidadConvocante">
+            </sgi-select-empresa>
+          </mat-form-field>
         </div>
 
-        <div [fxLayout.xs]="fxLayoutProperties.xs" [fxLayout]="fxLayoutProperties.layout"
-          [fxLayoutGap]="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
+      </div>
 
-          <!-- Entidad financiadora -->
-          <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md"
-            [fxFlex.gt-md]="fxFlexProperties.gtMd" [fxFlexOrder]="fxFlexProperties.order">
-            <mat-form-field class="input-form">
-              <mat-label>{{'csp.convocatoria-entidad-financiadora' | translate:MSG_PARAMS.CARDINALIRY.SINGULAR}}
-              </mat-label>
-              <sgi-select-empresa
-                placeholder="{{'csp.convocatoria-entidad-financiadora' | translate:MSG_PARAMS.CARDINALIRY.SINGULAR}}"
-                formControlName="entidadFinanciadora">
-              </sgi-select-empresa>
-            </mat-form-field>
-          </div>
+      <div [fxLayout.xs]="fxLayoutProperties.xs" [fxLayout]="fxLayoutProperties.layout"
+        [fxLayoutGap]="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
 
-          <!-- Fuente financiacion -->
-          <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md"
-            [fxFlex.gt-md]="fxFlexProperties.gtMd" [fxFlexOrder]="fxFlexProperties.order">
-            <mat-form-field class="input-form">
-              <mat-label>{{'csp.convocatoria.fuente-financiacion' | translate}}</mat-label>
-              <sgi-select-fuente-financiacion formControlName="fuenteFinanciacion"></sgi-select-fuente-financiacion>
-            </mat-form-field>
-          </div>
-
+        <!-- Entidad financiadora -->
+        <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
+          [fxFlexOrder]="fxFlexProperties.order">
+          <mat-form-field class="input-form">
+            <mat-label>{{'csp.convocatoria-entidad-financiadora' | translate:MSG_PARAMS.CARDINALIRY.SINGULAR}}
+            </mat-label>
+            <sgi-select-empresa
+              placeholder="{{'csp.convocatoria-entidad-financiadora' | translate:MSG_PARAMS.CARDINALIRY.SINGULAR}}"
+              formControlName="entidadFinanciadora">
+            </sgi-select-empresa>
+          </mat-form-field>
         </div>
 
-        <div [fxLayout.xs]="fxLayoutProperties.xs" [fxLayout]="fxLayoutProperties.layout"
-          [fxLayoutGap]="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
-
-          <!-- Tipo de ámbito geográfico -->
-          <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md"
-            [fxFlex.gt-md]="fxFlexProperties.gtMd" [fxFlexOrder]="fxFlexProperties.order">
-            <mat-form-field class="input-form">
-              <mat-label>{{'csp.convocatoria.ambito-geografico' | translate}}</mat-label>
-              <sgi-select-tipo-ambito-geografico formControlName="ambitoGeografico"></sgi-select-tipo-ambito-geografico>
-            </mat-form-field>
-          </div>
-
+        <!-- Fuente financiacion -->
+        <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
+          [fxFlexOrder]="fxFlexProperties.order">
+          <mat-form-field class="input-form">
+            <mat-label>{{'csp.convocatoria.fuente-financiacion' | translate}}</mat-label>
+            <sgi-select-fuente-financiacion formControlName="fuenteFinanciacion"></sgi-select-fuente-financiacion>
+          </mat-form-field>
         </div>
 
-        <div [fxLayout.xs]="fxLayoutProperties.xs" [fxLayout]="fxLayoutProperties.layout"
-          [fxLayoutGap]="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
+      </div>
 
-          <!-- Area tematica -->
-          <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md"
-            [fxFlex.gt-md]="fxFlexProperties.gtMd" [fxFlexOrder]="fxFlexProperties.order">
-            <mat-form-field class="input-form">
-              <mat-label>{{'list.entity' | translate:msgParamAreaTematicaEntity}}</mat-label>
-              <sgi-select-area-tematica formControlName="areaTematica"></sgi-select-area-tematica>
-            </mat-form-field>
-          </div>
+      <div [fxLayout.xs]="fxLayoutProperties.xs" [fxLayout]="fxLayoutProperties.layout"
+        [fxLayoutGap]="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
 
+        <!-- Tipo de ámbito geográfico -->
+        <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
+          [fxFlexOrder]="fxFlexProperties.order">
+          <mat-form-field class="input-form">
+            <mat-label>{{'csp.convocatoria.ambito-geografico' | translate}}</mat-label>
+            <sgi-select-tipo-ambito-geografico formControlName="ambitoGeografico"></sgi-select-tipo-ambito-geografico>
+          </mat-form-field>
         </div>
 
-        <div class="buttons-final">
-          <div class="col filter-button">
-            <button color="primary" aria-label="Center Align" mat-raised-button (click)="onSearch()">
-              <mat-icon>search</mat-icon> {{'btn.search'| translate}}
-            </button>
-            <button class="link-busqueda underline" aria-label="Center Align" mat-button
-              (click)="toggleBusquedaAvanzada()">
-              {{'btn.search.simple'| translate}}
-            </button>
-            <button color="warn" aria-label="Center Align" (click)="onClearFilters()" mat-button>{{'btn.clean'|
-              translate}}
-            </button>
-          </div>
+      </div>
+
+      <div [fxLayout.xs]="fxLayoutProperties.xs" [fxLayout]="fxLayoutProperties.layout"
+        [fxLayoutGap]="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
+
+        <!-- Area tematica -->
+        <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
+          [fxFlexOrder]="fxFlexProperties.order">
+          <mat-form-field class="input-form">
+            <mat-label>{{'list.entity' | translate:msgParamAreaTematicaEntity}}</mat-label>
+            <sgi-select-area-tematica formControlName="areaTematica"></sgi-select-area-tematica>
+          </mat-form-field>
         </div>
 
-      </form>
+      </div>
 
-
-    </div>
-
-    <table class="mat-elevation-z8 table-convocatoria-inv" mat-table [dataSource]="convocatorias$ | async" matSort
-      matSortActive="id" matSortDirection="asc" matSortDisableClear>
+      <div class="buttons-final">
+        <div class="col filter-button">
+          <button color="primary" aria-label="Center Align" mat-raised-button (click)="onSearch()">
+            <mat-icon>search</mat-icon> {{'btn.search'| translate}}
+          </button>
+          <button class="link-busqueda underline" aria-label="Center Align" mat-button
+            (click)="toggleBusquedaAvanzada()">
+            {{'btn.search.simple'| translate}}
+          </button>
+          <button color="warn" aria-label="Center Align" (click)="onClearFilters()" mat-button>{{'btn.clean'|
+            translate}}
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div class="mat-elevation-z4">
+    <table mat-table [dataSource]="convocatorias$ | async" matSort matSortActive="id" matSortDirection="asc"
+      matSortDisableClear>
 
       <!-- Titulo Column -->
       <ng-container matColumnDef="titulo">
@@ -282,5 +274,5 @@
     </table>
     <mat-paginator [pageSizeOptions]="elementosPagina" [length]="totalElementos" showFirstLastButtons>
     </mat-paginator>
-  </section>
-</div>
+  </div>
+</sgi-menu-content>

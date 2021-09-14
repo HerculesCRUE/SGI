@@ -1,0 +1,15 @@
+:host {
+  display: block;
+  div.alert {
+    padding-left: 15px;
+    padding-right: 15px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+
+    border-radius: 4px;
+    background-color: #e35138;
+    color: #fff;
+  }
+}

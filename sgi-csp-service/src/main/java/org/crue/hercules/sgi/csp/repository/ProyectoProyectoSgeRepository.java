@@ -1,5 +1,8 @@
 package org.crue.hercules.sgi.csp.repository;
 
+import java.util.List;
+import java.util.Optional;
+
 import org.crue.hercules.sgi.csp.model.Proyecto;
 import org.crue.hercules.sgi.csp.model.ProyectoProyectoSge;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -20,5 +23,7 @@ public interface ProyectoProyectoSgeRepository
    * @return si existe la entidad {@link ProyectoProyectoSge}
    */
   boolean existsByProyectoId(Long proyectoId);
+
+  Optional<ProyectoProyectoSge> findByIdAndProyectoUnidadGestionRefIn(Long id, List<String> unidadGestionRefs);
 
 }

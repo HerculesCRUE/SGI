@@ -208,27 +208,6 @@ public class SolicitudModalidadServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_WithProgramaNodoRaiz_ThrowsIllegalArgumentException() {
-    // given: Un nuevo SolicitudModalidad y la modalidad seleccionada es el nodo
-    // raiz
-    Long solicitudId = 1L;
-    Solicitud solicitud = generarMockSolicitud(solicitudId);
-    SolicitudModalidad solicitudModalidad = generarMockSolicitudModalidad(null);
-    solicitudModalidad.setPrograma(solicitudModalidad.getPrograma().getPadre());
-
-    BDDMockito.given(solicitudRepository.findById(ArgumentMatchers.anyLong())).willReturn(Optional.of(solicitud));
-    BDDMockito.given(programaRepository.findById(1L)).willReturn(Optional.of(solicitudModalidad.getPrograma()));
-    BDDMockito.given(convocatoriaEntidadConvocanteRepository
-        .findByConvocatoriaIdAndEntidadRef(ArgumentMatchers.anyLong(), ArgumentMatchers.anyString()))
-        .willReturn(Optional.of(generarMockConvocatoriaEntidadConvocante(1L)));
-
-    // when: Creamos el SolicitudModalidad
-    // then: Lanza una excepcion
-    Assertions.assertThatThrownBy(() -> service.create(solicitudModalidad)).isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("La modalidad seleccionada es el nodo raiz del arbol");
-  }
-
-  @Test
   public void update_ReturnsSolicitudModalidad() {
     // given: Un nuevo SolicitudModalidad con las observaciones actualizadas
     Long solicitudId = 1L;

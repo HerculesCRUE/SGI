@@ -1,5 +1,6 @@
 import { IConvocatoriaConceptoGastoCodigoEcBackend } from '@core/models/csp/backend/convocatoria-concepto-gasto-codigo-ec-backend';
 import { IConvocatoriaConceptoGastoCodigoEc } from '@core/models/csp/convocatoria-concepto-gasto-codigo-ec';
+import { ICodigoEconomicoGasto } from '@core/models/sge/codigo-economico-gasto';
 import { LuxonUtils } from '@core/utils/luxon-utils';
 import { SgiBaseConverter } from '@sgi/framework/core';
 
@@ -13,7 +14,7 @@ class ConvocatoriaConceptoGastoCodigoEcConverter extends
     return {
       id: value.id,
       convocatoriaConceptoGastoId: value.convocatoriaConceptoGastoId,
-      codigoEconomicoRef: value.codigoEconomicoRef,
+      codigoEconomico: { id: value.codigoEconomicoRef } as ICodigoEconomicoGasto,
       fechaInicio: LuxonUtils.fromBackend(value.fechaInicio),
       fechaFin: LuxonUtils.fromBackend(value.fechaFin),
       observaciones: value.observaciones
@@ -27,7 +28,7 @@ class ConvocatoriaConceptoGastoCodigoEcConverter extends
     return {
       id: value.id,
       convocatoriaConceptoGastoId: value.convocatoriaConceptoGastoId,
-      codigoEconomicoRef: value.codigoEconomicoRef,
+      codigoEconomicoRef: value.codigoEconomico.id,
       fechaInicio: LuxonUtils.toBackend(value.fechaInicio),
       fechaFin: LuxonUtils.toBackend(value.fechaFin),
       observaciones: value.observaciones

@@ -9,6 +9,7 @@ import TestUtils from '@core/utils/test-utils';
 import { MaterialDesignModule } from '@material/material-design.module';
 import { SharedModule } from '@shared/shared.module';
 import { LoggerTestingModule } from 'ngx-logger/testing';
+import { SgpSharedModule } from 'src/app/esb/sgp/shared/sgp-shared.module';
 
 import { EvaluacionListadoComponent } from './evaluacion-listado.component';
 
@@ -29,7 +30,8 @@ describe('EvaluacionListadoComponent', () => {
         FlexLayoutModule,
         FormsModule,
         ReactiveFormsModule,
-        SharedModule
+        SharedModule,
+        SgpSharedModule
       ],
       providers: [
         { provide: SnackBarService, useValue: TestUtils.getSnackBarServiceSpy() }

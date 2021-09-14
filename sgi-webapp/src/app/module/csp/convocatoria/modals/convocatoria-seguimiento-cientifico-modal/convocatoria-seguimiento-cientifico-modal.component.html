@@ -60,6 +60,12 @@
           <mat-error *ngIf="formGroup.controls.desdeMes.errors?.overlapped">
             {{ 'error.overlapping.range' | translate }}
           </mat-error>
+          <mat-error *ngIf="formGroup.controls.desdeMes.errors?.initial">
+            {{ 'error.initial.mes-desde' | translate }}
+          </mat-error>
+          <mat-error *ngIf="formGroup.controls.desdeMes.errors?.wrongOrder">
+            {{ 'error.wrongOrder.mes-desde' | translate }}
+          </mat-error>
         </mat-form-field>
       </div>
       <!-- Mes hasta -->
@@ -74,8 +80,8 @@
           <mat-error *ngIf="formGroup.controls.hastaMes.errors?.min">
             {{ 'error.min.mes-hasta' | translate }}
           </mat-error>
-          <mat-error *ngIf="formGroup.controls.hastaMes.errors?.after">
-            {{'error.after.param' | translate:msgParamMesInicioEntity}}
+          <mat-error *ngIf="formGroup.controls.hastaMes.errors?.afterOrEqual">
+            {{'error.afterOrEqual.param' | translate:msgParamMesInicioEntity}}
           </mat-error>
           <mat-error *ngIf="formGroup.controls.hastaMes.errors?.max">
             {{'error.csp.convocatoria-seguimiento-cientifico.duracion' | translate}}

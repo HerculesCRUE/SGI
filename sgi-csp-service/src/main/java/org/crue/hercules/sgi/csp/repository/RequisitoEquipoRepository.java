@@ -16,11 +16,10 @@ public interface RequisitoEquipoRepository
     extends JpaRepository<RequisitoEquipo, Long>, JpaSpecificationExecutor<RequisitoEquipo> {
 
   /**
-   * Busca un {@link RequisitoEquipo} por su {@link Convocatoria}
+   * Obtiene el {@link RequisitoEquipo} asociado a la {@link Convocatoria}
    * 
-   * @param convocatoriaId Id de la {@link Convocatoria}
-   * @return una {@link RequisitoEquipo}
+   * @param convocatoriaId id de la {@link Convocatoria}
+   * @return {@link RequisitoEquipo}
    */
   Optional<RequisitoEquipo> findByConvocatoriaId(Long convocatoriaId);
-
 }

@@ -2,19 +2,21 @@
 
 $variable1: 28;
 
+$background-color: map-get($sgi-custom-colors, bg);
+
 .navbar-icon {
   .nav-item {
     border-radius: $variable1 + px;
     margin: 10px 10px 10px 0px;
     padding: 11px 13px 9px 13px;
-    background-color: map-get($palette-primary, 50);
+    background-color: $background-color;
     height: $variable1 + px;
     cursor: pointer;
     &:hover,
     &:focus {
-      background-color: map-get($palette-primary, 500);
+      background-color: map-get($palette-primary, 400);
       mat-icon {
-        color: map-get($palette-primary, 50);
+        color: $background-color;
       }
       -moz-transition: all 0.51s;
       -o-transition: all 0.51s;
@@ -27,21 +29,21 @@ $variable1: 28;
       }
     }
     &.modulo {
-      background-color: map-get($palette-primary, 400);
+      background-color: map-get($palette-primary, 300);
       mat-icon {
-        color: map-get($palette-primary, 50);
+        color: $background-color;
       }
       &:hover,
       &:focus {
-        background-color: map-get($palette-primary, 50);
+        background-color: $background-color;
         mat-icon {
-          color: map-get($palette-primary, 500);
+          color: $background-color;
         }
       }
     }
   }
   &.modulo {
-    border-left: 1px solid map-get($palette-primary, 50);
+    border-left: 1px solid $background-color;
   }
   &.modulo,
   &:first-child {

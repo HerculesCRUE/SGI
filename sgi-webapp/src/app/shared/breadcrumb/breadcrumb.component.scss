@@ -1,35 +1,28 @@
 @import "colors.scss";
 @import "vars.scss";
 
-$breadcrumbTextColor: map-get($palette-grease, 500);
-$breadcrumbTextColorActive: map-get($palette-primary, 500);
+$background-color: map-get($sgi-custom-colors, bg);
+$border-bottom-color: map-get($palette-grey, 300);
+$breadcrumbTextColor: $dark-disabled-text;
+$breadcrumbTextColorActive: map-get($palette-primary, 400);
 
 .breadcrumbComponent {
-  background-color: map-get($palette-primary, 50);
+  background-color: $background-color;
   $height: calc(#{$breadcrumHeight} - #{$borderWidth * 1});
+
   max-height: $height;
   min-height: $height;
-  box-shadow: inset 0px 14px 12px -12px map-get($palette-grease, 100);
-  border-bottom: solid #{$borderWidth} rgba(0, 0, 0, 0.12);
+  box-shadow: inset 0px 14px 12px -12px $border-bottom-color;
+  border-bottom: solid #{$borderWidth} $dark-dividers;
   .migas {
-    padding: 5px 20px 5px 20px;
+    padding: 0px 15px 0px 15px;
     .breadcrumb {
-      --uiBreadcrumbDividerColor: var(--breadcrumbDividerColor, inherit);
-      --uiBreadcrumbDividerSize: var(--breadcrumbDividerSize, 16px);
-      --uiBreadcrumbIndent: var(--breadcrumbIndent, 10px);
-
-      --uiBreadcrumbTextColor: $breadcrumbTextColor;
-      --uiBreadcrumbTextColorActive: $breadcrumbTextColorActive;
-      --breadcrumbDividerColor: var(--uiBreadcrumbTextColor);
-      --rLinkTextColor: var(--uiBreadcrumbTextColor);
-
       .breadcrumb__divider {
-        color: var(--uiBreadcrumbDividerColor);
-        //  margin-left: var(--uiBreadcrumbIndent);
-        font-size: var(--uiBreadcrumbDividerSize);
+        color: var(--breadcrumbTextColor);
         .chevron {
           transform: rotate(90deg);
           margin-top: 5px;
+          color: $breadcrumbTextColorActive;
         }
       }
 
@@ -50,20 +43,14 @@ $breadcrumbTextColorActive: map-get($palette-primary, 500);
       }
 
       .r-list {
-        --uirListPaddingLeft: var(--rListPaddingLeft, 0);
-        --uirListMarginTop: var(--rListMarginTop, 0);
-        --uirListMarginBottom: var(--rListMarginBottom, 0);
-        --uirListListStyle: var(--rListListStyle, none);
-        padding-left: var(--uirListPaddingLeft) !important;
-        margin-top: var(--uirListMarginTop) !important;
-        margin-bottom: var(--uirListMarginBottom) !important;
-        list-style: var(--uirListListStyle) !important;
+        padding-left: 0 !important;
+        margin-top: 0 !important;
+        margin-bottom: 0 !important;
+        list-style: none !important;
       }
 
       .r-link {
-        --uirLinkDisplay: var(--rLinkDisplay, inline-flex);
-        --uirLinkTextDecoration: var(--rLinkTextDecoration, none);
-        display: var(--uirLinkDisplay) !important;
+        display: inline-flex !important;
         color: $breadcrumbTextColor !important;
         text-decoration: underline !important;
       }

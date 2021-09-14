@@ -1,5 +1,6 @@
 package org.crue.hercules.sgi.framework.web.config;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -64,15 +65,15 @@ public class SgiWebSecurityConfig {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
       log.debug("configure(HttpSecurity http) - start");
-    // @formatter:off
-    http
+      // @formatter:off
+      http
         // Configure session management as a basis for a classic, server side rendered application
         .sessionManagement()
         .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
       .and()
-        // Require authentication for all requests except for error
+        // Require authentication for all requests except for error, health checks and login
         .authorizeRequests()
-        .antMatchers("/error").permitAll()
+        .antMatchers("/error", "/actuator/health/liveness", "/actuator/health/readiness").permitAll()
         .antMatchers("/**").authenticated()
       .and()
         // Validate tokens through configured OpenID Provider
@@ -81,53 +82,59 @@ public class SgiWebSecurityConfig {
           .jwtAuthenticationConverter(jwtAuthenticationConverter())
         .and()
       .and();
-
-    // @formatter:on
-      if (csrfEnabled) {
-      // @formatter:off
-      http
-        // CSRF protection by cookie
-        .csrf()
-        .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse());
-    // @formatter:on
-      } else {
-      // @formatter:off
-      http
-        // CSRF protection disabled
-        .csrf()
-        .disable();
-    }
-
-    // @formatter:on
-      if (!frameoptionsEnabled) {
-      // @formatter:off
-      http
-        .headers()
-        // Disable X-Frame-Options
-        .frameOptions().disable();
-    }
-
-    // @formatter:on
-      if (loginEnabled) {
-      // @formatter:off
-      http
-          // This is the point where OAuth2 login of Spring 5 gets enabled
-          .oauth2Login()
-            .userInfoEndpoint()
-            .oidcUserService(keycloakOidcUserService())
-          .and()
-        .and()
-          // Propagate logouts via /logout to Keycloak
-          .logout()
-          .addLogoutHandler(keycloakLogoutHandler());
       // @formatter:on
+
+      if (csrfEnabled) {
+        // @formatter:off
+        http
+          // CSRF protection by cookie
+          .csrf()
+          .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse());
+        // @formatter:on
+      } else {
+        // @formatter:off
+        http
+          // CSRF protection disabled
+          .csrf()
+          .disable();
+        // @formatter:on
+      }
+
+      if (!frameoptionsEnabled) {
+        // @formatter:off
+        http
+          .headers()
+          // Disable X-Frame-Options
+          .frameOptions().disable();
+        // @formatter:on
+      }
+
+      if (loginEnabled) {
+        // @formatter:off
+        http
+            // This is the point where OAuth2 login of Spring 5 gets enabled
+            .oauth2Login()
+              .userInfoEndpoint()
+              .oidcUserService(keycloakOidcUserService())
+            .and()
+          .and()
+            // Propagate logouts via /logout to Keycloak
+            .logout()
+            .addLogoutHandler(keycloakLogoutHandler());
+        // @formatter:on
       }
 
       if (webSecurityExceptionHandler != null) {
-        http
-            // Handle Spring Security exceptions
-            .exceptionHandling().accessDeniedHandler(webSecurityExceptionHandler)
-            .authenticationEntryPoint(webSecurityExceptionHandler);
+        if (loginEnabled) {
+          http
+              // Handle Spring Security exceptions
+              .exceptionHandling().accessDeniedHandler(webSecurityExceptionHandler);
+        } else {
+          http
+              // Handle Spring Security exceptions
+              .exceptionHandling().accessDeniedHandler(webSecurityExceptionHandler)
+              .authenticationEntryPoint(webSecurityExceptionHandler);
+        }
       }
       log.debug("configure(HttpSecurity http) - end");
     }
@@ -163,8 +170,15 @@ public class SgiWebSecurityConfig {
           log.debug("convert(final Jwt jwt) - start");
           final Map<String, Object> realmAccess = (Map<String, Object>) jwt.getClaims().get("realm_access");
           if (realmAccess == null) {
-            Collection<GrantedAuthority> returnValue = Arrays
-                .asList(new GrantedAuthority[] { new SimpleGrantedAuthority("ROLE_USER") });
+            Collection<GrantedAuthority> returnValue = new ArrayList<>(
+                Arrays.asList(new GrantedAuthority[] { new SimpleGrantedAuthority("ROLE_USER") }));
+            String scopes = (String) jwt.getClaims().get("scope");
+            if (scopes != null) {
+              List<String> scopeList = Arrays.asList(((String) scopes).split(" "));
+              returnValue.addAll(scopeList.stream().map((scope) -> new SimpleGrantedAuthority("SCOPE_" + scope))
+                  .collect(Collectors.toList()));
+            }
+
             log.warn("No realm_acces found in token");
             log.debug("convert(final Jwt jwt) - end");
             return returnValue;

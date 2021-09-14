@@ -1,12 +1,12 @@
 @import "colors.scss";
-@import '~@angular/material/theming';
+@import "~@angular/material/theming";
 
-.convocatoria-listado-inv {
-    .caja-busqueda-avanzada {
+:host {
+  .caja-busqueda-avanzada {
     padding: 10px 20px 10px 20px;
     .col {
       padding-right: 15px;
-      .checkbox{
+      .checkbox {
         padding-top: 15px;
       }
     }
@@ -18,20 +18,20 @@
         }
       }
     }
-    .input-right{
+    .input-right {
       float: left;
       width: 65%;
     }
-    .boton-left{
+    .boton-left {
       float: right;
     }
   }
   .formulario {
-    @include mat-elevation(8, map-get($custom-colors, black), 0.8);
+    @include mat-elevation(8, map-get($sgi-custom-colors, black), 0.8);
     padding: 10px 20px 30px 20px;
     .col {
       padding-right: 15px;
-      .checkbox{
+      .checkbox {
         padding-top: 15px;
       }
     }
@@ -44,7 +44,7 @@
       }
     }
   }
-  .button-accion{
+  .button-accion {
     margin-left: 10px;
   }
 }

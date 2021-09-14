@@ -13,8 +13,7 @@ export class ConvocatoriaSeguimientoCientificoFragment extends Fragment {
   constructor(
     key: number,
     private convocatoriaService: ConvocatoriaService,
-    private convocatoriaSeguimientoCientificoService: ConvocatoriaSeguimientoCientificoService,
-    public readonly: boolean
+    private convocatoriaSeguimientoCientificoService: ConvocatoriaSeguimientoCientificoService
   ) {
     super(key);
     this.setComplete(true);
@@ -69,6 +68,10 @@ export class ConvocatoriaSeguimientoCientificoFragment extends Fragment {
 
   saveOrUpdate(): Observable<void> {
     const seguimientosCientificos = this.seguimientosCientificos$.value.map(wrapper => wrapper.value);
+    // TODO: Eliminar si el backend deja de validar que convocatoriaId no pueda ser null
+    seguimientosCientificos.forEach(periodo => {
+      periodo.convocatoriaId = this.getKey() as number;
+    });
 
     return this.convocatoriaSeguimientoCientificoService
       .updateConvocatoriaSeguimientoCientificoConvocatoria(this.getKey() as number, seguimientosCientificos).pipe(
@@ -96,6 +99,15 @@ export class ConvocatoriaSeguimientoCientificoFragment extends Fragment {
     const hasTouched = this.seguimientosCientificos$.value.some((wrapper) => wrapper.touched);
     const hasNoDeleted = this.seguimientosCientificosEliminados.length > 0;
     return !hasTouched && !hasNoDeleted;
+  }
+
+  public checkFirstPeriodoStartsAtOne() {
+    if (this.seguimientosCientificos$.value.length > 0
+      && this.seguimientosCientificos$.value[0].value.mesInicial !== 1) {
+      this.setErrors(true);
+    } else {
+      this.setErrors(false);
+    }
   }
 
 }

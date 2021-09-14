@@ -52,6 +52,7 @@ public class SolicitudProyectoController {
   public SolicitudProyectoController(SolicitudProyectoService solicitudProyectoService,
       SolicitudProyectoPresupuestoService solicitudProyectoPresupuestoService,
       SolicitudProyectoSocioService solicitudProyectoSocioService) {
+
     this.service = solicitudProyectoService;
     this.solicitudProyectoPresupuestoService = solicitudProyectoPresupuestoService;
     this.solicitudProyectoSocioService = solicitudProyectoSocioService;
@@ -99,7 +100,7 @@ public class SolicitudProyectoController {
    * @return SolicitudProyecto {@link SolicitudProyecto} correspondiente al id
    */
   @GetMapping("/{id}")
-  @PreAuthorize("hasAuthorityForAnyUO('AUTH')")
+  @PreAuthorize("hasAuthorityForAnyUO('CSP-PRO-E')")
   SolicitudProyecto findById(@PathVariable Long id) {
     log.debug("SolicitudProyecto findById(Long id) - start");
     SolicitudProyecto returnValue = service.findById(id);
@@ -151,6 +152,36 @@ public class SolicitudProyectoController {
     Boolean returnValue = solicitudProyectoSocioService.hasSolicitudSocio(id);
     log.debug("hasSolicitudSocio(Long id) - end");
     return returnValue ? new ResponseEntity<>(HttpStatus.OK) : new ResponseEntity<>(HttpStatus.NO_CONTENT);
+  }
+
+  @RequestMapping(path = "/{solicitudProyectoId}/solicitudproyectosocios/periodospago", method = RequestMethod.HEAD)
+  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-SOL-E', 'CSP-SOL-V', 'CSP-SOL-INV-ER')")
+  public ResponseEntity<Object> hasSolicitudProyectoSocioPeriodosPago(
+      @PathVariable(required = true) Long solicitudProyectoId) {
+
+    return this.solicitudProyectoSocioService.existsSolicitudProyectoSocioPeriodoPagoBySolicitudProyectoSocioId(
+        solicitudProyectoId) ? ResponseEntity.ok().build() : ResponseEntity.noContent().build();
+  }
+
+  @RequestMapping(path = "/{solicitudProyectoId}/solicitudproyectosocios/periodosjustificacion", method = RequestMethod.HEAD)
+  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-SOL-E', 'CSP-SOL-V', 'CSP-SOL-INV-ER')")
+  public ResponseEntity<Object> hasSolicitudProyectoSocioPeriodosJustificacion(
+      @PathVariable(required = true) Long solicitudProyectoId) {
+
+    return this.solicitudProyectoSocioService
+        .existsSolicitudProyectoSocioPeriodoJustificacionBySolicitudProyectoSocioId(solicitudProyectoId)
+            ? ResponseEntity.ok().build()
+            : ResponseEntity.noContent().build();
+  }
+
+  @RequestMapping(path = "/{solicitudProyectoId}/solicitudproyectosocios/coordinador", method = RequestMethod.HEAD)
+  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-SOL-E', 'CSP-SOL-V', 'CSP-SOL-INV-ER')")
+  public ResponseEntity<Object> hasAnySolicitudProyectoSocioWithRolCoordinador(
+      @PathVariable(required = true) Long solicitudProyectoId) {
+
+    return this.solicitudProyectoSocioService.hasAnySolicitudProyectoSocioWithRolCoordinador(solicitudProyectoId)
+        ? ResponseEntity.ok().build()
+        : ResponseEntity.noContent().build();
   }
 
 }

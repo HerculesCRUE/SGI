@@ -1,11 +1,13 @@
 package org.crue.hercules.sgi.csp.repository.custom;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.crue.hercules.sgi.csp.dto.ProyectoPresupuestoTotales;
 import org.crue.hercules.sgi.csp.model.ModeloEjecucion;
 import org.crue.hercules.sgi.csp.model.Proyecto;
 import org.crue.hercules.sgi.csp.model.ProyectoPaqueteTrabajo;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
 
 /**
@@ -38,4 +40,12 @@ public interface CustomProyectoRepository {
    * @return {@link ProyectoPresupuestoTotales}.
    */
   ProyectoPresupuestoTotales getTotales(Long proyectoId);
+
+  /**
+   * * Obtiene los ids de proyectos que cumplen con la specification recibida.
+   * 
+   * @param specification condiciones que deben cumplir.
+   * @return lista de ids de {@link Proyecto}.
+   */
+  List<Long> findIds(Specification<Proyecto> specification);
 }

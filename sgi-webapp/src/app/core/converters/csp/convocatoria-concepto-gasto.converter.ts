@@ -17,7 +17,6 @@ class ConvocatoriaConceptoGastoConverter extends SgiBaseConverter<IConvocatoriaC
       permitido: value.permitido,
       mesInicial: value.mesInicial,
       mesFinal: value.mesFinal,
-      porcentajeCosteIndirecto: value.porcentajeCosteIndirecto
     };
   }
 
@@ -34,7 +33,6 @@ class ConvocatoriaConceptoGastoConverter extends SgiBaseConverter<IConvocatoriaC
       permitido: value.permitido,
       mesInicial: value.mesInicial,
       mesFinal: value.mesFinal,
-      porcentajeCosteIndirecto: value.porcentajeCosteIndirecto
     };
   }
 }

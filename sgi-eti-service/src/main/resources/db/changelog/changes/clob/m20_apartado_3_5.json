@@ -1,0 +1,141 @@
+[
+  {
+    "key": "ap3_5",
+    "wrappers": [
+      "expansion-panel"
+    ],
+    "templateOptions": {
+      "label": "3.5 Lugar en el que se realizarán las intervenciones de los animales"
+    },
+    "fieldGroup": [
+      {
+        "template": "<p>Especificar el lugar en el que se mantendrán los animales durante el proceso de experimentación.</p>"
+      },
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "<p>Las intervenciones se realizarán en centros usuarios autorizados, salvo autorización del órgano competente, previa justificación científica de la necesidad o conveniencia de que se realicen fuera de dichos centros (<a href='https://www.um.es/web/comision-etica-investigacion/comision-etica/ceea' target='_blank'>Art. 25-4 RD 53/13</a>)</p>"
+      },
+      {
+        "key": "centroUsuarioUniversidadCheckPrincipal",
+        "type": "checkbox",
+        "templateOptions": {
+          "label": "Centro usuario de la Universidad",
+          "indeterminate": false
+        }
+      },
+      {
+        "key": "centroUsuarioUniversidadCheck",
+        "type": "multicheckbox",
+        "hideExpression": "!model.centroUsuarioUniversidadCheckPrincipal",
+        "templateOptions": {
+          "label": "Seleccionar",
+          "required": true,
+          "type": "array",
+          "options": [
+            {
+              "value": "animalarioCampusEspinardo",
+              "label": "Animalario Campus Espinardo"
+            },
+            {
+              "value": "animalarioCampusCienciasSalud",
+              "label": "Animalario Campus Ciencias de la Salud (CEIB)"
+            },
+            {
+              "value": "otros",
+              "label": "Otros (especificar)"
+            }
+          ]
+        }
+      },
+      {
+        "key": "especificarCentroUniversidad",
+        "type": "textarea",
+        "hideExpression": "model.centroUsuarioUniversidadCheck !='otros'",
+        "templateOptions": {
+          "label": "Especificar",
+          "disabled": false,
+          "required": true,
+          "autosize": true,
+          "autosizeMinRows": "1",
+          "autosizeMaxRows": "10"
+        }
+      },
+      {
+        "key": "otroCentroRegistradoCheck",
+        "type": "checkbox",
+        "templateOptions": {
+          "label": "Otro centro usuario, registrado.",
+          "indeterminate": false
+        }
+      },
+      {
+        "key": "especificarCentroRegistrado",
+        "type": "textarea",
+        "hideExpression": "!model.otroCentroRegistradoCheck",
+        "templateOptions": {
+          "label": "Especificar",
+          "disabled": false,
+          "required": true,
+          "autosize": true,
+          "autosizeMinRows": "1",
+          "autosizeMaxRows": "10"
+        }
+      },
+      {
+        "key": "numeroRegistro",
+        "type": "textarea",
+        "hideExpression": "!model.otroCentroRegistradoCheck",
+        "templateOptions": {
+          "label": "Nº de registro",
+          "disabled": false,
+          "required": true,
+          "autosize": true,
+          "autosizeMinRows": "1",
+          "autosizeMaxRows": "10"
+        }
+      },
+      {
+        "key": "otroCentroNoRegistradoCheck",
+        "type": "checkbox",
+        "templateOptions": {
+          "label": "Otro centro o lugar no registrado.",
+          "indeterminate": false
+        }
+      },
+      {
+        "key": "especificarCentroNoRegistrado",
+        "type": "textarea",
+        "hideExpression": "!model.otroCentroNoRegistradoCheck",
+        "templateOptions": {
+          "label": "Especificar",
+          "disabled": false,
+          "required": true,
+          "autosize": true,
+          "autosizeMinRows": "1",
+          "autosizeMaxRows": "10"
+        }
+      },
+      {
+        "key": "justificar",
+        "type": "textarea",
+        "hideExpression": "!model.otroCentroNoRegistradoCheck",
+        "templateOptions": {
+          "label": "Justificar",
+          "disabled": false,
+          "required": true,
+          "autosize": true,
+          "autosizeMinRows": "1",
+          "autosizeMaxRows": "10"
+        }
+      },
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "<p>Para más información de lugares del Centro usuario de la Universidad consultar en la <a href='https://www.um.es/web/comision-etica-investigacion/comision-etica/ceea' target='_blank'>página web del Comité de la Universidad</a>.</p>"
+      }
+    ]
+  }
+]

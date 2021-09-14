@@ -524,7 +524,14 @@ export abstract class MemoriaFormlyFormFragment extends Fragment {
       }
       firstFieldConfig.templateOptions.comentario = question.apartado.comentario;
       firstFieldConfig.group = new Group();
-      if (this.readonly || (!this.readonly && this.comentarios.size && !question.apartado.comentario)) {
+
+      this.evalExpressionLock(firstFieldConfig, model, formState);
+
+      if (
+        this.readonly
+        || (!this.readonly && this.comentarios.size && !question.apartado.comentario)
+        || (firstFieldConfig.templateOptions.locked)
+      ) {
         firstFieldConfig.templateOptions.locked = true;
         if (firstFieldConfig.fieldGroup) {
           firstFieldConfig.fieldGroup.forEach((esquema) => {
@@ -548,7 +555,8 @@ export abstract class MemoriaFormlyFormFragment extends Fragment {
       }
       formlyFieldConfig.push(...question.apartado.esquema);
       if (question.childs.length) {
-        this.fillFormlyData(false, key ? model[key] : model, formState, fieldConfig ? fieldConfig : formlyFieldConfig, question.childs);
+        const isFirstLevel = !firstLevel ? question.childs.length > 0 : firstLevel;
+        this.fillFormlyData(isFirstLevel, key ? model[key] : model, formState, fieldConfig ? fieldConfig : formlyFieldConfig, question.childs);
       }
     });
   }
@@ -634,6 +642,13 @@ export abstract class MemoriaFormlyFormFragment extends Fragment {
         });
 
       }
+    }
+  }
+
+  private evalExpressionLock(fieldConfig: SgiFormlyFieldConfig, model: any, formState: any): void {
+    if (fieldConfig.templateOptions.expressionLock) {
+      const f = this.evalStringExpression(fieldConfig.templateOptions.expressionLock, ['model', 'formState', 'field']);
+      fieldConfig.templateOptions.locked = !!this.evalExpression(f, { fieldConfig }, [{ model }, formState, fieldConfig]);
     }
   }
 

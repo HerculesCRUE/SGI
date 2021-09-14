@@ -29,8 +29,14 @@ const SOLICITUD_PROYECTO_PRESUPUESTO_GLOBAL_PARTIDA_GASTO_KEY = marker('csp.part
 const SOLICITUD_PROYECTO_PRESUPUESTO_PARTIDA_GASTO_KEY = marker('csp.solicitud-desglose-presupuesto.global.partidas-gasto');
 
 interface IValoresCalculadosData {
-  totalPresupuestadoUniversidad: number;
-  totalSolicitadoUniversidad: number;
+  totalImportePresupuestadoUniversidad: number;
+  importePresupuestadoUniversidad: number;
+  importePresupuestadoUniversidadCostesIndirectos: number;
+
+  importeSolicitadoUniversidad: number;
+  importeSolicitadoUniversidadCostesIndirectos: number;
+  totalImporteSolicitadoUniversidad: number;
+
   totalPresupuestadoSocios: number;
   totalSolicitadoSocios: number;
   totalPresupuestado: number;
@@ -190,28 +196,50 @@ export class SolicitudProyectoPresupuestoGlobalComponent extends FormFragmentCom
           this.formPart.addPartidaGasto(partidaGasto);
         } else if (!wrapper.created) {
           const wrapperUpdated = new StatusWrapper<ISolicitudProyectoPresupuesto>(wrapper.value);
-          this.updateImportesTotales();
           this.formPart.updatePartidaGasto(wrapperUpdated);
         }
+        this.updateImportesTotales();
       }
     });
   }
 
   private updateImportesTotales() {
-    const totalPresupuestadoUniversidad = this.formPart.partidasGastos$.value.reduce(
+    /* Presupuestado por Universidad Sin Costes Indirectos */
+    const importePresupuestadoUniversidad = this.formPart.partidasGastos$.value
+      .filter(partidaGasto => !partidaGasto.value.conceptoGasto.costesIndirectos)
+      .reduce((total, partidaGasto) => total + partidaGasto.value.importePresupuestado, 0);
+    this.valoresCalculadosData.importePresupuestadoUniversidad = importePresupuestadoUniversidad;
+    /* Presupuestado por Universidad Con Costes Indirectos */
+    const importePresupuestadoUniversidadCostesIndirectos = this.formPart.partidasGastos$.value
+      .filter(partidaGasto => partidaGasto.value.conceptoGasto.costesIndirectos)
+      .reduce((total, partidaGasto) => total + partidaGasto.value.importePresupuestado, 0);
+    this.valoresCalculadosData.importePresupuestadoUniversidadCostesIndirectos = importePresupuestadoUniversidadCostesIndirectos;
+    /* Total Presupuestado por Universidad */
+    const totalImportePresupuestadoUniversidad = this.formPart.partidasGastos$.value.reduce(
       (total, partidaGasto) => total + partidaGasto.value.importePresupuestado, 0);
-    this.valoresCalculadosData.totalPresupuestadoUniversidad = totalPresupuestadoUniversidad;
+    this.valoresCalculadosData.totalImportePresupuestadoUniversidad = totalImportePresupuestadoUniversidad;
 
+    /* Solicitado por Universidad Sin Costes Indirectos */
+    const importeSolicitadoUniversidad = this.formPart.partidasGastos$.value
+      .filter(partidaGasto => !partidaGasto.value.conceptoGasto.costesIndirectos)
+      .reduce((total, partidaGasto) => total + partidaGasto.value.importeSolicitado, 0);
+    this.valoresCalculadosData.importeSolicitadoUniversidad = importeSolicitadoUniversidad;
+    /* Solicitado por Universidad Con Costes Indirectos */
+    const importeSolicitadoUniversidadCostesIndirectos = this.formPart.partidasGastos$.value
+      .filter(partidaGasto => partidaGasto.value.conceptoGasto.costesIndirectos)
+      .reduce((total, partidaGasto) => total + partidaGasto.value.importeSolicitado, 0);
+    this.valoresCalculadosData.importeSolicitadoUniversidadCostesIndirectos = importeSolicitadoUniversidadCostesIndirectos;
+    /* Total Solicitado por Universidad*/
     const totalSolicitadoUniversidad = this.formPart.partidasGastos$.value.reduce(
       (total, partidaGasto) => total + partidaGasto.value.importeSolicitado, 0);
-    this.valoresCalculadosData.totalSolicitadoUniversidad = totalSolicitadoUniversidad;
+    this.valoresCalculadosData.totalImporteSolicitadoUniversidad = totalSolicitadoUniversidad;
 
     this.solicitudProyectoSocio$.pipe(
       map(solicitudProyectoSocios => solicitudProyectoSocios.reduce(
         (total, solicitudProyectoSocio) => total + solicitudProyectoSocio.importePresupuestado, 0)
       )).subscribe(result => {
         this.valoresCalculadosData.totalPresupuestadoSocios = result;
-        this.valoresCalculadosData.totalPresupuestado = totalPresupuestadoUniversidad + result;
+        this.valoresCalculadosData.totalPresupuestado = totalImportePresupuestadoUniversidad + result;
       });
 
     this.solicitudProyectoSocio$.pipe(

@@ -1,0 +1,51 @@
+[
+  {
+    "key": "ap4_2_2",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "label": "4.2.2 Sustitución"
+    },
+    "fieldGroup": [
+      {
+        "template": "¿Podría realizarse esta actividad de investigación con un agente/material biológico, Sustancias Químicas Peligrosas , Sustancias Radiactivas y/o Nanopartículas de riesgo inferior para la salud o el medio ambiente?"
+      },
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "Cuando la naturaleza de la actividad lo permita, el investigador debe evitar, teniendo en cuenta la información técnica y científica disponible, la utilización de materiales/agentes biológicos peligrosos mediante su sustitución por otros agentes que, en función de las condiciones de utilización, no sean peligrosos,  Sustancias Químicas Peligrosas , Sustancias Radiactivas y/o Nanopartículas para la seguridad o salud de los trabajadores y del medio ambiente, o lo sean en menor grado<b><a href='https://boe.es/buscar/act.php?id=BOE-A-1997-11144&p=19980330&tn=1#a5' target='_blank'>(Artículo 5 RD664/1997)</a></b>."
+      },
+      {
+        "key": "realizarseInvestigacion",
+        "type": "radio",
+        "templateOptions": {
+          "label": "Elige opción:",
+          "required": true,
+          "options": [
+            {
+              "value": "no",
+              "label": "No"
+            },
+            {
+              "value": "si",
+              "label": "Sí"
+            }
+          ]
+        }
+      },
+      {
+        "key": "especificarRealizarseInvestigacion",
+        "type": "textarea",
+        "templateOptions": {
+          "label": "Especificar",
+          "required": true,
+          "autosize": true,
+          "autosizeMinRows": "1",
+          "autosizeMaxRows": "10"
+        }
+      }
+    ]
+  }
+]

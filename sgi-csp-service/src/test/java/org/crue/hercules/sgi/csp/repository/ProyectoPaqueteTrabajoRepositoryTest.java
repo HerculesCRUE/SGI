@@ -147,7 +147,6 @@ public class ProyectoPaqueteTrabajoRepositoryTest extends BaseRepositoryTest {
         .fechaInicio(Instant.parse("2020-01-01T00:00:00Z"))
         .fechaFin(Instant.parse("2020-12-31T23:59:59Z"))
         .permitePaquetesTrabajo(Boolean.TRUE)
-        .fechaBase(Instant.parse("2020-01-01T00:00:00Z"))
         .activo(Boolean.TRUE)
         .build();
     entityManager.persistAndFlush(proyecto);

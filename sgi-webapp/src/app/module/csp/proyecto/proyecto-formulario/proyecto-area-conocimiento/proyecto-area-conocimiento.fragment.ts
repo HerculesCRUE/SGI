@@ -25,7 +25,8 @@ export class ProyectoAreaConocimientoFragment extends Fragment {
     private service: ProyectoAreaConocimientoService,
     private proyectoService: ProyectoService,
     private areaConocimientoService: AreaConocimientoService,
-    public readonly: boolean
+    public readonly: boolean,
+    public isVisor: boolean,
   ) {
     super(key);
     this.setComplete(true);

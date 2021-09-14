@@ -1,11 +1,7 @@
 <!-- Historico datos -->
-<div class="scrollable-panel">
-  <section class="convocatoria-historico-datos">
-
-    <h2>{{'menu.csp.solicitudes.historicos-estados' | translate}}</h2>
-
-    <table class="mat-elevation-z8 table-historico" mat-table [dataSource]="dataSource" matSort matSortActive="id"
-      matSortDirection="asc" matSortDisableClear>
+<sgi-fragment title="{{'menu.csp.solicitudes.historicos-estados' | translate}}">
+  <div class="mat-elevation-z4">
+    <table mat-table [dataSource]="dataSource" matSort matSortActive="id" matSortDirection="asc" matSortDisableClear>
 
       <!-- Estado Column -->
       <ng-container matColumnDef="estado">
@@ -34,9 +30,7 @@
 
     </table>
 
-
     <mat-paginator [pageSizeOptions]="elementosPagina" showFirstLastButtons>
     </mat-paginator>
-
-  </section>
-</div>
+  </div>
+</sgi-fragment>

@@ -3,9 +3,10 @@ import { IConvocatoriaConceptoGastoCodigoEc } from '@core/models/csp/convocatori
 import { Fragment } from '@core/services/action-service';
 import { ConvocatoriaConceptoGastoCodigoEcService } from '@core/services/csp/convocatoria-concepto-gasto-codigo-ec.service';
 import { ConvocatoriaConceptoGastoService } from '@core/services/csp/convocatoria-concepto-gasto.service';
+import { CodigoEconomicoGastoService } from '@core/services/sge/codigo-economico-gasto.service';
 import { StatusWrapper } from '@core/utils/status-wrapper';
-import { BehaviorSubject, from, Observable } from 'rxjs';
-import { map, mergeMap, tap } from 'rxjs/operators';
+import { BehaviorSubject, merge, Observable, of } from 'rxjs';
+import { map, switchMap, tap } from 'rxjs/operators';
 
 export interface ConvocatoriaConceptoGastoCodigoEc extends IConvocatoriaConceptoGastoCodigoEc {
   convocatoriaConceptoGasto: IConvocatoriaConceptoGasto;
@@ -18,6 +19,7 @@ export class ConvocatoriaConceptoGastoCodigoEcFragment extends Fragment {
     key: number,
     private convocatoriaConceptoGastoService: ConvocatoriaConceptoGastoService,
     private convocatoriaConceptoGastoCodigoEcService: ConvocatoriaConceptoGastoCodigoEcService,
+    private codigoEconomicoGastoService: CodigoEconomicoGastoService,
     public readonly: boolean
   ) {
     super(key);
@@ -29,25 +31,45 @@ export class ConvocatoriaConceptoGastoCodigoEcFragment extends Fragment {
       const id = this.getKey() as number;
       this.subscriptions.push(
         this.convocatoriaConceptoGastoService.findAllConvocatoriaConceptoGastoCodigoEcs(id).pipe(
-          map(response => response.items),
-          mergeMap(conceptosGasto => {
-            return from(conceptosGasto).pipe(
-              map(conceptoGasto => conceptoGasto as ConvocatoriaConceptoGastoCodigoEc),
-              mergeMap(conceptoGasto => {
-                return this.convocatoriaConceptoGastoService.findById(conceptoGasto.convocatoriaConceptoGastoId).pipe(
-                  map(conepto => {
-                    conceptoGasto.convocatoriaConceptoGasto = conepto;
-                    return conceptoGasto;
-                  })
-                );
-              })
+          map(response => response.items.map(conceptoGasto =>
+            new StatusWrapper<ConvocatoriaConceptoGastoCodigoEc>(conceptoGasto as ConvocatoriaConceptoGastoCodigoEc))),
+          switchMap(response => {
+            // Recupera el concepto gasto de todos los codigos economicos
+            const requestsConceptoGasto = this.convocatoriaConceptoGastoService.findById(id)
+              .pipe(
+                map(convocatoriaConceptoGasto => {
+                  response.forEach(convocatoriaConceptoGastoCodigoEc => {
+                    convocatoriaConceptoGastoCodigoEc.value.convocatoriaConceptoGasto = convocatoriaConceptoGasto;
+                  });
+
+                  return response;
+                })
+              );
+
+            return of(response).pipe(
+              tap(() => requestsConceptoGasto.subscribe())
             );
-          })
+          }),
+          switchMap(response => {
+            const requestsCodigoEconomico: Observable<StatusWrapper<ConvocatoriaConceptoGastoCodigoEc>>[] = [];
+            response.forEach(convocatoriaConceptoGastoCodigoEc => {
+              requestsCodigoEconomico.push(
+                this.codigoEconomicoGastoService.findById(convocatoriaConceptoGastoCodigoEc.value.codigoEconomico.id)
+                  .pipe(
+                    map(codigoEconomico => {
+                      convocatoriaConceptoGastoCodigoEc.value.codigoEconomico = codigoEconomico;
+                      return convocatoriaConceptoGastoCodigoEc;
+                    })
+                  )
+              );
+            });
+            return of(response).pipe(
+              tap(() => merge(...requestsCodigoEconomico).subscribe())
+            );
+          }),
         ).subscribe(
           result => {
-            const current = this.convocatoriaConceptoGastoCodigoEcs$.value;
-            current.push(new StatusWrapper<ConvocatoriaConceptoGastoCodigoEc>(result));
-            this.convocatoriaConceptoGastoCodigoEcs$.next(current);
+            this.convocatoriaConceptoGastoCodigoEcs$.next(result);
           }
         )
       );
@@ -85,7 +107,15 @@ export class ConvocatoriaConceptoGastoCodigoEcFragment extends Fragment {
       map((results) => {
         // TODO: Hacer maching con los datos preexistente para mantener el ConvocatoriaCodigoEconomico cargado
         this.convocatoriaConceptoGastoCodigoEcs$.next(
-          results.map(value => new StatusWrapper<ConvocatoriaConceptoGastoCodigoEc>(value as ConvocatoriaConceptoGastoCodigoEc)));
+          results.map(
+            (value) => {
+              (value as ConvocatoriaConceptoGastoCodigoEc).convocatoriaConceptoGasto = values.find(
+                convocatoriaConceptoGastoCodigoEc =>
+                  convocatoriaConceptoGastoCodigoEc.convocatoriaConceptoGastoId === value.convocatoriaConceptoGastoId
+              ).convocatoriaConceptoGasto;
+              return new StatusWrapper<ConvocatoriaConceptoGastoCodigoEc>(value as ConvocatoriaConceptoGastoCodigoEc);
+            })
+        );
       }),
       tap(() => {
         if (this.isSaveOrUpdateComplete()) {

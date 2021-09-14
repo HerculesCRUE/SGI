@@ -36,6 +36,10 @@ export class ProyectoSocioPeriodoPagoComponent extends FragmentComponent impleme
   dataSource = new MatTableDataSource<StatusWrapper<IProyectoSocioPeriodoPago>>();
   @ViewChild(MatSort, { static: true }) sort: MatSort;
 
+  get readonly(): boolean {
+    return this.actionService.readonly;
+  }
+
   constructor(
     private actionService: ProyectoSocioActionService,
     private matDialog: MatDialog,
@@ -93,7 +97,8 @@ export class ProyectoSocioPeriodoPagoComponent extends FragmentComponent impleme
       proyectoSocioPeriodoPago: wrapper?.value ?? proyectoSocioPeriodoPago,
       fechaInicioProyectoSocio,
       fechaFinProyectoSocio,
-      isEdit: Boolean(wrapper)
+      isEdit: Boolean(wrapper),
+      readonly: this.actionService.readonly
     };
     const config = {
       panelClass: 'sgi-dialog-container',

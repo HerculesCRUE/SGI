@@ -1,5 +1,5 @@
 <!-- BREADCRUMB -->
-<div class="breadcrumbComponent">
+<div class="breadcrumbComponent" fxLayout="row" fxLayoutAlign="baseline center" fxLayoutGap="5px">
   <div class="migas">
     <nav class="breadcrumb" *ngIf="data">
       <ol class="breadcrumb__list r-list">
@@ -12,10 +12,5 @@
         </li>
       </ol>
     </nav>
-    <div class="title" *ngIf="title">
-      <h2 style="margin: 0">
-        {{title.key | translate:title.params}}
-      </h2>
-    </div>
   </div>
 </div>

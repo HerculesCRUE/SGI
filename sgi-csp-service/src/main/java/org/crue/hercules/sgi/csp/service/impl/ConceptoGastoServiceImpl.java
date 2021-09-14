@@ -13,6 +13,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
+import org.crue.hercules.sgi.framework.problem.message.ProblemMessage;
+
+import org.crue.hercules.sgi.framework.spring.context.support.ApplicationContextSupport;
+
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -40,7 +44,15 @@ public class ConceptoGastoServiceImpl implements ConceptoGastoService {
   public ConceptoGasto create(ConceptoGasto conceptoGasto) {
     log.debug("create(ConceptoGasto conceptoGasto) - start");
 
-    Assert.isNull(conceptoGasto.getId(), "ConceptoGasto id tiene que ser null para crear un nuevo ConceptoGasto");
+    Assert.isNull(conceptoGasto.getId(),
+        () -> ProblemMessage.builder().key(Assert.class, "isNull")
+            .parameter("field", ApplicationContextSupport.getMessage("id"))
+            .parameter("entity", ApplicationContextSupport.getMessage(ConceptoGasto.class)).build());
+
+    Assert.notNull(conceptoGasto.getCostesIndirectos(),
+        () -> ProblemMessage.builder().key(Assert.class, "notNull")
+            .parameter("field", ApplicationContextSupport.getMessage("costesIndirectos"))
+            .parameter("entity", ApplicationContextSupport.getMessage(ConceptoGasto.class)).build());
 
     Assert.isTrue(!(repository.findByNombreAndActivoIsTrue(conceptoGasto.getNombre()).isPresent()),
         "Ya existe un ConceptoGasto con el nombre " + conceptoGasto.getNombre());
@@ -65,7 +77,14 @@ public class ConceptoGastoServiceImpl implements ConceptoGastoService {
     log.debug("update(ConceptoGasto conceptoGastoActualizar) - start");
 
     Assert.notNull(conceptoGastoActualizar.getId(),
-        "ConceptoGasto id no puede ser null para actualizar un ConceptoGasto");
+        () -> ProblemMessage.builder().key(Assert.class, "notNull")
+            .parameter("field", ApplicationContextSupport.getMessage("id"))
+            .parameter("entity", ApplicationContextSupport.getMessage(ConceptoGasto.class)).build());
+
+    Assert.notNull(conceptoGastoActualizar.getCostesIndirectos(),
+        () -> ProblemMessage.builder().key(Assert.class, "notNull")
+            .parameter("field", ApplicationContextSupport.getMessage("costesIndirectos"))
+            .parameter("entity", ApplicationContextSupport.getMessage(ConceptoGasto.class)).build());
 
     repository.findByNombreAndActivoIsTrue(conceptoGastoActualizar.getNombre()).ifPresent((conceptoGastoExistente) -> {
       Assert.isTrue(conceptoGastoActualizar.getId() == conceptoGastoExistente.getId(),
@@ -75,6 +94,7 @@ public class ConceptoGastoServiceImpl implements ConceptoGastoService {
     return repository.findById(conceptoGastoActualizar.getId()).map(conceptoGasto -> {
       conceptoGasto.setNombre(conceptoGastoActualizar.getNombre());
       conceptoGasto.setDescripcion(conceptoGastoActualizar.getDescripcion());
+      conceptoGasto.setCostesIndirectos(conceptoGastoActualizar.getCostesIndirectos());
 
       ConceptoGasto returnValue = repository.save(conceptoGasto);
       log.debug("update(ConceptoGasto conceptoGastoActualizar) - end");
@@ -190,6 +210,26 @@ public class ConceptoGastoServiceImpl implements ConceptoGastoService {
     log.debug("findById(Long id)  - end");
     return returnValue;
 
+  }
+
+  /**
+   * Obtiene una Page de {@link ConceptoGasto} por el id de la agrupacionde
+   * gastos.
+   *
+   * @param id     el id de la agrupacion.
+   * @param query  la información del filtro.
+   * @param paging la información de la paginación.
+   * 
+   * @return la page de entidades {@link ConceptoGasto}.
+   */
+  @Override
+  public Page<ConceptoGasto> findAllNotInAgrupacion(Long id, String query, Pageable paging) {
+    log.debug("findAllbyProyectoAgrupacionGastoId(Long agrupacionId, String query, Pageable pageable) - start");
+    Specification<ConceptoGasto> specs = ConceptoGastoSpecifications.notInProyectoAgrupacionGasto(id)
+        .and(ConceptoGastoSpecifications.activos()).and(SgiRSQLJPASupport.toSpecification(query));
+    Page<ConceptoGasto> returnValue = repository.findAll(specs, paging);
+    log.debug("findAllbyProyectoAgrupacionGastoId(Long agrupacionId, String query, Pageable pageable) - end");
+    return returnValue;
   }
 
 }

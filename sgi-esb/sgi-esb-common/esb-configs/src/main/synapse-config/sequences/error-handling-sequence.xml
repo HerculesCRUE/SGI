@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sequence name="error-handling-sequence" trace="disable" xmlns="http://ws.apache.org/ns/synapse">
+  <log level="custom">
+        <property name="Error" value="An unexpected error occured"/>
+        <property name="message" expression="get-property('ERROR_MESSAGE')"/>       
+        <property name="code" expression="get-property('ERROR_CODE')"/>       
+        <property name="detail" expression="get-property('ERROR_DETAIL')"/>       
+        <property name="exception" expression="get-property('ERROR_EXCEPTION')"/>       
+      </log>
+      <property name="HTTP_SC" scope="axis2" type="STRING" value="500"/>
+      <respond/>
+</sequence>

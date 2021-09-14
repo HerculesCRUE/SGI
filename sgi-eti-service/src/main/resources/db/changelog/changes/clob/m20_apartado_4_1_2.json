@@ -1,0 +1,38 @@
+[
+  {
+    "key": "ap4_1_2",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "label": "4.1.2 Fuentes consultadas para búsqueda de métodos alternativos"
+    },
+    "fieldGroup": [
+      {
+        "template": "Describir las fuentes consultadas y los criterios de búsqueda utilizados"
+      },
+      {
+        "key": "fuentes",
+        "type": "textarea",
+        "templateOptions": {
+          "label": "Fuentes consultadas",
+          "required": true,
+          "autosize": true,
+          "autosizeMinRows": "1",
+          "autosizeMaxRows": "10"
+        }
+      },
+      {
+        "key": "criteriosBusqueda",
+        "type": "textarea",
+        "templateOptions": {
+          "label": "Criterios de búsqueda",
+          "required": true,
+          "autosize": true,
+          "autosizeMinRows": "1",
+          "autosizeMaxRows": "10"
+        }
+      }
+    ]
+  }
+]

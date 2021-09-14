@@ -33,6 +33,8 @@ export class ConvocatoriaConceptoGastoDatosGeneralesFragment extends FormFragmen
   protected buildFormGroup(): FormGroup {
     const form = new FormGroup({
       conceptoGasto: new FormControl('', [IsEntityValidator.isValid()]),
+      costesIndirectos: new FormControl({ value: '', disabled: true },
+        Validators.required),
       importeMaximo: new FormControl('', [Validators.compose(
         [Validators.min(0), NumberValidator.maxDecimalPlaces(5)])]),
       mesInicial: new FormControl(
@@ -66,8 +68,10 @@ export class ConvocatoriaConceptoGastoDatosGeneralesFragment extends FormFragmen
     ]);
 
     this.subscriptions.push(form.controls.conceptoGasto.valueChanges.subscribe(
-      (value) => this.conceptoGasto$.next(value)
-    ));
+      (value) => {
+        form.controls.costesIndirectos.setValue(form.controls.conceptoGasto?.value?.costesIndirectos);
+        this.conceptoGasto$.next(value);
+      }));
 
     return form;
   }
@@ -76,6 +80,7 @@ export class ConvocatoriaConceptoGastoDatosGeneralesFragment extends FormFragmen
     this.convocatoriaConceptoGasto = convocatoriaConceptoGasto;
     const result = {
       conceptoGasto: convocatoriaConceptoGasto.conceptoGasto,
+      costesIndirectos: convocatoriaConceptoGasto.conceptoGasto.costesIndirectos,
       importeMaximo: convocatoriaConceptoGasto.importeMaximo,
       mesInicial: convocatoriaConceptoGasto.mesInicial,
       mesFinal: convocatoriaConceptoGasto.mesFinal,

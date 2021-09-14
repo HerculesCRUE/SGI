@@ -38,9 +38,9 @@ public class TipoFinalidad extends BaseEntity {
   private Long id;
 
   /** Nombre */
-  @Column(name = "nombre", length = 50, nullable = false)
+  @Column(name = "nombre", length = 100, nullable = false)
   @NotEmpty
-  @Size(max = 50)
+  @Size(max = 100)
   private String nombre;
 
   /** Descripción */

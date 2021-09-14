@@ -1,0 +1,30 @@
+[
+  {
+    "key": "ap4_6_6",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "expressionLock": "formState.memoria.tipoMemoria.id === 3",
+      "label": "4.6.6 Actividades alternativas"
+    },
+    "hideExpression": "!formState.mainModel.ap4_6.estudiantesSujetosInvestigacionRadio || formState.mainModel.ap4_6.estudiantesSujetosInvestigacionRadio === 'no'",
+    "fieldGroup": [
+      {
+        "template": "¿Qué actividades alternativas se ofrecen para los alumnos que no deseen participar en la investigación?"
+      },
+      {
+        "key": "actividadesAlternativas",
+        "type": "textarea",
+        "templateOptions": {
+          "label": "Actividades",
+          "placeholder": "Actividades",
+          "required": true,
+          "autosize": true,
+          "autosizeMinRows": "1",
+          "autosizeMaxRows": "10"
+        }
+      }
+    ]
+  }
+]

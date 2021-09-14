@@ -1,7 +1,7 @@
 @import "typography.scss";
 
-.fieldset-form{
+.fieldset-form {
   padding-bottom: 10px;
   padding-top: 10px;
-  font-size: mat-font-size($custom-typography, body-2);
+  font-size: map-get($sgi-typography-size, form-fieldset);
 }

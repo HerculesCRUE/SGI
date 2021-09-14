@@ -1,9 +1,8 @@
-<div class="scrollable-panel">
-  <section class="sector-aplicacion-listado">
-
-    <!-- Listado de fuentes de financiación -->
-    <table mat-table class="mat-elevation-z8 table-unidad" [dataSource]="sectorAplicacion$ | async" matSort
-      matSortActive="id" matSortDirection="asc" matSortDisableClear>
+<sgi-menu-content>
+  <!-- Listado de fuentes de financiación -->
+  <div class="mat-elevation-z4">
+    <table mat-table [dataSource]="sectorAplicacion$ | async" matSort matSortActive="id" matSortDirection="asc"
+      matSortDisableClear>
       <!-- Nombre -->
       <ng-container matColumnDef="nombre">
         <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'pii.sector-aplicacion.nombre' | translate}}
@@ -57,15 +56,15 @@
     </table>
     <mat-paginator [pageSizeOptions]="elementosPagina" [length]="totalElementos" showFirstLastButtons>
     </mat-paginator>
+  </div>
 
-    <ng-container *sgiHasAuthority="'PII-SEA-C'">
-      <div class="separation-button">
-        <button color="three" aria-label="Center Align" md-button mat-raised-button (click)="openModal()">
-          <mat-icon color="accent">add_circle</mat-icon>
-          {{ 'btn.add.entity' | translate:msgParamEntity }}
-        </button>
-      </div>
-    </ng-container>
+  <ng-container *sgiHasAuthority="'PII-SEA-C'">
+    <div class="separation-button">
+      <button color="three" aria-label="Center Align" md-button mat-raised-button (click)="openModal()">
+        <mat-icon color="accent">add_circle</mat-icon>
+        {{ 'btn.add.entity' | translate:msgParamEntity }}
+      </button>
+    </div>
+  </ng-container>
 
-  </section>
-</div>
+</sgi-menu-content>

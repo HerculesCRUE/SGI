@@ -313,9 +313,6 @@ public class ConfiguracionSolicitudServiceTest extends BaseServiceTest {
 
     BDDMockito.given(convocatoriaRepository.findById(ArgumentMatchers.anyLong())).willReturn(Optional.of(convocatoria));
 
-    BDDMockito.given(convocatoriaService.modificable(ArgumentMatchers.<Long>any(), ArgumentMatchers.<String>any(),
-        ArgumentMatchers.<String[]>any())).willReturn(Boolean.TRUE);
-
     BDDMockito.given(convocatoriaFaseRepository.findById(ArgumentMatchers.anyLong()))
         .willReturn(Optional.of(updatedConfiguracionSolicitud.getFasePresentacionSolicitudes()));
 
@@ -358,9 +355,6 @@ public class ConfiguracionSolicitudServiceTest extends BaseServiceTest {
 
     BDDMockito.given(convocatoriaRepository.findById(ArgumentMatchers.anyLong())).willReturn(Optional.of(convocatoria));
 
-    BDDMockito.given(convocatoriaService.modificable(ArgumentMatchers.<Long>any(), ArgumentMatchers.<String>any(),
-        ArgumentMatchers.<String[]>any())).willReturn(Boolean.TRUE);
-
     BDDMockito.given(repository.save(ArgumentMatchers.<ConfiguracionSolicitud>any()))
         .willReturn(updatedConfiguracionSolicitud);
 
@@ -394,29 +388,11 @@ public class ConfiguracionSolicitudServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_WithNoExistingConvocatoria_ThrowsNotFoundException() {
-    // given: update ConfiguracionSolicitud with no existing Convocatoria
-    ConfiguracionSolicitud configuracionSolicitud = generarMockConfiguracionSolicitud(1L, 1L, 1L);
-
-    BDDMockito.given(convocatoriaRepository.findById(ArgumentMatchers.anyLong())).willReturn(Optional.empty());
-
-    Assertions.assertThatThrownBy(
-        // when: update ConfiguracionSolicitud
-        () -> service.update(configuracionSolicitud, configuracionSolicitud.getConvocatoriaId()))
-        // then: throw exception as Convocatoria is not found
-        .isInstanceOf(ConvocatoriaNotFoundException.class);
-  }
-
-  @Test
   public void update_NotFoundByConvocatoria_ThrowsNotFoundException() {
     // given: update ConfiguracionSolicitud not found by Convocatoria
     Long convocatoriaId = 1L;
-    Convocatoria convocatoria = generarMockConvocatoria(convocatoriaId, 1L, 1L, 1L, 1L, 1L, Boolean.TRUE);
     ConfiguracionSolicitud configuracionSolicitud = generarMockConfiguracionSolicitud(1L, convocatoriaId, 1L);
 
-    BDDMockito.given(convocatoriaRepository.findById(ArgumentMatchers.anyLong())).willReturn(Optional.of(convocatoria));
-    BDDMockito.given(convocatoriaService.modificable(ArgumentMatchers.<Long>any(), ArgumentMatchers.<String>any(),
-        ArgumentMatchers.<String[]>any())).willReturn(Boolean.TRUE);
     BDDMockito.given(repository.findByConvocatoriaId(ArgumentMatchers.anyLong())).willReturn(Optional.empty());
 
     Assertions.assertThatThrownBy(
@@ -440,8 +416,6 @@ public class ConfiguracionSolicitudServiceTest extends BaseServiceTest {
         .willReturn(Optional.of(originalConfiguracionSolicitud));
 
     BDDMockito.given(convocatoriaRepository.findById(ArgumentMatchers.anyLong())).willReturn(Optional.of(convocatoria));
-    BDDMockito.given(convocatoriaService.modificable(ArgumentMatchers.<Long>any(), ArgumentMatchers.<String>any(),
-        ArgumentMatchers.<String[]>any())).willReturn(Boolean.TRUE);
 
     Assertions.assertThatThrownBy(
         // when: update ConfiguracionSolicitud
@@ -465,8 +439,6 @@ public class ConfiguracionSolicitudServiceTest extends BaseServiceTest {
         .willReturn(Optional.of(originalConfiguracionSolicitud));
 
     BDDMockito.given(convocatoriaRepository.findById(ArgumentMatchers.anyLong())).willReturn(Optional.of(convocatoria));
-    BDDMockito.given(convocatoriaService.modificable(ArgumentMatchers.<Long>any(), ArgumentMatchers.<String>any(),
-        ArgumentMatchers.<String[]>any())).willReturn(Boolean.TRUE);
 
     Assertions.assertThatThrownBy(
         // when: update ConfiguracionSolicitud
@@ -491,8 +463,6 @@ public class ConfiguracionSolicitudServiceTest extends BaseServiceTest {
         .willReturn(Optional.of(originalConfiguracionSolicitud));
 
     BDDMockito.given(convocatoriaRepository.findById(ArgumentMatchers.anyLong())).willReturn(Optional.of(convocatoria));
-    BDDMockito.given(convocatoriaService.modificable(ArgumentMatchers.<Long>any(), ArgumentMatchers.<String>any(),
-        ArgumentMatchers.<String[]>any())).willReturn(Boolean.TRUE);
 
     Assertions.assertThatThrownBy(
         // when: update ConfiguracionSolicitud
@@ -517,9 +487,6 @@ public class ConfiguracionSolicitudServiceTest extends BaseServiceTest {
         .willReturn(Optional.of(originalConfiguracionSolicitud));
 
     BDDMockito.given(convocatoriaRepository.findById(ArgumentMatchers.anyLong())).willReturn(Optional.of(convocatoria));
-    BDDMockito.given(convocatoriaService.modificable(ArgumentMatchers.<Long>any(), ArgumentMatchers.<String>any(),
-        ArgumentMatchers.<String[]>any())).willReturn(Boolean.TRUE);
-
     BDDMockito
         .given(documentoRequeridoSolicitudRepository.findAll(
             ArgumentMatchers.<Specification<DocumentoRequeridoSolicitud>>any(), ArgumentMatchers.<Pageable>any()))
@@ -547,8 +514,6 @@ public class ConfiguracionSolicitudServiceTest extends BaseServiceTest {
         .willReturn(Optional.of(originalConfiguracionSolicitud));
 
     BDDMockito.given(convocatoriaRepository.findById(ArgumentMatchers.anyLong())).willReturn(Optional.of(convocatoria));
-    BDDMockito.given(convocatoriaService.modificable(ArgumentMatchers.<Long>any(), ArgumentMatchers.<String>any(),
-        ArgumentMatchers.<String[]>any())).willReturn(Boolean.TRUE);
 
     BDDMockito.given(convocatoriaFaseRepository.findById(ArgumentMatchers.anyLong())).willReturn(Optional.empty());
 
@@ -573,8 +538,6 @@ public class ConfiguracionSolicitudServiceTest extends BaseServiceTest {
         .willReturn(Optional.of(originalConfiguracionSolicitud));
 
     BDDMockito.given(convocatoriaRepository.findById(ArgumentMatchers.anyLong())).willReturn(Optional.of(convocatoria));
-    BDDMockito.given(convocatoriaService.modificable(ArgumentMatchers.<Long>any(), ArgumentMatchers.<String>any(),
-        ArgumentMatchers.<String[]>any())).willReturn(Boolean.TRUE);
 
     BDDMockito
         .given(documentoRequeridoSolicitudRepository.findAll(
@@ -610,8 +573,6 @@ public class ConfiguracionSolicitudServiceTest extends BaseServiceTest {
         .willReturn(Optional.of(originalConfiguracionSolicitud));
 
     BDDMockito.given(convocatoriaRepository.findById(ArgumentMatchers.anyLong())).willReturn(Optional.of(convocatoria));
-    BDDMockito.given(convocatoriaService.modificable(ArgumentMatchers.<Long>any(), ArgumentMatchers.<String>any(),
-        ArgumentMatchers.<String[]>any())).willReturn(Boolean.TRUE);
 
     BDDMockito
         .given(documentoRequeridoSolicitudRepository.findAll(
@@ -625,26 +586,6 @@ public class ConfiguracionSolicitudServiceTest extends BaseServiceTest {
         // then: throw exception as FasePresentacion has documents
         .isInstanceOf(IllegalArgumentException.class).hasMessage(
             "Si ya existen documentos requeridos solicitud asociados a la configuración, no se puede cambiar la fase");
-  }
-
-  @Test
-  public void update_WhenModificableReturnsFalse_ThrowsIllegalArgumentException() {
-    // given: a ConfiguracionSolicitud when modificable return false
-    Long convocatoriaId = 1L;
-    Convocatoria convocatoria = generarMockConvocatoria(convocatoriaId, 1L, 1L, 1L, 1L, 1L, Boolean.TRUE);
-    ConfiguracionSolicitud configuracionSolicitud = generarMockConfiguracionSolicitud(1L, convocatoriaId, 1L);
-
-    BDDMockito.given(convocatoriaRepository.findById(ArgumentMatchers.anyLong())).willReturn(Optional.of(convocatoria));
-
-    BDDMockito.given(convocatoriaService.modificable(ArgumentMatchers.anyLong(), ArgumentMatchers.<String>any(),
-        ArgumentMatchers.<String[]>any())).willReturn(Boolean.FALSE);
-
-    Assertions.assertThatThrownBy(
-        // when: update ConfiguracionSolicitud
-        () -> service.update(configuracionSolicitud, configuracionSolicitud.getConvocatoriaId()))
-        // then: throw exception as Convocatoria is not modificable
-        .isInstanceOf(IllegalArgumentException.class).hasMessage(
-            "No se puede modificar ConfiguracionSolicitud. No tiene los permisos necesarios o la convocatoria está registrada y cuenta con solicitudes o proyectos asociados");
   }
 
   @Test
@@ -792,7 +733,6 @@ public class ConfiguracionSolicitudServiceTest extends BaseServiceTest {
         .observaciones("observaciones-" + String.format("%03d", convocatoriaId))
         .finalidad((modeloTipoFinalidad == null) ? null : modeloTipoFinalidad.getTipoFinalidad())
         .regimenConcurrencia(tipoRegimenConcurrencia)
-        .colaborativos(Boolean.TRUE)
         .estado(Convocatoria.Estado.REGISTRADA)
         .duracion(12)
         .ambitoGeografico(tipoAmbitoGeografico)

@@ -1,6 +1,6 @@
 @import "typography.scss";
 
-.miembro-equipo-solicitud-modal{
+.miembro-equipo-solicitud-modal {
   .wrapper {
     display: flex;
     align-items: baseline;
@@ -17,6 +17,6 @@
   .fieldset-form {
     padding-bottom: 10px;
     padding-top: 10px;
-    font-size: mat-font-size($custom-typography, body-2);
+    font-size: map-get($sgi-typography-size, form-fieldset);
   }
 }

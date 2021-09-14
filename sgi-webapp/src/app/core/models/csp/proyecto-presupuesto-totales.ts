@@ -1,8 +1,12 @@
 
 export interface IProyectoPresupuestoTotales {
-  importeTotalPresupuestoUniversidad: number;
+  importePresupuestoUniversidad: number;
+  importePresupuestoUniversidadCostesIndirectos: number;
+  totalImportePresupuestoUniversidad: number;
+  importeConcedidoUniversidad: number;
+  importeConcedidoUniversidadCostesIndirectos: number;
+  totalImporteConcedidoUniversidad: number;
   importeTotalPresupuestoSocios: number;
-  importeTotalConcedidoUniversidad: number;
   importeTotalConcedidoSocios: number;
   importeTotalPresupuesto: number;
   importeTotalConcedido: number;

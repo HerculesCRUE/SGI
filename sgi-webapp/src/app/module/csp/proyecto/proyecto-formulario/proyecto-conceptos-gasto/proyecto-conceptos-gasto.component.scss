@@ -1,11 +1,15 @@
 @import "colors.scss";
 
 :host {
-  .mat-icon.warning { 
-    color: map-get($custom-colors, warning); 
+  mat-divider {
+    margin-top: 10px;
+    padding-bottom: 10px;
+  }
+  .mat-icon.warning {
+    color: map-get($sgi-custom-colors, warning);
   }
 
-  .mat-icon.danger { 
-    color: map-get($custom-colors, danger);
-   }
+  .mat-icon.danger {
+    color: map-get($sgi-custom-colors, danger);
+  }
 }

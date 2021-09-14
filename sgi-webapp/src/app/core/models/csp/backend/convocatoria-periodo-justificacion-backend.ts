@@ -1,4 +1,5 @@
-import { Tipo } from '../convocatoria-periodo-justificacion';
+import { TipoJustificacion } from '@core/enums/tipo-justificacion';
+
 
 export interface IConvocatoriaPeriodoJustificacionBackend {
   /** Id */
@@ -18,5 +19,5 @@ export interface IConvocatoriaPeriodoJustificacionBackend {
   /** Observaciones */
   observaciones: string;
   /** Tipo */
-  tipo: Tipo;
+  tipo: TipoJustificacion;
 }

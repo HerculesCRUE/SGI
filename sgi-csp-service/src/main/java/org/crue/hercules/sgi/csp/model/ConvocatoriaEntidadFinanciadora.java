@@ -19,6 +19,7 @@ import javax.validation.constraints.Size;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -31,6 +32,7 @@ import lombok.Setter;
 @EqualsAndHashCode(callSuper = false)
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class ConvocatoriaEntidadFinanciadora extends BaseEntity {
 
   /**
@@ -67,9 +69,9 @@ public class ConvocatoriaEntidadFinanciadora extends BaseEntity {
   private TipoFinanciacion tipoFinanciacion;
 
   /** PorcentajeFinanciacion */
-  @Column(name = "porcentaje_financiacion", nullable = true)
+  @Column(name = "porcentaje_financiacion", nullable = true, precision = 5, scale = 2)
   @Min(0)
-  private Integer porcentajeFinanciacion;
+  private BigDecimal porcentajeFinanciacion;
 
   /** Importe financiacion */
   @Column(name = "importe_financiacion", nullable = true)

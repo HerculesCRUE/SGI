@@ -28,6 +28,7 @@ export interface PaquetesTrabajoModalData {
   fechaInicio: DateTime;
   fechaFin: DateTime;
   paqueteTrabajo: IProyectoPaqueteTrabajo;
+  readonly: boolean;
 }
 
 @Component({
@@ -146,6 +147,11 @@ export class ProyectoPaquetesTrabajoModalComponent extends
           ValidarRangoProyecto.rangoProyecto('fechaInicio', 'fechaFin', this.data),
           DateValidator.isAfter('fechaInicio', 'fechaFin')]
       });
+
+    if (this.data.readonly) {
+      formGroup.disable();
+    }
+
     return formGroup;
   }
 

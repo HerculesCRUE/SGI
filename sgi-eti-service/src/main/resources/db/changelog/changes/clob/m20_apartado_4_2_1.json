@@ -1,0 +1,95 @@
+[
+  {
+    "key": "ap4_2_1",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "label": "4.2.1 Valoración de la severidad y medidas correctoras ante el dolor, sufrimiento o la angustia del animal"
+    },
+    "fieldGroup": [
+      {
+        "template": "<p>Teniendo en cuenta las intervenciones enumeradas en el apartado 'Intervenciones/procedimientos que se realizarán al animal' califique la severidad de aquellas en las que se prevé que el animal pueda experimentar dolor, sufrimiento o ansiedad de acuerdo a la siguiente clasificación<br><ul><li><strong>No recuperación</strong>: las intervenciones que se realizan enteramente bajo anestesia general tras la cual el animal no recuperará la conciencia deben clasificarse como de no recuperación</li><li><strong>Leve</strong>: las intervenciones en animales a consecuencia de las cuales es probable que experimente dolor, sufrimiento o angustia leves de corta de duración, así como las intervenciones sin alteración significativa del bienestar o del estado general de los aniamles deben de clasificarse como leves</li><li><strong>Moderada</strong>: las intervenciones en animales a consecuencia de las cuales es probable que experimenten dolor, sufrimienti o angustia moderados de corta duración pero duraderos, así como las intervenciones que pudieran causar una alteración moderada del bienestar o el estado general de los animales deben clasificarse como moderadas</li><li><strong>Severa</strong>: las intervenciones en animales a consecuencia de las cuales es probable que experimenten dolor, sufrimiento o angustia intensos, o moderados pero duraderos, así como las intervenciones que pudieran causar una alteración grave del bienestar o del estado general de los animales deben clasificarse como severas</li></ul><br>Señale igualmente las medidas correctoras previstas (p.ej anestesia, analgesia) para minimizar el posible dolor, sufrimiento o ansiedad causados.<br><ul><li><strong>Intervención</strong>: cualquier acción que se realice al animal para obtener el efecto que se busca: por ejemplo, cirugía, administración de una sustancia, administración de anestesia, analgesia...</li><li><strong>Efecto buscado</strong>: efecto que se busca en el animal con la intervención realizada: extracción del bazo, subida de un parámetro determinado, anestesiar al animal para la cirugía.</li><li><strong>Efectos colaterales, secundarios o reacciones adversas</strong>: cualquier efecto, diferente al buscado, que pueda provocar que el animal experimente dolor, sufrimiento, angustia o daño duradero equivalente o superior al causado por la introducción de una aguja.</li><li><strong>Medida correctora</strong>: cualquier medida destinada a paliar el sufrimiento del animal y/o los efectos colaterales que se apliquen, sin interferir en el efecto buscado</li></ul></p>"
+      },
+      {
+        "type": "table-crud",
+        "key": "valoracionSeveridadTable",
+        "templateOptions": {
+          "entity": "medida correctora",
+          "gender": "female"
+        },
+        "fieldArray": {
+          "templateOptions": {
+            "text": "Medida correctora"
+          },
+          "fieldGroup": [
+            {
+              "key": "intervencion",
+              "type": "textarea",
+              "templateOptions": {
+                "label": "Intervención",
+                "order": 10
+              }
+            },
+            {
+              "key": "efectoBuscado",
+              "type": "textarea",
+              "templateOptions": {
+                "label": "Efecto buscado",
+                "order": 20
+              }
+            },
+            {
+              "key": "efectoColateral",
+              "type": "textarea",
+              "templateOptions": {
+                "label": "Efecto colateral",
+                "order": 30
+              }
+            },
+            {
+              "key": "severidad",
+              "type": "select",
+              "templateOptions": {
+                "label": "Severidad",
+                "order": 40,
+                "options": [
+                  {
+                    "value": "1",
+                    "label": "No recuperación"
+                  },
+                  {
+                    "value": "2",
+                    "label": "Leve"
+                  },
+                  {
+                    "value": "3",
+                    "label": "Moderada"
+                  },
+                  {
+                    "value": "4",
+                    "label": "Severa"
+                  }
+                ]
+              }
+            },
+            {
+              "key": "medidasCorrectoras",
+              "type": "input",
+              "templateOptions": {
+                "label": "Medidas correctoras",
+                "order": 50
+              }
+            }
+          ]
+        }
+      },
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "<p>Nota: Recuerde que las excepciones requieren aportar el documento correspondiente en el apartado '5.4 Situaciones especiales' anexo IX del RD 53/2013.</p>"
+      }
+    ]
+  }
+]

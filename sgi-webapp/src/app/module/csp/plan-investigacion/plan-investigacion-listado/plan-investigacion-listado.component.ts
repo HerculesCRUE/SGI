@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { AbstractTablePaginationComponent } from '@core/component/abstract-table-pagination.component';
+import { HttpProblem } from '@core/errors/http-problem';
 import { MSG_PARAMS } from '@core/i18n';
 import { IPrograma } from '@core/models/csp/programa';
 import { FxFlexProperties } from '@core/models/shared/flexLayout/fx-flex-properties';
@@ -221,7 +222,12 @@ export class PlanInvestigacionListadoComponent extends AbstractTablePaginationCo
         },
         (error) => {
           this.logger.error(error);
-          this.snackBarService.showError(this.textoErrorDesactivar);
+          if (error instanceof HttpProblem) {
+            this.snackBarService.showError(error);
+          }
+          else {
+            this.snackBarService.showError(this.textoErrorDesactivar);
+          }
         }
       );
     this.suscripciones.push(subcription);
@@ -248,7 +254,12 @@ export class PlanInvestigacionListadoComponent extends AbstractTablePaginationCo
         (error) => {
           this.logger.error(error);
           plan.activo = false;
-          this.snackBarService.showError(this.textoErrorReactivar);
+          if (error instanceof HttpProblem) {
+            this.snackBarService.showError(error);
+          }
+          else {
+            this.snackBarService.showError(this.textoErrorReactivar);
+          }
         }
       );
     this.suscripciones.push(suscription);

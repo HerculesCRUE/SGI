@@ -161,7 +161,8 @@ export class ProyectoPlazosModalComponent extends
     if (tipoFase && typeof tipoFase !== 'string') {
       const proyectoFases = this.data.plazos.filter(plazo =>
         plazo.tipoFase.id === (tipoFase as ITipoFase).id &&
-        (plazo.fechaInicio !== this.data.plazo.fechaInicio && plazo.fechaFin !== this.data.plazo.fechaFin));
+        (plazo.fechaInicio.toMillis() !== this.data.plazo.fechaInicio.toMillis()
+          && plazo.fechaFin.toMillis() !== this.data.plazo.fechaFin.toMillis()));
       rangoFechas = proyectoFases.map(
         fase => {
           const rango: IRange = {

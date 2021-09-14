@@ -14,6 +14,8 @@ public @interface UniqueNombreResultadoInformePatentabilidad {
 
   String message() default "{org.crue.hercules.sgi.pii.validation.UniqueNombreResultadoInformePatentabilidad.message}";
 
+  String field() default "org.crue.hercules.sgi.pii.model.UniqueNombreResultadoInformePatentabilidad.name";
+
   Class<?>[] groups() default {};
 
   Class<? extends Payload>[] payload() default {};

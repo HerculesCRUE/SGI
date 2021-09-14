@@ -1,0 +1,16 @@
+<sgi-action [actionService]="actionService">
+  <ng-container menu>
+    <sgi-action-fragment-menu-item [route]="[PII_TIPO_PROTECCION_ROUTE_NAMES.DATOS_GENERALES]"
+      *sgiHasAnyAuthority="['PII-TPR-E']" [title]="'label.datos-generales' | translate"
+      [fragment]="actionService.getFragment(actionService.FRAGMENT.DATOS_GENERALES)">
+    </sgi-action-fragment-menu-item>
+    <sgi-action-fragment-menu-item [route]="[PII_TIPO_PROTECCION_ROUTE_NAMES.SUBTIPOS]"
+      *sgiHasAnyAuthority="['PII-TPR-E','PII-TPR-B','PII-TPR-R']"
+      [title]="(tituloSubtipoProteccionPlural$ | async) | translate"
+      [fragment]="actionService.getFragment(actionService.FRAGMENT.SUBTIPOS)">
+    </sgi-action-fragment-menu-item>
+  </ng-container>
+  <ng-container footer>
+    <sgi-action-footer [texto]="(textoActualizar$| async)" [actionService]="actionService"></sgi-action-footer>
+  </ng-container>
+</sgi-action>

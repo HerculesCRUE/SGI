@@ -1,0 +1,47 @@
+<sgi-action [actionService]="actionService">
+  <ng-container menu>
+    <sgi-action-fragment-menu-item *sgiHasAnyAuthority="['PII-INV-V','PII-INV-E']"
+      [route]="[INVENCION_ROUTE_NAMES.DATOS_GENERALES]" [title]="'label.datos-generales' | translate"
+      [fragment]="actionService.getFragment(actionService.FRAGMENT.DATOS_GENERALES)">
+    </sgi-action-fragment-menu-item>
+    <sgi-action-fragment-menu-item *sgiHasAnyAuthority="['PII-INV-V','PII-INV-E']"
+      [route]="[INVENCION_ROUTE_NAMES.DOCUMENTOS]" [title]="'pii.invencion-documentos' | translate">
+    </sgi-action-fragment-menu-item>
+    <sgi-action-fragment-menu-item *sgiHasAnyAuthority="['PII-INV-V','PII-INV-E']"
+      [route]="[INVENCION_ROUTE_NAMES.EQUIPO_INVENTOR]" [title]="'pii.invencion-equipo-inventor' | translate"
+      [fragment]="actionService.getFragment(actionService.FRAGMENT.INVENCION_INVENTOR)">
+    </sgi-action-fragment-menu-item>
+    <sgi-action-fragment-menu-item *sgiHasAnyAuthority="['PII-INV-V','PII-INV-E']"
+      [route]="[INVENCION_ROUTE_NAMES.TITULARIDAD]" [title]="'pii.invencion-titularidad' | translate">
+    </sgi-action-fragment-menu-item>
+    <sgi-action-fragment-menu-item *sgiHasAnyAuthority="['PII-INV-V','PII-INV-E']"
+      [route]="[INVENCION_ROUTE_NAMES.INFORME_PATENTABILIDAD]"
+      [title]="'pii.invencion-informe-patentabilidad' | translate:MSG_PARAMS.CARDINALIRY.PLURAL"
+      [fragment]="actionService.getFragment(actionService.FRAGMENT.INFORME_PATENTABILIDAD)">
+    </sgi-action-fragment-menu-item>
+    <sgi-action-fragment-menu-item *sgiHasAnyAuthority="['PII-INV-E']"
+      [route]="[INVENCION_ROUTE_NAMES.SOLICITUDES_PROTECCION]"
+      [title]="'pii.invencion-solicitudes-proteccion' | translate">
+    </sgi-action-fragment-menu-item>
+    <sgi-action-fragment-menu-group *sgiHasAnyAuthority="['PII-INV-V','PII-INV-E']"
+      [title]="'pii.invencion-ejecucion-economica' | translate">
+      <sgi-action-fragment-menu-item [route]="[INVENCION_ROUTE_NAMES.GASTOS]"
+        [title]="'pii.invencion-gastos' | translate"
+        [fragment]="actionService.getFragment(actionService.FRAGMENT.GASTOS)">
+      </sgi-action-fragment-menu-item>
+      <sgi-action-fragment-menu-item [route]="[INVENCION_ROUTE_NAMES.CONTRATOS_ASCIADOS]"
+        [title]="'pii.invencion-contratos-asociados' | translate">
+      </sgi-action-fragment-menu-item>
+      <sgi-action-fragment-menu-item [route]="[INVENCION_ROUTE_NAMES.INGRESOS]"
+        [title]="'pii.invencion-ingresos' | translate">
+      </sgi-action-fragment-menu-item>
+      <sgi-action-fragment-menu-item [route]="[INVENCION_ROUTE_NAMES.REPARTOS]"
+        [title]="'pii.invencion-repartos' | translate">
+      </sgi-action-fragment-menu-item>
+    </sgi-action-fragment-menu-group>
+  </ng-container>
+  <ng-container footer>
+    <sgi-action-footer [texto]="textoCrear" [actionService]="actionService">
+    </sgi-action-footer>
+  </ng-container>
+</sgi-action>

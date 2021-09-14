@@ -105,13 +105,15 @@ export class ConvocatoriaPartidaPresupuestariaComponent extends FragmentComponen
    *
    * @param partidaPresupuestariaActualizar partida presupuestaria que se carga en el modal para modificarlo.
    */
-  openModalPartidaPresupuestaria(partidaPresupuestariaActualizar?: StatusWrapper<IConvocatoriaPartidaPresupuestaria>): void {
+  openModalPartidaPresupuestaria(
+    partidaPresupuestariaActualizar?: StatusWrapper<IConvocatoriaPartidaPresupuestaria>,
+    canEdit?: boolean): void {
     const modalData: PartidaPresupuestariaModalComponentData = {
       partidaPresupuestaria: partidaPresupuestariaActualizar?.value ?? {} as IConvocatoriaPartidaPresupuestaria,
       partidasPresupuestarias: this.dataSource.data.map(element => element.value),
       convocatoriaPartidaPresupuestaria: null,
       readonly: this.formPart.readonly,
-      canEdit: this.formPart.canEdit
+      canEdit: canEdit ?? true
     };
 
     const config = {

@@ -17,19 +17,19 @@
     "secure": false,
     "logLevel": "debug"
   },
-  "/api/pii": {
-    "target": "http://sgi-pii-service:4281",
+  "/api/usr": {
+    "target": "http://sgi-usr-service:4282",
     "pathRewrite": {
-      "^/api/pii": ""
+      "^/api/usr": ""
     },
     "changeOrigin": true,
     "secure": false,
     "logLevel": "debug"
   },
-  "/api/usr": {
-    "target": "http://sgi-usr-service:4282",
+  "/api/pii": {
+    "target": "http://sgi-pii-service:4283",
     "pathRewrite": {
-      "^/api/usr": ""
+      "^/api/pii": ""
     },
     "changeOrigin": true,
     "secure": false,
@@ -53,11 +53,14 @@
     "secure": false,
     "logLevel": "debug"
   },
+  "/api/sgepii": {
+    "target": "http://sgi-esb:8080",
+    "changeOrigin": true,
+    "secure": false,
+    "logLevel": "debug"
+  },
   "/api/sgdoc": {
     "target": "http://sgi-esb:8080",
-    "pathRewrite": {
-      "^/api/sgdoc": "/sgdoc"
-    },
     "changeOrigin": true,
     "secure": false,
     "logLevel": "debug"

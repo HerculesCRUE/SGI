@@ -1,5 +1,4 @@
-<section class="plan-investigacion-programa">
-  <h2>{{'csp.plan-investigacion.programa' | translate}} {{actionService.getPrograma.nombre}}</h2>
+<sgi-fragment title="{{'csp.plan-investigacion.programa' | translate}} {{actionService.getPrograma.nombre}}">
 
   <!-- Validacion si no tiene programa -->
   <div *ngIf="dataSource.data.length === 0" class="vacio">
@@ -122,4 +121,4 @@
     </button>
   </div>
 
-</section>
+</sgi-fragment>

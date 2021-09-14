@@ -208,6 +208,7 @@ export class ProyectoPeriodoSeguimientoDocumentosComponent extends FragmentCompo
 
   switchToNew() {
     const wrapper = new StatusWrapper<IProyectoPeriodoSeguimientoDocumento>({} as IProyectoPeriodoSeguimientoDocumento);
+    wrapper.value.visible = true;
     const newNode: NodeDocumento = new NodeDocumento(null, undefined, 2, wrapper);
     this.viewMode = VIEW_MODE.NEW;
     this.viewingNode = newNode;

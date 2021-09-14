@@ -12,6 +12,7 @@ import { map } from 'rxjs/operators';
   providedIn: 'root'
 })
 export class SolicitudProyectoService extends SgiMutableRestService<number, ISolicitudProyectoBackend, ISolicitudProyecto> {
+
   private static readonly MAPPING = '/solicitudproyecto';
 
   constructor(protected http: HttpClient) {
@@ -48,4 +49,29 @@ export class SolicitudProyectoService extends SgiMutableRestService<number, ISol
       map(response => response.status === 200)
     );
   }
+
+
+  hasPeriodosJustificacion(solicitudProyectoId: number): Observable<boolean> {
+
+    const url = `${this.endpointUrl}/${solicitudProyectoId}/solicitudproyectosocios/periodosjustificacion`;
+    return this.http.head(url, { observe: 'response' }).pipe(
+      map(response => response.status === 200)
+    );
+  }
+
+  hasPeriodosPago(solicitudProyectoId: number): Observable<boolean> {
+
+    const url = `${this.endpointUrl}/${solicitudProyectoId}/solicitudproyectosocios/periodospago`;
+    return this.http.head(url, { observe: 'response' }).pipe(
+      map(response => response.status === 200)
+    );
+  }
+
+  hasAnySolicitudProyectoSocioWithRolCoordinador(solicitudProyectoId: number): Observable<boolean> {
+    const url = `${this.endpointUrl}/${solicitudProyectoId}/solicitudproyectosocios/coordinador`;
+    return this.http.head(url, { observe: 'response' }).pipe(
+      map(response => response.status === 200)
+    );
+  }
+
 }

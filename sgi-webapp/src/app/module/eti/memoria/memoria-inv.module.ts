@@ -6,6 +6,7 @@ import { MaterialDesignModule } from '@material/material-design.module';
 import { TranslateModule } from '@ngx-translate/core';
 import { SgiAuthModule } from '@sgi/framework/auth';
 import { SharedModule } from '@shared/shared.module';
+import { SharedFormlyFormsModule } from 'src/app/esb/shared/formly-forms/shared-formly-forms.module';
 import { MemoriaEditarComponent } from '../memoria/memoria-editar/memoria-editar.component';
 import { MemoriaDatosGeneralesComponent } from '../memoria/memoria-formulario/memoria-datos-generales/memoria-datos-generales.component';
 import { EtiSharedModule } from '../shared/eti-shared.module';
@@ -48,6 +49,7 @@ import { MemoriaDocumentacionMemoriaModalComponent } from './modals/memoria-docu
     ReactiveFormsModule,
     SgiAuthModule,
     FormlyFormsModule,
+    SharedFormlyFormsModule,
     EtiSharedModule
   ],
   providers: [

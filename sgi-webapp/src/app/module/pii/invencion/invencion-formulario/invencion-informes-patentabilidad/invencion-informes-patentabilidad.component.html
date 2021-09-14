@@ -1,0 +1,91 @@
+<!-- Informes Patentabilidad -->
+<sgi-fragment title="{{'pii.invencion-informe-patentabilidad' | translate:MSG_PARAMS.CARDINALIRY.PLURAL}}">
+
+  <div class="mat-elevation-z4">
+    <table class="table-informes-patentabilidad" mat-table [dataSource]="dataSource" matSort matSortActive="id"
+      matSortDirection="asc" matSortDisableClear>
+
+      <!-- Fecha Informe Column -->
+      <ng-container matColumnDef="fecha">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>
+          {{'pii.invencion-informe-patentabilidad.fecha-informe' | translate}} </th>
+        <td mat-cell *matCellDef="let wrapper">
+          {{wrapper.value.fecha | luxon:'shortDate'}}
+        </td>
+      </ng-container>
+
+      <!-- Nombre Column -->
+      <ng-container matColumnDef="nombre">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>
+          {{'pii.invencion-informe-patentabilidad.nombre' | translate}}
+        </th>
+        <td mat-cell *matCellDef="let wrapper"> {{wrapper.value.nombre}} </td>
+      </ng-container>
+
+      <!-- Fichero Column -->
+      <ng-container matColumnDef="fichero">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>
+          {{'pii.invencion-informe-patentabilidad.fichero' | translate}}
+        </th>
+        <td mat-cell *matCellDef="let wrapper"> {{wrapper.value.documento?.nombre}} </td>
+      </ng-container>
+
+      <!-- Entidad Creadora Column -->
+      <ng-container matColumnDef="entidadCreadora">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>
+          {{'pii.invencion-informe-patentabilidad.entidad-creadora' | translate}}
+        </th>
+        <td mat-cell *matCellDef="let wrapper"> {{wrapper.value.entidadCreadora?.nombre}} </td>
+      </ng-container>
+
+      <!-- Resultado Column -->
+      <ng-container matColumnDef="resultado">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>
+          {{'pii.invencion-informe-patentabilidad.resultado' | translate}}
+        </th>
+        <td mat-cell *matCellDef="let wrapper"> {{wrapper.value.resultadoInformePatentabilidad?.nombre}} </td>
+      </ng-container>
+
+      <!-- Acciones  Column -->
+      <ng-container matColumnDef="acciones">
+        <th mat-header-cell *matHeaderCellDef> {{'label.actions' | translate}} </th>
+        <td mat-cell *matCellDef="let informePatentabilidad; let i = index">
+          <ng-container>
+            <div fxLayout="row">
+              <button *ngIf="!this.formPart.hasEditPerm()" mat-button matTooltip="{{'btn.view' | translate}}"
+                (click)="openModal(informePatentabilidad, i)">
+                <mat-icon color="primary">visibility</mat-icon>
+              </button>
+              <button *ngIf="this.formPart.hasEditPerm()" mat-button matTooltip="{{'btn.edit' | translate}}"
+                (click)="openModal(informePatentabilidad, i)">
+                <mat-icon color="primary">border_color</mat-icon>
+              </button>
+              <button *ngIf="hasInformePatentabilidadDocumentoReady(informePatentabilidad.value)" mat-button
+                matTooltip="{{'btn.download.file' | translate}}" (click)="downloadFile(informePatentabilidad)">
+                <mat-icon color="primary">arrow_downward</mat-icon>
+              </button>
+              <button *ngIf="formPart.hasEditPerm()" mat-button matTooltip="{{'btn.delete' | translate}}"
+                (click)="deleteInformePatentabilidad(informePatentabilidad)">
+                <mat-icon color="warn">highlight_off</mat-icon>
+              </button>
+            </div>
+          </ng-container>
+        </td>
+      </ng-container>
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+
+    </table>
+
+    <mat-paginator [pageSizeOptions]="elementosPagina" showFirstLastButtons>
+    </mat-paginator>
+  </div>
+  <div class="separation-button" *ngIf="formPart.hasEditPerm()">
+    <!-- Botón añadir Areas -->
+    <button color="three" mat-button mat-raised-button (click)="openModal()">
+      <mat-icon color="accent">add_circle</mat-icon>
+      {{ 'btn.add.entity' | translate:msgParamEntity }}
+    </button>
+  </div>
+
+</sgi-fragment>

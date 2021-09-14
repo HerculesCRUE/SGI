@@ -175,7 +175,6 @@ public class ProyectoConceptoGastoServiceImpl implements ProyectoConceptoGastoSe
       proyectoConceptoGasto.setFechaFin(proyectoConceptoGastoActualizar.getFechaFin());
       proyectoConceptoGasto.setObservaciones(proyectoConceptoGastoActualizar.getObservaciones());
       proyectoConceptoGasto.setPermitido(proyectoConceptoGastoActualizar.getPermitido());
-      proyectoConceptoGasto.setPorcentajeCosteIndirecto(proyectoConceptoGastoActualizar.getPorcentajeCosteIndirecto());
 
       ProyectoConceptoGasto returnValue = repository.save(proyectoConceptoGasto);
       log.debug("update(ProyectoConceptoGasto proyectoConceptoGastoActualizar) - end");

@@ -168,8 +168,10 @@ public class CustomSolicitudProyectoPresupuestoRepositoryImpl implements CustomS
     cq.multiselect(
         // total convocatoria
         root.get(SolicitudProyectoPresupuesto_.conceptoGasto),
-        // total
-        cb.sum(root.get(SolicitudProyectoPresupuesto_.importeSolicitado)));
+        // total solicitado
+        cb.sum(root.get(SolicitudProyectoPresupuesto_.importeSolicitado)),
+        // total presupuestado
+        cb.sum(root.get(SolicitudProyectoPresupuesto_.importePresupuestado)));
 
     // Execute query
     final TypedQuery<SolicitudProyectoPresupuestoTotalConceptoGasto> q = entityManager.createQuery(cq);

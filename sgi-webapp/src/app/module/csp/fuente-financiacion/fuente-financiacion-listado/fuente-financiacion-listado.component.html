@@ -1,83 +1,83 @@
-<div class="scrollable-panel">
-  <section class="fuente-financiacion-listado">
-    <!-- Buscador de fuentes de financiación -->
-    <form class="formulario mat-elevation-z8" [formGroup]=" formGroup" [fxLayout.xs]="fxLayoutProperties.xs"
-      [fxLayout]="fxLayoutProperties.layout" fxLayoutGap="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
+<sgi-menu-content>
+  <!-- Buscador de fuentes de financiación -->
+  <form class="formulario mat-elevation-z8" [formGroup]=" formGroup" [fxLayout.xs]="fxLayoutProperties.xs"
+    [fxLayout]="fxLayoutProperties.layout" fxLayoutGap="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
 
-      <div fxFlex="85%" fxFlex.sm="50%" fxFlex.md="73%" [fxLayout.xs]="fxLayoutProperties.xs"
-        [fxLayout]="fxLayoutProperties.layout" fxLayoutGap="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
-        <!-- Nombre -->
+    <div fxFlex="85%" fxFlex.sm="50%" fxFlex.md="73%" [fxLayout.xs]="fxLayoutProperties.xs"
+      [fxLayout]="fxLayoutProperties.layout" fxLayoutGap="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
+      <!-- Nombre -->
+      <div class="col">
+        <mat-form-field>
+          <mat-label>{{'csp.fuente-financiacion.nombre' | translate}}</mat-label>
+          <input matInput placeholder="{{'csp.fuente-financiacion.nombre' | translate}}" formControlName="nombre">
+        </mat-form-field>
+      </div>
+
+      <!--Ambito geográfico-->
+      <div class="col">
+        <mat-form-field class="input-form">
+          <mat-label>{{'csp.fuente-financiacion.ambito-geografico' | translate}}</mat-label>
+          <input matInput formControlName="ambitoGeografico" type="text" id="ambitoGeografico"
+            placeholder="{{'csp.fuente-financiacion.ambito-geografico' | translate}}" maxlength="100"
+            [matAutocomplete]="autoAmbitoGeografico">
+          <mat-autocomplete #autoAmbitoGeografico="matAutocomplete" [displayWith]="getAmbitoGeografico">
+
+            <mat-option *ngFor="let ambitoGeografico of ambitosGeograficos | async" [value]="ambitoGeografico">
+              {{ambitoGeografico.nombre}}
+            </mat-option>
+
+          </mat-autocomplete>
+        </mat-form-field>
+      </div>
+
+      <!--Origen-->
+      <div class="col">
+        <mat-form-field class="input-form">
+          <mat-label>{{'csp.fuente-financiacion.origen' | translate}}</mat-label>
+          <input matInput formControlName="origen" type="text" id="origen"
+            placeholder="{{'csp.fuente-financiacion.origen' | translate}}" maxlength="100" [matAutocomplete]="origen">
+          <mat-autocomplete #origen="matAutocomplete" [displayWith]="getOrigen">
+
+            <mat-option *ngFor="let origen of origenes | async" [value]="origen">
+              {{origen.nombre}}
+            </mat-option>
+
+          </mat-autocomplete>
+        </mat-form-field>
+      </div>
+
+      <!-- Activo -->
+      <ng-container *sgiHasAuthority="'CSP-FNT-R'">
         <div class="col">
           <mat-form-field>
-            <mat-label>{{'csp.fuente-financiacion.nombre' | translate}}</mat-label>
-            <input matInput placeholder="{{'csp.fuente-financiacion.nombre' | translate}}" formControlName="nombre">
+            <mat-label>{{'label.activo' | translate}}</mat-label>
+            <mat-select matNativeControl formControlName="activo">
+              <mat-option value="todos">{{'label.todos' | translate}}</mat-option>
+              <mat-option value="true">{{'label.si' | translate}}</mat-option>
+              <mat-option value="false">{{'label.no' | translate}}</mat-option>
+            </mat-select>
           </mat-form-field>
         </div>
+      </ng-container>
+    </div>
 
-        <!--Ambito geográfico-->
-        <div class="col">
-          <mat-form-field class="input-form">
-            <mat-label>{{'csp.fuente-financiacion.ambito-geografico' | translate}}</mat-label>
-            <input matInput formControlName="ambitoGeografico" type="text" id="ambitoGeografico"
-              placeholder="{{'csp.fuente-financiacion.ambito-geografico' | translate}}" maxlength="100"
-              [matAutocomplete]="autoAmbitoGeografico">
-            <mat-autocomplete #autoAmbitoGeografico="matAutocomplete" [displayWith]="getAmbitoGeografico">
-
-              <mat-option *ngFor="let ambitoGeografico of ambitosGeograficos | async" [value]="ambitoGeografico">
-                {{ambitoGeografico.nombre}}
-              </mat-option>
-
-            </mat-autocomplete>
-          </mat-form-field>
-        </div>
-
-        <!--Origen-->
-        <div class="col">
-          <mat-form-field class="input-form">
-            <mat-label>{{'csp.fuente-financiacion.origen' | translate}}</mat-label>
-            <input matInput formControlName="origen" type="text" id="origen"
-              placeholder="{{'csp.fuente-financiacion.origen' | translate}}" maxlength="100" [matAutocomplete]="origen">
-            <mat-autocomplete #origen="matAutocomplete" [displayWith]="getOrigen">
-
-              <mat-option *ngFor="let origen of origenes | async" [value]="origen">
-                {{origen.nombre}}
-              </mat-option>
-
-            </mat-autocomplete>
-          </mat-form-field>
-        </div>
-
-        <!-- Activo -->
-        <ng-container *sgiHasAuthority="'CSP-FNT-R'">
-          <div class="col">
-            <mat-form-field>
-              <mat-label>{{'label.activo' | translate}}</mat-label>
-              <mat-select matNativeControl formControlName="activo">
-                <mat-option value="todos">{{'label.todos' | translate}}</mat-option>
-                <mat-option value="true">{{'label.si' | translate}}</mat-option>
-                <mat-option value="false">{{'label.no' | translate}}</mat-option>
-              </mat-select>
-            </mat-form-field>
-          </div>
-        </ng-container>
+    <div class="buttons-final">
+      <div class="col filter-button">
+        <button color="primary" aria-label="Center Align" mat-raised-button (click)="onSearch()">
+          <mat-icon>search</mat-icon> {{'btn.search'| translate}}
+        </button>
+        <button color="warn" aria-label="Center Align" (click)="onClearFilters()" mat-button>{{'btn.clean'|
+          translate}}
+        </button>
       </div>
+    </div>
+  </form>
+  <!-- FIN Buscador de fuentes de financiación -->
 
-      <div class="buttons-final">
-        <div class="col filter-button">
-          <button color="primary" aria-label="Center Align" mat-raised-button (click)="onSearch()">
-            <mat-icon>search</mat-icon> {{'btn.search'| translate}}
-          </button>
-          <button color="warn" aria-label="Center Align" (click)="onClearFilters()" mat-button>{{'btn.clean'|
-            translate}}
-          </button>
-        </div>
-      </div>
-    </form>
-    <!-- FIN Buscador de fuentes de financiación -->
-
-    <!-- Listado de fuentes de financiación -->
-    <table mat-table class="mat-elevation-z8 table-unidad" [dataSource]="fuenteFinanciacion$ | async" matSort
-      matSortActive="id" matSortDirection="asc" matSortDisableClear>
+  <!-- Listado de fuentes de financiación -->
+  <div class="mat-elevation-z4">
+    <table mat-table [dataSource]="fuenteFinanciacion$ | async" matSort matSortActive="id" matSortDirection="asc"
+      matSortDisableClear>
       <!-- Nombre -->
       <ng-container matColumnDef="nombre">
         <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'csp.fuente-financiacion.nombre' | translate}}
@@ -157,15 +157,14 @@
     </table>
     <mat-paginator [pageSizeOptions]="elementosPagina" [length]="totalElementos" showFirstLastButtons>
     </mat-paginator>
+  </div>
+  <ng-container *sgiHasAuthority="'CSP-FNT-C'">
+    <div class="separation-button">
+      <button color="three" aria-label="Center Align" md-button mat-raised-button (click)="openModal()">
+        <mat-icon color="accent">add_circle</mat-icon>
+        {{ 'btn.add.entity' | translate:msgParamEntity }}
+      </button>
+    </div>
+  </ng-container>
 
-    <ng-container *sgiHasAuthority="'CSP-FNT-C'">
-      <div class="separation-button">
-        <button color="three" aria-label="Center Align" md-button mat-raised-button (click)="openModal()">
-          <mat-icon color="accent">add_circle</mat-icon>
-          {{ 'btn.add.entity' | translate:msgParamEntity }}
-        </button>
-      </div>
-    </ng-container>
-
-  </section>
-</div>
+</sgi-menu-content>

@@ -40,6 +40,10 @@ export class ProyectoSocioEquipoComponent extends FragmentComponent implements O
   @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
   @ViewChild(MatSort, { static: true }) sort: MatSort;
 
+  get readonly(): boolean {
+    return this.actionService.readonly;
+  }
+
   constructor(
     private actionService: ProyectoSocioActionService,
     private matDialog: MatDialog,
@@ -53,6 +57,27 @@ export class ProyectoSocioEquipoComponent extends FragmentComponent implements O
   ngOnInit(): void {
     super.ngOnInit();
     this.setupI18N();
+
+    this.dataSource.paginator = this.paginator;
+    this.dataSource.sort = this.sort;
+    this.dataSource.sortingDataAccessor =
+      (wrapper: StatusWrapper<IProyectoSocioEquipo>, property: string) => {
+        switch (property) {
+          case 'nombre':
+            return wrapper.value.persona.nombre;
+          case 'apellidos':
+            return wrapper.value.persona.apellidos;
+          case 'rolProyecto':
+            return wrapper.value.rolProyecto.nombre;
+          case 'fechaInicio':
+            return wrapper.value.fechaInicio;
+          case 'fechaFin':
+            return wrapper.value.fechaFin;
+          default:
+            return wrapper[property];
+        }
+      };
+
     const subcription = this.formPart.proyectoSocioEquipos$.subscribe(
       (proyectoEquipos) => this.dataSource.data = proyectoEquipos
     );
@@ -87,7 +112,11 @@ export class ProyectoSocioEquipoComponent extends FragmentComponent implements O
     this.subscriptions.forEach(subscription => subscription.unsubscribe());
   }
 
-  openModal(wrapper?: StatusWrapper<IProyectoSocioEquipo>, position?: number): void {
+  openModal(wrapper?: StatusWrapper<IProyectoSocioEquipo>, rowIndex?: number): void {
+    // Necesario para sincronizar los cambios de orden de registros dependiendo de la ordenación y paginación
+    this.dataSource.sortData(this.dataSource.filteredData, this.dataSource.sort);
+    const row = (this.paginator.pageSize * this.paginator.pageIndex) + rowIndex;
+
     const data: MiembroEquipoProyectoModalData = {
       titleEntity: this.modalTitleEntity,
       entidad: wrapper?.value ?? {} as IProyectoSocioEquipo,
@@ -95,12 +124,13 @@ export class ProyectoSocioEquipoComponent extends FragmentComponent implements O
       fechaInicioMin: this.actionService.proyectoSocio?.fechaInicio,
       fechaFinMax: this.actionService.proyectoSocio?.fechaFin,
       showHorasDedicacion: false,
-      isEdit: Boolean(wrapper)
+      isEdit: Boolean(wrapper),
+      readonly: this.actionService.readonly
     };
 
     if (wrapper) {
       const filtered = Object.assign([], data.selectedEntidades);
-      filtered.splice(position, 1);
+      filtered.splice(row, 1);
       data.selectedEntidades = filtered;
     }
 

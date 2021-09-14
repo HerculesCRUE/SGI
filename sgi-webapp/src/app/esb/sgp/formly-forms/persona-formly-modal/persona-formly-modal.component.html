@@ -1,0 +1,25 @@
+<div class="sgi-dialog-header" fxLayout="row" fxLayoutGap="20px">
+  <span fxFlexAlign="center" mat-mat-dialog-title role="heading" aria-level="3" fxFlex>{{title}}</span>
+  <button fxFlex="nogrow" mat-icon-button mat-dialog-close>
+    <mat-icon class="close-icon">close</mat-icon>
+  </button>
+</div>
+<mat-dialog-content>
+
+  <form [formGroup]="formGroup">
+    <formly-form [form]="formGroup" [fields]="formlyData.fields" [options]="options" [model]="formlyData.model">
+    </formly-form>
+  </form>
+
+</mat-dialog-content>
+<mat-dialog-actions>
+  <button color="accent" *ngIf="personaData.action === ACTION_MODAL_MODE.NEW" (click)="saveOrUpdate()" mat-raised-button
+    type="submit">
+    <mat-icon class="save-icon">save</mat-icon>{{'btn.request.add' | translate}}
+  </button>
+  <button color="accent" *ngIf="personaData.action === ACTION_MODAL_MODE.EDIT" (click)="saveOrUpdate()"
+    mat-raised-button type="submit">
+    <mat-icon class="save-icon">save</mat-icon>{{'btn.request.edit' | translate}}
+  </button>
+  <button class="link-cancelar" mat-button type="button" mat-dialog-close>{{'btn.cancel' | translate}}</button>
+</mat-dialog-actions>

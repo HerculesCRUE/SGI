@@ -39,6 +39,21 @@ public class ProyectoProyectoSgeController {
   }
 
   /**
+   * Devuelve el {@link ProyectoProyectoSge} con el id indicado.
+   * 
+   * @param id Identificador de {@link ProyectoProyectoSge}.
+   * @return {@link ProyectoProyectoSge} correspondiente al id.
+   */
+  @GetMapping("/{id}")
+  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-PRO-E', 'CSP-EJEC-V', 'CSP-EJEC-E')")
+  ProyectoProyectoSge findById(@PathVariable Long id) {
+    log.debug("findById(Long id) - start");
+    ProyectoProyectoSge returnValue = service.findById(id);
+    log.debug("findById(Long id) - end");
+    return returnValue;
+  }
+
+  /**
    * Crea nuevo {@link ProyectoProyectoSge}.
    * 
    * @param proyectoProyectoSge {@link ProyectoProyectoSge} que se quiere crear.

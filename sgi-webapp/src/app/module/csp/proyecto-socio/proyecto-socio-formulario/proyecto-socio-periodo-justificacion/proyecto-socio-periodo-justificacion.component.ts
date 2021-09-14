@@ -38,8 +38,12 @@ export class ProyectoSocioPeriodoJustificacionComponent extends FragmentComponen
   msgParamEntity = {};
   textoDelete: string;
 
+  get readonly(): boolean {
+    return this.actionService.readonly;
+  }
+
   constructor(
-    actionService: ProyectoSocioActionService,
+    private actionService: ProyectoSocioActionService,
     private dialogService: DialogService,
     private readonly translate: TranslateService
   ) {

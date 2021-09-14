@@ -1,0 +1,122 @@
+<sgi-fragment title="{{'menu.csp.ejecucion-economica.facturas-justificantes' | translate}} -
+    {{'menu.csp.ejecucion-economica.facturas-justificantes.facturas-gastos' | translate}}">
+  <div fxLayout="column" fxLayoutGap="10px">
+    <sgi-ejecucion-economica-table-proyectos-relacionados [data]="formPart.relaciones$ | async">
+    </sgi-ejecucion-economica-table-proyectos-relacionados>
+
+    <div fxLayout="column" class="mat-elevation-z4" style="padding:10px; border-radius: 4px;" fxLayoutGap="10px">
+      <div>
+        <mat-form-field>
+          <mat-label>{{'csp.proyecto-presupuesto.anualidad' | translate:MSG_PARAMS.CARDINALIRY.PLURAL}}</mat-label>
+          <mat-select [formControl]="formPart.aniosControl" multiple>
+            <mat-option *ngFor="let anio of formPart.anualidades$ | async" [value]="anio">{{anio}}</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+
+      <sgi-ejecucion-economica-filter-fechas [formGroupFechas]="formPart.formGroupFechas">
+      </sgi-ejecucion-economica-filter-fechas>
+
+      <div class="separation-button">
+        <button color="primary" class="rounded" mat-raised-button (click)="formPart.loadDesglose()">
+          <mat-icon>update</mat-icon>
+          {{'btn.load' | translate}}
+        </button>
+      </div>
+    </div>
+
+    <div class="mat-elevation-z4">
+      <mat-table [dataSource]="dataSourceDesglose" multiTemplateDataRows>
+
+        <ng-container matColumnDef="anualidad">
+          <mat-header-cell *matHeaderCellDef>{{'sge.dato-economico.anualidad' | translate}}
+          </mat-header-cell>
+          <mat-cell *matCellDef="let element">
+            <mat-icon color="primary" *ngIf="element.level === 0 && element.childs.length > 0"
+              (click)="element.expanded ? element.collapse() : element.expand()">
+              {{element.expanded ? 'expand_more' : 'chevron_right'}}
+            </mat-icon>
+            {{element.level === 0 ? element.item.anualidad : '' }}
+          </mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="proyecto">
+          <mat-header-cell *matHeaderCellDef>{{'sge.dato-economico.proyecto' | translate}}
+          </mat-header-cell>
+          <mat-cell *matCellDef="let element">
+            {{element.item.proyecto?.titulo }}
+          </mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="agrupacionGasto">
+          <mat-header-cell *matHeaderCellDef>{{'sge.dato-economico.agrupacion-gasto' | translate}}
+          </mat-header-cell>
+          <mat-cell *matCellDef="let element">
+            <mat-icon color="primary" *ngIf="element.level === 1 && element.childs.length > 0"
+              (click)="element.expanded ? element.collapse() : element.expand()">
+              {{element.expanded ? 'expand_more' : 'chevron_right'}}
+            </mat-icon>
+            {{element.level === 1 ? element.item.agrupacionGasto?.nombre : '' }}
+          </mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="conceptoGasto">
+          <mat-header-cell *matHeaderCellDef>{{'sge.dato-economico.concepto-gasto' | translate}}
+          </mat-header-cell>
+          <mat-cell *matCellDef="let element">
+            <mat-icon color="primary" *ngIf="element.level === 2 && element.childs.length > 0"
+              (click)="element.expanded ? element.collapse() : element.expand()">
+              {{element.expanded ? 'expand_more' : 'chevron_right'}}
+            </mat-icon>
+            {{element.level === 2 ? element.item.conceptoGasto?.nombre : '' }}
+          </mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="aplicacionPresupuestaria">
+          <mat-header-cell *matHeaderCellDef>{{'sge.dato-economico.partida-presupuestaria' | translate}}
+          </mat-header-cell>
+          <mat-cell *matCellDef="let element">
+            {{element.item.partidaPresupuestaria}}
+          </mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="codigoEconomico">
+          <mat-header-cell *matHeaderCellDef>{{'sge.dato-economico.codigo-economico' | translate}}
+          </mat-header-cell>
+          <mat-cell *matCellDef="let element">
+            {{element.item.codigoEconomico?.id}}
+            {{element.item.codigoEconomico?.nombre ? ' - ' + element.item.codigoEconomico.nombre : '' }}
+          </mat-cell>
+        </ng-container>
+
+        <ng-container *ngFor="let column of formPart.columns" [matColumnDef]="column.id">
+          <mat-header-cell *matHeaderCellDef [class.computed]="column.compute">{{column.name}}
+          </mat-header-cell>
+          <mat-cell *matCellDef="let element" [class.computed]="column.compute">
+            <ng-container *ngIf="column.compute">
+              {{element.item.columnas[column.id] | number: '1.2-2'}}
+            </ng-container>
+            <ng-container *ngIf="!column.compute">
+              {{element.item.columnas[column.id]}}
+            </ng-container>
+          </mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="acciones">
+          <mat-header-cell *matHeaderCellDef>{{'label.actions' | translate}}
+          </mat-header-cell>
+          <mat-cell *matCellDef="let element">
+            <button mat-button (click)="showDetail(element.item)" *ngIf="element.childs.length === 0">
+              <mat-icon color="primary">visibility</mat-icon>
+            </button>
+          </mat-cell>
+        </ng-container>
+
+        <mat-header-row *matHeaderRowDef="formPart.displayColumns"></mat-header-row>
+        <mat-row *matRowDef="let row; columns: formPart.displayColumns;"
+          [class.expanded-row]="!!row.parent && !!!row.parent?.expanded">
+        </mat-row>
+      </mat-table>
+    </div>
+  </div>
+</sgi-fragment>

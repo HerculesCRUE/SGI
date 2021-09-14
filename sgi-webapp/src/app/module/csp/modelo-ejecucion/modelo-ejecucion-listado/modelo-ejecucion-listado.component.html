@@ -1,46 +1,46 @@
-<div class="scrollable-panel-with-footer">
-  <section class="modelo-ejecucion-listado">
-    <!-- Buscador de modelos de ejecución -->
-    <form class="formulario mat-elevation-z8" [formGroup]=" formGroup" [fxLayout.xs]="fxLayoutProperties.xs"
-      [fxLayout]="fxLayoutProperties.layout" [fxLayoutGap]="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
+<sgi-menu-content>
+  <!-- Buscador de modelos de ejecución -->
+  <form class="formulario mat-elevation-z8" [formGroup]=" formGroup" [fxLayout.xs]="fxLayoutProperties.xs"
+    [fxLayout]="fxLayoutProperties.layout" [fxLayoutGap]="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
 
-      <div fxFlex="84%" fxFlex.sm="50%" fxFlex.md="72%" [fxLayout.xs]="fxLayoutProperties.xs"
-        [fxLayout]="fxLayoutProperties.layout" fxLayoutGap="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
-        <!-- Nombre -->
-        <div class="col">
-          <mat-form-field>
-            <mat-label>{{'csp.modelo-ejecucion.nombre' | translate}}</mat-label>
-            <input matInput placeholder="{{'csp.modelo-ejecucion.nombre' | translate}}" formControlName="nombre">
-          </mat-form-field>
-        </div>
+    <div fxFlex="84%" fxFlex.sm="50%" fxFlex.md="72%" [fxLayout.xs]="fxLayoutProperties.xs"
+      [fxLayout]="fxLayoutProperties.layout" fxLayoutGap="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
+      <!-- Nombre -->
+      <div class="col">
+        <mat-form-field>
+          <mat-label>{{'csp.modelo-ejecucion.nombre' | translate}}</mat-label>
+          <input matInput placeholder="{{'csp.modelo-ejecucion.nombre' | translate}}" formControlName="nombre">
+        </mat-form-field>
+      </div>
 
-        <!-- Activo -->
-        <ng-container *sgiHasAuthorityForAnyUO="'CSP-ME-R'">
+      <!-- Activo -->
+      <ng-container *sgiHasAuthorityForAnyUO="'CSP-ME-R'">
         <div class="col">
           <mat-form-field>
             <mat-label>{{'label.activo' | translate}}</mat-label>
             <sgi-select-boolean formControlName="activo"></sgi-select-boolean>
           </mat-form-field>
         </div>
-        </ng-container>
-      </div>
+      </ng-container>
+    </div>
 
-      <div class="buttons-final">
-        <div class="col filter-button">
-          <button color="primary" aria-label="Center Align" mat-raised-button (click)="onSearch()">
-            <mat-icon>search</mat-icon> {{'btn.search'| translate}}
-          </button>
-          <button color="warn" aria-label="Center Align" (click)="onClearFilters()" mat-button>{{'btn.clean'|
-            translate}}
-          </button>
-        </div>
+    <div class="buttons-final">
+      <div class="col filter-button">
+        <button color="primary" aria-label="Center Align" mat-raised-button (click)="onSearch()">
+          <mat-icon>search</mat-icon> {{'btn.search'| translate}}
+        </button>
+        <button color="warn" aria-label="Center Align" (click)="onClearFilters()" mat-button>{{'btn.clean'|
+          translate}}
+        </button>
       </div>
-    </form>
-    <!-- FIN Buscador de modelos de ejecución -->
+    </div>
+  </form>
+  <!-- FIN Buscador de modelos de ejecución -->
 
-    <!-- Listado de modelos de ejecución -->
-    <table mat-table class="mat-elevation-z8 table-unidad" [dataSource]="modeloEjecucion$ | async" matSort
-      matSortActive="id" matSortDirection="asc" matSortDisableClear>
+  <!-- Listado de modelos de ejecución -->
+  <div class="mat-elevation-z4">
+    <table mat-table [dataSource]="modeloEjecucion$ | async" matSort matSortActive="id" matSortDirection="asc"
+      matSortDisableClear>
       <!-- Nombre -->
       <ng-container matColumnDef="nombre">
         <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'csp.modelo-ejecucion.nombre' | translate}}
@@ -75,7 +75,7 @@
             </button>
           </ng-container>
           <ng-container *sgiHasAuthorityForAnyUO="'CSP-ME-B'">
-            <button *ngIf="modeloEjecucion.activo === true" mat-button matTooltip="{{'btn.edit' | translate}}"
+            <button *ngIf="modeloEjecucion.activo === true" mat-button matTooltip="{{'btn.delete' | translate}}"
               (click)="deactivateModeloEjecucion(modeloEjecucion)">
               <mat-icon color="warn">highlight_off</mat-icon>
             </button>
@@ -94,8 +94,8 @@
     </table>
     <mat-paginator [pageSizeOptions]="elementosPagina" [length]="totalElementos" showFirstLastButtons>
     </mat-paginator>
-  </section>
-</div>
-<ng-container *sgiHasAuthorityForAnyUO="'CSP-ME-C'">
-  <sgi-footer-crear [texto]="textoCrear" [route]="ROUTE_NAMES.NEW"></sgi-footer-crear>
-</ng-container>
+  </div>
+  <sgi-menu-content-footer *sgiHasAuthorityForAnyUO="'CSP-ME-C'">
+    <sgi-footer-crear [texto]="textoCrear" [route]="ROUTE_NAMES.NEW"></sgi-footer-crear>
+  </sgi-menu-content-footer>
+</sgi-menu-content>

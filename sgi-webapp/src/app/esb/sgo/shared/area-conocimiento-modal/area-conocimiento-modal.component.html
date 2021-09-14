@@ -12,7 +12,13 @@
       <mat-tree [dataSource]="dataSource" [treeControl]="treeControl" class="arbol-tree">
         <mat-tree-node *matTreeNodeDef="let node" matTreeNodeToggle matTreeNodePadding>
           <li class="mat-tree-node">
-            <button mat-icon-button disabled></button>
+            <button mat-icon-button matTreeNodeToggle [attr.aria-label]="'Toggle ' + node.areaConocimiento.nombre"
+              [disabled]="node.childsLoaded && node.childs.length === 0" (click)="onToggleNode(node)">
+              <mat-icon color="primary" class="mat-icon-rtl-mirror">
+                {{node.childsLoaded && node.childs.length === 0 ? '' : (treeControl.isExpanded(node) ? 'expand_more' :
+                'chevron_right')}}
+              </mat-icon>
+            </button>
 
             <mat-checkbox class="checkbox" color="primary" [checked]="node.checked" (change)="onCheckNode(node, $event)"
               [disabled]="node.disabled">

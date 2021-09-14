@@ -1,0 +1,117 @@
+[
+  {
+    "key": "ap3_5_6",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "label": "3.5.6 Sustancias radiactivas, equipo radiológico, instalación radiactiva"
+    },
+    "fieldGroup": [
+      {
+        "type": "table-crud",
+        "key": "sustanciasRadiactivasTable",
+        "templateOptions": {
+          "title": "Sustancia radiactiva",
+          "entity": "sustancia radiactiva",
+          "gender": "female"
+        },
+        "fieldArray": {
+          "templateOptions": {
+            "text": "Sustancia radiactiva"
+          },
+          "fieldGroup": [
+            {
+              "key": "radioisotopo",
+              "type": "input",
+              "templateOptions": {
+                "label": "Radioisótopo (s)",
+                "order": 10
+              }
+            },
+            {
+              "key": "compuestosMarcados",
+              "type": "input",
+              "templateOptions": {
+                "label": "Compuestos marcados",
+                "order": 20
+              }
+            },
+            {
+              "key": "actividadExperimento",
+              "type": "input",
+              "templateOptions": {
+                "label": "Actividad por experimento (μCi o kBq)",
+                "order": 30
+              }
+            }
+          ]
+        }
+      },
+      {
+        "type": "table-crud",
+        "key": "equiposRadiologicosTable",
+        "templateOptions": {
+          "title": "Equipo radiológico",
+          "entity": "equipo radiológico",
+          "gender": "male"
+        },
+        "fieldArray": {
+          "templateOptions": {
+            "text": "Equipo radiológico"
+          },
+          "fieldGroup": [
+            {
+              "key": "equipoRadiologico",
+              "type": "input",
+              "templateOptions": {
+                "label": "Equipo radiológico",
+                "order": 10
+              }
+            },
+            {
+              "key": "ubicacion",
+              "type": "input",
+              "templateOptions": {
+                "label": "Ubicación",
+                "order": 20
+              }
+            }
+          ]
+        }
+      },
+      {
+        "type": "table-crud",
+        "key": "instalacionesRadiactivasTable",
+        "templateOptions": {
+          "title": "Instalación radiactiva",
+          "entity": "instalación radiactiva",
+          "gender": "female"
+        },
+        "fieldArray": {
+          "templateOptions": {
+            "text": "Instalación radiactiva"
+          },
+          "fieldGroup": [
+            {
+              "key": "instalacionRadiactiva",
+              "type": "input",
+              "templateOptions": {
+                "label": "Instalación radiactiva",
+                "order": 10
+              }
+            },
+            {
+              "key": "ubicacion",
+              "type": "input",
+              "templateOptions": {
+                "label": "Ubicación",
+                "order": 20
+              }
+            }
+          ]
+        }
+      }
+    ]
+  }
+]

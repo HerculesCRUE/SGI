@@ -27,4 +27,5 @@ public interface ProyectoSocioPeriodoPagoRepository
    */
   void deleteByProyectoSocioId(Long id);
 
+  boolean existsByProyectoSocioId(Long proyectoSocioId);
 }

@@ -1,0 +1,10 @@
+@import "colors.scss";
+
+:host {
+  font-weight: 600;
+  mat-icon {
+    padding-right: 8px;
+    vertical-align: middle;
+    color: map-get($palette-warn, $warn-color);
+  }
+}

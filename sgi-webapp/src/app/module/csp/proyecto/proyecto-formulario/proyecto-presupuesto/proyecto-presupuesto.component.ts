@@ -2,6 +2,7 @@ import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
+import { ActivatedRoute, Router, UrlTree } from '@angular/router';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { FormFragmentComponent } from '@core/component/fragment.component';
 import { MSG_PARAMS } from '@core/i18n';
@@ -12,11 +13,15 @@ import { FxFlexProperties } from '@core/models/shared/flexLayout/fx-flex-propert
 import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-properties';
 import { ROUTE_NAMES } from '@core/route.names';
 import { ProyectoService } from '@core/services/csp/proyecto.service';
+import { SolicitudService } from '@core/services/csp/solicitud.service';
 import { DialogService } from '@core/services/dialog.service';
 import { StatusWrapper } from '@core/utils/status-wrapper';
 import { TranslateService } from '@ngx-translate/core';
+import { SpawnSyncOptionsWithStringEncoding } from 'child_process';
 import { Subscription } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
+import { CSP_ROUTE_NAMES } from '../../../csp-route-names';
+import { SOLICITUD_ROUTE_NAMES } from '../../../solicitud/solicitud-route-names';
 import { ProyectoActionService } from '../../proyecto.action.service';
 import { ProyectoPresupuestoFragment } from './proyecto-presupuesto.fragment';
 
@@ -54,9 +59,13 @@ export class ProyectoPresupuestoComponent extends FormFragmentComponent<IProyect
   get MSG_PARAMS() {
     return MSG_PARAMS;
   }
-  constructor(public actionService: ProyectoActionService,
+  constructor(
+    public actionService: ProyectoActionService,
     private translate: TranslateService,
     private readonly proyectoService: ProyectoService,
+    private readonly solicitudService: SolicitudService,
+    private router: Router,
+    private route: ActivatedRoute,
     private dialogService: DialogService) {
     super(actionService.FRAGMENT.PRESUPUESTO, actionService);
 
@@ -126,6 +135,8 @@ export class ProyectoPresupuestoComponent extends FormFragmentComponent<IProyect
       subscribe(response => {
         this.valoresCalculadosData = response;
       }));
+
+    this.updateImportesTotales();
   }
 
   private setupI18N(): void {
@@ -176,21 +187,78 @@ export class ProyectoPresupuestoComponent extends FormFragmentComponent<IProyect
     );
   }
 
+  showPresupuestoSolcitud() {
+    this.subscriptions.push(this.solicitudService.hasSolicitudProyectoGlobal(this.formPart.proyecto.solicitudId as number).
+      subscribe(value => {
+        let presupuestoSolicitud: UrlTree;
+        if (value) {
+          presupuestoSolicitud = this.router.createUrlTree(['../',
+            CSP_ROUTE_NAMES.SOLICITUD, this.formPart.proyecto.solicitudId, SOLICITUD_ROUTE_NAMES.DESGLOSE_PRESUPUESTO_GLOBAL],
+            { relativeTo: this.route.parent.parent });
+        } else {
+          presupuestoSolicitud = this.router.createUrlTree(['../',
+            CSP_ROUTE_NAMES.SOLICITUD, this.formPart.proyecto.solicitudId, SOLICITUD_ROUTE_NAMES.DESGLOSE_PRESUPUESTO_ENTIDADES],
+            { relativeTo: this.route.parent.parent });
+        }
+        window.open(presupuestoSolicitud.toString(), '_blank');
+
+      }));
+
+  }
+
   private checkDisabledControls(numAnualidades: number) {
     if (this.formGroup.controls.anualidades.value === null) {
       this.formPart.disableAddAnualidad$.next(true);
-    } else if (!this.formGroup.controls.anualidades.value && numAnualidades > 0) {
-      this.formPart.disableAddAnualidad$.next(true);
+    } else if (numAnualidades > 0) {
+      if (!this.formGroup.controls.anualidades.value) {
+        this.formPart.disableAddAnualidad$.next(true);
+      }
       if (!this.formGroup.controls.anualidades.disabled) {
         this.formGroup.controls.anualidades.disable();
       }
-
     } else {
       this.formPart.disableAddAnualidad$.next(false);
       if (this.formGroup.controls.anualidades.disabled) {
         this.formGroup.controls.anualidades.enable();
       }
     }
+  }
+
+  private updateImportesTotales() {
+    this.subscriptions.push(this.proyectoService.findAllProyectoAnualidadesGasto(this.formPart.getKey() as number)
+      .subscribe(proyectoAnualidades => {
+
+        /* Presupuesto por Universidad Sin Costes Indirectos */
+        const importePresupuestoUniversidad = proyectoAnualidades.items
+          .filter(anualidadGasto => !anualidadGasto.conceptoGasto.costesIndirectos)
+          .reduce((total, anualidadGasto) => total + anualidadGasto.importePresupuesto, 0);
+        this.valoresCalculadosData.importePresupuestoUniversidad = importePresupuestoUniversidad;
+        /* Presupuesto por Universidad Con Costes Indirectos */
+        const importePresupuestoUniversidadCostesIndirectos = proyectoAnualidades.items
+          .filter(anualidadGasto => anualidadGasto.conceptoGasto.costesIndirectos)
+          .reduce((total, anualidadGasto) => total + anualidadGasto.importePresupuesto, 0);
+        this.valoresCalculadosData.importePresupuestoUniversidadCostesIndirectos = importePresupuestoUniversidadCostesIndirectos;
+        /* Total Presupuesto por Universidad */
+        const totalImportePresupuestoUniversidad = proyectoAnualidades.items.reduce(
+          (total, anualidadGasto) => total + anualidadGasto.importePresupuesto, 0);
+        this.valoresCalculadosData.totalImportePresupuestoUniversidad = totalImportePresupuestoUniversidad;
+
+        /* Concedido por Universidad Sin Costes Indirectos */
+        const importeConcedidoUniversidad = proyectoAnualidades.items
+          .filter(anualidadGasto => !anualidadGasto.conceptoGasto.costesIndirectos)
+          .reduce((total, anualidadGasto) => total + anualidadGasto.importeConcedido, 0);
+        this.valoresCalculadosData.importeConcedidoUniversidad = importeConcedidoUniversidad;
+        /* Concedido por Universidad Con Costes Indirectos */
+        const importeConcedidoUniversidadCostesIndirectos = proyectoAnualidades.items
+          .filter(anualidadGasto => anualidadGasto.conceptoGasto.costesIndirectos)
+          .reduce((total, anualidadGasto) => total + anualidadGasto.importeConcedido, 0);
+        this.valoresCalculadosData.importeConcedidoUniversidadCostesIndirectos = importeConcedidoUniversidadCostesIndirectos;
+        /* Total Concedido por Universidad*/
+        const totalImporteConcedidoUniversidad = proyectoAnualidades.items.reduce(
+          (total, anualidadGasto) => total + anualidadGasto.importeConcedido, 0);
+        this.valoresCalculadosData.totalImporteConcedidoUniversidad = totalImporteConcedidoUniversidad;
+      })
+    );
   }
 }
 

@@ -10,7 +10,7 @@
     <div [fxLayout]="fxLayoutProperties.layout" [fxLayoutAlign]="fxLayoutProperties.layoutAlign">
       <mat-form-field>
         <mat-label>{{'csp.modelo-ejecucion-tipo-hito.tipo' | translate}}</mat-label>
-            <sgi-select-entity formControlName="tipoHito" required [options]="tipoHitos$ | async"></sgi-select-entity>
+        <sgi-select-entity formControlName="tipoHito" required [options]="tipoHitos$ | async"></sgi-select-entity>
         <mat-error *ngIf="formGroup.controls.tipoHito.errors?.required">
           {{'error.required.entity' | translate:msgParamTipoEntity}}
         </mat-error>
@@ -33,7 +33,7 @@
         <mat-checkbox color="primary" class="checkbox" formControlName="proyecto">
           {{'csp.modelo-ejecucion-tipo-hito.proyectos' | translate}}</mat-checkbox>
         <mat-error *ngIf="formGroup.controls.disponible.errors?.requiredChecked">
-          {{'error.required.entity' | translate:msgParamProyectosEntity}}
+          {{'error.csp.modelo-ejecucion-tipo-hito.requiredChecked' | translate}}
         </mat-error>
       </div>
     </div>

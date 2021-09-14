@@ -129,7 +129,7 @@ public class DocumentoRequeridoSolicitudServiceImpl implements DocumentoRequerid
           .orElseThrow(() -> new ConfiguracionSolicitudNotFoundException(
               convocatoriaAreaTematica.getConfiguracionSolicitudId()));
       Assert.isTrue(
-          convocatoriaService.modificable(configuracionSolicitud.getConvocatoriaId(), null,
+          convocatoriaService.isRegistradaConSolicitudesOProyectos(configuracionSolicitud.getConvocatoriaId(), null,
               new String[] { "CSP-CON-E" }),
           "No se puede eliminar DocumentoRequeridoSolicitud. No tiene los permisos necesarios o la convocatoria está registrada y cuenta con solicitudes o proyectos asociados");
 
@@ -207,7 +207,9 @@ public class DocumentoRequeridoSolicitudServiceImpl implements DocumentoRequerid
             documentoRequeridoSolicitud.getConfiguracionSolicitudId()));
 
     // comprobar si convocatoria es modificable
-    Assert.isTrue(convocatoriaService.modificable(configuracionSolicitud.getConvocatoriaId(), null, authorities),
+    Assert.isTrue(
+        convocatoriaService.isRegistradaConSolicitudesOProyectos(configuracionSolicitud.getConvocatoriaId(), null,
+            authorities),
         "No se puede " + ((datosOriginales != null) ? "modificar" : "crear")
             + " DocumentoRequeridoSolicitud. No tiene los permisos necesarios o la convocatoria está registrada y cuenta con solicitudes o proyectos asociados");
 

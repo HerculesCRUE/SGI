@@ -1,0 +1,52 @@
+[
+  {
+    "key": "ap4_4_1",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "expressionLock": "formState.memoria.tipoMemoria.id === 3",
+      "label": "4.4.1 Tipo de consentimiento"
+    },
+    "hideExpression": "!formState.mainModel.ap4_4.informacionConsentimientoRadio || formState.mainModel.ap4_4.informacionConsentimientoRadio === 'no'",
+    "fieldGroup": [
+      {
+        "template": "<p>Tarea para la que se solicita el consentimiento</p>"
+      },
+      {
+        "type": "multicheckbox",
+        "key": "tipoConsentimientoCheck",
+        "templateOptions": {
+          "label": "Tarea",
+          "type": "array",
+          "required": true,
+          "options": [
+            {
+              "value": "intervencionesInvasivas",
+              "label": "Para realizar a la persona participante intervenciones invasivas"
+            },
+            {
+              "value": "intervencionesNoInvasivas",
+              "label": "Para realizar a la persona participante intervenciones no invasivas"
+            },
+            {
+              "value": "usoMuestrasProyectoActual",
+              "label": "Para el uso de las muestras y/o los datos de la persona participante en el proyecto actual"
+            },
+            {
+              "value": "usoMuestrasProyectosPosteriores",
+              "label": "Para almacenamiento y uso de las muestras y/o los datos en proyectos posteriores"
+            },
+            {
+              "value": "cesion",
+              "label": "Para cesión"
+            }
+          ]
+        }
+      },
+      {
+        "template": "<p>En los siguientes apartados se hace un repaso a la información que va a facilitarse al sujeto participante y puede servir de lista de chequeo para el investigador responsable.</p>"
+      }
+    ]
+  }
+]

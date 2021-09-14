@@ -7,6 +7,8 @@ import { IEstadoSolicitud } from './estado-solicitud';
 export interface ISolicitud {
   /** Id */
   id: number;
+  /** Título */
+  titulo: string;
   /** Activo */
   activo: boolean;
   /** Codigo externo */

@@ -1,0 +1,36 @@
+[
+  {
+    "key": "ap3_4_3",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "expressionLock": "formState.memoria.tipoMemoria.id === 3",
+      "label": "3.4.3 Descripción de las intervenciones o pruebas"
+    },
+    "hideExpression": "!formState.mainModel.ap3_4.intervencionesSeresHumanosRadio || formState.mainModel.ap3_4.intervencionesSeresHumanosRadio === 'no'",
+    "fieldGroup": [
+      {
+        "template": "<p>Describir todas las intervenciones o pruebas a las que se va a someter al sujeto de estudio para obtener sus muestras o sus datos especificando el lugar, persona encargada de realizarlas, duración y frecuencia.</p>"
+      },
+      {
+        "key": "descripcionIntervenciones",
+        "type": "textarea",
+        "templateOptions": {
+          "label": "Intervenciones o pruebas",
+          "placeholder": "Intervenciones o pruebas",
+          "required": true,
+          "autosize": true,
+          "autosizeMinRows": "1",
+          "autosizeMaxRows": "10"
+        }
+      },
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "<p>Nota: Recuerde que el/la participante tiene derecho a conocer todas las intervenciones o pruebas que se le van a realizar o afectan a su participación y debe ser informado de ello en el documento de consentimiento (apartado '4.4.4 Información sobre las intervenciones o pruebas').</p><p>Para obtener más información sobre la información mínima exigida consultar el <a href='http://www.boe.es/buscar/act.php?id=BOE-A-2007-12945&p=20110602&tn=1#a15' target='_blank'>artículo 15</a> de la LIB 14/2007.</p>"
+      }
+    ]
+  }
+]

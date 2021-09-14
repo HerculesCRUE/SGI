@@ -48,6 +48,10 @@ export class ProyectoSocioDatosGeneralesComponent extends FormFragmentComponent<
   msgParamFechaFinEntity = {};
   msgParamPeriodoParticipacionEntity = {};
 
+  get readonly(): boolean {
+    return this.actionService.readonly;
+  }
+
   constructor(
     private readonly logger: NGXLogger,
     protected actionService: ProyectoSocioActionService,

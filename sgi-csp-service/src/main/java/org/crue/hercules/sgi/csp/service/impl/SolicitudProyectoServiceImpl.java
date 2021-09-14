@@ -6,6 +6,7 @@ import org.crue.hercules.sgi.csp.exceptions.SolicitudNotFoundException;
 import org.crue.hercules.sgi.csp.exceptions.SolicitudProyectoNotFoundException;
 import org.crue.hercules.sgi.csp.model.Solicitud;
 import org.crue.hercules.sgi.csp.model.SolicitudProyecto;
+import org.crue.hercules.sgi.csp.model.SolicitudProyecto.TipoPresupuesto;
 import org.crue.hercules.sgi.csp.repository.SolicitudProyectoRepository;
 import org.crue.hercules.sgi.csp.repository.SolicitudRepository;
 import org.crue.hercules.sgi.csp.service.SolicitudProyectoService;
@@ -75,32 +76,38 @@ public class SolicitudProyectoServiceImpl implements SolicitudProyectoService {
     // comprobar si la solicitud es modificable
     Assert.isTrue(solicitudService.modificable(solicitudProyecto.getId()), "No se puede modificar SolicitudProyecto");
 
-    return repository.findById(solicitudProyecto.getId()).map((solicitudProyectoExistente) -> {
+    return repository.findById(solicitudProyecto.getId()).map(
+        (solicitudProyectoExistente) -> updateExistingSolicitudProyecto(solicitudProyecto, solicitudProyectoExistente))
+        .orElseThrow(() -> new SolicitudProyectoNotFoundException(solicitudProyecto.getId()));
+  }
 
-      solicitudProyectoExistente.setTitulo(solicitudProyecto.getTitulo());
-      solicitudProyectoExistente.setAcronimo(solicitudProyecto.getAcronimo());
-      solicitudProyectoExistente.setCodExterno(solicitudProyecto.getCodExterno());
-      solicitudProyectoExistente.setDuracion(solicitudProyecto.getDuracion());
-      solicitudProyectoExistente.setColaborativo(solicitudProyecto.getColaborativo());
-      solicitudProyectoExistente.setCoordinadorExterno(solicitudProyecto.getCoordinadorExterno());
-      solicitudProyectoExistente.setObjetivos(solicitudProyecto.getObjetivos());
-      solicitudProyectoExistente.setIntereses(solicitudProyecto.getIntereses());
-      solicitudProyectoExistente.setResultadosPrevistos(solicitudProyecto.getResultadosPrevistos());
-      solicitudProyectoExistente.setAreaTematica(solicitudProyecto.getAreaTematica());
-      solicitudProyectoExistente.setChecklistRef(solicitudProyecto.getChecklistRef());
-      solicitudProyectoExistente.setPeticionEvaluacionRef(solicitudProyecto.getPeticionEvaluacionRef());
-      solicitudProyectoExistente.setTipoPresupuesto(solicitudProyecto.getTipoPresupuesto());
-      solicitudProyectoExistente.setImporteSolicitado(solicitudProyecto.getImporteSolicitado());
-      solicitudProyectoExistente.setImportePresupuestado(solicitudProyecto.getImportePresupuestado());
-      solicitudProyectoExistente.setImporteSolicitadoSocios(solicitudProyecto.getImporteSolicitadoSocios());
-      solicitudProyectoExistente.setImportePresupuestadoSocios(solicitudProyecto.getImportePresupuestadoSocios());
-      solicitudProyectoExistente.setTotalImporteSolicitado(solicitudProyecto.getTotalImporteSolicitado());
-      solicitudProyectoExistente.setTotalImportePresupuestado(solicitudProyecto.getTotalImportePresupuestado());
-      SolicitudProyecto returnValue = repository.save(solicitudProyectoExistente);
+  private SolicitudProyecto updateExistingSolicitudProyecto(SolicitudProyecto source, SolicitudProyecto target) {
 
-      log.debug("update(SolicitudProyecto solicitudProyecto) - end");
-      return returnValue;
-    }).orElseThrow(() -> new SolicitudProyectoNotFoundException(solicitudProyecto.getId()));
+    target.setAcronimo(source.getAcronimo());
+    target.setCodExterno(source.getCodExterno());
+    target.setDuracion(source.getDuracion());
+    target.setColaborativo(source.getColaborativo());
+    target.setCoordinado(source.getCoordinado());
+    target.setCoordinadorExterno(source.getCoordinadorExterno());
+    target.setObjetivos(source.getObjetivos());
+    target.setIntereses(source.getIntereses());
+    target.setResultadosPrevistos(source.getResultadosPrevistos());
+    target.setAreaTematica(source.getAreaTematica());
+    target.setChecklistRef(source.getChecklistRef());
+    target.setPeticionEvaluacionRef(source.getPeticionEvaluacionRef());
+    target.setTipoPresupuesto(source.getTipoPresupuesto());
+    target.setImporteSolicitado(source.getImporteSolicitado());
+    target.setImportePresupuestado(source.getImportePresupuestado());
+    target.setImporteSolicitadoSocios(source.getImporteSolicitadoSocios());
+    target.setImportePresupuestadoSocios(source.getImportePresupuestadoSocios());
+    target.setTotalImporteSolicitado(source.getTotalImporteSolicitado());
+    target.setTotalImportePresupuestado(source.getTotalImportePresupuestado());
+    target.setImportePresupuestadoCostesIndirectos(source.getImportePresupuestadoCostesIndirectos());
+    target.setImporteSolicitadoCostesIndirectos(source.getImporteSolicitadoCostesIndirectos());
+
+    log.debug("update(SolicitudProyecto solicitudProyecto) - end");
+
+    return repository.save(target);
   }
 
   /**
@@ -172,6 +179,22 @@ public class SolicitudProyectoServiceImpl implements SolicitudProyectoService {
   }
 
   /**
+   * Compruena si la {@link SolicitudProyecto} asociada a la {@link Solicitud} es
+   * de tipo Global.
+   * 
+   * @param solicitudId Identificador de la solicitud.
+   * @return Indicador de si el tipo de presupuesto es global
+   */
+  @Override
+  public boolean isTipoPresupuestoGlobalBySolicitudId(Long solicitudId) {
+    log.debug("isTipoPresupuestoGlobalBySolicitudId(Long solicitudId) - start");
+    SolicitudProyecto solicitudProyecto = findBySolicitud(solicitudId);
+    log.debug("isTipoPresupuestoGlobalBySolicitudId(Long solicitudId) - end");
+
+    return solicitudProyecto.getTipoPresupuesto().equals(TipoPresupuesto.GLOBAL);
+  }
+
+  /**
    * Realiza las validaciones comunes para las operaciones de creación y
    * acutalización de solicitud de proyecto.
    * 
@@ -182,9 +205,6 @@ public class SolicitudProyectoServiceImpl implements SolicitudProyectoService {
 
     Assert.notNull(solicitudProyecto.getId(),
         "El id no puede ser null para realizar la acción sobre SolicitudProyecto");
-
-    Assert.notNull(solicitudProyecto.getTitulo(),
-        "El título no puede ser null para realizar la acción sobre SolicitudProyecto");
 
     Assert.notNull(solicitudProyecto.getColaborativo(),
         "Colaborativo no puede ser null para realizar la acción sobre SolicitudProyecto");

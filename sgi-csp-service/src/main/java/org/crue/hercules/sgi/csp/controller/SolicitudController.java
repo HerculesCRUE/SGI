@@ -404,7 +404,7 @@ public class SolicitudController {
    * @return {@link SolicitudProyecto}
    */
   @RequestMapping(path = "/{id}/solicitudproyecto", method = RequestMethod.GET)
-  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-SOL-E', 'CSP-SOL-V')")
+  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-SOL-E', 'CSP-SOL-V', 'CSP-SOL-INV-ER')")
   public ResponseEntity<SolicitudProyecto> findSolictudProyectoDatos(@PathVariable Long id) {
     log.debug("findSolictudProyectoDatos(Long id) - start");
     SolicitudProyecto returnValue = solicitudProyectoService.findBySolicitud(id);
@@ -426,7 +426,7 @@ public class SolicitudController {
    * @param paging pageable.
    */
   @GetMapping("/{id}/solicitudproyectosocio")
-  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-SOL-E','CSP-SOL-V')")
+  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-SOL-E', 'CSP-SOL-V', 'CSP-SOL-INV-ER')")
   ResponseEntity<Page<SolicitudProyectoSocio>> findAllSolicitudProyectoSocio(@PathVariable Long id,
       @RequestParam(name = "q", required = false) String query, @RequestPageable(sort = "s") Pageable paging) {
     log.debug("findAllSolicitudProyectoSocio(Long id, String query, Pageable paging) - start");
@@ -465,10 +465,22 @@ public class SolicitudController {
   }
 
   /**
-   * Devuelve una lista paginada de
-   * {@link SolicitudProyectoEntidadFinanciadoraAjena}
+   * Devuelve true si el solicitante existe en la SolicitudProyectoEquipo
    * 
-   * @param id     Identificador de {@link Solicitud}.
+   * @param id Identificador de {@link SolicitudProyecto}.
+   */
+  @RequestMapping(path = "/{id}/existssolicitante", method = RequestMethod.HEAD)
+  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-SOL-E', 'CSP-SOL-V')")
+  ResponseEntity<?> existSolicitanteInSolicitudProyectoEquipo(@PathVariable Long id) {
+    log.debug("existSolicitanteInSolicitudProyectoEquipo(Long id) - start");
+    boolean returnValue = this.solicitudProyectoEquipoService.existsSolicitanteInSolicitudProyectoEquipo(id);
+    log.debug("existSolicitanteInSolicitudProyectoEquipo(Long id) - end");
+    return returnValue ? new ResponseEntity<>(HttpStatus.OK) : new ResponseEntity<>(HttpStatus.NO_CONTENT);
+  }
+
+  /**
+   * Devuelve una lista paginada de
+   * 
    * @param query  filtro de búsqueda.
    * @param paging pageable.
    */
@@ -695,7 +707,7 @@ public class SolicitudController {
    * @return {@link Solicitud} actualizado.
    */
   @PatchMapping("/{id}/cambiar-estado")
-  @PreAuthorize("hasAuthorityForAnyUO('CSP-SOL-E')")
+  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-SOL-E', 'CSP-SOL-INV-ER')")
   Solicitud cambiarEstado(@PathVariable Long id, @RequestBody EstadoSolicitud estadoSolicitud) {
     log.debug("presentar(Long id) - start");
 
@@ -801,6 +813,41 @@ public class SolicitudController {
 
     log.debug("findAllResponsablesEconomicosBySolicitud(Long id, String query, Pageable paging) - end");
     return new ResponseEntity<>(convert(page), HttpStatus.OK);
+  }
+
+  /**
+   * Comprueba la existencia de {@link SolicitudProyectoPresupuesto} asociados a
+   * una solicitud
+   * 
+   * @param id Id de la Solicitud
+   * @return {@link HttpStatus.OK} si existe alguna relación,
+   *         {@link HttpStatus.NO_CONTENT} en cualquier otro caso
+   */
+  @RequestMapping(path = "/{id}/solicitudproyectopresupuestos", method = RequestMethod.HEAD)
+  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-PRO-V', 'CSP-PRO-E')")
+  ResponseEntity<?> existSolicitudProyectoPresupuesto(@PathVariable Long id) {
+    log.debug("existSolicitudProyectoPresupuesto(Long id) - start");
+    boolean returnValue = solicitudProyectoPresupuestoService.existsBySolicitudProyectoSolicitudId(id);
+
+    log.debug("existSolicitudProyectoPresupuesto(Long id,) - end");
+    return returnValue ? new ResponseEntity<>(HttpStatus.OK) : new ResponseEntity<>(HttpStatus.NO_CONTENT);
+  }
+
+  /**
+   * Comprueba si la solicitud proyecto de la solicitud es de tipo Global
+   * 
+   * @param id Id de la Solicitud
+   * @return {@link HttpStatus.OK} si es tipo Global,
+   *         {@link HttpStatus.NO_CONTENT} Por Entidad o Mixto
+   */
+  @RequestMapping(path = "/{id}/solicitudproyecto-global", method = RequestMethod.HEAD)
+  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-SOL-E')")
+  ResponseEntity<?> hasSolicitudProyectoTipoGlobal(@PathVariable Long id) {
+    log.debug("hasSolicitudProyectoTipoGlobal(Long id) - start");
+    boolean returnValue = solicitudProyectoService.isTipoPresupuestoGlobalBySolicitudId(id);
+
+    log.debug("hasSolicitudProyectoTipoGlobal(Long id,) - end");
+    return returnValue ? new ResponseEntity<>(HttpStatus.OK) : new ResponseEntity<>(HttpStatus.NO_CONTENT);
   }
 
   private SolicitudProyectoResponsableEconomicoOutput convert(

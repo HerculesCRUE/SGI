@@ -1,7 +1,6 @@
 package org.crue.hercules.sgi.eti.service.impl;
 
 import java.time.Instant;
-import java.time.ZoneOffset;
 import java.time.temporal.ChronoField;
 import java.util.Arrays;
 import java.util.List;
@@ -9,6 +8,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
+import org.crue.hercules.sgi.eti.config.SgiConfigProperties;
 import org.crue.hercules.sgi.eti.dto.MemoriaPeticionEvaluacion;
 import org.crue.hercules.sgi.eti.exceptions.ComiteNotFoundException;
 import org.crue.hercules.sgi.eti.exceptions.EstadoRetrospectivaNotFoundException;
@@ -25,6 +25,7 @@ import org.crue.hercules.sgi.eti.model.Informe;
 import org.crue.hercules.sgi.eti.model.Memoria;
 import org.crue.hercules.sgi.eti.model.PeticionEvaluacion;
 import org.crue.hercules.sgi.eti.model.Respuesta;
+import org.crue.hercules.sgi.eti.model.Tarea;
 import org.crue.hercules.sgi.eti.model.TipoEstadoMemoria;
 import org.crue.hercules.sgi.eti.model.TipoEvaluacion;
 import org.crue.hercules.sgi.eti.model.TipoMemoria;
@@ -37,6 +38,7 @@ import org.crue.hercules.sgi.eti.repository.EvaluacionRepository;
 import org.crue.hercules.sgi.eti.repository.MemoriaRepository;
 import org.crue.hercules.sgi.eti.repository.PeticionEvaluacionRepository;
 import org.crue.hercules.sgi.eti.repository.RespuestaRepository;
+import org.crue.hercules.sgi.eti.repository.TareaRepository;
 import org.crue.hercules.sgi.eti.repository.specification.MemoriaSpecifications;
 import org.crue.hercules.sgi.eti.service.InformeService;
 import org.crue.hercules.sgi.eti.service.MemoriaService;
@@ -59,6 +61,9 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Transactional(readOnly = true)
 public class MemoriaServiceImpl implements MemoriaService {
+
+  /** Propiedades de configuración de la aplicación */
+  private final SgiConfigProperties sgiConfigProperties;
 
   /** Comentario repository */
   private final ComentarioRepository comentarioRepository;
@@ -90,11 +95,16 @@ public class MemoriaServiceImpl implements MemoriaService {
   /** Informe service */
   private final InformeService informeService;
 
-  public MemoriaServiceImpl(MemoriaRepository memoriaRepository, EstadoMemoriaRepository estadoMemoriaRepository,
-      EstadoRetrospectivaRepository estadoRetrospectivaRepository, EvaluacionRepository evaluacionRepository,
-      ComentarioRepository comentarioRepository, InformeService informeService,
-      PeticionEvaluacionRepository peticionEvaluacionRepository, ComiteRepository comiteRepository,
-      DocumentacionMemoriaRepository documentacionMemoriaRepository, RespuestaRepository respuestaRepository) {
+  /** Tarea repository */
+  private final TareaRepository tareaRepository;
+
+  public MemoriaServiceImpl(SgiConfigProperties sgiConfigProperties, MemoriaRepository memoriaRepository,
+      EstadoMemoriaRepository estadoMemoriaRepository, EstadoRetrospectivaRepository estadoRetrospectivaRepository,
+      EvaluacionRepository evaluacionRepository, ComentarioRepository comentarioRepository,
+      InformeService informeService, PeticionEvaluacionRepository peticionEvaluacionRepository,
+      ComiteRepository comiteRepository, DocumentacionMemoriaRepository documentacionMemoriaRepository,
+      RespuestaRepository respuestaRepository, TareaRepository tareaRepository) {
+    this.sgiConfigProperties = sgiConfigProperties;
     this.memoriaRepository = memoriaRepository;
     this.estadoMemoriaRepository = estadoMemoriaRepository;
     this.estadoRetrospectivaRepository = estadoRetrospectivaRepository;
@@ -105,6 +115,7 @@ public class MemoriaServiceImpl implements MemoriaService {
     this.comiteRepository = comiteRepository;
     this.documentacionMemoriaRepository = documentacionMemoriaRepository;
     this.respuestaRepository = respuestaRepository;
+    this.tareaRepository = tareaRepository;
   }
 
   /**
@@ -189,6 +200,16 @@ public class MemoriaServiceImpl implements MemoriaService {
     }).collect(Collectors.toList());
 
     respuestaRepository.saveAll(respuestaList);
+
+    /** Tarea */
+    List<Tarea> tareasMemoriaOriginal = tareaRepository.findAllByMemoriaId(memoria.getId());
+    if (!tareasMemoriaOriginal.isEmpty()) {
+      List<Tarea> tareasMemoriaCopy = tareasMemoriaOriginal.stream().map(tarea -> {
+        return new Tarea(null, tarea.getEquipoTrabajo(), nuevaMemoria, tarea.getTarea(), tarea.getFormacion(),
+            tarea.getFormacionEspecifica(), tarea.getOrganismo(), tarea.getAnio(), tarea.getTipoTarea());
+      }).collect(Collectors.toList());
+      tareaRepository.saveAll(tareasMemoriaCopy);
+    }
 
     log.debug("Memoria createModificada(Memoria memoria, id) - end");
     return memoriaCreada;
@@ -735,15 +756,19 @@ public class MemoriaServiceImpl implements MemoriaService {
   }
 
   @Override
-  public Page<Memoria> findByComite(Long idComite, Pageable paging) {
-    log.debug("findByComite(Long idComite) - start");
+  public Page<Memoria> findByComiteAndPeticionEvaluacion(Long idComite, Long idPeticionEvaluacion, Pageable paging) {
+    log.debug("findByComiteAndPeticionEvaluacion(Long idComite, Long idPeticionEvaluacion, Pageable paging) - start");
 
     Assert.notNull(idComite,
         "El identificador del comité no puede ser null para recuperar sus tipos de memoria asociados.");
 
+    Assert.notNull(idPeticionEvaluacion,
+        "El identificador de la petición de evaluación no puede ser null para recuperar sus tipos de memoria asociados.");
+
     return comiteRepository.findByIdAndActivoTrue(idComite).map(comite -> {
-      log.debug("findByComite(Long idComite) - end");
-      return memoriaRepository.findByComiteIdAndActivoTrueAndComiteActivoTrue(idComite, paging);
+      log.debug("findByComiteAndPeticionEvaluacion(Long idComite, Long idPeticionEvaluacion, Pageable paging) - end");
+      return memoriaRepository.findByComiteIdAndPeticionEvaluacionIdAndActivoTrueAndComiteActivoTrue(idComite,
+          idPeticionEvaluacion, paging);
 
     }).orElseThrow(() -> new ComiteNotFoundException(idComite));
 
@@ -779,7 +804,7 @@ public class MemoriaServiceImpl implements MemoriaService {
     log.debug("getReferenciaMemoria(Long id, String numReferencia) - start");
 
     // Referencia memoria
-    int anioActual = Instant.now().atZone(ZoneOffset.UTC).get(ChronoField.YEAR);
+    int anioActual = Instant.now().atZone(sgiConfigProperties.getTimeZone().toZoneId()).get(ChronoField.YEAR);
     StringBuffer sbNumReferencia = new StringBuffer();
     sbNumReferencia.append(comite.getFormulario().getNombre()).append("/").append(anioActual).append("/");
 
@@ -852,6 +877,31 @@ public class MemoriaServiceImpl implements MemoriaService {
 
     log.debug("getReferenciaMemoria(Long id, String numReferencia) - end");
     return sbNumReferencia.toString();
+  }
+
+  /**
+   * Comprobación de si están o no los documentos obligatorios aportados para
+   * pasar la memoria al estado en secretaría
+   * 
+   * @param idMemoria Id de {@link Memoria}
+   * @param paging    pageable
+   * @return true si existen documentos adjuntos obligatorios / false Si no se
+   *         existen documentos adjuntos obligatorios
+   */
+  public Boolean checkDatosAdjuntosExists(Long idMemoria, Pageable paging) {
+    Page<Respuesta> returnValue = respuestaRepository.findByMemoriaIdAndTipoDocumentoIsNotNull(idMemoria, paging);
+    Boolean[] arr = { true };
+    if (returnValue.hasContent()) {
+      List<Respuesta> respuestas = returnValue.getContent();
+      Long idFormulario = respuestas.get(0).getApartado().getBloque().getFormulario().getId();
+      respuestas.stream().map(resp -> resp.getTipoDocumento()).forEach(tipoDocumento -> {
+        if (!documentacionMemoriaRepository.existsByMemoriaIdAndTipoDocumentoIdAndTipoDocumentoFormularioId(idMemoria,
+            tipoDocumento.getId(), idFormulario)) {
+          arr[0] = false;
+        }
+      });
+    }
+    return arr[0];
   }
 
 }

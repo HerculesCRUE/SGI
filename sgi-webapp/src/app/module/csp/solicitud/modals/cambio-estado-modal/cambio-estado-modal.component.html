@@ -29,6 +29,22 @@
         </mat-form-field>
       </div>
     </div>
+    <div [fxLayout]="fxLayoutProperties.layout" [fxLayoutAlign]="fxLayoutProperties.layoutAlign"
+      [fxLayoutGap]="fxLayoutProperties.gap">
+      <!-- fecha Estado-->
+      <div>
+        <mat-form-field>
+          <mat-label>{{'csp.solicitud.estado-solicitud.fecha' | translate}}</mat-label>
+          <input matInput formControlName="fechaEstado" [ngxMatDatetimePicker]="fechaEstado">
+          <mat-datepicker-toggle matSuffix [for]="fechaEstado"></mat-datepicker-toggle>
+          <ngx-mat-datetime-picker #fechaEstado showSeconds="true">
+          </ngx-mat-datetime-picker>
+          <mat-error *ngIf="formGroup.get('fechaEstado').errors?.required">
+            {{'error.required.entity' | translate:msgParamFechaEstadoEntity}}
+          </mat-error>
+        </mat-form-field>
+      </div>
+    </div>
     <!-- Comentario -->
     <div [fxLayout]="fxLayoutProperties.layout" [fxLayoutAlign]="fxLayoutProperties.layoutAlign">
       <span class="mat-small">{{'csp.solicitud.cambio-estado.comentario' | translate}}</span>

@@ -2,7 +2,7 @@ package org.crue.hercules.sgi.pii.dto;
 
 import java.io.Serializable;
 
-import org.crue.hercules.sgi.pii.model.TipoProteccion.TipoPropiedad;
+import org.crue.hercules.sgi.pii.enums.TipoPropiedad;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

@@ -14,14 +14,21 @@ public class SgiJwtAuthenticationConverter implements Converter<Jwt, AbstractAut
   private Converter<Jwt, Collection<GrantedAuthority>> jwtGrantedAuthoritiesConverter = new JwtGrantedAuthoritiesConverter();
 
   private String userNameClaim;
+  public static final String CLIENT_ID = "clientId";
 
   @Override
   public final AbstractAuthenticationToken convert(Jwt jwt) {
     Collection<GrantedAuthority> authorities = extractAuthorities(jwt);
     if (userNameClaim != null) {
       if (jwt.containsClaim(userNameClaim)) {
+        // OAuth 2 Authorization Code Flow (C2B)
         String userName = jwt.getClaimAsString(userNameClaim);
         Assert.hasText(userName, userNameClaim + " cannot be empty");
+        return new JwtAuthenticationToken(jwt, authorities, userName);
+      } else if (jwt.containsClaim(CLIENT_ID)) {
+        // OAuth 2 Client Credentials Grant (B2B)
+        String userName = jwt.getClaimAsString(CLIENT_ID);
+        Assert.hasText(userName, CLIENT_ID + " cannot be empty");
         return new JwtAuthenticationToken(jwt, authorities, userName);
       } else {
         throw new IllegalArgumentException(userNameClaim + " cannot be empty");

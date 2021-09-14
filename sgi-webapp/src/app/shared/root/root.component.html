@@ -8,7 +8,7 @@
     (mouseenter)="layout.autoCollapse && !layout.opened ? layoutService.openMenu(): false"
     (mouseleave)="layout.autoCollapse && layout.opened ? layoutService.closeMenu(): false" #sidenav [opened]="true"
     [mode]="screenWidth > 960 ? 'side' : 'over'" [class.mat-elevation-z4]="true"
-    [ngStyle]="{ 'width.em': layout.opened ? openedWidth : closedWith }">
+    [ngStyle]="{ 'width.px': layout.opened ? openedWidth : closedWith }">
     <mat-nav-list class="menu-principal">
       <ng-content></ng-content>
     </mat-nav-list>
@@ -17,7 +17,7 @@
   <!-- CONTENIDO -->
   <mat-sidenav-content [@content-animation]="layout.opened ? 'open': 'close'">
     <sgi-breadcrumb></sgi-breadcrumb>
-    <div class="layout-components">
+    <div>
       <router-outlet></router-outlet>
     </div>
   </mat-sidenav-content>

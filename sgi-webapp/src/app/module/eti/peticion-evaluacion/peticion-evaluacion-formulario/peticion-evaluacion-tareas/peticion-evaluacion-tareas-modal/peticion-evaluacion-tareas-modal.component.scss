@@ -1,5 +1,13 @@
 @import "colors.scss";
 
-.ocultarCampo {
-  display: none;
+:host {
+  mat-dialog-content {
+    min-width: 60vw;
+  }
+}
+
+.modal-tareas {
+  .ocultarCampo {
+    display: none;
+  }
 }

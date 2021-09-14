@@ -1,7 +1,8 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { ActionComponent } from '@core/component/action.component';
+import { HttpProblem } from '@core/errors/http-problem';
 import { MSG_PARAMS } from '@core/i18n';
 import { DialogService } from '@core/services/dialog.service';
 import { SnackBarService } from '@core/services/snack-bar.service';
@@ -24,12 +25,13 @@ const SOLICITUD_KEY = marker('csp.solicitud');
     SolicitudActionService
   ]
 })
-export class SolicitudCrearComponent extends ActionComponent {
+export class SolicitudCrearComponent extends ActionComponent implements OnInit {
   SOLICITUD_ROUTE_NAMES = SOLICITUD_ROUTE_NAMES;
 
   textoCrear: string;
   textoCrearSuccess: string;
   textoCrearError: string;
+  textoMensajeRequisitosInvestigador: string;
 
   constructor(
     private readonly logger: NGXLogger,
@@ -37,10 +39,10 @@ export class SolicitudCrearComponent extends ActionComponent {
     router: Router,
     route: ActivatedRoute,
     public readonly actionService: SolicitudActionService,
-    dialogService: DialogService,
-    private readonly translate: TranslateService
+    private confirmDialogService: DialogService,
+    private readonly translate: TranslateService,
   ) {
-    super(router, route, actionService, dialogService);
+    super(router, route, actionService, confirmDialogService);
   }
 
   ngOnInit(): void {
@@ -85,6 +87,18 @@ export class SolicitudCrearComponent extends ActionComponent {
         );
       })
     ).subscribe((value) => this.textoCrearError = value);
+
+    this.translate.get(
+      SOLICITUD_KEY,
+      MSG_PARAMS.CARDINALIRY.SINGULAR
+    ).pipe(
+      switchMap((value) => {
+        return this.translate.get(
+          MSG_ERROR,
+          { entity: value, ...MSG_PARAMS.GENDER.FEMALE }
+        );
+      })
+    ).subscribe((value) => this.textoCrearError = value);
   }
 
 
@@ -93,7 +107,14 @@ export class SolicitudCrearComponent extends ActionComponent {
       () => { },
       (error) => {
         this.logger.error(error);
-        this.snackBarService.showError(this.textoCrearError);
+        if (error instanceof HttpProblem) {
+          if (!!!error.managed) {
+            this.snackBarService.showError(error);
+          }
+        }
+        else {
+          this.snackBarService.showError(this.textoCrearError);
+        }
       },
       () => {
         this.snackBarService.showSuccess(this.textoCrearSuccess);
@@ -102,5 +123,4 @@ export class SolicitudCrearComponent extends ActionComponent {
       }
     );
   }
-
 }

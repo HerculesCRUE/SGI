@@ -37,7 +37,6 @@ public class ProyectoEntidadConvocanteRepositoryTest extends BaseRepositoryTest 
         .fechaInicio(Instant.parse("2020-01-01T00:00:00Z"))
         .fechaFin(Instant.parse("2020-12-31T23:59:59Z"))
         .activo(true)
-        .fechaBase(Instant.parse("2020-01-01T00:00:00Z"))
       .build()
     );
     entityManager.persistAndFlush(
@@ -83,7 +82,6 @@ public class ProyectoEntidadConvocanteRepositoryTest extends BaseRepositoryTest 
         .modeloEjecucion(modeloEjecucion)
         .fechaInicio(Instant.parse("2020-01-01T00:00:00Z"))
         .fechaFin(Instant.parse("2020-12-31T23:59:59Z"))
-        .fechaBase(Instant.parse("2020-01-01T00:00:00Z"))
         .activo(true)
       .build()
     );

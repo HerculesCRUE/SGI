@@ -7,26 +7,30 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import javax.validation.ConstraintViolationException;
+
 import org.assertj.core.api.Assertions;
-import org.crue.hercules.sgi.csp.exceptions.SolicitudProyectoSocioPeriodoJustificacionNotFoundException;
+import org.crue.hercules.sgi.csp.exceptions.NoRelatedEntitiesException;
+import org.crue.hercules.sgi.csp.exceptions.PeriodoLongerThanSolicitudProyectoException;
+import org.crue.hercules.sgi.csp.exceptions.PeriodoWrongOrderException;
 import org.crue.hercules.sgi.csp.exceptions.SolicitudProyectoSocioNotFoundException;
+import org.crue.hercules.sgi.csp.exceptions.SolicitudProyectoSocioPeriodoJustificacionNotFoundException;
 import org.crue.hercules.sgi.csp.model.SolicitudProyecto;
-import org.crue.hercules.sgi.csp.model.SolicitudProyectoSocioPeriodoJustificacion;
 import org.crue.hercules.sgi.csp.model.SolicitudProyectoSocio;
-import org.crue.hercules.sgi.csp.repository.SolicitudProyectoSocioPeriodoJustificacionRepository;
+import org.crue.hercules.sgi.csp.model.SolicitudProyectoSocioPeriodoJustificacion;
 import org.crue.hercules.sgi.csp.repository.SolicitudProyectoRepository;
+import org.crue.hercules.sgi.csp.repository.SolicitudProyectoSocioPeriodoJustificacionRepository;
 import org.crue.hercules.sgi.csp.repository.SolicitudProyectoSocioRepository;
 import org.crue.hercules.sgi.csp.service.impl.SolicitudProyectoSocioPeriodoJustificacionServiceImpl;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentMatchers;
 import org.mockito.BDDMockito;
-import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
-import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.stubbing.Answer;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -36,28 +40,21 @@ import org.springframework.data.jpa.domain.Specification;
 /**
  * SolicitudProyectoSocioPeriodoJustificacionServiceTest
  */
-@ExtendWith(MockitoExtension.class)
-public class SolicitudProyectoSocioPeriodoJustificacionServiceTest {
+@Import({ SolicitudProyectoSocioPeriodoJustificacionServiceImpl.class })
+public class SolicitudProyectoSocioPeriodoJustificacionServiceTest extends BaseServiceTest {
 
-  @Mock
+  @MockBean
   private SolicitudProyectoSocioPeriodoJustificacionRepository repository;
-
-  @Mock
+  @MockBean
   private SolicitudProyectoSocioRepository solicitudProyectoSocioRepository;
-
-  @Mock
+  @MockBean
   private SolicitudService solicitudService;
-
-  @Mock
+  @MockBean
   private SolicitudProyectoRepository solicitudProyectoRepository;
 
+  // This bean must be created by Spring so validations can be applied
+  @Autowired
   private SolicitudProyectoSocioPeriodoJustificacionService service;
-
-  @BeforeEach
-  public void setUp() throws Exception {
-    service = new SolicitudProyectoSocioPeriodoJustificacionServiceImpl(repository, solicitudProyectoSocioRepository,
-        solicitudService, solicitudProyectoRepository);
-  }
 
   @Test
   public void update_ReturnsSolicitudProyectoSocioPeriodoJustificacion() {
@@ -82,7 +79,7 @@ public class SolicitudProyectoSocioPeriodoJustificacionServiceTest {
     newSolicitudProyectoSocioPeriodoJustificacion.setMesFinal(3);
     SolicitudProyectoSocioPeriodoJustificacion updatedSolicitudProyectoSocioPeriodoJustificacion = generarSolicitudProyectoSocioPeriodoJustificacion(
         4L, 1L);
-    updatedSolicitudProyectoSocioPeriodoJustificacion.setMesInicial(6);
+    updatedSolicitudProyectoSocioPeriodoJustificacion.setMesInicial(4);
     updatedSolicitudProyectoSocioPeriodoJustificacion.setMesFinal(10);
 
     List<SolicitudProyectoSocioPeriodoJustificacion> solicitudProyectoSocioPeriodoJustificacionActualizar = new ArrayList<>();
@@ -216,7 +213,7 @@ public class SolicitudProyectoSocioPeriodoJustificacionServiceTest {
   }
 
   @Test
-  public void update_WithSolicitudProyectoSocioChange_ThrowsIllegalArgumentException() {
+  public void update_WithSolicitudProyectoSocioChange_ThrowsNoRelatedEntitiesException() {
     // given:Se actualiza SolicitudProyectoSocio
     Long solicitudId = 1L;
     Long solicitudProyectoId = 1L;
@@ -247,12 +244,12 @@ public class SolicitudProyectoSocioPeriodoJustificacionServiceTest {
     Assertions
         .assertThatThrownBy(
             () -> service.update(solicitudProyectoSocioId, Arrays.asList(solicitudProyectoSocioPeriodoJustificacion)))
-        .isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("No se puede modificar la solicitud proyecto socio del SolicitudProyectoSocioPeriodoJustificacion");
+        .isInstanceOf(NoRelatedEntitiesException.class)
+        .hasMessage("Not all provided Justification Period are related with Partner");
   }
 
   @Test
-  public void update_WithMesSolapamiento_ThrowsIllegalArgumentException() {
+  public void update_WithMesSolapamiento_ThrowsPeriodoWrongOrderException() {
     // given: Se actualiza SolicitudProyectoSocioPeriodoJustificacion cuyo mes es
     // superior a la duración de solicitud de proyecto
     Long solicitudId = 1L;
@@ -284,11 +281,12 @@ public class SolicitudProyectoSocioPeriodoJustificacionServiceTest {
     Assertions
         .assertThatThrownBy(() -> service.update(solicitudProyectoSocioId,
             Arrays.asList(solicitudProyectoSocioPeriodoJustificacion1, solicitudProyectoSocioPeriodoJustificacion2)))
-        .isInstanceOf(IllegalArgumentException.class).hasMessage("El periodo se solapa con otro existente");
+        .isInstanceOf(PeriodoWrongOrderException.class).hasMessageContaining(
+            "The first Period must start in month 1 and all Periods must be consecutive, with no gaps");
   }
 
   @Test
-  public void update_WithMesInicialPosteriorMesFinal_ThrowsIllegalArgumentException() {
+  public void update_WithMesInicialPosteriorMesFinal_ThrowsConstraintViolationException() {
     // given: Se actualiza SolicitudProyectoSocioPeriodoJustificacion cuyo mes
     // inicial es
     // posterior al mes final
@@ -325,11 +323,12 @@ public class SolicitudProyectoSocioPeriodoJustificacionServiceTest {
     Assertions
         .assertThatThrownBy(() -> service.update(solicitudProyectoSocioId,
             Arrays.asList(solicitudProyectoSocioPeriodoJustificacion1, solicitudProyectoSocioPeriodoJustificacion2)))
-        .isInstanceOf(IllegalArgumentException.class).hasMessage("El mes final tiene que ser posterior al mes inicial");
+        .isInstanceOf(ConstraintViolationException.class)
+        .hasMessageContaining("End month must be bigger or equal than initial month");
   }
 
   @Test
-  public void update_WithFechaInicioPosteriorFechaFin_ThrowsIllegalArgumentException() {
+  public void update_WithFechaInicioPosteriorFechaFin_ThrowsConstraintViolationException() {
     // given: Se actualiza SolicitudProyectoSocioPeriodoJustificacion con fecha
     // inicio
     // superior a fecha fin
@@ -341,14 +340,11 @@ public class SolicitudProyectoSocioPeriodoJustificacionServiceTest {
         solicitudProyectoId);
     SolicitudProyectoSocioPeriodoJustificacion solicitudProyectoSocioPeriodoJustificacion1 = generarSolicitudProyectoSocioPeriodoJustificacion(
         1L, 1L);
-    SolicitudProyectoSocioPeriodoJustificacion solicitudProyectoSocioPeriodoJustificacion2 = generarSolicitudProyectoSocioPeriodoJustificacion(
-        2L, 1L);
 
     solicitudProyectoSocioPeriodoJustificacion1.setFechaInicio(Instant.parse("2021-12-19T00:00:00Z"));
 
     List<SolicitudProyectoSocioPeriodoJustificacion> solicitudProyectoSocioPeriodoJustificacionExistentes = new ArrayList<>();
     solicitudProyectoSocioPeriodoJustificacionExistentes.add(generarSolicitudProyectoSocioPeriodoJustificacion(1L, 1L));
-    solicitudProyectoSocioPeriodoJustificacionExistentes.add(generarSolicitudProyectoSocioPeriodoJustificacion(2L, 1L));
 
     BDDMockito.given(solicitudProyectoRepository.findById(ArgumentMatchers.anyLong()))
         .willReturn(Optional.of(solicitudProyecto));
@@ -361,14 +357,14 @@ public class SolicitudProyectoSocioPeriodoJustificacionServiceTest {
     // when: Actualizamos el SolicitudProyectoSocioPeriodoJustificacion
     // then: Lanza una excepcion porque fecha inicio superior a fecha fin
     Assertions
-        .assertThatThrownBy(() -> service.update(solicitudProyectoSocioId,
-            Arrays.asList(solicitudProyectoSocioPeriodoJustificacion1, solicitudProyectoSocioPeriodoJustificacion2)))
-        .isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("La fecha de fin tiene que ser posterior a la fecha de inicio");
+        .assertThatThrownBy(
+            () -> service.update(solicitudProyectoSocioId, Arrays.asList(solicitudProyectoSocioPeriodoJustificacion1)))
+        .isInstanceOf(ConstraintViolationException.class)
+        .hasMessageContaining("End date must be bigger or equal than initial date");
   }
 
   @Test
-  public void update_WithMesFinalSuperiorDuracion_ThrowsIllegalArgumentException() {
+  public void update_WithMesFinalSuperiorDuracion_ThrowsPeriodoLongerThanSolicitudProyectoException() {
     // given: Se actualiza SolicitudProyectoSocioPeriodoJustificacion con mes final
     // superior a la duración
     Long solicitudId = 1L;
@@ -380,14 +376,11 @@ public class SolicitudProyectoSocioPeriodoJustificacionServiceTest {
         solicitudProyectoId);
     SolicitudProyectoSocioPeriodoJustificacion solicitudProyectoSocioPeriodoJustificacion1 = generarSolicitudProyectoSocioPeriodoJustificacion(
         1L, 1L);
-    SolicitudProyectoSocioPeriodoJustificacion solicitudProyectoSocioPeriodoJustificacion2 = generarSolicitudProyectoSocioPeriodoJustificacion(
-        2L, 1L);
 
-    solicitudProyectoSocioPeriodoJustificacion2.setMesFinal(20);
+    solicitudProyectoSocioPeriodoJustificacion1.setMesFinal(20);
 
     List<SolicitudProyectoSocioPeriodoJustificacion> solicitudProyectoSocioPeriodoJustificacionExistentes = new ArrayList<>();
     solicitudProyectoSocioPeriodoJustificacionExistentes.add(generarSolicitudProyectoSocioPeriodoJustificacion(1L, 1L));
-    solicitudProyectoSocioPeriodoJustificacionExistentes.add(generarSolicitudProyectoSocioPeriodoJustificacion(2L, 1L));
 
     BDDMockito.given(solicitudProyectoRepository.findById(ArgumentMatchers.anyLong()))
         .willReturn(Optional.of(solicitudProyecto));
@@ -400,14 +393,14 @@ public class SolicitudProyectoSocioPeriodoJustificacionServiceTest {
     // when: Actualizamos el SolicitudProyectoSocioPeriodoJustificacion
     // then: Lanza una excepcion porque mes final superior a la duración
     Assertions
-        .assertThatThrownBy(() -> service.update(solicitudProyectoSocioId,
-            Arrays.asList(solicitudProyectoSocioPeriodoJustificacion1, solicitudProyectoSocioPeriodoJustificacion2)))
-        .isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("El mes final no puede ser superior a la duración en meses indicada en la solicitud de proyecto");
+        .assertThatThrownBy(
+            () -> service.update(solicitudProyectoSocioId, Arrays.asList(solicitudProyectoSocioPeriodoJustificacion1)))
+        .isInstanceOf(PeriodoLongerThanSolicitudProyectoException.class)
+        .hasMessage("The Period goes beyond the duration of the Project Data");
   }
 
   @Test
-  public void update_WithSolapamientoPeriodo_ThrowsIllegalArgumentException() {
+  public void update_WithSolapamientoPeriodo_ThrowsPeriodoWrongOrderException() {
     // given: Se actualiza SolicitudProyectoSocioPeriodoJustificacion con fecha
     // inicio
     // superior a fecha fin
@@ -439,7 +432,8 @@ public class SolicitudProyectoSocioPeriodoJustificacionServiceTest {
     Assertions
         .assertThatThrownBy(() -> service.update(solicitudProyectoSocioId,
             Arrays.asList(solicitudProyectoSocioPeriodoJustificacion1, solicitudProyectoSocioPeriodoJustificacion2)))
-        .isInstanceOf(IllegalArgumentException.class).hasMessage("El periodo se solapa con otro existente");
+        .isInstanceOf(PeriodoWrongOrderException.class).hasMessageContaining(
+            "The first Period must start in month 1 and all Periods must be consecutive, with no gaps");
   }
 
   @Test

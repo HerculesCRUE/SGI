@@ -48,7 +48,8 @@ export class ProyectoConceptoGastoCodigoEcComponent extends FragmentComponent im
 
   msgParamCodigoPermitidoEntity = {};
   msgParamCodigoNoPermitidoEntity = {};
-  textoDelete: string;
+  textoDeletePermitido: string;
+  textoDeleteNoPermitido: string;
 
   get MSG_PARAMS() {
     return MSG_PARAMS;
@@ -108,6 +109,18 @@ export class ProyectoConceptoGastoCodigoEcComponent extends FragmentComponent im
     ).subscribe((value) => this.msgParamCodigoNoPermitidoEntity = { entity: value });
 
     this.translate.get(
+      PROYECTO_CONCEPTO_GASTO_ECONOMICO_PERMITIDO,
+      MSG_PARAMS.CARDINALIRY.SINGULAR
+    ).pipe(
+      switchMap((value) => {
+        return this.translate.get(
+          MSG_DELETE,
+          { entity: value, ...MSG_PARAMS.GENDER.MALE }
+        );
+      })
+    ).subscribe((value) => this.textoDeletePermitido = value);
+
+    this.translate.get(
       PROYECTO_CONCEPTO_GASTO_ECONOMICO_NO_PERMITIDO,
       MSG_PARAMS.CARDINALIRY.SINGULAR
     ).pipe(
@@ -117,15 +130,20 @@ export class ProyectoConceptoGastoCodigoEcComponent extends FragmentComponent im
           { entity: value, ...MSG_PARAMS.GENDER.MALE }
         );
       })
-    ).subscribe((value) => this.textoDelete = value);
+    ).subscribe((value) => this.textoDeleteNoPermitido = value);
   }
 
   openModal(codigoEconomicoListado?: CodigoEconomicoListado, rowIndex?: number): void {
+
+    // Necesario para sincronizar los cambios de orden de registros dependiendo de la ordenación y paginación
+    this.dataSource.sortData(this.dataSource.filteredData, this.dataSource.sort);
+    const row = (this.paginator.pageSize * this.paginator.pageIndex) + rowIndex;
+
     const proyectoConceptoGastoCodigoEcsTabla = this.dataSource.data
       .filter(codigoEconomico => codigoEconomico.proyectoCodigoEconomico)
       .map(codigoEconomico => codigoEconomico.proyectoCodigoEconomico.value);
 
-    proyectoConceptoGastoCodigoEcsTabla.splice(rowIndex, 1);
+    proyectoConceptoGastoCodigoEcsTabla.splice(row, 1);
 
     const data: ProyectoConceptoGastoCodigoEcDataModal = {
       proyectoConceptoGastoCodigoEc: codigoEconomicoListado.proyectoCodigoEconomico?.value,
@@ -150,7 +168,7 @@ export class ProyectoConceptoGastoCodigoEcComponent extends FragmentComponent im
             this.formPart.addCodigoEconomico(codigoEconomico, modalData.convocatoriaConceptoGastoCodigoEc?.id);
           } else {
             const codigoEconomico = new StatusWrapper<IProyectoConceptoGastoCodigoEc>(modalData.proyectoConceptoGastoCodigoEc);
-            this.formPart.updateCodigoEconomico(codigoEconomico, rowIndex);
+            this.formPart.updateCodigoEconomico(codigoEconomico, row);
           }
         }
       }
@@ -164,7 +182,7 @@ export class ProyectoConceptoGastoCodigoEcComponent extends FragmentComponent im
 
     const proyectoConceptoGastoCodigoEc: IProyectoConceptoGastoCodigoEc = {
       proyectoConceptoGasto: { id: this.fragment.getKey() as number } as IProyectoConceptoGasto,
-      codigoEconomicoRef: null,
+      codigoEconomico: null,
       fechaFin: null,
       fechaInicio: null,
       id: null,
@@ -192,7 +210,7 @@ export class ProyectoConceptoGastoCodigoEcComponent extends FragmentComponent im
           const convConceptoGastoEc = {
             proyectoConceptoGasto: modalData.proyectoConceptoGastoCodigoEc.proyectoConceptoGasto,
             id: modalData.proyectoConceptoGastoCodigoEc.id,
-            codigoEconomicoRef: modalData.proyectoConceptoGastoCodigoEc.codigoEconomicoRef,
+            codigoEconomico: modalData.proyectoConceptoGastoCodigoEc.codigoEconomico,
             fechaInicio: modalData.proyectoConceptoGastoCodigoEc.fechaInicio,
             fechaFin: modalData.proyectoConceptoGastoCodigoEc.fechaFin,
             observaciones: modalData.proyectoConceptoGastoCodigoEc.observaciones,
@@ -206,8 +224,9 @@ export class ProyectoConceptoGastoCodigoEcComponent extends FragmentComponent im
   }
 
   deleteCodigoEconomico(wrapper: StatusWrapper<IProyectoConceptoGastoCodigoEc>) {
+    const messageConfirmation = this.actionService.permitido ? this.textoDeletePermitido : this.textoDeleteNoPermitido;
     this.subscriptions.push(
-      this.dialogService.showConfirmation(this.textoDelete).subscribe(
+      this.dialogService.showConfirmation(messageConfirmation).subscribe(
         (aceptado: boolean) => {
           if (aceptado) {
             this.formPart.deleteCodigoEconomico(wrapper);

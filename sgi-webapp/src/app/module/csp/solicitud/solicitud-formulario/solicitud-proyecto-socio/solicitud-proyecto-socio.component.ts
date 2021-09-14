@@ -4,6 +4,7 @@ import { MatTableDataSource } from '@angular/material/table';
 import { ActivatedRoute, Router } from '@angular/router';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { FragmentComponent } from '@core/component/fragment.component';
+import { HttpProblem } from '@core/errors/http-problem';
 import { MSG_PARAMS } from '@core/i18n';
 import { ISolicitudProyectoSocio } from '@core/models/csp/solicitud-proyecto-socio';
 import { FxFlexProperties } from '@core/models/shared/flexLayout/fx-flex-properties';
@@ -92,6 +93,7 @@ export class SolicitudProyectoSocioComponent extends FragmentComponent implement
       }
     };
     this.subscriptions.push(subscription);
+
   }
 
   private setupI18N(): void {
@@ -118,6 +120,8 @@ export class SolicitudProyectoSocioComponent extends FragmentComponent implement
     ).subscribe((value) => this.textoDelete = value);
   }
 
+
+
   ngOnDestroy(): void {
     this.subscriptions.forEach(subscription => subscription.unsubscribe());
   }
@@ -137,8 +141,13 @@ export class SolicitudProyectoSocioComponent extends FragmentComponent implement
             this.formPart.deleteProyectoSocio(wrapper);
           }
         },
-        () => {
-          this.snackBarService.showError(MSG_ERROR);
+        (error) => {
+          if (error instanceof HttpProblem) {
+            this.snackBarService.showError(error);
+          }
+          else {
+            this.snackBarService.showError(MSG_ERROR);
+          }
         }
       )
     );

@@ -9,42 +9,45 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import javax.validation.ConstraintViolationException;
+
 import org.assertj.core.api.Assertions;
 import org.crue.hercules.sgi.csp.enums.TipoSeguimiento;
 import org.crue.hercules.sgi.csp.exceptions.ConvocatoriaNotFoundException;
 import org.crue.hercules.sgi.csp.exceptions.ConvocatoriaPeriodoSeguimientoCientificoNotFoundException;
+import org.crue.hercules.sgi.csp.exceptions.PeriodoLongerThanConvocatoriaException;
+import org.crue.hercules.sgi.csp.exceptions.PeriodoWrongOrderException;
 import org.crue.hercules.sgi.csp.model.Convocatoria;
 import org.crue.hercules.sgi.csp.model.ConvocatoriaPeriodoSeguimientoCientifico;
 import org.crue.hercules.sgi.csp.repository.ConvocatoriaPeriodoSeguimientoCientificoRepository;
 import org.crue.hercules.sgi.csp.repository.ConvocatoriaRepository;
 import org.crue.hercules.sgi.csp.service.impl.ConvocatoriaPeriodoSeguimientoCientificoServiceImpl;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
 import org.mockito.BDDMockito;
-import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 
+@Import({ ConvocatoriaPeriodoSeguimientoCientificoServiceImpl.class })
 public class ConvocatoriaPeriodoSeguimientoCientificoServiceTest extends BaseServiceTest {
 
-  @Mock
+  @MockBean
   private ConvocatoriaPeriodoSeguimientoCientificoRepository repository;
-  @Mock
+  @MockBean
   private ConvocatoriaRepository convocatoriaRepository;
 
+  // This bean must be created by Spring so validations can be applied
+  @Autowired
   private ConvocatoriaPeriodoSeguimientoCientificoService service;
-
-  @BeforeEach
-  public void setUp() throws Exception {
-    service = new ConvocatoriaPeriodoSeguimientoCientificoServiceImpl(repository, convocatoriaRepository);
-  }
 
   @Test
   public void updateConvocatoriaPeriodoSeguimientoCientificosConvocatoria_ReturnsConvocatoriaPeriodoSeguimientoCientificoList() {
@@ -180,7 +183,7 @@ public class ConvocatoriaPeriodoSeguimientoCientificoServiceTest extends BaseSer
   }
 
   @Test
-  public void updateConvocatoriaPeriodoSeguimientoCientificosConvocatoria_WithMesFinalLowerThanMesInicial_ThrowsIllegalArgumentException() {
+  public void updateConvocatoriaPeriodoSeguimientoCientificosConvocatoria_WithMesFinalLowerThanMesInicial_ThrowsConstraintViolationException() {
     // given: a ConvocatoriaPeriodoSeguimientoCientifico with mesFinal lower than
     // mesInicial
     Long convocatoriaId = 1L;
@@ -199,11 +202,12 @@ public class ConvocatoriaPeriodoSeguimientoCientificoServiceTest extends BaseSer
         () -> service.updateConvocatoriaPeriodoSeguimientoCientificosConvocatoria(convocatoriaId,
             Arrays.asList(convocatoriaPeriodoSeguimientoCientifico)))
         // then: throw exception
-        .isInstanceOf(IllegalArgumentException.class).hasMessage("El mes final tiene que ser posterior al mes inicial");
+        .isInstanceOf(ConstraintViolationException.class)
+        .hasMessageContaining("End month must be bigger or equal than initial month");
   }
 
   @Test
-  public void updateConvocatoriaPeriodoSeguimientoCientificosConvocatoria_WithFechaFinBeforeFechaInicio_ThrowsIllegalArgumentException() {
+  public void updateConvocatoriaPeriodoSeguimientoCientificosConvocatoria_WithFechaFinBeforeFechaInicio_ThrowsConstraintViolationException() {
     // given: a ConvocatoriaPeriodoSeguimientoCientifico with FechaFinPresentacion
     // before FechaInicioPresentacion
     Long convocatoriaId = 1L;
@@ -223,12 +227,12 @@ public class ConvocatoriaPeriodoSeguimientoCientificoServiceTest extends BaseSer
         () -> service.updateConvocatoriaPeriodoSeguimientoCientificosConvocatoria(convocatoriaId,
             Arrays.asList(convocatoriaPeriodoSeguimientoCientifico)))
         // then: throw exception
-        .isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("La fecha de fin tiene que ser posterior a la fecha de inicio");
+        .isInstanceOf(ConstraintViolationException.class)
+        .hasMessageContaining("End date must be bigger or equal than initial date");
   }
 
   @Test
-  public void updateConvocatoriaPeriodoSeguimientoCientificosConvocatoria_WithMesFinalGreaterThanDuracionConvocatoria_ThrowsIllegalArgumentException() {
+  public void updateConvocatoriaPeriodoSeguimientoCientificosConvocatoria_WithMesFinalGreaterThanDuracionConvocatoria_ThrowsPeriodoLongerThanConvocatoriaException() {
     // given: a ConvocatoriaPeriodoSeguimientoCientifico with mesFinal greater than
     // duracion convocatoria
     Long convocatoriaId = 1L;
@@ -248,12 +252,12 @@ public class ConvocatoriaPeriodoSeguimientoCientificoServiceTest extends BaseSer
         () -> service.updateConvocatoriaPeriodoSeguimientoCientificosConvocatoria(convocatoriaId,
             Arrays.asList(convocatoriaPeriodoSeguimientoCientifico)))
         // then: throw exception
-        .isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("El mes final no puede ser superior a la duración en meses indicada en la Convocatoria");
+        .isInstanceOf(PeriodoLongerThanConvocatoriaException.class)
+        .hasMessage("The Period goes beyond the duration of the Call");
   }
 
   @Test
-  public void updateConvocatoriaPeriodoSeguimientoCientificosConvocatoria_WithMesSolapado_ThrowsIllegalArgumentException() {
+  public void updateConvocatoriaPeriodoSeguimientoCientificosConvocatoria_WithMesSolapado_ThrowsPeriodoWrongOrderException() {
     // given: a ConvocatoriaPeriodoSeguimientoCientifico with mesFinal greater than
     // duracion convocatoria
     Long convocatoriaId = 1L;
@@ -273,7 +277,8 @@ public class ConvocatoriaPeriodoSeguimientoCientificoServiceTest extends BaseSer
         () -> service.updateConvocatoriaPeriodoSeguimientoCientificosConvocatoria(convocatoriaId,
             Arrays.asList(convocatoriaPeriodoSeguimientoCientifico1, convocatoriaPeriodoSeguimientoCientifico2)))
         // then: throw exception
-        .isInstanceOf(IllegalArgumentException.class).hasMessage("El periodo se solapa con otro existente");
+        .isInstanceOf(PeriodoWrongOrderException.class).hasMessageContaining(
+            "The first Period must start in month 1 and all Periods must be consecutive, with no gaps");
   }
 
   @Test

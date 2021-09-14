@@ -2,6 +2,7 @@ package org.crue.hercules.sgi.csp.service.impl;
 
 import org.crue.hercules.sgi.csp.exceptions.RolProyectoNotFoundException;
 import org.crue.hercules.sgi.csp.model.RolProyecto;
+import org.crue.hercules.sgi.csp.model.RolProyecto.Orden;
 import org.crue.hercules.sgi.csp.repository.RolProyectoRepository;
 import org.crue.hercules.sgi.csp.repository.specification.RolProyectoSpecifications;
 import org.crue.hercules.sgi.csp.service.RolProyectoService;
@@ -39,6 +40,20 @@ public class RolProyectoServiceImpl implements RolProyectoService {
     log.debug("findById(Long id) - start");
     final RolProyecto returnValue = repository.findById(id).orElseThrow(() -> new RolProyectoNotFoundException(id));
     log.debug("findById(Long id) - end");
+    return returnValue;
+  }
+
+  /**
+   * Obtiene una entidad {@link RolProyecto} por orden Principal.
+   * 
+   * @return RolProyecto la entidad {@link RolProyecto}.
+   */
+  @Override
+  public RolProyecto findPrincipal() {
+    log.debug("findPrincipal() - start");
+    final RolProyecto returnValue = repository.findByOrdenAndRolPrincipalIsTrueAndActivoIsTrue(Orden.PRIMARIO)
+        .orElseThrow(() -> new RolProyectoNotFoundException(null));
+    log.debug("findPrincipal() - end");
     return returnValue;
   }
 

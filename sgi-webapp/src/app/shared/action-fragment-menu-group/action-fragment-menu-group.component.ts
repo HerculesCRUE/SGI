@@ -18,6 +18,7 @@ import { BehaviorSubject, Subscription } from 'rxjs';
 interface Status {
   changes: boolean;
   errors: boolean;
+  problems: boolean;
 }
 
 @Component({
@@ -32,7 +33,7 @@ export class ActionFragmentMenuGroupComponent implements AfterViewInit, AfterCon
   @ContentChildren(ActionFragmentMenuItemComponent, { descendants: true }) private menuItems!: QueryList<ActionFragmentMenuItemComponent>;
   @ViewChild(MatExpansionPanel, { static: true }) private panel: MatExpansionPanel;
 
-  status$: BehaviorSubject<Status> = new BehaviorSubject<Status>({ changes: false, errors: false });
+  status$: BehaviorSubject<Status> = new BehaviorSubject<Status>({ changes: false, errors: false, problems: false });
 
   private activated = false;
   isChildActive = false;
@@ -76,6 +77,7 @@ export class ActionFragmentMenuGroupComponent implements AfterViewInit, AfterCon
     const current = this.status$.value;
     current.changes = this.hasChanges();
     current.errors = this.hasErrors();
+    current.problems = this.hasProblems();
     this.status$.next(current);
   }
 
@@ -85,6 +87,10 @@ export class ActionFragmentMenuGroupComponent implements AfterViewInit, AfterCon
 
   private hasErrors(): boolean {
     return this.menuItems.some(items => items.fragment?.hasErrors());
+  }
+
+  private hasProblems(): boolean {
+    return this.menuItems.some(items => items.fragment?.hasProblems());
   }
 
   private isActive(): boolean {

@@ -20,6 +20,7 @@ import org.crue.hercules.sgi.csp.model.SolicitudProyecto;
 import org.crue.hercules.sgi.csp.model.SolicitudProyectoEquipo;
 import org.crue.hercules.sgi.csp.repository.RolProyectoRepository;
 import org.crue.hercules.sgi.csp.repository.SolicitudProyectoEquipoRepository;
+import org.crue.hercules.sgi.csp.repository.SolicitudProyectoRepository;
 import org.crue.hercules.sgi.csp.repository.SolicitudRepository;
 import org.crue.hercules.sgi.csp.repository.specification.SolicitudProyectoEquipoSpecifications;
 import org.crue.hercules.sgi.csp.service.SolicitudProyectoEquipoService;
@@ -53,12 +54,17 @@ public class SolicitudProyectoEquipoServiceImpl implements SolicitudProyectoEqui
 
   private final SolicitudRepository solicitudRepository;
 
+  private final SolicitudProyectoRepository solicitudProyectoRepository;
+
   public SolicitudProyectoEquipoServiceImpl(Validator validator, SolicitudProyectoEquipoRepository repository,
-      RolProyectoRepository rolProyectoRepository, SolicitudRepository solicitudRepository) {
+      RolProyectoRepository rolProyectoRepository, SolicitudRepository solicitudRepository,
+      SolicitudProyectoRepository solicitudProyectoRepository) {
     this.validator = validator;
     this.repository = repository;
     this.rolProyectoRepository = rolProyectoRepository;
     this.solicitudRepository = solicitudRepository;
+    this.solicitudProyectoRepository = solicitudProyectoRepository;
+
   }
 
   /**
@@ -99,12 +105,34 @@ public class SolicitudProyectoEquipoServiceImpl implements SolicitudProyectoEqui
   }
 
   /**
+   * Comprueba si existe la SolicitudProyectoEquipo con el solicitante de la
+   * solicitud.
+   * 
+   * @param solicitudId id de la solicitud.
+   * 
+   * @return true si existe false si no existe.
+   */
+  @Override
+  public boolean existsSolicitanteInSolicitudProyectoEquipo(Long solicitudId) {
+    log.debug("existsSolicitanteInSolicitudProyectoEquipo(Long solicitudId) - start");
+    if (this.solicitudProyectoRepository.existsById(solicitudId)) {
+      log.debug("existsSolicitanteInSolicitudProyectoEquipo(Long solicitudId) - end");
+      return this.repository.existsBySolicitudProyectoIdAndPersonaRef(solicitudId,
+          this.solicitudRepository.findById(solicitudId).get().getSolicitanteRef());
+    } else {
+      log.debug("existsSolicitanteInSolicitudProyectoEquipo(Long solicitudId) - end");
+      return false;
+    }
+
+  }
+
+  /**
    * Actualiza la lista de {@link SolicitudProyectoEquipo} del
    * {@link SolicitudProyecto}, elimina los que no están en la lista actual pero
    * tienen el mismo solicitudProyectoId , añade los que no tienen id y actualiza
    * los ya existentes .
    * 
-   * @param solicitudProyectoId Id de {@link SolicitudProyecto}
+   * @param solicitudProyectoId      Id de {@link SolicitudProyecto}
    * @param solicitudProyectoEquipos la lista con los cambios para aplicar.
    * @return La lista actualizada de {@link SolicitudProyectoEquipo}.
    */

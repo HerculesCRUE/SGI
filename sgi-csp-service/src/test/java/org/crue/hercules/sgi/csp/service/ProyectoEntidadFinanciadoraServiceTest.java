@@ -1,5 +1,6 @@
 package org.crue.hercules.sgi.csp.service;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -114,7 +115,7 @@ public class ProyectoEntidadFinanciadoraServiceTest extends BaseServiceTest {
   public void create_WithNegativePorcentajeFinanciacion_ThrowsIllegalArgumentException() {
     // given: Un nuevo ProyectoEntidadFinanciadora con porcentaje negativo
     ProyectoEntidadFinanciadora convocatoriaEntidadFinanciadora = generarMockProyectoEntidadFinanciadora(null);
-    convocatoriaEntidadFinanciadora.setPorcentajeFinanciacion(-10);
+    convocatoriaEntidadFinanciadora.setPorcentajeFinanciacion(BigDecimal.valueOf(-10));
 
     Proyecto proyecto = buildProyecto(1L, "3", EstadoProyecto.Estado.CONCEDIDO);
 
@@ -240,7 +241,7 @@ public class ProyectoEntidadFinanciadoraServiceTest extends BaseServiceTest {
     ProyectoEntidadFinanciadora proyectoEntidadFinanciadora = generarMockProyectoEntidadFinanciadora(1L);
     ProyectoEntidadFinanciadora proyectoEntidadFinanciadoraPorcentajeActualizado = generarMockProyectoEntidadFinanciadora(
         1L);
-    proyectoEntidadFinanciadoraPorcentajeActualizado.setPorcentajeFinanciacion(1);
+    proyectoEntidadFinanciadoraPorcentajeActualizado.setPorcentajeFinanciacion(BigDecimal.ONE);
     Proyecto proyecto = buildProyecto(1L, "3", EstadoProyecto.Estado.CONCEDIDO);
 
     BDDMockito.given(proyectoRepository.findById(ArgumentMatchers.anyLong())).willReturn(Optional.of(proyecto));
@@ -284,7 +285,7 @@ public class ProyectoEntidadFinanciadoraServiceTest extends BaseServiceTest {
     // given: Un ProyectoEntidadFinanciadora con porcentaje negativo
     ProyectoEntidadFinanciadora proyectoEntidadFinanciadoraOld = generarMockProyectoEntidadFinanciadora(1L);
     ProyectoEntidadFinanciadora proyectoEntidadFinanciadora = generarMockProyectoEntidadFinanciadora(1L);
-    proyectoEntidadFinanciadora.setPorcentajeFinanciacion(-10);
+    proyectoEntidadFinanciadora.setPorcentajeFinanciacion(BigDecimal.valueOf(-10));
     Proyecto proyecto = buildProyecto(1L, "3", EstadoProyecto.Estado.CONCEDIDO);
 
     BDDMockito.given(proyectoRepository.findById(ArgumentMatchers.anyLong())).willReturn(Optional.of(proyecto));
@@ -534,7 +535,7 @@ public class ProyectoEntidadFinanciadoraServiceTest extends BaseServiceTest {
       .entidadRef("entidad-" + (id == null ? 0 : id))
       .fuenteFinanciacion(fuenteFinanciacion)
       .tipoFinanciacion(tipoFinanciacion)
-      .porcentajeFinanciacion(50)
+      .porcentajeFinanciacion(BigDecimal.valueOf(50))
       .ajena(false)
       .build();
     //@formatter:on

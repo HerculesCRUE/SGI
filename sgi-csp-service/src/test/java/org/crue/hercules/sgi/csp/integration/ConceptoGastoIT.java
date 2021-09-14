@@ -228,6 +228,7 @@ public class ConceptoGastoIT extends BaseIT {
     conceptoGasto.setNombre(nombre);
     conceptoGasto.setDescripcion("descripcion-" + id);
     conceptoGasto.setActivo(true);
+    conceptoGasto.setCostesIndirectos(true);
 
     return conceptoGasto;
   }

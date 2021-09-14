@@ -1,22 +1,24 @@
 package org.crue.hercules.sgi.csp.model;
 
+import java.time.Instant;
+import java.util.List;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.ForeignKey;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+
+import org.hibernate.validator.constraints.Range;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -24,12 +26,12 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(name = "requisito_equipo", uniqueConstraints = {
-    @UniqueConstraint(columnNames = { "convocatoria_id" }, name = "UK_REQUISITOEQUIPO_CONVOCATORIA") })
+@Table(name = "requisito_equipo")
 @Data
 @EqualsAndHashCode(callSuper = false)
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class RequisitoEquipo extends BaseEntity {
 
   /**
@@ -37,27 +39,18 @@ public class RequisitoEquipo extends BaseEntity {
    */
   private static final long serialVersionUID = 1L;
 
-  /** Id. */
+  /** Id (compartido con Convocatoria) */
   @Id
   @Column(name = "id", nullable = false)
-  @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "requisito_equipo_seq")
-  @SequenceGenerator(name = "requisito_equipo_seq", sequenceName = "requisito_equipo_seq", allocationSize = 1)
   private Long id;
 
-  /** Convocatoria Id */
-  @Column(name = "convocatoria_id", nullable = false)
-  @NotNull
-  private Long convocatoriaId;
+  /** Fecha mínima obtención del nivel académico */
+  @Column(name = "f_min_nivel_academico", nullable = true)
+  private Instant fechaMinimaNivelAcademico;
 
-  /** Nivel académico */
-  @Column(name = "nivel_academico_ref", length = 50)
-  @Size(max = 50)
-  private String nivelAcademicoRef;
-
-  /** Años nivel académico */
-  @Column(name = "anios_nivel_academico")
-  @Min(0)
-  private Integer aniosNivelAcademico;
+  /** Fecha máxima obtención del nivel académico */
+  @Column(name = "f_max_nivel_academico", nullable = true)
+  private Instant fechaMaximaNivelAcademico;
 
   /** Edad máxima */
   @Column(name = "edad_maxima")
@@ -65,23 +58,25 @@ public class RequisitoEquipo extends BaseEntity {
   private Integer edadMaxima;
 
   /** Ratio mujeres */
-  @Column(name = "ratio_mujeres")
-  @Min(0)
-  private Integer ratioMujeres;
+  @Column(name = "ratio_sexo")
+  @Range(min = 0, max = 100)
+  private Integer ratioSexo;
+
+  /** Referencia a la entidad externa Sexo del ESB */
+  @Column(name = "sexo_ref", length = BaseEntity.EXTERNAL_REF_LENGTH)
+  private String sexoRef;
 
   /** Vinculación universidad */
   @Column(name = "vinculacion_universidad")
   private Boolean vinculacionUniversidad;
 
-  /** Modalidad contrato */
-  @Column(name = "modalidad_contrato_ref", length = 50)
-  @Size(max = 50)
-  private String modalidadContratoRef;
+  /** Fecha mínima obtención de la categoría profesional */
+  @Column(name = "f_min_categoria_profesional", nullable = true)
+  private Instant fechaMinimaCategoriaProfesional;
 
-  /** Años vinculación */
-  @Column(name = "anios_vinculacion")
-  @Min(0)
-  private Integer aniosVinculacion;
+  /** Fecha máxima obtención de la categoría profesional */
+  @Column(name = "f_max_categoria_profesional", nullable = true)
+  private Instant fechaMaximaCategoriaProfesional;
 
   /** Número mínimo competitivos */
   @Column(name = "num_minimo_competitivos")
@@ -110,8 +105,18 @@ public class RequisitoEquipo extends BaseEntity {
 
   // Relation mappings for JPA metamodel generation only
   @OneToOne
-  @JoinColumn(name = "convocatoria_id", insertable = false, updatable = false, foreignKey = @ForeignKey(name = "FK_REQUISITOEQUIPO_CONVOCATORIA"))
+  @JoinColumn(name = "id", insertable = false, updatable = false, foreignKey = @ForeignKey(name = "FK_REQUISITOEQUIPO_CONVOCATORIA"))
   @Getter(AccessLevel.NONE)
   @Setter(AccessLevel.NONE)
   private final Convocatoria convocatoria = null;
+
+  @OneToMany(mappedBy = "requisitoEquipo")
+  @Getter(AccessLevel.NONE)
+  @Setter(AccessLevel.NONE)
+  private final List<RequisitoEquipoNivelAcademico> nivelesAcademicos = null;
+
+  @OneToMany(mappedBy = "requisitoEquipo")
+  @Getter(AccessLevel.NONE)
+  @Setter(AccessLevel.NONE)
+  private final List<RequisitoEquipoCategoriaProfesional> categoriasProfesionales = null;
 }

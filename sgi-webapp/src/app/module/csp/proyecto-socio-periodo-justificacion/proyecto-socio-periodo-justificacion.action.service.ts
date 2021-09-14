@@ -16,6 +16,7 @@ export interface IProyectoSocioPeriodoJustificacionData {
   proyecto: IProyecto;
   proyectoSocio: IProyectoSocio;
   proyectoSocioPeriodosJustificacion: IProyectoSocioPeriodoJustificacion[];
+  readonly: boolean;
 }
 
 @Injectable()
@@ -30,6 +31,10 @@ export class ProyectoSocioPeriodoJustificacionActionService extends ActionServic
   private documentos: ProyectoSocioPeriodoJustificacionDocumentosFragment;
 
   private data: IProyectoSocioPeriodoJustificacionData;
+
+  get readonly(): boolean {
+    return this.data.readonly;
+  }
 
   constructor(
     logger: NGXLogger,
@@ -48,7 +53,7 @@ export class ProyectoSocioPeriodoJustificacionActionService extends ActionServic
 
     this.datosGenerales = new ProyectoSocioPeriodoJustificacionDatosGeneralesFragment(
       id, proyectoSocioPeriodoJustificacionService, this.data.proyectoSocio,
-      this.data.proyecto.estado, this.data?.proyectoSocioPeriodosJustificacion);
+      this.data.proyecto.estado, this.data?.proyectoSocioPeriodosJustificacion, this.data.readonly);
     this.documentos = new ProyectoSocioPeriodoJustificacionDocumentosFragment(logger, id,
       proyectoSocioPeriodoJustificacionService, proyectoSocioPeriodoJustificacionDocumentoService);
 

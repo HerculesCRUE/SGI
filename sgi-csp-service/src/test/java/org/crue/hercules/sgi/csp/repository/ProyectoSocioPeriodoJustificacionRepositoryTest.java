@@ -43,7 +43,6 @@ public class ProyectoSocioPeriodoJustificacionRepositoryTest extends BaseReposit
         .unidadGestionRef("2")
         .modeloEjecucion(modeloEjecucion)
         .activo(Boolean.TRUE)
-        .fechaBase(Instant.parse("2020-09-01T00:00:00Z"))
         .build();
 
     entityManager.persistAndFlush(proyecto);

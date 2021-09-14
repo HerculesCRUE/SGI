@@ -1,5 +1,4 @@
-<section>
-  <h2>{{'tree.entity' | translate:msgParamEntities}}</h2>
+<sgi-fragment title="{{'tree.entity' | translate:msgParamEntities}}">
 
   <div class="programa" fxLayout="row" fxLayout.xs="column" fxLayoutGap="10px">
     <div class="arbol" fxFlex>
@@ -71,10 +70,8 @@
         </mat-form-field>
         <mat-form-field class="input-form">
           <mat-label>{{'csp.prorroga.documento.visible' | translate}}</mat-label>
-          <mat-select placeholder="{{'csp.prorroga.documento.visible' | translate}}" formControlName="visible" required>
-            <mat-option [value]="true">{{'label.si' | translate }}</mat-option>
-            <mat-option [value]="false">{{'label.no' | translate }}</mat-option>
-          </mat-select>
+          <sgi-select-boolean formControlName="visible" required>
+          </sgi-select-boolean>
           <mat-error *ngIf="formGroup.controls.visible.errors?.required">
             {{'error.required.entity' | translate:msgParamVisibleEntity}}
           </mat-error>
@@ -118,4 +115,4 @@
     </button>
   </div>
 
-</section>
+</sgi-fragment>

@@ -4,12 +4,14 @@ import { ProyectoProrrogaService } from '@core/services/csp/proyecto-prorroga.se
 import { ProyectoService } from '@core/services/csp/proyecto.service';
 import { DocumentoService } from '@core/services/sgdoc/documento.service';
 import { StatusWrapper } from '@core/utils/status-wrapper';
-import { BehaviorSubject, from, Observable, of } from 'rxjs';
+import { BehaviorSubject, from, Observable, of, Subject } from 'rxjs';
 import { map, mergeMap, switchMap, takeLast, tap } from 'rxjs/operators';
 
 export class ProyectoProrrogasFragment extends Fragment {
   prorrogas$ = new BehaviorSubject<StatusWrapper<IProyectoProrroga>[]>([]);
   private prorrogasEliminados: StatusWrapper<IProyectoProrroga>[] = [];
+
+  readonly ultimaProrroga$: Subject<IProyectoProrroga> = new BehaviorSubject<IProyectoProrroga>(null);
 
   constructor(
     key: number,

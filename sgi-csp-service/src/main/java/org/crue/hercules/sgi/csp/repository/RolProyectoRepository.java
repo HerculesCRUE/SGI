@@ -3,6 +3,7 @@ package org.crue.hercules.sgi.csp.repository;
 import java.util.Optional;
 
 import org.crue.hercules.sgi.csp.model.RolProyecto;
+import org.crue.hercules.sgi.csp.model.RolProyecto.Orden;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
@@ -23,4 +24,13 @@ public interface RolProyectoRepository extends JpaRepository<RolProyecto, Long>,
    * @return el {@link RolProyecto} activo con el nombre indicado
    */
   Optional<RolProyecto> findByNombreAndActivoIsTrue(String nombre);
+
+  /**
+   * Obtiene la entidad {@link RolProyecto} con el orden indicado, con el valor
+   * "Principal" a true y con el valor "Activo" a true.
+   *
+   * @param orden el orden de {@link RolProyecto}.
+   * @return el {@link RolProyecto} con el orden indicado.
+   */
+  Optional<RolProyecto> findByOrdenAndRolPrincipalIsTrueAndActivoIsTrue(Orden orden);
 }

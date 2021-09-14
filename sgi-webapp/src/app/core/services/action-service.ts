@@ -1,8 +1,9 @@
 import { Directive, OnDestroy } from '@angular/core';
 import { AbstractControl, FormArray, FormControl, FormGroup } from '@angular/forms';
+import { HttpProblem, Problem } from '@core/errors/http-problem';
 import { DateTime } from 'luxon';
-import { BehaviorSubject, from, Observable, of, Subscription, throwError } from 'rxjs';
-import { filter, mergeMap, switchMap, takeLast, tap } from 'rxjs/operators';
+import { BehaviorSubject, from, Observable, of, Subject, Subscription, throwError } from 'rxjs';
+import { catchError, filter, mergeMap, switchMap, takeLast, tap } from 'rxjs/operators';
 
 export interface IActionService {
   /**
@@ -59,9 +60,13 @@ export interface ActionStatus {
    */
   complete: boolean;
   /**
-   * Any fragment has an error
+   * Any fragment has a validation error
    */
   errors: boolean;
+  /**
+   * Any fragment has a problem
+   */
+  problems: boolean;
   /**
    * Any fragment has a change
    */
@@ -126,7 +131,7 @@ interface IGroup {
 
 export interface FragmentStatus {
   /**
-   * The fragment has any error
+   * The fragment has any validation error
    */
   errors: boolean;
   /**
@@ -141,6 +146,10 @@ export interface FragmentStatus {
    * The fragment is in edition mode
    */
   edit: boolean;
+  /**
+   * The fragment has any problem
+   */
+  problems: boolean;
 }
 
 export interface IFragment {
@@ -148,6 +157,10 @@ export interface IFragment {
    * Status of the fragment
    */
   status$: BehaviorSubject<FragmentStatus>;
+  /**
+   * Problems of the fragment
+   */
+  problems$: Subject<Problem[]>;
   /**
    * Returns true if the fragment is in edition mode
    */
@@ -160,6 +173,18 @@ export interface IFragment {
    * Returns true if the fragment has any error
    */
   hasErrors(): boolean;
+  /**
+   * Returns true if the fragment has any problem
+   */
+  hasProblems(): boolean;
+  /**
+   * Push a related problem or problems
+   */
+  pushProblems(problem: Problem | Problem[]): void;
+  /**
+   * Clear problems
+   */
+  clearProblems(): void;
   /**
    * Return true if the fragment has any changes
    */
@@ -240,10 +265,16 @@ export interface ActionLink {
    * Router link of the action link
    */
   routerLink: string | string[];
+
+  /**
+   * Query params
+   */
+  queryParams?: {};
 }
 
 export abstract class Fragment implements IFragment {
   readonly status$: BehaviorSubject<FragmentStatus>;
+  readonly problems$: BehaviorSubject<Problem[]>;
   private key: number | string;
   private edit: boolean;
   readonly initialized$: BehaviorSubject<boolean>;
@@ -257,7 +288,8 @@ export abstract class Fragment implements IFragment {
   constructor(key: number | string) {
     this.key = key;
     this.edit = key ? true : false;
-    this.status$ = new BehaviorSubject<FragmentStatus>({ errors: false, changes: false, complete: false, edit: this.edit });
+    this.status$ = new BehaviorSubject<FragmentStatus>({ errors: false, changes: false, complete: false, edit: this.edit, problems: false });
+    this.problems$ = new BehaviorSubject<Problem[]>([]);
     this.initialized$ = new BehaviorSubject<boolean>(false);
   }
 
@@ -287,6 +319,28 @@ export abstract class Fragment implements IFragment {
     return this.status$.value.errors;
   }
 
+  hasProblems(): boolean {
+    return this.status$.value.problems;
+  }
+
+  pushProblems(problem: Problem | Problem[]): void {
+    const current = this.problems$.value;
+    if (Array.isArray(problem)) {
+      this.problems$.next([...current, ...problem]);
+    }
+    else if (problem) {
+      this.problems$.next([...current, problem]);
+    }
+    if (this.problems$.value.length) {
+      this.setProblems(true);
+    }
+  }
+
+  clearProblems(): void {
+    this.problems$.next([]);
+    this.setProblems(false);
+  }
+
   hasChanges(): boolean {
     return this.status$.value.changes;
   }
@@ -303,7 +357,8 @@ export abstract class Fragment implements IFragment {
     if (transitionToEdit) {
       this.edit = true;
     }
-    this.status$.next({ errors: false, changes: false, complete: false, edit: this.isEdit() });
+    this.problems$.next([]);
+    this.status$.next({ errors: false, changes: false, complete: false, edit: this.isEdit(), problems: false });
   }
 
   destroy(): void {
@@ -334,6 +389,14 @@ export abstract class Fragment implements IFragment {
     }
   }
 
+  private setProblems(value: boolean): void {
+    const current = this.status$.value;
+    if (current.problems !== value) {
+      current.problems = value;
+      this.status$.next(current);
+    }
+  }
+
   abstract saveOrUpdate(): Observable<string | number | void>;
 
   getKey(): string | number {
@@ -353,6 +416,7 @@ export abstract class Fragment implements IFragment {
 
 export abstract class FormFragment<T> implements IFormFragment<T> {
   readonly status$: BehaviorSubject<FragmentStatus>;
+  readonly problems$: BehaviorSubject<Problem[]>;
   private formStatus: GroupStatus;
   private complementStatus: FragmentStatus;
   private auxiliarStatus: boolean;
@@ -362,6 +426,10 @@ export abstract class FormFragment<T> implements IFormFragment<T> {
   protected subscriptions: Subscription[] = [];
   private key: number | string;
   private edit: boolean;
+
+  get formGroupStatus$(): BehaviorSubject<GroupStatus> {
+    return this.group.status$;
+  }
 
   /**
    * Default constructor
@@ -373,9 +441,10 @@ export abstract class FormFragment<T> implements IFormFragment<T> {
     this.key = key;
     this.edit = key ? true : false;
     this.auxiliarStatus = enableComplementaryStatus;
-    this.status$ = new BehaviorSubject<FragmentStatus>({ errors: false, changes: false, complete: false, edit: this.edit });
+    this.status$ = new BehaviorSubject<FragmentStatus>({ errors: false, changes: false, complete: false, edit: this.edit, problems: false });
+    this.problems$ = new BehaviorSubject<Problem[]>([]);
     this.formStatus = { changes: false, errors: false, complete: false };
-    this.complementStatus = { errors: false, changes: false, complete: !this.edit && !enableComplementaryStatus, edit: this.edit };
+    this.complementStatus = { errors: false, changes: false, complete: !this.edit && !enableComplementaryStatus, edit: this.edit, problems: false };
     this.initialized$ = new BehaviorSubject<boolean>(false);
   }
 
@@ -453,6 +522,7 @@ export abstract class FormFragment<T> implements IFormFragment<T> {
     const current: FragmentStatus = this.status$.value;
     const errors = this.formStatus.errors || this.complementStatus.errors;
     const changes = this.formStatus.changes || this.complementStatus.changes;
+    const problems = this.complementStatus.problems;
     const complete = !this.isEdit() && this.isValid() && this.complementStatus.complete;
     const edit = this.isEdit();
     let update = false;
@@ -468,6 +538,10 @@ export abstract class FormFragment<T> implements IFormFragment<T> {
       current.complete = complete;
       update = true;
     }
+    if (current.problems !== problems) {
+      current.problems = problems;
+      update = true;
+    }
     if (current.edit !== edit) {
       current.edit = edit;
       update = true;
@@ -479,6 +553,28 @@ export abstract class FormFragment<T> implements IFormFragment<T> {
 
   hasErrors(): boolean {
     return this.status$.value.errors;
+  }
+
+  hasProblems(): boolean {
+    return this.status$.value.problems;
+  }
+
+  pushProblems(problem: Problem | Problem[]): void {
+    const current = this.problems$.value;
+    if (Array.isArray(problem)) {
+      this.problems$.next([...current, ...problem]);
+    }
+    else if (problem) {
+      this.problems$.next([...current, problem]);
+    }
+    if (this.problems$.value.length) {
+      this.setProblems(true);
+    }
+  }
+
+  clearProblems(): void {
+    this.problems$.next([]);
+    this.setProblems(false);
   }
 
   hasChanges(): boolean {
@@ -502,7 +598,8 @@ export abstract class FormFragment<T> implements IFormFragment<T> {
     if (transitionToEdit) {
       this.edit = true;
     }
-    this.complementStatus = { errors: false, changes: false, complete: false, edit: this.isEdit() };
+    this.problems$.next([]);
+    this.complementStatus = { errors: false, changes: false, complete: false, edit: this.isEdit(), problems: false };
     this.mergeStatus();
   }
 
@@ -538,6 +635,14 @@ export abstract class FormFragment<T> implements IFormFragment<T> {
         current.errors = value;
         this.mergeStatus();
       }
+    }
+  }
+
+  private setProblems(value: boolean) {
+    const current = this.complementStatus;
+    if (current.problems !== value) {
+      current.problems = value;
+      this.mergeStatus();
     }
   }
 }
@@ -731,6 +836,9 @@ export class Group implements IGroup {
     } else if (x instanceof DateTime && y instanceof DateTime) {
       // if is DateTime compare with Milliseconds to ignore locale
       return x.toMillis() === y.toMillis();
+    } else if (x instanceof Date && y instanceof Date) {
+      // if is Date compare with Milliseconds to ignore locale
+      return x.getTime() === y.getTime();
     } else {
       for (const p in x) {
         if (!x.hasOwnProperty(p)) {
@@ -773,7 +881,7 @@ export abstract class ActionService implements IActionService, OnDestroy {
   private masterFragmentName: string;
   private actionLinks: ActionLink[] = [];
 
-  status$: BehaviorSubject<ActionStatus> = new BehaviorSubject<ActionStatus>({ changes: false, complete: false, errors: false, edit: false });
+  status$: BehaviorSubject<ActionStatus> = new BehaviorSubject<ActionStatus>({ changes: false, complete: false, errors: false, problems: false, edit: false });
 
   saveOrUpdate(): Observable<void> {
     this.performChecks(true);
@@ -783,7 +891,15 @@ export abstract class ActionService implements IActionService, OnDestroy {
     if (this.isEdit()) {
       return from(this.fragments.values()).pipe(
         filter((part) => part.hasChanges()),
+        tap((part) => part.clearProblems()),
         mergeMap((part) => part.saveOrUpdate().pipe(
+          catchError(error => {
+            if (error instanceof HttpProblem) {
+              part.pushProblems(error);
+              error.managed = true;
+            }
+            return throwError(error);
+          }),
           switchMap(() => {
             return of(void 0);
           }),
@@ -795,6 +911,13 @@ export abstract class ActionService implements IActionService, OnDestroy {
     else {
       const part = this.fragments.get(this.masterFragmentName);
       return part.saveOrUpdate().pipe(
+        catchError(error => {
+          if (error instanceof HttpProblem) {
+            part.pushProblems(error);
+            error.managed = true;
+          }
+          return throwError(error);
+        }),
         tap(() => part.refreshInitialState(true)),
         switchMap((key) => {
           if (typeof key === 'string' || typeof key === 'number') {
@@ -856,6 +979,7 @@ export abstract class ActionService implements IActionService, OnDestroy {
     const current = this.status$.value;
     const errors = this.hasErrors();
     const changes = this.hasChanges();
+    const problem = this.hasProblems();
     let complete = this.isComplete();
     let update = false;
     // If one element transit to edition, we too
@@ -864,6 +988,10 @@ export abstract class ActionService implements IActionService, OnDestroy {
     }
     if (current.errors !== errors) {
       current.errors = errors;
+      update = true;
+    }
+    if (current.problems !== problem) {
+      current.problems = problem;
       update = true;
     }
     if (current.changes !== changes) {
@@ -897,6 +1025,12 @@ export abstract class ActionService implements IActionService, OnDestroy {
     let errors = false;
     this.fragments.forEach((fragment) => errors = errors || fragment.hasErrors());
     return errors;
+  }
+
+  hasProblems(): boolean {
+    let problems = false;
+    this.fragments.forEach((fragment) => problems = problems || fragment.hasProblems());
+    return problems;
   }
 
   hasChanges(): boolean {

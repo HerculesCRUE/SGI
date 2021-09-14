@@ -1,0 +1,97 @@
+[
+  {
+    "key": "ap3_4",
+    "wrappers": [
+      "expansion-panel"
+    ],
+    "templateOptions": {
+      "expressionLock": "formState.memoria.tipoMemoria.id === 3",
+      "label": "3.4 Intervenciones o pruebas en seres humanos"
+    },
+    "fieldGroup": [
+      {
+        "template": "<p>¿En esta actividad se realizan intervenciones o pruebas en seres humanos?</p>"
+      },
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "<p>A efectos de este formulario se consideran intervenciones o pruebas los trabajos concretos que requieran la <strong>concurrencia directa del ser humano</strong> sujeto de la experiementación bien porque se vaya a obtener de él las muestras biológicas (de forma invasiva o no) o datos de carácter personal o tenga que realizar algún test, encuesta, ejercicio, etc.. </p>"
+      },
+      {
+        "template": "<p>Intervenciones o pruebas en seres humanos</p>"
+      },
+      {
+        "key": "intervencionesSeresHumanosRadio",
+        "type": "radio",
+        "templateOptions": {
+          "label": "Elige opción:",
+          "required": true,
+          "options": [
+            {
+              "value": "no",
+              "label": "No"
+            },
+            {
+              "value": "si",
+              "label": "Sí"
+            }
+          ]
+        }
+      },
+      {
+        "key": "intervencionesSeresHumanosCheck",
+        "type": "multicheckbox",
+        "hideExpression": "!model.intervencionesSeresHumanosRadio || model.intervencionesSeresHumanosRadio === 'no'",
+        "templateOptions": {
+          "label": "Cuales",
+          "required": true,
+          "type": "array",
+          "options": [
+            {
+              "value": "entrevistasEncuestas",
+              "label": "Entrevistas, encuestas, cuestionarios, etc."
+            },
+            {
+              "value": "obtencionImagenes",
+              "label": "Obtencion de imágenes, sonido o similares (fotos, vídeos, grabaciones, RX, ECO, ect)"
+            },
+            {
+              "value": "pruebasFisicas",
+              "label": "Pruebas físicas"
+            },
+            {
+              "value": "pruebasPsiquicas",
+              "label": "Pruebas psíquicas"
+            },
+            {
+              "value": "obtencionNoInvasivas",
+              "label": "Obtención no invasivas de muestras"
+            },
+            {
+              "value": "obtencionInvasivas",
+              "label": "Obtención invasivas de muestras"
+            },
+            {
+              "value": "otras",
+              "label": "Otras. Especificar"
+            }
+          ]
+        }
+      },
+      {
+        "key": "otrasTexto",
+        "type": "textarea",
+        "hideExpression": "!((model.intervencionesSeresHumanosRadio && model.intervencionesSeresHumanosRadio === 'si') && (model.intervencionesSeresHumanosCheck && model.intervencionesSeresHumanosCheck.find((c)=> c === 'otras')))",
+        "templateOptions": {
+          "placeholder": "Otras. Especificar",
+          "label": "Otras. Especificar",
+          "required": true,
+          "autosize": true,
+          "autosizeMinRows": "1",
+          "autosizeMaxRows": "10"
+        }
+      }
+    ]
+  }
+]

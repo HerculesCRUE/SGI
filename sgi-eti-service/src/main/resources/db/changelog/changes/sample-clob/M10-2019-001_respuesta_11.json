@@ -1,0 +1,13 @@
+{
+  "ap3_5_2": {
+    "destruccion": true,
+    "especificarDestruccion": "Especificación de como se destruiran las muestras",
+    "conservacion": true,
+    "cesionBiobanco": true,
+    "especificarCesionBiobanco": "Especificación de como se cederán las muestras a un biobanco",
+    "usoColeccionMuestras": true,
+    "especificarUsoColeccionMuestras": "Especificación de como se integraran las muestras en una colección",
+    "incorporacionColeccionMuestras": true,
+    "especificarIncorporacionColeccionMuestras": "Especificación de como se incorporaran las muestras a otra colección de muestras"
+  }
+}

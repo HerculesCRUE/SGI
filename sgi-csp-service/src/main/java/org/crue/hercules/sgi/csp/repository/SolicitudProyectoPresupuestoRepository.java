@@ -2,6 +2,7 @@ package org.crue.hercules.sgi.csp.repository;
 
 import java.util.List;
 
+import org.crue.hercules.sgi.csp.model.Solicitud;
 import org.crue.hercules.sgi.csp.model.SolicitudProyecto;
 import org.crue.hercules.sgi.csp.model.SolicitudProyectoPresupuesto;
 import org.crue.hercules.sgi.csp.repository.custom.CustomSolicitudProyectoPresupuestoRepository;
@@ -33,5 +34,14 @@ public interface SolicitudProyectoPresupuestoRepository extends JpaRepository<So
    */
   boolean existsBySolicitudProyectoSolicitudIdAndEntidadRefAndFinanciacionAjena(Long solicitudId, String entidadRef,
       Boolean financiacionAjena);
+
+  /**
+   * Recupera todos las {@link SolicitudProyectoPresupuesto} asociados a una
+   * {@link Solicitud}.
+   * 
+   * @param solicitudId Identificador de {@link Solicitud}
+   * @return número de entidades {@link SolicitudProyectoPresupuesto}
+   */
+  int countBySolicitudProyectoSolicitudId(Long solicitudId);
 
 }

@@ -1,0 +1,249 @@
+[
+  {
+    "key": "ap4_1",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "label": "4.2.1.1.4 Instalaciones"
+    }
+  },
+  {
+    "template": "<p>Se dispone de vestuarios con taquillas para la ropa</p>"
+  },
+  {
+    "key": "disponeVestuarios",
+    "type": "radio",
+    "templateOptions": {
+      "required": true,
+      "label": "Elige opción",
+      "options": [
+        {
+          "value": "no",
+          "label": "No"
+        },
+        {
+          "value": "si",
+          "label": "Sí"
+        }
+      ]
+    }
+  },
+  {
+    "key": "observaciones_disponeVestuarios",
+    "type": "textarea",
+    "templateOptions": {
+      "label": "Observaciones",
+      "placeholder": "Observaciones",
+      "required": false,
+      "disabled": false,
+      "autosize": true,
+      "autosizeMinRows": "1",
+      "autosizeMaxRows": "10"
+    }
+  },
+  {
+    "template": "<p>En caso de ventanas practicables, éstas llevan protección frente a la entrada de insectos</p>"
+  },
+  {
+    "key": "ventanasPracticables",
+    "type": "radio",
+    "templateOptions": {
+      "required": true,
+      "label": "Elige opción",
+      "options": [
+        {
+          "value": "no",
+          "label": "No"
+        },
+        {
+          "value": "si",
+          "label": "Sí"
+        }
+      ]
+    }
+  },
+  {
+    "key": "observaciones_ventanasPracticables",
+    "type": "textarea",
+    "templateOptions": {
+      "label": "Observaciones",
+      "placeholder": "Observaciones",
+      "required": false,
+      "disabled": false,
+      "autosize": true,
+      "autosizeMinRows": "1",
+      "autosizeMaxRows": "10"
+    }
+  },
+  {
+    "template": "<p>Se dispone de espacio suficiente para el almacenamiento de materiales y reactivos</p>"
+  },
+  {
+    "key": "espacioAlmacenamiento",
+    "type": "radio",
+    "templateOptions": {
+      "required": true,
+      "label": "Elige opción",
+      "options": [
+        {
+          "value": "no",
+          "label": "No"
+        },
+        {
+          "value": "si",
+          "label": "Sí"
+        }
+      ]
+    }
+  },
+  {
+    "key": "observaciones_espacioAlmacenamiento",
+    "type": "textarea",
+    "templateOptions": {
+      "label": "Observaciones",
+      "placeholder": "Observaciones",
+      "required": false,
+      "disabled": false,
+      "autosize": true,
+      "autosizeMinRows": "1",
+      "autosizeMaxRows": "10"
+    }
+  },
+  {
+    "template": "<p>El laboratorio dispone de ventilación adecuada</p>"
+  },
+  {
+    "key": "ventilacion",
+    "type": "radio",
+    "templateOptions": {
+      "required": true,
+      "label": "Elige opción",
+      "options": [
+        {
+          "value": "no",
+          "label": "No"
+        },
+        {
+          "value": "si",
+          "label": "Sí"
+        }
+      ]
+    }
+  },
+  {
+    "key": "observaciones_ventilacion",
+    "type": "textarea",
+    "templateOptions": {
+      "label": "Observaciones",
+      "placeholder": "Observaciones",
+      "required": false,
+      "disabled": false,
+      "autosize": true,
+      "autosizeMinRows": "1",
+      "autosizeMaxRows": "10"
+    }
+  },
+  {
+    "template": "<p>El laboratorio dispone de iluminación adecuada (incluida la de emergencia)</p>"
+  },
+  {
+    "key": "iluminacion",
+    "type": "radio",
+    "templateOptions": {
+      "required": true,
+      "label": "Elige opción",
+      "options": [
+        {
+          "value": "no",
+          "label": "No"
+        },
+        {
+          "value": "si",
+          "label": "Sí"
+        }
+      ]
+    }
+  },
+  {
+    "key": "observaciones_iluminacion",
+    "type": "textarea",
+    "templateOptions": {
+      "label": "Observaciones",
+      "placeholder": "Observaciones",
+      "required": false,
+      "disabled": false,
+      "autosize": true,
+      "autosizeMinRows": "1",
+      "autosizeMaxRows": "10"
+    }
+  },
+  {
+    "template": "<p>El laboratorio cuenta con un botiquín: si/no. Observaciones-El laboratorio dispone de lavamanos y lavaojos</p>"
+  },
+  {
+    "key": "lavamanos",
+    "type": "radio",
+    "templateOptions": {
+      "required": true,
+      "label": "Elige opción",
+      "options": [
+        {
+          "value": "no",
+          "label": "No"
+        },
+        {
+          "value": "si",
+          "label": "Sí"
+        }
+      ]
+    }
+  },
+  {
+    "key": "observaciones_lavamanos",
+    "type": "textarea",
+    "templateOptions": {
+      "label": "Observaciones",
+      "placeholder": "Observaciones",
+      "required": false,
+      "disabled": false,
+      "autosize": true,
+      "autosizeMinRows": "1",
+      "autosizeMaxRows": "10"
+    }
+  },
+  {
+    "template": "<p>El laboratorio dispone de ducha de emergencia</p>"
+  },
+  {
+    "key": "ducha",
+    "type": "radio",
+    "templateOptions": {
+      "required": true,
+      "label": "Elige opción",
+      "options": [
+        {
+          "value": "no",
+          "label": "No"
+        },
+        {
+          "value": "si",
+          "label": "Sí"
+        }
+      ]
+    }
+  },
+  {
+    "key": "observaciones_ducha",
+    "type": "textarea",
+    "templateOptions": {
+      "label": "Observaciones",
+      "placeholder": "Observaciones",
+      "required": false,
+      "disabled": false,
+      "autosize": true,
+      "autosizeMinRows": "1",
+      "autosizeMaxRows": "10"
+    }
+  }
+]

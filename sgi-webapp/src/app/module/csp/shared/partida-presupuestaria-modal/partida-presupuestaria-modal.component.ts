@@ -22,6 +22,7 @@ const PROYECTO_PARTIDA_PRESUPUESTARIA_TIPO_KEY = marker('csp.proyecto-partida-pr
 const PROYECTO_PARTIDA_PRESUPUESTARIA_DESCRIPCION_KEY = marker('csp.proyecto-partida-presupuestaria.descripcion');
 const PROYECTO_PARTIDA_PRESUPUESTARIA_KEY = marker('csp.proyecto-partida-presupuestaria');
 const TITLE_NEW_ENTITY = marker('title.new.entity');
+const PROYECTO_PARTIDA_PRESUPUESTARIA_CODIGO_TOOLTIP_KEY = marker('csp.partida-presupuestaria.codigo-tooltip');
 
 export interface PartidaPresupuestariaModalComponentData {
   partidasPresupuestarias: IPartidaPresupuestaria[];
@@ -44,6 +45,7 @@ export class PartidaPresupuestariaModalComponent
   msgParamCodigoEntity = {};
   msgParamTipoEntity = {};
   msgParamDescripcionEntity = {};
+  msgTooltip = {};
   title: string;
 
   get TIPO_PARTIDA_MAP() {
@@ -68,6 +70,7 @@ export class PartidaPresupuestariaModalComponent
 
   ngOnInit(): void {
     super.ngOnInit();
+    this.loadConfiguracion();
     this.setupI18N();
     this.textSaveOrUpdate = this.data?.partidaPresupuestaria ? MSG_ACEPTAR : MSG_ANADIR;
 
@@ -84,7 +87,7 @@ export class PartidaPresupuestariaModalComponent
     this.translate.get(
       PROYECTO_PARTIDA_PRESUPUESTARIA_CODIGO_KEY,
       MSG_PARAMS.CARDINALIRY.SINGULAR
-    ).subscribe((value) => this.msgParamCodigoEntity = { entity: value, ...MSG_PARAMS.GENDER.FEMALE, ...MSG_PARAMS.CARDINALIRY.SINGULAR });
+    ).subscribe((value) => this.msgParamCodigoEntity = { entity: value, ...MSG_PARAMS.GENDER.MALE, ...MSG_PARAMS.CARDINALIRY.SINGULAR });
 
     this.translate.get(
       PROYECTO_PARTIDA_PRESUPUESTARIA_DESCRIPCION_KEY,
@@ -210,6 +213,18 @@ export class PartidaPresupuestariaModalComponent
         codigoControl.updateValueAndValidity({ onlySelf: true });
       }
     };
+  }
+  private loadConfiguracion() {
+    const configuracionFindSubscription = this.configuracionService.getConfiguracion().subscribe(
+      configuracion => {
+        this.translate.get(
+          PROYECTO_PARTIDA_PRESUPUESTARIA_CODIGO_TOOLTIP_KEY,
+          MSG_PARAMS.CARDINALIRY.SINGULAR
+        ).subscribe(() => this.msgTooltip = {
+          mask: configuracion.plantillaFormatoPartidaPresupuestaria,
+        });
+      });
+    this.subscriptions.push(configuracionFindSubscription);
   }
 
 }

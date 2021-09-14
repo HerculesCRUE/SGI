@@ -1,22 +1,22 @@
 package org.crue.hercules.sgi.csp.model;
 
+import java.time.Instant;
+import java.util.List;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.ForeignKey;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -24,12 +24,12 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(name = "requisito_ip", uniqueConstraints = {
-    @UniqueConstraint(columnNames = { "convocatoria_id" }, name = "UK_REQUISITOIP_CONVOCATORIA") })
+@Table(name = "requisito_ip")
 @Data
 @EqualsAndHashCode(callSuper = false)
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class RequisitoIP extends BaseEntity {
 
   /**
@@ -37,56 +37,44 @@ public class RequisitoIP extends BaseEntity {
    */
   private static final long serialVersionUID = 1L;
 
-  /** Id. */
+  /** Id (compartido con Convocatoria) */
   @Id
   @Column(name = "id", nullable = false)
-  @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "requisito_ip_seq")
-  @SequenceGenerator(name = "requisito_ip_seq", sequenceName = "requisito_ip_seq", allocationSize = 1)
   private Long id;
-
-  /** Convocatoria Id */
-  @Column(name = "convocatoria_id", nullable = false)
-  @NotNull
-  private Long convocatoriaId;
 
   /** Número máximo ip */
   @Column(name = "num_maximo_ip", nullable = true)
   @Min(0)
   private Integer numMaximoIP;
 
-  /** Ref nivel académico. */
-  @Column(name = "nivel_academico_ref", length = 50, nullable = true)
-  @Size(max = 50)
-  private String nivelAcademicoRef;
+  /** Fecha mínima obtención del nivel académico */
+  @Column(name = "f_min_nivel_academico", nullable = true)
+  private Instant fechaMinimaNivelAcademico;
 
-  /** Años nivel académico */
-  @Column(name = "anios_nivel_academico", nullable = true)
-  @Min(0)
-  private Integer aniosNivelAcademico;
+  /** Fecha máxima obtención del nivel académico */
+  @Column(name = "f_max_nivel_academico", nullable = true)
+  private Instant fechaMaximaNivelAcademico;
 
   /** Edad máxima */
   @Column(name = "edad_maxima", nullable = true)
   @Min(0)
   private Integer edadMaxima;
 
-  /** Sexo. */
-  @Column(name = "sexo", length = 50, nullable = true)
-  @Size(max = 50)
-  private String sexo;
+  /** Referencia a la entidad externa Sexo del ESB */
+  @Column(name = "sexo_ref", length = BaseEntity.EXTERNAL_REF_LENGTH, nullable = true)
+  private String sexoRef;
 
   /** Vinculación universidad */
   @Column(name = "vinculacion_universidad", nullable = true)
   private Boolean vinculacionUniversidad;
 
-  /** Ref modalidad contrato. */
-  @Column(name = "modalidad_contrato_ref", length = 50, nullable = true)
-  @Size(max = 50)
-  private String modalidadContratoRef;
+  /** Fecha mínima obtención de la categoría profesional */
+  @Column(name = "f_min_categoria_profesional", nullable = true)
+  private Instant fechaMinimaCategoriaProfesional;
 
-  /** Años vinculación */
-  @Column(name = "anios_vinculacion", nullable = true)
-  @Min(0)
-  private Integer aniosVinculacion;
+  /** Fecha máxima obtención de la categoría profesional */
+  @Column(name = "f_max_categoria_profesional", nullable = true)
+  private Instant fechaMaximaCategoriaProfesional;
 
   /** Número mínimo competitivos */
   @Column(name = "num_minimo_competitivos", nullable = true)
@@ -115,8 +103,18 @@ public class RequisitoIP extends BaseEntity {
 
   // Relation mappings for JPA metamodel generation only
   @OneToOne
-  @JoinColumn(name = "convocatoria_id", insertable = false, updatable = false, foreignKey = @ForeignKey(name = "FK_REQUISITOIP_CONVOCATORIA"))
+  @JoinColumn(name = "id", insertable = false, updatable = false, foreignKey = @ForeignKey(name = "FK_REQUISITOIP_CONVOCATORIA"))
   @Getter(AccessLevel.NONE)
   @Setter(AccessLevel.NONE)
   private final Convocatoria convocatoria = null;
+
+  @OneToMany(mappedBy = "requisitoIP")
+  @Getter(AccessLevel.NONE)
+  @Setter(AccessLevel.NONE)
+  private final List<RequisitoIPNivelAcademico> nivelesAcademicos = null;
+
+  @OneToMany(mappedBy = "requisitoIP")
+  @Getter(AccessLevel.NONE)
+  @Setter(AccessLevel.NONE)
+  private final List<RequisitoIPCategoriaProfesional> categoriasProfesionales = null;
 }

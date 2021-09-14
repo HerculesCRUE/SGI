@@ -4,6 +4,7 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { AbstractTablePaginationComponent } from '@core/component/abstract-table-pagination.component';
+import { HttpProblem } from '@core/errors/http-problem';
 import { MSG_PARAMS } from '@core/i18n';
 import { COMITE, IComite } from '@core/models/eti/comite';
 import { ESTADO_RETROSPECTIVA } from '@core/models/eti/estado-retrospectiva';
@@ -39,6 +40,7 @@ const MSG_ERROR_ENVIAR_SECRETARIA_RETROSPECTIVA = marker('error.eti.memoria.envi
 const MSG_CONFIRM_ENVIAR_SECRETARIA_RETROSPECTIVA = marker('msg.eti.memoria.enviar-secretaria.retrospectiva');
 const MEMORIA_KEY = marker('eti.memoria');
 const PETICION_EVALUACION_KEY = marker('eti.peticion-evaluacion');
+const MSG_ERROR_DATOS_ADJUNTOS = marker('error.eti.memoria.enviar-secretaria.documentos-adjuntos');
 
 @Component({
   selector: 'sgi-memoria-listado-inv',
@@ -297,23 +299,53 @@ export class MemoriaListadoInvComponent extends AbstractTablePaginationComponent
   }
 
   enviarSecretaria(memoria: IMemoriaPeticionEvaluacion) {
-    const dialogSubscription = this.dialogService.showConfirmation(MSG_CONFIRM_ENVIAR_SECRETARIA)
-      .pipe(switchMap((aceptado) => {
-        if (aceptado) {
-          return this.memoriaService.enviarSecretaria(memoria.id);
+    this.suscripciones.push(this.memoriaService.checkDatosAdjuntosEnviarSecretariaExists(memoria.id).pipe(
+      map(respuesta => {
+        if (respuesta) {
+          this.suscripciones.push(this.dialogService.showConfirmation(MSG_CONFIRM_ENVIAR_SECRETARIA)
+            .pipe(switchMap((aceptado) => {
+              if (aceptado) {
+                return this.memoriaService.enviarSecretaria(memoria.id);
+              }
+            })).subscribe(
+              () => {
+                this.loadTable();
+                this.snackBarService.showSuccess(MSG_SUCCESS_ENVIAR_SECRETARIA);
+              },
+              (error) => {
+                this.logger.error(error);
+                if (error instanceof HttpProblem) {
+                  this.snackBarService.showError(error);
+                }
+                else {
+                  this.snackBarService.showError(MSG_ERROR_ENVIAR_SECRETARIA);
+                }
+              }
+            ));
+        } else {
+          this.suscripciones.push(this.dialogService.showConfirmation(MSG_ERROR_DATOS_ADJUNTOS)
+            .pipe(switchMap((consentimiento) => {
+              if (consentimiento) {
+                return this.memoriaService.enviarSecretaria(memoria.id);
+              }
+            })).subscribe(
+              () => {
+                this.loadTable();
+                this.snackBarService.showSuccess(MSG_SUCCESS_ENVIAR_SECRETARIA);
+              },
+              (error) => {
+                this.logger.error(error);
+                if (error instanceof HttpProblem) {
+                  this.snackBarService.showError(error);
+                }
+                else {
+                  this.snackBarService.showError(MSG_ERROR_ENVIAR_SECRETARIA);
+                }
+              }
+            ));
+          return of();
         }
-        return of();
-      })).subscribe(
-        () => {
-          this.loadTable();
-          this.snackBarService.showSuccess(MSG_SUCCESS_ENVIAR_SECRETARIA);
-        },
-        (error) => {
-          this.logger.error(error);
-          this.snackBarService.showError(MSG_ERROR_ENVIAR_SECRETARIA);
-        }
-      );
-    this.suscripciones.push(dialogSubscription);
+      })).subscribe());
   }
 
   /**
@@ -335,7 +367,12 @@ export class MemoriaListadoInvComponent extends AbstractTablePaginationComponent
         },
         (error) => {
           this.logger.error(error);
-          this.snackBarService.showError(this.textoDeleteError);
+          if (error instanceof HttpProblem) {
+            this.snackBarService.showError(error);
+          }
+          else {
+            this.snackBarService.showError(this.textoDeleteError);
+          }
         }
       );
   }
@@ -362,7 +399,12 @@ export class MemoriaListadoInvComponent extends AbstractTablePaginationComponent
         },
         (error) => {
           this.logger.error(error);
-          this.snackBarService.showError(MSG_ERROR_ENVIAR_SECRETARIA_RETROSPECTIVA);
+          if (error instanceof HttpProblem) {
+            this.snackBarService.showError(error);
+          }
+          else {
+            this.snackBarService.showError(MSG_ERROR_ENVIAR_SECRETARIA_RETROSPECTIVA);
+          }
         }
       );
   }

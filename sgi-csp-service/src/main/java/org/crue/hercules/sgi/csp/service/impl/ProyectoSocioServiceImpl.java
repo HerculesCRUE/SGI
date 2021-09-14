@@ -1,5 +1,7 @@
 package org.crue.hercules.sgi.csp.service.impl;
 
+import java.util.stream.Collectors;
+
 import org.crue.hercules.sgi.csp.exceptions.ProyectoNotFoundException;
 import org.crue.hercules.sgi.csp.exceptions.ProyectoSocioNotFoundException;
 import org.crue.hercules.sgi.csp.model.EstadoProyecto;
@@ -271,6 +273,34 @@ public class ProyectoSocioServiceImpl implements ProyectoSocioService {
     final Boolean returnValue = repository.vinculaciones(id);
     log.debug("vinculaciones(Long id) - start");
     return returnValue;
+  }
+
+  @Override
+  public boolean hasAnyProyectoSocioWithRolCoordinador(Long proyectoId) {
+
+    return repository.existsByProyectoIdAndRolSocioCoordinador(proyectoId, true);
+  }
+
+  @Override
+  public boolean hasAnyProyectoSocioWithProyectoId(Long proyectoId) {
+
+    return repository.existsByProyectoId(proyectoId);
+  }
+
+  @Override
+  public boolean existsProyectoSocioPeriodoPagoByProyectoSocioId(Long proyectoId) {
+
+    return !this.repository.findByProyectoId(proyectoId).stream()
+        .filter(proyectoSocio -> this.periodoPagoRepository.existsByProyectoSocioId(proyectoSocio.getId()))
+        .collect(Collectors.toList()).isEmpty();
+  }
+
+  @Override
+  public boolean existsProyectoSocioPeriodoJustificacionByProyectoSocioId(Long proyectoId) {
+
+    return !this.repository.findByProyectoId(proyectoId).stream()
+        .filter(proyectoSocio -> this.periodoJustificacionRepository.existsByProyectoSocioId(proyectoSocio.getId()))
+        .collect(Collectors.toList()).isEmpty();
   }
 
 }

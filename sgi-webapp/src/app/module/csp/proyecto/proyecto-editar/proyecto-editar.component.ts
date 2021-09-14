@@ -3,6 +3,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { ActionComponent } from '@core/component/action.component';
+import { HttpProblem } from '@core/errors/http-problem';
 import { MSG_PARAMS } from '@core/i18n';
 import { Estado, IEstadoProyecto } from '@core/models/csp/estado-proyecto';
 import { DialogService } from '@core/services/dialog.service';
@@ -20,7 +21,6 @@ const MSG_ERROR = marker('error.update.entity');
 const PROYECTO_KEY = marker('csp.proyecto');
 const MSG_BUTTON_CAMBIO_ESTADO = marker('csp.proyecto.cambio-estado');
 const MSG_CAMBIO_ESTADO_SUCCESS = marker('msg.csp.cambio-estado.success');
-const MSG_CAMBIO_ESTADO_CONFIRMACION = marker('confirmacion.csp.proyecto.cambio-estado');
 const MSG_CAMBIO_ESTADO_ERROR = marker('error.csp.proyecto.cambio-estado');
 
 @Component({
@@ -111,11 +111,17 @@ export class ProyectoEditarComponent extends ActionComponent implements OnInit {
       () => { },
       (error) => {
         this.logger.error(error);
-        this.snackBarService.showError(this.textoEditarError);
+        if (error instanceof HttpProblem) {
+          if (!!!error.managed) {
+            this.snackBarService.showError(error);
+          }
+        }
+        else {
+          this.snackBarService.showError(this.textoEditarError);
+        }
       },
       () => {
         this.snackBarService.showSuccess(this.textoEditarSuccess);
-        this.router.navigate(['../'], { relativeTo: this.activatedRoute });
       }
     );
   }
@@ -137,45 +143,41 @@ export class ProyectoEditarComponent extends ActionComponent implements OnInit {
    * Apertura de modal cambio de estado para insertar comentario
    */
   openCambioEstado(): void {
-    this.subscriptions.push(
-      this.confirmDialogService.showConfirmation(MSG_CAMBIO_ESTADO_CONFIRMACION).subscribe(
-        (aceptado: boolean) => {
-          if (aceptado) {
-            const data: ProyectoCambioEstadoModalComponentData = {
-              estadoActual: this.actionService.estado,
-              estadoNuevo: null,
-              comentario: null,
-            };
-            const config = {
-              panelClass: 'sgi-dialog-container',
-              data
-            };
-            const dialogRef = this.matDialog.open(CambioEstadoModalComponent, config);
-            dialogRef.afterClosed().subscribe(
-              (modalData: ProyectoCambioEstadoModalComponentData) => {
-                if (modalData) {
-                  const estadoProyecto = {
-                    estado: modalData.estadoNuevo,
-                    comentario: modalData.comentario
-                  } as IEstadoProyecto;
-                  this.actionService.cambiarEstado(estadoProyecto).subscribe(
-                    () => { },
-                    (error) => {
-                      this.logger.error(error);
-                      this.snackBarService.showError(MSG_CAMBIO_ESTADO_ERROR);
-                    },
-                    () => {
-                      this.snackBarService.showSuccess(MSG_CAMBIO_ESTADO_SUCCESS);
-                      this.router.navigate(['../'], { relativeTo: this.activatedRoute });
-                    }
-                  );;
-                }
-
+    const data: ProyectoCambioEstadoModalComponentData = {
+      estadoActual: this.actionService.estado,
+      estadoNuevo: null,
+      comentario: null,
+    };
+    const config = {
+      panelClass: 'sgi-dialog-container',
+      data
+    };
+    const dialogRef = this.matDialog.open(CambioEstadoModalComponent, config);
+    dialogRef.afterClosed().subscribe(
+      (modalData: ProyectoCambioEstadoModalComponentData) => {
+        if (modalData) {
+          const estadoProyecto = {
+            estado: modalData.estadoNuevo,
+            comentario: modalData.comentario
+          } as IEstadoProyecto;
+          this.actionService.cambiarEstado(estadoProyecto).subscribe(
+            () => { },
+            (error) => {
+              this.logger.error(error);
+              if (error instanceof HttpProblem) {
+                this.snackBarService.showError(error);
               }
-            );
-          }
+              else {
+                this.snackBarService.showError(MSG_CAMBIO_ESTADO_ERROR);
+              }
+            },
+            () => {
+              this.snackBarService.showSuccess(MSG_CAMBIO_ESTADO_SUCCESS);
+              this.router.navigate(['../'], { relativeTo: this.activatedRoute });
+            }
+          );
         }
-      )
+      }
     );
   }
 

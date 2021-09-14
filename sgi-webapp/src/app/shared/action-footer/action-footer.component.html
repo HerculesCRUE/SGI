@@ -1,5 +1,5 @@
 <footer class="separation footer">
-  <div class="botonera" fxLayout="row" fxLayoutAlign="baseline center" fxLayoutGap="15px">
+  <div class="botonera" fxLayout="row" fxLayoutAlign="baseline center" fxLayoutGap="5px">
     <sgi-action-footer-button (buttonClick)="save()" [text]="texto"
       [disabled]="(status.edit && (!status.changes || status.errors)) || (!status.edit && !status.complete)">
 
@@ -8,15 +8,11 @@
     <button class="link-cancelar" mat-button (click)="cancel()">
       <span class="underline">{{'btn.cancel' | translate}}</span>
     </button>
-    <div>
-      <span class="mensaje-inline warning" mat-line *ngIf="status.changes && !status.errors">
-        <mat-icon aria-hidden="false" class="icons warning-icon">error_outline</mat-icon>
-        {{'msg.footer.changes' | translate}}
-      </span>
-      <span class="mensaje-inline danger" mat-line *ngIf="status.errors">
-        <mat-icon aria-hidden="false" class="icons danger-icon">error</mat-icon>
-        {{'error.footer.form' | translate}}
-      </span>
-    </div>
+    <sgi-action-footer-message typeMessage="changes" *ngIf="status.changes && !status.errors && !status.problems">
+    </sgi-action-footer-message>
+    <sgi-action-footer-message typeMessage="errors" *ngIf="status.errors && !status.problems">
+    </sgi-action-footer-message>
+    <sgi-action-footer-message typeMessage="problems" *ngIf="status.problems && status.changes">
+    </sgi-action-footer-message>
   </div>
 </footer>

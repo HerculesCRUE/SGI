@@ -9,9 +9,9 @@ import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-pro
 import { SnackBarService } from '@core/services/snack-bar.service';
 import { DateValidator } from '@core/validators/date-validator';
 import { TranslateService } from '@ngx-translate/core';
-import { TipoColectivo } from '@shared/select-persona/select-persona.component';
 import { DateTime, Interval } from 'luxon';
 import { switchMap } from 'rxjs/operators';
+import { TipoColectivo } from 'src/app/esb/sgp/shared/select-persona/select-persona.component';
 
 const MSG_ANADIR = marker('btn.add');
 const MSG_ACEPTAR = marker('btn.ok');
@@ -67,14 +67,14 @@ export class ProyectoResponsableEconomicoModalComponent
     this.fxLayoutProperties.xs = 'row';
     this.textSaveOrUpdate = this.data.isEdit ? MSG_ACEPTAR : MSG_ANADIR;
 
-    this.data.selectedEntidades.sort((a, b) => {
+    this.data.selectedEntidades?.sort((a, b) => {
       if (!!!a.fechaInicio) {
         return -1;
       }
       return a.fechaInicio.toMillis() - b.fechaInicio.toMillis();
     });
-    this.requiredFechaInicio = !!this.data.selectedEntidades.length;
-    this.requiredFechaFin = this.data.selectedEntidades.some(select => !!!select.fechaFin);
+    this.requiredFechaInicio = !!this.data.selectedEntidades?.length;
+    this.requiredFechaFin = this.data.selectedEntidades?.some(select => !!!select.fechaFin);
   }
 
   ngOnInit(): void {
@@ -125,9 +125,9 @@ export class ProyectoResponsableEconomicoModalComponent
   protected getFormGroup(): FormGroup {
     const formGroup = new FormGroup(
       {
-        responsable: new FormControl(this.data.entidad.persona, [Validators.required]),
-        fechaInicio: new FormControl(this.data.entidad.fechaInicio),
-        fechaFin: new FormControl(this.data.entidad.fechaFin),
+        responsable: new FormControl(this.data?.entidad?.persona, [Validators.required]),
+        fechaInicio: new FormControl(this.data?.entidad?.fechaInicio),
+        fechaFin: new FormControl(this.data?.entidad?.fechaFin),
       }
     );
 
@@ -166,13 +166,12 @@ export class ProyectoResponsableEconomicoModalComponent
   }
 
   private setupValidators(formGroup: FormGroup): void {
-    const intervals: Interval[] = this.data.selectedEntidades
-      .map(responsableEconomico => {
-        return Interval.fromDateTimes(
-          responsableEconomico.fechaInicio ? responsableEconomico.fechaInicio : this.data.fechaInicioMin,
-          responsableEconomico.fechaFin ? responsableEconomico.fechaFin : this.data.fechaFinMax
-        );
-      });
+    const intervals: Interval[] = this.data.selectedEntidades?.map(responsableEconomico => {
+      return Interval.fromDateTimes(
+        responsableEconomico.fechaInicio ? responsableEconomico.fechaInicio : this.data.fechaInicioMin,
+        responsableEconomico.fechaFin ? responsableEconomico.fechaFin : this.data.fechaFinMax
+      );
+    });
 
     if (this.requiredFechaInicio) {
       formGroup.controls.fechaInicio.setValidators([

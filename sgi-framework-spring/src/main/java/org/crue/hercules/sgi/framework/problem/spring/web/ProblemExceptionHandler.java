@@ -251,7 +251,7 @@ public class ProblemExceptionHandler extends ResponseEntityExceptionHandler {
         .title(ProblemMessage.builder().key(HttpStatus.class, "BAD_REQUEST").build()).status(status.value())
         .detail(ProblemMessage.builder().key(MissingPathVariableException.class)
             .parameter("variableName", ex.getVariableName()).build())
-        .extension("name", ex.getVariableName()).build();
+        .extension("variableName", ex.getVariableName()).build();
     ResponseEntity<Object> response = handleExceptionInternal(ex, problem, headers, status, request);
     log.debug(
         "handleMissingPathVariable(MissingPathVariableException ex, HttpHeaders headers, HttpStatus status, WebRequest request) - end");
@@ -269,7 +269,7 @@ public class ProblemExceptionHandler extends ResponseEntityExceptionHandler {
         .detail(ProblemMessage.builder().key(MissingServletRequestParameterException.class)
             .parameter("parameterName", ex.getParameterName()).parameter("parameterType", ex.getParameterType())
             .build())
-        .extension("name", ex.getParameterName()).extension("type", ex.getParameterType()).build();
+        .extension("parameterName", ex.getParameterName()).extension("parameterType", ex.getParameterType()).build();
     ResponseEntity<Object> response = handleExceptionInternal(ex, problem, headers, status, request);
     log.debug(
         "handleMissingServletRequestParameter(MissingServletRequestParameterException ex, HttpHeaders headers, HttpStatus status, WebRequest request) - end");
@@ -319,7 +319,8 @@ public class ProblemExceptionHandler extends ResponseEntityExceptionHandler {
         .detail(
             ProblemMessage.builder().key(TypeMismatchException.class).parameter("propertyName", ex.getPropertyName())
                 .parameter("propertyType", ex.getRequiredType().getSimpleName()).build())
-        .extension("name", ex.getPropertyName()).extension("type", ex.getRequiredType().getSimpleName()).build();
+        .extension("propertyName", ex.getPropertyName()).extension("propertyType", ex.getRequiredType().getSimpleName())
+        .build();
     ResponseEntity<Object> response = handleExceptionInternal(ex, problem, headers, status, request);
     log.debug(
         "handleTypeMismatch(TypeMismatchException ex, HttpHeaders headers, HttpStatus status, WebRequest request) - end");

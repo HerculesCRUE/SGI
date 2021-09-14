@@ -180,11 +180,12 @@ public interface MemoriaService {
   /**
    * Recupera una lista paginada de memorias asociadas al comité recibido.
    * 
-   * @param idComite Identificador {@link Comite}.
-   * @param pageable Datos de la paginación.
+   * @param idComite             Identificador {@link Comite}.
+   * @param idPeticionEvaluacion Identificador {@link PeticionEvaluacion}.
+   * @param pageable             Datos de la paginación.
    * @return lista paginada de memorias
    */
-  Page<Memoria> findByComite(Long idComite, Pageable pageable);
+  Page<Memoria> findByComiteAndPeticionEvaluacion(Long idComite, Long idPeticionEvaluacion, Pageable pageable);
 
   /**
    * Crea una memoria del tipo modificada a partir de la recibida por parámetro.
@@ -194,4 +195,15 @@ public interface MemoriaService {
    * @return {@link Memoria} creada.
    */
   Memoria createModificada(Memoria nuevaMemoria, Long id);
+
+  /**
+   * Comprobación de si están o no los documentos obligatorios aportados para
+   * pasar la memoria al estado en secretaría
+   * 
+   * @param idMemoria Id de {@link Memoria}
+   * @param paging    pageable
+   * @return true si existen documentos adjuntos obligatorios / false Si no se
+   *         existen documentos adjuntos obligatorios
+   */
+  Boolean checkDatosAdjuntosExists(Long idMemoria, Pageable paging);
 }

@@ -6,17 +6,29 @@ export interface DialogData {
   params: {};
   ok: string;
   cancel: string;
+  okStyle?: string;
+  cancelStyle?: string;
 }
+
+export enum DIALOG_BUTTON_STYLE {
+  BTN_STYLE_ACCENT = 'accent',
+  BTN_STYLE_WARN = 'warn',
+  BTN_STYLE_LINK = 'link'
+}
+
 @Component({
   templateUrl: './dialog.component.html',
   styleUrls: ['./dialog.component.scss']
 })
 export class DialogComponent {
+  DIALOG_BUTTON_STYLE = DIALOG_BUTTON_STYLE;
 
   message: string;
   params: {};
   cancelButtonText: string;
   continuarButtonText: string;
+  cancelButtonStyle: string;
+  continuarButtonStyle: string;
 
   constructor(
     @Inject(MAT_DIALOG_DATA) data: DialogData,
@@ -27,6 +39,8 @@ export class DialogComponent {
       this.params = data.params || {};
       this.cancelButtonText = data.cancel || '';
       this.continuarButtonText = data.ok || '';
+      this.cancelButtonStyle = data.cancelStyle || DIALOG_BUTTON_STYLE.BTN_STYLE_LINK;
+      this.continuarButtonStyle = data.okStyle || DIALOG_BUTTON_STYLE.BTN_STYLE_ACCENT;
     }
   }
 

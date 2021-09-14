@@ -10,11 +10,11 @@ class SolicitudProyectoConverter extends SgiBaseConverter<ISolicitudProyectoBack
     }
     return {
       id: value.id,
-      titulo: value.titulo,
       acronimo: value.acronimo,
       codExterno: value.codExterno,
       duracion: value.duracion,
       colaborativo: value.colaborativo,
+      coordinado: value.coordinado,
       coordinadorExterno: value.coordinadorExterno,
       objetivos: value.objetivos,
       intereses: value.intereses,
@@ -25,6 +25,8 @@ class SolicitudProyectoConverter extends SgiBaseConverter<ISolicitudProyectoBack
       tipoPresupuesto: value.tipoPresupuesto,
       importeSolicitado: value.importeSolicitado,
       importePresupuestado: value.importePresupuestado,
+      importePresupuestadoCostesIndirectos: value.importePresupuestadoCostesIndirectos,
+      importeSolicitadoCostesIndirectos: value.importeSolicitadoCostesIndirectos,
       importeSolicitadoSocios: value.importeSolicitadoSocios,
       importePresupuestadoSocios: value.importePresupuestadoSocios,
       totalImporteSolicitado: value.totalImporteSolicitado,
@@ -38,11 +40,11 @@ class SolicitudProyectoConverter extends SgiBaseConverter<ISolicitudProyectoBack
     }
     return {
       id: value.id,
-      titulo: value.titulo,
       acronimo: value.acronimo,
       codExterno: value.codExterno,
       duracion: value.duracion,
       colaborativo: value.colaborativo,
+      coordinado: value.coordinado,
       coordinadorExterno: value.coordinadorExterno,
       objetivos: value.objetivos,
       intereses: value.intereses,
@@ -53,6 +55,8 @@ class SolicitudProyectoConverter extends SgiBaseConverter<ISolicitudProyectoBack
       tipoPresupuesto: value.tipoPresupuesto,
       importeSolicitado: value.importeSolicitado,
       importePresupuestado: value.importePresupuestado,
+      importePresupuestadoCostesIndirectos: value.importePresupuestadoCostesIndirectos,
+      importeSolicitadoCostesIndirectos: value.importeSolicitadoCostesIndirectos,
       importeSolicitadoSocios: value.importeSolicitadoSocios,
       importePresupuestadoSocios: value.importePresupuestadoSocios,
       totalImporteSolicitado: value.totalImporteSolicitado,

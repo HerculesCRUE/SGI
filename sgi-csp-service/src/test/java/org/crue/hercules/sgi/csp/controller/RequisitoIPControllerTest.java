@@ -2,6 +2,8 @@ package org.crue.hercules.sgi.csp.controller;
 
 import org.crue.hercules.sgi.csp.exceptions.RequisitoIPNotFoundException;
 import org.crue.hercules.sgi.csp.model.RequisitoIP;
+import org.crue.hercules.sgi.csp.service.RequisitoIPCategoriaProfesionalService;
+import org.crue.hercules.sgi.csp.service.RequisitoIPNivelAcademicoService;
 import org.crue.hercules.sgi.csp.service.RequisitoIPService;
 import org.crue.hercules.sgi.framework.test.web.servlet.result.SgiMockMvcResultHandlers;
 import org.junit.jupiter.api.Test;
@@ -25,6 +27,12 @@ public class RequisitoIPControllerTest extends BaseControllerTest {
 
   @MockBean
   private RequisitoIPService service;
+
+  @MockBean
+  private RequisitoIPNivelAcademicoService requisitoIPNivelAcademicoService;
+
+  @MockBean
+  private RequisitoIPCategoriaProfesionalService requisitoIPCategoriaProfesionalService;
 
   private static final String PATH_PARAMETER_ID = "/{id}";
   private static final String CONTROLLER_BASE_PATH = "/convocatoria-requisitoips";
@@ -51,7 +59,7 @@ public class RequisitoIPControllerTest extends BaseControllerTest {
         // then: new RequisitoIP is created
         .andExpect(MockMvcResultMatchers.status().isCreated())
         .andExpect(MockMvcResultMatchers.jsonPath("id").isNotEmpty())
-        .andExpect(MockMvcResultMatchers.jsonPath("sexo").value(requisitoIP.getSexo()));
+        .andExpect(MockMvcResultMatchers.jsonPath("sexoRef").value(requisitoIP.getSexoRef()));
   }
 
   @Test
@@ -78,7 +86,7 @@ public class RequisitoIPControllerTest extends BaseControllerTest {
     // given: Existing RequisitoIP to be updated
     RequisitoIP requisitoIPExistente = generarMockRequisitoIP(1L);
     RequisitoIP requisitoIP = generarMockRequisitoIP(1L);
-    requisitoIP.setSexo("Mujer");
+    requisitoIP.setSexoRef("Mujer");
 
     BDDMockito.given(service.findByConvocatoria(ArgumentMatchers.<Long>any())).willReturn(requisitoIPExistente);
     BDDMockito.given(service.update(ArgumentMatchers.<RequisitoIP>any(), ArgumentMatchers.<Long>any()))
@@ -86,15 +94,14 @@ public class RequisitoIPControllerTest extends BaseControllerTest {
 
     // when: update RequisitoIP
     mockMvc
-        .perform(MockMvcRequestBuilders
-            .put(CONTROLLER_BASE_PATH + PATH_PARAMETER_ID, requisitoIPExistente.getConvocatoriaId())
+        .perform(MockMvcRequestBuilders.put(CONTROLLER_BASE_PATH + PATH_PARAMETER_ID, requisitoIPExistente.getId())
             .with(SecurityMockMvcRequestPostProcessors.csrf()).contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON).content(mapper.writeValueAsString(requisitoIP)))
         .andDo(SgiMockMvcResultHandlers.printOnError())
         // then: RequisitoIP is updated
         .andExpect(MockMvcResultMatchers.status().isOk())
         .andExpect(MockMvcResultMatchers.jsonPath("id").value(requisitoIPExistente.getId()))
-        .andExpect(MockMvcResultMatchers.jsonPath("sexo").value(requisitoIP.getSexo()));
+        .andExpect(MockMvcResultMatchers.jsonPath("sexoRef").value(requisitoIP.getSexoRef()));
   }
 
   @Test
@@ -176,8 +183,7 @@ public class RequisitoIPControllerTest extends BaseControllerTest {
   private RequisitoIP generarMockRequisitoIP(Long id) {
     RequisitoIP requisitoIP = new RequisitoIP();
     requisitoIP.setId(id);
-    requisitoIP.setConvocatoriaId(id);
-    requisitoIP.setSexo("Hombre");
+    requisitoIP.setSexoRef("Hombre");
     return requisitoIP;
   }
 

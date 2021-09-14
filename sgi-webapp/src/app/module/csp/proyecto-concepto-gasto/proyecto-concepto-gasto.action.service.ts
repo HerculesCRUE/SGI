@@ -7,6 +7,7 @@ import { ActionService } from '@core/services/action-service';
 import { ConvocatoriaConceptoGastoService } from '@core/services/csp/convocatoria-concepto-gasto.service';
 import { ProyectoConceptoGastoCodigoEcService } from '@core/services/csp/proyecto-concepto-gasto-codigo-ec.service';
 import { ProyectoConceptoGastoService } from '@core/services/csp/proyecto-concepto-gasto.service';
+import { CodigoEconomicoGastoService } from '@core/services/sge/codigo-economico-gasto.service';
 import { BehaviorSubject, Subject } from 'rxjs';
 import { PROYECTO_CONCEPTO_GASTO_DATA_KEY } from './proyecto-concepto-gasto-data.resolver';
 import { ProyectoConceptoGastoCodigoEcFragment } from './proyecto-concepto-gasto-formulario/proyecto-concepto-gasto-codigo-ec/proyecto-concepto-gasto-codigo-ec.fragment';
@@ -55,7 +56,8 @@ export class ProyectoConceptoGastoActionService extends ActionService {
     route: ActivatedRoute,
     proyectoConceptoGastoService: ProyectoConceptoGastoService,
     proyectoConceptoGastoCodigoEcService: ProyectoConceptoGastoCodigoEcService,
-    private convocatoriaConceptoGastoService: ConvocatoriaConceptoGastoService
+    codigoEconomicoGastoService: CodigoEconomicoGastoService,
+    private convocatoriaConceptoGastoService: ConvocatoriaConceptoGastoService,
   ) {
     super();
     this.data = route.snapshot.data[PROYECTO_CONCEPTO_GASTO_DATA_KEY];
@@ -76,8 +78,8 @@ export class ProyectoConceptoGastoActionService extends ActionService {
     this.datosGenerales = new ProyectoConceptoGastoDatosGeneralesFragment(id, this.data.proyecto,
       proyectoConceptoGastoService, this.proyectoConceptoGastos, this.data.permitido, this.data.readonly);
 
-    this.codigosEconomicos = new ProyectoConceptoGastoCodigoEcFragment(id, convocatoriaConceptoGastoId,
-      proyectoConceptoGastoService, proyectoConceptoGastoCodigoEcService, convocatoriaConceptoGastoService, this.data.readonly);
+    this.codigosEconomicos = new ProyectoConceptoGastoCodigoEcFragment(id, convocatoriaConceptoGastoId, proyectoConceptoGastoService,
+      proyectoConceptoGastoCodigoEcService, convocatoriaConceptoGastoService, codigoEconomicoGastoService, this.data.readonly);
 
     this.addFragment(this.FRAGMENT.DATOS_GENERALES, this.datosGenerales);
     this.addFragment(this.FRAGMENT.CODIGOS_ECONOMICOS, this.codigosEconomicos);

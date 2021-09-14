@@ -8,8 +8,6 @@ import { SgiAuthModule, SgiAuthService } from '@sgi/framework/auth';
 import { BreadcrumbComponent } from '@shared/breadcrumb/breadcrumb.component';
 import { RootComponent } from '@shared/root/root.component';
 import { LoggerTestingModule } from 'ngx-logger/testing';
-
-import { EtiMenuPrincipalComponent } from '../eti-menu-principal/eti-menu-principal.component';
 import { EtiRootComponent } from './eti-root.component';
 
 describe('EtiRootComponent', () => {
@@ -21,7 +19,6 @@ describe('EtiRootComponent', () => {
       declarations: [
         EtiRootComponent,
         RootComponent,
-        EtiMenuPrincipalComponent,
         BreadcrumbComponent
       ],
       imports: [

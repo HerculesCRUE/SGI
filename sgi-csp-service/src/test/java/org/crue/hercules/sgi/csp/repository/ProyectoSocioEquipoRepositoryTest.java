@@ -38,7 +38,6 @@ public class ProyectoSocioEquipoRepositoryTest extends BaseRepositoryTest {
         .fechaFin(Instant.parse("2021-11-20T23:59:59Z"))
         .unidadGestionRef("2").modeloEjecucion(modeloEjecucion1)
         .activo(Boolean.TRUE)
-        .fechaBase(Instant.parse("2020-11-20T00:00:00Z"))
         .build());
 
     RolSocio rolSocio = entityManager.persistAndFlush(RolSocio.builder()

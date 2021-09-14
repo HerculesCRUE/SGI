@@ -3,6 +3,7 @@ import { FormControl, FormGroup } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { AbstractTablePaginationComponent } from '@core/component/abstract-table-pagination.component';
+import { HttpProblem } from '@core/errors/http-problem';
 import { MSG_PARAMS } from '@core/i18n';
 import { ITipoHito } from '@core/models/csp/tipos-configuracion';
 import { FxFlexProperties } from '@core/models/shared/flexLayout/fx-flex-properties';
@@ -273,7 +274,12 @@ export class TipoHitoListadoComponent extends AbstractTablePaginationComponent<I
               },
               (error) => {
                 this.logger.error(error);
-                this.snackBarService.showError(this.textoUpdateSuccess);
+                if (error instanceof HttpProblem) {
+                  this.snackBarService.showError(error);
+                }
+                else {
+                  this.snackBarService.showError(this.textoUpdateSuccess);
+                }
               }
             );
           } else {
@@ -284,7 +290,12 @@ export class TipoHitoListadoComponent extends AbstractTablePaginationComponent<I
               },
               (error) => {
                 this.logger.error(error);
-                this.snackBarService.showError(this.textoCrearError);
+                if (error instanceof HttpProblem) {
+                  this.snackBarService.showError(error);
+                }
+                else {
+                  this.snackBarService.showError(this.textoCrearError);
+                }
               }
             );
           }
@@ -313,7 +324,12 @@ export class TipoHitoListadoComponent extends AbstractTablePaginationComponent<I
         },
         (error) => {
           this.logger.error(error);
-          this.snackBarService.showError(this.textoErrorDesactivar);
+          if (error instanceof HttpProblem) {
+            this.snackBarService.showError(error);
+          }
+          else {
+            this.snackBarService.showError(this.textoErrorDesactivar);
+          }
         }
       );
     this.suscripciones.push(subcription);
@@ -340,7 +356,12 @@ export class TipoHitoListadoComponent extends AbstractTablePaginationComponent<I
         (error) => {
           this.logger.error(error);
           tipoHito.activo = false;
-          this.snackBarService.showError(this.textoSuccessReactivar);
+          if (error instanceof HttpProblem) {
+            this.snackBarService.showError(error);
+          }
+          else {
+            this.snackBarService.showError(this.textoSuccessReactivar);
+          }
         }
       );
     this.suscripciones.push(subcription);

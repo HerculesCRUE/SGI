@@ -68,7 +68,7 @@ public class ConceptoGastoServiceTest extends BaseServiceTest {
     // when: Creamos el ConceptoGasto
     // then: Lanza una excepcion porque el ConceptoGasto ya tiene id
     Assertions.assertThatThrownBy(() -> service.create(conceptoGasto)).isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("ConceptoGasto id tiene que ser null para crear un nuevo ConceptoGasto");
+        .hasMessage("The Identifier from Spend Concept must be null");
   }
 
   @Test
@@ -364,6 +364,7 @@ public class ConceptoGastoServiceTest extends BaseServiceTest {
     conceptoGasto.setNombre(nombre);
     conceptoGasto.setDescripcion("descripcion-" + id);
     conceptoGasto.setActivo(true);
+    conceptoGasto.setCostesIndirectos(true);
 
     return conceptoGasto;
   }

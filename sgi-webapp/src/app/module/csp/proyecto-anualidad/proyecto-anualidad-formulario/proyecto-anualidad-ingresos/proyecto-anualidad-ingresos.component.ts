@@ -43,7 +43,7 @@ export class ProyectoAnualidadIngresosComponent extends FragmentComponent implem
     return MSG_PARAMS;
   }
 
-  constructor(actionService: ProyectoAnualidadActionService,
+  constructor(public actionService: ProyectoAnualidadActionService,
     private dialogService: DialogService,
     private readonly translate: TranslateService,
     private matDialog: MatDialog) {
@@ -92,7 +92,8 @@ export class ProyectoAnualidadIngresosComponent extends FragmentComponent implem
     const data: ProyectoAnualidadIngresoModalData = {
       anualidadIngreso: anualidadIngreso ? anualidadIngreso : {} as IAnualidadIngreso,
       proyectoId: this.formPart.proyectoId,
-      isEdit: false
+      isEdit: false,
+      readonly: this.actionService.readonly
     };
     const config = {
       panelClass: 'sgi-dialog-container',

@@ -7,28 +7,28 @@
       <column name="nombre" value="OTRI" />
       <column name="acronimo" value="OTRI" />
       <column name="descripcion" value="Oficina de Transferencia de Resultados de Investigación" />
-      <column name="activo" value="true" />
+      <column name="activo" valueBoolean="true" />
     </insert>
     <insert tableName="unidad">
       <column name="id" valueSequenceNext="unidad_seq" />
       <column name="nombre" value="OPE" />
       <column name="acronimo" value="OPE" />
       <column name="descripcion" value="Oficina de Proyectos Europeos" />
-      <column name="activo" value="true" />
+      <column name="activo" valueBoolean="true" />
     </insert>
     <insert tableName="unidad">
       <column name="id" valueSequenceNext="unidad_seq" />
       <column name="nombre" value="UGI" />
       <column name="acronimo" value="UGI" />
       <column name="descripcion" value="Unidad de Gestión de la Investigación" />
-      <column name="activo" value="true" />
+      <column name="activo" valueBoolean="true" />
     </insert>
     <insert tableName="unidad">
       <column name="id" valueSequenceNext="unidad_seq" />
       <column name="nombre" value="CAT" />
       <column name="acronimo" value="CAT" />
       <column name="descripcion" value="Centro de Apoyo Tecnológico" />
-      <column name="activo" value="false" />
+      <column name="activo" valueBoolean="false" />
     </insert>
   </changeSet>
 

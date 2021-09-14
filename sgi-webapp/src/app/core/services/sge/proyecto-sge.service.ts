@@ -4,7 +4,9 @@ import { PROYECTO_SGE_CONVERTER } from '@core/converters/sge/proyecto-sge.conver
 import { IProyectoSgeBackend } from '@core/models/sge/backend/proyecto-sge-backend';
 import { IProyectoSge } from '@core/models/sge/proyecto-sge';
 import { environment } from '@env';
+import { FormlyFieldConfig } from '@ngx-formly/core';
 import { SgiMutableRestService } from '@sgi/framework/http';
+import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -21,4 +23,11 @@ export class ProyectoSgeService extends SgiMutableRestService<string, IProyectoS
     );
   }
 
+  createProyecto(model: any): Observable<void> {
+    return this.http.post<void>(`${this.endpointUrl}/formly`, model);
+  }
+
+  getFormlyCreate(): Observable<FormlyFieldConfig[]> {
+    return this.http.get<FormlyFieldConfig[]>(`${this.endpointUrl}/formly/create`);
+  }
 }

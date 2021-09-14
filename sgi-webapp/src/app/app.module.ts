@@ -1,14 +1,19 @@
 import { registerLocaleData } from '@angular/common';
-import { HttpClient, HttpClientModule } from '@angular/common/http';
+import { HttpClient, HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import localeEs from '@angular/common/locales/es';
 import { APP_INITIALIZER, LOCALE_ID, NgModule } from '@angular/core';
 import { CoreModule } from '@angular/flex-layout';
 import { MatPaginatorIntl } from '@angular/material/paginator';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { SgiErrorHttpInterceptor } from '@core/error-http-interceptor';
+import { SgiLanguageHttpInterceptor } from '@core/languague-http-interceptor';
+import { TimeZoneService } from '@core/services/timezone.service';
+import { TIME_ZONE } from '@core/time-zone';
 import { environment } from '@env';
 import { AppMatPaginatorIntl } from '@material/app-mat-paginator-intl';
 import { MaterialDesignModule } from '@material/material-design.module';
+import { FormlyModule } from '@ngx-formly/core';
 import { TranslateCompiler, TranslateLoader, TranslateModule } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { SgiAuthMode, SgiAuthModule, SGI_AUTH_CONFIG } from '@sgi/framework/auth';
@@ -57,7 +62,8 @@ const appInitializerFn = (appConfig: ConfigService) => {
     }),
     BlockModule,
     HttpClientModule,
-    SgiAuthModule.forRoot()
+    SgiAuthModule.forRoot(),
+    FormlyModule.forRoot()
   ],
   providers: [
     ConfigService,
@@ -82,6 +88,21 @@ const appInitializerFn = (appConfig: ConfigService) => {
     {
       provide: LOCALE_ID,
       useValue: 'es'
+    },
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: SgiLanguageHttpInterceptor,
+      multi: true
+    },
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: SgiErrorHttpInterceptor,
+      multi: true
+    },
+    {
+      provide: TIME_ZONE,
+      useFactory: (timeZoneService: TimeZoneService) => timeZoneService.zone$,
+      deps: [TimeZoneService]
     }
   ],
   bootstrap: [AppComponent]

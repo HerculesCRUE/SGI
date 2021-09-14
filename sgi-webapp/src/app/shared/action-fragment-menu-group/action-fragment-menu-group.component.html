@@ -4,10 +4,13 @@
       <div>
         <span>{{title}}</span>
         <span *ngIf="status$ | async as status;">
-          <mat-icon *ngIf="status.changes && !status.errors" aria-hidden="false" class="icons warning-icon">
-            error_outline</mat-icon>
-          <mat-icon *ngIf="status.errors" aria-hidden="false" class="icons danger-icon">
-            error</mat-icon>
+          <sgi-icon-changes *ngIf="status.changes && !status.errors && !status.problems"
+            tooltip="{{'msg.footer.changes' | translate}}">
+          </sgi-icon-changes>
+          <sgi-icon-errors *ngIf="status.errors && !status.problems" tooltip="{{'error.footer.form' | translate}}">
+          </sgi-icon-errors>
+          <sgi-icon-problems *ngIf="status.problems && status.changes" tooltip="{{'msg.footer.problems' | translate}}">
+          </sgi-icon-problems>
         </span>
       </div>
     </mat-expansion-panel-header>

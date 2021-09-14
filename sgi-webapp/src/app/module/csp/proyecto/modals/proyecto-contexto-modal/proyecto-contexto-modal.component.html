@@ -5,65 +5,70 @@
   </button>
 </div>
 <mat-dialog-content>
-    <form class="form-inline" [formGroup]="formGroup">
+  <form class="form-inline" [formGroup]="formGroup">
+    <div>
       <div>
-        <div>
-          <mat-form-field class="input-form">
-            <mat-label>{{'list.entity' | translate:msgParamEntity}}</mat-label>
-            <input type="text" placeholder="{{'list.entity' | translate:msgParamEntity}}" arial-label="Number" matInput
-              formControlName="padre" [matAutocomplete]="auto" required>
-            <mat-autocomplete #auto="matAutocomplete" [displayWith]="getNombreAreaTematica">
-              <mat-option *ngFor="let areaTematica of areasTematicas$ | async" [value]="areaTematica">
-                {{areaTematica.nombre}}
-              </mat-option>
-            </mat-autocomplete>
-            <mat-error *ngIf="formGroup.controls.padre.errors?.required">
-              {{'error.required.entity' | translate:msgParamListadoEntity}}
-            </mat-error>
-            <mat-error *ngIf="formGroup.controls.padre.errors?.invalid">
-              {{'error.invalid.entity' | translate:msgParamListadoEntity}}
-            </mat-error>
-          </mat-form-field>
-        </div>
+        <mat-form-field class="input-form">
+          <mat-label>{{'list.entity' | translate:msgParamEntity}}</mat-label>
+          <input type="text" placeholder="{{'list.entity' | translate:msgParamEntity}}" arial-label="Number" matInput
+            formControlName="padre" [matAutocomplete]="auto" required>
+          <mat-autocomplete #auto="matAutocomplete" [displayWith]="getNombreAreaTematica">
+            <mat-option *ngFor="let areaTematica of areasTematicas$ | async" [value]="areaTematica">
+              {{areaTematica.nombre}}
+            </mat-option>
+          </mat-autocomplete>
+          <mat-error *ngIf="formGroup.controls.padre.errors?.required">
+            {{'error.required.entity' | translate:msgParamListadoEntity}}
+          </mat-error>
+          <mat-error *ngIf="formGroup.controls.padre.errors?.invalid">
+            {{'error.invalid.entity' | translate:msgParamListadoEntity}}
+          </mat-error>
+        </mat-form-field>
       </div>
-      <div>
-        <div class="programa">
-          <div class="arbol">
-            <mat-tree [dataSource]="dataSource" [treeControl]="treeControl" class="arbol-tree">
-              <mat-tree-node *matTreeNodeDef="let node" matTreeNodeToggle>
-                <li class="mat-tree-node">
-                  <button mat-icon-button disabled></button>
-                  <mat-checkbox class="checkbox" color="primary" [checked]="node === checkedNode"
-                    (change)="onCheckNode(node, $event)">
+    </div>
+    <div>
+      <div class="programa">
+        <div class="arbol">
+          <mat-tree [dataSource]="dataSource" [treeControl]="treeControl" class="arbol-tree">
+            <mat-tree-node *matTreeNodeDef="let node" matTreeNodeToggle>
+              <li class="mat-tree-node">
+                <button mat-icon-button disabled></button>
+                <mat-checkbox class="checkbox" color="primary" [checked]="node === checkedNode"
+                  (change)="onCheckNode(node, $event)">
+                  {{node.areaTematica.value.nombre}}
+                </mat-checkbox>
+              </li>
+            </mat-tree-node>
+            <mat-nested-tree-node *matTreeNodeDef="let node; when: hasChild">
+              <li>
+                <div class="mat-tree-node">
+                  <button mat-icon-button matTreeNodeToggle
+                    [attr.aria-label]="'Toggle ' + node.areaTematica.value.nombre">
+                    <mat-icon color="primary" class="mat-icon-rtl-mirror">
+                      {{treeControl.isExpanded(node) ? 'expand_more' : 'chevron_right'}}
+                    </mat-icon>
+                  </button>
+
+                  <mat-label *ngIf="node === rootNodeConvocatoria">
+                    {{node.areaTematica.value.nombre}}
+                  </mat-label>
+
+                  <mat-checkbox *ngIf="node !== rootNodeConvocatoria" class="checkbox" color="primary"
+                    [checked]="node === checkedNode" (change)="onCheckNode(node, $event)">
                     {{node.areaTematica.value.nombre}}
                   </mat-checkbox>
-                </li>
-              </mat-tree-node>
-              <mat-nested-tree-node *matTreeNodeDef="let node; when: hasChild">
-                <li>
-                  <div class="mat-tree-node">
-                    <button mat-icon-button matTreeNodeToggle
-                      [attr.aria-label]="'Toggle ' + node.areaTematica.value.nombre">
-                      <mat-icon color="primary" class="mat-icon-rtl-mirror">
-                        {{treeControl.isExpanded(node) ? 'expand_more' : 'chevron_right'}}
-                      </mat-icon>
-                    </button>
-                    <mat-checkbox class="checkbox" color="primary" [checked]="node === checkedNode"
-                      (change)="onCheckNode(node, $event)">
-                      {{node.areaTematica.value.nombre}}
-                    </mat-checkbox>
-                  </div>
-                  <ul [class.arbol-invisible]="!treeControl.isExpanded(node)">
-                    <ng-container matTreeNodeOutlet></ng-container>
-                  </ul>
-                </li>
-              </mat-nested-tree-node>
-            </mat-tree>
-          </div>
+                </div>
+                <ul [class.arbol-invisible]="!treeControl.isExpanded(node)">
+                  <ng-container matTreeNodeOutlet></ng-container>
+                </ul>
+              </li>
+            </mat-nested-tree-node>
+          </mat-tree>
         </div>
       </div>
-    </form>
-  </mat-dialog-content>
+    </div>
+  </form>
+</mat-dialog-content>
 <mat-dialog-actions>
   <button color="accent" (click)="saveOrUpdate()" mat-raised-button type="submit">
     <mat-icon class="save-icon">save</mat-icon>{{textSaveOrUpdate | translate}}

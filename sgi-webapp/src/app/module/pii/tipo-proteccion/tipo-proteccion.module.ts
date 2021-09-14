@@ -5,12 +5,24 @@ import { MaterialDesignModule } from '@material/material-design.module';
 import { TranslateModule } from '@ngx-translate/core';
 import { SgiAuthModule } from '@sgi/framework/auth';
 import { SharedModule } from '@shared/shared.module';
+import { TipoProteccionSubtipoModalComponent } from './modals/tipo-proteccion-subtipo-modal/tipo-proteccion-subtipo-modal.component';
+import { TipoProteccionCrearComponent } from './tipo-proteccion-crear/tipo-proteccion-crear.component';
+import { TipoProteccionEditarComponent } from './tipo-proteccion-editar/tipo-proteccion-editar.component';
+import { TipoProteccionDatosGeneralesComponent } from './tipo-proteccion-formulario/tipo-proteccion-datos-generales/tipo-proteccion-datos-generales.component';
+import { TipoProteccionSubtiposComponent } from './tipo-proteccion-formulario/tipo-proteccion-subtipos/tipo-proteccion-subtipos.component';
+import { TipoProteccionListadoComponent } from './tipo-proteccion-listado/tipo-proteccion-listado.component';
 import { TipoProteccionRoutingModule } from './tipo-proteccion-routing.module';
-import { PiiTipoProteccionListadoComponent } from './pii-tipo-proteccion-listado/pii-tipo-proteccion-listado.component';
-import { PiiTipoProteccionModalComponent } from './pii-tipo-proteccion-modal/pii-tipo-proteccion-modal.component';
+import { TipoProteccionResolver } from './tipo-proteccion.resolver';
 
 @NgModule({
-  declarations: [PiiTipoProteccionListadoComponent, PiiTipoProteccionModalComponent],
+  declarations: [
+    TipoProteccionListadoComponent,
+    TipoProteccionCrearComponent,
+    TipoProteccionEditarComponent,
+    TipoProteccionDatosGeneralesComponent,
+    TipoProteccionSubtiposComponent,
+    TipoProteccionSubtipoModalComponent
+  ],
   imports: [
     CommonModule,
     SharedModule,
@@ -20,6 +32,9 @@ import { PiiTipoProteccionModalComponent } from './pii-tipo-proteccion-modal/pii
     TranslateModule,
     FormsModule,
     SgiAuthModule
+  ],
+  providers: [
+    TipoProteccionResolver
   ]
 })
 export class TipoProteccionModule { }

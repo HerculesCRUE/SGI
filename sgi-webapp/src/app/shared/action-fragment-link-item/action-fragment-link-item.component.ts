@@ -8,8 +8,5 @@ import { Component, Input } from '@angular/core';
 export class ActionFragmentLinkItemComponent {
   @Input() title: string;
   @Input() route: string | string[];
-
-  constructor() { }
-
-
+  @Input() queryParams: any;
 }

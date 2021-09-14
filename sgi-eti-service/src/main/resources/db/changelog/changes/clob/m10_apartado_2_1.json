@@ -1,0 +1,89 @@
+[
+  {
+    "key": "ap2_1",
+    "wrappers": [
+      "expansion-panel"
+    ],
+    "templateOptions": {
+      "label": "2.1 Personal que llevará a cabo las tareas con seres humanos, sus muestras y/o sus datos"
+    },
+    "fieldGroup": [
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "<p>A continuación se muestra todas las personas integrantes del equipo de investigador, incluido el/la solicitante. Añadir en este apartado cualquier otra persona que colabore en el proyecto ccómo reclutadores, encuestadores, etc.. En el caso de proyecto tutelado añadir al tutor o director del mismo.<br><br>Especificar por persona:<br><br><ul><li>Datos identificativos (nombre, NIF, vinculación y nivel académico)</li><li>Tareas concretas que realizará de acuerdo a lo descrito en el apartado 3.2 Diseño metodológico (añadir cuentas tareas sean necesarias)</li><li>Formación y experiencia previa en cada tarea en particular (realización de encuestas, reclutamiento, toma de muestras, tratamiento de datos, trabajo en laboratorio, dirección de tesis, etc).</li></ul></p><p>Para completar esta sección ir a <b>Equipo investigador</b></p>"
+      },
+      {
+        "type": "table-crud",
+        "key": "equipoInvestigador",
+        "templateOptions": {
+          "entity": "equipo investigador",
+          "gender": "male",
+          "disabled": true
+        },
+        "fieldArray": {
+          "templateOptions": {
+            "text": "Equipo investigador"
+          },
+          "fieldGroup": [
+            {
+              "key": "nombre",
+              "type": "input",
+              "templateOptions": {
+                "label": "Nombre",
+                "order": 10,
+                "expressionModelValue": "formState.tareas[$1].equipoTrabajo.persona?.nombre"
+              }
+            },
+            {
+              "key": "nif",
+              "type": "input",
+              "templateOptions": {
+                "label": "NIF",
+                "order": 20,
+                "expressionModelValue": "formState.tareas[$1].equipoTrabajo.persona?.numeroDocumento"
+              }
+            },
+            {
+              "key": "vinculacion",
+              "type": "input",
+              "templateOptions": {
+                "label": "Vinculación",
+                "order": 30,
+                "expressionModelValue": "formState.tareas[$1].equipoTrabajo.persona?.vinculacion?.categoriaProfesional?.nombre"
+              }
+            },
+            {
+              "key": "nivelAcademico",
+              "type": "input",
+              "templateOptions": {
+                "label": "Nivel académico",
+                "order": 40,
+                "expressionModelValue": "formState.tareas[$1].equipoTrabajo.persona.datosAcademicos?.nivelAcademico?.nombre"
+              }
+            },
+            {
+              "key": "tarea",
+              "type": "input",
+              "templateOptions": {
+                "label": "Tarea",
+                "order": 50,
+                "expressionModelValue": "formState.tareas[$1].tarea"
+              }
+            },
+            {
+              "key": "experiencia",
+              "type": "input",
+              "templateOptions": {
+                "label": "Experiencia",
+                "order": 60,
+                "expressionModelValue": "formState.tareas[$1].formacion"
+              }
+            }
+          ]
+        }
+      }
+    ]
+  }
+]

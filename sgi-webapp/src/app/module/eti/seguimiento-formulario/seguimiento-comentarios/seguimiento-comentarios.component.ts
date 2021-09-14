@@ -165,15 +165,13 @@ export class SeguimientoComentariosComponent extends FragmentComponent implement
     dialogRef.afterClosed().subscribe(
       (modalData: ComentarioModalData) => {
         if (modalData && modalData.comentario) {
+          this.formPart.deleteComentario(wrapperRef);
           this.subscriptions.push(this.getTipoComentario().subscribe(
             (tipoComentario) => {
               modalData.comentario.tipoComentario = tipoComentario;
+              this.formPart.addComentario(modalData.comentario);
             }
           ));
-          if (!wrapperRef.created) {
-            wrapperRef.setEdited();
-          }
-          this.formPart.setChanges(true);
         }
       }
     );

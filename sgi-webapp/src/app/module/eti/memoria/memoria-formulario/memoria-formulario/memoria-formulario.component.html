@@ -1,5 +1,4 @@
-<section class="memoria-formulario">
-  <h2>{{'eti.memoria.formulario' | translate}}</h2>
+<sgi-fragment title="{{'eti.memoria.formulario' | translate}}" class="memoria-formulario">
   <mat-horizontal-stepper [linear]="true" labelPosition="bottom" (selectionChange)="onStepChange($event)">
     <ng-container *ngFor="let block of blocks; let step_index = index; let last = last;">
       <mat-step [stepControl]="block.formlyData.formGroup">
@@ -41,4 +40,4 @@
     </ng-container>
 
   </mat-horizontal-stepper>
-</section>
+</sgi-fragment>

@@ -15,9 +15,9 @@
 */
 
 INSERT INTO csp.solicitud_proyecto
-  (id, titulo, colaborativo, tipo_presupuesto) 
+  (id, colaborativo, tipo_presupuesto) 
 VALUES
-  (1, 'titulo-001', true, 'INDIVIDUAL'),
-  (2, 'titulo-002', true, 'INDIVIDUAL'),
-  (3, 'titulo-003', true, 'GLOBAL'),
-  (4, 'titulo-004', false, 'GLOBAL');
+  (1, true, 'POR_ENTIDAD'),
+  (2, true, 'POR_ENTIDAD'),
+  (3, true, 'GLOBAL'),
+  (4, false, 'GLOBAL');

@@ -1,0 +1,32 @@
+mat-table {
+  .expanded-row {
+    height: 0;
+    min-height: 0;
+    border-bottom-width: 0;
+    .mat-cell {
+      border-bottom-width: 0;
+      overflow: hidden;
+      display: flex;
+      height: 0;
+      min-height: 0;
+    }
+  }
+  .mat-cell {
+    .mat-icon {
+      cursor: pointer;
+    }
+  }
+  .mat-cell, .mat-header-cell {
+    &.computed {
+      justify-content: flex-end;
+      padding-right: 10px;
+      text-align: right;
+    }
+  }
+  .mat-column-anualidad {
+    flex: 1.2;
+  }
+  .mat-column-aplicacionPresupuestaria {
+    flex: 1.7;
+  }
+}

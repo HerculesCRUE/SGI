@@ -1,6 +1,4 @@
-<section class="proyecto-contexto">
-  <h2>{{'label.datos-generales' | translate}} - {{'csp.proyecto-contexto' | translate}}</h2>
-
+<sgi-fragment title="{{'label.datos-generales' | translate}} - {{'csp.proyecto-contexto' | translate}}">
   <form [formGroup]="formGroup">
 
 
@@ -64,39 +62,43 @@
     <!-- Áreas temáticas -->
     <div class="separation-button">
       <h3>{{'list.entity' | translate:msgParamAreaTematicaEntities}}</h3>
-      <table class="mat-elevation-z8 table-acta" mat-table [dataSource]="convocatoriaAreaTematicas" matSort
-        matSortActive="id" matSortDirection="asc" matSortDisableClear *ngIf="convocatoriaAreaTematicas.data.length > 0">
-        <ng-container matColumnDef="nombreRaizArbol">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>
-            {{'list.entity' | translate:msgParamAreaEntities}}
-          </th>
-          <td mat-cell *matCellDef="let data">{{data.root?.nombre}}</td>
-        </ng-container>
-        <ng-container matColumnDef="areaTematicaConvocatoria">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>
-            {{'csp.area-tematica.nombre.convocatoria' | translate}}
-          </th>
-          <td mat-cell *matCellDef="let data"> {{formPart.convocatoriaAreaTematica?.nombre}} </td>
-        </ng-container>
-        <ng-container matColumnDef="areaTematicaProyecto">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>
-            {{'csp.area-tematica.proyecto' | translate}}
-          </th>
-          <td mat-cell *matCellDef="let data"> {{data.areaTematica?.nombre}} </td>
-        </ng-container>
-        <ng-container matColumnDef="acciones">
-          <th mat-header-cell *matHeaderCellDef>{{'label.actions' | translate}}
-          </th>
-          <td mat-cell *matCellDef="let data">
-            <ng-container *sgiHasAuthorityForAnyUO="'CSP-PRO-E'">
-              <button color="four" (click)="openModal(data)"
-                mat-raised-button>{{'csp.proyecto-contexto.add.area.selecciona' | translate}}</button>
-            </ng-container>
-          </td>
-        </ng-container>
-        <tr mat-header-row *matHeaderRowDef="columns"></tr>
-        <tr mat-row *matRowDef="let row; columns: columns;"></tr>
-      </table>
+      <div class="mat-elevation-z4">
+        <table mat-table [dataSource]="convocatoriaAreaTematicas" matSort matSortActive="id" matSortDirection="asc"
+          matSortDisableClear *ngIf="convocatoriaAreaTematicas.data.length > 0">
+          <ng-container matColumnDef="nombreRaizArbol">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>
+              {{'list.entity' | translate:msgParamAreaEntities}}
+            </th>
+            <td mat-cell *matCellDef="let data">{{data.root?.nombre}}</td>
+          </ng-container>
+          <ng-container matColumnDef="areaTematicaConvocatoria">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>
+              {{'csp.area-tematica.nombre.convocatoria' | translate}}
+            </th>
+            <td mat-cell *matCellDef="let data"> {{data.areaTematicaConvocatoria?.nombre}} </td>
+          </ng-container>
+          <ng-container matColumnDef="areaTematicaProyecto">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>
+              {{'csp.area-tematica.proyecto' | translate}}
+            </th>
+            <td mat-cell *matCellDef="let data"> {{data.areaTematica?.nombre}} </td>
+          </ng-container>
+          <ng-container matColumnDef="acciones">
+            <th mat-header-cell *matHeaderCellDef>{{'label.actions' | translate}}
+            </th>
+            <td mat-cell *matCellDef="let data">
+              <ng-container *sgiHasAuthorityForAnyUO="'CSP-PRO-E'">
+                <button mat-button matTooltip="{{'csp.proyecto-contexto.add.area.selecciona' | translate}}"
+                  (click)="openModal(data)">
+                  <mat-icon color="primary">done_outline</mat-icon>
+                </button>
+              </ng-container>
+            </td>
+          </ng-container>
+          <tr mat-header-row *matHeaderRowDef="columns"></tr>
+          <tr mat-row *matRowDef="let row; columns: columns;"></tr>
+        </table>
+      </div>
     </div>
 
     <ng-container *sgiHasAuthorityForAnyUO="'CSP-PRO-E'">
@@ -111,4 +113,4 @@
 
   </form>
 
-</section>
+</sgi-fragment>

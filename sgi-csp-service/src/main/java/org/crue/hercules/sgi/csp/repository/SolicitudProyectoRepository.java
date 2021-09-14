@@ -6,4 +6,5 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
 public interface SolicitudProyectoRepository
     extends JpaRepository<SolicitudProyecto, Long>, JpaSpecificationExecutor<SolicitudProyecto> {
+
 }

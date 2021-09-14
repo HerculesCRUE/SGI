@@ -1,0 +1,11 @@
+@import "colors.scss";
+
+span {
+  border-radius: 16px;
+  padding: 7px 25px 7px 7px;
+  &.changes,
+  &.errors,
+  &.problems {
+    background-color: map-get($sgi-custom-colors, bg-action-footer-message);
+  }
+}

@@ -1,0 +1,297 @@
+<sgi-fragment title="{{'label.datos-generales' | translate}}">
+  <form [formGroup]="formGroup">
+
+    <!-- Número de invención -->
+    <div *ngIf="isEdit" [fxLayout]="fxLayoutProperties.layout" [fxLayoutAlign]="fxLayoutProperties.layoutAlign">
+      <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties33.md"
+        [fxFlex.gt-md]="fxFlexProperties33.gtMd" [fxFlexOrder]="fxFlexProperties33.order">
+        <mat-form-field fxFill>
+          <mat-label>{{'pii.invencion.numero-invencion' | translate}}</mat-label>
+          <input matInput formControlName="id" type="text" id="id"
+            placeholder="{{'pii.invencion.numero-invencion'  | translate}}">
+        </mat-form-field>
+      </div>
+    </div>
+    <div [fxLayout]="fxLayoutProperties.layout" [fxLayoutAlign]="fxLayoutProperties.layoutAlign"
+      [fxLayoutGap]="fxLayoutProperties.gap">
+      <!-- Título -->
+      <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties66.md"
+        [fxFlex.gt-md]="fxFlexProperties66.gtMd" [fxFlexOrder]="fxFlexProperties66.order">
+        <mat-form-field fxFill>
+          <mat-label>{{'pii.invencion.titulo' | translate}}</mat-label>
+          <input matInput formControlName="titulo" type="text" id="titulo"
+            placeholder="{{'pii.invencion.titulo' | translate}}" required>
+          <mat-error *ngIf="formGroup.controls.titulo.errors?.required">
+            {{'error.required.entity' | translate:msgParamTituloEntity}}
+          </mat-error>
+          <mat-error *ngIf="formGroup.controls.titulo.errors?.maxlength">
+            {{'error.maxlength.entity' | translate:msgParamTituloEntity}}
+          </mat-error>
+        </mat-form-field>
+      </div>
+
+      <!-- Fecha Comunicación -->
+      <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties33.md"
+        [fxFlex.gt-md]="fxFlexProperties33.gtMd" [fxFlexOrder]="fxFlexProperties33.order">
+        <mat-form-field fxFill>
+          <mat-label>{{'pii.invencion.fecha-comunicacion' | translate}}</mat-label>
+          <input matInput formControlName="fechaComunicacion" [matDatepicker]="fechaComunicacion" required>
+          <mat-datepicker-toggle matSuffix [for]="fechaComunicacion"></mat-datepicker-toggle>
+          <mat-datepicker #fechaComunicacion></mat-datepicker>
+          <mat-error *ngIf="formGroup.controls.fechaComunicacion.errors?.required">
+            {{'error.required.entity' | translate:msgParamFechaComunicacionEntity}}
+          </mat-error>
+        </mat-form-field>
+      </div>
+    </div>
+
+    <!-- Descripción -->
+    <div [fxLayout]="fxLayoutProperties.layout" [fxLayoutAlign]="fxLayoutProperties.layoutAlign">
+      <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
+        [fxFlexOrder]="fxFlexProperties.order">
+        <mat-form-field fxFill>
+          <mat-label>{{'pii.invencion.descripcion' | translate}}</mat-label>
+          <textarea matInput formControlName="descripcion" id="descripcion"
+            placeholder="{{'pii.invencion.descripcion' | translate}}" required></textarea>
+          <mat-error *ngIf="formGroup.controls.descripcion.errors?.required">
+            {{'error.required.entity' | translate:msgParamDescripcionEntity}}
+          </mat-error>
+          <mat-error *ngIf="formGroup.controls.descripcion.errors?.maxlength">
+            {{'error.maxlength.entity' | translate:msgParamDescripcionEntity}}
+          </mat-error>
+        </mat-form-field>
+      </div>
+    </div>
+
+    <div [fxLayout]="fxLayoutProperties.layout" [fxLayoutAlign]="fxLayoutProperties.layoutAlign"
+      [fxLayoutGap]="fxLayoutProperties.gap">
+
+      <!-- Tipor de Protección -->
+      <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties33.md"
+        [fxFlex.gt-md]="fxFlexProperties33.gtMd" [fxFlexOrder]="fxFlexProperties33.order">
+        <mat-form-field fxFill>
+          <mat-label>{{'pii.invencion.tipo-proteccion' | translate}}</mat-label>
+          <sgi-select-entity formControlName="tipoProteccion" [options]=" tiposProteccion$ | async" required>
+          </sgi-select-entity>
+          <mat-error *ngIf="formGroup.controls.tipoProteccion.errors?.required">
+            {{'error.required.entity' | translate:msgParamTipoProteccionEntity}}
+          </mat-error>
+        </mat-form-field>
+      </div>
+
+      <!-- Subtipo de Protección -->
+      <ng-container *ngIf="subtiposProteccion$ | async as subtiposProteccion">
+        <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties33.md"
+          [fxFlex.gt-md]="fxFlexProperties33.gtMd" [fxFlexOrder]="fxFlexProperties33.order"
+          *ngIf="subtiposProteccion?.length">
+          <mat-form-field fxFill>
+            <mat-label>{{'pii.invencion.subtipo-proteccion' | translate}}</mat-label>
+            <sgi-select-entity formControlName="subtipoProteccion" [options]=" subtiposProteccion">
+            </sgi-select-entity>
+          </mat-form-field>
+        </div>
+      </ng-container>
+
+      <!-- Proyecto -->
+      <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties33.md"
+        [fxFlex.gt-md]="fxFlexProperties33.gtMd" [fxFlexOrder]="fxFlexProperties33.order">
+        <mat-form-field fxFill>
+          <mat-label>{{'pii.invencion.proyecto' | translate}}</mat-label>
+          <sgi-select-proyecto placeholder="{{'pii.invencion.proyecto' | translate}}" formControlName="proyecto">
+          </sgi-select-proyecto>
+        </mat-form-field>
+      </div>
+    </div>
+
+    <!-- Sectores de Aplicación -->
+    <section class="invencion-sectores-aplicacion">
+      <div [fxLayout]="fxLayoutProperties.layout" [fxLayoutAlign]="fxLayoutProperties.layoutAlign">
+        <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
+          [fxFlexOrder]="fxFlexProperties.order">
+          <h2>{{'pii.sector-aplicacion' | translate:MSG_PARAMS.CARDINALIRY.PLURAL }}</h2>
+
+          <div class="mat-elevation-z4">
+            <table mat-table [dataSource]="sectorAplicacionDataSource" matSort matSortActive="sector"
+              matSortDirection="asc" matSortDisableClear #sortSectorAplicacion="matSort">
+
+              <!-- Nombre Sector Aplicacion Column -->
+              <ng-container matColumnDef="sector">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                  {{'pii.invencion.sector' | translate}}
+                </th>
+                <td mat-cell *matCellDef="let wrapper"> {{wrapper.value.sectorAplicacion.nombre}} </td>
+              </ng-container>
+
+              <!-- Acciones Column -->
+              <ng-container matColumnDef="acciones">
+                <th mat-header-cell *matHeaderCellDef> {{'label.actions' | translate}} </th>
+                <td mat-cell *matCellDef="let wrapper; let i = index">
+                  <ng-container>
+                    <button *ngIf="formPart.hasEditPerm()" mat-button matTooltip="{{'btn.delete' | translate}}"
+                      (click)="deleteSectorAplicacion(wrapper)">
+                      <mat-icon color="warn">highlight_off</mat-icon>
+                    </button>
+                  </ng-container>
+                </td>
+              </ng-container>
+              <tr mat-header-row *matHeaderRowDef="displayedColumnsSectorAplicacion"></tr>
+              <tr mat-row *matRowDef="let row; columns: displayedColumnsSectorAplicacion;"></tr>
+            </table>
+          </div>
+
+          <div class="separation-button" *ngIf="formPart.hasEditPerm">
+            <button color="three" mat-button mat-raised-button (click)="openModalSectorAplicacion()"
+              *ngIf="(formPart.initialized$ | async) && formPart.hasEditPerm()">
+              <mat-icon color="accent">add_circle</mat-icon>
+              {{ 'btn.add.entity' | translate:msgParamSectorAplicacionEntity }}
+            </button>
+          </div>
+        </div>
+      </div>
+      <mat-error *ngIf="showSectorAplicacionErrorMsg">
+        {{'error.required.element' | translate:msgParamSectorAplicacionEntity}}
+      </mat-error>
+
+    </section>
+
+
+    <!-- Areas Conocimiento -->
+    <section class="invencion-areas-conocimiento">
+
+      <h2>{{'pii.invencion.area-procedencia' | translate:MSG_PARAMS.CARDINALIRY.PLURAL}}</h2>
+
+      <div class="mat-elevation-z4">
+        <table class="table-areas-conocimiento" mat-table [dataSource]="areaConocimientoDataSource" matSort
+          matSortActive="id" matSortDirection="asc" matSortDisableClear #sortAreaConocimiento="matSort">
+
+          <!-- Niveles Column -->
+          <ng-container matColumnDef="niveles">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>
+              {{'csp.proyecto-area-conocimiento.niveles' | translate}} </th>
+            <td mat-cell *matCellDef="let wrapper" matTooltip="{{wrapper.value?.nivelesTexto}}">
+              {{wrapper.value?.nivelesTexto}}
+            </td>
+          </ng-container>
+
+          <!-- Nivel Seleccionado Column -->
+          <ng-container matColumnDef="nivelSeleccionado">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>
+              {{'csp.proyecto-area-conocimiento.nivelSeleccionado' | translate}}
+            </th>
+            <td mat-cell *matCellDef="let wrapper"> {{wrapper.value?.nivelSeleccionado?.nombre}} </td>
+          </ng-container>
+
+          <!-- Acciones  Column -->
+          <ng-container matColumnDef="acciones">
+            <th mat-header-cell *matHeaderCellDef> {{'label.actions' | translate}} </th>
+            <td mat-cell *matCellDef="let area">
+              <ng-container>
+                <button *ngIf="formPart.hasEditPerm()" mat-button matTooltip="{{'btn.delete' | translate}}"
+                  (click)="deleteAreaConocimiento(area)">
+                  <mat-icon color="warn">highlight_off</mat-icon>
+                </button>
+              </ng-container>
+            </td>
+          </ng-container>
+          <tr mat-header-row *matHeaderRowDef="displayedColumnsAreaConocimiento"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumnsAreaConocimiento;"></tr>
+
+        </table>
+      </div>
+      <div class="separation-button" *ngIf="formPart.hasEditPerm()">
+        <!-- Botón añadir Areas -->
+        <button color="three" mat-button mat-raised-button (click)="openModalAreaConocimiento()"
+          *ngIf="(formPart.initialized$ | async) && formPart.hasEditPerm()">
+          <mat-icon color="accent">add_circle</mat-icon>
+          {{ 'btn.add.entity' | translate:msgParamAreaConocimientoEntity }}
+        </button>
+      </div>
+
+      <mat-error *ngIf="showAreaConocimientoErrorMsg">
+        {{'error.required.element' | translate:msgParamAreaConocimientoEntity}}
+      </mat-error>
+
+
+    </section>
+
+    <!-- Documentación de comunicación de invención -->
+    <section class="invencion-documentos" *ngIf="!isEdit">
+
+      <h2>{{'pii.invencion.documentacion-comunicacion' | translate}}</h2>
+
+      <div class="mat-elevation-z4">
+        <table class="table-documentos" mat-table [dataSource]="documentoDataSource" matSort matSortActive="id"
+          matSortDirection="asc" matSortDisableClear #sortDocumento="matSort">
+
+          <!-- Fecha de Añadido Column -->
+          <ng-container matColumnDef="fechaAnadido">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>
+              {{'pii.invencion.documentacion-comunicacion.fechaAnadido' | translate}} </th>
+            <td mat-cell *matCellDef="let wrapper">
+              {{wrapper.value?.fechaAnadido | luxon:'shortDate'}}
+            </td>
+          </ng-container>
+
+          <!-- Nombre Column -->
+          <ng-container matColumnDef="nombre">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>
+              {{'pii.invencion.documentacion-comunicacion.nombre' | translate}}
+            </th>
+            <td mat-cell *matCellDef="let wrapper"> {{wrapper.value?.nombre}} </td>
+          </ng-container>
+
+          <!-- Fichero Column -->
+          <ng-container matColumnDef="fichero">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>
+              {{'pii.invencion.documentacion-comunicacion.fichero' | translate}}
+            </th>
+            <td mat-cell *matCellDef="let wrapper"> {{wrapper.value?.documento?.nombre}} </td>
+          </ng-container>
+
+          <!-- Acciones  Column -->
+          <ng-container matColumnDef="acciones">
+            <th mat-header-cell *matHeaderCellDef> {{'label.actions' | translate}} </th>
+            <td mat-cell *matCellDef="let wrapper">
+              <ng-container>
+                <button mat-button matTooltip="{{'btn.delete' | translate}}" (click)="deleteDocumento(wrapper)">
+                  <mat-icon color="warn">highlight_off</mat-icon>
+                </button>
+              </ng-container>
+            </td>
+          </ng-container>
+          <tr mat-header-row *matHeaderRowDef="displayedColumnsDocumento"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumnsDocumento;"></tr>
+
+        </table>
+      </div>
+      <div class="separation-button">
+        <!-- Botón añadir Areas -->
+        <button color="three" mat-button mat-raised-button (click)="openModalDocumento()">
+          <mat-icon color="accent">add_circle</mat-icon>
+          {{ 'btn.add.entity' | translate:msgParamDocumentoComunicacionEntity }}
+        </button>
+      </div>
+
+      <mat-error *ngIf="showDocumentosErrorMsg">
+        {{'error.required.element' | translate:msgParamDocumentoComunicacionEntity}}
+      </mat-error>
+
+    </section>
+
+    <!-- Comentarios -->
+    <div [fxLayout]="fxLayoutProperties.layout" [fxLayoutAlign]="fxLayoutProperties.layoutAlign">
+      <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
+        [fxFlexOrder]="fxFlexProperties.order">
+        <mat-form-field fxFill>
+          <mat-label>{{'pii.invencion.comentarios' | translate}}</mat-label>
+          <textarea matInput formControlName="comentarios" id="comentarios"
+            placeholder="{{'pii.invencion.comentarios' | translate}}"></textarea>
+          <mat-error *ngIf="formGroup.controls.comentarios.errors?.maxlength">
+            {{'error.maxlength.entity' | translate:msgParamComentariosEntity}}
+          </mat-error>
+        </mat-form-field>
+      </div>
+    </div>
+
+  </form>
+</sgi-fragment>

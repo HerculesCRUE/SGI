@@ -1,0 +1,53 @@
+[
+  {
+    "key": "ap3_4_4",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "expressionLock": "formState.memoria.tipoMemoria.id === 3",
+      "label": "3.4.4 Incentivos para la participación"
+    },
+    "hideExpression": "!formState.mainModel.ap3_4.intervencionesSeresHumanosRadio || formState.mainModel.ap3_4.intervencionesSeresHumanosRadio === 'no'",
+    "fieldGroup": [
+      {
+        "template": "<p>¿Se va dar algún tipo de incentivo o compensación al sujeto de estudio por su participación?</p>"
+      },
+      {
+        "key": "incentivosParticipacionRadio",
+        "type": "radio",
+        "templateOptions": {
+          "label": "Elige opción:",
+          "required": true,
+          "options": [
+            {
+              "value": "no",
+              "label": "No"
+            },
+            {
+              "value": "si",
+              "label": "Sí"
+            }
+          ]
+        }
+      },
+      {
+        "template": "<p>Especificar tipo de incentivo, cuantía y justificación</p>",
+        "hideExpression": "!model.incentivosParticipacionRadio || model.incentivosParticipacionRadio === 'no'"
+      },
+      {
+        "key": "incentivosParticipacionTexto",
+        "type": "textarea",
+        "hideExpression": "!model.incentivosParticipacionRadio || model.incentivosParticipacionRadio === 'no'",
+        "templateOptions": {
+          "label": "Incentivos",
+          "placeholder": "Incentivos",
+          "required": true,
+          "autosize": true,
+          "autosizeMinRows": "1",
+          "autosizeMaxRows": "10"
+        }
+      }
+    ]
+  }
+]

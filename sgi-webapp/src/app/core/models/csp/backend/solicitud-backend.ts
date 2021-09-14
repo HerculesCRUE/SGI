@@ -4,6 +4,8 @@ import { IEstadoSolicitudBackend } from './estado-solicitud-backend';
 export interface ISolicitudBackend {
   /** Id */
   id: number;
+  /** Título */
+  titulo: string;
   /** Activo */
   activo: boolean;
   /** Codigo externo */

@@ -1,20 +1,27 @@
+import { DateTime } from 'luxon';
+import { ISexo } from '../sgp/sexo';
+
 export interface IConvocatoriaRequisitoEquipo {
   /** Id */
   id: number;
   /** Id de Convocatoria */
   convocatoriaId: number;
-  /** Referencia nivel académico */
-  nivelAcademicoRef: string;
-  /** Años nivel académico */
-  aniosNivelAcademico: number;
+  /** Fecha máxima nivel académico */
+  fechaMaximaNivelAcademico: DateTime;
+  /** Fecha mínima nivel académico */
+  fechaMinimaNivelAcademico: DateTime;
   /** Ratio máxima */
   edadMaxima: number;
+  /** Sexo */
+  sexo: ISexo;
+  /** Ratio Sexo */
+  ratioSexo: number;
   /** Vinculación universidad */
   vinculacionUniversidad: boolean;
-  /** Referencia modalidad contrato */
-  modalidadContratoRef: string;
-  /** Años vinculación */
-  aniosVinculacion: number;
+  /** Fecha máxima categoria profesional */
+  fechaMaximaCategoriaProfesional: DateTime;
+  /** Fecha mínima categoria profesional */
+  fechaMinimaCategoriaProfesional: DateTime;
   /** Número mínimo proyectos competitivos */
   numMinimoCompetitivos: number;
   /** Número mínimo proyectos NO competitivos */

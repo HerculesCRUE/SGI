@@ -12,7 +12,7 @@ import { LoggerTestingModule } from 'ngx-logger/testing';
 
 import { SectorAplicacionModalComponent } from './sector-aplicacion-modal.component';
 
-describe('FuenteFinanciacionModalComponent', () => {
+describe('SectorAplicacionModalComponent', () => {
   let component: SectorAplicacionModalComponent;
   let fixture: ComponentFixture<SectorAplicacionModalComponent>;
 

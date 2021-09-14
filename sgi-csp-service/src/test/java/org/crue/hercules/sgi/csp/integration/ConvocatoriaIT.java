@@ -113,8 +113,6 @@ public class ConvocatoriaIT extends BaseIT {
         .isEqualTo(convocatoria.getFinalidad().getId());
     Assertions.assertThat(responseData.getRegimenConcurrencia().getId()).as("getRegimenConcurrencia().getId()")
         .isEqualTo(convocatoria.getRegimenConcurrencia().getId());
-    Assertions.assertThat(responseData.getColaborativos()).as("getColaborativos()")
-        .isEqualTo(convocatoria.getColaborativos());
     Assertions.assertThat(responseData.getEstado()).as("getEstado()").isEqualTo(Convocatoria.Estado.BORRADOR);
     Assertions.assertThat(responseData.getDuracion()).as("getDuracion()").isEqualTo(convocatoria.getDuracion());
     Assertions.assertThat(responseData.getAmbitoGeografico().getId()).as("getAmbitoGeografico().getId()")
@@ -163,8 +161,6 @@ public class ConvocatoriaIT extends BaseIT {
         .isEqualTo(convocatoria.getFinalidad().getId());
     Assertions.assertThat(responseData.getRegimenConcurrencia().getId()).as("getRegimenConcurrencia().getId()")
         .isEqualTo(convocatoria.getRegimenConcurrencia().getId());
-    Assertions.assertThat(responseData.getColaborativos()).as("getColaborativos()")
-        .isEqualTo(convocatoria.getColaborativos());
     Assertions.assertThat(responseData.getEstado()).as("getEstado()").isEqualTo(convocatoria.getEstado());
     Assertions.assertThat(responseData.getDuracion()).as("getDuracion()").isEqualTo(convocatoria.getDuracion());
     Assertions.assertThat(responseData.getAmbitoGeografico().getId()).as("getAmbitoGeografico().getId()")
@@ -362,7 +358,6 @@ public class ConvocatoriaIT extends BaseIT {
     Assertions.assertThat(responseData.getFinalidad().getId()).as("getFinalidad().getId()").isEqualTo(1L);
     Assertions.assertThat(responseData.getRegimenConcurrencia().getId()).as("getRegimenConcurrencia().getId()")
         .isEqualTo(1L);
-    Assertions.assertThat(responseData.getColaborativos()).as("getColaborativos()").isEqualTo(Boolean.TRUE);
     Assertions.assertThat(responseData.getEstado()).as("getEstado()").isEqualTo(Convocatoria.Estado.REGISTRADA);
     Assertions.assertThat(responseData.getDuracion()).as("getDuracion()").isEqualTo(12);
     Assertions.assertThat(responseData.getAmbitoGeografico().getId()).as("getAmbitoGeografico().getId()").isEqualTo(1L);
@@ -1105,7 +1100,6 @@ public class ConvocatoriaIT extends BaseIT {
         .observaciones("observaciones-" + String.format("%03d", convocatoriaId))
         .finalidad((modeloTipoFinalidad == null) ? null : modeloTipoFinalidad.getTipoFinalidad())
         .regimenConcurrencia(tipoRegimenConcurrencia)
-        .colaborativos(Boolean.TRUE)
         .estado(Convocatoria.Estado.REGISTRADA)
         .duracion(12)
         .ambitoGeografico(tipoAmbitoGeografico)

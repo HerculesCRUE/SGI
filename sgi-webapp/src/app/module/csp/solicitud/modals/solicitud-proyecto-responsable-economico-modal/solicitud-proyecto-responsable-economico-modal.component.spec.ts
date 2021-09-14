@@ -9,9 +9,17 @@ import { HeaderComponent } from '@block/header/header.component';
 import { ISolicitudProyectoResponsableEconomico } from '@core/models/csp/solicitud-proyecto-responsable-economico';
 import { SnackBarService } from '@core/services/snack-bar.service';
 import TestUtils from '@core/utils/test-utils';
+import { FormlyFormsModule } from '@formly-forms/formly-forms.module';
 import { MaterialDesignModule } from '@material/material-design.module';
+import { TranslateModule } from '@ngx-translate/core';
+import { SgiAuthModule } from '@sgi/framework/auth';
 import { SharedModule } from '@shared/shared.module';
 import { LoggerTestingModule } from 'ngx-logger/testing';
+import { SgempSharedModule } from 'src/app/esb/sgemp/shared/sgemp-shared.module';
+import { SgoSharedModule } from 'src/app/esb/sgo/shared/sgo-shared.module';
+import { SgpFormlyFormsModule } from 'src/app/esb/sgp/formly-forms/sgp-formly-forms.module';
+import { SgpSharedModule } from 'src/app/esb/sgp/shared/sgp-shared.module';
+import { CspSharedModule } from '../../../shared/csp-shared.module';
 import { SolicitudProyectoResponsableEconomicoModalComponent, SolicitudProyectoResponsableEconomicoModalData } from './solicitud-proyecto-responsable-economico-modal.component';
 
 describe('SolicitudProyectoResponsableEconomicoModalComponent', () => {
@@ -39,9 +47,16 @@ describe('SolicitudProyectoResponsableEconomicoModalComponent', () => {
         MaterialDesignModule,
         HttpClientTestingModule,
         LoggerTestingModule,
+        TranslateModule,
         TestUtils.getIdiomas(),
         RouterTestingModule,
         ReactiveFormsModule,
+        SgiAuthModule,
+        CspSharedModule,
+        SgoSharedModule,
+        SgpSharedModule,
+        SgempSharedModule,
+        FormlyFormsModule
       ],
       providers: [
         { provide: SnackBarService, useValue: TestUtils.getSnackBarServiceSpy() },

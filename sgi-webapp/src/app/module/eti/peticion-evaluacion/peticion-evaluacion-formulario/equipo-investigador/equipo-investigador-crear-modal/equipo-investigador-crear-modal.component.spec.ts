@@ -11,6 +11,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { LoggerTestingModule } from 'ngx-logger/testing';
 import { MatDialogRef } from '@angular/material/dialog';
 import { SharedModule } from '@shared/shared.module';
+import { SgpSharedModule } from 'src/app/esb/sgp/shared/sgp-shared.module';
 
 describe('EquipoInvestigadorCrearModalComponent', () => {
   let component: EquipoInvestigadorCrearModalComponent;
@@ -28,7 +29,8 @@ describe('EquipoInvestigadorCrearModalComponent', () => {
         LoggerTestingModule,
         FlexModule,
         ReactiveFormsModule,
-        SharedModule
+        SharedModule,
+        SgpSharedModule
       ],
       providers: [
         { provide: MatDialogRef, useValue: {} }

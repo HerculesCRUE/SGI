@@ -34,14 +34,10 @@ public class RequisitoIPRepositoryTest extends BaseRepositoryTest {
     Long convocatoriaIdBuscada = convocatoria.getId();
 
     // when: se busca el RequisitoIP por el idConvocatoria
-    RequisitoIP requisitoIPEncontrado = repository.findByConvocatoriaId(convocatoriaIdBuscada).get();
+    RequisitoIP requisitoIPEncontrado = repository.findById(convocatoriaIdBuscada).get();
 
     // then: Se recupera el RequisitoIP con el idConvocatoria buscado
     Assertions.assertThat(requisitoIPEncontrado.getId()).as("getId").isNotNull();
-    Assertions.assertThat(requisitoIPEncontrado.getModalidadContratoRef()).as("getModalidadContratoRef")
-        .isEqualTo(requisitoIP1.getModalidadContratoRef());
-    Assertions.assertThat(requisitoIPEncontrado.getNivelAcademicoRef()).as("getNivelAcademicoRef")
-        .isEqualTo(requisitoIP1.getNivelAcademicoRef());
   }
 
   @Test
@@ -54,10 +50,10 @@ public class RequisitoIPRepositoryTest extends BaseRepositoryTest {
 
     RequisitoIP requisitoIP2 = generarMockRequisitoIP(2L, 2L);
 
-    Long convocatoriaIdBuscada = requisitoIP2.getConvocatoriaId();
+    Long convocatoriaIdBuscada = requisitoIP2.getId();
 
     // when: se busca el RequisitoIP por idConvocatoria que no existe
-    Optional<RequisitoIP> requisitoIPEncontrado = repository.findByConvocatoriaId(convocatoriaIdBuscada);
+    Optional<RequisitoIP> requisitoIPEncontrado = repository.findById(convocatoriaIdBuscada);
 
     // then: Se recupera el RequisitoIP con el idConvocatoria buscado
     Assertions.assertThat(requisitoIPEncontrado).isEqualTo(Optional.empty());
@@ -85,10 +81,8 @@ public class RequisitoIPRepositoryTest extends BaseRepositoryTest {
    */
   private RequisitoIP generarMockRequisitoIP(Long id, Long convocatoriaId) {
     RequisitoIP requisitoIP = new RequisitoIP();
-    requisitoIP.setConvocatoriaId(convocatoriaId);
-    requisitoIP.setSexo("Hombre");
-    requisitoIP.setModalidadContratoRef("modalidad-00" + (id != null ? id : 1L));
-    requisitoIP.setNivelAcademicoRef("nivel-00" + (id != null ? id : 1L));
+    requisitoIP.setId(convocatoriaId);
+    requisitoIP.setSexoRef("Hombre");
     return requisitoIP;
   }
 

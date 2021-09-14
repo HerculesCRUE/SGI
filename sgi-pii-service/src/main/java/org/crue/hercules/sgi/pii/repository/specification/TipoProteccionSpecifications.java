@@ -16,4 +16,29 @@ public class TipoProteccionSpecifications {
     };
   }
 
+  /**
+   * {@link TipoProteccion} no Subtipos.
+   * 
+   * @return Specification para obtener los {@link TipoProteccion} no Subtipos.
+   */
+  public static Specification<TipoProteccion> noSubtipos() {
+    return (root, query, cb) -> {
+      return cb.isNull(root.get(TipoProteccion_.padre));
+    };
+  }
+
+  /**
+   * Devuelve los {@link TipoProteccion} que son Subtipos del
+   * {@link TipoProteccion} pasado por parámetros
+   * 
+   * @param id {@link Long} Id del {@link TipoProteccion} padre.
+   * @return Specification para obtener los {@link TipoProteccion} que son
+   *         Subtipos del {@link TipoProteccion} pasado por parámetro.
+   */
+  public static Specification<TipoProteccion> subtipos(Long id) {
+    return (root, query, cb) -> {
+      return cb.equal(root.get(TipoProteccion_.padre), id);
+    };
+  }
+
 }

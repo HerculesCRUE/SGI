@@ -6,11 +6,13 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RouterTestingModule } from '@angular/router/testing';
 import { SnackBarService } from '@core/services/snack-bar.service';
 import TestUtils from '@core/utils/test-utils';
+import { FormlyFormsModule } from '@formly-forms/formly-forms.module';
 import { MaterialDesignModule } from '@material/material-design.module';
 import { SgiAuthService } from '@sgi/framework/auth';
 import { FooterCrearComponent } from '@shared/footers/footer-crear/footer-crear.component';
 import { SharedModule } from '@shared/shared.module';
 import { LoggerTestingModule } from 'ngx-logger/testing';
+import { SgpSharedModule } from 'src/app/esb/sgp/shared/sgp-shared.module';
 import { CspSharedModule } from '../../shared/csp-shared.module';
 import { EjecucionEconomicaActionService } from '../ejecucion-economica.action.service';
 import { EjecucionEconomicaListadoComponent } from './ejecucion-economica-listado.component';
@@ -34,9 +36,11 @@ describe('EjecucionEconomicaListadoComponent', () => {
         TestUtils.getIdiomas(),
         FlexLayoutModule,
         FormsModule,
+        FormlyFormsModule,
         ReactiveFormsModule,
         SharedModule,
-        CspSharedModule
+        CspSharedModule,
+        SgpSharedModule
       ],
       providers: [
         { provide: SnackBarService, useValue: TestUtils.getSnackBarServiceSpy() },

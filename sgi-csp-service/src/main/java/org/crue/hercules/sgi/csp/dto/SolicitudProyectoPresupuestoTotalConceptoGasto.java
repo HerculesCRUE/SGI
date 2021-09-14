@@ -24,6 +24,7 @@ public class SolicitudProyectoPresupuestoTotalConceptoGasto implements Serializa
   private static final long serialVersionUID = 1L;
 
   private ConceptoGasto conceptoGasto;
-  private BigDecimal importeTotal;
+  private BigDecimal importeTotalSolicitado;
+  private BigDecimal importeTotalPresupuestado;
 
 }

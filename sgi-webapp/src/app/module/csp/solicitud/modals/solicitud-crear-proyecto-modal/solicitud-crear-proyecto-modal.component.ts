@@ -73,7 +73,10 @@ export class SolicitudCrearProyectoModalComponent
     this.setupI18N();
     if (this.data.solicitud.convocatoriaId) {
       this.subscriptions.push(this.convocatoriaService.findById(this.data.solicitud.convocatoriaId).subscribe(
-        (convocatoria => this.convocatoria = convocatoria)
+        (convocatoria => {
+          this.formGroup.controls.modeloEjecucion.setValue(convocatoria.modeloEjecucion);
+          this.formGroup.controls.modeloEjecucion.disable();
+        })
       ));
     }
   }
@@ -100,9 +103,7 @@ export class SolicitudCrearProyectoModalComponent
       {
         fechaInicio: new FormControl(null, [Validators.required]),
         fechaFin: new FormControl(null, [Validators.required]),
-        modeloEjecucion: new FormControl(
-          this.convocatoria?.modeloEjecucion,
-          [Validators.required]
+        modeloEjecucion: new FormControl(null, [Validators.required]
         )
       },
       {
@@ -131,7 +132,8 @@ export class SolicitudCrearProyectoModalComponent
       fechaInicio: this.formGroup.controls.fechaInicio.value,
       fechaFin: this.formGroup.controls.fechaFin.value,
       modeloEjecucion: this.formGroup.controls.modeloEjecucion.value,
-      fechaBase: DateTime.local(this.formGroup.controls.fechaInicio.value.year, this.formGroup.controls.fechaInicio.value.month)
+      titulo: this.data.solicitud.titulo,
+      solicitudId: this.data.solicitud.id
     } as IProyecto;
   }
 
@@ -181,7 +183,8 @@ export class SolicitudCrearProyectoModalComponent
 
   private getFechaFinProyecto(fecha: DateTime): void {
     if (fecha && this.data?.solicitudProyecto?.duracion) {
-      const fechaFin = fecha.plus({ months: this.data?.solicitudProyecto?.duracion });
+      const fechaFin = fecha.plus({ months: this.data?.solicitudProyecto?.duracion, seconds: -1 });
+      // fechaFin.day = fecha.day - 1;
       this.formGroup.controls.fechaFin.setValue(fechaFin);
     }
   }

@@ -108,6 +108,7 @@ export class ProyectoPeriodoSeguimientosFragment extends Fragment {
       ).subscribe((periodoSeguimientoListado) => {
         periodoSeguimientoListado.forEach(element => this.fillListadoFields(element));
         this.periodoSeguimientos$.next(periodoSeguimientoListado);
+        this.recalcularNumPeriodos();
       });
     }
   }
@@ -177,12 +178,20 @@ export class ProyectoPeriodoSeguimientosFragment extends Fragment {
   private recalcularNumPeriodos(): void {
     let numPeriodo = 1;
     this.periodoSeguimientos$.value
-      .sort((a, b) => (a.proyectoPeriodoSeguimiento.value.fechaInicio >
-        b.proyectoPeriodoSeguimiento.value.fechaInicio) ? 1 :
-        ((b.proyectoPeriodoSeguimiento.value.fechaInicio > a.proyectoPeriodoSeguimiento.value.fechaInicio) ? -1 : 0));
+      .sort((a, b) => ((a.proyectoPeriodoSeguimiento ? a.proyectoPeriodoSeguimiento.value.fechaInicio : getFechaInicioPeriodoSeguimiento(this.proyecto.fechaInicio,
+        a.convocatoriaPeriodoSeguimiento.mesInicial)) > (b.proyectoPeriodoSeguimiento ?
+          b.proyectoPeriodoSeguimiento.value.fechaInicio : getFechaInicioPeriodoSeguimiento(this.proyecto.fechaInicio,
+            b.convocatoriaPeriodoSeguimiento.mesInicial))) ? 1 :
+        (((b.proyectoPeriodoSeguimiento ? b.proyectoPeriodoSeguimiento.value.fechaInicio : getFechaInicioPeriodoSeguimiento(this.proyecto.fechaInicio,
+          b.convocatoriaPeriodoSeguimiento.mesInicial)) > (a.proyectoPeriodoSeguimiento ? a.proyectoPeriodoSeguimiento.value.fechaInicio : getFechaInicioPeriodoSeguimiento(this.proyecto.fechaInicio,
+            a.convocatoriaPeriodoSeguimiento.mesInicial))) ? -1 : 0));
 
     this.periodoSeguimientos$.value.forEach(c => {
-      c.proyectoPeriodoSeguimiento.value.numPeriodo = numPeriodo++;
+      if (c.proyectoPeriodoSeguimiento) {
+        c.numPeriodo = numPeriodo++;
+      } else {
+        c.numPeriodo = numPeriodo++;
+      }
     });
 
     this.periodoSeguimientos$.next(this.periodoSeguimientos$.value);
@@ -231,7 +240,7 @@ export class ProyectoPeriodoSeguimientosFragment extends Fragment {
 
       if (periodoSeguimientoListado.convocatoriaPeriodoSeguimiento?.mesFinal) {
         periodoSeguimientoListado.fechaFin = getFechaFinPeriodoSeguimiento(this.proyecto.fechaInicio, this.proyecto.fechaFin,
-          periodoSeguimientoListado.convocatoriaPeriodoSeguimiento.mesFinal, periodoSeguimientoListado.fechaInicio);
+          periodoSeguimientoListado.convocatoriaPeriodoSeguimiento.mesFinal);
       }
 
       periodoSeguimientoListado.

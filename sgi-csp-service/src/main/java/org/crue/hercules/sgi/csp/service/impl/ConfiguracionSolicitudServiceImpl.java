@@ -35,7 +35,6 @@ public class ConfiguracionSolicitudServiceImpl implements ConfiguracionSolicitud
   private final ConvocatoriaRepository convocatoriaRepository;
   private final ConvocatoriaFaseRepository convocatoriaFaseRepository;
   private final DocumentoRequeridoSolicitudRepository documentoRequeridoSolicitudRepository;
-  private final ConvocatoriaService convocatoriaService;
 
   public ConfiguracionSolicitudServiceImpl(ConfiguracionSolicitudRepository repository,
       ConvocatoriaRepository convocatoriaRepository, ConvocatoriaFaseRepository convocatoriaFaseRepository,
@@ -45,7 +44,6 @@ public class ConfiguracionSolicitudServiceImpl implements ConfiguracionSolicitud
     this.convocatoriaRepository = convocatoriaRepository;
     this.convocatoriaFaseRepository = convocatoriaFaseRepository;
     this.documentoRequeridoSolicitudRepository = documentoRequeridoSolicitudRepository;
-    this.convocatoriaService = convocatoriaService;
   }
 
   /**
@@ -95,16 +93,6 @@ public class ConfiguracionSolicitudServiceImpl implements ConfiguracionSolicitud
     log.debug("update(ConfiguracionSolicitud configuracionSolicitud) - start");
 
     Assert.notNull(convocatoriaId, "Convocatoria no puede ser null en ConfiguracionSolicitud");
-
-    Convocatoria convocatoria = convocatoriaRepository.findById(configuracionSolicitud.getConvocatoriaId())
-        .orElseThrow(() -> new ConvocatoriaNotFoundException(configuracionSolicitud.getConvocatoriaId()));
-    configuracionSolicitud.setConvocatoriaId(convocatoriaId);
-
-    // comprobar si convocatoria es modificable
-    Assert.isTrue(
-        convocatoriaService.modificable(convocatoria.getId(), convocatoria.getUnidadGestionRef(),
-            new String[] { "CSP-CON-E" }),
-        "No se puede modificar ConfiguracionSolicitud. No tiene los permisos necesarios o la convocatoria está registrada y cuenta con solicitudes o proyectos asociados");
 
     return repository.findByConvocatoriaId(configuracionSolicitud.getConvocatoriaId()).map((data) -> {
 

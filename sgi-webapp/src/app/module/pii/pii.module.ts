@@ -6,12 +6,14 @@ import { TranslateModule } from '@ngx-translate/core';
 import { SgiAuthModule } from '@sgi/framework/auth';
 import { SharedModule } from '@shared/shared.module';
 import { PiiInicioComponent } from './pii-inicio/pii-inicio.component';
-import { PiiMenuPrincipalComponent } from './pii-menu-principal/pii-menu-principal.component';
 import { PiiRootComponent } from './pii-root/pii-root.component';
 import { PiiRoutingModule } from './pii-routing.module';
 
 @NgModule({
-  declarations: [PiiRootComponent, PiiMenuPrincipalComponent, PiiInicioComponent],
+  declarations: [
+    PiiRootComponent,
+    PiiInicioComponent
+  ],
   imports: [
     SharedModule,
     CommonModule,

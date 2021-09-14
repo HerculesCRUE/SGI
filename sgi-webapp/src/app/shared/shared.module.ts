@@ -2,9 +2,11 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
+import { FormlyFormsModule } from '@formly-forms/formly-forms.module';
 import { MaterialDesignModule } from '@material/material-design.module';
 import { TranslateModule } from '@ngx-translate/core';
 import { ActionFooterButtonComponent } from './action-footer-button/action-footer-button.component';
+import { ActionFooterMessageComponent } from './action-footer/action-footer-message/action-footer-message.component';
 import { ActionFooterComponent } from './action-footer/action-footer.component';
 import { ActionFragmentLinkItemComponent } from './action-fragment-link-item/action-fragment-link-item.component';
 import { ActionFragmentMenuGroupComponent } from './action-fragment-menu-group/action-fragment-menu-group.component';
@@ -14,15 +16,22 @@ import { BreadcrumbComponent } from './breadcrumb/breadcrumb.component';
 import { FieldInfoComponent } from './field-info/field-info.component';
 import { SgiFileUploadComponent } from './file-upload/file-upload.component';
 import { FooterCrearComponent } from './footers/footer-crear/footer-crear.component';
+import { FragmentContentComponent } from './fragment-content/fragment-content.component';
+import { FragmentTitleComponent } from './fragment-title/fragment-title.component';
+import { FragmentComponent } from './fragment/fragment.component';
+import { IconChangesComponent } from './icon-changes/icon-changes.component';
+import { IconErrorsComponent } from './icon-errors/icon-errors.component';
+import { IconProblemsComponent } from './icon-problems/icon-problems.component';
 import { LuxonDatePipe } from './luxon-date-pipe';
+import { MenuContentComponent, MenuContentFooter } from './menu-content/menu-content.component';
+import { MenuGroupComponent } from './menu-group/menu-group.component';
+import { MenuItemComponent } from './menu-item/menu-item.component';
+import { MenuSubItemComponent } from './menu-subitem/menu-subitem.component';
+import { ProblemPanelComponent } from './problem-panel/problem-panel.component';
 import { RootComponent } from './root/root.component';
 import { SelectBooleanComponent } from './select-boolean/select-boolean.component';
-import { SearchEmpresaModalComponent } from './select-empresa/dialog/search-empresa.component';
-import { SelectEmpresaComponent } from './select-empresa/select-empresa.component';
 import { SelectEntityComponent } from './select-entity/select-entity.component';
 import { SelectEnumComponent } from './select-enum/select-enum.component';
-import { SearchPersonaModalComponent } from './select-persona/dialog/search-persona.component';
-import { SelectPersonaComponent } from './select-persona/select-persona.component';
 import { SelectComponent } from './select/select.component';
 
 @NgModule({
@@ -32,13 +41,13 @@ import { SelectComponent } from './select/select.component';
     ActionFooterComponent,
     ActionFooterButtonComponent,
     RootComponent,
-    SearchPersonaModalComponent,
     ActionFragmentMenuItemComponent,
     ActionFragmentLinkItemComponent,
-    SelectPersonaComponent,
-    SelectEmpresaComponent,
-    SearchEmpresaModalComponent,
     SgiFileUploadComponent,
+    IconChangesComponent,
+    IconErrorsComponent,
+    IconProblemsComponent,
+    ActionFooterMessageComponent,
     ActionFragmentMenuGroupComponent,
     LuxonDatePipe,
     SelectBooleanComponent,
@@ -46,7 +55,16 @@ import { SelectComponent } from './select/select.component';
     SelectEntityComponent,
     SelectEnumComponent,
     FieldInfoComponent,
-    ActionComponent
+    ActionComponent,
+    ProblemPanelComponent,
+    FragmentComponent,
+    FragmentTitleComponent,
+    FragmentContentComponent,
+    MenuContentComponent,
+    MenuContentFooter,
+    MenuItemComponent,
+    MenuGroupComponent,
+    MenuSubItemComponent
   ],
   imports: [
     CommonModule,
@@ -54,7 +72,8 @@ import { SelectComponent } from './select/select.component';
     MaterialDesignModule,
     TranslateModule,
     FormsModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    FormlyFormsModule
   ],
   exports: [
     BreadcrumbComponent,
@@ -64,17 +83,26 @@ import { SelectComponent } from './select/select.component';
     RootComponent,
     ActionFragmentMenuItemComponent,
     ActionFragmentLinkItemComponent,
-    SelectPersonaComponent,
-    SelectEmpresaComponent,
     SgiFileUploadComponent,
     ActionFragmentMenuGroupComponent,
+    IconChangesComponent,
+    IconErrorsComponent,
+    IconProblemsComponent,
+    ActionFooterMessageComponent,
     LuxonDatePipe,
     SelectBooleanComponent,
     SelectComponent,
     SelectEntityComponent,
     SelectEnumComponent,
     FieldInfoComponent,
-    ActionComponent
+    ActionComponent,
+    ProblemPanelComponent,
+    FragmentComponent,
+    MenuContentComponent,
+    MenuContentFooter,
+    MenuItemComponent,
+    MenuGroupComponent,
+    MenuSubItemComponent
   ]
 })
 export class SharedModule { }

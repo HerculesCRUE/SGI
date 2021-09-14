@@ -1,0 +1,46 @@
+[
+  {
+    "key": "ap5_3",
+    "wrappers": [
+      "expansion-panel"
+    ],
+    "templateOptions": {
+      "label": "5.3 Seguro de accidentes y responsabilidad civil"
+    },
+    "fieldGroup": [
+      {
+        "template": "¿Dispone de Seguro de Responsabilidad Civil?"
+      },
+      {
+        "key": "seguroResponsabilidadCivil",
+        "type": "documento",
+        "templateOptions": {
+          "label": "Indicar",
+          "required": true,
+          "options": [
+            {
+              "value": 0,
+              "label": "No"
+            },
+            {
+              "value": 19,
+              "label": "Sí"
+            }
+          ]
+        }
+      },
+      {
+        "key": "especificarResposabilidad",
+        "type": "textarea",
+        "templateOptions": {
+          "label": "Especificar seguro o justificar su ausencia",
+          "placeholder": "Especificar seguro o justificar su ausencia",
+          "required": true,
+          "autosize": true,
+          "autosizeMinRows": "1",
+          "autosizeMaxRows": "10"
+        }
+      }
+    ]
+  }
+]

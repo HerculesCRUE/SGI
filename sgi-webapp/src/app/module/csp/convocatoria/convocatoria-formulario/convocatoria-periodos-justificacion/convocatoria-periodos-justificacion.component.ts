@@ -100,7 +100,6 @@ export class ConvocatoriaPeriodosJustificacionComponent extends FragmentComponen
       convocatoriaPeriodoJustificacion: periodoJustificacionActualizar
         ? periodoJustificacionActualizar.value : {} as IConvocatoriaPeriodoJustificacion,
       convocatoriaPeriodoJustificacionList: this.dataSource.data,
-      readonly: this.formPart.readonly
     };
 
     const config = {
@@ -163,6 +162,7 @@ export class ConvocatoriaPeriodosJustificacionComponent extends FragmentComponen
     });
 
     this.formPart.periodosJustificacion$.next(this.dataSource.data);
+    this.formPart.checkFirstPeriodoStartsAtOne();
   }
 
   get MSG_PARAMS() {

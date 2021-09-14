@@ -19,6 +19,8 @@ const MEMORIA_COMITE_KEY = marker('label.eti.comite');
 const MEMORIA_ORIGINAL_KEY = marker('eti.memoria.original');
 const MEMORIA_TIPO_KEY = marker('eti.memoria.tipo');
 const MEMORIA_CODIGO_ORGANO_COMPETENTE = marker('eti.memoria.codigo-organo-compentente');
+const MEMORIA_TITULO_DESCRIPTIVO = marker('eti.memoria.titulo-descriptivo');
+const INFO_TITLE_DESCRIPTIVO = marker('eti.memoria.info.titulo-descriptivo');
 
 @Component({
   selector: 'sgi-memoria-datos-generales',
@@ -30,6 +32,7 @@ export class MemoriaDatosGeneralesComponent extends FormFragmentComponent<IMemor
   fxFlexProperties: FxFlexProperties;
   fxFlexPropertiesInline: FxFlexProperties;
   fxLayoutProperties: FxLayoutProperties;
+  fxFlexPropertiesTextarea: FxFlexProperties;
 
   tiposMemoria$: Subject<ITipoMemoria[]> = new BehaviorSubject<ITipoMemoria[]>([]);
   memorias$: Subject<IMemoria[]> = new BehaviorSubject<IMemoria[]>([]);
@@ -42,6 +45,8 @@ export class MemoriaDatosGeneralesComponent extends FormFragmentComponent<IMemor
   msgParamTipoMemoriaEntity = {};
   msgParamOrginalEntity = {};
   msgParamCodigoOrganoCompenteteEntity = {};
+  msgParamTituloDescriptivoEntity = {};
+  textoInfoTituloDescriptivo: string;
 
   private subscriptions: Subscription[] = [];
 
@@ -58,6 +63,12 @@ export class MemoriaDatosGeneralesComponent extends FormFragmentComponent<IMemor
     this.fxFlexProperties.md = '0 1 calc(50%-10px)';
     this.fxFlexProperties.gtMd = '0 1 calc(22%-10px)';
     this.fxFlexProperties.order = '1';
+
+    this.fxFlexPropertiesTextarea = new FxFlexProperties();
+    this.fxFlexPropertiesTextarea.sm = '0 1 calc(100%-10px)';
+    this.fxFlexPropertiesTextarea.md = '0 1 calc(50%-10px)';
+    this.fxFlexPropertiesTextarea.gtMd = '0 1 calc(44%-10px)';
+    this.fxFlexPropertiesTextarea.order = '1';
 
     this.fxLayoutProperties = new FxLayoutProperties();
     this.fxLayoutProperties.gap = '20px';
@@ -87,11 +98,12 @@ export class MemoriaDatosGeneralesComponent extends FormFragmentComponent<IMemor
       (tipoMemoria) => {
         this.datosGeneralesFragment.onTipoMemoriaChange(tipoMemoria);
         if (this.datosGeneralesFragment.showMemoriaOriginal) {
-          this.comiteService.findMemorias(this.formGroup.controls.comite.value.id).subscribe(
-            (response) => {
-              this.memorias$.next(response.items);
-            }
-          );
+          this.comiteService.findMemoriasComitePeticionEvaluacion(
+            this.formGroup.controls.comite.value.id, this.datosGeneralesFragment.idPeticionEvaluacion).subscribe(
+              (response) => {
+                this.memorias$.next(response.items);
+              }
+            );
         } else {
           this.memorias$.next([]);
         }
@@ -119,6 +131,15 @@ export class MemoriaDatosGeneralesComponent extends FormFragmentComponent<IMemor
       MEMORIA_CODIGO_ORGANO_COMPETENTE,
       MSG_PARAMS.CARDINALIRY.SINGULAR
     ).subscribe((value) => this.msgParamCodigoOrganoCompenteteEntity = { entity: value, ...MSG_PARAMS.GENDER.MALE });
+
+    this.translate.get(
+      MEMORIA_TITULO_DESCRIPTIVO,
+      MSG_PARAMS.CARDINALIRY.SINGULAR
+    ).subscribe((value) => this.msgParamTituloDescriptivoEntity = { entity: value, ...MSG_PARAMS.GENDER.MALE, ...MSG_PARAMS.CARDINALIRY.SINGULAR });
+
+    this.translate.get(
+      INFO_TITLE_DESCRIPTIVO,
+    ).subscribe((value) => this.textoInfoTituloDescriptivo = value);
   }
 
   ngOnDestroy(): void {

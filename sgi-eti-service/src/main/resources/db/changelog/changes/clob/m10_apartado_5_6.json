@@ -1,0 +1,35 @@
+[
+  {
+    "key": "ap5_6",
+    "wrappers": [
+      "expansion-panel"
+    ],
+    "templateOptions": {
+      "expressionLock": "formState.memoria.tipoMemoria.id === 3",
+      "label": "5.6 Acuerdo de transferencia de muestras"
+    },
+    "fieldGroup": [
+      {
+        "template": "Si su proyecto ha requerido Cesión de Muestras o Tejidos ¿dispone de un Acuerdo de Transferencia de Muestras o Tejidos Humanos (MTA)?"
+      },
+      {
+        "key": "acuerdoTransferenciaMuestras",
+        "type": "documento",
+        "templateOptions": {
+          "label": "Indicar",
+          "required": true,
+          "options": [
+            {
+              "value": 0,
+              "label": "No"
+            },
+            {
+              "value": 9,
+              "label": "Sí"
+            }
+          ]
+        }
+      }
+    ]
+  }
+]

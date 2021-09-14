@@ -67,7 +67,6 @@ public class SolicitudProyectoControllerTest extends BaseControllerTest {
         // then: new SolicitudProyecto is created
         .andExpect(MockMvcResultMatchers.status().isCreated())
         .andExpect(MockMvcResultMatchers.jsonPath("id").isNotEmpty())
-        .andExpect(MockMvcResultMatchers.jsonPath("titulo").value(solicitudProyecto.getTitulo()))
         .andExpect(MockMvcResultMatchers.jsonPath("colaborativo").value(solicitudProyecto.getColaborativo())).andExpect(
             MockMvcResultMatchers.jsonPath("tipoPresupuesto").value(solicitudProyecto.getTipoPresupuesto().toString()));
   }
@@ -96,7 +95,6 @@ public class SolicitudProyectoControllerTest extends BaseControllerTest {
   public void update_WithExistingId_ReturnsSolicitudProyecto() throws Exception {
     // given: existing SolicitudProyecto
     SolicitudProyecto updatedSolicitudProyecto = generarSolicitudProyecto(1L);
-    updatedSolicitudProyecto.setTitulo("titulo-modificado");
 
     BDDMockito.given(service.update(ArgumentMatchers.<SolicitudProyecto>any()))
         .willAnswer(new Answer<SolicitudProyecto>() {
@@ -115,7 +113,6 @@ public class SolicitudProyectoControllerTest extends BaseControllerTest {
         .andDo(SgiMockMvcResultHandlers.printOnError())
         // then: SolicitudProyecto is updated
         .andExpect(MockMvcResultMatchers.status().isOk()).andExpect(MockMvcResultMatchers.jsonPath("id").isNotEmpty())
-        .andExpect(MockMvcResultMatchers.jsonPath("titulo").value(updatedSolicitudProyecto.getTitulo()))
         .andExpect(MockMvcResultMatchers.jsonPath("colaborativo").value(updatedSolicitudProyecto.getColaborativo()))
         .andExpect(MockMvcResultMatchers.jsonPath("tipoPresupuesto")
             .value(updatedSolicitudProyecto.getTipoPresupuesto().toString()));
@@ -177,7 +174,7 @@ public class SolicitudProyectoControllerTest extends BaseControllerTest {
   }
 
   @Test
-  @WithMockUser(username = "user", authorities = { "AUTH" })
+  @WithMockUser(username = "user", authorities = { "CSP-PRO-E" })
   public void findById_WithExistingId_ReturnsSolicitudProyecto() throws Exception {
     // given: existing id
     Long id = 1L;
@@ -201,7 +198,7 @@ public class SolicitudProyectoControllerTest extends BaseControllerTest {
   }
 
   @Test
-  @WithMockUser(username = "user", authorities = { "AUTH" })
+  @WithMockUser(username = "user", authorities = { "CSP-PRO-E" })
   public void findById_WithNoExistingId_Returns404() throws Exception {
     // given: no existing id
     Long id = 1L;
@@ -228,9 +225,13 @@ public class SolicitudProyectoControllerTest extends BaseControllerTest {
    */
   private SolicitudProyecto generarSolicitudProyecto(Long solicitudProyectoId) {
 
+    // formatter: off
+
     SolicitudProyecto solicitudProyecto = SolicitudProyecto.builder().id(solicitudProyectoId)
-        .titulo("titulo-" + solicitudProyectoId).acronimo("acronimo-" + solicitudProyectoId).colaborativo(Boolean.TRUE)
-        .tipoPresupuesto(TipoPresupuesto.GLOBAL).build();
+        .acronimo("acronimo-" + solicitudProyectoId).colaborativo(Boolean.TRUE).tipoPresupuesto(TipoPresupuesto.GLOBAL)
+        .coordinado(Boolean.TRUE).build();
+
+    // formatter: on
 
     return solicitudProyecto;
   }

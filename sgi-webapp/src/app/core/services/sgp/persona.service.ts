@@ -4,11 +4,12 @@ import { PERSONA_CONVERTER } from '@core/converters/sgp/persona.converter';
 import { IPersonaBackend } from '@core/models/sgp/backend/persona-backend';
 import { IPersona } from '@core/models/sgp/persona';
 import { environment } from '@env';
+import { FormlyFieldConfig } from '@ngx-formly/core';
 import {
   RSQLSgiRestFilter, SgiMutableRestService, SgiRestFilterOperator, SgiRestFindOptions, SgiRestListResult
 } from '@sgi/framework/http';
 import { Observable, of } from 'rxjs';
-import { switchMap } from 'rxjs/operators';
+import { map, switchMap } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -54,6 +55,46 @@ export class PersonaService extends SgiMutableRestService<string, IPersonaBacken
 
     return this.findAll(options).pipe(
       switchMap((result) => of(result.total > 0))
+    );
+  }
+
+  createPersona(model: any): Observable<void> {
+    return this.http.post<void>(`${this.endpointUrl}/formly`, model);
+  }
+
+  updatePersona(id: string, model: any): Observable<void> {
+    return this.http.put<void>(`${this.endpointUrl}/formly/${id}`, model);
+  }
+
+  getFormlyCreate(): Observable<FormlyFieldConfig[]> {
+    return this.http.get<FormlyFieldConfig[]>(`${this.endpointUrl}/formly/create`);
+  }
+
+  getFormlyUpdate(): Observable<FormlyFieldConfig[]> {
+    return this.http.get<FormlyFieldConfig[]>(`${this.endpointUrl}/formly/update`);
+  }
+
+  getFormlyModelById(id: string): Observable<any> {
+    return this.http.get<any[]>(`${this.endpointUrl}/formly/${id}`);
+  }
+
+  getFormlyView(): Observable<FormlyFieldConfig[]> {
+    return this.http.get<FormlyFieldConfig[]>(`${this.endpointUrl}/formly/view`);
+  }
+
+  /**
+   * Busca la persona que tenga el numero de documento
+   *
+   * @param numeroDocumento Numero de documento
+   * @returns la persona con ese numero de documento
+   */
+  findByNumeroDocumento(numeroDocumento: string): Observable<IPersona> {
+    const options: SgiRestFindOptions = {
+      filter: new RSQLSgiRestFilter('numeroDocumento', SgiRestFilterOperator.EQUALS, numeroDocumento)
+    };
+
+    return this.findAll(options).pipe(
+      map(result => result.items[0])
     );
   }
 

@@ -105,6 +105,7 @@ export class ProyectoProyectosSgeComponent extends FragmentComponent implements 
   openModal(): void {
     const data: SearchProyectoEconomicoModalData = {
       selectedProyectos: this.dataSource.data.map((proyectoProyectoSge) => proyectoProyectoSge.value.proyectoSge),
+      proyectoSgiId: this.formPart.getKey() as number
     };
 
     const config = {

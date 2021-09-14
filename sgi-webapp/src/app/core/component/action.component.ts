@@ -6,6 +6,7 @@ import { map } from 'rxjs/operators';
 import { OnDestroy, OnInit, ViewChild, Directive } from '@angular/core';
 import { ActionFooterComponent } from '@shared/action-footer/action-footer.component';
 import { ActivatedRoute, Router } from '@angular/router';
+import { DIALOG_BUTTON_STYLE } from '@block/dialog/dialog.component';
 
 const MSG_FORM_UNSAVED = marker('msg.unsaved');
 const MSG_FORM_UNSAVED_CANCEL = marker('btn.cancel');
@@ -55,7 +56,9 @@ export abstract class ActionComponent implements SgiAllowNavigation, OnInit, OnD
         MSG_FORM_UNSAVED,
         {},
         MSG_FORM_UNSAVED_CONTINUE,
-        MSG_FORM_UNSAVED_CANCEL
+        MSG_FORM_UNSAVED_CANCEL,
+        DIALOG_BUTTON_STYLE.BTN_STYLE_WARN,
+        DIALOG_BUTTON_STYLE.BTN_STYLE_ACCENT
       ).pipe(map((val) => val));
     }
     return of(true);

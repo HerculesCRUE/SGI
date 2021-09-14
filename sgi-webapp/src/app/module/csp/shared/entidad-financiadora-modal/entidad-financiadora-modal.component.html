@@ -47,6 +47,9 @@
         <mat-error *ngIf="formGroup.controls.porcentajeFinanciacion.errors?.max">
           {{ 'error.max.entity' | translate:msgParamPorcentajeFinanciacionEntity }}
         </mat-error>
+        <mat-error *ngIf="formGroup.controls.porcentajeFinanciacion.errors?.maxDecimals">
+          {{ 'error.max.decimals.entity' | translate:msgParamPorcentajeFinanciacionEntity }}
+        </mat-error>
       </mat-form-field>
     </div>
     <!-- Importe de financiación -->

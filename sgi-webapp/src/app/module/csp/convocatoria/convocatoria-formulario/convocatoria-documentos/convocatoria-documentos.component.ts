@@ -128,7 +128,7 @@ export class ConvocatoriaDocumentosComponent extends FragmentComponent implement
       fichero: new FormControl(null, Validators.required),
       fase: new FormControl(null),
       tipoDocumento: new FormControl(null),
-      publico: new FormControl(null, Validators.required),
+      publico: new FormControl(true, Validators.required),
       observaciones: new FormControl('')
     }));
     this.group.initialize();
@@ -251,6 +251,7 @@ export class ConvocatoriaDocumentosComponent extends FragmentComponent implement
     this.viewMode = VIEW_MODE.NEW;
     this.viewingNode = newNode;
     this.loadDetails(this.viewingNode);
+    this.group.form.controls.publico.setValue(true);
   }
 
   switchToEdit() {

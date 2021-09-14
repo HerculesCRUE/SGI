@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.assertj.core.api.Assertions;
+import org.crue.hercules.sgi.eti.config.SgiConfigProperties;
 import org.crue.hercules.sgi.eti.dto.PeticionEvaluacionWithIsEliminable;
 import org.crue.hercules.sgi.eti.exceptions.PeticionEvaluacionNotFoundException;
 import org.crue.hercules.sgi.eti.model.Memoria;
@@ -21,6 +22,7 @@ import org.mockito.BDDMockito;
 import org.mockito.Mock;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -35,11 +37,14 @@ public class PeticionEvaluacionServiceTest extends BaseServiceTest {
   @Mock
   private PeticionEvaluacionRepository peticionEvaluacionRepository;
 
+  @Autowired
+  private SgiConfigProperties sgiConfigProperties;
+
   private PeticionEvaluacionService peticionEvaluacionService;
 
   @BeforeEach
   public void setUp() throws Exception {
-    peticionEvaluacionService = new PeticionEvaluacionServiceImpl(peticionEvaluacionRepository);
+    peticionEvaluacionService = new PeticionEvaluacionServiceImpl(sgiConfigProperties, peticionEvaluacionRepository);
   }
 
   @Test

@@ -1,4 +1,6 @@
 import { Component } from '@angular/core';
+import { MSG_PARAMS } from '@core/i18n';
+import { ETI_ROUTE_NAMES } from '../eti-route-names';
 
 @Component({
   selector: 'sgi-eti-root',
@@ -7,7 +9,12 @@ import { Component } from '@angular/core';
 })
 export class EtiRootComponent {
 
-  constructor() {
+  get ETI_ROUTE_NAMES() {
+    return ETI_ROUTE_NAMES;
+  }
+
+  get MSG_PARAMS() {
+    return MSG_PARAMS;
   }
 
 }

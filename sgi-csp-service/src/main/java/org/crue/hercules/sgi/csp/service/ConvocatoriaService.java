@@ -1,6 +1,8 @@
 package org.crue.hercules.sgi.csp.service;
 
 import org.crue.hercules.sgi.csp.model.Convocatoria;
+import org.crue.hercules.sgi.csp.model.Proyecto;
+import org.crue.hercules.sgi.csp.model.Solicitud;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -62,7 +64,7 @@ public interface ConvocatoriaService {
    * @param authorities        Authorities a validar
    * @return true si puede ser modificada / false si no puede ser modificada
    */
-  boolean modificable(Long id, String unidadConvocatoria, String[] authorities);
+  boolean isRegistradaConSolicitudesOProyectos(Long id, String unidadConvocatoria, String[] authorities);
 
   /**
    * Hace las comprobaciones necesarias para determinar si la {@link Convocatoria}
@@ -140,5 +142,30 @@ public interface ConvocatoriaService {
    * @return true si puede ser tramitada / false si no puede ser tramitada
    */
   boolean tramitable(Long id);
+
+  /**
+   * Devuelve si tiene alguna {@link Solicitud} asociada
+   * 
+   * @param convocatoriaId id de la {@link Convocatoria}
+   * @return true o false
+   */
+  boolean hasAnySolicitudReferenced(Long convocatoriaId);
+
+  /**
+   * Devuelve si tiene algún {@link Proyecto} asociado
+   * 
+   * @param convocatoriaId id de la {@link Convocatoria}
+   * @return true o false
+   */
+  boolean hasAnyProyectoReferenced(Long convocatoriaId);
+
+  /**
+   * Clona una {@link Convocatoria} cuya fuente es la que corresponde con el id
+   * pasado por parámetro
+   * 
+   * @param convocatoriaId Id de la convocatoria a clonar
+   * @return un objeto de tipo {@link Convocatoria}
+   */
+  Convocatoria clone(Long convocatoriaId);
 
 }

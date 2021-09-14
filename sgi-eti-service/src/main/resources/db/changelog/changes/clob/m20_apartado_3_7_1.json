@@ -1,0 +1,34 @@
+[
+  {
+    "key": "ap3_7_1",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "label": "3.7.1 Intervenciones/procedimientos que se realizarán al animal"
+    },
+    "fieldGroup": [
+      {
+        "template": "<p>Describir PORMENORIZADAMENTE todas las intervenciones/procedimientos a las que es sometido el animal a lo largo del proceso de experimentación. Detallar especialmente aquellas en las que se prevé que pueda sufrir 'un nivel de dolor, sufrimiento, angustia o daño duradero, equivalente o superior al causado por la introducción de una aguja conforme a la buena práctica veterinaria'. Indicar la duración de cada procedimiento, frecuencia de realización, número de animales de cada procedimiento y categoría de severidad.</p>"
+      },
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "<p>Denominamos 'intervenciones' a las manipulaciones (quirúrgicas o no), pruebas u observaciones a las que es sometido el animal a lo largo del proceso de experimentación.</p>"
+      },
+      {
+        "key": "intervencionesAnimal",
+        "type": "textarea",
+        "templateOptions": {
+          "label": "Intervenciones/procedimientos",
+          "placeholder": "",
+          "required": true,
+          "autosize": true,
+          "autosizeMinRows": "1",
+          "autosizeMaxRows": "10"
+        }
+      }
+    ]
+  }
+]

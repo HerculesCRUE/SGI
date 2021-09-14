@@ -1,3 +1,4 @@
+import { IProyecto } from '@core/models/csp/proyecto';
 import { IProyectoProyectoSge } from '@core/models/csp/proyecto-proyecto-sge';
 import { IProyectoSge } from '@core/models/sge/proyecto-sge';
 import { Fragment } from '@core/services/action-service';
@@ -17,7 +18,8 @@ export class ProyectoProyectosSgeFragment extends Fragment {
     private service: ProyectoProyectoSgeService,
     private proyectoService: ProyectoService,
     private proyectoSgeService: ProyectoSgeService,
-    public readonly: boolean
+    public readonly: boolean,
+    public isVisor: boolean
   ) {
     super(key);
     this.setComplete(true);
@@ -52,7 +54,7 @@ export class ProyectoProyectosSgeFragment extends Fragment {
   public addProyectoSge(proyectoSge: IProyectoSge) {
     const proyectoProyectoSge: IProyectoProyectoSge = {
       id: undefined,
-      proyectoId: this.getKey() as number,
+      proyecto: { id: this.getKey() as number } as IProyecto,
       proyectoSge
     };
 

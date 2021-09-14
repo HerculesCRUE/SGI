@@ -1,6 +1,9 @@
 package org.crue.hercules.sgi.csp.service;
 
 import org.crue.hercules.sgi.csp.model.EstadoProyecto;
+
+import java.util.List;
+
 import org.crue.hercules.sgi.csp.dto.ProyectoPresupuestoTotales;
 import org.crue.hercules.sgi.csp.model.Proyecto;
 import org.crue.hercules.sgi.csp.model.Solicitud;
@@ -98,4 +101,24 @@ public interface ProyectoService {
    */
   ProyectoPresupuestoTotales getTotales(Long proyectoId);
 
+  /**
+   * Hace las comprobaciones necesarias para determinar si el {@link Proyecto}
+   * puede ser modificado. También se utilizará para permitir la creación,
+   * modificación o eliminación de ciertas entidades relacionadas con el
+   * {@link Proyecto}.
+   *
+   * @param proyectoId  Id del {@link Proyecto}.
+   * @param authorities Authorities a validar
+   * @return true si puede ser modificada / false si no puede ser modificada
+   */
+  boolean modificable(Long proyectoId, String[] authorities);
+
+  /**
+   * Obtiene todos los ids de {@link Proyecto} que cumplan las condiciones
+   * indicadas en la query.
+   *
+   * @param query información del filtro.
+   * @return el listado de ids de {@link Proyecto}.
+   */
+  List<Long> findIds(String query);
 }

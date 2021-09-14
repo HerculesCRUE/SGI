@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<api context="/sgepii" name="sgepii-api" publishSwagger="/_system/governance/swagger_files/sgepii-swagger.yaml" xmlns="http://ws.apache.org/ns/synapse">
+
+  <!-- gastos de invención -->
+  <resource methods="GET" url-mapping="/gastos-invencion">
+    <inSequence>
+      <call-template target="sgi-auth-sequence-template">
+        <with-param name="requiredAuthorities" value=""/>
+      </call-template>
+      <sequence key="sgepii-add-x-api-key-sequence"/>
+      <send>
+        <endpoint key="sgepii-endpoint"/>
+      </send>
+    </inSequence>
+    <outSequence>
+      <respond/>
+    </outSequence>
+    <faultSequence>
+      <sequence key="error-handling-sequence"/>
+    </faultSequence>
+  </resource>
+
+  <resource methods="GET" uri-template="/gastos-invencion/{id}">
+    <inSequence>
+      <call-template target="sgi-auth-sequence-template">
+        <with-param name="requiredAuthorities" value=""/>
+      </call-template>
+      <sequence key="sgepii-add-x-api-key-sequence"/>
+      <send>
+        <endpoint key="sgepii-endpoint"/>
+      </send>
+    </inSequence>
+    <outSequence>
+      <respond/>
+    </outSequence>
+    <faultSequence>
+      <sequence key="error-handling-sequence"/>
+    </faultSequence>
+  </resource>
+
+    <resource methods="GET" url-mapping="/gastos-invencion/columnas">
+    <inSequence>
+      <call-template target="sgi-auth-sequence-template">
+        <with-param name="requiredAuthorities" value=""/>
+      </call-template>
+      <sequence key="sgepii-add-x-api-key-sequence"/>
+      <send>
+        <endpoint key="sgepii-endpoint"/>
+      </send>
+    </inSequence>
+    <outSequence>
+      <respond/>
+    </outSequence>
+    <faultSequence>
+      <sequence key="error-handling-sequence"/>
+    </faultSequence>
+  </resource>
+
+  <!-- ingresos de invención -->
+  <resource methods="GET" url-mapping="/ingresos-invencion">
+    <inSequence>
+      <call-template target="sgi-auth-sequence-template">
+        <with-param name="requiredAuthorities" value=""/>
+      </call-template>
+      <sequence key="sgepii-add-x-api-key-sequence"/>
+      <send>
+        <endpoint key="sgepii-endpoint"/>
+      </send>
+    </inSequence>
+    <outSequence>
+      <respond/>
+    </outSequence>
+    <faultSequence>
+      <sequence key="error-handling-sequence"/>
+    </faultSequence>
+  </resource>
+
+  <resource methods="GET" url-mapping="/ingresos-invencion/columnas">
+    <inSequence>
+      <call-template target="sgi-auth-sequence-template">
+        <with-param name="requiredAuthorities" value=""/>
+      </call-template>
+      <sequence key="sgepii-add-x-api-key-sequence"/>
+      <send>
+        <endpoint key="sgepii-endpoint"/>
+      </send>
+    </inSequence>
+    <outSequence>
+      <respond/>
+    </outSequence>
+    <faultSequence>
+      <sequence key="error-handling-sequence"/>
+    </faultSequence>
+  </resource>
+
+    <!-- invenciones -->
+  <resource methods="GET" url-mapping="/invenciones">
+    <inSequence>
+      <send>
+        <endpoint key="sgipii-endpoint"/>
+      </send>
+    </inSequence>
+    <outSequence>
+      <script key="gov:scripts/sgepii/invenciones-response-converter-mediator.js" language="js"/>
+      <respond/>
+    </outSequence>
+    <faultSequence>
+      <sequence key="error-handling-sequence"/>
+    </faultSequence>
+  </resource>
+
+  <resource methods="HEAD" uri-template="/invenciones/{id}">
+    <inSequence>
+      <send>
+        <endpoint key="sgipii-endpoint"/>
+      </send>
+    </inSequence>
+    <outSequence>
+      <respond/>
+    </outSequence>
+    <faultSequence>
+      <sequence key="error-handling-sequence"/>
+    </faultSequence>
+  </resource>
+
+</api>

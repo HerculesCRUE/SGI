@@ -30,7 +30,8 @@ describe('ProyectoSocioPeriodoPagoModalComponent', () => {
     isEdit: false,
     proyectoSocioPeriodoPago,
     fechaInicioProyectoSocio: DateTime.now(),
-    fechaFinProyectoSocio: DateTime.now()
+    fechaFinProyectoSocio: DateTime.now(),
+    readonly: false
   };
 
   beforeEach(waitForAsync(() => {

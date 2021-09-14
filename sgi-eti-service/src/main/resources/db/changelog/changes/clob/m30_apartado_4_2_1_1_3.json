@@ -1,0 +1,487 @@
+[
+  {
+    "key": "ap4_1",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "label": "4.2.1.1.3 Buenas prácticas de laboratorio"
+    }
+  },
+  {
+    "template": "<p>Las puertas del laboratorio están cerradas y el acceso al laboratorio se limita, a juicio del responsable del mismo, cuando losexperimentos se hallan en marcha</p>"
+  },
+  {
+    "key": "puertasLaboratorio",
+    "type": "radio",
+    "templateOptions": {
+      "required": true,
+      "label": "Elige opción",
+      "options": [
+        {
+          "value": "no",
+          "label": "No"
+        },
+        {
+          "value": "si",
+          "label": "Sí"
+        }
+      ]
+    }
+  },
+  {
+    "key": "observaciones_puertasLaboratorio",
+    "type": "textarea",
+    "templateOptions": {
+      "label": "Observaciones",
+      "placeholder": "Observaciones",
+      "required": false,
+      "disabled": false,
+      "autosize": true,
+      "autosizeMinRows": "1",
+      "autosizeMaxRows": "10"
+    }
+  },
+  {
+    "template": "<p>Las superficies de trabajo se descontaminan al menos una vez al día, al final de la jornada de trabajo y después de cualquier derramede material biológico</p>"
+  },
+  {
+    "key": "superficiesTrabajo",
+    "type": "radio",
+    "templateOptions": {
+      "required": true,
+      "label": "Elige opción",
+      "options": [
+        {
+          "value": "no",
+          "label": "No"
+        },
+        {
+          "value": "si",
+          "label": "Sí"
+        }
+      ]
+    }
+  },
+  {
+    "key": "observaciones_superficiesTrabajo",
+    "type": "textarea",
+    "templateOptions": {
+      "label": "Observaciones",
+      "placeholder": "Observaciones",
+      "required": false,
+      "disabled": false,
+      "autosize": true,
+      "autosizeMinRows": "1",
+      "autosizeMaxRows": "10"
+    }
+  },
+  {
+    "template": "<p>Los residuos cortantes o punzantes se recogen en contenedores adecuados resistentes</p>"
+  },
+  {
+    "key": "residuosCortantes",
+    "type": "radio",
+    "templateOptions": {
+      "required": true,
+      "label": "Elige opción",
+      "options": [
+        {
+          "value": "no",
+          "label": "No"
+        },
+        {
+          "value": "si",
+          "label": "Sí"
+        }
+      ]
+    }
+  },
+  {
+    "key": "observaciones_residuosCortantes",
+    "type": "textarea",
+    "templateOptions": {
+      "label": "Observaciones",
+      "placeholder": "Observaciones",
+      "required": false,
+      "disabled": false,
+      "autosize": true,
+      "autosizeMinRows": "1",
+      "autosizeMaxRows": "10"
+    }
+  },
+  {
+    "template": "<p>Las técnicas de manipulación se efectúan de manera que se minimice la generación de aerosoles y salpicaduras</p>"
+  },
+  {
+    "key": "generacionAerosoles",
+    "type": "radio",
+    "templateOptions": {
+      "required": true,
+      "label": "Elige opción",
+      "options": [
+        {
+          "value": "no",
+          "label": "No"
+        },
+        {
+          "value": "si",
+          "label": "Sí"
+        }
+      ]
+    }
+  },
+  {
+    "key": "observaciones_generacionAerosoles",
+    "type": "textarea",
+    "templateOptions": {
+      "label": "Observaciones",
+      "placeholder": "Observaciones",
+      "required": false,
+      "disabled": false,
+      "autosize": true,
+      "autosizeMinRows": "1",
+      "autosizeMaxRows": "10"
+    }
+  },
+  {
+    "template": "<p>La recogida y limpieza de derrames se realiza de forma segura según procedimiento escrito</p>"
+  },
+  {
+    "key": "derrames",
+    "type": "radio",
+    "templateOptions": {
+      "required": true,
+      "label": "Elige opción",
+      "options": [
+        {
+          "value": "no",
+          "label": "No"
+        },
+        {
+          "value": "si",
+          "label": "Sí"
+        }
+      ]
+    }
+  },
+  {
+    "key": "observaciones_derrames",
+    "type": "textarea",
+    "templateOptions": {
+      "label": "Observaciones",
+      "placeholder": "Observaciones",
+      "required": false,
+      "disabled": false,
+      "autosize": true,
+      "autosizeMinRows": "1",
+      "autosizeMaxRows": "10"
+    }
+  },
+  {
+    "template": "<p>No está permitido comer, beber, fumar, maquillarse o llevar lentillas en el laboratorio</p>"
+  },
+  {
+    "key": "prohibido",
+    "type": "radio",
+    "templateOptions": {
+      "required": true,
+      "label": "Elige opción",
+      "options": [
+        {
+          "value": "no",
+          "label": "No"
+        },
+        {
+          "value": "si",
+          "label": "Sí"
+        }
+      ]
+    }
+  },
+  {
+    "key": "observaciones_prohibido",
+    "type": "textarea",
+    "templateOptions": {
+      "label": "Observaciones",
+      "placeholder": "Observaciones",
+      "required": false,
+      "disabled": false,
+      "autosize": true,
+      "autosizeMinRows": "1",
+      "autosizeMaxRows": "10"
+    }
+  },
+  {
+    "template": "<p>Estará prohibido salir del laboratorio con la ropa de trabajo y con los equipos de protección puestos</p>"
+  },
+  {
+    "key": "salirLaboratorio",
+    "type": "radio",
+    "templateOptions": {
+      "required": true,
+      "label": "Elige opción",
+      "options": [
+        {
+          "value": "no",
+          "label": "No"
+        },
+        {
+          "value": "si",
+          "label": "Sí"
+        }
+      ]
+    }
+  },
+  {
+    "key": "observaciones_salirLaboratorio",
+    "type": "textarea",
+    "templateOptions": {
+      "label": "Observaciones",
+      "placeholder": "Observaciones",
+      "required": false,
+      "disabled": false,
+      "autosize": true,
+      "autosizeMinRows": "1",
+      "autosizeMaxRows": "10"
+    }
+  },
+  {
+    "template": "<p>La ropa de trabajo se guarda en distinto lugar que la ropa de calle</p>"
+  },
+  {
+    "key": "ropaCalle",
+    "type": "radio",
+    "templateOptions": {
+      "required": true,
+      "label": "Elige opción",
+      "options": [
+        {
+          "value": "no",
+          "label": "No"
+        },
+        {
+          "value": "si",
+          "label": "Sí"
+        }
+      ]
+    }
+  },
+  {
+    "key": "observaciones_ropaCalle",
+    "type": "textarea",
+    "templateOptions": {
+      "label": "Observaciones",
+      "placeholder": "Observaciones",
+      "required": false,
+      "disabled": false,
+      "autosize": true,
+      "autosizeMinRows": "1",
+      "autosizeMaxRows": "10"
+    }
+  },
+  {
+    "template": "<p>La recogida, manipulación, almacenamiento y el transporte de muestras, de material contaminado o de residuos se hace encontenedores específicos y con procedimientos adecuados</p>"
+  },
+  {
+    "key": "muestrasContaminadas",
+    "type": "radio",
+    "templateOptions": {
+      "required": true,
+      "label": "Elige opción",
+      "options": [
+        {
+          "value": "no",
+          "label": "No"
+        },
+        {
+          "value": "si",
+          "label": "Sí"
+        }
+      ]
+    }
+  },
+  {
+    "key": "observaciones_muestrasContaminadas",
+    "type": "textarea",
+    "templateOptions": {
+      "label": "Observaciones",
+      "placeholder": "Observaciones",
+      "required": false,
+      "disabled": false,
+      "autosize": true,
+      "autosizeMinRows": "1",
+      "autosizeMaxRows": "10"
+    }
+  },
+  {
+    "template": "<p>En la puerta de entrada del laboratorio está colocada la señal de peligro biológico</p>"
+  },
+  {
+    "key": "señalLaboratorio",
+    "type": "radio",
+    "templateOptions": {
+      "required": true,
+      "label": "Elige opción",
+      "options": [
+        {
+          "value": "no",
+          "label": "No"
+        },
+        {
+          "value": "si",
+          "label": "Sí"
+        }
+      ]
+    }
+  },
+  {
+    "key": "observaciones_señalLaboratorio",
+    "type": "textarea",
+    "templateOptions": {
+      "label": "Observaciones",
+      "placeholder": "Observaciones",
+      "required": false,
+      "disabled": false,
+      "autosize": true,
+      "autosizeMinRows": "1",
+      "autosizeMaxRows": "10"
+    }
+  },
+  {
+    "template": "<p>Los equipos del laboratorio se descontaminan después de finalizar el trabajo</p>"
+  },
+  {
+    "key": "equiposLaboratorio",
+    "type": "radio",
+    "templateOptions": {
+      "required": true,
+      "label": "Elige opción",
+      "options": [
+        {
+          "value": "no",
+          "label": "No"
+        },
+        {
+          "value": "si",
+          "label": "Sí"
+        }
+      ]
+    }
+  },
+  {
+    "key": "observaciones_equiposLaboratorio",
+    "type": "textarea",
+    "templateOptions": {
+      "label": "Observaciones",
+      "placeholder": "Observaciones",
+      "required": false,
+      "disabled": false,
+      "autosize": true,
+      "autosizeMinRows": "1",
+      "autosizeMaxRows": "10"
+    }
+  },
+  {
+    "template": "<p>Todo derrame o accidente que tenga como consecuencia la sobreexposición del personal a material infeccioso será comunicado al responsable de seguridad</p>"
+  },
+  {
+    "key": "responsableSeguridad",
+    "type": "radio",
+    "templateOptions": {
+      "required": true,
+      "label": "Elige opción",
+      "options": [
+        {
+          "value": "no",
+          "label": "No"
+        },
+        {
+          "value": "si",
+          "label": "Sí"
+        }
+      ]
+    }
+  },
+  {
+    "key": "observaciones_responsableSeguridad",
+    "type": "textarea",
+    "templateOptions": {
+      "label": "Observaciones",
+      "placeholder": "Observaciones",
+      "required": false,
+      "disabled": false,
+      "autosize": true,
+      "autosizeMinRows": "1",
+      "autosizeMaxRows": "10"
+    }
+  },
+  {
+    "template": "<p>Ningún material infeccioso sale del laboratorio sin descontaminar o en contenedor específico</p>"
+  },
+  {
+    "key": "salirLaboratorioInfeccioso",
+    "type": "radio",
+    "templateOptions": {
+      "required": true,
+      "label": "Elige opción",
+      "options": [
+        {
+          "value": "no",
+          "label": "No"
+        },
+        {
+          "value": "si",
+          "label": "Sí"
+        }
+      ]
+    }
+  },
+  {
+    "key": "observaciones_salirLaboratorioInfeccioso",
+    "type": "textarea",
+    "templateOptions": {
+      "label": "Observaciones",
+      "placeholder": "Observaciones",
+      "required": false,
+      "disabled": false,
+      "autosize": true,
+      "autosizeMinRows": "1",
+      "autosizeMaxRows": "10"
+    }
+  },
+  {
+    "template": "<p>Todas las técnicas que puedan producir aerosoles (centrifugación, mezclas, apertura de envases de materiales infecciosos a distintapresión, inserción de asas de siembra calientes en el cultivo, inyección violenta de fluidos, etc.) se realizan en una CSB</p>"
+  },
+  {
+    "key": "realizarCSB",
+    "type": "radio",
+    "templateOptions": {
+      "required": true,
+      "label": "Elige opción",
+      "options": [
+        {
+          "value": "no",
+          "label": "No"
+        },
+        {
+          "value": "si",
+          "label": "Sí"
+        }
+      ]
+    }
+  },
+  {
+    "key": "observaciones_realizarCSB",
+    "type": "textarea",
+    "templateOptions": {
+      "label": "Observaciones",
+      "placeholder": "Observaciones",
+      "required": false,
+      "disabled": false,
+      "autosize": true,
+      "autosizeMinRows": "1",
+      "autosizeMaxRows": "10"
+    }
+  }
+]

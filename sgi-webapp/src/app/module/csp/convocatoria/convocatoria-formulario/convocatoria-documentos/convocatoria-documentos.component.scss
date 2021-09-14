@@ -1,12 +1,11 @@
 @import "colors.scss";
 
-
-.programa{
-  .arbol{
+.programa {
+  .arbol {
     padding: 10px;
-    border: 1px solid map-get($palette-grease, 100);
+    border: 1px solid map-get($palette-grey, 300);
     min-height: 485px;
-    .mat-tree-node{
+    .mat-tree-node {
       button {
         font-weight: 400;
       }
@@ -21,13 +20,11 @@
       list-style-type: none;
     }
   }
-  .visualizacion{
+  .visualizacion {
     h3 {
       font-weight: bold;
     }
-    background: map-get($palette-primary, 50);
+    background: map-get($sgi-custom-colors, bg);
     padding: 30px;
   }
 }
-
-

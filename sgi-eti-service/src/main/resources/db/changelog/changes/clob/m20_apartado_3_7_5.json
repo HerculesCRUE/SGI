@@ -1,0 +1,46 @@
+[
+  {
+    "key": "ap3_7_5",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "label": "3.7.5 Analgesia"
+    },
+    "fieldGroup": [
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "<p>Deberán utilizarse analgésicos u otros métodos idóneos para garantizar, en la medida de lo posible, que el dolor, el sufrimiento, la angustia o la lesión sean mínimos. Su aplicación, cuando proceda, debe ser realizada o supervisada por un veterinario (<a href='https://www.boe.es/buscar/act.php?id=BOE-A-2013-1337&p=20130208&tn=1#a26'>art, 26.2 RD 53/13</a>).</p><p>Siempre que sea compatible con los fines de la intervención, cuando se prevea que un animal va a sufrir dolor después de haberse recuperado de la anestesia, se le aplicará un tratamiento analgésico preventivo y paliativo, u otro método adecuado para calmar el dolor (<a href='https://www.boe.es/buscar/act.php?id=BOE-A-2013-1337&p=20130208&tn=1#a26'>art, 26.5 RD 53/13</a>).</p>"
+      },
+      {
+        "template": "¿Se va utilizar analgesia en algún momento del proceso de experimentación?"
+      },
+      {
+        "key": "analgesiaRadio",
+        "type": "radio",
+        "templateOptions": {
+          "label": "Elige opción:",
+          "required": true,
+          "options": [
+            {
+              "value": "no",
+              "label": "No"
+            },
+            {
+              "value": "si",
+              "label": "Sí"
+            }
+          ]
+        }
+      },
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "<p>Nota: recuerde que las excepciones requieren aportar el documento correspondiente en el apartado '5.4 Situaciones especiales'.</p>"
+      }
+    ]
+  }
+]

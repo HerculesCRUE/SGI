@@ -33,4 +33,16 @@ public class ProyectoSpecifications {
     };
   }
 
+  /**
+   * Filtro de {@link Proyecto} por su identificador
+   * 
+   * @param id identificador del {@link Proyecto}
+   * @return el {@link Proyecto}
+   */
+  public static Specification<Proyecto> byProyectoId(Long id) {
+    return (root, query, cb) -> {
+      return cb.equal(root.get(Proyecto_.id), id);
+    };
+  }
+
 }

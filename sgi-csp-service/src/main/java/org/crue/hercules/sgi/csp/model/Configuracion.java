@@ -43,4 +43,9 @@ public class Configuracion extends BaseEntity {
   @NotNull
   private String formatoPartidaPresupuestaria;
 
+  /** Formato codigo partida presupuestaria. */
+  @Column(name = "plantilla_formato_partida_presupuestaria", nullable = false, unique = true)
+  @NotNull
+  private String plantillaFormatoPartidaPresupuestaria;
+
 }

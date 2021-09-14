@@ -1,10 +1,14 @@
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
+import { FlexModule } from '@angular/flex-layout';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { IConceptoGasto } from '@core/models/csp/tipos-configuracion';
+import { RouterTestingModule } from '@angular/router/testing';
+import { IConceptoGasto } from '@core/models/csp/concepto-gasto';
 import TestUtils from '@core/utils/test-utils';
 import { MaterialDesignModule } from '@material/material-design.module';
+import { SharedModule } from '@shared/shared.module';
 import { LoggerTestingModule } from 'ngx-logger/testing';
 import { ConceptoGastoModalComponent } from './concepto-gasto-modal.component';
 
@@ -18,10 +22,16 @@ describe('ConceptoGastoModalComponent', () => {
     };
     TestBed.configureTestingModule({
       imports: [
+        BrowserAnimationsModule,
+        FlexModule,
+        FormsModule,
+        HttpClientTestingModule,
         LoggerTestingModule,
         MaterialDesignModule,
-        BrowserAnimationsModule,
-        TestUtils.getIdiomas()
+        ReactiveFormsModule,
+        RouterTestingModule,
+        SharedModule,
+        TestUtils.getIdiomas(),
       ],
       declarations: [ConceptoGastoModalComponent],
       providers: [{ provide: MatDialogRef, useValue: mockDialogRef },

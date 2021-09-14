@@ -1,6 +1,5 @@
 @import "colors.scss";
 @import "vars.scss";
-@import "typography.scss";
 
 .separation {
   height: $footerHeight;
@@ -8,41 +7,19 @@
     position: fixed;
     bottom: 0px;
     width: 100%;
-    box-shadow: inset 0px 14px 12px -12px map-get($palette-grease, 100);
-    background: white;
+    box-shadow: inset 0px 14px 12px -12px map-get($palette-grey, 300);
+    background: map-get($sgi-custom-colors, white);
   }
   .botonera {
     height: 100%;
-    padding-left: 25px;
+    padding-left: 5px;
     .link-cancelar {
       font-weight: bold;
-      color: map-get($custom-colors, black);
-      padding-left: 10px;
-      padding-right: 10px;
+      color: map-get($sgi-custom-colors, black);
+      padding-left: 5px;
+      padding-right: 5px;
       span.underline {
         text-decoration: underline;
-      }
-    }
-    .mensaje-inline {
-      padding: 7px 25px 7px 7px;
-      font-size: mat-font-size($custom-typography, subheading-1);
-      &.warning {
-        background-color: mat-contrast($custom-colors, warning);
-        border-radius: 16px;
-        font-weight: 600;
-        .warning-icon {
-          color: map-get($custom-colors, warning);
-          vertical-align: middle;
-        }
-      }
-      &.danger {
-        background-color: mat-contrast($custom-colors, danger);
-        border-radius: 16px;
-        font-weight: 600;
-        .danger-icon {
-          color: map-get($custom-colors, danger);
-          vertical-align: middle;
-        }
       }
     }
   }

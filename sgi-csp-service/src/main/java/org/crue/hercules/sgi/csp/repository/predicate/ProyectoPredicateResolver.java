@@ -8,15 +8,22 @@ import java.util.stream.Collectors;
 
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Join;
 import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.ListJoin;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
+import org.crue.hercules.sgi.csp.model.ContextoProyecto;
+import org.crue.hercules.sgi.csp.model.ContextoProyecto_;
 import org.crue.hercules.sgi.csp.model.Programa;
 import org.crue.hercules.sgi.csp.model.Proyecto;
 import org.crue.hercules.sgi.csp.model.ProyectoEntidadConvocante;
 import org.crue.hercules.sgi.csp.model.ProyectoEntidadConvocante_;
+import org.crue.hercules.sgi.csp.model.ProyectoEntidadFinanciadora;
+import org.crue.hercules.sgi.csp.model.ProyectoEntidadFinanciadora_;
+import org.crue.hercules.sgi.csp.model.ProyectoEntidadGestora;
+import org.crue.hercules.sgi.csp.model.ProyectoEntidadGestora_;
 import org.crue.hercules.sgi.csp.model.ProyectoEquipo;
 import org.crue.hercules.sgi.csp.model.ProyectoEquipo_;
 import org.crue.hercules.sgi.csp.model.ProyectoProrroga;
@@ -41,7 +48,9 @@ public class ProyectoPredicateResolver implements SgiRSQLPredicateResolver<Proye
     /* Finalizado */
     FINALIZADO("finalizado"),
     /* Prorrogado */
-    PRORROGADO("prorrogado");
+    PRORROGADO("prorrogado"),
+    /* Fecha modificación */
+    FECHA_MODIFICACION("fechaModificacion");
 
     private String code;
 
@@ -170,6 +179,39 @@ public class ProyectoPredicateResolver implements SgiRSQLPredicateResolver<Proye
     }
   }
 
+  private Predicate buildByFechaModificacion(ComparisonNode node, Root<Proyecto> root, CriteriaQuery<?> query,
+      CriteriaBuilder cb) {
+    ComparisonOperator operator = node.getOperator();
+    if (!operator.equals(RSQLOperators.GREATER_THAN_OR_EQUAL)) {
+      // Unsupported Operator
+      throw new IllegalArgumentException("Unsupported operator: " + operator + " for " + node.getSelector());
+    }
+    if (node.getArguments().size() != 1) {
+      // Bad number of arguments
+      throw new IllegalArgumentException("Bad number of arguments for " + node.getSelector());
+    }
+
+    String fechaModificacionArgument = node.getArguments().get(0);
+    Instant fechaModificacion = Instant.parse(fechaModificacionArgument);
+    Join<Proyecto, ContextoProyecto> joinContexto = root.join(Proyecto_.contexto, JoinType.LEFT);
+    ListJoin<Proyecto, ProyectoEquipo> joinEquipos = root.join(Proyecto_.equipo, JoinType.LEFT);
+    ListJoin<Proyecto, ProyectoEntidadGestora> joinEntidadGestora = root.join(Proyecto_.entidadesGestoras,
+        JoinType.LEFT);
+    ListJoin<Proyecto, ProyectoEntidadConvocante> joinEntidadConvocante = root.join(Proyecto_.entidadesConvocantes,
+        JoinType.LEFT);
+    ListJoin<Proyecto, ProyectoEntidadFinanciadora> joinEntidadFinanciadora = root
+        .join(Proyecto_.entidadesFinanciadoras, JoinType.LEFT);
+
+    return cb.or(cb.greaterThanOrEqualTo(root.get(Proyecto_.lastModifiedDate), fechaModificacion),
+        cb.greaterThanOrEqualTo(joinContexto.get(ContextoProyecto_.lastModifiedDate), fechaModificacion),
+        cb.greaterThanOrEqualTo(joinEquipos.get(ProyectoEquipo_.lastModifiedDate), fechaModificacion),
+        cb.greaterThanOrEqualTo(joinEntidadGestora.get(ProyectoEntidadGestora_.lastModifiedDate), fechaModificacion),
+        cb.greaterThanOrEqualTo(joinEntidadConvocante.get(ProyectoEntidadConvocante_.lastModifiedDate),
+            fechaModificacion),
+        cb.greaterThanOrEqualTo(joinEntidadFinanciadora.get(ProyectoEntidadFinanciadora_.lastModifiedDate),
+            fechaModificacion));
+  }
+
   @Override
   public boolean isManaged(ComparisonNode node) {
     Property property = Property.fromCode(node.getSelector());
@@ -188,6 +230,8 @@ public class ProyectoPredicateResolver implements SgiRSQLPredicateResolver<Proye
         return buildByFinalizado(node, root, query, criteriaBuilder);
       case PRORROGADO:
         return buildByProrrogado(node, root, query, criteriaBuilder);
+      case FECHA_MODIFICACION:
+        return buildByFechaModificacion(node, root, query, criteriaBuilder);
       default:
         return null;
     }

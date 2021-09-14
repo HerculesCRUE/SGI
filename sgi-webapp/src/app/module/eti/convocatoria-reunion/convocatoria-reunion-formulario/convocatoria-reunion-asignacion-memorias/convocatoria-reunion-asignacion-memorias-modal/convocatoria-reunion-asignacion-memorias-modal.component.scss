@@ -1,6 +1,6 @@
-@import 'colors.scss';
+@import "colors.scss";
 
-.confirmacion-dialog .mat-dialog-container{
+.confirmacion-dialog .mat-dialog-container {
   width: 325px;
-  background: map-get($palette-accent, 100);
+  background: map-get($sgi-custom-colors, bg-confirmation-dialog);
 }

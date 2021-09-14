@@ -47,16 +47,18 @@
         [route]="[PROYECTO_ROUTE_NAMES.EQUIPO_PROYECTO]" [title]="'menu.csp.proyectos.equipo' | translate"
         [fragment]="actionService.getFragment(actionService.FRAGMENT.EQUIPO_PROYECTO)">
       </sgi-action-fragment-menu-item>
-      <sgi-action-fragment-menu-item *sgiHasAnyAuthorityForAnyUO="['CSP-PRO-V', 'CSP-PRO-E']"
+      <sgi-action-fragment-menu-item *sgiHasAnyAuthorityForAnyUO="['CSP-PRO-E']"
         [route]="[PROYECTO_ROUTE_NAMES.RESPONSABLE_ECONOMICO]"
         [title]="'csp.proyecto-responsable-economico' | translate"
         [fragment]="actionService.getFragment(actionService.FRAGMENT.REPONSABLE_ECONOMICO)">
       </sgi-action-fragment-menu-item>
     </sgi-action-fragment-menu-group>
-    <sgi-action-fragment-menu-item *sgiHasAnyAuthorityForAnyUO="['CSP-PRO-V', 'CSP-PRO-E']"
-      [route]="[PROYECTO_ROUTE_NAMES.SOCIOS]" [title]="'menu.csp.proyectos.socios' | translate"
-      [fragment]="actionService.getFragment(actionService.FRAGMENT.SOCIOS)">
-    </sgi-action-fragment-menu-item>
+    <ng-container *ngIf="(actionService.showSocios$ | async)">
+      <sgi-action-fragment-menu-item *sgiHasAnyAuthorityForAnyUO="['CSP-PRO-V', 'CSP-PRO-E']"
+        [route]="[PROYECTO_ROUTE_NAMES.SOCIOS]" [title]="'menu.csp.proyectos.socios' | translate"
+        [fragment]="actionService.getFragment(actionService.FRAGMENT.SOCIOS)">
+      </sgi-action-fragment-menu-item>
+    </ng-container>
     <sgi-action-fragment-menu-group *sgiHasAnyAuthorityForAnyUO="['CSP-PRO-E']"
       [title]="'menu.csp.proyectos.fases-hitos' | translate">
       <sgi-action-fragment-menu-item *sgiHasAnyAuthorityForAnyUO="['CSP-PRO-E']" [route]="[PROYECTO_ROUTE_NAMES.FASES]"
@@ -92,12 +94,12 @@
     </sgi-action-fragment-menu-item>
     <sgi-action-fragment-menu-group *sgiHasAnyAuthorityForAnyUO="['CSP-PRO-V', 'CSP-PRO-E']"
       [title]="'menu.csp.proyectos.configuracion-economica' | translate">
-      <sgi-action-fragment-menu-item *sgiHasAnyAuthorityForAnyUO="['CSP-PRO-V', 'CSP-PRO-E']"
+      <sgi-action-fragment-menu-item *sgiHasAnyAuthorityForAnyUO="['CSP-PRO-E']"
         [route]="[PROYECTO_ROUTE_NAMES.IDENTIFICACION]"
         [title]="'menu.csp.proyectos.configuracion-economica.identificacion' | translate"
         [fragment]="actionService.getFragment(actionService.FRAGMENT.PROYECTOS_SGE)">
       </sgi-action-fragment-menu-item>
-      <sgi-action-fragment-menu-item *sgiHasAnyAuthorityForAnyUO="['CSP-PRO-V', 'CSP-PRO-E']"
+      <sgi-action-fragment-menu-item *sgiHasAnyAuthorityForAnyUO="['CSP-PRO-E']"
         [route]="[PROYECTO_ROUTE_NAMES.ELEGIBILIDAD]"
         [title]="'menu.csp.proyectos.configuracion-economica.elegibilidad' | translate"
         [fragment]="actionService.getFragment(actionService.FRAGMENT.ELEGIBILIDAD)">
@@ -111,6 +113,16 @@
         [route]="[PROYECTO_ROUTE_NAMES.PRESUPUESTO]"
         [title]="'menu.csp.proyectos.configuracion-economica.presupuesto'  | translate:MSG_PARAMS.CARDINALIRY.PLURAL"
         [fragment]="actionService.getFragment(actionService.FRAGMENT.PRESUPUESTO)">
+      </sgi-action-fragment-menu-item>
+      <sgi-action-fragment-menu-item *sgiHasAnyAuthorityForAnyUO="['CSP-PRO-E']"
+        [route]="[PROYECTO_ROUTE_NAMES.AGRUPACIONES_GASTO]"
+        [title]="'csp.proyecto-agrupacion-gasto' | translate:MSG_PARAMS.CARDINALIRY.PLURAL"
+        [fragment]="actionService.getFragment(actionService.FRAGMENT.AGRUPACIONES_GASTO)">
+      </sgi-action-fragment-menu-item>
+      <sgi-action-fragment-menu-item *sgiHasAnyAuthorityForAnyUO="['CSP-PRO-V', 'CSP-PRO-E']"
+        [route]="[PROYECTO_ROUTE_NAMES.CALENDARIO_JUSTIFICACION]"
+        [title]="'csp.proyectos.configuracion-economica.calendario_justificacion' | translate"
+        [fragment]="actionService.getFragment(actionService.FRAGMENT.CALENDARIO_JUSTIFICACION)">
       </sgi-action-fragment-menu-item>
     </sgi-action-fragment-menu-group>
   </ng-container>

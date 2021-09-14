@@ -1,7 +1,8 @@
 import { IProyectoSge } from '../sge/proyecto-sge';
+import { IProyecto } from './proyecto';
 
 export interface IProyectoProyectoSge {
   id: number;
-  proyectoId: number;
+  proyecto: IProyecto;
   proyectoSge: IProyectoSge;
 }

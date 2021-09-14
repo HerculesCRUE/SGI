@@ -2,6 +2,7 @@ import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { ActionComponent } from '@core/component/action.component';
+import { HttpProblem } from '@core/errors/http-problem';
 import { MSG_PARAMS } from '@core/i18n';
 import { DialogService } from '@core/services/dialog.service';
 import { SnackBarService } from '@core/services/snack-bar.service';
@@ -16,6 +17,7 @@ const MSG_BUTTON_SAVE = marker('btn.save');
 const MSG_SUCCESS = marker('msg.update.entity.success');
 const MSG_ERROR = marker('error.update.entity');
 const EVALUACION_KEY = marker('eti.evaluacion');
+
 @Component({
   selector: 'sgi-evaluacion-evaluar',
   templateUrl: './evaluacion-evaluar.component.html',
@@ -89,11 +91,15 @@ export class EvaluacionEvaluarComponent extends ActionComponent implements OnIni
       () => { },
       (error) => {
         this.logger.error(error);
-        this.snackBarService.showError(this.textoError);
+        if (error instanceof HttpProblem) {
+          this.snackBarService.showError(error);
+        }
+        else {
+          this.snackBarService.showError(this.textoError);
+        }
       },
       () => {
         this.snackBarService.showSuccess(this.textoSuccess);
-        this.router.navigate(['../'], { relativeTo: this.activatedRoute });
       }
     );
   }

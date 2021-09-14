@@ -1,9 +1,10 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { ValidationErrors } from '@angular/forms';
+import { AbstractControl, ValidationErrors, ValidatorFn } from '@angular/forms';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { FormFragmentComponent } from '@core/component/fragment.component';
 import { MSG_PARAMS } from '@core/i18n';
 import { IProyectoAnualidad } from '@core/models/csp/proyecto-anualidad';
+import { IProyectoAnualidadResumen } from '@core/models/csp/proyecto-anualidad-resumen';
 import { FxFlexProperties } from '@core/models/shared/flexLayout/fx-flex-properties';
 import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-properties';
 import { SnackBarService } from '@core/services/snack-bar.service';
@@ -54,22 +55,31 @@ export class ProyectoAnualidadDatosGeneralesComponent extends FormFragmentCompon
 
   }
 
+  /**
+   * Comprueba que la anulidad introducida no está duplicada
+   *
+   * @param anualidades Listado de anualidades.
+   */
+  static isDuplicated(anualidades: IProyectoAnualidadResumen[]): ValidatorFn {
+    return (control: AbstractControl): ValidationErrors | null => {
+      const anualidadesFilter = anualidades.filter(
+        element => element.anio === control.value);
+      if (anualidadesFilter.length > 0) {
+        return { duplicate: true } as ValidationErrors;
+      }
+      return null;
+    };
+  }
+
   ngOnInit(): void {
     super.ngOnInit();
 
     this.setupI18N();
 
-    this.subscriptions.push(
-
-      this.formGroup.controls.anualidad.valueChanges.subscribe((value) => {
-        const anualidades = this.actionService.anualidades.filter(
-          element => element.anio === value);
-        if (anualidades.length > 0 && !this.formPart.isAnualidadGenerica) {
-          this.formGroup.controls.anualidad.setErrors({ duplicate: true });
-          this.formGroup.controls.anualidad.markAsTouched({ onlySelf: true });
-        }
-      })
-    );
+    if (!this.formPart.isAnualidadGenerica && !this.formPart.isEdit()) {
+      this.formGroup.controls.anualidad.setValidators(ProyectoAnualidadDatosGeneralesComponent.isDuplicated(
+        this.actionService.anualidades));
+    }
   }
 
   private setupI18N(): void {
@@ -82,5 +92,4 @@ export class ProyectoAnualidadDatosGeneralesComponent extends FormFragmentCompon
   ngOnDestroy(): void {
     this.subscriptions.forEach(subscription => subscription.unsubscribe());
   }
-
 }

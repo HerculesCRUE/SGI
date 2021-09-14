@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { ActionComponent } from '@core/component/action.component';
+import { HttpProblem } from '@core/errors/http-problem';
 import { MSG_PARAMS } from '@core/i18n';
 import { DialogService } from '@core/services/dialog.service';
 import { SnackBarService } from '@core/services/snack-bar.service';
@@ -67,12 +68,20 @@ export class ProyectoConceptoGastoCrearComponent extends ActionComponent impleme
   saveOrUpdate(): void {
     this.actionService.saveOrUpdate().subscribe(
       () => { },
-      () => {
-        this.snackBarService.showError(MSG_ERROR);
+      (error) => {
+        if (error instanceof HttpProblem) {
+          if (!!!error.managed) {
+            this.snackBarService.showError(error);
+          }
+        }
+        else {
+          this.snackBarService.showError(MSG_ERROR);
+        }
       },
       () => {
         this.snackBarService.showSuccess(MSG_SUCCESS);
-        this.router.navigate(['../'], { relativeTo: this.activatedRoute });
+        const proyectoConceptoGastoId = this.actionService.getFragment(this.actionService.FRAGMENT.DATOS_GENERALES).getKey();
+        this.router.navigate([`../${proyectoConceptoGastoId}`], { relativeTo: this.activatedRoute });
       }
     );
   }

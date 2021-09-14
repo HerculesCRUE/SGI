@@ -75,7 +75,6 @@ public class ContextoProyectoRepositoryTest extends BaseRepositoryTest {
         .titulo("PRO")
         .fechaInicio(Instant.now())
         .fechaFin(Instant.now()).activo(Boolean.TRUE)
-        .fechaBase(Instant.now())
         .build();
     // @formatter:on
     return proyecto;

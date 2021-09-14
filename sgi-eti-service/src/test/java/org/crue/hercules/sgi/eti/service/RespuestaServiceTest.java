@@ -88,8 +88,9 @@ public class RespuestaServiceTest extends BaseServiceTest {
     BDDMockito.given(apartadoRepository.findById(1L)).willReturn(Optional.of(getMockApartado(1L, 1L, 1L)));
     BDDMockito.given(bloqueRepository.findFirstByFormularioIdOrderByOrdenDesc(1L))
         .willReturn(generarMockBloque(1L, memoria.getComite().getFormulario()));
-    BDDMockito.given(apartadoRepository.findFirstByBloqueIdOrderByOrdenDesc(1L))
-        .willReturn(getMockApartado(1L, 1L, 1L));
+    List<Apartado> ultimosApartados = new ArrayList<Apartado>();
+    ultimosApartados.add(getMockApartado(1L, 1L, 1L));
+    BDDMockito.given(apartadoRepository.findFirst2ByBloqueIdOrderByOrdenDesc(1L)).willReturn(ultimosApartados);
 
     // when: Creamos el Respuesta
     Respuesta respuestaCreado = respuestaService.create(respuestaNew);
@@ -126,8 +127,9 @@ public class RespuestaServiceTest extends BaseServiceTest {
     BDDMockito.given(apartadoRepository.findById(1L)).willReturn(Optional.of(getMockApartado(1L, 1L, 1L)));
     BDDMockito.given(bloqueRepository.findFirstByFormularioIdOrderByOrdenDesc(1L))
         .willReturn(generarMockBloque(1L, memoria.getComite().getFormulario()));
-    BDDMockito.given(apartadoRepository.findFirstByBloqueIdOrderByOrdenDesc(1L))
-        .willReturn(getMockApartado(1L, 1L, 1L));
+    List<Apartado> ultimosApartados = new ArrayList<Apartado>();
+    ultimosApartados.add(getMockApartado(1L, 1L, 1L));
+    BDDMockito.given(apartadoRepository.findFirst2ByBloqueIdOrderByOrdenDesc(1L)).willReturn(ultimosApartados);
 
     // when: Actualizamos el Respuesta
     Respuesta RespuestaActualizado = respuestaService.update(respuesta);

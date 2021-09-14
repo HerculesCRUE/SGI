@@ -178,6 +178,7 @@ export class ProyectoEntidadesFinanciadorasFragment extends Fragment {
           map((update: IEntidadFinanciadora) => {
             const index = target$.value.findIndex((current) => current === wrapped);
             update.hasPresupuesto = wrapped.value.hasPresupuesto;
+            update.empresa = wrapped.value.empresa;
             target$.value[index] = new StatusWrapper<IEntidadFinanciadora>(update);
           })
         );
@@ -199,7 +200,8 @@ export class ProyectoEntidadesFinanciadorasFragment extends Fragment {
           map((update: IEntidadFinanciadora) => {
             const index = target$.value.findIndex((current) => current === wrapped);
             update.hasPresupuesto = wrapped.value.hasPresupuesto;
-            target$[index] = new StatusWrapper<IEntidadFinanciadora>(update);
+            update.empresa = wrapped.value.empresa;
+            target$.value[index] = new StatusWrapper<IEntidadFinanciadora>(update);
           })
         );
       }));

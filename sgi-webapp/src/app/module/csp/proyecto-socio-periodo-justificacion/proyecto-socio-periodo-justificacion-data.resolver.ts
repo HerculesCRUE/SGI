@@ -44,25 +44,26 @@ export class ProyectoSocioPeriodoJustificacionDataResolver extends SgiResolverRe
             return throwError('NOT_FOUNTD');
           }
           return this.loadProyectoSocioPeriodoJustificacionData(
-            proyectoData.proyecto, proyectoSocioId, proyectoSocioPeriodoJustificacionId
+            proyectoData, proyectoSocioId, proyectoSocioPeriodoJustificacionId
           );
         })
       );
     }
-    return this.loadProyectoSocioPeriodoJustificacionData(proyectoData.proyecto, proyectoSocioId, proyectoSocioPeriodoJustificacionId);
+    return this.loadProyectoSocioPeriodoJustificacionData(proyectoData, proyectoSocioId, proyectoSocioPeriodoJustificacionId);
   }
 
   private loadProyectoSocioPeriodoJustificacionData(
-    proyecto: IProyecto,
+    proyectoData: IProyectoData,
     proyectoSocioId: number,
     proyectoSocioPeriodoJustificacionId: number
   ): Observable<IProyectoSocioPeriodoJustificacionData> {
     return this.proyectoSocioService.findById(proyectoSocioId).pipe(
       map(socio => {
         return {
-          proyecto,
+          proyecto: proyectoData.proyecto,
           proyectoSocio: socio,
-          proyectoSocioPeriodosJustificacion: []
+          proyectoSocioPeriodosJustificacion: [],
+          readonly: proyectoData.readonly
         };
       }),
       switchMap(data => {

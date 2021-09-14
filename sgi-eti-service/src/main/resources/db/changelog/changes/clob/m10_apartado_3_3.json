@@ -1,0 +1,29 @@
+[
+  {
+    "key": "ap3_3",
+    "wrappers": [
+      "expansion-panel"
+    ],
+    "templateOptions": {
+      "expressionLock": "formState.memoria.tipoMemoria.id === 3",
+      "label": "3.3 Referencias de publicaciones científicas"
+    },
+    "fieldGroup": [
+      {
+        "template": "<p>Citar de forma completa (autor, título, publicación, fecha etc) las referencias más relevantes utilizadas para el método (máximo 10 referencias)</p>"
+      },
+      {
+        "key": "referenciasPublicaciones",
+        "type": "textarea",
+        "templateOptions": {
+          "placeholder": "Referencias",
+          "label": "Referencias",
+          "required": true,
+          "autosize": true,
+          "autosizeMinRows": "1",
+          "autosizeMaxRows": "10"
+        }
+      }
+    ]
+  }
+]

@@ -16,6 +16,7 @@ import { ConvocatoriaConceptoGastoDatosGeneralesFragment } from './convocatoria-
 const MSG_ANADIR = marker('btn.add');
 const MSG_ACEPTAR = marker('btn.ok');
 const CONVOCATORIA_ELEGIBILIDAD_CONCEPTO_GASTO_KEY = marker('csp.convocatoria-elegibilidad.concepto-gasto.concepto-gasto');
+const CONVOCATORIA_ELEGIBILIDAD_GASTO_COSTES_INDIRECTOS_KEY = marker('csp.convocatoria-elegibilidad-concepto-gasto.costes-indirectos');
 
 @Component({
   templateUrl: './convocatoria-concepto-gasto-datos-generales.component.html',
@@ -33,6 +34,7 @@ export class ConvocatoriaConceptoGastoDatosGeneralesComponent
   textSaveOrUpdate: string;
 
   msgParamConceptoGastoEntity = {};
+  msgParamCostesIndirectos = {};
 
   constructor(
     conceptoGastoService: ConceptoGastoService,
@@ -66,6 +68,12 @@ export class ConvocatoriaConceptoGastoDatosGeneralesComponent
       CONVOCATORIA_ELEGIBILIDAD_CONCEPTO_GASTO_KEY,
       MSG_PARAMS.CARDINALIRY.SINGULAR
     ).subscribe((value) => this.msgParamConceptoGastoEntity = { entity: value, ...MSG_PARAMS.GENDER.MALE });
+
+    this.translate.get(
+      CONVOCATORIA_ELEGIBILIDAD_GASTO_COSTES_INDIRECTOS_KEY,
+      MSG_PARAMS.CARDINALIRY.SINGULAR
+    ).subscribe((value) => this.msgParamCostesIndirectos = { entity: value, ...MSG_PARAMS.GENDER.MALE });
+
   }
 
   ngOnDestroy(): void {

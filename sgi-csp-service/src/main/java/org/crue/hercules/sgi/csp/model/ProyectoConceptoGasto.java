@@ -15,7 +15,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -87,12 +86,6 @@ public class ProyectoConceptoGasto extends BaseEntity {
   /** Fecha fin */
   @Column(name = "fecha_fin", nullable = true)
   private Instant fechaFin;
-
-  /** Porcentaje coste indirecto */
-  @Column(name = "porcentaje_coste_indirecto", nullable = true)
-  @Min(0)
-  @Max(100)
-  private Integer porcentajeCosteIndirecto;
 
   /** Convocatoria concepto gasto Id */
   @Column(name = "convocatoria_concepto_gasto_id", nullable = true)

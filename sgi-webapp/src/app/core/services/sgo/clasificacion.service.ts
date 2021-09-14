@@ -40,22 +40,15 @@ export class ClasificacionService extends SgiRestService<string, IClasificacion>
   }
 
   /**
-   * Busca todas las clasificaciones que tengan como padre alguno de los ids indicados.
+   * Busca todas las clasificaciones que tengan como padre el id indicado.
    *
-   * @param ids lista de identificadores de IClasificacion.
+   * @param id identificador de IClasificacion.
    * @returns la lista de IClasificacion.
    */
-  findAllHijos(ids: string | string[]): Observable<SgiRestListResult<IClasificacion>> {
-    let options: SgiRestFindOptions;
-    if (Array.isArray(ids)) {
-      options = {
-        filter: new RSQLSgiRestFilter('padreId', SgiRestFilterOperator.IN, ids)
-      };
-    } else {
-      options = {
-        filter: new RSQLSgiRestFilter('padreId', SgiRestFilterOperator.EQUALS, ids)
-      };
-    }
+  findAllHijos(id: string): Observable<SgiRestListResult<IClasificacion>> {
+    const options: SgiRestFindOptions = {
+      filter: new RSQLSgiRestFilter('padreId', SgiRestFilterOperator.EQUALS, id)
+    };
 
     return this.findAll(options);
   }

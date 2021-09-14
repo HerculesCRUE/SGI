@@ -1,0 +1,35 @@
+[
+  {
+    "key": "ap1_2",
+    "wrappers": [
+      "expansion-panel"
+    ],
+    "templateOptions": {
+      "label": "1.2 Justificación del uso de agentes biológicos, OMG, Sustancias Químicas Peligrosas, Sustancias Radiactivas y/o Nanoparticulas"
+    },
+    "fieldGroup": [
+      {
+        "template": "<p>Exponer brevemente (máximo diez líneas) la necesidad de utilización de agentes biológicos, Sustancias Químicas Peligrosas, Sustancias Radiactivas y/o Nanoparticulas.</p>"
+      },
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "<p>Sustancias químicas peligrosas (SQP*),* según el Reglamento (CE) nº1272/2008 sobre clasificación, etiquetado y envasado de sustancias y mezclas (CLP).</p><p>Sustancias radiactivas e instalaciones radiactivas, según la normativa recogida en el R.D 1836/1999 y en el R.D. 783/2001. Equipos radiológicos, según el RD 1085/2009, de 3 de julio, por el que se aprueba el Reglamento sobre instalación y utilización de aparatos de Rayos X con fines de diagnóstico médico.</p>"
+      },
+      {
+        "key": "justificacion",
+        "className": "descripcion",
+        "type": "textarea",
+        "templateOptions": {
+          "label": "Justificación",
+          "placeholder": "",
+          "required": true,
+          "autosize": true,
+          "autosizeMinRows": "1",
+          "autosizeMaxRows": "10"
+        }
+      }
+    ]
+  }
+]

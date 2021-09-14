@@ -2,6 +2,7 @@ import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { ActionComponent } from '@core/component/action.component';
+import { HttpProblem } from '@core/errors/http-problem';
 import { MSG_PARAMS } from '@core/i18n';
 import { ActionService } from '@core/services/action-service';
 import { DialogService } from '@core/services/dialog.service';
@@ -89,11 +90,17 @@ export class PeticionEvaluacionEditarComponent extends ActionComponent implement
       () => { },
       (error) => {
         this.logger.error(error);
-        this.snackBarService.showError(this.textoEditarError);
+        if (error instanceof HttpProblem) {
+          if (!!!error.managed) {
+            this.snackBarService.showError(error);
+          }
+        }
+        else {
+          this.snackBarService.showError(this.textoEditarError);
+        }
       },
       () => {
         this.snackBarService.showSuccess(this.textoEditarSuccess);
-        this.router.navigate(['../'], { relativeTo: this.activatedRoute });
       }
     );
   }

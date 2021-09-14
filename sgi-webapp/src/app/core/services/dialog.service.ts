@@ -3,7 +3,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { DialogComponent, DialogData } from '../../block/dialog/dialog.component';
+import { DialogComponent, DialogData, DIALOG_BUTTON_STYLE } from '../../block/dialog/dialog.component';
 
 const MSG_BUTTON_OK = marker('btn.ok');
 const MSG_BUTTON_CANCEL = marker('btn.cancel');
@@ -20,7 +20,9 @@ export class DialogService {
     message: string,
     params: {} = {},
     ok: string = MSG_BUTTON_OK,
-    cancel: string = MSG_BUTTON_CANCEL
+    cancel: string = MSG_BUTTON_CANCEL,
+    okStyle: string = DIALOG_BUTTON_STYLE.BTN_STYLE_ACCENT,
+    cancelStyle: string = DIALOG_BUTTON_STYLE.BTN_STYLE_LINK
   ): Observable<boolean> {
     const dialogRef = this.dialog.open(DialogComponent, {
       ...this.dialog,
@@ -28,7 +30,9 @@ export class DialogService {
         message,
         params,
         ok,
-        cancel
+        cancel,
+        okStyle,
+        cancelStyle,
       } as DialogData,
       panelClass: 'confirmacion-dialog'
     });

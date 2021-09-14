@@ -16,4 +16,17 @@ public class InvencionSpecifications {
       return cb.equal(root.get(Invencion_.activo), Boolean.TRUE);
     };
   }
+
+  /**
+   * Solo {@link Invencion} distintas.
+   * 
+   * @return specification para obtener las {@link Invencion} distintas solamente.
+   */
+  public static Specification<Invencion> distinct() {
+    return (root, query, cb) -> {
+      query.distinct(true);
+      return null;
+    };
+  }
+
 }

@@ -2,9 +2,9 @@ package org.crue.hercules.sgi.csp.repository;
 
 import java.util.List;
 
-import org.crue.hercules.sgi.csp.model.ConvocatoriaConceptoGasto;
-import org.crue.hercules.sgi.csp.model.Convocatoria;
 import org.crue.hercules.sgi.csp.model.ConceptoGasto;
+import org.crue.hercules.sgi.csp.model.Convocatoria;
+import org.crue.hercules.sgi.csp.model.ConvocatoriaConceptoGasto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -58,4 +58,12 @@ public interface ConvocatoriaConceptoGastoRepository
    */
   List<ConvocatoriaConceptoGasto> findAllByConvocatoriaIdAndConceptoGastoActivoTrue(Long convocatoriaId);
 
+  /**
+   * Obtiene las {@link ConvocatoriaConceptoGasto} para una {@link Convocatoria}.
+   *
+   * @param convocatoriaId el id de la {@link Convocatoria}.
+   * @return la lista de entidades {@link ConvocatoriaConceptoGasto} de la
+   *         {@link Convocatoria}
+   */
+  List<ConvocatoriaConceptoGasto> findByConvocatoriaId(Long convocatoriaId);
 }

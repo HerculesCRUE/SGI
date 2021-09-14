@@ -1,52 +1,50 @@
-<div class="scrollable-panel-with-footer">
-  <section class="areas-tematicas-listado">
+<sgi-menu-content>
+  <!-- Buscador de areas-tematicas -->
+  <form class="formulario mat-elevation-z8" [formGroup]="formGroup" [fxLayout.xs]="fxLayoutProperties.xs"
+    [fxLayout]="fxLayoutProperties.layout" [fxLayoutGap]="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
 
-    <!-- Buscador de areas-tematicas -->
-    <form class="formulario mat-elevation-z8" [formGroup]="formGroup" [fxLayout.xs]="fxLayoutProperties.xs"
-      [fxLayout]="fxLayoutProperties.layout" [fxLayoutGap]="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
+    <div fxFlex="84%" fxFlex.sm="50%" fxFlex.md="72%" [fxLayout.xs]="fxLayoutProperties.xs"
+      [fxLayout]="fxLayoutProperties.layout" fxLayoutGap="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
+      <!-- Nombre -->
+      <div class="col">
+        <mat-form-field>
+          <mat-label>{{'csp.area-tematica.nombre-listado' | translate}}</mat-label>
+          <input matInput placeholder="{{'csp.area-tematica.nombre-listado' | translate}}" formControlName="nombre">
+        </mat-form-field>
+      </div>
 
-      <div fxFlex="84%" fxFlex.sm="50%" fxFlex.md="72%" [fxLayout.xs]="fxLayoutProperties.xs"
-        [fxLayout]="fxLayoutProperties.layout" fxLayoutGap="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
-        <!-- Nombre -->
+      <!-- Activo -->
+      <ng-container *sgiHasAuthority="'CSP-AREA-R'">
         <div class="col">
           <mat-form-field>
-            <mat-label>{{'csp.area-tematica.nombre-listado' | translate}}</mat-label>
-            <input matInput placeholder="{{'csp.area-tematica.nombre-listado' | translate}}" formControlName="nombre">
+            <mat-label>{{'label.activo' | translate}}</mat-label>
+            <mat-select matNativeControl formControlName="activo">
+              <mat-option value="todos">{{'label.todos' | translate}}</mat-option>
+              <mat-option value="true">{{'label.si' | translate}}</mat-option>
+              <mat-option value="false">{{'label.no' | translate}}</mat-option>
+            </mat-select>
           </mat-form-field>
         </div>
+      </ng-container>
 
-        <!-- Activo -->
-        <ng-container *sgiHasAuthority="'CSP-AREA-R'">
-          <div class="col">
-            <mat-form-field>
-              <mat-label>{{'label.activo' | translate}}</mat-label>
-              <mat-select matNativeControl formControlName="activo">
-                <mat-option value="todos">{{'label.todos' | translate}}</mat-option>
-                <mat-option value="true">{{'label.si' | translate}}</mat-option>
-                <mat-option value="false">{{'label.no' | translate}}</mat-option>
-              </mat-select>
-            </mat-form-field>
-          </div>
-        </ng-container>
+    </div>
 
+    <div class="buttons-final">
+      <div class="col filter-button">
+        <button color="primary" aria-label="Center Align" mat-raised-button (click)="onSearch()">
+          <mat-icon>search</mat-icon> {{'btn.search'| translate}}
+        </button>
+        <button color="warn" aria-label="Center Align" (click)="onClearFilters()" mat-button>{{'btn.clean'|
+          translate}}
+        </button>
       </div>
+    </div>
+  </form>
+  <!-- FIN Buscador de areas temáticas -->
 
-      <div class="buttons-final">
-        <div class="col filter-button">
-          <button color="primary" aria-label="Center Align" mat-raised-button (click)="onSearch()">
-            <mat-icon>search</mat-icon> {{'btn.search'| translate}}
-          </button>
-          <button color="warn" aria-label="Center Align" (click)="onClearFilters()" mat-button>{{'btn.clean'|
-            translate}}
-          </button>
-        </div>
-      </div>
-    </form>
-    <!-- FIN Buscador de areas temáticas -->
-
-    <!-- Listado de areas temáticas -->
-    <table mat-table class="mat-elevation-z8 table-unidad" [dataSource]="areaTematica$ | async" matSort
-      matSortActive="id" matSortDirection="asc" matSortDisableClear>
+  <div class="mat-elevation-z4">
+    <table mat-table [dataSource]="areaTematica$ | async" matSort matSortActive="id" matSortDirection="asc"
+      matSortDisableClear>
 
       <!-- Nombre -->
       <ng-container matColumnDef="nombre">
@@ -81,7 +79,7 @@
             </button>
           </ng-container>
           <ng-container *sgiHasAuthority="'CSP-AREA-B'">
-            <button *ngIf="areaTematica.activo ? true : false" mat-button matTooltip="{{'btn.edit' | translate}}"
+            <button *ngIf="areaTematica.activo ? true : false" mat-button matTooltip="{{'btn.delete' | translate}}"
               (click)="deactivateAreaTematica(areaTematica)">
               <mat-icon color="warn">highlight_off</mat-icon>
             </button>
@@ -100,8 +98,8 @@
     </table>
     <mat-paginator [pageSizeOptions]="elementosPagina" [length]="totalElementos" showFirstLastButtons>
     </mat-paginator>
-  </section>
-</div>
-<ng-container *sgiHasAuthority="'CSP-AREA-C'">
-  <sgi-footer-crear [texto]="textoCrear" [route]="ROUTE_NAMES.NEW"></sgi-footer-crear>
-</ng-container>
+  </div>
+  <sgi-menu-content-footer *sgiHasAuthority="'CSP-AREA-C'">
+    <sgi-footer-crear [texto]="textoCrear" [route]="ROUTE_NAMES.NEW"></sgi-footer-crear>
+  </sgi-menu-content-footer>
+</sgi-menu-content>

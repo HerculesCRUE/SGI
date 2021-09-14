@@ -9,26 +9,16 @@ import { MSG_PARAMS } from '@core/i18n';
 import { Estado, ESTADO_MAP } from '@core/models/csp/estado-proyecto';
 import { CAUSA_EXENCION_MAP, IProyecto, TIPO_HORAS_ANUALES_MAP } from '@core/models/csp/proyecto';
 import { IProyectoIVA } from '@core/models/csp/proyecto-iva';
-import { ITipoAmbitoGeografico } from '@core/models/csp/tipo-ambito-geografico';
-import { IModeloEjecucion, ITipoFinalidad } from '@core/models/csp/tipos-configuracion';
+import { IProyectoProyectoSge } from '@core/models/csp/proyecto-proyecto-sge';
 import { FxFlexProperties } from '@core/models/shared/flexLayout/fx-flex-properties';
 import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-properties';
-import { IUnidadGestion } from '@core/models/usr/unidad-gestion';
-import { ModeloEjecucionService } from '@core/services/csp/modelo-ejecucion.service';
-import { ModeloUnidadService } from '@core/services/csp/modelo-unidad.service';
-import { TipoAmbitoGeograficoService } from '@core/services/csp/tipo-ambito-geografico.service';
-import { UnidadGestionService } from '@core/services/csp/unidad-gestion.service';
-import { SnackBarService } from '@core/services/snack-bar.service';
 import { StatusWrapper } from '@core/utils/status-wrapper';
 import { TranslateService } from '@ngx-translate/core';
-import { RSQLSgiRestFilter, SgiRestFilterOperator, SgiRestFindOptions } from '@sgi/framework/http';
-import { NGXLogger } from 'ngx-logger';
-import { merge, Observable, of, Subscription } from 'rxjs';
-import { map, startWith, switchMap, tap } from 'rxjs/operators';
+import { Subscription } from 'rxjs';
+import { switchMap, tap } from 'rxjs/operators';
 import { ProyectoActionService } from '../../proyecto.action.service';
 import { ProyectoFichaGeneralFragment } from './proyecto-ficha-general.fragment';
 
-const MSG_ERROR_INIT = marker('error.load');
 const PROYECTO_ACRONIMO_KEY = marker('csp.proyecto.acronimo');
 const PROYECTO_AMBITO_GEOGRAFICO_KEY = marker('csp.proyecto.ambito-geografico');
 const PROYECTO_CALCULO_COSTE_KEY = marker('csp.proyecto.calculo-coste-personal');
@@ -46,6 +36,7 @@ const PROYECTO_CAUSA_EXENCION_KEY = marker('csp.proyecto.causa-exencion');
 const PROYECTO_MODELO_EJECUCION_KEY = marker('csp.proyecto.modelo-ejecucion');
 const PROYECTO_PAQUETE_TRABAJO_KEY = marker('csp.proyecto-paquete-trabajo');
 const PROYECTO_PROYECTO_COLABORATIVO_KEY = marker('csp.proyecto.proyecto-colaborativo');
+const PROYECTO_PROYECTO_COORDINADO_KEY = marker('csp.proyecto.proyecto-coordinado');
 const PROYECTO_TIMESHEET_KEY = marker('csp.proyecto.timesheet');
 const PROYECTO_TITULO_KEY = marker('csp.proyecto.titulo');
 const PROYECTO_UNIDAD_GESTION_KEY = marker('csp.proyecto.unidad-gestion');
@@ -66,24 +57,14 @@ export class ProyectoFichaGeneralComponent extends FormFragmentComponent<IProyec
   fxFlexPropertiesInline: FxFlexProperties;
   fxFlexPropertiesEntidad: FxFlexProperties;
 
+  proyectosSge: StatusWrapper<IProyectoProyectoSge>[];
+
   displayedColumns = ['iva', 'fechaInicio', 'fechaFin'];
   elementosPagina = [5, 10, 25, 100];
 
   dataSource = new MatTableDataSource<StatusWrapper<IProyectoIVA>>();
   @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
   @ViewChild(MatSort, { static: true }) sort: MatSort;
-
-  private finalidadFiltered = [] as ITipoFinalidad[];
-  finalidades$: Observable<ITipoFinalidad[]>;
-
-  private modelosEjecucionFiltered = [] as IModeloEjecucion[];
-  modelosEjecucion$: Observable<IModeloEjecucion[]>;
-
-  private unidadGestionFiltered = [] as IUnidadGestion[];
-  unidadesGestion$: Observable<IUnidadGestion[]>;
-
-  private tipoAmbitoGeograficoFiltered = [] as ITipoAmbitoGeografico[];
-  tipoAmbitosGeograficos$: Observable<ITipoAmbitoGeografico[]>;
 
   private subscriptions = [] as Subscription[];
 
@@ -107,6 +88,7 @@ export class ProyectoFichaGeneralComponent extends FormFragmentComponent<IProyec
   msgParamTimesheetEntity = {};
   msgParamUnidadGestionEntity = {};
   msgParamFechaFinDefinitivaEntity = {};
+  msgParamProyectoCoordinadoEntity = {};
   textoInfoAmbitoGeograficoConvocatoria: string;
   textoInfoFinalidadConvocatoria: string;
   textoInfoUnidadGestionConvocatoria: string;
@@ -136,13 +118,7 @@ export class ProyectoFichaGeneralComponent extends FormFragmentComponent<IProyec
   requiredHoras = false;
 
   constructor(
-    private readonly logger: NGXLogger,
     protected actionService: ProyectoActionService,
-    private readonly snackBarService: SnackBarService,
-    private unidadGestionService: UnidadGestionService,
-    private modeloEjecucionService: ModeloEjecucionService,
-    private unidadModeloService: ModeloUnidadService,
-    private tipoAmbitoGeograficoService: TipoAmbitoGeograficoService,
     private readonly translate: TranslateService
   ) {
     super(actionService.FRAGMENT.FICHA_GENERAL, actionService);
@@ -182,9 +158,6 @@ export class ProyectoFichaGeneralComponent extends FormFragmentComponent<IProyec
     super.ngOnInit();
 
     this.setupI18N();
-
-    this.loadUnidadesGestion();
-    this.loadAmbitosGeograficos();
 
     this.dataSource.paginator = this.paginator;
     this.dataSource.sortingDataAccessor =
@@ -252,16 +225,11 @@ export class ProyectoFichaGeneralComponent extends FormFragmentComponent<IProyec
           }
         }
       ));
-
-    this.subscriptions.push(
-      merge(
-        this.formGroup.controls.fechaInicio.valueChanges,
-        this.formGroup.controls.fechaFin.valueChanges,
-        this.formGroup.controls.convocatoria.valueChanges,
-      ).subscribe(() => this.formPart.checkFechas())
-    );
+    this.subscriptions.push(this.actionService.proyectosSge$.subscribe(elements => {
+      this.proyectosSge = elements;
+      this.formPart.getFormGroup().controls.codigosSge.patchValue(elements, { onlySelf: true, emitEvent: false });
+    }));
   }
-
 
   private setupI18N(): void {
 
@@ -332,6 +300,11 @@ export class ProyectoFichaGeneralComponent extends FormFragmentComponent<IProyec
       { entity: value, ...MSG_PARAMS.GENDER.MALE, ...MSG_PARAMS.CARDINALIRY.SINGULAR });
 
     this.translate.get(
+      PROYECTO_PROYECTO_COORDINADO_KEY,
+      MSG_PARAMS.CARDINALIRY.SINGULAR
+    ).subscribe((value) => this.msgParamProyectoCoordinadoEntity = { entity: value, ...MSG_PARAMS.GENDER.MALE, ...MSG_PARAMS.CARDINALIRY.SINGULAR });
+
+    this.translate.get(
       PROYECTO_PROYECTO_COLABORATIVO_KEY,
       MSG_PARAMS.CARDINALIRY.SINGULAR
     ).subscribe((value) => this.msgParamProyectoColaborativoEntity =
@@ -375,7 +348,6 @@ export class ProyectoFichaGeneralComponent extends FormFragmentComponent<IProyec
       PROYECTO_IVA_KEY,
       MSG_PARAMS.CARDINALIRY.SINGULAR
     ).subscribe((value) => this.msgParamIvaEntity = { entity: value, ...MSG_PARAMS.GENDER.MALE, ...MSG_PARAMS.CARDINALIRY.SINGULAR });
-
   }
 
 
@@ -444,219 +416,6 @@ export class ProyectoFichaGeneralComponent extends FormFragmentComponent<IProyec
     } else {
       return false;
     }
-  }
-
-  /**
-   * Listado ambito geografico
-   */
-  private loadAmbitosGeograficos(): void {
-    this.subscriptions.push(
-      this.tipoAmbitoGeograficoService.findAll().subscribe(
-        res => {
-          this.tipoAmbitoGeograficoFiltered = res.items;
-          this.tipoAmbitosGeograficos$ = this.formGroup.controls.ambitoGeografico.valueChanges
-            .pipe(
-              startWith(''),
-              map(value => this.filtroTipoAmbitoGeografico(value))
-            );
-        },
-        (error) => {
-          this.logger.error(error);
-          this.snackBarService.showError(MSG_ERROR_INIT);
-        }
-      )
-    );
-  }
-
-  /**
-   * Listado de modelos de ejecucion
-   */
-  loadModelosEjecucion(): void {
-    const options: SgiRestFindOptions = {
-      filter: new RSQLSgiRestFilter('unidadGestionRef',
-        SgiRestFilterOperator.EQUALS, String(this.formGroup.controls.unidadGestion.value?.id))
-    };
-    const subcription = this.unidadModeloService.findAll(options).subscribe(
-      res => {
-        this.modelosEjecucionFiltered = res.items.map(item => item.modeloEjecucion);
-        this.modelosEjecucion$ = this.formGroup.controls.modeloEjecucion.valueChanges
-          .pipe(
-            startWith(''),
-            map(value => this.filtroModeloEjecucion(value))
-          );
-      },
-      (error) => {
-        this.logger.error(error);
-        this.snackBarService.showError(MSG_ERROR_INIT);
-      }
-    );
-    this.subscriptions.push(subcription);
-  }
-
-  /**
-   * Listado de finalidades
-   */
-  loadFinalidades(): void {
-    this.clearFinalidad();
-    const modeloEjecucion = this.formGroup.get('modeloEjecucion').value;
-    if (modeloEjecucion) {
-      const id = modeloEjecucion.id;
-      if (id && !isNaN(id)) {
-        const options: SgiRestFindOptions = {
-          filter: new RSQLSgiRestFilter('tipoFinalidad.activo', SgiRestFilterOperator.EQUALS, 'true')
-        };
-        this.subscriptions.push(
-          this.modeloEjecucionService.findModeloTipoFinalidad(id, options).pipe(
-            map(res => {
-              return res.items.map(modeloTipoFinalidad => modeloTipoFinalidad.tipoFinalidad);
-            })
-          ).subscribe(
-            tipoFinalidades => {
-              this.finalidadFiltered = tipoFinalidades;
-              this.finalidades$ = this.formGroup.controls.finalidad.valueChanges
-                .pipe(
-                  startWith(''),
-                  map(value => this.filtroFinalidades(value))
-                );
-            },
-            (error) => {
-              this.logger.error(error);
-              this.snackBarService.showError(MSG_ERROR_INIT);
-            }
-          )
-        );
-      }
-    }
-  }
-
-  /**
-   * Devuelve el nombre de una gestión unidad.
-   *
-   * @param unidadGestion gestión unidad.
-   * @returns nombre de una gestión unidad.
-   */
-  getUnidadGestion(unidadGestion?: IUnidadGestion): string | undefined {
-    return typeof unidadGestion === 'string' ? unidadGestion : unidadGestion?.nombre;
-  }
-
-  /**
-   * Carga la lista de unidades de gestion seleccionables por el usuario
-   */
-  private loadUnidadesGestion(): void {
-    this.subscriptions.push(
-      this.unidadGestionService.findAllRestringidos().subscribe(
-        res => {
-          this.unidadGestionFiltered = res.items;
-          this.unidadesGestion$ = this.formGroup.controls.unidadGestion.valueChanges
-            .pipe(
-              startWith(''),
-              map(value => this.filtroUnidadGestion(value))
-            );
-        },
-        (error) => {
-          this.logger.error(error);
-          this.snackBarService.showError(MSG_ERROR_INIT);
-        }
-      )
-    );
-  }
-
-  /**
-   * Filtra la lista devuelta por el servicio
-   *
-   * @param value del input para autocompletar
-   */
-  private filtroModeloEjecucion(value: string): IModeloEjecucion[] {
-    // Si no es un string no se filtra
-    if (typeof value !== 'string') {
-      return this.modelosEjecucionFiltered;
-    }
-    const filterValue = value.toString().toLowerCase();
-    return this.modelosEjecucionFiltered.filter(modeloEjecucion => modeloEjecucion.nombre.toLowerCase().includes(filterValue));
-  }
-
-  /**
-   * Filtra la lista devuelta por el servicio
-   *
-   * @param value del input para autocompletar
-   */
-  private filtroFinalidades(value: string): ITipoFinalidad[] {
-    // Si no es un string no se filtra
-    if (typeof value !== 'string') {
-      return this.finalidadFiltered;
-    }
-    const filterValue = value.toString().toLowerCase();
-    return this.finalidadFiltered.filter(finalidad => finalidad.nombre.toLowerCase().includes(filterValue));
-  }
-
-  /**
-   * Filtra la lista devuelta por el servicio
-   *
-   * @param value del input para autocompletar
-   */
-  private filtroUnidadGestion(value: string): IUnidadGestion[] {
-    // Si no es un string no se filtra
-    if (typeof value !== 'string') {
-      return this.unidadGestionFiltered;
-    }
-    const filterValue = value.toString().toLowerCase();
-    return this.unidadGestionFiltered.filter(unidadGestion => unidadGestion.nombre.toLowerCase().includes(filterValue));
-  }
-
-  /**
-   * Devuelve el nombre de un modelo de ejecución.
-   * @param modeloEjecucion modelo de ejecución.
-   * @returns nombre de un modelo de ejecución.
-   */
-  getModeloEjecucion(modeloEjecucion?: IModeloEjecucion): string | undefined {
-    return typeof modeloEjecucion === 'string' ? modeloEjecucion : modeloEjecucion?.nombre;
-  }
-
-  /**
-   * Devuelve el nombre de una finalidad.
-   * @param finalidad finalidad.
-   * @returns nombre de una finalidad.
-   */
-  getFinalidad(finalidad?: ITipoFinalidad): string | undefined {
-    return typeof finalidad === 'string' ? finalidad : finalidad?.nombre;
-  }
-
-  /**
-   * Devuelve el nombre de un ámbito geográfico.
-   * @param tipoAmbitoGeografico ámbito geográfico.
-   * @returns nombre de un ámbito geográfico.
-   */
-  getTipoAmbitoGeografico(tipoAmbitoGeografico?: ITipoAmbitoGeografico): string | undefined {
-    return typeof tipoAmbitoGeografico === 'string' ? tipoAmbitoGeografico : tipoAmbitoGeografico?.nombre;
-  }
-
-  /**
-   * Filtra la lista devuelta por el servicio
-   *
-   * @param value del input para autocompletar
-   */
-  private filtroTipoAmbitoGeografico(value: string): ITipoAmbitoGeografico[] {
-    // Si no es un string no se filtra
-    if (typeof value !== 'string') {
-      return this.tipoAmbitoGeograficoFiltered;
-    }
-    const filterValue = value?.toString().toLowerCase();
-    return this.tipoAmbitoGeograficoFiltered.filter(
-      ambitoGeografico => ambitoGeografico.nombre.toLowerCase().includes(filterValue)
-    );
-  }
-
-  clearFinalidad(): void {
-    this.formGroup.get('finalidad').setValue('');
-    this.finalidadFiltered = [];
-    this.finalidades$ = of();
-  }
-
-  clearModeloEjecuccion(): void {
-    this.formGroup.get('modeloEjecucion').setValue('');
-    this.modelosEjecucionFiltered = [];
-    this.modelosEjecucion$ = of();
-    this.clearFinalidad();
   }
 
   setTextoInfoFinalidadConvocatoria() {

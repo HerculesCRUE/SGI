@@ -1,0 +1,34 @@
+[
+  {
+    "key": "ap4_2",
+    "wrappers": [
+      "expansion-panel"
+    ],
+    "templateOptions": {
+      "expressionLock": "formState.memoria.tipoMemoria.id === 3",
+      "label": "4.2 Selección equitativa de la muestra"
+    },
+    "fieldGroup": [
+      {
+        "template": "<p>Justificar la elección de la muestra de estudio y describir las medidas que garantizan la equidad en el proceso de reclutamiento.<p>"
+      },
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "<p>No hay que confundir la <strong>selección equitativa</strong> de los sujetos con los <strong>criterios de selección</strong> ya descritos en el apartado de metología.</p><p>La selección equitativa de la muestra se relaciona con unos de los principios básicos de la ética en la investigación: <strong>justicia</strong>.</p><p>La equidad en la selección implica que el reclutamiento de los sujetos de estudio se haga por razones relacionadas con los interrogantes científicas incluidas en la investigación y que no esconda otros intereses o motivos no científicos como por ejemplo: fácil disponibilidad, proximidad, amistad, facilidad en la obtención del consentimiento, no requerir autorizaciones, reservar las investigaciones con mayor riesgo para colectivos discriminados, etc.</p><p>La equidad debe asentarse sobre tres pilares: </p><ul><li>Que la investigación suponga beneficios potenciales para los sujetos o población seleccionados.</li><li>Que los sujetos o poblaciones potencialmente beneficiarias no sean excluidos de la selección si no existen razones científicas para ello.</li><li>Que la distribución de cargas y beneficios sea justa para que las investigaciones que impliquen riesgo no recaigan sobre sujetos o poblaciones de esta forma discriminados o vulnerables mientras los beneficios sean para otros.</li></ul><p>Para más información sobre la selección equitativa de la muestra consultar:</p><ul><li><a href='https://www.um.es/web/comision-etica-investigacion/comision-etica' target='_blank'>Informe Belmont</a></li><li><a href='https://www.um.es/web/comision-etica-investigacion/comision-etica' target='_blank'>Declaración Universal sobre Bioética y Derechos Humanos (UNESCO) en seres humanos</a></li><li>Documento de la CIOMS '<a href='https://www.um.es/web/comision-etica-investigacion/comision-etica' target='_blank'>Pautas éticas internacionales para la investigación biomédica en seres humanos</a>' (pauta 12)</li></ul>"
+      },
+      {
+        "key": "equitativaMuestra",
+        "type": "textarea",
+        "templateOptions": {
+          "label": "Justificacion",
+          "required": true,
+          "autosize": true,
+          "autosizeMinRows": "1",
+          "autosizeMaxRows": "10"
+        }
+      }
+    ]
+  }
+]

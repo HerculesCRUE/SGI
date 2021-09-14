@@ -1,5 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, Inject } from '@angular/core';
 import { ConfigService } from '@core/services/config.service';
+import { TIME_ZONE } from '@core/time-zone';
 
 @Component({
   selector: 'sgi-root',
@@ -8,6 +9,8 @@ import { ConfigService } from '@core/services/config.service';
 })
 export class AppComponent {
 
-  constructor(private configService: ConfigService) {
-  }
+  constructor(
+    private configService: ConfigService,
+    @Inject(TIME_ZONE) timeZone: any
+  ) { }
 }

@@ -9,7 +9,9 @@ import { SgiAuthGuard, SgiAuthRoutes } from '@sgi/framework/auth';
 import { ProyectoCrearComponent } from './proyecto-crear/proyecto-crear.component';
 import { ProyectoDataResolver, PROYECTO_DATA_KEY } from './proyecto-data.resolver';
 import { ProyectoEditarComponent } from './proyecto-editar/proyecto-editar.component';
+import { ProyectoAgrupacionesGastoComponent } from './proyecto-formulario/proyecto-agrupaciones-gasto/proyecto-agrupaciones-gasto.component';
 import { ProyectoAreaConocimientoComponent } from './proyecto-formulario/proyecto-area-conocimiento/proyecto-area-conocimiento.component';
+import { ProyectoCalendarioJustificacionComponent } from './proyecto-formulario/proyecto-calendario-justificacion/proyecto-calendario-justificacion.component';
 import { ProyectoClasificacionesComponent } from './proyecto-formulario/proyecto-clasificaciones/proyecto-clasificaciones.component';
 import { ProyectoConceptosGastoComponent } from './proyecto-formulario/proyecto-conceptos-gasto/proyecto-conceptos-gasto.component';
 import { ProyectoContextoComponent } from './proyecto-formulario/proyecto-contexto/proyecto-contexto.component';
@@ -40,6 +42,7 @@ const PROYECTO_PERIODOS_SEGUIMIENTO_KEY = marker('menu.csp.proyectos.seguimiento
 const PROYECTO_PRESUPUESTO_KEY = marker('menu.csp.proyectos.configuracion-economica.presupuesto');
 const PROYECTO_PRORROGA_KEY = marker('menu.csp.proyectos.prorrogas');
 const PROYECTO_ELEGIBILIDAD_KEY = marker('csp.proyecto-elegibilidad');
+const PROYECTO_AGRUPACION_GASTO_KEY = marker('csp.proyecto-agrupacion-gasto');
 const MSG_NEW_TITLE = marker('title.new.entity');
 
 const routes: SgiAuthRoutes = [
@@ -110,12 +113,20 @@ const routes: SgiAuthRoutes = [
       {
         path: PROYECTO_ROUTE_NAMES.HITOS,
         component: ProyectoHitosComponent,
-        canDeactivate: [FragmentGuard]
+        canDeactivate: [FragmentGuard],
+        canActivate: [SgiAuthGuard],
+        data: {
+          hasAuthorityForAnyUO: 'CSP-PRO-E'
+        },
       },
       {
         path: PROYECTO_ROUTE_NAMES.SOCIOS,
         component: ProyectoSociosComponent,
-        canDeactivate: [FragmentGuard]
+        canDeactivate: [FragmentGuard],
+        canActivate: [SgiAuthGuard],
+        data: {
+          hasAuthorityForAnyUO: 'CSP-PRO-E'
+        },
       },
       {
         path: PROYECTO_ROUTE_NAMES.ENTIDADES_CONVOCANTES,
@@ -130,7 +141,11 @@ const routes: SgiAuthRoutes = [
       {
         path: PROYECTO_ROUTE_NAMES.FASES,
         component: ProyectoPlazosComponent,
-        canDeactivate: [FragmentGuard]
+        canDeactivate: [FragmentGuard],
+        canActivate: [SgiAuthGuard],
+        data: {
+          hasAuthorityForAnyUO: 'CSP-PRO-E'
+        },
       },
       {
         path: PROYECTO_ROUTE_NAMES.CONTEXTO_PROYECTO,
@@ -169,7 +184,11 @@ const routes: SgiAuthRoutes = [
       {
         path: PROYECTO_ROUTE_NAMES.HISTORICO_ESTADOS,
         component: ProyectoHistoricoEstadosComponent,
-        canDeactivate: [FragmentGuard]
+        canDeactivate: [FragmentGuard],
+        canActivate: [SgiAuthGuard],
+        data: {
+          hasAuthorityForAnyUO: 'CSP-PRO-E'
+        },
       },
       {
         path: PROYECTO_ROUTE_NAMES.CLASIFICACIONES,
@@ -179,36 +198,73 @@ const routes: SgiAuthRoutes = [
       {
         path: PROYECTO_ROUTE_NAMES.IDENTIFICACION,
         component: ProyectoProyectosSgeComponent,
-        canDeactivate: [FragmentGuard]
+        canDeactivate: [FragmentGuard],
+        canActivate: [SgiAuthGuard],
+        data: {
+          hasAuthorityForAnyUO: 'CSP-PRO-E'
+        },
       },
       {
         path: PROYECTO_ROUTE_NAMES.PARTIDAS_PRESUPUESTARIAS,
         component: ProyectoPartidasPresupuestariasComponent,
-        canDeactivate: [FragmentGuard]
+        canActivate: [SgiAuthGuard],
+        data: {
+          hasAuthorityForAnyUO: 'CSP-PRO-E'
+        },
+      },
+      {
+        path: PROYECTO_ROUTE_NAMES.AGRUPACIONES_GASTO,
+        component: ProyectoAgrupacionesGastoComponent,
+        canDeactivate: [FragmentGuard],
+        canActivate: [SgiAuthGuard],
+        data: {
+          hasAuthorityForAnyUO: 'CSP-PRO-E'
+        },
       },
       {
         path: PROYECTO_ROUTE_NAMES.ELEGIBILIDAD,
         component: ProyectoConceptosGastoComponent,
-        canDeactivate: [FragmentGuard]
+        canDeactivate: [FragmentGuard],
+        canActivate: [SgiAuthGuard],
+        data: {
+          hasAuthorityForAnyUO: 'CSP-PRO-E'
+        },
       },
       {
         path: PROYECTO_ROUTE_NAMES.CONCEPTO_GATO_PERMITIDO,
-        redirectTo: PROYECTO_ROUTE_NAMES.ELEGIBILIDAD
+        redirectTo: PROYECTO_ROUTE_NAMES.ELEGIBILIDAD,
+        canActivate: [SgiAuthGuard],
+        data: {
+          hasAuthorityForAnyUO: 'CSP-PRO-E'
+        },
       },
       {
         path: PROYECTO_ROUTE_NAMES.CONCEPTO_GATO_NO_PERMITIDO,
-        redirectTo: PROYECTO_ROUTE_NAMES.ELEGIBILIDAD
+        redirectTo: PROYECTO_ROUTE_NAMES.ELEGIBILIDAD,
+        canActivate: [SgiAuthGuard],
+        data: {
+          hasAuthorityForAnyUO: 'CSP-PRO-E'
+        },
       },
       {
         path: PROYECTO_ROUTE_NAMES.PRESUPUESTO,
         component: ProyectoPresupuestoComponent,
-        canDeactivate: [FragmentGuard]
+        canDeactivate: [FragmentGuard],
       },
       {
         path: PROYECTO_ROUTE_NAMES.RESPONSABLE_ECONOMICO,
         component: ProyectoResponsableEconomicoComponent,
+        canDeactivate: [FragmentGuard],
+        canActivate: [SgiAuthGuard],
+        data: {
+          hasAuthorityForAnyUO: 'CSP-PRO-E'
+        },
+      },
+      {
+        path: PROYECTO_ROUTE_NAMES.CALENDARIO_JUSTIFICACION,
+        component: ProyectoCalendarioJustificacionComponent,
         canDeactivate: [FragmentGuard]
-      }
+      },
     ]
   },
   {
@@ -244,6 +300,17 @@ const routes: SgiAuthRoutes = [
         data: {
           title: PROYECTO_PERIODOS_SEGUIMIENTO_KEY,
           hasAuthorityForAnyUO: 'CSP-PRO-E'
+        }
+      },
+      {
+        path: PROYECTO_ROUTE_NAMES.AGRUPACIONES_GASTO,
+        loadChildren: () =>
+          import('../proyecto-agrupacion-gasto/proyecto-agrupacion-gasto.module').then(
+            (m) => m.ProyectoAgrupacionGastoModule
+          ),
+        canActivate: [SgiAuthGuard],
+        data: {
+          title: PROYECTO_AGRUPACION_GASTO_KEY
         }
       },
       {

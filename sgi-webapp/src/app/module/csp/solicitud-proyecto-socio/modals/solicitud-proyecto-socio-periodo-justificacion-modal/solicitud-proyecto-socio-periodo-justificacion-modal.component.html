@@ -45,6 +45,12 @@
           <mat-error *ngIf="formGroup.controls.mesInicial.errors?.required">
             {{'error.required.entity' | translate:msgParamMesInicialEntity}}
           </mat-error>
+          <mat-error *ngIf="formGroup.controls.mesInicial.errors?.initial">
+            {{ 'error.initial.mes-desde' | translate }}
+          </mat-error>
+          <mat-error *ngIf="formGroup.controls.mesInicial.errors?.wrongOrder">
+            {{ 'error.wrongOrder.mes-desde' | translate }}
+          </mat-error>
         </mat-form-field>
       </div>
       <!-- mesFinal -->
@@ -56,7 +62,7 @@
           <mat-error *ngIf="formGroup.controls.mesFinal.errors?.min">
             {{'error.csp.proyecto-socio.periodo-justificacion.mes-fin.min' | translate}}
           </mat-error>
-          <mat-error *ngIf="formGroup.controls.mesFinal.errors?.after">
+          <mat-error *ngIf="formGroup.controls.mesFinal.errors?.afterOrEqual">
             {{'error.after.mes-final' | translate}}
           </mat-error>
           <mat-error *ngIf="formGroup.controls.mesFinal.errors?.overlapped">

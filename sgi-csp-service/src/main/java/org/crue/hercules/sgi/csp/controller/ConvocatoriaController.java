@@ -1,7 +1,12 @@
 package org.crue.hercules.sgi.csp.controller;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import javax.validation.Valid;
 
+import org.crue.hercules.sgi.csp.dto.RequisitoIPCategoriaProfesionalOutput;
+import org.crue.hercules.sgi.csp.dto.RequisitoIPNivelAcademicoOutput;
 import org.crue.hercules.sgi.csp.model.Convocatoria;
 import org.crue.hercules.sgi.csp.model.ConvocatoriaAreaTematica;
 import org.crue.hercules.sgi.csp.model.ConvocatoriaConceptoGasto;
@@ -16,6 +21,11 @@ import org.crue.hercules.sgi.csp.model.ConvocatoriaHito;
 import org.crue.hercules.sgi.csp.model.ConvocatoriaPartida;
 import org.crue.hercules.sgi.csp.model.ConvocatoriaPeriodoJustificacion;
 import org.crue.hercules.sgi.csp.model.ConvocatoriaPeriodoSeguimientoCientifico;
+import org.crue.hercules.sgi.csp.model.Proyecto;
+import org.crue.hercules.sgi.csp.model.RequisitoIP;
+import org.crue.hercules.sgi.csp.model.RequisitoIPCategoriaProfesional;
+import org.crue.hercules.sgi.csp.model.RequisitoIPNivelAcademico;
+import org.crue.hercules.sgi.csp.model.Solicitud;
 import org.crue.hercules.sgi.csp.service.ConvocatoriaAreaTematicaService;
 import org.crue.hercules.sgi.csp.service.ConvocatoriaConceptoGastoCodigoEcService;
 import org.crue.hercules.sgi.csp.service.ConvocatoriaConceptoGastoService;
@@ -30,7 +40,10 @@ import org.crue.hercules.sgi.csp.service.ConvocatoriaPartidaService;
 import org.crue.hercules.sgi.csp.service.ConvocatoriaPeriodoJustificacionService;
 import org.crue.hercules.sgi.csp.service.ConvocatoriaPeriodoSeguimientoCientificoService;
 import org.crue.hercules.sgi.csp.service.ConvocatoriaService;
+import org.crue.hercules.sgi.csp.service.RequisitoIPCategoriaProfesionalService;
+import org.crue.hercules.sgi.csp.service.RequisitoIPNivelAcademicoService;
 import org.crue.hercules.sgi.framework.web.bind.annotation.RequestPageable;
+import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -56,6 +69,11 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping("/convocatorias")
 @Slf4j
 public class ConvocatoriaController {
+
+  public static final String PATH_CATEGORIAS_PROFESIONALES = "/{id}/categoriasprofesionales";
+  public static final String PATH_NIVELES = "/{id}/niveles";
+
+  private ModelMapper modelMapper;
 
   /** ConvocatoriaService service */
   private final ConvocatoriaService service;
@@ -98,10 +116,15 @@ public class ConvocatoriaController {
 
   /** ConvocatoriaConceptoGastoCodigoEcService */
   private final ConvocatoriaConceptoGastoCodigoEcService convocatoriaConceptoGastoCodigoEcService;
+  /** RequisitoIPNivelAcademicoService */
+  private final RequisitoIPNivelAcademicoService requisitoIPNivelAcademicoService;
+
+  /** RequisitoIPCategoriaProfesionalService */
+  private final RequisitoIPCategoriaProfesionalService requisitoIPCategoriaProfesionalService;
 
   /**
    * Instancia un nuevo ConvocatoriaController.
-   * 
+   *
    * @param convocatoriaService                             {@link ConvocatoriaService}.
    * @param convocatoriaAreaTematicaService                 {@link ConvocatoriaAreaTematicaService}.
    * @param convocatoriaDocumentoService                    {@link ConvocatoriaDocumentoService}.
@@ -116,6 +139,9 @@ public class ConvocatoriaController {
    * @param convocatoriaPeriodoSeguimientoCientificoService {@link ConvocatoriaPeriodoSeguimientoCientificoService}
    * @param convocatoriaConceptoGastoService                {@link ConvocatoriaConceptoGastoService}
    * @param convocatoriaConceptoGastoCodigoEcService        {@link ConvocatoriaConceptoGastoCodigoEcService}
+   * @param requisitoIPNivelAcademicoService                {@link RequisitoIPNivelAcademicoService}.
+   * @param requisitoIPCategoriaProfesionalService          {@link RequisitoIPCategoriaProfesionalService}.
+   * @param modelMapper                                     {@link ModelMapper}
    */
   public ConvocatoriaController(ConvocatoriaService convocatoriaService,
       ConvocatoriaAreaTematicaService convocatoriaAreaTematicaService,
@@ -128,7 +154,9 @@ public class ConvocatoriaController {
       ConvocatoriaPeriodoJustificacionService convocatoriaPeriodoJustificacionService,
       ConvocatoriaPeriodoSeguimientoCientificoService convocatoriaPeriodoSeguimientoCientificoService,
       ConvocatoriaConceptoGastoService convocatoriaConceptoGastoService,
-      ConvocatoriaConceptoGastoCodigoEcService convocatoriaConceptoGastoCodigoEcService) {
+      ConvocatoriaConceptoGastoCodigoEcService convocatoriaConceptoGastoCodigoEcService,
+      RequisitoIPNivelAcademicoService requisitoIPNivelAcademicoService,
+      RequisitoIPCategoriaProfesionalService requisitoIPCategoriaProfesionalService, ModelMapper modelMapper) {
     this.service = convocatoriaService;
     this.convocatoriaAreaTematicaService = convocatoriaAreaTematicaService;
     this.convocatoriaDocumentoService = convocatoriaDocumentoService;
@@ -143,11 +171,14 @@ public class ConvocatoriaController {
     this.convocatoriaPeriodoSeguimientoCientificoService = convocatoriaPeriodoSeguimientoCientificoService;
     this.convocatoriaConceptoGastoService = convocatoriaConceptoGastoService;
     this.convocatoriaConceptoGastoCodigoEcService = convocatoriaConceptoGastoCodigoEcService;
+    this.requisitoIPNivelAcademicoService = requisitoIPNivelAcademicoService;
+    this.requisitoIPCategoriaProfesionalService = requisitoIPCategoriaProfesionalService;
+    this.modelMapper = modelMapper;
   }
 
   /**
    * Crea nuevo {@link Convocatoria}
-   * 
+   *
    * @param convocatoria {@link Convocatoria}. que se quiere crear.
    * @return Nuevo {@link Convocatoria} creado.
    */
@@ -164,7 +195,7 @@ public class ConvocatoriaController {
 
   /**
    * Actualiza {@link Convocatoria}.
-   * 
+   *
    * @param convocatoria {@link Convocatoria} a actualizar.
    * @param id           Identificador {@link Convocatoria} a actualizar.
    * @return Convocatoria {@link Convocatoria} actualizado
@@ -183,7 +214,7 @@ public class ConvocatoriaController {
 
   /**
    * Registra la {@link Convocatoria} con id indicado.
-   * 
+   *
    * @param id Identificador de {@link Convocatoria}.
    * @return {@link Convocatoria} actualizado.
    */
@@ -198,7 +229,7 @@ public class ConvocatoriaController {
 
   /**
    * Reactiva el {@link Convocatoria} con id indicado.
-   * 
+   *
    * @param id Identificador de {@link Convocatoria}.
    * @return {@link Convocatoria} actualizado.
    */
@@ -213,7 +244,7 @@ public class ConvocatoriaController {
 
   /**
    * Desactiva {@link Convocatoria} con id indicado.
-   * 
+   *
    * @param id Identificador de {@link Convocatoria}.
    * @return {@link Convocatoria} actualizado.
    */
@@ -229,7 +260,7 @@ public class ConvocatoriaController {
   /**
    * Hace las comprobaciones necesarias para determinar si la {@link Convocatoria}
    * puede ser modificada.
-   * 
+   *
    * @param id Id del {@link Convocatoria}.
    * @return HTTP-200 Si se permite modificación / HTTP-204 Si no se permite
    *         modificación
@@ -238,7 +269,8 @@ public class ConvocatoriaController {
   @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-CON-E', 'CSP-CON-V')")
   ResponseEntity<Convocatoria> modificable(@PathVariable Long id) {
     log.debug("modificable(Long id) - start");
-    boolean returnValue = service.modificable(id, null, new String[] { "CSP-CON-E", "CSP-CON-V" });
+    boolean returnValue = service.isRegistradaConSolicitudesOProyectos(id, null,
+        new String[] { "CSP-CON-E", "CSP-CON-V" });
     log.debug("modificable(Long id) - end");
     return returnValue ? new ResponseEntity<>(HttpStatus.OK) : new ResponseEntity<>(HttpStatus.NO_CONTENT);
   }
@@ -262,7 +294,7 @@ public class ConvocatoriaController {
 
   /**
    * Comprueba la existencia del {@link Convocatoria} con el id indicado.
-   * 
+   *
    * @param id Identificador de {@link Convocatoria}.
    * @return HTTP 200 si existe y HTTP 204 si no.
    */
@@ -280,7 +312,7 @@ public class ConvocatoriaController {
 
   /**
    * Devuelve el {@link Convocatoria} con el id indicado.
-   * 
+   *
    * @param id Identificador de {@link Convocatoria}.
    * @return Convocatoria {@link Convocatoria} correspondiente al id
    */
@@ -295,7 +327,7 @@ public class ConvocatoriaController {
 
   /**
    * Devuelve una lista paginada y filtrada {@link Convocatoria} activas.
-   * 
+   *
    * @param query  filtro de búsqueda.
    * @param paging {@link Pageable}.
    * @return el listado de entidades {@link Convocatoria} activas paginadas y
@@ -318,7 +350,7 @@ public class ConvocatoriaController {
 
   /**
    * Devuelve una lista paginada y filtrada {@link Convocatoria} activas.
-   * 
+   *
    * @param query  filtro de búsqueda.
    * @param paging {@link Pageable}.
    * @return el listado de entidades {@link Convocatoria} activas paginadas y
@@ -342,7 +374,7 @@ public class ConvocatoriaController {
   /**
    * Devuelve una lista paginada y filtrada {@link Convocatoria} activas
    * registradas restringidas a las del usuario.
-   * 
+   *
    * @param query  filtro de búsqueda.
    * @param paging {@link Pageable}.
    * @return el listado de entidades {@link Convocatoria} paginadas y filtradas.
@@ -365,7 +397,7 @@ public class ConvocatoriaController {
 
   /**
    * Devuelve una lista paginada y filtrada {@link Convocatoria}.
-   * 
+   *
    * @param query  filtro de búsqueda.
    * @param paging {@link Pageable}.
    * @return el listado de entidades {@link Convocatoria} paginadas y filtradas.
@@ -387,15 +419,15 @@ public class ConvocatoriaController {
   }
 
   /**
-   * 
+   *
    * CONVOCATORIA HITO
-   * 
+   *
    */
 
   /**
    * Devuelve una lista paginada y filtrada de {@link ConvocatoriaHito} de la
    * {@link Convocatoria}.
-   * 
+   *
    * @param id     Identificador de {@link Convocatoria}.
    * @param query  filtro de búsqueda.
    * @param paging pageable.
@@ -419,7 +451,7 @@ public class ConvocatoriaController {
   /**
    * Comprueba la existencia de {@link ConvocatoriaHito} relacionados con el id de
    * Convocatoria recibido.
-   * 
+   *
    * @param id Identificador de {@link Convocatoria}.
    * @return HTTP 200 si existe alguna relación y HTTP 204 si no.
    */
@@ -436,15 +468,15 @@ public class ConvocatoriaController {
   }
 
   /**
-   * 
+   *
    * CONVOCATORIA PARTIDA PRESUPUESTARIA
-   * 
+   *
    */
 
   /**
    * Devuelve una lista paginada y filtrada de
    * {@link ConvocatoriaPartidaPresupuestaria} de la {@link Convocatoria}.
-   * 
+   *
    * @param id     Identificador de {@link Convocatoria}.
    * @param query  filtro de búsqueda.
    * @param paging pageable.
@@ -466,15 +498,15 @@ public class ConvocatoriaController {
   }
 
   /**
-   * 
+   *
    * CONVOCATORIA ENTIDAD FINANCIADORA
-   * 
+   *
    */
 
   /**
    * Devuelve una lista paginada y filtrada de
    * {@link ConvocatoriaEntidadFinanciadora} de la {@link Convocatoria}.
-   * 
+   *
    * @param id     Identificador de {@link Convocatoria}.
    * @param query  filtro de búsqueda.
    * @param paging pageable.
@@ -498,15 +530,15 @@ public class ConvocatoriaController {
   }
 
   /**
-   * 
+   *
    * CONVOCATORIA ENTIDAD GESTORA
-   * 
+   *
    */
 
   /**
    * Devuelve una lista paginada y filtrada de {@link ConvocatoriaEntidadGestora}
    * de la {@link Convocatoria}.
-   * 
+   *
    * @param id     Identificador de {@link Convocatoria}.
    * @param query  filtro de búsqueda.
    * @param paging pageable.
@@ -528,15 +560,15 @@ public class ConvocatoriaController {
   }
 
   /**
-   * 
+   *
    * CONVOCATORIA FASE
-   * 
+   *
    */
 
   /**
    * Devuelve una lista paginada y filtrada de {@link ConvocatoriaFase} de la
    * {@link Convocatoria}.
-   * 
+   *
    * @param id     Identificador de {@link Convocatoria}.
    * @param query  filtro de búsqueda.
    * @param paging pageable.
@@ -560,7 +592,7 @@ public class ConvocatoriaController {
   /**
    * Comprueba la existencia de {@link ConvocatoriaFase} relacionados con el id de
    * Convocatoria recibido.
-   * 
+   *
    * @param id Identificador de {@link Convocatoria}.
    * @return HTTP 200 si existe alguna relación y HTTP 204 si no.
    */
@@ -577,15 +609,15 @@ public class ConvocatoriaController {
   }
 
   /**
-   * 
+   *
    * CONVOCATORIA AREA TEMATICA
-   * 
+   *
    */
 
   /**
    * Devuelve una lista paginada y filtrada de {@link ConvocatoriaAreaTematica} de
    * la {@link Convocatoria}.
-   * 
+   *
    * @param id     Identificador de {@link Convocatoria}.
    * @param query  filtro de búsqueda.
    * @param paging pageable.
@@ -607,15 +639,15 @@ public class ConvocatoriaController {
   }
 
   /**
-   * 
+   *
    * CONVOCATORIA DOCUMENTO
-   * 
+   *
    */
 
   /**
    * Devuelve una lista paginada y filtrada de {@link ConvocatoriaDocumento} de la
    * {@link Convocatoria}.
-   * 
+   *
    * @param id     Identificador de {@link Convocatoria}.
    * @param query  filtro de búsqueda.
    * @param paging pageable.
@@ -639,7 +671,7 @@ public class ConvocatoriaController {
   /**
    * Comprueba la existencia de {@link ConvocatoriaDocumento} relacionados con el
    * id de Convocatoria recibido.
-   * 
+   *
    * @param id Identificador de {@link Convocatoria}.
    * @return HTTP 200 si existe alguna relación y HTTP 204 si no.
    */
@@ -656,15 +688,15 @@ public class ConvocatoriaController {
   }
 
   /**
-   * 
+   *
    * CONVOCATORIA ENLACE
-   * 
+   *
    */
 
   /**
    * Devuelve una lista paginada y filtrada de {@link ConvocatoriaEnlace} de la
    * {@link Convocatoria}.
-   * 
+   *
    * @param id     Identificador de {@link Convocatoria}.
    * @param query  filtro de búsqueda.
    * @param paging pageable.
@@ -688,7 +720,7 @@ public class ConvocatoriaController {
   /**
    * Comprueba la existencia de {@link ConvocatoriaEnlace} relacionados con el id
    * de Convocatoria recibido.
-   * 
+   *
    * @param id Identificador de {@link Convocatoria}.
    * @return HTTP 200 si existe alguna relación y HTTP 204 si no.
    */
@@ -705,15 +737,15 @@ public class ConvocatoriaController {
   }
 
   /**
-   * 
+   *
    * CONVOCATORIA ENTIDAD CONVOCANTE
-   * 
+   *
    */
 
   /**
    * Devuelve una lista paginada y filtrada de
    * {@link ConvocatoriaEntidadConvocante} de la {@link Convocatoria}.
-   * 
+   *
    * @param id     Identificador de {@link Convocatoria}.
    * @param query  filtro de búsqueda.
    * @param paging pageable.
@@ -736,15 +768,15 @@ public class ConvocatoriaController {
   }
 
   /**
-   * 
+   *
    * CONVOCATORIA PERIODO JUSTIFICACION
-   * 
+   *
    */
 
   /**
    * Devuelve una lista paginada y filtrada de
    * {@link ConvocatoriaPeriodoJustificacion} de la {@link Convocatoria}.
-   * 
+   *
    * @param id     Identificador de {@link Convocatoria}.
    * @param query  filtro de búsqueda.
    * @param paging pageable.
@@ -767,15 +799,15 @@ public class ConvocatoriaController {
   }
 
   /**
-   * 
+   *
    * CONVOCATORIA PERIODO SEGUIMIENTO CIENTIFICO
-   * 
+   *
    */
 
   /**
    * Devuelve una lista paginada y filtrada de
    * {@link convocatoriaPeriodoSeguimientoCientifico} de la {@link Convocatoria}.
-   * 
+   *
    * @param id     Identificador de {@link Convocatoria}.
    * @param query  filtro de búsqueda.
    * @param paging pageable.
@@ -799,15 +831,15 @@ public class ConvocatoriaController {
   }
 
   /**
-   * 
+   *
    * CONVOCATORIA GASTOS
-   * 
+   *
    */
 
   /**
    * Devuelve una lista paginada y filtrada de {@link ConvocatoriaConceptoGasto}
    * permitidos de la {@link Convocatoria}.
-   * 
+   *
    * @param id     Identificador de {@link Convocatoria}.
    * @param paging pageable.
    */
@@ -852,16 +884,16 @@ public class ConvocatoriaController {
   }
 
   /**
-   * 
+   *
    * CONVOCATORIA GASTOS CÓDIGO ECONÓMICO
-   * 
+   *
    */
 
   /**
    * Devuelve una lista paginada y filtrada de
    * {@link ConvocatoriaConceptoGastoCodigoEc} permitidos de la
    * {@link ConvocatoriaConceptoGasto}.
-   * 
+   *
    * @param id     Identificador de {@link ConvocatoriaConceptoGasto}.
    * @param paging pageable.
    */
@@ -920,6 +952,101 @@ public class ConvocatoriaController {
     boolean returnValue = service.tramitable(id);
     log.debug("registrable(Long id) - end");
     return returnValue ? new ResponseEntity<>(HttpStatus.OK) : new ResponseEntity<>(HttpStatus.NO_CONTENT);
+  }
+
+  /**
+   * Verifica si la convocatoria tiene asociada alguna solicitud
+   * 
+   * @param id Id de la {@link Convocatoria}
+   * @return HTTP-200 si tinene alguna {@link Solicitud} asociada
+   */
+  @PreAuthorize("hasAuthorityForAnyUO('CSP-CON-E')")
+  @RequestMapping(path = "/{id}/solicitudesreferenced", method = RequestMethod.HEAD)
+  public ResponseEntity<Object> hasSolicitudesReferenced(@PathVariable Long id) {
+
+    return this.service.hasAnySolicitudReferenced(id) ? ResponseEntity.ok().build()
+        : ResponseEntity.noContent().build();
+  }
+
+  /**
+   * verifica si la convocatoria tiene asociada algún {@link Proyecto}
+   * 
+   * @param id Id de la {@link Convocatoria}
+   * @return HTTP-200 si tinene algún {@link Proyecto} asociado
+   */
+  @PreAuthorize("hasAuthorityForAnyUO('CSP-CON-E')")
+  @RequestMapping(path = "/{id}/proyectosreferenced", method = RequestMethod.HEAD)
+  public ResponseEntity<Object> hasProyectosReferenced(@PathVariable Long id) {
+
+    return this.service.hasAnyProyectoReferenced(id) ? ResponseEntity.ok().build() : ResponseEntity.noContent().build();
+  }
+
+  /**
+   * Devuelve los {@link RequisitoIPNivelAcademico} asociados al*
+   * {@link RequisitoIP} con el id indicado**
+   * 
+   * @param id Identificador de {@link RequisitoIPNivelAcademico}*@return
+   *           RequisitoIPNivelAcademico {@link RequisitoIPNivelAcademico}*
+   *           correspondiente al id
+   */
+
+  @GetMapping(PATH_NIVELES)
+  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-SOL-C', 'CSP-SOL-INV-C')")
+  public List<RequisitoIPNivelAcademicoOutput> findNivelesAcademicos(@PathVariable Long id) {
+    log.debug("findNivelesAcademicos(@PathVariable Long id) - start");
+    List<RequisitoIPNivelAcademicoOutput> returnValue = convertRequisitoIPNivelesAcademicos(
+        requisitoIPNivelAcademicoService.findByConvocatoria(id));
+    log.debug("findNivelesAcademicos(@PathVariable Long id) - end");
+    return returnValue;
+  }
+
+  /**
+   * Devuelve los {@link RequisitoIPNivelAcademico} asociados al
+   * {@link RequisitoIP} con el id indicado
+   * 
+   * @param id Identificador de {@link RequisitoIPNivelAcademico}
+   * @return RequisitoIPNivelAcademico {@link RequisitoIPNivelAcademico}
+   *         correspondiente al id
+   */
+  @GetMapping(PATH_CATEGORIAS_PROFESIONALES)
+  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-SOL-C', 'CSP-SOL-INV-C')")
+  public List<RequisitoIPCategoriaProfesionalOutput> findCategoriasProfesionales(@PathVariable Long id) {
+    log.debug("findCategoriasProfesionales(@PathVariable Long id) - start");
+    List<RequisitoIPCategoriaProfesionalOutput> returnValue = convertRequisitoIPCategoriasProfesionales(
+        requisitoIPCategoriaProfesionalService.findByConvocatoria(id));
+    log.debug("findCategoriasProfesionales(@PathVariable Long id) - end");
+    return returnValue;
+  }
+
+  private RequisitoIPNivelAcademicoOutput convert(RequisitoIPNivelAcademico entity) {
+    return modelMapper.map(entity, RequisitoIPNivelAcademicoOutput.class);
+  }
+
+  private List<RequisitoIPNivelAcademicoOutput> convertRequisitoIPNivelesAcademicos(
+      List<RequisitoIPNivelAcademico> entities) {
+    return entities.stream().map((entity) -> convert(entity)).collect(Collectors.toList());
+  }
+
+  private List<RequisitoIPCategoriaProfesionalOutput> convertRequisitoIPCategoriasProfesionales(
+      List<RequisitoIPCategoriaProfesional> entities) {
+    return entities.stream().map((entity) -> convertCategoriaProfesional(entity)).collect(Collectors.toList());
+  }
+
+  private RequisitoIPCategoriaProfesionalOutput convertCategoriaProfesional(RequisitoIPCategoriaProfesional entity) {
+    return modelMapper.map(entity, RequisitoIPCategoriaProfesionalOutput.class);
+  }
+
+  /**
+   * Clona la convocatoria cuya fuente es la correspondiente al id pasado por el
+   * path
+   * 
+   * @param id id de la {@link Convocatoria}
+   * @return Convocatoria devuelve una {@link Convocatoria}
+   */
+  @PostMapping("/{id}/clone")
+  @PreAuthorize("hasAuthorityForAnyUO('CSP-CON-C')")
+  public ResponseEntity<Long> clone(@PathVariable Long id) {
+    return new ResponseEntity<>(service.clone(id).getId(), HttpStatus.CREATED);
   }
 
 }

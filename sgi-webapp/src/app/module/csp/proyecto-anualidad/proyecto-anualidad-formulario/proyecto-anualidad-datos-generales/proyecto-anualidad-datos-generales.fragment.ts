@@ -20,6 +20,7 @@ export class ProyectoAnualidadDatosGeneralesFragment extends FormFragment<IProye
     key: number,
     proyecto: IProyecto,
     private service: ProyectoAnualidadService,
+    private readonly: boolean
   ) {
     super(key);
     this.isAnualidadGenerica = !proyecto.anualidades;
@@ -70,6 +71,10 @@ export class ProyectoAnualidadDatosGeneralesFragment extends FormFragment<IProye
         this.fechaFin$.next(value);
       })
     );
+
+    if (this.readonly) {
+      form.disable();
+    }
 
     return form;
   }

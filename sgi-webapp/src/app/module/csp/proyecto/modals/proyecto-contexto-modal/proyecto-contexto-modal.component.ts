@@ -26,7 +26,9 @@ const TITLE_NEW_ENTITY = marker('title.new.entity');
 export interface ProyectoContextoModalData {
   root: IAreaTematica;
   areaTematica: IAreaTematica;
+  areaTematicaConvocatoria: IAreaTematica;
 }
+
 class NodeAreaTematica {
   parent: NodeAreaTematica;
   areaTematica: StatusWrapper<IAreaTematica>;
@@ -76,6 +78,7 @@ export class ProyectoContextoModalComponent extends
   dataSource = new MatTreeNestedDataSource<NodeAreaTematica>();
   private nodeMap = new Map<number, NodeAreaTematica>();
 
+  rootNodeConvocatoria: NodeAreaTematica;
   checkedNode: NodeAreaTematica;
   textSaveOrUpdate: string;
 
@@ -111,7 +114,7 @@ export class ProyectoContextoModalComponent extends
 
     this.setupI18N();
 
-    this.loadAreasTematicas();
+    this.loadAreasTematicasGrupo();
     this.loadTreeAreaTematica();
 
     const subscription = this.formGroup.get('padre').valueChanges.subscribe(() => this.loadTreeAreaTematica());
@@ -170,7 +173,7 @@ export class ProyectoContextoModalComponent extends
     const padre = this.formGroup.get('padre').value;
     const areaTematica = this.checkedNode?.areaTematica?.value;
     if (areaTematica) {
-      this.data.areaTematica = areaTematica ? areaTematica : padre;
+      this.data.areaTematica = areaTematica;
     } else {
       this.data.areaTematica = null;
     }
@@ -179,7 +182,7 @@ export class ProyectoContextoModalComponent extends
     return this.data;
   }
 
-  private loadAreasTematicas(): void {
+  private loadAreasTematicasGrupo(): void {
     this.dataSource.data = null;
     this.areasTematicas$ = this.areaTematicaService.findAllGrupo().pipe(
       map(res => res.items),
@@ -191,12 +194,25 @@ export class ProyectoContextoModalComponent extends
     );
   }
 
-
   private loadTreeAreaTematica(): void {
     this.nodeMap.clear();
     this.dataSource.data = [];
     const padre = this.formGroup.get('padre').value;
-    if (padre) {
+
+    if (this.data.areaTematicaConvocatoria) {
+      const node = new NodeAreaTematica(new StatusWrapper<IAreaTematica>(this.data.areaTematicaConvocatoria));
+      this.rootNodeConvocatoria = node;
+      this.nodeMap.set(node.areaTematica.value.id, node);
+      const susbcription = this.getChilds(node).pipe(map(() => node))
+        .subscribe((result) => {
+          this.publishNodes([result]);
+          this.checkedNode = this.nodeMap.get(this.data.areaTematica?.id);
+          if (this.checkedNode) {
+            this.expandNodes(this.checkedNode);
+          }
+        });
+      this.subscriptions.push(susbcription);
+    } else if (padre) {
       const susbcription = this.areaTematicaService.findAllHijosArea(padre.id).pipe(
         switchMap(response => {
           return from(response.items).pipe(

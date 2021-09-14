@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.assertj.core.api.Assertions;
+import org.crue.hercules.sgi.eti.config.SgiConfigProperties;
 import org.crue.hercules.sgi.eti.dto.ConvocatoriaReunionDatosGenerales;
 import org.crue.hercules.sgi.eti.exceptions.ConvocatoriaReunionNotFoundException;
 import org.crue.hercules.sgi.eti.model.Comite;
@@ -23,6 +24,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
 import org.mockito.BDDMockito;
 import org.mockito.Mock;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -41,11 +43,14 @@ public class ConvocatoriaReunionServiceTest extends BaseServiceTest {
   @Mock
   private EvaluacionRepository evaluacionRepository;
 
+  @Autowired
+  private SgiConfigProperties sgiConfigProperties;
+
   private ConvocatoriaReunionService service;
 
   @BeforeEach
   public void setUp() throws Exception {
-    service = new ConvocatoriaReunionServiceImpl(repository, actaRepository, evaluacionRepository);
+    service = new ConvocatoriaReunionServiceImpl(sgiConfigProperties, repository, actaRepository, evaluacionRepository);
   }
 
   @Test

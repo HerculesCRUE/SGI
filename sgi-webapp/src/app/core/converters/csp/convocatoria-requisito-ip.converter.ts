@@ -1,5 +1,7 @@
 import { IConvocatoriaRequisitoIPBackend } from '@core/models/csp/backend/convocatoria-requisito-ip-backend';
 import { IConvocatoriaRequisitoIP } from '@core/models/csp/convocatoria-requisito-ip';
+import { ISexo } from '@core/models/sgp/sexo';
+import { LuxonUtils } from '@core/utils/luxon-utils';
 import { SgiBaseConverter } from '@sgi/framework/core';
 
 class ConvocatoriaRequisitoIPConverter
@@ -13,13 +15,15 @@ class ConvocatoriaRequisitoIPConverter
       id: value.id,
       convocatoriaId: value.convocatoriaId,
       numMaximoIP: value.numMaximoIP,
-      nivelAcademicoRef: value.nivelAcademicoRef,
-      aniosNivelAcademico: value.aniosNivelAcademico,
+      fechaMaximaNivelAcademico: LuxonUtils.fromBackend(value.fechaMaximaNivelAcademico),
+      fechaMinimaNivelAcademico: LuxonUtils.fromBackend(value.fechaMinimaNivelAcademico),
       edadMaxima: value.edadMaxima,
-      sexo: value.sexo,
+      sexo: {
+        id: value.sexoRef,
+      } as ISexo,
       vinculacionUniversidad: value.vinculacionUniversidad,
-      modalidadContratoRef: value.modalidadContratoRef,
-      aniosVinculacion: value.aniosVinculacion,
+      fechaMaximaCategoriaProfesional: LuxonUtils.fromBackend(value.fechaMaximaCategoriaProfesional),
+      fechaMinimaCategoriaProfesional: LuxonUtils.fromBackend(value.fechaMinimaCategoriaProfesional),
       numMinimoCompetitivos: value.numMinimoCompetitivos,
       numMinimoNoCompetitivos: value.numMinimoNoCompetitivos,
       numMaximoCompetitivosActivos: value.numMaximoCompetitivosActivos,
@@ -36,13 +40,13 @@ class ConvocatoriaRequisitoIPConverter
       id: value.id,
       convocatoriaId: value.convocatoriaId,
       numMaximoIP: value.numMaximoIP,
-      nivelAcademicoRef: value.nivelAcademicoRef,
-      aniosNivelAcademico: value.aniosNivelAcademico,
+      fechaMaximaNivelAcademico: LuxonUtils.toBackend(value.fechaMaximaNivelAcademico),
+      fechaMinimaNivelAcademico: LuxonUtils.toBackend(value.fechaMinimaNivelAcademico),
       edadMaxima: value.edadMaxima,
-      sexo: value.sexo,
+      sexoRef: value.sexo?.id,
       vinculacionUniversidad: value.vinculacionUniversidad,
-      modalidadContratoRef: value.modalidadContratoRef,
-      aniosVinculacion: value.aniosVinculacion,
+      fechaMaximaCategoriaProfesional: LuxonUtils.toBackend(value.fechaMaximaCategoriaProfesional),
+      fechaMinimaCategoriaProfesional: LuxonUtils.toBackend(value.fechaMinimaCategoriaProfesional),
       numMinimoCompetitivos: value.numMinimoCompetitivos,
       numMinimoNoCompetitivos: value.numMinimoNoCompetitivos,
       numMaximoCompetitivosActivos: value.numMaximoCompetitivosActivos,

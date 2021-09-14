@@ -4,7 +4,8 @@ import java.util.List;
 
 import javax.validation.Valid;
 
-import org.crue.hercules.sgi.csp.exceptions.MiembroSolicitudMissmatchSolicitudProyectoIdException;
+import org.crue.hercules.sgi.csp.exceptions.NoRelatedEntitiesException;
+import org.crue.hercules.sgi.csp.model.Solicitud;
 import org.crue.hercules.sgi.csp.model.SolicitudProyectoEquipo;
 import org.crue.hercules.sgi.csp.service.SolicitudProyectoEquipoService;
 import org.springframework.http.HttpStatus;
@@ -65,7 +66,7 @@ public class SolicitudProyectoEquipoController {
 
     solicitudProyectoEquipos.stream().forEach(solicitudProyectoEquipo -> {
       if (solicitudProyectoEquipo.getSolicitudProyectoId() != solicitudProyectoId) {
-        throw new MiembroSolicitudMissmatchSolicitudProyectoIdException();
+        throw new NoRelatedEntitiesException(SolicitudProyectoEquipo.class, Solicitud.class);
       }
     });
 

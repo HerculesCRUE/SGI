@@ -30,6 +30,7 @@ const TITLE_NEW_ENTITY = marker('title.new.entity');
 export interface ProyectoEntidadConvocanteModalData {
   proyectoEntidadConvocante: IProyectoEntidadConvocante;
   selectedEmpresas: IEmpresa[];
+  readonly: boolean;
 }
 
 class NodePrograma {
@@ -309,6 +310,11 @@ export class ProyectoEntidadConvocanteModalComponent extends
         }, IsEntityValidator.isValid()),
       programa: new FormControl(this.data.proyectoEntidadConvocante.programa?.id)
     });
+
+    if (this.data.readonly) {
+      formGroup.disable();
+    }
+
     return formGroup;
   }
 

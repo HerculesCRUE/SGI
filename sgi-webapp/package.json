@@ -1,6 +1,6 @@
 {
   "name": "sgi-webapp",
-  "version": "0.0.1-SNAPSHOT",
+  "version": "0.0.1",
   "scripts": {
     "ng": "ng",
     "start": "node ./generate-config.js && ng serve --host 0.0.0.0 --allowed-hosts 0.0.0.0 --disable-host-check",
@@ -38,6 +38,7 @@
     "fontsource-poppins": "^3.0.3",
     "keycloak-js": "11.0.0",
     "luxon": "^1.26.0",
+    "mat-timepicker": "^5.1.4",
     "material-icons": "^0.3.1",
     "messageformat": "^2.3.0",
     "ngx-logger": "^4.1.9",

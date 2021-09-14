@@ -1,50 +1,52 @@
 <!-- Evaluacion listado -->
 <div>
   <h2>{{'title.eti.seguimiento.datos-memoria.evaluaciones-anteriores' | translate}}</h2>
-  <table mat-table [dataSource]="evaluaciones$ | async" matSort class="mat-elevation-z8 table-unidad">
-    <!-- NumReferencia Column -->
-    <ng-container matColumnDef="memoria.numReferencia">
-      <th mat-header-cell *matHeaderCellDef>
-        {{'eti.memoria.referencia' | translate}}</th>
-      <td mat-cell *matCellDef="let evaluacion"> {{evaluacion?.evaluacion?.memoria?.numReferencia}} </td>
-    </ng-container>
+  <div class="mat-elevation-z4">
+    <table mat-table [dataSource]="evaluaciones$ | async" matSort>
+      <!-- NumReferencia Column -->
+      <ng-container matColumnDef="memoria.numReferencia">
+        <th mat-header-cell *matHeaderCellDef>
+          {{'eti.memoria.referencia' | translate}}</th>
+        <td mat-cell *matCellDef="let evaluacion"> {{evaluacion?.evaluacion?.memoria?.numReferencia}} </td>
+      </ng-container>
 
-    <!-- Version Column -->
-    <ng-container matColumnDef="version">
-      <th mat-header-cell *matHeaderCellDef>
-        {{'eti.seguimiento.datos-memoria.version' | translate}}</th>
-      <td mat-cell *matCellDef="let evaluacion">{{evaluacion?.evaluacion?.version}}</td>
-    </ng-container>
+      <!-- Version Column -->
+      <ng-container matColumnDef="version">
+        <th mat-header-cell *matHeaderCellDef>
+          {{'eti.seguimiento.datos-memoria.version' | translate}}</th>
+        <td mat-cell *matCellDef="let evaluacion">{{evaluacion?.evaluacion?.version}}</td>
+      </ng-container>
 
-    <!-- Fecha dictamen Column -->
-    <ng-container matColumnDef="fechaDictamen">
-      <th mat-header-cell *matHeaderCellDef>
-        {{'eti.seguimiento.datos-memoria.fecha-evaluacion' | translate}}</th>
-      <td mat-cell *matCellDef="let evaluacion">{{evaluacion?.evaluacion?.fechaDictamen | luxon: 'short'}}</td>
-    </ng-container>
+      <!-- Fecha dictamen Column -->
+      <ng-container matColumnDef="fechaDictamen">
+        <th mat-header-cell *matHeaderCellDef>
+          {{'eti.seguimiento.datos-memoria.fecha-evaluacion' | translate}}</th>
+        <td mat-cell *matCellDef="let evaluacion">{{evaluacion?.evaluacion?.fechaDictamen | luxon: 'short'}}</td>
+      </ng-container>
 
-    <!-- Dictamen Column -->
-    <ng-container matColumnDef="dictamen.nombre">
-      <th mat-header-cell *matHeaderCellDef>
-        {{'eti.dictamen' | translate}}</th>
-      <td mat-cell *matCellDef="let evaluacion">{{evaluacion?.evaluacion?.dictamen?.nombre}}</td>
-    </ng-container>
+      <!-- Dictamen Column -->
+      <ng-container matColumnDef="dictamen.nombre">
+        <th mat-header-cell *matHeaderCellDef>
+          {{'eti.dictamen' | translate}}</th>
+        <td mat-cell *matCellDef="let evaluacion">{{evaluacion?.evaluacion?.dictamen?.nombre}}</td>
+      </ng-container>
 
-    <!-- Numero de comentarios Column -->
-    <ng-container matColumnDef="numComentarios">
-      <th mat-header-cell *matHeaderCellDef>
-        {{'eti.seguimiento.datos-memoria.numero-comentarios' | translate}}</th>
-      <td mat-cell *matCellDef="let evaluacion"> {{evaluacion?.numComentarios}} </td>
-    </ng-container>
+      <!-- Numero de comentarios Column -->
+      <ng-container matColumnDef="numComentarios">
+        <th mat-header-cell *matHeaderCellDef>
+          {{'eti.seguimiento.datos-memoria.numero-comentarios' | translate}}</th>
+        <td mat-cell *matCellDef="let evaluacion"> {{evaluacion?.numComentarios}} </td>
+      </ng-container>
 
-    <!-- Acciones Column -->
-    <ng-container matColumnDef="pdf">
-      <th mat-header-cell *matHeaderCellDef>
-        {{'eti.seguimiento.datos-memoria.pdf' | translate}}</th>
-      <td mat-cell *matCellDef="let evaluacion">
-      </td>
-    </ng-container>
-    <tr mat-header-row *matHeaderRowDef="columnas"></tr>
-    <tr mat-row *matRowDef="let row; columns: columnas;"></tr>
-  </table>
+      <!-- Acciones Column -->
+      <ng-container matColumnDef="pdf">
+        <th mat-header-cell *matHeaderCellDef>
+          {{'eti.seguimiento.datos-memoria.pdf' | translate}}</th>
+        <td mat-cell *matCellDef="let evaluacion">
+        </td>
+      </ng-container>
+      <tr mat-header-row *matHeaderRowDef="columnas"></tr>
+      <tr mat-row *matRowDef="let row; columns: columnas;"></tr>
+    </table>
+  </div>
 </div>

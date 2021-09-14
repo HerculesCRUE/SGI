@@ -10,6 +10,9 @@ export interface IConceptoGasto {
   /** Descripcion */
   descripcion: string;
 
+  /** Contes Indirectos */
+  costesIndirectos: boolean;
+
   /** Activo */
   activo: boolean;
 

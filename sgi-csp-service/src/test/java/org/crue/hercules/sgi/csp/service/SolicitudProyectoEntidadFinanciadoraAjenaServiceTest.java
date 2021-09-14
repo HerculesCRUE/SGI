@@ -1,5 +1,6 @@
 package org.crue.hercules.sgi.csp.service;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -173,7 +174,7 @@ public class SolicitudProyectoEntidadFinanciadoraAjenaServiceTest extends BaseSe
         1L);
     SolicitudProyectoEntidadFinanciadoraAjena solicitudProyectoEntidadFinanciadoraAjenaPorcentajeActualizado = generarMockSolicitudProyectoEntidadFinanciadoraAjena(
         1L);
-    solicitudProyectoEntidadFinanciadoraAjenaPorcentajeActualizado.setPorcentajeFinanciacion(1);
+    solicitudProyectoEntidadFinanciadoraAjenaPorcentajeActualizado.setPorcentajeFinanciacion(BigDecimal.ONE);
 
     BDDMockito.given(solicitudProyectoRepository.findById(ArgumentMatchers.anyLong()))
         .willReturn(Optional.of(solicitudProyecto));
@@ -426,7 +427,7 @@ public class SolicitudProyectoEntidadFinanciadoraAjenaServiceTest extends BaseSe
         .entidadRef("entidad-" + (id == null ? 0 : String.format("%03d", id)))
         .fuenteFinanciacion(fuenteFinanciacion)
         .tipoFinanciacion(tipoFinanciacion)
-        .porcentajeFinanciacion(50)
+        .porcentajeFinanciacion(BigDecimal.valueOf(50))
         .build();
     // @formatter:on
 

@@ -63,7 +63,7 @@ public class ResultadoInformePatentabilidadController {
    * @param paging Información de paginación.
    */
   @GetMapping()
-  @PreAuthorize("hasAnyAuthority('PII-RIP-V','PII-RIP-C','PII-RIP-E','PII-RIP-B','PII-RIP-R')")
+  @PreAuthorize("hasAnyAuthority('PII-RIP-V','PII-RIP-C','PII-RIP-E','PII-RIP-B','PII-RIP-R', 'PII-INV-V', 'PII-INV-E')")
   ResponseEntity<Page<ResultadoInformePatentabilidadOutput>> findActivos(
       @RequestParam(name = "q", required = false) String query, @RequestPageable(sort = "s") Pageable paging) {
     log.debug(

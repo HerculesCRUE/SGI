@@ -10,6 +10,7 @@ import TestUtils from '@core/utils/test-utils';
 import { MaterialDesignModule } from '@material/material-design.module';
 import { SharedModule } from '@shared/shared.module';
 import { LoggerTestingModule } from 'ngx-logger/testing';
+import { SgpSharedModule } from 'src/app/esb/sgp/shared/sgp-shared.module';
 import { MiembroEquipoProyectoModalComponent, MiembroEquipoProyectoModalData } from './miembro-equipo-proyecto-modal.component';
 
 describe('MiembroEquipoProyectoModalComponent', () => {
@@ -23,7 +24,8 @@ describe('MiembroEquipoProyectoModalComponent', () => {
     entidad: {} as IMiembroEquipoProyecto,
     fechaFinMax: undefined,
     fechaInicioMin: undefined,
-    showHorasDedicacion: true
+    showHorasDedicacion: true,
+    readonly: false
   };
 
   beforeEach(waitForAsync(() => {
@@ -40,6 +42,7 @@ describe('MiembroEquipoProyectoModalComponent', () => {
         TestUtils.getIdiomas(),
         RouterTestingModule,
         ReactiveFormsModule,
+        SgpSharedModule
       ],
       providers: [
         { provide: SnackBarService, useValue: TestUtils.getSnackBarServiceSpy() },

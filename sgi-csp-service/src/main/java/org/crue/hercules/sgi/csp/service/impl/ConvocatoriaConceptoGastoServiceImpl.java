@@ -169,8 +169,6 @@ public class ConvocatoriaConceptoGastoServiceImpl implements ConvocatoriaConcept
       convocatoriaConceptoGasto.setMesFinal(convocatoriaConceptoGastoActualizar.getMesFinal());
       convocatoriaConceptoGasto.setObservaciones(convocatoriaConceptoGastoActualizar.getObservaciones());
       convocatoriaConceptoGasto.setPermitido(convocatoriaConceptoGastoActualizar.getPermitido());
-      convocatoriaConceptoGasto
-          .setPorcentajeCosteIndirecto(convocatoriaConceptoGastoActualizar.getPorcentajeCosteIndirecto());
 
       ConvocatoriaConceptoGasto returnValue = repository.save(convocatoriaConceptoGasto);
       log.debug("update(ConvocatoriaConceptoGasto convocatoriaConceptoGastoActualizar) - end");

@@ -38,7 +38,7 @@ public interface CustomConvocatoriaRepository {
    * @return true registrada y con datos vinculados/false no registrada o sin
    *         datos vinculados.
    */
-  Boolean esRegistradaConSolicitudesOProyectos(Long id);
+  Boolean isRegistradaConSolicitudesOProyectos(Long id);
 
   /**
    * Obtiene la Unidad de Gestión asignada a la {@link Convocatoria}.

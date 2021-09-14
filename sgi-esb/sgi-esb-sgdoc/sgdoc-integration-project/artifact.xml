@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<artifacts>
+    <artifact name="sgdoc-api" groupId="org.crue.hercules.sgi.esb.sgdoc.api" version="0.0.1" type="synapse/api" serverRole="EnterpriseServiceBus">
+        <file>src/main/synapse-config/api/sgdoc-api.xml</file>
+    </artifact>
+    <artifact name="sgdoc-endpoint" groupId="org.crue.hercules.sgi.esb.sgdoc.endpoint" version="0.0.1" type="synapse/endpoint" serverRole="EnterpriseServiceBus">
+        <file>src/main/synapse-config/endpoints/sgdoc-endpoint.xml</file>
+    </artifact>
+</artifacts>

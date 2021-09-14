@@ -8,7 +8,6 @@ import { SgiAuthModule, SgiAuthService } from '@sgi/framework/auth';
 import { BreadcrumbComponent } from '@shared/breadcrumb/breadcrumb.component';
 import { RootComponent } from '@shared/root/root.component';
 import { LoggerTestingModule } from 'ngx-logger/testing';
-import { InvMenuPrincipalComponent } from '../inv-menu-principal/inv-menu-principal.component';
 import { InvRootComponent } from './inv-root.component';
 
 describe('InvRootComponent', () => {
@@ -20,7 +19,6 @@ describe('InvRootComponent', () => {
       declarations: [
         InvRootComponent,
         RootComponent,
-        InvMenuPrincipalComponent,
         BreadcrumbComponent
       ],
       imports: [

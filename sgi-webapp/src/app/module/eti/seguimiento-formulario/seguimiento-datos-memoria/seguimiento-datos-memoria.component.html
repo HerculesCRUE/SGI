@@ -1,5 +1,4 @@
-<section class="seguimiento-datos-memoria">
-  <h2>{{'eti.seguimiento.datos-memoria' | translate}}</h2>
+<sgi-fragment title="{{'eti.seguimiento.datos-memoria' | translate}}">
   <form [formGroup]="formGroup" [fxLayout.xs]="fxLayoutProperties.xs" [fxLayout]="fxLayoutProperties.layout"
     [fxLayoutGap]="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
     <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
@@ -43,4 +42,4 @@
   </form>
   <sgi-seguimiento-listado-anterior-memoria #evaluaciones [rol]="this.actionService.getRol()">
   </sgi-seguimiento-listado-anterior-memoria>
-</section>
+</sgi-fragment>

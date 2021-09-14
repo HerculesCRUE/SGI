@@ -1,0 +1,54 @@
+[
+  {
+    "key": "ap1_1",
+    "wrappers": [
+      "expansion-panel"
+    ],
+    "templateOptions": {
+      "label": "Objetivos",
+      "expanded": true
+    },
+    "fieldGroup": [
+      {
+        "template": "<p>Señale si se han alcanzado los objetivos del proyecto de investigación.</p>"
+      },
+      {
+        "key": "cumpleObjetivosRadio",
+        "type": "radio",
+        "templateOptions": {
+          "label": "Elige opción:",
+          "required": true,
+          "options": [
+            {
+              "value": "no",
+              "label": "No"
+            },
+            {
+              "value": "si",
+              "label": "Sí"
+            },
+            {
+              "value": "parcialmente",
+              "label": "Parcialmente"
+            }
+          ]
+        }
+      },
+      {
+        "template": "<p>Justifique la respuesta:</p>"
+      },
+      {
+        "key": "justificar",
+        "type": "textarea",
+        "templateOptions": {
+          "placeholder": "Justificación",
+          "label": "Justificación",
+          "required": true,
+          "autosize": true,
+          "autosizeMinRows": "1",
+          "autosizeMaxRows": "20"
+        }
+      }
+    ]
+  }
+]

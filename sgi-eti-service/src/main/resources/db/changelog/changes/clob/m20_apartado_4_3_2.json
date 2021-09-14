@@ -1,0 +1,109 @@
+[
+  {
+    "key": "ap4_3_2",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "label": "4.3.2 Reutilización"
+    },
+    "fieldGroup": [
+      {
+        "template": "¿Los animales han sido o van a ser reutilizados en otro proyecto de investigación?"
+      },
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "Un animal que ya haya sido utilizado no deberá ser sometido a nuevos procesos experimentales o procedimiento alguno cuando en su lugar puede ser utilizado otro animal al que no se le haya realizado ninguna intervención, a menos que se den las condiciones siguientes:<br><ul><li>a) Que la severidad de las intervenciomes anteriores fuera <u>leve</u> o <u>moderada</u></li><li>b) Que se haya demostrado la recuperación total del estado de salud general y del bienestar del animal</li><li>c) Que las nuevas intervenciones estén clasificadas como <u>leves</u>, <u>moderadas</u> o <u>sin recuperación</u> y</li><li>d) Que se ajuste al dictamen veterinario teniendo en cuenta la experiencia durante la vida del animal</li></ul><br> En circunstancias excepcionales, no obstante lo dispuesto en la letra a), y previo examen veterinario del animal, la autoridad competente podrá autorizar la reutilización de un animal siempre que dicho animal no haya sido sometido más de una vez a intervenciones que le haya provocado angustia y dolor severos o un sufrimiento equivalente.<br>Para más información sobre la reutilización de animales ver el art. 29 y anexo X.10 del RD 53-13"
+      },
+      {
+        "key": "reutilizacionRadio",
+        "type": "radio",
+        "templateOptions": {
+          "label": "Reutilizado",
+          "required": true,
+          "options": [
+            {
+              "value": "no",
+              "label": "No"
+            },
+            {
+              "value": "si",
+              "label": "Sí"
+            }
+          ]
+        }
+      },
+      {
+        "key": "anteriorPosteriorCheck",
+        "type": "multicheckbox",
+        "hideExpression": "!model.reutilizacionRadio || model.reutilizacionRadio === 'no'",
+        "templateOptions": {
+          "label": "Seleccionar",
+          "required": true,
+          "type": "array",
+          "options": [
+            {
+              "value": "anterior",
+              "label": "Anterior"
+            },
+            {
+              "value": "posterior",
+              "label": "Posterior"
+            }
+          ]
+        }
+      },
+      {
+        "template": "Código de referencia del proyecto",
+        "hideExpression": "model.anteriorPosteriorCheck != 'anterior'"
+      },
+      {
+        "key": "codigoRefProyecto",
+        "type": "input",
+        "hideExpression": "model.anteriorPosteriorCheck != 'anterior'",
+        "templateOptions": {
+          "label": "Código",
+          "placeholder": "Código"
+        }
+      },
+      {
+        "template": "Grado de severidad global del proyecto anterior/posterior",
+        "hideExpression": "model.anteriorPosteriorCheck == '' || model.anteriorPosteriorCheck == null || model.anteriorPosteriorCheck == undefined"
+      },
+      {
+        "key": "gradoSeveridad",
+        "type": "select",
+        "hideExpression": "model.anteriorPosteriorCheck == ''",
+        "templateOptions": {
+          "label": "Seleccionar",
+          "options": [
+            {
+              "label": "No recuperación",
+              "value": "1"
+            },
+            {
+              "label": "Leve",
+              "value": "2"
+            },
+            {
+              "label": "Moderada",
+              "value": "3"
+            },
+            {
+              "label": "Severa",
+              "value": "4"
+            }
+          ]
+        }
+      },
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "<p>Nota: Requiere informe veterinario que debe adjuntarse en el apartado 5.2</p>"
+      }
+    ]
+  }
+]

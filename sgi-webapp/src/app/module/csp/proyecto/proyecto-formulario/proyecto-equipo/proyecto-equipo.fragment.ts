@@ -94,7 +94,14 @@ export class ProyectoEquipoFragment extends Fragment {
         takeLast(1),
         map((results) => {
           this.equipos$.next(
-            results.map(value => new StatusWrapper<IProyectoEquipo>(value)));
+            results.map(
+              (value) => {
+                value.persona = values.find(
+                  equipo => equipo.persona.id === value.persona.id
+                ).persona;
+                return new StatusWrapper<IProyectoEquipo>(value);
+              })
+          );
         }),
         tap(() => {
           if (this.isSaveOrUpdateComplete()) {

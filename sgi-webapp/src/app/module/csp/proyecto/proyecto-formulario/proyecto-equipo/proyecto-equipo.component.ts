@@ -44,7 +44,7 @@ export class ProyectoEquipoComponent extends FragmentComponent implements OnInit
 
   constructor(
     protected proyectoService: ProyectoService,
-    private actionService: ProyectoActionService,
+    public actionService: ProyectoActionService,
     private matDialog: MatDialog,
     private dialogService: DialogService,
     private readonly translate: TranslateService
@@ -114,7 +114,11 @@ export class ProyectoEquipoComponent extends FragmentComponent implements OnInit
    *
    * @param idEquipo Identificador de equipo a editar.
    */
-  openModal(wrapper?: StatusWrapper<IProyectoEquipo>, position?: number): void {
+  openModal(wrapper?: StatusWrapper<IProyectoEquipo>, rowIndex?: number): void {
+    // Necesario para sincronizar los cambios de orden de registros dependiendo de la ordenación y paginación
+    this.dataSource.sortData(this.dataSource.filteredData, this.dataSource.sort);
+    const row = (this.paginator.pageSize * this.paginator.pageIndex) + rowIndex;
+
     const data: MiembroEquipoProyectoModalData = {
       titleEntity: this.modalTitleEntity,
       entidad: wrapper?.value ?? {} as IProyectoEquipo,
@@ -122,12 +126,13 @@ export class ProyectoEquipoComponent extends FragmentComponent implements OnInit
       fechaInicioMin: this.actionService.proyecto.fechaInicio,
       fechaFinMax: this.actionService.proyecto.fechaFinDefinitiva ?? this.actionService.proyecto.fechaFin,
       showHorasDedicacion: true,
-      isEdit: Boolean(wrapper)
+      isEdit: Boolean(wrapper),
+      readonly: this.actionService.readonly
     };
 
     if (wrapper) {
       const filtered = Object.assign([], data.selectedEntidades);
-      filtered.splice(position, 1);
+      filtered.splice(row, 1);
       data.selectedEntidades = filtered;
     }
 

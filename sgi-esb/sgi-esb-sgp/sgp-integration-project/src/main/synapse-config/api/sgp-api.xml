@@ -1,0 +1,2123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<api context="/sgp" name="sgp-api" xmlns="http://ws.apache.org/ns/synapse">
+
+  <!-- categorias-profesionales -->
+  <resource methods="GET" url-mapping="/categorias-profesionales">
+    <inSequence>
+      <call-template target="sgi-auth-sequence-template">
+        <with-param name="requiredAuthorities" value=""/>
+      </call-template>
+      <sequence key="sgp-add-x-api-key-sequence"/>
+      <send>
+        <endpoint key="sgp-endpoint"/>
+      </send>
+    </inSequence>
+    <outSequence>
+      <respond/>
+    </outSequence>
+    <faultSequence>
+      <sequence key="error-handling-sequence"/>
+    </faultSequence>
+  </resource>
+
+  <resource methods="GET" uri-template="/categorias-profesionales/{id}">
+    <inSequence>
+      <call-template target="sgi-auth-sequence-template">
+        <with-param name="requiredAuthorities" value=""/>
+      </call-template>
+      <sequence key="sgp-add-x-api-key-sequence"/>
+      <send>
+        <endpoint key="sgp-endpoint"/>
+      </send>
+    </inSequence>
+    <outSequence>
+      <respond/>
+    </outSequence>
+    <faultSequence>
+      <sequence key="error-handling-sequence"/>
+    </faultSequence>
+  </resource>
+
+  <!-- colectivos -->
+  <resource methods="GET" url-mapping="/colectivos">
+    <inSequence>
+      <call-template target="sgi-auth-sequence-template">
+        <with-param name="requiredAuthorities" value=""/>
+      </call-template>
+      <sequence key="sgp-add-x-api-key-sequence"/>
+      <send>
+        <endpoint key="sgp-endpoint"/>
+      </send>
+    </inSequence>
+    <outSequence>
+      <respond/>
+    </outSequence>
+    <faultSequence>
+      <sequence key="error-handling-sequence"/>
+    </faultSequence>
+  </resource>
+
+
+  <!-- datos-academicos -->
+  <resource methods="POST" url-mapping="/datos-academicos">
+    <inSequence>
+      <call-template target="sgi-auth-sequence-template">
+        <with-param name="requiredAuthorities" value=""/>
+      </call-template>
+      <sequence key="sgp-add-x-api-key-sequence"/>
+      <send>
+        <endpoint key="sgp-endpoint"/>
+      </send>
+    </inSequence>
+    <outSequence>
+      <respond/>
+    </outSequence>
+    <faultSequence>
+      <sequence key="error-handling-sequence"/>
+    </faultSequence>
+  </resource>
+
+  <resource methods="GET" url-mapping="/datos-academicos/formly/create">
+    <inSequence>
+      <call-template target="sgi-auth-sequence-template">
+        <with-param name="requiredAuthorities" value=""/>
+      </call-template>
+      <sequence key="sgp-add-x-api-key-sequence"/>
+      <send>
+        <endpoint key="sgp-endpoint"/>
+      </send>
+    </inSequence>
+    <outSequence>
+      <respond/>
+    </outSequence>
+    <faultSequence>
+      <sequence key="error-handling-sequence"/>
+    </faultSequence>
+  </resource>
+
+  <resource methods="GET" uri-template="/datos-academicos/persona/{id}">
+    <inSequence>
+      <call-template target="sgi-auth-sequence-template">
+        <with-param name="requiredAuthorities" value=""/>
+      </call-template>
+      <sequence key="sgp-add-x-api-key-sequence"/>
+      <send>
+        <endpoint key="sgp-endpoint"/>
+      </send>
+    </inSequence>
+    <outSequence>
+      <respond/>
+    </outSequence>
+    <faultSequence>
+      <sequence key="error-handling-sequence"/>
+    </faultSequence>
+  </resource>
+
+  
+  <!-- datos-contacto -->
+  <resource methods="POST" url-mapping="/datos-contacto">
+    <inSequence>
+      <call-template target="sgi-auth-sequence-template">
+        <with-param name="requiredAuthorities" value=""/>
+      </call-template>
+      <sequence key="sgp-add-x-api-key-sequence"/>
+      <send>
+        <endpoint key="sgp-endpoint"/>
+      </send>
+    </inSequence>
+    <outSequence>
+      <respond/>
+    </outSequence>
+    <faultSequence>
+      <sequence key="error-handling-sequence"/>
+    </faultSequence>
+  </resource>
+
+  <resource methods="GET" url-mapping="/datos-contacto/formly/create">
+    <inSequence>
+      <call-template target="sgi-auth-sequence-template">
+        <with-param name="requiredAuthorities" value=""/>
+      </call-template>
+      <sequence key="sgp-add-x-api-key-sequence"/>
+      <send>
+        <endpoint key="sgp-endpoint"/>
+      </send>
+    </inSequence>
+    <outSequence>
+      <respond/>
+    </outSequence>
+    <faultSequence>
+      <sequence key="error-handling-sequence"/>
+    </faultSequence>
+  </resource>
+
+  <resource methods="GET" uri-template="/datos-contacto/persona/{id}">
+    <inSequence>
+      <call-template target="sgi-auth-sequence-template">
+        <with-param name="requiredAuthorities" value=""/>
+      </call-template>
+      <sequence key="sgp-add-x-api-key-sequence"/>
+      <send>
+        <endpoint key="sgp-endpoint"/>
+      </send>
+    </inSequence>
+    <outSequence>
+      <script key="gov:scripts/sgp/datos-contacto-response-converter-mediator.js" language="js"/>
+      <respond/>
+    </outSequence>
+    <faultSequence>
+      <sequence key="error-handling-sequence"/>
+    </faultSequence>
+  </resource>
+
+
+  <!-- datos-personales -->
+  <resource methods="POST" url-mapping="/datos-personales">
+    <inSequence>
+      <call-template target="sgi-auth-sequence-template">
+        <with-param name="requiredAuthorities" value=""/>
+      </call-template>
+      <sequence key="sgp-add-x-api-key-sequence"/>
+      <send>
+        <endpoint key="sgp-endpoint"/>
+      </send>
+    </inSequence>
+    <outSequence>
+      <respond/>
+    </outSequence>
+    <faultSequence>
+      <sequence key="error-handling-sequence"/>
+    </faultSequence>
+  </resource>
+
+  <resource methods="GET" url-mapping="/datos-personales/formly/create">
+    <inSequence>
+      <call-template target="sgi-auth-sequence-template">
+        <with-param name="requiredAuthorities" value=""/>
+      </call-template>
+      <sequence key="sgp-add-x-api-key-sequence"/>
+      <send>
+        <endpoint key="sgp-endpoint"/>
+      </send>
+    </inSequence>
+    <outSequence>
+      <respond/>
+    </outSequence>
+    <faultSequence>
+      <sequence key="error-handling-sequence"/>
+    </faultSequence>
+  </resource>
+
+  <resource methods="GET" uri-template="/datos-personales/persona/{id}">
+    <inSequence>
+      <call-template target="sgi-auth-sequence-template">
+        <with-param name="requiredAuthorities" value=""/>
+      </call-template>
+      <sequence key="sgp-add-x-api-key-sequence"/>
+      <send>
+        <endpoint key="sgp-endpoint"/>
+      </send>
+    </inSequence>
+    <outSequence>
+      <respond/>
+    </outSequence>
+    <faultSequence>
+      <sequence key="error-handling-sequence"/>
+    </faultSequence>
+  </resource>
+
+
+  <!-- niveles-academicos -->
+  <resource methods="GET" url-mapping="/niveles-academicos">
+    <inSequence>
+      <call-template target="sgi-auth-sequence-template">
+        <with-param name="requiredAuthorities" value=""/>
+      </call-template>
+      <sequence key="sgp-add-x-api-key-sequence"/>
+      <send>
+        <endpoint key="sgp-endpoint"/>
+      </send>
+    </inSequence>
+    <outSequence>
+      <respond/>
+    </outSequence>
+    <faultSequence>
+      <sequence key="error-handling-sequence"/>
+    </faultSequence>
+  </resource>
+
+  <resource methods="GET" uri-template="/niveles-academicos/{id}">
+    <inSequence>
+      <call-template target="sgi-auth-sequence-template">
+        <with-param name="requiredAuthorities" value=""/>
+      </call-template>
+      <sequence key="sgp-add-x-api-key-sequence"/>
+      <send>
+        <endpoint key="sgp-endpoint"/>
+      </send>
+    </inSequence>
+    <outSequence>
+      <respond/>
+    </outSequence>
+    <faultSequence>
+      <sequence key="error-handling-sequence"/>
+    </faultSequence>
+  </resource>
+
+
+  <!-- personas -->
+  <resource methods="GET" url-mapping="/personas">
+    <inSequence>
+      <call-template target="sgi-auth-sequence-template">
+        <with-param name="requiredAuthorities" value=""/>
+      </call-template>
+      <sequence key="sgp-add-x-api-key-sequence"/>
+      <property name="path" expression="get-property('axis2','REST_URL_POSTFIX')" type="STRING"/>
+      <script key="gov:scripts/sgp/replace-tipo-colectivo-colectivos-ids-mediator.js" language="js"/>
+      <property name="REST_URL_POSTFIX" scope="axis2" type="STRING" expression="get-property('pathWithColectivosIds')" />
+      <send>
+        <endpoint key="sgp-endpoint"/>
+      </send>
+    </inSequence>
+    <outSequence>
+      <respond/>
+    </outSequence>
+    <faultSequence>
+      <sequence key="error-handling-sequence"/>
+    </faultSequence>
+  </resource>
+
+  <resource methods="POST" url-mapping="/personas">
+    <inSequence>
+      <call-template target="sgi-auth-sequence-template">
+        <with-param name="requiredAuthorities" value=""/>
+      </call-template>
+      <sequence key="sgp-add-x-api-key-sequence"/>
+      <send>
+        <endpoint key="sgp-endpoint"/>
+      </send>
+    </inSequence>
+    <outSequence>
+      <respond/>
+    </outSequence>
+    <faultSequence>
+      <sequence key="error-handling-sequence"/>
+    </faultSequence>
+  </resource>
+
+  <resource methods="GET" uri-template="/personas/{id}">
+    <inSequence>
+      <call-template target="sgi-auth-sequence-template">
+        <with-param name="requiredAuthorities" value=""/>
+      </call-template>
+      <sequence key="sgp-add-x-api-key-sequence"/>
+      <send>
+        <endpoint key="sgp-endpoint"/>
+      </send>
+    </inSequence>
+    <outSequence>
+      <respond/>
+    </outSequence>
+    <faultSequence>
+      <sequence key="error-handling-sequence"/>
+    </faultSequence>
+  </resource>
+
+  <resource methods="GET" url-mapping="/personas/formly/create">
+    <inSequence>
+      <call-template target="sgi-auth-sequence-template">
+        <with-param name="requiredAuthorities" value=""/>
+      </call-template>
+      <sequence key="sgp-add-x-api-key-sequence"/>
+
+       <!-- tipos via -->
+      <property value="/tipos-via" name="REST_URL_POSTFIX" scope="axis2" type="STRING"/>
+      <call blocking="true">
+        <endpoint key="sgo-endpoint"/>
+      </call>
+      <enrich>
+        <source clone="false" type="body"/>
+        <target type="property" property="tiposVia"/>
+      </enrich>
+
+      <payloadFactory media-type="json">
+        <format>
+[
+  {
+    "wrappers": [
+      "global"
+    ],
+    "templateOptions": {
+      "styles": "{ \"width\": \"700px\" }"
+    },
+    "fieldGroup": [
+      {
+        "wrappers": [
+          "mat-card-group"
+        ],
+        "templateOptions": {
+          "label": "Datos Generales"
+        },
+        "fieldGroup": [
+          {
+            "key": "nombre",
+            "type": "input",
+            "templateOptions": {
+              "label": "Nombre",
+              "placeholder": "Introduce nombre",
+              "required": true
+            }
+          },
+          {
+            "key": "apellidos",
+            "type": "input",
+            "templateOptions": {
+              "label": "Apellidos",
+              "placeholder": "Introduce apellidos",
+              "required": true
+            }
+          },
+          {
+            "fieldGroupClassName": "row-formly",
+            "fieldGroup": [
+              {
+                "key": "tipoDocumentoId",
+                "type": "select-tipos-documentos",
+                "className": "flex-1",
+                "templateOptions": {
+                  "label": "Tipo de documento",
+                  "placeholder": "Introduce tipo de documento",
+                  "valueProp": "id",
+                  "labelProp": "nombre"
+                }
+              },
+              {
+                "key": "numeroDocumento",
+                "type": "input",
+                "className": "flex-1",
+                "templateOptions": {
+                  "label": "Número de documento",
+                  "placeholder": "Introduce número de documento"
+                }
+              }
+            ]
+          },
+          {
+            "key": "sexoId",
+            "type": "select-sexos",
+            "className": "flex-1",
+            "templateOptions": {
+              "label": "Sexo",
+              "placeholder": "Introduce sexo",
+              "valueProp": "id",
+              "labelProp": "nombre"
+            }
+          }
+        ]
+      },
+      {
+        "wrappers": [
+          "mat-card-group"
+        ],
+        "templateOptions": {
+          "label": "Datos Personales"
+        },
+        "fieldGroup": [
+          {
+            "fieldGroupClassName": "row-formly",
+            "fieldGroup": [
+              {
+                "key": "fechaNacimiento",
+                "type": "datepicker",
+                "className": "flex-1",
+                "templateOptions": {
+                  "label": "Fecha de nacimiento",
+                  "placeholder": "Introduce fecha de nacimiento"
+                }
+              },
+              {
+                "key": "paisNacimientoId",
+                "type": "select-paises",
+                "className": "flex-1",
+                "templateOptions": {
+                  "label": "País de nacimiento",
+                  "placeholder": "Introduce país de nacimiento",
+                  "valueProp": "id",
+                  "labelProp": "nombre"
+                }
+              }
+            ]
+          },
+          {
+            "fieldGroupClassName": "row-formly",
+            "fieldGroup": [
+              {
+                "key": "regionNacimientoId",
+                "type": "select-comunidades",
+                "className": "flex-1",
+                "templateOptions": {
+                  "label": "C. Autón./Reg. de nacimiento",
+                  "placeholder": "Introduce C. Autón./Reg. de nacimiento",
+                  "propertyBound": "paisNacimientoId",
+                  "valueProp": "id",
+                  "labelProp": "nombre"
+                }
+              },
+              {
+                "key": "ciudadNacimiento",
+                "type": "input",
+                "className": "flex-1",
+                "templateOptions": {
+                  "label": "Ciudad de nacimiento",
+                  "placeholder": "Introduce ciudad de nacimiento"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "wrappers": [
+          "mat-card-group"
+        ],
+        "templateOptions": {
+          "label": "Datos de Vinculación"
+        },
+        "fieldGroup": [
+          {
+            "key": "empresaId",
+            "type": "select-empresas",
+            "templateOptions": {
+              "label": "Entidad externa",
+              "placeholder": "Selecciona entidad externa"
+            }
+          }
+        ]
+      },
+      {
+        "wrappers": [
+          "mat-card-group"
+        ],
+        "templateOptions": {
+          "label": "Datos de Contacto"
+        },
+        "fieldGroup": [
+          {
+            "type": "table-crud-one-element",
+            "key": "emails",
+            "templateOptions": {
+              "title": "Emails",
+              "entity": "email",
+              "gender": "male"
+            },
+            "fieldArray": {
+              "templateOptions": {
+                "text": "Email",
+                "gender": "male"
+              },
+              "fieldGroup": [
+                {
+                  "key": "email",
+                  "type": "input",
+                  "templateOptions": {
+                    "label": "Email",
+                    "placeholder": "Introduce email",
+                    "required": true,
+                    "order": 20
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "fieldGroupClassName": "row-formly",
+            "fieldGroup": [
+              {
+                "key": "tipoViaContactoId",
+                "type": "select",
+                "className": "flex-1",
+                "templateOptions": {
+                  "label": "Tipo de vía",
+                  "placeholder": "Introduce tipo de vía",
+                  "valueProp": "id",
+                  "labelProp": "nombre",
+                  "options": $1
+                }
+              }
+            ]
+          },
+          {
+            "fieldGroupClassName": "row-formly",
+            "fieldGroup": [
+              {
+                "key": "nombreViaContacto",
+                "type": "input",
+                "className": "flex-2",
+                "templateOptions": {
+                  "label": "Nombre de vía",
+                  "placeholder": "Introduce nombre de vía"
+                }
+              },
+              {
+                "key": "numeroViaContacto",
+                "type": "input",
+                "className": "flex-1",
+                "templateOptions": {
+                  "label": "Número",
+                  "placeholder": "Introduce número"
+                }
+              }
+            ]
+          },
+          {
+            "key": "ampliacion",
+            "type": "input",
+            "className": "flex-1",
+            "templateOptions": {
+              "label": "Ampliación",
+              "placeholder": "Introduce ampliación"
+            }
+          },
+          {
+            "fieldGroupClassName": "row-formly",
+            "fieldGroup": [
+              {
+                "key": "paisContactoId",
+                "type": "select-paises",
+                "className": "flex-1",
+                "templateOptions": {
+                  "label": "País de contacto",
+                  "placeholder": "Introduce país de dirección de contacto",
+                  "valueProp": "id",
+                  "labelProp": "nombre"
+                }
+              },
+              {
+                "key": "regionContactoId",
+                "type": "select-comunidades",
+                "className": "flex-1",
+                "templateOptions": {
+                  "label": "C. Autón./Reg. de dirección de contacto",
+                  "placeholder": "Introduce C. Autón./Reg. de dirección de contacto",
+                  "propertyBound": "paisContactoId",
+                  "valueProp": "id",
+                  "labelProp": "nombre"
+                }
+              }
+            ]
+          },
+          {
+            "fieldGroupClassName": "row-formly",
+            "fieldGroup": [
+              {
+                "key": "provinciaContactoId",
+                "type": "select-provincias",
+                "className": "flex-1",
+                "templateOptions": {
+                  "label": "Provincia de dirección de contacto",
+                  "placeholder": "Introduce provincia de dirección de contacto",
+                  "propertyBound": "regionContactoId",
+                  "valueProp": "id",
+                  "labelProp": "nombre"
+                }
+              },
+              {
+                "key": "codigoPostalContacto",
+                "type": "input",
+                "className": "flex-1",
+                "templateOptions": {
+                  "label": "Código postal de contacto",
+                  "placeholder": "Introduce código postal de contacto"
+                }
+              }
+            ]
+          },
+          {
+            "fieldGroupClassName": "row-formly",
+            "fieldGroup": [
+              {
+                "key": "ciudadContacto",
+                "type": "input",
+                "className": "flex-1",
+                "templateOptions": {
+                  "label": "Ciudad de contacto",
+                  "placeholder": "Introduce ciudad de contacto"
+                }
+              }
+            ]
+          },
+          {
+            "type": "table-crud-one-element",
+            "key": "telefonos",
+            "templateOptions": {
+              "title": "Télefonos",
+              "entity": "teléfono",
+              "gender": "male"
+            },
+            "fieldArray": {
+              "templateOptions": {
+                "text": "Télefonos"
+              },
+              "fieldGroup": [
+                {
+                  "key": "telefono",
+                  "type": "input",
+                  "templateOptions": {
+                    "label": "Teléfono",
+                    "placeholder": "Introduce teléfono",
+                    "required": true,
+                    "order": 20
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      }
+    ]
+  }
+]
+        </format>
+        <args>
+          <arg expression="get-property('tiposVia')" literal="true"/>
+        </args>
+      </payloadFactory>
+      <respond/>
+    </inSequence>
+    <outSequence>
+      <respond/>
+    </outSequence>
+    <faultSequence>
+      <sequence key="error-handling-sequence"/>
+    </faultSequence>
+  </resource>
+
+  <resource methods="GET" url-mapping="/personas/formly/update">
+    <inSequence>
+      <call-template target="sgi-auth-sequence-template">
+        <with-param name="requiredAuthorities" value=""/>
+      </call-template>
+      <sequence key="sgp-add-x-api-key-sequence"/>
+
+      <!-- tipos via -->
+      <property value="/tipos-via" name="REST_URL_POSTFIX" scope="axis2" type="STRING"/>
+      <call blocking="true">
+        <endpoint key="sgo-endpoint"/>
+      </call>
+      <enrich>
+        <source clone="false" type="body"/>
+        <target type="property" property="tiposVia"/>
+      </enrich>
+
+      <payloadFactory media-type="json">
+        <format>
+[
+  {
+    "wrappers": [
+      "global"
+    ],
+    "templateOptions": {
+      "styles": "{ \"width\": \"700px\" }"
+    },
+    "fieldGroup": [
+      {
+        "wrappers": [
+          "mat-card-group"
+        ],
+        "templateOptions": {
+          "label": "Datos Generales"
+        },
+        "fieldGroup": [
+          {
+            "key": "nombre",
+            "type": "input",
+            "templateOptions": {
+              "label": "Nombre",
+              "placeholder": "Introduce nombre",
+              "disabled": true
+            }
+          },
+          {
+            "key": "apellidos",
+            "type": "input",
+            "templateOptions": {
+              "label": "Apellidos",
+              "placeholder": "Introduce apellidos",
+              "disabled": true
+            }
+          },
+          {
+            "fieldGroupClassName": "row-formly",
+            "fieldGroup": [
+              {
+                "key": "tipoDocumentoId",
+                "type": "select-tipos-documentos",
+                "className": "flex-1",
+                "templateOptions": {
+                  "label": "Tipo de documento",
+                  "placeholder": "Introduce tipo de documento",
+                  "disabled": true,
+                  "valueProp": "id",
+                  "labelProp": "nombre"
+                }
+              },
+              {
+                "key": "numeroDocumento",
+                "type": "input",
+                "className": "flex-1",
+                "templateOptions": {
+                  "label": "Número de documento",
+                  "placeholder": "Introduce número de documento",
+                  "disabled": true
+                }
+              }
+            ]
+          },
+          {
+            "key": "sexoId",
+            "type": "select-sexos",
+            "className": "flex-1",
+            "templateOptions": {
+              "label": "Sexo",
+              "placeholder": "Introduce sexo",
+              "disabled": true,
+              "valueProp": "id",
+              "labelProp": "nombre"
+            }
+          }
+        ]
+      },
+      {
+        "wrappers": [
+          "mat-card-group"
+        ],
+        "templateOptions": {
+          "label": "Datos Personales"
+        },
+        "fieldGroup": [
+          {
+            "fieldGroupClassName": "row-formly",
+            "fieldGroup": [
+              {
+                "key": "fechaNacimiento",
+                "type": "datepicker",
+                "className": "flex-1",
+                "templateOptions": {
+                  "label": "Fecha de nacimiento",
+                  "placeholder": "Introduce fecha de nacimiento",
+                  "disabled": true
+                }
+              },
+              {
+                "key": "paisNacimientoId",
+                "type": "select-paises",
+                "className": "flex-1",
+                "templateOptions": {
+                  "label": "País de nacimiento",
+                  "placeholder": "Introduce país de nacimiento",
+                  "disabled": true,
+                  "valueProp": "id",
+                  "labelProp": "nombre"
+                }
+              }
+            ]
+          },
+          {
+            "fieldGroupClassName": "row-formly",
+            "fieldGroup": [
+              {
+                "key": "regionNacimientoId",
+                "type": "select-comunidades",
+                "className": "flex-1",
+                "templateOptions": {
+                  "label": "C. Autón./Reg. de nacimiento",
+                  "placeholder": "Introduce C. Autón./Reg. de nacimiento",
+                  "propertyBound": "paisNacimientoId",
+                  "disabled": true,
+                  "valueProp": "id",
+                  "labelProp": "nombre"
+                }
+              },
+              {
+                "key": "ciudadNacimiento",
+                "type": "input",
+                "className": "flex-1",
+                "templateOptions": {
+                  "label": "Ciudad de nacimiento",
+                  "placeholder": "Introduce ciudad de nacimiento",
+                  "disabled": true
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "wrappers": [
+          "mat-card-group"
+        ],
+        "templateOptions": {
+          "label": "Datos académicos"
+        },
+        "fieldGroup": [
+          {
+            "fieldGroupClassName": "row-formly",
+            "fieldGroup": [
+              {
+                "key": "nivelAcademicoId",
+                "type": "select-niveles-academicos",
+                "className": "flex-1",
+                "templateOptions": {
+                  "label": "Nivel académico",
+                  "placeholder": "Introduce nivel académico",
+                  "disabled": true,
+                  "valueProp": "id",
+                  "labelProp": "nombre"
+                }
+              },
+              {
+                "key": "fechaObtencion",
+                "type": "dateTimePicker",
+                "className": "flex-1",
+                "templateOptions": {
+                  "label": "Fecha de obtención",
+                  "placeholder": "Introduce fecha de obtención",
+                  "disabled": true
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "wrappers": [
+          "mat-card-group"
+        ],
+        "templateOptions": {
+          "label": "Datos de Vinculación"
+        },
+        "fieldGroup": [
+          {
+            "template": ""
+          },
+          {
+            "fieldGroupClassName": "row-formly",
+            "fieldGroup": [
+              {
+                "key": "categoriaPdiId",
+                "type": "select-categorias-profesionales",
+                "className": "flex-1",
+                "templateOptions": {
+                  "label": "Categoría",
+                  "placeholder": "Introduce categoría",
+                  "disabled": true,
+                  "valueProp": "id",
+                  "labelProp": "nombre"
+                }
+              },
+              {
+                "key": "departamentoPdiId",
+                "type": "select-departamentos",
+                "className": "flex-1",
+                "templateOptions": {
+                  "label": "Departamento",
+                  "placeholder": "Introduce departamento",
+                  "disabled": true,
+                  "valueProp": "id",
+                  "labelProp": "nombre"
+                }
+              }
+            ]
+          },
+          {
+            "fieldGroupClassName": "row-formly",
+            "fieldGroup": [
+              {
+                "key": "fechaCategoriaPdi",
+                "type": "dateTimePicker",
+                "className": "flex-1",
+                "templateOptions": {
+                  "label": "Fecha de categoría",
+                  "placeholder": "Introduce fecha de categoría",
+                  "disabled": true
+                }
+              },
+              {
+                "key": "fechaFinCategoriaPdi",
+                "type": "dateTimePicker",
+                "className": "flex-1",
+                "templateOptions": {
+                  "label": "Fecha fin de categoría",
+                  "placeholder": "Introduce fecha fin de categoría",
+                  "disabled": true
+                }
+              }
+            ]
+          },
+          {
+            "type": "table-crud",
+            "key": "areaConocimiento",
+            "templateOptions": {
+              "title": "Área de conocimiento",
+              "entity": "área de conocimiento",
+              "gender": "male",
+              "disabled": true
+            },
+            "fieldArray": {
+              "templateOptions": {
+                "text": "Área de conocimiento",
+                "gender": "male"
+              },
+              "fieldGroup": [
+                {
+                  "key": "niveles",
+                  "type": "input",
+                  "templateOptions": {
+                    "label": "Niveles",
+                    "placeholder": "Introduce niveles",
+                    "order": 20
+                  }
+                },
+                {
+                  "key": "nivelSeleccionado",
+                  "type": "input",
+                  "templateOptions": {
+                    "label": "Nivel seleccionado",
+                    "placeholder": "Introduce nivel seleccionado",
+                    "order": 30
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "template": ""
+          },
+          {
+            "fieldGroupClassName": "row-formly",
+            "fieldGroup": [
+              {
+                "key": "categoriaPasId",
+                "type": "select-categorias-profesionales",
+                "className": "flex-1",
+                "templateOptions": {
+                  "label": "Categoría",
+                  "placeholder": "Introduce categoría",
+                  "disabled": true,
+                  "valueProp": "id",
+                  "labelProp": "nombre"
+                }
+              },
+              {
+                "key": "unidadPasId",
+                "type": "select-departamentos",
+                "className": "flex-1",
+                "templateOptions": {
+                  "label": "Unidad",
+                  "placeholder": "Introduce unidad",
+                  "disabled": true,
+                  "valueProp": "id",
+                  "labelProp": "nombre"
+                }
+              }
+            ]
+          },
+          {
+            "fieldGroupClassName": "row-formly",
+            "fieldGroup": [
+              {
+                "key": "fechaCategoriaPas",
+                "type": "dateTimePicker",
+                "className": "flex-1",
+                "templateOptions": {
+                  "label": "Fecha de categoría",
+                  "placeholder": "Introduce fecha de categoría",
+                  "disabled": true
+                }
+              },
+              {
+                "key": "fechaFincategoriaPas",
+                "type": "dateTimePicker",
+                "className": "flex-1",
+                "templateOptions": {
+                  "label": "Fecha fin de categoría",
+                  "placeholder": "Introduce fecha fin de categoría",
+                  "disabled": true
+                }
+              }
+            ]
+          },
+          {
+            "template": ""
+          },
+          {
+            "fieldGroupClassName": "row-formly",
+            "fieldGroup": [
+              {
+                "key": "empresaId",
+                "type": "select-empresas",
+                "className": "flex-2",
+                "templateOptions": {
+                  "label": "Entidad externa",
+                  "placeholder": "Selecciona entidad externa",
+                  "disabled": false
+                }
+              },
+              {
+                "key": "fechaInicioVinculacion",
+                "type": "dateTimePicker",
+                "className": "flex-1",
+                "templateOptions": {
+                  "label": "Fecha inicio de vinculación",
+                  "placeholder": "Introduce fecha inicio de vinculación",
+                  "disabled": false
+                }
+              }
+            ]
+          },
+          {
+            "type": "table-crud",
+            "key": "historicosEntidades",
+            "templateOptions": {
+              "title": "Histórico de entidades externas de vinculación",
+              "entity": "histórico de entidad",
+              "gender": "male",
+              "disabled": true
+            },
+            "fieldArray": {
+              "templateOptions": {
+                "text": "Histórico de entidades externas de vinculación",
+                "gender": "male"
+              },
+              "fieldGroup": [
+                {
+                  "key": "entidad",
+                  "type": "input",
+                  "templateOptions": {
+                    "label": "Entidad",
+                    "placeholder": "Introduce entidad",
+                    "order": 20
+                  }
+                },
+                {
+                  "key": "inicioVinculacion",
+                  "type": "dateTimePicker",
+                  "templateOptions": {
+                    "label": "Inicio vinculación",
+                    "placeholder": "Introduce inicio de vinculación",
+                    "luxonFormat": "short",
+                    "order": 30
+                  }
+                },
+                {
+                  "key": "finVinculacion",
+                  "type": "dateTimePicker",
+                  "templateOptions": {
+                    "label": "Fin vinculación",
+                    "placeholder": "Introduce fin de vinculación",
+                    "luxonFormat": "short",
+                    "order": 40
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "wrappers": [
+          "mat-card-group"
+        ],
+        "templateOptions": {
+          "label": "Datos de Contacto"
+        },
+        "fieldGroup": [
+          {
+            "fieldGroupClassName": "row-formly",
+            "fieldGroup": [
+              {
+                "key": "tipoViaContactoId",
+                "type": "select",
+                "className": "flex-1",
+                "templateOptions": {
+                  "label": "Tipo de vía",
+                  "placeholder": "Introduce tipo de vía",
+                  "disabled": true,
+                  "valueProp": "id",
+                  "labelProp": "nombre",
+                  "options": $1
+                }
+              }
+            ]
+          },
+          {
+            "fieldGroupClassName": "row-formly",
+            "fieldGroup": [
+              {
+                "key": "nombreViaContacto",
+                "type": "input",
+                "className": "flex-2",
+                "templateOptions": {
+                  "disabled": true,
+                  "label": "Nombre de vía",
+                  "placeholder": "Introduce nombre de vía"
+                }
+              },
+              {
+                "key": "numeroViaContacto",
+                "type": "input",
+                "className": "flex-1",
+                "templateOptions": {
+                  "disabled": true,
+                  "label": "Número",
+                  "placeholder": "Introduce número"
+                }
+              }
+            ]
+          },
+          {
+            "key": "ampliacion",
+            "type": "input",
+            "className": "flex-1",
+            "templateOptions": {
+              "disabled": true,
+              "label": "Ampliación",
+              "placeholder": "Introduce ampliación"
+            }
+          },
+          {
+            "fieldGroupClassName": "row-formly",
+            "fieldGroup": [
+              {
+                "key": "paisContactoId",
+                "type": "select-paises",
+                "className": "flex-1",
+                "templateOptions": {
+                  "label": "País de contacto",
+                  "placeholder": "Introduce país de dirección de contacto",
+                  "disabled": true,
+                  "valueProp": "id",
+                  "labelProp": "nombre"
+                }
+              },
+              {
+                "key": "regionContactoId",
+                "type": "select-comunidades",
+                "className": "flex-1",
+                "templateOptions": {
+                  "label": "C. Autón./Reg. de dirección de contacto",
+                  "placeholder": "Introduce C. Autón./Reg. de dirección de contacto",
+                  "propertyBound": "paisContactoId",
+                  "disabled": true,
+                  "valueProp": "id",
+                  "labelProp": "nombre"
+                }
+              },
+              {
+                "key": "provinciaContactoId",
+                "type": "select-provincias",
+                "className": "flex-1",
+                "templateOptions": {
+                  "label": "Provincia de dirección de contacto",
+                  "placeholder": "Introduce provincia de dirección de contacto",
+                  "propertyBound": "regionContactoId",
+                  "disabled": true,
+                  "valueProp": "id",
+                  "labelProp": "nombre"
+                }
+              }
+            ]
+          },
+          {
+            "fieldGroupClassName": "row-formly",
+            "fieldGroup": [
+              {
+                "key": "codigoPostalContacto",
+                "type": "input",
+                "className": "flex-1",
+                "templateOptions": {
+                  "label": "Código postal de contacto",
+                  "placeholder": "Introduce código postal de contacto",
+                  "disabled": true
+                }
+              }
+            ]
+          },
+          {
+            "fieldGroupClassName": "row-formly",
+            "fieldGroup": [
+              {
+                "key": "ciudadContacto",
+                "type": "input",
+                "className": "flex-1",
+                "templateOptions": {
+                  "label": "Ciudad de contacto",
+                  "placeholder": "Introduce ciudad de contacto",
+                  "disabled": true
+                }
+              }
+            ]
+          },
+          {
+            "type": "table-crud-one-element",
+            "key": "telefonos",
+            "templateOptions": {
+              "title": "Télefonos",
+              "entity": "teléfono",
+              "gender": "male",
+              "disabled": true
+            },
+            "fieldArray": {
+              "templateOptions": {
+                "text": "Télefonos"
+              },
+              "fieldGroup": [
+                {
+                  "key": "telefono",
+                  "type": "input",
+                  "templateOptions": {
+                    "label": "Teléfono",
+                    "placeholder": "Introduce teléfono",
+                    "order": 20
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "type": "table-crud-one-element",
+            "key": "emails",
+            "templateOptions": {
+              "title": "Emails",
+              "entity": "email",
+              "gender": "male",
+              "disabled": true
+            },
+            "fieldArray": {
+              "templateOptions": {
+                "text": "Email",
+                "gender": "male"
+              },
+              "fieldGroup": [
+                {
+                  "key": "email",
+                  "type": "input",
+                  "templateOptions": {
+                    "label": "Email",
+                    "placeholder": "Introduce email",
+                    "order": 20
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      }
+    ]
+  }
+]
+        </format>
+        <args>
+          <arg expression="get-property('tiposVia')" literal="true"/>
+        </args>
+      </payloadFactory>
+      <respond/>
+    </inSequence>
+    <outSequence>
+      <respond/>
+    </outSequence>
+    <faultSequence>
+      <sequence key="error-handling-sequence"/>
+    </faultSequence>
+  </resource>
+
+  <resource methods="GET" url-mapping="/personas/formly/view">
+    <inSequence>
+      <call-template target="sgi-auth-sequence-template">
+        <with-param name="requiredAuthorities" value=""/>
+      </call-template>
+      <sequence key="sgp-add-x-api-key-sequence"/>
+
+      <!-- tipos via -->
+      <property value="/tipos-via" name="REST_URL_POSTFIX" scope="axis2" type="STRING"/>
+      <call blocking="true">
+        <endpoint key="sgo-endpoint"/>
+      </call>
+      <enrich>
+        <source clone="false" type="body"/>
+        <target type="property" property="tiposVia"/>
+      </enrich>
+
+      <payloadFactory media-type="json">
+        <format>
+[
+  {
+    "wrappers": [
+      "global"
+    ],
+    "templateOptions": {
+      "styles": "{ \"width\": \"700px\" }"
+    },
+    "fieldGroup": [
+      {
+        "wrappers": [
+          "mat-card-group"
+        ],
+        "templateOptions": {
+          "label": "Datos Generales"
+        },
+        "fieldGroup": [
+          {
+            "key": "nombre",
+            "type": "input",
+            "templateOptions": {
+              "label": "Nombre",
+              "placeholder": "Introduce nombre",
+              "disabled": true
+            }
+          },
+          {
+            "key": "apellidos",
+            "type": "input",
+            "templateOptions": {
+              "label": "Apellidos",
+              "placeholder": "Introduce apellidos",
+              "disabled": true
+            }
+          },
+          {
+            "fieldGroupClassName": "row-formly",
+            "fieldGroup": [
+              {
+                "key": "tipoDocumentoId",
+                "type": "select-tipos-documentos",
+                "className": "flex-1",
+                "templateOptions": {
+                  "label": "Tipo de documento",
+                  "placeholder": "Introduce tipo de documento",
+                  "disabled": true,
+                  "valueProp": "id",
+                  "labelProp": "nombre"
+                }
+              },
+              {
+                "key": "numeroDocumento",
+                "type": "input",
+                "className": "flex-1",
+                "templateOptions": {
+                  "label": "Número de documento",
+                  "placeholder": "Introduce número de documento",
+                  "disabled": true
+                }
+              }
+            ]
+          },
+          {
+            "key": "sexoId",
+            "type": "select-sexos",
+            "className": "flex-1",
+            "templateOptions": {
+              "label": "Sexo",
+              "placeholder": "Introduce sexo",
+              "disabled": true,
+              "valueProp": "id",
+              "labelProp": "nombre"
+            }
+          }
+        ]
+      },
+      {
+        "wrappers": [
+          "mat-card-group"
+        ],
+        "templateOptions": {
+          "label": "Datos Personales"
+        },
+        "fieldGroup": [
+          {
+            "fieldGroupClassName": "row-formly",
+            "fieldGroup": [
+              {
+                "key": "fechaNacimiento",
+                "type": "datepicker",
+                "className": "flex-1",
+                "templateOptions": {
+                  "label": "Fecha de nacimiento",
+                  "placeholder": "Introduce fecha de nacimiento",
+                  "disabled": true
+                }
+              },
+              {
+                "key": "paisNacimientoId",
+                "type": "select-paises",
+                "className": "flex-1",
+                "templateOptions": {
+                  "label": "País de nacimiento",
+                  "placeholder": "Introduce país de nacimiento",
+                  "disabled": true,
+                  "valueProp": "id",
+                  "labelProp": "nombre"
+                }
+              }
+            ]
+          },
+          {
+            "fieldGroupClassName": "row-formly",
+            "fieldGroup": [
+              {
+                "key": "regionNacimientoId",
+                "type": "select-comunidades",
+                "className": "flex-1",
+                "templateOptions": {
+                  "label": "C. Autón./Reg. de nacimiento",
+                  "placeholder": "Introduce C. Autón./Reg. de nacimiento",
+                  "propertyBound": "paisNacimientoId",
+                  "disabled": true,
+                  "valueProp": "id",
+                  "labelProp": "nombre"
+                }
+              },
+              {
+                "key": "ciudadNacimiento",
+                "type": "input",
+                "className": "flex-1",
+                "templateOptions": {
+                  "label": "Ciudad de nacimiento",
+                  "placeholder": "Introduce ciudad de nacimiento",
+                  "disabled": true
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "wrappers": [
+          "mat-card-group"
+        ],
+        "templateOptions": {
+          "label": "Datos académicos"
+        },
+        "fieldGroup": [
+          {
+            "fieldGroupClassName": "row-formly",
+            "fieldGroup": [
+              {
+                "key": "nivelAcademicoId",
+                "type": "select-niveles-academicos",
+                "className": "flex-1",
+                "templateOptions": {
+                  "label": "Nivel académico",
+                  "placeholder": "Introduce nivel académico",
+                  "disabled": true,
+                  "valueProp": "id",
+                  "labelProp": "nombre"
+                }
+              },
+              {
+                "key": "fechaObtencion",
+                "type": "dateTimePicker",
+                "className": "flex-1",
+                "templateOptions": {
+                  "label": "Fecha de obtención",
+                  "placeholder": "Introduce fecha de obtención",
+                  "disabled": true
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "wrappers": [
+          "mat-card-group"
+        ],
+        "templateOptions": {
+          "label": "Datos de Vinculación"
+        },
+        "fieldGroup": [
+          {
+            "template": ""
+          },
+          {
+            "fieldGroupClassName": "row-formly",
+            "fieldGroup": [
+              {
+                "key": "categoriaPdiId",
+                "type": "select-categorias-profesionales",
+                "className": "flex-1",
+                "templateOptions": {
+                  "label": "Categoría",
+                  "placeholder": "Introduce categoría",
+                  "disabled": true,
+                  "valueProp": "id",
+                  "labelProp": "nombre"
+                }
+              },
+              {
+                "key": "departamentoPdiId",
+                "type": "select-departamentos",
+                "className": "flex-1",
+                "templateOptions": {
+                  "label": "Departamento",
+                  "placeholder": "Introduce departamento",
+                  "disabled": true,
+                  "valueProp": "id",
+                  "labelProp": "nombre"
+                }
+              }
+            ]
+          },
+          {
+            "fieldGroupClassName": "row-formly",
+            "fieldGroup": [
+              {
+                "key": "fechaCategoriaPdi",
+                "type": "dateTimePicker",
+                "className": "flex-1",
+                "templateOptions": {
+                  "label": "Fecha de categoría",
+                  "placeholder": "Introduce fecha de categoría",
+                  "disabled": true
+                }
+              },
+              {
+                "key": "fechaFinCategoriaPdi",
+                "type": "dateTimePicker",
+                "className": "flex-1",
+                "templateOptions": {
+                  "label": "Fecha fin de categoría",
+                  "placeholder": "Introduce fecha fin de categoría",
+                  "disabled": true
+                }
+              }
+            ]
+          },
+          {
+            "type": "table-crud",
+            "key": "areaConocimiento",
+            "templateOptions": {
+              "title": "Área de conocimiento",
+              "entity": "área de conocimiento",
+              "gender": "male",
+              "disabled": true
+            },
+            "fieldArray": {
+              "templateOptions": {
+                "text": "Área de conocimiento",
+                "gender": "male"
+              },
+              "fieldGroup": [
+                {
+                  "key": "niveles",
+                  "type": "input",
+                  "templateOptions": {
+                    "label": "Niveles",
+                    "placeholder": "Introduce niveles",
+                    "order": 20
+                  }
+                },
+                {
+                  "key": "nivelSeleccionado",
+                  "type": "input",
+                  "templateOptions": {
+                    "label": "Nivel seleccionado",
+                    "placeholder": "Introduce nivel seleccionado",
+                    "order": 30
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "template": ""
+          },
+          {
+            "fieldGroupClassName": "row-formly",
+            "fieldGroup": [
+              {
+                "key": "categoriaPasId",
+                "type": "select-categorias-profesionales",
+                "className": "flex-1",
+                "templateOptions": {
+                  "label": "Categoría",
+                  "placeholder": "Introduce categoría",
+                  "disabled": true,
+                  "valueProp": "id",
+                  "labelProp": "nombre"
+                }
+              },
+              {
+                "key": "unidadPasId",
+                "type": "select-departamentos",
+                "className": "flex-1",
+                "templateOptions": {
+                  "label": "Unidad",
+                  "placeholder": "Introduce unidad",
+                  "disabled": true,
+                  "valueProp": "id",
+                  "labelProp": "nombre"
+                }
+              }
+            ]
+          },
+          {
+            "fieldGroupClassName": "row-formly",
+            "fieldGroup": [
+              {
+                "key": "fechaCategoriaPas",
+                "type": "dateTimePicker",
+                "className": "flex-1",
+                "templateOptions": {
+                  "label": "Fecha de categoría",
+                  "placeholder": "Introduce fecha de categoría",
+                  "disabled": true
+                }
+              },
+              {
+                "key": "fechaFincategoriaPas",
+                "type": "dateTimePicker",
+                "className": "flex-1",
+                "templateOptions": {
+                  "label": "Fecha fin de categoría",
+                  "placeholder": "Introduce fecha fin de categoría",
+                  "disabled": true
+                }
+              }
+            ]
+          },
+          {
+            "template": ""
+          },
+          {
+            "fieldGroupClassName": "row-formly",
+            "fieldGroup": [
+              {
+                "key": "empresaId",
+                "type": "select-empresas",
+                "className": "flex-2",
+                "templateOptions": {
+                  "label": "Entidad externa",
+                  "placeholder": "Selecciona entidad externa",
+                  "disabled": true
+                }
+              },
+              {
+                "key": "fechaInicioVinculacion",
+                "type": "dateTimePicker",
+                "className": "flex-1",
+                "templateOptions": {
+                  "label": "Fecha inicio de vinculación",
+                  "placeholder": "Introduce fecha inicio de vinculación",
+                  "disabled": true
+                }
+              }
+            ]
+          },
+          {
+            "type": "table-crud",
+            "key": "historicosEntidades",
+            "templateOptions": {
+              "title": "Histórico de entidades externas de vinculación",
+              "entity": "histórico de entidad",
+              "gender": "male",
+              "disabled": true
+            },
+            "fieldArray": {
+              "templateOptions": {
+                "text": "Histórico de entidades externas de vinculación",
+                "gender": "male"
+              },
+              "fieldGroup": [
+                {
+                  "key": "entidad",
+                  "type": "input",
+                  "templateOptions": {
+                    "label": "Entidad",
+                    "placeholder": "Introduce entidad",
+                    "order": 20
+                  }
+                },
+                {
+                  "key": "inicioVinculacion",
+                  "type": "dateTimePicker",
+                  "templateOptions": {
+                    "label": "Inicio vinculación",
+                    "placeholder": "Introduce inicio de vinculación",
+                    "luxonFormat": "short",
+                    "order": 30
+                  }
+                },
+                {
+                  "key": "finVinculacion",
+                  "type": "dateTimePicker",
+                  "templateOptions": {
+                    "label": "Fin vinculación",
+                    "placeholder": "Introduce fin de vinculación",
+                    "luxonFormat": "short",
+                    "order": 40
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "wrappers": [
+          "mat-card-group"
+        ],
+        "templateOptions": {
+          "label": "Datos de Contacto"
+        },
+        "fieldGroup": [
+          {
+            "fieldGroupClassName": "row-formly",
+            "fieldGroup": [
+              {
+                "key": "tipoViaContactoId",
+                "type": "select",
+                "className": "flex-1",
+                "templateOptions": {
+                  "label": "Tipo de vía",
+                  "placeholder": "Introduce tipo de vía",
+                  "disabled": true,
+                  "valueProp": "id",
+                  "labelProp": "nombre",
+                  "options": $1
+                }
+              }
+            ]
+          },
+          {
+            "fieldGroupClassName": "row-formly",
+            "fieldGroup": [
+              {
+                "key": "nombreViaContacto",
+                "type": "input",
+                "className": "flex-2",
+                "templateOptions": {
+                  "disabled": true,
+                  "label": "Nombre de vía",
+                  "placeholder": "Introduce nombre de vía"
+                }
+              },
+              {
+                "key": "numeroViaContacto",
+                "type": "input",
+                "className": "flex-1",
+                "templateOptions": {
+                  "disabled": true,
+                  "label": "Número",
+                  "placeholder": "Introduce número"
+                }
+              }
+            ]
+          },
+          {
+            "key": "ampliacion",
+            "type": "input",
+            "className": "flex-1",
+            "templateOptions": {
+              "disabled": true,
+              "label": "Ampliación",
+              "placeholder": "Introduce ampliación"
+            }
+          },
+          {
+            "fieldGroupClassName": "row-formly",
+            "fieldGroup": [
+              {
+                "key": "paisContactoId",
+                "type": "select-paises",
+                "className": "flex-1",
+                "templateOptions": {
+                  "label": "País de contacto",
+                  "placeholder": "Introduce país de dirección de contacto",
+                  "disabled": true,
+                  "valueProp": "id",
+                  "labelProp": "nombre"
+                }
+              },
+              {
+                "key": "regionContactoId",
+                "type": "select-comunidades",
+                "className": "flex-1",
+                "templateOptions": {
+                  "label": "C. Autón./Reg. de dirección de contacto",
+                  "placeholder": "Introduce C. Autón./Reg. de dirección de contacto",
+                  "propertyBound": "paisContactoId",
+                  "disabled": true,
+                  "valueProp": "id",
+                  "labelProp": "nombre"
+                }
+              },
+              {
+                "key": "provinciaContactoId",
+                "type": "select-provincias",
+                "className": "flex-1",
+                "templateOptions": {
+                  "label": "Provincia de dirección de contacto",
+                  "placeholder": "Introduce provincia de dirección de contacto",
+                  "propertyBound": "regionContactoId",
+                  "disabled": true,
+                  "valueProp": "id",
+                  "labelProp": "nombre"
+                }
+              }
+            ]
+          },
+          {
+            "fieldGroupClassName": "row-formly",
+            "fieldGroup": [
+              {
+                "key": "codigoPostalContacto",
+                "type": "input",
+                "className": "flex-1",
+                "templateOptions": {
+                  "label": "Código postal de contacto",
+                  "placeholder": "Introduce código postal de contacto",
+                  "disabled": true
+                }
+              }
+            ]
+          },
+          {
+            "fieldGroupClassName": "row-formly",
+            "fieldGroup": [
+              {
+                "key": "ciudadContacto",
+                "type": "input",
+                "className": "flex-1",
+                "templateOptions": {
+                  "label": "Ciudad de contacto",
+                  "placeholder": "Introduce ciudad de contacto",
+                  "disabled": true
+                }
+              }
+            ]
+          },
+          {
+            "type": "table-crud-one-element",
+            "key": "telefonos",
+            "templateOptions": {
+              "title": "Télefonos",
+              "entity": "teléfono",
+              "gender": "male",
+              "disabled": true
+            },
+            "fieldArray": {
+              "templateOptions": {
+                "text": "Télefonos"
+              },
+              "fieldGroup": [
+                {
+                  "key": "telefono",
+                  "type": "input",
+                  "templateOptions": {
+                    "label": "Teléfono",
+                    "placeholder": "Introduce teléfono",
+                    "order": 20
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "type": "table-crud-one-element",
+            "key": "emails",
+            "templateOptions": {
+              "title": "Emails",
+              "entity": "email",
+              "gender": "male",
+              "disabled": true
+            },
+            "fieldArray": {
+              "templateOptions": {
+                "text": "Email",
+                "gender": "male"
+              },
+              "fieldGroup": [
+                {
+                  "key": "email",
+                  "type": "input",
+                  "templateOptions": {
+                    "label": "Email",
+                    "placeholder": "Introduce email",
+                    "order": 20
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      }
+    ]
+  }
+]
+        </format>
+        <args>
+          <arg expression="get-property('tiposVia')" literal="true"/>
+        </args>
+      </payloadFactory>
+      <respond/>
+    </inSequence>
+    <outSequence>
+      <respond/>
+    </outSequence>
+    <faultSequence>
+      <sequence key="error-handling-sequence"/>
+    </faultSequence>
+  </resource>
+
+  <resource methods="GET" uri-template="/personas/formly/{id}">
+    <inSequence>
+      <call-template target="sgi-auth-sequence-template">
+        <with-param name="requiredAuthorities" value=""/>
+      </call-template>
+      <sequence key="sgp-add-x-api-key-sequence"/>
+      <send>
+        <endpoint key="sgp-endpoint"/>
+      </send>
+    </inSequence>
+    <outSequence>
+      <respond/>
+    </outSequence>
+    <faultSequence>
+      <sequence key="error-handling-sequence"/>
+    </faultSequence>
+  </resource>
+
+  <resource methods="GET" uri-template="/personas/{id}/fotografia">
+    <inSequence>
+      <call-template target="sgi-auth-sequence-template">
+        <with-param name="requiredAuthorities" value=""/>
+      </call-template>
+      <sequence key="sgp-add-x-api-key-sequence"/>
+      <send>
+        <endpoint key="sgp-endpoint"/>
+      </send>
+    </inSequence>
+    <outSequence>
+      <respond/>
+    </outSequence>
+    <faultSequence>
+      <sequence key="error-handling-sequence"/>
+    </faultSequence>
+  </resource>
+
+    <resource methods="GET" uri-mapping="/personas/modificadas-ids">
+    <inSequence>
+      <call-template target="sgi-auth-sequence-template">
+        <with-param name="requiredAuthorities" value=""/>
+      </call-template>
+      <sequence key="sgp-add-x-api-key-sequence"/>
+      <send>
+        <endpoint key="sgp-endpoint"/>
+      </send>
+    </inSequence>
+    <outSequence>
+      <respond/>
+    </outSequence>
+    <faultSequence>
+      <sequence key="error-handling-sequence"/>
+    </faultSequence>
+  </resource>
+
+  <!-- sexos -->
+  <resource methods="GET" url-mapping="/sexos">
+    <inSequence>
+      <call-template target="sgi-auth-sequence-template">
+        <with-param name="requiredAuthorities" value=""/>
+      </call-template>
+      <sequence key="sgp-add-x-api-key-sequence"/>
+      <send>
+        <endpoint key="sgp-endpoint"/>
+      </send>
+    </inSequence>
+    <outSequence>
+      <respond/>
+    </outSequence>
+    <faultSequence>
+      <sequence key="error-handling-sequence"/>
+    </faultSequence>
+  </resource>
+
+
+  <!-- tipos-documento -->
+  <resource methods="GET" url-mapping="/tipos-documento">
+    <inSequence>
+      <call-template target="sgi-auth-sequence-template">
+        <with-param name="requiredAuthorities" value=""/>
+      </call-template>
+      <sequence key="sgp-add-x-api-key-sequence"/>
+      <send>
+        <endpoint key="sgp-endpoint"/>
+      </send>
+    </inSequence>
+    <outSequence>
+      <respond/>
+    </outSequence>
+    <faultSequence>
+      <sequence key="error-handling-sequence"/>
+    </faultSequence>
+  </resource>
+
+
+  <!-- vinculaciones -->
+  <resource methods="POST" url-mapping="/vinculaciones">
+    <inSequence>
+      <call-template target="sgi-auth-sequence-template">
+        <with-param name="requiredAuthorities" value=""/>
+      </call-template>
+      <sequence key="sgp-add-x-api-key-sequence"/>
+      <send>
+        <endpoint key="sgp-endpoint"/>
+      </send>
+    </inSequence>
+    <outSequence>
+      <respond/>
+    </outSequence>
+    <faultSequence>
+      <sequence key="error-handling-sequence"/>
+    </faultSequence>
+  </resource>
+
+  <resource methods="GET" url-mapping="/vinculaciones/formly/create">
+    <inSequence>
+      <call-template target="sgi-auth-sequence-template">
+        <with-param name="requiredAuthorities" value=""/>
+      </call-template>
+      <sequence key="sgp-add-x-api-key-sequence"/>
+      <send>
+        <endpoint key="sgp-endpoint"/>
+      </send>
+    </inSequence>
+    <outSequence>
+      <respond/>
+    </outSequence>
+    <faultSequence>
+      <sequence key="error-handling-sequence"/>
+    </faultSequence>
+  </resource>
+
+  <resource methods="GET" uri-template="/vinculaciones/persona/{id}">
+    <inSequence>
+      <call-template target="sgi-auth-sequence-template">
+        <with-param name="requiredAuthorities" value=""/>
+      </call-template>
+      <sequence key="sgp-add-x-api-key-sequence"/>
+      <send>
+        <endpoint key="sgp-endpoint"/>
+      </send>
+    </inSequence>
+    <outSequence>
+      <script key="gov:scripts/sgp/vinculacion-response-converter-mediator.js" language="js"/>
+      <respond/>
+    </outSequence>
+    <faultSequence>
+      <sequence key="error-handling-sequence"/>
+    </faultSequence>
+  </resource>
+
+</api>

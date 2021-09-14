@@ -1,3 +1,40 @@
 <sgi-root>
-  <sgi-pii-menu-principal></sgi-pii-menu-principal>
+  <sgi-menu-item *sgiHasAnyAuthority="['PII-INV-V', 'PII-INV-E', 'PII-INV-B','PII-INV-R']"
+    [route]="[PII_ROUTE_NAMES.INVENCION]" icon="assignment_ind"
+    title="{{'pii.invencion' | translate:MSG_PARAMS.CARDINALIRY.PLURAL}}">
+  </sgi-menu-item>
+  <sgi-menu-group *sgiHasAnyAuthorityForAnyUO="[
+      'PII-TPR-V', 'PII-TPR-C', 'PII-TPR-E', 'PII-TPR-B', 'PII-TPR-R',
+      'PII-SEA-V', 'PII-SEA-C', 'PII-SEA-E', 'PII-SEA-B', 'PII-SEA-R',
+      'PII-RIP-V', 'PII-RIP-C', 'PII-RIP-E', 'PII-RIP-B', 'PII-RIP-R',
+      'PII-TRE-V', 'PII-TRE-C', 'PII-TRE-E', 'PII-TRE-B', 'PII-TRE-R',
+      'PII-VPR-V', 'PII-VPR-C', 'PII-VPR-E', 'PII-VPR-B', 'PII-VPR-R'
+      ]" title="{{'menu.pii.configuraciones' | translate}}" icon="list_alt">
+
+    <sgi-menu-subitem *sgiHasAnyAuthority="['PII-TPR-V', 'PII-TPR-C', 'PII-TPR-E','PII-TPR-B','PII-TPR-R']"
+      [route]="[PII_ROUTE_NAMES.TIPO_PROTECCION]"
+      title="{{'pii.tipo-proteccion' | translate:MSG_PARAMS.CARDINALIRY.PLURAL}}">
+    </sgi-menu-subitem>
+    <sgi-menu-subitem *sgiHasAnyAuthority="['PII-SEA-V', 'PII-SEA-C', 'PII-SEA-E','PII-SEA-B','PII-SEA-R']"
+      [route]="[PII_ROUTE_NAMES.SECTOR_APLICACION]"
+      title="{{'pii.sector-aplicacion' | translate:MSG_PARAMS.CARDINALIRY.PLURAL}}">
+    </sgi-menu-subitem>
+    <sgi-menu-subitem *sgiHasAnyAuthority="['PII-RIP-V', 'PII-RIP-C', 'PII-RIP-E','PII-RIP-B','PII-RIP-R']"
+      [route]="[PII_ROUTE_NAMES.RESULTADO_INFORME_PATENTABILIDAD]"
+      title="{{'pii.resultado-informe-patentabilidad' | translate:MSG_PARAMS.CARDINALIRY.PLURAL}}">
+    </sgi-menu-subitem>
+    <sgi-menu-subitem *sgiHasAnyAuthority="['PII-RIP-V', 'PII-RIP-C', 'PII-RIP-E','PII-RIP-B','PII-RIP-R']"
+      [route]="[PII_ROUTE_NAMES.TIPO_PROCEDIMIENTO]"
+      title="{{'pii.tipo-procedimiento' | translate:MSG_PARAMS.CARDINALIRY.PLURAL}}">
+    </sgi-menu-subitem>
+    <sgi-menu-subitem *sgiHasAnyAuthority="['PII-TRE-V', 'PII-TRE-C', 'PII-TRE-E', 'PII-TRE-B', 'PII-TRE-R']"
+      [route]="[PII_ROUTE_NAMES.TRAMO_REPARTO]"
+      title="{{'pii.tramo-reparto' | translate:MSG_PARAMS.CARDINALIRY.PLURAL}}">
+    </sgi-menu-subitem>
+    <sgi-menu-subitem *sgiHasAnyAuthority="['PII-VPR-V', 'PII-VPR-C', 'PII-VPR-E','PII-VPR-B','PII-VPR-R']"
+      [route]="[PII_ROUTE_NAMES.VIA_PROTECCION]"
+      title="{{'pii.via-proteccion' | translate:MSG_PARAMS.CARDINALIRY.PLURAL}}">
+    </sgi-menu-subitem>
+
+  </sgi-menu-group>
 </sgi-root>

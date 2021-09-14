@@ -1,6 +1,5 @@
 <!-- Configuración -->
-<section class="configuracion-actualizar">
-  <h2>{{'eti.configuracion' | translate:MSG_PARAMS.CARDINALIRY.PLURAL}}</h2>
+<sgi-fragment title="{{'eti.configuracion' | translate:MSG_PARAMS.CARDINALIRY.PLURAL}}">
 
   <form [formGroup]="formGroup" [fxLayout.xs]="fxLayoutProperties.xs" [fxLayout]="fxLayoutProperties.layout"
     [fxLayoutGap]="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
@@ -80,4 +79,4 @@
       translate}}</button>
     <button class="link-cancelar" mat-button (click)="cancel()" type="button">{{'btn.cancel' | translate}}</button>
   </div>
-</section>
+</sgi-fragment>

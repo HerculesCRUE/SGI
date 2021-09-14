@@ -1,0 +1,35 @@
+[
+  {
+    "key": "ap3_2",
+    "wrappers": [
+      "expansion-panel"
+    ],
+    "templateOptions": {
+      "label": "3.2 Diseño metodológico del proyecto"
+    },
+    "fieldGroup": [
+      {
+        "key": "disenoMetodologico",
+        "type": "textarea",
+        "templateOptions": {
+          "label": "Diseño metodológico",
+          "disabled": true,
+          "required": true,
+          "autosize": true,
+          "autosizeMinRows": "1",
+          "autosizeMaxRows": "10",
+          "expressionModelValue": "formState.memoria.peticionEvaluacion.disMetodologico"
+        }
+      },
+      {
+        "template": "<h5>Proceso de experimentación</h5><p>Los apartados que vienen a continuación ayudarán a precisar el proceso de experimentación al que es sometido el animal. En los casos que la complejidad del proyecto lo requiera (por ejemplo si se utilizan varias especies distintas de animales o si existen varios grupos de animales sometidos a distintos procesos de experimentación) pueden utilizarse varias memorias.</p>"
+      },
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "Para añadir nueva memoria ir a <b>'Memorias del proyecto'</b>."
+      }
+    ]
+  }
+]

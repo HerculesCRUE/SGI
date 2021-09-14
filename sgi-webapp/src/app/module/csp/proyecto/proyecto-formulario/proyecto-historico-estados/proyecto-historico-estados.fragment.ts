@@ -1,7 +1,6 @@
 import { IEstadoProyecto } from '@core/models/csp/estado-proyecto';
 import { Fragment } from '@core/services/action-service';
 import { ProyectoService } from '@core/services/csp/proyecto.service';
-import { StatusWrapper } from '@core/utils/status-wrapper';
 import { BehaviorSubject, Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
 

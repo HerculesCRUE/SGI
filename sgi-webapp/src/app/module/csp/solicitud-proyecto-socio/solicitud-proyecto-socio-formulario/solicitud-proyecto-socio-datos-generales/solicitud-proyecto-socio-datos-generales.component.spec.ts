@@ -9,6 +9,7 @@ import TestUtils from '@core/utils/test-utils';
 import { MaterialDesignModule } from '@material/material-design.module';
 import { SharedModule } from '@shared/shared.module';
 import { LoggerTestingModule } from 'ngx-logger/testing';
+import { SgempSharedModule } from 'src/app/esb/sgemp/shared/sgemp-shared.module';
 import { SOLICITUD_PROYECTO_SOCIO_DATA_KEY } from '../../solicitud-proyecto-socio-data.resolver';
 import { ISolicitudProyectoSocioData, SolicitudProyectoSocioActionService } from '../../solicitud-proyecto-socio.action.service';
 import { SolicitudProyectoSocioDatosGeneralesComponent } from './solicitud-proyecto-socio-datos-generales.component';
@@ -41,7 +42,8 @@ describe('SolicitudProyectoSocioDatosGeneralesComponent', () => {
         FormsModule,
         ReactiveFormsModule,
         RouterTestingModule,
-        SharedModule
+        SharedModule,
+        SgempSharedModule
       ],
       providers: [
         SolicitudProyectoSocioActionService,

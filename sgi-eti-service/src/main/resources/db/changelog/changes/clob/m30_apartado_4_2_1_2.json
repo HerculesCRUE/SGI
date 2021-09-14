@@ -1,0 +1,91 @@
+[
+  {
+    "key": "ap4_2_1_2",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "label": "4.2.1.2 Otro centro o lugar ajeno a la Universidad"
+    },
+    "fieldGroup": [
+      {
+        "template": "<p>¿Las tareas con agentes biológicos, OMG, Sustancias Químicas Peligrosas , Sustancias Radiactivas y/o Nanopartículas o parte de ellas se realizan en dependencias de otro centro o lugar?</p>"
+      },
+      {
+        "key": "tareasAgentesBiologicos",
+        "type": "radio",
+        "templateOptions": {
+          "label": "Elige opción:",
+          "required": true,
+          "options": [
+            {
+              "value": "no",
+              "label": "No"
+            },
+            {
+              "value": "si",
+              "label": "Sí"
+            }
+          ]
+        }
+      },
+      {
+        "key": "especificarAgenteBiologico",
+        "type": "textarea",
+        "hideExpression": "!model.tareasAgentesBiologicos || model.tareasAgentesBiologicos === 'no'",
+        "templateOptions": {
+          "label": "Especificar",
+          "required": true,
+          "autosize": true,
+          "autosizeMinRows": "1",
+          "autosizeMaxRows": "10"
+        }
+      },
+      {
+        "template": "Justificar la necesidad de realizar las tareas en ese lugar",
+        "hideExpression": "!model.tareasAgentesBiologicos || model.tareasAgentesBiologicos === 'no'"
+      },
+      {
+        "key": "justificarTareas",
+        "type": "textarea",
+        "hideExpression": "!model.tareasAgentesBiologicos || model.tareasAgentesBiologicos === 'no'",
+        "templateOptions": {
+          "label": "Justificar",
+          "required": true,
+          "autosize": true,
+          "autosizeMinRows": "1",
+          "autosizeMaxRows": "10"
+        }
+      },
+      {
+        "template": "Si dispone de acreditación indicar agencia y adjuntar copia",
+        "hideExpression": "!model.tareasAgentesBiologicos || model.tareasAgentesBiologicos === 'no'"
+      },
+      {
+        "key": "disponeAcreditacion",
+        "type": "textarea",
+        "hideExpression": "!model.tareasAgentesBiologicos || model.tareasAgentesBiologicos === 'no'",
+        "templateOptions": {
+          "label": "Indicar:",
+          "required": true,
+          "autosize": true,
+          "autosizeMinRows": "1",
+          "autosizeMaxRows": "10"
+        }
+      },
+      {
+        "key": "fechaAcreditacion",
+        "type": "datepicker",
+        "hideExpression": "!model.tareasAgentesBiologicos || model.tareasAgentesBiologicos === 'no'",
+        "templateOptions": {
+          "required": true,
+          "type": "text",
+          "label": "Fecha de acreditación:"
+        }
+      },
+      {
+        "template": "<p>Se recuerda que el informe del CBE, sólo es válido para labores desarrolladas en Instalaciones de la Universidad, por personal de la Universidad o por cualquier otro que, en aplicación de la normativa vigente, desarrolle sus labores en la misma.NOTA: La instalación deberá cumplir con los requisitos de contención para AB, OMGs, SQP, SR o nanoparticulas y, en su caso, la autorización / comunicación correspondiente.</p>"
+      }
+    ]
+  }
+]

@@ -252,4 +252,20 @@ public class SolicitudProyectoPresupuestoServiceImpl implements SolicitudProyect
     return returnValue;
   }
 
+  /**
+   * Comprueba la existencia de {@link SolicitudProyectoPresupuesto} asociados a
+   * una solicitud .
+   * 
+   * @param solicitudId Id de la Solicitud
+   * @return <code>true</code> si existe alguna relación, <code>false</code> en
+   *         cualquier otro caso
+   */
+  @Override
+  public boolean existsBySolicitudProyectoSolicitudId(Long solicitudId) {
+    log.debug("existsBySolicitudProyectoSolicitudId(Long id) - start");
+    int numSolicitudProyectoPresupuesto = repository.countBySolicitudProyectoSolicitudId(solicitudId);
+    log.debug("existsBySolicitudProyectoSolicitudId(Long id) - end");
+    return numSolicitudProyectoPresupuesto > 0;
+  }
+
 }

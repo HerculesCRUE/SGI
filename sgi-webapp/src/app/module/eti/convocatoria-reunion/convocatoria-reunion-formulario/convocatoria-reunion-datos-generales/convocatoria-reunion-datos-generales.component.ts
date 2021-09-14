@@ -30,10 +30,10 @@ const CONVOCATORIA_FECHA_EVALUACION_KEY = marker('eti.convocatoria-reunion.fecha
 const CONVOCATORIA_FECHA_LIMITE_KEY = marker('error.eti.convocatoria-reunion.fecha-limite');
 const CONVOCATORIA_TIPO_KEY = marker('eti.convocatoria-reunion.tipo');
 const CONVOCATORIA_HORA_INICIO_KEY = marker('eti.convocatoria-reunion.hora-inicio');
-const CONVOCATORIA_MINUTO_INICIO_KEY = marker('eti.convocatoria-reunion.minuto-inicio');
 const CONVOCATORIA_LUGAR_KEY = marker('eti.convocatoria-reunion.lugar');
 const CONVOCATORIA_ORDEN_DIA_KEY = marker('eti.convocatoria-reunion.orden-dia');
 const CONVOCATORIA_CONVOCANTES_KEY = marker('eti.convocatoria-reunion.convocantes');
+
 @Component({
   selector: 'sgi-convocatoria-reunion-datos-generales',
   templateUrl: './convocatoria-reunion-datos-generales.component.html',
@@ -60,7 +60,6 @@ export class ConvocatoriaReunionDatosGeneralesComponent extends FormFragmentComp
   msgParamFechaLimiteEntity = {};
   msgParamTipoEntity = {};
   msgParamHoraInicioEntity = {};
-  msgParamMinutoInicioEntity = {};
   msgParamLugarEntity = {};
   msgParamOrdenDiaEntity = {};
   msgParamConvocantesEntity = {};
@@ -110,6 +109,9 @@ export class ConvocatoriaReunionDatosGeneralesComponent extends FormFragmentComp
     // Inicializa los combos
     this.getComites();
     this.getTiposConvocatoriaReunion();
+    if (!this.formFragment.isEdit()) {
+      this.getConvocantesComite();
+    }
   }
 
   private setupI18N(): void {
@@ -137,11 +139,6 @@ export class ConvocatoriaReunionDatosGeneralesComponent extends FormFragmentComp
       CONVOCATORIA_HORA_INICIO_KEY,
       MSG_PARAMS.CARDINALIRY.SINGULAR
     ).subscribe((value) => this.msgParamHoraInicioEntity = { entity: value, ...MSG_PARAMS.GENDER.FEMALE, ...MSG_PARAMS.CARDINALIRY.SINGULAR });
-
-    this.translate.get(
-      CONVOCATORIA_MINUTO_INICIO_KEY,
-      MSG_PARAMS.CARDINALIRY.SINGULAR
-    ).subscribe((value) => this.msgParamMinutoInicioEntity = { entity: value, ...MSG_PARAMS.GENDER.MALE, ...MSG_PARAMS.CARDINALIRY.SINGULAR });
 
     this.translate.get(
       CONVOCATORIA_ORDEN_DIA_KEY,
@@ -289,6 +286,8 @@ export class ConvocatoriaReunionDatosGeneralesComponent extends FormFragmentComp
           return of(asistentes);
         })
       );
+    } else {
+      this.formGroup.get('convocantes').setValue(convocantes);
     }
     return of();
   }

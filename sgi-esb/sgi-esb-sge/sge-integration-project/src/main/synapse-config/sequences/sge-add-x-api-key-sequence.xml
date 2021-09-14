@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sequence name="sge-add-x-api-key-sequence" trace="disable" xmlns="http://ws.apache.org/ns/synapse">
+    <header name="X-API-Key" expression="get-property('env', 'SGI_ESB_SGE_API_KEY')"  scope="transport"/>
+</sequence>

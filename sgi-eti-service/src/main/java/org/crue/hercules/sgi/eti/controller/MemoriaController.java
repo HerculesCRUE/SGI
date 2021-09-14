@@ -40,6 +40,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -726,7 +727,7 @@ public class MemoriaController {
    * @return el {@link Informe}
    */
   @GetMapping("/{id}/informe/ultima-version")
-  @PreAuthorize("hasAnyAuthorityForAnyUO('ETI-PEV-ER-INV', 'ETI-PEV-V')")
+  @PreAuthorize("hasAnyAuthorityForAnyUO('ETI-PEV-ER-INV', 'ETI-PEV-V', 'ETI-EVC-EVALR')")
   public ResponseEntity<Informe> getInformeFormularioUltimaVersion(@PathVariable Long id) {
 
     Optional<Informe> returnValue = informeService.findFirstByMemoriaOrderByVersionDesc(id);
@@ -739,5 +740,23 @@ public class MemoriaController {
     log.debug("getInformesFormulario(Long id, Pageable pageable) - end");
     return new ResponseEntity<>(returnValue.get(), HttpStatus.OK);
 
+  }
+
+  /**
+   * Comprobación de si están o no los documentos obligatorios aportados para
+   * pasar la memoria al estado en secretaría
+   * 
+   * @param id Id de {@link Memoria}
+   * @return HTTP-200 Si se permite enviar a secretaría / HTTP-204 Si no se
+   *         permite enviar a secretaría
+   */
+  @RequestMapping(path = "/{id}/enviar-secretaria", method = RequestMethod.HEAD)
+  @PreAuthorize("hasAuthorityForAnyUO('ETI-PEV-ER-INV')")
+  ResponseEntity<Boolean> checkDatosAdjuntosExists(@PathVariable Long id,
+      @RequestPageable(sort = "s") Pageable pageable) {
+    log.debug("checkDatosAdjuntosExists(Long id) - start");
+    Boolean returnValue = service.checkDatosAdjuntosExists(id, pageable);
+    log.debug("checkDatosAdjuntosExists(Long id) - end");
+    return returnValue ? new ResponseEntity<>(HttpStatus.OK) : new ResponseEntity<>(HttpStatus.NO_CONTENT);
   }
 }

@@ -53,6 +53,8 @@ public class ComiteControllerTest extends BaseControllerTest {
   private MemoriaService memoriaService;
 
   private static final String PATH_PARAMETER_ID = "/{id}";
+  private static final String PATH_PARAMETER_ID_COMITE = "/{idComite}";
+  private static final String PATH_PARAMETER_ID_PETICION_EVALUACION = "/{idPeticionEvaluacion}";
   private static final String COMITE_CONTROLLER_BASE_PATH = "/comites";
 
   /* Retorna una lista Comite y comprueba los datos */
@@ -393,14 +395,15 @@ public class ComiteControllerTest extends BaseControllerTest {
   public void findMemoriasEmtyList() throws Exception {
     // given: El comité no tiene tipos de memoria asociados
     Long id = 3L;
-    final String url = new StringBuffer(COMITE_CONTROLLER_BASE_PATH).append(PATH_PARAMETER_ID).append("/memorias")
-        .toString();
+    final String url = new StringBuffer(COMITE_CONTROLLER_BASE_PATH).append(PATH_PARAMETER_ID_COMITE)
+        .append("/memorias-peticion-evaluacion").append(PATH_PARAMETER_ID_PETICION_EVALUACION).toString();
 
-    BDDMockito.given(memoriaService.findByComite(ArgumentMatchers.anyLong(), ArgumentMatchers.<Pageable>any()))
+    BDDMockito.given(memoriaService.findByComiteAndPeticionEvaluacion(ArgumentMatchers.anyLong(),
+        ArgumentMatchers.anyLong(), ArgumentMatchers.<Pageable>any()))
         .willReturn(new PageImpl<>(Collections.emptyList()));
 
     // when: Se buscan todos los datos
-    mockMvc.perform(MockMvcRequestBuilders.get(url, id).with(SecurityMockMvcRequestPostProcessors.csrf()))
+    mockMvc.perform(MockMvcRequestBuilders.get(url, id, 1L).with(SecurityMockMvcRequestPostProcessors.csrf()))
         .andDo(SgiMockMvcResultHandlers.printOnError())
         // then: Se recupera lista vacía
         .andExpect(MockMvcResultMatchers.status().isNoContent());
@@ -411,8 +414,8 @@ public class ComiteControllerTest extends BaseControllerTest {
   public void findMemoriaSValid() throws Exception {
     // given: Datos existentes
     Long id = 3L;
-    final String url = new StringBuffer(COMITE_CONTROLLER_BASE_PATH).append(PATH_PARAMETER_ID).append("/memorias")
-        .toString();
+    final String url = new StringBuffer(COMITE_CONTROLLER_BASE_PATH).append(PATH_PARAMETER_ID_COMITE)
+        .append("/memorias-peticion-evaluacion").append(PATH_PARAMETER_ID_PETICION_EVALUACION).toString();
 
     List<Memoria> memorias = new ArrayList<>();
     for (int i = 1; i <= 100; i++) {
@@ -422,8 +425,8 @@ public class ComiteControllerTest extends BaseControllerTest {
       memorias.add(memoria);
     }
 
-    BDDMockito.given(memoriaService.findByComite(ArgumentMatchers.anyLong(), ArgumentMatchers.<Pageable>any()))
-        .willAnswer(new Answer<Page<Memoria>>() {
+    BDDMockito.given(memoriaService.findByComiteAndPeticionEvaluacion(ArgumentMatchers.anyLong(),
+        ArgumentMatchers.anyLong(), ArgumentMatchers.<Pageable>any())).willAnswer(new Answer<Page<Memoria>>() {
           @Override
           public Page<Memoria> answer(InvocationOnMock invocation) throws Throwable {
             List<Memoria> content = new ArrayList<>();
@@ -435,7 +438,7 @@ public class ComiteControllerTest extends BaseControllerTest {
         });
     // when: Se buscan todos los tipo memoria del comité
     mockMvc
-        .perform(MockMvcRequestBuilders.get(url, id).with(SecurityMockMvcRequestPostProcessors.csrf())
+        .perform(MockMvcRequestBuilders.get(url, id, 1L).with(SecurityMockMvcRequestPostProcessors.csrf())
             .contentType(MediaType.APPLICATION_JSON))
         .andDo(SgiMockMvcResultHandlers.printOnError())
         // then: Se recuperan todos los tipo memoria relacionados
@@ -466,11 +469,12 @@ public class ComiteControllerTest extends BaseControllerTest {
    */
 
   private Memoria generarMockMemoria(Long id, String numReferencia, String titulo, Integer version) {
+    PeticionEvaluacion peticionEvaluacion = new PeticionEvaluacion();
+    peticionEvaluacion.setId(1L);
 
-    return new Memoria(id, numReferencia, new PeticionEvaluacion(),
-        new Comite(1L, "CEISH", new Formulario(), Boolean.TRUE), titulo, "user-00" + id,
-        generarMockTipoMemoria(1L, "TipoMemoria1", true), new TipoEstadoMemoria(), Instant.now(), Boolean.TRUE, null,
-        version, "CodOrganoCompetente", Boolean.TRUE, null);
+    return new Memoria(id, numReferencia, peticionEvaluacion, new Comite(1L, "CEISH", new Formulario(), Boolean.TRUE),
+        titulo, "user-00" + id, generarMockTipoMemoria(1L, "TipoMemoria1", true), new TipoEstadoMemoria(),
+        Instant.now(), Boolean.TRUE, null, version, "CodOrganoCompetente", Boolean.TRUE, null);
   }
 
 }

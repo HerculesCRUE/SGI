@@ -1,74 +1,73 @@
 <!-- Memorias listado -->
-<div class="scrollable-panel">
-  <section class="memoria-listado-inv">
+<sgi-menu-content>
+  <form class="formulario mat-elevation-z8" [formGroup]="formGroup" [fxLayout.xs]="fxLayoutProperties.xs"
+    [fxLayout]="fxLayoutProperties.layout" fxLayoutGap="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
 
-    <form class="formulario mat-elevation-z8" [formGroup]="formGroup" [fxLayout.xs]="fxLayoutProperties.xs"
+    <div fxFlex="85%" fxFlex.sm="50%" fxFlex.md="73%" [fxLayout.xs]="fxLayoutProperties.xs"
       [fxLayout]="fxLayoutProperties.layout" fxLayoutGap="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
-
-      <div fxFlex="85%" fxFlex.sm="50%" fxFlex.md="73%" [fxLayout.xs]="fxLayoutProperties.xs"
-        [fxLayout]="fxLayoutProperties.layout" fxLayoutGap="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
-        <!-- Título proyecto -->
-        <div class="col">
-          <mat-form-field>
-            <mat-label>{{'eti.memoria.proyecto-titulo' | translate}}</mat-label>
-            <input matInput type="text" placeholder="{{'eti.memoria.proyecto-titulo' | translate}}"
-              formControlName="titulo">
-          </mat-form-field>
-        </div>
-
-        <!-- Comité -->
-        <div class="col">
-          <mat-form-field class="input-form">
-            <mat-label>{{'label.eti.comite' | translate}}</mat-label>
-            <input type="text" [placeholder]="'label.eti.comite' | translate" arial-label="Number" matInput
-              formControlName="comite" [matAutocomplete]="autocompleteComite">
-            <mat-autocomplete #autocompleteComite="matAutocomplete" [displayWith]="getComite">
-              <mat-option *ngFor="let comite of filteredComites | async" [value]="comite">
-                {{comite.comite}}
-              </mat-option>
-            </mat-autocomplete>
-          </mat-form-field>
-        </div>
-
-        <!-- Referencia memoria-->
-        <div class="col">
-          <mat-form-field>
-            <mat-label>{{'eti.memoria.referencia' | translate}}</mat-label>
-            <input matInput type="text" placeholder="{{'eti.memoria.referencia' | translate}}"
-              formControlName="numReferencia">
-          </mat-form-field>
-        </div>
-
-        <!-- Estado Memoria -->
-        <div class="col">
-          <mat-form-field class="input-form">
-            <mat-label>{{'eti.memoria.estado' | translate}}</mat-label>
-            <input type="text" [placeholder]="'eti.memoria.estado' | translate" arial-label="Number" matInput
-              formControlName="tipoEstadoMemoria" [matAutocomplete]="autocompleteEstadoMemoria">
-            <mat-autocomplete #autocompleteEstadoMemoria="matAutocomplete" [displayWith]="getEstadoMemoria">
-              <mat-option *ngFor="let tipoEstadoMemoria of filteredEstadosMemoria | async" [value]="tipoEstadoMemoria">
-                {{tipoEstadoMemoria.nombre}}
-              </mat-option>
-            </mat-autocomplete>
-          </mat-form-field>
-        </div>
+      <!-- Título proyecto -->
+      <div class="col">
+        <mat-form-field>
+          <mat-label>{{'eti.memoria.proyecto-titulo' | translate}}</mat-label>
+          <input matInput type="text" placeholder="{{'eti.memoria.proyecto-titulo' | translate}}"
+            formControlName="titulo">
+        </mat-form-field>
       </div>
 
-      <div class="buttons-final">
-        <div class="col filter-button">
-          <button color="primary" aria-label="Center Align" mat-raised-button (click)="onSearch()">
-            <mat-icon>search</mat-icon> {{'btn.search'| translate}}
-          </button>
-          <button color="warn" aria-label="Center Align" (click)="onClearFilters()" mat-button>{{'btn.clean'|
-            translate}}
-          </button>
-        </div>
+      <!-- Comité -->
+      <div class="col">
+        <mat-form-field class="input-form">
+          <mat-label>{{'label.eti.comite' | translate}}</mat-label>
+          <input type="text" [placeholder]="'label.eti.comite' | translate" arial-label="Number" matInput
+            formControlName="comite" [matAutocomplete]="autocompleteComite">
+          <mat-autocomplete #autocompleteComite="matAutocomplete" [displayWith]="getComite">
+            <mat-option *ngFor="let comite of filteredComites | async" [value]="comite">
+              {{comite.comite}}
+            </mat-option>
+          </mat-autocomplete>
+        </mat-form-field>
       </div>
 
-    </form>
+      <!-- Referencia memoria-->
+      <div class="col">
+        <mat-form-field>
+          <mat-label>{{'eti.memoria.referencia' | translate}}</mat-label>
+          <input matInput type="text" placeholder="{{'eti.memoria.referencia' | translate}}"
+            formControlName="numReferencia">
+        </mat-form-field>
+      </div>
 
-    <table class="mat-elevation-z8 table-memoria" mat-table [dataSource]="memorias$ | async" matSort matSortActive="id"
-      matSortDirection="asc" matSortDisableClear>
+      <!-- Estado Memoria -->
+      <div class="col">
+        <mat-form-field class="input-form">
+          <mat-label>{{'eti.memoria.estado' | translate}}</mat-label>
+          <input type="text" [placeholder]="'eti.memoria.estado' | translate" arial-label="Number" matInput
+            formControlName="tipoEstadoMemoria" [matAutocomplete]="autocompleteEstadoMemoria">
+          <mat-autocomplete #autocompleteEstadoMemoria="matAutocomplete" [displayWith]="getEstadoMemoria">
+            <mat-option *ngFor="let tipoEstadoMemoria of filteredEstadosMemoria | async" [value]="tipoEstadoMemoria">
+              {{tipoEstadoMemoria.nombre}}
+            </mat-option>
+          </mat-autocomplete>
+        </mat-form-field>
+      </div>
+    </div>
+
+    <div class="buttons-final">
+      <div class="col filter-button">
+        <button color="primary" aria-label="Center Align" mat-raised-button (click)="onSearch()">
+          <mat-icon>search</mat-icon> {{'btn.search'| translate}}
+        </button>
+        <button color="warn" aria-label="Center Align" (click)="onClearFilters()" mat-button>{{'btn.clean'|
+          translate}}
+        </button>
+      </div>
+    </div>
+
+  </form>
+
+  <div class="mat-elevation-z4">
+    <table mat-table [dataSource]="memorias$ | async" matSort matSortActive="id" matSortDirection="asc"
+      matSortDisableClear>
 
       <!-- Referencia memoria -->
       <ng-container matColumnDef="numReferencia">
@@ -145,7 +144,7 @@
 
     <mat-paginator [pageSizeOptions]="elementosPagina" [length]="totalElementos" showFirstLastButtons>
     </mat-paginator>
+  </div>
 
-  </section>
-</div>
+</sgi-menu-content>
 <!-- FIN Memorias listado-->

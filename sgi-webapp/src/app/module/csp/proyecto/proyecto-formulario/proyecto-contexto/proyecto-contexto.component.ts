@@ -11,7 +11,7 @@ import { FxFlexProperties } from '@core/models/shared/flexLayout/fx-flex-propert
 import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-properties';
 import { TranslateService } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
-import { ProyectoContextoModalComponent } from '../../modals/proyecto-contexto-modal/proyecto-contexto-modal.component';
+import { ProyectoContextoModalComponent, ProyectoContextoModalData } from '../../modals/proyecto-contexto-modal/proyecto-contexto-modal.component';
 import { ProyectoActionService } from '../../proyecto.action.service';
 import { AreaTematicaProyectoData, ProyectoContextoFragment } from './proyecto-contexto.fragment';
 
@@ -124,14 +124,9 @@ export class ProyectoContextoComponent extends FormFragmentComponent<IProyectoCo
   }
 
   openModal(wrapper?: AreaTematicaProyectoData): void {
-    const newData: AreaTematicaProyectoData = {
-      root: undefined,
-      areaTematica: undefined,
-    };
-
     const config = {
       panelClass: 'sgi-dialog-container',
-      data: wrapper ? wrapper : newData
+      data: wrapper ? wrapper : {} as ProyectoContextoModalData
     };
     const dialogRef = this.matDialog.open(ProyectoContextoModalComponent, config);
     dialogRef.afterClosed().subscribe(

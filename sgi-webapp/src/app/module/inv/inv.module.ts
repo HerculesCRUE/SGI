@@ -2,15 +2,17 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { MaterialDesignModule } from '@material/material-design.module';
 import { TranslateModule } from '@ngx-translate/core';
-import { SharedModule } from '@shared/shared.module';
-import { InvRoutingModule } from './inv-routing.module';
-import { InvRootComponent } from './inv-root/inv-root.component';
-import { InvMenuPrincipalComponent } from './inv-menu-principal/inv-menu-principal.component';
 import { SgiAuthModule } from '@sgi/framework/auth';
+import { SharedModule } from '@shared/shared.module';
 import { InvInicioComponent } from './inv-inicio/inv-inicio.component';
+import { InvRootComponent } from './inv-root/inv-root.component';
+import { InvRoutingModule } from './inv-routing.module';
 
 @NgModule({
-  declarations: [InvRootComponent, InvMenuPrincipalComponent, InvInicioComponent],
+  declarations: [
+    InvRootComponent,
+    InvInicioComponent
+  ],
   imports: [
     SharedModule,
     CommonModule,
@@ -21,5 +23,4 @@ import { InvInicioComponent } from './inv-inicio/inv-inicio.component';
   ],
   providers: []
 })
-export class InvModule {
-}
+export class InvModule { }

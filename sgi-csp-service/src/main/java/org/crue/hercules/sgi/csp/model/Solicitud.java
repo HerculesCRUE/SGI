@@ -51,6 +51,12 @@ public class Solicitud extends BaseEntity {
   @SequenceGenerator(name = "solicitud_seq", sequenceName = "solicitud_seq", allocationSize = 1)
   private Long id;
 
+  /** Titulo */
+  @Column(name = "titulo", length = 250, nullable = false)
+  @Size(max = 250)
+  @NotNull
+  private String titulo;
+
   /** Convocatoria Id */
   @Column(name = "convocatoria_id", nullable = true)
   private Long convocatoriaId;

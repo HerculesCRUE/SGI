@@ -68,4 +68,6 @@ public interface ConceptoGastoService {
    */
   ConceptoGasto findById(Long id);
 
+  Page<ConceptoGasto> findAllNotInAgrupacion(Long id, String query, Pageable pageable);
+
 }

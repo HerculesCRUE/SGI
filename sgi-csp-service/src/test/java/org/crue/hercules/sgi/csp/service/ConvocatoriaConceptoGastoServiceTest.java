@@ -217,7 +217,6 @@ public class ConvocatoriaConceptoGastoServiceTest extends BaseServiceTest {
     convocatoriaConceptoGasto.setMesInicial(4);
     convocatoriaConceptoGasto.setMesFinal(5);
     convocatoriaConceptoGasto.setPermitido(true);
-    convocatoriaConceptoGasto.setPorcentajeCosteIndirecto(3);
 
     return convocatoriaConceptoGasto;
   }

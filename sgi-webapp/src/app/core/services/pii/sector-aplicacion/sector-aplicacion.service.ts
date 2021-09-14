@@ -47,16 +47,16 @@ export class SectorAplicacionService extends _SectorAplicacionServiceMixinBase {
   }
 
   /**
-   * Activar sector aplicación
-   * @param options opciones de búsqueda.
+   * Activar el sector de aplicación
+   * @param id id del sector de aplicación.
    */
   activar(id: number): Observable<void> {
     return this.http.patch<void>(`${this.endpointUrl}/${id}/activar`, { id });
   }
 
   /**
-   * Desactivar sector aplicación
-   * @param options opciones de búsqueda.
+   * Desactivar el sector de aplicación
+   * @param options id del sector de aplicación.
    */
   desactivar(id: number): Observable<void> {
     return this.http.patch<void>(`${this.endpointUrl}/${id}/desactivar`, { id });

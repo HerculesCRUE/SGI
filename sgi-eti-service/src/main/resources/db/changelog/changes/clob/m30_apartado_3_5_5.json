@@ -1,0 +1,83 @@
+[
+  {
+    "key": "ap3_5_5",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "label": "3.5.5 Sustancias químicas peligrosas"
+    },
+    "fieldGroup": [
+      {
+        "template": "<p>La información aportada debe estar contenida en la ficha de datos de seguridad de los productos actualizada según el Reglamento 1272/2008 (CLP)</p>"
+      },
+      {
+        "type": "table-crud",
+        "key": "sustanciasQuimicasTable",
+        "templateOptions": {
+          "entity": "sustancia química",
+          "gender": "female"
+        },
+        "fieldArray": {
+          "templateOptions": {
+            "text": "Sustancia química"
+          },
+          "fieldGroup": [
+            {
+              "key": "nombreProducto",
+              "type": "input",
+              "templateOptions": {
+                "label": "Nombre producto",
+                "order": 10
+              }
+            },
+            {
+              "key": "numeroCas",
+              "type": "input",
+              "templateOptions": {
+                "label": "Nº CAS",
+                "order": 20
+              }
+            },
+            {
+              "key": "clasificacion",
+              "type": "input",
+              "templateOptions": {
+                "label": "Clasificación",
+                "order": 30
+              }
+            },
+            {
+              "key": "episDisponibles",
+              "type": "input",
+              "templateOptions": {
+                "label": "EPIs disponibles",
+                "order": 40
+              }
+            },
+            {
+              "key": "medidasProteccion",
+              "type": "input",
+              "templateOptions": {
+                "label": "Medidas de protección",
+                "order": 50
+              }
+            }
+          ]
+        }
+      },
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "<p>* <b>Clasificación</b>: Clasificación según el Reglamento CLP Frases H (Indicar el significado correspondiente)</p><p>* <b>Epis disponibles</b>: EPIs disponibles (equipos de protección individual</p><p>* <b>Medidas de protección</b>: Medidas de protección colectiva y minimización de riesgos a terceros</p>"
+      },
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "Nota: recuerde que hay que aportar copia de la ficha técnica en el apartado '5.5 Documentación adicional' para que quede archivada junto con la memoria del proyecto."
+      }
+    ]
+  }
+]

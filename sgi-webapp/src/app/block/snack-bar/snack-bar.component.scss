@@ -1,13 +1,16 @@
 @import "colors.scss";
 
+:host {
+  flex-direction: column;
+}
 .error-snack-bar {
-  background-color: map-get($custom-colors, danger);
-  color: map-get($custom-colors, white);
+  background-color: map-get($sgi-custom-colors, danger);
+  color: map-get($sgi-custom-colors, white);
   text-align: center;
 }
 
 .success-snack-bar {
-  background-color: map-get($custom-colors, success);
-  color: map-get($custom-colors, white);
+  background-color: map-get($sgi-custom-colors, success);
+  color: map-get($sgi-custom-colors, white);
   text-align: center;
 }

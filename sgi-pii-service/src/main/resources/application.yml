@@ -1,9 +1,12 @@
 server:
-  port : 4281
+  port : 4283
   error:
     whitelabel:
       # Disble the default error page displayed in browsers in case of a server error
       enabled: false
+
+sgi:
+  time-zone: "Europe/Madrid"
 
 spring:
   profiles:
@@ -14,7 +17,7 @@ spring:
       hibernate:
         jdbc:
           # see: https://vladmihalcea.com/how-to-store-date-time-and-timestamps-in-utc-time-zone-with-jdbc-and-hibernate/
-          time_zone: UTC
+          '[time_zone]': UTC
       javax:
         persistence:
           # Disable Hibernate validation in JPA
@@ -61,7 +64,7 @@ spring:
         # We use a H2 database with PostgreSQL compatibility mode
         dialect: org.hibernate.dialect.H2Dialect
         # Set default Hibernate schema
-        default_schema: pii
+        '[default_schema]': pii
   security:
     oauth2:
       resourceserver:
@@ -143,7 +146,7 @@ spring:
         # We use a PostgreSQL database
         dialect: org.hibernate.dialect.PostgreSQL95Dialect
         # Set default Hibernate Schema
-        default_schema: pii
+        '[default_schema]': pii
   security:
     oauth2:
       resourceserver:

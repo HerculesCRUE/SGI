@@ -27,4 +27,6 @@ public interface ProyectoSocioPeriodoJustificacionRepository
    * @param id Identificador de {@link ProyectoSocio}.
    */
   void deleteByProyectoSocioId(Long id);
+
+  boolean existsByProyectoSocioId(Long proyectoSocioId);
 }

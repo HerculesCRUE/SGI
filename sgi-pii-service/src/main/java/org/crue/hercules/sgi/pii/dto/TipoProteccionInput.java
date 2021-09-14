@@ -6,8 +6,8 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import org.crue.hercules.sgi.pii.enums.TipoPropiedad;
 import org.crue.hercules.sgi.pii.model.TipoProteccion;
-import org.crue.hercules.sgi.pii.model.TipoProteccion.TipoPropiedad;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

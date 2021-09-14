@@ -1,0 +1,55 @@
+[
+  {
+    "key": "ap4_1_1",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "label": "4.1.1 Métodos alternativos"
+    },
+    "fieldGroup": [
+      {
+        "template": "¿Cuáles son los motivos por los que no se plantea aplicar métodos alternativos a los propuestos?"
+      },
+      {
+        "key": "metodoAlternativoMotivoRadio",
+        "type": "radio",
+        "className": "vertical-radio",
+        "templateOptions": {
+          "label": "Motivo",
+          "required": true,
+          "options": [
+            {
+              "value": "sonMetodosAlternativos",
+              "label": "Los métodos propuestos ya son métodos alternativos"
+            },
+            {
+              "value": "existen",
+              "label": "No existen métodos alternativos a los propuestos"
+            },
+            {
+              "value": "noValidados",
+              "label": "Existen métodos alternativos pero no están validados"
+            },
+            {
+              "value": "otros",
+              "label": "Otros motivos"
+            }
+          ]
+        }
+      },
+      {
+        "key": "especificarMotivo",
+        "type": "textarea",
+        "hideExpression": "!model.metodoAlternativoMotivoRadio || model.metodoAlternativoMotivoRadio === 'sonMetodosAlternativos' || model.metodoAlternativoMotivoRadio === 'existen' || model.metodoAlternativoMotivoRadio === 'noValidados'",
+        "templateOptions": {
+          "label": "Especificar",
+          "required": true,
+          "autosize": true,
+          "autosizeMinRows": "1",
+          "autosizeMaxRows": "10"
+        }
+      }
+    ]
+  }
+]

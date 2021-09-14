@@ -6,16 +6,7 @@
   height: calc(100% - #{$headerHeight});
   .menu-principal {
     padding-top: 0px;
-    box-shadow: inset 0px 14px 12px -12px map-get($palette-grease, 100);
-  }
-  .layout-components {
-    // TODO: Buscar alternativa al ng-deep, para evitar incorporar el css en el global
-    ::ng-deep section {
-      h2 {
-        font-weight: bold;
-      }
-      padding: 15px 25px 25px 25px;
-    }
+    box-shadow: inset 0px 14px 12px -12px map-get($palette-grey, 300);
   }
 }
 

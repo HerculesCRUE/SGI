@@ -1,12 +1,15 @@
 import { Injectable } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { TipoPartida } from '@core/enums/tipo-partida';
+import { IAnualidadResumen } from '@core/models/csp/anualidad-resumen';
 import { IProyecto } from '@core/models/csp/proyecto';
-import { IProyectoAnualidad } from '@core/models/csp/proyecto-anualidad';
 import { IProyectoAnualidadResumen } from '@core/models/csp/proyecto-anualidad-resumen';
 import { ActionService } from '@core/services/action-service';
 import { AnualidadGastoService } from '@core/services/csp/anualidad-gasto/anualidad-gasto.service';
 import { AnualidadIngresoService } from '@core/services/csp/anualidad-ingreso/anualidad-ingreso.service';
 import { ProyectoAnualidadService } from '@core/services/csp/proyecto-anualidad/proyecto-anualidad.service';
+import { CodigoEconomicoGastoService } from '@core/services/sge/codigo-economico-gasto.service';
+import { CodigoEconomicoIngresoService } from '@core/services/sge/codigo-economico-ingreso.service';
 import { NGXLogger } from 'ngx-logger';
 import { PROYECTO_ANUALIDAD_DATA_KEY } from './proyecto-anualidad-data.resolver';
 import { ProyectoAnualidadDatosGeneralesFragment } from './proyecto-anualidad-formulario/proyecto-anualidad-datos-generales/proyecto-anualidad-datos-generales.fragment';
@@ -46,12 +49,18 @@ export class ProyectoAnualidadActionService extends ActionService {
     return this.data.proyectoAnualidadResumen;
   }
 
+  get readonly(): boolean {
+    return this.data.readonly;
+  }
+
   constructor(
     logger: NGXLogger,
     route: ActivatedRoute,
     proyectoAnualidadService: ProyectoAnualidadService,
     anualidadGastoService: AnualidadGastoService,
-    anualidadIngresoService: AnualidadIngresoService
+    anualidadIngresoService: AnualidadIngresoService,
+    codigoEconomicoGastoService: CodigoEconomicoGastoService,
+    codigoEconomicoIngresoService: CodigoEconomicoIngresoService
   ) {
     super();
     this.data = route.snapshot.data[PROYECTO_ANUALIDAD_DATA_KEY];
@@ -62,11 +71,11 @@ export class ProyectoAnualidadActionService extends ActionService {
     }
 
     this.datosGenerales = new ProyectoAnualidadDatosGeneralesFragment(
-      id, this.data.proyecto, proyectoAnualidadService);
+      id, this.data.proyecto, proyectoAnualidadService, this.data.readonly);
     this.anualidadGastos = new ProyectoAnualidadGastosFragment(
-      logger, id, this.data.proyecto.id, proyectoAnualidadService, anualidadGastoService);
+      logger, id, this.data.proyecto.id, proyectoAnualidadService, anualidadGastoService, codigoEconomicoGastoService);
     this.anualidadIngresos = new ProyectoAnualidadIngresosFragment(
-      logger, id, this.data.proyecto.id, proyectoAnualidadService, anualidadIngresoService);
+      logger, id, this.data.proyecto.id, proyectoAnualidadService, anualidadIngresoService, codigoEconomicoIngresoService);
     this.anualidadResumen = new ProyectoAnualidadResumenFragment(id, proyectoAnualidadService);
 
     this.addFragment(this.FRAGMENT.DATOS_GENERALES, this.datosGenerales);
@@ -79,6 +88,40 @@ export class ProyectoAnualidadActionService extends ActionService {
         this.anualidadGastos.fechaInicioAnualidad = value;
       }
     }));
+
+    this.subscriptions.push(this.anualidadGastos.anualidadGastos$.subscribe(anualidadesGastos => {
+      const anualidadesIngresos =
+        this.anualidadResumen.anualidades$.value.filter(anualidadResumenIngreso => anualidadResumenIngreso.tipo === TipoPartida.INGRESO);
+
+      const anulidadesGasto = anualidadesGastos.map(anualidadGasto => {
+        return {
+          tipo: TipoPartida.GASTO,
+          codigoPartidaPresupuestaria: anualidadGasto.value.proyectoPartida.codigo,
+          importePresupuesto: anualidadGasto.value.importePresupuesto,
+          importeConcedido: anualidadGasto.value.importeConcedido
+        } as IAnualidadResumen;
+      });
+
+      this.anualidadResumen.anualidades$.next(anulidadesGasto.concat(anualidadesIngresos));
+
+    }));
+
+    this.subscriptions.push(this.anualidadIngresos.anualidadIngresos$.subscribe(anualidadesIngresos => {
+      const anualidadesGastos =
+        this.anualidadResumen.anualidades$.value.filter(anualidadResumenGastos => anualidadResumenGastos.tipo === TipoPartida.GASTO);
+
+      const anulidadesIngreso = anualidadesIngresos.map(anualidadIngreso => {
+        return {
+          tipo: TipoPartida.INGRESO,
+          codigoPartidaPresupuestaria: anualidadIngreso.value.proyectoPartida.codigo,
+          importeConcedido: anualidadIngreso.value.importeConcedido
+        } as IAnualidadResumen;
+      });
+
+      this.anualidadResumen.anualidades$.next(anualidadesGastos.concat(anulidadesIngreso));
+
+    }));
+
 
     this.subscriptions.push(this.datosGenerales.fechaFin$.subscribe(value => {
       if (value) {

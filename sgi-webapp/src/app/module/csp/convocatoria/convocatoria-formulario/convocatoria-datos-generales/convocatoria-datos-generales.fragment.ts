@@ -10,6 +10,7 @@ import { ConfiguracionSolicitudService } from '@core/services/csp/configuracion-
 import { ConvocatoriaAreaTematicaService } from '@core/services/csp/convocatoria-area-tematica.service';
 import { ConvocatoriaEntidadGestoraService } from '@core/services/csp/convocatoria-entidad-gestora.service';
 import { ConvocatoriaService } from '@core/services/csp/convocatoria.service';
+import { ProyectoService } from '@core/services/csp/proyecto.service';
 import { UnidadGestionService } from '@core/services/csp/unidad-gestion.service';
 import { EmpresaService } from '@core/services/sgemp/empresa.service';
 import { StatusWrapper } from '@core/utils/status-wrapper';
@@ -32,6 +33,7 @@ export class ConvocatoriaDatosGeneralesFragment extends FormFragment<IConvocator
   private convocatoriaEntidadGestora: IConvocatoriaEntidadGestora;
 
   public showAddAreaTematica: boolean;
+  public hasProyectoVinculado$: Subject<boolean> = new BehaviorSubject<boolean>(false);
 
   readonly modeloEjecucion$: Subject<IModeloEjecucion> = new BehaviorSubject<IModeloEjecucion>(null);
   readonly vinculacionesModeloEjecucion$: Subject<boolean> = new BehaviorSubject<boolean>(false);
@@ -40,12 +42,14 @@ export class ConvocatoriaDatosGeneralesFragment extends FormFragment<IConvocator
     private readonly logger: NGXLogger,
     key: number,
     private convocatoriaService: ConvocatoriaService,
+    private proyectoService: ProyectoService,
     private empresaService: EmpresaService,
     private convocatoriaEntidadGestoraService: ConvocatoriaEntidadGestoraService,
     private unidadGestionService: UnidadGestionService,
     private convocatoriaAreaTematicaService: ConvocatoriaAreaTematicaService,
     private configuracionSolicitudService: ConfiguracionSolicitudService,
-    public readonly: boolean
+    public isConvocatoriaVinculada: boolean,
+    public hasEditPerm: boolean
   ) {
     super(key, true);
     this.setComplete(true);
@@ -55,13 +59,14 @@ export class ConvocatoriaDatosGeneralesFragment extends FormFragment<IConvocator
     } as IConvocatoria;
     this.checkIfAddAreaTematicaIsAllowed();
     this.convocatoriaEntidadGestora = {} as IConvocatoriaEntidadGestora;
+    this.checkHasProyectoVinculado(key);
   }
 
   protected buildFormGroup(): FormGroup {
     const form = new FormGroup({
       codigo: new FormControl('', Validators.maxLength(50)),
       unidadGestion: new FormControl(null, Validators.required),
-      fechaPublicacion: new FormControl(null, Validators.required),
+      fechaPublicacion: new FormControl(null),
       fechaProvisional: new FormControl(null),
       fechaConcesion: new FormControl(null),
       titulo: new FormControl('', [Validators.required, Validators.maxLength(250)]),
@@ -71,13 +76,22 @@ export class ConvocatoriaDatosGeneralesFragment extends FormFragment<IConvocator
       ambitoGeografico: new FormControl(null),
       clasificacionCVN: new FormControl(null),
       regimenConcurrencia: new FormControl(null),
-      colaborativos: new FormControl(null),
       entidadGestora: new FormControl(null),
       objeto: new FormControl('', Validators.maxLength(2000)),
       observaciones: new FormControl('', Validators.maxLength(2000))
     });
-    if (this.readonly) {
+
+    if (this.isEdit()) {
+      form.addControl('estado', new FormControl({ value: null, disabled: true }));
+    }
+
+    if (!this.hasEditPerm) {
       form.disable();
+    } else if (this.isConvocatoriaVinculada) {
+      form.controls.unidadGestion.disable();
+      form.controls.modeloEjecucion.disable();
+      form.controls.entidadGestora.disable();
+      form.controls.duracion.disable();
     }
 
     this.subscriptions.push(
@@ -86,11 +100,11 @@ export class ConvocatoriaDatosGeneralesFragment extends FormFragment<IConvocator
       })
     );
 
-    if (!this.readonly) {
+    if (!this.isConvocatoriaVinculada) {
       this.subscriptions.push(
         this.vinculacionesModeloEjecucion$.subscribe(
           value => {
-            if (value) {
+            if (value || !this.hasEditPerm) {
               form.controls.unidadGestion.disable();
               form.controls.modeloEjecucion.disable();
             }
@@ -102,6 +116,20 @@ export class ConvocatoriaDatosGeneralesFragment extends FormFragment<IConvocator
         )
       );
     }
+
+    this.subscriptions.push(
+      this.hasProyectoVinculado$.subscribe(
+        value => {
+          if (value && this.isConvocatoriaVinculada) {
+            form.controls.regimenConcurrencia.disable();
+            form.controls.clasificacionCVN.disable();
+          } else {
+            form.controls.regimenConcurrencia.enable();
+            form.controls.clasificacionCVN.enable();
+          }
+        }
+      )
+    );
 
     this.checkEstado(form, this.convocatoria);
     return form;
@@ -121,10 +149,10 @@ export class ConvocatoriaDatosGeneralesFragment extends FormFragment<IConvocator
       observaciones: convocatoria.observaciones,
       finalidad: convocatoria.finalidad,
       regimenConcurrencia: convocatoria.regimenConcurrencia,
-      colaborativos: convocatoria.colaborativos,
       duracion: convocatoria.duracion,
       ambitoGeografico: convocatoria.ambitoGeografico,
       clasificacionCVN: convocatoria.clasificacionCVN,
+      estado: convocatoria.estado
     };
 
     this.checkEstado(this.getFormGroup(), convocatoria);
@@ -192,17 +220,17 @@ export class ConvocatoriaDatosGeneralesFragment extends FormFragment<IConvocator
     if (this.isEdit()) {
       this.configuracionSolicitudService.findByConvocatoriaId(this.getKey() as number).pipe(
         map(configuracionSolicitud => {
-          if (configuracionSolicitud === null) {
+          if (configuracionSolicitud === null && this.hasEditPerm) {
             this.showAddAreaTematica = true;
           }
-          else if (configuracionSolicitud.fasePresentacionSolicitudes === null) {
+          else if (configuracionSolicitud.fasePresentacionSolicitudes === null && this.hasEditPerm) {
             this.showAddAreaTematica = true;
           }
           return configuracionSolicitud?.fasePresentacionSolicitudes?.fechaInicio ?? null;
         })
       ).subscribe(fechaInicio => {
         if ((this.convocatoria.estado === Estado.REGISTRADA || this.convocatoria.estado === Estado.BORRADOR)
-          && (fechaInicio === null || fechaInicio > fechaActual)) {
+          && (fechaInicio === null || fechaInicio > fechaActual) && this.hasEditPerm) {
           return this.showAddAreaTematica = true;
         }
         return this.showAddAreaTematica = false;
@@ -210,6 +238,12 @@ export class ConvocatoriaDatosGeneralesFragment extends FormFragment<IConvocator
     } else {
       this.showAddAreaTematica = true;
     }
+  }
+
+  private checkHasProyectoVinculado(key): void {
+    this.subscriptions.push(this.proyectoService.findAllProyectosByConvocatoria(key).subscribe(
+      (proyectos) => this.hasProyectoVinculado$.next(Boolean(!!proyectos.total))
+    ));
   }
 
   private loadAreasTematicas(id: number): void {
@@ -270,7 +304,6 @@ export class ConvocatoriaDatosGeneralesFragment extends FormFragment<IConvocator
     this.convocatoria.observaciones = form.observaciones.value;
     this.convocatoria.finalidad = form.finalidad.value;
     this.convocatoria.regimenConcurrencia = form.regimenConcurrencia.value;
-    this.convocatoria.colaborativos = form.colaborativos.value;
     this.convocatoria.duracion = form.duracion.value;
     this.convocatoria.ambitoGeografico = form.ambitoGeografico.value;
     this.convocatoria.clasificacionCVN = form.clasificacionCVN.value;

@@ -5,6 +5,7 @@ import java.util.Optional;
 import org.crue.hercules.sgi.eti.model.DocumentacionMemoria;
 import org.crue.hercules.sgi.eti.model.Formulario;
 import org.crue.hercules.sgi.eti.model.Memoria;
+import org.crue.hercules.sgi.eti.model.TipoDocumento;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -50,4 +51,16 @@ public interface DocumentacionMemoriaRepository
    * @return lista paginada de la documentación de una memoria
    */
   Page<DocumentacionMemoria> findByMemoriaIdAndMemoriaActivoTrue(Long idMemoria, Pageable pageable);
+
+  /**
+   * Comprueba si existen entidades {@link DocumentacionMemoria} para una
+   * determinada {@link Memoria} y un {@link Formulario}
+   *
+   * @param id              Id de {@link Memoria}.
+   * @param idTipoDocumento Id de {@link TipoDocumento}
+   * @param idFormulario    Id de {@link Formulario}
+   * @return true si existen {@link DocumentacionMemoria} / false si no existen.
+   */
+  boolean existsByMemoriaIdAndTipoDocumentoIdAndTipoDocumentoFormularioId(Long id, Long idTipoDocumento,
+      Long idFormulario);
 }

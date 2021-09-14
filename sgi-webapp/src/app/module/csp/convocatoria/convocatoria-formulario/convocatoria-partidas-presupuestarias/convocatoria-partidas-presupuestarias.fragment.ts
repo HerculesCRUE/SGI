@@ -1,21 +1,25 @@
+import { Estado } from '@core/models/csp/convocatoria';
 import { IConvocatoriaPartidaPresupuestaria } from '@core/models/csp/convocatoria-partida-presupuestaria';
 import { Fragment } from '@core/services/action-service';
 import { ConvocatoriaPartidaPresupuestariaService } from '@core/services/csp/convocatoria-partidas-presupuestarias.service';
 import { ConvocatoriaService } from '@core/services/csp/convocatoria.service';
 import { StatusWrapper } from '@core/utils/status-wrapper';
 import { BehaviorSubject, from, merge, Observable, of } from 'rxjs';
-import { map, mergeMap, takeLast, tap } from 'rxjs/operators';
+import { map, mergeMap, switchMap, takeLast, tap } from 'rxjs/operators';
 
 export class ConvocatoriaPartidaPresupuestariaFragment extends Fragment {
   partidasPresupuestarias$ = new BehaviorSubject<StatusWrapper<IConvocatoriaPartidaPresupuestaria>[]>([]);
   partidasPresupuestariasEliminadas: StatusWrapper<IConvocatoriaPartidaPresupuestaria>[] = [];
+
+  mapModificable: Map<number, boolean> = new Map();
 
   constructor(
     key: number,
     private convocatoriaService: ConvocatoriaService,
     private convocatoriaPartidaPresupuestariaService: ConvocatoriaPartidaPresupuestariaService,
     public readonly: boolean,
-    public canEdit: boolean
+    public canEdit: boolean,
+    public convocatoriaEstado: Estado
   ) {
     super(key);
     this.setComplete(true);
@@ -24,7 +28,23 @@ export class ConvocatoriaPartidaPresupuestariaFragment extends Fragment {
   protected onInitialize(): void {
     if (this.getKey()) {
       this.convocatoriaService.findPartidasPresupuestarias(this.getKey() as number).pipe(
-        map((response) => response.items)
+        map((response) => {
+          return response.items;
+        }),
+        switchMap((partidasPresupuestarias) => {
+          if (partidasPresupuestarias) {
+            partidasPresupuestarias.forEach(partida => {
+              if (this.canEdit) {
+                this.subscriptions.push(this.convocatoriaPartidaPresupuestariaService.modificable(partida.id).subscribe((value) => {
+                  this.mapModificable.set(partida.id, value);
+                }));
+              } else {
+                this.mapModificable.set(partida.id, false);
+              }
+            });
+          }
+          return of(partidasPresupuestarias);
+        })
       ).subscribe((partidasPresupuestarias) => {
         this.partidasPresupuestarias$.next(partidasPresupuestarias.map(
           partidaPresupuestaria => new StatusWrapper<IConvocatoriaPartidaPresupuestaria>(partidaPresupuestaria))
@@ -109,10 +129,19 @@ export class ConvocatoriaPartidaPresupuestariaFragment extends Fragment {
     );
     return from(createdPartidasPresupuestarias).pipe(
       mergeMap((wrappedPartidasPresupuestarias) => {
+
         return this.convocatoriaPartidaPresupuestariaService.create(wrappedPartidasPresupuestarias.value).pipe(
-          map((updatedPartidasPresupuestarias) => {
-            const index = this.partidasPresupuestarias$.value.findIndex((currentPartidasPresupuestarias) => currentPartidasPresupuestarias === wrappedPartidasPresupuestarias);
-            this.partidasPresupuestarias$.value[index] = new StatusWrapper<IConvocatoriaPartidaPresupuestaria>(updatedPartidasPresupuestarias);
+          map((updatedPartidaPresupuestaria) => {
+            const index = this.partidasPresupuestarias$.value
+              .findIndex((currentPartidasPresupuestarias) => currentPartidasPresupuestarias === wrappedPartidasPresupuestarias);
+            this.partidasPresupuestarias$.value[index] =
+              new StatusWrapper<IConvocatoriaPartidaPresupuestaria>(updatedPartidaPresupuestaria);
+            this.subscriptions.push(
+              this.convocatoriaPartidaPresupuestariaService.modificable(updatedPartidaPresupuestaria.id)
+                .subscribe((value) => {
+                  this.mapModificable.set(updatedPartidaPresupuestaria.id, value);
+                  this.partidasPresupuestarias$.next(this.partidasPresupuestarias$.value);
+                }));
           })
         );
       })
@@ -126,12 +155,18 @@ export class ConvocatoriaPartidaPresupuestariaFragment extends Fragment {
     }
     return from(updatePartidasPresupuestarias).pipe(
       mergeMap((wrappedPartidasPresupuestarias) => {
-        return this.convocatoriaPartidaPresupuestariaService.update(wrappedPartidasPresupuestarias.value.id, wrappedPartidasPresupuestarias.value).pipe(
-          map((updatedPartidasPresupuestarias) => {
-            const index = this.partidasPresupuestarias$.value.findIndex((currentPartidasPresupuestarias) => currentPartidasPresupuestarias === wrappedPartidasPresupuestarias);
-            this.partidasPresupuestarias$.value[index] = new StatusWrapper<IConvocatoriaPartidaPresupuestaria>(updatedPartidasPresupuestarias);
-          })
-        );
+        return this.convocatoriaPartidaPresupuestariaService.update(
+          wrappedPartidasPresupuestarias.value.id,
+          wrappedPartidasPresupuestarias.value)
+          .pipe(
+            map((updatedPartidasPresupuestarias) => {
+              const index = this.partidasPresupuestarias$.value
+                .findIndex((currentPartidasPresupuestarias) => currentPartidasPresupuestarias === wrappedPartidasPresupuestarias);
+
+              this.partidasPresupuestarias$.value[index] = new StatusWrapper<IConvocatoriaPartidaPresupuestaria>(
+                updatedPartidasPresupuestarias);
+            })
+          );
       })
     );
   }
@@ -139,6 +174,10 @@ export class ConvocatoriaPartidaPresupuestariaFragment extends Fragment {
   private isSaveOrUpdateComplete(): boolean {
     const touched: boolean = this.partidasPresupuestarias$.value.some((wrapper) => wrapper.touched);
     return (this.partidasPresupuestariasEliminadas.length > 0 || touched);
+  }
+
+  public canEditPartidaPresupuestaria(partidaId: number): boolean {
+    return this.convocatoriaEstado === Estado.BORRADOR || (!partidaId || this.mapModificable.get(partidaId));
   }
 
 

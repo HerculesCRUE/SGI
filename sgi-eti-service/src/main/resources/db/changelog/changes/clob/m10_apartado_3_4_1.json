@@ -1,0 +1,54 @@
+[
+  {
+    "key": "ap3_4_1",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "expressionLock": "formState.memoria.tipoMemoria.id === 3",
+      "label": "3.4.1 Proceso de reclutamiento"
+    },
+    "hideExpression": "!formState.mainModel.ap3_4.intervencionesSeresHumanosRadio || formState.mainModel.ap3_4.intervencionesSeresHumanosRadio === 'no'",
+    "fieldGroup": [
+      {
+        "template": "<p>Describir el proceso de reclutamiento: presentación del proyecto y obtención de consentimiento del sujeto fuente y/o su representante legal de acuerdo al siguiente esquema:</p><ul><li>quién (persona/s encargada/s)</li><li>cómo (conversación, vídeo, folleto..)</li><li>dónde (lugar de información y de firma de documentos)</li><li>cuándo se realizan (momento en que se llevan a cabo)</li></ul>"
+      },
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "<p>Se entiende por 'proceso de reclutamiento' todas aquellas acciones encaminadas a captar las personas que participarán en el estudio como sujetos de investigación.</p><p>Este proceso incluye la información al posible participante, su convencimiento y posterior obtención y firma del consentimiento.</p><p>El proceso de reclutamiento es posterior a la definición de la muestra con los criterios de inclusión y exclusión al hacer el diseño metodológico.</p><p>El proceso de reclutamiento es una parte esencial de la investigación porque afecta directamente a aspectos éticos como la voluntariedad, la equidad y el respeto.</p>"
+      },
+      {
+        "key": "descripcionProcesoReclutamiento",
+        "type": "textarea",
+        "templateOptions": {
+          "label": "Proceso de reclutamiento",
+          "placeholder": "Proceso de reclutamiento",
+          "required": true,
+          "autosize": true,
+          "autosizeMinRows": "1",
+          "autosizeMaxRows": "10"
+        }
+      },
+      {
+        "template": "<p>Fecha prevista de inicio del reclutamiento</p>"
+      },
+      {
+        "key": "fechaReclutamiento",
+        "type": "datepicker",
+        "templateOptions": {
+          "required": true,
+          "type": "text",
+          "label": "Fecha prevista"
+        }
+      },
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "<p>Nota: Añadir en el apartado '5.7 Documentación adicional' todos los documentos que vayan a utilizarse para reclutamiento de sujetos de estudio (por ejemplo anuncios, trípticos etc, con el texto íntegro).</p><p>Si el proceso va a realizarse fuera de las instalaciones de la UMU añadir en el apartado '5.3' el Documento de autorización del centro o local (Hospitales, Centros Educativos, Centros de Salud, etc).</p><p>Recuerde que el proyecto <strong>no puede iniciarse sin haber obtenido el informe favorable</strong> del comité por tanto las fechas deben ser coherentes.</p></div>"
+      }
+    ]
+  }
+]

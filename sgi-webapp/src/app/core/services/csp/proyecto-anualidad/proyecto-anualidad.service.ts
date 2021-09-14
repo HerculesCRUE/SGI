@@ -2,12 +2,15 @@ import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { IAnualidadGasto } from '@core/models/csp/anualidad-gasto';
 import { IAnualidadIngreso } from '@core/models/csp/anualidad-ingreso';
+import { IAnualidadResumen } from '@core/models/csp/anualidad-resumen';
 import { IProyectoAnualidad } from '@core/models/csp/proyecto-anualidad';
 import { environment } from '@env';
 import {
   CreateCtor,
+  FindAllCtor,
   FindByIdCtor,
   mixinCreate,
+  mixinFindAll,
   mixinFindById,
   mixinUpdate,
   SgiRestBaseService,
@@ -16,36 +19,37 @@ import {
 } from '@sgi/framework/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
-import { ANUALIDAD_GASTO_RESPONSE_CONVERTER } from '../anualidad-gasto/anualidad-gasto-response.converter';
 import { IAnualidadGastoResponse } from '../anualidad-gasto/anualidad-gasto-response';
-import { ANUALIDAD_INGRESO_RESPONSE_CONVERTER } from '../anualidad-ingreso/anualidad-ingreso-response.converter';
+import { ANUALIDAD_GASTO_RESPONSE_CONVERTER } from '../anualidad-gasto/anualidad-gasto-response.converter';
 import { IAnualidadIngresoResponse } from '../anualidad-ingreso/anualidad-ingreso-response';
-import { PROYECTO_ANUALIDAD_REQUEST_CONVERTER } from './proyecto-anualidad-request.converter';
-import { IProyectoAnualidadRequest } from './proyecto-anualidad-request';
-import { IProyectoAnualidadResponse } from './proyecto-anualidad-response';
-import { PROYECTO_ANUALIDAD_RESPONSE_CONVERTER } from './proyecto-anualidad-response.converter';
-import { IProyectoAnualidadResumen } from '@core/models/csp/proyecto-anualidad-resumen';
-import { IAnualidadResumen } from '@core/models/csp/anualidad-resumen';
+import { ANUALIDAD_INGRESO_RESPONSE_CONVERTER } from '../anualidad-ingreso/anualidad-ingreso-response.converter';
 import { IAnualidadResumenResponse } from './anualidad-resumen-response';
 import { ANUALIDAD_RESUMEN_RESPONSE_CONVERTER } from './anualidad-resumen-response.converter';
+import { IProyectoAnualidadRequest } from './proyecto-anualidad-request';
+import { PROYECTO_ANUALIDAD_REQUEST_CONVERTER } from './proyecto-anualidad-request.converter';
+import { IProyectoAnualidadResponse } from './proyecto-anualidad-response';
+import { PROYECTO_ANUALIDAD_RESPONSE_CONVERTER } from './proyecto-anualidad-response.converter';
 
 // tslint:disable-next-line: variable-name
 const _ProyectoAnualidadServiceMixinBase:
   CreateCtor<IProyectoAnualidad, IProyectoAnualidad, IProyectoAnualidadRequest, IProyectoAnualidadResponse> &
   UpdateCtor<number, IProyectoAnualidad, IProyectoAnualidad, IProyectoAnualidadRequest, IProyectoAnualidadResponse> &
   FindByIdCtor<number, IProyectoAnualidad, IProyectoAnualidadResponse> &
-  typeof SgiRestBaseService = mixinFindById(
-    mixinUpdate(
-      mixinCreate(
-        SgiRestBaseService,
+  FindAllCtor<IProyectoAnualidad, IProyectoAnualidadResponse> &
+  typeof SgiRestBaseService = mixinFindAll(
+    mixinFindById(
+      mixinUpdate(
+        mixinCreate(
+          SgiRestBaseService,
+          PROYECTO_ANUALIDAD_REQUEST_CONVERTER,
+          PROYECTO_ANUALIDAD_RESPONSE_CONVERTER
+        ),
         PROYECTO_ANUALIDAD_REQUEST_CONVERTER,
         PROYECTO_ANUALIDAD_RESPONSE_CONVERTER
       ),
-      PROYECTO_ANUALIDAD_REQUEST_CONVERTER,
       PROYECTO_ANUALIDAD_RESPONSE_CONVERTER
     ),
-    PROYECTO_ANUALIDAD_REQUEST_CONVERTER
-  );
+    PROYECTO_ANUALIDAD_RESPONSE_CONVERTER);
 
 @Injectable({
   providedIn: 'root'

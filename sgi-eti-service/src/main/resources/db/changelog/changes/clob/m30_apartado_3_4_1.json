@@ -1,0 +1,66 @@
+[
+  {
+    "key": "ap3_4_1",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "label": "3.4.1 Exposición no intencionada o incidental"
+    },
+    "fieldGroup": [
+      {
+        "template": "<p>En esta actividad ¿se realizan tareas en las que puede haber exposición no intencionada o incidental a agentes biológicos?</p>"
+      },
+      {
+        "key": "agentesBiologicosRadio",
+        "type": "radio",
+        "templateOptions": {
+          "label": "Elige opción:",
+          "required": true,
+          "options": [
+            {
+              "value": "no",
+              "label": "No"
+            },
+            {
+              "value": "si",
+              "label": "Sí"
+            }
+          ]
+        }
+      },
+      {
+        "template": "Tipo de material biológico que se utiliza",
+        "hideExpression": "!model.agentesBiologicosRadio || model.agentesBiologicosRadio === 'no'"
+      },
+      {
+        "type": "multicheckbox",
+        "key": "muestrasBiologicasCheck",
+        "hideExpression": "!model.agentesBiologicosRadio || model.agentesBiologicosRadio === 'no'",
+        "templateOptions": {
+          "label": "Opciones:",
+          "type": "array",
+          "required": true,
+          "options": [
+            {
+              "value": "criaymanejoanimales",
+              "label": "Cría y manejo de animales"
+            },
+            {
+              "value": "tejidossangrefluidosanimales",
+              "label": "Tejidos/sangre/fluidos animales"
+            },
+            {
+              "value": "tejidossangrefluidoshumanos",
+              "label": "Tejidos/sangre/fluidos humanos"
+            },
+            {
+              "value": "fluidos",
+              "label": "Otros"
+            }
+          ]
+        }
+      }
+    ]
+  }
+]

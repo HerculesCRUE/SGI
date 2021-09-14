@@ -81,8 +81,7 @@ public class Convocatoria extends BaseEntity {
   private String codigo;
 
   /** Fecha Publicación */
-  @Column(name = "fecha_publicacion", nullable = false)
-  @NotNull
+  @Column(name = "fecha_publicacion")
   private Instant fechaPublicacion;
 
   /** Fecha Provisional */
@@ -118,10 +117,6 @@ public class Convocatoria extends BaseEntity {
   @ManyToOne
   @JoinColumn(name = "tipo_regimen_concurrencia_id", nullable = true, foreignKey = @ForeignKey(name = "FK_CONVOCATORIA_REGIMENCONCURRENCIA"))
   private TipoRegimenConcurrencia regimenConcurrencia;
-
-  /** Colaborativos */
-  @Column(name = "colaborativos", nullable = true)
-  private Boolean colaborativos;
 
   /** Estado */
   @Column(name = "estado", length = 50, nullable = false)

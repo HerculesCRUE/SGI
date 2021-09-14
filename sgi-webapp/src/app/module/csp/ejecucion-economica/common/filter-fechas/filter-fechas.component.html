@@ -1,0 +1,54 @@
+<form *ngIf="formGroupFechas" [formGroup]="formGroupFechas" fxLayout="column" fxLayout.gt-sm="row"
+  fxLayoutAlign="start center" fxLayoutGap="10px">
+  <mat-card fxLayout="column">
+    <mat-card-title>Fecha de devengo</mat-card-title>
+    <mat-card-content fxLayout="column" fxLayout.gt-md="row" fxLayoutGap="10px">
+      <mat-form-field>
+        <mat-label>entre</mat-label>
+        <input matInput [matDatepicker]="pickerDevengoDesde" formControlName="devengoDesde">
+        <mat-datepicker-toggle matSuffix [for]="pickerDevengoDesde"></mat-datepicker-toggle>
+        <mat-datepicker #pickerDevengoDesde></mat-datepicker>
+      </mat-form-field>
+      <mat-form-field>
+        <mat-label>y</mat-label>
+        <input matInput [matDatepicker]="pickerDevengoHasta" formControlName="devengoHasta">
+        <mat-datepicker-toggle matSuffix [for]="pickerDevengoHasta"></mat-datepicker-toggle>
+        <mat-datepicker #pickerDevengoHasta></mat-datepicker>
+      </mat-form-field>
+    </mat-card-content>
+  </mat-card>
+  <mat-card fxLayout="column">
+    <mat-card-title>Fecha de contabilizacion</mat-card-title>
+    <mat-card-content fxLayout="column" fxLayout.gt-md="row" fxLayoutGap="10px">
+      <mat-form-field>
+        <mat-label>entre</mat-label>
+        <input matInput [matDatepicker]="pickerContabilizacionDesde" formControlName="contabilizacionDesde">
+        <mat-datepicker-toggle matSuffix [for]="pickerContabilizacionDesde"></mat-datepicker-toggle>
+        <mat-datepicker #pickerContabilizacionDesde></mat-datepicker>
+      </mat-form-field>
+      <mat-form-field>
+        <mat-label>y</mat-label>
+        <input matInput [matDatepicker]="pickerContabilizacionHasta" formControlName="contabilizacionHasta">
+        <mat-datepicker-toggle matSuffix [for]="pickerContabilizacionHasta"></mat-datepicker-toggle>
+        <mat-datepicker #pickerContabilizacionHasta></mat-datepicker>
+      </mat-form-field>
+    </mat-card-content>
+  </mat-card>
+  <mat-card fxLayout="column">
+    <mat-card-title>Fecha de pago</mat-card-title>
+    <mat-card-content fxLayout="column" fxLayout.gt-md="row" fxLayoutGap="10px">
+      <mat-form-field>
+        <mat-label>entre</mat-label>
+        <input matInput [matDatepicker]="pickerPagoDesde" formControlName="pagoDesde">
+        <mat-datepicker-toggle matSuffix [for]="pickerPagoDesde"></mat-datepicker-toggle>
+        <mat-datepicker #pickerPagoDesde></mat-datepicker>
+      </mat-form-field>
+      <mat-form-field>
+        <mat-label>y</mat-label>
+        <input matInput [matDatepicker]="pickerPagoHasta" formControlName="pagoHasta">
+        <mat-datepicker-toggle matSuffix [for]="pickerPagoHasta"></mat-datepicker-toggle>
+        <mat-datepicker #pickerPagoHasta></mat-datepicker>
+      </mat-form-field>
+    </mat-card-content>
+  </mat-card>
+</form>

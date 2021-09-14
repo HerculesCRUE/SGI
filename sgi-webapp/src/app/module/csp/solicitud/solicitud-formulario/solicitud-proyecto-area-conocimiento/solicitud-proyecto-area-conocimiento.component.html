@@ -1,48 +1,46 @@
 <!-- Areas Conocimiento -->
-<section class="proyecto-area-conocimiento">
+<sgi-fragment title="{{'label.areas-conocimiento' | translate}}">
 
-  <h2>{{'label.areas-conocimiento' | translate}}</h2>
+  <div class="mat-elevation-z4">
+    <table mat-table [dataSource]="dataSource" matSort matSortActive="id" matSortDirection="asc" matSortDisableClear>
 
-  <table class="mat-elevation-z8 table-areas-conocimiento" mat-table [dataSource]="dataSource" matSort
-    matSortActive="id" matSortDirection="asc" matSortDisableClear>
+      <!-- Niveles Column -->
+      <ng-container matColumnDef="niveles">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>
+          {{'csp.solicitud-proyecto-area-conocimiento.niveles' | translate}} </th>
+        <td mat-cell *matCellDef="let wrapper" matTooltip="{{wrapper.value.nivelesTexto}}">
+          {{wrapper.value.nivelesTexto}}
+        </td>
+      </ng-container>
 
-    <!-- Niveles Column -->
-    <ng-container matColumnDef="niveles">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header>
-        {{'csp.solicitud-proyecto-area-conocimiento.niveles' | translate}} </th>
-      <td mat-cell *matCellDef="let wrapper" matTooltip="{{wrapper.value.nivelesTexto}}">
-        {{wrapper.value.nivelesTexto}}
-      </td>
-    </ng-container>
+      <!-- Nivel Seleccionado Column -->
+      <ng-container matColumnDef="nivelSeleccionado">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>
+          {{'csp.solicitud-proyecto-area-conocimiento.nivelSeleccionado' | translate}}
+        </th>
+        <td mat-cell *matCellDef="let wrapper"> {{wrapper.value.nivelSeleccionado.nombre}} </td>
+      </ng-container>
 
-    <!-- Nivel Seleccionado Column -->
-    <ng-container matColumnDef="nivelSeleccionado">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header>
-        {{'csp.solicitud-proyecto-area-conocimiento.nivelSeleccionado' | translate}}
-      </th>
-      <td mat-cell *matCellDef="let wrapper"> {{wrapper.value.nivelSeleccionado.nombre}} </td>
-    </ng-container>
+      <!-- Acciones  Column -->
+      <ng-container matColumnDef="acciones">
+        <th mat-header-cell *matHeaderCellDef> {{'label.actions' | translate}} </th>
+        <td mat-cell *matCellDef="let area">
+          <ng-container>
+            <button *ngIf="!this.formPart.readonly" mat-button matTooltip="{{'btn.delete' | translate}}"
+              (click)="deleteArea(area)">
+              <mat-icon color="warn">highlight_off</mat-icon>
+            </button>
+          </ng-container>
+        </td>
+      </ng-container>
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
 
-    <!-- Acciones  Column -->
-    <ng-container matColumnDef="acciones">
-      <th mat-header-cell *matHeaderCellDef> {{'label.actions' | translate}} </th>
-      <td mat-cell *matCellDef="let area">
-        <ng-container>
-          <button *ngIf="!this.formPart.readonly" mat-button matTooltip="{{'btn.delete' | translate}}"
-            (click)="deleteArea(area)">
-            <mat-icon color="warn">highlight_off</mat-icon>
-          </button>
-        </ng-container>
-      </td>
-    </ng-container>
-    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+    </table>
 
-  </table>
-
-  <mat-paginator [pageSizeOptions]="elementosPagina" showFirstLastButtons>
-  </mat-paginator>
-
+    <mat-paginator [pageSizeOptions]="elementosPagina" showFirstLastButtons>
+    </mat-paginator>
+  </div>
   <div class="separation-button" *ngIf="!formPart.readonly">
     <!-- Botón añadir Areas -->
     <button color="three" mat-button mat-raised-button (click)="openModal()">
@@ -51,4 +49,4 @@
     </button>
   </div>
 
-</section>
+</sgi-fragment>

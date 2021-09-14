@@ -5,6 +5,7 @@ import javax.validation.Valid;
 import org.crue.hercules.sgi.eti.exceptions.ComiteNotFoundException;
 import org.crue.hercules.sgi.eti.model.Comite;
 import org.crue.hercules.sgi.eti.model.Memoria;
+import org.crue.hercules.sgi.eti.model.PeticionEvaluacion;
 import org.crue.hercules.sgi.eti.model.TipoMemoria;
 import org.crue.hercules.sgi.eti.service.ComiteService;
 import org.crue.hercules.sgi.eti.service.MemoriaService;
@@ -168,16 +169,18 @@ public class ComiteController {
   /**
    * Recupera la lista paginada de memorias de un comité.
    * 
-   * @param id       Identificador de {@link Comite}.
-   * @param pageable Datos de la paginación.
+   * @param idComite             Identificador de {@link Comite}.
+   * @param idPeticionEvaluacion Identificador de la {@link PeticionEvaluacion}.
+   * @param pageable             Datos de la paginación.
    * 
    * @return lista paginada de memorias.
    */
-  @GetMapping("/{id}/memorias")
+  @GetMapping("/{idComite}/memorias-peticion-evaluacion/{idPeticionEvaluacion}")
   @PreAuthorize("hasAnyAuthorityForAnyUO('ETI-PEV-C-INV', 'ETI-PEV-ER-INV')")
-  ResponseEntity<Page<Memoria>> findMemorias(@PathVariable Long id, @RequestPageable(sort = "s") Pageable pageable) {
+  ResponseEntity<Page<Memoria>> findMemorias(@PathVariable Long idComite, @PathVariable Long idPeticionEvaluacion,
+      @RequestPageable(sort = "s") Pageable pageable) {
     log.debug("findMemorias(Long id, Pageable paging) - start");
-    Page<Memoria> memorias = memoriaService.findByComite(id, pageable);
+    Page<Memoria> memorias = memoriaService.findByComiteAndPeticionEvaluacion(idComite, idPeticionEvaluacion, pageable);
 
     if (memorias.isEmpty()) {
       log.debug("findMemorias(Long id, Pageable paging) - end");

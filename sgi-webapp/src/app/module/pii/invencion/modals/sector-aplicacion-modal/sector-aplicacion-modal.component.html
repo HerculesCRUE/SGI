@@ -1,0 +1,31 @@
+<div class="sgi-dialog-header" fxLayout="row" fxLayoutGap="20px">
+  <span fxFlexAlign="center" mat-mat-dialog-title role="heading" aria-level="3" fxFlex>
+    {{'pii.sector-aplicacion' | translate:MSG_PARAMS.CARDINALIRY.PLURAL}}
+  </span>
+  <button fxFlex="nogrow" mat-icon-button mat-dialog-close>
+    <mat-icon class="close-icon">close</mat-icon>
+  </button>
+</div>
+<mat-dialog-content>
+  <form class="form-inline" [formGroup]="formGroup">
+    <!-- Sector de Aplicación-->
+    <div>
+      <mat-form-field>
+        <mat-label>{{'pii.sector-aplicacion' | translate:MSG_PARAMS.CARDINALIRY.SINGULAR}}
+        </mat-label>
+        <sgi-select-entity formControlName="sectorAplicacion" [options]="sectoresAplicacion$ | async" required>
+        </sgi-select-entity>
+      </mat-form-field>
+    </div>
+  </form>
+
+</mat-dialog-content>
+<mat-dialog-actions>
+  <button color="accent" (click)="saveOrUpdate()" mat-raised-button type="submit">
+    <mat-icon class="save-icon">save</mat-icon>
+    {{'btn.ok' | translate}}
+  </button>
+  <button class="link-cancelar" mat-button type="button" mat-dialog-close>
+    {{'btn.cancel' | translate}}
+  </button>
+</mat-dialog-actions>

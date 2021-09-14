@@ -9,6 +9,7 @@ import { SgiAuthModule } from '@sgi/framework/auth';
 import { PeticionEvaluacionListadoGesComponent } from './peticion-evaluacion-listado-ges/peticion-evaluacion-listado-ges.component';
 import { PeticionEvaluacionGesRoutingModule } from './peticion-evaluacion-ges-routing.module';
 import { PeticionEvaluacionResolver } from './peticion-evaluacion.resolver';
+import { SgpSharedModule } from 'src/app/esb/sgp/shared/sgp-shared.module';
 
 @NgModule({
   declarations: [
@@ -22,7 +23,8 @@ import { PeticionEvaluacionResolver } from './peticion-evaluacion.resolver';
     MaterialDesignModule,
     FormsModule,
     ReactiveFormsModule,
-    SgiAuthModule
+    SgiAuthModule,
+    SgpSharedModule
   ],
   providers: [
     PeticionEvaluacionResolver

@@ -1,10 +1,10 @@
 package org.crue.hercules.sgi.eti.service.impl;
 
 import java.time.Instant;
-import java.time.ZoneOffset;
 import java.time.temporal.ChronoField;
 import java.util.List;
 
+import org.crue.hercules.sgi.eti.config.SgiConfigProperties;
 import org.crue.hercules.sgi.eti.dto.ConvocatoriaReunionDatosGenerales;
 import org.crue.hercules.sgi.eti.exceptions.ConvocatoriaReunionNotFoundException;
 import org.crue.hercules.sgi.eti.model.ConvocatoriaReunion;
@@ -32,12 +32,15 @@ import lombok.extern.slf4j.Slf4j;
 @Transactional(readOnly = true)
 public class ConvocatoriaReunionServiceImpl implements ConvocatoriaReunionService {
 
+  private final SgiConfigProperties sgiConfigProperties;
   private final ConvocatoriaReunionRepository repository;
   private final ActaRepository actaRepository;
   private final EvaluacionRepository evaluacionRepository;
 
-  public ConvocatoriaReunionServiceImpl(ConvocatoriaReunionRepository repository, ActaRepository actaRepository,
+  public ConvocatoriaReunionServiceImpl(SgiConfigProperties sgiConfigProperties,
+      ConvocatoriaReunionRepository repository, ActaRepository actaRepository,
       EvaluacionRepository evaluacionRepository) {
+    this.sgiConfigProperties = sgiConfigProperties;
     this.repository = repository;
     this.actaRepository = actaRepository;
     this.evaluacionRepository = evaluacionRepository;
@@ -64,7 +67,8 @@ public class ConvocatoriaReunionServiceImpl implements ConvocatoriaReunionServic
         : 1L;
 
     convocatoriaReunion.setNumeroActa(numeroActa);
-    convocatoriaReunion.setAnio(Instant.now().atZone(ZoneOffset.UTC).get(ChronoField.YEAR));
+    convocatoriaReunion
+        .setAnio(Instant.now().atZone(sgiConfigProperties.getTimeZone().toZoneId()).get(ChronoField.YEAR));
 
     ConvocatoriaReunion returnValue = repository.save(convocatoriaReunion);
     log.debug("create(ConvocatoriaReunion convocatoriaReunion) - end");

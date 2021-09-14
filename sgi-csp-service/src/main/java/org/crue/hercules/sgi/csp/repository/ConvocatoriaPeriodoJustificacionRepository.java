@@ -5,10 +5,11 @@ import java.util.Optional;
 
 import org.crue.hercules.sgi.csp.model.Convocatoria;
 import org.crue.hercules.sgi.csp.model.ConvocatoriaPeriodoJustificacion;
+import org.crue.hercules.sgi.csp.repository.custom.CustomConvocatoriaPeriodoJustificacionRepository;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
-public interface ConvocatoriaPeriodoJustificacionRepository extends
+public interface ConvocatoriaPeriodoJustificacionRepository extends CustomConvocatoriaPeriodoJustificacionRepository,
     JpaRepository<ConvocatoriaPeriodoJustificacion, Long>, JpaSpecificationExecutor<ConvocatoriaPeriodoJustificacion> {
 
   /**

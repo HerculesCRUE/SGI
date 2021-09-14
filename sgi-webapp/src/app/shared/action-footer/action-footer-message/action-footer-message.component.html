@@ -1,0 +1,11 @@
+<span [ngClass]="typeMessage">
+  <sgi-icon-changes *ngIf="typeMessage==='changes'">
+    {{'msg.footer.changes' | translate}}
+  </sgi-icon-changes>
+  <sgi-icon-errors *ngIf="typeMessage==='errors'">
+    {{'error.footer.form' | translate}}
+  </sgi-icon-errors>
+  <sgi-icon-problems *ngIf="typeMessage==='problems'">
+    {{'msg.footer.problems' | translate}}
+  </sgi-icon-problems>
+</span>

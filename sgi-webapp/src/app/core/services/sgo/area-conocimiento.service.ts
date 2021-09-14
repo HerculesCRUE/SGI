@@ -33,22 +33,15 @@ export class AreaConocimientoService extends SgiRestService<string, IAreaConocim
   }
 
   /**
-   * Busca todas las areas de conocimiento que tengan como padre alguno de los ids indicados.
+   * Busca todas las areas de conocimiento que tengan como padre el id indicado.
    *
-   * @param ids lista de identificadores de IAreaConocimiento
+   * @param id identificador de IAreaConocimiento
    * @returns la lista de IAreaConocimiento
    */
-  findAllHijos(ids: string | string[]): Observable<SgiRestListResult<IAreaConocimiento>> {
-    let options: SgiRestFindOptions;
-    if (Array.isArray(ids)) {
-      options = {
-        filter: new RSQLSgiRestFilter('padreId', SgiRestFilterOperator.IN, ids)
-      };
-    } else {
-      options = {
-        filter: new RSQLSgiRestFilter('padreId', SgiRestFilterOperator.EQUALS, ids)
-      };
-    }
+  findAllHijos(id: string): Observable<SgiRestListResult<IAreaConocimiento>> {
+    const options: SgiRestFindOptions = {
+      filter: new RSQLSgiRestFilter('padreId', SgiRestFilterOperator.EQUALS, id)
+    };
 
     return this.findAll(options);
   }

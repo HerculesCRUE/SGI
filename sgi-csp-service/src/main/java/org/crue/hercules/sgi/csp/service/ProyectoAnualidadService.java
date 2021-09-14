@@ -1,5 +1,6 @@
 package org.crue.hercules.sgi.csp.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -22,9 +23,12 @@ import org.crue.hercules.sgi.csp.repository.AnualidadIngresoRepository;
 import org.crue.hercules.sgi.csp.repository.ProyectoAnualidadRepository;
 import org.crue.hercules.sgi.csp.repository.ProyectoRepository;
 import org.crue.hercules.sgi.framework.problem.message.ProblemMessage;
+import org.crue.hercules.sgi.framework.rsql.SgiRSQLJPASupport;
 import org.crue.hercules.sgi.framework.spring.context.support.ApplicationContextSupport;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
@@ -46,15 +50,17 @@ public class ProyectoAnualidadService {
   private final ProyectoRepository proyectoRepository;
   private final AnualidadGastoRepository anualidadGastoRepository;
   private final AnualidadIngresoRepository anualidadIngresoRepository;
+  private final ProyectoAnualidadRepository proyectoAnualidadRepository;
 
   public ProyectoAnualidadService(Validator validator, ProyectoAnualidadRepository proyectoAnualidadepository,
       ProyectoRepository proyectoRepository, AnualidadGastoRepository anualidadGastoRepository,
-      AnualidadIngresoRepository anualidadIngresoRepository) {
+      AnualidadIngresoRepository anualidadIngresoRepository, ProyectoAnualidadRepository proyectoAnualidadRepository) {
     this.validator = validator;
     this.repository = proyectoAnualidadepository;
     this.proyectoRepository = proyectoRepository;
     this.anualidadGastoRepository = anualidadGastoRepository;
     this.anualidadIngresoRepository = anualidadIngresoRepository;
+    this.proyectoAnualidadRepository = proyectoAnualidadRepository;
   }
 
   /**
@@ -86,7 +92,7 @@ public class ProyectoAnualidadService {
     // En caso de que el proyecto tenga anualidad genérica no se guardarán la fecha
     // de inicio y fecha fin ya que se tendrán en cuenta las del proyecto.
     proyectoRepository.findById(proyectoAnualidad.getProyectoId()).map(proyecto -> {
-      if (!proyecto.getAnualidades()) {
+      if (proyecto.getAnualidades() == null || !proyecto.getAnualidades()) {
         proyectoAnualidad.setFechaInicio(null);
         proyectoAnualidad.setFechaFin(null);
       } else {
@@ -138,6 +144,16 @@ public class ProyectoAnualidadService {
     return returnValue;
   }
 
+  public Page<AnualidadGasto> findAllProyectoAnualidadGasto(Long proyectoId, Pageable pageable) {
+    log.debug(" findAllProyectoAnualidadGasto(Long proyectoId, Pageable pageable) - start");
+
+    Page<AnualidadGasto> returnValue = anualidadGastoRepository
+        .findAllAnualidadGastoByProyectoAnualidadProyectoId(proyectoId, pageable);
+
+    log.debug(" findAllProyectoAnualidadGasto(Long proyectoId, Pageable pageable) - end");
+    return returnValue;
+  }
+
   public ProyectoAnualidad findById(Long id) {
     log.debug("findById(Long id) - start");
     final ProyectoAnualidad returnValue = repository.findById(id)
@@ -158,6 +174,16 @@ public class ProyectoAnualidadService {
     List<AnualidadResumen> anulidadResumen = repository.getPartidasResumen(proyectoAnualidadId);
     log.debug("getPartidasResumen(Long proyectoAnualidadId) - end");
     return anulidadResumen;
+  }
+
+  public Page<ProyectoAnualidad> findAll(String query, Pageable pageable) {
+    log.debug("findAll(String query, Pageable pageable) - start");
+    // TODO: Pendiente evaluar si es necesario retringir por unidad de gestión
+    Specification<ProyectoAnualidad> specs = SgiRSQLJPASupport.toSpecification(query);
+
+    Page<ProyectoAnualidad> returnValue = repository.findAll(specs, pageable);
+    log.debug("findAll(String query, Pageable pageable) - end");
+    return returnValue;
   }
 
 }

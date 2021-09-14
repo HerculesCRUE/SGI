@@ -1,27 +1,30 @@
 import { Injectable } from '@angular/core';
 import { MatSnackBar, MatSnackBarConfig } from '@angular/material/snack-bar';
+import { Problem } from '@core/errors/http-problem';
 import { SnackBarComponent, SnackBarData } from '../../block/snack-bar/snack-bar.component';
 
 @Injectable({
   providedIn: 'root',
 })
 export class SnackBarService {
-  snackBarConfig: MatSnackBarConfig;
 
   constructor(
     private snackBar: MatSnackBar,
-  ) {
-    this.snackBarConfig = new MatSnackBarConfig();
-    this.snackBarConfig.duration = 4000;
-    this.snackBarConfig.verticalPosition = 'top';
-  }
+  ) { }
 
-  private open(msg: string, params: {}, cssClass: string): void {
+  private open(msg: string, params: {}, error: Problem, cssClass: string): void {
+    const snackBarConfig = new MatSnackBarConfig();
+    snackBarConfig.verticalPosition = 'top';
+    if (!!!error) {
+      snackBarConfig.duration = 4000;
+    }
+
     this.snackBar.openFromComponent(SnackBarComponent, {
-      ...this.snackBarConfig,
+      ...snackBarConfig,
       data: {
         msg,
-        params
+        params,
+        error,
       } as SnackBarData,
       panelClass: cssClass,
     });
@@ -32,8 +35,13 @@ export class SnackBarService {
    *
    * @param mensaje el mensaje o lista de mensajes de error.
    */
-  showError(msg: string, params: {} = {}): void {
-    this.open(msg, params, 'error-snack-bar');
+  showError(msg: string | Problem, params: {} = {}): void {
+    if (typeof msg === 'string') {
+      this.open(msg, params, undefined, 'error-snack-bar');
+    }
+    else {
+      this.open(undefined, params, msg, 'error-snack-bar');
+    }
   }
 
   /**
@@ -42,6 +50,6 @@ export class SnackBarService {
    * @param mensaje el mensaje.
    */
   showSuccess(msg: string, params: {} = {}): void {
-    this.open(msg, params, 'success-snack-bar');
+    this.open(msg, params, undefined, 'success-snack-bar');
   }
 }

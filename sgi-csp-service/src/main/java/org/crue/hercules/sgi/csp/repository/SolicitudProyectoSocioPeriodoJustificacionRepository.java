@@ -2,13 +2,15 @@ package org.crue.hercules.sgi.csp.repository;
 
 import java.util.List;
 
-import org.crue.hercules.sgi.csp.model.SolicitudProyectoSocioPeriodoJustificacion;
 import org.crue.hercules.sgi.csp.model.SolicitudProyectoSocio;
+import org.crue.hercules.sgi.csp.model.SolicitudProyectoSocioPeriodoJustificacion;
+import org.crue.hercules.sgi.csp.repository.custom.CustomSolicitudProyectoSocioPeriodoJustificacionRepository;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
 public interface SolicitudProyectoSocioPeriodoJustificacionRepository
-    extends JpaRepository<SolicitudProyectoSocioPeriodoJustificacion, Long>,
+    extends CustomSolicitudProyectoSocioPeriodoJustificacionRepository,
+    JpaRepository<SolicitudProyectoSocioPeriodoJustificacion, Long>,
     JpaSpecificationExecutor<SolicitudProyectoSocioPeriodoJustificacion> {
 
   /**
@@ -29,5 +31,7 @@ public interface SolicitudProyectoSocioPeriodoJustificacionRepository
    *                                 {@link SolicitudProyectoSocio}
    */
   void deleteBySolicitudProyectoSocioId(Long solicitudProyectoSocioId);
+
+  boolean existsBySolicitudProyectoSocioId(Long solicitudProyectoSocioId);
 
 }

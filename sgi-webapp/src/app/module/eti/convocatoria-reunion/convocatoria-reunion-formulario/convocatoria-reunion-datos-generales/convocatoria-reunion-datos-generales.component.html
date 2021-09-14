@@ -1,5 +1,4 @@
-<section class="convocatoria-reunion-datos-generales">
-  <h2>{{'label.datos-generales' | translate}}</h2>
+<sgi-fragment title="{{'label.datos-generales' | translate}}">
 
   <form [formGroup]="formGroup" [fxLayout.xs]="fxLayoutProperties.xs" [fxLayout]="fxLayoutProperties.layout"
     [fxLayoutGap]="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
@@ -18,8 +17,8 @@
       [fxFlexOrder]="fxFlexProperties.order">
       <mat-form-field class="input-form">
         <mat-label>{{'label.eti.comite' | translate}}</mat-label>
-        <input (click)="getConvocantesComite()" type="text" [placeholder]="'label.eti.comite' | translate"
-          arial-label="Number" matInput formControlName="comite" [matAutocomplete]="autocompleteComite" required>
+        <input type="text" [placeholder]="'label.eti.comite' | translate" arial-label="Number" matInput
+          formControlName="comite" [matAutocomplete]="autocompleteComite" required>
         <mat-autocomplete #autocompleteComite="matAutocomplete" [displayWith]="getComite">
           <mat-option *ngFor="let comite of filteredComites | async" [value]="comite">
             {{comite.comite}}
@@ -89,34 +88,19 @@
       </mat-form-field>
     </div>
 
-    <!-- Hora inicio -->
+    <!-- Hora -->
     <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
       [fxFlexOrder]="fxFlexProperties.order">
       <mat-form-field>
         <mat-label>{{'eti.convocatoria-reunion.hora-inicio' | translate}}</mat-label>
-        <input matInput formControlName="horaInicio" id="horaInicio" type="number"
-          placeholder="{{'eti.convocatoria-reunion.hora-inicio' | translate}}" required>
+        <input matTimepicker #timepicker="matTimepicker" formControlName="horaInicio" disableDialogOpenOnClick="true"
+          strict="false" okLabel="{{ 'btn.ok' | translate }}" cancelLabel="{{ 'btn.cancel' | translate }}" required>
+        <button mat-icon-button type="button" matSuffix (click)="timepicker.showDialog()" color="primary"
+          [disabled]="formGroup.controls.horaInicio.disabled">
+          <mat-icon>access_time</mat-icon>
+        </button>
         <mat-error *ngIf="formGroup.controls.horaInicio.errors?.required">
           {{'error.required.entity' | translate:msgParamHoraInicioEntity}}
-        </mat-error>
-        <mat-error *ngIf="formGroup.controls.horaInicio.errors?.noValido">
-          {{'error.invalid.entity' | translate:msgParamHoraInicioEntity}}
-        </mat-error>
-      </mat-form-field>
-    </div>
-
-    <!-- Minuto inicio -->
-    <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
-      [fxFlexOrder]="fxFlexProperties.order">
-      <mat-form-field>
-        <mat-label>{{'eti.convocatoria-reunion.minuto-inicio' | translate}}</mat-label>
-        <input matInput formControlName="minutoInicio" id="minutoInicio" type="number"
-          placeholder="{{'eti.convocatoria-reunion.minuto-inicio' | translate}}" required>
-        <mat-error *ngIf="formGroup.controls.minutoInicio.errors?.required">
-          {{'error.required.entity' | translate:msgParamMinutoInicioEntity}}
-        </mat-error>
-        <mat-error *ngIf="formGroup.controls.minutoInicio.errors?.noValido">
-          {{'error.invalid.entity' | translate:msgParamMinutoInicioEntity}}
         </mat-error>
       </mat-form-field>
     </div>
@@ -163,4 +147,4 @@
       </mat-form-field>
     </div>
   </form>
-</section>
+</sgi-fragment>

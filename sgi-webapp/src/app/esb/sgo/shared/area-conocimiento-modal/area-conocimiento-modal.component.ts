@@ -12,7 +12,7 @@ import { AreaConocimientoService } from '@core/services/sgo/area-conocimiento.se
 import { SnackBarService } from '@core/services/snack-bar.service';
 import { NGXLogger } from 'ngx-logger';
 import { BehaviorSubject } from 'rxjs';
-import { map, switchMap, tap } from 'rxjs/operators';
+import { map } from 'rxjs/operators';
 
 const MSG_ERROR_LOAD = marker('error.load');
 interface AreaConocimientoListado {
@@ -180,19 +180,18 @@ export class AreaConocimientoModalComponent
   }
 
   /**
-   * Recupera los hijos de los hijos del nodo expandido si no se han cargado previamente.
+   * Recupera los hijos del nodo expandido si no se han cargado previamente.
    *
    * @param node node del arbol expandido o colapsado.
    */
   onToggleNode(node: NodeAreaConocimiento): void {
     if (this.treeControl.isExpanded(node)) {
-      if (node.childs.some(child => !child.childsLoaded)) {
-        this.areaConocimientoService.findAllHijos(node.childs.filter(child => !child.childsLoaded).map(c => c.areaConocimiento.id))
-          .pipe(
-            tap((areasConocimiento) => this.buildTree(areasConocimiento.items))
-          ).subscribe(
-            () => {
-              node.childs.forEach(childNode => childNode.setChildsLoaded());
+      if (!node.childsLoaded) {
+        this.areaConocimientoService.findAllHijos(node.areaConocimiento.id)
+          .subscribe(
+            (areasConocimiento) => {
+              this.buildTree(areasConocimiento.items);
+              node.setChildsLoaded();
               this.publishNodes();
             },
             (error) => {
@@ -213,18 +212,7 @@ export class AreaConocimientoModalComponent
         .pipe(
           map((ramasConocimiento) => ramasConocimiento.items.map(
             (ramaConocimiento) => new NodeAreaConocimiento(ramaConocimiento, 0))
-          ),
-          tap((nodes) => this.publishNodes(nodes)),
-          switchMap((nodes) => {
-            const ids = nodes.map(node => node.areaConocimiento.id);
-            return this.areaConocimientoService.findAllHijos(ids).pipe(
-              map((areasConocimiento) => {
-                nodes.forEach(node => node.childs.forEach(childNode => childNode.setChildsLoaded()));
-                this.buildTree(areasConocimiento.items);
-                return nodes;
-              })
-            );
-          })
+          )
         ).subscribe(
           (nodes) => {
             this.publishNodes(nodes, true);

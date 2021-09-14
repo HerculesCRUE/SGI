@@ -1,6 +1,7 @@
-import { IConceptoGasto } from './tipos-configuracion';
+import { IConceptoGasto } from './concepto-gasto';
 
 export interface ISolicitudProyectoPresupuestoTotalConceptoGasto {
   conceptoGasto: IConceptoGasto;
-  importeTotal: number;
+  importeTotalSolicitado: number;
+  importeTotalPresupuestado: number;
 }

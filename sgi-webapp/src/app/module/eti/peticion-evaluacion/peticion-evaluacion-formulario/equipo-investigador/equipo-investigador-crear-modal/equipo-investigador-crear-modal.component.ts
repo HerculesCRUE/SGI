@@ -12,7 +12,7 @@ import { VinculacionService } from '@core/services/sgp/vinculacion.service';
 import { SnackBarService } from '@core/services/snack-bar.service';
 import { FormGroupUtil } from '@core/utils/form-group-util';
 import { TranslateService } from '@ngx-translate/core';
-import { TipoColectivo } from '@shared/select-persona/select-persona.component';
+import { TipoColectivo } from 'src/app/esb/sgp/shared/select-persona/select-persona.component';
 
 const PERSONA_KEY = marker('eti.peticion-evaluacion.equipo-investigador.persona');
 

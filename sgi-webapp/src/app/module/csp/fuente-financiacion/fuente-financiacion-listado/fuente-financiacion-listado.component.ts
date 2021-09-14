@@ -3,6 +3,7 @@ import { FormControl, FormGroup } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { AbstractTablePaginationComponent } from '@core/component/abstract-table-pagination.component';
+import { HttpProblem } from '@core/errors/http-problem';
 import { MSG_PARAMS } from '@core/i18n';
 import { IFuenteFinanciacion } from '@core/models/csp/fuente-financiacion';
 import { ITipoAmbitoGeografico } from '@core/models/csp/tipo-ambito-geografico';
@@ -34,6 +35,7 @@ const MSG_DEACTIVATE = marker('msg.deactivate.entity');
 const MSG_ERROR_DEACTIVATE = marker('error.csp.deactivate.entity');
 const MSG_SUCCESS_DEACTIVATE = marker('msg.csp.deactivate.success');
 const FUENTE_FINANCIACION_KEY = marker('csp.fuente-financiacion');
+
 @Component({
   selector: 'sgi-fuente-financiacion-listado',
   templateUrl: './fuente-financiacion-listado.component.html',
@@ -373,7 +375,12 @@ export class FuenteFinanciacionListadoComponent extends AbstractTablePaginationC
             },
             (error) => {
               this.logger.error(error);
-              this.snackBarService.showError(fuenteFinanciacion ? this.textoUpdateError : this.textoCrearSuccess);
+              if (error instanceof HttpProblem) {
+                this.snackBarService.showError(error);
+              }
+              else {
+                this.snackBarService.showError(fuenteFinanciacion ? this.textoUpdateError : this.textoCrearError);
+              }
             }
           );
         }
@@ -399,7 +406,12 @@ export class FuenteFinanciacionListadoComponent extends AbstractTablePaginationC
         },
         (error) => {
           this.logger.error(error);
-          this.snackBarService.showError(this.textoErrorDesactivar);
+          if (error instanceof HttpProblem) {
+            this.snackBarService.showError(error);
+          }
+          else {
+            this.snackBarService.showError(this.textoErrorDesactivar);
+          }
         }
       );
     this.suscripciones.push(subcription);
@@ -424,7 +436,12 @@ export class FuenteFinanciacionListadoComponent extends AbstractTablePaginationC
         },
         (error) => {
           this.logger.error(error);
-          this.snackBarService.showError(this.textoErrorReactivar);
+          if (error instanceof HttpProblem) {
+            this.snackBarService.showError(error);
+          }
+          else {
+            this.snackBarService.showError(this.textoErrorReactivar);
+          }
         }
       );
     this.suscripciones.push(subcription);

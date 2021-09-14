@@ -1,10 +1,9 @@
+import { animate, state, style, transition, trigger } from '@angular/animations';
 import { Component } from '@angular/core';
 import { LayoutService } from '@core/services/layout.service';
 
-import { trigger, state, style, transition, animate } from '@angular/animations';
-
-const OPEN_WITH_EM = 16;
-const CLOSE_WITH_EM = 5;
+const OPEN_WITH = 225;
+const CLOSE_WITH = 45;
 
 @Component({
   selector: 'sgi-root',
@@ -14,12 +13,12 @@ const CLOSE_WITH_EM = 5;
     trigger('menu-animation', [
       state('close',
         style({
-          'min-width': CLOSE_WITH_EM + 'em'
+          'min-width': CLOSE_WITH + 'px'
         })
       ),
       state('open',
         style({
-          'min-width': OPEN_WITH_EM + 'em'
+          'min-width': OPEN_WITH + 'px'
         })
       ),
       transition('close => open', animate('250ms ease-in')),
@@ -28,12 +27,12 @@ const CLOSE_WITH_EM = 5;
     trigger('content-animation', [
       state('close',
         style({
-          'margin-left': CLOSE_WITH_EM + 'em'
+          'margin-left': CLOSE_WITH + 'px'
         })
       ),
       state('open',
         style({
-          'margin-left': OPEN_WITH_EM + 'em'
+          'margin-left': OPEN_WITH + 'px'
         })
       ),
       transition('close => open', animate('250ms ease-in')),
@@ -44,12 +43,11 @@ const CLOSE_WITH_EM = 5;
 export class RootComponent {
   // width pantalla resoluciones pequenas
   screenWidth: number;
-  openedWidth = OPEN_WITH_EM;
-  closedWith = CLOSE_WITH_EM;
+  openedWidth = OPEN_WITH;
+  closedWith = CLOSE_WITH;
 
   constructor(public layoutService: LayoutService) {
     this.screenWidth = window.innerWidth;
   }
-
 
 }

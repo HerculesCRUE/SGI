@@ -2,10 +2,10 @@
 @import "typography.scss";
 
 a.mat-list-item {
-  font-size: mat-font-size($custom-typography, body-1);
+  font-size: map-get($sgi-typography-size, menu-secondary);
   text-decoration-line: none;
   &.is-active {
-    background-color: map-get($custom-colors, white);
+    background-color: map-get($sgi-custom-colors, white);
     font-weight: bold;
   }
 
@@ -15,13 +15,5 @@ a.mat-list-item {
     justify-content: space-between;
     width: 100%;
     align-items: center;
-  }
-
-  .warning-icon {
-    color: map-get($custom-colors, warning);
-  }
-
-  .danger-icon {
-    color: map-get($custom-colors, danger);
   }
 }

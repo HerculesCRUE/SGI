@@ -1,5 +1,4 @@
-<section class="proyecto-socio-periodo-justificacion.datos-generales">
-  <h2>{{'label.datos-generales' | translate}}</h2>
+<sgi-fragment title="{{'label.datos-generales' | translate}}">
   <form [formGroup]="formGroup">
     <!-- numPeriodo -->
     <div *ngIf="this.fragment.isEdit()" [fxLayout.xs]="fxLayoutProperties.xs" [fxLayout]="fxLayoutProperties.layout"
@@ -23,11 +22,11 @@
         [fxFlexOrder]="fxFlexProperties.order">
         <mat-form-field fxFill>
           <mat-label>{{'csp.proyecto-socio-periodo-justificacion.fecha-inicio' | translate}}</mat-label>
-          <input matInput [ngxMatDatetimePicker]="fechaInicioPicker" formControlName="fechaInicio" id="fechaInicio"
+          <input matInput [matDatepicker]="fechaInicioPicker" formControlName="fechaInicio" id="fechaInicio"
             placeholder="{{'csp.proyecto-socio-periodo-justificacion.fecha-inicio' | translate}}" required>
           <mat-datepicker-toggle matSuffix [for]="fechaInicioPicker"></mat-datepicker-toggle>
-          <ngx-mat-datetime-picker #fechaInicioPicker showSeconds="true" [defaultTime]="[0,0,0]">
-          </ngx-mat-datetime-picker>
+          <mat-datepicker #fechaInicioPicker>
+          </mat-datepicker>
           <mat-error *ngIf="formGroup.controls.fechaInicio.errors?.overlapped">
             {{'error.overlapping.record.entity' | translate:msgParamFechaInicio}}
           </mat-error>
@@ -46,13 +45,13 @@
       <!-- fechaFin -->
       <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
         [fxFlexOrder]="fxFlexProperties.order">
-        <mat-form-field fxFill>
+        <mat-form-field fxFill sgiEndDate>
           <mat-label>{{'csp.proyecto-socio-periodo-justificacion.fecha-fin' | translate}}</mat-label>
-          <input matInput [ngxMatDatetimePicker]="fechaFinPicker" formControlName="fechaFin" id="fechaFin" required
+          <input matInput [matDatepicker]="fechaFinPicker" formControlName="fechaFin" id="fechaFin" required
             placeholder="{{'csp.proyecto-socio-periodo-justificacion.fecha-fin' | translate}}">
           <mat-datepicker-toggle matSuffix [for]="fechaFinPicker"></mat-datepicker-toggle>
-          <ngx-mat-datetime-picker #fechaFinPicker showSeconds="true" [defaultTime]="[23,59,59]">
-          </ngx-mat-datetime-picker>
+          <mat-datepicker #fechaFinPicker>
+          </mat-datepicker>
           <mat-error *ngIf="formGroup.controls.fechaFin.errors?.overlapped">
             {{'error.overlapping.record.entity' | translate:msgParamFechaFin}}
           </mat-error>
@@ -179,4 +178,4 @@
     </div>
 
   </form>
-</section>
+</sgi-fragment>

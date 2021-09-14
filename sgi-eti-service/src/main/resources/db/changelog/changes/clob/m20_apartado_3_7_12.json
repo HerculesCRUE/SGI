@@ -1,0 +1,51 @@
+[
+  {
+    "key": "ap3_7_12",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "label": "3.7.12 Destino final"
+    },
+    "fieldGroup": [
+      {
+        "template": "¿Cuál es el destino final del animal una vez terminado todo el proceso de experimentación?"
+      },
+      {
+        "key": "destinoFinalRadio",
+        "type": "radio",
+        "className": "vertical-radio",
+        "templateOptions": {
+          "label": "Elige opción:",
+          "required": true,
+          "options": [
+            {
+              "value": "eutanasia",
+              "label": "Eutanasia"
+            },
+            {
+              "value": "muerte",
+              "label": "El proceso implica la muerte del animal"
+            },
+            {
+              "value": "mantenimiento",
+              "label": "Mantenimiento con vida"
+            }
+          ]
+        }
+      },
+      {
+        "key": "justificarMantenimiento",
+        "type": "textarea",
+        "hideExpression": "!model.destinoFinalRadio || model.destinoFinalRadio === 'eutanasia' || model.destinoFinalRadio === 'muerte'",
+        "templateOptions": {
+          "label": "Justificar",
+          "required": true,
+          "autosize": true,
+          "autosizeMinRows": "1",
+          "autosizeMaxRows": "10"
+        }
+      }
+    ]
+  }
+]

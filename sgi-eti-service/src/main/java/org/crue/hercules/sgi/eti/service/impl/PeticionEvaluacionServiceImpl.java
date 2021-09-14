@@ -1,10 +1,10 @@
 package org.crue.hercules.sgi.eti.service.impl;
 
 import java.time.Instant;
-import java.time.ZoneOffset;
 import java.time.temporal.ChronoField;
 
 import org.apache.commons.lang3.StringUtils;
+import org.crue.hercules.sgi.eti.config.SgiConfigProperties;
 import org.crue.hercules.sgi.eti.dto.PeticionEvaluacionWithIsEliminable;
 import org.crue.hercules.sgi.eti.exceptions.PeticionEvaluacionNotFoundException;
 import org.crue.hercules.sgi.eti.model.Memoria;
@@ -31,9 +31,12 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Transactional(readOnly = true)
 public class PeticionEvaluacionServiceImpl implements PeticionEvaluacionService {
+  private final SgiConfigProperties sgiConfigProperties;
   private final PeticionEvaluacionRepository peticionEvaluacionRepository;
 
-  public PeticionEvaluacionServiceImpl(PeticionEvaluacionRepository peticionEvaluacionRepository) {
+  public PeticionEvaluacionServiceImpl(SgiConfigProperties sgiConfigProperties,
+      PeticionEvaluacionRepository peticionEvaluacionRepository) {
+    this.sgiConfigProperties = sgiConfigProperties;
     this.peticionEvaluacionRepository = peticionEvaluacionRepository;
   }
 
@@ -55,11 +58,13 @@ public class PeticionEvaluacionServiceImpl implements PeticionEvaluacionService 
 
     String anioInicio;
     if (peticionEvaluacion.getFechaInicio() != null) {
-      anioInicio = String.valueOf(peticionEvaluacion.getFechaInicio().atZone(ZoneOffset.UTC).get(ChronoField.YEAR));
+      anioInicio = String.valueOf(peticionEvaluacion.getFechaInicio()
+          .atZone(sgiConfigProperties.getTimeZone().toZoneId()).get(ChronoField.YEAR));
     } else {
       // Si no existe fecha de inicio se utiliza el año de la fecha actual
       // (la petición viene de CSP)
-      anioInicio = String.valueOf(Instant.now().atZone(ZoneOffset.UTC).get(ChronoField.YEAR));
+      anioInicio = String
+          .valueOf(Instant.now().atZone(sgiConfigProperties.getTimeZone().toZoneId()).get(ChronoField.YEAR));
     }
     PeticionEvaluacion peticionEvaluacionAnio = peticionEvaluacionRepository
         .findFirstByCodigoStartingWithOrderByCodigoDesc(anioInicio);
@@ -81,8 +86,6 @@ public class PeticionEvaluacionServiceImpl implements PeticionEvaluacionService 
           "PeticionEvaluacion fuenteFinanciacion no puede ser null si existeFinanciacion");
       Assert.notNull(peticionEvaluacion.getEstadoFinanciacion(),
           "PeticionEvaluacion estadoFinanciacion no puede ser null si existeFinanciacion");
-      Assert.notNull(peticionEvaluacion.getImporteFinanciacion(),
-          "PeticionEvaluacion importeFinanciacion no puede ser null si existeFinanciacion");
     }
 
     if (peticionEvaluacion.getValorSocial() != null

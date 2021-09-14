@@ -1,0 +1,86 @@
+[
+  {
+    "key": "ap3_6_2",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "label": "3.6.2 Animales modificados genéticamente"
+    },
+    "fieldGroup": [
+      {
+        "template": "¿Son animales modificados genéticamente?"
+      },
+      {
+        "key": "animalesModificadosGeneticamenteRadio",
+        "type": "radio",
+        "templateOptions": {
+          "label": "Elige opción:",
+          "required": true,
+          "options": [
+            {
+              "value": "no",
+              "label": "No"
+            },
+            {
+              "value": "si",
+              "label": "Sí"
+            }
+          ]
+        }
+      },
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "<p>Nota: Requiere informe del CBE.</p>"
+      },
+      {
+        "template": "¿Implican riesgos para la salud humana, animal o para el medio ambiente?",
+        "hideExpression": "!model.animalesModificadosGeneticamenteRadio || model.animalesModificadosGeneticamenteRadio === 'no'"
+      },
+      {
+        "key": "implicanRiesgosRadio",
+        "type": "radio",
+        "hideExpression": "!model.animalesModificadosGeneticamenteRadio || model.animalesModificadosGeneticamenteRadio === 'no'",
+        "templateOptions": {
+          "label": "Elige opción:",
+          "required": true,
+          "options": [
+            {
+              "value": "no",
+              "label": "No"
+            },
+            {
+              "value": "si",
+              "label": "Sí"
+            }
+          ]
+        }
+      },
+      {
+        "template": "¿La modificación genética puede dar lugar a una progenie o línea animal que experimente dolor, sufrimiento, angustia o daño duradero equivalente o superior al causado por la introducción de una aguja?",
+        "hideExpression": "!model.animalesModificadosGeneticamenteRadio || model.animalesModificadosGeneticamenteRadio === 'no'"
+      },
+      {
+        "key": "experimentaDolorRadio",
+        "type": "radio",
+        "hideExpression": "!model.animalesModificadosGeneticamenteRadio || model.animalesModificadosGeneticamenteRadio === 'no'",
+        "templateOptions": {
+          "label": "Elige opción:",
+          "required": true,
+          "options": [
+            {
+              "value": "no",
+              "label": "No"
+            },
+            {
+              "value": "si",
+              "label": "Sí"
+            }
+          ]
+        }
+      }
+    ]
+  }
+]

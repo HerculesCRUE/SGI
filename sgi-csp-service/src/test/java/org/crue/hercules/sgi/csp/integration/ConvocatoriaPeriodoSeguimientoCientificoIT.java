@@ -59,13 +59,12 @@ public class ConvocatoriaPeriodoSeguimientoCientificoIT extends BaseIT {
       throws Exception {
 
     // given: una lista con uno de los ConvocatoriaPeriodoSeguimientoCientifico
-    // actualizado,
-    // otro nuevo y sin los otros 3 periodos existentes
+    // actualizado, otro nuevo y sin los otros 3 periodos existentes
     Long convocatoriaId = 1L;
     ConvocatoriaPeriodoSeguimientoCientifico newConvocatoriaPeriodoSeguimientoCientifico = generarMockConvocatoriaPeriodoSeguimientoCientifico(
         null, 27, 30, 1L, TipoSeguimiento.FINAL);
     ConvocatoriaPeriodoSeguimientoCientifico updatedConvocatoriaPeriodoSeguimientoCientifico = generarMockConvocatoriaPeriodoSeguimientoCientifico(
-        4L, 24, 26, 1L, TipoSeguimiento.INTERMEDIO);
+        4L, 1, 26, 1L, TipoSeguimiento.INTERMEDIO);
 
     List<ConvocatoriaPeriodoSeguimientoCientifico> convocatoriaPeriodoSeguimientoCientificos = Arrays
         .asList(newConvocatoriaPeriodoSeguimientoCientifico, updatedConvocatoriaPeriodoSeguimientoCientifico);
@@ -80,8 +79,7 @@ public class ConvocatoriaPeriodoSeguimientoCientificoIT extends BaseIT {
         });
 
     // then: Se crea el nuevo ConvocatoriaPeriodoSeguimientoCientifico, se actualiza
-    // el
-    // existe y se eliminan los otros
+    // el existe y se eliminan los otros
     Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
     List<ConvocatoriaPeriodoSeguimientoCientifico> responseData = response.getBody();
     Assertions.assertThat(responseData.get(0).getId()).as("get(0).getId()")

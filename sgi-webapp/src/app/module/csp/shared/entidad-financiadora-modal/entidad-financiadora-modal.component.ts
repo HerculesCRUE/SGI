@@ -10,6 +10,7 @@ import { IEmpresa } from '@core/models/sgemp/empresa';
 import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-properties';
 import { TipoFinanciacionService } from '@core/services/csp/tipo-financiacion.service';
 import { SnackBarService } from '@core/services/snack-bar.service';
+import { NumberValidator } from '@core/validators/number-validator';
 import { TranslateService } from '@ngx-translate/core';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -105,7 +106,8 @@ export class EntidadFinanciadoraModalComponent extends
       tipoFinanciacion: new FormControl(this.data.entidad.tipoFinanciacion),
       porcentajeFinanciacion: new FormControl(this.data.entidad.porcentajeFinanciacion, [
         Validators.min(0),
-        Validators.max(100)
+        Validators.max(100),
+        NumberValidator.maxDecimalDigits(2)
       ]),
       importeFinanciacion: new FormControl(this.data.entidad.importeFinanciacion, [
         Validators.min(0),

@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { AbstractTablePaginationComponent } from '@core/component/abstract-table-pagination.component';
+import { HttpProblem } from '@core/errors/http-problem';
 import { MSG_PARAMS } from '@core/i18n';
 import { IConvocatoria } from '@core/models/csp/convocatoria';
 import { Estado, ESTADO_MAP } from '@core/models/csp/estado-solicitud';
@@ -89,7 +90,8 @@ export class SolicitudListadoInvComponent extends AbstractTablePaginationCompone
 
     this.formGroup = new FormGroup({
       convocatoria: new FormControl(undefined),
-      estadoSolicitud: new FormControl('')
+      estadoSolicitud: new FormControl(''),
+      tituloSolicitud: new FormControl(undefined),
     });
   }
 
@@ -147,9 +149,9 @@ export class SolicitudListadoInvComponent extends AbstractTablePaginationCompone
     this.columnas = [
       'codigoRegistroInterno',
       'codigoExterno',
-      'convocatoria.titulo',
       'referencia',
       'estado.estado',
+      'titulo',
       'estado.fechaEstado',
       'acciones'
     ];
@@ -162,7 +164,8 @@ export class SolicitudListadoInvComponent extends AbstractTablePaginationCompone
   protected createFilter(): SgiRestFilter {
     const controls = this.formGroup.controls;
     const filter = new RSQLSgiRestFilter('convocatoria.id', SgiRestFilterOperator.EQUALS, controls.convocatoria.value?.id?.toString())
-      .and('estado.estado', SgiRestFilterOperator.EQUALS, controls.estadoSolicitud.value);
+      .and('estado.estado', SgiRestFilterOperator.EQUALS, controls.estadoSolicitud.value)
+      .and('titulo', SgiRestFilterOperator.LIKE_ICASE, controls.tituloSolicitud.value);
 
     return filter;
   }
@@ -187,7 +190,12 @@ export class SolicitudListadoInvComponent extends AbstractTablePaginationCompone
       },
       (error) => {
         this.logger.error(error);
-        this.snackBarService.showError(this.textoErrorDesactivar);
+        if (error instanceof HttpProblem) {
+          this.snackBarService.showError(error);
+        }
+        else {
+          this.snackBarService.showError(this.textoErrorDesactivar);
+        }
       }
     );
     this.suscripciones.push(subcription);

@@ -1,0 +1,35 @@
+[
+  {
+    "key": "ap3_1",
+    "wrappers": [
+      "expansion-panel"
+    ],
+    "templateOptions": {
+      "label": "3.1 Objetivos científicos del proyecto"
+    },
+    "fieldGroup": [
+      {
+        "template": "<p>Describir brevemente los principales objetivos que se pretenden alcanzar con esta experimentación con agentes biológicos, OMG, Sustancias Químicas Peligrosas, Sustancias Radiactivas y/o Nanoparticulas</p>"
+      },
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "Para completar esta sección ir a <b>'Datos generales'</b>."
+      },
+      {
+        "key": "objetivosCientificos",
+        "type": "textarea",
+        "templateOptions": {
+          "label": "Descripción objetivos científicos del proyecto",
+          "placeholder": "Descripción",
+          "disabled": true,
+          "autosize": true,
+          "autosizeMinRows": "1",
+          "autosizeMaxRows": "10",
+          "expressionModelValue": "formState.memoria.peticionEvaluacion.objetivos"
+        }
+      }
+    ]
+  }
+]

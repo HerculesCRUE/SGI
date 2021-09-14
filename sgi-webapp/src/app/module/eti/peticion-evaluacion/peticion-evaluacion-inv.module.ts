@@ -18,6 +18,7 @@ import { PeticionEvaluacionResolver } from './peticion-evaluacion.resolver';
 import { PeticionEvaluacionTareasListadoComponent } from './peticion-evaluacion-formulario/peticion-evaluacion-tareas/peticion-evaluacion-tareas-listado/peticion-evaluacion-tareas-listado.component';
 import { PeticionEvaluacionEditarComponent } from './peticion-evaluacion-editar/peticion-evaluacion-editar.component';
 import { PeticionEvaluacionTareasModalComponent } from './peticion-evaluacion-formulario/peticion-evaluacion-tareas/peticion-evaluacion-tareas-modal/peticion-evaluacion-tareas-modal.component';
+import { SgpSharedModule } from 'src/app/esb/sgp/shared/sgp-shared.module';
 
 @NgModule({
   declarations: [
@@ -39,7 +40,8 @@ import { PeticionEvaluacionTareasModalComponent } from './peticion-evaluacion-fo
     MaterialDesignModule,
     FormsModule,
     ReactiveFormsModule,
-    SgiAuthModule
+    SgiAuthModule,
+    SgpSharedModule
   ],
   providers: [
     PeticionEvaluacionResolver

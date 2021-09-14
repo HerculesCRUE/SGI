@@ -5,8 +5,8 @@
     height: 100px;
     width: 100px;
     font-size: 40px;
-    background-color: white;
-    color: #5472c9;
+    background-color: map-get($sgi-custom-colors, white);
+    color: map-get($palette-primary, 400);
 
     mat-icon {
       height: 40px;
@@ -15,21 +15,21 @@
     }
   }
   .mat-step-header .mat-step-icon-selected {
-    background-color: #5472c9;
-    color: white;
+    background-color: map-get($palette-primary, 400);
+    color: map-get($sgi-custom-colors, white);
   }
-  .mat-stepper-label-position-bottom .mat-horizontal-stepper-header:not(:first-child)::before, 
-  [dir=rtl] .mat-stepper-label-position-bottom .mat-horizontal-stepper-header:not(:last-child)::before, 
-  .mat-stepper-label-position-bottom .mat-horizontal-stepper-header:not(:last-child)::after, 
-  [dir=rtl] .mat-stepper-label-position-bottom .mat-horizontal-stepper-header:not(:first-child)::after {
+  .mat-stepper-label-position-bottom .mat-horizontal-stepper-header:not(:first-child)::before,
+  [dir="rtl"] .mat-stepper-label-position-bottom .mat-horizontal-stepper-header:not(:last-child)::before,
+  .mat-stepper-label-position-bottom .mat-horizontal-stepper-header:not(:last-child)::after,
+  [dir="rtl"] .mat-stepper-label-position-bottom .mat-horizontal-stepper-header:not(:first-child)::after {
     top: 74px;
     width: calc(50% - 60px);
     border-top-width: 1.5px;
     border-top-style: dashed;
-    border-color: #5472c9;
+    border-color: map-get($palette-primary, 400);
   }
   .mat-horizontal-stepper-header-container {
-    background-color: #f3f6f9;
+    background-color: map-get($sgi-custom-colors, bg);
     border: solid 1px rgba(0, 0, 0, 0.12);
   }
   .mat-step-label {
@@ -43,27 +43,27 @@
         border-radius: 1.5em;
         padding-right: 2em;
         mat-icon {
-          margin-left: -.2em;
-          padding-right: .1em;
+          margin-left: -0.2em;
+          padding-right: 0.1em;
         }
       }
       &.right {
         border-radius: 1.5em;
         padding-left: 2.3em;
         mat-icon {
-          margin-right: -.2em;
-          padding-left: .1em;
+          margin-right: -0.2em;
+          padding-left: 0.1em;
         }
       }
     }
   }
-  
+
   .mat-horizontal-content-container {
     padding: 0 4px 24px 4px;
   }
 
   .mat-radio-button ~ .mat-radio-button {
-      margin-left: 16px;
+    margin-left: 16px;
   }
   formly-field-mat-multicheckbox mat-checkbox {
     display: block;
@@ -72,17 +72,17 @@
     .template-input {
       border-width: 1px;
       border-style: solid;
-      border-radius: .5em;
+      border-radius: 0.5em;
       background: lightgrey;
-      padding: .5em;
+      padding: 0.5em;
       margin-top: 5px;
       margin-bottom: 5px;
     }
   }
 
-  formly-field.vertical-radio   {
+  formly-field.vertical-radio {
     mat-radio-button ~ mat-radio-button {
-        margin-top: 5px;
+      margin-top: 5px;
     }
     mat-radio-button {
       display: block;

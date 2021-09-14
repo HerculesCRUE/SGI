@@ -1,5 +1,4 @@
-<section class="seguimiento-evaluacion">
-  <h2>{{'eti.evaluacion' | translate:MSG_PARAMS.CARDINALIRY.SINGULAR}}</h2>
+<sgi-fragment title="{{'eti.evaluacion' | translate:MSG_PARAMS.CARDINALIRY.SINGULAR}}">
   <form [formGroup]="formGroup" [fxLayout.xs]="fxLayoutProperties.xs" [fxLayout]="fxLayoutProperties.layout"
     [fxLayoutGap]="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
 
@@ -69,4 +68,4 @@
   </form>
   <sgi-seguimiento-listado-anterior-memoria #evaluaciones [rol]="this.actionService.getRol()">
   </sgi-seguimiento-listado-anterior-memoria>
-</section>
+</sgi-fragment>

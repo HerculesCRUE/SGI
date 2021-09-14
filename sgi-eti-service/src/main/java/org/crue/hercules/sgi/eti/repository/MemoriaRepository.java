@@ -4,6 +4,7 @@ import java.util.Optional;
 
 import org.crue.hercules.sgi.eti.model.Comite;
 import org.crue.hercules.sgi.eti.model.Memoria;
+import org.crue.hercules.sgi.eti.model.PeticionEvaluacion;
 import org.crue.hercules.sgi.eti.model.TipoMemoria;
 import org.crue.hercules.sgi.eti.repository.custom.CustomMemoriaRepository;
 import org.springframework.data.domain.Page;
@@ -54,10 +55,12 @@ public interface MemoriaRepository
    * Devuelve una lista paginada de memorias activas asociadas al comité (que
    * también esté activo).
    * 
-   * @param idComite Identificador {@link Comite}
-   * @param paging   Datos de la paginación.
+   * @param idComite             Identificador {@link Comite}
+   * @param idPeticionEvaluacion Identificador {@link PeticionEvaluacion}
+   * @param paging               Datos de la paginación.
    * @return lista paginada de memorias
    */
-  Page<Memoria> findByComiteIdAndActivoTrueAndComiteActivoTrue(Long idComite, Pageable paging);
+  Page<Memoria> findByComiteIdAndPeticionEvaluacionIdAndActivoTrueAndComiteActivoTrue(Long idComite,
+      Long idPeticionEvaluacion, Pageable paging);
 
 }

@@ -1,0 +1,90 @@
+[
+  {
+    "key": "ap3_5",
+    "wrappers": [
+      "expansion-panel"
+    ],
+    "templateOptions": {
+      "expressionLock": "formState.memoria.tipoMemoria.id === 3",
+      "label": "3.5 Muestras biológicas de origen humano"
+    },
+    "fieldGroup": [
+      {
+        "template": "<p>¿En esta actividad se utilizan muestras biológicas de origen humano?</p>"
+      },
+      {
+        "key": "muestrasBiologicasRadio",
+        "type": "radio",
+        "templateOptions": {
+          "required": true,
+          "label": "Elige opción:",
+          "options": [
+            {
+              "value": "no",
+              "label": "No"
+            },
+            {
+              "value": "si",
+              "label": "Sí"
+            }
+          ]
+        }
+      },
+      {
+        "type": "multicheckbox",
+        "key": "muestrasBiologicasCheck",
+        "hideExpression": "!model.muestrasBiologicasRadio || model.muestrasBiologicasRadio === 'no'",
+        "templateOptions": {
+          "label": "Cuales",
+          "type": "array",
+          "required": true,
+          "options": [
+            {
+              "value": "celulasgerminales",
+              "label": "Células germinales"
+            },
+            {
+              "value": "celulassomaticas",
+              "label": "Células somáticas"
+            },
+            {
+              "value": "sangre",
+              "label": "Sangre"
+            },
+            {
+              "value": "fluidos",
+              "label": "Fluidos"
+            },
+            {
+              "value": "organos",
+              "label": "Órganos"
+            },
+            {
+              "value": "tejidos",
+              "label": "Tejidos"
+            },
+            {
+              "value": "lineasCelulares",
+              "label": "Líneas celulares troncales embrionarias*"
+            },
+            {
+              "value": "celulasTejidos",
+              "label": "Células y tejidos de origen embrionario humano*"
+            },
+            {
+              "value": "embrionesFetos",
+              "label": "Embriones y fetos humanos*"
+            }
+          ]
+        }
+      },
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "<p>Nota: Recuerde que la manipulación de tejidos/sangre/fluidos humanos requiere de evaluación del CBE.</p><p>Las opciones marcadas con asterisco (*) requieren el informe previo favorable de la Comisión de Garantías antes de su utilización</p>",
+        "hideExpression": "!model.muestrasBiologicasRadio || model.muestrasBiologicasRadio === 'no'"
+      }
+    ]
+  }
+]

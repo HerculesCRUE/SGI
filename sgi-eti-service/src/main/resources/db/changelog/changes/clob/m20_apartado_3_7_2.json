@@ -1,0 +1,30 @@
+[
+  {
+    "key": "ap3_7_2",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "label": "3.7.2 Duración del proceso de experimentación"
+    },
+    "fieldGroup": [
+      {
+        "template": "¿Cuánto tiempo dura el proceso de experimentación al que es sometido cada animal (en días)?"
+      },
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "<p>La duración debe contarse desde el momento en que se inicia la preparación de un animal para su utilización en el proceso de experimentación hasta que 'ya no vayan a hacerse observaciones ulteriores sobre él' y 'haya sido sacrificado, realojado o reintegrado a un hábitat o sistema zootécnico conveniente'.</p>"
+      },
+      {
+        "key": "duracionProcesoExperimentacion",
+        "type": "input",
+        "templateOptions": {
+          "label": "Tiempo (días)",
+          "placeholder": "Tiempo en días"
+        }
+      }
+    ]
+  }
+]

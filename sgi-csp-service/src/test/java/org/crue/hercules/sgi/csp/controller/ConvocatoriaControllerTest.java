@@ -1,5 +1,6 @@
 package org.crue.hercules.sgi.csp.controller;
 
+import java.math.BigDecimal;
 import java.time.Instant;
 import java.time.Period;
 import java.util.ArrayList;
@@ -52,6 +53,8 @@ import org.crue.hercules.sgi.csp.service.ConvocatoriaPartidaService;
 import org.crue.hercules.sgi.csp.service.ConvocatoriaPeriodoJustificacionService;
 import org.crue.hercules.sgi.csp.service.ConvocatoriaPeriodoSeguimientoCientificoService;
 import org.crue.hercules.sgi.csp.service.ConvocatoriaService;
+import org.crue.hercules.sgi.csp.service.RequisitoIPCategoriaProfesionalService;
+import org.crue.hercules.sgi.csp.service.RequisitoIPNivelAcademicoService;
 import org.crue.hercules.sgi.framework.test.web.servlet.result.SgiMockMvcResultHandlers;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
@@ -106,6 +109,10 @@ public class ConvocatoriaControllerTest extends BaseControllerTest {
   private ConvocatoriaConceptoGastoService convocatoriaConceptoGastoService;
   @MockBean
   private ConvocatoriaConceptoGastoCodigoEcService convocatoriaConceptoGastoCodigoEcService;
+  @MockBean
+  private RequisitoIPNivelAcademicoService requisitoIPNivelAcademicoService;
+  @MockBean
+  private RequisitoIPCategoriaProfesionalService requisitoIPCategoriaProfesionalService;
 
   private static final String PATH_PARAMETER_ID = "/{id}";
   private static final String PATH_PARAMETER_DESACTIVAR = "/desactivar";
@@ -191,7 +198,6 @@ public class ConvocatoriaControllerTest extends BaseControllerTest {
         .andExpect(MockMvcResultMatchers.jsonPath("finalidad.id").value(convocatoriaExistente.getFinalidad().getId()))
         .andExpect(MockMvcResultMatchers.jsonPath("regimenConcurrencia.id")
             .value(convocatoriaExistente.getRegimenConcurrencia().getId()))
-        .andExpect(MockMvcResultMatchers.jsonPath("colaborativos").value(convocatoriaExistente.getColaborativos()))
         .andExpect(MockMvcResultMatchers.jsonPath("estado").value(Convocatoria.Estado.REGISTRADA.toString()))
         .andExpect(MockMvcResultMatchers.jsonPath("duracion").value(convocatoriaExistente.getDuracion()))
         .andExpect(MockMvcResultMatchers.jsonPath("ambitoGeografico.id")
@@ -262,8 +268,6 @@ public class ConvocatoriaControllerTest extends BaseControllerTest {
             MockMvcResultMatchers.jsonPath("finalidad.id").value(convocatoriaBorradorExistente.getFinalidad().getId()))
         .andExpect(MockMvcResultMatchers.jsonPath("regimenConcurrencia.id")
             .value(convocatoriaBorradorExistente.getRegimenConcurrencia().getId()))
-        .andExpect(
-            MockMvcResultMatchers.jsonPath("colaborativos").value(convocatoriaBorradorExistente.getColaborativos()))
         .andExpect(MockMvcResultMatchers.jsonPath("estado").value(Convocatoria.Estado.REGISTRADA.toString()))
         .andExpect(MockMvcResultMatchers.jsonPath("duracion").value(convocatoriaBorradorExistente.getDuracion()))
         .andExpect(MockMvcResultMatchers.jsonPath("ambitoGeografico.id")
@@ -387,8 +391,8 @@ public class ConvocatoriaControllerTest extends BaseControllerTest {
   public void modificable_ConvocatoriaRegistradaWithSolicitudesOrProyectosIsTrue_Returns204() throws Exception {
     // given: Existing id convocatoria registrada with Solicitudes or Proyectos
     Long id = 1L;
-    BDDMockito.given(service.modificable(ArgumentMatchers.<Long>any(), ArgumentMatchers.<String>any(),
-        ArgumentMatchers.<String[]>any())).willReturn(Boolean.FALSE);
+    BDDMockito.given(service.isRegistradaConSolicitudesOProyectos(ArgumentMatchers.<Long>any(),
+        ArgumentMatchers.<String>any(), ArgumentMatchers.<String[]>any())).willReturn(Boolean.FALSE);
 
     // when: check modificable by convocatoriaId
     mockMvc
@@ -404,8 +408,8 @@ public class ConvocatoriaControllerTest extends BaseControllerTest {
   public void modificable_ConvocatoriaRegistradaOrWithSolicitudesOrProyectosIsFalse_Returns200() throws Exception {
     // given: Existing id in any Estado without Solicitudes or Proyectos
     Long id = 1L;
-    BDDMockito.given(service.modificable(ArgumentMatchers.<Long>any(), ArgumentMatchers.<String>any(),
-        ArgumentMatchers.<String[]>any())).willReturn(Boolean.TRUE);
+    BDDMockito.given(service.isRegistradaConSolicitudesOProyectos(ArgumentMatchers.<Long>any(),
+        ArgumentMatchers.<String>any(), ArgumentMatchers.<String[]>any())).willReturn(Boolean.TRUE);
 
     // when: check modificable by convocatoriaId
     mockMvc
@@ -1363,7 +1367,6 @@ public class ConvocatoriaControllerTest extends BaseControllerTest {
         .andExpect(MockMvcResultMatchers.jsonPath("finalidad.id").value(newConvocatoria.getFinalidad().getId()))
         .andExpect(MockMvcResultMatchers.jsonPath("regimenConcurrencia.id")
             .value(newConvocatoria.getRegimenConcurrencia().getId()))
-        .andExpect(MockMvcResultMatchers.jsonPath("colaborativos").value(newConvocatoria.getColaborativos()))
         .andExpect(MockMvcResultMatchers.jsonPath("estado").value(Convocatoria.Estado.REGISTRADA.toString()))
         .andExpect(MockMvcResultMatchers.jsonPath("duracion").value(newConvocatoria.getDuracion()))
         .andExpect(
@@ -1651,7 +1654,6 @@ public class ConvocatoriaControllerTest extends BaseControllerTest {
         .observaciones("observaciones-" + String.format("%03d", convocatoriaId))
         .finalidad((modeloTipoFinalidad == null) ? null : modeloTipoFinalidad.getTipoFinalidad())
         .regimenConcurrencia(tipoRegimenConcurrencia)
-        .colaborativos(Boolean.TRUE)
         .estado(Convocatoria.Estado.REGISTRADA)
         .duracion(12)
         .ambitoGeografico(tipoAmbitoGeografico)
@@ -2128,7 +2130,7 @@ public class ConvocatoriaControllerTest extends BaseControllerTest {
     convocatoriaEntidadFinanciadora.setEntidadRef("entidad-" + (id == null ? 0 : id));
     convocatoriaEntidadFinanciadora.setFuenteFinanciacion(fuenteFinanciacion);
     convocatoriaEntidadFinanciadora.setTipoFinanciacion(tipoFinanciacion);
-    convocatoriaEntidadFinanciadora.setPorcentajeFinanciacion(50);
+    convocatoriaEntidadFinanciadora.setPorcentajeFinanciacion(BigDecimal.valueOf(50));
 
     return convocatoriaEntidadFinanciadora;
   }
@@ -2174,7 +2176,6 @@ public class ConvocatoriaControllerTest extends BaseControllerTest {
     convocatoriaConceptoGasto.setMesFinal(4);
     convocatoriaConceptoGasto.setObservaciones("Obs-" + id);
     convocatoriaConceptoGasto.setPermitido(permitido);
-    convocatoriaConceptoGasto.setPorcentajeCosteIndirecto(2);
 
     return convocatoriaConceptoGasto;
   }

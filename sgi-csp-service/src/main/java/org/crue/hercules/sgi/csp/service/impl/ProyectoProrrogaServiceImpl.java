@@ -264,10 +264,8 @@ public class ProyectoProrrogaServiceImpl implements ProyectoProrrogaService {
       });
     }
 
-    proyecto.get().setFechaFin(proyectoProrroga.getFechaFin());
-    if (proyecto.get().getFechaFinDefinitiva() != null) {
-      proyecto.get().setFechaFinDefinitiva(proyectoProrroga.getFechaFin());
-    }
+    proyecto.get().setFechaFinDefinitiva(proyectoProrroga.getFechaFin());
+
     proyectoRepository.save(proyecto.get());
     log.debug("actualizarFechaFin(ProyectoProrroga proyectoProrroga) - end");
   }

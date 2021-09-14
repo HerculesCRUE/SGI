@@ -6,6 +6,7 @@ import { BaseModalComponent } from '@core/component/base-modal.component';
 import { MSG_PARAMS } from '@core/i18n';
 import { IEquipoTrabajo } from '@core/models/eti/equipo-trabajo';
 import { FormacionEspecifica } from '@core/models/eti/formacion-especifica';
+import { FORMULARIO } from '@core/models/eti/formulario';
 import { IMemoria } from '@core/models/eti/memoria';
 import { IMemoriaPeticionEvaluacion } from '@core/models/eti/memoria-peticion-evaluacion';
 import { ITareaWithIsEliminable } from '@core/models/eti/tarea-with-is-eliminable';
@@ -31,6 +32,7 @@ const BTN_OK = marker('btn.ok');
 const TAREA_EQUIPO_TRABAJO_KEY = marker('eti.peticion-evaluacion.tarea.persona');
 const TAREA_MEMORIA_KEY = marker('eti.memoria');
 const TAREA_FORMACION_ESPECIFICA_KEY = marker('eti.peticion-evaluacion.tarea.formacion-especifica');
+const TAREA_EXPERIENCIA_KEY = marker('eti.peticion-evaluacion.tarea.experiencia');
 const TAREA_ANIO_KEY = marker('eti.peticion-evaluacion.tarea.anio');
 const TAREA_ORGANISMO_KEY = marker('eti.peticion-evaluacion.tarea.organismo');
 
@@ -76,6 +78,8 @@ export class PeticionEvaluacionTareasModalComponent extends
   msgParamFormacionEntity = {};
   msgParamAnioEntity = {};
   msgParamOrganismoEntity = {};
+
+  textoFormacionExperiencia$ = new BehaviorSubject(null);
 
   get MSG_PARAMS() {
     return MSG_PARAMS;
@@ -126,6 +130,16 @@ export class PeticionEvaluacionTareasModalComponent extends
         BTN_OK,
         MSG_PARAMS.CARDINALIRY.SINGULAR
       ).subscribe((value) => this.textoAceptar = value);
+      if (this.data.tarea?.memoria.comite.formulario.id === FORMULARIO.M10) {
+        this.translate.get(
+          TAREA_EXPERIENCIA_KEY
+        ).subscribe((value) => this.textoFormacionExperiencia$.next(value));
+      } else {
+        this.translate.get(
+          TAREA_FORMACION_ESPECIFICA_KEY
+        ).subscribe((value) => this.textoFormacionExperiencia$.next(value));
+      }
+
     } else {
       this.translate.get(
         TAREA_KEY,
@@ -144,12 +158,17 @@ export class PeticionEvaluacionTareasModalComponent extends
         MSG_PARAMS.CARDINALIRY.SINGULAR
       ).subscribe((value) => this.textoAceptar = value);
 
+      this.translate.get(
+        TAREA_FORMACION_ESPECIFICA_KEY,
+        MSG_PARAMS.CARDINALIRY.SINGULAR
+      ).subscribe((value) => this.textoFormacionExperiencia$.next(value));
     }
 
     this.translate.get(
       TAREA_EQUIPO_TRABAJO_KEY,
       MSG_PARAMS.CARDINALIRY.SINGULAR
-    ).subscribe((value) => this.msgParamEquipoTrabajoEntity = { entity: value, ...MSG_PARAMS.GENDER.FEMALE, ...MSG_PARAMS.CARDINALIRY.SINGULAR });
+    ).subscribe((value) => this.msgParamEquipoTrabajoEntity =
+      { entity: value, ...MSG_PARAMS.GENDER.FEMALE, ...MSG_PARAMS.CARDINALIRY.SINGULAR });
 
     this.translate.get(
       TAREA_MEMORIA_KEY,
@@ -164,7 +183,8 @@ export class PeticionEvaluacionTareasModalComponent extends
     this.translate.get(
       TAREA_FORMACION_ESPECIFICA_KEY,
       MSG_PARAMS.CARDINALIRY.SINGULAR
-    ).subscribe((value) => this.msgParamFormacionEntity = { entity: value, ...MSG_PARAMS.GENDER.FEMALE, ...MSG_PARAMS.CARDINALIRY.SINGULAR });
+    ).subscribe((value) => this.msgParamFormacionEntity =
+      { entity: value, ...MSG_PARAMS.GENDER.FEMALE, ...MSG_PARAMS.CARDINALIRY.SINGULAR });
 
     this.translate.get(
       TAREA_ANIO_KEY,
@@ -225,6 +245,16 @@ export class PeticionEvaluacionTareasModalComponent extends
       this.formGroup.controls.formacionEspecifica.setValidators(Validators.required);
       this.formGroup.controls.tarea.clearValidators();
       this.formGroup.controls.formacion.clearValidators();
+    }
+
+    if (memoria?.comite?.formulario.id === FORMULARIO.M10) {
+      this.translate.get(
+        TAREA_EXPERIENCIA_KEY
+      ).subscribe((value) => this.textoFormacionExperiencia$.next(value));
+    } else {
+      this.translate.get(
+        TAREA_FORMACION_ESPECIFICA_KEY
+      ).subscribe((value) => this.textoFormacionExperiencia$.next(value));
     }
 
     this.formGroup.controls.anio.updateValueAndValidity();
@@ -296,7 +326,8 @@ export class PeticionEvaluacionTareasModalComponent extends
     }
 
     this.data.tarea.memoria = this.formGroup.controls.memoria.value;
-    this.data.tarea.equipoTrabajo = this.formGroup.controls.equipoTrabajo.value;
+    this.data.tarea.equipoTrabajo = {} as IEquipoTrabajo;
+    this.data.tarea.equipoTrabajo.persona = this.formGroup.controls.equipoTrabajo.value;
 
     return this.data;
   }
@@ -310,7 +341,8 @@ export class PeticionEvaluacionTareasModalComponent extends
       formacionEspecifica: new FormControl(this.data.tarea?.formacionEspecifica),
       formacion: new FormControl(this.data.tarea?.formacion),
       memoria: new FormControl(this.data.tarea?.memoria, [Validators.required]),
-      equipoTrabajo: new FormControl(this.data.tarea?.equipoTrabajo == null ? '' : this.data.tarea?.equipoTrabajo, [Validators.required])
+      equipoTrabajo: new FormControl(this.data.tarea?.equipoTrabajo == null ? '' :
+        this.data.tarea?.equipoTrabajo.persona, [Validators.required])
     });
 
     formGroup.controls.memoria.valueChanges.subscribe((memoria) => {

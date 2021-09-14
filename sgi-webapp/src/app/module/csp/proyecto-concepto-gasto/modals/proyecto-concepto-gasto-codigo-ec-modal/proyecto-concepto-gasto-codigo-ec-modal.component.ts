@@ -15,7 +15,7 @@ import { DateValidator } from '@core/validators/date-validator';
 import { SelectValidator } from '@core/validators/select-validator';
 import { TranslateService } from '@ngx-translate/core';
 import { Observable } from 'rxjs';
-import { map, switchMap } from 'rxjs/operators';
+import { map, switchMap, tap } from 'rxjs/operators';
 import { compareConceptoGastoCodigoEc } from '../../proyecto-concepto-gasto.utils';
 
 const MSG_ANADIR = marker('btn.add');
@@ -46,9 +46,11 @@ export class ProyectoConceptoGastoCodigoEcModalComponent
   fxLayoutProperties: FxLayoutProperties;
 
   codigosEconomicos$: Observable<ICodigoEconomicoGasto[]>;
+  private codigosEconomicos: ICodigoEconomicoGasto[];
   textSaveOrUpdate: string;
 
   showDatosConvocatoriaCodigoEconomico: boolean;
+  disabledCopy = false;
 
   msgParamEntity = {};
   msgParamCodigoEconomigoSgeEntity = {};
@@ -69,14 +71,15 @@ export class ProyectoConceptoGastoCodigoEcModalComponent
     this.fxLayoutProperties.xs = 'column';
 
     this.codigosEconomicos$ = codigoEconomicoGastoService.findAll().pipe(
-      map(response => response.items)
+      map(response => response.items),
+      tap(response => this.codigosEconomicos = response)
     );
   }
 
   ngOnInit(): void {
     super.ngOnInit();
     this.setupI18N();
-    this.textSaveOrUpdate = this.data.proyectoConceptoGastoCodigoEc?.codigoEconomicoRef ? MSG_ACEPTAR : MSG_ANADIR;
+    this.textSaveOrUpdate = this.data.proyectoConceptoGastoCodigoEc?.codigoEconomico ? MSG_ACEPTAR : MSG_ANADIR;
 
     this.checkShowDatosConvocatoriaCodigoEconomico(this.data.convocatoriaConceptoGastoCodigoEc, this.data.proyectoConceptoGastoCodigoEc);
 
@@ -97,6 +100,13 @@ export class ProyectoConceptoGastoCodigoEcModalComponent
         }
       }
     ));
+
+    this.subscriptions.push(this.formGroup.valueChanges.subscribe(
+      () => {
+        this.disabledCopy = !compareConceptoGastoCodigoEc(this.data.convocatoriaConceptoGastoCodigoEc,
+          this.getDatosForm().proyectoConceptoGastoCodigoEc);
+      }
+    ));
   }
 
   private setupI18N(): void {
@@ -113,17 +123,17 @@ export class ProyectoConceptoGastoCodigoEcModalComponent
       MSG_PARAMS.CARDINALIRY.SINGULAR
     ).subscribe((value) => this.msgParamEntity = { entity: value, ...MSG_PARAMS.GENDER.MALE });
 
-    if (this.data.proyectoConceptoGastoCodigoEc?.codigoEconomicoRef && this.data.permitido) {
+    if (this.data.proyectoConceptoGastoCodigoEc?.codigoEconomico && this.data.permitido) {
       this.translate.get(
         PROYECTO_CONCEPTO_GASTO_CODIGO_ECONOMICO_PERMITIDO_KEY,
         MSG_PARAMS.CARDINALIRY.SINGULAR
       ).subscribe((value) => this.title = value);
-    } else if (this.data.proyectoConceptoGastoCodigoEc?.codigoEconomicoRef && !this.data.permitido) {
+    } else if (this.data.proyectoConceptoGastoCodigoEc?.codigoEconomico && !this.data.permitido) {
       this.translate.get(
         PROYECTO_CONCEPTO_GASTO_CODIGO_ECONOMICO_NO_PERMITIDO_KEY,
         MSG_PARAMS.CARDINALIRY.SINGULAR
       ).subscribe((value) => this.title = value);
-    } else if (!this.data.proyectoConceptoGastoCodigoEc?.codigoEconomicoRef && this.data.permitido) {
+    } else if (!this.data.proyectoConceptoGastoCodigoEc?.codigoEconomico && this.data.permitido) {
       this.translate.get(
         PROYECTO_CONCEPTO_GASTO_CODIGO_ECONOMICO_PERMITIDO_KEY,
         MSG_PARAMS.CARDINALIRY.SINGULAR
@@ -158,7 +168,7 @@ export class ProyectoConceptoGastoCodigoEcModalComponent
   }
 
   displayerCodigoEconomico(codigoEconomico: ICodigoEconomicoGasto) {
-    return codigoEconomico?.id ?? '';
+    return `${codigoEconomico?.id} - ${codigoEconomico?.nombre}` ?? '';
   }
 
   sorterCodigoEconomico(o1: SelectValue<ICodigoEconomicoGasto>, o2: SelectValue<ICodigoEconomicoGasto>): number {
@@ -169,7 +179,9 @@ export class ProyectoConceptoGastoCodigoEcModalComponent
     if (!this.data.proyectoConceptoGastoCodigoEc) {
       this.data.proyectoConceptoGastoCodigoEc = {} as IProyectoConceptoGastoCodigoEc;
     }
-    this.data.proyectoConceptoGastoCodigoEc.codigoEconomicoRef = this.formGroup.controls.codigoEconomico.value?.id;
+    const codigoEconomicoForm = this.codigosEconomicos?.find(codigoEconomico =>
+      codigoEconomico.id === this.formGroup.controls.codigoEconomico.value.id);
+    this.data.proyectoConceptoGastoCodigoEc.codigoEconomico = codigoEconomicoForm;
     this.data.proyectoConceptoGastoCodigoEc.observaciones = this.formGroup.controls.observaciones.value;
     this.data.proyectoConceptoGastoCodigoEc.fechaInicio = this.formGroup.controls.fechaInicio.value;
     this.data.proyectoConceptoGastoCodigoEc.fechaFin = this.formGroup.controls.fechaFin.value;
@@ -178,9 +190,7 @@ export class ProyectoConceptoGastoCodigoEcModalComponent
   }
 
   protected getFormGroup(): FormGroup {
-    const codigoEconomico = this.data.proyectoConceptoGastoCodigoEc?.codigoEconomicoRef
-      ? { id: this.data.proyectoConceptoGastoCodigoEc?.codigoEconomicoRef } as ICodigoEconomicoGasto
-      : null;
+    const codigoEconomico = this.data.proyectoConceptoGastoCodigoEc?.codigoEconomico ?? null;
     const formGroup = new FormGroup(
       {
         codigoEconomico: new FormControl(codigoEconomico),
@@ -188,7 +198,7 @@ export class ProyectoConceptoGastoCodigoEcModalComponent
         fechaFin: new FormControl(this.data.proyectoConceptoGastoCodigoEc?.fechaFin),
         observaciones: new FormControl(this.data.proyectoConceptoGastoCodigoEc?.observaciones),
         codigoEconomicoConvocatoria: new FormControl({
-          value: { id: this.data.convocatoriaConceptoGastoCodigoEc?.codigoEconomicoRef } as ICodigoEconomicoGasto,
+          value: this.data.convocatoriaConceptoGastoCodigoEc?.codigoEconomico,
           disabled: true
         }),
         fechaInicioConvocatoria: new FormControl({ value: this.data.convocatoriaConceptoGastoCodigoEc?.fechaInicio, disabled: true }),
@@ -206,7 +216,7 @@ export class ProyectoConceptoGastoCodigoEcModalComponent
     if (this.data.readonly) {
       formGroup.disable();
     }
-    if (this.data.convocatoriaConceptoGastoCodigoEc?.codigoEconomicoRef) {
+    if (this.data.convocatoriaConceptoGastoCodigoEc?.codigoEconomico) {
       formGroup.controls.codigoEconomico.setValue(formGroup.controls.codigoEconomicoConvocatoria.value);
       formGroup.controls.codigoEconomico.disable();
     }
@@ -236,6 +246,8 @@ export class ProyectoConceptoGastoCodigoEcModalComponent
       this.showDatosConvocatoriaCodigoEconomico = false;
     } else if (!proyectoCodigoEconomico) {
       this.showDatosConvocatoriaCodigoEconomico = true;
+      this.disabledCopy = !compareConceptoGastoCodigoEc(this.data.convocatoriaConceptoGastoCodigoEc,
+        this.getDatosForm().proyectoConceptoGastoCodigoEc);
     } else if (compareConceptoGastoCodigoEc(convocatoriaCodigoEconomico, proyectoCodigoEconomico)) {
       this.showDatosConvocatoriaCodigoEconomico = true;
     } else {
@@ -268,7 +280,7 @@ export class ProyectoConceptoGastoCodigoEcModalComponent
         const finRangoNumber = finRangoControl.value ? finRangoControl.value.toMillis() : Number.MAX_VALUE;
 
         const ranges = this.data.proyectoConceptoGastoCodigoEcsTabla.filter(
-          conceptoGasto => conceptoGasto.codigoEconomicoRef === filterFieldControl.value.id
+          conceptoGasto => conceptoGasto.codigoEconomico.id === filterFieldControl.value.id
         ).map(conceptoGasto => {
           return {
             inicio: conceptoGasto.fechaInicio ? conceptoGasto.fechaInicio.toMillis() : Number.MIN_VALUE,

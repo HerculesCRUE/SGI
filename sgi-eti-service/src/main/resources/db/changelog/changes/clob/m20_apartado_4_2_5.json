@@ -1,0 +1,27 @@
+[
+  {
+    "key": "ap4_2_5",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "label": "4.2.5 Criterios de punto final"
+    },
+    "fieldGroup": [
+      {
+        "template": "En función de la cuantificación de los parámetros, indicar los criterios de punto final que se aplicarán para proceder a la eutanasia del animal."
+      },
+      {
+        "key": "puntoFinal",
+        "type": "textarea",
+        "templateOptions": {
+          "label": "Criterios de punto final",
+          "required": true,
+          "autosize": true,
+          "autosizeMinRows": "1",
+          "autosizeMaxRows": "10"
+        }
+      }
+    ]
+  }
+]

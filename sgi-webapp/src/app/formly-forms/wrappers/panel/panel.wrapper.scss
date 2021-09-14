@@ -1,12 +1,12 @@
- @import "colors.scss";
+@import "colors.scss";
 .mat-expansion-panel {
   margin-bottom: 1em;
 }
 mat-icon.warning {
-  color: map-get($custom-colors, warning);
+  color: map-get($sgi-custom-colors, warning);
 }
 mat-icon.error {
-  color: map-get($custom-colors, danger);
+  color: map-get($sgi-custom-colors, danger);
 }
 .mat-expansion-panel-header-title {
   align-items: center;
@@ -24,6 +24,6 @@ mat-icon.error {
   border-width: 2px;
   padding: 1em;
   margin-bottom: 2em;
-  border-color: map-get($custom-colors, warning);
-  background-color: rgba(map-get($custom-colors, warning), 0.1);
+  border-color: map-get($sgi-custom-colors, warning);
+  background-color: rgba(map-get($sgi-custom-colors, warning), 0.1);
 }

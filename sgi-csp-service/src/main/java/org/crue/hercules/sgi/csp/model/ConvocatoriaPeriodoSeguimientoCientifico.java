@@ -19,6 +19,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.crue.hercules.sgi.csp.enums.TipoSeguimiento;
+import org.hibernate.validator.constraints.ScriptAssert;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -36,6 +37,11 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@ScriptAssert.List({
+    // Validacion de meses
+    @ScriptAssert(lang = "spel", alias = "_this", script = "#_this.getMesInicial() == null || #_this.getMesFinal() == null || #_this.getMesFinal().compareTo(#_this.getMesInicial()) >= 0", reportOn = "mesFinal", message = "{org.crue.hercules.sgi.csp.validation.MesInicialMayorMesFinal.message}"),
+    // Validacion de fechas de presentación
+    @ScriptAssert(lang = "spel", alias = "_this", script = "#_this.getFechaInicioPresentacion() == null || #_this.getFechaFinPresentacion() == null || #_this.getFechaFinPresentacion().compareTo(#_this.getFechaInicioPresentacion()) >= 0", reportOn = "fechaFinPresentacion", message = "{org.crue.hercules.sgi.csp.validation.FechaInicialMayorFechaFinal.message}") })
 public class ConvocatoriaPeriodoSeguimientoCientifico extends BaseEntity {
 
   /**
@@ -69,7 +75,7 @@ public class ConvocatoriaPeriodoSeguimientoCientifico extends BaseEntity {
   /** Mes Final */
   @Column(name = "mes_final", nullable = false)
   @NotNull
-  @Min(2)
+  @Min(1)
   private Integer mesFinal;
 
   /** Fecha Inicio Presentacion */

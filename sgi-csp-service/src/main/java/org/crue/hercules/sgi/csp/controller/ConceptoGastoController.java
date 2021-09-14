@@ -166,4 +166,18 @@ public class ConceptoGastoController {
     return returnValue;
   }
 
+  @GetMapping("/{id}/no-proyectoagrupacion")
+  @PreAuthorize("hasAuthorityForAnyUO('CSP-PRO-E')")
+  ResponseEntity<Page<ConceptoGasto>> findAllNotInAgrupacion(@RequestParam(name = "q", required = false) String query,
+      @RequestPageable(sort = "s") Pageable paging, @PathVariable Long id) {
+    log.debug("findAll(String query, Pageable paging) - start");
+    Page<ConceptoGasto> page = service.findAllNotInAgrupacion(id, query, paging);
+    if (page.isEmpty()) {
+      log.debug("findAll(String query, Pageable paging) - end");
+      return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+    log.debug("findAll(String query, Pageable paging) - end");
+    return new ResponseEntity<>(page, HttpStatus.OK);
+  }
+
 }

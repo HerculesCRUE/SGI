@@ -1,0 +1,68 @@
+[
+  {
+    "key": "ap3_4_3",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "label": "3.4.3 Uso confinado de OMG"
+    },
+    "fieldGroup": [
+      {
+        "template": "<p>En esta actividad ¿se realizan tareas de uso confinado de OMG?</p>"
+      },
+      {
+        "key": "tareasUsoConfinado",
+        "type": "radio",
+        "templateOptions": {
+          "label": "Elige opción:",
+          "required": true,
+          "options": [
+            {
+              "value": "no",
+              "label": "No"
+            },
+            {
+              "value": "si",
+              "label": "Sí"
+            }
+          ]
+        }
+      },
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "Adjuntar la hoja de información del transgénico de la casa comercial."
+      },
+      {
+        "template": "Tipo de OMG que se utiliza",
+        "hideExpression": "!model.tareasUsoConfinado || model.tareasUsoConfinado === 'no'"
+      },
+      {
+        "type": "multicheckbox",
+        "key": "tiposOMG",
+        "hideExpression": "!model.tareasUsoConfinado || model.tareasUsoConfinado === 'no'",
+        "templateOptions": {
+          "label": "Opciones:",
+          "type": "array",
+          "required": true,
+          "options": [
+            {
+              "value": "microorganismos",
+              "label": "Microorganismos"
+            },
+            {
+              "value": "animales",
+              "label": "Animales"
+            },
+            {
+              "value": "plantas",
+              "label": "Plantas"
+            }
+          ]
+        }
+      }
+    ]
+  }
+]

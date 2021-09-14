@@ -90,11 +90,6 @@ public class ConvocatoriaConceptoGasto extends BaseEntity {
   @Min(1)
   private Integer mesFinal;
 
-  /** Porcentaje coste indirecto */
-  @Column(name = "porcentaje_coste_indirecto", nullable = true)
-  @Min(0)
-  private Integer porcentajeCosteIndirecto;
-
   // Relation mappings for JPA metamodel generation only
   @ManyToOne
   @JoinColumn(name = "convocatoria_id", insertable = false, updatable = false, foreignKey = @ForeignKey(name = "FK_CONVOCATORIACONCEPTOGASTO_CONVOCATORIA"))

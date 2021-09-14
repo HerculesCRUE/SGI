@@ -1,5 +1,7 @@
 package org.crue.hercules.sgi.csp.controller;
 
+import java.math.BigDecimal;
+
 import org.crue.hercules.sgi.csp.exceptions.ConvocatoriaEntidadFinanciadoraNotFoundException;
 import org.crue.hercules.sgi.csp.model.ConvocatoriaEntidadFinanciadora;
 import org.crue.hercules.sgi.csp.model.FuenteFinanciacion;
@@ -97,7 +99,7 @@ public class ConvocatoriaEntidadFinanciadoraControllerTest extends BaseControlle
     ConvocatoriaEntidadFinanciadora convocatoriaEntidadFinanciadoraExistente = generarMockConvocatoriaEntidadFinanciadora(
         1L);
     ConvocatoriaEntidadFinanciadora convocatoriaEntidadFinanciadora = generarMockConvocatoriaEntidadFinanciadora(1L);
-    convocatoriaEntidadFinanciadora.setPorcentajeFinanciacion(20);
+    convocatoriaEntidadFinanciadora.setPorcentajeFinanciacion(BigDecimal.valueOf(20));
 
     BDDMockito.given(service.findById(ArgumentMatchers.<Long>any()))
         .willReturn(convocatoriaEntidadFinanciadoraExistente);
@@ -248,7 +250,7 @@ public class ConvocatoriaEntidadFinanciadoraControllerTest extends BaseControlle
     convocatoriaEntidadFinanciadora.setEntidadRef("entidad-" + (id == null ? 0 : id));
     convocatoriaEntidadFinanciadora.setFuenteFinanciacion(fuenteFinanciacion);
     convocatoriaEntidadFinanciadora.setTipoFinanciacion(tipoFinanciacion);
-    convocatoriaEntidadFinanciadora.setPorcentajeFinanciacion(50);
+    convocatoriaEntidadFinanciadora.setPorcentajeFinanciacion(BigDecimal.valueOf(50));
 
     return convocatoriaEntidadFinanciadora;
   }

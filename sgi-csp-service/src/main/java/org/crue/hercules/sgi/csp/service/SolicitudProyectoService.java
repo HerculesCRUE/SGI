@@ -58,4 +58,13 @@ public interface SolicitudProyectoService {
    */
   boolean existsBySolicitudId(Long id);
 
+  /**
+   * Compruena si la {@link SolicitudProyecto} asociada a la {@link Solicitud} es
+   * de tipo Global.
+   * 
+   * @param solicitudId Identificador de la solicitud.
+   * @return Indicador de si el tipo de presupuesto es global
+   */
+  boolean isTipoPresupuestoGlobalBySolicitudId(Long solicitudId);
+
 }

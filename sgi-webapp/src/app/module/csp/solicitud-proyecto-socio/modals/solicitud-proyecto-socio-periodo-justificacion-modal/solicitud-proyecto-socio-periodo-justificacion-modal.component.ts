@@ -143,7 +143,7 @@ export class SolicitudProyectoSocioPeriodoJustificacionModalComponent
       },
       {
         validators: [
-          NumberValidator.isAfter('mesInicial', 'mesFinal'),
+          NumberValidator.isAfterOrEqual('mesInicial', 'mesFinal'),
           NumberValidator.isAfter('fechaInicio', 'fechaFin'),
           RangeValidator.notOverlaps('mesInicial', 'mesFinal', rangosPeriodosExistentes)
         ]
@@ -153,6 +153,45 @@ export class SolicitudProyectoSocioPeriodoJustificacionModalComponent
     if (this.data.readonly) {
       formGroup.disable();
     }
+    // Si es el primer periodo este ha de comenzar en el mes 1
+    // Si no es es el primero, deberá ser siempre consecutivo al anterior periodo de justificación
+    const mesInicialControl = formGroup.get('mesInicial');
+    const mesFinalControl = formGroup.get('mesFinal');
+    this.subscriptions.push(mesInicialControl.valueChanges.subscribe(value => {
+      if (this.data.selectedPeriodoJustificaciones.length === 0
+        || this.data.selectedPeriodoJustificaciones[0].mesInicial !== 1) {
+        if (value && value > 1) {
+          mesInicialControl.setErrors({ initial: true });
+          mesInicialControl.markAsTouched({ onlySelf: true });
+        } else if (mesInicialControl.errors) {
+          delete mesInicialControl.errors.initial;
+          mesInicialControl.updateValueAndValidity({ onlySelf: true, emitEvent: false });
+        }
+      } else {
+        if (value && (
+          (this.data.periodoJustificacion.numPeriodo > 1
+            && value !== this.data.selectedPeriodoJustificaciones[
+              this.data.periodoJustificacion.numPeriodo - 2].mesFinal + 1)
+          || ((this.data.periodoJustificacion.numPeriodo < 1
+            || this.data.periodoJustificacion.numPeriodo == null)
+            && value !== this.data.selectedPeriodoJustificaciones[
+              this.data.selectedPeriodoJustificaciones.length - 1].mesFinal + 1)
+        )) {
+          mesInicialControl.setErrors({ wrongOrder: true });
+          mesInicialControl.markAsTouched({ onlySelf: true });
+        } else if (mesInicialControl.errors) {
+          delete mesInicialControl.errors.wrongOrder;
+          mesInicialControl.updateValueAndValidity({ onlySelf: true, emitEvent: false });
+        }
+      }
+      if (value && value > mesFinalControl.value) {
+        mesFinalControl.setErrors({ afterOrEqual: true });
+        mesFinalControl.markAsTouched({ onlySelf: true });
+      } else if (mesFinalControl.errors) {
+        delete mesFinalControl.errors.afterOrEqual;
+        mesFinalControl.updateValueAndValidity({ onlySelf: true, emitEvent: false });
+      }
+    }));
 
     return formGroup;
   }

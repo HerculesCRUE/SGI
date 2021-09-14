@@ -1,6 +1,5 @@
 <!-- Evaluador datos generales -->
-<section class="evaluador-datos-generales">
-  <h2>{{'label.datos-generales' | translate}}</h2>
+<sgi-fragment title="{{'label.datos-generales' | translate}}">
 
   <form [formGroup]="formGroup" [fxLayout.xs]="fxLayoutProperties.xs" [fxLayout]="fxLayoutProperties.layout"
     [fxLayoutGap]="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
@@ -93,8 +92,8 @@
       <mat-form-field>
         <mat-label>{{'eti.evaluador.resumen' | translate}}</mat-label>
         <textarea #resumen matInput formControlName="resumen" id="resumen"
-          placeholder="{{'eti.evaluador.resumen' | translate}}" maxlength="8000"></textarea>
-        <mat-hint>{{resumen.value.length}} / 8000</mat-hint>
+          placeholder="{{'eti.evaluador.resumen' | translate}}" maxlength="4000"></textarea>
+        <mat-hint>{{resumen.value.length}} / 4000</mat-hint>
         <mat-error *ngIf="formGroup.controls.resumen.errors?.required">
           {{'error.required.entity' | translate:msgParamResumenEntity}}
         </mat-error>
@@ -105,5 +104,5 @@
     </div>
 
   </form>
-</section>
+</sgi-fragment>
 <!-- Evaluador crear -->

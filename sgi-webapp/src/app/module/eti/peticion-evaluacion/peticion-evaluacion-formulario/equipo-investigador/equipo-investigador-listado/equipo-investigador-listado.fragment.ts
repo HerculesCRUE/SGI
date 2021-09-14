@@ -160,6 +160,22 @@ export class EquipoInvestigadorListadoFragment extends Fragment {
   private getInvestigadorActual(): Observable<IEquipoTrabajoWithIsEliminable> {
     return this.personaService.findById(this.sgiAuthService.authStatus$?.getValue()?.userRefId)
       .pipe(
+        switchMap((persona) => {
+          return this.datosAcademicosService.findByPersonaId(persona.id).pipe(
+            map((datosAcademicos) => {
+              persona.datosAcademicos = datosAcademicos;
+              return persona;
+            }
+            ));
+        }),
+        switchMap((persona) => {
+          return this.vinculacionService.findByPersonaId(persona.id).pipe(
+            map((vinculacion) => {
+              persona.vinculacion = vinculacion;
+              return persona;
+            }
+            ));
+        }),
         map((persona) => {
           return {
             id: null,
@@ -200,8 +216,7 @@ export class EquipoInvestigadorListadoFragment extends Fragment {
           // TODO: Eliminar el casteo. Realmente existe la casuistica de que el backend no indica si el eliminable o no.
           map((savedEquipoTrabajo: IEquipoTrabajoWithIsEliminable) => {
             const index = this.equiposTrabajo$.value.findIndex((currentEquipoTrabajo) => currentEquipoTrabajo === wrappedEquipoTrabajo);
-            this.equiposTrabajo$.value[index] = new StatusWrapper<IEquipoTrabajoWithIsEliminable>(savedEquipoTrabajo);
-            this.equiposTrabajo$.next(this.equiposTrabajo$.value);
+            this.equiposTrabajo$[index] = new StatusWrapper<IEquipoTrabajoWithIsEliminable>(savedEquipoTrabajo);
           })
         );
       }));

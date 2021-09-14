@@ -1,0 +1,1408 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<api context="/sgemp" name="sgemp-api" xmlns="http://ws.apache.org/ns/synapse">
+
+  <!-- empresas -->
+  <resource methods="GET" url-mapping="/empresas">
+    <inSequence>
+      <call-template target="sgi-auth-sequence-template">
+        <with-param name="requiredAuthorities" value=""/>
+      </call-template>
+      <sequence key="sgemp-add-x-api-key-sequence"/>
+      <send>
+        <endpoint key="sgemp-endpoint"/>
+      </send>
+    </inSequence>
+    <outSequence>
+      <respond/>
+    </outSequence>
+    <faultSequence>
+      <sequence key="error-handling-sequence"/>
+    </faultSequence>
+  </resource>
+
+  <resource methods="GET" uri-template="/empresas/{id}">
+    <inSequence>
+      <call-template target="sgi-auth-sequence-template">
+        <with-param name="requiredAuthorities" value=""/>
+      </call-template>
+      <sequence key="sgemp-add-x-api-key-sequence"/>
+      <send>
+        <endpoint key="sgemp-endpoint"/>
+      </send>
+    </inSequence>
+    <outSequence>
+      <respond/>
+    </outSequence>
+    <faultSequence>
+      <sequence key="error-handling-sequence"/>
+    </faultSequence>
+  </resource>
+
+  <resource methods="POST" url-mapping="/empresas/formly">
+    <inSequence>
+      <call-template target="sgi-auth-sequence-template">
+        <with-param name="requiredAuthorities" value=""/>
+      </call-template>
+      <sequence key="sgemp-add-x-api-key-sequence"/>
+      <send>
+        <endpoint key="sgemp-endpoint"/>
+      </send>
+    </inSequence>
+    <outSequence>
+      <respond/>
+    </outSequence>
+    <faultSequence>
+      <sequence key="error-handling-sequence"/>
+    </faultSequence>
+  </resource>
+
+  <resource methods="PUT" uri-template="/empresas/formly/{id}">
+    <inSequence>
+      <call-template target="sgi-auth-sequence-template">
+        <with-param name="requiredAuthorities" value=""/>
+      </call-template>
+      <sequence key="sgemp-add-x-api-key-sequence"/>
+      <send>
+        <endpoint key="sgemp-endpoint"/>
+      </send>
+    </inSequence>
+    <outSequence>
+      <respond/>
+    </outSequence>
+    <faultSequence>
+      <sequence key="error-handling-sequence"/>
+    </faultSequence>
+  </resource>
+
+  <resource methods="GET" uri-template="/empresas/formly/{id}">
+    <inSequence>
+      <call-template target="sgi-auth-sequence-template">
+        <with-param name="requiredAuthorities" value=""/>
+      </call-template>
+      <sequence key="sgemp-add-x-api-key-sequence"/>
+      <send>
+        <endpoint key="sgemp-endpoint"/>
+      </send>
+    </inSequence>
+    <outSequence>
+      <respond/>
+    </outSequence>
+    <faultSequence>
+      <sequence key="error-handling-sequence"/>
+    </faultSequence>
+  </resource>
+
+  <resource methods="GET" url-mapping="/empresas/formly/create">
+    <inSequence>
+      <call-template target="sgi-auth-sequence-template">
+        <with-param name="requiredAuthorities" value=""/>
+      </call-template>
+      <sequence key="sgemp-add-x-api-key-sequence"/>
+
+      <!-- tipos via -->
+      <property value="/tipos-via" name="REST_URL_POSTFIX" scope="axis2" type="STRING"/>
+      <call blocking="true">
+        <endpoint key="sgo-endpoint"/>
+      </call>
+      <enrich>
+        <source clone="false" type="body"/>
+        <target type="property" property="tiposVia"/>
+      </enrich>
+
+      <!-- tipos empresa -->
+      <property value="/tipos-empresa" name="REST_URL_POSTFIX" scope="axis2" type="STRING"/>
+      <call blocking="true">
+        <endpoint key="sgemp-endpoint"/>
+      </call>
+      <enrich>
+        <source clone="false" type="body"/>
+        <target type="property" property="tiposEmpresa"/>
+      </enrich>
+
+      <!-- tipos empresa contabilidad -->
+      <property value="/tipos-empresa-contabilidad" name="REST_URL_POSTFIX" scope="axis2" type="STRING"/>
+      <call blocking="true">
+        <endpoint key="sgemp-endpoint"/>
+      </call>
+      <enrich>
+        <source clone="false" type="body"/>
+        <target type="property" property="tiposEmpresaContabilidad"/>
+      </enrich>
+
+      <!-- tipos tercero reino unido -->
+      <property value="/tipos-tercero-reino-unido" name="REST_URL_POSTFIX" scope="axis2" type="STRING"/>
+      <call blocking="true">
+        <endpoint key="sgemp-endpoint"/>
+      </call>
+      <enrich>
+        <source clone="false" type="body"/>
+        <target type="property" property="tiposTerceroReinoUnido"/>
+      </enrich>
+
+      <!-- tipos tercero -->
+      <property value="/tipos-tercero" name="REST_URL_POSTFIX" scope="axis2" type="STRING"/>
+      <call blocking="true">
+        <endpoint key="sgemp-endpoint"/>
+      </call>
+      <enrich>
+        <source clone="false" type="body"/>
+        <target type="property" property="tiposTercero"/>
+      </enrich>
+
+      <payloadFactory media-type="json">
+        <format>
+[
+  {
+    "wrappers": [
+      "global"
+    ],
+    "templateOptions": {
+      "styles": "{ \"width\": \"900px\" }"
+    },
+    "fieldGroup": [
+      {
+        "wrappers": [
+          "mat-card-group"
+        ],
+        "templateOptions": {
+          "label": "Datos Generales"
+        },
+        "fieldGroup": [
+          {
+            "fieldGroupClassName": "row-formly",
+            "fieldGroup": [
+              {
+                "key": "tipoSedeId",
+                "type": "select",
+                "className": "flex-1",
+                "templateOptions": {
+                  "label": "Tipo de sede",
+                  "placeholder": "Introduce tipo de sede",
+                  "required": true,
+                  "options": [
+                    {
+                      "value": "0",
+                      "label": "Entidad"
+                    },
+                    {
+                      "value": "1",
+                      "label": "Subentidad"
+                    }
+                  ]
+                }
+              },
+              {
+                "key": "datosEconomicos",
+                "type": "select",
+                "className": "flex-1",
+                "templateOptions": {
+                  "label": "Datos económicos",
+                  "placeholder": "Introduce datos económicos",
+                  "required": true,
+                  "options": [
+                    {
+                      "value": true,
+                      "label": "Sí"
+                    },
+                    {
+                      "value": false,
+                      "label": "No"
+                    }
+                  ]
+                },
+                "expressionProperties": {
+                  "model.tipoTerceroId": "!model.datosEconomicos?null:model.tipoTerceroId",
+                  "model.tipoEmpresaId": "!model.datosEconomicos?null:model.tipoEmpresaId",
+                  "model.tipoEmpresaContabilidadId": "!model.datosEconomicos?null:model.tipoEmpresaContabilidadId",
+                  "model.tipoTerceroReinoUnidoId": "!model.datosEconomicos?null:model.tipoTerceroReinoUnidoId"
+                }
+              }
+            ]
+          },
+          {
+            "key": "entidadRazonSocial",
+            "type": "input",
+            "templateOptions": {
+              "label": "Entidad / Razón social",
+              "placeholder": "Introduce Entidad / Razón social",
+              "required": true
+            }
+          },
+          {
+            "fieldGroupClassName": "row-formly",
+            "fieldGroup": [
+              {
+                "key": "tipoIdentificadorFiscalId",
+                "type": "select-tipos-identificadores",
+                "className": "flex-1",
+                "templateOptions": {
+                  "label": "Tipo de identificador fiscal",
+                  "placeholder": "Introduce tipo de identificador fiscal",
+                  "required": true,
+                  "valueProp": "id",
+                  "labelProp": "nombre"
+                }
+              },
+              {
+                "key": "numeroIdentificadorFiscal",
+                "type": "input",
+                "className": "flex-1",
+                "templateOptions": {
+                  "label": "Número de identificador fiscal",
+                  "placeholder": "Introduce número de identificador fiscal",
+                  "required": true
+                }
+              }
+            ]
+          },
+          {
+            "type": "table-crud-clasificaciones",
+            "key": "sectoresIndustriales",
+            "templateOptions": {
+              "title": "Sectores industriales",
+              "entity": "Sector industrial"
+            },
+            "fieldArray": {
+              "fieldGroup": [
+                {
+                  "key": "sectorIndustrial",
+                  "type": "input",
+                  "templateOptions": {
+                    "label": "Nivel seleccionado",
+                    "order": 20
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "wrappers": [
+          "mat-card-group"
+        ],
+        "templateOptions": {
+          "label": "Datos de Contacto"
+        },
+        "fieldGroup": [
+          {
+            "fieldGroupClassName": "row-formly",
+            "fieldGroup": [
+              {
+                "key": "paisContactoId",
+                "type": "select-paises",
+                "className": "flex-1",
+                "templateOptions": {
+                  "label": "País",
+                  "placeholder": "Introduce país",
+                  "required": true,
+                  "valueProp": "id",
+                  "labelProp": "nombre"
+                }
+              },
+              {
+                "key": "codigoPostalContacto",
+                "type": "input",
+                "className": "flex-1",
+                "templateOptions": {
+                  "label": "Código postal",
+                  "placeholder": "Introduce código postal",
+                  "required": false
+                },
+                "expressionProperties": {
+                  "templateOptions.required": "null!==model.paisContactoId &amp;&amp; model.paisContactoId==='011'"
+                }
+              }
+            ]
+          },
+          {
+            "fieldGroupClassName": "row-formly",
+            "fieldGroup": [
+              {
+                "key": "ciudadContacto",
+                "type": "input",
+                "className": "flex-1",
+                "templateOptions": {
+                  "label": "Ciudad",
+                  "placeholder": "Introduce ciudad",
+                  "required": true
+                },
+                "expressionProperties": {
+                  "templateOptions.required": "null!==model.paisContactoId &amp;&amp; model.paisContactoId!=='011'"
+                }
+              },
+              {
+                "key": "tipoViaContactoId",
+                "type": "select",
+                "className": "flex-1",
+                "templateOptions": {
+                  "label": "Tipo de vía",
+                  "placeholder": "Introduce tipo de vía",
+                  "valueProp": "id",
+                  "labelProp": "nombre",
+                  "options": $1
+                }
+              }
+            ]
+          },
+          {
+            "fieldGroupClassName": "row-formly",
+            "fieldGroup": [
+              {
+                "key": "nombreViaContacto",
+                "type": "input",
+                "className": "flex-2",
+                "templateOptions": {
+                  "label": "Nombre de vía",
+                  "placeholder": "Introduce nombre de vía"
+                }
+              },
+              {
+                "key": "numeroViaContacto",
+                "type": "input",
+                "className": "flex-1",
+                "templateOptions": {
+                  "label": "Número",
+                  "placeholder": "Introduce número"
+                }
+              }
+            ]
+          },
+          {
+            "key": "ampliacion",
+            "type": "input",
+            "className": "flex-1",
+            "templateOptions": {
+              "label": "Ampliación",
+              "placeholder": "Introduce ampliación"
+            }
+          },
+          {
+            "key": "email",
+            "type": "input",
+            "className": "flex-1",
+            "templateOptions": {
+              "label": "Email",
+              "placeholder": "Introduce email"
+            }
+          },
+          {
+            "fieldGroupClassName": "row-formly",
+            "fieldGroup": [
+              {
+                "key": "telefonoContacto",
+                "type": "input",
+                "className": "flex-1",
+                "templateOptions": {
+                  "label": "Teléfono",
+                  "placeholder": "Introduce teléfono"
+                }
+              },
+              {
+                "key": "faxContacto",
+                "type": "input",
+                "className": "flex-1",
+                "templateOptions": {
+                  "label": "Fax",
+                  "placeholder": "Introduce fax"
+                }
+              }
+            ]
+          },
+          {
+            "key": "direccionWeb",
+            "type": "input",
+            "className": "flex-1",
+            "templateOptions": {
+              "label": "Dirección web",
+              "placeholder": "Introduce dirección web"
+            }
+          }
+        ]
+      },
+      {
+        "wrappers": [
+          "mat-card-group"
+        ],
+        "templateOptions": {
+          "label": "Datos de Tipo de Entidad"
+        },
+        "hideExpression": "!model.datosEconomicos",
+        "fieldGroup": [
+          {
+            "key": "tipoTerceroId",
+            "type": "select-attributes",
+            "templateOptions": {
+              "label": "Tipo de tercero",
+              "placeholder": "Introduce tipo de tercero",
+              "required": true,
+              "valueProp": "id",
+              "labelProp": "nombre",
+              "propertyMappedToFormState": "tipoTerceroSelectedId",
+              "modelEditName": "mainModel",
+              "dataSelectPropertyValue": "id",
+              "dataSelectPropertyToFormState": "clase",
+              "dataSelect": $5
+            },
+            "expressionProperties": {
+              "templateOptions.options": "field.templateOptions.dataSelect",
+              "templateOptions.disabled": "!model.datosEconomicos"
+            }
+          },
+          {
+            "key": "tipoEmpresaId",
+            "type": "select",
+            "templateOptions": {
+              "label": "Tipo de entidad",
+              "placeholder": "Introduce tipo de entidad",
+              "required": true,
+              "valueProp": "id",
+              "labelProp": "nombre",
+              "options": $2
+            },
+            "expressionProperties": {
+              "templateOptions.disabled": "!model.datosEconomicos"
+            }
+          },
+          {
+            "key": "tipoEmpresaContabilidadId",
+            "type": "select",
+            "templateOptions": {
+              "label": "Tipo de entidad para contabilidad",
+              "placeholder": "Introduce tipo de entidad para contabilidad",
+              "required": true,
+              "valueProp": "id",
+              "labelProp": "nombre",
+              "options": $3
+            },
+            "expressionProperties": {
+              "templateOptions.disabled": "!model.datosEconomicos"
+            }
+          },
+          {
+            "key": "tipoTerceroReinoUnidoId",
+            "type": "select",
+            "templateOptions": {
+              "label": "Tipo de tercero Reino Unido",
+              "placeholder": "Introduce tipo de tercero Reino Unido",
+              "required": false,
+              "options": $4
+            },
+            "expressionProperties": {
+              "templateOptions.disabled": "!model.datosEconomicos",
+              "templateOptions.required": "model.datosEconomicos&amp;&amp;null!==model.paisContactoId&amp;&amp;model.paisContactoId==='006' &amp;&amp; formState.tipoTerceroSelectedId==='F'"
+            }
+          }
+        ]
+      }
+    ]
+  }
+]
+        </format>
+        <args>
+          <arg expression="get-property('tiposVia')" literal="true"/>
+          <arg expression="get-property('tiposEmpresa')" literal="true"/>
+          <arg expression="get-property('tiposEmpresaContabilidad')" literal="true"/>
+          <arg expression="get-property('tiposTerceroReinoUnido')" literal="true"/>
+          <arg expression="get-property('tiposTercero')" literal="true"/>
+        </args>
+      </payloadFactory>
+      <respond/>
+    </inSequence>
+    <outSequence>
+      <respond/>
+    </outSequence>
+    <faultSequence>
+      <sequence key="error-handling-sequence"/>
+    </faultSequence>
+  </resource>
+
+  <resource methods="GET" url-mapping="/empresas/formly/update">
+    <inSequence>
+      <call-template target="sgi-auth-sequence-template">
+        <with-param name="requiredAuthorities" value=""/>
+      </call-template>
+      <sequence key="sgemp-add-x-api-key-sequence"/>
+
+      <!-- tipos via -->
+      <property value="/tipos-via" name="REST_URL_POSTFIX" scope="axis2" type="STRING"/>
+      <call blocking="true">
+        <endpoint key="sgo-endpoint"/>
+      </call>
+      <enrich>
+        <source clone="false" type="body"/>
+        <target type="property" property="tiposVia"/>
+      </enrich>
+
+      <!-- tipos empresa -->
+      <property value="/tipos-empresa" name="REST_URL_POSTFIX" scope="axis2" type="STRING"/>
+      <call blocking="true">
+        <endpoint key="sgemp-endpoint"/>
+      </call>
+      <enrich>
+        <source clone="false" type="body"/>
+        <target type="property" property="tiposEmpresa"/>
+      </enrich>
+
+      <!-- tipos empresa contabilidad -->
+      <property value="/tipos-empresa-contabilidad" name="REST_URL_POSTFIX" scope="axis2" type="STRING"/>
+      <call blocking="true">
+        <endpoint key="sgemp-endpoint"/>
+      </call>
+      <enrich>
+        <source clone="false" type="body"/>
+        <target type="property" property="tiposEmpresaContabilidad"/>
+      </enrich>
+
+      <!-- tipos tercero reino unido -->
+      <property value="/tipos-tercero-reino-unido" name="REST_URL_POSTFIX" scope="axis2" type="STRING"/>
+      <call blocking="true">
+        <endpoint key="sgemp-endpoint"/>
+      </call>
+      <enrich>
+        <source clone="false" type="body"/>
+        <target type="property" property="tiposTerceroReinoUnido"/>
+      </enrich>
+
+      <!-- tipos tercero -->
+      <property value="/tipos-tercero" name="REST_URL_POSTFIX" scope="axis2" type="STRING"/>
+      <call blocking="true">
+        <endpoint key="sgemp-endpoint"/>
+      </call>
+      <enrich>
+        <source clone="false" type="body"/>
+        <target type="property" property="tiposTercero"/>
+      </enrich>
+
+      <payloadFactory media-type="json">
+        <format>
+[
+  {
+    "wrappers": [
+      "global"
+    ],
+    "templateOptions": {
+      "styles": "{ \"width\": \"900px\" }"
+    },
+    "fieldGroup": [
+      {
+        "wrappers": [
+          "mat-card-group"
+        ],
+        "templateOptions": {
+          "label": "Datos Generales"
+        },
+        "fieldGroup": [
+          {
+            "fieldGroupClassName": "row-formly",
+            "fieldGroup": [
+              {
+                "key": "tipoSedeId",
+                "type": "select",
+                "className": "flex-1",
+                "templateOptions": {
+                  "label": "Tipo de sede",
+                  "placeholder": "Introduce tipo de sede",
+                  "disabled": true,
+                  "options": [
+                    {
+                      "value": "0",
+                      "label": "Entidad"
+                    },
+                    {
+                      "value": "1",
+                      "label": "Subentidad"
+                    }
+                  ]
+                }
+              },
+              {
+                "key": "datosEconomicos",
+                "type": "select",
+                "className": "flex-1",
+                "templateOptions": {
+                  "label": "Datos económicos",
+                  "placeholder": "Introduce datos económicos",
+                  "options": [
+                    {
+                      "value": true,
+                      "label": "Sí"
+                    },
+                    {
+                      "value": false,
+                      "label": "No"
+                    }
+                  ]
+                },
+                "expressionProperties": {
+                  "templateOptions.disabled": "formState.mainModel.datosEconomicos"
+                }
+              }
+            ]
+          },
+          {
+            "key": "entidadRazonSocial",
+            "type": "input",
+            "templateOptions": {
+              "label": "Entidad / Razón social",
+              "placeholder": "Introduce Entidad / Razón social",
+              "disabled": true
+            }
+          },
+          {
+            "fieldGroupClassName": "row-formly",
+            "fieldGroup": [
+              {
+                "key": "tipoIdentificadorFiscalId",
+                "type": "select-tipos-identificadores",
+                "className": "flex-1",
+                "templateOptions": {
+                  "label": "Tipo de identificador fiscal",
+                  "placeholder": "Introduce tipo de identificador fiscal",
+                  "disabled": true,
+                  "valueProp": "id",
+                  "labelProp": "nombre"
+                }
+              },
+              {
+                "key": "numeroIdentificadorFiscal",
+                "type": "input",
+                "className": "flex-1",
+                "templateOptions": {
+                  "label": "Número de identificador fiscal",
+                  "placeholder": "Introduce número de identificador fiscal",
+                  "disabled": true
+                }
+              }
+            ]
+          },
+          {
+            "key": "entidadPrincipal",
+            "type": "input",
+            "templateOptions": {
+              "label": "Entidad principal",
+              "placeholder": "Introduce entidad principal",
+              "disabled": true
+            },
+            "hideExpression": "formState.mainModel.tipoSedeId!=='1'"
+          },
+          {
+            "type": "table-crud-clasificaciones",
+            "key": "sectoresIndustriales",
+            "templateOptions": {
+              "title": "Sectores industriales",
+              "entity": "Sector industrial"
+            },
+            "fieldArray": {
+              "fieldGroup": [
+                {
+                  "key": "sectorIndustrial",
+                  "type": "input",
+                  "templateOptions": {
+                    "label": "Nivel seleccionado",
+                    "order": 20
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "wrappers": [
+          "mat-card-group"
+        ],
+        "templateOptions": {
+          "label": "Datos de Contacto"
+        },
+        "fieldGroup": [
+          {
+            "fieldGroupClassName": "row-formly",
+            "fieldGroup": [
+              {
+                "key": "paisContactoId",
+                "type": "select-paises",
+                "className": "flex-1",
+                "templateOptions": {
+                  "label": "País",
+                  "placeholder": "Introduce país",
+                  "required": true,
+                  "valueProp": "id",
+                  "labelProp": "nombre"
+                }
+              },
+              {
+                "key": "codigoPostalContacto",
+                "type": "input",
+                "className": "flex-1",
+                "templateOptions": {
+                  "label": "Código postal",
+                  "placeholder": "Introduce código postal",
+                  "required": false
+                },
+                "expressionProperties": {
+                  "templateOptions.required": "null!==model.paisContactoId &amp;&amp; model.paisContactoId==='011'"
+                }
+              }
+            ]
+          },
+          {
+            "fieldGroupClassName": "row-formly",
+            "fieldGroup": [
+              {
+                "key": "ciudadContacto",
+                "type": "input",
+                "className": "flex-1",
+                "templateOptions": {
+                  "label": "Ciudad",
+                  "placeholder": "Introduce ciudad",
+                  "required": true
+                },
+                "expressionProperties": {
+                  "templateOptions.required": "null!==model.paisContactoId &amp;&amp; model.paisContactoId!=='011'"
+                }
+              },
+              {
+                "key": "tipoViaContactoId",
+                "type": "select",
+                "className": "flex-1",
+                "templateOptions": {
+                  "label": "Tipo de vía",
+                  "placeholder": "Introduce tipo de vía",
+                  "valueProp": "id",
+                  "labelProp": "nombre",
+                  "options": $1
+                }
+              }
+            ]
+          },
+          {
+            "fieldGroupClassName": "row-formly",
+            "fieldGroup": [
+              {
+                "key": "nombreViaContacto",
+                "type": "input",
+                "className": "flex-2",
+                "templateOptions": {
+                  "label": "Nombre de vía",
+                  "placeholder": "Introduce nombre de vía"
+                }
+              },
+              {
+                "key": "numeroViaContacto",
+                "type": "input",
+                "className": "flex-1",
+                "templateOptions": {
+                  "label": "Número",
+                  "placeholder": "Introduce número"
+                }
+              }
+            ]
+          },
+          {
+            "key": "ampliacion",
+            "type": "input",
+            "className": "flex-1",
+            "templateOptions": {
+              "label": "Ampliación",
+              "placeholder": "Introduce ampliación"
+            }
+          },
+          {
+            "key": "email",
+            "type": "input",
+            "className": "flex-1",
+            "templateOptions": {
+              "label": "Email",
+              "placeholder": "Introduce email"
+            }
+          },
+          {
+            "fieldGroupClassName": "row-formly",
+            "fieldGroup": [
+              {
+                "key": "telefonoContacto",
+                "type": "input",
+                "className": "flex-1",
+                "templateOptions": {
+                  "label": "Teléfono",
+                  "placeholder": "Introduce teléfono"
+                }
+              },
+              {
+                "key": "faxContacto",
+                "type": "input",
+                "className": "flex-1",
+                "templateOptions": {
+                  "label": "Fax",
+                  "placeholder": "Introduce fax"
+                }
+              }
+            ]
+          },
+          {
+            "key": "direccionWeb",
+            "type": "input",
+            "className": "flex-1",
+            "templateOptions": {
+              "label": "Dirección web",
+              "placeholder": "Introduce dirección web"
+            }
+          }
+        ]
+      },
+      {
+        "wrappers": [
+          "mat-card-group"
+        ],
+        "templateOptions": {
+          "label": "Datos de Tipo de Entidad"
+        },
+        "hideExpression": "!model.datosEconomicos",
+        "fieldGroup": [
+          {
+            "key": "tipoTerceroId",
+            "type": "select-attributes",
+            "templateOptions": {
+              "label": "Tipo de tercero",
+              "placeholder": "Introduce tipo de tercero",
+              "valueProp": "id",
+              "labelProp": "nombre",
+              "propertyMappedToFormState": "tipoTerceroSelectedId",
+              "modelEditName": "mainModel",
+              "dataSelectPropertyValue": "id",
+              "dataSelectPropertyToFormState": "clase",
+              "dataSelect": $5
+            },
+            "expressionProperties": {
+              "templateOptions.options": "field.templateOptions.dataSelect",
+              "templateOptions.required": "!formState.mainModel.datosEconomicos &amp;&amp; model.datosEconomicos",
+              "templateOptions.disabled": "formState.mainModel.datosEconomicos"
+            }
+          },
+          {
+            "key": "tipoEmpresaId",
+            "type": "select",
+            "templateOptions": {
+              "label": "Tipo de entidad",
+              "placeholder": "Introduce tipo de entidad",
+              "valueProp": "id",
+              "labelProp": "nombre",
+              "options": $2
+            },
+            "expressionProperties": {
+              "templateOptions.required": "!formState.mainModel.datosEconomicos &amp;&amp; model.datosEconomicos",
+              "templateOptions.disabled": "formState.mainModel.datosEconomicos"
+            }
+          },
+          {
+            "key": "tipoEmpresaContabilidadId",
+            "type": "select",
+            "templateOptions": {
+              "label": "Tipo de entidad para contabilidad",
+              "placeholder": "Introduce tipo de entidad para contabilidad",
+              "valueProp": "id",
+              "labelProp": "nombre",
+              "options": $3
+            },
+            "expressionProperties": {
+              "templateOptions.required": "!formState.mainModel.datosEconomicos &amp;&amp; model.datosEconomicos",
+              "templateOptions.disabled": "formState.mainModel.datosEconomicos"
+            }
+          },
+          {
+            "key": "tipoTerceroReinoUnidoId",
+            "type": "select",
+            "templateOptions": {
+              "label": "Tipo de tercero Reino Unido",
+              "placeholder": "Introduce tipo de tercero Reino Unido",
+              "valueProp": "id",
+              "labelProp": "nombre",
+              "options": $4
+            },
+            "expressionProperties": {
+              "templateOptions.required": "model.datosEconomicos &amp;&amp; null!==model.paisContactoId &amp;&amp; model.paisContactoId==='006' &amp;&amp; formState.tipoTerceroSelectedId==='F' &amp;&amp; !(formState.mainModel.datosEconomicos &amp;&amp; null!==formState.mainModel.paisContactoId &amp;&amp; formState.mainModel.paisContactoId==='006' &amp;&amp; formState.mainModel.tipoTerceroSelectedId==='F')",
+              "templateOptions.disabled": "(formState.mainModel.datosEconomicos &amp;&amp; !(null!==model.paisContactoId &amp;&amp; model.paisContactoId==='006' &amp;&amp; formState.mainModel.tipoTerceroSelectedId==='F')) || (formState.mainModel.datosEconomicos &amp;&amp; null!==formState.mainModel.paisContactoId &amp;&amp; formState.mainModel.paisContactoId==='006' &amp;&amp; formState.mainModel.tipoTerceroSelectedId==='F')"
+            }
+          }
+        ]
+      }
+    ]
+  }
+]
+        </format>
+        <args>
+          <arg expression="get-property('tiposVia')" literal="true"/>
+          <arg expression="get-property('tiposEmpresa')" literal="true"/>
+          <arg expression="get-property('tiposEmpresaContabilidad')" literal="true"/>
+          <arg expression="get-property('tiposTerceroReinoUnido')" literal="true"/>
+          <arg expression="get-property('tiposTercero')" literal="true"/>
+        </args>
+      </payloadFactory>
+      <respond/>
+    </inSequence>
+    <outSequence>
+      <respond/>
+    </outSequence>
+    <faultSequence>
+      <sequence key="error-handling-sequence"/>
+    </faultSequence>
+  </resource>
+
+  <resource methods="GET" url-mapping="/empresas/formly/view">
+    <inSequence>
+      <call-template target="sgi-auth-sequence-template">
+        <with-param name="requiredAuthorities" value=""/>
+      </call-template>
+      <sequence key="sgemp-add-x-api-key-sequence"/>
+
+      <!-- tipos via -->
+      <property value="/tipos-via" name="REST_URL_POSTFIX" scope="axis2" type="STRING"/>
+      <call blocking="true">
+        <endpoint key="sgo-endpoint"/>
+      </call>
+      <enrich>
+        <source clone="false" type="body"/>
+        <target type="property" property="tiposVia"/>
+      </enrich>
+
+      <!-- tipos empresa -->
+      <property value="/tipos-empresa" name="REST_URL_POSTFIX" scope="axis2" type="STRING"/>
+      <call blocking="true">
+        <endpoint key="sgemp-endpoint"/>
+      </call>
+      <enrich>
+        <source clone="false" type="body"/>
+        <target type="property" property="tiposEmpresa"/>
+      </enrich>
+
+      <!-- tipos empresa contabilidad -->
+      <property value="/tipos-empresa-contabilidad" name="REST_URL_POSTFIX" scope="axis2" type="STRING"/>
+      <call blocking="true">
+        <endpoint key="sgemp-endpoint"/>
+      </call>
+      <enrich>
+        <source clone="false" type="body"/>
+        <target type="property" property="tiposEmpresaContabilidad"/>
+      </enrich>
+
+      <!-- tipos tercero reino unido -->
+      <property value="/tipos-tercero-reino-unido" name="REST_URL_POSTFIX" scope="axis2" type="STRING"/>
+      <call blocking="true">
+        <endpoint key="sgemp-endpoint"/>
+      </call>
+      <enrich>
+        <source clone="false" type="body"/>
+        <target type="property" property="tiposTerceroReinoUnido"/>
+      </enrich>
+
+      <!-- tipos tercero -->
+      <property value="/tipos-tercero" name="REST_URL_POSTFIX" scope="axis2" type="STRING"/>
+      <call blocking="true">
+        <endpoint key="sgemp-endpoint"/>
+      </call>
+      <enrich>
+        <source clone="false" type="body"/>
+        <target type="property" property="tiposTercero"/>
+      </enrich>
+
+      <payloadFactory media-type="json">
+        <format>
+[
+  {
+    "wrappers": [
+      "global"
+    ],
+    "templateOptions": {
+      "styles": "{ \"width\": \"900px\" }"
+    },
+    "fieldGroup": [
+      {
+        "wrappers": [
+          "mat-card-group"
+        ],
+        "templateOptions": {
+          "label": "Datos Generales"
+        },
+        "fieldGroup": [
+          {
+            "fieldGroupClassName": "row-formly",
+            "fieldGroup": [
+              {
+                "key": "tipoSedeId",
+                "type": "select",
+                "className": "flex-1",
+                "templateOptions": {
+                  "label": "Tipo de sede",
+                  "placeholder": "Introduce tipo de sede",
+                  "disabled": true,
+                  "options": [
+                    {
+                      "value": "0",
+                      "label": "Entidad"
+                    },
+                    {
+                      "value": "1",
+                      "label": "Subentidad"
+                    }
+                  ]
+                }
+              },
+              {
+                "key": "datosEconomicos",
+                "type": "select",
+                "className": "flex-1",
+                "templateOptions": {
+                  "label": "Datos económicos",
+                  "placeholder": "Introduce datos económicos",
+                  "disabled": true,
+                  "options": [
+                    {
+                      "value": true,
+                      "label": "Sí"
+                    },
+                    {
+                      "value": false,
+                      "label": "No"
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          {
+            "key": "entidadRazonSocial",
+            "type": "input",
+            "templateOptions": {
+              "label": "Entidad / Razón social",
+              "placeholder": "Introduce Entidad / Razón social",
+              "disabled": true
+            }
+          },
+          {
+            "fieldGroupClassName": "row-formly",
+            "fieldGroup": [
+              {
+                "key": "tipoIdentificadorFiscalId",
+                "type": "select-tipos-identificadores",
+                "className": "flex-1",
+                "templateOptions": {
+                  "label": "Tipo de identificador fiscal",
+                  "placeholder": "Introduce tipo de identificador fiscal",
+                  "disabled": true,
+                  "valueProp": "id",
+                  "labelProp": "nombre"
+                }
+              },
+              {
+                "key": "numeroIdentificadorFiscal",
+                "type": "input",
+                "className": "flex-1",
+                "templateOptions": {
+                  "label": "Número de identificador fiscal",
+                  "placeholder": "Introduce número de identificador fiscal",
+                  "disabled": true
+                }
+              }
+            ]
+          },
+          {
+            "key": "entidadPrincipal",
+            "type": "input",
+            "templateOptions": {
+              "label": "Entidad principal",
+              "placeholder": "Introduce entidad principal",
+              "disabled": true,
+              "hideExpression": "model.tipoSedeId==='1'"
+            }
+          },
+          {
+            "type": "table-crud-clasificaciones",
+            "key": "sectoresIndustriales",
+            "templateOptions": {
+              "title": "Sectores industriales",
+              "entity": "Sector industrial",
+              "disabled": true
+            },
+            "fieldArray": {
+              "fieldGroup": [
+                {
+                  "key": "sectorIndustrial",
+                  "type": "input",
+                  "templateOptions": {
+                    "label": "Nivel seleccionado",
+                    "order": 20
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "wrappers": [
+          "mat-card-group"
+        ],
+        "templateOptions": {
+          "label": "Datos de Contacto"
+        },
+        "fieldGroup": [
+          {
+            "fieldGroupClassName": "row-formly",
+            "fieldGroup": [
+              {
+                "key": "paisContactoId",
+                "type": "select-paises",
+                "className": "flex-1",
+                "templateOptions": {
+                  "label": "País",
+                  "placeholder": "Introduce país",
+                  "disabled": true,
+                  "valueProp": "id",
+                  "labelProp": "nombre"
+                }
+              },
+              {
+                "key": "codigoPostalContacto",
+                "type": "input",
+                "className": "flex-1",
+                "templateOptions": {
+                  "label": "Código postal",
+                  "placeholder": "Introduce código postal",
+                  "disabled": true
+                }
+              }
+            ]
+          },
+          {
+            "fieldGroupClassName": "row-formly",
+            "fieldGroup": [
+              {
+                "key": "ciudadContacto",
+                "type": "input",
+                "className": "flex-1",
+                "templateOptions": {
+                  "label": "Ciudad",
+                  "placeholder": "Introduce ciudad",
+                  "disabled": true
+                }
+              },
+              {
+                "key": "tipoViaContactoId",
+                "type": "select",
+                "className": "flex-1",
+                "templateOptions": {
+                  "label": "Tipo de vía",
+                  "placeholder": "Introduce tipo de vía",
+                  "disabled": true,
+                  "valueProp": "id",
+                  "labelProp": "nombre",
+                  "options": $1
+                }
+              }
+            ]
+          },
+          {
+            "fieldGroupClassName": "row-formly",
+            "fieldGroup": [
+              {
+                "key": "nombreViaContacto",
+                "type": "input",
+                "className": "flex-2",
+                "templateOptions": {
+                  "label": "Nombre de vía",
+                  "placeholder": "Introduce nombre de vía",
+                  "disabled": true
+                }
+              },
+              {
+                "key": "numeroViaContacto",
+                "type": "input",
+                "className": "flex-1",
+                "templateOptions": {
+                  "label": "Número",
+                  "placeholder": "Introduce número",
+                  "disabled": true
+                }
+              }
+            ]
+          },
+          {
+            "key": "ampliacion",
+            "type": "input",
+            "className": "flex-1",
+            "templateOptions": {
+              "label": "Ampliación",
+              "placeholder": "Introduce ampliación",
+              "disabled": true
+            }
+          },
+          {
+            "key": "email",
+            "type": "input",
+            "className": "flex-1",
+            "templateOptions": {
+              "label": "Email",
+              "placeholder": "Introduce email",
+              "disabled": true
+            }
+          },
+          {
+            "fieldGroupClassName": "row-formly",
+            "fieldGroup": [
+              {
+                "key": "telefonoContacto",
+                "type": "input",
+                "className": "flex-1",
+                "templateOptions": {
+                  "label": "Teléfono",
+                  "placeholder": "Introduce teléfono",
+                  "disabled": true
+                }
+              },
+              {
+                "key": "faxContacto",
+                "type": "input",
+                "className": "flex-1",
+                "templateOptions": {
+                  "label": "Fax",
+                  "placeholder": "Introduce fax",
+                  "disabled": true
+                }
+              }
+            ]
+          },
+          {
+            "key": "direccionWeb",
+            "type": "input",
+            "className": "flex-1",
+            "templateOptions": {
+              "label": "Dirección web",
+              "placeholder": "Introduce dirección web",
+              "disabled": true
+            }
+          }
+        ]
+      },
+      {
+        "wrappers": [
+          "mat-card-group"
+        ],
+        "templateOptions": {
+          "label": "Datos de Tipo de Entidad"
+        },
+        "hideExpression": "!model.datosEconomicos",
+        "fieldGroup": [
+          {
+            "key": "tipoTerceroId",
+            "type": "select",
+            "templateOptions": {
+              "label": "Tipo de tercero",
+              "placeholder": "Introduce tipo de tercero",
+              "disabled": true,
+              "valueProp": "id",
+              "labelProp": "nombre",
+              "options": $5
+            }
+          },
+          {
+            "key": "tipoEmpresaId",
+            "type": "select",
+            "templateOptions": {
+              "label": "Tipo de entidad",
+              "placeholder": "Introduce tipo de entidad",
+              "disabled": true,
+              "valueProp": "id",
+              "labelProp": "nombre",
+              "options": $2
+            }
+          },
+          {
+            "key": "tipoEmpresaContabilidadId",
+            "type": "select",
+            "templateOptions": {
+              "label": "Tipo de entidad para contabilidad",
+              "placeholder": "Introduce tipo de entidad para contabilidad",
+              "disabled": true,
+              "valueProp": "id",
+              "labelProp": "nombre",
+              "options": $3
+            }
+          },
+          {
+            "key": "tipoTerceroReinoUnidoId",
+            "type": "select",
+            "templateOptions": {
+              "label": "Tipo de tercero Reino Unido",
+              "placeholder": "Introduce tipo de tercero Reino Unido",
+              "disabled": true,
+              "valueProp": "id",
+              "labelProp": "nombre",
+              "options": $4
+            }
+          }
+        ]
+      }
+    ]
+  }
+]
+        </format>
+        <args>
+          <arg expression="get-property('tiposVia')" literal="true"/>
+          <arg expression="get-property('tiposEmpresa')" literal="true"/>
+          <arg expression="get-property('tiposEmpresaContabilidad')" literal="true"/>
+          <arg expression="get-property('tiposTerceroReinoUnido')" literal="true"/>
+          <arg expression="get-property('tiposTercero')" literal="true"/>
+        </args>
+      </payloadFactory>
+      <respond/>
+    </inSequence>
+    <outSequence>
+      <respond/>
+    </outSequence>
+    <faultSequence>
+      <sequence key="error-handling-sequence"/>
+    </faultSequence>
+  </resource>
+
+  <!-- datos contacto -->
+  <resource methods="GET" uri-template="/datos-contacto/empresa/{id}">
+    <inSequence>
+      <call-template target="sgi-auth-sequence-template">
+        <with-param name="requiredAuthorities" value=""/>
+      </call-template>
+      <sequence key="sgemp-add-x-api-key-sequence"/>
+      <send>
+        <endpoint key="sgemp-endpoint"/>
+      </send>
+    </inSequence>
+    <outSequence>
+      <script key="gov:scripts/sgemp/datos-contacto-response-converter-mediator.js" language="js"/>
+      <respond/>
+    </outSequence>
+    <faultSequence>
+      <sequence key="error-handling-sequence"/>
+    </faultSequence>
+  </resource>
+
+  <!-- tipos identificador -->
+  <resource methods="GET" url-mapping="/tipos-identificador">
+    <inSequence>
+      <call-template target="sgi-auth-sequence-template">
+        <with-param name="requiredAuthorities" value=""/>
+      </call-template>
+      <sequence key="sgemp-add-x-api-key-sequence"/>
+      <send>
+        <endpoint key="sgemp-endpoint"/>
+      </send>
+    </inSequence>
+    <outSequence>
+      <respond/>
+    </outSequence>
+    <faultSequence>
+      <sequence key="error-handling-sequence"/>
+    </faultSequence>
+  </resource>
+
+
+</api>

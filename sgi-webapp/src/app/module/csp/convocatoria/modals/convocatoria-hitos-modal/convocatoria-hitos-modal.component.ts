@@ -20,7 +20,7 @@ const MSG_ANADIR = marker('btn.add');
 const MSG_ACEPTAR = marker('btn.ok');
 const CONVOCATORIA_HITO_KEY = marker('csp.hito');
 const CONVOCATORIA_HITO_COMENTARIO_KEY = marker('csp.hito.comentario');
-const CONVOCATORIA_HITO_FECHA_INICIO_KEY = marker('csp.hito.fecha-inicio');
+const CONVOCATORIA_HITO_FECHA_INICIO_KEY = marker('csp.hito.fecha');
 const CONVOCATORIA_HITO_TIPO_KEY = marker('csp.hito.tipo');
 const TITLE_NEW_ENTITY = marker('title.new.entity');
 

@@ -1,5 +1,4 @@
-<section>
-  <h2>{{'tree.entity' | translate:msgParamEntities}}</h2>
+<sgi-fragment title="{{'tree.entity' | translate:msgParamEntities}}">
 
   <div class="programa" fxLayout="row" fxLayout.xs="column" fxLayoutGap="10px">
     <div class="arbol" fxFlex>
@@ -53,6 +52,16 @@
           </mat-error>
         </mat-form-field>
         <mat-form-field class="input-form">
+          <mat-label>{{'csp.proyecto-socio-periodo-justificacion.documento.fichero' | translate}}</mat-label>
+          <sgi-file-upload #uploader
+            placeholder="{{'csp.proyecto-socio-periodo-justificacion.documento.fichero' | translate}}"
+            formControlName="fichero" required autoUpload="false" (uploadEventChange)="onUploadProgress($event)">
+          </sgi-file-upload>
+          <mat-error *ngIf="formGroup.get('fichero').errors?.required">
+            {{'error.required.entity' | translate:msgParamFicheroEntity}}
+          </mat-error>
+        </mat-form-field>
+        <mat-form-field class="input-form">
           <mat-label>{{'csp.documento.tipo' | translate}}
           </mat-label>
           <mat-select placeholder="{{'csp.documento.tipo' | translate}}" formControlName="tipoDocumento"
@@ -62,13 +71,10 @@
           </mat-select>
         </mat-form-field>
         <mat-form-field class="input-form">
-          <mat-label>{{'csp.proyecto-socio-periodo-justificacion.documento.fichero' | translate}}</mat-label>
-          <sgi-file-upload #uploader
-            placeholder="{{'csp.proyecto-socio-periodo-justificacion.documento.fichero' | translate}}"
-            formControlName="fichero" required autoUpload="false" (uploadEventChange)="onUploadProgress($event)">
-          </sgi-file-upload>
-          <mat-error *ngIf="formGroup.get('fichero').errors?.required">
-            {{'error.required.entity' | translate:msgParamFicheroEntity}}
+          <mat-label>{{'csp.proyecto-socio-periodo-justificacion.documento.visible' | translate}}</mat-label>
+          <sgi-select-boolean formControlName="visible" required></sgi-select-boolean>
+          <mat-error *ngIf="formGroup.get('visible').errors?.required">
+            {{'error.required.entity' | translate:msgParamVisibleEntity}}
           </mat-error>
         </mat-form-field>
         <mat-form-field class="input-form">
@@ -80,28 +86,26 @@
             {{'error.maxlength.entity' | translate:msgParamComentarioEntity}}
           </mat-error>
         </mat-form-field>
-        <mat-checkbox class="checkbox" color="primary" formControlName="visible">
-          {{'csp.proyecto-socio-periodo-justificacion.documento.visible' | translate}}
-        </mat-checkbox>
       </div>
       <div class="separation-button" *ngIf="group.status$ | async as status">
         <button *ngIf="viewMode === VIEW_MODE.VIEW" mat-button mat-raised-button color="primary" class="rounded"
-          [disabled]="!viewingNode.fichero" (click)="downloadFile(viewingNode)">
+          [disabled]="!viewingNode?.fichero || this.readonly" (click)="downloadFile(viewingNode)">
           <mat-icon>arrow_downward</mat-icon>
           {{'btn.download.file' | translate}}
         </button>
         <button *ngIf="viewMode === VIEW_MODE.NEW || viewMode === VIEW_MODE.EDIT" color="accent" mat-button
           mat-raised-button (click)="acceptDetail()"
-          [disabled]="!status.complete || (status.complete && uploading)">{{'btn.ok' | translate}}</button>
+          [disabled]="!status.complete || (status.complete && uploading) || this.readonly">{{'btn.ok' |
+          translate}}</button>
         <button *ngIf="viewMode === VIEW_MODE.NEW || viewMode === VIEW_MODE.EDIT" class="link-cancelar" mat-button><span
             class="underline" (click)="cancelDetail()">{{'btn.cancel' | translate}}</span></button>
-        <button *ngIf="viewMode === VIEW_MODE.VIEW" color="accent" class="rounded" mat-button mat-raised-button
-          (click)="switchToEdit()">
+        <button *ngIf="viewMode === VIEW_MODE.VIEW && !this.readonly" color="accent" class="rounded" mat-button
+          mat-raised-button (click)="switchToEdit()">
           <mat-icon>edit</mat-icon>
           {{'btn.edit.entity'| translate:msgParamEntity}}
         </button>
-        <button *ngIf="viewMode === VIEW_MODE.VIEW" color="warn" class="rounded" mat-button mat-raised-button
-          (click)="deleteDetail()">
+        <button *ngIf="viewMode === VIEW_MODE.VIEW && !this.readonly" color="warn" class="rounded" mat-button
+          mat-raised-button (click)="deleteDetail()">
           <mat-icon>close</mat-icon>
           {{'btn.delete.entity' | translate:msgParamEntity}}
         </button>
@@ -110,11 +114,11 @@
     <!-- FIN Visualizacion crear/editar/detalle -->
   </div>
 
-  <div class="separation-button">
+  <div class="separation-button" *ngIf="!this.readonly">
     <button color="three" aria-label="Center Align" mat-button mat-raised-button (click)="switchToNew()">
       <mat-icon color="accent">add_circle</mat-icon>
       {{ 'btn.add.entity' | translate:msgParamEntity }}
     </button>
   </div>
 
-</section>
+</sgi-fragment>

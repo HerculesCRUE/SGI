@@ -10,7 +10,7 @@ export class LuxonUtils {
     }
     if (value instanceof DateTime) {
       if (value.isValid) {
-        return asDate ? value.toUTC().toISODate() : value.toUTC().toISO({ suppressMilliseconds: true });
+        return asDate ? value.toISODate() : value.toUTC().toISO({ suppressMilliseconds: true });
       }
       else {
         return null;

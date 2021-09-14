@@ -1,4 +1,5 @@
 import { IProyectoProyectoSgeBackend } from '@core/models/csp/backend/proyecto-proyecto-sge-backend';
+import { IProyecto } from '@core/models/csp/proyecto';
 import { IProyectoProyectoSge } from '@core/models/csp/proyecto-proyecto-sge';
 import { IProyectoSge } from '@core/models/sge/proyecto-sge';
 import { SgiBaseConverter } from '@sgi/framework/core';
@@ -13,7 +14,7 @@ class ProyectoProyectoSgeConverter
     return {
       id: value.id,
       proyectoSge: { id: value.proyectoSgeRef } as IProyectoSge,
-      proyectoId: value.proyectoId,
+      proyecto: { id: value.proyectoId } as IProyecto
     };
   }
 
@@ -24,7 +25,7 @@ class ProyectoProyectoSgeConverter
     return {
       id: value.id,
       proyectoSgeRef: value.proyectoSge.id,
-      proyectoId: value.proyectoId
+      proyectoId: value.proyecto.id
     };
   }
 }

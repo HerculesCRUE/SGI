@@ -6,5 +6,6 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface InvencionRepository extends JpaRepository<Invencion, Long>, JpaSpecificationExecutor<Invencion> {
+public interface InvencionRepository
+    extends ActivableRepository, JpaRepository<Invencion, Long>, JpaSpecificationExecutor<Invencion> {
 }

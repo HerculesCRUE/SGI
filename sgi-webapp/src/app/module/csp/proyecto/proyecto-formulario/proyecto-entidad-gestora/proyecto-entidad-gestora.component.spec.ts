@@ -10,6 +10,7 @@ import { MaterialDesignModule } from '@material/material-design.module';
 import { SgiAuthService } from '@sgi/framework/auth';
 import { SharedModule } from '@shared/shared.module';
 import { LoggerTestingModule } from 'ngx-logger/testing';
+import { SgempSharedModule } from 'src/app/esb/sgemp/shared/sgemp-shared.module';
 import { PROYECTO_DATA_KEY } from '../../proyecto-data.resolver';
 import { IProyectoData, ProyectoActionService } from '../../proyecto.action.service';
 import { ProyectoEntidadGestoraComponent } from './proyecto-entidad-gestora.component';
@@ -37,7 +38,8 @@ describe('ProyectoEntidadGestoraComponent', () => {
         FormsModule,
         ReactiveFormsModule,
         RouterTestingModule,
-        SharedModule
+        SharedModule,
+        SgempSharedModule
       ],
       providers: [
         ProyectoActionService,

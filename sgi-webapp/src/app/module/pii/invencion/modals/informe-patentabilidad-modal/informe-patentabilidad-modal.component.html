@@ -1,0 +1,154 @@
+<div class="sgi-dialog-header" fxLayout="row" fxLayoutGap="20px">
+  <span fxFlexAlign="center" mat-mat-dialog-title role="heading" aria-level="3" fxFlex>{{title | translate}}</span>
+  <button fxFlex="nogrow" mat-icon-button mat-dialog-close>
+    <mat-icon class="close-icon">close</mat-icon>
+  </button>
+</div>
+<mat-dialog-content>
+  <form [formGroup]="formGroup">
+
+    <!-- Fecha Informe-->
+    <div [fxLayout]="fxLayoutProperties.layout" [fxLayoutAlign]="fxLayoutProperties.layoutAlign">
+      <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties33.md"
+        [fxFlex.gt-md]="fxFlexProperties33.gtMd" [fxFlexOrder]="fxFlexProperties33.order">
+        <mat-form-field fxFill>
+          <mat-label>{{'pii.invencion-informe-patentabilidad.fecha-informe' | translate}}</mat-label>
+          <input matInput formControlName="fecha" [matDatepicker]="fecha" required>
+          <mat-datepicker-toggle matSuffix [for]="fecha"></mat-datepicker-toggle>
+          <mat-datepicker #fecha></mat-datepicker>
+          <mat-error *ngIf="formGroup.controls.fecha.errors?.required">
+            {{'error.required.entity' | translate:msgParamFechaInformeEntity}}
+          </mat-error>
+        </mat-form-field>
+      </div>
+    </div>
+
+    <!-- Nombre -->
+    <div [fxLayout]="fxLayoutProperties.layout" [fxLayoutAlign]="fxLayoutProperties.layoutAlign">
+      <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
+        [fxFlexOrder]="fxFlexProperties.order">
+        <mat-form-field fxFill>
+          <mat-label>{{'pii.invencion-informe-patentabilidad.nombre' | translate}}</mat-label>
+          <input matInput formControlName="nombre" id="nombre"
+            placeholder="{{'pii.invencion-informe-patentabilidad.nombre' | translate}}" required>
+          <mat-error *ngIf="formGroup.controls.nombre.errors?.required">
+            {{'error.required.entity' | translate:msgParamNombreEntity}}
+          </mat-error>
+          <mat-error *ngIf="formGroup.controls.nombre.errors?.maxlength">
+            {{'error.maxlength.entity' | translate:msgParamNombreEntity}}
+          </mat-error>
+        </mat-form-field>
+      </div>
+    </div>
+
+    <!-- Fichero -->
+    <div [fxLayout]="fxLayoutProperties.layout" [fxLayoutAlign]="fxLayoutProperties.layoutAlign">
+      <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
+        [fxFlexOrder]="fxFlexProperties.order">
+        <mat-form-field fxFill>
+          <mat-label>{{'pii.invencion-informe-patentabilidad.fichero' | translate}}</mat-label>
+          <sgi-file-upload #uploader formControlName="documento" autoUpload="false"
+            (uploadEventChange)="onUploadProgress($event)"
+            placeholder="{{'pii.invencion-informe-patentabilidad.fichero' | translate}}" required></sgi-file-upload>
+          <mat-error *ngIf="formGroup.controls.documento.errors?.required">
+            {{'error.required.entity' | translate:msgParamFicheroEntity}}
+          </mat-error>
+        </mat-form-field>
+      </div>
+    </div>
+
+    <!-- Resultado-->
+    <div [fxLayout]="fxLayoutProperties.layout" [fxLayoutAlign]="fxLayoutProperties.layoutAlign"
+      [fxLayoutGap]="fxLayoutProperties.gap">
+
+      <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties50.md"
+        [fxFlex.gt-md]="fxFlexProperties50.gtMd" [fxFlexOrder]="fxFlexProperties50.order">
+        <mat-form-field fxFill>
+          <mat-label>{{'pii.invencion-informe-patentabilidad.resultado' | translate}}</mat-label>
+          <sgi-select-entity formControlName="resultadoInformePatentabilidad" [options]=" resultadosInforme$ | async"
+            required>
+          </sgi-select-entity>
+          <mat-error *ngIf="formGroup.controls.resultadoInformePatentabilidad.errors?.required">
+            {{'error.required.entity' | translate:msgParamResultadoEntity}}
+          </mat-error>
+        </mat-form-field>
+      </div>
+    </div>
+
+    <!-- Entidad Creadora -->
+    <div [fxLayout]="fxLayoutProperties.layout" [fxLayoutAlign]="fxLayoutProperties.layoutAlign">
+      <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
+        [fxFlexOrder]="fxFlexProperties.order">
+        <mat-form-field>
+          <mat-label>{{'pii.invencion-informe-patentabilidad.entidad-creadora' | translate}}</mat-label>
+          <sgi-select-empresa placeholder="{{'pii.invencion-informe-patentabilidad.entidad-creadora' | translate}}"
+            formControlName="entidadCreadora" required>
+          </sgi-select-empresa>
+          <mat-error *ngIf="formGroup.controls.entidadCreadora.errors?.required">
+            {{'error.required.entity' | translate:msgParamEntidadCreaddoraEntity}}
+          </mat-error>
+        </mat-form-field>
+      </div>
+    </div>
+
+    <div [fxLayout]="fxLayoutProperties.layout" [fxLayoutAlign]="fxLayoutProperties.layoutAlign"
+      [fxLayoutGap]="fxLayoutProperties.gap">
+
+      <!-- Contacto Entidad Creadora -->
+      <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties50.md"
+        [fxFlex.gt-md]="fxFlexProperties50.gtMd" [fxFlexOrder]="fxFlexProperties50.order">
+        <mat-form-field fxFill>
+          <mat-label>{{'pii.invencion-informe-patentabilidad.contacto-entidad' | translate}}</mat-label>
+          <input matInput formControlName="contactoEntidadCreadora" id="contactoEntidadCreadora"
+            placeholder="{{'pii.invencion-informe-patentabilidad.contacto-entidad' | translate}}" required>
+          <mat-error *ngIf="formGroup.controls.contactoEntidadCreadora.errors?.required">
+            {{'error.required.entity' | translate:msgParamContactoEntidadEntity}}
+          </mat-error>
+          <mat-error *ngIf="formGroup.controls.contactoEntidadCreadora.errors?.maxlength">
+            {{'error.maxlength.entity' | translate:msgParamContactoEntidadEntity}}
+          </mat-error>
+        </mat-form-field>
+      </div>
+
+      <!-- Contacto Examinador -->
+      <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties50.md"
+        [fxFlex.gt-md]="fxFlexProperties50.gtMd" [fxFlexOrder]="fxFlexProperties50.order">
+        <mat-form-field fxFill>
+          <mat-label>{{'pii.invencion-informe-patentabilidad.contacto-examinador' | translate}}</mat-label>
+          <input matInput formControlName="contactoExaminador" id="contactoExaminador"
+            placeholder="{{'pii.invencion-informe-patentabilidad.contacto-examinador' | translate}}" required>
+          <mat-error *ngIf="formGroup.controls.contactoExaminador.errors?.required">
+            {{'error.required.entity' | translate:msgParamContactoExaminadorEntity}}
+          </mat-error>
+          <mat-error *ngIf="formGroup.controls.contactoExaminador.errors?.maxlength">
+            {{'error.maxlength.entity' | translate:msgParamContactoExaminadorEntity}}
+          </mat-error>
+        </mat-form-field>
+      </div>
+
+    </div>
+
+    <!-- Comentarios -->
+    <div [fxLayout]="fxLayoutProperties.layout" [fxLayoutAlign]="fxLayoutProperties.layoutAlign">
+      <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
+        [fxFlexOrder]="fxFlexProperties.order">
+        <mat-form-field fxFill>
+          <mat-label>{{'pii.invencion-informe-patentabilidad.comentarios' | translate}}</mat-label>
+          <textarea matInput formControlName="comentarios" id="comentarios"
+            placeholder="{{'pii.invencion-informe-patentabilidad.comentarios' | translate}}"></textarea>
+          <mat-error *ngIf="formGroup.controls.comentarios.errors?.maxlength">
+            {{'error.maxlength.entity' | translate:msgParamComentariosEntity}}
+          </mat-error>
+        </mat-form-field>
+      </div>
+    </div>
+
+  </form>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <button color="accent" (click)="saveOrUpdate()" mat-raised-button type="submit" *ngIf="!data.readonly">
+    <mat-icon class="save-icon">save</mat-icon>{{textSaveOrUpdate | translate}}
+  </button>
+  <button class="link-cancelar" mat-button type="button" mat-dialog-close>{{'btn.cancel' |
+    translate}}</button>
+</mat-dialog-actions>

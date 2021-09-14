@@ -14,6 +14,7 @@ const MSG_SEGUIMIENTOS_TITLE = marker('menu.principal.inv.seguimientos');
 const MSG_PETICIONES_EVALUACION_TITLE = marker('menu.principal.inv.peticionesEvaluacion');
 const MSG_MEMORIAS_TITLE = marker('menu.principal.inv.memorias');
 const MSG_CONVOCATORIAS_TITLE = marker('menu.principal.inv.convocatorias');
+const MSG_SOLICITUDES_TITLE = marker('menu.principal.inv.solicitudes');
 
 const routes: SgiRoutes = [
   {
@@ -99,7 +100,7 @@ const routes: SgiRoutes = [
           ),
         canActivate: [SgiAuthGuard],
         data: {
-          title: MSG_CONVOCATORIAS_TITLE,
+          title: MSG_SOLICITUDES_TITLE,
           hasAnyAuthorityForAnyUO: ['CSP-SOL-INV-ER', 'CSP-SOL-INV-BR'],
         }
       },

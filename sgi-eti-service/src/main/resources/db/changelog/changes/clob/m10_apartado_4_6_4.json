@@ -1,0 +1,53 @@
+[
+  {
+    "key": "ap4_6_4",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "expressionLock": "formState.memoria.tipoMemoria.id === 3",
+      "label": "4.6.4 Incentivos académicos"
+    },
+    "hideExpression": "!formState.mainModel.ap4_6.estudiantesSujetosInvestigacionRadio || formState.mainModel.ap4_6.estudiantesSujetosInvestigacionRadio === 'no'",
+    "fieldGroup": [
+      {
+        "template": "<p>¿Se otorgan incentivos académicos?</p>"
+      },
+      {
+        "key": "incentivosAcademicosRadio",
+        "type": "radio",
+        "templateOptions": {
+          "required": true,
+          "label": "Elige opción",
+          "options": [
+            {
+              "value": "no",
+              "label": "No"
+            },
+            {
+              "value": "si",
+              "label": "Sí"
+            }
+          ]
+        }
+      },
+      {
+        "template": "Describir",
+        "hideExpression": "!model.incentivosAcademicosRadio || model.incentivosAcademicosRadio === 'no'"
+      },
+      {
+        "key": "describirIncentivos",
+        "type": "textarea",
+        "hideExpression": "!model.incentivosAcademicosRadio || model.incentivosAcademicosRadio === 'no'",
+        "templateOptions": {
+          "label": "Describir",
+          "placeholder": "Describir",
+          "required": true,
+          "autosize": true,
+          "autosizeMinRows": "1",
+          "autosizeMaxRows": "10"
+        }
+      }
+    ]
+  }
+]

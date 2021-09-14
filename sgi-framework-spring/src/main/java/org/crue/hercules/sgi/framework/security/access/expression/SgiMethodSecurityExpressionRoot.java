@@ -8,11 +8,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.crue.hercules.sgi.framework.security.oauth2.server.resource.authentication.SgiJwtAuthenticationConverter;
 import org.springframework.security.access.expression.SecurityExpressionRoot;
 import org.springframework.security.access.expression.method.MethodSecurityExpressionOperations;
 import org.springframework.security.access.hierarchicalroles.RoleHierarchy;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.util.Assert;
 
 import lombok.extern.slf4j.Slf4j;
@@ -118,6 +120,21 @@ public class SgiMethodSecurityExpressionRoot extends SecurityExpressionRoot
     String[] returnValue = getAuthorityNameUOs(defaultRolePrefix, authority);
     log.debug("getRolUOs(String authority) - end");
     return returnValue;
+  }
+
+  /**
+   * Check if the current authentication is acting as an authenticated client
+   * application not on behalf of a user.
+   * 
+   * @return true if the current authentication represents a client application
+   */
+  public boolean isClient() {
+    if (authentication instanceof JwtAuthenticationToken) {
+      return authentication.isAuthenticated() && ((JwtAuthenticationToken) authentication).getToken()
+          .containsClaim(SgiJwtAuthenticationConverter.CLIENT_ID);
+    }
+
+    return false;
   }
 
   private boolean hasAnyAuthorityNameForAnyUO(String prefix, String... roles) {

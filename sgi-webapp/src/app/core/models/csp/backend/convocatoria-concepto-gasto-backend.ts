@@ -1,4 +1,4 @@
-import { IConceptoGasto } from '../tipos-configuracion';
+import { IConceptoGasto } from '../concepto-gasto';
 
 export interface IConvocatoriaConceptoGastoBackend {
   /** id */
@@ -17,6 +17,4 @@ export interface IConvocatoriaConceptoGastoBackend {
   mesInicial: number;
   /** Mes final */
   mesFinal: number;
-  /** Porcentaje coste indirecto */
-  porcentajeCosteIndirecto: number;
 }

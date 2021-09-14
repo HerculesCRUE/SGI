@@ -1,0 +1,40 @@
+[
+  {
+    "key": "ap5_4",
+    "wrappers": [
+      "expansion-panel"
+    ],
+    "templateOptions": {
+      "label": "5.4 Situaciones especiales, excepcionales o salvaguardias legales"
+    },
+    "fieldGroup": [
+      {
+        "template": "¿El proyecto requiere solicitud sobre situaciones especiales, excepciones o salvaguardias legales?"
+      },
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "<p>Todas las situaciones especiales o excepciones requerirán la redacción por parte del/la Responsable del Proyecto de una Solicitud Razonada (antes Solicitud Previa y Expresa) explicando el motivo de la excepción y su justificación que se remitirá al Comité Habilitado y al Órgano Competente.</p><p>Estas situaciones están previstas en el El RD 53/2013 (artículos 6, 7, 9.1, 19, 20, 21, 22, 23, 25.3 y 25.5, 26 y 29) y en líneas generales tienen que ver con:</p><ul><li>Realización de procedimientos en los que no se utiliza anestesia, analgesia u otros métodos destinados a eliminar al máximo el dolor, el sufrimiento o la angustia, por ser incompatibles con los resultados perseguidos por el procedimiento o por estar contraindicada.</li><li>Utilización de animales de las especies incluidas en el <a target='_blank' href='http://www.boe.es/buscar/act.php?id=BOE-A-2013-1337&amp;p=20130208&amp;tn=1#ani'>anexo I</a> del RD 53/2013 que no hayan nacido ni hayan sido expresamente criados en centros oficialmente reconocidos.</li><li>Utilización de animales de las especies no incluidas en el <a target='_blank' href='http://www.boe.es/buscar/act.php?id=BOE-A-2013-1337&amp;p=20130208&amp;tn=1#ani'>anexo I</a> del RD 53/2013 que no procedan de centros de cría o suministro.</li><li>Ejecución de procedimientos fuera de los centros usuarios</li><li>Liberación de los animales durante el procedimiento</li><li>Utilización de animales salvajes capturados en la naturaleza, de animales vagabundos, de animales procedentes de centros de protección animal oficiales o de animales protegidos o en peligro de extinción.</li><li>Ejecución de procedimientos en que el animal puede sufrir un dolor grave o prolongado</li><li>Liberación al medio originario de estos animales, una vez terminados los procedimientos en los que se han utilizado animales capturados en la naturaleza</li><li>Utilización de primates no humanos.</li></ul>"
+      },
+      {
+        "key": "solicitudSituacionesEspeciales",
+        "type": "documento",
+        "templateOptions": {
+          "label": "Indicar",
+          "required": true,
+          "options": [
+            {
+              "value": 0,
+              "label": "No"
+            },
+            {
+              "value": 14,
+              "label": "Sí"
+            }
+          ]
+        }
+      }
+    ]
+  }
+]

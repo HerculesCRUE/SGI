@@ -1,0 +1,19 @@
+[
+  {
+    "key": "ap4_3",
+    "wrappers": [
+      "expansion-panel"
+    ],
+    "templateOptions": {
+      "label": "4.3 Reducción"
+    },
+    "fieldGroup": [
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "Se entiende por reducción el empleo de cualquier estrategia encaminada a utilizar el mínimo número de animales necesario para alcanzar el objetivo propuesto."
+      }
+    ]
+  }
+]

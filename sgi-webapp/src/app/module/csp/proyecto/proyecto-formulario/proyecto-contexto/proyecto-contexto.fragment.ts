@@ -11,6 +11,7 @@ import { catchError, map, switchMap } from 'rxjs/operators';
 export interface AreaTematicaProyectoData {
   root: IAreaTematica;
   areaTematica: IAreaTematica;
+  areaTematicaConvocatoria: IAreaTematica;
 }
 
 export class ProyectoContextoFragment extends FormFragment<IProyectoContexto>{
@@ -25,6 +26,8 @@ export class ProyectoContextoFragment extends FormFragment<IProyectoContexto>{
     key: number,
     private readonly logger: NGXLogger,
     private contextoProyectoService: ContextoProyectoService,
+    private readonly: boolean,
+    public isVisor: boolean,
   ) {
     super(key, true);
     this.setComplete(true);
@@ -38,6 +41,14 @@ export class ProyectoContextoFragment extends FormFragment<IProyectoContexto>{
       resultados_previstos: new FormControl('', [Validators.maxLength(2000)]),
       propiedadResultados: new FormControl(''),
     });
+
+    if (this.readonly) {
+      form.disable();
+    }
+    if (this.isVisor) {
+      form.disable();
+    }
+
     return form;
   }
 
@@ -69,11 +80,11 @@ export class ProyectoContextoFragment extends FormFragment<IProyectoContexto>{
 
         const area: AreaTematicaProyectoData = {
           root,
-          areaTematica: proyectoContexto.areaTematica
+          areaTematica: proyectoContexto.areaTematica,
+          areaTematicaConvocatoria: proyectoContexto.areaTematicaConvocatoria
         };
 
-        const loadData = this.loadAreaDataTable(area);
-        this.areasTematicas$.next([loadData]);
+        this.areasTematicas$.next([area]);
 
         return of(proyectoContexto);
       }),
@@ -124,58 +135,24 @@ export class ProyectoContextoFragment extends FormFragment<IProyectoContexto>{
   }
 
   updateAreaTematica(data: AreaTematicaProyectoData) {
-    if (data) {
-      const element = this.loadAreaDataTable(data);
-      const wrapper = new StatusWrapper<AreaTematicaProyectoData>(element);
-      const current = this.areasTematicas$.value;
-      const index = current.findIndex(value =>
-        value.areaTematica.nombre === data.areaTematica.nombre);
-      if (index >= 0) {
-        wrapper.setEdited();
-        this.areasTematicas$[index] = wrapper.value;
-        this.areasTematicas$.next(current);
-        this.setChanges(true);
-      }
-    }
+    this.areaTematica = data.areaTematica;
+    const wrapper = new StatusWrapper<AreaTematicaProyectoData>(data);
+    const current = this.areasTematicas$.value;
+    wrapper.setEdited();
+    this.areasTematicas$[0] = wrapper.value;
+    this.areasTematicas$.next(current);
+    this.setChanges(true);
   }
 
   addAreaTematica(data: AreaTematicaProyectoData) {
-    const element = this.loadAreaDataTable(data);
-    const wrapper = new StatusWrapper<AreaTematicaProyectoData>(element);
+    this.areaTematica = data.areaTematica;
+    const wrapper = new StatusWrapper<AreaTematicaProyectoData>(data);
     wrapper.setCreated();
     const current = this.areasTematicas$.value;
     current.push(wrapper.value);
     this.areasTematicas$.next(current);
     this.setChanges(true);
     this.setErrors(false);
-  }
-
-  loadAreaDataTable(data: AreaTematicaProyectoData): AreaTematicaProyectoData {
-    this.areaTematica = data.areaTematica;
-    if (data.areaTematica) {
-      const result = this.getSecondLevelAreaTematica(this.areaTematica);
-      const padre = result.padre ? result.padre : this.areaTematica;
-      const element: AreaTematicaProyectoData = {
-        root: padre,
-        areaTematica: this.areaTematica
-      };
-      return element;
-    }
-    return data;
-  }
-
-  private getSecondLevelAreaTematica(areaTematica: IAreaTematica): IAreaTematica {
-    if (areaTematica?.padre?.padre) {
-      return this.getSecondLevelAreaTematica(areaTematica.padre);
-    }
-    return areaTematica;
-  }
-
-  /**
-   * Devolvemos la convocatoria de una area tematica
-   */
-  get convocatoriaAreaTematica(): IAreaTematica {
-    return this.proyectoContexto?.areaTematicaConvocatoria;
   }
 
 }

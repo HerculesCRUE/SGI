@@ -1,5 +1,7 @@
 package org.crue.hercules.sgi.csp.controller;
 
+import java.math.BigDecimal;
+
 import org.crue.hercules.sgi.csp.exceptions.ProyectoEntidadFinanciadoraNotFoundException;
 import org.crue.hercules.sgi.csp.model.FuenteFinanciacion;
 import org.crue.hercules.sgi.csp.model.Programa;
@@ -96,7 +98,7 @@ public class ProyectoEntidadFinanciadoraControllerTest extends BaseControllerTes
     // given: Existing ProyectoEntidadFinanciadora to be updated
     ProyectoEntidadFinanciadora proyectoEntidadFinanciadoraExistente = generarMockProyectoEntidadFinanciadora(1L);
     ProyectoEntidadFinanciadora proyectoEntidadFinanciadora = generarMockProyectoEntidadFinanciadora(1L);
-    proyectoEntidadFinanciadora.setPorcentajeFinanciacion(20);
+    proyectoEntidadFinanciadora.setPorcentajeFinanciacion(BigDecimal.valueOf(20));
 
     BDDMockito.given(service.findById(ArgumentMatchers.<Long>any())).willReturn(proyectoEntidadFinanciadoraExistente);
     BDDMockito.given(service.update(ArgumentMatchers.<ProyectoEntidadFinanciadora>any()))
@@ -248,7 +250,7 @@ public class ProyectoEntidadFinanciadoraControllerTest extends BaseControllerTes
     ProyectoEntidadFinanciadora.setEntidadRef("entidad-" + (id == null ? 0 : id));
     ProyectoEntidadFinanciadora.setFuenteFinanciacion(fuenteFinanciacion);
     ProyectoEntidadFinanciadora.setTipoFinanciacion(tipoFinanciacion);
-    ProyectoEntidadFinanciadora.setPorcentajeFinanciacion(50);
+    ProyectoEntidadFinanciadora.setPorcentajeFinanciacion(BigDecimal.valueOf(50));
     ProyectoEntidadFinanciadora.setAjena(false);
 
     return ProyectoEntidadFinanciadora;

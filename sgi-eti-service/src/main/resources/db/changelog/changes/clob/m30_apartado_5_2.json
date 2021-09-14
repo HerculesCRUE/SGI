@@ -1,0 +1,62 @@
+[
+  {
+    "key": "ap5_2",
+    "wrappers": [
+      "expansion-panel"
+    ],
+    "templateOptions": {
+      "label": "5.2 Comunicación de uso de agentes biológicos, Sustancias Químicas Peligrosas, Sustancias Radiactivas y/o Nanopartículas"
+    },
+    "fieldGroup": [
+      {
+        "template": "¿Se ha comunicado al Servicio de Prevención que se va a trabajar con agentes/material biológico, Sustancias Químicas Peligrosas, Sustancias Radiactivas y/o Nanopartículas?"
+      },
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "<p>La utilización de agentes biológicos del grupo 2, 3 ó 4 por primera vez en una actividad investigadora debe notificarse.</p><p>Se efectuará una nueva notificación siempre que se introduzcan cambios sustanciales en algún proceso de trabajo cuyas repercusiones en las condiciones de seguridad y salud invaliden la notificación anterior <b><a href='https://www.boe.es/buscar/act.php?id=BOE-A-1997-11144&p=19980330&tn=1#a10' target='_blank'>(Artículo 10 RD664/1997)</a></b>.</p><p>Las notificaciones pueden realizarse a través de la página web de la <a href='https://www.um.es/web/comision-etica-investigacion/comision-etica/cbe' target='_blank'>Universidad.</a></p><p>Puede consultarse más información sobre las <a href='https://www.um.es/web/comision-etica-investigacion/comision-etica/cbe' target='_blank'>notificaciones</a> en la página web del Comité de la Universidad.</p>"
+      },
+      {
+        "key": "comunicacionAgentesBiologicos",
+        "type": "documento",
+        "templateOptions": {
+          "required": true,
+          "options": [
+            {
+              "value": 0,
+              "label": "No"
+            },
+            {
+              "value": 18,
+              "label": "Sí"
+            }
+          ]
+        }
+      },
+      {
+        "key": "fecha",
+        "type": "datepicker",
+        "hideExpression": "!model.comunicacionAgentesBiologicos || model.comunicacionAgentesBiologicos === 0",
+        "templateOptions": {
+          "required": true,
+          "type": "text",
+          "label": "Fecha"
+        }
+      },
+      {
+        "key": "especificarNegativo",
+        "type": "textarea",
+        "hideExpression": "model.comunicacionAgentesBiologicos !== 0",
+        "templateOptions": {
+          "label": "Justificación",
+          "placeholder": "Justificación",
+          "required": true,
+          "autosize": true,
+          "autosizeMinRows": "1",
+          "autosizeMaxRows": "10"
+        }
+      }
+    ]
+  }
+]

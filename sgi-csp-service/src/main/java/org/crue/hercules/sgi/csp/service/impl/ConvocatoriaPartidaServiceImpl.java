@@ -8,6 +8,7 @@ import org.crue.hercules.sgi.csp.repository.ConvocatoriaPartidaRepository;
 import org.crue.hercules.sgi.csp.repository.specification.ConvocatoriaPartidaSpecifications;
 import org.crue.hercules.sgi.csp.service.ConvocatoriaPartidaService;
 import org.crue.hercules.sgi.framework.rsql.SgiRSQLJPASupport;
+import org.crue.hercules.sgi.framework.security.core.context.SgiSecurityContextHolder;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -77,8 +78,7 @@ public class ConvocatoriaPartidaServiceImpl implements ConvocatoriaPartidaServic
         "ConvocatoriaPartida id no puede ser null para actualizar un ConvocatoriaPartida");
     this.validate(convocatoriaPartidaActualizar);
 
-    // TODO Incluir restricción de convocatorias asociadas a proyectos con
-    // presupuesto
+    // Restricción de convocatorias asociadas a proyectos con presupuesto
 
     return repository.findById(convocatoriaPartidaActualizar.getId()).map(convocatoriaPartida -> {
 
@@ -166,7 +166,36 @@ public class ConvocatoriaPartidaServiceImpl implements ConvocatoriaPartidaServic
           "Formato de codigo no valido");
     });
 
+    Assert.isTrue(this.modificable(convocatoriaPartida.getId(), "CSP-CON-E"),
+        "No se puede modificar ConvocatoriaPartida. No tiene los permisos necesarios o el proyecto de la convocatoria tiene presupuestos anuales asignados.");
+
     log.debug("validate(ConvocatoriaPartida convocatoriaPartida) - end");
+  }
+
+  /**
+   * Hace las comprobaciones necesarias para determinar si la
+   * {@link ConvocatoriaPartida} puede ser modificada. También se utilizará para
+   * permitir la creación, modificación o eliminación de ciertas entidades
+   * relacionadas con la propia {@link ConvocatoriaPartida}.
+   *
+   * @param id        Id de la {@link ConvocatoriaPartida}.
+   * @param authority Authority a validar
+   * @return true si puede ser modificada / false si no puede ser modificada
+   */
+  @Override
+  public boolean modificable(Long id, String authority) {
+    log.debug("modificable(Long id, String unidadConvocatoria) - start");
+
+    if (SgiSecurityContextHolder.hasAuthorityForAnyUO(authority)) {
+      // Será modificable si no tiene solicitudes o proyectos asociados
+      if (id != null) {
+        return (repository.isPosibleEditar(id));
+      }
+      return true;
+    }
+
+    log.debug("modificable(Long id, String unidadConvocatoria) - end");
+    return false;
   }
 
 }

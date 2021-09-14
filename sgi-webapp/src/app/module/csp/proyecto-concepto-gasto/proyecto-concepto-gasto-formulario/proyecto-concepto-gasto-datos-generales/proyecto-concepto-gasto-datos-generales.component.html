@@ -1,13 +1,12 @@
-<section>
-  <h2>{{'csp.proyecto-elegibilidad' | translate}} - {{'label.datos-generales' | translate}}</h2>
+<sgi-fragment title="{{'csp.proyecto-elegibilidad' | translate}} - {{'label.datos-generales' | translate}}">
 
   <form [formGroup]="formGroup">
     <div fxFlex>
       <!-- Concepto Gasto -->
-      <div [fxLayout]="fxLayoutProperties.layout" [fxLayoutAlign]="fxLayoutProperties.layoutAlign">
+      <div [fxLayout]="fxLayoutProperties.layout" [fxLayoutAlign]="fxLayoutProperties.layoutAlign" fxLayoutGap="10px">
         <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
           [fxFlexOrder]="fxFlexProperties.order">
-          <mat-form-field fxFill>
+          <mat-form-field>
             <mat-label>
               {{'csp.proyecto-concepto-gasto' | translate:MSG_PARAMS.CARDINALIRY.SINGULAR}}
             </mat-label>
@@ -18,6 +17,19 @@
             </mat-error>
           </mat-form-field>
         </div>
+        <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
+          [fxFlexOrder]="fxFlexProperties.order">
+          <!--Costes Indirectos-->
+          <mat-form-field>
+            <mat-label>{{'label.csp.concepto-gasto.costes-indirectos' | translate}}
+            </mat-label>
+            <sgi-select-boolean formControlName="costesIndirectos" required></sgi-select-boolean>
+            <mat-error *ngIf="formGroup.controls.costesIndirectos.errors?.required">
+              {{'error.required.entity' | translate:msgParamCostesIndirectos}}
+            </mat-error>
+          </mat-form-field>
+        </div>
+
       </div>
 
       <!-- Importe máximo -->
@@ -47,9 +59,9 @@
           [fxFlexOrder]="fxFlexProperties.order">
           <mat-form-field>
             <mat-label>{{'csp.proyecto-concepto-gasto.fecha-inicio' | translate}}</mat-label>
-            <input matInput formControlName="fechaInicio" [ngxMatDatetimePicker]="picker1">
+            <input matInput formControlName="fechaInicio" [matDatepicker]="picker1">
             <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
-            <ngx-mat-datetime-picker #picker1 showSeconds="true" [defaultTime]="[0,0,0]"></ngx-mat-datetime-picker>
+            <mat-datepicker #picker1></mat-datepicker>
             <mat-error *ngIf="formGroup.controls.fechaInicio.hasError('overlapped')">
               {{'error.overlapping.record.entity' | translate:msgParamConceptoGastoEntity}}
             </mat-error>
@@ -67,11 +79,11 @@
       <div [fxLayout]="fxLayoutProperties.layout" [fxLayoutAlign]="fxLayoutProperties.layoutAlign">
         <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
           [fxFlexOrder]="fxFlexProperties.order">
-          <mat-form-field fxFill>
+          <mat-form-field fxFill sgiEndDate>
             <mat-label>{{'csp.proyecto-concepto-gasto.fecha-fin' | translate}}</mat-label>
-            <input matInput formControlName="fechaFin" [ngxMatDatetimePicker]="picker2">
+            <input matInput formControlName="fechaFin" [matDatepicker]="picker2">
             <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
-            <ngx-mat-datetime-picker #picker2 showSeconds="true" [defaultTime]="[23,59,59]"></ngx-mat-datetime-picker>
+            <mat-datepicker #picker2></mat-datepicker>
             <mat-error *ngIf="formGroup.controls.fechaFin.hasError('after')">
               {{'error.after.mes-final' | translate}}
             </mat-error>
@@ -113,12 +125,25 @@
       <div [fxLayout]="fxLayoutProperties.layout" [fxLayoutAlign]="fxLayoutProperties.layoutAlign">
         <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
           [fxFlexOrder]="fxFlexProperties.order">
-          <mat-form-field fxFill>
+          <mat-form-field>
             <mat-label>
               {{'csp.proyecto-concepto-gasto' | translate:MSG_PARAMS.CARDINALIRY.SINGULAR}}
             </mat-label>
             <sgi-select-entity formControlName="conceptoGastoConvocatoria" [options]="conceptosGasto$ | async">
             </sgi-select-entity>
+          </mat-form-field>
+        </div>
+        <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
+          [fxFlexOrder]="fxFlexProperties.order">
+          <!--Costes Indirectos-->
+          <mat-form-field>
+            <mat-label>{{'label.csp.concepto-gasto.costes-indirectos' | translate}}
+            </mat-label>
+            <sgi-select-boolean formControlName="costesIndirectos" required></sgi-select-boolean>
+
+            <mat-error *ngIf="formGroup.controls.costesIndirectos.errors?.required">
+              {{'error.required.entity' | translate:msgParamCostesIndirectos}}
+            </mat-error>
           </mat-form-field>
         </div>
       </div>
@@ -183,10 +208,11 @@
       </div>
 
       <div class="separation-button">
-        <button color="primary" aria-label="Center Align" mat-raised-button (click)="copyToProyecto()">
+        <button *ngIf="!this.formPart.readonly" color="primary" aria-label="Center Align" mat-raised-button
+          (click)="copyToProyecto()" [disabled]="formPart.disabledCopy">
           {{'label.csp.proyecto-concepto-gasto'| translate}}
         </button>
       </div>
     </div>
   </form>
-</section>
+</sgi-fragment>

@@ -121,4 +121,14 @@ public interface SolicitudProyectoPresupuestoService {
    */
   Boolean hasSolicitudPresupuesto(Long id);
 
+  /**
+   * Comprueba la existencia de {@link SolicitudProyectoPresupuesto} asociados a
+   * una solicitud .
+   * 
+   * @param solicitudId Id de la Solicitud
+   * @return <code>true</code> si existe alguna relación, <code>false</code> en
+   *         cualquier otro caso
+   */
+  boolean existsBySolicitudProyectoSolicitudId(Long solicitudId);
+
 }

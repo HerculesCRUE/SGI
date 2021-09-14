@@ -6,13 +6,10 @@ import { FormlyModule } from '@ngx-formly/core';
 import { FormlyMaterialModule } from '@ngx-formly/material';
 import { FormlyMatDatepickerModule } from '@ngx-formly/material/datepicker';
 import { TranslateModule } from '@ngx-translate/core';
-import { SharedModule } from '@shared/shared.module';
-import { TableCRUDModalComponent } from './types/table-crud/table-crud-modal/table-crud-modal.component';
-import { TableCRUDTypeComponent } from './types/table-crud/table-crud.type';
 import { TableTypeRepetible } from './types/table-type-repetible.component';
 import { TableType } from './types/table-type.component';
 import { TipoValorSocialComponent } from './types/tipo-valor-social.component';
-import { requiredChecked, requiredRowTable } from './validators/utils.validator';
+import { requiredChecked } from './validators/utils.validator';
 import { InfoDivWrapperComponent } from './wrappers/info-div/info-div.wrapper';
 import { PanelWrapperComponent } from './wrappers/panel/panel.wrapper';
 import { TitleDivWrapperComponent } from './wrappers/title-div/title-div.wrapper';
@@ -21,22 +18,19 @@ import { TitleDivWrapperComponent } from './wrappers/title-div/title-div.wrapper
   declarations: [
     TableType,
     TableTypeRepetible,
-    TableCRUDTypeComponent,
-    TableCRUDModalComponent,
     PanelWrapperComponent,
     TitleDivWrapperComponent,
     InfoDivWrapperComponent,
     TipoValorSocialComponent
   ],
   imports: [
-    SharedModule,
     CommonModule,
     MaterialDesignModule,
     TranslateModule,
     FormsModule,
     ReactiveFormsModule,
     FormlyMatDatepickerModule,
-    FormlyModule.forRoot({
+    FormlyModule.forChild({
       types: [
         {
           name: 'table',
@@ -50,10 +44,6 @@ import { TitleDivWrapperComponent } from './wrappers/title-div/title-div.wrapper
           name: 'tipo-valor-social',
           component: TipoValorSocialComponent,
           wrappers: ['form-field'],
-        },
-        {
-          name: 'table-crud',
-          component: TableCRUDTypeComponent
         },
         { name: 'documento', extends: 'radio' }
       ],
@@ -74,20 +64,14 @@ import { TitleDivWrapperComponent } from './wrappers/title-div/title-div.wrapper
       validators: [
         { name: 'requiredChecked', validation: requiredChecked },
         /** TODO: Remove when any declared template didn't use it */
-        { name: 'nif', validation: Validators.required },
-        { name: 'oneRowRequired', validation: requiredRowTable },
-      ],
-      validationMessages: [
-        { name: 'required', message: 'El campo es obligatorio' },
-        { name: 'oneRowRequired', message: 'La tabla debe contener al menos una fila' },
-      ],
+        { name: 'nif', validation: Validators.required }
+      ]
     }),
     FormlyMaterialModule
   ],
   exports: [
     TableType,
     TableTypeRepetible,
-    TableCRUDTypeComponent,
     FormlyMatDatepickerModule,
     FormlyModule,
     FormlyMaterialModule

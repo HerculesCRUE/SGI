@@ -17,12 +17,9 @@ import org.crue.hercules.sgi.csp.model.TipoRegimenConcurrencia;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 
 @DataJpaTest
-public class ConvocatoriaConceptoGastoCodigoEcRepositoryTest {
-  @Autowired
-  private TestEntityManager entityManager;
+public class ConvocatoriaConceptoGastoCodigoEcRepositoryTest extends BaseRepositoryTest {
 
   @Autowired
   private ConvocatoriaConceptoGastoCodigoEcRepository repository;
@@ -53,10 +50,12 @@ public class ConvocatoriaConceptoGastoCodigoEcRepositoryTest {
     // given: data ConvocatoriaConceptoGastoCodigoEc to find by
     // ConvocatoriaConceptoGasto and permitido
     generarConvocatoriaConceptoGastoCodigoEc("-001", true);
-    generarConvocatoriaConceptoGastoCodigoEc("-002", true);
+    ConvocatoriaConceptoGastoCodigoEc lastConvocatoriaConceptoGastoCodigoEc = generarConvocatoriaConceptoGastoCodigoEc(
+        "-002", true);
 
     // when: find by ConvocatoriaConceptoGasto and permitido
-    List<ConvocatoriaConceptoGastoCodigoEc> dataFound = repository.findAllByConvocatoriaConceptoGastoId(5L);
+    List<ConvocatoriaConceptoGastoCodigoEc> dataFound = repository.findAllByConvocatoriaConceptoGastoId(
+        lastConvocatoriaConceptoGastoCodigoEc.getConvocatoriaConceptoGastoId() + 1);
 
     // then: ConvocatoriaConceptoGastoCodigoEc is not found
     Assertions.assertThat(dataFound).size().isEqualTo(0);
@@ -114,7 +113,6 @@ public class ConvocatoriaConceptoGastoCodigoEcRepositoryTest {
         .observaciones("observaciones" + suffix)
         .finalidad(modeloTipoFinalidad.getTipoFinalidad())
         .regimenConcurrencia(tipoRegimenConcurrencia)
-        .colaborativos(Boolean.TRUE)
         .estado(Convocatoria.Estado.REGISTRADA)
         .duracion(12)
         .ambitoGeografico(tipoAmbitoGeografico)
@@ -126,6 +124,7 @@ public class ConvocatoriaConceptoGastoCodigoEcRepositoryTest {
     ConceptoGasto conceptoGasto = ConceptoGasto.builder()
         .nombre("nombreConceptoGasto" + suffix)
         .activo(Boolean.TRUE)
+        .costesIndirectos(true)
         .build();
     entityManager.persistAndFlush(conceptoGasto);
 
@@ -138,7 +137,7 @@ public class ConvocatoriaConceptoGastoCodigoEcRepositoryTest {
 
     ConvocatoriaConceptoGastoCodigoEc convocatoriaConceptoGastoCodigoEc = ConvocatoriaConceptoGastoCodigoEc.builder()
         .convocatoriaConceptoGastoId(convocatoriaConceptoGasto.getId())
-        .codigoEconomicoRef("cod-" + suffix)
+        .codigoEconomicoRef("cod" + suffix)
         .build();
     // @formatter:on
     return entityManager.persistAndFlush(convocatoriaConceptoGastoCodigoEc);

@@ -20,6 +20,7 @@ import { PROYECTO_SOCIO_ROUTE_PARAMS } from './proyecto-socio-route-params';
 export interface IProyectoSocioData {
   proyecto: IProyecto;
   proyectoSocios: IProyectoSocio[];
+  readonly: boolean;
 }
 
 @Injectable()
@@ -51,6 +52,18 @@ export class ProyectoSocioActionService extends ActionService {
     return this.datosGenerales.getValue();
   }
 
+  get showPeriodoJustificacion(): boolean {
+    return !this.data.proyecto.coordinadorExterno;
+  }
+
+  get showPeriodoPago(): boolean {
+    return !this.data.proyecto.coordinadorExterno;
+  }
+
+  get readonly(): boolean {
+    return this.data.readonly;
+  }
+
   constructor(
     logger: NGXLogger,
     route: ActivatedRoute,
@@ -70,7 +83,7 @@ export class ProyectoSocioActionService extends ActionService {
     }
 
     this.datosGenerales = new ProyectoSocioDatosGeneralesFragment(id, this.data.proyecto.id,
-      proyectoSocioService, empresaService);
+      proyectoSocioService, empresaService, this.data.readonly);
     this.equipo = new ProyectoSocioEquipoFragment(logger, id, proyectoSocioService,
       proyectoEquipoSocioService, personaService);
     this.periodoPago = new ProyectoSocioPeriodoPagoFragment(logger, id, proyectoSocioService,
@@ -81,10 +94,7 @@ export class ProyectoSocioActionService extends ActionService {
     this.addFragment(this.FRAGMENT.DATOS_GENERALES, this.datosGenerales);
     this.addFragment(this.FRAGMENT.EQUIPO, this.equipo);
     this.addFragment(this.FRAGMENT.PERIODO_PAGO, this.periodoPago);
-
-    if (this.isEdit()) {
-      this.addFragment(this.FRAGMENT.PERIODO_JUSTIFICACION, this.periodosJustificacion);
-    }
+    this.addFragment(this.FRAGMENT.PERIODO_JUSTIFICACION, this.periodosJustificacion);
 
     // Inicializamos por defectos los datos generales
     this.datosGenerales.initialize();

@@ -45,8 +45,8 @@ public class SolicitudProyecto extends BaseEntity {
     GLOBAL,
     /** Mixto */
     MIXTO,
-    /** Individual */
-    INDIVIDUAL;
+    /** Por Entidad */
+    POR_ENTIDAD,
   }
 
   /**
@@ -58,12 +58,6 @@ public class SolicitudProyecto extends BaseEntity {
   @Id
   @Column(name = "id", nullable = false)
   private Long id;
-
-  /** Titulo */
-  @Column(name = "titulo", length = 250, nullable = false)
-  @Size(max = 250)
-  @NotNull
-  private String titulo;
 
   /** Acrónimo */
   @Column(name = "acronimo", length = 50, nullable = true)
@@ -88,6 +82,11 @@ public class SolicitudProyecto extends BaseEntity {
   /** Coordinador externo */
   @Column(name = "coordinador_externo", nullable = true)
   private Boolean coordinadorExterno;
+
+  /** Coordinado */
+  @Column(name = "coordinado", columnDefinition = "boolean default false", nullable = false)
+  @NotNull
+  private Boolean coordinado;
 
   /** Objetivos */
   @Column(name = "objetivos", length = 2000, nullable = true)
@@ -127,9 +126,17 @@ public class SolicitudProyecto extends BaseEntity {
   @Column(name = "importe_solicitado", nullable = true)
   private BigDecimal importeSolicitado;
 
+  /** Importe solicitado Costes Indirectos */
+  @Column(name = "importe_solicitado_costes_indirectos", nullable = true)
+  private BigDecimal importeSolicitadoCostesIndirectos;
+
   /** Importe presupuestado */
   @Column(name = "importe_presupuestado", nullable = true)
   private BigDecimal importePresupuestado;
+
+  /** Importe presupuestado Costes Indirectos */
+  @Column(name = "importe_presupuestado_costes_indirectos", nullable = true)
+  private BigDecimal importePresupuestadoCostesIndirectos;
 
   /** Importe Solicitado socios */
   @Column(name = "importe_solicitado_socios", nullable = true)

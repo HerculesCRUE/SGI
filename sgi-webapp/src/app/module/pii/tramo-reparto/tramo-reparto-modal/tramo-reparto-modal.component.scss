@@ -1,0 +1,11 @@
+@import "typography.scss";
+
+.fieldset-form {
+  padding-bottom: 10px;
+  padding-top: 10px;
+  font-size: map-get($sgi-typography-size, form-fieldset);
+}
+
+.first-row-input {
+  margin-right: 15px;
+}

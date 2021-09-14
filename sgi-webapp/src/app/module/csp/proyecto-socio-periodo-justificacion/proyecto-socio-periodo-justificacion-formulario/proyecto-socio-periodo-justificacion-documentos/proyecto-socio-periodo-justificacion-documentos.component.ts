@@ -34,6 +34,7 @@ const PROYECTO_SOCIO_PERIODO_JUSTIFICACION_COMENTARIO_KEY = marker('csp.document
 const PROYECTO_SOCIO_PERIODO_JUSTIFICACION_DOCUMENTO_KEY = marker('csp.documento');
 const PROYECTO_SOCIO_PERIODO_JUSTIFICACION_FICHERO_KEY = marker('csp.documento.fichero');
 const PROYECTO_SOCIO_PERIODO_JUSTIFICACION_NOMBRE_KEY = marker('csp.documento.nombre');
+const PROYECTO_SOCIO_PERIODO_JUSTIFICACION_DOCUMENTO_VISIBLE_KEY = marker('csp.proyecto-documento.visible');
 const DOCUMENTO_KEY = marker('csp.documento');
 
 enum VIEW_MODE {
@@ -62,6 +63,7 @@ export class ProyectoSocioPeriodoJustificacionDocumentosComponent extends Fragme
   msgParamEntities = {};
   msgParamFicheroEntity = {};
   msgParamNombreEntity = {};
+  msgParamVisibleEntity = {};
   textoDelete: string;
 
   treeControl: FlatTreeControl<NodeDocumentoProyecto>;
@@ -90,9 +92,13 @@ export class ProyectoSocioPeriodoJustificacionDocumentosComponent extends Fragme
   hasChild = (_: number, node: NodeDocumentoProyecto) => node.childs.length > 0;
   compareTipoDocumento = (option: ITipoDocumento, value: ITipoDocumento) => option?.id === value?.id;
 
+  get readonly(): boolean {
+    return this.actionService.readonly;
+  }
+
   constructor(
     private readonly logger: NGXLogger,
-    public actionService: ProyectoSocioPeriodoJustificacionActionService,
+    private actionService: ProyectoSocioPeriodoJustificacionActionService,
     private documentoService: DocumentoService,
     private tipoDocumentoService: TipoDocumentoService,
     private snackBar: SnackBarService,
@@ -136,7 +142,7 @@ export class ProyectoSocioPeriodoJustificacionDocumentosComponent extends Fragme
       fichero: new FormControl(null, Validators.required),
       tipoDocumento: new FormControl(null, IsEntityValidator.isValid),
       comentarios: new FormControl('', Validators.maxLength(2_000)),
-      visible: new FormControl(false)
+      visible: new FormControl(true, [Validators.required])
     }));
     this.group.initialize();
     const options: SgiRestFindOptions = {
@@ -186,6 +192,11 @@ export class ProyectoSocioPeriodoJustificacionDocumentosComponent extends Fragme
       DOCUMENTO_KEY,
       MSG_PARAMS.CARDINALIRY.PLURAL
     ).subscribe((value) => this.msgParamEntities = { entity: value, ...MSG_PARAMS.GENDER.MALE });
+
+    this.translate.get(
+      PROYECTO_SOCIO_PERIODO_JUSTIFICACION_DOCUMENTO_VISIBLE_KEY,
+      MSG_PARAMS.CARDINALIRY.SINGULAR
+    ).subscribe((value) => this.msgParamVisibleEntity = { entity: value, ...MSG_PARAMS.GENDER.MALE, ...MSG_PARAMS.CARDINALIRY.SINGULAR });
   }
 
   ngOnDestroy(): void {
@@ -350,6 +361,7 @@ export class ProyectoSocioPeriodoJustificacionDocumentosComponent extends Fragme
 
   switchToNew(): void {
     const wrapper = new StatusWrapper<IProyectoSocioPeriodoJustificacionDocumento>({} as IProyectoSocioPeriodoJustificacionDocumento);
+    wrapper.value.visible = true;
     const newNode: NodeDocumentoProyecto = new NodeDocumentoProyecto(null, undefined, 2, wrapper);
     this.viewMode = VIEW_MODE.NEW;
     this.viewingNode = newNode;

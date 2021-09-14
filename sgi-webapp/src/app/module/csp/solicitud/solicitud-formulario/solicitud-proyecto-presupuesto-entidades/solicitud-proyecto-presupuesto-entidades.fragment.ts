@@ -55,27 +55,43 @@ export class SolicitudProyectoPresupuestoEntidadesFragment extends FormFragment<
 
   protected buildFormGroup(): FormGroup {
     const form = new FormGroup({
-      importePresupuestado: new FormControl('', [
+      importePresupuestadoUniversidad: new FormControl(null, [
         Validators.min(0),
         Validators.max(2_147_483_647)
       ]),
-      importeSolicitado: new FormControl('', [
+      importePresupuestadoUniversidadCostesIndirectos: new FormControl(null, [
         Validators.min(0),
         Validators.max(2_147_483_647)
       ]),
-      importePresupuestadoSocios: new FormControl('', [
+      totalImportePresupuestadoUniversidad: new FormControl({ value: null, disabled: true }, [
         Validators.min(0),
         Validators.max(2_147_483_647)
       ]),
-      importeSolicitadoSocios: new FormControl('', [
+      importeSolicitadoUniversidad: new FormControl(null, [
         Validators.min(0),
         Validators.max(2_147_483_647)
       ]),
-      totalImportePresupuestado: new FormControl('', [
+      importeSolicitadoUniversidadCostesIndirectos: new FormControl(null, [
         Validators.min(0),
         Validators.max(2_147_483_647)
       ]),
-      totalImporteSolicitado: new FormControl('', [
+      totalImporteSolicitadoUniversidad: new FormControl({ value: null, disabled: true }, [
+        Validators.min(0),
+        Validators.max(2_147_483_647)
+      ]),
+      importePresupuestadoSocios: new FormControl(null, [
+        Validators.min(0),
+        Validators.max(2_147_483_647)
+      ]),
+      importeSolicitadoSocios: new FormControl(null, [
+        Validators.min(0),
+        Validators.max(2_147_483_647)
+      ]),
+      totalImportePresupuestado: new FormControl(null, [
+        Validators.min(0),
+        Validators.max(2_147_483_647)
+      ]),
+      totalImporteSolicitado: new FormControl(null, [
         Validators.min(0),
         Validators.max(2_147_483_647)
       ])
@@ -84,12 +100,38 @@ export class SolicitudProyectoPresupuestoEntidadesFragment extends FormFragment<
     if (this.readonly) {
       form.disable();
     }
+    this.subscriptions.push(
+      form.controls.importePresupuestadoUniversidad.valueChanges.subscribe(
+        (value) => {
+          form.controls.totalImportePresupuestadoUniversidad
+            .patchValue((value + form.controls.importePresupuestadoUniversidadCostesIndirectos.value) !== 0 ?
+              (value + form.controls.importePresupuestadoUniversidadCostesIndirectos.value) : null, { emitEvent: false });
+        }),
+      form.controls.importePresupuestadoUniversidadCostesIndirectos.valueChanges.subscribe(
+        (value) => {
+          form.controls.totalImportePresupuestadoUniversidad
+            .patchValue((form.controls.importePresupuestadoUniversidad.value + value) !== 0 ?
+              (form.controls.importePresupuestadoUniversidad.value + value) : null, { emitEvent: false });
+        }),
+      form.controls.importeSolicitadoUniversidad.valueChanges.subscribe(
+        (value) => {
+          form.controls.totalImporteSolicitadoUniversidad
+            .patchValue((value + form.controls.importeSolicitadoUniversidadCostesIndirectos.value) !== 0 ?
+              (value + form.controls.importeSolicitadoUniversidadCostesIndirectos.value) : null, { emitEvent: false });
+        }),
+      form.controls.importeSolicitadoUniversidadCostesIndirectos.valueChanges.subscribe(
+        (value) => {
+          form.controls.totalImporteSolicitadoUniversidad
+            .patchValue((form.controls.importeSolicitadoUniversidad.value + value) !== 0 ?
+              (form.controls.importeSolicitadoUniversidad.value + value) : null, { emitEvent: false });
+        })
+    );
 
     return form;
   }
 
   protected buildPatch(value: ISolicitudProyecto): { [key: string]: any; } {
-    this.solicitudProyecto = value;
+    this.solicitudProyecto = value ?? {} as ISolicitudProyecto;
     const result = {
       importePresupuestado: value.importePresupuestado,
       importePresupuestadoSocios: value.importePresupuestadoSocios,
@@ -98,6 +140,30 @@ export class SolicitudProyectoPresupuestoEntidadesFragment extends FormFragment<
       totalImportePresupuestado: value.totalImportePresupuestado,
       totalImporteSolicitado: value.totalImporteSolicitado
     } as ISolicitudProyecto;
+
+    const form = this.getFormGroup();
+    /*Presupuestado*/
+    form.controls.importePresupuestadoUniversidad
+      .setValue(value.importePresupuestado);
+    form.controls.importePresupuestadoUniversidadCostesIndirectos
+      .setValue(value.importePresupuestadoCostesIndirectos);
+    form.controls.totalImportePresupuestadoUniversidad
+      .setValue((value.importePresupuestado + value.importePresupuestadoCostesIndirectos) !== 0 ?
+        (value.importePresupuestado + value.importePresupuestadoCostesIndirectos) : null);
+    /*Solicitado*/
+    form.controls.importeSolicitadoUniversidad
+      .setValue(value.importeSolicitado);
+    form.controls.importeSolicitadoUniversidadCostesIndirectos
+      .setValue(value.importeSolicitadoCostesIndirectos);
+    form.controls.totalImporteSolicitadoUniversidad
+      .setValue((value.importeSolicitado + value.importeSolicitadoCostesIndirectos) !== 0 ?
+        (value.importeSolicitado + value.importeSolicitadoCostesIndirectos) : null);
+    /*Totales*/
+    form.controls.totalImportePresupuestado
+      .setValue(value.totalImportePresupuestado);
+    form.controls.totalImporteSolicitado
+      .setValue(value.totalImporteSolicitado);
+
     return result;
   }
 
@@ -106,9 +172,11 @@ export class SolicitudProyectoPresupuestoEntidadesFragment extends FormFragment<
       this.solicitudProyecto = {} as ISolicitudProyecto;
     }
     const form = this.getFormGroup().value;
-    this.solicitudProyecto.importePresupuestado = form.importePresupuestado;
+    this.solicitudProyecto.importePresupuestado = form.importePresupuestadoUniversidad;
+    this.solicitudProyecto.importePresupuestadoCostesIndirectos = form.importePresupuestadoUniversidadCostesIndirectos;
+    this.solicitudProyecto.importeSolicitadoCostesIndirectos = form.importeSolicitadoUniversidadCostesIndirectos;
     this.solicitudProyecto.importePresupuestadoSocios = form.importePresupuestadoSocios;
-    this.solicitudProyecto.importeSolicitado = form.importeSolicitado;
+    this.solicitudProyecto.importeSolicitado = form.importeSolicitadoUniversidad;
     this.solicitudProyecto.importeSolicitadoSocios = form.importeSolicitadoSocios;
     this.solicitudProyecto.totalImportePresupuestado = form.totalImportePresupuestado;
     this.solicitudProyecto.totalImporteSolicitado = form.totalImporteSolicitado;
@@ -131,7 +199,7 @@ export class SolicitudProyectoPresupuestoEntidadesFragment extends FormFragment<
     let entidades$: Observable<EntidadFinanciadoraDesglosePresupuesto[]>;
 
     switch (tipoPresupuesto) {
-      case TipoPresupuesto.INDIVIDUAL:
+      case TipoPresupuesto.POR_ENTIDAD:
         entidades$ = merge(
           this.loadEntidadFinanciadoraConvocatoria(this.convocatoriaId),
           this.loadEntidadFinanciadoraSolicitud(this.solicitudId)

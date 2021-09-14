@@ -63,8 +63,8 @@ public class MemoriaRepositoryTest extends BaseRepositoryTest {
     Comite comite = entityManager.persistFlushFind(generarMockComite(formulario));
 
     // when: Se buscan los datos
-    Page<Memoria> result = repository.findByComiteIdAndActivoTrueAndComiteActivoTrue(comite.getId(),
-        Pageable.unpaged());
+    Page<Memoria> result = repository
+        .findByComiteIdAndPeticionEvaluacionIdAndActivoTrueAndComiteActivoTrue(comite.getId(), 1L, Pageable.unpaged());
 
     // then: Se recuperan los datos correctamente
     Assertions.assertThat(result.get()).isNotNull();

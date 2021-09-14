@@ -1,0 +1,7 @@
+<sgi-fragment-title [title]="title"></sgi-fragment-title>
+<ng-container *ngIf="problems.length">
+  <sgi-problem-panel [problems]="problems"></sgi-problem-panel>
+</ng-container>
+<sgi-fragment-content>
+  <ng-content></ng-content>
+</sgi-fragment-content>

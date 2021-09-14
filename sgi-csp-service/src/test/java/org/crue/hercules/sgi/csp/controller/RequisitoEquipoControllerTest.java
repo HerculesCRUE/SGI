@@ -4,6 +4,8 @@ import org.crue.hercules.sgi.csp.config.SecurityConfig;
 import org.crue.hercules.sgi.csp.exceptions.ConvocatoriaNotFoundException;
 import org.crue.hercules.sgi.csp.exceptions.RequisitoEquipoNotFoundException;
 import org.crue.hercules.sgi.csp.model.RequisitoEquipo;
+import org.crue.hercules.sgi.csp.service.RequisitoEquipoCategoriaProfesionalService;
+import org.crue.hercules.sgi.csp.service.RequisitoEquipoNivelAcademicoService;
 import org.crue.hercules.sgi.csp.service.RequisitoEquipoService;
 import org.crue.hercules.sgi.framework.test.web.servlet.result.SgiMockMvcResultHandlers;
 import org.junit.jupiter.api.Test;
@@ -31,6 +33,12 @@ public class RequisitoEquipoControllerTest extends BaseControllerTest {
   @MockBean
   private RequisitoEquipoService service;
 
+  @MockBean
+  private RequisitoEquipoNivelAcademicoService requisitoEquipoNivelAcademicoService;
+
+  @MockBean
+  private RequisitoEquipoCategoriaProfesionalService requisitoEquipoCategoriaProfesionalService;
+
   private static final String PATH_PARAMETER_ID = "/{id}";
   private static final String CONTROLLER_BASE_PATH = "/convocatoria-requisitoequipos";
 
@@ -57,7 +65,8 @@ public class RequisitoEquipoControllerTest extends BaseControllerTest {
         // then: new RequisitoEquipo is created
         .andExpect(MockMvcResultMatchers.status().isCreated())
         .andExpect(MockMvcResultMatchers.jsonPath("id").isNotEmpty())
-        .andExpect(MockMvcResultMatchers.jsonPath("edadMaxima").value(requisitoEquipo.getEdadMaxima()));
+        .andExpect(MockMvcResultMatchers.jsonPath("edadMaxima").value(requisitoEquipo.getEdadMaxima()))
+        .andExpect(MockMvcResultMatchers.jsonPath("sexoRef").value(requisitoEquipo.getSexoRef()));
   }
 
   @Test
@@ -99,7 +108,8 @@ public class RequisitoEquipoControllerTest extends BaseControllerTest {
         // then: RequisitoEquipo is updated
         .andExpect(MockMvcResultMatchers.status().isOk())
         .andExpect(MockMvcResultMatchers.jsonPath("id").value(requisitoEquipoExistente.getId()))
-        .andExpect(MockMvcResultMatchers.jsonPath("edadMaxima").value(requisitoEquipo.getEdadMaxima()));
+        .andExpect(MockMvcResultMatchers.jsonPath("edadMaxima").value(requisitoEquipo.getEdadMaxima()))
+        .andExpect(MockMvcResultMatchers.jsonPath("sexoRef").value(requisitoEquipo.getSexoRef()));
   }
 
   @Test
@@ -181,8 +191,8 @@ public class RequisitoEquipoControllerTest extends BaseControllerTest {
   private RequisitoEquipo generarMockRequisitoEquipo(Long id) {
     RequisitoEquipo requisitoEquipo = new RequisitoEquipo();
     requisitoEquipo.setId(id);
-    requisitoEquipo.setConvocatoriaId(id);
     requisitoEquipo.setEdadMaxima(50);
+    requisitoEquipo.setSexoRef("sexo-ref");
     return requisitoEquipo;
   }
 

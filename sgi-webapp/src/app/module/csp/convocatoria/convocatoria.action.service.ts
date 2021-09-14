@@ -2,6 +2,8 @@ import { Injectable, OnDestroy } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
+import { MSG_PARAMS } from '@core/i18n';
+import { Estado } from '@core/models/csp/convocatoria';
 import { IConvocatoriaFase } from '@core/models/csp/convocatoria-fase';
 import { IModeloEjecucion } from '@core/models/csp/tipos-configuracion';
 import { ActionService } from '@core/services/action-service';
@@ -22,12 +24,16 @@ import { ConvocatoriaRequisitoIPService } from '@core/services/csp/convocatoria-
 import { ConvocatoriaSeguimientoCientificoService } from '@core/services/csp/convocatoria-seguimiento-cientifico.service';
 import { ConvocatoriaService } from '@core/services/csp/convocatoria.service';
 import { DocumentoRequeridoSolicitudService } from '@core/services/csp/documento-requerido-solicitud.service';
+import { ProyectoService } from '@core/services/csp/proyecto.service';
 import { UnidadGestionService } from '@core/services/csp/unidad-gestion.service';
 import { DialogService } from '@core/services/dialog.service';
 import { EmpresaService } from '@core/services/sgemp/empresa.service';
+import { CategoriaProfesionalService } from '@core/services/sgp/categoria-profesional.service';
+import { NivelAcademicosService } from '@core/services/sgp/nivel-academico.service';
 import { NGXLogger } from 'ngx-logger';
 import { BehaviorSubject, merge, Observable, of, Subject, throwError } from 'rxjs';
 import { switchMap, tap } from 'rxjs/operators';
+import { CSP_ROUTE_NAMES } from '../csp-route-names';
 import { CONVOCATORIA_DATA_KEY } from './convocatoria-data.resolver';
 import { ConvocatoriaConceptoGastoFragment } from './convocatoria-formulario/convocatoria-concepto-gasto/convocatoria-concepto-gasto.fragment';
 import { ConvocatoriaConfiguracionSolicitudesFragment } from './convocatoria-formulario/convocatoria-configuracion-solicitudes/convocatoria-configuracion-solicitudes.fragment';
@@ -46,10 +52,17 @@ import { ConvocatoriaSeguimientoCientificoFragment } from './convocatoria-formul
 import { CONVOCATORIA_ROUTE_PARAMS } from './convocatoria-route-params';
 
 const MSG_REGISTRAR = marker('msg.csp.convocatoria.registrar');
+const MSG_SOLICITUDES = marker('csp.solicitud');
+const MSG_PROYECTOS = marker('csp.proyecto');
+
+export const CONVOCATORIA_ACTION_LINK_KEY = 'convocatoria';
 
 export interface IConvocatoriaData {
   readonly: boolean;
   canEdit: boolean;
+  showSolicitudesLink: boolean;
+  showProyectosLink: boolean;
+  estado: Estado;
 }
 
 @Injectable()
@@ -120,6 +133,7 @@ export class ConvocatoriaActionService extends ActionService implements OnDestro
     logger: NGXLogger,
     route: ActivatedRoute,
     private convocatoriaService: ConvocatoriaService,
+    proyectoService: ProyectoService,
     convocatoriaEnlaceService: ConvocatoriaEnlaceService,
     empresaService: EmpresaService,
     convocatoriaEntidadFinanciadoraService: ConvocatoriaEntidadFinanciadoraService,
@@ -138,6 +152,8 @@ export class ConvocatoriaActionService extends ActionService implements OnDestro
     configuracionSolicitudService: ConfiguracionSolicitudService,
     documentoRequeridoSolicitudService: DocumentoRequeridoSolicitudService,
     convocatoriaPartidaPresupuestariaService: ConvocatoriaPartidaPresupuestariaService,
+    nivelAcademicoService: NivelAcademicosService,
+    categoriaProfesionaService: CategoriaProfesionalService,
     dialogService: DialogService,
   ) {
     super();
@@ -146,40 +162,43 @@ export class ConvocatoriaActionService extends ActionService implements OnDestro
     if (this.id) {
       this.data = route.snapshot.data[CONVOCATORIA_DATA_KEY];
       this.enableEdit();
+      this.addSolicitudLink(this.id);
+      this.addProyectoLink(this.id);
     }
 
     this.datosGenerales = new ConvocatoriaDatosGeneralesFragment(
-      logger, this.id, convocatoriaService, empresaService,
+      logger, this.id, convocatoriaService, proyectoService, empresaService,
       convocatoriaEntidadGestoraService, unidadGestionService, convocatoriaAreaTematicaService, configuracionSolicitudService,
-      this.readonly);
+      this.readonly, this.canEdit);
     this.periodoJustificacion = new ConvocatoriaPeriodosJustificacionFragment(
-      this.id, convocatoriaService, convocatoriaPeriodoJustificacionService, this.readonly);
+      this.id, convocatoriaService, convocatoriaPeriodoJustificacionService);
     this.entidadesConvocantes = new ConvocatoriaEntidadesConvocantesFragment(
       logger, this.id, convocatoriaService, convocatoriaEntidadConvocanteService,
-      empresaService, this.readonly);
+      empresaService, this.readonly, this.canEdit);
     this.plazosFases = new ConvocatoriaPlazosFasesFragment(
-      this.id, convocatoriaService, convocatoriaFaseService, this.readonly, this.canEdit);
+      this.id, convocatoriaService, convocatoriaFaseService, configuracionSolicitudService, this.readonly, this.canEdit);
     this.hitos = new ConvocatoriaHitosFragment(this.id, convocatoriaService,
       convocatoriaHitoService, this.readonly, this.canEdit);
     this.documentos = new ConvocatoriaDocumentosFragment(logger, this.id, convocatoriaService,
       convocatoriaDocumentoService, this.readonly, this.canEdit);
     this.seguimientoCientifico = new ConvocatoriaSeguimientoCientificoFragment(this.id,
-      convocatoriaService, convocatoriaSeguimientoCientificoService, this.readonly);
+      convocatoriaService, convocatoriaSeguimientoCientificoService);
     this.entidadesFinanciadoras = new ConvocatoriaEntidadesFinanciadorasFragment(
-      this.id, convocatoriaService, convocatoriaEntidadFinanciadoraService, this.readonly);
+      this.id, convocatoriaService, convocatoriaEntidadFinanciadoraService, this.readonly, this.canEdit);
     this.enlaces = new ConvocatoriaEnlaceFragment(this.id, convocatoriaService,
       convocatoriaEnlaceService, this.readonly, this.canEdit);
     this.requisitosIP = new ConvocatoriaRequisitosIPFragment(fb, this.id,
-      convocatoriaRequisitoIPService, this.readonly);
-    this.elegibilidad = new ConvocatoriaConceptoGastoFragment(fb, this.id, convocatoriaService,
-      convocatoriaConceptoGastoService, this.readonly, this.canEdit);
+      convocatoriaRequisitoIPService, nivelAcademicoService, categoriaProfesionaService, this.canEdit);
     this.requisitosEquipo = new ConvocatoriaRequisitosEquipoFragment(fb, this.id,
-      convocatoriaRequisitoEquipoService, this.readonly);
+      convocatoriaRequisitoEquipoService, nivelAcademicoService, categoriaProfesionaService, this.canEdit);
     this.configuracionSolicitudes = new ConvocatoriaConfiguracionSolicitudesFragment(
       logger, this.id, configuracionSolicitudService, documentoRequeridoSolicitudService,
-      this.readonly);
-    this.partidasPresupuestarias = new ConvocatoriaPartidaPresupuestariaFragment(this.id, convocatoriaService, convocatoriaPartidaPresupuestariaService,
       this.readonly, this.canEdit);
+    this.partidasPresupuestarias = new ConvocatoriaPartidaPresupuestariaFragment(
+      this.id, convocatoriaService, convocatoriaPartidaPresupuestariaService,
+      this.readonly, this.canEdit, this.data?.estado);
+    this.elegibilidad = new ConvocatoriaConceptoGastoFragment(this.id, convocatoriaService,
+      convocatoriaConceptoGastoService, this.readonly, this.canEdit);
 
     this.addFragment(this.FRAGMENT.DATOS_GENERALES, this.datosGenerales);
     this.addFragment(this.FRAGMENT.SEGUIMIENTO_CIENTIFICO, this.seguimientoCientifico);
@@ -262,6 +281,29 @@ export class ConvocatoriaActionService extends ActionService implements OnDestro
     this.datosGenerales.initialize();
   }
 
+  private addSolicitudLink(convocatoriaId: number): void {
+    if (Estado.BORRADOR === this.data.estado || !this.data.showSolicitudesLink) {
+      return;
+    }
+    this.addActionLink({
+      title: MSG_SOLICITUDES,
+      titleParams: MSG_PARAMS.CARDINALIRY.SINGULAR,
+      routerLink: ['../..', CSP_ROUTE_NAMES.SOLICITUD],
+      queryParams: { [CONVOCATORIA_ACTION_LINK_KEY]: convocatoriaId }
+    });
+  }
+
+  private addProyectoLink(convocatoriaId: number): void {
+    if (Estado.BORRADOR === this.data.estado || !this.data.showProyectosLink) {
+      return;
+    }
+    this.addActionLink({
+      title: MSG_PROYECTOS,
+      titleParams: MSG_PARAMS.CARDINALIRY.SINGULAR,
+      routerLink: ['../..', CSP_ROUTE_NAMES.PROYECTO],
+      queryParams: { [CONVOCATORIA_ACTION_LINK_KEY]: convocatoriaId }
+    });
+  }
   /**
    * Cuando se elimina una fase se actualizan los datos de la pestaña configuración solicitudes.
    */

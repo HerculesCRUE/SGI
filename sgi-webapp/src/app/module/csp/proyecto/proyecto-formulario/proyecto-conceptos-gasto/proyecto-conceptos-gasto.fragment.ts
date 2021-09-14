@@ -1,9 +1,9 @@
-import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { FormControl, FormGroup } from '@angular/forms';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { IConvocatoriaConceptoGasto } from '@core/models/csp/convocatoria-concepto-gasto';
 import { IProyecto } from '@core/models/csp/proyecto';
 import { IProyectoConceptoGasto } from '@core/models/csp/proyecto-concepto-gasto';
-import { FormFragment } from '@core/services/action-service';
+import { Fragment } from '@core/services/action-service';
 import { ConvocatoriaService } from '@core/services/csp/convocatoria.service';
 import { ProyectoConceptoGastoService } from '@core/services/csp/proyecto-concepto-gasto.service';
 import { ProyectoService } from '@core/services/csp/proyecto.service';
@@ -35,13 +35,15 @@ export interface ConceptoGastoListado {
   help: HelpIcon;
   conceptoGasto: string;
   descripcion: string;
+  costesIndirectos: boolean;
   importeMaximo: number;
   fechaInicio: DateTime;
   fechaFin: DateTime;
   observaciones: string;
 }
 
-export class ProyectoConceptosGastoFragment extends FormFragment<ConceptoGastoListado[]> {
+export class ProyectoConceptosGastoFragment extends Fragment {
+
   proyectoConceptosGastoPermitidos$ = new BehaviorSubject<ConceptoGastoListado[]>([]);
   proyectoConceptosGastoNoPermitidos$ = new BehaviorSubject<ConceptoGastoListado[]>([]);
   private proyectoConceptosGastoEliminados: StatusWrapper<IProyectoConceptoGasto>[] = [];
@@ -52,44 +54,29 @@ export class ProyectoConceptosGastoFragment extends FormFragment<ConceptoGastoLi
     private proyectoService: ProyectoService,
     private proyectoConceptoGastoService: ProyectoConceptoGastoService,
     private convocatoriaService: ConvocatoriaService,
-    public readonly: boolean
+    public readonly: boolean,
+    public isVisor: boolean,
   ) {
-    super(key, true);
+    super(key);
     this.setComplete(true);
   }
 
   protected buildFormGroup(): FormGroup {
     const form = new FormGroup({
-      porcentajeCosteIndirecto: new FormControl(null, [
-        Validators.compose(
-          [Validators.min(0), Validators.max(100)]
-        )]),
       costeIndirecto: new FormControl(null, [
         IsEntityValidator.isValid()
       ])
     });
+
+    if (this.readonly) {
+      form.disable();
+    }
+
     return form;
   }
 
-  protected buildPatch(values: ConceptoGastoListado[]): { [key: string]: any } {
-    let porcentajeCosteIndirecto = null;
-    let costeIndirecto = null;
-
-    values.forEach(conceptoGastoListado => {
-      if (conceptoGastoListado.proyectoConceptoGasto?.value.porcentajeCosteIndirecto) {
-        costeIndirecto = conceptoGastoListado.proyectoConceptoGasto.value;
-        porcentajeCosteIndirecto = conceptoGastoListado.proyectoConceptoGasto.value.porcentajeCosteIndirecto;
-      }
-    });
-
-    this.proyectoConceptosGastoPermitidos$.next(values);
-    return {
-      porcentajeCosteIndirecto,
-      costeIndirecto
-    };
-  }
-
-  protected initializer(key: string | number): Observable<ConceptoGastoListado[]> {
+  protected onInitialize(): void {
+    const key = this.getKey() as number;
     if (key) {
 
       this.subscriptions.push(
@@ -143,53 +130,55 @@ export class ProyectoConceptosGastoFragment extends FormFragment<ConceptoGastoLi
           this.proyectoConceptosGastoNoPermitidos$.next(response);
         }));
 
-      return this.proyectoService.findAllProyectoConceptosGastoPermitidos(key as number).pipe(
-        map((response) => response.items.map(item => {
-          const conceptoGastoListado = {
-            proyectoConceptoGasto: new StatusWrapper<IProyectoConceptoGasto>(item),
-          } as ConceptoGastoListado;
-          return conceptoGastoListado;
-        })),
-        switchMap(conceptosGastoListado => {
-          let requestConvocatoriaConceptosGasto: Observable<ConceptoGastoListado[]>;
+      this.subscriptions.push(
+        this.proyectoService.findAllProyectoConceptosGastoPermitidos(key as number).pipe(
+          map((response) => response.items.map(item => {
+            const conceptoGastoListado = {
+              proyectoConceptoGasto: new StatusWrapper<IProyectoConceptoGasto>(item),
+            } as ConceptoGastoListado;
+            return conceptoGastoListado;
+          })),
+          switchMap(conceptosGastoListado => {
+            let requestConvocatoriaConceptosGasto: Observable<ConceptoGastoListado[]>;
 
-          if (this.proyecto.convocatoriaId) {
-            requestConvocatoriaConceptosGasto = this.convocatoriaService
-              .findAllConvocatoriaConceptoGastosPermitidos(this.proyecto.convocatoriaId)
-              .pipe(
-                map((response) => response.items),
-                map(convocatoriaConceptosGasto => {
-                  conceptosGastoListado.forEach(conceptoGastoListado => {
-                    if (conceptoGastoListado.proyectoConceptoGasto.value.convocatoriaConceptoGastoId) {
-                      const index = convocatoriaConceptosGasto.findIndex(convocatoriaConceptoGasto =>
-                        convocatoriaConceptoGasto.id === conceptoGastoListado.proyectoConceptoGasto.value.convocatoriaConceptoGastoId
-                      );
-                      if (index >= 0) {
-                        conceptoGastoListado.convocatoriaConceptoGasto = convocatoriaConceptosGasto[index];
-                        convocatoriaConceptosGasto.splice(index, 1);
+            if (this.proyecto.convocatoriaId) {
+              requestConvocatoriaConceptosGasto = this.convocatoriaService
+                .findAllConvocatoriaConceptoGastosPermitidos(this.proyecto.convocatoriaId)
+                .pipe(
+                  map((response) => response.items),
+                  map(convocatoriaConceptosGasto => {
+                    conceptosGastoListado.forEach(conceptoGastoListado => {
+                      if (conceptoGastoListado.proyectoConceptoGasto.value.convocatoriaConceptoGastoId) {
+                        const index = convocatoriaConceptosGasto.findIndex(convocatoriaConceptoGasto =>
+                          convocatoriaConceptoGasto.id === conceptoGastoListado.proyectoConceptoGasto.value.convocatoriaConceptoGastoId
+                        );
+                        if (index >= 0) {
+                          conceptoGastoListado.convocatoriaConceptoGasto = convocatoriaConceptosGasto[index];
+                          convocatoriaConceptosGasto.splice(index, 1);
+                        }
                       }
+                    });
+
+                    if (convocatoriaConceptosGasto.length > 0) {
+                      conceptosGastoListado.push(...convocatoriaConceptosGasto.map(convocatoriaConceptoGasto => {
+                        const conceptoGastoListado = {
+                          convocatoriaConceptoGasto
+                        } as ConceptoGastoListado;
+                        return conceptoGastoListado;
+                      }));
                     }
-                  });
 
-                  if (convocatoriaConceptosGasto.length > 0) {
-                    conceptosGastoListado.push(...convocatoriaConceptosGasto.map(convocatoriaConceptoGasto => {
-                      const conceptoGastoListado = {
-                        convocatoriaConceptoGasto
-                      } as ConceptoGastoListado;
-                      return conceptoGastoListado;
-                    }));
-                  }
-
-                  return conceptosGastoListado;
-                })
-              );
-          } else {
-            requestConvocatoriaConceptosGasto = of(conceptosGastoListado);
-          }
-          return requestConvocatoriaConceptosGasto;
-        }),
-        tap((response) => response.forEach(element => this.fillListadoFields(element)))
-      );
+                    return conceptosGastoListado;
+                  })
+                );
+            } else {
+              requestConvocatoriaConceptosGasto = of(conceptosGastoListado);
+            }
+            return requestConvocatoriaConceptosGasto;
+          })).subscribe((response) => {
+            response.forEach(element => this.fillListadoFields(element));
+            this.proyectoConceptosGastoPermitidos$.next(response);
+          }));
     }
   }
 
@@ -235,7 +224,6 @@ export class ProyectoConceptosGastoFragment extends FormFragment<ConceptoGastoLi
   }
 
   saveOrUpdate(): Observable<void> {
-    this.applyCostesIndirectos();
     return merge(
       this.deleteProyectoConceptosGasto(),
       this.updateProyectoConceptosGasto()
@@ -307,27 +295,6 @@ export class ProyectoConceptosGastoFragment extends FormFragment<ConceptoGastoLi
     );
   }
 
-  private applyCostesIndirectos() {
-    if (this.getFormGroup()?.controls.costeIndirecto.value != null) {
-      this.proyectoConceptosGastoPermitidos$.value.forEach(gasto => {
-        if (gasto.proyectoConceptoGasto && gasto.proyectoConceptoGasto.value.id === this.getFormGroup().controls.costeIndirecto.value.id
-          && gasto.proyectoConceptoGasto.value.porcentajeCosteIndirecto !== this.getFormGroup().controls.porcentajeCosteIndirecto.value) {
-
-          gasto.proyectoConceptoGasto.value.porcentajeCosteIndirecto = this.getFormGroup().controls.porcentajeCosteIndirecto.value;
-          gasto.proyectoConceptoGasto.setEdited();
-
-          this.proyectoConceptosGastoPermitidos$.value.filter(wrap =>
-            wrap.proyectoConceptoGasto && wrap.proyectoConceptoGasto.value.id !== gasto.proyectoConceptoGasto.value.id
-            && wrap.proyectoConceptoGasto.value.porcentajeCosteIndirecto !== null)
-            .map(gastoBuscado => {
-              gastoBuscado.proyectoConceptoGasto.value.porcentajeCosteIndirecto = null;
-              gastoBuscado.proyectoConceptoGasto.setEdited();
-            });
-        }
-      });
-    }
-  }
-
   private isSaveOrUpdateComplete(): boolean {
     const touched: boolean = this.proyectoConceptosGastoPermitidos$.value.some((gasto) =>
       gasto.proyectoConceptoGasto && gasto.proyectoConceptoGasto.touched);
@@ -342,6 +309,7 @@ export class ProyectoConceptosGastoFragment extends FormFragment<ConceptoGastoLi
       conceptoGasto.fechaInicio = conceptoGasto.proyectoConceptoGasto.value.fechaInicio;
       conceptoGasto.fechaFin = conceptoGasto.proyectoConceptoGasto.value.fechaFin;
       conceptoGasto.observaciones = conceptoGasto.proyectoConceptoGasto.value.observaciones;
+      conceptoGasto.costesIndirectos = conceptoGasto.proyectoConceptoGasto.value.conceptoGasto.costesIndirectos;
 
       if (conceptoGasto.convocatoriaConceptoGasto) {
         if (compareConceptoGasto(conceptoGasto.convocatoriaConceptoGasto, conceptoGasto.proyectoConceptoGasto.value,

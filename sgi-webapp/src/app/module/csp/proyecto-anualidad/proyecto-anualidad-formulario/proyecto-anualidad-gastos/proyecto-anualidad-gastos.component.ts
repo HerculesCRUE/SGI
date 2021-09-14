@@ -43,7 +43,11 @@ export class ProyectoAnualidadGastosComponent extends FragmentComponent implemen
     return MSG_PARAMS;
   }
 
-  constructor(actionService: ProyectoAnualidadActionService,
+  get readonly(): boolean {
+    return this.actionService.readonly;
+  }
+
+  constructor(private actionService: ProyectoAnualidadActionService,
     private dialogService: DialogService,
     private readonly translate: TranslateService,
     private matDialog: MatDialog) {
@@ -93,7 +97,8 @@ export class ProyectoAnualidadGastosComponent extends FragmentComponent implemen
       proyectoId: this.formPart.proyectoId,
       fechaInicioAnualidad: this.formPart.fechaInicioAnualidad,
       fechaFinAnualidad: this.formPart.fechaFinAnualidad,
-      isEdit: false
+      isEdit: false,
+      readonly: this.actionService.readonly
     };
     const config = {
       panelClass: 'sgi-dialog-container',

@@ -172,7 +172,7 @@ export class ConvocatoriaConfiguracionSolicitudesComponent
       documentoRequerido: wrapper ? wrapper.value : documentosRequerido,
       tipoFaseId: this.formGroup.controls.fasePresentacionSolicitudes.value?.tipoFase?.id,
       modeloEjecucionId: this.actionService.modeloEjecucionId,
-      readonly: this.formPart.readonly
+      isConvocatoriaVinculada: this.formPart.isConvocatoriaVinculada
     };
     const config = {
       panelClass: 'sgi-dialog-container',

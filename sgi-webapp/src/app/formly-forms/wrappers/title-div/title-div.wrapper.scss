@@ -1,4 +1,4 @@
- @import "colors.scss";
+@import "colors.scss";
 .title {
   margin-bottom: 15px;
   font-size: 14px;
@@ -7,21 +7,21 @@
 }
 .mat-divider {
   border-top-style: dotted;
-  border-color: #5472c9;
+  border-color: map-get($palette-primary, 400);
   border-width: 2.5px;
-  margin-top:1em;
-  margin-bottom:2em;
-  margin-left:.5em;
-  margin-right:.5em;
+  margin-top: 1em;
+  margin-bottom: 2em;
+  margin-left: 0.5em;
+  margin-right: 0.5em;
 }
 mat-icon.warning {
-  color: map-get($custom-colors, warning);
+  color: map-get($sgi-custom-colors, warning);
 }
 .comentario {
   border-style: solid;
   border-width: 2px;
   padding: 1em;
   margin-bottom: 2em;
-  border-color: map-get($custom-colors, warning);
-  background-color: rgba(map-get($custom-colors, warning), 0.1);
+  border-color: map-get($sgi-custom-colors, warning);
+  background-color: rgba(map-get($sgi-custom-colors, warning), 0.1);
 }

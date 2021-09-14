@@ -1,0 +1,24 @@
+[
+  {
+    "key": "ap4_3_1",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "label": "4.3.1 Justificación del tamaño muestral y tratamiento estadístico"
+    },
+    "fieldGroup": [
+      {
+        "key": "justificacionMuestraEstadistica",
+        "type": "textarea",
+        "templateOptions": {
+          "label": "Justificación",
+          "required": true,
+          "autosize": true,
+          "autosizeMinRows": "1",
+          "autosizeMaxRows": "10"
+        }
+      }
+    ]
+  }
+]

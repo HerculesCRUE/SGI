@@ -3,9 +3,8 @@ import { FormControl, FormGroup } from '@angular/forms';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { AbstractTablePaginationComponent } from '@core/component/abstract-table-pagination.component';
 import { Estado, ESTADO_MAP } from '@core/models/csp/estado-proyecto';
-import { IProyecto } from '@core/models/csp/proyecto';
+import { IProyectoProyectoSge } from '@core/models/csp/proyecto-proyecto-sge';
 import { IRolProyecto } from '@core/models/csp/rol-proyecto';
-import { IProyectoSge } from '@core/models/sge/proyecto-sge';
 import { FxFlexProperties } from '@core/models/shared/flexLayout/fx-flex-properties';
 import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-properties';
 import { ROUTE_NAMES } from '@core/route.names';
@@ -18,27 +17,22 @@ import { RSQLSgiRestFilter, SgiRestFilter, SgiRestFilterOperator, SgiRestFindOpt
 import { NGXLogger } from 'ngx-logger';
 import { merge, Observable, of, Subscription } from 'rxjs';
 import { map, switchMap, tap } from 'rxjs/operators';
+import { EJECUCION_ECONOMICA_ROUTE_NAMES } from '../ejecucion-economica-route-names';
 
 const MSG_ERROR = marker('error.load');
-
-interface EjecucionEconomicaListado {
-  id: number;
-  proyectoSge: IProyectoSge;
-  proyecto: IProyecto;
-}
 
 @Component({
   selector: 'sgi-ejecucion-economica-listado',
   templateUrl: './ejecucion-economica-listado.component.html',
   styleUrls: ['./ejecucion-economica-listado.component.scss']
 })
-export class EjecucionEconomicaListadoComponent extends AbstractTablePaginationComponent<EjecucionEconomicaListado>
+export class EjecucionEconomicaListadoComponent extends AbstractTablePaginationComponent<IProyectoProyectoSge>
   implements OnInit, OnDestroy {
   ROUTE_NAMES = ROUTE_NAMES;
 
   fxFlexProperties: FxFlexProperties;
   fxLayoutProperties: FxLayoutProperties;
-  dataSource$: Observable<EjecucionEconomicaListado[]>;
+  dataSource$: Observable<IProyectoProyectoSge[]>;
 
   private subscriptions: Subscription[] = [];
 
@@ -52,6 +46,10 @@ export class EjecucionEconomicaListadoComponent extends AbstractTablePaginationC
 
   get Estado() {
     return Estado;
+  }
+
+  get EJECUCION_ECONOMICA_ROUTE_NAMES() {
+    return EJECUCION_ECONOMICA_ROUTE_NAMES;
   }
 
   constructor(
@@ -93,24 +91,10 @@ export class EjecucionEconomicaListadoComponent extends AbstractTablePaginationC
     this.loadColectivos();
   }
 
-  protected createObservable(): Observable<SgiRestListResult<EjecucionEconomicaListado>> {
+  protected createObservable(): Observable<SgiRestListResult<IProyectoProyectoSge>> {
     const observable$ = this.proyectoProyectoSgeService.findAll(this.getFindOptions()).pipe(
-      map(response => {
-        const ejecucionEconomicaListado = response.items.map((proyectoProyectoSge) => {
-          return {
-            id: proyectoProyectoSge.id,
-            proyectoSge: proyectoProyectoSge.proyectoSge,
-            proyecto: { id: proyectoProyectoSge.proyectoId } as IProyecto
-          } as EjecucionEconomicaListado;
-        });
-        return {
-          page: response.page,
-          total: response.total,
-          items: ejecucionEconomicaListado
-        } as SgiRestListResult<EjecucionEconomicaListado>;
-      }),
       switchMap(response => {
-        const requestsProyecto: Observable<EjecucionEconomicaListado>[] = [];
+        const requestsProyecto: Observable<IProyectoProyectoSge>[] = [];
         response.items.forEach(ejecucionEconomicaListado => {
           requestsProyecto.push(this.proyectoService.findById(ejecucionEconomicaListado.proyecto.id).pipe(
             map(proyecto => {

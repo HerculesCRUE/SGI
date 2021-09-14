@@ -1,6 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
+import { HttpProblem } from '@core/errors/http-problem';
 import { MSG_PARAMS } from '@core/i18n';
 import { IConfiguracion } from '@core/models/eti/configuracion';
 import { FxFlexProperties } from '@core/models/shared/flexLayout/fx-flex-properties';
@@ -147,7 +148,12 @@ export class ConfiguracionFormularioComponent implements OnInit, OnDestroy {
       },
       (error) => {
         this.logger.error(error);
-        this.snackBarService.showError(this.textoUpdateError);
+        if (error instanceof HttpProblem) {
+          this.snackBarService.showError(error);
+        }
+        else {
+          this.snackBarService.showError(this.textoUpdateError);
+        }
       }
     );
     this.suscripciones.push(configuracionUpdateSubscription);

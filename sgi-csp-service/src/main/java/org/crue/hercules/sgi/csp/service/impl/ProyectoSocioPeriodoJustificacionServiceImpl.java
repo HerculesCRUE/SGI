@@ -279,7 +279,7 @@ public class ProyectoSocioPeriodoJustificacionServiceImpl implements ProyectoSoc
 
     Assert.isTrue(
         proyectoSocio.getFechaFin() == null
-            || proyectoSocioPeriodoJustificacion.getFechaFin().isBefore(proyectoSocio.getFechaFin()),
+            || !proyectoSocioPeriodoJustificacion.getFechaFin().isAfter(proyectoSocio.getFechaFin()),
         "La fecha fin no puede ser superior a la fecha fin indicada en Proyecto socio");
 
     Assert.isTrue(!isRangoFechasSolapado(proyectoSocioPeriodoJustificacion), "El periodo se solapa con otro existente");

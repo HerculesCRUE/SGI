@@ -1,0 +1,27 @@
+[
+  {
+    "key": "ap3_2",
+    "wrappers": [
+      "expansion-panel"
+    ],
+    "templateOptions": {
+      "label": "3.2 Diseño metodológico del proyecto"
+    },
+    "fieldGroup": [
+      {
+        "key": "disenoMetodologico",
+        "type": "textarea",
+        "templateOptions": {
+          "label": "Diseño metodológico",
+          "placeholder": "Diseño",
+          "disabled": true,
+          "required": true,
+          "autosize": true,
+          "autosizeMinRows": "1",
+          "autosizeMaxRows": "10",
+          "expressionModelValue": "formState.memoria.peticionEvaluacion.disMetodologico"
+        }
+      }
+    ]
+  }
+]

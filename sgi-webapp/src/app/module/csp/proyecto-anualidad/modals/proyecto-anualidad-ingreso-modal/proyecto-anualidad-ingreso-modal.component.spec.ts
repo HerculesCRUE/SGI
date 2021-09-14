@@ -19,7 +19,8 @@ describe('ProyectoAnualidadIngresoModalComponent', () => {
   const newData: ProyectoAnualidadIngresoModalData = {
     isEdit: false,
     anualidadIngreso: {} as IAnualidadIngreso,
-    proyectoId: null
+    proyectoId: null,
+    readonly: false
   };
 
   beforeEach(waitForAsync(() => {
