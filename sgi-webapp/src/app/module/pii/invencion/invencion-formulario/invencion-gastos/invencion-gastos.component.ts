@@ -1,14 +1,15 @@
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { FragmentComponent } from '@core/component/fragment.component';
 import { MSG_PARAMS } from '@core/i18n';
-import { ESTADO_MAP } from '@core/models/csp/estado-gasto-proyecto';
-import { IInvencionGasto } from '@core/models/pii/invencion-gasto';
+import { ESTADO_MAP, IInvencionGasto } from '@core/models/pii/invencion-gasto';
 import { StatusWrapper } from '@core/utils/status-wrapper';
 import { Subscription } from 'rxjs';
 import { InvencionActionService } from '../../invencion.action.service';
+import { InvencionGastoModalComponent, InvencionGastoModalData } from '../../modals/invencion-gasto-modal/invencion-gasto-modal.component';
 import { InvencionGastosFragment } from './invencion-gastos.fragment';
 
 @Component({
@@ -36,7 +37,8 @@ export class InvencionGastosComponent extends FragmentComponent implements OnIni
   }
 
   constructor(
-    public actionService: InvencionActionService
+    public actionService: InvencionActionService,
+    private readonly matDialog: MatDialog
   ) {
     super(actionService.FRAGMENT.GASTOS, actionService);
     this.formPart = this.fragment as InvencionGastosFragment;
@@ -62,6 +64,31 @@ export class InvencionGastosComponent extends FragmentComponent implements OnIni
     this.dataSource.sort = this.sort;
     this.subscriptions.push(this.formPart.getInvencionGastos$()
       .subscribe(elements => this.dataSource.data = elements));
+  }
+
+  openModal(wrapper: StatusWrapper<IInvencionGasto>) {
+    this.subscriptions.push(
+      this.formPart.getGastoDetalle(wrapper.value.gasto).pipe(
+      ).subscribe(gastoDetalle => {
+        const config: MatDialogConfig<InvencionGastoModalData> = {
+          panelClass: 'sgi-dialog-container',
+          data: {
+            selectedInvencionId: this.formPart.invencionId,
+            selectedInvencionGasto: wrapper.value,
+            columns: this.formPart.columns,
+            gastoDetalle: gastoDetalle
+          },
+          minWidth: '700px',
+        };
+        const dialogRef = this.matDialog.open(InvencionGastoModalComponent, config);
+        dialogRef.afterClosed().subscribe(
+          (result: IInvencionGasto) => {
+            if (result) {
+              result.id ? this.formPart.modifyInvencionGasto(wrapper) : this.formPart.addInvencionGasto(wrapper);
+            }
+          });
+      })
+    );
   }
 
   ngOnDestroy(): void {

@@ -236,7 +236,8 @@ public class ProyectoProrrogaServiceImpl implements ProyectoProrrogaService {
     Optional<Proyecto> proyecto = repository.getProyecto(proyectoProrroga.getId());
 
     Assert.isTrue(
-        proyecto.isPresent() && proyectoProrroga.getFechaFin().compareTo(proyecto.get().getFechaInicio()) >= 0,
+        proyecto.isPresent() && proyectoProrroga.getFechaFin() != null
+            && proyectoProrroga.getFechaFin().compareTo(proyecto.get().getFechaInicio()) >= 0,
         "La fecha de fin debe ser posterior a la fecha de inicio del proyecto");
 
     // Se actualizan los miembros de equipo cuya fecha de fin coincida con la fecha
@@ -299,7 +300,9 @@ public class ProyectoProrrogaServiceImpl implements ProyectoProrrogaService {
     Instant fechaFinProyecto = proyecto.getFechaFinDefinitiva() != null ? proyecto.getFechaFinDefinitiva()
         : proyecto.getFechaFin();
 
-    Assert.isTrue(datosProyectoProrroga.getFechaFin().isAfter(fechaFinProyecto),
+    Assert.isTrue(
+        datosProyectoProrroga.getFechaFin() == null || (datosProyectoProrroga.getFechaFin() != null
+            && datosProyectoProrroga.getFechaFin().isAfter(fechaFinProyecto)),
         "Fecha de fin debe ser posterior a la fecha de fin del proyecto");
 
     // Se recupera el ProyectoProrroga con la última fecha de concesión

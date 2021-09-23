@@ -106,7 +106,7 @@ export class MemoriaDatosGeneralesFragment extends FormFragment<IMemoria>  {
     this.memoria.comite = form.comite.value;
     this.memoria.tipoMemoria = form.tipoMemoria.value;
 
-    if (this.showTitulo && form.titulo.value) {
+    if (this.showTitulo) {
       this.memoria.titulo = form.titulo.value;
     }
     this.memoria.responsable = form.personaResponsable.value;

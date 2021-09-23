@@ -5,6 +5,7 @@ import { IEvaluacion } from '@core/models/eti/evaluacion';
 import { EvaluacionService } from '@core/services/eti/evaluacion.service';
 import { PersonaService } from '@core/services/sgp/persona.service';
 import { SnackBarService } from '@core/services/snack-bar.service';
+import { SgiAuthService } from '@sgi/framework/auth';
 import { EvaluacionComentarioFragment } from '../evaluacion-formulario/evaluacion-comentarios/evaluacion-comentarios.fragment';
 import { EvaluacionDocumentacionFragment } from '../evaluacion-formulario/evaluacion-documentacion/evaluacion-documentacion.fragment';
 import { EvaluacionEvaluacionFragment } from '../evaluacion-formulario/evaluacion-evaluacion/evaluacion-evaluacion.fragment';
@@ -18,7 +19,8 @@ export class EvaluacionActionService extends EvaluacionFormularioActionService {
     route: ActivatedRoute,
     service: EvaluacionService,
     protected readonly snackBarService: SnackBarService,
-    personaService: PersonaService) {
+    personaService: PersonaService,
+    authService: SgiAuthService) {
     super();
     this.evaluacion = {} as IEvaluacion;
     if (route.snapshot.data.evaluacion) {
@@ -27,7 +29,7 @@ export class EvaluacionActionService extends EvaluacionFormularioActionService {
     }
     this.evaluaciones = new EvaluacionEvaluacionFragment(
       fb, this.evaluacion?.id, snackBarService, service, personaService);
-    this.comentarios = new EvaluacionComentarioFragment(this.evaluacion?.id, Rol.GESTOR, service);
+    this.comentarios = new EvaluacionComentarioFragment(this.evaluacion?.id, Rol.GESTOR, service, personaService, authService);
     this.documentacion = new EvaluacionDocumentacionFragment(this.evaluacion?.id);
 
 

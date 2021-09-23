@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.crue.hercules.sgi.esb.sgp</groupId>
   <artifactId>sgi-esb-sgp</artifactId>
-  <version>0.0.1</version>
+  <version>0.0.2</version>
   <packaging>pom</packaging>
   <name>sgi-esb-sgp</name>
   <description>sgi-esb-sgp</description>

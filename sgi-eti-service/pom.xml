@@ -9,7 +9,7 @@
   </parent>
   <groupId>org.crue.hercules.sgi</groupId>
   <artifactId>sgi-eti-service</artifactId>
-  <version>0.0.1</version>
+  <version>0.0.2</version>
   <name>sgi-eti-service</name>
   <description>Servicio Etica SGI HERCULES</description>
 

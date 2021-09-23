@@ -9,7 +9,7 @@
   </parent>
   <groupId>org.crue.hercules.sgi</groupId>
   <artifactId>sgi-pii-service</artifactId>
-  <version>0.0.1</version>
+  <version>0.0.2</version>
   <name>sgi-pii-service</name>
   <description>Servicio de Propiedad industrial e intelectual SGI HERCULES</description>
 

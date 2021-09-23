@@ -5,6 +5,7 @@ import { IEvaluacion } from '@core/models/eti/evaluacion';
 import { EvaluacionService } from '@core/services/eti/evaluacion.service';
 import { PersonaService } from '@core/services/sgp/persona.service';
 import { SnackBarService } from '@core/services/snack-bar.service';
+import { SgiAuthService } from '@sgi/framework/auth';
 import { SeguimientoComentarioFragment } from '../seguimiento-formulario/seguimiento-comentarios/seguimiento-comentarios.fragment';
 import { SeguimientoDocumentacionFragment } from '../seguimiento-formulario/seguimiento-documentacion/seguimiento-documentacion.fragment';
 import { SeguimientoEvaluacionFragment } from '../seguimiento-formulario/seguimiento-evaluacion/seguimiento-evaluacion.fragment';
@@ -19,7 +20,8 @@ export class GestionSeguimientoActionService extends SeguimientoFormularioAction
     route: ActivatedRoute,
     service: EvaluacionService,
     protected readonly snackBarService: SnackBarService,
-    personaService: PersonaService) {
+    personaService: PersonaService,
+    authService: SgiAuthService) {
     super();
     this.evaluacion = {} as IEvaluacion;
     if (route.snapshot.data.evaluacion) {
@@ -28,7 +30,7 @@ export class GestionSeguimientoActionService extends SeguimientoFormularioAction
     }
     this.evaluaciones = new SeguimientoEvaluacionFragment(
       fb, this.evaluacion?.id, snackBarService, service, personaService);
-    this.comentarios = new SeguimientoComentarioFragment(this.evaluacion?.id, Rol.GESTOR, service);
+    this.comentarios = new SeguimientoComentarioFragment(this.evaluacion?.id, Rol.GESTOR, service, personaService, authService);
     this.documentacion = new SeguimientoDocumentacionFragment(this.evaluacion?.id);
 
     this.addFragment(this.FRAGMENT.COMENTARIOS, this.comentarios);

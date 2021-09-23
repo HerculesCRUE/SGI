@@ -1,3 +1,4 @@
+import { IPersona } from '../sgp/persona';
 import { IApartado } from './apartado';
 import { IEvaluacion } from './evaluacion';
 import { IMemoria } from './memoria';
@@ -16,4 +17,6 @@ export interface IComentario {
   tipoComentario: TipoComentario;
   /** Texto */
   texto: string;
+  /** Persona creación/modificación */
+  evaluador: IPersona;
 }

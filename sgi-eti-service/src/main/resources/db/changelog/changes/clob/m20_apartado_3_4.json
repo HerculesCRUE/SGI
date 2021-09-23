@@ -9,7 +9,7 @@
     },
     "fieldGroup": [
       {
-        "template": "<p>Indique el tipo de proyecto (según el artículo 31 del RD 53/2013).</p>"
+        "template": "<p>Indique el tipo de proyecto (según el <a href='https://www.boe.es/diario_boe/txt.php?id=BOE-A-2013-1337' target='_blank'>artículo 31 del RD 53/2013</a>).</p>"
       },
       {
         "key": "tipoProyecto",

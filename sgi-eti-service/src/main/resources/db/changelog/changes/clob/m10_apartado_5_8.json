@@ -5,28 +5,20 @@
       "expansion-panel"
     ],
     "templateOptions": {
-      "label": "5.8 Documentación adicional"
+      "label": "5.8 Aclaraciones al comité"
     },
     "fieldGroup": [
       {
-        "template": "¿Dispone de alguna otra documentación adicional para su proyecto?"
+        "template": "Incluir a continuación cualquier otra aclaración que se considere necesaria para el comité"
       },
       {
-        "key": "documentacionAdicional",
-        "type": "documento",
+        "key": "aclaracionesComite",
+        "type": "textarea",
         "templateOptions": {
-          "label": "Indicar",
-          "required": true,
-          "options": [
-            {
-              "value": 0,
-              "label": "No"
-            },
-            {
-              "value": 11,
-              "label": "Sí"
-            }
-          ]
+          "label": "Aclaraciones",
+          "autosize": true,
+          "autosizeMinRows": "1",
+          "autosizeMaxRows": "10"
         }
       }
     ]

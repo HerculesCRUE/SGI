@@ -1,5 +1,6 @@
-<?xml version="1.0" encoding="UTF-8"?><artifacts>
-  <artifact name="datos-contacto-response-converter-mediator" groupId="org.crue.hercules.sgi.esb.sgemp.resource" version="0.0.1" type="registry/resource" serverRole="EnterpriseIntegrator">
+<?xml version="1.0" encoding="UTF-8"?>
+<artifacts>
+  <artifact name="datos-contacto-response-converter-mediator" groupId="org.crue.hercules.sgi.esb.sgemp.resource" version="0.0.2" type="registry/resource" serverRole="EnterpriseIntegrator">
     <item>
       <file>datos-contacto-response-converter-mediator.js</file>
       <path>/_system/governance/scripts/sgemp</path>

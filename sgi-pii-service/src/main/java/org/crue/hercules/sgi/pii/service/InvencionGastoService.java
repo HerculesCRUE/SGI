@@ -64,8 +64,8 @@ public class InvencionGastoService {
     Assert.notNull(invencionGasto.getInvencionId(),
         // Defer message resolution untill is needed
         () -> ProblemMessage.builder().key(Assert.class, "notNull")
-            .parameter("field", ApplicationContextSupport.getMessage("invencionId"))
-            .parameter("entity", ApplicationContextSupport.getMessage(InvencionGasto.class)).build());
+            .parameter("field", ApplicationContextSupport.getMessage("id"))
+            .parameter("entity", ApplicationContextSupport.getMessage(Invencion.class)).build());
 
     InvencionGasto returnValue = repository.save(invencionGasto);
 
@@ -83,16 +83,16 @@ public class InvencionGastoService {
   public InvencionGasto update(InvencionGasto invencionGasto) {
     log.debug("update(InvencionGasto invencionGasto) - start");
 
-    Assert.isNull(invencionGasto.getId(),
+    Assert.notNull(invencionGasto.getId(),
         // Defer message resolution untill is needed
-        () -> ProblemMessage.builder().key(Assert.class, "isNull")
+        () -> ProblemMessage.builder().key(Assert.class, "notNull")
             .parameter("field", ApplicationContextSupport.getMessage("id"))
             .parameter("entity", ApplicationContextSupport.getMessage(InvencionGasto.class)).build());
     Assert.notNull(invencionGasto.getInvencionId(),
         // Defer message resolution untill is needed
         () -> ProblemMessage.builder().key(Assert.class, "notNull")
-            .parameter("field", ApplicationContextSupport.getMessage("invencionId"))
-            .parameter("entity", ApplicationContextSupport.getMessage(InvencionGasto.class)).build());
+            .parameter("field", ApplicationContextSupport.getMessage("id"))
+            .parameter("entity", ApplicationContextSupport.getMessage(Invencion.class)).build());
 
     return repository.findById(invencionGasto.getId()).map(invencionGastoExistente -> {
 

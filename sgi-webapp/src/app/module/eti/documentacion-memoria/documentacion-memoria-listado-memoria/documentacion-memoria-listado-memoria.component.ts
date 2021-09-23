@@ -103,8 +103,8 @@ export class DocumentacionMemoriaListadoMemoriaComponent extends
     // TODO generar documentacion
   }
 
-  private getVersion(informe: IInforme) {
-    switch (informe.tipoEvaluacion.id) {
+  private getVersion(informe: IInforme, tipoEvaluacion: number) {
+    switch (tipoEvaluacion) {
       case TIPO_EVALUACION.MEMORIA:
         return informe.memoria?.numReferencia + '_v' + informe.version;
       case TIPO_EVALUACION.RETROSPECTIVA:
@@ -120,7 +120,7 @@ export class DocumentacionMemoriaListadoMemoriaComponent extends
 
   getNombre(documento: IDocumentacionMemoriaWithInformeAndFichaEvaluador) {
     if (documento.informe) {
-      return this.getVersion(documento.informe);
+      return this.getVersion(documento.informe, this.tipoEvaluacion);
     }
     switch (this.tipoEvaluacion) {
       case TIPO_EVALUACION.MEMORIA:

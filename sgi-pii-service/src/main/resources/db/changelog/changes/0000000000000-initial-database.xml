@@ -164,9 +164,7 @@
             <column name="gasto_ref" type="VARCHAR(255)">
                 <constraints nullable="false"/>
             </column>
-            <column name="importe_pendiente_deducir" type="DECIMAL(19, 2)">
-                <constraints nullable="false"/>
-            </column>
+            <column name="importe_pendiente_deducir" type="DECIMAL(19, 2)"/>
             <column name="invencion_id" type="BIGINT">
                 <constraints nullable="false"/>
             </column>

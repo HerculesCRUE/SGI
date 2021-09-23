@@ -336,9 +336,7 @@ public class EvaluadorIT extends BaseIT {
         });
 
     // then: Respuesta OK, retorna la información de la página correcta en el header
-    Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-    final List<Evaluacion> evaluaciones = response.getBody();
-    Assertions.assertThat(evaluaciones.size()).isEqualTo(1);
+    Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
   }
 
   @Test

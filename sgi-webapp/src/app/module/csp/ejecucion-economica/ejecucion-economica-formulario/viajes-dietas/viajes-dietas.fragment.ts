@@ -93,4 +93,8 @@ export class ViajesDietasFragment extends FacturasJustificantesFragment {
     return this.updatedGastosProyectos.size === 0;
   }
 
+  public clearRangos(): void {
+    this.formGroupFechas.reset();
+  }
+
 }

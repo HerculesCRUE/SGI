@@ -66,6 +66,9 @@ export abstract class MemoriaFormlyFormFragment extends Fragment {
 
   private readonly: boolean;
 
+  // Almacena el formState de todos los bloques para poder hacer referencia entre ellos
+  private formStateGlobal: any = {};
+
   isReadonly(): boolean {
     return this.readonly;
   }
@@ -395,6 +398,10 @@ export abstract class MemoriaFormlyFormFragment extends Fragment {
           block.loaded = true;
           block.selected = true;
           this.fillFormlyData(true, value.formlyData.model, value.formlyData.options.formState, value.formlyData.fields, value.questions);
+
+          this.formStateGlobal = { ...this.formStateGlobal, ...block.formlyData.model };
+          block.formlyData.options.formState.mainModel = this.formStateGlobal;
+
           value.formlyData.fields.forEach((f) => {
             if (f.group) {
               this.subscriptions.push(f.group.status$.subscribe((status) => {

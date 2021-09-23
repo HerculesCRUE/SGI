@@ -11,7 +11,13 @@
     "hideExpression": "!formState.bloques[3].ap3_4.intervencionesSeresHumanosRadio || formState.bloques[3].ap3_4.intervencionesSeresHumanosRadio === 'no'",
     "fieldGroup": [
       {
-        "template": "<p>Participar en una actividad de investigación puede suponer riesgos, y por ello la Universidad dispone de un Seguro de Responsabilidad civil que cubre los daños derivados de dichas actividades profesionales. Para más información consultar en   <a href='https://www.um.es/web/comision-etica-investigacion/comision-etica' target='_blank'>https://www.um.es/web/comision-etica-investigacion/comision-etica</a></p>"
+        "template": "<p>Participar en una actividad de investigación puede suponer riesgos, y por ello la Universidad dispone de un Seguro de Responsabilidad civil que cubre los daños derivados de dichas actividades profesionales.</p>"
+      },
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "<p>En seres humanos, el seguro de responsabilidad civil no cubre los daños que puedan producirse en la investigación si es un ensayo clínico (LIB 14/2007), si el personal investigador no forma parte de la Universidad o si la actividad investigadora no dispone del informe favorable del CEI.</p>"
       },
       {
         "key": "aseguramientoDanoRadio",
@@ -47,7 +53,7 @@
         "wrappers": [
           "info-div"
         ],
-        "template": "<p>Nota: añadir en el apartado '5.8 Documentación adicional' la póliza de seguro si procede</p>"
+        "template": "<p>Nota: añadir en el apartado '5.7 Documentación adicional' la póliza de seguro, en el caso de que la actividad de investigación necesite un seguro específico.</p>"
       }
     ]
   }

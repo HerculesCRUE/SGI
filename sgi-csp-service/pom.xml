@@ -9,7 +9,7 @@
   </parent>
   <groupId>org.crue.hercules.sgi</groupId>
   <artifactId>sgi-csp-service</artifactId>
-  <version>0.0.1</version>
+  <version>0.0.2</version>
   <name>sgi-csp-service</name>
   <description>Servicio Convocatorias Solicitudes y Proyectos SGI HERCULES</description>
 

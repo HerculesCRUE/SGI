@@ -5,21 +5,25 @@ import { InvencionService } from '@core/services/pii/invencion/invencion.service
 import { SolicitudProteccionService } from '@core/services/pii/invencion/solicitud-proteccion/solicitud-proteccion.service';
 import { GastosInvencionService } from '@core/services/sgepii/gastos-invencion.service';
 import { StatusWrapper } from '@core/utils/status-wrapper';
-import { BehaviorSubject, forkJoin, from, Observable, of } from 'rxjs';
-import { filter, map, mergeMap, switchMap, tap } from 'rxjs/operators';
+import { BehaviorSubject, forkJoin, from, merge, Observable, of } from "rxjs";
+import { catchError, map, mergeMap, switchMap, takeLast, tap, toArray } from "rxjs/operators";
 import { IColumnDefinition } from 'src/app/module/csp/ejecucion-economica/ejecucion-economica-formulario/desglose-economico.fragment';
+import { IInvencion } from "@core/models/pii/invencion";
+import { IDatoEconomicoDetalle } from "@core/models/sgepii/dato-economico-detalle";
+import { InvencionGastoService } from "@core/services/pii/invencion/invencion-gasto/invencion-gasto.service";
 
 export class InvencionGastosFragment extends Fragment {
 
-  private invencionId: number;
   private invencionGastos$ = new BehaviorSubject<StatusWrapper<IInvencionGasto>[]>([]);
 
+  invencionId: number;
   displayColumns: string[] = [];
   columns: IColumnDefinition[] = [];
 
   constructor(
     key: number,
     private readonly gastosInvencionService: GastosInvencionService,
+    private readonly invencionGastosService: InvencionGastoService,
     private readonly invencionService: InvencionService,
     private readonly solicitudProteccionService: SolicitudProteccionService,
   ) {
@@ -65,11 +69,81 @@ export class InvencionGastosFragment extends Fragment {
   }
 
   saveOrUpdate(): Observable<string | number | void> {
-    return of(void 0);
+    return merge(
+      this.updateInvencionesGasto(),
+      this.createInvencionesGasto()
+    ).pipe(
+      takeLast(1),
+      tap(() => {
+        this.setChanges(this.hasFragmentChangesPending());
+      })
+    );
+  }
+
+  private updateInvencionesGasto(): Observable<void> {
+    const current = this.invencionGastos$.value;
+    return from(current.filter(wrapper => wrapper.edited)).pipe(
+      mergeMap((wrapper => {
+        return this.invencionGastosService.update(wrapper.value.id, wrapper.value).pipe(
+          map((informePatentabilidadResponse) => this.refreshInvencionGastosData(informePatentabilidadResponse, wrapper, current)),
+          catchError(() => of(void 0))
+        )
+      }))
+    );
+  }
+
+  private createInvencionesGasto(): Observable<void> {
+    const current = this.invencionGastos$.value;
+    return from(current.filter(wrapper => wrapper.created)).pipe(
+      mergeMap((wrapper => {
+        return this.invencionGastosService.create(wrapper.value).pipe(
+          map((invencionGastoResponse) => this.refreshInvencionGastosData(invencionGastoResponse, wrapper, current)),
+          catchError(() => of(void 0))
+        )
+      }))
+    );
+  }
+
+  private refreshInvencionGastosData(
+    invencionGastoResponse: IInvencionGasto,
+    wrapper: StatusWrapper<IInvencionGasto>,
+    current: StatusWrapper<IInvencionGasto>[]
+  ): void {
+    this.copyRelatedAttributes(wrapper.value, invencionGastoResponse);
+    current[current.findIndex(c => c === wrapper)] = new StatusWrapper<IInvencionGasto>(invencionGastoResponse);
+    this.invencionGastos$.next(current);
+  }
+
+  private copyRelatedAttributes(
+    source: IInvencionGasto,
+    target: IInvencionGasto
+  ): void {
+    target.invencion = source.invencion;
+    target.gasto = source.gasto;
+    target.solicitudProteccion = source.solicitudProteccion;
+  }
+
+  private hasFragmentChangesPending() {
+    return this.invencionGastos$.value.some((value) => value.created || value.edited);
   }
 
   getInvencionGastos$(): Observable<StatusWrapper<IInvencionGasto>[]> {
     return this.invencionGastos$.asObservable();
+  }
+
+  addInvencionGasto(wrapper: StatusWrapper<IInvencionGasto>): void {
+    wrapper.value.invencion = { id: +this.getKey() } as IInvencion;
+    wrapper.setCreated();
+    this.setChanges(true);
+  }
+
+  modifyInvencionGasto(wrapper: StatusWrapper<IInvencionGasto>): void {
+    wrapper.setEdited();
+    this.setChanges(true);
+  }
+
+  getGastoDetalle(gasto: IDatoEconomico): Observable<IDatoEconomicoDetalle> {
+    return this.gastosInvencionService.getGastoDetalle(gasto.id);
   }
 
   private getColumns(invencionId: string): Observable<IColumnDefinition[]> {
@@ -92,19 +166,27 @@ export class InvencionGastosFragment extends Fragment {
 
   private getInvencionGasto$(invencionId: number): Observable<IInvencionGasto[]> {
     return this.invencionService.findGastos(invencionId).pipe(
-      tap(invencionGastos => this.fillSolicitudProteccion(invencionGastos))
+      mergeMap(invencionGastos => this.fillRelatedSolicitudesProteccion(invencionGastos))
     );
   }
 
-  private fillSolicitudProteccion(invencionGastos: IInvencionGasto[]): void {
-    from(invencionGastos).pipe(
-      filter(invencionGasto => !!invencionGasto.solicitudProteccion?.id),
+  private fillRelatedSolicitudesProteccion(invencionGastos: IInvencionGasto[]): Observable<IInvencionGasto[]> {
+    return from(invencionGastos).pipe(
       mergeMap(invencionGasto =>
-        this.solicitudProteccionService.findById(invencionGasto.solicitudProteccion.id).pipe(
-          tap(solicitudProteccion => invencionGasto.solicitudProteccion = solicitudProteccion)
-        )
-      )
+        invencionGasto.solicitudProteccion?.id ? this.fillRelatedSolicitudProteccion(invencionGasto) : of(invencionGasto)
+      ),
+      toArray()
     );
+  }
+
+  private fillRelatedSolicitudProteccion(invencionGasto: IInvencionGasto): Observable<IInvencionGasto> {
+    return this.solicitudProteccionService.findById(invencionGasto.solicitudProteccion.id).pipe(
+      map(solicitudProteccion => {
+        invencionGasto.solicitudProteccion = solicitudProteccion;
+        return invencionGasto;
+      }),
+      catchError(() => of(invencionGasto))
+    )
   }
 
   private createeInvencionGastoTableData(gastoInvencion: IDatoEconomico, relatedInvencionGasto: IInvencionGasto): IInvencionGasto {

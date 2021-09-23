@@ -221,6 +221,11 @@ export abstract class DesgloseEconomicoFragment<T extends IDatoEconomico> extend
       );
   }
 
+  public clearDesglose(): void {
+    const regs: RowTreeDesglose<T>[] = [];
+    this.desglose$.next(regs);
+  }
+
   protected abstract getDatosEconomicos(anualidades: string[]): Observable<IDatoEconomico[]>;
 
   protected abstract buildRows(datosEconomicos: IDatoEconomico[]): Observable<RowTreeDesglose<T>[]>;

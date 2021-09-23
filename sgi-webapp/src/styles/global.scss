@@ -91,6 +91,10 @@ mat-form-field {
   color: map-get($palette-primary, $primary-color);
 }
 
+.mat-form-field-label mat-label {
+  color: rgba(black, 0.7);
+}
+
 /**/
 /** FIN INPUT */
 /**/

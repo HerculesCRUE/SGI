@@ -1,5 +1,6 @@
 import { IComentarioBackend } from '@core/models/eti/backend/comentario-backend';
 import { IComentario } from '@core/models/eti/comentario';
+import { IPersona } from '@core/models/sgp/persona';
 import { SgiBaseConverter } from '@sgi/framework/core';
 import { EVALUACION_CONVERTER } from './evaluacion.converter';
 import { MEMORIA_CONVERTER } from './memoria.converter';
@@ -15,7 +16,8 @@ class ComentarioConverter extends SgiBaseConverter<IComentarioBackend, IComentar
       apartado: value.apartado,
       evaluacion: EVALUACION_CONVERTER.toTarget(value.evaluacion),
       tipoComentario: value.tipoComentario,
-      texto: value.texto
+      texto: value.texto,
+      evaluador: { id: value.lastModifiedBy ?? value.createdBy } as IPersona
     };
   }
 
@@ -29,7 +31,9 @@ class ComentarioConverter extends SgiBaseConverter<IComentarioBackend, IComentar
       apartado: value.apartado,
       evaluacion: EVALUACION_CONVERTER.fromTarget(value.evaluacion),
       tipoComentario: value.tipoComentario,
-      texto: value.texto
+      texto: value.texto,
+      createdBy: null,
+      lastModifiedBy: null
     };
   }
 }

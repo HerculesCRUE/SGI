@@ -10,13 +10,13 @@
     },
     "fieldGroup": [
       {
-        "template": "Si parte de su proyecto se realiza fuera de las instalaciones de la UMU ¿dispone Documento de Autorización del Responsable del Centro o lugar?"
+        "template": "Si parte de su proyecto se realiza fuera de las instalaciones de la Universidad ¿dispone Documento de Autorización del Responsable del Centro o lugar?"
       },
       {
         "wrappers": [
           "info-div"
         ],
-        "template": "<p>En general cualquier faceta de un estudio que se realice fuera de las instalaciones de la UMU requerirá de la autorización o acuerdo firmado por parte del/la responsable del Centro o instalaciones donde se vaya a realizar esa fase del proyecto, incluido el reclutamiento de sujetos para el estudio, distribución de información sobre el proyecto, toma de muestras, realización de encuestas, realización de pruebas físicas o psicológicas, recopilación de datos, etc.</p>"
+        "template": "<p>En general cualquier faceta de un estudio que se realice fuera de las instalaciones de la Universidad requerirá de la autorización o acuerdo firmado por parte del/la responsable del Centro o instalaciones donde se vaya a realizar esa fase del proyecto, incluido el reclutamiento de sujetos para el estudio, distribución de información sobre el proyecto, toma de muestras, realización de encuestas, realización de pruebas físicas o psicológicas, recopilación de datos, etc.</p>"
       },
       {
         "key": "documentoAutorizacion",

@@ -57,7 +57,7 @@ export class SeguimientoComentariosComponent extends FragmentComponent implement
     this.dataSource = new MatTableDataSource<StatusWrapper<IComentario>>();
     this.formPart = this.fragment as SeguimientoComentarioFragment;
     this.elementosPagina = [5, 10, 25, 100];
-    this.columnas = ['apartado.bloque', 'apartado.padre',
+    this.columnas = ['evaluador.nombre', 'apartado.bloque', 'apartado.padre',
       'apartado', 'texto', 'acciones'];
   }
 

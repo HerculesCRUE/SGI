@@ -9,6 +9,7 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { LoggerTestingModule } from 'ngx-logger/testing';
 import { SnackBarService } from '@core/services/snack-bar.service';
 import { SharedModule } from '@shared/shared.module';
+import { SgiAuthService } from '@sgi/framework/auth';
 
 describe('GestionSeguimientoEvaluarComponent', () => {
   let component: GestionSeguimientoEvaluarComponent;
@@ -28,6 +29,7 @@ describe('GestionSeguimientoEvaluarComponent', () => {
       ],
       providers: [
         { provide: SnackBarService, useValue: TestUtils.getSnackBarServiceSpy() },
+        SgiAuthService
       ],
     })
       .compileComponents();

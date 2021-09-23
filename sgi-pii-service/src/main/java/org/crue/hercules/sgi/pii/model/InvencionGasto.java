@@ -64,7 +64,7 @@ public class InvencionGasto extends BaseEntity {
   private String gastoRef;
 
   /** Importe pendiente de deducir */
-  @Column(name = "importe_pendiente_deducir", nullable = false)
+  @Column(name = "importe_pendiente_deducir", nullable = true)
   private BigDecimal importePendienteDeducir;
 
   /** Estado del gasto de la invención */

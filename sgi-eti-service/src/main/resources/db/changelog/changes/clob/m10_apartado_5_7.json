@@ -5,15 +5,14 @@
       "expansion-panel"
     ],
     "templateOptions": {
-      "expressionLock": "formState.memoria.tipoMemoria.id === 3",
-      "label": "5.7 Documento de registro de tratamiento de datos"
+      "label": "5.7 Documentación adicional"
     },
     "fieldGroup": [
       {
-        "template": "¿Su proyecto requiere el registro de un tratamiento de datos? (Apartado '3.6 Datos de carácter personal')."
+        "template": "¿Dispone de alguna otra documentación adicional para su proyecto?"
       },
       {
-        "key": "documentoRegistroTratamientoDatos",
+        "key": "documentacionAdicional",
         "type": "documento",
         "templateOptions": {
           "label": "Indicar",
@@ -24,17 +23,11 @@
               "label": "No"
             },
             {
-              "value": 10,
+              "value": 11,
               "label": "Sí"
             }
           ]
         }
-      },
-      {
-        "wrappers": [
-          "info-div"
-        ],
-        "template": "<p>Nota: Si la respuesta es afirmativa adjuntar en el apartado de 'Documentación'.</p>"
       }
     ]
   }

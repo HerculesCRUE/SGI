@@ -1,6 +1,4 @@
 {
-  "ap4_6_1": {
-    "justificacionUsoEstudiantesRadio": "no",
-    "motivosNoPlanteamientoSustitucion": "Motivo por el que los estudiantes no son un grupo especifico"
-  }
+  "justificacionUsoEstudiantesRadio": "no",
+  "motivosNoPlanteamientoSustitucion": "Motivo por el que los estudiantes no son un grupo especifico"
 }

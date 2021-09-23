@@ -10,6 +10,7 @@ import { LoggerTestingModule } from 'ngx-logger/testing';
 import { EvaluacionComentariosComponent } from './evaluacion-comentarios.component';
 import { EvaluacionActionService } from '../../evaluacion/evaluacion.action.service';
 import { EvaluacionFormularioActionService } from '../evaluacion-formulario.action.service';
+import { SgiAuthService } from '@sgi/framework/auth';
 
 describe('EvaluacionComentariosComponent', () => {
   let component: EvaluacionComentariosComponent;
@@ -31,7 +32,8 @@ describe('EvaluacionComentariosComponent', () => {
         BrowserAnimationsModule
       ],
       providers: [
-        { provide: EvaluacionFormularioActionService, useClass: EvaluacionActionService }
+        { provide: EvaluacionFormularioActionService, useClass: EvaluacionActionService },
+        SgiAuthService
       ],
     })
       .compileComponents();

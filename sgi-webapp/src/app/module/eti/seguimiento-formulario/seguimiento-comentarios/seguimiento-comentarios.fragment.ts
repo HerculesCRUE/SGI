@@ -2,9 +2,11 @@ import { IComentario } from '@core/models/eti/comentario';
 import { IDictamen } from '@core/models/eti/dictamen';
 import { Fragment } from '@core/services/action-service';
 import { EvaluacionService } from '@core/services/eti/evaluacion.service';
+import { PersonaService } from '@core/services/sgp/persona.service';
 import { StatusWrapper } from '@core/utils/status-wrapper';
+import { SgiAuthService } from '@sgi/framework/auth';
 import { BehaviorSubject, from, merge, Observable, of } from 'rxjs';
-import { endWith, map, mergeMap, takeLast, tap } from 'rxjs/operators';
+import { endWith, map, mergeMap, switchMap, takeLast, tap } from 'rxjs/operators';
 import { Rol } from '../seguimiento-formulario.action.service';
 
 export class SeguimientoComentarioFragment extends Fragment {
@@ -15,42 +17,40 @@ export class SeguimientoComentarioFragment extends Fragment {
   constructor(
     key: number,
     private rol: Rol,
-    private service: EvaluacionService) {
+    private service: EvaluacionService,
+    private readonly personaService: PersonaService,
+    private readonly authService: SgiAuthService
+  ) {
     super(key);
   }
 
   protected onInitialize(): void {
     if (this.getKey()) {
-      // Se muestran el listado de los comentarios del GESTOR
+      // Se muestra el listado de los comentarios del EVALUADOR
+      let evaluacionComentarios$ = this.service.getComentariosEvaluador(this.getKey() as number);
       if (this.rol === Rol.GESTOR) {
-        this.service.getComentariosGestor(this.getKey() as number).pipe(
-          map((response) => {
-            if (response.items) {
-              return response.items;
-            }
-            else {
-              return [];
-            }
-          })
-        ).subscribe((comentarios) => {
-          this.comentarios$.next(comentarios.map(comentario => new StatusWrapper<IComentario>(comentario)));
-        });
-
-        // Se muestra el listado de los comentarios del EVALUADOR
-      } else {
-        this.service.getComentariosEvaluador(this.getKey() as number).pipe(
-          map((response) => {
-            if (response.items) {
-              return response.items;
-            }
-            else {
-              return [];
-            }
-          })
-        ).subscribe((comentarios) => {
-          this.comentarios$.next(comentarios.map(comentario => new StatusWrapper<IComentario>(comentario)));
-        });
+        // Se muestran el listado de los comentarios del GESTOR
+        evaluacionComentarios$ = this.service.getComentariosGestor(this.getKey() as number);
       }
+
+      this.subscriptions.push(evaluacionComentarios$.pipe(
+        switchMap(result => {
+          return from(result.items).pipe(
+            mergeMap(element => {
+              return this.personaService.findById(element.evaluador.id).pipe(
+                map(persona => {
+                  element.evaluador = persona;
+                  return element;
+                })
+              );
+            }),
+            map(() => result)
+          );
+        }),
+        map(response => response.items)
+      ).subscribe((comentarios) => {
+        this.comentarios$.next(comentarios.map(comentario => new StatusWrapper<IComentario>(comentario)));
+      }));
     }
   }
 
@@ -77,13 +77,16 @@ export class SeguimientoComentarioFragment extends Fragment {
   }
 
   public addComentario(comentario: IComentario) {
-    const wrapped = new StatusWrapper<IComentario>(comentario);
-    wrapped.setCreated();
-    const current = this.comentarios$.value;
-    current.push(wrapped);
-    this.comentarios$.next(current);
-    this.setChanges(true);
-    this.setErrors(false);
+    this.personaService.findById(this.authService.authStatus$.value.userRefId).subscribe(persona => {
+      comentario.evaluador = persona;
+      const wrapped = new StatusWrapper<IComentario>(comentario);
+      wrapped.setCreated();
+      const current = this.comentarios$.value;
+      current.push(wrapped);
+      this.comentarios$.next(current);
+      this.setChanges(true);
+      this.setErrors(false);
+    });
   }
 
   public deleteComentario(comentario: StatusWrapper<IComentario>) {

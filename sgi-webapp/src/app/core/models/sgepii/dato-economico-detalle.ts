@@ -1,4 +1,4 @@
-import { IDocumento } from './documento';
+import { IDocumento } from "../sge/documento";
 
 export interface IDatoEconomicoDetalle {
   id: string;

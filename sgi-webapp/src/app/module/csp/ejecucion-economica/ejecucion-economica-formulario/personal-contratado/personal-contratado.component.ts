@@ -1,5 +1,7 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { MatOption } from '@angular/material/core';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
+import { MatSelect } from '@angular/material/select';
 import { MatTableDataSource } from '@angular/material/table';
 import { FragmentComponent } from '@core/component/fragment.component';
 import { MSG_PARAMS } from '@core/i18n';
@@ -29,6 +31,7 @@ export class PersonalContratadoComponent extends FragmentComponent implements On
   msgParamEntity = {};
 
   readonly dataSourceDesglose = new MatTableDataSource<RowTreeDesglose<IDesglose>>();
+  @ViewChild('anualSel') selectAnualidades: MatSelect;
 
   get MSG_PARAMS() {
     return MSG_PARAMS;
@@ -66,6 +69,12 @@ export class PersonalContratadoComponent extends FragmentComponent implements On
         this.matDialog.open(PersonalContratadoModalComponent, config);
       }
     ));
+  }
+
+  public clearDesglose(): void {
+    this.formPart.clearRangos();
+    this.selectAnualidades.options.forEach((item: MatOption) => { item.deselect() });
+    this.formPart.clearDesglose();
   }
 
 }

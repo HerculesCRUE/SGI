@@ -1,4 +1,5 @@
-<sgi-fragment title="{{'tree.entity' | translate:msgParamEntity}} {{actionService.getArea().nombre}}">
+<sgi-fragment title="{{'tree.entity' | translate:msgParamEntity}} {{actionService.getArea().nombre}}"
+  class="gestion-areas-tematicas">
   <!-- Validacion si no tiene area -->
   <div *ngIf="dataSource.data.length === 0" class="vacio">
     <p>{{'info.csp.area-tematica-arbol.no.padre' | translate}}</p>

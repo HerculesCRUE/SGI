@@ -7,7 +7,7 @@ function mediate(mc) {
 
   var path = decodeURI(mc.getProperty('path'));
   log.info("replace-tipo-colectivo-colectivos-ids-mediator.mediate() - initial query: " + path);
-  var regex = /tipoColectivo==([^;,&])*[;,]?/g;
+  var regex = /tipoColectivo==([^;,&)])*[;,]?/g;
   var tipoColectivoQueries = path.match(regex);
   if (tipoColectivoQueries) {
     var tipoColectivoQuery = tipoColectivoQueries[0];

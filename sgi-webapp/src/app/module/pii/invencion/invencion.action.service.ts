@@ -5,6 +5,7 @@ import { ActionService } from '@core/services/action-service';
 import { ProyectoService } from '@core/services/csp/proyecto.service';
 import { InformePatentabilidadService } from '@core/services/pii/informe-patentabilidad/informe-patentabilidad.service';
 import { InvencionDocumentoService } from '@core/services/pii/invencion/invencion-documento/invencion-documento.service';
+import { InvencionGastoService } from '@core/services/pii/invencion/invencion-gasto/invencion-gasto.service';
 import { InvencionService } from '@core/services/pii/invencion/invencion.service';
 import { SolicitudProteccionService } from '@core/services/pii/invencion/solicitud-proteccion/solicitud-proteccion.service';
 import { DocumentoService } from '@core/services/sgdoc/documento.service';
@@ -66,7 +67,9 @@ export class InvencionActionService extends ActionService {
     personaService: PersonaService,
     readonly logger: NGXLogger,
     solicitudProteccionService: SolicitudProteccionService,
-    gastosInvencionService: GastosInvencionService
+    gastosInvencionService: GastosInvencionService,
+    invencionGastosService: InvencionGastoService
+
   ) {
     super();
 
@@ -99,7 +102,7 @@ export class InvencionActionService extends ActionService {
         this.data.tipoPropiedad);
       this.addFragment(this.FRAGMENT.SOLICITUDES_PROTECCION, this.solicitudesProteccion);
 
-      this.invencionGastos = new InvencionGastosFragment(this.id, gastosInvencionService, invencionService, solicitudProteccionService);
+      this.invencionGastos = new InvencionGastosFragment(this.id, gastosInvencionService, invencionGastosService, invencionService, solicitudProteccionService);
       this.addFragment(this.FRAGMENT.GASTOS, this.invencionGastos);
     }
 

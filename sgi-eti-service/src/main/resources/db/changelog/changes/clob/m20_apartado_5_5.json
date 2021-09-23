@@ -25,6 +25,10 @@
           "required": true,
           "options": [
             {
+              "value": 0,
+              "label": "No"
+            },
+            {
               "value": 15,
               "label": "Sí"
             }

@@ -14,103 +14,74 @@
         "template": "¿Qué va a hacer con las muestras de origen humano una vez que ya no sean necesarias para este proyecto?"
       },
       {
-        "fieldGroup": [
-          {
-            "key": "destruccion",
-            "type": "checkbox",
-            "templateOptions": {
-              "indeterminate": false,
+        "type": "multicheckbox",
+        "key": "destinoMuestrasCheck",
+        "templateOptions": {
+          "label": "Destino",
+          "type": "array",
+          "required": true,
+          "options": [
+            {
+              "value": "destruccion",
               "label": "Destrucción"
-            }
-          },
-          {
-            "key": "especificarDestruccion",
-            "type": "textarea",
-            "hideExpression": "!model.destruccion",
-            "templateOptions": {
-              "label": "Especificar gestión de residuos (contactar con el servicio de Prevención)",
-              "placeholder": "Especificar gestión de residuos (contactar con el servicio de Prevención)",
-              "required": true,
-              "autosize": true,
-              "autosizeMinRows": "1",
-              "autosizeMaxRows": "10"
-            }
-          },
-          {
-            "key": "conservacion",
-            "type": "checkbox",
-            "templateOptions": {
-              "indeterminate": false,
+            },
+            {
+              "value": "conservacion",
               "label": "Conservación anonimizada para utilización posterior"
-            }
-          },
-          {
-            "key": "cesionBiobanco",
-            "type": "checkbox",
-            "templateOptions": {
-              "indeterminate": false,
+            },
+            {
+              "value": "cesionBiobanco",
               "label": "Cesión gratuita a Biobanco"
-            }
-          },
-          {
-            "key": "especificarCesionBiobanco",
-            "type": "textarea",
-            "hideExpression": "!model.cesionBiobanco",
-            "templateOptions": {
-              "label": "Especificar",
-              "placeholder": "Especificar",
-              "required": true,
-              "autosize": true,
-              "autosizeMinRows": "1",
-              "autosizeMaxRows": "10"
-            }
-          },
-          {
-            "key": "usoColeccionMuestras",
-            "type": "checkbox",
-            "templateOptions": {
-              "indeterminate": false,
+            },
+            {
+              "value": "usoColeccionMuestras",
               "label": "Uso integrado en colección de muestras"
-            }
-          },
-          {
-            "key": "especificarUsoColeccionMuestras",
-            "type": "textarea",
-            "hideExpression": "!model.usoColeccionMuestras",
-            "templateOptions": {
-              "label": "Especificar colección y registro",
-              "placeholder": "Especificar colección y registro",
-              "required": true,
-              "autosize": true,
-              "autosizeMinRows": "1",
-              "autosizeMaxRows": "10"
-            }
-          },
-          {
-            "key": "incorporacionColeccionMuestras",
-            "type": "checkbox",
-            "templateOptions": {
-              "indeterminate": false,
+            },
+            {
+              "value": "incorporacionColeccionMuestras",
               "label": "Incorporación a una colección de muestras"
             }
-          },
-          {
-            "key": "especificarIncorporacionColeccionMuestras",
-            "type": "textarea",
-            "hideExpression": "!model.incorporacionColeccionMuestras",
-            "templateOptions": {
-              "label": "Especificar",
-              "placeholder": "Especificar",
-              "required": true,
-              "autosize": true,
-              "autosizeMinRows": "1",
-              "autosizeMaxRows": "10"
-            }
-          }
-        ],
-        "validators": [
-          "requiredChecked"
-        ]
+          ]
+        }
+      },
+      {
+        "key": "especificarCesionBiobanco",
+        "type": "textarea",
+        "hideExpression": "!model.destinoMuestrasCheck || !model.destinoMuestrasCheck.some(destino => destino === 'cesionBiobanco')",
+        "templateOptions": {
+          "label": "Especificar cesión a Biobanco",
+          "placeholder": "Especificar cesión a Biobanco",
+          "required": true,
+          "autosize": true,
+          "autosizeMinRows": "1",
+          "autosizeMaxRows": "10"
+        }
+      },
+      {
+        "key": "especificarUsoColeccionMuestras",
+        "type": "textarea",
+        "hideExpression": "!model.destinoMuestrasCheck || !model.destinoMuestrasCheck.some(destino => destino === 'usoColeccionMuestras')",
+        "templateOptions": {
+          "label": "Especificar colección y registro",
+          "placeholder": "Especificar colección y registro",
+          "required": true,
+          "autosize": true,
+          "autosizeMinRows": "1",
+          "autosizeMaxRows": "10"
+        }
+      },
+      {
+        "key": "especificarUsoColeccionMuestras",
+        "type": "textarea",
+        "hideExpression": "!model.destinoMuestrasCheck || !model.destinoMuestrasCheck.some(destino => destino === 'incorporacionColeccionMuestras')",
+        "templateOptions": {
+          "label": "Especificar incorporación a colección",
+          "placeholder": "Especificar incorporación a colección",
+          "required": true,
+          "autosize": true,
+          "autosizeMinRows": "1",
+          "autosizeMaxRows": "10"
+        }
       },
       {
         "wrappers": [

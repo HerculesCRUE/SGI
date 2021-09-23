@@ -960,7 +960,7 @@ public class ConvocatoriaController {
    * @param id Id de la {@link Convocatoria}
    * @return HTTP-200 si tinene alguna {@link Solicitud} asociada
    */
-  @PreAuthorize("hasAuthorityForAnyUO('CSP-CON-E')")
+  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-CON-E', 'CSP-CON-V')")
   @RequestMapping(path = "/{id}/solicitudesreferenced", method = RequestMethod.HEAD)
   public ResponseEntity<Object> hasSolicitudesReferenced(@PathVariable Long id) {
 
@@ -974,7 +974,7 @@ public class ConvocatoriaController {
    * @param id Id de la {@link Convocatoria}
    * @return HTTP-200 si tinene algún {@link Proyecto} asociado
    */
-  @PreAuthorize("hasAuthorityForAnyUO('CSP-CON-E')")
+  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-CON-E','CSP-CON-V')")
   @RequestMapping(path = "/{id}/proyectosreferenced", method = RequestMethod.HEAD)
   public ResponseEntity<Object> hasProyectosReferenced(@PathVariable Long id) {
 

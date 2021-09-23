@@ -14,81 +14,70 @@
         "template": "¿Como se han obtenido las muestras?"
       },
       {
-        "fieldGroup": [
-          {
-            "key": "recogidasExpresamente",
-            "type": "checkbox",
-            "templateOptions": {
-              "indeterminate": false,
+        "type": "multicheckbox",
+        "key": "origenMuestrasCheck",
+        "templateOptions": {
+          "label": "Origen",
+          "type": "array",
+          "required": true,
+          "options": [
+            {
+              "value": "recogidasExpresamente",
               "label": "Recogidas expresamente para este proyecto con intervención del sujeto de estudio (debe contestar afirmativamente a la pregunta 3.4)"
-            }
-          },
-          {
-            "key": "recogidasApartirDeMuestras",
-            "type": "checkbox",
-            "templateOptions": {
-              "indeterminate": false,
+            },
+            {
+              "value": "recogidasApartirDeMuestras",
               "label": "Recogidas a partir de muestras ya obtenidas en otro proceso (ej. clínico-asistencial, autopsia)*"
-            }
-          },
-          {
-            "key": "especificarRecogidasApartirDeMuestras",
-            "type": "textarea",
-            "hideExpression": "!model.recogidasApartirDeMuestras",
-            "templateOptions": {
-              "label": "Especificar",
-              "placeholder": "Especificar",
-              "required": true,
-              "autosize": true,
-              "autosizeMinRows": "1",
-              "autosizeMaxRows": "10"
-            }
-          },
-          {
-            "key": "procedentesBiobanco",
-            "type": "checkbox",
-            "templateOptions": {
-              "indeterminate": false,
+            },
+            {
+              "value": "procedentesBiobanco",
               "label": "Procedentes de Biobanco*"
-            }
-          },
-          {
-            "key": "especificarProcedentesBiobanco",
-            "type": "textarea",
-            "hideExpression": "!model.procedentesBiobanco",
-            "templateOptions": {
-              "label": "Especificar",
-              "placeholder": "Especificar",
-              "required": true,
-              "autosize": true,
-              "autosizeMinRows": "1",
-              "autosizeMaxRows": "10"
-            }
-          },
-          {
-            "key": "procedentesColeccion",
-            "type": "checkbox",
-            "templateOptions": {
-              "indeterminate": false,
+            },
+            {
+              "value": "procedentesColeccion",
               "label": "Procedentes de una colección de muestras*"
             }
-          },
-          {
-            "key": "especificarProcedentesColeccion",
-            "type": "textarea",
-            "hideExpression": "!model.procedentesColeccion",
-            "templateOptions": {
-              "label": "Especificar:",
-              "required": true,
-              "autosize": true,
-              "autosizeMinRows": "1",
-              "autosizeMaxRows": "10"
-            }
-          }
-        ],
-        "validators": [
-          "requiredChecked"
-        ]
+          ]
+        }
+      },
+      {
+        "key": "especificarRecogidasApartirDeMuestras",
+        "type": "textarea",
+        "hideExpression": "!model.origenMuestrasCheck || !model.origenMuestrasCheck.some(origen => origen === 'recogidasApartirDeMuestras')",
+        "templateOptions": {
+          "label": "Especificar recogidas a partir de muestras ya obtenidas",
+          "placeholder": "Especificar recogidas a partir de muestras ya obtenidas",
+          "required": true,
+          "autosize": true,
+          "autosizeMinRows": "1",
+          "autosizeMaxRows": "10"
+        }
+      },
+      {
+        "key": "especificarProcedentesBiobanco",
+        "type": "textarea",
+        "hideExpression": "!model.origenMuestrasCheck || !model.origenMuestrasCheck.some(origen => origen === 'procedentesBiobanco')",
+        "templateOptions": {
+          "label": "Especificar procedentes de Biobanco",
+          "placeholder": "Especificar procedentes de Biobanco",
+          "required": true,
+          "autosize": true,
+          "autosizeMinRows": "1",
+          "autosizeMaxRows": "10"
+        }
+      },
+      {
+        "key": "especificarProcedentesColeccion",
+        "type": "textarea",
+        "hideExpression": "!model.origenMuestrasCheck || !model.origenMuestrasCheck.some(origen => origen === 'procedentesColeccion')",
+        "templateOptions": {
+          "label": "Especificar procedentes de una colección de muestras",
+          "placeholder": "Especificar procedentes de una colección de muestras",
+          "required": true,
+          "autosize": true,
+          "autosizeMinRows": "1",
+          "autosizeMaxRows": "10"
+        }
       },
       {
         "wrappers": [

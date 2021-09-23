@@ -43,6 +43,11 @@
           {{ 'label.actions' | translate }}
         </mat-header-cell>
         <mat-cell mat-cell *matCellDef="let gasto">
+          <ng-container *sgiHasAnyAuthority="['PII-INV-E', 'PII-INV-V']">
+            <button mat-button matTooltip="{{'btn.edit' | translate}}" (click)="openModal(gasto)">
+              <mat-icon color="primary">border_color</mat-icon>
+            </button>
+          </ng-container>
         </mat-cell>
       </ng-container>
       <mat-header-row *matHeaderRowDef="formPart.displayColumns"></mat-header-row>

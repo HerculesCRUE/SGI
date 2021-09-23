@@ -120,7 +120,7 @@
   <changeSet context="dev" author="master" id="0000000000000-retrospectiva">
     <insert tableName="retrospectiva">
       <column name="id" valueSequenceNext="retrospectiva_seq" />
-      <column name="estado_retrospectiva_id" value="1" />
+      <column name="estado_retrospectiva_id" valueNumeric="1" />
       <column name="fecha_retrospectiva" valueDate="2020-12-01T00:00:00" />
     </insert>
   </changeSet>
@@ -133,11 +133,11 @@
       <column name="comite_id" valueComputed="(select id from comite where comite='CEISH')" />
       <column name="titulo" value="Título M10/2019/001" />
       <column name="persona_ref" value="02221287" />
-      <column name="tipo_memoria_id" value="1" />
-      <column name="estado_actual_id" value="12" />
+      <column name="tipo_memoria_id" valueNumeric="1" />
+      <column name="estado_actual_id" valueNumeric="12" />
       <column name="fecha_envio_secretaria" valueDate="2020-10-01T00:00:00" />
       <column name="requiere_retrospectiva" valueBoolean="false" />
-      <column name="version" value="2" />
+      <column name="version" valueNumeric="2" />
       <column name="activo" valueBoolean="true" />
     </insert>
     <insert tableName="memoria">
@@ -146,12 +146,12 @@
       <column name="peticion_evaluacion_id" valueComputed="(select id from peticion_evaluacion where titulo='PeticionEvaluacion2')" />
       <column name="comite_id" valueComputed="(select id from comite where comite='CEEA')" />
       <column name="titulo" value="Título M20/2020/001" />
-      <column name="tipo_memoria_id" value="1" />
-      <column name="estado_actual_id" value="5" />
+      <column name="tipo_memoria_id" valueNumeric="1" />
+      <column name="estado_actual_id" valueNumeric="5" />
       <column name="fecha_envio_secretaria" valueDate="2020-10-01T00:00:00" />
       <column name="requiere_retrospectiva" valueBoolean="true" />
       <column name="retrospectiva_id" valueComputed="(select max(id) from retrospectiva)" />
-      <column name="version" value="2" />
+      <column name="version" valueNumeric="2" />
       <column name="cod_organo_competente" value="CodOrganoCompetente" />
       <column name="activo" valueBoolean="true" />
     </insert>
@@ -162,11 +162,11 @@
       <column name="comite_id" valueComputed="(select id from comite where comite='CEEA')" />
       <column name="titulo" value="Título M20/2020/002" />
       <column name="persona_ref" value="02221287" />
-      <column name="tipo_memoria_id" value="1" />
-      <column name="estado_actual_id" value="3" />
+      <column name="tipo_memoria_id" valueNumeric="1" />
+      <column name="estado_actual_id" valueNumeric="3" />
       <column name="fecha_envio_secretaria" valueDate="2020-10-01T00:00:00" />
       <column name="requiere_retrospectiva" valueBoolean="false" />
-      <column name="version" value="0" />
+      <column name="version" valueNumeric="0" />
       <column name="activo" valueBoolean="true" />
     </insert>
     <insert tableName="memoria">
@@ -175,10 +175,10 @@
       <column name="peticion_evaluacion_id" valueComputed="(select id from peticion_evaluacion where titulo='PeticionEvaluacion4')" />
       <column name="comite_id" valueComputed="(select id from comite where comite='CEISH')" />
       <column name="titulo" value="Título M10/2020/001" />
-      <column name="tipo_memoria_id" value="1" />
-      <column name="estado_actual_id" value="1" />
+      <column name="tipo_memoria_id" valueNumeric="1" />
+      <column name="estado_actual_id" valueNumeric="1" />
       <column name="requiere_retrospectiva" valueBoolean="false" />
-      <column name="version" value="0" />
+      <column name="version" valueNumeric="0" />
       <column name="activo" valueBoolean="true" />
     </insert>
   </changeSet>
@@ -407,7 +407,7 @@
       <column name="memoria_id" valueComputed="(select id from memoria where num_referencia='M20/2020/001')" />
       <column name="formacion_especifica_id" valueComputed="(select id from formacion_especifica where id=3)" />
       <column name="organismo" value="Organismo3" />
-      <column name="anio" value="2018" />
+      <column name="anio" valueNumeric="2018" />
       <column name="tipo_tarea_id" valueComputed="(select id from tipo_tarea where nombre='Manipulación de animales')" />
     </insert>
     <insert tableName="tarea">
@@ -416,7 +416,7 @@
       <column name="memoria_id" valueComputed="(select id from memoria where num_referencia='M20/2020/002')" />
       <column name="formacion_especifica_id" valueComputed="(select id from formacion_especifica where id=4)" />
       <column name="organismo" value="Organismo4" />
-      <column name="anio" value="2018" />
+      <column name="anio" valueNumeric="2018" />
       <column name="tipo_tarea_id" valueComputed="(select id from tipo_tarea where nombre='Eutanasia')" />
     </insert>
     <insert tableName="tarea">
@@ -432,140 +432,140 @@
     <insert tableName="documentacion_memoria">
       <column name="id" valueSequenceNext="documentacion_memoria_seq" />
       <column name="memoria_id" valueComputed="(select id from memoria where num_referencia='M10/2019/001')" />
-      <column name="tipo_documento_id" value="4" />
+      <column name="tipo_documento_id" valueNumeric="4" />
       <column name="documento_ref" value="DocumentoRef1_M10/2019/001" />
       <column name="nombre" value="Documento 1" />
     </insert>
     <insert tableName="documentacion_memoria">
       <column name="id" valueSequenceNext="documentacion_memoria_seq" />
       <column name="memoria_id" valueComputed="(select id from memoria where num_referencia='M10/2019/001')" />
-      <column name="tipo_documento_id" value="5" />
+      <column name="tipo_documento_id" valueNumeric="5" />
       <column name="documento_ref" value="DocumentoRef2_M10/2019/001" />
       <column name="nombre" value="Documento 2" />
     </insert>
     <insert tableName="documentacion_memoria">
       <column name="id" valueSequenceNext="documentacion_memoria_seq" />
       <column name="memoria_id" valueComputed="(select id from memoria where num_referencia='M10/2019/001')" />
-      <column name="tipo_documento_id" value="6" />
+      <column name="tipo_documento_id" valueNumeric="6" />
       <column name="documento_ref" value="DocumentoRef3_M10/2019/001" />
       <column name="nombre" value="Documento 3" />
     </insert>
     <insert tableName="documentacion_memoria">
       <column name="id" valueSequenceNext="documentacion_memoria_seq" />
       <column name="memoria_id" valueComputed="(select id from memoria where num_referencia='M10/2019/001')" />
-      <column name="tipo_documento_id" value="7" />
+      <column name="tipo_documento_id" valueNumeric="7" />
       <column name="documento_ref" value="DocumentoRef4_M10/2019/001" />
       <column name="nombre" value="Documento 4" />
     </insert>
     <insert tableName="documentacion_memoria">
       <column name="id" valueSequenceNext="documentacion_memoria_seq" />
       <column name="memoria_id" valueComputed="(select id from memoria where num_referencia='M10/2019/001')" />
-      <column name="tipo_documento_id" value="8" />
+      <column name="tipo_documento_id" valueNumeric="8" />
       <column name="documento_ref" value="DocumentoRef5_M10/2019/001" />
       <column name="nombre" value="Documento 5" />
     </insert>
     <insert tableName="documentacion_memoria">
       <column name="id" valueSequenceNext="documentacion_memoria_seq" />
       <column name="memoria_id" valueComputed="(select id from memoria where num_referencia='M10/2019/001')" />
-      <column name="tipo_documento_id" value="9" />
+      <column name="tipo_documento_id" valueNumeric="9" />
       <column name="documento_ref" value="DocumentoRef6_M10/2019/001" />
       <column name="nombre" value="Documento 6" />
     </insert>
     <insert tableName="documentacion_memoria">
       <column name="id" valueSequenceNext="documentacion_memoria_seq" />
       <column name="memoria_id" valueComputed="(select id from memoria where num_referencia='M10/2019/001')" />
-      <column name="tipo_documento_id" value="10" />
+      <column name="tipo_documento_id" valueNumeric="10" />
       <column name="documento_ref" value="DocumentoRef7_M10/2019/001" />
       <column name="nombre" value="Documento 7" />
     </insert>
     <insert tableName="documentacion_memoria">
       <column name="id" valueSequenceNext="documentacion_memoria_seq" />
       <column name="memoria_id" valueComputed="(select id from memoria where num_referencia='M10/2019/001')" />
-      <column name="tipo_documento_id" value="11" />
+      <column name="tipo_documento_id" valueNumeric="11" />
       <column name="documento_ref" value="DocumentoRef8_M10/2019/001" />
       <column name="nombre" value="Documento 8" />
     </insert>
     <insert tableName="documentacion_memoria">
       <column name="id" valueSequenceNext="documentacion_memoria_seq" />
       <column name="memoria_id" valueComputed="(select id from memoria where num_referencia='M20/2020/001')" />
-      <column name="tipo_documento_id" value="12" />
+      <column name="tipo_documento_id" valueNumeric="12" />
       <column name="documento_ref" value="DocumentoRef1_M20/2020/001" />
       <column name="nombre" value="Documento 1" />
     </insert>
     <insert tableName="documentacion_memoria">
       <column name="id" valueSequenceNext="documentacion_memoria_seq" />
       <column name="memoria_id" valueComputed="(select id from memoria where num_referencia='M20/2020/001')" />
-      <column name="tipo_documento_id" value="13" />
+      <column name="tipo_documento_id" valueNumeric="13" />
       <column name="documento_ref" value="DocumentoRef2_M20/2020/001" />
       <column name="nombre" value="Documento 2" />
     </insert>
     <insert tableName="documentacion_memoria">
       <column name="id" valueSequenceNext="documentacion_memoria_seq" />
       <column name="memoria_id" valueComputed="(select id from memoria where num_referencia='M20/2020/001')" />
-      <column name="tipo_documento_id" value="14" />
+      <column name="tipo_documento_id" valueNumeric="14" />
       <column name="documento_ref" value="DocumentoRef3_M20/2020/001" />
       <column name="nombre" value="Documento 3" />
     </insert>
     <insert tableName="documentacion_memoria">
       <column name="id" valueSequenceNext="documentacion_memoria_seq" />
       <column name="memoria_id" valueComputed="(select id from memoria where num_referencia='M20/2020/001')" />
-      <column name="tipo_documento_id" value="15" />
+      <column name="tipo_documento_id" valueNumeric="15" />
       <column name="documento_ref" value="DocumentoRef4_M20/2020/001" />
       <column name="nombre" value="Documento 4" />
     </insert>
     <insert tableName="documentacion_memoria">
       <column name="id" valueSequenceNext="documentacion_memoria_seq" />
       <column name="memoria_id" valueComputed="(select id from memoria where num_referencia='M20/2020/001')" />
-      <column name="tipo_documento_id" value="16" />
+      <column name="tipo_documento_id" valueNumeric="16" />
       <column name="documento_ref" value="DocumentoRef5_M20/2020/001" />
       <column name="nombre" value="Documento 5" />
     </insert>
     <insert tableName="documentacion_memoria">
       <column name="id" valueSequenceNext="documentacion_memoria_seq" />
       <column name="memoria_id" valueComputed="(select id from memoria where num_referencia='M20/2020/002')" />
-      <column name="tipo_documento_id" value="12" />
+      <column name="tipo_documento_id" valueNumeric="12" />
       <column name="documento_ref" value="DocumentoRef1_M20/2020/002" />
       <column name="nombre" value="Documento 1" />
     </insert>
     <insert tableName="documentacion_memoria">
       <column name="id" valueSequenceNext="documentacion_memoria_seq" />
       <column name="memoria_id" valueComputed="(select id from memoria where num_referencia='M20/2020/002')" />
-      <column name="tipo_documento_id" value="13" />
+      <column name="tipo_documento_id" valueNumeric="13" />
       <column name="documento_ref" value="DocumentoRef2_M20/2020/002" />
       <column name="nombre" value="Documento 2" />
     </insert>
     <insert tableName="documentacion_memoria">
       <column name="id" valueSequenceNext="documentacion_memoria_seq" />
       <column name="memoria_id" valueComputed="(select id from memoria where num_referencia='M20/2020/002')" />
-      <column name="tipo_documento_id" value="14" />
+      <column name="tipo_documento_id" valueNumeric="14" />
       <column name="documento_ref" value="DocumentoRef3_M20/2020/002" />
       <column name="nombre" value="Documento 3" />
     </insert>
     <insert tableName="documentacion_memoria">
       <column name="id" valueSequenceNext="documentacion_memoria_seq" />
       <column name="memoria_id" valueComputed="(select id from memoria where num_referencia='M20/2020/002')" />
-      <column name="tipo_documento_id" value="15" />
+      <column name="tipo_documento_id" valueNumeric="15" />
       <column name="documento_ref" value="DocumentoRef4_M20/2020/002" />
       <column name="nombre" value="Documento 4" />
     </insert>
     <insert tableName="documentacion_memoria">
       <column name="id" valueSequenceNext="documentacion_memoria_seq" />
       <column name="memoria_id" valueComputed="(select id from memoria where num_referencia='M20/2020/002')" />
-      <column name="tipo_documento_id" value="16" />
+      <column name="tipo_documento_id" valueNumeric="16" />
       <column name="documento_ref" value="DocumentoRef5_M20/2020/002" />
       <column name="nombre" value="Documento 5" />
     </insert>
     <insert tableName="documentacion_memoria">
       <column name="id" valueSequenceNext="documentacion_memoria_seq" />
       <column name="memoria_id" valueComputed="(select id from memoria where num_referencia='M20/2020/002')" />
-      <column name="tipo_documento_id" value="16" />
+      <column name="tipo_documento_id" valueNumeric="16" />
       <column name="documento_ref" value="DocumentoRef6_M20/2020/002" />
       <column name="nombre" value="Documento 6" />
     </insert>
     <insert tableName="documentacion_memoria">
       <column name="id" valueSequenceNext="documentacion_memoria_seq" />
       <column name="memoria_id" valueComputed="(select id from memoria where num_referencia='M20/2020/002')" />
-      <column name="tipo_documento_id" value="16" />
+      <column name="tipo_documento_id" valueNumeric="16" />
       <column name="documento_ref" value="DocumentoRef7_M20/2020/002" />
       <column name="nombre" value="Documento 7" />
     </insert>
@@ -579,11 +579,11 @@
       <column name="fecha_limite" valueDate="2019-08-15T23:59:59" />
       <column name="lugar" value="Lugar 1" />
       <column name="orden_dia" value="Orden del día convocatoria reunión 1" />
-      <column name="anio" value="2019" />
-      <column name="numero_acta" value="1" />
+      <column name="anio" valueNumeric="2019" />
+      <column name="numero_acta" valueNumeric="1" />
       <column name="tipo_convocatoria_reunion_id" valueComputed="(select id from tipo_convocatoria_reunion where nombre='Ordinaria')" />
-      <column name="hora_inicio" value="8" />
-      <column name="minuto_inicio" value="30" />
+      <column name="hora_inicio" valueNumeric="8" />
+      <column name="minuto_inicio" valueNumeric="30" />
       <column name="fecha_envio" valueDate="2019-07-13T00:00:00" />
       <column name="activo" valueBoolean="true" />
     </insert>
@@ -594,11 +594,11 @@
       <column name="fecha_limite" valueDate="2020-09-10T23:59:59" />
       <column name="lugar" value="Lugar 2" />
       <column name="orden_dia" value="Orden del día convocatoria reunión 2" />
-      <column name="anio" value="2020" />
-      <column name="numero_acta" value="1" />
+      <column name="anio" valueNumeric="2020" />
+      <column name="numero_acta" valueNumeric="1" />
       <column name="tipo_convocatoria_reunion_id" valueComputed="(select id from tipo_convocatoria_reunion where nombre='Ordinaria')" />
-      <column name="hora_inicio" value="16" />
-      <column name="minuto_inicio" value="00" />
+      <column name="hora_inicio" valueNumeric="16" />
+      <column name="minuto_inicio" valueNumeric="00" />
       <column name="fecha_envio" valueDate="2020-08-13T00:00:00" />
       <column name="activo" valueBoolean="true" />
     </insert>
@@ -609,11 +609,11 @@
       <column name="fecha_limite" valueDate="2020-12-15T23:59:59" />
       <column name="lugar" value="Lugar 3" />
       <column name="orden_dia" value="Orden del día convocatoria reunión 3" />
-      <column name="anio" value="2020" />
-      <column name="numero_acta" value="2" />
+      <column name="anio" valueNumeric="2020" />
+      <column name="numero_acta" valueNumeric="2" />
       <column name="tipo_convocatoria_reunion_id" valueComputed="(select id from tipo_convocatoria_reunion where nombre='Ordinaria')" />
-      <column name="hora_inicio" value="10" />
-      <column name="minuto_inicio" value="30" />
+      <column name="hora_inicio" valueNumeric="10" />
+      <column name="minuto_inicio" valueNumeric="30" />
       <column name="fecha_envio" valueDate="2020-09-13T00:00:00" />
       <column name="activo" valueBoolean="true" />
     </insert>
@@ -624,11 +624,11 @@
       <column name="fecha_limite" valueDate="2021-05-13T23:59:59" />
       <column name="lugar" value="Lugar 4" />
       <column name="orden_dia" value="Orden del día convocatoria reunión 4" />
-      <column name="anio" value="2020" />
-      <column name="numero_acta" value="2" />
+      <column name="anio" valueNumeric="2020" />
+      <column name="numero_acta" valueNumeric="2" />
       <column name="tipo_convocatoria_reunion_id" valueComputed="(select id from tipo_convocatoria_reunion where nombre='Seguimiento')" />
-      <column name="hora_inicio" value="17" />
-      <column name="minuto_inicio" value="00" />
+      <column name="hora_inicio" valueNumeric="17" />
+      <column name="minuto_inicio" valueNumeric="00" />
       <column name="fecha_envio" valueDate="2020-09-13T00:00:00" />
       <column name="activo" valueBoolean="true" />
     </insert>
@@ -638,10 +638,10 @@
     <insert tableName="acta">
       <column name="id" valueSequenceNext="acta_seq" />
       <column name="convocatoria_reunion_id" valueComputed="(select id from convocatoria_reunion where orden_dia='Orden del día convocatoria reunión 1')" />
-      <column name="hora_inicio" value="8" />
-      <column name="minuto_inicio" value="30" />
-      <column name="hora_fin" value="12" />
-      <column name="minuto_fin" value="0" />
+      <column name="hora_inicio" valueNumeric="8" />
+      <column name="minuto_inicio" valueNumeric="30" />
+      <column name="hora_fin" valueNumeric="12" />
+      <column name="minuto_fin" valueNumeric="0" />
       <column name="resumen" value="Resumen1" />
       <column name="numero" valueComputed="(select numero_acta from convocatoria_reunion where orden_dia='Orden del día convocatoria reunión 1')" />
       <column name="estado_actual_id" valueComputed="(select id from tipo_estado_acta where nombre='Finalizada')" />
@@ -651,10 +651,10 @@
     <insert tableName="acta">
       <column name="id" valueSequenceNext="acta_seq" />
       <column name="convocatoria_reunion_id" valueComputed="(select id from convocatoria_reunion where orden_dia='Orden del día convocatoria reunión 2')" />
-      <column name="hora_inicio" value="16" />
-      <column name="minuto_inicio" value="0" />
-      <column name="hora_fin" value="19" />
-      <column name="minuto_fin" value="45" />
+      <column name="hora_inicio" valueNumeric="16" />
+      <column name="minuto_inicio" valueNumeric="0" />
+      <column name="hora_fin" valueNumeric="19" />
+      <column name="minuto_fin" valueNumeric="45" />
       <column name="resumen" value="Resumen2" />
       <column name="numero" valueComputed="(select numero_acta from convocatoria_reunion where orden_dia='Orden del día convocatoria reunión 2')" />
       <column name="estado_actual_id" valueComputed="(select id from tipo_estado_acta where nombre='Finalizada')" />
@@ -664,10 +664,10 @@
     <insert tableName="acta">
       <column name="id" valueSequenceNext="acta_seq" />
       <column name="convocatoria_reunion_id" valueComputed="(select id from convocatoria_reunion where orden_dia='Orden del día convocatoria reunión 3')" />
-      <column name="hora_inicio" value="10" />
-      <column name="minuto_inicio" value="30" />
-      <column name="hora_fin" value="12" />
-      <column name="minuto_fin" value="30" />
+      <column name="hora_inicio" valueNumeric="10" />
+      <column name="minuto_inicio" valueNumeric="30" />
+      <column name="hora_fin" valueNumeric="12" />
+      <column name="minuto_fin" valueNumeric="30" />
       <column name="resumen" value="Resumen3" />
       <column name="numero" valueComputed="(select numero_acta from convocatoria_reunion where orden_dia='Orden del día convocatoria reunión 3')" />
       <column name="estado_actual_id" valueComputed="(select id from tipo_estado_acta where nombre='En elaboración')" />
@@ -677,10 +677,10 @@
     <insert tableName="acta">
       <column name="id" valueSequenceNext="acta_seq" />
       <column name="convocatoria_reunion_id" valueComputed="(select id from convocatoria_reunion where orden_dia='Orden del día convocatoria reunión 4')" />
-      <column name="hora_inicio" value="17" />
-      <column name="minuto_inicio" value="0" />
-      <column name="hora_fin" value="20" />
-      <column name="minuto_fin" value="0" />
+      <column name="hora_inicio" valueNumeric="17" />
+      <column name="minuto_inicio" valueNumeric="0" />
+      <column name="hora_fin" valueNumeric="20" />
+      <column name="minuto_fin" valueNumeric="0" />
       <column name="resumen" value="Resumen4" />
       <column name="numero" valueComputed="(select numero_acta from convocatoria_reunion where orden_dia='Orden del día convocatoria reunión 4')" />
       <column name="estado_actual_id" valueComputed="(select id from tipo_estado_acta where nombre='En elaboración')" />
@@ -732,61 +732,61 @@
     <insert tableName="asistentes">
       <column name="id" valueSequenceNext="asistentes_seq" />
       <column name="evaluador_id" valueComputed="(select id from evaluador where resumen='Evaluador1')" />
-      <column name="convocatoria_reunion_id" value="1" />
+      <column name="convocatoria_reunion_id" valueNumeric="1" />
       <column name="asistencia" valueBoolean="true" />
     </insert>
     <insert tableName="asistentes">
       <column name="id" valueSequenceNext="asistentes_seq" />
       <column name="evaluador_id" valueComputed="(select id from evaluador where resumen='Evaluador2')" />
-      <column name="convocatoria_reunion_id" value="1" />
+      <column name="convocatoria_reunion_id" valueNumeric="1" />
       <column name="asistencia" valueBoolean="true" />
     </insert>
     <insert tableName="asistentes">
       <column name="id" valueSequenceNext="asistentes_seq" />
       <column name="evaluador_id" valueComputed="(select id from evaluador where resumen='Evaluador3')" />
-      <column name="convocatoria_reunion_id" value="2" />
+      <column name="convocatoria_reunion_id" valueNumeric="2" />
       <column name="asistencia" valueBoolean="true" />
     </insert>
     <insert tableName="asistentes">
       <column name="id" valueSequenceNext="asistentes_seq" />
       <column name="evaluador_id" valueComputed="(select id from evaluador where resumen='Evaluador4')" />
-      <column name="convocatoria_reunion_id" value="2" />
+      <column name="convocatoria_reunion_id" valueNumeric="2" />
       <column name="asistencia" valueBoolean="true" />
     </insert>
     <insert tableName="asistentes">
       <column name="id" valueSequenceNext="asistentes_seq" />
       <column name="evaluador_id" valueComputed="(select id from evaluador where resumen='Evaluador5')" />
-      <column name="convocatoria_reunion_id" value="2" />
+      <column name="convocatoria_reunion_id" valueNumeric="2" />
       <column name="asistencia" valueBoolean="true" />
     </insert>
     <insert tableName="asistentes">
       <column name="id" valueSequenceNext="asistentes_seq" />
       <column name="evaluador_id" valueComputed="(select id from evaluador where resumen='Evaluador3')" />
-      <column name="convocatoria_reunion_id" value="3" />
+      <column name="convocatoria_reunion_id" valueNumeric="3" />
       <column name="asistencia" valueBoolean="true" />
     </insert>
     <insert tableName="asistentes">
       <column name="id" valueSequenceNext="asistentes_seq" />
       <column name="evaluador_id" valueComputed="(select id from evaluador where resumen='Evaluador4')" />
-      <column name="convocatoria_reunion_id" value="3" />
+      <column name="convocatoria_reunion_id" valueNumeric="3" />
       <column name="asistencia" valueBoolean="true" />
     </insert>
     <insert tableName="asistentes">
       <column name="id" valueSequenceNext="asistentes_seq" />
       <column name="evaluador_id" valueComputed="(select id from evaluador where resumen='Evaluador5')" />
-      <column name="convocatoria_reunion_id" value="3" />
+      <column name="convocatoria_reunion_id" valueNumeric="3" />
       <column name="asistencia" valueBoolean="true" />
     </insert>
     <insert tableName="asistentes">
       <column name="id" valueSequenceNext="asistentes_seq" />
       <column name="evaluador_id" valueComputed="(select id from evaluador where resumen='Evaluador1')" />
-      <column name="convocatoria_reunion_id" value="4" />
+      <column name="convocatoria_reunion_id" valueNumeric="4" />
       <column name="asistencia" valueBoolean="true" />
     </insert>
     <insert tableName="asistentes">
       <column name="id" valueSequenceNext="asistentes_seq" />
       <column name="evaluador_id" valueComputed="(select id from evaluador where resumen='Evaluador2')" />
-      <column name="convocatoria_reunion_id" value="4" />
+      <column name="convocatoria_reunion_id" valueNumeric="4" />
       <column name="asistencia" valueBoolean="true" />
     </insert>
   </changeSet>
@@ -795,52 +795,52 @@
     <insert tableName="evaluacion">
       <column name="id" valueSequenceNext="evaluacion_seq" />
       <column name="memoria_id" valueComputed="(select id from memoria where num_referencia='M10/2019/001')" />
-      <column name="convocatoria_reunion_id" value="1" />
-      <column name="dictamen_id" value="2" />
+      <column name="convocatoria_reunion_id" valueNumeric="1" />
+      <column name="dictamen_id" valueNumeric="2" />
       <column name="tipo_evaluacion_id" valueComputed="(select id from tipo_evaluacion where nombre='Memoria')" />
       <column name="evaluador1_id" valueComputed="(select id from evaluador where resumen='Evaluador1')" />
       <column name="evaluador2_id" valueComputed="(select id from evaluador where resumen='Evaluador2')" />
       <column name="fecha_dictamen" valueDate="2019-08-25T00:00:00" />
       <column name="es_rev_minima" valueBoolean="false" />
-      <column name="version" value="1" />
+      <column name="version" valueNumeric="1" />
       <column name="activo" valueBoolean="true" />
     </insert>
     <insert tableName="evaluacion">
       <column name="id" valueSequenceNext="evaluacion_seq" />
       <column name="memoria_id" valueComputed="(select id from memoria where num_referencia='M10/2019/001')" />
-      <column name="dictamen_id" value="1" />
-      <column name="convocatoria_reunion_id" value="1" />
+      <column name="dictamen_id" valueNumeric="1" />
+      <column name="convocatoria_reunion_id" valueNumeric="1" />
       <column name="tipo_evaluacion_id" valueComputed="(select id from tipo_evaluacion where nombre='Memoria')" />
       <column name="evaluador1_id" valueComputed="(select id from evaluador where resumen='Evaluador1')" />
       <column name="evaluador2_id" valueComputed="(select id from evaluador where resumen='Evaluador2')" />
       <column name="fecha_dictamen" valueDate="2019-08-28T00:00:00" />
       <column name="es_rev_minima" valueBoolean="true" />
-      <column name="version" value="2" />
+      <column name="version" valueNumeric="2" />
       <column name="activo" valueBoolean="true" />
     </insert>
     <insert tableName="evaluacion">
       <column name="id" valueSequenceNext="evaluacion_seq" />
       <column name="memoria_id" valueComputed="(select id from memoria where num_referencia='M20/2020/001')" />
-      <column name="dictamen_id" value="3" />
-      <column name="convocatoria_reunion_id" value="2" />
+      <column name="dictamen_id" valueNumeric="3" />
+      <column name="convocatoria_reunion_id" valueNumeric="2" />
       <column name="tipo_evaluacion_id" valueComputed="(select id from tipo_evaluacion where nombre='Memoria')" />
       <column name="evaluador1_id" valueComputed="(select id from evaluador where resumen='Evaluador3')" />
       <column name="evaluador2_id" valueComputed="(select id from evaluador where resumen='Evaluador4')" />
       <column name="fecha_dictamen" valueDate="2020-09-20T00:00:00" />
       <column name="es_rev_minima" valueBoolean="false" />
-      <column name="version" value="1" />
+      <column name="version" valueNumeric="1" />
       <column name="activo" valueBoolean="true" />
     </insert>
     <insert tableName="evaluacion">
       <column name="id" valueSequenceNext="evaluacion_seq" />
       <column name="memoria_id" valueComputed="(select id from memoria where num_referencia='M20/2020/001')" />
-      <column name="convocatoria_reunion_id" value="3" />
+      <column name="convocatoria_reunion_id" valueNumeric="3" />
       <column name="tipo_evaluacion_id" valueComputed="(select id from tipo_evaluacion where nombre='Memoria')" />
       <column name="evaluador1_id" valueComputed="(select id from evaluador where resumen='Evaluador3')" />
       <column name="evaluador2_id" valueComputed="(select id from evaluador where resumen='Evaluador4')" />
       <column name="fecha_dictamen" valueDate="2020-12-25T00:00:00" />
       <column name="es_rev_minima" valueBoolean="false" />
-      <column name="version" value="2" />
+      <column name="version" valueNumeric="2" />
       <column name="activo" valueBoolean="true" />
     </insert>
   </changeSet>
@@ -850,42 +850,42 @@
       <column name="id" valueSequenceNext="informe_seq" />
       <column name="memoria_id" valueComputed="(select id from memoria where num_referencia='M10/2019/001')" />
       <column name="documento_ref" value="M10/2019/001_v1" />
-      <column name="version" value="1" />
+      <column name="version" valueNumeric="1" />
       <column name="tipo_evaluacion_id" valueComputed="(select id from tipo_evaluacion where nombre='Memoria')" />
     </insert>
     <insert tableName="informe">
       <column name="id" valueSequenceNext="informe_seq" />
       <column name="memoria_id" valueComputed="(select id from memoria where num_referencia='M10/2019/001')" />
       <column name="documento_ref" value="M10/2019/001_v2" />
-      <column name="version" value="2" />
+      <column name="version" valueNumeric="2" />
       <column name="tipo_evaluacion_id" valueComputed="(select id from tipo_evaluacion where nombre='Memoria')" />
     </insert>
     <insert tableName="informe">
       <column name="id" valueSequenceNext="informe_seq" />
       <column name="memoria_id" valueComputed="(select id from memoria where num_referencia='M10/2019/001')" />
       <column name="documento_ref" value="M10/2019/001_SA_v1" />
-      <column name="version" value="1" />
+      <column name="version" valueNumeric="1" />
       <column name="tipo_evaluacion_id" valueComputed="(select id from tipo_evaluacion where nombre='Seguimiento anual')" />
     </insert>
     <insert tableName="informe">
       <column name="id" valueSequenceNext="informe_seq" />
       <column name="memoria_id" valueComputed="(select id from memoria where num_referencia='M20/2020/001')" />
       <column name="documento_ref" value="M20/2020/001_v1" />
-      <column name="version" value="1" />
+      <column name="version" valueNumeric="1" />
       <column name="tipo_evaluacion_id" valueComputed="(select id from tipo_evaluacion where nombre='Memoria')" />
     </insert>
     <insert tableName="informe">
       <column name="id" valueSequenceNext="informe_seq" />
       <column name="memoria_id" valueComputed="(select id from memoria where num_referencia='M20/2020/001')" />
       <column name="documento_ref" value="M20/2020/001_v2" />
-      <column name="version" value="2" />
+      <column name="version" valueNumeric="2" />
       <column name="tipo_evaluacion_id" valueComputed="(select id from tipo_evaluacion where nombre='Memoria')" />
     </insert>
     <insert tableName="informe">
       <column name="id" valueSequenceNext="informe_seq" />
       <column name="memoria_id" valueComputed="(select id from memoria where num_referencia='M20/2020/002')" />
       <column name="documento_ref" value="M20/2020/002_v1" />
-      <column name="version" value="1" />
+      <column name="version" valueNumeric="1" />
       <column name="tipo_evaluacion_id" valueComputed="(select id from tipo_evaluacion where nombre='Memoria')" />
     </insert>
   </changeSet>
@@ -925,7 +925,7 @@
     </insert>
     <insert tableName="comentario">
       <column name="id" valueSequenceNext="comentario_seq" />
-      <column name="apartado_id" valueComputed="(select id from apartado where nombre='Reclutamiento realizado por personal ajeno al equipo investigado')" />
+      <column name="apartado_id" valueComputed="(select id from apartado where nombre='Reclutamiento realizado por personal ajeno al equipo investigador')" />
       <column name="memoria_id" valueComputed="(select id from memoria where num_referencia='M10/2019/001')" />
       <column name="evaluacion_id" valueComputed="(select e.id from evaluacion e join memoria m on e.memoria_id=m.id where m.num_referencia='M10/2019/001' and e.version=1)" />
       <column name="tipo_comentario_id" valueComputed="(select id from tipo_comentario where nombre='GESTOR')" />
@@ -1006,7 +1006,7 @@
 
     <insert tableName="respuesta">
       <column name="id" valueSequenceNext="respuesta_seq" />
-      <column name="apartado_id" valueComputed="(select id from apartado where nombre='Reclutamiento realizado por personal ajeno al equipo investigado' and bloque_id=(select id from bloque where orden = '3' and formulario_id = (select id from formulario where nombre = 'M10')))" />
+      <column name="apartado_id" valueComputed="(select id from apartado where nombre='Reclutamiento realizado por personal ajeno al equipo investigador' and bloque_id=(select id from bloque where orden = '3' and formulario_id = (select id from formulario where nombre = 'M10')))" />
       <column name="memoria_id" valueComputed="(select id from memoria where num_referencia='M10/2019/001')" />
       <column name="valor" value="{}" />
     </insert>
@@ -1386,7 +1386,7 @@
       <column name="id" valueSequenceNext="respuesta_seq" />
       <column name="apartado_id" valueComputed="(select id from apartado where nombre='Documento de consentimiento' and bloque_id=(select id from bloque where orden = '5' and formulario_id = (select id from formulario where nombre = 'M10')))" />
       <column name="memoria_id" valueComputed="(select id from memoria where num_referencia='M10/2019/001')" />
-      <column name="tipo_documento_id" value="4" />
+      <column name="tipo_documento_id" valueNumeric="4" />
       <column name="valor" value="{}" />
     </insert>
     <update tableName="respuesta">
@@ -1401,7 +1401,7 @@
       <column name="id" valueSequenceNext="respuesta_seq" />
       <column name="apartado_id" valueComputed="(select id from apartado where nombre='Documento de cesión de datos' and bloque_id=(select id from bloque where orden = '5' and formulario_id = (select id from formulario where nombre = 'M10')))" />
       <column name="memoria_id" valueComputed="(select id from memoria where num_referencia='M10/2019/001')" />
-      <column name="tipo_documento_id" value="5" />
+      <column name="tipo_documento_id" valueNumeric="5" />
       <column name="valor" value="{}" />
     </insert>
     <update tableName="respuesta">
@@ -1416,7 +1416,7 @@
       <column name="id" valueSequenceNext="respuesta_seq" />
       <column name="apartado_id" valueComputed="(select id from apartado where nombre='Documento de autorización' and bloque_id=(select id from bloque where orden = '5' and formulario_id = (select id from formulario where nombre = 'M10')))" />
       <column name="memoria_id" valueComputed="(select id from memoria where num_referencia='M10/2019/001')" />
-      <column name="tipo_documento_id" value="6" />
+      <column name="tipo_documento_id" valueNumeric="6" />
       <column name="valor" value="{}" />
     </insert>
     <update tableName="respuesta">
@@ -1431,7 +1431,7 @@
       <column name="id" valueSequenceNext="respuesta_seq" />
       <column name="apartado_id" valueComputed="(select id from apartado where nombre='Documento de aceptación de colaboración' and bloque_id=(select id from bloque where orden = '5' and formulario_id = (select id from formulario where nombre = 'M10')))" />
       <column name="memoria_id" valueComputed="(select id from memoria where num_referencia='M10/2019/001')" />
-      <column name="tipo_documento_id" value="7" />
+      <column name="tipo_documento_id" valueNumeric="7" />
       <column name="valor" value="{}" />
     </insert>
     <update tableName="respuesta">
@@ -1446,7 +1446,7 @@
       <column name="id" valueSequenceNext="respuesta_seq" />
       <column name="apartado_id" valueComputed="(select id from apartado where nombre='Informe de la Comisión de Garantías' and bloque_id=(select id from bloque where orden = '5' and formulario_id = (select id from formulario where nombre = 'M10')))" />
       <column name="memoria_id" valueComputed="(select id from memoria where num_referencia='M10/2019/001')" />
-      <column name="tipo_documento_id" value="8" />
+      <column name="tipo_documento_id" valueNumeric="8" />
       <column name="valor" value="{}" />
     </insert>
     <update tableName="respuesta">
@@ -1461,7 +1461,7 @@
       <column name="id" valueSequenceNext="respuesta_seq" />
       <column name="apartado_id" valueComputed="(select id from apartado where nombre='Acuerdo de transferencia de muestras' and bloque_id=(select id from bloque where orden = '5' and formulario_id = (select id from formulario where nombre = 'M10')))" />
       <column name="memoria_id" valueComputed="(select id from memoria where num_referencia='M10/2019/001')" />
-      <column name="tipo_documento_id" value="9" />
+      <column name="tipo_documento_id" valueNumeric="9" />
       <column name="valor" value="{}" />
     </insert>
     <update tableName="respuesta">
@@ -1474,28 +1474,13 @@
 
     <insert tableName="respuesta">
       <column name="id" valueSequenceNext="respuesta_seq" />
-      <column name="apartado_id" valueComputed="(select id from apartado where nombre='Documento de registro de tratamiento de datos' and bloque_id=(select id from bloque where orden = '5' and formulario_id = (select id from formulario where nombre = 'M10')))" />
+      <column name="apartado_id" valueComputed="(select id from apartado where nombre='Documentación adicional' and bloque_id=(select id from bloque where orden = '5' and formulario_id = (select id from formulario where nombre = 'M10')))" />
       <column name="memoria_id" valueComputed="(select id from memoria where num_referencia='M10/2019/001')" />
-      <column name="tipo_documento_id" value="10" />
+      <column name="tipo_documento_id" valueNumeric="11" />
       <column name="valor" value="{}" />
     </insert>
     <update tableName="respuesta">
       <column name="valor" valueClobFile="sample-clob/M10-2019-001_respuesta_39.json" />
-      <where>:name=:value</where>
-      <whereParams>
-        <param name="id" valueComputed="(select max(id) from respuesta)" />
-      </whereParams>
-    </update>
-
-    <insert tableName="respuesta">
-      <column name="id" valueSequenceNext="respuesta_seq" />
-      <column name="apartado_id" valueComputed="(select id from apartado where nombre='Documentación adicional' and bloque_id=(select id from bloque where orden = '5' and formulario_id = (select id from formulario where nombre = 'M10')))" />
-      <column name="memoria_id" valueComputed="(select id from memoria where num_referencia='M10/2019/001')" />
-      <column name="tipo_documento_id" value="11" />
-      <column name="valor" value="{}" />
-    </insert>
-    <update tableName="respuesta">
-      <column name="valor" valueClobFile="sample-clob/M10-2019-001_respuesta_40.json" />
       <where>:name=:value</where>
       <whereParams>
         <param name="id" valueComputed="(select max(id) from respuesta)" />
@@ -1509,7 +1494,7 @@
       <column name="valor" value="{}" />
     </insert>
     <update tableName="respuesta">
-      <column name="valor" valueClobFile="sample-clob/M10-2019-001_respuesta_41.json" />
+      <column name="valor" valueClobFile="sample-clob/M10-2019-001_respuesta_40.json" />
       <where>:name=:value</where>
       <whereParams>
         <param name="id" valueComputed="(select max(id) from respuesta)" />

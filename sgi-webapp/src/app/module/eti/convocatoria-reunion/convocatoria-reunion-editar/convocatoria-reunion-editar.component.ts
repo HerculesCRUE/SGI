@@ -1,4 +1,4 @@
-import { Component, ViewEncapsulation } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { ActionComponent } from '@core/component/action.component';
@@ -26,7 +26,7 @@ const CONVOCATORIA_REUNION_KEY = marker('eti.convocatoria-reunion');
     ConvocatoriaReunionActionService
   ]
 })
-export class ConvocatoriaReunionEditarComponent extends ActionComponent {
+export class ConvocatoriaReunionEditarComponent extends ActionComponent implements OnInit {
   CONVOCATORIA_REUNION_ROUTE_NAMES = CONVOCATORIA_REUNION_ROUTE_NAMES;
 
   textoUpdate = MSG_BUTTON_SAVE;

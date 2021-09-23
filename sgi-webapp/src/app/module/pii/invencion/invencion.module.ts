@@ -24,6 +24,7 @@ import { InformePatentabilidadModalComponent } from './modals/informe-patentabil
 import { SgempSharedModule } from 'src/app/esb/sgemp/shared/sgemp-shared.module';
 import { SolicitudProteccionComponent } from './invencion-formulario/solicitud-proteccion/solicitud-proteccion.component';
 import { InvencionGastosComponent } from './invencion-formulario/invencion-gastos/invencion-gastos.component';
+import { InvencionGastoModalComponent } from './modals/invencion-gasto-modal/invencion-gasto-modal.component';
 
 @NgModule({
   declarations: [
@@ -39,7 +40,8 @@ import { InvencionGastosComponent } from './invencion-formulario/invencion-gasto
     InvencionInventorComponent,
     InvencionInventorModalComponent,
     SolicitudProteccionComponent,
-    InvencionGastosComponent
+    InvencionGastosComponent,
+    InvencionGastoModalComponent
   ],
   imports: [
     CommonModule,

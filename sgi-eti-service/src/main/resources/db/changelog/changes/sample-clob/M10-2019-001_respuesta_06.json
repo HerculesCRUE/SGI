@@ -1,7 +1,5 @@
 {
-  "ap3_4_2": {
-    "reclutamientoPersonalAjenoRadio": "si",
-    "tipoCompensacionRadio": "si",
-    "tipoCompensacionTexto": "El reclutamiento recibe compensación especial"
-  }
+  "reclutamientoPersonalAjenoRadio": "si",
+  "tipoCompensacionRadio": "si",
+  "tipoCompensacionTexto": "El reclutamiento recibe compensación especial"
 }

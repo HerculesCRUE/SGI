@@ -3,8 +3,8 @@ import { IConvocatoria } from '@core/models/csp/convocatoria';
 import { Estado } from '@core/models/csp/estado-proyecto';
 import { IProyecto } from '@core/models/csp/proyecto';
 import { IProyectoIVA } from '@core/models/csp/proyecto-iva';
-import { IProyectoProrroga } from '@core/models/csp/proyecto-prorroga';
 import { ISolicitud } from '@core/models/csp/solicitud';
+import { IProyectoProrroga, Tipo } from '@core/models/csp/proyecto-prorroga';
 import { ISolicitudProyecto } from '@core/models/csp/solicitud-proyecto';
 import { ITipoAmbitoGeografico } from '@core/models/csp/tipo-ambito-geografico';
 import { IModeloEjecucion, ITipoFinalidad } from '@core/models/csp/tipos-configuracion';
@@ -678,7 +678,10 @@ export class ProyectoFichaGeneralFragment extends FormFragment<IProyecto> {
 
   private buildValidatorFechaFin(): ValidatorFn {
     return (control: AbstractControl): ValidationErrors | null => {
-      if (this.ultimaProrroga && control.value && this.ultimaProrroga.fechaFin <= control.value) {
+      if (this.ultimaProrroga
+        && control.value
+        && this.ultimaProrroga.tipo !== Tipo.IMPORTE
+        && this.ultimaProrroga.fechaFin <= control.value) {
         return { afterThanProrroga: true };
       }
       return null;

@@ -1,6 +1,4 @@
 {
-  "ap4_6_5": {
-    "usoTiempoLectivoRadio": "si",
-    "horarioYduracion": "Horario lectivo"
-  }
+  "usoTiempoLectivoRadio": "si",
+  "horarioYduracion": "Horario lectivo"
 }

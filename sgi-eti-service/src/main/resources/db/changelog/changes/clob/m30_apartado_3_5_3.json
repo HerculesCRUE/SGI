@@ -7,6 +7,7 @@
     "templateOptions": {
       "label": "3.5.3 Material biológico"
     },
+    "hideExpression": "!formState.mainModel.ap3_4.ap3_4_1 || !formState.mainModel.ap3_4.ap3_4_1.agentesBiologicosRadio || formState.mainModel.ap3_4.ap3_4_1.agentesBiologicosRadio === 'no'",
     "fieldGroup": [
       {
         "type": "table-crud",

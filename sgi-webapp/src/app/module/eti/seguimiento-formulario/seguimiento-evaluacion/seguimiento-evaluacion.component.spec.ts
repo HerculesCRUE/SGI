@@ -13,6 +13,7 @@ import { SeguimientoEvaluacionComponent } from './seguimiento-evaluacion.compone
 import { SeguimientoListadoAnteriorMemoriaComponent } from '../seguimiento-listado-anterior-memoria/seguimiento-listado-anterior-memoria.component';
 import { SeguimientoFormularioActionService } from '../seguimiento-formulario.action.service';
 import { GestionSeguimientoActionService } from '../../gestion-seguimiento/gestion-seguimiento.action.service';
+import { SgiAuthService } from '@sgi/framework/auth';
 
 describe('SeguimientoEvaluacionComponent', () => {
   let component: SeguimientoEvaluacionComponent;
@@ -38,6 +39,7 @@ describe('SeguimientoEvaluacionComponent', () => {
         { provide: SnackBarService, useValue: TestUtils.getSnackBarServiceSpy() },
         { provide: SeguimientoFormularioActionService, useClass: GestionSeguimientoActionService },
         EvaluacionActionService,
+        SgiAuthService
       ],
     })
       .compileComponents();

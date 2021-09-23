@@ -7,6 +7,7 @@
     "templateOptions": {
       "label": "3.5.4 Organismo modificado genéticamente"
     },
+    "hideExpression": "!formState.mainModel.ap3_4 || !formState.mainModel.ap3_4.ap3_4_3 || !formState.mainModel.ap3_4.ap3_4_3.tareasUsoConfinadoRadio || formState.mainModel.ap3_4.ap3_4_3.tareasUsoConfinadoRadio === 'no'",
     "fieldGroup": [
       {
         "key": "organismoModificadoNombre",

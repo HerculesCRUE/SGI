@@ -223,6 +223,7 @@ export class ConvocatoriaReunionDatosGeneralesFragment extends FormFragment<ICon
   private create(datosGenerales: IConvocatoriaReunion): Observable<IConvocatoriaReunion> {
     return this.convocatoriaReunionService.create(datosGenerales).pipe(
       switchMap((convocatoriaReunion) => {
+        this.setKey(convocatoriaReunion.id);
         return this.saveAsistentes(convocatoriaReunion, this.evaluadoresComite);
       })
     );

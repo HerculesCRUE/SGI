@@ -1,304 +1,287 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <api context="/sge" name="sge-api" publishSwagger="/_system/governance/swagger_files/sge-swagger.yaml" xmlns="http://ws.apache.org/ns/synapse">
-
   <!-- codigos economicos gastos -->
   <resource methods="GET" url-mapping="/codigos-economicos-gastos">
     <inSequence>
       <call-template target="sgi-auth-sequence-template">
-        <with-param name="requiredAuthorities" value=""/>
+        <with-param name="requiredAuthorities" value="" />
       </call-template>
-      <sequence key="sge-add-x-api-key-sequence"/>
+      <sequence key="sge-add-x-api-key-sequence" />
       <send>
-        <endpoint key="sge-endpoint"/>
+        <endpoint key="sge-endpoint" />
       </send>
     </inSequence>
     <outSequence>
-      <respond/>
+      <respond />
     </outSequence>
     <faultSequence>
-      <sequence key="error-handling-sequence"/>
+      <sequence key="error-handling-sequence" />
     </faultSequence>
   </resource>
-
   <resource methods="GET" uri-template="/codigos-economicos-gastos/{id}">
     <inSequence>
       <call-template target="sgi-auth-sequence-template">
-        <with-param name="requiredAuthorities" value=""/>
+        <with-param name="requiredAuthorities" value="" />
       </call-template>
-      <sequence key="sge-add-x-api-key-sequence"/>
+      <sequence key="sge-add-x-api-key-sequence" />
       <send>
-        <endpoint key="sge-endpoint"/>
+        <endpoint key="sge-endpoint" />
       </send>
     </inSequence>
     <outSequence>
-      <respond/>
+      <respond />
     </outSequence>
     <faultSequence>
-      <sequence key="error-handling-sequence"/>
+      <sequence key="error-handling-sequence" />
     </faultSequence>
   </resource>
-
   <!-- codigos economicos ingresos -->
   <resource methods="GET" url-mapping="/codigos-economicos-ingresos">
     <inSequence>
       <call-template target="sgi-auth-sequence-template">
-        <with-param name="requiredAuthorities" value=""/>
+        <with-param name="requiredAuthorities" value="" />
       </call-template>
-      <sequence key="sge-add-x-api-key-sequence"/>
+      <sequence key="sge-add-x-api-key-sequence" />
       <send>
-        <endpoint key="sge-endpoint"/>
+        <endpoint key="sge-endpoint" />
       </send>
     </inSequence>
     <outSequence>
-      <respond/>
+      <respond />
     </outSequence>
     <faultSequence>
-      <sequence key="error-handling-sequence"/>
+      <sequence key="error-handling-sequence" />
     </faultSequence>
   </resource>
-
   <resource methods="GET" uri-template="/codigos-economicos-ingresos/{id}">
     <inSequence>
       <call-template target="sgi-auth-sequence-template">
-        <with-param name="requiredAuthorities" value=""/>
+        <with-param name="requiredAuthorities" value="" />
       </call-template>
-      <sequence key="sge-add-x-api-key-sequence"/>
+      <sequence key="sge-add-x-api-key-sequence" />
       <send>
-        <endpoint key="sge-endpoint"/>
+        <endpoint key="sge-endpoint" />
       </send>
     </inSequence>
     <outSequence>
-      <respond/>
+      <respond />
     </outSequence>
     <faultSequence>
-      <sequence key="error-handling-sequence"/>
+      <sequence key="error-handling-sequence" />
     </faultSequence>
   </resource>
-
   <!-- documentos -->
   <resource methods="GET" uri-template="/documentos/{id}">
     <inSequence>
       <call-template target="sgi-auth-sequence-template">
-        <with-param name="requiredAuthorities" value=""/>
+        <with-param name="requiredAuthorities" value="" />
       </call-template>
-      <sequence key="sge-add-x-api-key-sequence"/>
+      <sequence key="sge-add-x-api-key-sequence" />
       <send>
-        <endpoint key="sge-endpoint"/>
+        <endpoint key="sge-endpoint" />
       </send>
     </inSequence>
     <outSequence>
-      <respond/>
+      <respond />
     </outSequence>
     <faultSequence>
-      <sequence key="error-handling-sequence"/>
+      <sequence key="error-handling-sequence" />
     </faultSequence>
   </resource>
-
   <resource methods="GET" uri-template="/documentos/{id}/archivo">
     <inSequence>
       <call-template target="sgi-auth-sequence-template">
-        <with-param name="requiredAuthorities" value=""/>
+        <with-param name="requiredAuthorities" value="" />
       </call-template>
-      <sequence key="sge-add-x-api-key-sequence"/>
+      <sequence key="sge-add-x-api-key-sequence" />
       <send>
-        <endpoint key="sge-endpoint"/>
+        <endpoint key="sge-endpoint" />
       </send>
     </inSequence>
     <outSequence>
-      <respond/>
+      <respond />
     </outSequence>
     <faultSequence>
-      <sequence key="error-handling-sequence"/>
+      <sequence key="error-handling-sequence" />
     </faultSequence>
   </resource>
-
   <!-- ejecucion economica -->
   <resource methods="GET" url-mapping="/ejecucion-economica">
     <inSequence>
       <call-template target="sgi-auth-sequence-template">
-        <with-param name="requiredAuthorities" value=""/>
+        <with-param name="requiredAuthorities" value="" />
       </call-template>
-      <sequence key="sge-add-x-api-key-sequence"/>
+      <sequence key="sge-add-x-api-key-sequence" />
       <send>
-        <endpoint key="sge-endpoint"/>
+        <endpoint key="sge-endpoint" />
       </send>
     </inSequence>
     <outSequence>
-      <respond/>
+      <respond />
     </outSequence>
     <faultSequence>
-      <sequence key="error-handling-sequence"/>
+      <sequence key="error-handling-sequence" />
     </faultSequence>
   </resource>
-
   <resource methods="GET" url-mapping="/ejecucion-economica/columnas">
     <inSequence>
       <call-template target="sgi-auth-sequence-template">
-        <with-param name="requiredAuthorities" value=""/>
+        <with-param name="requiredAuthorities" value="" />
       </call-template>
-      <sequence key="sge-add-x-api-key-sequence"/>
+      <sequence key="sge-add-x-api-key-sequence" />
       <send>
-        <endpoint key="sge-endpoint"/>
+        <endpoint key="sge-endpoint" />
       </send>
     </inSequence>
     <outSequence>
-      <respond/>
+      <respond />
     </outSequence>
     <faultSequence>
-      <sequence key="error-handling-sequence"/>
+      <sequence key="error-handling-sequence" />
     </faultSequence>
   </resource>
-
   <resource methods="GET" uri-template="/ejecucion-economica/{id}">
     <inSequence>
       <call-template target="sgi-auth-sequence-template">
-        <with-param name="requiredAuthorities" value=""/>
+        <with-param name="requiredAuthorities" value="" />
       </call-template>
-      <sequence key="sge-add-x-api-key-sequence"/>
+      <sequence key="sge-add-x-api-key-sequence" />
       <send>
-        <endpoint key="sge-endpoint"/>
+        <endpoint key="sge-endpoint" />
       </send>
     </inSequence>
     <outSequence>
-      <respond/>
+      <respond />
     </outSequence>
     <faultSequence>
-      <sequence key="error-handling-sequence"/>
+      <sequence key="error-handling-sequence" />
     </faultSequence>
   </resource>
-
   <!-- gastos -->
   <resource methods="GET" url-mapping="/gastos">
     <inSequence>
       <call-template target="sgi-auth-sequence-template">
-        <with-param name="requiredAuthorities" value=""/>
+        <with-param name="requiredAuthorities" value="" />
       </call-template>
-      <sequence key="sge-add-x-api-key-sequence"/>
+      <sequence key="sge-add-x-api-key-sequence" />
       <send>
-        <endpoint key="sge-endpoint"/>
+        <endpoint key="sge-endpoint" />
       </send>
     </inSequence>
     <outSequence>
-      <respond/>
+      <respond />
     </outSequence>
     <faultSequence>
-      <sequence key="error-handling-sequence"/>
+      <sequence key="error-handling-sequence" />
     </faultSequence>
   </resource>
-
   <resource methods="GET" url-mapping="/gastos/columnas">
     <inSequence>
       <call-template target="sgi-auth-sequence-template">
-        <with-param name="requiredAuthorities" value=""/>
+        <with-param name="requiredAuthorities" value="" />
       </call-template>
-      <sequence key="sge-add-x-api-key-sequence"/>
+      <sequence key="sge-add-x-api-key-sequence" />
       <send>
-        <endpoint key="sge-endpoint"/>
+        <endpoint key="sge-endpoint" />
       </send>
     </inSequence>
     <outSequence>
-      <respond/>
+      <respond />
     </outSequence>
     <faultSequence>
-      <sequence key="error-handling-sequence"/>
+      <sequence key="error-handling-sequence" />
     </faultSequence>
   </resource>
-
   <resource methods="GET" uri-template="/gastos/{id}">
     <inSequence>
       <call-template target="sgi-auth-sequence-template">
-        <with-param name="requiredAuthorities" value=""/>
+        <with-param name="requiredAuthorities" value="" />
       </call-template>
-      <sequence key="sge-add-x-api-key-sequence"/>
+      <sequence key="sge-add-x-api-key-sequence" />
       <send>
-        <endpoint key="sge-endpoint"/>
+        <endpoint key="sge-endpoint" />
       </send>
     </inSequence>
     <outSequence>
-      <respond/>
+      <respond />
     </outSequence>
     <faultSequence>
-      <sequence key="error-handling-sequence"/>
+      <sequence key="error-handling-sequence" />
     </faultSequence>
   </resource>
-
   <resource methods="PATCH" uri-template="/gastos/{id}/validar">
     <inSequence>
       <call-template target="sgi-auth-sequence-template">
-        <with-param name="requiredAuthorities" value=""/>
+        <with-param name="requiredAuthorities" value="" />
       </call-template>
-      <sequence key="sge-add-x-api-key-sequence"/>
+      <sequence key="sge-add-x-api-key-sequence" />
       <send>
-        <endpoint key="sge-endpoint"/>
+        <endpoint key="sge-endpoint" />
       </send>
     </inSequence>
     <outSequence>
-      <respond/>
+      <respond />
     </outSequence>
     <faultSequence>
-      <sequence key="error-handling-sequence"/>
+      <sequence key="error-handling-sequence" />
     </faultSequence>
   </resource>
-
   <resource methods="PATCH" uri-template="/gastos/{id}/rechazar">
     <inSequence>
       <call-template target="sgi-auth-sequence-template">
-        <with-param name="requiredAuthorities" value=""/>
+        <with-param name="requiredAuthorities" value="" />
       </call-template>
-      <sequence key="sge-add-x-api-key-sequence"/>
+      <sequence key="sge-add-x-api-key-sequence" />
       <send>
-        <endpoint key="sge-endpoint"/>
+        <endpoint key="sge-endpoint" />
       </send>
     </inSequence>
     <outSequence>
-      <respond/>
+      <respond />
     </outSequence>
     <faultSequence>
-      <sequence key="error-handling-sequence"/>
+      <sequence key="error-handling-sequence" />
     </faultSequence>
   </resource>
-
   <!-- proyectos -->
   <resource methods="GET" url-mapping="/proyectos">
     <inSequence>
       <call-template target="sgi-auth-sequence-template">
-        <with-param name="requiredAuthorities" value=""/>
+        <with-param name="requiredAuthorities" value="" />
       </call-template>
-      <sequence key="sge-add-x-api-key-sequence"/>
+      <sequence key="sge-add-x-api-key-sequence" />
       <send>
-        <endpoint key="sge-endpoint"/>
+        <endpoint key="sge-endpoint" />
       </send>
     </inSequence>
     <outSequence>
-      <respond/>
+      <respond />
     </outSequence>
     <faultSequence>
-      <sequence key="error-handling-sequence"/>
+      <sequence key="error-handling-sequence" />
     </faultSequence>
   </resource>
-
   <resource methods="GET" uri-template="/proyectos/{id}">
     <inSequence>
       <call-template target="sgi-auth-sequence-template">
-        <with-param name="requiredAuthorities" value=""/>
+        <with-param name="requiredAuthorities" value="" />
       </call-template>
-      <sequence key="sge-add-x-api-key-sequence"/>
+      <sequence key="sge-add-x-api-key-sequence" />
       <send>
-        <endpoint key="sge-endpoint"/>
+        <endpoint key="sge-endpoint" />
       </send>
     </inSequence>
     <outSequence>
-      <respond/>
+      <respond />
     </outSequence>
     <faultSequence>
-      <sequence key="error-handling-sequence"/>
+      <sequence key="error-handling-sequence" />
     </faultSequence>
   </resource>
-
   <resource methods="GET" url-mapping="/proyectos/formly/create">
     <inSequence>
       <call-template target="sgi-auth-sequence-template">
-        <with-param name="requiredAuthorities" value=""/>
+        <with-param name="requiredAuthorities" value="" />
       </call-template>
       <payloadFactory media-type="json">
         <format>
@@ -493,53 +476,132 @@
   }
 ]
         </format>
-        <args/>
+        <args />
       </payloadFactory>
-      <respond/>
+      <respond />
     </inSequence>
     <outSequence>
-      <respond/>
+      <respond />
     </outSequence>
     <faultSequence>
-      <sequence key="error-handling-sequence"/>
+      <sequence key="error-handling-sequence" />
     </faultSequence>
   </resource>
-
   <resource methods="POST" url-mapping="/proyectos/formly">
     <inSequence>
       <call-template target="sgi-auth-sequence-template">
-        <with-param name="requiredAuthorities" value=""/>
+        <with-param name="requiredAuthorities" value="" />
       </call-template>
-      <sequence key="sge-add-x-api-key-sequence"/>
+      <sequence key="sge-add-x-api-key-sequence" />
       <send>
-        <endpoint key="sge-endpoint"/>
+        <endpoint key="sge-endpoint" />
       </send>
     </inSequence>
     <outSequence>
-      <respond/>
+      <respond />
     </outSequence>
     <faultSequence>
-      <sequence key="error-handling-sequence"/>
+      <sequence key="error-handling-sequence" />
     </faultSequence>
   </resource>
-
   <!-- proyectos anualidades -->
   <resource methods="POST" url-mapping="/proyectos/anualidades">
     <inSequence>
       <call-template target="sgi-auth-sequence-template">
-        <with-param name="requiredAuthorities" value=""/>
+        <with-param name="requiredAuthorities" value="" />
       </call-template>
-      <sequence key="sge-add-x-api-key-sequence"/>
+      <sequence key="sge-add-x-api-key-sequence" />
       <send>
-        <endpoint key="sge-endpoint"/>
+        <endpoint key="sge-endpoint" />
       </send>
     </inSequence>
     <outSequence>
-      <respond/>
+      <respond />
     </outSequence>
     <faultSequence>
-      <sequence key="error-handling-sequence"/>
+      <sequence key="error-handling-sequence" />
     </faultSequence>
   </resource>
-
+  <!-- facturas -->
+  <resource methods="GET" url-mapping="/facturas-emitidas">
+    <inSequence>
+      <call-template target="sgi-auth-sequence-template">
+        <with-param name="requiredAuthorities" value="" />
+      </call-template>
+      <sequence key="sge-add-x-api-key-sequence" />
+      <send>
+        <endpoint key="sge-endpoint" />
+      </send>
+    </inSequence>
+    <outSequence>
+      <respond />
+    </outSequence>
+    <faultSequence>
+      <sequence key="error-handling-sequence" />
+    </faultSequence>
+  </resource>
+  <resource methods="GET" url-mapping="/facturas-emitidas/columnas">
+    <inSequence>
+      <call-template target="sgi-auth-sequence-template">
+        <with-param name="requiredAuthorities" value="" />
+      </call-template>
+      <sequence key="sge-add-x-api-key-sequence" />
+      <send>
+        <endpoint key="sge-endpoint" />
+      </send>
+    </inSequence>
+    <outSequence>
+      <respond />
+    </outSequence>
+    <faultSequence>
+      <sequence key="error-handling-sequence" />
+    </faultSequence>
+  </resource>
+  <resource methods="GET" uri-template="/facturas-emitidas/{id}">
+    <inSequence>
+      <call-template target="sgi-auth-sequence-template">
+        <with-param name="requiredAuthorities" value="" />
+      </call-template>
+      <sequence key="sge-add-x-api-key-sequence" />
+      <send>
+        <endpoint key="sge-endpoint" />
+      </send>
+    </inSequence>
+    <outSequence>
+      <respond />
+    </outSequence>
+    <faultSequence>
+      <sequence key="error-handling-sequence" />
+    </faultSequence>
+  </resource>
+  <resource methods="GET" url-mapping="/facturas-previstas-emitidas">
+    <inSequence>
+      <call-template target="sgi-auth-sequence-template">
+        <with-param name="requiredAuthorities" value="" />
+      </call-template>
+      <sequence key="sge-add-x-api-key-sequence" />
+      <send>
+        <endpoint key="sge-endpoint" />
+      </send>
+    </inSequence>
+    <outSequence>
+      <respond />
+    </outSequence>
+    <faultSequence>
+      <sequence key="error-handling-sequence" />
+    </faultSequence>
+  </resource>
+  <resource methods="GET" url-mapping="/facturas-previstas">
+    <inSequence>
+      <send>
+        <endpoint key="sgicsp-endpoint" />
+      </send>
+    </inSequence>
+    <outSequence>
+      <respond />
+    </outSequence>
+    <faultSequence>
+      <sequence key="error-handling-sequence" />
+    </faultSequence>
+  </resource>
 </api>

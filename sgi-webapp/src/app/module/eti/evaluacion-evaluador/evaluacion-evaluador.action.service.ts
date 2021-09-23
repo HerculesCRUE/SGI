@@ -4,6 +4,7 @@ import { ActivatedRoute } from '@angular/router';
 import { IEvaluacion } from '@core/models/eti/evaluacion';
 import { EvaluacionService } from '@core/services/eti/evaluacion.service';
 import { PersonaService } from '@core/services/sgp/persona.service';
+import { SgiAuthService } from '@sgi/framework/auth';
 import { EvaluacionComentarioFragment } from '../evaluacion-formulario/evaluacion-comentarios/evaluacion-comentarios.fragment';
 import { EvaluacionDatosMemoriaFragment } from '../evaluacion-formulario/evaluacion-datos-memoria/evaluacion-datos-memoria.fragment';
 import { EvaluacionDocumentacionFragment } from '../evaluacion-formulario/evaluacion-documentacion/evaluacion-documentacion.fragment';
@@ -17,7 +18,8 @@ export class EvaluacionEvaluadorActionService extends EvaluacionFormularioAction
     fb: FormBuilder,
     route: ActivatedRoute,
     service: EvaluacionService,
-    personaService: PersonaService
+    personaService: PersonaService,
+    authService: SgiAuthService
   ) {
     super();
     this.evaluacion = {} as IEvaluacion;
@@ -25,7 +27,7 @@ export class EvaluacionEvaluadorActionService extends EvaluacionFormularioAction
       this.evaluacion = route.snapshot.data.evaluacion;
       this.enableEdit();
     }
-    this.comentarios = new EvaluacionComentarioFragment(this.evaluacion?.id, Rol.EVALUADOR, service);
+    this.comentarios = new EvaluacionComentarioFragment(this.evaluacion?.id, Rol.EVALUADOR, service, personaService, authService);
     this.datosMemoria = new EvaluacionDatosMemoriaFragment(fb, this.evaluacion?.id, service, personaService);
     this.documentacion = new EvaluacionDocumentacionFragment(this.evaluacion?.id);
 

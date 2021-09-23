@@ -9,6 +9,7 @@ import { LoggerTestingModule } from 'ngx-logger/testing';
 import { SnackBarService } from '@core/services/snack-bar.service';
 import { SharedModule } from '@shared/shared.module';
 import { EvaluacionEvaluadorEvaluarComponent } from './evaluacion-evaluador-evaluar.component';
+import { SgiAuthService } from '@sgi/framework/auth';
 
 describe('EvaluacionEvaluadorEvaluarComponent', () => {
   let component: EvaluacionEvaluadorEvaluarComponent;
@@ -28,6 +29,7 @@ describe('EvaluacionEvaluadorEvaluarComponent', () => {
       ],
       providers: [
         { provide: SnackBarService, useValue: TestUtils.getSnackBarServiceSpy() },
+        SgiAuthService
       ],
     })
       .compileComponents();

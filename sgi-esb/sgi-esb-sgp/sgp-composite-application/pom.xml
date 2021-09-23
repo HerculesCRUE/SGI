@@ -1,14 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>org.crue.hercules.sgi.esb.sgp</groupId>
     <artifactId>sgi-esb-sgp</artifactId>
-    <version>0.0.1</version>
+    <version>0.0.2</version>
   </parent>
   <artifactId>sgp-composite-application</artifactId>
-  <version>0.0.1</version>
+  <version>0.0.2</version>
   <packaging>carbon/application</packaging>
   <name>sgp-composite-application</name>
   <description>sgp-composite-application</description>
@@ -22,49 +21,49 @@
     <org.crue.hercules.sgi.esb.sgp.endpoint_._sgo-endpoint>capp/EnterpriseServiceBus</org.crue.hercules.sgi.esb.sgp.endpoint_._sgo-endpoint>
     <artifact.types>jaggery/app=zip,synapse/priority-executor=xml,synapse/inbound-endpoint=xml,service/rule=aar,synapse/message-store=xml,event/stream=json,service/meta=xml,datasource/datasource=xml,synapse/proxy-service=xml,bpel/workflow=zip,synapse/sequence=xml,synapse/endpointTemplate=xml,carbon/application=car,wso2/gadget=dar,synapse/api=xml,synapse/event-source=xml,synapse/message-processors=xml,event/receiver=xml,lib/dataservice/validator=jar,synapse/template=xml,synapse/endpoint=xml,lib/carbon/ui=jar,lib/synapse/mediator=jar,event/publisher=xml,synapse/local-entry=xml,synapse/task=xml,webapp/jaxws=war,registry/resource=zip,synapse/configuration=xml,service/axis2=aar,synapse/lib=zip,synapse/sequenceTemplate=xml,event/execution-plan=siddhiql,service/dataservice=dbs,web/application=war,lib/library/bundle=jar</artifact.types>
     <timestamp>${maven.build.timestamp}</timestamp>
-		<maven.build.timestamp.format>dd-MM-yyyy HH:mm</maven.build.timestamp.format>
+    <maven.build.timestamp.format>dd-MM-yyyy HH:mm</maven.build.timestamp.format>
   </properties>
   <dependencies>
     <dependency>
       <groupId>org.crue.hercules.sgi.esb.sgp.api</groupId>
       <artifactId>sgp-api</artifactId>
-      <version>0.0.1</version>
+      <version>0.0.2</version>
       <type>xml</type>
     </dependency>
     <dependency>
       <groupId>org.crue.hercules.sgi.esb.sgp.endpoint</groupId>
       <artifactId>sgp-endpoint</artifactId>
-      <version>0.0.1</version>
+      <version>0.0.2</version>
       <type>xml</type>
     </dependency>
     <dependency>
       <groupId>org.crue.hercules.sgi.esb.sgp.sequence</groupId>
       <artifactId>sgp-add-x-api-key-sequence</artifactId>
-      <version>0.0.1</version>
+      <version>0.0.2</version>
       <type>xml</type>
     </dependency>
     <dependency>
       <groupId>org.crue.hercules.sgi.esb.sgp.resource</groupId>
       <artifactId>datos-contacto-response-converter-mediator</artifactId>
-      <version>0.0.1</version>
+      <version>0.0.2</version>
       <type>zip</type>
     </dependency>
     <dependency>
       <groupId>org.crue.hercules.sgi.esb.sgp.resource</groupId>
       <artifactId>replace-tipo-colectivo-colectivos-ids-mediator</artifactId>
-      <version>0.0.1</version>
+      <version>0.0.2</version>
       <type>zip</type>
     </dependency>
     <dependency>
       <groupId>org.crue.hercules.sgi.esb.sgp.resource</groupId>
       <artifactId>vinculacion-response-converter-mediator</artifactId>
-      <version>0.0.1</version>
+      <version>0.0.2</version>
       <type>zip</type>
     </dependency>
     <dependency>
       <groupId>org.crue.hercules.sgi.esb.sgp.endpoint</groupId>
       <artifactId>sgo-endpoint</artifactId>
-      <version>0.0.1</version>
+      <version>0.0.2</version>
       <type>xml</type>
     </dependency>
 
@@ -147,69 +146,69 @@
     </plugins>
   </build>
   <profiles>
-       <profile>
-          <!-- dev profile. This is the default profile -->
-          <id>dev</id>
-          <activation>
-            <activeByDefault>true</activeByDefault>
-          </activation>
-          <build>
-            <plugins>
-            <plugin>
-              <groupId>org.wso2.maven</groupId>
-              <artifactId>maven-car-plugin</artifactId>
-              <version>2.1.1</version>
-              <extensions>true</extensions>
-              <executions>
-                <execution>
-                  <id>car</id>
-                  <phase>package</phase>
-                  <goals>
-                    <goal>car</goal>
-                  </goals>
-                </execution>
-              </executions>
-              <configuration>
-                <!-- enable this to re define an archive location other than the default location-->
-                <archiveLocation>/carbonapps</archiveLocation>
-                <!-- enable this to rename the .car file name
+    <profile>
+      <!-- dev profile. This is the default profile -->
+      <id>dev</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.wso2.maven</groupId>
+            <artifactId>maven-car-plugin</artifactId>
+            <version>2.1.1</version>
+            <extensions>true</extensions>
+            <executions>
+              <execution>
+                <id>car</id>
+                <phase>package</phase>
+                <goals>
+                  <goal>car</goal>
+                </goals>
+              </execution>
+            </executions>
+            <configuration>
+              <!-- enable this to re define an archive location other than the default location-->
+              <archiveLocation>/carbonapps</archiveLocation>
+              <!-- enable this to rename the .car file name
                 <archiveName>archive_name</archiveName-->
-                <!-- enable this to rename the carbon application name
+              <!-- enable this to rename the carbon application name
                 <cAppName>capp_name</cAppName-->
-              </configuration>
-            </plugin>
-            </plugins>
-          </build>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
     </profile>
     <profile>
       <!-- CI profile. This is the default profile for CI builds-->
       <id>ci</id>
       <build>
-      <plugins>
-       <plugin>
-        <groupId>org.wso2.maven</groupId>
-        <artifactId>maven-car-plugin</artifactId>
-        <version>2.1.1</version>
-        <extensions>true</extensions>
-        <executions>
-          <execution>
-            <id>car</id>
-            <phase>package</phase>
-            <goals>
-              <goal>car</goal>
-            </goals>
-          </execution>
-        </executions>
-        <configuration>
-          <!-- enable this to re define an archive location other than the default location-->
-          <!--<archiveLocation>/carbonapps</archiveLocation>-->
-          <!-- enable this to rename the .car file name
+        <plugins>
+          <plugin>
+            <groupId>org.wso2.maven</groupId>
+            <artifactId>maven-car-plugin</artifactId>
+            <version>2.1.1</version>
+            <extensions>true</extensions>
+            <executions>
+              <execution>
+                <id>car</id>
+                <phase>package</phase>
+                <goals>
+                  <goal>car</goal>
+                </goals>
+              </execution>
+            </executions>
+            <configuration>
+              <!-- enable this to re define an archive location other than the default location-->
+              <!--<archiveLocation>/carbonapps</archiveLocation>-->
+              <!-- enable this to rename the .car file name
           <archiveName>archive_name</archiveName-->
-          <!-- enable this to rename the carbon application name
+              <!-- enable this to rename the carbon application name
           <cAppName>capp_name</cAppName-->
-        </configuration>
-      </plugin>
-      </plugins>
+            </configuration>
+          </plugin>
+        </plugins>
       </build>
     </profile>
   </profiles>

@@ -8,7 +8,7 @@
       <div>
         <mat-form-field>
           <mat-label>{{'csp.proyecto-presupuesto.anualidad' | translate:MSG_PARAMS.CARDINALIRY.PLURAL}}</mat-label>
-          <mat-select [formControl]="formPart.aniosControl" multiple>
+          <mat-select #anualSel [formControl]="formPart.aniosControl" multiple>
             <mat-option *ngFor="let anio of formPart.anualidades$ | async" [value]="anio">{{anio}}</mat-option>
           </mat-select>
         </mat-form-field>
@@ -21,6 +21,9 @@
         <button color="primary" class="rounded" mat-raised-button (click)="formPart.loadDesglose()">
           <mat-icon>update</mat-icon>
           {{'btn.load' | translate}}
+        </button>
+        <button color="warn" aria-label="Center Align" (click)="clearDesglose()" mat-button>{{'btn.clean'|
+          translate}}
         </button>
       </div>
     </div>

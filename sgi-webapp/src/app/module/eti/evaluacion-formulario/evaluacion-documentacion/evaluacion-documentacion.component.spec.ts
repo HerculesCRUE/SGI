@@ -12,6 +12,7 @@ import { DocumentacionMemoriaListadoMemoriaComponent } from '../../documentacion
 import { EvaluacionEvaluadorActionService } from '../../evaluacion-evaluador/evaluacion-evaluador.action.service';
 import { SnackBarService } from '@core/services/snack-bar.service';
 import { EvaluacionFormularioActionService } from '../evaluacion-formulario.action.service';
+import { SgiAuthService } from '@sgi/framework/auth';
 
 describe('EvaluacionDocumentacionComponent', () => {
   let component: EvaluacionDocumentacionComponent;
@@ -35,7 +36,8 @@ describe('EvaluacionDocumentacionComponent', () => {
       ],
       providers: [
         { provide: SnackBarService, useValue: TestUtils.getSnackBarServiceSpy() },
-        { provide: EvaluacionFormularioActionService, useClass: EvaluacionEvaluadorActionService }
+        { provide: EvaluacionFormularioActionService, useClass: EvaluacionEvaluadorActionService },
+        SgiAuthService
       ],
     })
       .compileComponents();

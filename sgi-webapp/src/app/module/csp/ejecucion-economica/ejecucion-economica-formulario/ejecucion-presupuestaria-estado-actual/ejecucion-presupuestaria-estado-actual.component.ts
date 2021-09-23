@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { MatPaginator } from '@angular/material/paginator';
-import { MatSort } from '@angular/material/sort';
+import { MatOption } from '@angular/material/core';
+import { MatSelect } from '@angular/material/select';
 import { MatTableDataSource } from '@angular/material/table';
 import { FragmentComponent } from '@core/component/fragment.component';
 import { MSG_PARAMS } from '@core/i18n';
@@ -9,7 +9,7 @@ import { FxFlexProperties } from '@core/models/shared/flexLayout/fx-flex-propert
 import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-properties';
 import { Subscription } from 'rxjs';
 import { EjecucionEconomicaActionService } from '../../ejecucion-economica.action.service';
-import { IProyectoRelacion, RowTreeDesglose } from '../desglose-economico.fragment';
+import { RowTreeDesglose } from '../desglose-economico.fragment';
 import { EjecucionPresupuestariaEstadoActualFragment } from './ejecucion-presupuestaria-estado-actual.fragment';
 
 @Component({
@@ -28,6 +28,7 @@ export class EjecucionPresupuestariaEstadoActualComponent extends FragmentCompon
   textoDelete: string;
 
   readonly dataSourceDesglose = new MatTableDataSource<RowTreeDesglose<IDatoEconomico>>();
+  @ViewChild('anualSel') selectAnualidades: MatSelect;
 
   get MSG_PARAMS() {
     return MSG_PARAMS;
@@ -47,6 +48,11 @@ export class EjecucionPresupuestariaEstadoActualComponent extends FragmentCompon
     this.subscriptions.push(this.formPart.desglose$.subscribe(elements => {
       this.dataSourceDesglose.data = elements;
     }));
+  }
+
+  public clearDesglose(): void {
+    this.selectAnualidades.options.forEach((item: MatOption) => { item.deselect() });
+    this.formPart.clearDesglose();
   }
 
   ngOnDestroy(): void {

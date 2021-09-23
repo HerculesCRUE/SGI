@@ -9,6 +9,12 @@
     },
     "fieldGroup": [
       {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "<p>Para completa esta sección ir a 'Datos generales' donde debe de describir el procedimiento e incluir la especie animal</p>"
+      },
+      {
         "template": "<p>Título descriptivo del proceso experimental.</p>"
       },
       {
@@ -17,10 +23,11 @@
         "templateOptions": {
           "placeholder": "Título descriptivo",
           "label": "Título descriptivo",
-          "required": true,
           "autosize": true,
           "autosizeMinRows": "1",
-          "autosizeMaxRows": "10"
+          "autosizeMaxRows": "10",
+          "disabled": true,
+          "expressionModelValue": "formState.memoria.titulo"
         }
       }
     ]

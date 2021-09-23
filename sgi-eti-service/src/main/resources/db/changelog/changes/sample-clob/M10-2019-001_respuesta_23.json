@@ -1,7 +1,5 @@
 {
-  "ap4_5_2": {
-    "proporcionarConsejoGeneticoRadio": "si",
-    "personaExpertaConsejoGeneticoRadio": "si",
-    "documentoConsejoGeneticoRadio": "si"
-  }
+  "proporcionarConsejoGeneticoRadio": "si",
+  "personaExpertaConsejoGeneticoRadio": "si",
+  "documentoConsejoGeneticoRadio": "si"
 }

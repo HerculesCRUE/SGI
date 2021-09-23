@@ -29,7 +29,6 @@ public class InvencionGastoInput implements Serializable {
   @NotEmpty
   private String gastoRef;
 
-  @NotNull
   @Min(0)
   private BigDecimal importePendienteDeducir;
 

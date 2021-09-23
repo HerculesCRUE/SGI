@@ -10,7 +10,7 @@
     },
     "fieldGroup": [
       {
-        "template": "¿Su proyecto requiere la autorización de la Agencia Española de Protección de Datos (AEPD) para cesión de datos?"
+        "template": "A veces hay documento de cesión de datos (del profesor al alumno para Investigación tutelada, de clínicos a investigadores de la Universidad, a través de Biobancos"
       },
       {
         "key": "documentoCesion",
@@ -29,12 +29,6 @@
             }
           ]
         }
-      },
-      {
-        "wrappers": [
-          "info-div"
-        ],
-        "template": "<p>Nota: ver apartado '3.6.3 Cesión a terceros de los datos de carácter personal'.</p>"
       }
     ]
   }

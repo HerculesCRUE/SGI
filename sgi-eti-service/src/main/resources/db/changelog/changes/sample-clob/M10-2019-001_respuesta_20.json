@@ -1,7 +1,5 @@
 {
-  "ap4_4_1": {
-    "tipoConsentimientoCheck": [
-      "cesion"
-    ]
-  }
+  "tipoConsentimientoCheck": [
+    "cesion"
+  ]
 }

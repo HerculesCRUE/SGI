@@ -50,4 +50,8 @@ export class PersonalContratadoFragment extends FacturasJustificantesFragment {
     return this.ejecucionEconomicaService.getPersonalContratado(this.proyectoSge.id, anualidades, pagosRange, devengosRange, contabilizacionRange);
   }
 
+  public clearRangos(): void {
+    this.formGroupFechas.reset();
+  }
+
 }

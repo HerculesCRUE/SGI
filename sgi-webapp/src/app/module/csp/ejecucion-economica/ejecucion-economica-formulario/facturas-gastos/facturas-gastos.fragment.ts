@@ -50,4 +50,8 @@ export class FacturasGastosFragment extends FacturasJustificantesFragment {
     return this.ejecucionEconomicaService.getFacturasGastos(this.proyectoSge.id, anualidades, pagosRange, devengosRange, contabilizacionRange);
   }
 
+  public clearRangos(): void {
+    this.formGroupFechas.reset();
+  }
+
 }

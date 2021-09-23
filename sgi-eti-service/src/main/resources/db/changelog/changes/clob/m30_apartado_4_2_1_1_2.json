@@ -1,19 +1,22 @@
 [
   {
-    "key": "ap4_1",
+    "key": "ap4_2_1_1_2",
     "wrappers": [
       "title-div"
     ],
     "templateOptions": {
       "label": "4.2.1.1.2 Equipos de seguridad"
-    }
+    },
+    "hideExpression": "!formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1 || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable.some(localTable => localTable.nivelContencion !== '1')"
   },
   {
-    "template": "<p>Se dispone de sistemas mecánicos de pipeteo</p>"
+    "template": "<p>Se dispone de sistemas mecánicos de pipeteo</p>",
+    "hideExpression": "!formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1 || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable.some(localTable => localTable.nivelContencion !== '1')"
   },
   {
     "key": "pipeteo",
     "type": "radio",
+    "hideExpression": "!formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1 || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable.some(localTable => localTable.nivelContencion !== '1')",
     "templateOptions": {
       "required": true,
       "label": "Elige opción",
@@ -32,6 +35,7 @@
   {
     "key": "observaciones_pipeteo",
     "type": "textarea",
+    "hideExpression": "!formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1 || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable.some(localTable => localTable.nivelContencion !== '1')",
     "templateOptions": {
       "label": "Observaciones",
       "placeholder": "Observaciones",
@@ -43,11 +47,13 @@
     }
   },
   {
-    "template": "<p>Se dispone de CSB adecuada a la clase de riesgo</p>"
+    "template": "<p>Se dispone de CSB adecuada a la clase de riesgo</p>",
+    "hideExpression": "!formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1 || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable.some(localTable => localTable.nivelContencion !== '1')"
   },
   {
     "key": "claseRiesgo",
     "type": "radio",
+    "hideExpression": "!formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1 || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable.some(localTable => localTable.nivelContencion !== '1')",
     "templateOptions": {
       "required": true,
       "label": "Elige opción",
@@ -66,6 +72,7 @@
   {
     "key": "observaciones_claseRiesgo",
     "type": "textarea",
+    "hideExpression": "!formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1 || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable.some(localTable => localTable.nivelContencion !== '1')",
     "templateOptions": {
       "label": "Observaciones",
       "placeholder": "Observaciones",
@@ -77,11 +84,13 @@
     }
   },
   {
-    "template": "<p>Se dispone de equipos de protección individual, como guantes impermeables para la manipulación de material potencialmenteinfeccioso en el interior de las CSB y guantes, gafas y mascarilla para trabajos con material infeccioso realizados en el banco de trabajoy en los que se puedan generar aerosoles, salpicaduras o proyecciones</p>"
+    "template": "<p>Se dispone de equipos de protección individual, como guantes impermeables para la manipulación de material potencialmenteinfeccioso en el interior de las CSB y guantes, gafas y mascarilla para trabajos con material infeccioso realizados en el banco de trabajoy en los que se puedan generar aerosoles, salpicaduras o proyecciones</p>",
+    "hideExpression": "!formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1 || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable.some(localTable => localTable.nivelContencion !== '1')"
   },
   {
     "key": "equiposProteccion",
     "type": "radio",
+    "hideExpression": "!formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1 || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable.some(localTable => localTable.nivelContencion !== '1')",
     "templateOptions": {
       "required": true,
       "label": "Elige opción",
@@ -100,6 +109,7 @@
   {
     "key": "observaciones_equiposProteccion",
     "type": "textarea",
+    "hideExpression": "!formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1 || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable.some(localTable => localTable.nivelContencion !== '1')",
     "templateOptions": {
       "label": "Observaciones",
       "placeholder": "Observaciones",

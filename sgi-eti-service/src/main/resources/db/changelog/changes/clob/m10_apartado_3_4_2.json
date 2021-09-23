@@ -6,7 +6,7 @@
     ],
     "templateOptions": {
       "expressionLock": "formState.memoria.tipoMemoria.id === 3",
-      "label": "3.4.2 Reclutamiento realizado por personal ajeno al equipo investigado"
+      "label": "3.4.2 Reclutamiento realizado por personal ajeno al equipo investigador"
     },
     "hideExpression": "!formState.mainModel.ap3_4.intervencionesSeresHumanosRadio || formState.mainModel.ap3_4.intervencionesSeresHumanosRadio === 'no'",
     "fieldGroup": [
@@ -71,7 +71,7 @@
         "wrappers": [
           "info-div"
         ],
-        "template": "<p>Nota: Añadir en el apartado '5.4' el Documento de aceptación de colaboración de tercera persona con especificación de las tareas que vaya a asumir y la compensación si la hubiera.</p>"
+        "template": "<p>Nota: Si el reclutamiento se realiza desde un centro ajeno a la Universidad, y que además autoriza la realización de dicho proyecto en sus instalaciones, con sus asociados, etc,: 5.3. Autorización del centro: Añadir la tarea de reclutamiento en el Documento de Autorización.</p>"
       }
     ]
   }

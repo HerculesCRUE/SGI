@@ -1,9 +1,7 @@
 {
-  "ap4_6_3": {
-    "vinculacionAcademicaEquipoInvestigadorRadio": "si",
-    "especificarVinculacion": "Vinculación academica con la investigación",
-    "calificacionEstudiantesRadio": "no",
-    "medidasEspecialesEquipoInvestigadorRadio": "otras",
-    "especificarOtras": "Medidas especiales para la protección de la voluntariedad de los alumnos"
-  }
+  "vinculacionAcademicaEquipoInvestigadorRadio": "si",
+  "especificarVinculacion": "Vinculación academica con la investigación",
+  "calificacionEstudiantesRadio": "no",
+  "medidasEspecialesEquipoInvestigadorRadio": "otras",
+  "especificarOtras": "Medidas especiales para la protección de la voluntariedad de los alumnos"
 }

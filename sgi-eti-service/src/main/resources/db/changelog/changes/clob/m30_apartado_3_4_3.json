@@ -12,7 +12,7 @@
         "template": "<p>En esta actividad ¿se realizan tareas de uso confinado de OMG?</p>"
       },
       {
-        "key": "tareasUsoConfinado",
+        "key": "tareasUsoConfinadoRadio",
         "type": "radio",
         "templateOptions": {
           "label": "Elige opción:",
@@ -37,12 +37,12 @@
       },
       {
         "template": "Tipo de OMG que se utiliza",
-        "hideExpression": "!model.tareasUsoConfinado || model.tareasUsoConfinado === 'no'"
+        "hideExpression": "!model.tareasUsoConfinadoRadio || model.tareasUsoConfinadoRadio === 'no'"
       },
       {
         "type": "multicheckbox",
         "key": "tiposOMG",
-        "hideExpression": "!model.tareasUsoConfinado || model.tareasUsoConfinado === 'no'",
+        "hideExpression": "!model.tareasUsoConfinadoRadio || model.tareasUsoConfinadoRadio === 'no'",
         "templateOptions": {
           "label": "Opciones:",
           "type": "array",

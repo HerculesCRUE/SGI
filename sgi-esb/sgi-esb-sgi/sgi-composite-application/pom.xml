@@ -4,10 +4,10 @@
   <parent>
     <groupId>org.crue.hercules.sgi.esb.sgi</groupId>
     <artifactId>sgi-esb-sgi</artifactId>
-    <version>0.0.1</version>
+    <version>0.0.2</version>
   </parent>
   <artifactId>sgi-composite-application</artifactId>
-  <version>0.0.1</version>
+  <version>0.0.2</version>
   <packaging>carbon/application</packaging>
   <name>sgi-esb-sgi-composite-application</name>
   <description>sgi-esb-sgi-composite-application</description>
@@ -22,13 +22,13 @@
     <dependency>
       <groupId>org.crue.hercules.sgi.esb.sgi.api</groupId>
       <artifactId>sgicsp-api</artifactId>
-      <version>0.0.1</version>
+      <version>0.0.2</version>
       <type>xml</type>
     </dependency>
     <dependency>
       <groupId>org.crue.hercules.sgi.esb.sgi.endpoint</groupId>
       <artifactId>sgicsp-endpoint</artifactId>
-      <version>0.0.1</version>
+      <version>0.0.2</version>
       <type>xml</type>
     </dependency>
   </dependencies>
