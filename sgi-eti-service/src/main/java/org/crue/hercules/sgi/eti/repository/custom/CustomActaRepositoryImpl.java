@@ -1,5 +1,6 @@
 package org.crue.hercules.sgi.eti.repository.custom;
 
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,6 +21,9 @@ import org.crue.hercules.sgi.eti.model.Comite_;
 import org.crue.hercules.sgi.eti.model.ConvocatoriaReunion_;
 import org.crue.hercules.sgi.eti.model.Evaluacion;
 import org.crue.hercules.sgi.eti.model.Evaluacion_;
+import org.crue.hercules.sgi.eti.model.Evaluador;
+import org.crue.hercules.sgi.eti.model.Evaluador_;
+import org.crue.hercules.sgi.eti.model.Memoria_;
 import org.crue.hercules.sgi.eti.model.TipoConvocatoriaReunion_;
 import org.crue.hercules.sgi.framework.rsql.SgiRSQLJPASupport;
 import org.springframework.data.domain.Page;
@@ -45,11 +49,13 @@ public class CustomActaRepositoryImpl implements CustomActaRepository {
   /**
    * Devuelve una lista paginada y filtrada {@link ActaWithNumEvaluaciones}.
    * 
-   * @param query    la información del filtro.
-   * @param pageable la información de la paginación.
+   * @param query      la información del filtro.
+   * @param pageable   la información de la paginación.
+   * @param personaRef referencia de la persona.
    * @return la lista de {@link ActaWithNumEvaluaciones} paginadas y/o filtradas.
    */
-  public Page<ActaWithNumEvaluaciones> findAllActaWithNumEvaluaciones(String query, Pageable pageable) {
+  public Page<ActaWithNumEvaluaciones> findAllActaWithNumEvaluaciones(String query, Pageable pageable,
+      String personaRef) {
     log.debug("findAllActaWithNumEvaluaciones(String query, Pageable paging) - start");
 
     // Crete query
@@ -67,8 +73,24 @@ public class CustomActaRepositoryImpl implements CustomActaRepository {
     List<Predicate> listPredicates = new ArrayList<Predicate>();
     List<Predicate> listPredicatesCount = new ArrayList<Predicate>();
 
-    listPredicates.add(cb.and(cb.equal(root.get(Acta_.activo), Boolean.TRUE)));
-    listPredicatesCount.add(cb.and(cb.equal(rootCount.get(Acta_.activo), Boolean.TRUE)));
+    if (personaRef != null) {
+      Subquery<Long> queryComites = cq.subquery(Long.class);
+      Root<Evaluador> subqRootEvaluadores = queryComites.from(Evaluador.class);
+
+      queryComites.select(subqRootEvaluadores.get(Evaluador_.comite).get(Comite_.id)).where(
+          cb.in(subqRootEvaluadores.get(Evaluador_.personaRef)).value(personaRef),
+          cb.equal(subqRootEvaluadores.get(Evaluador_.activo), Boolean.TRUE),
+          cb.or(cb.isNull(subqRootEvaluadores.get(Evaluador_.fechaBaja)),
+              cb.greaterThan(subqRootEvaluadores.get(Evaluador_.fechaBaja), Instant.now())));
+
+      listPredicates.add(cb.and(cb.equal(root.get(Acta_.activo), Boolean.TRUE), cb.in(queryComites)
+          .value(root.get(Acta_.convocatoriaReunion).get(ConvocatoriaReunion_.comite).get(Comite_.id))));
+      listPredicatesCount.add(cb.and(cb.equal(rootCount.get(Acta_.activo), Boolean.TRUE), cb.in(queryComites)
+          .value(rootCount.get(Acta_.convocatoriaReunion).get(ConvocatoriaReunion_.comite).get(Comite_.id))));
+    } else {
+      listPredicates.add(cb.and(cb.equal(root.get(Acta_.activo), Boolean.TRUE)));
+      listPredicatesCount.add(cb.and(cb.equal(rootCount.get(Acta_.activo), Boolean.TRUE)));
+    }
 
     // Where
     if (query != null) {

@@ -11,6 +11,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -67,7 +68,7 @@ public class ChecklistController {
    * @return Nuevo {@link Checklist} creado
    */
   @PostMapping
-  @PreAuthorize("hasAuthority('ETI-CHKLST-MOD-C')")
+  @PreAuthorize("hasAnyAuthority('ETI-CHKLST-MOD-C', 'ETI-CHK-E')")
   ResponseEntity<ChecklistOutput> create(@Valid @RequestBody ChecklistInput checklist) {
     log.debug("create(ChecklistInput checklist) - start");
     Checklist created = service.create(convert(checklist));
@@ -84,12 +85,31 @@ public class ChecklistController {
    * @return El {@link Checklist} actualizado
    */
   @PatchMapping("/{id}/respuesta")
-  @PreAuthorize("hasAuthority('ETI-CHKLST-MOD-C')")
+  @PreAuthorize("hasAnyAuthority('ETI-CHKLST-MOD-C', 'ETI-CHK-E')")
   ResponseEntity<ChecklistOutput> updateRespuesta(@PathVariable Long id, @NotEmpty @RequestBody String respuesta) {
     log.debug("update(Long id, String respuesta) - start");
     Checklist updated = service.updateRespuesta(id, respuesta);
     ChecklistOutput returnValue = convert(updated);
     log.debug("update(Long id, String respuesta) - end");
+    return new ResponseEntity<>(returnValue, HttpStatus.OK);
+  }
+
+  /**
+   * Recupera el Checklist del usuario actual del sistema
+   * 
+   * @return CheklistOutput El Checklist de la persona actual
+   */
+  @GetMapping("/persona-actual")
+  @PreAuthorize("hasAnyAuthority('ETI-CHKLST-MOD-V', 'ETI-CHKLST-MOD-C', 'ETI-CHK-E')")
+  ResponseEntity<ChecklistOutput> getByPersonaActual(Authentication authentication) {
+    log.debug("getByPersonaActual(Authentication authentication) - start");
+    String personaRef = authentication.getName();
+    Checklist checkList = service.findByPersonaRef(personaRef);
+    ChecklistOutput returnValue = null;
+    if (checkList != null) {
+      returnValue = convert(checkList);
+    }
+    log.debug("getByPersonaActual(Authentication authentication) - end");
     return new ResponseEntity<>(returnValue, HttpStatus.OK);
   }
 

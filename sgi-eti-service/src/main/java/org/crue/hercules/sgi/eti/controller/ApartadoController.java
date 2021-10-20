@@ -85,7 +85,7 @@ public class ApartadoController {
    * @return el listado de entidades {@link Apartado} paginadas y filtradas.
    */
   @GetMapping("/{id}/hijos")
-  @PreAuthorize("hasAnyAuthorityForAnyUO('ETI-EVC-EVAL', 'ETI-EVC-EVALR', 'ETI-EVC-EVALR-INV')")
+  @PreAuthorize("hasAnyAuthorityForAnyUO('ETI-EVC-EVAL', 'ETI-EVC-EVALR', 'ETI-EVC-INV-EVALR')")
   ResponseEntity<Page<Apartado>> getHijos(@PathVariable Long id, @RequestPageable(sort = "s") Pageable paging) {
     log.debug("getHijos(Long id, Pageable paging - start");
     Page<Apartado> page = service.findByPadreId(id, paging);

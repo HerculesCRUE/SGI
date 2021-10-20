@@ -87,7 +87,7 @@ public class BloqueController {
    * @return el listado de entidades {@link Apartado} paginadas y filtradas.
    */
   @GetMapping("/{id}/apartados")
-  @PreAuthorize("hasAnyAuthorityForAnyUO('ETI-EVC-EVAL', 'ETI-EVC-EVALR', 'ETI-EVC-EVALR-INV')")
+  @PreAuthorize("hasAnyAuthorityForAnyUO('ETI-EVC-EVAL', 'ETI-EVC-EVALR', 'ETI-EVC-INV-EVALR')")
   ResponseEntity<Page<Apartado>> getApartados(@PathVariable Long id, @RequestPageable(sort = "s") Pageable paging) {
     log.debug("getApartados(Long id, Pageable paging - start");
     Page<Apartado> page = apartadoService.findByBloqueId(id, paging);

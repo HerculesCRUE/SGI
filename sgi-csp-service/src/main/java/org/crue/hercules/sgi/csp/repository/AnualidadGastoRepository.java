@@ -6,6 +6,7 @@ import java.util.Optional;
 import org.crue.hercules.sgi.csp.model.AnualidadGasto;
 import org.crue.hercules.sgi.csp.model.Proyecto;
 import org.crue.hercules.sgi.csp.model.ProyectoAnualidad;
+import org.crue.hercules.sgi.csp.model.ProyectoPartida;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -41,4 +42,14 @@ public interface AnualidadGastoRepository
    * @return Listado paginado de {@link AnualidadGasto}
    */
   Page<AnualidadGasto> findAllAnualidadGastoByProyectoAnualidadProyectoId(Long proyectoId, Pageable pageable);
+
+  /**
+   * Recupera todas las {@link AnualidadGasto} del proyecto que formen parte de
+   * una {@link ProyectoAnualidad} asociada al {@link ProyectoPartida} que tiene como {@link Proyecto} el
+   * identificado con el proyectoId pasado por parámetro
+   *
+   * @param proyectoId Id del {@link Proyecto}.
+   * @return Listado de {@link AnualidadGasto}
+   */
+  List<AnualidadGasto> findAnualidadGastoByProyectoPartidaProyectoId(Long proyectoId);
 }

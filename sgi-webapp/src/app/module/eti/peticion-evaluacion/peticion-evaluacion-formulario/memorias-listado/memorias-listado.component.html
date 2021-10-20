@@ -56,7 +56,7 @@
           {{'label.actions' | translate}} </th>
         <td mat-cell *matCellDef="let wrapper;let i=index;">
 
-          <button mat-button *sgiHasAnyAuthorityForAnyUO="['ETI-PEV-C-INV', 'ETI-PEV-ER-INV']"
+          <button mat-button *sgiHasAnyAuthorityForAnyUO="['ETI-PEV-INV-C', 'ETI-PEV-INV-ER']"
             [routerLink]="['../../..', MEMORIAS_ROUTE, wrapper.value.id]" matTooltip="{{'btn.edit' | translate}}">
             <mat-icon color="primary">border_color</mat-icon>
           </button>
@@ -68,7 +68,7 @@
 
 
           <ng-container *ngIf="hasPermisoEliminar(wrapper.value.estadoActual.id)">
-            <button mat-button *sgiHasAnyAuthorityForAnyUO="['ETI-PEV-C-INV', 'ETI-PEV-ER-INV']"
+            <button mat-button *sgiHasAnyAuthorityForAnyUO="['ETI-PEV-INV-C', 'ETI-PEV-INV-ER']"
               matTooltip="{{'btn.delete' | translate}}" (click)="delete(wrapper)">
               <mat-icon color="warn">highlight_off</mat-icon>
             </button>
@@ -84,14 +84,14 @@
           </ng-container>
 
           <ng-container *ngIf="hasPermisoEnviarSecretaria(wrapper.value.estadoActual.id)">
-            <button mat-button *sgiHasAnyAuthorityForAnyUO="['ETI-PEV-C-INV', 'ETI-PEV-ER-INV']"
+            <button mat-button *sgiHasAnyAuthorityForAnyUO="['ETI-PEV-INV-C', 'ETI-PEV-INV-ER']"
               (click)="enviarSecretaria(wrapper.value)" [disabled]="disableEnviarSecretaria"
               matTooltip="{{'btn.eti.memoria.enviar' | translate}}">
               <mat-icon color="primary">send</mat-icon>
             </button>
           </ng-container>
           <ng-container *ngIf="hasPermisoEnviarSecretariaRetrospectiva(wrapper.value)">
-            <button mat-button *sgiHasAnyAuthorityForAnyUO="['ETI-PEV-C-INV', 'ETI-PEV-ER-INV']"
+            <button mat-button *sgiHasAnyAuthorityForAnyUO="['ETI-PEV-INV-C', 'ETI-PEV-INV-ER']"
               (click)="enviarSecretariaRetrospectiva(wrapper.value)" [disabled]="disableEnviarSecretaria"
               matTooltip="{{'btn.eti.memoria.enviar-retrospectiva' | translate}}">
               <mat-icon color="primary">assignment</mat-icon>
@@ -110,7 +110,7 @@
   </div>
   <!-- Botón añadir memoria -->
   <div class="separation-button">
-    <button mat-raised-button color="three" *sgiHasAnyAuthorityForAnyUO="['ETI-PEV-C-INV', 'ETI-PEV-ER-INV']"
+    <button mat-raised-button color="three" *sgiHasAnyAuthorityForAnyUO="['ETI-PEV-INV-C', 'ETI-PEV-INV-ER']"
       [routerLink]="['../../..', MEMORIAS_ROUTE, 'new']" [state]="{idPeticionEvaluacion: fragment.getKey()}">
       <mat-icon>add_box</mat-icon>
       {{'btn.add.entity' | translate:msgParamEntity}}

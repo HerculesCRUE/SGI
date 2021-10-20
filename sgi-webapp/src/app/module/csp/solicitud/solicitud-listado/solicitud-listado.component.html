@@ -209,13 +209,8 @@
           [fxFlexOrder]="fxFlexProperties.order">
           <mat-form-field class="input-form">
             <mat-label>{{'csp.solicitud.plan-investigacion' | translate}}</mat-label>
-            <input matInput formControlName="planInvestigacion" type="text" id="planInvestigacion"
-              placeholder="{{'csp.solicitud.plan-investigacion' | translate}}" [matAutocomplete]="planInvestigacion">
-            <mat-autocomplete #planInvestigacion="matAutocomplete" [displayWith]="getPlanInvestigacion">
-              <mat-option *ngFor="let planInvestigacion of planInvestigaciones$ | async" [value]="planInvestigacion">
-                {{planInvestigacion.nombre}}
-              </mat-option>
-            </mat-autocomplete>
+            <sgi-select-entity formControlName="planInvestigacion" [options]="planInvestigaciones$ | async">
+            </sgi-select-entity>
           </mat-form-field>
         </div>
 
@@ -242,13 +237,7 @@
           [fxFlexOrder]="fxFlexProperties.order">
           <mat-form-field class="input-form">
             <mat-label>{{'csp.solicitud.fuente-financiacion' | translate}}</mat-label>
-            <input matInput formControlName="fuenteFinanciacion" type="text" id="fuente"
-              placeholder="{{'csp.solicitud.fuente-financiacion' | translate}}" [matAutocomplete]="fuente">
-            <mat-autocomplete #fuente="matAutocomplete" [displayWith]="getFuenteFinanciacion">
-              <mat-option *ngFor="let fuente of fuenteFinanciacion$ | async" [value]="fuente">
-                {{fuente.nombre}}
-              </mat-option>
-            </mat-autocomplete>
+            <sgi-select-fuente-financiacion formControlName="fuenteFinanciacion"></sgi-select-fuente-financiacion>
           </mat-form-field>
         </div>
       </div>

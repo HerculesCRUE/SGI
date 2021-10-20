@@ -1,16 +1,15 @@
 package org.crue.hercules.sgi.framework.web.config;
 
 import org.crue.hercules.sgi.framework.http.HttpEntityBuilder;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.security.oauth2.client.AuthorizedClientServiceOAuth2AuthorizedClientManager;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientProvider;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientProviderBuilder;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
+import org.springframework.stereotype.Component;
 
-@Configuration
+@Component
 public class OAuth2ClientConfiguration {
 
   /**
@@ -23,7 +22,6 @@ public class OAuth2ClientConfiguration {
    * @return a {@link AuthorizedClientServiceOAuth2AuthorizedClientManager}
    */
   @Bean
-  @ConditionalOnBean({ ClientRegistrationRepository.class, OAuth2AuthorizedClientService.class })
   public AuthorizedClientServiceOAuth2AuthorizedClientManager authorizedClientServiceAndManager(
       ClientRegistrationRepository clientRegistrationRepository,
       OAuth2AuthorizedClientService authorizedClientService) {

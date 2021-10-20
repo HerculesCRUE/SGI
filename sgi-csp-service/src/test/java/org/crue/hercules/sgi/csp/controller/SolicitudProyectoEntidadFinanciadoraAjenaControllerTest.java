@@ -9,6 +9,8 @@ import org.crue.hercules.sgi.csp.model.SolicitudProyectoEntidadFinanciadoraAjena
 import org.crue.hercules.sgi.csp.model.TipoFinanciacion;
 import org.crue.hercules.sgi.csp.service.ProgramaService;
 import org.crue.hercules.sgi.csp.service.SolicitudProyectoEntidadFinanciadoraAjenaService;
+import org.crue.hercules.sgi.csp.service.SolicitudProyectoEntidadService;
+import org.crue.hercules.sgi.csp.service.SolicitudProyectoPresupuestoService;
 import org.crue.hercules.sgi.framework.test.web.servlet.result.SgiMockMvcResultHandlers;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
@@ -32,6 +34,10 @@ public class SolicitudProyectoEntidadFinanciadoraAjenaControllerTest extends Bas
 
   @MockBean
   private SolicitudProyectoEntidadFinanciadoraAjenaService service;
+  @MockBean
+  private SolicitudProyectoPresupuestoService solicitudProyectoPresupuestoService;
+  @MockBean
+  private SolicitudProyectoEntidadService solicitudProyectoEntidadService;
 
   @MockBean
   private ProgramaService programaService;

@@ -106,6 +106,44 @@ public class ComentarioServiceImpl implements ComentarioService {
   }
 
   /**
+   * Guardar un {@link Comentario} de {@link TipoComentario} "ACTA" de una
+   * {@link Evaluacion}.
+   * 
+   * @param evaluacionId Id de la evaluación
+   * @param comentario   {@link Comentario} a guardar.
+   * @return lista de entidades {@link Comentario} persistida.
+   */
+  @Override
+  @Transactional
+  public Comentario createComentarioActa(Long evaluacionId, Comentario comentario) {
+    log.debug("createComentarioActa(Long evaluacionId, Comentario comentario) - start");
+
+    Assert.notNull(evaluacionId, "Evaluación id no puede ser null para crear un nuevo comentario.");
+
+    return evaluacionRepository.findById(evaluacionId).map(evaluacion -> {
+
+      validarTipoEvaluacionAndFormulario(evaluacion.getTipoEvaluacion().getId(),
+          evaluacion.getMemoria().getComite().getComite(),
+          comentario.getApartado().getBloque().getFormulario().getId());
+
+      Assert.isTrue(
+          evaluacion.getMemoria().getEstadoActual().getId().equals(4L)
+              || evaluacion.getMemoria().getEstadoActual().getId().equals(5L)
+              || evaluacion.getMemoria().getEstadoActual().getId().equals(13L)
+              || evaluacion.getMemoria().getEstadoActual().getId().equals(18L)
+              || evaluacion.getMemoria().getEstadoActual().getId().equals(19L)
+              || evaluacion.getMemoria().getRetrospectiva().getEstadoRetrospectiva().getId().equals(4L),
+          "La Evaluación no está en un estado adecuado para añadir comentarios.");
+
+      log.debug("createComentarioActa(Long evaluacionId, Comentario comentario) - end");
+
+      return createComentarioEvaluacion(evaluacionId, comentario, 3L);
+
+    }).orElseThrow(() -> new EvaluacionNotFoundException(evaluacionId));
+
+  }
+
+  /**
    * Obtiene una entidad {@link Comentario} por id.
    *
    * @param id el id de la entidad {@link Comentario}.
@@ -181,6 +219,30 @@ public class ComentarioServiceImpl implements ComentarioService {
       deleteComentarioEvaluacion(evaluacionId, comentarioId, 2L);
 
       log.debug("deleteComentarioEvaluador(Long evaluacionId, Long comentarioId) - end");
+      return evaluacion;
+    }).orElseThrow(() -> new EvaluacionNotFoundException(evaluacionId));
+
+  }
+
+  /**
+   * Elimina un {@link Comentario} de tipo "ACTA" de una {@link Evaluacion}.
+   *
+   * @param evaluacionId Id de {@link Evaluacion}
+   * @param comentarioId Id de {@link Comentario}
+   */
+  @Override
+  @Transactional
+  public void deleteComentarioActa(Long evaluacionId, Long comentarioId) throws ComentarioNotFoundException {
+    log.debug("deleteComentarioActa(Long evaluacionId, Long comentarioId) - start");
+
+    Assert.notNull(evaluacionId, "Evaluación id no puede ser null para eliminar un comentario.");
+    Assert.notNull(comentarioId, "Comentario id no puede ser null para eliminar un comentario.");
+
+    evaluacionRepository.findById(evaluacionId).map(evaluacion -> {
+
+      deleteComentarioEvaluacion(evaluacionId, comentarioId, 3L);
+
+      log.debug("deleteComentarioActa(Long evaluacionId, Long comentarioId) - end");
       return evaluacion;
     }).orElseThrow(() -> new EvaluacionNotFoundException(evaluacionId));
 
@@ -307,6 +369,27 @@ public class ComentarioServiceImpl implements ComentarioService {
 
   }
 
+  /**
+   * Obtiene todos los {@link Comentario} del tipo "ACTA" por el id de su
+   * evaluación.
+   *
+   * @param id       el id de la entidad {@link Evaluacion}.
+   * @param pageable la información de la paginación.
+   * @return la lista de entidades {@link Comentario} paginadas.
+   */
+  @Override
+  public Page<Comentario> findByEvaluacionIdActa(Long id, Pageable pageable) {
+    log.debug("findByEvaluacionIdActa(Long id, Pageable pageable) - start");
+    Assert.notNull(id, "El id de la evaluación no puede ser nulo para listar sus comentarios");
+
+    return evaluacionRepository.findById(id).map(evaluacion -> {
+      Page<Comentario> returnValue = comentarioRepository.findByEvaluacionIdAndTipoComentarioId(id, 3L, pageable);
+      log.debug("findByEvaluacionIdActa(Long id, Pageable pageable) - end");
+      return returnValue;
+    }).orElseThrow(() -> new EvaluacionNotFoundException(id));
+
+  }
+
   @Override
   public int countByEvaluacionId(Long id) {
     return comentarioRepository.countByEvaluacionId(id);
@@ -407,10 +490,10 @@ public class ComentarioServiceImpl implements ComentarioService {
       case 2: {
         // Tipo Evaluación Memoria
 
-        // El id formulario debe ser del tipo 1 - > M10 si el comité es CEISH
+        // El id formulario debe ser del tipo 1 - > M10 si el comité es CEI
         Assert.isTrue(
-            (idFormulario.equals(1L) && comite.equals("CEISH")) || (idFormulario.equals(2L) && comite.equals("CEEA"))
-                || (idFormulario.equals(3L) && comite.equals("CEIAB")),
+            (idFormulario.equals(1L) && comite.equals("CEI")) || (idFormulario.equals(2L) && comite.equals("CEEA"))
+                || (idFormulario.equals(3L) && comite.equals("CBE")),
             "El bloque seleccionado no es correcto para el tipo de evaluación.");
 
         break;

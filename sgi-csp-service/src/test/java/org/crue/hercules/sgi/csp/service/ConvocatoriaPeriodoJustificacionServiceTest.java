@@ -11,6 +11,7 @@ import java.util.stream.Collectors;
 import javax.validation.ConstraintViolationException;
 
 import org.assertj.core.api.Assertions;
+import org.crue.hercules.sgi.csp.enums.TipoJustificacion;
 import org.crue.hercules.sgi.csp.exceptions.ConvocatoriaNotFoundException;
 import org.crue.hercules.sgi.csp.exceptions.ConvocatoriaPeriodoJustificacionNotFoundException;
 import org.crue.hercules.sgi.csp.exceptions.PeriodoLongerThanConvocatoriaException;
@@ -60,16 +61,16 @@ public class ConvocatoriaPeriodoJustificacionServiceTest extends BaseServiceTest
 
     List<ConvocatoriaPeriodoJustificacion> peridosJustificiacionExistentes = new ArrayList<>();
     peridosJustificiacionExistentes.add(
-        generarMockConvocatoriaPeriodoJustificacion(2L, 5, 10, ConvocatoriaPeriodoJustificacion.Tipo.PERIODICO, 1L));
+        generarMockConvocatoriaPeriodoJustificacion(2L, 5, 10, TipoJustificacion.PERIODICO, 1L));
     peridosJustificiacionExistentes.add(
-        generarMockConvocatoriaPeriodoJustificacion(4L, 11, 15, ConvocatoriaPeriodoJustificacion.Tipo.PERIODICO, 1L));
+        generarMockConvocatoriaPeriodoJustificacion(4L, 11, 15, TipoJustificacion.PERIODICO, 1L));
     peridosJustificiacionExistentes
-        .add(generarMockConvocatoriaPeriodoJustificacion(5L, 20, 25, ConvocatoriaPeriodoJustificacion.Tipo.FINAL, 1L));
+        .add(generarMockConvocatoriaPeriodoJustificacion(5L, 20, 25, TipoJustificacion.FINAL, 1L));
 
     ConvocatoriaPeriodoJustificacion newConvocatoriaPeriodoJustificacion = generarMockConvocatoriaPeriodoJustificacion(
-        null, 1, 10, ConvocatoriaPeriodoJustificacion.Tipo.PERIODICO, 1L);
+        null, 1, 10, TipoJustificacion.PERIODICO, 1L);
     ConvocatoriaPeriodoJustificacion updatedConvocatoriaPeriodoJustificacion = generarMockConvocatoriaPeriodoJustificacion(
-        4L, 11, 19, ConvocatoriaPeriodoJustificacion.Tipo.FINAL, 1L);
+        4L, 11, 19, TipoJustificacion.FINAL, 1L);
 
     List<ConvocatoriaPeriodoJustificacion> peridosJustificiacionActualizar = new ArrayList<>();
     peridosJustificiacionActualizar.add(newConvocatoriaPeriodoJustificacion);
@@ -260,9 +261,9 @@ public class ConvocatoriaPeriodoJustificacionServiceTest extends BaseServiceTest
     // convocatoria
     Long convocatoriaId = 1L;
     ConvocatoriaPeriodoJustificacion convocatoriaPeriodoJustificacion1 = generarMockConvocatoriaPeriodoJustificacion(1L,
-        1, 10, ConvocatoriaPeriodoJustificacion.Tipo.PERIODICO, 1L);
+        1, 10, TipoJustificacion.PERIODICO, 1L);
     ConvocatoriaPeriodoJustificacion convocatoriaPeriodoJustificacion2 = generarMockConvocatoriaPeriodoJustificacion(2L,
-        8, 15, ConvocatoriaPeriodoJustificacion.Tipo.PERIODICO, 1L);
+        8, 15, TipoJustificacion.PERIODICO, 1L);
 
     BDDMockito.given(convocatoriaRepository.findById(ArgumentMatchers.anyLong()))
         .willReturn(Optional.of(generarMockConvocatoria(convocatoriaId)));
@@ -285,9 +286,9 @@ public class ConvocatoriaPeriodoJustificacionServiceTest extends BaseServiceTest
     // ConvocatoriaPeriodoJustificacion FINAL
     Long convocatoriaId = 1L;
     ConvocatoriaPeriodoJustificacion convocatoriaPeriodoJustificacion1 = generarMockConvocatoriaPeriodoJustificacion(1L,
-        1, 7, ConvocatoriaPeriodoJustificacion.Tipo.FINAL, 1L);
+        1, 7, TipoJustificacion.FINAL, 1L);
     ConvocatoriaPeriodoJustificacion convocatoriaPeriodoJustificacion2 = generarMockConvocatoriaPeriodoJustificacion(2L,
-        8, 15, ConvocatoriaPeriodoJustificacion.Tipo.PERIODICO, 1L);
+        8, 15, TipoJustificacion.PERIODICO, 1L);
 
     BDDMockito.given(convocatoriaRepository.findById(ArgumentMatchers.anyLong()))
         .willReturn(Optional.of(generarMockConvocatoria(convocatoriaId)));
@@ -371,7 +372,7 @@ public class ConvocatoriaPeriodoJustificacionServiceTest extends BaseServiceTest
     Assertions.assertThat(convocatoriaPeriodoJustificacion.getObservaciones()).as("getObservaciones()")
         .isEqualTo("observaciones-1");
     Assertions.assertThat(convocatoriaPeriodoJustificacion.getTipo()).as("getTipo()")
-        .isEqualTo(ConvocatoriaPeriodoJustificacion.Tipo.PERIODICO);
+        .isEqualTo(TipoJustificacion.PERIODICO);
   }
 
   @Test
@@ -393,7 +394,7 @@ public class ConvocatoriaPeriodoJustificacionServiceTest extends BaseServiceTest
    * @return el objeto ConvocatoriaPeriodoJustificacion
    */
   private ConvocatoriaPeriodoJustificacion generarMockConvocatoriaPeriodoJustificacion(Long id) {
-    return generarMockConvocatoriaPeriodoJustificacion(id, 1, 2, ConvocatoriaPeriodoJustificacion.Tipo.PERIODICO, id);
+    return generarMockConvocatoriaPeriodoJustificacion(id, 1, 2, TipoJustificacion.PERIODICO, id);
   }
 
   /**
@@ -407,7 +408,7 @@ public class ConvocatoriaPeriodoJustificacionServiceTest extends BaseServiceTest
    * @return el objeto ConvocatoriaPeriodoJustificacion
    */
   private ConvocatoriaPeriodoJustificacion generarMockConvocatoriaPeriodoJustificacion(Long id, Integer mesInicial,
-      Integer mesFinal, ConvocatoriaPeriodoJustificacion.Tipo tipo, Long convocatoriaId) {
+      Integer mesFinal, TipoJustificacion tipo, Long convocatoriaId) {
     ConvocatoriaPeriodoJustificacion convocatoriaPeriodoJustificacion = new ConvocatoriaPeriodoJustificacion();
     convocatoriaPeriodoJustificacion.setId(id);
     convocatoriaPeriodoJustificacion.setConvocatoriaId(convocatoriaId == null ? 1 : convocatoriaId);

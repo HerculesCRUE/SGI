@@ -23,7 +23,7 @@ const routes: SgiAuthRoutes = [
     data: {
       title: SEGUIMIENTO_EVALUADOR_KEY,
       titleParams: MSG_PARAMS.CARDINALIRY.PLURAL,
-      hasAnyAuthorityForAnyUO: ['ETI-EVC-V', 'ETI-EVC-VR', 'ETI-EVC-VR-INV']
+      hasAnyAuthorityForAnyUO: ['ETI-EVC-V', 'ETI-EVC-VR', 'ETI-EVC-INV-VR']
     }
   },
   {
@@ -37,7 +37,7 @@ const routes: SgiAuthRoutes = [
     data: {
       title: SEGUIMIENTO_EVALUADOR_KEY,
       titleParams: MSG_PARAMS.CARDINALIRY.SINGULAR,
-      hasAnyAuthorityForAnyUO: ['ETI-EVC-EVAL', 'ETI-EVC-EVALR', 'ETI-EVC-EVALR-INV']
+      hasAnyAuthorityForAnyUO: ['ETI-EVC-EVAL', 'ETI-EVC-EVALR', 'ETI-EVC-INV-EVALR']
     },
     children: [
       {

@@ -58,14 +58,14 @@ public class Configuracion extends BaseEntity {
   @NotNull
   private Integer mesesAvisoProyectoCEEA;
 
-  /** mesesAvisoProyectoCEISH. */
-  @Column(name = "meses_aviso_proyecto_ceish", nullable = false, unique = true)
+  /** mesesAvisoProyectoCEI. */
+  @Column(name = "meses_aviso_proyecto_cei", nullable = false, unique = true)
   @NotNull
-  private Integer mesesAvisoProyectoCEISH;
+  private Integer mesesAvisoProyectoCEI;
 
-  /** mesesAvisoProyectoCEIAB. */
-  @Column(name = "meses_aviso_proyecto_ceiab", nullable = false, unique = true)
+  /** mesesAvisoProyectoCBE. */
+  @Column(name = "meses_aviso_proyecto_cbe", nullable = false, unique = true)
   @NotNull
-  private Integer mesesAvisoProyectoCEIAB;
+  private Integer mesesAvisoProyectoCBE;
 
 }

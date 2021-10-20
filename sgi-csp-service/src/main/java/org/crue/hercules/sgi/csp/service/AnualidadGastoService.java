@@ -117,4 +117,9 @@ public class AnualidadGastoService {
     return returnValue;
   }
 
+  public List<AnualidadGasto> findAnualidadesGastosByProyectoId(Long proyectoId) {
+
+    return this.repository.findAnualidadGastoByProyectoPartidaProyectoId(proyectoId);
+  }
+
 }

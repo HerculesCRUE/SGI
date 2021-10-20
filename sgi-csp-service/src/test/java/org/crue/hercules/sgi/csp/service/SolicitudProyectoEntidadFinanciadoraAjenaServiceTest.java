@@ -13,6 +13,7 @@ import org.crue.hercules.sgi.csp.model.SolicitudProyectoEntidadFinanciadoraAjena
 import org.crue.hercules.sgi.csp.model.TipoFinanciacion;
 import org.crue.hercules.sgi.csp.repository.FuenteFinanciacionRepository;
 import org.crue.hercules.sgi.csp.repository.SolicitudProyectoEntidadFinanciadoraAjenaRepository;
+import org.crue.hercules.sgi.csp.repository.SolicitudProyectoEntidadRepository;
 import org.crue.hercules.sgi.csp.repository.SolicitudProyectoRepository;
 import org.crue.hercules.sgi.csp.repository.TipoFinanciacionRepository;
 import org.crue.hercules.sgi.csp.service.impl.SolicitudProyectoEntidadFinanciadoraAjenaServiceImpl;
@@ -48,12 +49,15 @@ public class SolicitudProyectoEntidadFinanciadoraAjenaServiceTest extends BaseSe
   @Mock
   private SolicitudProyectoRepository solicitudProyectoRepository;
 
+  @Mock
+  private SolicitudProyectoEntidadRepository solicitudProyectoEntidadRepository;
+
   private SolicitudProyectoEntidadFinanciadoraAjenaService service;
 
   @BeforeEach
   public void setUp() throws Exception {
     service = new SolicitudProyectoEntidadFinanciadoraAjenaServiceImpl(repository, fuenteFinanciacionRepository,
-        tipoFinanciacionRepository, solicitudService, solicitudProyectoRepository);
+        tipoFinanciacionRepository, solicitudService, solicitudProyectoRepository, solicitudProyectoEntidadRepository);
   }
 
   @Test

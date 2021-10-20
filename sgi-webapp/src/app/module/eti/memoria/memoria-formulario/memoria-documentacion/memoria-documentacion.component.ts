@@ -17,6 +17,7 @@ import { DialogService } from '@core/services/dialog.service';
 import { DocumentoService, triggerDownloadToUser } from '@core/services/sgdoc/documento.service';
 import { StatusWrapper } from '@core/utils/status-wrapper';
 import { TranslateService } from '@ngx-translate/core';
+import { SgiAuthService } from '@sgi/framework/auth';
 import { Observable, of, Subscription } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { MemoriaActionService } from '../../memoria.action.service';
@@ -105,7 +106,8 @@ export class MemoriaDocumentacionComponent extends FragmentComponent implements 
     private matDialog: MatDialog,
     private actionService: MemoriaActionService,
     private readonly documentoService: DocumentoService,
-    private readonly translate: TranslateService) {
+    private readonly translate: TranslateService,
+    private readonly authService: SgiAuthService) {
 
     super(actionService.FRAGMENT.DOCUMENTACION, actionService);
 
@@ -186,7 +188,9 @@ export class MemoriaDocumentacionComponent extends FragmentComponent implements 
     }
     const data: MemoriaDocumentacionMemoriaModalData = {
       memoriaId: this.fragment.getKey() as number,
-      tipoEvaluacion
+      tipoEvaluacion,
+      showTipoDocumentos: !this.authService.hasAuthority('ETI-MEM-EDOC') && !this.actionService.readonly,
+      comite: this.actionService.getComite()
     };
     const config = {
       panelClass: 'sgi-dialog-container',
@@ -222,6 +226,9 @@ export class MemoriaDocumentacionComponent extends FragmentComponent implements 
 
   isEditAllowed(tipoDocumentacion: TIPO_DOCUMENTACION): boolean {
     if (this.actionService.readonly) {
+      if (this.authService.hasAuthority('ETI-MEM-EDOC') && tipoDocumentacion === TIPO_DOCUMENTACION.INICIAL) {
+        return this.estadoMemoria.id >= ESTADO_MEMORIA.EN_EVALUACION;
+      }
       return false;
     }
     switch (tipoDocumentacion) {

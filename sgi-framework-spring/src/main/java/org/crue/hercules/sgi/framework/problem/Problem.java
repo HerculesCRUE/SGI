@@ -9,8 +9,11 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
+import org.springframework.http.HttpStatus;
+
 public class Problem implements Serializable {
   public static final URI UNKNOWN_PROBLEM_TYPE = URI.create("urn:problem-type:unknown");
+  public static final int INTERAL_SERVER_ERROR_STATUS = HttpStatus.INTERNAL_SERVER_ERROR.value();
 
   private final URI type;
   private final String title;
@@ -116,7 +119,7 @@ public class Problem implements Serializable {
   public static class ProblemBuilder {
     private URI type = UNKNOWN_PROBLEM_TYPE;
     private String title;
-    private int status = 0;
+    private int status = INTERAL_SERVER_ERROR_STATUS;
     private String detail;
     private URI instance = URI.create("urn:uuid:" + UUID.randomUUID());
     private Map<String, Object> extensions = new LinkedHashMap<>();

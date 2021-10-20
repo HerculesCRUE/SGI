@@ -9,7 +9,7 @@
   </parent>
   <groupId>org.crue.hercules.sgi</groupId>
   <artifactId>sgi-usr-service</artifactId>
-  <version>0.0.2</version>
+  <version>0.0.3</version>
   <name>sgi-usr-service</name>
   <description>Gestión de Usuarios SGI HERCULES</description>
 
@@ -134,7 +134,7 @@
 
   <properties>
     <java.version>1.8</java.version>
-    <sgi-framework-spring.version>0.0.3</sgi-framework-spring.version>
+    <sgi-framework-spring.version>0.0.4</sgi-framework-spring.version>
     <wiremock.version>2.27.1</wiremock.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>

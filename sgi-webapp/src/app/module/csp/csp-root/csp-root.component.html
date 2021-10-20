@@ -16,6 +16,9 @@
     [route]="[CSP_ROUTE_NAMES.EJECUCION_ECONOMICA]" icon="attach_money"
     title="{{'menu.csp.ejecucion-economica' | translate}}">
   </sgi-menu-item>
+  <sgi-menu-item *sgiHasAnyAuthorityForAnyUO="['CSP-EJEC-E']" [route]="[CSP_ROUTE_NAMES.NOTIFICACION_PRESUPUESTO_SGE]"
+    icon="attach_money" title="{{'menu.csp.notificacion-presupuesto-sge' | translate}}">
+  </sgi-menu-item>
   <sgi-menu-item *sgiHasAnyAuthorityForAnyUO="['AUTH']" icon="insert_invitation"
     title="{{'menu.csp.timesheet' | translate}}">
   </sgi-menu-item>

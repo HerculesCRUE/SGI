@@ -17,7 +17,7 @@ import { SnackBarService } from '@core/services/snack-bar.service';
 import { IsEntityValidator } from '@core/validators/is-entity-validador';
 import { TranslateService } from '@ngx-translate/core';
 import { NGXLogger } from 'ngx-logger';
-import { from, Observable, of } from 'rxjs';
+import { BehaviorSubject, from, Observable, of } from 'rxjs';
 import { map, mergeMap, startWith, switchMap, takeLast, tap } from 'rxjs/operators';
 
 const PROYECTO_ENTIDAD_CONVOCANTE_KEY = marker('csp.proyecto-entidad-convocante');
@@ -88,8 +88,7 @@ export class ProyectoEntidadConvocanteModalComponent extends
   msgParamProgramaEntity = {};
   title: string;
 
-  planes$: Observable<IPrograma[]>;
-  private programaFiltered = [] as IPrograma[];
+  planes$: BehaviorSubject<IPrograma[]> = new BehaviorSubject<IPrograma[]>([]);
 
   treeControl = new NestedTreeControl<NodePrograma>(node => node.childs);
   dataSource = new MatTreeNestedDataSource<NodePrograma>();
@@ -133,21 +132,7 @@ export class ProyectoEntidadConvocanteModalComponent extends
     super.ngOnInit();
     this.setupI18N();
     const subcription = this.programaService.findAllPlan().subscribe(
-      list => {
-        this.programaFiltered = list.items;
-        this.planes$ = this.formGroup.get('plan').valueChanges.pipe(
-          startWith(''),
-          map(value => this.filterPrograma(value)),
-          tap(() => {
-            // Reset selected node on first user change
-            if (this.formGroup.get('plan').value?.id !== this.getPlan(this.data.proyectoEntidadConvocante)?.id) {
-              this.formGroup.get('programa').setValue(undefined);
-              this.checkedNode = undefined;
-            }
-            this.loadTreePrograma();
-          })
-        );
-      }
+      list => this.planes$.next(list.items)
     );
     this.subscriptions.push(subcription);
   }
@@ -189,16 +174,6 @@ export class ProyectoEntidadConvocanteModalComponent extends
 
   private updateProgramas(programa: NodePrograma[]) {
     this.dataSource.data = programa;
-  }
-
-  private filterPrograma(value: string): IPrograma[] {
-    const filterValue = value.toString().toLowerCase();
-    return this.programaFiltered.filter(programa =>
-      programa.nombre.toLowerCase().includes(filterValue));
-  }
-
-  getNombrePlan(plan: IPrograma): string {
-    return plan?.nombre;
   }
 
   private loadTreePrograma() {
@@ -314,7 +289,14 @@ export class ProyectoEntidadConvocanteModalComponent extends
     if (this.data.readonly) {
       formGroup.disable();
     }
-
+    this.subscriptions.push(
+      formGroup.controls.plan.valueChanges.subscribe(value => {
+        if (value.id !== this.getPlan(this.data.proyectoEntidadConvocante)?.id) {
+          formGroup.controls.programa.setValue(undefined);
+          this.checkedNode = undefined;
+        }
+        this.loadTreePrograma();
+      }));
     return formGroup;
   }
 

@@ -1006,7 +1006,8 @@ public class ConvocatoriaReunionControllerTest extends BaseControllerTest {
   private ConvocatoriaReunion getMockData(Long id, Long comiteId, Long tipoId) {
 
     Formulario formulario = new Formulario(1L, "M10", "Descripcion");
-    Comite comite = new Comite(comiteId, "Comite" + comiteId, formulario, Boolean.TRUE);
+    Comite comite = new Comite(comiteId, "Comite" + comiteId, "nombreSecretario", "nombreInvestigacion",
+        "nombreDecreto", "articulo", formulario, Boolean.TRUE);
 
     String tipo_txt = (tipoId == 1L) ? "Ordinaria" : (tipoId == 2L) ? "Extraordinaria" : "Seguimiento";
     TipoConvocatoriaReunion tipoConvocatoriaReunion = new TipoConvocatoriaReunion(tipoId, tipo_txt, Boolean.TRUE);
@@ -1067,7 +1068,8 @@ public class ConvocatoriaReunionControllerTest extends BaseControllerTest {
     cargoComite.setActivo(Boolean.TRUE);
 
     Formulario formulario = new Formulario(1L, "M10", "Descripcion");
-    Comite comite = new Comite(1L, "Comite1", formulario, Boolean.TRUE);
+    Comite comite = new Comite(1L, "Comite1", "nombreSecretario", "nombreInvestigacion", "nombreDecreto", "articulo",
+        formulario, Boolean.TRUE);
 
     Evaluador evaluador = new Evaluador();
     evaluador.setId(id);
@@ -1123,7 +1125,8 @@ public class ConvocatoriaReunionControllerTest extends BaseControllerTest {
     peticionEvaluacion.setActivo(Boolean.TRUE);
 
     Formulario formulario = new Formulario(1L, "M10", "Descripcion");
-    Comite comite = new Comite(1L, "Comite1", formulario, Boolean.TRUE);
+    Comite comite = new Comite(1L, "Comite1", "nombreSecretario", "nombreInvestigacion", "nombreDecreto", "articulo",
+        formulario, Boolean.TRUE);
 
     TipoMemoria tipoMemoria = new TipoMemoria();
     tipoMemoria.setId(1L);

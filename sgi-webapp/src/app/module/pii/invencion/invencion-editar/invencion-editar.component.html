@@ -33,7 +33,8 @@
         [title]="'pii.invencion-contratos-asociados' | translate">
       </sgi-action-fragment-menu-item>
       <sgi-action-fragment-menu-item [route]="[INVENCION_ROUTE_NAMES.INGRESOS]"
-        [title]="'pii.invencion-ingresos' | translate">
+        [title]="'pii.invencion-ingresos' | translate"
+        [fragment]="actionService.getFragment(actionService.FRAGMENT.INGRESOS)">
       </sgi-action-fragment-menu-item>
       <sgi-action-fragment-menu-item [route]="[INVENCION_ROUTE_NAMES.REPARTOS]"
         [title]="'pii.invencion-repartos' | translate">

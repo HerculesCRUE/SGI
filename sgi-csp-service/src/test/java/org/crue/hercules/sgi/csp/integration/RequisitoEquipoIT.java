@@ -221,8 +221,9 @@ public class RequisitoEquipoIT {
     Long id = 1L;
 
     final ResponseEntity<List<RequisitoEquipoCategoriaProfesionalOutput>> response = restTemplate.exchange(
-        RequisitoEquipoController.MAPPING + RequisitoEquipoController.PATH_CATEGORIAS, HttpMethod.GET,
-        buildRequest(null), new ParameterizedTypeReference<List<RequisitoEquipoCategoriaProfesionalOutput>>() {
+        RequisitoEquipoController.MAPPING + RequisitoEquipoController.PATH_CATEGORIAS_PROFESIONALES_REQUISITOS_EQUIPO,
+        HttpMethod.GET, buildRequest(null),
+        new ParameterizedTypeReference<List<RequisitoEquipoCategoriaProfesionalOutput>>() {
         }, id);
 
     Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -255,8 +256,9 @@ public class RequisitoEquipoIT {
     }
 
     final ResponseEntity<List<RequisitoEquipoCategoriaProfesionalOutput>> response = restTemplate.exchange(
-        RequisitoEquipoController.MAPPING + RequisitoEquipoController.PATH_CATEGORIAS, HttpMethod.PATCH,
-        buildRequest(requestBody), new ParameterizedTypeReference<List<RequisitoEquipoCategoriaProfesionalOutput>>() {
+        RequisitoEquipoController.MAPPING + RequisitoEquipoController.PATH_CATEGORIAS_PROFESIONALES_REQUISITOS_EQUIPO,
+        HttpMethod.PATCH, buildRequest(requestBody),
+        new ParameterizedTypeReference<List<RequisitoEquipoCategoriaProfesionalOutput>>() {
         }, id);
 
     Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);

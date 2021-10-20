@@ -1,0 +1,20 @@
+@import "colors.scss";
+@import "~@angular/material/theming";
+
+:host {
+  .formulario {
+    @include mat-elevation(8, map-get($sgi-custom-colors, black), 0.8);
+    padding: 10px 20px 10px 20px;
+    .col {
+      padding-right: 15px;
+    }
+    .buttons-final {
+      padding: 10px 0px 10px 0px;
+      .filter-button {
+        button {
+          margin-right: 15px;
+        }
+      }
+    }
+  }
+}

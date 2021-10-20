@@ -41,7 +41,7 @@ public class TipoActividadIT extends BaseIT {
     headers.setContentType(MediaType.APPLICATION_JSON);
     headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
     headers.set("Authorization", String.format("bearer %s", tokenBuilder.buildToken("user", "ETI-TIPOACTIVIDAD-EDITAR",
-        "ETI-TIPOACTIVIDAD-VER", "ETI-PEV-CR", "ETI-MEM-CR", "ETI-PEV-C-INV", "ETI-PEV-ER-INV")));
+        "ETI-TIPOACTIVIDAD-VER", "ETI-PEV-CR", "ETI-MEM-CR", "ETI-PEV-INV-C", "ETI-PEV-INV-ER")));
 
     HttpEntity<TipoActividad> request = new HttpEntity<>(entity, headers);
     return request;

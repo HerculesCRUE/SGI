@@ -20,7 +20,6 @@ describe('EntidadFinanciadoraModalComponent', () => {
   const data: EntidadFinanciadoraDataModal = {
     title: 'title',
     entidad: {} as IEntidadFinanciadora,
-    selectedEmpresas: [],
     readonly: false
   };
 

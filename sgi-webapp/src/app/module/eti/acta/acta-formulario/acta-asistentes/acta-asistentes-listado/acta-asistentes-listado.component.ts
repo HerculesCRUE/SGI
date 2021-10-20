@@ -8,7 +8,7 @@ import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-pro
 import { ConvocatoriaReunionService } from '@core/services/eti/convocatoria-reunion.service';
 import { StatusWrapper } from '@core/utils/status-wrapper';
 import { BehaviorSubject } from 'rxjs';
-import { ActaActionService } from '../../../acta.action.service';
+import { ActaActionService, Rol } from '../../../acta.action.service';
 import { ActaAsistentesEditarModalComponent } from '../acta-asistentes-editar-modal/acta-asistentes-editar-modal.component';
 import { ActaAsistentesFragment } from './acta-asistentes-listado.fragment';
 
@@ -45,7 +45,7 @@ export class ActaAsistentesListadoComponent extends FragmentComponent implements
 
   ngOnInit() {
     super.ngOnInit();
-    this.readonly = this.actionService.readonly;
+    this.readonly = this.actionService.getRol() === Rol.EVALUADOR ? true : this.actionService.readonly;
   }
 
   /**

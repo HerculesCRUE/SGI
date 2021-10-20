@@ -1,9 +1,9 @@
 import { IFormulario } from './formulario';
 
 export enum COMITE {
-  CEISH = 1,
+  CEI = 1,
   CEEA = 2,
-  CEIAB = 3
+  CBE = 3
 }
 
 export interface IComite {

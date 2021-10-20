@@ -3,6 +3,7 @@ package org.crue.hercules.sgi.csp.repository.custom;
 import java.util.List;
 
 import org.crue.hercules.sgi.csp.dto.AnualidadResumen;
+import org.crue.hercules.sgi.csp.dto.ProyectoAnualidadNotificacionSge;
 import org.crue.hercules.sgi.csp.dto.ProyectoAnualidadResumen;
 import org.crue.hercules.sgi.csp.model.AnualidadGasto;
 import org.crue.hercules.sgi.csp.model.AnualidadIngreso;
@@ -38,5 +39,15 @@ public interface CustomProyectoAnualidadRepository {
    * @return Listado del resumen de {@link AnualidadResumen}.
    */
   List<AnualidadResumen> getPartidasResumen(Long proyectoAnualidadId);
+
+  /**
+   * Recupera los {@link ProyectoAnualidadNotificacionSge} que cumplan las
+   * condiciones de búsqueda y tengan a true el indicador presupuestar.
+   * 
+   * @param query           filtro de búsqueda.
+   * @param unidadesGestion unidades de gestión.
+   * @return Listado de {@link ProyectoAnualidadNotificacionSge}.
+   */
+  List<ProyectoAnualidadNotificacionSge> findAllNotificacionSge(String query, List<String> unidadesGestion);
 
 }

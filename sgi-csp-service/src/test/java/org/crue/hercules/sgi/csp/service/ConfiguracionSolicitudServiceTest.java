@@ -102,8 +102,6 @@ public class ConfiguracionSolicitudServiceTest extends BaseServiceTest {
         .isEqualTo(configuracionSolicitud.getFasePresentacionSolicitudes().getId());
     Assertions.assertThat(created.getImporteMaximoSolicitud()).as("getImporteMaximoSolicitud()")
         .isEqualTo(configuracionSolicitud.getImporteMaximoSolicitud());
-    Assertions.assertThat(created.getFormularioSolicitud()).as("getFormularioSolicitud()")
-        .isEqualTo(configuracionSolicitud.getFormularioSolicitud());
   }
 
   @Test
@@ -139,7 +137,6 @@ public class ConfiguracionSolicitudServiceTest extends BaseServiceTest {
     Assertions.assertThat(created.getTramitacionSGI()).as("getTramitacionSGI()").isNull();
     Assertions.assertThat(created.getFasePresentacionSolicitudes()).as("getFasePresentacionSolicitudes()").isNull();
     Assertions.assertThat(created.getImporteMaximoSolicitud()).as("getImporteMaximoSolicitud()").isNull();
-    Assertions.assertThat(created.getFormularioSolicitud()).as("getFormularioSolicitud()").isNull();
   }
 
   @Test
@@ -217,25 +214,6 @@ public class ConfiguracionSolicitudServiceTest extends BaseServiceTest {
         // then: throw exception as Tramitacion SGI can't be provided
         .isInstanceOf(IllegalArgumentException.class).hasMessage(
             "Habilitar presentacion SGI no puede ser null para crear ConfiguracionSolicitud cuando la convocatoria está registrada");
-  }
-
-  @Test
-  public void create_WithConvocatoriaRegistradaAndWithoutFormulario_ThrowsIllegalArgumentException() {
-    // given: a ConfiguracionSolicitud with convocatoria registrada and without
-    // Formulario
-    Long convocatoriaId = 1L;
-    Convocatoria convocatoria = generarMockConvocatoria(convocatoriaId, 1L, 1L, 1L, 1L, 1L, Boolean.TRUE);
-    ConfiguracionSolicitud configuracionSolicitud = generarMockConfiguracionSolicitud(null, convocatoriaId, 1L);
-    configuracionSolicitud.setFormularioSolicitud(null);
-
-    BDDMockito.given(convocatoriaRepository.findById(ArgumentMatchers.anyLong())).willReturn(Optional.of(convocatoria));
-
-    Assertions.assertThatThrownBy(
-        // when: create ConfiguracionSolicitud
-        () -> service.create(configuracionSolicitud))
-        // then: throw exception as Formulario can't be provided
-        .isInstanceOf(IllegalArgumentException.class).hasMessage(
-            "Tipo formulario no puede ser null para crear ConfiguracionSolicitud cuando la convocatoria está registrada");
   }
 
   @Test
@@ -334,8 +312,6 @@ public class ConfiguracionSolicitudServiceTest extends BaseServiceTest {
         .isEqualTo(updatedConfiguracionSolicitud.getFasePresentacionSolicitudes().getId());
     Assertions.assertThat(updated.getImporteMaximoSolicitud()).as("getImporteMaximoSolicitud()")
         .isEqualTo(updatedConfiguracionSolicitud.getImporteMaximoSolicitud());
-    Assertions.assertThat(updated.getFormularioSolicitud()).as("getFormularioSolicitud()")
-        .isEqualTo(originalConfiguracionSolicitud.getFormularioSolicitud());
   }
 
   @Test
@@ -370,7 +346,6 @@ public class ConfiguracionSolicitudServiceTest extends BaseServiceTest {
     Assertions.assertThat(updated.getFasePresentacionSolicitudes()).as("getFasePresentacionSolicitudes()").isNull();
     Assertions.assertThat(updated.getImporteMaximoSolicitud()).as("getImporteMaximoSolicitud()")
         .isEqualTo(updatedConfiguracionSolicitud.getImporteMaximoSolicitud());
-    Assertions.assertThat(updated.getFormularioSolicitud()).as("getFormularioSolicitud()").isNull();
   }
 
   @Test
@@ -423,53 +398,6 @@ public class ConfiguracionSolicitudServiceTest extends BaseServiceTest {
         // then: throw exception as Tramitacion SGI can't be provided
         .isInstanceOf(IllegalArgumentException.class).hasMessage(
             "Habilitar presentacion SGI no puede ser null para crear ConfiguracionSolicitud cuando la convocatoria está registrada");
-  }
-
-  @Test
-  public void update_WithConvocatoriaRegistradaAndWithoutFormulario_ThrowsIllegalArgumentException() {
-    // given: a ConfiguracionSolicitud with convocatoria registrada and without
-    // Formulario
-    Long convocatoriaId = 1L;
-    Convocatoria convocatoria = generarMockConvocatoria(convocatoriaId, 1L, 1L, 1L, 1L, 1L, Boolean.TRUE);
-    ConfiguracionSolicitud originalConfiguracionSolicitud = generarMockConfiguracionSolicitud(1L, convocatoriaId, 1L);
-    ConfiguracionSolicitud updatedConfiguracionSolicitud = generarMockConfiguracionSolicitud(1L, convocatoriaId, 1L);
-    updatedConfiguracionSolicitud.setFormularioSolicitud(null);
-
-    BDDMockito.given(repository.findByConvocatoriaId(ArgumentMatchers.anyLong()))
-        .willReturn(Optional.of(originalConfiguracionSolicitud));
-
-    BDDMockito.given(convocatoriaRepository.findById(ArgumentMatchers.anyLong())).willReturn(Optional.of(convocatoria));
-
-    Assertions.assertThatThrownBy(
-        // when: update ConfiguracionSolicitud
-        () -> service.update(updatedConfiguracionSolicitud, originalConfiguracionSolicitud.getConvocatoriaId()))
-        // then: throw exception as Formulario can't be provided
-        .isInstanceOf(IllegalArgumentException.class).hasMessage(
-            "Tipo formulario no puede ser null para crear ConfiguracionSolicitud cuando la convocatoria está registrada");
-  }
-
-  @Test
-  public void update_WithTramitacionSGITrueAndWithoutFasePresentacion_ThrowsIllegalArgumentException() {
-    // given: a ConfiguracionSolicitud with TramitacionSGI = true and without
-    // FasePresentacion
-    Long convocatoriaId = 1L;
-    Convocatoria convocatoria = generarMockConvocatoria(convocatoriaId, 1L, 1L, 1L, 1L, 1L, Boolean.TRUE);
-    ConfiguracionSolicitud originalConfiguracionSolicitud = generarMockConfiguracionSolicitud(1L, convocatoriaId, 1L);
-    ConfiguracionSolicitud updatedConfiguracionSolicitud = generarMockConfiguracionSolicitud(1L, convocatoriaId, 1L);
-    updatedConfiguracionSolicitud.setTramitacionSGI(Boolean.TRUE);
-    updatedConfiguracionSolicitud.setFasePresentacionSolicitudes(null);
-
-    BDDMockito.given(repository.findByConvocatoriaId(ArgumentMatchers.anyLong()))
-        .willReturn(Optional.of(originalConfiguracionSolicitud));
-
-    BDDMockito.given(convocatoriaRepository.findById(ArgumentMatchers.anyLong())).willReturn(Optional.of(convocatoria));
-
-    Assertions.assertThatThrownBy(
-        // when: update ConfiguracionSolicitud
-        () -> service.update(updatedConfiguracionSolicitud, originalConfiguracionSolicitud.getConvocatoriaId()))
-        // then: throw exception as FasePresentacion can't be provided
-        .isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("Plazo presentación solicitudes no puede ser null cuando se establece presentacion SGI");
   }
 
   @Test
@@ -613,8 +541,6 @@ public class ConfiguracionSolicitudServiceTest extends BaseServiceTest {
         .isEqualTo(configuracionSolicitudExistente.getFasePresentacionSolicitudes().getId());
     Assertions.assertThat(found.getImporteMaximoSolicitud()).as("getImporteMaximoSolicitud()")
         .isEqualTo(configuracionSolicitudExistente.getImporteMaximoSolicitud());
-    Assertions.assertThat(found.getFormularioSolicitud()).as("getFormularioSolicitud()")
-        .isEqualTo(configuracionSolicitudExistente.getFormularioSolicitud());
   }
 
   @Test
@@ -661,7 +587,6 @@ public class ConfiguracionSolicitudServiceTest extends BaseServiceTest {
         .tramitacionSGI(Boolean.TRUE)
         .fasePresentacionSolicitudes(convocatoriaFase)
         .importeMaximoSolicitud(BigDecimal.valueOf(12345))
-        .formularioSolicitud(FormularioSolicitud.ESTANDAR)
         .build();
     // @formatter:on
 

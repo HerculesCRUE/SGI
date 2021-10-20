@@ -6,12 +6,15 @@ import org.crue.hercules.sgi.csp.exceptions.SolicitudProyectoNotFoundException;
 import org.crue.hercules.sgi.csp.exceptions.TipoFinanciacionNotFoundException;
 import org.crue.hercules.sgi.csp.model.Solicitud;
 import org.crue.hercules.sgi.csp.model.SolicitudProyecto;
+import org.crue.hercules.sgi.csp.model.SolicitudProyectoEntidad;
 import org.crue.hercules.sgi.csp.model.SolicitudProyectoEntidadFinanciadoraAjena;
 import org.crue.hercules.sgi.csp.repository.FuenteFinanciacionRepository;
 import org.crue.hercules.sgi.csp.repository.SolicitudProyectoEntidadFinanciadoraAjenaRepository;
+import org.crue.hercules.sgi.csp.repository.SolicitudProyectoEntidadRepository;
 import org.crue.hercules.sgi.csp.repository.SolicitudProyectoRepository;
 import org.crue.hercules.sgi.csp.repository.TipoFinanciacionRepository;
 import org.crue.hercules.sgi.csp.repository.specification.SolicitudProyectoEntidadFinanciadoraAjenaSpecifications;
+import org.crue.hercules.sgi.csp.repository.specification.SolicitudProyectoEntidadSpecifications;
 import org.crue.hercules.sgi.csp.service.SolicitudProyectoEntidadFinanciadoraAjenaService;
 import org.crue.hercules.sgi.csp.service.SolicitudService;
 import org.crue.hercules.sgi.framework.rsql.SgiRSQLJPASupport;
@@ -39,20 +42,24 @@ public class SolicitudProyectoEntidadFinanciadoraAjenaServiceImpl
   private final TipoFinanciacionRepository tipoFinanciacionRepository;
   private final SolicitudService solicitudService;
   private final SolicitudProyectoRepository solicitudProyectoRepository;
+  private final SolicitudProyectoEntidadRepository solicitudProyectoEntidadRepository;
 
   public SolicitudProyectoEntidadFinanciadoraAjenaServiceImpl(
       SolicitudProyectoEntidadFinanciadoraAjenaRepository solicitudProyectoEntidadFinanciadoraAjenaRepository,
       FuenteFinanciacionRepository fuenteFinanciacionRepository, TipoFinanciacionRepository tipoFinanciacionRepository,
-      SolicitudService solicitudService, SolicitudProyectoRepository solicitudProyectoRepository) {
+      SolicitudService solicitudService, SolicitudProyectoRepository solicitudProyectoRepository,
+      SolicitudProyectoEntidadRepository solicitudProyectoEntidadRepository) {
     this.repository = solicitudProyectoEntidadFinanciadoraAjenaRepository;
     this.fuenteFinanciacionRepository = fuenteFinanciacionRepository;
     this.tipoFinanciacionRepository = tipoFinanciacionRepository;
     this.solicitudService = solicitudService;
     this.solicitudProyectoRepository = solicitudProyectoRepository;
+    this.solicitudProyectoEntidadRepository = solicitudProyectoEntidadRepository;
   }
 
   /**
-   * Guardar un nuevo {@link SolicitudProyectoEntidadFinanciadoraAjena}.
+   * Guardar un nuevo {@link SolicitudProyectoEntidadFinanciadoraAjena} y el
+   * {@link SolicitudProyectoEntidad} asociado.
    *
    * @param solicitudProyectoEntidadFinanciadoraAjena la entidad
    *                                                  {@link SolicitudProyectoEntidadFinanciadoraAjena}
@@ -75,6 +82,11 @@ public class SolicitudProyectoEntidadFinanciadoraAjenaServiceImpl
     validateData(solicitudProyectoEntidadFinanciadoraAjena, null);
 
     SolicitudProyectoEntidadFinanciadoraAjena returnValue = repository.save(solicitudProyectoEntidadFinanciadoraAjena);
+
+    SolicitudProyectoEntidad solicitudProyectoEntidad = new SolicitudProyectoEntidad();
+    solicitudProyectoEntidad.setSolicitudProyectoId(solicitudProyectoEntidadFinanciadoraAjena.getSolicitudProyectoId());
+    solicitudProyectoEntidad.setSolicitudProyectoEntidadFinanciadoraAjena(returnValue);
+    solicitudProyectoEntidadRepository.save(solicitudProyectoEntidad);
 
     log.debug("create(SolicitudProyectoEntidadFinanciadoraAjena solicitudProyectoEntidadFinanciadoraAjena) - end");
     return returnValue;
@@ -145,6 +157,12 @@ public class SolicitudProyectoEntidadFinanciadoraAjenaServiceImpl
     if (!repository.existsById(id)) {
       throw new SolicitudProyectoEntidadFinanciadoraAjenaNotFoundException(id);
     }
+
+    solicitudProyectoEntidadRepository
+        .findAll(SolicitudProyectoEntidadSpecifications.bySolicitudProyectoEntidadFinanciadoraAjenaId(id)).stream()
+        .forEach(solicitudProyectoEntidad -> {
+          solicitudProyectoEntidadRepository.deleteById(solicitudProyectoEntidad.getId());
+        });
 
     repository.deleteById(id);
     log.debug("delete(Long id) - end");

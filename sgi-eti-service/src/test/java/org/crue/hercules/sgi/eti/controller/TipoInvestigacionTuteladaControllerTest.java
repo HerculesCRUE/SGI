@@ -39,7 +39,7 @@ public class TipoInvestigacionTuteladaControllerTest extends BaseControllerTest 
   private static final String TIPO_INVESTIGACION_TUTELADA_CONTROLLER_BASE_PATH = "/tipoinvestigaciontuteladas";
 
   @Test
-  @WithMockUser(username = "user", authorities = { "ETI-PEV-C-INV", "ETI-PEV-ER-INV" })
+  @WithMockUser(username = "user", authorities = { "ETI-PEV-INV-C", "ETI-PEV-INV-ER" })
   public void findAll_Unlimited_ReturnsFullTipoInvestigacionTuteladaList() throws Exception {
     // given: One hundred TipoInvestigacionTutelada
     List<TipoInvestigacionTutelada> tipoInvestigacionTuteladas = new ArrayList<>();
@@ -64,7 +64,7 @@ public class TipoInvestigacionTuteladaControllerTest extends BaseControllerTest 
   }
 
   @Test
-  @WithMockUser(username = "user", authorities = { "ETI-PEV-C-INV", "ETI-PEV-ER-INV" })
+  @WithMockUser(username = "user", authorities = { "ETI-PEV-INV-C", "ETI-PEV-INV-ER" })
   public void findAll_WithPaging_ReturnsTipoInvestigacionTuteladaSubList() throws Exception {
     // given: One hundred TipoInvestigacionTutelada
     List<TipoInvestigacionTutelada> tipoInvestigacionTuteladas = new ArrayList<>();
@@ -121,7 +121,7 @@ public class TipoInvestigacionTuteladaControllerTest extends BaseControllerTest 
   }
 
   @Test
-  @WithMockUser(username = "user", authorities = { "ETI-PEV-C-INV", "ETI-PEV-ER-INV" })
+  @WithMockUser(username = "user", authorities = { "ETI-PEV-INV-C", "ETI-PEV-INV-ER" })
   public void findAll_WithSearchQuery_ReturnsFilteredTipoInvestigacionTuteladaList() throws Exception {
     // given: One hundred TipoInvestigacionTutelada and a search query
     List<TipoInvestigacionTutelada> tipoInvestigacionTuteladas = new ArrayList<>();
@@ -160,7 +160,7 @@ public class TipoInvestigacionTuteladaControllerTest extends BaseControllerTest 
   }
 
   @Test
-  @WithMockUser(username = "user", authorities = { "ETI-PEV-C-INV", "ETI-PEV-ER-INV" })
+  @WithMockUser(username = "user", authorities = { "ETI-PEV-INV-C", "ETI-PEV-INV-ER" })
   public void findAll_ReturnsNoContent() throws Exception {
     // given: TipoInvestigacionTutelada empty
     List<TipoInvestigacionTutelada> tipoInvestigacionTutelada = new ArrayList<>();

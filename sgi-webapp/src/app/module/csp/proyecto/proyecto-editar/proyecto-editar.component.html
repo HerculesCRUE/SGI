@@ -23,6 +23,11 @@
         [title]="'menu.csp.proyectos.datos-generales.historicos-estados' | translate"
         [fragment]="actionService.getFragment(actionService.FRAGMENT.HISTORICO_ESTADOS)">
       </sgi-action-fragment-menu-item>
+      <sgi-action-fragment-menu-item *sgiHasAnyAuthorityForAnyUO="['CSP-PRO-E']"
+        [route]="[PROYECTO_ROUTE_NAMES.RELACIONES]"
+        [title]="'menu.csp.proyectos.datos-generales.relaciones' | translate"
+        [fragment]="actionService.getFragment(actionService.FRAGMENT.RELACIONES)">
+      </sgi-action-fragment-menu-item>
     </sgi-action-fragment-menu-group>
     <sgi-action-fragment-menu-group *sgiHasAnyAuthorityForAnyUO="['CSP-PRO-V', 'CSP-PRO-E']"
       [title]="'menu.csp.proyectos.entidades' | translate">
@@ -118,6 +123,11 @@
         [route]="[PROYECTO_ROUTE_NAMES.AGRUPACIONES_GASTO]"
         [title]="'csp.proyecto-agrupacion-gasto' | translate:MSG_PARAMS.CARDINALIRY.PLURAL"
         [fragment]="actionService.getFragment(actionService.FRAGMENT.AGRUPACIONES_GASTO)">
+      </sgi-action-fragment-menu-item>
+      <sgi-action-fragment-menu-item *sgiHasAnyAuthorityForAnyUO="['CSP-PRO-V', 'CSP-PRO-E']"
+        [route]="[PROYECTO_ROUTE_NAMES.CONSULTA_PRESUPUESTO]"
+        [title]="'csp.proyectos.configuracion-economica.consulta-presupuesto' | translate"
+        [fragment]="actionService.getFragment(actionService.FRAGMENT.CONSULTA_PRESUPUESTO)">
       </sgi-action-fragment-menu-item>
       <sgi-action-fragment-menu-item *sgiHasAnyAuthorityForAnyUO="['CSP-PRO-V', 'CSP-PRO-E']"
         [route]="[PROYECTO_ROUTE_NAMES.CALENDARIO_JUSTIFICACION]"

@@ -84,7 +84,7 @@ export class SolicitudProyectoFichaGeneralComponent extends FormFragmentComponen
 
   ngOnInit(): void {
     super.ngOnInit();
-    if (this.actionService.formularioSolicitud !== FormularioSolicitud.ESTANDAR) {
+    if (this.actionService.formularioSolicitud !== FormularioSolicitud.PROYECTO) {
       this.router.navigate(['../', SOLICITUD_ROUTE_NAMES.DATOS_GENERALES], { relativeTo: this.route });
     }
     this.loadAreaTematicas();

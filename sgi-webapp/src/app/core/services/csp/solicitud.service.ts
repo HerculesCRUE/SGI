@@ -1,5 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { CONVOCATORIA_ENTIDAD_FINANCIADORA_CONVERTER } from '@core/converters/csp/convocatoria-entidad-financiadora.converter';
 import { ESTADO_SOLICITUD_CONVERTER } from '@core/converters/csp/estado-solicitud.converter';
 import { SOLICITUD_DOCUMENTO_CONVERTER } from '@core/converters/csp/solicitud-documento.converter';
 import { SOLICITUD_HITO_CONVERTER } from '@core/converters/csp/solicitud-hito.converter';
@@ -12,6 +13,7 @@ import { SOLICITUD_PROYECTO_PRESUPUESTO_CONVERTER } from '@core/converters/csp/s
 import { SOLICITUD_PROYECTO_SOCIO_CONVERTER } from '@core/converters/csp/solicitud-proyecto-socio.converter';
 import { SOLICITUD_PROYECTO_CONVERTER } from '@core/converters/csp/solicitud-proyecto.converter';
 import { SOLICITUD_CONVERTER } from '@core/converters/csp/solicitud.converter';
+import { IConvocatoriaEntidadFinanciadoraBackend } from '@core/models/csp/backend/convocatoria-entidad-financiadora-backend';
 import { IEstadoSolicitudBackend } from '@core/models/csp/backend/estado-solicitud-backend';
 import { ISolicitudBackend } from '@core/models/csp/backend/solicitud-backend';
 import { ISolicitudDocumentoBackend } from '@core/models/csp/backend/solicitud-documento-backend';
@@ -24,6 +26,7 @@ import { ISolicitudProyectoEntidadFinanciadoraAjenaBackend } from '@core/models/
 import { ISolicitudProyectoEquipoBackend } from '@core/models/csp/backend/solicitud-proyecto-equipo-backend';
 import { ISolicitudProyectoPresupuestoBackend } from '@core/models/csp/backend/solicitud-proyecto-presupuesto-backend';
 import { ISolicitudProyectoSocioBackend } from '@core/models/csp/backend/solicitud-proyecto-socio-backend';
+import { IConvocatoriaEntidadFinanciadora } from '@core/models/csp/convocatoria-entidad-financiadora';
 import { IEstadoSolicitud } from '@core/models/csp/estado-solicitud';
 import { ISolicitud } from '@core/models/csp/solicitud';
 import { ISolicitudDocumento } from '@core/models/csp/solicitud-documento';
@@ -32,6 +35,7 @@ import { ISolicitudModalidad } from '@core/models/csp/solicitud-modalidad';
 import { ISolicitudProyecto } from '@core/models/csp/solicitud-proyecto';
 import { ISolicitudProyectoAreaConocimiento } from '@core/models/csp/solicitud-proyecto-area-conocimiento';
 import { ISolicitudProyectoClasificacion } from '@core/models/csp/solicitud-proyecto-clasificacion';
+import { ISolicitudProyectoEntidad } from '@core/models/csp/solicitud-proyecto-entidad';
 import { ISolicitudProyectoEntidadFinanciadoraAjena } from '@core/models/csp/solicitud-proyecto-entidad-financiadora-ajena';
 import { ISolicitudProyectoEquipo } from '@core/models/csp/solicitud-proyecto-equipo';
 import { ISolicitudProyectoPresupuesto } from '@core/models/csp/solicitud-proyecto-presupuesto';
@@ -46,6 +50,8 @@ import { from, Observable, of } from 'rxjs';
 import { catchError, map, mergeMap, switchMap } from 'rxjs/operators';
 import { PersonaService } from '../sgp/persona.service';
 import { SolicitudModalidadService } from './solicitud-modalidad.service';
+import { ISolicitudProyectoEntidadResponse } from './solicitud-proyecto-entidad/solicitud-proyecto-entidad-response';
+import { SOLICITUD_PROYECTO_ENTIDAD_RESPONSE_CONVERTER } from './solicitud-proyecto-entidad/solicitud-proyecto-entidad-response.converter';
 import { ISolicitudProyectoResponsableEconomicoResponse } from './solicitud-proyecto-responsable-economico/solicitud-proyecto-responsable-economico-response';
 import { SOLICITUD_PROYECTO_RESPONSABLE_ECONOMICO_RESPONSE_CONVERTER } from './solicitud-proyecto-responsable-economico/solicitud-proyecto-responsable-economico-response.converter';
 
@@ -302,38 +308,6 @@ export class SolicitudService extends SgiMutableRestService<number, ISolicitudBa
   }
 
   /**
-   * Recupera los ISolicitudProyectoPresupuesto de la entidad de la convocatoria de la solicitud
-   *
-   * @param id Id de la solicitud
-   * @param options opciones de busqueda
-   * @returns observable con la lista de ISolicitudProyectoPresupuesto de la entidad de la solicitud
-   */
-  findAllSolicitudProyectoPresupuestoEntidadConvocatoria(id: number, entidadRef: string, options?: SgiRestFindOptions)
-    : Observable<SgiRestListResult<ISolicitudProyectoPresupuesto>> {
-    return this.find<ISolicitudProyectoPresupuestoBackend, ISolicitudProyectoPresupuesto>(
-      `${this.endpointUrl}/${id}/solicitudproyectopresupuestos/entidadconvocatoria/${entidadRef}`,
-      options,
-      SOLICITUD_PROYECTO_PRESUPUESTO_CONVERTER
-    );
-  }
-
-  /**
-   * Recupera los ISolicitudProyectoPresupuesto de la entidad ajena de la solicitud
-   *
-   * @param id Id de la solicitud
-   * @param options opciones de busqueda
-   * @returns observable con la lista de ISolicitudProyectoPresupuesto de la entidad de la solicitud
-   */
-  findAllSolicitudProyectoPresupuestoEntidadAjena(id: number, entidadRef: string, options?: SgiRestFindOptions)
-    : Observable<SgiRestListResult<ISolicitudProyectoPresupuesto>> {
-    return this.find<ISolicitudProyectoPresupuestoBackend, ISolicitudProyectoPresupuesto>(
-      `${this.endpointUrl}/${id}/solicitudproyectopresupuestos/entidadajena/${entidadRef}`,
-      options,
-      SOLICITUD_PROYECTO_PRESUPUESTO_CONVERTER
-    );
-  }
-
-  /**
    * Comprueba la existencia de presupuestos de una solicitud, para una entidad concreta con relación ajena o no.
    *
    * @param id ID de la Solicitud
@@ -473,6 +447,57 @@ export class SolicitudService extends SgiMutableRestService<number, ISolicitudBa
     const url = `${this.endpointUrl}/${id}/solicitudproyecto-global`;
     return this.http.head(url, { observe: 'response' }).pipe(
       map(x => x.status === 200)
+    );
+  }
+
+  /**
+   * Devuelve las entidades financiadoras de la convocatoria de una solicitud
+   *
+   * @param solicitudId Id de la solicitud
+   * @param options opciones de busqueda
+   */
+  findEntidadesFinanciadorasConvocatoriaSolicitud(
+    solicitudId: number,
+    options?: SgiRestFindOptions
+  ): Observable<SgiRestListResult<IConvocatoriaEntidadFinanciadora>> {
+    return this.find<IConvocatoriaEntidadFinanciadoraBackend, IConvocatoriaEntidadFinanciadora>(
+      `${this.endpointUrl}/${solicitudId}/solicitudproyectoentidadfinanciadora`,
+      options,
+      CONVOCATORIA_ENTIDAD_FINANCIADORA_CONVERTER
+    );
+  }
+
+  /**
+   * Devuelve las entidades para un desglose de presupuesto de tipo mixto
+   *
+   * @param solicitudId Id de la solicitud
+   * @param options opciones de busqueda
+   */
+  findAllSolicitudProyectoEntidadTipoPresupuestoMixto(
+    solicitudId: number,
+    options?: SgiRestFindOptions
+  ): Observable<SgiRestListResult<ISolicitudProyectoEntidad>> {
+    return this.find<ISolicitudProyectoEntidadResponse, ISolicitudProyectoEntidad>(
+      `${this.endpointUrl}/${solicitudId}/solicitudproyectoentidad/tipopresupuestomixto`,
+      options,
+      SOLICITUD_PROYECTO_ENTIDAD_RESPONSE_CONVERTER
+    );
+  }
+
+  /**
+   * Devuelve las entidades para un desglose de presupuesto de tipo por entidad
+   *
+   * @param solicitudId Id de la solicitud
+   * @param options opciones de busqueda
+   */
+  findAllSolicitudProyectoEntidadTipoPresupuestoPorEntidades(
+    solicitudId: number,
+    options?: SgiRestFindOptions
+  ): Observable<SgiRestListResult<ISolicitudProyectoEntidad>> {
+    return this.find<ISolicitudProyectoEntidadResponse, ISolicitudProyectoEntidad>(
+      `${this.endpointUrl}/${solicitudId}/solicitudproyectoentidad/tipopresupuestoporentidad`,
+      options,
+      SOLICITUD_PROYECTO_ENTIDAD_RESPONSE_CONVERTER
     );
   }
 

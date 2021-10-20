@@ -64,11 +64,11 @@ public class ProyectoAnualidad extends BaseEntity {
   private Instant fechaFin;
 
   /** Presupuestar */
-  @Column(name = "presupuestar", nullable = true)
+  @Column(name = "presupuestar", nullable = true, columnDefinition = "boolean default false")
   private Boolean presupuestar;
 
   /** Enviado a SGE */
-  @Column(name = "enviado_sge", nullable = true)
+  @Column(name = "enviado_sge", nullable = true, columnDefinition = "boolean default false")
   private Boolean enviadoSge;
 
   // Relation mappings for JPA metamodel generation only

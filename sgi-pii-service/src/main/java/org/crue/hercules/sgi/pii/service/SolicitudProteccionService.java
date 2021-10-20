@@ -1,5 +1,6 @@
 package org.crue.hercules.sgi.pii.service;
 
+import java.util.Optional;
 import java.util.Set;
 
 import javax.validation.ConstraintViolation;
@@ -9,13 +10,18 @@ import javax.validation.Validator;
 
 import org.crue.hercules.sgi.framework.problem.message.ProblemMessage;
 import org.crue.hercules.sgi.framework.spring.context.support.ApplicationContextSupport;
+import org.crue.hercules.sgi.pii.enums.TipoPropiedad;
 import org.crue.hercules.sgi.pii.exceptions.SolicitudProteccionNotFoundException;
 import org.crue.hercules.sgi.pii.model.SolicitudProteccion;
+import org.crue.hercules.sgi.pii.model.SolicitudProteccion.EstadoSolicitudProteccion;
 import org.crue.hercules.sgi.pii.model.SolicitudProteccion.OnActivar;
+import org.crue.hercules.sgi.pii.model.ViaProteccion;
 import org.crue.hercules.sgi.pii.repository.SolicitudProteccionRepository;
+import org.crue.hercules.sgi.pii.repository.ViaProteccionRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 import org.springframework.validation.annotation.Validated;
 
@@ -29,6 +35,7 @@ import lombok.extern.slf4j.Slf4j;
 public class SolicitudProteccionService {
 
   private final SolicitudProteccionRepository solicitudProteccionRepository;
+  private final ViaProteccionRepository viaProteccionRepository;
   private final Validator validator;
 
   /**
@@ -51,6 +58,8 @@ public class SolicitudProteccionService {
    * @param solicitudProteccion la entidad {@link SolicitudProteccion} a guardar.
    * @return la entidad {@link SolicitudProteccion} persistida.
    */
+  @Transactional
+  @Validated({ SolicitudProteccion.OnCrear.class })
   public SolicitudProteccion create(@Valid SolicitudProteccion solicitudProteccion) {
 
     Assert.isNull(solicitudProteccion.getId(),
@@ -61,6 +70,99 @@ public class SolicitudProteccionService {
     solicitudProteccion.setActivo(true);
 
     return this.solicitudProteccionRepository.save(solicitudProteccion);
+  }
+
+  /**
+   * Actualizar {@link SolicitudProteccion}.
+   *
+   * @param solicitudProteccion la entidad {@link SolicitudProteccion} a
+   *                            actualizar.
+   * @return la entidad {@link SolicitudProteccion} persistida.
+   */
+  @Transactional
+  @Validated({ SolicitudProteccion.OnActualizar.class })
+  public SolicitudProteccion update(@Valid SolicitudProteccion solicitudProteccion) {
+    log.debug("update(@Valid SolicitudProteccion solicitudProteccion) - start");
+
+    Assert.notNull(solicitudProteccion.getId(),
+        // Defer message resolution untill is needed
+        () -> ProblemMessage.builder().key(Assert.class, "notNull")
+            .parameter("field", ApplicationContextSupport.getMessage("id"))
+            .parameter("entity", ApplicationContextSupport.getMessage(SolicitudProteccion.class)).build());
+
+    Assert.notNull(solicitudProteccion.getViaProteccion().getId(),
+        // Defer message resolution untill is needed
+        () -> ProblemMessage.builder().key(Assert.class, "notNull")
+            .parameter("field", ApplicationContextSupport.getMessage(ViaProteccion.class))
+            .parameter("entity", ApplicationContextSupport.getMessage(SolicitudProteccion.class)).build());
+
+    Optional<ViaProteccion> viaProteccionOptional = this.viaProteccionRepository
+        .findById(solicitudProteccion.getViaProteccion().getId());
+    viaProteccionOptional.filter(elem -> elem.getTipoPropiedad().equals(TipoPropiedad.INDUSTRIAL))
+        .ifPresent(viaProteccion -> {
+          Assert.notNull(solicitudProteccion.getEstado(),
+              // Defer message resolution untill is needed
+              () -> ProblemMessage.builder().key(Assert.class, "notNull")
+                  .parameter("field", ApplicationContextSupport.getMessage("estado"))
+                  .parameter("entity", ApplicationContextSupport.getMessage(SolicitudProteccion.class)).build());
+          if (solicitudProteccion.getEstado().equals(EstadoSolicitudProteccion.CADUCADA)) {
+            Assert.notNull(solicitudProteccion.getFechaCaducidad(),
+                // Defer message resolution untill is needed
+                () -> ProblemMessage.builder().key(Assert.class, "notNull")
+                    .parameter("field", ApplicationContextSupport.getMessage("fechaCaducidad"))
+                    .parameter("entity", ApplicationContextSupport.getMessage(SolicitudProteccion.class)).build());
+            Assert.notNull(solicitudProteccion.getTipoCaducidad(),
+                // Defer message resolution untill is needed
+                () -> ProblemMessage.builder().key(Assert.class, "notNull")
+                    .parameter("field", ApplicationContextSupport.getMessage("tipoCaducidad"))
+                    .parameter("entity", ApplicationContextSupport.getMessage(SolicitudProteccion.class)).build());
+            if (viaProteccion.getPaisEspecifico()) {
+              Assert.notNull(solicitudProteccion.getPaisProteccionRef(),
+                  // Defer message resolution untill is needed
+                  () -> ProblemMessage.builder().key(Assert.class, "notNull")
+                      .parameter("field", ApplicationContextSupport.getMessage("pais"))
+                      .parameter("entity", ApplicationContextSupport.getMessage(SolicitudProteccion.class)).build());
+            }
+          }
+        });
+
+    return this.solicitudProteccionRepository.findById(solicitudProteccion.getId())
+        .map(solicitudProteccionExistente -> {
+          solicitudProteccionExistente.setTitulo(solicitudProteccion.getTitulo());
+          solicitudProteccionExistente.setFechaPrioridadSolicitud(solicitudProteccion.getFechaPrioridadSolicitud());
+          if (solicitudProteccionExistente.getViaProteccion().getId() != solicitudProteccion.getViaProteccion()
+              .getId()) {
+            Set<ConstraintViolation<SolicitudProteccion>> result = validator.validate(solicitudProteccion,
+                SolicitudProteccion.OnActualizarViaProteccion.class);
+            if (!result.isEmpty()) {
+              throw new ConstraintViolationException(result);
+            }
+            solicitudProteccionExistente.setViaProteccion(solicitudProteccion.getViaProteccion());
+          }
+          solicitudProteccionExistente.setNumeroSolicitud(solicitudProteccion.getNumeroSolicitud());
+          solicitudProteccionExistente.setComentarios(solicitudProteccion.getComentarios());
+          solicitudProteccionExistente.setNumeroRegistro(solicitudProteccion.getNumeroRegistro());
+          if (solicitudProteccion.getFechaFinPriorPresFasNacRec() != null) {
+            solicitudProteccionExistente
+                .setFechaFinPriorPresFasNacRec(solicitudProteccion.getFechaFinPriorPresFasNacRec());
+          }
+          solicitudProteccionExistente.setEstado(solicitudProteccion.getEstado());
+          if (solicitudProteccionExistente.getEstado().equals(EstadoSolicitudProteccion.CADUCADA)) {
+            solicitudProteccionExistente.setFechaCaducidad(solicitudProteccion.getFechaCaducidad());
+            solicitudProteccionExistente.setTipoCaducidad(solicitudProteccion.getTipoCaducidad());
+          }
+          solicitudProteccionExistente.setAgentePropiedadRef(solicitudProteccion.getAgentePropiedadRef());
+          solicitudProteccionExistente.setPaisProteccionRef(solicitudProteccion.getPaisProteccionRef());
+          solicitudProteccionExistente.setNumeroConcesion(solicitudProteccion.getNumeroConcesion());
+          solicitudProteccionExistente.setFechaConcesion(solicitudProteccion.getFechaConcesion());
+          solicitudProteccionExistente.setNumeroPublicacion(solicitudProteccion.getNumeroPublicacion());
+          solicitudProteccionExistente.setFechaPublicacion(solicitudProteccion.getFechaPublicacion());
+
+          // Actualizamos la entidad
+          SolicitudProteccion returnValue = solicitudProteccionRepository.save(solicitudProteccionExistente);
+          log.debug("update(@Valid SolicitudProteccion solicitudProteccion) - end");
+          return returnValue;
+        }).orElseThrow(() -> new SolicitudProteccionNotFoundException(solicitudProteccion.getId()));
   }
 
   /**

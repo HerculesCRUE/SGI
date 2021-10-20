@@ -6,7 +6,6 @@ import { BaseModalComponent } from '@core/component/base-modal.component';
 import { MSG_PARAMS } from '@core/i18n';
 import { IEntidadFinanciadora } from '@core/models/csp/entidad-financiadora';
 import { ITipoFinalidad } from '@core/models/csp/tipos-configuracion';
-import { IEmpresa } from '@core/models/sgemp/empresa';
 import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-properties';
 import { TipoFinanciacionService } from '@core/services/csp/tipo-financiacion.service';
 import { SnackBarService } from '@core/services/snack-bar.service';
@@ -18,7 +17,6 @@ import { map } from 'rxjs/operators';
 export interface EntidadFinanciadoraDataModal {
   title: string;
   entidad: IEntidadFinanciadora;
-  selectedEmpresas: IEmpresa[];
   readonly: boolean;
 }
 

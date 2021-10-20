@@ -6,7 +6,7 @@
       [fragment]="actionService.getFragment(actionService.FRAGMENT.DATOS_GENERALES)">
     </sgi-action-fragment-menu-item>
     <ng-container *sgiHasAnyAuthorityForAnyUO="['CSP-SOL-E', 'CSP-SOL-V']">
-      <sgi-action-fragment-menu-group *ngIf="actionService.formularioSolicitud === FormularioSolicitud.ESTANDAR"
+      <sgi-action-fragment-menu-group *ngIf="actionService.formularioSolicitud === FormularioSolicitud.PROYECTO"
         [title]="'menu.csp.solicitudes.datos-proyecto' | translate">
         <sgi-action-fragment-menu-item [route]="[SOLICITUD_ROUTE_NAMES.PROYECTO_DATOS]"
           [title]="'label.ficha-general' | translate"

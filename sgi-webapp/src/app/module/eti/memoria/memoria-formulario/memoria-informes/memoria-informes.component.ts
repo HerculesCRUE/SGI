@@ -76,22 +76,50 @@ export class MemoriaInformesComponent extends FragmentComponent implements OnIni
       };
   }
 
+  b64toBlob(b64Data, contentType = '', sliceSize = 512): Blob {
+    const byteCharacters = atob(atob(b64Data));
+    const byteArrays = [];
+
+    for (let offset = 0; offset < byteCharacters.length; offset += sliceSize) {
+      const slice = byteCharacters.slice(offset, offset + sliceSize);
+
+      const byteNumbers = new Array(slice.length);
+      for (let i = 0; i < slice.length; i++) {
+        byteNumbers[i] = slice.charCodeAt(i);
+      }
+
+      const byteArray = new Uint8Array(byteNumbers);
+      byteArrays.push(byteArray);
+    }
+
+    const blob = new Blob(byteArrays, { type: contentType });
+    return blob;
+  }
+
+  downloadFile(documento: IDocumento): void {
+    // TODO Arreglar la ñapa
+    const downloadLink = document.createElement('a');
+
+    const archivo = documento.archivo;
+    const file = this.b64toBlob(archivo, documento.tipo);
+
+    const href = window.URL.createObjectURL(file);
+    downloadLink.href = href;
+    downloadLink.download = documento.nombre;
+    document.body.appendChild(downloadLink);
+    downloadLink.click();
+    document.body.removeChild(downloadLink);
+    window.URL.revokeObjectURL(href);
+  }
+
 
   /**
    * Visualiza el informe seleccionado.
    * @param documentoRef Referencia del informe..
    */
   visualizarInforme(documentoRef: string) {
-    const documento: IDocumento = {} as IDocumento;
-    this.documentoService.getInfoFichero(documentoRef).pipe(
-      switchMap((documentoInfo: IDocumento) => {
-        documento.nombre = documentoInfo.nombre;
-        documento.tipo = documentoInfo.tipo;
-
-        return this.documentoService.downloadFichero(documentoRef);
-      })
-    ).subscribe(response => {
-      triggerDownloadToUser(response, documento.nombre);
+    this.documentoService.getInfoFichero(documentoRef).subscribe(documento => {
+      this.downloadFile(documento);
     });
   }
 

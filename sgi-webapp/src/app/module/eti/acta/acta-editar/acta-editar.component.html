@@ -12,6 +12,10 @@
       [title]="'eti.acta.asistente' | translate:MSG_PARAMS.CARDINALIRY.PLURAL"
       [fragment]="actionService.getFragment(actionService.FRAGMENT.ASISTENTES)">
     </sgi-action-fragment-menu-item>
+    <sgi-action-fragment-menu-item [route]="[ACTA_ROUTE_NAMES.COMENTARIOS]"
+      [title]="'eti.acta.comentario' | translate:MSG_PARAMS.CARDINALIRY.PLURAL"
+      [fragment]="actionService.getFragment(actionService.FRAGMENT.COMENTARIOS)">
+    </sgi-action-fragment-menu-item>
   </ng-container>
   <ng-container footer>
     <sgi-action-footer [texto]="textoCrear" [actionService]="actionService">

@@ -1,28 +1,35 @@
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { TipoPropiedad } from '@core/enums/tipo-propiedad';
-import { ISolicitudProteccion } from '@core/models/pii/solicitud-proteccion';
+import { IInvencion } from '@core/models/pii/invencion';
+import { Estado, ISolicitudProteccion } from '@core/models/pii/solicitud-proteccion';
+import { ITipoCaducidad } from '@core/models/pii/tipo-caducidad';
 import { IViaProteccion } from '@core/models/pii/via-proteccion';
 import { IPais } from '@core/models/sgo/pais';
 import { FormFragment } from '@core/services/action-service';
-import { SolicitudProteccionService } from '@core/services/pii/invencion/solicitud-proteccion/solicitud-proteccion.service';
+import { SolicitudProteccionService } from '@core/services/pii/solicitud-proteccion/solicitud-proteccion.service';
+import { TipoCaducidadService } from '@core/services/pii/tipo-caducidad/tipo-caducidad.service';
 import { ViaProteccionService } from '@core/services/pii/via-proteccion/via-proteccion.service';
+import { EmpresaService } from '@core/services/sgemp/empresa.service';
 import { PaisService } from '@core/services/sgo/pais/pais.service';
 import { DateValidator } from '@core/validators/date-validator';
 import { RSQLSgiRestFilter, SgiRestFilterOperator, SgiRestFindOptions } from '@sgi/framework/http';
 import { DateTime } from 'luxon';
 import { NGXLogger } from 'ngx-logger';
-import { BehaviorSubject, Observable, of, Subscription } from 'rxjs';
-import { catchError, map } from 'rxjs/operators';
+import { BehaviorSubject, forkJoin, Observable, of, Subscription } from 'rxjs';
+import { catchError, map, switchMap, tap } from 'rxjs/operators';
 
 export class SolicitudProteccionDatosGeneralesFragment extends FormFragment<ISolicitudProteccion> {
 
-  private readonly TITULO_MAX_LENGTH = 50;
+  private readonly TITULO_MAX_LENGTH = 250;
   private readonly COMENTARIOS_MAX_LENGTH = 250;
   private readonly NUMERO_REGISTRO_MAX_LENGTH = 24;
   private readonly NUMERO_SOLICITUD_MAX_LENGTH = 24;
+  private readonly NUMERO_PUBLICACION_MAX_LENGTH = 24;
+  private readonly NUMERO_CONCESION_MAX_LENGTH = 24;
 
   public viasProteccion$ = new BehaviorSubject<IViaProteccion[]>([]);
   public paises$ = new BehaviorSubject<IPais[]>([]);
+  public tiposCaducidad$ = new BehaviorSubject<ITipoCaducidad[]>([]);
 
   public solicitudProteccion: ISolicitudProteccion;
 
@@ -48,30 +55,46 @@ export class SolicitudProteccionDatosGeneralesFragment extends FormFragment<ISol
     private solicitudProteccionService: SolicitudProteccionService,
     public readonly: boolean,
     private viaProteccionService: ViaProteccionService,
-    private paisService: PaisService
+    private paisService: PaisService,
+    private empresaService: EmpresaService,
+    private tipoCaducidadService: TipoCaducidadService
   ) {
     super(key);
     this.solicitudProteccion = {
       invencion:
         { id: invencionId }
     } as ISolicitudProteccion;
-
-    this.loadViasProteccion();
-    this.loadPaises();
+    if (!key) {
+      this.loadViasProteccion$().subscribe(viasProteccion => {
+        this.viasProteccion$.next(viasProteccion);
+      });
+      this.loadPaises$().subscribe(paises => {
+        this.paises$.next(paises);
+      });
+    }
   }
 
   protected buildFormGroup(): FormGroup {
 
     const form: FormGroup = new FormGroup({
-      titulo: new FormControl(this.defaultTitle, [Validators.maxLength(this.TITULO_MAX_LENGTH), Validators.required]),
+      titulo: new FormControl(
+        !this.getKey() ? this.defaultTitle : null, [Validators.maxLength(this.TITULO_MAX_LENGTH), Validators.required]
+      ),
       viaProteccion: new FormControl('', Validators.required),
       pais: new FormControl(null, [Validators.required]),
       fechaPrioridad: new FormControl('', [Validators.required]),
       fechaFinPrioridad: new FormControl(null, [Validators.required]),
       numeroSolicitud: new FormControl('', [Validators.required, Validators.maxLength(this.NUMERO_SOLICITUD_MAX_LENGTH)]),
-      agentePropiedad: new FormControl('', []),
+      numeroPublicacion: new FormControl('', [Validators.maxLength(this.NUMERO_PUBLICACION_MAX_LENGTH)]),
+      fechaPublicacion: new FormControl(null, []),
+      numeroConcesion: new FormControl('', [Validators.maxLength(this.NUMERO_CONCESION_MAX_LENGTH)]),
+      fechaConcesion: new FormControl(null, []),
+      agentePropiedad: new FormControl(null, []),
       comentarios: new FormControl('', [Validators.maxLength(this.COMENTARIOS_MAX_LENGTH)]),
-      numeroRegistro: new FormControl('', [Validators.maxLength(this.NUMERO_REGISTRO_MAX_LENGTH)])
+      numeroRegistro: new FormControl('', [Validators.maxLength(this.NUMERO_REGISTRO_MAX_LENGTH)]),
+      fechaCaducidad: new FormControl(null, []),
+      tipoCaducidad: new FormControl(null, []),
+      estado: new FormControl(null, []),
     }, {
       validators: [
         DateValidator.isAfter('fechaPrioridad', 'fechaFinPrioridad')
@@ -81,13 +104,17 @@ export class SolicitudProteccionDatosGeneralesFragment extends FormFragment<ISol
     if (this.readonly) {
       form.disable();
     } else {
-
+      if (this.getKey()) {
+        form.controls.estado.setValidators([Validators.required]);
+      }
       this.subscriptions.push(
         this.handleViaProteccionOnChangeValueEventSubscription(form)
       );
-
       this.subscriptions.push(
         this.handleFechaPrioridadOnChangeValueEventSubscription(form)
+      );
+      this.subscriptions.push(
+        this.handleEstadoOnChangeValueEventSubscription(form)
       );
     }
     return form;
@@ -98,42 +125,92 @@ export class SolicitudProteccionDatosGeneralesFragment extends FormFragment<ISol
     this.solicitudProteccion = solicitudProteccion;
 
     return {
-      titulo: this.defaultTitle,
+      titulo: this.solicitudProteccion.titulo,
       viaProteccion: solicitudProteccion.viaProteccion,
-      pais: solicitudProteccion.paisProteccion
+      pais: solicitudProteccion.paisProteccion,
+      agentePropiedad: solicitudProteccion.agentePropiedad.id ? solicitudProteccion.agentePropiedad : null,
+      comentarios: solicitudProteccion.comentarios,
+      fechaFinPriorPresFasNacRec: solicitudProteccion.fechaFinPriorPresFasNacRec,
+      fechaPrioridad: solicitudProteccion.fechaPrioridadSolicitud,
+      numeroSolicitud: solicitudProteccion.numeroSolicitud,
+      numeroPublicacion: solicitudProteccion.numeroPublicacion,
+      fechaPublicacion: solicitudProteccion.fechaPublicacion,
+      numeroConcesion: solicitudProteccion.numeroConcesion,
+      fechaConcesion: solicitudProteccion.fechaConcesion,
+      paisProteccion: solicitudProteccion.paisProteccion,
+      numeroRegistro: solicitudProteccion.numeroRegistro,
+      fechaCaducidad: solicitudProteccion.fechaCaducidad,
+      tipoCaducidad: solicitudProteccion.tipoCaducidad,
+      invencion: { id: this.invencionId },
+      estado: solicitudProteccion.estado,
     };
   }
 
   protected initializer(key: number): Observable<ISolicitudProteccion> {
 
-    return this.solicitudProteccionService.findById(key).pipe(
-      map(response => {
-        this.solicitudProteccion = response;
-        return response;
-      }),
-      catchError((err) => {
-        this.logger.error(err);
-        return of(void 0);
-      })
-    );
+    return forkJoin({
+      solicitudProteccion: this.solicitudProteccionService.findById(key),
+      viasProteccion: this.loadViasProteccion$(),
+      paises: this.loadPaises$(),
+      tiposCaducidad: this.loadTiposCaducidad$()
+    })
+      .pipe(
+        tap(({ viasProteccion }) => {
+          this.viasProteccion$.next(viasProteccion);
+        }),
+        tap(({ paises }) => {
+          this.paises$.next(paises);
+        }),
+        tap(({ tiposCaducidad }) => {
+          this.tiposCaducidad$.next(tiposCaducidad);
+        }),
+        map(({ solicitudProteccion }) => {
+          this.solicitudProteccion = solicitudProteccion;
+          return this.solicitudProteccion;
+        }),
+        switchMap((solicitudProteccion) => {
+          if (solicitudProteccion.agentePropiedad?.id) {
+            return this.empresaService.findById(solicitudProteccion.agentePropiedad?.id).pipe(
+              map(result => {
+                solicitudProteccion.agentePropiedad = result;
+                return solicitudProteccion;
+              },
+                catchError(e => {
+                  return of(solicitudProteccion);
+                })
+              ));
+          }
+          return of(solicitudProteccion);
+        }),
+        catchError((err) => {
+          this.logger.error(err);
+          return of(void 0);
+        })
+      );
   }
 
   getValue(): ISolicitudProteccion {
 
     const formCtrls = this.getFormGroup().controls;
 
-    return {
-      agentePropiedad: formCtrls.agentePropiedad.value,
-      comentarios: formCtrls.comentarios.value,
-      fechaFinPriorPresFasNacRec: formCtrls.fechaFinPrioridad.value,
-      fechaPrioridadSolicitud: formCtrls.fechaPrioridad.value,
-      numeroSolicitud: formCtrls.numeroSolicitud.value,
-      titulo: formCtrls.titulo.value,
-      viaProteccion: formCtrls.viaProteccion.value,
-      paisProteccion: formCtrls.pais.value,
-      numeroRegistro: formCtrls.numeroRegistro.value,
-      invencion: { id: this.invencionId },
-    } as ISolicitudProteccion;
+    this.solicitudProteccion.agentePropiedad = formCtrls.agentePropiedad.value;
+    this.solicitudProteccion.comentarios = formCtrls.comentarios.value;
+    this.solicitudProteccion.fechaFinPriorPresFasNacRec = formCtrls.fechaFinPrioridad.value;
+    this.solicitudProteccion.fechaPrioridadSolicitud = formCtrls.fechaPrioridad.value;
+    this.solicitudProteccion.numeroSolicitud = formCtrls.numeroSolicitud.value;
+    this.solicitudProteccion.numeroPublicacion = formCtrls.numeroPublicacion.value;
+    this.solicitudProteccion.fechaPublicacion = formCtrls.fechaPublicacion.value;
+    this.solicitudProteccion.numeroConcesion = formCtrls.numeroConcesion.value;
+    this.solicitudProteccion.fechaConcesion = formCtrls.fechaConcesion.value;
+    this.solicitudProteccion.titulo = formCtrls.titulo.value;
+    this.solicitudProteccion.viaProteccion = formCtrls.viaProteccion.value;
+    this.solicitudProteccion.paisProteccion = formCtrls.pais.value;
+    this.solicitudProteccion.numeroRegistro = formCtrls.numeroRegistro.value;
+    this.solicitudProteccion.invencion = { id: this.invencionId } as IInvencion;
+    this.solicitudProteccion.fechaCaducidad = formCtrls.fechaCaducidad.value;
+    this.solicitudProteccion.tipoCaducidad = formCtrls.tipoCaducidad.value;
+    this.solicitudProteccion.estado = formCtrls.estado.value;
+    return this.solicitudProteccion;
   }
 
   saveOrUpdate(): Observable<number> {
@@ -152,30 +229,40 @@ export class SolicitudProteccionDatosGeneralesFragment extends FormFragment<ISol
     return this.solicitudProteccion.titulo || this.invencionTitulo;
   }
 
-  private loadViasProteccion(): void {
+  private loadViasProteccion$(): Observable<IViaProteccion[]> {
 
     const options: SgiRestFindOptions = {
       filter: new RSQLSgiRestFilter('tipoPropiedad', SgiRestFilterOperator.EQUALS, this.tipoPropiedad)
         .and('activo', SgiRestFilterOperator.EQUALS, 'true')
     };
 
-    this.viaProteccionService.findTodos(options).pipe(
+    return this.viaProteccionService.findTodos(options).pipe(
       map(response => response.items),
       catchError(error => {
         this.logger.error(error);
-        return of(void 0);
-      })
-    ).subscribe((vias: IViaProteccion[]) => this.viasProteccion$.next(vias));
+        return of([]);
+      }),
+    );
   }
 
-  private loadPaises(): void {
-    this.paisService.findAll().pipe(
+  private loadPaises$(): Observable<IPais[]> {
+    return this.paisService.findAll().pipe(
       map(response => response.items),
       catchError(error => {
         this.logger.error(error);
-        return of(void 0);
+        return of([]);
       })
-    ).subscribe(paises => this.paises$.next(paises));
+    );
+  }
+
+  private loadTiposCaducidad$(): Observable<ITipoCaducidad[]> {
+    return this.tipoCaducidadService.findAll().pipe(
+      map(response => response.items),
+      catchError(error => {
+        this.logger.error(error);
+        return of([]);
+      })
+    );
   }
 
   private enableOrDisablePaisSelector(via: IViaProteccion, paisCtrl: FormControl): void {
@@ -221,6 +308,23 @@ export class SolicitudProteccionDatosGeneralesFragment extends FormFragment<ISol
           }
         }
         form.controls.fechaFinPrioridad.updateValueAndValidity();
+      });
+  }
+
+  private handleEstadoOnChangeValueEventSubscription(form: FormGroup): Subscription {
+
+    return form.controls.estado.valueChanges
+      .subscribe((estado: Estado) => {
+        if (estado === Estado.CADUCADA) {
+          form.controls.fechaCaducidad.setValidators([Validators.required]);
+          form.controls.tipoCaducidad.setValidators([Validators.required]);
+        } else {
+          form.controls.fechaCaducidad.setValidators([]);
+          form.controls.tipoCaducidad.setValidators([]);
+          form.controls.fechaCaducidad.setValue(null);
+        }
+        form.controls.fechaCaducidad.updateValueAndValidity();
+        form.controls.tipoCaducidad.updateValueAndValidity();
       });
   }
 

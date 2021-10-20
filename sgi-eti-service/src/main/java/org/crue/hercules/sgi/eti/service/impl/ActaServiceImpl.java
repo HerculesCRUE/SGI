@@ -21,6 +21,7 @@ import org.crue.hercules.sgi.eti.service.ActaService;
 import org.crue.hercules.sgi.eti.service.MemoriaService;
 import org.crue.hercules.sgi.eti.service.RetrospectivaService;
 import org.crue.hercules.sgi.eti.util.Constantes;
+import org.crue.hercules.sgi.framework.security.core.context.SgiSecurityContextHolder;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -110,14 +111,16 @@ public class ActaServiceImpl implements ActaService {
   /**
    * Devuelve una lista paginada y filtrada {@link ActaWithNumEvaluaciones}.
    *
-   * @param paging la información de paginación.
-   * @param query  información del filtro.
+   * @param paging     la información de paginación.
+   * @param query      información del filtro.
+   * @param personaRef referencia de la persona.
    * @return el listado de {@link ActaWithNumEvaluaciones} paginadas y filtradas.
    */
-  public Page<ActaWithNumEvaluaciones> findAllActaWithNumEvaluaciones(String query, Pageable paging) {
+  public Page<ActaWithNumEvaluaciones> findAllActaWithNumEvaluaciones(String query, Pageable paging,
+      String personaRef) {
     log.debug("findAllActaWithNumEvaluaciones(String query, Pageable paging) - start");
-
-    Page<ActaWithNumEvaluaciones> returnValue = actaRepository.findAllActaWithNumEvaluaciones(query, paging);
+    Page<ActaWithNumEvaluaciones> returnValue = actaRepository.findAllActaWithNumEvaluaciones(query, paging,
+        SgiSecurityContextHolder.hasAuthority("ETI-ACT-V") ? null : personaRef);
     log.debug("findAllActaWithNumEvaluaciones(String query, Pageable paging) - end");
     return returnValue;
   }

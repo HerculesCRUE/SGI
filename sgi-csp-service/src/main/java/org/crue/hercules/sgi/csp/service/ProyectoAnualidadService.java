@@ -1,6 +1,5 @@
 package org.crue.hercules.sgi.csp.service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -9,6 +8,7 @@ import javax.validation.ConstraintViolationException;
 import javax.validation.Validator;
 
 import org.crue.hercules.sgi.csp.dto.AnualidadResumen;
+import org.crue.hercules.sgi.csp.dto.ProyectoAnualidadNotificacionSge;
 import org.crue.hercules.sgi.csp.dto.ProyectoAnualidadResumen;
 import org.crue.hercules.sgi.csp.exceptions.ProyectoAnualidadAnioUniqueException;
 import org.crue.hercules.sgi.csp.exceptions.ProyectoAnualidadNotFoundException;
@@ -24,9 +24,9 @@ import org.crue.hercules.sgi.csp.repository.ProyectoAnualidadRepository;
 import org.crue.hercules.sgi.csp.repository.ProyectoRepository;
 import org.crue.hercules.sgi.framework.problem.message.ProblemMessage;
 import org.crue.hercules.sgi.framework.rsql.SgiRSQLJPASupport;
+import org.crue.hercules.sgi.framework.security.core.context.SgiSecurityContextHolder;
 import org.crue.hercules.sgi.framework.spring.context.support.ApplicationContextSupport;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
@@ -50,17 +50,16 @@ public class ProyectoAnualidadService {
   private final ProyectoRepository proyectoRepository;
   private final AnualidadGastoRepository anualidadGastoRepository;
   private final AnualidadIngresoRepository anualidadIngresoRepository;
-  private final ProyectoAnualidadRepository proyectoAnualidadRepository;
 
   public ProyectoAnualidadService(Validator validator, ProyectoAnualidadRepository proyectoAnualidadepository,
       ProyectoRepository proyectoRepository, AnualidadGastoRepository anualidadGastoRepository,
-      AnualidadIngresoRepository anualidadIngresoRepository, ProyectoAnualidadRepository proyectoAnualidadRepository) {
+      AnualidadIngresoRepository anualidadIngresoRepository) {
+
     this.validator = validator;
     this.repository = proyectoAnualidadepository;
     this.proyectoRepository = proyectoRepository;
     this.anualidadGastoRepository = anualidadGastoRepository;
     this.anualidadIngresoRepository = anualidadIngresoRepository;
-    this.proyectoAnualidadRepository = proyectoAnualidadRepository;
   }
 
   /**
@@ -176,6 +175,13 @@ public class ProyectoAnualidadService {
     return anulidadResumen;
   }
 
+  /**
+   * Recupera todos los {@link ProyectoAnualidad} .
+   * 
+   * @param query    filtro de búsqueda.
+   * @param pageable datos paginación.
+   * @return Listado paginado de {@link ProyectoAnualidad}.
+   */
   public Page<ProyectoAnualidad> findAll(String query, Pageable pageable) {
     log.debug("findAll(String query, Pageable pageable) - start");
     // TODO: Pendiente evaluar si es necesario retringir por unidad de gestión
@@ -184,6 +190,48 @@ public class ProyectoAnualidadService {
     Page<ProyectoAnualidad> returnValue = repository.findAll(specs, pageable);
     log.debug("findAll(String query, Pageable pageable) - end");
     return returnValue;
+  }
+
+  public List<ProyectoAnualidad> findByProyectoId(Long proyectoId) {
+    return this.repository.findByProyectoId(proyectoId);
+  }
+
+  /**
+   * Recupera los {@link ProyectoAnualidadNotificacionSge} que cumplan las
+   * condiciones de búsqueda y tengan a true el indicador presupuestar.
+   * 
+   * @param query filtro de búsqueda.
+   * @return Listado de {@link ProyectoAnualidadNotificacionSge}.
+   */
+  public List<ProyectoAnualidadNotificacionSge> findAllNotificacionesSge(String query) {
+    log.debug("findAllNotificacionesSge(String query) - start");
+
+    List<String> unidadesGestion = SgiSecurityContextHolder.getUOsForAnyAuthority(new String[] { "CSP-EJEC-E" });
+
+    List<ProyectoAnualidadNotificacionSge> returnValue = repository.findAllNotificacionSge(query, unidadesGestion);
+
+    log.debug("findAllNotificacionesSge(String query) - end");
+    return returnValue;
+  }
+
+  /**
+   * Actualiza el flag notificadoSge del {@link ProyectoAnualidad} con id
+   * indicado.
+   *
+   * @param id Identificador de {@link ProyectoAnualidad}.
+   * @return {@link ProyectoAnualidad} actualizado.
+   */
+  @Transactional
+  public ProyectoAnualidad notificarSge(final Long id) {
+    log.debug("notificarSge(Long id) - start");
+
+    return repository.findById(id).map((data) -> {
+      data.setEnviadoSge(true);
+      ProyectoAnualidad returnValue = repository.save(data);
+
+      log.debug("notificarSge(Long id) - end");
+      return returnValue;
+    }).orElseThrow(() -> new ProyectoAnualidadNotFoundException(id));
   }
 
 }

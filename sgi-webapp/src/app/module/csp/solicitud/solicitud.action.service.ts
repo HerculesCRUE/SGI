@@ -1,19 +1,15 @@
 import { Injectable } from '@angular/core';
-import { ErrorStateMatcher } from '@angular/material/core';
 import { ActivatedRoute } from '@angular/router';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { FormularioSolicitud } from '@core/enums/formulario-solicitud';
+import { VALIDACION_REQUISITOS_EQUIPO_IP_MAP } from '@core/enums/validaciones-requisitos-equipo-ip';
 import { MSG_PARAMS } from '@core/i18n';
 import { IConvocatoria } from '@core/models/csp/convocatoria';
-import { IConvocatoriaRequisitoEquipo } from '@core/models/csp/convocatoria-requisito-equipo';
-import { IConvocatoriaRequisitoIP } from '@core/models/csp/convocatoria-requisito-ip';
 import { Estado, IEstadoSolicitud } from '@core/models/csp/estado-solicitud';
-import { IRequisitoEquipoCategoriaProfesional } from '@core/models/csp/requisito-equipo-categoria-profesional';
 import { ISolicitud } from '@core/models/csp/solicitud';
 import { ISolicitudProyecto, TipoPresupuesto } from '@core/models/csp/solicitud-proyecto';
 import { ISolicitudProyectoSocio } from '@core/models/csp/solicitud-proyecto-socio';
 import { IPersona } from '@core/models/sgp/persona';
-import { IVinculacion } from '@core/models/sgp/vinculacion';
 import { ActionService } from '@core/services/action-service';
 import { ConfiguracionSolicitudService } from '@core/services/csp/configuracion-solicitud.service';
 import { ConvocatoriaRequisitoEquipoService } from '@core/services/csp/convocatoria-requisito-equipo.service';
@@ -40,14 +36,15 @@ import { EmpresaService } from '@core/services/sgemp/empresa.service';
 import { AreaConocimientoService } from '@core/services/sgo/area-conocimiento.service';
 import { ClasificacionService } from '@core/services/sgo/clasificacion.service';
 import { DatosAcademicosService } from '@core/services/sgp/datos-academicos.service';
+import { DatosPersonalesService } from '@core/services/sgp/datos-personales.service';
 import { PersonaService } from '@core/services/sgp/persona.service';
 import { VinculacionService } from '@core/services/sgp/vinculacion.service';
 import { StatusWrapper } from '@core/utils/status-wrapper';
+import { TranslateService } from '@ngx-translate/core';
 import { SgiAuthService } from '@sgi/framework/auth';
-import { DateTime } from 'luxon';
 import { NGXLogger } from 'ngx-logger';
 import { BehaviorSubject, Observable, of, Subject, throwError } from 'rxjs';
-import { map, switchMap, tap } from 'rxjs/operators';
+import { switchMap, tap } from 'rxjs/operators';
 import { CSP_ROUTE_NAMES } from '../csp-route-names';
 import { CONVOCATORIA_ID_KEY } from './solicitud-crear/solicitud-crear.guard';
 import { SOLICITUD_DATA_KEY } from './solicitud-data.resolver';
@@ -178,12 +175,14 @@ export class SolicitudActionService extends ActionService {
     solicitudProyectoResponsableEconomicoService: SolicitudProyectoResponsableEconomicoService,
     formlyService: FormlyService,
     checklistService: ChecklistService,
-    private datosAcademicosService: DatosAcademicosService,
-    private vinculacionService: VinculacionService,
-    private convocatoriaRequisitoIpService: ConvocatoriaRequisitoIPService,
-    private convocatoriaRquisitoEquipoService: ConvocatoriaRequisitoEquipoService,
+    datosAcademicosService: DatosAcademicosService,
+    vinculacionService: VinculacionService,
+    convocatoriaRequisitoIpService: ConvocatoriaRequisitoIPService,
+    convocatoriaRequisitoEquipoService: ConvocatoriaRequisitoEquipoService,
     private dialogService: DialogService,
-    rolProyectoService: RolProyectoService
+    rolProyectoService: RolProyectoService,
+    private translate: TranslateService,
+    datosPersonalesService: DatosPersonalesService
   ) {
     super();
 
@@ -227,16 +226,19 @@ export class SolicitudActionService extends ActionService {
     this.proyectoDatos = new SolicitudProyectoFichaGeneralFragment(logger, this.data?.solicitud?.id, solicitudService,
       solicitudProyectoService, convocatoriaService, this.readonly, this.data?.solicitud.convocatoriaId,
       this.hasAnySolicitudProyectoSocioWithRolCoordinador$, this.data?.hasPopulatedPeriodosSocios);
-    this.equipoProyecto = new SolicitudEquipoProyectoFragment(this.data?.solicitud?.id, solicitudService,
-      solicitudProyectoEquipoService, this, rolProyectoService, this.readonly);
+    this.equipoProyecto = new SolicitudEquipoProyectoFragment(this.data?.solicitud?.id, this.data?.solicitud?.convocatoriaId,
+      solicitudService, solicitudProyectoEquipoService, this, rolProyectoService,
+      convocatoriaService, datosAcademicosService, convocatoriaRequisitoIpService, vinculacionService,
+      convocatoriaRequisitoEquipoService, datosPersonalesService, this.readonly);
     this.socio = new SolicitudProyectoSocioFragment(this.data?.solicitud?.id, solicitudService,
       solicitudProyectoSocioService, empresaService, this.readonly);
     this.entidadesFinanciadoras = new SolicitudProyectoEntidadesFinanciadorasFragment(this.data?.solicitud?.id, solicitudService,
-      solicitudEntidadFinanciadoraService, empresaService, this.readonly);
+      solicitudEntidadFinanciadoraService, empresaService, solicitudEntidadFinanciadoraService, this.readonly);
     this.desglosePresupuestoGlobal = new SolicitudProyectoPresupuestoGlobalFragment(this.data?.solicitud?.id, solicitudService,
       solicitudProyectoPresupuestoService, empresaService, solicitudProyectoService, this.readonly);
     this.desglosePresupuestoEntidades = new SolicitudProyectoPresupuestoEntidadesFragment(this.data?.solicitud?.id,
-      this.data?.solicitud?.convocatoriaId, convocatoriaService, solicitudService, empresaService, solicitudProyectoService, this.readonly);
+      this.data?.solicitud?.convocatoriaId, solicitudService, empresaService, solicitudProyectoService, solicitudEntidadFinanciadoraService,
+      this.readonly);
     this.clasificaciones = new SolicitudProyectoClasificacionesFragment(this.data?.solicitud?.id, solicitudProyectoClasificacionService,
       solicitudService, clasificacionService, this.readonly);
     this.responsableEconomico = new SolicitudProyectoResponsableEconomicoFragment(this.data?.solicitud?.id, solicitudService,
@@ -258,7 +260,7 @@ export class SolicitudActionService extends ActionService {
       this.addFragment(this.FRAGMENT.HISTORICO_ESTADOS, this.historicoEstado);
       this.addFragment(this.FRAGMENT.DOCUMENTOS, this.documentos);
 
-      if (this.data.solicitud.formularioSolicitud === FormularioSolicitud.ESTANDAR) {
+      if (this.data.solicitud.formularioSolicitud === FormularioSolicitud.PROYECTO) {
         this.addFragment(this.FRAGMENT.PROYECTO_DATOS, this.proyectoDatos);
         this.addFragment(this.FRAGMENT.EQUIPO_PROYECTO, this.equipoProyecto);
         this.addFragment(this.FRAGMENT.SOCIOS, this.socio);
@@ -271,7 +273,7 @@ export class SolicitudActionService extends ActionService {
         this.addFragment(this.FRAGMENT.AUTOEVALUACION, this.autoevaluacion);
       }
 
-      if (this.data.solicitud.formularioSolicitud === FormularioSolicitud.ESTANDAR) {
+      if (this.data.solicitud.formularioSolicitud === FormularioSolicitud.PROYECTO) {
         this.subscriptions.push(
           solicitudService.hasConvocatoriaSGI(this.data.solicitud.id).subscribe((hasConvocatoriaSgi) => {
             if (hasConvocatoriaSgi) {
@@ -334,12 +336,22 @@ export class SolicitudActionService extends ActionService {
             this.onSolicitudProyectoSocioListChangeHandle(proyectoSocios);
           }
         ));
+
+        this.subscriptions.push(this.entidadesFinanciadoras.initialized$.subscribe(value => {
+          if (value) {
+            this.desglosePresupuestoEntidades.initialize();
+          }
+        }));
+        this.subscriptions.push(this.entidadesFinanciadoras.entidadesFinanciadoras$.subscribe(entidadesFinanciadoras => {
+          this.desglosePresupuestoEntidades.setEntidadesFinanciadorasEdited(entidadesFinanciadoras.map(entidad => entidad.value));
+        }));
+
       }
 
       // Forzamos la inicialización de los datos principales
       this.datosGenerales.initialize();
 
-      if (this.data.solicitud.formularioSolicitud === FormularioSolicitud.ESTANDAR) {
+      if (this.data.solicitud.formularioSolicitud === FormularioSolicitud.PROYECTO) {
         this.proyectoDatos.initialize();
       }
     } else if (this.isEdit() && this.isInvestigador) {
@@ -367,22 +379,31 @@ export class SolicitudActionService extends ActionService {
     this.performChecks(true);
     if (this.hasErrors()) {
       return throwError('Errores');
+    } else {
+      return this.equipoProyecto.validateRequisitosConvocatoriaSolicitante(this.solicitante, this.convocatoriaId).pipe(
+        switchMap((response) => {
+          if (response) {
+            return this.translate.get(VALIDACION_REQUISITOS_EQUIPO_IP_MAP.get(response)).pipe(
+              switchMap((value) => {
+                return this.translate.get(
+                  MSG_SAVE_REQUISITOS_INVESTIGADOR,
+                  { mask: value }
+                );
+              }),
+              switchMap((value) => {
+                return this.dialogService.showConfirmation(value);
+              }),
+              switchMap((aceptado) => {
+                if (aceptado) {
+                  return this.saveOrUpdateSolicitud();
+                }
+              })
+            );
+          }
+          return this.saveOrUpdateSolicitud();
+        })
+      );
     }
-
-    return this.validateRequisitosConvocatoria().pipe(
-      switchMap((errors) => {
-        if (errors) {
-          return this.dialogService.showConfirmation(MSG_SAVE_REQUISITOS_INVESTIGADOR).pipe(
-            switchMap((aceptado) => {
-              if (aceptado) {
-                return this.saveOrUpdateSolicitud();
-              }
-            }));
-        }
-        return this.saveOrUpdateSolicitud();
-      })
-    );
-
   }
 
   /**
@@ -489,109 +510,6 @@ export class SolicitudActionService extends ActionService {
     }
   }
 
-  private validateRequisitosConvocatoria(): Observable<boolean> {
-    if (this.convocatoriaId) {
-      let fechaObtencion: DateTime;
-      let vinculacion: IVinculacion;
-      let categoriasProfesionalesConvocatoria: IRequisitoEquipoCategoriaProfesional[];
-      return this.convocatoriaService.findNivelesAcademicos(this.convocatoriaId).pipe(
-        switchMap((nivelesAcademicos) => {
-          if (nivelesAcademicos.length > 0) {
-            return this.datosAcademicosService.findByPersonaId(this.solicitante.id).pipe(
-              switchMap((datosAcademicos) => {
-                if (datosAcademicos) {
-                  fechaObtencion = datosAcademicos.fechaObtencion;
-                  const nivelAcademicoSolicitante =
-                    nivelesAcademicos.filter(nivelAcademico => nivelAcademico?.nivelAcademico?.id === datosAcademicos.nivelAcademico.id);
-                  if (nivelAcademicoSolicitante.length > 0) {
-                    return this.convocatoriaRequisitoIpService.getRequisitoIPConvocatoria
-                      (this.convocatoriaId);
-                  }
-                } else {
-                  return of(null);
-                }
-              }),
-              map((convocatoriaRequisitoIp: IConvocatoriaRequisitoIP) => {
-                if
-                  (convocatoriaRequisitoIp?.fechaMaximaNivelAcademico ||
-                  convocatoriaRequisitoIp?.fechaMinimaNivelAcademico) {
-                  if (!fechaObtencion) {
-                    return false;
-                  } else if (fechaObtencion.startOf('day') >
-                    convocatoriaRequisitoIp.fechaMaximaNivelAcademico?.startOf('day')) {
-                    return false;
-                  } else if (fechaObtencion.startOf('day') <
-                    convocatoriaRequisitoIp.fechaMinimaNivelAcademico?.startOf('day')) {
-                    return false;
-                  } else {
-                    return true;
-                  }
-                } else {
-                  return false;
-                }
-              })
-            );
-          }
-          return of(false);
-        }),
-        switchMap((erroresNivelesAcademicos: boolean) => {
-          if (!erroresNivelesAcademicos) {
-            return this.convocatoriaService.findCategoriasProfesionales(this.convocatoriaId).pipe(
-              switchMap((categoriasProfesionales) => {
-                if (categoriasProfesionales.length > 0) {
-                  categoriasProfesionalesConvocatoria = categoriasProfesionales;
-                  return this.vinculacionService.findByPersonaId(this.solicitante.id);
-                } else {
-                  return of(null);
-                }
-              }),
-              switchMap((vinculacionSolicitante: IVinculacion) => {
-                const categoriaProfesionalSolicitante =
-                  categoriasProfesionalesConvocatoria?.filter(categoriaProfesional => categoriaProfesional.categoriaProfesional.id ===
-                    vinculacionSolicitante?.categoriaProfesional.id);
-                vinculacion = vinculacionSolicitante;
-                if (categoriaProfesionalSolicitante?.length > 0) {
-                  return this.convocatoriaRquisitoEquipoService.findById(this.convocatoriaId);
-
-                } else {
-                  return of(null);
-                }
-              }),
-              map((convocatoriaRequisitoEquipo: IConvocatoriaRequisitoEquipo) => {
-
-                if (convocatoriaRequisitoEquipo?.sexo.id && this.solicitante?.sexo.nombre !== convocatoriaRequisitoEquipo?.sexo.nombre) {
-                  return true;
-                }
-
-                if (categoriasProfesionalesConvocatoria?.length !== 0 && !convocatoriaRequisitoEquipo?.vinculacionUniversidad) {
-                  return true;
-                }
-
-                if (convocatoriaRequisitoEquipo?.fechaMaximaCategoriaProfesional ||
-                  convocatoriaRequisitoEquipo?.fechaMinimaCategoriaProfesional) {
-                  if (!vinculacion.id) {
-                    return false;
-                  } else if (vinculacion.fechaObtencionCategoria >
-                    convocatoriaRequisitoEquipo.fechaMaximaCategoriaProfesional) {
-                    return false;
-                  } else if (vinculacion.fechaObtencionCategoria <
-                    convocatoriaRequisitoEquipo.fechaMinimaCategoriaProfesional) {
-                    return false;
-                  } else {
-                    return true;
-                  }
-                } else {
-                  return false;
-                }
-              })
-            );
-          }
-          return of(erroresNivelesAcademicos);
-        })
-      );
-    }
-  }
-
   private loadConvocatoria(id: number): void {
     if (id) {
       this.convocatoriaService.findById(id).subscribe(convocatoria => {
@@ -617,4 +535,5 @@ export class SolicitudActionService extends ActionService {
     }
     this.showAlertNotSocioCoordinadorExist$.next(needShow);
   }
+
 }

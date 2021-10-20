@@ -64,8 +64,8 @@ public class ConfiguracionServiceImpl implements ConfiguracionService {
       configuracion.setDiasLimiteEvaluador(configuracionActualizar.getDiasLimiteEvaluador());
       configuracion.setMesesArchivadaInactivo(configuracionActualizar.getMesesArchivadaInactivo());
       configuracion.setMesesAvisoProyectoCEEA(configuracionActualizar.getMesesAvisoProyectoCEEA());
-      configuracion.setMesesAvisoProyectoCEISH(configuracionActualizar.getMesesAvisoProyectoCEISH());
-      configuracion.setMesesAvisoProyectoCEIAB(configuracionActualizar.getMesesAvisoProyectoCEIAB());
+      configuracion.setMesesAvisoProyectoCEI(configuracionActualizar.getMesesAvisoProyectoCEI());
+      configuracion.setMesesAvisoProyectoCBE(configuracionActualizar.getMesesAvisoProyectoCBE());
 
       Configuracion returnValue = configuracionRepository.save(configuracion);
       log.debug("update(Configuracion configuracionActualizar) - end");

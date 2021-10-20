@@ -231,10 +231,12 @@ export abstract class MemoriaFormlyFormFragment extends Fragment {
     });
     question.apartado.respuesta.valor = respuesta;
     respuestas.push(question.apartado.respuesta);
+
     if (!question.apartado.respuesta.id) {
       question.apartado.respuesta.memoria = { id: this.getKey() as number } as IMemoria;
       question.apartado.respuesta.apartado = { id: question.apartado.id } as IApartado;
     }
+
     const fieldDocumentacion = this.fieldsDocumentacion.get(question.apartado.id);
     if (fieldDocumentacion) {
       const id = fieldDocumentacion.model[fieldDocumentacion.key as string];
@@ -259,7 +261,7 @@ export abstract class MemoriaFormlyFormFragment extends Fragment {
       mergeMap((respuesta) => {
         return this.respuestaService.create(respuesta).pipe(
           map((updated) => {
-            respuesta = updated;
+            Object.assign(respuesta, updated);
           })
         );
       }),
@@ -272,7 +274,7 @@ export abstract class MemoriaFormlyFormFragment extends Fragment {
       mergeMap((respuesta) => {
         return this.respuestaService.update(respuesta.id, respuesta).pipe(
           map((updated) => {
-            respuesta = updated;
+            Object.assign(respuesta, updated);
           })
         );
       }),

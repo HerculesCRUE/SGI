@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, Optional, Self } from '@angular/core';
+import { Component, Optional, Self } from '@angular/core';
 import { NgControl } from '@angular/forms';
 import { ErrorStateMatcher } from '@angular/material/core';
 import { MatFormFieldControl } from '@angular/material/form-field';
@@ -12,7 +12,6 @@ import { map } from 'rxjs/operators';
   selector: 'sgi-select-comite',
   templateUrl: '../../../../core/component/select-common/select-common.component.html',
   styleUrls: ['../../../../core/component/select-common/select-common.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [
     {
       provide: MatFormFieldControl,

@@ -160,7 +160,7 @@ public class TipoActividadControllerTest extends BaseControllerTest {
   }
 
   @Test
-  @WithMockUser(username = "user", authorities = { "ETI-PEV-C-INV", "ETI-PEV-ER-INV" })
+  @WithMockUser(username = "user", authorities = { "ETI-PEV-INV-C", "ETI-PEV-INV-ER" })
   public void findAll_Unlimited_ReturnsFullTipoActividadList() throws Exception {
     // given: One hundred TipoActividad
     List<TipoActividad> tipoActividades = new ArrayList<>();
@@ -182,7 +182,7 @@ public class TipoActividadControllerTest extends BaseControllerTest {
   }
 
   @Test
-  @WithMockUser(username = "user", authorities = { "ETI-PEV-C-INV", "ETI-PEV-ER-INV" })
+  @WithMockUser(username = "user", authorities = { "ETI-PEV-INV-C", "ETI-PEV-INV-ER" })
   public void findAll_WithPaging_ReturnsTipoActividadSubList() throws Exception {
     // given: One hundred TipoActividad
     List<TipoActividad> tipoActividades = new ArrayList<>();
@@ -233,7 +233,7 @@ public class TipoActividadControllerTest extends BaseControllerTest {
   }
 
   @Test
-  @WithMockUser(username = "user", authorities = { "ETI-PEV-C-INV", "ETI-PEV-ER-INV" })
+  @WithMockUser(username = "user", authorities = { "ETI-PEV-INV-C", "ETI-PEV-INV-ER" })
   public void findAll_WithSearchQuery_ReturnsFilteredTipoActividadList() throws Exception {
     // given: One hundred TipoActividad and a search query
     List<TipoActividad> tipoActividades = new ArrayList<>();
@@ -268,7 +268,7 @@ public class TipoActividadControllerTest extends BaseControllerTest {
   }
 
   @Test
-  @WithMockUser(username = "user", authorities = { "ETI-PEV-C-INV", "ETI-PEV-ER-INV" })
+  @WithMockUser(username = "user", authorities = { "ETI-PEV-INV-C", "ETI-PEV-INV-ER" })
   public void findAll_ReturnsNoContent() throws Exception {
     // given: TipoActividad empty
     List<TipoActividad> tipoActividades = new ArrayList<>();

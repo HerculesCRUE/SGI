@@ -44,7 +44,7 @@ public class TipoInvestigacionTuteladaController {
    * @param paging pageable
    */
   @GetMapping()
-  @PreAuthorize("hasAnyAuthorityForAnyUO('ETI-PEV-C-INV', 'ETI-PEV-ER-INV')")
+  @PreAuthorize("hasAnyAuthorityForAnyUO('ETI-PEV-INV-C', 'ETI-PEV-INV-ER')")
   ResponseEntity<Page<TipoInvestigacionTutelada>> findAll(@RequestParam(name = "q", required = false) String query,
       @RequestPageable(sort = "s") Pageable paging) {
     log.debug("findAll(String query,Pageable paging) - start");

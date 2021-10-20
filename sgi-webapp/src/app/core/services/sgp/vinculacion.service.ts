@@ -1,9 +1,12 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { IVinculacionBackend } from '@core/models/sgp/backend/vinculacion-backend';
 import { IVinculacion } from '@core/models/sgp/vinculacion';
 import { environment } from '@env';
 import { SgiRestService } from '@sgi/framework/http';
 import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
+import { VINCULACION_CONVERTER } from './vinculacion-converter';
 
 @Injectable({
   providedIn: 'root'
@@ -26,7 +29,9 @@ export class VinculacionService extends SgiRestService<string, IVinculacion>{
    * @returns vinculacion de la persona
    */
   findByPersonaId(personaId: string): Observable<IVinculacion> {
-    return this.http.get<IVinculacion>(`${this.endpointUrl}/persona/${personaId}`);
+    return this.http.get<IVinculacionBackend>(`${this.endpointUrl}/persona/${personaId}`).pipe(
+      map(response => VINCULACION_CONVERTER.toTarget(response))
+    );
   }
 
 }

@@ -7,6 +7,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.assertj.core.api.Assertions;
+import org.crue.hercules.sgi.csp.enums.TipoJustificacion;
 import org.crue.hercules.sgi.csp.model.ConvocatoriaPeriodoJustificacion;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -61,9 +62,9 @@ public class ConvocatoriaPeriodoJustificacionIT extends BaseIT {
     // otro nuevo y sin los otros 3 periodos existentes
     Long convocatoriaId = 1L;
     ConvocatoriaPeriodoJustificacion newConvocatoriaPeriodoJustificacion = generarMockConvocatoriaPeriodoJustificacion(
-        null, 27, 30, ConvocatoriaPeriodoJustificacion.Tipo.FINAL, 1L);
+        null, 27, 30, TipoJustificacion.FINAL, 1L);
     ConvocatoriaPeriodoJustificacion updatedConvocatoriaPeriodoJustificacion = generarMockConvocatoriaPeriodoJustificacion(
-        4L, 1, 26, ConvocatoriaPeriodoJustificacion.Tipo.PERIODICO, 1L);
+        4L, 1, 26, TipoJustificacion.PERIODICO, 1L);
 
     List<ConvocatoriaPeriodoJustificacion> convocatoriaPeriodoJustificaciones = Arrays
         .asList(newConvocatoriaPeriodoJustificacion, updatedConvocatoriaPeriodoJustificacion);
@@ -165,7 +166,7 @@ public class ConvocatoriaPeriodoJustificacionIT extends BaseIT {
     Assertions.assertThat(convocatoriaPeriodoJustificacion.getObservaciones()).as("getObservaciones()")
         .isEqualTo("observaciones-001");
     Assertions.assertThat(convocatoriaPeriodoJustificacion.getTipo()).as("getTipo()")
-        .isEqualTo(ConvocatoriaPeriodoJustificacion.Tipo.PERIODICO);
+        .isEqualTo(TipoJustificacion.PERIODICO);
   }
 
   /**
@@ -179,7 +180,7 @@ public class ConvocatoriaPeriodoJustificacionIT extends BaseIT {
    * @return el objeto ConvocatoriaPeriodoJustificacion
    */
   private ConvocatoriaPeriodoJustificacion generarMockConvocatoriaPeriodoJustificacion(Long id, Integer mesInicial,
-      Integer mesFinal, ConvocatoriaPeriodoJustificacion.Tipo tipo, Long convocatoriaId) {
+      Integer mesFinal, TipoJustificacion tipo, Long convocatoriaId) {
     ConvocatoriaPeriodoJustificacion convocatoriaPeriodoJustificacion = new ConvocatoriaPeriodoJustificacion();
     convocatoriaPeriodoJustificacion.setId(id);
     convocatoriaPeriodoJustificacion.setConvocatoriaId(convocatoriaId == null ? 1 : convocatoriaId);

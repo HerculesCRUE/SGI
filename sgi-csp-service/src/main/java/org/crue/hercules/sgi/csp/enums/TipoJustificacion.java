@@ -8,4 +8,5 @@ public enum TipoJustificacion {
   INTERMEDIO,
   /** Final */
   FINAL;
+
 }

@@ -17,7 +17,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { SgiRestListResult } from '@sgi/framework/http';
 import { DateTime } from 'luxon';
 import { NGXLogger } from 'ngx-logger';
-import { Observable } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { map, startWith, switchMap } from 'rxjs/operators';
 
 const MSG_ERROR_INIT = marker('error.load');
@@ -47,9 +47,7 @@ export class ProyectoPlazosModalComponent extends
 
   fxLayoutProperties: FxLayoutProperties;
   fxLayoutProperties2: FxLayoutProperties;
-  modeloTipoFases$: Observable<IModeloTipoFase[]>;
-
-  private modeloTipoFasesFiltered: IModeloTipoFase[];
+  tiposFase$: BehaviorSubject<ITipoFase[]> = new BehaviorSubject<ITipoFase[]>([]);
 
   textSaveOrUpdate: string;
 
@@ -183,39 +181,12 @@ export class ProyectoPlazosModalComponent extends
   loadTipoFases() {
     this.subscriptions.push(
       this.modeloEjecucionService.findModeloTipoFaseModeloEjecucionProyecto(this.data.idModeloEjecucion).subscribe(
-        (res: SgiRestListResult<IModeloTipoFase>) => {
-          this.modeloTipoFasesFiltered = res.items;
-          this.modeloTipoFases$ = this.formGroup.controls.tipoFase.valueChanges
-            .pipe(
-              startWith(''),
-              map(value => this.filtroTipoPlazosFase(value))
-            );
-        },
+        (res: SgiRestListResult<IModeloTipoFase>) => this.tiposFase$.next(res.items.map(modelo => modelo.tipoFase)),
         (error) => {
           this.logger.error(error);
           this.snackBarService.showError(MSG_ERROR_INIT);
         })
     );
-  }
-
-  /**
-   * Devuelve el nombre tipo de plazos fase
-   * @param tipoFase tipo de plazos fase
-   * @returns nombre de plazos fase
-   */
-  getTipoPlazosFase(tipoFase?: ITipoFase): string | undefined {
-    return typeof tipoFase === 'string' ? tipoFase : tipoFase?.nombre;
-  }
-
-  /**
-   * Filtra la lista devuelta por el servicio.
-   *
-   * @param value del input para autocompletar
-   */
-  private filtroTipoPlazosFase(value: string): IModeloTipoFase[] {
-    const filterValue = value.toString().toLowerCase();
-    return this.modeloTipoFasesFiltered.filter(modeloTipoFase =>
-      modeloTipoFase.tipoFase?.nombre?.toLowerCase().includes(filterValue));
   }
 
   protected getDatosForm(): ProyectoPlazosModalComponentData {

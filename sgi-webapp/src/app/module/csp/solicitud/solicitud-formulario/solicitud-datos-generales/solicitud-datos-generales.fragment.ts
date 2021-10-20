@@ -261,8 +261,8 @@ export class SolicitudDatosGeneralesFragment extends FormFragment<ISolicitud> {
     );
 
     this.subscriptions.push(
-      this.configuracionSolicitudService.findById(convocatoria.id).subscribe(configuracionSolicitud => {
-        this.solicitud.formularioSolicitud = configuracionSolicitud.formularioSolicitud;
+      this.convocatoriaService.findById(convocatoria.id).subscribe(convocatoria => {
+        this.solicitud.formularioSolicitud = convocatoria.formularioSolicitud;
       })
     );
 
@@ -436,8 +436,8 @@ export class SolicitudDatosGeneralesFragment extends FormFragment<ISolicitud> {
       );
 
       this.subscriptions.push(
-        this.configuracionSolicitudService.findById(convocatoria.id).subscribe(configuracionSolicitud => {
-          this.getFormGroup().controls.formularioSolicitud.setValue(configuracionSolicitud.formularioSolicitud);
+        this.convocatoriaService.findById(convocatoria.id).subscribe(convocatoria => {
+          this.getFormGroup().controls.formularioSolicitud.setValue(convocatoria.formularioSolicitud);
         })
       );
 

@@ -33,7 +33,7 @@ const routes: SgiRoutes = [
     data: {
       title: MEMORIA_KEY,
       titleParams: MSG_PARAMS.CARDINALIRY.PLURAL,
-      hasAuthorityForAnyUO: 'ETI-PEV-VR-INV'
+      hasAuthorityForAnyUO: 'ETI-PEV-INV-VR'
     }
   },
   {
@@ -46,7 +46,7 @@ const routes: SgiRoutes = [
       titleParams: {
         entity: MEMORIA_KEY, ...MSG_PARAMS.GENDER.FEMALE, ...MSG_PARAMS.CARDINALIRY.SINGULAR
       },
-      hasAnyAuthorityForAnyUO: ['ETI-PEV-C-INV', 'ETI-PEV-ER-INV']
+      hasAnyAuthorityForAnyUO: ['ETI-PEV-INV-C', 'ETI-PEV-INV-ER']
     },
     children: [
       {
@@ -72,7 +72,7 @@ const routes: SgiRoutes = [
     data: {
       title: MEMORIA_KEY,
       titleParams: MSG_PARAMS.CARDINALIRY.SINGULAR,
-      hasAuthorityForAnyUO: 'ETI-PEV-ER-INV',
+      hasAuthorityForAnyUO: 'ETI-PEV-INV-ER',
       readonly: false
     },
     children: [

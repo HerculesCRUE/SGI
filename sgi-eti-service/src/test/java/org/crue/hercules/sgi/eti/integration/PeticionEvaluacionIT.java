@@ -64,8 +64,8 @@ public class PeticionEvaluacionIT extends BaseIT {
     headers = (headers != null ? headers : new HttpHeaders());
     headers.setContentType(MediaType.APPLICATION_JSON);
     headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
-    headers.set("Authorization", String.format("bearer %s", tokenBuilder.buildToken("user", "ETI-PEV-ER-INV",
-        "ETI-PEV-V", "ETI-PEV-CR", "ETI-MEM-CR", "ETI-PEV-BR-INV", "ETI-PEV-C-INV", "ETI-PEV-V")));
+    headers.set("Authorization", String.format("bearer %s", tokenBuilder.buildToken("user", "ETI-PEV-INV-ER",
+        "ETI-PEV-V", "ETI-PEV-CR", "ETI-MEM-CR", "ETI-PEV-INV-BR", "ETI-PEV-INV-C", "ETI-PEV-V")));
 
     HttpEntity<PeticionEvaluacion> request = new HttpEntity<>(entity, headers);
     return request;
@@ -77,7 +77,7 @@ public class PeticionEvaluacionIT extends BaseIT {
     headers.setContentType(MediaType.APPLICATION_JSON);
     headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
     headers.set("Authorization", String.format("bearer %s",
-        tokenBuilder.buildToken("user", "ETI-PEV-C-INV", "ETI-PEV-ER-INV", "ETI-PEV-VR-INV")));
+        tokenBuilder.buildToken("user", "ETI-PEV-INV-C", "ETI-PEV-INV-ER", "ETI-PEV-INV-VR")));
 
     HttpEntity<EquipoTrabajo> request = new HttpEntity<>(entity, headers);
     return request;
@@ -88,7 +88,7 @@ public class PeticionEvaluacionIT extends BaseIT {
     headers.setContentType(MediaType.APPLICATION_JSON);
     headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
     headers.set("Authorization",
-        String.format("bearer %s", tokenBuilder.buildToken("user", "ETI-PEV-C-INV", "ETI-PEV-ER-INV")));
+        String.format("bearer %s", tokenBuilder.buildToken("user", "ETI-PEV-INV-C", "ETI-PEV-INV-ER")));
 
     HttpEntity<Tarea> request = new HttpEntity<>(entity, headers);
     return request;
@@ -100,7 +100,7 @@ public class PeticionEvaluacionIT extends BaseIT {
     headers.setContentType(MediaType.APPLICATION_JSON);
     headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
     headers.set("Authorization", String.format("bearer %s",
-        tokenBuilder.buildToken("user", "ETI-PEV-CR", "ETI-PEV-ER-INV", "ETI-EVR-V", "ETI-PEV-C-INV")));
+        tokenBuilder.buildToken("user", "ETI-PEV-CR", "ETI-PEV-INV-ER", "ETI-EVR-V", "ETI-PEV-INV-C")));
 
     HttpEntity<EquipoTrabajo> request = new HttpEntity<>(entity, headers);
     return request;
@@ -460,7 +460,7 @@ public class PeticionEvaluacionIT extends BaseIT {
     // when: Obtiene page=1 con pagesize=3
     HttpHeaders headers = new HttpHeaders();
     headers.set("Authorization",
-        String.format("bearer %s", tokenBuilder.buildToken("user", "ETI-PEV-VR-INV", "ETI-PEV-V", "ETI-MEM-CR-INV")));
+        String.format("bearer %s", tokenBuilder.buildToken("user", "ETI-PEV-INV-VR", "ETI-PEV-V", "ETI-MEM-INV-CR")));
     headers.add("X-Page", "0");
     headers.add("X-Page-Size", "3");
     // when: Ordena por id desc

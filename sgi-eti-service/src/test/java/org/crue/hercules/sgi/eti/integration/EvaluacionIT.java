@@ -587,7 +587,7 @@ public class EvaluacionIT extends BaseIT {
     // Authorization
     HttpHeaders headers = new HttpHeaders();
     headers.set("Authorization",
-        String.format("bearer %s", tokenBuilder.buildToken("user", "ETI-EVC-EVALR", "ETI-EVC-EVALR-INV")));
+        String.format("bearer %s", tokenBuilder.buildToken("user", "ETI-EVC-EVALR", "ETI-EVC-INV-EVALR")));
 
     final ResponseEntity<Comentario> response = restTemplate.exchange(
         EVALUACION_CONTROLLER_BASE_PATH + PATH_PARAMETER_ID + "/comentario-evaluador", HttpMethod.POST,
@@ -618,7 +618,7 @@ public class EvaluacionIT extends BaseIT {
     // Authorization
     HttpHeaders headers = new HttpHeaders();
     headers.set("Authorization",
-        String.format("bearer %s", tokenBuilder.buildToken("user-002", "ETI-EVC-EVALR", "ETI-EVC-EVALR-INV")));
+        String.format("bearer %s", tokenBuilder.buildToken("user-002", "ETI-EVC-EVALR", "ETI-EVC-INV-EVALR")));
 
     final ResponseEntity<Comentario> response = restTemplate.exchange(
         EVALUACION_CONTROLLER_BASE_PATH + PATH_PARAMETER_ID + "/comentario-evaluador", HttpMethod.POST,
@@ -718,7 +718,7 @@ public class EvaluacionIT extends BaseIT {
     // Authorization
     HttpHeaders headers = new HttpHeaders();
     headers.set("Authorization",
-        String.format("bearer %s", tokenBuilder.buildToken("user-002", "ETI-EVC-EVALR", "ETI-EVC-EVALR-INV")));
+        String.format("bearer %s", tokenBuilder.buildToken("user-002", "ETI-EVC-EVALR", "ETI-EVC-INV-EVALR")));
 
     final ResponseEntity<Comentario> response = restTemplate.exchange(
         EVALUACION_CONTROLLER_BASE_PATH + PATH_PARAMETER_ID + "/comentario-evaluador" + "/{idComentario}",
@@ -756,7 +756,7 @@ public class EvaluacionIT extends BaseIT {
     // Authorization
     HttpHeaders headers = new HttpHeaders();
     headers.set("Authorization",
-        String.format("bearer %s", tokenBuilder.buildToken("user-002", "ETI-EVC-EVAL", "ETI-EVC-EVALR-INV")));
+        String.format("bearer %s", tokenBuilder.buildToken("user-002", "ETI-EVC-EVAL", "ETI-EVC-INV-EVALR")));
 
     // when: Delete con id existente
     final ResponseEntity<Comentario> response = restTemplate.exchange(
@@ -815,7 +815,8 @@ public class EvaluacionIT extends BaseIT {
     peticionEvaluacion.setActivo(Boolean.TRUE);
 
     Formulario formulario = new Formulario(1L, "M10", "Descripcion");
-    Comite comite = new Comite(1L, "CEISH", formulario, Boolean.TRUE);
+    Comite comite = new Comite(1L, "CEI", "nombreSecretario", "nombreInvestigacion", "nombreDecreto", "articulo",
+        formulario, Boolean.TRUE);
 
     TipoMemoria tipoMemoria = new TipoMemoria();
     tipoMemoria.setId(1L);

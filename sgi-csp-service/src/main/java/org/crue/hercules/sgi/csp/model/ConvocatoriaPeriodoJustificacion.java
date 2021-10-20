@@ -18,6 +18,7 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import org.crue.hercules.sgi.csp.enums.TipoJustificacion;
 import org.hibernate.validator.constraints.ScriptAssert;
 
 import lombok.AccessLevel;
@@ -47,17 +48,6 @@ public class ConvocatoriaPeriodoJustificacion extends BaseEntity {
    * Serial version
    */
   private static final long serialVersionUID = 1L;
-
-  /** Tipos de justificación */
-  public enum Tipo {
-
-    /** Final */
-    FINAL,
-    /** Periódico */
-    PERIODICO,
-    /** Intermedio */
-    INTERMEDIO;
-  }
 
   /** Id. */
   @Id
@@ -103,7 +93,7 @@ public class ConvocatoriaPeriodoJustificacion extends BaseEntity {
   /** Tipo justificacion */
   @Column(name = "tipo", length = 10)
   @Enumerated(EnumType.STRING)
-  private Tipo tipo;
+  private TipoJustificacion tipo;
 
   // Relation mappings for JPA metamodel generation only
   @ManyToOne

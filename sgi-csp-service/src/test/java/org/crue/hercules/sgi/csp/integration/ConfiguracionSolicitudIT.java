@@ -7,7 +7,6 @@ import java.util.Collections;
 import java.util.List;
 
 import org.assertj.core.api.Assertions;
-import org.crue.hercules.sgi.csp.enums.FormularioSolicitud;
 import org.crue.hercules.sgi.csp.model.ConfiguracionSolicitud;
 import org.crue.hercules.sgi.csp.model.ConvocatoriaFase;
 import org.crue.hercules.sgi.csp.model.DocumentoRequeridoSolicitud;
@@ -84,8 +83,6 @@ public class ConfiguracionSolicitudIT {
         .isEqualTo(configuracionSolicitud.getFasePresentacionSolicitudes().getId());
     Assertions.assertThat(responseData.getImporteMaximoSolicitud()).as("getImporteMaximoSolicitud()")
         .isEqualTo(configuracionSolicitud.getImporteMaximoSolicitud());
-    Assertions.assertThat(responseData.getFormularioSolicitud()).as("getFormularioSolicitud()")
-        .isEqualTo(configuracionSolicitud.getFormularioSolicitud());
   }
 
   @Sql
@@ -117,8 +114,6 @@ public class ConfiguracionSolicitudIT {
         .as("getFasePresentacionSolicitudes().getId()").isEqualTo(2L);
     Assertions.assertThat(responseData.getImporteMaximoSolicitud()).as("getImporteMaximoSolicitud()")
         .isEqualTo(BigDecimal.valueOf(54321));
-    Assertions.assertThat(responseData.getFormularioSolicitud()).as("getFormularioSolicitud()")
-        .isEqualTo(configuracionSolicitud.getFormularioSolicitud());
   }
 
   @Sql
@@ -141,8 +136,6 @@ public class ConfiguracionSolicitudIT {
         .as("getFasePresentacionSolicitudes().getId()").isEqualTo(2L);
     Assertions.assertThat(responseData.getImporteMaximoSolicitud()).as("getImporteMaximoSolicitud()")
         .isEqualTo(new BigDecimal("54321.00"));
-    Assertions.assertThat(responseData.getFormularioSolicitud()).as("getFormularioSolicitud()")
-        .isEqualTo(FormularioSolicitud.ESTANDAR);
 
   }
 
@@ -220,7 +213,6 @@ public class ConfiguracionSolicitudIT {
         .tramitacionSGI(Boolean.TRUE)
         .fasePresentacionSolicitudes(convocatoriaFase)
         .importeMaximoSolicitud(BigDecimal.valueOf(12345))
-        .formularioSolicitud(FormularioSolicitud.ESTANDAR)
         .build();
     // @formatter:on
 

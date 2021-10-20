@@ -43,6 +43,7 @@ export class ConvocatoriaReunionDatosGeneralesFragment extends FormFragment<ICon
       fechaLimite: [null, Validators.required],
       tipoConvocatoriaReunion: ['', new NullIdValidador().isValid()],
       horaInicio: [null, Validators.required],
+      horaInicioSegunda: [null],
       lugar: ['', Validators.required],
       ordenDia: ['', Validators.required],
       convocantes: ['', Validators.required],
@@ -154,6 +155,7 @@ export class ConvocatoriaReunionDatosGeneralesFragment extends FormFragment<ICon
       fechaLimite: value.fechaLimite?.minus({ hours: 23, minutes: 59, seconds: 59 }),
       tipoConvocatoriaReunion: value.tipoConvocatoriaReunion,
       horaInicio: this.getDate(value.horaInicio, value.minutoInicio),
+      horaInicioSegunda: value.horaInicioSegunda ? this.getDate(value.horaInicioSegunda, value.minutoInicioSegunda) : null,
       lugar: value.lugar,
       ordenDia: value.ordenDia,
     };
@@ -165,6 +167,7 @@ export class ConvocatoriaReunionDatosGeneralesFragment extends FormFragment<ICon
       this.getFormGroup().controls.fechaLimite.disable({ onlySelf: true });
       this.getFormGroup().controls.tipoConvocatoriaReunion.disable({ onlySelf: true });
       this.getFormGroup().controls.horaInicio.disable({ onlySelf: true });
+      this.getFormGroup().controls.horaInicioSegunda.disable({ onlySelf: true });
       this.getFormGroup().controls.convocantes.disable({ onlySelf: true });
     } else {
       // Para que en la carga inicial no se permita editar si hay evaluaciones asignadas.
@@ -204,6 +207,8 @@ export class ConvocatoriaReunionDatosGeneralesFragment extends FormFragment<ICon
       this.getFormGroup().controls.tipoConvocatoriaReunion.value : form.controls.tipoConvocatoriaReunion.value;
     this.convocatoriaReunion.horaInicio = form.controls.horaInicio.value?.getHours();
     this.convocatoriaReunion.minutoInicio = form.controls.horaInicio.value?.getMinutes();
+    this.convocatoriaReunion.horaInicioSegunda = form.controls.horaInicioSegunda.value?.getHours();
+    this.convocatoriaReunion.minutoInicioSegunda = form.controls.horaInicioSegunda.value?.getMinutes();
     this.convocatoriaReunion.lugar = form.controls.lugar.value;
     this.convocatoriaReunion.ordenDia = form.controls.ordenDia.value;
     return this.convocatoriaReunion;

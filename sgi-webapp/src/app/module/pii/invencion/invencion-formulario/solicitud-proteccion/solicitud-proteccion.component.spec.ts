@@ -6,7 +6,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ActivatedRoute, Data } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 import { InvencionService } from '@core/services/pii/invencion/invencion.service';
-import { SolicitudProteccionService } from '@core/services/pii/invencion/solicitud-proteccion/solicitud-proteccion.service';
+import { SolicitudProteccionService } from '@core/services/pii/solicitud-proteccion/solicitud-proteccion.service';
 import { SnackBarService } from '@core/services/snack-bar.service';
 import TestUtils from '@core/utils/test-utils';
 import { MaterialDesignModule } from '@material/material-design.module';
@@ -16,8 +16,8 @@ import { LoggerTestingModule } from 'ngx-logger/testing';
 import { SgpSharedModule } from 'src/app/esb/sgp/shared/sgp-shared.module';
 import { IInvencionData, InvencionActionService } from '../../invencion.action.service';
 import { INVENCION_DATA_KEY } from '../../invencion.resolver';
-
 import { SolicitudProteccionComponent } from './solicitud-proteccion.component';
+
 
 describe('SolicitudProteccionComponent', () => {
   let component: SolicitudProteccionComponent;

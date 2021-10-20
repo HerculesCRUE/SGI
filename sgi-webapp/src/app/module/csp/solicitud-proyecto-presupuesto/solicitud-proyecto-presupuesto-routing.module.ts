@@ -16,7 +16,7 @@ const MSG_EDIT_TITLE = marker('menu.csp.proyectos.proyecto-presupuesto');
 
 const routes: SgiRoutes = [
   {
-    path: `:${SOLICITUD_PROYECTO_PRESUPUESTO_ROUTE_PARAMS.EMPRESA_REF}`,
+    path: `:${SOLICITUD_PROYECTO_PRESUPUESTO_ROUTE_PARAMS.SOLICITUD_PROYECTO_ENTIDAD_ID}`,
     component: SolicitudProyectoPresupuestoEditarComponent,
     canActivate: [SgiAuthGuard],
     canDeactivate: [ActionGuard],

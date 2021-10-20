@@ -14,6 +14,7 @@ import { ProyectoAreaConocimientoComponent } from './proyecto-formulario/proyect
 import { ProyectoCalendarioJustificacionComponent } from './proyecto-formulario/proyecto-calendario-justificacion/proyecto-calendario-justificacion.component';
 import { ProyectoClasificacionesComponent } from './proyecto-formulario/proyecto-clasificaciones/proyecto-clasificaciones.component';
 import { ProyectoConceptosGastoComponent } from './proyecto-formulario/proyecto-conceptos-gasto/proyecto-conceptos-gasto.component';
+import { ProyectoConsultaPresupuestoComponent } from './proyecto-formulario/proyecto-consulta-presupuesto/proyecto-consulta-presupuesto.component';
 import { ProyectoContextoComponent } from './proyecto-formulario/proyecto-contexto/proyecto-contexto.component';
 import { ProyectoFichaGeneralComponent } from './proyecto-formulario/proyecto-datos-generales/proyecto-ficha-general.component';
 import { ProyectoDocumentosComponent } from './proyecto-formulario/proyecto-documentos/proyecto-documentos.component';
@@ -30,6 +31,7 @@ import { ProyectoPlazosComponent } from './proyecto-formulario/proyecto-plazos/p
 import { ProyectoPresupuestoComponent } from './proyecto-formulario/proyecto-presupuesto/proyecto-presupuesto.component';
 import { ProyectoProrrogasComponent } from './proyecto-formulario/proyecto-prorrogas/proyecto-prorrogas.component';
 import { ProyectoProyectosSgeComponent } from './proyecto-formulario/proyecto-proyectos-sge/proyecto-proyectos-sge.component';
+import { ProyectoRelacionesComponent } from './proyecto-formulario/proyecto-relaciones/proyecto-relaciones.component';
 import { ProyectoResponsableEconomicoComponent } from './proyecto-formulario/proyecto-responsable-economico/proyecto-responsable-economico.component';
 import { ProyectoSociosComponent } from './proyecto-formulario/proyecto-socios/proyecto-socios.component';
 import { ProyectoListadoComponent } from './proyecto-listado/proyecto-listado.component';
@@ -263,6 +265,16 @@ const routes: SgiAuthRoutes = [
       {
         path: PROYECTO_ROUTE_NAMES.CALENDARIO_JUSTIFICACION,
         component: ProyectoCalendarioJustificacionComponent,
+        canDeactivate: [FragmentGuard]
+      },
+      {
+        path: PROYECTO_ROUTE_NAMES.CONSULTA_PRESUPUESTO,
+        component: ProyectoConsultaPresupuestoComponent,
+        canDeactivate: [FragmentGuard]
+      },
+      {
+        path: PROYECTO_ROUTE_NAMES.RELACIONES,
+        component: ProyectoRelacionesComponent,
         canDeactivate: [FragmentGuard]
       },
     ]

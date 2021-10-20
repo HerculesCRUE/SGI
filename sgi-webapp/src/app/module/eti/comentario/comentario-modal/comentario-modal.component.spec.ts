@@ -15,6 +15,7 @@ import { IComite } from '@core/models/eti/comite';
 import { TipoEvaluacion } from '@core/models/eti/tipo-evaluacion';
 import { ActivatedRoute } from '@angular/router';
 import { FormularioService } from '@core/services/eti/formulario.service';
+import { IEvaluacion } from '@core/models/eti/evaluacion';
 
 describe('ComentarioModalComponent', () => {
   let component: ComentarioModalComponent;
@@ -31,7 +32,8 @@ describe('ComentarioModalComponent', () => {
         comite: {
           id: 1
         } as IComite,
-      }
+      },
+      evaluaciones: [] as IEvaluacion[]
     };
 
     TestBed.configureTestingModule({

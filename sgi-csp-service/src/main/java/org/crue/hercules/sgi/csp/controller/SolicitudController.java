@@ -8,6 +8,7 @@ import javax.validation.Valid;
 import org.crue.hercules.sgi.csp.dto.SolicitudProyectoPresupuestoTotalConceptoGasto;
 import org.crue.hercules.sgi.csp.dto.SolicitudProyectoPresupuestoTotales;
 import org.crue.hercules.sgi.csp.dto.SolicitudProyectoResponsableEconomicoOutput;
+import org.crue.hercules.sgi.csp.model.ConvocatoriaEntidadFinanciadora;
 import org.crue.hercules.sgi.csp.model.EstadoSolicitud;
 import org.crue.hercules.sgi.csp.model.Proyecto;
 import org.crue.hercules.sgi.csp.model.Solicitud;
@@ -17,6 +18,7 @@ import org.crue.hercules.sgi.csp.model.SolicitudModalidad;
 import org.crue.hercules.sgi.csp.model.SolicitudProyecto;
 import org.crue.hercules.sgi.csp.model.SolicitudProyectoAreaConocimiento;
 import org.crue.hercules.sgi.csp.model.SolicitudProyectoClasificacion;
+import org.crue.hercules.sgi.csp.model.SolicitudProyectoEntidad;
 import org.crue.hercules.sgi.csp.model.SolicitudProyectoEntidadFinanciadoraAjena;
 import org.crue.hercules.sgi.csp.model.SolicitudProyectoEquipo;
 import org.crue.hercules.sgi.csp.model.SolicitudProyectoPresupuesto;
@@ -29,6 +31,7 @@ import org.crue.hercules.sgi.csp.service.SolicitudModalidadService;
 import org.crue.hercules.sgi.csp.service.SolicitudProyectoAreaConocimientoService;
 import org.crue.hercules.sgi.csp.service.SolicitudProyectoClasificacionService;
 import org.crue.hercules.sgi.csp.service.SolicitudProyectoEntidadFinanciadoraAjenaService;
+import org.crue.hercules.sgi.csp.service.SolicitudProyectoEntidadService;
 import org.crue.hercules.sgi.csp.service.SolicitudProyectoEquipoService;
 import org.crue.hercules.sgi.csp.service.SolicitudProyectoPresupuestoService;
 import org.crue.hercules.sgi.csp.service.SolicitudProyectoResponsableEconomicoService;
@@ -106,6 +109,9 @@ public class SolicitudController {
   /** SolicitudProyectoResponaableEconomicoService */
   private final SolicitudProyectoResponsableEconomicoService solicitudProyectoResponsableEconomicoService;
 
+  /** SolicitudProyectoEntidadService */
+  private final SolicitudProyectoEntidadService solicitudProyectoEntidadService;
+
   /**
    * Instancia un nuevo SolicitudController.
    * 
@@ -123,6 +129,7 @@ public class SolicitudController {
    * @param solicitudProyectoClasificacionService            {@link SolicitudProyectoClasificacionService}.
    * @param solicitudProyectoAreaConocimientoService         {@link SolicitudProyectoAreaConocimientoService}.
    * @param solicitudProyectoResponsableEconomicoService     {@link SolicitudProyectoResponsableEconomicoService}.
+   * @param solicitudProyectoEntidadService                  {@link SolicitudProyectoEntidadService}.
    */
   public SolicitudController(ModelMapper modelMapper, SolicitudService solicitudService,
       SolicitudModalidadService solicitudModalidadService, EstadoSolicitudService estadoSolicitudService,
@@ -133,7 +140,8 @@ public class SolicitudController {
       SolicitudProyectoPresupuestoService solicitudProyectoPresupuestoService,
       SolicitudProyectoClasificacionService solicitudProyectoClasificacionService,
       SolicitudProyectoAreaConocimientoService solicitudProyectoAreaConocimientoService,
-      SolicitudProyectoResponsableEconomicoService solicitudProyectoResponsableEconomicoService) {
+      SolicitudProyectoResponsableEconomicoService solicitudProyectoResponsableEconomicoService,
+      SolicitudProyectoEntidadService solicitudProyectoEntidadService) {
     this.modelMapper = modelMapper;
     this.service = solicitudService;
     this.solicitudModalidadService = solicitudModalidadService;
@@ -148,6 +156,7 @@ public class SolicitudController {
     this.solicitudProyectoClasificacionService = solicitudProyectoClasificacionService;
     this.solicitudProyectoAreaConocimientoService = solicitudProyectoAreaConocimientoService;
     this.solicitudProyectoResponsableEconomicoService = solicitudProyectoResponsableEconomicoService;
+    this.solicitudProyectoEntidadService = solicitudProyectoEntidadService;
   }
 
   /**
@@ -542,34 +551,6 @@ public class SolicitudController {
   }
 
   /**
-   * Devuelve una lista paginada de {@link SolicitudProyectoPresupuesto}
-   * 
-   * @param id     Identificador de {@link Solicitud}.
-   * @param query  filtro de búsqueda.
-   * @param paging pageable.
-   */
-  @GetMapping("/{id}/solicitudproyectopresupuestos/entidadconvocatoria/{entidadRef}")
-  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-SOL-E', 'CSP-PRO-V', 'CSP-PRO-E')")
-  ResponseEntity<Page<SolicitudProyectoPresupuesto>> findAllSolicitudProyectoPresupuestoEntidadConvocatoria(
-      @PathVariable Long id, @PathVariable String entidadRef, @RequestParam(name = "q", required = false) String query,
-      @RequestPageable(sort = "s") Pageable paging) {
-    log.debug(
-        "findAllSolicitudProyectoPresupuestoEntidad(Long id, String entidadRef, String query, Pageable paging) - start");
-    Page<SolicitudProyectoPresupuesto> page = solicitudProyectoPresupuestoService.findAllBySolicitudAndEntidadRef(id,
-        entidadRef, false, query, paging);
-
-    if (page.isEmpty()) {
-      log.debug(
-          "findAllSolicitudProyectoPresupuestoEntidad(Long id, String entidadRef, String query, Pageable paging) - end");
-      return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-    }
-
-    log.debug(
-        "findAllSolicitudProyectoPresupuestoEntidad(Long id, String entidadRef, String query, Pageable paging) - end");
-    return new ResponseEntity<>(page, HttpStatus.OK);
-  }
-
-  /**
    * Comprueba la existencia de {@link SolicitudProyectoPresupuesto} asociados a
    * una solicitud para una entidadRef y relacionada con la convocatorai
    * 
@@ -588,34 +569,6 @@ public class SolicitudController {
 
     log.debug("existSolicitudProyectoPresupuestoEntidadConvocatoria(Long id, String entidadRef) - end");
     return returnValue ? new ResponseEntity<>(HttpStatus.OK) : new ResponseEntity<>(HttpStatus.NO_CONTENT);
-  }
-
-  /**
-   * Devuelve una lista paginada de {@link SolicitudProyectoPresupuesto}
-   * 
-   * @param id     Identificador de {@link Solicitud}.
-   * @param query  filtro de búsqueda.
-   * @param paging pageable.
-   */
-  @GetMapping("/{id}/solicitudproyectopresupuestos/entidadajena/{entidadRef}")
-  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-SOL-E', 'CSP-SOL-V')")
-  ResponseEntity<Page<SolicitudProyectoPresupuesto>> findAllSolicitudProyectoPresupuestoEntidadAjena(
-      @PathVariable Long id, @PathVariable String entidadRef, @RequestParam(name = "q", required = false) String query,
-      @RequestPageable(sort = "s") Pageable paging) {
-    log.debug(
-        "findAllSolicitudProyectoPresupuestoEntidad(Long id, String entidadRef, String query, Pageable paging) - start");
-    Page<SolicitudProyectoPresupuesto> page = solicitudProyectoPresupuestoService.findAllBySolicitudAndEntidadRef(id,
-        entidadRef, true, query, paging);
-
-    if (page.isEmpty()) {
-      log.debug(
-          "findAllSolicitudProyectoPresupuestoEntidad(Long id, String entidadRef, String query, Pageable paging) - end");
-      return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-    }
-
-    log.debug(
-        "findAllSolicitudProyectoPresupuestoEntidad(Long id, String entidadRef, String query, Pageable paging) - end");
-    return new ResponseEntity<>(page, HttpStatus.OK);
   }
 
   /**
@@ -860,6 +813,84 @@ public class SolicitudController {
         .map((responsableEconomico) -> convert(responsableEconomico)).collect(Collectors.toList());
 
     return new PageImpl<>(content, page.getPageable(), page.getTotalElements());
+  }
+
+  /**
+   * Devuelve una lista paginada de {@link ConvocatoriaEntidadFinanciadora}
+   * 
+   * @param id     Identificador de {@link Solicitud}.
+   * @param query  filtro de búsqueda.
+   * @param paging pageable.
+   */
+  @GetMapping("/{id}/solicitudproyectoentidadfinanciadora")
+  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-SOL-E','CSP-SOL-V')")
+  ResponseEntity<Page<ConvocatoriaEntidadFinanciadora>> findAllSolicitudProyectoEntidadFinanciadora(
+      @PathVariable Long id, @RequestParam(name = "q", required = false) String query,
+      @RequestPageable(sort = "s") Pageable paging) {
+    log.debug("findAllSolicitudProyectoEntidadFinanciadora(Long id, String query, Pageable paging) - start");
+    Page<ConvocatoriaEntidadFinanciadora> page = solicitudProyectoEntidadService
+        .findConvocatoriaEntidadFinanciadoraBySolicitud(id, query, paging);
+
+    if (page.isEmpty()) {
+      log.debug("findAllSolicitudProyectoEntidadFinanciadora(Long id, String query, Pageable paging) - end");
+      return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    log.debug("findAllSolicitudProyectoEntidadFinanciadora(Long id, String query, Pageable paging) - end");
+    return new ResponseEntity<>(page, HttpStatus.OK);
+  }
+
+  /**
+   * Devuelve una lista paginada de {@link SolicitudProyectoEntidad} para una
+   * {@link Solicitud} correspondientes a un tipo de presupuesto mixto (entidad
+   * gestora de la convocatoria y entidades financiadoras ajenas).
+   * 
+   * @param id     Identificador de {@link Solicitud}.
+   * @param query  filtro de búsqueda.
+   * @param paging pageable.
+   */
+  @GetMapping("/{id}/solicitudproyectoentidad/tipopresupuestomixto")
+  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-SOL-E','CSP-SOL-V')")
+  ResponseEntity<Page<SolicitudProyectoEntidad>> findSolicitudProyectoEntidadTipoPresupuestoMixto(@PathVariable Long id,
+      @RequestParam(name = "q", required = false) String query, @RequestPageable(sort = "s") Pageable paging) {
+    log.debug("findSolicitudProyectoEntidadTipoPresupuestoMixto(Long id, String query, Pageable paging) - start");
+    Page<SolicitudProyectoEntidad> page = solicitudProyectoEntidadService
+        .findSolicitudProyectoEntidadTipoPresupuestoMixto(id, query, paging);
+
+    if (page.isEmpty()) {
+      log.debug("findSolicitudProyectoEntidadTipoPresupuestoMixto(Long id, String query, Pageable paging) - end");
+      return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    log.debug("findSolicitudProyectoEntidadTipoPresupuestoMixto(Long id, String query, Pageable paging) - end");
+    return new ResponseEntity<>(page, HttpStatus.OK);
+  }
+
+  /**
+   * Devuelve una lista paginada de {@link SolicitudProyectoEntidad} para una
+   * {@link Solicitud} correspondientes a un tipo de presupuesto mixto (entidad
+   * gestora de la convocatoria y entidades financiadoras ajenas).
+   * 
+   * @param id     Identificador de {@link Solicitud}.
+   * @param query  filtro de búsqueda.
+   * @param paging pageable.
+   */
+  @GetMapping("/{id}/solicitudproyectoentidad/tipopresupuestoporentidad")
+  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-SOL-E','CSP-SOL-V')")
+  ResponseEntity<Page<SolicitudProyectoEntidad>> findSolicitudProyectoEntidadTipoPresupuestoPorEntidad(
+      @PathVariable Long id, @RequestParam(name = "q", required = false) String query,
+      @RequestPageable(sort = "s") Pageable paging) {
+    log.debug("findSolicitudProyectoEntidadTipoPresupuestoPorEntidad(Long id, String query, Pageable paging) - start");
+    Page<SolicitudProyectoEntidad> page = solicitudProyectoEntidadService
+        .findSolicitudProyectoEntidadTipoPresupuestoPorEntidad(id, query, paging);
+
+    if (page.isEmpty()) {
+      log.debug("findSolicitudProyectoEntidadTipoPresupuestoPorEntidad(Long id, String query, Pageable paging) - end");
+      return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    log.debug("findSolicitudProyectoEntidadTipoPresupuestoPorEntidad(Long id, String query, Pageable paging) - end");
+    return new ResponseEntity<>(page, HttpStatus.OK);
   }
 
 }

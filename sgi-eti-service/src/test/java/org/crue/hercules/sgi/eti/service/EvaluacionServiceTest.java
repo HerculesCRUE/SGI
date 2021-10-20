@@ -906,7 +906,8 @@ public class EvaluacionServiceTest extends BaseServiceTest {
     peticionEvaluacion.setActivo(Boolean.TRUE);
 
     final Formulario formulario = new Formulario(1L, "M10", "Descripcion");
-    final Comite comite = new Comite(1L, "Comite1", formulario, Boolean.TRUE);
+    final Comite comite = new Comite(1L, "Comite1", "nombreSecretario", "nombreInvestigacion", "nombreDecreto",
+        "articulo", formulario, Boolean.TRUE);
 
     final TipoMemoria tipoMemoria = new TipoMemoria();
     tipoMemoria.setId(1L); // Nueva
@@ -1001,7 +1002,8 @@ public class EvaluacionServiceTest extends BaseServiceTest {
     peticionEvaluacion.setActivo(Boolean.TRUE);
 
     Formulario formulario = new Formulario(1L, "M10", "Descripcion");
-    Comite comite = new Comite(1L, "Comite1", formulario, Boolean.TRUE);
+    Comite comite = new Comite(1L, "Comite1", "nombreSecretario", "nombreInvestigacion", "nombreDecreto", "articulo",
+        formulario, Boolean.TRUE);
 
     TipoMemoria tipoMemoria = new TipoMemoria();
     tipoMemoria.setId(1L);

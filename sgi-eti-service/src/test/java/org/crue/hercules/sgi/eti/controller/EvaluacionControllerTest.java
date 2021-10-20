@@ -603,7 +603,7 @@ public class EvaluacionControllerTest extends BaseControllerTest {
   }
 
   @Test
-  @WithMockUser(username = "user", authorities = { "ETI-EVC-EVALR", "ETI-EVC-EVALR-INV" })
+  @WithMockUser(username = "user", authorities = { "ETI-EVC-EVALR", "ETI-EVC-INV-EVALR" })
   public void createComentarioEvaluador_WithId_Returns400() throws Exception {
 
     // given: Nueva entidad con Id
@@ -895,7 +895,8 @@ public class EvaluacionControllerTest extends BaseControllerTest {
     peticionEvaluacion.setActivo(Boolean.TRUE);
 
     Formulario formulario = new Formulario(1L, "M10", "Descripcion");
-    Comite comite = new Comite(1L, "Comite1", formulario, Boolean.TRUE);
+    Comite comite = new Comite(1L, "Comite1", "nombreSecretario", "nombreInvestigacion", "nombreDecreto", "articulo",
+        formulario, Boolean.TRUE);
 
     TipoMemoria tipoMemoria = new TipoMemoria();
     tipoMemoria.setId(1L);
@@ -1019,7 +1020,8 @@ public class EvaluacionControllerTest extends BaseControllerTest {
     peticionEvaluacion.setActivo(Boolean.TRUE);
 
     Formulario formulario = new Formulario(1L, "M10", "Descripcion");
-    Comite comite = new Comite(1L, "Comite1", formulario, Boolean.TRUE);
+    Comite comite = new Comite(1L, "Comite1", "nombreSecretario", "nombreInvestigacion", "nombreDecreto", "articulo",
+        formulario, Boolean.TRUE);
 
     TipoMemoria tipoMemoria = new TipoMemoria();
     tipoMemoria.setId(1L);

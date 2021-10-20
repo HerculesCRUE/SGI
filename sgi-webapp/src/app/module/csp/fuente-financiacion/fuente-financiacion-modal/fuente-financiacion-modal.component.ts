@@ -14,7 +14,7 @@ import { SnackBarService } from '@core/services/snack-bar.service';
 import { TranslateService } from '@ngx-translate/core';
 import { SgiRestListResult } from '@sgi/framework/http/types';
 import { NGXLogger } from 'ngx-logger';
-import { Observable } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { map, startWith, switchMap } from 'rxjs/operators';
 
 const MSG_ERROR_INIT = marker('error.load');
@@ -36,10 +36,8 @@ export class FuenteFinanciacionModalComponent extends
   fxLayoutProperties: FxLayoutProperties;
   public fuenteFinanciacion: IFuenteFinanciacion;
 
-  ambitosGeograficos: Observable<ITipoAmbitoGeografico[]>;
-  origenes: Observable<ITipoOrigenFuenteFinanciacion[]>;
-  private ambitoGeograficoFiltered: ITipoAmbitoGeografico[];
-  private origenFiltered: ITipoOrigenFuenteFinanciacion[];
+  ambitosGeograficos$: BehaviorSubject<ITipoAmbitoGeografico[]> = new BehaviorSubject<ITipoAmbitoGeografico[]>([]);
+  origenes$: BehaviorSubject<ITipoOrigenFuenteFinanciacion[]> = new BehaviorSubject<ITipoOrigenFuenteFinanciacion[]>([]);
 
   msgParamAmbitoEntity = {};
   msgParamNombreEntity = {};
@@ -126,15 +124,7 @@ export class FuenteFinanciacionModalComponent extends
   private loadAmbitosGeograficos() {
     this.subscriptions.push(
       this.ambitoGeograficoService.findAll().subscribe(
-        (res: SgiRestListResult<ITipoAmbitoGeografico>) => {
-          this.ambitoGeograficoFiltered = res.items;
-          this.ambitosGeograficos = this.formGroup.controls.ambitoGeografico.valueChanges
-            .pipe(
-
-              startWith(''),
-              map(value => this.filtroAmbitoGeografico(value))
-            );
-        },
+        (res: SgiRestListResult<ITipoAmbitoGeografico>) => this.ambitosGeograficos$.next(res.items),
         (error) => {
           this.logger.error(error);
           this.snackBarService.showError(MSG_ERROR_INIT);
@@ -146,60 +136,13 @@ export class FuenteFinanciacionModalComponent extends
   private loadOrigenes() {
     this.subscriptions.push(
       this.tipoOrigenFuenteFinanciacionService.findAll().subscribe(
-        (res: SgiRestListResult<ITipoOrigenFuenteFinanciacion>) => {
-          this.origenFiltered = res.items;
-          this.origenes = this.formGroup.controls.origen.valueChanges
-            .pipe(
-
-              startWith(''),
-              map(value => this.filtroOrigen(value))
-            );
-        },
+        (res: SgiRestListResult<ITipoOrigenFuenteFinanciacion>) => this.origenes$.next(res.items),
         (error) => {
           this.logger.error(error);
           this.snackBarService.showError(MSG_ERROR_INIT);
         }
       )
     );
-  }
-
-  /**
-   * Devuelve el nombre de un ámbito geográfico.
-   * @param ambitoGeografico ámbito geográfico.
-   * @returns nombre de un ámbito geográfico.
-   */
-  getAmbitoGeografico(ambitoGeografico?: ITipoAmbitoGeografico): string | undefined {
-    return typeof ambitoGeografico === 'string' ? ambitoGeografico : ambitoGeografico?.nombre;
-  }
-
-  /**
-   * Devuelve el nombre de un tipo de origen.
-   * @param origen origen.
-   * @returns nombre de un tipo de origen.
-   */
-  getOrigen(origen?: ITipoOrigenFuenteFinanciacion): string | undefined {
-    return typeof origen === 'string' ? origen : origen?.nombre;
-  }
-
-  /**
-   * Filtra la lista devuelta por el servicio
-   *
-   * @param value del input para autocompletar
-   */
-  private filtroAmbitoGeografico(value: string): ITipoAmbitoGeografico[] {
-    const filterValue = value.toString().toLowerCase();
-    return this.ambitoGeograficoFiltered.filter(ambitoGeografico => ambitoGeografico.nombre.toLowerCase()
-      .includes(filterValue));
-  }
-
-  /**
-   * Filtra la lista devuelta por el servicio
-   *
-   * @param value del input para autocompletar
-   */
-  private filtroOrigen(value: string): ITipoOrigenFuenteFinanciacion[] {
-    const filterValue = value.toString().toLowerCase();
-    return this.origenFiltered.filter(origen => origen.nombre.toLowerCase().includes(filterValue));
   }
 
   protected getDatosForm(): IFuenteFinanciacion {

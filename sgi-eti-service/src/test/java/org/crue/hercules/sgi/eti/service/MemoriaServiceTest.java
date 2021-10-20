@@ -9,12 +9,14 @@ import java.util.List;
 import java.util.Optional;
 
 import org.assertj.core.api.Assertions;
+import org.crue.hercules.sgi.eti.config.RestApiProperties;
 import org.crue.hercules.sgi.eti.config.SgiConfigProperties;
 import org.crue.hercules.sgi.eti.dto.MemoriaPeticionEvaluacion;
 import org.crue.hercules.sgi.eti.exceptions.ComiteNotFoundException;
 import org.crue.hercules.sgi.eti.exceptions.MemoriaNotFoundException;
 import org.crue.hercules.sgi.eti.exceptions.PeticionEvaluacionNotFoundException;
 import org.crue.hercules.sgi.eti.model.Comite;
+import org.crue.hercules.sgi.eti.model.Configuracion;
 import org.crue.hercules.sgi.eti.model.ConvocatoriaReunion;
 import org.crue.hercules.sgi.eti.model.Dictamen;
 import org.crue.hercules.sgi.eti.model.EstadoMemoria;
@@ -42,6 +44,7 @@ import org.crue.hercules.sgi.eti.repository.PeticionEvaluacionRepository;
 import org.crue.hercules.sgi.eti.repository.RespuestaRepository;
 import org.crue.hercules.sgi.eti.repository.TareaRepository;
 import org.crue.hercules.sgi.eti.service.impl.MemoriaServiceImpl;
+import org.crue.hercules.sgi.eti.util.Constantes;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
@@ -55,6 +58,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.web.client.RestTemplate;
 
 /**
  * MemoriaServiceTest
@@ -97,6 +101,15 @@ public class MemoriaServiceTest extends BaseServiceTest {
   @Mock
   private TareaRepository tareaRepository;
 
+  @Mock
+  private ConfiguracionService configuracionService;
+
+  @Mock
+  private RestTemplate restTemplate;
+
+  @Mock
+  private RestApiProperties restApiProperties;
+
   @Autowired
   private SgiConfigProperties sgiConfigProperties;
 
@@ -105,7 +118,7 @@ public class MemoriaServiceTest extends BaseServiceTest {
     memoriaService = new MemoriaServiceImpl(sgiConfigProperties, memoriaRepository, estadoMemoriaRepository,
         estadoRetrospectivaRepository, evaluacionRepository, comentarioRepository, informeFormularioService,
         peticionEvaluacionRepository, comiteRepository, documentacionMemoriaRepository, respuestaRepository,
-        tareaRepository);
+        tareaRepository, configuracionService, restApiProperties, restTemplate);
   }
 
   @Test
@@ -931,6 +944,57 @@ public class MemoriaServiceTest extends BaseServiceTest {
     Assertions.assertThat(memoriaEstadoActualizado).isNull();
   }
 
+  @Test
+  public void updateEstadoAnteriorMemoriaEnEvaluacion_returnsMemoriaNull() {
+    TipoEstadoMemoria tipoEstadoMemoria = new TipoEstadoMemoria();
+    tipoEstadoMemoria.setId(Constantes.TIPO_ESTADO_MEMORIA_EN_EVALUACION);
+
+    Memoria memoria = generarMockMemoria(1L, "numRef-5598", "Memoria1", 1, 3L);
+    memoria.setEstadoActual(tipoEstadoMemoria);
+
+    BDDMockito.given(memoriaRepository.findById(ArgumentMatchers.anyLong())).willReturn(Optional.of(memoria));
+
+    Memoria memoriaEstadoActualizado = memoriaService.updateEstadoAnteriorMemoria(1L);
+
+    Assertions.assertThat(memoriaEstadoActualizado).isNull();
+  }
+
+  @Test
+  public void updateEstadoAnteriorMemoriaEnSecretaria_returnsMemoriaNull() {
+    TipoEstadoMemoria tipoEstadoMemoria = new TipoEstadoMemoria();
+    tipoEstadoMemoria.setId(Constantes.TIPO_ESTADO_MEMORIA_EN_SECRETARIA);
+
+    Memoria memoria = generarMockMemoria(1L, "numRef-5598", "Memoria1", 1, 3L);
+    memoria.setEstadoActual(tipoEstadoMemoria);
+
+    BDDMockito.given(memoriaRepository.findById(ArgumentMatchers.anyLong())).willReturn(Optional.of(memoria));
+
+    Memoria memoriaEstadoActualizado = memoriaService.updateEstadoAnteriorMemoria(1L);
+
+    Assertions.assertThat(memoriaEstadoActualizado).isNull();
+  }
+
+  @Test
+  public void updateEstadoAnteriorMemoriaEnSecretariaRevisionMinima_returnsMemoriaNull() {
+    TipoEstadoMemoria tipoEstadoMemoria = new TipoEstadoMemoria();
+    tipoEstadoMemoria.setId(Constantes.TIPO_ESTADO_MEMORIA_EN_SECRETARIA_REVISION_MINIMA);
+
+    Memoria memoria = generarMockMemoria(1L, "numRef-5598", "Memoria1", 1, 3L);
+    memoria.setEstadoActual(tipoEstadoMemoria);
+
+    BDDMockito.given(memoriaRepository.findById(ArgumentMatchers.anyLong())).willReturn(Optional.of(memoria));
+
+    Memoria memoriaEstadoActualizado = memoriaService.updateEstadoAnteriorMemoria(1L);
+
+    Assertions.assertThat(memoriaEstadoActualizado).isNull();
+  }
+
+  @Test
+  public void updateEstadoAnterior_MemoriaNotPresent_ThrowsMemoriaNotFoundException() {
+    Assertions.assertThatThrownBy(() -> memoriaService.updateEstadoAnteriorMemoria(1L))
+        .isInstanceOf(MemoriaNotFoundException.class);
+  }
+
   public List<EstadoMemoria> generarEstadosMemoria(Long id) {
     List<EstadoMemoria> estadosMemoria = new ArrayList<EstadoMemoria>();
     EstadoMemoria estadoMemoria = new EstadoMemoria();
@@ -948,7 +1012,6 @@ public class MemoriaServiceTest extends BaseServiceTest {
     return estadoRetrospectiva;
   }
 
-  @Test
   public void enviarSecretaria_WithId() {
 
     Memoria memoria = generarMockMemoria(1L, "numRef-111", "Memoria1", 1, 6L);
@@ -974,7 +1037,6 @@ public class MemoriaServiceTest extends BaseServiceTest {
 
   }
 
-  @Test
   public void enviarSecretaria_WithId_EstadoEnAclaraciónSeguimientoFinal() {
     // given: Una nueva Memoria (21L=En Aclaración Seguimiento Final)
     Memoria memoria = generarMockMemoria(1L, "numRef-111", "Memoria1", 1, 21L);
@@ -1002,7 +1064,6 @@ public class MemoriaServiceTest extends BaseServiceTest {
 
   }
 
-  @Test
   public void enviarSecretaria_WithId_EstadoCompletadaSeguimientoAnual() {
 
     // given: Una nueva Memoria (11L=Completada Seguimiento Anual)
@@ -1024,7 +1085,6 @@ public class MemoriaServiceTest extends BaseServiceTest {
 
   }
 
-  @Test
   public void enviarSecretaria_WithId_EstadoCompletadaSeguimientoFinal() {
 
     // given: Una nueva Memoria (16L=Completada Seguimiento Final)
@@ -1046,7 +1106,6 @@ public class MemoriaServiceTest extends BaseServiceTest {
 
   }
 
-  @Test
   public void enviarSecretaria_WithId_EstadoNoProcedeEvaluar() {
 
     // given: Una nueva Memoria (8L=No procede evaluar)
@@ -1068,7 +1127,6 @@ public class MemoriaServiceTest extends BaseServiceTest {
 
   }
 
-  @Test
   public void enviarSecretaria_WithId_EstadoPendienteCorrecciones() {
 
     // given: Una nueva Memoria (7L=Pendiente de correcciones)
@@ -1090,7 +1148,6 @@ public class MemoriaServiceTest extends BaseServiceTest {
 
   }
 
-  @Test
   public void enviarSecretaria_WithId_EstadoCompletada() {
 
     // given: Una nueva Memoria (2L=Completada)
@@ -1109,6 +1166,35 @@ public class MemoriaServiceTest extends BaseServiceTest {
     Assertions.assertThat(memoriaActualizada.getNumReferencia()).isEqualTo("numRef-111");
     Assertions.assertThat(memoriaActualizada.getEstadoActual().getId()).isEqualTo(3L);
     Assertions.assertThat(memoriaActualizada.getPeticionEvaluacion().getPersonaRef()).isEqualTo("user-001");
+
+  }
+
+  @Test
+  public void update_archivarNoPresentados() {
+    // given: Memorias a archivar
+    Memoria memoria = generarMockMemoria(1L, "numRef-99", "Memoria", 1, 1L);
+    Memoria memoriaServicioActualizado = generarMockMemoria(1L, "numRef-99", "MemoriaAct", 1, 1L);
+    BDDMockito.given(configuracionService.findConfiguracion()).willReturn(generarMockConfiguracion());
+
+    List<Memoria> memorias = new ArrayList<>();
+    for (int i = 1; i <= 100; i++) {
+      memorias.add(generarMockMemoria(Long.valueOf(i), "numRef-5" + String.format("%03d", i),
+          "Memoria" + String.format("%03d", i), 1, 1L));
+    }
+
+    BDDMockito.given(memoriaRepository.findAll(ArgumentMatchers.<Specification<Memoria>>any())).willReturn(memorias);
+    TipoEstadoMemoria tipoEstadoMemoria = new TipoEstadoMemoria();
+    tipoEstadoMemoria.setId(Constantes.TIPO_ESTADO_MEMORIA_ARCHIVADO);
+    EstadoMemoria estadoMemoria = new EstadoMemoria(null, memoria, tipoEstadoMemoria, Instant.now());
+    BDDMockito.given(estadoMemoriaRepository.save(ArgumentMatchers.<EstadoMemoria>any())).willReturn(estadoMemoria);
+    memoriaServicioActualizado.setEstadoActual(tipoEstadoMemoria);
+    BDDMockito.given(memoriaRepository.save(ArgumentMatchers.<Memoria>any())).willReturn(memoriaServicioActualizado);
+
+    // when: Actualizamos la Memoria con el estado archivado
+    memoriaService.archivarNoPresentados();
+
+    Assertions.assertThat(memoriaServicioActualizado.getEstadoActual().getId())
+        .isEqualTo(Constantes.TIPO_ESTADO_MEMORIA_ARCHIVADO);
 
   }
 
@@ -1201,7 +1287,8 @@ public class MemoriaServiceTest extends BaseServiceTest {
    */
   private Comite generarMockComite(Long id, String comite, Boolean activo) {
     Formulario formulario = new Formulario(1L, "M10", "Descripcion");
-    return new Comite(id, comite, formulario, activo);
+    return new Comite(id, comite, "nombreSecretario", "nombreInvestigacion", "nombreDecreto", "articulo", formulario,
+        activo);
 
   }
 
@@ -1307,7 +1394,8 @@ public class MemoriaServiceTest extends BaseServiceTest {
     peticionEvaluacion.setActivo(Boolean.TRUE);
 
     Formulario formulario = new Formulario(1L, "M10", "Descripcion");
-    Comite comite = new Comite(1L, "Comite1", formulario, Boolean.TRUE);
+    Comite comite = new Comite(1L, "Comite1", "nombreSecretario", "nombreInvestigacion", "nombreDecreto", "articulo",
+        formulario, Boolean.TRUE);
 
     TipoMemoria tipoMemoria = new TipoMemoria();
     tipoMemoria.setId(1L);
@@ -1364,5 +1452,26 @@ public class MemoriaServiceTest extends BaseServiceTest {
     evaluacion.setActivo(Boolean.TRUE);
 
     return evaluacion;
+  }
+
+  /**
+   * Función que devuelve un objeto Configuracion
+   * 
+   * @return el objeto Configuracion
+   */
+
+  public Configuracion generarMockConfiguracion() {
+
+    Configuracion configuracion = new Configuracion();
+
+    configuracion.setId(1L);
+    configuracion.setDiasArchivadaPendienteCorrecciones(20);
+    configuracion.setDiasLimiteEvaluador(3);
+    configuracion.setMesesArchivadaInactivo(2);
+    configuracion.setMesesAvisoProyectoCEEA(1);
+    configuracion.setMesesAvisoProyectoCEI(1);
+    configuracion.setMesesAvisoProyectoCBE(1);
+
+    return configuracion;
   }
 }

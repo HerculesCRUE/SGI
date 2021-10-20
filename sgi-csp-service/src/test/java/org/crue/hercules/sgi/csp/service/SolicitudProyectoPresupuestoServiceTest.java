@@ -74,16 +74,14 @@ public class SolicitudProyectoPresupuestoServiceTest {
         .isEqualTo(solicitudProyectoPresupuesto.getSolicitudProyectoId());
     Assertions.assertThat(solicitudProyectoPresupuestoCreado.getConceptoGasto().getId())
         .as("getConceptoGasto().getId()").isEqualTo(solicitudProyectoPresupuesto.getConceptoGasto().getId());
-    Assertions.assertThat(solicitudProyectoPresupuestoCreado.getEntidadRef()).as("getEntidadRef()")
-        .isEqualTo(solicitudProyectoPresupuesto.getEntidadRef());
     Assertions.assertThat(solicitudProyectoPresupuestoCreado.getAnualidad()).as("getAnualidad()")
         .isEqualTo(solicitudProyectoPresupuesto.getAnualidad());
     Assertions.assertThat(solicitudProyectoPresupuestoCreado.getImporteSolicitado()).as("getImporteSolicitado()")
         .isEqualTo(solicitudProyectoPresupuesto.getImporteSolicitado());
     Assertions.assertThat(solicitudProyectoPresupuestoCreado.getObservaciones()).as("getObservaciones()")
         .isEqualTo(solicitudProyectoPresupuesto.getObservaciones());
-    Assertions.assertThat(solicitudProyectoPresupuestoCreado.getFinanciacionAjena()).as("getFinanciacionAjena()")
-        .isEqualTo(solicitudProyectoPresupuesto.getFinanciacionAjena());
+    Assertions.assertThat(solicitudProyectoPresupuestoCreado.getSolicitudProyectoEntidadId())
+        .as("getSolicitudProyectoEntidadId()").isNull();
   }
 
   @Test
@@ -130,16 +128,14 @@ public class SolicitudProyectoPresupuestoServiceTest {
         .as("getSolicitudProyectoId()").isEqualTo(solicitudProyectoPresupuesto.getSolicitudProyectoId());
     Assertions.assertThat(solicitudProyectoPresupuestoActualizado.getConceptoGasto().getId())
         .as("getConceptoGasto().getId()").isEqualTo(solicitudProyectoPresupuesto.getConceptoGasto().getId());
-    Assertions.assertThat(solicitudProyectoPresupuestoActualizado.getEntidadRef()).as("getEntidadRef()")
-        .isEqualTo(solicitudProyectoPresupuesto.getEntidadRef());
     Assertions.assertThat(solicitudProyectoPresupuestoActualizado.getAnualidad()).as("getAnualidad()")
         .isEqualTo(solicitudProyectoPresupuesto.getAnualidad());
     Assertions.assertThat(solicitudProyectoPresupuestoActualizado.getImporteSolicitado()).as("getImporteSolicitado()")
         .isEqualTo(solicitudProyectoPresupuesto.getImporteSolicitado());
     Assertions.assertThat(solicitudProyectoPresupuestoActualizado.getObservaciones()).as("getObservaciones()")
         .isEqualTo(solicitudProyectoPresupuestoActualizar.getObservaciones());
-    Assertions.assertThat(solicitudProyectoPresupuestoActualizado.getFinanciacionAjena()).as("getFinanciacionAjena()")
-        .isEqualTo(solicitudProyectoPresupuesto.getFinanciacionAjena());
+    Assertions.assertThat(solicitudProyectoPresupuestoActualizado.getSolicitudProyectoEntidadId())
+        .as("getSolicitudProyectoEntidadId()").isNull();
 
   }
 
@@ -279,11 +275,10 @@ public class SolicitudProyectoPresupuestoServiceTest {
         .id(id)
         .solicitudProyectoId(solicitudProyectoId)
         .conceptoGasto(ConceptoGasto.builder().id(conceptoGastoId).build())
-        .entidadRef(null)
         .anualidad(1000)
         .importeSolicitado(new BigDecimal("335"))
         .observaciones("observaciones-" + suffix)
-        .financiacionAjena(false)
+        .solicitudProyectoEntidadId(null)
         .build();// @formatter:on
 
     return solicitudProyectoPresupuesto;

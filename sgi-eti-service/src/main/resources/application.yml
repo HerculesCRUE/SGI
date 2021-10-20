@@ -30,6 +30,12 @@ spring:
     # Disable the static resource handling
     add-mappings: false
 ---
+sgi:
+  rest:
+    api:
+      rep-url: "http://sgi-rep-service:4287"
+      sgdoc-url: "http://sgi-esb:8080"
+      
 spring:
   profiles: dev
   datasource:
@@ -98,6 +104,11 @@ spring:
 
 logging:
   level:
+    liquibase:
+      executor:
+        jvm:
+          # Log the Liquibase JDBC executor
+          JdbcExecutor: DEBUG
     org:
       hibernate:
         # Log the SQL statements
@@ -114,6 +125,11 @@ logging:
             JdbcTemplate: DEBUG
             StatementCreatorUtils: TRACE
 ---
+sgi:
+  rest:
+    api:
+      rep-url: "http://sgi-rep:8080" 
+      sgdoc-url: "http://sgi-esb:8080"   
 spring:
   profiles: prod
   datasource:

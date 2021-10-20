@@ -1,16 +1,16 @@
+import { IInvencion } from '@core/models/pii/invencion';
 import { Estado, IInvencionGasto } from '@core/models/pii/invencion-gasto';
 import { IDatoEconomico } from '@core/models/sgepii/dato-economico';
+import { IDatoEconomicoDetalle } from '@core/models/sgepii/dato-economico-detalle';
 import { Fragment } from '@core/services/action-service';
+import { InvencionGastoService } from '@core/services/pii/invencion/invencion-gasto/invencion-gasto.service';
 import { InvencionService } from '@core/services/pii/invencion/invencion.service';
-import { SolicitudProteccionService } from '@core/services/pii/invencion/solicitud-proteccion/solicitud-proteccion.service';
+import { SolicitudProteccionService } from '@core/services/pii/solicitud-proteccion/solicitud-proteccion.service';
 import { GastosInvencionService } from '@core/services/sgepii/gastos-invencion.service';
 import { StatusWrapper } from '@core/utils/status-wrapper';
-import { BehaviorSubject, forkJoin, from, merge, Observable, of } from "rxjs";
-import { catchError, map, mergeMap, switchMap, takeLast, tap, toArray } from "rxjs/operators";
+import { BehaviorSubject, forkJoin, from, merge, Observable, of } from 'rxjs';
+import { catchError, map, mergeMap, switchMap, takeLast, tap, toArray } from 'rxjs/operators';
 import { IColumnDefinition } from 'src/app/module/csp/ejecucion-economica/ejecucion-economica-formulario/desglose-economico.fragment';
-import { IInvencion } from "@core/models/pii/invencion";
-import { IDatoEconomicoDetalle } from "@core/models/sgepii/dato-economico-detalle";
-import { InvencionGastoService } from "@core/services/pii/invencion/invencion-gasto/invencion-gasto.service";
 
 export class InvencionGastosFragment extends Fragment {
 
@@ -60,7 +60,7 @@ export class InvencionGastosFragment extends Fragment {
           }));
           const invencionGastoTableData = gastosInvencionProcessed.map(gastoInvencion => {
             const relatedInvencionGasto = invencionGastos.find(invencionGasto => invencionGasto.gasto.id === gastoInvencion.id);
-            return new StatusWrapper(this.createeInvencionGastoTableData(gastoInvencion, relatedInvencionGasto));
+            return new StatusWrapper(this.createInvencionGastoTableData(gastoInvencion, relatedInvencionGasto));
           });
           this.invencionGastos$.next(invencionGastoTableData);
         }
@@ -87,7 +87,7 @@ export class InvencionGastosFragment extends Fragment {
         return this.invencionGastosService.update(wrapper.value.id, wrapper.value).pipe(
           map((informePatentabilidadResponse) => this.refreshInvencionGastosData(informePatentabilidadResponse, wrapper, current)),
           catchError(() => of(void 0))
-        )
+        );
       }))
     );
   }
@@ -99,7 +99,7 @@ export class InvencionGastosFragment extends Fragment {
         return this.invencionGastosService.create(wrapper.value).pipe(
           map((invencionGastoResponse) => this.refreshInvencionGastosData(invencionGastoResponse, wrapper, current)),
           catchError(() => of(void 0))
-        )
+        );
       }))
     );
   }
@@ -186,10 +186,10 @@ export class InvencionGastosFragment extends Fragment {
         return invencionGasto;
       }),
       catchError(() => of(invencionGasto))
-    )
+    );
   }
 
-  private createeInvencionGastoTableData(gastoInvencion: IDatoEconomico, relatedInvencionGasto: IInvencionGasto): IInvencionGasto {
+  private createInvencionGastoTableData(gastoInvencion: IDatoEconomico, relatedInvencionGasto: IInvencionGasto): IInvencionGasto {
     if (relatedInvencionGasto) {
       return {
         ...relatedInvencionGasto,

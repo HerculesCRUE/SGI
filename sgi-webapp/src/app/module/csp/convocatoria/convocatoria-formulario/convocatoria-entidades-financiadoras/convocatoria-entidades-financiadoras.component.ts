@@ -136,7 +136,6 @@ export class ConvocatoriaEntidadesFinanciadorasComponent extends FragmentCompone
     const data: EntidadFinanciadoraDataModal = {
       title: wrapper ? this.textoTitleModal : this.textoTitleModalNew,
       entidad: wrapper ? wrapper.value : {} as IConvocatoriaEntidadFinanciadora,
-      selectedEmpresas: this.selectedEmpresas,
       readonly: this.formPart.isConvocatoriaVinculada
     };
     const config = {

@@ -62,7 +62,7 @@ public class TipoProteccionController {
    * @return Lista de entidades {@link TipoProteccion} paginadas y/o filtradas.
    */
   @GetMapping()
-  @PreAuthorize("hasAnyAuthority('PII-TPR-V', 'PII-TPR-C', 'PII-TPR-E', 'PII-TPR-B', 'PII-TPR-R', 'PII-INV-V', 'PII-INV-C', 'PII-INV-E', 'PII-INV-B', 'PII-INV-R')")
+  @PreAuthorize("hasAnyAuthority('PII-TPR-V', 'PII-TPR-C', 'PII-TPR-E', 'PII-TPR-B', 'PII-TPR-R', 'PII-INV-V', 'PII-INV-C', 'PII-INV-E', 'PII-INV-B', 'PII-INV-R', 'PII-INV-MOD-V')")
   ResponseEntity<Page<TipoProteccionOutput>> findActivos(@RequestParam(name = "q", required = false) String query,
       @RequestPageable(sort = "s") Pageable paging) {
     log.debug("findAll(String query, Pageable paging) - start");

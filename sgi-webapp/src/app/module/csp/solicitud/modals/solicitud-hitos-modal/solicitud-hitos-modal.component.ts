@@ -17,7 +17,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { SgiRestListResult } from '@sgi/framework/http/types';
 import { DateTime } from 'luxon';
 import { NGXLogger } from 'ngx-logger';
-import { Observable, Subscription } from 'rxjs';
+import { BehaviorSubject, Observable, Subscription } from 'rxjs';
 import { map, startWith, switchMap } from 'rxjs/operators';
 
 const MSG_ERROR_INIT = marker('error.load');
@@ -47,12 +47,10 @@ export class SolicitiudHitosModalComponent implements OnInit, OnDestroy {
   formGroup: FormGroup;
   fxLayoutProperties: FxLayoutProperties;
 
-  modeloTiposHito$: Observable<IModeloTipoHito[]>;
+  tiposHito$: BehaviorSubject<ITipoHito[]> = new BehaviorSubject<ITipoHito[]>([]);
 
   textSaveOrUpdate: string;
   title: string;
-
-  private modeloTiposHitoFiltered: IModeloTipoHito[];
 
   private suscripciones: Subscription[] = [];
 
@@ -176,44 +174,18 @@ export class SolicitiudHitosModalComponent implements OnInit, OnDestroy {
 
   loadTiposHito() {
     this.suscripciones.push(
-      this.modeloEjecucionService.findModeloTipoHitoSolicitud(this.data.idModeloEjecucion).subscribe(
-        (res: SgiRestListResult<IModeloTipoHito>) => {
-          this.modeloTiposHitoFiltered = res.items;
-          this.modeloTiposHito$ = this.formGroup.controls.tipoHito.valueChanges
-            .pipe(
-              startWith(''),
-              map(value => this.filtroTipoHito(value))
-            );
-        },
-        (error) => {
-          this.logger.error(error);
-          if (this.data.idModeloEjecucion) {
-            this.snackBarService.showError(MSG_ERROR_INIT);
-          } else {
-            this.snackBarService.showError(MSG_ERROR_TIPOS);
-          }
-        })
+      this.modeloEjecucionService.findModeloTipoHitoSolicitud(this.data.idModeloEjecucion)
+        .subscribe(
+          (res: SgiRestListResult<IModeloTipoHito>) => this.tiposHito$.next(res.items.map(modelo => modelo.tipoHito)),
+          (error) => {
+            this.logger.error(error);
+            if (this.data.idModeloEjecucion) {
+              this.snackBarService.showError(MSG_ERROR_INIT);
+            } else {
+              this.snackBarService.showError(MSG_ERROR_TIPOS);
+            }
+          })
     );
-  }
-
-  /**
-   * Devuelve el nombre de un tipo de hito.
-   * @param tipoHito tipo de hito.
-   * @returns nombre de un tipo de hito.
-   */
-  getTipoHito(tipoHito?: ITipoHito): string | undefined {
-    return typeof tipoHito === 'string' ? tipoHito : tipoHito?.nombre;
-  }
-
-  /**
-   * Filtra la lista devuelta por el servicio.
-   *
-   * @param value del input para autocompletar
-   */
-  filtroTipoHito(value: string): IModeloTipoHito[] {
-    const filterValue = value.toString().toLowerCase();
-    return this.modeloTiposHitoFiltered.filter(modeloTipoHito =>
-      modeloTipoHito.tipoHito?.nombre.toLowerCase().includes(filterValue));
   }
 
   saveOrUpdate(): void {

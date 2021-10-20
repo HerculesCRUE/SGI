@@ -9,6 +9,8 @@ import { IProyectoProyectoSge } from '@core/models/csp/proyecto-proyecto-sge';
 import { IProyectoSocio } from '@core/models/csp/proyecto-socio';
 import { ActionService } from '@core/services/action-service';
 import { ContextoProyectoService } from '@core/services/csp/contexto-proyecto.service';
+import { ConvocatoriaRequisitoEquipoService } from '@core/services/csp/convocatoria-requisito-equipo.service';
+import { ConvocatoriaRequisitoIPService } from '@core/services/csp/convocatoria-requisito-ip.service';
 import { ConvocatoriaService } from '@core/services/csp/convocatoria.service';
 import { ModeloEjecucionService } from '@core/services/csp/modelo-ejecucion.service';
 import { ProyectoAgrupacionGastoService } from '@core/services/csp/proyecto-agrupacion-gasto/proyecto-agrupacion-gasto.service';
@@ -37,12 +39,17 @@ import { SolicitudService } from '@core/services/csp/solicitud.service';
 import { TipoAmbitoGeograficoService } from '@core/services/csp/tipo-ambito-geografico.service';
 import { TipoFinalidadService } from '@core/services/csp/tipo-finalidad.service';
 import { UnidadGestionService } from '@core/services/csp/unidad-gestion.service';
+import { InvencionService } from '@core/services/pii/invencion/invencion.service';
+import { RelacionService } from '@core/services/rel/relaciones/relacion.service';
 import { DocumentoService } from '@core/services/sgdoc/documento.service';
 import { ProyectoSgeService } from '@core/services/sge/proyecto-sge.service';
 import { EmpresaService } from '@core/services/sgemp/empresa.service';
 import { AreaConocimientoService } from '@core/services/sgo/area-conocimiento.service';
 import { ClasificacionService } from '@core/services/sgo/clasificacion.service';
+import { DatosAcademicosService } from '@core/services/sgp/datos-academicos.service';
+import { DatosPersonalesService } from '@core/services/sgp/datos-personales.service';
 import { PersonaService } from '@core/services/sgp/persona.service';
+import { VinculacionService } from '@core/services/sgp/vinculacion.service';
 import { StatusWrapper } from '@core/utils/status-wrapper';
 import { TranslateService } from '@ngx-translate/core';
 import { SgiAuthService } from '@sgi/framework/auth';
@@ -56,6 +63,7 @@ import { ProyectoAreaConocimientoFragment } from './proyecto-formulario/proyecto
 import { ProyectoCalendarioJustificacionFragment } from './proyecto-formulario/proyecto-calendario-justificacion/proyecto-calendario-justificacion.fragment';
 import { ProyectoClasificacionesFragment } from './proyecto-formulario/proyecto-clasificaciones/proyecto-clasificaciones.fragment';
 import { ProyectoConceptosGastoFragment } from './proyecto-formulario/proyecto-conceptos-gasto/proyecto-conceptos-gasto.fragment';
+import { ProyectoConsultaPresupuestoFragment } from './proyecto-formulario/proyecto-consulta-presupuesto/proyecto-consulta-presupuesto.fragment';
 import { ProyectoContextoFragment } from './proyecto-formulario/proyecto-contexto/proyecto-contexto.fragment';
 import { ProyectoFichaGeneralFragment } from './proyecto-formulario/proyecto-datos-generales/proyecto-ficha-general.fragment';
 import { ProyectoDocumentosFragment } from './proyecto-formulario/proyecto-documentos/proyecto-documentos.fragment';
@@ -72,6 +80,7 @@ import { ProyectoPlazosFragment } from './proyecto-formulario/proyecto-plazos/pr
 import { ProyectoPresupuestoFragment } from './proyecto-formulario/proyecto-presupuesto/proyecto-presupuesto.fragment';
 import { ProyectoProrrogasFragment } from './proyecto-formulario/proyecto-prorrogas/proyecto-prorrogas.fragment';
 import { ProyectoProyectosSgeFragment } from './proyecto-formulario/proyecto-proyectos-sge/proyecto-proyectos-sge.fragment';
+import { ProyectoRelacionFragment } from './proyecto-formulario/proyecto-relaciones/proyecto-relaciones.fragment';
 import { ProyectoResponsableEconomicoFragment } from './proyecto-formulario/proyecto-responsable-economico/proyecto-responsable-economico.fragment';
 import { ProyectoSociosFragment } from './proyecto-formulario/proyecto-socios/proyecto-socios.fragment';
 import { PROYECTO_ROUTE_PARAMS } from './proyecto-route-params';
@@ -113,7 +122,9 @@ export class ProyectoActionService extends ActionService {
     PRESUPUESTO: 'presupuesto',
     REPONSABLE_ECONOMICO: 'responsable-economico',
     AGRUPACIONES_GASTO: 'agrupaciones-gasto',
-    CALENDARIO_JUSTIFICACION: 'calendario-justificacion'
+    CALENDARIO_JUSTIFICACION: 'calendario-justificacion',
+    CONSULTA_PRESUPUESTO: 'consulta-presupuesto',
+    RELACIONES: 'relaciones',
   };
 
   private fichaGeneral: ProyectoFichaGeneralFragment;
@@ -139,6 +150,8 @@ export class ProyectoActionService extends ActionService {
   private responsableEconomico: ProyectoResponsableEconomicoFragment;
   private proyectoAgrupacionGasto: ProyectoAgrupacionGastoFragment;
   private proyectoCalendarioJustificacion: ProyectoCalendarioJustificacionFragment;
+  private consultaPresupuesto: ProyectoConsultaPresupuestoFragment;
+  private relaciones: ProyectoRelacionFragment;
 
   private readonly data: IProyectoData;
 
@@ -218,7 +231,15 @@ export class ProyectoActionService extends ActionService {
     proyectoAgrupacionGastoService: ProyectoAgrupacionGastoService,
     translate: TranslateService,
     proyectoAnualidadService: ProyectoAnualidadService,
-    proyectoPeriodoJustificacionService: ProyectoPeriodoJustificacionService
+    proyectoPeriodoJustificacionService: ProyectoPeriodoJustificacionService,
+    datosAcademicosService: DatosAcademicosService,
+    convocatoriaRequisitoIPService: ConvocatoriaRequisitoIPService,
+    viculacionService: VinculacionService,
+    convocatoriaRequisitoEquipoService: ConvocatoriaRequisitoEquipoService,
+    datosPersonalesService: DatosPersonalesService,
+    relacionService: RelacionService,
+    invencionService: InvencionService,
+    sgiAuthService: SgiAuthService
   ) {
     super();
     this.data = route.snapshot.data[PROYECTO_DATA_KEY];
@@ -256,7 +277,9 @@ export class ProyectoActionService extends ActionService {
       this.proyectoContexto = new ProyectoContextoFragment(id, logger, contextoProyectoService, this.readonly, this.data?.isVisor);
       this.seguimientoCientifico = new ProyectoPeriodoSeguimientosFragment(
         id, this.data.proyecto, proyectoService, proyectoPeriodoSeguimientoService, convocatoriaService, documentoService);
-      this.proyectoEquipo = new ProyectoEquipoFragment(logger, id, proyectoService, proyectoEquipoService, personaService);
+      this.proyectoEquipo = new ProyectoEquipoFragment(logger, id, proyectoService, proyectoEquipoService, personaService,
+        convocatoriaService, datosAcademicosService, convocatoriaRequisitoIPService, viculacionService,
+        convocatoriaRequisitoEquipoService, datosPersonalesService);
       this.entidadGestora = new ProyectoEntidadGestoraFragment(
         fb, id, proyectoService, proyectoEntidadGestora, empresaService, this.readonly, this.data?.isVisor);
       this.areaConocimiento = new ProyectoAreaConocimientoFragment(this.data?.proyecto?.id,
@@ -282,6 +305,10 @@ export class ProyectoActionService extends ActionService {
         proyectoAgrupacionGastoService, this.readonly, this.data?.isVisor);
       this.proyectoCalendarioJustificacion = new ProyectoCalendarioJustificacionFragment(this.data?.proyecto?.id, this.data?.proyecto,
         proyectoService, proyectoPeriodoJustificacionService, convocatoriaService);
+      this.consultaPresupuesto = new ProyectoConsultaPresupuestoFragment(this.data?.proyecto?.id, this.proyectoService,
+        proyectoAnualidadService, proyectoAgrupacionGastoService);
+      this.relaciones = new ProyectoRelacionFragment(
+        id, this.data.proyecto, this.readonly, relacionService, convocatoriaService, invencionService, proyectoService, sgiAuthService);
 
       this.addFragment(this.FRAGMENT.ENTIDADES_FINANCIADORAS, this.entidadesFinanciadoras);
       this.addFragment(this.FRAGMENT.SOCIOS, this.socios);
@@ -305,6 +332,8 @@ export class ProyectoActionService extends ActionService {
       this.addFragment(this.FRAGMENT.REPONSABLE_ECONOMICO, this.responsableEconomico);
       this.addFragment(this.FRAGMENT.AGRUPACIONES_GASTO, this.proyectoAgrupacionGasto);
       this.addFragment(this.FRAGMENT.CALENDARIO_JUSTIFICACION, this.proyectoCalendarioJustificacion);
+      this.addFragment(this.FRAGMENT.CONSULTA_PRESUPUESTO, this.consultaPresupuesto);
+      this.addFragment(this.FRAGMENT.RELACIONES, this.relaciones);
 
       this.subscriptions.push(this.fichaGeneral.initialized$.subscribe(value => {
         if (value) {

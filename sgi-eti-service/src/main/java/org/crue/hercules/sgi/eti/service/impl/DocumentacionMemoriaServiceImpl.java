@@ -24,6 +24,7 @@ import org.crue.hercules.sgi.eti.service.DocumentacionMemoriaService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
@@ -70,7 +71,8 @@ public class DocumentacionMemoriaServiceImpl implements DocumentacionMemoriaServ
    */
   @Override
   @Transactional
-  public DocumentacionMemoria createDocumentacionInicial(Long idMemoria, DocumentacionMemoria documentacionMemoria) {
+  public DocumentacionMemoria createDocumentacionInicial(Long idMemoria, DocumentacionMemoria documentacionMemoria,
+      Authentication authentication) {
     log.debug("Petición a create DocumentacionMemoria : {} - start", documentacionMemoria);
     Assert.isNull(documentacionMemoria.getId(),
         "DocumentacionMemoria id tiene que ser null para crear un nuevo DocumentacionMemoria");
@@ -78,15 +80,23 @@ public class DocumentacionMemoriaServiceImpl implements DocumentacionMemoriaServ
     Assert.notNull(idMemoria,
         "El identificador de la memoria no puede ser null para crear un nuevo documento asociado a esta");
 
+    Boolean isGestor = authentication.getAuthorities().stream()
+        .anyMatch(authority -> authority.getAuthority().startsWith("ETI-MEM-EDOC"));
+
     return memoriaRepository.findByIdAndActivoTrue(idMemoria).map(memoria -> {
       TipoEstadoMemoria.Tipo estado = TipoEstadoMemoria.Tipo.fromId(memoria.getEstadoActual().getId());
-      Assert.isTrue(
-          (estado == TipoEstadoMemoria.Tipo.EN_ELABORACION || estado == TipoEstadoMemoria.Tipo.COMPLETADA
-              || estado == TipoEstadoMemoria.Tipo.FAVORABLE_PENDIENTE_MODIFICACIONES_MINIMAS
-              || estado == TipoEstadoMemoria.Tipo.PENDIENTE_CORRECCIONES
-              || estado == TipoEstadoMemoria.Tipo.NO_PROCEDE_EVALUAR
-              || estado.getId() >= TipoEstadoMemoria.Tipo.FIN_EVALUACION.getId()),
-          "La memoria no se encuentra en un estado adecuado para añadir documentación.");
+      if (isGestor) {
+        Assert.isTrue((estado.getId() >= TipoEstadoMemoria.Tipo.EN_EVALUACION.getId()),
+            "La memoria no se encuentra en un estado adecuado para añadir documentación.");
+      } else {
+        Assert.isTrue(
+            (estado == TipoEstadoMemoria.Tipo.EN_ELABORACION || estado == TipoEstadoMemoria.Tipo.COMPLETADA
+                || estado == TipoEstadoMemoria.Tipo.FAVORABLE_PENDIENTE_MODIFICACIONES_MINIMAS
+                || estado == TipoEstadoMemoria.Tipo.PENDIENTE_CORRECCIONES
+                || estado == TipoEstadoMemoria.Tipo.NO_PROCEDE_EVALUAR
+                || estado.getId() >= TipoEstadoMemoria.Tipo.FIN_EVALUACION.getId()),
+            "La memoria no se encuentra en un estado adecuado para añadir documentación.");
+      }
 
       documentacionMemoria.setMemoria(memoria);
       return documentacionMemoriaRepository.save(documentacionMemoria);
@@ -515,10 +525,11 @@ public class DocumentacionMemoriaServiceImpl implements DocumentacionMemoriaServ
    * 
    * @param idMemoria              Id {@link Memoria}
    * @param idDocumentacionMemoria Id {@link DocumentacionMemoria}
+   * @param authentication         Authentication
    */
   @Transactional
   @Override
-  public void deleteDocumentacionInicial(Long idMemoria, Long idDocumentacionMemoria) {
+  public void deleteDocumentacionInicial(Long idMemoria, Long idDocumentacionMemoria, Authentication authentication) {
     log.debug("deleteDocumentacionInicial(Long idMemoria, Long idDocumentacionMemoria) -- start");
 
     Assert.notNull(idDocumentacionMemoria,
@@ -527,15 +538,23 @@ public class DocumentacionMemoriaServiceImpl implements DocumentacionMemoriaServ
     Assert.notNull(idMemoria,
         "El identificador de la memoria no puede ser null para eliminar un documento de tipo inicial asociado a esta");
 
+    Boolean isGestor = authentication.getAuthorities().stream()
+        .anyMatch(authority -> authority.getAuthority().startsWith("ETI-MEM-EDOC"));
+
     memoriaRepository.findByIdAndActivoTrue(idMemoria).map(memoria -> {
       TipoEstadoMemoria.Tipo estado = TipoEstadoMemoria.Tipo.fromId(memoria.getEstadoActual().getId());
-      Assert.isTrue(
-          (estado == TipoEstadoMemoria.Tipo.EN_ELABORACION || estado == TipoEstadoMemoria.Tipo.COMPLETADA
-              || estado == TipoEstadoMemoria.Tipo.FAVORABLE_PENDIENTE_MODIFICACIONES_MINIMAS
-              || estado == TipoEstadoMemoria.Tipo.PENDIENTE_CORRECCIONES
-              || estado == TipoEstadoMemoria.Tipo.NO_PROCEDE_EVALUAR
-              || estado.getId() >= TipoEstadoMemoria.Tipo.FIN_EVALUACION.getId()),
-          "La memoria no se encuentra en un estado adecuado para eliminar documentación inicial");
+      if (isGestor) {
+        Assert.isTrue((estado.getId() >= TipoEstadoMemoria.Tipo.EN_EVALUACION.getId()),
+            "La memoria no se encuentra en un estado adecuado para añadir documentación.");
+      } else {
+        Assert.isTrue(
+            (estado == TipoEstadoMemoria.Tipo.EN_ELABORACION || estado == TipoEstadoMemoria.Tipo.COMPLETADA
+                || estado == TipoEstadoMemoria.Tipo.FAVORABLE_PENDIENTE_MODIFICACIONES_MINIMAS
+                || estado == TipoEstadoMemoria.Tipo.PENDIENTE_CORRECCIONES
+                || estado == TipoEstadoMemoria.Tipo.NO_PROCEDE_EVALUAR
+                || estado.getId() >= TipoEstadoMemoria.Tipo.FIN_EVALUACION.getId()),
+            "La memoria no se encuentra en un estado adecuado para eliminar documentación inicial");
+      }
 
       Formulario formulario = formularioRepository.findByMemoriaId(idMemoria);
       documentacionMemoriaRepository

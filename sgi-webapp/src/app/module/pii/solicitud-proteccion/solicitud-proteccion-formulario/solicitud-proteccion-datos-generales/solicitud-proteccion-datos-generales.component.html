@@ -1,12 +1,10 @@
 <sgi-fragment title="{{'label.datos-generales' | translate}}">
-  <form [formGroup]="formGroup">
-    <div [fxLayout]="fxLayoutProperties.layout" [fxLayoutAlign]="fxLayoutProperties.layoutAlign"
-      [fxLayoutGap]="fxLayoutProperties.gap">
+  <form [formGroup]="formGroup" #form fxLayout="column wrap">
 
+    <div id="datos-generales" fxFlex fxLayout="row wrap" fxLayoutGap="1%">
       <!-- Título -->
-      <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties66.md"
-        [fxFlex.gt-md]="fxFlexProperties66.gtMd" [fxFlexOrder]="fxFlexProperties66.order">
-        <mat-form-field fxFill>
+      <div fxFlex fxFlex.sm="100%">
+        <mat-form-field>
           <mat-label>{{'pii.solicitud-proteccion.titulo' | translate}}</mat-label>
           <input matInput formControlName="titulo" type="text" id="titulo"
             placeholder="{{'pii.solicitud-proteccion.titulo' | translate}}" required>
@@ -18,43 +16,36 @@
           </mat-error>
         </mat-form-field>
       </div>
-
-      <!-- Vias Protección -->
-      <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties33.md"
-        [fxFlex.gt-md]="fxFlexProperties33.gtMd" [fxFlexOrder]="fxFlexProperties33.order">
-        <mat-form-field fxFill>
-          <mat-label>{{'pii.solicitud-proteccion.via-proteccion' | translate}}</mat-label>
-          <sgi-select-entity formControlName="viaProteccion" [options]="formPart.viasProteccion$ | async" required>
-          </sgi-select-entity>
-          <mat-error *ngIf="formGroup.controls.viaProteccion.errors?.required">
-            {{'error.required.entity' | translate:msgParamViaProteccionEntity}}
-          </mat-error>
-        </mat-form-field>
-      </div>
-
-      <!-- Pais -->
-      <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties33.md"
-        [fxFlex.gt-md]="fxFlexProperties33.gtMd" [fxFlexOrder]="fxFlexProperties33.order"
-        *ngIf="formPart.showPaisSelector | async">
-        <mat-form-field fxFill>
-          <mat-label>{{'pii.solicitud-proteccion.pais' | translate}}</mat-label>
-          <sgi-select-entity formControlName="pais" [options]="formPart.paises$ | async" required>
-          </sgi-select-entity>
-          <mat-error *ngIf="formGroup.controls.pais.errors?.required">
-            {{'error.required.entity' | translate:msgParamPaisEntity}}
-          </mat-error>
-        </mat-form-field>
+      <div id="via-proteccion-pais" fxFLex fxLayoutGap="3%">
+        <!-- Vias Protección -->
+        <div fxFlex>
+          <mat-form-field>
+            <mat-label>{{'pii.solicitud-proteccion.via-proteccion' | translate}}</mat-label>
+            <sgi-select-entity formControlName="viaProteccion" [options]="formPart.viasProteccion$ | async" required>
+            </sgi-select-entity>
+            <mat-error *ngIf="formGroup.controls.viaProteccion.errors?.required">
+              {{'error.required.entity' | translate:msgParamViaProteccionEntity}}
+            </mat-error>
+          </mat-form-field>
+        </div>
+        <!-- Pais -->
+        <div fxFlex *ngIf="formPart.showPaisSelector | async">
+          <mat-form-field>
+            <mat-label>{{'pii.solicitud-proteccion.pais' | translate}}</mat-label>
+            <sgi-select-entity formControlName="pais" [options]="formPart.paises$ | async" required>
+            </sgi-select-entity>
+            <mat-error *ngIf="formGroup.controls.pais.errors?.required">
+              {{'error.required.entity' | translate:msgParamPaisEntity}}
+            </mat-error>
+          </mat-form-field>
+        </div>
       </div>
     </div>
-
-    <div [fxLayout]="fxLayoutProperties.layout" [fxLayoutAlign]="fxLayoutProperties.layoutAlign"
-      [fxLayoutGap]="fxLayoutProperties.gap">
+    <div id="otros-campos" fxFlex fxLayout="row wrap" fxLayoutGap="1%">
 
       <!-- Fecha Prioridad -->
-      <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties33.md"
-        [fxFlex.gt-md]="fxFlexProperties33.gtMd" [fxFlexOrder]="fxFlexProperties33.order">
+      <div fxFlex="24%" fxFlex.lt-sm="100%">
         <mat-form-field fxFill>
-
           <mat-label *ngIf="formPart.canShowFechaPrioridad() | async; else labelFechaSolicitud">
             {{'pii.solicitud-proteccion.fecha-prioridad' | translate}}
           </mat-label>
@@ -72,9 +63,7 @@
       </div>
 
       <!-- Fecha Fin Prioridad -->
-      <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties33.md"
-        [fxFlex.gt-md]="fxFlexProperties33.gtMd" [fxFlexOrder]="fxFlexProperties33.order"
-        *ngIf="formPart.canShowFechaFinPrioridad() | async">
+      <div fxFlex="24%" fxFlex.lt-sm="100%" *ngIf="formPart.canShowFechaFinPrioridad() | async">
         <mat-form-field fxFill>
           <mat-label *ngIf="formPart.isExtensionInternacional | async; else noPCTFechaFinPrioridad">{{
             'pii.solicitud-proteccion.fecha-fin-prioridad-pct' | translate }}</mat-label>
@@ -97,8 +86,7 @@
       </div>
 
       <!-- Número de Solicitud -->
-      <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties33.md"
-        [fxFlex.gt-md]="fxFlexProperties33.gtMd" [fxFlexOrder]="fxFlexProperties33.order">
+      <div fxFlex="24%" fxFlex.lt-sm="100%">
         <mat-form-field fxFill>
           <mat-label>{{'pii.solicitud-proteccion.numero-solicitud-form' | translate}}</mat-label>
           <input matInput formControlName="numeroSolicitud" type="text" id="numeroSolicitud"
@@ -112,10 +100,56 @@
         </mat-form-field>
       </div>
 
+      <!-- Número de Publicación -->
+      <div fxFlex="24%" fxFlex.lt-sm="100%" *ngIf="formPart.tipoPropiedad === formPart.TipoPropiedad.INDUSTRIAL">
+        <mat-form-field fxFill>
+          <mat-label>{{'pii.solicitud-proteccion.numero-publicacion-form' | translate}}</mat-label>
+          <input matInput formControlName="numeroPublicacion" type="text" id="numeroPublicacion"
+            placeholder="{{'pii.solicitud-proteccion.numero-publicacion-form' | translate}}">
+          <mat-error *ngIf="formGroup.controls.numeroPublicacion.errors?.maxlength">
+            {{'error.maxlength.entity' | translate:msgParamNumeroPublicacionEntity}}
+          </mat-error>
+        </mat-form-field>
+      </div>
+
+      <!-- Fecha de Publicación -->
+      <div fxFlex="24%" fxFlex.lt-sm="100%" *ngIf="formPart.tipoPropiedad === formPart.TipoPropiedad.INDUSTRIAL">
+        <mat-form-field fxFill>
+          <mat-label>
+            {{'pii.solicitud-proteccion.fecha-publicacion-form' | translate}}
+          </mat-label>
+          <input matInput formControlName="fechaPublicacion" [matDatepicker]="fechaPublicacion">
+          <mat-datepicker-toggle matSuffix [for]="fechaPublicacion"></mat-datepicker-toggle>
+          <mat-datepicker #fechaPublicacion></mat-datepicker>
+        </mat-form-field>
+      </div>
+
+      <!-- Número de Concesión -->
+      <div fxFlex="24%" fxFlex.lt-sm="100%" *ngIf="formPart.tipoPropiedad === formPart.TipoPropiedad.INDUSTRIAL">
+        <mat-form-field fxFill>
+          <mat-label>{{'pii.solicitud-proteccion.numero-concesion-form' | translate}}</mat-label>
+          <input matInput formControlName="numeroConcesion" type="text" id="numeroConcesion"
+            placeholder="{{'pii.solicitud-proteccion.numero-concesion-form' | translate}}">
+          <mat-error *ngIf="formGroup.controls.numeroConcesion.errors?.maxlength">
+            {{'error.maxlength.entity' | translate:msgParamNumeroConcesionEntity}}
+          </mat-error>
+        </mat-form-field>
+      </div>
+
+      <!-- Fecha de Concesión -->
+      <div fxFlex="24%" fxFlex.lt-sm="100%" *ngIf="formPart.tipoPropiedad === formPart.TipoPropiedad.INDUSTRIAL">
+        <mat-form-field fxFill>
+          <mat-label>
+            {{'pii.solicitud-proteccion.fecha-concesion-form' | translate}}
+          </mat-label>
+          <input matInput formControlName="fechaConcesion" [matDatepicker]="fechaConcesion">
+          <mat-datepicker-toggle matSuffix [for]="fechaConcesion"></mat-datepicker-toggle>
+          <mat-datepicker #fechaConcesion></mat-datepicker>
+        </mat-form-field>
+      </div>
+
       <!-- Número de Registro -->
-      <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties33.md"
-        [fxFlex.gt-md]="fxFlexProperties33.gtMd" [fxFlexOrder]="fxFlexProperties33.order"
-        *ngIf="formPart.tipoPropiedad === formPart.TipoPropiedad.INTELECTUAL">
+      <div fxFlex="24%" fxFlex.lt-sm="100%" *ngIf="formPart.tipoPropiedad === formPart.TipoPropiedad.INTELECTUAL">
         <mat-form-field fxFill>
           <mat-label>{{'pii.solicitud-proteccion.numero-registro-form' | translate}}</mat-label>
           <input matInput formControlName="numeroRegistro" type="text" id="numeroRegistro"
@@ -125,34 +159,69 @@
           </mat-error>
         </mat-form-field>
       </div>
-    </div>
 
-    <!-- Agente de la propiedad -->
-    <div [fxLayout]="fxLayoutProperties.layout" [fxLayoutAlign]="fxLayoutProperties.layoutAlign"
-      *ngIf="formPart.tipoPropiedad === formPart.TipoPropiedad.INDUSTRIAL">
-      <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
-        [fxFlexOrder]="fxFlexProperties.order">
+      <!-- Fecha de Caducidad -->
+      <div fxFlex="24%" fxFlex.lt-sm="100%" *ngIf="formGroup.controls.estado.value === Estado.CADUCADA">
         <mat-form-field fxFill>
-          <mat-label>{{'pii.solicitud-proteccion.agente-propiedad' | translate}}</mat-label>
-          <sgi-select-empresa placeholder="{{'pii.solicitud-proteccion.agente-propiedad' | translate}}"
-            formControlName="agentePropiedad">
-          </sgi-select-empresa>
-        </mat-form-field>
-      </div>
-    </div>
-    <!-- Comentarios -->
-    <div [fxLayout]="fxLayoutProperties.layout" [fxLayoutAlign]="fxLayoutProperties.layoutAlign">
-      <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
-        [fxFlexOrder]="fxFlexProperties.order">
-        <mat-form-field fxFill>
-          <mat-label>{{'pii.solicitud-proteccion.comentarios' | translate}}</mat-label>
-          <textarea matInput formControlName="comentarios" id="comentarios"
-            placeholder="{{'pii.solicitud-proteccion.comentarios' | translate}}"></textarea>
-          <mat-error *ngIf="formGroup.controls.comentarios.errors?.maxlength">
-            {{'error.maxlength.entity' | translate:msgParamComentariosEntity}}
+          <mat-label>
+            {{'pii.solicitud-proteccion.fecha-caducidad-form' | translate}}
+          </mat-label>
+          <input matInput formControlName="fechaCaducidad" [matDatepicker]="fechaCaducidad" required>
+          <mat-datepicker-toggle matSuffix [for]="fechaCaducidad"></mat-datepicker-toggle>
+          <mat-datepicker #fechaCaducidad></mat-datepicker>
+          <mat-error *ngIf="formGroup.controls.fechaCaducidad.errors?.required">
+            {{'error.required.entity' | translate:msgParamFechaCaducidEntity}}
           </mat-error>
         </mat-form-field>
       </div>
+
+      <!-- Tipo de Caducidad -->
+      <div fxFlex="24%" fxFlex.lt-sm="100%" *ngIf="formGroup.controls.estado.value === Estado.CADUCADA">
+        <mat-form-field fxFill>
+          <mat-label>{{'pii.solicitud-proteccion.tipo-caducidad-form' | translate}}</mat-label>
+          <sgi-select-entity formControlName="tipoCaducidad" [options]="formPart.tiposCaducidad$ | async"
+            [displayWith]="displayTextTipoCaducidad" [required]="true">
+          </sgi-select-entity>
+          <mat-error *ngIf="formGroup.controls.tipoCaducidad.errors?.required">
+            {{'error.required.entity' | translate:msgParamTipoCaducidadEntity}}
+          </mat-error>
+        </mat-form-field>
+      </div>
+
+      <!-- Estado -->
+      <div fxFlex="24%" fxFlex.lt-sm="100%"
+        *ngIf="formPart.tipoPropiedad === formPart.TipoPropiedad.INDUSTRIAL && formPart.getKey()">
+        <mat-form-field>
+          <mat-label>{{'pii.solicitud-proteccion.estado' | translate}}</mat-label>
+          <sgi-select-enum #estado formControlName="estado" [enumMap]="ESTADO_MAP"></sgi-select-enum>
+          <mat-error *ngIf="formGroup.controls.estado.errors?.required">
+            {{'error.required.entity' | translate:msgParamEstadoEntity}}
+          </mat-error>
+        </mat-form-field>
+      </div>
+
+    </div>
+
+    <!-- Agente de la propiedad -->
+    <div fxFlex="100%" *ngIf="formPart.tipoPropiedad === formPart.TipoPropiedad.INDUSTRIAL">
+      <mat-form-field fxFill>
+        <mat-label>{{'pii.solicitud-proteccion.agente-propiedad' | translate}}</mat-label>
+        <sgi-select-empresa placeholder="{{'pii.solicitud-proteccion.agente-propiedad' | translate}}"
+          formControlName="agentePropiedad">
+        </sgi-select-empresa>
+      </mat-form-field>
+    </div>
+
+    <!-- Comentarios -->
+    <div fxFlex="100%">
+      <mat-form-field fxFill>
+        <mat-label>{{'pii.solicitud-proteccion.comentarios' | translate}}</mat-label>
+        <textarea matInput formControlName="comentarios" id="comentarios"
+          placeholder="{{'pii.solicitud-proteccion.comentarios' | translate}}"></textarea>
+        <mat-error *ngIf="formGroup.controls.comentarios.errors?.maxlength">
+          {{'error.maxlength.entity' | translate:msgParamComentariosEntity}}
+        </mat-error>
+      </mat-form-field>
     </div>
 
   </form>

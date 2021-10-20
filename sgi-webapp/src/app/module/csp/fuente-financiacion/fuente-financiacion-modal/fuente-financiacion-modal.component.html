@@ -29,14 +29,8 @@
     <div [fxLayout]="fxLayoutProperties.layout" [fxLayoutAlign]="fxLayoutProperties.layoutAlign">
       <mat-form-field>
         <mat-label>{{'csp.fuente-financiacion.ambito-geografico' | translate}}</mat-label>
-        <input matInput formControlName="ambitoGeografico" type="text" id="ambitoGeografico"
-          placeholder="{{'csp.fuente-financiacion.ambito-geografico' | translate}}" maxlength="100"
-          [matAutocomplete]="autoAmbitoGeografico" required>
-        <mat-autocomplete #autoAmbitoGeografico="matAutocomplete" [displayWith]="getAmbitoGeografico">
-          <mat-option *ngFor="let ambitoGeografico of ambitosGeograficos | async" [value]="ambitoGeografico">
-            {{ambitoGeografico.nombre}}
-          </mat-option>
-        </mat-autocomplete>
+        <sgi-select-entity formControlName="ambitoGeografico" [options]="ambitosGeograficos$ | async" required>
+        </sgi-select-entity>
         <mat-error *ngIf="formGroup.controls.ambitoGeografico.errors?.required">
           {{'error.required.entity' | translate:msgParamAmbitoEntity}}
         </mat-error>
@@ -46,13 +40,7 @@
     <div [fxLayout]="fxLayoutProperties.layout" [fxLayoutAlign]="fxLayoutProperties.layoutAlign">
       <mat-form-field>
         <mat-label>{{'csp.fuente-financiacion.origen' | translate}}</mat-label>
-        <input matInput formControlName="origen" type="text" id="origen" required
-          placeholder="{{'csp.fuente-financiacion.origen' | translate}}" maxlength="100" [matAutocomplete]="origen">
-        <mat-autocomplete #origen="matAutocomplete" [displayWith]="getOrigen">
-          <mat-option *ngFor="let origen of origenes | async" [value]="origen">
-            {{origen.nombre}}
-          </mat-option>
-        </mat-autocomplete>
+        <sgi-select-entity [options]="origenes$ | async" formControlName="origen" required></sgi-select-entity>
         <mat-error *ngIf="formGroup.controls.origen.errors?.required">
           {{'error.required.entity' | translate:msgParamOrigenEntity}}
         </mat-error>

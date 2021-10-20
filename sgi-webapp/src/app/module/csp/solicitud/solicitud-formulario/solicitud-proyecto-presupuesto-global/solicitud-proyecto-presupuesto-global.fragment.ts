@@ -8,7 +8,7 @@ import { SolicitudService } from '@core/services/csp/solicitud.service';
 import { EmpresaService } from '@core/services/sgemp/empresa.service';
 import { StatusWrapper } from '@core/utils/status-wrapper';
 import { BehaviorSubject, EMPTY, from, merge, Observable, of } from 'rxjs';
-import { catchError, map, mergeAll, mergeMap, switchMap, takeLast, tap } from 'rxjs/operators';
+import { catchError, map, mergeMap, takeLast, tap } from 'rxjs/operators';
 
 export class SolicitudProyectoPresupuestoGlobalFragment extends FormFragment<ISolicitudProyecto> {
   partidasGastos$ = new BehaviorSubject<StatusWrapper<ISolicitudProyectoPresupuesto>[]>([]);
@@ -149,28 +149,10 @@ export class SolicitudProyectoPresupuestoGlobalFragment extends FormFragment<ISo
     const solicitudId = this.getKey() as number;
     if (solicitudId) {
       const subscription = this.solicitudService.findAllSolicitudProyectoPresupuesto(solicitudId).pipe(
-        switchMap((solicitudProyectoPresupuestos) =>
-          from(solicitudProyectoPresupuestos.items)
-            .pipe(
-              map((solicitudProyectoPresupuesto) => {
-                if (solicitudProyectoPresupuesto.empresa.id) {
-                  return this.empresaService.findById(solicitudProyectoPresupuesto.empresa.id)
-                    .pipe(
-                      tap(empresa => solicitudProyectoPresupuesto.empresa = empresa),
-                      catchError(() => of(null))
-                    );
-                } else {
-                  return of(solicitudProyectoPresupuesto);
-                }
-              }),
-              mergeAll(),
-              map(() => {
-                return solicitudProyectoPresupuestos.items
-                  .map(element => new StatusWrapper<ISolicitudProyectoPresupuesto>(element));
-              })
-            )
-        ),
-        takeLast(1)
+        map((solicitudProyectoPresupuestos) => {
+          return solicitudProyectoPresupuestos.items
+            .map(element => new StatusWrapper<ISolicitudProyectoPresupuesto>(element));
+        })
       ).subscribe(
         (solicitudProyectoPresupuestos) => {
           this.partidasGastos$.next(solicitudProyectoPresupuestos);

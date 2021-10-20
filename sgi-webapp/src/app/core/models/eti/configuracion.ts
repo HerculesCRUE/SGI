@@ -14,10 +14,10 @@ export interface IConfiguracion {
   /** mesesAvisoProyectoCEEA */
   mesesAvisoProyectoCEEA: number;
 
-  /** mesesAvisoProyectoCEISH */
-  mesesAvisoProyectoCEISH: number;
+  /** mesesAvisoProyectoCEI */
+  mesesAvisoProyectoCEI: number;
 
-  /** mesesAvisoProyectoCEIAB */
-  mesesAvisoProyectoCEIAB: number;
+  /** mesesAvisoProyectoCBE */
+  mesesAvisoProyectoCBE: number;
 
 }

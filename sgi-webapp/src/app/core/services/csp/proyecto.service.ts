@@ -43,6 +43,7 @@ import { IEstadoProyecto } from '@core/models/csp/estado-proyecto';
 import { IPrograma } from '@core/models/csp/programa';
 import { IProyecto } from '@core/models/csp/proyecto';
 import { IProyectoAgrupacionGasto } from '@core/models/csp/proyecto-agrupacion-gasto';
+import { IProyectoAnualidad } from '@core/models/csp/proyecto-anualidad';
 import { IProyectoAnualidadResumen } from '@core/models/csp/proyecto-anualidad-resumen';
 import { IProyectoAreaConocimiento } from '@core/models/csp/proyecto-area-conocimiento';
 import { IProyectoClasificacion } from '@core/models/csp/proyecto-clasificacion';
@@ -81,6 +82,8 @@ import { IAnualidadGastoResponse } from './anualidad-gasto/anualidad-gasto-respo
 import { ANUALIDAD_GASTO_RESPONSE_CONVERTER } from './anualidad-gasto/anualidad-gasto-response.converter';
 import { IProyectoAgrupacionGastoResponse } from './proyecto-agrupacion-gasto/proyecto-agrupacion-gasto-response';
 import { PROYECTO_AGRUPACION_GASTO_RESPONSE_CONVERTER } from './proyecto-agrupacion-gasto/proyecto-agrupacion-gasto-response.converter';
+import { IProyectoAnualidadResponse } from './proyecto-anualidad/proyecto-anualidad-response';
+import { PROYECTO_ANUALIDAD_RESPONSE_CONVERTER } from './proyecto-anualidad/proyecto-anualidad-response.converter';
 import { IProyectoAnualidadResumenResponse } from './proyecto-anualidad/proyecto-anualidad-resumen-response';
 import { PROYECTO_ANUALIDAD_RESUMEN_RESPONSE_CONVERTER } from './proyecto-anualidad/proyecto-anualidad-resumen-response.converter';
 import { IProyectoPeriodoJustificacionResponse } from './proyecto-periodo-justificacion/proyecto-periodo-justificacion-response';
@@ -676,6 +679,34 @@ export class ProyectoService extends SgiMutableRestService<number, IProyectoBack
     const url = `${this.endpointUrl}/${id}/modificable`;
     return this.http.head(url, { observe: 'response' }).pipe(
       map(response => response.status === 200)
+    );
+  }
+
+  /**
+   * Devuelve los objetos {@link IProyectoAnualidad} asociados a un {@link IProyecto}
+   *
+   * @param id Id del proyecto
+   */
+  findAllProyectoAnualidadesByProyectoId(proyectoId: number):
+    Observable<SgiRestListResult<IProyectoAnualidad>> {
+    return this.find<IProyectoAnualidadResponse, IProyectoAnualidad>(
+      `${this.endpointUrl}/${proyectoId}/proyectoanualidades`,
+      {},
+      PROYECTO_ANUALIDAD_RESPONSE_CONVERTER
+    );
+  }
+
+  /**
+   * Devuelve los objetos {@link IAnualidadGastoWithProyectoAgrupacionGasto} asociados a un {@link IProyecto}
+   *
+   * @param id Id del proyecto
+   */
+  findAnualidadesGastosByProyectoId(proyectoId: number):
+    Observable<SgiRestListResult<IAnualidadGasto>> {
+    return this.find<IAnualidadGastoResponse, IAnualidadGasto>(
+      `${this.endpointUrl}/${proyectoId}/anualidadesgastos`,
+      {},
+      ANUALIDAD_GASTO_RESPONSE_CONVERTER
     );
   }
 }

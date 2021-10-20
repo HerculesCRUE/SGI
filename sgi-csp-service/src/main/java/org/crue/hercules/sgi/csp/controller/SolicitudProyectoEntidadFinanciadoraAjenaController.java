@@ -4,8 +4,12 @@ import javax.validation.Valid;
 import javax.validation.groups.Default;
 
 import org.crue.hercules.sgi.csp.model.BaseEntity.Update;
+import org.crue.hercules.sgi.csp.model.SolicitudProyectoEntidad;
 import org.crue.hercules.sgi.csp.model.SolicitudProyectoEntidadFinanciadoraAjena;
+import org.crue.hercules.sgi.csp.model.SolicitudProyectoPresupuesto;
 import org.crue.hercules.sgi.csp.service.SolicitudProyectoEntidadFinanciadoraAjenaService;
+import org.crue.hercules.sgi.csp.service.SolicitudProyectoEntidadService;
+import org.crue.hercules.sgi.csp.service.SolicitudProyectoPresupuestoService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -17,6 +21,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -33,14 +38,18 @@ public class SolicitudProyectoEntidadFinanciadoraAjenaController {
 
   /** SolicitudProyectoEntidadFinanciadoraAjena service */
   private final SolicitudProyectoEntidadFinanciadoraAjenaService service;
+  /** SolicitudProyectoPresupuesto service */
+  private final SolicitudProyectoPresupuestoService solicitudProyectoPresupuestoService;
+  /** SolicitudProyectoEntidad service */
+  private final SolicitudProyectoEntidadService solicitudProyectoEntidadService;
 
   public SolicitudProyectoEntidadFinanciadoraAjenaController(
-      SolicitudProyectoEntidadFinanciadoraAjenaService solicitudProyectoEntidadFinanciadoraAjenaService) {
-    log.debug(
-        "SolicitudProyectoEntidadFinanciadoraAjenaController(SolicitudProyectoEntidadFinanciadoraAjenaService solicitudProyectoEntidadFinanciadoraAjenaService) - start");
+      SolicitudProyectoEntidadFinanciadoraAjenaService solicitudProyectoEntidadFinanciadoraAjenaService,
+      SolicitudProyectoPresupuestoService solicitudProyectoPresupuestoService,
+      SolicitudProyectoEntidadService solicitudProyectoEntidadService) {
     this.service = solicitudProyectoEntidadFinanciadoraAjenaService;
-    log.debug(
-        "SolicitudProyectoEntidadFinanciadoraAjenaController(SolicitudProyectoEntidadFinanciadoraAjenaService solicitudProyectoEntidadFinanciadoraAjenaService) - end");
+    this.solicitudProyectoPresupuestoService = solicitudProyectoPresupuestoService;
+    this.solicitudProyectoEntidadService = solicitudProyectoEntidadService;
   }
 
   /**
@@ -116,4 +125,43 @@ public class SolicitudProyectoEntidadFinanciadoraAjenaController {
     service.delete(id);
     log.debug("deleteById(Long id) - end");
   }
+
+  /**
+   * Comprueba la existencia de {@link SolicitudProyectoPresupuesto} asociados a
+   * una {@link SolicitudProyectoEntidadFinanciadoraAjena}
+   * 
+   * @param id                         Id de la Solicitud
+   * @param entidadFinanciadoraAjenaId Id de la
+   *                                   SolicitudProyectoEntidadFinanciadoraAjena
+   * @return {@link HttpStatus.OK} si existe alguna relación,
+   *         {@link HttpStatus.NO_CONTENT} en cualquier otro caso
+   */
+  @RequestMapping(path = "/{id}/solicitudproyectopresupuestos", method = RequestMethod.HEAD)
+  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-SOL-E', 'CSP-SOL-V')")
+  ResponseEntity<?> hasSolicitudProyectoPresupuestoEntidad(@PathVariable Long id) {
+    log.debug("hasSolicitudProyectoPresupuestoEntidad(Long id) - start");
+    boolean returnValue = solicitudProyectoPresupuestoService.existsBySolicitudProyectoEntidadFinanciadoraAjena(id);
+
+    log.debug("hasSolicitudProyectoPresupuestoEntidad(Long id) - end");
+    return returnValue ? new ResponseEntity<>(HttpStatus.OK) : new ResponseEntity<>(HttpStatus.NO_CONTENT);
+  }
+
+  /**
+   * Devuelve el {@link SolicitudProyectoEntidadFinanciadoraAjena} con el id
+   * indicado.
+   * 
+   * @param id Identificador de {@link SolicitudProyectoEntidadFinanciadoraAjena}.
+   * @return {@link SolicitudProyectoEntidadFinanciadoraAjena} correspondiente al
+   *         id.
+   */
+  @GetMapping("/{id}/solicitudproyectoentidad")
+  @PreAuthorize("hasAuthorityForAnyUO('CSP-SOL-E')")
+  SolicitudProyectoEntidad findBySolicitudProyectoEntidadFinanciadoraAjena(@PathVariable Long id) {
+    log.debug("findBySolicitudProyectoEntidadFinanciadoraAjena(Long id) - start");
+    SolicitudProyectoEntidad returnValue = solicitudProyectoEntidadService
+        .findBySolicitudProyectoEntidadFinanciadoraAjena(id);
+    log.debug("findBySolicitudProyectoEntidadFinanciadoraAjena(Long id) - end");
+    return returnValue;
+  }
+
 }

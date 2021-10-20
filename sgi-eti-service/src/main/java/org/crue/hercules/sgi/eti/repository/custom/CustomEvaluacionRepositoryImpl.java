@@ -18,7 +18,6 @@ import javax.persistence.criteria.Subquery;
 import org.crue.hercules.sgi.eti.dto.EvaluacionWithNumComentario;
 import org.crue.hercules.sgi.eti.model.Comentario;
 import org.crue.hercules.sgi.eti.model.Comentario_;
-import org.crue.hercules.sgi.eti.model.Comite;
 import org.crue.hercules.sgi.eti.model.Comite_;
 import org.crue.hercules.sgi.eti.model.ConflictoInteres;
 import org.crue.hercules.sgi.eti.model.ConflictoInteres_;

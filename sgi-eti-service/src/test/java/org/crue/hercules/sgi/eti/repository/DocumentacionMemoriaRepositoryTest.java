@@ -60,7 +60,7 @@ public class DocumentacionMemoriaRepositoryTest extends BaseRepositoryTest {
    * @return el objeto Comite
    */
   public Comite generarMockComite(Formulario formulario) {
-    return new Comite(null, "Comite1", formulario, Boolean.TRUE);
+    return new Comite(null, "Comite1", "nombreSecretario", "nombreInvestigacion", "nombreDecreto", "articulo", formulario, Boolean.TRUE);
   }
 
   /**

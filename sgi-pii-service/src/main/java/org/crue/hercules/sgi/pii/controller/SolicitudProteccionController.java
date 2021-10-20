@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -58,6 +59,23 @@ public class SolicitudProteccionController {
 
     return new ResponseEntity<>(
         convert(this.solicitudProteccionService.create(convert(null, solicitudProteccionInput))), HttpStatus.CREATED);
+  }
+
+  /**
+   * Actualiza la {@link SolicitudProteccion} con el id indicado.
+   * 
+   * @param solicitudProteccion {@link SolicitudProteccionInput} a actualizar.
+   * @param id                  id {@link SolicitudProteccion} a actualizar.
+   * @return {@link SolicitudProteccion} actualizado.
+   */
+  @PutMapping("/{id}")
+  @PreAuthorize("hasAuthority('PII-INV-E')")
+  SolicitudProteccionOutput update(@Valid @RequestBody SolicitudProteccionInput solicitudProteccion,
+      @PathVariable Long id) {
+    log.debug("update(@Valid @RequestBody SolicitudProteccionInput invencion, @PathVariable Long id) - start");
+    SolicitudProteccion returnValue = this.solicitudProteccionService.update(convert(id, solicitudProteccion));
+    log.debug("update(@Valid @RequestBody SolicitudProteccionInput invencion, @PathVariable Long id) - end");
+    return convert(returnValue);
   }
 
   /**

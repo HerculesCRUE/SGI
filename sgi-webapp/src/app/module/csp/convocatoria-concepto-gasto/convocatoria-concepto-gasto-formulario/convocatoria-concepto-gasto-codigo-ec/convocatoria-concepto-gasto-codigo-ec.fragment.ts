@@ -6,7 +6,7 @@ import { ConvocatoriaConceptoGastoService } from '@core/services/csp/convocatori
 import { CodigoEconomicoGastoService } from '@core/services/sge/codigo-economico-gasto.service';
 import { StatusWrapper } from '@core/utils/status-wrapper';
 import { BehaviorSubject, merge, Observable, of } from 'rxjs';
-import { map, switchMap, tap } from 'rxjs/operators';
+import { concatMap, map, switchMap, tap } from 'rxjs/operators';
 
 export interface ConvocatoriaConceptoGastoCodigoEc extends IConvocatoriaConceptoGastoCodigoEc {
   convocatoriaConceptoGasto: IConvocatoriaConceptoGasto;
@@ -105,9 +105,15 @@ export class ConvocatoriaConceptoGastoCodigoEcFragment extends Fragment {
     });
     return this.convocatoriaConceptoGastoCodigoEcService.updateList(id, values).pipe(
       map((results) => {
+        const completedResults = results.map((codGastoCodEc: IConvocatoriaConceptoGastoCodigoEc) => {
+          codGastoCodEc.codigoEconomico.nombre = values.find((entity: IConvocatoriaConceptoGastoCodigoEc) =>
+            entity.codigoEconomico.id === codGastoCodEc.codigoEconomico.id)?.codigoEconomico?.nombre;
+
+          return codGastoCodEc;
+        });
         // TODO: Hacer maching con los datos preexistente para mantener el ConvocatoriaCodigoEconomico cargado
         this.convocatoriaConceptoGastoCodigoEcs$.next(
-          results.map(
+          completedResults.map(
             (value) => {
               (value as ConvocatoriaConceptoGastoCodigoEc).convocatoriaConceptoGasto = values.find(
                 convocatoriaConceptoGastoCodigoEc =>
@@ -129,4 +135,5 @@ export class ConvocatoriaConceptoGastoCodigoEcFragment extends Fragment {
     const hasTouched = this.convocatoriaConceptoGastoCodigoEcs$.value.some((wrapper) => wrapper.touched);
     return !hasTouched;
   }
+
 }

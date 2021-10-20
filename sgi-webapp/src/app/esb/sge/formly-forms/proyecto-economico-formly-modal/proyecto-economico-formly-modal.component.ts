@@ -4,12 +4,13 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { MSG_PARAMS } from '@core/i18n';
 import { CausaExencion, CAUSA_EXENCION_MAP, IProyecto } from '@core/models/csp/proyecto';
-import { ProyectoConceptoGastoService } from '@core/services/csp/proyecto-concepto-gasto.service';
+import { IProyectoResponsableEconomico } from '@core/models/csp/proyecto-responsable-economico';
+import { Orden } from '@core/models/csp/rol-proyecto';
+import { IPersona } from '@core/models/sgp/persona';
 import { ProyectoService } from '@core/services/csp/proyecto.service';
 import { SolicitudProyectoService } from '@core/services/csp/solicitud-proyecto.service';
 import { SolicitudService } from '@core/services/csp/solicitud.service';
 import { ProyectoSgeService } from '@core/services/sge/proyecto-sge.service';
-import { PersonaService } from '@core/services/sgp/persona.service';
 import { SnackBarService } from '@core/services/snack-bar.service';
 import { FormlyUtils } from '@core/utils/formly-utils';
 import { FormlyFieldConfig, FormlyFormOptions } from '@ngx-formly/core';
@@ -49,6 +50,11 @@ interface IDatosProyecto {
   porIva: number;
   causaExencion: CausaExencion;
   causaExencionDesc?: string;
+}
+interface IResponsable {
+  fechaInicio: DateTime;
+  fechaFin: DateTime;
+  persona: IPersona;
 }
 
 @Component({
@@ -146,7 +152,7 @@ export class ProyectoEconomicoFormlyModalComponent implements OnInit, OnDestroy 
         );
       }),
       switchMap((formlyData) => {
-        return this.findResponsableEconomico(id, formlyData);
+        return this.findNumeroDocumentoResponsableEcnomicoOrMiembroEquipo(id, formlyData);
       }),
       switchMap((formlyData) => {
         const proyectoEconomico = formlyData.data.proyecto;
@@ -198,29 +204,23 @@ export class ProyectoEconomicoFormlyModalComponent implements OnInit, OnDestroy 
     );
   }
 
-  private findResponsableEconomico(id: number, formlyData: IFormlyData): Observable<IFormlyData> {
+  private findNumeroDocumentoResponsableEcnomicoOrMiembroEquipo(id: number, formlyData: IFormlyData): Observable<IFormlyData> {
     return this.proyectoService.findAllProyectoResponsablesEconomicos(id).pipe(
-      map(response => response.items),
-      map(responsablesEconomicos => {
-        responsablesEconomicos.sort(
-          (a, b) => {
-            const dateA = a.fechaInicio;
-            const dateB = b.fechaInicio;
-            return (dateA > dateB) ? 1 : ((dateB > dateA) ? -1 : 0);
-          }
-        );
-
-        const dateTimeNow = DateTime.now();
-        return responsablesEconomicos.find(responsableEconomico => {
-          if (!responsableEconomico.fechaInicio) {
-            responsableEconomico.fechaInicio = dateTimeNow;
-          }
-          if (!responsableEconomico.fechaFin) {
-            responsableEconomico.fechaFin = dateTimeNow;
-          }
-          return responsableEconomico.fechaInicio.toMillis() <= dateTimeNow.toMillis() && responsableEconomico.fechaFin >= dateTimeNow;
+      map(response => response.items.map(responsable => {
+        return {
+          fechaInicio: responsable.fechaInicio,
+          fechaFin: responsable.fechaFin,
+          persona: responsable.persona
+        } as IResponsable;
+      })),
+      map((responsablesEconomicos: IResponsable[]) => {
+        return this.getCurrentResponsable(responsablesEconomicos);
+      }),
+      switchMap((result: IResponsable) => {
+        if (!result?.persona) {
+          return this.getCurrentMiembroEquipoWithRolOrdenPrimario(id);
         }
-        );
+        return of(result);
       }),
       switchMap((result) => {
         if (result) {
@@ -228,6 +228,28 @@ export class ProyectoEconomicoFormlyModalComponent implements OnInit, OnDestroy 
         }
         return of(formlyData);
       })
+    );
+  }
+
+  private getCurrentResponsable(responsablesEconomicos: IResponsable[]): IResponsable {
+    responsablesEconomicos.sort(
+      (a, b) => {
+        const dateA = a.fechaInicio;
+        const dateB = b.fechaInicio;
+        return (dateA > dateB) ? 1 : ((dateB > dateA) ? -1 : 0);
+      }
+    );
+
+    const dateTimeNow = DateTime.now();
+    return responsablesEconomicos.find(responsableEconomico => {
+      if (!responsableEconomico.fechaInicio) {
+        responsableEconomico.fechaInicio = dateTimeNow;
+      }
+      if (!responsableEconomico.fechaFin) {
+        responsableEconomico.fechaFin = dateTimeNow;
+      }
+      return responsableEconomico.fechaInicio.toMillis() <= dateTimeNow.toMillis() && responsableEconomico.fechaFin >= dateTimeNow;
+    }
     );
   }
 
@@ -297,6 +319,25 @@ export class ProyectoEconomicoFormlyModalComponent implements OnInit, OnDestroy 
         );
       })
     ).subscribe((value) => this.textoCrearError = value);
+  }
+
+  private getCurrentMiembroEquipoWithRolOrdenPrimario(id: number): Observable<IResponsable> {
+    const options: SgiRestFindOptions = {
+      filter: new RSQLSgiRestFilter('rolProyecto.rolPrincipal', SgiRestFilterOperator.EQUALS, 'true')
+        .and('rolProyecto.orden', SgiRestFilterOperator.EQUALS, Orden.PRIMARIO)
+    };
+    return this.proyectoService.findAllProyectoEquipo(id, options).pipe(
+      map(responseIP => responseIP.items.map(investigadorPrincipal => {
+        return {
+          fechaInicio: investigadorPrincipal.fechaInicio,
+          fechaFin: investigadorPrincipal.fechaFin,
+          persona: investigadorPrincipal.persona
+        } as IResponsable;
+      })),
+      map(responsablesEconomicos => {
+        return this.getCurrentResponsable(responsablesEconomicos);
+      })
+    );
   }
 }
 

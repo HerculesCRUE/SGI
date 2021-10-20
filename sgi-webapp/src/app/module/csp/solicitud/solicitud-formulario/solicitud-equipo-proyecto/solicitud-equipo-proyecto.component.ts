@@ -6,6 +6,7 @@ import { MatTableDataSource } from '@angular/material/table';
 import { ActivatedRoute, Router } from '@angular/router';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { FragmentComponent } from '@core/component/fragment.component';
+import { VALIDACION_REQUISITOS_EQUIPO_IP_MAP } from '@core/enums/validaciones-requisitos-equipo-ip';
 import { MSG_PARAMS } from '@core/i18n';
 import { ISolicitudProyectoEquipo } from '@core/models/csp/solicitud-proyecto-equipo';
 import { FxFlexProperties } from '@core/models/shared/flexLayout/fx-flex-properties';
@@ -18,7 +19,7 @@ import { switchMap, take } from 'rxjs/operators';
 import { MiembroEquipoSolicitudModalComponent, MiembroEquipoSolicitudModalData } from '../../../shared/miembro-equipo-solicitud-modal/miembro-equipo-solicitud-modal.component';
 import { SOLICITUD_ROUTE_NAMES } from '../../solicitud-route-names';
 import { SolicitudActionService } from '../../solicitud.action.service';
-import { SolicitudEquipoProyectoFragment } from './solicitud-equipo-proyecto.fragment';
+import { ISolicitudProyectoEquipoListado, SolicitudEquipoProyectoFragment } from './solicitud-equipo-proyecto.fragment';
 
 const MSG_DELETE = marker('msg.delete.entity');
 const MODAL_TITLE_KEY = marker('csp.solicitud-equipo-proyecto.miembro-equipo');
@@ -37,15 +38,19 @@ export class SolicitudEquipoProyectoComponent extends FragmentComponent implemen
   fxLayoutProperties: FxLayoutProperties;
 
   elementosPagina = [5, 10, 25, 100];
-  displayedColumns = ['persona', 'nombre', 'apellidos', 'rolProyecto', 'acciones'];
+  displayedColumns = ['helpIcon', 'persona', 'nombre', 'apellidos', 'rolProyecto', 'acciones'];
 
   msgParamEntity = {};
   modalTitleEntity: string;
   textoDelete: string;
 
-  dataSource = new MatTableDataSource<StatusWrapper<ISolicitudProyectoEquipo>>();
+  dataSource = new MatTableDataSource<StatusWrapper<ISolicitudProyectoEquipoListado>>();
   @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
   @ViewChild(MatSort, { static: true }) sort: MatSort;
+
+  get VALIDACION_REQUISITOS_EQUIPO_IP_MAP() {
+    return VALIDACION_REQUISITOS_EQUIPO_IP_MAP;
+  }
 
   constructor(
     private actionService: SolicitudActionService,
@@ -66,16 +71,16 @@ export class SolicitudEquipoProyectoComponent extends FragmentComponent implemen
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
     this.dataSource.sortingDataAccessor =
-      (wrapper: StatusWrapper<ISolicitudProyectoEquipo>, property: string) => {
+      (wrapper: StatusWrapper<ISolicitudProyectoEquipoListado>, property: string) => {
         switch (property) {
           case 'persona':
-            return wrapper.value.persona.numeroDocumento;
+            return wrapper.value.solicitudProyectoEquipo.persona.numeroDocumento;
           case 'nombre':
-            return wrapper.value.persona.nombre;
+            return wrapper.value.solicitudProyectoEquipo.persona.nombre;
           case 'apellidos':
-            return wrapper.value.persona.apellidos;
+            return wrapper.value.solicitudProyectoEquipo.persona.apellidos;
           case 'rolProyecto':
-            return wrapper.value.rolProyecto.nombre;
+            return wrapper.value.solicitudProyectoEquipo.rolProyecto.nombre;
           default:
             return wrapper[property];
         }
@@ -94,7 +99,8 @@ export class SolicitudEquipoProyectoComponent extends FragmentComponent implemen
     const subcription = this.formPart.proyectoEquipos$.subscribe(
       (proyectoEquipos) => {
         if (proyectoEquipos.length === 0 ||
-          proyectoEquipos.filter(equipo => equipo.value.persona?.id === this.actionService.solicitante?.id).length > 0) {
+          proyectoEquipos.filter(equipo =>
+            equipo.value.solicitudProyectoEquipo.persona?.id === this.actionService.solicitante?.id).length > 0) {
           this.formPart.setErrors(false);
         } else {
           this.formPart.setErrors(true);
@@ -133,15 +139,15 @@ export class SolicitudEquipoProyectoComponent extends FragmentComponent implemen
     this.subscriptions.forEach(subscription => subscription.unsubscribe());
   }
 
-  openModal(wrapper?: StatusWrapper<ISolicitudProyectoEquipo>, rowIndex?: number): void {
+  openModal(wrapper?: StatusWrapper<ISolicitudProyectoEquipoListado>, rowIndex?: number): void {
     // Necesario para sincronizar los cambios de orden de registros dependiendo de la ordenación y paginación
     this.dataSource.sortData(this.dataSource.filteredData, this.dataSource.sort);
     const row = (this.paginator.pageSize * this.paginator.pageIndex) + rowIndex;
 
     const data: MiembroEquipoSolicitudModalData = {
       titleEntity: this.modalTitleEntity,
-      entidad: wrapper?.value ?? {} as ISolicitudProyectoEquipo,
-      selectedEntidades: this.dataSource.data.map(element => element.value),
+      entidad: wrapper?.value.solicitudProyectoEquipo ?? {} as ISolicitudProyectoEquipo,
+      selectedEntidades: this.dataSource.data.map(element => element.value.solicitudProyectoEquipo),
       mesInicialMin: 1,
       mesFinalMax: this.actionService.duracionProyecto,
       isEdit: Boolean(wrapper),
@@ -163,7 +169,10 @@ export class SolicitudEquipoProyectoComponent extends FragmentComponent implemen
     dialogRef.afterClosed().subscribe((modalData: MiembroEquipoSolicitudModalData) => {
       if (modalData) {
         if (!wrapper) {
-          this.formPart.addProyectoEquipo(modalData.entidad as ISolicitudProyectoEquipo);
+          const solicitudProyectoEquipoNew = {
+            solicitudProyectoEquipo: modalData.entidad as ISolicitudProyectoEquipo
+          } as ISolicitudProyectoEquipoListado;
+          this.formPart.addProyectoEquipo(solicitudProyectoEquipoNew);
         } else {
           wrapper.setEdited();
           this.formPart.updateProyectoEquipo(wrapper, modalData.index);
@@ -173,7 +182,7 @@ export class SolicitudEquipoProyectoComponent extends FragmentComponent implemen
     });
   }
 
-  deleteProyectoEquipo(wrapper: StatusWrapper<ISolicitudProyectoEquipo>) {
+  deleteProyectoEquipo(wrapper: StatusWrapper<ISolicitudProyectoEquipoListado>) {
     this.subscriptions.push(
       this.dialogService.showConfirmation(this.textoDelete).subscribe(
         (aceptado) => {

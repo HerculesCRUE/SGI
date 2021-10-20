@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { IEntidad } from '@core/models/csp/entidad';
 import { ActionService } from '@core/services/action-service';
+import { SolicitudProyectoEntidadService } from '@core/services/csp/solicitud-proyecto-entidad/solicitud-proyecto-entidad.service';
 import { SolicitudProyectoPresupuestoService } from '@core/services/csp/solicitud-proyecto-presupuesto.service';
 import { SolicitudService } from '@core/services/csp/solicitud.service';
 import { SOLICITUD_ROUTE_PARAMS } from '../solicitud/solicitud-route-params';
@@ -10,6 +11,7 @@ import { SolicitudProyectoPresupuestoDatosGeneralesFragment } from './solicitud-
 import { SolicitudProyectoPresupuestoPartidasGastoFragment } from './solicitud-proyecto-presupuesto-formulario/solicitud-proyecto-presupuesto-partidas-gasto/solicitud-proyecto-presupuesto-partidas-gasto.fragment';
 
 export interface ISolicitudProyectoPresupuestoData {
+  solicitudProyectoEntidadId: number;
   entidad: IEntidad;
   ajena: boolean;
   financiadora: boolean;
@@ -33,6 +35,7 @@ export class SolicitudProyectoPresupuestoActionService extends ActionService {
     route: ActivatedRoute,
     solicitudService: SolicitudService,
     solicitudProyectoPresupuestoService: SolicitudProyectoPresupuestoService,
+    solicitudProyectoEntidadService: SolicitudProyectoEntidadService
   ) {
     super();
     this.data = route.snapshot.data[SOLICITUD_PROYECTO_PRESUPUESTO_DATA_KEY];
@@ -43,8 +46,8 @@ export class SolicitudProyectoPresupuestoActionService extends ActionService {
     this.datosGenerales = new SolicitudProyectoPresupuestoDatosGeneralesFragment(
       solicitudId, this.data.entidad, this.data.financiadora);
     this.partidasGasto = new SolicitudProyectoPresupuestoPartidasGastoFragment(
-      solicitudId, this.data.entidad.empresa, this.data.ajena, solicitudService,
-      solicitudProyectoPresupuestoService, this.data.readonly);
+      solicitudId, this.data.solicitudProyectoEntidadId, solicitudService,
+      solicitudProyectoPresupuestoService, solicitudProyectoEntidadService, this.data.readonly);
 
     this.addFragment(this.FRAGMENT.DATOS_GENERALES, this.datosGenerales);
     this.addFragment(this.FRAGMENT.PARTIDAS_GASTO, this.partidasGasto);

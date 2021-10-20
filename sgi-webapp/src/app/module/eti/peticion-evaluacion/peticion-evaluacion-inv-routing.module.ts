@@ -28,7 +28,7 @@ const routes: SgiRoutes = [
     data: {
       title: PETICION_EVALUACION_KEY,
       titleParams: MSG_PARAMS.CARDINALIRY.PLURAL,
-      hasAuthorityForAnyUO: 'ETI-PEV-VR-INV'
+      hasAuthorityForAnyUO: 'ETI-PEV-INV-VR'
     },
 
   },
@@ -42,7 +42,7 @@ const routes: SgiRoutes = [
       titleParams: {
         entity: PETICION_EVALUACION_KEY, ...MSG_PARAMS.GENDER.FEMALE, ...MSG_PARAMS.CARDINALIRY.SINGULAR
       },
-      hasAnyAuthorityForAnyUO: ['ETI-PEV-C-INV']
+      hasAnyAuthorityForAnyUO: ['ETI-PEV-INV-C']
     },
     children: [
       {
@@ -80,7 +80,7 @@ const routes: SgiRoutes = [
     data: {
       title: PETICION_EVALUACION_KEY,
       titleParams: MSG_PARAMS.CARDINALIRY.SINGULAR,
-      hasAuthorityForAnyUO: 'ETI-PEV-ER-INV'
+      hasAuthorityForAnyUO: 'ETI-PEV-INV-ER'
     },
     children: [
       {

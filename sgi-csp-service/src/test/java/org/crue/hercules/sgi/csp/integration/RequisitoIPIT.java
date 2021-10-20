@@ -203,7 +203,8 @@ public class RequisitoIPIT extends BaseIT {
     Long id = 1L;
 
     final ResponseEntity<List<RequisitoIPCategoriaProfesionalOutput>> response = restTemplate.exchange(
-        RequisitoIPController.MAPPING + RequisitoIPController.PATH_CATEGORIAS, HttpMethod.GET, buildRequest(null),
+        RequisitoIPController.MAPPING + RequisitoIPController.PATH_CATEGORIAS_PROFESIONALES_REQUISITOS_EQUIPO,
+        HttpMethod.GET, buildRequest(null),
         new ParameterizedTypeReference<List<RequisitoIPCategoriaProfesionalOutput>>() {
         }, id);
 
@@ -237,8 +238,9 @@ public class RequisitoIPIT extends BaseIT {
     }
 
     final ResponseEntity<List<RequisitoIPCategoriaProfesionalOutput>> response = restTemplate.exchange(
-        RequisitoIPController.MAPPING + RequisitoIPController.PATH_CATEGORIAS, HttpMethod.PATCH,
-        buildRequest(requestBody), new ParameterizedTypeReference<List<RequisitoIPCategoriaProfesionalOutput>>() {
+        RequisitoIPController.MAPPING + RequisitoIPController.PATH_CATEGORIAS_PROFESIONALES_REQUISITOS_EQUIPO,
+        HttpMethod.PATCH, buildRequest(requestBody),
+        new ParameterizedTypeReference<List<RequisitoIPCategoriaProfesionalOutput>>() {
         }, id);
 
     Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);

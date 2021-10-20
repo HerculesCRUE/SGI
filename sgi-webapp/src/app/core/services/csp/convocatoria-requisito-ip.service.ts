@@ -12,7 +12,7 @@ import { catchError, map } from 'rxjs/operators';
 import { REQUISITOIP_CATEGORIA_PROFESIONAL_REQUEST_CONVERTER } from './requisito-ip-categoria-profesional/requisito-ip-categoria-profesional-request.converter';
 import { IRequisitoIPCategoriaProfesionalResponse } from './requisito-ip-categoria-profesional/requisito-ip-categoria-profesional-response';
 import { REQUISITOIP_CATEGORIA_PROFESIONAL_RESPONSE_CONVERTER } from './requisito-ip-categoria-profesional/requisito-ip-categoria-profesional-response.converter';
-import { REQUISITOIP_NIVELACADEMICO_REQUEST_CONVERTER }  from './requisito-ip-nivel-academico/requisito-ip-nivel-academico-request.converter';
+import { REQUISITOIP_NIVELACADEMICO_REQUEST_CONVERTER } from './requisito-ip-nivel-academico/requisito-ip-nivel-academico-request.converter';
 import { IRequisitoIPNivelAcademicoResponse } from './requisito-ip-nivel-academico/requisito-ip-nivel-academico-response';
 import { REQUISITOIP_NIVELACADEMICO_RESPONSE_CONVERTER } from './requisito-ip-nivel-academico/requisito-ip-nivel-academico-response.converter';
 
@@ -91,7 +91,7 @@ export class ConvocatoriaRequisitoIPService extends _ConvocatoriaRequisitoIPServ
    * @param id Identificador del RequisitoIP
    */
   findCategoriaProfesional(id: number): Observable<IRequisitoIPCategoriaProfesional[]> {
-    const endpointUrl = `${this.endpointUrl}/${id}/categorias`;
+    const endpointUrl = `${this.endpointUrl}/${id}/categoriasprofesionalesrequisitosequipo`;
     const params = new HttpParams().set('id', id.toString());
     return this.http.get<IRequisitoIPCategoriaProfesionalResponse[]>(endpointUrl, { params })
       .pipe(
@@ -108,7 +108,7 @@ export class ConvocatoriaRequisitoIPService extends _ConvocatoriaRequisitoIPServ
    */
   updateCategoriasProfesionales(id: number, nivelesAcademicos: IRequisitoIPCategoriaProfesional[]):
     Observable<IRequisitoIPCategoriaProfesional[]> {
-    return this.http.patch<IRequisitoIPCategoriaProfesionalResponse[]>(`${this.endpointUrl}/${id}/categorias`,
+    return this.http.patch<IRequisitoIPCategoriaProfesionalResponse[]>(`${this.endpointUrl}/${id}/categoriasprofesionalesrequisitosequipo`,
       REQUISITOIP_CATEGORIA_PROFESIONAL_REQUEST_CONVERTER.fromTargetArray(nivelesAcademicos)
     ).pipe(
       map((response => REQUISITOIP_CATEGORIA_PROFESIONAL_RESPONSE_CONVERTER.toTargetArray(response)))

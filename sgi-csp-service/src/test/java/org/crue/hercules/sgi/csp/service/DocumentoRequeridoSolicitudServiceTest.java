@@ -8,7 +8,6 @@ import java.util.Optional;
 
 import org.assertj.core.api.Assertions;
 import org.crue.hercules.sgi.csp.enums.ClasificacionCVN;
-import org.crue.hercules.sgi.csp.enums.FormularioSolicitud;
 import org.crue.hercules.sgi.csp.exceptions.ConfiguracionSolicitudNotFoundException;
 import org.crue.hercules.sgi.csp.exceptions.DocumentoRequeridoSolicitudNotFoundException;
 import org.crue.hercules.sgi.csp.model.ConfiguracionSolicitud;
@@ -1124,7 +1123,6 @@ public class DocumentoRequeridoSolicitudServiceTest extends BaseServiceTest {
         .tramitacionSGI(Boolean.TRUE)
         .fasePresentacionSolicitudes(convocatoriaFase)
         .importeMaximoSolicitud(BigDecimal.valueOf(12345))
-        .formularioSolicitud(FormularioSolicitud.ESTANDAR)
         .build();
     // @formatter:on
 

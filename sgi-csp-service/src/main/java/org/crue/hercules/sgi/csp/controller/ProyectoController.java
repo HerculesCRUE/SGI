@@ -5,6 +5,7 @@ import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
+import org.crue.hercules.sgi.csp.dto.AnualidadGastoOutput;
 import org.crue.hercules.sgi.csp.dto.ProyectoAgrupacionGastoOutput;
 import org.crue.hercules.sgi.csp.dto.ProyectoAnualidadOutput;
 import org.crue.hercules.sgi.csp.dto.ProyectoAnualidadResumen;
@@ -16,6 +17,7 @@ import org.crue.hercules.sgi.csp.model.ConvocatoriaConceptoGasto;
 import org.crue.hercules.sgi.csp.model.EstadoProyecto;
 import org.crue.hercules.sgi.csp.model.Proyecto;
 import org.crue.hercules.sgi.csp.model.ProyectoAgrupacionGasto;
+import org.crue.hercules.sgi.csp.model.ProyectoAnualidad;
 import org.crue.hercules.sgi.csp.model.ProyectoAreaConocimiento;
 import org.crue.hercules.sgi.csp.model.ProyectoClasificacion;
 import org.crue.hercules.sgi.csp.model.ProyectoConceptoGasto;
@@ -34,6 +36,7 @@ import org.crue.hercules.sgi.csp.model.ProyectoProyectoSge;
 import org.crue.hercules.sgi.csp.model.ProyectoResponsableEconomico;
 import org.crue.hercules.sgi.csp.model.ProyectoSocio;
 import org.crue.hercules.sgi.csp.model.Solicitud;
+import org.crue.hercules.sgi.csp.service.AnualidadGastoService;
 import org.crue.hercules.sgi.csp.service.EstadoProyectoService;
 import org.crue.hercules.sgi.csp.service.ProrrogaDocumentoService;
 import org.crue.hercules.sgi.csp.service.ProyectoAgrupacionGastoService;
@@ -164,6 +167,8 @@ public class ProyectoController {
   /** ProyectoPeriodoJustificacionService */
   private final ProyectoPeriodoJustificacionService proyectoPeriodoJustificacionService;
 
+  private final AnualidadGastoService anualidadGastoService;
+
   /**
    * Instancia un nuevo ProyectoController.
    * 
@@ -185,7 +190,7 @@ public class ProyectoController {
    * @param proyectoPeriodoSeguimientoDocumentoService        {@link ProyectoPeriodoSeguimientoDocumentoService}.
    * @param proyectoSocioPeriodoJustificacionDocumentoService {@link ProyectoSocioPeriodoJustificacionDocumentoService}.
    * @param proyectoClasificacionService                      {@link ProyectoClasificacionService}.
-   * @param proyectoAreaConocimientoService                   {@link proyectoAreaConocimientoService}.
+   * @param proyectoAreaConocimientoService                   {@link ProyectoAreaConocimientoService}.
    * @param proyectoProyectoSgeService                        {@link ProyectoProyectoSgeService}.
    * @param proyectoAnualidadService                          {@link ProyectoAnualidadService}.
    * @param proyectoPartidaService                            {@link ProyectoPartidaService}.
@@ -193,6 +198,7 @@ public class ProyectoController {
    * @param proyectoResponsableEconomicoService               {@link ProyectoResponsableEconomicoService}.
    * @param proyectoAgrupacionGastoService                    {@link ProyectoAgrupacionGastoService}.
    * @param proyectoPeriodoJustificacionService               {@link ProyectoPeriodoJustificacionService}.
+   * @param anualidadGastoService                             {@link AnualidadGastoService}
    */
   public ProyectoController(ModelMapper modelMapper, ProyectoService proyectoService,
       ProyectoHitoService proyectoHitoService, ProyectoFaseService proyectoFaseService,
@@ -210,7 +216,8 @@ public class ProyectoController {
       ProyectoConceptoGastoService proyectoConceptoGastoService, ProyectoAnualidadService proyectoAnualidadService,
       ProyectoResponsableEconomicoService proyectoResponsableEconomicoService,
       ProyectoAgrupacionGastoService proyectoAgrupacionGastoService,
-      ProyectoPeriodoJustificacionService proyectoPeriodoJustificacionService) {
+      ProyectoPeriodoJustificacionService proyectoPeriodoJustificacionService,
+      AnualidadGastoService anualidadGastoService) {
     this.modelMapper = modelMapper;
     this.service = proyectoService;
     this.proyectoHitoService = proyectoHitoService;
@@ -236,6 +243,7 @@ public class ProyectoController {
     this.proyectoResponsableEconomicoService = proyectoResponsableEconomicoService;
     this.proyectoAgrupacionGastoService = proyectoAgrupacionGastoService;
     this.proyectoPeriodoJustificacionService = proyectoPeriodoJustificacionService;
+    this.anualidadGastoService = anualidadGastoService;
   }
 
   /**
@@ -868,7 +876,6 @@ public class ProyectoController {
    * Devuelve una lista paginada de {@link ProyectoAnualidadOutput}
    * 
    * @param id     Identificador de {@link Proyecto}.
-   * @param query  filtro de búsqueda.
    * @param paging pageable.
    */
   @GetMapping("/{id}/anualidades")
@@ -891,7 +898,6 @@ public class ProyectoController {
    * Devuelve una lista paginada de {@link AnualidadGasto}
    * 
    * @param id     Identificador de {@link Proyecto}.
-   * @param query  filtro de búsqueda.
    * @param paging pageable.
    */
   @GetMapping("/{id}/anualidadesgasto")
@@ -1203,6 +1209,43 @@ public class ProyectoController {
     }
     log.debug("findIds(String query) - end");
     return new ResponseEntity<>(returnValue, HttpStatus.OK);
+  }
+
+  /**
+   * Devuelve una lista de {@link ProyectoAnualidad}
+   * 
+   * @param id Identificador del {@link Proyecto}.
+   */
+  @GetMapping("/{id}/proyectoanualidades")
+  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-PRO-V','CSP-PRO-E')")
+  ResponseEntity<List<ProyectoAnualidad>> findAllProyectoAnualidad(@PathVariable Long id) {
+
+    List<ProyectoAnualidad> anualidades = proyectoAnualidadService.findByProyectoId(id);
+
+    return anualidades.isEmpty() ? ResponseEntity.noContent().build() : ResponseEntity.ok(anualidades);
+  }
+
+  /**
+   * Devuelve una lista de {@link AnualidadGastoOutput} asociados a un
+   * {@link Proyecto}
+   * 
+   * @param id Identificador del {@link Proyecto}.
+   */
+  @GetMapping("/{id}/anualidadesgastos")
+  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-PRO-V','CSP-PRO-E')")
+  ResponseEntity<List<AnualidadGastoOutput>> findProyectoAnualidadesGasto(@PathVariable Long id) {
+
+    List<AnualidadGastoOutput> anualidades = this
+        .convertListAnualidadGastoOutput(this.anualidadGastoService.findAnualidadesGastosByProyectoId(id));
+
+    return anualidades.isEmpty() ? ResponseEntity.noContent().build() : ResponseEntity.ok(anualidades);
+  }
+
+  private List<AnualidadGastoOutput> convertListAnualidadGastoOutput(List<AnualidadGasto> anualidadesGasto) {
+    return anualidadesGasto.stream().map((anualidadGasto) -> {
+      return modelMapper.map(anualidadGasto, AnualidadGastoOutput.class);
+    }).collect(Collectors.toList());
+
   }
 
 }

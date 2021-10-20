@@ -610,6 +610,7 @@ public class ConvocatoriaServiceTest extends BaseServiceTest {
         .estado(Convocatoria.Estado.BORRADOR)
         .codigo("codigo")
         .unidadGestionRef("2")
+        .formularioSolicitud(FormularioSolicitud.PROYECTO)
         .fechaPublicacion(Instant.parse("2021-08-01T00:00:00Z"))
         .titulo("titulo")
         .build();
@@ -1687,25 +1688,17 @@ public class ConvocatoriaServiceTest extends BaseServiceTest {
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-CON-E" })
   public void update_RegistradaWithoutFormularioSolicitud_ThrowsIllegalArgumentException() {
-    // given: a Convocatoria Registrada without FormularioSolicitud at
-    // ConfiguracionSolicitud
-    Convocatoria convocatoriaExistente = generarMockConvocatoria(1L, 1L, 1L, 1L, 1L, 1L, Boolean.TRUE);
+    // given: a Convocatoria Registrada without FormularioSolicitud
     Convocatoria convocatoria = generarMockConvocatoria(1L, 1L, 1L, 1L, 1L, 1L, Boolean.TRUE);
+    convocatoria.setFormularioSolicitud(null);
     convocatoria.setObservaciones("observaciones-modificadas");
-    ConfiguracionSolicitud configuracionSolicitud = generarMockConfiguracionSolicitud(1L, convocatoriaExistente, 1L);
-    configuracionSolicitud.setFormularioSolicitud(null);
-
-    BDDMockito.given(repository.findById(ArgumentMatchers.anyLong())).willReturn(Optional.of(convocatoriaExistente));
-
-    BDDMockito.given(configuracionSolicitudRepository.findByConvocatoriaId(ArgumentMatchers.anyLong()))
-        .willReturn(Optional.of(configuracionSolicitud));
 
     Assertions.assertThatThrownBy(
         // when: update Convocatoria
         () -> service.update(convocatoria))
         // then: throw exception as FormularioSolicitud is not present
-        .isInstanceOf(IllegalArgumentException.class).hasMessage(
-            "Tipo formulario no puede ser null para crear ConfiguracionSolicitud cuando la convocatoria está registrada");
+        .isInstanceOf(IllegalArgumentException.class)
+        .hasMessage("FormularioSolicitud no puede ser null para actualizar Convocatoria");
   }
 
   /**
@@ -2126,20 +2119,15 @@ public class ConvocatoriaServiceTest extends BaseServiceTest {
     // ConfiguracionSolicitud
     Convocatoria convocatoria = generarMockConvocatoria(1L, 1L, 1L, 1L, 1L, 1L, Boolean.TRUE);
     convocatoria.setEstado(Convocatoria.Estado.BORRADOR);
-    ConfiguracionSolicitud configuracionSolicitud = generarMockConfiguracionSolicitud(1L, convocatoria, 1L);
-    configuracionSolicitud.setFormularioSolicitud(null);
-
+    convocatoria.setFormularioSolicitud(null);
     BDDMockito.given(repository.findById(ArgumentMatchers.anyLong())).willReturn(Optional.of(convocatoria));
-
-    BDDMockito.given(configuracionSolicitudRepository.findByConvocatoriaId(ArgumentMatchers.anyLong()))
-        .willReturn(Optional.of(configuracionSolicitud));
 
     Assertions.assertThatThrownBy(
         // when: registrar Convocatoria
         () -> service.registrar(convocatoria.getId()))
         // then: throw exception as FormularioSolicitud is not present
-        .isInstanceOf(IllegalArgumentException.class).hasMessage(
-            "Tipo formulario no puede ser null para crear ConfiguracionSolicitud cuando la convocatoria está registrada");
+        .isInstanceOf(IllegalArgumentException.class)
+        .hasMessage("FormularioSolicitud no puede ser null en la Convocatoria");
   }
 
   /**
@@ -2191,6 +2179,7 @@ public class ConvocatoriaServiceTest extends BaseServiceTest {
     Long id = 1L;
     Convocatoria convocatoria = generarMockConvocatoria(id, 1L, 1L, 1L, 1L, 1L, Boolean.TRUE);
     convocatoria.setEstado(Convocatoria.Estado.BORRADOR);
+    convocatoria.setFormularioSolicitud(FormularioSolicitud.PROYECTO);
     ConfiguracionSolicitud configuracionSolicitud = generarMockConfiguracionSolicitud(1L, convocatoria, 1L);
 
     BDDMockito.given(repository.findById(ArgumentMatchers.<Long>any())).willReturn(Optional.of(convocatoria));
@@ -2415,12 +2404,8 @@ public class ConvocatoriaServiceTest extends BaseServiceTest {
     Long id = 1L;
     Convocatoria convocatoria = generarMockConvocatoria(id, 1L, 1L, 1L, 1L, 1L, Boolean.TRUE);
     convocatoria.setEstado(Convocatoria.Estado.BORRADOR);
-    ConfiguracionSolicitud configuracionSolicitud = generarMockConfiguracionSolicitud(1L, convocatoria, 1L);
-    configuracionSolicitud.setFormularioSolicitud(null);
-
+    convocatoria.setFormularioSolicitud(null);
     BDDMockito.given(repository.findById(ArgumentMatchers.<Long>any())).willReturn(Optional.of(convocatoria));
-    BDDMockito.given(configuracionSolicitudRepository.findByConvocatoriaId(ArgumentMatchers.<Long>any()))
-        .willReturn(Optional.of(configuracionSolicitud));
 
     // when: check registrable
     boolean responseData = service.registrable(id);
@@ -2756,8 +2741,9 @@ public class ConvocatoriaServiceTest extends BaseServiceTest {
         .objeto("objeto-" + String.format("%03d", convocatoriaId))
         .observaciones("observaciones-" + String.format("%03d", convocatoriaId))
         .finalidad((modeloTipoFinalidad == null) ? null : modeloTipoFinalidad.getTipoFinalidad())
-        .regimenConcurrencia(tipoRegimenConcurrencia).estado(Convocatoria.Estado.REGISTRADA).duracion(12)
-        .ambitoGeografico(tipoAmbitoGeografico).clasificacionCVN(ClasificacionCVN.AYUDAS).activo(activo).build();
+        .formularioSolicitud(FormularioSolicitud.PROYECTO).regimenConcurrencia(tipoRegimenConcurrencia)
+        .estado(Convocatoria.Estado.REGISTRADA).duracion(12).ambitoGeografico(tipoAmbitoGeografico)
+        .clasificacionCVN(ClasificacionCVN.AYUDAS).activo(activo).build();
 
     return convocatoria;
   }
@@ -2825,7 +2811,6 @@ public class ConvocatoriaServiceTest extends BaseServiceTest {
         .tramitacionSGI(Boolean.TRUE)
         .fasePresentacionSolicitudes(convocatoriaFase)
         .importeMaximoSolicitud(BigDecimal.valueOf(12345))
-        .formularioSolicitud(FormularioSolicitud.ESTANDAR)
         .build();
     // @formatter:on
 

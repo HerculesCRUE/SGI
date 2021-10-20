@@ -1,11 +1,11 @@
-import { ChangeDetectionStrategy, Component, Optional, Self } from '@angular/core';
+import { Component, Optional, Self } from '@angular/core';
 import { NgControl } from '@angular/forms';
 import { ErrorStateMatcher } from '@angular/material/core';
 import { MatFormFieldControl } from '@angular/material/form-field';
 import { SelectServiceComponent } from '@core/component/select-service/select-service.component';
 import { ITipoAmbitoGeografico } from '@core/models/csp/tipo-ambito-geografico';
 import { TipoAmbitoGeograficoService } from '@core/services/csp/tipo-ambito-geografico.service';
-import { SgiRestFindOptions, RSQLSgiRestSort, SgiRestSortDirection } from '@sgi/framework/http';
+import { RSQLSgiRestSort, SgiRestFindOptions, SgiRestSortDirection } from '@sgi/framework/http';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
@@ -13,7 +13,6 @@ import { map } from 'rxjs/operators';
   selector: 'sgi-select-tipo-ambito-geografico',
   templateUrl: '../../../../core/component/select-common/select-common.component.html',
   styleUrls: ['../../../../core/component/select-common/select-common.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [
     {
       provide: MatFormFieldControl,

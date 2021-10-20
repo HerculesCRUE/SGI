@@ -26,6 +26,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.crue.hercules.sgi.csp.enums.ClasificacionCVN;
+import org.crue.hercules.sgi.csp.enums.FormularioSolicitud;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -144,6 +145,11 @@ public class Convocatoria extends BaseEntity {
   /** Activo */
   @Column(name = "activo", columnDefinition = "boolean default true", nullable = false)
   private Boolean activo;
+
+  /** Tipo Formulario Solicitud */
+  @Column(name = "formulario_solicitud", length = 50, nullable = true)
+  @Enumerated(EnumType.STRING)
+  private FormularioSolicitud formularioSolicitud;
 
   // Relations mapping, only for JPA metamodel generation
   @OneToOne(mappedBy = "convocatoria")

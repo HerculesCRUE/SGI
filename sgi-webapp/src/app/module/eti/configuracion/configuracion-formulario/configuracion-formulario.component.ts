@@ -103,8 +103,8 @@ export class ConfiguracionFormularioComponent implements OnInit, OnDestroy {
       diasArchivadaPendienteCorrecciones: new FormControl('', [Validators.required]),
       diasLimiteEvaluador: new FormControl('', [Validators.required]),
       mesesAvisoProyectoCEEA: new FormControl('', [Validators.required]),
-      mesesAvisoProyectoCEISH: new FormControl('', [Validators.required]),
-      mesesAvisoProyectoCEIAB: new FormControl('', [Validators.required])
+      mesesAvisoProyectoCEI: new FormControl('', [Validators.required]),
+      mesesAvisoProyectoCBE: new FormControl('', [Validators.required])
     });
     const formChangesSubscription = this.formGroup.statusChanges.subscribe(status => this.hasChanges(status));
     this.suscripciones.push(formChangesSubscription);
@@ -116,8 +116,8 @@ export class ConfiguracionFormularioComponent implements OnInit, OnDestroy {
     this.formGroup.controls.diasArchivadaPendienteCorrecciones.setValue(configuracion.diasArchivadaPendienteCorrecciones);
     this.formGroup.controls.diasLimiteEvaluador.setValue(configuracion.diasLimiteEvaluador);
     this.formGroup.controls.mesesAvisoProyectoCEEA.setValue(configuracion.mesesAvisoProyectoCEEA);
-    this.formGroup.controls.mesesAvisoProyectoCEISH.setValue(configuracion.mesesAvisoProyectoCEISH);
-    this.formGroup.controls.mesesAvisoProyectoCEIAB.setValue(configuracion.mesesAvisoProyectoCEIAB);
+    this.formGroup.controls.mesesAvisoProyectoCEI.setValue(configuracion.mesesAvisoProyectoCEI);
+    this.formGroup.controls.mesesAvisoProyectoCBE.setValue(configuracion.mesesAvisoProyectoCBE);
     this.initialFormValue = Object.assign({}, this.formGroup.value);
   }
 
@@ -126,8 +126,8 @@ export class ConfiguracionFormularioComponent implements OnInit, OnDestroy {
     this.configuracion.diasArchivadaPendienteCorrecciones = this.formGroup.value.diasArchivadaPendienteCorrecciones;
     this.configuracion.diasLimiteEvaluador = this.formGroup.value.diasLimiteEvaluador;
     this.configuracion.mesesAvisoProyectoCEEA = this.formGroup.value.mesesAvisoProyectoCEEA;
-    this.configuracion.mesesAvisoProyectoCEISH = this.formGroup.value.mesesAvisoProyectoCEISH;
-    this.configuracion.mesesAvisoProyectoCEIAB = this.formGroup.value.mesesAvisoProyectoCEIAB;
+    this.configuracion.mesesAvisoProyectoCEI = this.formGroup.value.mesesAvisoProyectoCEI;
+    this.configuracion.mesesAvisoProyectoCBE = this.formGroup.value.mesesAvisoProyectoCBE;
     return this.configuracion;
   }
 
@@ -174,8 +174,8 @@ export class ConfiguracionFormularioComponent implements OnInit, OnDestroy {
     if (initFormValue && formValue) {
       if (initFormValue.mesesArchivadaInactivo === formValue.mesesArchivadaInactivo
         && initFormValue.mesesAvisoProyectoCEEA === formValue.mesesAvisoProyectoCEEA
-        && initFormValue.mesesAvisoProyectoCEISH === formValue.mesesAvisoProyectoCEISH
-        && initFormValue.mesesAvisoProyectoCEIAB === formValue.mesesAvisoProyectoCEIAB
+        && initFormValue.mesesAvisoProyectoCEI === formValue.mesesAvisoProyectoCEI
+        && initFormValue.mesesAvisoProyectoCBE === formValue.mesesAvisoProyectoCBE
         && initFormValue.diasArchivadaPendienteCorrecciones === formValue.diasArchivadaPendienteCorrecciones
         && initFormValue.diasLimiteEvaluador === formValue.diasLimiteEvaluador) {
         return true;

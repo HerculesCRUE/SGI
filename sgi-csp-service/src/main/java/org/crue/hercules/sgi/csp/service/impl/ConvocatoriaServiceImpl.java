@@ -131,6 +131,8 @@ public class ConvocatoriaServiceImpl implements ConvocatoriaService {
     log.debug("update(Convocatoria convocatoria) - start");
 
     Assert.notNull(convocatoria.getId(), "Id no puede ser null para actualizar Convocatoria");
+    Assert.notNull(convocatoria.getFormularioSolicitud(),
+        "FormularioSolicitud no puede ser null para actualizar Convocatoria");
 
     return repository.findById(convocatoria.getId()).map((data) -> {
 
@@ -147,6 +149,7 @@ public class ConvocatoriaServiceImpl implements ConvocatoriaService {
       data.setObservaciones(validConvocatoria.getObservaciones());
       data.setFinalidad(validConvocatoria.getFinalidad());
       data.setRegimenConcurrencia(validConvocatoria.getRegimenConcurrencia());
+      data.setFormularioSolicitud(validConvocatoria.getFormularioSolicitud());
       data.setDuracion(validConvocatoria.getDuracion());
       data.setAmbitoGeografico(validConvocatoria.getAmbitoGeografico());
       data.setClasificacionCVN(validConvocatoria.getClasificacionCVN());
@@ -311,7 +314,8 @@ public class ConvocatoriaServiceImpl implements ConvocatoriaService {
 
         // Campos requeridos a nivel de convocatoria
         if (convocatoria.get().getUnidadGestionRef() != null && convocatoria.get().getModeloEjecucion() != null
-            && convocatoria.get().getFinalidad() != null && convocatoria.get().getAmbitoGeografico() != null) {
+            && convocatoria.get().getFinalidad() != null && convocatoria.get().getAmbitoGeografico() != null
+            && convocatoria.get().getFormularioSolicitud() != null) {
 
           Optional<ConfiguracionSolicitud> configuracionSolicitud = configuracionSolicitudRepository
               .findByConvocatoriaId(convocatoria.get().getId());
@@ -320,8 +324,7 @@ public class ConvocatoriaServiceImpl implements ConvocatoriaService {
           if (configuracionSolicitud.isPresent()) {
 
             // campos requeridos a nivel de configuración solicitud
-            if (configuracionSolicitud.get().getTramitacionSGI() != null
-                && configuracionSolicitud.get().getFormularioSolicitud() != null) {
+            if (configuracionSolicitud.get().getTramitacionSGI() != null) {
 
               // con tramitación SGI debe tener una fase asignada
               if (!(configuracionSolicitud.get().getFasePresentacionSolicitudes() == null
@@ -672,6 +675,9 @@ public class ConvocatoriaServiceImpl implements ConvocatoriaService {
     Assert.notNull(datosConvocatoria.getFinalidad(), "Finalidad no puede ser null en la Convocatoria");
     // TipoAmbitoGeografico
     Assert.notNull(datosConvocatoria.getAmbitoGeografico(), "AmbitoGeografico no puede ser null en la Convocatoria");
+    // FormularioSolicitud
+    Assert.notNull(datosConvocatoria.getFormularioSolicitud(),
+        "FormularioSolicitud no puede ser null en la Convocatoria");
 
     // ConfiguracionSolicitud
     validarRequeridosConfiguracionSolicitudConvocatoriaRegistrada(datosConvocatoria);
@@ -719,9 +725,6 @@ public class ConvocatoriaServiceImpl implements ConvocatoriaService {
         !(datosConfiguracionSolicitud.getFasePresentacionSolicitudes() == null
             && datosConfiguracionSolicitud.getTramitacionSGI() == Boolean.TRUE),
         "Plazo presentación solicitudes no puede ser null cuando se establece presentacion SGI");
-    // Tipo Formulario Solicitud
-    Assert.notNull(datosConfiguracionSolicitud.getFormularioSolicitud(),
-        "Tipo formulario no puede ser null para crear ConfiguracionSolicitud cuando la convocatoria está registrada");
 
     log.debug("validarRequeridosConfiguracionSolicitudConvocatoriaRegistrada(Convocatoria datosConvocatoria) - end");
   }

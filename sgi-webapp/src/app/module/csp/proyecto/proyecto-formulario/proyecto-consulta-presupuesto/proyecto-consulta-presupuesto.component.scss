@@ -1,0 +1,52 @@
+mat-table {
+  .expanded-row {
+    height: 0;
+    min-height: 0;
+    border-bottom-width: 0;
+    .mat-cell {
+      border-bottom-width: 0;
+      overflow: hidden;
+      display: flex;
+      height: 0;
+      min-height: 0;
+    }
+  }
+  .mat-cell {
+    .mat-icon {
+      cursor: pointer;
+    }
+  }
+  .mat-cell, .mat-header-cell {
+    &.computed {
+      justify-content: flex-end;
+      padding-right: 10px;
+      text-align: right;
+    }
+  }
+  .mat-column-anualidad {
+    flex: 1;
+  }
+  .mat-column-agrupacionGastos,
+  .mat-column-aplicacionPresupuestaria,
+  .mat-column-conceptoGasto {
+    flex: 2;
+  }
+  .mat-column-codigoEconomico {
+    flex: 3;
+  }
+  mat-row {
+    .mat-column-importeConcedido,
+    .mat-column-importePresupuesto {
+      text-align: right;
+      justify-content: flex-end;
+    }
+  }
+  mat-header-row {
+    .mat-column-importeConcedido,
+    .mat-column-importePresupuesto {
+      flex: 1;
+      text-align: left;
+      justify-content: start;
+    }
+  }
+}

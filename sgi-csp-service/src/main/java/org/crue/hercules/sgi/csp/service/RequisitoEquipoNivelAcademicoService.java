@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.crue.hercules.sgi.csp.model.Convocatoria;
 import org.crue.hercules.sgi.csp.model.RequisitoEquipo;
 import org.crue.hercules.sgi.csp.model.RequisitoEquipoNivelAcademico;
 import org.crue.hercules.sgi.csp.repository.RequisitoEquipoNivelAcademicoRepository;
@@ -93,4 +94,24 @@ public class RequisitoEquipoNivelAcademicoService {
         "updateNivelesAcademicos(Long requisitoEquipoId, List<RequisitoEquipoNivelAcademico> nivelesAcademicos) - end");
     return returnValue;
   }
+
+  /**
+   * Obtiene los {@link RequisitoEquipoNivelAcademico} para una
+   * {@link Convocatoria}.
+   *
+   * @param convocatoriaId el id de la {@link Convocatoria}.
+   * @return la lista de {@link RequisitoEquipoNivelAcademico} de la
+   *         {@link Convocatoria}.
+   */
+  public List<RequisitoEquipoNivelAcademico> findByConvocatoria(Long convocatoriaId) {
+    log.debug("findByConvocatoria(Long convocatoriaId) - start");
+
+    Specification<RequisitoEquipoNivelAcademico> specs = RequisitoEquipoNivelAcademicoSpecifications
+        .byConvocatoriaId(convocatoriaId);
+
+    List<RequisitoEquipoNivelAcademico> returnValue = repository.findAll(specs);
+    log.debug("findByConvocatoria(Long convocatoriaId) - end");
+    return returnValue;
+  }
+
 }

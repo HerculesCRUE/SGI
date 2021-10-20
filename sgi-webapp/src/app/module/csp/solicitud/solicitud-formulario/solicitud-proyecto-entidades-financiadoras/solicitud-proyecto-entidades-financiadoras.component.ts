@@ -11,7 +11,7 @@ import { IConvocatoriaEntidadFinanciadora } from '@core/models/csp/convocatoria-
 import { ISolicitudProyectoEntidadFinanciadoraAjena } from '@core/models/csp/solicitud-proyecto-entidad-financiadora-ajena';
 import { FxFlexProperties } from '@core/models/shared/flexLayout/fx-flex-properties';
 import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-properties';
-import { ConvocatoriaService } from '@core/services/csp/convocatoria.service';
+import { SolicitudService } from '@core/services/csp/solicitud.service';
 import { DialogService } from '@core/services/dialog.service';
 import { EmpresaService } from '@core/services/sgemp/empresa.service';
 import { StatusWrapper } from '@core/utils/status-wrapper';
@@ -21,7 +21,7 @@ import { map, mergeAll, switchMap, take, takeLast } from 'rxjs/operators';
 import { EntidadFinanciadoraDataModal, EntidadFinanciadoraModalComponent } from '../../../shared/entidad-financiadora-modal/entidad-financiadora-modal.component';
 import { SOLICITUD_ROUTE_NAMES } from '../../solicitud-route-names';
 import { SolicitudActionService } from '../../solicitud.action.service';
-import { SolicitudProyectoEntidadesFinanciadorasFragment } from './solicitud-proyecto-entidades-financiadoras.fragment';
+import { SolicitudProyectoEntidadesFinanciadorasFragment, SolicitudProyectoEntidadFinanciadoraAjenaData } from './solicitud-proyecto-entidades-financiadoras.fragment';
 
 const MSG_DELETE = marker('msg.delete.entity');
 const SOLICITUD_PROYECTO_ENTIDAD_FINANCIADORA_KEY = marker('csp.solicitud-entidad-financiadora');
@@ -75,7 +75,7 @@ export class SolicitudProyectoEntidadesFinanciadorasComponent extends FragmentCo
   @ViewChild('paginatorEntidadesFinanciadorasConvocatoria', { static: true }) paginatorEntidadesFinanciadorasConvocatoria: MatPaginator;
   @ViewChild('sortEntidadesFinanciadorasConvocatoria', { static: true }) sortEntidadesFinanciadorasConvocatoria: MatSort;
 
-  dataSourceEntidadesFinanciadorasAjenas = new MatTableDataSource<StatusWrapper<ISolicitudProyectoEntidadFinanciadoraAjena>>();
+  dataSourceEntidadesFinanciadorasAjenas = new MatTableDataSource<StatusWrapper<SolicitudProyectoEntidadFinanciadoraAjenaData>>();
   @ViewChild('paginatorEntidadesFinanciadorasAjenas', { static: true }) paginatorEntidadesFinanciadorasAjena: MatPaginator;
   @ViewChild('sortEntidadesFinanciadorasAjenas', { static: true }) sortEntidadesFinanciadorasAjena: MatSort;
 
@@ -85,7 +85,7 @@ export class SolicitudProyectoEntidadesFinanciadorasComponent extends FragmentCo
     private route: ActivatedRoute,
     private matDialog: MatDialog,
     private dialogService: DialogService,
-    private convocatoriaService: ConvocatoriaService,
+    private solicitudService: SolicitudService,
     private empresaService: EmpresaService,
     private readonly translate: TranslateService
   ) {
@@ -132,7 +132,7 @@ export class SolicitudProyectoEntidadesFinanciadorasComponent extends FragmentCo
 
     this.dataSourceEntidadesFinanciadorasAjenas.paginator = this.paginatorEntidadesFinanciadorasAjena;
     this.dataSourceEntidadesFinanciadorasAjenas.sortingDataAccessor =
-      (entidadFinanciadora: StatusWrapper<ISolicitudProyectoEntidadFinanciadoraAjena>, property: string) => {
+      (entidadFinanciadora: StatusWrapper<SolicitudProyectoEntidadFinanciadoraAjenaData>, property: string) => {
         switch (property) {
           case 'nombre':
             return entidadFinanciadora.value.empresa?.nombre;
@@ -152,39 +152,35 @@ export class SolicitudProyectoEntidadesFinanciadorasComponent extends FragmentCo
       };
     this.dataSourceEntidadesFinanciadorasAjenas.sort = this.sortEntidadesFinanciadorasAjena;
 
-    const convocatoriaId = this.actionService.convocatoriaId;
-    if (convocatoriaId) {
-      const subscriptionEntidadesFinanciadorasConvocatoria = this.convocatoriaService.findEntidadesFinanciadoras(convocatoriaId)
-        .pipe(
-          map(result => result.items),
-          switchMap((entidadesFinanciadoras) => {
-            return from(entidadesFinanciadoras)
-              .pipe(
-                map((entidadesFinanciadora) => {
-                  return this.empresaService.findById(entidadesFinanciadora.empresa.id)
-                    .pipe(
-                      map(empresa => {
-                        entidadesFinanciadora.empresa = empresa;
-                        return entidadesFinanciadora;
-                      }),
-                    );
+    const subscriptionEntidadesFinanciadorasConvocatoria = this.solicitudService
+      .findEntidadesFinanciadorasConvocatoriaSolicitud(this.formPart.getKey() as number)
+      .pipe(
+        map(result => result.items),
+        switchMap((entidadesFinanciadoras) => {
+          return from(entidadesFinanciadoras)
+            .pipe(
+              map((entidadesFinanciadora) => {
+                return this.empresaService.findById(entidadesFinanciadora.empresa.id)
+                  .pipe(
+                    map(empresa => {
+                      entidadesFinanciadora.empresa = empresa;
+                      return entidadesFinanciadora;
+                    }),
+                  );
 
-                }),
-                mergeAll(),
-                map(() => {
-                  return entidadesFinanciadoras;
-                })
-              );
-          }),
-          takeLast(1)
-        ).subscribe((result) => {
-          this.dataSourceEntidadesFinanciadorasConvocatoria.data = result;
-        });
+              }),
+              mergeAll(),
+              map(() => {
+                return entidadesFinanciadoras;
+              })
+            );
+        }),
+        takeLast(1)
+      ).subscribe((result) => {
+        this.dataSourceEntidadesFinanciadorasConvocatoria.data = result;
+      });
 
-      this.subscriptions.push(subscriptionEntidadesFinanciadorasConvocatoria);
-    } else {
-      this.dataSourceEntidadesFinanciadorasConvocatoria.data = [] as IConvocatoriaEntidadFinanciadora[];
-    }
+    this.subscriptions.push(subscriptionEntidadesFinanciadorasConvocatoria);
 
     const subscriptionEntidadesFinanciadorasAjenas = this.formPart.entidadesFinanciadoras$
       .subscribe((entidadesFinanciadoras) => {
@@ -243,11 +239,10 @@ export class SolicitudProyectoEntidadesFinanciadorasComponent extends FragmentCo
     this.subscriptions.forEach(subscription => subscription.unsubscribe());
   }
 
-  openModal(wrapper?: StatusWrapper<ISolicitudProyectoEntidadFinanciadoraAjena>): void {
+  openModal(wrapper?: StatusWrapper<SolicitudProyectoEntidadFinanciadoraAjenaData>): void {
     const data: EntidadFinanciadoraDataModal = {
       title: wrapper ? this.title : this.titleNew,
-      entidad: wrapper ? wrapper.value : {} as ISolicitudProyectoEntidadFinanciadoraAjena,
-      selectedEmpresas: this.dataSourceEntidadesFinanciadorasAjenas.data.map(entidad => entidad.value.empresa),
+      entidad: wrapper ? wrapper.value : {} as SolicitudProyectoEntidadFinanciadoraAjenaData,
       readonly: this.formPart.readonly
     };
 
@@ -261,8 +256,8 @@ export class SolicitudProyectoEntidadesFinanciadorasComponent extends FragmentCo
       if (entidadFinanciadora) {
         if (!wrapper) {
           this.formPart.addSolicitudProyectoEntidadFinanciadora(entidadFinanciadora);
-        } else if (!wrapper.created) {
-          const entidad = new StatusWrapper<ISolicitudProyectoEntidadFinanciadoraAjena>(wrapper.value);
+        } else {
+          const entidad = new StatusWrapper<SolicitudProyectoEntidadFinanciadoraAjenaData>(wrapper.value);
           this.formPart.updateSolicitudProyectoEntidadFinanciadora(entidad);
         }
       }

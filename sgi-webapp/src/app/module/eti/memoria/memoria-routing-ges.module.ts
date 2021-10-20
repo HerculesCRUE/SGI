@@ -29,7 +29,7 @@ const routes: SgiRoutes = [
     data: {
       title: MEMORIA_KEY,
       titleParams: MSG_PARAMS.CARDINALIRY.PLURAL,
-      hasAuthorityForAnyUO: 'ETI-PEV-V'
+      hasAnyAuthorityForAnyUO: ['ETI-PEV-V', 'ETI-MEM-EDOC']
     }
   },
   {
@@ -43,6 +43,7 @@ const routes: SgiRoutes = [
     data: {
       title: MEMORIA_KEY,
       titleParams: MSG_PARAMS.CARDINALIRY.SINGULAR,
+      hasAnyAuthorityForAnyUO: ['ETI-PEV-V', 'ETI-MEM-EDOC'],
       readonly: true
     },
     children: [

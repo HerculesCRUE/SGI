@@ -1,22 +1,28 @@
 <sgi-root>
   <!-- ETICA -->
   <sgi-menu-group title="{{'menu.principal.inv.etica' | translate}}" icon="list_alt">
-    <sgi-menu-subitem *sgiHasAuthorityForAnyUO="'ETI-PEV-VR-INV'" [route]="[INV_ROUTE_NAMES.PETICIONES_EVALUACION]"
+    <sgi-menu-subitem *sgiHasAuthorityForAnyUO="'ETI-PEV-INV-VR'" [route]="[INV_ROUTE_NAMES.PETICIONES_EVALUACION]"
       title="{{'menu.principal.inv.peticionesEvaluacion' | translate}}">
     </sgi-menu-subitem>
-    <sgi-menu-subitem *sgiHasAuthorityForAnyUO="'ETI-PEV-VR-INV'" [route]="[INV_ROUTE_NAMES.MEMORIAS]"
+    <sgi-menu-subitem *sgiHasAuthorityForAnyUO="'ETI-PEV-INV-VR'" [route]="[INV_ROUTE_NAMES.MEMORIAS]"
       title="{{'menu.principal.inv.memorias' | translate}}">
     </sgi-menu-subitem>
+    <sgi-menu-subitem *sgiHasAuthorityForAnyUO="'ETI-CHK-E'" [route]="[INV_ROUTE_NAMES.CHECKLIST]"
+      title="{{'menu.principal.inv.checklist' | translate}}">
+    </sgi-menu-subitem>
     <ng-container *ngIf="showEvaluaciones">
-      <sgi-menu-subitem *sgiHasAuthorityForAnyUO="'ETI-EVC-VR-INV'" [route]="[INV_ROUTE_NAMES.EVALUACIONES]"
+      <sgi-menu-subitem *sgiHasAuthorityForAnyUO="'ETI-EVC-INV-VR'" [route]="[INV_ROUTE_NAMES.EVALUACIONES]"
         title="{{'menu.principal.inv.evaluaciones' | translate}}">
       </sgi-menu-subitem>
     </ng-container>
     <ng-container *ngIf="showSeguimientos">
-      <sgi-menu-subitem *sgiHasAuthorityForAnyUO="'ETI-EVC-VR-INV'" [route]="[INV_ROUTE_NAMES.SEGUIMIENTOS]"
+      <sgi-menu-subitem *sgiHasAuthorityForAnyUO="'ETI-EVC-INV-VR'" [route]="[INV_ROUTE_NAMES.SEGUIMIENTOS]"
         title="{{'menu.principal.inv.seguimientos' | translate}}">
       </sgi-menu-subitem>
     </ng-container>
+    <sgi-menu-subitem *sgiHasAnyAuthorityForAnyUO="['ETI-ACT-INV-ER', 'ETI-ACT-ER']" [route]="[INV_ROUTE_NAMES.ACTAS]"
+      title="{{'menu.principal.inv.actas' | translate}}">
+    </sgi-menu-subitem>
   </sgi-menu-group>
 
   <!-- CSP -->
@@ -33,7 +39,7 @@
     </sgi-menu-subitem>
     <sgi-menu-subitem title="{{'menu.principal.inv.timesheet' | translate}}">
     </sgi-menu-subitem>
-    <sgi-menu-subitem title="{{'menu.principal.inv.contratosRRHH' | translate}}">
+    <sgi-menu-subitem title="{{'menu.principal.inv.GRUPO' | translate}}">
     </sgi-menu-subitem>
   </sgi-menu-group>
 </sgi-root>

@@ -89,7 +89,7 @@ public class PeticionEvaluacionController {
    *         paginadas.
    */
   @GetMapping()
-  @PreAuthorize("hasAnyAuthorityForAnyUO('ETI-PEV-VR-INV', 'ETI-PEV-V')")
+  @PreAuthorize("hasAnyAuthorityForAnyUO('ETI-PEV-INV-VR', 'ETI-PEV-V')")
   ResponseEntity<Page<PeticionEvaluacionWithIsEliminable>> findAll(
       @RequestParam(name = "q", required = false) String query, @RequestPageable(sort = "s") Pageable paging) {
     log.debug("findAll(String query,Pageable paging) - start");
@@ -112,7 +112,7 @@ public class PeticionEvaluacionController {
    * @return Nuevo {@link PeticionEvaluacion} creado.
    */
   @PostMapping
-  @PreAuthorize("hasAnyAuthorityForAnyUO('ETI-PEV-C-INV', 'ETI-PEV-MOD-C')")
+  @PreAuthorize("hasAnyAuthorityForAnyUO('ETI-PEV-INV-C', 'ETI-PEV-MOD-C')")
   ResponseEntity<PeticionEvaluacion> newPeticionEvaluacion(
       @Valid @RequestBody PeticionEvaluacion nuevoPeticionEvaluacion) {
     log.debug("newPeticionEvaluacion(PeticionEvaluacion nuevoPeticionEvaluacion) - start");
@@ -129,7 +129,7 @@ public class PeticionEvaluacionController {
    * @return {@link PeticionEvaluacion} actualizado.
    */
   @PutMapping("/{id}")
-  @PreAuthorize("hasAnyAuthorityForAnyUO('ETI-PEV-ER-INV', 'ETI-PEV-MOD-C')")
+  @PreAuthorize("hasAnyAuthorityForAnyUO('ETI-PEV-INV-ER', 'ETI-PEV-MOD-C')")
   PeticionEvaluacion replacePeticionEvaluacion(@Valid @RequestBody PeticionEvaluacion updatedPeticionEvaluacion,
       @PathVariable Long id) {
     log.debug("replacePeticionEvaluacion(PeticionEvaluacion updatedPeticionEvaluacion, Long id) - start");
@@ -146,7 +146,7 @@ public class PeticionEvaluacionController {
    * @return {@link PeticionEvaluacion} correspondiente al id.
    */
   @GetMapping("/{id}")
-  @PreAuthorize("hasAnyAuthorityForAnyUO('ETI-PEV-ER-INV', 'ETI-PEV-V', 'ETI-PEV-MOD-C')")
+  @PreAuthorize("hasAnyAuthorityForAnyUO('ETI-PEV-INV-ER', 'ETI-PEV-V', 'ETI-PEV-MOD-C')")
   PeticionEvaluacion one(@PathVariable Long id) {
     log.debug("PeticionEvaluacion one(Long id) - start");
     PeticionEvaluacion returnValue = service.findById(id);
@@ -160,7 +160,7 @@ public class PeticionEvaluacionController {
    * @param id Identificador de {@link PeticionEvaluacion}.
    */
   @DeleteMapping("/{id}")
-  @PreAuthorize("hasAnyAuthorityForAnyUO('ETI-PEV-BR-INV')")
+  @PreAuthorize("hasAnyAuthorityForAnyUO('ETI-PEV-INV-BR')")
   void delete(@PathVariable Long id) {
     log.debug("delete(Long id) - start");
     PeticionEvaluacion peticionEvaluacion = this.one(id);
@@ -177,7 +177,7 @@ public class PeticionEvaluacionController {
    * @return la lista de entidades {@link EquipoTrabajo} paginadas.
    */
   @GetMapping("/{id}/equipo-investigador")
-  @PreAuthorize("hasAnyAuthorityForAnyUO('ETI-PEV-V', 'ETI-PEV-VR-INV', 'ETI-PEV-C-INV', 'ETI-PEV-ER-INV')")
+  @PreAuthorize("hasAnyAuthorityForAnyUO('ETI-PEV-V', 'ETI-PEV-INV-VR', 'ETI-PEV-INV-C', 'ETI-PEV-INV-ER')")
   ResponseEntity<List<EquipoTrabajoWithIsEliminable>> findEquipoInvestigador(@PathVariable Long id) {
     log.debug("findEquipoInvestigador(Long id) - start");
 
@@ -200,7 +200,7 @@ public class PeticionEvaluacionController {
    * @return la lista de entidades {@link TareaWithIsEliminable} paginadas.
    */
   @GetMapping("/{id}/tareas")
-  @PreAuthorize("hasAnyAuthorityForAnyUO('ETI-PEV-C-INV', 'ETI-PEV-ER-INV', 'ETI-PEV-V')")
+  @PreAuthorize("hasAnyAuthorityForAnyUO('ETI-PEV-INV-C', 'ETI-PEV-INV-ER', 'ETI-PEV-V')")
   ResponseEntity<List<TareaWithIsEliminable>> findTareas(@PathVariable Long id) {
     log.debug("findTareas(Long id) - start");
 
@@ -223,7 +223,7 @@ public class PeticionEvaluacionController {
    * @return la lista de entidades {@link Memoria} paginadas.
    */
   @GetMapping("/{id}/memorias")
-  @PreAuthorize("hasAnyAuthorityForAnyUO('ETI-PEV-C-INV', 'ETI-PEV-ER-INV', 'ETI-PEV-V')")
+  @PreAuthorize("hasAnyAuthorityForAnyUO('ETI-PEV-INV-C', 'ETI-PEV-INV-ER', 'ETI-PEV-V')")
   ResponseEntity<List<MemoriaPeticionEvaluacion>> findMemorias(@PathVariable Long id) {
     log.debug("findMemorias(Long id) - start");
 
@@ -247,7 +247,7 @@ public class PeticionEvaluacionController {
    * @return Nuevo {@link EquipoTrabajo} creado.
    */
   @PostMapping("/{id}/equipos-trabajo")
-  @PreAuthorize("hasAnyAuthorityForAnyUO('ETI-PEV-V', 'ETI-PEV-VR-INV', 'ETI-PEV-C-INV', 'ETI-PEV-ER-INV', 'ETI-PEV-MOD-C')")
+  @PreAuthorize("hasAnyAuthorityForAnyUO('ETI-PEV-V', 'ETI-PEV-INV-VR', 'ETI-PEV-INV-C', 'ETI-PEV-INV-ER', 'ETI-PEV-MOD-C')")
   public ResponseEntity<EquipoTrabajo> createEquipoTrabajo(@PathVariable Long id,
       @Valid @RequestBody EquipoTrabajo nuevoEquipoTrabajo) {
     log.debug("createEquipoTrabajo(Long id, EquipoTrabajo nuevoEquipoTrabajo) - start");
@@ -274,7 +274,7 @@ public class PeticionEvaluacionController {
    * @return Nuevo {@link EquipoTrabajo} creado.
    */
   @PostMapping("/{idPeticionEvaluacion}/equipos-trabajo/{idEquipoTrabajo}/tareas")
-  @PreAuthorize("hasAnyAuthorityForAnyUO('ETI-PEV-C-INV', 'ETI-PEV-ER-INV')")
+  @PreAuthorize("hasAnyAuthorityForAnyUO('ETI-PEV-INV-C', 'ETI-PEV-INV-ER')")
   public ResponseEntity<Tarea> createTarea(@PathVariable Long idPeticionEvaluacion, @PathVariable Long idEquipoTrabajo,
       @Valid @RequestBody Tarea nuevaTarea) {
     log.debug("createTarea(Long idPeticionEvaluacion, Long idEquipoTrabajo, Tarea nuevaTarea) - start");
@@ -302,7 +302,7 @@ public class PeticionEvaluacionController {
    * @param idEquipoTrabajo      Identificador de {@link EquipoTrabajo}.
    */
   @DeleteMapping("/{idPeticionEvaluacion}/equipos-trabajo/{idEquipoTrabajo}")
-  @PreAuthorize("hasAnyAuthorityForAnyUO('ETI-PEV-ER-INV')")
+  @PreAuthorize("hasAnyAuthorityForAnyUO('ETI-PEV-INV-ER')")
   void deleteEquipoTrabajo(@PathVariable Long idPeticionEvaluacion, @PathVariable Long idEquipoTrabajo) {
     log.debug("deleteEquipoTrabajo(Long idPeticionEvaluacion, Long idEquipoTrabajo) - start");
 
@@ -329,7 +329,7 @@ public class PeticionEvaluacionController {
    * @param idTarea              Identificador de {@link Tarea}.
    */
   @DeleteMapping("/{idPeticionEvaluacion}/equipos-trabajo/{idEquipoTrabajo}/tareas/{idTarea}")
-  @PreAuthorize("hasAnyAuthorityForAnyUO('ETI-PEV-ER-INV')")
+  @PreAuthorize("hasAnyAuthorityForAnyUO('ETI-PEV-INV-ER')")
   void deleteTarea(@PathVariable Long idPeticionEvaluacion, @PathVariable Long idEquipoTrabajo,
       @PathVariable Long idTarea) {
     log.debug("deleteTarea(Long idPeticionEvaluacion, Long idTarea) - start");
@@ -360,7 +360,7 @@ public class PeticionEvaluacionController {
    * @return la lista de entidades {@link PeticionEvaluacion} paginadas.
    */
   @GetMapping("persona")
-  @PreAuthorize("hasAnyAuthorityForAnyUO('ETI-PEV-VR-INV', 'ETI-PEV-V')")
+  @PreAuthorize("hasAnyAuthorityForAnyUO('ETI-PEV-INV-VR', 'ETI-PEV-V')")
   ResponseEntity<Page<PeticionEvaluacion>> findAllByPersonaRef(@RequestParam(name = "q", required = false) String query,
       @RequestPageable(sort = "s") Pageable paging, Authentication authentication) {
     log.debug("findAll(String query,Pageable paging) - start");
@@ -385,7 +385,7 @@ public class PeticionEvaluacionController {
    * @return la lista de entidades {@link PeticionEvaluacion} paginadas.
    */
   @GetMapping("/memorias")
-  @PreAuthorize("hasAnyAuthorityForAnyUO('ETI-PEV-VR-INV', 'ETI-PEV-V')")
+  @PreAuthorize("hasAnyAuthorityForAnyUO('ETI-PEV-INV-VR', 'ETI-PEV-V')")
   ResponseEntity<Page<PeticionEvaluacionWithIsEliminable>> findAllPeticionEvaluacionMemoria(
       @RequestParam(name = "q", required = false) String query, @RequestPageable(sort = "s") Pageable paging,
       Authentication authentication) {

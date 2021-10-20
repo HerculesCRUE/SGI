@@ -83,6 +83,15 @@ export class ProyectoAnualidadActionService extends ActionService {
     this.addFragment(this.FRAGMENT.INGRESOS, this.anualidadIngresos);
     this.addFragment(this.FRAGMENT.RESUMEN, this.anualidadResumen);
 
+    this.datosGenerales.initialize();
+    this.subscriptions.push(
+      this.anualidadResumen.initialized$.subscribe(value => {
+        if (value) {
+          this.anualidadGastos.initialize();
+          this.anualidadIngresos.initialize();
+        }
+      }));
+
     this.subscriptions.push(this.datosGenerales.fechaInicio$.subscribe(value => {
       if (value) {
         this.anualidadGastos.fechaInicioAnualidad = value;

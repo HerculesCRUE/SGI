@@ -1,5 +1,8 @@
 package org.crue.hercules.sgi.eti.repository.specification;
 
+import java.time.Instant;
+import java.time.Period;
+import java.time.ZoneOffset;
 import java.util.List;
 
 import javax.persistence.criteria.Join;
@@ -81,6 +84,20 @@ public class MemoriaSpecifications {
   public static Specification<Memoria> byPeticionEvaluacionActivo() {
     return (root, query, cb) -> {
       return cb.equal(root.get(Memoria_.peticionEvaluacion).get(PeticionEvaluacion_.activo), Boolean.TRUE);
+    };
+  }
+
+  public static Specification<Memoria> byFechaActualMayorFechaEstadoByMesesDiff(Integer mesesDiff) {
+    return (root, query, cb) -> {
+      return cb.lessThan(root.get(Memoria_.estadoActual).get(TipoEstadoMemoria_.lastModifiedDate),
+          Instant.now().atZone(ZoneOffset.UTC).minus(Period.ofMonths(mesesDiff)).toInstant());
+    };
+  }
+
+  public static Specification<Memoria> byFechaActualMayorFechaEstadoByDiasDiff(Integer diasDiff) {
+    return (root, query, cb) -> {
+      return cb.lessThan(root.get(Memoria_.estadoActual).get(TipoEstadoMemoria_.lastModifiedDate),
+          Instant.now().atZone(ZoneOffset.UTC).minus(Period.ofDays(diasDiff)).toInstant());
     };
   }
 }

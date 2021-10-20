@@ -1,7 +1,17 @@
 databaseChangeLog:
+  # HERCULES_0.0.1
   - include:
       file: classpath*:db/changelog/changes/0000000000000-initial-database.xml
   - include:
       file: classpath*:db/changelog/changes/0000000000000-initial-master-data.xml
   - include:
       file: classpath*:db/changelog/changes/0000000000000-sample-data.xml
+  # HERCULES_0.0.2
+  - include:
+      file: classpath*:db/changelog/changes/0000000000001-update-initial-database.xml
+  - include:
+      file: classpath*:db/changelog/changes/0000000000001-update-sample-data.xml
+  - include:
+      file: classpath*:db/changelog/changes/0000000000001-update-data.xml
+  - include:
+      file: classpath*:db/changelog/changes/0000000000001-fixup-initial-database.xml

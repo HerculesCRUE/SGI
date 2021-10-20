@@ -9,7 +9,6 @@ import java.util.List;
 import com.fasterxml.jackson.core.type.TypeReference;
 
 import org.assertj.core.api.Assertions;
-import org.crue.hercules.sgi.csp.enums.FormularioSolicitud;
 import org.crue.hercules.sgi.csp.exceptions.ConfiguracionSolicitudNotFoundException;
 import org.crue.hercules.sgi.csp.exceptions.ConvocatoriaNotFoundException;
 import org.crue.hercules.sgi.csp.model.ConfiguracionSolicitud;
@@ -94,9 +93,7 @@ public class ConfiguracionSolicitudControllerTest extends BaseControllerTest {
         .andExpect(MockMvcResultMatchers.jsonPath("fasePresentacionSolicitudes.id")
             .value(newConfiguracionSolicitud.getFasePresentacionSolicitudes().getId()))
         .andExpect(MockMvcResultMatchers.jsonPath("importeMaximoSolicitud")
-            .value(newConfiguracionSolicitud.getImporteMaximoSolicitud()))
-        .andExpect(MockMvcResultMatchers.jsonPath("formularioSolicitud")
-            .value(newConfiguracionSolicitud.getFormularioSolicitud().toString()));
+            .value(newConfiguracionSolicitud.getImporteMaximoSolicitud()));
   }
 
   @Test
@@ -148,9 +145,7 @@ public class ConfiguracionSolicitudControllerTest extends BaseControllerTest {
         .andExpect(MockMvcResultMatchers.jsonPath("fasePresentacionSolicitudes.id")
             .value(configuracionSolicitud.getFasePresentacionSolicitudes().getId()))
         .andExpect(MockMvcResultMatchers.jsonPath("importeMaximoSolicitud")
-            .value(configuracionSolicitud.getImporteMaximoSolicitud()))
-        .andExpect(MockMvcResultMatchers.jsonPath("formularioSolicitud")
-            .value(configuracionSolicitudExistente.getFormularioSolicitud().toString()));
+            .value(configuracionSolicitud.getImporteMaximoSolicitud()));
   }
 
   @Test
@@ -366,7 +361,6 @@ public class ConfiguracionSolicitudControllerTest extends BaseControllerTest {
         .tramitacionSGI(Boolean.TRUE)
         .fasePresentacionSolicitudes(convocatoriaFase)
         .importeMaximoSolicitud(BigDecimal.valueOf(12345))
-        .formularioSolicitud(FormularioSolicitud.ESTANDAR)
         .build();
     // @formatter:on
 

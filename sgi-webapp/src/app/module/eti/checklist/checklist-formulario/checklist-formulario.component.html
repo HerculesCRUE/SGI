@@ -1,0 +1,13 @@
+<sgi-fragment title="{{'title.csp.solicitudes.autoevaluacion' | translate}}">
+
+  <form [formGroup]="data.formGroup">
+    <formly-form [model]="data.model" [fields]="data.formly.esquema" [form]="data.formGroup">
+    </formly-form>
+  </form>
+  <div id="modals-buttons" class="float-right" mat-dialog-actions>
+    <button color="accent" (click)="saveOrUpdate()" mat-raised-button type="submit"
+      [disabled]="buttonDisable">{{'btn.comprobar' |
+      translate}}</button>
+    <button class="link-cancelar" mat-button (click)="cancel()" type="button">{{'btn.cancel' | translate}}</button>
+  </div>
+</sgi-fragment>

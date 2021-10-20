@@ -23,6 +23,7 @@ import org.crue.hercules.sgi.csp.validation.OrderFechasProyectoPeriodoJustificac
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -35,6 +36,7 @@ import lombok.Setter;
 @EqualsAndHashCode(callSuper = false)
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 @OrderFechasProyectoPeriodoJustificacion(groups = { OnActualizar.class })
 public class ProyectoPeriodoJustificacion extends BaseEntity {
 

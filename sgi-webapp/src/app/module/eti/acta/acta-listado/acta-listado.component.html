@@ -137,7 +137,7 @@
       <ng-container matColumnDef="acciones">
         <th mat-header-cell *matHeaderCellDef> {{'label.actions' | translate}} </th>
         <td mat-cell *matCellDef="let acta;let i=index;">
-          <ng-container *sgiHasAuthorityForAnyUO="'ETI-ACT-E'">
+          <ng-container *sgiHasAnyAuthorityForAnyUO="['ETI-ACT-E','ETI-ACT-INV-ER','ETI-ACT-ER']">
             <button *ngIf="!isFinalizada(acta)" mat-button [routerLink]="[acta.id]"
               matTooltip="{{'btn.edit' | translate}}">
               <mat-icon color="primary">border_color</mat-icon>
@@ -152,7 +152,7 @@
               <mat-icon color="primary">picture_as_pdf</mat-icon>
             </button>
           </ng-container>
-          <ng-container *sgiHasAuthorityForAnyUO="'ETI-ACT-FIN'">
+          <ng-container *sgiHasAnyAuthorityForAnyUO="['ETI-ACT-FIN','ETI-ACT-INV-DESR','ETI-ACT-DESR']">
             <button *ngIf="hasFinalizarActa(acta)" mat-button (click)="finishActa(acta.id)"
               matTooltip="{{'eti.acta.finalizar' | translate}}">
               <mat-icon color="primary">https</mat-icon>

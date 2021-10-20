@@ -34,9 +34,10 @@ const COMENTARIO_KEY = marker('eti.comentario');
 const COMENTARIO_BLOQUE_KEY = marker('eti.comentario.bloque');
 const BTN_ADD = marker('btn.add');
 const BTN_OK = marker('btn.ok');
+const MEMORIA_KEY = marker('eti.memoria');
 
 export interface ComentarioModalData {
-  evaluacion: IEvaluacion;
+  evaluaciones: IEvaluacion[];
   comentario: IComentario;
 }
 
@@ -97,6 +98,7 @@ export class ComentarioModalComponent extends
   fxLayoutProperties: FxLayoutProperties;
 
   apartado$: Observable<IBloque[]>;
+  evaluaciones$: Observable<IEvaluacion[]>;
   treeControl = new NestedTreeControl<NodeApartado>(node => node.childs);
   dataSource = new MatTreeNestedDataSource<NodeApartado>();
   private nodeMap = new Map<number, NodeApartado>();
@@ -108,6 +110,7 @@ export class ComentarioModalComponent extends
 
   msgParamBloqueEntity = {};
   msgParamComentarioEntity = {};
+  msgParamMemoriaEntity = {};
   title: string;
   textoAceptar: string;
 
@@ -135,12 +138,16 @@ export class ComentarioModalComponent extends
   ngOnInit(): void {
     super.ngOnInit();
     this.setupI18N();
-    this.loadBloques();
+    this.loadMemorias();
     if (this.data?.comentario?.apartado?.bloque) {
       this.loadTreeApartados(this.data?.comentario?.apartado?.bloque.id);
     }
-    const subscription = this.formGroup.get('bloque').valueChanges.subscribe((value) => this.loadTreeApartados(value.id));
-    this.subscriptions.push(subscription);
+    this.subscriptions.push(this.formGroup.get('bloque').valueChanges.subscribe((value) => this.loadTreeApartados(value.id)));
+    if (this.data?.evaluaciones?.length > 1) {
+      this.subscriptions.push(this.formGroup.get('evaluacion').valueChanges.subscribe((value) => this.loadBloques(value)));
+    } else {
+      this.loadBloques(this.data?.evaluaciones[0]);
+    }
   }
 
   private setupI18N(): void {
@@ -153,6 +160,11 @@ export class ComentarioModalComponent extends
       COMENTARIO_BLOQUE_KEY,
       MSG_PARAMS.CARDINALIRY.SINGULAR
     ).subscribe((value) => this.msgParamBloqueEntity = { entity: value, ...MSG_PARAMS.GENDER.MALE, ...MSG_PARAMS.CARDINALIRY.SINGULAR });
+
+    this.translate.get(
+      MEMORIA_KEY,
+      MSG_PARAMS.CARDINALIRY.SINGULAR
+    ).subscribe((value) => this.msgParamMemoriaEntity = { entity: value, ...MSG_PARAMS.GENDER.FEMALE, ...MSG_PARAMS.CARDINALIRY.SINGULAR });
 
     if (this.data.comentario) {
       this.translate.get(
@@ -185,11 +197,18 @@ export class ComentarioModalComponent extends
   }
 
   /**
+   * Carga todas las evaluaciones del acta
+   */
+  private loadMemorias(): void {
+    this.evaluaciones$ = of(this.data.evaluaciones);
+  }
+
+  /**
    * Carga todos los bloques de la aplicación
    */
-  private loadBloques(): void {
+  private loadBloques(evaluacion: IEvaluacion): void {
     this.apartado$ = this.formularioService.getBloques(resolveFormularioByTipoEvaluacionAndComite
-      (this.data?.evaluacion?.tipoEvaluacion?.id, this.data?.evaluacion?.memoria?.comite)).pipe(
+      (evaluacion?.tipoEvaluacion?.id, evaluacion?.memoria?.comite)).pipe(
         map(res => res.items),
         catchError(error => {
           this.matDialogRef.close(null);
@@ -314,7 +333,8 @@ export class ComentarioModalComponent extends
     const formGroup = new FormGroup({
       bloque: new FormControl(this.data?.comentario?.apartado?.bloque, [Validators.required, IsEntityValidator.isValid()]),
       comentario: new FormControl(this.data?.comentario?.texto, [
-        Validators.required, Validators.maxLength(2000)])
+        Validators.required, Validators.maxLength(2000)]),
+      evaluacion: new FormControl(this.data?.evaluaciones?.length === 1 ? this.data?.evaluaciones[0] : this.data?.comentario ? this.data?.evaluaciones.filter(ev => ev.memoria.id === this.data.comentario?.memoria?.id)[0] : null, [Validators.required, IsEntityValidator.isValid()])
     });
 
     return formGroup;
@@ -330,9 +350,13 @@ export class ComentarioModalComponent extends
       comentario.apartado = subapartado;
     }
     comentario.texto = FormGroupUtil.getValue(this.formGroup, 'comentario');
-    comentario.memoria = this.data.evaluacion.memoria;
+    comentario.memoria = FormGroupUtil.getValue(this.formGroup, 'evaluacion').memoria;
     this.data.comentario = comentario;
     return this.data;
+  }
+
+  displayerMemoria(evaluacion: IEvaluacion): string {
+    return evaluacion.memoria?.numReferencia;
   }
 
   ngOnDestroy(): void {

@@ -11,12 +11,15 @@ import org.crue.hercules.sgi.pii.dto.InvencionAreaConocimientoInput;
 import org.crue.hercules.sgi.pii.dto.InvencionAreaConocimientoOutput;
 import org.crue.hercules.sgi.pii.dto.InvencionDocumentoOutput;
 import org.crue.hercules.sgi.pii.dto.InvencionGastoOutput;
+import org.crue.hercules.sgi.pii.dto.InvencionIngresoOutput;
 import org.crue.hercules.sgi.pii.dto.InvencionInput;
 import org.crue.hercules.sgi.pii.dto.InvencionInventorInput;
 import org.crue.hercules.sgi.pii.dto.InvencionInventorOutput;
 import org.crue.hercules.sgi.pii.dto.InvencionOutput;
 import org.crue.hercules.sgi.pii.dto.InvencionSectorAplicacionInput;
 import org.crue.hercules.sgi.pii.dto.InvencionSectorAplicacionOutput;
+import org.crue.hercules.sgi.pii.dto.PeriodoTitularidadInput;
+import org.crue.hercules.sgi.pii.dto.PeriodoTitularidadOutput;
 import org.crue.hercules.sgi.pii.dto.SolicitudProteccionOutput;
 import org.crue.hercules.sgi.pii.exceptions.NoRelatedEntitiesException;
 import org.crue.hercules.sgi.pii.model.InformePatentabilidad;
@@ -24,16 +27,20 @@ import org.crue.hercules.sgi.pii.model.Invencion;
 import org.crue.hercules.sgi.pii.model.InvencionAreaConocimiento;
 import org.crue.hercules.sgi.pii.model.InvencionDocumento;
 import org.crue.hercules.sgi.pii.model.InvencionGasto;
+import org.crue.hercules.sgi.pii.model.InvencionIngreso;
 import org.crue.hercules.sgi.pii.model.InvencionInventor;
 import org.crue.hercules.sgi.pii.model.InvencionSectorAplicacion;
+import org.crue.hercules.sgi.pii.model.PeriodoTitularidad;
 import org.crue.hercules.sgi.pii.model.SolicitudProteccion;
 import org.crue.hercules.sgi.pii.service.InformePatentabilidadService;
 import org.crue.hercules.sgi.pii.service.InvencionAreaConocimientoService;
 import org.crue.hercules.sgi.pii.service.InvencionDocumentoService;
 import org.crue.hercules.sgi.pii.service.InvencionGastoService;
+import org.crue.hercules.sgi.pii.service.InvencionIngresoService;
 import org.crue.hercules.sgi.pii.service.InvencionInventorService;
 import org.crue.hercules.sgi.pii.service.InvencionSectorAplicacionService;
 import org.crue.hercules.sgi.pii.service.InvencionService;
+import org.crue.hercules.sgi.pii.service.PeriodoTitularidadService;
 import org.crue.hercules.sgi.pii.service.SolicitudProteccionService;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
@@ -69,6 +76,9 @@ public class InvencionController {
   public static final String PATH_INFORMESPATENTABILIDAD = "/{id}/informespatentabilidad";
   public static final String PATH_INVENCION_INVENTOR = "/{invencionId}/invencion-inventores";
   public static final String PATH_INVENCION_GASTO = "/{invencionId}/gastos";
+  public static final String PATH_INVENCION_INGRESO = "/{invencionId}/ingresos";
+  public static final String PATH_PERIODOSTITULARIDAD = "/{invencionId}/periodostitularidad";
+  public static final String PATH_PERIODOTITULARIDAD_TITULAR = PATH_PERIODOSTITULARIDAD + "/{periodotitularidadId}";
 
   private ModelMapper modelMapper;
 
@@ -89,6 +99,11 @@ public class InvencionController {
 
   /** InvencionGasto service */
   private final InvencionGastoService invencionGastoService;
+  /** PeriodoTitularidadService service */
+  private final PeriodoTitularidadService periodoTitularidadService;
+
+  /** InvencionIngreso service */
+  private final InvencionIngresoService invencionIngresoService;
 
   public InvencionController(ModelMapper modelMapper, InvencionService invencionService,
       InvencionSectorAplicacionService invencionSectorAplicacionService,
@@ -96,7 +111,8 @@ public class InvencionController {
       InvencionAreaConocimientoService invencionAreaConocimientoService,
       InformePatentabilidadService informePatentabilidadService,
       final SolicitudProteccionService solicitudProteccionService, InvencionInventorService invencionInventorService,
-      InvencionGastoService invencionGastoService) {
+      InvencionGastoService invencionGastoService, InvencionIngresoService invencionIngresoService,
+      final PeriodoTitularidadService periodoTitularidadService) {
     this.modelMapper = modelMapper;
     this.service = invencionService;
     this.invencionInventorService = invencionInventorService;
@@ -106,6 +122,8 @@ public class InvencionController {
     this.informePatentabilidadService = informePatentabilidadService;
     this.solicitudProteccionService = solicitudProteccionService;
     this.invencionGastoService = invencionGastoService;
+    this.invencionIngresoService = invencionIngresoService;
+    this.periodoTitularidadService = periodoTitularidadService;
   }
 
   /**
@@ -116,7 +134,7 @@ public class InvencionController {
    * @return la lista de entidades {@link Invencion} paginadas y/o filtradas.
    */
   @GetMapping()
-  @PreAuthorize("hasAnyAuthority('PII-INV-V', 'PII-INV-C', 'PII-INV-E', 'PII-INV-B', 'PII-INV-R')")
+  @PreAuthorize("hasAnyAuthority('PII-INV-V', 'PII-INV-C', 'PII-INV-E', 'PII-INV-B', 'PII-INV-R', 'PII-INV-MOD-V')")
   ResponseEntity<Page<InvencionOutput>> findActivos(@RequestParam(name = "q", required = false) String query,
       @RequestPageable(sort = "s") Pageable paging) {
     log.debug("findAll(String query, Pageable paging) - start");
@@ -161,7 +179,7 @@ public class InvencionController {
    * @return {@link Invencion} correspondiente al id.
    */
   @GetMapping("/{id}")
-  @PreAuthorize("hasAnyAuthority('PII-INV-V', 'PII-INV-C', 'PII-INV-E', 'PII-INV-B', 'PII-INV-R')")
+  @PreAuthorize("hasAnyAuthority('PII-INV-V', 'PII-INV-C', 'PII-INV-E', 'PII-INV-B', 'PII-INV-R', 'PII-INV-MOD-V')")
   InvencionOutput findById(@PathVariable Long id) {
     log.debug("findById(Long id) - start");
     Invencion returnValue = service.findById(id);
@@ -441,11 +459,95 @@ public class InvencionController {
   @GetMapping(PATH_INVENCION_GASTO)
   @PreAuthorize("hasAnyAuthority('PII-INV-V', 'PII-INV-E')")
   public List<InvencionGastoOutput> findInvencionGastosByInvencionId(@PathVariable Long invencionId) {
-    log.debug("findInvencionGastosByInvencionId(@PathVariable Long id) - start");
+    log.debug("findInvencionGastosByInvencionId(@PathVariable Long invencionId) - start");
     List<InvencionGastoOutput> returnValue = convertInvencionGasto(
         invencionGastoService.findByInvencionId(invencionId));
-    log.debug("findInvencionGastosByInvencionId(@PathVariable Long id) - end");
+    log.debug("findInvencionGastosByInvencionId(@PathVariable Long invencionId) - end");
     return returnValue;
+  }
+
+  /**
+   * Devuelve los {@link InvencionIngreso} asociados a la {@link Invencion} con el
+   * id indicado
+   * 
+   * @param invencionId Identificador de {@link Invencion}
+   * @return {@link InvencionIngreso} correspondientes al id de la
+   *         {@link Invencion}
+   */
+  @GetMapping(PATH_INVENCION_INGRESO)
+  @PreAuthorize("hasAnyAuthority('PII-INV-V', 'PII-INV-E')")
+  public List<InvencionIngresoOutput> findInvencionIngresoByInvencionId(@PathVariable Long invencionId) {
+    log.debug("findInvencionIngresoByInvencionId(@PathVariable Long invencionId) - start");
+    List<InvencionIngresoOutput> returnValue = convertInvencionIngreso(
+        invencionIngresoService.findByInvencionId(invencionId));
+    log.debug("findInvencionIngresoByInvencionId(@PathVariable Long invencionId) - end");
+    return returnValue;
+  }
+
+  /**
+   * Crea un nuevo {@link PeriodoTitularidad}.
+   * 
+   * @param periodoTitularidad {@link PeriodoTitularidad} que se quiere crear.
+   * @return Nuevo {@link PeriodoTitularidad} creado.
+   */
+  @PostMapping(PATH_PERIODOSTITULARIDAD)
+  @PreAuthorize("hasAuthority('PII-INV-C')")
+  ResponseEntity<PeriodoTitularidadOutput> create(@PathVariable Long invencionId,
+      @Valid @RequestBody PeriodoTitularidadInput periodoTitularidad) {
+    log.debug("create(@Valid @RequestBody PeriodoTitularidadInput periodoTitularidad)  - start");
+
+    PeriodoTitularidad returnValue = periodoTitularidadService.create(convert(periodoTitularidad),
+        periodoTitularidad.getFechaFinPrevious());
+
+    log.debug("create(@Valid @RequestBody PeriodoTitularidadInput periodoTitularidad)  - end");
+    return new ResponseEntity<>(convert(returnValue), HttpStatus.CREATED);
+  }
+
+  /**
+   * Devuelve los {@link PeriodoTitularidad} asociados a la {@link Invencion} con
+   * el id indicado.
+   * 
+   * @param invencionId Identificador de {@link Invencion}
+   * @return {@link PeriodoTitularidad} asociados a la {@link Invencion}
+   */
+  @GetMapping(PATH_PERIODOSTITULARIDAD)
+  @PreAuthorize("hasAnyAuthority('PII-INV-E', 'PII-INV-V', 'PII-INV-B')")
+  public ResponseEntity<Page<PeriodoTitularidadOutput>> findPeriodosTitularidad(@PathVariable Long invencionId,
+      @RequestParam(name = "q", required = false) String query, @RequestPageable(sort = "s") Pageable paging) {
+    log.debug(
+        "findPeriodosTitularidad(@PathVariable Long invencionId, @RequestParam(name = 'q', required = false) String query, @RequestPageable(sort = 's') Pageable paging) - start");
+
+    Page<PeriodoTitularidad> page = periodoTitularidadService.findByInvencion(invencionId, query, paging);
+
+    if (page.isEmpty()) {
+      log.debug(
+          "findPeriodosTitularidad(@PathVariable Long invencionId, @RequestParam(name = 'q', required = false) String query, @RequestPageable(sort = 's') Pageable paging) - end");
+      return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    log.debug("findAll(String query, Pageable paging) - end");
+    return ResponseEntity.ok().body(convertToPeriodoTitularidadPage(page));
+  }
+
+  private Page<PeriodoTitularidadOutput> convertToPeriodoTitularidadPage(Page<PeriodoTitularidad> page) {
+    List<PeriodoTitularidadOutput> content = page.getContent().stream()
+        .map((periodoTitularidad) -> convert(periodoTitularidad)).collect(Collectors.toList());
+
+    return new PageImpl<>(content, page.getPageable(), page.getTotalElements());
+  }
+
+  private PeriodoTitularidadOutput convert(PeriodoTitularidad periodoTitularidad) {
+    return modelMapper.map(periodoTitularidad, PeriodoTitularidadOutput.class);
+  }
+
+  private PeriodoTitularidad convert(PeriodoTitularidadInput periodoTitularidadInput) {
+    return convert(null, periodoTitularidadInput);
+  }
+
+  private PeriodoTitularidad convert(Long id, PeriodoTitularidadInput periodoTitularidadInput) {
+    PeriodoTitularidad periodoTitularidad = modelMapper.map(periodoTitularidadInput, PeriodoTitularidad.class);
+    periodoTitularidad.setId(id);
+    return periodoTitularidad;
   }
 
   private InvencionOutput convert(Invencion invencion) {
@@ -574,5 +676,13 @@ public class InvencionController {
 
   private InvencionGastoOutput convert(InvencionGasto entity) {
     return modelMapper.map(entity, InvencionGastoOutput.class);
+  }
+
+  private List<InvencionIngresoOutput> convertInvencionIngreso(List<InvencionIngreso> entities) {
+    return entities.stream().map((entity) -> convert(entity)).collect(Collectors.toList());
+  }
+
+  private InvencionIngresoOutput convert(InvencionIngreso entity) {
+    return modelMapper.map(entity, InvencionIngresoOutput.class);
   }
 }

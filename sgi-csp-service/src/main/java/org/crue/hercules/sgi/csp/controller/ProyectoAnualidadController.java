@@ -9,6 +9,7 @@ import org.crue.hercules.sgi.csp.dto.AnualidadGastoOutput;
 import org.crue.hercules.sgi.csp.dto.AnualidadIngresoOutput;
 import org.crue.hercules.sgi.csp.dto.AnualidadResumen;
 import org.crue.hercules.sgi.csp.dto.ProyectoAnualidadInput;
+import org.crue.hercules.sgi.csp.dto.ProyectoAnualidadNotificacionSge;
 import org.crue.hercules.sgi.csp.dto.ProyectoAnualidadOutput;
 import org.crue.hercules.sgi.csp.model.AnualidadGasto;
 import org.crue.hercules.sgi.csp.model.AnualidadIngreso;
@@ -26,6 +27,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -203,6 +205,41 @@ public class ProyectoAnualidadController {
 
     List<AnualidadResumen> returnValue = service.getPartidasResumen(id);
     log.debug(" Page<AnualidadResumen> getPartidasResumen(Long id) - end");
+    return returnValue;
+  }
+
+  /**
+   * Recupera los {@link ProyectoAnualidadNotificacionSge} que cumplan las
+   * condiciones de búsqueda y tengan a true el indicador presupuestar.
+   * 
+   * @param query  filtro de búsqueda.
+   * @param paging pageable.
+   * @return Listado de {@link ProyectoAnualidadNotificacionSge}.
+   */
+  @GetMapping("/notificaciones-sge")
+  @PreAuthorize("hasAuthorityForAnyUO('CSP-EJEC-E')")
+  List<ProyectoAnualidadNotificacionSge> findAllNotificacionesSge(
+      @RequestParam(name = "q", required = false) String query) {
+    log.debug("findAllNotificacionesSge(String query, Pageable paging) - start");
+
+    List<ProyectoAnualidadNotificacionSge> returnValue = service.findAllNotificacionesSge(query);
+    log.debug("findAllNotificacionesSge(String query, Pageable paging) - start");
+    return returnValue;
+  }
+
+  /**
+   * Actualiza el flag notificadoSge del {@link ProyectoAnualidad} con id
+   * indicado.
+   *
+   * @param id Identificador de {@link ProyectoAnualidad}.
+   * @return {@link ProyectoAnualidad} actualizado.
+   */
+  @PatchMapping("/{id}/notificarsge")
+  @PreAuthorize("hasAuthorityForAnyUO('CSP-EJEC-E')")
+  public ProyectoAnualidad notificarSge(@PathVariable Long id) {
+    log.debug("notificarSge(Long id) - start");
+    ProyectoAnualidad returnValue = service.notificarSge(id);
+    log.debug("notificarSge(Long id) - end");
     return returnValue;
   }
 

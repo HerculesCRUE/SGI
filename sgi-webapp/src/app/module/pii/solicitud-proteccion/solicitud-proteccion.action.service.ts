@@ -3,8 +3,10 @@ import { ActivatedRoute } from '@angular/router';
 import { IInvencion } from '@core/models/pii/invencion';
 import { ISolicitudProteccion } from '@core/models/pii/solicitud-proteccion';
 import { ActionService } from '@core/services/action-service';
-import { SolicitudProteccionService } from '@core/services/pii/invencion/solicitud-proteccion/solicitud-proteccion.service';
+import { SolicitudProteccionService } from '@core/services/pii/solicitud-proteccion/solicitud-proteccion.service';
+import { TipoCaducidadService } from '@core/services/pii/tipo-caducidad/tipo-caducidad.service';
 import { ViaProteccionService } from '@core/services/pii/via-proteccion/via-proteccion.service';
+import { EmpresaService } from '@core/services/sgemp/empresa.service';
 import { PaisService } from '@core/services/sgo/pais/pais.service';
 import { PersonaService } from '@core/services/sgp/persona.service';
 import { NGXLogger } from 'ngx-logger';
@@ -35,7 +37,9 @@ export class SolicitudProteccionActionService extends ActionService {
     private solicitudProteccionService: SolicitudProteccionService,
     personaService: PersonaService,
     private viaProteccionService: ViaProteccionService,
-    private paisService: PaisService
+    private paisService: PaisService,
+    private empresaService: EmpresaService,
+    private tipoCaducidadService: TipoCaducidadService
   ) {
     super();
 
@@ -57,7 +61,10 @@ export class SolicitudProteccionActionService extends ActionService {
       this.solicitudProteccionService,
       this.data.readonly,
       this.viaProteccionService,
-      this.paisService);
+      this.paisService,
+      this.empresaService,
+      this.tipoCaducidadService
+    );
 
     this.addFragment(this.FRAGMENT.DATOS_GENERALES, this.datosGenerales);
 

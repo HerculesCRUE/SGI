@@ -15,11 +15,21 @@
           </mat-form-field>
         </div>
 
-        <!-- Acronimo -->
+
+        <!-- id -->
         <div class="col">
           <mat-form-field>
-            <mat-label>{{'csp.proyecto.acronimo' | translate}}</mat-label>
-            <input matInput placeholder="{{'csp.proyecto.acronimo' | translate}}" formControlName="acronimo">
+            <mat-label>{{'csp.proyecto.id' | translate}}</mat-label>
+            <input matInput placeholder="{{'csp.proyecto.id' | translate}}" formControlName="id">
+          </mat-form-field>
+        </div>
+
+        <!-- Codigo de identificacion SGE-->
+        <div class="col">
+          <mat-form-field>
+            <mat-label>{{'csp.proyecto-proyecto-sge.codigo-sge' | translate}}</mat-label>
+            <input matInput formControlName="codigoSge" type="text" id="codigoSge"
+              placeholder="{{'csp.proyecto-proyecto-sge.codigo-sge' | translate}}">
           </mat-form-field>
         </div>
 
@@ -69,7 +79,13 @@
 
       <div [fxLayout.xs]="fxLayoutProperties.xs" [fxLayout]="fxLayoutProperties.layout"
         [fxLayoutGap]="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
-
+        <!-- Acronimo -->
+        <div class="col">
+          <mat-form-field>
+            <mat-label>{{'csp.proyecto.acronimo' | translate}}</mat-label>
+            <input matInput placeholder="{{'csp.proyecto.acronimo' | translate}}" formControlName="acronimo">
+          </mat-form-field>
+        </div>
         <ng-container *sgiHasAuthorityForAnyUO="'CSP-PRO-R'">
           <!-- Activo -->
           <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md"
@@ -90,13 +106,8 @@
           [fxFlexOrder]="fxFlexProperties.order">
           <mat-form-field class="input-form">
             <mat-label>{{'csp.proyecto.unidad-gestion' | translate}}</mat-label>
-            <input matInput formControlName="unidadGestion" type="text" id="unidadGestion"
-              placeholder="{{'csp.proyecto.unidad-gestion' | translate}}" [matAutocomplete]="autoUnidadGestion">
-            <mat-autocomplete #autoUnidadGestion="matAutocomplete" [displayWith]="getUnidadGestion">
-              <mat-option *ngFor="let unidadGestion of unidadesGestion$ | async" [value]="unidadGestion">
-                {{unidadGestion.nombre}}
-              </mat-option>
-            </mat-autocomplete>
+            <sgi-select-unidad-gestion formControlName="unidadGestion">
+            </sgi-select-unidad-gestion>
           </mat-form-field>
         </div>
 
@@ -181,22 +192,8 @@
           [fxFlexOrder]="fxFlexProperties.order">
           <mat-form-field class="input-form">
             <mat-label>{{'csp.proyecto.ambito-geografico' | translate}}</mat-label>
-            <input matInput formControlName="ambitoGeografico" type="text" id="ambitoGeografico"
-              placeholder="{{'csp.proyecto.ambito-geografico' | translate}}" [matAutocomplete]="autoAmbitoGeografico">
-            <mat-autocomplete #autoAmbitoGeografico="matAutocomplete" [displayWith]="getAmbitoGeografico">
-              <mat-option *ngFor="let ambitoGeografico of ambitoGeografico$ | async" [value]="ambitoGeografico">
-                {{ambitoGeografico.nombre}}
-              </mat-option>
-            </mat-autocomplete>
-          </mat-form-field>
-        </div>
-        <!-- Codigo de identificacion SGE-->
-        <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
-          [fxFlexOrder]="fxFlexProperties.order">
-          <mat-form-field class="input-form">
-            <mat-label>{{'csp.proyecto-proyecto-sge.codigo-sge' | translate}}</mat-label>
-            <input matInput formControlName="codigoSge" type="text" id="codigoSge"
-              placeholder="{{'csp.proyecto-proyecto-sge.codigo-sge' | translate}}">
+            <sgi-select-entity formControlName="ambitoGeografico" [options]="ambitoGeografico$ | async">
+            </sgi-select-entity>
           </mat-form-field>
         </div>
       </div>
@@ -264,14 +261,8 @@
           [fxFlexOrder]="fxFlexProperties.order">
           <mat-form-field class="input-form">
             <mat-label>{{'csp.proyecto.plan-investigacion' | translate}}</mat-label>
-            <input matInput formControlName="planInvestigacion" type="text" id="planInvestigacion"
-              placeholder="{{'csp.proyecto.plan-investigacion' | translate}}" maxlength="100"
-              [matAutocomplete]="autoPlanInvestigacion">
-            <mat-autocomplete #autoPlanInvestigacion="matAutocomplete" [displayWith]="getPlanInvestigacion">
-              <mat-option *ngFor="let planInvestigacion of planInvestigacion$ | async" [value]="planInvestigacion">
-                {{planInvestigacion.nombre}}
-              </mat-option>
-            </mat-autocomplete>
+            <sgi-select-entity formControlName="planInvestigacion" [options]="planInvestigacion$ | async">
+            </sgi-select-entity>
           </mat-form-field>
         </div>
       </div>
@@ -295,14 +286,7 @@
           [fxFlexOrder]="fxFlexProperties.order">
           <mat-form-field class="input-form">
             <mat-label>{{'csp.proyecto.fuente-financiacion' | translate}}</mat-label>
-            <input matInput formControlName="fuenteFinanciacion" type="text" id="fuente"
-              placeholder="{{'csp.proyecto.fuente-financiacion' | translate}}" maxlength="100"
-              [matAutocomplete]="fuente">
-            <mat-autocomplete #fuente="matAutocomplete" [displayWith]="getFuenteFinanciacion">
-              <mat-option *ngFor="let fuente of fuenteFinanciacion$ | async" [value]="fuente">
-                {{fuente.nombre}}
-              </mat-option>
-            </mat-autocomplete>
+            <sgi-select-fuente-financiacion formControlName="fuenteFinanciacion"></sgi-select-fuente-financiacion>
           </mat-form-field>
         </div>
 
@@ -329,8 +313,21 @@
 
   <!-- Listado de proyectos -->
   <div class="mat-elevation-z4">
-    <table mat-table [dataSource]="proyecto$ | async" matSort matSortActive="id" matSortDirection="asc"
+    <table mat-table [dataSource]="proyecto$ | async" matSort matSortActive="id" matSortDirection="desc"
       matSortDisableClear>
+      <!-- ID -->
+      <ng-container matColumnDef="id">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'csp.proyecto.id' | translate}}
+        </th>
+        <td mat-cell *matCellDef="let proyecto">{{proyecto.id}}</td>
+      </ng-container>
+
+      <!-- Código SGE -->
+      <ng-container matColumnDef="codigoSGE">
+        <th mat-header-cell *matHeaderCellDef> {{'csp.proyecto.codigo-sge' | translate}}
+        </th>
+        <td mat-cell *matCellDef="let proyecto">{{proyecto.proyectosSGE}}</td>
+      </ng-container>
 
       <!-- Titulo -->
       <ng-container matColumnDef="titulo">

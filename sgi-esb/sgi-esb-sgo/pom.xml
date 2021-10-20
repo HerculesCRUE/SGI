@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.crue.hercules.sgi.esb.sgo</groupId>
   <artifactId>sgi-esb-sgo</artifactId>
-  <version>0.0.2</version>
+  <version>0.0.3</version>
   <packaging>pom</packaging>
   <name>sgi-esb-sgo</name>
   <description>sgi-esb-sgo</description>

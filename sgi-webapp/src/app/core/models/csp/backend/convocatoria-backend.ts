@@ -1,4 +1,5 @@
 import { ClasificacionCVN } from '@core/enums/clasificacion-cvn';
+import { FormularioSolicitud } from '@core/enums/formulario-solicitud';
 import { Estado } from '../convocatoria';
 import { ITipoAmbitoGeografico } from '../tipo-ambito-geografico';
 import { ITipoRegimenConcurrencia } from '../tipo-regimen-concurrencia';
@@ -17,6 +18,7 @@ export interface IConvocatoriaBackend {
   observaciones: string;
   finalidad: ITipoFinalidad;
   regimenConcurrencia: ITipoRegimenConcurrencia;
+  formularioSolicitud: FormularioSolicitud;
   estado: Estado;
   duracion: number;
   abiertoPlazoPresentacionSolicitud: boolean;

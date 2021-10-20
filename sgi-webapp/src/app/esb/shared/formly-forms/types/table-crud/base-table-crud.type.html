@@ -53,10 +53,9 @@
     <tr mat-header-row *matHeaderRowDef="getDisplayColumns(); sticky: true"></tr>
     <tr mat-row *matRowDef="let row; columns: getDisplayColumns()"></tr>
   </table>
-
-  <formly-validation-message [field]="field"></formly-validation-message>
-
 </div>
+
+<formly-validation-message [field]="field"></formly-validation-message>
 
 <div class="separation-button" *ngIf="!to.disabled">
   <button color="three" mat-raised-button (click)="addItem()">

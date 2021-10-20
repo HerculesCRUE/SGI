@@ -1,5 +1,5 @@
 import { coerceBooleanProperty } from '@angular/cdk/coercion';
-import { AfterViewInit, Directive, DoCheck, EventEmitter, Input, OnDestroy, Optional, Output, Self, ViewChild } from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, Directive, DoCheck, EventEmitter, Input, OnDestroy, Optional, Output, Self, ViewChild } from '@angular/core';
 import { ControlValueAccessor, NgControl } from '@angular/forms';
 import { ErrorStateMatcher } from '@angular/material/core';
 import { MatFormFieldControl } from '@angular/material/form-field';
@@ -133,15 +133,17 @@ export abstract class SelectCommonComponent<T>
 
   /** Whether the component is in an error state. */
   get errorState(): boolean {
-    return this._errorState;
+    return this.ready ? this.matSelect.errorState : this._errorState;
   }
   set errorState(value: boolean) {
-    if (this.ready) {
+    if (this.ready && this.matSelect.errorState !== value) {
       this.matSelect.errorState = value;
       this._errorState = value;
+      this.stateChanges.next();
     }
-    else {
+    else if (this._errorState !== value) {
       this._errorState = value;
+      this.stateChanges.next();
     }
   }
   // tslint:disable-next-line: variable-name
@@ -208,7 +210,10 @@ export abstract class SelectCommonComponent<T>
     if (value) {
       this._resetOnChange = value;
       this.subscriptions.push(this._resetOnChange.subscribe(
-        () => this.resetSelection()
+        () => {
+          this.ngControl.control.markAsTouched({ onlySelf: true });
+          this.resetSelection();
+        }
       ));
     }
   }
@@ -293,8 +298,9 @@ export abstract class SelectCommonComponent<T>
 
   ngDoCheck(): void {
     if (this.ready) {
-      this._errorState = this.matSelect.errorState;
-      this.stateChanges.next();
+      // Call ngDoCheck to evaluate errorState
+      this.matSelect.ngDoCheck();
+      this.errorState = this.matSelect.errorState;
     }
   }
 

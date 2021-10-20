@@ -1,0 +1,78 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:pro="http://www.liquibase.org/xml/ns/pro" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-3.8.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+  <changeSet context="dev" author="master" id="0000000000000-relacion">
+    <insert tableName="relacion">
+      <column name="id" valueSequenceNext="relacion_seq" />
+      <column name="tipo_entidad_origen" value="PROYECTO" />
+      <column name="tipo_entidad_destino" value="CONVOCATORIA" />
+      <column name="entidad_origen_ref" value="1" />
+      <column name="entidad_destino_ref" value="1" />
+      <column name="observaciones" value="Proyecto 1 con Convocatoria 1" />
+    </insert>
+    <insert tableName="relacion">
+      <column name="id" valueSequenceNext="relacion_seq" />
+      <column name="tipo_entidad_origen" value="PROYECTO" />
+      <column name="tipo_entidad_destino" value="CONVOCATORIA" />
+      <column name="entidad_origen_ref" value="1" />
+      <column name="entidad_destino_ref" value="2" />
+      <column name="observaciones" value="Proyecto 1 con Convocatoria 2" />
+    </insert>
+    <insert tableName="relacion">
+      <column name="id" valueSequenceNext="relacion_seq" />
+      <column name="tipo_entidad_origen" value="PROYECTO" />
+      <column name="tipo_entidad_destino" value="CONVOCATORIA" />
+      <column name="entidad_origen_ref" value="1" />
+      <column name="entidad_destino_ref" value="3" />
+      <column name="observaciones" value="Proyecto 1 con Convocatoria 3" />
+    </insert>
+    <insert tableName="relacion">
+      <column name="id" valueSequenceNext="relacion_seq" />
+      <column name="tipo_entidad_origen" value="PROYECTO" />
+      <column name="tipo_entidad_destino" value="CONVOCATORIA" />
+      <column name="entidad_origen_ref" value="2" />
+      <column name="entidad_destino_ref" value="4" />
+      <column name="observaciones" value="Proyecto 2 con Convocatoria 4" />
+    </insert>
+    <insert tableName="relacion">
+      <column name="id" valueSequenceNext="relacion_seq" />
+      <column name="tipo_entidad_origen" value="PROYECTO" />
+      <column name="tipo_entidad_destino" value="CONVOCATORIA" />
+      <column name="entidad_origen_ref" value="2" />
+      <column name="entidad_destino_ref" value="5" />
+      <column name="observaciones" value="Proyecto 2 con Convocatoria 5" />
+    </insert>
+    <insert tableName="relacion">
+      <column name="id" valueSequenceNext="relacion_seq" />
+      <column name="tipo_entidad_origen" value="PROYECTO" />
+      <column name="tipo_entidad_destino" value="CONVOCATORIA" />
+      <column name="entidad_origen_ref" value="2" />
+      <column name="entidad_destino_ref" value="6" />
+      <column name="observaciones" value="Proyecto 2 con Convocatoria 6" />
+    </insert>
+    <insert tableName="relacion">
+      <column name="id" valueSequenceNext="relacion_seq" />
+      <column name="tipo_entidad_origen" value="PROYECTO" />
+      <column name="tipo_entidad_destino" value="PROYECTO" />
+      <column name="entidad_origen_ref" value="1" />
+      <column name="entidad_destino_ref" value="2" />
+      <column name="observaciones" value="Proyecto 1 con Proyecto 2" />
+    </insert>
+    <insert tableName="relacion">
+      <column name="id" valueSequenceNext="relacion_seq" />
+      <column name="tipo_entidad_origen" value="PROYECTO" />
+      <column name="tipo_entidad_destino" value="PROYECTO" />
+      <column name="entidad_origen_ref" value="3" />
+      <column name="entidad_destino_ref" value="1" />
+      <column name="observaciones" value="Proyecto 3 con Proyecto 1" />
+    </insert>
+    <insert tableName="relacion">
+      <column name="id" valueSequenceNext="relacion_seq" />
+      <column name="tipo_entidad_origen" value="PROYECTO" />
+      <column name="tipo_entidad_destino" value="INVENCION" />
+      <column name="entidad_origen_ref" value="1" />
+      <column name="entidad_destino_ref" value="111" />
+      <column name="observaciones" value="Proyecto 1 con Invencion 111" />
+    </insert>
+  </changeSet>
+</databaseChangeLog>

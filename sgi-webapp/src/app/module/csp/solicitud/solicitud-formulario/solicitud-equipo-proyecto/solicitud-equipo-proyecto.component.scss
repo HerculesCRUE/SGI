@@ -1,0 +1,7 @@
+@import "colors.scss";
+
+:host {
+  .mat-icon.danger {
+    color: map-get($sgi-custom-colors, danger);
+  }
+}

@@ -23,19 +23,6 @@ public interface SolicitudProyectoPresupuestoRepository extends JpaRepository<So
   List<SolicitudProyectoPresupuesto> findBySolicitudProyectoId(Long solicitudProyectoId);
 
   /**
-   * Comprueba la existencia de {@link SolicitudProyectoPresupuesto} asociados a
-   * una solicitud para una entidadRef y financiacionAjena
-   * 
-   * @param solicitudId       Id de la Solicitud
-   * @param entidadRef        Referencia de la Entidad
-   * @param financiacionAjena Si es financiacionAjena
-   * @return <code>true</code> si existe alguna relación, <code>false</code> en
-   *         cualquier otro caso
-   */
-  boolean existsBySolicitudProyectoSolicitudIdAndEntidadRefAndFinanciacionAjena(Long solicitudId, String entidadRef,
-      Boolean financiacionAjena);
-
-  /**
    * Recupera todos las {@link SolicitudProyectoPresupuesto} asociados a una
    * {@link Solicitud}.
    * 

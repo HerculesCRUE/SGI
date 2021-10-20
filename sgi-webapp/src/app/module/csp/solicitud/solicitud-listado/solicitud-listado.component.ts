@@ -29,7 +29,7 @@ import { SgiAuthService } from '@sgi/framework/auth';
 import { RSQLSgiRestFilter, SgiRestFilter, SgiRestFilterOperator, SgiRestListResult } from '@sgi/framework/http';
 import { TipoColectivo } from 'src/app/esb/sgp/shared/select-persona/select-persona.component';
 import { NGXLogger } from 'ngx-logger';
-import { merge, Observable, of } from 'rxjs';
+import { BehaviorSubject, merge, Observable, of } from 'rxjs';
 import { catchError, map, startWith, switchMap, tap } from 'rxjs/operators';
 import { CONVOCATORIA_ACTION_LINK_KEY } from '../../convocatoria/convocatoria.action.service';
 import { ISolicitudCrearProyectoModalData, SolicitudCrearProyectoModalComponent } from '../modals/solicitud-crear-proyecto-modal/solicitud-crear-proyecto-modal.component';
@@ -70,10 +70,7 @@ export class SolicitudListadoComponent extends AbstractTablePaginationComponent<
   textoErrorReactivar: string;
 
   busquedaAvanzada = false;
-  private fuenteFinanciacionFiltered: IFuenteFinanciacion[] = [];
-  fuenteFinanciacion$: Observable<IFuenteFinanciacion[]>;
-  private planInvestigacionFiltered: IPrograma[] = [];
-  planInvestigaciones$: Observable<IPrograma[]>;
+  planInvestigaciones$: BehaviorSubject<IPrograma[]> = new BehaviorSubject<IPrograma[]>([]);
 
   mapCrearProyecto: Map<number, boolean> = new Map();
   mapModificable: Map<number, boolean> = new Map();
@@ -107,7 +104,6 @@ export class SolicitudListadoComponent extends AbstractTablePaginationComponent<
     protected snackBarService: SnackBarService,
     private solicitudService: SolicitudService,
     private personaService: PersonaService,
-    private fuenteFinanciacionService: FuenteFinanciacionService,
     private programaService: ProgramaService,
     private proyectoService: ProyectoService,
     private matDialog: MatDialog,
@@ -174,7 +170,6 @@ export class SolicitudListadoComponent extends AbstractTablePaginationComponent<
       fuenteFinanciacion: new FormControl(undefined)
     });
 
-    this.getFuentesFinanciacion();
     this.getPlanesInvestigacion();
 
     this.filter = this.createFilter();
@@ -481,44 +476,11 @@ export class SolicitudListadoComponent extends AbstractTablePaginationComponent<
     this.formGroup.controls.entidadFinanciadora.setValue(undefined);
   }
 
-  private getFuentesFinanciacion(): void {
-    this.suscripciones.push(
-      this.fuenteFinanciacionService.findAll().subscribe(
-        (res) => {
-          this.fuenteFinanciacionFiltered = res.items;
-          this.fuenteFinanciacion$ = this.formGroup.controls.fuenteFinanciacion.valueChanges
-            .pipe(
-              startWith(''),
-              map(value => this.filtroFuenteFinanciacion(value))
-            );
-        },
-        (error) => {
-          this.logger.error(error);
-          this.snackBarService.showError(MSG_ERROR);
-        }
-      )
-    );
-  }
-
-  private filtroFuenteFinanciacion(value: string): IFuenteFinanciacion[] {
-    const filterValue = value?.toString().toLowerCase();
-    return this.fuenteFinanciacionFiltered.filter(fuente => fuente.nombre.toLowerCase().includes(filterValue));
-  }
-
-  getFuenteFinanciacion(fuente?: IFuenteFinanciacion): string | undefined {
-    return typeof fuente === 'string' ? fuente : fuente?.nombre;
-  }
-
   private getPlanesInvestigacion(): void {
     this.suscripciones.push(
       this.programaService.findAllPlan().subscribe(
         (res) => {
-          this.planInvestigacionFiltered = res.items;
-          this.planInvestigaciones$ = this.formGroup.controls.planInvestigacion.valueChanges
-            .pipe(
-              startWith(''),
-              map(value => this.filtroPlanInvestigacion(value))
-            );
+          this.planInvestigaciones$.next(res.items);
         },
         (error) => {
           this.logger.error(error);
@@ -526,11 +488,6 @@ export class SolicitudListadoComponent extends AbstractTablePaginationComponent<
         }
       )
     );
-  }
-
-  private filtroPlanInvestigacion(value: string): IPrograma[] {
-    const filterValue = value?.toString().toLowerCase();
-    return this.planInvestigacionFiltered.filter(fuente => fuente.nombre.toLowerCase().includes(filterValue));
   }
 
   getPlanInvestigacion(programa?: IPrograma): string | undefined {

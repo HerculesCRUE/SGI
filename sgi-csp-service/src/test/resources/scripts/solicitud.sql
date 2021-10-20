@@ -16,8 +16,8 @@
 INSERT INTO csp.solicitud 
   (id, titulo ,codigo_externo, codigo_registro_interno, estado_solicitud_id, convocatoria_id, creador_ref, solicitante_ref, observaciones, convocatoria_externa, unidad_gestion_ref, formulario_solicitud, activo)
 VALUES 
-  (1, 'titulo', null, 'SGI_SLC1202011061027', null, 1, 'usr-001', 'usr-002', 'observaciones-001', null, '2', 'ESTANDAR', true),
-  (2, 'titulo', null, 'SGI_SLC2202011061027', null, 1, 'usr-001', 'usr-002', 'observaciones-002', null, '2', 'ESTANDAR', true),
-  (3, 'titulo', null, 'SGI_SLC3202011061027', null, 1, 'usr-001', 'usr-002', 'observaciones-003', null, '2', 'ESTANDAR', false),
-  (4, 'titulo', null, 'SGI_SLC4202011061027', null, 1, 'usr-001', 'usr-002', 'observaciones-004', null, '1', 'ESTANDAR', true),
-  (5, 'titulo', null, 'SGI_SLC5202011061027', null, 1, 'usr-001', 'usr-002', 'observaciones-005', null, '1', 'ESTANDAR', true);
+  (1, 'titulo', null, 'SGI_SLC1202011061027', null, 1, 'usr-001', 'usr-002', 'observaciones-001', null, '2', 'PROYECTO', true),
+  (2, 'titulo', null, 'SGI_SLC2202011061027', null, 1, 'usr-001', 'usr-002', 'observaciones-002', null, '2', 'PROYECTO', true),
+  (3, 'titulo', null, 'SGI_SLC3202011061027', null, 1, 'usr-001', 'usr-002', 'observaciones-003', null, '2', 'PROYECTO', false),
+  (4, 'titulo', null, 'SGI_SLC4202011061027', null, 1, 'usr-001', 'usr-002', 'observaciones-004', null, '1', 'PROYECTO', true),
+  (5, 'titulo', null, 'SGI_SLC5202011061027', null, 1, 'usr-001', 'usr-002', 'observaciones-005', null, '1', 'PROYECTO', true);

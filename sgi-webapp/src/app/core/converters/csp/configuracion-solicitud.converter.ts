@@ -14,8 +14,7 @@ class ConfiguracionSolicitudConverter extends SgiBaseConverter<IConfiguracionSol
       convocatoriaId: value.convocatoriaId,
       tramitacionSGI: value.tramitacionSGI,
       fasePresentacionSolicitudes: CONVOCATORIA_FASE_CONVERTER.toTarget(value.fasePresentacionSolicitudes),
-      importeMaximoSolicitud: value.importeMaximoSolicitud,
-      formularioSolicitud: value.formularioSolicitud
+      importeMaximoSolicitud: value.importeMaximoSolicitud
     };
   }
 
@@ -29,7 +28,6 @@ class ConfiguracionSolicitudConverter extends SgiBaseConverter<IConfiguracionSol
       tramitacionSGI: value.tramitacionSGI,
       fasePresentacionSolicitudes: CONVOCATORIA_FASE_CONVERTER.fromTarget(value.fasePresentacionSolicitudes),
       importeMaximoSolicitud: value.importeMaximoSolicitud,
-      formularioSolicitud: value.formularioSolicitud
     };
   }
 }

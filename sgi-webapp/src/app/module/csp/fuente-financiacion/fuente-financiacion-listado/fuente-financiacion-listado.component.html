@@ -17,16 +17,8 @@
       <div class="col">
         <mat-form-field class="input-form">
           <mat-label>{{'csp.fuente-financiacion.ambito-geografico' | translate}}</mat-label>
-          <input matInput formControlName="ambitoGeografico" type="text" id="ambitoGeografico"
-            placeholder="{{'csp.fuente-financiacion.ambito-geografico' | translate}}" maxlength="100"
-            [matAutocomplete]="autoAmbitoGeografico">
-          <mat-autocomplete #autoAmbitoGeografico="matAutocomplete" [displayWith]="getAmbitoGeografico">
-
-            <mat-option *ngFor="let ambitoGeografico of ambitosGeograficos | async" [value]="ambitoGeografico">
-              {{ambitoGeografico.nombre}}
-            </mat-option>
-
-          </mat-autocomplete>
+          <sgi-select-entity [options]="ambitosGeograficos$ | async" formControlName="ambitoGeografico">
+          </sgi-select-entity>
         </mat-form-field>
       </div>
 
@@ -34,15 +26,7 @@
       <div class="col">
         <mat-form-field class="input-form">
           <mat-label>{{'csp.fuente-financiacion.origen' | translate}}</mat-label>
-          <input matInput formControlName="origen" type="text" id="origen"
-            placeholder="{{'csp.fuente-financiacion.origen' | translate}}" maxlength="100" [matAutocomplete]="origen">
-          <mat-autocomplete #origen="matAutocomplete" [displayWith]="getOrigen">
-
-            <mat-option *ngFor="let origen of origenes | async" [value]="origen">
-              {{origen.nombre}}
-            </mat-option>
-
-          </mat-autocomplete>
+          <sgi-select-entity formControlName="origen" [options]="origenes$ | async"></sgi-select-entity>
         </mat-form-field>
       </div>
 

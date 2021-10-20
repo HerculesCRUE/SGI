@@ -8,6 +8,7 @@ import org.crue.hercules.sgi.eti.model.Memoria;
 import org.crue.hercules.sgi.eti.model.TipoEvaluacion;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.Authentication;
 
 /**
  * Service Interface para gestionar {@link DocumentacionMemoria}.
@@ -21,9 +22,11 @@ public interface DocumentacionMemoriaService {
    * @param idMemoria            Id de la {@link Memoria}
    * @param DocumentacionMemoria la entidad {@link DocumentacionMemoria} a
    *                             guardar.
+   * @param authentication       Authentication
    * @return la entidad {@link DocumentacionMemoria} persistida.
    */
-  DocumentacionMemoria createDocumentacionInicial(Long idMemoria, DocumentacionMemoria DocumentacionMemoria);
+  DocumentacionMemoria createDocumentacionInicial(Long idMemoria, DocumentacionMemoria DocumentacionMemoria,
+      Authentication authentication);
 
   /**
    * Obtiene {@link DocumentacionMemoria} por id.
@@ -141,6 +144,7 @@ public interface DocumentacionMemoriaService {
    * 
    * @param idMemoria              Id {@link Memoria}
    * @param idDocumentacionMemoria Id {@link DocumentacionMemoria}
+   * @param authentication         Authentication
    */
-  void deleteDocumentacionInicial(Long idMemoria, Long idDocumentacionMemoria);
+  void deleteDocumentacionInicial(Long idMemoria, Long idDocumentacionMemoria, Authentication authentication);
 }

@@ -10,12 +10,10 @@ import {
   mixinFindAll,
   mixinFindById,
   mixinUpdate,
-  SgiRestBaseService,
-  SgiRestFindOptions,
-  SgiRestListResult,
-  UpdateCtor
+  SgiRestBaseService, UpdateCtor
 } from '@sgi/framework/http';
 import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { ISolicitudProteccionRequest } from './solicitud-proteccion-request';
 import { SOLICITUD_PROTECCION_REQUEST_CONVERTER } from './solicitud-proteccion-request.converter';
 import { ISolicitudProteccionResponse } from './solicitud-proteccion-response';
@@ -69,4 +67,17 @@ export class SolicitudProteccionService extends _SolicitudProteccionServiceMixin
   public deactivate(id: number): Observable<void> {
     return this.http.patch<void>(`${this.endpointUrl}/${id}/desactivar`, {});
   }
+
+  /**
+   * Comprueba si existe una {@link ISolicitudProteccion} con el id pasado por parámetros
+   *
+   * @param id Id de la {@link ISolicitudProteccion}
+   */
+  exists(id: number): Observable<boolean> {
+    const url = `${this.endpointUrl}/${id}`;
+    return this.http.head(url, { observe: 'response' }).pipe(
+      map(response => response.status === 200)
+    );
+  }
+
 }

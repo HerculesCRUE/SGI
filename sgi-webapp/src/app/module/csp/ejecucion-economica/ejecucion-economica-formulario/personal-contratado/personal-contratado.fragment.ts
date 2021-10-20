@@ -9,8 +9,8 @@ import { EjecucionEconomicaService } from '@core/services/sge/ejecucion-economic
 import { PersonaService } from '@core/services/sgp/persona.service';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { IColumnDefinition } from '../desglose-economico.fragment';
-import { FacturasJustificantesFragment } from '../facturas-justificantes.fragment';
+import { IColumnDefinition, RowTreeDesglose } from '../desglose-economico.fragment';
+import { FacturasJustificantesFragment, IDesglose } from '../facturas-justificantes.fragment';
 
 export class PersonalContratadoFragment extends FacturasJustificantesFragment {
 
@@ -52,6 +52,17 @@ export class PersonalContratadoFragment extends FacturasJustificantesFragment {
 
   public clearRangos(): void {
     this.formGroupFechas.reset();
+  }
+
+  protected sortRows(rows: RowTreeDesglose<IDesglose>[]): void {
+    rows.sort((a, b) => {
+      return this.compareAnualidad(b, a)
+        || this.compareProyectoTitulo(a, b)
+        || this.compareAgrupacionGastoNombre(a, b)
+        || this.compareConceptoGastoNombre(a, b)
+        || this.comparePartidaPresupuestaria(a, b)
+        || this.compareCodigoEconomico(a, b);
+    });
   }
 
 }

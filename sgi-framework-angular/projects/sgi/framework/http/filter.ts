@@ -1,4 +1,15 @@
-interface FilterClause {
+interface Filter {
+  /**
+   * The value to apply
+   */
+  value: string | SgiRestFilter;
+  /**
+   * The condition to apply
+   */
+  condition?: SgiRestFilterCondition;
+}
+
+interface FilterClause extends Filter {
   /**
    * The entity field name
    */
@@ -11,10 +22,6 @@ interface FilterClause {
    * The value to apply
    */
   value: string;
-  /**
-   * The condition to apply
-   */
-  condition?: SgiRestFilterCondition;
 }
 
 /**
@@ -32,6 +39,14 @@ export interface SgiRestFilter {
    */
   and(field: string, operator: SgiRestFilterOperator, value: string | string[]): SgiRestFilter;
   /**
+   * Add new AND condition filter
+   *
+   * @param filter the filter to append
+   *
+   * @returns filter instance to chaining more conditions
+   */
+  and(filter: SgiRestFilter): SgiRestFilter;
+  /**
    * Add new OR condition to the filter
    *
    * @param field the entity field name
@@ -41,6 +56,14 @@ export interface SgiRestFilter {
    * @returns filter instance to chaining more conditions
    */
   or(field: string, operator: SgiRestFilterOperator, value: string | string[]): SgiRestFilter;
+  /**
+   * Add new OR condition filter
+   *
+   * @param filter the filter to append
+   *
+   * @returns filter instance to chaining more conditions
+   */
+  or(filter: SgiRestFilter): SgiRestFilter;
   /**
    * Check if the filter contains a condition for a field
    *
@@ -62,13 +85,23 @@ export interface SgiRestFilter {
   toString(): string;
 }
 
+function isFilterClause(filter: Filter | FilterClause): filter is FilterClause {
+  return (filter as FilterClause).operator !== undefined;
+}
+
 /**
  * RSQL SgiRestFilter implementation
  */
 export class RSQLSgiRestFilter implements SgiRestFilter {
 
-  private filters: FilterClause[] = [];
+  private filters: (Filter | FilterClause)[] = [];
 
+  /**
+   * Initialize the filter with the provided filter
+   *
+   * @param filter the filter
+   */
+  constructor(filter: SgiRestFilter);
   /**
    * Initialize the filter with the provided values
    *
@@ -76,20 +109,29 @@ export class RSQLSgiRestFilter implements SgiRestFilter {
    * @param operator  the operator of the filter
    * @param value the value
    */
-  constructor(field: string, operator: SgiRestFilterOperator, value: string | string[]) {
-    if (!field || field === '') {
-      throw Error('field is mandaroty');
+  constructor(field: string, operator: SgiRestFilterOperator, value: string | string[]);
+  constructor(firsParameter: SgiRestFilter | string, operator?: SgiRestFilterOperator, value?: string | string[]) {
+    if (typeof firsParameter === 'string') {
+      if (!firsParameter || firsParameter === '') {
+        throw Error('field is mandaroty');
+      }
+      if (!operator) {
+        throw Error('operator is mandaroty');
+      }
+      const filteredValue = this.filterArrayEmptyValues(value);
+      this.checkValue(operator, filteredValue);
+      this.filters.push({
+        field: firsParameter,
+        operator,
+        value: this.getFixedValue(operator, filteredValue)
+      });
     }
-    if (!operator) {
-      throw Error('operator is mandaroty');
+    else {
+      this.filters.push({
+        value: firsParameter,
+        condition: SgiRestFilterCondition.AND
+      });
     }
-    const filteredValue = this.filterArrayEmptyValues(value);
-    this.checkValue(operator, filteredValue);
-    this.filters.push({
-      field,
-      operator,
-      value: this.getFixedValue(operator, filteredValue)
-    });
   }
 
   private checkValue(operator: SgiRestFilterOperator, value: string | string[]): void {
@@ -161,21 +203,74 @@ export class RSQLSgiRestFilter implements SgiRestFilter {
     });
   }
 
-  and(field: string, operator: SgiRestFilterOperator, value: string | string[]): SgiRestFilter {
-    this.addClausule(field, operator, value, SgiRestFilterCondition.AND);
+  /**
+   * Add new AND condition to the filter
+   *
+   * @param field the entity field name
+   * @param operator  the operator of the filter
+   * @param value the value
+   *
+   * @returns filter instance to chaining more conditions
+   */
+  and(field: string, operator: SgiRestFilterOperator, value: string | string[]): SgiRestFilter;
+  /**
+   * Add new AND condition filter
+   *
+   * @param filter the filter to append
+   *
+   * @returns filter instance to chaining more conditions
+   */
+  and(filter: SgiRestFilter): SgiRestFilter;
+  and(firsParameter: SgiRestFilter | string, operator?: SgiRestFilterOperator, value?: string | string[]) {
+    if (typeof firsParameter === 'string') {
+      this.addClausule(firsParameter, operator, value, SgiRestFilterCondition.AND);
+    }
+    else {
+      this.filters.push({
+        value: firsParameter,
+        condition: SgiRestFilterCondition.AND
+      });
+    }
     return this;
   }
 
-  or(field: string, operator: SgiRestFilterOperator, value: string | string[]): SgiRestFilter {
-    this.addClausule(field, operator, value, SgiRestFilterCondition.OR);
+  /**
+   * Add new OR condition to the filter
+   *
+   * @param field the entity field name
+   * @param operator  the operator of the filter
+   * @param value the value
+   *
+   * @returns filter instance to chaining more conditions
+   */
+  or(field: string, operator: SgiRestFilterOperator, value: string | string[]): SgiRestFilter;
+  /**
+   * Add new OR condition filter
+   *
+   * @param filter the filter to append
+   *
+   * @returns filter instance to chaining more conditions
+   */
+  or(filter: SgiRestFilter): SgiRestFilter;
+  or(firsParameter: SgiRestFilter | string, operator?: SgiRestFilterOperator, value?: string | string[]): SgiRestFilter {
+    if (typeof firsParameter === 'string') {
+      this.addClausule(firsParameter, operator, value, SgiRestFilterCondition.OR);
+    }
+    else {
+      this.filters.push({
+        value: firsParameter,
+        condition: SgiRestFilterCondition.OR
+      });
+    }
     return this;
   }
 
   contains(field: string): boolean {
-    return this.filters.some(filter => filter.field === field);
+    return this.filters.filter(filter => isFilterClause(filter)).some((filter: FilterClause) => filter.field === field);
   }
+
   remove(field: string): void {
-    const index = this.filters.findIndex(filter => filter.field === field);
+    const index = this.filters.filter(filter => isFilterClause(filter)).findIndex((filter: FilterClause) => filter.field === field);
     if (index > 0) {
       this.filters.splice(index, 1);
     }
@@ -185,8 +280,15 @@ export class RSQLSgiRestFilter implements SgiRestFilter {
     const filterValues: string[] = [];
     if (this.filters.length) {
       this.filters.forEach((filter) => {
-        if (filter.field && filter.value && filter.operator && filter.operator !== SgiRestFilterOperator.NONE) {
-          filterValues.push((filterValues.length ? filter.condition : '') + filter.field + filter.operator.toString() + filter.value);
+        if (isFilterClause(filter)) {
+          if (filter.field && filter.value && filter.operator && filter.operator !== SgiRestFilterOperator.NONE) {
+            filterValues.push((filterValues.length ? filter.condition : '') + filter.field + filter.operator.toString() + filter.value);
+          }
+        }
+        else {
+          if (filter.value.toString().length) {
+            filterValues.push((filterValues.length ? filter.condition : '') + '(' + filter.value.toString() + ')');
+          }
         }
       });
     }

@@ -29,7 +29,7 @@ const routes: SgiRoutes = [
       titleParams: {
         entity: SOLICITUD_PROTECCION_KEY, ...MSG_PARAMS.GENDER.FEMALE, ...MSG_PARAMS.CARDINALIRY.SINGULAR
       },
-      hasAuthorityForAnyUO: 'PII-INV-E'
+      hasAuthority: 'PII-INV-C'
     },
     resolve: {
       [SOLICITUD_PROTECCION_DATA_KEY]: SolicitudProteccionDataResolver
@@ -54,7 +54,7 @@ const routes: SgiRoutes = [
     canDeactivate: [ActionGuard],
     data: {
       title: SOLICITUD_PROTECCION_KEY,
-      hasAuthorityForAnyUO: 'PII-INV-E'
+      hasAuthority: 'PII-INV-E'
     },
     resolve: {
       [SOLICITUD_PROTECCION_DATA_KEY]: SolicitudProteccionDataResolver

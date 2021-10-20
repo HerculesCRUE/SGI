@@ -4,6 +4,7 @@ import { IAnualidadGasto } from '@core/models/csp/anualidad-gasto';
 import { IAnualidadIngreso } from '@core/models/csp/anualidad-ingreso';
 import { IAnualidadResumen } from '@core/models/csp/anualidad-resumen';
 import { IProyectoAnualidad } from '@core/models/csp/proyecto-anualidad';
+import { IProyectoAnualidadNotificacionSge } from '@core/models/csp/proyecto-anualidad-notificacion-sge';
 import { environment } from '@env';
 import {
   CreateCtor,
@@ -25,6 +26,8 @@ import { IAnualidadIngresoResponse } from '../anualidad-ingreso/anualidad-ingres
 import { ANUALIDAD_INGRESO_RESPONSE_CONVERTER } from '../anualidad-ingreso/anualidad-ingreso-response.converter';
 import { IAnualidadResumenResponse } from './anualidad-resumen-response';
 import { ANUALIDAD_RESUMEN_RESPONSE_CONVERTER } from './anualidad-resumen-response.converter';
+import { IProyectoAnualidadNotificacionSgeResponse } from './proyecto-anualidad-notificacion-sge-response';
+import { PROYECTO_ANUALIDAD_NOTIFICACION_SGE_RESPONSE_CONVERTER } from './proyecto-anualidad-notificacion-sge-response.converter';
 import { IProyectoAnualidadRequest } from './proyecto-anualidad-request';
 import { PROYECTO_ANUALIDAD_REQUEST_CONVERTER } from './proyecto-anualidad-request.converter';
 import { IProyectoAnualidadResponse } from './proyecto-anualidad-response';
@@ -125,6 +128,18 @@ export class ProyectoAnualidadService extends _ProyectoAnualidadServiceMixinBase
         return throwError(error);
       })
     );
+  }
+
+  findNotificacionesSge(options?: SgiRestFindOptions): Observable<SgiRestListResult<IProyectoAnualidadNotificacionSge>> {
+    return this.find<IProyectoAnualidadNotificacionSgeResponse, IProyectoAnualidadNotificacionSge>(
+      `${this.endpointUrl}/notificaciones-sge`,
+      options,
+      PROYECTO_ANUALIDAD_NOTIFICACION_SGE_RESPONSE_CONVERTER
+    );
+  }
+
+  notificarSge(id: number): Observable<void> {
+    return this.http.patch<void>(`${this.endpointUrl}/${id}/notificarsge`, undefined);
   }
 
 }

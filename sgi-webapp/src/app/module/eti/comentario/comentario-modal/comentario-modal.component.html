@@ -5,8 +5,21 @@
   </button>
 </div>
 <mat-dialog-content>
-  <!-- Bloque -->
   <form class="form-inline" [formGroup]="formGroup">
+    <!-- Memoria -->
+    <div *ngIf="this.data?.evaluaciones?.length > 1" [fxLayout]="fxLayoutProperties.layout"
+      [fxLayoutAlign]="fxLayoutProperties.layoutAlign">
+      <mat-form-field class="input-form">
+        <mat-label>{{'eti.memoria' | translate:MSG_PARAMS.CARDINALIRY.SINGULAR}}</mat-label>
+        <sgi-select-entity formControlName="evaluacion" [options]="evaluaciones$ | async"
+          [displayWith]="displayerMemoria" required>
+        </sgi-select-entity>
+        <mat-error *ngIf="formGroup.controls.evaluacion.errors?.required">
+          {{'error.required.entity' | translate:msgParamMemoriaEntity}}
+        </mat-error>
+      </mat-form-field>
+    </div>
+    <!-- Bloque -->
     <div [fxLayout]="fxLayoutProperties.layout" [fxLayoutAlign]="fxLayoutProperties.layoutAlign">
       <mat-form-field>
         <mat-label>{{'eti.comentario.bloque' | translate}}</mat-label>

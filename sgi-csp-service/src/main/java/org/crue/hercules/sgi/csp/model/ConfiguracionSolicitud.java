@@ -5,8 +5,6 @@ import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
@@ -20,8 +18,6 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
-
-import org.crue.hercules.sgi.csp.enums.FormularioSolicitud;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -71,11 +67,6 @@ public class ConfiguracionSolicitud extends BaseEntity {
   /** Importe Máximo Solicitud */
   @Column(name = "importe_maximo_solicitud", nullable = true)
   private BigDecimal importeMaximoSolicitud;
-
-  /** Tipo Formulario Solicitud */
-  @Column(name = "formulario_solicitud", length = 50, nullable = true)
-  @Enumerated(EnumType.STRING)
-  private FormularioSolicitud formularioSolicitud;
 
   // Relation mappings for JPA metamodel generation only
   @OneToOne

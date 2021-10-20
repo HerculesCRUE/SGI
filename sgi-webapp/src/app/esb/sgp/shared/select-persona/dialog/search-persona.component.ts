@@ -1,4 +1,3 @@
-import { F } from '@angular/cdk/keycodes';
 import { AfterViewInit, Component, Inject, OnInit, ViewChild } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
@@ -24,37 +23,6 @@ const TIPO_PERSONA_KEY = marker('sgp.persona');
 export interface SearchPersonaModalData {
   tipoColectivo: string;
   colectivos: string[];
-}
-
-class JoinRSQLSgiRestFilter implements SgiRestFilter {
-
-  private readonly filter1: SgiRestFilter;
-  private readonly filter2: SgiRestFilter;
-
-  constructor(filter1: SgiRestFilter, filter2: SgiRestFilter) {
-    this.filter1 = filter1;
-    this.filter2 = filter2;
-  }
-
-  and(field: string, operator: SgiRestFilterOperator, value: string | string[]): SgiRestFilter {
-    throw new Error('Method not implemented.');
-  }
-  or(field: string, operator: SgiRestFilterOperator, value: string | string[]): SgiRestFilter {
-    throw new Error('Method not implemented.');
-  }
-  contains(field: string): boolean {
-    throw new Error('Method not implemented.');
-  }
-  remove(field: string): void {
-    throw new Error('Method not implemented.');
-  }
-
-  public toString(): string {
-    const strFilter1 = this.filter1.toString() !== '' ? '(' + this.filter1.toString() + ');' : '';
-    const strFilter2 = this.filter2.toString() !== '' ? '(' + this.filter2.toString() + ')' : '';
-    const strJoinFilters = strFilter1 + strFilter2;
-    return strJoinFilters;
-  }
 }
 
 @Component({
@@ -102,8 +70,6 @@ export class SearchPersonaModalComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit(): void {
-    this.search(true);
-
     merge(
       this.paginator.page,
       this.sort.sortChange
@@ -173,7 +139,6 @@ export class SearchPersonaModalComponent implements OnInit, AfterViewInit {
    */
   onClearFilters(): void {
     this.formGroup.reset();
-    this.search(true);
   }
 
   get MSG_PARAMS() {
@@ -189,23 +154,19 @@ export class SearchPersonaModalComponent implements OnInit, AfterViewInit {
   private buildFilter(filter: SearchPersonaModalData): SgiRestFilter {
     const controls = this.formGroup.controls;
 
-    let rsqlFilterColectivo = null;
-
-    const rsqlFilter = new RSQLSgiRestFilter('nombre', SgiRestFilterOperator.LIKE_ICASE, controls.datosPersona.value)
-      .or('apellidos', SgiRestFilterOperator.LIKE_ICASE, controls.datosPersona.value)
-      .or('numeroDocumento', SgiRestFilterOperator.LIKE_ICASE, controls.datosPersona.value);
+    const rsqlFilter = new RSQLSgiRestFilter(
+      new RSQLSgiRestFilter('nombre', SgiRestFilterOperator.LIKE_ICASE, controls.datosPersona.value)
+        .or('apellidos', SgiRestFilterOperator.LIKE_ICASE, controls.datosPersona.value)
+        .or('numeroDocumento', SgiRestFilterOperator.LIKE_ICASE, controls.datosPersona.value)
+    );
 
     if (filter?.colectivos?.length) {
-      rsqlFilterColectivo = new RSQLSgiRestFilter('colectivoId', SgiRestFilterOperator.IN, filter.colectivos);
+      rsqlFilter.and('colectivoId', SgiRestFilterOperator.IN, filter.colectivos);
     } else if (filter?.tipoColectivo) {
-      rsqlFilterColectivo = new RSQLSgiRestFilter('tipoColectivo', SgiRestFilterOperator.EQUALS, filter.tipoColectivo);
+      rsqlFilter.and('tipoColectivo', SgiRestFilterOperator.EQUALS, filter.tipoColectivo);
     }
 
-    if (rsqlFilterColectivo) {
-      return new JoinRSQLSgiRestFilter(rsqlFilter, rsqlFilterColectivo);
-    } else {
-      return rsqlFilter;
-    }
+    return rsqlFilter;
   }
 
   openPersonaCreateModal(): void {

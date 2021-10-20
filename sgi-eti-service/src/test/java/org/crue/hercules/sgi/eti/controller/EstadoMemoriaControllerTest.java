@@ -379,7 +379,8 @@ public class EstadoMemoriaControllerTest extends BaseControllerTest {
    */
   private Comite generarMockComite(Long id, String comite, Boolean activo) {
     Formulario formulario = new Formulario(1L, "M10", "Descripcion");
-    return new Comite(id, comite, formulario, activo);
+    return new Comite(id, comite, "nombreSecretario", "nombreInvestigacion", "nombreDecreto", "articulo", formulario,
+        activo);
 
   }
 

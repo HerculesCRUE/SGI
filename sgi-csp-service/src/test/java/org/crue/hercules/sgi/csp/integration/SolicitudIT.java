@@ -633,7 +633,7 @@ public class SolicitudIT {
     solicitud.setObservaciones("observaciones");
     solicitud.setConvocatoriaExterna(null);
     solicitud.setUnidadGestionRef("2");
-    solicitud.setFormularioSolicitud(FormularioSolicitud.ESTANDAR);
+    solicitud.setFormularioSolicitud(FormularioSolicitud.PROYECTO);
     solicitud.setActivo(true);
 
     if (id != null) {

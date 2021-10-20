@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <artifacts>
-  <artifact name="sgicsp-endpoint" groupId="org.crue.hercules.sgi.esb.sgi.endpoint" version="0.0.2" type="synapse/endpoint" serverRole="EnterpriseServiceBus">
+  <artifact name="sgicsp-endpoint" groupId="org.crue.hercules.sgi.esb.sgi.endpoint" version="0.0.3" type="synapse/endpoint" serverRole="EnterpriseServiceBus">
     <file>src/main/synapse-config/endpoints/sgicsp-endpoint.xml</file>
   </artifact>
-  <artifact name="sgicsp-api" groupId="org.crue.hercules.sgi.esb.sgi.api" version="0.0.2" type="synapse/api" serverRole="EnterpriseServiceBus">
+  <artifact name="sgicsp-api" groupId="org.crue.hercules.sgi.esb.sgi.api" version="0.0.3" type="synapse/api" serverRole="EnterpriseServiceBus">
     <file>src/main/synapse-config/api/sgicsp-api.xml</file>
   </artifact>
 </artifacts>

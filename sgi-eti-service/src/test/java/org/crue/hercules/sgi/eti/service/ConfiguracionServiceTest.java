@@ -103,8 +103,8 @@ public class ConfiguracionServiceTest extends BaseServiceTest {
     configuracion.setDiasLimiteEvaluador(3);
     configuracion.setMesesArchivadaInactivo(2);
     configuracion.setMesesAvisoProyectoCEEA(1);
-    configuracion.setMesesAvisoProyectoCEISH(1);
-    configuracion.setMesesAvisoProyectoCEIAB(1);
+    configuracion.setMesesAvisoProyectoCEI(1);
+    configuracion.setMesesAvisoProyectoCBE(1);
 
     return configuracion;
   }
@@ -124,8 +124,8 @@ public class ConfiguracionServiceTest extends BaseServiceTest {
     configuracion.setDiasLimiteEvaluador(10);
     configuracion.setMesesArchivadaInactivo(2);
     configuracion.setMesesAvisoProyectoCEEA(1);
-    configuracion.setMesesAvisoProyectoCEISH(1);
-    configuracion.setMesesAvisoProyectoCEIAB(1);
+    configuracion.setMesesAvisoProyectoCEI(1);
+    configuracion.setMesesAvisoProyectoCBE(1);
 
     return configuracion;
   }

@@ -65,9 +65,11 @@ public class ComiteControllerTest extends BaseControllerTest {
     List<Comite> comiteLista = new ArrayList<>();
 
     Formulario formulario1 = new Formulario(1L, "M10", "Descripcion");
-    comiteLista.add(new Comite(1L, "Comite1", formulario1, Boolean.TRUE));
+    comiteLista.add(new Comite(1L, "Comite1", "nombreSecretario", "nombreInvestigacion", "nombreDecreto", "articulo",
+        formulario1, Boolean.TRUE));
     Formulario formulario2 = new Formulario(2L, "M20", "Descripcion");
-    comiteLista.add(new Comite(2L, "Comite2", formulario2, Boolean.TRUE));
+    comiteLista.add(new Comite(2L, "Comite2", "nombreSecretario", "nombreInvestigacion", "nombreDecreto", "articulo",
+        formulario2, Boolean.TRUE));
 
     BDDMockito.given(comiteService.findAll(ArgumentMatchers.<String>any(), ArgumentMatchers.<Pageable>any()))
         .willReturn(new PageImpl<>(comiteLista));
@@ -107,8 +109,8 @@ public class ComiteControllerTest extends BaseControllerTest {
   public void getComite_WithId_ReturnsComite() throws Exception {
 
     Formulario formulario = new Formulario(1L, "M10", "Descripcion");
-    BDDMockito.given(comiteService.findById(ArgumentMatchers.anyLong()))
-        .willReturn((new Comite(1L, "Comite1", formulario, Boolean.TRUE)));
+    BDDMockito.given(comiteService.findById(ArgumentMatchers.anyLong())).willReturn((new Comite(1L, "Comite1",
+        "nombreSecretario", "nombreInvestigacion", "nombreDecreto", "articulo", formulario, Boolean.TRUE)));
 
     mockMvc
         .perform(MockMvcRequestBuilders.get(COMITE_CONTROLLER_BASE_PATH + PATH_PARAMETER_ID, 1L)
@@ -230,8 +232,8 @@ public class ComiteControllerTest extends BaseControllerTest {
   public void deleteComite() throws Exception {
 
     Formulario formulario = new Formulario(1L, "M10", "Descripcion");
-    BDDMockito.given(comiteService.findById(ArgumentMatchers.anyLong()))
-        .willReturn(new Comite(1L, "Comite1", formulario, Boolean.TRUE));
+    BDDMockito.given(comiteService.findById(ArgumentMatchers.anyLong())).willReturn(new Comite(1L, "Comite1",
+        "nombreSecretario", "nombreInvestigacion", "nombreDecreto", "articulo", formulario, Boolean.TRUE));
 
     mockMvc
         .perform(MockMvcRequestBuilders.delete(COMITE_CONTROLLER_BASE_PATH + PATH_PARAMETER_ID, 1L)
@@ -248,7 +250,8 @@ public class ComiteControllerTest extends BaseControllerTest {
     List<Comite> comiteList = new ArrayList<>();
     for (int i = 1; i <= 100; i++) {
       Formulario formulario = new Formulario(Long.valueOf(i), "M" + i, "Descripcion");
-      comiteList.add(new Comite(Long.valueOf(i), "Comite" + String.format("%03d", i), formulario, Boolean.TRUE));
+      comiteList.add(new Comite(Long.valueOf(i), "Comite" + String.format("%03d", i), "nombreSecretario",
+          "nombreInvestigacion", "nombreDecreto", "articulo", formulario, Boolean.TRUE));
     }
 
     BDDMockito.given(comiteService.findAll(ArgumentMatchers.<String>any(), ArgumentMatchers.<Pageable>any()))
@@ -302,9 +305,11 @@ public class ComiteControllerTest extends BaseControllerTest {
 
     List<Comite> comiteList = new ArrayList<>();
     Formulario formulario1 = new Formulario(1L, "M10", "Descripcion");
-    comiteList.add(new Comite(1L, "Comite1", formulario1, Boolean.TRUE));
+    comiteList.add(new Comite(1L, "Comite1", "nombreSecretario", "nombreInvestigacion", "nombreDecreto", "articulo",
+        formulario1, Boolean.TRUE));
     Formulario formulario2 = new Formulario(1L, "M20", "Descripcion");
-    comiteList.add(new Comite(2L, "Comite2", formulario2, Boolean.TRUE));
+    comiteList.add(new Comite(2L, "Comite2", "nombreSecretario", "nombreInvestigacion", "nombreDecreto", "articulo",
+        formulario2, Boolean.TRUE));
 
     String query = "comite~Comite%";
 
@@ -334,7 +339,7 @@ public class ComiteControllerTest extends BaseControllerTest {
   }
 
   @Test
-  @WithMockUser(username = "user", authorities = { "ETI-PEV-C-INV", "ETI-PEV-ER-INV" })
+  @WithMockUser(username = "user", authorities = { "ETI-PEV-INV-C", "ETI-PEV-INV-ER" })
   public void findTipoMemoriaEmtyList() throws Exception {
     // given: El comité no tiene tipos de memoria asociados
     Long id = 3L;
@@ -353,7 +358,7 @@ public class ComiteControllerTest extends BaseControllerTest {
   }
 
   @Test
-  @WithMockUser(username = "user", authorities = { "ETI-PEV-C-INV", "ETI-PEV-ER-INV" })
+  @WithMockUser(username = "user", authorities = { "ETI-PEV-INV-C", "ETI-PEV-INV-ER" })
   public void findTipoMemoriaValid() throws Exception {
     // given: Datos existentes
     Long id = 3L;
@@ -391,7 +396,7 @@ public class ComiteControllerTest extends BaseControllerTest {
   }
 
   @Test
-  @WithMockUser(username = "user", authorities = { "ETI-PEV-C-INV", "ETI-PEV-ER-INV" })
+  @WithMockUser(username = "user", authorities = { "ETI-PEV-INV-C", "ETI-PEV-INV-ER" })
   public void findMemoriasEmtyList() throws Exception {
     // given: El comité no tiene tipos de memoria asociados
     Long id = 3L;
@@ -410,7 +415,7 @@ public class ComiteControllerTest extends BaseControllerTest {
   }
 
   @Test
-  @WithMockUser(username = "user", authorities = { "ETI-PEV-C-INV", "ETI-PEV-ER-INV" })
+  @WithMockUser(username = "user", authorities = { "ETI-PEV-INV-C", "ETI-PEV-INV-ER" })
   public void findMemoriaSValid() throws Exception {
     // given: Datos existentes
     Long id = 3L;
@@ -472,7 +477,9 @@ public class ComiteControllerTest extends BaseControllerTest {
     PeticionEvaluacion peticionEvaluacion = new PeticionEvaluacion();
     peticionEvaluacion.setId(1L);
 
-    return new Memoria(id, numReferencia, peticionEvaluacion, new Comite(1L, "CEISH", new Formulario(), Boolean.TRUE),
+    return new Memoria(id, numReferencia, peticionEvaluacion,
+        new Comite(1L, "CEI", "nombreSecretario", "nombreInvestigacion", "nombreDecreto", "articulo", new Formulario(),
+            Boolean.TRUE),
         titulo, "user-00" + id, generarMockTipoMemoria(1L, "TipoMemoria1", true), new TipoEstadoMemoria(),
         Instant.now(), Boolean.TRUE, null, version, "CodOrganoCompetente", Boolean.TRUE, null);
   }

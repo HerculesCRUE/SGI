@@ -7,7 +7,7 @@
 <mat-dialog-content>
   <form [formGroup]="formGroup">
     <!-- Tipo de documento -->
-    <div fxFill *ngIf="data.tipoEvaluacion == TIPO_EVALUACION.MEMORIA">
+    <div fxFill *ngIf="data.tipoEvaluacion == TIPO_EVALUACION.MEMORIA && data.showTipoDocumentos">
       <mat-form-field>
         <mat-label>{{'eti.memoria.documento.tipo' | translate}}</mat-label>
         <sgi-select-entity formControlName="tipoDocumento" required [options]="tiposDocumento$ | async">

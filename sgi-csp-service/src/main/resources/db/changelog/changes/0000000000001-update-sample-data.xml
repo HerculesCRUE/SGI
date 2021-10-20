@@ -1,0 +1,191 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:pro="http://www.liquibase.org/xml/ns/pro" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-3.8.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+  <!-- En el contexto_proyecto con proyecto_id=3 se uso para su id la secuencia de proyecto en vez de la de contexto_proyecto -->
+  <changeSet context="dev" author="master" id="0000000000001-contexto_proyecto">
+    <update tableName="contexto_proyecto">
+      <column name="id" valueSequenceNext="contexto_proyecto_seq" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="proyecto_id" valueNumeric="3" />
+      </whereParams>
+    </update>
+  </changeSet>
+
+  <!-- HERCULES-4968 -->
+  <changeSet context="dev" author="master" id="0000000000001-concepto_gasto">
+    <update tableName="concepto_gasto">
+      <column name="costes_indirectos" valueBoolean="false" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="nombre" value="Gastos de personal" />
+      </whereParams>
+    </update>
+    <update tableName="concepto_gasto">
+      <column name="costes_indirectos" valueBoolean="false" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="nombre" value="Contratación" />
+      </whereParams>
+    </update>
+    <update tableName="concepto_gasto">
+      <column name="costes_indirectos" valueBoolean="true" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="nombre" value="Costes indirectos" />
+      </whereParams>
+    </update>
+  </changeSet>
+
+  <changeSet context="dev" author="master" id="0000000000001-rol_proyecto_colectivo">
+    <!-- Rol Proyecto 1-->
+    <update tableName="rol_proyecto_colectivo">
+      <column name="colectivo_ref" value="3" />
+      <where>:name=:value AND :name=:value</where>
+      <whereParams>
+        <param name="rol_proyecto_id" valueNumeric="1" />
+        <param name="colectivo_ref" value="1" />
+      </whereParams>
+    </update>
+
+    <update tableName="rol_proyecto_colectivo">
+      <column name="colectivo_ref" value="4" />
+      <where>:name=:value AND :name=:value</where>
+      <whereParams>
+        <param name="rol_proyecto_id" valueNumeric="1" />
+        <param name="colectivo_ref" value="2" />
+      </whereParams>
+    </update>
+    <!-- Rol Proyecto 2-->
+    <update tableName="rol_proyecto_colectivo">
+      <column name="colectivo_ref" value="4" />
+      <where>:name=:value AND :name=:value</where>
+      <whereParams>
+        <param name="rol_proyecto_id" valueNumeric="2" />
+        <param name="colectivo_ref" value="1" />
+      </whereParams>
+    </update>
+
+    <insert tableName="rol_proyecto_colectivo">
+      <column name="id" valueSequenceNext="rol_proyecto_colectivo_seq" />
+      <column name="colectivo_ref" value="3" />
+      <column name="rol_proyecto_id" valueNumeric="2" />
+    </insert>
+    <!-- Rol Proyecto 3-->
+    <insert tableName="rol_proyecto_colectivo">
+      <column name="id" valueSequenceNext="rol_proyecto_colectivo_seq" />
+      <column name="colectivo_ref" value="3" />
+      <column name="rol_proyecto_id" valueNumeric="3" />
+    </insert>
+    <!-- Rol Proyecto 4-->
+    <insert tableName="rol_proyecto_colectivo">
+      <column name="id" valueSequenceNext="rol_proyecto_colectivo_seq" />
+      <column name="colectivo_ref" value="4" />
+      <column name="rol_proyecto_id" valueNumeric="4" />
+    </insert>
+    <!-- Rol Proyecto 5-->
+    <insert tableName="rol_proyecto_colectivo">
+      <column name="id" valueSequenceNext="rol_proyecto_colectivo_seq" />
+      <column name="colectivo_ref" value="2" />
+      <column name="rol_proyecto_id" valueNumeric="5" />
+    </insert>
+
+    <insert tableName="rol_proyecto_colectivo">
+      <column name="id" valueSequenceNext="rol_proyecto_colectivo_seq" />
+      <column name="colectivo_ref" value="3" />
+      <column name="rol_proyecto_id" valueNumeric="5" />
+    </insert>
+
+    <insert tableName="rol_proyecto_colectivo">
+      <column name="id" valueSequenceNext="rol_proyecto_colectivo_seq" />
+      <column name="colectivo_ref" value="4" />
+      <column name="rol_proyecto_id" valueNumeric="5" />
+    </insert>
+
+    <!-- Rol Proyecto 6-->
+    <insert tableName="rol_proyecto_colectivo">
+      <column name="id" valueSequenceNext="rol_proyecto_colectivo_seq" />
+      <column name="colectivo_ref" value="2" />
+      <column name="rol_proyecto_id" valueNumeric="6" />
+    </insert>
+
+    <insert tableName="rol_proyecto_colectivo">
+      <column name="id" valueSequenceNext="rol_proyecto_colectivo_seq" />
+      <column name="colectivo_ref" value="4" />
+      <column name="rol_proyecto_id" valueNumeric="6" />
+    </insert>
+    <!-- Rol Proyecto 7-->
+    <insert tableName="rol_proyecto_colectivo">
+      <column name="id" valueSequenceNext="rol_proyecto_colectivo_seq" />
+      <column name="colectivo_ref" value="1" />
+      <column name="rol_proyecto_id" valueNumeric="7" />
+    </insert>
+    <!-- Rol Proyecto 8-->
+    <insert tableName="rol_proyecto_colectivo">
+      <column name="id" valueSequenceNext="rol_proyecto_colectivo_seq" />
+      <column name="colectivo_ref" value="3" />
+      <column name="rol_proyecto_id" valueNumeric="8" />
+    </insert>
+    <!-- Rol Proyecto 9-->
+    <insert tableName="rol_proyecto_colectivo">
+      <column name="id" valueSequenceNext="rol_proyecto_colectivo_seq" />
+      <column name="colectivo_ref" value="2" />
+      <column name="rol_proyecto_id" valueNumeric="9" />
+    </insert>
+
+    <insert tableName="rol_proyecto_colectivo">
+      <column name="id" valueSequenceNext="rol_proyecto_colectivo_seq" />
+      <column name="colectivo_ref" value="3" />
+      <column name="rol_proyecto_id" valueNumeric="9" />
+    </insert>
+    <!-- Rol Proyecto 10-->
+    <insert tableName="rol_proyecto_colectivo">
+      <column name="id" valueSequenceNext="rol_proyecto_colectivo_seq" />
+      <column name="colectivo_ref" value="1" />
+      <column name="rol_proyecto_id" valueNumeric="10" />
+    </insert>
+    <!-- Rol Proyecto 11-->
+    <insert tableName="rol_proyecto_colectivo">
+      <column name="id" valueSequenceNext="rol_proyecto_colectivo_seq" />
+      <column name="colectivo_ref" value="1" />
+      <column name="rol_proyecto_id" valueNumeric="11" />
+    </insert>
+
+    <insert tableName="rol_proyecto_colectivo">
+      <column name="id" valueSequenceNext="rol_proyecto_colectivo_seq" />
+      <column name="colectivo_ref" value="2" />
+      <column name="rol_proyecto_id" valueNumeric="11" />
+    </insert>
+
+    <insert tableName="rol_proyecto_colectivo">
+      <column name="id" valueSequenceNext="rol_proyecto_colectivo_seq" />
+      <column name="colectivo_ref" value="3" />
+      <column name="rol_proyecto_id" valueNumeric="11" />
+    </insert>
+
+    <insert tableName="rol_proyecto_colectivo">
+      <column name="id" valueSequenceNext="rol_proyecto_colectivo_seq" />
+      <column name="colectivo_ref" value="4" />
+      <column name="rol_proyecto_id" valueNumeric="11" />
+    </insert>
+    <!-- Rol Proyecto 12-->
+    <insert tableName="rol_proyecto_colectivo">
+      <column name="id" valueSequenceNext="rol_proyecto_colectivo_seq" />
+      <column name="colectivo_ref" value="3" />
+      <column name="rol_proyecto_id" valueNumeric="12" />
+    </insert>
+
+    <insert tableName="rol_proyecto_colectivo">
+      <column name="id" valueSequenceNext="rol_proyecto_colectivo_seq" />
+      <column name="colectivo_ref" value="4" />
+      <column name="rol_proyecto_id" valueNumeric="12" />
+    </insert>
+    <!-- Rol Proyecto 13-->
+    <insert tableName="rol_proyecto_colectivo">
+      <column name="id" valueSequenceNext="rol_proyecto_colectivo_seq" />
+      <column name="colectivo_ref" value="3" />
+      <column name="rol_proyecto_id" valueNumeric="13" />
+    </insert>
+  </changeSet>
+
+</databaseChangeLog>

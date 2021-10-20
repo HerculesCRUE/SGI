@@ -31,17 +31,14 @@ export class ConvocatoriaConfiguracionSolicitudesFragment extends FormFragment<I
 
   protected buildFormGroup(): FormGroup {
     const form = new FormGroup({
-      tramitacionSGI: new FormControl(false, Validators.required),
+      tramitacionSGI: new FormControl(null, Validators.required),
       fasePresentacionSolicitudes: new FormControl(null),
-      formularioSolicitud: new FormControl(null),
       fechaInicioFase: new FormControl({ value: null, disabled: true }),
       fechaFinFase: new FormControl({ value: null, disabled: true }),
       importeMaximoSolicitud: new FormControl(null, Validators.maxLength(50)),
     });
     if (!this.hasEditPerm) {
       form.disable();
-    } else if (this.isConvocatoriaVinculada) {
-      form.controls.formularioSolicitud.disable();
     }
 
     this.subscriptions.push(form.controls.tramitacionSGI.valueChanges.subscribe(
@@ -74,12 +71,11 @@ export class ConvocatoriaConfiguracionSolicitudesFragment extends FormFragment<I
 
   protected buildPatch(configuracionSolicitud: IConfiguracionSolicitud): { [key: string]: any; } {
     return {
-      tramitacionSGI: configuracionSolicitud?.tramitacionSGI ?? false,
+      tramitacionSGI: configuracionSolicitud?.tramitacionSGI,
       fasePresentacionSolicitudes: configuracionSolicitud?.fasePresentacionSolicitudes ?? null,
       fechaInicioFase: configuracionSolicitud?.fasePresentacionSolicitudes?.fechaInicio ?? null,
       fechaFinFase: configuracionSolicitud?.fasePresentacionSolicitudes?.fechaFin ?? null,
-      importeMaximoSolicitud: configuracionSolicitud?.importeMaximoSolicitud ?? null,
-      formularioSolicitud: configuracionSolicitud?.formularioSolicitud ?? null
+      importeMaximoSolicitud: configuracionSolicitud?.importeMaximoSolicitud ?? null
     };
   }
 
@@ -118,7 +114,6 @@ export class ConvocatoriaConfiguracionSolicitudesFragment extends FormFragment<I
     this.configuracionSolicitud.tramitacionSGI = controls.tramitacionSGI.value ? true : false;
     this.configuracionSolicitud.fasePresentacionSolicitudes = controls.fasePresentacionSolicitudes.value;
 
-    this.configuracionSolicitud.formularioSolicitud = controls.formularioSolicitud.value;
     this.configuracionSolicitud.importeMaximoSolicitud = controls.importeMaximoSolicitud.value;
 
     return this.configuracionSolicitud;

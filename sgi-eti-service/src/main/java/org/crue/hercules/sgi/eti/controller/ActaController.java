@@ -13,6 +13,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -52,17 +53,19 @@ public class ActaController {
   /**
    * Devuelve una lista paginada y filtrada {@link ActaWithNumEvaluaciones}.
    * 
-   * @param query  filtro de búsqueda.
-   * @param paging pageable
+   * @param query          filtro de búsqueda.
+   * @param paging         pageable
+   * @param authentication Authentication
    * @return la lista de {@link ActaWithNumEvaluaciones} paginadas y/o filtradas.
    */
   @GetMapping()
-  @PreAuthorize("hasAuthorityForAnyUO('ETI-ACT-V')")
+  @PreAuthorize("hasAnyAuthorityForAnyUO('ETI-ACT-V','ETI-ACT-INV-ER', 'ETI-ACT-ER')")
   ResponseEntity<Page<ActaWithNumEvaluaciones>> findAllActaWithNumEvaluaciones(
-      @RequestParam(name = "q", required = false) String query, @RequestPageable(sort = "s") Pageable paging) {
+      @RequestParam(name = "q", required = false) String query, @RequestPageable(sort = "s") Pageable paging,
+      Authentication authentication) {
     log.debug("findAllActaWithNumEvaluaciones(String query, Pageable paging) - start");
-    Page<ActaWithNumEvaluaciones> page = service.findAllActaWithNumEvaluaciones(query, paging);
-
+    String personaRef = authentication.getName();
+    Page<ActaWithNumEvaluaciones> page = service.findAllActaWithNumEvaluaciones(query, paging, personaRef);
     if (page.isEmpty()) {
       log.debug("findAllActaWithNumEvaluaciones(String query, Pageable paging) - end");
       return new ResponseEntity<>(HttpStatus.NO_CONTENT);
@@ -110,7 +113,7 @@ public class ActaController {
    * @return {@link Acta} correspondiente al id.
    */
   @GetMapping("/{id}")
-  @PreAuthorize("hasAuthorityForAnyUO('ETI-ACT-V')")
+  @PreAuthorize("hasAnyAuthorityForAnyUO('ETI-ACT-V','ETI-ACT-INV-ER','ETI-ACT-ER')")
   Acta one(@PathVariable Long id) {
     log.debug("Acta one(Long id) - start");
     Acta returnValue = service.findById(id);
@@ -154,7 +157,7 @@ public class ActaController {
    * 
    */
   @PutMapping("/{id}/finalizar")
-  @PreAuthorize("hasAuthorityForAnyUO('ETI-ACT-FIN')")
+  @PreAuthorize("hasAnyAuthorityForAnyUO('ETI-ACT-FIN','ETI-ACT-INV-DESR','ETI-ACT-DESR')")
   void finishActa(@PathVariable Long id) {
 
     log.debug("finalizarActa(Long id) - start");

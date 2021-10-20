@@ -5,7 +5,8 @@
 
     <!-- Código -->
     <div *ngIf="fragment.isEdit()" [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md"
-      [fxFlex.gt-md]="fxFlexProperties.gtMd" [fxFlexOrder]="fxFlexProperties.order">
+      [fxFlex.gt-md]="fxFlexProperties.gtMd" [fxLayout.xs]="fxLayoutProperties.xs"
+      [fxLayout]="fxLayoutProperties.layout" [fxLayoutGap]="fxLayoutProperties.gap">
       <mat-form-field>
         <mat-label>{{'eti.convocatoria-reunion.codigo' | translate}}</mat-label>
         <input matInput formControlName="codigo" id="codigo" readonly="true" />
@@ -13,96 +14,109 @@
     </div>
 
     <!-- Comite -->
-    <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
-      [fxFlexOrder]="fxFlexProperties.order">
-      <mat-form-field class="input-form">
-        <mat-label>{{'label.eti.comite' | translate}}</mat-label>
-        <input type="text" [placeholder]="'label.eti.comite' | translate" arial-label="Number" matInput
-          formControlName="comite" [matAutocomplete]="autocompleteComite" required>
-        <mat-autocomplete #autocompleteComite="matAutocomplete" [displayWith]="getComite">
-          <mat-option *ngFor="let comite of filteredComites | async" [value]="comite">
-            {{comite.comite}}
-          </mat-option>
-        </mat-autocomplete>
-        <mat-error *ngIf="formGroup.controls.comite.errors?.required">
-          {{'error.required.entity' | translate:msgParamComiteEntity}}
-        </mat-error>
-      </mat-form-field>
-    </div>
+    <div [fxFlex.sm]="fxFlexPropertiesInline.sm" [fxFlex.md]="fxFlexPropertiesInline.md"
+      [fxFlex.gt-md]="fxFlexPropertiesInline.gtMd" [fxLayout.xs]="fxLayoutProperties.xs"
+      [fxLayout]="fxLayoutProperties.layout" [fxLayoutGap]="fxLayoutProperties.gap">
+      <div>
+        <mat-form-field class="input-form">
+          <mat-label>{{'label.eti.comite' | translate}}</mat-label>
+          <input type="text" [placeholder]="'label.eti.comite' | translate" arial-label="Number" matInput
+            formControlName="comite" [matAutocomplete]="autocompleteComite" required>
+          <mat-autocomplete #autocompleteComite="matAutocomplete" [displayWith]="getComite">
+            <mat-option *ngFor="let comite of filteredComites | async" [value]="comite">
+              {{comite.comite}}
+            </mat-option>
+          </mat-autocomplete>
+          <mat-error *ngIf="formGroup.controls.comite.errors?.required">
+            {{'error.required.entity' | translate:msgParamComiteEntity}}
+          </mat-error>
+        </mat-form-field>
+      </div>
 
-    <!-- Fecha evaluación -->
-    <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
-      [fxFlexOrder]="fxFlexProperties.order">
-      <mat-form-field>
-        <mat-label>{{'eti.convocatoria-reunion.fecha-evaluacion' | translate}}
-        </mat-label>
-        <input matInput formControlName="fechaEvaluacion" [ngxMatDatetimePicker]="pickerFechaEvaluacion"
-          [placeholder]="'eti.convocatoria-reunion.fecha-evaluacion' | translate" required>
-        <mat-datepicker-toggle matSuffix [for]="pickerFechaEvaluacion"></mat-datepicker-toggle>
-        <ngx-mat-datetime-picker #pickerFechaEvaluacion showSeconds="true" [defaultTime]="[0,0,0]">
-        </ngx-mat-datetime-picker>
-        <mat-error *ngIf="formGroup.controls.fechaEvaluacion.errors?.required">
-          {{'error.required.entity' | translate:msgParamFechaEvaluacionEntity}}
-        </mat-error>
-        <mat-error *ngIf="formGroup.controls.fechaEvaluacion.errors?.after">
-          {{'error.eti.convocatoria-reunion.fecha-limite.after' | translate}}
-        </mat-error>
-      </mat-form-field>
-    </div>
-
-    <!-- Fecha limite -->
-    <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
-      [fxFlexOrder]="fxFlexProperties.order">
-      <mat-form-field>
-        <mat-label>{{'error.eti.convocatoria-reunion.fecha-limite' | translate}}
-        </mat-label>
-        <input matInput formControlName="fechaLimite" [matDatepicker]="pickerFechaLimite"
-          [placeholder]="'error.eti.convocatoria-reunion.fecha-limite' | translate" required>
-        <mat-datepicker-toggle matSuffix [for]="pickerFechaLimite"></mat-datepicker-toggle>
-        <mat-datepicker #pickerFechaLimite>
-        </mat-datepicker>
-        <mat-error *ngIf="formGroup.controls.fechaLimite?.errors?.required">
-          {{'error.required.entity' | translate:msgParamFechaLimiteEntity}}
-        </mat-error>
-      </mat-form-field>
+      <!-- Fecha evaluación -->
+      <div>
+        <mat-form-field>
+          <mat-label>{{'eti.convocatoria-reunion.fecha-evaluacion' | translate}}
+          </mat-label>
+          <input matInput formControlName="fechaEvaluacion" [ngxMatDatetimePicker]="pickerFechaEvaluacion"
+            [placeholder]="'eti.convocatoria-reunion.fecha-evaluacion' | translate" required>
+          <mat-datepicker-toggle matSuffix [for]="pickerFechaEvaluacion"></mat-datepicker-toggle>
+          <ngx-mat-datetime-picker #pickerFechaEvaluacion showSeconds="true" [defaultTime]="[0,0,0]">
+          </ngx-mat-datetime-picker>
+          <mat-error *ngIf="formGroup.controls.fechaEvaluacion.errors?.required">
+            {{'error.required.entity' | translate:msgParamFechaEvaluacionEntity}}
+          </mat-error>
+          <mat-error *ngIf="formGroup.controls.fechaEvaluacion.errors?.after">
+            {{'error.eti.convocatoria-reunion.fecha-limite.after' | translate}}
+          </mat-error>
+        </mat-form-field>
+      </div>
+      <!-- Fecha limite -->
+      <div>
+        <mat-form-field>
+          <mat-label>{{'error.eti.convocatoria-reunion.fecha-limite' | translate}}
+          </mat-label>
+          <input matInput formControlName="fechaLimite" [matDatepicker]="pickerFechaLimite"
+            [placeholder]="'error.eti.convocatoria-reunion.fecha-limite' | translate" required>
+          <mat-datepicker-toggle matSuffix [for]="pickerFechaLimite"></mat-datepicker-toggle>
+          <mat-datepicker #pickerFechaLimite>
+          </mat-datepicker>
+          <mat-error *ngIf="formGroup.controls.fechaLimite?.errors?.required">
+            {{'error.required.entity' | translate:msgParamFechaLimiteEntity}}
+          </mat-error>
+        </mat-form-field>
+      </div>
     </div>
 
     <!-- Convocatoria-->
-    <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
-      [fxFlexOrder]="fxFlexProperties.order">
-      <mat-form-field>
-        <mat-label>{{'eti.convocatoria-reunion.tipo' | translate}}
-        </mat-label>
-        <input type="text" [placeholder]="'eti.convocatoria-reunion.tipo' | translate" arial-label="Number" matInput
-          formControlName="tipoConvocatoriaReunion" [matAutocomplete]="autocompleteTipoConvocatoriaReunion" required>
-        <mat-autocomplete #autocompleteTipoConvocatoriaReunion="matAutocomplete"
-          [displayWith]="getTipoConvocatoriaReunion">
-          <mat-option *ngFor="let tipoConvocatoriaReunion of filteredTiposConvocatoriaReunion | async"
-            [value]="tipoConvocatoriaReunion">
-            {{tipoConvocatoriaReunion.nombre}}
-          </mat-option>
-        </mat-autocomplete>
-        <mat-error *ngIf="formGroup.controls.tipoConvocatoriaReunion.errors?.required">
-          {{'error.required.entity' | translate:msgParamTipoEntity}}
-        </mat-error>
-      </mat-form-field>
-    </div>
-
-    <!-- Hora -->
-    <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
-      [fxFlexOrder]="fxFlexProperties.order">
-      <mat-form-field>
-        <mat-label>{{'eti.convocatoria-reunion.hora-inicio' | translate}}</mat-label>
-        <input matTimepicker #timepicker="matTimepicker" formControlName="horaInicio" disableDialogOpenOnClick="true"
-          strict="false" okLabel="{{ 'btn.ok' | translate }}" cancelLabel="{{ 'btn.cancel' | translate }}" required>
-        <button mat-icon-button type="button" matSuffix (click)="timepicker.showDialog()" color="primary"
-          [disabled]="formGroup.controls.horaInicio.disabled">
-          <mat-icon>access_time</mat-icon>
-        </button>
-        <mat-error *ngIf="formGroup.controls.horaInicio.errors?.required">
-          {{'error.required.entity' | translate:msgParamHoraInicioEntity}}
-        </mat-error>
-      </mat-form-field>
+    <div [fxFlex.sm]="fxFlexPropertiesInline.sm" [fxFlex.md]="fxFlexPropertiesInline.md"
+      [fxFlex.gt-md]="fxFlexPropertiesInline.gtMd" [fxLayout.xs]="fxLayoutProperties.xs"
+      [fxLayout]="fxLayoutProperties.layout" [fxLayoutGap]="fxLayoutProperties.gap">
+      <div>
+        <mat-form-field>
+          <mat-label>{{'eti.convocatoria-reunion.tipo' | translate}}
+          </mat-label>
+          <input type="text" [placeholder]="'eti.convocatoria-reunion.tipo' | translate" arial-label="Number" matInput
+            formControlName="tipoConvocatoriaReunion" [matAutocomplete]="autocompleteTipoConvocatoriaReunion" required>
+          <mat-autocomplete #autocompleteTipoConvocatoriaReunion="matAutocomplete"
+            [displayWith]="getTipoConvocatoriaReunion">
+            <mat-option *ngFor="let tipoConvocatoriaReunion of filteredTiposConvocatoriaReunion | async"
+              [value]="tipoConvocatoriaReunion">
+              {{tipoConvocatoriaReunion.nombre}}
+            </mat-option>
+          </mat-autocomplete>
+          <mat-error *ngIf="formGroup.controls.tipoConvocatoriaReunion.errors?.required">
+            {{'error.required.entity' | translate:msgParamTipoEntity}}
+          </mat-error>
+        </mat-form-field>
+      </div>
+      <!-- Hora -->
+      <div>
+        <mat-form-field>
+          <mat-label>{{'eti.convocatoria-reunion.hora-inicio' | translate}}</mat-label>
+          <input matTimepicker #timepicker="matTimepicker" formControlName="horaInicio" disableDialogOpenOnClick="true"
+            strict="false" okLabel="{{ 'btn.ok' | translate }}" cancelLabel="{{ 'btn.cancel' | translate }}" required>
+          <button mat-icon-button type="button" matSuffix (click)="timepicker.showDialog()" color="primary"
+            [disabled]="formGroup.controls.horaInicio.disabled">
+            <mat-icon>access_time</mat-icon>
+          </button>
+          <mat-error *ngIf="formGroup.controls.horaInicio.errors?.required">
+            {{'error.required.entity' | translate:msgParamHoraInicioEntity}}
+          </mat-error>
+        </mat-form-field>
+      </div>
+      <div>
+        <mat-form-field>
+          <mat-label>{{'eti.convocatoria-reunion.hora-inicio-segunda' | translate}}</mat-label>
+          <input matTimepicker #timepickerSegunda="matTimepicker" formControlName="horaInicioSegunda"
+            disableDialogOpenOnClick="true" strict="false" okLabel="{{ 'btn.ok' | translate }}"
+            cancelLabel="{{ 'btn.cancel' | translate }}">
+          <button mat-icon-button type="button" matSuffix (click)="timepickerSegunda.showDialog()" color="primary"
+            [disabled]="formGroup.controls.horaInicioSegunda.disabled">
+            <mat-icon>access_time</mat-icon>
+          </button>
+        </mat-form-field>
+      </div>
     </div>
 
     <!-- Lugar -->

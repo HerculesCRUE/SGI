@@ -1,6 +1,8 @@
 package org.crue.hercules.sgi.framework.http;
 
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -8,6 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.crue.hercules.sgi.framework.spring.context.support.ApplicationContextSupport;
 import org.crue.hercules.sgi.framework.web.config.OAuth2ClientConfiguration;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -69,6 +72,7 @@ public class HttpEntityBuilder<T> {
     headers = (headers != null ? headers : new HttpHeaders());
     headers.setContentType(MediaType.APPLICATION_JSON);
     headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
+    headers.setAcceptLanguage(Arrays.asList(new Locale.LanguageRange(LocaleContextHolder.getLocale().toLanguageTag())));
 
     if (useCurrentUserAuthorization) {
       // Use Authorization from caller

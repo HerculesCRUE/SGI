@@ -46,6 +46,10 @@ import { ProyectoListadoComponent } from './proyecto-listado/proyecto-listado.co
 import { ProyectoRoutingModule } from './proyecto-routing.module';
 import { ProyectoCalendarioJustificacionComponent } from './proyecto-formulario/proyecto-calendario-justificacion/proyecto-calendario-justificacion.component';
 import { ProyectoPeriodoJustificacionModalComponent } from './modals/proyecto-periodo-justificacion-modal/proyecto-periodo-justificacion-modal/proyecto-periodo-justificacion-modal.component';
+import { ProyectoConsultaPresupuestoComponent } from './proyecto-formulario/proyecto-consulta-presupuesto/proyecto-consulta-presupuesto.component';
+import { ProyectoRelacionesComponent } from './proyecto-formulario/proyecto-relaciones/proyecto-relaciones.component';
+import { ProyectoRelacionModalComponent } from './modals/proyecto-relacion-modal/proyecto-relacion-modal.component';
+import { PiiSharedModule } from '../../pii/shared/pii-shared.module';
 
 @NgModule({
   declarations: [
@@ -83,7 +87,10 @@ import { ProyectoPeriodoJustificacionModalComponent } from './modals/proyecto-pe
     ProyectoResponsableEconomicoModalComponent,
     ProyectoAgrupacionesGastoComponent,
     ProyectoCalendarioJustificacionComponent,
-    ProyectoPeriodoJustificacionModalComponent
+    ProyectoPeriodoJustificacionModalComponent,
+    ProyectoConsultaPresupuestoComponent,
+    ProyectoRelacionesComponent,
+    ProyectoRelacionModalComponent,
   ],
   imports: [
     SharedModule,
@@ -97,7 +104,8 @@ import { ProyectoPeriodoJustificacionModalComponent } from './modals/proyecto-pe
     CspSharedModule,
     SgoSharedModule,
     SgpSharedModule,
-    SgempSharedModule
+    SgempSharedModule,
+    PiiSharedModule
   ],
   providers: [
     ProyectoDataResolver,

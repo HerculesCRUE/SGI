@@ -1,6 +1,7 @@
 const fs = require('fs');
 const { DateTime } = require('luxon');
 const handlebars = require('handlebars');
+const version = require('./package.json').version;
 
 const inFile = 'src/assets/config/config.json.tmpl';
 const outFile = 'src/assets/config/config.json';
@@ -13,6 +14,7 @@ try {
   });
 
   const result = template({
+    "appVersion": version,
     "buildTimeStamp": timeStamp
   });
 

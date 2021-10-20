@@ -30,7 +30,7 @@ public class SolicitudProteccionOutput implements Serializable {
   private Instant fechaFinPriorPresFasNacRec;
   private Instant fechaPublicacion;
   private Instant fechaConcesion;
-  private Instant fechaCaducid;
+  private Instant fechaCaducidad;
   private ViaProteccion viaProteccion;
   private String numeroSolicitud;
   private String numeroPublicacion;
@@ -72,6 +72,7 @@ public class SolicitudProteccionOutput implements Serializable {
     Long id;
     String nombre;
     TipoPropiedad tipoPropiedad;
+    Boolean paisEspecifico;
   }
 
   @Data

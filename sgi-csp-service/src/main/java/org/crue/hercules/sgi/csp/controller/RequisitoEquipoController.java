@@ -44,7 +44,7 @@ import lombok.extern.slf4j.Slf4j;
 public class RequisitoEquipoController {
   public static final String MAPPING = "/convocatoria-requisitoequipos";
   public static final String PATH_NIVELES = "/{id}/niveles";
-  public static final String PATH_CATEGORIAS = "/{id}/categorias";
+  public static final String PATH_CATEGORIAS_PROFESIONALES_REQUISITOS_EQUIPO = "/{id}/categoriasprofesionalesrequisitosequipo";
 
   private ModelMapper modelMapper;
 
@@ -152,7 +152,7 @@ public class RequisitoEquipoController {
    * @return RequisitoEquipoCategoriaProfesional
    *         {@link RequisitoEquipoCategoriaProfesional} correspondiente al id
    */
-  @GetMapping(PATH_CATEGORIAS)
+  @GetMapping(PATH_CATEGORIAS_PROFESIONALES_REQUISITOS_EQUIPO)
   @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-CON-E', 'CSP-CON-V', 'CSP-CON-INV-V')")
   public List<RequisitoEquipoCategoriaProfesionalOutput> findCategoriasProfesionales(@PathVariable Long id) {
     log.debug("findCategoriasProfesionales(@PathVariable Long id) - start");
@@ -202,7 +202,7 @@ public class RequisitoEquipoController {
    * @return la nueva lista de {@link RequisitoEquipoCategoriaProfesional}
    *         asociadas al {@link RequisitoEquipo}
    */
-  @PatchMapping(PATH_CATEGORIAS)
+  @PatchMapping(PATH_CATEGORIAS_PROFESIONALES_REQUISITOS_EQUIPO)
   @PreAuthorize("hasAuthorityForAnyUO('CSP-CON-E')")
   public ResponseEntity<List<RequisitoEquipoCategoriaProfesionalOutput>> updateCategoriasProfesionales(
       @PathVariable Long id,

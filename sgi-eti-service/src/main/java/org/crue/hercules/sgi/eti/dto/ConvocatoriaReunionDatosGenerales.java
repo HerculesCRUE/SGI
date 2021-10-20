@@ -54,6 +54,12 @@ public class ConvocatoriaReunionDatosGenerales implements Serializable {
   /** Minuto Inicio. */
   private Integer minutoInicio;
 
+  /** Hora Inicio Segunda. */
+  private Integer horaInicioSegunda;
+
+  /** Minuto Inicio Segunda. */
+  private Integer minutoInicioSegunda;
+
   /** Fecha Envío. */
   private Instant fechaEnvio;
 
@@ -78,6 +84,8 @@ public class ConvocatoriaReunionDatosGenerales implements Serializable {
     this.tipoConvocatoriaReunion = convocatoriaReunion.getTipoConvocatoriaReunion();
     this.horaInicio = convocatoriaReunion.getHoraInicio();
     this.minutoInicio = convocatoriaReunion.getMinutoInicio();
+    this.horaInicioSegunda = convocatoriaReunion.getHoraInicioSegunda();
+    this.minutoInicioSegunda = convocatoriaReunion.getMinutoInicioSegunda();
     this.fechaEnvio = convocatoriaReunion.getFechaEnvio();
     this.activo = convocatoriaReunion.getActivo();
     this.numEvaluaciones = numEvaluaciones.intValue();

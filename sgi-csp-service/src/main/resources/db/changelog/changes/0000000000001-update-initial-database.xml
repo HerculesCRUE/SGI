@@ -1,0 +1,74 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:pro="http://www.liquibase.org/xml/ns/pro" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-4.1.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.1.xsd">
+
+  <!-- Nueva entidad: solicitud_proyecto_entidad -->
+  <changeSet author="user (generated)" id="0000000000001-1">
+    <createSequence incrementBy="1" sequenceName="solicitud_proyecto_entidad_seq" startValue="1" />
+  </changeSet>
+  <changeSet author="user (generated)" id="0000000000001-2">
+    <createTable tableName="solicitud_proyecto_entidad">
+      <column name="id" type="BIGINT">
+        <constraints nullable="false" primaryKey="true" primaryKeyName="solicitud_proyecto_entidadPK" />
+      </column>
+      <column name="created_by" type="VARCHAR(255)" />
+      <column name="creation_date" type="TIMESTAMP" />
+      <column name="last_modified_by" type="VARCHAR(255)" />
+      <column name="last_modified_date" type="TIMESTAMP" />
+      <column name="solicitud_proyecto_id" type="BIGINT">
+        <constraints nullable="false" />
+      </column>
+      <column name="convocatoria_entidad_financiadora_id" type="BIGINT" />
+      <column name="convocatoria_entidad_gestora_id" type="BIGINT" />
+      <column name="solicitud_proyecto_entidad_financiadora_ajena_id" type="BIGINT" />
+    </createTable>
+  </changeSet>
+
+  <changeSet author="user (generated)" id="0000000000001-3">
+    <addForeignKeyConstraint baseColumnNames="convocatoria_entidad_financiadora_id" baseTableName="solicitud_proyecto_entidad" constraintName="FK_SOLICITUDPROYECTOENTIDAD_CONVOCATORIAENTIDADFINANCIADORA" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableName="convocatoria_entidad_financiadora" validate="true" />
+  </changeSet>
+  <changeSet author="user (generated)" id="0000000000001-4">
+    <addForeignKeyConstraint baseColumnNames="convocatoria_entidad_gestora_id" baseTableName="solicitud_proyecto_entidad" constraintName="FK_SOLICITUDPROYECTOENTIDAD_CONVOCATORIAENTIDADGESTORA" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableName="convocatoria_entidad_gestora" validate="true" />
+  </changeSet>
+  <changeSet author="user (generated)" id="0000000000001-5">
+    <addForeignKeyConstraint baseColumnNames="solicitud_proyecto_entidad_financiadora_ajena_id" baseTableName="solicitud_proyecto_entidad" constraintName="FK_SOLICITUDPROYECTOENTIDAD_ENTIDADFINANCIADORAAJENA" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableName="solicitud_proyecto_entidad_financiadora_ajena" validate="true" />
+  </changeSet>
+  <changeSet author="user (generated)" id="0000000000001-6">
+    <addForeignKeyConstraint baseColumnNames="solicitud_proyecto_id" baseTableName="solicitud_proyecto_entidad" constraintName="FK_SOLICITUDPROYECTOENTIDAD_SOLICITUDPROYECTO" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableName="solicitud_proyecto" validate="true" />
+  </changeSet>
+
+  <!-- Nueva columna solicitud_proyecto_entidad_id en solicitud_proyecto_presupuesto -->
+  <changeSet author="user (generated)" id="0000000000001-7">
+    <addColumn tableName="solicitud_proyecto_presupuesto">
+      <column name="solicitud_proyecto_entidad_id" type="bigint" />
+    </addColumn>
+  </changeSet>
+  <changeSet author="user (generated)" id="0000000000001-8">
+    <addForeignKeyConstraint baseColumnNames="solicitud_proyecto_entidad_id" baseTableName="solicitud_proyecto_presupuesto" constraintName="FK_SOLICITUDPROYECTOPRESUPUESTO_SOLICITUDPROYECTOENTIDAD" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableName="solicitud_proyecto_entidad" validate="true" />
+  </changeSet>
+
+  <!-- Elimimnación de restricción de unicidad de columnas solicitud_proyecto_id, entidad_ref en solicitud_proyecto_entidad_financiadora_ajena -->
+  <changeSet author="user (generated)" id="0000000000001-9">
+    <dropUniqueConstraint constraintName="UK_SOLICITUDPROYECTOENTIDADFINANCIADORAAJENA_SOLICITUDPROYECTO_ENTIDAD" tableName="solicitud_proyecto_entidad_financiadora_ajena" />
+  </changeSet>
+
+  <!-- Eliminación de restricción de unicidad de columnas proyecto_id, entidad_ref, ajena en proyecto_entidad_financiadora -->
+  <changeSet author="user (generated)" id="0000000000001-10">
+    <dropUniqueConstraint constraintName="UK_PROYECTOENTIDADFINANCIADORA_PROYECTO_ENTIDAD_AJENA" tableName="proyecto_entidad_financiadora" />
+  </changeSet>
+
+  <!-- valores por defecto boolean de proyecto_anualidad -->
+  <changeSet author="user (generated)" id="0000000000001-11">
+    <addDefaultValue columnDataType="boolean" columnName="enviado_sge" defaultValueBoolean="false" tableName="proyecto_anualidad" />
+  </changeSet>
+
+  <changeSet author="user (generated)" id="0000000000001-12">
+    <addDefaultValue columnDataType="boolean" columnName="presupuestar" defaultValueBoolean="false" tableName="proyecto_anualidad" />
+  </changeSet>
+
+  <changeSet author="user (generated)" id="0000000000001-13">
+    <addColumn tableName="convocatoria">
+      <column name="formulario_solicitud" type="varchar(50)" />
+    </addColumn>
+  </changeSet>
+
+</databaseChangeLog>

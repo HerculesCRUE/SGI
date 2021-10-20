@@ -147,9 +147,6 @@ export class ProyectoEntidadesFinanciadorasComponent extends FragmentComponent i
         ? (wrapper == null ? this.msgCrear : this.modalTitle)
         : (wrapper == null ? this.msgCrearAjena : this.modalTitleAjena),
       entidad: wrapper ? wrapper.value : {} as IEntidadFinanciadora,
-      selectedEmpresas: targetPropias
-        ? this.dataSourcePropias.data.map(entidad => entidad.value.empresa)
-        : this.dataSourceAjenas.data.map(entidad => entidad.value.empresa),
       readonly: this.formPart.readonly
     };
     const config = {

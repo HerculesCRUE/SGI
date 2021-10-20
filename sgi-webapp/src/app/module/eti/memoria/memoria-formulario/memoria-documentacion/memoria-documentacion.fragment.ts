@@ -5,7 +5,7 @@ import { DocumentoService } from '@core/services/sgdoc/documento.service';
 import { StatusWrapper } from '@core/utils/status-wrapper';
 import { SgiRestListResult } from '@sgi/framework/http';
 import { BehaviorSubject, from, merge, Observable, of } from 'rxjs';
-import { endWith, map, mergeMap, switchMap, takeLast, tap } from 'rxjs/operators';
+import { endWith, map, mergeMap, switchMap, takeLast } from 'rxjs/operators';
 
 export enum TIPO_DOCUMENTACION {
   INICIAL = 0,
@@ -70,6 +70,7 @@ export class MemoriaDocumentacionFragment extends Fragment {
   }
 
   saveOrUpdate(): Observable<void> {
+    this.setChanges(false);
     return merge(
       this.createDocumentacion(TIPO_DOCUMENTACION.INICIAL),
       this.deleteDocumentacion(TIPO_DOCUMENTACION.INICIAL),
@@ -80,8 +81,7 @@ export class MemoriaDocumentacionFragment extends Fragment {
       this.createDocumentacion(TIPO_DOCUMENTACION.RETROSPECTIVA),
       this.deleteDocumentacion(TIPO_DOCUMENTACION.RETROSPECTIVA)
     ).pipe(
-      takeLast(1),
-      tap(() => this.setChanges(false))
+      takeLast(1)
     );
   }
 
@@ -140,7 +140,13 @@ export class MemoriaDocumentacionFragment extends Fragment {
       mergeMap((wrappedDocumentacion) => {
         return this.getCreateService(tipoDocumentacion, wrappedDocumentacion.value).pipe(
           map((savedDocumentacion) => {
-            const index = data$.value.findIndex((currentComentario) => currentComentario === wrappedDocumentacion);
+            const index = data$.value.findIndex((currentDocumentacion) => currentDocumentacion === wrappedDocumentacion);
+            data$.value.map((currentDocumentacion) => {
+              if (currentDocumentacion === wrappedDocumentacion) {
+                currentDocumentacion.setEdited();
+                currentDocumentacion.value.id = savedDocumentacion.id;
+              }
+            });
             this.documentacionesMemoria$[index] = new StatusWrapper<IDocumentacionMemoria>(savedDocumentacion);
           })
         );

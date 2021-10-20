@@ -5,12 +5,13 @@ import { ActaService } from '@core/services/eti/acta.service';
 import { TimeValidator } from '@core/validators/time-validator';
 import { EMPTY, merge, Observable, of } from 'rxjs';
 import { catchError, map, switchMap } from 'rxjs/operators';
+import { Rol } from '../../acta.action.service';
 
 export class ActaDatosGeneralesFragment extends FormFragment<IActa> {
 
   private acta: IActa;
 
-  constructor(private fb: FormBuilder, key: number, private service: ActaService) {
+  constructor(private fb: FormBuilder, key: number, private rol: Rol, private service: ActaService) {
     super(key);
     this.acta = {} as IActa;
     this.acta.activo = true;
@@ -48,6 +49,10 @@ export class ActaDatosGeneralesFragment extends FormFragment<IActa> {
         }
       )
     );
+
+    if (this.rol === Rol.EVALUADOR) {
+      fb.disable();
+    }
 
     return fb;
   }

@@ -14,6 +14,10 @@ export interface IConvocatoriaReunionBackend {
   horaInicio: number;
   /** Minuto inicio */
   minutoInicio: number;
+  /** Hora inicio Segunda */
+  horaInicioSegunda: number;
+  /** Minuto inicio Segunda */
+  minutoInicioSegunda: number;
   /** Fecha Limite */
   fechaLimite: string;
   /** Lugar */

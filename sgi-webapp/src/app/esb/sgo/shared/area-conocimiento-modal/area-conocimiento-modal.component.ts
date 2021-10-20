@@ -153,14 +153,15 @@ export class AreaConocimientoModalComponent
   }
 
   protected getDatosForm(): AreaConocimientoListado[] {
-    const selectedAreasConocimientoListado = this.selectedAreasConocimiento.map(areaConocimiento => {
-      const areasConocimientoListado: AreaConocimientoListado = {
-        niveles: [areaConocimiento],
-        nivelesTexto: undefined,
-        nivelSeleccionado: areaConocimiento
-      };
-      return this.fillAreaConocimientoListado(areasConocimientoListado);
-    });
+    const selectedAreasConocimientoListado = this.selectedAreasConocimiento
+      .map(areaConocimiento => {
+        const areasConocimientoListado: AreaConocimientoListado = {
+          niveles: [areaConocimiento],
+          nivelesTexto: undefined,
+          nivelSeleccionado: areaConocimiento
+        };
+        return this.fillAreaConocimientoListado(areasConocimientoListado);
+      });
     return selectedAreasConocimientoListado;
   }
 
@@ -248,11 +249,11 @@ export class AreaConocimientoModalComponent
   private publishNodes(rootNodes?: NodeAreaConocimiento[], recreateTree = false): void {
     let nodes = rootNodes ? rootNodes : this.areasConocimientoTree$.value;
     nodes = sortByName(nodes);
+    this.refreshTree(nodes, recreateTree);
+    this.areasConocimientoTree$.next(nodes);
     this.data.selectedAreasConocimiento?.forEach(areaSeleccionada => {
       this.treeControl.dataNodes.find(node => node.areaConocimiento.id === areaSeleccionada.id)?.setCheckedAndDisabled();
     });
-    this.refreshTree(nodes, recreateTree);
-    this.areasConocimientoTree$.next(nodes);
   }
 
   /**

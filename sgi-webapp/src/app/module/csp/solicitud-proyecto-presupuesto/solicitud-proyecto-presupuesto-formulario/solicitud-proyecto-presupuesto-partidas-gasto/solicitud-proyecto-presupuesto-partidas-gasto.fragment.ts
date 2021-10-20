@@ -1,7 +1,8 @@
+import { ISolicitudProyectoEntidad } from '@core/models/csp/solicitud-proyecto-entidad';
 import { ISolicitudProyectoPresupuesto } from '@core/models/csp/solicitud-proyecto-presupuesto';
 import { ISolicitudProyectoPresupuestoTotalConceptoGasto } from '@core/models/csp/solicitud-proyecto-presupuesto-total-concepto-gasto';
-import { IEmpresa } from '@core/models/sgemp/empresa';
 import { Fragment } from '@core/services/action-service';
+import { SolicitudProyectoEntidadService } from '@core/services/csp/solicitud-proyecto-entidad/solicitud-proyecto-entidad.service';
 import { SolicitudProyectoPresupuestoService } from '@core/services/csp/solicitud-proyecto-presupuesto.service';
 import { SolicitudService } from '@core/services/csp/solicitud.service';
 import { StatusWrapper } from '@core/utils/status-wrapper';
@@ -26,10 +27,10 @@ export class SolicitudProyectoPresupuestoPartidasGastoFragment extends Fragment 
 
   constructor(
     solicitudId: number,
-    private empresa: IEmpresa,
-    private readonly ajena: boolean,
+    private solicitudProyectoEntidadId: number,
     private solicitudService: SolicitudService,
     private solicitudProyectoPresupuestoService: SolicitudProyectoPresupuestoService,
+    private solicitudProyectoEntidadService: SolicitudProyectoEntidadService,
     public readonly: boolean
   ) {
     super(solicitudId);
@@ -47,10 +48,8 @@ export class SolicitudProyectoPresupuestoPartidasGastoFragment extends Fragment 
           switchMap((solicitudProyectoPresupuestoTotalesConceptoGasto) => {
             this.solicitudProyectoPresupuestoTotalesConceptoGasto = solicitudProyectoPresupuestoTotalesConceptoGasto;
 
-            const observable$ = !this.ajena ?
-              this.solicitudService.findAllSolicitudProyectoPresupuestoEntidadConvocatoria(key, this.empresa.id) :
-              this.solicitudService.findAllSolicitudProyectoPresupuestoEntidadAjena(key, this.empresa.id);
-            return observable$
+            return this.solicitudProyectoEntidadService
+              .findAllSolicitudProyectoPresupuestoEntidadConvocatoria(this.solicitudProyectoEntidadId)
               .pipe(
                 map((result) => result.items),
                 switchMap((solicitudProyectoPresupuestos) =>
@@ -59,8 +58,6 @@ export class SolicitudProyectoPresupuestoPartidasGastoFragment extends Fragment 
                       map(() => {
                         return solicitudProyectoPresupuestos
                           .map((element, index) => {
-                            element.empresa = this.empresa;
-
                             return {
                               partidaGasto: new StatusWrapper<ISolicitudProyectoPresupuesto>(element),
                               importeSolicitadoPrevio: element.importeSolicitado,
@@ -68,6 +65,7 @@ export class SolicitudProyectoPresupuestoPartidasGastoFragment extends Fragment 
                                 .find(concepto => concepto.conceptoGasto.id === element.conceptoGasto.id)?.importeTotalSolicitado,
                               importeTotalPresupuestadoConceptoGasto: solicitudProyectoPresupuestoTotalesConceptoGasto
                                 .find(concepto => concepto.conceptoGasto.id === element.conceptoGasto.id)?.importeTotalPresupuestado,
+                              importePresupuestadoPrevio: element.importePresupuestado,
                               index
                             } as SolicitudProyectoPresupuestoListado;
                           });
@@ -135,8 +133,7 @@ export class SolicitudProyectoPresupuestoPartidasGastoFragment extends Fragment 
   }
 
   public addPartidaGasto(partidaGasto: ISolicitudProyectoPresupuesto) {
-    partidaGasto.empresa = this.empresa;
-    partidaGasto.financiacionAjena = this.ajena;
+    partidaGasto.solicitudProyectoEntidad = { id: this.solicitudProyectoEntidadId } as ISolicitudProyectoEntidad;
 
     const wrapped = new StatusWrapper<ISolicitudProyectoPresupuesto>(partidaGasto);
     wrapped.setCreated();
@@ -209,7 +206,8 @@ export class SolicitudProyectoPresupuestoPartidasGastoFragment extends Fragment 
       this.partidasGastos$.value[index].partidaGasto = solicitudProyectoPresupuestoListado.partidaGasto;
       this.partidasGastos$.value[index].importeSolicitadoPrevio = solicitudProyectoPresupuestoListado.partidaGasto.value.importeSolicitado;
       solicitudProyectoPresupuestoTotalesConceptoGasto.importeTotalSolicitado = importeTotalSolicitadoConceptoGasto;
-      this.partidasGastos$.value[index].importePresupuestadoPrevio = solicitudProyectoPresupuestoListado.partidaGasto.value.importePresupuestado;
+      this.partidasGastos$.value[index].importePresupuestadoPrevio =
+        solicitudProyectoPresupuestoListado.partidaGasto.value.importePresupuestado;
       solicitudProyectoPresupuestoTotalesConceptoGasto.importeTotalPresupuestado = importeTotalPresupuestadoConceptoGasto;
       this.setChanges(true);
 

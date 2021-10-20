@@ -11,13 +11,7 @@
       [fxLayoutGap]="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
       <mat-form-field>
         <mat-label>{{'csp.solicitud-hito.tipo' | translate}}</mat-label>
-        <input matInput formControlName="tipoHito" type="text" placeholder="{{'csp.solicitud-hito.tipo' | translate}}"
-          required [matAutocomplete]="auto">
-        <mat-autocomplete #auto="matAutocomplete" [displayWith]="getTipoHito">
-          <mat-option *ngFor="let modeloTipoHito of modeloTiposHito$ | async" [value]="modeloTipoHito.tipoHito">
-            {{modeloTipoHito.tipoHito.nombre}}
-          </mat-option>
-        </mat-autocomplete>
+        <sgi-select-entity formControlName="tipoHito" [options]="tiposHito$ | async" required></sgi-select-entity>
         <mat-error *ngIf="formGroup.controls.tipoHito.errors?.required">
           {{'error.required.entity' | translate:msgParamTipoEntity}}
         </mat-error>

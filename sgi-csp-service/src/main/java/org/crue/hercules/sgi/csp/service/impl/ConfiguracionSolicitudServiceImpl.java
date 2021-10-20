@@ -102,7 +102,6 @@ public class ConfiguracionSolicitudServiceImpl implements ConfiguracionSolicitud
       data.setTramitacionSGI(configuracionSolicitud.getTramitacionSGI());
       data.setFasePresentacionSolicitudes(configuracionSolicitud.getFasePresentacionSolicitudes());
       data.setImporteMaximoSolicitud(configuracionSolicitud.getImporteMaximoSolicitud());
-      data.setFormularioSolicitud(configuracionSolicitud.getFormularioSolicitud());
 
       ConfiguracionSolicitud returnValue = repository.save(configuracionSolicitud);
 
@@ -148,8 +147,6 @@ public class ConfiguracionSolicitudServiceImpl implements ConfiguracionSolicitud
     if (convocatoria.getEstado() == Convocatoria.Estado.REGISTRADA) {
       Assert.notNull(datosConfiguracionSolicitud.getTramitacionSGI(),
           "Habilitar presentacion SGI no puede ser null para crear ConfiguracionSolicitud cuando la convocatoria está registrada");
-      Assert.notNull(datosConfiguracionSolicitud.getFormularioSolicitud(),
-          "Tipo formulario no puede ser null para crear ConfiguracionSolicitud cuando la convocatoria está registrada");
     }
 
     Assert.isTrue(

@@ -3,17 +3,14 @@ import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { FormFragmentComponent } from '@core/component/fragment.component';
 import { TipoPropiedad } from '@core/enums/tipo-propiedad';
 import { MSG_PARAMS } from '@core/i18n';
-import { ISolicitudProteccion } from '@core/models/pii/solicitud-proteccion';
-import { FxFlexProperties } from '@core/models/shared/flexLayout/fx-flex-properties';
-import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-properties';
-import { SnackBarService } from '@core/services/snack-bar.service';
+import { Estado, ESTADO_MAP, ISolicitudProteccion } from '@core/models/pii/solicitud-proteccion';
+import { ITipoCaducidad } from '@core/models/pii/tipo-caducidad';
+import { FormGroupUtil } from '@core/utils/form-group-util';
 import { TranslateService } from '@ngx-translate/core';
-import { NGXLogger } from 'ngx-logger';
-import { Observable, Subscription } from 'rxjs';
+import { Subscription } from 'rxjs';
 import { SolicitudProteccionActionService } from '../../solicitud-proteccion.action.service';
 import { SolicitudProteccionDatosGeneralesFragment } from './solicitud-proteccion-datos-generales.fragment';
 
-const MSG_ERROR_INIT = marker('error.load');
 const SOLICITUD_PROTECCION_TITULO_KEY = marker('pii.solicitud-proteccion.titulo');
 const SOLICITUD_PROTECCION_VIA_PROTECCION_KEY = marker('pii.solicitud-proteccion.via-proteccion');
 const SOLICITUD_PROTECCION_PAIS_KEY = marker('pii.solicitud-proteccion.pais');
@@ -21,9 +18,16 @@ const SOLICITUD_PROTECCION_FECHA_PRIORIDAD_KEY = marker('pii.solicitud-proteccio
 const SOLICITUD_PROTECCION_FECHA_FIN_PRIORIDAD_KEY = marker('pii.solicitud-proteccion.fecha-fin-prioridad-form');
 const SOLICITUD_PROTECCION_FECHA_FIN_PRIORIDAD_PCT_KEY = marker('pii.solicitud-proteccion.fecha-fin-prioridad-pct');
 const SOLICITUD_PROTECCION_NUMERO_SOLICITUD_KEY = marker('pii.solicitud-proteccion.numero-solicitud-form');
+const SOLICITUD_PROTECCION_NUMERO_PUBLICACION_KEY = marker('pii.solicitud-proteccion.numero-publicacion-form');
+const SOLICITUD_PROTECCION_FECHA_PUBLICACION_KEY = marker('pii.solicitud-proteccion.fecha-publicacion-form');
+const SOLICITUD_PROTECCION_NUMERO_CONCESION_KEY = marker('pii.solicitud-proteccion.numero-concesion-form');
+const SOLICITUD_PROTECCION_FECHA_CONCESION_KEY = marker('pii.solicitud-proteccion.fecha-concesion-form');
+const SOLICITUD_PROTECCION_FECHA_CADUCID_KEY = marker('pii.solicitud-proteccion.fecha-caducidad-form');
+const SOLICITUD_PROTECCION_TIPO_CADUCIDAD_KEY = marker('pii.solicitud-proteccion.tipo-caducidad-form');
 const SOLICITUD_PROTECCION_COMENTARIOS_KEY = marker('pii.solicitud-proteccion.comentarios');
 const SOLICITUD_PROTECCION_NUMERO_REGISTRO_KEY = marker('pii.solicitud-proteccion.numero-registro-form');
 const SOLICITUD_PROTECCION_FECHA_SOLICITUD_KEY = marker('pii.solicitud-proteccion.fecha-solicitud');
+const SOLICITUD_PROTECCION_ESTADO_KEY = marker('pii.solicitud-proteccion.estado');
 
 @Component({
   selector: 'sgi-solicitud-proteccion-datos-generales',
@@ -33,13 +37,10 @@ const SOLICITUD_PROTECCION_FECHA_SOLICITUD_KEY = marker('pii.solicitud-proteccio
 export class SolicitudProteccionDatosGeneralesComponent extends FormFragmentComponent<ISolicitudProteccion> implements OnInit, OnDestroy {
 
   private subscriptions: Subscription[] = [];
+  FormGroupUtil = FormGroupUtil;
+  Estado = Estado;
 
   formPart: SolicitudProteccionDatosGeneralesFragment;
-  fxFlexPropertiesInline: FxFlexProperties;
-  fxFlexProperties33: FxFlexProperties;
-  fxFlexProperties66: FxFlexProperties;
-  fxFlexProperties: FxFlexProperties;
-  fxLayoutProperties: FxLayoutProperties;
 
   msgParamTituloEntity = {};
   msgParamPaisEntity = {};
@@ -48,12 +49,23 @@ export class SolicitudProteccionDatosGeneralesComponent extends FormFragmentComp
   msgParamFechaFinPrioridadEntity = {};
   msgParamFechaFinPrioridadPCTEntity = {};
   msgParamNumeroSolicitudEntity = {};
+  msgParamNumeroPublicacionEntity = {};
+  msgParamFechaPublicacionEntity = {};
+  msgParamNumeroConcesionEntity = {};
+  msgParamFechaConcesionEntity = {};
+  msgParamEstadoEntity = {};
+  msgParamFechaCaducidEntity = {};
+  msgParamTipoCaducidadEntity = {};
   msgParamComentariosEntity = {};
   msgParamNumeroRegistroEntity = {};
   msgParamFechaSolicitudEntity = {};
 
   get MSG_PARAMS() {
     return MSG_PARAMS;
+  }
+
+  get ESTADO_MAP() {
+    return ESTADO_MAP;
   }
 
   get suitableMsgParamEntityFechaPrioridad() {
@@ -63,14 +75,11 @@ export class SolicitudProteccionDatosGeneralesComponent extends FormFragmentComp
   }
 
   constructor(
-    private readonly logger: NGXLogger,
     protected actionService: SolicitudProteccionActionService,
-    private snackBarService: SnackBarService,
     private readonly translate: TranslateService
   ) {
     super(actionService.FRAGMENT.DATOS_GENERALES, actionService);
     this.formPart = this.fragment as SolicitudProteccionDatosGeneralesFragment;
-    this.initFlexProperties();
   }
 
   ngOnDestroy(): void {
@@ -82,29 +91,8 @@ export class SolicitudProteccionDatosGeneralesComponent extends FormFragmentComp
     this.setupI18N();
   }
 
-  private initFlexProperties(): void {
-    this.fxFlexProperties = new FxFlexProperties();
-    this.fxFlexProperties.sm = '0 1 calc(100%-10px)';
-    this.fxFlexProperties.md = '0 1 calc(100%-10px)';
-    this.fxFlexProperties.gtMd = '0 1 calc(100%-10px)';
-    this.fxFlexProperties.order = '2';
-
-    this.fxLayoutProperties = new FxLayoutProperties();
-    this.fxLayoutProperties.gap = '20px';
-    this.fxLayoutProperties.layout = 'row';
-    this.fxLayoutProperties.xs = 'column';
-
-    this.fxFlexProperties33 = new FxFlexProperties();
-    this.fxFlexProperties33.sm = '0 1 calc(33%-10px)';
-    this.fxFlexProperties33.md = '0 1 calc(33%-10px)';
-    this.fxFlexProperties33.gtMd = '0 1 calc(33%-10px)';
-    this.fxFlexProperties33.order = '2';
-
-    this.fxFlexProperties66 = new FxFlexProperties();
-    this.fxFlexProperties66.sm = '0 1 calc(66%-10px)';
-    this.fxFlexProperties66.md = '0 1 calc(66%-10px)';
-    this.fxFlexProperties66.gtMd = '0 1 calc(66%-10px)';
-    this.fxFlexProperties66.order = '1';
+  public displayTextTipoCaducidad(tipoCaducidad: ITipoCaducidad) {
+    return tipoCaducidad?.descripcion ?? '';
   }
 
   private setupI18N(): void {
@@ -148,6 +136,48 @@ export class SolicitudProteccionDatosGeneralesComponent extends FormFragmentComp
       MSG_PARAMS.CARDINALIRY.SINGULAR
     ).subscribe((value) =>
       this.msgParamNumeroSolicitudEntity = { entity: value, ...MSG_PARAMS.GENDER.MALE, ...MSG_PARAMS.CARDINALIRY.SINGULAR });
+
+    this.translate.get(
+      SOLICITUD_PROTECCION_NUMERO_PUBLICACION_KEY,
+      MSG_PARAMS.CARDINALIRY.SINGULAR
+    ).subscribe((value) =>
+      this.msgParamNumeroPublicacionEntity = { entity: value, ...MSG_PARAMS.GENDER.MALE, ...MSG_PARAMS.CARDINALIRY.SINGULAR });
+
+    this.translate.get(
+      SOLICITUD_PROTECCION_FECHA_PUBLICACION_KEY,
+      MSG_PARAMS.CARDINALIRY.SINGULAR
+    ).subscribe((value) =>
+      this.msgParamFechaPublicacionEntity = { entity: value, ...MSG_PARAMS.GENDER.MALE, ...MSG_PARAMS.CARDINALIRY.SINGULAR });
+
+    this.translate.get(
+      SOLICITUD_PROTECCION_NUMERO_CONCESION_KEY,
+      MSG_PARAMS.CARDINALIRY.SINGULAR
+    ).subscribe((value) =>
+      this.msgParamNumeroConcesionEntity = { entity: value, ...MSG_PARAMS.GENDER.MALE, ...MSG_PARAMS.CARDINALIRY.SINGULAR });
+
+    this.translate.get(
+      SOLICITUD_PROTECCION_FECHA_CONCESION_KEY,
+      MSG_PARAMS.CARDINALIRY.SINGULAR
+    ).subscribe((value) =>
+      this.msgParamFechaConcesionEntity = { entity: value, ...MSG_PARAMS.GENDER.MALE, ...MSG_PARAMS.CARDINALIRY.SINGULAR });
+
+    this.translate.get(
+      SOLICITUD_PROTECCION_FECHA_CADUCID_KEY,
+      MSG_PARAMS.CARDINALIRY.SINGULAR
+    ).subscribe((value) =>
+      this.msgParamFechaCaducidEntity = { entity: value, ...MSG_PARAMS.GENDER.MALE, ...MSG_PARAMS.CARDINALIRY.SINGULAR });
+
+    this.translate.get(
+      SOLICITUD_PROTECCION_TIPO_CADUCIDAD_KEY,
+      MSG_PARAMS.CARDINALIRY.SINGULAR
+    ).subscribe((value) =>
+      this.msgParamTipoCaducidadEntity = { entity: value, ...MSG_PARAMS.GENDER.MALE, ...MSG_PARAMS.CARDINALIRY.SINGULAR });
+
+    this.translate.get(
+      SOLICITUD_PROTECCION_ESTADO_KEY,
+      MSG_PARAMS.CARDINALIRY.SINGULAR
+    ).subscribe((value) =>
+      this.msgParamEstadoEntity = { entity: value, ...MSG_PARAMS.GENDER.MALE, ...MSG_PARAMS.CARDINALIRY.SINGULAR });
 
     this.translate.get(
       SOLICITUD_PROTECCION_COMENTARIOS_KEY,

@@ -35,6 +35,7 @@ import org.crue.hercules.sgi.csp.service.SolicitudModalidadService;
 import org.crue.hercules.sgi.csp.service.SolicitudProyectoAreaConocimientoService;
 import org.crue.hercules.sgi.csp.service.SolicitudProyectoClasificacionService;
 import org.crue.hercules.sgi.csp.service.SolicitudProyectoEntidadFinanciadoraAjenaService;
+import org.crue.hercules.sgi.csp.service.SolicitudProyectoEntidadService;
 import org.crue.hercules.sgi.csp.service.SolicitudProyectoEquipoService;
 import org.crue.hercules.sgi.csp.service.SolicitudProyectoPresupuestoService;
 import org.crue.hercules.sgi.csp.service.SolicitudProyectoResponsableEconomicoService;
@@ -105,6 +106,9 @@ public class SolicitudControllerTest extends BaseControllerTest {
 
   @MockBean
   private SolicitudProyectoResponsableEconomicoService solicitudProyectoResponsableEconomicoService;
+
+  @MockBean
+  private SolicitudProyectoEntidadService solicitudProyectoEntidadService;
 
   private static final String PATH_PARAMETER_ID = "/{id}";
   private static final String PATH_PARAMETER_DESACTIVAR = "/desactivar";
@@ -1203,7 +1207,7 @@ public class SolicitudControllerTest extends BaseControllerTest {
     solicitud.setObservaciones("observaciones-" + String.format("%03d", id));
     solicitud.setConvocatoriaExterna(null);
     solicitud.setUnidadGestionRef("2");
-    solicitud.setFormularioSolicitud(FormularioSolicitud.RRHH);
+    solicitud.setFormularioSolicitud(FormularioSolicitud.GRUPO);
     solicitud.setActivo(true);
 
     if (id != null) {
@@ -1374,11 +1378,10 @@ public class SolicitudControllerTest extends BaseControllerTest {
         .id(id)
         .solicitudProyectoId(solicitudProyectoId)
         .conceptoGasto(ConceptoGasto.builder().id(conceptoGastoId).build())
-        .entidadRef(null)
         .anualidad(1000)
         .importeSolicitado(new BigDecimal("335"))
         .observaciones("observaciones-" + suffix)
-        .financiacionAjena(false)
+        .solicitudProyectoEntidadId(null)
         .build();// @formatter:on
 
     return solicitudProyectoPresupuesto;

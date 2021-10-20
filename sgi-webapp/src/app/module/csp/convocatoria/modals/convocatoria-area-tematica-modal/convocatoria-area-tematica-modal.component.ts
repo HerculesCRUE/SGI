@@ -17,7 +17,6 @@ import { TranslateService } from '@ngx-translate/core';
 import { NGXLogger } from 'ngx-logger';
 import { BehaviorSubject, from, Observable, of } from 'rxjs';
 import { map, mergeMap, switchMap, takeLast } from 'rxjs/operators';
-import { AreaTematicaData } from '../../convocatoria-formulario/convocatoria-datos-generales/convocatoria-datos-generales.fragment';
 
 const MSG_ANADIR = marker('btn.add');
 const MSG_ACEPTAR = marker('btn.ok');
@@ -25,9 +24,16 @@ const AREA_TEMATICA_KEY = marker('csp.area-tematica');
 const AREA_TEMATICA_OBSERVACIONES_KEY = marker('csp.area-tematica.observaciones');
 const TITLE_NEW_ENTITY = marker('title.new.entity');
 
+export interface AreaTematicaModalData {
+  padre: IAreaTematica;
+  areasTematicas: IAreaTematica[];
+}
+
 class NodeAreaTematica {
   parent: NodeAreaTematica;
   areaTematica: StatusWrapper<IAreaTematica>;
+  checked: boolean;
+  disabled: boolean;
   // tslint:disable-next-line: variable-name
   _childs: NodeAreaTematica[];
   get childs(): NodeAreaTematica[] {
@@ -72,7 +78,7 @@ function sortByName(nodes: NodeAreaTematica[]): NodeAreaTematica[] {
   styleUrls: ['./convocatoria-area-tematica-modal.component.scss']
 })
 export class ConvocatoriaAreaTematicaModalComponent extends
-  BaseModalComponent<AreaTematicaData, ConvocatoriaAreaTematicaModalComponent> implements OnInit {
+  BaseModalComponent<AreaTematicaModalData, ConvocatoriaAreaTematicaModalComponent> implements OnInit {
   fxFlexProperties: FxFlexProperties;
   fxLayoutProperties: FxLayoutProperties;
 
@@ -88,18 +94,19 @@ export class ConvocatoriaAreaTematicaModalComponent extends
   msgParamObservacionesEntity = {};
   title: string;
 
-  checkedNode: NodeAreaTematica;
+  selectedAreasTematicas = [] as IAreaTematica[];
+  checkedNodes: NodeAreaTematica[];
   hasChild = (_: number, node: NodeAreaTematica) => node.childs.length > 0;
 
   constructor(
     private readonly logger: NGXLogger,
     protected snackBarService: SnackBarService,
     public matDialogRef: MatDialogRef<ConvocatoriaAreaTematicaModalComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: AreaTematicaData,
+    @Inject(MAT_DIALOG_DATA) public data: AreaTematicaModalData,
     private areaTematicaService: AreaTematicaService,
     private readonly translate: TranslateService
   ) {
-    super(snackBarService, matDialogRef, data);
+    super(snackBarService, matDialogRef, null);
     this.fxFlexProperties = new FxFlexProperties();
     this.fxFlexProperties.sm = '0 1 calc(100%-10px)';
     this.fxFlexProperties.md = '0 1 calc(100%-10px)';
@@ -117,7 +124,7 @@ export class ConvocatoriaAreaTematicaModalComponent extends
     this.subscriptions.push(this.formGroup.get('padre').valueChanges.subscribe(
       (value) => this.loadTreeAreaTematica(value?.id)
     ));
-    this.textSaveOrUpdate = this.data.convocatoriaAreaTematica.value.areaTematica?.padre ? MSG_ACEPTAR : MSG_ANADIR;
+    this.textSaveOrUpdate = this.data.padre ? MSG_ACEPTAR : MSG_ANADIR;
     if (this.data.padre?.id) {
       this.loadTreeAreaTematica(this.data.padre.id);
     }
@@ -164,23 +171,21 @@ export class ConvocatoriaAreaTematicaModalComponent extends
   protected getFormGroup(): FormGroup {
     const formGroup = new FormGroup({
       padre: new FormControl(this.data.padre, Validators.required),
-      observaciones: new FormControl(this.data.observaciones, Validators.maxLength(2000))
     });
     return formGroup;
   }
 
-  protected getDatosForm(): AreaTematicaData {
-    const data = this.data.convocatoriaAreaTematica.value;
+  protected getDatosForm(): AreaTematicaModalData {
     const padre = this.formGroup.get('padre').value;
-    const areaTematica = this.checkedNode?.areaTematica?.value;
-    data.areaTematica = areaTematica ? areaTematica : padre;
-    data.observaciones = this.formGroup.get('observaciones').value;
-    return this.data;
+    const areasTematicas = this.selectedAreasTematicas;
+    const data = { padre, areasTematicas } as AreaTematicaModalData;
+    return data;
   }
 
   private loadTreeAreaTematica(padreId: number) {
     this.areaTematicaTree$.next([]);
     this.nodeMap.clear();
+    this.checkedNodes = [];
     if (padreId) {
       const susbcription = this.areaTematicaService.findAllHijosArea(padreId).pipe(
         switchMap(response => {
@@ -197,9 +202,21 @@ export class ConvocatoriaAreaTematicaModalComponent extends
           const current = this.areaTematicaTree$.value;
           current.push(result);
           this.publishNodes(current);
-          this.checkedNode = this.nodeMap.get(this.data.convocatoriaAreaTematica?.value?.areaTematica?.id);
-          if (this.checkedNode) {
-            this.expandNodes(this.checkedNode);
+          this.data.areasTematicas.map(element => {
+            const node = this.nodeMap.get(element.id);
+            if (node) {
+              node.checked = true;
+              this.disableChilds(node);
+              if (!this.checkedNodes.includes(node)) {
+                this.checkedNodes.push(node);
+              }
+            }
+          });
+          if (this.checkedNodes) {
+            this.checkedNodes.map(node => this.expandNodes(node));
+            if (this.checkedNodes.map(node => !this.selectedAreasTematicas?.includes(node.areaTematica.value))) {
+              this.selectedAreasTematicas = this.checkedNodes.map(node => node.areaTematica.value);
+            }
           }
         },
         (error) => {
@@ -207,6 +224,34 @@ export class ConvocatoriaAreaTematicaModalComponent extends
         }
       );
       this.subscriptions.push(susbcription);
+    }
+  }
+
+  private disableChilds(node: NodeAreaTematica) {
+    if (node && node.childs) {
+      node.childs.forEach(child => {
+        child.disabled = true;
+        this.disableChilds(child);
+      });
+    }
+  }
+
+  private unCheckChilds(node: NodeAreaTematica) {
+    if (node && node.childs) {
+      node.childs.forEach(child => {
+        child.checked = false;
+        this.unCheckChilds(child);
+      });
+      this.selectedAreasTematicas = this.selectedAreasTematicas.filter(checkedNode => checkedNode.id !== node.areaTematica.value.id);
+    }
+  }
+
+  private enableChilds(node: NodeAreaTematica) {
+    if (node && node.childs) {
+      node.childs.forEach(child => {
+        child.disabled = false;
+        this.enableChilds(child);
+      });
     }
   }
 
@@ -259,6 +304,14 @@ export class ConvocatoriaAreaTematicaModalComponent extends
   }
 
   onCheckNode(node: NodeAreaTematica, $event: MatCheckboxChange): void {
-    this.checkedNode = $event.checked ? node : undefined;
+    node.checked = $event.checked;
+    if ($event.checked) {
+      this.disableChilds(node);
+      this.unCheckChilds(node);
+      this.selectedAreasTematicas.push(node.areaTematica.value);
+    } else {
+      this.enableChilds(node);
+      this.selectedAreasTematicas = this.selectedAreasTematicas.filter(checkedNode => checkedNode.id !== node.areaTematica.value.id);
+    }
   }
 }

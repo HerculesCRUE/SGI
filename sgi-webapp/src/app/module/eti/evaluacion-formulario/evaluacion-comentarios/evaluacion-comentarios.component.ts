@@ -122,7 +122,7 @@ export class EvaluacionComentariosComponent extends FragmentComponent implements
    */
   openCreateModal(): void {
     const evaluacionData: ComentarioModalData = {
-      evaluacion: this.actionService.getEvaluacion(),
+      evaluaciones: [this.actionService.getEvaluacion()],
       comentario: undefined
     };
 
@@ -149,7 +149,7 @@ export class EvaluacionComentariosComponent extends FragmentComponent implements
     const wrapperRef = comentario;
 
     const evaluacionData: ComentarioModalData = {
-      evaluacion: this.actionService.getEvaluacion(),
+      evaluaciones: [this.actionService.getEvaluacion()],
       comentario: wrapperRef.value
     };
 

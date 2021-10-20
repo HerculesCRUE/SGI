@@ -92,7 +92,6 @@ export class ProyectoFichaGeneralFragment extends FormFragment<IProyecto> {
     super(key);
     // TODO: Eliminar la declaración de activo, ya que no debería ser necesaria
     this.proyecto = { activo: true } as IProyecto;
-
   }
 
   protected initializer(key: number): Observable<IProyectoDatosGenerales> {
@@ -108,10 +107,12 @@ export class ProyectoFichaGeneralFragment extends FormFragment<IProyecto> {
     return this.service.findById(key).pipe(
       map(proyecto => {
         this.proyecto = proyecto;
-        this.subscriptions.push(this.solicitudService.findById(this.proyecto.solicitudId).subscribe(solicitud => {
-          this.solicitud = solicitud;
-          this.getFormGroup().controls.solicitudProyecto.setValue(solicitud.titulo);
-        }));
+        if (this.proyecto.solicitudId) {
+          this.subscriptions.push(this.solicitudService.findById(this.proyecto.solicitudId).subscribe(solicitud => {
+            this.solicitud = solicitud;
+            this.getFormGroup().controls.solicitudProyecto.setValue(solicitud.titulo);
+          }));
+        }
         return proyecto as IProyectoDatosGenerales;
       }),
       switchMap((proyecto) => {
@@ -190,6 +191,10 @@ export class ProyectoFichaGeneralFragment extends FormFragment<IProyecto> {
         value: '',
         disabled: true
       }),
+      id: new FormControl({
+        value: '',
+        disabled: true
+      }),
       codigosSge: new FormControl({
         value: '',
         disabled: true
@@ -237,7 +242,7 @@ export class ProyectoFichaGeneralFragment extends FormFragment<IProyecto> {
       {
         validators: [
           DateValidator.isAfter('fechaInicio', 'fechaFin'),
-          DateValidator.isAfter('fechaFin', 'fechaFinDefinitiva')]
+        ]
       });
 
     if (this.isVisor) {
@@ -425,6 +430,7 @@ export class ProyectoFichaGeneralFragment extends FormFragment<IProyecto> {
   buildPatch(proyecto: IProyectoDatosGenerales): { [key: string]: any } {
     const result = {
       estado: proyecto.estado?.estado,
+      id: proyecto.id,
       titulo: proyecto.titulo,
       acronimo: proyecto.acronimo,
       codigoExterno: proyecto.codigoExterno,
@@ -631,9 +637,14 @@ export class ProyectoFichaGeneralFragment extends FormFragment<IProyecto> {
         Validators.required]);
       formgroup.get('costeHora').setValidators([
         Validators.required]);
+      formgroup.setValidators([
+        DateValidator.isAfter('fechaFin', 'fechaFinDefinitiva')]);
       this.abiertoRequired = true;
       this.comentarioEstadoCancelado = false;
-    } else {
+    } else if (proyecto.estado.estado === Estado.RENUNCIADO || proyecto.estado.estado === Estado.RESCINDIDO) {
+      formgroup.get('fechaFinDefinitiva').setErrors(null);
+      formgroup.get('fechaFinDefinitiva').clearValidators();
+      formgroup.get('fechaFinDefinitiva').updateValueAndValidity({ onlySelf: true, emitEvent: false });
       formgroup.get('finalidad').setValidators(IsEntityValidator.isValid());
       formgroup.get('ambitoGeografico').setValidators(IsEntityValidator.isValid());
       this.abiertoRequired = false;

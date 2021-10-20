@@ -72,7 +72,7 @@
           [fxFlexOrder]="fxFlexProperties.order">
           <mat-form-field class="input-form">
             <mat-label>{{'csp.convocatoria.unidad-gestion' | translate}}</mat-label>
-            <sgi-select-unidad-gestion #unidadGestion formControlName="unidadGestion" required>
+            <sgi-select-unidad-gestion #unidadGestion formControlName="unidadGestion">
             </sgi-select-unidad-gestion>
           </mat-form-field>
         </div>
@@ -89,7 +89,7 @@
           <mat-form-field class="input-form">
             <mat-label>{{'csp.convocatoria.modelo-ejecucion' | translate}}</mat-label>
             <sgi-select-modelo-ejecucion #modeloEjecucion formControlName="modeloEjecucion"
-              [unidadGestionRef]="formGroup.controls.unidadGestion.value?.acronimo"
+              [unidadGestionRef]="formGroup.controls.unidadGestion.value?.id"
               [resetOnChange]="unidadGestion.selectionChange">
             </sgi-select-modelo-ejecucion>
           </mat-form-field>

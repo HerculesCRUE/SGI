@@ -12,6 +12,4 @@ export interface IConfiguracionSolicitudBackend {
   fasePresentacionSolicitudes: IConvocatoriaFaseBackend;
   /** Importe Máximo Solicitud */
   importeMaximoSolicitud: number;
-  /** Tipo Formulario Solicitud */
-  formularioSolicitud: FormularioSolicitud;
 }

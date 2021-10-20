@@ -75,8 +75,8 @@ public class ConvocatoriaClonerService {
    * "objeto") Observaciones (campo "observaciones") Estado ( se pone el estado
    * "Borrador") Activo (se pone a true)
    * 
-   * @param toClone
-   * @return
+   * @param toClone la convocatoria de la que hacer el clon
+   * @return la convocatoria clonada
    */
   public Convocatoria cloneBasicConvocatoriaData(Convocatoria toClone) {
 
@@ -85,9 +85,9 @@ public class ConvocatoriaClonerService {
         .finalidad(toClone.getFinalidad()).codigo(toClone.getCodigo()).fechaConcesion(toClone.getFechaConcesion())
         .fechaProvisional(toClone.getFechaProvisional()).fechaPublicacion(toClone.getFechaPublicacion())
         .duracion(toClone.getDuracion()).ambitoGeografico(toClone.getAmbitoGeografico())
-        .regimenConcurrencia(toClone.getRegimenConcurrencia()).clasificacionCVN(toClone.getClasificacionCVN())
-        .objeto(toClone.getObjeto()).observaciones(toClone.getObservaciones()).estado(Convocatoria.Estado.BORRADOR)
-        .build();
+        .formularioSolicitud(toClone.getFormularioSolicitud()).regimenConcurrencia(toClone.getRegimenConcurrencia())
+        .clasificacionCVN(toClone.getClasificacionCVN()).objeto(toClone.getObjeto())
+        .observaciones(toClone.getObservaciones()).estado(Convocatoria.Estado.BORRADOR).build();
   }
 
   /**

@@ -1,6 +1,7 @@
 export enum TIPO_COMENTARIO {
   GESTOR = 1,
-  EVALUADOR = 2
+  EVALUADOR = 2,
+  ACTA = 3
 }
 
 export class TipoComentario {

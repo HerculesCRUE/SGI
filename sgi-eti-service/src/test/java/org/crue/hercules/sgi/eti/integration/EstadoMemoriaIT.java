@@ -333,7 +333,7 @@ public class EstadoMemoriaIT extends BaseIT {
    */
   private Comite generarMockComite(Long id, String comite, Boolean activo) {
     Formulario formulario = new Formulario(id, "M" + id + "0", "Descripcion");
-    return new Comite(id, comite, formulario, activo);
+    return new Comite(id, comite, "nombreSecretario", "nombreInvestigacion", "nombreDecreto", "articulo", formulario, activo);
 
   }
 

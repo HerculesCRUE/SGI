@@ -51,7 +51,7 @@ public class TipoEstadoActaController {
    * @param paging pageable
    */
   @GetMapping()
-  @PreAuthorize("hasAuthorityForAnyUO('ETI-ACT-V')")
+  @PreAuthorize("hasAnyAuthorityForAnyUO('ETI-ACT-V','ETI-ACT-INV-ER','ETI-ACT-ER')")
   ResponseEntity<Page<TipoEstadoActa>> findAll(@RequestParam(name = "q", required = false) String query,
       @RequestPageable(sort = "s") Pageable paging) {
     log.debug("findAll(String query,Pageable paging) - start");

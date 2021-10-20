@@ -16,7 +16,7 @@ import { StatusWrapper } from '@core/utils/status-wrapper';
 import { IsEntityValidator } from '@core/validators/is-entity-validador';
 import { TranslateService } from '@ngx-translate/core';
 import { NGXLogger } from 'ngx-logger';
-import { from, Observable, of } from 'rxjs';
+import { BehaviorSubject, from, Observable, of } from 'rxjs';
 import { catchError, map, mergeMap, switchMap, takeLast } from 'rxjs/operators';
 
 const AREA_TEMATICA_LISTADO_KEY = marker('list.entity');
@@ -73,7 +73,7 @@ export class ProyectoContextoModalComponent extends
   fxFlexProperties: FxFlexProperties;
   fxLayoutProperties: FxLayoutProperties;
 
-  areasTematicas$: Observable<IAreaTematica[]>;
+  areasTematicas$: BehaviorSubject<IAreaTematica[]> = new BehaviorSubject<IAreaTematica[]>([]);
   treeControl = new NestedTreeControl<NodeAreaTematica>(node => node.childs);
   dataSource = new MatTreeNestedDataSource<NodeAreaTematica>();
   private nodeMap = new Map<number, NodeAreaTematica>();
@@ -184,14 +184,15 @@ export class ProyectoContextoModalComponent extends
 
   private loadAreasTematicasGrupo(): void {
     this.dataSource.data = null;
-    this.areasTematicas$ = this.areaTematicaService.findAllGrupo().pipe(
-      map(res => res.items),
-      catchError(error => {
-        this.logger.error(error);
-        this.snackBarService.showError(MSG_ERROR_AREA_TEMATICA);
-        return of([]);
-      })
-    );
+    this.subscriptions.push(
+      this.areaTematicaService.findAllGrupo().pipe(
+        map(res => this.areasTematicas$.next(res.items)),
+        catchError(error => {
+          this.logger.error(error);
+          this.snackBarService.showError(MSG_ERROR_AREA_TEMATICA);
+          return of([]);
+        })
+      ).subscribe());
   }
 
   private loadTreeAreaTematica(): void {
@@ -239,10 +240,6 @@ export class ProyectoContextoModalComponent extends
       );
       this.subscriptions.push(susbcription);
     }
-  }
-
-  getNombreAreaTematica(areaTematica?: IAreaTematica): string | undefined {
-    return typeof areaTematica === 'string' ? areaTematica : areaTematica?.nombre;
   }
 
   private expandNodes(node: NodeAreaTematica) {

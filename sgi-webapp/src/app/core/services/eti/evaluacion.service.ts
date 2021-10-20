@@ -11,8 +11,8 @@ import { IEvaluacion } from '@core/models/eti/evaluacion';
 import { IEvaluacionWithIsEliminable } from '@core/models/eti/evaluacion-with-is-eliminable';
 import { environment } from '@env';
 import { SgiMutableRestService, SgiRestFindOptions, SgiRestListResult } from '@sgi/framework/http';
-import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { from, Observable } from 'rxjs';
+import { endWith, map, mergeMap } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -71,6 +71,20 @@ export class EvaluacionService extends SgiMutableRestService<number, IEvaluacion
   }
 
   /**
+   * Devuelve los comentarios de tipo ACTA de una evalución
+   *
+   * @param id Id de la evaluación
+   * @param options Opciones de paginación
+   */
+  getComentariosActa(id: number, options?: SgiRestFindOptions): Observable<SgiRestListResult<IComentario>> {
+    return this.find<IComentarioBackend, IComentario>(
+      `${this.endpointUrl}/${id}/comentarios-acta`,
+      options,
+      COMENTARIO_CONVERTER
+    );
+  }
+
+  /**
    * Añade un comentario de tipo GESTOR a una evaluación
    *
    * @param id Id de la evaluación
@@ -94,6 +108,21 @@ export class EvaluacionService extends SgiMutableRestService<number, IEvaluacion
   createComentarioEvaluador(id: number, comentario: IComentario): Observable<IComentario> {
     return this.http.post<IComentarioBackend>(
       `${this.endpointUrl}/${id}/comentario-evaluador`,
+      COMENTARIO_CONVERTER.fromTarget(comentario)
+    ).pipe(
+      map(response => COMENTARIO_CONVERTER.toTarget(response))
+    );
+  }
+
+  /**
+   * Añade un comentario de tipo ACTA a una evaluación
+   *
+   * @param id Id de la evaluación
+   * @param comentario Comentario a crear
+   */
+  createComentarioActa(id: number, comentario: IComentario): Observable<IComentario> {
+    return this.http.post<IComentarioBackend>(
+      `${this.endpointUrl}/${id}/comentario-acta`,
       COMENTARIO_CONVERTER.fromTarget(comentario)
     ).pipe(
       map(response => COMENTARIO_CONVERTER.toTarget(response))
@@ -152,6 +181,17 @@ export class EvaluacionService extends SgiMutableRestService<number, IEvaluacion
   deleteComentarioEvaluador(id: number, idComentario: number): Observable<void> {
     const params = new HttpParams().set('idComentario', idComentario.toString());
     return this.http.delete<void>(`${this.endpointUrl}/${id}/comentario-evaluador/${idComentario}`, { params });
+  }
+
+  /**
+   * Elimina un comentario de tipo ACTA de una evaluación
+   *
+   * @param id Id de la evaluación
+   * @param idComentario Id del comentario
+   */
+  deleteComentarioActa(id: number, idComentario: number): Observable<void> {
+    const params = new HttpParams().set('idComentario', idComentario.toString());
+    return this.http.delete<void>(`${this.endpointUrl}/${id}/comentario-acta/${idComentario}`, { params });
   }
 
   /**

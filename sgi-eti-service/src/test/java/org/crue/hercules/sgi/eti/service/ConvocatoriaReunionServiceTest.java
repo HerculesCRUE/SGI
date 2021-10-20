@@ -324,7 +324,7 @@ public class ConvocatoriaReunionServiceTest extends BaseServiceTest {
   private ConvocatoriaReunion getMockData(Long id, Long comiteId, Long tipoId) {
 
     Formulario formulario = new Formulario(1L, "M10", "Descripcion");
-    Comite comite = new Comite(comiteId, "Comite" + comiteId, formulario, Boolean.TRUE);
+    Comite comite = new Comite(comiteId, "Comite" + comiteId, "nombreSecretario", "nombreInvestigacion", "nombreDecreto", "articulo", formulario, Boolean.TRUE);
 
     String tipo_txt = (tipoId == 1L) ? "Ordinaria" : (tipoId == 2L) ? "Extraordinaria" : "Seguimiento";
     TipoConvocatoriaReunion tipoConvocatoriaReunion = new TipoConvocatoriaReunion(tipoId, tipo_txt, Boolean.TRUE);

@@ -27,7 +27,9 @@ import org.crue.hercules.sgi.csp.model.ConvocatoriaEntidadConvocante;
 import org.crue.hercules.sgi.csp.model.ConvocatoriaEntidadFinanciadora;
 import org.crue.hercules.sgi.csp.model.ConvocatoriaEntidadGestora;
 import org.crue.hercules.sgi.csp.model.ConvocatoriaPartida;
+import org.crue.hercules.sgi.csp.model.ConvocatoriaPeriodoJustificacion;
 import org.crue.hercules.sgi.csp.model.EstadoProyecto;
+import org.crue.hercules.sgi.csp.model.EstadoProyectoPeriodoJustificacion;
 import org.crue.hercules.sgi.csp.model.EstadoSolicitud;
 import org.crue.hercules.sgi.csp.model.ModeloUnidad;
 import org.crue.hercules.sgi.csp.model.Proyecto;
@@ -41,6 +43,7 @@ import org.crue.hercules.sgi.csp.model.ProyectoEntidadGestora;
 import org.crue.hercules.sgi.csp.model.ProyectoEquipo;
 import org.crue.hercules.sgi.csp.model.ProyectoIVA;
 import org.crue.hercules.sgi.csp.model.ProyectoPartida;
+import org.crue.hercules.sgi.csp.model.ProyectoPeriodoJustificacion;
 import org.crue.hercules.sgi.csp.model.ProyectoPeriodoSeguimiento;
 import org.crue.hercules.sgi.csp.model.ProyectoProrroga;
 import org.crue.hercules.sgi.csp.model.ProyectoResponsableEconomico;
@@ -61,14 +64,17 @@ import org.crue.hercules.sgi.csp.repository.ConvocatoriaConceptoGastoRepository;
 import org.crue.hercules.sgi.csp.repository.ConvocatoriaEntidadConvocanteRepository;
 import org.crue.hercules.sgi.csp.repository.ConvocatoriaEntidadFinanciadoraRepository;
 import org.crue.hercules.sgi.csp.repository.ConvocatoriaEntidadGestoraRepository;
+import org.crue.hercules.sgi.csp.repository.ConvocatoriaPeriodoJustificacionRepository;
 import org.crue.hercules.sgi.csp.repository.ConvocatoriaPeriodoSeguimientoCientificoRepository;
 import org.crue.hercules.sgi.csp.repository.ConvocatoriaRepository;
+import org.crue.hercules.sgi.csp.repository.EstadoProyectoPeriodoJustificacionRepository;
 import org.crue.hercules.sgi.csp.repository.EstadoProyectoRepository;
 import org.crue.hercules.sgi.csp.repository.ModeloUnidadRepository;
 import org.crue.hercules.sgi.csp.repository.ProgramaRepository;
 import org.crue.hercules.sgi.csp.repository.ProyectoAreaConocimientoRepository;
 import org.crue.hercules.sgi.csp.repository.ProyectoClasificacionRepository;
 import org.crue.hercules.sgi.csp.repository.ProyectoIVARepository;
+import org.crue.hercules.sgi.csp.repository.ProyectoPeriodoJustificacionRepository;
 import org.crue.hercules.sgi.csp.repository.ProyectoProrrogaRepository;
 import org.crue.hercules.sgi.csp.repository.ProyectoProyectoSgeRepository;
 import org.crue.hercules.sgi.csp.repository.ProyectoRepository;
@@ -176,6 +182,9 @@ public class ProyectoServiceImpl implements ProyectoService {
   private final SolicitudProyectoResponsableEconomicoRepository solicitudProyectoResponsableEconomicoRepository;
   private final ProyectoResponsableEconomicoService proyectoResponsableEconomicoService;
   private final Validator validator;
+  private final ConvocatoriaPeriodoJustificacionRepository convocatoriaPeriodoJustificacionRepository;
+  private final ProyectoPeriodoJustificacionRepository proyectoPeriodoJustificacionRepository;
+  private final EstadoProyectoPeriodoJustificacionRepository estadoProyectoPeriodoJustificacionRepository;
 
   public ProyectoServiceImpl(SgiConfigProperties sgiConfigProperties, ProyectoRepository repository,
       EstadoProyectoRepository estadoProyectoRepository, ModeloUnidadRepository modeloUnidadRepository,
@@ -214,7 +223,10 @@ public class ProyectoServiceImpl implements ProyectoService {
       ProyectoConceptoGastoCodigoEcService proyectoConceptoGastoCodigoEcService,
       ConvocatoriaConceptoGastoCodigoEcRepository convocatoriaConceptoGastoCodigoEcRepository,
       SolicitudProyectoResponsableEconomicoRepository solicitudProyectoResponsableEconomicoRepository,
-      ProyectoResponsableEconomicoService proyectoResponsableEconomicoService, Validator validator) {
+      ProyectoResponsableEconomicoService proyectoResponsableEconomicoService, Validator validator,
+      ConvocatoriaPeriodoJustificacionRepository convocatoriaPeriodoJustificacionRepository,
+      ProyectoPeriodoJustificacionRepository proyectoPeriodoJustificacionRepository,
+      EstadoProyectoPeriodoJustificacionRepository estadoProyectoPeriodoJustificacionRepository) {
     this.sgiConfigProperties = sgiConfigProperties;
     this.repository = repository;
     this.estadoProyectoRepository = estadoProyectoRepository;
@@ -261,6 +273,9 @@ public class ProyectoServiceImpl implements ProyectoService {
     this.solicitudProyectoResponsableEconomicoRepository = solicitudProyectoResponsableEconomicoRepository;
     this.proyectoResponsableEconomicoService = proyectoResponsableEconomicoService;
     this.validator = validator;
+    this.convocatoriaPeriodoJustificacionRepository = convocatoriaPeriodoJustificacionRepository;
+    this.proyectoPeriodoJustificacionRepository = proyectoPeriodoJustificacionRepository;
+    this.estadoProyectoPeriodoJustificacionRepository = estadoProyectoPeriodoJustificacionRepository;
   }
 
   /**
@@ -427,20 +442,15 @@ public class ProyectoServiceImpl implements ProyectoService {
     List<ProyectoEquipo> equipos = new ArrayList<ProyectoEquipo>();
     List<ProyectoEquipo> equiposFechaFinIgualAFechaFinActual = proyectoEquipoService
         .findAllByProyectoIdAndFechaFin(proyectoId, fechaBusqueda);
-    List<ProyectoEquipo> equiposFechaFinMayorAFechaFinNueva = proyectoEquipoService
-        .findAllByProyectoIdAndFechaFinGreaterThan(proyectoId, fechaFinNew);
     if (!CollectionUtils.isEmpty(equiposFechaFinIgualAFechaFinActual)) {
       equipos.addAll(
           equiposFechaFinIgualAFechaFinActual.stream().filter(e -> !equipos.contains(e)).collect(Collectors.toList()));
     }
-    if (!CollectionUtils.isEmpty(equiposFechaFinMayorAFechaFinNueva)) {
-      equipos.addAll(
-          equiposFechaFinMayorAFechaFinNueva.stream().filter(e -> !equipos.contains(e)).collect(Collectors.toList()));
-    }
+
     if (!CollectionUtils.isEmpty(equipos)) {
       equipos.stream().map(equipo -> {
         equipo.setFechaFin(fechaFinNew);
-        if (equipo.getFechaInicio().compareTo(fechaFinNew) > 0) {
+        if (equipo.getFechaInicio() != null && equipo.getFechaInicio().compareTo(fechaFinNew) > 0) {
           // La fecha de inicio nunca puede ser superior a la de fin
           equipo.setFechaInicio(fechaFinNew);
         }
@@ -619,9 +629,7 @@ public class ProyectoServiceImpl implements ProyectoService {
    * Añade el nuevo {@link ProyectoIVA} y actualiza la {@link Proyecto} con dicho
    * ProyectoIVA.
    * 
-   * @param proyecto    la {@link Proyecto} para la que se añade el nuevo estado.
-   * @param proyectoIVA El nuevo {@link EstadoProyecto.Estado} de la
-   *                    {@link Proyecto}.
+   * @param proyecto la {@link Proyecto} para la que se añade el nuevo estado.
    * @return la {@link Proyecto} con el estado actualizado.
    */
   private ProyectoIVA addProyectoIVA(Proyecto proyecto) {
@@ -1366,6 +1374,7 @@ public class ProyectoServiceImpl implements ProyectoService {
     log.debug("copyConfiguracionEconomica(Proyecto proyecto) - start");
     this.copyConceptosGasto(proyecto);
     this.copyPartidasPresupuestarias(proyecto.getId(), proyecto.getConvocatoriaId());
+    this.copyPeriodosJustificacionFromConvocatoria(proyecto, convocatoriaId);
     log.debug("copyConfiguracionEconomica(Proyecto proyecto) - end");
   }
 
@@ -1507,8 +1516,8 @@ public class ProyectoServiceImpl implements ProyectoService {
     Assert.isTrue(!repository.existsBySolicitudId(solicitud.getId()),
         "La solicitud con id: " + solicitud.getId() + " ya está asociada a un proyecto");
 
-    Assert.isTrue(solicitud.getFormularioSolicitud() == FormularioSolicitud.ESTANDAR,
-        "El formulario de la solicitud debe ser de tipo " + FormularioSolicitud.ESTANDAR);
+    Assert.isTrue(solicitud.getFormularioSolicitud() == FormularioSolicitud.PROYECTO,
+        "El formulario de la solicitud debe ser de tipo " + FormularioSolicitud.PROYECTO);
   }
 
   /**
@@ -1718,6 +1727,53 @@ public class ProyectoServiceImpl implements ProyectoService {
     log.debug("findIds(String query) - end");
 
     return returnValue;
+  }
+
+  private void copyPeriodosJustificacionFromConvocatoria(Proyecto proyecto, Long convocatoriaId) {
+    // @formatter:off
+    this.proyectoPeriodoJustificacionRepository.saveAll(
+      this.convocatoriaPeriodoJustificacionRepository.findAllByConvocatoriaId(convocatoriaId).stream()
+        .filter(periodo -> checkIfFechaInicioIsInsideProyectoRange(proyecto, periodo))
+        .map(periodo -> ProyectoPeriodoJustificacion.builder()
+          .proyectoId(proyecto.getId())
+          .numPeriodo(periodo.getNumPeriodo())
+          .fechaInicioPresentacion(periodo.getFechaInicioPresentacion())
+          .fechaFinPresentacion(periodo.getFechaFinPresentacion())
+          .tipoJustificacion(periodo.getTipo())
+          .observaciones(periodo.getObservaciones())
+          .estado(createEstadoProyectoPeriodoJustificacionPendiente())
+          .convocatoriaPeriodoJustificacionId(periodo.getId())
+          .fechaInicio(PeriodDateUtil.calculateFechaInicioPeriodo(proyecto.getFechaInicio(),
+              periodo.getMesInicial(), sgiConfigProperties.getTimeZone()))
+          .fechaFin(resolveFechaFinFromPeriodoJustificacionConvocatoria(proyecto, periodo))
+          .build()
+        ).collect(Collectors.toList())
+    );
+    // @formatter: on
+  }
+
+  private EstadoProyectoPeriodoJustificacion createEstadoProyectoPeriodoJustificacionPendiente() {
+    return this.estadoProyectoPeriodoJustificacionRepository.save(EstadoProyectoPeriodoJustificacion.builder()
+      .estado(EstadoProyectoPeriodoJustificacion.TipoEstadoPeriodoJustificacion.PENDIENTE)
+      .fechaEstado(Instant.now())
+      .build());
+  }
+
+  private Instant resolveFechaFinFromPeriodoJustificacionConvocatoria(Proyecto proyecto, ConvocatoriaPeriodoJustificacion periodo) {
+    Instant fechaFin = PeriodDateUtil.calculateFechaFinPeriodo(proyecto.getFechaInicio(),
+      periodo.getMesFinal(), proyecto.getFechaFin(), sgiConfigProperties.getTimeZone());
+    if(fechaFin.isAfter(proyecto.getFechaFin())){
+      fechaFin = proyecto.getFechaFin();
+    }
+    return fechaFin;
+  }
+
+  private boolean checkIfFechaInicioIsInsideProyectoRange(Proyecto proyecto, ConvocatoriaPeriodoJustificacion periodo) {
+    Instant fechaInicio = PeriodDateUtil.calculateFechaInicioPeriodo(proyecto.getFechaInicio(),
+      periodo.getMesInicial(), sgiConfigProperties.getTimeZone());
+
+    return (fechaInicio.isAfter(proyecto.getFechaInicio()) || fechaInicio.equals(proyecto.getFechaInicio()))
+      && (fechaInicio.isBefore(proyecto.getFechaFin()));
   }
 
 }

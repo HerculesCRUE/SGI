@@ -15,6 +15,7 @@ import { DialogComponent } from '@block/dialog/dialog.component';
 import { HeaderComponent } from '@block/header/header.component';
 import { IConvocatoriaHito } from '@core/models/csp/convocatoria-hito';
 import { ISolicitudHito } from '@core/models/csp/solicitud-hito';
+import { SharedModule } from '@shared/shared.module';
 
 
 describe('SolicitiudHitosModalComponent', () => {
@@ -41,7 +42,8 @@ describe('SolicitiudHitosModalComponent', () => {
         TestUtils.getIdiomas(),
         RouterTestingModule,
         ReactiveFormsModule,
-        SgiAuthModule
+        SgiAuthModule,
+        SharedModule
       ],
       providers: [
         { provide: SnackBarService, useValue: TestUtils.getSnackBarServiceSpy() },

@@ -1,7 +1,8 @@
 <sgi-fragment title="{{'csp.proyecto-clasificacion' | translate:MSG_PARAMS.CARDINALIRY.PLURAL}}">
 
   <div class="mat-elevation-z4">
-    <table mat-table [dataSource]="dataSource" matSort matSortActive="id" matSortDirection="asc" matSortDisableClear>
+    <table class="proyecto-clasificacion" mat-table [dataSource]="dataSource" matSort matSortActive="id"
+      matSortDirection="asc" matSortDisableClear>
 
       <!-- Clasificacion Column -->
       <ng-container matColumnDef="clasificacion">

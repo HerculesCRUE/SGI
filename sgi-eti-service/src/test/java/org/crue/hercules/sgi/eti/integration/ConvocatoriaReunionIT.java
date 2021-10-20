@@ -704,7 +704,8 @@ public class ConvocatoriaReunionIT extends BaseIT {
   private ConvocatoriaReunion getMockData(Long id, Long comiteId, Long tipoId) {
 
     Formulario formulario = new Formulario(comiteId, "M" + comiteId + "0", "Formulario M" + comiteId + "0");
-    Comite comite = new Comite(comiteId, "CEISH", formulario, Boolean.TRUE);
+    Comite comite = new Comite(comiteId, "CEI", "nombreSecretario", "nombreInvestigacion", "nombreDecreto", "articulo",
+        formulario, Boolean.TRUE);
 
     String tipo_txt = (tipoId == 1L) ? "Ordinaria" : (tipoId == 2L) ? "Extraordinaria" : "Seguimiento";
     TipoConvocatoriaReunion tipoConvocatoriaReunion = new TipoConvocatoriaReunion(tipoId, tipo_txt, Boolean.TRUE);
@@ -765,7 +766,8 @@ public class ConvocatoriaReunionIT extends BaseIT {
     cargoComite.setActivo(Boolean.TRUE);
 
     Formulario formulario = new Formulario(1L, "M10", "Formulario M10");
-    Comite comite = new Comite(1L, "CEISH", formulario, Boolean.TRUE);
+    Comite comite = new Comite(1L, "CEI", "nombreSecretario", "nombreInvestigacion", "nombreDecreto", "articulo",
+        formulario, Boolean.TRUE);
 
     Evaluador evaluador = new Evaluador();
     evaluador.setId(id);
@@ -823,7 +825,8 @@ public class ConvocatoriaReunionIT extends BaseIT {
     peticionEvaluacion.setActivo(Boolean.TRUE);
 
     Formulario formulario = new Formulario(1L, "M10", "Formulario M10");
-    Comite comite = new Comite(1L, "CEISH", formulario, Boolean.TRUE);
+    Comite comite = new Comite(1L, "CEI", "nombreSecretario", "nombreInvestigacion", "nombreDecreto", "articulo",
+        formulario, Boolean.TRUE);
 
     TipoMemoria tipoMemoria = new TipoMemoria();
     tipoMemoria.setId(1L);
@@ -897,7 +900,8 @@ public class ConvocatoriaReunionIT extends BaseIT {
     peticionEvaluacion.setActivo(Boolean.TRUE);
 
     Formulario formulario = new Formulario(1L, "M10", "Formulario M10");
-    Comite comite = new Comite(1L, "CEISH", formulario, Boolean.TRUE);
+    Comite comite = new Comite(1L, "CEI", "nombreSecretario", "nombreInvestigacion", "nombreDecreto", "articulo",
+        formulario, Boolean.TRUE);
 
     TipoMemoria tipoMemoria = new TipoMemoria();
     tipoMemoria.setId(1L);
@@ -976,7 +980,8 @@ public class ConvocatoriaReunionIT extends BaseIT {
     peticionEvaluacion.setActivo(Boolean.TRUE);
 
     Formulario formulario = new Formulario(1L, "M10", "Formulario M10");
-    Comite comite = new Comite(1L, "Comite1", formulario, Boolean.TRUE);
+    Comite comite = new Comite(1L, "Comite1", "nombreSecretario", "nombreInvestigacion", "nombreDecreto", "articulo",
+        formulario, Boolean.TRUE);
 
     TipoMemoria tipoMemoria = new TipoMemoria();
     tipoMemoria.setId(1L);

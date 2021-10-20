@@ -10,6 +10,7 @@ import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import javax.validation.Validator;
 
+import org.crue.hercules.sgi.csp.enums.TipoJustificacion;
 import org.crue.hercules.sgi.csp.exceptions.ConvocatoriaNotFoundException;
 import org.crue.hercules.sgi.csp.exceptions.ConvocatoriaPeriodoJustificacionNotFoundException;
 import org.crue.hercules.sgi.csp.exceptions.NoRelatedEntitiesException;
@@ -190,7 +191,7 @@ public class ConvocatoriaPeriodoJustificacionServiceImpl implements Convocatoria
     periodos.sort(Comparator.comparing(ConvocatoriaPeriodoJustificacion::getMesInicial));
 
     Integer mesFinal = 0;
-    ConvocatoriaPeriodoJustificacion.Tipo tipo = null;
+    TipoJustificacion tipo = null;
     for (int i = 0; i < periodos.size(); i++) {
       ConvocatoriaPeriodoJustificacion periodo = periodos.get(i);
       // Validado por anotaciones en la entidad
@@ -224,7 +225,7 @@ public class ConvocatoriaPeriodoJustificacionServiceImpl implements Convocatoria
         // Convocatoria
         throw new PeriodoLongerThanConvocatoriaException();
       }
-      if (tipo != null && tipo == ConvocatoriaPeriodoJustificacion.Tipo.FINAL) {
+      if (tipo != null && tipo == TipoJustificacion.FINAL) {
         // El ConvocatoriaPeriodoJustificacion de tipo final tiene que ser el último
         throw new TipoFinalException();
       }

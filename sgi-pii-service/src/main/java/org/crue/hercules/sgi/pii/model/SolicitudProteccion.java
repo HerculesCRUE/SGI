@@ -17,8 +17,11 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.Valid;
 
+import org.crue.hercules.sgi.pii.model.SolicitudProteccion.OnActivar;
 import org.crue.hercules.sgi.pii.model.SolicitudProteccion.OnActualizar;
+import org.crue.hercules.sgi.pii.model.SolicitudProteccion.OnCrear;
 import org.crue.hercules.sgi.pii.validation.EntidadActiva;
+import org.crue.hercules.sgi.pii.validation.UniqueSolicitudViaProteccion;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -33,6 +36,7 @@ import lombok.experimental.SuperBuilder;
 @NoArgsConstructor
 @AllArgsConstructor
 @SuperBuilder
+@UniqueSolicitudViaProteccion(groups = { OnActualizar.class, OnActivar.class, OnCrear.class })
 @EntidadActiva(entityClass = SolicitudProteccion.class, groups = { OnActualizar.class })
 public class SolicitudProteccion extends BaseActivableEntity {
 
@@ -54,7 +58,7 @@ public class SolicitudProteccion extends BaseActivableEntity {
   @ManyToOne
   @JoinColumn(name = "invencion_id", nullable = false, foreignKey = @ForeignKey(name = "FK_SOLICITUDPROTECCION_INVENCION"))
   @Valid
-  @EntidadActiva(entityClass = ViaProteccion.class, groups = { OnCrear.class, OnActualizarInvencion.class })
+  @EntidadActiva(entityClass = Invencion.class, groups = { OnCrear.class, OnActualizarInvencion.class })
   private Invencion invencion;
 
   @Column(name = "titulo", length = TITULO_MAX_LENGTH, nullable = false)
@@ -73,7 +77,7 @@ public class SolicitudProteccion extends BaseActivableEntity {
   private Instant fechaConcesion;
 
   @Column(name = "fecha_caducidad", nullable = true)
-  private Instant fechaCaducid;
+  private Instant fechaCaducidad;
 
   @ManyToOne
   @JoinColumn(name = "via_proteccion_id", nullable = false, foreignKey = @ForeignKey(name = "FK_SOLICITUDPROTECCION_VIAPROTECCION"))

@@ -31,6 +31,7 @@ export class ConvocatoriaConceptoGastoCodigoEcService extends
    * @param entities Listado de IConvocatoriaConceptoGastoCodigoEc
    */
   updateList(id: number, entities: IConvocatoriaConceptoGastoCodigoEc[]): Observable<IConvocatoriaConceptoGastoCodigoEc[]> {
+
     return this.http.patch<IConvocatoriaConceptoGastoCodigoEcBackend[]>(
       `${this.endpointUrl}/${id}`,
       this.converter.fromTargetArray(entities)

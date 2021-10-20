@@ -11,8 +11,7 @@
       <mat-form-field>
         <mat-label>{{'csp.entidad-financiadora.empresa-economica' | translate}}</mat-label>
         <sgi-select-empresa formControlName="empresa"
-          placeholder="{{'csp.entidad-financiadora.empresa-economica' | translate}}"
-          [selectedEmpresas]="data.selectedEmpresas" required>
+          placeholder="{{'csp.entidad-financiadora.empresa-economica' | translate}}" required>
         </sgi-select-empresa>
         <mat-error *ngIf="formGroup.controls.empresa.errors?.required">
           {{ 'error.required.entity' | translate:msgParamEmpresaEntity }}

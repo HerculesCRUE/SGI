@@ -44,6 +44,8 @@ import { IConvocatoriaPeriodoJustificacion } from '@core/models/csp/convocatoria
 import { IConvocatoriaPeriodoSeguimientoCientifico } from '@core/models/csp/convocatoria-periodo-seguimiento-cientifico';
 import { IRequisitoEquipoCategoriaProfesional } from '@core/models/csp/requisito-equipo-categoria-profesional';
 import { IRequisitoEquipoNivelAcademico } from '@core/models/csp/requisito-equipo-nivel-academico';
+import { IRequisitoIPCategoriaProfesional } from '@core/models/csp/requisito-ip-categoria-profesional';
+import { IRequisitoIPNivelAcademico } from '@core/models/csp/requisito-ip-nivel-academico';
 import { IModeloEjecucion } from '@core/models/csp/tipos-configuracion';
 import { environment } from '@env';
 import { SgiMutableRestService, SgiRestFindOptions, SgiRestListResult } from '@sgi/framework/http/';
@@ -53,6 +55,10 @@ import { IRequisitoEquipoCategoriaProfesionalResponse } from './requisito-equipo
 import { REQUISITO_EQUIPO_CATEGORIA_PROFESIONAL_RESPONSE_CONVERTER } from './requisito-equipo-categoria-profesional/requisito-equipo-categoria-profesional-response.converter';
 import { IRequisitoEquipoNivelAcademicoResponse } from './requisito-equipo-nivel-academico/requisito-equipo-nivel-academico-response';
 import { REQUISITO_EQUIPO_NIVELACADEMICO_RESPONSE_CONVERTER } from './requisito-equipo-nivel-academico/requisito-equipo-nivel-academico-response.converter';
+import { IRequisitoIPCategoriaProfesionalResponse } from './requisito-ip-categoria-profesional/requisito-ip-categoria-profesional-response';
+import { REQUISITOIP_CATEGORIA_PROFESIONAL_RESPONSE_CONVERTER } from './requisito-ip-categoria-profesional/requisito-ip-categoria-profesional-response.converter';
+import { IRequisitoIPNivelAcademicoResponse } from './requisito-ip-nivel-academico/requisito-ip-nivel-academico-response';
+import { REQUISITOIP_NIVELACADEMICO_RESPONSE_CONVERTER } from './requisito-ip-nivel-academico/requisito-ip-nivel-academico-response.converter';
 
 @Injectable({
   providedIn: 'root'
@@ -427,11 +433,11 @@ export class ConvocatoriaService extends SgiMutableRestService<number, IConvocat
   }
 
   /**
-   * Recupera los niveles académicos asociados a la Convocatoria con el id indicado
+   * Recupera los niveles académicos asociados a los requisitos equipo de la Convocatoria con el id indicado
    * @param id Identificador de la Convocatoria
    */
-  findNivelesAcademicos(id: number): Observable<IRequisitoEquipoNivelAcademico[]> {
-    const endpointUrl = `${this.endpointUrl}/${id}/niveles`;
+  findRequisitosEquipoNivelesAcademicos(id: number): Observable<IRequisitoEquipoNivelAcademico[]> {
+    const endpointUrl = `${this.endpointUrl}/${id}/nivelesrequisitosequipo`;
     const params = new HttpParams().set('id', id.toString());
     return this.http.get<IRequisitoEquipoNivelAcademicoResponse[]>(endpointUrl, { params })
       .pipe(
@@ -441,13 +447,42 @@ export class ConvocatoriaService extends SgiMutableRestService<number, IConvocat
       );
   }
 
-
   /**
-   * Recupera las categorías asociadas a la Convocatoria con el id indicado
+   * Recupera los niveles académicos asociados a los requisitos ip de la Convocatoria con el id indicado
    * @param id Identificador de la Convocatoria
    */
-  findCategoriasProfesionales(id: number): Observable<IRequisitoEquipoCategoriaProfesional[]> {
-    const endpointUrl = `${this.endpointUrl}/${id}/categoriasprofesionales`;
+  findRequisitosIpNivelesAcademicos(id: number): Observable<IRequisitoIPNivelAcademico[]> {
+    const endpointUrl = `${this.endpointUrl}/${id}/nivelesrequisitosip`;
+    const params = new HttpParams().set('id', id.toString());
+    return this.http.get<IRequisitoIPNivelAcademicoResponse[]>(endpointUrl, { params })
+      .pipe(
+        map(r => {
+          return REQUISITOIP_NIVELACADEMICO_RESPONSE_CONVERTER.toTargetArray(r);
+        })
+      );
+  }
+
+  /**
+   * Recupera las categorías sociadas a los requisitos ip de la Convocatoria con el id indicado
+   * @param id Identificador de la Convocatoria
+   */
+  findRequisitosIpCategoriasProfesionales(id: number): Observable<IRequisitoIPCategoriaProfesional[]> {
+    const endpointUrl = `${this.endpointUrl}/${id}/categoriasprofesionalesrequisitosip`;
+    const params = new HttpParams().set('id', id.toString());
+    return this.http.get<IRequisitoIPCategoriaProfesionalResponse[]>(endpointUrl, { params })
+      .pipe(
+        map(r => {
+          return REQUISITOIP_CATEGORIA_PROFESIONAL_RESPONSE_CONVERTER.toTargetArray(r);
+        })
+      );
+  }
+
+  /**
+   * Recupera las categorías asociadas a los requisitos equipo de la Convocatoria con el id indicado
+   * @param id Identificador de la Convocatoria
+   */
+  findRequisitosEquipoCategoriasProfesionales(id: number): Observable<IRequisitoEquipoCategoriaProfesional[]> {
+    const endpointUrl = `${this.endpointUrl}/${id}/categoriasprofesionalesrequisitosequipo`;
     const params = new HttpParams().set('id', id.toString());
     return this.http.get<IRequisitoEquipoCategoriaProfesionalResponse[]>(endpointUrl, { params })
       .pipe(

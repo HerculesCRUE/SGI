@@ -113,7 +113,7 @@ export class ConvocatoriaReunionListadoComponent
     return observable$;
   }
   protected initColumns(): void {
-    this.displayedColumns = ['comite', 'fechaEvaluacion', 'codigo', 'horaInicio', 'lugar', 'tipoConvocatoriaReunion', 'fechaEnvio', 'acciones'];
+    this.displayedColumns = ['comite', 'fechaEvaluacion', 'codigo', 'horaInicio', 'horaInicioSegunda', 'lugar', 'tipoConvocatoriaReunion', 'fechaEnvio', 'acciones'];
   }
 
   protected createFilter(): SgiRestFilter {

@@ -131,21 +131,8 @@
 
   </div>
 
-
   <form class="separation-button" [formGroup]="formGroup" [fxLayout.xs]="fxLayoutProperties.xs"
     [fxLayout]="fxLayoutProperties.layout" [fxLayoutGap]="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
-
-    <!-- Tipo Formulario Solicitud -->
-    <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
-      [fxFlexOrder]="fxFlexProperties.order">
-      <mat-form-field>
-        <mat-label>{{'csp.convocatoria-configuracion-solicitud.formulario' | translate}}</mat-label>
-        <sgi-select-enum formControlName="formularioSolicitud" [enumMap]="FORMULARIO_SOLICITUD_MAP"></sgi-select-enum>
-        <sgi-field-info matSuffix [visible]="formPart.isConvocatoriaVinculada && formPart.hasEditPerm"
-          message="{{'csp.convocatoria.campo.vinculada' | translate}}">
-        </sgi-field-info>
-      </mat-form-field>
-    </div>
 
     <!-- Importe Máximo Solicitud -->
     <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"

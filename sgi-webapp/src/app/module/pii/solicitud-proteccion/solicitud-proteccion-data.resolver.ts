@@ -3,7 +3,7 @@ import { ActivatedRouteSnapshot, Router } from '@angular/router';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { SgiResolverResolver } from '@core/resolver/sgi-resolver';
 import { InvencionService } from '@core/services/pii/invencion/invencion.service';
-import { SolicitudProteccionService } from '@core/services/pii/invencion/solicitud-proteccion/solicitud-proteccion.service';
+import { SolicitudProteccionService } from '@core/services/pii/solicitud-proteccion/solicitud-proteccion.service';
 import { SnackBarService } from '@core/services/snack-bar.service';
 import { NGXLogger } from 'ngx-logger';
 import { Observable, throwError } from 'rxjs';
@@ -24,7 +24,8 @@ export class SolicitudProteccionDataResolver extends SgiResolverResolver<ISolici
     logger: NGXLogger,
     router: Router,
     snackBar: SnackBarService,
-    private invencionService: InvencionService
+    private solicitudProteccionService: SolicitudProteccionService,
+    private invencionService: InvencionService,
   ) {
     super(logger, router, snackBar, MSG_NOT_FOUND);
   }
@@ -34,7 +35,7 @@ export class SolicitudProteccionDataResolver extends SgiResolverResolver<ISolici
     const solicitudProteccionId = Number(route.paramMap.get(SOLICITUD_PROTECCION_ROUTE_PARAMS.ID));
 
     if (solicitudProteccionId) {
-      return this.invencionService.exists(solicitudProteccionId).pipe(
+      return this.solicitudProteccionService.exists(solicitudProteccionId).pipe(
         switchMap((exists) => {
           if (!exists) {
             return throwError('NOT_FOUND');

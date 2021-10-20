@@ -1,5 +1,6 @@
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { ClasificacionCVN } from '@core/enums/clasificacion-cvn';
+import { FormularioSolicitud } from '@core/enums/formulario-solicitud';
 import { DateTime } from 'luxon';
 import { IUnidadGestion } from '../usr/unidad-gestion';
 import { ITipoAmbitoGeografico } from './tipo-ambito-geografico';
@@ -19,6 +20,7 @@ export interface IConvocatoria {
   observaciones: string;
   finalidad: ITipoFinalidad;
   regimenConcurrencia: ITipoRegimenConcurrencia;
+  formularioSolicitud: FormularioSolicitud;
   estado: Estado;
   duracion: number;
   abiertoPlazoPresentacionSolicitud: boolean;

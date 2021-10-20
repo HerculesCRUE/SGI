@@ -1,0 +1,60 @@
+<!-- Periodos de Titularidad -->
+<section class="periodo-titularidad-titularidades">
+  <h2>{{'pii.invencion-titularidad.periodo-titularidad' | translate}}</h2>
+
+  <!-- Listado de Periodos de Titularidad -->
+  <table mat-table class="mat-elevation-z8 table-unidad" [dataSource]="dataSource" matSort matSortActive="id"
+    matSortDirection="asc" matSortDisableClear>
+    <!-- Fecha de Inicio de la Titularidad -->
+    <ng-container matColumnDef="fechaInicio">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>
+        {{'pii.invencion-titularidad.periodo-titularidad.fecha-inicio' |
+        translate}}
+      </th>
+      <td mat-cell *matCellDef="let periodoTitularidad">{{periodoTitularidad.value.fechaInicio | luxon:'shortDate'}}
+      </td>
+    </ng-container>
+    <!-- Fecha de Fin de la Titularidad -->
+    <ng-container matColumnDef="fechaFin">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'pii.invencion-titularidad.periodo-titularidad.fecha-fin'
+        |
+        translate}}
+      </th>
+      <td mat-cell *matCellDef="let periodoTitularidad">{{periodoTitularidad.value.fechaFin | luxon:'shortDate'}}</td>
+    </ng-container>
+
+    <!-- Acciones -->
+    <ng-container matColumnDef="acciones">
+      <th mat-header-cell *matHeaderCellDef> {{'label.actions' | translate}} </th>
+      <td mat-cell *matCellDef="let periodoTitularidad">
+        <ng-container *sgiHasAuthority="'PII-INV-E'">
+          <button *ngIf="canEdit(periodoTitularidad)" mat-button matTooltip="{{'btn.edit' | translate}}"
+            (click)="openModal(periodoTitularidad)">
+            <mat-icon color="primary">border_color</mat-icon>
+          </button>
+        </ng-container>
+        <ng-container *sgiHasAuthority="'PII-INV-B'">
+          <button *ngIf="canDelete(periodoTitularidad)" mat-button matTooltip="{{'btn.delete' | translate}}"
+            (click)="deletePeriodoTitularidad(periodoTitularidad)">
+            <mat-icon color="warn">highlight_off</mat-icon>
+          </button>
+        </ng-container>
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="columnas"></tr>
+    <tr mat-row (click)="setSelectedPeriodoTitularidad(row)" *matRowDef="let row; columns: columnas;"
+      [class.selected]="row?.value?.id == (formPart.periodosTitularidadSelected$| async)?.value?.id"></tr>
+  </table>
+  <mat-paginator [pageSizeOptions]="elementosPagina" showFirstLastButtons>
+  </mat-paginator>
+
+  <ng-container *sgiHasAuthority="'PII-INV-C'">
+    <div class="separation-button">
+      <button color="three" mat-raised-button (click)="openModal(null)" [disabled]="!this.formPart.canAddTitularidad()">
+        <mat-icon color="accent">add_circle</mat-icon>
+        {{ 'btn.add.entity' | translate:msgParamEntity }}
+      </button>
+    </div>
+  </ng-container>
+</section>

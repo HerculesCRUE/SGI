@@ -176,7 +176,7 @@ public class FormularioControllerTest extends BaseControllerTest {
   }
 
   @Test
-  @WithMockUser(username = "user", authorities = { "ETI-EVC-EVAL", "ETI-EVC-EVALR", "ETI-PEV-C-INV", "ETI-PEV-ER-INV" })
+  @WithMockUser(username = "user", authorities = { "ETI-EVC-EVAL", "ETI-EVC-EVALR", "ETI-PEV-INV-C", "ETI-PEV-INV-ER" })
   public void getBloquesEmptyList() throws Exception {
     // given: Existe el formulario pero no tiene bloques
 
@@ -195,7 +195,7 @@ public class FormularioControllerTest extends BaseControllerTest {
   }
 
   @Test
-  @WithMockUser(username = "user", authorities = { "ETI-EVC-EVAL", "ETI-EVC-EVALR", "ETI-PEV-C-INV", "ETI-PEV-ER-INV" })
+  @WithMockUser(username = "user", authorities = { "ETI-EVC-EVAL", "ETI-EVC-EVALR", "ETI-PEV-INV-C", "ETI-PEV-INV-ER" })
   public void getBloquesValid() throws Exception {
     // given: Datos existentes con formulario
     Long id = 3L;

@@ -1,0 +1,137 @@
+[
+  {
+    "template": "<p>Mi investigación conlleva la recogida de datos personales de seres humanos (a través de cuestionarios, entrevistas, grupos de discusión, grabaciones de audio o video, fotografías...).</p>"
+  },
+  {
+    "type": "radio",
+    "key": "pregunta_1",
+    "templateOptions": {
+      "label": "Respuesta",
+      "required": true,
+      "color": "primary",
+      "options": [
+        {
+          "label": "No",
+          "value": false
+        },
+        {
+          "label": "Sí",
+          "value": true
+        }
+      ]
+    }
+  },
+  {
+    "template": "<p>Mi investigación permite identificar a los participantes (o permite que puedan llegar a ser identificables a partir de los datos recogidos).</p>"
+  },
+  {
+    "type": "radio",
+    "key": "pregunta_2",
+    "templateOptions": {
+      "label": "Respuesta",
+      "required": true,
+      "color": "primary",
+      "options": [
+        {
+          "label": "No",
+          "value": false
+        },
+        {
+          "label": "Sí",
+          "value": true
+        }
+      ]
+    }
+  },
+  {
+    "template": "<p>Mi investigación conlleva el estudio con animales de experimentación.</p>"
+  },
+  {
+    "type": "radio",
+    "key": "pregunta_3",
+    "templateOptions": {
+      "label": "Respuesta",
+      "required": true,
+      "color": "primary",
+      "options": [
+        {
+          "label": "No",
+          "value": false
+        },
+        {
+          "label": "Sí",
+          "value": true
+        }
+      ]
+    }
+  },
+  {
+    "template": "<p>Mi investigación conlleva la recogida y tratamiento de muestras biológicas -de humanos o animales- (saliva, sangre, cabello, tejidos...).</p>"
+  },
+  {
+    "type": "radio",
+    "key": "pregunta_4",
+    "templateOptions": {
+      "label": "Respuesta",
+      "required": true,
+      "color": "primary",
+      "options": [
+        {
+          "label": "No",
+          "value": false
+        },
+        {
+          "label": "Sí",
+          "value": true
+        }
+      ]
+    }
+  },
+  {
+    "template": "<p>Mi investigación cuenta con informe favorable pero se van a realizar cambios.</p>"
+  },
+  {
+    "type": "radio",
+    "key": "pregunta_5",
+    "templateOptions": {
+      "label": "Respuesta",
+      "required": true,
+      "color": "primary",
+      "options": [
+        {
+          "label": "No",
+          "value": false
+        },
+        {
+          "label": "Sí",
+          "value": true
+        }
+      ]
+    }
+  },
+  {
+    "template": "<p>Mi investigación supone trabajar con personas.</p>"
+  },
+  {
+    "type": "radio",
+    "key": "pregunta_6",
+    "templateOptions": {
+      "label": "Respuesta",
+      "required": true,
+      "color": "primary",
+      "options": [
+        {
+          "label": "No",
+          "value": false
+        },
+        {
+          "label": "Sí",
+          "value": true
+        }
+      ]
+    }
+  },
+  {
+    "template": "<p><b>En el caso de que se conteste a una de las preguntas que Sí es necesario someter la investigación ante la Comisión de Ética de investigación. Se creará de forma automática la solicitud de petición de la evaluación de la comisión, estando accesible en el módulo de Ética, al cambiar el estado de la solicitud</b></p>"
+  }
+]

@@ -34,6 +34,16 @@ public interface ComentarioService {
   Comentario createComentarioEvaluador(Long evaluacionId, Comentario comentario, String personaRef);
 
   /**
+   * Guardar un {@link Comentario} de {@link TipoComentario} "ACTA" de una
+   * {@link Evaluacion}.
+   *
+   * @param evaluacionId Id de la evaluación
+   * @param comentario   {@link Comentario} a guardar.
+   * @return lista de entidades {@link Comentario} persistida.
+   */
+  Comentario createComentarioActa(Long evaluacionId, Comentario comentario);
+
+  /**
    * Actualizar un {@link Comentario} de tipo "GESTOR" de una {@link Evaluacion}.
    *
    * @param evaluacionId Id de la evaluación
@@ -83,6 +93,16 @@ public interface ComentarioService {
   Page<Comentario> findByEvaluacionIdEvaluador(Long id, Pageable pageable, String personaRef);
 
   /**
+   * Obtiene todos los {@link Comentario} del tipo "ACTA" por el id de su
+   * evaluación.
+   *
+   * @param id       el id de la entidad {@link Evaluacion}.
+   * @param pageable la información de la paginación.
+   * @return la lista de entidades {@link Comentario} paginadas.
+   */
+  Page<Comentario> findByEvaluacionIdActa(Long id, Pageable pageable);
+
+  /**
    * Elimina un {@link Comentario} de tipo "GESTOR" de una {@link Evaluacion}.
    *
    * @param evaluacionId Id de {@link Evaluacion}
@@ -99,6 +119,14 @@ public interface ComentarioService {
    */
   void deleteComentarioEvaluador(Long evaluacionId, Long idComentario, String personaRef)
       throws ComentarioNotFoundException;
+
+  /**
+   * Elimina un {@link Comentario} de tipo "ACTA" de una {@link Evaluacion}.
+   *
+   * @param evaluacionId Id de {@link Evaluacion}
+   * @param idComentario Id de {@link Comentario}
+   */
+  void deleteComentarioActa(Long evaluacionId, Long idComentario) throws ComentarioNotFoundException;
 
   /**
    * Obtiene el número total de {@link Comentario} para una determinada

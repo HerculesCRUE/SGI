@@ -51,7 +51,7 @@ public class TipoConvocatoriaReunionController {
    * @param paging pageable
    */
   @GetMapping()
-  @PreAuthorize("hasAnyAuthorityForAnyUO('ETI-CNV-V', 'ETI-EVC-VR', 'ETI-EVC-VR-INV', 'ETI-EVC-EVAL', 'ETI-EVC-EVALR', 'ETI-EVC-EVALR-INV')")
+  @PreAuthorize("hasAnyAuthorityForAnyUO('ETI-CNV-V', 'ETI-EVC-VR', 'ETI-EVC-INV-VR', 'ETI-EVC-EVAL', 'ETI-EVC-EVALR', 'ETI-EVC-INV-EVALR')")
   ResponseEntity<Page<TipoConvocatoriaReunion>> findAll(@RequestParam(name = "q", required = false) String query,
       @RequestPageable(sort = "s") Pageable paging) {
     log.debug("findAll(String query,Pageable paging) - start");

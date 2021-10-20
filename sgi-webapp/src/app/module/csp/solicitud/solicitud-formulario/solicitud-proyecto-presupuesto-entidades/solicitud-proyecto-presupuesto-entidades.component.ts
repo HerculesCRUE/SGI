@@ -62,6 +62,7 @@ export class SolicitudProyectoPresupuestoEntidadesComponent
 
   displayedColumns = [
     'nombre',
+    'fuenteFinanciacion',
     'cif',
     'ajena',
     'acciones'

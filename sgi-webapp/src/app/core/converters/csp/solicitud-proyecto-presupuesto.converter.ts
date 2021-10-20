@@ -1,6 +1,6 @@
 import { ISolicitudProyectoPresupuestoBackend } from '@core/models/csp/backend/solicitud-proyecto-presupuesto-backend';
+import { ISolicitudProyectoEntidad } from '@core/models/csp/solicitud-proyecto-entidad';
 import { ISolicitudProyectoPresupuesto } from '@core/models/csp/solicitud-proyecto-presupuesto';
-import { IEmpresa } from '@core/models/sgemp/empresa';
 import { SgiBaseConverter } from '@sgi/framework/core';
 
 class SolicitudProyectoPresupuestoConverter extends SgiBaseConverter<ISolicitudProyectoPresupuestoBackend, ISolicitudProyectoPresupuesto> {
@@ -13,12 +13,11 @@ class SolicitudProyectoPresupuestoConverter extends SgiBaseConverter<ISolicitudP
       id: value.id,
       solicitudProyectoId: value.solicitudProyectoId,
       conceptoGasto: value.conceptoGasto,
-      empresa: { id: value.entidadRef } as IEmpresa,
+      solicitudProyectoEntidad: { id: value.solicitudProyectoEntidadId } as ISolicitudProyectoEntidad,
       anualidad: value.anualidad,
       importeSolicitado: value.importeSolicitado,
       importePresupuestado: value.importePresupuestado,
-      observaciones: value.observaciones,
-      financiacionAjena: value.financiacionAjena
+      observaciones: value.observaciones
     };
   }
 
@@ -29,13 +28,12 @@ class SolicitudProyectoPresupuestoConverter extends SgiBaseConverter<ISolicitudP
     return {
       id: value.id,
       solicitudProyectoId: value.solicitudProyectoId,
+      solicitudProyectoEntidadId: value.solicitudProyectoEntidad?.id,
       conceptoGasto: value.conceptoGasto,
-      entidadRef: value.empresa?.id,
       anualidad: value.anualidad,
       importeSolicitado: value.importeSolicitado,
       importePresupuestado: value.importePresupuestado,
-      observaciones: value.observaciones,
-      financiacionAjena: value.financiacionAjena ? true : false
+      observaciones: value.observaciones
     };
   }
 }

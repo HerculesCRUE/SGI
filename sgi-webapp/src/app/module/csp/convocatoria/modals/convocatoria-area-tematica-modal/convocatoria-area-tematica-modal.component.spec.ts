@@ -21,7 +21,6 @@ describe('ConvocatoriaAreaTematicaModalComponent', () => {
   const convocatoriaAreaTematica = {} as IConvocatoriaAreaTematica;
   const newData: AreaTematicaData = {
     padre: undefined,
-    observaciones: '',
     convocatoriaAreaTematica: new StatusWrapper<IConvocatoriaAreaTematica>(convocatoriaAreaTematica)
   };
 
@@ -58,10 +57,5 @@ describe('ConvocatoriaAreaTematicaModalComponent', () => {
 
   it('should create', () => {
     expect(component).toBeTruthy();
-    const formGroup = component.formGroup;
-    expect(formGroup).toBeTruthy();
-    expect(Object.keys(formGroup.controls).length).toBe(2);
-    expect(formGroup.controls.padre).toBeTruthy();
-    expect(formGroup.controls.observaciones).toBeTruthy();
   });
 });

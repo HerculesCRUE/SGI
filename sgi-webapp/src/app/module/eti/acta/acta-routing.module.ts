@@ -12,6 +12,7 @@ import { ActaEditarComponent } from './acta-editar/acta-editar.component';
 import {
   ActaAsistentesListadoComponent
 } from './acta-formulario/acta-asistentes/acta-asistentes-listado/acta-asistentes-listado.component';
+import { ActaComentariosComponent } from './acta-formulario/acta-comentarios/acta-comentarios.component';
 import { ActaDatosGeneralesComponent } from './acta-formulario/acta-datos-generales/acta-datos-generales.component';
 import { ActaMemoriasComponent } from './acta-formulario/acta-memorias/acta-memorias.component';
 import { ActaListadoComponent } from './acta-listado/acta-listado.component';
@@ -29,7 +30,7 @@ const routes: SgiRoutes = [
     data: {
       title: ACTA_KEY,
       titleParams: MSG_PARAMS.CARDINALIRY.PLURAL,
-      hasAuthorityForAnyUO: 'ETI-ACT-V'
+      hasAnyAuthorityForAnyUO: ['ETI-ACT-V', 'ETI-ACT-INV-ER', 'ETI-ACT-ER']
     }
   },
   {
@@ -76,7 +77,7 @@ const routes: SgiRoutes = [
     data: {
       title: ACTA_KEY,
       titleParams: MSG_PARAMS.CARDINALIRY.SINGULAR,
-      hasAuthorityForAnyUO: 'ETI-ACT-E'
+      hasAnyAuthorityForAnyUO: ['ETI-ACT-E', 'ETI-ACT-INV-ER', 'ETI-ACT-ER']
     },
     children: [
       {
@@ -96,6 +97,10 @@ const routes: SgiRoutes = [
       {
         path: ACTA_ROUTE_NAMES.ASISTENTES,
         component: ActaAsistentesListadoComponent
+      },
+      {
+        path: ACTA_ROUTE_NAMES.COMENTARIOS,
+        component: ActaComentariosComponent
       }
     ]
   }

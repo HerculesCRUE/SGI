@@ -35,6 +35,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.test.context.support.WithMockUser;
 
 /**
  * ActaServiceTest
@@ -211,6 +212,7 @@ public class ActaServiceTest extends BaseServiceTest {
   }
 
   @Test
+  @WithMockUser(username = "user", authorities = { "ETI-ACT-V" })
   public void findAll_Unlimited_ReturnsFullActaWithNumEvaluacionesList() {
     // given: One hundred actas
     List<ActaWithNumEvaluaciones> actas = new ArrayList<>();
@@ -218,12 +220,11 @@ public class ActaServiceTest extends BaseServiceTest {
       actas.add(generarMockActaWithNumEvaluaciones(Long.valueOf(i), i));
     }
 
-    BDDMockito.given(
-        actaRepository.findAllActaWithNumEvaluaciones(ArgumentMatchers.<String>any(), ArgumentMatchers.<Pageable>any()))
-        .willReturn(new PageImpl<>(actas));
+    BDDMockito.given(actaRepository.findAllActaWithNumEvaluaciones(ArgumentMatchers.<String>any(),
+        ArgumentMatchers.<Pageable>any(), ArgumentMatchers.<String>any())).willReturn(new PageImpl<>(actas));
 
     // when: find unlimited
-    Page<ActaWithNumEvaluaciones> page = actaService.findAllActaWithNumEvaluaciones(null, Pageable.unpaged());
+    Page<ActaWithNumEvaluaciones> page = actaService.findAllActaWithNumEvaluaciones(null, Pageable.unpaged(), null);
 
     // then: Get a page with one hundred actas
     Assertions.assertThat(page.getContent().size()).isEqualTo(100);
@@ -234,6 +235,7 @@ public class ActaServiceTest extends BaseServiceTest {
   }
 
   @Test
+  @WithMockUser(username = "user", authorities = { "ETI-ACT-V" })
   public void findAll_WithPaging_ReturnsPage() {
     // given: One hundred actas
     List<ActaWithNumEvaluaciones> actas = new ArrayList<>();
@@ -241,8 +243,9 @@ public class ActaServiceTest extends BaseServiceTest {
       actas.add(generarMockActaWithNumEvaluaciones(Long.valueOf(i), i));
     }
 
-    BDDMockito.given(
-        actaRepository.findAllActaWithNumEvaluaciones(ArgumentMatchers.<String>any(), ArgumentMatchers.<Pageable>any()))
+    BDDMockito
+        .given(actaRepository.findAllActaWithNumEvaluaciones(ArgumentMatchers.<String>any(),
+            ArgumentMatchers.<Pageable>any(), ArgumentMatchers.<String>any()))
         .willAnswer(new Answer<Page<ActaWithNumEvaluaciones>>() {
           @Override
           public Page<ActaWithNumEvaluaciones> answer(InvocationOnMock invocation) throws Throwable {
@@ -259,7 +262,7 @@ public class ActaServiceTest extends BaseServiceTest {
 
     // when: Get page=3 with pagesize=10
     Pageable paging = PageRequest.of(3, 10);
-    Page<ActaWithNumEvaluaciones> page = actaService.findAllActaWithNumEvaluaciones(null, paging);
+    Page<ActaWithNumEvaluaciones> page = actaService.findAllActaWithNumEvaluaciones(null, paging, null);
 
     // then: A Page with ten actas are returned containing id='31' to '40'
     Assertions.assertThat(page.getContent().size()).isEqualTo(10);

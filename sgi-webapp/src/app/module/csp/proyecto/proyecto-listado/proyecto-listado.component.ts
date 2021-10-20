@@ -17,12 +17,10 @@ import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-pro
 import { IUnidadGestion } from '@core/models/usr/unidad-gestion';
 import { ROUTE_NAMES } from '@core/route.names';
 import { ConvocatoriaService } from '@core/services/csp/convocatoria.service';
-import { FuenteFinanciacionService } from '@core/services/csp/fuente-financiacion/fuente-financiacion.service';
 import { ProgramaService } from '@core/services/csp/programa.service';
 import { ProyectoService } from '@core/services/csp/proyecto.service';
 import { RolProyectoService } from '@core/services/csp/rol-proyecto.service';
 import { TipoAmbitoGeograficoService } from '@core/services/csp/tipo-ambito-geografico.service';
-import { UnidadGestionService } from '@core/services/csp/unidad-gestion.service';
 import { DialogService } from '@core/services/dialog.service';
 import { SnackBarService } from '@core/services/snack-bar.service';
 import { LuxonUtils } from '@core/utils/luxon-utils';
@@ -32,9 +30,10 @@ import { SgiAuthService } from '@sgi/framework/auth';
 import { RSQLSgiRestFilter, SgiRestFilter, SgiRestFilterOperator, SgiRestFindOptions, SgiRestListResult } from '@sgi/framework/http';
 import { DateTime } from 'luxon';
 import { NGXLogger } from 'ngx-logger';
-import { merge, Observable, of, Subscription } from 'rxjs';
-import { catchError, map, startWith, switchMap, tap } from 'rxjs/operators';
+import { BehaviorSubject, merge, Observable, of, Subscription } from 'rxjs';
+import { catchError, map, switchMap, tap } from 'rxjs/operators';
 import { CONVOCATORIA_ACTION_LINK_KEY } from '../../convocatoria/convocatoria.action.service';
+
 
 const MSG_ERROR = marker('error.load');
 const MSG_BUTTON_NEW = marker('btn.add.entity');
@@ -48,6 +47,7 @@ const PROYECTO_KEY = marker('csp.proyecto');
 
 interface IProyectoData extends IProyecto {
   prorrogado: boolean;
+  proyectosSGE: string
 }
 
 @Component({
@@ -80,17 +80,9 @@ export class ProyectoListadoComponent extends AbstractTablePaginationComponent<I
 
   private subscriptions: Subscription[] = [];
 
-  private unidadGestionFiltered: IUnidadGestion[] = [];
-  unidadesGestion$: Observable<IUnidadGestion[]>;
+  ambitoGeografico$: BehaviorSubject<ITipoAmbitoGeografico[]> = new BehaviorSubject<ITipoAmbitoGeografico[]>([]);
 
-  private ambitoGeograficoFiltered: ITipoAmbitoGeografico[] = [];
-  ambitoGeografico$: Observable<ITipoAmbitoGeografico[]>;
-
-  private planInvestigacionFiltered: IPrograma[] = [];
-  planInvestigacion$: Observable<IPrograma[]>;
-
-  private fuenteFinanciacionFiltered: IFuenteFinanciacion[] = [];
-  fuenteFinanciacion$: Observable<IFuenteFinanciacion[]>;
+  planInvestigacion$: BehaviorSubject<IPrograma[]> = new BehaviorSubject<IPrograma[]>([]);
 
   private convocatoriaId: number;
   mapModificable: Map<number, boolean> = new Map();
@@ -113,10 +105,8 @@ export class ProyectoListadoComponent extends AbstractTablePaginationComponent<I
     private readonly proyectoService: ProyectoService,
     private readonly dialogService: DialogService,
     public authService: SgiAuthService,
-    private unidadGestionService: UnidadGestionService,
     private tipoAmbitoGeograficoService: TipoAmbitoGeograficoService,
     private programaService: ProgramaService,
-    private fuenteFinanciacionService: FuenteFinanciacionService,
     private rolProyectoService: RolProyectoService,
     private readonly translate: TranslateService,
     private convocatoriaService: ConvocatoriaService,
@@ -164,6 +154,7 @@ export class ProyectoListadoComponent extends AbstractTablePaginationComponent<I
   private loadForm() {
     this.formGroup = new FormGroup({
       titulo: new FormControl(''),
+      id: new FormControl(''),
       acronimo: new FormControl(''),
       estado: new FormControl(''),
       activo: new FormControl('true'),
@@ -186,10 +177,8 @@ export class ProyectoListadoComponent extends AbstractTablePaginationComponent<I
       finalizado: new FormControl(''),
       prorrogado: new FormControl('')
     });
-    this.loadUnidadesGestion();
     this.loadAmbitoGeografico();
     this.loadPlanInvestigacion();
-    this.loadFuenteFinanciacion();
     this.loadColectivos();
     this.filter = this.createFilter();
   }
@@ -291,78 +280,58 @@ export class ProyectoListadoComponent extends AbstractTablePaginationComponent<I
   }
 
   protected createObservable(): Observable<SgiRestListResult<IProyectoData>> {
-    let observable$ = null;
+    let observable$: Observable<SgiRestListResult<IProyecto>> = null;
     if (this.authService.hasAuthorityForAnyUO('CSP-PRO-R')) {
-      observable$ = this.proyectoService.findTodos(this.getFindOptions()).pipe(
-        map((response) => {
-          return response as SgiRestListResult<IProyecto>;
-        }),
-        switchMap((response) => {
-          const requestsProyecto: Observable<IProyectoData>[] = [];
-          response.items.forEach(proyecto => {
-            const proyectoData = proyecto as IProyectoData;
-            if (proyecto.id) {
-              requestsProyecto.push(this.proyectoService.hasProyectoProrrogas(proyecto.id).pipe(
-                map(value => {
-                  proyectoData.prorrogado = value;
-                  return proyectoData;
-                })
-              ));
-            } else {
-              requestsProyecto.push(of(proyectoData));
-            }
-
-            if (this.authService.hasAnyAuthorityForAnyUO(['CSP-PRO-E', 'CSP-PRO-V'])) {
-              this.suscripciones.push(this.proyectoService.modificable(proyecto.id).subscribe((value) => {
-                this.mapModificable.set(proyecto.id, value);
-              }));
-            }
-          });
-          return of(response).pipe(
-            tap(() => merge(...requestsProyecto).subscribe())
-          );
-        })
-      );
+      observable$ = this.proyectoService.findTodos(this.getFindOptions());
     } else {
-      observable$ = this.proyectoService.findAll(this.getFindOptions()).pipe(
-        map((response) => {
-          return response as SgiRestListResult<IProyecto>;
-        }),
-        switchMap((response) => {
-          const requestsProyecto: Observable<IProyectoData>[] = [];
-          response.items.forEach(proyecto => {
-            const proyectoData = proyecto as IProyectoData;
-            if (proyecto.id) {
-              requestsProyecto.push(this.proyectoService.hasProyectoProrrogas(proyecto.id).pipe(
-                map(value => {
-                  proyectoData.prorrogado = value;
-                  return proyectoData;
-                })
-              ));
-            } else {
-              requestsProyecto.push(of(proyectoData));
-            }
-
-            if (this.authService.hasAnyAuthorityForAnyUO(['CSP-PRO-E', 'CSP-PRO-V'])) {
-              this.suscripciones.push(this.proyectoService.modificable(proyecto.id).subscribe((value) => {
-                this.mapModificable.set(proyecto.id, value);
-              }));
-            }
-          });
-          return of(response).pipe(
-            tap(() => merge(...requestsProyecto).subscribe())
-          );
-        })
-      );
+      observable$ = this.proyectoService.findAll(this.getFindOptions());
     }
-    return observable$;
+    return observable$.pipe(
+      map((response) => {
+        return response as SgiRestListResult<IProyectoData>;
+      }),
+      switchMap((response) => {
+        const requestsProyecto: Observable<IProyectoData>[] = [];
+        response.items.forEach(proyecto => {
+          const proyectoData = proyecto as IProyectoData;
+          if (proyecto.id) {
+            requestsProyecto.push(this.proyectoService.hasProyectoProrrogas(proyecto.id).pipe(
+              map(value => {
+                proyectoData.prorrogado = value;
+                return proyectoData;
+              }),
+              switchMap(() =>
+                this.proyectoService.findAllProyectosSgeProyecto(proyecto.id).pipe(
+                  map(value => {
+                    proyectoData.proyectosSGE = value.items.map(element => element.proyectoSge.id).join(', ');
+                    return proyectoData;
+                  }))
+              )
+
+            ));
+          } else {
+            requestsProyecto.push(of(proyectoData));
+          }
+
+          if (this.authService.hasAnyAuthorityForAnyUO(['CSP-PRO-E', 'CSP-PRO-V'])) {
+            this.suscripciones.push(this.proyectoService.modificable(proyecto.id).subscribe((value) => {
+              this.mapModificable.set(proyecto.id, value);
+            }));
+          }
+        });
+        return of(response).pipe(
+          tap(() => merge(...requestsProyecto).subscribe())
+        );
+      })
+    );
+
   }
 
   protected initColumns(): void {
     if (this.authService.hasAuthorityForAnyUO('CSP-PRO-R')) {
-      this.columnas = ['titulo', 'acronimo', 'codigoExterno', 'fechaInicio', 'fechaFin', 'fechaFinDefinitiva', 'finalizado', 'prorrogado', 'estado', 'activo', 'acciones'];
+      this.columnas = ['id', 'codigoSGE', 'titulo', 'acronimo', 'codigoExterno', 'fechaInicio', 'fechaFin', 'fechaFinDefinitiva', 'finalizado', 'prorrogado', 'estado', 'activo', 'acciones'];
     } else {
-      this.columnas = ['titulo', 'acronimo', 'codigoExterno', 'fechaInicio', 'fechaFin', 'fechaFinDefinitiva', 'finalizado', 'prorrogado', 'estado', 'acciones'];
+      this.columnas = ['id', 'codigoSGE', 'titulo', 'acronimo', 'codigoExterno', 'fechaInicio', 'fechaFin', 'fechaFinDefinitiva', 'finalizado', 'prorrogado', 'estado', 'acciones'];
     }
   }
 
@@ -372,7 +341,8 @@ export class ProyectoListadoComponent extends AbstractTablePaginationComponent<I
 
   protected createFilter(): SgiRestFilter {
     const controls = this.formGroup.controls;
-    const filter = new RSQLSgiRestFilter('acronimo', SgiRestFilterOperator.LIKE_ICASE, controls.acronimo.value)
+
+    const filter = new RSQLSgiRestFilter('id', SgiRestFilterOperator.EQUALS, controls.id.value)
       .and('titulo', SgiRestFilterOperator.LIKE_ICASE, controls.titulo.value)
       .and('estado.estado', SgiRestFilterOperator.EQUALS, controls.estado.value)
       .and('codigoExterno', SgiRestFilterOperator.LIKE_ICASE, controls.codigoExterno.value);
@@ -380,6 +350,7 @@ export class ProyectoListadoComponent extends AbstractTablePaginationComponent<I
       filter.and('activo', SgiRestFilterOperator.EQUALS, controls.activo.value);
     }
     filter
+      .and('acronimo', SgiRestFilterOperator.LIKE_ICASE, controls.acronimo.value)
       .and('unidadGestionRef', SgiRestFilterOperator.EQUALS, controls.unidadGestion.value?.acronimo)
       .and('fechaInicio', SgiRestFilterOperator.GREATHER_OR_EQUAL, LuxonUtils.toBackend(controls.fechaInicioDesde.value))
       .and('fechaInicio', SgiRestFilterOperator.LOWER_OR_EQUAL, LuxonUtils.toBackend(controls.fechaInicioHasta.value))
@@ -509,104 +480,12 @@ export class ProyectoListadoComponent extends AbstractTablePaginationComponent<I
   }
 
   /**
-   * Filtra la lista devuelta por el servicio de Unidades de Gestión
-   *
-   * @param value del input para autocompletar
-   */
-  private filtroUnidadGestion(value: string): IUnidadGestion[] {
-    const filterValue = value.toString().toLowerCase();
-    return this.unidadGestionFiltered.filter(unidadGestion => unidadGestion.nombre.toLowerCase().includes(filterValue));
-  }
-
-  /**
-   * Filtra la lista devuelta por el servicio de Tipos de ámbitos geográficos
-   *
-   * @param value del input para autocompletar
-   */
-  private filtroAmbitoGeografico(value: string): ITipoAmbitoGeografico[] {
-    const filterValue = value.toString().toLowerCase();
-    return this.ambitoGeograficoFiltered.filter(ambitoGeografico => ambitoGeografico.nombre.toLowerCase().includes(filterValue));
-  }
-
-  /**
-   * Filtra la lista devuelta por el servicio de Planes e Investigación
-   *
-   * @param value del input para autocompletar
-   */
-  private filtroPlanInvestigacion(value: string): IPrograma[] {
-    const filterValue = value.toString().toLowerCase();
-    return this.planInvestigacionFiltered.filter(fuente => fuente.nombre.toLowerCase().includes(filterValue));
-  }
-
-  /**
-   * Filtra la lista devuelta por el servicio de Fuentes de Financiación
-   *
-   * @param value del input para autocompletar
-   */
-  private filtroFuenteFinanciacion(value: string): IFuenteFinanciacion[] {
-    const filterValue = value.toString().toLowerCase();
-    return this.fuenteFinanciacionFiltered.filter(fuente => fuente.nombre.toLowerCase().includes(filterValue));
-  }
-
-  /**
-   * Cargar unidad gestion
-   */
-  private loadUnidadesGestion() {
-    this.subscriptions.push(
-      // TODO Debería filtrar por el rol
-      this.unidadGestionService.findAllRestringidos().subscribe(
-        res => {
-          this.unidadGestionFiltered = res.items;
-          this.unidadesGestion$ = this.formGroup.controls.unidadGestion.valueChanges
-            .pipe(
-              startWith(''),
-              map(value => this.filtroUnidadGestion(value))
-            );
-        },
-        (error) => {
-          this.logger.error(error);
-          this.snackBarService.showError(MSG_ERROR);
-        }
-      )
-    );
-  }
-
-  /**
-   * Cargar fuente financiacion
-   */
-  private loadFuenteFinanciacion() {
-    this.suscripciones.push(
-      this.fuenteFinanciacionService.findAll().subscribe(
-        (res) => {
-          this.fuenteFinanciacionFiltered = res.items;
-          this.fuenteFinanciacion$ = this.formGroup.controls.fuenteFinanciacion.valueChanges
-            .pipe(
-              startWith(''),
-              map(value => this.filtroFuenteFinanciacion(value))
-            );
-        },
-        (error) => {
-          this.logger.error(error);
-          this.snackBarService.showError(MSG_ERROR);
-        }
-      )
-    );
-  }
-
-  /**
    * Cargar planes de investigación
    */
   private loadPlanInvestigacion() {
     this.suscripciones.push(
       this.programaService.findAllPlan().subscribe(
-        (res) => {
-          this.planInvestigacionFiltered = res.items;
-          this.planInvestigacion$ = this.formGroup.controls.planInvestigacion.valueChanges
-            .pipe(
-              startWith(''),
-              map(value => this.filtroPlanInvestigacion(value))
-            );
-        },
+        (res) => this.planInvestigacion$.next(res.items),
         (error) => {
           this.logger.error(error);
           this.snackBarService.showError(MSG_ERROR);
@@ -621,14 +500,7 @@ export class ProyectoListadoComponent extends AbstractTablePaginationComponent<I
   private loadAmbitoGeografico() {
     this.suscripciones.push(
       this.tipoAmbitoGeograficoService.findAll().subscribe(
-        (res) => {
-          this.ambitoGeograficoFiltered = res.items;
-          this.ambitoGeografico$ = this.formGroup.controls.ambitoGeografico.valueChanges
-            .pipe(
-              startWith(''),
-              map(value => this.filtroAmbitoGeografico(value))
-            );
-        },
+        (res) => this.ambitoGeografico$.next(res.items),
         (error) => {
           this.logger.error(error);
           this.snackBarService.showError(MSG_ERROR);
@@ -643,7 +515,7 @@ export class ProyectoListadoComponent extends AbstractTablePaginationComponent<I
    */
   private loadColectivos() {
     const queryOptions: SgiRestFindOptions = {};
-    queryOptions.filter = new RSQLSgiRestFilter('rolPrincipal', SgiRestFilterOperator.EQUALS, 'false')
+    queryOptions.filter = new RSQLSgiRestFilter('rolPrincipal', SgiRestFilterOperator.EQUALS, 'false');
     this.subscriptions.push(this.rolProyectoService.findAll(queryOptions).subscribe(
       (response) => {
         response.items.forEach((rolProyecto: IRolProyecto) => {

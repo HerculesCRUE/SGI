@@ -6,11 +6,8 @@ package org.crue.hercules.sgi.csp.enums;
  */
 public enum FormularioSolicitud {
 
-  /** Estándar */
-  ESTANDAR,
-  /** RRHH */
-  RRHH,
-  /** Ayudas a grupos */
-  AYUDAS_GRUPOS;
-
+  /** Proyecto */
+  PROYECTO,
+  /** Grupo */
+  GRUPO
 }

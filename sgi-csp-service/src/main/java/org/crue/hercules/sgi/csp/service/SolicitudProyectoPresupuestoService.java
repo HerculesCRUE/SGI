@@ -6,6 +6,8 @@ import org.crue.hercules.sgi.csp.dto.SolicitudProyectoPresupuestoTotalConceptoGa
 import org.crue.hercules.sgi.csp.dto.SolicitudProyectoPresupuestoTotales;
 import org.crue.hercules.sgi.csp.model.Solicitud;
 import org.crue.hercules.sgi.csp.model.SolicitudProyecto;
+import org.crue.hercules.sgi.csp.model.SolicitudProyectoEntidad;
+import org.crue.hercules.sgi.csp.model.SolicitudProyectoEntidadFinanciadoraAjena;
 import org.crue.hercules.sgi.csp.model.SolicitudProyectoPresupuesto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -66,20 +68,6 @@ public interface SolicitudProyectoPresupuestoService {
   Page<SolicitudProyectoPresupuesto> findAllBySolicitud(Long solicitudId, String query, Pageable paging);
 
   /**
-   * Recupera la lista paginada de {@link SolicitudProyectoPresupuesto} de una
-   * entidad en una {@link Solicitud}.
-   * 
-   * @param solicitudId Identificador de la {@link Solicitud}.
-   * @param entidadRef  Identificador de la entidad.
-   * @param ajena       es o no financiacionAjena.
-   * @param query       parámentros de búsqueda.
-   * @param paging      parámetros de paginación.
-   * @return lista paginada.
-   */
-  Page<SolicitudProyectoPresupuesto> findAllBySolicitudAndEntidadRef(Long solicitudId, String entidadRef, boolean ajena,
-      String query, Pageable paging);
-
-  /**
    * Comprueba la existencia de {@link SolicitudProyectoPresupuesto} asociados a
    * una solicitud para una entidadRef y financiacionAjena
    * 
@@ -130,5 +118,29 @@ public interface SolicitudProyectoPresupuestoService {
    *         cualquier otro caso
    */
   boolean existsBySolicitudProyectoSolicitudId(Long solicitudId);
+
+  /**
+   * Comprueba la existencia de {@link SolicitudProyectoPresupuesto} asociados a
+   * una {@link SolicitudProyectoEntidadFinanciadoraAjena}
+   * 
+   * @param solicitudProyectoEntidadFinanciadoraAjenaId Id de la
+   *                                                    {@link SolicitudProyectoEntidadFinanciadoraAjena}
+   * @return <code>true</code> si existe alguna relación, <code>false</code> en
+   *         cualquier otro caso
+   */
+  boolean existsBySolicitudProyectoEntidadFinanciadoraAjena(Long solicitudProyectoEntidadFinanciadoraAjenaId);
+
+  /**
+   * Recupera la lista paginada de {@link SolicitudProyectoPresupuesto} de una
+   * entidad en una {@link SolicitudProyectoEntidad}.
+   * 
+   * @param solicitudProyectoEntidadId Identificador de la
+   *                                   {@link SolicitudProyectoEntidad}.
+   * @param query                      parámentros de búsqueda.
+   * @param paging                     parámetros de paginación.
+   * @return lista paginada.
+   */
+  Page<SolicitudProyectoPresupuesto> findAllBySolicitudProyectoEntidad(Long solicitudProyectoEntidadId, String query,
+      Pageable paging);
 
 }

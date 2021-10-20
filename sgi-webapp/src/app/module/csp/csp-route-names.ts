@@ -13,5 +13,6 @@ export const CSP_ROUTE_NAMES = {
   TIPO_FINANCIACION: 'tipo-financiaciones',
   AREA_TEMATICA: 'area-tematica',
   PROYECTO: 'proyectos',
-  EJECUCION_ECONOMICA: 'ejecucion-economica'
+  EJECUCION_ECONOMICA: 'ejecucion-economica',
+  NOTIFICACION_PRESUPUESTO_SGE: 'notificacion-presupuesto-sge'
 };

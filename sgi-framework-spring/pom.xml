@@ -10,7 +10,7 @@
   <groupId>org.crue.hercules.sgi</groupId>
   <artifactId>sgi-framework-spring</artifactId>
 
-  <version>0.0.3</version>
+  <version>0.0.4</version>
 
   <!-- ********************************************** -->
   <!-- ******************** ABOUT ******************* -->
@@ -59,6 +59,7 @@
     <org.hibernate-jpamodelgen.version>5.3.15.Final</org.hibernate-jpamodelgen.version>
     <rsql-jpa.version>5.0.9</rsql-jpa.version>
     <lombok.version>1.18.20</lombok.version>
+    <jslt.version>0.1.11</jslt.version>
   </properties>
 
   <dependencyManagement>
@@ -84,6 +85,11 @@
         <artifactId>jsr305</artifactId>
         <version>${jsr305.version}</version>
         <scope>provided</scope>
+      </dependency>
+      <dependency>
+        <groupId>com.schibsted.spt.data</groupId>
+        <artifactId>jslt</artifactId>
+        <version>${jslt.version}</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
@@ -174,6 +180,10 @@
     <dependency>
       <groupId>io.github.perplexhub</groupId>
       <artifactId>rsql-jpa-spring-boot-starter</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.schibsted.spt.data</groupId>
+      <artifactId>jslt</artifactId>
     </dependency>
 
     <!-- ============================================== -->

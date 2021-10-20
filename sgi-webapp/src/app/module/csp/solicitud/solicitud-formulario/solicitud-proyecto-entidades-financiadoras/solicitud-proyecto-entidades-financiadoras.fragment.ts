@@ -7,15 +7,20 @@ import { StatusWrapper } from '@core/utils/status-wrapper';
 import { BehaviorSubject, from, merge, Observable, of } from 'rxjs';
 import { map, mergeAll, mergeMap, switchMap, takeLast, tap } from 'rxjs/operators';
 
+export interface SolicitudProyectoEntidadFinanciadoraAjenaData extends ISolicitudProyectoEntidadFinanciadoraAjena {
+  hasDesglosePresupuesto: boolean;
+}
+
 export class SolicitudProyectoEntidadesFinanciadorasFragment extends Fragment {
-  entidadesFinanciadoras$ = new BehaviorSubject<StatusWrapper<ISolicitudProyectoEntidadFinanciadoraAjena>[]>([]);
-  private entidadesFinanciadorasEliminadas: StatusWrapper<ISolicitudProyectoEntidadFinanciadoraAjena>[] = [];
+  entidadesFinanciadoras$ = new BehaviorSubject<StatusWrapper<SolicitudProyectoEntidadFinanciadoraAjenaData>[]>([]);
+  private entidadesFinanciadorasEliminadas: StatusWrapper<SolicitudProyectoEntidadFinanciadoraAjenaData>[] = [];
 
   constructor(
     key: number,
     private solicitudService: SolicitudService,
     private solicitudProyectoEntidadFinanciadoraService: SolicitudProyectoEntidadFinanciadoraAjenaService,
     private empresaService: EmpresaService,
+    private solicitudProyectoEntidadFinanciadoraAjenaService: SolicitudProyectoEntidadFinanciadoraAjenaService,
     public readonly: boolean
   ) {
     super(key);
@@ -30,7 +35,9 @@ export class SolicitudProyectoEntidadesFinanciadorasFragment extends Fragment {
         .pipe(
           map(result => {
             return result.items.map((entidadFinanciadora) => {
-              return new StatusWrapper<ISolicitudProyectoEntidadFinanciadoraAjena>(entidadFinanciadora)
+              return new StatusWrapper<SolicitudProyectoEntidadFinanciadoraAjenaData>(
+                entidadFinanciadora as SolicitudProyectoEntidadFinanciadoraAjenaData
+              );
             });
           }),
           switchMap((entidadesFinanciadoras) => {
@@ -51,6 +58,23 @@ export class SolicitudProyectoEntidadesFinanciadorasFragment extends Fragment {
                   return entidadesFinanciadoras;
                 })
               );
+          }),
+          switchMap((response) => {
+            const requestsHasDesglosePresupuesto: Observable<StatusWrapper<SolicitudProyectoEntidadFinanciadoraAjenaData>>[] = [];
+            response.forEach(solicitudProyectoEntidadFinanciadora => {
+              requestsHasDesglosePresupuesto.push(
+                this.solicitudProyectoEntidadFinanciadoraAjenaService
+                  .hasSolicitudProyectoPresupuestoEntidad(solicitudProyectoEntidadFinanciadora.value.id)
+                  .pipe(
+                    map(hasDesglosePresupuesto => {
+                      solicitudProyectoEntidadFinanciadora.value.hasDesglosePresupuesto = hasDesglosePresupuesto;
+                      return solicitudProyectoEntidadFinanciadora;
+                    })
+                  ));
+            });
+            return of(response).pipe(
+              tap(() => merge(...requestsHasDesglosePresupuesto).subscribe())
+            );
           }),
           takeLast(1)
         ).subscribe(
@@ -73,6 +97,7 @@ export class SolicitudProyectoEntidadesFinanciadorasFragment extends Fragment {
       tap(() => {
         if (this.isSaveOrUpdateComplete()) {
           this.setChanges(false);
+          this.entidadesFinanciadoras$.next(this.entidadesFinanciadoras$.value);
         }
       })
     );
@@ -93,8 +118,9 @@ export class SolicitudProyectoEntidadesFinanciadorasFragment extends Fragment {
     }
   }
 
-  public addSolicitudProyectoEntidadFinanciadora(entidadFinanciadora: ISolicitudProyectoEntidadFinanciadoraAjena) {
-    const wrapped = new StatusWrapper<ISolicitudProyectoEntidadFinanciadoraAjena>(entidadFinanciadora);
+  public addSolicitudProyectoEntidadFinanciadora(entidadFinanciadora: SolicitudProyectoEntidadFinanciadoraAjenaData) {
+    entidadFinanciadora.hasDesglosePresupuesto = false;
+    const wrapped = new StatusWrapper<SolicitudProyectoEntidadFinanciadoraAjenaData>(entidadFinanciadora);
     wrapped.setCreated();
     const current = this.entidadesFinanciadoras$.value;
     current.push(wrapped);
@@ -102,14 +128,20 @@ export class SolicitudProyectoEntidadesFinanciadorasFragment extends Fragment {
     this.setChanges(true);
   }
 
-  public updateSolicitudProyectoEntidadFinanciadora(wrapper: StatusWrapper<ISolicitudProyectoEntidadFinanciadoraAjena>) {
+  public updateSolicitudProyectoEntidadFinanciadora(wrapper: StatusWrapper<SolicitudProyectoEntidadFinanciadoraAjenaData>) {
     const current = this.entidadesFinanciadoras$.value;
-    const index = current.findIndex(value => value.value.id === wrapper.value.id);
-    if (index >= 0) {
-      wrapper.setEdited();
-      this.entidadesFinanciadoras$.value[index] = wrapper;
-      this.setChanges(true);
+    if (wrapper.value.id) {
+      const index = current.findIndex(value => value.value?.id === wrapper.value.id);
+      if (index >= 0) {
+        if (!wrapper.created) {
+          wrapper.setEdited();
+          this.setChanges(true);
+        }
+
+        this.entidadesFinanciadoras$.value[index] = wrapper;
+      }
     }
+    this.entidadesFinanciadoras$.next(current);
   }
 
   /**
@@ -146,9 +178,14 @@ export class SolicitudProyectoEntidadesFinanciadorasFragment extends Fragment {
       mergeMap((wrapped) => {
         const entidadFinanciadora = wrapped.value;
         return this.solicitudProyectoEntidadFinanciadoraService.update(entidadFinanciadora.id, entidadFinanciadora).pipe(
-          map((updated) => {
+          map((solicitudProyectoEntidadFinanciadora) => {
+            const updated = solicitudProyectoEntidadFinanciadora as SolicitudProyectoEntidadFinanciadoraAjenaData;
+            updated.empresa = wrapped.value.empresa;
+            updated.hasDesglosePresupuesto = wrapped.value.hasDesglosePresupuesto;
             const index = this.entidadesFinanciadoras$.value.findIndex((current) => current === wrapped);
-            this.entidadesFinanciadoras$.value[index] = new StatusWrapper<ISolicitudProyectoEntidadFinanciadoraAjena>(updated);
+            this.entidadesFinanciadoras$.value[index] = new StatusWrapper<SolicitudProyectoEntidadFinanciadoraAjenaData>(
+              updated as SolicitudProyectoEntidadFinanciadoraAjenaData
+            );
           })
         );
       })
@@ -166,10 +203,14 @@ export class SolicitudProyectoEntidadesFinanciadorasFragment extends Fragment {
         const entidadFinanciadora = wrapped.value;
         entidadFinanciadora.solicitudProyectoId = this.getKey() as number;
         return this.solicitudProyectoEntidadFinanciadoraService.create(entidadFinanciadora).pipe(
-          map((updated) => {
-            updated.empresa = wrapped.value.empresa;
+          map((solicitudProyectoEntidadFinanciadora) => {
+            const created = solicitudProyectoEntidadFinanciadora as SolicitudProyectoEntidadFinanciadoraAjenaData;
+            created.empresa = wrapped.value.empresa;
+            created.hasDesglosePresupuesto = wrapped.value.hasDesglosePresupuesto;
             const index = this.entidadesFinanciadoras$.value.findIndex((current) => current === wrapped);
-            this.entidadesFinanciadoras$.value[index] = new StatusWrapper<ISolicitudProyectoEntidadFinanciadoraAjena>(updated);
+            this.entidadesFinanciadoras$.value[index] = new StatusWrapper<SolicitudProyectoEntidadFinanciadoraAjenaData>(
+              created as SolicitudProyectoEntidadFinanciadoraAjenaData
+            );
             this.entidadesFinanciadoras$.next(this.entidadesFinanciadoras$.value);
           })
         );
@@ -180,7 +221,7 @@ export class SolicitudProyectoEntidadesFinanciadorasFragment extends Fragment {
 
   private isSaveOrUpdateComplete(): boolean {
     const touched: boolean = this.entidadesFinanciadoras$.value.some((wrapper) => wrapper.touched);
-    return (this.entidadesFinanciadorasEliminadas.length > 0 || touched);
+    return !(this.entidadesFinanciadorasEliminadas.length > 0 || touched);
   }
 
 }

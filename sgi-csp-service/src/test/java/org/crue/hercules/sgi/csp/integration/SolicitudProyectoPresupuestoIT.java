@@ -72,16 +72,13 @@ public class SolicitudProyectoPresupuestoIT extends BaseIT {
         .isEqualTo(newSolicitudProyectoPresupuesto.getSolicitudProyectoId());
     Assertions.assertThat(responseData.getConceptoGasto().getId()).as("getConceptoGasto().getId()")
         .isEqualTo(newSolicitudProyectoPresupuesto.getConceptoGasto().getId());
-    Assertions.assertThat(responseData.getEntidadRef()).as("getEntidadRef()")
-        .isEqualTo(newSolicitudProyectoPresupuesto.getEntidadRef());
     Assertions.assertThat(responseData.getAnualidad()).as("getAnualidad()")
         .isEqualTo(newSolicitudProyectoPresupuesto.getAnualidad());
     Assertions.assertThat(responseData.getImporteSolicitado()).as("getImporteSolicitado()")
         .isEqualTo(newSolicitudProyectoPresupuesto.getImporteSolicitado());
     Assertions.assertThat(responseData.getObservaciones()).as("getObservaciones()")
         .isEqualTo(newSolicitudProyectoPresupuesto.getObservaciones());
-    Assertions.assertThat(responseData.getFinanciacionAjena()).as("getFinanciacionAjena()")
-        .isEqualTo(newSolicitudProyectoPresupuesto.getFinanciacionAjena());
+    Assertions.assertThat(responseData.getSolicitudProyectoEntidadId()).as("getSolicitudProyectoEntidadId()").isNull();
 
   }
 
@@ -118,16 +115,13 @@ public class SolicitudProyectoPresupuestoIT extends BaseIT {
         .isEqualTo(solicitudProyectoPresupuesto.getSolicitudProyectoId());
     Assertions.assertThat(responseData.getConceptoGasto().getId()).as("getConceptoGasto().getId()")
         .isEqualTo(solicitudProyectoPresupuesto.getConceptoGasto().getId());
-    Assertions.assertThat(responseData.getEntidadRef()).as("getEntidadRef()")
-        .isEqualTo(solicitudProyectoPresupuesto.getEntidadRef());
     Assertions.assertThat(responseData.getAnualidad()).as("getAnualidad()")
         .isEqualTo(solicitudProyectoPresupuesto.getAnualidad());
     Assertions.assertThat(responseData.getImporteSolicitado()).as("getImporteSolicitado()")
         .isEqualTo(solicitudProyectoPresupuesto.getImporteSolicitado());
     Assertions.assertThat(responseData.getObservaciones()).as("getObservaciones()")
         .isEqualTo(solicitudProyectoPresupuesto.getObservaciones());
-    Assertions.assertThat(responseData.getFinanciacionAjena()).as("getFinanciacionAjena()")
-        .isEqualTo(solicitudProyectoPresupuesto.getFinanciacionAjena());
+    Assertions.assertThat(responseData.getSolicitudProyectoEntidadId()).as("getSolicitudProyectoEntidadId()").isNull();
 
   }
 
@@ -212,13 +206,11 @@ public class SolicitudProyectoPresupuestoIT extends BaseIT {
     Assertions.assertThat(responseData.getId()).as("getId()").isEqualTo(idSolicitudProyectoPresupuesto);
     Assertions.assertThat(responseData.getSolicitudProyectoId()).as("getSolicitudProyectoId()").isEqualTo(1L);
     Assertions.assertThat(responseData.getConceptoGasto().getId()).as("getConceptoGasto().getId()").isEqualTo(1L);
-    Assertions.assertThat(responseData.getEntidadRef()).as("getEntidadRef()").isNull();
     Assertions.assertThat(responseData.getAnualidad()).as("getAnualidad()").isEqualTo(2020);
     Assertions.assertThat(responseData.getImporteSolicitado()).as("getImporteSolicitado()")
         .isEqualTo(new BigDecimal("1000.00"));
     Assertions.assertThat(responseData.getObservaciones()).as("getObservaciones()").isEqualTo("observaciones-001");
-    Assertions.assertThat(responseData.getFinanciacionAjena()).as("getFinanciacionAjena()").isEqualTo(false);
-
+    Assertions.assertThat(responseData.getSolicitudProyectoEntidadId()).as("getSolicitudProyectoEntidadId()").isNull();
   }
 
   /**
@@ -239,11 +231,10 @@ public class SolicitudProyectoPresupuestoIT extends BaseIT {
         .id(id)
         .solicitudProyectoId(solicitudProyectoId)
         .conceptoGasto(ConceptoGasto.builder().id(conceptoGastoId).build())
-        .entidadRef(null)
         .anualidad(2020)
         .importeSolicitado(new BigDecimal("1000.00"))
         .observaciones("observaciones-" + suffix)
-        .financiacionAjena(false)
+        .solicitudProyectoEntidadId(null)
         .build();// @formatter:on
 
     return solicitudProyectoPresupuesto;

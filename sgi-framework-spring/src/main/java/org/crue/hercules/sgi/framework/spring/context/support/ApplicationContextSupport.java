@@ -1,6 +1,8 @@
 package org.crue.hercules.sgi.framework.spring.context.support;
 
 import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.BeanFactory;
+import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.MessageSourceResolvable;
@@ -46,6 +48,62 @@ public class ApplicationContextSupport implements ApplicationContextAware {
       throw new IllegalStateException("ApplicationContextSupport does not run in an ApplicationContext");
     }
     return applicationContext;
+  }
+
+  /**
+   * Return the named Spring Bean from the ApplicationContext that this object is
+   * associated with.
+   * 
+   * 
+   * @param name the name of the bean to retrieve
+   * @return an instance of the bean
+   * @throws NoSuchBeanDefinitionException if there is no bean with the specified
+   *                                       name
+   * @throws BeansException                if the bean could not be obtained
+   * @throws IllegalStateException         if not running in an ApplicationContext
+   * @see BeanFactory
+   */
+  public static Object getBean(String name)
+      throws NoSuchBeanDefinitionException, BeansException, IllegalStateException {
+    return getApplicationContext().getBean(name);
+  }
+
+  /**
+   * Return the typed Spring Bean from the ApplicationContext that this object is
+   * associated with.
+   * 
+   * @param <T>   The expected type of the bean
+   * @param clazz type the bean must match; can be an interface or superclass
+   * @return an instance of the bean
+   * @throws NoSuchBeanDefinitionException if there is no bean with the specified
+   *                                       name
+   * @throws BeansException                if the bean could not be obtained
+   * @throws IllegalStateException         if not running in an ApplicationContext
+   * @see BeanFactory
+   */
+  public static <T> T getBean(Class<T> clazz)
+      throws NoSuchBeanDefinitionException, BeansException, IllegalStateException {
+    return getApplicationContext().getBean(clazz);
+  }
+
+  /**
+   * Return the named and typed Spring Bean from the ApplicationContext that this
+   * object is associated with.
+   * 
+   * 
+   * @param <T>   The expected type of the bean
+   * @param name  the name of the bean to retrieve
+   * @param clazz type the bean must match; can be an interface or superclass
+   * @return an instance of the bean
+   * @throws NoSuchBeanDefinitionException if there is no bean with the specified
+   *                                       name
+   * @throws BeansException                if the bean could not be obtained
+   * @throws IllegalStateException         if not running in an ApplicationContext
+   * @see BeanFactory
+   */
+  public static <T> T getBean(String name, Class<T> clazz)
+      throws NoSuchBeanDefinitionException, BeansException, IllegalStateException {
+    return getApplicationContext().getBean(name, clazz);
   }
 
   /**

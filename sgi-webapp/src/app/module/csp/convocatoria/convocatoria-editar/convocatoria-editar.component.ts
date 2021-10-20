@@ -10,7 +10,7 @@ import { SnackBarService } from '@core/services/snack-bar.service';
 import { TranslateService } from '@ngx-translate/core';
 import { NGXLogger } from 'ngx-logger';
 import { BehaviorSubject, Subject } from 'rxjs';
-import { switchMap } from 'rxjs/operators';
+import { switchMap, tap } from 'rxjs/operators';
 import { CONVOCATORIA_ROUTE_NAMES } from '../convocatoria-route-names';
 import { ConvocatoriaActionService } from '../convocatoria.action.service';
 
@@ -116,8 +116,16 @@ export class ConvocatoriaEditarComponent extends ActionComponent implements OnIn
   }
 
   saveOrUpdate(): void {
-    this.actionService.saveOrUpdate().subscribe(
-      () => { },
+    this.actionService.saveOrUpdate().pipe(
+      switchMap(() => {
+        return this.convocatoriaService.registrable(this.actionService.id).pipe(
+          tap(registrable => {
+            this.registrable = registrable;
+            this.disableRegistrar$.next(!registrable);
+          })
+        );
+      })
+    ).subscribe(() => { },
       (error) => {
         this.logger.error(error);
         if (error instanceof HttpProblem) {

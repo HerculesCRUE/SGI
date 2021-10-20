@@ -7,6 +7,7 @@ import java.util.List;
 
 import org.assertj.core.api.Assertions;
 import org.crue.hercules.sgi.csp.enums.ClasificacionCVN;
+import org.crue.hercules.sgi.csp.enums.FormularioSolicitud;
 import org.crue.hercules.sgi.csp.enums.TipoSeguimiento;
 import org.crue.hercules.sgi.csp.model.Convocatoria;
 import org.crue.hercules.sgi.csp.model.ConvocatoriaAreaTematica;
@@ -1099,6 +1100,7 @@ public class ConvocatoriaIT extends BaseIT {
         .objeto("objeto-" + String.format("%03d", convocatoriaId))
         .observaciones("observaciones-" + String.format("%03d", convocatoriaId))
         .finalidad((modeloTipoFinalidad == null) ? null : modeloTipoFinalidad.getTipoFinalidad())
+        .formularioSolicitud(FormularioSolicitud.PROYECTO)
         .regimenConcurrencia(tipoRegimenConcurrencia)
         .estado(Convocatoria.Estado.REGISTRADA)
         .duracion(12)

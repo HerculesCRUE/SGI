@@ -155,7 +155,6 @@ public class SolicitudService {
           "La Convocatoria pertenece a una Unidad de Gestión no gestionable por el usuario");
 
       solicitud.setUnidadGestionRef(convocatoria.getUnidadGestionRef());
-      solicitud.setFormularioSolicitud(configuracionSolicitud.getFormularioSolicitud());
     } else {
       Assert.isTrue(
           SgiSecurityContextHolder.hasAuthority(authority)
@@ -732,9 +731,9 @@ public class SolicitudService {
       return false;
     }
 
-    // Si el formulario de la solicitud no es de tipo ESTANDAR no se podrá crear el
+    // Si el formulario de la solicitud no es de tipo PROYECTO no se podrá crear el
     // proyecto a partir de ella
-    if (solicitud.getFormularioSolicitud() != FormularioSolicitud.ESTANDAR) {
+    if (solicitud.getFormularioSolicitud() != FormularioSolicitud.PROYECTO) {
       return false;
     }
 
@@ -807,7 +806,7 @@ public class SolicitudService {
     }
 
     // Si el formulario es de tipo Estándar
-    if (solicitud.getFormularioSolicitud() == FormularioSolicitud.ESTANDAR) {
+    if (solicitud.getFormularioSolicitud() == FormularioSolicitud.PROYECTO) {
 
       SolicitudProyecto solicitudProyecto = solicitudProyectoRepository.findById(solicitud.getId()).orElse(null);
       if (solicitudProyecto == null) {

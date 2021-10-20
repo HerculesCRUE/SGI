@@ -23,7 +23,7 @@ describe('SolicitudProyectoFichaGeneralComponent', () => {
   const routeData: Data = {
     [SOLICITUD_DATA_KEY]: {
       solicitud: {
-        formularioSolicitud: FormularioSolicitud.ESTANDAR,
+        formularioSolicitud: FormularioSolicitud.PROYECTO,
         estado: {
           estado: Estado.BORRADOR
         }

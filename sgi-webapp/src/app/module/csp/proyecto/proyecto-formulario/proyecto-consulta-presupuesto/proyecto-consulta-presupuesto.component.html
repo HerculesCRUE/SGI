@@ -1,0 +1,128 @@
+<sgi-fragment title="{{'menu.csp.proyectos.configuracion-economica' | translate}} - {{'menu.csp.proyectos.configuracion-economica.consulta-presupuesto' |
+    translate}}" *ngIf="fxLayoutProperties">
+  <form [formGroup]="filterForm">
+    <div [fxLayout.xs]="fxLayoutProperties.xs" [fxLayout]="fxLayoutProperties.layout"
+      [fxLayoutGap]="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
+
+      <!-- Listado de anualidades -->
+      <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
+        [fxFlexOrder]="fxFlexProperties.order">
+        <mat-form-field>
+          <mat-label>{{'csp.proyecto-consulta-presupuesto.label.listado-anualidades' | translate}}</mat-label>
+          <sgi-select-entity formControlName="anualidad" [options]="formPart.anualidades$ | async"
+            [displayWith]="displayerAnualidad"></sgi-select-entity>
+        </mat-form-field>
+      </div>
+      <!-- Listado de aplicaciones presupuestarias -->
+      <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
+        [fxFlexOrder]="fxFlexProperties.order">
+        <mat-form-field>
+          <mat-label>{{'csp.proyecto-consulta-presupuesto.label.listado-aplicaciones-presupuestarias' | translate}}
+          </mat-label>
+          <sgi-select-entity formControlName="aplicacion" [options]="formPart.aplicaciones$ | async"
+            [displayWith]="displayerAplicacion"></sgi-select-entity>
+        </mat-form-field>
+      </div>
+      <!-- Listado de conceptos de gasto -->
+      <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
+        [fxFlexOrder]="fxFlexProperties.order">
+        <mat-form-field>
+          <mat-label>{{'csp.proyecto-consulta-presupuesto.label.listado-concepto-gasto' | translate}}
+          </mat-label>
+          <sgi-select-entity formControlName="concepto" [options]="formPart.conceptos$ | async"
+            [displayWith]="displayerConcepto"></sgi-select-entity>
+        </mat-form-field>
+      </div>
+    </div>
+    <div [fxLayout.xs]="fxLayoutProperties.xs" [fxLayout]="fxLayoutProperties.layout"
+      [fxLayoutGap]="fxLayoutProperties.gap" fxLayoutAlign="end center" ngClass.gt-xs="ml-10">
+      <div>
+        <button mat-raised-button color="primary" (click)="filterTable()">{{ 'btn.search' | translate }}</button>
+      </div>
+    </div>
+    <div [fxLayout.xs]="fxLayoutProperties.xs" [fxLayout]="fxLayoutProperties.layout"
+      [fxLayoutGap]="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
+      <mat-table [dataSource]="dataSource" multiTemplateDataRows>
+        <!-- Anualidad -->
+        <ng-container matColumnDef="anualidad">
+          <mat-header-cell *matHeaderCellDef>{{'csp.proyecto-consulta-presupuesto.label.anualidad' | translate}}
+          </mat-header-cell>
+          <mat-cell *matCellDef="let element">
+            <mat-icon color="primary" *ngIf="element.level === 0 && element.childs.length > 0"
+              (click)="element.expanded ? element.collapse() : element.expand()">
+              {{element.expanded ? 'expand_more' : 'chevron_right'}}
+            </mat-icon>
+            {{element.level === 0 ? element.item.proyectoAnualidad.anio : '' }}
+          </mat-cell>
+        </ng-container>
+
+        <!-- Agrupacion de Gastos -->
+        <ng-container matColumnDef="agrupacionGastos">
+          <mat-header-cell *matHeaderCellDef>{{'csp.proyecto-consulta-presupuesto.label.agrupacion-gastos' | translate}}
+          </mat-header-cell>
+          <mat-cell *matCellDef="let element">
+            <mat-icon color="primary" *ngIf="element.level === 1 && element.childs.length > 0"
+              (click)="element.expanded ? element.collapse() : element.expand()">
+              {{element.expanded ? 'expand_more' : 'chevron_right'}}
+            </mat-icon>
+            {{element.level === 1 ? element.item.proyectoAgrupacionGasto?.nombre : '' }}
+          </mat-cell>
+        </ng-container>
+
+        <!-- Concepto de Gasto -->
+        <ng-container matColumnDef="conceptoGasto">
+          <mat-header-cell *matHeaderCellDef>{{'csp.proyecto-consulta-presupuesto.label.concepto-gasto' | translate}}
+          </mat-header-cell>
+          <mat-cell *matCellDef="let element">
+            <mat-icon color="primary" *ngIf="element.level === 2 && element.childs.length > 0"
+              (click)="element.expanded ? element.collapse() : element.expand()">
+              {{element.expanded ? 'expand_more' : 'chevron_right'}}
+            </mat-icon>
+            {{element.level === 2 ? element.item.conceptoGasto?.nombre: ''}}
+          </mat-cell>
+        </ng-container>
+
+        <!-- Aplicación presupuestaria -->
+        <ng-container matColumnDef="aplicacionPresupuestaria">
+          <mat-header-cell *matHeaderCellDef>{{'csp.proyecto-consulta-presupuesto.label.aplicacion-presupuestaria' |
+            translate}}
+          </mat-header-cell>
+          <mat-cell *matCellDef="let element">{{!!!element.childs.length ?
+            element.item.proyectoPartida?.codigo: ''}}</mat-cell>
+        </ng-container>
+
+        <!-- Código económico -->
+        <ng-container matColumnDef="codigoEconomico">
+          <mat-header-cell *matHeaderCellDef>{{'csp.proyecto-consulta-presupuesto.label.codigo-economico' |
+            translate}}
+          </mat-header-cell>
+          <mat-cell *matCellDef="let element">{{ element.item.codigoEconomico?.id }} {{ element.item.codigoEconomico ?
+            '-' : '' }} {{
+            element.item.codigoEconomico?.nombre }}</mat-cell>
+        </ng-container>
+
+        <!-- Importe presupuesto -->
+        <ng-container matColumnDef="importePresupuesto">
+          <mat-header-cell *matHeaderCellDef>{{'csp.proyecto-consulta-presupuesto.label.importe-presupuesto' |
+            translate}}
+          </mat-header-cell>
+          <mat-cell *matCellDef="let element">{{ element.item.importePresupuesto | number:'2.2-2':'es'}}</mat-cell>
+        </ng-container>
+
+        <!-- Importe concedido -->
+        <ng-container matColumnDef="importeConcedido">
+          <mat-header-cell *matHeaderCellDef>{{'csp.proyecto-consulta-presupuesto.label.importe-concedido' |
+            translate}}
+          </mat-header-cell>
+          <mat-cell *matCellDef="let element">{{element.item.importeConcedido | number:'2.2-2':'es'}}
+          </mat-cell>
+        </ng-container>
+
+        <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+        <mat-row *matRowDef="let row; columns: displayedColumns;"
+          [class.expanded-row]="!!row.parent && !!!row.parent?.expanded">
+        </mat-row>
+      </mat-table>
+    </div>
+  </form>
+</sgi-fragment>

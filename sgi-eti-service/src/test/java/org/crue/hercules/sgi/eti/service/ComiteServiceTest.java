@@ -43,9 +43,11 @@ public class ComiteServiceTest extends BaseServiceTest {
 
     // given: dos comites
     Formulario formulario1 = new Formulario(1L, "M10", "Descripcion");
-    Comite comite = new Comite(1L, "Comite1", formulario1, Boolean.TRUE);
+    Comite comite = new Comite(1L, "Comite1", "nombreSecretario", "nombreInvestigacion", "nombreDecreto", "articulo",
+        formulario1, Boolean.TRUE);
     Formulario formulario2 = new Formulario(1L, "M20", "Descripcion");
-    Comite comite2 = new Comite(2L, "Comite2", formulario2, Boolean.TRUE);
+    Comite comite2 = new Comite(2L, "Comite2", "nombreSecretario", "nombreInvestigacion", "nombreDecreto", "articulo",
+        formulario2, Boolean.TRUE);
 
     List<Comite> comiteResponseList = new ArrayList<Comite>();
     comiteResponseList.add(comite);
@@ -87,8 +89,8 @@ public class ComiteServiceTest extends BaseServiceTest {
   public void findById_WithId_ReturnsComite() throws ComiteNotFoundException {
     // given: El id de un comité
 
-    BDDMockito.given(comiteRepository.findById(1L))
-        .willReturn(Optional.of(new Comite(1L, "Comite1", new Formulario(1L, "M10", "Descripcion"), Boolean.TRUE)));
+    BDDMockito.given(comiteRepository.findById(1L)).willReturn(Optional.of(new Comite(1L, "Comite1", "nombreSecretario",
+        "nombreInvestigacion", "nombreDecreto", "articulo", new Formulario(1L, "M10", "Descripcion"), Boolean.TRUE)));
 
     // when: Buscamos por id
     Comite comite = comiteService.findById(1L);
@@ -117,7 +119,8 @@ public class ComiteServiceTest extends BaseServiceTest {
 
     // given: Un comité
     Formulario formulario = new Formulario(1L, "M10", "Descripcion");
-    Comite comite = new Comite(null, "Comite1", formulario, Boolean.TRUE);
+    Comite comite = new Comite(null, "Comite1", "nombreSecretario", "nombreInvestigacion", "nombreDecreto", "articulo",
+        formulario, Boolean.TRUE);
 
     BDDMockito.given(comiteRepository.save(comite)).will((InvocationOnMock invocation) -> {
       Comite comiteCreada = invocation.getArgument(0);
@@ -138,7 +141,8 @@ public class ComiteServiceTest extends BaseServiceTest {
 
     // given: Un nuevo comité que ya tiene id
     Formulario formulario = new Formulario(1L, "M10", "Descripcion");
-    Comite comite = new Comite(1L, "Comite1", formulario, Boolean.TRUE);
+    Comite comite = new Comite(1L, "Comite1", "nombreSecretario", "nombreInvestigacion", "nombreDecreto", "articulo",
+        formulario, Boolean.TRUE);
 
     // then: Lanza una excepcion porque el comité ya tiene id
     Assertions.assertThatThrownBy(() -> comiteService.create(comite)).isInstanceOf(IllegalArgumentException.class);
@@ -149,9 +153,11 @@ public class ComiteServiceTest extends BaseServiceTest {
 
     // given: Un nuevo comité con el servicio actualizado
     Formulario formulario = new Formulario(1L, "M10", "Descripcion");
-    Comite comiteServicioActualizado = new Comite(1L, "Comite1 Actualizado", formulario, Boolean.TRUE);
+    Comite comiteServicioActualizado = new Comite(1L, "Comite1 Actualizado", "nombreSecretario", "nombreInvestigacion",
+        "nombreDecreto", "articulo", formulario, Boolean.TRUE);
 
-    Comite comite = new Comite(1L, "Comite1", formulario, Boolean.TRUE);
+    Comite comite = new Comite(1L, "Comite1", "nombreSecretario", "nombreInvestigacion", "nombreDecreto", "articulo",
+        formulario, Boolean.TRUE);
 
     BDDMockito.given(comiteRepository.findById(1L)).willReturn(Optional.of(comite));
     BDDMockito.given(comiteRepository.save(comite)).willReturn(comiteServicioActualizado);
@@ -170,7 +176,8 @@ public class ComiteServiceTest extends BaseServiceTest {
 
     // given: Un nuevo comité a actualizar
     Formulario formulario = new Formulario(1L, "M10", "Descripcion");
-    Comite comite = new Comite(1L, "Comite1", formulario, Boolean.TRUE);
+    Comite comite = new Comite(1L, "Comite1", "nombreSecretario", "nombreInvestigacion", "nombreDecreto", "articulo",
+        formulario, Boolean.TRUE);
 
     // then: Lanza una excepcion porque el comité no existe
     Assertions.assertThatThrownBy(() -> comiteService.update(comite)).isInstanceOf(ComiteNotFoundException.class);
@@ -182,7 +189,7 @@ public class ComiteServiceTest extends BaseServiceTest {
 
     // given: Un Comite que venga sin id
     Formulario formulario = new Formulario(1L, "M10", "Descripcion");
-    Comite comite = new Comite(null, "Comite", formulario, Boolean.TRUE);
+    Comite comite = new Comite(null, "Comite", "nombreSecretario", "nombreInvestigacion", "nombreDecreto", "articulo", formulario, Boolean.TRUE);
 
     Assertions.assertThatThrownBy(
         // when: update Comite
@@ -250,7 +257,8 @@ public class ComiteServiceTest extends BaseServiceTest {
     List<Comite> comiteList = new ArrayList<>();
     for (int i = 1; i <= 100; i++) {
       Formulario formulario = new Formulario(Long.valueOf(i), "M" + i, "Descripcion");
-      comiteList.add(new Comite(Long.valueOf(i), "Comite" + String.format("%03d", i), formulario, Boolean.TRUE));
+      comiteList.add(new Comite(Long.valueOf(i), "Comite" + String.format("%03d", i), "nombreSecretario",
+          "nombreInvestigacion", "nombreDecreto", "articulo", formulario, Boolean.TRUE));
     }
 
     BDDMockito
@@ -296,7 +304,8 @@ public class ComiteServiceTest extends BaseServiceTest {
    */
   private Comite generarMockComite(Long id, String comite, Boolean activo) {
     Formulario formulario = new Formulario(1L, "M10", "Descripcion");
-    return new Comite(id, comite, formulario, activo);
+    return new Comite(id, comite, "nombreSecretario", "nombreInvestigacion", "nombreDecreto", "articulo", formulario,
+        activo);
 
   }
 }

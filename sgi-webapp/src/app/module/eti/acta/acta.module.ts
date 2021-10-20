@@ -5,15 +5,15 @@ import { MaterialDesignModule } from '@material/material-design.module';
 import { TranslateModule } from '@ngx-translate/core';
 import { SgiAuthModule } from '@sgi/framework/auth';
 import { SharedModule } from '@shared/shared.module';
-
 import { ActaCrearComponent } from './acta-crear/acta-crear.component';
 import { ActaEditarComponent } from './acta-editar/acta-editar.component';
 import {
-  ActaAsistentesEditarModalComponent,
+  ActaAsistentesEditarModalComponent
 } from './acta-formulario/acta-asistentes/acta-asistentes-editar-modal/acta-asistentes-editar-modal.component';
 import {
-  ActaAsistentesListadoComponent,
+  ActaAsistentesListadoComponent
 } from './acta-formulario/acta-asistentes/acta-asistentes-listado/acta-asistentes-listado.component';
+import { ActaComentariosComponent } from './acta-formulario/acta-comentarios/acta-comentarios.component';
 import { ActaDatosGeneralesComponent } from './acta-formulario/acta-datos-generales/acta-datos-generales.component';
 import { ActaMemoriasComponent } from './acta-formulario/acta-memorias/acta-memorias.component';
 import { ActaListadoComponent } from './acta-listado/acta-listado.component';
@@ -28,7 +28,8 @@ import { ActaResolver } from './acta.resolver';
     ActaListadoComponent,
     ActaAsistentesListadoComponent,
     ActaEditarComponent,
-    ActaAsistentesEditarModalComponent
+    ActaAsistentesEditarModalComponent,
+    ActaComentariosComponent,
   ],
   imports: [
     SharedModule,

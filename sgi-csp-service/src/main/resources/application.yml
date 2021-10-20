@@ -54,6 +54,9 @@ spring:
     liquibase-schema: csp
     # Set Liquibase contexts same as spring profiles
     contexts: dev
+    # Set Liquibase changeLog parameters
+    parameters:
+      schemaPrefix: "csp."
   jpa:
     hibernate:
       # Make sure Hibernate will not use the entities to create, update or validate the database
@@ -140,6 +143,9 @@ spring:
     default-schema: csp
     # Schema to use for Liquibase objects
     liquibase-schema: csp
+    # Set Liquibase changeLog parameters
+    parameters:
+      schemaPrefix: "csp."
   jpa:
     hibernate:
       # Hibernate will use the entities to validate the database

@@ -37,7 +37,7 @@ public class SolicitudProteccionInput {
 
   private Instant fechaConcesion;
 
-  private Instant fechaCaducid;
+  private Instant fechaCaducidad;
 
   @NotNull
   private Long viaProteccionId;

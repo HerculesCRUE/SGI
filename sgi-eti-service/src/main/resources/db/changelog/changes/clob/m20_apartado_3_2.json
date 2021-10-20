@@ -22,7 +22,7 @@
         }
       },
       {
-        "template": "<h5>Proceso de experimentación</h5><p>Los apartados que vienen a continuación ayudarán a precisar el proceso de experimentación al que es sometido el animal. En los casos que la complejidad del proyecto lo requiera (por ejemplo si se utilizan varias especies distintas de animales o si existen varios grupos de animales sometidos a distintos procesos de experimentación) pueden utilizarse varias memorias.</p>"
+        "template": "<b>Proceso de experimentación</b><p>Los apartados que vienen a continuación ayudarán a precisar el proceso de experimentación al que es sometido el animal. En los casos que la complejidad del proyecto lo requiera (por ejemplo si se utilizan varias especies distintas de animales o si existen varios grupos de animales sometidos a distintos procesos de experimentación) pueden utilizarse varias memorias.</p>"
       },
       {
         "wrappers": [

@@ -2,7 +2,7 @@ import { TipoPropiedad } from '@core/enums/tipo-propiedad';
 import { ISolicitudProteccion } from '@core/models/pii/solicitud-proteccion';
 import { Fragment } from '@core/services/action-service';
 import { InvencionService } from '@core/services/pii/invencion/invencion.service';
-import { SolicitudProteccionService } from '@core/services/pii/invencion/solicitud-proteccion/solicitud-proteccion.service';
+import { SolicitudProteccionService } from '@core/services/pii/solicitud-proteccion/solicitud-proteccion.service';
 import { StatusWrapper } from '@core/utils/status-wrapper';
 import { SgiRestListResult } from '@sgi/framework/http';
 import { BehaviorSubject, from, merge, Observable, of } from 'rxjs';

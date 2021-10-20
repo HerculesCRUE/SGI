@@ -22,6 +22,7 @@ const MSG_TIPO_FINANCIACION_TITLE = marker('menu.csp.configuraciones.tipos-finan
 const MSG_FUENTE_FINANCIACION_TITLE = marker('menu.csp.configuraciones.fuentes-financiacion');
 const MSG_AREA_TEMATICA_TITLE = marker('menu.csp.configuraciones.areas-tematicas');
 const MSG_EJECUCION_ECONOMICA_TITLE = marker('menu.csp.ejecucion-economica');
+const MSG_NOTIFICACION_PRESUPUESTO_SGE_TITLE = marker('menu.csp.notificacion-presupuesto-sge');
 const PROYECTO_KEY = marker('csp.proyectos');
 
 const routes: SgiRoutes = [
@@ -228,6 +229,19 @@ const routes: SgiRoutes = [
           title: MSG_EJECUCION_ECONOMICA_TITLE,
           titleParams: MSG_PARAMS.CARDINALIRY.SINGULAR,
           hasAnyAuthorityForAnyUO: ['CSP-EJEC-V', 'CSP-EJEC-E', 'CSP-EJEC-INV-VR']
+        }
+      },
+      {
+        path: CSP_ROUTE_NAMES.NOTIFICACION_PRESUPUESTO_SGE,
+        loadChildren: () =>
+          import('./notificacion-presupuesto-sge/notificacion-presupuesto-sge.module').then(
+            (m) => m.NotificacionPresupuestoSgeModule
+          ),
+        canActivate: [SgiAuthGuard],
+        data: {
+          title: MSG_NOTIFICACION_PRESUPUESTO_SGE_TITLE,
+          titleParams: MSG_PARAMS.CARDINALIRY.SINGULAR,
+          hasAuthorityForAnyUO: 'CSP-EJEC-E'
         }
       },
       { path: '**', component: null }

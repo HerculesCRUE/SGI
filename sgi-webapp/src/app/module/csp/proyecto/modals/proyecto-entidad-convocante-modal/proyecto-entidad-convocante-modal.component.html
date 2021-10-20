@@ -23,13 +23,7 @@
     <div>
       <mat-form-field class="input-form">
         <mat-label>{{ 'csp.proyecto-entidad-convocante.programa.plan' | translate }}</mat-label>
-        <input matInput type="text" placeholder="{{ 'csp.proyecto-entidad-convocante.programa.plan' | translate }}"
-          formControlName="plan" [matAutocomplete]="auto">
-        <mat-autocomplete #auto="matAutocomplete" [displayWith]="getNombrePlan">
-          <mat-option *ngFor="let plan of planes$ | async" [value]="plan">
-            {{ plan.nombre }}
-          </mat-option>
-        </mat-autocomplete>
+        <sgi-select-entity formControlName="plan" [options]="planes$ | async"></sgi-select-entity>
         <mat-error *ngIf="formGroup.controls.plan.errors?.invalid">
           {{ 'error.invalid.entity' | translate:msgParamPlanEntity }}
         </mat-error>

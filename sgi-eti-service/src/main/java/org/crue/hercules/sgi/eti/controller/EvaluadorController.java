@@ -176,7 +176,7 @@ public class EvaluadorController {
    * @return la lista de entidades {@link Evaluacion} paginadas.
    */
   @GetMapping("/evaluaciones")
-  @PreAuthorize("hasAnyAuthorityForAnyUO('ETI-EVC-V','ETI-EVC-VR', 'ETI-EVC-VR-INV', 'ETI-EVC-EVAL', 'ETI-EVC-EVALR', 'ETI-EVC-EVALR-INV')")
+  @PreAuthorize("hasAnyAuthorityForAnyUO('ETI-EVC-V','ETI-EVC-VR', 'ETI-EVC-INV-VR', 'ETI-EVC-EVAL', 'ETI-EVC-EVALR', 'ETI-EVC-INV-EVALR')")
   ResponseEntity<Page<Evaluacion>> getEvaluaciones(@RequestParam(name = "q", required = false) String query,
       @RequestPageable(sort = "s") Pageable pageable, Authentication authorization) {
     log.debug("getEvaluaciones(String query, Pageable pageable) - start");
@@ -201,7 +201,7 @@ public class EvaluadorController {
    * @return la lista de entidades {@link Evaluacion} paginadas y/o filtradas.
    */
   @GetMapping("/evaluaciones-seguimiento")
-  @PreAuthorize("hasAnyAuthorityForAnyUO('ETI-EVC-V', 'ETI-EVC-VR', 'ETI-EVC-VR-INV', 'ETI-EVC-EVAL', 'ETI-EVC-EVALR', 'ETI-EVC-EVALR-INV')")
+  @PreAuthorize("hasAnyAuthorityForAnyUO('ETI-EVC-V', 'ETI-EVC-VR', 'ETI-EVC-INV-VR', 'ETI-EVC-EVAL', 'ETI-EVC-EVALR', 'ETI-EVC-INV-EVALR')")
   ResponseEntity<Page<Evaluacion>> findEvaluacionesEnSeguimiento(
       @RequestParam(name = "q", required = false) String query, @RequestPageable(sort = "s") Pageable pageable,
       Authentication authorization) {
@@ -243,7 +243,7 @@ public class EvaluadorController {
    * @return HTTP 200 si existe y HTTP 204 si no.
    */
   @RequestMapping(path = "/evaluaciones", method = RequestMethod.HEAD)
-  @PreAuthorize("hasAnyAuthorityForAnyUO('ETI-EVC-V','ETI-EVC-VR', 'ETI-EVC-VR-INV', 'ETI-EVC-EVAL', 'ETI-EVC-EVALR', 'ETI-EVC-EVALR-INV')")
+  @PreAuthorize("hasAnyAuthorityForAnyUO('ETI-EVC-V','ETI-EVC-VR', 'ETI-EVC-INV-VR', 'ETI-EVC-EVAL', 'ETI-EVC-EVALR', 'ETI-EVC-INV-EVALR')")
   public ResponseEntity<?> hasAssignedEvaluaciones(Authentication authorization) {
     log.debug("hasAssignedEvaluaciones(Authentication authorization) - start");
     String personaRef = authorization.getName();
@@ -262,7 +262,7 @@ public class EvaluadorController {
    * @return HTTP 200 si existe y HTTP 204 si no.
    */
   @RequestMapping(path = "/evaluaciones-seguimiento", method = RequestMethod.HEAD)
-  @PreAuthorize("hasAnyAuthorityForAnyUO('ETI-EVC-V', 'ETI-EVC-VR', 'ETI-EVC-VR-INV', 'ETI-EVC-EVAL', 'ETI-EVC-EVALR', 'ETI-EVC-EVALR-INV')")
+  @PreAuthorize("hasAnyAuthorityForAnyUO('ETI-EVC-V', 'ETI-EVC-VR', 'ETI-EVC-INV-VR', 'ETI-EVC-EVAL', 'ETI-EVC-EVALR', 'ETI-EVC-INV-EVALR')")
   public ResponseEntity<?> hasAssignedEvaluacionesSeguimiento(Authentication authorization) {
     log.debug("hasAssignedEvaluacionesSeguimiento(Authentication authorization) - start");
     String personaRef = authorization.getName();

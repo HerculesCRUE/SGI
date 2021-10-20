@@ -279,11 +279,11 @@ export class ClasificacionModalComponent
   private publishNodes(rootNodes?: NodeClasificacion[], recreateTree = false): void {
     let nodes = rootNodes ? rootNodes : this.clasificacionesTree$.value;
     nodes = sortByName(nodes);
+    this.refreshTree(nodes, recreateTree);
+    this.clasificacionesTree$.next(nodes);
     this.data.selectedClasificaciones?.forEach(clasificacionSeleccionada => {
       this.treeControl.dataNodes.find(node => node.clasificacion.id === clasificacionSeleccionada.id)?.setCheckedAndDisabled();
     });
-    this.refreshTree(nodes, recreateTree);
-    this.clasificacionesTree$.next(nodes);
   }
 
   /**

@@ -1,12 +1,19 @@
 package org.crue.hercules.sgi.csp.service.impl;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
+import org.crue.hercules.sgi.csp.enums.FormularioSolicitud;
 import org.crue.hercules.sgi.csp.exceptions.SolicitudNotFoundException;
 import org.crue.hercules.sgi.csp.exceptions.SolicitudProyectoNotFoundException;
 import org.crue.hercules.sgi.csp.model.Solicitud;
 import org.crue.hercules.sgi.csp.model.SolicitudProyecto;
 import org.crue.hercules.sgi.csp.model.SolicitudProyecto.TipoPresupuesto;
+import org.crue.hercules.sgi.csp.model.SolicitudProyectoEntidad;
+import org.crue.hercules.sgi.csp.repository.ConvocatoriaEntidadFinanciadoraRepository;
+import org.crue.hercules.sgi.csp.repository.ConvocatoriaEntidadGestoraRepository;
+import org.crue.hercules.sgi.csp.repository.SolicitudProyectoEntidadRepository;
 import org.crue.hercules.sgi.csp.repository.SolicitudProyectoRepository;
 import org.crue.hercules.sgi.csp.repository.SolicitudRepository;
 import org.crue.hercules.sgi.csp.service.SolicitudProyectoService;
@@ -31,11 +38,23 @@ public class SolicitudProyectoServiceImpl implements SolicitudProyectoService {
 
   private final SolicitudService solicitudService;
 
+  private final ConvocatoriaEntidadFinanciadoraRepository convocatoriaEntidadFinanciadoraRepository;
+
+  private final ConvocatoriaEntidadGestoraRepository convocatoriaEntidadGestoraRepository;
+
+  private final SolicitudProyectoEntidadRepository solicitudProyectoEntidadRepository;
+
   public SolicitudProyectoServiceImpl(SolicitudProyectoRepository repository, SolicitudRepository solicitudRepository,
-      SolicitudService solicitudService) {
+      SolicitudService solicitudService,
+      ConvocatoriaEntidadFinanciadoraRepository convocatoriaEntidadFinanciadoraRepository,
+      ConvocatoriaEntidadGestoraRepository convocatoriaEntidadGestoraRepository,
+      SolicitudProyectoEntidadRepository solicitudProyectoEntidadRepository) {
     this.repository = repository;
     this.solicitudRepository = solicitudRepository;
     this.solicitudService = solicitudService;
+    this.convocatoriaEntidadFinanciadoraRepository = convocatoriaEntidadFinanciadoraRepository;
+    this.convocatoriaEntidadGestoraRepository = convocatoriaEntidadGestoraRepository;
+    this.solicitudProyectoEntidadRepository = solicitudProyectoEntidadRepository;
   }
 
   /**
@@ -52,6 +71,8 @@ public class SolicitudProyectoServiceImpl implements SolicitudProyectoService {
     validateSolicitudProyecto(solicitudProyecto);
 
     SolicitudProyecto returnValue = repository.save(solicitudProyecto);
+
+    createSolicitudProyectoEntidades(solicitudProyecto.getId());
 
     log.debug("create(SolicitudProyecto solicitudProyecto) - end");
     return returnValue;
@@ -217,6 +238,44 @@ public class SolicitudProyectoServiceImpl implements SolicitudProyectoService {
     }
 
     log.debug("validateSolicitudProyecto(SolicitudProyecto solicitudProyecto) - end");
+  }
+
+  /**
+   * Si es una solicitud estandar se crea un SolicitudProyectoEntidad por cada
+   * entidad financiadora y entidad gestora de la convocatoria asociada
+   * 
+   * @param solicitudProyectoId Identificador del {@link SolicitudProyecto}
+   */
+  private void createSolicitudProyectoEntidades(Long solicitudProyectoId) {
+    log.debug("createSolicitudProyectoEntidades() - start");
+    solicitudRepository.findById(solicitudProyectoId).ifPresent(solicitud -> {
+      if (solicitud.getConvocatoriaId() != null
+          && solicitud.getFormularioSolicitud().equals(FormularioSolicitud.PROYECTO)) {
+        // un registro por cada una de las entidades financiadoras de la convocatoria
+        List<SolicitudProyectoEntidad> solicitudProyectoEntidadesFinanciadoras = convocatoriaEntidadFinanciadoraRepository
+            .findByConvocatoriaId(solicitud.getConvocatoriaId()).stream().map(convocatoriaEntidadFinanciadora -> {
+              SolicitudProyectoEntidad solicitudProyectoEntidadFinanciadora = new SolicitudProyectoEntidad();
+              solicitudProyectoEntidadFinanciadora.setSolicitudProyectoId(solicitudProyectoId);
+              solicitudProyectoEntidadFinanciadora.setConvocatoriaEntidadFinanciadora(convocatoriaEntidadFinanciadora);
+              return solicitudProyectoEntidadFinanciadora;
+            }).collect(Collectors.toList());
+
+        solicitudProyectoEntidadRepository.saveAll(solicitudProyectoEntidadesFinanciadoras);
+
+        // un registro por la entidad gestora de la convocatoria
+        List<SolicitudProyectoEntidad> solicitudProyectoEntidadesGestoras = convocatoriaEntidadGestoraRepository
+            .findAllByConvocatoriaId(solicitud.getConvocatoriaId()).stream().map(convocatoriaEntidadGestora -> {
+              SolicitudProyectoEntidad solicitudProyectoEntidadGestora = new SolicitudProyectoEntidad();
+              solicitudProyectoEntidadGestora.setSolicitudProyectoId(solicitudProyectoId);
+              solicitudProyectoEntidadGestora.setConvocatoriaEntidadGestora(convocatoriaEntidadGestora);
+              return solicitudProyectoEntidadGestora;
+            }).collect(Collectors.toList());
+
+        solicitudProyectoEntidadRepository.saveAll(solicitudProyectoEntidadesGestoras);
+      }
+    });
+
+    log.debug("createSolicitudProyectoEntidades() - end");
   }
 
 }

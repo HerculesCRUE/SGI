@@ -17,11 +17,11 @@
 */
 
 INSERT INTO csp.solicitud_proyecto_presupuesto
-  (id, solicitud_proyecto_id, concepto_gasto_id, entidad_ref, anualidad, importe_solicitado, observaciones, financiacion_ajena) 
+  (id, solicitud_proyecto_id, concepto_gasto_id, solicitud_proyecto_entidad_id, anualidad, importe_solicitado, observaciones) 
 VALUES 
-  (1, 1, 1, null, 2020, 1000, 'observaciones-001', false),
-  (2, 1, 2, null, 2020, 2000, 'observaciones-002', false),
-  (3, 1, 1, null, 2021, 3000, 'observaciones-003', false),
-  (4, 2, 1, null, 2020, 4000, 'observaciones-004', false),
-  (11, 1, 11, null, 2020, 11000, 'observaciones-011', false),
-  (12, 1, 12, null, 2021, 12000, 'observaciones-012', false);
+  (1, 1, 1, null, 2020, 1000, 'observaciones-001'),
+  (2, 1, 2, null, 2020, 2000, 'observaciones-002'),
+  (3, 1, 1, null, 2021, 3000, 'observaciones-003'),
+  (4, 2, 1, null, 2020, 4000, 'observaciones-004'),
+  (11, 1, 11, null, 2020, 11000, 'observaciones-011'),
+  (12, 1, 12, null, 2021, 12000, 'observaciones-012');

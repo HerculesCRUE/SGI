@@ -12,6 +12,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 
 import org.assertj.core.api.Assertions;
 import org.crue.hercules.sgi.csp.enums.ClasificacionCVN;
+import org.crue.hercules.sgi.csp.enums.TipoJustificacion;
 import org.crue.hercules.sgi.csp.exceptions.ConvocatoriaNotFoundException;
 import org.crue.hercules.sgi.csp.model.AreaTematica;
 import org.crue.hercules.sgi.csp.model.ConceptoGasto;
@@ -53,6 +54,8 @@ import org.crue.hercules.sgi.csp.service.ConvocatoriaPartidaService;
 import org.crue.hercules.sgi.csp.service.ConvocatoriaPeriodoJustificacionService;
 import org.crue.hercules.sgi.csp.service.ConvocatoriaPeriodoSeguimientoCientificoService;
 import org.crue.hercules.sgi.csp.service.ConvocatoriaService;
+import org.crue.hercules.sgi.csp.service.RequisitoEquipoCategoriaProfesionalService;
+import org.crue.hercules.sgi.csp.service.RequisitoEquipoNivelAcademicoService;
 import org.crue.hercules.sgi.csp.service.RequisitoIPCategoriaProfesionalService;
 import org.crue.hercules.sgi.csp.service.RequisitoIPNivelAcademicoService;
 import org.crue.hercules.sgi.framework.test.web.servlet.result.SgiMockMvcResultHandlers;
@@ -113,6 +116,10 @@ public class ConvocatoriaControllerTest extends BaseControllerTest {
   private RequisitoIPNivelAcademicoService requisitoIPNivelAcademicoService;
   @MockBean
   private RequisitoIPCategoriaProfesionalService requisitoIPCategoriaProfesionalService;
+  @MockBean
+  private RequisitoEquipoCategoriaProfesionalService requisitoEquipoCategoriaProfesionalService;
+  @MockBean
+  private RequisitoEquipoNivelAcademicoService requisitoEquipoNivelAcademicoService;
 
   private static final String PATH_PARAMETER_ID = "/{id}";
   private static final String PATH_PARAMETER_DESACTIVAR = "/desactivar";
@@ -2151,7 +2158,7 @@ public class ConvocatoriaControllerTest extends BaseControllerTest {
     convocatoriaPeriodoJustificacion.setFechaInicioPresentacion(Instant.parse("2020-10-10T00:00:00Z"));
     convocatoriaPeriodoJustificacion.setFechaFinPresentacion(Instant.parse("2020-11-20T23:59:59Z"));
     convocatoriaPeriodoJustificacion.setObservaciones("observaciones-" + id);
-    convocatoriaPeriodoJustificacion.setTipo(ConvocatoriaPeriodoJustificacion.Tipo.PERIODICO);
+    convocatoriaPeriodoJustificacion.setTipo(TipoJustificacion.PERIODICO);
 
     return convocatoriaPeriodoJustificacion;
   }

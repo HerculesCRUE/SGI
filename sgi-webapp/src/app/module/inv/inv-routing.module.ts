@@ -1,18 +1,21 @@
 import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
+import { MSG_PARAMS } from '@core/i18n';
 import { SgiRoutes } from '@core/route';
 import { SgiAuthGuard } from '@sgi/framework/auth';
-
+import { InvInicioComponent } from './inv-inicio/inv-inicio.component';
 import { InvRootComponent } from './inv-root/inv-root.component';
 import { INV_ROUTE_NAMES } from './inv-route-names';
-import { InvInicioComponent } from './inv-inicio/inv-inicio.component';
+
 
 const MSG_ROOT_TITLE = marker('inv.root.title');
 const MSG_EVALUACIONES_TITLE = marker('menu.principal.inv.evaluaciones');
 const MSG_SEGUIMIENTOS_TITLE = marker('menu.principal.inv.seguimientos');
 const MSG_PETICIONES_EVALUACION_TITLE = marker('menu.principal.inv.peticionesEvaluacion');
 const MSG_MEMORIAS_TITLE = marker('menu.principal.inv.memorias');
+const MSG_CHECKLIST_TITLE = marker('menu.principal.inv.checklist');
+const MSG_ACTAS_TITLE = marker('eti.acta');
 const MSG_CONVOCATORIAS_TITLE = marker('menu.principal.inv.convocatorias');
 const MSG_SOLICITUDES_TITLE = marker('menu.principal.inv.solicitudes');
 
@@ -41,7 +44,7 @@ const routes: SgiRoutes = [
         canActivate: [SgiAuthGuard],
         data: {
           title: MSG_EVALUACIONES_TITLE,
-          hasAnyAuthorityForAnyUO: ['ETI-EVC-VR-INV', 'ETI-EVC-EVALR-INV']
+          hasAnyAuthorityForAnyUO: ['ETI-EVC-INV-VR', 'ETI-EVC-INV-EVALR']
         }
       },
       {
@@ -53,7 +56,7 @@ const routes: SgiRoutes = [
         canActivate: [SgiAuthGuard],
         data: {
           title: MSG_SEGUIMIENTOS_TITLE,
-          hasAnyAuthorityForAnyUO: ['ETI-EVC-VR-INV', 'ETI-EVC-EVALR-INV']
+          hasAnyAuthorityForAnyUO: ['ETI-EVC-INV-VR', 'ETI-EVC-INV-EVALR']
         }
       },
       {
@@ -65,7 +68,7 @@ const routes: SgiRoutes = [
         canActivate: [SgiAuthGuard],
         data: {
           title: MSG_PETICIONES_EVALUACION_TITLE,
-          hasAnyAuthorityForAnyUO: ['ETI-PEV-VR-INV', 'ETI-PEV-C-INV', 'ETI-PEV-ER-INV', 'ETI-PEV-BR-INV']
+          hasAnyAuthorityForAnyUO: ['ETI-PEV-INV-VR', 'ETI-PEV-INV-C', 'ETI-PEV-INV-ER', 'ETI-PEV-INV-BR']
         }
       },
       {
@@ -77,7 +80,32 @@ const routes: SgiRoutes = [
         canActivate: [SgiAuthGuard],
         data: {
           title: MSG_MEMORIAS_TITLE,
-          hasAuthorityForAnyUO: 'ETI-PEV-VR-INV'
+          hasAuthorityForAnyUO: 'ETI-PEV-INV-VR'
+        }
+      },
+      {
+        path: INV_ROUTE_NAMES.CHECKLIST,
+        loadChildren: () =>
+          import('../eti/checklist/checklist.module').then(
+            (m) => m.ChecklistModule
+          ),
+        canActivate: [SgiAuthGuard],
+        data: {
+          title: MSG_CHECKLIST_TITLE,
+          hasAuthorityForAnyUO: 'ETI-CHK-E'
+        }
+      },
+      {
+        path: INV_ROUTE_NAMES.ACTAS,
+        loadChildren: () =>
+          import('../eti/acta/acta.module').then(
+            (m) => m.ActaModule
+          ),
+        canActivate: [SgiAuthGuard],
+        data: {
+          title: MSG_ACTAS_TITLE,
+          titleParams: MSG_PARAMS.CARDINALIRY.PLURAL,
+          hasAnyAuthorityForAnyUO: ['ETI-ACT-INV-ER', 'ETI-ACT-ER']
         }
       },
       {

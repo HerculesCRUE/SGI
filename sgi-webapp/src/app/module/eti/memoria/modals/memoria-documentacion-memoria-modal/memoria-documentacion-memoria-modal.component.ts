@@ -3,6 +3,7 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { MSG_PARAMS } from '@core/i18n';
+import { IComite } from '@core/models/eti/comite';
 import { IDocumentacionMemoria } from '@core/models/eti/documentacion-memoria';
 import { resolveFormularioByTipoEvaluacionAndComite } from '@core/models/eti/formulario';
 import { IMemoria } from '@core/models/eti/memoria';
@@ -15,7 +16,7 @@ import { SnackBarService } from '@core/services/snack-bar.service';
 import { TranslateService } from '@ngx-translate/core';
 import { SgiFileUploadComponent, UploadEvent } from '@shared/file-upload/file-upload.component';
 import { Observable, of, Subscription } from 'rxjs';
-import { switchMap } from 'rxjs/operators';
+import { map, switchMap } from 'rxjs/operators';
 
 const TITLE_NEW_ENTITY = marker('title.new.entity');
 const DOCUMENTO_KEY = marker('eti.memoria.documento');
@@ -28,6 +29,8 @@ const MSG_UPLOAD_ERROR = marker('error.file.upload');
 export interface MemoriaDocumentacionMemoriaModalData {
   memoriaId: number;
   tipoEvaluacion: TIPO_EVALUACION;
+  showTipoDocumentos: boolean;
+  comite: IComite;
 }
 
 @Component({
@@ -68,8 +71,17 @@ export class MemoriaDocumentacionMemoriaModalComponent implements OnInit {
 
     if (data.tipoEvaluacion === TIPO_EVALUACION.MEMORIA) {
       this.tiposDocumento$ = memoriaService.getTiposDocumentoRespuestasFormulario(this.data.memoriaId);
-    }
-    else {
+      if (!data.showTipoDocumentos) {
+        // Se setea solo el tipo de documento adicional
+        this.subscriptions.push(this.tipoDocumentoService.findByFormulario(
+          resolveFormularioByTipoEvaluacionAndComite(this.data.tipoEvaluacion, this.data.comite)
+        ).subscribe(
+          (docs) => {
+            docs.filter(doc => doc.formulario.id === 1 ? doc.id === 11 : (doc.formulario.id === 2 ? doc.id === 16 : (doc.formulario.id === 3 ? doc.id === 21 : doc))).map(doc => this.formGroup.controls.tipoDocumento.setValue(doc));
+          }
+        ));
+      }
+    } else {
       this.tiposDocumento$ = of([]);
     }
   }

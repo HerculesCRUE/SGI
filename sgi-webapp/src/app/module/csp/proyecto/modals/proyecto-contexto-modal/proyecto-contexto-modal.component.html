@@ -10,13 +10,7 @@
       <div>
         <mat-form-field class="input-form">
           <mat-label>{{'list.entity' | translate:msgParamEntity}}</mat-label>
-          <input type="text" placeholder="{{'list.entity' | translate:msgParamEntity}}" arial-label="Number" matInput
-            formControlName="padre" [matAutocomplete]="auto" required>
-          <mat-autocomplete #auto="matAutocomplete" [displayWith]="getNombreAreaTematica">
-            <mat-option *ngFor="let areaTematica of areasTematicas$ | async" [value]="areaTematica">
-              {{areaTematica.nombre}}
-            </mat-option>
-          </mat-autocomplete>
+          <sgi-select-entity [options]="areasTematicas$ | async" formControlName="padre" required></sgi-select-entity>
           <mat-error *ngIf="formGroup.controls.padre.errors?.required">
             {{'error.required.entity' | translate:msgParamListadoEntity}}
           </mat-error>

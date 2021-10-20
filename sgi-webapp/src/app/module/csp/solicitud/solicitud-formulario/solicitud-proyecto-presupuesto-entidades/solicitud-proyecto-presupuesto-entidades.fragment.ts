@@ -1,21 +1,26 @@
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { IEntidad } from '@core/models/csp/entidad';
+import { IEntidadFinanciadora } from '@core/models/csp/entidad-financiadora';
 import { ISolicitudProyecto, TipoPresupuesto } from '@core/models/csp/solicitud-proyecto';
+import { ISolicitudProyectoEntidad } from '@core/models/csp/solicitud-proyecto-entidad';
 import { FormFragment } from '@core/services/action-service';
-import { ConvocatoriaService } from '@core/services/csp/convocatoria.service';
+import { SolicitudProyectoEntidadFinanciadoraAjenaService } from '@core/services/csp/solicitud-proyecto-entidad-financiadora-ajena.service';
 import { SolicitudProyectoService } from '@core/services/csp/solicitud-proyecto.service';
 import { SolicitudService } from '@core/services/csp/solicitud.service';
 import { EmpresaService } from '@core/services/sgemp/empresa.service';
 import { BehaviorSubject, EMPTY, from, merge, Observable, of, Subject } from 'rxjs';
 import { catchError, map, mergeAll, switchMap, takeLast, tap } from 'rxjs/operators';
+import { SolicitudProyectoEntidadFinanciadoraAjenaData } from '../solicitud-proyecto-entidades-financiadoras/solicitud-proyecto-entidades-financiadoras.fragment';
 
 export interface EntidadFinanciadoraDesglosePresupuesto {
-  entidadFinanciadora: IEntidad;
+  solicitudProyectoEntidadId: number;
+  entidadFinanciadora: IEntidadFinanciadora;
+  fuenteFinanciacion: string;
   ajena: boolean;
 }
 
 export class SolicitudProyectoPresupuestoEntidadesFragment extends FormFragment<ISolicitudProyecto> {
 
+  entidadesFinanciadorasEdited$ = new BehaviorSubject<SolicitudProyectoEntidadFinanciadoraAjenaData[]>([]);
   entidadesFinanciadoras$ = new BehaviorSubject<EntidadFinanciadoraDesglosePresupuesto[]>([]);
   private readonly solicitudId: number;
   tipoPresupuestoMixto: boolean;
@@ -26,10 +31,10 @@ export class SolicitudProyectoPresupuestoEntidadesFragment extends FormFragment<
   constructor(
     key: number,
     public readonly convocatoriaId: number,
-    private convocatoriaService: ConvocatoriaService,
     private solicitudService: SolicitudService,
     private empresaService: EmpresaService,
     private solicitudProyectoService: SolicitudProyectoService,
+    private solicitudProyectoEntidadFinanciadoraAjenaService: SolicitudProyectoEntidadFinanciadoraAjenaService,
     public readonly readonly: boolean
   ) {
     super(key, true);
@@ -41,6 +46,57 @@ export class SolicitudProyectoPresupuestoEntidadesFragment extends FormFragment<
     this.tipoPresupuesto$.subscribe(tipoPresupuesto => {
       this.tipoPresupuestoMixto = tipoPresupuesto === TipoPresupuesto.MIXTO;
       this.loadEntidadesFinanciadoras(tipoPresupuesto);
+    });
+
+    this.entidadesFinanciadorasEdited$.pipe(
+      switchMap(entidadesFinanciadorasEdited => {
+        const entidadesFinanciadorasAdded = entidadesFinanciadorasEdited
+          .filter(entidad => !entidad.id || 0 > this.entidadesFinanciadoras$.value.findIndex(e => entidad.id === e.entidadFinanciadora.id))
+          .map(entidad => {
+            const entidadDesglose: EntidadFinanciadoraDesglosePresupuesto = {
+              solicitudProyectoEntidadId: undefined,
+              entidadFinanciadora: entidad,
+              fuenteFinanciacion: entidad.fuenteFinanciacion?.nombre,
+              ajena: true
+            };
+            return entidadDesglose;
+          });
+
+        let entidadesFinanciadorasUpdated = this.entidadesFinanciadoras$.value.filter(entidadFinanciadora => !entidadFinanciadora.ajena);
+        entidadesFinanciadorasUpdated = entidadesFinanciadorasUpdated.concat(entidadesFinanciadorasAdded);
+
+        this.entidadesFinanciadoras$.value.forEach(entidadFinanciadora => {
+          const edited = entidadesFinanciadorasEdited.find(a => entidadFinanciadora.entidadFinanciadora.id
+            && entidadFinanciadora.entidadFinanciadora.id === a.id && entidadFinanciadora.ajena);
+          if (edited) {
+            entidadFinanciadora.entidadFinanciadora = edited;
+            entidadesFinanciadorasUpdated.push(entidadFinanciadora);
+          }
+        });
+
+        return of(entidadesFinanciadorasUpdated);
+      }),
+      switchMap(response => {
+        const requestsSolicitudProyectoEntidad: Observable<EntidadFinanciadoraDesglosePresupuesto>[] = [];
+        response.forEach(entidad => {
+          if (!entidad.solicitudProyectoEntidadId && entidad.entidadFinanciadora.id) {
+            requestsSolicitudProyectoEntidad.push(
+              this.solicitudProyectoEntidadFinanciadoraAjenaService.getSolicitudProyectoEntidad(entidad.entidadFinanciadora.id).pipe(
+                map(solicitudProyectoEntidad => {
+                  entidad.solicitudProyectoEntidadId = solicitudProyectoEntidad.id;
+                  return entidad;
+                })
+              ));
+          } else {
+            requestsSolicitudProyectoEntidad.push(of(entidad));
+          }
+        });
+        return of(response).pipe(
+          tap(() => merge(...requestsSolicitudProyectoEntidad).subscribe())
+        );
+      }),
+    ).subscribe(entidadesFinanciadoras => {
+      this.entidadesFinanciadoras$.next(entidadesFinanciadoras);
     });
 
     return this.solicitudService.findSolicitudProyecto(key).pipe(
@@ -194,158 +250,81 @@ export class SolicitudProyectoPresupuestoEntidadesFragment extends FormFragment<
     );
   }
 
-  private loadEntidadesFinanciadoras(tipoPresupuesto: TipoPresupuesto): void {
-    let entidades: EntidadFinanciadoraDesglosePresupuesto[] = [];
-    let entidades$: Observable<EntidadFinanciadoraDesglosePresupuesto[]>;
+  public setEntidadesFinanciadorasEdited(entidadesFinanciadorasEdited: SolicitudProyectoEntidadFinanciadoraAjenaData[]) {
+    this.entidadesFinanciadorasEdited$.next(entidadesFinanciadorasEdited);
+  }
 
+  private loadEntidadesFinanciadoras(tipoPresupuesto: TipoPresupuesto): void {
+
+    let entidades$: Observable<ISolicitudProyectoEntidad[]>;
     switch (tipoPresupuesto) {
       case TipoPresupuesto.POR_ENTIDAD:
-        entidades$ = merge(
-          this.loadEntidadFinanciadoraConvocatoria(this.convocatoriaId),
-          this.loadEntidadFinanciadoraSolicitud(this.solicitudId)
-        );
+        entidades$ = this.solicitudService.findAllSolicitudProyectoEntidadTipoPresupuestoPorEntidades(this.solicitudId)
+          .pipe(
+            map(result => result.items)
+          );
+
         break;
       case TipoPresupuesto.MIXTO:
-        entidades$ = merge(
-          this.loadEntidadGestoraConvocatoria(this.convocatoriaId),
-          this.loadEntidadFinanciadoraSolicitud(this.solicitudId)
-        );
+        entidades$ = this.solicitudService.findAllSolicitudProyectoEntidadTipoPresupuestoMixto(this.solicitudId)
+          .pipe(
+            map(result => result.items)
+          );
+
         break;
       default:
         entidades$ = of([]);
         break;
     }
 
-    const subscription = entidades$.subscribe(
-      (result) => {
-        entidades = entidades.concat(result);
-        this.entidadesFinanciadoras$.next(entidades);
-      }
-    );
+    const subscription = entidades$
+      .pipe(
+        map(solicitudProyectoEntidades => solicitudProyectoEntidades.map(solicitudProyectoEntidad => {
+          const entidadFinanciadora: IEntidadFinanciadora = solicitudProyectoEntidad.solicitudProyectoEntidadFinanciadoraAjena
+            ?? solicitudProyectoEntidad.convocatoriaEntidadFinanciadora
+            ?? {
+              id: solicitudProyectoEntidad.convocatoriaEntidadGestora.id,
+              empresa: solicitudProyectoEntidad.convocatoriaEntidadGestora.empresa
+            } as IEntidadFinanciadora;
+
+          const entidadFinanciadoraDesglosePresupuesto: EntidadFinanciadoraDesglosePresupuesto = {
+            solicitudProyectoEntidadId: solicitudProyectoEntidad.id,
+            entidadFinanciadora,
+            fuenteFinanciacion: entidadFinanciadora.fuenteFinanciacion?.nombre,
+            ajena: !!solicitudProyectoEntidad.solicitudProyectoEntidadFinanciadoraAjena
+          };
+
+          return entidadFinanciadoraDesglosePresupuesto;
+        })),
+        switchMap((solicitudProyectoEntidades) => {
+          if (solicitudProyectoEntidades.length === 0) {
+            return of([] as EntidadFinanciadoraDesglosePresupuesto[]);
+          }
+
+          return from(solicitudProyectoEntidades)
+            .pipe(
+              map((solicitudProyectoEntidad) => {
+                return this.empresaService.findById(solicitudProyectoEntidad.entidadFinanciadora.empresa.id)
+                  .pipe(
+                    map(empresa => {
+                      solicitudProyectoEntidad.entidadFinanciadora.empresa = empresa;
+                      return solicitudProyectoEntidad;
+                    }),
+                  );
+
+              }),
+              mergeAll(),
+              map(() => solicitudProyectoEntidades)
+            );
+        }),
+        takeLast(1)
+      ).subscribe(
+        (result) => {
+          this.entidadesFinanciadoras$.next(result);
+        }
+      );
 
     this.subscriptions.push(subscription);
-  }
-
-  private loadEntidadFinanciadoraSolicitud(solicitudId: number): Observable<EntidadFinanciadoraDesglosePresupuesto[]> {
-    return this.solicitudService.findAllSolicitudProyectoEntidadFinanciadora(solicitudId)
-      .pipe(
-        map(result => {
-          return result.items;
-        }),
-        switchMap((entidadesFinanciadoras) => {
-          if (entidadesFinanciadoras.length === 0) {
-            return of([] as EntidadFinanciadoraDesglosePresupuesto[]);
-          }
-
-          return from(entidadesFinanciadoras)
-            .pipe(
-              map((entidadesFinanciadora) => {
-                return this.empresaService.findById(entidadesFinanciadora.empresa.id)
-                  .pipe(
-                    map(empresa => {
-                      entidadesFinanciadora.empresa = empresa;
-                      return entidadesFinanciadora;
-                    }),
-                  );
-
-              }),
-              mergeAll(),
-              map(() => {
-                return entidadesFinanciadoras.map((entidadFinanciadora) => {
-                  const entidadFinanciadoraDesglosePresupuesto: EntidadFinanciadoraDesglosePresupuesto = {
-                    entidadFinanciadora,
-                    ajena: true
-                  };
-
-                  return entidadFinanciadoraDesglosePresupuesto;
-                });
-              })
-            );
-        }),
-        takeLast(1)
-      );
-  }
-
-  private loadEntidadFinanciadoraConvocatoria(convocatoriaId: number): Observable<EntidadFinanciadoraDesglosePresupuesto[]> {
-    if (!convocatoriaId) {
-      return of([] as EntidadFinanciadoraDesglosePresupuesto[]);
-    }
-
-    return this.convocatoriaService.findEntidadesFinanciadoras(convocatoriaId)
-      .pipe(
-        map(result => result.items),
-        switchMap((entidadesFinanciadoras) => {
-          if (entidadesFinanciadoras.length === 0) {
-            return of([] as EntidadFinanciadoraDesglosePresupuesto[]);
-          }
-
-          return from(entidadesFinanciadoras)
-            .pipe(
-              map((entidadesFinanciadora) => {
-                return this.empresaService.findById(entidadesFinanciadora.empresa.id)
-                  .pipe(
-                    map(empresa => {
-                      entidadesFinanciadora.empresa = empresa;
-                      return entidadesFinanciadora;
-                    }),
-                  );
-              }),
-              mergeAll(),
-              map(() => {
-                return entidadesFinanciadoras.map((entidadFinanciadora) => {
-                  const entidadFinanciadoraDesglosePresupuesto: EntidadFinanciadoraDesglosePresupuesto = {
-                    entidadFinanciadora,
-                    ajena: false
-                  };
-
-                  return entidadFinanciadoraDesglosePresupuesto;
-                });
-              })
-            );
-        }),
-        takeLast(1)
-      );
-  }
-
-  private loadEntidadGestoraConvocatoria(convocatoriaId: number): Observable<EntidadFinanciadoraDesglosePresupuesto[]> {
-    if (!convocatoriaId) {
-      return of([] as EntidadFinanciadoraDesglosePresupuesto[]);
-    }
-
-    return this.convocatoriaService.findAllConvocatoriaEntidadGestora(convocatoriaId)
-      .pipe(
-        map(result => result.items),
-        switchMap((entidadesGestoras) => {
-          if (entidadesGestoras.length === 0) {
-            return of([] as EntidadFinanciadoraDesglosePresupuesto[]);
-          }
-
-          return from(entidadesGestoras)
-            .pipe(
-              map((entidadGestora) => {
-                return this.empresaService.findById(entidadGestora.empresa.id)
-                  .pipe(
-                    map(empresa => {
-                      entidadGestora.empresa = empresa;
-                      return entidadGestora;
-                    }),
-                  );
-              }),
-              mergeAll(),
-              map(() => {
-                return entidadesGestoras.map((entidadGestora) => {
-                  const entidadFinanciadoraDesglosePresupuesto: EntidadFinanciadoraDesglosePresupuesto = {
-                    entidadFinanciadora: entidadGestora,
-                    ajena: false
-                  };
-
-                  return entidadFinanciadoraDesglosePresupuesto;
-                });
-              })
-            );
-        }),
-        takeLast(1)
-      );
   }
 
   /**

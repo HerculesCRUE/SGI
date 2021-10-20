@@ -10,6 +10,8 @@ import org.crue.hercules.sgi.csp.exceptions.SolicitudProyectoNotFoundException;
 import org.crue.hercules.sgi.csp.exceptions.SolicitudProyectoPresupuestoNotFoundException;
 import org.crue.hercules.sgi.csp.model.Solicitud;
 import org.crue.hercules.sgi.csp.model.SolicitudProyecto;
+import org.crue.hercules.sgi.csp.model.SolicitudProyectoEntidad;
+import org.crue.hercules.sgi.csp.model.SolicitudProyectoEntidadFinanciadoraAjena;
 import org.crue.hercules.sgi.csp.model.SolicitudProyectoPresupuesto;
 import org.crue.hercules.sgi.csp.repository.SolicitudProyectoPresupuestoRepository;
 import org.crue.hercules.sgi.csp.repository.SolicitudProyectoRepository;
@@ -164,41 +166,17 @@ public class SolicitudProyectoPresupuestoServiceImpl implements SolicitudProyect
     return returnValue;
   }
 
-  /**
-   * Recupera la lista paginada de {@link SolicitudProyectoPresupuesto} de una
-   * entidad en una {@link Solicitud}.
-   * 
-   * @param solicitudId Identificador de la {@link Solicitud}.
-   * @param entidadRef  Identificador de la entidad.
-   * @param ajena       es o no financiacionAjena.
-   * @param query       parámentros de búsqueda.
-   * @param paging      parámetros de paginación.
-   * @return lista paginada.
-   */
-  @Override
-  public Page<SolicitudProyectoPresupuesto> findAllBySolicitudAndEntidadRef(Long solicitudId, String entidadRef,
-      boolean ajena, String query, Pageable paging) {
-    log.debug(
-        "findAllBySolicitudAndEntidadRef(Long solicitudId, String entidadRef, String query, Pageable paging) - start");
-
-    Specification<SolicitudProyectoPresupuesto> specs = SolicitudProyectoPresupuestoSpecifications
-        .bySolicitudId(solicitudId).and(SolicitudProyectoPresupuestoSpecifications.byEntidadRef(entidadRef))
-        .and(SolicitudProyectoPresupuestoSpecifications.byFinanciacionAjena(ajena))
-        .and(SgiRSQLJPASupport.toSpecification(query));
-
-    Page<SolicitudProyectoPresupuesto> returnValue = repository.findAll(specs, paging);
-    log.debug(
-        "findAllBySolicitudAndEntidadRef(Long solicitudId, String entidadRef, String query, Pageable paging) - end");
-    return returnValue;
-  }
-
   @Override
   public boolean existsBySolicitudProyectoSolicitudIdAndEntidadRefAndFinanciacionAjena(Long solicitudId,
       String entidadRef, boolean ajena) {
     log.debug(
         "existsBySolicitudProyectoSolicitudIdAndEntidadRefAndFinanciacionAjena(Long solicitudId, String entidadRef, boolean ajena) - start");
-    boolean returnValue = repository.existsBySolicitudProyectoSolicitudIdAndEntidadRefAndFinanciacionAjena(solicitudId,
-        entidadRef, ajena);
+
+    Specification<SolicitudProyectoPresupuesto> specs = SolicitudProyectoPresupuestoSpecifications
+        .byEntidadRef(entidadRef).and(SolicitudProyectoPresupuestoSpecifications.bySolicitudId(solicitudId))
+        .and(SolicitudProyectoPresupuestoSpecifications.byFinanciacionAjena(ajena));
+
+    boolean returnValue = repository.count(specs) > 0 ? true : false;
     log.debug(
         "existsBySolicitudProyectoSolicitudIdAndEntidadRefAndFinanciacionAjena(Long solicitudId, String entidadRef, boolean ajena) - end");
     return returnValue;
@@ -266,6 +244,54 @@ public class SolicitudProyectoPresupuestoServiceImpl implements SolicitudProyect
     int numSolicitudProyectoPresupuesto = repository.countBySolicitudProyectoSolicitudId(solicitudId);
     log.debug("existsBySolicitudProyectoSolicitudId(Long id) - end");
     return numSolicitudProyectoPresupuesto > 0;
+  }
+
+  /**
+   * Comprueba la existencia de {@link SolicitudProyectoPresupuesto} asociados a
+   * una {@link SolicitudProyectoEntidadFinanciadoraAjena}
+   * 
+   * @param solicitudProyectoEntidadFinanciadoraAjenaId Id de la
+   *                                                    {@link SolicitudProyectoEntidadFinanciadoraAjena}
+   * @return <code>true</code> si existe alguna relación, <code>false</code> en
+   *         cualquier otro caso
+   */
+  @Override
+  public boolean existsBySolicitudProyectoEntidadFinanciadoraAjena(Long solicitudProyectoEntidadFinanciadoraAjenaId) {
+    log.debug(
+        "existsBySolicitudProyectoEntidadFinanciadoraAjena(Long solicitudProyectoEntidadFinanciadoraAjenaId) - start");
+
+    Specification<SolicitudProyectoPresupuesto> specs = SolicitudProyectoPresupuestoSpecifications
+        .bySolicitudProyectoEntidadFinanciadoraAjenaId(solicitudProyectoEntidadFinanciadoraAjenaId);
+
+    boolean returnValue = repository.count(specs) > 0 ? true : false;
+    log.debug(
+        "existsBySolicitudProyectoEntidadFinanciadoraAjena(Long solicitudProyectoEntidadFinanciadoraAjenaId) - end");
+    return returnValue;
+  }
+
+  /**
+   * Recupera la lista paginada de {@link SolicitudProyectoPresupuesto} de una
+   * entidad en una {@link SolicitudProyectoEntidad}.
+   * 
+   * @param solicitudProyectoEntidadId Identificador de la
+   *                                   {@link SolicitudProyectoEntidad}.
+   * @param query                      parámentros de búsqueda.
+   * @param paging                     parámetros de paginación.
+   * @return lista paginada.
+   */
+  @Override
+  public Page<SolicitudProyectoPresupuesto> findAllBySolicitudProyectoEntidad(Long solicitudProyectoEntidadId,
+      String query, Pageable paging) {
+    log.debug(
+        "findAllBySolicitudProyectoEntidad(Long solicitudProyectoEntidadId, String query, Pageable paging) - start");
+
+    Specification<SolicitudProyectoPresupuesto> specs = SolicitudProyectoPresupuestoSpecifications
+        .bySolicitudProyectoEntidadId(solicitudProyectoEntidadId).and(SgiRSQLJPASupport.toSpecification(query));
+
+    Page<SolicitudProyectoPresupuesto> returnValue = repository.findAll(specs, paging);
+    log.debug(
+        "findAllBySolicitudProyectoEntidad(Long solicitudProyectoEntidadId, String query, Pageable paging) - end");
+    return returnValue;
   }
 
 }

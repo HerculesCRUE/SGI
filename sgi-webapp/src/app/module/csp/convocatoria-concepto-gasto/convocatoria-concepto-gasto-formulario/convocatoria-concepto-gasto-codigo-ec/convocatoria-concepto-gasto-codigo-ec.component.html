@@ -22,7 +22,7 @@
           {{'csp.convocatoria-elegibilidad.codigo-economico' | translate}} </th>
         <td mat-cell *matCellDef="let convocatoriaConceptoGastoCodigoEc">
           {{convocatoriaConceptoGastoCodigoEc.value.codigoEconomico.id}} -
-          {{convocatoriaConceptoGastoCodigoEc.value.codigoEconomico.nombre}}
+          {{convocatoriaConceptoGastoCodigoEc.value.codigoEconomico.nombre || ''}}
         </td>
       </ng-container>
 

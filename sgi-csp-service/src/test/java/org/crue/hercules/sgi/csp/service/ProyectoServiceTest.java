@@ -24,14 +24,17 @@ import org.crue.hercules.sgi.csp.repository.ConvocatoriaConceptoGastoRepository;
 import org.crue.hercules.sgi.csp.repository.ConvocatoriaEntidadConvocanteRepository;
 import org.crue.hercules.sgi.csp.repository.ConvocatoriaEntidadFinanciadoraRepository;
 import org.crue.hercules.sgi.csp.repository.ConvocatoriaEntidadGestoraRepository;
+import org.crue.hercules.sgi.csp.repository.ConvocatoriaPeriodoJustificacionRepository;
 import org.crue.hercules.sgi.csp.repository.ConvocatoriaPeriodoSeguimientoCientificoRepository;
 import org.crue.hercules.sgi.csp.repository.ConvocatoriaRepository;
+import org.crue.hercules.sgi.csp.repository.EstadoProyectoPeriodoJustificacionRepository;
 import org.crue.hercules.sgi.csp.repository.EstadoProyectoRepository;
 import org.crue.hercules.sgi.csp.repository.ModeloUnidadRepository;
 import org.crue.hercules.sgi.csp.repository.ProgramaRepository;
 import org.crue.hercules.sgi.csp.repository.ProyectoAreaConocimientoRepository;
 import org.crue.hercules.sgi.csp.repository.ProyectoClasificacionRepository;
 import org.crue.hercules.sgi.csp.repository.ProyectoIVARepository;
+import org.crue.hercules.sgi.csp.repository.ProyectoPeriodoJustificacionRepository;
 import org.crue.hercules.sgi.csp.repository.ProyectoProrrogaRepository;
 import org.crue.hercules.sgi.csp.repository.ProyectoProyectoSgeRepository;
 import org.crue.hercules.sgi.csp.repository.ProyectoRepository;
@@ -158,6 +161,12 @@ public class ProyectoServiceTest extends BaseServiceTest {
   ProyectoResponsableEconomicoService proyectoResponsableEconomicoService;
   @Mock
   Validator validator;
+  @Mock
+  private ConvocatoriaPeriodoJustificacionRepository convocatoriaPeriodoJustificacionRepository;
+  @Mock
+  private ProyectoPeriodoJustificacionRepository proyectoPeriodoJustificacionRepository;
+  @Mock
+  private EstadoProyectoPeriodoJustificacionRepository estadoProyectoPeriodoJustificacionRepository;
 
   @Autowired
   private SgiConfigProperties sgiConfigProperties;
@@ -180,7 +189,9 @@ public class ProyectoServiceTest extends BaseServiceTest {
         solicitudProyectoAreaConocimientoRepository, solicitudProyectoClasificacionRepository, programaRepository,
         proyectoPartidaService, convocatoriaPartidaService, proyectoIVARepository, proyectoProyectoSgeRepository,
         proyectoConceptoGastoService, proyectoConceptoGastoCodigoEcService, convocatoriaConceptoGastoCodigoEcRepository,
-        solicitudProyectoResponsableEconomicoRepository, proyectoResponsableEconomicoService, validator);
+        solicitudProyectoResponsableEconomicoRepository, proyectoResponsableEconomicoService, validator,
+        convocatoriaPeriodoJustificacionRepository, proyectoPeriodoJustificacionRepository,
+        estadoProyectoPeriodoJustificacionRepository);
   }
 
   @Test

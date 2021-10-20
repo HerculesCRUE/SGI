@@ -98,7 +98,8 @@
         <th mat-header-cell *matHeaderCellDef> {{'label.actions' | translate}} </th>
         <td mat-cell *matCellDef="let solicitudprot; let row = index;">
           <ng-container *sgiHasAuthority="'PII-INV-E'">
-            <button *ngIf="solicitudprot?.activo" mat-button matTooltip="{{'btn.edit' | translate}}">
+            <button *ngIf="solicitudprot?.activo" mat-button matTooltip="{{'btn.edit' | translate}}"
+              [routerLink]="[solicitudprot.id]">
               <mat-icon color="primary">border_color</mat-icon>
             </button>
           </ng-container>

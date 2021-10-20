@@ -1,0 +1,96 @@
+<div class="sgi-dialog-header" fxLayout="row" fxLayoutGap="20px">
+  <span fxFlexAlign="center" mat-mat-dialog-title role="heading" aria-level="3" fxFlex>{{title | translate}}</span>
+  <button fxFlex="nogrow" mat-icon-button mat-dialog-close>
+    <mat-icon class="close-icon">close</mat-icon>
+  </button>
+</div>
+<mat-dialog-content>
+  <form [formGroup]="formGroup">
+
+    <!-- Tipo entidad relacionada -->
+    <div [fxLayout]="fxLayoutProperties.layout" [fxLayoutAlign]="fxLayoutProperties.layoutAlign">
+      <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
+        [fxFlexOrder]="fxFlexProperties.order">
+        <mat-form-field fxFill>
+          <mat-label>{{'csp.proyecto-relacion.tipo-entidad-relacionada' | translate}}</mat-label>
+          <sgi-select-enum formControlName="tipoEntidadRelacionada" [enumMap]="TIPO_ENTIDAD_MAP_FILTERED" required>
+          </sgi-select-enum>
+          <mat-error *ngIf="formGroup.controls.tipoEntidadRelacionada.errors?.required">
+            {{'error.required.entity' | translate:msgParamTipoEntidadRelacionada}}
+          </mat-error>
+        </mat-form-field>
+      </div>
+    </div>
+
+    <!-- Entidad relacionada -->
+    <div [fxLayout]="fxLayoutProperties.layout" [fxLayoutAlign]="fxLayoutProperties.layoutAlign"
+      *ngIf="formGroup.controls.tipoEntidadRelacionada.value">
+      <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
+        [fxFlexOrder]="fxFlexProperties.order">
+        <mat-form-field fxFill>
+          <mat-label>{{'csp.proyecto-relacion.entidad-relacionada' | translate}}</mat-label>
+          <ng-container [ngSwitch]="formGroup.controls.tipoEntidadRelacionada.value">
+            <sgi-select-convocatoria *ngSwitchCase="TIPO_ENTIDAD.CONVOCATORIA"
+              placeholder="{{'csp.proyecto-relacion.convocatoria' | translate}}" formControlName="entidadRelacionada"
+              required>
+            </sgi-select-convocatoria>
+            <sgi-select-invencion *ngSwitchCase="TIPO_ENTIDAD.INVENCION"
+              placeholder="{{'csp.proyecto-relacion.invencion' | translate}}" formControlName="entidadRelacionada"
+              required>
+            </sgi-select-invencion>
+            <sgi-select-proyecto *ngSwitchCase="TIPO_ENTIDAD.PROYECTO"
+              placeholder="{{'csp.proyecto-relacion.proyecto' | translate}}" formControlName="entidadRelacionada"
+              required>
+            </sgi-select-proyecto>
+            <div *ngSwitchDefault></div>
+          </ng-container>
+          <mat-error *ngIf="formGroup.controls.entidadRelacionada.errors?.required">
+            {{'error.required.entity' | translate:msgParamEntidadRelacionada}}
+          </mat-error>
+          <mat-error *ngIf="formGroup.controls.entidadRelacionada.errors?.notRepeatedProyectoRelacion">
+            {{'csp.proyecto-relacion.error.notRepeatedProyectoRelacion' | translate}}
+          </mat-error>
+        </mat-form-field>
+      </div>
+    </div>
+
+    <!-- Tipo relacion -->
+    <div [fxLayout]="fxLayoutProperties.layout" [fxLayoutAlign]="fxLayoutProperties.layoutAlign"
+      *ngIf="formGroup?.controls?.tipoRelacion?.enabled">
+      <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
+        [fxFlexOrder]="fxFlexProperties.order">
+        <mat-form-field fxFill>
+          <mat-label>{{'csp.proyecto-relacion.tipo-relacion' | translate}}</mat-label>
+          <sgi-select-enum formControlName="tipoRelacion" [enumMap]="TIPO_RELACION_MAP" required>
+          </sgi-select-enum>
+          <mat-error *ngIf="formGroup.controls.tipoRelacion.errors?.required">
+            {{'error.required.entity' | translate:msgParamTipoRelacion}}
+          </mat-error>
+        </mat-form-field>
+      </div>
+    </div>
+
+    <!-- Observaciones -->
+    <div [fxLayout]="fxLayoutProperties.layout" [fxLayoutAlign]="fxLayoutProperties.layoutAlign">
+      <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
+        [fxFlexOrder]="fxFlexProperties.order">
+        <mat-form-field fxFill>
+          <mat-label>{{'csp.proyecto-relacion.observaciones' | translate}}</mat-label>
+          <textarea matInput formControlName="observaciones" id="observaciones"
+            placeholder="{{'csp.proyecto-relacion.observaciones' | translate}}"></textarea>
+          <mat-error *ngIf="formGroup.controls.observaciones.errors?.maxlength">
+            {{'error.maxlength.entity' | translate:msgParamObservaciones}}
+          </mat-error>
+        </mat-form-field>
+      </div>
+    </div>
+
+  </form>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <button color="accent" (click)="saveOrUpdate()" mat-raised-button type="submit" *ngIf="!data.readonly">
+    <mat-icon class="save-icon">save</mat-icon>{{textSaveOrUpdate | translate}}
+  </button>
+  <button class="link-cancelar" mat-button type="button" mat-dialog-close>{{'btn.cancel' |
+    translate}}</button>
+</mat-dialog-actions>

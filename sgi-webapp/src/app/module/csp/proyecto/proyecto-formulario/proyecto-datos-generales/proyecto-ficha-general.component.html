@@ -25,9 +25,19 @@
             placeholder="{{'csp.proyecto.estado.comentario' | translate}}"></textarea>
         </mat-form-field>
       </div>
-
     </div>
+    <div [fxLayout.xs]="fxLayoutProperties.xs" [fxLayout]="fxLayoutProperties.layout"
+      [fxLayoutGap]="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
 
+      <!-- ID -->
+      <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
+        [fxFlexOrder]="fxFlexProperties.order">
+        <mat-form-field>
+          <mat-label>{{'csp.proyecto.id' | translate}}</mat-label>
+          <input type="text" placeholder="{{'csp.proyecto.id' | translate}}" matInput formControlName="id" required>
+        </mat-form-field>
+      </div>
+    </div>
     <div [fxLayout.xs]="fxLayoutProperties.xs" [fxLayout]="fxLayoutProperties.layout"
       [fxLayoutGap]="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
 

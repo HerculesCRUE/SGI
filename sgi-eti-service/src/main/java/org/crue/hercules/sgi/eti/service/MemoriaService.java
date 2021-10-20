@@ -206,4 +206,23 @@ public interface MemoriaService {
    *         existen documentos adjuntos obligatorios
    */
   Boolean checkDatosAdjuntosExists(Long idMemoria, Pageable paging);
+
+  /**
+   * Se actualiza el estado de la memoria a "Archivado" de {@link Memoria} que han
+   * pasado "diasArchivadaPendienteCorrecciones" días desde la fecha de estado de
+   * una memoria cuyo estado es "Pendiente Correcciones"
+   * 
+   * @return Los ids de memorias que pasan al estado "Archivado"
+   */
+  List<Long> archivarNoPresentados();
+
+  /**
+   * Se actualiza el estado de la memoria a "Archivado" de {@link Memoria} que han
+   * pasado "mesesArchivadaInactivo" meses desde la fecha de estado de una memoria
+   * cuyo estados son "Favorable Pendiente de Modificaciones Mínimas" o "No
+   * procede evaluar" o "Solicitud modificación"
+   * 
+   * @return Los ids de memorias que pasan al estado "Archivado"
+   */
+  List<Long> archivarInactivos();
 }

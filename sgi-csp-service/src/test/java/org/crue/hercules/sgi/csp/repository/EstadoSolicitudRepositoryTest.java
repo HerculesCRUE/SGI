@@ -39,7 +39,7 @@ public class EstadoSolicitudRepositoryTest extends BaseRepositoryTest {
     solicitud.setTitulo("titulo");
     solicitud.setSolicitanteRef("usr-002");
     solicitud.setUnidadGestionRef("2");
-    solicitud.setFormularioSolicitud(FormularioSolicitud.RRHH);
+    solicitud.setFormularioSolicitud(FormularioSolicitud.GRUPO);
     solicitud.setActivo(true);
 
     return solicitud;

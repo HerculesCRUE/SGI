@@ -14,6 +14,7 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { DialogComponent } from '@block/dialog/dialog.component';
 import { HeaderComponent } from '@block/header/header.component';
 import { IProyectoHito } from '@core/models/csp/proyecto-hito';
+import { SharedModule } from '@shared/shared.module';
 
 
 describe('ProyectoHitosModalComponent', () => {
@@ -40,7 +41,8 @@ describe('ProyectoHitosModalComponent', () => {
         TestUtils.getIdiomas(),
         RouterTestingModule,
         ReactiveFormsModule,
-        SgiAuthModule
+        SgiAuthModule,
+        SharedModule
       ],
       providers: [
         { provide: SnackBarService, useValue: TestUtils.getSnackBarServiceSpy() },

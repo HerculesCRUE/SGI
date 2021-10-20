@@ -30,6 +30,9 @@ function mediate(mc) {
     if (datosContacto.telefonos) {
       datosContactoResponse.telefonos = datosContacto.telefonos;
     }
+    if (datosContacto.moviles) {
+      datosContactoResponse.moviles = datosContacto.moviles;
+    }
 
     var direccionContacto = null;
     if (datosContacto.tipoViaContacto) {

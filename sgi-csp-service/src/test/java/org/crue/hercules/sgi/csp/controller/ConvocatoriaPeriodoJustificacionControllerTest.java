@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.crue.hercules.sgi.csp.enums.TipoJustificacion;
 import org.crue.hercules.sgi.csp.exceptions.ConvocatoriaPeriodoJustificacionNotFoundException;
 import org.crue.hercules.sgi.csp.model.ConvocatoriaPeriodoJustificacion;
 import org.crue.hercules.sgi.csp.service.ConvocatoriaPeriodoJustificacionService;
@@ -46,9 +47,9 @@ public class ConvocatoriaPeriodoJustificacionControllerTest extends BaseControll
     // otro nuevo y sin los otros 3 periodos existentes
     Long convocatoriaId = 1L;
     ConvocatoriaPeriodoJustificacion newConvocatoriaPeriodoJustificacion = generarMockConvocatoriaPeriodoJustificacion(
-        null, 27, 30, ConvocatoriaPeriodoJustificacion.Tipo.FINAL, 1L);
+        null, 27, 30, TipoJustificacion.FINAL, 1L);
     ConvocatoriaPeriodoJustificacion updatedConvocatoriaPeriodoJustificacion = generarMockConvocatoriaPeriodoJustificacion(
-        4L, 24, 26, ConvocatoriaPeriodoJustificacion.Tipo.PERIODICO, 1L);
+        4L, 24, 26, TipoJustificacion.PERIODICO, 1L);
 
     List<ConvocatoriaPeriodoJustificacion> convocatoriaPeriodoJustificaciones = Arrays
         .asList(updatedConvocatoriaPeriodoJustificacion, newConvocatoriaPeriodoJustificacion);
@@ -153,7 +154,7 @@ public class ConvocatoriaPeriodoJustificacionControllerTest extends BaseControll
         .andExpect(MockMvcResultMatchers.jsonPath("fechaInicioPresentacion").value("2020-10-10T00:00:00Z"))
         .andExpect(MockMvcResultMatchers.jsonPath("fechaFinPresentacion").value("2020-11-20T23:59:59Z"))
         .andExpect(MockMvcResultMatchers.jsonPath("observaciones").value("observaciones-1")).andExpect(
-            MockMvcResultMatchers.jsonPath("tipo").value(ConvocatoriaPeriodoJustificacion.Tipo.PERIODICO.toString()));
+            MockMvcResultMatchers.jsonPath("tipo").value(TipoJustificacion.PERIODICO.toString()));
   }
 
   @Test
@@ -180,7 +181,7 @@ public class ConvocatoriaPeriodoJustificacionControllerTest extends BaseControll
    * @return el objeto ConvocatoriaPeriodoJustificacion
    */
   private ConvocatoriaPeriodoJustificacion generarMockConvocatoriaPeriodoJustificacion(Long id) {
-    return generarMockConvocatoriaPeriodoJustificacion(id, 1, 2, ConvocatoriaPeriodoJustificacion.Tipo.PERIODICO, id);
+    return generarMockConvocatoriaPeriodoJustificacion(id, 1, 2, TipoJustificacion.PERIODICO, id);
   }
 
   /**
@@ -194,7 +195,7 @@ public class ConvocatoriaPeriodoJustificacionControllerTest extends BaseControll
    * @return el objeto ConvocatoriaPeriodoJustificacion
    */
   private ConvocatoriaPeriodoJustificacion generarMockConvocatoriaPeriodoJustificacion(Long id, Integer mesInicial,
-      Integer mesFinal, ConvocatoriaPeriodoJustificacion.Tipo tipo, Long convocatoriaId) {
+      Integer mesFinal, TipoJustificacion tipo, Long convocatoriaId) {
     ConvocatoriaPeriodoJustificacion convocatoriaPeriodoJustificacion = new ConvocatoriaPeriodoJustificacion();
     convocatoriaPeriodoJustificacion.setId(id);
     convocatoriaPeriodoJustificacion.setConvocatoriaId(convocatoriaId == null ? 1 : convocatoriaId);

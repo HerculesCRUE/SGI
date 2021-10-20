@@ -214,9 +214,8 @@ public class ActaControllerTest extends BaseControllerTest {
       actas.add(generarMockActaWithNumEvaluaciones(Long.valueOf(i), i));
     }
 
-    BDDMockito.given(
-        actaService.findAllActaWithNumEvaluaciones(ArgumentMatchers.<String>any(), ArgumentMatchers.<Pageable>any()))
-        .willReturn(new PageImpl<>(actas));
+    BDDMockito.given(actaService.findAllActaWithNumEvaluaciones(ArgumentMatchers.<String>any(),
+        ArgumentMatchers.<Pageable>any(), ArgumentMatchers.<String>any())).willReturn(new PageImpl<>(actas));
 
     // when: find unlimited
     mockMvc
@@ -237,8 +236,9 @@ public class ActaControllerTest extends BaseControllerTest {
       actas.add(generarMockActaWithNumEvaluaciones(Long.valueOf(i), i));
     }
 
-    BDDMockito.given(
-        actaService.findAllActaWithNumEvaluaciones(ArgumentMatchers.<String>any(), ArgumentMatchers.<Pageable>any()))
+    BDDMockito
+        .given(actaService.findAllActaWithNumEvaluaciones(ArgumentMatchers.<String>any(),
+            ArgumentMatchers.<Pageable>any(), ArgumentMatchers.<String>any()))
         .willAnswer(new Answer<Page<ActaWithNumEvaluaciones>>() {
           @Override
           public Page<ActaWithNumEvaluaciones> answer(InvocationOnMock invocation) throws Throwable {
@@ -289,8 +289,9 @@ public class ActaControllerTest extends BaseControllerTest {
     }
     String query = "id:5";
 
-    BDDMockito.given(
-        actaService.findAllActaWithNumEvaluaciones(ArgumentMatchers.<String>any(), ArgumentMatchers.<Pageable>any()))
+    BDDMockito
+        .given(actaService.findAllActaWithNumEvaluaciones(ArgumentMatchers.<String>any(),
+            ArgumentMatchers.<Pageable>any(), ArgumentMatchers.<String>any()))
         .willAnswer(new Answer<Page<ActaWithNumEvaluaciones>>() {
           @Override
           public Page<ActaWithNumEvaluaciones> answer(InvocationOnMock invocation) throws Throwable {

@@ -3,11 +3,12 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatTableDataSource } from '@angular/material/table';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { ISolicitudProyectoPresupuesto } from '@core/models/csp/solicitud-proyecto-presupuesto';
+import { SolicitudProyectoEntidadService } from '@core/services/csp/solicitud-proyecto-entidad/solicitud-proyecto-entidad.service';
 import { SolicitudService } from '@core/services/csp/solicitud.service';
 import { EmpresaService } from '@core/services/sgemp/empresa.service';
 import { RSQLSgiRestFilter, SgiRestFilterOperator, SgiRestFindOptions } from '@sgi/framework/http';
 import { of } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { map, switchMap } from 'rxjs/operators';
 
 const TITLE_PRESUPUESTO_COMPLETO = marker('title.csp.presupuesto-completo');
 const TITLE_PRESUPUESTO_ENTIDAD = marker('title.csp.presupuesto-entidad');
@@ -91,6 +92,7 @@ export class SolicitiudPresupuestoModalComponent {
     public matDialogRef: MatDialogRef<SolicitiudPresupuestoModalComponent>,
     @Inject(MAT_DIALOG_DATA) public readonly data: SolicitudPresupuestoModalData,
     solicitudService: SolicitudService,
+    private readonly solicitudProyectoEntidadService: SolicitudProyectoEntidadService,
     private readonly empresaService: EmpresaService
   ) {
     this.title = this.data.entidadId ? TITLE_PRESUPUESTO_ENTIDAD : TITLE_PRESUPUESTO_COMPLETO;
@@ -126,7 +128,7 @@ export class SolicitiudPresupuestoModalComponent {
     const root: RowTreePresupuesto[] = [];
     presupuestos.forEach(element => {
       const keyAnualidad = `${element.anualidad}`;
-      const keyEntidad = `${keyAnualidad}-${element?.empresa?.id}-${element?.financiacionAjena}`;
+      const keyEntidad = `${keyAnualidad}-${element?.solicitudProyectoEntidad?.id}`;
       let anualidad = this.mapTree.get(keyAnualidad);
       if (!anualidad) {
         anualidad = new RowTreePresupuesto(
@@ -143,17 +145,42 @@ export class SolicitiudPresupuestoModalComponent {
       if (!entidad) {
         entidad = new RowTreePresupuesto(
           {
-            empresa: element.empresa,
-            financiacionAjena: element.financiacionAjena,
+            solicitudProyectoEntidad: element.solicitudProyectoEntidad,
             importePresupuestado: 0,
             importeSolicitado: 0
           } as ISolicitudProyectoPresupuesto
         );
         this.mapTree.set(keyEntidad, entidad);
         anualidad.addChild(entidad);
-        this.empresaService.findById(entidad.item.empresa.id).subscribe(
-          (empresa) => entidad.item.empresa = empresa
-        );
+
+        if (entidad.item.solicitudProyectoEntidad?.id) {
+          this.solicitudProyectoEntidadService.findById(entidad.item.solicitudProyectoEntidad.id).pipe(
+            switchMap(solicitudProyectoEntidad => {
+              entidad.item.solicitudProyectoEntidad = solicitudProyectoEntidad;
+
+              const empresaId = solicitudProyectoEntidad.solicitudProyectoEntidadFinanciadoraAjena?.empresa?.id
+                ?? solicitudProyectoEntidad.convocatoriaEntidadFinanciadora?.empresa?.id
+                ?? solicitudProyectoEntidad.convocatoriaEntidadGestora?.empresa?.id;
+
+              if (empresaId) {
+                return this.empresaService.findById(empresaId);
+              }
+              return of(null);
+            })
+          ).subscribe(
+            (empresa) => {
+              if (empresa) {
+                if (entidad.item.solicitudProyectoEntidad.solicitudProyectoEntidadFinanciadoraAjena) {
+                  entidad.item.solicitudProyectoEntidad.solicitudProyectoEntidadFinanciadoraAjena.empresa = empresa;
+                } else if (entidad.item.solicitudProyectoEntidad.convocatoriaEntidadFinanciadora) {
+                  entidad.item.solicitudProyectoEntidad.convocatoriaEntidadFinanciadora.empresa = empresa;
+                } else if (entidad.item.solicitudProyectoEntidad.convocatoriaEntidadGestora) {
+                  entidad.item.solicitudProyectoEntidad.convocatoriaEntidadGestora.empresa = empresa;
+                }
+              }
+            }
+          );
+        }
       }
       entidad.addChild(new RowTreePresupuesto(
         {

@@ -1,8 +1,6 @@
-import { INivelAcademico } from '../sgp/nivel-academico';
 import { IConvocatoriaRequisitoIP } from './convocatoria-requisito-ip';
+import { IRequisitoNivelAcademico } from './requisito-nivel-academico';
 
-export interface IRequisitoIPNivelAcademico {
-  id: number;
+export interface IRequisitoIPNivelAcademico extends IRequisitoNivelAcademico {
   requisitoIP: IConvocatoriaRequisitoIP;
-  nivelAcademico: INivelAcademico;
 }

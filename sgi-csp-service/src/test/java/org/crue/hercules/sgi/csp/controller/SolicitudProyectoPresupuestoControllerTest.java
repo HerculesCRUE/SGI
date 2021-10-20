@@ -62,14 +62,12 @@ public class SolicitudProyectoPresupuestoControllerTest extends BaseControllerTe
             .value(solicitudProyectoPresupuesto.getSolicitudProyectoId()))
         .andExpect(MockMvcResultMatchers.jsonPath("conceptoGasto.id")
             .value(solicitudProyectoPresupuesto.getConceptoGasto().getId()))
-        .andExpect(MockMvcResultMatchers.jsonPath("entidadRef").value(solicitudProyectoPresupuesto.getEntidadRef()))
         .andExpect(MockMvcResultMatchers.jsonPath("anualidad").value(solicitudProyectoPresupuesto.getAnualidad()))
         .andExpect(MockMvcResultMatchers.jsonPath("importeSolicitado")
             .value(solicitudProyectoPresupuesto.getImporteSolicitado()))
         .andExpect(
             MockMvcResultMatchers.jsonPath("observaciones").value(solicitudProyectoPresupuesto.getObservaciones()))
-        .andExpect(MockMvcResultMatchers.jsonPath("financiacionAjena")
-            .value(solicitudProyectoPresupuesto.getFinanciacionAjena()));
+        .andExpect(MockMvcResultMatchers.jsonPath("solicitudProyectoEntidadId").isEmpty());
   }
 
   @Test
@@ -119,15 +117,12 @@ public class SolicitudProyectoPresupuestoControllerTest extends BaseControllerTe
         .andExpect(MockMvcResultMatchers.jsonPath("conceptoGasto.id")
             .value(updatedSolicitudProyectoPresupuesto.getConceptoGasto().getId()))
         .andExpect(
-            MockMvcResultMatchers.jsonPath("entidadRef").value(updatedSolicitudProyectoPresupuesto.getEntidadRef()))
-        .andExpect(
             MockMvcResultMatchers.jsonPath("anualidad").value(updatedSolicitudProyectoPresupuesto.getAnualidad()))
         .andExpect(MockMvcResultMatchers.jsonPath("importeSolicitado")
             .value(updatedSolicitudProyectoPresupuesto.getImporteSolicitado()))
         .andExpect(MockMvcResultMatchers.jsonPath("observaciones")
             .value(updatedSolicitudProyectoPresupuesto.getObservaciones()))
-        .andExpect(MockMvcResultMatchers.jsonPath("financiacionAjena")
-            .value(updatedSolicitudProyectoPresupuesto.getFinanciacionAjena()));
+        .andExpect(MockMvcResultMatchers.jsonPath("solicitudProyectoEntidadId").isEmpty());
     ;
   }
 
@@ -249,11 +244,10 @@ public class SolicitudProyectoPresupuestoControllerTest extends BaseControllerTe
         .id(id)
         .solicitudProyectoId(solicitudProyectoId)
         .conceptoGasto(ConceptoGasto.builder().id(conceptoGastoId).build())
-        .entidadRef(null)
         .anualidad(1000)
         .importeSolicitado(new BigDecimal("335"))
         .observaciones("observaciones-" + suffix)
-        .financiacionAjena(false)
+        .solicitudProyectoEntidadId(null)
         .build();// @formatter:on
 
     return solicitudProyectoPresupuesto;

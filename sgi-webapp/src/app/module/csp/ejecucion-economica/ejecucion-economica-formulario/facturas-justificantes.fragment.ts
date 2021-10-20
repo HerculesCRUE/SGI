@@ -221,8 +221,73 @@ export abstract class FacturasJustificantesFragment extends DesgloseEconomicoFra
             r.compute(this.columns);
             regs.push(...this.addChilds(r));
           });
+          this.sortRows(regs);
           this.desglose$.next(regs);
         }
       );
+  }
+
+  protected abstract sortRows(rows: RowTreeDesglose<IDesglose>[]): void;
+
+  protected getItemLevel(item: RowTreeDesglose<IDesglose>, level: number): RowTreeDesglose<IDesglose> {
+    if (item.level === level) {
+      return item;
+    } else if (item.level < level) {
+      return null;
+    } else {
+      return this.getItemLevel(item.parent, level);
+    }
+  }
+
+  protected compareAnualidad(itemA: RowTreeDesglose<IDesglose>, itemB: RowTreeDesglose<IDesglose>): number {
+    const anualidadItemA = this.getItemLevel(itemA, 0)?.item?.anualidad ?? '';
+    const anualidadItemB = this.getItemLevel(itemB, 0)?.item?.anualidad ?? '';
+    return anualidadItemA.localeCompare(anualidadItemB);
+  }
+
+  protected compareProyectoTitulo(itemA: RowTreeDesglose<IDesglose>, itemB: RowTreeDesglose<IDesglose>): number {
+    const tituloProyectoItemA = this.getItemLevel(itemA, 0)?.item?.proyecto?.titulo ?? '';
+    const tituloProyectoItemB = this.getItemLevel(itemB, 0)?.item?.proyecto?.titulo ?? '';
+    return tituloProyectoItemA.localeCompare(tituloProyectoItemB);
+  }
+
+  protected compareAgrupacionGastoNombre(itemA: RowTreeDesglose<IDesglose>, itemB: RowTreeDesglose<IDesglose>): number {
+    if (!itemA || !itemB || itemA.level < 1 || itemB.level < 1) {
+      return 0;
+    }
+
+    const nombreAgrupacionGastoItemA = this.getItemLevel(itemA, 1)?.item?.agrupacionGasto?.nombre ?? '';
+    const nombreAgrupacionGastoItemB = this.getItemLevel(itemB, 1)?.item?.agrupacionGasto?.nombre ?? '';
+    return nombreAgrupacionGastoItemA.localeCompare(nombreAgrupacionGastoItemB);
+  }
+
+  protected compareConceptoGastoNombre(itemA: RowTreeDesglose<IDesglose>, itemB: RowTreeDesglose<IDesglose>): number {
+    if (!itemA || !itemB || itemA.level < 2 || itemB.level < 2) {
+      return 0;
+    }
+
+    const nombreConceptoGastoItemA = this.getItemLevel(itemA, 2)?.item?.conceptoGasto?.nombre ?? '';
+    const nombreConceptoGastoItemB = this.getItemLevel(itemB, 2)?.item?.conceptoGasto?.nombre ?? '';
+    return nombreConceptoGastoItemA.localeCompare(nombreConceptoGastoItemB);
+  }
+
+  protected comparePartidaPresupuestaria(itemA: RowTreeDesglose<IDesglose>, itemB: RowTreeDesglose<IDesglose>): number {
+    if (!itemA || !itemB || itemA.level < 3 || itemB.level < 3) {
+      return 0;
+    }
+
+    const partidaPresupuestariaItemA = this.getItemLevel(itemA, 2)?.item?.partidaPresupuestaria ?? '';
+    const partidaPresupuestariaItemB = this.getItemLevel(itemB, 2)?.item?.partidaPresupuestaria ?? '';
+    return partidaPresupuestariaItemA.localeCompare(partidaPresupuestariaItemB);
+  }
+
+  protected compareCodigoEconomico(itemA: RowTreeDesglose<IDesglose>, itemB: RowTreeDesglose<IDesglose>): number {
+    if (!itemA || !itemB || itemA.level < 3 || itemB.level < 3) {
+      return 0;
+    }
+
+    const codigoEconomicoItemA = this.getItemLevel(itemA, 3)?.item?.codigoEconomico?.id ?? '';
+    const codigoEconomicoItemB = this.getItemLevel(itemB, 3)?.item?.codigoEconomico?.id ?? '';
+    return codigoEconomicoItemA.localeCompare(codigoEconomicoItemB);
   }
 }

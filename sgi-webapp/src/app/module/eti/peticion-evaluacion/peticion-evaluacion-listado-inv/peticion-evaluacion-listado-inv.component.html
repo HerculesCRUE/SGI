@@ -100,12 +100,12 @@
       <ng-container matColumnDef="acciones" class="acciones">
         <th mat-header-cell *matHeaderCellDef> {{'label.actions' | translate}} </th>
         <td mat-cell *matCellDef="let peticionEvaluacion;let i=index;">
-          <ng-container *sgiHasAuthorityForAnyUO="'ETI-PEV-ER-INV'">
+          <ng-container *sgiHasAuthorityForAnyUO="'ETI-PEV-INV-ER'">
             <button mat-button [routerLink]="[peticionEvaluacion.id]" matTooltip="{{'btn.edit' | translate}}">
               <mat-icon color="primary">border_color</mat-icon>
             </button>
             <ng-container *ngIf="peticionEvaluacion.eliminable">
-              <button mat-button color="warn" *sgiHasAuthorityForAnyUO="'ETI-PEV-BR-INV'"
+              <button mat-button color="warn" *sgiHasAuthorityForAnyUO="'ETI-PEV-INV-BR'"
                 matTooltip="{{'btn.delete' | translate}}" (click)="borrar(peticionEvaluacion.id, $event)">
                 <mat-icon>highlight_off</mat-icon>
               </button>
@@ -121,7 +121,7 @@
     <mat-paginator [pageSizeOptions]="elementosPagina" [length]="totalElementos" showFirstLastButtons>
     </mat-paginator>
   </div>
-  <sgi-menu-content-footer *sgiHasAnyAuthorityForAnyUO="['ETI-PEV-C-INV']">
+  <sgi-menu-content-footer *sgiHasAnyAuthorityForAnyUO="['ETI-PEV-INV-C']">
     <sgi-footer-crear [texto]="textoCrear" [route]="ROUTE_NAMES.NEW">
     </sgi-footer-crear>
   </sgi-menu-content-footer>

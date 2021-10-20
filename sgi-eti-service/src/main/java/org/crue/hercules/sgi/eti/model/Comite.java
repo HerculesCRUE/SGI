@@ -40,6 +40,22 @@ public class Comite extends BaseEntity {
   @Column(name = "comite", length = 50, nullable = false)
   private String comite;
 
+  /** Nombre secretario */
+  @Column(name = "nombre_secretario", length = 255, nullable = false)
+  private String nombreSecretario;
+
+  /** Nombre investigación */
+  @Column(name = "nombre_investigacion", length = 255, nullable = false)
+  private String nombreInvestigacion;
+
+  /** Nombre decreto */
+  @Column(name = "nombre_decreto", length = 255, nullable = false)
+  private String nombreDecreto;
+
+  /** Artículo */
+  @Column(name = "articulo", length = 255, nullable = false)
+  private String articulo;
+
   /** Formulario */
   @OneToOne
   @JoinColumn(name = "formulario_id", nullable = false, foreignKey = @ForeignKey(name = "FK_COMITE_FORMULARIO"))

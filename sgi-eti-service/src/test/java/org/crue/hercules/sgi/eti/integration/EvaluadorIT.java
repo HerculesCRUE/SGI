@@ -95,7 +95,8 @@ public class EvaluadorIT extends BaseIT {
 
     Evaluador nuevoEvaluador = new Evaluador();
     nuevoEvaluador.setResumen("Evaluador1");
-    nuevoEvaluador.setComite(new Comite(1L, "Comite1", new Formulario(1L, "M10", "Descripcion"), Boolean.TRUE));
+    nuevoEvaluador.setComite(new Comite(1L, "Comite1", "nombreSecretario", "nombreInvestigacion", "nombreDecreto",
+        "articulo", new Formulario(1L, "M10", "Descripcion"), Boolean.TRUE));
     nuevoEvaluador.setCargoComite(new CargoComite(1L, "CargoComite1", Boolean.TRUE));
     nuevoEvaluador.setPersonaRef("user-001");
     nuevoEvaluador.setActivo(Boolean.TRUE);
@@ -407,7 +408,8 @@ public class EvaluadorIT extends BaseIT {
     cargoComite.setActivo(Boolean.TRUE);
 
     Formulario formulario = new Formulario(1L, "M10", "Descripcion");
-    Comite comite = new Comite(1L, "Comite1", formulario, Boolean.TRUE);
+    Comite comite = new Comite(1L, "Comite1", "nombreSecretario", "nombreInvestigacion", "nombreDecreto", "articulo",
+        formulario, Boolean.TRUE);
 
     Evaluador evaluador = new Evaluador();
     evaluador.setId(id);

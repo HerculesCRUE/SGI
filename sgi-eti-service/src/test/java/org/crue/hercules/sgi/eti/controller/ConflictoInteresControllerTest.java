@@ -148,7 +148,8 @@ public class ConflictoInteresControllerTest extends BaseControllerTest {
     cargoComite.setActivo(Boolean.TRUE);
 
     Formulario formulario = new Formulario(1L, "M10", "Descripcion");
-    Comite comite = new Comite(1L, "Comite1", formulario, Boolean.TRUE);
+    Comite comite = new Comite(1L, "Comite1", "nombreSecretario", "nombreInvestigacion", "nombreDecreto", "articulo",
+        formulario, Boolean.TRUE);
 
     Evaluador evaluador = new Evaluador();
     evaluador.setId(id);

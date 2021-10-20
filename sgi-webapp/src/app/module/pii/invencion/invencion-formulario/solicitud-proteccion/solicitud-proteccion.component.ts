@@ -12,12 +12,11 @@ import { FxFlexProperties } from '@core/models/shared/flexLayout/fx-flex-propert
 import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-properties';
 import { ROUTE_NAMES } from '@core/route.names';
 import { DialogService } from '@core/services/dialog.service';
-import { SolicitudProteccionService } from '@core/services/pii/invencion/solicitud-proteccion/solicitud-proteccion.service';
+import { SolicitudProteccionService } from '@core/services/pii/solicitud-proteccion/solicitud-proteccion.service';
 import { SnackBarService } from '@core/services/snack-bar.service';
-import { StatusWrapper } from '@core/utils/status-wrapper';
 import { TranslateService } from '@ngx-translate/core';
 import { NGXLogger } from 'ngx-logger';
-import { of, Subscription } from 'rxjs';
+import { Subscription } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { InvencionActionService } from '../../invencion.action.service';
 import { SolicitudProteccionFragment } from './solicitud-proteccion.fragment';

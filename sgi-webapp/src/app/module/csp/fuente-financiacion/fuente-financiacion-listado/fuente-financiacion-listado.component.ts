@@ -19,7 +19,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { SgiAuthService } from '@sgi/framework/auth';
 import { RSQLSgiRestFilter, SgiRestFilter, SgiRestFilterOperator, SgiRestListResult } from '@sgi/framework/http';
 import { NGXLogger } from 'ngx-logger';
-import { Observable, of } from 'rxjs';
+import { BehaviorSubject, Observable, of } from 'rxjs';
 import { map, startWith, switchMap } from 'rxjs/operators';
 import { FuenteFinanciacionModalComponent } from '../fuente-financiacion-modal/fuente-financiacion-modal.component';
 
@@ -47,10 +47,8 @@ export class FuenteFinanciacionListadoComponent extends AbstractTablePaginationC
   fxLayoutProperties: FxLayoutProperties;
   fuenteFinanciacion$: Observable<IFuenteFinanciacion[]>;
 
-  ambitosGeograficos: Observable<ITipoAmbitoGeografico[]>;
-  origenes: Observable<ITipoOrigenFuenteFinanciacion[]>;
-  private ambitoGeograficoFiltered: ITipoAmbitoGeografico[];
-  private origenFiltered: ITipoOrigenFuenteFinanciacion[];
+  ambitosGeograficos$: BehaviorSubject<ITipoAmbitoGeografico[]> = new BehaviorSubject<ITipoAmbitoGeografico[]>([]);
+  origenes$: BehaviorSubject<ITipoOrigenFuenteFinanciacion[]> = new BehaviorSubject<ITipoOrigenFuenteFinanciacion[]>([]);
 
   msgParamEntity = {};
 
@@ -258,8 +256,8 @@ export class FuenteFinanciacionListadoComponent extends AbstractTablePaginationC
       filter.and('activo', SgiRestFilterOperator.EQUALS, controls.activo.value);
     }
     filter
-      .and('tipoAmbitoGeografico.nombre', SgiRestFilterOperator.LIKE_ICASE, controls.ambitoGeografico.value.nombre)
-      .and('tipoOrigenFuenteFinanciacion.nombre', SgiRestFilterOperator.LIKE_ICASE, controls.origen.value.nombre);
+      .and('tipoAmbitoGeografico.nombre', SgiRestFilterOperator.LIKE_ICASE, controls.ambitoGeografico.value?.nombre)
+      .and('tipoOrigenFuenteFinanciacion.nombre', SgiRestFilterOperator.LIKE_ICASE, controls.origen.value?.nombre);
 
     return filter;
   }
@@ -275,15 +273,7 @@ export class FuenteFinanciacionListadoComponent extends AbstractTablePaginationC
   private loadAmbitosGeograficos() {
     this.suscripciones.push(
       this.ambitoGeograficoService.findAll().subscribe(
-        (res: SgiRestListResult<ITipoAmbitoGeografico>) => {
-          this.ambitoGeograficoFiltered = res.items;
-          this.ambitosGeograficos = this.formGroup.controls.ambitoGeografico.valueChanges
-            .pipe(
-
-              startWith(''),
-              map(value => this.filtroAmbitoGeografico(value))
-            );
-        },
+        (res: SgiRestListResult<ITipoAmbitoGeografico>) => this.ambitosGeograficos$.next(res.items),
         (error) => {
           this.logger.error(error);
           this.snackBarService.showError(MSG_ERROR);
@@ -295,60 +285,13 @@ export class FuenteFinanciacionListadoComponent extends AbstractTablePaginationC
   private loadOrigenes() {
     this.suscripciones.push(
       this.tipoOrigenFuenteFinanciacionService.findAll().subscribe(
-        (res: SgiRestListResult<ITipoOrigenFuenteFinanciacion>) => {
-          this.origenFiltered = res.items;
-          this.origenes = this.formGroup.controls.origen.valueChanges
-            .pipe(
-
-              startWith(''),
-              map(value => this.filtroOrigen(value))
-            );
-        },
+        (res: SgiRestListResult<ITipoOrigenFuenteFinanciacion>) => this.origenes$.next(res.items),
         (error) => {
           this.logger.error(error);
           this.snackBarService.showError(MSG_ERROR);
         }
       )
     );
-  }
-
-  /**
-   * Devuelve el nombre de un ámbito geográfico.
-   * @param ambitoGeografico ámbito geográfico.
-   * @returns nombre de un ámbito geográfico.
-   */
-  getAmbitoGeografico(ambitoGeografico?: ITipoAmbitoGeografico): string | undefined {
-    return typeof ambitoGeografico === 'string' ? ambitoGeografico : ambitoGeografico?.nombre;
-  }
-
-  /**
-   * Devuelve el nombre de un tipo de origen.
-   * @param origen origen.
-   * @returns nombre de un tipo de origen.
-   */
-  getOrigen(origen?: ITipoOrigenFuenteFinanciacion): string | undefined {
-    return typeof origen === 'string' ? origen : origen?.nombre;
-  }
-
-  /**
-   * Filtra la lista devuelta por el servicio
-   *
-   * @param value del input para autocompletar
-   */
-  private filtroAmbitoGeografico(value: string): ITipoAmbitoGeografico[] {
-    const filterValue = value.toString().toLowerCase();
-    return this.ambitoGeograficoFiltered.filter(ambitoGeografico => ambitoGeografico.nombre.toLowerCase()
-      .includes(filterValue));
-  }
-
-  /**
-   * Filtra la lista devuelta por el servicio
-   *
-   * @param value del input para autocompletar
-   */
-  private filtroOrigen(value: string): ITipoOrigenFuenteFinanciacion[] {
-    const filterValue = value.toString().toLowerCase();
-    return this.origenFiltered.filter(origen => origen.nombre.toLowerCase().includes(filterValue));
   }
 
   /**

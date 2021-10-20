@@ -65,7 +65,7 @@ export class ConvocatoriaRequisitoEquipoService
    * @param id Identificador del RequisitoEquipo
    */
   findCategoriaProfesional(id: number): Observable<IRequisitoEquipoCategoriaProfesional[]> {
-    const endpointUrl = `${this.endpointUrl}/${id}/categorias`;
+    const endpointUrl = `${this.endpointUrl}/${id}/categoriasprofesionalesrequisitosequipo`;
     const params = new HttpParams().set('id', id.toString());
     return this.http.get<IRequisitoEquipoCategoriaProfesionalResponse[]>(endpointUrl, { params })
       .pipe(
@@ -82,10 +82,22 @@ export class ConvocatoriaRequisitoEquipoService
    */
   updateCategoriasProfesionales(id: number, nivelesAcademicos: IRequisitoEquipoCategoriaProfesional[]):
     Observable<IRequisitoEquipoCategoriaProfesional[]> {
-    return this.http.patch<IRequisitoEquipoCategoriaProfesionalResponse[]>(`${this.endpointUrl}/${id}/categorias`,
+    return this.http.patch<IRequisitoEquipoCategoriaProfesionalResponse[]>(`${this.endpointUrl}/${id}/categoriasprofesionalesrequisitosequipo`,
       REQUISITO_EQUIPO_CATEGORIA_PROFESIONAL_REQUEST_CONVERTER.fromTargetArray(nivelesAcademicos)
     ).pipe(
       map((response => REQUISITO_EQUIPO_CATEGORIA_PROFESIONAL_RESPONSE_CONVERTER.toTargetArray(response)))
     );
+  }
+
+  /**
+   * Recupera el Requisito del equipo asociado a la convocatoria.
+   *
+   * @param id Id de la convocatoria
+   */
+  findByConvocatoriaId(id: number): Observable<IConvocatoriaRequisitoEquipo> {
+    return this.http.get<IConvocatoriaRequisitoEquipoBackend>(`${this.endpointUrl}/${id}`).pipe(
+      map(response => CONVOCATORIA_REQUISITO_EQUIPO_CONVERTER.toTarget(response))
+    );
+
   }
 }

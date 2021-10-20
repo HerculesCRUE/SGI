@@ -1,5 +1,6 @@
 package org.crue.hercules.sgi.csp.repository;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.crue.hercules.sgi.csp.model.Proyecto;
@@ -36,5 +37,14 @@ public interface ProyectoAnualidadRepository extends JpaRepository<ProyectoAnual
    * @return {@link ProyectoAnualidad}.
    */
   Page<ProyectoAnualidad> findAllByProyectoId(Long proyectoId, Pageable pageable);
+
+  /**
+   * Recupera una lista de objetos {@link ProyectoAnualidad} de un
+   * {@link Proyecto}
+   * 
+   * @param proyectoId Identificador del {@link Proyecto}
+   * @return lista de {@link ProyectoAnualidad}
+   */
+  List<ProyectoAnualidad> findByProyectoId(Long proyectoId);
 
 }

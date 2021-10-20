@@ -4,7 +4,9 @@ import { IColumna } from '@core/models/sge/columna';
 import { IDatoEconomico } from '@core/models/sge/dato-economico';
 import { IDatoEconomicoDetalle } from '@core/models/sge/dato-economico-detalle';
 import { environment } from '@env';
-import { RSQLSgiRestFilter, SgiRestBaseService, SgiRestFilterOperator, SgiRestFindOptions } from '@sgi/framework/http';
+import {
+  RSQLSgiRestFilter, RSQLSgiRestSort, SgiRestBaseService, SgiRestFilterOperator, SgiRestFindOptions, SgiRestSort, SgiRestSortDirection
+} from '@sgi/framework/http';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
@@ -84,6 +86,7 @@ export class EjecucionEconomicaService extends SgiRestBaseService {
   }
 
   private getDatosEconomicos(
+    sort: SgiRestSort,
     proyectoEconomicoId: string,
     tipoOperacion: TipoOperacion,
     anualidades: string[] = [],
@@ -111,7 +114,8 @@ export class EjecucionEconomicaService extends SgiRestBaseService {
         .and('fechaContabilizacion', SgiRestFilterOperator.LOWER_OR_EQUAL, fechaContabilizacionRange.hasta);
     }
     const options: SgiRestFindOptions = {
-      filter
+      filter,
+      sort
     };
     return this.find<IDatoEconomico, IDatoEconomico>(
       `${this.endpointUrl}`,
@@ -122,27 +126,38 @@ export class EjecucionEconomicaService extends SgiRestBaseService {
   }
 
   getEjecucionPresupuestariaEstadoActual(proyectoEconomicoId: string, anualidades: string[] = []): Observable<IDatoEconomico[]> {
-    return this.getDatosEconomicos(proyectoEconomicoId, TipoOperacion.EJECUCION_PRESUPUESTARIA_ESTADO_ACTUAL, anualidades);
+    const sort = new RSQLSgiRestSort('tipo', SgiRestSortDirection.ASC).and('anualidad', SgiRestSortDirection.DESC);
+    return this.getDatosEconomicos(sort, proyectoEconomicoId, TipoOperacion.EJECUCION_PRESUPUESTARIA_ESTADO_ACTUAL, anualidades);
   }
 
   getEjecucionPresupuestariaGastos(proyectoEconomicoId: string, anualidades: string[] = []): Observable<IDatoEconomico[]> {
-    return this.getDatosEconomicos(proyectoEconomicoId, TipoOperacion.EJECUCION_PRESUPUESTARIA_GASTOS, anualidades);
+    const sort = new RSQLSgiRestSort('anualidad', SgiRestSortDirection.DESC);
+    return this.getDatosEconomicos(sort, proyectoEconomicoId, TipoOperacion.EJECUCION_PRESUPUESTARIA_GASTOS, anualidades);
   }
 
   getEjecucionPresupuestariaIngresos(proyectoEconomicoId: string, anualidades: string[] = []): Observable<IDatoEconomico[]> {
-    return this.getDatosEconomicos(proyectoEconomicoId, TipoOperacion.EJECUCION_PRESUPUESTARIA_INGRESOS, anualidades);
+    const sort = new RSQLSgiRestSort('anualidad', SgiRestSortDirection.DESC);
+    return this.getDatosEconomicos(sort, proyectoEconomicoId, TipoOperacion.EJECUCION_PRESUPUESTARIA_INGRESOS, anualidades);
   }
 
   getDetalleOperacionesGastos(proyectoEconomicoId: string, anualidades: string[] = []): Observable<IDatoEconomico[]> {
-    return this.getDatosEconomicos(proyectoEconomicoId, TipoOperacion.DETALLE_OPERACIONES_GASTOS, anualidades);
+    const sort = new RSQLSgiRestSort('anualidad', SgiRestSortDirection.DESC)
+      .and('partidaPresupuestaria', SgiRestSortDirection.ASC)
+      .and('codigoEconomico.id', SgiRestSortDirection.ASC);
+    return this.getDatosEconomicos(sort, proyectoEconomicoId, TipoOperacion.DETALLE_OPERACIONES_GASTOS, anualidades);
   }
 
   getDetalleOperacionesIngresos(proyectoEconomicoId: string, anualidades: string[] = []): Observable<IDatoEconomico[]> {
-    return this.getDatosEconomicos(proyectoEconomicoId, TipoOperacion.DETALLE_OPERACIONES_INGRESOS, anualidades);
+    const sort = new RSQLSgiRestSort('anualidad', SgiRestSortDirection.DESC)
+      .and('partidaPresupuestaria', SgiRestSortDirection.ASC)
+      .and('codigoEconomico.id', SgiRestSortDirection.ASC);
+    return this.getDatosEconomicos(sort, proyectoEconomicoId, TipoOperacion.DETALLE_OPERACIONES_INGRESOS, anualidades);
   }
 
   getDetalleOperacionesModificaciones(proyectoEconomicoId: string, anualidades: string[] = []): Observable<IDatoEconomico[]> {
-    return this.getDatosEconomicos(proyectoEconomicoId, TipoOperacion.DETALLE_OPERACIONES_MODIFICACIONES, anualidades);
+    const sort = new RSQLSgiRestSort('anualidad', SgiRestSortDirection.DESC)
+      .and('partidaPresupuestaria', SgiRestSortDirection.ASC);
+    return this.getDatosEconomicos(sort, proyectoEconomicoId, TipoOperacion.DETALLE_OPERACIONES_MODIFICACIONES, anualidades);
   }
 
   getFacturasGastos(
@@ -153,6 +168,7 @@ export class EjecucionEconomicaService extends SgiRestBaseService {
     fechaContabilizacionRange?: { desde: string, hasta: string }
   ): Observable<IDatoEconomico[]> {
     return this.getDatosEconomicos(
+      null,
       proyectoEconomicoId,
       TipoOperacion.FACTURAS_JUSTIFICANTES_FACTURAS_GASTOS,
       anualidades,
@@ -171,6 +187,7 @@ export class EjecucionEconomicaService extends SgiRestBaseService {
     fechaContabilizacionRange?: { desde: string, hasta: string }
   ): Observable<IDatoEconomico[]> {
     return this.getDatosEconomicos(
+      null,
       proyectoEconomicoId,
       TipoOperacion.FACTURAS_JUSTIFICANTES_VIAJES_DIETAS,
       anualidades,
@@ -189,6 +206,7 @@ export class EjecucionEconomicaService extends SgiRestBaseService {
     fechaContabilizacionRange?: { desde: string, hasta: string }
   ): Observable<IDatoEconomico[]> {
     return this.getDatosEconomicos(
+      null,
       proyectoEconomicoId,
       TipoOperacion.FACTURAS_JUSTIFICANTES_PERSONAL_CONTRATADO,
       anualidades,

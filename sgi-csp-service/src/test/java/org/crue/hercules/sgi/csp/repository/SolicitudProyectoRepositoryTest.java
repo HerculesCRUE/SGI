@@ -36,7 +36,7 @@ public class SolicitudProyectoRepositoryTest {
         .titulo("titulo")
         .solicitanteRef("user-002")
         .unidadGestionRef("1")
-        .formularioSolicitud(FormularioSolicitud.AYUDAS_GRUPOS)
+        .formularioSolicitud(FormularioSolicitud.GRUPO)
         .activo(Boolean.TRUE)
         .build());
     // @formatter:on
@@ -50,7 +50,7 @@ public class SolicitudProyectoRepositoryTest {
         .titulo("titulo")
         .solicitanteRef("user-002")
         .unidadGestionRef("1")
-        .formularioSolicitud(FormularioSolicitud.AYUDAS_GRUPOS)
+        .formularioSolicitud(FormularioSolicitud.GRUPO)
         .activo(Boolean.TRUE)
         .build());
     // @formatter:on
@@ -80,7 +80,7 @@ public class SolicitudProyectoRepositoryTest {
         .titulo("titulo")
         .solicitanteRef("user-002")
         .unidadGestionRef("1")
-        .formularioSolicitud(FormularioSolicitud.AYUDAS_GRUPOS)
+        .formularioSolicitud(FormularioSolicitud.GRUPO)
         .activo(Boolean.TRUE)
         .build());
     // @formatter:on
@@ -93,7 +93,7 @@ public class SolicitudProyectoRepositoryTest {
         .titulo("titulo")
         .solicitanteRef("user-002")
         .unidadGestionRef("1")
-        .formularioSolicitud(FormularioSolicitud.AYUDAS_GRUPOS)
+        .formularioSolicitud(FormularioSolicitud.GRUPO)
         .activo(Boolean.TRUE)
         .build());
     // @formatter:on

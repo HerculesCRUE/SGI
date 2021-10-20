@@ -17,6 +17,7 @@ DELETE FROM csp.solicitud_proyecto_socio_periodo_pago;
 DELETE FROM csp.solicitud_proyecto_socio_periodo_justificacion;
 DELETE FROM csp.solicitud_proyecto_socio_equipo;
 DELETE FROM csp.solicitud_proyecto_socio;
+DELETE FROM csp.solicitud_proyecto_entidad;
 DELETE FROM csp.solicitud_proyecto_entidad_financiadora_ajena;
 DELETE FROM csp.solicitud_proyecto_equipo;
 DELETE FROM csp.solicitud_proyecto;

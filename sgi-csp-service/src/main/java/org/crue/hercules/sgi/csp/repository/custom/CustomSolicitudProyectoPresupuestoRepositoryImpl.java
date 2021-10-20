@@ -17,6 +17,7 @@ import org.crue.hercules.sgi.csp.dto.SolicitudProyectoPresupuestoTotales;
 import org.crue.hercules.sgi.csp.model.Proyecto;
 import org.crue.hercules.sgi.csp.model.Solicitud;
 import org.crue.hercules.sgi.csp.model.SolicitudProyecto;
+import org.crue.hercules.sgi.csp.model.SolicitudProyectoEntidad_;
 import org.crue.hercules.sgi.csp.model.SolicitudProyecto_;
 import org.crue.hercules.sgi.csp.model.SolicitudProyectoPresupuesto;
 import org.crue.hercules.sgi.csp.model.SolicitudProyectoPresupuesto_;
@@ -64,10 +65,11 @@ public class CustomSolicitudProyectoPresupuestoRepositoryImpl implements CustomS
 
     sqTotalPresupuestadoNoAjeno
         .select(cb.sum(rootTotalPresupuestadoNoAjeno.get(SolicitudProyectoPresupuesto_.importePresupuestado)));
-    sqTotalPresupuestadoNoAjeno.where(
-        cb.and(cb.isTrue(rootTotalPresupuestadoNoAjeno.get(SolicitudProyectoPresupuesto_.financiacionAjena)).not(),
-            cb.equal(rootTotalPresupuestadoNoAjeno.get(SolicitudProyectoPresupuesto_.solicitudProyecto)
-                .get(SolicitudProyecto_.solicitud).get(Solicitud_.id), root.get(Solicitud_.id))));
+    sqTotalPresupuestadoNoAjeno.where(cb.and(
+        cb.isNull(rootTotalPresupuestadoNoAjeno.get(SolicitudProyectoPresupuesto_.solicitudProyectoEntidad)
+            .get(SolicitudProyectoEntidad_.solicitudProyectoEntidadFinanciadoraAjena)),
+        cb.equal(rootTotalPresupuestadoNoAjeno.get(SolicitudProyectoPresupuesto_.solicitudProyecto)
+            .get(SolicitudProyecto_.solicitud).get(Solicitud_.id), root.get(Solicitud_.id))));
 
     // Total solicitado no ajeno
     Subquery<BigDecimal> sqTotalSolicitadoNoAjeno = cq.subquery(BigDecimal.class);
@@ -79,10 +81,11 @@ public class CustomSolicitudProyectoPresupuestoRepositoryImpl implements CustomS
 
     sqTotalSolicitadoNoAjeno
         .select(cb.sum(rootTotalSolicitadoNoAjeno.get(SolicitudProyectoPresupuesto_.importeSolicitado)));
-    sqTotalSolicitadoNoAjeno
-        .where(cb.and(cb.isTrue(rootTotalSolicitadoNoAjeno.get(SolicitudProyectoPresupuesto_.financiacionAjena)).not(),
-            cb.equal(rootTotalSolicitadoNoAjeno.get(SolicitudProyectoPresupuesto_.solicitudProyecto)
-                .get(SolicitudProyecto_.solicitud).get(Solicitud_.id), root.get(Solicitud_.id))));
+    sqTotalSolicitadoNoAjeno.where(cb.and(
+        cb.isNull(rootTotalSolicitadoNoAjeno.get(SolicitudProyectoPresupuesto_.solicitudProyectoEntidad)
+            .get(SolicitudProyectoEntidad_.solicitudProyectoEntidadFinanciadoraAjena)),
+        cb.equal(rootTotalSolicitadoNoAjeno.get(SolicitudProyectoPresupuesto_.solicitudProyecto)
+            .get(SolicitudProyecto_.solicitud).get(Solicitud_.id), root.get(Solicitud_.id))));
 
     // Total presupuestado ajeno
     Subquery<BigDecimal> sqTotalPresupuestadoAjeno = cq.subquery(BigDecimal.class);
@@ -94,10 +97,11 @@ public class CustomSolicitudProyectoPresupuestoRepositoryImpl implements CustomS
 
     sqTotalPresupuestadoAjeno
         .select(cb.sum(rootTotalPresupuestadoAjeno.get(SolicitudProyectoPresupuesto_.importePresupuestado)));
-    sqTotalPresupuestadoAjeno
-        .where(cb.and(cb.isTrue(rootTotalPresupuestadoAjeno.get(SolicitudProyectoPresupuesto_.financiacionAjena)),
-            cb.equal(rootTotalPresupuestadoAjeno.get(SolicitudProyectoPresupuesto_.solicitudProyecto)
-                .get(SolicitudProyecto_.solicitud).get(Solicitud_.id), root.get(Solicitud_.id))));
+    sqTotalPresupuestadoAjeno.where(cb.and(
+        cb.isNotNull(rootTotalPresupuestadoAjeno.get(SolicitudProyectoPresupuesto_.solicitudProyectoEntidad)
+            .get(SolicitudProyectoEntidad_.solicitudProyectoEntidadFinanciadoraAjena)),
+        cb.equal(rootTotalPresupuestadoAjeno.get(SolicitudProyectoPresupuesto_.solicitudProyecto)
+            .get(SolicitudProyecto_.solicitud).get(Solicitud_.id), root.get(Solicitud_.id))));
 
     // Total solicitado ajeno
     Subquery<BigDecimal> sqTotalSolicitadoAjeno = cq.subquery(BigDecimal.class);
@@ -109,10 +113,11 @@ public class CustomSolicitudProyectoPresupuestoRepositoryImpl implements CustomS
 
     sqTotalSolicitadoAjeno
         .select(cb.sum(rootTotalSolicitadoAjeno.get(SolicitudProyectoPresupuesto_.importeSolicitado)));
-    sqTotalSolicitadoAjeno
-        .where(cb.and(cb.isTrue(rootTotalSolicitadoAjeno.get(SolicitudProyectoPresupuesto_.financiacionAjena)),
-            cb.equal(rootTotalSolicitadoAjeno.get(SolicitudProyectoPresupuesto_.solicitudProyecto)
-                .get(SolicitudProyecto_.solicitud).get(Solicitud_.id), root.get(Solicitud_.id))));
+    sqTotalSolicitadoAjeno.where(cb.and(
+        cb.isNotNull(rootTotalSolicitadoAjeno.get(SolicitudProyectoPresupuesto_.solicitudProyectoEntidad)
+            .get(SolicitudProyectoEntidad_.solicitudProyectoEntidadFinanciadoraAjena)),
+        cb.equal(rootTotalSolicitadoAjeno.get(SolicitudProyectoPresupuesto_.solicitudProyecto)
+            .get(SolicitudProyecto_.solicitud).get(Solicitud_.id), root.get(Solicitud_.id))));
 
     cq.where(cb.equal(root.get(Solicitud_.id), solicitudId));
 
@@ -209,8 +214,9 @@ public class CustomSolicitudProyectoPresupuestoRepositoryImpl implements CustomS
         // BySolicitudId
         cb.equal(root.get(SolicitudProyectoPresupuesto_.solicitudProyecto).get(SolicitudProyecto_.solicitud)
             .get(Solicitud_.id), solicitudId),
-        // AndFinanciacionAjenaIsFalse
-        cb.equal(root.get(SolicitudProyectoPresupuesto_.financiacionAjena), Boolean.FALSE)));
+        // AndSolicitudProyectoEntidadFinanciadoraAjenaIsNull
+        cb.isNull(root.get(SolicitudProyectoPresupuesto_.solicitudProyectoEntidad)
+            .get(SolicitudProyectoEntidad_.solicitudProyectoEntidadFinanciadoraAjena))));
 
     final TypedQuery<BigDecimal> typedQuery = entityManager.createQuery(cq);
     return typedQuery.getSingleResult();

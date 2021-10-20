@@ -107,6 +107,8 @@ public class ConvocatoriaReunionServiceImpl implements ConvocatoriaReunionServic
       convocatoriaReunion.setTipoConvocatoriaReunion(convocatoriaReunionActualizar.getTipoConvocatoriaReunion());
       convocatoriaReunion.setHoraInicio(convocatoriaReunionActualizar.getHoraInicio());
       convocatoriaReunion.setMinutoInicio(convocatoriaReunionActualizar.getMinutoInicio());
+      convocatoriaReunion.setHoraInicioSegunda(convocatoriaReunionActualizar.getHoraInicioSegunda());
+      convocatoriaReunion.setMinutoInicioSegunda(convocatoriaReunionActualizar.getMinutoInicioSegunda());
       convocatoriaReunion.setFechaEnvio(convocatoriaReunionActualizar.getFechaEnvio());
       convocatoriaReunion.setActivo(convocatoriaReunionActualizar.getActivo());
 

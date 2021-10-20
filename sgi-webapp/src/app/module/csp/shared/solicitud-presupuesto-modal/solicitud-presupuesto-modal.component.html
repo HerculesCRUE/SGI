@@ -26,14 +26,22 @@
           (click)="element.expanded ? element.collapse() : element.expand()">
           {{element.expanded ? 'expand_more' : 'chevron_right'}}
         </mat-icon>
-        {{element.level > 0 && element.childs.length ? element.item.empresa?.nombre : '' }}
+        {{element.level > 0 && element.childs.length ?
+        element.item.solicitudProyectoEntidad.solicitudProyectoEntidadFinanciadoraAjena ?
+        element.item.solicitudProyectoEntidad.solicitudProyectoEntidadFinanciadoraAjena.empresa?.nombre
+        : element.item.solicitudProyectoEntidad.convocatoriaEntidadFinanciadora
+        ? element.item.solicitudProyectoEntidad.convocatoriaEntidadFinanciadora.empresa?.nombre :
+        element.item.solicitudProyectoEntidad.convocatoriaEntidadGestora ?
+        element.item.solicitudProyectoEntidad.convocatoriaEntidadGestora.empresa?.nombre : ''
+        : '' }}
       </mat-cell>
     </ng-container>
     <ng-container matColumnDef="ajena">
       <mat-header-cell *matHeaderCellDef>{{'csp.solicitud-proyecto-presupuesto.financiacion-ajena' | translate}}
       </mat-header-cell>
       <mat-cell *matCellDef="let element">{{element.level > 0 && element.childs.length ?
-        ((element.item.financiacionAjena ? 'label.si' : 'label.no') | translate) : ''}}</mat-cell>
+        ((element.item.solicitudProyectoEntidad.solicitudProyectoEntidadFinanciadoraAjena ? 'label.si' : 'label.no') |
+        translate) : ''}}</mat-cell>
     </ng-container>
     <ng-container matColumnDef="conceptoGasto">
       <mat-header-cell *matHeaderCellDef>{{'csp.solicitud-proyecto-presupuesto.concepto-gasto' | translate}}

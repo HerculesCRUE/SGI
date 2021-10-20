@@ -80,7 +80,7 @@ public class FormularioController {
   }
 
   @GetMapping("/{id}/bloques")
-  @PreAuthorize("hasAnyAuthorityForAnyUO('ETI-EVC-EVAL', 'ETI-EVC-EVALR', 'ETI-PEV-C-INV', 'ETI-PEV-ER-INV')")
+  @PreAuthorize("hasAnyAuthorityForAnyUO('ETI-EVC-EVAL', 'ETI-EVC-EVALR', 'ETI-PEV-INV-C', 'ETI-PEV-INV-ER')")
   ResponseEntity<Page<Bloque>> getBloques(@PathVariable Long id, @RequestPageable(sort = "s") Pageable paging) {
     log.debug("getBloques(Long id, Pageable paging - start");
     Page<Bloque> page = bloqueService.findByFormularioId(id, paging);

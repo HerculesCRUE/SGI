@@ -11,13 +11,7 @@
       [fxLayoutGap]="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
       <mat-form-field>
         <mat-label>{{'csp.proyecto.plazo.tipo-fase' | translate}}</mat-label>
-        <input matInput formControlName="tipoFase" type="text" required
-          placeholder="{{'csp.proyecto.plazo.tipo-fase' | translate}}" [matAutocomplete]="autoPlazosFase" required>
-        <mat-autocomplete #autoPlazosFase="matAutocomplete" [displayWith]="getTipoPlazosFase">
-          <mat-option *ngFor="let modeloTipoFase of modeloTipoFases$ | async" [value]="modeloTipoFase.tipoFase">
-            {{modeloTipoFase.tipoFase.nombre}}
-          </mat-option>
-        </mat-autocomplete>
+        <sgi-select-entity [options]="tiposFase$ | async" formControlName="tipoFase" required></sgi-select-entity>
         <mat-error *ngIf="formGroup.controls.tipoFase.errors?.required">
           {{'error.required.entity' | translate:msgParamTipoFaseEntity}}
         </mat-error>

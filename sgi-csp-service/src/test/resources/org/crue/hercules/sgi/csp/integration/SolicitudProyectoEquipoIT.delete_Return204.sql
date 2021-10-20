@@ -31,7 +31,7 @@ INSERT INTO csp.convocatoria_fase(id, convocatoria_id, tipo_fase_id, fecha_inici
 -- CONFIGURACION SOLICITUD
 INSERT INTO csp.configuracion_solicitud 
 (id, convocatoria_id, tramitacion_sgi, convocatoria_fase_id, importe_maximo_solicitud, formulario_solicitud) 
-VALUES(1, 1, TRUE, 1, 12345, 'ESTANDAR');
+VALUES(1, 1, TRUE, 1, 12345, 'PROYECTO');
 
 -- PROGRAMA
 INSERT INTO csp.programa (id, nombre, descripcion, programa_padre_id, activo) VALUES (1, 'nombre-001', 'descripcion-001', null, true);
@@ -44,7 +44,7 @@ INSERT INTO csp.convocatoria_entidad_convocante (id,  convocatoria_id, entidad_r
 
 -- SOLICITUD
 INSERT INTO csp.solicitud (id,titulo, codigo_externo, codigo_registro_interno, estado_solicitud_id, convocatoria_id, creador_ref, solicitante_ref, observaciones, convocatoria_externa, unidad_gestion_ref, formulario_solicitud, activo)
- VALUES (1,'titulo', null, 'SGI_SLC1202011061027', null, 1, 'usr-001', 'usr-002', 'observaciones 1', null, '2', 'ESTANDAR', true);
+ VALUES (1,'titulo', null, 'SGI_SLC1202011061027', null, 1, 'usr-001', 'usr-002', 'observaciones 1', null, '2', 'PROYECTO', true);
 
 -- ESTADO SOLICITUD
 INSERT INTO csp.estado_solicitud (id, solicitud_id, estado, fecha_estado, comentario) VALUES (1, 1, 'BORRADOR', '2020-11-17T00:00:00Z', 'comentario');

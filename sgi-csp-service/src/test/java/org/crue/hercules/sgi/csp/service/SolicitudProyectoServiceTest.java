@@ -7,6 +7,9 @@ import org.crue.hercules.sgi.csp.exceptions.SolicitudNotFoundException;
 import org.crue.hercules.sgi.csp.exceptions.SolicitudProyectoNotFoundException;
 import org.crue.hercules.sgi.csp.model.SolicitudProyecto;
 import org.crue.hercules.sgi.csp.model.SolicitudProyecto.TipoPresupuesto;
+import org.crue.hercules.sgi.csp.repository.ConvocatoriaEntidadFinanciadoraRepository;
+import org.crue.hercules.sgi.csp.repository.ConvocatoriaEntidadGestoraRepository;
+import org.crue.hercules.sgi.csp.repository.SolicitudProyectoEntidadRepository;
 import org.crue.hercules.sgi.csp.repository.SolicitudProyectoRepository;
 import org.crue.hercules.sgi.csp.repository.SolicitudRepository;
 import org.crue.hercules.sgi.csp.service.impl.SolicitudProyectoServiceImpl;
@@ -32,12 +35,20 @@ public class SolicitudProyectoServiceTest {
   private SolicitudRepository solicitudRepository;
   @Mock
   private SolicitudService solicitudService;
+  @Mock
+  private ConvocatoriaEntidadFinanciadoraRepository convocatoriaEntidadFinanciadoraRepository;
+  @Mock
+  private ConvocatoriaEntidadGestoraRepository convocatoriaEntidadGestoraRepository;
+  @Mock
+  private SolicitudProyectoEntidadRepository solicitudProyectoEntidadRepository;
 
   private SolicitudProyectoService service;
 
   @BeforeEach
   public void setUp() throws Exception {
-    service = new SolicitudProyectoServiceImpl(repository, solicitudRepository, solicitudService);
+    service = new SolicitudProyectoServiceImpl(repository, solicitudRepository, solicitudService,
+        convocatoriaEntidadFinanciadoraRepository, convocatoriaEntidadGestoraRepository,
+        solicitudProyectoEntidadRepository);
   }
 
   @Test

@@ -43,7 +43,7 @@ const routes: SgiRoutes = [
         data: {
           title: MSG_INVENCION_TITLE,
           titleParams: MSG_PARAMS.CARDINALIRY.PLURAL,
-          hasAnyAuthority: ['PII-INV-V', 'PII-INV-E', 'PII-INV-B', 'PII-INV-R']
+          hasAnyAuthority: ['PII-INV-V', 'PII-INV-C', 'PII-INV-E', 'PII-INV-B', 'PII-INV-R']
         }
       },
       {

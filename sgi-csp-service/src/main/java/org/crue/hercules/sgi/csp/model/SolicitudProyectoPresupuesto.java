@@ -51,16 +51,15 @@ public class SolicitudProyectoPresupuesto extends BaseEntity {
   @NotNull
   private Long solicitudProyectoId;
 
+  /** SolicitudProyectoEntidad Id */
+  @Column(name = "solicitud_proyecto_entidad_id", nullable = true)
+  private Long solicitudProyectoEntidadId;
+
   /** Concepto gasto */
   @ManyToOne
   @JoinColumn(name = "concepto_gasto_id", nullable = false, foreignKey = @ForeignKey(name = "FK_SOLICITUDPROYECTOPRESUPUESTO_CONCEPTOGASTO"))
   @NotNull
   private ConceptoGasto conceptoGasto;
-
-  /** EntidadRef */
-  @Column(name = "entidad_ref", length = 50, nullable = true)
-  @Size(max = 50)
-  private String entidadRef;
 
   /** Anualidad */
   @Column(name = "anualidad", nullable = true)
@@ -80,15 +79,16 @@ public class SolicitudProyectoPresupuesto extends BaseEntity {
   @Size(max = 2000)
   private String observaciones;
 
-  /** Financiacion ajena */
-  @Column(name = "financiacion_ajena", columnDefinition = "boolean default false", nullable = false)
-  @NotNull
-  private Boolean financiacionAjena;
-
   // Relation mappings for JPA metamodel generation only
   @ManyToOne
   @JoinColumn(name = "solicitud_proyecto_id", insertable = false, updatable = false, foreignKey = @ForeignKey(name = "FK_SOLICITUDPROYECTOPRESUPUESTO_SOLICITUDPROYECTO"))
   @Getter(AccessLevel.NONE)
   @Setter(AccessLevel.NONE)
   private final SolicitudProyecto solicitudProyecto = null;
+
+  @ManyToOne
+  @JoinColumn(name = "solicitud_proyecto_entidad_id", insertable = false, updatable = false, foreignKey = @ForeignKey(name = "FK_SOLICITUDPROYECTOPRESUPUESTO_SOLICITUDPROYECTOENTIDAD"))
+  @Getter(AccessLevel.NONE)
+  @Setter(AccessLevel.NONE)
+  private final SolicitudProyectoEntidad solicitudProyectoEntidad = null;
 }

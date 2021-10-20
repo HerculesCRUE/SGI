@@ -4,6 +4,7 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { BaseModalComponent } from '@core/component/base-modal.component';
 import { MSG_PARAMS } from '@core/i18n';
+import { COMITE } from '@core/models/eti/comite';
 import { IEquipoTrabajo } from '@core/models/eti/equipo-trabajo';
 import { FormacionEspecifica } from '@core/models/eti/formacion-especifica';
 import { FORMULARIO } from '@core/models/eti/formulario';
@@ -13,6 +14,7 @@ import { ITareaWithIsEliminable } from '@core/models/eti/tarea-with-is-eliminabl
 import { TipoTarea } from '@core/models/eti/tipo-tarea';
 import { IPersona } from '@core/models/sgp/persona';
 import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-properties';
+import { ComiteService } from '@core/services/eti/comite.service';
 import { EquipoTrabajoService } from '@core/services/eti/equipo-trabajo.service';
 import { FormacionEspecificaService } from '@core/services/eti/formacion-especifica.service';
 import { MemoriaService } from '@core/services/eti/memoria.service';
@@ -223,7 +225,7 @@ export class PeticionEvaluacionTareasModalComponent extends
    * muestra y oculta los campos oportunos
    */
   private onChangeMemoria(memoria: IMemoria): void {
-    if (memoria?.comite?.comite === 'CEIAB' || memoria?.comite?.comite === 'CEEA') {
+    if (memoria?.comite?.id === COMITE.CBE || memoria?.comite?.id === COMITE.CEEA) {
       this.mostrarOrganismoYanio$.next(true);
       this.formGroup.controls.organismo.setValidators(Validators.required);
       this.formGroup.controls.anio.setValidators(Validators.required);
@@ -233,7 +235,7 @@ export class PeticionEvaluacionTareasModalComponent extends
       this.formGroup.controls.anio.clearValidators();
     }
 
-    if (memoria?.comite?.comite === 'CEISH' || memoria?.comite?.comite === 'CEIAB') {
+    if (memoria?.comite?.id === COMITE.CEI || memoria?.comite?.id === COMITE.CBE) {
       this.tareaYformacionTexto$.next(true);
       this.formGroup.controls.tarea.setValidators(Validators.required);
       this.formGroup.controls.formacion.setValidators(Validators.required);

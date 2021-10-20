@@ -4,7 +4,7 @@ import localeEs from '@angular/common/locales/es';
 import { APP_INITIALIZER, LOCALE_ID, NgModule } from '@angular/core';
 import { CoreModule } from '@angular/flex-layout';
 import { MatPaginatorIntl } from '@angular/material/paginator';
-import { BrowserModule } from '@angular/platform-browser';
+import { BrowserModule, Meta } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { SgiErrorHttpInterceptor } from '@core/error-http-interceptor';
 import { SgiLanguageHttpInterceptor } from '@core/languague-http-interceptor';
@@ -66,6 +66,7 @@ const appInitializerFn = (appConfig: ConfigService) => {
     FormlyModule.forRoot()
   ],
   providers: [
+    Meta,
     ConfigService,
     {
       provide: APP_INITIALIZER,
