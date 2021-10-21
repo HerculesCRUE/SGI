@@ -104,9 +104,9 @@
           JOIN ${schemaPrefix}solicitud_proyecto_entidad_financiadora_ajena spefa ON spe.solicitud_proyecto_entidad_financiadora_ajena_id = spefa.id
         WHERE 
           spp.solicitud_proyecto_id = spefa.solicitud_proyecto_id
-          AND spp.financiacion_ajena = true AND spp.entidad_ref = spefa.entidad_ref
+          AND spp.financiacion_ajena = '1' AND spp.entidad_ref = spefa.entidad_ref
       )
-      WHERE spp.financiacion_ajena = true 
+      WHERE spp.financiacion_ajena = '1' 
     </sql>
     <sql>
       UPDATE ${schemaPrefix}solicitud_proyecto_presupuesto spp SET solicitud_proyecto_entidad_id=(
@@ -118,11 +118,11 @@
           JOIN ${schemaPrefix}solicitud_proyecto sp ON sp.id = s.id
         WHERE 
           spp.solicitud_proyecto_id = sp.id
-          AND spp.financiacion_ajena = false 
+          AND spp.financiacion_ajena = '0' 
           AND spp.entidad_ref = cef.entidad_ref
           AND sp.tipo_presupuesto = 'POR_ENTIDAD'
       )
-      WHERE spp.financiacion_ajena = false
+      WHERE spp.financiacion_ajena = '0'
     </sql>
     <sql>
       UPDATE ${schemaPrefix}solicitud_proyecto_presupuesto spp SET solicitud_proyecto_entidad_id=(
@@ -134,11 +134,11 @@
           JOIN ${schemaPrefix}solicitud_proyecto sp ON sp.id = s.id
         WHERE 
           spp.solicitud_proyecto_id = sp.id
-          AND spp.financiacion_ajena = false 
+          AND spp.financiacion_ajena = '0' 
           AND spp.entidad_ref = ceg.entidad_ref
           AND sp.tipo_presupuesto = 'MIXTO'
       )
-      WHERE spp.financiacion_ajena = false AND spp.solicitud_proyecto_entidad_id IS NULL 
+      WHERE spp.financiacion_ajena = '0' AND spp.solicitud_proyecto_entidad_id IS NULL 
     </sql>
   </changeSet>
 
