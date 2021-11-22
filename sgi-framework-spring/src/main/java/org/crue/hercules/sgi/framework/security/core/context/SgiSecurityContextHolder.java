@@ -6,12 +6,17 @@ import java.util.stream.Collectors;
 
 import org.springframework.security.authentication.InsufficientAuthenticationException;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 /**
  * SgiSecurityContextHolder
  */
 public class SgiSecurityContextHolder {
+
+  private SgiSecurityContextHolder() {
+
+  }
 
   /**
    * Obtain the list of authorities of the currently authenticated user
@@ -24,7 +29,7 @@ public class SgiSecurityContextHolder {
     if (authentication == null || !authentication.isAuthenticated()) {
       throw new InsufficientAuthenticationException("Authentication null or not authenticated");
     }
-    return authentication.getAuthorities().stream().map(authority -> authority.getAuthority()).distinct()
+    return authentication.getAuthorities().stream().map(GrantedAuthority::getAuthority).distinct()
         .collect(Collectors.toList());
   }
 
@@ -36,7 +41,7 @@ public class SgiSecurityContextHolder {
    */
   public static boolean hasAuthority(String authority) {
     return SgiSecurityContextHolder.getAuthorities().stream()
-        .anyMatch((userAuthority) -> userAuthority.matches("^" + authority + "$"));
+        .anyMatch(userAuthority -> userAuthority.matches("^" + authority + "$"));
   }
 
   /**
@@ -47,7 +52,7 @@ public class SgiSecurityContextHolder {
    */
   public static boolean hasAuthorityForAnyUO(String authority) {
     return SgiSecurityContextHolder.getAuthorities().stream()
-        .anyMatch((userAuthority) -> userAuthority.matches("^" + authority + "($|_.+$)"));
+        .anyMatch(userAuthority -> userAuthority.matches("^" + authority + "($|_.+$)"));
   }
 
   /**
@@ -59,7 +64,7 @@ public class SgiSecurityContextHolder {
    */
   public static boolean hasAuthorityForUO(String authority, String uo) {
     return SgiSecurityContextHolder.getAuthorities().stream()
-        .anyMatch((userAuthority) -> userAuthority.matches("^" + authority + "($|_" + uo + "$)"));
+        .anyMatch(userAuthority -> userAuthority.matches("^" + authority + "($|_" + uo + "$)"));
   }
 
   /**
@@ -72,8 +77,8 @@ public class SgiSecurityContextHolder {
    */
   public static boolean hasAnyAuthorityForUO(String[] authorities, String uo) {
     List<String> userAuthorities = SgiSecurityContextHolder.getAuthorities();
-    return Arrays.asList(authorities).stream().anyMatch((authority) -> userAuthorities.stream()
-        .anyMatch((userAuthority) -> userAuthority.matches("^" + authority + "($|_" + uo + "$)")));
+    return Arrays.asList(authorities).stream().anyMatch(authority -> userAuthorities.stream()
+        .anyMatch(userAuthority -> userAuthority.matches("^" + authority + "($|_" + uo + "$)")));
   }
 
   /**
@@ -84,8 +89,8 @@ public class SgiSecurityContextHolder {
    */
   public static List<String> getUOsForAuthority(String authority) {
     return SgiSecurityContextHolder.getAuthorities().stream()
-        .filter((userAuthority) -> userAuthority.matches("^" + authority + "_.+$"))
-        .map((userAuthority) -> userAuthority.replaceAll("^.+_", "")).distinct().collect(Collectors.toList());
+        .filter(userAuthority -> userAuthority.matches("^" + authority + "_.+$"))
+        .map(userAuthority -> userAuthority.replaceAll("^.+_", "")).distinct().collect(Collectors.toList());
   }
 
   /**
@@ -97,8 +102,8 @@ public class SgiSecurityContextHolder {
    */
   public static List<String> getUOsForAnyAuthority(String[] authorities) {
     return SgiSecurityContextHolder.getAuthorities().stream()
-        .filter((userAuthority) -> Arrays.asList(authorities).stream()
-            .anyMatch((authority) -> userAuthority.matches("^" + authority + "_.+$")))
-        .map((filtered) -> filtered.replaceAll("^.+_", "")).distinct().collect(Collectors.toList());
+        .filter(userAuthority -> Arrays.asList(authorities).stream()
+            .anyMatch(authority -> userAuthority.matches("^" + authority + "_.+$")))
+        .map(filtered -> filtered.replaceAll("^.+_", "")).distinct().collect(Collectors.toList());
   }
 }

@@ -1,0 +1,13 @@
+@import "colors.scss";
+@import "typography.scss";
+
+:host {
+  .sgi-dialog-header {
+    font-size: map-get($sgi-typography-size, dialog-header);
+    color: map-get($sgi-custom-colors, white);
+    background-color: map-get($palette-primary, 400);
+    padding-top: 10px;
+    padding-bottom: 10px;
+    padding-left: 10px;
+  }
+}

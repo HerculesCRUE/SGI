@@ -2,6 +2,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { MatTableDataSource } from '@angular/material/table';
+import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { FragmentComponent } from '@core/component/fragment.component';
 import { IAnualidadGasto } from '@core/models/csp/anualidad-gasto';
 import { IProyectoAnualidad } from '@core/models/csp/proyecto-anualidad';
@@ -15,6 +16,8 @@ import { Subscription } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { ProyectoActionService } from '../../proyecto.action.service';
 import { IAnualidadGastoWithProyectoAgrupacionGasto, ProyectoConsultaPresupuestoFragment } from './proyecto-consulta-presupuesto.fragment';
+
+const ANUALIDAD_GENERICA_KEY = marker('csp.proyecto-presupuesto.generica');
 
 abstract class RowTree<T> {
   level: number;
@@ -80,6 +83,7 @@ export class ProyectoConsultaPresupuestoComponent extends FragmentComponent impl
   public filterForm: FormGroup;
   private subscriptions: Subscription[] = [];
   formPart: ProyectoConsultaPresupuestoFragment;
+  msgParamAnualidadGenerica: String;
 
   fxFlexProperties: FxFlexProperties;
   fxFlexPropertiesOne: FxFlexProperties;
@@ -111,8 +115,18 @@ export class ProyectoConsultaPresupuestoComponent extends FragmentComponent impl
 
   ngOnInit(): void {
     super.ngOnInit();
+    this.setupI18N();
     this.initLayout();
     this.initFilterForm();
+
+    this.subscriptions.push(this.formPart.anualidades$.subscribe(anualidades => {
+      if (anualidades.length === 1 &&
+        anualidades[0].anio == null) {
+        this.filterForm.controls.anualidad.disable();
+      }
+    }
+    ));
+
     this.subscriptions.push(
       this.formPart.anualidadesGastos$.pipe(
         map((gastosAnualidad: IAnualidadGastoWithProyectoAgrupacionGasto[]) => {
@@ -134,6 +148,13 @@ export class ProyectoConsultaPresupuestoComponent extends FragmentComponent impl
       ).subscribe(presupuestos => {
         this.dataSource.data = presupuestos;
       }));
+  }
+
+  private setupI18N(): void {
+
+    this.translate.get(
+      ANUALIDAD_GENERICA_KEY,
+    ).subscribe((value) => this.msgParamAnualidadGenerica = value);
   }
 
   ngOnDestroy(): void {
@@ -267,12 +288,20 @@ export class ProyectoConsultaPresupuestoComponent extends FragmentComponent impl
 
   private sortCollectionByProperty<T>(collection: T[], direction: number, property: string, nestedProperty?: string): void {
     collection.sort((a: T, b: T) => {
-      const aProp = nestedProperty ? a[property][nestedProperty] : a[property];
-      const bProp = nestedProperty ? b[property][nestedProperty] : b[property];
-      if (aProp === bProp) {
-        return 0;
+      if (a[property] && b[property]) {
+        const aProp = nestedProperty ? a[property][nestedProperty] : a[property];
+        const bProp = nestedProperty ? b[property][nestedProperty] : b[property];
+        if (aProp === bProp) {
+          return 0;
+        }
+        return aProp > bProp ? direction : -direction;
+      } else {
+        if (b[property]) {
+          return -direction;
+        } else {
+          return direction;
+        }
       }
-      return aProp > bProp ? direction : -direction;
     });
   }
 

@@ -22,6 +22,7 @@ import { ProyectoDocumentoService } from '@core/services/csp/proyecto-documento.
 import { ProyectoEntidadFinanciadoraService } from '@core/services/csp/proyecto-entidad-financiadora.service';
 import { ProyectoEntidadGestoraService } from '@core/services/csp/proyecto-entidad-gestora.service';
 import { ProyectoEquipoService } from '@core/services/csp/proyecto-equipo.service';
+import { ProyectoFacturacionService } from '@core/services/csp/proyecto-facturacion/proyecto-facturacion.service';
 import { ProyectoHitoService } from '@core/services/csp/proyecto-hito.service';
 import { ProyectoIVAService } from '@core/services/csp/proyecto-iva.service';
 import { ProyectoPaqueteTrabajoService } from '@core/services/csp/proyecto-paquete-trabajo.service';
@@ -42,6 +43,7 @@ import { UnidadGestionService } from '@core/services/csp/unidad-gestion.service'
 import { InvencionService } from '@core/services/pii/invencion/invencion.service';
 import { RelacionService } from '@core/services/rel/relaciones/relacion.service';
 import { DocumentoService } from '@core/services/sgdoc/documento.service';
+import { FacturaPrevistaEmitidaService } from '@core/services/sge/factura-prevista-emitida/factura-prevista-emitida.service';
 import { ProyectoSgeService } from '@core/services/sge/proyecto-sge.service';
 import { EmpresaService } from '@core/services/sgemp/empresa.service';
 import { AreaConocimientoService } from '@core/services/sgo/area-conocimiento.service';
@@ -60,6 +62,7 @@ import { CSP_ROUTE_NAMES } from '../csp-route-names';
 import { PROYECTO_DATA_KEY } from './proyecto-data.resolver';
 import { ProyectoAgrupacionGastoFragment } from './proyecto-formulario/proyecto-agrupaciones-gasto/proyecto-agrupaciones-gasto.fragment';
 import { ProyectoAreaConocimientoFragment } from './proyecto-formulario/proyecto-area-conocimiento/proyecto-area-conocimiento.fragment';
+import { ProyectoCalendarioFacturacionFragment } from './proyecto-formulario/proyecto-calendario-facturacion/proyecto-calendario-facturacion.fragment';
 import { ProyectoCalendarioJustificacionFragment } from './proyecto-formulario/proyecto-calendario-justificacion/proyecto-calendario-justificacion.fragment';
 import { ProyectoClasificacionesFragment } from './proyecto-formulario/proyecto-clasificaciones/proyecto-clasificaciones.fragment';
 import { ProyectoConceptosGastoFragment } from './proyecto-formulario/proyecto-conceptos-gasto/proyecto-conceptos-gasto.fragment';
@@ -125,6 +128,7 @@ export class ProyectoActionService extends ActionService {
     CALENDARIO_JUSTIFICACION: 'calendario-justificacion',
     CONSULTA_PRESUPUESTO: 'consulta-presupuesto',
     RELACIONES: 'relaciones',
+    CALENDARIO_FACTURACION: 'calendario-facturacion'
   };
 
   private fichaGeneral: ProyectoFichaGeneralFragment;
@@ -152,6 +156,7 @@ export class ProyectoActionService extends ActionService {
   private proyectoCalendarioJustificacion: ProyectoCalendarioJustificacionFragment;
   private consultaPresupuesto: ProyectoConsultaPresupuestoFragment;
   private relaciones: ProyectoRelacionFragment;
+  private proyectoCalendarioFacturacion: ProyectoCalendarioFacturacionFragment;
 
   private readonly data: IProyectoData;
 
@@ -239,7 +244,9 @@ export class ProyectoActionService extends ActionService {
     datosPersonalesService: DatosPersonalesService,
     relacionService: RelacionService,
     invencionService: InvencionService,
-    sgiAuthService: SgiAuthService
+    sgiAuthService: SgiAuthService,
+    proyectoFacturacionService: ProyectoFacturacionService,
+    facturaPrevistaEmitidaService: FacturaPrevistaEmitidaService
   ) {
     super();
     this.data = route.snapshot.data[PROYECTO_DATA_KEY];
@@ -274,10 +281,11 @@ export class ProyectoActionService extends ActionService {
       this.plazos = new ProyectoPlazosFragment(id, proyectoService, proyectoPlazoService);
       this.entidadesConvocantes = new ProyectoEntidadesConvocantesFragment(logger, id, proyectoService, empresaService);
       this.paqueteTrabajo = new ProyectoPaqueteTrabajoFragment(id, proyectoService, proyectoPaqueteTrabajoService);
-      this.proyectoContexto = new ProyectoContextoFragment(id, logger, contextoProyectoService, this.readonly, this.data?.isVisor);
+      this.proyectoContexto = new ProyectoContextoFragment(id, logger, contextoProyectoService, convocatoriaService,
+        this.data?.proyecto?.convocatoriaId, this.readonly, this.data?.isVisor);
       this.seguimientoCientifico = new ProyectoPeriodoSeguimientosFragment(
         id, this.data.proyecto, proyectoService, proyectoPeriodoSeguimientoService, convocatoriaService, documentoService);
-      this.proyectoEquipo = new ProyectoEquipoFragment(logger, id, proyectoService, proyectoEquipoService, personaService,
+      this.proyectoEquipo = new ProyectoEquipoFragment(logger, id, this.data?.proyecto?.convocatoriaId, proyectoService, proyectoEquipoService, personaService,
         convocatoriaService, datosAcademicosService, convocatoriaRequisitoIPService, viculacionService,
         convocatoriaRequisitoEquipoService, datosPersonalesService);
       this.entidadGestora = new ProyectoEntidadGestoraFragment(
@@ -310,6 +318,9 @@ export class ProyectoActionService extends ActionService {
       this.relaciones = new ProyectoRelacionFragment(
         id, this.data.proyecto, this.readonly, relacionService, convocatoriaService, invencionService, proyectoService, sgiAuthService);
 
+      this.proyectoCalendarioFacturacion = new ProyectoCalendarioFacturacionFragment(this.data?.proyecto?.id, this.data?.proyecto,
+        proyectoService, proyectoFacturacionService, facturaPrevistaEmitidaService);
+
       this.addFragment(this.FRAGMENT.ENTIDADES_FINANCIADORAS, this.entidadesFinanciadoras);
       this.addFragment(this.FRAGMENT.SOCIOS, this.socios);
       this.addFragment(this.FRAGMENT.HITOS, this.hitos);
@@ -334,6 +345,7 @@ export class ProyectoActionService extends ActionService {
       this.addFragment(this.FRAGMENT.CALENDARIO_JUSTIFICACION, this.proyectoCalendarioJustificacion);
       this.addFragment(this.FRAGMENT.CONSULTA_PRESUPUESTO, this.consultaPresupuesto);
       this.addFragment(this.FRAGMENT.RELACIONES, this.relaciones);
+      this.addFragment(this.FRAGMENT.CALENDARIO_FACTURACION, this.proyectoCalendarioFacturacion);
 
       this.subscriptions.push(this.fichaGeneral.initialized$.subscribe(value => {
         if (value) {
@@ -410,6 +422,12 @@ export class ProyectoActionService extends ActionService {
         }));
       }
     }
+
+    this.subscriptions.push(this.fichaGeneral.iva$.subscribe(newIVA => {
+      if(this.proyectoCalendarioFacturacion){
+        this.proyectoCalendarioFacturacion.proyectoIVA = newIVA;
+      }
+    }));
   }
 
   private addSolicitudLink(idSolicitud: number): void {

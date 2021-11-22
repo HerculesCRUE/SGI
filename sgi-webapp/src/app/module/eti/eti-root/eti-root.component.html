@@ -2,31 +2,36 @@
   <sgi-menu-item *sgiHasAuthorityForAnyUO="'ETI-PEV-V'" [route]="[ETI_ROUTE_NAMES.PETICIONES_EVALUACION]"
     icon="content_paste" title="{{'eti.peticion-evaluacion' | translate:MSG_PARAMS.CARDINALIRY.PLURAL}}">
   </sgi-menu-item>
-  <sgi-menu-item *sgiHasAuthorityForAnyUO="'ETI-PEV-V'" [route]="[ETI_ROUTE_NAMES.MEMORIAS]" icon="file_copy"
-    title="{{'eti.memoria' | translate:MSG_PARAMS.CARDINALIRY.PLURAL}}">
+  <sgi-menu-item *sgiHasAnyAuthorityForAnyUO="['ETI-MEM-V', 'ETI-MEM-CEST']" [route]="[ETI_ROUTE_NAMES.MEMORIAS]"
+    icon="file_copy" title="{{'eti.memoria' | translate:MSG_PARAMS.CARDINALIRY.PLURAL}}">
   </sgi-menu-item>
-  <sgi-menu-item *sgiHasAuthorityForAnyUO="'ETI-CNV-V'" [route]="[ETI_ROUTE_NAMES.SOLICITUDES_CONVOCATORIA]"
-    icon="equalizer" title="{{'eti.convocatoria-reunion' | translate:MSG_PARAMS.CARDINALIRY.PLURAL}}">
+  <sgi-menu-item *sgiHasAnyAuthorityForAnyUO="['ETI-CNV-V', 'ETI-CNV-C', 'ETI-CNV-E', 'ETI-CNV-B', 'ETI-CNV-ENV']"
+    [route]="[ETI_ROUTE_NAMES.SOLICITUDES_CONVOCATORIA]" icon="equalizer"
+    title="{{'eti.convocatoria-reunion' | translate:MSG_PARAMS.CARDINALIRY.PLURAL}}">
   </sgi-menu-item>
-  <sgi-menu-item *sgiHasAuthorityForAnyUO="'ETI-EVC-V'" [route]="[ETI_ROUTE_NAMES.EVALUACIONES]" icon="list_alt"
-    title="{{'eti.evaluacion' | translate:MSG_PARAMS.CARDINALIRY.PLURAL}}">
+  <sgi-menu-item *sgiHasAnyAuthorityForAnyUO="['ETI-EVC-V', 'ETI-EVC-EVAL']" [route]="[ETI_ROUTE_NAMES.EVALUACIONES]"
+    icon="list_alt" title="{{'eti.evaluacion' | translate:MSG_PARAMS.CARDINALIRY.PLURAL}}">
   </sgi-menu-item>
   <sgi-menu-item *sgiHasAnyAuthorityForAnyUO="['ETI-EVC-V', 'ETI-EVC-EVAL']"
     [route]="[ETI_ROUTE_NAMES.GESTION_SEGUIMIENTO]" icon="supervised_user_circle"
     title="{{'eti.seguimiento' | translate:MSG_PARAMS.CARDINALIRY.PLURAL}}">
   </sgi-menu-item>
-  <sgi-menu-item *sgiHasAuthorityForAnyUO="'ETI-ACT-V'" [route]="[ETI_ROUTE_NAMES.ACTAS]" icon="assignment"
+  <sgi-menu-item
+    *sgiHasAnyAuthorityForAnyUO="['ETI-ACT-V', 'ETI-ACT-C', 'ETI-ACT-E', 'ETI-ACT-ER', 'ETI-ACT-DES', 'ETI-ACT-DESR', 'ETI-ACT-FIN']"
+    [route]="[ETI_ROUTE_NAMES.ACTAS]" icon="assignment"
     title="{{'eti.acta' | translate:MSG_PARAMS.CARDINALIRY.PLURAL}}">
   </sgi-menu-item>
-  <sgi-menu-item *sgiHasAuthorityForAnyUO="'ETI-EVR-V'" [route]="[ETI_ROUTE_NAMES.EVALUADORES]"
-    icon="supervised_user_circle" title="{{'eti.evaluador' | translate:MSG_PARAMS.CARDINALIRY.PLURAL}}">
+  <sgi-menu-item *sgiHasAnyAuthorityForAnyUO="['ETI-EVR-V', 'ETI-EVR-C', 'ETI-EVR-E', 'ETI-EVR-B']"
+    [route]="[ETI_ROUTE_NAMES.EVALUADORES]" icon="supervised_user_circle"
+    title="{{'eti.evaluador' | translate:MSG_PARAMS.CARDINALIRY.PLURAL}}">
   </sgi-menu-item>
-  <sgi-menu-item *sgiHasAnyAuthorityForAnyUO="['ETI-EVC-V', 'ETI-EVC-VR']"
+  <sgi-menu-item *sgiHasAnyAuthorityForAnyUO="['ETI-EVC-V', 'ETI-EVC-VR', 'ETI-EVC-EVAL', 'ETI-EVC-EVALR']"
     [route]="[ETI_ROUTE_NAMES.EVALUACIONES_EVALUADOR]" icon="list_alt"
     title="{{'menu.eti.evaluacion-evaluador' | translate}}">
   </sgi-menu-item>
-  <sgi-menu-item *sgiHasAnyAuthorityForAnyUO="['ETI-EVC-V', 'ETI-EVC-VR']" [route]="[ETI_ROUTE_NAMES.SEGUIMIENTOS]"
-    icon="verified_user" title="{{'menu.eti.seguimiento-evaluador' | translate:MSG_PARAMS.CARDINALIRY.PLURAL}}">
+  <sgi-menu-item *sgiHasAnyAuthorityForAnyUO="['ETI-EVC-V', 'ETI-EVC-VR', 'ETI-EVC-EVAL', 'ETI-EVC-EVALR']"
+    [route]="[ETI_ROUTE_NAMES.SEGUIMIENTOS]" icon="verified_user"
+    title="{{'menu.eti.seguimiento-evaluador' | translate:MSG_PARAMS.CARDINALIRY.PLURAL}}">
   </sgi-menu-item>
   <sgi-menu-item *sgiHasAuthorityForAnyUO="'ETI-CNF-E'" [route]="[ETI_ROUTE_NAMES.CONFIGURACIONES]" icon="settings"
     title="{{'eti.configuracion' | translate:MSG_PARAMS.CARDINALIRY.PLURAL}}">

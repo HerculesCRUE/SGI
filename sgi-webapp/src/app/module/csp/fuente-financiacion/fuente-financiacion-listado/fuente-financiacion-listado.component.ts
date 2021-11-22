@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
-import { MatDialog } from '@angular/material/dialog';
+import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { AbstractTablePaginationComponent } from '@core/component/abstract-table-pagination.component';
 import { HttpProblem } from '@core/errors/http-problem';
@@ -300,32 +300,15 @@ export class FuenteFinanciacionListadoComponent extends AbstractTablePaginationC
    * @param fuenteFinanciacion Fuente de Financiación
    */
   openModal(fuenteFinanciacion?: IFuenteFinanciacion): void {
-    const config = {
-      panelClass: 'sgi-dialog-container',
+    const config: MatDialogConfig<IFuenteFinanciacion> = {
       data: fuenteFinanciacion
     };
     const dialogRef = this.matDialog.open(FuenteFinanciacionModalComponent, config);
     dialogRef.afterClosed().subscribe(
       (result: IFuenteFinanciacion) => {
         if (result) {
-          const subscription = fuenteFinanciacion ? this.fuenteFinanciacionService.update(fuenteFinanciacion.id, result) :
-            this.fuenteFinanciacionService.create(result);
-
-          subscription.subscribe(
-            () => {
-              this.snackBarService.showSuccess(fuenteFinanciacion ? this.textoUpdateSuccess : this.textoCrearSuccess);
-              this.loadTable();
-            },
-            (error) => {
-              this.logger.error(error);
-              if (error instanceof HttpProblem) {
-                this.snackBarService.showError(error);
-              }
-              else {
-                this.snackBarService.showError(fuenteFinanciacion ? this.textoUpdateError : this.textoCrearError);
-              }
-            }
-          );
+          this.snackBarService.showSuccess(fuenteFinanciacion ? this.textoUpdateSuccess : this.textoCrearSuccess);
+          this.loadTable();
         }
       });
   }

@@ -55,4 +55,8 @@ public class EstadoMemoria extends BaseEntity {
   @NotNull
   private Instant fechaEstado;
 
+  public EstadoMemoria(Long id, @NotNull Instant fechaEstado) {
+    this.id = id;
+    this.fechaEstado = fechaEstado;
+  }
 }

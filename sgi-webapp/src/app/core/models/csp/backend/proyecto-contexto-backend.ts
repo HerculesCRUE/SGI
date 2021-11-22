@@ -9,5 +9,4 @@ export interface IProyectoContextoBackend {
   resultadosPrevistos: string;
   propiedadResultados: PropiedadResultados;
   areaTematica: IAreaTematica;
-  areaTematicaConvocatoria: IAreaTematica;
 }

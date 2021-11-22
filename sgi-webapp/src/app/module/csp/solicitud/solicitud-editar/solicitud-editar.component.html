@@ -5,7 +5,7 @@
       [title]="'label.datos-generales' | translate"
       [fragment]="actionService.getFragment(actionService.FRAGMENT.DATOS_GENERALES)">
     </sgi-action-fragment-menu-item>
-    <ng-container *sgiHasAnyAuthorityForAnyUO="['CSP-SOL-E', 'CSP-SOL-V']">
+    <ng-container *sgiHasAnyAuthorityForAnyUO="['CSP-SOL-E', 'CSP-SOL-V', 'CSP-SOL-INV-C', 'CSP-SOL-INV-ER']">
       <sgi-action-fragment-menu-group *ngIf="actionService.formularioSolicitud === FormularioSolicitud.PROYECTO"
         [title]="'menu.csp.solicitudes.datos-proyecto' | translate">
         <sgi-action-fragment-menu-item [route]="[SOLICITUD_ROUTE_NAMES.PROYECTO_DATOS]"
@@ -26,27 +26,27 @@
           [fragment]="actionService.getFragment(actionService.FRAGMENT.EQUIPO_PROYECTO)">
         </sgi-action-fragment-menu-item>
         <sgi-action-fragment-menu-item [route]="[SOLICITUD_ROUTE_NAMES.RESPONSABLE_ECONOMICO]"
-          *ngIf="actionService.datosProyectoComplete$ | async"
+          *ngIf="(actionService.datosProyectoComplete$  | async) && !actionService.isInvestigador"
           [title]="'csp.solicitud-proyecto-responsable-economico' | translate"
           [fragment]="actionService.getFragment(actionService.FRAGMENT.RESPONSABLE_ECONOMICO)">
         </sgi-action-fragment-menu-item>
         <sgi-action-fragment-menu-item [route]="[SOLICITUD_ROUTE_NAMES.SOCIOS]"
-          *ngIf="(actionService.datosProyectoComplete$ | async) && (actionService.showSocios$ | async)"
+          *ngIf="(actionService.datosProyectoComplete$ | async) && (actionService.showSocios$ | async) && !actionService.isInvestigador"
           [title]="'csp.solicitud-proyecto-socio' | translate:MSG_PARAMS.CARDINALIRY.PLURAL"
           [fragment]="actionService.getFragment(actionService.FRAGMENT.SOCIOS)">
         </sgi-action-fragment-menu-item>
         <sgi-action-fragment-menu-item [route]="[SOLICITUD_ROUTE_NAMES.ENTIDADES_FINANCIADORAS]"
-          *ngIf="actionService.datosProyectoComplete$ | async"
+          *ngIf="(actionService.datosProyectoComplete$ | async) && !actionService.isInvestigador"
           [title]="'csp.convocatoria-entidad-financiadora' | translate:MSG_PARAMS.CARDINALIRY.PLURAL"
           [fragment]="actionService.getFragment(actionService.FRAGMENT.ENTIDADES_FINANCIADORAS)">
         </sgi-action-fragment-menu-item>
         <sgi-action-fragment-menu-item [route]="[SOLICITUD_ROUTE_NAMES.DESGLOSE_PRESUPUESTO_GLOBAL]"
-          *ngIf="(actionService.datosProyectoComplete$ | async) && (actionService.showDesglosePresupuestoGlobal$ | async)"
+          *ngIf="(actionService.datosProyectoComplete$ | async) && (actionService.showDesglosePresupuestoGlobal$ | async) && !actionService.isInvestigador"
           [title]="'menu.csp.solicitudes.desgloses-presupuesto' | translate"
           [fragment]="actionService.getFragment(actionService.FRAGMENT.DESGLOSE_PRESUPUESTO_GLOBAL)">
         </sgi-action-fragment-menu-item>
         <sgi-action-fragment-menu-item [route]="[SOLICITUD_ROUTE_NAMES.DESGLOSE_PRESUPUESTO_ENTIDADES]"
-          *ngIf="(actionService.datosProyectoComplete$ | async) && (actionService.showDesglosePresupuestoEntidad$ | async)"
+          *ngIf="(actionService.datosProyectoComplete$ | async) && (actionService.showDesglosePresupuestoEntidad$ | async) && !actionService.isInvestigador"
           [title]="'menu.csp.solicitudes.desgloses-presupuesto' | translate"
           [fragment]="actionService.getFragment(actionService.FRAGMENT.DESGLOSE_PRESUPUESTO_ENTIDADES)">
         </sgi-action-fragment-menu-item>
@@ -56,11 +56,12 @@
         </sgi-action-fragment-menu-item>
       </sgi-action-fragment-menu-group>
     </ng-container>
-    <sgi-action-fragment-menu-item *sgiHasAnyAuthorityForAnyUO="['CSP-SOL-E', 'CSP-SOL-V']"
+    <sgi-action-fragment-menu-item
+      *sgiHasAnyAuthorityForAnyUO="['CSP-SOL-E', 'CSP-SOL-V' ,'CSP-SOL-INV-C', 'CSP-SOL-INV-ER']"
       [route]="[SOLICITUD_ROUTE_NAMES.DOCUMENTOS]" [title]="'csp.documentos' | translate"
       [fragment]="actionService.getFragment(actionService.FRAGMENT.DOCUMENTOS)">
     </sgi-action-fragment-menu-item>
-    <sgi-action-fragment-menu-item *sgiHasAnyAuthorityForAnyUO="['CSP-SOL-E', 'CSP-SOL-V']"
+    <sgi-action-fragment-menu-item *sgiHasAnyAuthorityForAnyUO="['CSP-SOL-E', 'CSP-SOL-V', 'CSP-SOL-INV-ER']"
       [route]="[SOLICITUD_ROUTE_NAMES.HISTORICO_ESTADOS]"
       [title]="'menu.csp.solicitudes.historicos-estados' | translate"
       [fragment]="actionService.getFragment(actionService.FRAGMENT.HISTORICO_ESTADOS)">

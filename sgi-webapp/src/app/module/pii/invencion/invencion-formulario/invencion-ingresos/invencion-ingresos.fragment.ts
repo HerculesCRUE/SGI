@@ -1,12 +1,15 @@
 import { IInvencion } from '@core/models/pii/invencion';
 import { Estado, IInvencionIngreso } from '@core/models/pii/invencion-ingreso';
+import { IRelacion, TipoEntidad } from '@core/models/rel/relacion';
 import { IDatoEconomico } from '@core/models/sgepii/dato-economico';
 import { Fragment } from '@core/services/action-service';
+import { ProyectoService } from '@core/services/csp/proyecto.service';
 import { InvencionService } from '@core/services/pii/invencion/invencion.service';
+import { RelacionService } from '@core/services/rel/relaciones/relacion.service';
 import { IngresosInvencionService } from '@core/services/sgepii/ingresos-invencion.service';
 import { StatusWrapper } from '@core/utils/status-wrapper';
-import { BehaviorSubject, forkJoin, Observable } from 'rxjs';
-import { map, switchMap, tap } from 'rxjs/operators';
+import { BehaviorSubject, forkJoin, from, Observable } from 'rxjs';
+import { map, mergeMap, reduce, switchMap, tap } from 'rxjs/operators';
 import { IColumnDefinition } from 'src/app/module/csp/ejecucion-economica/ejecucion-economica-formulario/desglose-economico.fragment';
 
 export class InvencionIngresosFragment extends Fragment {
@@ -18,7 +21,9 @@ export class InvencionIngresosFragment extends Fragment {
   constructor(
     private invencion: IInvencion,
     private ingresosInvencionService: IngresosInvencionService,
-    private readonly invencionService: InvencionService
+    private readonly invencionService: InvencionService,
+    private readonly relacionService: RelacionService,
+    private readonly proyectoService: ProyectoService,
   ) {
     super(invencion?.id);
     this.setComplete(true);
@@ -30,10 +35,8 @@ export class InvencionIngresosFragment extends Fragment {
 
   protected onInitialize(): void | Observable<any> {
     if (this.invencion?.id) {
-      //TODO El proyectoId se debe obtener de otra relación aún no desarrollada
-      const proyectoIdQueryParam = this.invencion.proyecto?.id?.toString();
       this.subscriptions.push(
-        this.getColumns(proyectoIdQueryParam)
+        this.getColumns()
           .pipe(
             tap((columns) => {
               this.columns = columns;
@@ -44,7 +47,7 @@ export class InvencionIngresosFragment extends Fragment {
             }),
             switchMap(() =>
               forkJoin({
-                ingresosInvencion: this.getIngresosInvencion$(proyectoIdQueryParam),
+                ingresosInvencion: this.getIngresosInvencion$(this.invencion.id),
                 invencionIngresos: this.getInvencionIngresos$(this.invencion.id),
               })
             )
@@ -79,8 +82,8 @@ export class InvencionIngresosFragment extends Fragment {
     }
   }
 
-  private getColumns(proyectoId: string): Observable<IColumnDefinition[]> {
-    return this.ingresosInvencionService.getColumnas(proyectoId).pipe(
+  private getColumns(): Observable<IColumnDefinition[]> {
+    return this.ingresosInvencionService.getColumnas().pipe(
       map((columnas) =>
         columnas.map((columna) => {
           return {
@@ -93,8 +96,46 @@ export class InvencionIngresosFragment extends Fragment {
     );
   }
 
-  private getIngresosInvencion$(proyectoId: string): Observable<IDatoEconomico[]> {
-    return this.ingresosInvencionService.getIngresos(proyectoId);
+  private getIngresosInvencion$(invencionId: number): Observable<IDatoEconomico[]> {
+    return this.relacionService.findInvencionRelaciones(invencionId).pipe(
+      map(relaciones => this.convertRelacionesToArrayProyectoIds(relaciones)),
+      switchMap(proyectoIds => this.getProyectosSgeId(proyectoIds)),
+      switchMap(proyectoSgeIds => this.getIngresosProyectosSge(proyectoSgeIds))
+    );
+  }
+
+  private convertRelacionesToArrayProyectoIds(relaciones: IRelacion[]): number[] {
+    return relaciones.map(relacion => this.getProyectoIdFromRelacion(relacion));
+  }
+
+  private getProyectoIdFromRelacion(relacion: IRelacion): number {
+    return relacion.tipoEntidadOrigen === TipoEntidad.PROYECTO ? +relacion.entidadOrigen.id : +relacion.entidadDestino.id;
+  }
+
+  private getProyectosSgeId(proyectoIds: number[]): Observable<string[]> {
+    return from(proyectoIds).pipe(
+      mergeMap(proyectoId => this.getProyectoSgeId(proyectoId)),
+      // flat array
+      reduce((acc, val) => acc.concat(val), [])
+    );
+  }
+
+  private getProyectoSgeId(proyectoId: number): Observable<string[]> {
+    return this.proyectoService.findAllProyectosSgeProyecto(proyectoId).pipe(
+      map(({ items }) => items.map(proyectoSge => proyectoSge.proyectoSge.id))
+    );
+  }
+
+  private getIngresosProyectosSge(proyectoSgeIds: string[]): Observable<IDatoEconomico[]> {
+    return from(proyectoSgeIds).pipe(
+      mergeMap(proyectoSgeId => this.getIngresosProyectoSge(proyectoSgeId)),
+      // flat array
+      reduce((acc, val) => acc.concat(val), [])
+    );
+  }
+
+  private getIngresosProyectoSge(proyectoSgeId: string): Observable<IDatoEconomico[]> {
+    return this.ingresosInvencionService.getIngresos(proyectoSgeId);
   }
 
   private getInvencionIngresos$(invencionId: number): Observable<IInvencionIngreso[]> {

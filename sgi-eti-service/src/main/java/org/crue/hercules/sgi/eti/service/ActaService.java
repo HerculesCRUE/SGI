@@ -1,6 +1,10 @@
 package org.crue.hercules.sgi.eti.service;
 
+import java.util.List;
+
 import org.crue.hercules.sgi.eti.dto.ActaWithNumEvaluaciones;
+import org.crue.hercules.sgi.eti.dto.DocumentoOutput;
+import org.crue.hercules.sgi.eti.dto.MemoriaEvaluada;
 import org.crue.hercules.sgi.eti.exceptions.ActaNotFoundException;
 import org.crue.hercules.sgi.eti.model.Acta;
 import org.crue.hercules.sgi.eti.model.ConvocatoriaReunion;
@@ -76,4 +80,45 @@ public interface ActaService {
    */
   Acta findByConvocatoriaReunionId(Long convocatoriaReunionId);
 
+  /**
+   * Devuelve el número de evaluaciones nuevas asociadas a un {@link Acta}
+   *
+   * @param idActa Id de {@link Acta}.
+   * @return número de evaluaciones nuevas
+   */
+  Long countEvaluacionesNuevas(Long idActa);
+
+  /**
+   * Devuelve el número de evaluaciones de revisión sin las de revisión mínima
+   *
+   * @param idActa Id de {@link Acta}.
+   * @return número de evaluaciones
+   */
+  Long countEvaluacionesRevisionSinMinima(Long idActa);
+
+  /**
+   * Devuelve una lista de {@link MemoriaEvaluada} sin las de revisión mínima para
+   * una determinada {@link Acta}
+   * 
+   * @param idActa Id de {@link Acta}.
+   * @return lista de memorias evaluadas
+   */
+  List<MemoriaEvaluada> findAllMemoriasEvaluadasSinRevMinimaByActaId(Long idActa);
+
+  /**
+   * Obtiene el informe de un {@link Acta}
+   * 
+   * @param idActa id {@link Acta}
+   * @return El documento del informe del acta
+   */
+  DocumentoOutput generarDocumentoActa(Long idActa);
+
+  /**
+   * Devuelve si el usuario es miembro activo del comité del {@link Acta}
+   * 
+   * @param personaRef usuario
+   * @param idActa     identificador del {@link Acta}
+   * @return las entidades {@link Acta}
+   */
+  Boolean isMiembroComiteActa(String personaRef, Long idActa);
 }

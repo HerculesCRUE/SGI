@@ -1,0 +1,51 @@
+:host{
+  .footer-row-total {
+    font-weight: bold;
+    
+    .mat-column-totalGastosCaption {
+      padding-right: 20px;
+      text-align: right;
+    }
+    
+    .mat-column-importeADeducir {
+      background-color: #f3f6f9;
+    }
+
+    .mat-column-totalIngresosCaption {
+      padding-right: 20px;
+      text-align: right;
+    }
+    
+    .mat-column-importeARepartir {
+      background-color: #f3f6f9;
+    }
+  }
+
+  .mat-row.selected {
+    background: #f5f5f5;
+  }
+
+  .reparto-gastos {
+    margin-bottom: 1em;
+    padding: 1px;
+    overflow: auto;
+  }
+
+  .reparto-ingresos {
+    margin-bottom: 1em;
+    padding: 1px;
+    overflow: auto;
+  }
+
+  .reparto-resultado {
+      text-align: center;
+    h2 {
+      font-weight: bold;
+
+      span {
+        background-color: #f3f6f9;
+        margin-left: 20px;
+      }
+    }
+  }
+}

@@ -11,8 +11,8 @@ import org.springframework.stereotype.Repository;
  * Spring Data JPA repository para {@link ResultadoInformePatentabilidad}.
  */
 @Repository
-public interface ResultadoInformePatentabilidadRepository extends ActivableRepository,
-    JpaRepository<ResultadoInformePatentabilidad, Long>, JpaSpecificationExecutor<ResultadoInformePatentabilidad> {
+public interface ResultadoInformePatentabilidadRepository extends JpaRepository<ResultadoInformePatentabilidad, Long>,
+    JpaSpecificationExecutor<ResultadoInformePatentabilidad> {
 
   /**
    * Obtiene la entidad {@link ResultadoInformePatentabilidad} activo con el

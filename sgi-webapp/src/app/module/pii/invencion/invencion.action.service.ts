@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { TipoPropiedad } from '@core/enums/tipo-propiedad';
 import { IInvencion } from '@core/models/pii/invencion';
+import { IInvencionInventor } from '@core/models/pii/invencion-inventor';
 import { ActionService } from '@core/services/action-service';
 import { ProyectoService } from '@core/services/csp/proyecto.service';
 import { InformePatentabilidadService } from '@core/services/pii/informe-patentabilidad/informe-patentabilidad.service';
@@ -9,20 +10,27 @@ import { InvencionDocumentoService } from '@core/services/pii/invencion/invencio
 import { InvencionGastoService } from '@core/services/pii/invencion/invencion-gasto/invencion-gasto.service';
 import { InvencionService } from '@core/services/pii/invencion/invencion.service';
 import { PeriodoTitularidadService } from '@core/services/pii/invencion/periodo-titularidad/periodo-titularidad.service';
+import { SectorLicenciadoService } from '@core/services/pii/sector-licenciado/sector-licenciado.service';
 import { SolicitudProteccionService } from '@core/services/pii/solicitud-proteccion/solicitud-proteccion.service';
+import { RelacionService } from '@core/services/rel/relaciones/relacion.service';
 import { DocumentoService } from '@core/services/sgdoc/documento.service';
 import { EmpresaService } from '@core/services/sgemp/empresa.service';
 import { GastosInvencionService } from '@core/services/sgepii/gastos-invencion.service';
 import { IngresosInvencionService } from '@core/services/sgepii/ingresos-invencion.service';
 import { AreaConocimientoService } from '@core/services/sgo/area-conocimiento.service';
+import { PaisService } from '@core/services/sgo/pais/pais.service';
 import { PersonaService } from '@core/services/sgp/persona.service';
+import { StatusWrapper } from '@core/utils/status-wrapper';
 import { NGXLogger } from 'ngx-logger';
+import { map } from 'rxjs/operators';
+import { InvencionContratosFragment } from './invencion-formulario/invencion-contratos/invencion-contratos.fragment';
 import { InvencionDatosGeneralesFragment } from './invencion-formulario/invencion-datos-generales/invencion-datos-generales.fragment';
 import { InvencionDocumentoFragment } from './invencion-formulario/invencion-documento/invencion-documento.fragment';
 import { InvencionGastosFragment } from './invencion-formulario/invencion-gastos/invencion-gastos.fragment';
 import { InvencionInformesPatentabilidadFragment } from './invencion-formulario/invencion-informes-patentabilidad/invencion-informes-patentabilidad.fragment';
 import { InvencionIngresosFragment } from './invencion-formulario/invencion-ingresos/invencion-ingresos.fragment';
 import { InvencionInventorFragment } from './invencion-formulario/invencion-inventor/invencion-inventor.fragment';
+import { InvencionRepartosFragment } from './invencion-formulario/invencion-repartos/invencion-repartos.fragment';
 import { PeriodoTitularidadFragment } from './invencion-formulario/periodo-titularidad/periodo-titularidad.fragment';
 import { SolicitudProteccionFragment } from './invencion-formulario/solicitud-proteccion/solicitud-proteccion.fragment';
 import { INVENCION_ROUTE_PARAMS } from './invencion-route-params';
@@ -48,6 +56,8 @@ export class InvencionActionService extends ActionService {
     GASTOS: 'gastos',
     INGRESOS: 'ingresos',
     PERIODOS_TITULARIDAD: 'periodos-titularidad',
+    CONTRATOS: 'contratos',
+    REPARTOS: 'repartos',
   };
 
   private datosGenerales: InvencionDatosGeneralesFragment;
@@ -58,6 +68,8 @@ export class InvencionActionService extends ActionService {
   private invencionGastos: InvencionGastosFragment;
   private invencionIngresos: InvencionIngresosFragment;
   private periodosTitularidad: PeriodoTitularidadFragment;
+  private contratos: InvencionContratosFragment;
+  private repartos: InvencionRepartosFragment;
 
   get canEdit(): boolean {
     return this.data?.canEdit ?? true;
@@ -78,7 +90,10 @@ export class InvencionActionService extends ActionService {
     gastosInvencionService: GastosInvencionService,
     invencionGastosService: InvencionGastoService,
     ingresosInvencionService: IngresosInvencionService,
-    private periodoTitularidadService: PeriodoTitularidadService
+    private periodoTitularidadService: PeriodoTitularidadService,
+    sectorLicenciadoService: SectorLicenciadoService,
+    relacionService: RelacionService,
+    paisService: PaisService,
   ) {
     super();
 
@@ -89,7 +104,7 @@ export class InvencionActionService extends ActionService {
     }
 
     this.datosGenerales = new InvencionDatosGeneralesFragment(null, this.id, invencionService, proyectoService, areaConocimientoService,
-      invencionDocumentoService, this.canEdit);
+      invencionDocumentoService, this.canEdit, this.periodoTitularidadService);
     this.invencionInventoresFragment = new InvencionInventorFragment(this.id, logger, invencionService,
       personaService, empresaService, this.canEdit);
 
@@ -115,14 +130,29 @@ export class InvencionActionService extends ActionService {
         new InvencionGastosFragment(this.id, gastosInvencionService, invencionGastosService, invencionService, solicitudProteccionService);
       this.addFragment(this.FRAGMENT.GASTOS, this.invencionGastos);
 
-      this.invencionIngresos = new InvencionIngresosFragment(this.data.invencion, ingresosInvencionService, invencionService);
+      this.invencionIngresos = new InvencionIngresosFragment(
+        this.data.invencion, ingresosInvencionService, invencionService, relacionService, proyectoService);
       this.addFragment(this.FRAGMENT.INGRESOS, this.invencionIngresos);
 
       this.periodosTitularidad = new PeriodoTitularidadFragment(this.id, logger, periodoTitularidadService, invencionService,
         empresaService);
       this.addFragment(this.FRAGMENT.PERIODOS_TITULARIDAD, this.periodosTitularidad);
 
-    }
+      this.contratos = new InvencionContratosFragment(
+        this.id, this.canEdit, sectorLicenciadoService, relacionService, proyectoService, empresaService, personaService, paisService);
+      this.addFragment(this.FRAGMENT.CONTRATOS, this.contratos);
 
+      this.repartos = new InvencionRepartosFragment(
+        this.id, this.canEdit, invencionService);
+      this.addFragment(this.FRAGMENT.REPARTOS, this.repartos);
+    }
+    this.passInventoresFromInventoresFragmentToDatosGeneralesFragmentOnChangesSubscription();
+  }
+
+  private passInventoresFromInventoresFragmentToDatosGeneralesFragmentOnChangesSubscription(): void {
+    this.subscriptions.push(
+      this.invencionInventoresFragment?.invencionInventores$.pipe(
+        map((wrappers: StatusWrapper<IInvencionInventor>[]) => wrappers.map(wrapper => wrapper.value))
+      ).subscribe(inventores => this.datosGenerales.inventores = inventores));
   }
 }

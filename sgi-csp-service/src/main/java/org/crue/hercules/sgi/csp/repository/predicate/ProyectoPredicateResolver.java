@@ -14,10 +14,14 @@ import javax.persistence.criteria.ListJoin;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
+import org.crue.hercules.sgi.csp.model.AnualidadGasto;
+import org.crue.hercules.sgi.csp.model.AnualidadGasto_;
 import org.crue.hercules.sgi.csp.model.ContextoProyecto;
 import org.crue.hercules.sgi.csp.model.ContextoProyecto_;
 import org.crue.hercules.sgi.csp.model.Programa;
 import org.crue.hercules.sgi.csp.model.Proyecto;
+import org.crue.hercules.sgi.csp.model.ProyectoAnualidad;
+import org.crue.hercules.sgi.csp.model.ProyectoAnualidad_;
 import org.crue.hercules.sgi.csp.model.ProyectoEntidadConvocante;
 import org.crue.hercules.sgi.csp.model.ProyectoEntidadConvocante_;
 import org.crue.hercules.sgi.csp.model.ProyectoEntidadFinanciadora;
@@ -201,11 +205,16 @@ public class ProyectoPredicateResolver implements SgiRSQLPredicateResolver<Proye
         JoinType.LEFT);
     ListJoin<Proyecto, ProyectoEntidadFinanciadora> joinEntidadFinanciadora = root
         .join(Proyecto_.entidadesFinanciadoras, JoinType.LEFT);
+    ListJoin<Proyecto, ProyectoAnualidad> joinAnualidad = root.join(Proyecto_.proyectosAnualidad, JoinType.LEFT);
+    ListJoin<ProyectoAnualidad, AnualidadGasto> joinAnualidadGasto = joinAnualidad
+        .join(ProyectoAnualidad_.anualidadesGasto, JoinType.LEFT);
 
     return cb.or(cb.greaterThanOrEqualTo(root.get(Proyecto_.lastModifiedDate), fechaModificacion),
         cb.greaterThanOrEqualTo(joinContexto.get(ContextoProyecto_.lastModifiedDate), fechaModificacion),
         cb.greaterThanOrEqualTo(joinEquipos.get(ProyectoEquipo_.lastModifiedDate), fechaModificacion),
         cb.greaterThanOrEqualTo(joinEntidadGestora.get(ProyectoEntidadGestora_.lastModifiedDate), fechaModificacion),
+        cb.greaterThanOrEqualTo(joinAnualidad.get(ProyectoAnualidad_.lastModifiedDate), fechaModificacion),
+        cb.greaterThanOrEqualTo(joinAnualidadGasto.get(AnualidadGasto_.lastModifiedDate), fechaModificacion),
         cb.greaterThanOrEqualTo(joinEntidadConvocante.get(ProyectoEntidadConvocante_.lastModifiedDate),
             fechaModificacion),
         cb.greaterThanOrEqualTo(joinEntidadFinanciadora.get(ProyectoEntidadFinanciadora_.lastModifiedDate),
@@ -222,18 +231,18 @@ public class ProyectoPredicateResolver implements SgiRSQLPredicateResolver<Proye
   public Predicate toPredicate(ComparisonNode node, Root<Proyecto> root, CriteriaQuery<?> query,
       CriteriaBuilder criteriaBuilder) {
     switch (Property.fromCode(node.getSelector())) {
-      case PLAN_INVESTIGACION:
-        return buildByPlanInvestigacion(node, root, query, criteriaBuilder);
-      case RESPONSABLE_PROYECTO:
-        return buildByResponsableEquipo(node, root, query, criteriaBuilder);
-      case FINALIZADO:
-        return buildByFinalizado(node, root, query, criteriaBuilder);
-      case PRORROGADO:
-        return buildByProrrogado(node, root, query, criteriaBuilder);
-      case FECHA_MODIFICACION:
-        return buildByFechaModificacion(node, root, query, criteriaBuilder);
-      default:
-        return null;
+    case PLAN_INVESTIGACION:
+      return buildByPlanInvestigacion(node, root, query, criteriaBuilder);
+    case RESPONSABLE_PROYECTO:
+      return buildByResponsableEquipo(node, root, query, criteriaBuilder);
+    case FINALIZADO:
+      return buildByFinalizado(node, root, query, criteriaBuilder);
+    case PRORROGADO:
+      return buildByProrrogado(node, root, query, criteriaBuilder);
+    case FECHA_MODIFICACION:
+      return buildByFechaModificacion(node, root, query, criteriaBuilder);
+    default:
+      return null;
     }
   }
 }

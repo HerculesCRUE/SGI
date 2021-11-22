@@ -4,8 +4,8 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { MSG_PARAMS } from '@core/i18n';
 import { CausaExencion, CAUSA_EXENCION_MAP, IProyecto } from '@core/models/csp/proyecto';
-import { IProyectoResponsableEconomico } from '@core/models/csp/proyecto-responsable-economico';
 import { Orden } from '@core/models/csp/rol-proyecto';
+import { IProyectoSge } from '@core/models/sge/proyecto-sge';
 import { IPersona } from '@core/models/sgp/persona';
 import { ProyectoService } from '@core/services/csp/proyecto.service';
 import { SolicitudProyectoService } from '@core/services/csp/solicitud-proyecto.service';
@@ -19,12 +19,14 @@ import { RSQLSgiRestFilter, SgiRestFilterOperator, SgiRestFindOptions } from '@s
 import { DateTime } from 'luxon';
 import { NGXLogger } from 'ngx-logger';
 import { Observable, of, Subscription } from 'rxjs';
-import { map, switchMap } from 'rxjs/operators';
+import { map, mergeMap, switchMap } from 'rxjs/operators';
 
 const PROYECTO_KEY = marker('sge.proyecto');
 const MSG_ERROR = marker('error.load');
 const MSG_SAVE_ERROR = marker('error.save.request.entity');
 const MSG_SAVE_SUCCESS = marker('msg.save.request.entity.success');
+const MSG_UPDATE_ERROR = marker('error.update.request.entity');
+const MSG_UPDATE_SUCCESS = marker('msg.update.request.entity.success');
 
 export enum ACTION_MODAL_MODE {
   VIEW = 'view',
@@ -34,6 +36,8 @@ export enum ACTION_MODAL_MODE {
 
 export interface IProyectoEconomicoFormlyData {
   proyectoSgiId: number;
+  proyectoSge: IProyectoSge;
+  action: ACTION_MODAL_MODE;
 }
 
 interface IFormlyData {
@@ -69,6 +73,8 @@ export class ProyectoEconomicoFormlyModalComponent implements OnInit, OnDestroy 
 
   private textoCrearSuccess: string;
   private textoCrearError: string;
+  private textoUpdateSuccess: string;
+  private textoUpdateError: string;
 
   private subscriptions: Subscription[] = [];
 
@@ -98,7 +104,7 @@ export class ProyectoEconomicoFormlyModalComponent implements OnInit, OnDestroy 
 
   ) {
     this.subscriptions.push(
-      this.loadFormlyData(proyectoData?.proyectoSgiId).subscribe(
+      this.loadFormlyData(proyectoData?.action, proyectoData?.proyectoSgiId, proyectoData?.proyectoSge?.id).subscribe(
         (formlyData) => {
           this.options.formState.mainModel = formlyData.data;
           this.formlyData.model = {};
@@ -122,9 +128,14 @@ export class ProyectoEconomicoFormlyModalComponent implements OnInit, OnDestroy 
   }
 
 
-  private loadFormlyData(id: number): Observable<IFormlyData> {
-    let load$: Observable<IFormlyData> = of({ fields: [], data: {}, model: {} });
-    load$ = this.proyectoSgeService.getFormlyCreate().pipe(
+  private loadFormlyData(action: ACTION_MODAL_MODE, proyectoSgiId: number, proyectoSgeId: any): Observable<IFormlyData> {
+    let load$: Observable<FormlyFieldConfig[]>;
+    if (action === ACTION_MODAL_MODE.NEW) {
+      load$ = this.proyectoSgeService.getFormlyCreate();
+    } else {
+      load$ = this.proyectoSgeService.getFormlyUpdate();
+    }
+    return load$.pipe(
       map(fields => {
         return {
           fields,
@@ -133,7 +144,7 @@ export class ProyectoEconomicoFormlyModalComponent implements OnInit, OnDestroy 
         } as IFormlyData;
       }),
       switchMap((formlyData) => {
-        return this.proyectoService.findById(id).pipe(
+        return this.proyectoService.findById(proyectoSgiId).pipe(
           map((proyectoEconomico) => {
             formlyData.data.proyecto = proyectoEconomico;
             formlyData.data.fechaInicio = proyectoEconomico.fechaInicio;
@@ -141,6 +152,10 @@ export class ProyectoEconomicoFormlyModalComponent implements OnInit, OnDestroy 
             formlyData.data.porIva = proyectoEconomico.iva?.iva;
             formlyData.data.importeTotalGastos = proyectoEconomico.importePresupuesto;
             formlyData.data.causaExencion = proyectoEconomico.causaExencion;
+            formlyData.data.tipoFinalidad = proyectoEconomico.finalidad;
+            if (action === ACTION_MODAL_MODE.EDIT) {
+              formlyData.data.sgeId = proyectoSgeId;
+            }
 
             if (formlyData.data.causaExencion) {
               formlyData.data.causaExencionDesc = this.translate.instant(
@@ -152,7 +167,7 @@ export class ProyectoEconomicoFormlyModalComponent implements OnInit, OnDestroy 
         );
       }),
       switchMap((formlyData) => {
-        return this.findNumeroDocumentoResponsableEcnomicoOrMiembroEquipo(id, formlyData);
+        return this.findNumeroDocumentoResponsableEcnomicoOrMiembroEquipo(proyectoSgiId, formlyData);
       }),
       switchMap((formlyData) => {
         const proyectoEconomico = formlyData.data.proyecto;
@@ -177,7 +192,6 @@ export class ProyectoEconomicoFormlyModalComponent implements OnInit, OnDestroy 
         return of(formlyData);
       })
     );
-    return load$;
   }
 
   private findImportePresupuestoBySolicitudProyecto(proyectoEconomico: any, formlyData: IFormlyData): Observable<IFormlyData> {
@@ -261,18 +275,42 @@ export class ProyectoEconomicoFormlyModalComponent implements OnInit, OnDestroy 
 
     if (this.formGroup.valid) {
 
-      this.parseModel();
+      if (this.proyectoData.action === ACTION_MODAL_MODE.NEW) {
+        this.parseModel();
 
-      this.subscriptions.push(this.proyectoSgeService.createProyecto(this.formlyData.model).subscribe(
-        () => {
-          this.matDialogRef.close();
-          this.snackBarService.showSuccess(this.textoCrearSuccess);
-        },
-        (error) => {
-          this.logger.error(error);
-          this.snackBarService.showError(this.textoCrearError);
-        }
-      ));
+        this.subscriptions.push(this.proyectoSgeService.createProyecto(this.formlyData.model).pipe(
+          mergeMap(response =>
+            //TODO se busca proyecto SGE según respuesta actual del servicio. Es posible que esta cambie
+            this.proyectoSgeService.findById(response).pipe(
+              map(proyecto => {
+                return proyecto;
+              })
+            )
+          )
+        ).subscribe(
+          (proyectoCreado) => {
+            this.matDialogRef.close(proyectoCreado);
+            this.snackBarService.showSuccess(this.textoCrearSuccess);
+          },
+          (error) => {
+            this.logger.error(error);
+            this.snackBarService.showError(this.textoCrearError);
+          }
+        ));
+      } else if (this.proyectoData.action === ACTION_MODAL_MODE.EDIT) {
+        delete this.formlyData.model.proyectoSgeId;
+        this.parseModel();
+        this.subscriptions.push(this.proyectoSgeService.updateProyecto(this.proyectoData.proyectoSgiId, this.formlyData.model).subscribe(
+          () => {
+            this.snackBarService.showSuccess(this.textoUpdateSuccess);
+            this.matDialogRef.close(this.proyectoData.proyectoSge);
+          },
+          (error) => {
+            this.logger.error(error);
+            this.snackBarService.showError(this.textoUpdateError);
+          }
+        ));
+      }
     }
   }
 
@@ -319,6 +357,30 @@ export class ProyectoEconomicoFormlyModalComponent implements OnInit, OnDestroy 
         );
       })
     ).subscribe((value) => this.textoCrearError = value);
+
+    this.translate.get(
+      PROYECTO_KEY,
+      MSG_PARAMS.CARDINALIRY.SINGULAR
+    ).pipe(
+      switchMap((value) => {
+        return this.translate.get(
+          MSG_UPDATE_SUCCESS,
+          { entity: value, ...MSG_PARAMS.GENDER.MALE }
+        );
+      })
+    ).subscribe((value) => this.textoUpdateSuccess = value);
+
+    this.translate.get(
+      PROYECTO_KEY,
+      MSG_PARAMS.CARDINALIRY.SINGULAR
+    ).pipe(
+      switchMap((value) => {
+        return this.translate.get(
+          MSG_UPDATE_ERROR,
+          { entity: value, ...MSG_PARAMS.GENDER.MALE }
+        );
+      })
+    ).subscribe((value) => this.textoUpdateError = value);
   }
 
   private getCurrentMiembroEquipoWithRolOrdenPrimario(id: number): Observable<IResponsable> {

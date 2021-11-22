@@ -1,4 +1,5 @@
 import { FormControl } from '@angular/forms';
+import { HttpProblem } from '@core/errors/http-problem';
 import { IProyecto } from '@core/models/csp/proyecto';
 import { IColumna } from '@core/models/sge/columna';
 import { IDatoEconomico } from '@core/models/sge/dato-economico';
@@ -17,6 +18,7 @@ export interface IColumnDefinition {
   id: string;
   name: string;
   compute: boolean;
+  importeReparto?: boolean;
 }
 
 abstract class RowTree<T> {
@@ -217,6 +219,11 @@ export abstract class DesgloseEconomicoFragment<T extends IDatoEconomico> extend
             regs.push(...this.addChilds(r));
           });
           this.desglose$.next(regs);
+        },
+        (error) => {
+          if (error instanceof HttpProblem) {
+            this.pushProblems(error);
+          }
         }
       );
   }

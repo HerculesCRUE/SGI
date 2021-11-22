@@ -27,6 +27,7 @@ import org.crue.hercules.sgi.eti.model.TipoConvocatoriaReunion;
 import org.crue.hercules.sgi.eti.model.TipoEstadoMemoria;
 import org.crue.hercules.sgi.eti.model.TipoEvaluacion;
 import org.crue.hercules.sgi.eti.model.TipoMemoria;
+import org.crue.hercules.sgi.eti.model.Comite.Genero;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.ParameterizedTypeReference;
@@ -174,7 +175,6 @@ public class EvaluacionIT extends BaseIT {
 
   }
 
-  @Test
   public void replaceEvaluacion_ReturnsEvaluacion() throws Exception {
 
     Evaluacion replaceEvaluacion = generarMockEvaluacion(1L, null);
@@ -815,8 +815,8 @@ public class EvaluacionIT extends BaseIT {
     peticionEvaluacion.setActivo(Boolean.TRUE);
 
     Formulario formulario = new Formulario(1L, "M10", "Descripcion");
-    Comite comite = new Comite(1L, "CEI", "nombreSecretario", "nombreInvestigacion", "nombreDecreto", "articulo",
-        formulario, Boolean.TRUE);
+    Comite comite = new Comite(1L, "CEI", "nombreSecretario", "nombreInvestigacion", Genero.M, "nombreDecreto",
+        "articulo", formulario, Boolean.TRUE);
 
     TipoMemoria tipoMemoria = new TipoMemoria();
     tipoMemoria.setId(1L);

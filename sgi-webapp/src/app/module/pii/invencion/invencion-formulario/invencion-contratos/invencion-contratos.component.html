@@ -1,0 +1,151 @@
+<sgi-fragment title="{{ 'pii.invencion-contrato' | translate: MSG_PARAMS.CARDINALIRY.PLURAL }}">
+  <section class="table-contratos-asociados">
+    <h2>{{'pii.invencion-contrato.contratos-asociados' | translate}}</h2>
+    <div class="mat-elevation-z4">
+      <mat-table [dataSource]="dataSourceContratosAsociados" matSort matSortDisableClear
+        #sortContratosAsociados="matSort">
+
+        <!-- Fecha Column -->
+        <ng-container matColumnDef="fecha">
+          <mat-header-cell mat-header-cell *matHeaderCellDef mat-sort-header>
+            {{'pii.invencion-contrato.contratos-asociados.fecha' | translate}}
+          </mat-header-cell>
+          <mat-cell mat-cell *matCellDef="let contratosAsociado">
+            {{ contratosAsociado.contrato?.fechaInicio | luxon:'shortDate' }}
+          </mat-cell>
+        </ng-container>
+
+        <!-- Nombre Column -->
+        <ng-container matColumnDef="nombre">
+          <mat-header-cell mat-header-cell *matHeaderCellDef mat-sort-header>
+            {{'pii.invencion-contrato.contratos-asociados.nombre' | translate}}
+          </mat-header-cell>
+          <mat-cell mat-cell *matCellDef="let contratosAsociado">
+            {{ contratosAsociado.contrato?.titulo }}
+          </mat-cell>
+        </ng-container>
+
+        <!-- Entidad Financiadora Column -->
+        <ng-container matColumnDef="entidadFinanciadora">
+          <mat-header-cell mat-header-cell *matHeaderCellDef mat-sort-header>
+            {{'pii.invencion-contrato.contratos-asociados.entidadFinanciadora' | translate}}
+          </mat-header-cell>
+          <mat-cell mat-cell *matCellDef="let contratosAsociado"
+            matTooltip="{{getEntidadesFinanciadorasTooltip(contratosAsociado.entidadesFinanciadoras)}}">
+            {{ getFirstEntidadFinanciadora(contratosAsociado.entidadesFinanciadoras)?.nombre }}
+          </mat-cell>
+        </ng-container>
+
+        <!-- Investigador Responsable Column -->
+        <ng-container matColumnDef="investigadorResponsable">
+          <mat-header-cell mat-header-cell *matHeaderCellDef mat-sort-header>
+            {{'pii.invencion-contrato.contratos-asociados.investigadorResponsable' | translate}}
+          </mat-header-cell>
+          <mat-cell mat-cell *matCellDef="let contratosAsociado">
+            {{ getInventorResponsableCompleteName(contratosAsociado.investigadorPrincipal) }}
+          </mat-cell>
+        </ng-container>
+
+        <mat-header-row *matHeaderRowDef="displayColumnsContratosAsociados"></mat-header-row>
+        <mat-row *matRowDef="let row; columns: displayColumnsContratosAsociados;"
+          [class.selected]="row?.contrato?.id === selectedContratoAsociado?.contrato?.id"
+          (click)="selectContratoAsociado(row)"></mat-row>
+      </mat-table>
+      <mat-paginator [pageSizeOptions]="elementsPage" showFirstLastButtons #paginatorContratosAsociados></mat-paginator>
+    </div>
+  </section>
+
+  <section class="table-sectores-licenciados" *ngIf="selectedContratoAsociado">
+    <h2>{{'pii.invencion-contrato.sector-licenciado' | translate: MSG_PARAMS.CARDINALIRY.PLURAL}} -
+      {{selectedContratoAsociado?.contrato?.titulo}}</h2>
+    <div class="mat-elevation-z4">
+      <mat-table [dataSource]="dataSourceSectoresLicenciados" matSort matSortDisableClear
+        #sortSectoresLicenciados="matSort">
+
+        <!-- Pais Column -->
+        <ng-container matColumnDef="pais">
+          <mat-header-cell mat-header-cell *matHeaderCellDef mat-sort-header>
+            {{'pii.invencion-contrato.sector-licenciado.pais' | translate}}
+          </mat-header-cell>
+          <mat-cell mat-cell *matCellDef="let wrapper">
+            {{ wrapper.value?.pais.nombre }}
+          </mat-cell>
+        </ng-container>
+
+        <!-- Sector Column -->
+        <ng-container matColumnDef="sector">
+          <mat-header-cell mat-header-cell *matHeaderCellDef mat-sort-header>
+            {{'pii.invencion-contrato.sector-licenciado.sector' | translate}}
+          </mat-header-cell>
+          <mat-cell mat-cell *matCellDef="let wrapper">
+            {{ wrapper.value.sectorAplicacion.nombre }}
+          </mat-cell>
+        </ng-container>
+
+        <!-- Fecha Inicio Licencia Column -->
+        <ng-container matColumnDef="fechaInicioLicencia">
+          <mat-header-cell mat-header-cell *matHeaderCellDef mat-sort-header>
+            {{'pii.invencion-contrato.sector-licenciado.fechaInicioLicencia' | translate}}
+          </mat-header-cell>
+          <mat-cell mat-cell *matCellDef="let wrapper">
+            {{ wrapper.value.fechaInicioLicencia | luxon:'shortDate' }}
+          </mat-cell>
+        </ng-container>
+
+        <!-- Fecha Fin Licencia Column -->
+        <ng-container matColumnDef="fechaFinLicencia">
+          <mat-header-cell mat-header-cell *matHeaderCellDef mat-sort-header>
+            {{'pii.invencion-contrato.sector-licenciado.fechaFinLicencia' | translate}}
+          </mat-header-cell>
+          <mat-cell mat-cell *matCellDef="let wrapper">
+            {{ wrapper.value.fechaFinLicencia | luxon:'shortDate' }}
+          </mat-cell>
+        </ng-container>
+
+        <!-- Exclusividad Column -->
+        <ng-container matColumnDef="exclusividad">
+          <mat-header-cell mat-header-cell *matHeaderCellDef mat-sort-header>
+            {{'pii.invencion-contrato.sector-licenciado.exclusividad' | translate}}
+          </mat-header-cell>
+          <mat-cell mat-cell *matCellDef="let wrapper">
+            {{ wrapper.value.exclusividad? ('label.si' | translate) : ('label.no' | translate) }}
+          </mat-cell>
+        </ng-container>
+
+        <!-- Acciones Column -->
+        <ng-container matColumnDef="acciones">
+          <mat-header-cell mat-header-cell *matHeaderCellDef> {{'label.actions' | translate}} </mat-header-cell>
+          <mat-cell mat-cell *matCellDef="let wrapper; let i = index">
+            <ng-container>
+              <button *ngIf="!this.formPart.candEdit" mat-button matTooltip="{{'btn.view' | translate}}"
+                (click)="openModal(wrapper, i)">
+                <mat-icon color="primary">visibility</mat-icon>
+              </button>
+              <button *ngIf="this.formPart.candEdit" mat-button matTooltip="{{'btn.edit' | translate}}"
+                (click)="openModal(wrapper, i)">
+                <mat-icon color="primary">border_color</mat-icon>
+              </button>
+              <button *ngIf="this.formPart.candEdit" mat-button matTooltip="{{'btn.delete' | translate}}"
+                (click)="deleteSectorLicenciado(wrapper)">
+                <mat-icon color="warn">highlight_off</mat-icon>
+              </button>
+            </ng-container>
+          </mat-cell>
+        </ng-container>
+
+        <mat-header-row *matHeaderRowDef="displayColumnsSectoresLicenciados"></mat-header-row>
+        <mat-row *matRowDef="let row; columns: displayColumnsSectoresLicenciados"></mat-row>
+      </mat-table>
+      <mat-paginator [pageSizeOptions]="elementsPage" showFirstLastButtons #paginatorSectoresLicenciados>
+      </mat-paginator>
+    </div>
+
+    <div class="separation-button">
+      <!-- Botón añadir Sector Licenciado -->
+      <button color="three" mat-button mat-raised-button (click)="openModal()">
+        <mat-icon color="accent">add_circle</mat-icon>
+        {{ 'btn.add.entity' | translate:msgParamSectorLicenciadoEntity }}
+      </button>
+    </div>
+  </section>
+</sgi-fragment>

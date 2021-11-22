@@ -9,6 +9,7 @@ import org.crue.hercules.sgi.framework.web.bind.annotation.RequestPageable;
 import org.crue.hercules.sgi.pii.dto.TramoRepartoInput;
 import org.crue.hercules.sgi.pii.dto.TramoRepartoOutput;
 import org.crue.hercules.sgi.pii.model.TramoReparto;
+import org.crue.hercules.sgi.pii.model.TramoReparto.Tipo;
 import org.crue.hercules.sgi.pii.service.TramoRepartoService;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
@@ -17,13 +18,14 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -54,37 +56,14 @@ public class TramoRepartoController {
   }
 
   /**
-   * Devuelve una lista paginada y filtrada {@link TramoReparto} activos.
-   * 
-   * @param query  filtro de búsqueda.
-   * @param paging pageable.
-   * @return la lista de entidades {@link TramoReparto} paginadas y/o filtradas.
-   */
-  @GetMapping()
-  @PreAuthorize("hasAnyAuthority('PII-TRE-V', 'PII-TRE-C', 'PII-TRE-E', 'PII-TRE-B', 'PII-TRE-R')")
-  ResponseEntity<Page<TramoRepartoOutput>> findActivos(@RequestParam(name = "q", required = false) String query,
-      @RequestPageable(sort = "s") Pageable paging) {
-    log.debug("findAll(String query, Pageable paging) - start");
-    Page<TramoReparto> page = service.findActivos(query, paging);
-
-    if (page.isEmpty()) {
-      log.debug("findAll(String query, Pageable paging) - end");
-      return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-    }
-
-    log.debug("findAll(String query, Pageable paging) - end");
-    return new ResponseEntity<>(convert(page), HttpStatus.OK);
-  }
-
-  /**
    * Devuelve una lista paginada y filtrada {@link TramoReparto}.
    * 
    * @param query  filtro de búsqueda.
    * @param paging pageable.
    * @return la lista de entidades {@link TramoReparto} paginadas y/o filtradas.
    */
-  @GetMapping("/todos")
-  @PreAuthorize("hasAnyAuthority('PII-TRE-V', 'PII-TRE-C', 'PII-TRE-E', 'PII-TRE-B', 'PII-TRE-R')")
+  @GetMapping()
+  @PreAuthorize("hasAnyAuthority('PII-TRE-V', 'PII-TRE-C', 'PII-TRE-E', 'PII-TRE-B', 'PII-TRE-R', 'PII-INV-V', 'PII-INV-E')")
   ResponseEntity<Page<TramoRepartoOutput>> findAll(@RequestParam(name = "q", required = false) String query,
       @RequestPageable(sort = "s") Pageable paging) {
     log.debug("findAllTodos(String query, Pageable paging) - start");
@@ -146,32 +125,52 @@ public class TramoRepartoController {
   }
 
   /**
-   * Activa la entidad {@link TramoReparto} con id indicado.
+   * Elimina la entidad {@link TramoReparto} con id indicado.
    * 
    * @param id Identificador de {@link TramoReparto}.
    * @return {@link TramoReparto} actualizado.
    */
-  @PatchMapping("/{id}/activar")
-  @PreAuthorize("hasAuthority('PII-TRE-R')")
-  TramoRepartoOutput activar(@PathVariable Long id) {
-    log.debug("reactivar(Long id) - start");
-    TramoReparto returnValue = service.activar(id);
-    log.debug("reactivar(Long id) - end");
-    return convert(returnValue);
+  @DeleteMapping("/{id}")
+  @PreAuthorize("hasAuthority('PII-TRE-B')")
+  void delete(@PathVariable Long id) {
+    log.debug("delete(Long id) - start");
+    service.delete(id);
+    log.debug("delete(Long id) - end");
   }
 
   /**
-   * Desactiva la entidad {@link TramoReparto} con id indicado.
+   * Comprueba la existencia de {@link TramoReparto} con el
+   * {@link TramoReparto.Tipo} indicado.
    * 
-   * @param id Identificador de {@link TramoReparto}.
+   * @param tipo {@link TramoReparto.Tipo} indicado.
+   * @return HTTP 200 si existe y HTTP 204 si no.
    */
-  @PatchMapping("/{id}/desactivar")
-  @PreAuthorize("hasAuthority('PII-TRE-B')")
-  TramoRepartoOutput desactivar(@PathVariable Long id) {
-    log.debug("desactivar(Long id) - start");
-    TramoReparto returnValue = service.desactivar(id);
-    log.debug("desactivar(Long id) - end");
-    return convert(returnValue);
+  @RequestMapping(path = "", method = RequestMethod.HEAD, params = { "tipo" })
+  @PreAuthorize("hasAnyAuthority('PII-TRE-V', 'PII-TRE-C', 'PII-TRE-E')")
+  public ResponseEntity<?> existTipoTramoReparto(@RequestParam(required = true) Tipo tipo) {
+    log.debug("ResponseEntity<?> existTipoTramoReparto(Tipo tipo) - start");
+    final ResponseEntity<?> returnValue = service.existTipoTramoReparto(tipo) ? new ResponseEntity<>(HttpStatus.OK)
+        : new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    log.debug("ResponseEntity<?> existTipoTramoReparto(Tipo tipo) - end");
+
+    return returnValue;
+  }
+
+  /**
+   * Comprueba si el {@link TramoReparto} se puede eliminar o editar su rango
+   * 
+   * @param id {@link TramoReparto} indicado.
+   * @return HTTP 200 si se puede y HTTP 204 si no.
+   */
+  @RequestMapping(path = "/{id}/modificable", method = RequestMethod.HEAD)
+  @PreAuthorize("hasAnyAuthority('PII-TRE-V', 'PII-TRE-C', 'PII-TRE-E')")
+  public ResponseEntity<?> isTramoRepartoModificable(@PathVariable Long id) {
+    log.debug("ResponseEntity<?> isTramoRepartoModificable(Long id) - start");
+    final ResponseEntity<?> returnValue = service.isTramoRepartoModificable(id) ? new ResponseEntity<>(HttpStatus.OK)
+        : new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    log.debug("ResponseEntity<?> isTramoRepartoModificable(Long id) - end");
+
+    return returnValue;
   }
 
   private TramoRepartoOutput convert(TramoReparto tramoReparto) {

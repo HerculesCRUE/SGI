@@ -388,6 +388,19 @@ export class MemoriaService extends SgiMutableRestService<number, IMemoriaBacken
   }
 
   /**
+   * Obtiene la última versión del informe de la memoria
+   * @param idMemoria identificador de la memoria
+   * * @param idTipoEvaluacion el identificador del tipo de evaluación
+   */
+  findInformeUltimaVersionTipoEvaluacion(idMemoria: number, idTipoEvaluacion: number): Observable<IInforme> {
+    return this.http.get<IInformeBackend>(
+      `${this.endpointUrl}/${idMemoria}/informe/ultima-version/tipo/${idTipoEvaluacion}`
+    ).pipe(
+      map(response => INFORME_CONVERTER.toTarget(response))
+    );
+  }
+
+  /**
    * Comprobación de si están o no los documentos obligatorios aportados para
    * pasar la memoria al estado en secretaría
    *
@@ -397,6 +410,18 @@ export class MemoriaService extends SgiMutableRestService<number, IMemoriaBacken
     const url = `${this.endpointUrl}/${id}/enviar-secretaria`;
     return this.http.head(url, { observe: 'response' }).pipe(
       map(response => response.status === 200)
+    );
+  }
+
+  /**
+   * Comprueba si el usuario es responsable de la memoria  o creador de la petición de evaluación
+   *
+   * @param id Id de la Memoria
+   */
+  isResponsableOrCreador(id: number): Observable<boolean> {
+    const url = `${this.endpointUrl}/${id}/responsable-creador`;
+    return this.http.head(url, { observe: 'response' }).pipe(
+      map(x => x.status === 200)
     );
   }
 

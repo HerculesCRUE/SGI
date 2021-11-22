@@ -1,0 +1,1886 @@
+{
+  "bloques": [
+    {
+      "id": 1,
+      "nombre": "NoRefCEID: M30/2021/001",
+      "orden": 0,
+      "apartados": [
+        {
+          "id": 1,
+          "nombre": "Datos del solicitante",
+          "titulo": "Datos del solicitante",
+          "orden": 1,
+          "elementos": [
+            {
+              "nombre": "",
+              "tipo": "datosSolicitanteType",
+              "content": "48517010"
+            }
+          ],
+          "apartadosHijos": []
+        },
+        {
+          "id": 2,
+          "nombre": "Título del proyecto",
+          "titulo": "Título del proyecto",
+          "orden": 2,
+          "elementos": [
+            {
+              "nombre": "",
+              "tipo": "template",
+              "content": "<p><i>PeticionEvaluacion1</i></p>"
+            }
+          ],
+          "apartadosHijos": []
+        },
+        {
+          "id": 3,
+          "nombre": "Tipo de actividad",
+          "titulo": "Tipo de actividad",
+          "orden": 3,
+          "elementos": [
+            {
+              "nombre": "",
+              "tipo": "template",
+              "content": "<p><i>Proyecto de investigación</i></p>"
+            }
+          ],
+          "apartadosHijos": []
+        },
+        {
+          "id": 4,
+          "nombre": "Financiación",
+          "titulo": "Financiación",
+          "orden": 4,
+          "elementos": [
+            {
+              "nombre": "",
+              "tipo": "template",
+              "content": "<p>¿Se dispone de financiación para la realización del proyecto?: <i>Sí</i></p>"
+            },
+            {
+              "nombre": "",
+              "tipo": "template",
+              "content": "<p>Indicar la fuente de financiación: <i>organismo financiador</i></p>"
+            },
+            {
+              "nombre": "",
+              "tipo": "template",
+              "content": "<p>Estado de la financiación: <i>DENEGADO</i></p>"
+            }
+          ],
+          "apartadosHijos": []
+        },
+        {
+          "id": 5,
+          "nombre": "Fechas clave del proyecto",
+          "titulo": "Fechas clave del proyecto",
+          "orden": 5,
+          "elementos": [
+            {
+              "nombre": "",
+              "tipo": "template",
+              "content": "<p>Fecha prevista inicio del proyecto: <i>01/09/2019</i></p>"
+            },
+            {
+              "nombre": "",
+              "tipo": "template",
+              "content": "<p>Fecha prevista fin del proyecto: <i>02/10/2019</i></p>"
+            }
+          ],
+          "apartadosHijos": []
+        },
+        {
+          "id": 6,
+          "nombre": "Resumen del proyecto",
+          "titulo": "Resumen del proyecto",
+          "orden": 6,
+          "elementos": [
+            {
+              "nombre": "",
+              "tipo": "template",
+              "content": "<p><i>Resumen</i></p>"
+            }
+          ],
+          "apartadosHijos": []
+        },
+        {
+          "id": 7,
+          "nombre": "Memorias del proyecto",
+          "titulo": "Memorias del proyecto",
+          "orden": 7,
+          "elementos": [
+            {
+              "nombre": "memoriasProyecto",
+              "tipo": "table-crud",
+              "content": "[[{\"nombre\":\"Comité\",\"tipo\":null,\"content\":\"CEISH\"},{\"nombre\":\"NoRefCEID\",\"tipo\":null,\"content\":\"M10/2019/001\"},{\"nombre\":\"Nombre\",\"tipo\":null,\"content\":\"Título M10/2019/001\"},{\"nombre\":\"Estado\",\"tipo\":null,\"content\":\"En secretaría seguimiento anual\"}],[{\"nombre\":\"Comité\",\"tipo\":null,\"content\":\"CEEA\"},{\"nombre\":\"NoRefCEID\",\"tipo\":null,\"content\":\"M20/2021/001\"},{\"nombre\":\"Nombre\",\"tipo\":null,\"content\":\"Nueva M20\"},{\"nombre\":\"Estado\",\"tipo\":null,\"content\":\"Completada\"}],[{\"nombre\":\"Comité\",\"tipo\":null,\"content\":\"CEEA\"},{\"nombre\":\"NoRefCEID\",\"tipo\":null,\"content\":\"M20/2021/002\"},{\"nombre\":\"Nombre\",\"tipo\":null,\"content\":\"M20 prueba duplicados\"},{\"nombre\":\"Estado\",\"tipo\":null,\"content\":\"En elaboración\"}],[{\"nombre\":\"Comité\",\"tipo\":null,\"content\":\"CEIAB\"},{\"nombre\":\"NoRefCEID\",\"tipo\":null,\"content\":\"M30/2021/001\"},{\"nombre\":\"Nombre\",\"tipo\":null,\"content\":null},{\"nombre\":\"Estado\",\"tipo\":null,\"content\":\"Completada\"}]]"
+            }
+          ],
+          "apartadosHijos": []
+        }
+      ]
+    },
+    {
+      "id": 1,
+      "nombre": "1. VALOR SOCIAL Y JUSTIFICACIÓN",
+      "orden": 1,
+      "apartados": [
+        {
+          "id": 98,
+          "nombre": "Valor social del proyecto",
+          "titulo": "1.1 Valor social del proyecto",
+          "orden": 1,
+          "elementos": [
+            {
+              "nombre": "",
+              "tipo": "template",
+              "content": "Para completar esta sección ir a <b>'Datos generales'</b>.<br/>\n"
+            },
+            {
+              "nombre": "",
+              "tipo": "template",
+              "content": "<p>A continuación se muestra la finalidad principal del proyecto o campo en el que se espera un aumento del conocimiento o un beneficio social último que justifique su realización.</p><br/>\n"
+            },
+            {
+              "nombre": "valorSocial",
+              "tipo": "tipo-valor-social",
+              "content": "<p>Valor social: <i>Research applied to the protection or improvement of social, political, economic or environmental conditions in the interest of the well-being and / or health of human beings</i></p><br/>\n"
+            },
+            {
+              "nombre": "otroValorSocial",
+              "tipo": "textarea",
+              "content": "<p>Especificar: </p><br/>\n"
+            }
+          ],
+          "apartadosHijos": []
+        },
+        {
+          "id": 99,
+          "nombre": "Justificación del uso de agentes biológicos, OMG, Sustancias Químicas Peligrosas, Sustancias Radiactivas y/o Nanoparticulas",
+          "titulo": "1.2 Justificación del uso de agentes biológicos, OMG, Sustancias Químicas Peligrosas, Sustancias Radiactivas y/o Nanoparticulas",
+          "orden": 2,
+          "elementos": [
+            {
+              "nombre": "",
+              "tipo": "template",
+              "content": "<p>Exponer brevemente (máximo diez líneas) la necesidad de utilización de agentes biológicos, Sustancias Químicas Peligrosas, Sustancias Radiactivas y/o Nanoparticulas.</p><br/>\n"
+            },
+            {
+              "nombre": "",
+              "tipo": "template",
+              "content": "<p>Sustancias químicas peligrosas (SQP*),* según el Reglamento (CE) nº1272/2008 sobre clasificación, etiquetado y envasado de sustancias y mezclas (CLP).</p><p>Sustancias radiactivas e instalaciones radiactivas, según la normativa recogida en el R.D 1836/1999 y en el R.D. 783/2001. Equipos radiológicos, según el RD 1085/2009, de 3 de julio, por el que se aprueba el Reglamento sobre instalación y utilización de aparatos de Rayos X con fines de diagnóstico médico.</p><br/>\n"
+            },
+            {
+              "nombre": "justificacion",
+              "tipo": "textarea",
+              "content": "<p>Justificación: <i>dfgd</i></p><br/>\n"
+            }
+          ],
+          "apartadosHijos": []
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "nombre": "2. CUALIFICACIÓN DEL EQUIPO INVESTIGADOR",
+      "orden": 2,
+      "apartados": [
+        {
+          "id": 100,
+          "nombre": "Personal que llevará a cabo las tareas con agentes biológicos, OMG, Sustancias Químicas Peligrosas, Sustancias Radiactivas y/o Nanoparticulas",
+          "titulo": "2.1 Personal que llevará a cabo las tareas con agentes biológicos, OMG, Sustancias Químicas Peligrosas, Sustancias Radiactivas y/o Nanoparticulas",
+          "orden": 1,
+          "elementos": [
+            {
+              "nombre": "",
+              "tipo": "template",
+              "content": "<p>A continuación se muestran todas las personas integrantes del equipo investigador. Añadir en este apartado cualquier otra persona que colabore en el proyecto realizando tareas relacionadas con los agentes biológicos, OMGs, sustancias químicas peligrosas, sustancias radiactivas y/o nanopartículas.<br><br>Especificar por cada persona:<br><ul><li>Datos identificativos (nombre, NIF, vinculación con la Universidad).</li><li>Formación específica en riesgos biológicos.</li><li>Organismo acreditador (UMU, MiriadaX, otras universidades u organismos).</li><li>Año.</li></ul></p><br/>\n"
+            },
+            {
+              "nombre": "",
+              "tipo": "template",
+              "content": "Para completar o editar esta sección ir a <b>'Equipo investigador'</b>.<br/>\n"
+            }
+          ],
+          "apartadosHijos": []
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "nombre": "3. VALIDEZ CIENTÍFICA Y METODOLÓGICA",
+      "orden": 3,
+      "apartados": [
+        {
+          "id": 101,
+          "nombre": "Objetivos científicos del proyecto",
+          "titulo": "3.1 Objetivos científicos del proyecto",
+          "orden": 1,
+          "elementos": [
+            {
+              "nombre": "",
+              "tipo": "template",
+              "content": "<p>Describir brevemente los principales objetivos que se pretenden alcanzar con esta experimentación con agentes biológicos, OMG, Sustancias Químicas Peligrosas, Sustancias Radiactivas y/o Nanoparticulas</p><br/>\n"
+            },
+            {
+              "nombre": "",
+              "tipo": "template",
+              "content": "Para completar esta sección ir a <b>'Datos generales'</b>.<br/>\n"
+            },
+            {
+              "nombre": "objetivosCientificos",
+              "tipo": "textarea",
+              "content": "<p>Descripción objetivos científicos del proyecto: <i>objetivos de prueba</i></p><br/>\n"
+            }
+          ],
+          "apartadosHijos": []
+        },
+        {
+          "id": 102,
+          "nombre": "Diseño metodológico del proyecto",
+          "titulo": "3.2 Diseño metodológico del proyecto",
+          "orden": 2,
+          "elementos": [
+            {
+              "nombre": "disenoMetodologico",
+              "tipo": "textarea",
+              "content": "<p>Diseño metodológico: <i>diseño de prueba</i></p><br/>\n"
+            }
+          ],
+          "apartadosHijos": []
+        },
+        {
+          "id": 103,
+          "nombre": "Referencias de publicaciones científicas",
+          "titulo": "3.3 Referencias de publicaciones científicas",
+          "orden": 3,
+          "elementos": [
+            {
+              "nombre": "",
+              "tipo": "template",
+              "content": "<p>Citar de forma completa (autor, título, publicación, fecha etc) las referencias más relevantes utilizadas para el método (máximo 10 referencias)</p><br/>\n"
+            },
+            {
+              "nombre": "referenciasPublicaciones",
+              "tipo": "textarea",
+              "content": "<p>Referencias: <i>dfg</i></p><br/>\n"
+            }
+          ],
+          "apartadosHijos": []
+        },
+        {
+          "id": 104,
+          "nombre": "Tipo de exposición",
+          "titulo": "3.4 Tipo de exposición",
+          "orden": 4,
+          "elementos": [
+            {
+              "nombre": "",
+              "tipo": "template",
+              "content": "<p>La exposición a los agentes biológicos puede ser de dos tipos.</p><br><ul><li>Exposición por intención deliberada de utilizar o manipular un agente biológico, que constituye el propósito principal del trabajo. Actividades de este tipo serían las desarrolladas con animales deliberadamente infectados o en los laboratorios cuya actividad principal constituye el trabajar con agentes biológicos. Otras actividades encuadradas en este grupo serían, por ejemplo, las relacionadas con las industrias de biotecnología: industrias farmacéuticas (para la obtención de antibióticos, enzimas, vacunas virales); industria alimentaria (cerveza, quesos, yogur); etc.</li><li>Exposición no intencionada o incidental al propósito principal del trabajo. En este caso la actividad no implica la manipulación, ni el trabajo en contacto directo o el uso deliberado del agente biológico pero si existe un riesgo de contaminación por agentes biológicos. Este sería el caso del trabajo en contacto con seres humanos o animales o sus productos (tejidos, sangre o fluidos), así como el contacto con elementos o medios donde dicho agente vive o puede sobrevivir (materiales, agua, suelo, alimentos, residuos ...), que servirían como fuente de exposición.</li></ul><p>En esta memoria se incluye además la exposición a OMG en tareas de uso confinado.</p><br/>\n"
+            }
+          ],
+          "apartadosHijos": [
+            {
+              "id": 105,
+              "nombre": "Exposición no intencionada o incidental",
+              "titulo": "3.4.1 Exposición no intencionada o incidental",
+              "orden": 1,
+              "elementos": [
+                {
+                  "nombre": "",
+                  "tipo": "template",
+                  "content": "<p>En esta actividad ¿se realizan tareas en las que puede haber exposición no intencionada o incidental a agentes biológicos?</p><br/>\n"
+                },
+                {
+                  "nombre": "agentesBiologicosRadio",
+                  "tipo": "radio",
+                  "content": "<p>Elige opción: <i>Sí</i></p><br/>\n"
+                },
+                {
+                  "nombre": "",
+                  "tipo": "template",
+                  "content": "Tipo de material biológico que se utiliza<br/>\n"
+                },
+                {
+                  "nombre": "muestrasBiologicasCheck",
+                  "tipo": "multicheckbox",
+                  "content": "<p>Opciones: <i>Tejidos/sangre/fluidos humanos</i></p><br/>\n"
+                }
+              ],
+              "apartadosHijos": []
+            },
+            {
+              "id": 106,
+              "nombre": "Exposición deliberada",
+              "titulo": "3.4.2 Exposición deliberada",
+              "orden": 2,
+              "elementos": [
+                {
+                  "nombre": "",
+                  "tipo": "template",
+                  "content": "<p>En esta actividad ¿se realizan tareas en las que hay intención deliberada de utilizar agentes biológicos, Sustancias Químicas Peligrosas , Sustancias Radiactivas y/o Nanopartículas?</p><br/>\n"
+                },
+                {
+                  "nombre": "tareasAgentesBiologicosRadio",
+                  "tipo": "radio",
+                  "content": "<p>Elige opción: <i>Sí</i></p><br/>\n"
+                },
+                {
+                  "nombre": "",
+                  "tipo": "template",
+                  "content": "Tipo de agente biológico, Sustancias Químicas Peligrosas , Sustancias Radiactivas y/o Nanopartículas que se utiliza<br/>\n"
+                },
+                {
+                  "nombre": "exposicionNointencionada",
+                  "tipo": "multicheckbox",
+                  "content": "<p>Opciones: <i>Sustancias Radiactivas</i></p><br/>\n"
+                }
+              ],
+              "apartadosHijos": []
+            },
+            {
+              "id": 107,
+              "nombre": "Uso confinado de OMG",
+              "titulo": "3.4.3 Uso confinado de OMG",
+              "orden": 3,
+              "elementos": [
+                {
+                  "nombre": "",
+                  "tipo": "template",
+                  "content": "<p>En esta actividad ¿se realizan tareas de uso confinado de OMG?</p><br/>\n"
+                },
+                {
+                  "nombre": "tareasUsoConfinadoRadio",
+                  "tipo": "radio",
+                  "content": "<p>Elige opción: <i>No</i></p><br/>\n"
+                },
+                {
+                  "nombre": "",
+                  "tipo": "template",
+                  "content": "Adjuntar la hoja de información del transgénico de la casa comercial.<br/>\n"
+                },
+                {
+                  "nombre": "",
+                  "tipo": "template",
+                  "content": "Tipo de OMG que se utiliza<br/>\n"
+                },
+                {
+                  "nombre": "tiposOMG",
+                  "tipo": "multicheckbox",
+                  "content": "<p>Opciones: <i></i></p><br/>\n"
+                }
+              ],
+              "apartadosHijos": []
+            },
+            {
+              "id": 108,
+              "nombre": "Sustancias químicas peligrosas",
+              "titulo": "3.4.4 Sustancias químicas peligrosas",
+              "orden": 4,
+              "elementos": [
+                {
+                  "nombre": "",
+                  "tipo": "template",
+                  "content": "<p>En esta actividad ¿se utilizan Sustancias Químicas Peligrosas?</p><br/>\n"
+                },
+                {
+                  "nombre": "sustanciasQuimicasPeligrosas",
+                  "tipo": "radio",
+                  "content": "<p>Elige opción: <i>Sí</i></p><br/>\n"
+                },
+                {
+                  "nombre": "",
+                  "tipo": "template",
+                  "content": "Tipo de Sustancia Química Peligrosa que se utiliza:<br/>\n"
+                },
+                {
+                  "nombre": "tiposSustanciasQuimicas",
+                  "tipo": "multicheckbox",
+                  "content": "<p>Opciones: <i>Tóxica</i></p><br/>\n"
+                },
+                {
+                  "nombre": "otraTexto",
+                  "tipo": "textarea",
+                  "content": "<p>Especificar: </p><br/>\n"
+                },
+                {
+                  "nombre": "",
+                  "tipo": "template",
+                  "content": "Nota: Debe adjuntar la Ficha de Seguridad en Documentación Adicional.<br/>\n"
+                }
+              ],
+              "apartadosHijos": []
+            },
+            {
+              "id": 109,
+              "nombre": "Sustancias radiactivas",
+              "titulo": "3.4.5 Sustancias radiactivas",
+              "orden": 5,
+              "elementos": [
+                {
+                  "nombre": "",
+                  "tipo": "template",
+                  "content": "<p>En esta actividad ¿se utilizan Sustancias Radiactivas?</p><br/>\n"
+                },
+                {
+                  "nombre": "sustanciasRadiactivas",
+                  "tipo": "radio",
+                  "content": "<p>Elige opción: <i>Sí</i></p><br/>\n"
+                }
+              ],
+              "apartadosHijos": []
+            }
+          ]
+        },
+        {
+          "id": 110,
+          "nombre": "Datos referentes a los agentes biológicos, Sustancias Químicas Peligrosas , Sustancias Radiactivas y/o Nanopartículas",
+          "titulo": "3.5 Datos referentes a los agentes biológicos, Sustancias Químicas Peligrosas , Sustancias Radiactivas y/o Nanopartículas",
+          "orden": 5,
+          "elementos": [
+            {
+              "nombre": "",
+              "tipo": "template",
+              "content": "La clasificación del tipo de los agentes biológicos a los que esté o pueda estar expuesto el personal se hace de acuerdo con la tabla y criterios de clasificación contenidos en el <a href='https://www.boe.es/buscar/act.php?id=BOE-A-1997-11144&p=19980330&tn=1#anii' target='_blank'>anexo II del Real Decreto 664/1997</a> y sus actualizaciones.<br><br>Si un agente no consta en la tabla se deberá estimar su riesgo de infección teniendo en cuenta las siguientes definiciones:<br><br><ul><li><b>Grupo 1:</b> aquél que resulta poco probable que cause una enfermedad en el ser humano, los animales y/o el medio ambiente.</li><li><b>Grupo 2:</b> aquél que puede causar una enfermedad en el ser humano, los animales y/o el medio ambiente y puede suponer un peligro para las personas expuestas, pero es poco probable que se propague a la colectividad y existe una profilaxis o un tratamiento eficaz.</li><li><b>Grupo 3:</b> aquél que puede causar una enfermedad grave en el ser humano, los animales y/o el medio ambiente y presenta un serio peligro para las personas expuestas, con riesgo de que se propague a la colectividad y existe una profilaxis o un tratamiento eficaz.</li><li><b>Grupo 4:</b> aquél que causa una enfermedad grave en el ser humano, los animales y/o el medio ambiente, supone un serio peligro para las personas expuestas, con muchas probabilidades de que se propague a la colectividad y sin que exista una profilaxis o un tratamiento eficaz.</li></ul>En caso de duda entre dos grupos deberá clasificarse en el grupo de <b>peligrosidad superior</b>.<br/>\n"
+            }
+          ],
+          "apartadosHijos": [
+            {
+              "id": 111,
+              "nombre": "Microorganismos/Parásitos",
+              "titulo": "3.5.1 Microorganismos/Parásitos",
+              "orden": 1,
+              "elementos": [
+                {
+                  "nombre": "",
+                  "tipo": "template",
+                  "content": "* Notas adicionales: <strong>A</strong>: Posibles efectos alérgicos; <strong>D</strong>: Lista de trabajadores expuestos debe conservarse; <strong>T</strong>: Producción de tóxinas; <strong>V</strong>: Vacuna eficaz disponible<br/>\n"
+                }
+              ],
+              "apartadosHijos": []
+            },
+            {
+              "id": 112,
+              "nombre": "Cultivos celulares",
+              "titulo": "3.5.2 Cultivos celulares",
+              "orden": 2,
+              "elementos": [],
+              "apartadosHijos": []
+            },
+            {
+              "id": 113,
+              "nombre": "Material biológico",
+              "titulo": "3.5.3 Material biológico",
+              "orden": 3,
+              "elementos": [],
+              "apartadosHijos": []
+            },
+            {
+              "id": 114,
+              "nombre": "Organismo modificado genéticamente",
+              "titulo": "3.5.4 Organismo modificado genéticamente",
+              "orden": 4,
+              "elementos": [],
+              "apartadosHijos": []
+            },
+            {
+              "id": 115,
+              "nombre": "Sustancias químicas peligrosas",
+              "titulo": "3.5.5 Sustancias químicas peligrosas",
+              "orden": 5,
+              "elementos": [
+                {
+                  "nombre": "",
+                  "tipo": "template",
+                  "content": "<p>La información aportada debe estar contenida en la ficha de datos de seguridad de los productos actualizada según el Reglamento 1272/2008 (CLP)</p><br/>\n"
+                },
+                {
+                  "nombre": "",
+                  "tipo": "template",
+                  "content": "<p>* <b>Clasificación</b>: Clasificación según el Reglamento CLP Frases H (Indicar el significado correspondiente)</p><p>* <b>Epis disponibles</b>: EPIs disponibles (equipos de protección individual</p><p>* <b>Medidas de protección</b>: Medidas de protección colectiva y minimización de riesgos a terceros</p><br/>\n"
+                },
+                {
+                  "nombre": "",
+                  "tipo": "template",
+                  "content": "Nota: recuerde que hay que aportar copia de la ficha técnica en el apartado '5.5 Documentación adicional' para que quede archivada junto con la memoria del proyecto.<br/>\n"
+                }
+              ],
+              "apartadosHijos": []
+            },
+            {
+              "id": 116,
+              "nombre": "Sustancias radiactivas, equipo radiológico, instalación radiactiva",
+              "titulo": "3.5.6 Sustancias radiactivas, equipo radiológico, instalación radiactiva",
+              "orden": 6,
+              "elementos": [],
+              "apartadosHijos": []
+            }
+          ]
+        },
+        {
+          "id": 117,
+          "nombre": "Frecuencia y periodicidad de uso",
+          "titulo": "3.6 Frecuencia y periodicidad de uso",
+          "orden": 6,
+          "elementos": [
+            {
+              "nombre": "",
+              "tipo": "template",
+              "content": "<p>Describir a continuación la frecuencia de uso de los agentes biológicos, OMG, sustancias químicas peligrosas, sustancias radiactivas y/o nanopartículas especificados, es decir, número de veces al día o a la semana que se accederá a la muestra para manipulación, cultivo etc., duración de esa manipulación, y si esa acción se repetirá de forma periódica (por ejemplo número de veces a la semana o al mes, número de meses al año etc).</p><br/>\n"
+            },
+            {
+              "nombre": "frecuenciaPeriodicidad",
+              "tipo": "textarea",
+              "content": "<p>Describe: <i>dfg</i></p><br/>\n"
+            }
+          ],
+          "apartadosHijos": []
+        },
+        {
+          "id": 118,
+          "nombre": "Trayectoria completa de los agentes biológicos, OMG, Sustancias Químicas Peligrosas , Sustancias Radiactivas y/o Nanopartículas",
+          "titulo": "3.7 Trayectoria completa de los agentes biológicos, OMG, Sustancias Químicas Peligrosas , Sustancias Radiactivas y/o Nanopartículas",
+          "orden": 7,
+          "elementos": [
+            {
+              "nombre": "",
+              "tipo": "template",
+              "content": "<p>Describir a continuación el recorrido que siguen los agentes biológicos, OMG, Sustancias Químicas Peligrosas , Sustancias Radiactivas y/o Nanopartícula desde su obtención hasta su eliminación:</p><br/>\n"
+            },
+            {
+              "nombre": "mododeobtención",
+              "tipo": "textarea",
+              "content": "<p>Modo de obtención: <i>dfg</i></p><br/>\n"
+            },
+            {
+              "nombre": "transporte",
+              "tipo": "textarea",
+              "content": "<p>Transporte: <i>dfg</i></p><br/>\n"
+            },
+            {
+              "nombre": "recepcion",
+              "tipo": "textarea",
+              "content": "<p>Recepción: <i>dfg</i></p><br/>\n"
+            },
+            {
+              "nombre": "almacenamiento",
+              "tipo": "textarea",
+              "content": "<p>Almacenamiento: <i>dfg</i></p><br/>\n"
+            },
+            {
+              "nombre": "eliminacion",
+              "tipo": "textarea",
+              "content": "<p>Eliminación: <i>dfg</i></p><br/>\n"
+            }
+          ],
+          "apartadosHijos": []
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "nombre": "4. ASPECTOS ÉTICOS ESPECÍFICOS",
+      "orden": 4,
+      "apartados": [
+        {
+          "id": 119,
+          "nombre": "Evaluación del riesgo",
+          "titulo": "4.1 Evaluación del riesgo",
+          "orden": 1,
+          "elementos": [],
+          "apartadosHijos": [
+            {
+              "id": 120,
+              "nombre": "Nivel de riesgo",
+              "titulo": "4.1.1 Nivel de riesgo",
+              "orden": 1,
+              "elementos": [
+                {
+                  "nombre": "",
+                  "tipo": "template",
+                  "content": "<p>Señalar el nivel de riesgo global de la actividad. En caso de manejo de varios agentes de distinto nivel de riesgo considérese el de nivel superior</p><br/>\n"
+                },
+                {
+                  "nombre": "nivelRiesgo",
+                  "tipo": "radio",
+                  "content": "<p>Elige opción: <i>Nivel III: Riesgo individual elevado, riesgo poblacional bajo. Agentes patógenos que suelen provocar enfermedades humanas o animales graves, pero que de ordinario no se propagan de un individuo a otro. Existen medidas preventivas y terapéuticas eficaces.</i></p><br/>\n"
+                }
+              ],
+              "apartadosHijos": []
+            },
+            {
+              "id": 121,
+              "nombre": "Características del riesgo de los agentes biológicos y/o material biológico, Sustancias Químicas Peligrosas , Sustancias Radiactivas y/o Nanopartículas",
+              "titulo": "4.1.2 Características del riesgo de los agentes biológicos y/o material biológico, Sustancias Químicas Peligrosas , Sustancias Radiactivas y/o Nanopartículas",
+              "orden": 2,
+              "elementos": [
+                {
+                  "nombre": "",
+                  "tipo": "template",
+                  "content": "<p>Los agentes biológicos, material biológico, Sustancias Químicas Peligrosas , Sustancias Radiactivas y/o Nanopartículas que se utilizan implican algún tipo de efecto potencialmente nocivo?</p><br/>\n"
+                },
+                {
+                  "nombre": "agentesBiologicos",
+                  "tipo": "radio",
+                  "content": "<p>Elige opción: <i>Sí</i></p><br/>\n"
+                },
+                {
+                  "nombre": "grupoDiana",
+                  "tipo": "multicheckbox",
+                  "content": "<p>Grupo diana: <i>Ser humano</i></p><br/>\n"
+                },
+                {
+                  "nombre": "",
+                  "tipo": "template",
+                  "content": "Tipo de efecto nocivo<br/>\n"
+                },
+                {
+                  "nombre": "efectoNocivo",
+                  "tipo": "multicheckbox",
+                  "content": "<p>Tipo: <i>Tóxico</i></p><br/>\n"
+                }
+              ],
+              "apartadosHijos": []
+            },
+            {
+              "id": 122,
+              "nombre": "Características del riesgo de los OMG",
+              "titulo": "4.1.3 Características del riesgo de los OMG",
+              "orden": 3,
+              "elementos": [],
+              "apartadosHijos": []
+            },
+            {
+              "id": 123,
+              "nombre": "Efectos nocivos que puedan derivarse del uso de agentes, material biológico, Sustancias Químicas Peligrosas , Sustancias Radiactivas y/o Nanopartículas",
+              "titulo": "4.1.4 Efectos nocivos que puedan derivarse del uso de agentes, material biológico, Sustancias Químicas Peligrosas , Sustancias Radiactivas y/o Nanopartículas",
+              "orden": 4,
+              "elementos": [
+                {
+                  "nombre": "",
+                  "tipo": "template",
+                  "content": "<p>Describir brevemente la enfermedad o efectos nocivos que puedan derivarse del uso de agentes y/o material biológico, Sustancias Químicas Peligrosas , Sustancias Radiactivas y/o Nanopartículas</p><br/>\n"
+                },
+                {
+                  "nombre": "efectosNocivos",
+                  "tipo": "textarea",
+                  "content": "<p>Describir: <i>dfgd</i></p><br/>\n"
+                }
+              ],
+              "apartadosHijos": []
+            },
+            {
+              "id": 124,
+              "nombre": "Tratamiento profiláctico disponible",
+              "titulo": "4.1.5 Tratamiento profiláctico disponible",
+              "orden": 5,
+              "elementos": [
+                {
+                  "nombre": "",
+                  "tipo": "template",
+                  "content": "<p>¿Existe vacuna eficaz o tratamiento profiláctico disponible?</p><br/>\n"
+                },
+                {
+                  "nombre": "vacunaEficaz",
+                  "tipo": "radio",
+                  "content": "<p>Elige opción: <i>Sí</i></p><br/>\n"
+                },
+                {
+                  "nombre": "especificarVacunaEficaz",
+                  "tipo": "textarea",
+                  "content": "<p>Especificar: <i>dfg</i></p><br/>\n"
+                }
+              ],
+              "apartadosHijos": []
+            }
+          ]
+        },
+        {
+          "id": 125,
+          "nombre": "Medidas técnicas de seguridad",
+          "titulo": "4.2 Medidas técnicas de seguridad",
+          "orden": 2,
+          "elementos": [],
+          "apartadosHijos": [
+            {
+              "id": 126,
+              "nombre": "Lugar en el que se realizará el manejo de agentes biológicos, OMG, Sustancias Químicas Peligrosas , Sustancias Radiactivas y/o Nanopartículas",
+              "titulo": "4.2.1 Lugar en el que se realizará el manejo de agentes biológicos, OMG, Sustancias Químicas Peligrosas , Sustancias Radiactivas y/o Nanopartículas",
+              "orden": 1,
+              "elementos": [
+                {
+                  "nombre": "",
+                  "tipo": "template",
+                  "content": "<p>La manipulación de agentes biológicos o materiales susceptibles de contenerlos requiere unas condiciones específicas del lugar de trabajo acordes con el grado de peligrosidad del agente y nivel de riesgo que garanticen la seguridad.<br>El tipo de laboratorio debe ser adecuado al nivel de riesgo. En caso de exposición a más de un agente biológico se tendrá en cuenta <b>el de mayor riesgo</b>.</p><ul><li>Nivel de contención C1: Laboratorio básico</li><li>Nivel de contención C2: Laboratorio básico con cabina de seguridad biológica u otros dispositivos apropiados de protección personal o contención física.</li><li>Nivel de contención C3: Laboratorio restringido con cabina de seguridad biológica u otros dispositivos apropiados de protección personal o contención física</li><li>Nivel de contención C4: Laboratorio estanco de contención máxima</li></ul><p>Para más información sobre medidas y niveles de contención consultar el <b><a href='https://boe.es/buscar/act.php?id=BOE-A-1997-11144&p=19980330&tn=1#anv' target='_blank'>Anexo V del RD 664-97</a></b>.</p><br/>\n"
+                }
+              ],
+              "apartadosHijos": [
+                {
+                  "id": 127,
+                  "nombre": "Laboratorio de la Universidad",
+                  "titulo": "4.2.1.1 Laboratorio de la Universidad",
+                  "orden": 1,
+                  "elementos": [
+                    {
+                      "nombre": "",
+                      "tipo": "template",
+                      "content": "<p>A continuación especificar en qué local de la Universidad se realizarán las tareas con agentes, material biológico, OMG, Sustancias Químicas Peligrosas , Sustancias Radiactivas y/o Nanopartículas</p><br/>\n"
+                    },
+                    {
+                      "nombre": "laboratorioLocalTable",
+                      "tipo": "table-crud",
+                      "content": "[[{\"nombre\":\"Código Patrimonial\",\"tipo\":null,\"content\":\"dfg\"},{\"nombre\":\"Nivel contención\",\"tipo\":null,\"content\":\"C2\"},{\"nombre\":\"Ubicación\",\"tipo\":null,\"content\":\"dfgd\"},{\"nombre\":\"Certificado idoneidad\",\"tipo\":null,\"content\":\"No\"},{\"nombre\":\"No. Reg. Servicio Prevención\",\"tipo\":null,\"content\":\"dfgd\"},{\"nombre\":\"Fecha\",\"tipo\":null,\"content\":\"07/10/2021\"}]]"
+                    }
+                  ],
+                  "apartadosHijos": [
+                    {
+                      "id": 128,
+                      "nombre": "Medidas de contención",
+                      "titulo": "4.2.1.1.1 Medidas de contención",
+                      "orden": 1,
+                      "elementos": [
+                        {
+                          "nombre": "",
+                          "tipo": "template",
+                          "content": "<p>El lugar de trabajo se encontrará separado de toda actividad que se desarrolle en el mismo edificio (Exigencias según la Guía del <b>R.D.664/97</b>)</p><br/>\n"
+                        },
+                        {
+                          "nombre": "lugarTrabajoSeparado",
+                          "tipo": "radio",
+                          "content": "<p>Elige opción: <i>Sí</i></p><br/>\n"
+                        },
+                        {
+                          "nombre": "observaciones_lugarTrabajoSeparado",
+                          "tipo": "textarea",
+                          "content": "<p>Observaciones: </p><br/>\n"
+                        },
+                        {
+                          "nombre": "",
+                          "tipo": "template",
+                          "content": "<p>El aire introducido y extraído del lugar de trabajo se filtrará mediante la utilización de filtros de alta eficacia para partículas en elaire (HEPA) ode forma similar.(Exigencias según la Guía del <b>R.D. 664/97:No</b>)</p><br/>\n"
+                        },
+                        {
+                          "nombre": "filtroAltaEficacia",
+                          "tipo": "radio",
+                          "content": "<p>Elige opción: <i>Sí</i></p><br/>\n"
+                        },
+                        {
+                          "nombre": "observaciones_filtroAltaEficacia",
+                          "tipo": "textarea",
+                          "content": "<p>Observaciones: </p><br/>\n"
+                        },
+                        {
+                          "nombre": "",
+                          "tipo": "template",
+                          "content": "<p>Solamente se permitirá el acceso al personal designado. (Exigencias según la Guía del <b>R.D. 664/97</b>:Aconsejable.)</p><br/>\n"
+                        },
+                        {
+                          "nombre": "accesoPersonal",
+                          "tipo": "radio",
+                          "content": "<p>Elige opción: <i>Sí</i></p><br/>\n"
+                        },
+                        {
+                          "nombre": "observaciones_accesoPersonal",
+                          "tipo": "textarea",
+                          "content": "<p>Observaciones: </p><br/>\n"
+                        },
+                        {
+                          "nombre": "",
+                          "tipo": "template",
+                          "content": "<p>El lugar de trabajo deberá poder precintarse para permitir su desinfección.(Exigencias según la Guía del <b>R.D. 664/97</b>:No)</p><br/>\n"
+                        },
+                        {
+                          "nombre": "lugarTrabajo",
+                          "tipo": "radio",
+                          "content": "<p>Elige opción: <i>Sí</i></p><br/>\n"
+                        },
+                        {
+                          "nombre": "observaciones_lugarTrabajo",
+                          "tipo": "textarea",
+                          "content": "<p>Observaciones: </p><br/>\n"
+                        },
+                        {
+                          "nombre": "",
+                          "tipo": "template",
+                          "content": "<p>Procedimientos de desinfección especificados. (Exigencias según la Guía del <b>R.D. 664/97</b>:Si)</p><br/>\n"
+                        },
+                        {
+                          "nombre": "procedimientosDesinfeccion",
+                          "tipo": "radio",
+                          "content": "<p>Elige opción: <i>Sí</i></p><br/>\n"
+                        },
+                        {
+                          "nombre": "observaciones_procedimientosDesinfeccion",
+                          "tipo": "textarea",
+                          "content": "<p>Observaciones: </p><br/>\n"
+                        },
+                        {
+                          "nombre": "",
+                          "tipo": "template",
+                          "content": "<p>El lugar de trabajo se mantendrá con una presión negativa respecto a la presión atmosférica. (Exigencias según la Guía del <b>R.D. 664/97</b>:Si)</p><br/>\n"
+                        },
+                        {
+                          "nombre": "presionNegativa",
+                          "tipo": "radio",
+                          "content": "<p>Elige opción: <i>Sí</i></p><br/>\n"
+                        },
+                        {
+                          "nombre": "observaciones_presionNegativa",
+                          "tipo": "textarea",
+                          "content": "<p>Observaciones: </p><br/>\n"
+                        },
+                        {
+                          "nombre": "",
+                          "tipo": "template",
+                          "content": "<p>Control eficiente de vectores, por ejemplo, de roedores e insectos. (Exigencias según la Guía del <b>R.D. 664/97</b>:Aconsejable)</p><br/>\n"
+                        },
+                        {
+                          "nombre": "roedoresInsectos",
+                          "tipo": "radio",
+                          "content": "<p>Elige opción: <i>No</i></p><br/>\n"
+                        },
+                        {
+                          "nombre": "observaciones_roedoresInsectos",
+                          "tipo": "textarea",
+                          "content": "<p>Observaciones: </p><br/>\n"
+                        },
+                        {
+                          "nombre": "",
+                          "tipo": "template",
+                          "content": "<p>Superficies impermeables al agua y de fácil limpieza.(Exigencias según la Guía del <b>R.D. 664/97</b>:Sí, para el banco de pruebas o mesa de trabajo)</p><br/>\n"
+                        },
+                        {
+                          "nombre": "superficiesImpermeables",
+                          "tipo": "radio",
+                          "content": "<p>Elige opción: <i>No</i></p><br/>\n"
+                        },
+                        {
+                          "nombre": "observaciones_superficiesImpermeables",
+                          "tipo": "textarea",
+                          "content": "<p>Observaciones: </p><br/>\n"
+                        },
+                        {
+                          "nombre": "",
+                          "tipo": "template",
+                          "content": "<p>Superficies resistentes a ácidos, álcalis, disolventes y desinfectantes.(Exigencias según la Guía del <b>R.D. 664/97</b>:Aconsejable)</p><br/>\n"
+                        },
+                        {
+                          "nombre": "superficiesResistentes",
+                          "tipo": "radio",
+                          "content": "<p>Elige opción: <i>No</i></p><br/>\n"
+                        },
+                        {
+                          "nombre": "observaciones_superficiesResistentes",
+                          "tipo": "textarea",
+                          "content": "<p>Observaciones: </p><br/>\n"
+                        },
+                        {
+                          "nombre": "",
+                          "tipo": "template",
+                          "content": "<p>Almacenamiento de seguridad para agentes biológicos.(Exigencias según la Guía del <b>R.D. 664/97</b>:Si)</p><br/>\n"
+                        },
+                        {
+                          "nombre": "almacenamientoSeguridad",
+                          "tipo": "radio",
+                          "content": "<p>Elige opción: <i>No</i></p><br/>\n"
+                        },
+                        {
+                          "nombre": "observaciones_almacenamientoSeguridad",
+                          "tipo": "textarea",
+                          "content": "<p>Observaciones: </p><br/>\n"
+                        },
+                        {
+                          "nombre": "",
+                          "tipo": "template",
+                          "content": "<p>Se instalará una ventanilla de observación o un dispositivo alternativo en las zonas de manera que se pueda ver a sus ocupantes.(Exigenciassegún la Guía del <b>R.D. 664/97</b>:Aconsejable)</p><br/>\n"
+                        },
+                        {
+                          "nombre": "ventanillaObservacion",
+                          "tipo": "radio",
+                          "content": "<p>Elige opción: <i>No</i></p><br/>\n"
+                        },
+                        {
+                          "nombre": "observaciones_ventanillaObservacion",
+                          "tipo": "textarea",
+                          "content": "<p>Observaciones: </p><br/>\n"
+                        },
+                        {
+                          "nombre": "",
+                          "tipo": "template",
+                          "content": "<p>Laboratorio con equipo propio.(Exigencias según la Guía del <b>R.D. 664/97</b>:No)</p><br/>\n"
+                        },
+                        {
+                          "nombre": "laboratorioEquipo",
+                          "tipo": "radio",
+                          "content": "<p>Elige opción: <i>No</i></p><br/>\n"
+                        },
+                        {
+                          "nombre": "observaciones_laboratorioEquipo",
+                          "tipo": "textarea",
+                          "content": "<p>Observaciones: </p><br/>\n"
+                        },
+                        {
+                          "nombre": "",
+                          "tipo": "template",
+                          "content": "<p>El material infectado, animales incluidos, deberá manejarse en una cabina de seguridad biológica o en un aislador u otra contenciónapropiada.(Exigencias según la <b>Guía del R.D. 664/97</b>:cuando proceda)</p><br/>\n"
+                        },
+                        {
+                          "nombre": "materialInfectado",
+                          "tipo": "radio",
+                          "content": "<p>Elige opción: <i>No</i></p><br/>\n"
+                        },
+                        {
+                          "nombre": "observaciones_materialInfectado",
+                          "tipo": "textarea",
+                          "content": "<p>Observaciones: </p><br/>\n"
+                        },
+                        {
+                          "nombre": "",
+                          "tipo": "template",
+                          "content": "<p>Incinerador para destrucción de animales muertos.(Exigencias según la <b>Guía del R.D. 664/97</b>:Aconsejable)</p><br/>\n"
+                        },
+                        {
+                          "nombre": "animalesMuertos",
+                          "tipo": "radio",
+                          "content": "<p>Elige opción: <i>No</i></p><br/>\n"
+                        },
+                        {
+                          "nombre": "observaciones_animalesMuertos",
+                          "tipo": "textarea",
+                          "content": "<p>Observaciones: </p><br/>\n"
+                        }
+                      ],
+                      "apartadosHijos": []
+                    },
+                    {
+                      "id": 129,
+                      "nombre": "Equipos de seguridad",
+                      "titulo": "4.2.1.1.2 Equipos de seguridad",
+                      "orden": 2,
+                      "elementos": [
+                        {
+                          "nombre": "",
+                          "tipo": "template",
+                          "content": "<p>Se dispone de sistemas mecánicos de pipeteo</p><br/>\n"
+                        },
+                        {
+                          "nombre": "pipeteo",
+                          "tipo": "radio",
+                          "content": "<p>Elige opción: <i>No</i></p><br/>\n"
+                        },
+                        {
+                          "nombre": "observaciones_pipeteo",
+                          "tipo": "textarea",
+                          "content": "<p>Observaciones: </p><br/>\n"
+                        },
+                        {
+                          "nombre": "",
+                          "tipo": "template",
+                          "content": "<p>Se dispone de CSB adecuada a la clase de riesgo</p><br/>\n"
+                        },
+                        {
+                          "nombre": "claseRiesgo",
+                          "tipo": "radio",
+                          "content": "<p>Elige opción: <i>No</i></p><br/>\n"
+                        },
+                        {
+                          "nombre": "observaciones_claseRiesgo",
+                          "tipo": "textarea",
+                          "content": "<p>Observaciones: </p><br/>\n"
+                        },
+                        {
+                          "nombre": "",
+                          "tipo": "template",
+                          "content": "<p>Se dispone de equipos de protección individual, como guantes impermeables para la manipulación de material potencialmenteinfeccioso en el interior de las CSB y guantes, gafas y mascarilla para trabajos con material infeccioso realizados en el banco de trabajoy en los que se puedan generar aerosoles, salpicaduras o proyecciones</p><br/>\n"
+                        },
+                        {
+                          "nombre": "equiposProteccion",
+                          "tipo": "radio",
+                          "content": "<p>Elige opción: <i>No</i></p><br/>\n"
+                        },
+                        {
+                          "nombre": "observaciones_equiposProteccion",
+                          "tipo": "textarea",
+                          "content": "<p>Observaciones: </p><br/>\n"
+                        }
+                      ],
+                      "apartadosHijos": []
+                    },
+                    {
+                      "id": 130,
+                      "nombre": "Buenas prácticas de laboratorio",
+                      "titulo": "4.2.1.1.3 Buenas prácticas de laboratorio",
+                      "orden": 3,
+                      "elementos": [
+                        {
+                          "nombre": "",
+                          "tipo": "template",
+                          "content": "<p>Las puertas del laboratorio están cerradas y el acceso al laboratorio se limita, a juicio del responsable del mismo, cuando losexperimentos se hallan en marcha</p><br/>\n"
+                        },
+                        {
+                          "nombre": "puertasLaboratorio",
+                          "tipo": "radio",
+                          "content": "<p>Elige opción: <i>No</i></p><br/>\n"
+                        },
+                        {
+                          "nombre": "observaciones_puertasLaboratorio",
+                          "tipo": "textarea",
+                          "content": "<p>Observaciones: </p><br/>\n"
+                        },
+                        {
+                          "nombre": "",
+                          "tipo": "template",
+                          "content": "<p>Las superficies de trabajo se descontaminan al menos una vez al día, al final de la jornada de trabajo y después de cualquier derramede material biológico</p><br/>\n"
+                        },
+                        {
+                          "nombre": "superficiesTrabajo",
+                          "tipo": "radio",
+                          "content": "<p>Elige opción: <i>No</i></p><br/>\n"
+                        },
+                        {
+                          "nombre": "observaciones_superficiesTrabajo",
+                          "tipo": "textarea",
+                          "content": "<p>Observaciones: </p><br/>\n"
+                        },
+                        {
+                          "nombre": "",
+                          "tipo": "template",
+                          "content": "<p>Los residuos cortantes o punzantes se recogen en contenedores adecuados resistentes</p><br/>\n"
+                        },
+                        {
+                          "nombre": "residuosCortantes",
+                          "tipo": "radio",
+                          "content": "<p>Elige opción: <i>No</i></p><br/>\n"
+                        },
+                        {
+                          "nombre": "observaciones_residuosCortantes",
+                          "tipo": "textarea",
+                          "content": "<p>Observaciones: </p><br/>\n"
+                        },
+                        {
+                          "nombre": "",
+                          "tipo": "template",
+                          "content": "<p>Las técnicas de manipulación se efectúan de manera que se minimice la generación de aerosoles y salpicaduras</p><br/>\n"
+                        },
+                        {
+                          "nombre": "generacionAerosoles",
+                          "tipo": "radio",
+                          "content": "<p>Elige opción: <i>No</i></p><br/>\n"
+                        },
+                        {
+                          "nombre": "observaciones_generacionAerosoles",
+                          "tipo": "textarea",
+                          "content": "<p>Observaciones: </p><br/>\n"
+                        },
+                        {
+                          "nombre": "",
+                          "tipo": "template",
+                          "content": "<p>La recogida y limpieza de derrames se realiza de forma segura según procedimiento escrito</p><br/>\n"
+                        },
+                        {
+                          "nombre": "derrames",
+                          "tipo": "radio",
+                          "content": "<p>Elige opción: <i>No</i></p><br/>\n"
+                        },
+                        {
+                          "nombre": "observaciones_derrames",
+                          "tipo": "textarea",
+                          "content": "<p>Observaciones: </p><br/>\n"
+                        },
+                        {
+                          "nombre": "",
+                          "tipo": "template",
+                          "content": "<p>No está permitido comer, beber, fumar, maquillarse o llevar lentillas en el laboratorio</p><br/>\n"
+                        },
+                        {
+                          "nombre": "prohibido",
+                          "tipo": "radio",
+                          "content": "<p>Elige opción: <i>No</i></p><br/>\n"
+                        },
+                        {
+                          "nombre": "observaciones_prohibido",
+                          "tipo": "textarea",
+                          "content": "<p>Observaciones: </p><br/>\n"
+                        },
+                        {
+                          "nombre": "",
+                          "tipo": "template",
+                          "content": "<p>Estará prohibido salir del laboratorio con la ropa de trabajo y con los equipos de protección puestos</p><br/>\n"
+                        },
+                        {
+                          "nombre": "salirLaboratorio",
+                          "tipo": "radio",
+                          "content": "<p>Elige opción: <i>No</i></p><br/>\n"
+                        },
+                        {
+                          "nombre": "observaciones_salirLaboratorio",
+                          "tipo": "textarea",
+                          "content": "<p>Observaciones: </p><br/>\n"
+                        },
+                        {
+                          "nombre": "",
+                          "tipo": "template",
+                          "content": "<p>La ropa de trabajo se guarda en distinto lugar que la ropa de calle</p><br/>\n"
+                        },
+                        {
+                          "nombre": "ropaCalle",
+                          "tipo": "radio",
+                          "content": "<p>Elige opción: <i>No</i></p><br/>\n"
+                        },
+                        {
+                          "nombre": "observaciones_ropaCalle",
+                          "tipo": "textarea",
+                          "content": "<p>Observaciones: </p><br/>\n"
+                        },
+                        {
+                          "nombre": "",
+                          "tipo": "template",
+                          "content": "<p>La recogida, manipulación, almacenamiento y el transporte de muestras, de material contaminado o de residuos se hace encontenedores específicos y con procedimientos adecuados</p><br/>\n"
+                        },
+                        {
+                          "nombre": "muestrasContaminadas",
+                          "tipo": "radio",
+                          "content": "<p>Elige opción: <i>No</i></p><br/>\n"
+                        },
+                        {
+                          "nombre": "observaciones_muestrasContaminadas",
+                          "tipo": "textarea",
+                          "content": "<p>Observaciones: </p><br/>\n"
+                        },
+                        {
+                          "nombre": "",
+                          "tipo": "template",
+                          "content": "<p>En la puerta de entrada del laboratorio está colocada la señal de peligro biológico</p><br/>\n"
+                        },
+                        {
+                          "nombre": "señalLaboratorio",
+                          "tipo": "radio",
+                          "content": "<p>Elige opción: <i>No</i></p><br/>\n"
+                        },
+                        {
+                          "nombre": "observaciones_señalLaboratorio",
+                          "tipo": "textarea",
+                          "content": "<p>Observaciones: </p><br/>\n"
+                        },
+                        {
+                          "nombre": "",
+                          "tipo": "template",
+                          "content": "<p>Los equipos del laboratorio se descontaminan después de finalizar el trabajo</p><br/>\n"
+                        },
+                        {
+                          "nombre": "equiposLaboratorio",
+                          "tipo": "radio",
+                          "content": "<p>Elige opción: <i>No</i></p><br/>\n"
+                        },
+                        {
+                          "nombre": "observaciones_equiposLaboratorio",
+                          "tipo": "textarea",
+                          "content": "<p>Observaciones: </p><br/>\n"
+                        },
+                        {
+                          "nombre": "",
+                          "tipo": "template",
+                          "content": "<p>Todo derrame o accidente que tenga como consecuencia la sobreexposición del personal a material infeccioso será comunicado al responsable de seguridad</p><br/>\n"
+                        },
+                        {
+                          "nombre": "responsableSeguridad",
+                          "tipo": "radio",
+                          "content": "<p>Elige opción: <i>No</i></p><br/>\n"
+                        },
+                        {
+                          "nombre": "observaciones_responsableSeguridad",
+                          "tipo": "textarea",
+                          "content": "<p>Observaciones: </p><br/>\n"
+                        },
+                        {
+                          "nombre": "",
+                          "tipo": "template",
+                          "content": "<p>Ningún material infeccioso sale del laboratorio sin descontaminar o en contenedor específico</p><br/>\n"
+                        },
+                        {
+                          "nombre": "salirLaboratorioInfeccioso",
+                          "tipo": "radio",
+                          "content": "<p>Elige opción: <i>No</i></p><br/>\n"
+                        },
+                        {
+                          "nombre": "observaciones_salirLaboratorioInfeccioso",
+                          "tipo": "textarea",
+                          "content": "<p>Observaciones: </p><br/>\n"
+                        },
+                        {
+                          "nombre": "",
+                          "tipo": "template",
+                          "content": "<p>Todas las técnicas que puedan producir aerosoles (centrifugación, mezclas, apertura de envases de materiales infecciosos a distintapresión, inserción de asas de siembra calientes en el cultivo, inyección violenta de fluidos, etc.) se realizan en una CSB</p><br/>\n"
+                        },
+                        {
+                          "nombre": "realizarCSB",
+                          "tipo": "radio",
+                          "content": "<p>Elige opción: <i>No</i></p><br/>\n"
+                        },
+                        {
+                          "nombre": "observaciones_realizarCSB",
+                          "tipo": "textarea",
+                          "content": "<p>Observaciones: </p><br/>\n"
+                        }
+                      ],
+                      "apartadosHijos": []
+                    },
+                    {
+                      "id": 131,
+                      "nombre": "Instalaciones",
+                      "titulo": "4.2.1.1.4 Instalaciones",
+                      "orden": 4,
+                      "elementos": [
+                        {
+                          "nombre": "",
+                          "tipo": "template",
+                          "content": "<p>Se dispone de vestuarios con taquillas para la ropa</p><br/>\n"
+                        },
+                        {
+                          "nombre": "disponeVestuarios",
+                          "tipo": "radio",
+                          "content": "<p>Elige opción: <i>No</i></p><br/>\n"
+                        },
+                        {
+                          "nombre": "observaciones_disponeVestuarios",
+                          "tipo": "textarea",
+                          "content": "<p>Observaciones: </p><br/>\n"
+                        },
+                        {
+                          "nombre": "",
+                          "tipo": "template",
+                          "content": "<p>En caso de ventanas practicables, éstas llevan protección frente a la entrada de insectos</p><br/>\n"
+                        },
+                        {
+                          "nombre": "ventanasPracticables",
+                          "tipo": "radio",
+                          "content": "<p>Elige opción: <i>No</i></p><br/>\n"
+                        },
+                        {
+                          "nombre": "observaciones_ventanasPracticables",
+                          "tipo": "textarea",
+                          "content": "<p>Observaciones: </p><br/>\n"
+                        },
+                        {
+                          "nombre": "",
+                          "tipo": "template",
+                          "content": "<p>Se dispone de espacio suficiente para el almacenamiento de materiales y reactivos</p><br/>\n"
+                        },
+                        {
+                          "nombre": "espacioAlmacenamiento",
+                          "tipo": "radio",
+                          "content": "<p>Elige opción: <i>No</i></p><br/>\n"
+                        },
+                        {
+                          "nombre": "observaciones_espacioAlmacenamiento",
+                          "tipo": "textarea",
+                          "content": "<p>Observaciones: </p><br/>\n"
+                        },
+                        {
+                          "nombre": "",
+                          "tipo": "template",
+                          "content": "<p>El laboratorio dispone de ventilación adecuada</p><br/>\n"
+                        },
+                        {
+                          "nombre": "ventilacion",
+                          "tipo": "radio",
+                          "content": "<p>Elige opción: <i>No</i></p><br/>\n"
+                        },
+                        {
+                          "nombre": "observaciones_ventilacion",
+                          "tipo": "textarea",
+                          "content": "<p>Observaciones: </p><br/>\n"
+                        },
+                        {
+                          "nombre": "",
+                          "tipo": "template",
+                          "content": "<p>El laboratorio dispone de iluminación adecuada (incluida la de emergencia)</p><br/>\n"
+                        },
+                        {
+                          "nombre": "iluminacion",
+                          "tipo": "radio",
+                          "content": "<p>Elige opción: <i>No</i></p><br/>\n"
+                        },
+                        {
+                          "nombre": "observaciones_iluminacion",
+                          "tipo": "textarea",
+                          "content": "<p>Observaciones: </p><br/>\n"
+                        },
+                        {
+                          "nombre": "",
+                          "tipo": "template",
+                          "content": "<p>El laboratorio cuenta con un botiquín: si/no. Observaciones-El laboratorio dispone de lavamanos y lavaojos</p><br/>\n"
+                        },
+                        {
+                          "nombre": "lavamanos",
+                          "tipo": "radio",
+                          "content": "<p>Elige opción: <i>No</i></p><br/>\n"
+                        },
+                        {
+                          "nombre": "observaciones_lavamanos",
+                          "tipo": "textarea",
+                          "content": "<p>Observaciones: </p><br/>\n"
+                        },
+                        {
+                          "nombre": "",
+                          "tipo": "template",
+                          "content": "<p>El laboratorio dispone de ducha de emergencia</p><br/>\n"
+                        },
+                        {
+                          "nombre": "ducha",
+                          "tipo": "radio",
+                          "content": "<p>Elige opción: <i>No</i></p><br/>\n"
+                        },
+                        {
+                          "nombre": "observaciones_ducha",
+                          "tipo": "textarea",
+                          "content": "<p>Observaciones: <i>sdfds</i></p><br/>\n"
+                        }
+                      ],
+                      "apartadosHijos": []
+                    }
+                  ]
+                },
+                {
+                  "id": 132,
+                  "nombre": "Otro centro o lugar ajeno a la Universidad",
+                  "titulo": "4.2.1.2 Otro centro o lugar ajeno a la Universidad",
+                  "orden": 2,
+                  "elementos": [
+                    {
+                      "nombre": "",
+                      "tipo": "template",
+                      "content": "<p>¿Las tareas con agentes biológicos, OMG, Sustancias Químicas Peligrosas , Sustancias Radiactivas y/o Nanopartículas o parte de ellas se realizan en dependencias de otro centro o lugar?</p><br/>\n"
+                    },
+                    {
+                      "nombre": "tareasAgentesBiologicos",
+                      "tipo": "radio",
+                      "content": "<p>Elige opción: <i>No</i></p><br/>\n"
+                    },
+                    {
+                      "nombre": "especificarAgenteBiologico",
+                      "tipo": "textarea",
+                      "content": "<p>Especificar: </p><br/>\n"
+                    },
+                    {
+                      "nombre": "",
+                      "tipo": "template",
+                      "content": "Justificar la necesidad de realizar las tareas en ese lugar<br/>\n"
+                    },
+                    {
+                      "nombre": "justificarTareas",
+                      "tipo": "textarea",
+                      "content": "<p>Justificar: </p><br/>\n"
+                    },
+                    {
+                      "nombre": "",
+                      "tipo": "template",
+                      "content": "Si dispone de acreditación indicar agencia y adjuntar copia<br/>\n"
+                    },
+                    {
+                      "nombre": "disponeAcreditacion",
+                      "tipo": "textarea",
+                      "content": "<p>Indicar: </p><br/>\n"
+                    },
+                    {
+                      "nombre": "fechaAcreditacion",
+                      "tipo": "datepicker",
+                      "content": "<p>Fecha de acreditación: <i></i></p><br/>\n"
+                    },
+                    {
+                      "nombre": "",
+                      "tipo": "template",
+                      "content": "<p>Se recuerda que el informe del CBE, sólo es válido para labores desarrolladas en Instalaciones de la Universidad, por personal de la Universidad o por cualquier otro que, en aplicación de la normativa vigente, desarrolle sus labores en la misma.NOTA: La instalación deberá cumplir con los requisitos de contención para AB, OMGs, SQP, SR o nanoparticulas y, en su caso, la autorización / comunicación correspondiente.</p><br/>\n"
+                    }
+                  ],
+                  "apartadosHijos": []
+                }
+              ]
+            },
+            {
+              "id": 133,
+              "nombre": "Sustitución",
+              "titulo": "4.2.2 Sustitución",
+              "orden": 2,
+              "elementos": [
+                {
+                  "nombre": "",
+                  "tipo": "template",
+                  "content": "¿Podría realizarse esta actividad de investigación con un agente/material biológico, Sustancias Químicas Peligrosas , Sustancias Radiactivas y/o Nanopartículas de riesgo inferior para la salud o el medio ambiente?<br/>\n"
+                },
+                {
+                  "nombre": "",
+                  "tipo": "template",
+                  "content": "Cuando la naturaleza de la actividad lo permita, el investigador debe evitar, teniendo en cuenta la información técnica y científica disponible, la utilización de materiales/agentes biológicos peligrosos mediante su sustitución por otros agentes que, en función de las condiciones de utilización, no sean peligrosos,  Sustancias Químicas Peligrosas , Sustancias Radiactivas y/o Nanopartículas para la seguridad o salud de los trabajadores y del medio ambiente, o lo sean en menor grado<b><a href='https://boe.es/buscar/act.php?id=BOE-A-1997-11144&p=19980330&tn=1#a5' target='_blank'>(Artículo 5 RD664/1997)</a></b>.<br/>\n"
+                },
+                {
+                  "nombre": "realizarseInvestigacion",
+                  "tipo": "radio",
+                  "content": "<p>Elige opción: <i>No</i></p><br/>\n"
+                },
+                {
+                  "nombre": "especificarRealizarseInvestigacion",
+                  "tipo": "textarea",
+                  "content": "<p>Especificar: <i>sfs</i></p><br/>\n"
+                }
+              ],
+              "apartadosHijos": []
+            },
+            {
+              "id": 134,
+              "nombre": "Reducción de riesgos",
+              "titulo": "4.2.3 Reducción de riesgos",
+              "orden": 3,
+              "elementos": [],
+              "apartadosHijos": [
+                {
+                  "id": 135,
+                  "nombre": "Control de la exposición",
+                  "titulo": "4.2.3.1 Control de la exposición",
+                  "orden": 1,
+                  "elementos": [
+                    {
+                      "nombre": "",
+                      "tipo": "template",
+                      "content": "<p>Además de para las personas que realizan las tareas con agentes biológicos , OMG,  Sustancias Químicas Peligrosas , Sustancias Radiactivas y/o Nanopartículas, ¿hay riesgo de exposición para otras personas?</p><br/>\n"
+                    },
+                    {
+                      "nombre": "riesgoExposicion",
+                      "tipo": "radio",
+                      "content": "<p>Elige opción: <i>No</i></p><br/>\n"
+                    },
+                    {
+                      "nombre": "",
+                      "tipo": "template",
+                      "content": "Especificar quiénes (equipo de mantenimiento, personal de limpieza etc.)<br/>\n"
+                    },
+                    {
+                      "nombre": "especificarQuienes",
+                      "tipo": "textarea",
+                      "content": "<p>Especificar: </p><br/>\n"
+                    }
+                  ],
+                  "apartadosHijos": []
+                },
+                {
+                  "id": 136,
+                  "nombre": "Medidas de reducción de la exposición",
+                  "titulo": "4.2.3.2 Medidas de reducción de la exposición",
+                  "orden": 2,
+                  "elementos": [
+                    {
+                      "nombre": "",
+                      "tipo": "template",
+                      "content": "<p>¿Se contemplan medidas para limitar y reducir al mínimo el número de personas expuestas?</p><br/>\n"
+                    },
+                    {
+                      "nombre": "limitarPersonasExpuestas",
+                      "tipo": "radio",
+                      "content": "<p>Elige opción: <i>No</i></p><br/>\n"
+                    },
+                    {
+                      "nombre": "especificarLimitar",
+                      "tipo": "textarea",
+                      "content": "<p>Especificar qué medidas o justificar en caso negativo: <i>sdfsd</i></p><br/>\n"
+                    }
+                  ],
+                  "apartadosHijos": []
+                },
+                {
+                  "id": 137,
+                  "nombre": "Medidas de protección",
+                  "titulo": "4.2.3.3 Medidas de protección",
+                  "orden": 3,
+                  "elementos": [
+                    {
+                      "nombre": "",
+                      "tipo": "template",
+                      "content": "<p>¿Se contemplan medidas seguras para la manipulación de los agentes biológicos, OMG, Sustancias Químicas Peligrosas , Sustancias Radiactivas y/o Nanopartículas?</p><br/>\n"
+                    },
+                    {
+                      "nombre": "medidasSeguras",
+                      "tipo": "radio",
+                      "content": "<p>Elige opción: <i>No</i></p><br/>\n"
+                    },
+                    {
+                      "nombre": "",
+                      "tipo": "template",
+                      "content": "Especificar las medidas o justificar por qué no se contemplan en caso negativo:<br/>\n"
+                    },
+                    {
+                      "nombre": "especificarLimitar",
+                      "tipo": "textarea",
+                      "content": "<p>Explica: <i>sdfsf</i></p><br/>\n"
+                    }
+                  ],
+                  "apartadosHijos": []
+                },
+                {
+                  "id": 138,
+                  "nombre": "Métodos de descontaminación/desinfección",
+                  "titulo": "4.2.3.4 Métodos de descontaminación/desinfección",
+                  "orden": 4,
+                  "elementos": [
+                    {
+                      "nombre": "",
+                      "tipo": "template",
+                      "content": "<p>¿Se aplican o contemplan métodos de descontaminación/desinfección del material contaminado?</p><br/>\n"
+                    },
+                    {
+                      "nombre": "metodosDesinfeccion",
+                      "tipo": "radio",
+                      "content": "<p>Elige opción: <i>No</i></p><br/>\n"
+                    },
+                    {
+                      "nombre": "",
+                      "tipo": "template",
+                      "content": "Especificar los métodos o justificar en caso negativo<br/>\n"
+                    },
+                    {
+                      "nombre": "especificarLimitar",
+                      "tipo": "textarea",
+                      "content": "<p>Explica: <i>sdfsf</i></p><br/>\n"
+                    }
+                  ],
+                  "apartadosHijos": []
+                },
+                {
+                  "id": 139,
+                  "nombre": "Gestión de residuos",
+                  "titulo": "4.2.3.5 Gestión de residuos",
+                  "orden": 5,
+                  "elementos": [
+                    {
+                      "nombre": "",
+                      "tipo": "template",
+                      "content": "<p>Con respecto a la gestión de residuos biológicos, OMGs, químicos y radiactivos, ¿conoce, aplica y tiene a su disposición el <a href='https://www.um.es/web/acti/contenido/servicios/radioproteccion-residuos/normas' target='_blank'>'Manual de Gestión de Residuos Peligrosos, Biológicos y Radiactivos de la Universidad'</a>?</p><br/>\n"
+                    },
+                    {
+                      "nombre": "manualGestionResiduos",
+                      "tipo": "radio",
+                      "content": "<p>Elige opción: <i>No</i></p><br/>\n"
+                    },
+                    {
+                      "nombre": "",
+                      "tipo": "template",
+                      "content": "<p>¿Dispone de alta como unidad productora de residuos peligrosos y biológicos en la UMU?</p><br/>\n"
+                    },
+                    {
+                      "nombre": "productoraResiduosPeligrosos",
+                      "tipo": "radio",
+                      "content": "<p>Elige opción: <i>No</i></p><br/>\n"
+                    },
+                    {
+                      "nombre": "",
+                      "tipo": "template",
+                      "content": "<p>¿Se contempla gestión externa de residuos peligrosos o biológicos?</p><br/>\n"
+                    },
+                    {
+                      "nombre": "gestionResiduos",
+                      "tipo": "radio",
+                      "content": "<p>Elige opción: <i>No</i></p><br/>\n"
+                    },
+                    {
+                      "nombre": "",
+                      "tipo": "template",
+                      "content": "Especificar gestión externa o justificar en caso positivo<br/>\n"
+                    },
+                    {
+                      "nombre": "residuosGenerar",
+                      "tipo": "multicheckbox",
+                      "content": "<p>Cuáles: <i></i></p><br/>\n"
+                    },
+                    {
+                      "nombre": "otrasTexto",
+                      "tipo": "textarea",
+                      "content": "<p>Otros. Especificar: </p><br/>\n"
+                    },
+                    {
+                      "nombre": "",
+                      "tipo": "template",
+                      "content": "<p>Un residuo peligroso es el que presenta una o varias de las siguientes características de peligrosidad: explosivo, cancerígeno, comburente, corrosivo, inflamable, infeccioso, irritante, tóxico, nocivo, mutagénico y/o ecotóxico. Si un residuo no presenta alguna de las anteriores características, no será considerado residuo peligroso y, por tanto, su gestión se realizará junto al resto de residuos urbanos.<br><br>Dentro de los residuos peligrosos que se producen en los laboratorios de docencia y de investigación de la UMU destacan los residuos de origen químico, residuos biosanitarios del grupo III o biológicos, residuos radiactivos y residuos de animales de experimentación <strong>(SANDACH)</strong>.<br><br>La gestión de los residuos peligrosos de la Universidad se realiza a través de la Sección de Radioprotección y Residuos del ACTI con una empresa de gestión externa.</p><br/>\n"
+                    }
+                  ],
+                  "apartadosHijos": []
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": 140,
+          "nombre": "Vigilancia y protección de la salud",
+          "titulo": "4.3 Vigilancia y protección de la salud",
+          "orden": 3,
+          "elementos": [
+            {
+              "nombre": "",
+              "tipo": "template",
+              "content": "<p>El/la investigador/a responsable con el apoyo del Servicio de Prevención está obligado a contemplar una política de vigilancia de la salud de las personas expuestas al riesgo biológico.<br>Las medidas de prevención sanitaria deberán ofrecerse antes de la exposición, durante y tras la finalización del trabajo así como cuando se haya detectado en alguna persona expuesta una infección o enfermedad que pueda deberse a la exposición a agentes biológicos <a href='https://www.boe.es/buscar/act.php?id=BOE-A-1997-11144&p=19980330&tn=1#a8' target='_blank'>(Artículo 8 RD664/1997)</a>.</p><br/>\n"
+            }
+          ],
+          "apartadosHijos": [
+            {
+              "id": 141,
+              "nombre": "Vacunación",
+              "titulo": "4.3.1 Vacunación",
+              "orden": 1,
+              "elementos": [
+                {
+                  "nombre": "",
+                  "tipo": "template",
+                  "content": "<p>¿Qué vacunación se ofrece al personal que manejará los agentes biológicos, OMG, Sustancias Químicas Peligrosas , Sustancias Radiactivas y/o Nanopartículas?</p><br/>\n"
+                },
+                {
+                  "nombre": "vacunacionCheck",
+                  "tipo": "multicheckbox",
+                  "content": "<p>Cuáles: <i>Tétanos</i></p><br/>\n"
+                },
+                {
+                  "nombre": "otrasTexto",
+                  "tipo": "textarea",
+                  "content": "<p>Especificar: </p><br/>\n"
+                },
+                {
+                  "nombre": "",
+                  "tipo": "template",
+                  "content": "Organismo sanitario responsable de la vacunación<br/>\n"
+                },
+                {
+                  "nombre": "organismoSanitario",
+                  "tipo": "textarea",
+                  "content": "<p>Organismo: <i>sdfs</i></p><br/>\n"
+                }
+              ],
+              "apartadosHijos": []
+            },
+            {
+              "id": 142,
+              "nombre": "Medidas especiales de protección",
+              "titulo": "4.3.2 Medidas especiales de protección",
+              "orden": 2,
+              "elementos": [
+                {
+                  "nombre": "",
+                  "tipo": "template",
+                  "content": "<p>¿Se contemplan medidas especiales de protección para las personas vulnerables expuestas que lo requieran? (ej. mujeres embarazadas, enfermos crónicos etc..)</p><br/>\n"
+                },
+                {
+                  "nombre": "medidasEspeciales",
+                  "tipo": "radio",
+                  "content": "<p>Elige opción: <i>No</i></p><br/>\n"
+                },
+                {
+                  "nombre": "",
+                  "tipo": "template",
+                  "content": "Especificar las medidas especiales de protección o justificar en caso negativo<br/>\n"
+                },
+                {
+                  "nombre": "especificar",
+                  "tipo": "textarea",
+                  "content": "<p>Explica: <i>sdfsdf</i></p><br/>\n"
+                }
+              ],
+              "apartadosHijos": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "nombre": "5. CUMPLIMIENTO DE LA DOCUMENTACIÓN",
+      "orden": 5,
+      "apartados": [
+        {
+          "id": 143,
+          "nombre": "Acreditaciones",
+          "titulo": "5.1 Acreditaciones",
+          "orden": 1,
+          "elementos": [
+            {
+              "nombre": "",
+              "tipo": "template",
+              "content": "Recuerde que debe aportar copia de todas las acreditaciones del equipo investigador para que queden archivadas junto con la memoria del proyecto.<br/>\n"
+            },
+            {
+              "nombre": "acreditaciones",
+              "tipo": "documento",
+              "content": "<p>Indicar: <i>Sí</i></p><br/>\n"
+            }
+          ],
+          "apartadosHijos": []
+        },
+        {
+          "id": 144,
+          "nombre": "Comunicación de uso de agentes biológicos, Sustancias Químicas Peligrosas, Sustancias Radiactivas y/o Nanopartículas y autorización para llevar a cabo utilización confinada de OMG",
+          "titulo": "5.2 Comunicación de uso de agentes biológicos, Sustancias Químicas Peligrosas, Sustancias Radiactivas y/o Nanopartículas y autorización para llevar a cabo utilización confinada de OMG",
+          "orden": 2,
+          "elementos": [],
+          "apartadosHijos": [
+            {
+              "id": 145,
+              "nombre": "Comunicación de uso de agentes biológicos, Sustancias Químicas Peligrosas, Sustancias Radiactivas y/o Nanopartículas",
+              "titulo": "5.2.1 Comunicación de uso de agentes biológicos, Sustancias Químicas Peligrosas, Sustancias Radiactivas y/o Nanopartículas",
+              "orden": 1,
+              "elementos": [
+                {
+                  "nombre": "",
+                  "tipo": "template",
+                  "content": "¿Se ha comunicado al Servicio de Prevención que se va a trabajar con agentes/material biológico, Sustancias Químicas Peligrosas, Sustancias Radiactivas y/o Nanopartículas?<br/>\n"
+                },
+                {
+                  "nombre": "",
+                  "tipo": "template",
+                  "content": "<p>La utilización de agentes biológicos del grupo 2, 3 ó 4 por primera vez en una actividad investigadora debe notificarse.</p><p>Se efectuará una nueva notificación siempre que se introduzcan cambios sustanciales en algún proceso de trabajo cuyas repercusiones en las condiciones de seguridad y salud invaliden la notificación anterior <b><a href='https://www.boe.es/buscar/act.php?id=BOE-A-1997-11144&p=19980330&tn=1#a10' target='_blank'>(Artículo 10 RD664/1997)</a></b>.</p><br/>\n"
+                },
+                {
+                  "nombre": "comunicacionAgentesBiologicos",
+                  "tipo": "documento",
+                  "content": ""
+                },
+                {
+                  "nombre": "fecha",
+                  "tipo": "datepicker",
+                  "content": "<p>Fecha: <i></i></p><br/>\n"
+                },
+                {
+                  "nombre": "especificarNegativo",
+                  "tipo": "textarea",
+                  "content": "<p>Justificación: <i>sdfs</i></p><br/>\n"
+                }
+              ],
+              "apartadosHijos": []
+            },
+            {
+              "id": 146,
+              "nombre": "Autorización para llevar a cabo utilización confinada de OMG",
+              "titulo": "5.2.2 Autorización para llevar a cabo utilización confinada de OMG",
+              "orden": 2,
+              "elementos": [
+                {
+                  "nombre": "",
+                  "tipo": "template",
+                  "content": "¿La instalación dispone de autorización para el uso confinado de OMG?<br/>\n"
+                },
+                {
+                  "nombre": "autorizacionOMG",
+                  "tipo": "documento",
+                  "content": ""
+                },
+                {
+                  "nombre": "fecha",
+                  "tipo": "datepicker",
+                  "content": "<p>Fecha: <i></i></p><br/>\n"
+                },
+                {
+                  "nombre": "especificarNegativo",
+                  "tipo": "textarea",
+                  "content": "<p>Justificación: <i>sfs</i></p><br/>\n"
+                },
+                {
+                  "nombre": "",
+                  "tipo": "template",
+                  "content": "<p>Las notificaciones tanto de autorización como de comunicación pueden realizarse a través de la página web del <a href='https://www.um.es/web/comision-etica-investigacion/comision-etica/cbe' target='_blank'>Comité de Bioseguridad en Experimentación</a> de la Universidad.</p><p>Puede consultarse más información sobre las notificaciones en la página web del <a href='https://www.um.es/web/comision-etica-investigacion/comision-etica/cbe' target='_blank'>Comité de Bioseguridad en Experimentación</a> de la Universidad.</p><br/>\n"
+                }
+              ],
+              "apartadosHijos": []
+            }
+          ]
+        },
+        {
+          "id": 147,
+          "nombre": "Seguro de accidentes y responsabilidad civil",
+          "titulo": "5.3 Seguro de accidentes y responsabilidad civil",
+          "orden": 3,
+          "elementos": [
+            {
+              "nombre": "",
+              "tipo": "template",
+              "content": "¿Dispone de Seguro de Responsabilidad Civil?<br/>\n"
+            },
+            {
+              "nombre": "seguroResponsabilidadCivil",
+              "tipo": "documento",
+              "content": "<p>Indicar: <i>No</i></p><br/>\n"
+            },
+            {
+              "nombre": "especificarResposabilidad",
+              "tipo": "textarea",
+              "content": "<p>Especificar seguro o justificar su ausencia: <i>sdfs</i></p><br/>\n"
+            }
+          ],
+          "apartadosHijos": []
+        },
+        {
+          "id": 148,
+          "nombre": "Protocolo de actuación en caso de accidente biológico",
+          "titulo": "5.4 Protocolo de actuación en caso de accidente biológico",
+          "orden": 4,
+          "elementos": [
+            {
+              "nombre": "",
+              "tipo": "template",
+              "content": "A continuación debe redactar un Protocolo de actuación en caso de accidente biológico específico para este proyecto y aportarlo en el apartado correspondiente de 'Documentación'<br/>\n"
+            },
+            {
+              "nombre": "",
+              "tipo": "template",
+              "content": "<p>Para más información puede consultar la página del <a href='https://www.um.es/web/comision-etica-investigacion/comision-etica/cbe' target='_blank'>Comité de la Universidad.</a></p><br/>\n"
+            },
+            {
+              "nombre": "protocoloActuacion",
+              "tipo": "documento",
+              "content": "<p>Indicar: <i>Sí</i></p><br/>\n"
+            }
+          ],
+          "apartadosHijos": []
+        },
+        {
+          "id": 149,
+          "nombre": "Documentación adicional",
+          "titulo": "5.5 Documentación adicional",
+          "orden": 5,
+          "elementos": [
+            {
+              "nombre": "",
+              "tipo": "template",
+              "content": "¿Dispone de alguna otra documentación adicional para su proyecto?<br/>\n"
+            },
+            {
+              "nombre": "documentacionAdicional",
+              "tipo": "documento",
+              "content": "<p>Indicar: <i>No</i></p><br/>\n"
+            },
+            {
+              "nombre": "especificarDocumenAdicional",
+              "tipo": "textarea",
+              "content": "<p>Especificar: </p><br/>\n"
+            }
+          ],
+          "apartadosHijos": []
+        },
+        {
+          "id": 150,
+          "nombre": "Aclaraciones al comité",
+          "titulo": "5.6 Aclaraciones al comité",
+          "orden": 6,
+          "elementos": [
+            {
+              "nombre": "",
+              "tipo": "template",
+              "content": "Incluir a continuación cualquier otra aclaración que se considere necesaria para el comité.<br/>\n"
+            },
+            {
+              "nombre": "aclaracionesComite",
+              "tipo": "textarea",
+              "content": "<p>Aclaraciones: <i>sfsfsd</i></p><br/>\n"
+            }
+          ],
+          "apartadosHijos": []
+        }
+      ]
+    }
+  ]
+}

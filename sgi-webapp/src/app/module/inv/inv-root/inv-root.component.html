@@ -1,23 +1,26 @@
 <sgi-root>
   <!-- ETICA -->
   <sgi-menu-group title="{{'menu.principal.inv.etica' | translate}}" icon="list_alt">
-    <sgi-menu-subitem *sgiHasAuthorityForAnyUO="'ETI-PEV-INV-VR'" [route]="[INV_ROUTE_NAMES.PETICIONES_EVALUACION]"
+    <sgi-menu-subitem
+      *sgiHasAnyAuthorityForAnyUO="['ETI-PEV-INV-VR', 'ETI-PEV-INV-C', 'ETI-PEV-INV-ER', 'ETI-PEV-INV-BR']"
+      [route]="[INV_ROUTE_NAMES.PETICIONES_EVALUACION]"
       title="{{'menu.principal.inv.peticionesEvaluacion' | translate}}">
     </sgi-menu-subitem>
-    <sgi-menu-subitem *sgiHasAuthorityForAnyUO="'ETI-PEV-INV-VR'" [route]="[INV_ROUTE_NAMES.MEMORIAS]"
-      title="{{'menu.principal.inv.memorias' | translate}}">
+    <sgi-menu-subitem
+      *sgiHasAnyAuthorityForAnyUO="['ETI-MEM-INV-VR', 'ETI-MEM-INV-ER', 'ETI-MEM-INV-BR', 'ETI-MEM-INV-ESCR', 'ETI-MEM-INV-ERTR']"
+      [route]="[INV_ROUTE_NAMES.MEMORIAS]" title="{{'menu.principal.inv.memorias' | translate}}">
     </sgi-menu-subitem>
     <sgi-menu-subitem *sgiHasAuthorityForAnyUO="'ETI-CHK-E'" [route]="[INV_ROUTE_NAMES.CHECKLIST]"
       title="{{'menu.principal.inv.checklist' | translate}}">
     </sgi-menu-subitem>
     <ng-container *ngIf="showEvaluaciones">
-      <sgi-menu-subitem *sgiHasAuthorityForAnyUO="'ETI-EVC-INV-VR'" [route]="[INV_ROUTE_NAMES.EVALUACIONES]"
-        title="{{'menu.principal.inv.evaluaciones' | translate}}">
+      <sgi-menu-subitem *sgiHasAnyAuthorityForAnyUO="['ETI-EVC-INV-VR', 'ETI-EVC-INV-EVALR']"
+        [route]="[INV_ROUTE_NAMES.EVALUACIONES]" title="{{'menu.principal.inv.evaluaciones' | translate}}">
       </sgi-menu-subitem>
     </ng-container>
     <ng-container *ngIf="showSeguimientos">
-      <sgi-menu-subitem *sgiHasAuthorityForAnyUO="'ETI-EVC-INV-VR'" [route]="[INV_ROUTE_NAMES.SEGUIMIENTOS]"
-        title="{{'menu.principal.inv.seguimientos' | translate}}">
+      <sgi-menu-subitem *sgiHasAnyAuthorityForAnyUO="['ETI-EVC-INV-VR', 'ETI-EVC-INV-EVALR']"
+        [route]="[INV_ROUTE_NAMES.SEGUIMIENTOS]" title="{{'menu.principal.inv.seguimientos' | translate}}">
       </sgi-menu-subitem>
     </ng-container>
     <sgi-menu-subitem *sgiHasAnyAuthorityForAnyUO="['ETI-ACT-INV-ER', 'ETI-ACT-ER']" [route]="[INV_ROUTE_NAMES.ACTAS]"

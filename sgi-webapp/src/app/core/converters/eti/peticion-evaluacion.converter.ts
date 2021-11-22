@@ -30,6 +30,7 @@ class PeticionEvaluacionConverter extends SgiBaseConverter<IPeticionEvaluacionBa
       externo: value.externo,
       tieneFondosPropios: value.tieneFondosPropios,
       solicitante: { id: value.personaRef } as IPersona,
+      checklistId: value.checklistId,
       activo: value.activo
     };
   }
@@ -59,6 +60,7 @@ class PeticionEvaluacionConverter extends SgiBaseConverter<IPeticionEvaluacionBa
       externo: value.externo,
       tieneFondosPropios: value.tieneFondosPropios,
       personaRef: value.solicitante?.id,
+      checklistId: value.checklistId,
       activo: value.activo
     };
   }

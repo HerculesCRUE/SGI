@@ -1,0 +1,48 @@
+<div class="sgi-dialog-header" fxLayout="row" fxLayoutGap="20px">
+  <span fxFlexAlign="center" mat-mat-dialog-title role="heading" aria-level="3" fxFlex>
+    {{'pii.reparto.ingreso.desglose-ingreso-repartir' | translate}}
+  </span>
+  <button fxFlex="nogrow" mat-icon-button mat-dialog-close>
+    <mat-icon class="close-icon">close</mat-icon>
+  </button>
+</div>
+<mat-dialog-content>
+  <form [formGroup]="formGroup">
+    <div fxLayout="row">
+      <!-- Importe pendiente de repartir -->
+      <mat-form-field class="first-row-input">
+        <mat-label>{{'pii.reparto.ingreso.importe-pendiente-repartir' | translate}}</mat-label>
+        <input matInput formControlName="importePendienteRepartir" id="importePendienteRepartir" type="number"
+          placeholder="{{'pii.reparto.ingreso.importe-pendiente-repartir' | translate}}">
+      </mat-form-field>
+
+      <!-- Importe a repartir -->
+      <mat-form-field>
+        <mat-label>{{'pii.reparto.ingreso.importe-repartir' | translate}}</mat-label>
+        <input matInput formControlName="importeARepartir" id="importeARepartir" type="number"
+          placeholder="{{'pii.reparto.ingreso.importe-repartir' | translate}}" required cdkFocusInitial>
+        <mat-error *ngIf="formGroup.controls.importeARepartir.errors?.required">
+          {{'error.required.entity' | translate:msgParamImporteARepartirEntity}}
+        </mat-error>
+        <mat-error *ngIf="formGroup.controls.importeARepartir.errors?.min">
+          {{'error.min.entity' | translate:msgParamImporteARepartirEntity}}
+        </mat-error>
+        <mat-error *ngIf="formGroup.controls.importeARepartir.errors?.maxDecimals">
+          {{'error.max.decimals.entity' | translate:msgParamImporteARepartirEntity}}
+        </mat-error>
+        <mat-error *ngIf="formGroup.controls.importeARepartir.errors?.beforeOrEqual">
+          {{'error.beforeOrEqual.param' | translate:msgParamImportePendienteRepartirEntity}}
+        </mat-error>
+      </mat-form-field>
+    </div>
+  </form>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <button color="accent" (click)="saveOrUpdate()" mat-raised-button type="submit">
+    <mat-icon class="save-icon">save</mat-icon>
+    {{'btn.ok' | translate}}
+  </button>
+  <button class="link-cancelar" mat-button type="button" mat-dialog-close>
+    {{'btn.cancel' | translate}}
+  </button>
+</mat-dialog-actions>

@@ -1,0 +1,4 @@
+org.crue.hercules.sgi.framework.validation.ActivableIsActivoValidator
+org.crue.hercules.sgi.framework.validation.ExistsByIdValidator
+org.crue.hercules.sgi.framework.validation.FieldValueEqualsValidator
+org.crue.hercules.sgi.framework.validation.UniqueFieldValueValidator

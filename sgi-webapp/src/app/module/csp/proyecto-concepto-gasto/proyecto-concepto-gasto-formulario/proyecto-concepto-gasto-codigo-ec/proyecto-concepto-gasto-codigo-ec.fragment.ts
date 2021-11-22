@@ -265,7 +265,7 @@ export class ProyectoConceptoGastoCodigoEcFragment extends Fragment {
 
   private fillListadoFields(codigoEconomico: CodigoEconomicoListado): void {
     if (codigoEconomico.proyectoCodigoEconomico) {
-      codigoEconomico.codigoEconomico = codigoEconomico.proyectoCodigoEconomico.value.codigoEconomico;
+      codigoEconomico.codigoEconomico = codigoEconomico.codigoEconomico ?? codigoEconomico.proyectoCodigoEconomico.value.codigoEconomico;
       codigoEconomico.fechaInicio = codigoEconomico.proyectoCodigoEconomico.value.fechaInicio;
       codigoEconomico.fechaFin = codigoEconomico.proyectoCodigoEconomico.value.fechaFin;
       codigoEconomico.observaciones = codigoEconomico.proyectoCodigoEconomico.value.observaciones;
@@ -286,7 +286,7 @@ export class ProyectoConceptoGastoCodigoEcFragment extends Fragment {
         };
       }
     } else {
-      codigoEconomico.codigoEconomico = codigoEconomico.convocatoriaCodigoEconomico.codigoEconomico;
+      codigoEconomico.codigoEconomico = codigoEconomico.codigoEconomico ?? codigoEconomico.convocatoriaCodigoEconomico.codigoEconomico;
       codigoEconomico.fechaInicio = codigoEconomico.convocatoriaCodigoEconomico.fechaInicio;
       codigoEconomico.fechaFin = codigoEconomico.convocatoriaCodigoEconomico.fechaFin;
       codigoEconomico.observaciones = codigoEconomico.convocatoriaCodigoEconomico.observaciones;

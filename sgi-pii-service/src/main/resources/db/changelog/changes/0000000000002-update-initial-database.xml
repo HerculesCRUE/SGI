@@ -1,0 +1,281 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:pro="http://www.liquibase.org/xml/ns/pro" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-4.1.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.1.xsd">
+
+  <changeSet author="master" id="0000000000002-1">
+    <createSequence incrementBy="1" sequenceName="sector_licenciado_seq" startValue="1" />
+  </changeSet>
+  <changeSet author="master" id="0000000000002-2">
+    <createTable tableName="sector_licenciado">
+      <column name="id" type="BIGINT">
+        <constraints nullable="false" primaryKey="true" primaryKeyName="sector_licenciadoPK" />
+      </column>
+      <column name="created_by" type="VARCHAR(255)" />
+      <column name="creation_date" type="TIMESTAMP" />
+      <column name="last_modified_by" type="VARCHAR(255)" />
+      <column name="last_modified_date" type="TIMESTAMP" />
+      <column name="contrato_ref" type="VARCHAR(50)">
+        <constraints nullable="false" />
+      </column>
+      <column name="exclusividad" type="BOOLEAN">
+        <constraints nullable="false" />
+      </column>
+      <column name="fecha_fin_licencia" type="TIMESTAMP">
+        <constraints nullable="false" />
+      </column>
+      <column name="fecha_inicio_licencia" type="TIMESTAMP">
+        <constraints nullable="false" />
+      </column>
+      <column name="invencion_id" type="BIGINT">
+        <constraints nullable="false" />
+      </column>
+      <column name="pais_ref" type="VARCHAR(50)">
+        <constraints nullable="false" />
+      </column>
+      <column name="sector_aplicacion_id" type="BIGINT">
+        <constraints nullable="false" />
+      </column>
+    </createTable>
+  </changeSet>
+  <changeSet author="master" id="0000000000002-3">
+    <addForeignKeyConstraint baseColumnNames="invencion_id" baseTableName="sector_licenciado" constraintName="FK_SECTORLICENCIADO_INVENCION" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableName="invencion" validate="true" />
+  </changeSet>
+  <changeSet author="master" id="0000000000002-4">
+    <addForeignKeyConstraint baseColumnNames="sector_aplicacion_id" baseTableName="sector_licenciado" constraintName="FK_SECTORLICENCIADO_SECTORAPLICACION" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableName="sector_aplicacion" validate="true" />
+  </changeSet>
+  <changeSet author="master" id="0000000000002-5">
+    <createSequence incrementBy="1" sequenceName="reparto_seq" startValue="1" />
+  </changeSet>
+  <changeSet author="master" id="0000000000002-6">
+    <createTable tableName="reparto">
+      <column name="id" type="BIGINT">
+        <constraints nullable="false" primaryKey="true" primaryKeyName="repartoPK" />
+      </column>
+      <column name="created_by" type="VARCHAR(255)" />
+      <column name="creation_date" type="TIMESTAMP" />
+      <column name="last_modified_by" type="VARCHAR(255)" />
+      <column name="last_modified_date" type="TIMESTAMP" />
+      <column name="estado" type="VARCHAR(25)">
+        <constraints nullable="false" />
+      </column>
+      <column name="fecha" type="TIMESTAMP">
+        <constraints nullable="false" />
+      </column>
+      <column name="importe_universidad" type="DECIMAL(19, 2)">
+        <constraints nullable="false" />
+      </column>
+      <column name="invencion_id" type="BIGINT">
+        <constraints nullable="false" />
+      </column>
+    </createTable>
+  </changeSet>
+  <changeSet author="master" id="0000000000002-7">
+    <addForeignKeyConstraint baseColumnNames="invencion_id" baseTableName="reparto" constraintName="FK_REPARTO_INVENCION" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableName="invencion" validate="true" />
+  </changeSet>
+  <changeSet author="master" id="0000000000002-8">
+    <addColumn tableName="tramo_reparto">
+      <column name="tipo" type="varchar(25)"></column>
+    </addColumn>
+  </changeSet>
+  <changeSet author="master" id="0000000000002-9">
+    <dropNotNullConstraint columnDataType="int" columnName="hasta" tableName="tramo_reparto" />
+  </changeSet>
+  <changeSet author="master" id="0000000000002-10">
+    <dropColumn columnName="ACTIVO" tableName="TRAMO_REPARTO" />
+  </changeSet>
+  <changeSet author="master" id="0000000000002-11">
+    <createSequence incrementBy="1" sequenceName="pais_validado_seq" startValue="1" />
+  </changeSet>
+  <changeSet author="master" id="0000000000002-12">
+    <createTable tableName="pais_validado">
+      <column name="id" type="BIGINT">
+        <constraints nullable="false" primaryKey="true" primaryKeyName="pais_validadoPK" />
+      </column>
+      <column name="codigo_invencion" type="VARCHAR(50)">
+        <constraints nullable="false" />
+      </column>
+      <column name="fecha_validacion" type="TIMESTAMP">
+        <constraints nullable="false" />
+      </column>
+      <column name="pais_ref" type="VARCHAR(50)">
+        <constraints nullable="false" />
+      </column>
+      <column name="solicitud_proteccion_id" type="BIGINT">
+        <constraints nullable="false" />
+      </column>
+    </createTable>
+  </changeSet>
+  <changeSet author="master" id="0000000000002-13">
+    <createSequence incrementBy="1" sequenceName="procedimiento_seq" startValue="1" />
+  </changeSet>
+  <changeSet author="master" id="0000000000002-14">
+    <createSequence incrementBy="1" sequenceName="reparto_equipo_inventor_seq" startValue="1" />
+  </changeSet>
+  <changeSet author="master" id="0000000000002-15">
+    <createSequence incrementBy="1" sequenceName="reparto_gasto_seq" startValue="1" />
+  </changeSet>
+  <changeSet author="master" id="0000000000002-16">
+    <createSequence incrementBy="1" sequenceName="reparto_ingreso_seq" startValue="1" />
+  </changeSet>
+  <changeSet author="master" id="0000000000002-17">
+    <createTable tableName="reparto_equipo_inventor">
+      <column name="id" type="BIGINT">
+        <constraints nullable="false" primaryKey="true" primaryKeyName="reparto_equipo_inventorPK" />
+      </column>
+      <column name="created_by" type="VARCHAR(255)" />
+      <column name="creation_date" type="TIMESTAMP" />
+      <column name="last_modified_by" type="VARCHAR(255)" />
+      <column name="last_modified_date" type="TIMESTAMP" />
+      <column name="importe_nomina" type="DECIMAL(19, 2)">
+        <constraints nullable="false" />
+      </column>
+      <column name="importe_otros" type="DECIMAL(19, 2)">
+        <constraints nullable="false" />
+      </column>
+      <column name="importe_proyecto" type="DECIMAL(19, 2)">
+        <constraints nullable="false" />
+      </column>
+      <column name="persona_ref" type="VARCHAR(50)">
+        <constraints nullable="false" />
+      </column>
+      <column name="reparto_id" type="BIGINT">
+        <constraints nullable="false" />
+      </column>
+    </createTable>
+  </changeSet>
+  <changeSet author="master" id="0000000000002-18">
+    <createTable tableName="reparto_gasto">
+      <column name="id" type="BIGINT">
+        <constraints nullable="false" primaryKey="true" primaryKeyName="reparto_gastoPK" />
+      </column>
+      <column name="created_by" type="VARCHAR(255)" />
+      <column name="creation_date" type="TIMESTAMP" />
+      <column name="last_modified_by" type="VARCHAR(255)" />
+      <column name="last_modified_date" type="TIMESTAMP" />
+      <column name="importe_a_deducir" type="DECIMAL(19, 2)">
+        <constraints nullable="false" />
+      </column>
+      <column name="invencion_gasto_id" type="BIGINT">
+        <constraints nullable="false" />
+      </column>
+      <column name="reparto_id" type="BIGINT">
+        <constraints nullable="false" />
+      </column>
+    </createTable>
+  </changeSet>
+  <changeSet author="master" id="0000000000002-19">
+    <createTable tableName="reparto_ingreso">
+      <column name="id" type="BIGINT">
+        <constraints nullable="false" primaryKey="true" primaryKeyName="reparto_ingresoPK" />
+      </column>
+      <column name="created_by" type="VARCHAR(255)" />
+      <column name="creation_date" type="TIMESTAMP" />
+      <column name="last_modified_by" type="VARCHAR(255)" />
+      <column name="last_modified_date" type="TIMESTAMP" />
+      <column name="importe_a_repartir" type="DECIMAL(19, 2)">
+        <constraints nullable="false" />
+      </column>
+      <column name="invencion_ingreso_id" type="BIGINT">
+        <constraints nullable="false" />
+      </column>
+      <column name="reparto_id" type="BIGINT">
+        <constraints nullable="false" />
+      </column>
+    </createTable>
+  </changeSet>
+  <changeSet author="master" id="0000000000002-20">
+    <addForeignKeyConstraint baseColumnNames="reparto_id" baseTableName="reparto_equipo_inventor" constraintName="FK_REPARTOEQUIPOINVENTOR_REPARTO" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableName="reparto" validate="true" />
+  </changeSet>
+  <changeSet author="master" id="0000000000002-21">
+    <addForeignKeyConstraint baseColumnNames="invencion_gasto_id" baseTableName="reparto_gasto" constraintName="FK_REPARTOGASTO_INVENCIONGASTO" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableName="invencion_gasto" validate="true" />
+  </changeSet>
+  <changeSet author="master" id="0000000000002-22">
+    <addForeignKeyConstraint baseColumnNames="reparto_id" baseTableName="reparto_gasto" constraintName="FK_REPARTOGASTO_REPARTO" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableName="reparto" validate="true" />
+  </changeSet>
+  <changeSet author="master" id="0000000000002-23">
+    <addForeignKeyConstraint baseColumnNames="invencion_ingreso_id" baseTableName="reparto_ingreso" constraintName="FK_REPARTOINGRESO_INVENCIONINGRESO" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableName="invencion_ingreso" validate="true" />
+  </changeSet>
+  <changeSet author="master" id="0000000000002-24">
+    <addForeignKeyConstraint baseColumnNames="reparto_id" baseTableName="reparto_ingreso" constraintName="FK_REPARTOINGRESO_REPARTO" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableName="reparto" validate="true" />
+  </changeSet>
+  <changeSet author="master" id="0000000000002-25">
+    <createTable tableName="procedimiento">
+      <column name="id" type="BIGINT">
+        <constraints nullable="false" primaryKey="true" primaryKeyName="procedimientoPK" />
+      </column>
+      <column name="created_by" type="VARCHAR(255)" />
+      <column name="creation_date" type="TIMESTAMP" />
+      <column name="last_modified_by" type="VARCHAR(255)" />
+      <column name="last_modified_date" type="TIMESTAMP" />
+      <column name="accion_a_tomar" type="VARCHAR(500)" />
+      <column name="comentarios" type="VARCHAR(2000)" />
+      <column name="fecha" type="TIMESTAMP">
+        <constraints nullable="false" />
+      </column>
+      <column name="fecha_limite_accion" type="TIMESTAMP" />
+      <column name="generar_aviso" type="BOOLEAN" />
+      <column name="solicitud_proteccion_id" type="BIGINT">
+        <constraints nullable="false" />
+      </column>
+      <column name="tipo_procedimiento_id" type="BIGINT">
+        <constraints nullable="false" />
+      </column>
+    </createTable>
+  </changeSet>
+  <changeSet author="master" id="0000000000002-26">
+    <createSequence incrementBy="1" sequenceName="procedimiento_documento_seq" startValue="1" />
+    <createTable tableName="procedimiento_documento">
+      <column name="id" type="BIGINT">
+        <constraints nullable="false" primaryKey="true" primaryKeyName="procedimiento_documentoPK" />
+      </column>
+      <column name="created_by" type="VARCHAR(255)" />
+      <column name="creation_date" type="TIMESTAMP" />
+      <column name="last_modified_by" type="VARCHAR(255)" />
+      <column name="last_modified_date" type="TIMESTAMP" />
+      <column name="documento_ref" type="VARCHAR(250)">
+        <constraints nullable="false" />
+      </column>
+      <column name="nombre" type="VARCHAR(250)">
+        <constraints nullable="false" />
+      </column>
+      <column name="procedimiento_id" type="BIGINT">
+        <constraints nullable="false" />
+      </column>
+    </createTable>
+  </changeSet>
+  <changeSet author="master" id="0000000000002-27">
+    <addForeignKeyConstraint baseColumnNames="solicitud_proteccion_id" baseTableName="pais_validado" constraintName="FK_PAISVALIDADO_SOLICITUDPROTECCION" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableName="solicitud_proteccion" validate="true" />
+  </changeSet>
+  <changeSet author="master" id="0000000000002-28">
+    <addForeignKeyConstraint baseColumnNames="procedimiento_id" baseTableName="procedimiento_documento" constraintName="FK_PROCEDIMIENTODOCUMENTO_PROCEDIMIENTO" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableName="procedimiento" validate="true" />
+  </changeSet>
+  <changeSet author="master" id="0000000000002-29">
+    <addForeignKeyConstraint baseColumnNames="solicitud_proteccion_id" baseTableName="procedimiento" constraintName="FK_PROCEDIMIENTO_SOLICITUDPROTECCION" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableName="solicitud_proteccion" validate="true" />
+  </changeSet>
+  <changeSet author="master" id="0000000000002-30">
+    <addForeignKeyConstraint baseColumnNames="tipo_procedimiento_id" baseTableName="procedimiento" constraintName="FK_PROCEDIMIENTO_TIPOPROCEDIMIENTO" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableName="tipo_procedimiento" validate="true" />
+  </changeSet>
+  <changeSet author="master" id="0000000000002-31">
+    <addColumn tableName="reparto_equipo_inventor">
+      <column name="invencion_inventor_id" type="bigint">
+        <constraints nullable="false" />
+      </column>
+    </addColumn>
+  </changeSet>
+  <changeSet author="master" id="0000000000002-32">
+    <addForeignKeyConstraint baseColumnNames="invencion_inventor_id" baseTableName="reparto_equipo_inventor" constraintName="FK_REPARTOEQUIPOINVENTOR_INVENCIONINVENTOR" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableName="invencion_inventor" validate="true" />
+  </changeSet>
+  <changeSet author="master" id="0000000000002-33">
+    <dropColumn columnName="PERSONA_REF" tableName="REPARTO_EQUIPO_INVENTOR" />
+  </changeSet>
+  <changeSet author="master" id="0000000000002-34">
+    <addColumn tableName="reparto_equipo_inventor">
+      <column name="proyecto_ref" type="varchar(50)" />
+    </addColumn>
+  </changeSet>
+  <changeSet author="master" id="0000000000002-35">
+    <addColumn tableName="reparto">
+      <column name="importe_equipo_inventor" type="decimal(19, 2)" />
+    </addColumn>
+  </changeSet>
+
+</databaseChangeLog>

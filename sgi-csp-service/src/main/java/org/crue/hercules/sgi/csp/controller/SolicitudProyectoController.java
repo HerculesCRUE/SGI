@@ -83,7 +83,7 @@ public class SolicitudProyectoController {
    * @return SolicitudProyecto {@link SolicitudProyecto} actualizado
    */
   @PutMapping("/{id}")
-  @PreAuthorize("hasAuthorityForAnyUO('CSP-SOL-E')")
+  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-SOL-E','CSP-SOL-INV-C', 'CSP-SOL-INV-ER')")
   public SolicitudProyecto update(@Valid @RequestBody SolicitudProyecto solicitudProyecto, @PathVariable Long id,
       Authentication authentication) {
     log.debug("update(SolicitudProyecto solicitudProyecto, Long id) - start");

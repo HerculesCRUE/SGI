@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { ActivatedRouteSnapshot, Router } from '@angular/router';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
-import { ISolicitudProyecto } from '@core/models/csp/solicitud-proyecto';
+import { Estado } from '@core/models/csp/estado-solicitud';
 import { SgiResolverResolver } from '@core/resolver/sgi-resolver';
 import { SolicitudProyectoService } from '@core/services/csp/solicitud-proyecto.service';
 import { SolicitudService } from '@core/services/csp/solicitud.service';
@@ -16,6 +16,12 @@ import { ISolicitudData } from './solicitud.action.service';
 const MSG_NOT_FOUND = marker('error.load');
 
 export const SOLICITUD_DATA_KEY = 'solicitudData';
+
+const ALLOWED_PROYECTO_LINK_ESTADOS = [
+  Estado.CONCEDIDA,
+  Estado.CONCEDIDA_PROVISIONAL,
+  Estado.CONCEDIDA_PROVISIONAL_ALEGADA,
+  Estado.CONCEDIDA_PROVISIONAL_NO_ALEGADA];
 
 @Injectable()
 export class SolicitudDataResolver extends SgiResolverResolver<ISolicitudData> {
@@ -68,6 +74,19 @@ export class SolicitudDataResolver extends SgiResolverResolver<ISolicitudData> {
         }
         return of(data);
       }),
+      switchMap(data => {
+        if (data.solicitud && ALLOWED_PROYECTO_LINK_ESTADOS.includes(data.solicitud.estado.estado)) {
+          return this.service.findIdsProyectosBySolicitudId(data.solicitud.id).pipe(
+            map(response => {
+              return {
+                ...data,
+                proyectos: response
+              };
+            })
+          );
+        }
+        return of(data);
+      })
     );
   }
 

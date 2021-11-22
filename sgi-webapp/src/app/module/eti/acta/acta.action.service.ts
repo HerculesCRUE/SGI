@@ -3,7 +3,6 @@ import { FormBuilder } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { IActa } from '@core/models/eti/acta';
 import { IConvocatoriaReunion } from '@core/models/eti/convocatoria-reunion';
-import { TIPO_COMENTARIO } from '@core/models/eti/tipo-comentario';
 import { ActionService } from '@core/services/action-service';
 import { ActaService } from '@core/services/eti/acta.service';
 import { AsistenteService } from '@core/services/eti/asistente.service';
@@ -17,8 +16,7 @@ import {
 import { ActaComentariosFragment } from './acta-formulario/acta-comentarios/acta-comentarios.fragment';
 import { ActaDatosGeneralesFragment } from './acta-formulario/acta-datos-generales/acta-datos-generales.fragment';
 import { ActaMemoriasFragment } from './acta-formulario/acta-memorias/acta-memorias.fragment';
-
-export enum Rol { EVALUADOR = TIPO_COMENTARIO.EVALUADOR, GESTOR = TIPO_COMENTARIO.GESTOR }
+import { Rol } from './acta-rol';
 
 @Injectable()
 export class ActaActionService extends ActionService {

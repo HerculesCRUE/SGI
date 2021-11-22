@@ -23,6 +23,7 @@ import org.crue.hercules.sgi.eti.model.TipoConvocatoriaReunion;
 import org.crue.hercules.sgi.eti.model.TipoEstadoMemoria;
 import org.crue.hercules.sgi.eti.model.TipoEvaluacion;
 import org.crue.hercules.sgi.eti.model.TipoMemoria;
+import org.crue.hercules.sgi.eti.model.Comite.Genero;
 import org.crue.hercules.sgi.eti.repository.ComentarioRepository;
 import org.crue.hercules.sgi.eti.service.BaseServiceTest;
 import org.junit.jupiter.api.BeforeEach;
@@ -110,7 +111,7 @@ public class EvaluacionConverterTest extends BaseServiceTest {
 
     Assertions.assertThat(evaluacion.getConvocatoriaReunion().getFechaEvaluacion()).isAfter(Instant.now());
     Assertions.assertThat(evaluacion.getDictamen()).isNull();
-    Assertions.assertThat(comentarioRepository.countByEvaluacionId(evaluacion.getId())).isEqualTo(0);
+    Assertions.assertThat(comentarioRepository.countByEvaluacionId(evaluacion.getId())).isZero();
   }
 
   @Test
@@ -181,8 +182,8 @@ public class EvaluacionConverterTest extends BaseServiceTest {
     peticionEvaluacion.setActivo(Boolean.TRUE);
 
     Formulario formulario = new Formulario(1L, "M10", "Descripcion");
-    Comite comite = new Comite(1L, "Comite1", "nombreSecretario", "nombreInvestigacion", "nombreDecreto", "articulo",
-        formulario, Boolean.TRUE);
+    Comite comite = new Comite(1L, "Comite1", "nombreSecretario", "nombreInvestigacion", Genero.M, "nombreDecreto",
+        "articulo", formulario, Boolean.TRUE);
 
     TipoMemoria tipoMemoria = new TipoMemoria();
     tipoMemoria.setId(1L);

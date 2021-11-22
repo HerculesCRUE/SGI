@@ -5,9 +5,26 @@
     <mat-icon class="close-icon">close</mat-icon>
   </button>
 </div>
-<p>{{'info.csp.solicitud-proyecto.new'| translate}}</p>
 <mat-dialog-content>
+  <div fxLayout="row" fxLayout.xs="column" fxFlexFill fxLayoutAlign="center center">
+    <p fxFlex="100">{{'info.csp.solicitud-proyecto.new'| translate}}</p>
+  </div>
   <form [formGroup]="formGroup">
+    <div [fxLayout.xs]="fxLayoutProperties.xs" [fxLayout]="fxLayoutProperties.layout"
+    [fxLayoutGap]="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
+      <!-- Título -->
+      <mat-form-field>
+        <mat-label>{{'csp.solicitud-proyecto.titulo' | translate}}</mat-label>
+        <input matInput type="text" formControlName="titulo" required>
+        <mat-error *ngIf="formGroup.controls.titulo.errors?.required">
+          {{'error.required.entity' | translate:msgParamTituloEntity}}
+        </mat-error>
+        <mat-error *ngIf="formGroup.controls.titulo.errors?.maxlength">
+          {{'error.maxlength.entity' | translate:msgParamTituloEntity}}
+        </mat-error>
+      </mat-form-field>
+    </div>
+
     <div [fxLayout.xs]="fxLayoutProperties.xs" [fxLayout]="fxLayoutProperties.layout"
       [fxLayoutGap]="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
       <!-- Fecha inicio proyecto -->
@@ -48,14 +65,9 @@
       [fxLayoutGap]="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
       <mat-form-field class="input-form">
         <mat-label>{{'csp.solicitud-proyecto.modelo-ejecucion' | translate}}</mat-label>
-        <input type="text" placeholder="{{'csp.solicitud-proyecto.modelo-ejecucion' | translate}}" matInput
-          formControlName="modeloEjecucion" [matAutocomplete]="autoModeloEjecucion" (click)="loadModelosEjecucion()"
-          required>
-        <mat-autocomplete #autoModeloEjecucion="matAutocomplete" [displayWith]="getModeloEjecucion">
-          <mat-option *ngFor="let modeloEjecucion of modelosEjecucion$ | async" [value]="modeloEjecucion">
-            {{modeloEjecucion.nombre}}
-          </mat-option>
-        </mat-autocomplete>
+        <sgi-select-modelo-ejecucion #modeloEjecucion formControlName="modeloEjecucion"
+          [unidadGestionRef]="data?.solicitud?.unidadGestion?.id">
+        </sgi-select-modelo-ejecucion>
         <mat-error *ngIf="formGroup.controls.modeloEjecucion.errors?.required">
           {{'error.required.entity' | translate:msgParamModeloEjecucionEntity}}
         </mat-error>
@@ -65,9 +77,68 @@
       </mat-form-field>
     </div>
   </form>
+
+  <ng-container *ngIf="(proyectos$ | async)?.length >0">
+    <h3>{{'title.csp.proyecto.proyectos-solicitud' | translate}}</h3>
+    <table mat-table [dataSource]="proyectos$ | async" matSort matSortActive="id" matSortDirection="desc"
+      matSortDisableClear>
+      <!-- ID -->
+      <ng-container matColumnDef="id">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'csp.proyecto.id' | translate}}
+        </th>
+        <td mat-cell *matCellDef="let proyecto">{{proyecto.id}}</td>
+      </ng-container>
+
+      <!-- Código SGE -->
+      <ng-container matColumnDef="codigoSGE">
+        <th mat-header-cell *matHeaderCellDef> {{'csp.proyecto.codigo-sge' | translate}}
+        </th>
+        <td mat-cell *matCellDef="let proyecto">{{proyecto.proyectosSGE}}</td>
+      </ng-container>
+
+      <!-- Titulo -->
+      <ng-container matColumnDef="titulo">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'csp.proyecto.titulo' | translate}}
+        </th>
+        <td mat-cell *matCellDef="let proyecto">{{proyecto.titulo}}</td>
+      </ng-container>
+
+      <!-- Fecha inicio -->
+      <ng-container matColumnDef="fechaInicio">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>
+          {{'csp.proyecto.fecha-inicio' | translate}} </th>
+        <td mat-cell *matCellDef="let proyecto">
+          {{proyecto.fechaInicio | luxon:'shortDate'}}
+        </td>
+      </ng-container>
+
+      <!-- Fecha fin -->
+      <ng-container matColumnDef="fechaFin">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>
+          {{'csp.proyecto.fecha-fin' | translate}} </th>
+        <td mat-cell *matCellDef="let proyecto">
+          {{proyecto.fechaFin | luxon:'shortDate'}}
+        </td>
+      </ng-container>
+
+      <!-- Estado proyecto -->
+      <ng-container matColumnDef="estado">
+        <th mat-header-cell *matHeaderCellDef> {{'csp.proyecto.estado' | translate}} </th>
+        <td mat-cell *matCellDef="let proyecto">
+          {{ESTADO_MAP.get(proyecto.estado.estado) | translate}}
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+    </table>
+    <mat-paginator [pageSizeOptions]="elementosPagina" [length]="totalElements" showFirstLastButtons>
+    </mat-paginator>
+  </ng-container>
 </mat-dialog-content>
+
 <mat-dialog-actions>
-  <button color="accent" (click)="saveOrUpdate()" mat-raised-button type="submit">
+  <button color="accent" [disabled]="formGroup.invalid" (click)="saveOrUpdate()" mat-raised-button type="submit">
     <mat-icon class="save-icon">save</mat-icon>{{textSaveOrUpdate |
     translate}}
   </button>

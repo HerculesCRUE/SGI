@@ -32,6 +32,7 @@ class PeticionEvaluacionWithIsEliminableConverter
       tieneFondosPropios: value.tieneFondosPropios,
       solicitante: { id: value.personaRef } as IPersona,
       activo: value.activo,
+      checklistId: value.checklistId,
       eliminable: value.eliminable
     };
   }
@@ -62,6 +63,7 @@ class PeticionEvaluacionWithIsEliminableConverter
       tieneFondosPropios: value.tieneFondosPropios,
       personaRef: value.solicitante?.id,
       activo: value.activo,
+      checklistId: value.checklistId,
       eliminable: value.eliminable
     };
   }

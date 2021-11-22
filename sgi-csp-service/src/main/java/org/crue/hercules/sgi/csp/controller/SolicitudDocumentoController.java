@@ -47,7 +47,7 @@ public class SolicitudDocumentoController {
    * @return Nuevo {@link SolicitudDocumento} creado.
    */
   @PostMapping
-  @PreAuthorize("hasAuthorityForAnyUO('CSP-SOL-E')")
+  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-SOL-E','CSP-SOL-INV-ER')")
   public ResponseEntity<SolicitudDocumento> create(@Valid @RequestBody SolicitudDocumento solicitudDocumento) {
     log.debug("create(SolicitudDocumento solicitudDocumento) - start");
     SolicitudDocumento returnValue = service.create(solicitudDocumento);
@@ -65,7 +65,7 @@ public class SolicitudDocumentoController {
    * @return SolicitudDocumento {@link SolicitudDocumento} actualizado
    */
   @PutMapping("/{id}")
-  @PreAuthorize("hasAuthorityForAnyUO('CSP-SOL-E')")
+  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-SOL-E','CSP-SOL-INV-ER')")
   public SolicitudDocumento update(@Valid @RequestBody SolicitudDocumento solicitudDocumento, @PathVariable Long id,
       Authentication authentication) {
     log.debug("update(SolicitudDocumento solicitudDocumento, Long id) - start");
@@ -96,7 +96,7 @@ public class SolicitudDocumentoController {
    * @param id Identificador de {@link SolicitudDocumento}.
    */
   @DeleteMapping("/{id}")
-  @PreAuthorize("hasAuthorityForAnyUO('CSP-SOL-E')")
+  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-SOL-E','CSP-SOL-INV-ER')")
   @ResponseStatus(value = HttpStatus.NO_CONTENT)
   void deleteById(@PathVariable Long id) {
     log.debug("deleteById(Long id) - start");

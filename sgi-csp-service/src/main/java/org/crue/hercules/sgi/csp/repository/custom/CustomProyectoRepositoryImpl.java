@@ -16,6 +16,7 @@ import javax.persistence.criteria.Subquery;
 import org.crue.hercules.sgi.csp.dto.ProyectoPresupuestoTotales;
 import org.crue.hercules.sgi.csp.model.AnualidadGasto;
 import org.crue.hercules.sgi.csp.model.AnualidadGasto_;
+import org.crue.hercules.sgi.csp.model.ConceptoGasto_;
 import org.crue.hercules.sgi.csp.model.ModeloEjecucion;
 import org.crue.hercules.sgi.csp.model.Proyecto;
 import org.crue.hercules.sgi.csp.model.ProyectoAnualidad_;
@@ -108,7 +109,7 @@ public class CustomProyectoRepositoryImpl implements CustomProyectoRepository {
     // Define FROM Proyecto clause
     Root<Proyecto> root = cq.from(Proyecto.class);
 
-    // Total presupuesto universidad
+    // Total presupuesto universidad Sin Costes Indirectos
     Subquery<BigDecimal> sqlTotalPresupuestoUniversidad = cq.subquery(BigDecimal.class);
     Root<AnualidadGasto> rootTotalPresupuestoUniversidad = sqlTotalPresupuestoUniversidad.from(AnualidadGasto.class);
 
@@ -116,16 +117,36 @@ public class CustomProyectoRepositoryImpl implements CustomProyectoRepository {
         .select(cb.sum(rootTotalPresupuestoUniversidad.get(AnualidadGasto_.importePresupuesto)));
     sqlTotalPresupuestoUniversidad.where(cb.and(cb.equal(
         rootTotalPresupuestoUniversidad.get(AnualidadGasto_.proyectoAnualidad).get(ProyectoAnualidad_.proyectoId),
-        proyectoId)));
+        proyectoId), cb.isFalse(rootTotalPresupuestoUniversidad.get(AnualidadGasto_.conceptoGasto).get(ConceptoGasto_.costesIndirectos))));
 
-    // Total concedido universidad
+    // Total presupuesto universidad costes indirectos
+    Subquery<BigDecimal> sqlTotalPresupuestoUniversidadCostesIndirectos = cq.subquery(BigDecimal.class);
+    Root<AnualidadGasto> rootTotalPresupuestoUniversidadCostesIndirectos = 
+      sqlTotalPresupuestoUniversidadCostesIndirectos.from(AnualidadGasto.class);
+
+    sqlTotalPresupuestoUniversidadCostesIndirectos
+        .select(cb.sum(rootTotalPresupuestoUniversidadCostesIndirectos.get(AnualidadGasto_.importePresupuesto)));
+    sqlTotalPresupuestoUniversidadCostesIndirectos.where(cb.and(cb.equal(
+        rootTotalPresupuestoUniversidadCostesIndirectos.get(AnualidadGasto_.proyectoAnualidad).get(ProyectoAnualidad_.proyectoId),
+        proyectoId), cb.isTrue(rootTotalPresupuestoUniversidadCostesIndirectos.get(AnualidadGasto_.conceptoGasto).get(ConceptoGasto_.costesIndirectos))));
+
+    // Total concedido universidad Sin Costes Indirectos
     Subquery<BigDecimal> sqlTotalConcedidoUniversidad = cq.subquery(BigDecimal.class);
     Root<AnualidadGasto> rootTotalConcedidoUniversidad = sqlTotalConcedidoUniversidad.from(AnualidadGasto.class);
 
     sqlTotalConcedidoUniversidad.select(cb.sum(rootTotalConcedidoUniversidad.get(AnualidadGasto_.importeConcedido)));
     sqlTotalConcedidoUniversidad.where(cb.and(cb.equal(
         rootTotalConcedidoUniversidad.get(AnualidadGasto_.proyectoAnualidad).get(ProyectoAnualidad_.proyectoId),
-        proyectoId)));
+        proyectoId), cb.isFalse(rootTotalConcedidoUniversidad.get(AnualidadGasto_.conceptoGasto).get(ConceptoGasto_.costesIndirectos))));
+    
+    // Total concedido universidad costes indirectos
+    Subquery<BigDecimal> sqlTotalConcedidoUniversidadCostesIndirectos = cq.subquery(BigDecimal.class);
+    Root<AnualidadGasto> rootTotalConcedidoUniversidadCostesIndirectos = sqlTotalConcedidoUniversidadCostesIndirectos.from(AnualidadGasto.class);
+
+    sqlTotalConcedidoUniversidadCostesIndirectos.select(cb.sum(rootTotalConcedidoUniversidadCostesIndirectos.get(AnualidadGasto_.importeConcedido)));
+    sqlTotalConcedidoUniversidadCostesIndirectos.where(cb.and(cb.equal(
+      rootTotalConcedidoUniversidadCostesIndirectos.get(AnualidadGasto_.proyectoAnualidad).get(ProyectoAnualidad_.proyectoId),
+        proyectoId), cb.isTrue(rootTotalConcedidoUniversidadCostesIndirectos.get(AnualidadGasto_.conceptoGasto).get(ConceptoGasto_.costesIndirectos))));
 
     // Total presupuesto socio
     Subquery<BigDecimal> sqTotalPresupuestoSocio = cq.subquery(BigDecimal.class);
@@ -143,12 +164,16 @@ public class CustomProyectoRepositoryImpl implements CustomProyectoRepository {
 
     // Define DTO projection
     cq.multiselect(
-        // Total presupuesto universidad
+        // Total presupuesto universidad No CostesIndirectos
         cb.coalesce(sqlTotalPresupuestoUniversidad.getSelection(), new BigDecimal(0)),
+        // Total presupuesto universidad Costes Indirectos
+        cb.coalesce(sqlTotalPresupuestoUniversidadCostesIndirectos.getSelection(), new BigDecimal(0)),
         // Total presupuesto socio
         cb.coalesce(sqTotalPresupuestoSocio.getSelection(), new BigDecimal(0)),
         // Total concedido universidad
         cb.coalesce(sqlTotalConcedidoUniversidad.getSelection(), new BigDecimal(0)),
+        // Total concedido universidad Costes Indirectos
+        cb.coalesce(sqlTotalConcedidoUniversidadCostesIndirectos.getSelection(), new BigDecimal(0)),
         // Total concedido socio
         cb.coalesce(sqTotalConcedidoSocio.getSelection(), new BigDecimal(0)));
     // Execute query

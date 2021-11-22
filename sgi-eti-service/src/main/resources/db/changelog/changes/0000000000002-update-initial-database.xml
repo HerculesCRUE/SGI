@@ -1,0 +1,27 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:pro="http://www.liquibase.org/xml/ns/pro" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-4.1.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.1.xsd">
+
+  <changeSet author="master" id="0000000000002-1">
+    <renameColumn tableName="configuracion" newColumnName="dias_archivada_inactivo" oldColumnName="meses_archivada_inactivo" />
+  </changeSet>
+  <changeSet author="master" id="0000000000002-2">
+    <renameColumn tableName="configuracion" newColumnName="meses_archivada_pendiente_correcciones" oldColumnName="dias_archivada_pendiente_correcciones" />
+  </changeSet>
+  <changeSet author="master" id="0000000000002-3">
+    <dropColumn tableName="configuracion" columnName="meses_aviso_proyecto_ceea" />
+  </changeSet>
+  <changeSet author="master" id="0000000000002-4">
+    <dropColumn tableName="configuracion" columnName="meses_aviso_proyecto_cei" />
+  </changeSet>
+  <changeSet author="master" id="0000000000002-5">
+    <dropColumn tableName="configuracion" columnName="meses_aviso_proyecto_cbe" />
+  </changeSet>
+
+  <!-- COMITE -->
+  <!-- Nueva columna genero en comite -->
+  <changeSet author="master" id="0000000000002-6">
+    <addColumn tableName="comite">
+      <column name="genero" type="VARCHAR(1)" />
+    </addColumn>
+  </changeSet>
+</databaseChangeLog>

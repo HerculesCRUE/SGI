@@ -1,0 +1,156 @@
+<div class="sgi-dialog-header" fxLayout="row" fxLayoutGap="20px">
+  <span fxFlexAlign="center" mat-mat-dialog-title role="heading" aria-level="3" fxFlex>Detalle de gasto</span>
+  <button fxFlex="nogrow" mat-icon-button mat-dialog-close>
+    <mat-icon class="close-icon">close</mat-icon>
+  </button>
+</div>
+<mat-dialog-content>
+  <div>
+    <p>{{'sge.gasto.estado.actual' | translate}}: {{data?.estado | translate}}</p>
+    <p>{{'sge.gasto.partida-presupuestaria' | translate}}: {{data?.partidaPresupuestaria}}</p>
+    <p>{{'sge.gasto.codigo-economico' | translate}}: {{data?.codigoEconomico?.id}}
+      {{data?.codigoEconomico?.nombre ? ' - ' + data?.codigoEconomico.nombre : '' }}
+    </p>
+    <p>{{'sge.gasto.anualidad' | translate}}: {{data?.anualidad}}</p>
+    <p *ngFor="let campo of data?.campos">{{campo?.nombre}}: {{campo?.valor}}</p>
+  </div>
+  <div>
+    <form [formGroup]="formGroup">
+      <!-- Proyectos SGI ligados al proyecto SGE -->
+      <div>
+        <mat-form-field>
+          <mat-label>{{'csp.ejecucion-economica.validacion-gastos.proyecto-sgi' |
+            translate:MSG_PARAMS.CARDINALIRY.SINGULAR}}</mat-label>
+          <sgi-select-entity formControlName="identificadorSgi" [options]=" proyectosSgi$ | async"
+            [displayWith]="displayerIdentificadorSgi" [compareWith]="comparerIdentificadorSgi"
+            [sortWith]="sorterIdentificadorSgi">
+          </sgi-select-entity>
+          <mat-error *ngIf="formGroup.controls.identificadorSgi.errors?.required">
+            {{'error.required.entity' | translate:msgParamProyectoSgiEntity}}
+          </mat-error>
+        </mat-form-field>
+      </div>
+
+      <!-- Concepto de gasto tipo-->
+      <div [fxLayout.xs]=" fxLayoutProperties.xs" [fxLayout]="fxLayoutProperties.layout"
+        [fxLayoutGap]="fxLayoutProperties.gap" ngClass.gt-xs="ml-10 separation-button">
+        <div [fxLayout]="fxLayoutProperties.layout" [fxLayoutAlign]="fxLayoutProperties.layoutAlign">
+          <mat-radio-group class="radio-inline" name="conceptoGastoFiltro" formControlName="conceptoGastoFiltro">
+            <mat-radio-button color="primary" class="radio" *ngFor="let optionConceptoGasto of optionsConceptoGasto"
+              name="conceptoGastoFiltro" [value]="optionConceptoGasto" (change)="loadConceptoGasto($event.value)">
+              {{optionConceptoGasto | translate}}
+            </mat-radio-button>
+          </mat-radio-group>
+        </div>
+      </div>
+
+      <!-- Concepto Gasto -->
+      <div [fxLayout]="fxLayoutProperties.layout" [fxLayoutAlign]="fxLayoutProperties.layoutAlign">
+        <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
+          [fxFlexOrder]="fxFlexProperties.order">
+          <mat-form-field fxFill>
+            <mat-label>{{'csp.ejecucion-economica.validacion-gastos.concepto-gasto' | translate}}</mat-label>
+            <sgi-select-entity formControlName="conceptoGasto" [options]="conceptosGasto$ | async"
+              [displayWith]="displayerConceptoGasto">
+            </sgi-select-entity>
+            <mat-error *ngIf="formGroup.controls.conceptoGasto.errors?.required">
+              {{'error.required.entity' | translate:msgParamConceptoGastoEntity}}
+            </mat-error>
+          </mat-form-field>
+        </div>
+      </div>
+
+      <!-- Estado -->
+      <div [fxLayout]="fxLayoutProperties.layout" [fxLayoutAlign]="fxLayoutProperties.layoutAlign">
+        <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
+          [fxFlexOrder]="fxFlexProperties.order">
+          <mat-form-field fxFill>
+            <mat-label>{{'csp.ejecucion-economica.validacion-gastos.estado' | translate}}</mat-label>
+            <sgi-select-enum formControlName="estadoGasto" required [enumMap]="ESTADO_MAP"></sgi-select-enum>
+          </mat-form-field>
+        </div>
+      </div>
+
+      <mat-card *ngIf="formGroup.controls.estadoGasto.value=='VALIDADO'">
+        <mat-card-title>
+          {{ 'title.csp.ejecucion-economica.validacion-gastos.datos-sgi' | translate}}
+        </mat-card-title>
+        <mat-card-content>
+          <form [formGroup]="formGroup">
+            <div [fxLayout.xs]="fxLayoutProperties.xs" [fxLayout]="fxLayoutProperties.layout"
+              [fxLayoutGap]="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
+              <!-- Fecha congreso -->
+              <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md"
+                [fxFlex.gt-md]="fxFlexProperties.gtMd" [fxFlexOrder]="fxFlexProperties.order">
+                <mat-form-field>
+                  <mat-label>
+                    {{'csp.ejecucion-economica.validacion-gastos.fecha-congreso' | translate}}
+                  </mat-label>
+                  <input matInput [matDatepicker]="picker1" formControlName="fechaCongreso">
+                  <mat-datepicker-toggle class=" fechaIcon" matSuffix [for]="picker1"></mat-datepicker-toggle>
+                  <mat-datepicker #picker1>
+                  </mat-datepicker>
+                </mat-form-field>
+              </div>
+
+              <!-- Importe inscripcion -->
+              <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md"
+                [fxFlex.gt-md]="fxFlexProperties.gtMd" [fxFlexOrder]="fxFlexProperties.order">
+                <mat-form-field>
+                  <mat-label>
+                    {{'csp.ejecucion-economica.validacion-gastos.importe-inscripcion' | translate}}
+                  </mat-label>
+                  <input matInput formControlName="importeInscripcion" type="number" min="0" step="1"
+                    placeholder="{{'csp.ejecucion-economica.validacion-gastos.importe-inscripcion' | translate}}">
+                  <mat-error *ngIf="formGroup.controls.importeInscripcion.errors?.min">
+                    {{'error.min.entity' | translate:msgParamImporteInscripcion}}
+                  </mat-error>
+                  <mat-error *ngIf="formGroup.controls.importeInscripcion.errors?.max">
+                    {{'error.max.entity' | translate:msgParamImporteInscripcion}}
+                  </mat-error>
+                </mat-form-field>
+              </div>
+            </div>
+
+            <div [fxLayout.xs]="fxLayoutProperties.xs" [fxLayout]="fxLayoutProperties.layout"
+              [fxLayoutGap]="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
+              <!-- Observaciones -->
+              <div [fxFlex.sm]="fxFlexPropertiesInline.sm" [fxFlex.md]="fxFlexPropertiesInline.md"
+                [fxFlex.gt-md]="fxFlexPropertiesInline.gtMd" [fxFlexOrder]="fxFlexPropertiesInline.order">
+                <mat-form-field fxFill>
+                  <mat-label>
+                    {{'csp.ejecucion-economica.validacion-gastos.observaciones' | translate}}
+                  </mat-label>
+                  <textarea #obs matInput formControlName="observaciones"
+                    placeholder="{{'csp.ejecucion-economica.validacion-gastos.observaciones' | translate}}"
+                    maxlength="2000"></textarea>
+                  <mat-hint>{{obs.value.length}} / 2000</mat-hint>
+                </mat-form-field>
+              </div>
+            </div>
+          </form>
+        </mat-card-content>
+      </mat-card>
+
+      <!-- Comentarios asociados al estado -->
+      <mat-form-field fxFill *ngIf="this.showComment">
+        <mat-label>
+          {{'csp.ejecucion-economica.validacion-gastos.comentario-estado' | translate}}
+        </mat-label>
+        <textarea #coment matInput formControlName="comentarioEstado" type="text"
+          placeholder="{{'csp.ejecucion-economica.validacion-gastos.comentario-estado' | translate}}" maxlength="2000">
+                    </textarea>
+        <mat-hint>{{coment.value.length}} / 2000</mat-hint>
+      </mat-form-field>
+    </form>
+  </div>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <button color="accent" mat-raised-button type="submit">
+    <mat-icon class="save-icon">save</mat-icon>
+    {{'btn.save' | translate}}
+  </button>
+  <button class="link-cancelar" mat-button type="button" mat-dialog-close>
+    {{'btn.cancel' | translate}}
+  </button>
+</mat-dialog-actions>

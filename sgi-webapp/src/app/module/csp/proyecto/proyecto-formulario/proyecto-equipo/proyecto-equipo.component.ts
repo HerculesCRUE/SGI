@@ -5,6 +5,7 @@ import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { FragmentComponent } from '@core/component/fragment.component';
+import { VALIDACION_REQUISITOS_EQUIPO_IP_MAP } from '@core/enums/validaciones-requisitos-equipo-ip';
 import { MSG_PARAMS } from '@core/i18n';
 import { IProyectoEquipo } from '@core/models/csp/proyecto-equipo';
 import { ProyectoService } from '@core/services/csp/proyecto.service';
@@ -55,6 +56,10 @@ export class ProyectoEquipoComponent extends FragmentComponent implements OnInit
   dataSource = new MatTableDataSource<StatusWrapper<IProyectoEquipoListado>>();
   @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
   @ViewChild(MatSort, { static: true }) sort: MatSort;
+
+  get VALIDACION_REQUISITOS_EQUIPO_IP_MAP() {
+    return VALIDACION_REQUISITOS_EQUIPO_IP_MAP;
+  }
 
   constructor(
     protected proyectoService: ProyectoService,

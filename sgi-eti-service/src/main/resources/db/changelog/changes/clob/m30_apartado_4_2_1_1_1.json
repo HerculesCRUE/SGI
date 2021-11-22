@@ -5,528 +5,526 @@
       "title-div"
     ],
     "templateOptions": {
-      "label": "4.2.1.1.1 Medidas de contención",
-      "hideExpression": "!formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1 || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable.some(localTable => localTable.nivelContencion !== '1')"
+      "label": "4.2.1.1.1 Medidas de contención"
     },
-    "fieldGroup": [
-      {
-        "template": "<p>El lugar de trabajo se encontrará separado de toda actividad que se desarrolle en el mismo edificio (Exigencias según la Guía del <b>R.D.664/97</b>)</p>",
-        "hideExpression": "!formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1 || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable.some(localTable => localTable.nivelContencion !== '1')"
-      },
-      {
-        "key": "lugarTrabajoSeparado",
-        "type": "radio",
-        "hideExpression": "!formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1 || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable.some(localTable => localTable.nivelContencion !== '1')",
-        "templateOptions": {
-          "label": "Elige opción",
-          "required": true,
-          "options": [
-            {
-              "value": "no",
-              "label": "No"
-            },
-            {
-              "value": "si",
-              "label": "Sí"
-            }
-          ]
+    "hideExpression": "!formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1 || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable.some(localTable => localTable.nivelContencion !== '1')"
+  },
+  {
+    "template": "<p>El lugar de trabajo se encontrará separado de toda actividad que se desarrolle en el mismo edificio (Exigencias según la Guía del <b>R.D.664/97</b>)</p>",
+    "hideExpression": "!formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1 || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable.some(localTable => localTable.nivelContencion !== '1')"
+  },
+  {
+    "key": "lugarTrabajoSeparado",
+    "type": "radio",
+    "hideExpression": "!formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1 || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable.some(localTable => localTable.nivelContencion !== '1')",
+    "templateOptions": {
+      "label": "Elige opción",
+      "required": true,
+      "options": [
+        {
+          "value": "no",
+          "label": "No"
+        },
+        {
+          "value": "si",
+          "label": "Sí"
         }
-      },
-      {
-        "key": "observaciones_lugarTrabajoSeparado",
-        "type": "textarea",
-        "hideExpression": "!formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1 || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable.some(localTable => localTable.nivelContencion !== '1')",
-        "templateOptions": {
-          "label": "Observaciones",
-          "placeholder": "Observaciones",
-          "required": false,
-          "disabled": false,
-          "autosize": true,
-          "autosizeMinRows": "1",
-          "autosizeMaxRows": "10"
+      ]
+    }
+  },
+  {
+    "key": "observaciones_lugarTrabajoSeparado",
+    "type": "textarea",
+    "hideExpression": "!formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1 || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable.some(localTable => localTable.nivelContencion !== '1')",
+    "templateOptions": {
+      "label": "Observaciones",
+      "placeholder": "Observaciones",
+      "required": false,
+      "disabled": false,
+      "autosize": true,
+      "autosizeMinRows": "1",
+      "autosizeMaxRows": "10"
+    }
+  },
+  {
+    "template": "<p>El aire introducido y extraído del lugar de trabajo se filtrará mediante la utilización de filtros de alta eficacia para partículas en elaire (HEPA) ode forma similar.(Exigencias según la Guía del <b>R.D. 664/97:No</b>)</p>",
+    "hideExpression": "!formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1 || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable.some(localTable => localTable.nivelContencion !== '1')"
+  },
+  {
+    "key": "filtroAltaEficacia",
+    "type": "radio",
+    "hideExpression": "!formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1 || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable.some(localTable => localTable.nivelContencion !== '1')",
+    "templateOptions": {
+      "required": true,
+      "label": "Elige opción",
+      "options": [
+        {
+          "value": "no",
+          "label": "No"
+        },
+        {
+          "value": "si",
+          "label": "Sí"
         }
-      },
-      {
-        "template": "<p>El aire introducido y extraído del lugar de trabajo se filtrará mediante la utilización de filtros de alta eficacia para partículas en elaire (HEPA) ode forma similar.(Exigencias según la Guía del <b>R.D. 664/97:No</b>)</p>",
-        "hideExpression": "!formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1 || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable.some(localTable => localTable.nivelContencion !== '1')"
-      },
-      {
-        "key": "filtroAltaEficacia",
-        "type": "radio",
-        "hideExpression": "!formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1 || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable.some(localTable => localTable.nivelContencion !== '1')",
-        "templateOptions": {
-          "required": true,
-          "label": "Elige opción",
-          "options": [
-            {
-              "value": "no",
-              "label": "No"
-            },
-            {
-              "value": "si",
-              "label": "Sí"
-            }
-          ]
+      ]
+    }
+  },
+  {
+    "key": "observaciones_filtroAltaEficacia",
+    "type": "textarea",
+    "hideExpression": "!formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1 || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable.some(localTable => localTable.nivelContencion !== '1')",
+    "templateOptions": {
+      "label": "Observaciones",
+      "placeholder": "Observaciones",
+      "required": false,
+      "disabled": false,
+      "autosize": true,
+      "autosizeMinRows": "1",
+      "autosizeMaxRows": "10"
+    }
+  },
+  {
+    "template": "<p>Solamente se permitirá el acceso al personal designado. (Exigencias según la Guía del <b>R.D. 664/97</b>:Aconsejable.)</p>",
+    "hideExpression": "!formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1 || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable.some(localTable => localTable.nivelContencion !== '1')"
+  },
+  {
+    "key": "accesoPersonal",
+    "type": "radio",
+    "hideExpression": "!formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1 || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable.some(localTable => localTable.nivelContencion !== '1')",
+    "templateOptions": {
+      "required": true,
+      "label": "Elige opción",
+      "options": [
+        {
+          "value": "no",
+          "label": "No"
+        },
+        {
+          "value": "si",
+          "label": "Sí"
         }
-      },
-      {
-        "key": "observaciones_filtroAltaEficacia",
-        "type": "textarea",
-        "hideExpression": "!formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1 || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable.some(localTable => localTable.nivelContencion !== '1')",
-        "templateOptions": {
-          "label": "Observaciones",
-          "placeholder": "Observaciones",
-          "required": false,
-          "disabled": false,
-          "autosize": true,
-          "autosizeMinRows": "1",
-          "autosizeMaxRows": "10"
+      ]
+    }
+  },
+  {
+    "key": "observaciones_accesoPersonal",
+    "type": "textarea",
+    "hideExpression": "!formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1 || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable.some(localTable => localTable.nivelContencion !== '1')",
+    "templateOptions": {
+      "label": "Observaciones",
+      "placeholder": "Observaciones",
+      "required": false,
+      "disabled": false,
+      "autosize": true,
+      "autosizeMinRows": "1",
+      "autosizeMaxRows": "10"
+    }
+  },
+  {
+    "template": "<p>El lugar de trabajo deberá poder precintarse para permitir su desinfección.(Exigencias según la Guía del <b>R.D. 664/97</b>:No)</p>",
+    "hideExpression": "!formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1 || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable.some(localTable => localTable.nivelContencion !== '1')"
+  },
+  {
+    "key": "lugarTrabajo",
+    "type": "radio",
+    "hideExpression": "!formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1 || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable.some(localTable => localTable.nivelContencion !== '1')",
+    "templateOptions": {
+      "required": true,
+      "label": "Elige opción",
+      "options": [
+        {
+          "value": "no",
+          "label": "No"
+        },
+        {
+          "value": "si",
+          "label": "Sí"
         }
-      },
-      {
-        "template": "<p>Solamente se permitirá el acceso al personal designado. (Exigencias según la Guía del <b>R.D. 664/97</b>:Aconsejable.)</p>",
-        "hideExpression": "!formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1 || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable.some(localTable => localTable.nivelContencion !== '1')"
-      },
-      {
-        "key": "accesoPersonal",
-        "type": "radio",
-        "hideExpression": "!formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1 || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable.some(localTable => localTable.nivelContencion !== '1')",
-        "templateOptions": {
-          "required": true,
-          "label": "Elige opción",
-          "options": [
-            {
-              "value": "no",
-              "label": "No"
-            },
-            {
-              "value": "si",
-              "label": "Sí"
-            }
-          ]
+      ]
+    }
+  },
+  {
+    "key": "observaciones_lugarTrabajo",
+    "type": "textarea",
+    "hideExpression": "!formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1 || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable.some(localTable => localTable.nivelContencion !== '1')",
+    "templateOptions": {
+      "label": "Observaciones",
+      "placeholder": "Observaciones",
+      "required": false,
+      "disabled": false,
+      "autosize": true,
+      "autosizeMinRows": "1",
+      "autosizeMaxRows": "10"
+    }
+  },
+  {
+    "template": "<p>Procedimientos de desinfección especificados. (Exigencias según la Guía del <b>R.D. 664/97</b>:Si)</p>",
+    "hideExpression": "!formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1 || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable.some(localTable => localTable.nivelContencion !== '1')"
+  },
+  {
+    "key": "procedimientosDesinfeccion",
+    "type": "radio",
+    "hideExpression": "!formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1 || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable.some(localTable => localTable.nivelContencion !== '1')",
+    "templateOptions": {
+      "required": true,
+      "label": "Elige opción",
+      "options": [
+        {
+          "value": "no",
+          "label": "No"
+        },
+        {
+          "value": "si",
+          "label": "Sí"
         }
-      },
-      {
-        "key": "observaciones_accesoPersonal",
-        "type": "textarea",
-        "hideExpression": "!formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1 || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable.some(localTable => localTable.nivelContencion !== '1')",
-        "templateOptions": {
-          "label": "Observaciones",
-          "placeholder": "Observaciones",
-          "required": false,
-          "disabled": false,
-          "autosize": true,
-          "autosizeMinRows": "1",
-          "autosizeMaxRows": "10"
+      ]
+    }
+  },
+  {
+    "key": "observaciones_procedimientosDesinfeccion",
+    "type": "textarea",
+    "hideExpression": "!formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1 || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable.some(localTable => localTable.nivelContencion !== '1')",
+    "templateOptions": {
+      "label": "Observaciones",
+      "placeholder": "Observaciones",
+      "required": false,
+      "disabled": false,
+      "autosize": true,
+      "autosizeMinRows": "1",
+      "autosizeMaxRows": "10"
+    }
+  },
+  {
+    "template": "<p>El lugar de trabajo se mantendrá con una presión negativa respecto a la presión atmosférica. (Exigencias según la Guía del <b>R.D. 664/97</b>:Si)</p>",
+    "hideExpression": "!formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1 || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable.some(localTable => localTable.nivelContencion !== '1')"
+  },
+  {
+    "key": "presionNegativa",
+    "type": "radio",
+    "hideExpression": "!formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1 || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable.some(localTable => localTable.nivelContencion !== '1')",
+    "templateOptions": {
+      "required": true,
+      "label": "Elige opción",
+      "options": [
+        {
+          "value": "no",
+          "label": "No"
+        },
+        {
+          "value": "si",
+          "label": "Sí"
         }
-      },
-      {
-        "template": "<p>El lugar de trabajo deberá poder precintarse para permitir su desinfección.(Exigencias según la Guía del <b>R.D. 664/97</b>:No)</p>",
-        "hideExpression": "!formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1 || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable.some(localTable => localTable.nivelContencion !== '1')"
-      },
-      {
-        "key": "lugarTrabajo",
-        "type": "radio",
-        "hideExpression": "!formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1 || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable.some(localTable => localTable.nivelContencion !== '1')",
-        "templateOptions": {
-          "required": true,
-          "label": "Elige opción",
-          "options": [
-            {
-              "value": "no",
-              "label": "No"
-            },
-            {
-              "value": "si",
-              "label": "Sí"
-            }
-          ]
+      ]
+    }
+  },
+  {
+    "key": "observaciones_presionNegativa",
+    "type": "textarea",
+    "hideExpression": "!formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1 || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable.some(localTable => localTable.nivelContencion !== '1')",
+    "templateOptions": {
+      "label": "Observaciones",
+      "placeholder": "Observaciones",
+      "required": false,
+      "disabled": false,
+      "autosize": true,
+      "autosizeMinRows": "1",
+      "autosizeMaxRows": "10"
+    }
+  },
+  {
+    "template": "<p>Control eficiente de vectores, por ejemplo, de roedores e insectos. (Exigencias según la Guía del <b>R.D. 664/97</b>:Aconsejable)</p>",
+    "hideExpression": "!formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1 || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable.some(localTable => localTable.nivelContencion !== '1')"
+  },
+  {
+    "key": "roedoresInsectos",
+    "type": "radio",
+    "hideExpression": "!formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1 || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable.some(localTable => localTable.nivelContencion !== '1')",
+    "templateOptions": {
+      "required": true,
+      "label": "Elige opción",
+      "options": [
+        {
+          "value": "no",
+          "label": "No"
+        },
+        {
+          "value": "si",
+          "label": "Sí"
         }
-      },
-      {
-        "key": "observaciones_lugarTrabajo",
-        "type": "textarea",
-        "hideExpression": "!formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1 || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable.some(localTable => localTable.nivelContencion !== '1')",
-        "templateOptions": {
-          "label": "Observaciones",
-          "placeholder": "Observaciones",
-          "required": false,
-          "disabled": false,
-          "autosize": true,
-          "autosizeMinRows": "1",
-          "autosizeMaxRows": "10"
+      ]
+    }
+  },
+  {
+    "key": "observaciones_roedoresInsectos",
+    "type": "textarea",
+    "hideExpression": "!formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1 || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable.some(localTable => localTable.nivelContencion !== '1')",
+    "templateOptions": {
+      "label": "Observaciones",
+      "placeholder": "Observaciones",
+      "required": false,
+      "disabled": false,
+      "autosize": true,
+      "autosizeMinRows": "1",
+      "autosizeMaxRows": "10"
+    }
+  },
+  {
+    "template": "<p>Superficies impermeables al agua y de fácil limpieza.(Exigencias según la Guía del <b>R.D. 664/97</b>:Sí, para el banco de pruebas o mesa de trabajo)</p>",
+    "hideExpression": "!formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1 || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable.some(localTable => localTable.nivelContencion !== '1')"
+  },
+  {
+    "key": "superficiesImpermeables",
+    "type": "radio",
+    "hideExpression": "!formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1 || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable.some(localTable => localTable.nivelContencion !== '1')",
+    "templateOptions": {
+      "required": true,
+      "label": "Elige opción",
+      "options": [
+        {
+          "value": "no",
+          "label": "No"
+        },
+        {
+          "value": "si",
+          "label": "Sí"
         }
-      },
-      {
-        "template": "<p>Procedimientos de desinfección especificados. (Exigencias según la Guía del <b>R.D. 664/97</b>:Si)</p>",
-        "hideExpression": "!formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1 || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable.some(localTable => localTable.nivelContencion !== '1')"
-      },
-      {
-        "key": "procedimientosDesinfeccion",
-        "type": "radio",
-        "hideExpression": "!formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1 || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable.some(localTable => localTable.nivelContencion !== '1')",
-        "templateOptions": {
-          "required": true,
-          "label": "Elige opción",
-          "options": [
-            {
-              "value": "no",
-              "label": "No"
-            },
-            {
-              "value": "si",
-              "label": "Sí"
-            }
-          ]
+      ]
+    }
+  },
+  {
+    "key": "observaciones_superficiesImpermeables",
+    "type": "textarea",
+    "hideExpression": "!formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1 || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable.some(localTable => localTable.nivelContencion !== '1')",
+    "templateOptions": {
+      "label": "Observaciones",
+      "placeholder": "Observaciones",
+      "required": false,
+      "disabled": false,
+      "autosize": true,
+      "autosizeMinRows": "1",
+      "autosizeMaxRows": "10"
+    }
+  },
+  {
+    "template": "<p>Superficies resistentes a ácidos, álcalis, disolventes y desinfectantes.(Exigencias según la Guía del <b>R.D. 664/97</b>:Aconsejable)</p>",
+    "hideExpression": "!formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1 || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable.some(localTable => localTable.nivelContencion !== '1')"
+  },
+  {
+    "key": "superficiesResistentes",
+    "type": "radio",
+    "hideExpression": "!formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1 || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable.some(localTable => localTable.nivelContencion !== '1')",
+    "templateOptions": {
+      "required": true,
+      "label": "Elige opción",
+      "options": [
+        {
+          "value": "no",
+          "label": "No"
+        },
+        {
+          "value": "si",
+          "label": "Sí"
         }
-      },
-      {
-        "key": "observaciones_procedimientosDesinfeccion",
-        "type": "textarea",
-        "hideExpression": "!formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1 || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable.some(localTable => localTable.nivelContencion !== '1')",
-        "templateOptions": {
-          "label": "Observaciones",
-          "placeholder": "Observaciones",
-          "required": false,
-          "disabled": false,
-          "autosize": true,
-          "autosizeMinRows": "1",
-          "autosizeMaxRows": "10"
+      ]
+    }
+  },
+  {
+    "key": "observaciones_superficiesResistentes",
+    "type": "textarea",
+    "hideExpression": "!formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1 || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable.some(localTable => localTable.nivelContencion !== '1')",
+    "templateOptions": {
+      "label": "Observaciones",
+      "placeholder": "Observaciones",
+      "required": false,
+      "disabled": false,
+      "autosize": true,
+      "autosizeMinRows": "1",
+      "autosizeMaxRows": "10"
+    }
+  },
+  {
+    "template": "<p>Almacenamiento de seguridad para agentes biológicos.(Exigencias según la Guía del <b>R.D. 664/97</b>:Si)</p>",
+    "hideExpression": "!formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1 || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable.some(localTable => localTable.nivelContencion !== '1')"
+  },
+  {
+    "key": "almacenamientoSeguridad",
+    "type": "radio",
+    "hideExpression": "!formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1 || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable.some(localTable => localTable.nivelContencion !== '1')",
+    "templateOptions": {
+      "required": true,
+      "label": "Elige opción",
+      "options": [
+        {
+          "value": "no",
+          "label": "No"
+        },
+        {
+          "value": "si",
+          "label": "Sí"
         }
-      },
-      {
-        "template": "<p>El lugar de trabajo se mantendrá con una presión negativa respecto a la presión atmosférica. (Exigencias según la Guía del <b>R.D. 664/97</b>:Si)</p>",
-        "hideExpression": "!formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1 || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable.some(localTable => localTable.nivelContencion !== '1')"
-      },
-      {
-        "key": "presionNegativa",
-        "type": "radio",
-        "hideExpression": "!formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1 || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable.some(localTable => localTable.nivelContencion !== '1')",
-        "templateOptions": {
-          "required": true,
-          "label": "Elige opción",
-          "options": [
-            {
-              "value": "no",
-              "label": "No"
-            },
-            {
-              "value": "si",
-              "label": "Sí"
-            }
-          ]
+      ]
+    }
+  },
+  {
+    "key": "observaciones_almacenamientoSeguridad",
+    "type": "textarea",
+    "hideExpression": "!formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1 || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable.some(localTable => localTable.nivelContencion !== '1')",
+    "templateOptions": {
+      "label": "Observaciones",
+      "placeholder": "Observaciones",
+      "required": false,
+      "disabled": false,
+      "autosize": true,
+      "autosizeMinRows": "1",
+      "autosizeMaxRows": "10"
+    }
+  },
+  {
+    "template": "<p>Se instalará una ventanilla de observación o un dispositivo alternativo en las zonas de manera que se pueda ver a sus ocupantes.(Exigenciassegún la Guía del <b>R.D. 664/97</b>:Aconsejable)</p>",
+    "hideExpression": "!formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1 || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable.some(localTable => localTable.nivelContencion !== '1')"
+  },
+  {
+    "key": "ventanillaObservacion",
+    "type": "radio",
+    "hideExpression": "!formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1 || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable.some(localTable => localTable.nivelContencion !== '1')",
+    "templateOptions": {
+      "required": true,
+      "label": "Elige opción",
+      "options": [
+        {
+          "value": "no",
+          "label": "No"
+        },
+        {
+          "value": "si",
+          "label": "Sí"
         }
-      },
-      {
-        "key": "observaciones_presionNegativa",
-        "type": "textarea",
-        "hideExpression": "!formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1 || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable.some(localTable => localTable.nivelContencion !== '1')",
-        "templateOptions": {
-          "label": "Observaciones",
-          "placeholder": "Observaciones",
-          "required": false,
-          "disabled": false,
-          "autosize": true,
-          "autosizeMinRows": "1",
-          "autosizeMaxRows": "10"
+      ]
+    }
+  },
+  {
+    "key": "observaciones_ventanillaObservacion",
+    "type": "textarea",
+    "hideExpression": "!formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1 || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable.some(localTable => localTable.nivelContencion !== '1')",
+    "templateOptions": {
+      "label": "Observaciones",
+      "placeholder": "Observaciones",
+      "required": false,
+      "disabled": false,
+      "autosize": true,
+      "autosizeMinRows": "1",
+      "autosizeMaxRows": "10"
+    }
+  },
+  {
+    "template": "<p>Laboratorio con equipo propio.(Exigencias según la Guía del <b>R.D. 664/97</b>:No)</p>",
+    "hideExpression": "!formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1 || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable.some(localTable => localTable.nivelContencion !== '1')"
+  },
+  {
+    "key": "laboratorioEquipo",
+    "type": "radio",
+    "hideExpression": "!formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1 || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable.some(localTable => localTable.nivelContencion !== '1')",
+    "templateOptions": {
+      "required": true,
+      "label": "Elige opción",
+      "options": [
+        {
+          "value": "no",
+          "label": "No"
+        },
+        {
+          "value": "si",
+          "label": "Sí"
         }
-      },
-      {
-        "template": "<p>Control eficiente de vectores, por ejemplo, de roedores e insectos. (Exigencias según la Guía del <b>R.D. 664/97</b>:Aconsejable)</p>",
-        "hideExpression": "!formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1 || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable.some(localTable => localTable.nivelContencion !== '1')"
-      },
-      {
-        "key": "roedoresInsectos",
-        "type": "radio",
-        "hideExpression": "!formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1 || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable.some(localTable => localTable.nivelContencion !== '1')",
-        "templateOptions": {
-          "required": true,
-          "label": "Elige opción",
-          "options": [
-            {
-              "value": "no",
-              "label": "No"
-            },
-            {
-              "value": "si",
-              "label": "Sí"
-            }
-          ]
+      ]
+    }
+  },
+  {
+    "key": "observaciones_laboratorioEquipo",
+    "type": "textarea",
+    "hideExpression": "!formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1 || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable.some(localTable => localTable.nivelContencion !== '1')",
+    "templateOptions": {
+      "label": "Observaciones",
+      "placeholder": "Observaciones",
+      "required": false,
+      "disabled": false,
+      "autosize": true,
+      "autosizeMinRows": "1",
+      "autosizeMaxRows": "10"
+    }
+  },
+  {
+    "template": "<p>El material infectado, animales incluidos, deberá manejarse en una cabina de seguridad biológica o en un aislador u otra contenciónapropiada.(Exigencias según la <b>Guía del R.D. 664/97</b>:cuando proceda)</p>",
+    "hideExpression": "!formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1 || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable.some(localTable => localTable.nivelContencion !== '1')"
+  },
+  {
+    "key": "materialInfectado",
+    "type": "radio",
+    "hideExpression": "!formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1 || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable.some(localTable => localTable.nivelContencion !== '1')",
+    "templateOptions": {
+      "required": true,
+      "label": "Elige opción",
+      "options": [
+        {
+          "value": "no",
+          "label": "No"
+        },
+        {
+          "value": "si",
+          "label": "Sí"
         }
-      },
-      {
-        "key": "observaciones_roedoresInsectos",
-        "type": "textarea",
-        "hideExpression": "!formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1 || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable.some(localTable => localTable.nivelContencion !== '1')",
-        "templateOptions": {
-          "label": "Observaciones",
-          "placeholder": "Observaciones",
-          "required": false,
-          "disabled": false,
-          "autosize": true,
-          "autosizeMinRows": "1",
-          "autosizeMaxRows": "10"
+      ]
+    }
+  },
+  {
+    "key": "observaciones_materialInfectado",
+    "type": "textarea",
+    "hideExpression": "!formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1 || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable.some(localTable => localTable.nivelContencion !== '1')",
+    "templateOptions": {
+      "label": "Observaciones",
+      "placeholder": "Observaciones",
+      "required": false,
+      "disabled": false,
+      "autosize": true,
+      "autosizeMinRows": "1",
+      "autosizeMaxRows": "10"
+    }
+  },
+  {
+    "template": "<p>Incinerador para destrucción de animales muertos.(Exigencias según la <b>Guía del R.D. 664/97</b>:Aconsejable)</p>",
+    "hideExpression": "!formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1 || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable.some(localTable => localTable.nivelContencion !== '1')"
+  },
+  {
+    "key": "animalesMuertos",
+    "type": "radio",
+    "hideExpression": "!formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1 || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable.some(localTable => localTable.nivelContencion !== '1')",
+    "templateOptions": {
+      "required": true,
+      "label": "Elige opción",
+      "options": [
+        {
+          "value": "no",
+          "label": "No"
+        },
+        {
+          "value": "si",
+          "label": "Sí"
         }
-      },
-      {
-        "template": "<p>Superficies impermeables al agua y de fácil limpieza.(Exigencias según la Guía del <b>R.D. 664/97</b>:Sí, para el banco de pruebas o mesa de trabajo)</p>",
-        "hideExpression": "!formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1 || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable.some(localTable => localTable.nivelContencion !== '1')"
-      },
-      {
-        "key": "superficiesImpermeables",
-        "type": "radio",
-        "hideExpression": "!formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1 || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable.some(localTable => localTable.nivelContencion !== '1')",
-        "templateOptions": {
-          "required": true,
-          "label": "Elige opción",
-          "options": [
-            {
-              "value": "no",
-              "label": "No"
-            },
-            {
-              "value": "si",
-              "label": "Sí"
-            }
-          ]
-        }
-      },
-      {
-        "key": "observaciones_superficiesImpermeables",
-        "type": "textarea",
-        "hideExpression": "!formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1 || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable.some(localTable => localTable.nivelContencion !== '1')",
-        "templateOptions": {
-          "label": "Observaciones",
-          "placeholder": "Observaciones",
-          "required": false,
-          "disabled": false,
-          "autosize": true,
-          "autosizeMinRows": "1",
-          "autosizeMaxRows": "10"
-        }
-      },
-      {
-        "template": "<p>Superficies resistentes a ácidos, álcalis, disolventes y desinfectantes.(Exigencias según la Guía del <b>R.D. 664/97</b>:Aconsejable)</p>",
-        "hideExpression": "!formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1 || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable.some(localTable => localTable.nivelContencion !== '1')"
-      },
-      {
-        "key": "superficiesResistentes",
-        "type": "radio",
-        "hideExpression": "!formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1 || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable.some(localTable => localTable.nivelContencion !== '1')",
-        "templateOptions": {
-          "required": true,
-          "label": "Elige opción",
-          "options": [
-            {
-              "value": "no",
-              "label": "No"
-            },
-            {
-              "value": "si",
-              "label": "Sí"
-            }
-          ]
-        }
-      },
-      {
-        "key": "observaciones_superficiesResistentes",
-        "type": "textarea",
-        "hideExpression": "!formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1 || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable.some(localTable => localTable.nivelContencion !== '1')",
-        "templateOptions": {
-          "label": "Observaciones",
-          "placeholder": "Observaciones",
-          "required": false,
-          "disabled": false,
-          "autosize": true,
-          "autosizeMinRows": "1",
-          "autosizeMaxRows": "10"
-        }
-      },
-      {
-        "template": "<p>Almacenamiento de seguridad para agentes biológicos.(Exigencias según la Guía del <b>R.D. 664/97</b>:Si)</p>",
-        "hideExpression": "!formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1 || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable.some(localTable => localTable.nivelContencion !== '1')"
-      },
-      {
-        "key": "almacenamientoSeguridad",
-        "type": "radio",
-        "hideExpression": "!formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1 || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable.some(localTable => localTable.nivelContencion !== '1')",
-        "templateOptions": {
-          "required": true,
-          "label": "Elige opción",
-          "options": [
-            {
-              "value": "no",
-              "label": "No"
-            },
-            {
-              "value": "si",
-              "label": "Sí"
-            }
-          ]
-        }
-      },
-      {
-        "key": "observaciones_almacenamientoSeguridad",
-        "type": "textarea",
-        "hideExpression": "!formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1 || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable.some(localTable => localTable.nivelContencion !== '1')",
-        "templateOptions": {
-          "label": "Observaciones",
-          "placeholder": "Observaciones",
-          "required": false,
-          "disabled": false,
-          "autosize": true,
-          "autosizeMinRows": "1",
-          "autosizeMaxRows": "10"
-        }
-      },
-      {
-        "template": "<p>Se instalará una ventanilla de observación o un dispositivo alternativo en las zonas de manera que se pueda ver a sus ocupantes.(Exigenciassegún la Guía del <b>R.D. 664/97</b>:Aconsejable)</p>",
-        "hideExpression": "!formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1 || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable.some(localTable => localTable.nivelContencion !== '1')"
-      },
-      {
-        "key": "ventanillaObservacion",
-        "type": "radio",
-        "hideExpression": "!formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1 || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable.some(localTable => localTable.nivelContencion !== '1')",
-        "templateOptions": {
-          "required": true,
-          "label": "Elige opción",
-          "options": [
-            {
-              "value": "no",
-              "label": "No"
-            },
-            {
-              "value": "si",
-              "label": "Sí"
-            }
-          ]
-        }
-      },
-      {
-        "key": "observaciones_ventanillaObservacion",
-        "type": "textarea",
-        "hideExpression": "!formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1 || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable.some(localTable => localTable.nivelContencion !== '1')",
-        "templateOptions": {
-          "label": "Observaciones",
-          "placeholder": "Observaciones",
-          "required": false,
-          "disabled": false,
-          "autosize": true,
-          "autosizeMinRows": "1",
-          "autosizeMaxRows": "10"
-        }
-      },
-      {
-        "template": "<p>Laboratorio con equipo propio.(Exigencias según la Guía del <b>R.D. 664/97</b>:No)</p>",
-        "hideExpression": "!formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1 || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable.some(localTable => localTable.nivelContencion !== '1')"
-      },
-      {
-        "key": "laboratorioEquipo",
-        "type": "radio",
-        "hideExpression": "!formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1 || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable.some(localTable => localTable.nivelContencion !== '1')",
-        "templateOptions": {
-          "required": true,
-          "label": "Elige opción",
-          "options": [
-            {
-              "value": "no",
-              "label": "No"
-            },
-            {
-              "value": "si",
-              "label": "Sí"
-            }
-          ]
-        }
-      },
-      {
-        "key": "observaciones_laboratorioEquipo",
-        "type": "textarea",
-        "hideExpression": "!formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1 || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable.some(localTable => localTable.nivelContencion !== '1')",
-        "templateOptions": {
-          "label": "Observaciones",
-          "placeholder": "Observaciones",
-          "required": false,
-          "disabled": false,
-          "autosize": true,
-          "autosizeMinRows": "1",
-          "autosizeMaxRows": "10"
-        }
-      },
-      {
-        "template": "<p>El material infectado, animales incluidos, deberá manejarse en una cabina de seguridad biológica o en un aislador u otra contenciónapropiada.(Exigencias según la <b>Guía del R.D. 664/97</b>:cuando proceda)</p>",
-        "hideExpression": "!formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1 || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable.some(localTable => localTable.nivelContencion !== '1')"
-      },
-      {
-        "key": "materialInfectado",
-        "type": "radio",
-        "hideExpression": "!formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1 || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable.some(localTable => localTable.nivelContencion !== '1')",
-        "templateOptions": {
-          "required": true,
-          "label": "Elige opción",
-          "options": [
-            {
-              "value": "no",
-              "label": "No"
-            },
-            {
-              "value": "si",
-              "label": "Sí"
-            }
-          ]
-        }
-      },
-      {
-        "key": "observaciones_materialInfectado",
-        "type": "textarea",
-        "hideExpression": "!formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1 || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable.some(localTable => localTable.nivelContencion !== '1')",
-        "templateOptions": {
-          "label": "Observaciones",
-          "placeholder": "Observaciones",
-          "required": false,
-          "disabled": false,
-          "autosize": true,
-          "autosizeMinRows": "1",
-          "autosizeMaxRows": "10"
-        }
-      },
-      {
-        "template": "<p>Incinerador para destrucción de animales muertos.(Exigencias según la <b>Guía del R.D. 664/97</b>:Aconsejable)</p>",
-        "hideExpression": "!formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1 || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable.some(localTable => localTable.nivelContencion !== '1')"
-      },
-      {
-        "key": "animalesMuertos",
-        "type": "radio",
-        "hideExpression": "!formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1 || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable.some(localTable => localTable.nivelContencion !== '1')",
-        "templateOptions": {
-          "required": true,
-          "label": "Elige opción",
-          "options": [
-            {
-              "value": "no",
-              "label": "No"
-            },
-            {
-              "value": "si",
-              "label": "Sí"
-            }
-          ]
-        }
-      },
-      {
-        "key": "observaciones_animalesMuertos",
-        "type": "textarea",
-        "hideExpression": "!formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1 || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable.some(localTable => localTable.nivelContencion !== '1')",
-        "templateOptions": {
-          "label": "Observaciones",
-          "placeholder": "Observaciones",
-          "required": false,
-          "disabled": false,
-          "autosize": true,
-          "autosizeMinRows": "1",
-          "autosizeMaxRows": "10"
-        }
-      }
-    ]
+      ]
+    }
+  },
+  {
+    "key": "observaciones_animalesMuertos",
+    "type": "textarea",
+    "hideExpression": "!formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1 || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable.some(localTable => localTable.nivelContencion !== '1')",
+    "templateOptions": {
+      "label": "Observaciones",
+      "placeholder": "Observaciones",
+      "required": false,
+      "disabled": false,
+      "autosize": true,
+      "autosizeMinRows": "1",
+      "autosizeMaxRows": "10"
+    }
   }
 ]

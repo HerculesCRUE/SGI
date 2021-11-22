@@ -38,7 +38,7 @@ public class ConfigController {
    */
   @GetMapping(value = "/time-zone", produces = MediaType.TEXT_PLAIN_VALUE)
   @PreAuthorize("isAuthenticated()")
-  String timeZone() {
+  public String timeZone() {
     log.debug("timeZone() - start");
     String returnValue = sgiConfigProperties.getTimeZone().getID();
     log.debug("timeZone() - end");

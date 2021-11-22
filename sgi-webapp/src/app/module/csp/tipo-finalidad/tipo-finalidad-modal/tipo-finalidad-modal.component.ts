@@ -1,49 +1,45 @@
-import { Component, Inject, OnInit } from '@angular/core';
-import { FormControl, FormGroup } from '@angular/forms';
+import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
-import { BaseModalComponent } from '@core/component/base-modal.component';
+import { DialogActionComponent } from '@core/component/dialog-action.component';
 import { MSG_PARAMS } from '@core/i18n';
 import { ITipoFinalidad } from '@core/models/csp/tipos-configuracion';
-import { SnackBarService } from '@core/services/snack-bar.service';
+import { TipoFinalidadService } from '@core/services/csp/tipo-finalidad.service';
 import { TranslateService } from '@ngx-translate/core';
+import { Observable } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 
-
-const MSG_ANADIR = marker('btn.add');
-const MSG_ACEPTAR = marker('btn.ok');
 const TIPO_FINALIDAD_KEY = marker('csp.tipo-finalidad');
 const TIPO_FINALIDAD_NOMBRE_KEY = marker('csp.tipo-finalidad.nombre');
 const TITLE_NEW_ENTITY = marker('title.new.entity');
+
 @Component({
   templateUrl: './tipo-finalidad-modal.component.html',
   styleUrls: ['./tipo-finalidad-modal.component.scss']
 })
-export class TipoFinalidadModalComponent extends BaseModalComponent<ITipoFinalidad, TipoFinalidadModalComponent> implements OnInit {
+export class TipoFinalidadModalComponent extends DialogActionComponent<ITipoFinalidad, ITipoFinalidad> implements OnInit, OnDestroy {
 
-  textSaveOrUpdate: string;
+  private readonly tipoFinalidad: ITipoFinalidad;
   title: string;
   msgParamNombreEntity = {};
 
   constructor(
-    protected readonly snackBarService: SnackBarService,
-    public readonly matDialogRef: MatDialogRef<TipoFinalidadModalComponent>,
-    @Inject(MAT_DIALOG_DATA) public tipoFinalidad: ITipoFinalidad,
+    matDialogRef: MatDialogRef<TipoFinalidadModalComponent>,
+    @Inject(MAT_DIALOG_DATA) data: ITipoFinalidad,
+    private readonly tipoFinalidadService: TipoFinalidadService,
     private readonly translate: TranslateService
   ) {
-    super(snackBarService, matDialogRef, tipoFinalidad);
-    if (tipoFinalidad.id) {
-      this.tipoFinalidad = { ...tipoFinalidad };
-      this.textSaveOrUpdate = MSG_ACEPTAR;
+    super(matDialogRef, !!data?.id);
+    if (this.isEdit()) {
+      this.tipoFinalidad = { ...data };
     } else {
       this.tipoFinalidad = { activo: true } as ITipoFinalidad;
-      this.textSaveOrUpdate = MSG_ANADIR;
     }
   }
 
   ngOnInit(): void {
     super.ngOnInit();
-
     this.setupI18N();
   }
 
@@ -53,7 +49,7 @@ export class TipoFinalidadModalComponent extends BaseModalComponent<ITipoFinalid
       MSG_PARAMS.CARDINALIRY.SINGULAR
     ).subscribe((value) => this.msgParamNombreEntity = { entity: value, ...MSG_PARAMS.GENDER.MALE, ...MSG_PARAMS.CARDINALIRY.SINGULAR });
 
-    if (this.tipoFinalidad.nombre) {
+    if (this.isEdit()) {
       this.translate.get(
         TIPO_FINALIDAD_KEY,
         MSG_PARAMS.CARDINALIRY.SINGULAR
@@ -73,18 +69,23 @@ export class TipoFinalidadModalComponent extends BaseModalComponent<ITipoFinalid
     }
   }
 
-  protected getDatosForm(): ITipoFinalidad {
+  protected getValue(): ITipoFinalidad {
     const tipoFinalidad = this.tipoFinalidad;
     tipoFinalidad.nombre = this.formGroup.get('nombre').value;
     tipoFinalidad.descripcion = this.formGroup.get('descripcion').value;
     return tipoFinalidad;
   }
 
-  protected getFormGroup(): FormGroup {
+  protected buildFormGroup(): FormGroup {
     return new FormGroup({
-      nombre: new FormControl(this.tipoFinalidad?.nombre),
-      descripcion: new FormControl(this.tipoFinalidad?.descripcion)
+      nombre: new FormControl(this.tipoFinalidad?.nombre ?? '', Validators.required),
+      descripcion: new FormControl(this.tipoFinalidad?.descripcion ?? '')
     });
   }
 
+  protected saveOrUpdate(): Observable<ITipoFinalidad> {
+    const tipoFinalidad = this.getValue();
+    return this.isEdit() ? this.tipoFinalidadService.update(tipoFinalidad.id, tipoFinalidad) :
+      this.tipoFinalidadService.create(tipoFinalidad);
+  }
 }

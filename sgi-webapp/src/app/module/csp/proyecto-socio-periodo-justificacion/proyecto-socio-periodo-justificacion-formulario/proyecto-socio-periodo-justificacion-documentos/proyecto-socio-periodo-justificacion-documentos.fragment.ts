@@ -139,6 +139,7 @@ export class ProyectoSocioPeriodoJustificacionDocumentosFragment extends Fragmen
 
   private buildTree(documentos: IProyectoSocioPeriodoJustificacionDocumento[]): NodeDocumentoProyecto[] {
     const nodes: NodeDocumentoProyecto[] = [];
+    this.nodeLookup = new Map<string, NodeDocumentoProyecto>();
     documentos.forEach((documento: IProyectoSocioPeriodoJustificacionDocumento) => {
       const keyTipoDocumento = `${documento.tipoDocumento ? documento.tipoDocumento?.id : 0}`;
       let tipoDocNode = this.nodeLookup.get(keyTipoDocumento);

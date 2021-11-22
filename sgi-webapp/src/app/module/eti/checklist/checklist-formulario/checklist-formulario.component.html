@@ -3,6 +3,7 @@
   <form [formGroup]="data.formGroup">
     <formly-form [model]="data.model" [fields]="data.formly.esquema" [form]="data.formGroup">
     </formly-form>
+    <p>{{ 'eti.checklist.texto' | translate }}</p>
   </form>
   <div id="modals-buttons" class="float-right" mat-dialog-actions>
     <button color="accent" (click)="saveOrUpdate()" mat-raised-button type="submit"

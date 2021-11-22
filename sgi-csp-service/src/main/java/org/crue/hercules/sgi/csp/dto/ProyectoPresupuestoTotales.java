@@ -21,19 +21,24 @@ public class ProyectoPresupuestoTotales implements Serializable {
    */
   private static final long serialVersionUID = 1L;
 
-  private BigDecimal importeTotalPresupuestoUniversidad;
+  private BigDecimal importeTotalPresupuestoUniversidadSinCosteIndirecto;
   private BigDecimal importeTotalPresupuestoSocios;
-  private BigDecimal importeTotalConcedidoUniversidad;
+  private BigDecimal importeTotalConcedidoUniversidadSinCosteIndirecto;
   private BigDecimal importeTotalConcedidoSocios;
   private BigDecimal importeTotalPresupuesto;
   private BigDecimal importeTotalConcedido;
+  private BigDecimal importeTotalPresupuestoUniversidadCostesIndirectos;
+  private BigDecimal importeTotalConcedidoUniversidadCostesIndirectos;
 
-  public ProyectoPresupuestoTotales(BigDecimal importeTotalPresupuestoUniversidad,
-      BigDecimal importeTotalPresupuestoSocios, BigDecimal importeTotalConcedidoUniversidad,
-      BigDecimal importeTotalConcedidoSocios) {
-    this.importeTotalPresupuestoUniversidad = importeTotalPresupuestoUniversidad;
+  public ProyectoPresupuestoTotales(BigDecimal importeTotalPresupuestoUniversidadSinCosteIndirecto,
+      BigDecimal importeTotalPresupuestoUniversidadCostesIndirectos, BigDecimal importeTotalPresupuestoSocios,
+      BigDecimal importeTotalConcedidoUniversidadSinCosteIndirecto,
+      BigDecimal importeTotalConcedidoUniversidadCostesIndirectos, BigDecimal importeTotalConcedidoSocios) {
+    this.importeTotalPresupuestoUniversidadSinCosteIndirecto = importeTotalPresupuestoUniversidadSinCosteIndirecto;
     this.importeTotalPresupuestoSocios = importeTotalPresupuestoSocios;
-    this.importeTotalConcedidoUniversidad = importeTotalConcedidoUniversidad;
+    this.importeTotalConcedidoUniversidadSinCosteIndirecto = importeTotalConcedidoUniversidadSinCosteIndirecto;
     this.importeTotalConcedidoSocios = importeTotalConcedidoSocios;
+    this.importeTotalPresupuestoUniversidadCostesIndirectos = importeTotalPresupuestoUniversidadCostesIndirectos;
+    this.importeTotalConcedidoUniversidadCostesIndirectos = importeTotalConcedidoUniversidadCostesIndirectos;
   }
 }

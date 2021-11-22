@@ -47,8 +47,7 @@ public class GastoProyecto extends BaseEntity {
   private Long id;
 
   /** Proyecto Id */
-  @Column(name = "proyecto_id", nullable = false)
-  @NotNull(groups = { OnCrear.class, OnActualizar.class })
+  @Column(name = "proyecto_id", nullable = true)
   private Long proyectoId;
 
   /** Gasto ref */
@@ -68,8 +67,7 @@ public class GastoProyecto extends BaseEntity {
   private EstadoGastoProyecto estado;
 
   /** Fecha congreso */
-  @Column(name = "fecha_congreso", nullable = false)
-  @NotNull(groups = { OnCrear.class, OnActualizar.class })
+  @Column(name = "fecha_congreso", nullable = true)
   private Instant fechaCongreso;
 
   /** Importe inscripcion */

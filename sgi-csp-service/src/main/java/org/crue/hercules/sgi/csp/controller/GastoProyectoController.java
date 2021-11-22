@@ -7,7 +7,9 @@ import javax.validation.Valid;
 
 import org.crue.hercules.sgi.csp.dto.GastoProyectoInput;
 import org.crue.hercules.sgi.csp.dto.GastoProyectoOutput;
+import org.crue.hercules.sgi.csp.model.EstadoGastoProyecto;
 import org.crue.hercules.sgi.csp.model.GastoProyecto;
+import org.crue.hercules.sgi.csp.service.EstadoGastoProyectoService;
 import org.crue.hercules.sgi.csp.service.GastoProyectoService;
 import org.crue.hercules.sgi.framework.web.bind.annotation.RequestPageable;
 import org.modelmapper.ModelMapper;
@@ -42,15 +44,20 @@ public class GastoProyectoController {
   /** GastoProyecto service */
   private final GastoProyectoService service;
 
+  /** EstadoGastoProyecto service */
+  private final EstadoGastoProyectoService estadoGastoProyectoService;
+
   /**
    * Instancia un nuevo GastoProyectoController.
    * 
    * @param modelMapper {@link ModelMapper}
    * @param service     {@link GastoProyectoService}
    */
-  public GastoProyectoController(ModelMapper modelMapper, GastoProyectoService service) {
+  public GastoProyectoController(ModelMapper modelMapper, GastoProyectoService service,
+      EstadoGastoProyectoService estadoGastoProyectoService) {
     this.modelMapper = modelMapper;
     this.service = service;
+    this.estadoGastoProyectoService = estadoGastoProyectoService;
   }
 
   /**
@@ -85,9 +92,36 @@ public class GastoProyectoController {
   @PreAuthorize("hasAuthorityForAnyUO('CSP-EJEC-E')")
   ResponseEntity<GastoProyectoOutput> create(@Valid @RequestBody GastoProyectoInput gastoProyecto) {
     log.debug("create(GastoProyecto gastoProyecto) - start");
+
     GastoProyecto returnValue = service.create(convert(gastoProyecto));
+
     log.debug("create(GastoProyecto gastoProyecto) - end");
     return new ResponseEntity<>(convert(returnValue), HttpStatus.CREATED);
+  }
+
+  /**
+   * Devuelve una lista de EstadoGastoProyecto paginada y filtrada de
+   * {@link GastoProyecto}.
+   * 
+   * @param id     Identificador de {@link GastoProyecto}.
+   * @param paging pageable.
+   */
+
+  @GetMapping("/{id}/estadosgastoproyecto")
+  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-EJEC-E', 'CSP-EJEC-V', 'CSP-EJEC-INV-VR')")
+  ResponseEntity<Page<EstadoGastoProyecto>> findAllEstadoGastoProyecto(@PathVariable Long id,
+      @RequestPageable(sort = "s") Pageable paging) {
+    log.debug("findAllEstadoGastoProyecto(Long id, Pageable paging) - start");
+    Page<EstadoGastoProyecto> page = estadoGastoProyectoService.findAllByGastoProyecto(id, paging);
+
+    if (page.isEmpty()) {
+      log.debug("findAllEstadoGastoProyecto(Long id, Pageable paging) - end");
+      return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    log.debug("findAllEstadoGastoProyecto(Long id, Pageable paging) - end");
+    return new ResponseEntity<>(page, HttpStatus.OK);
+
   }
 
   /**
@@ -101,7 +135,9 @@ public class GastoProyectoController {
   @PreAuthorize("hasAuthorityForAnyUO('CSP-EJEC-E')")
   GastoProyectoOutput update(@Valid @RequestBody GastoProyectoInput gastoProyecto, @PathVariable Long id) {
     log.debug("update(GastoProyecto gastoProyecto, Long id) - start");
+
     GastoProyecto returnValue = service.update(convert(id, gastoProyecto));
+
     log.debug("update(GastoProyecto gastoProyecto, Long id) - end");
     return convert(returnValue);
   }

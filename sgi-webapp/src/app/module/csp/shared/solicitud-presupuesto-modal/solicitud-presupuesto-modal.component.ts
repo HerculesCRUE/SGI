@@ -81,7 +81,7 @@ export class SolicitiudPresupuestoModalComponent {
 
   readonly columnas: string[];
   private readonly columnasGlobal = ['anualidad', 'conceptoGasto', 'observaciones', 'importePresupuestado', 'importeSolicitado'];
-  private readonly columnasEntidad = ['anualidad', 'nombre', 'ajena', 'conceptoGasto', 'observaciones', 'importePresupuestado', 'importeSolicitado'];
+  private readonly columnasEntidad = ['anualidad', 'nombre', 'fuenteFinanciacion', 'ajena', 'conceptoGasto', 'observaciones', 'importePresupuestado', 'importeSolicitado'];
 
   dataSource = new MatTableDataSource<RowTreePresupuesto>();
   readonly title: string;
@@ -109,6 +109,9 @@ export class SolicitiudPresupuestoModalComponent {
 
     presupuestos$.pipe(
       map(presupuestos => {
+
+        this.sortRows(presupuestos)
+
         const root = this.data.global ? this.toGlobal(presupuestos) : this.toEntidad(presupuestos);
         const regs: RowTreePresupuesto[] = [];
         root.forEach(r => {
@@ -231,6 +234,13 @@ export class SolicitiudPresupuestoModalComponent {
       });
     }
     return childs;
+  }
+
+  private sortRows(rows: ISolicitudProyectoPresupuesto[]): void {
+    rows.sort((a, b) => {
+      return b.anualidad.toLocaleString().localeCompare(a.anualidad.toLocaleString())
+            || a.conceptoGasto?.nombre.localeCompare(b.conceptoGasto?.nombre);
+    });
   }
 
 }

@@ -14,6 +14,7 @@ import org.crue.hercules.sgi.eti.model.Comite;
 import org.crue.hercules.sgi.eti.model.ConvocatoriaReunion;
 import org.crue.hercules.sgi.eti.model.TipoConvocatoriaReunion;
 import org.crue.hercules.sgi.eti.model.TipoEstadoActa;
+import org.crue.hercules.sgi.eti.model.Comite.Genero;
 import org.crue.hercules.sgi.eti.service.ActaService;
 import org.crue.hercules.sgi.framework.test.web.servlet.result.SgiMockMvcResultHandlers;
 import org.hamcrest.Matchers;
@@ -195,7 +196,7 @@ public class ActaControllerTest extends BaseControllerTest {
   }
 
   @Test
-  @WithMockUser(username = "user", authorities = { "ETI-ACT-B" })
+  @WithMockUser(username = "user", authorities = { "ETI-ACT-DES" })
   public void removeActa_ReturnsOk() throws Exception {
     BDDMockito.given(actaService.findById(ArgumentMatchers.anyLong())).willReturn(generarMockActa(1L, 123));
 
@@ -335,6 +336,7 @@ public class ActaControllerTest extends BaseControllerTest {
   public Acta generarMockActa(Long id, Integer numero) {
     Comite comite = new Comite();
     comite.setId(1L);
+    comite.setGenero(Genero.M);
     comite.setComite("CEEA");
     TipoConvocatoriaReunion tipoConvocatoriaReunion = new TipoConvocatoriaReunion(1L, "Ordinaria", Boolean.TRUE);
     ConvocatoriaReunion convocatoriaReunion = new ConvocatoriaReunion();

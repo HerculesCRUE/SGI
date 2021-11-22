@@ -107,20 +107,25 @@ export class ProyectoPartidasPresupuestariasComponent extends FragmentComponent 
    *
    * @param idEquipo Identificador de equipo a editar.
    */
-  openModal(proyectoPartida: StatusWrapper<IProyectoPartida>, convocatoriaPartida?: IConvocatoriaPartidaPresupuestaria,
-    rowIndex?: number, canEdit?: boolean): void {
+  openModal(
+    proyectoPartida: StatusWrapper<IProyectoPartida>,
+    convocatoriaPartida?: IConvocatoriaPartidaPresupuestaria,
+    rowIndex?: number,
+    canEdit?: boolean
+  ): void {
 
     // Necesario para sincronizar los cambios de orden de registros dependiendo de la ordenación y paginación
     this.dataSource.sortData(this.dataSource.filteredData, this.dataSource.sort);
     const row = (this.paginator.pageSize * this.paginator.pageIndex) + rowIndex;
 
-    const proyectoPartidaPresupuestariaTabla = this.dataSource.data
-      .filter(partidaPresupuestaria => partidaPresupuestaria.partidaPresupuestaria)
-      .map(partidaPresupuestaria => partidaPresupuestaria.partidaPresupuestaria.value);
+    let proyectoPartidaPresupuestariaTabla = this.dataSource.data
+      .map(partidaPresupuestaria => partidaPresupuestaria.partidaPresupuestaria?.value);
 
     proyectoPartidaPresupuestariaTabla.splice(row, 1);
+    proyectoPartidaPresupuestariaTabla = proyectoPartidaPresupuestariaTabla.filter(partidaPresupuestaria => !!partidaPresupuestaria)
+
     const data: PartidaPresupuestariaModalComponentData = {
-      partidaPresupuestaria: proyectoPartida?.value ?? {} as IProyectoPartida,
+      partidaPresupuestaria: proyectoPartida?.value,
       partidasPresupuestarias: proyectoPartidaPresupuestariaTabla,
       convocatoriaPartidaPresupuestaria: convocatoriaPartida,
       readonly: this.formPart.readonly,

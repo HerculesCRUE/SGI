@@ -1,11 +1,11 @@
 package org.crue.hercules.sgi.csp.service;
 
-import org.crue.hercules.sgi.csp.model.EstadoProyecto;
-
 import java.util.List;
 
 import org.crue.hercules.sgi.csp.dto.ProyectoPresupuestoTotales;
+import org.crue.hercules.sgi.csp.model.EstadoProyecto;
 import org.crue.hercules.sgi.csp.model.Proyecto;
+import org.crue.hercules.sgi.csp.model.ProyectoFacturacion;
 import org.crue.hercules.sgi.csp.model.Solicitud;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -121,4 +121,20 @@ public interface ProyectoService {
    * @return el listado de ids de {@link Proyecto}.
    */
   List<Long> findIds(String query);
+
+  /**
+   * Busca todos los objetos de tipo {@link ProyectoFacturacion} cuyo proyectoId sea igual al recibido por parámetro
+   * @param proyectoId id del {@link Proyecto} del que cuelgan la lista de objetos {@link ProyectoFacturacion} a buscar
+   * @param query información del filtro.
+   * @param paging información de paginación
+   * @return objeto {@link Page} con el listado de objetos de tipo {@link ProyectoFacturacion}
+   */
+  Page<ProyectoFacturacion> findAllProyectoFacturacionByProyectoId(Long proyectoId, String query, Pageable paging);
+
+  /**
+   * Obtiene una lista de identificadores de los objetos de tipo {@link Proyecto} filtrados por solicitudId
+   * @param solicitudId id del objeto de tipo {@link Solicitud} referenciado
+   * @return lista de ids de los {@link Proyecto}
+   */
+  List<Long> findIdsBySolicitudId(Long solicitudId);
 }

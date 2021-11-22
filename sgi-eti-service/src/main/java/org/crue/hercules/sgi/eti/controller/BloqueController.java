@@ -98,4 +98,19 @@ public class BloqueController {
     return new ResponseEntity<>(page, HttpStatus.OK);
   }
 
+  /**
+   * Devuelve los bloques a través del id del formulario.
+   * 
+   * @param idFormulario Identificador de {@link Formulario}.
+   * @return Page<Bloque>
+   */
+  @GetMapping("/{idFormulario}/formulario")
+  @PreAuthorize("hasAnyAuthorityForAnyUO('ETI-EVC-EVAL', 'ETI-PEV-INV-VR')")
+  Page<Bloque> findByFormularioId(@PathVariable Long idFormulario, @RequestPageable(sort = "s") Pageable paging) {
+    log.debug("Bloque findByFormularioId(Long idFormulario, Pageable paging) - start");
+    Page<Bloque> returnValue = service.findByFormularioId(idFormulario, paging);
+    log.debug("Bloque findByFormularioId(Long idFormulario, Pageable paging) - end");
+    return returnValue;
+  }
+
 }

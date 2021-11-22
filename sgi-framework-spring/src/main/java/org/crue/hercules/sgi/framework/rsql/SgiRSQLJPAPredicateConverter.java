@@ -19,8 +19,15 @@ import lombok.extern.slf4j.Slf4j;
 public class SgiRSQLJPAPredicateConverter extends RSQLJPAPredicateConverter {
 
   private final SgiRSQLPredicateResolver<?> specificationResolver;
+
+  /**
+   * The {@link CriteriaBuilder} used in predicate generation
+   */
   protected CriteriaBuilder builder;
-  CriteriaQuery<?> query;
+  /**
+   * The {@link CriteriaQuery} used in predicate generation
+   */
+  protected CriteriaQuery<?> query;
 
   /**
    * @param builder           {@link CriteriaBuilder} to use in predicate
@@ -55,15 +62,13 @@ public class SgiRSQLJPAPredicateConverter extends RSQLJPAPredicateConverter {
     return returnValue;
   }
 
-  @SuppressWarnings({ "unchecked", "rawtypes" })
+  @Override
+  @SuppressWarnings({ "rawtypes" })
   protected Object convert(String source, Class targetType) {
     log.debug("convert(String source, Class targetType) - start");
 
-    Object object = null;
     try {
-      if (defaultConversionService.canConvert(String.class, targetType)) {
-        object = defaultConversionService.convert(source, targetType);
-      }
+      Object object = null;
       if (targetType.equals(Instant.class)) {
         object = Instant.parse(source);
       } else {

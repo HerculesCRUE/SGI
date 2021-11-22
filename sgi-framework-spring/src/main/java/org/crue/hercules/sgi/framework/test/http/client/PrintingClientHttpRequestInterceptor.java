@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpCookie;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -89,7 +90,7 @@ public class PrintingClientHttpRequestInterceptor implements ClientHttpRequestIn
    * @throws IOException in case of I/O errors
    */
   protected void printRequest(HttpRequest request, byte[] body) throws IOException {
-    String bodyString = new String(body, "UTF-8");
+    String bodyString = new String(body, StandardCharsets.UTF_8);
 
     this.printer.printValue("HTTP Method", request.getMethod());
     this.printer.printValue("Request URI", request.getURI());
@@ -105,7 +106,8 @@ public class PrintingClientHttpRequestInterceptor implements ClientHttpRequestIn
    */
   protected void printResponse(ClientHttpResponse response) throws IOException {
     StringBuilder inputStringBuilder = new StringBuilder();
-    BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(response.getBody(), "UTF-8"));
+    BufferedReader bufferedReader = new BufferedReader(
+        new InputStreamReader(response.getBody(), StandardCharsets.UTF_8));
     String line = bufferedReader.readLine();
     while (line != null) {
       inputStringBuilder.append(line);
@@ -166,8 +168,19 @@ public class PrintingClientHttpRequestInterceptor implements ClientHttpRequestIn
    */
   protected interface ResultValuePrinter {
 
+    /**
+     * Prints a heading value.
+     * 
+     * @param heading the heading
+     */
     void printHeading(String heading);
 
+    /**
+     * Prints a content value.
+     * 
+     * @param label content label
+     * @param value content value
+     */
     void printValue(String label, @Nullable Object value);
   }
 

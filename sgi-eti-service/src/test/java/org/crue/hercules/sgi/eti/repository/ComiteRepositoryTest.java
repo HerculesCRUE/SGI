@@ -5,6 +5,7 @@ import java.util.Optional;
 import org.assertj.core.api.Assertions;
 import org.crue.hercules.sgi.eti.model.Comite;
 import org.crue.hercules.sgi.eti.model.Formulario;
+import org.crue.hercules.sgi.eti.model.Comite.Genero;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -48,7 +49,8 @@ public class ComiteRepositoryTest extends BaseRepositoryTest {
    * @return el objeto Comite
    */
   public Comite generarMockComite(Formulario formulario) {
-    return new Comite(null, "Comite1", "nombreSecretario", "nombreInvestigacion", "nombreDecreto", "articulo", formulario, Boolean.TRUE);
+    return new Comite(null, "Comite1", "nombreSecretario", "nombreInvestigacion", Genero.M, "nombreDecreto", "articulo",
+        formulario, Boolean.TRUE);
   }
 
 }

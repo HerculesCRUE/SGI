@@ -23,4 +23,10 @@ public class PeticionEvaluacionSpecifications {
       return cb.equal(root.get(PeticionEvaluacion_.personaRef), personaRef);
     };
   }
+
+  public static Specification<PeticionEvaluacion> byId(Long idPeticionEvaluacion) {
+    return (root, query, cb) -> {
+      return cb.equal(root.get(PeticionEvaluacion_.id), idPeticionEvaluacion);
+    };
+  }
 }

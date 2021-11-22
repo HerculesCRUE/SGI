@@ -16,14 +16,14 @@ import { FormlyFieldConfig } from '@ngx-formly/core';
 import { TranslateService } from '@ngx-translate/core';
 import { SgiAuthService } from '@sgi/framework/auth';
 import { Observable, Subscription } from 'rxjs';
-import { filter, map, switchMap } from 'rxjs/operators';
+import { filter, switchMap } from 'rxjs/operators';
 import { PETICION_EVALUACION_ROUTE, PETICION_EVALUACION_ROUTE_NAMES } from '../../peticion-evaluacion/peticion-evaluacion-route-names';
 
 const MSG_CHECKLIST_INVALID_FORM = marker('eti.checklist.invalid');
 const MSG_CHECKLIST_DIALOG = marker('eti.checklist.dialog');
 const CHECKLIST_KEY = marker('eti.checklist');
 const MSG_CREATE_SUCCESS = marker('msg.save.entity.success');
-const MSG_UPDATE_SUCCESS = marker('msg.update.entity.success');
+const MSG_NO_SUCCESS = marker('eti.checklist.no-success');
 const URL_CREAR_SOLICITUD_EVALUACION = Module.INV.path + '/' + PETICION_EVALUACION_ROUTE + '/' + ROUTE_NAMES.NEW + '/' + PETICION_EVALUACION_ROUTE_NAMES.DATOS_GENERALES;
 
 export interface FormlyData {
@@ -53,7 +53,6 @@ export class ChecklistFormularioComponent implements OnInit, OnDestroy {
   private subscriptions: Subscription[] = [];
   private idCheckList = null;
   private textoCreateSuccess: string;
-  private textoUpdateSuccess: string;
   buttonDisable = false;
 
   constructor(
@@ -68,16 +67,8 @@ export class ChecklistFormularioComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.subscriptions.push(this.checklistService.findByPersonaActual().subscribe((checkList: IChecklist) => {
-      if (!checkList) {
-        this.subscriptions.push(this.formlyService.findByNombre('CHECKLIST').subscribe((formlyByNombre: IFormly) => {
-          this.data.formly = formlyByNombre;
-        }));
-      } else {
-        this.idCheckList = checkList.id;
-        this.data.formly = checkList.formly;
-        this.data.model = checkList.respuesta;
-      }
+    this.subscriptions.push(this.formlyService.findByNombre('CHECKLIST').subscribe((formlyByNombre: IFormly) => {
+      this.data.formly = formlyByNombre;
     }));
     this.setupI18N();
   }
@@ -94,18 +85,6 @@ export class ChecklistFormularioComponent implements OnInit, OnDestroy {
         );
       })
     ).subscribe((value) => this.textoCreateSuccess = value);
-
-    this.translate.get(
-      CHECKLIST_KEY,
-      MSG_PARAMS.CARDINALIRY.SINGULAR
-    ).pipe(
-      switchMap((value) => {
-        return this.translate.get(
-          MSG_UPDATE_SUCCESS,
-          { entity: value, ...MSG_PARAMS.GENDER.FEMALE }
-        );
-      })
-    ).subscribe((value) => this.textoUpdateSuccess = value);
   }
 
   private switchToReadonly(fieldConfig: FormlyFieldConfig[]): void {
@@ -132,23 +111,22 @@ export class ChecklistFormularioComponent implements OnInit, OnDestroy {
       if (this.hasAnyTrue()) {
         this.subscriptions.push(this.dialogService.showConfirmation(
           MSG_CHECKLIST_DIALOG
-        ).pipe(
-          filter(aceptado => aceptado),
-          switchMap(() => {
-            return this.doSaveOrUpdate();
-          })
-        ).subscribe((checklist) => {
-          this.idCheckList = checklist.id;
-          this.snackBarService.showSuccess(this.textoUpdateSuccess);
+        ).subscribe(aceptado => {
+          if (aceptado) {
+            const checklist = {
+              id: undefined,
+              formly: this.data.formly,
+              respuesta: this.data.model,
+              fechaCreacion: undefined,
+              persona: { id: this.authService.authStatus$.value.userRefId } as IPersona
+            } as IChecklist;
+            this.router.navigate([URL_CREAR_SOLICITUD_EVALUACION], { queryParams: { checklist: JSON.stringify(checklist) } });
+          }
           this.buttonDisable = false;
-          this.router.navigate([URL_CREAR_SOLICITUD_EVALUACION]);
         }));
       } else {
-        this.doSaveOrUpdate().subscribe((checklist) => {
-          this.idCheckList = checklist.id;
-          this.snackBarService.showSuccess(this.textoUpdateSuccess);
-          this.buttonDisable = false;
-        });
+        this.snackBarService.showSuccess(MSG_NO_SUCCESS);
+        this.buttonDisable = false;
       }
 
     } else {

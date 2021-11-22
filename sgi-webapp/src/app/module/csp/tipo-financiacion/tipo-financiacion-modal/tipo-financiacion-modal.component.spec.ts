@@ -5,9 +5,9 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RouterTestingModule } from '@angular/router/testing';
 import { ITipoFinanciacion } from '@core/models/csp/tipos-configuracion';
-import { SnackBarService } from '@core/services/snack-bar.service';
 import TestUtils from '@core/utils/test-utils';
 import { MaterialDesignModule } from '@material/material-design.module';
+import { SharedModule } from '@shared/shared.module';
 import { LoggerTestingModule } from 'ngx-logger/testing';
 import { TipoFinanciacionModalComponent } from './tipo-financiacion-modal.component';
 
@@ -28,11 +28,11 @@ describe('TipoFinanciacionModalComponent', () => {
         TestUtils.getIdiomas(),
         RouterTestingModule,
         FormsModule,
-        ReactiveFormsModule
+        ReactiveFormsModule,
+        SharedModule
       ],
       providers: [
-        { provide: SnackBarService, useValue: TestUtils.getSnackBarServiceSpy() },
-        { provide: MatDialogRef, useValue: {} as ITipoFinanciacion },
+        { provide: MatDialogRef, useValue: TestUtils.buildDialogActionMatDialogRef() },
         { provide: MAT_DIALOG_DATA, useValue: {} as ITipoFinanciacion },
       ]
     })

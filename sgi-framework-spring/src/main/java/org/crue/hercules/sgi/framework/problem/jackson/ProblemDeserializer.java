@@ -1,6 +1,7 @@
 package org.crue.hercules.sgi.framework.problem.jackson;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.net.URI;
 import java.util.Iterator;
 
@@ -45,7 +46,7 @@ class ProblemDeserializer extends StdDeserializer<Problem> {
       default:
         if (jsonParser.getCodec() instanceof ObjectMapper) {
           ObjectMapper mapper = (ObjectMapper) jsonParser.getCodec();
-          builder.extension(field, mapper.treeToValue(node.get(field), Object.class));
+          builder.extension(field, mapper.treeToValue(node.get(field), Serializable.class));
         }
         break;
       }

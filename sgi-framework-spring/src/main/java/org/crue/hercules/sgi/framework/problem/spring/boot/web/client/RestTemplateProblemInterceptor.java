@@ -18,6 +18,11 @@ import org.springframework.http.client.ClientHttpResponse;
 public class RestTemplateProblemInterceptor implements ClientHttpRequestInterceptor {
   private ObjectMapper mapper;
 
+  /**
+   * Creates a new {@link RestTemplateProblemInterceptor}.
+   * 
+   * @param mapper the {@link ObjectMapper} used to serialize {@link Problem}
+   */
   public RestTemplateProblemInterceptor(ObjectMapper mapper) {
     this.mapper = mapper;
   }

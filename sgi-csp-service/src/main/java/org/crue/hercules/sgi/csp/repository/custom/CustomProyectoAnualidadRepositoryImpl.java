@@ -77,8 +77,8 @@ public class CustomProyectoAnualidadRepositoryImpl implements CustomProyectoAnua
     Root<ProyectoAnualidad> rootCount = countQuery.from(ProyectoAnualidad.class);
     countQuery.select(cb.count(rootCount));
 
-    List<Predicate> listPredicates = new ArrayList<Predicate>();
-    List<Predicate> listPredicatesCount = new ArrayList<Predicate>();
+    List<Predicate> listPredicates = new ArrayList<>();
+    List<Predicate> listPredicatesCount = new ArrayList<>();
 
     listPredicates.add(cb.and(cb.equal(root.get(ProyectoAnualidad_.proyectoId), proyectoId)));
     listPredicatesCount.add(cb.and(cb.equal(rootCount.get(ProyectoAnualidad_.proyectoId), proyectoId)));
@@ -127,7 +127,7 @@ public class CustomProyectoAnualidadRepositoryImpl implements CustomProyectoAnua
     }
 
     List<ProyectoAnualidadResumen> result = typedQuery.getResultList();
-    Page<ProyectoAnualidadResumen> returnValue = new PageImpl<ProyectoAnualidadResumen>(result, pageable, count);
+    Page<ProyectoAnualidadResumen> returnValue = new PageImpl<>(result, pageable, count);
 
     log.debug("findAllResumenByProyectoId(Long proyectoId, Pageable pageable) - end");
     return returnValue;
@@ -147,7 +147,7 @@ public class CustomProyectoAnualidadRepositoryImpl implements CustomProyectoAnua
     CriteriaQuery<AnualidadResumen> cqAnualidadGasto = cb.createQuery(AnualidadResumen.class);
     Root<AnualidadGasto> rootGasto = cqAnualidadGasto.from(AnualidadGasto.class);
 
-    List<Predicate> listPredicates = new ArrayList<Predicate>();
+    List<Predicate> listPredicates = new ArrayList<>();
     listPredicates.add(cb.and(cb.equal(rootGasto.get(AnualidadGasto_.proyectoAnualidadId), proyectoAnualidadId)));
     cqAnualidadGasto.where(listPredicates.toArray(new Predicate[] {}));
 
@@ -164,7 +164,7 @@ public class CustomProyectoAnualidadRepositoryImpl implements CustomProyectoAnua
     CriteriaQuery<AnualidadResumen> cqAnualidadIngreso = cb.createQuery(AnualidadResumen.class);
     Root<AnualidadIngreso> rootIngreso = cqAnualidadIngreso.from(AnualidadIngreso.class);
 
-    listPredicates = new ArrayList<Predicate>();
+    listPredicates = new ArrayList<>();
     listPredicates.add(cb.and(cb.equal(rootIngreso.get(AnualidadIngreso_.proyectoAnualidadId), proyectoAnualidadId)));
     cqAnualidadIngreso.where(listPredicates.toArray(new Predicate[] {}));
 
@@ -218,20 +218,16 @@ public class CustomProyectoAnualidadRepositoryImpl implements CustomProyectoAnua
     List<ProyectoAnualidadNotificacionSge> result = new ArrayList<>();
     result.addAll(anualidadGastos);
 
-    result.stream().forEach(anualidadGastoNotificacionSge -> {
-      anualidadIngresos.stream()
-          .filter(anualidadIngresoNotificacionSge -> anualidadIngresoNotificacionSge.getProyectoSgeRef()
-              .equals(anualidadGastoNotificacionSge.getProyectoSgeRef())
-              && anualidadIngresoNotificacionSge.getAnio().equals(anualidadGastoNotificacionSge.getAnio())
-              && anualidadIngresoNotificacionSge.getProyectoId().equals(anualidadGastoNotificacionSge.getProyectoId()))
-          .findFirst().ifPresent(anualidadIngresoNotificacionSge -> {
-            anualidadGastoNotificacionSge.setTotalIngresos(anualidadIngresoNotificacionSge.getTotalIngresos());
-          });
-      ;
-    });
+    result.stream().forEach(anualidadGastoNotificacionSge -> anualidadIngresos.stream()
+        .filter(anualidadIngresoNotificacionSge -> anualidadIngresoNotificacionSge.getProyectoSgeRef()
+            .equals(anualidadGastoNotificacionSge.getProyectoSgeRef())
+            && anualidadIngresoNotificacionSge.getAnio().equals(anualidadGastoNotificacionSge.getAnio())
+            && anualidadIngresoNotificacionSge.getProyectoId().equals(anualidadGastoNotificacionSge.getProyectoId()))
+        .findFirst().ifPresent(anualidadIngresoNotificacionSge -> anualidadGastoNotificacionSge
+            .setTotalIngresos(anualidadIngresoNotificacionSge.getTotalIngresos())));
 
     for (ProyectoAnualidadNotificacionSge anualidadIngresoNotificacionSge : anualidadIngresos) {
-      if (!result.stream().anyMatch(anualidadGastoNotificacionSge -> anualidadIngresoNotificacionSge.getProyectoSgeRef()
+      if (result.stream().noneMatch(anualidadGastoNotificacionSge -> anualidadIngresoNotificacionSge.getProyectoSgeRef()
           .equals(anualidadGastoNotificacionSge.getProyectoSgeRef())
           && anualidadIngresoNotificacionSge.getAnio().equals(anualidadGastoNotificacionSge.getAnio())
           && anualidadIngresoNotificacionSge.getProyectoId().equals(anualidadGastoNotificacionSge.getProyectoId()))) {
@@ -261,7 +257,7 @@ public class CustomProyectoAnualidadRepositoryImpl implements CustomProyectoAnua
         JoinType.INNER);
 
     // Where
-    List<Predicate> listPredicates = new ArrayList<Predicate>();
+    List<Predicate> listPredicates = new ArrayList<>();
 
     if (CollectionUtils.isNotEmpty(unidadesGestion)) {
       listPredicates.add(cb.and(root.get(AnualidadGasto_.proyectoAnualidad).get(ProyectoAnualidad_.proyecto)
@@ -302,11 +298,12 @@ public class CustomProyectoAnualidadRepositoryImpl implements CustomProyectoAnua
             joinProyecto.get(Proyecto_.estado).alias("proyectoEstado"),
             root.get(AnualidadGasto_.proyectoSgeRef).alias("proyectoSgeRef"),
             joinProyectoAnualidad.get(ProyectoAnualidad_.enviadoSge).alias("enviadoSge"))
-        .groupBy(joinProyectoAnualidad.get(ProyectoAnualidad_.id), root.get(AnualidadGasto_.proyectoSgeRef));
+        .groupBy(joinProyectoAnualidad.get(ProyectoAnualidad_.id), root.get(AnualidadGasto_.proyectoSgeRef),
+            joinProyecto.get(Proyecto_.fechaInicio), joinProyecto.get(Proyecto_.fechaFin),
+            joinProyecto.get(Proyecto_.id), joinProyecto.get(Proyecto_.titulo), joinProyecto.get(Proyecto_.acronimo),
+            joinProyecto.get(Proyecto_.estado));
 
-    List<ProyectoAnualidadNotificacionSge> result = entityManager.createQuery(selectQuery).getResultList();
-
-    return result;
+    return entityManager.createQuery(selectQuery).getResultList();
   }
 
   private List<ProyectoAnualidadNotificacionSge> getProyectoAnualidadNotificacionSgeIngresos(String query,
@@ -327,7 +324,7 @@ public class CustomProyectoAnualidadRepositoryImpl implements CustomProyectoAnua
         JoinType.INNER);
 
     // Where
-    List<Predicate> listPredicates = new ArrayList<Predicate>();
+    List<Predicate> listPredicates = new ArrayList<>();
 
     if (CollectionUtils.isNotEmpty(unidadesGestion)) {
       listPredicates.add(cb.and(root.get(AnualidadIngreso_.proyectoAnualidad).get(ProyectoAnualidad_.proyecto)
@@ -367,11 +364,12 @@ public class CustomProyectoAnualidadRepositoryImpl implements CustomProyectoAnua
         joinProyecto.get(Proyecto_.estado).alias("proyectoEstado"),
         root.get(AnualidadIngreso_.proyectoSgeRef).alias("proyectoSgeRef"),
         joinProyectoAnualidad.get(ProyectoAnualidad_.enviadoSge).alias("enviadoSge"))
-        .groupBy(joinProyectoAnualidad.get(ProyectoAnualidad_.id), root.get(AnualidadIngreso_.proyectoSgeRef));
+        .groupBy(joinProyectoAnualidad.get(ProyectoAnualidad_.id), root.get(AnualidadIngreso_.proyectoSgeRef),
+            joinProyecto.get(Proyecto_.fechaInicio), joinProyecto.get(Proyecto_.fechaFin),
+            joinProyecto.get(Proyecto_.id), joinProyecto.get(Proyecto_.titulo), joinProyecto.get(Proyecto_.acronimo),
+            joinProyecto.get(Proyecto_.estado));
 
-    List<ProyectoAnualidadNotificacionSge> result = entityManager.createQuery(selectQuery).getResultList();
-
-    return result;
+    return entityManager.createQuery(selectQuery).getResultList();
   }
 
 }

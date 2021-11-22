@@ -14,6 +14,7 @@ import org.crue.hercules.sgi.eti.model.TipoActividad;
 import org.crue.hercules.sgi.eti.model.TipoEstadoMemoria;
 import org.crue.hercules.sgi.eti.model.TipoInvestigacionTutelada;
 import org.crue.hercules.sgi.eti.model.TipoMemoria;
+import org.crue.hercules.sgi.eti.model.Comite.Genero;
 import org.crue.hercules.sgi.eti.model.PeticionEvaluacion.TipoValorSocial;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -88,7 +89,7 @@ public class MemoriaRepositoryTest extends BaseRepositoryTest {
    * @return el objeto Comite
    */
   public Comite generarMockComite(Formulario formulario) {
-    return new Comite(null, "Comite1", "nombreSecretario", "nombreInvestigacion", "nombreDecreto", "articulo",
+    return new Comite(null, "Comite1", "nombreSecretario", "nombreInvestigacion", Genero.M, "nombreDecreto", "articulo",
         formulario, Boolean.TRUE);
   }
 

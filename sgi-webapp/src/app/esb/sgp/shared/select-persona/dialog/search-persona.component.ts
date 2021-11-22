@@ -4,12 +4,14 @@ import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dial
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
+import { HttpProblem } from '@core/errors/http-problem';
 import { MSG_PARAMS } from '@core/i18n';
 import { IPersona } from '@core/models/sgp/persona';
 import { EmpresaService } from '@core/services/sgemp/empresa.service';
 import { PersonaService } from '@core/services/sgp/persona.service';
 import { SnackBarService } from '@core/services/snack-bar.service';
 import { TranslateService } from '@ngx-translate/core';
+import { SgiAuthService } from '@sgi/framework/auth';
 import { RSQLSgiRestFilter, RSQLSgiRestSort, SgiRestFilter, SgiRestFilterOperator, SgiRestSortDirection } from '@sgi/framework/http';
 import { NGXLogger } from 'ngx-logger';
 import { merge, Observable, of } from 'rxjs';
@@ -41,7 +43,7 @@ export class SearchPersonaModalComponent implements OnInit, AfterViewInit {
   @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
 
   personas$: Observable<IPersona[]> = of();
-
+  isInvestigador: boolean;
   msgParamEntity: {};
 
   constructor(
@@ -52,6 +54,7 @@ export class SearchPersonaModalComponent implements OnInit, AfterViewInit {
     private empresaService: EmpresaService,
     private snackBarService: SnackBarService,
     private readonly translate: TranslateService,
+    private readonly authService: SgiAuthService,
     private personaCreateMatDialog: MatDialog
   ) { }
 
@@ -59,6 +62,7 @@ export class SearchPersonaModalComponent implements OnInit, AfterViewInit {
     this.formGroup = new FormGroup({
       datosPersona: new FormControl()
     });
+    this.isInvestigador = this.authService.hasAuthority('CSP-SOL-INV-ER');
     this.setupI18N();
   }
 
@@ -128,7 +132,12 @@ export class SearchPersonaModalComponent implements OnInit, AfterViewInit {
           // On error reset pagination values
           this.paginator.firstPage();
           this.totalElementos = 0;
-          this.snackBarService.showError(MSG_LISTADO_ERROR);
+          if (error instanceof HttpProblem) {
+            this.snackBarService.showError(error);
+          }
+          else {
+            this.snackBarService.showError(MSG_LISTADO_ERROR);
+          }
           return of([]);
         })
       );
@@ -157,7 +166,7 @@ export class SearchPersonaModalComponent implements OnInit, AfterViewInit {
     const rsqlFilter = new RSQLSgiRestFilter(
       new RSQLSgiRestFilter('nombre', SgiRestFilterOperator.LIKE_ICASE, controls.datosPersona.value)
         .or('apellidos', SgiRestFilterOperator.LIKE_ICASE, controls.datosPersona.value)
-        .or('numeroDocumento', SgiRestFilterOperator.LIKE_ICASE, controls.datosPersona.value)
+        .or('email', SgiRestFilterOperator.LIKE_ICASE, controls.datosPersona.value)
     );
 
     if (filter?.colectivos?.length) {
@@ -191,7 +200,16 @@ export class SearchPersonaModalComponent implements OnInit, AfterViewInit {
       panelClass: 'sgi-dialog-container',
       data: personaData
     };
-    this.personaCreateMatDialog.open(PersonaFormlyModalComponent, config);
+    const dialogRef = this.personaCreateMatDialog.open(PersonaFormlyModalComponent, config);
+
+    dialogRef.afterClosed().subscribe(
+      (persona) => {
+        if (persona) {
+          this.closeModal(persona);
+        }
+      }
+    );
+
   }
 
 }

@@ -1,0 +1,48 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:pro="http://www.liquibase.org/xml/ns/pro" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-3.8.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+  <property name="schemaPrefix" value="" />
+
+  <changeSet context="dev" author="master" id="0000000000000-bean_method_tasks">
+    <insert tableName="bean_method_tasks">
+      <column name="id" valueSequenceNext="bean_method_tasks_seq" />
+      <column name="schedule_type" value="CRON" />
+      <column name="description" value="Echo CRON Sample Task" />
+      <column name="bean" value="echoTask" />
+      <column name="method" value="echo" />
+    </insert>
+    <insert tableName="bean_method_tasks">
+      <column name="id" valueSequenceNext="bean_method_tasks_seq" />
+      <column name="schedule_type" value="INSTANT" />
+      <column name="description" value="Echo INSTANT Sample Task" />
+      <column name="bean" value="echoTask" />
+      <column name="method" value="echo" />
+    </insert>
+  </changeSet>
+
+  <changeSet context="dev" author="master" id="0000000000000-bean_method_task_params">
+    <insert tableName="bean_method_task_params">
+      <column name="bean_method_tasks_id" valueComputed="(select id from ${schemaPrefix}bean_method_tasks where description='Echo CRON Sample Task')" />
+      <column name="param" value="CRON sample task" />
+    </insert>
+    <insert tableName="bean_method_task_params">
+      <column name="bean_method_tasks_id" valueComputed="(select id from ${schemaPrefix}bean_method_tasks where description='Echo INSTANT Sample Task')" />
+      <column name="param" value="INSTANT sample task" />
+    </insert>
+  </changeSet>
+
+  <changeSet context="dev" author="master" id="0000000000000-bean_method_cron_tasks">
+    <insert tableName="bean_method_cron_tasks">
+      <column name="id" valueComputed="(select id from ${schemaPrefix}bean_method_tasks where description='Echo CRON Sample Task')" />
+      <!-- Every 10 seconds (second, minute, hour, day, month, weekday) -->
+      <column name="cron_expression" value="0/10 * * * * ?" />
+    </insert>
+  </changeSet>
+
+  <changeSet context="dev" author="master" id="0000000000000-bean_method_instant_tasks">
+    <insert tableName="bean_method_instant_tasks">
+      <column name="id" valueComputed="(select id from ${schemaPrefix}bean_method_tasks where description='Echo INSTANT Sample Task')" />
+      <!-- Now -->
+      <column name="instant" valueDate="current_timestamp()" />
+    </insert>
+  </changeSet>
+</databaseChangeLog>

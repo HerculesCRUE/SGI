@@ -83,12 +83,9 @@ public class ConfiguracionIT extends BaseIT {
     Configuracion configuracion = new Configuracion();
 
     configuracion.setId(id);
-    configuracion.setDiasArchivadaPendienteCorrecciones(20);
+    configuracion.setMesesArchivadaPendienteCorrecciones(20);
     configuracion.setDiasLimiteEvaluador(1);
-    configuracion.setMesesArchivadaInactivo(2);
-    configuracion.setMesesAvisoProyectoCEEA(1);
-    configuracion.setMesesAvisoProyectoCEI(1);
-    configuracion.setMesesAvisoProyectoCBE(1);
+    configuracion.setDiasArchivadaInactivo(2);
 
     return configuracion;
   }

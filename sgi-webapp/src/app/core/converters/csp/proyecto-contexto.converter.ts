@@ -16,7 +16,6 @@ class ProyectoContextoConverter extends SgiBaseConverter<IProyectoContextoBacken
       resultadosPrevistos: value.resultadosPrevistos,
       propiedadResultados: value.propiedadResultados,
       areaTematica: value.areaTematica,
-      areaTematicaConvocatoria: value.areaTematicaConvocatoria
     };
   }
 
@@ -32,7 +31,6 @@ class ProyectoContextoConverter extends SgiBaseConverter<IProyectoContextoBacken
       resultadosPrevistos: value.resultadosPrevistos,
       propiedadResultados: value.propiedadResultados,
       areaTematica: value.areaTematica,
-      areaTematicaConvocatoria: value.areaTematicaConvocatoria
     };
   }
 }

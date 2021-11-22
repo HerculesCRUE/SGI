@@ -1,6 +1,6 @@
 <div class="sgi-dialog-header" fxLayout="row" fxLayoutGap="20px">
   <span fxFlexAlign="center" mat-mat-dialog-title role="heading" aria-level="3" fxFlex>
-    <div *ngIf="isEditionMode()">{{'pii.invencion-titularidad.periodo-titularidad' | translate}}</div>
+    <div *ngIf="isEditionMode()">{{'pii.invencion-titularidad.periodo-titularidad' | translate:msgParamTitle}}</div>
     <div *ngIf="!isEditionMode()">{{'pii.invencion-titularidad.periodo-titularidad.nuevo' | translate:msgParamTitle}}
     </div>
   </span>
@@ -14,7 +14,7 @@
       <form [formGroup]="formGroup" fxFill fxLayout="row wrap" fxLayoutGap="10px">
         <!-- Fecha Fin-->
         <div fxFlex="calc(50 - 10px)" *ngIf="showFechaFin()">
-          <mat-form-field>
+          <mat-form-field sgiEndDate>
             <mat-label>{{'pii.invencion-titularidad.periodo-titularidad.fecha-fin-anterior' | translate}}</mat-label>
             <input matInput formControlName="fechaFin" [matDatepicker]="fechaF" required>
             <mat-datepicker-toggle matSuffix [for]="fechaF"></mat-datepicker-toggle>
@@ -22,11 +22,11 @@
             <mat-error *ngIf="formGroup.controls.fechaFin.errors?.required">
               {{'error.required.entity' | translate:msgParamFechaFinEntity}}
             </mat-error>
-            <mat-error *ngIf="formGroup.controls.fechaFin.errors?.before">
-              {{'error.pii.invencion-titularidad.periodo-titularidad.fecha-fin.max' | translate}}
-            </mat-error>
             <mat-error *ngIf="formGroup.controls.fechaFin.errors?.minDate">
               {{'error.pii.invencion-titularidad.periodo-titularidad.fecha-fin.min' | translate}}
+            </mat-error>
+            <mat-error *ngIf="formGroup.controls.fechaFin.errors?.before">
+              {{'error.pii.invencion-titularidad.periodo-titularidad.fecha-fin.before' | translate}}
             </mat-error>
           </mat-form-field>
         </div>
@@ -47,6 +47,9 @@
             </mat-error>
             <mat-error *ngIf="formGroup.controls.fechaInicio.errors?.minDate">
               {{'error.pii.invencion-titularidad.periodo-titularidad.fecha-inicio.min' | translate}}
+            </mat-error>
+            <mat-error *ngIf="formGroup.controls.fechaInicio.errors?.after">
+              {{'error.pii.invencion-titularidad.periodo-titularidad.fecha-inicio.after' | translate}}
             </mat-error>
           </mat-form-field>
         </div>

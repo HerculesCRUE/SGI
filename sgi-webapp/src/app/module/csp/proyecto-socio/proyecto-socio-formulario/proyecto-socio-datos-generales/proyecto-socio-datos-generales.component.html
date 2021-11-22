@@ -26,13 +26,7 @@
         [fxFlexOrder]="fxFlexProperties.order">
         <mat-form-field fxFill>
           <mat-label>{{'csp.proyecto-socio.rol-socio' | translate}}</mat-label>
-          <input matInput formControlName="rolSocio" type="text" id="rolSocio"
-            placeholder="{{'csp.proyecto-socio.rol-socio' | translate}}" [matAutocomplete]="autoRolSocio" required>
-          <mat-autocomplete #autoRolSocio="matAutocomplete" [displayWith]="getNombreRolSocio">
-            <mat-option *ngFor="let rolSocio of rolSocios$ | async" [value]="rolSocio">
-              {{rolSocio.nombre}}
-            </mat-option>
-          </mat-autocomplete>
+          <sgi-select-entity formControlName="rolSocio" required [options]="rolSocios$ | async"></sgi-select-entity>
           <mat-error *ngIf="formGroup.controls.rolSocio.errors?.required">
             {{'error.required.entity' | translate:msgParamRolSocioEntity}}
           </mat-error>

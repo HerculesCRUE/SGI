@@ -1,0 +1,151 @@
+<div class="sgi-dialog-header" fxLayout="row" fxLayoutGap="20px">
+  <span fxFlexAlign="center" mat-mat-dialog-title role="heading" aria-level="3" fxFlex>{{title}}</span>
+  <button fxFlex="nogrow" mat-icon-button mat-dialog-close>
+    <mat-icon class="close-icon">close</mat-icon>
+  </button>
+</div>
+<mat-dialog-content>
+  <form [formGroup]="formGroup">
+
+    <div [fxLayout.xs]="fxLayoutProperties.xs" [fxLayout]="fxLayoutProperties.layout"
+      [fxLayoutGap]="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
+      <div fxFlex="50">
+        <!-- Número prevision -->
+        <mat-form-field>
+          <mat-label>{{'csp.proyecto-calendario-facturacion.numero-prevision' | translate}}</mat-label>
+          <input matInput formControlName="numeroPrevision" type="number" required>
+          <mat-error *ngIf="formGroup.controls.numeroPrevision.errors?.required">
+            {{'error.required.entity' | translate:msgParamNumeroPrevisionEntity}}
+          </mat-error>
+        </mat-form-field>
+      </div>
+      <div fxFlex="50" *ngIf="canShowValidacionIP()">
+        <!-- Validacion IP -->
+        <mat-form-field>
+          <mat-label>{{'csp.proyecto-calendario-facturacion.validacion-ip' | translate}}</mat-label>
+          <sgi-select-enum formControlName="validacionIP" [enumMap]="TIPO_VALIDACION_IP_MAP" required></sgi-select-enum>
+        </mat-form-field>
+      </div>
+    </div>
+    <!-- Fecha emisión -->
+    <div [fxLayout.xs]="fxLayoutProperties2.xs" [fxLayout]="fxLayoutProperties2.layout"
+      [fxLayoutGap]="fxLayoutProperties2.gap" ngClass.gt-xs="ml-10">
+      <div>
+        <mat-form-field>
+          <input matInput formControlName="fechaEmision" [matDatepicker]="pickerFechaEmision"
+            placeholder="{{'csp.proyecto-calendario-facturacion.fecha-emision' | translate}}" required>
+          <mat-datepicker-toggle matSuffix [for]="pickerFechaEmision"></mat-datepicker-toggle>
+          <mat-datepicker #pickerFechaEmision></mat-datepicker>
+          <mat-error *ngIf="formGroup.controls.fechaEmision.errors?.required">
+            {{'error.required.entity' | translate:msgParamFechaEmisionEntity}}
+          </mat-error>
+        </mat-form-field>
+      </div>
+    </div>
+    <!-- Importe base -->
+    <div [fxLayout.xs]="fxLayoutProperties.xs" [fxLayout]="fxLayoutProperties.layout"
+      [fxLayoutGap]="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
+      <mat-form-field>
+        <mat-label>{{'csp.proyecto-calendario-facturacion.importe-base' | translate}}</mat-label>
+        <input matInput formControlName="importeBase" type="number" required>
+        <mat-error *ngIf="formGroup.controls.importeBase.errors?.required">
+          {{'error.required.entity' | translate:msgParamImporteBaseEntity}}
+        </mat-error>
+      </mat-form-field>
+    </div>
+    <!-- IVA -->
+    <div [fxLayout.xs]="fxLayoutProperties.xs" [fxLayout]="fxLayoutProperties.layout"
+      [fxLayoutGap]="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
+      <mat-form-field>
+        <mat-label>{{'csp.proyecto-calendario-facturacion.iva' | translate}}</mat-label>
+        <input matInput formControlName="porcentajeIVA" type="number" required>
+        <mat-error *ngIf="formGroup.controls.porcentajeIVA.errors?.required">
+          {{'error.required.entity' | translate:msgParamPorcentajeIVAEntity}}
+        </mat-error>
+        <mat-error *ngIf="formGroup.controls.porcentajeIVA.errors?.pattern">
+          {{'error.number.format.integer.entity' | translate:msgParamPorcentajeIVAEntity}}
+        </mat-error>
+        <mat-error *ngIf="formGroup.controls.porcentajeIVA.errors?.min">
+          {{ 'error.min.entity' | translate:msgParamPorcentajeIVAEntity }}
+        </mat-error>
+        <mat-error *ngIf="formGroup.controls.porcentajeIVA.errors?.max">
+          {{ 'error.max.entity' | translate:msgParamPorcentajeIVAEntity }}
+        </mat-error>
+      </mat-form-field>
+    </div>
+    <!-- Comentario -->
+    <div [fxLayout.xs]="fxLayoutProperties.xs" [fxLayout]="fxLayoutProperties.layout"
+      [fxLayoutGap]="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
+      <mat-form-field>
+        <mat-label>{{'csp.proyecto-calendario-facturacion.comentario' | translate}}</mat-label>
+        <textarea matInput formControlName="comentario" type="text"
+          placeholder="{{'csp.proyecto-calendario-facturacion.comentario' | translate}}">
+            </textarea>
+        <mat-error *ngIf="formGroup.get('comentario').errors?.maxlength">
+          {{'error.maxlength.entity' | translate:msgParamComentarioEntity}}
+        </mat-error>
+      </mat-form-field>
+    </div>
+    <!-- Hito facturación -->
+    <div [fxLayout.xs]="fxLayoutProperties.xs" [fxLayout]="fxLayoutProperties.layout"
+      [fxLayoutGap]="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
+      <mat-form-field>
+        <mat-label>{{'csp.proyecto-calendario-facturacion.hito-facturacion' | translate}}</mat-label>
+        <sgi-select-entity formControlName="hitoFacturacion" [options]="tiposFacturacion$ | async">
+        </sgi-select-entity>
+      </mat-form-field>
+    </div>
+    <!-- Fecha conformidad -->
+    <div [fxLayout.xs]="fxLayoutProperties2.xs" [fxLayout]="fxLayoutProperties2.layout"
+      [fxLayoutGap]="fxLayoutProperties2.gap" ngClass.gt-xs="ml-10"
+      *ngIf="canShowFechaConformidad()">
+      <div>
+        <mat-form-field>
+          <input matInput formControlName="fechaConformidad" [matDatepicker]="pickerFechaConformidad"
+            placeholder="{{'csp.proyecto-calendario-facturacion.fecha-conformidad' | translate}}" required>
+          <mat-datepicker-toggle matSuffix [for]="pickerFechaConformidad"></mat-datepicker-toggle>
+          <mat-datepicker #pickerFechaConformidad></mat-datepicker>
+          <mat-error *ngIf="formGroup.controls.fechaEmision.errors?.required">
+            {{'error.required.entity' | translate:msgParamFechaConformidadEntity}}
+          </mat-error>
+        </mat-form-field>
+      </div>
+    </div>
+    <!-- Nuevo Estado Validacion IP -->
+    <div [fxLayout.xs]="fxLayoutProperties.xs" [fxLayout]="fxLayoutProperties.layout"
+      [fxLayoutGap]="fxLayoutProperties.gap" ngClass.gt-xs="ml-10" *ngIf="DIALOG_ACTION.VALIDAR_IP === data.action">
+      <mat-form-field>
+        <mat-label>{{'csp.proyecto-calendario-facturacion.nuevo-estado-validacion-ip' | translate}}</mat-label>
+        <sgi-select-enum formControlName="nuevoEstadoValidacionIP" [enumMap]="TIPO_ESTADO_VALIDACION_ESTADO_NOTIFICADA_MAP" required>
+        </sgi-select-enum>
+        <mat-error *ngIf="formGroup.get('nuevoEstadoValidacionIP').errors?.required">
+          {{'error.required.entity' | translate:msgParamNuevoEstadoValidacionIPEntity}}
+        </mat-error>
+      </mat-form-field>
+    </div>
+    <!-- Mensaje Motivo Rechazo -->
+    <div [fxLayout.xs]="fxLayoutProperties.xs" [fxLayout]="fxLayoutProperties.layout"
+      [fxLayoutGap]="fxLayoutProperties.gap" ngClass.gt-xs="ml-10"
+      *ngIf="DIALOG_ACTION.VALIDAR_IP === data.action && showMensajeMotivoRechazo$ | async">
+      <mat-form-field>
+        <mat-label>{{'csp.proyecto-calendario-facturacion.motivo-rechazo' | translate}}</mat-label>
+        <textarea matInput formControlName="mensajeMotivoRechazo" type="text"
+          placeholder="{{'csp.proyecto-calendario-facturacion.motivo-rechazo' | translate}}" required></textarea>
+        <mat-error *ngIf="formGroup.get('mensajeMotivoRechazo').errors?.maxlength">
+          {{'error.maxlength.entity' | translate:msgParamMotivoRechazoEntity}}
+        </mat-error>
+        <mat-error *ngIf="formGroup.get('mensajeMotivoRechazo').errors?.required">
+          {{'error.required.entity' | translate:msgParamMotivoRechazoEntity}}
+        </mat-error>
+      </mat-form-field>
+    </div>
+  </form>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <button [disabled]="!formGroup.valid" color="accent" (click)="saveOrUpdate()" mat-raised-button type="submit">
+    <mat-icon class="save-icon">save</mat-icon>{{textSaveOrUpdate |
+    translate}}
+  </button>
+  <button class="link-cancelar" mat-button type="button" mat-dialog-close>{{'btn.cancel' |
+    translate}}</button>
+</mat-dialog-actions>

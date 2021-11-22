@@ -1,5 +1,5 @@
 import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { FormControl, FormGroup, ValidatorFn, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { BaseModalComponent } from '@core/component/base-modal.component';
@@ -94,24 +94,24 @@ export class PeriodoTitularidadModalComponent
   }
 
   protected getFormGroup(): FormGroup {
-    const formGroup = new FormGroup(
-      {
-        fechaInicio: new FormControl(this.entity?.periodoTitularidad.value.fechaInicio, [
-          DateValidator.minDate(this.entity.fechaInicioMinima),
-        ]),
-        fechaFin: new FormControl(this.entity?.periodoTitularidad.value.fechaFin, [
-          DateValidator.minDate(this.entity.fechaInicioMinima),
-        ]),
+    const fechaFinValidators: Array<ValidatorFn> = [DateValidator.minDate(this.entity.fechaInicioMinima)];
+    const fechaInicioValidators: Array<ValidatorFn> = [DateValidator.minDate(this.entity.fechaInicioMinima), Validators.required];
 
-      },
-      {
-        validators: [
-          DateValidator.isBeforeOrEqual('fechaInicio', 'fechaFin')
-        ]
-      }
-    );
+    if(this.showFechaFin()) {
+      fechaFinValidators.push(Validators.required);
+    }
+    const form: FormGroup = new FormGroup({
+        fechaInicio: new FormControl(this.entity?.periodoTitularidad.value.fechaInicio, []),
+        fechaFin: new FormControl(this.entity?.periodoTitularidad.value.fechaFin, [])
+      });
 
-    return formGroup;
+    fechaInicioValidators.push(DateValidator.isAfterOther(form.controls.fechaFin));
+    fechaFinValidators.push(DateValidator.isBeforeOther(form.controls.fechaInicio));
+
+    form.controls.fechaInicio.setValidators(fechaInicioValidators);
+    form.controls.fechaFin.setValidators(fechaFinValidators);
+
+    return form;
   }
 
   public showFechaFin(): boolean {

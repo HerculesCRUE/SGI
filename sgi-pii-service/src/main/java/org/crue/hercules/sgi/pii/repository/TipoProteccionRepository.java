@@ -12,7 +12,7 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 public interface TipoProteccionRepository
-    extends ActivableRepository, JpaRepository<TipoProteccion, Long>, JpaSpecificationExecutor<TipoProteccion> {
+    extends JpaRepository<TipoProteccion, Long>, JpaSpecificationExecutor<TipoProteccion> {
 
   /**
    * Obtiene la entidad {@link TipoProteccion} activo con el nombre indicado

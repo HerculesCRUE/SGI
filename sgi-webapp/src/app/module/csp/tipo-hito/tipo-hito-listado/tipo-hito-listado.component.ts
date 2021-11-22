@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
-import { MatDialog } from '@angular/material/dialog';
+import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { AbstractTablePaginationComponent } from '@core/component/abstract-table-pagination.component';
 import { HttpProblem } from '@core/errors/http-problem';
@@ -15,13 +15,11 @@ import { TranslateService } from '@ngx-translate/core';
 import { SgiAuthService } from '@sgi/framework/auth';
 import { RSQLSgiRestFilter, SgiRestFilter, SgiRestFilterOperator, SgiRestListResult } from '@sgi/framework/http';
 import { NGXLogger } from 'ngx-logger';
-import { Observable, of, Subscription } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { TipoHitoModalComponent } from '../tipo-hito-modal/tipo-hito-modal.component';
 
 const MSG_ERROR = marker('error.load');
-const MSG_SAVE_ERROR = marker('error.save.entity');
-const MSG_UPDATE_ERROR = marker('error.update.entity');
 const MSG_SAVE_SUCCESS = marker('msg.save.entity.success');
 const MSG_UPDATE_SUCCESS = marker('msg.update.entity.success');
 const MSG_DEACTIVATE = marker('msg.deactivate.entity');
@@ -46,9 +44,7 @@ export class TipoHitoListadoComponent extends AbstractTablePaginationComponent<I
   msgParamEntity = {};
 
   textoCrearSuccess: string;
-  textoCrearError: string;
   textoUpdateSuccess: string;
-  textoUpdateError: string;
   textoDesactivar: string;
   textoReactivar: string;
   textoErrorDesactivar: string;
@@ -112,35 +108,11 @@ export class TipoHitoListadoComponent extends AbstractTablePaginationComponent<I
     ).pipe(
       switchMap((value) => {
         return this.translate.get(
-          MSG_SAVE_ERROR,
-          { entity: value, ...MSG_PARAMS.GENDER.MALE }
-        );
-      })
-    ).subscribe((value) => this.textoCrearError = value);
-
-    this.translate.get(
-      TIPO_HITO_KEY,
-      MSG_PARAMS.CARDINALIRY.SINGULAR
-    ).pipe(
-      switchMap((value) => {
-        return this.translate.get(
           MSG_UPDATE_SUCCESS,
           { entity: value, ...MSG_PARAMS.GENDER.MALE }
         );
       })
     ).subscribe((value) => this.textoUpdateSuccess = value);
-
-    this.translate.get(
-      TIPO_HITO_KEY,
-      MSG_PARAMS.CARDINALIRY.SINGULAR
-    ).pipe(
-      switchMap((value) => {
-        return this.translate.get(
-          MSG_UPDATE_ERROR,
-          { entity: value, ...MSG_PARAMS.GENDER.MALE }
-        );
-      })
-    ).subscribe((value) => this.textoUpdateError = value);
 
     this.translate.get(
       TIPO_HITO_KEY,
@@ -257,49 +229,15 @@ export class TipoHitoListadoComponent extends AbstractTablePaginationComponent<I
    * @param tipoHito Tipo de finalidad
    */
   openModal(tipoHito?: ITipoHito): void {
-    const config = {
-      panelClass: 'sgi-dialog-container',
+    const config: MatDialogConfig<ITipoHito> = {
       data: tipoHito ? Object.assign({}, tipoHito) : { activo: true } as ITipoHito
     };
     const dialogRef = this.matDialog.open(TipoHitoModalComponent, config);
     dialogRef.afterClosed().subscribe(
       (result: ITipoHito) => {
         if (result) {
-          let subscription: Subscription;
-          if (tipoHito) {
-            subscription = this.tipoHitoService.update(tipoHito.id, result).subscribe(
-              () => {
-                this.snackBarService.showSuccess(this.textoUpdateSuccess);
-                this.loadTable();
-              },
-              (error) => {
-                this.logger.error(error);
-                if (error instanceof HttpProblem) {
-                  this.snackBarService.showError(error);
-                }
-                else {
-                  this.snackBarService.showError(this.textoUpdateSuccess);
-                }
-              }
-            );
-          } else {
-            subscription = this.tipoHitoService.create(result).subscribe(
-              () => {
-                this.snackBarService.showSuccess(this.textoCrearSuccess);
-                this.loadTable();
-              },
-              (error) => {
-                this.logger.error(error);
-                if (error instanceof HttpProblem) {
-                  this.snackBarService.showError(error);
-                }
-                else {
-                  this.snackBarService.showError(this.textoCrearError);
-                }
-              }
-            );
-          }
-          this.suscripciones.push(subscription);
+          this.snackBarService.showSuccess(tipoHito ? this.textoUpdateSuccess : this.textoCrearSuccess);
+          this.loadTable();
         }
       }
     );

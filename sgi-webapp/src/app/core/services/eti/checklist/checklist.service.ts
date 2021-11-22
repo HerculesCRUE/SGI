@@ -44,10 +44,4 @@ export class ChecklistService extends _ChecklistServiceMixinBase {
     );
   }
 
-  findByPersonaActual(): Observable<IChecklist> {
-    return this.get<IChecklistResponse>(`${this.endpointUrl}/persona-actual`).pipe(
-      map(checklist => CHECKLIST_RESPONSE_CONVERTER.toTarget(checklist))
-    );
-  }
-
 }

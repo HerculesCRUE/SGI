@@ -1,6 +1,7 @@
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
+import { MatDialogRef } from '@angular/material/dialog';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RouterTestingModule } from '@angular/router/testing';
 import TestUtils from '@core/utils/test-utils';
@@ -17,7 +18,9 @@ describe('ViaProteccionListadoComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ViaProteccionListadoComponent],
+      declarations: [
+        ViaProteccionListadoComponent
+      ],
       imports: [
         BrowserAnimationsModule,
         TestUtils.getIdiomas(),
@@ -28,6 +31,9 @@ describe('ViaProteccionListadoComponent', () => {
         ViaProteccionRoutingModule,
         MaterialDesignModule,
         ReactiveFormsModule
+      ],
+      providers: [
+        { provide: MatDialogRef, useValue: TestUtils.buildDialogActionMatDialogRef() },
       ]
     })
       .compileComponents();

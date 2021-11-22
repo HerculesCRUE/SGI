@@ -75,6 +75,20 @@ public class FormularioServiceImpl implements FormularioService {
   }
 
   /**
+   * Obtiene {@link Formulario} por id de la memoria.
+   *
+   * @param idMemoria el id de la memoria
+   * @return la entidad {@link Formulario}.
+   * @return Formulario
+   */
+  public Formulario findByMemoriaId(Long idMemoria) {
+    log.debug("findByMemoriaId : {}  - start", idMemoria);
+    final Formulario formulario = formularioRepository.findByMemoriaId(idMemoria);
+    log.debug("findByMemoriaId : {}  - end", idMemoria);
+    return formulario;
+  }
+
+  /**
    * Elimina una entidad {@link Formulario} por id.
    *
    * @param id el id de la entidad {@link Formulario}.

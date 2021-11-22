@@ -20,6 +20,12 @@
       "type": "java.lang.String",
       "description": "JWT claim that contains the user name.",
       "defaultValue": "sub"
+    },
+    {
+      "name": "test.reset.sql.template",
+      "type": "java.lang.String",
+      "description": "SQL template for reseting sequences.",
+      "defaultValue": "ALTER SEQUENCE %s RESTART WITH 1"
     }
   ],
   "hints": [

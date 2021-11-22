@@ -1,0 +1,124 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:pro="http://www.liquibase.org/xml/ns/pro" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-4.1.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.1.xsd">
+
+  <changeSet author="user (generated)" id="0000000000002-1">
+    <dropNotNullConstraint columnDataType="varchar(250)" columnName="titulo" tableName="solicitud" />
+  </changeSet>
+  <!-- Eliminación de columna de contexto_proyecto que ya no es necesaria -->
+  <changeSet author="user (generated)" id="0000000000002-2">
+    <dropColumn columnName="area_tematica_convocatoria_id" tableName="contexto_proyecto" />
+  </changeSet>
+
+  <changeSet author="user (generated)" id="0000000000002-3">
+    <customChange class="org.crue.hercules.sgi.framework.liquibase.change.custom.ComputedValueCreateSequenceChange">
+      <param name="incrementBy" value="1" />
+      <param name="sequenceName" value="proyecto_partida_seq" />
+      <param name="computedStartValue" value="SELECT COALESCE(MAX(id)+1, 1) FROM ${schemaPrefix}proyecto_partida" />
+    </customChange>
+  </changeSet>
+
+  <!-- estado_validacion_ip_seq -->
+  <changeSet author="user (generated)" id="0000000000002-4">
+    <createSequence incrementBy="1" sequenceName="estado_validacion_ip_seq" startValue="1" />
+  </changeSet>
+  <!-- proyecto_facturacion_seq -->
+  <changeSet author="user (generated)" id="0000000000002-5">
+    <createSequence incrementBy="1" sequenceName="proyecto_facturacion_seq" startValue="1" />
+  </changeSet>
+  <!-- tipo_facturacion_seq -->
+  <changeSet author="user (generated)" id="0000000000002-6">
+    <createSequence incrementBy="1" sequenceName="tipo_facturacion_seq" startValue="1" />
+  </changeSet>
+  <!-- estado_validacion_ip -->
+  <changeSet author="user (generated)" id="0000000000002-7">
+    <createTable tableName="estado_validacion_ip">
+      <column name="id" type="BIGINT">
+        <constraints nullable="false" primaryKey="true" primaryKeyName="estado_validacion_ipPK" />
+      </column>
+      <column name="created_by" type="VARCHAR(255)" />
+      <column name="creation_date" type="TIMESTAMP" />
+      <column name="last_modified_by" type="VARCHAR(255)" />
+      <column name="last_modified_date" type="TIMESTAMP" />
+      <column name="comentario" type="VARCHAR(1024)" />
+      <column name="estado" type="VARCHAR(255)">
+        <constraints nullable="false" />
+      </column>
+      <column name="fecha" type="TIMESTAMP" />
+      <column name="proyecto_facturacion_id" type="BIGINT">
+        <constraints nullable="false" />
+      </column>
+    </createTable>
+  </changeSet>
+  <!-- proyecto_facturacion -->
+  <changeSet author="user (generated)" id="0000000000002-8">
+    <createTable tableName="proyecto_facturacion">
+      <column name="id" type="BIGINT">
+        <constraints nullable="false" primaryKey="true" primaryKeyName="proyecto_facturacionPK" />
+      </column>
+      <column name="created_by" type="VARCHAR(255)" />
+      <column name="creation_date" type="TIMESTAMP" />
+      <column name="last_modified_by" type="VARCHAR(255)" />
+      <column name="last_modified_date" type="TIMESTAMP" />
+      <column name="comentario" type="VARCHAR(1024)" />
+      <column name="fecha_conformidad" type="TIMESTAMP" />
+      <column name="fecha_emision" type="TIMESTAMP">
+        <constraints nullable="false" />
+      </column>
+      <column name="importe_base" type="DECIMAL(19, 2)">
+        <constraints nullable="false" />
+      </column>
+      <column name="numero_prevision" type="INT">
+        <constraints nullable="false" />
+      </column>
+      <column name="porcentaje_iva" type="INT">
+        <constraints nullable="false" />
+      </column>
+      <column name="proyecto_id" type="BIGINT">
+        <constraints nullable="false" />
+      </column>
+      <column name="estado_validacion_ip_id" type="BIGINT">
+        <constraints nullable="true" />
+      </column>
+      <column name="tipo_facturacion_id" type="BIGINT" />
+    </createTable>
+  </changeSet>
+  <!-- tipo_facturacion -->
+  <changeSet author="user (generated)" id="0000000000002-9">
+    <createTable tableName="tipo_facturacion">
+      <column name="id" type="BIGINT">
+        <constraints nullable="false" primaryKey="true" primaryKeyName="tipo_facturacionPK" />
+      </column>
+      <column name="created_by" type="VARCHAR(255)" />
+      <column name="creation_date" type="TIMESTAMP" />
+      <column name="last_modified_by" type="VARCHAR(255)" />
+      <column name="last_modified_date" type="TIMESTAMP" />
+      <column defaultValueBoolean="true" name="activo" type="BOOLEAN">
+        <constraints nullable="false" />
+      </column>
+      <column name="nombre" type="VARCHAR(45)">
+        <constraints nullable="false" />
+      </column>
+    </createTable>
+  </changeSet>
+  <!-- FK_ESTADOVALIDACIONIP_PROYECTOFACTURACION -->
+  <changeSet author="user (generated)" id="0000000000002-10">
+    <addForeignKeyConstraint baseColumnNames="proyecto_facturacion_id" baseTableName="estado_validacion_ip" constraintName="FK_ESTADOVALIDACIONIP_PROYECTOFACTURACION" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableName="proyecto_facturacion" validate="true" />
+  </changeSet>
+  <!-- FK_PROYECTOFACTURACION_ESTADOVALIDACIONIP -->
+  <changeSet author="user (generated)" id="0000000000002-11">
+    <addForeignKeyConstraint baseColumnNames="estado_validacion_ip_id" baseTableName="proyecto_facturacion" constraintName="FK_PROYECTOFACTURACION_ESTADOVALIDACIONIP" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableName="estado_validacion_ip" validate="true" />
+  </changeSet>
+  <!-- FK_PROYECTOFACTURACION_PROYECTO  -->
+  <changeSet author="user (generated)" id="0000000000002-12">
+    <addForeignKeyConstraint baseColumnNames="proyecto_id" baseTableName="proyecto_facturacion" constraintName="FK_PROYECTOFACTURACION_PROYECTO" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableName="proyecto" validate="true" />
+  </changeSet>
+  <!-- FK_PROYECTOFACTURACION_TIPOFACTURACION -->
+  <changeSet author="user (generated)" id="0000000000002-13">
+    <addForeignKeyConstraint baseColumnNames="tipo_facturacion_id" baseTableName="proyecto_facturacion" constraintName="FK_PROYECTOFACTURACION_TIPOFACTURACION" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableName="tipo_facturacion" validate="true" />
+  </changeSet>
+  <!-- Se elimina restricción para fecha_congreso en la tabla gasto_proyecto -->
+  <changeSet author="user (generated)" id="0000000000002-14">
+    <dropNotNullConstraint columnDataType="timestamp" columnName="fecha_congreso" tableName="gasto_proyecto" />
+    <dropNotNullConstraint columnDataType="timestamp" columnName="proyecto_id" tableName="gasto_proyecto" />
+  </changeSet>
+</databaseChangeLog>

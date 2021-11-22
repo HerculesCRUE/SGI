@@ -31,6 +31,7 @@ import org.crue.hercules.sgi.eti.model.TipoDocumento;
 import org.crue.hercules.sgi.eti.model.TipoEstadoMemoria;
 import org.crue.hercules.sgi.eti.model.TipoEvaluacion;
 import org.crue.hercules.sgi.eti.model.TipoMemoria;
+import org.crue.hercules.sgi.eti.model.Comite.Genero;
 import org.crue.hercules.sgi.eti.repository.custom.CustomConvocatoriaReunionRepository;
 import org.crue.hercules.sgi.eti.service.DocumentacionMemoriaService;
 import org.crue.hercules.sgi.eti.service.EvaluacionService;
@@ -93,7 +94,7 @@ public class MemoriaControllerTest extends BaseControllerTest {
   private static final String PATH_PARAMETER_PERSONA = "/persona";
 
   @Test
-  @WithMockUser(username = "user", authorities = { "ETI-PEV-V", "ETI-PEV-INV-VR" })
+  @WithMockUser(username = "user", authorities = { "ETI-MEM-V", "ETI-MEM-INV-VR" })
   public void getMemoria_WithId_ReturnsMemoria() throws Exception {
     BDDMockito.given(memoriaService.findById(ArgumentMatchers.anyLong()))
         .willReturn((generarMockMemoria(1L, "numRef-5598", "Memoria1", 1)));
@@ -107,7 +108,7 @@ public class MemoriaControllerTest extends BaseControllerTest {
   }
 
   @Test
-  @WithMockUser(username = "user", authorities = { "ETI-PEV-V", "ETI-PEV-INV-VR" })
+  @WithMockUser(username = "user", authorities = { "ETI-MEM-V", "ETI-MEM-INV-VR" })
   public void getMemoria_NotFound_Returns404() throws Exception {
     BDDMockito.given(memoriaService.findById(ArgumentMatchers.anyLong())).will((InvocationOnMock invocation) -> {
       throw new MemoriaNotFoundException(invocation.getArgument(0));
@@ -119,7 +120,7 @@ public class MemoriaControllerTest extends BaseControllerTest {
   }
 
   @Test
-  @WithMockUser(username = "user", authorities = { "ETI-PEV-INV-C", "ETI-PEV-INV-ER" })
+  @WithMockUser(username = "user", authorities = { "ETI-MEM-INV-ER" })
   public void newMemoria_ReturnsMemoria() throws Exception {
     // given: Una memoria nueva
     String nuevaMemoriaJson = mapper.writeValueAsString(generarMockMemoria(null, "numRef-5599", "Memoria1", 1));
@@ -140,7 +141,7 @@ public class MemoriaControllerTest extends BaseControllerTest {
   }
 
   @Test
-  @WithMockUser(username = "user", authorities = { "ETI-PEV-INV-C", "ETI-PEV-INV-ER" })
+  @WithMockUser(username = "user", authorities = { "ETI-MEM-INV-ER" })
   public void newMemoria_Error_Returns400() throws Exception {
     // given: Una memoria nueva que produce un error al crearse
     String nuevaMemoriaJson = "{\"numReferencia\": \"numRef-5599\", \"peticionEvaluacion\": {\"id\": 1, \"titulo\": \"PeticionEvaluacion1\"},"
@@ -161,7 +162,7 @@ public class MemoriaControllerTest extends BaseControllerTest {
   }
 
   @Test
-  @WithMockUser(username = "user", authorities = { "ETI-PEV-INV-C", "ETI-PEV-INV-ER" })
+  @WithMockUser(username = "user", authorities = { "ETI-MEM-INV-ER" })
   public void newMemoriaModificada_ReturnsMemoria() throws Exception {
     // given: Una memoria nueva
     String nuevaMemoriaJson = mapper.writeValueAsString(generarMockMemoria(null, "numRef-5599", "Memoria1", 1));
@@ -184,7 +185,7 @@ public class MemoriaControllerTest extends BaseControllerTest {
   }
 
   @Test
-  @WithMockUser(username = "user", authorities = { "ETI-PEV-INV-C", "ETI-PEV-INV-ER" })
+  @WithMockUser(username = "user", authorities = { "ETI-MEM-INV-ER" })
   public void newMemoriaModificada_Error_Returns400() throws Exception {
     // given: Una memoria nueva que produce un error al crearse
     String nuevaMemoriaJson = "{\"numReferencia\": \"numRef-5599\", \"peticionEvaluacion\": {\"id\": 1, \"titulo\": \"PeticionEvaluacion1\"},"
@@ -207,7 +208,7 @@ public class MemoriaControllerTest extends BaseControllerTest {
   }
 
   @Test
-  @WithMockUser(username = "user", authorities = { "ETI-PEV-INV-ER" })
+  @WithMockUser(username = "user", authorities = { "ETI-MEM-INV-ER" })
   public void replaceMemoria_ReturnsMemoria() throws Exception {
     // given: Una memoria a modificar
     String replaceMemoriaJson = mapper.writeValueAsString(generarMockMemoria(1L, "numRef-5599", "Memoria1", 1));
@@ -229,7 +230,7 @@ public class MemoriaControllerTest extends BaseControllerTest {
   }
 
   @Test
-  @WithMockUser(username = "user", authorities = { "ETI-PEV-INV-ER" })
+  @WithMockUser(username = "user", authorities = { "ETI-MEM-INV-ER" })
   public void replaceMemoria_NotFound() throws Exception {
     // given: Una memoria a modificar
     String replaceMemoriaJson = mapper.writeValueAsString(generarMockMemoria(1L, "numRef-5599", "Memoria1", 1));
@@ -246,7 +247,7 @@ public class MemoriaControllerTest extends BaseControllerTest {
   }
 
   @Test
-  @WithMockUser(username = "user", authorities = { "ETI-PEV-INV-ER" })
+  @WithMockUser(username = "user", authorities = { "ETI-MEM-INV-BR" })
   public void removeMemoria_ReturnsOk() throws Exception {
     BDDMockito.given(memoriaService.findById(ArgumentMatchers.anyLong()))
         .willReturn(generarMockMemoria(1L, "numRef-5598", "Memoria1", 1));
@@ -258,7 +259,7 @@ public class MemoriaControllerTest extends BaseControllerTest {
   }
 
   @Test
-  @WithMockUser(username = "user", authorities = { "ETI-PEV-INV-ER" })
+  @WithMockUser(username = "user", authorities = { "ETI-MEM-INV-ER" })
   public void deleteDocumentacionSeguimientoAnual_ReturnsOk() throws Exception {
 
     mockMvc
@@ -270,7 +271,7 @@ public class MemoriaControllerTest extends BaseControllerTest {
   }
 
   @Test
-  @WithMockUser(username = "user", authorities = { "ETI-PEV-INV-ER" })
+  @WithMockUser(username = "user", authorities = { "ETI-MEM-INV-ER" })
   public void deleteDocumentacionSeguimientoFinal_ReturnsOk() throws Exception {
 
     mockMvc
@@ -282,7 +283,7 @@ public class MemoriaControllerTest extends BaseControllerTest {
   }
 
   @Test
-  @WithMockUser(username = "user", authorities = { "ETI-PEV-INV-ER" })
+  @WithMockUser(username = "user", authorities = { "ETI-MEM-INV-ER" })
   public void deleteDocumentacionRetrospectiva_ReturnsOk() throws Exception {
 
     mockMvc
@@ -294,7 +295,7 @@ public class MemoriaControllerTest extends BaseControllerTest {
   }
 
   @Test
-  @WithMockUser(username = "user", authorities = { "ETI-PEV-INV-ER" })
+  @WithMockUser(username = "user", authorities = { "ETI-MEM-INV-ER" })
   public void deleteDocumentacionInicial_ReturnsOk() throws Exception {
 
     mockMvc
@@ -308,7 +309,7 @@ public class MemoriaControllerTest extends BaseControllerTest {
 
   @Test
 
-  @WithMockUser(username = "user", authorities = { "ETI-PEV-INV-VR", "ETI-PEV-V" })
+  @WithMockUser(username = "user", authorities = { "ETI-MEM-INV-VR", "ETI-MEM-V" })
   public void findAll_Unlimited_ReturnsFullMemoriaList() throws Exception { // given: One hundred Memoria
 
     List<MemoriaPeticionEvaluacion> memorias = new ArrayList<>();
@@ -329,7 +330,7 @@ public class MemoriaControllerTest extends BaseControllerTest {
   }
 
   @Test
-  @WithMockUser(username = "user", authorities = { "ETI-PEV-INV-VR", "ETI-PEV-V" })
+  @WithMockUser(username = "user", authorities = { "ETI-MEM-INV-VR", "ETI-MEM-V" })
   public void findAll_WithPaging_ReturnsMemoriaSubList() throws Exception {
     // given: One hundred Memoria
     List<Memoria> memorias = new ArrayList<>();
@@ -381,7 +382,7 @@ public class MemoriaControllerTest extends BaseControllerTest {
   }
 
   @Test
-  @WithMockUser(username = "user", authorities = { "ETI-PEV-INV-VR", "ETI-PEV-V" })
+  @WithMockUser(username = "user", authorities = { "ETI-MEM-INV-VR", "ETI-MEM-V" })
   public void findAll_WithSearchQuery_ReturnsFilteredMemoriaList() throws Exception {
     // given: One hundred Memoria and a search query
     List<Memoria> memorias = new ArrayList<>();
@@ -417,7 +418,7 @@ public class MemoriaControllerTest extends BaseControllerTest {
   }
 
   @Test
-  @WithMockUser(username = "user", authorities = { "ETI-PEV-INV-VR", "ETI-PEV-V", "ETI-PEV-E" })
+  @WithMockUser(username = "user", authorities = { "ETI-MEM-INV-VR", "ETI-MEM-V", "ETI-MEM-E" })
   public void findAll_ReturnsNoContent() throws Exception { // given: One hundred Memoria
     // given: Memorias empty
     List<MemoriaPeticionEvaluacion> memorias = new ArrayList<>();
@@ -673,7 +674,7 @@ public class MemoriaControllerTest extends BaseControllerTest {
   }
 
   @Test
-  @WithMockUser(username = "user", authorities = { "ETI-PEV-INV-ER" })
+  @WithMockUser(username = "user", authorities = { "ETI-MEM-INV-ER" })
   public void getDocumentacionFormularioEmptyList() throws Exception {
     // given: Existe la memoria pero no tiene documentacion
     Long id = 3L;
@@ -691,7 +692,7 @@ public class MemoriaControllerTest extends BaseControllerTest {
   }
 
   @Test
-  @WithMockUser(username = "user", authorities = { "ETI-PEV-INV-ER" })
+  @WithMockUser(username = "user", authorities = { "ETI-MEM-INV-ER" })
   public void getDocumentacionFormularioValid() throws Exception {
     // given: Datos existentes con memoria
     Long id = 3L;
@@ -730,7 +731,7 @@ public class MemoriaControllerTest extends BaseControllerTest {
   }
 
   @Test
-  @WithMockUser(username = "user", authorities = { "ETI-PEV-INV-ER" })
+  @WithMockUser(username = "user", authorities = { "ETI-MEM-INV-ER" })
   public void getDocumentacionSeguimientoAnualEmptyList() throws Exception {
     // given: Existe la memoria pero no tiene documentacion
     Long id = 3L;
@@ -748,7 +749,7 @@ public class MemoriaControllerTest extends BaseControllerTest {
   }
 
   @Test
-  @WithMockUser(username = "user", authorities = { "ETI-PEV-INV-ER" })
+  @WithMockUser(username = "user", authorities = { "ETI-MEM-INV-ER" })
   public void getDocumentacionSeguimientoAnualValid() throws Exception {
     // given: Datos existentes con memoria
     Long id = 3L;
@@ -787,7 +788,7 @@ public class MemoriaControllerTest extends BaseControllerTest {
   }
 
   @Test
-  @WithMockUser(username = "user", authorities = { "ETI-PEV-INV-ER" })
+  @WithMockUser(username = "user", authorities = { "ETI-MEM-INV-ER" })
   public void getDocumentacionSeguimientoFinalEmptyList() throws Exception {
     // given: Existe la memoria pero no tiene documentacion
     Long id = 3L;
@@ -805,7 +806,7 @@ public class MemoriaControllerTest extends BaseControllerTest {
   }
 
   @Test
-  @WithMockUser(username = "user", authorities = { "ETI-PEV-INV-ER" })
+  @WithMockUser(username = "user", authorities = { "ETI-MEM-INV-ER" })
   public void getDocumentacionSeguimientoFinalValid() throws Exception {
     // given: Datos existentes con memoria
     Long id = 3L;
@@ -844,7 +845,7 @@ public class MemoriaControllerTest extends BaseControllerTest {
   }
 
   @Test
-  @WithMockUser(username = "user", authorities = { "ETI-PEV-INV-ER" })
+  @WithMockUser(username = "user", authorities = { "ETI-MEM-INV-ER" })
   public void getDocumentacionRetrospectivaEmptyList() throws Exception {
     // given: Existe la memoria pero no tiene documentacion
     Long id = 3L;
@@ -862,7 +863,7 @@ public class MemoriaControllerTest extends BaseControllerTest {
   }
 
   @Test
-  @WithMockUser(username = "user", authorities = { "ETI-PEV-INV-ER" })
+  @WithMockUser(username = "user", authorities = { "ETI-MEM-INV-ER" })
   public void getDocumentacionRetrospectivaValid() throws Exception {
     // given: Datos existentes con memoria
     Long id = 3L;
@@ -901,7 +902,7 @@ public class MemoriaControllerTest extends BaseControllerTest {
   }
 
   @Test
-  @WithMockUser(username = "user", authorities = { "ETI-PEV-INV-ER" })
+  @WithMockUser(username = "user", authorities = { "ETI-MEM-INV-ER" })
   public void newDocumentacionMemoriaInicial_ReturnsMemoria() throws Exception {
     // given: Un documentación memoria nueva
     String nuevaDocumentacionMemoriaJson = mapper.writeValueAsString(generarMockDocumentacionMemoria(1L,
@@ -928,7 +929,7 @@ public class MemoriaControllerTest extends BaseControllerTest {
   }
 
   @Test
-  @WithMockUser(username = "user", authorities = { "ETI-PEV-INV-ER" })
+  @WithMockUser(username = "user", authorities = { "ETI-MEM-INV-ER" })
   public void getEvaluacionesMemoria_ReturnsList() throws Exception {
     // given: Existen 100 evaluaciones
     List<Evaluacion> evaluaciones = new ArrayList<>();
@@ -950,7 +951,7 @@ public class MemoriaControllerTest extends BaseControllerTest {
   }
 
   @Test
-  @WithMockUser(username = "user", authorities = { "ETI-PEV-INV-ER" })
+  @WithMockUser(username = "user", authorities = { "ETI-MEM-INV-ER" })
   public void newDocumentacionMemoriaSeguimientoAnual_ReturnsMemoria() throws Exception {
     // given: Un documentación memoria nueva
     String nuevaDocumentacionMemoriaJson = mapper.writeValueAsString(generarMockDocumentacionMemoria(1L,
@@ -975,7 +976,7 @@ public class MemoriaControllerTest extends BaseControllerTest {
   }
 
   @Test
-  @WithMockUser(username = "user", authorities = { "ETI-PEV-INV-ER" })
+  @WithMockUser(username = "user", authorities = { "ETI-MEM-INV-ER" })
   public void newDocumentacionMemoriaSeguimientoFinal_ReturnsMemoria() throws Exception {
     // given: Un documentación memoria nueva
     String nuevaDocumentacionMemoriaJson = mapper.writeValueAsString(generarMockDocumentacionMemoria(1L,
@@ -1000,7 +1001,7 @@ public class MemoriaControllerTest extends BaseControllerTest {
   }
 
   @Test
-  @WithMockUser(username = "user", authorities = { "ETI-PEV-INV-ER" })
+  @WithMockUser(username = "user", authorities = { "ETI-MEM-INV-ER" })
   public void newDocumentacionMemoriaRetrospectiva_ReturnsMemoria() throws Exception {
     // given: Un documentación memoria nueva
     String nuevaDocumentacionMemoriaJson = mapper.writeValueAsString(generarMockDocumentacionMemoria(1L,
@@ -1025,7 +1026,7 @@ public class MemoriaControllerTest extends BaseControllerTest {
   }
 
   @Test
-  @WithMockUser(username = "user", authorities = { "ETI-PEV-INV-ER" })
+  @WithMockUser(username = "user", authorities = { "ETI-MEM-INV-ESCR" })
   public void enviarSecretaria_WithId() throws Exception {
 
     mockMvc
@@ -1036,7 +1037,7 @@ public class MemoriaControllerTest extends BaseControllerTest {
   }
 
   @Test
-  @WithMockUser(username = "user", authorities = { "ETI-PEV-INV-ER" })
+  @WithMockUser(username = "user", authorities = { "ETI-MEM-INV-ERTR" })
   public void enviarSecretariaRetrospectiva_WithId() throws Exception {
 
     mockMvc
@@ -1047,7 +1048,7 @@ public class MemoriaControllerTest extends BaseControllerTest {
   }
 
   @Test
-  @WithMockUser(username = "user", authorities = { "ETI-PEV-INV-VR" })
+  @WithMockUser(username = "user", authorities = { "ETI-MEM-INV-VR" })
   public void findAllMemoriasEvaluacionByPersonaRef_Unlimited_ReturnsFullMemoriaPeticionEvaluacionList()
       throws Exception {
     // given: One hundred Memoria
@@ -1073,7 +1074,7 @@ public class MemoriaControllerTest extends BaseControllerTest {
   }
 
   @Test
-  @WithMockUser(username = "user", authorities = { "ETI-PEV-INV-VR", "ETI-PEV-V", "ETI-MEM-INV-CR" })
+  @WithMockUser(username = "user", authorities = { "ETI-MEM-INV-VR", "ETI-MEM-V", "ETI-MEM-INV-CR" })
   public void findAllMemoriasEvaluacionByPersonaRef_WithPaging_ReturnsMemoriaPeticionEvaluacionSubList()
       throws Exception {
     // given: One hundred Memoria
@@ -1127,7 +1128,7 @@ public class MemoriaControllerTest extends BaseControllerTest {
   }
 
   @Test
-  @WithMockUser(username = "user", authorities = { "ETI-PEV-INV-VR" })
+  @WithMockUser(username = "user", authorities = { "ETI-MEM-INV-VR" })
   public void findAllMemoriasEvaluacionByPersonaRef_ReturnsNoContent() throws Exception {
     // given: Memorias empty
     List<MemoriaPeticionEvaluacion> memoriasPeticionEvaluacion = new ArrayList<>();
@@ -1294,8 +1295,8 @@ public class MemoriaControllerTest extends BaseControllerTest {
    */
   private Comite generarMockComite(Long id, String comite, Boolean activo) {
     Formulario formulario = new Formulario(1L, "M10", "Descripcion");
-    return new Comite(id, comite, "nombreSecretario", "nombreInvestigacion", "nombreDecreto", "articulo", formulario,
-        activo);
+    return new Comite(id, comite, "nombreSecretario", "nombreInvestigacion", Genero.M, "nombreDecreto", "articulo",
+        formulario, activo);
 
   }
 
@@ -1398,8 +1399,8 @@ public class MemoriaControllerTest extends BaseControllerTest {
     peticionEvaluacion.setActivo(Boolean.TRUE);
 
     Formulario formulario = new Formulario(1L, "M10", "Descripcion");
-    Comite comite = new Comite(1L, "Comite1", "nombreSecretario", "nombreInvestigacion", "nombreDecreto", "articulo",
-        formulario, Boolean.TRUE);
+    Comite comite = new Comite(1L, "Comite1", "nombreSecretario", "nombreInvestigacion", Genero.M, "nombreDecreto",
+        "articulo", formulario, Boolean.TRUE);
 
     TipoMemoria tipoMemoria = new TipoMemoria();
     tipoMemoria.setId(1L);
@@ -1496,6 +1497,7 @@ public class MemoriaControllerTest extends BaseControllerTest {
 
     Comite comite = new Comite();
     comite.setId(id);
+    comite.setGenero(Genero.M);
     memoria.setComite(comite);
 
     TipoEstadoMemoria tipoEstadoMemoria = new TipoEstadoMemoria();

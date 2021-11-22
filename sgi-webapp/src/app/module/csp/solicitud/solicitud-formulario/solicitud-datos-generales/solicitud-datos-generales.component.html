@@ -17,9 +17,8 @@
     </div>
 
     <!-- Comentarios del estado -->
-    <div *ngIf="(formPart.showComentariosEstado$ | async) && !this.formPart.isInvestigador"
-      [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
-      [fxFlexOrder]="fxFlexProperties.order">
+    <div *ngIf="(formPart.showComentariosEstado$ | async)" [fxFlex.sm]="fxFlexProperties.sm"
+      [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd" [fxFlexOrder]="fxFlexProperties.order">
       <mat-form-field fxFill>
         <mat-label>{{'csp.solicitud.estado-solicitud.comentario' | translate}}</mat-label>
         <textarea matInput formControlName="comentariosEstado" type="text" id="comentariosEstado"
@@ -88,16 +87,10 @@
     <!-- Unidad de gestión -->
     <div *ngIf="!this.formPart.isInvestigador" [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md"
       [fxFlex.gt-md]="fxFlexProperties.gtMd" [fxFlexOrder]="fxFlexProperties.order">
-      <mat-form-field class="input-form">
-        <mat-label>{{'csp.solicitud.unidad-gestion' | translate}}</mat-label>
-        <input matInput formControlName="unidadGestion" type="text" id="unidadGestion"
-          placeholder="{{'csp.solicitud.unidad-gestion' | translate}}" [matAutocomplete]="autoUnidadGestion"
-          [required]="formPart.convocatoriaExternaRequired">
-        <mat-autocomplete #autoUnidadGestion="matAutocomplete" [displayWith]="getUnidadGestion">
-          <mat-option *ngFor="let unidadGestion of unidadesGestionFiltered$ | async" [value]="unidadGestion">
-            {{unidadGestion.nombre}}
-          </mat-option>
-        </mat-autocomplete>
+      <mat-form-field>
+        <mat-label>{{'csp.proyecto.unidad-gestion' | translate}}</mat-label>
+        <sgi-select-unidad-gestion #unidadGestion formControlName="unidadGestion" required>
+        </sgi-select-unidad-gestion>
         <mat-error *ngIf="formGroup.controls.unidadGestion.errors?.required">
           {{'error.required.entity' | translate:msgParamUnidadGestionEntity}}
         </mat-error>
@@ -137,10 +130,7 @@
       <mat-form-field class="input-form">
         <mat-label>{{'csp.solicitud.titulo' | translate}}</mat-label>
         <input matInput formControlName="titulo" type="text" id="titulo"
-          placeholder="{{'csp.solicitud.titulo' | translate}}" required>
-        <mat-error *ngIf="formGroup.controls.titulo.errors?.required">
-          {{'error.required.entity' | translate:msgParamTituloEntity}}
-        </mat-error>
+          placeholder="{{'csp.solicitud.titulo' | translate}}">
         <mat-error *ngIf="formGroup.controls.titulo.errors?.maxlength">
           {{'error.maxlength.entity' | translate:msgParamTituloEntity}}
         </mat-error>

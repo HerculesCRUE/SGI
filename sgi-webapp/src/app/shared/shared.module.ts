@@ -5,6 +5,7 @@ import { RouterModule } from '@angular/router';
 import { FormlyFormsModule } from '@formly-forms/formly-forms.module';
 import { MaterialDesignModule } from '@material/material-design.module';
 import { TranslateModule } from '@ngx-translate/core';
+import { ActionDialogComponent } from './action-dialog/action-dialog.component';
 import { ActionFooterButtonComponent } from './action-footer-button/action-footer-button.component';
 import { ActionFooterMessageComponent } from './action-footer/action-footer-message/action-footer-message.component';
 import { ActionFooterComponent } from './action-footer/action-footer.component';
@@ -13,6 +14,10 @@ import { ActionFragmentMenuGroupComponent } from './action-fragment-menu-group/a
 import { ActionFragmentMenuItemComponent } from './action-fragment-menu-item/action-fragment-menu-item.component';
 import { ActionComponent } from './action/action.component';
 import { BreadcrumbComponent } from './breadcrumb/breadcrumb.component';
+import { DialogContentComponent } from './dialog-content/dialog-content.component';
+import { DialogFooterComponent } from './dialog-footer/dialog-footer.component';
+import { DialogHeaderComponent } from './dialog-header/dialog-header.component';
+import { ExportDialogComponent } from './export-dialog/export-dialog.component';
 import { FieldInfoComponent } from './field-info/field-info.component';
 import { SgiFileUploadComponent } from './file-upload/file-upload.component';
 import { FooterCrearComponent } from './footers/footer-crear/footer-crear.component';
@@ -64,7 +69,12 @@ import { SelectComponent } from './select/select.component';
     MenuContentFooter,
     MenuItemComponent,
     MenuGroupComponent,
-    MenuSubItemComponent
+    MenuSubItemComponent,
+    DialogContentComponent,
+    DialogHeaderComponent,
+    DialogFooterComponent,
+    ActionDialogComponent,
+    ExportDialogComponent
   ],
   imports: [
     CommonModule,
@@ -102,7 +112,9 @@ import { SelectComponent } from './select/select.component';
     MenuContentFooter,
     MenuItemComponent,
     MenuGroupComponent,
-    MenuSubItemComponent
+    MenuSubItemComponent,
+    ActionDialogComponent,
+    ExportDialogComponent
   ]
 })
 export class SharedModule { }

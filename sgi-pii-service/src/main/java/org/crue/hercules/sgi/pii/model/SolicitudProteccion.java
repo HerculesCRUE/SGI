@@ -1,6 +1,7 @@
 package org.crue.hercules.sgi.pii.model;
 
 import java.time.Instant;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -12,21 +13,25 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.PrePersist;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.Valid;
 
+import org.crue.hercules.sgi.framework.validation.ActivableIsActivo;
 import org.crue.hercules.sgi.pii.model.SolicitudProteccion.OnActivar;
 import org.crue.hercules.sgi.pii.model.SolicitudProteccion.OnActualizar;
 import org.crue.hercules.sgi.pii.model.SolicitudProteccion.OnCrear;
-import org.crue.hercules.sgi.pii.validation.EntidadActiva;
 import org.crue.hercules.sgi.pii.validation.UniqueSolicitudViaProteccion;
 
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 
 @Entity
@@ -37,7 +42,7 @@ import lombok.experimental.SuperBuilder;
 @AllArgsConstructor
 @SuperBuilder
 @UniqueSolicitudViaProteccion(groups = { OnActualizar.class, OnActivar.class, OnCrear.class })
-@EntidadActiva(entityClass = SolicitudProteccion.class, groups = { OnActualizar.class })
+@ActivableIsActivo(entityClass = SolicitudProteccion.class, groups = { OnActualizar.class })
 public class SolicitudProteccion extends BaseActivableEntity {
 
   protected static final String TABLE_NAME = "solicitud_proteccion";
@@ -58,7 +63,7 @@ public class SolicitudProteccion extends BaseActivableEntity {
   @ManyToOne
   @JoinColumn(name = "invencion_id", nullable = false, foreignKey = @ForeignKey(name = "FK_SOLICITUDPROTECCION_INVENCION"))
   @Valid
-  @EntidadActiva(entityClass = Invencion.class, groups = { OnCrear.class, OnActualizarInvencion.class })
+  @ActivableIsActivo(entityClass = Invencion.class, groups = { OnCrear.class, OnActualizarInvencion.class })
   private Invencion invencion;
 
   @Column(name = "titulo", length = TITULO_MAX_LENGTH, nullable = false)
@@ -82,7 +87,7 @@ public class SolicitudProteccion extends BaseActivableEntity {
   @ManyToOne
   @JoinColumn(name = "via_proteccion_id", nullable = false, foreignKey = @ForeignKey(name = "FK_SOLICITUDPROTECCION_VIAPROTECCION"))
   @Valid
-  @EntidadActiva(entityClass = ViaProteccion.class, groups = { OnCrear.class, OnActualizarViaProteccion.class })
+  @ActivableIsActivo(entityClass = ViaProteccion.class, groups = { OnCrear.class, OnActualizarViaProteccion.class })
   private ViaProteccion viaProteccion;
 
   @Column(name = "numero_solicitud", nullable = false, length = NUMERO_SOLICITUD_MAX_LENGTH)
@@ -113,6 +118,11 @@ public class SolicitudProteccion extends BaseActivableEntity {
 
   @Column(name = "comentarios", length = COMENTARIOS_MAX_LENGTH, nullable = true)
   private String comentarios;
+
+  @OneToMany(mappedBy = "solicitudProteccion")
+  @Getter(AccessLevel.NONE)
+  @Setter(AccessLevel.NONE)
+  private final List<Procedimiento> procedimientos = null;
 
   /**
    * Interfaz para marcar validaciones en la creación de la entidad.

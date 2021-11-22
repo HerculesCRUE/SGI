@@ -5,6 +5,7 @@ import javax.validation.ConstraintValidatorContext;
 
 import org.crue.hercules.sgi.framework.spring.context.support.ApplicationContextSupport;
 import org.crue.hercules.sgi.pii.model.TramoReparto;
+import org.crue.hercules.sgi.pii.model.TramoReparto.Tipo;
 import org.hibernate.validator.constraintvalidation.HibernateConstraintValidatorContext;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,19 +23,18 @@ public class DesdeLowerThanHastaTramoRepartoValidator
   @Override
   @Transactional(readOnly = true, propagation = Propagation.NOT_SUPPORTED)
   public boolean isValid(TramoReparto value, ConstraintValidatorContext context) {
+    if (value.getTipo() == Tipo.FINAL) {
+      return true;
+    }
     if (value == null || value.getDesde() == null || value.getHasta() == null) {
       return false;
     }
 
-    boolean returnValue = isDesdeLowerThanHasta(value);
+    boolean returnValue = value.getDesde() < value.getHasta();
     if (!returnValue) {
       addEntityMessageParameter(context);
     }
     return returnValue;
-  }
-
-  private boolean isDesdeLowerThanHasta(TramoReparto value) {
-    return value.getDesde() < value.getHasta();
   }
 
   private void addEntityMessageParameter(ConstraintValidatorContext context) {

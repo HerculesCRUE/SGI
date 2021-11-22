@@ -15,16 +15,15 @@ import { catchError, filter, map, mergeMap, switchMap, takeLast, tap, toArray } 
 export class InvencionInventorFragment extends Fragment {
 
   // tslint:disable-next-line: variable-name
-  private _invencionInventores$ = new BehaviorSubject<StatusWrapper<IInvencionInventor>[]>([]);
-  // tslint:disable-next-line: variable-name
   private _invencionInventoresDelete$ = new BehaviorSubject<StatusWrapper<IInvencionInventor>[]>([]);
   // tslint:disable-next-line: variable-name
   private _participacionCompleta$ = new BehaviorSubject<boolean>(true);
   // tslint:disable-next-line: variable-name
   private _verificarParticipacion$ = new BehaviorSubject<any>(null);
+  private _invencionInventores$: BehaviorSubject<StatusWrapper<IInvencionInventor>[]> = new BehaviorSubject<StatusWrapper<IInvencionInventor>[]>([]);
 
-  get invencionInventores$(): Observable<StatusWrapper<IInvencionInventor>[]> {
-    return this._invencionInventores$.asObservable();
+  get invencionInventores$(): BehaviorSubject<StatusWrapper<IInvencionInventor>[]> {
+    return this._invencionInventores$;
   }
 
   get participacionCompleta$(): Observable<boolean> {

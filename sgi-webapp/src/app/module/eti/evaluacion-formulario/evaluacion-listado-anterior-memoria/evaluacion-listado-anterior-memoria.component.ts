@@ -2,10 +2,14 @@ import { Component, Input } from '@angular/core';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { AbstractTableWithoutPaginationComponent } from '@core/component/abstract-table-without-pagination.component';
 import { IEvaluacionWithNumComentario } from '@core/models/eti/evaluacion-with-num-comentario';
+import { IDocumento } from '@core/models/sgdoc/documento';
+import { EvaluacionService } from '@core/services/eti/evaluacion.service';
 import { MemoriaService } from '@core/services/eti/memoria.service';
+import { DocumentoService, triggerDownloadToUser } from '@core/services/sgdoc/documento.service';
 import { SnackBarService } from '@core/services/snack-bar.service';
 import { SgiRestFilter, SgiRestListResult } from '@sgi/framework/http';
 import { Observable } from 'rxjs';
+import { switchMap } from 'rxjs/operators';
 import { Rol } from '../evaluacion-formulario.action.service';
 
 const MSG_ERROR = marker('error.load');
@@ -25,7 +29,9 @@ export class EvaluacionListadoAnteriorMemoriaComponent extends AbstractTableWith
 
   constructor(
     private readonly memoriaService: MemoriaService,
-    protected readonly snackBarService: SnackBarService
+    protected readonly snackBarService: SnackBarService,
+    private readonly documentoService: DocumentoService,
+    private readonly evaluacionService: EvaluacionService,
   ) {
     super(snackBarService, MSG_ERROR);
   }
@@ -50,4 +56,21 @@ export class EvaluacionListadoAnteriorMemoriaComponent extends AbstractTableWith
   protected createFilters(): SgiRestFilter[] {
     return [];
   }
+
+  /**
+   * Visualiza el informe de evaluación seleccionado.
+   * @param idEvaluacion id de la memoria del informe
+   */
+  visualizarInforme(idEvaluacion: number): void {
+    const documento: IDocumento = {} as IDocumento;
+    this.evaluacionService.getDocumentoEvaluacion(idEvaluacion).pipe(
+      switchMap((documentoInfo: IDocumento) => {
+        documento.nombre = documentoInfo.nombre;
+        return this.documentoService.downloadFichero(documentoInfo.documentoRef);
+      })
+    ).subscribe(response => {
+      triggerDownloadToUser(response, documento.nombre);
+    });
+  }
+
 }

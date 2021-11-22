@@ -9,7 +9,7 @@
   </parent>
   <groupId>org.crue.hercules.sgi</groupId>
   <artifactId>sgi-eti-service</artifactId>
-  <version>0.0.3</version>
+  <version>0.0.4</version>
   <name>sgi-eti-service</name>
   <description>Servicio Etica SGI HERCULES</description>
 
@@ -103,13 +103,6 @@
       <artifactId>modelmapper</artifactId>
     </dependency>
 
-    <!-- jsonpath lib -->
-    <dependency>
-      <groupId>com.jayway.jsonpath</groupId>
-      <artifactId>json-path</artifactId>
-      <version>${jsonpath.version}</version>
-    </dependency>
-
     <dependency>
       <groupId>com.oracle.ojdbc</groupId>
       <artifactId>ojdbc8</artifactId>
@@ -142,7 +135,7 @@
 
   <properties>
     <java.version>1.8</java.version>
-    <sgi-framework-spring.version>0.0.4</sgi-framework-spring.version>
+    <sgi-framework-spring.version>0.0.5</sgi-framework-spring.version>
     <wiremock.version>2.27.1</wiremock.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
@@ -152,7 +145,6 @@
     <org.hibernate-jpamodelgen.version>5.3.15.Final</org.hibernate-jpamodelgen.version>
     <org.modelmapper.version>2.3.5</org.modelmapper.version>
     <lombok.version>1.18.20</lombok.version>
-    <jsonpath.version>2.6.0</jsonpath.version>
 
     <!-- Plugin versions (only those that are not defined in `spring-boot-starter-parent`) -->
     <docker-maven-plugin.version>0.33.0</docker-maven-plugin.version>
@@ -397,6 +389,10 @@
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-maven-plugin</artifactId>
         <configuration>
+          <jvmArguments>
+            -Xmx256m
+            -Xss256k
+          </jvmArguments>
           <!--
           Create 2 artifacts: one as dependency and another as executable fat JAR
           See https://docs.spring.io/spring-boot/docs/current/reference/html/howto-build.html#howto-create-an-additional-executable-jar

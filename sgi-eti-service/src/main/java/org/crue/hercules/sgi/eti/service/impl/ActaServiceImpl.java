@@ -1,10 +1,14 @@
 package org.crue.hercules.sgi.eti.service.impl;
 
 import java.time.Instant;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
+import org.apache.commons.lang3.StringUtils;
 import org.crue.hercules.sgi.eti.dto.ActaWithNumEvaluaciones;
+import org.crue.hercules.sgi.eti.dto.DocumentoOutput;
+import org.crue.hercules.sgi.eti.dto.MemoriaEvaluada;
 import org.crue.hercules.sgi.eti.exceptions.ActaNotFoundException;
 import org.crue.hercules.sgi.eti.exceptions.TareaNotFoundException;
 import org.crue.hercules.sgi.eti.model.Acta;
@@ -17,13 +21,21 @@ import org.crue.hercules.sgi.eti.repository.EstadoActaRepository;
 import org.crue.hercules.sgi.eti.repository.EvaluacionRepository;
 import org.crue.hercules.sgi.eti.repository.RetrospectivaRepository;
 import org.crue.hercules.sgi.eti.repository.TipoEstadoActaRepository;
+import org.crue.hercules.sgi.eti.repository.specification.ActaSpecifications;
 import org.crue.hercules.sgi.eti.service.ActaService;
 import org.crue.hercules.sgi.eti.service.MemoriaService;
+import org.crue.hercules.sgi.eti.service.ReportService;
 import org.crue.hercules.sgi.eti.service.RetrospectivaService;
+import org.crue.hercules.sgi.eti.service.SgdocService;
 import org.crue.hercules.sgi.eti.util.Constantes;
+import org.crue.hercules.sgi.framework.rsql.SgiRSQLJPASupport;
 import org.crue.hercules.sgi.framework.security.core.context.SgiSecurityContextHolder;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
@@ -37,6 +49,8 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Transactional(readOnly = true)
 public class ActaServiceImpl implements ActaService {
+
+  private static final String TITULO_INFORME_ACTA = "informeActaPdf";
 
   /** Acta Repository. */
   private final ActaRepository actaRepository;
@@ -56,6 +70,12 @@ public class ActaServiceImpl implements ActaService {
   /** Retrospectiva Service. */
   private final RetrospectivaService retrospectivaService;
 
+  /** Report service */
+  private final ReportService reportService;
+
+  /** SGDOC service */
+  private final SgdocService sgdocService;
+
   /**
    * Instancia un nuevo ActaServiceImpl.
    * 
@@ -66,18 +86,23 @@ public class ActaServiceImpl implements ActaService {
    * @param retrospectivaRepository  {@link RetrospectivaRepository}
    * @param memoriaService           {@link MemoriaService}
    * @param retrospectivaService     {@link RetrospectivaService}
+   * @param reportService            {@link ReportService}
+   * @param sgdocService             {@link SgdocService}
    * 
    */
+  @Autowired
   public ActaServiceImpl(ActaRepository actaRepository, EstadoActaRepository estadoActaRepository,
       TipoEstadoActaRepository tipoEstadoActaRepository, EvaluacionRepository evaluacionRepository,
       RetrospectivaRepository retrospectivaRepository, MemoriaService memoriaService,
-      RetrospectivaService retrospectivaService) {
+      RetrospectivaService retrospectivaService, ReportService reportService, SgdocService sgdocService) {
     this.actaRepository = actaRepository;
     this.estadoActaRepository = estadoActaRepository;
     this.tipoEstadoActaRepository = tipoEstadoActaRepository;
     this.evaluacionRepository = evaluacionRepository;
     this.memoriaService = memoriaService;
     this.retrospectivaService = retrospectivaService;
+    this.reportService = reportService;
+    this.sgdocService = sgdocService;
   }
 
   /**
@@ -119,10 +144,32 @@ public class ActaServiceImpl implements ActaService {
   public Page<ActaWithNumEvaluaciones> findAllActaWithNumEvaluaciones(String query, Pageable paging,
       String personaRef) {
     log.debug("findAllActaWithNumEvaluaciones(String query, Pageable paging) - start");
-    Page<ActaWithNumEvaluaciones> returnValue = actaRepository.findAllActaWithNumEvaluaciones(query, paging,
+    Specification<Acta> specActa = null;
+    if (StringUtils.isNotBlank(query)) {
+      specActa = SgiRSQLJPASupport.toSpecification(query);
+    }
+    Page<ActaWithNumEvaluaciones> returnValue = actaRepository.findAllActaWithNumEvaluaciones(specActa, paging,
         SgiSecurityContextHolder.hasAuthority("ETI-ACT-V") ? null : personaRef);
     log.debug("findAllActaWithNumEvaluaciones(String query, Pageable paging) - end");
     return returnValue;
+  }
+
+  /**
+   * Devuelve si el usuario es miembro activo del comité del {@link Acta}
+   * 
+   * @param personaRef usuario
+   * @param idActa     identificador del {@link Acta}
+   * @return las entidades {@link Acta}
+   */
+  @Override
+  public Boolean isMiembroComiteActa(String personaRef, Long idActa) {
+    log.debug("isMiembroComiteActa(String personaRef, Long idActa) - start");
+    Specification<Acta> specActa = ActaSpecifications.byId(idActa);
+
+    Page<ActaWithNumEvaluaciones> returnValue = actaRepository.findAllActaWithNumEvaluaciones(specActa,
+        PageRequest.of(0, 1), personaRef);
+    log.debug("isMiembroComiteActa(String personaRef, Long idActa) - end");
+    return returnValue.hasContent();
   }
 
   /**
@@ -233,38 +280,40 @@ public class ActaServiceImpl implements ActaService {
     listEvaluacionesMemoria.forEach(evaluacion -> {
 
       switch (evaluacion.getDictamen().getId().intValue()) {
-        case Constantes.DICTAMEN_FAVORABLE: {
-          // Dictamen "Favorable"-
-          // Se actualiza memoria a estado 9: "Fin evaluación"
-          memoriaService.updateEstadoMemoria(evaluacion.getMemoria(), Constantes.ESTADO_MEMORIA_FIN_EVALUACION);
-          break;
-        }
-        case Constantes.DICTAMEN_FAVORABLE_PENDIENTE_REVISION_MINIMA: {
-          // Dictamen "Favorable pendiente de revisión mínima"-
-          // Se actualiza memoria a estado 6: "Favorable Pendiente de Modificaciones
-          // Mínimas"
-          memoriaService.updateEstadoMemoria(evaluacion.getMemoria(),
-              Constantes.ESTADO_MEMORIA_FAVORABLE_PENDIENTE_MOD_MINIMAS);
-          break;
-        }
-        case Constantes.DICTAMEN_PENDIENTE_CORRECCIONES: {
-          // Dictamen "Pendiente de correcciones"
-          // Se actualiza memoria a estado 7: "Pendiente de correcciones"
-          memoriaService.updateEstadoMemoria(evaluacion.getMemoria(), Constantes.ESTADO_MEMORIA_PENDIENTE_CORRECCIONES);
-          break;
-        }
-        case Constantes.DICTAMEN_NO_PROCEDE_EVALUAR: {
-          // Dictamen "No procede evaluar"
-          // Se actualiza memoria a estado 8: "No procede evaluar"
-          memoriaService.updateEstadoMemoria(evaluacion.getMemoria(), Constantes.ESTADO_MEMORIA_NO_PROCEDE_EVALUAR);
-          break;
-        }
-        case Constantes.DICTAMEN_SOLICITUD_MODIFICACIONES: {
-          // Dictamen "Solicitud modificaciones"
-          // Se actualiza memoria a estado 15: "Solicitud modificacion"
-          memoriaService.updateEstadoMemoria(evaluacion.getMemoria(), Constantes.ESTADO_MEMORIA_SOLICITUD_MODIFICACION);
-          break;
-        }
+      case Constantes.DICTAMEN_FAVORABLE: {
+        // Dictamen "Favorable"-
+        // Se actualiza memoria a estado 9: "Fin evaluación"
+        memoriaService.updateEstadoMemoria(evaluacion.getMemoria(), Constantes.ESTADO_MEMORIA_FIN_EVALUACION);
+        break;
+      }
+      case Constantes.DICTAMEN_FAVORABLE_PENDIENTE_REVISION_MINIMA: {
+        // Dictamen "Favorable pendiente de revisión mínima"-
+        // Se actualiza memoria a estado 6: "Favorable Pendiente de Modificaciones
+        // Mínimas"
+        memoriaService.updateEstadoMemoria(evaluacion.getMemoria(),
+            Constantes.ESTADO_MEMORIA_FAVORABLE_PENDIENTE_MOD_MINIMAS);
+        break;
+      }
+      case Constantes.DICTAMEN_PENDIENTE_CORRECCIONES: {
+        // Dictamen "Pendiente de correcciones"
+        // Se actualiza memoria a estado 7: "Pendiente de correcciones"
+        memoriaService.updateEstadoMemoria(evaluacion.getMemoria(), Constantes.ESTADO_MEMORIA_PENDIENTE_CORRECCIONES);
+        break;
+      }
+      case Constantes.DICTAMEN_NO_PROCEDE_EVALUAR: {
+        // Dictamen "No procede evaluar"
+        // Se actualiza memoria a estado 8: "No procede evaluar"
+        memoriaService.updateEstadoMemoria(evaluacion.getMemoria(), Constantes.ESTADO_MEMORIA_NO_PROCEDE_EVALUAR);
+        break;
+      }
+      case Constantes.DICTAMEN_SOLICITUD_MODIFICACIONES: {
+        // Dictamen "Solicitud modificaciones"
+        // Se actualiza memoria a estado 15: "Solicitud modificacion"
+        memoriaService.updateEstadoMemoria(evaluacion.getMemoria(), Constantes.ESTADO_MEMORIA_SOLICITUD_MODIFICACION);
+        break;
+      }
+      default:
+        break;
       }
     });
 
@@ -276,14 +325,15 @@ public class ActaServiceImpl implements ActaService {
     listEvaluacionesRetrospectiva.forEach(evaluacion -> {
 
       switch (evaluacion.getDictamen().getId().intValue()) {
-        case Constantes.DICTAMEN_DESFAVORABLE_RETROSPECTIVA:
-        case Constantes.DICTAMEN_FAVORABLE_RETROSPECTIVA: {
-          // Dictamen "Favorable y desfavorable retrospectiva"
-          // Se actualiza memoria a estado 5: "Fin evaluación retrospectiva"
-          retrospectivaService.updateEstadoRetrospectiva(evaluacion.getMemoria().getRetrospectiva(),
-              Constantes.ESTADO_RETROSPECTIVA_FIN_EVALUACION);
-          break;
-        }
+      case Constantes.DICTAMEN_DESFAVORABLE_RETROSPECTIVA:
+      case Constantes.DICTAMEN_FAVORABLE_RETROSPECTIVA:
+      default: {
+        // Dictamen "Favorable y desfavorable retrospectiva"
+        // Se actualiza memoria a estado 5: "Fin evaluación retrospectiva"
+        retrospectivaService.updateEstadoRetrospectiva(evaluacion.getMemoria().getRetrospectiva(),
+            Constantes.ESTADO_RETROSPECTIVA_FIN_EVALUACION);
+        break;
+      }
       }
 
     });
@@ -296,20 +346,22 @@ public class ActaServiceImpl implements ActaService {
     listEvaluacionesSegFinal.forEach(evaluacion -> {
 
       switch (evaluacion.getDictamen().getId().intValue()) {
-        case Constantes.DICTAMEN_FAVORABLE_SEGUIMIENTO_FINAL: {
-          // Dictamen "Favorable - seguimiento anual"-
-          // Se actualiza memoria a estado 9: "Fin evaluación"
-          memoriaService.updateEstadoMemoria(evaluacion.getMemoria(),
-              Constantes.ESTADO_MEMORIA_FIN_EVALUACION_SEGUIMIENTO_FINAL);
-          break;
-        }
-        case Constantes.DICTAMEN_SOLICITUD_ACLARACIONES_SEGUIMIENTO_FINAL: {
-          // Dictamen "Solicitud aclaraciones seguimiento final"
-          // Se actualiza memoria a estado 21: "En aclaracion seguimiento final"
-          memoriaService.updateEstadoMemoria(evaluacion.getMemoria(),
-              Constantes.ESTADO_MEMORIA_EN_ACLARACION_SEGUIMIENTO_FINAL);
-          break;
-        }
+      case Constantes.DICTAMEN_FAVORABLE_SEGUIMIENTO_FINAL: {
+        // Dictamen "Favorable - seguimiento anual"-
+        // Se actualiza memoria a estado 9: "Fin evaluación"
+        memoriaService.updateEstadoMemoria(evaluacion.getMemoria(),
+            Constantes.ESTADO_MEMORIA_FIN_EVALUACION_SEGUIMIENTO_FINAL);
+        break;
+      }
+      case Constantes.DICTAMEN_SOLICITUD_ACLARACIONES_SEGUIMIENTO_FINAL: {
+        // Dictamen "Solicitud aclaraciones seguimiento final"
+        // Se actualiza memoria a estado 21: "En aclaración seguimiento final"
+        memoriaService.updateEstadoMemoria(evaluacion.getMemoria(),
+            Constantes.TIPO_ESTADO_MEMORIA_EN_ACLARACION_SEGUIMIENTO_FINAL);
+        break;
+      }
+      default:
+        break;
       }
 
     });
@@ -322,19 +374,21 @@ public class ActaServiceImpl implements ActaService {
     listEvaluacionesSegAnual.forEach(evaluacion -> {
 
       switch (evaluacion.getDictamen().getId().intValue()) {
-        case Constantes.DICTAMEN_FAVORABLE_SEGUIMIENTO_ANUAL: {
-          // Dictamen "Favorable - seguimiento anual"-
-          // Se actualiza memoria a estado 9: "Fin evaluación"
-          memoriaService.updateEstadoMemoria(evaluacion.getMemoria(),
-              Constantes.ESTADO_MEMORIA_FIN_EVALUACION_SEGUIMIENTO_ANUAL);
-          break;
-        }
-        case Constantes.DICTAMEN_SOLICITUD_MODIFICACIONES: {
-          // Dictamen "Solicitud modificaciones"
-          // Se actualiza memoria a estado 15: "Solicitud modificacion"
-          memoriaService.updateEstadoMemoria(evaluacion.getMemoria(), Constantes.ESTADO_MEMORIA_SOLICITUD_MODIFICACION);
-          break;
-        }
+      case Constantes.DICTAMEN_FAVORABLE_SEGUIMIENTO_ANUAL: {
+        // Dictamen "Favorable - seguimiento anual"-
+        // Se actualiza memoria a estado 9: "Fin evaluación"
+        memoriaService.updateEstadoMemoria(evaluacion.getMemoria(),
+            Constantes.ESTADO_MEMORIA_FIN_EVALUACION_SEGUIMIENTO_ANUAL);
+        break;
+      }
+      case Constantes.DICTAMEN_SOLICITUD_MODIFICACIONES: {
+        // Dictamen "Solicitud modificaciones"
+        // Se actualiza memoria a estado 15: "Solicitud modificacion"
+        memoriaService.updateEstadoMemoria(evaluacion.getMemoria(), Constantes.ESTADO_MEMORIA_SOLICITUD_MODIFICACION);
+        break;
+      }
+      default:
+        break;
       }
 
     });
@@ -365,4 +419,51 @@ public class ActaServiceImpl implements ActaService {
     return acta.isPresent() ? acta.get() : null;
   }
 
+  /**
+   * Devuelve el número de evaluaciones nuevas asociadas a un {@link Acta}
+   *
+   * @param idActa Id de {@link Acta}.
+   * @return número de evaluaciones nuevas
+   */
+  @Override
+  public Long countEvaluacionesNuevas(Long idActa) {
+    return actaRepository.countEvaluacionesNuevas(idActa);
+  }
+
+  /**
+   * Devuelve el número de evaluaciones de revisión sin las de revisión mínima
+   *
+   * @param idActa Id de {@link Acta}.
+   * @return número de evaluaciones
+   */
+  @Override
+  public Long countEvaluacionesRevisionSinMinima(Long idActa) {
+    return actaRepository.countEvaluacionesRevisionSinMinima(idActa);
+  }
+
+  /**
+   * Devuelve una lista de {@link MemoriaEvaluada} sin las de revisión mínima para
+   * una determinada {@link Acta}
+   * 
+   * @param idActa Id de {@link Acta}.
+   * @return lista de memorias evaluadas
+   */
+  @Override
+  public List<MemoriaEvaluada> findAllMemoriasEvaluadasSinRevMinimaByActaId(Long idActa) {
+    return actaRepository.findAllMemoriasEvaluadasSinRevMinimaByActaId(idActa);
+  }
+
+  /**
+   * Obtiene el informe de un {@link Acta}
+   * 
+   * @param idActa id {@link Acta}
+   * @return El documento del informe del acta
+   */
+  @Override
+  public DocumentoOutput generarDocumentoActa(Long idActa) {
+    Resource informePdf = reportService.getInformeActa(idActa);
+    // Se sube el informe a sgdoc
+    String fileName = TITULO_INFORME_ACTA + "_" + idActa + LocalDate.now() + ".pdf";
+    return sgdocService.uploadInforme(fileName, informePdf);
+  }
 }

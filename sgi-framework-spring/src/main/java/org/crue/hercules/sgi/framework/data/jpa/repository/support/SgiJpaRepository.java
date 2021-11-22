@@ -29,7 +29,7 @@ import lombok.extern.slf4j.Slf4j;
  * {@link EntityManager} .
  */
 @Slf4j
-public class SgiJpaRepository<T, ID> extends SimpleJpaRepository<T, ID> implements SgiRepository<T, ID> {
+public class SgiJpaRepository<T, I> extends SimpleJpaRepository<T, I> implements SgiRepository<T, I> {
 
   private EscapeCharacter escapeCharacter = EscapeCharacter.DEFAULT;
   private final EntityManager em;
@@ -87,7 +87,7 @@ public class SgiJpaRepository<T, ID> extends SimpleJpaRepository<T, ID> implemen
     log.debug("findAll(Pageable pageable) - start");
     if (isUnpagedAndUnsorted(pageable)) {
       log.info("Not paged or sorted");
-      Page<T> returnValue = new PageImpl<T>(findAll());
+      Page<T> returnValue = new PageImpl<>(findAll());
       log.debug("findAll(Pageable pageable) - end");
       return returnValue;
     }
@@ -108,7 +108,7 @@ public class SgiJpaRepository<T, ID> extends SimpleJpaRepository<T, ID> implemen
   public Page<T> findAll(@Nullable Specification<T> spec, Pageable pageable) {
     log.debug("findAll(@Nullable Specification<T> spec, Pageable pageable) - start");
     TypedQuery<T> query = getQuery(spec, pageable);
-    Page<T> returnValue = isUnpagedAndUnsorted(pageable) ? new PageImpl<T>(query.getResultList())
+    Page<T> returnValue = isUnpagedAndUnsorted(pageable) ? new PageImpl<>(query.getResultList())
         : readPage(query, getDomainClass(), pageable, spec);
     log.debug("findAll(@Nullable Specification<T> spec, Pageable pageable) - end");
     return returnValue;
@@ -156,6 +156,7 @@ public class SgiJpaRepository<T, ID> extends SimpleJpaRepository<T, ID> implemen
    * @param pageable must not be {@literal null}.
    * @return TypedQuery
    */
+  @Override
   protected TypedQuery<T> getQuery(@Nullable Specification<T> spec, Pageable pageable) {
     log.debug("getQuery(@Nullable Specification<T> spec, Pageable pageable) - start");
     Sort sort = pageable.getSort();
@@ -172,6 +173,7 @@ public class SgiJpaRepository<T, ID> extends SimpleJpaRepository<T, ID> implemen
    * @param pageable    must not be {@literal null}.
    * @return TypedQuery
    */
+  @Override
   protected <S extends T> TypedQuery<S> getQuery(@Nullable Specification<S> spec, Class<S> domainClass,
       Pageable pageable) {
     log.debug("getQuery(@Nullable Specification<S> spec, Class<S> domainClass, Pageable pageable) - start");
@@ -204,8 +206,8 @@ public class SgiJpaRepository<T, ID> extends SimpleJpaRepository<T, ID> implemen
 
     private static final long serialVersionUID = 1L;
 
-    private final Example<T> example;
-    private final EscapeCharacter escapeCharacter;
+    private final transient Example<T> example;
+    private final transient EscapeCharacter escapeCharacter;
 
     /**
      * Creates new {@link ExampleSpecification}.

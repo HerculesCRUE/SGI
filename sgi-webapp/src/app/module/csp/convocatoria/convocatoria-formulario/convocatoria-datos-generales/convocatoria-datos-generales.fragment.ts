@@ -1,4 +1,5 @@
 import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { FormularioSolicitud } from '@core/enums/formulario-solicitud';
 import { IAreaTematica } from '@core/models/csp/area-tematica';
 import { Estado, IConvocatoria } from '@core/models/csp/convocatoria';
 import { IConvocatoriaAreaTematica } from '@core/models/csp/convocatoria-area-tematica';
@@ -63,6 +64,7 @@ export class ConvocatoriaDatosGeneralesFragment extends FormFragment<IConvocator
 
   protected buildFormGroup(): FormGroup {
     const form = new FormGroup({
+      estado: new FormControl({ value: null, disabled: true }),
       codigo: new FormControl('', Validators.maxLength(50)),
       unidadGestion: new FormControl(null, Validators.required),
       fechaPublicacion: new FormControl(null),
@@ -73,17 +75,13 @@ export class ConvocatoriaDatosGeneralesFragment extends FormFragment<IConvocator
       finalidad: new FormControl(null),
       duracion: new FormControl('', [Validators.min(1), Validators.max(9999)]),
       ambitoGeografico: new FormControl(null),
-      formularioSolicitud: new FormControl(null),
+      formularioSolicitud: new FormControl(FormularioSolicitud.PROYECTO),
       clasificacionCVN: new FormControl(null),
       regimenConcurrencia: new FormControl(null),
       entidadGestora: new FormControl(null),
       objeto: new FormControl('', Validators.maxLength(2000)),
       observaciones: new FormControl('', Validators.maxLength(2000))
     });
-
-    if (this.isEdit()) {
-      form.addControl('estado', new FormControl({ value: null, disabled: true }));
-    }
 
     if (!this.hasEditPerm) {
       form.disable();

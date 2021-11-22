@@ -1,0 +1,13 @@
+<sgi-dialog-header [title]="title" (closeClick)="modal.close()">
+</sgi-dialog-header>
+<sgi-dialog-content>
+  <ng-content></ng-content>
+</sgi-dialog-content>
+<sgi-dialog-footer *ngIf="modal.status$ | async as status">
+  <button color="accent" (click)="modal.doAction()" mat-raised-button
+    [disabled]="(status.errors) || (modal.isEdit() && !status.changes) || (!modal.isEdit() && !status.complete)">
+    <mat-icon class="save-icon">save</mat-icon>{{(modal?.isEdit() ? 'btn.ok' : 'btn.add') | translate}}
+  </button>
+  <button class="link-cancelar" mat-button type="button" (click)="modal.close()">{{'btn.cancel' |
+    translate}}</button>
+</sgi-dialog-footer>

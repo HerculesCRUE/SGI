@@ -37,10 +37,12 @@ import { ConvocatoriaPlazosFaseModalComponent } from './modals/convocatoria-plaz
 import { ConvocatoriaSeguimientoCientificoModalComponent } from './modals/convocatoria-seguimiento-cientifico-modal/convocatoria-seguimiento-cientifico-modal.component';
 import { CategoriaProfesionalModalComponent } from './modals/categoria-profesional-modal/categoria-profesional-modal.component';
 import { NivelAcademicoModalComponent } from './modals/nivel-academico-modal/nivel-academico-modal.component';
+import { ConvocatoriaListadoModalComponent } from './modals/convocatoria-listado-modal/convocatoria-listado-modal.component';
 
 @NgModule({
   declarations: [
     ConvocatoriaListadoComponent,
+    ConvocatoriaListadoModalComponent,
     ConvocatoriaCrearComponent,
     ConvocatoriaDatosGeneralesComponent,
     ConvocatoriaPeriodosJustificacionComponent,

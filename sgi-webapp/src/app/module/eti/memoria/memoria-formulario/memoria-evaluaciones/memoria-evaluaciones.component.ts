@@ -7,14 +7,17 @@ import { FragmentComponent } from '@core/component/fragment.component';
 import { MSG_PARAMS } from '@core/i18n';
 import { IActa } from '@core/models/eti/acta';
 import { IEvaluacion } from '@core/models/eti/evaluacion';
+import { IDocumento } from '@core/models/sgdoc/documento';
 import { FxFlexProperties } from '@core/models/shared/flexLayout/fx-flex-properties';
 import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-properties';
 import { DialogService } from '@core/services/dialog.service';
 import { ConvocatoriaReunionService } from '@core/services/eti/convocatoria-reunion.service';
+import { EvaluacionService } from '@core/services/eti/evaluacion.service';
 import { MemoriaService } from '@core/services/eti/memoria.service';
-import { openInformeFavorableMemoria, openInformeFavorableTipoRatificacion } from '@core/services/pentaho.service';
+import { DocumentoService, triggerDownloadToUser } from '@core/services/sgdoc/documento.service';
 import { StatusWrapper } from '@core/utils/status-wrapper';
 import { Subscription } from 'rxjs';
+import { switchMap } from 'rxjs/operators';
 import { MemoriaActionService } from '../../memoria.action.service';
 import { MemoriaEvaluacionesFragment } from './memoria-evaluaciones.fragment';
 
@@ -51,6 +54,8 @@ export class MemoriaEvaluacionesComponent extends FragmentComponent implements O
     protected readonly dialogService: DialogService,
     protected matDialog: MatDialog,
     protected memoriaService: MemoriaService,
+    protected evaluacionService: EvaluacionService,
+    protected documentoService: DocumentoService,
     actionService: MemoriaActionService,
     private readonly convocatoriaReunionService: ConvocatoriaReunionService) {
 
@@ -101,18 +106,25 @@ export class MemoriaEvaluacionesComponent extends FragmentComponent implements O
     );
   }
 
-  generateInformeDictamenFavorable(idTipoMemoria: number, idEvaluacion: number): void {
-    if (idTipoMemoria === 1) {
-      openInformeFavorableMemoria(idEvaluacion);
-    }
-    else if (idTipoMemoria === 3) {
-      openInformeFavorableTipoRatificacion(idEvaluacion);
-    }
-  }
-
   isActaFinalizada(evaluacionWrapper: StatusWrapper<IEvaluacion>): boolean {
     const actaConvocatoriaReunion = this.actasConvocatoriaReunion.find(actaConv => actaConv.idConvocatoriaReunion === evaluacionWrapper.value.convocatoriaReunion.id);
     return actaConvocatoriaReunion?.acta?.estadoActual?.id === 2 ? true : false;
+  }
+
+  /**
+   * Visualiza el informe de evaluación seleccionado.
+   * @param idEvaluacion id de la evaluación del informe
+   */
+  visualizarInforme(idEvaluacion: number): void {
+    const documento: IDocumento = {} as IDocumento;
+    this.evaluacionService.getDocumentoEvaluacion(idEvaluacion).pipe(
+      switchMap((documentoInfo: IDocumento) => {
+        documento.nombre = documentoInfo.nombre;
+        return this.documentoService.downloadFichero(documentoInfo.documentoRef);
+      })
+    ).subscribe(response => {
+      triggerDownloadToUser(response, documento.nombre);
+    });
   }
 
   ngOnDestroy(): void {

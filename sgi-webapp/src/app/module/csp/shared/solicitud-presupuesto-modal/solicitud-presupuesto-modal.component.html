@@ -36,6 +36,17 @@
         : '' }}
       </mat-cell>
     </ng-container>
+    <ng-container matColumnDef="fuenteFinanciacion">
+      <mat-header-cell *matHeaderCellDef>
+        {{'csp.solicitud-desglose-presupuesto.entidades.entidades-financiadoras.fuente-financiacion' | translate}}
+      </mat-header-cell>
+      <mat-cell *matCellDef="let element">{{element.level > 0 && element.childs.length ?
+        element.item.solicitudProyectoEntidad.solicitudProyectoEntidadFinanciadoraAjena ?
+        element.item.solicitudProyectoEntidad.solicitudProyectoEntidadFinanciadoraAjena.fuenteFinanciacion?.nombre
+        : element.item.solicitudProyectoEntidad.convocatoriaEntidadFinanciadora
+        ? element.item.solicitudProyectoEntidad.convocatoriaEntidadFinanciadora.fuenteFinanciacion?.nombre : ''
+        : '' }}</mat-cell>
+    </ng-container>
     <ng-container matColumnDef="ajena">
       <mat-header-cell *matHeaderCellDef>{{'csp.solicitud-proyecto-presupuesto.financiacion-ajena' | translate}}
       </mat-header-cell>

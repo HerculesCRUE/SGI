@@ -145,12 +145,17 @@
             {{ 'label.actions' | translate }}
           </mat-header-cell>
           <mat-cell mat-cell *matCellDef="let element">
-            <button mat-button (click)="showDetail(element)">
+            <button mat-button matTooltip="{{'btn.view' | translate}}" (click)="showDetail(element)">
               <mat-icon color="primary">visibility</mat-icon>
+            </button>
+            <button mat-button matTooltip="{{'btn.edit' | translate}}" (click)="showEditModal(element)">
+              <mat-icon color="primary">border_color</mat-icon>
+            </button>
+            <button mat-button matTooltip="{{'btn.ejecu.historical' | translate}}" (click)="showHistorical(element)">
+              <mat-icon color="primary">access_time</mat-icon>
             </button>
           </mat-cell>
         </ng-container>
-
         <mat-header-row *matHeaderRowDef="formPart.displayColumns"></mat-header-row>
         <mat-row *matRowDef="let row; columns: formPart.displayColumns;"></mat-row>
       </mat-table>

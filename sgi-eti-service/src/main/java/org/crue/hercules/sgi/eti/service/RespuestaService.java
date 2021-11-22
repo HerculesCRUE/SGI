@@ -55,13 +55,13 @@ public interface RespuestaService {
   void deleteAll();
 
   /**
-   * Obtiene la Respuesta asociada a un Memoria y Apartado
+   * Obtiene la Respuesta asociada a una Memoria y Apartado
    * 
-   * @param id         Identidficador del Memoria
+   * @param idMemoria  Identificador del Memoria
    * @param idApartado Identificaro del Apartado
    * @return Respuesta
    */
-  Respuesta findByMemoriaIdAndApartadoId(Long id, Long idApartado);
+  Respuesta findByMemoriaIdAndApartadoId(Long idMemoria, Long idApartado);
 
   Page<Respuesta> findByMemoriaId(Long idMemoria, Pageable page);
 }

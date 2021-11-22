@@ -1,6 +1,7 @@
 import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { forwardRef } from '@angular/core';
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
-import { ReactiveFormsModule } from '@angular/forms';
+import { NG_VALUE_ACCESSOR, ReactiveFormsModule } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RouterTestingModule } from '@angular/router/testing';
@@ -11,6 +12,7 @@ import TestUtils from '@core/utils/test-utils';
 import { MaterialDesignModule } from '@material/material-design.module';
 import { SharedModule } from '@shared/shared.module';
 import { LoggerTestingModule } from 'ngx-logger/testing';
+import { CspSharedModule } from '../../../shared/csp-shared.module';
 import { ISolicitudCrearProyectoModalData, SolicitudCrearProyectoModalComponent } from './solicitud-crear-proyecto-modal.component';
 
 describe('SolicitudCrearProyectoModalComponent', () => {
@@ -19,6 +21,7 @@ describe('SolicitudCrearProyectoModalComponent', () => {
 
   const data: ISolicitudCrearProyectoModalData = {
     solicitud: {
+      id: 3,
       convocatoriaId: 1
     }
   } as ISolicitudCrearProyectoModalData;
@@ -39,11 +42,12 @@ describe('SolicitudCrearProyectoModalComponent', () => {
         TestUtils.getIdiomas(),
         RouterTestingModule,
         ReactiveFormsModule,
+        CspSharedModule
       ],
       providers: [
         { provide: SnackBarService, useValue: TestUtils.getSnackBarServiceSpy() },
         { provide: MatDialogRef, useValue: {} },
-        { provide: MAT_DIALOG_DATA, useValue: data },
+        { provide: MAT_DIALOG_DATA, useValue: data }
       ]
     })
       .compileComponents();

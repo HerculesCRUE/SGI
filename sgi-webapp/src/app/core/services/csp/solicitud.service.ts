@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { CONVOCATORIA_ENTIDAD_FINANCIADORA_CONVERTER } from '@core/converters/csp/convocatoria-entidad-financiadora.converter';
 import { ESTADO_SOLICITUD_CONVERTER } from '@core/converters/csp/estado-solicitud.converter';
+import { PROYECTO_CONVERTER } from '@core/converters/csp/proyecto.converter';
 import { SOLICITUD_DOCUMENTO_CONVERTER } from '@core/converters/csp/solicitud-documento.converter';
 import { SOLICITUD_HITO_CONVERTER } from '@core/converters/csp/solicitud-hito.converter';
 import { SOLICITUD_MODALIDAD_CONVERTER } from '@core/converters/csp/solicitud-modalidad.converter';
@@ -15,6 +16,7 @@ import { SOLICITUD_PROYECTO_CONVERTER } from '@core/converters/csp/solicitud-pro
 import { SOLICITUD_CONVERTER } from '@core/converters/csp/solicitud.converter';
 import { IConvocatoriaEntidadFinanciadoraBackend } from '@core/models/csp/backend/convocatoria-entidad-financiadora-backend';
 import { IEstadoSolicitudBackend } from '@core/models/csp/backend/estado-solicitud-backend';
+import { IProyectoBackend } from '@core/models/csp/backend/proyecto-backend';
 import { ISolicitudBackend } from '@core/models/csp/backend/solicitud-backend';
 import { ISolicitudDocumentoBackend } from '@core/models/csp/backend/solicitud-documento-backend';
 import { ISolicitudHitoBackend } from '@core/models/csp/backend/solicitud-hito-backend';
@@ -28,6 +30,7 @@ import { ISolicitudProyectoPresupuestoBackend } from '@core/models/csp/backend/s
 import { ISolicitudProyectoSocioBackend } from '@core/models/csp/backend/solicitud-proyecto-socio-backend';
 import { IConvocatoriaEntidadFinanciadora } from '@core/models/csp/convocatoria-entidad-financiadora';
 import { IEstadoSolicitud } from '@core/models/csp/estado-solicitud';
+import { IProyecto } from '@core/models/csp/proyecto';
 import { ISolicitud } from '@core/models/csp/solicitud';
 import { ISolicitudDocumento } from '@core/models/csp/solicitud-documento';
 import { ISolicitudHito } from '@core/models/csp/solicitud-hito';
@@ -501,4 +504,7 @@ export class SolicitudService extends SgiMutableRestService<number, ISolicitudBa
     );
   }
 
+  public findIdsProyectosBySolicitudId(solicitudId: number): Observable<number[]> {
+    return this.http.get<number[]>(`${this.endpointUrl}/${solicitudId}/proyectosids`);
+  }
 }

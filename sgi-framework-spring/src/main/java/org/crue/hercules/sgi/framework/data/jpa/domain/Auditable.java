@@ -15,21 +15,28 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
+/**
+ * Auditable entities should subclass this class.
+ */
 @MappedSuperclass
 @Data
 @SuperBuilder
 @NoArgsConstructor
 @EntityListeners(AuditingEntityListener.class)
 public abstract class Auditable {
+  /** Creator */
   @CreatedBy
   protected String createdBy;
 
+  /** Creation date */
   @CreatedDate
   protected Instant creationDate;
 
+  /** Last updater */
   @LastModifiedBy
   protected String lastModifiedBy;
 
+  /** Last update date */
   @LastModifiedDate
   protected Instant lastModifiedDate;
 }

@@ -4,7 +4,7 @@
     <form [ngClass]="busquedaAvanzada ? '' : 'mat-elevation-z8 formulario'" [formGroup]="formGroup"
       [fxLayout.xs]="fxLayoutProperties.xs" [fxLayout]="fxLayoutProperties.layout" fxLayoutGap="fxLayoutProperties.gap">
 
-      <div fxFlex="73%" fxFlex.sm="50%" fxFlex.md="53%" [fxLayout.xs]="fxLayoutProperties.xs"
+      <div fxFlex="65%" fxFlex.sm="50%" fxFlex.md="53%" [fxLayout.xs]="fxLayoutProperties.xs"
         [fxLayout]="fxLayoutProperties.layout" fxLayoutGap="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
         <!-- Convocatoria -->
         <div class="col">
@@ -384,9 +384,15 @@
       <tr mat-header-row *matHeaderRowDef="columnas"></tr>
       <tr mat-row *matRowDef="let row; columns: columnas;"></tr>
     </table>
-
-    <mat-paginator [pageSizeOptions]="elementosPagina" [length]="totalElementos" showFirstLastButtons>
-    </mat-paginator>
+    <div class="paginator-export">
+      <div class="export-footer">
+        <button mat-button matTooltip="{{'btn.export' | translate}}" (click)="openExportModal()">
+          <mat-icon color="primary">insert_chart_outlined</mat-icon>
+        </button>
+      </div>
+      <mat-paginator [pageSizeOptions]="elementosPagina" [length]="totalElementos" showFirstLastButtons>
+      </mat-paginator>
+    </div>
   </div>
 
   <sgi-menu-content-footer *sgiHasAuthorityForAnyUO="'CSP-SOL-C'">

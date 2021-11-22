@@ -2,16 +2,14 @@ import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
-import { BaseModalComponent } from '@core/component/base-modal.component';
+import { DialogActionComponent } from '@core/component/dialog-action.component';
 import { TipoPropiedad, TIPO_PROPIEDAD_MAP } from '@core/enums/tipo-propiedad';
 import { MSG_PARAMS } from '@core/i18n';
 import { IViaProteccion } from '@core/models/pii/via-proteccion';
-import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-properties';
-import { SnackBarService } from '@core/services/snack-bar.service';
+import { ViaProteccionService } from '@core/services/pii/via-proteccion/via-proteccion.service';
 import { TranslateService } from '@ngx-translate/core';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
-import { FormGroupUtil } from '@core/utils/form-group-util';
-import { BehaviorSubject } from 'rxjs';
 
 const VIA_PROTECCION_KEY = marker('pii.via-proteccion');
 const VIA_PROTECCION_NOMBRE_KEY = marker('pii.via-proteccion.nombre');
@@ -19,27 +17,21 @@ const VIA_PROTECCION_DESCRIPCION_KEY = marker('pii.via-proteccion.descripcion');
 const VIA_PROTECCION_TIPO_PROPIEDAD_KEY = marker('pii.via-proteccion.tipo-propiedad');
 const VIA_PROTECCION_MESES_PRIORIDAD_KEY = marker('pii.via-proteccion.meses-prioridad');
 const TITLE_NEW_ENTITY = marker('title.new.entity');
-const MSG_ANADIR = marker('btn.add');
-const MSG_ACEPTAR = marker('btn.ok');
 
 @Component({
   selector: 'sgi-via-proteccion-modal',
   templateUrl: './via-proteccion-modal.component.html',
   styleUrls: ['./via-proteccion-modal.component.scss']
 })
-export class ViaProteccionModalComponent
-  extends BaseModalComponent<IViaProteccion, ViaProteccionModalComponent> implements OnInit, OnDestroy {
+export class ViaProteccionModalComponent extends DialogActionComponent<IViaProteccion, IViaProteccion> implements OnInit, OnDestroy {
 
-  FormGroupUtil = FormGroupUtil;
-  public fxLayoutProperties: FxLayoutProperties;
-  public viaProteccion: IViaProteccion;
+  private readonly viaProteccion: IViaProteccion;
   public msgParamNombreEntity = {};
   public msgParamDescripcionEntity = {};
   public msgParamTipoPropiedadEntity = {};
   public msgParamMesesPrioridadEntity = {};
 
   public title: string;
-  public textSaveOrUpdate: string;
 
   get TIPO_PROPIEDAD_MAP() {
     return TIPO_PROPIEDAD_MAP;
@@ -49,19 +41,17 @@ export class ViaProteccionModalComponent
   private lastTipoPrioridad: TipoPropiedad;
 
   constructor(
-    protected snackBarService: SnackBarService,
-    public readonly matDialogRef: MatDialogRef<ViaProteccionModalComponent>,
-    @Inject(MAT_DIALOG_DATA) viaProteccion: IViaProteccion,
-    private translate: TranslateService) {
+    matDialogRef: MatDialogRef<ViaProteccionModalComponent>,
+    @Inject(MAT_DIALOG_DATA) data: IViaProteccion,
+    private readonly viaProteccionService: ViaProteccionService,
+    private readonly translate: TranslateService
+  ) {
+    super(matDialogRef, !!data?.id);
 
-    super(snackBarService, matDialogRef, viaProteccion);
-
-    this.initLayoutProperties();
-
-    this.viaProteccion = viaProteccion ? { ...viaProteccion } : { activo: true } as IViaProteccion;
+    this.viaProteccion = this.isEdit() ? { ...data } : { activo: true } as IViaProteccion;
   }
 
-  protected getDatosForm(): IViaProteccion {
+  protected getValue(): IViaProteccion {
     return {
       ...this.viaProteccion,
       nombre: this.formGroup.controls.nombre.value,
@@ -73,33 +63,36 @@ export class ViaProteccionModalComponent
       variosPaises: this.formGroup.controls.variosPaises.value
     };
   }
-  protected getFormGroup(): FormGroup {
 
+  protected buildFormGroup(): FormGroup {
     const form = new FormGroup({
-      nombre: new FormControl('', [Validators.maxLength(50), Validators.required]),
-      descripcion: new FormControl('', [Validators.maxLength(250), Validators.required]),
-      tipoPropiedad: new FormControl('', [Validators.required]),
-      mesesPrioridad: new FormControl('', [Validators.required]),
-      paisEspecifico: new FormControl('', []),
-      extensionInternacional: new FormControl('', []),
-      variosPaises: new FormControl('', [])
+      nombre: new FormControl(this.viaProteccion.nombre ?? '', [Validators.maxLength(50), Validators.required]),
+      descripcion: new FormControl(this.viaProteccion.descripcion ?? '', [Validators.maxLength(250), Validators.required]),
+      tipoPropiedad: new FormControl(this.viaProteccion.tipoPropiedad ?? null, [Validators.required]),
+      mesesPrioridad: new FormControl(this.viaProteccion.mesesPrioridad ?? 1, [Validators.required]),
+      paisEspecifico: new FormControl(this.viaProteccion.paisEspecifico ?? false, []),
+      extensionInternacional: new FormControl(this.viaProteccion.extensionInternacional ?? false, []),
+      variosPaises: new FormControl(this.viaProteccion.variosPaises ?? false, [])
     });
 
-    form.patchValue(this.viaProteccion);
-
     return form;
+  }
+
+  protected saveOrUpdate(): Observable<IViaProteccion> {
+    const viaProteccion = this.getValue();
+    return this.isEdit() ? this.viaProteccionService.update(viaProteccion.id, viaProteccion) :
+      this.viaProteccionService.create(viaProteccion);
   }
 
   ngOnInit(): void {
     super.ngOnInit();
     this.setupI18N();
 
-    this.showMesesPrioridad(this.viaProteccion.tipoPropiedad);
-    this.subscribeOnFormGroupChanges();
-  }
+    if (this.viaProteccion.tipoPropiedad === TipoPropiedad.INDUSTRIAL) {
+      this.isMesesPrioridadNeeded.next(true);
+    }
 
-  ngOnDestroy(): void {
-    super.ngOnDestroy();
+    this.subscribeOnFormGroupChanges();
   }
 
   private setupI18N(): void {
@@ -114,14 +107,11 @@ export class ViaProteccionModalComponent
     ).subscribe((value) =>
       this.msgParamDescripcionEntity = { entity: value, ...MSG_PARAMS.GENDER.FEMALE, ...MSG_PARAMS.CARDINALIRY.SINGULAR });
 
-    if (this.viaProteccion.nombre) {
-
+    if (this.isEdit()) {
       this.translate.get(
         VIA_PROTECCION_KEY,
         MSG_PARAMS.CARDINALIRY.SINGULAR
       ).subscribe((value) => this.title = value);
-
-      this.textSaveOrUpdate = MSG_ACEPTAR;
     } else {
       this.translate.get(
         VIA_PROTECCION_KEY,
@@ -134,8 +124,6 @@ export class ViaProteccionModalComponent
           );
         })
       ).subscribe((value) => this.title = value);
-
-      this.textSaveOrUpdate = MSG_ANADIR;
     }
     this.translate.get(
       VIA_PROTECCION_TIPO_PROPIEDAD_KEY,
@@ -148,12 +136,6 @@ export class ViaProteccionModalComponent
       MSG_PARAMS.CARDINALIRY.PLURAL
     ).subscribe((value) =>
       this.msgParamMesesPrioridadEntity = { entity: value, ...MSG_PARAMS.GENDER.MALE, ...MSG_PARAMS.CARDINALIRY.PLURAL });
-  }
-
-  private initLayoutProperties() {
-    this.fxLayoutProperties = new FxLayoutProperties();
-    this.fxLayoutProperties.layout = 'row';
-    this.fxLayoutProperties.layoutAlign = 'row';
   }
 
   private showMesesPrioridad(tipoPropiedad: TipoPropiedad): void {
@@ -169,17 +151,10 @@ export class ViaProteccionModalComponent
       this.formGroup.controls?.mesesPrioridad.setValue(1);
     } else {
       this.isMesesPrioridadNeeded.next(false);
-      this.formGroup.controls?.mesesPrioridad.setValue('');
+      this.formGroup.controls?.mesesPrioridad.setValue(1);
       this.formGroup.controls?.mesesPrioridad.clearValidators();
     }
     this.formGroup.controls?.mesesPrioridad.updateValueAndValidity();
-  }
-
-  private verifyTipoPropiedad(): void {
-    if (this.viaProteccion.tipoPropiedad === TipoPropiedad.INDUSTRIAL) {
-      this.isMesesPrioridadNeeded.next(true);
-
-    }
   }
 
   private subscribeOnFormGroupChanges(): void {
@@ -188,5 +163,4 @@ export class ViaProteccionModalComponent
         .subscribe((values: IViaProteccion) => this.showMesesPrioridad(values.tipoPropiedad))
     );
   }
-
 }

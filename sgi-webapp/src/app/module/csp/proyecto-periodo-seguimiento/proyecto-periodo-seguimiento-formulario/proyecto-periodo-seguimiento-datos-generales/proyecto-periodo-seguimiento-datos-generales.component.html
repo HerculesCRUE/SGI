@@ -1,9 +1,10 @@
 <sgi-fragment title="{{'label.datos-generales' | translate}}">
   <form [formGroup]="formGroup">
     <div fxFlex>
+      <h3 *ngIf="formPart.showDatosConvocatoriaPeriodoSeguimiento">&nbsp;</h3>
       <!-- Número de período -->
       <div *ngIf="formPart.isEdit()" [fxLayout]="fxLayoutProperties.layout"
-        [fxLayoutAlign]="fxLayoutProperties.layoutAlign">
+        [fxLayoutAlign]="fxLayoutProperties.layoutAlign" [fxLayoutGap]="fxLayoutProperties.gap">
         <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
           [fxFlexOrder]="fxFlexProperties.order">
           <mat-form-field>
@@ -14,7 +15,8 @@
         </div>
       </div>
       <!-- Tipo De Seguimiento-->
-      <div [fxLayout]="fxLayoutProperties.layout" [fxLayoutAlign]="fxLayoutProperties.layoutAlign">
+      <div [fxLayout]="fxLayoutProperties.layout" [fxLayoutAlign]="fxLayoutProperties.layoutAlign"
+        [fxLayoutGap]="fxLayoutProperties.gap">
         <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
           [fxFlexOrder]="fxFlexProperties.order">
           <mat-form-field>
@@ -34,7 +36,7 @@
       <div class="fieldset-form">
         {{'title.csp.proyecto-periodo-seguimiento-cientifico.periodo' | translate}}
       </div>
-      <div [fxLayoutAlign]="fxLayoutProperties.layoutAlign">
+      <div [fxLayoutAlign]="fxLayoutProperties.layoutAlign" [fxLayoutGap]="fxLayoutProperties.gap">
         <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
           [fxFlexOrder]="fxFlexProperties.order">
           <!-- Fecha de inicio -->
@@ -83,7 +85,7 @@
         {{'csp.proyecto-periodo-seguimiento.datosGenerales.plazoPresentacion' | translate}}
       </div>
 
-      <div [fxLayoutAlign]="fxLayoutProperties.layoutAlign">
+      <div [fxLayoutAlign]="fxLayoutProperties.layoutAlign" [fxLayoutGap]="fxLayoutProperties.gap">
         <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
           [fxFlexOrder]="fxFlexProperties.order">
           <!-- Fecha de inicio de presentación-->
@@ -119,9 +121,9 @@
         </div>
       </div>
       <!-- Observaciones -->
-      <div [fxLayoutAlign]="fxLayoutProperties.layoutAlign">
-        <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
-          [fxFlexOrder]="fxFlexProperties.order">
+      <div [fxLayoutAlign]="fxLayoutProperties.layoutAlign" [fxLayoutGap]="fxLayoutProperties.gap">
+        <div [fxFlex.sm]="fxFlexProperties2.sm" [fxFlex.md]="fxFlexProperties2.md"
+          [fxFlex.gt-md]="fxFlexProperties2.gtMd" [fxFlexOrder]="fxFlexProperties2.order">
           <mat-form-field>
             <mat-label>{{'csp.proyecto-periodo-seguimiento-cientifico.observaciones' | translate}}</mat-label>
             <textarea matInput formControlName="observaciones" type="text" id="observaciones"
@@ -138,31 +140,37 @@
     <div fxFlex="50" *ngIf="formPart.showDatosConvocatoriaPeriodoSeguimiento">
       <h3>{{'info.csp.datos-convocatoria' | translate}}</h3>
       <!-- Número de período -->
-      <div *ngIf="formPart.isEdit()" [fxLayout.xs]="fxLayoutProperties.xs" [fxLayout]="fxLayoutProperties.layout"
-        [fxLayoutGap]="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
-        <mat-form-field>
-          <mat-label>{{'csp.proyecto-periodo-seguimiento-cientifico.numero-periodo' | translate}}</mat-label>
-          <input matInput formControlName="numPeriodoConvocatoria" type="number" id="numPeriodoConvocatoria"
-            placeholder="{{'csp.proyecto-periodo-seguimiento-cientifico.numero-periodo' | translate}}">
-        </mat-form-field>
+      <div *ngIf="formPart.isEdit()" [fxLayout]="fxLayoutProperties.layout"
+        [fxLayoutAlign]="fxLayoutProperties.layoutAlign" [fxLayoutGap]="fxLayoutProperties.gap">
+        <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
+          [fxFlexOrder]="fxFlexProperties.order">
+          <mat-form-field>
+            <mat-label>{{'csp.proyecto-periodo-seguimiento-cientifico.numero-periodo' | translate}}</mat-label>
+            <input matInput formControlName="numPeriodoConvocatoria" type="number" id="numPeriodoConvocatoria"
+              placeholder="{{'csp.proyecto-periodo-seguimiento-cientifico.numero-periodo' | translate}}">
+          </mat-form-field>
+        </div>
       </div>
       <!-- Tipo De Seguimiento-->
-      <div [fxLayout.xs]="fxLayoutProperties.xs" [fxLayout]="fxLayoutProperties.layout"
-        [fxLayoutGap]="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
-        <mat-form-field>
-          <mat-label>{{'csp.proyecto-periodo-seguimiento-cientifico.tipo-seguimiento' | translate}}</mat-label>
-          <sgi-select-enum formControlName="tipoSeguimientoConvocatoria" [enumMap]="TIPO_SEGUIMIENTO_MAP">
-          </sgi-select-enum>
-        </mat-form-field>
+      <div [fxLayout]="fxLayoutProperties.layout" [fxLayoutAlign]="fxLayoutProperties.layoutAlign"
+        [fxLayoutGap]="fxLayoutProperties.gap">
+        <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
+          [fxFlexOrder]="fxFlexProperties.order">
+          <mat-form-field>
+            <mat-label>{{'csp.proyecto-periodo-seguimiento-cientifico.tipo-seguimiento' | translate}}</mat-label>
+            <sgi-select-enum formControlName="tipoSeguimientoConvocatoria" [enumMap]="TIPO_SEGUIMIENTO_MAP">
+            </sgi-select-enum>
+          </mat-form-field>
+        </div>
       </div>
       <!-- Periodo de seguimiento científico -->
       <div class="fieldset-form">
         {{'title.csp.proyecto-periodo-seguimiento-cientifico.periodo' | translate}}
       </div>
-      <div [fxLayout.xs]="fxLayoutProperties.xs" [fxLayout]="fxLayoutProperties.layout"
-        [fxLayoutGap]="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
-        <!-- Fecha de inicio -->
-        <div>
+      <div [fxLayoutAlign]="fxLayoutProperties.layoutAlign" [fxLayoutGap]="fxLayoutProperties.gap">
+        <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
+          [fxFlexOrder]="fxFlexProperties.order">
+          <!-- Fecha de inicio -->
           <mat-form-field>
             <mat-label>{{'csp.proyecto-periodo-seguimiento-cientifico.fecha-inicio'|
               translate}}</mat-label>
@@ -174,7 +182,8 @@
           </mat-form-field>
         </div>
         <!-- Fecha de fin -->
-        <div>
+        <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
+          [fxFlexOrder]="fxFlexProperties.order">
           <mat-form-field>
             <mat-label>{{'csp.proyecto-periodo-seguimiento-cientifico.fecha-fin' |
               translate}}</mat-label>
@@ -190,11 +199,10 @@
         {{'csp.proyecto-periodo-seguimiento.datosGenerales.plazoPresentacion' | translate}}
       </div>
 
-      <div [fxLayout.xs]="fxLayoutProperties.xs" [fxLayout]="fxLayoutProperties.layout"
-        [fxLayoutGap]="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
-
-        <!-- Fecha de inicio de presentación-->
-        <div>
+      <div [fxLayoutAlign]="fxLayoutProperties.layoutAlign" [fxLayoutGap]="fxLayoutProperties.gap">
+        <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
+          [fxFlexOrder]="fxFlexProperties.order">
+          <!-- Fecha de inicio de presentación-->
           <mat-form-field>
             <mat-label>{{'csp.proyecto-periodo-seguimiento-cientifico.fecha-inicio-presentacion'|
               translate}}</mat-label>
@@ -208,7 +216,8 @@
         </div>
 
         <!-- Fecha de fin de presentación-->
-        <div>
+        <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
+          [fxFlexOrder]="fxFlexProperties.order">
           <mat-form-field>
             <mat-label>{{'csp.proyecto-periodo-seguimiento-cientifico.fecha-fin-presentacion' |
               translate}}</mat-label>
@@ -223,20 +232,23 @@
         </div>
       </div>
       <!-- Observaciones -->
-      <div [fxLayout.xs]="fxLayoutProperties.xs" [fxLayout]="fxLayoutProperties.layout"
-        [fxLayoutGap]="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
-        <mat-form-field>
-          <mat-label>{{'csp.proyecto-periodo-seguimiento-cientifico.observaciones' | translate}}</mat-label>
-          <textarea matInput formControlName="observacionesConvocatoria" type="text" id="observacionesConvocatoria"
-            placeholder="{{'csp.proyecto-periodo-seguimiento-cientifico.observaciones' | translate}}">
+      <div [fxLayoutAlign]="fxLayoutProperties.layoutAlign" [fxLayoutGap]="fxLayoutProperties.gap">
+        <div [fxFlex.sm]="fxFlexProperties2.sm" [fxFlex.md]="fxFlexProperties2.md"
+          [fxFlex.gt-md]="fxFlexProperties2.gtMd" [fxFlexOrder]="fxFlexProperties2.order">
+          <mat-form-field>
+            <mat-label>{{'csp.proyecto-periodo-seguimiento-cientifico.observaciones' | translate}}</mat-label>
+            <textarea matInput formControlName="observacionesConvocatoria" type="text" id="observacionesConvocatoria"
+              placeholder="{{'csp.proyecto-periodo-seguimiento-cientifico.observaciones' | translate}}">
           </textarea>
 
-        </mat-form-field>
+          </mat-form-field>
+        </div>
       </div>
 
       <div class="separation-button" *ngIf="!this.formPart.readonly">
-        <button color="primary" aria-label="Center Align" mat-raised-button (click)="copyToProyecto()">
-          {{'label.csp.proyecto-concepto-gasto'| translate}}
+        <button color="primary" aria-label="Center Align" mat-raised-button (click)="copyToProyecto()"
+          [disabled]="formPart.disabledCopy">
+          {{'btn.csp.aplicar-proyecto'| translate}}
         </button>
       </div>
     </div>

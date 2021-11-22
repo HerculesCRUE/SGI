@@ -33,6 +33,7 @@ export class PeriodoTitularidadTitularidadesComponent extends FragmentComponent 
   elementosPagina = [5, 10, 25, 100];
   columnas = ['fechaInicio', 'fechaFin', 'acciones'];
   msgParamEntity = {};
+  msgParamEntityPlural = {};
   msgDelete: string;
   msgLostTitularesChanged: string;
   msgReactivatePrevious: string;
@@ -85,10 +86,16 @@ export class PeriodoTitularidadTitularidadesComponent extends FragmentComponent 
   }
 
   private setupI18N(): void {
+
     this.translate.get(
       PERIODO_TITULARIDAD_KEY,
       MSG_PARAMS.CARDINALIRY.SINGULAR
     ).subscribe((value) => this.msgParamEntity = { entity: value });
+
+    this.translate.get(
+      PERIODO_TITULARIDAD_KEY,
+      MSG_PARAMS.CARDINALIRY.PLURAL
+    ).subscribe((value) => this.msgParamEntityPlural = { entity: value });
 
     this.translate.get(
       MSG_PERIODO_TITULARIDAD_ACTIVATE_PREVIOUS,
@@ -102,7 +109,7 @@ export class PeriodoTitularidadTitularidadesComponent extends FragmentComponent 
       switchMap((value) => {
         return this.translate.get(
           MSG_PERIODO_TITULARIDAD_DELETE,
-          { entity: value, ...MSG_PARAMS.GENDER.MALE }
+          { entity: value, ...MSG_PARAMS.GENDER.MALE, ...MSG_PARAMS.CARDINALIRY.SINGULAR }
         );
       })).subscribe((value) => this.msgDelete = value);
 

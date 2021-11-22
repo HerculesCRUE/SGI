@@ -34,6 +34,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -90,7 +91,7 @@ public class PeticionEvaluacionController {
    */
   @GetMapping()
   @PreAuthorize("hasAnyAuthorityForAnyUO('ETI-PEV-INV-VR', 'ETI-PEV-V')")
-  ResponseEntity<Page<PeticionEvaluacionWithIsEliminable>> findAll(
+  public ResponseEntity<Page<PeticionEvaluacionWithIsEliminable>> findAll(
       @RequestParam(name = "q", required = false) String query, @RequestPageable(sort = "s") Pageable paging) {
     log.debug("findAll(String query,Pageable paging) - start");
     Page<PeticionEvaluacionWithIsEliminable> page = service
@@ -113,7 +114,7 @@ public class PeticionEvaluacionController {
    */
   @PostMapping
   @PreAuthorize("hasAnyAuthorityForAnyUO('ETI-PEV-INV-C', 'ETI-PEV-MOD-C')")
-  ResponseEntity<PeticionEvaluacion> newPeticionEvaluacion(
+  public ResponseEntity<PeticionEvaluacion> newPeticionEvaluacion(
       @Valid @RequestBody PeticionEvaluacion nuevoPeticionEvaluacion) {
     log.debug("newPeticionEvaluacion(PeticionEvaluacion nuevoPeticionEvaluacion) - start");
     PeticionEvaluacion returnValue = service.create(nuevoPeticionEvaluacion);
@@ -130,7 +131,7 @@ public class PeticionEvaluacionController {
    */
   @PutMapping("/{id}")
   @PreAuthorize("hasAnyAuthorityForAnyUO('ETI-PEV-INV-ER', 'ETI-PEV-MOD-C')")
-  PeticionEvaluacion replacePeticionEvaluacion(@Valid @RequestBody PeticionEvaluacion updatedPeticionEvaluacion,
+  public PeticionEvaluacion replacePeticionEvaluacion(@Valid @RequestBody PeticionEvaluacion updatedPeticionEvaluacion,
       @PathVariable Long id) {
     log.debug("replacePeticionEvaluacion(PeticionEvaluacion updatedPeticionEvaluacion, Long id) - start");
     updatedPeticionEvaluacion.setId(id);
@@ -147,7 +148,7 @@ public class PeticionEvaluacionController {
    */
   @GetMapping("/{id}")
   @PreAuthorize("hasAnyAuthorityForAnyUO('ETI-PEV-INV-ER', 'ETI-PEV-V', 'ETI-PEV-MOD-C')")
-  PeticionEvaluacion one(@PathVariable Long id) {
+  public PeticionEvaluacion one(@PathVariable Long id) {
     log.debug("PeticionEvaluacion one(Long id) - start");
     PeticionEvaluacion returnValue = service.findById(id);
     log.debug("PeticionEvaluacion one(Long id) - end");
@@ -161,7 +162,7 @@ public class PeticionEvaluacionController {
    */
   @DeleteMapping("/{id}")
   @PreAuthorize("hasAnyAuthorityForAnyUO('ETI-PEV-INV-BR')")
-  void delete(@PathVariable Long id) {
+  public void delete(@PathVariable Long id) {
     log.debug("delete(Long id) - start");
     PeticionEvaluacion peticionEvaluacion = this.one(id);
     peticionEvaluacion.setActivo(Boolean.FALSE);
@@ -178,7 +179,7 @@ public class PeticionEvaluacionController {
    */
   @GetMapping("/{id}/equipo-investigador")
   @PreAuthorize("hasAnyAuthorityForAnyUO('ETI-PEV-V', 'ETI-PEV-INV-VR', 'ETI-PEV-INV-C', 'ETI-PEV-INV-ER')")
-  ResponseEntity<List<EquipoTrabajoWithIsEliminable>> findEquipoInvestigador(@PathVariable Long id) {
+  public ResponseEntity<List<EquipoTrabajoWithIsEliminable>> findEquipoInvestigador(@PathVariable Long id) {
     log.debug("findEquipoInvestigador(Long id) - start");
 
     List<EquipoTrabajoWithIsEliminable> result = equipoTrabajoService.findAllByPeticionEvaluacionId(id);
@@ -201,7 +202,7 @@ public class PeticionEvaluacionController {
    */
   @GetMapping("/{id}/tareas")
   @PreAuthorize("hasAnyAuthorityForAnyUO('ETI-PEV-INV-C', 'ETI-PEV-INV-ER', 'ETI-PEV-V')")
-  ResponseEntity<List<TareaWithIsEliminable>> findTareas(@PathVariable Long id) {
+  public ResponseEntity<List<TareaWithIsEliminable>> findTareas(@PathVariable Long id) {
     log.debug("findTareas(Long id) - start");
 
     List<TareaWithIsEliminable> result = tareaService.findAllByPeticionEvaluacionId(id);
@@ -216,6 +217,23 @@ public class PeticionEvaluacionController {
   }
 
   /**
+   * Obtener todas las entidades paginadas {@link Tarea} para una determinada
+   * {@link PeticionEvaluacion}.
+   *
+   * @param id     Id de {@link PeticionEvaluacion}.
+   * @param paging Datos de paginación
+   * @return la lista de entidades {@link Tarea} paginadas.
+   */
+  @GetMapping("/{id}/tareas-equipo-trabajo")
+  @PreAuthorize("hasAnyAuthorityForAnyUO('ETI-EVC-EVAL', 'ETI-EVC-INV-EVALR')")
+  public Page<Tarea> findTareasEquipoTrabajo(@PathVariable Long id, @RequestPageable(sort = "s") Pageable paging) {
+    log.debug("findTareasEquipoTrabajo(Long id, Pageable paging) - start");
+    Page<Tarea> result = tareaService.findAllByEquipoTrabajoPeticionEvaluacionId(id, paging);
+    log.debug("findTareasEquipoTrabajo(Long id, Pageable paging - end");
+    return result;
+  }
+
+  /**
    * Obtener todas las entidades paginadas {@link EquipoTrabajo} para una
    * determinada {@link PeticionEvaluacion}.
    *
@@ -224,7 +242,7 @@ public class PeticionEvaluacionController {
    */
   @GetMapping("/{id}/memorias")
   @PreAuthorize("hasAnyAuthorityForAnyUO('ETI-PEV-INV-C', 'ETI-PEV-INV-ER', 'ETI-PEV-V')")
-  ResponseEntity<List<MemoriaPeticionEvaluacion>> findMemorias(@PathVariable Long id) {
+  public ResponseEntity<List<MemoriaPeticionEvaluacion>> findMemorias(@PathVariable Long id) {
     log.debug("findMemorias(Long id) - start");
 
     List<MemoriaPeticionEvaluacion> result = memoriaService.findMemoriaByPeticionEvaluacionMaxVersion(id);
@@ -303,7 +321,7 @@ public class PeticionEvaluacionController {
    */
   @DeleteMapping("/{idPeticionEvaluacion}/equipos-trabajo/{idEquipoTrabajo}")
   @PreAuthorize("hasAnyAuthorityForAnyUO('ETI-PEV-INV-ER')")
-  void deleteEquipoTrabajo(@PathVariable Long idPeticionEvaluacion, @PathVariable Long idEquipoTrabajo) {
+  public void deleteEquipoTrabajo(@PathVariable Long idPeticionEvaluacion, @PathVariable Long idEquipoTrabajo) {
     log.debug("deleteEquipoTrabajo(Long idPeticionEvaluacion, Long idEquipoTrabajo) - start");
 
     EquipoTrabajo equipoTrabajo = equipoTrabajoService.findById(idEquipoTrabajo);
@@ -330,7 +348,7 @@ public class PeticionEvaluacionController {
    */
   @DeleteMapping("/{idPeticionEvaluacion}/equipos-trabajo/{idEquipoTrabajo}/tareas/{idTarea}")
   @PreAuthorize("hasAnyAuthorityForAnyUO('ETI-PEV-INV-ER')")
-  void deleteTarea(@PathVariable Long idPeticionEvaluacion, @PathVariable Long idEquipoTrabajo,
+  public void deleteTarea(@PathVariable Long idPeticionEvaluacion, @PathVariable Long idEquipoTrabajo,
       @PathVariable Long idTarea) {
     log.debug("deleteTarea(Long idPeticionEvaluacion, Long idTarea) - start");
 
@@ -361,8 +379,9 @@ public class PeticionEvaluacionController {
    */
   @GetMapping("persona")
   @PreAuthorize("hasAnyAuthorityForAnyUO('ETI-PEV-INV-VR', 'ETI-PEV-V')")
-  ResponseEntity<Page<PeticionEvaluacion>> findAllByPersonaRef(@RequestParam(name = "q", required = false) String query,
-      @RequestPageable(sort = "s") Pageable paging, Authentication authentication) {
+  public ResponseEntity<Page<PeticionEvaluacion>> findAllByPersonaRef(
+      @RequestParam(name = "q", required = false) String query, @RequestPageable(sort = "s") Pageable paging,
+      Authentication authentication) {
     log.debug("findAll(String query,Pageable paging) - start");
     String personaRef = authentication.getName();
     Page<PeticionEvaluacion> page = service.findAllByPersonaRef(query, paging, personaRef);
@@ -386,7 +405,7 @@ public class PeticionEvaluacionController {
    */
   @GetMapping("/memorias")
   @PreAuthorize("hasAnyAuthorityForAnyUO('ETI-PEV-INV-VR', 'ETI-PEV-V')")
-  ResponseEntity<Page<PeticionEvaluacionWithIsEliminable>> findAllPeticionEvaluacionMemoria(
+  public ResponseEntity<Page<PeticionEvaluacionWithIsEliminable>> findAllPeticionEvaluacionMemoria(
       @RequestParam(name = "q", required = false) String query, @RequestPageable(sort = "s") Pageable paging,
       Authentication authentication) {
     log.debug("findAllPeticionEvaluacionMemoria(String query,Pageable paging) - start");
@@ -400,6 +419,27 @@ public class PeticionEvaluacionController {
     }
     log.debug("findAllPeticionEvaluacionMemoria(String query,Pageable paging) - end");
     return new ResponseEntity<>(page, HttpStatus.OK);
+  }
+
+  /**
+   * Comprueba si la persona es responsable o creador de la
+   * {@link PeticionEvaluacion} con el id indicado.
+   * 
+   * @param id             Identificador de {@link PeticionEvaluacion}.
+   * @param authentication Authentication
+   * @return HTTP 200 si existe y HTTP 204 si no.
+   */
+  @RequestMapping(path = "/{id}/responsable-creador", method = RequestMethod.HEAD)
+  @PreAuthorize("hasAuthorityForAnyUO('ETI-PEV-INV-ER')")
+  public ResponseEntity<?> isResponsableOrCreador(@PathVariable Long id, Authentication authentication) {
+    log.debug("isResponsableOrCreador(Long id) - start");
+    String personaRef = authentication.getName();
+    if (service.isPeticionWithPersonaRefCreadorPeticionEvaluacionOrResponsableMemoria(personaRef, id)) {
+      log.debug("isResponsableOrCreador(Long id) - end");
+      return new ResponseEntity<>(HttpStatus.OK);
+    }
+    log.debug("isResponsableOrCreador(Long id) - end");
+    return new ResponseEntity<>(HttpStatus.NO_CONTENT);
   }
 
 }

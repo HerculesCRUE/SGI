@@ -7,6 +7,7 @@
 <mat-dialog-content>
   <form [formGroup]="formGroup">
     <div fxFlex>
+      <h3 *ngIf="showDatosConvocatoriaCodigoEconomico">&nbsp;</h3>
       <!-- Código Económico -->
       <div [fxLayout]="fxLayoutProperties.layout" [fxLayoutAlign]="fxLayoutProperties.layoutAlign">
         <mat-form-field>
@@ -153,7 +154,7 @@
       <div class="separation-button">
         <button color="primary" aria-label="Center Align" mat-raised-button (click)="copyToProyecto()"
           [disabled]="disabledCopy">
-          {{'label.csp.proyecto-concepto-gasto'| translate}}
+          {{'btn.csp.aplicar-proyecto'| translate}}
         </button>
       </div>
     </div>
@@ -161,7 +162,8 @@
   </form>
 </mat-dialog-content>
 <mat-dialog-actions>
-  <button color="accent" (click)="saveOrUpdate()" mat-raised-button type="submit" *ngIf="!data.readonly">
+  <button color="accent" (click)="saveOrUpdate()" mat-raised-button type="submit" *ngIf="!data.readonly"
+    [disabled]="disabledSave">
     <mat-icon class="save-icon">save</mat-icon>{{textSaveOrUpdate | translate}}
   </button>
   <button class="link-cancelar" mat-button type="button" mat-dialog-close>

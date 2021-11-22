@@ -35,4 +35,14 @@ public interface ComentarioRepository extends JpaRepository<Comentario, Long>, J
    */
   int countByEvaluacionId(Long id);
 
+  /**
+   * Obtiene el número total de {@link Comentario} para una determinada
+   * {@link Evaluacion} y un tipo de comentario {@link TipoComentario}.
+   * 
+   * @param id               Id de {@link Evaluacion}.
+   * @param idTipoComentario idTipoComentario de {@link TipoComentario}.
+   * @return número de {@link Comentario}
+   */
+  int countByEvaluacionIdAndTipoComentarioId(Long id, Long idTipoComentario);
+
 }

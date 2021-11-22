@@ -116,7 +116,11 @@ export class EvaluacionComentarioFragment extends Fragment {
     return from(this.comentariosEliminados).pipe(
       mergeMap((wrappedComentario) => {
 
-        return this.service.deleteComentarioGestor(this.getKey() as number, wrappedComentario.value.id);
+        return this.service.deleteComentarioGestor(this.getKey() as number, wrappedComentario.value.id).pipe(
+          map(() => {
+            this.comentariosEliminados = this.comentariosEliminados.filter((currentComentario) => currentComentario !== wrappedComentario);
+          })
+        );
       }),
       endWith()
     );
@@ -129,7 +133,11 @@ export class EvaluacionComentarioFragment extends Fragment {
     return from(this.comentariosEliminados).pipe(
       mergeMap((wrappedComentario) => {
 
-        return this.service.deleteComentarioEvaluador(this.getKey() as number, wrappedComentario.value.id);
+        return this.service.deleteComentarioEvaluador(this.getKey() as number, wrappedComentario.value.id).pipe(
+          map(() => {
+            this.comentariosEliminados = this.comentariosEliminados.filter((currentComentario) => currentComentario !== wrappedComentario);
+          })
+        );
       }),
       endWith()
     );
@@ -184,8 +192,10 @@ export class EvaluacionComentarioFragment extends Fragment {
 
         return this.service.createComentarioGestor(this.getKey() as number, wrappedComentario.value).pipe(
           map((savedComentario) => {
-            const index = this.comentarios$.value.findIndex((currentComentario) => currentComentario === wrappedComentario);
-            this.comentarios$[index] = new StatusWrapper<IComentario>(savedComentario);
+            const currentComentarios = this.comentarios$.value.filter((currentComentario) => currentComentario !== wrappedComentario);
+            savedComentario.evaluador = wrappedComentario.value.evaluador;
+            currentComentarios.push(new StatusWrapper<IComentario>(savedComentario));
+            this.comentarios$.next(currentComentarios);
           })
         );
       }),
@@ -204,8 +214,10 @@ export class EvaluacionComentarioFragment extends Fragment {
 
         return this.service.createComentarioEvaluador(this.getKey() as number, wrappedComentario.value).pipe(
           map((savedComentario) => {
-            const index = this.comentarios$.value.findIndex((currentComentario) => currentComentario === wrappedComentario);
-            this.comentarios$[index] = new StatusWrapper<IComentario>(savedComentario);
+            const currentComentarios = this.comentarios$.value.filter((currentComentario) => currentComentario !== wrappedComentario);
+            savedComentario.evaluador = wrappedComentario.value.evaluador;
+            currentComentarios.push(new StatusWrapper<IComentario>(savedComentario));
+            this.comentarios$.next(currentComentarios);
           })
         );
       }),

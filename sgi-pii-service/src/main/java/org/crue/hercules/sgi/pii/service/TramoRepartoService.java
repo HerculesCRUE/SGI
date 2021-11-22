@@ -1,19 +1,15 @@
 package org.crue.hercules.sgi.pii.service;
 
-import java.util.Set;
-
-import javax.validation.ConstraintViolation;
-import javax.validation.ConstraintViolationException;
 import javax.validation.Valid;
-import javax.validation.Validator;
 
 import org.crue.hercules.sgi.framework.problem.message.ProblemMessage;
 import org.crue.hercules.sgi.framework.rsql.SgiRSQLJPASupport;
 import org.crue.hercules.sgi.framework.spring.context.support.ApplicationContextSupport;
 import org.crue.hercules.sgi.pii.exceptions.TramoRepartoNotFoundException;
 import org.crue.hercules.sgi.pii.model.TramoReparto;
-import org.crue.hercules.sgi.pii.model.TramoReparto.OnActivar;
+import org.crue.hercules.sgi.pii.model.TramoReparto.Tipo;
 import org.crue.hercules.sgi.pii.repository.TramoRepartoRepository;
+import org.crue.hercules.sgi.pii.repository.predicate.TramoRepartoPredicateResolver;
 import org.crue.hercules.sgi.pii.repository.specification.TramoRepartoSpecifications;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -34,30 +30,10 @@ import lombok.extern.slf4j.Slf4j;
 @Validated
 public class TramoRepartoService {
 
-  private final Validator validator;
   private final TramoRepartoRepository repository;
 
-  public TramoRepartoService(Validator validator, TramoRepartoRepository tramoRepartoRepository) {
-    this.validator = validator;
+  public TramoRepartoService(TramoRepartoRepository tramoRepartoRepository) {
     this.repository = tramoRepartoRepository;
-  }
-
-  /**
-   * Obtener todas las entidades {@link TramoReparto} activas paginadas y/o
-   * filtradas.
-   *
-   * @param pageable la información de la paginación.
-   * @param query    la información del filtro.
-   * @return la lista de entidades {@link TramoReparto} paginadas y/o filtradas.
-   */
-  public Page<TramoReparto> findActivos(String query, Pageable pageable) {
-    log.debug("findActivos(String query, Pageable pageable) - start");
-    Specification<TramoReparto> specs = TramoRepartoSpecifications.activos()
-        .and(SgiRSQLJPASupport.toSpecification(query));
-
-    Page<TramoReparto> returnValue = repository.findAll(specs, pageable);
-    log.debug("findActivos(String query, Pageable pageable) - end");
-    return returnValue;
   }
 
   /**
@@ -69,7 +45,8 @@ public class TramoRepartoService {
    */
   public Page<TramoReparto> findAll(String query, Pageable pageable) {
     log.debug("findAll(String query, Pageable pageable) - start");
-    Specification<TramoReparto> specs = SgiRSQLJPASupport.toSpecification(query);
+    Specification<TramoReparto> specs = SgiRSQLJPASupport.toSpecification(query,
+        TramoRepartoPredicateResolver.getInstance());
 
     Page<TramoReparto> returnValue = repository.findAll(specs, pageable);
     log.debug("findAll(String query, Pageable pageable) - end");
@@ -106,7 +83,6 @@ public class TramoRepartoService {
             .parameter("field", ApplicationContextSupport.getMessage("id"))
             .parameter("entity", ApplicationContextSupport.getMessage(TramoReparto.class)).build());
 
-    tramoReparto.setActivo(true);
     TramoReparto returnValue = repository.save(tramoReparto);
 
     log.debug("create(TramoReparto tramoReparto) - end");
@@ -137,6 +113,7 @@ public class TramoRepartoService {
       tramorepartoExistente.setHasta(tramoReparto.getHasta());
       tramorepartoExistente.setPorcentajeUniversidad(tramoReparto.getPorcentajeUniversidad());
       tramorepartoExistente.setPorcentajeInventores(tramoReparto.getPorcentajeInventores());
+      tramorepartoExistente.setTipo(tramoReparto.getTipo());
 
       // Actualizamos la entidad
       TramoReparto returnValue = repository.save(tramorepartoExistente);
@@ -146,67 +123,54 @@ public class TramoRepartoService {
   }
 
   /**
-   * Activa el {@link TramoReparto}.
+   * Elimina el {@link TramoReparto}.
    *
    * @param id Id del {@link TramoReparto}.
-   * @return la entidad {@link TramoReparto} persistida.
    */
   @Transactional
-  public TramoReparto activar(Long id) {
-    log.debug("activar(Long id) - start");
-
+  public void delete(Long id) {
+    log.debug("delete(Long id) - start");
     Assert.notNull(id,
         // Defer message resolution untill is needed
         () -> ProblemMessage.builder().key(Assert.class, "notNull")
             .parameter("field", ApplicationContextSupport.getMessage("id"))
             .parameter("entity", ApplicationContextSupport.getMessage(TramoReparto.class)).build());
-
-    return repository.findById(id).map(tramoReparto -> {
-      if (tramoReparto.getActivo()) {
-        // Si esta activo no se hace nada
-        return tramoReparto;
-      }
-      // Invocar validaciones asociadas a OnActivar
-      Set<ConstraintViolation<TramoReparto>> result = validator.validate(tramoReparto, OnActivar.class);
-      if (!result.isEmpty()) {
-        throw new ConstraintViolationException(result);
-      }
-
-      tramoReparto.setActivo(true);
-
-      TramoReparto returnValue = repository.save(tramoReparto);
-      log.debug("enable(Long id) - end");
-      return returnValue;
-    }).orElseThrow(() -> new TramoRepartoNotFoundException(id));
+    if (!repository.existsById(id)) {
+      throw new TramoRepartoNotFoundException(id);
+    }
+    repository.deleteById(id);
+    log.debug("delete(Long id) - end");
   }
 
   /**
-   * Desactiva el {@link TramoReparto}.
-   *
-   * @param id Id del {@link TramoReparto}.
-   * @return la entidad {@link TramoReparto} persistida.
+   * Comprueba si existe un {@link TramoReparto} activo del tipo indicado.
+   * 
+   * @param tipo {@link TramoReparto.Tipo} indicado.
+   * @return boolean que indica si existe o no.
    */
-  @Transactional
-  public TramoReparto desactivar(Long id) {
-    log.debug("desactivar(Long id) - start");
-
-    Assert.notNull(id,
+  public boolean existTipoTramoReparto(Tipo tipo) {
+    log.debug("hasTipoTramoReparto(Tipo tipo) - start");
+    Assert.notNull(tipo,
         // Defer message resolution untill is needed
         () -> ProblemMessage.builder().key(Assert.class, "notNull")
-            .parameter("field", ApplicationContextSupport.getMessage("id"))
+            .parameter("field", ApplicationContextSupport.getMessage("tipo"))
             .parameter("entity", ApplicationContextSupport.getMessage(TramoReparto.class)).build());
+    final boolean returnValue = this.repository.count(TramoRepartoSpecifications.withTipo(tipo)) > 0;
+    log.debug("hasTipoTramoReparto(Tipo tipo) - end");
+    return returnValue;
+  }
 
-    return repository.findById(id).map(tramoReparto -> {
-      if (!tramoReparto.getActivo()) {
-        // Si no esta activo no se hace nada
-        return tramoReparto;
-      }
-
-      tramoReparto.setActivo(false);
-
-      TramoReparto returnValue = repository.save(tramoReparto);
-      log.debug("desactivar(Long id) - end");
-      return returnValue;
-    }).orElseThrow(() -> new TramoRepartoNotFoundException(id));
+  /**
+   * Comprueba si el tramo de {@link TramoReparto} se puede eliminar o editar su
+   * rango
+   * 
+   * @param id del {@link TramoReparto} indicado.
+   * @return boolean que indica si existe o no.
+   */
+  public boolean isTramoRepartoModificable(Long id) {
+    log.debug("isTramoRepartoModificable(Long id) - start");
+    final boolean returnValue = this.repository.count(TramoRepartoSpecifications.hasTramoRepartoGreatestDesde(id)) > 0;
+    log.debug("isTramoRepartoModificable(Long id) - end");
+    return returnValue;
   }
 }

@@ -15,8 +15,8 @@ import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
+import org.crue.hercules.sgi.framework.validation.ActivableIsActivo;
 import org.crue.hercules.sgi.pii.model.Invencion.OnActualizar;
-import org.crue.hercules.sgi.pii.validation.EntidadActiva;
 
 import lombok.AccessLevel;
 import lombok.Data;
@@ -32,7 +32,7 @@ import lombok.experimental.SuperBuilder;
 @EqualsAndHashCode(callSuper = false)
 @NoArgsConstructor
 @SuperBuilder
-@EntidadActiva(entityClass = Invencion.class, groups = { OnActualizar.class })
+@ActivableIsActivo(entityClass = Invencion.class, groups = { OnActualizar.class })
 public class Invencion extends BaseActivableEntity {
   public static final int REF_LENGTH = 50;
   public static final int TITULO_LENGTH = 250;
@@ -68,7 +68,7 @@ public class Invencion extends BaseActivableEntity {
   /** Tipo de protección. */
   @ManyToOne
   @JoinColumn(name = "tipo_proteccion_id", nullable = false, foreignKey = @ForeignKey(name = "FK_INVENCION_TIPOPROTECCION"))
-  @EntidadActiva(entityClass = TipoProteccion.class, groups = { OnCrear.class, OnActualizarTipoProteccion.class })
+  @ActivableIsActivo(entityClass = TipoProteccion.class, groups = { OnCrear.class, OnActualizarTipoProteccion.class })
   private TipoProteccion tipoProteccion;
 
   // Relation mappings for JPA metamodel generation only

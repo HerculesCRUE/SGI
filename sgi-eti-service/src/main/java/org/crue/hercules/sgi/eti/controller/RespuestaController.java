@@ -9,6 +9,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -117,6 +118,21 @@ public class RespuestaController {
     log.debug("delete(Long id) - start");
     service.delete(id);
     log.debug("delete(Long id) - end");
+  }
+
+  /**
+   * Devuelve el {@link Respuesta} con el id indicado.
+   * 
+   * @param id Identificador de {@link Respuesta}.
+   * @return {@link Respuesta} correspondiente al id.
+   */
+  @GetMapping("/{idMemoria}/{idApartado}")
+  @PreAuthorize("hasAnyAuthorityForAnyUO('ETI-PEV-INV-ER')")
+  Respuesta findByMemoriaIdAndApartadoId(@PathVariable Long idMemoria, @PathVariable Long idApartado) {
+    log.debug("Respuesta findByMemoriaIdAndApartadoId(Long idMemoria, Long idApartado) - start");
+    Respuesta returnValue = service.findByMemoriaIdAndApartadoId(idMemoria, idApartado);
+    log.debug("Respuesta findByMemoriaIdAndApartadoId(Long idMemoria, Long idApartado) - end");
+    return returnValue;
   }
 
 }

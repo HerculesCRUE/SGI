@@ -29,15 +29,17 @@
         [title]="'pii.invencion-gastos' | translate"
         [fragment]="actionService.getFragment(actionService.FRAGMENT.GASTOS)">
       </sgi-action-fragment-menu-item>
-      <sgi-action-fragment-menu-item [route]="[INVENCION_ROUTE_NAMES.CONTRATOS_ASCIADOS]"
-        [title]="'pii.invencion-contratos-asociados' | translate">
+      <sgi-action-fragment-menu-item [route]="[INVENCION_ROUTE_NAMES.CONTRATOS]"
+        [title]="'pii.invencion-contrato' | translate:MSG_PARAMS.CARDINALIRY.PLURAL"
+        [fragment]="actionService.getFragment(actionService.FRAGMENT.CONTRATOS)">
       </sgi-action-fragment-menu-item>
       <sgi-action-fragment-menu-item [route]="[INVENCION_ROUTE_NAMES.INGRESOS]"
         [title]="'pii.invencion-ingresos' | translate"
         [fragment]="actionService.getFragment(actionService.FRAGMENT.INGRESOS)">
       </sgi-action-fragment-menu-item>
       <sgi-action-fragment-menu-item [route]="[INVENCION_ROUTE_NAMES.REPARTOS]"
-        [title]="'pii.invencion-repartos' | translate">
+        [title]="'pii.invencion-repartos' | translate"
+        [fragment]="actionService.getFragment(actionService.FRAGMENT.REPARTOS)">
       </sgi-action-fragment-menu-item>
     </sgi-action-fragment-menu-group>
   </ng-container>

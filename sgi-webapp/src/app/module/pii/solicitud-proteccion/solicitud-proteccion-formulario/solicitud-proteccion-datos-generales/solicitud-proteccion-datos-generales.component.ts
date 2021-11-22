@@ -196,4 +196,5 @@ export class SolicitudProteccionDatosGeneralesComponent extends FormFragmentComp
     ).subscribe((value) =>
       this.msgParamFechaSolicitudEntity = { entity: value, ...MSG_PARAMS.GENDER.FEMALE, ...MSG_PARAMS.CARDINALIRY.SINGULAR });
   }
+
 }

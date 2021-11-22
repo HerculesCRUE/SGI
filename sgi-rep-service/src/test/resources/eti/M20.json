@@ -1,0 +1,1487 @@
+{
+  "bloques": [
+    {
+      "id": 1,
+      "nombre": "NoRefCEID: M20/2021/001",
+      "orden": 1,
+      "apartados": [
+        {
+          "id": 1,
+          "nombre": "Datos del solicitante",
+          "titulo": "Datos del solicitante",
+          "orden": 1,
+          "elementos": [
+            {
+              "nombre": "",
+              "tipo": "datosSolicitanteType",
+              "content": "48517010"
+            }
+          ],
+          "apartadosHijos": []
+        },
+        {
+          "id": 2,
+          "nombre": "Título del proyecto",
+          "titulo": "Título del proyecto",
+          "orden": 2,
+          "elementos": [
+            {
+              "nombre": "",
+              "tipo": "template",
+              "content": "<p><i>PeticionEvaluacion1</i></p>"
+            }
+          ],
+          "apartadosHijos": []
+        },
+        {
+          "id": 3,
+          "nombre": "Tipo de actividad",
+          "titulo": "Tipo de actividad",
+          "orden": 3,
+          "elementos": [
+            {
+              "nombre": "",
+              "tipo": "template",
+              "content": "<p><i>Proyecto de investigación</i></p>"
+            }
+          ],
+          "apartadosHijos": []
+        },
+        {
+          "id": 4,
+          "nombre": "Financiación",
+          "titulo": "Financiación",
+          "orden": 4,
+          "elementos": [
+            {
+              "nombre": "",
+              "tipo": "template",
+              "content": "<p>¿Se dispone de financiación para la realización del proyecto?: <i>Sí</i></p>"
+            },
+            {
+              "nombre": "",
+              "tipo": "template",
+              "content": "<p>Indicar la fuente de financiación: <i>organismo financiador</i></p>"
+            },
+            {
+              "nombre": "",
+              "tipo": "template",
+              "content": "<p>Estado de la financiación: <i>DENEGADO</i></p>"
+            }
+          ],
+          "apartadosHijos": []
+        },
+        {
+          "id": 5,
+          "nombre": "Fechas clave del proyecto",
+          "titulo": "Fechas clave del proyecto",
+          "orden": 5,
+          "elementos": [
+            {
+              "nombre": "",
+              "tipo": "template",
+              "content": "<p>Fecha prevista inicio del proyecto: <i>01/09/2019</i></p>"
+            },
+            {
+              "nombre": "",
+              "tipo": "template",
+              "content": "<p>Fecha prevista fin del proyecto: <i>02/10/2019</i></p>"
+            }
+          ],
+          "apartadosHijos": []
+        },
+        {
+          "id": 6,
+          "nombre": "Resumen del proyecto",
+          "titulo": "Resumen del proyecto",
+          "orden": 6,
+          "elementos": [
+            {
+              "nombre": "",
+              "tipo": "template",
+              "content": "<p><i>Resumen</i></p>"
+            }
+          ],
+          "apartadosHijos": []
+        },
+        {
+          "id": 7,
+          "nombre": "Memorias del proyecto",
+          "titulo": "Memorias del proyecto",
+          "orden": 7,
+          "elementos": [
+            {
+              "nombre": "memoriasProyecto",
+              "tipo": "table-crud",
+              "content": "[[{\"nombre\":\"Comité\",\"tipo\":null,\"content\":\"CEISH\"},{\"nombre\":\"NoRefCEID\",\"tipo\":null,\"content\":\"M10/2019/001\"},{\"nombre\":\"Nombre\",\"tipo\":null,\"content\":\"Título M10/2019/001\"},{\"nombre\":\"Estado\",\"tipo\":null,\"content\":\"En secretaría seguimiento anual\"}],[{\"nombre\":\"Comité\",\"tipo\":null,\"content\":\"CEEA\"},{\"nombre\":\"NoRefCEID\",\"tipo\":null,\"content\":\"M20/2021/001\"},{\"nombre\":\"Nombre\",\"tipo\":null,\"content\":\"Nueva M20\"},{\"nombre\":\"Estado\",\"tipo\":null,\"content\":\"Completada\"}],[{\"nombre\":\"Comité\",\"tipo\":null,\"content\":\"CEEA\"},{\"nombre\":\"NoRefCEID\",\"tipo\":null,\"content\":\"M20/2021/002\"},{\"nombre\":\"Nombre\",\"tipo\":null,\"content\":\"M20 prueba duplicados\"},{\"nombre\":\"Estado\",\"tipo\":null,\"content\":\"En elaboración\"}],[{\"nombre\":\"Comité\",\"tipo\":null,\"content\":\"CEIAB\"},{\"nombre\":\"NoRefCEID\",\"tipo\":null,\"content\":\"M30/2021/001\"},{\"nombre\":\"Nombre\",\"tipo\":null,\"content\":null},{\"nombre\":\"Estado\",\"tipo\":null,\"content\":\"Completada\"}]]"
+            }
+          ],
+          "apartadosHijos": []
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "nombre": "VALOR SOCIAL Y JUSTIFICACIÓN",
+      "orden": 2,
+      "apartados": [
+        {
+          "id": 46,
+          "nombre": "Valor social del proyecto",
+          "titulo": "1.1 Valor social del proyecto",
+          "orden": 1,
+          "elementos": [
+            {
+              "nombre": "",
+              "tipo": "template",
+              "content": "Para completa esta sección ir a <b>'Datos generales'</b>.<br/>\n"
+            },
+            {
+              "nombre": "",
+              "tipo": "template",
+              "content": "<p>A continuación se muestra la finalidad principal del proyecto o campo en el que se espera un aumento del conocimiento o un beneficio social último que justifique su realización.</p><br/>\n"
+            },
+            {
+              "nombre": "valorSocial",
+              "tipo": "tipo-valor-social",
+              "content": "<p>Valor social: <i>INVESTIGACION_FUNDAMENTAL</i></p><br/>\n"
+            },
+            {
+              "nombre": "otroValorSocial",
+              "tipo": "textarea",
+              "content": "<p>Especificar: </p><br/>\n"
+            }
+          ],
+          "apartadosHijos": [
+            {
+              "id": 47,
+              "nombre": "Fin específico del proyecto",
+              "titulo": "1.1.1 Fin específico del proyecto",
+              "orden": 1,
+              "elementos": [
+                {
+                  "nombre": "",
+                  "tipo": "template",
+                  "content": "Indicar el fin específico del proyecto:<br/>\n"
+                },
+                {
+                  "nombre": "finEspecificoProyecto",
+                  "tipo": "select",
+                  "content": "<p>Seleccione: <i>[PB5] Investigación Básica. Sistema gastrointestinal, hígado incluido</i></p><br/>\n"
+                }
+              ],
+              "apartadosHijos": []
+            }
+          ]
+        },
+        {
+          "id": 48,
+          "nombre": "Justificación del uso de animales",
+          "titulo": "1.2 Justificación del uso de animales",
+          "orden": 2,
+          "elementos": [
+            {
+              "nombre": "",
+              "tipo": "template",
+              "content": "<p>Exponer brevemente la necesidad de utilización de animales.</p><br/>\n"
+            },
+            {
+              "nombre": "justificacion",
+              "tipo": "textarea",
+              "content": "<p>Justificación: <i>sdfsdf</i></p><br/>\n"
+            }
+          ],
+          "apartadosHijos": []
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "nombre": "CUALIFICACIÓN DEL EQUIPO INVESTIGADOR",
+      "orden": 3,
+      "apartados": [
+        {
+          "id": 49,
+          "nombre": "Personal que llevará a cabo las tareas animales",
+          "titulo": "2.1 Personal que llevará a cabo las tareas con animales",
+          "orden": 1,
+          "elementos": [
+            {
+              "nombre": "",
+              "tipo": "template",
+              "content": "<p>A continuación se muestran todas las personas integrantes del equipo investigador. Añadir en este apartado cualquier otra persona que colabore en el proyecto realizando tareas relacionadas con los animales de experimentación.<br><br>Especificar por cada persona<br><ul><li>Datos indentificativos (nombre, NIF, vinculacion y nivel académico)</li><li>Tareas concretas que realizará de acuerdo o lo descrito en el apartado '3.3 Diseño metodológico' (diseño del proyecto y metodología, realización de cada intervención y/o eutanasia, aplicación del protocolo de supervisión, etc..)</li></ul></p><br/>\n"
+            },
+            {
+              "nombre": "",
+              "tipo": "template",
+              "content": "<p>La normativa respecto a la experimentación animal está en continua revisión. Actualmente la capacitación necesaria para la experimentación animal se especifica en la orden ministerial Orden <a href='https://www.boe.es/diario_boe/txt.php?id=BOE-A-2015-3564' target='_blank'>ECC/566/2015</a>. Ya no se habla de categorías A, B, C y D sino de 'funciones'. De forma simplificada la equivalencia entre ambas es la siguiente:<br>Se puede encontrar información sobre cursos de capacitación autorizados en las páginas de la <a href='https://secal.es' target='_blank'>SECAL</a> y <a href='https://www.animalaria.org' target='_blank'>ANIMALARIA</a>.</div><br><ul><li>Categoría A: Función a y b</li><li>Categoría B: Función b y c</li><li>Categoría C: Función c y d</li><li>Categoría D1: Función e</li><li>Categoría D2: Función f y b</li></ul></p><br/>\n"
+            },
+            {
+              "nombre": "",
+              "tipo": "template",
+              "content": "<p>Nota: recuerde que hay que aportar copia de todas las acreditaciones del equipo investigador en el apartado '5.1. Acreditaciones' para que queden archivadas junto con la memoria del proyecto.</p><br/>\n"
+            },
+            {
+              "nombre": "",
+              "tipo": "template",
+              "content": "<p>Nota:  En cada solicitud sólo debe haber una persona con Función D, que además será la persona que solicita la evaluación.</p><p>El resto de los integrantes del equipo, tendrán la función B o C en función de que realicen la eutanasia (B) o las intervenciones (C), y habrá tantos como personal con acreditación. Aquellos que todavía no han realizado el TBS trabajo bajo supervisión (requerido para la obtención de la acreditación) no se pueden incluir como integrantes del equipo en esa solicitud, hasta que hayan finalizado su TBS y hayan obtenido la capacitación.</p><p>Quienes posean las acreditaciones antiguas de categoría B y C, deben solicitar la acreditación para las nuevas funciones al mismo organismo acreditador.</p><br/>\n"
+            },
+            {
+              "nombre": "",
+              "tipo": "template",
+              "content": "<p>Para completar esta sección ir a <b>Equipo investigador</b> ya que nuevamente se trata de un apartado común a todos los comités. Una vez rellenados los datos en la pantalla <b>Equipo investigador</b>, en el Paso 2, aparece la pantalla rellena con todos los integrantes del equipo investigador que van a realizar tareas con animales:</p><p>Haciendo clic en <b>Siguiente</b> aparece la pantalla para introducir los datos del <b>paso 3</b></p><br/>\n"
+            }
+          ],
+          "apartadosHijos": []
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "nombre": "VALIDEZ CIENTÍFICA Y METODOLÓGICA",
+      "orden": 4,
+      "apartados": [
+        {
+          "id": 50,
+          "nombre": "Objetivos científicos del proyecto",
+          "titulo": "3.1 Objetivos científicos del proyecto",
+          "orden": 1,
+          "elementos": [
+            {
+              "nombre": "",
+              "tipo": "template",
+              "content": "<p>Describir brevemente los principales objetivos que se pretenden alcanzar con este proyecto.</p><br/>\n"
+            },
+            {
+              "nombre": "",
+              "tipo": "template",
+              "content": "Para completa esta sección ir a <b>'Datos generales'</b>.<br/>\n"
+            },
+            {
+              "nombre": "objetivosCientificos",
+              "tipo": "textarea",
+              "content": "<p>Objetivos cientificos: <i>Objetivos</i></p><br/>\n"
+            },
+            {
+              "nombre": "",
+              "tipo": "template",
+              "content": "<p>Nota: en caso de tratarse de una evaluación retrospectiva describir si se han alcanzado los objetivos inicialmente previstos.</p><br/>\n"
+            }
+          ],
+          "apartadosHijos": []
+        },
+        {
+          "id": 51,
+          "nombre": "Diseño metodológico del proyecto",
+          "titulo": "3.2 Diseño metodológico del proyecto",
+          "orden": 2,
+          "elementos": [
+            {
+              "nombre": "disenoMetodologico",
+              "tipo": "textarea",
+              "content": "<p>Diseño metodológico: <i>Diseño metodológico</i></p><br/>\n"
+            },
+            {
+              "nombre": "",
+              "tipo": "template",
+              "content": "<h5>Proceso de experimentación</h5><p>Los apartados que vienen a continuación ayudarán a precisar el proceso de experimentación al que es sometido el animal. En los casos que la complejidad del proyecto lo requiera (por ejemplo si se utilizan varias especies distintas de animales o si existen varios grupos de animales sometidos a distintos procesos de experimentación) pueden utilizarse varias memorias.</p><br/>\n"
+            },
+            {
+              "nombre": "",
+              "tipo": "template",
+              "content": "Para añadir nueva memoria ir a <b>'Memorias del proyecto'</b>.<br/>\n"
+            }
+          ],
+          "apartadosHijos": []
+        },
+        {
+          "id": 52,
+          "nombre": "Título descriptivo",
+          "titulo": "3.3 Título descriptivo",
+          "orden": 3,
+          "elementos": [
+            {
+              "nombre": "",
+              "tipo": "template",
+              "content": "<p>Para completa esta sección ir a 'Datos generales' donde debe de describir el procedimiento e incluir la especie animal</p><br/>\n"
+            },
+            {
+              "nombre": "",
+              "tipo": "template",
+              "content": "<p>Título descriptivo del proceso experimental.</p><br/>\n"
+            },
+            {
+              "nombre": "tituloDescriptivo",
+              "tipo": "textarea",
+              "content": "<p>Título descriptivo: <i>Nueva M20</i></p><br/>\n"
+            }
+          ],
+          "apartadosHijos": []
+        },
+        {
+          "id": 53,
+          "nombre": "Tipo de proyecto",
+          "titulo": "3.4 Tipo de proyecto",
+          "orden": 4,
+          "elementos": [
+            {
+              "nombre": "",
+              "tipo": "template",
+              "content": "<p>Indique el tipo de proyecto (según el <a href='https://www.boe.es/diario_boe/txt.php?id=BOE-A-2013-1337' target='_blank'>artículo 31 del RD 53/2013</a>).</p><br/>\n"
+            },
+            {
+              "nombre": "tipoProyecto",
+              "tipo": "select",
+              "content": "<p>Seleccione: <i>Tipo 2</i></p><br/>\n"
+            }
+          ],
+          "apartadosHijos": []
+        },
+        {
+          "id": 54,
+          "nombre": "Lugar en el que se realizarán las intervenciones de los animales",
+          "titulo": "3.5 Lugar en el que se realizarán las intervenciones de los animales",
+          "orden": 5,
+          "elementos": [
+            {
+              "nombre": "",
+              "tipo": "template",
+              "content": "<p>Especificar el lugar en el que se mantendrán los animales durante el proceso de experimentación.</p><br/>\n"
+            },
+            {
+              "nombre": "",
+              "tipo": "template",
+              "content": "<p>Las intervenciones se realizarán en centros usuarios autorizados, salvo autorización del órgano competente, previa justificación científica de la necesidad o conveniencia de que se realicen fuera de dichos centros (<a href='https://www.um.es/web/comision-etica-investigacion/comision-etica/ceea' target='_blank'>Art. 25-4 RD 53/13</a>)</p><br/>\n"
+            },
+            {
+              "nombre": "centroUsuarioUniversidadCheckPrincipal",
+              "tipo": "checkbox",
+              "content": "<p>Centro usuario de la Universidad: <i>Sí</i></p><br/>\n"
+            },
+            {
+              "nombre": "centroUsuarioUniversidadCheck",
+              "tipo": "multicheckbox",
+              "content": "<p>Seleccionar: <i>Animalario Campus Espinardo, Animalario Campus Ciencias de la Salud (CEIB), Otros (especificar)</i></p><br/>\n"
+            },
+            {
+              "nombre": "especificarCentroUniversidad",
+              "tipo": "textarea",
+              "content": "<p>Especificar: </p><br/>\n"
+            },
+            {
+              "nombre": "otroCentroRegistradoCheck",
+              "tipo": "checkbox",
+              "content": "<p>Otro centro usuario, registrado.: </p><br/>\n"
+            },
+            {
+              "nombre": "especificarCentroRegistrado",
+              "tipo": "textarea",
+              "content": "<p>Especificar: </p><br/>\n"
+            },
+            {
+              "nombre": "numeroRegistro",
+              "tipo": "textarea",
+              "content": "<p>Nº de registro: </p><br/>\n"
+            },
+            {
+              "nombre": "otroCentroNoRegistradoCheck",
+              "tipo": "checkbox",
+              "content": "<p>Otro centro o lugar no registrado.: </p><br/>\n"
+            },
+            {
+              "nombre": "especificarCentroNoRegistrado",
+              "tipo": "textarea",
+              "content": "<p>Especificar: </p><br/>\n"
+            },
+            {
+              "nombre": "justificar",
+              "tipo": "textarea",
+              "content": "<p>Justificar: </p><br/>\n"
+            },
+            {
+              "nombre": "",
+              "tipo": "template",
+              "content": "<p>Para más información de lugares del Centro usuario de la Universidad consultar en la <a href='https://www.um.es/web/comision-etica-investigacion/comision-etica/ceea' target='_blank'>página web del Comité de la Universidad</a>.</p><br/>\n"
+            }
+          ],
+          "apartadosHijos": []
+        },
+        {
+          "id": 55,
+          "nombre": "Datos referentes a los animales de experimentación",
+          "titulo": "3.6 Datos referentes a los animales de experimentación",
+          "orden": 6,
+          "elementos": [],
+          "apartadosHijos": [
+            {
+              "id": 56,
+              "nombre": "Definición",
+              "titulo": "3.6.1 Definición",
+              "orden": 1,
+              "elementos": [
+                {
+                  "nombre": "",
+                  "tipo": "template",
+                  "content": "<p>Sólo podrán utilizarse en experimentación animales de las especies enumeradas en el <a href='https://www.boe.es/buscar/act.php?id=BOE-A-2013-1337&p=20130208&tn=1#ani'>anexo I del RD 53/13</a> si han sido criados expresamente para ese fin.</p><p>En casos excepcionales, y siempre que exista una justificación científica, los órganos competentes podrán autorizar el uso de animales que no hayan sido criados para experimentación (<a href='https://www.boe.es/buscar/act.php?id=BOE-A-2013-1337&p=20130208&tn=1#a19'>Art. 19 RD 53/13</a>).</p><br/>\n"
+                },
+                {
+                  "nombre": "animalesExperimentacionTable",
+                  "tipo": "table-crud",
+                  "content": "[[{\"nombre\":\"Especie\",\"tipo\":null,\"content\":\"[2] Rata\"},{\"nombre\":\"Nombre científico\",\"tipo\":null,\"content\":\"sdf\"},{\"nombre\":\"Cepa/s\",\"tipo\":null,\"content\":\"sdf\"},{\"nombre\":\"Sexo\",\"tipo\":null,\"content\":\"Hembra\"},{\"nombre\":\"Edad o peso\",\"tipo\":null,\"content\":\"sdf\"},{\"nombre\":\"Procedencia\",\"tipo\":null,\"content\":\"Centros de cría o suministro registrados del país\"}]]"
+                }
+              ],
+              "apartadosHijos": []
+            },
+            {
+              "id": 57,
+              "nombre": "Animales modificados genéticamente",
+              "titulo": "3.6.2 Animales modificados genéticamente",
+              "orden": 2,
+              "elementos": [
+                {
+                  "nombre": "",
+                  "tipo": "template",
+                  "content": "¿Son animales modificados genéticamente?<br/>\n"
+                },
+                {
+                  "nombre": "animalesModificadosGeneticamenteRadio",
+                  "tipo": "radio",
+                  "content": "<p>Elige opción: <i>No</i></p><br/>\n"
+                },
+                {
+                  "nombre": "",
+                  "tipo": "template",
+                  "content": "<p>Nota: Requiere informe del CBE.</p><br/>\n"
+                },
+                {
+                  "nombre": "",
+                  "tipo": "template",
+                  "content": "¿Implican riesgos para la salud humana, animal o para el medio ambiente?<br/>\n"
+                },
+                {
+                  "nombre": "implicanRiesgosRadio",
+                  "tipo": "radio",
+                  "content": "<p>Elige opción: </p><br/>\n"
+                },
+                {
+                  "nombre": "",
+                  "tipo": "template",
+                  "content": "¿La modificación genética puede dar lugar a una progenie o línea animal que experimente dolor, sufrimiento, angustia o daño duradero equivalente o superior al causado por la introducción de una aguja?<br/>\n"
+                },
+                {
+                  "nombre": "experimentaDolorRadio",
+                  "tipo": "radio",
+                  "content": "<p>Elige opción: </p><br/>\n"
+                }
+              ],
+              "apartadosHijos": []
+            },
+            {
+              "id": 58,
+              "nombre": "Animales protegidos o en peligro de extinción",
+              "titulo": "3.6.3 Animales protegidos o en peligro de extinción",
+              "orden": 3,
+              "elementos": [
+                {
+                  "nombre": "",
+                  "tipo": "template",
+                  "content": "<p>Las especies amenazadas y en peligro de extinción pueden consultarse en la página de la CITES (<a href='https://cites.org/esp/app/appendices.php'>Anexo A del Reglamento (CE) nº 338/97</a>).</p><p>La regulación del uso en experimentación de estas especies se precisa en el <a href='https://www.boe.es/buscar/act.php?id=BOE-A-2013-1337&p=20130208&tn=1#a20'>artículo 20</a> del RD 53/13, según el cual sólo se pueden utilizar estos animales si se cumplen las dos condiciones siguientes:</p><ul><li>El proyecto tiene una de las siguientes finalidades:<br><li>a) Precención, profilaxis, diagnóstico o tratamiento de enfermedades, maa salud u otras anomalías o sus efectos en los seres humanos, los animales o las plantas</li><br><li>b) La protección del medio natural en interés de la salud o el bienestar de los seres humanos o los aniamles.</li><br><li>c) La investigación dirigida a la conservación de las especies.</li></li><li>Se ha justificado científicamente que dicha finalidad no puede conseguirse utilizando animales de otras especies.</li></ul><p>En este apartado también se incluye el uso de primates como animal de experimentación, para lo cual hay que tener en cuenta lo dispuesto en el <strong>Real Decreto 1386/2018</strong>, de 19 de noviembre, por el que se modifica el Real Decreto 53/2013.</p><br/>\n"
+                },
+                {
+                  "nombre": "",
+                  "tipo": "template",
+                  "content": "¿Son animales protegidos o en peligro de extinción?<br/>\n"
+                },
+                {
+                  "nombre": "animalesProtegidosRadio",
+                  "tipo": "radio",
+                  "content": "<p>Elige opción: <i>No</i></p><br/>\n"
+                },
+                {
+                  "nombre": "",
+                  "tipo": "template",
+                  "content": "<p>Nota: recuerde que las excepciones requieren aportar el documento correspondiente en el apartado '5.4 Situaciones especiales'.</p><br/>\n"
+                }
+              ],
+              "apartadosHijos": []
+            },
+            {
+              "id": 59,
+              "nombre": "Número de animales a utilizar",
+              "titulo": "3.6.4 Número de animales a utilizar",
+              "orden": 4,
+              "elementos": [
+                {
+                  "nombre": "totalAnimalesUtilizar",
+                  "tipo": "input",
+                  "content": "<p>Total: <i>345</i></p><br/>\n"
+                }
+              ],
+              "apartadosHijos": []
+            },
+            {
+              "id": 60,
+              "nombre": "Periodo del proyecto durante el que se utilizarán los animales",
+              "titulo": "3.6.5 Periodo del proyecto durante el que se utilizarán los animales",
+              "orden": 5,
+              "elementos": [
+                {
+                  "nombre": "fechaUsoAnimalesDesde",
+                  "tipo": "datepicker",
+                  "content": "<p>Desde: <i>01/09/2021</i></p><br/>\n"
+                },
+                {
+                  "nombre": "fechaUsoAnimalesHasta",
+                  "tipo": "datepicker",
+                  "content": "<p>Hasta: <i>23/09/2021</i></p><br/>\n"
+                }
+              ],
+              "apartadosHijos": []
+            }
+          ]
+        },
+        {
+          "id": 61,
+          "nombre": "Proceso de experimentación al que va a ser sometido el animal",
+          "titulo": "3.7 Proceso de experimentación al que va a ser sometido el animal",
+          "orden": 7,
+          "elementos": [
+            {
+              "nombre": "",
+              "tipo": "template",
+              "content": "<p>Denominamos 'proceso de experimentación' al conjunto o sucesión de intervenciones a las que es sometido el animal desde el momento en que se inicia la preparación del animal para su utilización hasta que 'ya no vayan a hacerse observaciones ulteriores sobre él' y 'haya sido sacrificado, realojado o reintegrado a un hábitat o sistema zootécnico conveniente'.</p><br/>\n"
+            }
+          ],
+          "apartadosHijos": [
+            {
+              "id": 62,
+              "nombre": "Intervenciones/procedimientos que se realizarán al animal",
+              "titulo": "3.7.1 Intervenciones/procedimientos que se realizarán al animal",
+              "orden": 1,
+              "elementos": [
+                {
+                  "nombre": "",
+                  "tipo": "template",
+                  "content": "<p>Describir PORMENORIZADAMENTE todas las intervenciones/procedimientos a las que es sometido el animal a lo largo del proceso de experimentación. Detallar especialmente aquellas en las que se prevé que pueda sufrir 'un nivel de dolor, sufrimiento, angustia o daño duradero, equivalente o superior al causado por la introducción de una aguja conforme a la buena práctica veterinaria'. Indicar la duración de cada procedimiento, frecuencia de realización, número de animales de cada procedimiento y categoría de severidad.</p><br/>\n"
+                },
+                {
+                  "nombre": "",
+                  "tipo": "template",
+                  "content": "<p>Denominamos 'intervenciones' a las manipulaciones (quirúrgicas o no), pruebas u observaciones a las que es sometido el animal a lo largo del proceso de experimentación.</p><br/>\n"
+                },
+                {
+                  "nombre": "intervencionesAnimal",
+                  "tipo": "textarea",
+                  "content": "<p>Intervenciones/procedimientos: <i>345345</i></p><br/>\n"
+                }
+              ],
+              "apartadosHijos": []
+            },
+            {
+              "id": 63,
+              "nombre": "Duración del proceso de experimentación",
+              "titulo": "3.7.2 Duración del proceso de experimentación",
+              "orden": 2,
+              "elementos": [
+                {
+                  "nombre": "",
+                  "tipo": "template",
+                  "content": "¿Cuánto tiempo dura el proceso de experimentación al que es sometido cada animal (en días)?<br/>\n"
+                },
+                {
+                  "nombre": "",
+                  "tipo": "template",
+                  "content": "<p>La duración debe contarse desde el momento en que se inicia la preparación de un animal para su utilización en el proceso de experimentación hasta que 'ya no vayan a hacerse observaciones ulteriores sobre él' y 'haya sido sacrificado, realojado o reintegrado a un hábitat o sistema zootécnico conveniente'.</p><br/>\n"
+                },
+                {
+                  "nombre": "duracionProcesoExperimentacion",
+                  "tipo": "input",
+                  "content": "<p>Tiempo (días): <i>543</i></p><br/>\n"
+                }
+              ],
+              "apartadosHijos": []
+            },
+            {
+              "id": 64,
+              "nombre": "Referencias de publicaciones científicas",
+              "titulo": "3.7.3 Referencias de publicaciones científicas",
+              "orden": 3,
+              "elementos": [
+                {
+                  "nombre": "",
+                  "tipo": "template",
+                  "content": "¿Estas intervenciones siguen alguna línea directriz oficial?<br/>\n"
+                },
+                {
+                  "nombre": "siguenDirectrizOficialRadio",
+                  "tipo": "radio",
+                  "content": "<p>Elige opción: <i>No, pero se facilitan referencias de publicaciones científicas con diseño similar</i></p><br/>\n"
+                },
+                {
+                  "nombre": "",
+                  "tipo": "template",
+                  "content": "<p>Nota: citar las referencias más relevantes (máximo 10 líneas) de forma completa (autor, título, publicación, fecha etc.) y facilitar los documentos en el apartado '5.6 Documentación adicional'.</p><br/>\n"
+                },
+                {
+                  "nombre": "especificarDirectriz",
+                  "tipo": "textarea",
+                  "content": "<p>Especificar: </p><br/>\n"
+                }
+              ],
+              "apartadosHijos": []
+            },
+            {
+              "id": 65,
+              "nombre": "Intervenciones quirúrgicas",
+              "titulo": "3.7.4 Intervenciones quirúrgicas",
+              "orden": 4,
+              "elementos": [
+                {
+                  "nombre": "",
+                  "tipo": "template",
+                  "content": "¿Van a ser sometidos a cirugía en algún momento del proceso de experimentación?<br/>\n"
+                },
+                {
+                  "nombre": "intervencionQuirurgicaRadio",
+                  "tipo": "radio",
+                  "content": "<p>Elige opción: <i>No</i></p><br/>\n"
+                }
+              ],
+              "apartadosHijos": []
+            },
+            {
+              "id": 66,
+              "nombre": "Analgesia",
+              "titulo": "3.7.5 Analgesia",
+              "orden": 5,
+              "elementos": [
+                {
+                  "nombre": "",
+                  "tipo": "template",
+                  "content": "<p>Deberán utilizarse analgésicos u otros métodos idóneos para garantizar, en la medida de lo posible, que el dolor, el sufrimiento, la angustia o la lesión sean mínimos. Su aplicación, cuando proceda, debe ser realizada o supervisada por un veterinario (<a href='https://www.boe.es/buscar/act.php?id=BOE-A-2013-1337&p=20130208&tn=1#a26'>art, 26.2 RD 53/13</a>).</p><p>Siempre que sea compatible con los fines de la intervención, cuando se prevea que un animal va a sufrir dolor después de haberse recuperado de la anestesia, se le aplicará un tratamiento analgésico preventivo y paliativo, u otro método adecuado para calmar el dolor (<a href='https://www.boe.es/buscar/act.php?id=BOE-A-2013-1337&p=20130208&tn=1#a26'>art, 26.5 RD 53/13</a>).</p><br/>\n"
+                },
+                {
+                  "nombre": "",
+                  "tipo": "template",
+                  "content": "¿Se va utilizar analgesia en algún momento del proceso de experimentación?<br/>\n"
+                },
+                {
+                  "nombre": "analgesiaRadio",
+                  "tipo": "radio",
+                  "content": "<p>Elige opción: <i>No</i></p><br/>\n"
+                },
+                {
+                  "nombre": "",
+                  "tipo": "template",
+                  "content": "<p>Nota: recuerde que las excepciones requieren aportar el documento correspondiente en el apartado '5.4 Situaciones especiales'.</p><br/>\n"
+                }
+              ],
+              "apartadosHijos": []
+            },
+            {
+              "id": 67,
+              "nombre": "Anestesia",
+              "titulo": "3.7.6 Anestesia",
+              "orden": 6,
+              "elementos": [
+                {
+                  "nombre": "",
+                  "tipo": "template",
+                  "content": "<p>Las intervenciones deberán llevarse a cabo con anestesia general o local, salvo que se considere que es inapropiada porque:</p><ul><li>Es más traumática para el animal que la propia intervención en sí.</li><li>Es incompatible con los fines de la intervención (<a href='https://www.boe.es/buscar/act.php?id=BOE-A-2013-1337&p=20130208&tn=1#a26'>art, 26.1 RD 53/13</a>).</li></ul><p>Las intervenciones que impliquen lesiones graves que puedan causar dolores intensos no se llevarán a cabo sin anestesia (<a href='https://www.boe.es/buscar/act.php?id=BOE-A-2013-1337&p=20130208&tn=1#a26'>art, 26.3 RD 53/13</a>).</p><br/>\n"
+                },
+                {
+                  "nombre": "",
+                  "tipo": "template",
+                  "content": "¿Se va utilizar anestesia en algún momento del proceso de experimentación?<br/>\n"
+                },
+                {
+                  "nombre": "anestesiaRadio",
+                  "tipo": "radio",
+                  "content": "<p>Elige opción: <i>No</i></p><br/>\n"
+                },
+                {
+                  "nombre": "",
+                  "tipo": "template",
+                  "content": "<p>Nota: recuerde que las excepciones requieren aportar el documento correspondiente en el apartado '5.4 Situaciones especiales'.</p><br/>\n"
+                }
+              ],
+              "apartadosHijos": []
+            },
+            {
+              "id": 68,
+              "nombre": "Administración de sustancias",
+              "titulo": "3.7.7 Administración de sustancias",
+              "orden": 7,
+              "elementos": [
+                {
+                  "nombre": "",
+                  "tipo": "template",
+                  "content": "No se suministrará a un animal ningún medicamento que impida o restrinja sus manifestaciones de dolor, salvo que haya recibido una dosis adecuada de anestesia o analgesia. En caso de que se suministre ese tipo de medicamentos deberá proporcionarse una justificación científica acompañada de una descripción del tratamiento por anestesia o analgesia, que estará a disposición del órgano competente (<a href='https://www.boe.es/buscar/act.php?id=BOE-A-2013-1337&p=20130208&tn=1#a26'>art. 26.4 RD 53/2013</a>).<br/>\n"
+                },
+                {
+                  "nombre": "",
+                  "tipo": "template",
+                  "content": "¿Se va a administrar al animal algún tipo de sustancia en algún momento del proceso de experimentación? (No incluir anestesia o analgesia en este apartado)<br/>\n"
+                },
+                {
+                  "nombre": "sustanciasRadio",
+                  "tipo": "radio",
+                  "content": "<p>Elige opción: <i>No</i></p><br/>\n"
+                },
+                {
+                  "nombre": "justificarSustancias",
+                  "tipo": "textarea",
+                  "content": "<p>Justificación: </p><br/>\n"
+                }
+              ],
+              "apartadosHijos": []
+            },
+            {
+              "id": 69,
+              "nombre": "Agentes biológicos",
+              "titulo": "3.7.8 Agentes biológicos",
+              "orden": 8,
+              "elementos": [
+                {
+                  "nombre": "",
+                  "tipo": "template",
+                  "content": "¿El proceso de experimentación incluye la inoculación de agentes biológicos?<br/>\n"
+                },
+                {
+                  "nombre": "agentesBiologicosRadio",
+                  "tipo": "radio",
+                  "content": "<p>Elige opción: <i>No</i></p><br/>\n"
+                },
+                {
+                  "nombre": "",
+                  "tipo": "template",
+                  "content": "<p>Requiere informe del CBE</p><br/>\n"
+                },
+                {
+                  "nombre": "tipoAgenteBiologico",
+                  "tipo": "input",
+                  "content": "<p>Tipo de agente biológico: </p><br/>\n"
+                },
+                {
+                  "nombre": "nivelBioseguridad",
+                  "tipo": "input",
+                  "content": "<p>Nivel de bioseguridad: </p><br/>\n"
+                },
+                {
+                  "nombre": "administracion",
+                  "tipo": "input",
+                  "content": "<p>Dosis y vía de administración: </p><br/>\n"
+                }
+              ],
+              "apartadosHijos": []
+            },
+            {
+              "id": 70,
+              "nombre": "Administración de isótopos radiactivos",
+              "titulo": "3.7.9 Administración de isótopos radiactivos",
+              "orden": 9,
+              "elementos": [
+                {
+                  "nombre": "",
+                  "tipo": "template",
+                  "content": "¿El proceso de experimentación incluye la administración de isótopos radiactivos al animal?<br/>\n"
+                },
+                {
+                  "nombre": "administracionIsotoposRadio",
+                  "tipo": "radio",
+                  "content": "<p>Elige opción: <i>No</i></p><br/>\n"
+                },
+                {
+                  "nombre": "tipoIsotopo",
+                  "tipo": "input",
+                  "content": "<p>Tipo de isótopo: </p><br/>\n"
+                },
+                {
+                  "nombre": "administracionIsotopo",
+                  "tipo": "input",
+                  "content": "<p>Dosis y vía de administración: </p><br/>\n"
+                }
+              ],
+              "apartadosHijos": []
+            },
+            {
+              "id": 71,
+              "nombre": "Extracción de sangre",
+              "titulo": "3.7.10 Extracción de sangre",
+              "orden": 10,
+              "elementos": [
+                {
+                  "nombre": "",
+                  "tipo": "template",
+                  "content": "¿Se va a extraer sangre animal?<br/>\n"
+                },
+                {
+                  "nombre": "extraccionSangreRadio",
+                  "tipo": "radio",
+                  "content": "<p>Elige opción: <i>No</i></p><br/>\n"
+                },
+                {
+                  "nombre": "",
+                  "tipo": "template",
+                  "content": "<p>Nota: en caso de utilizar analgesia/anestesia especificar pauta en el apartado correspondiente (3.7.6 y 3.7.15).</p><br/>\n"
+                }
+              ],
+              "apartadosHijos": []
+            },
+            {
+              "id": 72,
+              "nombre": "Privación de aliminto y/o agua",
+              "titulo": "3.7.11 Privación de alimento y/o agua",
+              "orden": 11,
+              "elementos": [
+                {
+                  "nombre": "",
+                  "tipo": "template",
+                  "content": "¿El animal va a ser privado de alimento y/o bebida en algún momento?<br/>\n"
+                },
+                {
+                  "nombre": "privacionRadio",
+                  "tipo": "radio",
+                  "content": "<p>Elige opción: <i>No</i></p><br/>\n"
+                },
+                {
+                  "nombre": "tipoPrivacionCheck",
+                  "tipo": "multicheckbox",
+                  "content": "<p>Seleccionar: <i></i></p><br/>\n"
+                },
+                {
+                  "nombre": "",
+                  "tipo": "template",
+                  "content": "Describir a continuación la pauta de la privación de alimento y/o agua indicando la hora de inicio y la duración (en horas)<br/>\n"
+                },
+                {
+                  "nombre": "describirPrivacion",
+                  "tipo": "textarea",
+                  "content": "<p>Describir: </p><br/>\n"
+                }
+              ],
+              "apartadosHijos": []
+            },
+            {
+              "id": 73,
+              "nombre": "Destino final",
+              "titulo": "3.7.12 Destino final",
+              "orden": 12,
+              "elementos": [
+                {
+                  "nombre": "",
+                  "tipo": "template",
+                  "content": "¿Cuál es el destino final del animal una vez terminado todo el proceso de experimentación?<br/>\n"
+                },
+                {
+                  "nombre": "destinoFinalRadio",
+                  "tipo": "radio",
+                  "content": "<p>Elige opción: <i>Eutanasia</i></p><br/>\n"
+                },
+                {
+                  "nombre": "justificarMantenimiento",
+                  "tipo": "textarea",
+                  "content": "<p>Justificar: </p><br/>\n"
+                }
+              ],
+              "apartadosHijos": []
+            },
+            {
+              "id": 74,
+              "nombre": "Eutanasia",
+              "titulo": "3.7.13 Eutanasia",
+              "orden": 13,
+              "elementos": [
+                {
+                  "nombre": "",
+                  "tipo": "template",
+                  "content": "Explicar a continuación el método de eutanasia (programada y no programada) que se va a utilizar.<br/>\n"
+                },
+                {
+                  "nombre": "",
+                  "tipo": "template",
+                  "content": "El RD 53/13 dedica el <a href='https://www.boe.es/buscar/act.php?id=BOE-A-2013-1337&p=20130208&tn=1#aniii'>Anexo III</a>, puntos 1 y 3, a los Métodos de eutanasia.<br/>\n"
+                },
+                {
+                  "nombre": "explicarMetodoEutanasia",
+                  "tipo": "textarea",
+                  "content": "<p>Explicar: <i>2342</i></p><br/>\n"
+                },
+                {
+                  "nombre": "",
+                  "tipo": "template",
+                  "content": "¿Qué método se empleará para confirmar la muerte del animal?<br/>\n"
+                },
+                {
+                  "nombre": "",
+                  "tipo": "template",
+                  "content": "Pueden consultarse los métodos para completar la eutanasia en el <a href='https://www.boe.es/buscar/act.php?id=BOE-A-2013-1337&p=20130208&tn=1#aniii'>Anexo III</a> punto 2 del RD 53/13.<br/>\n"
+                },
+                {
+                  "nombre": "confirmarMuerte",
+                  "tipo": "textarea",
+                  "content": "<p>Explicar: <i>2342</i></p><br/>\n"
+                },
+                {
+                  "nombre": "",
+                  "tipo": "template",
+                  "content": "Tiempo máximo estimado desde la finalización del proceso de experimentación hasta el sacrificio.<br/>\n"
+                },
+                {
+                  "nombre": "",
+                  "tipo": "template",
+                  "content": "El RD 53/2013 en su <a href='https://www.boe.es/buscar/act.php?id=BOE-A-2013-1337&p=20130208&tn=1#a25'>artículo 25.6</a> señala que “tan pronto como se haya conseguido la finalidad del procedimiento se tomarán las medidas adecuadas para minimizar el sufrimiento del animal”. De ello puede deducirse que la aplicación de la eutanasia debe realizarse sin demora injustificada.<br/>\n"
+                },
+                {
+                  "nombre": "tiempoProceso",
+                  "tipo": "textarea",
+                  "content": "<p>Tiempo: <i>234</i></p><br/>\n"
+                }
+              ],
+              "apartadosHijos": []
+            },
+            {
+              "id": 75,
+              "nombre": "Mantenimiento con vida",
+              "titulo": "3.7.14 Mantenimiento con vida",
+              "orden": 14,
+              "elementos": [
+                {
+                  "nombre": "",
+                  "tipo": "template",
+                  "content": "Describir las condiciones para su realojamiento o reintegro a un hábitat o sistema zootécnico conveniente.<br/>\n"
+                },
+                {
+                  "nombre": "",
+                  "tipo": "template",
+                  "content": "<p>Para que un animal que ha sido utilizado en experimentación pueda ser mantenido con vida deben darse las condiciones descritas en el artículo 30 del RD 53/2013:</p><ul><li>a) Que su estado de salud lo permita.</li><li>b) Que no suponga un peligro para la salud pública, la sanidad animal ni el medio ambiente.</li><li>c) Que se hayan tomado las medidas adecuadas para salvaguardar el buen estado del animal.</li><li>d) Que en el caso de realojamiento o adopción, los criadores, suministradores y usuarios tengan un programa adecuado que garantice su socialización.</li><li>e) Que en el caso de liberación de animales silvestres en su hábitat, se disponga de un programa de adaptación adecuado.</li></ul><br/>\n"
+                },
+                {
+                  "nombre": "mantenimientoConVida",
+                  "tipo": "textarea",
+                  "content": "<p>Descripción: </p><br/>\n"
+                }
+              ],
+              "apartadosHijos": []
+            },
+            {
+              "id": 76,
+              "nombre": "Relación y protocolo de sustancias y agentes biológicos administradas incluídas anestesia y analgesia",
+              "titulo": "3.7.15 Relación y protocolo de sustancias y agentes biológicos administradas incluidas anestesia y analgesia",
+              "orden": 15,
+              "elementos": [
+                {
+                  "nombre": "",
+                  "tipo": "template",
+                  "content": "Especificar a continuación el principio activo y pautas de TODAS las sustancias administradas, incluidas anestesia, analgesia y protocolo de eutanasia programada y no programada (si procede).<br/>\n"
+                }
+              ],
+              "apartadosHijos": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "nombre": "ASPECTOS ÉTICOS ESPECÍFICOS",
+      "orden": 5,
+      "apartados": [
+        {
+          "id": 77,
+          "nombre": "Reemplazo",
+          "titulo": "4.1 Reemplazo",
+          "orden": 1,
+          "elementos": [
+            {
+              "nombre": "",
+              "tipo": "template",
+              "content": "<p>Una de las principales herramientas de que disponen los/las investigadores para cumplir con el reemplazo es el uso de métodos alternativos. Por métodos alternativos se entiende aquellos que <u>no implican el uso de animales</u>, permiten <u>reducir el número de animales</u> a utilizar o <u>sustituirlos</u> por otras especies con un menor grado de padecimiento.</p><p>Puede encontrarse más información sobre métodos alternativos en las páginas web de la <a href='https://ec.europa.eu/jrc/en'>ECVAN</a> y <a href='http://www.remanet.net/'>REMA</a>.</p><br/>\n"
+            }
+          ],
+          "apartadosHijos": [
+            {
+              "id": 78,
+              "nombre": "Métodos alternativos",
+              "titulo": "4.1.1 Métodos alternativos",
+              "orden": 1,
+              "elementos": [
+                {
+                  "nombre": "",
+                  "tipo": "template",
+                  "content": "¿Cuáles son los motivos por los que no se plantea aplicar métodos alternativos a los propuestos?<br/>\n"
+                },
+                {
+                  "nombre": "metodoAlternativoMotivoRadio",
+                  "tipo": "radio",
+                  "content": "<p>Motivo: <i>Los métodos propuestos ya son métodos alternativos</i></p><br/>\n"
+                },
+                {
+                  "nombre": "especificarMotivo",
+                  "tipo": "textarea",
+                  "content": "<p>Especificar: </p><br/>\n"
+                }
+              ],
+              "apartadosHijos": []
+            },
+            {
+              "id": 79,
+              "nombre": "Fuentes consultadas para búsqueda de métodos alternativos",
+              "titulo": "4.1.2 Fuentes consultadas para búsqueda de métodos alternativos",
+              "orden": 2,
+              "elementos": [
+                {
+                  "nombre": "",
+                  "tipo": "template",
+                  "content": "Describir las fuentes consultadas y los criterios de búsqueda utilizados<br/>\n"
+                },
+                {
+                  "nombre": "fuentes",
+                  "tipo": "textarea",
+                  "content": "<p>Fuentes consultadas: <i>234</i></p><br/>\n"
+                },
+                {
+                  "nombre": "criteriosBusqueda",
+                  "tipo": "textarea",
+                  "content": "<p>Criterios de búsqueda: <i>234</i></p><br/>\n"
+                }
+              ],
+              "apartadosHijos": []
+            },
+            {
+              "id": 80,
+              "nombre": "Elección de la especie",
+              "titulo": "4.1.3 Elección de la especie",
+              "orden": 3,
+              "elementos": [
+                {
+                  "nombre": "",
+                  "tipo": "template",
+                  "content": "Explicar los motivos de elección de la especie, incluyendo las razones por las que no se plantea su sustitución por otra especie con menor capacidad de sentir dolor, sufrimiento, angustia o daño duradero (art. 24 RD 53/2013)<br/>\n"
+                },
+                {
+                  "nombre": "motivosEleccion",
+                  "tipo": "textarea",
+                  "content": "<p>Motivos de elección: <i>234</i></p><br/>\n"
+                }
+              ],
+              "apartadosHijos": []
+            }
+          ]
+        },
+        {
+          "id": 81,
+          "nombre": "Refinamiento",
+          "titulo": "4.2 Refinamiento",
+          "orden": 2,
+          "elementos": [
+            {
+              "nombre": "",
+              "tipo": "template",
+              "content": "<p>Se entiende por refinamiento la utilización de sistemas que permitan disminuir la severidad del daño infringido a los animales así como aliviar o reducir el posible dolor o malestar que vayan a padecer. Entre dichas estrategias se incluye la clasificación de la severidad, el control del padecimiento, el uso de medidas corretoras como anestesia y analgesia así como la “eutanasia humanitaria” programada y no programada.</p><br/>\n"
+            }
+          ],
+          "apartadosHijos": [
+            {
+              "id": 82,
+              "nombre": "Valoración de la severidad y medidas correctoras ante el dolor, sufrimiento o la angustia del animal",
+              "titulo": "4.2.1 Valoración de la severidad y medidas correctoras ante el dolor, sufrimiento o la angustia del animal",
+              "orden": 1,
+              "elementos": [
+                {
+                  "nombre": "",
+                  "tipo": "template",
+                  "content": "<p>Teniendo en cuenta las intervenciones enumeradas en el apartado 'Intervenciones/procedimientos que se realizarán al animal' califique la severidad de aquellas en las que se prevé que el animal pueda experimentar dolor, sufrimiento o ansiedad de acuerdo a la siguiente clasificación<br><ul><li><strong>No recuperación</strong>: las intervenciones que se realizan enteramente bajo anestesia general tras la cual el animal no recuperará la conciencia deben clasificarse como de no recuperación</li><li><strong>Leve</strong>: las intervenciones en animales a consecuencia de las cuales es probable que experimente dolor, sufrimiento o angustia leves de corta de duración, así como las intervenciones sin alteración significativa del bienestar o del estado general de los aniamles deben de clasificarse como leves</li><li><strong>Moderada</strong>: las intervenciones en animales a consecuencia de las cuales es probable que experimenten dolor, sufrimienti o angustia moderados de corta duración pero duraderos, así como las intervenciones que pudieran causar una alteración moderada del bienestar o el estado general de los animales deben clasificarse como moderadas</li><li><strong>Severa</strong>: las intervenciones en animales a consecuencia de las cuales es probable que experimenten dolor, sufrimiento o angustia intensos, o moderados pero duraderos, así como las intervenciones que pudieran causar una alteración grave del bienestar o del estado general de los animales deben clasificarse como severas</li></ul><br>Señale igualmente las medidas correctoras previstas (p.ej anestesia, analgesia) para minimizar el posible dolor, sufrimiento o ansiedad causados.<br><ul><li><strong>Intervención</strong>: cualquier acción que se realice al animal para obtener el efecto que se busca: por ejemplo, cirugía, administración de una sustancia, administración de anestesia, analgesia...</li><li><strong>Efecto buscado</strong>: efecto que se busca en el animal con la intervención realizada: extracción del bazo, subida de un parámetro determinado, anestesiar al animal para la cirugía.</li><li><strong>Efectos colaterales, secundarios o reacciones adversas</strong>: cualquier efecto, diferente al buscado, que pueda provocar que el animal experimente dolor, sufrimiento, angustia o daño duradero equivalente o superior al causado por la introducción de una aguja.</li><li><strong>Medida correctora</strong>: cualquier medida destinada a paliar el sufrimiento del animal y/o los efectos colaterales que se apliquen, sin interferir en el efecto buscado</li></ul></p><br/>\n"
+                },
+                {
+                  "nombre": "valoracionSeveridadTable",
+                  "tipo": "table-crud",
+                  "content": "[[{\"nombre\":\"Intervención\",\"tipo\":null,\"content\":\"sdfsd\"},{\"nombre\":\"Efecto buscado\",\"tipo\":null,\"content\":\"sdfsd\"},{\"nombre\":\"Efecto colateral\",\"tipo\":null,\"content\":\"sdfsdf\"},{\"nombre\":\"Severidad\",\"tipo\":null,\"content\":\"No recuperación\"},{\"nombre\":\"Medidas correctoras\",\"tipo\":null,\"content\":\"hhhh\"}],[{\"nombre\":\"Intervención\",\"tipo\":null,\"content\":\"2\"},{\"nombre\":\"Efecto buscado\",\"tipo\":null,\"content\":\"2\"},{\"nombre\":\"Efecto colateral\",\"tipo\":null,\"content\":\"2\"},{\"nombre\":\"Severidad\",\"tipo\":null,\"content\":\"Leve\"},{\"nombre\":\"Medidas correctoras\",\"tipo\":null,\"content\":\"2222\"}]]"
+                },
+                {
+                  "nombre": "",
+                  "tipo": "template",
+                  "content": "<p>Nota: Recuerde que las excepciones requieren aportar el documento correspondiente en el apartado '5.4 Situaciones especiales' anexo IX del RD 53/2013.</p><br/>\n"
+                }
+              ],
+              "apartadosHijos": []
+            },
+            {
+              "id": 83,
+              "nombre": "No aplicación de medidas correctoras",
+              "titulo": "4.2.2 No aplicación de medidas correctoras",
+              "orden": 2,
+              "elementos": [
+                {
+                  "nombre": "",
+                  "tipo": "template",
+                  "content": "En caso de no aplicar medidas correctoras en alguna intervención justifique la razón<br/>\n"
+                },
+                {
+                  "nombre": "",
+                  "tipo": "template",
+                  "content": "Para más información sobre medidas correctoras (anestesia y analgesia) ver Art. 26 del RD 53/13.<br/>\n"
+                },
+                {
+                  "nombre": "justificarRazon",
+                  "tipo": "textarea",
+                  "content": "<p>Justificar: <i>23423465665</i></p><br/>\n"
+                }
+              ],
+              "apartadosHijos": []
+            },
+            {
+              "id": 84,
+              "nombre": "Severidad global",
+              "titulo": "4.2.3 Severidad global",
+              "orden": 3,
+              "elementos": [
+                {
+                  "nombre": "",
+                  "tipo": "template",
+                  "content": "Teniendo en cuenta la severidad acumulada ¿Cómo calificaría la severidad global de todo el proceso?<br/>\n"
+                },
+                {
+                  "nombre": "severidadGlobal",
+                  "tipo": "textarea",
+                  "content": "<p>Calificación severidad global: <i>23423</i></p><br/>\n"
+                },
+                {
+                  "nombre": "",
+                  "tipo": "template",
+                  "content": "<p>Nota: Valore la severidad global según la siguiente escala: 1. No recuperación, 2. Leve, 3. Moderada, 4. Severa</p><br/>\n"
+                }
+              ],
+              "apartadosHijos": []
+            },
+            {
+              "id": 85,
+              "nombre": "Protocolo de supervisión",
+              "titulo": "4.2.4 Protocolo de supervisión",
+              "orden": 4,
+              "elementos": [
+                {
+                  "nombre": "",
+                  "tipo": "template",
+                  "content": "Elaborar un protocolo sobre cómo será la supervisión del animal y cuantificar los parámetros que se supervisarán, indicando en qué momento del procedimiento comenzará el control y cuál será la duración y la frecuencia de la supervisión.<br/>\n"
+                },
+                {
+                  "nombre": "protocoloSupervision",
+                  "tipo": "textarea",
+                  "content": "<p>Protocolo de supervisión: <i>23432</i></p><br/>\n"
+                }
+              ],
+              "apartadosHijos": []
+            },
+            {
+              "id": 86,
+              "nombre": "Criterios de punto final",
+              "titulo": "4.2.5 Criterios de punto final",
+              "orden": 5,
+              "elementos": [
+                {
+                  "nombre": "",
+                  "tipo": "template",
+                  "content": "En función de la cuantificación de los parámetros, indicar los criterios de punto final que se aplicarán para proceder a la eutanasia del animal.<br/>\n"
+                },
+                {
+                  "nombre": "puntoFinal",
+                  "tipo": "textarea",
+                  "content": "<p>Criterios de punto final: <i>234234</i></p><br/>\n"
+                }
+              ],
+              "apartadosHijos": []
+            }
+          ]
+        },
+        {
+          "id": 87,
+          "nombre": "Reducción",
+          "titulo": "4.3 Reducción",
+          "orden": 3,
+          "elementos": [
+            {
+              "nombre": "",
+              "tipo": "template",
+              "content": "Se entiende por reducción el empleo de cualquier estrategia encaminada a utilizar el mínimo número de animales necesario para alcanzar el objetivo propuesto.<br/>\n"
+            }
+          ],
+          "apartadosHijos": [
+            {
+              "id": 88,
+              "nombre": "Justificación del tamaño muestral y tratamiento estadístico",
+              "titulo": "4.3.1 Justificación del tamaño muestral y tratamiento estadístico",
+              "orden": 1,
+              "elementos": [
+                {
+                  "nombre": "justificacionMuestraEstadistica",
+                  "tipo": "textarea",
+                  "content": "<p>Justificación: <i>234</i></p><br/>\n"
+                }
+              ],
+              "apartadosHijos": []
+            },
+            {
+              "id": 89,
+              "nombre": "Reutilización",
+              "titulo": "4.3.2 Reutilización",
+              "orden": 2,
+              "elementos": [
+                {
+                  "nombre": "",
+                  "tipo": "template",
+                  "content": "¿Los animales han sido o van a ser reutilizados en otro proyecto de investigación?<br/>\n"
+                },
+                {
+                  "nombre": "",
+                  "tipo": "template",
+                  "content": "Un animal que ya haya sido utilizado no deberá ser sometido a nuevos procesos experimentales o procedimiento alguno cuando en su lugar puede ser utilizado otro animal al que no se le haya realizado ninguna intervención, a menos que se den las condiciones siguientes:<br><ul><li>a) Que la severidad de las intervenciomes anteriores fuera <u>leve</u> o <u>moderada</u></li><li>b) Que se haya demostrado la recuperación total del estado de salud general y del bienestar del animal</li><li>c) Que las nuevas intervenciones estén clasificadas como <u>leves</u>, <u>moderadas</u> o <u>sin recuperación</u> y</li><li>d) Que se ajuste al dictamen veterinario teniendo en cuenta la experiencia durante la vida del animal</li></ul><br> En circunstancias excepcionales, no obstante lo dispuesto en la letra a), y previo examen veterinario del animal, la autoridad competente podrá autorizar la reutilización de un animal siempre que dicho animal no haya sido sometido más de una vez a intervenciones que le haya provocado angustia y dolor severos o un sufrimiento equivalente.<br>Para más información sobre la reutilización de animales ver el art. 29 y anexo X.10 del RD 53-13<br/>\n"
+                },
+                {
+                  "nombre": "reutilizacionRadio",
+                  "tipo": "radio",
+                  "content": "<p>Reutilizado: <i>No</i></p><br/>\n"
+                },
+                {
+                  "nombre": "anteriorPosteriorCheck",
+                  "tipo": "multicheckbox",
+                  "content": "<p>Seleccionar: <i></i></p><br/>\n"
+                },
+                {
+                  "nombre": "",
+                  "tipo": "template",
+                  "content": "Código de referencia del proyecto<br/>\n"
+                },
+                {
+                  "nombre": "codigoRefProyecto",
+                  "tipo": "input",
+                  "content": "<p>Código: </p><br/>\n"
+                },
+                {
+                  "nombre": "",
+                  "tipo": "template",
+                  "content": "Grado de severidad global del proyecto anterior/posterior<br/>\n"
+                },
+                {
+                  "nombre": "gradoSeveridad",
+                  "tipo": "select",
+                  "content": "<p>Seleccionar: <i>Leve</i></p><br/>\n"
+                },
+                {
+                  "nombre": "",
+                  "tipo": "template",
+                  "content": "<p>Nota: Requiere informe veterinario que debe adjuntarse en el apartado 5.2</p><br/>\n"
+                }
+              ],
+              "apartadosHijos": []
+            },
+            {
+              "id": 90,
+              "nombre": "Excepciones de reutilización",
+              "titulo": "4.3.3 Mantenimiento con vida",
+              "orden": 3,
+              "elementos": [
+                {
+                  "nombre": "",
+                  "tipo": "template",
+                  "content": "Si los animales han sido utilizados anteriormente o van a ser reutilizados con posterioridad explique si se dan las circunstancias marcadas por la ley o justifique la excepción<br/>\n"
+                },
+                {
+                  "nombre": "excepcionReutilizacion",
+                  "tipo": "textarea",
+                  "content": "<p>Justificar: </p><br/>\n"
+                }
+              ],
+              "apartadosHijos": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 6,
+      "nombre": "CUMPLIMIENTO DE LA DOCUMENTACIÓN",
+      "orden": 6,
+      "apartados": [
+        {
+          "id": 91,
+          "nombre": "Acreditaciones",
+          "titulo": "5.1 Acreditaciones",
+          "orden": 1,
+          "elementos": [
+            {
+              "nombre": "",
+              "tipo": "template",
+              "content": "Recuerde que debe aportar copia de todas las acreditaciones del equipo investigador para que queden archivadas junto con la memoria del proyecto.<br/>\n"
+            },
+            {
+              "nombre": "acreditaciones",
+              "tipo": "documento",
+              "content": "<p>Indicar: </p><br/>\n"
+            }
+          ],
+          "apartadosHijos": []
+        },
+        {
+          "id": 92,
+          "nombre": "Informe veterinario",
+          "titulo": "5.2 Informe veterinario",
+          "orden": 2,
+          "elementos": [
+            {
+              "nombre": "",
+              "tipo": "template",
+              "content": "¿Se requiere informe veterinario para la valoración de severidad acumulada por reutilización anterior o psoterior de animales (ver apartado 4.3.2)?<br/>\n"
+            },
+            {
+              "nombre": "informeVeterinario",
+              "tipo": "documento",
+              "content": "<p>Indicar: </p><br/>\n"
+            }
+          ],
+          "apartadosHijos": []
+        },
+        {
+          "id": 93,
+          "nombre": "Evaluación retrospectiva",
+          "titulo": "5.3 Evaluación retrospectiva",
+          "orden": 3,
+          "elementos": [
+            {
+              "nombre": "",
+              "tipo": "template",
+              "content": "¿El proyecto requiere evaluación retrospectiva?<br/>\n"
+            },
+            {
+              "nombre": "evaluacionRetrospectivaRadio",
+              "tipo": "radio",
+              "content": "<p>Elige opción: </p><br/>\n"
+            },
+            {
+              "nombre": "",
+              "tipo": "template",
+              "content": " <p>Requieren <strong>evaluación retrospectiva</strong> los <strong>proyectos Tipo III</strong> que, en líneas generales, son aquellos que incluyen:</p><ul><li>intervenciones clasificadas como «severas» que implican dolor severo, sufrimiento o angustia para el animal y que puede ser duradero y que no puede experimentar una mejoría.</li><li>utilización de primates no humanos</li><li>alguna excepción o situación especial que requiera la pertinente solicitud del apartado 5.4</li></ul><p>También requerirán evaluación retrospectiva los proyectos de Tipo II con intervenciones calificadas de “moderadas” cuya evaluación así lo determine.</p><p>Para más información sobre evaluación retrospectiva consultar los artículos <a target='_blank' href='http://www.boe.es/buscar/act.php?id=BOE-A-2013-1337&amp;p=20130208&amp;tn=1#a31'>31</a>, <a target='_blank' href='http://www.boe.es/buscar/act.php?id=BOE-A-2013-1337&amp;p=20130208&amp;tn=1#a35'>35</a> y <a target='_blank' href='http://www.boe.es/buscar/act.php?id=BOE-A-2013-1337&amp;p=20130208&amp;tn=1#dasegunda'>Disposición adicional segunda</a> del RD 53/2013)</p><br/>\n"
+            },
+            {
+              "nombre": "",
+              "tipo": "template",
+              "content": "Motivo de la evaluación<br/>\n"
+            },
+            {
+              "nombre": "motivoEvaluacionRetrospectivaCheck",
+              "tipo": "multicheckbox",
+              "content": "<p>Seleccionar: <i></i></p><br/>\n"
+            },
+            {
+              "nombre": "especificarMotivo",
+              "tipo": "input",
+              "content": "<p>Especificar: </p><br/>\n"
+            },
+            {
+              "nombre": "",
+              "tipo": "template",
+              "content": "Fecha de la evaluación retrospectiva (seguimiento)<br/>\n"
+            },
+            {
+              "nombre": "fechaEvRetrospectiva",
+              "tipo": "datepicker",
+              "content": "<p>Fecha: <i></i></p><br/>\n"
+            }
+          ],
+          "apartadosHijos": []
+        },
+        {
+          "id": 94,
+          "nombre": "Situaciones especiales, excepcionales o salvaguardias legales",
+          "titulo": "5.4 Situaciones especiales, excepcionales o salvaguardias legales",
+          "orden": 4,
+          "elementos": [
+            {
+              "nombre": "",
+              "tipo": "template",
+              "content": "¿El proyecto requiere solicitud sobre situaciones especiales, excepciones o salvaguardias legales?<br/>\n"
+            },
+            {
+              "nombre": "",
+              "tipo": "template",
+              "content": "<p>Todas las situaciones especiales o excepciones requerirán la redacción por parte del/la Responsable del Proyecto de una Solicitud Razonada (antes Solicitud Previa y Expresa) explicando el motivo de la excepción y su justificación que se remitirá al Comité Habilitado y al Órgano Competente.</p><p>Estas situaciones están previstas en el El RD 53/2013 (artículos 6, 7, 9.1, 19, 20, 21, 22, 23, 25.3 y 25.5, 26 y 29) y en líneas generales tienen que ver con:</p><ul><li>Realización de procedimientos en los que no se utiliza anestesia, analgesia u otros métodos destinados a eliminar al máximo el dolor, el sufrimiento o la angustia, por ser incompatibles con los resultados perseguidos por el procedimiento o por estar contraindicada.</li><li>Utilización de animales de las especies incluidas en el <a target='_blank' href='http://www.boe.es/buscar/act.php?id=BOE-A-2013-1337&amp;p=20130208&amp;tn=1#ani'>anexo I</a> del RD 53/2013 que no hayan nacido ni hayan sido expresamente criados en centros oficialmente reconocidos.</li><li>Utilización de animales de las especies no incluidas en el <a target='_blank' href='http://www.boe.es/buscar/act.php?id=BOE-A-2013-1337&amp;p=20130208&amp;tn=1#ani'>anexo I</a> del RD 53/2013 que no procedan de centros de cría o suministro.</li><li>Ejecución de procedimientos fuera de los centros usuarios</li><li>Liberación de los animales durante el procedimiento</li><li>Utilización de animales salvajes capturados en la naturaleza, de animales vagabundos, de animales procedentes de centros de protección animal oficiales o de animales protegidos o en peligro de extinción.</li><li>Ejecución de procedimientos en que el animal puede sufrir un dolor grave o prolongado</li><li>Liberación al medio originario de estos animales, una vez terminados los procedimientos en los que se han utilizado animales capturados en la naturaleza</li><li>Utilización de primates no humanos.</li></ul><br/>\n"
+            },
+            {
+              "nombre": "solicitudSituacionesEspeciales",
+              "tipo": "documento",
+              "content": "<p>Indicar: </p><br/>\n"
+            }
+          ],
+          "apartadosHijos": []
+        },
+        {
+          "id": 95,
+          "nombre": "Resumen no técnico (RNT)",
+          "titulo": "5.5 Resumen no técnico (RNT)",
+          "orden": 5,
+          "elementos": [
+            {
+              "nombre": "",
+              "tipo": "template",
+              "content": "A continuación debe descargarse la plantilla 'RNT: Resumen no técnico' para redactar el <strong>Resumen no técnico (RNT)</strong> y aportarlo en el apartado correspondiente de 'Documentación'.<br/>\n"
+            },
+            {
+              "nombre": "",
+              "tipo": "template",
+              "content": "<p><strong>Real Decreto 118/2021</strong>, de 23 de febrero, por el que se modifica el Real Decreto 53/2013, de 1 de febrero dictamina que el/la responsable del proyecto debe redactar un resumen anónimo no técnico (RNT) del proyecto y sus eventuales actualizaciones, que se presentará a la Comisión Europea en el plazo máximo de seis meses desde su autorización.</p><p>Siempre que la propiedad intelectual y la información confidencial queden protegidas, el resumen no técnico del proyecto incluirá, al menos, lo siguiente:</p><ul><li><strong>Será anónimo y no contendrá nombres</strong> ni direcciones de los usuarios ni de las personas, ni ningún otro dato de carácter personal.</li><li>Información sobre los <strong>objetivos</strong> del proyecto, incluidos los <strong>perjuicios</strong> y los <strong>beneficios</strong> previstos, así como el <strong>número</strong> y <strong>tipo</strong> de animales que van a utilizarse.<li>La demostración del cumplimiento del requisito de <strong>reemplazo</strong>, <strong>reducción</strong> y <strong>refinamiento</strong>.</li></ul><p>Los órganos competentes podrán exigir que el resumen no técnico del proyecto especifique si este debe someterse a una evaluación retrospectiva y, en tal caso, establecer el plazo. En tal caso, el resumen no técnico del proyecto debe actualizarse con los resultados de la evaluación retrospectiva en un plazo de seis meses a partir de la finalización de esta evaluación retrospectiva.</p><p>Una vez autorizado el proyecto, el órgano competente publicará el RNT en la página web del <a target='_blank' href='https://www.magrama.gob.es/es/ganaderia/temas/produccion-y-mercados-ganaderos/bienestanimal/en-la-investigacion/Resumenes_no_tecnicos_de_los_proyectos.aspx'>Ministerio de Economía y Competitividad</a>.</p><p> Para la redacción del RNT se facilitan plantillas en la página correspondiente en la web del <a target='_blank' href='https://www.um.es/web/comision-etica-investigacion/comision-etica/ceea'>Comité de la Universidad</a>.</p><br/>\n"
+            },
+            {
+              "nombre": "resumenNoTecnico",
+              "tipo": "documento",
+              "content": "<p>Indicar: </p><br/>\n"
+            }
+          ],
+          "apartadosHijos": []
+        },
+        {
+          "id": 96,
+          "nombre": "Documentación adicional",
+          "titulo": "5.6 Documentación adicional",
+          "orden": 6,
+          "elementos": [
+            {
+              "nombre": "",
+              "tipo": "template",
+              "content": "¿Dispone de alguna otra documentación adicional para su proyecto? (p.ej. referencias bibliográficas etc)<br/>\n"
+            },
+            {
+              "nombre": "documentacionAdicional",
+              "tipo": "documento",
+              "content": "<p>Indicar: </p><br/>\n"
+            },
+            {
+              "nombre": "documentacionAdicionalDescripcion",
+              "tipo": "textarea",
+              "content": "<p>Especificar: </p><br/>\n"
+            }
+          ],
+          "apartadosHijos": []
+        },
+        {
+          "id": 97,
+          "nombre": "Aclaraciones al comité",
+          "titulo": "5.7 Aclaraciones al comité",
+          "orden": 7,
+          "elementos": [
+            {
+              "nombre": "",
+              "tipo": "template",
+              "content": "<p>Incluir a continuación cualquier otra aclaración que se considere necesaria para el comité</p><br/>\n"
+            },
+            {
+              "nombre": "aclaracionesComite",
+              "tipo": "textarea",
+              "content": "<p>Aclaraciones: </p><br/>\n"
+            }
+          ],
+          "apartadosHijos": []
+        }
+      ]
+    }
+  ]
+}

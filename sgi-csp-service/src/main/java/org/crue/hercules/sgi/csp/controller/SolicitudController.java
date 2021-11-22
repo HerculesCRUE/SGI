@@ -25,6 +25,7 @@ import org.crue.hercules.sgi.csp.model.SolicitudProyectoPresupuesto;
 import org.crue.hercules.sgi.csp.model.SolicitudProyectoResponsableEconomico;
 import org.crue.hercules.sgi.csp.model.SolicitudProyectoSocio;
 import org.crue.hercules.sgi.csp.service.EstadoSolicitudService;
+import org.crue.hercules.sgi.csp.service.ProyectoService;
 import org.crue.hercules.sgi.csp.service.SolicitudDocumentoService;
 import org.crue.hercules.sgi.csp.service.SolicitudHitoService;
 import org.crue.hercules.sgi.csp.service.SolicitudModalidadService;
@@ -112,6 +113,9 @@ public class SolicitudController {
   /** SolicitudProyectoEntidadService */
   private final SolicitudProyectoEntidadService solicitudProyectoEntidadService;
 
+  /** ProyectoService */
+  private final ProyectoService proyectoService;
+
   /**
    * Instancia un nuevo SolicitudController.
    * 
@@ -130,6 +134,7 @@ public class SolicitudController {
    * @param solicitudProyectoAreaConocimientoService         {@link SolicitudProyectoAreaConocimientoService}.
    * @param solicitudProyectoResponsableEconomicoService     {@link SolicitudProyectoResponsableEconomicoService}.
    * @param solicitudProyectoEntidadService                  {@link SolicitudProyectoEntidadService}.
+   * @param proyectoService                                  {@link ProyectoService}.
    */
   public SolicitudController(ModelMapper modelMapper, SolicitudService solicitudService,
       SolicitudModalidadService solicitudModalidadService, EstadoSolicitudService estadoSolicitudService,
@@ -141,7 +146,7 @@ public class SolicitudController {
       SolicitudProyectoClasificacionService solicitudProyectoClasificacionService,
       SolicitudProyectoAreaConocimientoService solicitudProyectoAreaConocimientoService,
       SolicitudProyectoResponsableEconomicoService solicitudProyectoResponsableEconomicoService,
-      SolicitudProyectoEntidadService solicitudProyectoEntidadService) {
+      SolicitudProyectoEntidadService solicitudProyectoEntidadService, ProyectoService proyectoService) {
     this.modelMapper = modelMapper;
     this.service = solicitudService;
     this.solicitudModalidadService = solicitudModalidadService;
@@ -157,6 +162,7 @@ public class SolicitudController {
     this.solicitudProyectoAreaConocimientoService = solicitudProyectoAreaConocimientoService;
     this.solicitudProyectoResponsableEconomicoService = solicitudProyectoResponsableEconomicoService;
     this.solicitudProyectoEntidadService = solicitudProyectoEntidadService;
+    this.proyectoService = proyectoService;
   }
 
   /**
@@ -219,7 +225,7 @@ public class SolicitudController {
    * @return {@link Solicitud} actualizado.
    */
   @PatchMapping("/{id}/desactivar")
-  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-SOL-B', 'CSP-SOL-BR-INV')")
+  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-SOL-B', 'CSP-SOL-BR-INV', 'CSP-SOL-INV-ER')")
   Solicitud desactivar(@PathVariable Long id) {
     log.debug("desactivar(Long id) - start");
 
@@ -327,7 +333,7 @@ public class SolicitudController {
    * @param paging pageable.
    */
   @GetMapping("/{id}/estadosolicitudes")
-  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-SOL-E', 'CSP-SOL-V')")
+  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-SOL-E', 'CSP-SOL-V', 'CSP-SOL-INV-ER')")
   ResponseEntity<Page<EstadoSolicitud>> findAllEstadoSolicitud(@PathVariable Long id,
       @RequestPageable(sort = "s") Pageable paging) {
     log.debug("findAllEstadoSolicitud(Long id, Pageable paging) - start");
@@ -375,7 +381,7 @@ public class SolicitudController {
    * @param paging pageable.
    */
   @GetMapping("/{id}/solicituddocumentos")
-  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-SOL-E', 'CSP-SOL-V')")
+  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-SOL-E', 'CSP-SOL-V','CSP-SOL-INV-ER')")
   ResponseEntity<Page<SolicitudDocumento>> findAllSolicitudDocumentos(@PathVariable Long id,
       @RequestParam(name = "q", required = false) String query, @RequestPageable(sort = "s") Pageable paging) {
     log.debug("findAllSolicitudDocumentos(Long id, String query, Pageable paging) - start");
@@ -458,7 +464,7 @@ public class SolicitudController {
    * @param paging pageable.
    */
   @GetMapping("/{id}/solicitudproyectoequipo")
-  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-SOL-E', 'CSP-SOL-V')")
+  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-SOL-E', 'CSP-SOL-V', 'CSP-SOL-INV-ER')")
   ResponseEntity<Page<SolicitudProyectoEquipo>> findAllSolicitudProyectoEquipo(@PathVariable Long id,
       @RequestParam(name = "q", required = false) String query, @RequestPageable(sort = "s") Pageable paging) {
     log.debug("findAllSolicitudProyectoEquipo(Long id, String query, Pageable paging) - start");
@@ -702,7 +708,7 @@ public class SolicitudController {
    * @param paging pageable.
    */
   @GetMapping("/{id}/solicitud-proyecto-clasificaciones")
-  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-SOL-E','CSP-SOL-V')")
+  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-SOL-E','CSP-SOL-V','CSP-SOL-INV-ER')")
   ResponseEntity<Page<SolicitudProyectoClasificacion>> findAllSolicitudProyectoClasificaciones(@PathVariable Long id,
       @RequestParam(name = "q", required = false) String query, @RequestPageable(sort = "s") Pageable paging) {
     log.debug("findAllSolicitudProyectoClasificaciones(Long id, String query, Pageable paging) - start");
@@ -891,6 +897,22 @@ public class SolicitudController {
 
     log.debug("findSolicitudProyectoEntidadTipoPresupuestoPorEntidad(Long id, String query, Pageable paging) - end");
     return new ResponseEntity<>(page, HttpStatus.OK);
+  }
+
+  /**
+   * Devuelve una lista de identificadores de los objetos de tipo {@link Proyecto}
+   * que están que tienen relación con el objeto de tipo {@link Solicitud} cuyo id
+   * se recibe por el path
+   * 
+   * @param id id del objeto {@link Solicitud}
+   * @return lista de identificadores de los objetos de tipo {@link Proyecto}
+   */
+  @GetMapping("/{id}/proyectosids")
+  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-SOL-E', 'CSP-SOL-V', 'CSP-SOL-INV-ER')")
+  public ResponseEntity<List<Long>> findProyectosIdsBySolicitudId(@PathVariable Long id) {
+
+    List<Long> proyectos = this.proyectoService.findIdsBySolicitudId(id);
+    return proyectos.isEmpty() ? ResponseEntity.noContent().build() : ResponseEntity.ok(proyectos);
   }
 
 }

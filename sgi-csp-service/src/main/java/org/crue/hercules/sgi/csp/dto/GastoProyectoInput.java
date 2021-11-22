@@ -6,9 +6,9 @@ import java.time.Instant;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import org.crue.hercules.sgi.csp.model.EstadoGastoProyecto.TipoEstadoGasto;
 import org.crue.hercules.sgi.csp.model.GastoProyecto;
 
 import lombok.AllArgsConstructor;
@@ -24,7 +24,6 @@ import lombok.NoArgsConstructor;
 @Builder
 public class GastoProyectoInput implements Serializable {
 
-  @NotNull
   private Long proyectoId;
 
   @NotBlank
@@ -33,7 +32,6 @@ public class GastoProyectoInput implements Serializable {
 
   private Long conceptoGastoId;
 
-  @NotNull
   private Instant fechaCongreso;
 
   @Min(GastoProyecto.IMPORTE_INSCRIPCION_MIN)
@@ -41,5 +39,19 @@ public class GastoProyectoInput implements Serializable {
 
   @Size(max = GastoProyecto.OBSERVACIONES_LENGTH)
   private String observaciones;
+
+  private EstadoGastoProyecto estado;
+
+  @Data
+  @EqualsAndHashCode(callSuper = false)
+  @NoArgsConstructor
+  @AllArgsConstructor
+  @Builder
+  public static class EstadoGastoProyecto {
+    private Long id;
+    private TipoEstadoGasto estado;
+    private Instant fechaEstado;
+    private String comentario;
+  }
 
 }

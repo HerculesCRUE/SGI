@@ -94,15 +94,15 @@ export class SolicitudProteccionEditarComponent extends ActionComponent implemen
       (error) => {
         this.logger.error(error);
         if (error instanceof HttpProblem) {
-          this.snackBarService.showError(error);
-        }
-        else {
+          if(!error.managed){
+            this.snackBarService.showError(error);
+          }
+        } else {
           this.snackBarService.showError(this.textEditarError);
         }
       },
       () => {
         this.snackBarService.showSuccess(this.textEditarSuccess);
-        this.router.navigate(['../'], { relativeTo: this.activatedRoute });
       }
     );
   }

@@ -22,10 +22,13 @@ import org.springframework.util.StringUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * {@link OidcUserService} cutom implementation for Keycloak.
+ */
 @RequiredArgsConstructor
 @Slf4j
 public class KeycloakOidcUserService extends OidcUserService {
-  private final OAuth2Error INVALID_REQUEST = new OAuth2Error(OAuth2ErrorCodes.INVALID_REQUEST);
+  private static final OAuth2Error INVALID_REQUEST = new OAuth2Error(OAuth2ErrorCodes.INVALID_REQUEST);
 
   private final JwtDecoder jwtDecoder;
 
@@ -45,7 +48,10 @@ public class KeycloakOidcUserService extends OidcUserService {
     Jwt jwt = parseJwt(accessToken.getTokenValue());
     // 2) Map the authority information to one or more GrantedAuthority's and add it
     // to mappedAuthorities
-    mappedAuthorities.addAll(convert(jwt).getAuthorities());
+    AbstractAuthenticationToken token = convert(jwt);
+    if (token != null) {
+      mappedAuthorities.addAll(token.getAuthorities());
+    }
 
     // 3) Create a copy of oidcUser but use the mappedAuthorities instead
     String userNameAttributeName = userRequest.getClientRegistration().getProviderDetails().getUserInfoEndpoint()

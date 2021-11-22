@@ -1,9 +1,11 @@
 import { Injectable } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
+import { IChecklist } from '@core/models/eti/checklist';
 import { IEquipoTrabajo } from '@core/models/eti/equipo-trabajo';
 import { IPeticionEvaluacion } from '@core/models/eti/peticion-evaluacion';
 import { ActionService, IFragment } from '@core/services/action-service';
+import { ChecklistService } from '@core/services/eti/checklist/checklist.service';
 import { EquipoTrabajoService } from '@core/services/eti/equipo-trabajo.service';
 import { MemoriaService } from '@core/services/eti/memoria.service';
 import { PeticionEvaluacionService } from '@core/services/eti/peticion-evaluacion.service';
@@ -38,6 +40,7 @@ export class PeticionEvaluacionActionService extends ActionService {
   private tareas: PeticionEvaluacionTareasFragment;
   private memoriasListado: MemoriasListadoFragment;
   private fragmentos: IFragment[] = [];
+  private checklist: IChecklist;
 
 
   constructor(
@@ -51,7 +54,8 @@ export class PeticionEvaluacionActionService extends ActionService {
     protected readonly tareaService: TareaService,
     protected readonly memoriaService: MemoriaService,
     protected readonly datosAcademicosService: DatosAcademicosService,
-    protected readonly vinculacionService: VinculacionService
+    protected readonly vinculacionService: VinculacionService,
+    protected readonly checklistService: ChecklistService
   ) {
     super();
 
@@ -63,9 +67,16 @@ export class PeticionEvaluacionActionService extends ActionService {
       this.readonly = route.snapshot.data.readonly;
     }
 
+    this.route.queryParams.subscribe(params => {
+      if (params?.checklist) {
+        this.checklist = JSON.parse(params.checklist);
+        params.checklist.remove();
+      }
+    });
+
     this.datosGenerales =
       new PeticionEvaluacionDatosGeneralesFragment(
-        fb, this.peticionEvaluacion?.id, peticionEvaluacionService, sgiAuthService, this.readonly);
+        fb, this.peticionEvaluacion?.id, peticionEvaluacionService, sgiAuthService, checklistService, this.checklist, this.readonly);
     this.equipoInvestigadorListado = new EquipoInvestigadorListadoFragment(
       this.peticionEvaluacion?.id, personaService, peticionEvaluacionService, sgiAuthService, datosAcademicosService, vinculacionService);
     this.memoriasListado = new MemoriasListadoFragment(this.peticionEvaluacion?.id, peticionEvaluacionService, memoriaService);

@@ -80,18 +80,21 @@ export class DateValidator {
         return;
       }
 
-      const fechaAnteriorDate: DateTime = fechaAnteriorControl.value;
-      const fechaPosteriorDate: DateTime = fechaPosteriorControl.value;
-
-
-      if (fechaAnteriorDate && (fechaPosteriorDate < fechaAnteriorDate)) {
-        fechaAnteriorControl.setErrors({ before: true });
-        fechaAnteriorControl.markAsTouched({ onlySelf: true });
-      } else if (fechaAnteriorControl.errors) {
-        delete fechaAnteriorControl.errors.before;
-        fechaAnteriorControl.updateValueAndValidity({ onlySelf: true });
-      }
+      DateValidator.validateBeforeOrEqualInRange(fechaAnteriorControl, fechaPosteriorControl);
     };
+  }
+
+  private static validateBeforeOrEqualInRange(fechaAnteriorControl: AbstractControl, fechaPosteriorControl: AbstractControl): void {
+    const fechaAnteriorDate: DateTime = fechaAnteriorControl.value;
+    const fechaPosteriorDate: DateTime = fechaPosteriorControl.value;
+
+    if (fechaAnteriorDate && (fechaPosteriorDate < fechaAnteriorDate)) {
+      fechaAnteriorControl.setErrors({ before: true });
+      fechaAnteriorControl.markAsTouched({ onlySelf: true });
+    } else if (fechaAnteriorControl.errors) {
+      delete fechaAnteriorControl.errors.before;
+      fechaAnteriorControl.updateValueAndValidity({ onlySelf: true });
+    }
   }
 
   /**
@@ -228,6 +231,17 @@ export class DateValidator {
       if (control.value && other.value) {
         if (control.value.toMillis() <= other.value.toMillis()) {
           return { after: true };
+        }
+      }
+      return null;
+    };
+  }
+
+  static isBeforeOther(other: AbstractControl): ValidatorFn {
+    return (control: AbstractControl): ValidationErrors | null => {
+      if (control.value && other.value) {
+        if (control.value.toMillis() >= other.value.toMillis()) {
+          return { before: true };
         }
       }
       return null;

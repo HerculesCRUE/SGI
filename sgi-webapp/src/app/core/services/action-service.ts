@@ -3,7 +3,7 @@ import { AbstractControl, FormArray, FormControl, FormGroup } from '@angular/for
 import { HttpProblem, Problem } from '@core/errors/http-problem';
 import { DateTime } from 'luxon';
 import { BehaviorSubject, from, Observable, of, Subject, Subscription, throwError } from 'rxjs';
-import { catchError, filter, mergeMap, switchMap, takeLast, tap } from 'rxjs/operators';
+import { catchError, defaultIfEmpty, filter, mergeMap, switchMap, takeLast, tap } from 'rxjs/operators';
 
 export interface IActionService {
   /**
@@ -77,7 +77,7 @@ export interface ActionStatus {
   edit: boolean;
 }
 
-interface IGroup {
+export interface IGroup {
   /**
    * Asociated form group
    */
@@ -806,7 +806,7 @@ export class Group implements IGroup {
       this.form.markAllAsTouched();
     }
     this.forcingUpdate = true;
-    this.form.updateValueAndValidity({ onlySelf: false, emitEvent: true });
+    this.form.updateValueAndValidity();
   }
 
   destroy(): void {
@@ -824,11 +824,13 @@ export class Group implements IGroup {
     this.status$.next({ errors: false, changes: false, complete: false });
   }
 
-  private deepEquals(x: any, y: any): boolean {
+  private deepEquals(x: any, y: any, root = true): boolean {
     if (x === y) {
       return true; // if both x and y are null or undefined and exactly the same
     } else if (!(x instanceof Object) || !(y instanceof Object)) {
       return false; // if they are not strictly equal, they both need to be Objects
+    } else if (!root && x.hasOwnProperty('id') && y.hasOwnProperty('id')) {
+      return x.id === y.id;
     } else if (x.constructor !== y.constructor) {
       // they must have the exact same prototype chain, the closest we can do is
       // test their constructor.
@@ -853,7 +855,7 @@ export class Group implements IGroup {
         if (typeof (x[p]) !== 'object') {
           return false; // Numbers, Strings, Functions, Booleans must be strictly equal
         }
-        if (!this.deepEquals(x[p], y[p])) {
+        if (!this.deepEquals(x[p], y[p], false)) {
           return false;
         }
       }
@@ -905,11 +907,13 @@ export abstract class ActionService implements IActionService, OnDestroy {
           }),
           tap(() => part.refreshInitialState(true)))
         ),
-        takeLast(1)
+        takeLast(1),
+        defaultIfEmpty(void 0)
       );
     }
     else {
       const part = this.fragments.get(this.masterFragmentName);
+      part.clearProblems();
       return part.saveOrUpdate().pipe(
         catchError(error => {
           if (error instanceof HttpProblem) {

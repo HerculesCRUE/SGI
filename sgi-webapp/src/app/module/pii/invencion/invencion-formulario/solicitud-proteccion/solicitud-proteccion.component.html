@@ -104,16 +104,9 @@
             </button>
           </ng-container>
           <ng-container *sgiHasAuthority="'PII-INV-E'">
-            <button *ngIf="solicitudprot?.activo" mat-button matTooltip="{{'btn.delete' | translate}}"
+            <button *ngIf="!solicitudprot?.id" mat-button matTooltip="{{'btn.delete' | translate}}"
               (click)="deactivateSolicitudProteccion(solicitudprot, row)">
               <mat-icon color="warn">highlight_off</mat-icon>
-            </button>
-          </ng-container>
-          <ng-container *sgiHasAuthority="'PII-INV-E'">
-            <button *ngIf="!solicitudprot?.activo" mat-button matTooltip="{{'btn.recover' | translate}}"
-              (click)="activateSolicitudProteccion(solicitudprot, row)">
-              <mat-icon color="accent">add_circle_outline
-              </mat-icon>
             </button>
           </ng-container>
 

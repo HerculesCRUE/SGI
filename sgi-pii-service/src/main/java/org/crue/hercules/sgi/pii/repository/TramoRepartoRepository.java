@@ -7,6 +7,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface TramoRepartoRepository
-    extends ActivableRepository, JpaRepository<TramoReparto, Long>, JpaSpecificationExecutor<TramoReparto> {
+    extends JpaRepository<TramoReparto, Long>, JpaSpecificationExecutor<TramoReparto> {
 
 }

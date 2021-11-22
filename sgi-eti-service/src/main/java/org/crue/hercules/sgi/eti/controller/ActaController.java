@@ -1,11 +1,16 @@
 package org.crue.hercules.sgi.eti.controller;
 
+import java.util.List;
+
 import javax.validation.Valid;
 import javax.validation.groups.Default;
 
 import org.crue.hercules.sgi.eti.dto.ActaWithNumEvaluaciones;
+import org.crue.hercules.sgi.eti.dto.DocumentoOutput;
+import org.crue.hercules.sgi.eti.dto.MemoriaEvaluada;
 import org.crue.hercules.sgi.eti.model.Acta;
 import org.crue.hercules.sgi.eti.model.BaseEntity.Update;
+import org.crue.hercules.sgi.eti.model.Evaluacion;
 import org.crue.hercules.sgi.eti.service.ActaService;
 import org.crue.hercules.sgi.framework.web.bind.annotation.RequestPageable;
 import org.springframework.data.domain.Page;
@@ -60,7 +65,7 @@ public class ActaController {
    */
   @GetMapping()
   @PreAuthorize("hasAnyAuthorityForAnyUO('ETI-ACT-V','ETI-ACT-INV-ER', 'ETI-ACT-ER')")
-  ResponseEntity<Page<ActaWithNumEvaluaciones>> findAllActaWithNumEvaluaciones(
+  public ResponseEntity<Page<ActaWithNumEvaluaciones>> findAllActaWithNumEvaluaciones(
       @RequestParam(name = "q", required = false) String query, @RequestPageable(sort = "s") Pageable paging,
       Authentication authentication) {
     log.debug("findAllActaWithNumEvaluaciones(String query, Pageable paging) - start");
@@ -98,7 +103,8 @@ public class ActaController {
    */
   @PutMapping("/{id}")
   @PreAuthorize("hasAuthorityForAnyUO('ETI-ACT-E')")
-  Acta replaceActa(@Validated({ Update.class, Default.class }) @RequestBody Acta updatedActa, @PathVariable Long id) {
+  public Acta replaceActa(@Validated({ Update.class, Default.class }) @RequestBody Acta updatedActa,
+      @PathVariable Long id) {
     log.debug("replaceActa(Acta updatedActa, Long id) - start");
     updatedActa.setId(id);
     Acta returnValue = service.update(updatedActa);
@@ -114,7 +120,7 @@ public class ActaController {
    */
   @GetMapping("/{id}")
   @PreAuthorize("hasAnyAuthorityForAnyUO('ETI-ACT-V','ETI-ACT-INV-ER','ETI-ACT-ER')")
-  Acta one(@PathVariable Long id) {
+  public Acta one(@PathVariable Long id) {
     log.debug("Acta one(Long id) - start");
     Acta returnValue = service.findById(id);
     log.debug("Acta one(Long id) - end");
@@ -128,6 +134,7 @@ public class ActaController {
    * @return HTTP 200 si existe y HTTP 204 si no.
    */
   @RequestMapping(path = "/{id}", method = RequestMethod.HEAD)
+  @PreAuthorize("hasAnyAuthorityForAnyUO('ETI-ACT-V','ETI-ACT-INV-ER','ETI-ACT-ER')")
   public ResponseEntity<?> exists(@PathVariable Long id) {
     log.debug("Acta exists(Long id) - start");
     if (service.existsById(id)) {
@@ -144,7 +151,7 @@ public class ActaController {
    * @param id Identificador de {@link Acta}.
    */
   @DeleteMapping("/{id}")
-  @PreAuthorize("hasAuthorityForAnyUO('ETI-ACT-B')")
+  @PreAuthorize("hasAuthorityForAnyUO('ETI-ACT-DES')")
   void delete(@PathVariable Long id) {
     log.debug("delete(Long id) - start");
     Acta acta = this.one(id);
@@ -153,16 +160,92 @@ public class ActaController {
     log.debug("delete(Long id) - end");
   }
 
-  /**
-   * 
-   */
   @PutMapping("/{id}/finalizar")
   @PreAuthorize("hasAnyAuthorityForAnyUO('ETI-ACT-FIN','ETI-ACT-INV-DESR','ETI-ACT-DESR')")
-  void finishActa(@PathVariable Long id) {
+  public void finishActa(@PathVariable Long id) {
 
     log.debug("finalizarActa(Long id) - start");
     service.finishActa(id);
     log.debug("finalizarActa(Long id) - end");
 
+  }
+
+  /**
+   * Obtiene el número de {@link Evaluacion} nuevas de un {@link Acta}
+   * 
+   * @param idActa id {@link Acta}
+   * @return Número de evaluaciones nuevas
+   */
+  @GetMapping("/{idActa}/numero-evaluaciones-nuevas")
+  @PreAuthorize("hasAnyAuthorityForAnyUO('ETI-EVC-EVAL', 'ETI-ACT-DES', 'ETI-ACT-DESR', 'ETI-ACT-INV-DESR')")
+  public ResponseEntity<Long> countEvaluacionesNuevas(@PathVariable Long idActa) {
+    log.debug("countEvaluacionesNuevas(@PathVariable Long idActa) - start");
+    Long countNumEvaluaciones = service.countEvaluacionesNuevas(idActa);
+    log.debug("countEvaluacionesNuevas(@PathVariable Long idActa) - end");
+    return new ResponseEntity<>(countNumEvaluaciones, HttpStatus.OK);
+  }
+
+  /**
+   * Obtiene el número de {@link Evaluacion} de revisión sin las de revision
+   * mínima de un {@link Acta}
+   * 
+   * @param idActa id {@link Acta}
+   * @return Número de evaluaciones
+   */
+  @GetMapping("/{idActa}/numero-evaluaciones-revision-sin-minima")
+  @PreAuthorize("hasAnyAuthorityForAnyUO('ETI-EVC-EVAL', 'ETI-ACT-DES', 'ETI-ACT-DESR', 'ETI-ACT-INV-DESR')")
+  public ResponseEntity<Long> countEvaluacionesRevisionSinMinima(@PathVariable Long idActa) {
+    log.debug("countEvaluacionesRevisionSinMinima(@PathVariable Long idActa) - start");
+    Long countNumEvaluaciones = service.countEvaluacionesRevisionSinMinima(idActa);
+    log.debug("countEvaluacionesRevisionSinMinima(@PathVariable Long idActa) - end");
+    return new ResponseEntity<>(countNumEvaluaciones, HttpStatus.OK);
+  }
+
+  /**
+   * Devuelve una lista de {@link MemoriaEvaluada} sin las de revisión mínima para
+   * una determinada {@link Acta}
+   * 
+   * @param idActa Id de {@link Acta}.
+   * @return lista de memorias evaluadas
+   */
+  @GetMapping("/{idActa}/memorias-evaluadas")
+  @PreAuthorize("hasAnyAuthorityForAnyUO('ETI-EVC-EVAL', 'ETI-ACT-DES', 'ETI-ACT-DESR', 'ETI-ACT-INV-DESR')")
+  public List<MemoriaEvaluada> findAllMemoriasEvaluadasSinRevMinimaByActaId(@PathVariable Long idActa) {
+    return service.findAllMemoriasEvaluadasSinRevMinimaByActaId(idActa);
+  }
+
+  /**
+   * Obtiene el documento de un {@link Acta}
+   * 
+   * @param idActa id {@link Acta}
+   * @return el documento del acta
+   */
+  @GetMapping("/{idActa}/documento")
+  @PreAuthorize("hasAnyAuthorityForAnyUO('ETI-ACT-DES', 'ETI-ACT-DESR', 'ETI-ACT-INV-DESR')")
+  public ResponseEntity<DocumentoOutput> documentoActa(@PathVariable Long idActa) {
+    log.debug("documentoActa(@PathVariable Long idActa) - start");
+    DocumentoOutput documento = service.generarDocumentoActa(idActa);
+    log.debug("documentoActa(@PathVariable Long idActa) - end");
+    return new ResponseEntity<>(documento, HttpStatus.OK);
+  }
+
+  /**
+   * Comprueba si la persona es miembro activo del comité del {@link Acta}
+   * 
+   * @param id             Identificador de {@link Acta}.
+   * @param authentication Authentication
+   * @return HTTP 200 si existe y HTTP 204 si no.
+   */
+  @RequestMapping(path = "/{id}/miembro-comite", method = RequestMethod.HEAD)
+  @PreAuthorize("hasAuthorityForAnyUO('ETI-ACT-INV-ER')")
+  public ResponseEntity<?> isMiembroActivoComiteActa(@PathVariable Long id, Authentication authentication) {
+    log.debug("isMiembroActivoComiteActa(Long id, Authentication authentication) - start");
+    String personaRef = authentication.getName();
+    if (service.isMiembroComiteActa(personaRef, id)) {
+      log.debug("isMiembroActivoComiteActa(Long id, Authentication authentication) - end");
+      return new ResponseEntity<>(HttpStatus.OK);
+    }
+    log.debug("isResponsableOrCreador(Long id, Authentication authentication) - end");
+    return new ResponseEntity<>(HttpStatus.NO_CONTENT);
   }
 }

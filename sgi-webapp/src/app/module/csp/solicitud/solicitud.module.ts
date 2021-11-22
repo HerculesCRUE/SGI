@@ -14,6 +14,7 @@ import { CambioEstadoModalComponent } from './modals/cambio-estado-modal/cambio-
 import { SolicitudAreaTematicaModalComponent } from './modals/solicitud-area-tematica-modal/solicitud-area-tematica-modal.component';
 import { SolicitudCrearProyectoModalComponent } from './modals/solicitud-crear-proyecto-modal/solicitud-crear-proyecto-modal.component';
 import { SolicitiudHitosModalComponent } from './modals/solicitud-hitos-modal/solicitud-hitos-modal.component';
+import { SolicitudListadoModalComponent } from './modals/solicitud-listado-modal/solicitud-listado-modal.component';
 import { SolicitudModalidadEntidadConvocanteModalComponent } from './modals/solicitud-modalidad-entidad-convocante-modal/solicitud-modalidad-entidad-convocante-modal.component';
 import { SolicitudProyectoResponsableEconomicoModalComponent } from './modals/solicitud-proyecto-responsable-economico-modal/solicitud-proyecto-responsable-economico-modal.component';
 import { SolicitudCrearComponent } from './solicitud-crear/solicitud-crear.component';
@@ -42,6 +43,7 @@ import { SolicitudRoutingModule } from './solicitud-routing.module';
     SolicitudCrearComponent,
     SolicitudEditarComponent,
     SolicitudListadoComponent,
+    SolicitudListadoModalComponent,
     SolicitudDatosGeneralesComponent,
     SolicitudModalidadEntidadConvocanteModalComponent,
     SolicitudHistoricoEstadosComponent,

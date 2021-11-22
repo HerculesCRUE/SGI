@@ -1,7 +1,7 @@
 import { HttpErrorResponse, HttpEvent, HttpHandler, HttpInterceptor, HttpRequest } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable, throwError } from 'rxjs';
-import { catchError } from 'rxjs/operators';
+import { from, Observable, throwError } from 'rxjs';
+import { catchError, map, switchMap } from 'rxjs/operators';
 import {
   AccessDeniedHttpProblem,
   AuthenticationHttpProblem,
@@ -23,13 +23,19 @@ import {
 @Injectable()
 export class SgiErrorHttpInterceptor implements HttpInterceptor {
 
-  constructor() { }
-
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     return next.handle(req).pipe(
       catchError((error: HttpErrorResponse) => {
         if (this.isProblem(error)) {
-          return throwError(this.resolveHttpProblem(error));
+          if (error.error instanceof Blob) {
+            return this.toJSONHttpErrorResponse(error).pipe(
+              map(jsonError => this.resolveHttpProblem(jsonError)),
+              switchMap(problem => throwError(problem))
+            );
+          }
+          else {
+            return throwError(this.resolveHttpProblem(error));
+          }
         }
         return throwError(error);
       })
@@ -74,5 +80,20 @@ export class SgiErrorHttpInterceptor implements HttpInterceptor {
 
   private isProblem(error: HttpErrorResponse): boolean {
     return error.headers.get('content-type') === 'application/problem+json';
+  }
+
+  private toJSONHttpErrorResponse(blobError: HttpErrorResponse): Observable<HttpErrorResponse> {
+    const blob = blobError.error as Blob;
+    return from(blob.text()).pipe(
+      map(body => {
+        return new HttpErrorResponse({
+          error: JSON.parse(body),
+          headers: blobError.headers,
+          status: blobError.status,
+          statusText: blobError.statusText,
+          url: blobError.url
+        });
+      })
+    );
   }
 }

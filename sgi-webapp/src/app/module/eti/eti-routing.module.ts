@@ -88,7 +88,7 @@ const routes: SgiRoutes = [
         data: {
           title: MSG_ACTAS_TITLE,
           titleParams: MSG_PARAMS.CARDINALIRY.PLURAL,
-          hasAnyAuthorityForAnyUO: ['ETI-ACT-V', 'ETI-ACT-C', 'ETI-ACT-E', 'ETI-ACT-B', 'ETI-ACT-DES', 'ETI-ACT-FIN']
+          hasAnyAuthorityForAnyUO: ['ETI-ACT-V', 'ETI-ACT-C', 'ETI-ACT-E', 'ETI-ACT-ER', 'ETI-ACT-DES', 'ETI-ACT-DESR', 'ETI-ACT-FIN']
         }
       },
       {
@@ -114,7 +114,7 @@ const routes: SgiRoutes = [
         data: {
           title: MSG_MEMORIAS_TITLE,
           titleParams: MSG_PARAMS.CARDINALIRY.PLURAL,
-          hasAuthorityForAnyUO: 'ETI-PEV-V'
+          hasAnyAuthorityForAnyUO: ['ETI-MEM-V', 'ETI-MEM-CEST']
         }
       },
       {
@@ -152,7 +152,7 @@ const routes: SgiRoutes = [
         data: {
           title: MSG_PETICIONES_EVALUACION_TITLE,
           titleParams: MSG_PARAMS.CARDINALIRY.PLURAL,
-          hasAnyAuthorityForAnyUO: ['ETI-PEV-V']
+          hasAuthorityForAnyUO: 'ETI-PEV-V'
         }
       }, {
         path: ETI_ROUTE_NAMES.CONFIGURACIONES,
@@ -164,7 +164,7 @@ const routes: SgiRoutes = [
         data: {
           title: MSG_CONFIGURACION_TITLE,
           titleParams: MSG_PARAMS.CARDINALIRY.PLURAL,
-          hasAnyAuthorityForAnyUO: ['ETI-CNF-E']
+          hasAuthorityForAnyUO: 'ETI-CNF-E'
         }
       },
       { path: '**', component: null }

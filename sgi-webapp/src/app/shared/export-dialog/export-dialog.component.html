@@ -1,0 +1,15 @@
+<sgi-dialog-header [title]="title" (closeClick)="modal.close()">
+</sgi-dialog-header>
+
+<sgi-dialog-content>
+  <sgi-dialog-content>
+    <ng-content></ng-content>
+  </sgi-dialog-content>
+</sgi-dialog-content>
+
+<sgi-dialog-footer>
+  <button color="accent" (click)="modal.export()" mat-raised-button type="submit">
+    <mat-icon>insert_chart_outlined</mat-icon>{{'btn.export' | translate}}
+  </button>
+  <button class="link-cancelar" mat-button type="button" mat-dialog-close>{{'btn.cancel' | translate}}</button>
+</sgi-dialog-footer>

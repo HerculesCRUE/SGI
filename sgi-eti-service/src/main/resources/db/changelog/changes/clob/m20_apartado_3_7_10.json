@@ -31,15 +31,15 @@
       },
       {
         "type": "table-crud",
-        "key": "extraccionSangreTable",
+        "key": "animalesExperimentacionTable",
         "hideExpression": "!field.parent.model.extraccionSangreRadio || field.parent.model.extraccionSangreRadio === 'no'",
         "templateOptions": {
-          "entity": "extracción sangre",
+          "entity": "experimentación animal",
           "gender": "female"
         },
         "fieldArray": {
           "templateOptions": {
-            "text": "Extracción sangre"
+            "text": "Experimentación animal"
           },
           "fieldGroup": [
             {

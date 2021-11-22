@@ -10,6 +10,7 @@ import { MaterialDesignModule } from '@material/material-design.module';
 import { SgiAuthModule } from '@sgi/framework/auth';
 import { SharedModule } from '@shared/shared.module';
 import { LoggerTestingModule } from 'ngx-logger/testing';
+import { CspSharedModule } from '../../../shared/csp-shared.module';
 import { ProyectoContextoModalComponent, ProyectoContextoModalData } from './proyecto-contexto-modal.component';
 
 describe('ProyectoContextoModalComponent', () => {
@@ -30,6 +31,7 @@ describe('ProyectoContextoModalComponent', () => {
         RouterTestingModule,
         ReactiveFormsModule,
         SgiAuthModule,
+        CspSharedModule,
         SharedModule
       ],
       providers: [

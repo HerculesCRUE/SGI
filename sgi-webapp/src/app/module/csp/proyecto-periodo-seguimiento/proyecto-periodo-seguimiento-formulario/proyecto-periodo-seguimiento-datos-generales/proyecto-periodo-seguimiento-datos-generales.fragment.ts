@@ -15,8 +15,9 @@ import { comparePeriodoSeguimiento, getFechaFinPeriodoSeguimiento, getFechaInici
 
 export class ProyectoPeriodoSeguimientoDatosGeneralesFragment extends FormFragment<IProyectoPeriodoSeguimiento> {
   proyectoPeriodoSeguimiento: IProyectoPeriodoSeguimiento;
-
+  convocatoriaPeriodoSeguimiento: IConvocatoriaPeriodoSeguimientoCientifico;
   showDatosConvocatoriaPeriodoSeguimiento = false;
+  disabledCopy = false;
 
   constructor(
     key: number,
@@ -94,6 +95,13 @@ export class ProyectoPeriodoSeguimientoDatosGeneralesFragment extends FormFragme
       form.disable();
     }
 
+    this.subscriptions.push(form.valueChanges.subscribe(
+      () => {
+        this.disabledCopy = !comparePeriodoSeguimiento(this.convocatoriaPeriodoSeguimiento, this.getValue(),
+          this.proyecto.fechaInicio, this.proyecto.fechaFin);
+      }
+    ));
+
     return form;
   }
 
@@ -141,39 +149,42 @@ export class ProyectoPeriodoSeguimientoDatosGeneralesFragment extends FormFragme
 
 
   setDatosConvocatoriaPeriodoSeguimiento(convocatoriaPeriodoSeguimiento: IConvocatoriaPeriodoSeguimientoCientifico) {
+    this.convocatoriaPeriodoSeguimiento = convocatoriaPeriodoSeguimiento;
+
     this.subscriptions.push(
       this.initialized$.pipe(
         skipWhile(initialized => !initialized)
       ).subscribe(() => {
 
+        if (!this.proyectoPeriodoSeguimiento.id) {
+          this.disableEditableControls();
+        }
+
         this.proyectoPeriodoSeguimiento.convocatoriaPeriodoSeguimientoId = convocatoriaPeriodoSeguimiento.id;
 
-        if (comparePeriodoSeguimiento(convocatoriaPeriodoSeguimiento, this.proyectoPeriodoSeguimiento,
-          this.proyecto.fechaInicio, this.proyecto.fechaFin)) {
+        this.showDatosConvocatoriaPeriodoSeguimiento = true;
+        this.getFormGroup().controls.tipoSeguimientoConvocatoria.setValue(convocatoriaPeriodoSeguimiento.tipoSeguimiento);
+        this.getFormGroup().controls.observacionesConvocatoria.setValue(convocatoriaPeriodoSeguimiento.observaciones);
+        this.getFormGroup().controls.fechaInicioPresentacionConvocatoria.setValue(convocatoriaPeriodoSeguimiento.fechaInicioPresentacion);
+        this.getFormGroup().controls.fechaFinPresentacionConvocatoria.setValue(convocatoriaPeriodoSeguimiento.fechaFinPresentacion);
+        this.getFormGroup().controls.numPeriodoConvocatoria.setValue(convocatoriaPeriodoSeguimiento.numPeriodo);
 
-          this.showDatosConvocatoriaPeriodoSeguimiento = true;
-          this.getFormGroup().controls.tipoSeguimientoConvocatoria.setValue(convocatoriaPeriodoSeguimiento.tipoSeguimiento);
-          this.getFormGroup().controls.observacionesConvocatoria.setValue(convocatoriaPeriodoSeguimiento.observaciones);
-          this.getFormGroup().controls.fechaInicioPresentacionConvocatoria.setValue(convocatoriaPeriodoSeguimiento.fechaInicioPresentacion);
-          this.getFormGroup().controls.fechaFinPresentacionConvocatoria.setValue(convocatoriaPeriodoSeguimiento.fechaFinPresentacion);
-          this.getFormGroup().controls.numPeriodoConvocatoria.setValue(convocatoriaPeriodoSeguimiento.numPeriodo);
-
-          let fechaInicioPeriodoSeguimiento: DateTime;
-          if (convocatoriaPeriodoSeguimiento.mesInicial) {
-            fechaInicioPeriodoSeguimiento = getFechaInicioPeriodoSeguimiento(this.proyecto.fechaInicio,
-              convocatoriaPeriodoSeguimiento.mesInicial);
-            this.getFormGroup().controls.fechaInicioConvocatoria.setValue(fechaInicioPeriodoSeguimiento);
-          }
-
-          if (convocatoriaPeriodoSeguimiento.mesFinal) {
-            this.getFormGroup().controls.fechaFinConvocatoria.setValue(getFechaFinPeriodoSeguimiento(this.proyecto.fechaInicio,
-              this.proyecto.fechaFin, convocatoriaPeriodoSeguimiento.mesFinal));
-          }
-
-          if (this.proyectoPeriodoSeguimiento.id) {
-            this.refreshInitialState();
-          }
+        let fechaInicioPeriodoSeguimiento: DateTime;
+        if (convocatoriaPeriodoSeguimiento.mesInicial) {
+          fechaInicioPeriodoSeguimiento = getFechaInicioPeriodoSeguimiento(this.proyecto.fechaInicio,
+            convocatoriaPeriodoSeguimiento.mesInicial);
+          this.getFormGroup().controls.fechaInicioConvocatoria.setValue(fechaInicioPeriodoSeguimiento);
         }
+
+        if (convocatoriaPeriodoSeguimiento.mesFinal) {
+          this.getFormGroup().controls.fechaFinConvocatoria.setValue(getFechaFinPeriodoSeguimiento(this.proyecto.fechaInicio,
+            this.proyecto.fechaFin, convocatoriaPeriodoSeguimiento.mesFinal));
+        }
+
+        if (this.proyectoPeriodoSeguimiento.id) {
+          this.refreshInitialState();
+        }
+
       })
     );
   }
@@ -185,4 +196,23 @@ export class ProyectoPeriodoSeguimientoDatosGeneralesFragment extends FormFragme
   private update(proyectoPeriodoSeguimiento: IProyectoPeriodoSeguimiento): Observable<IProyectoPeriodoSeguimiento> {
     return this.service.update(proyectoPeriodoSeguimiento.id, proyectoPeriodoSeguimiento);
   }
+
+  private disableEditableControls(): void {
+    this.getFormGroup().controls.tipoSeguimiento.disable();
+    this.getFormGroup().controls.fechaInicio.disable();
+    this.getFormGroup().controls.fechaFin.disable();
+    this.getFormGroup().controls.fechaInicioPresentacion.disable();
+    this.getFormGroup().controls.fechaFinPresentacion.disable();
+    this.getFormGroup().controls.observaciones.disable();
+  }
+
+  enableEditableControls(): void {
+    this.getFormGroup().controls.tipoSeguimiento.enable();
+    this.getFormGroup().controls.fechaInicio.enable();
+    this.getFormGroup().controls.fechaFin.enable();
+    this.getFormGroup().controls.fechaInicioPresentacion.enable();
+    this.getFormGroup().controls.fechaFinPresentacion.enable();
+    this.getFormGroup().controls.observaciones.enable();
+  }
+
 }

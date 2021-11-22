@@ -1,7 +1,6 @@
 package org.crue.hercules.sgi.framework.http;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.Optional;
@@ -11,6 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.crue.hercules.sgi.framework.spring.context.support.ApplicationContextSupport;
 import org.crue.hercules.sgi.framework.web.config.OAuth2ClientConfiguration;
 import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.data.util.Optionals;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -41,85 +41,128 @@ public class HttpEntityBuilder<T> {
   private String clientRegistrationId;
   private boolean useCurrentUserAuthorization = false;
 
+  /**
+   * Creates a new {@link HttpEntityBuilder} for building an {@link HttpEntity}
+   * containing the provided Entity.
+   * 
+   * @param entity the entity
+   */
   public HttpEntityBuilder(T entity) {
     this.entity = entity;
   }
 
+  /**
+   * Creates a new {@link HttpEntityBuilder} for building an {@link HttpEntity}.
+   */
   public HttpEntityBuilder() {
   }
 
+  /**
+   * Sets the Entity to include in the {@link HttpEntity}.
+   * 
+   * @param entity the entity
+   * @return self reference
+   */
   public HttpEntityBuilder<T> withEntity(T entity) {
     this.entity = entity;
     return this;
   }
 
+  /**
+   * Sets the clientRegistrationId to include in the {@link HttpEntity}.
+   * 
+   * @param clientRegistrationId the Oauth2 client registration id
+   * @return self reference
+   */
   public HttpEntityBuilder<T> withClientAuthorization(String clientRegistrationId) {
     this.clientRegistrationId = clientRegistrationId;
     return this;
   }
 
+  /**
+   * Allow to re-use the current HTTP Request Authorization header in the
+   * {@link HttpEntity}.
+   * 
+   * @return self reference
+   */
   public HttpEntityBuilder<T> withCurrentUserAuthorization() {
     this.useCurrentUserAuthorization = true;
     return this;
   }
 
+  /**
+   * Sets extra {@link HttpHeaders} to include in the {@link HttpEntity}.
+   * 
+   * @param headers {@link HttpHeaders} to include
+   * @return self reference
+   */
   public HttpEntityBuilder<T> withHeaders(HttpHeaders headers) {
     this.headers = headers;
     return this;
   }
 
+  /**
+   * Builds the {@link HttpEntity} with the provided information.
+   * 
+   * @return the {@link HttpEntity}
+   */
   public HttpEntity<T> build() {
     headers = (headers != null ? headers : new HttpHeaders());
     headers.setContentType(MediaType.APPLICATION_JSON);
-    headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
+    headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON, MediaType.TEXT_PLAIN, MediaType.TEXT_HTML));
     headers.setAcceptLanguage(Arrays.asList(new Locale.LanguageRange(LocaleContextHolder.getLocale().toLanguageTag())));
 
     if (useCurrentUserAuthorization) {
-      // Use Authorization from caller
-      Optional<HttpServletRequest> req = getCurrentHttpRequest();
-      if (req.isPresent()) {
-        HttpServletRequest httpServletRequest = req.get();
-        String authorization = httpServletRequest.getHeader(HttpHeaders.AUTHORIZATION);
-        if (authorization != null) {
-          headers.set(HttpHeaders.AUTHORIZATION, authorization);
-        } else {
-          log.warn("Can't get current user Authorization.");
-        }
-      } else {
-        log.warn("Can't get current user Authorization. Not running in an HttpRequest.");
-      }
+      withCurrentUserAuthorization(headers);
     }
 
     if (clientRegistrationId != null) {
-      // Use client credentials
-      Optional<AuthorizedClientServiceOAuth2AuthorizedClientManager> manager = getAuthorizedClientServiceOAuth2AuthorizedClientManager();
-      if (manager.isPresent()) {
-        AuthorizedClientServiceOAuth2AuthorizedClientManager authorizedClientServiceAndManager = manager.get();
-
-        // Build an OAuth2 request for the Keycloak provider
-        OAuth2AuthorizeRequest authorizeRequest = OAuth2AuthorizeRequest.withClientRegistrationId(clientRegistrationId)
-            .principal(clientRegistrationId).build();
-
-        // Perform the actual authorization request using the authorized client service
-        // and authorized client manager. This is where the JWT is retrieved from the
-        // Keycloack servers.
-        OAuth2AuthorizedClient authorizedClient = authorizedClientServiceAndManager.authorize(authorizeRequest);
-
-        if (authorizedClient != null) {
-          // Get the token from the authorized client object
-          OAuth2AccessToken accessToken = Objects.requireNonNull(authorizedClient).getAccessToken();
-
-          String authorization = "Bearer " + accessToken.getTokenValue();
-          headers.set(HttpHeaders.AUTHORIZATION, authorization);
-        } else {
-          log.warn("Can't get client Authorization.");
-        }
-      } else {
-        log.warn("Can't get client Authorization. No AuthorizedClientServiceOAuth2AuthorizedClientManager bean found.");
-      }
+      withClientCredentials(headers, clientRegistrationId);
     }
-    HttpEntity<T> request = new HttpEntity<>(entity, headers);
-    return request;
+    return new HttpEntity<>(entity, headers);
+  }
+
+  private static void withCurrentUserAuthorization(HttpHeaders headers) {
+    // Use Authorization from caller
+    Optional<HttpServletRequest> req = getCurrentHttpRequest();
+    if (req.isPresent()) {
+      HttpServletRequest httpServletRequest = req.get();
+      String authorization = httpServletRequest.getHeader(HttpHeaders.AUTHORIZATION);
+      if (authorization != null) {
+        headers.set(HttpHeaders.AUTHORIZATION, authorization);
+      } else {
+        log.warn("Can't get current user Authorization.");
+      }
+    } else {
+      log.warn("Can't get current user Authorization. Not running in an HttpRequest.");
+    }
+  }
+
+  private static void withClientCredentials(HttpHeaders headers, String clientRegistrationId) {
+    // Use client credentials
+    Optional<AuthorizedClientServiceOAuth2AuthorizedClientManager> manager = getAuthorizedClientServiceOAuth2AuthorizedClientManager();
+    Optionals.ifPresentOrElse(manager,
+        (AuthorizedClientServiceOAuth2AuthorizedClientManager authorizedClientServiceAndManager) -> {
+          // Build an OAuth2 request for the Keycloak provider
+          OAuth2AuthorizeRequest authorizeRequest = OAuth2AuthorizeRequest
+              .withClientRegistrationId(clientRegistrationId).principal(clientRegistrationId).build();
+
+          // Perform the actual authorization request using the authorized client service
+          // and authorized client manager. This is where the JWT is retrieved from the
+          // Keycloack servers.
+          OAuth2AuthorizedClient authorizedClient = authorizedClientServiceAndManager.authorize(authorizeRequest);
+
+          if (authorizedClient != null) {
+            // Get the token from the authorized client object
+            OAuth2AccessToken accessToken = Objects.requireNonNull(authorizedClient).getAccessToken();
+
+            String authorization = "Bearer " + accessToken.getTokenValue();
+            headers.set(HttpHeaders.AUTHORIZATION, authorization);
+          } else {
+            log.warn("Can't get client Authorization.");
+          }
+        }, () -> log.warn(
+            "Can't get client Authorization. No AuthorizedClientServiceOAuth2AuthorizedClientManager bean found."));
   }
 
   private static Optional<HttpServletRequest> getCurrentHttpRequest() {

@@ -10,25 +10,23 @@
       <div>
         <mat-form-field class="input-form">
           <mat-label>{{'list.entity' | translate:msgParamEntity}}</mat-label>
-          <sgi-select-entity [options]="areasTematicas$ | async" formControlName="padre" required></sgi-select-entity>
+          <sgi-select-area-tematica formControlName="padre" required></sgi-select-area-tematica>
           <mat-error *ngIf="formGroup.controls.padre.errors?.required">
-            {{'error.required.entity' | translate:msgParamListadoEntity}}
-          </mat-error>
-          <mat-error *ngIf="formGroup.controls.padre.errors?.invalid">
-            {{'error.invalid.entity' | translate:msgParamListadoEntity}}
+            {{ 'error.required.entity' | translate:msgParamEntity }}
           </mat-error>
         </mat-form-field>
       </div>
     </div>
     <div>
+      <h4>{{'csp.proyecto.select-area-tematica' | translate}}</h4>
       <div class="programa">
         <div class="arbol">
           <mat-tree [dataSource]="dataSource" [treeControl]="treeControl" class="arbol-tree">
             <mat-tree-node *matTreeNodeDef="let node" matTreeNodeToggle>
               <li class="mat-tree-node">
                 <button mat-icon-button disabled></button>
-                <mat-checkbox class="checkbox" color="primary" [checked]="node === checkedNode"
-                  (change)="onCheckNode(node, $event)">
+                <mat-checkbox class="checkbox" color="primary" [disabled]="node.disabled"
+                  [checked]="node === checkedNode" (change)="onCheckNode(node, $event)">
                   {{node.areaTematica.value.nombre}}
                 </mat-checkbox>
               </li>
@@ -48,7 +46,7 @@
                   </mat-label>
 
                   <mat-checkbox *ngIf="node !== rootNodeConvocatoria" class="checkbox" color="primary"
-                    [checked]="node === checkedNode" (change)="onCheckNode(node, $event)">
+                    [disabled]="node.disabled" [checked]="node === checkedNode" (change)="onCheckNode(node, $event)">
                     {{node.areaTematica.value.nombre}}
                   </mat-checkbox>
                 </div>
@@ -64,7 +62,7 @@
   </form>
 </mat-dialog-content>
 <mat-dialog-actions>
-  <button color="accent" (click)="saveOrUpdate()" mat-raised-button type="submit">
+  <button color="accent" (click)="saveOrUpdate()" mat-raised-button type="submit" [disabled]="!this.checkedNode">
     <mat-icon class="save-icon">save</mat-icon>{{textSaveOrUpdate | translate}}
   </button>
   <button class="link-cancelar" mat-button type="button" mat-dialog-close>{{'btn.cancel' |

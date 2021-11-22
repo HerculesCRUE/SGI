@@ -1,32 +1,28 @@
 import { Component, OnInit } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
+import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { AbstractTablePaginationComponent } from '@core/component/abstract-table-pagination.component';
 import { HttpProblem } from '@core/errors/http-problem';
 import { MSG_PARAMS } from '@core/i18n';
-import { ITramoReparto } from '@core/models/pii/tramo-reparto';
+import { ITramoReparto, Tipo } from '@core/models/pii/tramo-reparto';
 import { DialogService } from '@core/services/dialog.service';
 import { TramoRepartoService } from '@core/services/pii/tramo-reparto/tramo-reparto.service';
 import { SnackBarService } from '@core/services/snack-bar.service';
 import { TranslateService } from '@ngx-translate/core';
-import { SgiRestListResult, SgiRestFilter } from '@sgi/framework/http';
+import { SgiRestListResult, SgiRestFilter, SgiRestFilterOperator, RSQLSgiRestFilter, SgiRestFindOptions } from '@sgi/framework/http';
 import { NGXLogger } from 'ngx-logger';
-import { Observable, of } from 'rxjs';
-import { switchMap } from 'rxjs/operators';
-import { TramoRepartoModalComponent } from '../tramo-reparto-modal/tramo-reparto-modal.component';
+import { forkJoin, Observable, of } from 'rxjs';
+import { map, switchMap } from 'rxjs/operators';
+import { ITramoRepartoModalData, TramoRepartoModalComponent } from '../tramo-reparto-modal/tramo-reparto-modal.component';
 
 const MSG_ERROR = marker('error.load');
 const MSG_SAVE_SUCCESS = marker('msg.save.entity.success');
-const MSG_SAVE_ERROR = marker('error.save.entity');
-const MSG_UPDATE_ERROR = marker('error.update.entity');
 const MSG_UPDATE_SUCCESS = marker('msg.update.entity.success');
-const MSG_REACTIVE = marker('msg.reactivate.entity');
-const MSG_SUCCESS_REACTIVE = marker('msg.reactivate.entity.success');
-const MSG_ERROR_REACTIVE = marker('error.reactivate.entity');
-const MSG_DEACTIVATE = marker('msg.deactivate.entity');
-const MSG_ERROR_DEACTIVATE = marker('error.deactivate.entity');
-const MSG_SUCCESS_DEACTIVATE = marker('msg.deactivate.entity.success');
+const MSG_DELETE = marker('msg.delete.entity');
+const MSG_ERROR_DELETE = marker('error.delete.entity');
+const MSG_SUCCESS_DELETE = marker('msg.delete.entity.success');
 const TRAMO_REPARTO_KEY = marker('pii.tramo-reparto');
+const MSG_ERROR_TRAMO_NO_DELETABLE = marker('pii.tramo-reparto.no-deletable');
 
 @Component({
   selector: 'sgi-tramo-reparto-listado',
@@ -40,15 +36,10 @@ export class TramoRepartoListadoComponent extends AbstractTablePaginationCompone
   msgParamEntity = {};
 
   textoCrearSuccess: string;
-  textoCrearError: string;
   textoUpdateSuccess: string;
-  textoUpdateError: string;
-  textoDesactivar: string;
-  textoReactivar: string;
-  textoErrorDesactivar: string;
-  textoSuccessDesactivar: string;
-  textoSuccessReactivar: string;
-  textoErrorReactivar: string;
+  textoEliminar: string;
+  textoErrorEliminar: string;
+  textoSuccessEliminar: string;
 
   get MSG_PARAMS() {
     return MSG_PARAMS;
@@ -71,12 +62,12 @@ export class TramoRepartoListadoComponent extends AbstractTablePaginationCompone
   }
 
   protected createObservable(): Observable<SgiRestListResult<ITramoReparto>> {
-    const observable$ = this.tramoRepartoService.findTodos(this.getFindOptions());
+    const observable$ = this.tramoRepartoService.findAll(this.getFindOptions());
     return observable$;
   }
 
   protected initColumns(): void {
-    this.columnas = ['desde', 'porcentajeUniversidad', 'porcentajeInventores', 'activo', 'acciones'];
+    this.columnas = ['desde', 'porcentajeUniversidad', 'porcentajeInventores', 'acciones'];
   }
 
   protected loadTable(reset?: boolean): void {
@@ -93,51 +84,70 @@ export class TramoRepartoListadoComponent extends AbstractTablePaginationCompone
    * @param tramoReparto Tramo de Reparto
    */
   openModal(tramoReparto?: ITramoReparto): void {
-    const config = {
-      panelClass: 'sgi-dialog-container',
-      data: tramoReparto
+    this.createPreConditionsObservable(tramoReparto).subscribe((response) => this.createModal(response));
+  }
+
+  private createPreConditionsObservable(tramoReparto: ITramoReparto): Observable<ITramoRepartoModalData> {
+    const options: SgiRestFindOptions = {
+      filter: new RSQLSgiRestFilter('maxHasta', SgiRestFilterOperator.EQUALS, tramoReparto?.id?.toString() ?? 'max')
+    };
+    if (tramoReparto?.id) {
+      return forkJoin({
+        currentTramoReparto: of(tramoReparto),
+        tramoRepartoMaxHasta: this.tramoRepartoService.findAll(options).pipe(map(({ items }) => items[0])),
+        hasTramoRepartoInicial: this.tramoRepartoService.existTipoTramoReparto(Tipo.INICIAL),
+        hasTramoRepartoFinal: this.tramoRepartoService.existTipoTramoReparto(Tipo.FINAL),
+        isTramoRepartoModificable: this.tramoRepartoService.isTipoTramoRepartoModificable(tramoReparto.id)
+      });
+    } else {
+      return forkJoin({
+        currentTramoReparto: of(tramoReparto),
+        tramoRepartoMaxHasta: this.tramoRepartoService.findAll(options).pipe(map(({ items }) => items[0])),
+        hasTramoRepartoInicial: this.tramoRepartoService.existTipoTramoReparto(Tipo.INICIAL),
+        hasTramoRepartoFinal: this.tramoRepartoService.existTipoTramoReparto(Tipo.FINAL)
+      });
+    }
+  }
+
+  private createModal(data: ITramoRepartoModalData): void {
+    const config: MatDialogConfig<ITramoRepartoModalData> = {
+      data
     };
     const dialogRef = this.matDialog.open(TramoRepartoModalComponent, config);
     dialogRef.afterClosed().subscribe(
       (result: ITramoReparto) => {
         if (result) {
-          const subscription = tramoReparto ? this.tramoRepartoService.update(tramoReparto.id, result) :
-            this.tramoRepartoService.create(result);
-
-          subscription.subscribe(
-            () => {
-              this.snackBarService.showSuccess(tramoReparto ? this.textoUpdateSuccess : this.textoCrearSuccess);
-              this.loadTable();
-            },
-            (error) => {
-              this.logger.error(error);
-              if (error instanceof HttpProblem) {
-                this.snackBarService.showError(error);
-              }
-              else {
-                this.snackBarService.showError(tramoReparto ? this.textoUpdateError : this.textoCrearError);
-              }
-            }
-          );
+          this.snackBarService.showSuccess(data ? this.textoUpdateSuccess : this.textoCrearSuccess);
+          this.loadTable();
         }
       });
   }
 
   /**
-   * Desactivar un registro de Tramo de Reparto
+   * Eliminar un registro de Tramo de Reparto
    * @param tramoReparto  Tramo de Reparto.
    */
-  deactivateTramoReparto(tramoReparto: ITramoReparto): void {
-    const subcription = this.dialogService.showConfirmation(this.textoDesactivar)
+  deleteTramoReparto(tramoReparto: ITramoReparto): void {
+    this.tramoRepartoService.isTipoTramoRepartoModificable(tramoReparto.id).subscribe(isModificable => {
+      if (isModificable) {
+        this.openConfirmDeleteModal(tramoReparto);
+      } else {
+        this.snackBarService.showError(MSG_ERROR_TRAMO_NO_DELETABLE);
+      }
+    });
+  }
+
+  private openConfirmDeleteModal(tramoReparto: ITramoReparto): void {
+    const subcription = this.dialogService.showConfirmation(this.textoEliminar)
       .pipe(switchMap((accept) => {
         if (accept) {
-          return this.tramoRepartoService.desactivar(tramoReparto.id);
+          return this.tramoRepartoService.delete(tramoReparto.id);
         } else {
           return of();
         }
       })).subscribe(
         () => {
-          this.snackBarService.showSuccess(this.textoSuccessDesactivar);
+          this.snackBarService.showSuccess(this.textoSuccessEliminar);
           this.loadTable();
         },
         (error) => {
@@ -146,43 +156,12 @@ export class TramoRepartoListadoComponent extends AbstractTablePaginationCompone
             this.snackBarService.showError(error);
           }
           else {
-            this.snackBarService.showError(this.textoErrorDesactivar);
+            this.snackBarService.showError(this.textoErrorEliminar);
           }
         }
       );
     this.suscripciones.push(subcription);
   }
-
-  /**
-   * Activar un registro de Tramo de Reparto
-   * @param tramoReparto  Tramo de Reparto.
-   */
-  activateTramoReparto(tramoReparto: ITramoReparto): void {
-    const subcription = this.dialogService.showConfirmation(this.textoReactivar)
-      .pipe(switchMap((accept) => {
-        if (accept) {
-          return this.tramoRepartoService.activar(tramoReparto.id);
-        } else {
-          return of();
-        }
-      })).subscribe(
-        () => {
-          this.snackBarService.showSuccess(this.textoSuccessReactivar);
-          this.loadTable();
-        },
-        (error) => {
-          this.logger.error(error);
-          if (error instanceof HttpProblem) {
-            this.snackBarService.showError(error);
-          }
-          else {
-            this.snackBarService.showError(this.textoErrorReactivar);
-          }
-        }
-      );
-    this.suscripciones.push(subcription);
-  }
-
 
   private setupI18N(): void {
     this.translate.get(
@@ -208,18 +187,6 @@ export class TramoRepartoListadoComponent extends AbstractTablePaginationCompone
     ).pipe(
       switchMap((value) => {
         return this.translate.get(
-          MSG_SAVE_ERROR,
-          { entity: value, ...MSG_PARAMS.GENDER.MALE }
-        );
-      })
-    ).subscribe((value) => this.textoCrearError = value);
-
-    this.translate.get(
-      TRAMO_REPARTO_KEY,
-      MSG_PARAMS.CARDINALIRY.SINGULAR
-    ).pipe(
-      switchMap((value) => {
-        return this.translate.get(
           MSG_UPDATE_SUCCESS,
           { entity: value, ...MSG_PARAMS.GENDER.MALE }
         );
@@ -232,11 +199,11 @@ export class TramoRepartoListadoComponent extends AbstractTablePaginationCompone
     ).pipe(
       switchMap((value) => {
         return this.translate.get(
-          MSG_UPDATE_ERROR,
+          MSG_DELETE,
           { entity: value, ...MSG_PARAMS.GENDER.MALE }
         );
       })
-    ).subscribe((value) => this.textoUpdateError = value);
+    ).subscribe((value) => this.textoEliminar = value);
 
     this.translate.get(
       TRAMO_REPARTO_KEY,
@@ -244,11 +211,11 @@ export class TramoRepartoListadoComponent extends AbstractTablePaginationCompone
     ).pipe(
       switchMap((value) => {
         return this.translate.get(
-          MSG_DEACTIVATE,
+          MSG_ERROR_DELETE,
           { entity: value, ...MSG_PARAMS.GENDER.MALE }
         );
       })
-    ).subscribe((value) => this.textoDesactivar = value);
+    ).subscribe((value) => this.textoErrorEliminar = value);
 
     this.translate.get(
       TRAMO_REPARTO_KEY,
@@ -256,58 +223,10 @@ export class TramoRepartoListadoComponent extends AbstractTablePaginationCompone
     ).pipe(
       switchMap((value) => {
         return this.translate.get(
-          MSG_ERROR_DEACTIVATE,
+          MSG_SUCCESS_DELETE,
           { entity: value, ...MSG_PARAMS.GENDER.MALE }
         );
       })
-    ).subscribe((value) => this.textoErrorDesactivar = value);
-
-    this.translate.get(
-      TRAMO_REPARTO_KEY,
-      MSG_PARAMS.CARDINALIRY.SINGULAR
-    ).pipe(
-      switchMap((value) => {
-        return this.translate.get(
-          MSG_SUCCESS_DEACTIVATE,
-          { entity: value, ...MSG_PARAMS.GENDER.MALE }
-        );
-      })
-    ).subscribe((value) => this.textoSuccessDesactivar = value);
-
-    this.translate.get(
-      TRAMO_REPARTO_KEY,
-      MSG_PARAMS.CARDINALIRY.SINGULAR
-    ).pipe(
-      switchMap((value) => {
-        return this.translate.get(
-          MSG_REACTIVE,
-          { entity: value, ...MSG_PARAMS.GENDER.MALE }
-        );
-      })
-    ).subscribe((value) => this.textoReactivar = value);
-
-    this.translate.get(
-      TRAMO_REPARTO_KEY,
-      MSG_PARAMS.CARDINALIRY.SINGULAR
-    ).pipe(
-      switchMap((value) => {
-        return this.translate.get(
-          MSG_SUCCESS_REACTIVE,
-          { entity: value, ...MSG_PARAMS.GENDER.MALE }
-        );
-      })
-    ).subscribe((value) => this.textoSuccessReactivar = value);
-
-    this.translate.get(
-      TRAMO_REPARTO_KEY,
-      MSG_PARAMS.CARDINALIRY.SINGULAR
-    ).pipe(
-      switchMap((value) => {
-        return this.translate.get(
-          MSG_ERROR_REACTIVE,
-          { entity: value, ...MSG_PARAMS.GENDER.MALE }
-        );
-      })
-    ).subscribe((value) => this.textoErrorReactivar = value);
+    ).subscribe((value) => this.textoSuccessEliminar = value);
   }
 }

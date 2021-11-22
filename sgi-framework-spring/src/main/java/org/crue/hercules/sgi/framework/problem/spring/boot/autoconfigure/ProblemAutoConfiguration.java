@@ -13,10 +13,21 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.DispatcherServlet;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 
+/**
+ * AutoConfiguration for {@link Problem} support.
+ */
 @Configuration
 @ComponentScan(basePackageClasses = { Problem.class })
 public class ProblemAutoConfiguration {
 
+  /**
+   * Register a custom {@link WebSecurityExceptionHandler} to delegate exception
+   * handling to the provided {@link HandlerExceptionResolver}.
+   * 
+   * @param resolver the {@link HandlerExceptionResolver} to deletage exception
+   *                 handling
+   * @return the {@link WebSecurityExceptionHandler}
+   */
   @ConditionalOnWebApplication
   @ConditionalOnMissingBean
   @Bean
@@ -25,6 +36,11 @@ public class ProblemAutoConfiguration {
     return new HandlerExceptionResolverDelegator(resolver);
   }
 
+  /**
+   * Registers a custom Jackson module for {@link Problem} transformations.
+   * 
+   * @return the Jackson module for {@link Problem} transformations
+   */
   @ConditionalOnMissingBean
   @Bean
   public ProblemModule problemModule() {

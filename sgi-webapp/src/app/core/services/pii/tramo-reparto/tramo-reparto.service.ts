@@ -1,9 +1,10 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { ITramoReparto } from '@core/models/pii/tramo-reparto';
+import { ITramoReparto, Tipo } from '@core/models/pii/tramo-reparto';
 import { environment } from '@env';
-import { CreateCtor, FindAllCtor, mixinCreate, mixinFindAll, mixinUpdate, SgiRestBaseService, SgiRestFindOptions, SgiRestListResult, UpdateCtor } from '@sgi/framework/http';
+import { CreateCtor, FindAllCtor, mixinCreate, mixinFindAll, mixinUpdate, SgiRestBaseService, UpdateCtor } from '@sgi/framework/http';
 import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { ITramoRepartoRequest } from './tramo-reparto-request';
 import { TRAMO_REPARTO_REQUEST_CONVERTER } from './tramo-reparto-request.converter';
 
@@ -37,29 +38,32 @@ export class TramoRepartoService extends _TramoRepartoServiceMixinBase {
   }
 
   /**
-   * Muestra activos y no activos
-   *
-   * @param options opciones de búsqueda.
-   */
-  findTodos(options?: SgiRestFindOptions): Observable<SgiRestListResult<ITramoReparto>> {
-    return this.find<ITramoReparto, ITramoReparto>(
-      `${this.endpointUrl}/todos`,
-      options);
-  }
-
-  /**
-   * Activar el tramo de reparto
-   * @param id id del tramo de reparto.
-   */
-  activar(id: number): Observable<void> {
-    return this.http.patch<void>(`${this.endpointUrl}/${id}/activar`, { id });
-  }
-
-  /**
-   * Desactivar el tramo de reparto
+   * Elimina el tramo de reparto
    * @param options id del tramo de reparto.
    */
-  desactivar(id: number): Observable<void> {
-    return this.http.patch<void>(`${this.endpointUrl}/${id}/desactivar`, { id });
+  delete(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.endpointUrl}/${id}`);
+  }
+
+  /**
+   * Comprueba si existe un Tramo de Reparto con el Tipo indicado
+   * @param tipo del Tramo de Reparto.
+   * @returns true si existe y false sino existe.
+   */
+  existTipoTramoReparto(tipo: Tipo): Observable<boolean> {
+    return this.http.head<boolean>(this.endpointUrl, { params: { tipo }, observe: 'response' }).pipe(
+      map(response => response.status === 200)
+    );
+  }
+
+  /**
+   * Comprueba si un Tramo de Reparto es modificable/eliminable
+   * @param id del Tramo de Reparto.
+   * @returns true si es modificable/eliminable y false sino es modificable/eliminable.
+   */
+  isTipoTramoRepartoModificable(id: number): Observable<boolean> {
+    return this.http.head<boolean>(`${this.endpointUrl}/${id}/modificable`, { observe: 'response' }).pipe(
+      map(response => response.status === 200)
+    );
   }
 }

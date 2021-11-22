@@ -42,8 +42,8 @@ public class ConfiguracionController {
    * @return el objeto {@link Configuracion}
    */
   @GetMapping()
-  @PreAuthorize("hasAnyAuthorityForAnyUO('ETI-CNF-E', 'ETI-EVC-V', 'ETI-EVC-VR', 'ETI-EVC-EVAL', 'ETI-EVC-EVALR', 'ETI-EVC-INV-VR')")
-  ResponseEntity<Configuracion> findConfiguracion() {
+  @PreAuthorize("hasAnyAuthorityForAnyUO('ETI-CNF-E', 'ETI-EVC-EVAL', 'ETI-EVC-INV-EVALR')")
+  public ResponseEntity<Configuracion> findConfiguracion() {
     log.debug("findConfiguracion() - start");
     Configuracion configuracion = service.findConfiguracion();
     log.debug("findConfiguracion() - end");
@@ -59,7 +59,8 @@ public class ConfiguracionController {
    */
   @PutMapping("/{id}")
   @PreAuthorize("hasAuthorityForAnyUO('ETI-CNF-E')")
-  Configuracion replaceConfiguracion(@Valid @RequestBody Configuracion updatedConfiguracion, @PathVariable Long id) {
+  public Configuracion replaceConfiguracion(@Valid @RequestBody Configuracion updatedConfiguracion,
+      @PathVariable Long id) {
     log.debug("replaceConfiguracion(Configuracion updatedConfiguracion, Long id) - start");
     updatedConfiguracion.setId(id);
     Configuracion returnValue = service.update(updatedConfiguracion);

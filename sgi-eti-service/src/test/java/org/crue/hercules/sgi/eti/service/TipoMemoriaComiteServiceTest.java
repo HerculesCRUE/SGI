@@ -10,6 +10,7 @@ import org.crue.hercules.sgi.eti.model.Comite;
 import org.crue.hercules.sgi.eti.model.Formulario;
 import org.crue.hercules.sgi.eti.model.TipoMemoria;
 import org.crue.hercules.sgi.eti.model.TipoMemoriaComite;
+import org.crue.hercules.sgi.eti.model.Comite.Genero;
 import org.crue.hercules.sgi.eti.repository.ComiteRepository;
 import org.crue.hercules.sgi.eti.repository.TipoMemoriaComiteRepository;
 import org.crue.hercules.sgi.eti.service.impl.TipoMemoriaComiteServiceImpl;
@@ -45,8 +46,8 @@ public class TipoMemoriaComiteServiceTest extends BaseServiceTest {
     BDDMockito.given(comiteRepository.findByIdAndActivoTrue(1L)).willReturn(Optional.of(new Comite()));
 
     Formulario formulario = new Formulario(1L, "M10", "Descripcion");
-    Comite comite = new Comite(1L, "Comite1", "nombreSecretario", "nombreInvestigacion", "nombreDecreto", "articulo",
-        formulario, Boolean.TRUE);
+    Comite comite = new Comite(1L, "Comite1", "nombreSecretario", "nombreInvestigacion", Genero.M, "nombreDecreto",
+        "articulo", formulario, Boolean.TRUE);
     TipoMemoria tipoMemoria = new TipoMemoria(1L, "TipoMemoria1", Boolean.TRUE);
 
     List<TipoMemoriaComite> tipoMemoriasComite = new ArrayList<>();
@@ -61,7 +62,7 @@ public class TipoMemoriaComiteServiceTest extends BaseServiceTest {
     Page<TipoMemoria> page = tipoMemoriaComiteService.findByComite(1L, Pageable.unpaged());
     // then: Get a page with one hundred TipoMemorias
     Assertions.assertThat(page.getContent().size()).isEqualTo(100);
-    Assertions.assertThat(page.getNumber()).isEqualTo(0);
+    Assertions.assertThat(page.getNumber()).isZero();
     Assertions.assertThat(page.getSize()).isEqualTo(100);
     Assertions.assertThat(page.getTotalElements()).isEqualTo(100);
 

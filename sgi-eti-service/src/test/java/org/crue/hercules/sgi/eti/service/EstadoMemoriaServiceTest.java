@@ -20,6 +20,7 @@ import org.crue.hercules.sgi.eti.model.Retrospectiva;
 import org.crue.hercules.sgi.eti.model.TipoActividad;
 import org.crue.hercules.sgi.eti.model.TipoEstadoMemoria;
 import org.crue.hercules.sgi.eti.model.TipoMemoria;
+import org.crue.hercules.sgi.eti.model.Comite.Genero;
 import org.crue.hercules.sgi.eti.repository.EstadoMemoriaRepository;
 import org.crue.hercules.sgi.eti.service.impl.EstadoMemoriaServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
@@ -196,7 +197,7 @@ public class EstadoMemoriaServiceTest extends BaseServiceTest {
 
     // then: Get a page with one hundred estado memorias
     Assertions.assertThat(page.getContent().size()).isEqualTo(100);
-    Assertions.assertThat(page.getNumber()).isEqualTo(0);
+    Assertions.assertThat(page.getNumber()).isZero();
     Assertions.assertThat(page.getSize()).isEqualTo(100);
     Assertions.assertThat(page.getTotalElements()).isEqualTo(100);
   }
@@ -322,7 +323,8 @@ public class EstadoMemoriaServiceTest extends BaseServiceTest {
    */
   private Comite generarMockComite(Long id, String comite, Boolean activo) {
     Formulario formulario = new Formulario(1L, "M10", "Descripcion");
-    return new Comite(id, comite, "nombreSecretario", "nombreInvestigacion", "nombreDecreto", "articulo", formulario, activo);
+    return new Comite(id, comite, "nombreSecretario", "nombreInvestigacion", Genero.M, "nombreDecreto", "articulo",
+        formulario, activo);
 
   }
 

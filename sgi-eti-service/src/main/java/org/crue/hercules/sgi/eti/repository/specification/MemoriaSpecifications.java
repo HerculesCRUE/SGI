@@ -100,4 +100,10 @@ public class MemoriaSpecifications {
           Instant.now().atZone(ZoneOffset.UTC).minus(Period.ofDays(diasDiff)).toInstant());
     };
   }
+
+  public static Specification<Memoria> byId(Long idMemoria) {
+    return (root, query, cb) -> {
+      return cb.equal(root.get(Memoria_.id), idMemoria);
+    };
+  }
 }

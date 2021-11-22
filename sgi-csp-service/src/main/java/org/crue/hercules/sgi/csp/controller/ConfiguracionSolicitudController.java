@@ -157,7 +157,7 @@ public class ConfiguracionSolicitudController {
    * @param paging pageable.
    */
   @GetMapping("/{id}/tipodocumentofasepresentaciones")
-  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-SOL-E', 'CSP-SOL-V')")
+  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-SOL-E', 'CSP-SOL-V', 'CSP-SOL-INV-ER')")
   ResponseEntity<Page<TipoDocumento>> findAllTipoDocumentosFasePresentacion(@PathVariable Long id,
       @RequestParam(name = "q", required = false) String query, @RequestPageable(sort = "s") Pageable paging) {
     log.debug("findAllTipoDocumentosFasePresentacion(Long id, Pageable paging) - start");

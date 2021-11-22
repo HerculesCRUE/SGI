@@ -29,6 +29,10 @@ import org.springframework.http.MediaType;
 
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * Custom class that creates and cofigures a {@link WireMockServer} for testing
+ * purposes.
+ */
 @Slf4j
 public class Oauth2WireMockInitializer implements ApplicationContextInitializer<ConfigurableApplicationContext> {
 
@@ -40,23 +44,26 @@ public class Oauth2WireMockInitializer implements ApplicationContextInitializer<
       // the JWT, wrapped in a JWK
       final RSAKey rsaJWK = new RSAKeyGenerator(2048).keyID("someId").keyUse(KeyUse.SIGNATURE).generate();
       TokenBuilder tokenBuilder = new TokenBuilder() {
-        private final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(TokenBuilder.class);
-
         @Override
-        public String buildToken(String username, String... roles) throws Exception {
-          log.debug("buildToken(String username, String... roles) - start");
-          JWSSigner signer = new RSASSASigner(rsaJWK);
-          JWTClaimsSet claimsSet = new JWTClaimsSet.Builder().subject(username).jwtID(UUID.randomUUID().toString())
-              .audience("someAudience").issuer("someIssuer")
-              .expirationTime(Date.from(Instant.now().plus(Duration.ofMinutes(1L))))
-              .claim("preferred_username", username)
-              .claim("realm_access", Collections.singletonMap("roles", Arrays.asList(roles))).build();
-          SignedJWT signedJWT = new SignedJWT(
-              new JWSHeader.Builder(JWSAlgorithm.RS256).keyID(rsaJWK.getKeyID()).build(), claimsSet);
-          signedJWT.sign(signer);
-          String returnValue = signedJWT.serialize();
-          log.debug("buildToken(String username, String... roles) - end");
-          return returnValue;
+        public String buildToken(String username, String... roles) throws BuildException {
+          try {
+            log.debug("buildToken(String username, String... roles) - start");
+            JWSSigner signer;
+            signer = new RSASSASigner(rsaJWK);
+            JWTClaimsSet claimsSet = new JWTClaimsSet.Builder().subject(username).jwtID(UUID.randomUUID().toString())
+                .audience("someAudience").issuer("someIssuer")
+                .expirationTime(Date.from(Instant.now().plus(Duration.ofMinutes(1L))))
+                .claim("preferred_username", username)
+                .claim("realm_access", Collections.singletonMap("roles", Arrays.asList(roles))).build();
+            SignedJWT signedJWT = new SignedJWT(
+                new JWSHeader.Builder(JWSAlgorithm.RS256).keyID(rsaJWK.getKeyID()).build(), claimsSet);
+            signedJWT.sign(signer);
+            String returnValue = signedJWT.serialize();
+            log.debug("buildToken(String username, String... roles) - end");
+            return returnValue;
+          } catch (JOSEException e) {
+            throw new BuildException(e);
+          }
         }
       };
       configurableApplicationContext.getBeanFactory().registerSingleton("tokenBuilder", tokenBuilder);
@@ -84,11 +91,50 @@ public class Oauth2WireMockInitializer implements ApplicationContextInitializer<
       log.debug("initialize(ConfigurableApplicationContext configurableApplicationContext) - end");
     } catch (JOSEException e) {
       log.error("Error intializing WireMock", e);
-      throw new RuntimeException(e);
+      throw new Oauth2WireMockInitializationEsception(e);
     }
   }
 
+  /**
+   * Interface to be implemented for building a JWT token.
+   */
   public interface TokenBuilder {
-    String buildToken(String username, String... roles) throws Exception;
+    /**
+     * Builds the JWT token usin the provided username and roles.
+     * 
+     * @param username the username
+     * @param roles    the roles
+     * @return the JWT token
+     * @throws BuildException in case of error
+     */
+    String buildToken(String username, String... roles) throws BuildException;
+  }
+
+  /**
+   * Exception thrown if there is an error initializing WireMock.
+   */
+  public class Oauth2WireMockInitializationEsception extends RuntimeException {
+    /**
+     * Creates a new {@link Oauth2WireMockInitializationEsception}.
+     * 
+     * @param cause the original cause of the exception
+     */
+    public Oauth2WireMockInitializationEsception(Throwable cause) {
+      super(cause);
+    }
+  }
+
+  /**
+   * Exception thrown if there is an error building a JWT token.
+   */
+  public class BuildException extends Exception {
+    /**
+     * Creates a new {@link BuildException}.
+     * 
+     * @param cause the original cause of the exception
+     */
+    public BuildException(Throwable cause) {
+      super(cause);
+    }
   }
 }

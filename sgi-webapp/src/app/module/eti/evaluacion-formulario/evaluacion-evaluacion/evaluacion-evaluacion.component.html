@@ -58,8 +58,7 @@
           </mat-error>
         </mat-form-field>
         <div fxLayoutAlign="center center">
-          <button mat-icon-button
-            (click)="generateInformeDictamenFavorable(this.formPart.evaluacion?.memoria?.tipoMemoria?.id)"
+          <button mat-icon-button (click)="visualizarInforme(this.formPart.evaluacion?.id)"
             [disabled]="(this.formPart.evaluacion?.memoria?.tipoMemoria?.id === 1 || this.formPart.evaluacion?.memoria?.tipoMemoria?.id === 3) && this.formGroup.controls.dictamen.value?.id !== 1">
             <mat-icon color="primary">picture_as_pdf</mat-icon>
           </button>

@@ -17,4 +17,10 @@ public class ActaSpecifications {
       return cb.equal(root.get(Acta_.activo), Boolean.FALSE);
     };
   }
+
+  public static Specification<Acta> byId(Long idActa) {
+    return (root, query, cb) -> {
+      return cb.equal(root.get(Acta_.id), idActa);
+    };
+  }
 }

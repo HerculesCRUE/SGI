@@ -2,6 +2,8 @@ package org.crue.hercules.sgi.eti.model;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -48,6 +50,11 @@ public class Comite extends BaseEntity {
   @Column(name = "nombre_investigacion", length = 255, nullable = false)
   private String nombreInvestigacion;
 
+  /** Género Nombre investigación */
+  @Column(name = "genero", length = 1, nullable = false)
+  @Enumerated(EnumType.STRING)
+  private Genero genero;
+
   /** Nombre decreto */
   @Column(name = "nombre_decreto", length = 255, nullable = false)
   private String nombreDecreto;
@@ -65,4 +72,12 @@ public class Comite extends BaseEntity {
   /** Activo */
   @Column(name = "activo", columnDefinition = "boolean default true", nullable = false)
   private Boolean activo;
+
+  /** Género de nombre de investigación */
+  public enum Genero {
+    /** Femenino */
+    F,
+    /** Masculino */
+    M;
+  }
 }

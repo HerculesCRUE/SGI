@@ -63,34 +63,50 @@
     <div class="separation-button">
       <h3>{{'list.entity' | translate:msgParamAreaTematicaEntities}}</h3>
       <div class="mat-elevation-z4">
-        <table mat-table [dataSource]="convocatoriaAreaTematicas" matSort matSortActive="id" matSortDirection="asc"
-          matSortDisableClear *ngIf="convocatoriaAreaTematicas.data.length > 0">
+        <table mat-table [dataSource]="listadoAreaTematicas" matSort matSortActive="id" matSortDirection="asc"
+          matSortDisableClear *ngIf="listadoAreaTematicas.data.length > 0">
           <ng-container matColumnDef="nombreRaizArbol">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>
               {{'list.entity' | translate:msgParamAreaEntities}}
             </th>
-            <td mat-cell *matCellDef="let data">{{data.root?.nombre}}</td>
+            <td mat-cell *matCellDef="let data">{{data.padre?.nombre}}</td>
           </ng-container>
           <ng-container matColumnDef="areaTematicaConvocatoria">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>
               {{'csp.area-tematica.nombre.convocatoria' | translate}}
             </th>
-            <td mat-cell *matCellDef="let data"> {{data.areaTematicaConvocatoria?.nombre}} </td>
+            <td mat-cell *matCellDef="let data"> {{data.areasTematicasConvocatoria}} </td>
           </ng-container>
           <ng-container matColumnDef="areaTematicaProyecto">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>
               {{'csp.area-tematica.proyecto' | translate}}
             </th>
-            <td mat-cell *matCellDef="let data"> {{data.areaTematica?.nombre}} </td>
+            <td mat-cell *matCellDef="let data"> {{data.areaTematicaProyecto?.nombre}} </td>
           </ng-container>
           <ng-container matColumnDef="acciones">
             <th mat-header-cell *matHeaderCellDef>{{'label.actions' | translate}}
             </th>
             <td mat-cell *matCellDef="let data">
+              <!-- Botón Seleccionar-->
+              <ng-container *sgiHasAnyAuthorityForAnyUO="['CSP-PRO-E', 'CSP-PRO-C']">
+                <button color="accent" *ngIf="!data.areaTematicaProyecto" mat-button
+                  matTooltip="{{'csp.proyecto.select-area-tematica' | translate}}" (click)="openModal(data)">
+                  <mat-icon color="accent">add_circle</mat-icon>
+                  {{'csp.proyecto.select-area-tematica' | translate}}
+                </button>
+              </ng-container>
+              <!-- Botón Editar-->
               <ng-container *sgiHasAuthorityForAnyUO="'CSP-PRO-E'">
-                <button mat-button matTooltip="{{'csp.proyecto-contexto.add.area.selecciona' | translate}}"
-                  (click)="openModal(data)">
-                  <mat-icon color="primary">done_outline</mat-icon>
+                <button *ngIf="data.areaTematicaProyecto" mat-button
+                  matTooltip="{{'csp.proyecto.select-area-tematica' | translate}}" (click)="openModal(data)">
+                  <mat-icon color="primary">border_color</mat-icon>
+                </button>
+              </ng-container>
+              <!--Botón Borrar-->
+              <ng-container *sgiHasAnyAuthorityForAnyUO="['CSP-PRO-E', 'CSP-PRO-C']">
+                <button *ngIf="data.areaTematicaProyecto" mat-button matTooltip="{{'btn.delete' | translate}}"
+                  (click)="deleteAreaTematicaListado()">
+                  <mat-icon color="warn">highlight_off</mat-icon>
                 </button>
               </ng-container>
             </td>
@@ -102,11 +118,11 @@
     </div>
 
     <ng-container *sgiHasAuthorityForAnyUO="'CSP-PRO-E'">
-      <div class="separation-button" *ngIf="convocatoriaAreaTematicas.data.length === 0">
+      <div class="separation-button" *ngIf="listadoAreaTematicas.data.length === 0">
         <!-- Botón añadir areas tematicas -->
-        <button color="three" mat-button mat-raised-button (click)="openModal()">
+        <button color="three" mat-raised-button (click)="openModal()">
           <mat-icon color="accent">add_circle</mat-icon>
-          {{ 'btn.add.entity' | translate:msgParamAreaTematicaEntity }}
+          {{ 'btn.add.entity' | translate:msgParamAreaTematicaEntities }}
         </button>
       </div>
     </ng-container>

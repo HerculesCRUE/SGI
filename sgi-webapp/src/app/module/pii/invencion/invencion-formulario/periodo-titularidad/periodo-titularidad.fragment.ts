@@ -79,14 +79,14 @@ export class PeriodoTitularidadFragment extends Fragment {
       return this.fechaInicioMinimaEdicion;
     }
 
-    return result.plus({ days: 1 });
+    return result;
   }
 
   /**
    * Devuelve la Fecha Minima posible de ser usada como Inicio al editar un {@link IPeriodoTitularidad} activo.
    */
   get fechaInicioMinimaEdicion(): DateTime {
-    return this.previousPeriodoTitularidadHistorico?.value?.fechaFin?.plus({ days: 1 });
+    return this.previousPeriodoTitularidadHistorico?.value?.fechaFin;
   }
 
   /**
@@ -385,18 +385,15 @@ export class PeriodoTitularidadFragment extends Fragment {
   /**
    * Se valida el estado actual y se marca como que hay cambios
    * siempre que al estar seleccionado el {@link IPeriodoTitularidad} vigente se
-   * determine que existen {@link IPeriodoTitularidad} o {@link IPeriodoTitularidadTitular} 
+   * determine que existen {@link IPeriodoTitularidad} o {@link IPeriodoTitularidadTitular}
    * con cambios pendientes de guardar.
    *
    */
   private validateStatus() {
     this.setChanges(
-      this.periodoVigente === this.periodosTitularidadSelected.getValue() &&
-      (
-        this.periodoVigente?.touched ||
-        this.hasChangesTitulares() ||
-        this.periodosTitularidadesToDelete.length > 0
-      )
+      this.periodoVigente?.touched ||
+      this.hasChangesTitulares() ||
+      this.periodosTitularidadesToDelete.length > 0
     );
   }
 

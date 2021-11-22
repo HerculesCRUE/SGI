@@ -12,6 +12,7 @@ import org.crue.hercules.sgi.eti.model.ConvocatoriaReunion;
 import org.crue.hercules.sgi.eti.model.Evaluador;
 import org.crue.hercules.sgi.eti.model.Formulario;
 import org.crue.hercules.sgi.eti.model.TipoConvocatoriaReunion;
+import org.crue.hercules.sgi.eti.model.Comite.Genero;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -117,7 +118,7 @@ public class AsistentesRepositoryTest extends BaseRepositoryTest {
    * @return el objeto Comite
    */
   public Comite generarMockComite(Formulario formulario) {
-    return new Comite(null, "Comite1", "nombreSecretario", "nombreInvestigacion", "nombreDecreto", "articulo",
+    return new Comite(null, "Comite1", "nombreSecretario", "nombreInvestigacion", Genero.M, "nombreDecreto", "articulo",
         formulario, Boolean.TRUE);
   }
 

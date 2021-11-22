@@ -57,7 +57,7 @@ public class InvencionInventorController {
    */
   @GetMapping("/{id}/inventores")
   @PreAuthorize("hasAnyAuthority('PII-INV-V', 'PII-INV-C', 'PII-INV-E', 'PII-INV-B', 'PII-INV-R')")
-  ResponseEntity<Page<InvencionInventorOutput>> findActiveInvencionInventores(@PathVariable Long invencionId,
+  public ResponseEntity<Page<InvencionInventorOutput>> findActiveInvencionInventores(@PathVariable Long invencionId,
       @RequestParam(name = "q", required = false) String query, @RequestPageable(sort = "s") Pageable paging) {
     log.debug(
         "findActiveInvencionInventores(@PathVariable Long invencionId, @RequestParam(name = 'q', required = false) String query, @RequestPageable(sort = 's') Pageable paging) - start");
@@ -76,6 +76,21 @@ public class InvencionInventorController {
     log.debug(
         "findActiveInvencionInventores(@PathVariable Long invencionId, @RequestParam(name = 'q', required = false) String query, @RequestPageable(sort = 's') Pageable paging) - end");
     return new ResponseEntity<>(convert(page, null), HttpStatus.OK);
+  }
+
+  /**
+   * Devuelve la entidad {@link InvencionInventor} con el id indicado.
+   * 
+   * @param id Identificador de la entidad {@link InvencionInventor}.
+   * @return {@link InvencionInventor} correspondiente al id.
+   */
+  @GetMapping("/{id}")
+  @PreAuthorize("hasAnyAuthority('PII-INV-V', 'PII-INV-E')")
+  public InvencionInventorOutput findById(@PathVariable Long id) {
+    log.debug("findById(Long id) - start");
+    final InvencionInventor returnValue = service.findById(id);
+    log.debug("findById(Long id) - end");
+    return convert(returnValue);
   }
 
   private InvencionInventorOutput convert(InvencionInventor invencionInventor) {

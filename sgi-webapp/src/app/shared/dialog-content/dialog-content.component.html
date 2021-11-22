@@ -1,0 +1,6 @@
+<mat-dialog-content>
+  <ng-container *ngIf="problems.length">
+    <sgi-problem-panel [problems]="problems"></sgi-problem-panel>
+  </ng-container>
+  <ng-content></ng-content>
+</mat-dialog-content>

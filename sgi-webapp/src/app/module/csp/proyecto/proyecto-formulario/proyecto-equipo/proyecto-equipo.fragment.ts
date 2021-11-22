@@ -1,12 +1,10 @@
+import { ValidacionRequisitosEquipoIp } from '@core/enums/validaciones-requisitos-equipo-ip';
 import { IConvocatoriaRequisitoEquipo } from '@core/models/csp/convocatoria-requisito-equipo';
 import { IConvocatoriaRequisitoIP } from '@core/models/csp/convocatoria-requisito-ip';
 import { IProyectoEquipo } from '@core/models/csp/proyecto-equipo';
 import { IRequisitoEquipoNivelAcademico } from '@core/models/csp/requisito-equipo-nivel-academico';
-import { IRequisitoIPCategoriaProfesional } from '@core/models/csp/requisito-ip-categoria-profesional';
+import { IRequisitoIPNivelAcademico } from '@core/models/csp/requisito-ip-nivel-academico';
 import { ICategoriaProfesional } from '@core/models/sgp/categoria-profesional';
-import { IDatosAcademicos } from '@core/models/sgp/datos-academicos';
-import { IDatosPersonales } from '@core/models/sgp/datos-personales';
-import { IVinculacion } from '@core/models/sgp/vinculacion';
 import { Fragment } from '@core/services/action-service';
 import { ConvocatoriaRequisitoEquipoService } from '@core/services/csp/convocatoria-requisito-equipo.service';
 import { ConvocatoriaRequisitoIPService } from '@core/services/csp/convocatoria-requisito-ip.service';
@@ -18,9 +16,9 @@ import { DatosPersonalesService } from '@core/services/sgp/datos-personales.serv
 import { PersonaService } from '@core/services/sgp/persona.service';
 import { VinculacionService } from '@core/services/sgp/vinculacion.service';
 import { StatusWrapper } from '@core/utils/status-wrapper';
-import { DateTime, Duration } from 'luxon';
+import { DateTime } from 'luxon';
 import { NGXLogger } from 'ngx-logger';
-import { BehaviorSubject, from, Observable, of } from 'rxjs';
+import { BehaviorSubject, forkJoin, from, Observable, of } from 'rxjs';
 import { map, mergeMap, switchMap, takeLast, tap } from 'rxjs/operators';
 
 export enum HelpIconClass {
@@ -54,10 +52,21 @@ interface ErrorResponse {
   isValid: boolean;
   msgError: ErroresRequisitos;
 }
+
 export interface IProyectoEquipoListado {
   proyectoEquipo: IProyectoEquipo;
   help: HelpIcon;
 }
+
+interface RequisitosConvocatoria {
+  nivelesAcademicosRequisitosEquipo: IRequisitoEquipoNivelAcademico[];
+  nivelesAcademicosRequisitosIp: IRequisitoIPNivelAcademico[];
+  categoriasProfesionalesRequisitosEquipo: ICategoriaProfesional[];
+  categoriasProfesionalesRequisitosIp: ICategoriaProfesional[];
+  requisitosIp: IConvocatoriaRequisitoIP;
+  requisitosEquipo: IConvocatoriaRequisitoEquipo;
+}
+
 export class ProyectoEquipoFragment extends Fragment {
   equipos$ = new BehaviorSubject<StatusWrapper<IProyectoEquipoListado>[]>([]);
   msgToolTip: string;
@@ -77,9 +86,12 @@ export class ProyectoEquipoFragment extends Fragment {
   msgToolTipFechaObtencionMayor: string;
   msgToolTipFechaObtencionMenor: string;
 
+  requisitosConvocatoria: RequisitosConvocatoria;
+
   constructor(
     private readonly logger: NGXLogger,
     key: number,
+    private convocatoriaId: number,
     private proyectoService: ProyectoService,
     private proyectoEquipoService: ProyectoEquipoService,
     private personaService: PersonaService,
@@ -122,14 +134,9 @@ export class ProyectoEquipoFragment extends Fragment {
           switchMap(result => {
             return from(result).pipe(
               mergeMap(element => {
-                return this.validateRequisitosConvocatoria(element.value.proyectoEquipo).pipe(
+                return this.validateRequisitosConvocatoria(element.value.proyectoEquipo, this.convocatoriaId).pipe(
                   map(response => {
-                    if (!response.isValid) {
-                      element.value.help = {
-                        class: HelpIconClass.DANGER,
-                        tooltip: this.getTooltipMessage(response),
-                      } as HelpIcon;
-                    }
+                    this.buildHelpIconIfNeeded(response, element);
                     return element;
                   })
                 );
@@ -154,14 +161,9 @@ export class ProyectoEquipoFragment extends Fragment {
       proyectoEquipo: element.proyectoEquipo,
       help: null
     } as IProyectoEquipoListado);
-    this.validateRequisitosConvocatoria(wrapper.value.proyectoEquipo).subscribe(
+    this.validateRequisitosConvocatoria(wrapper.value.proyectoEquipo, this.convocatoriaId).subscribe(
       (response => {
-        if (!response.isValid) {
-          wrapper.value.help = {
-            class: HelpIconClass.DANGER,
-            tooltip: this.getTooltipMessage(response),
-          } as HelpIcon;
-        }
+        this.buildHelpIconIfNeeded(response, wrapper);
         wrapper.setCreated();
         const current = this.equipos$.value;
         current.push(wrapper);
@@ -181,14 +183,9 @@ export class ProyectoEquipoFragment extends Fragment {
       wrapper.value.help = {
         class: HelpIconClass.DANGER
       } as HelpIcon;
-      this.validateRequisitosConvocatoria(wrapper.value.proyectoEquipo).subscribe(
+      this.validateRequisitosConvocatoria(wrapper.value.proyectoEquipo, this.convocatoriaId).subscribe(
         (response => {
-          if (!response.isValid) {
-            wrapper.value.help = {
-              class: HelpIconClass.DANGER,
-              tooltip: this.getTooltipMessage(response),
-            } as HelpIcon;
-          }
+          this.buildHelpIconIfNeeded(response, wrapper);
           this.equipos$.value[index] = wrapper;
           this.setChanges(true);
         })
@@ -200,14 +197,9 @@ export class ProyectoEquipoFragment extends Fragment {
     const current = this.equipos$.value;
     const index = current.findIndex((value) => value === wrapper);
     if (index >= 0) {
-      this.validateRequisitosConvocatoria(wrapper.value.proyectoEquipo).subscribe(
+      this.validateRequisitosConvocatoria(wrapper.value.proyectoEquipo, this.convocatoriaId).subscribe(
         (response => {
-          if (!response.isValid) {
-            wrapper.value.help = {
-              class: HelpIconClass.DANGER,
-              tooltip: this.getTooltipMessage(response),
-            } as HelpIcon;
-          }
+          this.buildHelpIconIfNeeded(response, wrapper);
           current.splice(index, 1);
           this.equipos$.next(current);
           this.setChanges(true);
@@ -237,14 +229,9 @@ export class ProyectoEquipoFragment extends Fragment {
         switchMap((results) => {
           return from(results).pipe(
             mergeMap(element => {
-              return this.validateRequisitosConvocatoria(element.value.proyectoEquipo).pipe(
+              return this.validateRequisitosConvocatoria(element.value.proyectoEquipo, this.convocatoriaId).pipe(
                 map(response => {
-                  if (!response.isValid) {
-                    element.value.help = {
-                      class: HelpIconClass.DANGER,
-                      tooltip: this.getTooltipMessage(response),
-                    } as HelpIcon;
-                  }
+                  this.buildHelpIconIfNeeded(response, element);
                   return element;
                 })
               );
@@ -269,225 +256,6 @@ export class ProyectoEquipoFragment extends Fragment {
     const hasTouched = this.equipos$.value.some((wrapper) => wrapper.touched);
     return !hasTouched;
   }
-
-  private validateRequisitosConvocatoria(proyectoEquipo: IProyectoEquipo): Observable<ErrorResponse> {
-    let datosAcademicos: IDatosAcademicos;
-    let edad: Duration;
-    let datosPersonales: IDatosPersonales;
-    let vinculacion: IVinculacion;
-    let categoriasProfesionalesConvocatoria: ICategoriaProfesional[];
-    let nivelAcademicoSolicitante: IRequisitoEquipoNivelAcademico[];
-    let categoriaProfesionalSolicitante: ICategoriaProfesional[];
-    const response = {
-      isValid: false,
-      msgError: null,
-    } as ErrorResponse;
-
-    return this.proyectoService.findById(this.getKey() as number).pipe(
-      switchMap((proyecto) => {
-        return this.convocatoriaService.findRequisitosEquipoNivelesAcademicos(proyecto.convocatoriaId).pipe(
-          switchMap((nivelesAcademicos) => {
-            return this.datosAcademicosService.findByPersonaId(proyectoEquipo.persona.id).pipe(
-              switchMap((datoAcademico) => {
-                if (datoAcademico) {
-                  datosAcademicos = datoAcademico;
-                  if (nivelesAcademicos?.length > 0) {
-                    nivelAcademicoSolicitante =
-                      nivelesAcademicos.filter(nivelAcademico => nivelAcademico?.nivelAcademico?.id === datosAcademicos.nivelAcademico.id);
-                  }
-                }
-                return this.datosPersonalesService.findByPersonaId(proyectoEquipo.persona.id).pipe(
-                  switchMap((datoPersonal) => {
-                    if (datoPersonal) {
-                      datosPersonales = datoPersonal;
-                      edad = DateTime.local().diff(datoPersonal?.fechaNacimiento, ['years', 'months', 'days', 'hours']);
-                    }
-                    return this.convocatoriaService.findRequisitosIpCategoriasProfesionales(proyecto.convocatoriaId);
-                  }),
-                  switchMap((categoriasProfesionales: IRequisitoIPCategoriaProfesional[]) => {
-                    if (categoriasProfesionales?.length > 0) {
-                      categoriasProfesionalesConvocatoria = categoriasProfesionales.map(element => element.categoriaProfesional);
-                    }
-                    return this.vinculacionService.findByPersonaId(proyectoEquipo.persona.id);
-                  }),
-                  switchMap((vinculacionSolicitante: IVinculacion) => {
-                    if (categoriasProfesionalesConvocatoria?.length > 0 && vinculacionSolicitante != null) {
-                      categoriaProfesionalSolicitante =
-                        categoriasProfesionalesConvocatoria?.filter(categoriaProfesional => categoriaProfesional.id ===
-                          vinculacionSolicitante?.categoriaProfesional.id);
-                    }
-                    vinculacion = vinculacionSolicitante;
-                    return this.convocatoriaRequisitoIpService.getRequisitoIPConvocatoria(proyecto.convocatoriaId);
-                  }));
-              }),
-              map((convocatoriaRequisitoIp: IConvocatoriaRequisitoIP) => {
-                if (proyectoEquipo.rolProyecto.rolPrincipal) {
-                  if (!convocatoriaRequisitoIp?.fechaMaximaNivelAcademico &&
-                    !convocatoriaRequisitoIp?.fechaMinimaNivelAcademico &&
-                    !convocatoriaRequisitoIp?.sexo.id &&
-                    !convocatoriaRequisitoIp?.edadMaxima &&
-                    !convocatoriaRequisitoIp?.fechaMaximaCategoriaProfesional &&
-                    !convocatoriaRequisitoIp?.fechaMinimaCategoriaProfesional &&
-                    convocatoriaRequisitoIp?.vinculacionUniversidad == null) {
-                    response.msgError = null;
-                    response.isValid = true;
-                  }
-                  if ((convocatoriaRequisitoIp?.fechaMaximaNivelAcademico ||
-                    convocatoriaRequisitoIp?.fechaMinimaNivelAcademico ||
-                    convocatoriaRequisitoIp?.sexo ||
-                    convocatoriaRequisitoIp?.edadMaxima) && datosAcademicos != null) {
-
-                    if (!datosAcademicos.fechaObtencion &&
-                      (convocatoriaRequisitoIp.fechaMaximaCategoriaProfesional &&
-                        convocatoriaRequisitoIp.fechaMinimaCategoriaProfesional)) {
-                      response.msgError = ErroresRequisitos.FECHA_OBTENCION;
-                    } else if (datosAcademicos.fechaObtencion?.startOf('day') >
-                      convocatoriaRequisitoIp.fechaMaximaNivelAcademico?.startOf('day')) {
-                      response.msgError = ErroresRequisitos.FECHA_MAYOR;
-                    } else if (datosAcademicos.fechaObtencion?.startOf('day') <
-                      convocatoriaRequisitoIp.fechaMinimaNivelAcademico?.startOf('day')) {
-                      response.msgError = ErroresRequisitos.FECHA_MENOR;
-                    } else if (nivelAcademicoSolicitante !== null && nivelAcademicoSolicitante?.length < 1) {
-                      response.msgError = ErroresRequisitos.NIVEL_ACADEMICO;
-                    } else if (convocatoriaRequisitoIp != null && (convocatoriaRequisitoIp?.sexo?.id != null &&
-                      (proyectoEquipo.persona.sexo?.id !== convocatoriaRequisitoIp?.sexo?.id))) {
-                      response.msgError = ErroresRequisitos.SEXO;
-                    } else if (convocatoriaRequisitoIp != null && (convocatoriaRequisitoIp?.edadMaxima != null &&
-                      (edad.years > convocatoriaRequisitoIp?.edadMaxima))) {
-                      response.msgError = ErroresRequisitos.EDAD;
-                    }
-
-                  } else if (convocatoriaRequisitoIp != null && (convocatoriaRequisitoIp?.sexo?.id != null &&
-                    (proyectoEquipo.persona.sexo?.id !== convocatoriaRequisitoIp?.sexo?.id))) {
-                    response.msgError = ErroresRequisitos.SEXO;
-                  } else if (convocatoriaRequisitoIp != null && (convocatoriaRequisitoIp?.edadMaxima != null &&
-                    (edad.years > convocatoriaRequisitoIp?.edadMaxima))) {
-                    response.msgError = ErroresRequisitos.EDAD;
-                  } else if (convocatoriaRequisitoIp != null && datosAcademicos == null) {
-                    response.msgError = ErroresRequisitos.DATOS_ACADEMICOS;
-                  }
-
-                  if (categoriasProfesionalesConvocatoria != null && convocatoriaRequisitoIp != null
-                    && categoriasProfesionalesConvocatoria?.length !== 0 && convocatoriaRequisitoIp?.vinculacionUniversidad === true
-                    && categoriaProfesionalSolicitante?.length === 0) {
-                    response.msgError = ErroresRequisitos.CATEGORIAS_PROFESIONALES;
-                  }
-                  if (vinculacion !== null) {
-                    if (convocatoriaRequisitoIp != null) {
-                      if (convocatoriaRequisitoIp.vinculacionUniversidad === false && vinculacion) {
-                        response.msgError = ErroresRequisitos.NO_VINCULACION;
-                      } else if (convocatoriaRequisitoIp.vinculacionUniversidad === true && !vinculacion) {
-                        response.msgError = ErroresRequisitos.VINCULACION;
-                      } else if (convocatoriaRequisitoIp.fechaMaximaNivelAcademico != null &&
-                        vinculacion.fechaObtencionCategoria >
-                        convocatoriaRequisitoIp.fechaMaximaNivelAcademico) {
-                        response.msgError = ErroresRequisitos.FECHA_VINCULACION_MAYOR;
-                      } else if (convocatoriaRequisitoIp.fechaMinimaNivelAcademico != null &&
-                        vinculacion.fechaObtencionCategoria <
-                        convocatoriaRequisitoIp.fechaMinimaNivelAcademico) {
-                        response.msgError = ErroresRequisitos.FECHA_VINCULACION_MENOR;
-                      } else if (convocatoriaRequisitoIp.fechaMaximaCategoriaProfesional != null &&
-                        vinculacion.fechaObtencionCategoria >
-                        convocatoriaRequisitoIp.fechaMaximaCategoriaProfesional) {
-                        response.msgError = ErroresRequisitos.FECHA_OBTENCION_MAYOR;
-                      } else if (convocatoriaRequisitoIp.fechaMinimaCategoriaProfesional != null &&
-                        vinculacion.fechaObtencionCategoria <
-                        convocatoriaRequisitoIp.fechaMinimaCategoriaProfesional) {
-                        response.msgError = ErroresRequisitos.FECHA_OBTENCION_MENOR;
-                      } else if (response.msgError === null) {
-                        response.isValid = true;
-                      }
-                    } else if (vinculacion.fechaObtencionCategoria == null) {
-                      response.msgError = ErroresRequisitos.NO_FECHAS_VINCUALCION;
-                    }
-                  } else if (convocatoriaRequisitoIp?.vinculacionUniversidad === true) {
-                    response.msgError = ErroresRequisitos.NO_VINCULACION;
-                  } else if (response.msgError === null) {
-                    response.isValid = true;
-                  }
-                } else {
-                  response.msgError = null;
-                  response.isValid = true;
-                }
-                return response;
-              })
-            );
-
-          }),
-          switchMap((erroresNivelesAcademicos: ErrorResponse) => {
-            if (erroresNivelesAcademicos.msgError === null) {
-              return this.convocatoriaService.findRequisitosEquipoCategoriasProfesionales(proyecto.convocatoriaId).pipe(
-                switchMap((categoriasProfesionales) => {
-                  if (categoriasProfesionales?.length > 0) {
-                    categoriasProfesionalesConvocatoria = categoriasProfesionales.map(element => element.categoriaProfesional);
-                  }
-                  return this.vinculacionService.findByPersonaId(proyectoEquipo.persona.id);
-                }),
-                switchMap((vinculacionSolicitante: IVinculacion) => {
-                  categoriaProfesionalSolicitante =
-                    categoriasProfesionalesConvocatoria?.filter(categoriaProfesional => categoriaProfesional.id ===
-                      vinculacionSolicitante?.categoriaProfesional.id);
-                  vinculacion = vinculacionSolicitante;
-                  return this.convocatoriaRequisitoEquipoService.findByConvocatoriaId(proyecto.convocatoriaId);
-                }),
-                map((convocatoriaRequisitoEquipo: IConvocatoriaRequisitoEquipo) => {
-
-                  if (convocatoriaRequisitoEquipo?.sexo.id &&
-                    proyectoEquipo.persona?.sexo.id !== convocatoriaRequisitoEquipo?.sexo.id) {
-                    response.msgError = ErroresRequisitos.SEXO;
-                  }
-
-                  if (categoriasProfesionalesConvocatoria != null && convocatoriaRequisitoEquipo != null
-                    && categoriasProfesionalesConvocatoria?.length !== 0 && convocatoriaRequisitoEquipo?.vinculacionUniversidad
-                    && categoriaProfesionalSolicitante?.length === 0) {
-                    response.msgError = ErroresRequisitos.CATEGORIAS_PROFESIONALES;
-                  }
-
-                  if (vinculacion !== null) {
-                    if (convocatoriaRequisitoEquipo != null) {
-                      if (convocatoriaRequisitoEquipo.vinculacionUniversidad === false && vinculacion) {
-                        response.msgError = ErroresRequisitos.NO_VINCULACION;
-                      } else if (convocatoriaRequisitoEquipo.vinculacionUniversidad === true && !vinculacion) {
-                        response.msgError = ErroresRequisitos.VINCULACION;
-                      } else if (convocatoriaRequisitoEquipo.fechaMaximaNivelAcademico != null &&
-                        vinculacion.fechaObtencionCategoria >
-                        convocatoriaRequisitoEquipo.fechaMaximaNivelAcademico) {
-                        response.msgError = ErroresRequisitos.FECHA_VINCULACION_MAYOR;
-                      } else if (convocatoriaRequisitoEquipo.fechaMinimaNivelAcademico != null &&
-                        vinculacion.fechaObtencionCategoria <
-                        convocatoriaRequisitoEquipo.fechaMinimaNivelAcademico) {
-                        response.msgError = ErroresRequisitos.FECHA_VINCULACION_MENOR;
-                      } else if (convocatoriaRequisitoEquipo.fechaMaximaCategoriaProfesional != null &&
-                        vinculacion.fechaObtencionCategoria >
-                        convocatoriaRequisitoEquipo.fechaMaximaCategoriaProfesional) {
-                        response.msgError = ErroresRequisitos.FECHA_OBTENCION_MAYOR;
-                      } else if (convocatoriaRequisitoEquipo.fechaMinimaCategoriaProfesional != null &&
-                        vinculacion.fechaObtencionCategoria <
-                        convocatoriaRequisitoEquipo.fechaMinimaCategoriaProfesional) {
-                        response.msgError = ErroresRequisitos.FECHA_OBTENCION_MENOR;
-                      } else if (response.msgError === null) {
-                        response.isValid = true;
-                      }
-                    } else if (vinculacion.fechaObtencionCategoria == null) {
-                      response.msgError = ErroresRequisitos.NO_FECHAS_VINCUALCION;
-                    }
-                  } else if (convocatoriaRequisitoEquipo?.vinculacionUniversidad != null &&
-                    convocatoriaRequisitoEquipo.vinculacionUniversidad === true) {
-                    response.msgError = ErroresRequisitos.NO_VINCULACION;
-                  } else if (response.msgError === null) {
-                    response.isValid = true;
-                  }
-                  return response;
-                })
-              );
-            }
-            return of(response);
-          })
-        );
-      })
-    );
-  }
-
 
   private getTooltipMessage(input: ErrorResponse): string {
     switch (input.msgError) {
@@ -522,6 +290,359 @@ export class ProyectoEquipoFragment extends Fragment {
     }
   }
 
+  private validateRequisitosConvocatoria(
+    proyectoEquipo: IProyectoEquipo,
+    convocatoriaId: number
+  ): Observable<ValidacionRequisitosEquipoIp> {
+    if (proyectoEquipo.rolProyecto.rolPrincipal && convocatoriaId) {
+      return this.validateRequisitosIp(proyectoEquipo, convocatoriaId);
+    } else if (convocatoriaId) {
+      return this.validateRequisitosEquipo(proyectoEquipo, convocatoriaId);
+    } else {
+      return of(null);
+    }
+  }
+
+  private validateRequisitosIp(
+    proyectoEquipo: IProyectoEquipo,
+    convocatoriaId: number
+  ): Observable<ValidacionRequisitosEquipoIp> {
+    return this.getRequisitosConvocatoria(convocatoriaId).pipe(
+      switchMap(() => {
+        return this.validateRequisitosIpDatosPersonales(proyectoEquipo, this.requisitosConvocatoria);
+      }),
+      switchMap(response => {
+        if (!response) {
+          return this.validateRequisitosIpDatosAcademicos(proyectoEquipo, this.requisitosConvocatoria);
+        }
+
+        return of(response);
+      }),
+      switchMap(response => {
+        if (!response) {
+          return this.validateRequisitosIpVinculaciones(proyectoEquipo, this.requisitosConvocatoria);
+        }
+
+        return of(response);
+      })
+    );
+  }
+
+  private validateRequisitosEquipo(
+    solicitudProyectoEquipo: IProyectoEquipo,
+    convocatoriaId: number
+  ): Observable<ValidacionRequisitosEquipoIp> {
+    return this.getRequisitosConvocatoria(convocatoriaId).pipe(
+      switchMap(() => {
+        return this.validateRequisitosEquipoDatosPersonales(solicitudProyectoEquipo, this.requisitosConvocatoria);
+      }),
+      switchMap(response => {
+        if (!response) {
+          return this.validateRequisitosEquipoDatosAcademicos(solicitudProyectoEquipo, this.requisitosConvocatoria);
+        }
+
+        return of(response);
+      }),
+      switchMap(response => {
+        if (!response) {
+          return this.validateRequisitosEquipoVinculaciones(solicitudProyectoEquipo, this.requisitosConvocatoria);
+        }
+
+        return of(response);
+      })
+    );
+  }
+
+  private getRequisitosConvocatoria(convocatoriaId: number): Observable<RequisitosConvocatoria> {
+    const requisitosConvocatoria = {} as RequisitosConvocatoria;
+
+    if (this.requisitosConvocatoria) {
+      return of(this.requisitosConvocatoria);
+    } else {
+      const nivelesAcademicosRequisitosEquipo$ = this.convocatoriaService.findRequisitosEquipoNivelesAcademicos(convocatoriaId).pipe(
+        tap(nivelesAcademicos => requisitosConvocatoria.nivelesAcademicosRequisitosEquipo = nivelesAcademicos)
+      );
+
+      const nivelesAcademicosRequisitosIp$ = this.convocatoriaService.findRequisitosIpNivelesAcademicos(convocatoriaId).pipe(
+        tap(nivelesAcademicos => requisitosConvocatoria.nivelesAcademicosRequisitosIp = nivelesAcademicos)
+      );
+
+      const categoriasProfesionalesRequisitosEquipo$ = this.convocatoriaService.findRequisitosEquipoCategoriasProfesionales(convocatoriaId)
+        .pipe(
+          tap(categorias =>
+            requisitosConvocatoria.categoriasProfesionalesRequisitosEquipo = categorias.map(element => element.categoriaProfesional))
+        );
+
+      const categoriasProfesionalesRequisitosIp$ = this.convocatoriaService.findRequisitosIpCategoriasProfesionales(convocatoriaId)
+        .pipe(
+          tap(categorias =>
+            requisitosConvocatoria.categoriasProfesionalesRequisitosIp = categorias.map(element => element.categoriaProfesional))
+        );
+
+
+      const requisitosIp$ = this.convocatoriaRequisitoIpService.getRequisitoIPConvocatoria(convocatoriaId)
+        .pipe(
+          tap(requisitosIp => requisitosConvocatoria.requisitosIp = requisitosIp)
+        );
+
+      const requisitosEquipo$ = this.convocatoriaRequisitoEquipoService.findByConvocatoriaId(convocatoriaId)
+        .pipe(
+          tap(requisitosEquipo => requisitosConvocatoria.requisitosEquipo = requisitosEquipo)
+        );
+
+      return forkJoin([
+        nivelesAcademicosRequisitosEquipo$,
+        nivelesAcademicosRequisitosIp$,
+        categoriasProfesionalesRequisitosEquipo$,
+        categoriasProfesionalesRequisitosIp$,
+        requisitosEquipo$,
+        requisitosIp$
+      ]).pipe(
+        map(() => {
+          this.requisitosConvocatoria = requisitosConvocatoria;
+          return requisitosConvocatoria;
+        })
+      );
+    }
+  }
+
+  private validateRequisitosIpDatosAcademicos(
+    proyectoEquipo: IProyectoEquipo,
+    requisitosConvocatoria: RequisitosConvocatoria
+  ): Observable<ValidacionRequisitosEquipoIp> {
+
+    if (requisitosConvocatoria.nivelesAcademicosRequisitosIp.length > 0) {
+      return this.datosAcademicosService.findByPersonaId(proyectoEquipo.persona.id).pipe(
+        map(datosAcademicos => {
+          if (datosAcademicos?.nivelAcademico) {
+            const nivelAcademicoInRequisitos = requisitosConvocatoria.nivelesAcademicosRequisitosIp
+              .find(nivelAcademico => nivelAcademico?.nivelAcademico?.id === datosAcademicos.nivelAcademico.id);
+            if (nivelAcademicoInRequisitos) {
+              if (!datosAcademicos.fechaObtencion) {
+                return ValidacionRequisitosEquipoIp.FECHA_OBTENCION_NIVEL_ACADEMICO_DESCONOCIDA;
+              } else if (requisitosConvocatoria.requisitosIp.fechaMinimaNivelAcademico
+                && datosAcademicos.fechaObtencion < requisitosConvocatoria.requisitosIp.fechaMinimaNivelAcademico) {
+                return ValidacionRequisitosEquipoIp.FECHA_OBTENCION_NIVEL_ACADEMICO_MIN;
+              } else if (requisitosConvocatoria.requisitosIp.fechaMaximaNivelAcademico
+                && datosAcademicos.fechaObtencion > requisitosConvocatoria.requisitosIp.fechaMaximaNivelAcademico) {
+                return ValidacionRequisitosEquipoIp.FECHA_OBTENCION_NIVEL_ACADEMICO_MAX;
+              }
+            } else {
+              return ValidacionRequisitosEquipoIp.NO_NIVEL_ACADEMICO;
+            }
+          } else {
+            return ValidacionRequisitosEquipoIp.NO_NIVEL_ACADEMICO;
+          }
+
+          return null;
+        })
+      );
+    } else {
+      return of(null);
+    }
+  }
+
+  private validateRequisitosIpDatosPersonales(
+    proyectoEquipo: IProyectoEquipo,
+    requisitosConvocatoria: RequisitosConvocatoria
+  ): Observable<ValidacionRequisitosEquipoIp> {
+
+    if (requisitosConvocatoria.requisitosIp?.sexo?.id) {
+      if (proyectoEquipo.persona.sexo?.id !== requisitosConvocatoria.requisitosIp.sexo.id) {
+        return of(ValidacionRequisitosEquipoIp.SEXO);
+      }
+    }
+
+    if (requisitosConvocatoria.requisitosIp?.edadMaxima) {
+      return this.datosPersonalesService.findByPersonaId(proyectoEquipo.persona.id).pipe(
+        map(datosPersonales => {
+
+          if (!datosPersonales.fechaNacimiento) {
+            return ValidacionRequisitosEquipoIp.EDAD_DESCONOCIDA;
+          } else {
+            const edad = DateTime.local().diff(datosPersonales?.fechaNacimiento, ['years', 'months', 'days', 'hours']);
+            if (edad.years > requisitosConvocatoria.requisitosIp.edadMaxima) {
+              return ValidacionRequisitosEquipoIp.EDAD_MAX;
+            }
+          }
+
+          return null;
+        })
+      );
+    }
+
+    return of(null);
+  }
+
+  private validateRequisitosIpVinculaciones(
+    proyectoEquipo: IProyectoEquipo,
+    requisitosConvocatoria: RequisitosConvocatoria
+  ): Observable<ValidacionRequisitosEquipoIp> {
+
+    if (requisitosConvocatoria.categoriasProfesionalesRequisitosIp.length > 0
+      || (requisitosConvocatoria.requisitosIp && !requisitosConvocatoria.requisitosIp.vinculacionUniversidad)) {
+      return this.vinculacionService.findByPersonaId(proyectoEquipo.persona.id).pipe(
+        map(vinculaciones => {
+
+          if (requisitosConvocatoria.categoriasProfesionalesRequisitosIp.length > 0) {
+            if (vinculaciones) {
+              const categoriaProfesionalInRequisitos =
+                requisitosConvocatoria.categoriasProfesionalesRequisitosIp?.find(categoriaProfesional => categoriaProfesional.id ===
+                  vinculaciones?.categoriaProfesional.id);
+
+              if (categoriaProfesionalInRequisitos) {
+                if (!vinculaciones.fechaObtencionCategoria) {
+                  return ValidacionRequisitosEquipoIp.FECHA_OBTENCION_CATEGORIA_PROFESIONAL_DESCONOCIDA;
+                } else if (requisitosConvocatoria.requisitosIp.fechaMinimaCategoriaProfesional
+                  && vinculaciones.fechaObtencionCategoria < requisitosConvocatoria.requisitosIp.fechaMinimaCategoriaProfesional) {
+                  return ValidacionRequisitosEquipoIp.FECHA_OBTENCION_CATEGORIA_PROFESIONAL_MIN;
+                } else if (requisitosConvocatoria.requisitosIp.fechaMaximaCategoriaProfesional
+                  && vinculaciones.fechaObtencionCategoria > requisitosConvocatoria.requisitosIp.fechaMaximaCategoriaProfesional) {
+                  return ValidacionRequisitosEquipoIp.FECHA_OBTENCION_CATEGORIA_PROFESIONAL_MAX;
+                }
+              } else {
+                return ValidacionRequisitosEquipoIp.NO_CATEGORIA_PROFESIONAL;
+              }
+            } else {
+              return ValidacionRequisitosEquipoIp.NO_CATEGORIA_PROFESIONAL;
+            }
+
+          } else if (requisitosConvocatoria.requisitosIp && !requisitosConvocatoria.requisitosIp.vinculacionUniversidad) {
+            if (vinculaciones?.categoriaProfesional) {
+              return ValidacionRequisitosEquipoIp.VINCULACION_UNIVERSIDAD;
+            }
+          }
+
+          return null;
+        })
+      );
+    } else {
+      return of(null);
+    }
+  }
+
+  private validateRequisitosEquipoDatosPersonales(
+    proyectoEquipo: IProyectoEquipo,
+    requisitosConvocatoria: RequisitosConvocatoria
+  ): Observable<ValidacionRequisitosEquipoIp> {
+
+    if (requisitosConvocatoria.requisitosEquipo?.sexo?.id) {
+      if (proyectoEquipo.persona.sexo?.id !== requisitosConvocatoria.requisitosEquipo.sexo.id) {
+        return of(ValidacionRequisitosEquipoIp.SEXO);
+      }
+    }
+
+    if (requisitosConvocatoria.requisitosEquipo?.edadMaxima) {
+      return this.datosPersonalesService.findByPersonaId(proyectoEquipo.persona.id).pipe(
+        map(datosPersonales => {
+
+          if (!datosPersonales.fechaNacimiento) {
+            return ValidacionRequisitosEquipoIp.EDAD_DESCONOCIDA;
+          } else {
+            const edad = DateTime.local().diff(datosPersonales?.fechaNacimiento, ['years', 'months', 'days', 'hours']);
+            if (edad.years > requisitosConvocatoria.requisitosEquipo.edadMaxima) {
+              return ValidacionRequisitosEquipoIp.EDAD_MAX;
+            }
+          }
+
+          return null;
+        })
+      );
+    }
+
+    return of(null);
+  }
+
+  private validateRequisitosEquipoDatosAcademicos(
+    proyectoEquipo: IProyectoEquipo,
+    requisitosConvocatoria: RequisitosConvocatoria
+  ): Observable<ValidacionRequisitosEquipoIp> {
+
+    if (requisitosConvocatoria.nivelesAcademicosRequisitosEquipo.length > 0) {
+      return this.datosAcademicosService.findByPersonaId(proyectoEquipo.persona.id).pipe(
+        map(datosAcademicos => {
+          if (datosAcademicos?.nivelAcademico) {
+            const nivelAcademicoInRequisitos = requisitosConvocatoria.nivelesAcademicosRequisitosEquipo
+              .find(nivelAcademico => nivelAcademico?.nivelAcademico?.id === datosAcademicos.nivelAcademico.id);
+            if (nivelAcademicoInRequisitos) {
+              if (!datosAcademicos.fechaObtencion) {
+                return ValidacionRequisitosEquipoIp.FECHA_OBTENCION_NIVEL_ACADEMICO_DESCONOCIDA;
+              } else if (requisitosConvocatoria.requisitosEquipo.fechaMinimaNivelAcademico
+                && datosAcademicos.fechaObtencion < requisitosConvocatoria.requisitosEquipo.fechaMinimaNivelAcademico) {
+                return ValidacionRequisitosEquipoIp.FECHA_OBTENCION_NIVEL_ACADEMICO_MIN;
+              } else if (requisitosConvocatoria.requisitosEquipo.fechaMaximaNivelAcademico
+                && datosAcademicos.fechaObtencion > requisitosConvocatoria.requisitosEquipo.fechaMaximaNivelAcademico) {
+                return ValidacionRequisitosEquipoIp.FECHA_OBTENCION_NIVEL_ACADEMICO_MAX;
+              }
+            } else {
+              return ValidacionRequisitosEquipoIp.NO_NIVEL_ACADEMICO;
+            }
+          } else {
+            return ValidacionRequisitosEquipoIp.NO_NIVEL_ACADEMICO;
+          }
+
+          return null;
+        })
+      );
+    } else {
+      return of(null);
+    }
+  }
+
+  private validateRequisitosEquipoVinculaciones(
+    proyectoEquipo: IProyectoEquipo,
+    requisitosConvocatoria: RequisitosConvocatoria
+  ): Observable<ValidacionRequisitosEquipoIp> {
+
+    if (requisitosConvocatoria.categoriasProfesionalesRequisitosEquipo.length > 0
+      || (requisitosConvocatoria.requisitosEquipo && !requisitosConvocatoria.requisitosEquipo.vinculacionUniversidad)) {
+      return this.vinculacionService.findByPersonaId(proyectoEquipo.persona.id).pipe(
+        map(vinculaciones => {
+
+          if (requisitosConvocatoria.categoriasProfesionalesRequisitosEquipo.length > 0) {
+            if (vinculaciones) {
+              const categoriaProfesionalInRequisitos =
+                requisitosConvocatoria.categoriasProfesionalesRequisitosEquipo?.find(categoriaProfesional => categoriaProfesional.id ===
+                  vinculaciones?.categoriaProfesional.id);
+
+              if (categoriaProfesionalInRequisitos) {
+                if (!vinculaciones.fechaObtencionCategoria) {
+                  return ValidacionRequisitosEquipoIp.FECHA_OBTENCION_CATEGORIA_PROFESIONAL_DESCONOCIDA;
+                } else if (requisitosConvocatoria.requisitosEquipo.fechaMinimaCategoriaProfesional
+                  && vinculaciones.fechaObtencionCategoria < requisitosConvocatoria.requisitosEquipo.fechaMinimaCategoriaProfesional) {
+                  return ValidacionRequisitosEquipoIp.FECHA_OBTENCION_CATEGORIA_PROFESIONAL_MIN;
+                } else if (requisitosConvocatoria.requisitosEquipo.fechaMaximaCategoriaProfesional
+                  && vinculaciones.fechaObtencionCategoria > requisitosConvocatoria.requisitosEquipo.fechaMaximaCategoriaProfesional) {
+                  return ValidacionRequisitosEquipoIp.FECHA_OBTENCION_CATEGORIA_PROFESIONAL_MAX;
+                }
+              } else {
+                return ValidacionRequisitosEquipoIp.NO_CATEGORIA_PROFESIONAL;
+              }
+            } else {
+              return ValidacionRequisitosEquipoIp.NO_CATEGORIA_PROFESIONAL;
+            }
+
+          } else if (requisitosConvocatoria.requisitosEquipo && !requisitosConvocatoria.requisitosEquipo.vinculacionUniversidad) {
+            if (vinculaciones?.categoriaProfesional) {
+              return ValidacionRequisitosEquipoIp.VINCULACION_UNIVERSIDAD;
+            }
+          }
+
+          return null;
+        })
+      );
+    } else {
+      return of(null);
+    }
+  }
+
+  private buildHelpIconIfNeeded(response: ValidacionRequisitosEquipoIp, wrapper: StatusWrapper<IProyectoEquipoListado>) {
+    if (response) {
+      wrapper.value.help = {
+        class: HelpIconClass.DANGER,
+        tooltip: response,
+      } as HelpIcon;
+    }
+  }
+
 }
-
-

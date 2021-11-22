@@ -1,13 +1,13 @@
-import { IInformePatentabilidad } from "@core/models/pii/informe-patentabilidad";
-import { IInvencion } from "@core/models/pii/invencion";
-import { Fragment } from "@core/services/action-service";
-import { InformePatentabilidadService } from "@core/services/pii/informe-patentabilidad/informe-patentabilidad.service";
-import { InvencionService } from "@core/services/pii/invencion/invencion.service";
-import { DocumentoService } from "@core/services/sgdoc/documento.service";
-import { EmpresaService } from "@core/services/sgemp/empresa.service";
-import { StatusWrapper } from "@core/utils/status-wrapper";
-import { BehaviorSubject, from, merge, Observable, of } from "rxjs";
-import { catchError, map, mergeMap, takeLast, tap } from "rxjs/operators";
+import { IInformePatentabilidad } from '@core/models/pii/informe-patentabilidad';
+import { IInvencion } from '@core/models/pii/invencion';
+import { Fragment } from '@core/services/action-service';
+import { InformePatentabilidadService } from '@core/services/pii/informe-patentabilidad/informe-patentabilidad.service';
+import { InvencionService } from '@core/services/pii/invencion/invencion.service';
+import { DocumentoService } from '@core/services/sgdoc/documento.service';
+import { EmpresaService } from '@core/services/sgemp/empresa.service';
+import { StatusWrapper } from '@core/utils/status-wrapper';
+import { BehaviorSubject, from, merge, Observable, of } from 'rxjs';
+import { catchError, map, mergeMap, takeLast, tap } from 'rxjs/operators';
 
 export class InvencionInformesPatentabilidadFragment extends Fragment {
 

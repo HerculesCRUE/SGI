@@ -8,6 +8,8 @@ import org.crue.hercules.sgi.eti.config.SgiConfigProperties;
 import org.crue.hercules.sgi.eti.dto.ConvocatoriaReunionDatosGenerales;
 import org.crue.hercules.sgi.eti.exceptions.ConvocatoriaReunionNotFoundException;
 import org.crue.hercules.sgi.eti.model.ConvocatoriaReunion;
+import org.crue.hercules.sgi.eti.model.Dictamen;
+import org.crue.hercules.sgi.eti.model.Evaluacion;
 import org.crue.hercules.sgi.eti.repository.ActaRepository;
 import org.crue.hercules.sgi.eti.repository.ConvocatoriaReunionRepository;
 import org.crue.hercules.sgi.eti.repository.EvaluacionRepository;
@@ -260,4 +262,18 @@ public class ConvocatoriaReunionServiceImpl implements ConvocatoriaReunionServic
     return !actaRepository.existsByConvocatoriaReunionIdAndEstadoActualId(id, Constantes.TIPO_ESTADO_ACTA_FINALIZADA);
   }
 
+  /**
+   * Retorna la fecha convocatoria y acta (codigo convocatoria) de la última
+   * evaluación de tipo memoria de la memoria original (y que no sea revisión
+   * mínima)
+   * 
+   * @param idEvaluacion Id de la {@link Evaluacion}
+   * @param idDictamen   Id del {@link Dictamen}
+   * @return ConvocatoriaReunion
+   */
+  @Override
+  public ConvocatoriaReunion findConvocatoriaUltimaEvaluacionTipoMemoria(Long idEvaluacion, Long idDictamen) {
+    log.debug("findConvocatoriaUltimaEvaluacionTipoMemoria(Long idEvaluacion, idDictamen) - start - end");
+    return repository.findConvocatoriaUltimaEvaluacionTipoMemoria(idEvaluacion, idDictamen);
+  }
 }

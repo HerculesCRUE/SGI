@@ -58,7 +58,7 @@
             </button>
           </ng-container>
           <ng-container *sgiHasAnyAuthority="['PII-INV-B']">
-            <button *ngIf="!invencionInventor.deleted" mat-button matTooltip="{{'btn.delete' | translate}}"
+            <button *ngIf="!invencionInventor.value.id" mat-button matTooltip="{{'btn.delete' | translate}}"
               (click)="deleteInventor(invencionInventor)">
               <mat-icon color="warn">highlight_off</mat-icon>
             </button>
@@ -73,17 +73,7 @@
     <mat-paginator [pageSizeOptions]="elementosPagina" showFirstLastButtons>
     </mat-paginator>
 
-    <mat-error *ngIf="isInvecionInvtoresEmpty; else errorParticipacion">
-      {{'pii.invencion-inventor.error.vacio' | translate}}
-    </mat-error>
-    <ng-template #errorParticipacion>
-      <mat-error *ngIf="!(formPart.participacionCompleta$ | async)">
-        {{msgErrorParticipacion}}
-      </mat-error>
-    </ng-template>
-
   </div>
-
 
   <ng-container *sgiHasAuthority="'PII-INV-C'">
     <div class="separation-button">
@@ -93,5 +83,14 @@
       </button>
     </div>
   </ng-container>
+
+  <mat-error *ngIf="isInvecionInvtoresEmpty; else errorParticipacion">
+    {{'pii.invencion-inventor.error.vacio' | translate}}
+  </mat-error>
+  <ng-template #errorParticipacion>
+    <mat-error *ngIf="!(formPart.participacionCompleta$ | async)">
+      {{msgErrorParticipacion}}
+    </mat-error>
+  </ng-template>
 
 </sgi-fragment>

@@ -53,12 +53,12 @@ export class ProyectoPeriodoSeguimientoActionService extends ActionService {
     const convocatoriaPeriodoSeguimientoId =
       this.data.convocatoriaPeriodoSeguimientoId ?? history.state[CONVOCATORIA_PERIODO_SEGUIMIENTO_ID_KEY];
 
-    if (convocatoriaPeriodoSeguimientoId) {
-      this.loadPeriodoSeguimiento(convocatoriaPeriodoSeguimientoId);
-    }
-
     if (id) {
       this.enableEdit();
+    }
+
+    if (convocatoriaPeriodoSeguimientoId) {
+      this.loadPeriodoSeguimiento(convocatoriaPeriodoSeguimientoId);
     }
 
     this.datosGenerales = new ProyectoPeriodoSeguimientoDatosGeneralesFragment(

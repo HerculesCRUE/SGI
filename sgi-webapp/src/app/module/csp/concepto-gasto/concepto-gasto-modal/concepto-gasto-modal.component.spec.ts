@@ -1,6 +1,5 @@
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
-import { FlexModule } from '@angular/flex-layout';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -17,25 +16,23 @@ describe('ConceptoGastoModalComponent', () => {
   let fixture: ComponentFixture<ConceptoGastoModalComponent>;
 
   beforeEach(waitForAsync(() => {
-    const mockDialogRef = {
-      close: jasmine.createSpy('close'),
-    };
     TestBed.configureTestingModule({
+      declarations: [ConceptoGastoModalComponent],
       imports: [
         BrowserAnimationsModule,
-        FlexModule,
-        FormsModule,
+        MaterialDesignModule,
         HttpClientTestingModule,
         LoggerTestingModule,
-        MaterialDesignModule,
-        ReactiveFormsModule,
-        RouterTestingModule,
-        SharedModule,
         TestUtils.getIdiomas(),
+        RouterTestingModule,
+        FormsModule,
+        ReactiveFormsModule,
+        SharedModule
       ],
-      declarations: [ConceptoGastoModalComponent],
-      providers: [{ provide: MatDialogRef, useValue: mockDialogRef },
-      { provide: MAT_DIALOG_DATA, useValue: {} as IConceptoGasto }]
+      providers: [
+        { provide: MatDialogRef, useValue: TestUtils.buildDialogActionMatDialogRef() },
+        { provide: MAT_DIALOG_DATA, useValue: {} as IConceptoGasto }
+      ]
     })
       .compileComponents();
   }));

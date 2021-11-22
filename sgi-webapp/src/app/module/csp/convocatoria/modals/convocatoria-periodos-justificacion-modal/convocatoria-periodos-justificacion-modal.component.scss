@@ -5,3 +5,18 @@
   padding-top: 10px;
   font-size: map-get($sgi-typography-size, form-fieldset);
 }
+
+.mat-form-field.ng-invalid.ng-touched {
+  animation: example;
+  animation-duration: 0.3s;
+  margin-bottom: 20px;
+}
+@keyframes example {
+  from {
+    margin-bottom: 0;
+  }
+  to {
+    margin-bottom: 20px;
+  }
+}
+

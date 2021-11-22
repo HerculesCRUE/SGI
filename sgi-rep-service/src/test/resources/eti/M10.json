@@ -1,0 +1,1465 @@
+{
+  "bloques": [
+    {
+      "id": 1,
+      "nombre": "NoRefCEID: M10/2021/005",
+      "orden": 1,
+      "apartados": [
+        {
+          "id": 1,
+          "nombre": "Datos del solicitante",
+          "titulo": "Datos del solicitante",
+          "orden": 1,
+          "elementos": [
+            {
+              "nombre": "",
+              "tipo": "datosSolicitanteType",
+              "content": "48517010"
+            }
+          ],
+          "apartadosHijos": []
+        },
+        {
+          "id": 2,
+          "nombre": "Título del proyecto",
+          "titulo": "Título del proyecto",
+          "orden": 2,
+          "elementos": [
+            {
+              "nombre": "",
+              "tipo": "template",
+              "content": "<p><i>PeticionEvaluacion1</i></p>"
+            }
+          ],
+          "apartadosHijos": []
+        },
+        {
+          "id": 3,
+          "nombre": "Tipo de actividad",
+          "titulo": "Tipo de actividad",
+          "orden": 3,
+          "elementos": [
+            {
+              "nombre": "",
+              "tipo": "template",
+              "content": "<p><i>Proyecto de investigación</i></p>"
+            }
+          ],
+          "apartadosHijos": []
+        },
+        {
+          "id": 4,
+          "nombre": "Financiación",
+          "titulo": "Financiación",
+          "orden": 4,
+          "elementos": [
+            {
+              "nombre": "",
+              "tipo": "template",
+              "content": "<p>¿Se dispone de financiación para la realización del proyecto?: <i>Sí</i></p>"
+            },
+            {
+              "nombre": "",
+              "tipo": "template",
+              "content": "<p>Indicar la fuente de financiación: <i>organismo financiador</i></p>"
+            },
+            {
+              "nombre": "",
+              "tipo": "template",
+              "content": "<p>Estado de la financiación: <i>DENEGADO</i></p>"
+            }
+          ],
+          "apartadosHijos": []
+        },
+        {
+          "id": 5,
+          "nombre": "Fechas clave del proyecto",
+          "titulo": "Fechas clave del proyecto",
+          "orden": 5,
+          "elementos": [
+            {
+              "nombre": "",
+              "tipo": "template",
+              "content": "<p>Fecha prevista inicio del proyecto: <i>01/09/2019</i></p>"
+            },
+            {
+              "nombre": "",
+              "tipo": "template",
+              "content": "<p>Fecha prevista fin del proyecto: <i>02/10/2019</i></p>"
+            }
+          ],
+          "apartadosHijos": []
+        },
+        {
+          "id": 6,
+          "nombre": "Resumen del proyecto",
+          "titulo": "Resumen del proyecto",
+          "orden": 6,
+          "elementos": [
+            {
+              "nombre": "",
+              "tipo": "template",
+              "content": "<p><i>Resumen</i></p>"
+            }
+          ],
+          "apartadosHijos": []
+        },
+        {
+          "id": 7,
+          "nombre": "Memorias del proyecto",
+          "titulo": "Memorias del proyecto",
+          "orden": 7,
+          "elementos": [
+            {
+              "nombre": "memoriasProyecto",
+              "tipo": "table-crud",
+              "content": "[[{\"nombre\":\"Comité\",\"tipo\":null,\"content\":\"CEISH\"},{\"nombre\":\"NoRefCEID\",\"tipo\":null,\"content\":\"M10/2019/001\"},{\"nombre\":\"Nombre\",\"tipo\":null,\"content\":\"Título M10/2019/001\"},{\"nombre\":\"Estado\",\"tipo\":null,\"content\":\"En secretaría seguimiento anual\"}],[{\"nombre\":\"Comité\",\"tipo\":null,\"content\":\"CEEA\"},{\"nombre\":\"NoRefCEID\",\"tipo\":null,\"content\":\"M20/2021/001\"},{\"nombre\":\"Nombre\",\"tipo\":null,\"content\":\"Nueva M20\"},{\"nombre\":\"Estado\",\"tipo\":null,\"content\":\"Completada\"}],[{\"nombre\":\"Comité\",\"tipo\":null,\"content\":\"CEEA\"},{\"nombre\":\"NoRefCEID\",\"tipo\":null,\"content\":\"M20/2021/002\"},{\"nombre\":\"Nombre\",\"tipo\":null,\"content\":\"M20 prueba duplicados\"},{\"nombre\":\"Estado\",\"tipo\":null,\"content\":\"En elaboración\"}],[{\"nombre\":\"Comité\",\"tipo\":null,\"content\":\"CEIAB\"},{\"nombre\":\"NoRefCEID\",\"tipo\":null,\"content\":\"M30/2021/001\"},{\"nombre\":\"Nombre\",\"tipo\":null,\"content\":\"M30 que tenia null\"},{\"nombre\":\"Estado\",\"tipo\":null,\"content\":\"Completada\"}],[{\"nombre\":\"Comité\",\"tipo\":null,\"content\":\"CEISH\"},{\"nombre\":\"NoRefCEID\",\"tipo\":null,\"content\":\"M10/2021/005\"},{\"nombre\":\"Nombre\",\"tipo\":null,\"content\":null},{\"nombre\":\"Estado\",\"tipo\":null,\"content\":\"Completada\"}]]"
+            }
+          ],
+          "apartadosHijos": []
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "nombre": "VALOR SOCIAL Y JUSTIFICACIÓN",
+      "orden": 2,
+      "apartados": [
+        {
+          "id": 1,
+          "nombre": "Valor social del proyecto",
+          "titulo": "1.1 Valor social del proyecto",
+          "orden": 1,
+          "elementos": [
+            {
+              "nombre": "",
+              "tipo": "template",
+              "content": "Para completa esta sección ir a <b>'Datos generales'</b>.<br/>\n"
+            },
+            {
+              "nombre": "",
+              "tipo": "template",
+              "content": "<p>A continuación se muestra la finalidad principal del proyecto o campo en el que se espera un aumento del conocimiento o un beneficio social último que justifique su realización.</p><br/>\n"
+            },
+            {
+              "nombre": "valorSocial",
+              "tipo": "tipo-valor-social",
+              "content": "<p>Valor social: <i>INVESTIGACION_FUNDAMENTAL</i></p><br/>\n"
+            },
+            {
+              "nombre": "otroValorSocial",
+              "tipo": "textarea",
+              "content": "<p>Especificar: </p><br/>\n"
+            }
+          ],
+          "apartadosHijos": []
+        },
+        {
+          "id": 2,
+          "nombre": "Justificación del uso de seres humanos",
+          "titulo": "1.2 Justificación del uso de seres humanos",
+          "orden": 2,
+          "elementos": [
+            {
+              "nombre": "",
+              "tipo": "template",
+              "content": "<p>Exponer brevemente la necesidad de utilizar seres humanos, sus muestras o sus datos, relacionándola con los beneficios que se esperan respecto al aumento del conocimiento o mejora de las condiciones de vida.</p><p>Si además se espera que beneficie a la población estudiada explicar como lo hará.</p><br/>\n"
+            },
+            {
+              "nombre": "justificacion",
+              "tipo": "textarea",
+              "content": "<p>Justificación: <i>sdfsdsdffffff</i></p><br/>\n"
+            }
+          ],
+          "apartadosHijos": []
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "nombre": "CUALIFICACIÓN DEL EQUIPO INVESTIGADOR",
+      "orden": 3,
+      "apartados": [
+        {
+          "id": 3,
+          "nombre": "Personal que llevará a cabo las tareas con seres humanos, sus muestras y/o sus datos",
+          "titulo": "2.1 Personal que llevará a cabo las tareas con seres humanos, sus muestras y/o sus datos",
+          "orden": 1,
+          "elementos": [
+            {
+              "nombre": "",
+              "tipo": "template",
+              "content": "<p>A continuación se muestra todas las personas integrantes del equipo de investigador, incluido el/la solicitante. Añadir en este apartado cualquier otra persona que colabore en el proyecto ccómo reclutadores, encuestadores, etc.. En el caso de proyecto tutelado añadir al tutor o director del mismo.<br><br>Especificar por persona:<br><br><ul><li>Datos identificativos (nombre, NIF, vinculación y nivel académico)</li><li>Tareas concretas que realizará de acuerdo a lo descrito en el apartado 3.2 Diseño metodológico (añadir cuentas tareas sean necesarias)</li><li>Formación y experiencia previa en cada tarea en particular (realización de encuestas, reclutamiento, toma de muestras, tratamiento de datos, trabajo en laboratorio, dirección de tesis, etc).</li></ul></p><p>Para completar esta sección ir a <b>Equipo investigador</b></p><br/>\n"
+            }
+          ],
+          "apartadosHijos": []
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "nombre": "VALIDEZ CIENTÍFICA Y METODOLÓGICA",
+      "orden": 4,
+      "apartados": [
+        {
+          "id": 4,
+          "nombre": "Objetivos científicos del proyecto",
+          "titulo": "3.1 Objetivos científicos del proyecto",
+          "orden": 1,
+          "elementos": [
+            {
+              "nombre": "",
+              "tipo": "template",
+              "content": "<p>Describir brevemente los principales objetivos que se pretenden alcanzar con este proyecto</p><br/>\n"
+            },
+            {
+              "nombre": "",
+              "tipo": "template",
+              "content": "Para completa esta sección ir a <b>'Datos generales'</b>.<br/>\n"
+            },
+            {
+              "nombre": "objetivosCientificos",
+              "tipo": "textarea",
+              "content": "<p>Objetivos cientificos: <i>Objetivos</i></p><br/>\n"
+            }
+          ],
+          "apartadosHijos": []
+        },
+        {
+          "id": 5,
+          "nombre": "Diseño metodológico del proyecto",
+          "titulo": "3.2 Diseño metodológico del proyecto",
+          "orden": 2,
+          "elementos": [
+            {
+              "nombre": "disenoMetodologico",
+              "tipo": "textarea",
+              "content": "<p>Diseño metodológico: <i>Diseño metodológico</i></p><br/>\n"
+            }
+          ],
+          "apartadosHijos": []
+        },
+        {
+          "id": 6,
+          "nombre": "Referencias de publicaciones científicas",
+          "titulo": "3.3 Referencias de publicaciones científicas",
+          "orden": 3,
+          "elementos": [
+            {
+              "nombre": "",
+              "tipo": "template",
+              "content": "<p>Citar de forma completa (autor, título, publicación, fecha etc) las referencias más relevantes utilizadas para el método (máximo 10 referencias)</p><br/>\n"
+            },
+            {
+              "nombre": "referenciasPublicaciones",
+              "tipo": "textarea",
+              "content": "<p>Referencias: <i>sdfsdfsdf</i></p><br/>\n"
+            }
+          ],
+          "apartadosHijos": []
+        },
+        {
+          "id": 7,
+          "nombre": "Intervenciones o pruebas en seres humanos",
+          "titulo": "3.4 Intervenciones o pruebas en seres humanos",
+          "orden": 4,
+          "elementos": [
+            {
+              "nombre": "",
+              "tipo": "template",
+              "content": "<p>¿En esta actividad se realizan intervenciones o pruebas en seres humanos?</p><br/>\n"
+            },
+            {
+              "nombre": "",
+              "tipo": "template",
+              "content": "<p>A efectos de este formulario se consideran intervenciones o pruebas los trabajos concretos que requieran la <strong>concurrencia directa del ser humano</strong> sujeto de la experiementación bien porque se vaya a obtener de él las muestras biológicas (de forma invasiva o no) o datos de carácter personal o tenga que realizar algún test, encuesta, ejercicio, etc.. </p><br/>\n"
+            },
+            {
+              "nombre": "",
+              "tipo": "template",
+              "content": "<p>Intervenciones o pruebas en seres humanos</p><br/>\n"
+            },
+            {
+              "nombre": "intervencionesSeresHumanosRadio",
+              "tipo": "radio",
+              "content": "<p>Elige opción: <i>No</i></p><br/>\n"
+            },
+            {
+              "nombre": "intervencionesSeresHumanosCheck",
+              "tipo": "multicheckbox",
+              "content": "<p>Cuales: <i></i></p><br/>\n"
+            },
+            {
+              "nombre": "otrasTexto",
+              "tipo": "textarea",
+              "content": "<p>Otras. Especificar: </p><br/>\n"
+            }
+          ],
+          "apartadosHijos": [
+            {
+              "id": 8,
+              "nombre": "Proceso de reclutamiento",
+              "titulo": "3.4.1 Proceso de reclutamiento",
+              "orden": 1,
+              "elementos": [
+                {
+                  "nombre": "",
+                  "tipo": "template",
+                  "content": "<p>Describir el proceso de reclutamiento: presentación del proyecto y obtención de consentimiento del sujeto fuente y/o su representante legal de acuerdo al siguiente esquema:</p><ul><li>quién (persona/s encargada/s)</li><li>cómo (conversación, vídeo, folleto..)</li><li>dónde (lugar de información y de firma de documentos)</li><li>cuándo se realizan (momento en que se llevan a cabo)</li></ul><br/>\n"
+                },
+                {
+                  "nombre": "",
+                  "tipo": "template",
+                  "content": "<p>Se entiende por 'proceso de reclutamiento' todas aquellas acciones encaminadas a captar las personas que participarán en el estudio como sujetos de investigación.</p><p>Este proceso incluye la información al posible participante, su convencimiento y posterior obtención y firma del consentimiento.</p><p>El proceso de reclutamiento es posterior a la definición de la muestra con los criterios de inclusión y exclusión al hacer el diseño metodológico.</p><p>El proceso de reclutamiento es una parte esencial de la investigación porque afecta directamente a aspectos éticos como la voluntariedad, la equidad y el respeto.</p><br/>\n"
+                },
+                {
+                  "nombre": "descripcionProcesoReclutamiento",
+                  "tipo": "textarea",
+                  "content": "<p>Proceso de reclutamiento: </p><br/>\n"
+                },
+                {
+                  "nombre": "",
+                  "tipo": "template",
+                  "content": "<p>Fecha prevista de inicio del reclutamiento</p><br/>\n"
+                },
+                {
+                  "nombre": "fechaReclutamiento",
+                  "tipo": "datepicker",
+                  "content": "<p>Fecha prevista: <i></i></p><br/>\n"
+                },
+                {
+                  "nombre": "",
+                  "tipo": "template",
+                  "content": "<p>Nota: Añadir en el apartado '5.7 Documentación adicional' todos los documentos que vayan a utilizarse para reclutamiento de sujetos de estudio (por ejemplo anuncios, trípticos etc, con el texto íntegro).</p><p>Si el proceso va a realizarse fuera de las instalaciones de la UMU añadir en el apartado '5.3' el Documento de autorización del centro o local (Hospitales, Centros Educativos, Centros de Salud, etc).</p><p>Recuerde que el proyecto <strong>no puede iniciarse sin haber obtenido el informe favorable</strong> del comité por tanto las fechas deben ser coherentes.</p></div><br/>\n"
+                }
+              ],
+              "apartadosHijos": []
+            },
+            {
+              "id": 9,
+              "nombre": "Reclutamiento realizado por personal ajeno al equipo investigador",
+              "titulo": "3.4.2 Reclutamiento realizado por personal ajeno al equipo investigador",
+              "orden": 2,
+              "elementos": [
+                {
+                  "nombre": "",
+                  "tipo": "template",
+                  "content": "<p>¿El reclutamiento va a ser realizado por alguien ajeno al equipo de investigador?</p><br/>\n"
+                },
+                {
+                  "nombre": "reclutamientoPersonalAjenoRadio",
+                  "tipo": "radio",
+                  "content": "<p>Elige opción: </p><br/>\n"
+                },
+                {
+                  "nombre": "",
+                  "tipo": "template",
+                  "content": "<p>¿Recibe algún tipo de compensación?</p><br/>\n"
+                },
+                {
+                  "nombre": "tipoCompensacionRadio",
+                  "tipo": "radio",
+                  "content": "<p>Elige opción: </p><br/>\n"
+                },
+                {
+                  "nombre": "tipoCompensacionTexto",
+                  "tipo": "textarea",
+                  "content": "<p>Tipo de compensación: </p><br/>\n"
+                },
+                {
+                  "nombre": "",
+                  "tipo": "template",
+                  "content": "<p>Nota: Si el reclutamiento se realiza desde un centro ajeno a la Universidad, y que además autoriza la realización de dicho proyecto en sus instalaciones, con sus asociados, etc,: 5.3. Autorización del centro: Añadir la tarea de reclutamiento en el Documento de Autorización.</p><br/>\n"
+                }
+              ],
+              "apartadosHijos": []
+            },
+            {
+              "id": 10,
+              "nombre": "Descripción de las intervenciones o pruebas",
+              "titulo": "3.4.3 Descripción de las intervenciones o pruebas",
+              "orden": 3,
+              "elementos": [
+                {
+                  "nombre": "",
+                  "tipo": "template",
+                  "content": "<p>Describir todas las intervenciones o pruebas a las que se va a someter al sujeto de estudio para obtener sus muestras o sus datos especificando el lugar, persona encargada de realizarlas, duración y frecuencia.</p><br/>\n"
+                },
+                {
+                  "nombre": "descripcionIntervenciones",
+                  "tipo": "textarea",
+                  "content": "<p>Intervenciones o pruebas: </p><br/>\n"
+                },
+                {
+                  "nombre": "",
+                  "tipo": "template",
+                  "content": "<p>Nota: Recuerde que la persona participante tiene derecho a conocer todas las intervenciones o pruebas que se le van a realizar o afectan a su participación y debe ser informado de ello en el documento de consentimiento (apartado '4.4.4 Información sobre las intervenciones o pruebas').</p><p>Para obtener más información sobre la información mínima exigida consultar el <a href='http://www.boe.es/buscar/act.php?id=BOE-A-2007-12945&p=20110602&tn=1#a15' target='_blank'>artículo 15</a> de la LIB 14/2007.</p><br/>\n"
+                }
+              ],
+              "apartadosHijos": []
+            },
+            {
+              "id": 11,
+              "nombre": "Incentivos para la participación",
+              "titulo": "3.4.4 Incentivos para la participación",
+              "orden": 4,
+              "elementos": [
+                {
+                  "nombre": "",
+                  "tipo": "template",
+                  "content": "<p>¿Se va dar algún tipo de incentivo o compensación al sujeto de estudio por su participación?</p><br/>\n"
+                },
+                {
+                  "nombre": "incentivosParticipacionRadio",
+                  "tipo": "radio",
+                  "content": "<p>Elige opción: </p><br/>\n"
+                },
+                {
+                  "nombre": "",
+                  "tipo": "template",
+                  "content": "<p>Especificar tipo de incentivo, cuantía y justificación</p><br/>\n"
+                },
+                {
+                  "nombre": "incentivosParticipacionTexto",
+                  "tipo": "textarea",
+                  "content": "<p>Incentivos: </p><br/>\n"
+                }
+              ],
+              "apartadosHijos": []
+            }
+          ]
+        },
+        {
+          "id": 12,
+          "nombre": "Muestras biológicas de origen humano",
+          "titulo": "3.5 Muestras biológicas de origen humano",
+          "orden": 5,
+          "elementos": [
+            {
+              "nombre": "",
+              "tipo": "template",
+              "content": "<p>¿En esta actividad se utilizan muestras biológicas de origen humano?</p><br/>\n"
+            },
+            {
+              "nombre": "muestrasBiologicasRadio",
+              "tipo": "radio",
+              "content": "<p>Elige opción: <i>No</i></p><br/>\n"
+            },
+            {
+              "nombre": "muestrasBiologicasCheck",
+              "tipo": "multicheckbox",
+              "content": "<p>Cuales: <i></i></p><br/>\n"
+            },
+            {
+              "nombre": "",
+              "tipo": "template",
+              "content": "<p>Nota: Recuerde que la manipulación de tejidos/sangre/fluidos humanos requiere de evaluación del CBE.</p><p>Las opciones marcadas con asterisco (*) requieren el informe previo favorable de la Comisión de Garantías antes de su utilización</p><br/>\n"
+            }
+          ],
+          "apartadosHijos": [
+            {
+              "id": 13,
+              "nombre": "Origen de las muestras",
+              "titulo": "3.5.1 Origen de las muestras",
+              "orden": 1,
+              "elementos": [
+                {
+                  "nombre": "",
+                  "tipo": "template",
+                  "content": "¿Como se han obtenido las muestras?<br/>\n"
+                },
+                {
+                  "nombre": "origenMuestrasCheck",
+                  "tipo": "multicheckbox",
+                  "content": "<p>Origen: <i></i></p><br/>\n"
+                },
+                {
+                  "nombre": "especificarRecogidasApartirDeMuestras",
+                  "tipo": "textarea",
+                  "content": "<p>Especificar recogidas a partir de muestras ya obtenidas: </p><br/>\n"
+                },
+                {
+                  "nombre": "especificarProcedentesBiobanco",
+                  "tipo": "textarea",
+                  "content": "<p>Especificar procedentes de Biobanco: </p><br/>\n"
+                },
+                {
+                  "nombre": "especificarProcedentesColeccion",
+                  "tipo": "textarea",
+                  "content": "<p>Especificar procedentes de una colección de muestras: </p><br/>\n"
+                },
+                {
+                  "nombre": "",
+                  "tipo": "template",
+                  "content": "<p>Nota: Las opciones marcadas con (*) requiren MTA o convenio que debe aportarse en el apartado 5.5.</p><br/>\n"
+                }
+              ],
+              "apartadosHijos": []
+            },
+            {
+              "id": 14,
+              "nombre": "Destino de las muestras de origen humano",
+              "titulo": "3.5.2 Destino de las muestras de origen humano",
+              "orden": 2,
+              "elementos": [
+                {
+                  "nombre": "",
+                  "tipo": "template",
+                  "content": "¿Qué va a hacer con las muestras de origen humano una vez que ya no sean necesarias para este proyecto?<br/>\n"
+                },
+                {
+                  "nombre": "destinoMuestrasCheck",
+                  "tipo": "multicheckbox",
+                  "content": "<p>Destino: <i></i></p><br/>\n"
+                },
+                {
+                  "nombre": "especificarCesionBiobanco",
+                  "tipo": "textarea",
+                  "content": "<p>Especificar cesión a Biobanco: </p><br/>\n"
+                },
+                {
+                  "nombre": "especificarUsoColeccionMuestras",
+                  "tipo": "textarea",
+                  "content": "<p>Especificar colección y registro: </p><br/>\n"
+                },
+                {
+                  "nombre": "especificarUsoColeccionMuestras",
+                  "tipo": "textarea",
+                  "content": "<p>Especificar incorporación a colección: </p><br/>\n"
+                },
+                {
+                  "nombre": "",
+                  "tipo": "template",
+                  "content": "<p>Nota: Recuerde que el/la participante tiene derecho a conocer y decidir el destino de sus muestras y debe ser informado de ello en el <strong>documento de consentimiento</strong> (apartado 4.4.8 Derecho a decidir sobre el destino de las muestras').</p><p>Para obtener más información sobre la información mínima exigida consulta el <a href='http://www.boe.es/buscar/act.php?id=BOE-A-2007-12945&p=20110602&tn=1#a59' target='_blank'>articulo 59</a> de la LIB 14/2007.</p><br/>\n"
+                }
+              ],
+              "apartadosHijos": []
+            }
+          ]
+        },
+        {
+          "id": 15,
+          "nombre": "Datos de carácter personal",
+          "titulo": "3.6 Datos de carácter personal",
+          "orden": 6,
+          "elementos": [
+            {
+              "nombre": "",
+              "tipo": "template",
+              "content": "<p>Para dar debido cumplimiento a lo referido a la protección de datos de carácter personal, deberá rellenar la siguiente <a href='https://encuestas.um.es/encuestas/protecciondedatosproyectos.cc' target='_blank'>encuesta</a></p><br/>\n"
+            }
+          ],
+          "apartadosHijos": []
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "nombre": "ASPECTOS ÉTICOS ESPECÍFICOS",
+      "orden": 5,
+      "apartados": [
+        {
+          "id": 16,
+          "nombre": "Ponderación de los riesgos o molestias",
+          "titulo": "4.1 Ponderación de los riesgos o molestias",
+          "orden": 1,
+          "elementos": [
+            {
+              "nombre": "",
+              "tipo": "template",
+              "content": "<p>El balance entre riesgos y beneficios es una de las cuestiones básicas en ética de la investigación.</p><p>Es responsabilidad del investigador o investigadora principal (IP) ponderar con prudencia el riesgo al que se somete a los/las participantes en relación con los beneficios esperables para ellos (previamente descritos en el apartado 1.2 de este formulario).</p><p>Hay que tener en cuenta que un gran beneficio no justifica cualquier riesgo ni siquiera si es aceptado voluntariamente. El bienestar y la integridad del individuo priman sobre el beneficio esperable.</p><p>Para más información sobre el balance riesgo/beneficio consultar el documento de la CIOMS <a href='https://www.um.es/web/comision-etica-investigacion/comision-etica' target='_blank'>Pautas éticas internacionales para la investigación biomédica en seres humanos</a></p><br/>\n"
+            }
+          ],
+          "apartadosHijos": [
+            {
+              "id": 17,
+              "nombre": "Tipo de riesgos o molestias",
+              "titulo": "4.1.1 Tipo de riesgos o molestias",
+              "orden": 1,
+              "elementos": [
+                {
+                  "nombre": "",
+                  "tipo": "template",
+                  "content": "<p>Señale a continuación el tipo de riesgos y/o molestias que se ocasionarán al sujeto de investigación debido a las intervenciones o pruebas que se le realizarán para el proyecto.</p><br/>\n"
+                },
+                {
+                  "nombre": "",
+                  "tipo": "template",
+                  "content": "<p>La consideración de riesgo o molestia debe realizarse en un sentido amplio ya que hay que tener en cuenta los riesgos fisicos para la salud (como en el caso de pruebas invasivas, por ejemplo) sino también posibles daños psicológicos (por ejemplo cuando se tratan 'temas sensibles') o las molestias ocasionadas por la simple intromisión en la initimidad del sujeto de estudio o el uso de su tiempo.</p><br/>\n"
+                },
+                {
+                  "nombre": "tipoRiesgosOMolestiasCheck",
+                  "tipo": "multicheckbox",
+                  "content": "<p>Opciones: <i></i></p><br/>\n"
+                },
+                {
+                  "nombre": "",
+                  "tipo": "template",
+                  "content": "<p>Nota: los posibles daños/molestias deben relacionarse con las intervenciones descritas detalladamente en el apartado <strong>'3.4.3 Descripción de las intervenciones o pruebas'</strong></p><p>Recuerde que el/la participante debe ser informado debidamente de las molestias y los posibles riesgos y beneficios de la investigación y debe ser informado de ello en <strong>el documento de consentimiento</strong> (apartado '4.4.2 Información obligatoria mínima').</p><p>Para obtener más información sobre la información mínima exigida consultar el <a href='http://www.boe.es/buscar/act.php?id=BOE-A-2007-12945&p=20110602&tn=1#a15' target='_blank'>artículo 15</a> de la LIB 14/2007 y en <a href='https://www.um.es/web/comision-etica-investigacion/comision-etica' target='_blank'>página de la Web de la Comisión de Ética de Investigación</a>.</p><br/>\n"
+                }
+              ],
+              "apartadosHijos": []
+            },
+            {
+              "id": 18,
+              "nombre": "Valoración de los riesgos o molestias",
+              "titulo": "4.1.2 Valoración de los riesgos o molestias",
+              "orden": 2,
+              "elementos": [
+                {
+                  "nombre": "",
+                  "tipo": "template",
+                  "content": "<p>Teniendo en cuenta las intervenciones y pruebas que se van a realizar a los sujetos de investigación descritas en el apartado 3.4.3 ¿cómo valoraría los riesgos o molestias posibles según la siguiente definición?</p><br/>\n"
+                },
+                {
+                  "nombre": "valoracionRiesgosMolestiasCheck",
+                  "tipo": "multicheckbox",
+                  "content": "<p>Opciones: <i></i></p><br/>\n"
+                },
+                {
+                  "nombre": "riesgoSuperiorTexto",
+                  "tipo": "textarea",
+                  "content": "<p>Justificar la pertinencia del estudio así como la no existencia o la no utilización de alternativas de eficacia comparable: </p><br/>\n"
+                }
+              ],
+              "apartadosHijos": []
+            },
+            {
+              "id": 19,
+              "nombre": "Minimización del riesgo o molestias superiores al mínimo",
+              "titulo": "4.1.3 Minimización del riesgo o molestias superiores al mínimo",
+              "orden": 3,
+              "elementos": [
+                {
+                  "nombre": "",
+                  "tipo": "template",
+                  "content": "<p>¿Qué mecanismos se han previsto para reducir el riesgo o las molestias que se han calificado como superiores al mínimo?</p><br/>\n"
+                },
+                {
+                  "nombre": "",
+                  "tipo": "template",
+                  "content": "<p>El criterio de no maleficencia en investigación (no hacer daño y hacer buenas prácticas científicas) implica que no debe causarse daño a los sujetos de investigación.</p><p>Cuando el riesgo o las molestias son inhoerentes a la propia investigación, es responsabilidad del/la investigador principal reducirlas al mínimo. P.ej: aplicar anestesiaen intervenciones invasivas para obtención de muestras, disponer de tratamiento de rescate para posibles acontecimientos adversos (desde shock anafiláctico hasta crisis de ansiedad), preservar la intimidad si se habla y se toman datos personales sensibles, monitorizar las constantes al realizar pruebas físicas, mantener la presencia de padres o tutores en poblaciones vulnerables etc.</p><br/>\n"
+                },
+                {
+                  "nombre": "minimizacionRiesgo",
+                  "tipo": "textarea",
+                  "content": "<p>Mecanismos: </p><br/>\n"
+                }
+              ],
+              "apartadosHijos": []
+            },
+            {
+              "id": 20,
+              "nombre": "Aseguramiento del daño",
+              "titulo": "4.1.4 Aseguramiento del daño",
+              "orden": 4,
+              "elementos": [
+                {
+                  "nombre": "",
+                  "tipo": "template",
+                  "content": "<p>Participar en una actividad de investigación puede suponer riesgos, y por ello la Universidad dispone de un Seguro de Responsabilidad civil que cubre los daños derivados de dichas actividades profesionales.</p><br/>\n"
+                },
+                {
+                  "nombre": "",
+                  "tipo": "template",
+                  "content": "<p>En seres humanos, el seguro de responsabilidad civil no cubre los daños que puedan producirse en la investigación si es un ensayo clínico (LIB 14/2007), si el personal investigador no forma parte de la Universidad o si la actividad investigadora no dispone del informe favorable del CEI.</p><br/>\n"
+                },
+                {
+                  "nombre": "aseguramientoDanoRadio",
+                  "tipo": "radio",
+                  "content": "<p>¿Cuenta con el seguir correspondiente para realizar dicha actividad?: </p><br/>\n"
+                },
+                {
+                  "nombre": "numPoliza",
+                  "tipo": "textarea",
+                  "content": "<p>Nº de póliza: </p><br/>\n"
+                },
+                {
+                  "nombre": "",
+                  "tipo": "template",
+                  "content": "<p>Nota: añadir en el apartado '5.7 Documentación adicional' la póliza de seguro, en el caso de que la actividad de investigación necesite un seguro específico.</p><br/>\n"
+                }
+              ],
+              "apartadosHijos": []
+            }
+          ]
+        },
+        {
+          "id": 21,
+          "nombre": "Selección equitativa de la muestra",
+          "titulo": "4.2 Selección equitativa de la muestra",
+          "orden": 2,
+          "elementos": [
+            {
+              "nombre": "",
+              "tipo": "template",
+              "content": "<p>Justificar la elección de la muestra de estudio y describir las medidas que garantizan la equidad en el proceso de reclutamiento.<p><br/>\n"
+            },
+            {
+              "nombre": "",
+              "tipo": "template",
+              "content": "<p>No hay que confundir la <strong>selección equitativa</strong> de los sujetos con los <strong>criterios de selección</strong> ya descritos en el apartado de metología.</p><p>La selección equitativa de la muestra se relaciona con unos de los principios básicos de la ética en la investigación: <strong>justicia</strong>.</p><p>La equidad en la selección implica que el reclutamiento de los sujetos de estudio se haga por razones relacionadas con los interrogantes científicas incluidas en la investigación y que no esconda otros intereses o motivos no científicos como por ejemplo: fácil disponibilidad, proximidad, amistad, facilidad en la obtención del consentimiento, no requerir autorizaciones, reservar las investigaciones con mayor riesgo para colectivos discriminados, etc.</p><p>La equidad debe asentarse sobre tres pilares: </p><ul><li>Que la investigación suponga beneficios potenciales para los sujetos o población seleccionados.</li><li>Que los sujetos o poblaciones potencialmente beneficiarias no sean excluidos de la selección si no existen razones científicas para ello.</li><li>Que la distribución de cargas y beneficios sea justa para que las investigaciones que impliquen riesgo no recaigan sobre sujetos o poblaciones de esta forma discriminados o vulnerables mientras los beneficios sean para otros.</li></ul><p>Para más información sobre la selección equitativa de la muestra consultar:</p><ul><li><a href='https://www.um.es/web/comision-etica-investigacion/comision-etica' target='_blank'>Informe Belmont</a></li><li><a href='https://www.um.es/web/comision-etica-investigacion/comision-etica' target='_blank'>Declaración Universal sobre Bioética y Derechos Humanos (UNESCO) en seres humanos</a></li><li>Documento de la CIOMS '<a href='https://www.um.es/web/comision-etica-investigacion/comision-etica' target='_blank'>Pautas éticas internacionales para la investigación biomédica en seres humanos</a>' (pauta 12)</li></ul><br/>\n"
+            },
+            {
+              "nombre": "equitativaMuestra",
+              "tipo": "textarea",
+              "content": "<p>Justificacion: </p><br/>\n"
+            }
+          ],
+          "apartadosHijos": []
+        },
+        {
+          "id": 22,
+          "nombre": "Protección de grupos vulnerables",
+          "titulo": "4.3 Protección de grupos especialmente vulnerables",
+          "orden": 3,
+          "elementos": [
+            {
+              "nombre": "",
+              "tipo": "template",
+              "content": "<p>¿Se trata de personas especialmente vulnerables? (menores, personas legalmente incapacitadas, etc.)</p><br/>\n"
+            },
+            {
+              "nombre": "",
+              "tipo": "template",
+              "content": "<p>Son personas especialmente vulnerables aquellas que de forma absoluta o relativa no pueden proteger sus propios intereses. Se considera que esta capacidad se ve alterada cuando se da alguna de estas circunstancias:</p><ul><li>Está limitada su autonomía o autogestión por agentes internos (ej.menores, algunas enfermedades psíquicas graves, etc), o externos (personas institucionalizadas, relaciones de subordinación, recepción de subsidios, etc)</li><li>Son precisas medidas específicas para garantizar su acceso a participar en proyectos de investigación en condiciones de igualdad y no discriminación (ej. personas en riesgo de exclusión, con alguna discapacidad, etc)</li><ul><p>Para más información sobre grupos especialmente vulnerables y sus implicaciones éticas consultar el documento de la CIOMS <a href='https://www.um.es/web/comision-etica-investigacion/comision-etica' target='_blank'>Pautas éticas internacionales para la investigación biomédica en seres humanos</a> (pautas 13 y sig)</p><br/>\n"
+            },
+            {
+              "nombre": "gruposVulnerablesRadio",
+              "tipo": "radio",
+              "content": "<p>Elige opción: </p><br/>\n"
+            },
+            {
+              "nombre": "",
+              "tipo": "template",
+              "content": "Especificar colectivos de personas especialmente vulnerables<br/>\n"
+            },
+            {
+              "nombre": "especificarColectivoVulnerables",
+              "tipo": "textarea",
+              "content": "<p>Especificar: </p><br/>\n"
+            },
+            {
+              "nombre": "",
+              "tipo": "template",
+              "content": "Justificar por qué no se plantea la utilización de personas menos vulnerables<br/>\n"
+            },
+            {
+              "nombre": "justificarPersonasMenosVulnerables",
+              "tipo": "textarea",
+              "content": "<p>Justificar: </p><br/>\n"
+            },
+            {
+              "nombre": "",
+              "tipo": "template",
+              "content": "Especificar en qué pueden beneficiar los resultados de estas investigaciones a estas personas o colectivos especialmente vulnerables<br/>\n"
+            },
+            {
+              "nombre": "especificarBeneficiosInvestigacionVulnerables",
+              "tipo": "textarea",
+              "content": "<p>Especificar: </p><br/>\n"
+            },
+            {
+              "nombre": "",
+              "tipo": "template",
+              "content": "<p>Nota: recuerde que la condición especial de estas personas debe tenerse en cuenta y obliga a:</p><ul><li>Cuidar al máximo cuestiones como la voluntariedad, información, consentimiento, proceso de reclutamiento, etc. (ver apartados 3.4.1, 4.1 y 4.2) aquél que tenga la custodia</li><li>En caso de menores de 12 años debe incluirse la firma de ambos progenitores en el documento de consentimiento, entre 12 y 18 años ha de incorporarse el asentimiento del menor, y en personas legalmente incapacitadas, debe incluirse la firma de su representante legal (ver punto 4.4.2 Información obligatoria mínima)</li></ul><p>Para más información sobre protección de grupos vulnerables consultar los <a href='http://www.boe.es/buscar/act.php?id=BOE-A-2007-12945&p=20110602&tn=1#a20' target='_blank'>artículos 20, 21</a> de la LIB 14/2007.</p><br/>\n"
+            }
+          ],
+          "apartadosHijos": []
+        },
+        {
+          "id": 23,
+          "nombre": "Información y consentimiento",
+          "titulo": "4.4 Información y consentimiento",
+          "orden": 4,
+          "elementos": [
+            {
+              "nombre": "",
+              "tipo": "template",
+              "content": "<p>¿Se solicita el consentimiento de la persona participante/fuente y/o su representante legal?</p><br/>\n"
+            },
+            {
+              "nombre": "",
+              "tipo": "template",
+              "content": "<p>Para que la participación de una persona como sujeto de estudio en una investigación pueda considerarse verdaderamente <strong>libre y voluntaria</strong> debe recibir previamente una <strong>adecuada</strong> información que puede darse de forma oral, escrita y/o audiovisual.</p><p><strong>El proceso de información y posterior consentimiento debe documentarse en una hoja</strong> que recoja las firmas y la información mínima obligatoria pero puede ir acompañado de otros materiales informativos de ayuda tales como trípticos, cuadernillos, diapositivas, vídeos, multimedia, etc) orientados a informar al sujeto participante y por tanto dirigidos y adecuados en lenguaje y forma a sus características.</p><p>El documento que recoge el consentimiento en sí no tiene validez legal si no se acredita que se ha proporcionado al participante la información necesaria.</p><p>Para saber más sobre la información mínima obligatoria consultar:</p><ul><li>Artículos <a href='http://www.boe.es/buscar/act.php?id=BOE-A-2007-12945&p=20110602&tn=1#a15' target='_blank'>15</a>, <a href='http://www.boe.es/buscar/act.php?id=BOE-A-2007-12945&p=20110602&tn=1#a47' target='_blank'>47</a>, <a href='http://www.boe.es/buscar/act.php?id=BOE-A-2007-12945&p=20110602&tn=1#a59' target='_blank'>59 y 60</a> de la LIB 14/2007</li><li><a href='https://www.um.es/web/comision-etica-investigacion/comision-etica' target='_blank'>Guía para elaboración de documentos</a> (pdf), elaborada por el CEI.</li></ul><br/>\n"
+            },
+            {
+              "nombre": "informacionConsentimientoRadio",
+              "tipo": "radio",
+              "content": "<p>Elige opción: </p><br/>\n"
+            },
+            {
+              "nombre": "",
+              "tipo": "template",
+              "content": "Indicar el motivo por el que no se solicita<br/>\n"
+            },
+            {
+              "nombre": "informacionConsentimientoMotivoRadio",
+              "tipo": "radio",
+              "content": "<p></p><br/>\n"
+            },
+            {
+              "nombre": "",
+              "tipo": "template",
+              "content": "<p>Especificar o justificar</p><br/>\n"
+            },
+            {
+              "nombre": "informacionConsentimientoMotivoTexto",
+              "tipo": "textarea",
+              "content": "<p>Especificar o justificar: </p><br/>\n"
+            },
+            {
+              "nombre": "",
+              "tipo": "template",
+              "content": "<p>Nota: añadir en el apartado '5.1 Documento de consentimiento' la hoja de consentimiento así como todo el material auxiliar de información que se haya preparado.</p><br/>\n"
+            }
+          ],
+          "apartadosHijos": [
+            {
+              "id": 24,
+              "nombre": "Tipo de consentimiento",
+              "titulo": "4.4.1 Tipo de consentimiento",
+              "orden": 1,
+              "elementos": [
+                {
+                  "nombre": "",
+                  "tipo": "template",
+                  "content": "<p>Tarea para la que se solicita el consentimiento</p><br/>\n"
+                },
+                {
+                  "nombre": "tipoConsentimientoCheck",
+                  "tipo": "multicheckbox",
+                  "content": "<p>Tarea: <i></i></p><br/>\n"
+                },
+                {
+                  "nombre": "",
+                  "tipo": "template",
+                  "content": "<p>En los siguientes apartados se hace un repaso a la información que va a facilitarse al sujeto participante y puede servir de lista de chequeo para el investigador responsable.</p><br/>\n"
+                }
+              ],
+              "apartadosHijos": []
+            },
+            {
+              "id": 25,
+              "nombre": "Información obligatoria mínima",
+              "titulo": "4.4.2 Información obligatoria mínima",
+              "orden": 2,
+              "elementos": [
+                {
+                  "nombre": "",
+                  "tipo": "template",
+                  "content": "<p>El documento de consentimiento debe llevar los logos de la Universidad y de otras instituciones si procede.</p><p>Los datos identificativos y de contacto deben coincidir con los aportados previamente en esta memoria</p><p>A continuación, se le facilita la información que debe incluir en el documento de consentimiento para su proyecto de investigación.</p><p><a href='https://www.um.es/web/comision-etica-investigacion/comision-etica/ceic' target='_blank'>Modelos de la Universidad de Murcia de Hoja de Información y de Consentimiento Informado</a></p><br/>\n"
+                }
+              ],
+              "apartadosHijos": []
+            }
+          ]
+        },
+        {
+          "id": 26,
+          "nombre": "Estudios genéticos",
+          "titulo": "4.5 Estudios genéticos",
+          "orden": 5,
+          "elementos": [
+            {
+              "nombre": "",
+              "tipo": "template",
+              "content": "<p>¿Se va a realizar algún tipo de prueba predictiva genética?</p><br/>\n"
+            },
+            {
+              "nombre": "",
+              "tipo": "template",
+              "content": "<p><strong>Límites que deben respetarse en los análisis genéticos.</strong> Sólo podrán hacerse pruebas predictivas genéticas para el estudio de:</p><ul><li>enfermedades genéticas o que permitan identificar al sujeto como portador de un gen responsable de una enfermedad, o detectar una predisposición o una susceptibilidad genética a una enfermedad, con fines médicos o de investigación médica y con un asesoramiento genético, cuando esté indicado</li><li>diferencias inter-individuales en la respuesta a los fármacos</li><li>interacciones genético-ambientales</li><li>bases moleculares de las enfermedades</li></ul><p>Todo lo relacionado con la regulación de los análisis genéticos, sus límites, principios rectores, información etc, se halla contenido en la <a href='http://www.boe.es/buscar/act.php?id=BOE-A-2007-12945&p=20110602&tn=2' target='_blank'>Ley de Investigación Biomédica</a> 14/2007 (consultar el <a href='http://www.boe.es/buscar/act.php?id=BOE-A-2007-12945&p=20110602&tn=1#a9' target='_blank'>artículo 9</a>, <a href='http://www.boe.es/buscar/act.php?id=BOE-A-2007-12945&p=20110602&tn=1#tv' target='_blank'>Título V</a>)</p><br/>\n"
+            },
+            {
+              "nombre": "estudiosGeneticosRadio",
+              "tipo": "radio",
+              "content": "<p>Elige opción: </p><br/>\n"
+            },
+            {
+              "nombre": "",
+              "tipo": "template",
+              "content": "<p>Tipo de prueba predictiva</p><br/>\n"
+            },
+            {
+              "nombre": "pruebaPredectivaRadio",
+              "tipo": "radio",
+              "content": "<p>Tipo: </p><br/>\n"
+            },
+            {
+              "nombre": "otraPruebaPredictiva",
+              "tipo": "textarea",
+              "content": "<p>Especificar: </p><br/>\n"
+            },
+            {
+              "nombre": "",
+              "tipo": "template",
+              "content": "<p>Fines</p><br/>\n"
+            },
+            {
+              "nombre": "finesRadio",
+              "tipo": "radio",
+              "content": "<p>Fines: </p><br/>\n"
+            },
+            {
+              "nombre": "otrosFines",
+              "tipo": "textarea",
+              "content": "<p>Especificar: </p><br/>\n"
+            }
+          ],
+          "apartadosHijos": [
+            {
+              "id": 27,
+              "nombre": "Resultado del estudio genético",
+              "titulo": "4.5.1 Resultado del estudio genético",
+              "orden": 1,
+              "elementos": [
+                {
+                  "nombre": "",
+                  "tipo": "template",
+                  "content": "<p>¿Se puede obtener alguna información relevante para la vida o la salud del sujeto participante?</p><br/>\n"
+                },
+                {
+                  "nombre": "resultadoEstudioGeneticoRadio",
+                  "tipo": "radio",
+                  "content": "<p>Elige opción: </p><br/>\n"
+                },
+                {
+                  "nombre": "",
+                  "tipo": "template",
+                  "content": "<p>En caso afirmativo especificar</p><br/>\n"
+                },
+                {
+                  "nombre": "especificarResultadoEstudioGenetico",
+                  "tipo": "textarea",
+                  "content": "<p>Especificar: </p><br/>\n"
+                }
+              ],
+              "apartadosHijos": []
+            },
+            {
+              "id": 28,
+              "nombre": "Consejo genético",
+              "titulo": "4.5.2 Consejo genético",
+              "orden": 2,
+              "elementos": [
+                {
+                  "nombre": "",
+                  "tipo": "template",
+                  "content": "<p>¿Se va a proporcionar consejo genético?</p><br/>\n"
+                },
+                {
+                  "nombre": "proporcionarConsejoGeneticoRadio",
+                  "tipo": "radio",
+                  "content": "<p>Elige opción: </p><br/>\n"
+                },
+                {
+                  "nombre": "",
+                  "tipo": "template",
+                  "content": "<p>¿En caso afirmativo se cuenta en el equipo con una persona experta en este campo para informar al donante sobre los resultados?</p><br/>\n"
+                },
+                {
+                  "nombre": "personaExpertaConsejoGeneticoRadio",
+                  "tipo": "radio",
+                  "content": "<p>Elige opción: </p><br/>\n"
+                },
+                {
+                  "nombre": "",
+                  "tipo": "template",
+                  "content": "<p>¿En caso afirmativo se ha incluido esta información en el documento de consentimiento? Ver apartado 4.4.10</p><br/>\n"
+                },
+                {
+                  "nombre": "documentoConsejoGeneticoRadio",
+                  "tipo": "radio",
+                  "content": "<p>Elige opción: </p><br/>\n"
+                }
+              ],
+              "apartadosHijos": []
+            },
+            {
+              "id": 29,
+              "nombre": "No discriminación por motivos genéticos",
+              "titulo": "4.5.3 No discriminación por motivos genéticos",
+              "orden": 3,
+              "elementos": [
+                {
+                  "nombre": "",
+                  "tipo": "template",
+                  "content": "<p>Especificar las medidas previstas para evitar la discriminación o el daño que pudieran derivarse de los resultados de los estudios genéticos</p><br/>\n"
+                },
+                {
+                  "nombre": "",
+                  "tipo": "template",
+                  "content": "<p>El <a href='http://www.boe.es/buscar/act.php?id=BOE-A-2007-12945&p=20110602&tn=1#a45' target='_blank'>Artículo 45</a> de la <a href='http://www.boe.es/buscar/act.php?id=BOE-A-2007-12945&p=20110602&tn=2' target='_blank'>LIB 14/2007</a> establece los siguientes principios para los anális genéticos:</p><ul><li>Accesibilidad y equidad</li><li>Protección de datos</li><li>Gratuidad</li><li>Consentimiento</li><li>Calidad de los datos</li></ul><p>A lo que hay que añadir lo establecido en los artículos <a href='http://www.boe.es/buscar/act.php?id=BOE-A-2007-12945&p=20110602&tn=1#a9' target='_blank'>9</a> y <a href='http://www.boe.es/buscar/act.php?id=BOE-A-2007-12945&p=20110602&tn=1#a6' target='_blank'>6</a>.</p><ul><li>Los análisis genéticos se llevarán a cabo con criterios de pertinencia, calidad, equidad y accesibilidad</li><li>No discriminación</li></ul><br/>\n"
+                },
+                {
+                  "nombre": "noDiscriminacionMotivosGeneticos",
+                  "tipo": "textarea",
+                  "content": "<p>Medidas: </p><br/>\n"
+                }
+              ],
+              "apartadosHijos": []
+            }
+          ]
+        },
+        {
+          "id": 30,
+          "nombre": "Estudiantes como sujetos de investigación",
+          "titulo": "4.6 Estudiantes como sujetos de investigación",
+          "orden": 6,
+          "elementos": [
+            {
+              "nombre": "",
+              "tipo": "template",
+              "content": "<p>¿Participan estudiantes de la Universidad como sujetos de investigación?</p><br/>\n"
+            },
+            {
+              "nombre": "",
+              "tipo": "template",
+              "content": "<p>La particular relación profesor/a alumno/a hace necesario tener especial cuidado con cuestiones como la voluntariedad, privacidad, confidencialidad, incentivos y uso de tiempo lectivo.</p><br/>\n"
+            },
+            {
+              "nombre": "estudiantesSujetosInvestigacionRadio",
+              "tipo": "radio",
+              "content": "<p>Elige opción: </p><br/>\n"
+            },
+            {
+              "nombre": "",
+              "tipo": "template",
+              "content": "Especificar qué estudiantes participan (facultad, curso, etc)<br/>\n"
+            },
+            {
+              "nombre": "especificarEstudiantesSujetosInvestigacion",
+              "tipo": "textarea",
+              "content": "<p>Especificar: </p><br/>\n"
+            },
+            {
+              "nombre": "",
+              "tipo": "template",
+              "content": "Justificar<br/>\n"
+            },
+            {
+              "nombre": "justificarEstudiantesSujetosInvestigacion",
+              "tipo": "textarea",
+              "content": "<p>Justificar: </p><br/>\n"
+            }
+          ],
+          "apartadosHijos": [
+            {
+              "id": 31,
+              "nombre": "Justificación del uso de estudiantes",
+              "titulo": "4.6.1 Justificación del uso de estudiantes",
+              "orden": 1,
+              "elementos": [
+                {
+                  "nombre": "",
+                  "tipo": "template",
+                  "content": "<p>¿Son los estudiantes de la UMU un grupo específico de población necesario para el proyecto?</p><br/>\n"
+                },
+                {
+                  "nombre": "justificacionUsoEstudiantesRadio",
+                  "tipo": "radio",
+                  "content": "<p>Elige opción: </p><br/>\n"
+                },
+                {
+                  "nombre": "",
+                  "tipo": "template",
+                  "content": "Motivos por los que no se plantea su sustitución<br/>\n"
+                },
+                {
+                  "nombre": "motivosNoPlanteamientoSustitucion",
+                  "tipo": "textarea",
+                  "content": "<p>Motivos: </p><br/>\n"
+                }
+              ],
+              "apartadosHijos": []
+            },
+            {
+              "id": 32,
+              "nombre": "Beneficio formativo para el estudiante",
+              "titulo": "4.6.2 Beneficio formativo para el estudiante",
+              "orden": 2,
+              "elementos": [
+                {
+                  "nombre": "",
+                  "tipo": "template",
+                  "content": "<p>¿La participación como sujeto de investigación ¿reporta a algún beneficio formativo al estudiante?</p><br/>\n"
+                },
+                {
+                  "nombre": "beneficioFormativoEstudianteRadio",
+                  "tipo": "radio",
+                  "content": "<p>Elige opción: </p><br/>\n"
+                },
+                {
+                  "nombre": "",
+                  "tipo": "template",
+                  "content": "Especificar<br/>\n"
+                },
+                {
+                  "nombre": "especificarBeneficioFormativo",
+                  "tipo": "textarea",
+                  "content": "<p>Especificar: </p><br/>\n"
+                }
+              ],
+              "apartadosHijos": []
+            },
+            {
+              "id": 33,
+              "nombre": "Vinculación académica con el equipo investigador",
+              "titulo": "4.6.3 Vinculación académica con el equipo investigador",
+              "orden": 3,
+              "elementos": [
+                {
+                  "nombre": "",
+                  "tipo": "template",
+                  "content": "<p>Los estudiantes que participen ¿van a tener vinculación académica con el equipo investigador?</p><br/>\n"
+                },
+                {
+                  "nombre": "vinculacionAcademicaEquipoInvestigadorRadio",
+                  "tipo": "radio",
+                  "content": "<p>Elige opción: </p><br/>\n"
+                },
+                {
+                  "nombre": "",
+                  "tipo": "template",
+                  "content": "Especificar cuál es esta vinculación y justificar la necesidad de esa elección<br/>\n"
+                },
+                {
+                  "nombre": "especificarVinculacion",
+                  "tipo": "textarea",
+                  "content": "<p>Especificar: </p><br/>\n"
+                },
+                {
+                  "nombre": "",
+                  "tipo": "template",
+                  "content": "<p>¿Algún miembro del equipo investigador va a calificar a los estudiantes?</p><br/>\n"
+                },
+                {
+                  "nombre": "calificacionEstudiantesRadio",
+                  "tipo": "radio",
+                  "content": "<p>Elige opción: </p><br/>\n"
+                },
+                {
+                  "nombre": "",
+                  "tipo": "template",
+                  "content": "<p>¿Qué medidas especiales van a adoptarse para proteger la voluntariedad de los alumnos vinculados académicamente con el equipo investigador?</p><br/>\n"
+                },
+                {
+                  "nombre": "",
+                  "tipo": "template",
+                  "content": "<p>Es importante reducir al mínimo la posible influencia sobre el alumnado en el momento de la capacitación tanto por parte del profesorado como de la presión ejercida por el grupo.</p><ul><li><strong>Reclutamiento directo:</strong> es el que realiza el propio profesor en el aula o hablando con los alumnos, ofreciendo incentivos académicos etc. Es lo menos recomendable pues se produce coerción.</li><li><strong>Interposición de tercera persona no vinculada académicamente al alumnado:</strong> cuando es necesaria la captación directa se recomienda que no sea el profesor quien realice la captación sino una tercera persona sin vinculación con el alumnado.</li><li><strong>Reclutamiento indirecto:</strong> mediante anuncios, folletos, etc.</li></ul><br/>\n"
+                },
+                {
+                  "nombre": "",
+                  "tipo": "template",
+                  "content": "<p>Medidas</p><br/>\n"
+                },
+                {
+                  "nombre": "medidasEspecialesEquipoInvestigadorRadio",
+                  "tipo": "radio",
+                  "content": "<p>Opciones: </p><br/>\n"
+                },
+                {
+                  "nombre": "",
+                  "tipo": "template",
+                  "content": "Especificar<br/>\n"
+                },
+                {
+                  "nombre": "especificarOtras",
+                  "tipo": "textarea",
+                  "content": "<p>Especificar: </p><br/>\n"
+                }
+              ],
+              "apartadosHijos": []
+            },
+            {
+              "id": 34,
+              "nombre": "Incentivos académicos",
+              "titulo": "4.6.4 Incentivos académicos",
+              "orden": 4,
+              "elementos": [
+                {
+                  "nombre": "",
+                  "tipo": "template",
+                  "content": "<p>¿Se otorgan incentivos académicos?</p><br/>\n"
+                },
+                {
+                  "nombre": "incentivosAcademicosRadio",
+                  "tipo": "radio",
+                  "content": "<p>Elige opción: </p><br/>\n"
+                },
+                {
+                  "nombre": "",
+                  "tipo": "template",
+                  "content": "Describir<br/>\n"
+                },
+                {
+                  "nombre": "describirIncentivos",
+                  "tipo": "textarea",
+                  "content": "<p>Describir: </p><br/>\n"
+                }
+              ],
+              "apartadosHijos": []
+            },
+            {
+              "id": 35,
+              "nombre": "Uso de tiempo lectivo",
+              "titulo": "4.6.5 Uso de tiempo lectivo",
+              "orden": 5,
+              "elementos": [
+                {
+                  "nombre": "",
+                  "tipo": "template",
+                  "content": "<p>¿Las pruebas en las que participarán los estudiantes como sujetos de investigación se realizarán durante el tiempo lectivo?</p><br/>\n"
+                },
+                {
+                  "nombre": "usoTiempoLectivoRadio",
+                  "tipo": "radio",
+                  "content": "<p>Elige opción: </p><br/>\n"
+                },
+                {
+                  "nombre": "",
+                  "tipo": "template",
+                  "content": "Horario y duración<br/>\n"
+                },
+                {
+                  "nombre": "horarioYduracion",
+                  "tipo": "textarea",
+                  "content": "<p>Especificar: </p><br/>\n"
+                }
+              ],
+              "apartadosHijos": []
+            },
+            {
+              "id": 36,
+              "nombre": "Actividades alternativas",
+              "titulo": "4.6.6 Actividades alternativas",
+              "orden": 6,
+              "elementos": [
+                {
+                  "nombre": "",
+                  "tipo": "template",
+                  "content": "¿Qué actividades alternativas se ofrecen para los alumnos que no deseen participar en la investigación?<br/>\n"
+                },
+                {
+                  "nombre": "actividadesAlternativas",
+                  "tipo": "textarea",
+                  "content": "<p>Actividades: </p><br/>\n"
+                }
+              ],
+              "apartadosHijos": []
+            },
+            {
+              "id": 37,
+              "nombre": "Protección de la privacidad",
+              "titulo": "4.6.7 Protección de la privacidad",
+              "orden": 7,
+              "elementos": [
+                {
+                  "nombre": "",
+                  "tipo": "template",
+                  "content": "¿Qué medidas se van a adoptar para asegurar la privacidad de cada alumno/a fuente frente al grupo durante la recogida de datos, la realización de pruebas y/o revocación del consentimiento?<br/>\n"
+                },
+                {
+                  "nombre": "proteccionPrivacidad",
+                  "tipo": "textarea",
+                  "content": "<p>Medidas: </p><br/>\n"
+                }
+              ],
+              "apartadosHijos": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 6,
+      "nombre": "CUMPLIMIENTO DE LA DOCUMENTACIÓN",
+      "orden": 6,
+      "apartados": [
+        {
+          "id": 38,
+          "nombre": "Documento de consentimiento",
+          "titulo": "5.1 Documento de consentimiento",
+          "orden": 1,
+          "elementos": [
+            {
+              "nombre": "",
+              "tipo": "template",
+              "content": "¿Su proyecto requiere documento de consentimiento del sujeto fuente y/o su representante?<br/>\n"
+            },
+            {
+              "nombre": "documentoConsentimiento",
+              "tipo": "documento",
+              "content": "<p>Indicar: </p><br/>\n"
+            },
+            {
+              "nombre": "",
+              "tipo": "template",
+              "content": "<p>Nota: ver apartado '4.4 Información y consentimiento'.</p><br/>\n"
+            }
+          ],
+          "apartadosHijos": []
+        },
+        {
+          "id": 39,
+          "nombre": "Documento de cesión de datos",
+          "titulo": "5.2 Documento de cesión de datos",
+          "orden": 2,
+          "elementos": [
+            {
+              "nombre": "",
+              "tipo": "template",
+              "content": "A veces hay documento de cesión de datos (del profesor al alumno para Investigación tutelada, de clínicos a investigadores de la Universidad, a través de Biobancos<br/>\n"
+            },
+            {
+              "nombre": "documentoCesion",
+              "tipo": "documento",
+              "content": "<p>Indicar: </p><br/>\n"
+            }
+          ],
+          "apartadosHijos": []
+        },
+        {
+          "id": 40,
+          "nombre": "Documento de autorización",
+          "titulo": "5.3 Documento de autorización",
+          "orden": 3,
+          "elementos": [
+            {
+              "nombre": "",
+              "tipo": "template",
+              "content": "Si parte de su proyecto se realiza fuera de las instalaciones de la Universidad ¿dispone Documento de Autorización del Responsable del Centro o lugar?<br/>\n"
+            },
+            {
+              "nombre": "",
+              "tipo": "template",
+              "content": "<p>En general cualquier faceta de un estudio que se realice fuera de las instalaciones de la Universidad requerirá de la autorización o acuerdo firmado por parte del/la responsable del Centro o instalaciones donde se vaya a realizar esa fase del proyecto, incluido el reclutamiento de sujetos para el estudio, distribución de información sobre el proyecto, toma de muestras, realización de encuestas, realización de pruebas físicas o psicológicas, recopilación de datos, etc.</p><br/>\n"
+            },
+            {
+              "nombre": "documentoAutorizacion",
+              "tipo": "documento",
+              "content": "<p>Indicar: </p><br/>\n"
+            },
+            {
+              "nombre": "",
+              "tipo": "template",
+              "content": "<p>Nota: describir en los apartados '3.4.1 Proceso de reclutamiento y/o 3.5.3 Descripción de las intervenciones'.</p><br/>\n"
+            }
+          ],
+          "apartadosHijos": []
+        },
+        {
+          "id": 41,
+          "nombre": "Documento de aceptación de colaboración",
+          "titulo": "5.4 Documento de aceptación de colaboración",
+          "orden": 4,
+          "elementos": [
+            {
+              "nombre": "",
+              "tipo": "template",
+              "content": "Si el reclutamiento de las personas participantes va a ser realizado por alguien ajeno al equipo investigador ¿dispone del documento de aceptación de colaboración?<br/>\n"
+            },
+            {
+              "nombre": "documentoAceptacionColaboracion",
+              "tipo": "documento",
+              "content": "<p>Indicar: </p><br/>\n"
+            },
+            {
+              "nombre": "",
+              "tipo": "template",
+              "content": "<p>Nota: ver apartado '3,4.2 Reclutamiento realizado por personal ajeno al equipo investigador'.</p><br/>\n"
+            }
+          ],
+          "apartadosHijos": []
+        },
+        {
+          "id": 42,
+          "nombre": "Informe de la Comisión de Garantías",
+          "titulo": "5.5 Informe de la Comisión de Garantías",
+          "orden": 5,
+          "elementos": [
+            {
+              "nombre": "",
+              "tipo": "template",
+              "content": "¿Su proyecto requiere informe previo favorable de la Comisión de Garantías?<br/>\n"
+            },
+            {
+              "nombre": "",
+              "tipo": "template",
+              "content": "<p>Requerirán el informe previo favorable de la Comisión de Garantías para la Donación y Utilización de Células y Tejidos Humanos, los proyectos de investigación que versen en todo o en parte sobre las siguientes materias:</p><ul><li>La investigación con preembriones humanos para la derivación de líneas celulares, para la investigación embriológica y para otros usos de investigación, excepto aquellos relacionados con el desarrollo y aplicación de las técnicas de reproducción asistida.</li><li>La investigación con células troncales embrionarias humanas.</li><li>La activación de ovocitos mediante transferencia nuclear para su uso con fines terapéuticos o de investigación.</li><li>Cualquier otra técnica que, utilizando en todo o en parte muestras biológicas de origen humano, pueda dar lugar a la obtención de células troncales.</li><li>La investigación con células o tejidos embrionarios obtenidos por cualquiera de los procedimientos señalados en el <a href='https://www.boe.es/buscar/act.php?id=BOE-A-2007-12945&p=20110602&tn=1#a33' target='_blank'>artículo 33.2</a>.</li><li>Cualquier otra línea de investigación que incluya material celular de origen embrionario humano u otro funcionalmente semejante.</li><li>La investigación con líneas de células troncales embrionarias que provengan de otro país, intracomunitario o extracomunitario. Dicho otrigen vendrá especificado en el proyecto presentado a informe.</li></ul><p>Para más información consultar el <a href='https://www.boe.es/buscar/act.php?id=BOE-A-2007-12945&p=20110602&tn=1#a35' target='_blank'>artículo 35 de la LIB 14/2007</a></p><br/>\n"
+            },
+            {
+              "nombre": "informeComisionGarantiasRadio",
+              "tipo": "documento",
+              "content": "<p>Indicar: </p><br/>\n"
+            },
+            {
+              "nombre": "",
+              "tipo": "template",
+              "content": "<p>Nota: sólo se podrá constestar <b>Si</b> si en el apartado '3.5 Muestras biológicas de origen humano' se ha seleccionado alguna de las opciones marcas con asterisco <b>*</b>.</p><br/>\n"
+            }
+          ],
+          "apartadosHijos": []
+        },
+        {
+          "id": 43,
+          "nombre": "Acuerdo de transferencia de muestras",
+          "titulo": "5.6 Acuerdo de transferencia de muestras",
+          "orden": 6,
+          "elementos": [
+            {
+              "nombre": "",
+              "tipo": "template",
+              "content": "Si su proyecto ha requerido Cesión de Muestras o Tejidos ¿dispone de un Acuerdo de Transferencia de Muestras o Tejidos Humanos (MTA)?<br/>\n"
+            },
+            {
+              "nombre": "acuerdoTransferenciaMuestras",
+              "tipo": "documento",
+              "content": "<p>Indicar: </p><br/>\n"
+            }
+          ],
+          "apartadosHijos": []
+        },
+        {
+          "id": 44,
+          "nombre": "Documentación adicional",
+          "titulo": "5.7 Documentación adicional",
+          "orden": 7,
+          "elementos": [
+            {
+              "nombre": "",
+              "tipo": "template",
+              "content": "¿Dispone de alguna otra documentación adicional para su proyecto?<br/>\n"
+            },
+            {
+              "nombre": "documentacionAdicional",
+              "tipo": "documento",
+              "content": "<p>Indicar: </p><br/>\n"
+            }
+          ],
+          "apartadosHijos": []
+        },
+        {
+          "id": 45,
+          "nombre": "Aclaraciones al comité",
+          "titulo": "5.8 Aclaraciones al comité",
+          "orden": 8,
+          "elementos": [
+            {
+              "nombre": "",
+              "tipo": "template",
+              "content": "Incluir a continuación cualquier otra aclaración que se considere necesaria para el comité<br/>\n"
+            },
+            {
+              "nombre": "aclaracionesComite",
+              "tipo": "textarea",
+              "content": "<p>Aclaraciones: </p><br/>\n"
+            }
+          ],
+          "apartadosHijos": []
+        }
+      ]
+    }
+  ]
+}

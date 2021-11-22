@@ -2,42 +2,32 @@ import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
-import { BaseModalComponent } from '@core/component/base-modal.component';
+import { DialogActionComponent } from '@core/component/dialog-action.component';
 import { MSG_PARAMS } from '@core/i18n';
 import { IFuenteFinanciacion } from '@core/models/csp/fuente-financiacion';
-import { ITipoAmbitoGeografico } from '@core/models/csp/tipo-ambito-geografico';
 import { ITipoOrigenFuenteFinanciacion } from '@core/models/csp/tipo-origen-fuente-financiacion';
-import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-properties';
-import { TipoAmbitoGeograficoService } from '@core/services/csp/tipo-ambito-geografico.service';
+import { FuenteFinanciacionService } from '@core/services/csp/fuente-financiacion/fuente-financiacion.service';
 import { TipoOrigenFuenteFinanciacionService } from '@core/services/csp/tipo-origen-fuente-financiacion.service';
-import { SnackBarService } from '@core/services/snack-bar.service';
 import { TranslateService } from '@ngx-translate/core';
-import { SgiRestListResult } from '@sgi/framework/http/types';
-import { NGXLogger } from 'ngx-logger';
-import { BehaviorSubject, Observable } from 'rxjs';
-import { map, startWith, switchMap } from 'rxjs/operators';
+import { Observable } from 'rxjs';
+import { map, switchMap } from 'rxjs/operators';
 
-const MSG_ERROR_INIT = marker('error.load');
 const FUENTE_FINANCIACION_KEY = marker('csp.fuente-financiacion');
 const FUENTE_FINANCIACION_NOMBRE_KEY = marker('csp.fuente-financiacion.nombre');
 const FUENTE_FINANCIACION_AMBITO_GEOGRAFICO_KEY = marker('csp.fuente-financiacion.ambito-geografico');
 const FUENTE_FINANCIACION_ORIGEN_KEY = marker('csp.fuente-financiacion.origen');
 const FUENTE_FINANCIACION_FONDO_ESTRUCTURAL_KEY = marker('csp.fuente-financiacion.fondo-estructural');
 const TITLE_NEW_ENTITY = marker('title.new.entity');
-const MSG_ANADIR = marker('btn.add');
-const MSG_ACEPTAR = marker('btn.ok');
 
 @Component({
   templateUrl: './fuente-financiacion-modal.component.html',
   styleUrls: ['./fuente-financiacion-modal.component.scss']
 })
-export class FuenteFinanciacionModalComponent extends
-  BaseModalComponent<IFuenteFinanciacion, FuenteFinanciacionModalComponent> implements OnInit, OnDestroy {
-  fxLayoutProperties: FxLayoutProperties;
-  public fuenteFinanciacion: IFuenteFinanciacion;
+export class FuenteFinanciacionModalComponent
+  extends DialogActionComponent<IFuenteFinanciacion, IFuenteFinanciacion> implements OnInit, OnDestroy {
 
-  ambitosGeograficos$: BehaviorSubject<ITipoAmbitoGeografico[]> = new BehaviorSubject<ITipoAmbitoGeografico[]>([]);
-  origenes$: BehaviorSubject<ITipoOrigenFuenteFinanciacion[]> = new BehaviorSubject<ITipoOrigenFuenteFinanciacion[]>([]);
+  private readonly fuenteFinanciacion: IFuenteFinanciacion;
+  public readonly origenes: Observable<ITipoOrigenFuenteFinanciacion[]>;
 
   msgParamAmbitoEntity = {};
   msgParamNombreEntity = {};
@@ -45,23 +35,18 @@ export class FuenteFinanciacionModalComponent extends
   msgParamFondoEstructuralEntity = {};
   title: string;
 
-  textSaveOrUpdate: string;
-
   constructor(
-    private readonly logger: NGXLogger,
-    protected readonly snackBarService: SnackBarService,
-    public readonly matDialogRef: MatDialogRef<FuenteFinanciacionModalComponent>,
-    private ambitoGeograficoService: TipoAmbitoGeograficoService,
-    private tipoOrigenFuenteFinanciacionService: TipoOrigenFuenteFinanciacionService,
-    @Inject(MAT_DIALOG_DATA) fuenteFinanciacion: IFuenteFinanciacion,
+    matDialogRef: MatDialogRef<FuenteFinanciacionModalComponent, IFuenteFinanciacion>,
+    @Inject(MAT_DIALOG_DATA) data: IFuenteFinanciacion,
+    tipoOrigenFuenteFinanciacionService: TipoOrigenFuenteFinanciacionService,
+    private readonly fuenteFinanciacionService: FuenteFinanciacionService,
     private readonly translate: TranslateService
   ) {
-    super(snackBarService, matDialogRef, fuenteFinanciacion);
-    this.fxLayoutProperties = new FxLayoutProperties();
-    this.fxLayoutProperties.layout = 'row';
-    this.fxLayoutProperties.layoutAlign = 'row';
-    if (fuenteFinanciacion) {
-      this.fuenteFinanciacion = { ...fuenteFinanciacion };
+    super(matDialogRef, !!data?.id);
+    this.origenes = tipoOrigenFuenteFinanciacionService.findAll().pipe(map(result => result.items));
+
+    if (this.isEdit()) {
+      this.fuenteFinanciacion = { ...data };
     } else {
       this.fuenteFinanciacion = { activo: true } as IFuenteFinanciacion;
     }
@@ -70,8 +55,6 @@ export class FuenteFinanciacionModalComponent extends
   ngOnInit(): void {
     super.ngOnInit();
     this.setupI18N();
-    this.loadAmbitosGeograficos();
-    this.loadOrigenes();
   }
 
   private setupI18N(): void {
@@ -95,14 +78,11 @@ export class FuenteFinanciacionModalComponent extends
       MSG_PARAMS.CARDINALIRY.SINGULAR
     ).subscribe((value) => this.msgParamFondoEstructuralEntity = { entity: value, ...MSG_PARAMS.GENDER.MALE, ...MSG_PARAMS.CARDINALIRY.SINGULAR });
 
-    if (this.fuenteFinanciacion.nombre) {
-
+    if (this.isEdit()) {
       this.translate.get(
         FUENTE_FINANCIACION_KEY,
         MSG_PARAMS.CARDINALIRY.SINGULAR
       ).subscribe((value) => this.title = value);
-
-      this.textSaveOrUpdate = MSG_ACEPTAR;
     } else {
       this.translate.get(
         FUENTE_FINANCIACION_KEY,
@@ -115,57 +95,34 @@ export class FuenteFinanciacionModalComponent extends
           );
         })
       ).subscribe((value) => this.title = value);
-
-      this.textSaveOrUpdate = MSG_ANADIR;
     }
 
   }
 
-  private loadAmbitosGeograficos() {
-    this.subscriptions.push(
-      this.ambitoGeograficoService.findAll().subscribe(
-        (res: SgiRestListResult<ITipoAmbitoGeografico>) => this.ambitosGeograficos$.next(res.items),
-        (error) => {
-          this.logger.error(error);
-          this.snackBarService.showError(MSG_ERROR_INIT);
-        }
-      )
-    );
-  }
-
-  private loadOrigenes() {
-    this.subscriptions.push(
-      this.tipoOrigenFuenteFinanciacionService.findAll().subscribe(
-        (res: SgiRestListResult<ITipoOrigenFuenteFinanciacion>) => this.origenes$.next(res.items),
-        (error) => {
-          this.logger.error(error);
-          this.snackBarService.showError(MSG_ERROR_INIT);
-        }
-      )
-    );
-  }
-
-  protected getDatosForm(): IFuenteFinanciacion {
-    this.fuenteFinanciacion.nombre = this.formGroup.controls.nombre.value;
-    this.fuenteFinanciacion.descripcion = this.formGroup.controls.descripcion.value;
-    this.fuenteFinanciacion.tipoAmbitoGeografico = this.formGroup.controls.ambitoGeografico.value;
-    this.fuenteFinanciacion.tipoOrigenFuenteFinanciacion = this.formGroup.controls.origen.value;
-    this.fuenteFinanciacion.fondoEstructural = this.formGroup.controls.fondoEstructural.value;
+  protected getValue(): IFuenteFinanciacion {
+    const controls = this.formGroup.controls;
+    this.fuenteFinanciacion.nombre = controls.nombre.value;
+    this.fuenteFinanciacion.descripcion = controls.descripcion.value;
+    this.fuenteFinanciacion.tipoAmbitoGeografico = controls.ambitoGeografico.value;
+    this.fuenteFinanciacion.tipoOrigenFuenteFinanciacion = controls.origen.value;
+    this.fuenteFinanciacion.fondoEstructural = controls.fondoEstructural.value;
     return this.fuenteFinanciacion;
   }
 
-  protected getFormGroup(): FormGroup {
+  protected buildFormGroup(): FormGroup {
     const formGroup = new FormGroup({
-      nombre: new FormControl(this.fuenteFinanciacion?.nombre),
-      descripcion: new FormControl(this.fuenteFinanciacion?.descripcion),
-      ambitoGeografico: new FormControl(this.fuenteFinanciacion?.tipoAmbitoGeografico),
-      origen: new FormControl(this.fuenteFinanciacion?.tipoOrigenFuenteFinanciacion),
-      fondoEstructural: new FormControl(this.fuenteFinanciacion?.id ? this.fuenteFinanciacion.fondoEstructural : true),
+      nombre: new FormControl(this.fuenteFinanciacion?.nombre ?? ''),
+      descripcion: new FormControl(this.fuenteFinanciacion?.descripcion ?? ''),
+      ambitoGeografico: new FormControl(this.fuenteFinanciacion?.tipoAmbitoGeografico ?? null),
+      origen: new FormControl(this.fuenteFinanciacion?.tipoOrigenFuenteFinanciacion ?? null),
+      fondoEstructural: new FormControl(this.fuenteFinanciacion?.fondoEstructural ?? true),
     });
     return formGroup;
   }
 
-  ngOnDestroy(): void {
-    super.ngOnDestroy();
+  protected saveOrUpdate(): Observable<IFuenteFinanciacion> {
+    const fuenteFinanciacion = this.getValue();
+    return this.isEdit() ? this.fuenteFinanciacionService.update(fuenteFinanciacion.id, fuenteFinanciacion) :
+      this.fuenteFinanciacionService.create(fuenteFinanciacion);
   }
 }

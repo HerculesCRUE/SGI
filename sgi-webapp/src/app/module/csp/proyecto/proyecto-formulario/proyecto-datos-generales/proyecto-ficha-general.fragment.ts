@@ -72,6 +72,8 @@ export class ProyectoFichaGeneralFragment extends FormFragment<IProyecto> {
   modeloEjecucionConvocatoria$: Subject<boolean> = new BehaviorSubject<boolean>(false);
   readonly vinculacionesProyectosSge$: Subject<boolean> = new BehaviorSubject<boolean>(false);
 
+  readonly iva$: BehaviorSubject<number> = new BehaviorSubject<number>(null);
+
   constructor(
     private logger: NGXLogger,
     private fb: FormBuilder,
@@ -264,7 +266,6 @@ export class ProyectoFichaGeneralFragment extends FormFragment<IProyecto> {
             this.getFormGroup().controls.fechaFin.setValue(fechaFin);
           }
         })
-
     );
     this.subscriptions.push(
       form.controls.iva.valueChanges.subscribe(
@@ -382,6 +383,8 @@ export class ProyectoFichaGeneralFragment extends FormFragment<IProyecto> {
       this.hasAnyProyectoSocioWithRolCoordinador$.next(this.hasAnyProyectoSocioCoordinador);
 
       this.subscribeToOnChangeHasPopulatedSocios();
+
+      this.subscriptions.push(form.controls.iva.valueChanges.subscribe(iva => this.iva$.next(iva)));
 
     } else {
       form.disable();
@@ -664,6 +667,7 @@ export class ProyectoFichaGeneralFragment extends FormFragment<IProyecto> {
     return obs.pipe(
       map((value) => {
         this.proyecto = value;
+        this.loadHistoricoProyectoIVA(this.proyecto.id);
         return this.proyecto.id;
       })
     );

@@ -107,7 +107,7 @@ export class ProyectoPresupuestoFragment extends FormFragment<IProyecto>  {
   }
   protected buildFormGroup(): FormGroup {
     const form = new FormGroup({
-      anualidades: new FormControl(null, Validators.required),
+      anualidades: new FormControl(null, []),
       importePresupuestoUniversidad: new FormControl(null, [
         Validators.min(0),
         Validators.max(2_147_483_647)
@@ -156,7 +156,7 @@ export class ProyectoPresupuestoFragment extends FormFragment<IProyecto>  {
     this.subscriptions.push(
       form.controls.importePresupuestoUniversidad.valueChanges.subscribe(
         (value) => {
-          form.controls.importePresupuestoUniversidad
+          form.controls.totalImportePresupuestoUniversidad
             .patchValue((value + form.controls.importePresupuestoUniversidadCostesIndirectos.value) !== 0 ?
               (value + form.controls.importePresupuestoUniversidadCostesIndirectos.value) : null, { emitEvent: false });
         }),

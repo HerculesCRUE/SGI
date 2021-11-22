@@ -8,6 +8,7 @@ import { SharedModule } from '@shared/shared.module';
 import { FuenteFinanciacionRoutingModule } from './fuente-financiacion-routing.module';
 import { FuenteFinanciacionListadoComponent } from './fuente-financiacion-listado/fuente-financiacion-listado.component';
 import { FuenteFinanciacionModalComponent } from './fuente-financiacion-modal/fuente-financiacion-modal.component';
+import { CspSharedModule } from '../shared/csp-shared.module';
 
 @NgModule({
   declarations: [
@@ -23,6 +24,7 @@ import { FuenteFinanciacionModalComponent } from './fuente-financiacion-modal/fu
     SgiAuthModule,
     FormsModule,
     ReactiveFormsModule,
+    CspSharedModule
   ]
 })
 export class FuenteFinanciacionModule { }

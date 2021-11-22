@@ -2,20 +2,18 @@ import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
-import { BaseModalComponent } from '@core/component/base-modal.component';
+import { DialogActionComponent } from '@core/component/dialog-action.component';
 import { MSG_PARAMS } from '@core/i18n';
 import { ITipoProcedimiento } from '@core/models/pii/tipo-procedimiento';
-import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-properties';
-import { SnackBarService } from '@core/services/snack-bar.service';
+import { TipoProcedimientoService } from '@core/services/pii/tipo-procedimiento/tipo-procedimiento.service';
 import { TranslateService } from '@ngx-translate/core';
+import { Observable } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 
 const TIPO_PROCEDIMIENTO_KEY = marker('pii.tipo-procedimiento');
 const TIPO_PROCEDIMIENTO_NOMBRE_KEY = marker('pii.tipo-procedimiento.nombre');
 const TIPO_PROCEDIMIENTO_DESCRIPCION_KEY = marker('pii.tipo-procedimiento.descripcion');
 const TITLE_NEW_ENTITY = marker('title.new.entity');
-const MSG_ANADIR = marker('btn.add');
-const MSG_ACEPTAR = marker('btn.ok');
 
 @Component({
   selector: 'sgi-tipo-procedimiento-modal',
@@ -23,58 +21,22 @@ const MSG_ACEPTAR = marker('btn.ok');
   styleUrls: ['./tipo-procedimiento-modal.component.scss']
 })
 export class TipoProcedimientoModalComponent
-  extends BaseModalComponent<ITipoProcedimiento, TipoProcedimientoModalComponent> implements OnInit, OnDestroy {
+  extends DialogActionComponent<ITipoProcedimiento, ITipoProcedimiento> implements OnInit, OnDestroy {
 
-  public fxLayoutProperties: FxLayoutProperties;
-  public tipoProcedimiento: ITipoProcedimiento;
+  private readonly tipoProcedimiento: ITipoProcedimiento;
   public msgParamNombreEntity = {};
   public msgParamDescripcionEntity = {};
   public title: string;
-  public textSaveOrUpdate: string;
 
   constructor(
-    protected snackBarService: SnackBarService,
-    public readonly matDialogRef: MatDialogRef<TipoProcedimientoModalComponent>,
-    @Inject(MAT_DIALOG_DATA) tipoProcedimiento: ITipoProcedimiento,
-    private translate: TranslateService) {
+    matDialogRef: MatDialogRef<TipoProcedimientoModalComponent>,
+    @Inject(MAT_DIALOG_DATA) data: ITipoProcedimiento,
+    private readonly tipoProcedimientoService: TipoProcedimientoService,
+    private readonly translate: TranslateService
+  ) {
+    super(matDialogRef, !!data?.id);
 
-    super(snackBarService, matDialogRef, tipoProcedimiento);
-
-    this.initLayoutProperties();
-
-    this.tipoProcedimiento = tipoProcedimiento ? { ...tipoProcedimiento } : { activo: true } as ITipoProcedimiento;
-  }
-
-  private initLayoutProperties() {
-    this.fxLayoutProperties = new FxLayoutProperties();
-    this.fxLayoutProperties.layout = 'row';
-    this.fxLayoutProperties.layoutAlign = 'row';
-  }
-
-  protected getDatosForm(): ITipoProcedimiento {
-
-    return {
-      ...this.tipoProcedimiento,
-      nombre: this.formGroup.controls.nombre.value,
-      descripcion: this.formGroup.controls.descripcion.value
-    };
-  }
-
-  protected getFormGroup(): FormGroup {
-
-    return new FormGroup({
-      nombre: new FormControl(this.tipoProcedimiento?.nombre, [Validators.maxLength(50), Validators.required]),
-      descripcion: new FormControl(this.tipoProcedimiento?.descripcion, [Validators.maxLength(250), Validators.required]),
-    });
-  }
-
-  ngOnInit(): void {
-    super.ngOnInit();
-    this.setupI18N();
-  }
-
-  ngOnDestroy(): void {
-    super.ngOnDestroy();
+    this.tipoProcedimiento = this.isEdit() ? { ...data } : { activo: true } as ITipoProcedimiento;
   }
 
   private setupI18N(): void {
@@ -89,14 +51,11 @@ export class TipoProcedimientoModalComponent
     ).subscribe((value) =>
       this.msgParamDescripcionEntity = { entity: value, ...MSG_PARAMS.GENDER.FEMALE, ...MSG_PARAMS.CARDINALIRY.SINGULAR });
 
-    if (this.tipoProcedimiento.nombre) {
-
+    if (this.isEdit()) {
       this.translate.get(
         TIPO_PROCEDIMIENTO_KEY,
         MSG_PARAMS.CARDINALIRY.SINGULAR
       ).subscribe((value) => this.title = value);
-
-      this.textSaveOrUpdate = MSG_ACEPTAR;
     } else {
       this.translate.get(
         TIPO_PROCEDIMIENTO_KEY,
@@ -109,10 +68,34 @@ export class TipoProcedimientoModalComponent
           );
         })
       ).subscribe((value) => this.title = value);
-
-      this.textSaveOrUpdate = MSG_ANADIR;
     }
 
+  }
+
+  ngOnInit(): void {
+    super.ngOnInit();
+    this.setupI18N();
+  }
+
+  protected getValue(): ITipoProcedimiento {
+    return {
+      ...this.tipoProcedimiento,
+      nombre: this.formGroup.controls.nombre.value,
+      descripcion: this.formGroup.controls.descripcion.value
+    };
+  }
+
+  protected buildFormGroup(): FormGroup {
+    return new FormGroup({
+      nombre: new FormControl(this.tipoProcedimiento?.nombre ?? '', [Validators.required, Validators.maxLength(50)]),
+      descripcion: new FormControl(this.tipoProcedimiento?.descripcion ?? '', [Validators.required, Validators.maxLength(250)]),
+    });
+  }
+
+  protected saveOrUpdate(): Observable<ITipoProcedimiento> {
+    const tipoProcedimiento = this.getValue();
+    return this.isEdit() ? this.tipoProcedimientoService.update(tipoProcedimiento.id, tipoProcedimiento) :
+      this.tipoProcedimientoService.create(tipoProcedimiento);
   }
 
 }

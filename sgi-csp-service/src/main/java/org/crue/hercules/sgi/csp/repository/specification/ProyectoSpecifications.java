@@ -5,6 +5,7 @@ import java.util.List;
 import org.crue.hercules.sgi.csp.model.Convocatoria;
 import org.crue.hercules.sgi.csp.model.Proyecto;
 import org.crue.hercules.sgi.csp.model.Proyecto_;
+import org.crue.hercules.sgi.csp.model.Solicitud;
 import org.springframework.data.jpa.domain.Specification;
 
 public class ProyectoSpecifications {
@@ -42,6 +43,18 @@ public class ProyectoSpecifications {
   public static Specification<Proyecto> byProyectoId(Long id) {
     return (root, query, cb) -> {
       return cb.equal(root.get(Proyecto_.id), id);
+    };
+  }
+
+  /**
+   * Filtro de {@link Proyecto} por el id de solicitud
+   * 
+   * @param solicitudId identificador de la {@link Solicitud}
+   * @return lista de {@link Proyecto}
+   */
+  public static Specification<Proyecto> bySolicitudId(Long solicitudId) {
+    return (root, query, cb) -> {
+      return cb.equal(root.get(Proyecto_.solicitudId), solicitudId);
     };
   }
 

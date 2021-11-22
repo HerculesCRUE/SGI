@@ -79,11 +79,6 @@ public class ContextoProyecto extends BaseEntity {
   @Enumerated(EnumType.STRING)
   private PropiedadResultados propiedadResultados;
 
-  /** AreaTematica convocatoria */
-  @ManyToOne
-  @JoinColumn(name = "area_tematica_convocatoria_id", nullable = true, foreignKey = @ForeignKey(name = "FK_CONTEXTOPROYECTO_AREATEMATICACONVOCATORIA"))
-  private AreaTematica areaTematicaConvocatoria;
-
   /** AreaTematica */
   @ManyToOne
   @JoinColumn(name = "area_tematica_id", nullable = true, foreignKey = @ForeignKey(name = "FK_CONTEXTOPROYECTO_AREATEMATICA"))

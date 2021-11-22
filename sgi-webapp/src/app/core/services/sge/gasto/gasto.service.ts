@@ -108,5 +108,19 @@ export class GastoService extends _GastoServiceMixinBase {
     );
   }
 
+  /**
+   * validar gasto
+   * @param comentario comentario asociado al estado.
+   */
+  validarGasto(id: string, comentario: string): Observable<void> {
+    return this.http.patch<void>(`${this.endpointUrl}/${id}/validar`, comentario);
+  }
+  /**
+  * rechazar gasto
+  * @param comentario comentario asociado al estado.
+  */
+  rechazarGasto(id: string, comentario: string): Observable<void> {
+    return this.http.patch<void>(`${this.endpointUrl}/${id}/rechazar`, comentario);
+  }
 
 }

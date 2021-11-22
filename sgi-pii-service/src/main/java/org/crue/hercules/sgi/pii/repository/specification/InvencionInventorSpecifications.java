@@ -11,8 +11,7 @@ public class InvencionInventorSpecifications {
    * Devuelve los {@link InvencionInventor} relacionados con la {@link Invencion}
    * con el Id pasado por parámetros.
    * 
-   * {@link Long} Id de la {@link Invencion}.
-   * 
+   * @param invencionId {@link Long} Id de la {@link Invencion}.
    * @return Specification para obtener los {@link InvencionInventor} relacionados
    *         a la {@link Invencion} pasada por parámetro.
    */

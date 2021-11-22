@@ -51,6 +51,7 @@ export class ProyectoConceptoGastoCodigoEcModalComponent
 
   showDatosConvocatoriaCodigoEconomico: boolean;
   disabledCopy = false;
+  disabledSave = true;
 
   msgParamEntity = {};
   msgParamCodigoEconomigoSgeEntity = {};
@@ -72,7 +73,10 @@ export class ProyectoConceptoGastoCodigoEcModalComponent
 
     this.codigosEconomicos$ = codigoEconomicoGastoService.findAll().pipe(
       map(response => response.items),
-      tap(response => this.codigosEconomicos = response)
+      tap(response => {
+        this.codigosEconomicos = response;
+        this.disabledSave = false;
+      })
     );
   }
 
@@ -80,8 +84,6 @@ export class ProyectoConceptoGastoCodigoEcModalComponent
     super.ngOnInit();
     this.setupI18N();
     this.textSaveOrUpdate = this.data.proyectoConceptoGastoCodigoEc?.codigoEconomico ? MSG_ACEPTAR : MSG_ANADIR;
-
-    this.checkShowDatosConvocatoriaCodigoEconomico(this.data.convocatoriaConceptoGastoCodigoEc, this.data.proyectoConceptoGastoCodigoEc);
 
     this.subscriptions.push(this.codigosEconomicos$.subscribe(
       (codigosEconomicos) => this.formGroup.controls.codigoEconomico.setValidators(
@@ -180,7 +182,7 @@ export class ProyectoConceptoGastoCodigoEcModalComponent
       this.data.proyectoConceptoGastoCodigoEc = {} as IProyectoConceptoGastoCodigoEc;
     }
     const codigoEconomicoForm = this.codigosEconomicos?.find(codigoEconomico =>
-      codigoEconomico.id === this.formGroup.controls.codigoEconomico.value.id);
+      this.formGroup.controls.codigoEconomico.value && codigoEconomico.id === this.formGroup.controls.codigoEconomico.value.id);
     this.data.proyectoConceptoGastoCodigoEc.codigoEconomico = codigoEconomicoForm;
     this.data.proyectoConceptoGastoCodigoEc.observaciones = this.formGroup.controls.observaciones.value;
     this.data.proyectoConceptoGastoCodigoEc.fechaInicio = this.formGroup.controls.fechaInicio.value;
@@ -213,13 +215,25 @@ export class ProyectoConceptoGastoCodigoEcModalComponent
         ]
       }
     );
+
     if (this.data.readonly) {
       formGroup.disable();
     }
+
     if (this.data.convocatoriaConceptoGastoCodigoEc?.codigoEconomico) {
-      formGroup.controls.codigoEconomico.setValue(formGroup.controls.codigoEconomicoConvocatoria.value);
       formGroup.controls.codigoEconomico.disable();
+      if (!codigoEconomico) {
+        formGroup.controls.fechaInicio.disable();
+        formGroup.controls.fechaFin.disable();
+        formGroup.controls.observaciones.disable();
+      }
+      this.showDatosConvocatoriaCodigoEconomico = true;
+      this.disabledCopy = !compareConceptoGastoCodigoEc(this.data.convocatoriaConceptoGastoCodigoEc,
+        this.data.proyectoConceptoGastoCodigoEc);
+    } else {
+      this.showDatosConvocatoriaCodigoEconomico = false;
     }
+
     if (this.data.editModal) {
       formGroup.controls.codigoEconomico.disable();
     }
@@ -228,6 +242,7 @@ export class ProyectoConceptoGastoCodigoEcModalComponent
   }
 
   copyToProyecto(): void {
+    this.enableEditableControls();
     this.formGroup.controls.codigoEconomico.setValue(this.formGroup.controls.codigoEconomicoConvocatoria.value);
     this.formGroup.controls.fechaInicio.setValue(this.formGroup.controls.fechaInicioConvocatoria.value);
     this.formGroup.controls.fechaFin.setValue(this.formGroup.controls.fechaFinConvocatoria.value);
@@ -236,23 +251,6 @@ export class ProyectoConceptoGastoCodigoEcModalComponent
 
   ngOnDestroy(): void {
     super.ngOnDestroy();
-  }
-
-  private checkShowDatosConvocatoriaCodigoEconomico(
-    convocatoriaCodigoEconomico: IConvocatoriaConceptoGastoCodigoEc,
-    proyectoCodigoEconomico: IProyectoConceptoGastoCodigoEc) {
-
-    if (!convocatoriaCodigoEconomico) {
-      this.showDatosConvocatoriaCodigoEconomico = false;
-    } else if (!proyectoCodigoEconomico) {
-      this.showDatosConvocatoriaCodigoEconomico = true;
-      this.disabledCopy = !compareConceptoGastoCodigoEc(this.data.convocatoriaConceptoGastoCodigoEc,
-        this.getDatosForm().proyectoConceptoGastoCodigoEc);
-    } else if (compareConceptoGastoCodigoEc(convocatoriaCodigoEconomico, proyectoCodigoEconomico)) {
-      this.showDatosConvocatoriaCodigoEconomico = true;
-    } else {
-      this.showDatosConvocatoriaCodigoEconomico = false;
-    }
   }
 
   /**
@@ -307,5 +305,11 @@ export class ProyectoConceptoGastoCodigoEcModalComponent
         }
       }
     };
+  }
+
+  private enableEditableControls(): void {
+    this.formGroup.controls.fechaInicio.enable();
+    this.formGroup.controls.fechaFin.enable();
+    this.formGroup.controls.observaciones.enable();
   }
 }

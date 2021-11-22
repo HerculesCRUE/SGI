@@ -35,15 +35,17 @@ export class ProyectoAnualidadGastosFragment extends Fragment {
             switchMap(response => {
               const requestsCodigoEconomico: Observable<IAnualidadGasto>[] = [];
               response.items.forEach(anualidadGasto => {
-                requestsCodigoEconomico.push(
-                  this.codigoEconomicoGastoService.findById(anualidadGasto.codigoEconomico?.id)
-                    .pipe(
-                      map(codigoEconomico => {
-                        anualidadGasto.codigoEconomico = codigoEconomico;
-                        return anualidadGasto;
-                      })
-                    )
-                );
+                if (!anualidadGasto.codigoEconomico?.id) {
+                  requestsCodigoEconomico.push(of(anualidadGasto));
+                } else {
+                  requestsCodigoEconomico.push(
+                    this.codigoEconomicoGastoService.findById(anualidadGasto.codigoEconomico?.id)
+                      .pipe(
+                        map(codigoEconomico => {
+                          anualidadGasto.codigoEconomico = codigoEconomico;
+                          return anualidadGasto;
+                        })));
+                }
               });
               return of(response).pipe(
                 tap(() => merge(...requestsCodigoEconomico).subscribe())

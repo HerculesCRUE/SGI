@@ -7,12 +7,21 @@ import org.springframework.security.core.Authentication;
 
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * Custom implementation of {@code MethodSecurityExpressionHandler} that adds
+ * following expressions:
+ * <ul>
+ * <li>hasAuthorityForAnyUO(String authority)</li>
+ * <li>hasAnyAuthorityForAnyUO(String... authorities)</li>
+ * <li>hasRoleForAnyUO(String role)</li>
+ * <li>hasAnyRoleForAnyUO(String... roles)</li>
+ * <li>getAuthorityUOs(String authority)</li>
+ * <li>isClient()</li>
+ * </ul>
+ */
 @Slf4j
 public class SgiMethodSecurityExpressionHandler extends DefaultMethodSecurityExpressionHandler {
 
-  /**
-   * Creates the root object for expression evaluation.
-   */
   @Override
   protected MethodSecurityExpressionOperations createSecurityExpressionRoot(Authentication authentication,
       MethodInvocation invocation) {

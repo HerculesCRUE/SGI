@@ -1,6 +1,6 @@
-import { DateTime } from "luxon";
-import { IProyecto } from "../csp/proyecto";
-import { ITipoProteccion } from "./tipo-proteccion";
+import { DateTime } from 'luxon';
+import { IProyecto } from '../csp/proyecto';
+import { ITipoProteccion } from './tipo-proteccion';
 
 export interface IInvencion {
   id: number;

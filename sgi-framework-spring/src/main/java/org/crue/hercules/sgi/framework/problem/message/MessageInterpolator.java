@@ -15,7 +15,10 @@ import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.validation.beanvalidation.MessageSourceResourceBundleLocator;
 
 class MessageInterpolator {
-  private static javax.validation.MessageInterpolator messageInterpolator;
+  private static javax.validation.MessageInterpolator interpolator;
+
+  private MessageInterpolator() {
+  }
 
   public static String interpolateMessage(@Nullable final String message,
       @Nullable Map<String, Object> messageParameters) {
@@ -23,9 +26,6 @@ class MessageInterpolator {
       return null;
     }
     javax.validation.MessageInterpolator messageInterpolator = getMessageInterpolator();
-    if (messageInterpolator == null) {
-      return message;
-    }
     ConstraintDescriptor<?> constraintDescriptor = null;
     Object validatedValue = null;
     Class<?> rootBeanType = null;
@@ -40,13 +40,13 @@ class MessageInterpolator {
 
   private static javax.validation.MessageInterpolator getMessageInterpolator() {
     // If already defined
-    if (messageInterpolator != null) {
-      return messageInterpolator;
+    if (interpolator != null) {
+      return interpolator;
     }
     // If not defined, create a new one from ProblemMessages.properties if exists in
     // the classpath
-    messageInterpolator = buildInterpolatorFromProblemMessages();
-    return messageInterpolator;
+    interpolator = buildInterpolatorFromProblemMessages();
+    return interpolator;
   }
 
   private static javax.validation.MessageInterpolator buildInterpolatorFromProblemMessages() {

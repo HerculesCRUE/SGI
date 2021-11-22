@@ -1,6 +1,7 @@
 package org.crue.hercules.sgi.csp.model;
 
 import java.time.Instant;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -10,6 +11,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
@@ -77,6 +79,11 @@ public class ProyectoAnualidad extends BaseEntity {
   @Getter(AccessLevel.NONE)
   @Setter(AccessLevel.NONE)
   private final Proyecto proyecto = null;
+
+  @OneToMany(mappedBy = "proyectoAnualidad")
+  @Getter(AccessLevel.NONE)
+  @Setter(AccessLevel.NONE)
+  private final List<AnualidadGasto> anualidadesGasto = null;
 
   /**
    * Interfaz para marcar validaciones en la creación de la entidad.

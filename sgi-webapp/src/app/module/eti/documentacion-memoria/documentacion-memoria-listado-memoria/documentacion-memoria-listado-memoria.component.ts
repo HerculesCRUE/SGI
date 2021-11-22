@@ -4,7 +4,10 @@ import { AbstractTableWithoutPaginationComponent } from '@core/component/abstrac
 import { IDocumentacionMemoria } from '@core/models/eti/documentacion-memoria';
 import { IInforme } from '@core/models/eti/informe';
 import { TIPO_EVALUACION } from '@core/models/eti/tipo-evaluacion';
+import { IDocumento } from '@core/models/sgdoc/documento';
+import { EvaluacionService } from '@core/services/eti/evaluacion.service';
 import { MemoriaService } from '@core/services/eti/memoria.service';
+import { DocumentoService, triggerDownloadToUser } from '@core/services/sgdoc/documento.service';
 import { SnackBarService } from '@core/services/snack-bar.service';
 import { SgiRestFilter, SgiRestListResult } from '@sgi/framework/http';
 import { Observable, of } from 'rxjs';
@@ -30,10 +33,13 @@ export class DocumentacionMemoriaListadoMemoriaComponent extends
   @Input() memoriaId: number;
   @Input() tipoEvaluacion: number;
   @Input() fichaEvaluador: boolean;
+  @Input() evaluacionId: number;
 
   constructor(
     private readonly memoriaService: MemoriaService,
-    protected readonly snackBarService: SnackBarService
+    protected readonly snackBarService: SnackBarService,
+    private readonly documentoService: DocumentoService,
+    private readonly evaluacionService: EvaluacionService
   ) {
     super(snackBarService, MSG_ERROR);
   }
@@ -45,7 +51,7 @@ export class DocumentacionMemoriaListadoMemoriaComponent extends
           return response;
         }),
         switchMap(response => {
-          return this.memoriaService.findInformeUltimaVersion(this.memoriaId).pipe(
+          return this.memoriaService.findInformeUltimaVersionTipoEvaluacion(this.memoriaId, this.tipoEvaluacion).pipe(
             switchMap(res => {
               const documentacionMemoria: IDocumentacionMemoriaWithInformeAndFichaEvaluador[] = [];
               const documentoInforme = {
@@ -91,16 +97,35 @@ export class DocumentacionMemoriaListadoMemoriaComponent extends
     return [];
   }
 
-  generarInforme(informe: IInforme) {
-    // TODO generar informe
+  /**
+   * Visualiza el informe de evaluación seleccionado.
+   * @param documentoRef referencia del documento
+   */
+  visualizarInforme(documentoRef: string): void {
+    const documento: IDocumento = {} as IDocumento;
+    this.documentoService.getInfoFichero(documentoRef).pipe(
+      switchMap((documentoInfo: IDocumento) => {
+        documento.nombre = documentoInfo.nombre;
+        return this.documentoService.downloadFichero(documentoInfo.documentoRef);
+      })
+    ).subscribe(response => {
+      triggerDownloadToUser(response, documento.nombre);
+    });
   }
 
-  generarFichaEvaluador(documentacion: IDocumentacionMemoriaWithInformeAndFichaEvaluador) {
-    // TODO generar ficha evaluador
-  }
-
-  generarDocumentacionMemoria(documentacion: IDocumentacionMemoriaWithInformeAndFichaEvaluador) {
-    // TODO generar documentacion
+  /**
+   * Visualiza el informe del evaluador a partir de su evaluación
+   */
+  visualizarInformeEvaluador(): void {
+    const documento: IDocumento = {} as IDocumento;
+    this.evaluacionService.getDocumentoEvaluador(this.evaluacionId).pipe(
+      switchMap((documentoInfo: IDocumento) => {
+        documento.nombre = documentoInfo.nombre;
+        return this.documentoService.downloadFichero(documentoInfo.documentoRef);
+      })
+    ).subscribe(response => {
+      triggerDownloadToUser(response, documento.nombre);
+    });
   }
 
   private getVersion(informe: IInforme, tipoEvaluacion: number) {

@@ -1,51 +1,62 @@
-<div class="sgi-dialog-header" fxLayout="row" fxLayoutGap="20px">
-  <span fxFlexAlign="center" mat-mat-dialog-title role="heading" aria-level="3" fxFlex>{{title}}</span>
-  <button fxFlex="nogrow" mat-icon-button mat-dialog-close>
-    <mat-icon class="close-icon">close</mat-icon>
-  </button>
-</div>
-<mat-dialog-content>
+<sgi-action-dialog [title]="title">
   <form [formGroup]="formGroup">
-    <div class="fieldset-form">
-      {{'pii.tramo-reparto.tramo' | translate:MSG_PARAMS.CARDINALIRY.SINGULAR}}
-    </div>
-    <div [fxLayout]="fxLayoutProperties.layout" [fxLayoutAlign]="fxLayoutProperties.layoutAlign">
+    <div fxLayout="row">
 
-      <!-- Desde -->
+      <!-- Tipo -->
       <mat-form-field class="first-row-input">
-        <mat-label>{{'pii.tramo-reparto.desde' | translate}}</mat-label>
-        <input matInput formControlName="desde" type="text" id="desde" type="number"
-          placeholder="{{'pii.tramo-reparto.desde' | translate}}" required cdkFocusInitial>
-        <mat-error *ngIf="formGroup.controls.desde.errors?.required">
-          {{'error.required.entity' | translate:msgParamDesdeEntity}}
+        <mat-label>{{'pii.tramo-reparto.tipo' | translate}}</mat-label>
+        <sgi-select-enum formControlName="tipo" [enumMap]="TIPO_TRAMO_REPARTO_MAP" required>
+        </sgi-select-enum>
+        <mat-error *ngIf="formGroup.controls.tipo.errors?.required">
+          {{'error.required.entity' | translate:msgParamTipoEntity}}
         </mat-error>
-        <mat-error *ngIf="formGroup.controls.desde.errors?.min">
-          {{'error.min.entity' | translate:msgParamDesdeEntity}}
-        </mat-error>
-        <mat-error *ngIf="formGroup.controls.desde.errors?.pattern">
-          {{'error.integer.entity' | translate}}
+        <mat-error *ngIf="formGroup.controls.tipo.errors?.noDuplicateTipoTramo">
+          {{'pii.tramo-reparto.tipo.error.required.noDuplicateTipoTramo' | translate}}
         </mat-error>
       </mat-form-field>
-
-      <!-- Hasta -->
-      <mat-form-field>
-        <mat-label>{{'pii.tramo-reparto.hasta' | translate}}</mat-label>
-        <input matInput formControlName="hasta" id="hasta" type="number"
-          placeholder="{{'pii.tramo-reparto.hasta' | translate}}" required>
-        <mat-error *ngIf="formGroup.controls.hasta.errors?.required">
-          {{'error.required.entity' | translate:msgParamHastaEntity}}
-        </mat-error>
-        <mat-error *ngIf="formGroup.controls.hasta.errors?.pattern">
-          {{'error.integer.entity' | translate}}
-        </mat-error>
-        <mat-error *ngIf="formGroup.controls.hasta.errors?.after">
-          {{'error.after.param' | translate:msgParamDesdeEntity}}
-        </mat-error>
-      </mat-form-field>
-
     </div>
+    <ng-container *ngIf="formGroup.controls?.tipo.value">
+      <div class="fieldset-form">
+        {{'pii.tramo-reparto.tramo' | translate:MSG_PARAMS.CARDINALIRY.SINGULAR}}
+      </div>
+      <div fxLayout="row">
 
-    <div [fxLayout]="fxLayoutProperties.layout" [fxLayoutAlign]="fxLayoutProperties.layoutAlign">
+        <!-- Desde -->
+        <mat-form-field class="first-row-input">
+          <mat-label>{{'pii.tramo-reparto.desde' | translate}}</mat-label>
+          <input matInput formControlName="desde" type="text" id="desde" type="number"
+            placeholder="{{'pii.tramo-reparto.desde' | translate}}" required cdkFocusInitial>
+          <mat-error *ngIf="formGroup.controls.desde.errors?.required">
+            {{'error.required.entity' | translate:msgParamDesdeEntity}}
+          </mat-error>
+          <mat-error *ngIf="formGroup.controls.desde.errors?.min">
+            {{'error.min.entity' | translate:msgParamDesdeEntity}}
+          </mat-error>
+          <mat-error *ngIf="formGroup.controls.desde.errors?.pattern">
+            {{'error.integer.entity' | translate}}
+          </mat-error>
+        </mat-form-field>
+
+        <!-- Hasta -->
+        <mat-form-field>
+          <mat-label>{{'pii.tramo-reparto.hasta' | translate}}</mat-label>
+          <input matInput formControlName="hasta" id="hasta" type="number"
+            placeholder="{{'pii.tramo-reparto.hasta' | translate}}" required>
+          <mat-error *ngIf="formGroup.controls.hasta.errors?.required">
+            {{'error.required.entity' | translate:msgParamHastaEntity}}
+          </mat-error>
+          <mat-error *ngIf="formGroup.controls.hasta.errors?.pattern">
+            {{'error.integer.entity' | translate}}
+          </mat-error>
+          <mat-error *ngIf="formGroup.controls.hasta.errors?.after">
+            {{'error.after.param' | translate:msgParamDesdeEntity}}
+          </mat-error>
+        </mat-form-field>
+
+      </div>
+    </ng-container>
+
+    <div fxLayout="row">
 
       <!-- % Universidad -->
       <mat-form-field class="first-row-input">
@@ -80,17 +91,10 @@
       </mat-form-field>
 
     </div>
-    <div [fxLayout]="fxLayoutProperties.layout" [fxLayoutAlign]="fxLayoutProperties.layoutAlign">
+    <div fxLayout="row">
       <mat-error *ngIf="formGroup?.errors?.fieldsSumNotEqualsToValue">
         {{'error.sum.fields' | translate: formGroup.errors.fieldsSumNotEqualsToValue }}
       </mat-error>
     </div>
   </form>
-</mat-dialog-content>
-<mat-dialog-actions>
-  <button color="accent" (click)="saveOrUpdate()" mat-raised-button type="submit">
-    <mat-icon class="save-icon">save</mat-icon>{{textSaveOrUpdate | translate}}
-  </button>
-  <button class="link-cancelar" mat-button type="button" mat-dialog-close>{{'btn.cancel' |
-    translate}}</button>
-</mat-dialog-actions>
+</sgi-action-dialog>

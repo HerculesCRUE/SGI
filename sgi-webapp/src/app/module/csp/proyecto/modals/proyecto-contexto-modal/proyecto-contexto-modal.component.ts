@@ -13,7 +13,6 @@ import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-pro
 import { AreaTematicaService } from '@core/services/csp/area-tematica.service';
 import { SnackBarService } from '@core/services/snack-bar.service';
 import { StatusWrapper } from '@core/utils/status-wrapper';
-import { IsEntityValidator } from '@core/validators/is-entity-validador';
 import { TranslateService } from '@ngx-translate/core';
 import { NGXLogger } from 'ngx-logger';
 import { BehaviorSubject, from, Observable, of } from 'rxjs';
@@ -24,14 +23,16 @@ const AREA_TEMATICA_KEY = marker('csp.area-tematica');
 const TITLE_NEW_ENTITY = marker('title.new.entity');
 
 export interface ProyectoContextoModalData {
-  root: IAreaTematica;
-  areaTematica: IAreaTematica;
-  areaTematicaConvocatoria: IAreaTematica;
+  padre: IAreaTematica;
+  areasTematicasConvocatoria: IAreaTematica[];
+  areaTematicaProyecto: IAreaTematica;
 }
 
 class NodeAreaTematica {
   parent: NodeAreaTematica;
   areaTematica: StatusWrapper<IAreaTematica>;
+  checked: boolean;
+  disabled: boolean;
   // tslint:disable-next-line: variable-name
   _childs: NodeAreaTematica[];
   get childs(): NodeAreaTematica[] {
@@ -73,6 +74,7 @@ export class ProyectoContextoModalComponent extends
   fxFlexProperties: FxFlexProperties;
   fxLayoutProperties: FxLayoutProperties;
 
+  areaTematicaTree$ = new BehaviorSubject<NodeAreaTematica[]>([]);
   areasTematicas$: BehaviorSubject<IAreaTematica[]> = new BehaviorSubject<IAreaTematica[]>([]);
   treeControl = new NestedTreeControl<NodeAreaTematica>(node => node.childs);
   dataSource = new MatTreeNestedDataSource<NodeAreaTematica>();
@@ -106,7 +108,7 @@ export class ProyectoContextoModalComponent extends
     this.fxLayoutProperties.gap = '20px';
     this.fxLayoutProperties.layout = 'row';
     this.fxLayoutProperties.xs = 'row';
-    this.textSaveOrUpdate = this.data?.areaTematica ? MSG_ACEPTAR : MSG_ANADIR;
+    this.textSaveOrUpdate = this.data?.areaTematicaProyecto != null ? MSG_ACEPTAR : MSG_ANADIR;
   }
 
   ngOnInit(): void {
@@ -115,10 +117,16 @@ export class ProyectoContextoModalComponent extends
     this.setupI18N();
 
     this.loadAreasTematicasGrupo();
-    this.loadTreeAreaTematica();
+    this.subscriptions.push(this.formGroup.get('padre').valueChanges.subscribe(
+      (value) => this.loadAreasTematicas(value?.id)
+    ));
 
-    const subscription = this.formGroup.get('padre').valueChanges.subscribe(() => this.loadTreeAreaTematica());
-    this.subscriptions.push(subscription);
+    if (this.data.padre && this.data.areasTematicasConvocatoria) {
+      this.formGroup.controls.padre.disable();
+      this.formGroup.controls.padre.setValue(this.data.padre);
+    }
+
+    this.textSaveOrUpdate = this.data.padre ? MSG_ACEPTAR : MSG_ANADIR;
   }
 
   private setupI18N(): void {
@@ -139,7 +147,7 @@ export class ProyectoContextoModalComponent extends
       MSG_PARAMS.CARDINALIRY.PLURAL
     ).subscribe((value) => this.msgParamEntity = { entity: value, ...MSG_PARAMS.GENDER.MALE });
 
-    if (this.data?.areaTematica) {
+    if (this.data?.areaTematicaProyecto != null) {
       this.translate.get(
         AREA_TEMATICA_KEY,
         MSG_PARAMS.CARDINALIRY.SINGULAR
@@ -161,25 +169,22 @@ export class ProyectoContextoModalComponent extends
 
   protected getFormGroup(): FormGroup {
     const formGroup = new FormGroup({
-      padre: new FormControl({
-        value: this.data?.root,
-        disabled: Boolean(this.data?.root?.nombre),
-      }, [Validators.required, IsEntityValidator.isValid()]),
+      padre: new FormControl(null, [Validators.required]),
     });
     return formGroup;
   }
 
   protected getDatosForm(): ProyectoContextoModalData {
-    const padre = this.formGroup.get('padre').value;
-    const areaTematica = this.checkedNode?.areaTematica?.value;
-    if (areaTematica) {
-      this.data.areaTematica = areaTematica;
-    } else {
-      this.data.areaTematica = null;
+    const padre = this.formGroup.controls.padre.value;
+    const areasTematicasConvocatoria = this.data.areasTematicasConvocatoria;
+    if (this.checkedNode) {
+      return {
+        padre,
+        areasTematicasConvocatoria,
+        areaTematicaProyecto: this.checkedNode?.areaTematica.value,
+      } as ProyectoContextoModalData;
     }
 
-    this.data.root = padre;
-    return this.data;
   }
 
   private loadAreasTematicasGrupo(): void {
@@ -195,26 +200,11 @@ export class ProyectoContextoModalComponent extends
       ).subscribe());
   }
 
-  private loadTreeAreaTematica(): void {
+  private loadAreasTematicas(padreId: number): void {
+    this.areaTematicaTree$.next([]);
     this.nodeMap.clear();
-    this.dataSource.data = [];
-    const padre = this.formGroup.get('padre').value;
-
-    if (this.data.areaTematicaConvocatoria) {
-      const node = new NodeAreaTematica(new StatusWrapper<IAreaTematica>(this.data.areaTematicaConvocatoria));
-      this.rootNodeConvocatoria = node;
-      this.nodeMap.set(node.areaTematica.value.id, node);
-      const susbcription = this.getChilds(node).pipe(map(() => node))
-        .subscribe((result) => {
-          this.publishNodes([result]);
-          this.checkedNode = this.nodeMap.get(this.data.areaTematica?.id);
-          if (this.checkedNode) {
-            this.expandNodes(this.checkedNode);
-          }
-        });
-      this.subscriptions.push(susbcription);
-    } else if (padre) {
-      const susbcription = this.areaTematicaService.findAllHijosArea(padre.id).pipe(
+    if (padreId) {
+      const susbcription = this.areaTematicaService.findAllHijosArea(padreId).pipe(
         switchMap(response => {
           return from(response.items).pipe(
             mergeMap((areaTematica) => {
@@ -226,10 +216,36 @@ export class ProyectoContextoModalComponent extends
         })
       ).subscribe(
         (result) => {
-          const current = this.dataSource.data ? this.dataSource.data : [];
+          const current = this.areaTematicaTree$.value;
           current.push(result);
           this.publishNodes(current);
-          this.checkedNode = this.nodeMap?.get(this.data?.areaTematica?.id);
+          if (this.data.areaTematicaProyecto?.id === result.areaTematica.value.id) {
+            this.checkedNode = result;
+          } else {
+            result.childs.map(node => {
+              if (this.data.areaTematicaProyecto?.id === node.areaTematica.value.id) {
+                this.checkedNode = node;
+              }
+            });
+          }
+          if (this.data.areasTematicasConvocatoria) {
+            if (this.data.areasTematicasConvocatoria?.map(area => area.id)
+              .includes(result.areaTematica.value.id)) {
+              result.disabled = false;
+              this.expandNodes(result);
+            } else {
+              result.disabled = true;
+              this.disableChilds(result);
+
+              result.childs.map(node => {
+                if (this.data.areasTematicasConvocatoria?.map(area => area.id)
+                  .includes(node.areaTematica.value.id)) {
+                  node.disabled = false;
+                  this.expandNodes(node);
+                }
+              });
+            }
+          }
           if (this.checkedNode) {
             this.expandNodes(this.checkedNode);
           }
@@ -239,6 +255,15 @@ export class ProyectoContextoModalComponent extends
         }
       );
       this.subscriptions.push(susbcription);
+    }
+  }
+
+  private disableChilds(node: NodeAreaTematica) {
+    if (node && node.childs) {
+      node.childs.forEach(child => {
+        child.disabled = true;
+        this.disableChilds(child);
+      });
     }
   }
 

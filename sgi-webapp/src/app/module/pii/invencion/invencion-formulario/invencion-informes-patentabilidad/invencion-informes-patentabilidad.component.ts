@@ -87,7 +87,7 @@ export class InvencionInformesPatentabilidadComponent extends FragmentComponent 
     const data: IInformePatentabilidadModalData = {
       informePatentabilidad: wrapper ? wrapper.value : {} as IInformePatentabilidad,
       readonly: !this.formPart.hasEditPerm()
-    }
+    };
 
     const config: MatDialogConfig = {
       panelClass: 'sgi-dialog-container',

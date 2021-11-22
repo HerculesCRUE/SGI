@@ -1,7 +1,9 @@
 <sgi-fragment title="{{'title.csp.solicitudes.autoevaluacion' | translate}}">
 
   <form [formGroup]="formPart.data.formGroup" *ngIf="formPart.initialized$ | async">
-    <formly-form [model]="formPart.data.model" [fields]="formPart.data.formly.esquema" [form]="formPart.data.formGroup">
+    <formly-form [model]="formPart.data.model" [fields]="formPart.data.formly.esquema" [options]="formPart.data.options"
+      [form]="formPart.data.formGroup">
     </formly-form>
   </form>
+  <p>{{ 'csp.solicitud.autoevaluacion.texto' | translate }}</p>
 </sgi-fragment>

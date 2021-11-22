@@ -13,6 +13,7 @@ import org.crue.hercules.sgi.eti.model.CargoComite;
 import org.crue.hercules.sgi.eti.model.Comite;
 import org.crue.hercules.sgi.eti.model.Evaluador;
 import org.crue.hercules.sgi.eti.model.Formulario;
+import org.crue.hercules.sgi.eti.model.Comite.Genero;
 import org.crue.hercules.sgi.eti.repository.EvaluadorRepository;
 import org.crue.hercules.sgi.eti.service.impl.EvaluadorServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
@@ -357,7 +358,7 @@ public class EvaluadorServiceTest extends BaseServiceTest {
 
     // then: Get a page with one hundred Evaluadores
     Assertions.assertThat(page.getContent().size()).isEqualTo(100);
-    Assertions.assertThat(page.getNumber()).isEqualTo(0);
+    Assertions.assertThat(page.getNumber()).isZero();
     Assertions.assertThat(page.getSize()).isEqualTo(100);
     Assertions.assertThat(page.getTotalElements()).isEqualTo(100);
   }
@@ -461,7 +462,8 @@ public class EvaluadorServiceTest extends BaseServiceTest {
     cargoComite.setActivo(Boolean.TRUE);
 
     Formulario formulario = new Formulario(1L, "M10", "Descripcion");
-    Comite comite = new Comite(1L, "Comite1", "nombreSecretario", "nombreInvestigacion", "nombreDecreto", "articulo", formulario, Boolean.TRUE);
+    Comite comite = new Comite(1L, "Comite1", "nombreSecretario", "nombreInvestigacion", Genero.M, "nombreDecreto",
+        "articulo", formulario, Boolean.TRUE);
 
     Evaluador evaluador = new Evaluador();
     evaluador.setId(id);
@@ -481,7 +483,8 @@ public class EvaluadorServiceTest extends BaseServiceTest {
     CargoComite cargoComite = new CargoComite(cargoComiteId, cargoComiteNombre, Boolean.TRUE);
 
     Formulario formulario = new Formulario(1L, "M10", "Descripcion");
-    Comite comite = new Comite(1L, "Comite1", "nombreSecretario", "nombreInvestigacion", "nombreDecreto", "articulo", formulario, Boolean.TRUE);
+    Comite comite = new Comite(1L, "Comite1", "nombreSecretario", "nombreInvestigacion", Genero.M, "nombreDecreto",
+        "articulo", formulario, Boolean.TRUE);
 
     Evaluador evaluador = new Evaluador();
     evaluador.setId(id);

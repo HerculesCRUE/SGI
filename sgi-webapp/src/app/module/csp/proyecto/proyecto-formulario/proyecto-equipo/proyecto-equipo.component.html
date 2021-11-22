@@ -9,7 +9,7 @@
         </th>
         <td mat-cell *matCellDef="let wrapper">
           <mat-icon *ngIf="wrapper.value.help?.class" class="{{wrapper.value.help?.class}}"
-            matTooltip="{{wrapper.value.help?.tooltip | translate}}">
+            matTooltip="{{VALIDACION_REQUISITOS_EQUIPO_IP_MAP.get(wrapper.value.help?.tooltip) | translate}}">
             help</mat-icon>
         </td>
       </ng-container>

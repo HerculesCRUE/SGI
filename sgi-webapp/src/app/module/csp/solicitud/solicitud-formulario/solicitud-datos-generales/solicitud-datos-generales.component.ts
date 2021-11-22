@@ -11,14 +11,11 @@ import { ESTADO_MAP } from '@core/models/csp/estado-solicitud';
 import { ISolicitud } from '@core/models/csp/solicitud';
 import { FxFlexProperties } from '@core/models/shared/flexLayout/fx-flex-properties';
 import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-properties';
-import { IUnidadGestion } from '@core/models/usr/unidad-gestion';
-import { UnidadGestionService } from '@core/services/csp/unidad-gestion.service';
 import { SnackBarService } from '@core/services/snack-bar.service';
 import { TranslateService } from '@ngx-translate/core';
-import { TipoColectivo } from 'src/app/esb/sgp/shared/select-persona/select-persona.component';
 import { NGXLogger } from 'ngx-logger';
-import { Observable, Subscription } from 'rxjs';
-import { map, startWith } from 'rxjs/operators';
+import { Subscription } from 'rxjs';
+import { TipoColectivo } from 'src/app/esb/sgp/shared/select-persona/select-persona.component';
 import { SolicitudModalidadEntidadConvocanteModalComponent, SolicitudModalidadEntidadConvocanteModalData } from '../../modals/solicitud-modalidad-entidad-convocante-modal/solicitud-modalidad-entidad-convocante-modal.component';
 import { SolicitudActionService } from '../../solicitud.action.service';
 import { SolicitudDatosGeneralesFragment, SolicitudModalidadEntidadConvocanteListado } from './solicitud-datos-generales.fragment';
@@ -45,9 +42,6 @@ export class SolicitudDatosGeneralesComponent extends FormFragmentComponent<ISol
   fxLayoutProperties: FxLayoutProperties;
   fxFlexPropertiesInline: FxFlexProperties;
   fxFlexPropertiesEntidad: FxFlexProperties;
-
-  private unidadesGestion = [] as IUnidadGestion[];
-  unidadesGestionFiltered$: Observable<IUnidadGestion[]>;
 
   totalElementos: number;
   displayedColumns: string[];
@@ -86,7 +80,6 @@ export class SolicitudDatosGeneralesComponent extends FormFragmentComponent<ISol
     private readonly logger: NGXLogger,
     protected actionService: SolicitudActionService,
     private snackBarService: SnackBarService,
-    private unidadGestionService: UnidadGestionService,
     private matDialog: MatDialog,
     private readonly translate: TranslateService
   ) {
@@ -128,9 +121,6 @@ export class SolicitudDatosGeneralesComponent extends FormFragmentComponent<ISol
 
   ngOnInit(): void {
     super.ngOnInit();
-    if (!this.formPart.isInvestigador) {
-      this.loadUnidadesGestion();
-    }
     this.setupI18N();
 
     this.dataSourceEntidadesConvocantes = new MatTableDataSource<SolicitudModalidadEntidadConvocanteListado>();
@@ -203,16 +193,6 @@ export class SolicitudDatosGeneralesComponent extends FormFragmentComponent<ISol
   }
 
   /**
-   * Devuelve el nombre de una gestión unidad.
-   *
-   * @param unidadGestion gestión unidad.
-   * @returns nombre de una gestión unidad.
-   */
-  getUnidadGestion(unidadGestion?: IUnidadGestion): string | undefined {
-    return typeof unidadGestion === 'string' ? unidadGestion : unidadGestion?.nombre;
-  }
-
-  /**
    * Apertura de modal de modadidad solicitud
    *
    * @param entidadConvocanteModalidad EntidadConvocanteModalidad que se carga en el modal para modificarlo.
@@ -249,43 +229,4 @@ export class SolicitudDatosGeneralesComponent extends FormFragmentComponent<ISol
       }
     );
   }
-
-  /**
-   * Carga la lista de unidades de gestion seleccionables por el usuario
-   */
-  private loadUnidadesGestion() {
-    this.subscriptions.push(
-      this.unidadGestionService.findAllRestringidos().subscribe(
-        res => {
-          this.unidadesGestion = res.items;
-          this.unidadesGestionFiltered$ = this.formGroup.controls.unidadGestion.valueChanges
-            .pipe(
-              startWith(''),
-              map(value => this.filtroUnidadGestion(value))
-            );
-        },
-        (error) => {
-          this.logger.error(error);
-          this.snackBarService.showError(MSG_ERROR_INIT);
-        }
-      )
-    );
-  }
-
-  /**
-   * Filtra la lista por el value
-   *
-   * @param value del input para autocompletar
-   * @returns Lista filtrada
-   */
-  private filtroUnidadGestion(value: string | IUnidadGestion): IUnidadGestion[] {
-    // Si no es un string no se filtra
-    if (typeof value !== 'string') {
-      return this.unidadesGestion;
-    }
-
-    const filterValue = value.toString().toLowerCase();
-    return this.unidadesGestion.filter(unidadGestion => unidadGestion.nombre.toLowerCase().includes(filterValue));
-  }
-
 }

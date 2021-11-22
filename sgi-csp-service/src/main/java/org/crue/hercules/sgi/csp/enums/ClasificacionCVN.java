@@ -8,4 +8,10 @@ public enum ClasificacionCVN {
   COMPETITIVOS,
   /** Contratos, Convenios, Proyectos no competitivos */
   NO_COMPETITIVOS,
+  /** Proyectos institucionales. Ayudas y becas */
+  INSTITUCIONAL_AYUDAS,
+  /** Proyectos institucionales. Proyectos competitivos */
+  INSTITUCIONAL_COMPETITIVOS,
+  /** Proyectos institucionales. Proyectos NO competitivos */
+  INSTITUCIONAL_NO_COMPETITIVOS,
 }

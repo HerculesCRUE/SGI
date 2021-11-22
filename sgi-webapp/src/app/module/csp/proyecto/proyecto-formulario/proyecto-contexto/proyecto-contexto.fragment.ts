@@ -3,29 +3,32 @@ import { IAreaTematica } from '@core/models/csp/area-tematica';
 import { IProyectoContexto } from '@core/models/csp/proyecto-contexto';
 import { FormFragment } from '@core/services/action-service';
 import { ContextoProyectoService } from '@core/services/csp/contexto-proyecto.service';
+import { ConvocatoriaService } from '@core/services/csp/convocatoria.service';
 import { StatusWrapper } from '@core/utils/status-wrapper';
 import { NGXLogger } from 'ngx-logger';
 import { BehaviorSubject, EMPTY, Observable, of } from 'rxjs';
 import { catchError, map, switchMap } from 'rxjs/operators';
+import { ProyectoContextoModalData } from '../../modals/proyecto-contexto-modal/proyecto-contexto-modal.component';
+import { AreaTematicaListado } from './proyecto-contexto.component';
 
 export interface AreaTematicaProyectoData {
   root: IAreaTematica;
-  areaTematica: IAreaTematica;
-  areaTematicaConvocatoria: IAreaTematica;
+  areaTematicaProyecto: IAreaTematica;
+  areasTematicasConvocatoria: IAreaTematica[];
 }
 
 export class ProyectoContextoFragment extends FormFragment<IProyectoContexto>{
-
-  private proyectoContexto: IProyectoContexto;
+  proyectoContexto: IProyectoContexto;
   areasTematicas$ = new BehaviorSubject<AreaTematicaProyectoData[]>([]);
-
-  private areaTematica: IAreaTematica;
+  areaTematica: IAreaTematica;
   ocultarTable: boolean;
 
   constructor(
     key: number,
     private readonly logger: NGXLogger,
     private contextoProyectoService: ContextoProyectoService,
+    private convocatoriaService: ConvocatoriaService,
+    private convocatoriaId: number,
     private readonly: boolean,
     public isVisor: boolean,
   ) {
@@ -69,24 +72,36 @@ export class ProyectoContextoFragment extends FormFragment<IProyectoContexto>{
       map(proyectoContexto => {
         return proyectoContexto ?? {} as IProyectoContexto;
       }),
-      switchMap((proyectoContexto) => {
+      switchMap(proyectoContexto => {
+        if (this.convocatoriaId) {
+          return this.convocatoriaService.findAreaTematicas(this.convocatoriaId).pipe(
+            map((results) => {
+              let nodes;
+              if (results.total > 0) {
+                nodes = results.items.map(convocatoriaAreaTematica => {
+                  const area: AreaTematicaProyectoData = {
+                    root: this.getFirstLevelAreaTematica(convocatoriaAreaTematica.areaTematica),
+                    areasTematicasConvocatoria: results.items.map(areaConvocatoria => areaConvocatoria.areaTematica),
+                    areaTematicaProyecto: proyectoContexto.areaTematica
+                  };
+                  return area;
+                });
+              } else if (proyectoContexto.areaTematica) {
+                nodes = [{
+                  root: this.getFirstLevelAreaTematica(proyectoContexto.areaTematica),
+                  areasTematicasConvocatoria: null,
+                  areaTematicaProyecto: proyectoContexto.areaTematica
+                }];
+              }
 
-        let root: IAreaTematica;
-        if (proyectoContexto?.areaTematicaConvocatoria?.id) {
-          root = this.getFirstLevelAreaTematica(proyectoContexto.areaTematicaConvocatoria);
-        } else if (proyectoContexto?.areaTematica?.id) {
-          root = this.getFirstLevelAreaTematica(proyectoContexto.areaTematica);
+              this.areasTematicas$.next(nodes);
+              return results;
+            }),
+            switchMap(() => of(proyectoContexto))
+          );
+        } else {
+          return of(proyectoContexto);
         }
-
-        const area: AreaTematicaProyectoData = {
-          root,
-          areaTematica: proyectoContexto.areaTematica,
-          areaTematicaConvocatoria: proyectoContexto.areaTematicaConvocatoria
-        };
-
-        this.areasTematicas$.next([area]);
-
-        return of(proyectoContexto);
       }),
       catchError(error => {
         this.logger.error(error);
@@ -96,7 +111,7 @@ export class ProyectoContextoFragment extends FormFragment<IProyectoContexto>{
   }
 
   getFirstLevelAreaTematica(areaTematica: IAreaTematica): IAreaTematica {
-    if (areaTematica.padre) {
+    if (areaTematica?.padre) {
       return this.getFirstLevelAreaTematica(areaTematica.padre);
     }
     return areaTematica;
@@ -118,6 +133,7 @@ export class ProyectoContextoFragment extends FormFragment<IProyectoContexto>{
       this.create(proyectoContextoDatos);
     return observable$.pipe(
       map(value => {
+        this.setChanges(false);
         this.proyectoContexto = value;
         this.refreshInitialState(true);
         return this.proyectoContexto.id;
@@ -134,25 +150,30 @@ export class ProyectoContextoFragment extends FormFragment<IProyectoContexto>{
     return this.contextoProyectoService.update(proyectoContexto.proyectoId, proyectoContexto);
   }
 
-  updateAreaTematica(data: AreaTematicaProyectoData) {
-    this.areaTematica = data.areaTematica;
-    const wrapper = new StatusWrapper<AreaTematicaProyectoData>(data);
-    const current = this.areasTematicas$.value;
-    wrapper.setEdited();
-    this.areasTematicas$[0] = wrapper.value;
-    this.areasTematicas$.next(current);
+  updateListadoAreaTematica(result: ProyectoContextoModalData): void {
+    this.areaTematica = result?.areaTematicaProyecto;
+
+    if (this.areasTematicas$.value?.length > 0) {
+      this.areasTematicas$.value[0].areaTematicaProyecto = result.areaTematicaProyecto;
+      this.areasTematicas$.next(this.areasTematicas$.value);
+    } else {
+      this.areasTematicas$.next([{
+        root: result.padre,
+        areaTematicaProyecto: result.areaTematicaProyecto,
+        areasTematicasConvocatoria: result.areasTematicasConvocatoria
+      } as AreaTematicaProyectoData]);
+    }
     this.setChanges(true);
   }
 
-  addAreaTematica(data: AreaTematicaProyectoData) {
-    this.areaTematica = data.areaTematica;
-    const wrapper = new StatusWrapper<AreaTematicaProyectoData>(data);
-    wrapper.setCreated();
-    const current = this.areasTematicas$.value;
-    current.push(wrapper.value);
-    this.areasTematicas$.next(current);
+  deleteAreaTematicaListado(): void {
+    this.proyectoContexto.areaTematica = null;
+    if (this.areasTematicas$.value[0].areasTematicasConvocatoria) {
+      this.areasTematicas$.value[0].areaTematicaProyecto = null;
+      this.areasTematicas$.next(this.areasTematicas$.value);
+    } else {
+      this.areasTematicas$.next([]);
+    }
     this.setChanges(true);
-    this.setErrors(false);
   }
-
 }

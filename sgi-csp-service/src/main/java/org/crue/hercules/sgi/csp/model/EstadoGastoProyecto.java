@@ -59,7 +59,6 @@ public class EstadoGastoProyecto extends BaseEntity {
 
   /** Gasto proyecto Id */
   @Column(name = "gasto_proyecto_id", nullable = false)
-  @NotNull
   private Long gastoProyectoId;
 
   /** Tipo estado gasto */
@@ -70,7 +69,6 @@ public class EstadoGastoProyecto extends BaseEntity {
 
   /** Fecha estado */
   @Column(name = "fecha_estado", nullable = false)
-  @NotNull
   private Instant fechaEstado;
 
   /** Comentario */

@@ -102,7 +102,8 @@ export class LuxonDateTimeAdapter extends NgxMatDateAdapter<DateTime> implements
   }
 
   getDayOfWeek(date: DateTime): number {
-    return date.weekday;
+    // Weekday is 1-indexed, so wee need match weekNames array
+    return date.weekday - 1;
   }
 
   getMonthNames(style: 'long' | 'short' | 'narrow'): string[] {
@@ -127,6 +128,7 @@ export class LuxonDateTimeAdapter extends NgxMatDateAdapter<DateTime> implements
   }
 
   getDayOfWeekNames(style: 'long' | 'short' | 'narrow'): string[] {
+    // For any locale the first day are Monday with index = 0
     return Info.weekdays(style, { locale: this.locale });
   }
 

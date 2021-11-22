@@ -11,8 +11,8 @@ import org.springframework.stereotype.Repository;
  * Spring Data JPA repository para {@link TipoAmbitoGeografico}.
  */
 @Repository
-public interface TipoAmbitoGeograficoRepository extends ActivableRepository, JpaRepository<TipoAmbitoGeografico, Long>,
-    JpaSpecificationExecutor<TipoAmbitoGeografico> {
+public interface TipoAmbitoGeograficoRepository
+    extends JpaRepository<TipoAmbitoGeografico, Long>, JpaSpecificationExecutor<TipoAmbitoGeografico> {
 
   /**
    * Obtiene la entidad {@link TipoAmbitoGeografico} con el nombre indicado

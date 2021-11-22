@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @WebMvcTest(excludeAutoConfiguration = SecurityAutoConfiguration.class)
-public class RequestPageableIT {
+class RequestPageableIT {
 
   @Autowired
   private MockMvc mockMvc;
@@ -50,7 +50,7 @@ public class RequestPageableIT {
    * @throws Exception
    */
   @Test
-  public void requestWithPageableAnnotation_and_PagingHeaders_returnsPageable() throws Exception {
+  void requestWithPageableAnnotation_and_PagingHeaders_returnsPageable() throws Exception {
     // given: some Paging info
     int pageNumber = 3;
     int pageSize = 10;
@@ -71,7 +71,7 @@ public class RequestPageableIT {
    * @throws Exception
    */
   @Test
-  public void requestWithPageableAnnotation_and_No_PagingHeaders_returnsUnpagedPageable() throws Exception {
+  void requestWithPageableAnnotation_and_No_PagingHeaders_returnsUnpagedPageable() throws Exception {
     // given: no Paging info
 
     // when: test-request-pageable controller with @RequestPageable annotations
@@ -87,7 +87,7 @@ public class RequestPageableIT {
    * @throws Exception
    */
   @Test
-  public void requestWithPageableAnnotation_and_CustomPagingHeaders_returnsPageable() throws Exception {
+  void requestWithPageableAnnotation_and_CustomPagingHeaders_returnsPageable() throws Exception {
     // given: some Paging info
     int pageNumber = 3;
     int pageSize = 10;

@@ -1,0 +1,62 @@
+<div class="sgi-dialog-header" fxLayout="row" fxLayoutGap="20px">
+  <span fxFlexAlign="center" mat-mat-dialog-title role="heading" aria-level="3" fxFlex>
+    {{(!paisValidado?.created ? 'btn.edit.entity' : 'title.new.entity') | translate:msgParamTituloEntity}}
+  </span>
+  <button fxFlex="nogrow" mat-icon-button mat-dialog-close>
+    <mat-icon class="close-icon">close</mat-icon>
+  </button>
+</div>
+<mat-dialog-content>
+  <form class="form-inline" [formGroup]="formGroup">
+    <div fxFlex fxLayout="row" fxLayout.lt-md='column' fxLayoutGap="20px">
+      <!-- Fecha Validacion -->
+      <div fxFlex>
+        <mat-form-field>
+          <mat-label>
+            {{'pii.solicitud-proteccion.pais-validado.fecha-validacion' | translate:msgParamFechaValidacionEntity}}
+          </mat-label>
+          <input matInput formControlName="fechaValidacion" [matDatepicker]="fechaValidacion" required>
+          <mat-datepicker-toggle matSuffix [for]="fechaValidacion"></mat-datepicker-toggle>
+          <mat-datepicker #fechaValidacion></mat-datepicker>
+          <mat-error *ngIf="formGroup.controls.fechaValidacion.errors?.required">
+            {{'error.required.entity' | translate: msgParamFechaValidacionEntity }}
+          </mat-error>
+        </mat-form-field>
+      </div>
+      <!-- Pais -->
+      <div fxFlex>
+        <mat-form-field>
+          <mat-label>{{'pii.solicitud-proteccion.pais-validado.pais' | translate:msgParamPaisEntity}}</mat-label>
+          <sgi-select-entity formControlName="pais" [options]="data.paises" required>
+          </sgi-select-entity>
+          <mat-error *ngIf="formGroup.controls.pais.errors?.required">
+            {{'error.required.entity' | translate:msgParamPaisEntity}}
+          </mat-error>
+        </mat-form-field>
+      </div>
+      <!-- Código Invención -->
+      <div fxFlex>
+        <mat-form-field>
+          <mat-label>
+            {{'pii.solicitud-proteccion.pais-validado.codigo-invencion' | translate:msgParamCodigoInvencionEntity}}
+          </mat-label>
+          <input matInput formControlName="codigoInvencion" required>
+          <mat-error *ngIf="formGroup.controls.codigoInvencion.errors?.required">
+            {{'error.required.entity' | translate: msgParamCodigoInvencionEntity }}
+          </mat-error>
+        </mat-form-field>
+      </div>
+
+    </div>
+  </form>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <button color="accent" (click)="saveOrUpdate()" mat-raised-button type="submit"
+    [disabled]="!formGroup.valid || formGroup.pristine">
+    <mat-icon class="save-icon">save</mat-icon>
+    {{( paisValidado?.created ? 'btn.ok': 'btn.add' )| translate}}
+  </button>
+  <button class="link-cancelar" mat-button type="button" mat-dialog-close>
+    {{'btn.cancel' | translate}}
+  </button>
+</mat-dialog-actions>

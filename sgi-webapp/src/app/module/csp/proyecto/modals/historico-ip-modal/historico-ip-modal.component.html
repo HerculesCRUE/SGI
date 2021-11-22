@@ -1,0 +1,44 @@
+<div class="sgi-dialog-header" fxLayout="row" fxLayoutGap="20px">
+  <span fxFlexAlign="center" mat-mat-dialog-title role="heading" aria-level="3" fxFlex>{{'csp.historico-ip.title' | translate}}</span>
+  <button fxFlex="nogrow" mat-icon-button mat-dialog-close>
+    <mat-icon class="close-icon">close</mat-icon>
+  </button>
+</div>
+<mat-dialog-content>
+  <div class="mat-elevation-z4">
+    <table mat-table [dataSource]="dataSource" matSort matSortActive="fecha" matSortDirection="asc"
+      matSortDisableClear #sort="matSort">
+      <!-- Estado -->
+      <ng-container matColumnDef="estado">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>
+          {{'csp.estado-validacion-ip.estado' |
+          translate}} </th>
+        <td mat-cell *matCellDef="let element">
+          {{TIPO_ESTADO_VALIDACION_MAP.get(element.estado) | translate}}
+        </td>
+      </ng-container>
+
+      <!-- Fecha estado -->
+      <ng-container matColumnDef="fecha">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>
+          {{'csp.estado-validacion-ip.fecha-estado' | translate}}
+        </th>
+        <td mat-cell *matCellDef="let element"> {{element.fecha | luxon:'shortDate'}} </td>
+      </ng-container>
+
+      <!-- Motivo -->
+      <ng-container matColumnDef="motivo">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>
+          {{'csp.estado-validacion-ip.motivo' |
+          translate}} </th>
+        <td mat-cell *matCellDef="let element"> {{element.comentario}} </td>
+      </ng-container>
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+    </table>
+  </div>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <button class="link-cancelar" mat-button type="button" mat-dialog-close>{{'btn.cancel' |
+    translate}}</button>
+</mat-dialog-actions>

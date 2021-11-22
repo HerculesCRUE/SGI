@@ -725,12 +725,6 @@ public class SolicitudService {
       return false;
     }
 
-    // Si la solicitud ya está asignada a un proyecto no se podrá crear otro
-    // proyecto para la solicitud
-    if (proyectoRepository.existsBySolicitudId(solicitud.getId())) {
-      return false;
-    }
-
     // Si el formulario de la solicitud no es de tipo PROYECTO no se podrá crear el
     // proyecto a partir de ella
     if (solicitud.getFormularioSolicitud() != FormularioSolicitud.PROYECTO) {

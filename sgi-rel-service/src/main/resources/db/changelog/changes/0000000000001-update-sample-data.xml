@@ -1,0 +1,22 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:pro="http://www.liquibase.org/xml/ns/pro" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-3.8.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+  <changeSet context="dev" author="master" id="0000000000001-insert_relacion_invencion_contrato">
+    <insert tableName="relacion">
+      <column name="id" valueSequenceNext="relacion_seq" />
+      <column name="tipo_entidad_origen" value="PROYECTO" />
+      <column name="tipo_entidad_destino" value="INVENCION" />
+      <column name="entidad_origen_ref" value="2" />
+      <column name="entidad_destino_ref" value="111" />
+      <column name="observaciones" value="Proyecto 2 con Invencion 111" />
+    </insert>
+    <insert tableName="relacion">
+      <column name="id" valueSequenceNext="relacion_seq" />
+      <column name="tipo_entidad_origen" value="PROYECTO" />
+      <column name="tipo_entidad_destino" value="INVENCION" />
+      <column name="entidad_origen_ref" value="3" />
+      <column name="entidad_destino_ref" value="111" />
+      <column name="observaciones" value="Proyecto 3 con Invencion 111" />
+    </insert>
+  </changeSet>
+</databaseChangeLog>

@@ -8,10 +8,12 @@ import { MSG_PARAMS } from '@core/i18n';
 import { INivelAcademico } from '@core/models/sgp/nivel-academico';
 import { NivelAcademicosService } from '@core/services/sgp/nivel-academico.service';
 import { SnackBarService } from '@core/services/snack-bar.service';
+import { TranslateService } from '@ngx-translate/core';
 import { NGXLogger } from 'ngx-logger';
 import { BehaviorSubject } from 'rxjs';
 
 const MSG_ERROR_LOAD = marker('error.load');
+const CONVOCATORIA_NIVEL_ACADEMICO_KEY = marker('csp.convocatoria.nivel-academico');
 
 export interface NivelAcademicoModalData {
   selectedEntidades: INivelAcademico[];
@@ -27,11 +29,14 @@ export class NivelAcademicoModalComponent
 
   readonly nivelesAcademicos$ = new BehaviorSubject<INivelAcademico[]>([]);
 
+  msgParamNivelAcademico = {};
+
   constructor(
     private readonly logger: NGXLogger,
     public matDialogRef: MatDialogRef<NivelAcademicoModalComponent>,
     private nivelAcademicoService: NivelAcademicosService,
     protected readonly snackBarService: SnackBarService,
+    private readonly translate: TranslateService,
     @Inject(MAT_DIALOG_DATA) public data: NivelAcademicoModalData,
   ) {
     super(snackBarService, matDialogRef, null);
@@ -56,7 +61,14 @@ export class NivelAcademicoModalComponent
 
   ngOnInit(): void {
     super.ngOnInit();
+    this.setupI18N();
+  }
 
+  protected setupI18N(): void {
+    this.translate.get(
+      CONVOCATORIA_NIVEL_ACADEMICO_KEY,
+      MSG_PARAMS.CARDINALIRY.SINGULAR
+    ).subscribe((value) => this.msgParamNivelAcademico = { entity: value, ...MSG_PARAMS.GENDER.MALE, ...MSG_PARAMS.CARDINALIRY.SINGULAR });
   }
 
   protected getFormGroup(): FormGroup {

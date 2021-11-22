@@ -11,8 +11,7 @@ export function compareConceptoGastoCodigoEc(
   return proyectoCodigoEconomico?.codigoEconomico?.id !== convocatoriaCodigoEconomico?.codigoEconomico.id
     || proyectoCodigoEconomico?.fechaInicio?.toMillis() !== convocatoriaCodigoEconomico?.fechaInicio?.toMillis()
     || proyectoCodigoEconomico?.fechaFin?.toMillis() !== convocatoriaCodigoEconomico?.fechaFin?.toMillis()
-    || (!!proyectoCodigoEconomico?.observaciones !== !!convocatoriaCodigoEconomico?.observaciones
-      && proyectoCodigoEconomico?.observaciones !== convocatoriaCodigoEconomico?.observaciones);
+    || (proyectoCodigoEconomico.observaciones ?? '') !== (convocatoriaCodigoEconomico?.observaciones ?? '');
 }
 
 export function compareConceptoGasto(
@@ -37,8 +36,7 @@ export function compareConceptoGasto(
     || proyectoConceptoGasto.importeMaximo !== convocatoriaConceptoGasto?.importeMaximo
     || proyectoConceptoGasto.fechaInicio?.toMillis() !== fechaInicioConvocatoriaConceptoGasto?.toMillis()
     || proyectoConceptoGasto.fechaFin?.toMillis() !== fechaFinConvocatoriaConceptoGasto?.toMillis()
-    || (!!proyectoConceptoGasto.observaciones !== !!convocatoriaConceptoGasto?.observaciones
-      && proyectoConceptoGasto.observaciones !== convocatoriaConceptoGasto?.observaciones);
+    || (proyectoConceptoGasto.observaciones ?? '') !== (convocatoriaConceptoGasto?.observaciones ?? '');
 }
 
 /**

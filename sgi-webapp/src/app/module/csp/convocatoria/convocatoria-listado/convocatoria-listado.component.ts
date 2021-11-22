@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { AbstractTablePaginationComponent } from '@core/component/abstract-table-pagination.component';
@@ -24,6 +25,7 @@ import { RSQLSgiRestFilter, SgiRestFilter, SgiRestFilterOperator, SgiRestListRes
 import { NGXLogger } from 'ngx-logger';
 import { from, Observable, of } from 'rxjs';
 import { map, mergeAll, mergeMap, switchMap } from 'rxjs/operators';
+import { ConvocatoriaListadoModalComponent, IConvocatoriaListadoModalData } from '../modals/convocatoria-listado-modal/convocatoria-listado-modal.component';
 
 const MSG_BUTTON_ADD = marker('btn.add.entity');
 const MSG_ERROR_LOAD = marker('error.load');
@@ -38,7 +40,7 @@ const MSG_SUCCESS_DEACTIVATE = marker('msg.csp.deactivate.success');
 const AREA_TENATICA_KEY = marker('csp.area-tematica');
 const CONVOCATORIA_KEY = marker('csp.convocatoria');
 
-interface IConvocatoriaListado {
+export interface IConvocatoriaListado {
   convocatoria: IConvocatoria;
   fase: IConvocatoriaFase;
   entidadConvocante: IConvocatoriaEntidadConvocante;
@@ -96,6 +98,7 @@ export class ConvocatoriaListadoComponent extends AbstractTablePaginationCompone
     public authService: SgiAuthService,
     private readonly translate: TranslateService,
     private router: Router,
+    private matDialog: MatDialog,
     private activatedRoute: ActivatedRoute
   ) {
     super(snackBarService, MSG_ERROR_LOAD);
@@ -132,6 +135,8 @@ export class ConvocatoriaListadoComponent extends AbstractTablePaginationCompone
       fuenteFinanciacion: new FormControl(null),
       areaTematica: new FormControl(null),
     });
+
+
 
     this.filter = this.createFilter();
   }
@@ -290,6 +295,15 @@ export class ConvocatoriaListadoComponent extends AbstractTablePaginationCompone
             return this.convocatoriaService.findEntidadesFinanciadoras(convocatoriaListado.convocatoria.id).pipe(
               map(entidadFinanciadora => {
                 if (entidadFinanciadora.items.length > 0) {
+                  const fuenteFinanciacionFilter = this.formGroup.get('fuenteFinanciacion').value;
+                  const entidadFinanciadoraFilter = this.formGroup.get('entidadFinanciadora').value;
+                  if (entidadFinanciadoraFilter) {
+                    entidadFinanciadora.items = entidadFinanciadora.items
+                      .filter(entidadF => entidadF.empresa.id === entidadFinanciadoraFilter.id);
+                  } else if (fuenteFinanciacionFilter) {
+                    entidadFinanciadora.items = entidadFinanciadora.items
+                      .filter(entidadF => entidadF.fuenteFinanciacion.id === fuenteFinanciacionFilter.id);
+                  }
                   convocatoriaListado.entidadFinanciadora = entidadFinanciadora.items[0];
                 }
                 return convocatoriaListado;
@@ -318,7 +332,13 @@ export class ConvocatoriaListadoComponent extends AbstractTablePaginationCompone
               switchMap(() => {
                 return this.convocatoriaService.findAllConvocatoriaEntidadConvocantes(convocatoriaListado.convocatoria.id).pipe(
                   map(convocatoriaEntidadConvocante => {
+                    const entidadConvocanteFilter = this.formGroup.get('entidadConvocante').value;
+
                     if (convocatoriaEntidadConvocante.items.length > 0) {
+                      if (entidadConvocanteFilter) {
+                        convocatoriaEntidadConvocante.items = convocatoriaEntidadConvocante.items
+                          .filter(entidadC => entidadC.entidad.id === entidadConvocanteFilter.id);
+                      }
                       convocatoriaListado.entidadConvocante = convocatoriaEntidadConvocante.items[0];
                     }
                     return convocatoriaListado;
@@ -488,6 +508,17 @@ export class ConvocatoriaListadoComponent extends AbstractTablePaginationCompone
             this.snackBarService.showError(this.textErrorCloning);
           }
         }));
+  }
+
+  openExportModal(): void {
+    const data: IConvocatoriaListadoModalData = {
+      findOptions: this.findOptions
+    };
+
+    const config = {
+      data
+    };
+    this.matDialog.open(ConvocatoriaListadoModalComponent, config);
   }
 
 }

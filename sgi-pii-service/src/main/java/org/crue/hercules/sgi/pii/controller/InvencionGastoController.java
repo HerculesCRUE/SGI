@@ -10,6 +10,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -40,6 +41,21 @@ public class InvencionGastoController {
   }
 
   /**
+   * Devuelve la entidad {@link InvencionGasto} con el id indicado.
+   * 
+   * @param id Identificador de la entidad {@link InvencionGasto}.
+   * @return {@link InvencionGasto} correspondiente al id.
+   */
+  @GetMapping("/{id}")
+  @PreAuthorize("hasAnyAuthority('PII-INV-V', 'PII-INV-E')")
+  public InvencionGastoOutput findById(@PathVariable Long id) {
+    log.debug("findById(Long id) - start");
+    final InvencionGasto returnValue = service.findById(id);
+    log.debug("findById(Long id) - end");
+    return convert(returnValue);
+  }
+
+  /**
    * Crea un nuevo {@link InvencionGasto}.
    * 
    * @param invencionGasto {@link InvencionGasto} que se quiere crear.
@@ -47,7 +63,7 @@ public class InvencionGastoController {
    */
   @PostMapping
   @PreAuthorize("hasAuthority('PII-INV-E')")
-  ResponseEntity<InvencionGastoOutput> create(@Valid @RequestBody InvencionGastoInput invencionGasto) {
+  public ResponseEntity<InvencionGastoOutput> create(@Valid @RequestBody InvencionGastoInput invencionGasto) {
     log.debug("create(InvencionGasto invencionGasto) - start");
     InvencionGasto returnValue = service.create(convert(invencionGasto));
     log.debug("create(InvencionGasto invencionGasto) - end");
@@ -63,7 +79,7 @@ public class InvencionGastoController {
    */
   @PutMapping("/{id}")
   @PreAuthorize("hasAuthority('PII-INV-E')")
-  InvencionGastoOutput update(@Valid @RequestBody InvencionGastoInput invencionGasto, @PathVariable Long id) {
+  public InvencionGastoOutput update(@Valid @RequestBody InvencionGastoInput invencionGasto, @PathVariable Long id) {
     log.debug("update(InvencionGasto invencionGasto, Long id) - start");
     InvencionGasto returnValue = service.update(convert(id, invencionGasto));
     log.debug("update(InvencionGasto invencionGasto, Long id) - end");

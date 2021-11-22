@@ -4,14 +4,26 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * Table sort operation.
+ */
 @RequiredArgsConstructor
 @Getter
 @Slf4j
 public enum SortOperation {
-  ASC("asc"), DESC("desc");
+  /** Ascending sort opertaion */
+  ASC("asc"),
+  /** Descending sort operation */
+  DESC("desc");
 
   private final String asString;
 
+  /**
+   * Gets the {@link SortOperation} from the input string
+   * 
+   * @param input the textual sort operation
+   * @return eht {@link SortOperation}
+   */
   public static SortOperation fromString(String input) {
     log.debug("fromString(String input) - start");
     for (SortOperation operation : SortOperation.values()) {

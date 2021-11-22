@@ -9,7 +9,6 @@ export interface IProyectoContexto {
   resultadosPrevistos: string;
   propiedadResultados: PropiedadResultados;
   areaTematica: IAreaTematica;
-  areaTematicaConvocatoria: IAreaTematica;
 }
 
 export enum PropiedadResultados {

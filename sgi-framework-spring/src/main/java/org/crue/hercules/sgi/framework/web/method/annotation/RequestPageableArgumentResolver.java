@@ -1,7 +1,9 @@
 package org.crue.hercules.sgi.framework.web.method.annotation;
 
+import java.io.Serializable;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
@@ -35,10 +37,20 @@ import lombok.extern.slf4j.Slf4j;
  * @see HandlerMethodReturnValueHandler
  */
 @Slf4j
-public class RequestPageableArgumentResolver implements HandlerMethodArgumentResolver {
+public class RequestPageableArgumentResolver implements HandlerMethodArgumentResolver, Serializable {
 
+  /**
+   * The {@link SortCriteriaConverter} to convert the sorting information
+   */
   private SortCriteriaConverter converter;
 
+  /**
+   * Cretates a new {@link RequestPageableArgumentResolver} that uses the provided
+   * {@link SortCriteriaConverter} to convert the sorting information provided in
+   * the specified sort request parameter.
+   * 
+   * @param converter the {@link SortCriteriaConverter}
+   */
   public RequestPageableArgumentResolver(SortCriteriaConverter converter) {
     log.debug("RequestPageableArgumentResolver(SortCriteriaConverter converter) - start");
     this.converter = converter;
@@ -85,13 +97,18 @@ public class RequestPageableArgumentResolver implements HandlerMethodArgumentRes
         "resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer, NativeWebRequest webRequest, WebDataBinderFactory binderFactory) - start");
     MethodParameter nestedParameter = parameter.nestedIfOptional();
     RequestPageable requestPageable = parameter.getParameterAnnotation(RequestPageable.class);
-    String xPage = webRequest.getHeader(requestPageable.pageHeader());
-    String xPageSize = webRequest.getHeader(requestPageable.pageSizeHeader());
-    String sortParamName = requestPageable.sort();
-    Sort sort = Sort.unsorted();
+    String xPage = null;
+    String xPageSize = null;
+    String sortParamName = null;
+    if (requestPageable != null) {
+      xPage = webRequest.getHeader(requestPageable.pageHeader());
+      xPageSize = webRequest.getHeader(requestPageable.pageSizeHeader());
+      sortParamName = requestPageable.sort();
+    }
+    Sort sort = null;
 
     if (sortParamName != null && !"".equals(sortParamName)) {
-      Object arg = resolveName(sortParamName.toString(), nestedParameter, webRequest);
+      Object arg = resolveName(sortParamName, nestedParameter, webRequest);
       if (arg != null) {
         List<SortCriteria> sortCriterias = converter.convert(arg.toString());
         List<Sort> sortList = generateSortList(sortCriterias);
@@ -100,17 +117,17 @@ public class RequestPageableArgumentResolver implements HandlerMethodArgumentRes
     }
 
     if (xPageSize == null) {
-      Object returnValue = new UnpagedPageable(sort);
+      Object returnValue = new UnpagedPageable(sort != null ? sort : Sort.unsorted());
       log.debug(
-          "resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer, NativeWebRequest webRequest, WebDataBinderFactory binderFactory) - start");
+          "resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer, NativeWebRequest webRequest, WebDataBinderFactory binderFactory) - end");
       return returnValue;
     }
     if (xPage == null) {
       xPage = "0";
     }
-
     // Use provided page size and short info
-    Object returnValue = PageRequest.of(Integer.parseInt(xPage), Integer.parseInt(xPageSize), sort);
+    Object returnValue = PageRequest.of(Integer.parseInt(xPage), Integer.parseInt(xPageSize),
+        sort != null ? sort : Sort.unsorted());
     log.debug(
         "resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer, NativeWebRequest webRequest, WebDataBinderFactory binderFactory) - start");
     return returnValue;
@@ -158,16 +175,16 @@ public class RequestPageableArgumentResolver implements HandlerMethodArgumentRes
    */
   private List<Sort> generateSortList(List<SortCriteria> criteria) {
     log.debug("generateSortList(List<SortCriteria> criteria) - start");
-    List<Sort> returnValue = criteria.stream().map((criterion) -> {
+    List<Sort> returnValue = criteria.stream().map(criterion -> {
       switch (criterion.getOperation()) {
-        case ASC:
-          return Sort.by(Order.asc(criterion.getKey()));
-        case DESC:
-          return Sort.by(Order.desc(criterion.getKey()));
-        default:
-          return null;
+      case ASC:
+        return Sort.by(Order.asc(criterion.getKey()));
+      case DESC:
+        return Sort.by(Order.desc(criterion.getKey()));
+      default:
+        return null;
       }
-    }).filter((sort) -> sort != null).collect(Collectors.toList());
+    }).filter(Objects::nonNull).collect(Collectors.toList());
     log.debug("generateSortList(List<SortCriteria> criteria) - end");
     return returnValue;
   }
@@ -191,11 +208,22 @@ public class RequestPageableArgumentResolver implements HandlerMethodArgumentRes
     return null;
   }
 
-  public class UnpagedPageable implements Pageable {
-    private final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(UnpagedPageable.class);
+  /**
+   * Custom {@link Pageable} for unpaged but sorted page info.
+   */
+  public static class UnpagedPageable implements Pageable, Serializable {
+    private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(UnpagedPageable.class);
 
+    /**
+     * The sort information
+     */
     private Sort sort;
 
+    /**
+     * Creates a new {@link UnpagedPageable} with the provided sort information.
+     * 
+     * @param sort the sorting
+     */
     public UnpagedPageable(Sort sort) {
       log.debug("UnpagedPageable(Sort sort) - start");
       this.sort = sort;

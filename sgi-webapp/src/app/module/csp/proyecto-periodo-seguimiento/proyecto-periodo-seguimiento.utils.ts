@@ -12,24 +12,23 @@ export function comparePeriodoSeguimiento(
   fechaFinProyecto: DateTime): boolean {
 
   let fechaInicioConvocatoriaPeriodoSeguimiento: DateTime;
-  if (convocatoriaPeriodoSeguimiento.mesInicial) {
+  if (convocatoriaPeriodoSeguimiento?.mesInicial) {
     fechaInicioConvocatoriaPeriodoSeguimiento =
       getFechaInicioPeriodoSeguimiento(fechaInicioProyecto, convocatoriaPeriodoSeguimiento.mesInicial);
   }
 
   let fechaFinConvocatoriaConceptoGasto: DateTime;
-  if (convocatoriaPeriodoSeguimiento.mesFinal) {
+  if (convocatoriaPeriodoSeguimiento?.mesFinal) {
     fechaFinConvocatoriaConceptoGasto = getFechaFinPeriodoSeguimiento(fechaInicioProyecto, fechaFinProyecto,
       convocatoriaPeriodoSeguimiento.mesFinal);
   }
 
-  return convocatoriaPeriodoSeguimiento.numPeriodo !== convocatoriaPeriodoSeguimiento.numPeriodo
-    || proyectoPeriodoSeguimiento.tipoSeguimiento !== convocatoriaPeriodoSeguimiento.tipoSeguimiento
+  return proyectoPeriodoSeguimiento.tipoSeguimiento !== convocatoriaPeriodoSeguimiento?.tipoSeguimiento
     || proyectoPeriodoSeguimiento.fechaInicio?.toMillis() !== fechaInicioConvocatoriaPeriodoSeguimiento?.toMillis()
     || proyectoPeriodoSeguimiento.fechaFin?.toMillis() !== fechaFinConvocatoriaConceptoGasto?.toMillis()
     || proyectoPeriodoSeguimiento.fechaInicioPresentacion?.toMillis() !== convocatoriaPeriodoSeguimiento.fechaInicioPresentacion?.toMillis()
     || proyectoPeriodoSeguimiento.fechaFinPresentacion?.toMillis() !== convocatoriaPeriodoSeguimiento.fechaFinPresentacion?.toMillis()
-    || (proyectoPeriodoSeguimiento.observaciones !== convocatoriaPeriodoSeguimiento.observaciones);
+    || (proyectoPeriodoSeguimiento.observaciones ?? '') !== (convocatoriaPeriodoSeguimiento?.observaciones ?? '');
 }
 
 export function comparePeriodoJustificacion(
@@ -39,25 +38,24 @@ export function comparePeriodoJustificacion(
   fechaFinProyecto: DateTime): boolean {
 
   let fechaInicioConvocatoriaPeriodoSeguimiento: DateTime;
-  if (convocactoriaPeriodoJustificacion.mesInicial) {
+  if (convocactoriaPeriodoJustificacion?.mesInicial) {
     fechaInicioConvocatoriaPeriodoSeguimiento =
       getFechaInicioPeriodoSeguimiento(fechaInicioProyecto, convocactoriaPeriodoJustificacion.mesInicial);
   }
 
   let fechaFinConvocatoriaConceptoGasto: DateTime;
-  if (convocactoriaPeriodoJustificacion.mesFinal) {
+  if (convocactoriaPeriodoJustificacion?.mesFinal) {
     fechaFinConvocatoriaConceptoGasto = getFechaFinPeriodoSeguimiento(fechaInicioProyecto, fechaFinProyecto,
       convocactoriaPeriodoJustificacion.mesFinal);
   }
 
-  return convocactoriaPeriodoJustificacion.numPeriodo !== convocactoriaPeriodoJustificacion.numPeriodo
-    || proyectoPeriodojustificacion.tipoJustificacion !== convocactoriaPeriodoJustificacion.tipo
+  return proyectoPeriodojustificacion.tipoJustificacion !== convocactoriaPeriodoJustificacion.tipo
     || proyectoPeriodojustificacion.fechaInicio?.toMillis() !== fechaInicioConvocatoriaPeriodoSeguimiento?.toMillis()
     || proyectoPeriodojustificacion.fechaFin?.toMillis() !== fechaFinConvocatoriaConceptoGasto?.toMillis()
     || proyectoPeriodojustificacion.fechaInicioPresentacion?.toMillis() !==
     convocactoriaPeriodoJustificacion.fechaInicioPresentacion?.toMillis()
     || proyectoPeriodojustificacion.fechaFinPresentacion?.toMillis() !== convocactoriaPeriodoJustificacion.fechaFinPresentacion?.toMillis()
-    || (proyectoPeriodojustificacion.observaciones !== convocactoriaPeriodoJustificacion.observaciones);
+    || (proyectoPeriodojustificacion.observaciones ?? '') !== (convocactoriaPeriodoJustificacion?.observaciones ?? '');
 }
 
 

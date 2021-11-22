@@ -8,7 +8,7 @@ import { ROUTE_NAMES } from '@core/route.names';
 import { MSG_PARAMS } from '@core/i18n';
 import { switchMap } from 'rxjs/operators';
 import { NGXLogger } from 'ngx-logger';
-import { MatDialog } from '@angular/material/dialog';
+import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { DialogService } from '@core/services/dialog.service';
 import { ViaProteccionService } from '@core/services/pii/via-proteccion/via-proteccion.service';
 import { SnackBarService } from '@core/services/snack-bar.service';
@@ -19,8 +19,6 @@ import { ViaProteccionModalComponent } from '../via-proteccion-modal/via-protecc
 const MSG_ERROR = marker('error.load');
 const MSG_CREATE = marker('btn.add.entity');
 const MSG_SAVE_SUCCESS = marker('msg.save.entity.success');
-const MSG_SAVE_ERROR = marker('error.save.entity');
-const MSG_UPDATE_ERROR = marker('error.update.entity');
 const MSG_UPDATE_SUCCESS = marker('msg.update.entity.success');
 const MSG_REACTIVE = marker('msg.reactivate.entity');
 const MSG_SUCCESS_REACTIVE = marker('msg.reactivate.entity.success');
@@ -43,9 +41,7 @@ export class ViaProteccionListadoComponent extends AbstractTablePaginationCompon
 
   textCrear: string;
   textCrearSuccess: string;
-  textCrearError: string;
   textUpdateSuccess: string;
-  textUpdateError: string;
   textDesactivar: string;
   textReactivar: string;
   textErrorDesactivar: string;
@@ -122,35 +118,11 @@ export class ViaProteccionListadoComponent extends AbstractTablePaginationCompon
     ).pipe(
       switchMap((value) => {
         return this.translate.get(
-          MSG_SAVE_ERROR,
-          { entity: value, ...MSG_PARAMS.GENDER.FEMALE }
-        );
-      })
-    ).subscribe((value: string) => this.textCrearError = value);
-
-    this.translate.get(
-      VIA_PROTECCION_KEY,
-      MSG_PARAMS.CARDINALIRY.SINGULAR
-    ).pipe(
-      switchMap((value) => {
-        return this.translate.get(
           MSG_UPDATE_SUCCESS,
           { entity: value, ...MSG_PARAMS.GENDER.FEMALE }
         );
       })
     ).subscribe((value: string) => this.textUpdateSuccess = value);
-
-    this.translate.get(
-      VIA_PROTECCION_KEY,
-      MSG_PARAMS.CARDINALIRY.SINGULAR
-    ).pipe(
-      switchMap((value) => {
-        return this.translate.get(
-          MSG_UPDATE_ERROR,
-          { entity: value, ...MSG_PARAMS.GENDER.FEMALE }
-        );
-      })
-    ).subscribe((value: string) => this.textUpdateError = value);
 
     this.translate.get(
       VIA_PROTECCION_KEY,
@@ -277,28 +249,15 @@ export class ViaProteccionListadoComponent extends AbstractTablePaginationCompon
    * @param viaProteccion Via de Proteccion
    */
   openModal(viaProteccion?: IViaProteccion): void {
-    const config = {
-      panelClass: 'sgi-dialog-container',
+    const config: MatDialogConfig<IViaProteccion> = {
       data: viaProteccion
     };
     const dialogRef = this.matDialog.open(ViaProteccionModalComponent, config);
     dialogRef.afterClosed().subscribe(
       (result: IViaProteccion) => {
         if (result) {
-          const subscription = viaProteccion ? this.viaProteccionService.update(viaProteccion.id, result) :
-            this.viaProteccionService.create(result);
-
-          subscription.subscribe(() => {
-            this.snackBarService.showSuccess(viaProteccion ? this.textUpdateSuccess : this.textCrearSuccess);
-            this.loadTable();
-          }, (error) => {
-            this.logger.error(error);
-            if (error instanceof HttpProblem) {
-              this.snackBarService.showError(error);
-            } else {
-              this.snackBarService.showError(viaProteccion ? this.textUpdateError : this.textCrearError);
-            }
-          });
+          this.snackBarService.showSuccess(viaProteccion ? this.textUpdateSuccess : this.textCrearSuccess);
+          this.loadTable();
         }
       });
   }

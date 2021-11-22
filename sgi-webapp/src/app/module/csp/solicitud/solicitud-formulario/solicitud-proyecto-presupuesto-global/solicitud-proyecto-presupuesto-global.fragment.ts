@@ -10,9 +10,24 @@ import { StatusWrapper } from '@core/utils/status-wrapper';
 import { BehaviorSubject, EMPTY, from, merge, Observable, of } from 'rxjs';
 import { catchError, map, mergeMap, takeLast, tap } from 'rxjs/operators';
 
+export interface IValoresCalculadosData {
+  totalImportePresupuestadoUniversidad: number;
+  importePresupuestadoUniversidad: number;
+  importePresupuestadoUniversidadCostesIndirectos: number;
+
+  importeSolicitadoUniversidad: number;
+  importeSolicitadoUniversidadCostesIndirectos: number;
+  totalImporteSolicitadoUniversidad: number;
+
+  totalPresupuestadoSocios: number;
+  totalSolicitadoSocios: number;
+  totalPresupuestado: number;
+  totalSolicitado: number;
+}
 export class SolicitudProyectoPresupuestoGlobalFragment extends FormFragment<ISolicitudProyecto> {
   partidasGastos$ = new BehaviorSubject<StatusWrapper<ISolicitudProyectoPresupuesto>[]>([]);
   private partidasGastosEliminadas: StatusWrapper<ISolicitudProyectoPresupuesto>[] = [];
+  valoresCalculadosData = {} as IValoresCalculadosData;
 
   private solicitudProyecto: ISolicitudProyecto;
 
@@ -111,37 +126,44 @@ export class SolicitudProyectoPresupuestoGlobalFragment extends FormFragment<ISo
   protected buildPatch(value: ISolicitudProyecto): { [key: string]: any; } {
     this.solicitudProyecto = value;
     const result = {
-      importePresupuestado: value.importePresupuestado,
-      importePresupuestadoCostesIndirectos: value.importePresupuestadoCostesIndirectos,
-      importePresupuestadoSocios: value.importePresupuestadoSocios,
-      importeSolicitadoCostesIndirectos: value.importeSolicitadoCostesIndirectos,
-      importeSolicitado: value.importeSolicitado,
-      importeSolicitadoSocios: value.importeSolicitadoSocios,
-      totalImportePresupuestado: value.totalImportePresupuestado,
-      totalImporteSolicitado: value.totalImporteSolicitado
+      importePresupuestado: value.importePresupuestado === 0
+        ? null : value.importePresupuestado,
+      importePresupuestadoCostesIndirectos: value.importePresupuestadoCostesIndirectos === 0
+        ? null : value.importePresupuestadoCostesIndirectos,
+      importePresupuestadoSocios: value.importePresupuestadoSocios === 0
+        ? null : value.importePresupuestadoSocios,
+      importeSolicitadoCostesIndirectos: value.importeSolicitadoCostesIndirectos === 0
+        ? null : value.importeSolicitadoCostesIndirectos,
+      importeSolicitado: value.importeSolicitado === 0
+        ? null : value.importeSolicitado,
+      importeSolicitadoSocios: value.importeSolicitadoSocios === 0
+        ? null : value.importeSolicitadoSocios,
+      totalImportePresupuestado: value.totalImportePresupuestado === 0
+        ? null : value.totalImportePresupuestado,
+      totalImporteSolicitado: value.totalImporteSolicitado === 0
+        ? null : value.totalImporteSolicitado
     } as ISolicitudProyecto;
 
     const form = this.getFormGroup();
     form.controls.importePresupuestadoUniversidad
-      .setValue(value.importePresupuestado);
+      .setValue(result.importePresupuestado);
     form.controls.importePresupuestadoUniversidadCostesIndirectos
-      .setValue(value.importePresupuestadoCostesIndirectos);
+      .setValue(result.importePresupuestadoCostesIndirectos);
+    form.controls.importeSolicitadoUniversidad
+      .setValue(result.importeSolicitado);
+    form.controls.importeSolicitadoUniversidadCostesIndirectos
+      .setValue(result.importeSolicitadoCostesIndirectos);
+    form.controls.totalImportePresupuestado
+      .setValue(result.totalImportePresupuestado);
+    form.controls.totalImporteSolicitado
+      .setValue(result.totalImporteSolicitado);
+
     form.controls.totalImportePresupuestadoUniversidad
       .setValue((value.importePresupuestado + value.importePresupuestadoCostesIndirectos) !== 0 ?
         (value.importePresupuestado + value.importePresupuestadoCostesIndirectos) : null);
-
-    form.controls.importeSolicitadoUniversidad
-      .setValue(value.importeSolicitado);
-    form.controls.importeSolicitadoUniversidadCostesIndirectos
-      .setValue(value.importeSolicitadoCostesIndirectos);
     form.controls.totalImporteSolicitadoUniversidad
       .setValue((value.importeSolicitado + value.importeSolicitadoCostesIndirectos) !== 0 ?
         (value.importeSolicitado + value.importeSolicitadoCostesIndirectos) : null);
-
-    form.controls.totalImportePresupuestado
-      .setValue(value.totalImportePresupuestado);
-    form.controls.totalImporteSolicitado
-      .setValue(value.totalImporteSolicitado);
     return result;
   }
 
@@ -176,14 +198,22 @@ export class SolicitudProyectoPresupuestoGlobalFragment extends FormFragment<ISo
       this.solicitudProyecto = {} as ISolicitudProyecto;
     }
     const form = this.getFormGroup().value;
-    this.solicitudProyecto.importePresupuestado = form.importePresupuestadoUniversidad;
-    this.solicitudProyecto.importePresupuestadoCostesIndirectos = form.importePresupuestadoUniversidadCostesIndirectos;
-    this.solicitudProyecto.importeSolicitadoCostesIndirectos = form.importeSolicitadoUniversidadCostesIndirectos;
-    this.solicitudProyecto.importePresupuestadoSocios = form.importePresupuestadoSocios;
-    this.solicitudProyecto.importeSolicitado = form.importeSolicitadoUniversidad;
-    this.solicitudProyecto.importeSolicitadoSocios = form.importeSolicitadoSocios;
-    this.solicitudProyecto.totalImportePresupuestado = form.totalImportePresupuestado;
-    this.solicitudProyecto.totalImporteSolicitado = form.totalImporteSolicitado;
+    this.solicitudProyecto.importePresupuestado = form.importePresupuestadoUniversidad
+      ?? this.valoresCalculadosData.importePresupuestadoUniversidad;
+    this.solicitudProyecto.importePresupuestadoCostesIndirectos = form.importePresupuestadoUniversidadCostesIndirectos
+      ?? this.valoresCalculadosData.importePresupuestadoUniversidadCostesIndirectos;
+    this.solicitudProyecto.importeSolicitadoCostesIndirectos = form.importeSolicitadoUniversidadCostesIndirectos
+      ?? this.valoresCalculadosData.importeSolicitadoUniversidadCostesIndirectos;
+    this.solicitudProyecto.importePresupuestadoSocios = form.importePresupuestadoSocios
+      ?? this.valoresCalculadosData.totalPresupuestadoSocios;
+    this.solicitudProyecto.importeSolicitado = form.importeSolicitadoUniversidad
+      ?? this.valoresCalculadosData.importeSolicitadoUniversidad;
+    this.solicitudProyecto.importeSolicitadoSocios = form.importeSolicitadoSocios
+      ?? this.valoresCalculadosData.totalSolicitadoSocios;
+    this.solicitudProyecto.totalImportePresupuestado = form.totalImportePresupuestado
+      ?? this.valoresCalculadosData.totalPresupuestado;
+    this.solicitudProyecto.totalImporteSolicitado = form.totalImporteSolicitado
+      ?? this.valoresCalculadosData.totalSolicitado;
     return this.solicitudProyecto;
   }
 

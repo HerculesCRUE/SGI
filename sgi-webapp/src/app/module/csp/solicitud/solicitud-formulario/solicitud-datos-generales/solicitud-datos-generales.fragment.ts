@@ -1,4 +1,5 @@
 import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { FormularioSolicitud } from '@core/enums/formulario-solicitud';
 import { IConvocatoria } from '@core/models/csp/convocatoria';
 import { IConvocatoriaEntidadConvocante } from '@core/models/csp/convocatoria-entidad-convocante';
 import { Estado } from '@core/models/csp/estado-solicitud';
@@ -119,27 +120,34 @@ export class SolicitudDatosGeneralesFragment extends FormFragment<ISolicitud> {
   }
 
   protected buildFormGroup(): FormGroup {
+    let form: FormGroup;
     if (this.isInvestigador) {
-      const form = new FormGroup({
+      form = new FormGroup({
         estado: new FormControl({ value: Estado.BORRADOR, disabled: true }),
-        titulo: new FormControl('', [Validators.required, Validators.maxLength(250)]),
+        titulo: new FormControl({ value: '', disabled: this.isEdit() }, [Validators.maxLength(250)]),
         convocatoria: new FormControl({ value: '', disabled: true }),
-        codigoExterno: new FormControl('', Validators.maxLength(50)),
-        observaciones: new FormControl('', Validators.maxLength(2000))
+        codigoExterno: new FormControl({ value: '', disabled: true }, Validators.maxLength(50)),
+        observaciones: new FormControl({ value: '', disabled: this.isEdit() }, Validators.maxLength(2000)),
+        comentariosEstado: new FormControl({ value: '', disabled: true })
       });
 
-      return form;
-
+      this.subscriptions.push(
+        form.controls.convocatoria.valueChanges.subscribe(
+          (convocatoria) => {
+            this.convocatoria$.next(convocatoria);
+          }
+        )
+      );
     } else {
-      const form = new FormGroup({
+      form = new FormGroup({
         estado: new FormControl({ value: Estado.BORRADOR, disabled: true }),
-        titulo: new FormControl(undefined, [Validators.required, Validators.maxLength(250)]),
+        titulo: new FormControl(undefined, [Validators.maxLength(250)]),
         solicitante: new FormControl('', Validators.required),
         convocatoria: new FormControl({ value: '', disabled: this.isEdit() }),
         comentariosEstado: new FormControl({ value: '', disabled: true }),
         convocatoriaExterna: new FormControl(''),
-        formularioSolicitud: new FormControl({ value: null, disabled: this.isEdit() }),
-        unidadGestion: new FormControl({ value: '' }),
+        formularioSolicitud: new FormControl({ value: FormularioSolicitud.PROYECTO, disabled: this.isEdit() }),
+        unidadGestion: new FormControl(null, Validators.required),
         codigoExterno: new FormControl('', Validators.maxLength(50)),
         codigoRegistro: new FormControl({ value: '', disabled: true }),
         observaciones: new FormControl('', Validators.maxLength(2000))
@@ -165,23 +173,32 @@ export class SolicitudDatosGeneralesFragment extends FormFragment<ISolicitud> {
           }
         )
       );
-
-      if (this.readonly) {
-        form.disable();
-      }
-      return form;
     }
-  }
 
+    if (this.readonly) {
+      form.disable();
+    }
+    return form;
+
+  }
   buildPatch(solicitud: SolicitudDatosGenerales): { [key: string]: any } {
     this.solicitud = solicitud;
+    if (solicitud?.estado?.estado === Estado.BORRADOR) {
+      this.getFormGroup().controls.titulo.enable();
+      this.getFormGroup().controls.estado.enable();
+      this.getFormGroup().controls.convocatoria.enable();
+      this.getFormGroup().controls.codigoExterno.enable();
+      this.getFormGroup().controls.observaciones.enable();
+      this.getFormGroup().controls.comentariosEstado.enable();
+    }
     if (this.isInvestigador) {
       const result = {
-        estado: solicitud.estado?.estado,
-        titulo: solicitud.titulo,
-        convocatoria: solicitud.convocatoria,
-        codigoExterno: solicitud.codigoExterno,
-        observaciones: solicitud.observaciones
+        estado: solicitud?.estado?.estado,
+        titulo: solicitud?.titulo ?? '',
+        convocatoria: solicitud?.convocatoria,
+        codigoExterno: solicitud?.codigoExterno,
+        observaciones: solicitud?.observaciones ?? '',
+        comentariosEstado: solicitud?.estado?.comentario,
       };
       return result;
     } else {
@@ -200,6 +217,7 @@ export class SolicitudDatosGeneralesFragment extends FormFragment<ISolicitud> {
       };
       return result;
     }
+
   }
 
   getValue(): ISolicitud {

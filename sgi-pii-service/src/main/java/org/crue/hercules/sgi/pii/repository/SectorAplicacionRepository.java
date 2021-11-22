@@ -9,7 +9,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface SectorAplicacionRepository
-    extends ActivableRepository, JpaRepository<SectorAplicacion, Long>, JpaSpecificationExecutor<SectorAplicacion> {
+    extends JpaRepository<SectorAplicacion, Long>, JpaSpecificationExecutor<SectorAplicacion> {
 
   /**
    * Obtiene la entidad {@link SectorAplicacion} activo con el nombre indicado

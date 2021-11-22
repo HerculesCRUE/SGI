@@ -11,7 +11,7 @@
         <mat-form-field class="input-form">
           <mat-label>{{'csp.proyecto-presupuesto.desglosar-anualidades' | translate}}
           </mat-label>
-          <sgi-select-boolean formControlName="anualidades" required>
+          <sgi-select-boolean formControlName="anualidades">
           </sgi-select-boolean>
         </mat-form-field>
       </div>
@@ -89,6 +89,13 @@
                   <mat-icon color="warn">highlight_off</mat-icon>
                 </button>
               </ng-container>
+              <ng-container *sgiHasAnyAuthorityForAnyUO="['CSP-CON-E', 'CSP-CON-C']">
+                <button *ngIf="!data.value.enviadoSge && data.value.presupuestar" color="primary" mat-raised-button
+                  matTooltip="{{'btn.enviar-sge' | translate}}" (click)="sendSGE(data)"
+                  [disabled]="this.formPart.hasChanges()">
+                  {{'btn.enviar-sge' | translate}}
+                </button>
+              </ng-container>
             </td>
           </ng-container>
           <tr mat-header-row *matHeaderRowDef="columns"></tr>
@@ -144,7 +151,7 @@
           <mat-form-field>
             <input attr.aria-label="{{'csp.proyecto-presupuesto.valor-calculado' | translate}}:
              {{'csp.proyecto-presupuesto.importe-presupuesto-universidad' | translate}}" matInput type="text"
-              [value]="this.valoresCalculadosData.importePresupuestoUniversidad" disabled />
+              [value]="this.valoresCalculadosData.importeTotalPresupuestoUniversidadSinCosteIndirecto" disabled />
           </mat-form-field>
         </div>
         <div>
@@ -153,8 +160,8 @@
              {{'csp.proyecto-presupuesto.importe-presupuesto-universidad' | translate}}" matInput type="number"
               formControlName="importePresupuestoUniversidad">
             <sgi-field-info matSuffix
-              [visible]="!formPart.readonly && this.formGroup.controls.importePresupuestoUniversidad.value 
-                    && this.valoresCalculadosData.importePresupuestoUniversidad !== this.formGroup.controls.importePresupuestoUniversidad.value"
+              [visible]="!formPart.readonly && this.formGroup.controls.importePresupuestoUniversidad.value
+                    && this.valoresCalculadosData.importeTotalPresupuestoUniversidadSinCosteIndirecto !== this.formGroup.controls.importePresupuestoUniversidad.value"
               message="{{'msg.csp.proyecto-presupuesto.warn' | translate}}" color="warn">
             </sgi-field-info>
           </mat-form-field>
@@ -172,7 +179,8 @@
           <mat-form-field>
             <input attr.aria-label="{{'csp.proyecto-presupuesto.valor-calculado' | translate}}:
              {{'csp.proyecto-presupuesto.importe-presupuesto-universidad-costes-indirectos' | translate}}" matInput
-              type="text" [value]="this.valoresCalculadosData.importePresupuestoUniversidadCostesIndirectos" disabled />
+              type="text" [value]="this.valoresCalculadosData.importeTotalPresupuestoUniversidadCostesIndirectos"
+              disabled />
           </mat-form-field>
         </div>
         <div>
@@ -180,8 +188,8 @@
             <input attr.aria-label="{{'csp.proyecto-presupuesto.valor-manual' | translate}}:
              {{'csp.proyecto-presupuesto.importe-presupuesto-universidad-costes-indirectos' | translate}}" matInput
               type="number" formControlName="importePresupuestoUniversidadCostesIndirectos">
-            <sgi-field-info matSuffix [visible]="!formPart.readonly && this.formGroup.controls.importePresupuestoUniversidadCostesIndirectos.value 
-                    && this.valoresCalculadosData.importePresupuestoUniversidadCostesIndirectos 
+            <sgi-field-info matSuffix [visible]="!formPart.readonly && this.formGroup.controls.importePresupuestoUniversidadCostesIndirectos.value
+                    && this.valoresCalculadosData.importeTotalPresupuestoUniversidadCostesIndirectos
                     !== this.formGroup.controls.importePresupuestoUniversidadCostesIndirectos.value"
               message="{{'msg.csp.proyecto-presupuesto.warn' | translate}}" color="warn">
             </sgi-field-info>
@@ -199,7 +207,7 @@
           <mat-form-field>
             <input attr.aria-label="{{'csp.proyecto-presupuesto.valor-calculado' | translate}}:
                      {{'csp.proyecto-presupuesto.importe-presupuesto-universidad' | translate}}" matInput type="text"
-              [value]="this.valoresCalculadosData.totalImportePresupuestoUniversidad" disabled />
+              [value]="this.valoresCalculadosData.importeTotalPresupuestoUniversidadSinCosteIndirecto" disabled />
           </mat-form-field>
         </div>
         <div>
@@ -208,8 +216,8 @@
              {{'csp.proyecto-presupuesto.importe-presupuesto-universidad' | translate}}" matInput type="number"
               formControlName="totalImportePresupuestoUniversidad">
             <sgi-field-info matSuffix
-              [visible]="!formPart.readonly && this.formGroup.controls.totalImportePresupuestoUniversidad.value 
-                    && this.valoresCalculadosData.totalImportePresupuestoUniversidad !== this.formGroup.controls.totalImportePresupuestoUniversidad.value"
+              [visible]="!formPart.readonly && this.formGroup.controls.totalImportePresupuestoUniversidad.value
+                    && this.valoresCalculadosData.importeTotalPresupuestoUniversidadSinCosteIndirecto !== this.formGroup.controls.totalImportePresupuestoUniversidad.value"
               message="{{'msg.csp.proyecto-presupuesto.warn' | translate}}" color="warn">
             </sgi-field-info>
           </mat-form-field>
@@ -226,7 +234,7 @@
           <mat-form-field>
             <input attr.aria-label="{{'csp.proyecto-presupuesto.valor-calculado' | translate}}:
              {{'csp.proyecto-presupuesto.importe-concedido-universidad' | translate}}" matInput type="text"
-              [value]="this.valoresCalculadosData.importeConcedidoUniversidad" disabled>
+              [value]="this.valoresCalculadosData.importeTotalConcedidoUniversidadSinCosteIndirecto" disabled>
           </mat-form-field>
         </div>
         <div>
@@ -235,8 +243,8 @@
              {{'csp.proyecto-presupuesto.importe-concedido-universidad' | translate}}" type="number"
               formControlName="importeConcedidoUniversidad">
             <sgi-field-info matSuffix
-              [visible]="!formPart.readonly && this.formGroup.controls.importeConcedidoUniversidad.value 
-                    && this.valoresCalculadosData.importeConcedidoUniversidad !== this.formGroup.controls.importeConcedidoUniversidad.value"
+              [visible]="!formPart.readonly && this.formGroup.controls.importeConcedidoUniversidad.value
+                    && this.valoresCalculadosData.importeTotalConcedidoUniversidadSinCosteIndirecto !== this.formGroup.controls.importeConcedidoUniversidad.value"
               message="{{'msg.csp.proyecto-presupuesto.warn' | translate}}" color="warn">
             </sgi-field-info>
           </mat-form-field>
@@ -254,7 +262,8 @@
           <mat-form-field>
             <input attr.aria-label="{{'csp.proyecto-presupuesto.valor-calculado' | translate}}:
              {{'csp.proyecto-presupuesto.importe-concedido-universidad-costes-indirectos' | translate}}" matInput
-              type="text" [value]="this.valoresCalculadosData.importeConcedidoUniversidadCostesIndirectos" disabled>
+              type="text" [value]="this.valoresCalculadosData.importeTotalConcedidoUniversidadCostesIndirectos"
+              disabled>
           </mat-form-field>
         </div>
         <div>
@@ -263,8 +272,8 @@
              {{'csp.proyecto-presupuesto.importe-concedido-universidad-costes-indirectos' | translate}}" type="number"
               formControlName="importeConcedidoUniversidadCostesIndirectos">
             <sgi-field-info matSuffix
-              [visible]="!formPart.readonly && this.formGroup.controls.importeConcedidoUniversidadCostesIndirectos.value 
-                    && this.valoresCalculadosData.importeConcedidoUniversidadCostesIndirectos !== this.formGroup.controls.importeConcedidoUniversidadCostesIndirectos.value"
+              [visible]="!formPart.readonly && this.formGroup.controls.importeConcedidoUniversidadCostesIndirectos.value
+                    && this.valoresCalculadosData.importeTotalConcedidoUniversidadCostesIndirectos !== this.formGroup.controls.importeConcedidoUniversidadCostesIndirectos.value"
               message="{{'msg.csp.proyecto-presupuesto.warn' | translate}}" color="warn">
             </sgi-field-info>
           </mat-form-field>
@@ -281,7 +290,7 @@
           <mat-form-field>
             <input attr.aria-label="{{'csp.presupuesto-desglose-presupuesto.valor-calculado' | translate}}:
              {{'csp.proyecto-presupuesto.total-importe-concedido-universidad' | translate}}" matInput type="text"
-              [value]="this.valoresCalculadosData.totalImporteConcedidoUniversidad" disabled>
+              [value]="this.valoresCalculadosData.importeTotalConcedidoUniversidadCostesIndirectos" disabled>
           </mat-form-field>
         </div>
         <div>
@@ -290,8 +299,8 @@
              {{'csp.proyecto-presupuesto.total-importe-concedido-universidad' | translate}}" type="number"
               formControlName="totalImporteConcedidoUniversidad">
             <sgi-field-info matSuffix
-              [visible]="!formPart.readonly && this.formGroup.controls.totalImporteConcedidoUniversidad.value 
-                          && this.valoresCalculadosData.totalImporteConcedidoUniversidad !== this.formGroup.controls.totalImporteConcedidoUniversidad.value"
+              [visible]="!formPart.readonly && this.formGroup.controls.totalImporteConcedidoUniversidad.value
+                          && this.valoresCalculadosData.importeTotalConcedidoUniversidadCostesIndirectos !== this.formGroup.controls.totalImporteConcedidoUniversidad.value"
               message="{{'msg.csp.proyecto-presupuesto.warn' | translate}}" color="warn">
             </sgi-field-info>
           </mat-form-field>

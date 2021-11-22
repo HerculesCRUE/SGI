@@ -6,7 +6,7 @@ import { Fragment } from '@core/services/action-service';
 import { InvencionGastoService } from '@core/services/pii/invencion/invencion-gasto/invencion-gasto.service';
 import { InvencionService } from '@core/services/pii/invencion/invencion.service';
 import { SolicitudProteccionService } from '@core/services/pii/solicitud-proteccion/solicitud-proteccion.service';
-import { GastosInvencionService } from '@core/services/sgepii/gastos-invencion.service';
+import { GastosInvencionService, TipoOperacion } from '@core/services/sgepii/gastos-invencion.service';
 import { StatusWrapper } from '@core/utils/status-wrapper';
 import { BehaviorSubject, forkJoin, from, merge, Observable, of } from 'rxjs';
 import { catchError, map, mergeMap, switchMap, takeLast, tap, toArray } from 'rxjs/operators';
@@ -153,7 +153,8 @@ export class InvencionGastosFragment extends Fragment {
           return {
             id: columna.id,
             name: columna.nombre,
-            compute: columna.acumulable
+            compute: columna.acumulable,
+            importeReparto: columna.importeReparto
           };
         })
         )
@@ -161,7 +162,7 @@ export class InvencionGastosFragment extends Fragment {
   }
 
   private getGastosInvencion$(invencionId: string): Observable<IDatoEconomico[]> {
-    return this.gastosInvencionService.getGastos(invencionId);
+    return this.gastosInvencionService.getGastos(invencionId, TipoOperacion.GASTO);
   }
 
   private getInvencionGasto$(invencionId: number): Observable<IInvencionGasto[]> {
@@ -197,6 +198,7 @@ export class InvencionGastosFragment extends Fragment {
       };
     } else {
       return {
+        importePendienteDeducir: gastoInvencion.columnas[this.getImporteRepartoColumnId(this.columns)],
         gasto: gastoInvencion,
         estado: Estado.NO_DEDUCIDO
       } as IInvencionGasto;
@@ -217,5 +219,10 @@ export class InvencionGastosFragment extends Fragment {
       }
     });
     return values;
+  }
+
+  private getImporteRepartoColumnId(columnas: IColumnDefinition[]): number {
+    const importeRepartoColumn = columnas.find(column => column.importeReparto);
+    return importeRepartoColumn ? Number(importeRepartoColumn.id) : 0;
   }
 }

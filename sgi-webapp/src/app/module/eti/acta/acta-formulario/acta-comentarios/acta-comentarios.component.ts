@@ -16,7 +16,8 @@ import { TranslateService } from '@ngx-translate/core';
 import { Observable, Subscription } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { ComentarioModalComponent, ComentarioModalData } from '../../../comentario/comentario-modal/comentario-modal.component';
-import { ActaActionService, Rol } from '../../acta.action.service';
+import { Rol } from '../../acta-rol';
+import { ActaActionService } from '../../acta.action.service';
 import { ActaComentariosFragment } from './acta-comentarios.fragment';
 
 const MSG_DELETE = marker('msg.delete.entity');

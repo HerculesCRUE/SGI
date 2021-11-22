@@ -8,6 +8,7 @@ import org.crue.hercules.sgi.eti.dto.ConvocatoriaReunionDatosGenerales;
 import org.crue.hercules.sgi.eti.model.Acta;
 import org.crue.hercules.sgi.eti.model.Asistentes;
 import org.crue.hercules.sgi.eti.model.ConvocatoriaReunion;
+import org.crue.hercules.sgi.eti.model.Dictamen;
 import org.crue.hercules.sgi.eti.model.Evaluacion;
 import org.crue.hercules.sgi.eti.service.ActaService;
 import org.crue.hercules.sgi.eti.service.AsistentesService;
@@ -113,7 +114,7 @@ public class ConvocatoriaReunionController {
    */
   @PutMapping("/{id}")
   @PreAuthorize("hasAnyAuthorityForAnyUO('ETI-CNV-E')")
-  ConvocatoriaReunion replaceConvocatoriaReunion(@Valid @RequestBody ConvocatoriaReunion convocatoriaReunion,
+  public ConvocatoriaReunion replaceConvocatoriaReunion(@Valid @RequestBody ConvocatoriaReunion convocatoriaReunion,
       @PathVariable Long id) {
     log.debug("replaceConvocatoriaReunion(ConvocatoriaReunion convocatoriaReunion, Long id) - start");
     convocatoriaReunion.setId(id);
@@ -134,7 +135,7 @@ public class ConvocatoriaReunionController {
   @DeleteMapping("/{id}")
   @PreAuthorize("hasAnyAuthorityForAnyUO('ETI-CNV-B')")
   @ResponseStatus(value = HttpStatus.NO_CONTENT)
-  void delete(@PathVariable Long id) {
+  public void delete(@PathVariable Long id) {
     log.debug("delete(Long id) - start");
     ConvocatoriaReunion convocatoriaReunion = this.one(id);
     convocatoriaReunion.setActivo(Boolean.FALSE);
@@ -153,7 +154,7 @@ public class ConvocatoriaReunionController {
    */
   @GetMapping()
   @PreAuthorize("hasAnyAuthorityForAnyUO('ETI-ACT-C', 'ETI-CNV-V')")
-  ResponseEntity<Page<ConvocatoriaReunion>> findAll(@RequestParam(name = "q", required = false) String query,
+  public ResponseEntity<Page<ConvocatoriaReunion>> findAll(@RequestParam(name = "q", required = false) String query,
       @RequestPageable(sort = "s") Pageable paging) {
     log.debug("findAll(String query, Pageable paging - start");
     Page<ConvocatoriaReunion> page = convocatoriaReunionService.findAll(query, paging);
@@ -174,7 +175,7 @@ public class ConvocatoriaReunionController {
    * @throws IllegalArgumentException Si no se informa id.
    */
   @GetMapping("/{id}")
-  ConvocatoriaReunion one(@PathVariable Long id) {
+  public ConvocatoriaReunion one(@PathVariable Long id) {
     log.debug("one(Long id) - start");
     ConvocatoriaReunion returnValue = convocatoriaReunionService.findById(id);
     log.debug("one(Long id) - end");
@@ -194,7 +195,7 @@ public class ConvocatoriaReunionController {
    */
   @GetMapping("/{id}/datos-generales")
   @PreAuthorize("hasAnyAuthorityForAnyUO('ETI-CNV-V', 'ETI-CNV-E')")
-  ConvocatoriaReunionDatosGenerales oneWithDatosGenerales(@PathVariable Long id) {
+  public ConvocatoriaReunionDatosGenerales oneWithDatosGenerales(@PathVariable Long id) {
     log.debug("oneWithDatosGenerales(Long id) - start");
     ConvocatoriaReunionDatosGenerales returnValue = convocatoriaReunionService.findByIdWithDatosGenerales(id);
     log.debug("oneWithDatosGenerales(Long id) - end");
@@ -211,7 +212,7 @@ public class ConvocatoriaReunionController {
    */
   @GetMapping("/{id}/asistentes")
   @PreAuthorize("hasAnyAuthorityForAnyUO('ETI-ACT-C','ETI-ACT-E','ETI-ACT-INV-ER','ETI-ACT-ER')")
-  ResponseEntity<Page<Asistentes>> findAsistentes(@PathVariable Long id,
+  public ResponseEntity<Page<Asistentes>> findAsistentes(@PathVariable Long id,
       @RequestPageable(sort = "s") Pageable pageable) {
     log.debug("findAsistentes(Long id, Pageable pageable) - start");
     Page<Asistentes> page = asistenteService.findAllByConvocatoriaReunionId(id, pageable);
@@ -234,7 +235,7 @@ public class ConvocatoriaReunionController {
    */
   @GetMapping("/{id}/evaluaciones-activas")
   @PreAuthorize("hasAnyAuthorityForAnyUO('ETI-ACT-C','ETI-ACT-E','ETI-ACT-INV-ER','ETI-ACT-ER')")
-  ResponseEntity<Page<Evaluacion>> findEvaluacionesActivas(@PathVariable Long id,
+  public ResponseEntity<Page<Evaluacion>> findEvaluacionesActivas(@PathVariable Long id,
       @RequestPageable(sort = "s") Pageable pageable) {
     log.debug("findEvaluacionesActivas(Long id, Pageable pageable) - start");
     Page<Evaluacion> page = evaluacionService.findAllActivasByConvocatoriaReunionId(id, pageable);
@@ -257,7 +258,7 @@ public class ConvocatoriaReunionController {
    */
   @GetMapping("/{id}/evaluaciones")
   @PreAuthorize("hasAnyAuthorityForAnyUO('ETI-EVC-V')")
-  ResponseEntity<Page<Evaluacion>> getEvaluaciones(@PathVariable Long id,
+  public ResponseEntity<Page<Evaluacion>> getEvaluaciones(@PathVariable Long id,
       @RequestPageable(sort = "s") Pageable pageable) {
     log.debug("findEvaluaciones(Long id, Pageable pageable) - start");
     Page<Evaluacion> page = evaluacionService.findAllActivasByConvocatoriaReunionId(id, pageable);
@@ -271,11 +272,12 @@ public class ConvocatoriaReunionController {
   /**
    * Eliminar la memoria del listado de memorias a evaluar en una convocatoria
    * 
-   * @throws Exception
+   * @param idConvocatoriaReunion Id de la convocatoria
+   * @param idEvaluacion          Id de la evaluación
    */
   @DeleteMapping("/{idConvocatoriaReunion}/evaluacion/{idEvaluacion}")
   @PreAuthorize("hasAnyAuthorityForAnyUO('ETI-CNV-C', 'ETI-CNV-E')")
-  void deleteEvaluacion(@PathVariable Long idConvocatoriaReunion, @PathVariable Long idEvaluacion) {
+  public void deleteEvaluacion(@PathVariable Long idConvocatoriaReunion, @PathVariable Long idEvaluacion) {
     log.debug("deleteMemoria(Long idConvocatoriaReunion, Long idEvaluacion, Long idMemoria) - start");
 
     evaluacionService.deleteEvaluacion(idConvocatoriaReunion, idEvaluacion);
@@ -292,7 +294,7 @@ public class ConvocatoriaReunionController {
    */
   @GetMapping("/acta-no-asignada")
   @PreAuthorize("hasAnyAuthorityForAnyUO('ETI-ACT-C','ETI-ACT-E','ETI-ACT-INV-ER','ETI-ACT-ER')")
-  ResponseEntity<List<ConvocatoriaReunion>> findConvocatoriasSinActa() {
+  public ResponseEntity<List<ConvocatoriaReunion>> findConvocatoriasSinActa() {
     log.debug("findConvocatoriasSinActa() - start");
     List<ConvocatoriaReunion> result = convocatoriaReunionService.findConvocatoriasSinActa();
 
@@ -313,11 +315,12 @@ public class ConvocatoriaReunionController {
    */
   @RequestMapping(path = "/{id}/eliminable", method = RequestMethod.HEAD)
   @PreAuthorize("hasAnyAuthorityForAnyUO('ETI-ACT-C', 'ETI-CNV-V')")
-  ResponseEntity<ConvocatoriaReunion> eliminable(@PathVariable Long id) {
+  public ResponseEntity<ConvocatoriaReunion> eliminable(@PathVariable Long id) {
     log.debug("eliminable(Long id) - start");
     Boolean returnValue = convocatoriaReunionService.eliminable(id);
     log.debug("eliminable(Long id) - end");
-    return returnValue ? new ResponseEntity<>(HttpStatus.OK) : new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    return Boolean.TRUE.equals(returnValue) ? new ResponseEntity<>(HttpStatus.OK)
+        : new ResponseEntity<>(HttpStatus.NO_CONTENT);
   }
 
   /**
@@ -330,11 +333,12 @@ public class ConvocatoriaReunionController {
    */
   @RequestMapping(path = "/{id}/modificable", method = RequestMethod.HEAD)
   @PreAuthorize("hasAnyAuthorityForAnyUO('ETI-CNV-V', 'ETI-CNV-E')")
-  ResponseEntity<ConvocatoriaReunion> modificable(@PathVariable Long id) {
+  public ResponseEntity<ConvocatoriaReunion> modificable(@PathVariable Long id) {
     log.debug("modificable(Long id) - start");
     Boolean returnValue = convocatoriaReunionService.modificable(id);
     log.debug("modificable(Long id) - end");
-    return returnValue ? new ResponseEntity<>(HttpStatus.OK) : new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    return Boolean.TRUE.equals(returnValue) ? new ResponseEntity<>(HttpStatus.OK)
+        : new ResponseEntity<>(HttpStatus.NO_CONTENT);
   }
 
   /**
@@ -345,10 +349,30 @@ public class ConvocatoriaReunionController {
    */
   @GetMapping(path = "/{id}/acta")
   @PreAuthorize("hasAnyAuthorityForAnyUO('ETI-CNV-V','ETI-ACT-V', 'ETI-PEV-INV-VR')")
-  ResponseEntity<Acta> actaConvocatoriaReunion(@PathVariable Long id) {
+  public ResponseEntity<Acta> actaConvocatoriaReunion(@PathVariable Long id) {
     log.debug("actaConvocatoriaReunion(Long id) - start");
     Acta returnValue = actaService.findByConvocatoriaReunionId(id);
     log.debug("actaConvocatoriaReunion(Long id) - end");
+    return new ResponseEntity<>(returnValue, HttpStatus.OK);
+  }
+
+  /**
+   * Retorna la fecha convocatoria y acta (codigo convocatoria) de la última
+   * evaluación de tipo memoria de la memoria original (y que no sea revisión
+   * mínima)
+   * 
+   * @param idEvaluacion Id de la {@link Evaluacion}.
+   * @param idDictamen   Id del {@link Dictamen}.
+   * @return {@link ConvocatoriaReunion}
+   */
+  @GetMapping(path = "/{idEvaluacion}/{idDictamen}/convocatoria-ultima-evaluacion")
+  @PreAuthorize("hasAuthorityForAnyUO('ETI-EVC-EVAL')")
+  public ResponseEntity<ConvocatoriaReunion> findConvocatoriaUltimaEvaluacionTipoMemoria(
+      @PathVariable Long idEvaluacion, @PathVariable Long idDictamen) {
+    log.debug("findConvocatoriaUltimaEvaluacionTipoMemoria(Long idEvaluacion, idDictamen) - start");
+    ConvocatoriaReunion returnValue = convocatoriaReunionService
+        .findConvocatoriaUltimaEvaluacionTipoMemoria(idEvaluacion, idDictamen);
+    log.debug("findConvocatoriaUltimaEvaluacionTipoMemoria(Long idEvaluacion, idDictamen) - end");
     return new ResponseEntity<>(returnValue, HttpStatus.OK);
   }
 }

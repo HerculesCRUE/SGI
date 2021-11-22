@@ -1,0 +1,33 @@
+:host{
+  th.mat-column-acciones {
+    flex: 3;
+    text-align: center;
+    justify-content: center;
+  }
+  th.mat-column-iva{
+    flex: 2;
+    min-width: 50px;
+  }
+  .mat-row{
+    .mat-column-importeTotal,
+    .mat-column-importeBase,
+    .mat-column-iva {
+      text-align: right;
+      justify-content: flex-end;
+    }
+    .mat-column-importeTotal,
+    .mat-column-importeBase{
+      flex: 1.5;
+    }
+    .actions-flex-container {
+      display: flex;
+      flex-direction: row;
+    }
+    .mat-column-acciones {
+      text-align: center;
+      justify-content: center;
+      flex: 3;
+    }
+  }
+}
+

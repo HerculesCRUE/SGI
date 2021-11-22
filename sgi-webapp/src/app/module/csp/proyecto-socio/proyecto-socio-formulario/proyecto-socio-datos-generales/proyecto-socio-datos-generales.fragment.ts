@@ -31,7 +31,7 @@ export class ProyectoSocioDatosGeneralesFragment extends FormFragment<IProyectoS
         }, [
           Validators.required
         ]),
-        rolSocio: new FormControl('', [
+        rolSocio: new FormControl(null, [
           Validators.required,
           IsEntityValidator.isValid()
         ]),

@@ -1,17 +1,15 @@
 import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
-import { FormControl, FormGroup } from '@angular/forms';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
-import { BaseModalComponent } from '@core/component/base-modal.component';
+import { DialogActionComponent } from '@core/component/dialog-action.component';
 import { MSG_PARAMS } from '@core/i18n';
 import { ITipoEnlace } from '@core/models/csp/tipos-configuracion';
-import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-properties';
-import { SnackBarService } from '@core/services/snack-bar.service';
+import { TipoEnlaceService } from '@core/services/csp/tipo-enlace.service';
 import { TranslateService } from '@ngx-translate/core';
+import { Observable } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 
-const MSG_ANADIR = marker('btn.add');
-const MSG_ACEPTAR = marker('btn.ok');
 const TIPO_ENLACE_KEY = marker('csp.tipo-enlace');
 const TIPO_ENLACE_NOMBRE_KEY = marker('csp.tipo-enlace.nombre');
 const TITLE_NEW_ENTITY = marker('title.new.entity');
@@ -20,31 +18,24 @@ const TITLE_NEW_ENTITY = marker('title.new.entity');
   templateUrl: './tipo-enlace-modal.component.html',
   styleUrls: ['./tipo-enlace-modal.component.scss']
 })
-export class TipoEnlaceModalComponent extends
-  BaseModalComponent<ITipoEnlace, TipoEnlaceModalComponent> implements OnInit {
-  fxLayoutProperties: FxLayoutProperties;
+export class TipoEnlaceModalComponent extends DialogActionComponent<ITipoEnlace, ITipoEnlace> implements OnInit, OnDestroy {
 
-  textSaveOrUpdate: string;
+  private readonly tipoEnlace: ITipoEnlace;
   title: string;
   msgParamNombreEntity = {};
 
   constructor(
-    protected readonly snackBarService: SnackBarService,
-    public readonly matDialogRef: MatDialogRef<TipoEnlaceModalComponent>,
-    @Inject(MAT_DIALOG_DATA) public tipoEnlace: ITipoEnlace,
+    matDialogRef: MatDialogRef<TipoEnlaceModalComponent>,
+    @Inject(MAT_DIALOG_DATA) data: ITipoEnlace,
+    private readonly tipoEnlaceService: TipoEnlaceService,
     private readonly translate: TranslateService
   ) {
-    super(snackBarService, matDialogRef, tipoEnlace);
+    super(matDialogRef, !!data?.id);
 
-    this.fxLayoutProperties = new FxLayoutProperties();
-    this.fxLayoutProperties.layout = 'row';
-    this.fxLayoutProperties.layoutAlign = 'row';
-    if (tipoEnlace.id) {
-      this.tipoEnlace = { ...tipoEnlace };
-      this.textSaveOrUpdate = MSG_ACEPTAR;
+    if (this.isEdit()) {
+      this.tipoEnlace = { ...data };
     } else {
       this.tipoEnlace = { activo: true } as ITipoEnlace;
-      this.textSaveOrUpdate = MSG_ANADIR;
     }
   }
 
@@ -59,7 +50,7 @@ export class TipoEnlaceModalComponent extends
       MSG_PARAMS.CARDINALIRY.SINGULAR
     ).subscribe((value) => this.msgParamNombreEntity = { entity: value, ...MSG_PARAMS.GENDER.MALE, ...MSG_PARAMS.CARDINALIRY.SINGULAR });
 
-    if (this.tipoEnlace.nombre) {
+    if (this.isEdit()) {
       this.translate.get(
         TIPO_ENLACE_KEY,
         MSG_PARAMS.CARDINALIRY.SINGULAR
@@ -79,19 +70,24 @@ export class TipoEnlaceModalComponent extends
     }
   }
 
-  protected getDatosForm(): ITipoEnlace {
+  protected getValue(): ITipoEnlace {
     this.tipoEnlace.nombre = this.formGroup.controls.nombre.value;
     this.tipoEnlace.descripcion = this.formGroup.controls.descripcion.value;
     return this.tipoEnlace;
   }
 
-  protected getFormGroup(): FormGroup {
+  protected buildFormGroup(): FormGroup {
     const formGroup = new FormGroup({
-      nombre: new FormControl(this.tipoEnlace?.nombre),
-      descripcion: new FormControl(this.tipoEnlace?.descripcion)
+      nombre: new FormControl(this.tipoEnlace?.nombre ?? '', Validators.required),
+      descripcion: new FormControl(this.tipoEnlace?.descripcion ?? '')
     });
 
     return formGroup;
   }
 
+  protected saveOrUpdate(): Observable<ITipoEnlace> {
+    const tipoEnlace = this.getValue();
+    return this.isEdit() ? this.tipoEnlaceService.update(tipoEnlace.id, tipoEnlace) :
+      this.tipoEnlaceService.create(tipoEnlace);
+  }
 }

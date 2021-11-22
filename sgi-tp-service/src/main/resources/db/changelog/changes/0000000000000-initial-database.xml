@@ -1,0 +1,67 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:pro="http://www.liquibase.org/xml/ns/pro" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-4.1.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.1.xsd">
+    <changeSet author="user (generated)" id="0000000000000-1">
+        <createSequence incrementBy="1" sequenceName="bean_method_tasks_seq" startValue="1"/>
+    </changeSet>
+    <changeSet author="user (generated)" id="0000000000000-2">
+        <createTable tableName="bean_method_cron_tasks">
+            <column name="cron_expression" type="VARCHAR(256)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="bean_method_cron_tasksPK"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="user (generated)" id="0000000000000-3">
+        <createTable tableName="bean_method_instant_tasks">
+            <column name="instant" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="bean_method_instant_tasksPK"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="user (generated)" id="0000000000000-4">
+        <createTable tableName="bean_method_task_params">
+            <column name="bean_method_tasks_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="param" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="user (generated)" id="0000000000000-5">
+        <createTable tableName="bean_method_tasks">
+            <column name="schedule_type" type="VARCHAR(31)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="bean_method_tasksPK"/>
+            </column>
+            <column name="created_by" type="VARCHAR(255)"/>
+            <column name="creation_date" type="TIMESTAMP"/>
+            <column name="last_modified_by" type="VARCHAR(255)"/>
+            <column name="last_modified_date" type="TIMESTAMP"/>
+            <column name="bean" type="VARCHAR(256)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="description" type="VARCHAR(1024)"/>
+            <column defaultValueBoolean="false" name="disabled" type="BOOLEAN">
+                <constraints nullable="false"/>
+            </column>
+            <column name="method" type="VARCHAR(256)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="user (generated)" id="0000000000000-6">
+        <addForeignKeyConstraint baseColumnNames="id" baseTableName="bean_method_instant_tasks" constraintName="FK7b4hdpckc0dfgpgnv2x56lykd" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableName="bean_method_tasks" validate="true"/>
+    </changeSet>
+    <changeSet author="user (generated)" id="0000000000000-7">
+        <addForeignKeyConstraint baseColumnNames="id" baseTableName="bean_method_cron_tasks" constraintName="FK9vivcmqm60o2qhcfy875jq30v" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableName="bean_method_tasks" validate="true"/>
+    </changeSet>
+    <changeSet author="user (generated)" id="0000000000000-8">
+        <addForeignKeyConstraint baseColumnNames="bean_method_tasks_id" baseTableName="bean_method_task_params" constraintName="FKcdtaljorarsyben1i3w9baidb" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableName="bean_method_tasks" validate="true"/>
+    </changeSet>
+</databaseChangeLog>

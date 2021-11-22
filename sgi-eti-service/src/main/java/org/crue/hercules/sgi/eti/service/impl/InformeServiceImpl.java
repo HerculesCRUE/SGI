@@ -5,6 +5,7 @@ import java.util.Optional;
 import org.crue.hercules.sgi.eti.exceptions.InformeNotFoundException;
 import org.crue.hercules.sgi.eti.model.Informe;
 import org.crue.hercules.sgi.eti.model.Memoria;
+import org.crue.hercules.sgi.eti.model.TipoEvaluacion;
 import org.crue.hercules.sgi.eti.repository.InformeRepository;
 import org.crue.hercules.sgi.eti.service.InformeService;
 import org.crue.hercules.sgi.framework.rsql.SgiRSQLJPASupport;
@@ -170,8 +171,24 @@ public class InformeServiceImpl implements InformeService {
    */
   @Override
   public Optional<Informe> findFirstByMemoriaOrderByVersionDesc(Long id) {
-    Assert.notNull(id, "Memoria id no puede ser null para actualizar un informe");
+    Assert.notNull(id, "Memoria id no puede ser null para buscar un informe");
     return informeRepository.findFirstByMemoriaIdOrderByVersionDesc(id);
+  }
+
+  /**
+   * Devuelve el {@link Informe} filtrado por la {@link Memoria} su versión y su
+   * tipo de evaluación
+   * 
+   * @param id               identificador de la {@link Memoria}
+   * @param idTipoEvaluacion identificador del {@link TipoEvaluacion}
+   * @return el {@link Informe}
+   */
+  @Override
+  public Optional<Informe> findByMemoriaAndTipoEvaluacion(Long id, Long idTipoEvaluacion) {
+    Assert.notNull(id, "Memoria id no puede ser null para buscar un informe");
+    Assert.notNull(idTipoEvaluacion,
+        "El id TipoEvaluacion no puede ser null para buscar un informe por su tipo de evaluación");
+    return informeRepository.findFirstByMemoriaIdAndTipoEvaluacionIdOrderByVersionDesc(id, idTipoEvaluacion);
   }
 
 }

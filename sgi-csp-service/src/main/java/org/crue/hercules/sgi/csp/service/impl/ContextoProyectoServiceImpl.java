@@ -75,7 +75,6 @@ public class ContextoProyectoServiceImpl implements ContextoProyectoService {
     return repository.findByProyectoId(idProyecto).map(contextoProyecto -> {
 
       contextoProyecto.setAreaTematica(contextoProyectoActualizar.getAreaTematica());
-      contextoProyecto.setAreaTematicaConvocatoria(contextoProyectoActualizar.getAreaTematicaConvocatoria());
       contextoProyecto.setIntereses(contextoProyectoActualizar.getIntereses());
       contextoProyecto.setObjetivos(contextoProyectoActualizar.getObjetivos());
       contextoProyecto.setPropiedadResultados(contextoProyectoActualizar.getPropiedadResultados());

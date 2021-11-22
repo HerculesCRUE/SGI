@@ -15,7 +15,7 @@ import { switchMap } from 'rxjs/operators';
 
 const MSG_SUCCESS = marker('msg.update.entity.success');
 const MSG_ERROR = marker('error.update.entity');
-const CONFIGURACION_KEY = marker('eti.configuracion')
+const CONFIGURACION_KEY = marker('eti.configuracion');
 
 @Component({
   selector: 'sgi-configuracion-formulario',
@@ -99,12 +99,9 @@ export class ConfiguracionFormularioComponent implements OnInit, OnDestroy {
    */
   private initFormGroup() {
     this.formGroup = new FormGroup({
-      mesesArchivadaInactivo: new FormControl('', [Validators.required]),
-      diasArchivadaPendienteCorrecciones: new FormControl('', [Validators.required]),
-      diasLimiteEvaluador: new FormControl('', [Validators.required]),
-      mesesAvisoProyectoCEEA: new FormControl('', [Validators.required]),
-      mesesAvisoProyectoCEI: new FormControl('', [Validators.required]),
-      mesesAvisoProyectoCBE: new FormControl('', [Validators.required])
+      diasArchivadaInactivo: new FormControl('', [Validators.required]),
+      mesesArchivadaPendienteCorrecciones: new FormControl('', [Validators.required]),
+      diasLimiteEvaluador: new FormControl('', [Validators.required])
     });
     const formChangesSubscription = this.formGroup.statusChanges.subscribe(status => this.hasChanges(status));
     this.suscripciones.push(formChangesSubscription);
@@ -112,22 +109,16 @@ export class ConfiguracionFormularioComponent implements OnInit, OnDestroy {
 
   private setForm(configuracion: IConfiguracion) {
     this.configuracion = configuracion;
-    this.formGroup.controls.mesesArchivadaInactivo.setValue(configuracion.mesesArchivadaInactivo);
-    this.formGroup.controls.diasArchivadaPendienteCorrecciones.setValue(configuracion.diasArchivadaPendienteCorrecciones);
+    this.formGroup.controls.diasArchivadaInactivo.setValue(configuracion.diasArchivadaInactivo);
+    this.formGroup.controls.mesesArchivadaPendienteCorrecciones.setValue(configuracion.mesesArchivadaPendienteCorrecciones);
     this.formGroup.controls.diasLimiteEvaluador.setValue(configuracion.diasLimiteEvaluador);
-    this.formGroup.controls.mesesAvisoProyectoCEEA.setValue(configuracion.mesesAvisoProyectoCEEA);
-    this.formGroup.controls.mesesAvisoProyectoCEI.setValue(configuracion.mesesAvisoProyectoCEI);
-    this.formGroup.controls.mesesAvisoProyectoCBE.setValue(configuracion.mesesAvisoProyectoCBE);
     this.initialFormValue = Object.assign({}, this.formGroup.value);
   }
 
   private getForm(): IConfiguracion {
-    this.configuracion.mesesArchivadaInactivo = this.formGroup.value.mesesArchivadaInactivo;
-    this.configuracion.diasArchivadaPendienteCorrecciones = this.formGroup.value.diasArchivadaPendienteCorrecciones;
+    this.configuracion.diasArchivadaInactivo = this.formGroup.value.diasArchivadaInactivo;
+    this.configuracion.mesesArchivadaPendienteCorrecciones = this.formGroup.value.mesesArchivadaPendienteCorrecciones;
     this.configuracion.diasLimiteEvaluador = this.formGroup.value.diasLimiteEvaluador;
-    this.configuracion.mesesAvisoProyectoCEEA = this.formGroup.value.mesesAvisoProyectoCEEA;
-    this.configuracion.mesesAvisoProyectoCEI = this.formGroup.value.mesesAvisoProyectoCEI;
-    this.configuracion.mesesAvisoProyectoCBE = this.formGroup.value.mesesAvisoProyectoCBE;
     return this.configuracion;
   }
 
@@ -172,11 +163,8 @@ export class ConfiguracionFormularioComponent implements OnInit, OnDestroy {
 
   private isEquals(initFormValue: IConfiguracion, formValue: IConfiguracion): boolean {
     if (initFormValue && formValue) {
-      if (initFormValue.mesesArchivadaInactivo === formValue.mesesArchivadaInactivo
-        && initFormValue.mesesAvisoProyectoCEEA === formValue.mesesAvisoProyectoCEEA
-        && initFormValue.mesesAvisoProyectoCEI === formValue.mesesAvisoProyectoCEI
-        && initFormValue.mesesAvisoProyectoCBE === formValue.mesesAvisoProyectoCBE
-        && initFormValue.diasArchivadaPendienteCorrecciones === formValue.diasArchivadaPendienteCorrecciones
+      if (initFormValue.diasArchivadaInactivo === formValue.diasArchivadaInactivo
+        && initFormValue.mesesArchivadaPendienteCorrecciones === formValue.mesesArchivadaPendienteCorrecciones
         && initFormValue.diasLimiteEvaluador === formValue.diasLimiteEvaluador) {
         return true;
       }

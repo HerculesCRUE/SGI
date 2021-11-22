@@ -8,23 +8,26 @@
   <form class="form-inline" [formGroup]="formGroup">
     <div>
       <div>
-        <mat-form-field class="input-form">
+        <mat-form-field>
           <mat-label>{{'list.entity' | translate:msgParamEntity}}</mat-label>
-          <input type="text" placeholder="{{'list.entity' | translate:msgParamEntity}}" arial-label="Number" matInput
-            formControlName="padre">
+          <sgi-select-area-tematica formControlName="padre" required></sgi-select-area-tematica>
+          <mat-error *ngIf="formGroup.controls.padre.errors?.required">
+            {{ 'error.required.entity' | translate:msgParamEntity }}
+          </mat-error>
         </mat-form-field>
       </div>
     </div>
     <div>
+      <h4>{{'csp.proyecto.select-area-tematica' | translate}}</h4>
       <div class="programa">
         <div class="arbol">
           <mat-tree [dataSource]="dataSource" [treeControl]="treeControl" class="arbol-tree">
             <mat-tree-node *matTreeNodeDef="let node" matTreeNodeToggle>
               <li class="mat-tree-node">
                 <button mat-icon-button disabled></button>
-                <mat-checkbox class="checkbox" color="primary" [checked]="node === checkedNode"
-                  (change)="onCheckNode(node, $event)">
-                  {{node.areaTematica.value.nombre}}
+                <mat-checkbox class="checkbox" color="primary" [disabled]="node.disabled"
+                  [checked]="node === checkedNode" (change)="onCheckNode(node, $event)">
+                  {{node?.areaTematica.value.nombre}}
                 </mat-checkbox>
               </li>
             </mat-tree-node>
@@ -32,14 +35,14 @@
               <li>
                 <div class="mat-tree-node">
                   <button mat-icon-button matTreeNodeToggle
-                    [attr.aria-label]="'Toggle ' + node.areaTematica.value.nombre">
+                    [attr.aria-label]="'Toggle ' + node?.areaTematica.value.nombre">
                     <mat-icon color="primary" class="mat-icon-rtl-mirror">
                       {{treeControl.isExpanded(node) ? 'expand_more' : 'chevron_right'}}
                     </mat-icon>
                   </button>
-                  <mat-checkbox class="checkbox" color="primary" [checked]="node === checkedNode"
-                    (change)="onCheckNode(node, $event)">
-                    {{node.areaTematica.value.nombre}}
+                  <mat-checkbox class="checkbox" color="primary" [disabled]="node.disabled"
+                    [checked]="node === checkedNode" (change)="onCheckNode(node, $event)">
+                    {{node?.areaTematica.value.nombre}}
                   </mat-checkbox>
                 </div>
                 <ul [class.arbol-invisible]="!treeControl.isExpanded(node)">
@@ -54,7 +57,7 @@
   </form>
 </mat-dialog-content>
 <mat-dialog-actions>
-  <button color="accent" (click)="saveOrUpdate()" mat-raised-button type="submit" *ngIf="!this.data.readonly">
+  <button color="accent" (click)="saveOrUpdate()" mat-raised-button type="submit" [disabled]="!this.checkedNode">
     <mat-icon class="save-icon">save</mat-icon>{{textSaveOrUpdate |
     translate}}
   </button>

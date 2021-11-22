@@ -5,6 +5,7 @@ import java.util.Optional;
 import org.crue.hercules.sgi.eti.exceptions.InformeNotFoundException;
 import org.crue.hercules.sgi.eti.model.Informe;
 import org.crue.hercules.sgi.eti.model.Memoria;
+import org.crue.hercules.sgi.eti.model.TipoEvaluacion;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -82,5 +83,15 @@ public interface InformeService {
    * @return el {@link Informe}
    */
   Optional<Informe> findFirstByMemoriaOrderByVersionDesc(Long id);
+
+  /**
+   * Devuelve el {@link Informe} filtrado por la {@link Memoria} su versión y su
+   * tipo de evaluación
+   * 
+   * @param id               identificador de la {@link Memoria}
+   * @param idTipoEvaluacion identificador del {@link TipoEvaluacion}
+   * @return el {@link Informe}
+   */
+  Optional<Informe> findByMemoriaAndTipoEvaluacion(Long id, Long idTipoEvaluacion);
 
 }

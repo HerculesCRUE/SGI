@@ -13,7 +13,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
-import org.crue.hercules.sgi.pii.validation.EntidadActiva;
+import org.crue.hercules.sgi.framework.validation.ActivableIsActivo;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -63,7 +63,7 @@ public class InformePatentabilidad extends BaseEntity {
   /** Tipo de protección. */
   @ManyToOne
   @JoinColumn(name = "resultado_informe_patentabilidad_id", nullable = false, foreignKey = @ForeignKey(name = "FK_INFORMEPATENTABILIDAD_RESULTADOINFORMEPATENTABILIDAD"))
-  @EntidadActiva(entityClass = ResultadoInformePatentabilidad.class, groups = { OnCrear.class,
+  @ActivableIsActivo(entityClass = ResultadoInformePatentabilidad.class, groups = { OnCrear.class,
       OnActualizarResultadoInformePatentabilidad.class })
   private ResultadoInformePatentabilidad resultadoInformePatentabilidad;
 

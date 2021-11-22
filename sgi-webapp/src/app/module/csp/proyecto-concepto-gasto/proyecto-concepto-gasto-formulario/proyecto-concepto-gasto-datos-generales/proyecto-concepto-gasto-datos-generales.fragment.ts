@@ -141,49 +141,57 @@ export class ProyectoConceptoGastoDatosGeneralesFragment extends FormFragment<IP
         skipWhile(initialized => !initialized)
       ).subscribe(() => {
 
+        if (!this.proyectoConceptoGasto.id) {
+          this.disableEditableControls();
+        }
+
         this.proyectoConceptoGasto.convocatoriaConceptoGastoId = convocatoriaConceptoGasto.id;
         this.getFormGroup().controls.conceptoGasto.disable();
 
+        this.showDatosConvocatoriaConceptoGasto = true;
+        this.getFormGroup().controls.conceptoGastoConvocatoria.setValue(convocatoriaConceptoGasto.conceptoGasto);
+        this.getFormGroup().controls.observacionesConvocatoria.setValue(convocatoriaConceptoGasto.observaciones);
+        this.getFormGroup().controls.costesIndirectosConvocatoria.setValue(convocatoriaConceptoGasto.conceptoGasto.costesIndirectos);
 
-        if (compareConceptoGasto(convocatoriaConceptoGasto, this.proyectoConceptoGasto,
-          this.proyecto.fechaInicio, this.proyecto.fechaFin)) {
+        if (this.permitido) {
+          this.getFormGroup().controls.importeMaximoConvocatoria.setValue(convocatoriaConceptoGasto.importeMaximo);
+        }
 
-          this.showDatosConvocatoriaConceptoGasto = true;
-          this.getFormGroup().controls.conceptoGastoConvocatoria.setValue(convocatoriaConceptoGasto.conceptoGasto);
-          this.getFormGroup().controls.observacionesConvocatoria.setValue(convocatoriaConceptoGasto.observaciones);
-          this.getFormGroup().controls.costesIndirectosConvocatoria.setValue(convocatoriaConceptoGasto.conceptoGasto.costesIndirectos);
+        let fechaInicioConceptoGasto: DateTime;
+        if (convocatoriaConceptoGasto.mesInicial) {
+          fechaInicioConceptoGasto = getFechaInicioConceptoGasto(this.proyecto.fechaInicio,
+            convocatoriaConceptoGasto.mesInicial);
+          this.getFormGroup().controls.fechaInicioConvocatoria.setValue(fechaInicioConceptoGasto);
+        }
 
-          if (this.permitido) {
-            this.getFormGroup().controls.importeMaximoConvocatoria.setValue(convocatoriaConceptoGasto.importeMaximo);
-          }
+        if (convocatoriaConceptoGasto.mesFinal) {
+          this.getFormGroup().controls.fechaFinConvocatoria.setValue(getFechaFinConceptoGasto(this.proyecto.fechaInicio,
+            this.proyecto.fechaFin, convocatoriaConceptoGasto.mesFinal, fechaInicioConceptoGasto));
+        }
 
-          let fechaInicioConceptoGasto: DateTime;
-          if (convocatoriaConceptoGasto.mesInicial) {
-            fechaInicioConceptoGasto = getFechaInicioConceptoGasto(this.proyecto.fechaInicio,
-              convocatoriaConceptoGasto.mesInicial);
-            this.getFormGroup().controls.fechaInicioConvocatoria.setValue(fechaInicioConceptoGasto);
-          }
-
-          if (convocatoriaConceptoGasto.mesFinal) {
-            this.getFormGroup().controls.fechaFinConvocatoria.setValue(getFechaFinConceptoGasto(this.proyecto.fechaInicio,
-              this.proyecto.fechaFin, convocatoriaConceptoGasto.mesFinal, fechaInicioConceptoGasto));
-          }
-
-          if (this.proyectoConceptoGasto.id) {
-            this.refreshInitialState();
-          } else {
-            this.getFormGroup().controls.conceptoGasto.setValue(convocatoriaConceptoGasto.conceptoGasto);
-            this.disabledCopy = !compareConceptoGasto(this.convocatoriaConceptoGasto,
-              {
-                conceptoGasto: this.convocatoriaConceptoGasto.conceptoGasto,
-                importeMaximo: null,
-                observaciones: null
-              } as IProyectoConceptoGasto,
-              this.proyecto.fechaInicio, this.proyecto.fechaFin);
-          }
+        if (this.proyectoConceptoGasto.id) {
+          this.refreshInitialState();
         }
       })
     );
+  }
+
+  private disableEditableControls(): void {
+    if (this.permitido) {
+      this.getFormGroup().controls.importeMaximo.disable();
+    }
+    this.getFormGroup().controls.fechaInicio.disable();
+    this.getFormGroup().controls.fechaFin.disable();
+    this.getFormGroup().controls.observaciones.disable();
+  }
+
+  enableEditableControls(): void {
+    if (this.permitido) {
+      this.getFormGroup().controls.importeMaximo.enable();
+    }
+    this.getFormGroup().controls.fechaInicio.enable();
+    this.getFormGroup().controls.fechaFin.enable();
+    this.getFormGroup().controls.observaciones.enable();
   }
 
   saveOrUpdate(): Observable<number> {

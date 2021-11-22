@@ -8,10 +8,12 @@ import { MSG_PARAMS } from '@core/i18n';
 import { ICategoriaProfesional } from '@core/models/sgp/categoria-profesional';
 import { CategoriaProfesionalService } from '@core/services/sgp/categoria-profesional.service';
 import { SnackBarService } from '@core/services/snack-bar.service';
+import { TranslateService } from '@ngx-translate/core';
 import { NGXLogger } from 'ngx-logger';
 import { BehaviorSubject } from 'rxjs';
 
 const MSG_ERROR_LOAD = marker('error.load');
+const CONVOCATORIA_CATEGORIA_PROFESIONAL_KEY = marker('csp.convocatoria.categoria-profesional');
 
 export interface CategoriaProfesionalModalData {
   selectedEntidades: ICategoriaProfesional[];
@@ -27,11 +29,14 @@ export class CategoriaProfesionalModalComponent
 
   readonly categoriasProfesionales$ = new BehaviorSubject<ICategoriaProfesional[]>([]);
 
+  msgParamCategoriaProfesional = {};
+
   constructor(
     private readonly logger: NGXLogger,
     public matDialogRef: MatDialogRef<CategoriaProfesionalModalComponent>,
     private categoriaProfesionalService: CategoriaProfesionalService,
     protected readonly snackBarService: SnackBarService,
+    private readonly translate: TranslateService,
     @Inject(MAT_DIALOG_DATA) public data: CategoriaProfesionalModalData,
   ) {
     super(snackBarService, matDialogRef, null);
@@ -57,7 +62,14 @@ export class CategoriaProfesionalModalComponent
 
   ngOnInit(): void {
     super.ngOnInit();
+    this.setupI18N();
+  }
 
+  protected setupI18N(): void {
+    this.translate.get(
+      CONVOCATORIA_CATEGORIA_PROFESIONAL_KEY,
+      MSG_PARAMS.CARDINALIRY.SINGULAR
+    ).subscribe((value) => this.msgParamCategoriaProfesional = { entity: value, ...MSG_PARAMS.GENDER.FEMALE, ...MSG_PARAMS.CARDINALIRY.SINGULAR });
   }
 
   protected getFormGroup(): FormGroup {

@@ -17,8 +17,8 @@ export class EmpresaService extends SgiRestService<string, IEmpresa> {
       `${environment.serviceServers.sgemp}${EmpresaService.MAPPING}`, http);
   }
 
-  createEmpresa(model: any): Observable<void> {
-    return this.http.post<void>(`${this.endpointUrl}/formly`, model);
+  createEmpresa(model: any): Observable<string> {
+    return this.http.post<string>(`${this.endpointUrl}/formly`, model);
   }
 
   updateEmpresa(id: string, model: any): Observable<void> {

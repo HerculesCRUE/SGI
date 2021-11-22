@@ -14,7 +14,7 @@ import javax.validation.Payload;
 public @interface DesdeLowerThanHastaTramoReparto {
   String message() default "{org.crue.hercules.sgi.pii.validation.DesdeLowerThanHastaTramoReparto.message}";
 
-  String field() default "org.crue.hercules.sgi.pii.model.DesdeLowerThanHastaTramoReparto.to";
+  String field() default "org.crue.hercules.sgi.pii.model.DesdeLowerThanHastaTramoReparto.stretch";
 
   Class<?>[] groups() default {};
 

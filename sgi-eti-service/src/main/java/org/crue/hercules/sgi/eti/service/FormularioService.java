@@ -54,4 +54,13 @@ public interface FormularioService {
    */
   void deleteAll();
 
+  /**
+   * Obtiene {@link Formulario} por id de la memoria.
+   *
+   * @param idMemoria el id de la memoria
+   * @return la entidad {@link Formulario}.
+   * @return Formulario
+   */
+  Formulario findByMemoriaId(Long idMemoria);
+
 }

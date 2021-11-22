@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @WebMvcTest
-public class SgiMethodSecurityExpressionRootIT {
+class SgiMethodSecurityExpressionRootIT {
 
   @Autowired
   private MockMvc mockMvc;
@@ -51,7 +51,7 @@ public class SgiMethodSecurityExpressionRootIT {
    */
   @Test
   @WithMockUser(username = "user", authorities = { "AUTH_UO1" })
-  public void requestTestAuth_WithAuthForUO1_returnsOk() throws Exception {
+  void requestTestAuth_WithAuthForUO1_returnsOk() throws Exception {
     // given:
 
     // when:
@@ -65,7 +65,7 @@ public class SgiMethodSecurityExpressionRootIT {
    */
   @Test
   @WithMockUser(username = "user", authorities = { "AUTH_UO2" })
-  public void requestTestAuth_WithAuthForUO2_returnsForbidden() throws Exception {
+  void requestTestAuth_WithAuthForUO2_returnsForbidden() throws Exception {
     // given:
 
     // when:
@@ -79,7 +79,7 @@ public class SgiMethodSecurityExpressionRootIT {
    */
   @Test
   @WithMockUser(username = "user", authorities = { "AUTH_UO1" })
-  public void requestTestAuthForAnyUO_WithAuthForUO1_returnsOk() throws Exception {
+  void requestTestAuthForAnyUO_WithAuthForUO1_returnsOk() throws Exception {
     // given:
 
     // when:
@@ -93,7 +93,7 @@ public class SgiMethodSecurityExpressionRootIT {
    */
   @Test
   @WithMockUser(username = "user", authorities = { "AUTH_UO2" })
-  public void requestTestAuthForAnyUO_WithAuthForUO2_returnsOk() throws Exception {
+  void requestTestAuthForAnyUO_WithAuthForUO2_returnsOk() throws Exception {
     // given:
 
     // when:

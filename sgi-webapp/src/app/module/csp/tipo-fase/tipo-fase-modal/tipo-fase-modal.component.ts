@@ -1,17 +1,15 @@
-import { Component, Inject, OnInit } from '@angular/core';
-import { FormControl, FormGroup } from '@angular/forms';
+import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
-import { BaseModalComponent } from '@core/component/base-modal.component';
+import { DialogActionComponent } from '@core/component/dialog-action.component';
 import { MSG_PARAMS } from '@core/i18n';
 import { ITipoFase } from '@core/models/csp/tipos-configuracion';
-import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-properties';
-import { SnackBarService } from '@core/services/snack-bar.service';
+import { TipoFaseService } from '@core/services/csp/tipo-fase.service';
 import { TranslateService } from '@ngx-translate/core';
+import { Observable } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 
-const MSG_ANADIR = marker('btn.add');
-const MSG_ACEPTAR = marker('btn.ok');
 const TIPO_FASE_KEY = marker('csp.tipo-fase');
 const TIPO_FASE_NOMBRE_KEY = marker('csp.tipo-fase.nombre');
 const TITLE_NEW_ENTITY = marker('title.new.entity');
@@ -21,31 +19,24 @@ const TITLE_NEW_ENTITY = marker('title.new.entity');
   templateUrl: './tipo-fase-modal.component.html',
   styleUrls: ['./tipo-fase-modal.component.scss']
 })
-export class TipoFaseModalComponent extends
-  BaseModalComponent<ITipoFase, TipoFaseModalComponent> implements OnInit {
-  fxLayoutProperties: FxLayoutProperties;
+export class TipoFaseModalComponent extends DialogActionComponent<ITipoFase, ITipoFase> implements OnInit, OnDestroy {
 
-  textSaveOrUpdate: string;
+  private readonly tipoFase: ITipoFase;
   title: string;
   msgParamNombreEntity = {};
 
   constructor(
-    protected readonly snackBarService: SnackBarService,
-    public readonly matDialogRef: MatDialogRef<TipoFaseModalComponent>,
-    @Inject(MAT_DIALOG_DATA) public tipoFase: ITipoFase,
+    matDialogRef: MatDialogRef<TipoFaseModalComponent>,
+    @Inject(MAT_DIALOG_DATA) data: ITipoFase,
+    private readonly tipoFaseService: TipoFaseService,
     private readonly translate: TranslateService
   ) {
-    super(snackBarService, matDialogRef, tipoFase);
+    super(matDialogRef, !!data.id);
 
-    this.fxLayoutProperties = new FxLayoutProperties();
-    this.fxLayoutProperties.layout = 'row';
-    this.fxLayoutProperties.layoutAlign = 'row';
-    if (tipoFase.id) {
-      this.tipoFase = { ...tipoFase };
-      this.textSaveOrUpdate = MSG_ACEPTAR;
+    if (this.isEdit()) {
+      this.tipoFase = { ...data };
     } else {
       this.tipoFase = { activo: true } as ITipoFase;
-      this.textSaveOrUpdate = MSG_ANADIR;
     }
   }
 
@@ -60,7 +51,7 @@ export class TipoFaseModalComponent extends
       MSG_PARAMS.CARDINALIRY.SINGULAR
     ).subscribe((value) => this.msgParamNombreEntity = { entity: value, ...MSG_PARAMS.GENDER.MALE, ...MSG_PARAMS.CARDINALIRY.SINGULAR });
 
-    if (this.tipoFase.nombre) {
+    if (this.isEdit()) {
       this.translate.get(
         TIPO_FASE_KEY,
         MSG_PARAMS.CARDINALIRY.SINGULAR
@@ -80,19 +71,24 @@ export class TipoFaseModalComponent extends
     }
   }
 
-  protected getDatosForm(): ITipoFase {
+  protected getValue(): ITipoFase {
     this.tipoFase.nombre = this.formGroup.controls.nombre.value;
     this.tipoFase.descripcion = this.formGroup.controls.descripcion.value;
     return this.tipoFase;
   }
 
-  protected getFormGroup(): FormGroup {
+  protected buildFormGroup(): FormGroup {
     const formGroup = new FormGroup({
-      nombre: new FormControl(this.tipoFase?.nombre),
-      descripcion: new FormControl(this.tipoFase?.descripcion)
+      nombre: new FormControl(this.tipoFase?.nombre ?? '', Validators.required),
+      descripcion: new FormControl(this.tipoFase?.descripcion ?? '')
     });
 
     return formGroup;
   }
-}
 
+  protected saveOrUpdate(): Observable<ITipoFase> {
+    const tipoFase = this.getValue();
+    return this.isEdit() ? this.tipoFaseService.update(tipoFase.id, tipoFase) :
+      this.tipoFaseService.create(tipoFase);
+  }
+}

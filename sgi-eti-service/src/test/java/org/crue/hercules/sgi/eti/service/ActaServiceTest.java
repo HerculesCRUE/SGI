@@ -15,6 +15,7 @@ import org.crue.hercules.sgi.eti.model.ConvocatoriaReunion;
 import org.crue.hercules.sgi.eti.model.EstadoActa;
 import org.crue.hercules.sgi.eti.model.TipoConvocatoriaReunion;
 import org.crue.hercules.sgi.eti.model.TipoEstadoActa;
+import org.crue.hercules.sgi.eti.model.Comite.Genero;
 import org.crue.hercules.sgi.eti.repository.ActaRepository;
 import org.crue.hercules.sgi.eti.repository.EstadoActaRepository;
 import org.crue.hercules.sgi.eti.repository.EvaluacionRepository;
@@ -35,6 +36,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.test.context.support.WithMockUser;
 
 /**
@@ -58,6 +60,10 @@ public class ActaServiceTest extends BaseServiceTest {
   private RetrospectivaRepository retrospectivaRepository;
   @Mock
   private RetrospectivaService retrospectivaService;
+  @Mock
+  private ReportService reportService;
+  @Mock
+  private SgdocService sgdocService;
 
   private ActaService actaService;
   private MemoriaService memoriaService;
@@ -65,7 +71,8 @@ public class ActaServiceTest extends BaseServiceTest {
   @BeforeEach
   public void setUp() throws Exception {
     actaService = new ActaServiceImpl(actaRepository, estadoActaRepository, tipoEstadoActaRepository,
-        evaluacionRepository, retrospectivaRepository, memoriaService, retrospectivaService);
+        evaluacionRepository, retrospectivaRepository, memoriaService, retrospectivaService, reportService,
+        sgdocService);
   }
 
   @Test
@@ -220,7 +227,7 @@ public class ActaServiceTest extends BaseServiceTest {
       actas.add(generarMockActaWithNumEvaluaciones(Long.valueOf(i), i));
     }
 
-    BDDMockito.given(actaRepository.findAllActaWithNumEvaluaciones(ArgumentMatchers.<String>any(),
+    BDDMockito.given(actaRepository.findAllActaWithNumEvaluaciones(ArgumentMatchers.<Specification<Acta>>any(),
         ArgumentMatchers.<Pageable>any(), ArgumentMatchers.<String>any())).willReturn(new PageImpl<>(actas));
 
     // when: find unlimited
@@ -244,7 +251,7 @@ public class ActaServiceTest extends BaseServiceTest {
     }
 
     BDDMockito
-        .given(actaRepository.findAllActaWithNumEvaluaciones(ArgumentMatchers.<String>any(),
+        .given(actaRepository.findAllActaWithNumEvaluaciones(ArgumentMatchers.<Specification<Acta>>any(),
             ArgumentMatchers.<Pageable>any(), ArgumentMatchers.<String>any()))
         .willAnswer(new Answer<Page<ActaWithNumEvaluaciones>>() {
           @Override
@@ -328,6 +335,8 @@ public class ActaServiceTest extends BaseServiceTest {
     Comite comite = new Comite();
     comite.setId(1L);
     comite.setComite("CEEA");
+    comite.setGenero(Genero.M);
+
     TipoConvocatoriaReunion tipoConvocatoriaReunion = new TipoConvocatoriaReunion(1L, "Ordinaria", Boolean.TRUE);
     ConvocatoriaReunion convocatoriaReunion = new ConvocatoriaReunion();
     convocatoriaReunion.setId(100L);

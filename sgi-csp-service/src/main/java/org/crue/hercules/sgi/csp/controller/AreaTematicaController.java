@@ -124,7 +124,7 @@ public class AreaTematicaController {
    * @return la lista de entidades {@link AreaTematica} paginadas
    */
   @GetMapping()
-  @PreAuthorize("hasAuthorityForAnyUO('CSP-CON-INV-V')")
+  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-CON-INV-V', 'CSP-SOL-INV-C', 'CSP-SOL-INV-ER')")
   ResponseEntity<Page<AreaTematica>> findAll(@RequestParam(name = "q", required = false) String query,
       @RequestPageable(sort = "s") Pageable paging) {
     log.debug("findAll(String query, Pageable paging) - start");
@@ -148,7 +148,7 @@ public class AreaTematicaController {
    * @return la lista de entidades {@link AreaTematica} paginadas
    */
   @GetMapping("/grupo")
-  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-CON-V', 'CSP-CON-C', 'CSP-CON-E','CSP-CON-R','CSP-CON-B','CSP-PRO-E')")
+  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-CON-V', 'CSP-CON-C', 'CSP-CON-E','CSP-CON-R','CSP-CON-B','CSP-PRO-E', 'CSP-SOL-INV-C' ,'CSP-SOL-INV-ER')")
   ResponseEntity<Page<AreaTematica>> findAllGrupo(@RequestParam(name = "q", required = false) String query,
       @RequestPageable(sort = "s") Pageable paging) {
     log.debug("findAllGrupo(String query, Pageable paging) - start");
@@ -172,7 +172,7 @@ public class AreaTematicaController {
    * @return la lista de entidades {@link AreaTematica} paginadas
    */
   @GetMapping("/grupo/todos")
-  @PreAuthorize("hasAnyAuthority('CSP-AREA-V', 'CSP-AREA-C', 'CSP-AREA-E', 'CSP-AREA-B', 'CSP-AREA-R')")
+  @PreAuthorize("hasAnyAuthority('CSP-AREA-V', 'CSP-AREA-C', 'CSP-AREA-E', 'CSP-AREA-B', 'CSP-AREA-R', 'CSP-SOL-INV-C', 'CSP-SOL-INV-ER')")
   ResponseEntity<Page<AreaTematica>> findAllTodosGrupo(@RequestParam(name = "q", required = false) String query,
       @RequestPageable(sort = "s") Pageable paging) {
     log.debug("findAllTodosGrupo(String query, Pageable paging) - start");
@@ -196,7 +196,7 @@ public class AreaTematicaController {
    * @return la lista de entidades {@link AreaTematica} paginadas
    */
   @GetMapping("/{id}/hijos")
-  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-CON-C', 'CSP-CON-E', 'CSP-PRO-E', 'CSP-AREA-E')")
+  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-CON-C', 'CSP-CON-E', 'CSP-PRO-E', 'CSP-AREA-E', 'CSP-SOL-INV-C', 'CSP-SOL-INV-ER')")
   ResponseEntity<Page<AreaTematica>> findAllHijosAreaTematica(@PathVariable Long id,
       @RequestParam(name = "q", required = false) String query, @RequestPageable(sort = "s") Pageable paging) {
     log.debug("findAllHijosAreaTematica(String query, Pageable paging) - start");

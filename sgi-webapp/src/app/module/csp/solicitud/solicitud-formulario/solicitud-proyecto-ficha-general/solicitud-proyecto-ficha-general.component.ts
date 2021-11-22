@@ -8,16 +8,16 @@ import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { FormFragmentComponent } from '@core/component/fragment.component';
 import { FormularioSolicitud } from '@core/enums/formulario-solicitud';
 import { MSG_PARAMS } from '@core/i18n';
+import { IAreaTematica } from '@core/models/csp/area-tematica';
 import { ISolicitudProyecto, TIPO_PRESUPUESTO_MAP } from '@core/models/csp/solicitud-proyecto';
 import { FxFlexProperties } from '@core/models/shared/flexLayout/fx-flex-properties';
 import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-properties';
-import { GLOBAL_CONSTANTS } from '@core/utils/global-constants';
 import { TranslateService } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
-import { SolicitudAreaTematicaModalComponent } from '../../modals/solicitud-area-tematica-modal/solicitud-area-tematica-modal.component';
+import { AreaTematicaModalData, SolicitudAreaTematicaModalComponent } from '../../modals/solicitud-area-tematica-modal/solicitud-area-tematica-modal.component';
 import { SOLICITUD_ROUTE_NAMES } from '../../solicitud-route-names';
 import { SolicitudActionService } from '../../solicitud.action.service';
-import { AreaTematicaSolicitudData, SolicitudProyectoFichaGeneralFragment } from './solicitud-proyecto-ficha-general.fragment';
+import { SolicitudProyectoFichaGeneralFragment } from './solicitud-proyecto-ficha-general.fragment';
 
 const SOLICITUD_DATOS_PROYECTO_FICHA_GENERAL_ACRONIMO_KEY = marker('csp.solicitud-datos-proyecto-ficha-general.acronimo');
 const SOLICITUD_DATOS_PROYECTO_FICHA_GENERAL_COD_EXTERNO_KEY = marker('csp.solicitud-datos-proyecto-ficha-general.codigo-externo');
@@ -28,6 +28,11 @@ const SOLICITUD_DATOS_PROYECTO_FICHA_GENERAL_TIPO_DESGLOSE_PRESUPUESTO_KEY = mar
 const AREA_TEMATICA_KEY = marker('csp.area-tematica');
 const AREA_KEY = marker('csp.area');
 
+export interface AreaTematicaListado {
+  padre: IAreaTematica;
+  areasTematicasConvocatoria: string;
+  areaTematicaSolicitud: IAreaTematica;
+}
 @Component({
   selector: 'sgi-solicitud-proyecto-ficha-general',
   templateUrl: './solicitud-proyecto-ficha-general.component.html',
@@ -49,7 +54,9 @@ export class SolicitudProyectoFichaGeneralComponent extends FormFragmentComponen
   msgParamAreaEntities: {};
   msgParamCodExternoEntity = {};
 
-  convocatoriaAreaTematicas = new MatTableDataSource<AreaTematicaSolicitudData>();
+  areasConvocatoria: IAreaTematica[];
+
+  listadoAreaTematicas = new MatTableDataSource<AreaTematicaListado>();
   @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
   @ViewChild(MatSort, { static: true }) sort: MatSort;
   columns = ['nombreRaizArbol', 'areaTematicaConvocatoria', 'areaTematicaSolicitud', 'acciones'];
@@ -144,24 +151,44 @@ export class SolicitudProyectoFichaGeneralComponent extends FormFragmentComponen
   }
 
   private loadAreaTematicas(): void {
-    const subscription = this.formPart.areasTematicas$.subscribe(
-      data => this.convocatoriaAreaTematicas.data = data
+    const subscription = this.formPart.areasTematicas$.subscribe((data) => {
+      if (!data || data.length === 0) {
+        this.listadoAreaTematicas.data = [];
+      } else {
+        this.areasConvocatoria = data[0]?.areaTematicaConvocatoria;
+        const listadoAreas: AreaTematicaListado = {
+          padre: data[0]?.rootTree,
+          areasTematicasConvocatoria: data[0]?.areaTematicaConvocatoria?.map(area => area.nombre).join(', '),
+          areaTematicaSolicitud: data[0]?.areaTematicaSolicitud
+        };
+        this.listadoAreaTematicas.data = [listadoAreas];
+      }
+    }
     );
     this.subscriptions.push(subscription);
-    this.convocatoriaAreaTematicas.paginator = this.paginator;
-    this.convocatoriaAreaTematicas.sort = this.sort;
+    this.listadoAreaTematicas.paginator = this.paginator;
+    this.listadoAreaTematicas.sort = this.sort;
   }
 
-  openModal(data: AreaTematicaSolicitudData): void {
+  deleteAreaTematicaListado(data?: AreaTematicaListado) {
+    this.formPart.deleteAreaTematica();
+  }
+
+  openModal(data?: AreaTematicaListado): void {
     const config = {
       panelClass: 'sgi-dialog-container',
-      data
+      data: {
+        padre: data?.padre ?? this.formGroup.controls.padre?.value,
+        areasTematicasConvocatoria: this.areasConvocatoria,
+        areaTematicaSolicitud: data?.areaTematicaSolicitud,
+      } as AreaTematicaModalData,
     };
     const dialogRef = this.matDialog.open(SolicitudAreaTematicaModalComponent, config);
     dialogRef.afterClosed().subscribe(
-      (result: AreaTematicaSolicitudData) => {
-        this.formPart.solicitudProyecto.areaTematica = result?.areaTematicaSolicitud;
-        this.formPart.setChanges(true);
+      (result: AreaTematicaModalData) => {
+        if (result) {
+          this.formPart.updateAreaTematica(result);
+        }
       }
     );
   }

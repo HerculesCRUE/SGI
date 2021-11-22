@@ -10,11 +10,15 @@
     <formly-form [form]="formGroup" [fields]="formlyData.fields" [options]="options" [model]="formlyData.model">
     </formly-form>
   </form>
-
 </mat-dialog-content>
 <mat-dialog-actions>
-  <button color="accent" (click)="saveOrUpdate()" mat-raised-button type="submit">
+  <button color="accent" *ngIf="proyectoData.action === ACTION_MODAL_MODE.NEW" (click)="saveOrUpdate()"
+    mat-raised-button type="submit">
     <mat-icon class="save-icon">save</mat-icon>{{'btn.request.add' | translate}}
+  </button>
+  <button color="accent" *ngIf="proyectoData.action === ACTION_MODAL_MODE.EDIT" (click)="saveOrUpdate()"
+    mat-raised-button type="submit">
+    <mat-icon class="save-icon">save</mat-icon>{{'btn.request.add-notify' | translate}}
   </button>
   <button class="link-cancelar" mat-button type="button" mat-dialog-close>{{'btn.cancel' | translate}}</button>
 </mat-dialog-actions>

@@ -1,6 +1,6 @@
 import { NestedTreeControl } from '@angular/cdk/tree';
 import { Component, Inject, OnInit } from '@angular/core';
-import { FormControl, FormGroup } from '@angular/forms';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatCheckboxChange } from '@angular/material/checkbox';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatTreeNestedDataSource } from '@angular/material/tree';
@@ -16,14 +16,21 @@ import { TranslateService } from '@ngx-translate/core';
 import { NGXLogger } from 'ngx-logger';
 import { BehaviorSubject, from, Observable, of } from 'rxjs';
 import { map, mergeMap, switchMap, takeLast } from 'rxjs/operators';
-import { AreaTematicaSolicitudData } from '../../solicitud-formulario/solicitud-proyecto-ficha-general/solicitud-proyecto-ficha-general.fragment';
 
 const AREA_TEMATICA_KEY = marker('csp.area-tematica');
 const TITLE_NEW_ENTITY = marker('title.new.entity');
 
+export interface AreaTematicaModalData {
+  padre: IAreaTematica;
+  areasTematicasConvocatoria: IAreaTematica[];
+  areaTematicaSolicitud: IAreaTematica;
+}
+
 class NodeAreaTematica {
   parent: NodeAreaTematica;
   areaTematica: StatusWrapper<IAreaTematica>;
+  checked: boolean;
+  disabled: boolean;
   // tslint:disable-next-line: variable-name
   _childs: NodeAreaTematica[];
   get childs(): NodeAreaTematica[] {
@@ -60,7 +67,7 @@ const MSG_ACEPTAR = marker('btn.ok');
   styleUrls: ['./solicitud-area-tematica-modal.component.scss']
 })
 export class SolicitudAreaTematicaModalComponent extends
-  BaseModalComponent<AreaTematicaSolicitudData, SolicitudAreaTematicaModalComponent> implements OnInit {
+  BaseModalComponent<AreaTematicaModalData, SolicitudAreaTematicaModalComponent> implements OnInit {
   fxLayoutProperties: FxLayoutProperties;
 
   areaTematicaTree$ = new BehaviorSubject<NodeAreaTematica[]>([]);
@@ -79,7 +86,7 @@ export class SolicitudAreaTematicaModalComponent extends
     private readonly logger: NGXLogger,
     protected snackBarService: SnackBarService,
     public matDialogRef: MatDialogRef<SolicitudAreaTematicaModalComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: AreaTematicaSolicitudData,
+    @Inject(MAT_DIALOG_DATA) public data: AreaTematicaModalData,
     private areaTematicaService: AreaTematicaService,
     private readonly translate: TranslateService
   ) {
@@ -88,13 +95,22 @@ export class SolicitudAreaTematicaModalComponent extends
     this.fxLayoutProperties.gap = '20px';
     this.fxLayoutProperties.layout = 'row';
     this.fxLayoutProperties.xs = 'row';
-    this.textSaveOrUpdate = this.data.areaTematicaSolicitud ? MSG_ACEPTAR : MSG_ANADIR;
   }
 
   ngOnInit(): void {
     super.ngOnInit();
     this.setupI18N();
-    this.loadAreasTematicas(this.data.areaTematicaConvocatoria.id);
+    this.subscriptions.push(this.formGroup.get('padre').valueChanges.subscribe(
+      (value) => this.loadAreasTematicas(value?.id)
+    ));
+
+    if (this.data.padre && this.data.areasTematicasConvocatoria) {
+      this.formGroup.controls.padre.disable();
+      this.formGroup.controls.padre.setValue(this.data.padre);
+    }
+
+    this.textSaveOrUpdate = this.data.areaTematicaSolicitud != null ? MSG_ACEPTAR : MSG_ANADIR;
+
   }
 
 
@@ -105,7 +121,7 @@ export class SolicitudAreaTematicaModalComponent extends
       MSG_PARAMS.CARDINALIRY.PLURAL
     ).subscribe((value) => this.msgParamEntity = { entity: value, ...MSG_PARAMS.GENDER.MALE });
 
-    if (this.data?.rootTree) {
+    if (this.data.areaTematicaSolicitud != null) {
       this.translate.get(
         AREA_TEMATICA_KEY,
         MSG_PARAMS.CARDINALIRY.SINGULAR
@@ -128,50 +144,80 @@ export class SolicitudAreaTematicaModalComponent extends
 
   protected getFormGroup(): FormGroup {
     const formGroup = new FormGroup({
-      padre: new FormControl({
-        value: this.data.areaTematicaConvocatoria.nombre,
-        disabled: true
-      }),
+      padre: new FormControl(null, Validators.required),
     });
-
-    if (this.data.readonly) {
-      formGroup.disable();
-    }
-
     return formGroup;
   }
 
-  protected getDatosForm(): AreaTematicaSolicitudData {
-    this.data.areaTematicaSolicitud = this.checkedNode?.areaTematica?.value;
-    return this.data;
+  protected getDatosForm(): AreaTematicaModalData {
+    const padre = this.formGroup.controls.padre.value;
+    const areasTematicasConvocatoria = this.data.areasTematicasConvocatoria;
+
+    return {
+      padre,
+      areasTematicasConvocatoria,
+      areaTematicaSolicitud: this.checkedNode?.areaTematica.value,
+    } as AreaTematicaModalData;
+
+
   }
 
-  private loadAreasTematicas(id: number): void {
-    const susbcription = this.areaTematicaService.findAllHijosArea(id).pipe(
-      switchMap(response => {
-        return from(response.items).pipe(
-          mergeMap((areaTematica) => {
-            const node = new NodeAreaTematica(new StatusWrapper<IAreaTematica>(areaTematica));
-            this.nodeMap.set(node.areaTematica.value.id, node);
-            return this.getChilds(node).pipe(map(() => node));
-          })
-        );
-      })
-    ).subscribe(
-      (result) => {
-        const current = this.areaTematicaTree$.value;
-        current.push(result);
-        this.publishNodes(current);
-        this.checkedNode = this.nodeMap.get(this.data.areaTematicaSolicitud?.id);
-        if (this.checkedNode) {
-          this.expandNodes(this.checkedNode);
+  private loadAreasTematicas(padreId: number): void {
+    this.areaTematicaTree$.next([]);
+    this.nodeMap.clear();
+    if (padreId) {
+      const susbcription = this.areaTematicaService.findAllHijosArea(padreId).pipe(
+        switchMap(response => {
+          return from(response.items).pipe(
+            mergeMap((areaTematica) => {
+              const node = new NodeAreaTematica(new StatusWrapper<IAreaTematica>(areaTematica));
+              this.nodeMap.set(node.areaTematica.value.id, node);
+              return this.getChilds(node).pipe(map(() => node));
+            })
+          );
+        })
+      ).subscribe(
+        (result) => {
+          const current = this.areaTematicaTree$.value;
+          current.push(result);
+          this.publishNodes(current);
+          if (this.data.areaTematicaSolicitud?.id === result.areaTematica.value.id) {
+            this.checkedNode = result;
+          } else {
+            result.childs.map(node => {
+              if (this.data.areaTematicaSolicitud?.id === node.areaTematica.value.id) {
+                this.checkedNode = node;
+              }
+            });
+          }
+          if (this.data.areasTematicasConvocatoria) {
+            if (this.data.areasTematicasConvocatoria?.map(area => area.id)
+              .includes(result.areaTematica.value.id)) {
+              result.disabled = false;
+              this.expandNodes(result);
+            } else {
+              result.disabled = true;
+              this.disableChilds(result);
+
+              result.childs.map(node => {
+                if (this.data.areasTematicasConvocatoria?.map(area => area.id)
+                  .includes(node.areaTematica.value.id)) {
+                  node.disabled = false;
+                  this.expandNodes(node);
+                }
+              });
+            }
+          }
+          if (this.checkedNode) {
+            this.expandNodes(this.checkedNode);
+          }
+        },
+        (error) => {
+          this.logger.error(error);
         }
-      },
-      (error) => {
-        this.logger.error(error);
-      }
-    );
-    this.subscriptions.push(susbcription);
+      );
+      this.subscriptions.push(susbcription);
+    }
   }
 
   getNombreAreaTematica(areaTematica: IAreaTematica) {
@@ -179,8 +225,8 @@ export class SolicitudAreaTematicaModalComponent extends
   }
 
   private expandNodes(node: NodeAreaTematica) {
-    if (node && node.parent) {
-      this.treeControl.expand(node.parent);
+    if (node) {
+      this.treeControl.expand(node);
       this.expandNodes(node.parent);
     }
   }
@@ -213,6 +259,15 @@ export class SolicitudAreaTematicaModalComponent extends
       }),
       takeLast(1)
     );
+  }
+
+  private disableChilds(node: NodeAreaTematica) {
+    if (node && node.childs) {
+      node.childs.forEach(child => {
+        child.disabled = true;
+        this.disableChilds(child);
+      });
+    }
   }
 
   private publishNodes(rootNodes?: NodeAreaTematica[]) {

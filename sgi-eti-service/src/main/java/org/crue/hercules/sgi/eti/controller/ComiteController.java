@@ -128,7 +128,7 @@ public class ComiteController {
    * @param paging pageable
    */
   @GetMapping()
-  @PreAuthorize("hasAnyAuthorityForAnyUO('ETI-ACT-V', 'ETI-CONV-V', 'ETI-EVC-VR', 'ETI-EVC-INV-VR', 'ETI-EVC-EVALR', 'ETI-EVC-INV-EVALR', 'ETI-PEV-INV-VR','ETI-PEV-V')")
+  @PreAuthorize("hasAnyAuthorityForAnyUO('ETI-ACT-V', 'ETI-CONV-V', 'ETI-EVC-VR', 'ETI-EVC-INV-VR', 'ETI-EVC-EVALR', 'ETI-EVC-INV-EVALR', 'ETI-MEM-INV-VR','ETI-MEM-V')")
   ResponseEntity<Page<Comite>> findAll(@RequestParam(name = "q", required = false) String query,
       @RequestPageable(sort = "s") Pageable paging) {
     log.debug("findAllComite(String query,Pageable paging) - start");
@@ -151,7 +151,7 @@ public class ComiteController {
    * @return lista paginada de tipos de memoria.
    */
   @GetMapping("/{id}/tipo-memorias")
-  @PreAuthorize("hasAnyAuthorityForAnyUO('ETI-PEV-INV-C', 'ETI-PEV-INV-ER', 'ETI-PEV-V')")
+  @PreAuthorize("hasAnyAuthorityForAnyUO('ETI-MEM-INV-ER', 'ETI-MEM-V')")
   ResponseEntity<Page<TipoMemoria>> findTipoMemoria(@PathVariable Long id,
       @RequestPageable(sort = "s") Pageable pageable) {
     log.debug("findTipoMemoria(Long id, Pageable paging) - start");

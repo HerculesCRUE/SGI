@@ -22,9 +22,16 @@
   }
 
   .listado-gastos {
-   .mat-header-cell.mat-column-aplicacionPresupuestaria, .mat-cell.mat-column-aplicacionPresupuestaria {
+   .mat-header-cell.mat-column-aplicacionPresupuestaria, .mat-cell.mat-column-aplicacionPresupuestaria, .mat-header-cell.mat-column-acciones, .mat-cell.mat-column-acciones {
       min-width: 200px;
     }
   }
 
+  mat-table {
+    .mat-cell {
+      .mat-icon {
+        cursor: pointer;
+      }
+    }
+  }
 }

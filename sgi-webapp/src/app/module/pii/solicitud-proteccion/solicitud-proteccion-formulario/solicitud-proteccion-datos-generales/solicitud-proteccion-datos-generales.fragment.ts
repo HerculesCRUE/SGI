@@ -1,22 +1,25 @@
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { TipoPropiedad } from '@core/enums/tipo-propiedad';
 import { IInvencion } from '@core/models/pii/invencion';
+import { IPaisValidado } from '@core/models/pii/pais-validado';
 import { Estado, ISolicitudProteccion } from '@core/models/pii/solicitud-proteccion';
 import { ITipoCaducidad } from '@core/models/pii/tipo-caducidad';
 import { IViaProteccion } from '@core/models/pii/via-proteccion';
 import { IPais } from '@core/models/sgo/pais';
 import { FormFragment } from '@core/services/action-service';
+import { PaisValidadoService } from '@core/services/pii/solicitud-proteccion/pais-validado/pais-validado.service';
 import { SolicitudProteccionService } from '@core/services/pii/solicitud-proteccion/solicitud-proteccion.service';
 import { TipoCaducidadService } from '@core/services/pii/tipo-caducidad/tipo-caducidad.service';
 import { ViaProteccionService } from '@core/services/pii/via-proteccion/via-proteccion.service';
 import { EmpresaService } from '@core/services/sgemp/empresa.service';
 import { PaisService } from '@core/services/sgo/pais/pais.service';
+import { StatusWrapper } from '@core/utils/status-wrapper';
 import { DateValidator } from '@core/validators/date-validator';
 import { RSQLSgiRestFilter, SgiRestFilterOperator, SgiRestFindOptions } from '@sgi/framework/http';
 import { DateTime } from 'luxon';
 import { NGXLogger } from 'ngx-logger';
-import { BehaviorSubject, forkJoin, Observable, of, Subscription } from 'rxjs';
-import { catchError, map, switchMap, tap } from 'rxjs/operators';
+import { BehaviorSubject, concat, forkJoin, from, Observable, of, Subscription } from 'rxjs';
+import { catchError, defaultIfEmpty, last, map, mergeMap, switchMap, takeLast, tap } from 'rxjs/operators';
 
 export class SolicitudProteccionDatosGeneralesFragment extends FormFragment<ISolicitudProteccion> {
 
@@ -27,13 +30,20 @@ export class SolicitudProteccionDatosGeneralesFragment extends FormFragment<ISol
   private readonly NUMERO_PUBLICACION_MAX_LENGTH = 24;
   private readonly NUMERO_CONCESION_MAX_LENGTH = 24;
 
+  private isExtensionInternacional$ = new BehaviorSubject<boolean>(false);
+  private isViaEuropea = new BehaviorSubject<boolean>(false);
+
   public viasProteccion$ = new BehaviorSubject<IViaProteccion[]>([]);
   public paises$ = new BehaviorSubject<IPais[]>([]);
   public tiposCaducidad$ = new BehaviorSubject<ITipoCaducidad[]>([]);
 
   public solicitudProteccion: ISolicitudProteccion;
+  public firstSolicitudProteccionWithPrioridad = new BehaviorSubject<ISolicitudProteccion>(null);
 
   public showPaisSelector = new BehaviorSubject<boolean>(false);
+
+  public paisesValidados$ = new BehaviorSubject<StatusWrapper<IPaisValidado>[]>([]);
+  public paisesValidadosToDelete: StatusWrapper<IPaisValidado>[] = [];
 
   public get TipoPropiedad(): any {
     return TipoPropiedad;
@@ -43,27 +53,35 @@ export class SolicitudProteccionDatosGeneralesFragment extends FormFragment<ISol
     return this.isExtensionInternacional$;
   }
 
-  private isExtensionInternacional$ = new BehaviorSubject<boolean>(false);
-
   constructor(
     private logger: NGXLogger,
     key: number,
     private invencionId: number,
     public tipoPropiedad: TipoPropiedad,
     private invencionTitulo: string,
-    public solicitudesBefore: boolean,
     private solicitudProteccionService: SolicitudProteccionService,
     public readonly: boolean,
     private viaProteccionService: ViaProteccionService,
     private paisService: PaisService,
     private empresaService: EmpresaService,
-    private tipoCaducidadService: TipoCaducidadService
+    private tipoCaducidadService: TipoCaducidadService,
+    solicitudesAnteriores: ISolicitudProteccion[],
+    private paisValidadoService: PaisValidadoService
   ) {
-    super(key);
+    super(key, true);
+    this.setComplete(true);
     this.solicitudProteccion = {
       invencion:
         { id: invencionId }
     } as ISolicitudProteccion;
+
+    solicitudesAnteriores.sort((a, b) => a.id > b.id ? 1 : -1);
+    const firstSolicitudProteccion = solicitudesAnteriores
+      .find(solicitud =>
+        solicitud.invencion.tipoProteccion.tipoPropiedad === TipoPropiedad.INDUSTRIAL
+        && solicitud.activo === true
+      );
+    this.firstSolicitudProteccionWithPrioridad.next(firstSolicitudProteccion ?? null);
     if (!key) {
       this.loadViasProteccion$().subscribe(viasProteccion => {
         this.viasProteccion$.next(viasProteccion);
@@ -130,7 +148,7 @@ export class SolicitudProteccionDatosGeneralesFragment extends FormFragment<ISol
       pais: solicitudProteccion.paisProteccion,
       agentePropiedad: solicitudProteccion.agentePropiedad.id ? solicitudProteccion.agentePropiedad : null,
       comentarios: solicitudProteccion.comentarios,
-      fechaFinPriorPresFasNacRec: solicitudProteccion.fechaFinPriorPresFasNacRec,
+      fechaFinPrioridad: solicitudProteccion.fechaFinPriorPresFasNacRec,
       fechaPrioridad: solicitudProteccion.fechaPrioridadSolicitud,
       numeroSolicitud: solicitudProteccion.numeroSolicitud,
       numeroPublicacion: solicitudProteccion.numeroPublicacion,
@@ -182,11 +200,29 @@ export class SolicitudProteccionDatosGeneralesFragment extends FormFragment<ISol
           }
           return of(solicitudProteccion);
         }),
+        switchMap((solicitudProteccion) => {
+          return this.findPaisesValidadosBySolicitudProteccion(solicitudProteccion);
+        }),
         catchError((err) => {
           this.logger.error(err);
           return of(void 0);
         })
       );
+  }
+
+  private findPaisesValidadosBySolicitudProteccion(solicitudProteccion: ISolicitudProteccion): Observable<ISolicitudProteccion> {
+    return this.solicitudProteccionService.findPaisesValidadosBySolicitudProteccionId(solicitudProteccion.id).pipe(
+      map(result => {
+        this.paisesValidados$.next(result.items.map(elem => {
+          elem.pais = this.paises$.value.find(pais => pais.id === elem.pais.id);
+          return new StatusWrapper(elem);
+        }));
+        return solicitudProteccion;
+      },
+        catchError(e => {
+          return of(solicitudProteccion);
+        })
+      ));
   }
 
   getValue(): ISolicitudProteccion {
@@ -213,15 +249,26 @@ export class SolicitudProteccionDatosGeneralesFragment extends FormFragment<ISol
     return this.solicitudProteccion;
   }
 
-  saveOrUpdate(): Observable<number> {
+  saveOrUpdate(): Observable<number | string | void> {
 
     const solicitudProteccion = this.getValue();
-    const saveActionObservable$ = this.isEdit() ? this.update(solicitudProteccion) : this.create(solicitudProteccion);
-    return saveActionObservable$.pipe(
-      map((response: ISolicitudProteccion) => {
-        return response.id;
-      })
-    );
+    const createOrDeletePaisesValidados$ = concat(this.createOrUpdatePaisValidado(), this.deletePaisesValidados()).pipe(
+      defaultIfEmpty(void 0),
+      last());
+    return (this.isEdit() ? this.update(solicitudProteccion) : this.create(solicitudProteccion))
+      .pipe(
+        map((response: ISolicitudProteccion) => {
+          this.solicitudProteccion = response;
+          return response.id;
+        }),
+        switchMap(elem => createOrDeletePaisesValidados$),
+        tap(() => {
+          this.findPaisesValidadosBySolicitudProteccion(this.solicitudProteccion).subscribe();
+          this.checkState();
+        }),
+        map(() => this.solicitudProteccion.id),
+      );
+
   }
 
   private get defaultTitle(): string {
@@ -269,6 +316,7 @@ export class SolicitudProteccionDatosGeneralesFragment extends FormFragment<ISol
 
     if (via.paisEspecifico) {
       paisCtrl.enable();
+      paisCtrl.setValue(null);
       paisCtrl.setValidators([Validators.required]);
       this.showPaisSelector.next(true);
     } else {
@@ -296,15 +344,14 @@ export class SolicitudProteccionDatosGeneralesFragment extends FormFragment<ISol
       .subscribe((via: IViaProteccion) => {
         this.enableOrDisablePaisSelector(via, form.controls.pais as FormControl);
         this.isExtensionInternacional$.next(via.extensionInternacional);
+        this.isViaEuropea.next(via.nombre === 'Europea');
         if (!this.shouldShowFechaFinPrioridad(via)) {
           form.controls.fechaFinPrioridad.setValidators([]);
           form.controls.fechaFinPrioridad.setValue(null);
         } else {
           form.controls.fechaFinPrioridad.setValidators([Validators.required]);
-          const fechaPri: DateTime = form.controls.fechaPrioridad.value;
-
-          if (fechaPri) {
-            this.resolveFechaFinPrioridad(via, form.controls.fechaFinPrioridad as FormControl, fechaPri);
+          if (form.controls.viaProteccion.dirty) {
+            this.resolveFechaFinPrioridad(via);
           }
         }
         form.controls.fechaFinPrioridad.updateValueAndValidity();
@@ -336,15 +383,17 @@ export class SolicitudProteccionDatosGeneralesFragment extends FormFragment<ISol
         if (!fechaPri || !via) {
           return;
         }
-        this.resolveFechaFinPrioridad(via, form.controls.fechaFinPrioridad as FormControl, fechaPri);
+        if (form.controls.fechaPrioridad.dirty) {
+          this.resolveFechaFinPrioridad(via);
+        }
       });
   }
 
   public canShowFechaPrioridad(): Observable<boolean> {
 
     return this.isExtensionInternacional$.pipe(
-      map(isPCT => {
-        return !isPCT && TipoPropiedad.INDUSTRIAL === this.tipoPropiedad && !this.solicitudesBefore;
+      map(isExtensionInternacional => {
+        return !isExtensionInternacional && TipoPropiedad.INDUSTRIAL === this.tipoPropiedad && !this.solicitudesBefore;
       })
     );
   }
@@ -352,10 +401,102 @@ export class SolicitudProteccionDatosGeneralesFragment extends FormFragment<ISol
   public canShowFechaFinPrioridad(): Observable<boolean> {
 
     return this.isExtensionInternacional$.pipe(
-      map(isPCT => {
-        return isPCT
+      map(isExtensionInternacional => {
+        return isExtensionInternacional
           || (TipoPropiedad.INDUSTRIAL === this.tipoPropiedad && !this.solicitudesBefore);
       })
+    );
+  }
+
+  get solicitudesBefore(): boolean {
+    return this.firstSolicitudProteccionWithPrioridad.value?.id !== this.solicitudProteccion?.id;
+  }
+
+  /**
+   * Determina si es Via Europea la {@link IIViaProteccion} actual
+   */
+  get isViaEuropea$(): Observable<boolean> {
+    return this.isViaEuropea.asObservable();
+  }
+
+  public createEmptyPaisValidado(): StatusWrapper<IPaisValidado> {
+    const createdElem = new StatusWrapper({} as IPaisValidado);
+    createdElem.setCreated();
+    return createdElem;
+  }
+
+  /**
+   *  Crear un {@link IPaisValidado}.
+   *
+   * @param addedElem Elemento a eliminar
+   */
+  addPaisValidado(addedElem: StatusWrapper<IPaisValidado>) {
+    addedElem.value.solicitudProteccion = { id: this.getKey() } as ISolicitudProteccion;
+    const current = this.paisesValidados$.value;
+    if (current.indexOf(addedElem) === -1) {
+      current.push(addedElem);
+      this.paisesValidados$.next(current);
+    }
+    this.checkState();
+  }
+
+  /**
+   *  Editar un {@link IPaisValidado}.
+   *
+   * @param elemToEdit Elemento a eliminar
+   */
+  editPaisValidado(elemToEdit: StatusWrapper<IPaisValidado>) {
+    if (!elemToEdit.created) {
+      elemToEdit.setEdited();
+    }
+    this.checkState();
+  }
+
+  /**
+   *  Elimina el {@link IPaisValidado}.
+   *
+   * @param elemToDelete Elemento a eliminar
+   */
+  deletePaisValidado(elemToDelete: StatusWrapper<IPaisValidado>) {
+    const current = this.paisesValidados$.value;
+    const index = current.findIndex((value) => value === elemToDelete);
+    if (index >= 0) {
+      current.splice(index, 1);
+      this.paisesValidados$.next(current);
+      this.paisesValidadosToDelete.push(elemToDelete);
+    }
+    this.checkState();
+  }
+
+  private checkState(): void {
+    if (this.paisesValidados$.value.some(paisWrapper => paisWrapper.touched)) {
+      return this.setChanges(true);
+    }
+    if (this.paisesValidadosToDelete.some(paisWrapper => !paisWrapper.created)) {
+      return this.setChanges(true);
+    }
+  }
+
+  private createOrUpdatePaisValidado(): Observable<ISolicitudProteccion> {
+    return from(this.paisesValidados$.value.filter(elem => elem.touched))
+      .pipe(
+        mergeMap(elem => {
+          elem.value.solicitudProteccion = this.solicitudProteccion;
+          return (
+            elem.created ? this.paisValidadoService.create(elem.value) : this.paisValidadoService.update(elem.value.id, elem.value)).pipe(
+              catchError(err => of(void 0))
+            );
+        }),
+      );
+  }
+
+  private deletePaisesValidados(): Observable<void> {
+    return from(this.paisesValidadosToDelete.filter(elem => !elem.created)).pipe(
+      mergeMap(elem => this.paisValidadoService.deleteById(elem.value.id).pipe(
+        catchError(e => of(void 0))
+      )),
+      takeLast(1),
+      tap(() => this.paisesValidadosToDelete = [])
     );
   }
 
@@ -365,12 +506,15 @@ export class SolicitudProteccionDatosGeneralesFragment extends FormFragment<ISol
       || (TipoPropiedad.INDUSTRIAL === this.tipoPropiedad && !this.solicitudesBefore);
   }
 
-  private resolveFechaFinPrioridad(via: IViaProteccion, fechaFinPriCtrl: FormControl, fechaPri: DateTime): void {
-
-    if ((this.tipoPropiedad === TipoPropiedad.INDUSTRIAL && !this.solicitudesBefore)
-      || via.extensionInternacional) {
-
-      fechaFinPriCtrl.setValue(fechaPri.plus({ months: via.mesesPrioridad }));
+  private resolveFechaFinPrioridad(via: IViaProteccion): void {
+    const form = this.getFormGroup();
+    let fechaPri: DateTime = form.controls.fechaPrioridad.value;
+    if (this.isExtensionInternacional$.value) {
+      fechaPri = this.firstSolicitudProteccionWithPrioridad.value?.fechaPrioridadSolicitud ?? fechaPri;
+    }
+    if (fechaPri) {
+      form.controls.fechaFinPrioridad.setValue(fechaPri.plus({ months: (via ?? this.solicitudProteccion?.viaProteccion).mesesPrioridad }));
     }
   }
+
 }

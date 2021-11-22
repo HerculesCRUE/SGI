@@ -8,6 +8,9 @@ import org.springframework.security.core.context.SecurityContextHolder;
 
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * Custom {@link AuditorAware} using the current {@link Authentication} name.
+ */
 @Slf4j
 public class SgiAuditorAware implements AuditorAware<String> {
   @Override

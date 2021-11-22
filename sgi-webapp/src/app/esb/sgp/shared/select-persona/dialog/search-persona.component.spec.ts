@@ -7,7 +7,7 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { HeaderComponent } from '@block/header/header.component';
 import TestUtils from '@core/utils/test-utils';
 import { MaterialDesignModule } from '@material/material-design.module';
-import { SgiAuthModule } from '@sgi/framework/auth';
+import { SgiAuthModule, SgiAuthService } from '@sgi/framework/auth';
 import { LoggerTestingModule } from 'ngx-logger/testing';
 import { SearchPersonaModalComponent } from './search-persona.component';
 
@@ -34,9 +34,11 @@ describe('SearchPersonaModalComponent', () => {
         MatDialogModule,
         TestUtils.getIdiomas(),
         ReactiveFormsModule,
-        SgiAuthModule
+        SgiAuthModule,
       ],
       providers: [
+
+        SgiAuthService,
         {
           provide: MatDialogRef,
           useValue: mockDialogRef,

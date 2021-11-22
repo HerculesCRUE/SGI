@@ -45,7 +45,7 @@ public class ConfiguracionControllerTest extends BaseControllerTest {
   @WithMockUser(username = "user", authorities = { "ETI-CNF-E" })
   public void replaceConfiguracion_ReturnsConfiguracion() throws Exception {
     // given: Una configuracion a modificar
-    String replaceConfiguracionJson = "{\"id\": 1, \"diasLimiteEvaluador\": 1, \"diasArchivadaPendienteCorrecciones\": 4, \"mesesArchivadaInactivo\":1, \"mesesAvisoProyectoCEEA\":1, \"mesesAvisoProyectoCEI\":1, \"mesesAvisoProyectoCBE\":1}";
+    String replaceConfiguracionJson = "{\"id\": 1, \"diasLimiteEvaluador\": 1, \"mesesArchivadaPendienteCorrecciones\": 4, \"diasArchivadaInactivo\":1, \"mesesAvisoProyectoCEEA\":1, \"mesesAvisoProyectoCEI\":1, \"mesesAvisoProyectoCBE\":1}";
 
     Configuracion configuracion = generarMockConfiguracion();
 
@@ -66,7 +66,7 @@ public class ConfiguracionControllerTest extends BaseControllerTest {
   @WithMockUser(username = "user", authorities = { "ETI-CNF-E" })
   public void replaceConfiguracion_NotFound() throws Exception {
     // given: Una configuracion a modificar
-    String replaceConfiguracionJson = "{\"id\": 1, \"diasLimiteEvaluador\": 1, \"diasArchivadaPendienteCorrecciones\": 4, \"mesesArchivadaInactivo\":1, \"mesesAvisoProyectoCEEA\":1, \"mesesAvisoProyectoCEI\":1, \"mesesAvisoProyectoCBE\":1}";
+    String replaceConfiguracionJson = "{\"id\": 1, \"diasLimiteEvaluador\": 1, \"mesesArchivadaPendienteCorrecciones\": 4, \"diasArchivadaInactivo\":1, \"mesesAvisoProyectoCEEA\":1, \"mesesAvisoProyectoCEI\":1, \"mesesAvisoProyectoCBE\":1}";
 
     BDDMockito.given(configuracionService.update(ArgumentMatchers.<Configuracion>any()))
         .will((InvocationOnMock invocation) -> {
@@ -91,12 +91,9 @@ public class ConfiguracionControllerTest extends BaseControllerTest {
     Configuracion configuracion = new Configuracion();
 
     configuracion.setId(1L);
-    configuracion.setDiasArchivadaPendienteCorrecciones(20);
+    configuracion.setMesesArchivadaPendienteCorrecciones(20);
     configuracion.setDiasLimiteEvaluador(3);
-    configuracion.setMesesArchivadaInactivo(2);
-    configuracion.setMesesAvisoProyectoCEEA(1);
-    configuracion.setMesesAvisoProyectoCEI(1);
-    configuracion.setMesesAvisoProyectoCBE(1);
+    configuracion.setDiasArchivadaInactivo(2);
 
     return configuracion;
   }

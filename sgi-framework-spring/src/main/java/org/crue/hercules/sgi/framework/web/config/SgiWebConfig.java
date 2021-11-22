@@ -51,16 +51,12 @@ public class SgiWebConfig implements WebMvcConfigurer {
   }
 
   /**
-   * Configure the {@link HttpMessageConverter HttpMessageConverters} to use for
-   * reading or writing to the body of the request or response. If no converters
-   * are added, a default list of converters is registered.
-   * <p>
-   * <strong>Note</strong> that adding converters to the list, turns off default
-   * converter registration. To simply add a converter without impacting default
-   * registration, consider using the method
-   * {@link #extendMessageConverters(java.util.List)} instead.
+   * Modifies the {@link HttpMessageConverter HttpMessageConverters} to use for
+   * reading or writing to the body of the request or response. If a
+   * MappingJackson2HttpMessageConverter is found, it is replaced with the
+   * PageMappingJackson2HttpMessageConverter.
    * 
-   * @param converters initially an empty list of converters
+   * @param converters the list of converters
    */
   @Override
   public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
@@ -72,7 +68,7 @@ public class SgiWebConfig implements WebMvcConfigurer {
         // One is created by WebMvcConfigurationSupport
         // One is created by AllEncompassingFormHttpMessageConverter
         MappingJackson2HttpMessageConverter converter = (MappingJackson2HttpMessageConverter) httpMessageConverter;
-        PageMappingJackson2HttpMessageConverter newConverter = new PageMappingJackson2HttpMessageConverter(
+        PageMappingJackson2HttpMessageConverter newConverter = pageMappingJackson2HttpMessageConverter(
             converter.getObjectMapper());
         converters.set(converters.indexOf(converter), newConverter);
       }
@@ -109,6 +105,13 @@ public class SgiWebConfig implements WebMvcConfigurer {
     log.debug("addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) - end");
   }
 
+  /**
+   * Custom {@link MappingJackson2HttpMessageConverter} that handles paging
+   * information using Http headers.
+   * 
+   * @param objectMapper the {@link ObjectMapper} to use
+   * @return the {@link PageMappingJackson2HttpMessageConverter}
+   */
   @Bean
   public PageMappingJackson2HttpMessageConverter pageMappingJackson2HttpMessageConverter(ObjectMapper objectMapper) {
     log.debug("pageMappingJackson2HttpMessageConverter(ObjectMapper objectMapper) - start");

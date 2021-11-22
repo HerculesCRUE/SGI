@@ -14,6 +14,7 @@ import org.crue.hercules.sgi.eti.model.EstadoActa;
 import org.crue.hercules.sgi.eti.model.Formulario;
 import org.crue.hercules.sgi.eti.model.TipoConvocatoriaReunion;
 import org.crue.hercules.sgi.eti.model.TipoEstadoActa;
+import org.crue.hercules.sgi.eti.model.Comite.Genero;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.ParameterizedTypeReference;
@@ -146,7 +147,7 @@ public class ActaIT extends BaseIT {
   public void removeActa_Success() throws Exception {
     // Authorization
     HttpHeaders headers = new HttpHeaders();
-    headers.set("Authorization", String.format("bearer %s", tokenBuilder.buildToken("user", "ETI-ACT-B")));
+    headers.set("Authorization", String.format("bearer %s", tokenBuilder.buildToken("user", "ETI-ACT-DES")));
 
     // when: Delete con id existente
     long id = 2L;
@@ -161,7 +162,7 @@ public class ActaIT extends BaseIT {
   public void removeActa_DoNotGetActa() throws Exception {
     // Authorization
     HttpHeaders headers = new HttpHeaders();
-    headers.set("Authorization", String.format("bearer %s", tokenBuilder.buildToken("user", "ETI-ACT-B")));
+    headers.set("Authorization", String.format("bearer %s", tokenBuilder.buildToken("user", "ETI-ACT-DES")));
 
     final ResponseEntity<Acta> response = restTemplate.exchange(ACTA_CONTROLLER_BASE_PATH + PATH_PARAMETER_ID,
         HttpMethod.DELETE, buildRequest(headers, null), Acta.class, 1L);
@@ -355,6 +356,7 @@ public class ActaIT extends BaseIT {
     Comite comite = new Comite();
     comite.setId(1L);
     comite.setComite("CEEA");
+    comite.setGenero(Genero.F);
     comite.setFormulario(formulario);
     TipoConvocatoriaReunion tipoConvocatoriaReunion = new TipoConvocatoriaReunion(1L, "Ordinaria", Boolean.TRUE);
     ConvocatoriaReunion convocatoriaReunion = new ConvocatoriaReunion();

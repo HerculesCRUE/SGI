@@ -22,6 +22,7 @@ export class SeguimientoDocumentacionComponent extends FormFragmentComponent<IDo
   ngAfterViewInit() {
     this.documentacion.memoriaId = this.actionService.getEvaluacion()?.memoria?.id;
     this.documentacion.tipoEvaluacion = this.actionService.getEvaluacion()?.tipoEvaluacion?.id;
+    this.documentacion.evaluacionId = this.actionService.getEvaluacion()?.id;
     this.actionService.getRol() === Rol.EVALUADOR ? this.documentacion.fichaEvaluador = false : this.documentacion.fichaEvaluador = true;
     this.documentacion?.ngAfterViewInit();
   }

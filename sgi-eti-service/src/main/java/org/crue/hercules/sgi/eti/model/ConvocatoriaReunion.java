@@ -106,4 +106,11 @@ public class ConvocatoriaReunion extends BaseEntity {
   @Column(name = "activo", columnDefinition = "boolean default true", nullable = false)
   private Boolean activo;
 
+  public ConvocatoriaReunion(Long id, Instant fechaEvaluacion, Integer anio, Long numeroActa) {
+    this.id = id;
+    this.fechaEvaluacion = fechaEvaluacion;
+    this.anio = anio;
+    this.numeroActa = numeroActa;
+  }
+
 }

@@ -119,8 +119,8 @@
         <td mat-cell *matCellDef="let proyectoListado">
           <ng-container>
             <button color="three" mat-raised-button *ngIf="!proyectoListado.selected"
-              (click)="closeModal(proyectoListado.proyecto)">
-              {{'btn.select' | translate}}
+              (click)="openProyectoUpdateModal(proyectoListado.proyecto)">
+              {{'btn.select-notify' | translate}}
             </button>
             <span *ngIf="proyectoListado.selected">
               {{'sge.proyecto.seleccionado'| translate}}

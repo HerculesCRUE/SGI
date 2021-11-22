@@ -1,5 +1,6 @@
 package org.crue.hercules.sgi.framework.core.convert.converter;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -18,7 +19,7 @@ import lombok.extern.slf4j.Slf4j;
  * type {@code List<SortCriteria>}.
  */
 @Slf4j
-public class SortCriteriaConverter implements Converter<String, List<SortCriteria>> {
+public class SortCriteriaConverter implements Converter<String, List<SortCriteria>>, Serializable {
   private static final String MULTIPLE_SORT_SEPARATOR = ";";
   private static final String SORT_SEPARATOR = ",";
 
@@ -39,7 +40,7 @@ public class SortCriteriaConverter implements Converter<String, List<SortCriteri
     List<SortCriteria> sortCriterias = new ArrayList<>();
     if (source != null) {
       sortCriterias = Arrays.stream(source.split(MULTIPLE_SORT_SEPARATOR)).map(item -> item.split(SORT_SEPARATOR))
-          .map(parts -> toSortCriteria(parts)).filter(Objects::nonNull).collect(Collectors.toList());
+          .map(this::toSortCriteria).filter(Objects::nonNull).collect(Collectors.toList());
     }
     log.debug("convert(String source) - end");
     return sortCriterias;

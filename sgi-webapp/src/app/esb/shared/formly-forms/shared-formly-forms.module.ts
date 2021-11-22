@@ -44,6 +44,7 @@ import { MatCardGroupWrapperComponent } from './wrappers/mat-card-group/mat-card
         {
           name: 'select-object',
           component: SelectObjectTypeComponent,
+          wrappers: ['form-field']
         },
         {
           name: 'table-crud',

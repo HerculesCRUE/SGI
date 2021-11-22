@@ -1,29 +1,29 @@
 <!-- Configuración -->
 <sgi-fragment title="{{'eti.configuracion' | translate:MSG_PARAMS.CARDINALIRY.PLURAL}}">
 
-  <form [formGroup]="formGroup" [fxLayout.xs]="fxLayoutProperties.xs" [fxLayout]="fxLayoutProperties.layout"
-    [fxLayoutGap]="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
+  <form class="configuracion" [formGroup]="formGroup" [fxLayout.xs]="fxLayoutProperties.xs"
+    [fxLayout]="fxLayoutProperties.layout" [fxLayoutGap]="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
 
-    <!-- mesesArchivadaInactivo -->
+    <!-- diasArchivadaInactivo -->
     <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
       [fxFlexOrder]="fxFlexProperties.order">
       <mat-form-field>
-        <mat-label>{{'eti.configuracion.meses-inactiva' | translate}}</mat-label>
-        <input type="number" [placeholder]="'eti.configuracion.meses-inactiva' | translate" arial-label="Number"
-          matInput formControlName="mesesArchivadaInactivo">
-        <mat-hint>{{'eti.configuracion.meses-inactiva.descripcion' | translate}}
+        <mat-label>{{'eti.configuracion.dias-inactiva' | translate}}</mat-label>
+        <input type="number" [placeholder]="'eti.configuracion.dias-inactiva' | translate" arial-label="Number" matInput
+          formControlName="diasArchivadaInactivo">
+        <mat-hint>{{'eti.configuracion.dias-inactiva.descripcion' | translate}}
         </mat-hint>
       </mat-form-field>
     </div>
 
-    <!-- diasArchivadaPendienteCorrecciones -->
+    <!-- mesesArchivadaPendienteCorrecciones -->
     <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
       [fxFlexOrder]="fxFlexProperties.order">
       <mat-form-field>
-        <mat-label>{{'eti.configuracion.dias-correcciones' | translate}}</mat-label>
-        <input type="number" [placeholder]="'eti.configuracion.dias-correcciones' | translate" arial-label="Number"
-          matInput formControlName="diasArchivadaPendienteCorrecciones">
-        <mat-hint>{{'eti.configuracion.dias-correcciones.descripcion' | translate}}
+        <mat-label>{{'eti.configuracion.meses-correcciones' | translate}}</mat-label>
+        <input type="number" [placeholder]="'eti.configuracion.meses-correcciones' | translate" arial-label="Number"
+          matInput formControlName="mesesArchivadaPendienteCorrecciones">
+        <mat-hint>{{'eti.configuracion.meses-correcciones.descripcion' | translate}}
         </mat-hint>
       </mat-form-field>
     </div>
@@ -36,39 +36,6 @@
         <input type="number" [placeholder]="'eti.configuracion.dias-evaluar' | translate" arial-label="Number" matInput
           formControlName="diasLimiteEvaluador">
         <mat-hint>{{'eti.configuracion.dias-evaluar.descripcion' | translate}}</mat-hint>
-      </mat-form-field>
-    </div>
-
-    <!-- mesesAvisoProyectoCEEA -->
-    <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
-      [fxFlexOrder]="fxFlexProperties.order">
-      <mat-form-field>
-        <mat-label>{{'eti.configuracion.meses-ceea' | translate}}</mat-label>
-        <input type="number" [placeholder]="'eti.configuracion.meses-ceea' | translate" arial-label="Number" matInput
-          formControlName="mesesAvisoProyectoCEEA">
-        <mat-hint>{{'eti.configuracion.meses-ceea.descripcion' | translate}}</mat-hint>
-      </mat-form-field>
-    </div>
-
-    <!-- mesesAvisoProyectoCEI -->
-    <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
-      [fxFlexOrder]="fxFlexProperties.order">
-      <mat-form-field>
-        <mat-label>{{'eti.configuracion.meses-cei' | translate}}</mat-label>
-        <input type="number" [placeholder]="'eti.configuracion.meses-cei' | translate" arial-label="Number" matInput
-          formControlName="mesesAvisoProyectoCEI">
-        <mat-hint>{{'eti.configuracion.meses-cei.descripcion' | translate}}</mat-hint>
-      </mat-form-field>
-    </div>
-
-    <!-- mesesAvisoProyectoCBE -->
-    <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
-      [fxFlexOrder]="fxFlexProperties.order">
-      <mat-form-field>
-        <mat-label>{{'eti.configuracion.meses-cbe' | translate}}</mat-label>
-        <input type="number" [placeholder]="'eti.configuracion.meses-cbe' | translate" arial-label="Number" matInput
-          formControlName="mesesAvisoProyectoCBE">
-        <mat-hint>{{'eti.configuracion.meses-cbe.descripcion' | translate}}</mat-hint>
       </mat-form-field>
     </div>
 

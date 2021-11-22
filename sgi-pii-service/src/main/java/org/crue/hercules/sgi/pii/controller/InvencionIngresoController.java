@@ -10,6 +10,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -40,6 +41,21 @@ public class InvencionIngresoController {
   }
 
   /**
+   * Devuelve la entidad {@link InvencionIngreso} con el id indicado.
+   * 
+   * @param id Identificador de la entidad {@link InvencionIngreso}.
+   * @return {@link InvencionIngreso} correspondiente al id.
+   */
+  @GetMapping("/{id}")
+  @PreAuthorize("hasAnyAuthority('PII-INV-V', 'PII-INV-E')")
+  public InvencionIngresoOutput findById(@PathVariable Long id) {
+    log.debug("findById(Long id) - start");
+    final InvencionIngreso returnValue = service.findById(id);
+    log.debug("findById(Long id) - end");
+    return convert(returnValue);
+  }
+
+  /**
    * Crea un nuevo {@link InvencionIngreso}.
    * 
    * @param invencionIngreso {@link InvencionIngreso} que se quiere crear.
@@ -47,7 +63,7 @@ public class InvencionIngresoController {
    */
   @PostMapping
   @PreAuthorize("hasAuthority('PII-INV-E')")
-  ResponseEntity<InvencionIngresoOutput> create(@Valid @RequestBody InvencionIngresoInput invencionIngreso) {
+  public ResponseEntity<InvencionIngresoOutput> create(@Valid @RequestBody InvencionIngresoInput invencionIngreso) {
     log.debug("create(InvencionIngreso invencionIngreso) - start");
     InvencionIngreso returnValue = service.create(convert(invencionIngreso));
     log.debug("create(InvencionIngreso invencionIngreso) - end");
@@ -63,7 +79,8 @@ public class InvencionIngresoController {
    */
   @PutMapping("/{id}")
   @PreAuthorize("hasAuthority('PII-INV-E')")
-  InvencionIngresoOutput update(@Valid @RequestBody InvencionIngresoInput invencionIngreso, @PathVariable Long id) {
+  public InvencionIngresoOutput update(@Valid @RequestBody InvencionIngresoInput invencionIngreso,
+      @PathVariable Long id) {
     log.debug("update(InvencionIngreso invencionIngreso, Long id) - start");
     InvencionIngreso returnValue = service.update(convert(id, invencionIngreso));
     log.debug("update(InvencionIngreso invencionIngreso, Long id) - end");

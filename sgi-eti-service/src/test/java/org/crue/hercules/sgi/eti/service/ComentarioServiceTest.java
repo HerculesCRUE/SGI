@@ -21,6 +21,7 @@ import org.crue.hercules.sgi.eti.model.Retrospectiva;
 import org.crue.hercules.sgi.eti.model.TipoComentario;
 import org.crue.hercules.sgi.eti.model.TipoEstadoMemoria;
 import org.crue.hercules.sgi.eti.model.TipoEvaluacion;
+import org.crue.hercules.sgi.eti.model.Comite.Genero;
 import org.crue.hercules.sgi.eti.repository.ComentarioRepository;
 import org.crue.hercules.sgi.eti.repository.EvaluacionRepository;
 import org.crue.hercules.sgi.eti.service.impl.ComentarioServiceImpl;
@@ -99,7 +100,7 @@ public class ComentarioServiceTest extends BaseServiceTest {
 
     // then: se debe devolver una lista de comentarios
     Assertions.assertThat(page.getContent().size()).isEqualTo(numeroComentario);
-    Assertions.assertThat(page.getNumber()).isEqualTo(0);
+    Assertions.assertThat(page.getNumber()).isZero();
     Assertions.assertThat(page.getSize()).isEqualTo(numeroComentario);
     Assertions.assertThat(page.getTotalElements()).isEqualTo(numeroComentario);
     for (int i = 0; i < numeroComentario; i++) {
@@ -189,7 +190,7 @@ public class ComentarioServiceTest extends BaseServiceTest {
 
     // then: se debe devolver una lista de comentarios
     Assertions.assertThat(page.getContent().size()).isEqualTo(numeroComentario);
-    Assertions.assertThat(page.getNumber()).isEqualTo(0);
+    Assertions.assertThat(page.getNumber()).isZero();
     Assertions.assertThat(page.getSize()).isEqualTo(numeroComentario);
     Assertions.assertThat(page.getTotalElements()).isEqualTo(numeroComentario);
     for (int i = 0; i < numeroComentario; i++) {
@@ -280,7 +281,7 @@ public class ComentarioServiceTest extends BaseServiceTest {
 
     // then: se debe devolver una lista de comentarios
     Assertions.assertThat(page.getContent().size()).isEqualTo(numeroComentario);
-    Assertions.assertThat(page.getNumber()).isEqualTo(0);
+    Assertions.assertThat(page.getNumber()).isZero();
     Assertions.assertThat(page.getSize()).isEqualTo(numeroComentario);
     Assertions.assertThat(page.getTotalElements()).isEqualTo(numeroComentario);
     for (int i = 0; i < numeroComentario; i++) {
@@ -786,8 +787,8 @@ public class ComentarioServiceTest extends BaseServiceTest {
     TipoEvaluacion tipoEvaluacion = new TipoEvaluacion(4L, "Seguimiento Final", Boolean.TRUE);
     evaluacion.setTipoEvaluacion(tipoEvaluacion);
     Formulario formulario = new Formulario(5L, "Formulario", "Descripcion");
-    Comite comite = new Comite(1L, "CEISH", "nombreSecretario", "nombreInvestigacion", "nombreDecreto", "articulo",
-        formulario, Boolean.TRUE);
+    Comite comite = new Comite(1L, "CEISH", "nombreSecretario", "nombreInvestigacion", Genero.M, "nombreDecreto",
+        "articulo", formulario, Boolean.TRUE);
 
     Memoria memoria = new Memoria();
     TipoEstadoMemoria estadoMemoria = new TipoEstadoMemoria();
@@ -821,7 +822,8 @@ public class ComentarioServiceTest extends BaseServiceTest {
     TipoEvaluacion tipoEvaluacion = new TipoEvaluacion(4L, "Seguimiento Final", Boolean.TRUE);
     evaluacion.setTipoEvaluacion(tipoEvaluacion);
     Formulario formulario = new Formulario(5L, "Formulario", "Descripcion");
-    Comite comite = new Comite(1L, "CEISH", "nombreSecretario", "nombreInvestigacion", "nombreDecreto", "articulo", formulario, Boolean.TRUE);
+    Comite comite = new Comite(1L, "CEISH", "nombreSecretario", "nombreInvestigacion", Genero.M, "nombreDecreto",
+        "articulo", formulario, Boolean.TRUE);
 
     Memoria memoria = new Memoria();
     TipoEstadoMemoria estadoMemoria = new TipoEstadoMemoria();
@@ -855,8 +857,8 @@ public class ComentarioServiceTest extends BaseServiceTest {
     TipoEvaluacion tipoEvaluacion = new TipoEvaluacion(4L, "Seguimiento Final", Boolean.TRUE);
     evaluacion.setTipoEvaluacion(tipoEvaluacion);
     Formulario formulario = new Formulario(5L, "Formulario", "Descripcion");
-    Comite comite = new Comite(1L, "CEISH", "nombreSecretario", "nombreInvestigacion", "nombreDecreto", "articulo",
-        formulario, Boolean.TRUE);
+    Comite comite = new Comite(1L, "CEISH", "nombreSecretario", "nombreInvestigacion", Genero.M, "nombreDecreto",
+        "articulo", formulario, Boolean.TRUE);
 
     Memoria memoria = new Memoria();
     TipoEstadoMemoria estadoMemoria = new TipoEstadoMemoria();
@@ -890,8 +892,8 @@ public class ComentarioServiceTest extends BaseServiceTest {
     TipoEvaluacion tipoEvaluacion = new TipoEvaluacion(4L, "Seguimiento Final", Boolean.TRUE);
     evaluacion.setTipoEvaluacion(tipoEvaluacion);
     Formulario formulario = new Formulario(5L, "Formulario", "Descripcion");
-    Comite comite = new Comite(1L, "CEISH", "nombreSecretario", "nombreInvestigacion", "nombreDecreto", "articulo",
-        formulario, Boolean.TRUE);
+    Comite comite = new Comite(1L, "CEISH", "nombreSecretario", "nombreInvestigacion", Genero.M, "nombreDecreto",
+        "articulo", formulario, Boolean.TRUE);
 
     Memoria memoria = new Memoria();
     TipoEstadoMemoria estadoMemoria = new TipoEstadoMemoria();
@@ -925,8 +927,8 @@ public class ComentarioServiceTest extends BaseServiceTest {
     TipoEvaluacion tipoEvaluacion = new TipoEvaluacion(4L, "Seguimiento Final", Boolean.TRUE);
     evaluacion.setTipoEvaluacion(tipoEvaluacion);
     Formulario formulario = new Formulario(5L, "Formulario", "Descripcion");
-    Comite comite = new Comite(1L, "CEISH", "nombreSecretario", "nombreInvestigacion", "nombreDecreto", "articulo",
-        formulario, Boolean.TRUE);
+    Comite comite = new Comite(1L, "CEISH", "nombreSecretario", "nombreInvestigacion", Genero.M, "nombreDecreto",
+        "articulo", formulario, Boolean.TRUE);
 
     Memoria memoria = new Memoria();
     TipoEstadoMemoria estadoMemoria = new TipoEstadoMemoria();
@@ -961,8 +963,8 @@ public class ComentarioServiceTest extends BaseServiceTest {
     TipoEvaluacion tipoEvaluacion = new TipoEvaluacion(4L, "Seguimiento Final", Boolean.TRUE);
     evaluacion.setTipoEvaluacion(tipoEvaluacion);
     Formulario formulario = new Formulario(5L, "Formulario", "Descripcion");
-    Comite comite = new Comite(1L, "CEISH", "nombreSecretario", "nombreInvestigacion", "nombreDecreto", "articulo",
-        formulario, Boolean.TRUE);
+    Comite comite = new Comite(1L, "CEISH", "nombreSecretario", "nombreInvestigacion", Genero.M, "nombreDecreto",
+        "articulo", formulario, Boolean.TRUE);
 
     Memoria memoria = new Memoria();
     TipoEstadoMemoria estadoMemoria = new TipoEstadoMemoria();
@@ -1946,7 +1948,8 @@ public class ComentarioServiceTest extends BaseServiceTest {
     memoria.setEstadoActual(estadoMemoria);
 
     Formulario formulario = new Formulario(1L, "M10", "Descripcion");
-    Comite comite = new Comite(1L, "CEI", "nombreSecretario", "nombreInvestigacion", "nombreDecreto", "articulo", formulario, Boolean.TRUE);
+    Comite comite = new Comite(1L, "CEI", "nombreSecretario", "nombreInvestigacion", Genero.M, "nombreDecreto",
+        "articulo", formulario, Boolean.TRUE);
     memoria.setComite(comite);
 
     final Evaluacion evaluacion = new Evaluacion();
@@ -1977,7 +1980,8 @@ public class ComentarioServiceTest extends BaseServiceTest {
     memoria.setRetrospectiva(retrospectiva);
 
     Formulario formulario = new Formulario(1L, "Nombre", "Descripcion");
-    Comite comite = new Comite(1L, nombreComite, "nombreSecretario", "nombreInvestigacion", "nombreDecreto", "articulo", formulario, Boolean.TRUE);
+    Comite comite = new Comite(1L, nombreComite, "nombreSecretario", "nombreInvestigacion", Genero.M, "nombreDecreto",
+        "articulo", formulario, Boolean.TRUE);
     Bloque bloque = new Bloque(1L, formulario, "Bloque1", 1);
     Apartado apartado = new Apartado();
     apartado.setId(1L);

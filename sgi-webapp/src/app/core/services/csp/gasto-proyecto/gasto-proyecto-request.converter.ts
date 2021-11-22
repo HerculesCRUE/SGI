@@ -17,9 +17,7 @@ class GastoProyectoRequestConverter extends SgiBaseConverter<IGastoProyectoReque
       conceptoGasto: {
         id: value.conceptoGastoId
       } as IConceptoGasto,
-      estado: {
-        id: value.estadoId,
-      } as IEstadoGastoProyecto,
+      estado: value.estado,
       fechaCongreso: LuxonUtils.fromBackend(value.fechaCongreso),
       importeInscripcion: value.importeInscripcion,
       observaciones: value.observaciones
@@ -33,7 +31,7 @@ class GastoProyectoRequestConverter extends SgiBaseConverter<IGastoProyectoReque
       proyectoId: value.proyectoId,
       gastoRef: value.gastoRef,
       conceptoGastoId: value.conceptoGasto?.id,
-      estadoId: value.estado?.id,
+      estado: value.estado,
       fechaCongreso: LuxonUtils.toBackend(value.fechaCongreso),
       importeInscripcion: value.importeInscripcion,
       observaciones: value.observaciones

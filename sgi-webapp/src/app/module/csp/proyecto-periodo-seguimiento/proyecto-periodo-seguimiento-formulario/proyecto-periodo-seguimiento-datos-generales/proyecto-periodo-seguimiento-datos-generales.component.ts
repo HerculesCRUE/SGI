@@ -27,7 +27,7 @@ export class ProyectoPeriodoSeguimientoDatosGeneralesComponent extends FormFragm
   formPart: ProyectoPeriodoSeguimientoDatosGeneralesFragment;
   fxLayoutProperties: FxLayoutProperties;
   fxFlexProperties: FxFlexProperties;
-  fxFlexProperties3: FxFlexProperties;
+  fxFlexProperties2: FxFlexProperties;
   private subscriptions: Subscription[] = [];
   FormGroupUtil = FormGroupUtil;
 
@@ -46,16 +46,16 @@ export class ProyectoPeriodoSeguimientoDatosGeneralesComponent extends FormFragm
     super(actionService.FRAGMENT.DATOS_GENERALES, actionService);
     this.formPart = this.fragment as ProyectoPeriodoSeguimientoDatosGeneralesFragment;
     this.fxFlexProperties = new FxFlexProperties();
-    this.fxFlexProperties.sm = '0 1 calc(36%-10px)';
-    this.fxFlexProperties.md = '0 1 calc(33%-10px)';
-    this.fxFlexProperties.gtMd = '0 1 calc(32%-10px)';
+    this.fxFlexProperties.sm = '0 1 calc(50%-10px)';
+    this.fxFlexProperties.md = '0 1 calc(50%-10px)';
+    this.fxFlexProperties.gtMd = '0 1 calc(50%-10px)';
     this.fxFlexProperties.order = '2';
 
-    this.fxFlexProperties3 = new FxFlexProperties();
-    this.fxFlexProperties3.sm = '0 1 calc(100%-10px)';
-    this.fxFlexProperties3.md = '0 1 calc(100%-10px)';
-    this.fxFlexProperties3.gtMd = '0 1 calc(100%-10px)';
-    this.fxFlexProperties3.order = '3';
+    this.fxFlexProperties2 = new FxFlexProperties();
+    this.fxFlexProperties2.sm = '0 1 calc(100%-10px)';
+    this.fxFlexProperties2.md = '0 1 calc(100%-10px)';
+    this.fxFlexProperties2.gtMd = '0 1 calc(100%-10px)';
+    this.fxFlexProperties2.order = '3';
 
     this.fxLayoutProperties = new FxLayoutProperties();
     this.fxLayoutProperties.gap = '20px';
@@ -79,6 +79,7 @@ export class ProyectoPeriodoSeguimientoDatosGeneralesComponent extends FormFragm
   }
 
   copyToProyecto(): void {
+    this.formPart.enableEditableControls();
     this.formPart.getFormGroup().controls.numPeriodo.setValue(this.formPart.getFormGroup().controls.numPeriodoConvocatoria.value);
     this.formPart.getFormGroup().controls.fechaInicio.setValue(this.formPart.getFormGroup().controls.fechaInicioConvocatoria.value);
     this.formPart.getFormGroup().controls.fechaFin.setValue(this.formPart.getFormGroup().controls.fechaFinConvocatoria.value);

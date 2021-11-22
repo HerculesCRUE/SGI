@@ -11,8 +11,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
-import org.crue.hercules.sgi.eti.validation.ExistsById;
-import org.crue.hercules.sgi.eti.validation.FieldValueEquals;
+import org.crue.hercules.sgi.framework.validation.ExistsById;
+import org.crue.hercules.sgi.framework.validation.FieldValueEquals;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -49,7 +49,7 @@ public class Checklist extends BaseEntity {
   @ManyToOne
   @JoinColumn(name = "formly_id", nullable = false, foreignKey = @ForeignKey(name = "FK_CHECKLIST_FORMLY"))
   @ExistsById(entityClass = Formly.class)
-  @FieldValueEquals(entityClass = Formly.class, field = "nombre", value = "CHECKLIST")
+  @FieldValueEquals(entityClass = Formly.class, fieldName = "nombre", value = "CHECKLIST")
   private Formly formly;
 
   /** Respuestas del formulario definido en el Formly */

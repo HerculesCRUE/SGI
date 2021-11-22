@@ -5,269 +5,267 @@
       "title-div"
     ],
     "templateOptions": {
-      "label": "4.2.1.1.4 Instalaciones",
-      "hideExpression": "!formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1 || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable.some(localTable => localTable.nivelContencion !== '1')"
+      "label": "4.2.1.1.4 Instalaciones"
     },
-    "fieldGroup": [
-      {
-        "template": "<p>Se dispone de vestuarios con taquillas para la ropa</p>",
-        "hideExpression": "!formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1 || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable.some(localTable => localTable.nivelContencion !== '1')"
-      },
-      {
-        "key": "disponeVestuarios",
-        "type": "radio",
-        "hideExpression": "!formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1 || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable.some(localTable => localTable.nivelContencion !== '1')",
-        "templateOptions": {
-          "required": true,
-          "label": "Elige opción",
-          "options": [
-            {
-              "value": "no",
-              "label": "No"
-            },
-            {
-              "value": "si",
-              "label": "Sí"
-            }
-          ]
+    "hideExpression": "!formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1 || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable.some(localTable => localTable.nivelContencion !== '1')"
+  },
+  {
+    "template": "<p>Se dispone de vestuarios con taquillas para la ropa</p>",
+    "hideExpression": "!formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1 || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable.some(localTable => localTable.nivelContencion !== '1')"
+  },
+  {
+    "key": "disponeVestuarios",
+    "type": "radio",
+    "hideExpression": "!formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1 || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable.some(localTable => localTable.nivelContencion !== '1')",
+    "templateOptions": {
+      "required": true,
+      "label": "Elige opción",
+      "options": [
+        {
+          "value": "no",
+          "label": "No"
+        },
+        {
+          "value": "si",
+          "label": "Sí"
         }
-      },
-      {
-        "key": "observaciones_disponeVestuarios",
-        "type": "textarea",
-        "hideExpression": "!formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1 || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable.some(localTable => localTable.nivelContencion !== '1')",
-        "templateOptions": {
-          "label": "Observaciones",
-          "placeholder": "Observaciones",
-          "required": false,
-          "disabled": false,
-          "autosize": true,
-          "autosizeMinRows": "1",
-          "autosizeMaxRows": "10"
+      ]
+    }
+  },
+  {
+    "key": "observaciones_disponeVestuarios",
+    "type": "textarea",
+    "hideExpression": "!formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1 || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable.some(localTable => localTable.nivelContencion !== '1')",
+    "templateOptions": {
+      "label": "Observaciones",
+      "placeholder": "Observaciones",
+      "required": false,
+      "disabled": false,
+      "autosize": true,
+      "autosizeMinRows": "1",
+      "autosizeMaxRows": "10"
+    }
+  },
+  {
+    "template": "<p>En caso de ventanas practicables, éstas llevan protección frente a la entrada de insectos</p>",
+    "hideExpression": "!formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1 || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable.some(localTable => localTable.nivelContencion !== '1')"
+  },
+  {
+    "key": "ventanasPracticables",
+    "type": "radio",
+    "hideExpression": "!formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1 || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable.some(localTable => localTable.nivelContencion !== '1')",
+    "templateOptions": {
+      "required": true,
+      "label": "Elige opción",
+      "options": [
+        {
+          "value": "no",
+          "label": "No"
+        },
+        {
+          "value": "si",
+          "label": "Sí"
         }
-      },
-      {
-        "template": "<p>En caso de ventanas practicables, éstas llevan protección frente a la entrada de insectos</p>",
-        "hideExpression": "!formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1 || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable.some(localTable => localTable.nivelContencion !== '1')"
-      },
-      {
-        "key": "ventanasPracticables",
-        "type": "radio",
-        "hideExpression": "!formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1 || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable.some(localTable => localTable.nivelContencion !== '1')",
-        "templateOptions": {
-          "required": true,
-          "label": "Elige opción",
-          "options": [
-            {
-              "value": "no",
-              "label": "No"
-            },
-            {
-              "value": "si",
-              "label": "Sí"
-            }
-          ]
+      ]
+    }
+  },
+  {
+    "key": "observaciones_ventanasPracticables",
+    "type": "textarea",
+    "hideExpression": "!formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1 || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable.some(localTable => localTable.nivelContencion !== '1')",
+    "templateOptions": {
+      "label": "Observaciones",
+      "placeholder": "Observaciones",
+      "required": false,
+      "disabled": false,
+      "autosize": true,
+      "autosizeMinRows": "1",
+      "autosizeMaxRows": "10"
+    }
+  },
+  {
+    "template": "<p>Se dispone de espacio suficiente para el almacenamiento de materiales y reactivos</p>",
+    "hideExpression": "!formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1 || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable.some(localTable => localTable.nivelContencion !== '1')"
+  },
+  {
+    "key": "espacioAlmacenamiento",
+    "type": "radio",
+    "hideExpression": "!formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1 || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable.some(localTable => localTable.nivelContencion !== '1')",
+    "templateOptions": {
+      "required": true,
+      "label": "Elige opción",
+      "options": [
+        {
+          "value": "no",
+          "label": "No"
+        },
+        {
+          "value": "si",
+          "label": "Sí"
         }
-      },
-      {
-        "key": "observaciones_ventanasPracticables",
-        "type": "textarea",
-        "hideExpression": "!formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1 || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable.some(localTable => localTable.nivelContencion !== '1')",
-        "templateOptions": {
-          "label": "Observaciones",
-          "placeholder": "Observaciones",
-          "required": false,
-          "disabled": false,
-          "autosize": true,
-          "autosizeMinRows": "1",
-          "autosizeMaxRows": "10"
+      ]
+    }
+  },
+  {
+    "key": "observaciones_espacioAlmacenamiento",
+    "type": "textarea",
+    "hideExpression": "!formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1 || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable.some(localTable => localTable.nivelContencion !== '1')",
+    "templateOptions": {
+      "label": "Observaciones",
+      "placeholder": "Observaciones",
+      "required": false,
+      "disabled": false,
+      "autosize": true,
+      "autosizeMinRows": "1",
+      "autosizeMaxRows": "10"
+    }
+  },
+  {
+    "template": "<p>El laboratorio dispone de ventilación adecuada</p>",
+    "hideExpression": "!formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1 || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable.some(localTable => localTable.nivelContencion !== '1')"
+  },
+  {
+    "key": "ventilacion",
+    "type": "radio",
+    "hideExpression": "!formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1 || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable.some(localTable => localTable.nivelContencion !== '1')",
+    "templateOptions": {
+      "required": true,
+      "label": "Elige opción",
+      "options": [
+        {
+          "value": "no",
+          "label": "No"
+        },
+        {
+          "value": "si",
+          "label": "Sí"
         }
-      },
-      {
-        "template": "<p>Se dispone de espacio suficiente para el almacenamiento de materiales y reactivos</p>",
-        "hideExpression": "!formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1 || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable.some(localTable => localTable.nivelContencion !== '1')"
-      },
-      {
-        "key": "espacioAlmacenamiento",
-        "type": "radio",
-        "hideExpression": "!formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1 || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable.some(localTable => localTable.nivelContencion !== '1')",
-        "templateOptions": {
-          "required": true,
-          "label": "Elige opción",
-          "options": [
-            {
-              "value": "no",
-              "label": "No"
-            },
-            {
-              "value": "si",
-              "label": "Sí"
-            }
-          ]
+      ]
+    }
+  },
+  {
+    "key": "observaciones_ventilacion",
+    "type": "textarea",
+    "hideExpression": "!formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1 || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable.some(localTable => localTable.nivelContencion !== '1')",
+    "templateOptions": {
+      "label": "Observaciones",
+      "placeholder": "Observaciones",
+      "required": false,
+      "disabled": false,
+      "autosize": true,
+      "autosizeMinRows": "1",
+      "autosizeMaxRows": "10"
+    }
+  },
+  {
+    "template": "<p>El laboratorio dispone de iluminación adecuada (incluida la de emergencia)</p>",
+    "hideExpression": "!formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1 || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable.some(localTable => localTable.nivelContencion !== '1')"
+  },
+  {
+    "key": "iluminacion",
+    "type": "radio",
+    "hideExpression": "!formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1 || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable.some(localTable => localTable.nivelContencion !== '1')",
+    "templateOptions": {
+      "required": true,
+      "label": "Elige opción",
+      "options": [
+        {
+          "value": "no",
+          "label": "No"
+        },
+        {
+          "value": "si",
+          "label": "Sí"
         }
-      },
-      {
-        "key": "observaciones_espacioAlmacenamiento",
-        "type": "textarea",
-        "hideExpression": "!formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1 || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable.some(localTable => localTable.nivelContencion !== '1')",
-        "templateOptions": {
-          "label": "Observaciones",
-          "placeholder": "Observaciones",
-          "required": false,
-          "disabled": false,
-          "autosize": true,
-          "autosizeMinRows": "1",
-          "autosizeMaxRows": "10"
+      ]
+    }
+  },
+  {
+    "key": "observaciones_iluminacion",
+    "type": "textarea",
+    "hideExpression": "!formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1 || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable.some(localTable => localTable.nivelContencion !== '1')",
+    "templateOptions": {
+      "label": "Observaciones",
+      "placeholder": "Observaciones",
+      "required": false,
+      "disabled": false,
+      "autosize": true,
+      "autosizeMinRows": "1",
+      "autosizeMaxRows": "10"
+    }
+  },
+  {
+    "template": "<p>El laboratorio cuenta con un botiquín: si/no. Observaciones-El laboratorio dispone de lavamanos y lavaojos</p>",
+    "hideExpression": "!formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1 || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable.some(localTable => localTable.nivelContencion !== '1')"
+  },
+  {
+    "key": "lavamanos",
+    "type": "radio",
+    "hideExpression": "!formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1 || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable.some(localTable => localTable.nivelContencion !== '1')",
+    "templateOptions": {
+      "required": true,
+      "label": "Elige opción",
+      "options": [
+        {
+          "value": "no",
+          "label": "No"
+        },
+        {
+          "value": "si",
+          "label": "Sí"
         }
-      },
-      {
-        "template": "<p>El laboratorio dispone de ventilación adecuada</p>",
-        "hideExpression": "!formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1 || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable.some(localTable => localTable.nivelContencion !== '1')"
-      },
-      {
-        "key": "ventilacion",
-        "type": "radio",
-        "hideExpression": "!formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1 || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable.some(localTable => localTable.nivelContencion !== '1')",
-        "templateOptions": {
-          "required": true,
-          "label": "Elige opción",
-          "options": [
-            {
-              "value": "no",
-              "label": "No"
-            },
-            {
-              "value": "si",
-              "label": "Sí"
-            }
-          ]
+      ]
+    }
+  },
+  {
+    "key": "observaciones_lavamanos",
+    "type": "textarea",
+    "hideExpression": "!formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1 || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable.some(localTable => localTable.nivelContencion !== '1')",
+    "templateOptions": {
+      "label": "Observaciones",
+      "placeholder": "Observaciones",
+      "required": false,
+      "disabled": false,
+      "autosize": true,
+      "autosizeMinRows": "1",
+      "autosizeMaxRows": "10"
+    }
+  },
+  {
+    "template": "<p>El laboratorio dispone de ducha de emergencia</p>",
+    "hideExpression": "!formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1 || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable.some(localTable => localTable.nivelContencion !== '1')"
+  },
+  {
+    "key": "ducha",
+    "type": "radio",
+    "hideExpression": "!formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1 || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable.some(localTable => localTable.nivelContencion !== '1')",
+    "templateOptions": {
+      "required": true,
+      "label": "Elige opción",
+      "options": [
+        {
+          "value": "no",
+          "label": "No"
+        },
+        {
+          "value": "si",
+          "label": "Sí"
         }
-      },
-      {
-        "key": "observaciones_ventilacion",
-        "type": "textarea",
-        "hideExpression": "!formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1 || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable.some(localTable => localTable.nivelContencion !== '1')",
-        "templateOptions": {
-          "label": "Observaciones",
-          "placeholder": "Observaciones",
-          "required": false,
-          "disabled": false,
-          "autosize": true,
-          "autosizeMinRows": "1",
-          "autosizeMaxRows": "10"
-        }
-      },
-      {
-        "template": "<p>El laboratorio dispone de iluminación adecuada (incluida la de emergencia)</p>",
-        "hideExpression": "!formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1 || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable.some(localTable => localTable.nivelContencion !== '1')"
-      },
-      {
-        "key": "iluminacion",
-        "type": "radio",
-        "hideExpression": "!formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1 || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable.some(localTable => localTable.nivelContencion !== '1')",
-        "templateOptions": {
-          "required": true,
-          "label": "Elige opción",
-          "options": [
-            {
-              "value": "no",
-              "label": "No"
-            },
-            {
-              "value": "si",
-              "label": "Sí"
-            }
-          ]
-        }
-      },
-      {
-        "key": "observaciones_iluminacion",
-        "type": "textarea",
-        "hideExpression": "!formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1 || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable.some(localTable => localTable.nivelContencion !== '1')",
-        "templateOptions": {
-          "label": "Observaciones",
-          "placeholder": "Observaciones",
-          "required": false,
-          "disabled": false,
-          "autosize": true,
-          "autosizeMinRows": "1",
-          "autosizeMaxRows": "10"
-        }
-      },
-      {
-        "template": "<p>El laboratorio cuenta con un botiquín: si/no. Observaciones-El laboratorio dispone de lavamanos y lavaojos</p>",
-        "hideExpression": "!formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1 || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable.some(localTable => localTable.nivelContencion !== '1')"
-      },
-      {
-        "key": "lavamanos",
-        "type": "radio",
-        "hideExpression": "!formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1 || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable.some(localTable => localTable.nivelContencion !== '1')",
-        "templateOptions": {
-          "required": true,
-          "label": "Elige opción",
-          "options": [
-            {
-              "value": "no",
-              "label": "No"
-            },
-            {
-              "value": "si",
-              "label": "Sí"
-            }
-          ]
-        }
-      },
-      {
-        "key": "observaciones_lavamanos",
-        "type": "textarea",
-        "hideExpression": "!formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1 || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable.some(localTable => localTable.nivelContencion !== '1')",
-        "templateOptions": {
-          "label": "Observaciones",
-          "placeholder": "Observaciones",
-          "required": false,
-          "disabled": false,
-          "autosize": true,
-          "autosizeMinRows": "1",
-          "autosizeMaxRows": "10"
-        }
-      },
-      {
-        "template": "<p>El laboratorio dispone de ducha de emergencia</p>",
-        "hideExpression": "!formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1 || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable.some(localTable => localTable.nivelContencion !== '1')"
-      },
-      {
-        "key": "ducha",
-        "type": "radio",
-        "hideExpression": "!formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1 || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable.some(localTable => localTable.nivelContencion !== '1')",
-        "templateOptions": {
-          "required": true,
-          "label": "Elige opción",
-          "options": [
-            {
-              "value": "no",
-              "label": "No"
-            },
-            {
-              "value": "si",
-              "label": "Sí"
-            }
-          ]
-        }
-      },
-      {
-        "key": "observaciones_ducha",
-        "type": "textarea",
-        "hideExpression": "!formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1 || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable.some(localTable => localTable.nivelContencion !== '1')",
-        "templateOptions": {
-          "label": "Observaciones",
-          "placeholder": "Observaciones",
-          "required": false,
-          "disabled": false,
-          "autosize": true,
-          "autosizeMinRows": "1",
-          "autosizeMaxRows": "10"
-        }
-      }
-    ]
+      ]
+    }
+  },
+  {
+    "key": "observaciones_ducha",
+    "type": "textarea",
+    "hideExpression": "!formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1 || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable || !formState.mainModel.ap4_2.ap4_2_1.ap4_2_1_1.laboratorioLocalTable.some(localTable => localTable.nivelContencion !== '1')",
+    "templateOptions": {
+      "label": "Observaciones",
+      "placeholder": "Observaciones",
+      "required": false,
+      "disabled": false,
+      "autosize": true,
+      "autosizeMinRows": "1",
+      "autosizeMaxRows": "10"
+    }
   }
 ]

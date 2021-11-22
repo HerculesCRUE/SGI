@@ -6,11 +6,12 @@ import { MatTableDataSource } from '@angular/material/table';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { FormFragmentComponent } from '@core/component/fragment.component';
 import { MSG_PARAMS } from '@core/i18n';
+import { IAreaTematica } from '@core/models/csp/area-tematica';
 import { IProyectoContexto, PROPIEDAD_RESULTADOS_MAP } from '@core/models/csp/proyecto-contexto';
 import { FxFlexProperties } from '@core/models/shared/flexLayout/fx-flex-properties';
 import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-properties';
 import { TranslateService } from '@ngx-translate/core';
-import { Subscription } from 'rxjs';
+import { BehaviorSubject, Subscription } from 'rxjs';
 import { ProyectoContextoModalComponent, ProyectoContextoModalData } from '../../modals/proyecto-contexto-modal/proyecto-contexto-modal.component';
 import { ProyectoActionService } from '../../proyecto.action.service';
 import { AreaTematicaProyectoData, ProyectoContextoFragment } from './proyecto-contexto.fragment';
@@ -19,8 +20,16 @@ const PROYECTO_CONTEXTO_INTERESES_KEY = marker('csp.proyecto.contexto.intereses'
 const PROYECTO_CONTEXTO_OBJETIVOS_KEY = marker('csp.proyecto.contexto.objetivos');
 const PROYECTO_CONTEXTO_RESULTADOS_KEY = marker('csp.proyecto.contexto.resultados');
 const AREA_KEY = marker('csp.area');
+const SELECCIONAR_AREA_TEMATICA_KEY = marker('csp.proyecto.select-area');
 const AREA_TEMATICA_KEY = marker('csp.area-tematica');
 
+
+
+export interface AreaTematicaListado {
+  padre: IAreaTematica;
+  areasTematicasConvocatoria: string;
+  areaTematicaProyecto: IAreaTematica;
+}
 @Component({
   selector: 'sgi-proyecto-contexto',
   templateUrl: './proyecto-contexto.component.html',
@@ -40,8 +49,9 @@ export class ProyectoContextoComponent extends FormFragmentComponent<IProyectoCo
   msgParamInteresesEntity = {};
   msgParamObjetivosEntity = {};
   msgParamResultadosEntity = {};
+  areasConvocatoria: IAreaTematica[];
 
-  convocatoriaAreaTematicas = new MatTableDataSource<AreaTematicaProyectoData>();
+  listadoAreaTematicas = new MatTableDataSource<AreaTematicaListado>();
   @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
   @ViewChild(MatSort, { static: true }) sort: MatSort;
   columns = ['nombreRaizArbol', 'areaTematicaConvocatoria', 'areaTematicaProyecto', 'acciones'];
@@ -50,7 +60,7 @@ export class ProyectoContextoComponent extends FormFragmentComponent<IProyectoCo
 
   msgParamEntity = {};
   msgParamAreaEntities = {};
-  msgParamAreaTematicaEntity = {};
+  msgParamAreaTematicaSeleccionar = {};
   msgParamAreaTematicaEntities = {};
 
   constructor(
@@ -105,9 +115,9 @@ export class ProyectoContextoComponent extends FormFragmentComponent<IProyectoCo
     ).subscribe((value) => this.msgParamResultadosEntity = { entity: value, ...MSG_PARAMS.GENDER.MALE, ...MSG_PARAMS.CARDINALIRY.PLURAL });
 
     this.translate.get(
-      AREA_TEMATICA_KEY,
+      SELECCIONAR_AREA_TEMATICA_KEY,
       MSG_PARAMS.CARDINALIRY.SINGULAR
-    ).subscribe((value) => this.msgParamAreaTematicaEntity = { entity: value });
+    ).subscribe((value) => this.msgParamAreaTematicaSeleccionar = { entity: value });
 
     this.translate.get(
       AREA_TEMATICA_KEY,
@@ -116,25 +126,42 @@ export class ProyectoContextoComponent extends FormFragmentComponent<IProyectoCo
   }
 
   private loadAreaTematicas(): void {
-    this.subscriptions.push(this.formPart.areasTematicas$.subscribe(
-      data => this.convocatoriaAreaTematicas.data = data
-    ));
-    this.convocatoriaAreaTematicas.paginator = this.paginator;
-    this.convocatoriaAreaTematicas.sort = this.sort;
+    const subscription = this.formPart.areasTematicas$.subscribe((data) => {
+      if (!data || data.length === 0) {
+        this.listadoAreaTematicas.data = [];
+      } else {
+        this.areasConvocatoria = data[0]?.areasTematicasConvocatoria;
+        const listadoAreas: AreaTematicaListado = {
+          padre: data[0]?.root,
+          areasTematicasConvocatoria: data[0]?.areasTematicasConvocatoria?.map(area => area.nombre).join(', '),
+          areaTematicaProyecto: data[0]?.areaTematicaProyecto
+        };
+        this.listadoAreaTematicas.data = [listadoAreas];
+      }
+    }
+    );
+    this.subscriptions.push(subscription);
+    this.listadoAreaTematicas.paginator = this.paginator;
+    this.listadoAreaTematicas.sort = this.sort;
+  }
+  deleteAreaTematicaListado() {
+    this.formPart.deleteAreaTematicaListado();
   }
 
-  openModal(wrapper?: AreaTematicaProyectoData): void {
+  openModal(data?: AreaTematicaListado): void {
     const config = {
       panelClass: 'sgi-dialog-container',
-      data: wrapper ? wrapper : {} as ProyectoContextoModalData
+      data: {
+        padre: data?.padre ?? this.formGroup.controls.padre?.value,
+        areasTematicasConvocatoria: this.areasConvocatoria,
+        areaTematicaProyecto: data?.areaTematicaProyecto,
+      } as ProyectoContextoModalData,
     };
     const dialogRef = this.matDialog.open(ProyectoContextoModalComponent, config);
     dialogRef.afterClosed().subscribe(
-      (result) => {
-        if (wrapper) {
-          this.formPart.updateAreaTematica(result);
-        } else {
-          this.formPart.addAreaTematica(result);
+      (result: ProyectoContextoModalData) => {
+        if (result) {
+          this.formPart.updateListadoAreaTematica(result);
         }
       }
     );

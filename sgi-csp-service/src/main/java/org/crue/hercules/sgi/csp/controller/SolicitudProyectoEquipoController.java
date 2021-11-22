@@ -59,7 +59,7 @@ public class SolicitudProyectoEquipoController {
   }
 
   @PatchMapping("/{solicitudProyectoId}")
-  @PreAuthorize("hasAuthorityForAnyUO('CSP-SOL-E')")
+  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-SOL-E', 'CSP-SOL-INV-ER')")
   public ResponseEntity<List<SolicitudProyectoEquipo>> updateMiembrosEquipo(@PathVariable Long solicitudProyectoId,
       @Valid @RequestBody List<SolicitudProyectoEquipo> solicitudProyectoEquipos) {
     log.debug("updateMiembrosEquipo(Long solicitudId, List<SolicitudProyectoEquipo> solicitudProyectoEquipos) - start");

@@ -27,7 +27,7 @@ abstract class BaseIT {
   static class TestRestTemplateConfiguration {
     @Bean
     public RestTemplateBuilder restTemplateBuilder() {
-      return new RestTemplateBuilder().additionalInterceptors(SgiClientHttpRequestInterceptors.printOnError())
+      return new RestTemplateBuilder().additionalInterceptors(SgiClientHttpRequestInterceptors.logOnError())
           // The BufferingHttpComponentsClientHttpRequestFactory is required as we want to
           // use the response body both in the interceptor and for the initial calling
           // code. The default implementation allows to read the response body only once.

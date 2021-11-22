@@ -10,11 +10,11 @@ import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
+import org.crue.hercules.sgi.framework.validation.ActivableIsActivo;
 import org.crue.hercules.sgi.pii.enums.TipoPropiedad;
 import org.crue.hercules.sgi.pii.model.ViaProteccion.OnActivar;
 import org.crue.hercules.sgi.pii.model.ViaProteccion.OnActualizar;
 import org.crue.hercules.sgi.pii.model.ViaProteccion.OnCrear;
-import org.crue.hercules.sgi.pii.validation.EntidadActiva;
 import org.crue.hercules.sgi.pii.validation.UniqueNombreViaProteccion;
 
 import lombok.AllArgsConstructor;
@@ -31,7 +31,7 @@ import lombok.experimental.SuperBuilder;
 @AllArgsConstructor
 @SuperBuilder
 @UniqueNombreViaProteccion(groups = { OnActualizar.class, OnActivar.class, OnCrear.class })
-@EntidadActiva(entityClass = ViaProteccion.class, groups = { OnActualizar.class })
+@ActivableIsActivo(entityClass = ViaProteccion.class, groups = { OnActualizar.class })
 public class ViaProteccion extends BaseActivableEntity {
 
   protected static final String TABLE_NAME = "via_proteccion";

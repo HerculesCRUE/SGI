@@ -82,4 +82,14 @@ public interface PeticionEvaluacionService {
   Page<PeticionEvaluacionWithIsEliminable> findAllPeticionesWithPersonaRefCreadorPeticionesEvaluacionOrResponsableMemoria(
       String query, Pageable pageable, String personaRef);
 
+  /**
+   * Devuelve si la {@link PeticionEvaluacion} existe para la persona responsable
+   * de memorias o creador de la petición de evaluación
+   * 
+   * @param personaRef           usuario
+   * @param idPeticionEvaluacion identificador de la {@link PeticionEvaluacion}
+   * @return las entidades {@link PeticionEvaluacion}
+   */
+  Boolean isPeticionWithPersonaRefCreadorPeticionEvaluacionOrResponsableMemoria(String personaRef,
+      Long idPeticionEvaluacion);
 }

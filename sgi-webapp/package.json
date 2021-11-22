@@ -1,9 +1,9 @@
 {
   "name": "sgi-webapp",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "scripts": {
     "ng": "ng",
-    "start": "node ./generate-config.js && ng serve --host 0.0.0.0 --allowed-hosts 0.0.0.0 --disable-host-check",
+    "start": "node ./generate-config.js && NODE_OPTIONS=--max-old-space-size=2048 ng serve --disable-host-check",
     "build": "node ./generate-config.js && ng build",
     "build-prod": "node ./generate-config.js && ng build --prod",
     "test": "node ./generate-config.js && ng test",

@@ -20,35 +20,35 @@ import lombok.extern.slf4j.Slf4j;
  * Static factory methods for {@link ClientHttpRequestInterceptor}.
  */
 @Slf4j
-public abstract class SgiClientHttpRequestInterceptors {
+public class SgiClientHttpRequestInterceptors {
+
+  private SgiClientHttpRequestInterceptors() {
+  }
+
   /**
-   * Logs {@link HttpRequest} and {@link ClientHttpResponse} details to the via
-   * SL4J.
+   * Logs (at DEBUG level) {@link HttpRequest} and {@link ClientHttpResponse}
+   * details via SL4J.
    * 
    * @return a {@link ClientHttpRequestInterceptor} that logs {@link HttpRequest}
    *         and {@link ClientHttpResponse} details at {@code DEBUG} level via
    *         SL4J..
    * @see #print(OutputStream)
    * @see #print(Writer)
-   * @see #print()
    */
   public static ClientHttpRequestInterceptor log() {
     return new LoggingClientHttpRequestInterceptor();
   }
 
   /**
-   * Print {@link HttpRequest} and {@link ClientHttpResponse} details to the
-   * "standard" output stream.
+   * Logs (at ERROR level) {@link HttpRequest} and {@link ClientHttpResponse}
+   * details via SL4J only if the response status code is greater or equal to 400.
    * 
-   * @return a {@link PrintingClientHttpRequestInterceptor} that writes to
-   *         {@link System#out}.
-   * @see System#out
-   * @see #print(OutputStream)
-   * @see #print(Writer)
-   * @see #log()
+   * @return a {@link ClientHttpRequestInterceptor} that logs only if the response
+   *         status code is greater or equal to 400.
+   * @see #printOnError(Writer)
    */
-  public static ClientHttpRequestInterceptor print() {
-    return print(System.out);
+  public static ClientHttpRequestInterceptor logOnError() {
+    return new LoggingErrorClientHttpRequestInterceptor();
   }
 
   /**
@@ -58,7 +58,6 @@ public abstract class SgiClientHttpRequestInterceptors {
    * @param stream the OutputStream to write to
    * @return a {@link PrintingClientHttpRequestInterceptor} that writes to an
    *         {@link OutputStream}.
-   * @see #print()
    * @see #print(Writer)
    * @see #log()
    */
@@ -73,28 +72,11 @@ public abstract class SgiClientHttpRequestInterceptors {
    * @param writer the Writer to write to
    * @return a {@link PrintingClientHttpRequestInterceptor} that writes to a
    *         {@link Writer}.
-   * @see #print()
    * @see #print(OutputStream)
    * @see #log()
    */
   public static ClientHttpRequestInterceptor print(Writer writer) {
     return new PrintWriterHttpRequestInterceptor(new PrintWriter(writer, true));
-  }
-
-  /**
-   * Print {@link HttpRequest} and {@link ClientHttpResponse} details to the
-   * "standard" output stream only if the response status code is greater or equal
-   * to 400.
-   * 
-   * @return a {@link ClientHttpRequestInterceptor} that writes to
-   *         {@link System#out} only if the response status code is greater or
-   *         equal to 400.
-   * @see System#out
-   * @see #printOnError(OutputStream)
-   * @see #printOnError(Writer)
-   */
-  public static ClientHttpRequestInterceptor printOnError() {
-    return printOnError(System.out);
   }
 
   /**
@@ -106,7 +88,7 @@ public abstract class SgiClientHttpRequestInterceptors {
    * @return a {@link ClientHttpRequestInterceptor} that writes to an
    *         {@link OutputStream} only if the response status code is greater or
    *         equal to 400.
-   * @see #printOnError()
+   * @see #logOnError()
    * @see #printOnError(Writer)
    */
   public static ClientHttpRequestInterceptor printOnError(OutputStream stream) {
@@ -121,7 +103,7 @@ public abstract class SgiClientHttpRequestInterceptors {
    * @param writer the Writer to write to
    * @return a {@link PrintingClientHttpRequestInterceptor} that writes to a
    *         {@link Writer}.
-   * @see #printOnError()
+   * @see #logOnError()
    * @see #printOnError(OutputStream)
    */
   public static ClientHttpRequestInterceptor printOnError(Writer writer) {
@@ -183,6 +165,29 @@ public abstract class SgiClientHttpRequestInterceptors {
             });
       } else {
         return response;
+      }
+    }
+  }
+
+  /**
+   * A {@link PrintingClientHttpRequestInterceptor} that writes to a
+   * {@link Writer} only if the response status code is greater or equal to 400.
+   *
+   * <p>
+   * Delegates to a {@link PrintWriterHttpRequestInterceptor} for writing.
+   */
+  private static class LoggingErrorClientHttpRequestInterceptor implements ClientHttpRequestInterceptor {
+    @Override
+    public ClientHttpResponse intercept(HttpRequest request, byte[] body, ClientHttpRequestExecution execution)
+        throws IOException {
+      if (log.isErrorEnabled()) {
+        StringWriter writer = new StringWriter();
+        ClientHttpResponse response = SgiClientHttpRequestInterceptors.print(writer).intercept(request, body,
+            execution);
+        log.error("HttpRequest and ClientHttpResponse details:\n" + writer);
+        return response;
+      } else {
+        return execution.execute(request, body);
       }
     }
   }

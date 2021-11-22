@@ -3,6 +3,8 @@ package org.crue.hercules.sgi.pii.dto;
 import java.io.Serializable;
 import java.math.BigDecimal;
 
+import org.crue.hercules.sgi.pii.model.TramoReparto.Tipo;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -20,5 +22,5 @@ public class TramoRepartoOutput implements Serializable {
   private Integer hasta;
   private BigDecimal porcentajeUniversidad;
   private BigDecimal porcentajeInventores;
-  private Boolean activo;
+  private Tipo tipo;
 }

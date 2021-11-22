@@ -5,6 +5,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
 public interface TipoProcedimientoRepository
-    extends ActivableRepository, JpaRepository<TipoProcedimiento, Long>, JpaSpecificationExecutor<TipoProcedimiento> {
+    extends JpaRepository<TipoProcedimiento, Long>, JpaSpecificationExecutor<TipoProcedimiento> {
 
 }

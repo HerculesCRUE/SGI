@@ -13,11 +13,11 @@ import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
+import org.crue.hercules.sgi.framework.validation.ActivableIsActivo;
 import org.crue.hercules.sgi.pii.enums.TipoPropiedad;
 import org.crue.hercules.sgi.pii.model.TipoProteccion.OnActivar;
 import org.crue.hercules.sgi.pii.model.TipoProteccion.OnActualizar;
 import org.crue.hercules.sgi.pii.model.TipoProteccion.OnCrear;
-import org.crue.hercules.sgi.pii.validation.EntidadActiva;
 import org.crue.hercules.sgi.pii.validation.UniqueNombreTipoProteccion;
 
 import lombok.AllArgsConstructor;
@@ -34,7 +34,7 @@ import lombok.experimental.SuperBuilder;
 @AllArgsConstructor
 @SuperBuilder
 @UniqueNombreTipoProteccion(groups = { OnActualizar.class, OnActivar.class, OnCrear.class })
-@EntidadActiva(entityClass = TipoProteccion.class, groups = { OnActualizar.class })
+@ActivableIsActivo(entityClass = TipoProteccion.class, groups = { OnActualizar.class })
 public class TipoProteccion extends BaseActivableEntity {
 
   public static final int NOMBRE_LENGTH = 50;

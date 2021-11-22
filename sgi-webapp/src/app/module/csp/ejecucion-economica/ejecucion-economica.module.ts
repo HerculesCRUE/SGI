@@ -20,6 +20,7 @@ import { DetalleOperacionesModificacionesComponent } from './ejecucion-economica
 import { EjecucionPresupuestariaEstadoActualComponent } from './ejecucion-economica-formulario/ejecucion-presupuestaria-estado-actual/ejecucion-presupuestaria-estado-actual.component';
 import { EjecucionPresupuestariaGastosComponent } from './ejecucion-economica-formulario/ejecucion-presupuestaria-gastos/ejecucion-presupuestaria-gastos.component';
 import { EjecucionPresupuestariaIngresosComponent } from './ejecucion-economica-formulario/ejecucion-presupuestaria-ingresos/ejecucion-presupuestaria-ingresos.component';
+import { FacturasEmitidasComponent } from './ejecucion-economica-formulario/facturas-emitidas/facturas-emitidas.component';
 import { FacturasGastosComponent } from './ejecucion-economica-formulario/facturas-gastos/facturas-gastos.component';
 import { PersonalContratadoComponent } from './ejecucion-economica-formulario/personal-contratado/personal-contratado.component';
 import { ProyectosComponent } from './ejecucion-economica-formulario/proyectos/proyectos.component';
@@ -27,8 +28,11 @@ import { ValidacionGastosComponent } from './ejecucion-economica-formulario/vali
 import { ViajesDietasComponent } from './ejecucion-economica-formulario/viajes-dietas/viajes-dietas.component';
 import { EjecucionEconomicaListadoComponent } from './ejecucion-economica-listado/ejecucion-economica-listado.component';
 import { EjecucionEconomicaRoutingModule } from './ejecucion-economica-routing.module';
+import { FacturasEmitidasModalComponent } from './modals/facturas-emitidas-modal/facturas-emitidas-modal.component';
 import { FacturasGastosModalComponent } from './modals/facturas-gastos-modal/facturas-gastos-modal.component';
 import { PersonalContratadoModalComponent } from './modals/personal-contratado-modal/personal-contratado-modal.component';
+import { ValidacionGastosEditarModalComponent } from './modals/validacion-gastos-editar-modal/validacion-gastos-editar-modal.component';
+import { ValidacionGastosHistoricoModalComponent } from './modals/validacion-gastos-historico-modal/validacion-gastos-historico-modal.component';
 import { ValidacionGastosModalComponent } from './modals/validacion-gastos-modal/validacion-gastos-modal.component';
 import { ViajesDietasModalComponent } from './modals/viajes-dietas-modal/viajes-dietas-modal.component';
 
@@ -53,7 +57,11 @@ import { ViajesDietasModalComponent } from './modals/viajes-dietas-modal/viajes-
     FilterFechasComponent,
     DetalleEconomicoComponent,
     ValidacionGastosComponent,
-    ValidacionGastosModalComponent
+    ValidacionGastosModalComponent,
+    FacturasEmitidasComponent,
+    FacturasEmitidasModalComponent,
+    ValidacionGastosEditarModalComponent,
+    ValidacionGastosHistoricoModalComponent
   ],
   imports: [
     CommonModule,

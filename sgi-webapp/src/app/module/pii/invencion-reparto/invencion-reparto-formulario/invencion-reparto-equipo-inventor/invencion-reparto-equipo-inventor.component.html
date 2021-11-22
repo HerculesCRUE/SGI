@@ -1,0 +1,378 @@
+<sgi-fragment title="{{ 'label.datos-generales' | translate }}">
+  <section>
+    <form [formGroup]="repartoFormGroup">
+      <div fxLayout="row">
+        <div fxFlex="20%" fxFlex.lt-md="100%">
+          <!-- Estado -->
+          <mat-form-field>
+            <mat-label>{{'pii.invencion-reparto.estado' | translate}}</mat-label>
+            <sgi-select-enum formControlName="estado" [enumMap]="REPARTO_ESTADO_MAP" required>
+            </sgi-select-enum>
+            <mat-error *ngIf="repartoFormGroup.controls.estado.errors?.required">
+              {{'error.required.entity' | translate:msgParamEstadoEntity}}
+            </mat-error>
+          </mat-form-field>
+        </div>
+
+      </div>
+    </form>
+  </section>
+
+  <section class="reparto-gastos">
+    <h2>{{'pii.reparto.gasto.gastos-deducir' | translate }}</h2>
+    <table class="table-gastos mat-elevation-z4" mat-table [dataSource]="gastosDataSource" matSort
+      #sortGastos="matSort">
+
+      <!-- Columnas dinamicas -->
+      <ng-container *ngFor="let column of formPart.gastosColumns" [matColumnDef]="column.id">
+        <th mat-header-cell *matHeaderCellDef [class.computed]="column.compute" mat-sort-header>
+          {{column.name}}
+        </th>
+        <td mat-cell *matCellDef="let repartoGasto" [class.computed]="column.compute">
+          <ng-container *ngIf="column.compute">
+            {{repartoGasto.invencionGasto?.gasto?.columnas[column.id] | number: '1.2-2'}}
+          </ng-container>
+          <ng-container *ngIf="!column.compute">
+            {{repartoGasto.invencionGasto?.gasto?.columnas[column.id]}}
+          </ng-container>
+        </td>
+      </ng-container>
+
+      <!-- Solicitud de Proteccion Column -->
+      <ng-container matColumnDef="solicitudProteccion">
+        <th mat-header-cell mat-header-cell *matHeaderCellDef mat-sort-header>
+          {{'pii.reparto.gasto.solicitud-proteccion' | translate}}
+        </th>
+        <td mat-cell mat-cell *matCellDef="let repartoGasto">
+          {{repartoGasto.invencionGasto?.solicitudProteccion?.titulo }}
+        </td>
+      </ng-container>
+
+      <!-- Importe Pendiente de Deducir Column -->
+      <ng-container matColumnDef="importePendienteDeducir">
+        <th mat-header-cell mat-header-cell *matHeaderCellDef mat-sort-header>
+          {{'pii.reparto.gasto.importe-pendiente-compensar' | translate}}
+        </th>
+        <td mat-cell mat-cell *matCellDef="let repartoGasto">
+          {{ repartoGasto.invencionGasto?.importePendienteDeducir | number: '1.2-2' }}
+        </td>
+      </ng-container>
+
+      <!-- Importe a Deducir-->
+      <ng-container matColumnDef="importeADeducir">
+        <th mat-header-cell mat-header-cell *matHeaderCellDef mat-sort-header>
+          {{'pii.reparto.gasto.importe-compensar' | translate}}
+        </th>
+        <td mat-cell mat-cell *matCellDef="let repartoGasto">
+          {{ repartoGasto.importeADeducir | number: '1.2-2' }}
+        </td>
+        <td mat-footer-cell *matFooterCellDef>
+          {{ totalGastosCompensar | number: '1.2-2'}}
+        </td>
+      </ng-container>
+
+      <!-- Total Gastos a Compensar  -->
+      <ng-container matColumnDef="totalGastosCaption">
+        <td mat-footer-cell *matFooterCellDef [attr.colspan]="getTotalGastosCaptionColspan()">
+          {{'pii.reparto.gasto.total-gastos-compensar' | translate}}
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="formPart.displayGastosColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: formPart.displayGastosColumns;">
+      </tr>
+      <tr mat-footer-row *matFooterRowDef="['totalGastosCaption', 'importeADeducir']" class="footer-row-total"></tr>
+    </table>
+  </section>
+
+  <section class="reparto-ingresos">
+    <h2>{{'pii.reparto.ingreso.ingresos-repartir' | translate }}</h2>
+    <table class="table-ingresos mat-elevation-z4" mat-table [dataSource]="ingresosDataSource" matSort
+      #sortIngresos="matSort">
+
+      <!-- Columnas dinamicas -->
+      <ng-container *ngFor="let column of formPart.ingresosColumns" [matColumnDef]="column.id">
+        <th mat-header-cell *matHeaderCellDef [class.computed]="column.compute" mat-sort-header>
+          {{column.name}}
+        </th>
+        <td mat-cell *matCellDef="let repartoIngreso" [class.computed]="column.compute">
+          <ng-container *ngIf="column.compute">
+            {{repartoIngreso.invencionIngreso?.ingreso?.columnas[column.id] | number: '1.2-2'}}
+          </ng-container>
+          <ng-container *ngIf="!column.compute">
+            {{repartoIngreso.invencionIngreso?.ingreso?.columnas[column.id]}}
+          </ng-container>
+        </td>
+      </ng-container>
+
+      <!-- Importe Pendiente de Repartir Column -->
+      <ng-container matColumnDef="importePendienteRepartir">
+        <th mat-header-cell mat-header-cell *matHeaderCellDef mat-sort-header>
+          {{'pii.reparto.ingreso.importe-pendiente-repartir' | translate}}
+        </th>
+        <td mat-cell mat-cell *matCellDef="let repartoIngreso">
+          {{ repartoIngreso.invencionIngreso?.importePendienteRepartir | number: '1.2-2' }}
+        </td>
+      </ng-container>
+
+      <!-- Importe a Repartir-->
+      <ng-container matColumnDef="importeARepartir">
+        <th mat-header-cell mat-header-cell *matHeaderCellDef mat-sort-header>
+          {{'pii.reparto.ingreso.importe-repartir' | translate}}
+        </th>
+        <td mat-cell mat-cell *matCellDef="let repartoIngreso">
+          {{ repartoIngreso.importeARepartir | number: '1.2-2' }}
+        </td>
+        <td mat-footer-cell *matFooterCellDef>
+          {{ totalIngresosRepartir | number: '1.2-2'}}
+        </td>
+      </ng-container>
+
+      <!-- Total Ingresos a Repartir  -->
+      <ng-container matColumnDef="totalIngresosCaption">
+        <td mat-footer-cell *matFooterCellDef [attr.colspan]="getTotalIngresosCaptionColspan()">
+          {{'pii.reparto.ingreso.total-ingresos-repartir' | translate}}
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="formPart.displayIngresosColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: formPart.displayIngresosColumns;">
+      </tr>
+      <tr mat-footer-row *matFooterRowDef="['totalIngresosCaption', 'importeARepartir']" class="footer-row-total"></tr>
+    </table>
+  </section>
+
+  <section class="resultado">
+    <h2>
+      {{ 'pii.reparto.resultado' | translate }}
+      <span>{{ totalRepartir | number: '1.2-2' }}</span>
+    </h2>
+  </section>
+
+  <section class="reparto-resultado" *ngIf="getTotalRepartirRounded() > 0">
+    <h2>
+      {{ 'pii.reparto.reparto-resultado' | translate }}
+    </h2>
+    <section class="tramo-reparto">
+      <form [formGroup]="tramoRepartoFormGroup">
+        <div [fxLayout]="fxLayoutProperties.layout" [fxLayoutAlign]="fxLayoutProperties.layoutAlign"
+          [fxLayoutGap]="fxLayoutProperties.gap">
+          <!-- Resultado a repartir -->
+          <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md"
+            [fxFlex.gt-md]="fxFlexProperties.gtMd" [fxFlexOrder]="fxFlexProperties.order">
+            <mat-form-field appearance="fill">
+              <mat-label>{{'pii.reparto.equipo-inventor.resultado-repartir' | translate}}</mat-label>
+              <input matInput formControlName="resultadoRepartir" type="text" id="resultadoRepartir"
+                placeholder="{{'pii.reparto.equipo-inventor.resultado-repartir' | translate}}">
+            </mat-form-field>
+          </div>
+          <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md"
+            [fxFlex.gt-md]="fxFlexProperties.gtMd" [fxFlexOrder]="fxFlexProperties.order">
+            <div fxLayout="row" *ngIf="hasTramoReparto; else noTramoRepartoMsg">
+              <!-- Reparto según tramo -->
+              <mat-form-field appearance="fill">
+                <mat-label>{{'pii.reparto.equipo-inventor.reparto-segun-tramo' | translate}}</mat-label>
+                <input matInput formControlName="rango" type="text" id="rango"
+                  placeholder="{{'pii.reparto.equipo-inventor.reparto-segun-tramo' | translate}}">
+              </mat-form-field>
+              <mat-form-field appearance="fill">
+                <input matInput formControlName="porcentajeUniversidad" type="text" id="porcentajeUniversidad">
+              </mat-form-field>
+              <mat-form-field appearance="fill">
+                <input matInput formControlName="porcentajeInventores" type="text" id="resultadoRepartir">
+              </mat-form-field>
+            </div>
+            <ng-template #noTramoRepartoMsg>
+              <p>{{ 'pii.reparto.equipo-inventor.no-tramo-reparto-msg' | translate }}</p>
+            </ng-template>
+          </div>
+          <!-- Importe de reparto a la universidad -->
+          <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md"
+            [fxFlex.gt-md]="fxFlexProperties.gtMd" [fxFlexOrder]="fxFlexProperties.order">
+            <mat-form-field appearance="fill">
+              <mat-label>{{'pii.reparto.equipo-inventor.importe-universidad' | translate}}</mat-label>
+              <input matInput formControlName="importeRepartoUniversidad" type="number" id="importeRepartoUniversidad"
+                placeholder="{{'pii.reparto.equipo-inventor.importe-universidad' | translate}}">
+            </mat-form-field>
+          </div>
+          <!-- Importe de reparto a equipo inventor -->
+          <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md"
+            [fxFlex.gt-md]="fxFlexProperties.gtMd" [fxFlexOrder]="fxFlexProperties.order">
+            <mat-form-field appearance="fill">
+              <mat-label>{{'pii.reparto.equipo-inventor.importe-equipo-inventor' | translate}}</mat-label>
+              <input matInput formControlName="importeRepartoEquipoInventor" type="number"
+                id="importeRepartoEquipoInventor"
+                placeholder="{{'pii.reparto.equipo-inventor.importe-equipo-inventor' | translate}}">
+              <mat-error *ngIf="tramoRepartoFormGroup.controls.importeRepartoEquipoInventor.errors?.required">
+                {{'error.required.entity' | translate:msgParamImporteRepartoEquipoInventorEntity}}
+              </mat-error>
+              <mat-error *ngIf="tramoRepartoFormGroup.controls.importeRepartoEquipoInventor.errors?.min">
+                {{'error.min.entity' | translate:msgParamImporteRepartoEquipoInventorEntity}}
+              </mat-error>
+              <mat-error *ngIf="tramoRepartoFormGroup.controls.importeRepartoEquipoInventor.errors?.max">
+                {{'error.max.entity' | translate:msgParamImporteRepartoEquipoInventorEntity}}
+              </mat-error>
+              <mat-error
+                *ngIf="!tramoRepartoFormGroup.controls.importeRepartoEquipoInventor.errors?.max && tramoRepartoFormGroup.controls.importeRepartoEquipoInventor.errors?.maxDecimals">
+                {{'error.max.decimals.entity' | translate:msgParamImporteRepartoEquipoInventorEntity}}
+              </mat-error>
+            </mat-form-field>
+          </div>
+        </div>
+      </form>
+    </section>
+
+    <section class="reparto-equipo-inventor">
+      <table class="table-equipo-inventor mat-elevation-z4" mat-table [dataSource]="equipoInventorDataSource" matSort
+        #sortEquipoInventor="matSort">
+        <!-- Icono ayuda -->
+        <ng-container matColumnDef="helpIcon">
+          <th mat-header-cell *matHeaderCellDef>
+          </th>
+          <td mat-cell *matCellDef="let wrapper">
+            <mat-icon *ngIf="wrapper.value.hasError" class="danger"
+              matTooltip="{{'error.pii.reparto.equipo-inventor.importe-total-inventor' | translate}}">
+              error
+            </mat-icon>
+          </td>
+        </ng-container>
+        <!-- Nombre-->
+        <ng-container matColumnDef="nombre">
+          <th mat-header-cell mat-header-cell *matHeaderCellDef mat-sort-header>
+            {{'pii.reparto.equipo-inventor.nombre' | translate}}
+          </th>
+          <td mat-cell mat-cell *matCellDef="let wrapper">
+            {{ wrapper.value.repartoEquipoInventor?.invencionInventor?.inventor?.nombre }}
+          </td>
+        </ng-container>
+
+        <!-- Apellidos-->
+        <ng-container matColumnDef="apellidos">
+          <th mat-header-cell mat-header-cell *matHeaderCellDef mat-sort-header>
+            {{'pii.reparto.equipo-inventor.apellidos' | translate}}
+          </th>
+          <td mat-cell mat-cell *matCellDef="let wrapper">
+            {{ wrapper.value.repartoEquipoInventor?.invencionInventor?.inventor?.apellidos }}
+          </td>
+        </ng-container>
+
+        <!-- Número Documento-->
+        <ng-container matColumnDef="numeroDocumento">
+          <th mat-header-cell mat-header-cell *matHeaderCellDef mat-sort-header>
+            {{'pii.reparto.equipo-inventor.numero-documento' | translate}}
+          </th>
+          <td mat-cell mat-cell *matCellDef="let wrapper">
+            {{ wrapper.value.repartoEquipoInventor?.invencionInventor?.inventor?.numeroDocumento }}
+          </td>
+        </ng-container>
+
+        <!-- Entidad-->
+        <ng-container matColumnDef="entidad">
+          <th mat-header-cell mat-header-cell *matHeaderCellDef mat-sort-header>
+            {{'pii.reparto.equipo-inventor.entidad' | translate}}
+          </th>
+          <td mat-cell mat-cell *matCellDef="let wrapper">
+            {{ wrapper.value.repartoEquipoInventor?.invencionInventor?.inventor?.entidad?.nombre }}
+          </td>
+        </ng-container>
+
+        <!-- % Participación-->
+        <ng-container matColumnDef="participacion">
+          <th mat-header-cell mat-header-cell *matHeaderCellDef mat-sort-header>
+            {{'pii.reparto.equipo-inventor.participacion' | translate}}
+          </th>
+          <td mat-cell mat-cell *matCellDef="let wrapper">
+            {{ wrapper.value.repartoEquipoInventor?.invencionInventor?.participacion | number: '1.2-2'}}
+          </td>
+        </ng-container>
+
+        <!-- % Reparto-->
+        <ng-container matColumnDef="porcentajeRepartoInventor">
+          <th mat-header-cell mat-header-cell *matHeaderCellDef mat-sort-header>
+            {{'pii.reparto.equipo-inventor.porcentaje-reparto' | translate}}
+          </th>
+          <td mat-cell mat-cell *matCellDef="let wrapper">
+            {{ wrapper.value.porcentajeRepartoInventor | number: '1.2-2' }}
+          </td>
+        </ng-container>
+
+        <!-- Importe a Nómina-->
+        <ng-container matColumnDef="importeNomina">
+          <th mat-header-cell mat-header-cell *matHeaderCellDef mat-sort-header>
+            {{'pii.reparto.equipo-inventor.importe-nomina' | translate}}
+          </th>
+          <td mat-cell mat-cell *matCellDef="let wrapper">
+            {{ wrapper.value.repartoEquipoInventor?.importeNomina | number: '1.2-2' }}
+          </td>
+        </ng-container>
+
+        <!-- Importe a Proyecto-->
+        <ng-container matColumnDef="importeProyecto">
+          <th mat-header-cell mat-header-cell *matHeaderCellDef mat-sort-header>
+            {{'pii.reparto.equipo-inventor.importe-proyecto' | translate}}
+          </th>
+          <td mat-cell mat-cell *matCellDef="let wrapper">
+            {{ wrapper.value.repartoEquipoInventor?.importeProyecto | number: '1.2-2' }}
+          </td>
+        </ng-container>
+
+        <!-- Importe a Otros-->
+        <ng-container matColumnDef="importeOtros">
+          <th mat-header-cell mat-header-cell *matHeaderCellDef mat-sort-header>
+            {{'pii.reparto.equipo-inventor.importe-otros' | translate}}
+          </th>
+          <td mat-cell mat-cell *matCellDef="let wrapper">
+            {{ wrapper.value.repartoEquipoInventor?.importeOtros | number: '1.2-2' }}
+          </td>
+        </ng-container>
+
+        <!-- Importe Total-->
+        <ng-container matColumnDef="importeTotal">
+          <th mat-header-cell mat-header-cell *matHeaderCellDef mat-sort-header>
+            {{'pii.reparto.equipo-inventor.importe-total' | translate}}
+          </th>
+          <td mat-cell mat-cell *matCellDef="let wrapper">
+            {{ wrapper.value?.importeTotalInventor | number: '1.2-2' }}
+          </td>
+          <td mat-footer-cell *matFooterCellDef>
+            {{ formPart.importeTotalSumEquipoInventor | number: '1.2-2'}}
+          </td>
+        </ng-container>
+
+        <!-- Acciones Column -->
+        <ng-container matColumnDef="acciones">
+          <th mat-header-cell mat-header-cell *matHeaderCellDef>
+            {{ 'label.actions' | translate }}
+          </th>
+          <td mat-cell mat-cell *matCellDef="let wrapper">
+            <ng-container *sgiHasAnyAuthority="['PII-INV-E']">
+              <button mat-button matTooltip="{{'btn.edit' | translate}}"
+                (click)="openModalRepartoEquipoInventor(wrapper)">
+                <mat-icon color="primary">border_color</mat-icon>
+              </button>
+            </ng-container>
+          </td>
+          <td mat-footer-cell *matFooterCellDef>
+            <mat-icon *ngIf="formPart.isRightTotalSumImporteTotalInventor" class="danger"
+              matTooltip="{{'error.pii.reparto.equipo-inventor.importe-total-sum-equipo-inventor' | translate: formPart.importeTotalSumEquipoInventorRoundingErrorParam}}">
+              error
+            </mat-icon>
+          </td>
+        </ng-container>
+
+        <!-- Total Importe Desglose Reparto a Equipo Inventor  -->
+        <ng-container matColumnDef="totalRepartoEquipoInventorCaption">
+          <td mat-footer-cell *matFooterCellDef [attr.colspan]="getTotalRepartoEquipoInventorCaptionColspan()">
+            {{'pii.reparto.equipo-inventor.total-reparto-equipo-inventor' | translate}}
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="formPart.displayEquipoInventorColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: formPart.displayEquipoInventorColumns;"></tr>
+        <tr mat-footer-row *matFooterRowDef="formPart.displayEquipoInventorFooterColumns" class="footer-row-total">
+        </tr>
+      </table>
+    </section>
+  </section>
+
+</sgi-fragment>

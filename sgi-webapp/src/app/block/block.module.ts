@@ -10,6 +10,7 @@ import { DialogComponent } from './dialog/dialog.component';
 import { SnackBarComponent } from './snack-bar/snack-bar.component';
 import { NavbarComponent } from './navbar/navbar.component';
 import { SgiAuthModule } from '@sgi/framework/auth';
+import { SpinnerComponent } from './spinner/spinner.component';
 
 @NgModule({
   declarations: [
@@ -17,7 +18,8 @@ import { SgiAuthModule } from '@sgi/framework/auth';
     SelectorModuloComponent,
     DialogComponent,
     SnackBarComponent,
-    NavbarComponent
+    NavbarComponent,
+    SpinnerComponent
   ],
   imports: [
     CommonModule,

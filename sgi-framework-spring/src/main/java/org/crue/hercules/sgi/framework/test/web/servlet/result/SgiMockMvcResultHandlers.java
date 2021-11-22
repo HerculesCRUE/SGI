@@ -11,7 +11,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 /**
  * Static factory methods for {@link ResultHandler}-based result actions.
  */
-public abstract class SgiMockMvcResultHandlers {
+public interface SgiMockMvcResultHandlers {
 
   /**
    * Print {@link MvcResult} details to the "standard" output stream only if the
@@ -23,6 +23,7 @@ public abstract class SgiMockMvcResultHandlers {
    * @see #printOnError(OutputStream)
    * @see #printOnError(Writer)
    */
+  @SuppressWarnings("java:S106")
   public static ResultHandler printOnError() {
     return printOnError(System.out);
   }
@@ -59,9 +60,14 @@ public abstract class SgiMockMvcResultHandlers {
    * A {@link ResultHandler} that writes to a {@link Writer} only if the response
    * status code is greater or equal to 400.
    */
-  private static class PrintWriterPrintingErrorResultHandler implements ResultHandler {
+  public static class PrintWriterPrintingErrorResultHandler implements ResultHandler {
     Writer writer;
 
+    /**
+     * Creates the {@link PrintWriterPrintingErrorResultHandler}
+     * 
+     * @param writer the {@link Writer} to write to
+     */
     public PrintWriterPrintingErrorResultHandler(Writer writer) {
       this.writer = writer;
     }

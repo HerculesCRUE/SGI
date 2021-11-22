@@ -20,7 +20,6 @@ import org.crue.hercules.sgi.csp.exceptions.ProyectoNotFoundException;
 import org.crue.hercules.sgi.csp.exceptions.SolicitudNotFoundException;
 import org.crue.hercules.sgi.csp.model.ContextoProyecto;
 import org.crue.hercules.sgi.csp.model.Convocatoria;
-import org.crue.hercules.sgi.csp.model.ConvocatoriaAreaTematica;
 import org.crue.hercules.sgi.csp.model.ConvocatoriaConceptoGasto;
 import org.crue.hercules.sgi.csp.model.ConvocatoriaConceptoGastoCodigoEc;
 import org.crue.hercules.sgi.csp.model.ConvocatoriaEntidadConvocante;
@@ -41,6 +40,7 @@ import org.crue.hercules.sgi.csp.model.ProyectoEntidadConvocante;
 import org.crue.hercules.sgi.csp.model.ProyectoEntidadFinanciadora;
 import org.crue.hercules.sgi.csp.model.ProyectoEntidadGestora;
 import org.crue.hercules.sgi.csp.model.ProyectoEquipo;
+import org.crue.hercules.sgi.csp.model.ProyectoFacturacion;
 import org.crue.hercules.sgi.csp.model.ProyectoIVA;
 import org.crue.hercules.sgi.csp.model.ProyectoPartida;
 import org.crue.hercules.sgi.csp.model.ProyectoPeriodoJustificacion;
@@ -101,6 +101,7 @@ import org.crue.hercules.sgi.csp.service.ProyectoEntidadConvocanteService;
 import org.crue.hercules.sgi.csp.service.ProyectoEntidadFinanciadoraService;
 import org.crue.hercules.sgi.csp.service.ProyectoEntidadGestoraService;
 import org.crue.hercules.sgi.csp.service.ProyectoEquipoService;
+import org.crue.hercules.sgi.csp.service.ProyectoFacturacionService;
 import org.crue.hercules.sgi.csp.service.ProyectoPartidaService;
 import org.crue.hercules.sgi.csp.service.ProyectoPeriodoSeguimientoService;
 import org.crue.hercules.sgi.csp.service.ProyectoResponsableEconomicoService;
@@ -185,6 +186,7 @@ public class ProyectoServiceImpl implements ProyectoService {
   private final ConvocatoriaPeriodoJustificacionRepository convocatoriaPeriodoJustificacionRepository;
   private final ProyectoPeriodoJustificacionRepository proyectoPeriodoJustificacionRepository;
   private final EstadoProyectoPeriodoJustificacionRepository estadoProyectoPeriodoJustificacionRepository;
+  private final ProyectoFacturacionService proyectoFacturacionService;
 
   public ProyectoServiceImpl(SgiConfigProperties sgiConfigProperties, ProyectoRepository repository,
       EstadoProyectoRepository estadoProyectoRepository, ModeloUnidadRepository modeloUnidadRepository,
@@ -226,7 +228,9 @@ public class ProyectoServiceImpl implements ProyectoService {
       ProyectoResponsableEconomicoService proyectoResponsableEconomicoService, Validator validator,
       ConvocatoriaPeriodoJustificacionRepository convocatoriaPeriodoJustificacionRepository,
       ProyectoPeriodoJustificacionRepository proyectoPeriodoJustificacionRepository,
-      EstadoProyectoPeriodoJustificacionRepository estadoProyectoPeriodoJustificacionRepository) {
+      EstadoProyectoPeriodoJustificacionRepository estadoProyectoPeriodoJustificacionRepository,
+      ProyectoFacturacionService proyectoFacturacionService) {
+
     this.sgiConfigProperties = sgiConfigProperties;
     this.repository = repository;
     this.estadoProyectoRepository = estadoProyectoRepository;
@@ -276,6 +280,7 @@ public class ProyectoServiceImpl implements ProyectoService {
     this.convocatoriaPeriodoJustificacionRepository = convocatoriaPeriodoJustificacionRepository;
     this.proyectoPeriodoJustificacionRepository = proyectoPeriodoJustificacionRepository;
     this.estadoProyectoPeriodoJustificacionRepository = estadoProyectoPeriodoJustificacionRepository;
+    this.proyectoFacturacionService = proyectoFacturacionService;
   }
 
   /**
@@ -406,7 +411,7 @@ public class ProyectoServiceImpl implements ProyectoService {
         equipos = getEquiposUpdateFechaFinProyectoEquipo(data.getId(), data.getFechaFin(),
             proyectoActualizar.getFechaFinDefinitiva());
       } else if (data.getFechaFinDefinitiva() != null && proyectoActualizar.getFechaFinDefinitiva() != null
-          && data.getFechaFinDefinitiva() != proyectoActualizar.getFechaFinDefinitiva()) {
+          && !data.getFechaFinDefinitiva().equals(proyectoActualizar.getFechaFinDefinitiva())) {
         // Si la fecha de fin definitiva del proyecto cambia de valor, se actualizan
         // todos los equipos cuya fecha de fin sea igual a la fecha definitiva del
         // proyecto
@@ -844,26 +849,13 @@ public class ProyectoServiceImpl implements ProyectoService {
    */
   private void copyAreaTematica(Proyecto proyecto) {
 
-    // si en la convocatoria se ha rellenado "ConvocatoriaAreaTematica" se rellenará
-    // el campo "areaTematicaConvocatoria" de la tabla "ContextoProyecto" con el
-    // campo "areaTematica" de la tabla "ConvocatoriaAreaTematica" de la
-    // convocatoria, dejando vacío el campo "areaTematica" de la tabla
-    // "ContextoProyecto" para que lo pueda seleccionar el usuario.
-    Optional<ConvocatoriaAreaTematica> convocatoriaAreaTematica = convocatoriaAreaTematicaRepository
-        .findByConvocatoriaId(proyecto.getConvocatoriaId());
-
-    if (convocatoriaAreaTematica.isPresent()) {
-      if (!contextoProyectoService.existsByProyecto(proyecto.getId())) {
-        ContextoProyecto contextoProyectoNew = new ContextoProyecto();
-        contextoProyectoNew.setProyectoId(proyecto.getId());
-        contextoProyectoNew.setAreaTematicaConvocatoria(convocatoriaAreaTematica.get().getAreaTematica());
-        contextoProyectoService.create(contextoProyectoNew);
-      } else {
-        ContextoProyecto contextoProyectoUpdate = contextoProyectoService.findByProyecto(proyecto.getId());
-        contextoProyectoUpdate.setAreaTematicaConvocatoria(convocatoriaAreaTematica.get().getAreaTematica());
-        contextoProyectoService.update(contextoProyectoUpdate, proyecto.getId());
-      }
-
+    if (!contextoProyectoService.existsByProyecto(proyecto.getId())) {
+      ContextoProyecto contextoProyectoNew = new ContextoProyecto();
+      contextoProyectoNew.setProyectoId(proyecto.getId());
+      contextoProyectoService.create(contextoProyectoNew);
+    } else {
+      ContextoProyecto contextoProyectoUpdate = contextoProyectoService.findByProyecto(proyecto.getId());
+      contextoProyectoService.update(contextoProyectoUpdate, proyecto.getId());
     }
   }
 
@@ -1029,15 +1021,6 @@ public class ProyectoServiceImpl implements ProyectoService {
     contextoProyectoNew.setResultadosPrevistos(solicitudProyecto.getResultadosPrevistos());
     contextoProyectoNew.setIntereses(solicitudProyecto.getIntereses());
     contextoProyectoNew.setAreaTematica(solicitudProyecto.getAreaTematica());
-
-    if (solicitud.getConvocatoriaId() != null) {
-      Optional<ConvocatoriaAreaTematica> convocatoriaAreaTematica = convocatoriaAreaTematicaRepository
-          .findByConvocatoriaId(solicitud.getConvocatoriaId());
-
-      if (convocatoriaAreaTematica.isPresent()) {
-        contextoProyectoNew.setAreaTematicaConvocatoria(convocatoriaAreaTematica.get().getAreaTematica());
-      }
-    }
 
     contextoProyectoService.create(contextoProyectoNew);
     log.debug("copyContexto(Proyecto proyecto, Solicitud solicitud, SolicitudProyecto solicitudProyecto) - end");
@@ -1513,8 +1496,6 @@ public class ProyectoServiceImpl implements ProyectoService {
       throw new IllegalArgumentException(
           "La solicitud no se encuentra en un estado correcto para la creación del proyecto.");
     }
-    Assert.isTrue(!repository.existsBySolicitudId(solicitud.getId()),
-        "La solicitud con id: " + solicitud.getId() + " ya está asociada a un proyecto");
 
     Assert.isTrue(solicitud.getFormularioSolicitud() == FormularioSolicitud.PROYECTO,
         "El formulario de la solicitud debe ser de tipo " + FormularioSolicitud.PROYECTO);
@@ -1644,9 +1625,9 @@ public class ProyectoServiceImpl implements ProyectoService {
     final ProyectoPresupuestoTotales returnValue = repository.getTotales(proyectoId);
 
     returnValue.setImporteTotalPresupuesto(
-        returnValue.getImporteTotalPresupuestoUniversidad().add(returnValue.getImporteTotalPresupuestoSocios()));
+        returnValue.getImporteTotalPresupuestoUniversidadSinCosteIndirecto().add(returnValue.getImporteTotalPresupuestoSocios()));
     returnValue.setImporteTotalConcedido(
-        returnValue.getImporteTotalConcedidoUniversidad().add(returnValue.getImporteTotalConcedidoSocios()));
+        returnValue.getImporteTotalConcedidoUniversidadSinCosteIndirecto().add(returnValue.getImporteTotalConcedidoSocios()));
     log.debug("getTotales(Long proyectoId) - end");
     return returnValue;
   }
@@ -1776,4 +1757,27 @@ public class ProyectoServiceImpl implements ProyectoService {
       && (fechaInicio.isBefore(proyecto.getFechaFin()));
   }
 
+  /**
+   *
+   * @param proyectoId id del {@link Proyecto} del que cuelgan la lista de objetos {@link ProyectoFacturacion} a buscar
+   * @param query información del filtro.
+   * @param paging información de paginación
+   * @return objeto {@link Page} con el listado de objetos de tipo {@link ProyectoFacturacion}
+   */
+  @Override
+  public Page<ProyectoFacturacion> findAllProyectoFacturacionByProyectoId(Long proyectoId, String query, Pageable paging){
+    return this.proyectoFacturacionService.findByProyectoId(proyectoId, paging);
+  }
+
+  /**
+   * Devuelve una lista de ids de los objetos de tipo {@link Proyecto} que estñan asociados
+   * con un objeto de tipo {@link Solicitud}
+   * 
+   * @param solicitudId id de la {@link Solicitud}
+   * @return lista de ids de los objetos de tipo {@link Proyecto}
+   */
+  @Override
+  public List<Long> findIdsBySolicitudId(Long solicitudId) {
+    return this.repository.findIds(ProyectoSpecifications.bySolicitudId(solicitudId));
+  }
 }

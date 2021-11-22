@@ -15,8 +15,8 @@ import javax.validation.Valid;
 import org.crue.hercules.sgi.csp.model.FuenteFinanciacion.OnActivar;
 import org.crue.hercules.sgi.csp.model.FuenteFinanciacion.OnActualizar;
 import org.crue.hercules.sgi.csp.model.FuenteFinanciacion.OnCrear;
-import org.crue.hercules.sgi.csp.validation.EntidadActiva;
 import org.crue.hercules.sgi.csp.validation.UniqueNombreFuenteFinanciacionActiva;
+import org.crue.hercules.sgi.framework.validation.ActivableIsActivo;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -30,7 +30,7 @@ import lombok.experimental.SuperBuilder;
 @NoArgsConstructor
 @SuperBuilder
 @UniqueNombreFuenteFinanciacionActiva(groups = { OnActualizar.class, OnActivar.class, OnCrear.class })
-@EntidadActiva(entityClass = FuenteFinanciacion.class, groups = { OnActualizar.class })
+@ActivableIsActivo(entityClass = FuenteFinanciacion.class, groups = { OnActualizar.class })
 public class FuenteFinanciacion extends BaseActivableEntity {
   public static final int NOMBRE_LENGTH = 50;
   public static final int DESCRIPCION_LENGTH = 250;
@@ -58,7 +58,7 @@ public class FuenteFinanciacion extends BaseActivableEntity {
   @ManyToOne
   @JoinColumn(name = "tipo_ambito_geografico_id", nullable = false, foreignKey = @ForeignKey(name = "FK_FUENTEFINANCIACION_TIPOAMBITOGEOGRAFICO"))
   @Valid
-  @EntidadActiva(entityClass = TipoAmbitoGeografico.class, groups = { OnCrear.class,
+  @ActivableIsActivo(entityClass = TipoAmbitoGeografico.class, groups = { OnCrear.class,
       OnActualizarTipoAmbitoGeografico.class })
   private TipoAmbitoGeografico tipoAmbitoGeografico;
 
@@ -66,7 +66,7 @@ public class FuenteFinanciacion extends BaseActivableEntity {
   @ManyToOne
   @JoinColumn(name = "tipo_origen_fuente_financiacion_id", nullable = false, foreignKey = @ForeignKey(name = "FK_FUENTEFINANCIACION_TIPOORIGENFUENTEFINANCIACION"))
   @Valid
-  @EntidadActiva(entityClass = TipoOrigenFuenteFinanciacion.class, groups = { OnCrear.class,
+  @ActivableIsActivo(entityClass = TipoOrigenFuenteFinanciacion.class, groups = { OnCrear.class,
       OnActualizarTipoOrigenFuenteFinanciacion.class })
   private TipoOrigenFuenteFinanciacion tipoOrigenFuenteFinanciacion;
 

@@ -1,5 +1,5 @@
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
+import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
@@ -124,8 +124,9 @@ export class InvencionInventorComponent extends FragmentComponent implements OnI
 
     this.subscriptions.push(modalData$.pipe(
       switchMap(data => {
-        const config = {
+        const config: MatDialogConfig = {
           panelClass: 'sgi-dialog-container',
+          minWidth: '700px',
           data
         };
         return this.matDialog.open(InvencionInventorModalComponent, config).afterClosed();

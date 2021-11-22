@@ -80,7 +80,7 @@ const routes: SgiRoutes = [
         canActivate: [SgiAuthGuard],
         data: {
           title: MSG_MEMORIAS_TITLE,
-          hasAuthorityForAnyUO: 'ETI-PEV-INV-VR'
+          hasAnyAuthorityForAnyUO: ['ETI-MEM-INV-VR', 'ETI-MEM-INV-ER', 'ETI-MEM-INV-BR', 'ETI-MEM-INV-ESCR', 'ETI-MEM-INV-ERTR']
         }
       },
       {
@@ -105,7 +105,7 @@ const routes: SgiRoutes = [
         data: {
           title: MSG_ACTAS_TITLE,
           titleParams: MSG_PARAMS.CARDINALIRY.PLURAL,
-          hasAnyAuthorityForAnyUO: ['ETI-ACT-INV-ER', 'ETI-ACT-ER']
+          hasAnyAuthorityForAnyUO: ['ETI-ACT-INV-ER', 'ETI-ACT-INV-DESR']
         }
       },
       {

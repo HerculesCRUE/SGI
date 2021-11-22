@@ -7,7 +7,6 @@ import { TIPO_PARTIDA_MAP } from '@core/enums/tipo-partida';
 import { MSG_PARAMS } from '@core/i18n';
 import { IConvocatoriaPartidaPresupuestaria } from '@core/models/csp/convocatoria-partida-presupuestaria';
 import { IPartidaPresupuestaria } from '@core/models/csp/partida-presupuestaria';
-import { IProyectoPartida } from '@core/models/csp/proyecto-partida';
 import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-properties';
 import { ConfiguracionService } from '@core/services/csp/configuracion.service';
 import { SnackBarService } from '@core/services/snack-bar.service';
@@ -53,6 +52,7 @@ export class PartidaPresupuestariaModalComponent
   }
 
   showDatosPartidaPresupuestaria = false;
+  disabledCopy = false;
 
   constructor(
     public matDialogRef: MatDialogRef<PartidaPresupuestariaModalComponent>,
@@ -74,10 +74,19 @@ export class PartidaPresupuestariaModalComponent
     this.setupI18N();
     this.textSaveOrUpdate = this.data?.partidaPresupuestaria ? MSG_ACEPTAR : MSG_ANADIR;
 
-    this.checkShowDatosConvocatoriaPartidaPresupuestaria(this.data.convocatoriaPartidaPresupuestaria, this.data.partidaPresupuestaria);
+    this.checkShowDatosConvocatoriaPartidaPresupuestaria(this.data.convocatoriaPartidaPresupuestaria);
+
+    if (this.data.convocatoriaPartidaPresupuestaria) {
+      this.subscriptions.push(this.formGroup.valueChanges.subscribe(
+        () => {
+          this.disabledCopy = !comparePartidaPresupuestaria(this.data.convocatoriaPartidaPresupuestaria, this.getDatosForm());
+        }
+      ));
+    }
   }
 
   copyToProyecto(): void {
+    this.enableEditableControls();
     this.formGroup.controls.codigo.setValue(this.formGroup.controls.codigoConvocatoria.value);
     this.formGroup.controls.tipo.setValue(this.formGroup.controls.tipoConvocatoria.value);
     this.formGroup.controls.descripcion.setValue(this.formGroup.controls.descripcionConvocatoria.value);
@@ -122,22 +131,15 @@ export class PartidaPresupuestariaModalComponent
     }
   }
 
-  private checkShowDatosConvocatoriaPartidaPresupuestaria(
-    convocatoriaPartidaPresupuestaria: IConvocatoriaPartidaPresupuestaria,
-    proyectoPartidaPresupuestaria: IPartidaPresupuestaria) {
-
-    if (!convocatoriaPartidaPresupuestaria) {
-      this.showDatosPartidaPresupuestaria = false;
-    } else if (!proyectoPartidaPresupuestaria) {
-      this.showDatosPartidaPresupuestaria = true;
-    } else if (comparePartidaPresupuestaria(convocatoriaPartidaPresupuestaria, proyectoPartidaPresupuestaria)) {
-      this.showDatosPartidaPresupuestaria = true;
-    } else {
-      this.showDatosPartidaPresupuestaria = false;
-    }
+  private checkShowDatosConvocatoriaPartidaPresupuestaria(convocatoriaPartidaPresupuestaria: IConvocatoriaPartidaPresupuestaria): void {
+    this.showDatosPartidaPresupuestaria = !!convocatoriaPartidaPresupuestaria;
   }
 
   protected getDatosForm(): IPartidaPresupuestaria {
+    if (!this.data.partidaPresupuestaria) {
+      this.data.partidaPresupuestaria = {} as IPartidaPresupuestaria;
+    }
+
     this.data.partidaPresupuestaria.codigo = this.formGroup.controls.codigo.value;
     this.data.partidaPresupuestaria.tipoPartida = this.formGroup.controls.tipo.value;
     this.data.partidaPresupuestaria.descripcion = this.formGroup.controls.descripcion.value === ''
@@ -178,6 +180,17 @@ export class PartidaPresupuestariaModalComponent
         ]);
       })
     );
+
+    if (this.data.convocatoriaPartidaPresupuestaria) {
+      formGroup.controls.codigo.disable();
+      formGroup.controls.tipo.disable();
+
+      if (this.data.partidaPresupuestaria) {
+        this.disabledCopy = !comparePartidaPresupuestaria(this.data.convocatoriaPartidaPresupuestaria, this.data.partidaPresupuestaria);
+      } else {
+        formGroup.controls.descripcion.disable();
+      }
+    }
 
     return formGroup;
   }
@@ -225,6 +238,10 @@ export class PartidaPresupuestariaModalComponent
         });
       });
     this.subscriptions.push(configuracionFindSubscription);
+  }
+
+  private enableEditableControls(): void {
+    this.formGroup.controls.descripcion.enable();
   }
 
 }

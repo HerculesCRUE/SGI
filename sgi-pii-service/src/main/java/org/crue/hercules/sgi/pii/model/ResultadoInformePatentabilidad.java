@@ -7,11 +7,13 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+
+import org.crue.hercules.sgi.framework.validation.ActivableIsActivo;
 import org.crue.hercules.sgi.pii.model.ResultadoInformePatentabilidad.OnActivar;
 import org.crue.hercules.sgi.pii.model.ResultadoInformePatentabilidad.OnActualizar;
 import org.crue.hercules.sgi.pii.model.ResultadoInformePatentabilidad.OnCrear;
-import org.crue.hercules.sgi.pii.validation.EntidadActiva;
 import org.crue.hercules.sgi.pii.validation.UniqueNombreResultadoInformePatentabilidad;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -26,7 +28,7 @@ import lombok.experimental.SuperBuilder;
 @AllArgsConstructor
 @SuperBuilder
 @UniqueNombreResultadoInformePatentabilidad(groups = { OnActualizar.class, OnActivar.class, OnCrear.class })
-@EntidadActiva(entityClass = ResultadoInformePatentabilidad.class, groups = { OnActualizar.class })
+@ActivableIsActivo(entityClass = ResultadoInformePatentabilidad.class, groups = { OnActualizar.class })
 public class ResultadoInformePatentabilidad extends BaseActivableEntity {
 
   public static final int NOMBRE_LENGTH = 50;

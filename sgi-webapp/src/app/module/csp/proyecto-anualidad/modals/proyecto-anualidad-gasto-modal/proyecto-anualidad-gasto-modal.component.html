@@ -42,12 +42,9 @@
       <div [fxLayout]="fxLayoutProperties.layout" [fxLayoutAlign]="fxLayoutProperties.layoutAlign">
         <mat-form-field fxFill>
           <mat-label>{{'csp.proyecto-anualidad.partida-gasto.concepto-gasto' | translate}}</mat-label>
-          <sgi-select-entity formControlName="conceptoGasto" required [options]="conceptosGasto$ | async"
+          <sgi-select-entity formControlName="conceptoGasto" [options]="conceptosGasto$ | async"
             (selectionChange)="loadCodigosEconomicosInfo($event)" [displayWith]="displayerConceptoGasto">
           </sgi-select-entity>
-          <mat-error *ngIf="formGroup.controls.conceptoGasto.errors?.required">
-            {{'error.invalid.entity' | translate:msgParamConceptoGastoEntity}}
-          </mat-error>
         </mat-form-field>
       </div>
     </div>

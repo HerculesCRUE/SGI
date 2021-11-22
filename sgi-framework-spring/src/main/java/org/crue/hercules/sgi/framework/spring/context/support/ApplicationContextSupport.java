@@ -9,8 +9,16 @@ import org.springframework.context.MessageSourceResolvable;
 import org.springframework.context.support.MessageSourceAccessor;
 import org.springframework.stereotype.Component;
 
+/**
+ * Allows access to Spring ApplicationContext in an static way.
+ * <p>
+ * This class is only usable in Spring Applications.
+ */
 @Component
 public class ApplicationContextSupport implements ApplicationContextAware {
+  private static final String MESSAGE_NOT_IN_APPLICATION_CONTEXT = "ApplicationContextSupport does not run in an ApplicationContext";
+  private static final String MESSAGE_CODE_SUFFIX = ".message";
+
   private static ApplicationContext applicationContext;
   private static MessageSourceAccessor messageSourceAccessor;
 
@@ -33,6 +41,10 @@ public class ApplicationContextSupport implements ApplicationContextAware {
    */
   @Override
   public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+    ApplicationContextSupport.setGlobalApplicationContext(applicationContext);
+  }
+
+  private static void setGlobalApplicationContext(ApplicationContext applicationContext) {
     ApplicationContextSupport.applicationContext = applicationContext;
     ApplicationContextSupport.messageSourceAccessor = new MessageSourceAccessor(applicationContext);
   }
@@ -45,7 +57,7 @@ public class ApplicationContextSupport implements ApplicationContextAware {
    */
   public static ApplicationContext getApplicationContext() throws IllegalStateException {
     if (applicationContext == null) {
-      throw new IllegalStateException("ApplicationContextSupport does not run in an ApplicationContext");
+      throw new IllegalStateException(MESSAGE_NOT_IN_APPLICATION_CONTEXT);
     }
     return applicationContext;
   }
@@ -115,7 +127,7 @@ public class ApplicationContextSupport implements ApplicationContextAware {
    */
   public static MessageSourceAccessor getMessageSourceAccessor() throws IllegalStateException {
     if (messageSourceAccessor == null) {
-      throw new IllegalStateException("ApplicationContextSupport does not run in an ApplicationContext");
+      throw new IllegalStateException(MESSAGE_NOT_IN_APPLICATION_CONTEXT);
     }
     return messageSourceAccessor;
   }
@@ -132,7 +144,7 @@ public class ApplicationContextSupport implements ApplicationContextAware {
    */
   public static String getMessage(String code) throws IllegalStateException {
     if (messageSourceAccessor == null) {
-      throw new IllegalStateException("ApplicationContextSupport does not run in an ApplicationContext");
+      throw new IllegalStateException(MESSAGE_NOT_IN_APPLICATION_CONTEXT);
     }
     return messageSourceAccessor.getMessage(code);
   }
@@ -150,7 +162,7 @@ public class ApplicationContextSupport implements ApplicationContextAware {
    */
   public static String getMessage(String code, Object... args) throws IllegalStateException {
     if (messageSourceAccessor == null) {
-      throw new IllegalStateException("ApplicationContextSupport does not run in an ApplicationContext");
+      throw new IllegalStateException(MESSAGE_NOT_IN_APPLICATION_CONTEXT);
     }
     return messageSourceAccessor.getMessage(code, args);
   }
@@ -168,9 +180,9 @@ public class ApplicationContextSupport implements ApplicationContextAware {
    */
   public static String getMessage(Class<?> clazz) throws IllegalStateException {
     if (messageSourceAccessor == null) {
-      throw new IllegalStateException("ApplicationContextSupport does not run in an ApplicationContext");
+      throw new IllegalStateException(MESSAGE_NOT_IN_APPLICATION_CONTEXT);
     }
-    return messageSourceAccessor.getMessage(clazz.getName() + ".message");
+    return messageSourceAccessor.getMessage(clazz.getName() + MESSAGE_CODE_SUFFIX);
   }
 
   /**
@@ -187,9 +199,9 @@ public class ApplicationContextSupport implements ApplicationContextAware {
    */
   public static String getMessage(Class<?> clazz, Object... args) throws IllegalStateException {
     if (messageSourceAccessor == null) {
-      throw new IllegalStateException("ApplicationContextSupport does not run in an ApplicationContext");
+      throw new IllegalStateException(MESSAGE_NOT_IN_APPLICATION_CONTEXT);
     }
-    return messageSourceAccessor.getMessage(clazz.getName() + ".message", args);
+    return messageSourceAccessor.getMessage(clazz.getName() + MESSAGE_CODE_SUFFIX, args);
   }
 
   /**
@@ -206,9 +218,9 @@ public class ApplicationContextSupport implements ApplicationContextAware {
    */
   public static String getMessage(Class<?> clazz, String property) throws IllegalStateException {
     if (messageSourceAccessor == null) {
-      throw new IllegalStateException("ApplicationContextSupport does not run in an ApplicationContext");
+      throw new IllegalStateException(MESSAGE_NOT_IN_APPLICATION_CONTEXT);
     }
-    return messageSourceAccessor.getMessage(clazz.getName() + "." + property + ".message");
+    return messageSourceAccessor.getMessage(clazz.getName() + "." + property + MESSAGE_CODE_SUFFIX);
   }
 
   /**
@@ -226,9 +238,9 @@ public class ApplicationContextSupport implements ApplicationContextAware {
    */
   public static String getMessage(Class<?> clazz, String property, Object... args) throws IllegalStateException {
     if (messageSourceAccessor == null) {
-      throw new IllegalStateException("ApplicationContextSupport does not run in an ApplicationContext");
+      throw new IllegalStateException(MESSAGE_NOT_IN_APPLICATION_CONTEXT);
     }
-    return messageSourceAccessor.getMessage(clazz.getName() + "." + property + ".message", args);
+    return messageSourceAccessor.getMessage(clazz.getName() + "." + property + MESSAGE_CODE_SUFFIX, args);
   }
 
   /**
@@ -244,7 +256,7 @@ public class ApplicationContextSupport implements ApplicationContextAware {
    */
   public static String getMessage(MessageSourceResolvable resolvable) throws IllegalStateException {
     if (messageSourceAccessor == null) {
-      throw new IllegalStateException("ApplicationContextSupport does not run in an ApplicationContext");
+      throw new IllegalStateException(MESSAGE_NOT_IN_APPLICATION_CONTEXT);
     }
     return messageSourceAccessor.getMessage(resolvable);
   }

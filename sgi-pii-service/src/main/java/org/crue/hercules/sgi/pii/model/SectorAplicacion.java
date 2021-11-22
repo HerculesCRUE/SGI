@@ -8,11 +8,11 @@ import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
-import org.crue.hercules.sgi.pii.validation.EntidadActiva;
-import org.crue.hercules.sgi.pii.validation.UniqueNombreSectorAplicacionActiva;
+import org.crue.hercules.sgi.framework.validation.ActivableIsActivo;
 import org.crue.hercules.sgi.pii.model.SectorAplicacion.OnActivar;
 import org.crue.hercules.sgi.pii.model.SectorAplicacion.OnActualizar;
 import org.crue.hercules.sgi.pii.model.SectorAplicacion.OnCrear;
+import org.crue.hercules.sgi.pii.validation.UniqueNombreSectorAplicacionActiva;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -26,7 +26,7 @@ import lombok.experimental.SuperBuilder;
 @NoArgsConstructor
 @SuperBuilder
 @UniqueNombreSectorAplicacionActiva(groups = { OnActualizar.class, OnActivar.class, OnCrear.class })
-@EntidadActiva(entityClass = SectorAplicacion.class, groups = { OnActualizar.class })
+@ActivableIsActivo(entityClass = SectorAplicacion.class, groups = { OnActualizar.class })
 public class SectorAplicacion extends BaseActivableEntity {
   public static final int NOMBRE_LENGTH = 50;
   public static final int DESCRIPCION_LENGTH = 250;

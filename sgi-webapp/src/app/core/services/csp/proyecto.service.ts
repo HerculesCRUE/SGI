@@ -54,6 +54,7 @@ import { IProyectoEntidadConvocante } from '@core/models/csp/proyecto-entidad-co
 import { IProyectoEntidadFinanciadora } from '@core/models/csp/proyecto-entidad-financiadora';
 import { IProyectoEntidadGestora } from '@core/models/csp/proyecto-entidad-gestora';
 import { IProyectoEquipo } from '@core/models/csp/proyecto-equipo';
+import { IProyectoFacturacion } from '@core/models/csp/proyecto-facturacion';
 import { IProyectoHito } from '@core/models/csp/proyecto-hito';
 import { IProyectoIVA } from '@core/models/csp/proyecto-iva';
 import { IProyectoPaqueteTrabajo } from '@core/models/csp/proyecto-paquete-trabajo';
@@ -86,6 +87,8 @@ import { IProyectoAnualidadResponse } from './proyecto-anualidad/proyecto-anuali
 import { PROYECTO_ANUALIDAD_RESPONSE_CONVERTER } from './proyecto-anualidad/proyecto-anualidad-response.converter';
 import { IProyectoAnualidadResumenResponse } from './proyecto-anualidad/proyecto-anualidad-resumen-response';
 import { PROYECTO_ANUALIDAD_RESUMEN_RESPONSE_CONVERTER } from './proyecto-anualidad/proyecto-anualidad-resumen-response.converter';
+import { IProyectoFacturacionResponse } from './proyecto-facturacion/proyecto-facturacion-response';
+import { PROYECTO_FACTURACION_RESPONSE_CONVERTER } from './proyecto-facturacion/proyecto-facturacion-response.converter';
 import { IProyectoPeriodoJustificacionResponse } from './proyecto-periodo-justificacion/proyecto-periodo-justificacion-response';
 import { PROYECTO_PERIODO_JUSTIFICACION_RESPONSE_CONVERTER } from './proyecto-periodo-justificacion/proyecto-periodo-justificacion-response.converter';
 import { IProyectoResponsableEconomicoResponse } from './proyecto-responsable-economico/proyecto-responsable-economico-response';
@@ -172,7 +175,7 @@ export class ProyectoService extends SgiMutableRestService<number, IProyectoBack
     return this.http.patch<void>(`${this.endpointUrl}/${id}/reactivar`, undefined);
   }
 
-  private findEntidadesFinanciadoras(id: number, options?: SgiRestFindOptions):
+  findEntidadesFinanciadoras(id: number, options?: SgiRestFindOptions):
     Observable<SgiRestListResult<IProyectoEntidadFinanciadora>> {
     return this.find<IProyectoEntidadFinanciadoraBackend, IProyectoEntidadFinanciadora>(
       `${this.endpointUrl}/${id}/proyectoentidadfinanciadoras`,
@@ -706,7 +709,19 @@ export class ProyectoService extends SgiMutableRestService<number, IProyectoBack
     return this.find<IAnualidadGastoResponse, IAnualidadGasto>(
       `${this.endpointUrl}/${proyectoId}/anualidadesgastos`,
       {},
-      ANUALIDAD_GASTO_RESPONSE_CONVERTER
-    );
+      ANUALIDAD_GASTO_RESPONSE_CONVERTER);
+  }
+
+  /*
+   * Devuelve el listado de {@link IProyectoFacturacion} de un {@link IProyecto}
+   *
+   * @param proyectoId Id del {@link IProyecto}
+   */
+  findProyectosFacturacionByProyectoId(
+    proyectoId: number, options?: SgiRestFindOptions
+    ): Observable<SgiRestListResult<IProyectoFacturacion>> {
+
+      return this.find<IProyectoFacturacionResponse, IProyectoFacturacion>(
+        `${this.endpointUrl}/${proyectoId}/proyectosfacturacion`, options, PROYECTO_FACTURACION_RESPONSE_CONVERTER);
   }
 }

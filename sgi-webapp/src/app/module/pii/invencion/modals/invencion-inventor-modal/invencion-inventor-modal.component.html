@@ -9,48 +9,53 @@
 </div>
 <mat-dialog-content>
   <form class="form-inline" [formGroup]="formGroup">
-    <div fxFlex fxLayout="row" fxLayout.lt-md='column' fxLayoutGap="20px">
-      <!-- Invención Inventor -->
-      <div fxFlex="50%" fxFlex.lt-md="100%">
-        <mat-form-field>
-          <mat-label>{{'pii.invencion.inventor' | translate:MSG_PARAMS.CARDINALIRY.SINGULAR}}
-          </mat-label>
-          <sgi-select-persona formControlName="inventor" [tipoColectivo]="TipoColectivo.AUTOR_INVENCION" required>
-          </sgi-select-persona>
-          <mat-error *ngIf="formGroup.controls.inventor.errors?.required">
-            {{'error.required.entity' | translate:msgParamNombreEntity}}
-          </mat-error>
-        </mat-form-field>
+    <div fxFlex fxLayout="column" fxLayout.lt-md='column' fxLayoutGap="20px">
+      <div fxFlex fxLayout="row" fxLayout.lt-md='column' fxLayoutGap="20px">
+
+        <!-- Invención Inventor -->
+        <div fxFlex="100%" fxFlex.lt-md="100%">
+          <mat-form-field>
+            <mat-label>{{'pii.invencion.inventor' | translate:MSG_PARAMS.CARDINALIRY.SINGULAR}}
+            </mat-label>
+            <sgi-select-persona formControlName="inventor" [tipoColectivo]="TipoColectivo.AUTOR_INVENCION" required>
+            </sgi-select-persona>
+            <mat-error *ngIf="formGroup.controls.inventor.errors?.required">
+              {{'error.required.entity' | translate:msgParamNombreEntity}}
+            </mat-error>
+          </mat-form-field>
+        </div>
       </div>
-      <!-- Porcentaje Participacion -->
-      <div fxFlex="25%" fxFlex.lt-md="100%">
-        <mat-form-field>
-          <mat-label>{{'pii.invencion-inventor.participacion' | translate}} %</mat-label>
-          <input matInput formControlName="participacion" type="number"
-            placeholder="{{'pii.invencion-inventor.participacion' | translate}} %" required>
-          <mat-error *ngIf="formGroup.controls.participacion.errors?.required">
-            {{'error.required.entity' | translate:msgParamParticipacionEntity}}
-          </mat-error>
-          <mat-error *ngIf="formGroup.controls.participacion.errors?.min">
-            {{'error.min.entity' | translate:msgParamParticipacionEntity}}
-          </mat-error>
-          <mat-error *ngIf="formGroup.controls.participacion.errors?.max">
-            {{'error.max.entity' | translate:msgParamParticipacionEntity}}
-          </mat-error>
-        </mat-form-field>
-      </div>
-      <!-- Reparto Universidad -->
-      <div fxFlex="25%" fxFlex.lt-md="100%">
-        <mat-form-field>
-          <mat-label>{{'pii.invencion-inventor.reparto-universidad' | translate}}</mat-label>
-          <mat-select matNativeControl formControlName="isRepartoUniversidad" required>
-            <mat-option [value]="true">{{'label.si' | translate}}</mat-option>
-            <mat-option [value]="false">{{'label.no' | translate}}</mat-option>
-          </mat-select>
-          <mat-error *ngIf="formGroup.controls.isRepartoUniversidad.errors?.required">
-            {{'error.required.entity' | translate:msgParamRepartoEntity}}
-          </mat-error>
-        </mat-form-field>
+      <div fxFlex fxLayout="row" fxLayout.lt-md='column' fxLayoutGap="20px">
+        <!-- Porcentaje Participacion -->
+        <div fxFlex="20%" fxFlex.lt-md="100%">
+          <mat-form-field>
+            <mat-label>{{'pii.invencion-inventor.participacion' | translate}} %</mat-label>
+            <input matInput formControlName="participacion" type="number"
+              placeholder="{{'pii.invencion-inventor.participacion' | translate}} %" required>
+            <mat-error *ngIf="formGroup.controls.participacion.errors?.required">
+              {{'error.required.entity' | translate:msgParamParticipacionEntity}}
+            </mat-error>
+            <mat-error *ngIf="formGroup.controls.participacion.errors?.min">
+              {{'error.min.entity' | translate:msgParamParticipacionEntity}}
+            </mat-error>
+            <mat-error *ngIf="formGroup.controls.participacion.errors?.max">
+              {{'error.max.entity' | translate:msgParamParticipacionEntity}}
+            </mat-error>
+          </mat-form-field>
+        </div>
+        <!-- Reparto Universidad -->
+        <div fxFlex="30%" fxFlex.lt-md="100%">
+          <mat-form-field>
+            <mat-label>{{'pii.invencion-inventor.reparto-universidad' | translate}}</mat-label>
+            <mat-select matNativeControl formControlName="isRepartoUniversidad" required>
+              <mat-option [value]="true">{{'label.si' | translate}}</mat-option>
+              <mat-option [value]="false">{{'label.no' | translate}}</mat-option>
+            </mat-select>
+            <mat-error *ngIf="formGroup.controls.isRepartoUniversidad.errors?.required">
+              {{'error.required.entity' | translate:msgParamRepartoEntity}}
+            </mat-error>
+          </mat-form-field>
+        </div>
       </div>
     </div>
   </form>

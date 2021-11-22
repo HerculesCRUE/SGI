@@ -38,34 +38,19 @@ public class Configuracion extends BaseEntity {
   @SequenceGenerator(name = "configuracion_seq", sequenceName = "configuracion_seq", allocationSize = 1)
   private Long id;
 
-  /** mesesArchivadaInactivo. */
-  @Column(name = "meses_archivada_inactivo", nullable = false, unique = true)
+  /** diasArchivadaInactivo. */
+  @Column(name = "dias_archivada_inactivo", nullable = false, unique = true)
   @NotNull
-  private Integer mesesArchivadaInactivo;
+  private Integer diasArchivadaInactivo;
 
-  /** diasArchivadaPendienteCorrecciones. */
-  @Column(name = "dias_archivada_pendiente_correcciones", nullable = false, unique = true)
+  /** mesesArchivadaPendienteCorrecciones. */
+  @Column(name = "meses_archivada_pendiente_correcciones", nullable = false, unique = true)
   @NotNull
-  private Integer diasArchivadaPendienteCorrecciones;
+  private Integer mesesArchivadaPendienteCorrecciones;
 
   /** diasLimiteEvaluador. */
   @Column(name = "dias_limite_evaluador", nullable = false, unique = true)
   @NotNull
   private Integer diasLimiteEvaluador;
-
-  /** mesesAvisoProyectoCEEA. */
-  @Column(name = "meses_aviso_proyecto_ceea", nullable = false, unique = true)
-  @NotNull
-  private Integer mesesAvisoProyectoCEEA;
-
-  /** mesesAvisoProyectoCEI. */
-  @Column(name = "meses_aviso_proyecto_cei", nullable = false, unique = true)
-  @NotNull
-  private Integer mesesAvisoProyectoCEI;
-
-  /** mesesAvisoProyectoCBE. */
-  @Column(name = "meses_aviso_proyecto_cbe", nullable = false, unique = true)
-  @NotNull
-  private Integer mesesAvisoProyectoCBE;
 
 }

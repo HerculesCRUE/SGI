@@ -28,12 +28,20 @@ export class ProyectoSgeService extends SgiMutableRestService<string, IProyectoS
     );
   }
 
-  createProyecto(model: any): Observable<void> {
-    return this.http.post<void>(`${this.endpointUrl}/formly`, model);
+  createProyecto(model: any): Observable<string> {
+    return this.http.post<string>(`${this.endpointUrl}/formly`, model);
+  }
+
+  updateProyecto(id: number, model: any): Observable<void> {
+    return this.http.put<void>(`${this.endpointUrl}/formly/${id}`, model);
   }
 
   getFormlyCreate(): Observable<FormlyFieldConfig[]> {
     return this.http.get<FormlyFieldConfig[]>(`${this.endpointUrl}/formly/create`);
+  }
+
+  getFormlyUpdate(): Observable<FormlyFieldConfig[]> {
+    return this.http.get<FormlyFieldConfig[]>(`${this.endpointUrl}/formly/update`);
   }
 
   createProyectoAnualidadesPartidas(proyectoAnualidadesPartidas: IProyectoAnualidadPartida[]): Observable<void> {

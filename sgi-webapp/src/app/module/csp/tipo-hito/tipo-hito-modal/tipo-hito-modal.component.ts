@@ -1,49 +1,42 @@
-import { Component, Inject, OnInit } from '@angular/core';
-import { FormControl, FormGroup } from '@angular/forms';
+import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
-import { BaseModalComponent } from '@core/component/base-modal.component';
+import { DialogActionComponent } from '@core/component/dialog-action.component';
 import { MSG_PARAMS } from '@core/i18n';
 import { ITipoHito } from '@core/models/csp/tipos-configuracion';
-import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-properties';
-import { SnackBarService } from '@core/services/snack-bar.service';
+import { TipoHitoService } from '@core/services/csp/tipo-hito.service';
 import { TranslateService } from '@ngx-translate/core';
+import { Observable } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 
-const MSG_ANADIR = marker('btn.add');
-const MSG_ACEPTAR = marker('btn.ok');
 const TIPO_HITO_KEY = marker('csp.tipo-hito');
 const TIPO_HITO_NOMBRE_KEY = marker('csp.tipo-hito.nombre');
 const TITLE_NEW_ENTITY = marker('title.new.entity');
+
 @Component({
   selector: 'sgi-tipo-hito-modal',
   templateUrl: './tipo-hito-modal.component.html',
   styleUrls: ['./tipo-hito-modal.component.scss']
 })
-export class TipoHitoModalComponent extends
-  BaseModalComponent<ITipoHito, TipoHitoModalComponent> implements OnInit {
-  fxLayoutProperties: FxLayoutProperties;
-  textSaveOrUpdate: string;
+export class TipoHitoModalComponent extends DialogActionComponent<ITipoHito, ITipoHito> implements OnInit, OnDestroy {
+
+  private readonly tipoHito: ITipoHito;
   title: string;
   msgParamNombreEntity = {};
 
   constructor(
-    protected readonly snackBarService: SnackBarService,
-    public readonly matDialogRef: MatDialogRef<TipoHitoModalComponent>,
-    @Inject(MAT_DIALOG_DATA) public tipoHito: ITipoHito,
+    matDialogRef: MatDialogRef<TipoHitoModalComponent>,
+    @Inject(MAT_DIALOG_DATA) data: ITipoHito,
+    private readonly tipoHitoService: TipoHitoService,
     private readonly translate: TranslateService
   ) {
-    super(snackBarService, matDialogRef, tipoHito);
+    super(matDialogRef, !!data?.id);
 
-    this.fxLayoutProperties = new FxLayoutProperties();
-    this.fxLayoutProperties.layout = 'row';
-    this.fxLayoutProperties.layoutAlign = 'row';
-    if (tipoHito.id) {
-      this.tipoHito = { ...tipoHito };
-      this.textSaveOrUpdate = MSG_ACEPTAR;
+    if (this.isEdit()) {
+      this.tipoHito = { ...data };
     } else {
       this.tipoHito = { activo: true } as ITipoHito;
-      this.textSaveOrUpdate = MSG_ANADIR;
     }
   }
 
@@ -58,7 +51,7 @@ export class TipoHitoModalComponent extends
       MSG_PARAMS.CARDINALIRY.SINGULAR
     ).subscribe((value) => this.msgParamNombreEntity = { entity: value, ...MSG_PARAMS.GENDER.MALE, ...MSG_PARAMS.CARDINALIRY.SINGULAR });
 
-    if (this.tipoHito.nombre) {
+    if (this.isEdit()) {
       this.translate.get(
         TIPO_HITO_KEY,
         MSG_PARAMS.CARDINALIRY.SINGULAR
@@ -78,18 +71,23 @@ export class TipoHitoModalComponent extends
     }
   }
 
-  protected getDatosForm(): ITipoHito {
+  protected getValue(): ITipoHito {
     this.tipoHito.nombre = this.formGroup.controls.nombre.value;
     this.tipoHito.descripcion = this.formGroup.controls.descripcion.value;
     return this.tipoHito;
   }
 
-  protected getFormGroup(): FormGroup {
+  protected buildFormGroup(): FormGroup {
     const formGroup = new FormGroup({
-      nombre: new FormControl(this.tipoHito?.nombre),
-      descripcion: new FormControl(this.tipoHito?.descripcion)
+      nombre: new FormControl(this.tipoHito?.nombre ?? '', Validators.required),
+      descripcion: new FormControl(this.tipoHito?.descripcion ?? '')
     });
     return formGroup;
   }
 
+  protected saveOrUpdate(): Observable<ITipoHito> {
+    const tipoHito = this.getValue();
+    return this.isEdit() ? this.tipoHitoService.update(tipoHito.id, tipoHito) :
+      this.tipoHitoService.create(tipoHito);
+  }
 }

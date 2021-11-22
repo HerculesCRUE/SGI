@@ -23,6 +23,7 @@ export abstract class AbstractTablePaginationComponent<T> implements OnInit, OnD
   filter: SgiRestFilter;
   suscripciones: Subscription[];
   formGroup: FormGroup;
+  findOptions: SgiRestFindOptions;
 
   @ViewChild(MatSort, { static: true }) sort: MatSort;
   @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
@@ -125,6 +126,7 @@ export abstract class AbstractTablePaginationComponent<T> implements OnInit, OnD
       sort: new RSQLSgiRestSort(this.sort?.active, SgiRestSortDirection.fromSortDirection(this.sort?.direction)),
       filter: this.filter,
     };
+    this.findOptions = options;
     return options;
   }
 

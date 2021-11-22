@@ -58,8 +58,8 @@ export class PersonaService extends SgiMutableRestService<string, IPersonaBacken
     );
   }
 
-  createPersona(model: any): Observable<void> {
-    return this.http.post<void>(`${this.endpointUrl}/formly`, model);
+  createPersona(model: any): Observable<string> {
+    return this.http.post<string>(`${this.endpointUrl}/formly`, model);
   }
 
   updatePersona(id: string, model: any): Observable<void> {

@@ -1,0 +1,99 @@
+<div class="sgi-dialog-header" fxLayout="row" fxLayoutGap="20px">
+  <span fxFlexAlign="center" mat-mat-dialog-title role="heading" aria-level="3" fxFlex>
+    {{'pii.reparto.gasto.desglose-gasto-deducir' | translate}}
+  </span>
+  <button fxFlex="nogrow" mat-icon-button mat-dialog-close>
+    <mat-icon class="close-icon">close</mat-icon>
+  </button>
+</div>
+<mat-dialog-content>
+  <form [formGroup]="formGroup">
+    <div fxLayout="row" fxLayoutGap="20px" class="row">
+      <!-- Importe Total -->
+      <mat-form-field>
+        <mat-label>{{'pii.reparto.equipo-inventor-modal.importe-total' | translate}}</mat-label>
+        <input matInput formControlName="importeTotal" id="importeTotal" type="number"
+          placeholder="{{'pii.reparto.equipo-inventor-modal.importe-total' | translate}}">
+        <mat-error *ngIf="formGroup.controls.importeTotal.errors?.required">
+          {{'error.required.entity' | translate:msgParamImporteTotalEntity}}
+        </mat-error>
+        <mat-error *ngIf="formGroup.controls.importeTotal.errors?.min">
+          {{'error.min.entity' | translate:msgParamImporteTotalEntity}}
+        </mat-error>
+        <mat-error *ngIf="formGroup.controls.importeTotal.errors?.maxDecimals">
+          {{'error.max.decimals.entity' | translate:msgParamImporteTotalEntity}}
+        </mat-error>
+      </mat-form-field>
+      <!-- Importe Nómina -->
+      <mat-form-field>
+        <mat-label>{{'pii.reparto.equipo-inventor-modal.importe-nomina' | translate}}</mat-label>
+        <input matInput formControlName="importeNomina" id="importeNomina" type="number"
+          placeholder="{{'pii.reparto.equipo-inventor-modal.importe-nomina' | translate}}">
+        <mat-error *ngIf="formGroup.controls.importeNomina.errors?.required">
+          {{'error.required.entity' | translate:msgParamImporteNominaEntity}}
+        </mat-error>
+        <mat-error *ngIf="formGroup.controls.importeNomina.errors?.min">
+          {{'error.min.entity' | translate:msgParamImporteNominaEntity}}
+        </mat-error>
+        <mat-error *ngIf="formGroup.controls.importeNomina.errors?.maxDecimals">
+          {{'error.max.decimals.entity' | translate:msgParamImporteNominaEntity}}
+        </mat-error>
+      </mat-form-field>
+      <!-- Importe Proyecto -->
+      <mat-form-field>
+        <mat-label>{{'pii.reparto.equipo-inventor-modal.importe-proyecto' | translate}}</mat-label>
+        <input matInput formControlName="importeProyecto" id="importeProyecto" type="number"
+          placeholder="{{'pii.reparto.equipo-inventor-modal.importe-proyecto' | translate}}">
+        <mat-error *ngIf="formGroup.controls.importeProyecto.errors?.required">
+          {{'error.required.entity' | translate:msgParamImporteProyectoEntity}}
+        </mat-error>
+        <mat-error *ngIf="formGroup.controls.importeProyecto.errors?.min">
+          {{'error.min.entity' | translate:msgParamImporteProyectoEntity}}
+        </mat-error>
+        <mat-error *ngIf="formGroup.controls.importeProyecto.errors?.maxDecimals">
+          {{'error.max.decimals.entity' | translate:msgParamImporteProyectoEntity}}
+        </mat-error>
+      </mat-form-field>
+    </div>
+    <div fxLayout="row" class="row" *ngIf="formGroup.controls.importeProyecto.value > 0">
+      <mat-form-field>
+        <mat-label>{{'pii.invencion.proyecto' | translate}}</mat-label>
+        <sgi-select-proyecto placeholder="{{'pii.invencion.proyecto' | translate}}" formControlName="proyecto">
+        </sgi-select-proyecto>
+      </mat-form-field>
+    </div>
+    <div fxLayout="row" class="row">
+      <!-- Importe Otros -->
+      <div fxFlex.sm="0 1 calc(33%-10px)">
+        <mat-form-field>
+          <mat-label>{{'pii.reparto.equipo-inventor-modal.importe-otros' | translate}}</mat-label>
+          <input matInput formControlName="importeOtros" id="importeOtros" type="number"
+            placeholder="{{'pii.reparto.equipo-inventor-modal.importe-otros' | translate}}">
+          <mat-error *ngIf="formGroup.controls.importeOtros.errors?.required">
+            {{'error.required.entity' | translate:msgParamImporteOtrosEntity}}
+          </mat-error>
+          <mat-error *ngIf="formGroup.controls.importeOtros.errors?.min">
+            {{'error.min.entity' | translate:msgParamImporteOtrosEntity}}
+          </mat-error>
+          <mat-error *ngIf="formGroup.controls.importeOtros.errors?.maxDecimals">
+            {{'error.max.decimals.entity' | translate:msgParamImporteOtrosEntity}}
+          </mat-error>
+        </mat-form-field>
+      </div>
+    </div>
+    <div fxLayout="row" fxLayoutAlign="center" class="error-message">
+      <mat-error *ngIf="!formGroup.controls.importeTotal.errors && formGroup?.errors?.fieldsSumNotEqualsToValue">
+        {{'error.sum.fields' | translate: formGroup.errors.fieldsSumNotEqualsToValue }}
+      </mat-error>
+    </div>
+  </form>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <button color="accent" (click)="saveOrUpdate()" mat-raised-button type="submit">
+    <mat-icon class="save-icon">save</mat-icon>
+    {{'btn.ok' | translate}}
+  </button>
+  <button class="link-cancelar" mat-button type="button" mat-dialog-close>
+    {{'btn.cancel' | translate}}
+  </button>
+</mat-dialog-actions>

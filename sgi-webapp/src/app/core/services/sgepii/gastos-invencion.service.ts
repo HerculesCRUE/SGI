@@ -8,6 +8,11 @@ import { RSQLSgiRestFilter, SgiRestBaseService, SgiRestFilterOperator, SgiRestFi
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
+export enum TipoOperacion {
+  GASTO = 'GAS',
+  REPARTO = 'REP'
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -27,10 +32,10 @@ export class GastosInvencionService extends SgiRestBaseService {
    * @param invencionId Id de la Invención
    * @returns Lista de Gastos asociados a la Invención
    */
-  getGastos(invencionId: string): Observable<IDatoEconomico[]> {
-    const filter = new RSQLSgiRestFilter('invencionId', SgiRestFilterOperator.EQUALS, invencionId);
+  getGastos(invencionId: string, tipoOperacion: TipoOperacion): Observable<IDatoEconomico[]> {
     const options: SgiRestFindOptions = {
-      filter
+      filter: new RSQLSgiRestFilter('invencionId', SgiRestFilterOperator.EQUALS, invencionId)
+        .and('tipoOperacion', SgiRestFilterOperator.EQUALS, tipoOperacion)
     };
     return this.find<IDatoEconomico, IDatoEconomico>(
       `${this.endpointUrl}`,

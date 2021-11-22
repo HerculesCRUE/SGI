@@ -1,7 +1,7 @@
 <sgi-fragment title="{{'label.datos-generales' | translate}}">
   <form [formGroup]="formGroup" #form fxLayout="column wrap">
 
-    <div id="datos-generales" fxFlex fxLayout="row wrap" fxLayoutGap="1%">
+    <div id="datos-generales" fxFlex fxLayout="row " fxLayoutGap="1%">
       <!-- Título -->
       <div fxFlex fxFlex.sm="100%">
         <mat-form-field>
@@ -100,20 +100,21 @@
         </mat-form-field>
       </div>
 
-      <!-- Número de Publicación -->
-      <div fxFlex="24%" fxFlex.lt-sm="100%" *ngIf="formPart.tipoPropiedad === formPart.TipoPropiedad.INDUSTRIAL">
-        <mat-form-field fxFill>
-          <mat-label>{{'pii.solicitud-proteccion.numero-publicacion-form' | translate}}</mat-label>
-          <input matInput formControlName="numeroPublicacion" type="text" id="numeroPublicacion"
-            placeholder="{{'pii.solicitud-proteccion.numero-publicacion-form' | translate}}">
-          <mat-error *ngIf="formGroup.controls.numeroPublicacion.errors?.maxlength">
-            {{'error.maxlength.entity' | translate:msgParamNumeroPublicacionEntity}}
+      <!-- Estado -->
+      <div fxFlex="24%" fxFlex.lt-sm="100%"
+        *ngIf="formPart.tipoPropiedad === formPart.TipoPropiedad.INDUSTRIAL && formPart.getKey()">
+        <mat-form-field>
+          <mat-label>{{'pii.solicitud-proteccion.estado' | translate}}</mat-label>
+          <sgi-select-enum #estado formControlName="estado" [enumMap]="ESTADO_MAP" [required]="true"></sgi-select-enum>
+          <mat-error *ngIf="formGroup.controls.estado.errors?.required">
+            {{'error.required.entity' | translate:msgParamEstadoEntity}}
           </mat-error>
         </mat-form-field>
       </div>
 
       <!-- Fecha de Publicación -->
-      <div fxFlex="24%" fxFlex.lt-sm="100%" *ngIf="formPart.tipoPropiedad === formPart.TipoPropiedad.INDUSTRIAL">
+      <div fxFlex="24%" fxFlex.lt-sm="100%"
+        *ngIf="formPart.tipoPropiedad === formPart.TipoPropiedad.INDUSTRIAL && formPart.solicitudProteccion?.id">
         <mat-form-field fxFill>
           <mat-label>
             {{'pii.solicitud-proteccion.fecha-publicacion-form' | translate}}
@@ -124,20 +125,22 @@
         </mat-form-field>
       </div>
 
-      <!-- Número de Concesión -->
-      <div fxFlex="24%" fxFlex.lt-sm="100%" *ngIf="formPart.tipoPropiedad === formPart.TipoPropiedad.INDUSTRIAL">
+      <!-- Número de Publicación -->
+      <div fxFlex="24%" fxFlex.lt-sm="100%"
+        *ngIf="formPart.tipoPropiedad === formPart.TipoPropiedad.INDUSTRIAL && formPart.solicitudProteccion?.id">
         <mat-form-field fxFill>
-          <mat-label>{{'pii.solicitud-proteccion.numero-concesion-form' | translate}}</mat-label>
-          <input matInput formControlName="numeroConcesion" type="text" id="numeroConcesion"
-            placeholder="{{'pii.solicitud-proteccion.numero-concesion-form' | translate}}">
-          <mat-error *ngIf="formGroup.controls.numeroConcesion.errors?.maxlength">
-            {{'error.maxlength.entity' | translate:msgParamNumeroConcesionEntity}}
+          <mat-label>{{'pii.solicitud-proteccion.numero-publicacion-form' | translate}}</mat-label>
+          <input matInput formControlName="numeroPublicacion" type="text" id="numeroPublicacion"
+            placeholder="{{'pii.solicitud-proteccion.numero-publicacion-form' | translate}}">
+          <mat-error *ngIf="formGroup.controls.numeroPublicacion.errors?.maxlength">
+            {{'error.maxlength.entity' | translate:msgParamNumeroPublicacionEntity}}
           </mat-error>
         </mat-form-field>
       </div>
 
       <!-- Fecha de Concesión -->
-      <div fxFlex="24%" fxFlex.lt-sm="100%" *ngIf="formPart.tipoPropiedad === formPart.TipoPropiedad.INDUSTRIAL">
+      <div fxFlex="24%" fxFlex.lt-sm="100%" *ngIf="formPart.tipoPropiedad === formPart.TipoPropiedad.INDUSTRIAL &&
+                    formPart.solicitudProteccion?.id">
         <mat-form-field fxFill>
           <mat-label>
             {{'pii.solicitud-proteccion.fecha-concesion-form' | translate}}
@@ -145,6 +148,19 @@
           <input matInput formControlName="fechaConcesion" [matDatepicker]="fechaConcesion">
           <mat-datepicker-toggle matSuffix [for]="fechaConcesion"></mat-datepicker-toggle>
           <mat-datepicker #fechaConcesion></mat-datepicker>
+        </mat-form-field>
+      </div>
+
+      <!-- Número de Concesión -->
+      <div fxFlex="24%" fxFlex.lt-sm="100%"
+        *ngIf="formPart.tipoPropiedad === formPart.TipoPropiedad.INDUSTRIAL && formPart.solicitudProteccion?.id">
+        <mat-form-field fxFill>
+          <mat-label>{{'pii.solicitud-proteccion.numero-concesion-form' | translate}}</mat-label>
+          <input matInput formControlName="numeroConcesion" type="text" id="numeroConcesion"
+            placeholder="{{'pii.solicitud-proteccion.numero-concesion-form' | translate}}">
+          <mat-error *ngIf="formGroup.controls.numeroConcesion.errors?.maxlength">
+            {{'error.maxlength.entity' | translate:msgParamNumeroConcesionEntity}}
+          </mat-error>
         </mat-form-field>
       </div>
 
@@ -187,19 +203,6 @@
           </mat-error>
         </mat-form-field>
       </div>
-
-      <!-- Estado -->
-      <div fxFlex="24%" fxFlex.lt-sm="100%"
-        *ngIf="formPart.tipoPropiedad === formPart.TipoPropiedad.INDUSTRIAL && formPart.getKey()">
-        <mat-form-field>
-          <mat-label>{{'pii.solicitud-proteccion.estado' | translate}}</mat-label>
-          <sgi-select-enum #estado formControlName="estado" [enumMap]="ESTADO_MAP"></sgi-select-enum>
-          <mat-error *ngIf="formGroup.controls.estado.errors?.required">
-            {{'error.required.entity' | translate:msgParamEstadoEntity}}
-          </mat-error>
-        </mat-form-field>
-      </div>
-
     </div>
 
     <!-- Agente de la propiedad -->
@@ -222,6 +225,9 @@
           {{'error.maxlength.entity' | translate:msgParamComentariosEntity}}
         </mat-error>
       </mat-form-field>
+    </div>
+    <div *ngIf="formPart.isViaEuropea$ | async">
+      <sgi-solicitud-proteccion-paises-validados></sgi-solicitud-proteccion-paises-validados>
     </div>
 
   </form>

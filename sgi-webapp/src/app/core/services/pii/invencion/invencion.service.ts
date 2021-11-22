@@ -9,6 +9,7 @@ import { IInvencionIngreso } from '@core/models/pii/invencion-ingreso';
 import { IInvencionInventor } from '@core/models/pii/invencion-inventor';
 import { IInvencionSectorAplicacion } from '@core/models/pii/invencion-sector-aplicacion';
 import { IPeriodoTitularidad } from '@core/models/pii/periodo-titularidad';
+import { IReparto } from '@core/models/pii/reparto';
 import { ISolicitudProteccion } from '@core/models/pii/solicitud-proteccion';
 import { environment } from '@env';
 import {
@@ -26,6 +27,8 @@ import { INFORME_PATENTABILIDAD_RESPONSE_CONVERTER } from '../informe-patentabil
 import { INVENCION_INVENTOR_REQUEST_CONVERTER } from '../invencion-inventor/invencion-inventor-request.converter';
 import { IInvencionInventorResponse } from '../invencion-inventor/invencion-inventor-response';
 import { INVENCION_INVENTOR_RESPONSE_CONVERTER } from '../invencion-inventor/invencion-inventor-response.converter';
+import { IRepartoResponse } from '../reparto/reparto-response';
+import { REPARTO_RESPONSE_CONVERTER } from '../reparto/reparto-response.converter';
 import { ISolicitudProteccionResponse } from '../solicitud-proteccion/solicitud-proteccion-response';
 import { SOLICITUD_PROTECCION_RESPONSE_CONVERTER } from '../solicitud-proteccion/solicitud-proteccion-response.converter';
 import { INVENCION_AREACONOCIMIENTO_REQUEST_CONVERTER } from './invencion-area-conocimiento/invencion-area-conocimiento-request.converter';
@@ -229,6 +232,20 @@ export class InvencionService extends _InvencionServiceMixinBase {
   }
 
   /**
+   * Obtiene la lista de inventores asociados a una invencion
+   * @param id id de la invencion
+   * @param options opciones de busqueda
+   * @returns lista de inventores asociados a una invencion
+   */
+  findInventoresWithOptions(id: number, options?: SgiRestFindOptions): Observable<SgiRestListResult<IInvencionInventor>> {
+    return this.find<IInvencionInventorResponse, IInvencionInventor>(
+      `${this.endpointUrl}/${id}/invencion-inventores`,
+      options,
+      INVENCION_INVENTOR_RESPONSE_CONVERTER
+    );
+  }
+
+  /**
    * Persiste los cambios efectuados a las entidades {@link IInvencionInventor}.
    *
    * @param id Id de la {@link IInvencion}
@@ -302,4 +319,15 @@ export class InvencionService extends _InvencionServiceMixinBase {
     );
   }
 
+  /**
+   * Recupera los Repartos asociados a la Invencion con el id indicado.
+   *
+   * @param id Id de la Invencion
+   */
+  findRepartos(id: number, options?: SgiRestFindOptions): Observable<SgiRestListResult<IReparto>> {
+    return this.find<IRepartoResponse, IReparto>(
+      `${this.endpointUrl}/${id}/repartos`,
+      options,
+      REPARTO_RESPONSE_CONVERTER);
+  }
 }

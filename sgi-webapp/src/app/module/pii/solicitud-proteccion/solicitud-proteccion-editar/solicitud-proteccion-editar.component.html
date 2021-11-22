@@ -4,6 +4,10 @@
       [title]="'label.datos-generales' | translate"
       [fragment]="actionService.getFragment(actionService.FRAGMENT.DATOS_GENERALES)">
     </sgi-action-fragment-menu-item>
+    <sgi-action-fragment-menu-item [route]="[SOLICITUD_PROTECCION_ROUTE_NAMES.PROCEDIMIENTOS]"
+      [title]="'menu.pii.solicitud-proteccion.procedimiento' | translate"
+      [fragment]="actionService.getFragment(actionService.FRAGMENT.PROCEDIMIENTOS)">
+    </sgi-action-fragment-menu-item>
   </ng-container>
   <ng-container footer>
     <sgi-action-footer [texto]="textEditar" [actionService]="actionService"></sgi-action-footer>

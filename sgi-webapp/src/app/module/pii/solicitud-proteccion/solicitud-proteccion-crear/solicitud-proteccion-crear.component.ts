@@ -94,7 +94,9 @@ export class SolicitudProteccionCrearComponent extends ActionComponent implement
       (error) => {
         this.logger.error(error);
         if (error instanceof HttpProblem) {
-          this.snackBarService.showError(error);
+          if(!error.managed){
+            this.snackBarService.showError(error);
+          }
         }
         else {
           this.snackBarService.showError(this.textCrearError);
@@ -102,7 +104,8 @@ export class SolicitudProteccionCrearComponent extends ActionComponent implement
       },
       () => {
         this.snackBarService.showSuccess(this.textCrearSuccess);
-        this.router.navigate(['../'], { relativeTo: this.activatedRoute });
+        const solicitudId = this.actionService.getFragment(this.actionService.FRAGMENT.DATOS_GENERALES).getKey();
+        this.router.navigate([`../${solicitudId}`], { relativeTo: this.activatedRoute });
       }
     );
   }

@@ -9,12 +9,14 @@ import { ROUTE_NAMES } from '@core/route.names';
 import { SgiAuthGuard } from '@sgi/framework/auth';
 import { InvencionCrearComponent } from './invencion-crear/invencion-crear.component';
 import { InvencionEditarComponent } from './invencion-editar/invencion-editar.component';
+import { InvencionContratosComponent } from './invencion-formulario/invencion-contratos/invencion-contratos.component';
 import { InvencionDatosGeneralesComponent } from './invencion-formulario/invencion-datos-generales/invencion-datos-generales.component';
 import { InvencionDocumentoComponent } from './invencion-formulario/invencion-documento/invencion-documento.component';
 import { InvencionGastosComponent } from './invencion-formulario/invencion-gastos/invencion-gastos.component';
 import { InvencionInformesPatentabilidadComponent } from './invencion-formulario/invencion-informes-patentabilidad/invencion-informes-patentabilidad.component';
 import { InvencionIngresosComponent } from './invencion-formulario/invencion-ingresos/invencion-ingresos.component';
 import { InvencionInventorComponent } from './invencion-formulario/invencion-inventor/invencion-inventor.component';
+import { InvencionRepartosComponent } from './invencion-formulario/invencion-repartos/invencion-repartos.component';
 import { PeriodoTitularidadComponent } from './invencion-formulario/periodo-titularidad/periodo-titularidad.component';
 import { SolicitudProteccionComponent } from './invencion-formulario/solicitud-proteccion/solicitud-proteccion.component';
 import { InvencionListadoComponent } from './invencion-listado/invencion-listado.component';
@@ -26,6 +28,7 @@ const MSG_LISTADO_TITLE = marker('menu.pii.invenciones');
 const MSG_NEW_TITLE = marker('title.new.entity');
 const INVENCION_KEY = marker('pii.invencion');
 const SOLICITUD_PROTECCION_KEY = marker('pii.solicitud-proteccion');
+const REPARTO_KEY = marker('pii.reparto');
 
 const routes: SgiRoutes = [
   {
@@ -123,6 +126,16 @@ const routes: SgiRoutes = [
         path: INVENCION_ROUTE_NAMES.TITULARIDAD,
         component: PeriodoTitularidadComponent,
         canDeactivate: [FragmentGuard]
+      },
+      {
+        path: INVENCION_ROUTE_NAMES.CONTRATOS,
+        component: InvencionContratosComponent,
+        canDeactivate: [FragmentGuard],
+      },
+      {
+        path: INVENCION_ROUTE_NAMES.REPARTOS,
+        component: InvencionRepartosComponent,
+        canDeactivate: [FragmentGuard],
       }
     ]
   },
@@ -147,6 +160,16 @@ const routes: SgiRoutes = [
         canActivate: [SgiAuthGuard],
         data: {
           title: SOLICITUD_PROTECCION_KEY
+        }
+      },
+      {
+        path: INVENCION_ROUTE_NAMES.REPARTOS,
+        loadChildren: () =>
+          import('../invencion-reparto/invencion-reparto.module').then(
+            m => m.InvencionRepartoModule),
+        canActivate: [SgiAuthGuard],
+        data: {
+          title: REPARTO_KEY
         }
       },
       {

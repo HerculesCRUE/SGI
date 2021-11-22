@@ -149,7 +149,8 @@
           {{'csp.partida-gasto.codigo-economico' | translate}}
         </th>
         <td mat-cell *matCellDef="let data">
-          {{data.codigoEconomicoRef}}
+          {{data.codigoEconomico?.id}}
+          {{data.codigoEconomico?.nombre ? ' - ' + data.codigoEconomico.nombre : '' }}
         </td>
       </ng-container>
       <tr mat-header-row *matHeaderRowDef="columnsCodigosEconomicosPermitidos"></tr>
@@ -194,7 +195,8 @@
           {{'csp.partida-gasto.codigo-economico' | translate}}
         </th>
         <td mat-cell *matCellDef="let data">
-          {{data.codigoEconomicoRef}}
+          {{data.codigoEconomico?.id}}
+          {{data.codigoEconomico?.nombre ? ' - ' + data.codigoEconomico.nombre : '' }}
         </td>
       </ng-container>
       <tr mat-header-row *matHeaderRowDef="columnsCodigosEconomicosNoPermitidos"></tr>

@@ -249,7 +249,7 @@ export class PeticionEvaluacionTareasModalComponent extends
       this.formGroup.controls.formacion.clearValidators();
     }
 
-    if (memoria?.comite?.formulario.id === FORMULARIO.M10) {
+    if (memoria?.comite?.formulario.id === FORMULARIO.M10 || memoria?.comite?.formulario.id === FORMULARIO.M30) {
       this.translate.get(
         TAREA_EXPERIENCIA_KEY
       ).subscribe((value) => this.textoFormacionExperiencia$.next(value));
@@ -295,7 +295,7 @@ export class PeticionEvaluacionTareasModalComponent extends
   private loadDatosUsuario(equiposTrabajo: IEquipoTrabajo[]) {
     const personaIds = new Set<string>();
 
-    if (equiposTrabajo) {
+    if (equiposTrabajo && equiposTrabajo.length > 0) {
       equiposTrabajo.forEach((equipoTrabajo: IEquipoTrabajo) => {
         personaIds.add(equipoTrabajo?.persona?.id);
       });
@@ -329,6 +329,8 @@ export class PeticionEvaluacionTareasModalComponent extends
 
     this.data.tarea.memoria = this.formGroup.controls.memoria.value;
     this.data.tarea.equipoTrabajo = {} as IEquipoTrabajo;
+    this.data.equiposTrabajo.filter(equipo => equipo.persona.id === this.formGroup.controls.equipoTrabajo.value.id)
+      .map(equipoTrabajo => this.data.tarea.equipoTrabajo = equipoTrabajo);
     this.data.tarea.equipoTrabajo.persona = this.formGroup.controls.equipoTrabajo.value;
 
     return this.data;

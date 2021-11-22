@@ -122,13 +122,13 @@
               </button>
             </ng-container>
             <ng-container *ngIf="hasPermisoEnviarSecretaria(memoria.estadoActual.id, memoria.responsable)">
-              <button mat-button *sgiHasAnyAuthorityForAnyUO="['ETI-PEV-INV-C', 'ETI-PEV-INV-ER']"
-                (click)="enviarSecretaria(memoria)" matTooltip="{{'btn.eti.memoria.enviar' | translate}}">
+              <button mat-button *sgiHasAuthorityForAnyUO="'ETI-MEM-INV-ESCR'" (click)="enviarSecretaria(memoria)"
+                matTooltip="{{'btn.eti.memoria.enviar' | translate}}">
                 <mat-icon color="primary">send</mat-icon>
               </button>
             </ng-container>
             <ng-container *ngIf="hasPermisoEnviarSecretariaRetrospectiva(memoria, memoria.responsable)">
-              <button mat-button *sgiHasAnyAuthorityForAnyUO="['ETI-PEV-INV-C', 'ETI-PEV-INV-ER']"
+              <button mat-button *sgiHasAuthorityForAnyUO="'ETI-MEM-INV-ERTR'"
                 (click)="enviarSecretariaRetrospectiva(memoria)"
                 matTooltip="{{'btn.eti.memoria.enviar-retrospectiva' | translate}}">
                 <mat-icon color="primary">assignment</mat-icon>

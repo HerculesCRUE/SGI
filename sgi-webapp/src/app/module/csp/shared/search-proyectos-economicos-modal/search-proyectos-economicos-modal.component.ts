@@ -15,7 +15,7 @@ import { RSQLSgiRestFilter, RSQLSgiRestSort, SgiRestFilter, SgiRestFilterOperato
 import { NGXLogger } from 'ngx-logger';
 import { merge, Observable, of } from 'rxjs';
 import { catchError, map, tap } from 'rxjs/operators';
-import { IProyectoEconomicoFormlyData, ProyectoEconomicoFormlyModalComponent } from 'src/app/esb/sge/formly-forms/proyecto-economico-formly-modal/proyecto-economico-formly-modal.component';
+import { ACTION_MODAL_MODE, IProyectoEconomicoFormlyData, ProyectoEconomicoFormlyModalComponent } from 'src/app/esb/sge/formly-forms/proyecto-economico-formly-modal/proyecto-economico-formly-modal.component';
 
 const MSG_LISTADO_ERROR = marker('error.load');
 const TIPO_PROYECTO_KEY = marker('sge.proyecto');
@@ -172,7 +172,9 @@ export class SearchProyectosEconomicosModalComponent implements OnInit, AfterVie
 
   openProyectoCreateModal(): void {
     const proyectoData: IProyectoEconomicoFormlyData = {
-      proyectoSgiId: this.data.proyectoSgiId
+      proyectoSgiId: this.data.proyectoSgiId,
+      action: ACTION_MODAL_MODE.NEW,
+      proyectoSge: null
     };
 
     const config = {
@@ -180,5 +182,35 @@ export class SearchProyectosEconomicosModalComponent implements OnInit, AfterVie
       data: proyectoData
     };
     const dialogRef = this.proyectoCreateMatDialog.open(ProyectoEconomicoFormlyModalComponent, config);
+
+    dialogRef.afterClosed().subscribe(
+      (proyectoSge) => {
+        if (proyectoSge) {
+          this.closeModal(proyectoSge);
+        }
+      }
+    );
+  }
+
+  openProyectoUpdateModal(proyectoSeleccionado: IProyectoSge): void {
+    const proyectoData: IProyectoEconomicoFormlyData = {
+      proyectoSgiId: this.data.proyectoSgiId,
+      proyectoSge: proyectoSeleccionado,
+      action: ACTION_MODAL_MODE.EDIT
+    };
+
+    const config = {
+      panelClass: 'sgi-dialog-container',
+      data: proyectoData
+    };
+
+    const dialogRef = this.proyectoCreateMatDialog.open(ProyectoEconomicoFormlyModalComponent, config);
+    dialogRef.afterClosed().subscribe(
+      (proyectoSge) => {
+        if (proyectoSge) {
+          this.closeModal(proyectoSge);
+        }
+      }
+    );
   }
 }

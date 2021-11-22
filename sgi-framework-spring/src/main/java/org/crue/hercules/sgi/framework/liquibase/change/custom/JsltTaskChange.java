@@ -10,8 +10,6 @@ import java.sql.SQLException;
 import java.sql.Types;
 import java.util.Set;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.schibsted.spt.data.jslt.Expression;
@@ -26,6 +24,11 @@ import liquibase.exception.ValidationErrors;
 import liquibase.resource.ResourceAccessor;
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * Liquibae {@link CustomTaskChange} that allows applying a JSON query and
+ * transformation language (JSLT) to specified Database Table Column containing
+ * JSON content.
+ */
 @Slf4j
 public class JsltTaskChange implements CustomTaskChange {
 
@@ -63,27 +66,29 @@ public class JsltTaskChange implements CustomTaskChange {
 
   @Override
   public void execute(Database database) throws CustomChangeException {
-    // Connection con = ((JdbcConnection)
-    // database.getConnection()).getUnderlyingConnection();
-    JdbcConnection db_connection = (JdbcConnection) database.getConnection();
+    JdbcConnection dbConnection = (JdbcConnection) database.getConnection();
     PreparedStatement selectStatement = null;
     PreparedStatement updateStatement = null;
     ResultSet results;
 
     try {
       StringBuilder select = new StringBuilder();
+      StringBuilder columnNames = new StringBuilder();
+      columnNames.append(idColumnName);
+      columnNames.append(",");
+      columnNames.append(jsonColumnName);
+
       select.append("SELECT ");
-      select.append(idColumnName);
-      select.append(", ");
-      select.append(jsonColumnName);
+      select.append(database.escapeColumnNameList(columnNames.toString()));
       select.append(" FROM ");
-      select.append(tableName);
+      select.append(
+          database.escapeTableName(database.getDefaultCatalogName(), database.getDefaultSchemaName(), tableName));
       if (where != null) {
         select.append(" WHERE ");
         select.append(where);
       }
       log.info(select.toString());
-      selectStatement = db_connection.prepareStatement(select.toString());
+      selectStatement = dbConnection.prepareStatement(select.toString());
       results = selectStatement.executeQuery();
 
       while (results.next()) {
@@ -101,12 +106,19 @@ public class JsltTaskChange implements CustomTaskChange {
         if (!jsonNode.equals(newJsonNode)) {
           String newJson = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(newJsonNode);
           StringBuilder update = new StringBuilder();
-          update.append("UPDATE " + tableName);
+          update.append("UPDATE ");
+          update.append(
+              database.escapeTableName(database.getDefaultCatalogName(), database.getDefaultSchemaName(), tableName));
           update.append(" SET ");
-          update.append(jsonColumnName + " = ? ");
-          update.append("WHERE " + idColumnName + " = ?");
+          update.append(database.escapeColumnName(database.getDefaultCatalogName(), database.getDefaultSchemaName(),
+              tableName, jsonColumnName));
+          update.append(" = ? ");
+          update.append("WHERE ");
+          update.append(database.escapeColumnName(database.getDefaultCatalogName(), database.getDefaultSchemaName(),
+              tableName, idColumnName));
+          update.append(" = ?");
           log.info(update.toString());
-          updateStatement = db_connection.prepareStatement(update.toString());
+          updateStatement = dbConnection.prepareStatement(update.toString());
           log.debug("Applaying column parameter = 1 for column {}", jsonColumnName);
           log.debug("value is string = " + newJson);
           updateStatement.setString(1, newJson);
@@ -141,6 +153,13 @@ public class JsltTaskChange implements CustomTaskChange {
     }
   }
 
+  /**
+   * Execute the provided {@link PreparedStatement}.
+   * 
+   * @param stmt the {@link PreparedStatement} to execute
+   * @throws SQLException if there is an error executing the
+   *                      {@link PreparedStatement}
+   */
   protected void executePreparedStatement(PreparedStatement stmt) throws SQLException {
     // if execute returns false, we can retrieve the affected rows count
     // (true used when resultset is returned)
@@ -161,8 +180,7 @@ public class JsltTaskChange implements CustomTaskChange {
     }
   }
 
-  private JsonNode applyJslt(JsonNode jsonNode)
-      throws CustomChangeException, JsonMappingException, JsonProcessingException {
+  private JsonNode applyJslt(JsonNode jsonNode) throws CustomChangeException {
     Expression expression = getJsltExpression();
     if (expression != null) {
       return expression.apply(jsonNode);
@@ -181,7 +199,7 @@ public class JsltTaskChange implements CustomTaskChange {
         }
 
         for (InputStream stream : streams) {
-          if (includeEmpty) {
+          if (Boolean.TRUE.equals(includeEmpty)) {
             this.jsltExpression = new Parser(new InputStreamReader(stream)).withObjectFilter("true").compile();
           } else {
             this.jsltExpression = new Parser(new InputStreamReader(stream)).compile();
@@ -194,50 +212,116 @@ public class JsltTaskChange implements CustomTaskChange {
     return jsltExpression;
   }
 
+  /**
+   * Get the table name for the columns content to be updated.
+   * 
+   * @return the table name
+   */
   public String getTableName() {
     return tableName;
   }
 
+  /**
+   * Set the table name for the columns content to be updated.
+   * 
+   * @param tableName the table name
+   */
   public void setTableName(String tableName) {
     this.tableName = tableName;
   }
 
+  /**
+   * Get the column name for the column content to be updated.
+   * 
+   * @return the column name
+   */
   public String getJsonColumnName() {
     return jsonColumnName;
   }
 
+  /**
+   * Set the column name for the column content to be updated.
+   * 
+   * @param jsonColumnName the column name
+   */
   public void setJsonColumnName(String jsonColumnName) {
     this.jsonColumnName = jsonColumnName;
   }
 
+  /**
+   * Get the jslt file path for the transformation rules.
+   * 
+   * @return the jslt file path
+   */
   public String getJsltFile() {
     return jsltFile;
   }
 
+  /**
+   * Set the jslt file path for the transformation rules.
+   * 
+   * @param jsltFile the jslt file path
+   */
   public void setJsltFile(String jsltFile) {
     this.jsltFile = jsltFile;
   }
 
+  /**
+   * Get the column name for the columns that uniquely identifies a single record
+   * in the table for the content to be updated.
+   * 
+   * @return the identifier column name
+   */
   public String getIdColumnName() {
     return idColumnName;
   }
 
+  /**
+   * Set the column name for the columns that uniquely identifies a single record
+   * in the table for the content to be updated.
+   * 
+   * @param idColumnName the identifier column name
+   */
   public void setIdColumnName(String idColumnName) {
     this.idColumnName = idColumnName;
   }
 
+  /**
+   * Get the where clause to be used for filtering the rows with content to be
+   * updated.
+   * 
+   * @return the where clause
+   */
   public String getWhere() {
     return where;
   }
 
+  /**
+   * Set the where clause to be used for filtering the rows with content to be
+   * updated.
+   * 
+   * @param where the where clause
+   */
   public void setWhere(String where) {
     this.where = where;
   }
 
+  /**
+   * Get if the JSLT transformation should include output object keys where the
+   * value is null or an empty object or array.
+   * 
+   * @return true if empty keys should be included
+   */
   public Boolean getIncludeEmpty() {
     return includeEmpty;
   }
 
+  /**
+   * Set if the JSLT transformation should include output object keys where the
+   * value is null or an empty object or array.
+   * 
+   * @param includeEmpty true if empty keys should be included
+   */
   public void setIncludeEmpty(Boolean includeEmpty) {
     this.includeEmpty = includeEmpty;
   }

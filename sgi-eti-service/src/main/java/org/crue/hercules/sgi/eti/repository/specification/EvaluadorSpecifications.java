@@ -10,6 +10,8 @@ import org.springframework.data.jpa.domain.Specification;
 
 public class EvaluadorSpecifications {
 
+  public static final String PRESIDENTE = "presidente";
+
   public static Specification<Evaluador> activos() {
     return (root, query, cb) -> {
       return cb.equal(root.get(Evaluador_.activo), Boolean.TRUE);
@@ -24,7 +26,7 @@ public class EvaluadorSpecifications {
 
   public static Specification<Evaluador> presidentes() {
     return (root, query, cb) -> {
-      return cb.equal(cb.lower(root.get(Evaluador_.cargoComite).get(CargoComite_.nombre)), "presidente");
+      return cb.equal(cb.lower(root.get(Evaluador_.cargoComite).get(CargoComite_.nombre)), PRESIDENTE);
     };
   }
 

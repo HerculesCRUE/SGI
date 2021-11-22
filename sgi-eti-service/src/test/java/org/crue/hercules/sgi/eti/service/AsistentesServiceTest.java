@@ -16,6 +16,7 @@ import org.crue.hercules.sgi.eti.model.ConvocatoriaReunion;
 import org.crue.hercules.sgi.eti.model.Evaluador;
 import org.crue.hercules.sgi.eti.model.Formulario;
 import org.crue.hercules.sgi.eti.model.TipoConvocatoriaReunion;
+import org.crue.hercules.sgi.eti.model.Comite.Genero;
 import org.crue.hercules.sgi.eti.repository.AsistentesRepository;
 import org.crue.hercules.sgi.eti.service.impl.AsistentesServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
@@ -197,7 +198,7 @@ public class AsistentesServiceTest extends BaseServiceTest {
 
     // then: Get a page with one hundred asistentes
     Assertions.assertThat(page.getContent().size()).isEqualTo(100);
-    Assertions.assertThat(page.getNumber()).isEqualTo(0);
+    Assertions.assertThat(page.getNumber()).isZero();
     Assertions.assertThat(page.getSize()).isEqualTo(100);
     Assertions.assertThat(page.getTotalElements()).isEqualTo(100);
   }
@@ -259,7 +260,7 @@ public class AsistentesServiceTest extends BaseServiceTest {
 
     // then: Se recuperan todos los datos
     Assertions.assertThat(result.getContent()).isEqualTo(response);
-    Assertions.assertThat(result.getNumber()).isEqualTo(0);
+    Assertions.assertThat(result.getNumber()).isZero();
     Assertions.assertThat(result.getSize()).isEqualTo(response.size());
     Assertions.assertThat(result.getTotalElements()).isEqualTo(response.size());
   }
@@ -364,8 +365,8 @@ public class AsistentesServiceTest extends BaseServiceTest {
     cargoComite.setActivo(Boolean.TRUE);
 
     Formulario formulario = new Formulario(1L, "M10", "Descripcion");
-    Comite comite = new Comite(1L, "Comite1", "nombreSecretario", "nombreInvestigacion", "nombreDecreto", "articulo",
-        formulario, Boolean.TRUE);
+    Comite comite = new Comite(1L, "Comite1", "nombreSecretario", "nombreInvestigacion", Genero.M, "nombreDecreto",
+        "articulo", formulario, Boolean.TRUE);
 
     Evaluador evaluador = new Evaluador();
     evaluador.setId(id);
@@ -390,7 +391,7 @@ public class AsistentesServiceTest extends BaseServiceTest {
   private ConvocatoriaReunion getMockConvocatoriaReunion(Long id, Long comiteId) {
 
     Formulario formulario = new Formulario(1L, "M10", "Descripcion");
-    Comite comite = new Comite(comiteId, "Comite" + comiteId, "nombreSecretario", "nombreInvestigacion",
+    Comite comite = new Comite(comiteId, "Comite" + comiteId, "nombreSecretario", "nombreInvestigacion", Genero.M,
         "nombreDecreto", "articulo", formulario, Boolean.TRUE);
 
     TipoConvocatoriaReunion tipoConvocatoriaReunion = new TipoConvocatoriaReunion(1L, "Ordinaria", Boolean.TRUE);

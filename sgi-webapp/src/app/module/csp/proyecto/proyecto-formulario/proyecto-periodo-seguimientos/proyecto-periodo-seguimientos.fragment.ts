@@ -122,7 +122,12 @@ export class ProyectoPeriodoSeguimientosFragment extends Fragment {
       if (!wrapper.created) {
         this.periodoSeguimientosEliminados.push(current[index].proyectoPeriodoSeguimiento);
       }
-      current.splice(index, 1);
+      if (wrapper.value.convocatoriaPeriodoSeguimientoId) {
+        current[index].proyectoPeriodoSeguimiento = undefined;
+        this.fillListadoFields(current[index]);
+      } else {
+        current.splice(index, 1);
+      }
       this.periodoSeguimientos$.next(current);
       this.setChanges(true);
       this.recalcularNumPeriodos();

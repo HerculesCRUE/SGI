@@ -71,6 +71,7 @@ export class ProyectoConceptoGastoDatosGeneralesComponent
   }
 
   copyToProyecto(): void {
+    this.formPart.enableEditableControls();
     this.formPart.getFormGroup().controls.conceptoGasto.setValue(this.formPart.getFormGroup().controls.conceptoGastoConvocatoria.value);
 
     if (this.actionService.permitido) {
@@ -94,7 +95,7 @@ export class ProyectoConceptoGastoDatosGeneralesComponent
     this.translate.get(
       PROYECTO_CONCEPTO_GASTO_COSTES_INDIRECTOS_KEY,
       MSG_PARAMS.CARDINALIRY.SINGULAR
-    ).subscribe((value) => this.msgParamConceptoGastoEntity = { entity: value, ...MSG_PARAMS.GENDER.MALE });
+    ).subscribe((value) => this.msgParamCostesIndirectos = { entity: value, ...MSG_PARAMS.GENDER.MALE });
 
 
   }

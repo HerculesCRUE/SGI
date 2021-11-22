@@ -1,0 +1,16 @@
+<sgi-export-dialog [title]="title">
+  <form [formGroup]="formGroup">
+    <!-- Title -->
+    <mat-form-field>
+      <mat-label>{{'csp.proyecto.titulo' | translate}}</mat-label>
+      <input matInput placeholder="{{'csp.proyecto.titulo' | translate}}" formControlName="reportTitle">
+    </mat-form-field>
+
+    <!-- OutputReportType -->
+    <mat-form-field>
+      <mat-label>{{'export.type' | translate}}</mat-label>
+      <sgi-select-enum formControlName="outputReportType" required [enumMap]="OUTPUT_REPORT_TYPE_MAP">
+      </sgi-select-enum>
+    </mat-form-field>
+  </form>
+</sgi-export-dialog>

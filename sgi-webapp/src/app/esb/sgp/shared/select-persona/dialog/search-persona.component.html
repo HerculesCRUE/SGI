@@ -76,6 +76,9 @@
             <button mat-button matTooltip="{{'btn.view' | translate}}" (click)="openPersonaViewModal(persona)">
               <mat-icon color="primary">visibility</mat-icon>
             </button>
+            <button mat-button matTooltip="{{'btn.edit' | translate}}" (click)="openPersonaEditModal(persona)">
+              <mat-icon color="primary">border_color</mat-icon>
+            </button>
           </ng-container>
         </td>
       </ng-container>
@@ -84,6 +87,13 @@
     </table>
     <mat-paginator [pageSizeOptions]="elementosPagina" [length]="totalElementos" showFirstLastButtons>
     </mat-paginator>
+  </div>
+
+  <div *ngIf="!this.isInvestigador" class="separation-button">
+    <button color="three" mat-raised-button (click)="openPersonaCreateModal()">
+      <mat-icon color="accent">add_circle</mat-icon>
+      {{ 'btn.request.add.entity' | translate:msgParamEntity }}
+    </button>
   </div>
 </mat-dialog-content>
 <mat-dialog-actions>

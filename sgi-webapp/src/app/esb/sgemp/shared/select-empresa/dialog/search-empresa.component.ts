@@ -145,11 +145,9 @@ export class SearchEmpresaModalComponent implements OnInit, AfterViewInit {
   private buildFilter(): SgiRestFilter {
     const controls = this.formGroup.controls;
 
-    const rsqlFilter = new RSQLSgiRestFilter('numeroIdentificacion', SgiRestFilterOperator.LIKE_ICASE, controls.datosEmpresa.value)
+    return new RSQLSgiRestFilter('numeroIdentificacion', SgiRestFilterOperator.LIKE_ICASE, controls.datosEmpresa.value)
       .or('nombre', SgiRestFilterOperator.LIKE_ICASE, controls.datosEmpresa.value)
       .or('razonSocial', SgiRestFilterOperator.LIKE_ICASE, controls.datosEmpresa.value);
-
-    return rsqlFilter;
   }
 
   openEmpresaCreateModal(): void {
@@ -174,7 +172,15 @@ export class SearchEmpresaModalComponent implements OnInit, AfterViewInit {
       panelClass: 'sgi-dialog-container',
       data: empresaData
     };
-    this.empresaCreateMatDialog.open(EmpresaFormlyModalComponent, config);
+    const dialogRef = this.empresaCreateMatDialog.open(EmpresaFormlyModalComponent, config);
+
+    dialogRef.afterClosed().subscribe(
+      (empresa) => {
+        if (empresa) {
+          this.closeModal(empresa);
+        }
+      }
+    );
   }
 
 }

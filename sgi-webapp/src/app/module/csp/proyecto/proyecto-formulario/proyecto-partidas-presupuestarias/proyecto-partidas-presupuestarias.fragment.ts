@@ -38,7 +38,7 @@ export interface IPartidaPresupuestariaListado {
 
 export class ProyectoPartidasPresupuestariasFragment extends Fragment {
   partidasPresupuestarias$ = new BehaviorSubject<IPartidaPresupuestariaListado[]>([]);
-  private partidasPresupuestariasEliminadas: IPartidaPresupuestariaListado[] = [];
+  private partidasPresupuestariasEliminadasIds: number[] = [];
 
   mapModificable: Map<number, boolean> = new Map();
 
@@ -140,6 +140,7 @@ export class ProyectoPartidasPresupuestariasFragment extends Fragment {
       codigo: partidaPresupuestaria.codigo,
       descripcion: partidaPresupuestaria.descripcion,
       tipoPartida: partidaPresupuestaria.tipoPartida,
+      canEdit: true
     } as IPartidaPresupuestariaListado;
 
     if (convocatoriaPartida) {
@@ -203,9 +204,14 @@ export class ProyectoPartidasPresupuestariasFragment extends Fragment {
     );
     if (index >= 0) {
       if (!wrapper.created) {
-        this.partidasPresupuestariasEliminadas.push(current[index]);
+        this.partidasPresupuestariasEliminadasIds.push(current[index].partidaPresupuestaria.value.id);
       }
-      current.splice(index, 1);
+      if (wrapper.value.convocatoriaPartidaId) {
+        current[index].partidaPresupuestaria = undefined;
+        this.fillListadoFields(current[index]);
+      } else {
+        current.splice(index, 1);
+      }
       this.partidasPresupuestarias$.next(current);
       this.setChanges(true);
     }
@@ -227,18 +233,16 @@ export class ProyectoPartidasPresupuestariasFragment extends Fragment {
   }
 
   private deletePartidasPresupuestarias(): Observable<void> {
-    if (this.partidasPresupuestariasEliminadas.length === 0) {
+    if (this.partidasPresupuestariasEliminadasIds.length === 0) {
       return of(void 0);
     }
-    return from(this.partidasPresupuestariasEliminadas).pipe(
-      mergeMap((partidaPresupuestariaListado) => {
-        return this.proyectoPartidaService.deleteById(partidaPresupuestariaListado.partidaPresupuestaria.value.id)
+    return from(this.partidasPresupuestariasEliminadasIds).pipe(
+      mergeMap((partidaPresupuestariaId) => {
+        return this.proyectoPartidaService.deleteById(partidaPresupuestariaId)
           .pipe(
             tap(() => {
-              this.partidasPresupuestariasEliminadas = this.partidasPresupuestariasEliminadas
-                .filter(deletedPartidaPresupuestaria =>
-                  deletedPartidaPresupuestaria.partidaPresupuestaria.value.id !==
-                  partidaPresupuestariaListado.partidaPresupuestaria.value.id);
+              this.partidasPresupuestariasEliminadasIds = this.partidasPresupuestariasEliminadasIds
+                .filter(deletedPartidaPresupuestariaId => deletedPartidaPresupuestariaId !== partidaPresupuestariaId);
             })
           );
       })
@@ -259,7 +263,7 @@ export class ProyectoPartidasPresupuestariasFragment extends Fragment {
         return this.proyectoPartidaService.create(partidaPresupuestariaListado.partidaPresupuestaria.value).pipe(
           map((createdPartidaPresupuestaria) => {
             const index = this.partidasPresupuestarias$.value
-              .findIndex((currentPartidaPresupuestariaListado) => currentPartidaPresupuestariaListado.partidaPresupuestaria.value.id
+              .findIndex((currentPartidaPresupuestariaListado) => currentPartidaPresupuestariaListado.partidaPresupuestaria?.value.id
                 === partidaPresupuestariaListado.partidaPresupuestaria.value.id);
             this.partidasPresupuestarias$.value[index] = {
               partidaPresupuestaria: new StatusWrapper<IProyectoPartida>(createdPartidaPresupuestaria),
@@ -307,7 +311,7 @@ export class ProyectoPartidasPresupuestariasFragment extends Fragment {
   private isSaveOrUpdateComplete(): boolean {
     const touched: boolean = this.partidasPresupuestarias$.value.some((partidaPresupuestariaListado) =>
       partidaPresupuestariaListado.partidaPresupuestaria?.touched);
-    return !(this.partidasPresupuestariasEliminadas.length > 0 || touched);
+    return !(this.partidasPresupuestariasEliminadasIds.length > 0 || touched);
   }
 
 
@@ -346,10 +350,14 @@ export class ProyectoPartidasPresupuestariasFragment extends Fragment {
   }
 
   private checkCanEditPartida(partida: IPartidaPresupuestariaListado): void {
-    this.subscriptions.push(
-      this.proyectoPartidaService.hasAnyAnualidadAssociated(partida.partidaPresupuestaria?.value.id)
-        .subscribe((hasAnualidades: boolean) => partida.canEdit = !hasAnualidades)
-    );
+    if (partida.partidaPresupuestaria?.value.id) {
+      this.subscriptions.push(
+        this.proyectoPartidaService.hasAnyAnualidadAssociated(partida.partidaPresupuestaria?.value.id)
+          .subscribe((hasAnualidades: boolean) => partida.canEdit = !hasAnualidades)
+      );
+    } else {
+      partida.canEdit = true;
+    }
   }
 
 }

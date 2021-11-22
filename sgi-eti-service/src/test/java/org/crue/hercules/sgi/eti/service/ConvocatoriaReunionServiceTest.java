@@ -15,6 +15,7 @@ import org.crue.hercules.sgi.eti.model.Comite;
 import org.crue.hercules.sgi.eti.model.ConvocatoriaReunion;
 import org.crue.hercules.sgi.eti.model.Formulario;
 import org.crue.hercules.sgi.eti.model.TipoConvocatoriaReunion;
+import org.crue.hercules.sgi.eti.model.Comite.Genero;
 import org.crue.hercules.sgi.eti.repository.ActaRepository;
 import org.crue.hercules.sgi.eti.repository.ConvocatoriaReunionRepository;
 import org.crue.hercules.sgi.eti.repository.EvaluacionRepository;
@@ -231,7 +232,7 @@ public class ConvocatoriaReunionServiceTest extends BaseServiceTest {
 
     // then: Se recuperan todos los datos
     Assertions.assertThat(result.getContent()).isEqualTo(response);
-    Assertions.assertThat(result.getNumber()).isEqualTo(0);
+    Assertions.assertThat(result.getNumber()).isZero();
     Assertions.assertThat(result.getSize()).isEqualTo(response.size());
     Assertions.assertThat(result.getTotalElements()).isEqualTo(response.size());
   }
@@ -324,7 +325,8 @@ public class ConvocatoriaReunionServiceTest extends BaseServiceTest {
   private ConvocatoriaReunion getMockData(Long id, Long comiteId, Long tipoId) {
 
     Formulario formulario = new Formulario(1L, "M10", "Descripcion");
-    Comite comite = new Comite(comiteId, "Comite" + comiteId, "nombreSecretario", "nombreInvestigacion", "nombreDecreto", "articulo", formulario, Boolean.TRUE);
+    Comite comite = new Comite(comiteId, "Comite" + comiteId, "nombreSecretario", "nombreInvestigacion", Genero.M,
+        "nombreDecreto", "articulo", formulario, Boolean.TRUE);
 
     String tipo_txt = (tipoId == 1L) ? "Ordinaria" : (tipoId == 2L) ? "Extraordinaria" : "Seguimiento";
     TipoConvocatoriaReunion tipoConvocatoriaReunion = new TipoConvocatoriaReunion(tipoId, tipo_txt, Boolean.TRUE);

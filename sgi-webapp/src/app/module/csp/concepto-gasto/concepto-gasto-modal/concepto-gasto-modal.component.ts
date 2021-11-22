@@ -1,45 +1,42 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
-import { BaseModalComponent } from '@core/component/base-modal.component';
+import { DialogActionComponent } from '@core/component/dialog-action.component';
 import { MSG_PARAMS } from '@core/i18n';
 import { IConceptoGasto } from '@core/models/csp/concepto-gasto';
-import { SnackBarService } from '@core/services/snack-bar.service';
+import { ConceptoGastoService } from '@core/services/csp/concepto-gasto.service';
 import { TranslateService } from '@ngx-translate/core';
+import { Observable } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 
 const CONCEPTO_GASTO_KEY = marker('csp.concepto-gasto');
 const CONCEPTO_GASTO_NOMBRE_KEY = marker('csp.concepto-gasto.nombre');
 const CONCEPTO_GASTO_COSTES_INDIRECTOS = marker('label.costes-indirectos');
 const TITLE_NEW_ENTITY = marker('title.new.entity');
-const MSG_ANADIR = marker('btn.add');
-const MSG_ACEPTAR = marker('btn.ok');
 
 @Component({
   selector: 'sgi-concepto-gasto-modal',
   templateUrl: './concepto-gasto-modal.component.html',
   styleUrls: ['./concepto-gasto-modal.component.scss']
 })
-export class ConceptoGastoModalComponent extends
-  BaseModalComponent<IConceptoGasto, ConceptoGastoModalComponent> implements OnInit {
+export class ConceptoGastoModalComponent extends DialogActionComponent<IConceptoGasto, IConceptoGasto> implements OnInit, OnDestroy {
 
+  private readonly conceptoGasto: IConceptoGasto;
   msgParamNombreEntity = {};
   msgParamCostesIndirectos = {};
   title: string;
-  textoToolTip: string;
-  textSaveOrUpdate: string;
 
   constructor(
-    protected readonly snackBarService: SnackBarService,
-    public readonly matDialogRef: MatDialogRef<ConceptoGastoModalComponent>,
-    @Inject(MAT_DIALOG_DATA)
-    public conceptoGasto: IConceptoGasto,
+    matDialogRef: MatDialogRef<ConceptoGastoModalComponent>,
+    @Inject(MAT_DIALOG_DATA) data: IConceptoGasto,
+    private readonly conceptoGastoService: ConceptoGastoService,
     private readonly translate: TranslateService
   ) {
-    super(snackBarService, matDialogRef, conceptoGasto);
-    if (conceptoGasto) {
-      this.conceptoGasto = { ...conceptoGasto };
+    super(matDialogRef, !!data?.id);
+
+    if (this.isEdit()) {
+      this.conceptoGasto = { ...data };
     } else {
       this.conceptoGasto = { activo: true } as IConceptoGasto;
     }
@@ -48,11 +45,6 @@ export class ConceptoGastoModalComponent extends
   ngOnInit(): void {
     super.ngOnInit();
     this.setupI18N();
-    this.formGroup = new FormGroup({
-      nombre: new FormControl(this.conceptoGasto?.nombre),
-      descripcion: new FormControl(this.conceptoGasto?.descripcion),
-      costesIndirectos: new FormControl(this.conceptoGasto?.costesIndirectos, Validators.required)
-    });
   }
 
   private setupI18N(): void {
@@ -65,13 +57,11 @@ export class ConceptoGastoModalComponent extends
       CONCEPTO_GASTO_COSTES_INDIRECTOS,
     ).subscribe((value) => this.msgParamCostesIndirectos = { entity: value, ...MSG_PARAMS.GENDER.MALE, ...MSG_PARAMS.CARDINALIRY.PLURAL });
 
-    if (this.conceptoGasto.nombre) {
+    if (this.isEdit()) {
       this.translate.get(
         CONCEPTO_GASTO_KEY,
         MSG_PARAMS.CARDINALIRY.SINGULAR
       ).subscribe((value) => this.title = value);
-
-      this.textSaveOrUpdate = MSG_ACEPTAR;
     } else {
       this.translate.get(
         CONCEPTO_GASTO_KEY,
@@ -84,12 +74,10 @@ export class ConceptoGastoModalComponent extends
           );
         })
       ).subscribe((value) => this.title = value);
-
-      this.textSaveOrUpdate = MSG_ANADIR;
     }
   }
 
-  protected getDatosForm(): IConceptoGasto {
+  protected getValue(): IConceptoGasto {
     const conceptoGasto = this.conceptoGasto;
     conceptoGasto.nombre = this.formGroup.get('nombre').value;
     conceptoGasto.descripcion = this.formGroup.get('descripcion').value;
@@ -97,12 +85,17 @@ export class ConceptoGastoModalComponent extends
     return conceptoGasto;
   }
 
-  protected getFormGroup(): FormGroup {
+  protected buildFormGroup(): FormGroup {
     return new FormGroup({
-      nombre: new FormControl(this.conceptoGasto?.nombre),
-      descripcion: new FormControl(this.conceptoGasto?.descripcion),
+      nombre: new FormControl(this.conceptoGasto?.nombre ?? '', Validators.required),
+      descripcion: new FormControl(this.conceptoGasto?.descripcion ?? ''),
       costesIndirectos: new FormControl({ value: this.conceptoGasto?.costesIndirectos, disabled: true }, Validators.required)
     });
   }
 
+  protected saveOrUpdate(): Observable<IConceptoGasto> {
+    const conceptoGasto = this.getValue();
+    return this.isEdit() ? this.conceptoGastoService.update(conceptoGasto.id, conceptoGasto) :
+      this.conceptoGastoService.create(conceptoGasto);
+  }
 }

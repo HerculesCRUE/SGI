@@ -172,4 +172,16 @@ export class PeticionEvaluacionService extends SgiMutableRestService<number, IPe
       PETICION_EVALUACION_WITH_IS_ELIMINABLE_CONVERTER
     );
   }
+
+  /**
+   * Comprueba si el usuario es responsable o creador de la petición de evaluación
+   *
+   * @param id Id de la Petición de evaluación
+   */
+  isResponsableOrCreador(id: number): Observable<boolean> {
+    const url = `${this.endpointUrl}/${id}/responsable-creador`;
+    return this.http.head(url, { observe: 'response' }).pipe(
+      map(x => x.status === 200)
+    );
+  }
 }

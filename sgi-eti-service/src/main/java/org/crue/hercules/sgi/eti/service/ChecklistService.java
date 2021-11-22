@@ -123,16 +123,4 @@ public class ChecklistService {
     return returnValue;
   }
 
-  /**
-   * Recupera el Checklist de la personaRef
-   * 
-   * @param personaRef referencia de la persona
-   * @return el Checklist de la personaRef
-   */
-  public Checklist findByPersonaRef(String personaRef) {
-    log.debug("findByPersonaRef(String personaRef) - start");
-    final Checklist returnValue = repository.findByPersonaRef(personaRef).orElse(null);
-    log.debug("findByPersonaRef(String personaRef) - end");
-    return returnValue;
-  }
 }

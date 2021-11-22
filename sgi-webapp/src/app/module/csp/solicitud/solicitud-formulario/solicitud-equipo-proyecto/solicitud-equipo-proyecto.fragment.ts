@@ -64,6 +64,7 @@ export class SolicitudEquipoProyectoFragment extends Fragment {
     private vinculacionService: VinculacionService,
     private convocatoriaRequisitoEquipoService: ConvocatoriaRequisitoEquipoService,
     private datosPersonalesService: DatosPersonalesService,
+    public isInvestigador: boolean,
     public readonly: boolean
   ) {
     super(key);
@@ -443,7 +444,6 @@ export class SolicitudEquipoProyectoFragment extends Fragment {
     }
   }
 
-
   private validateRequisitosIp(
     solicitudProyectoEquipo: ISolicitudProyectoEquipo,
     convocatoriaId: number
@@ -588,10 +588,12 @@ export class SolicitudEquipoProyectoFragment extends Fragment {
     solicitudProyectoEquipo: ISolicitudProyectoEquipo,
     convocatoriaId: number
   ): Observable<ValidacionRequisitosEquipoIp> {
-    if (solicitudProyectoEquipo.rolProyecto.rolPrincipal) {
+    if (solicitudProyectoEquipo.rolProyecto.rolPrincipal && convocatoriaId) {
       return this.validateRequisitosIp(solicitudProyectoEquipo, convocatoriaId);
-    } else {
+    } else if (convocatoriaId) {
       return this.validateRequisitosEquipo(solicitudProyectoEquipo, convocatoriaId);
+    } else {
+      return of(null);
     }
   }
 

@@ -1,0 +1,91 @@
+<sgi-fragment title="{{'menu.csp.ejecucion-economica.facturas-emitidas' | translate}}">
+  <div fxLayout="column" fxLayoutGap="10px">
+    <sgi-ejecucion-economica-table-proyectos-relacionados [data]="formPart.relaciones$ | async">
+    </sgi-ejecucion-economica-table-proyectos-relacionados>
+
+
+    <form *ngIf="formPart.formGroupFechas" [formGroup]="formPart.formGroupFechas" fxLayout="column" fxLayout.gt-sm="row"
+      fxLayoutAlign="start center" fxLayoutGap="10px">
+      <mat-card fxLayout="column">
+        <mat-card-title>Fecha Factura</mat-card-title>
+        <mat-card-content fxLayout="column" fxLayout.gt-md="row" fxLayoutGap="10px">
+          <mat-form-field>
+            <mat-label>entre</mat-label>
+            <input matInput [matDatepicker]="pickerFacturaDesde" formControlName="facturaDesde">
+            <mat-datepicker-toggle matSuffix [for]="pickerFacturaDesde"></mat-datepicker-toggle>
+            <mat-datepicker #pickerFacturaDesde></mat-datepicker>
+          </mat-form-field>
+          <mat-form-field>
+            <mat-label>y</mat-label>
+            <input matInput [matDatepicker]="pickerFacturaHasta" formControlName="facturaHasta">
+            <mat-datepicker-toggle matSuffix [for]="pickerFacturaHasta"></mat-datepicker-toggle>
+            <mat-datepicker #pickerFacturaHasta></mat-datepicker>
+          </mat-form-field>
+        </mat-card-content>
+      </mat-card>
+    </form>
+
+    <div class="separation-button">
+      <button color="primary" class="rounded" mat-raised-button (click)="formPart.loadDesglose()">
+        <mat-icon>update</mat-icon>
+        {{'btn.load' | translate}}
+      </button>
+      <button color="warn" aria-label="Center Align" (click)="clearDesglose()" mat-button>{{'btn.clean'|
+        translate}}
+      </button>
+    </div>
+
+    <div class="mat-elevation-z4">
+      <mat-table [dataSource]="dataSourceDesglose" multiTemplateDataRows>
+
+        <ng-container matColumnDef="anualidad">
+          <mat-header-cell *matHeaderCellDef>{{'sge.dato-economico.anualidad' | translate}}
+          </mat-header-cell>
+          <mat-cell *matCellDef="let element">
+            <mat-icon color="primary" *ngIf="element.level === 0 && element.childs.length > 0"
+              (click)="element.expanded ? element.collapse() : element.expand()">
+              {{element.expanded ? 'expand_more' : 'chevron_right'}}
+            </mat-icon>
+            {{element.level === 0 ? element.item.anualidad : '' }}
+          </mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="factura">
+          <mat-header-cell *matHeaderCellDef>{{'sge.dato-economico.factura' | translate}}
+          </mat-header-cell>
+          <mat-cell *matCellDef="let element">
+            {{element.item.id }}
+          </mat-cell>
+        </ng-container>
+
+        <ng-container *ngFor="let column of formPart.columns" [matColumnDef]="column.id">
+          <mat-header-cell *matHeaderCellDef [class.computed]="column.compute">{{column.name}}
+          </mat-header-cell>
+          <mat-cell *matCellDef="let element" [class.computed]="column.compute">
+            <ng-container *ngIf="column.compute">
+              {{element.item.columnas[column.id] | number: '1.2-2'}}
+            </ng-container>
+            <ng-container *ngIf="!column.compute">
+              {{element.item.columnas[column.id]}}
+            </ng-container>
+          </mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="acciones">
+          <mat-header-cell *matHeaderCellDef>{{'label.actions' | translate}}
+          </mat-header-cell>
+          <mat-cell *matCellDef="let element">
+            <button mat-button (click)="showDetail(element.item)" *ngIf="element.childs.length === 0">
+              <mat-icon color="primary">visibility</mat-icon>
+            </button>
+          </mat-cell>
+        </ng-container>
+
+        <mat-header-row *matHeaderRowDef="formPart.displayColumns"></mat-header-row>
+        <mat-row *matRowDef="let row; columns: formPart.displayColumns;"
+          [class.expanded-row]="!!row.parent && !!!row.parent?.expanded">
+        </mat-row>
+      </mat-table>
+    </div>
+  </div>
+</sgi-fragment>

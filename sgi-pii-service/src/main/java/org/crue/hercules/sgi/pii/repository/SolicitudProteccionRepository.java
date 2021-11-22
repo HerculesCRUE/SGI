@@ -6,8 +6,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
-public interface SolicitudProteccionRepository extends JpaRepository<SolicitudProteccion, Long>,
-    JpaSpecificationExecutor<SolicitudProteccion>, ActivableRepository {
+public interface SolicitudProteccionRepository
+    extends JpaRepository<SolicitudProteccion, Long>, JpaSpecificationExecutor<SolicitudProteccion> {
 
   Page<SolicitudProteccion> findByInvencionId(Long invencionId, Pageable paging);
 

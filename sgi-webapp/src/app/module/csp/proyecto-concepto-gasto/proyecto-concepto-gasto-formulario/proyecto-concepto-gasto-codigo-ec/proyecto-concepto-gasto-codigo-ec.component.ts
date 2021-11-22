@@ -139,11 +139,12 @@ export class ProyectoConceptoGastoCodigoEcComponent extends FragmentComponent im
     this.dataSource.sortData(this.dataSource.filteredData, this.dataSource.sort);
     const row = (this.paginator.pageSize * this.paginator.pageIndex) + rowIndex;
 
-    const proyectoConceptoGastoCodigoEcsTabla = this.dataSource.data
-      .filter(codigoEconomico => codigoEconomico.proyectoCodigoEconomico)
-      .map(codigoEconomico => codigoEconomico.proyectoCodigoEconomico.value);
+    let proyectoConceptoGastoCodigoEcsTabla = this.dataSource.data
+      .map(codigoEconomico => codigoEconomico.proyectoCodigoEconomico?.value);
 
     proyectoConceptoGastoCodigoEcsTabla.splice(row, 1);
+    proyectoConceptoGastoCodigoEcsTabla = proyectoConceptoGastoCodigoEcsTabla
+      .filter(codigoEconomico => !!codigoEconomico);
 
     const data: ProyectoConceptoGastoCodigoEcDataModal = {
       proyectoConceptoGastoCodigoEc: codigoEconomicoListado.proyectoCodigoEconomico?.value,

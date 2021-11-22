@@ -77,7 +77,7 @@ public class TipoEstadoMemoria extends BaseEntity {
 
     public static Tipo fromId(Long id) {
       for (Tipo tipo : Tipo.values()) {
-        if (tipo.id == id) {
+        if (tipo.id.equals(id)) {
           return tipo;
         }
       }

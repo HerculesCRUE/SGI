@@ -7,6 +7,7 @@
 <mat-dialog-content>
   <form [formGroup]="formGroup">
     <div fxFlex>
+      <h3 *ngIf="showDatosPartidaPresupuestaria">&nbsp;</h3>
       <!-- Codigo -->
       <div [fxLayout.xs]="fxLayoutProperties.xs" [fxLayout]="fxLayoutProperties.layout"
         [fxLayoutGap]="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
@@ -99,8 +100,9 @@
         </mat-form-field>
       </div>
       <div class="separation-button">
-        <button color="primary" aria-label="Center Align" mat-raised-button (click)="copyToProyecto()">
-          {{'label.csp.proyecto-partida-presupuestaria'| translate}}
+        <button color="primary" aria-label="Center Align" mat-raised-button (click)="copyToProyecto()"
+          [disabled]="disabledCopy">
+          {{'btn.csp.aplicar-proyecto'| translate}}
         </button>
       </div>
     </div>

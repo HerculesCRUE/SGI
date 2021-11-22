@@ -17,6 +17,7 @@ import org.crue.hercules.sgi.eti.model.Evaluacion;
 import org.crue.hercules.sgi.eti.model.Formulario;
 import org.crue.hercules.sgi.eti.model.Informe;
 import org.crue.hercules.sgi.eti.model.Memoria;
+import org.crue.hercules.sgi.eti.model.PeticionEvaluacion;
 import org.crue.hercules.sgi.eti.model.Respuesta;
 import org.crue.hercules.sgi.eti.model.TipoComentario;
 import org.crue.hercules.sgi.eti.model.TipoEvaluacion;
@@ -106,7 +107,7 @@ public class MemoriaController {
    * @param paging pageable
    */
   @GetMapping()
-  @PreAuthorize("hasAnyAuthorityForAnyUO('ETI-PEV-INV-VR', 'ETI-PEV-V', 'ETI-PEV-E')")
+  @PreAuthorize("hasAnyAuthorityForAnyUO('ETI-MEM-INV-VR', 'ETI-MEM-V')")
   ResponseEntity<Page<MemoriaPeticionEvaluacion>> findAll(@RequestParam(name = "q", required = false) String query,
       @RequestPageable(sort = "s") Pageable paging) {
     log.debug("findAll(String query,Pageable paging) - start");
@@ -217,7 +218,7 @@ public class MemoriaController {
    * @return Nueva {@link Memoria} creada.
    */
   @PostMapping
-  @PreAuthorize("hasAnyAuthorityForAnyUO('ETI-PEV-INV-C', 'ETI-PEV-INV-ER')")
+  @PreAuthorize("hasAnyAuthorityForAnyUO('ETI-MEM-INV-CR', 'ETI-MEM-INV-ER')")
   public ResponseEntity<Memoria> newMemoria(
       @Validated({ Memoria.Create.class, Default.class }) @RequestBody Memoria nuevaMemoria) {
     log.debug("newMemoria(Memoria nuevaMemoria) - start");
@@ -234,7 +235,7 @@ public class MemoriaController {
    * @return Nueva {@link Memoria} creada.
    */
   @PostMapping("/{id}/crear-memoria-modificada")
-  @PreAuthorize("hasAnyAuthorityForAnyUO('ETI-PEV-INV-C', 'ETI-PEV-INV-ER')")
+  @PreAuthorize("hasAnyAuthorityForAnyUO('ETI-MEM-INV-CR', 'ETI-MEM-INV-ER')")
   public ResponseEntity<Memoria> newMemoriaModificada(
       @Validated({ Memoria.Create.class, Default.class }) @RequestBody Memoria nuevaMemoria, @PathVariable Long id) {
     log.debug("newMemoriaModificada(Memoria nuevaMemoria,  Long id) - start");
@@ -251,7 +252,7 @@ public class MemoriaController {
    * @return {@link Memoria} actualizada.
    */
   @PutMapping("/{id}")
-  @PreAuthorize("hasAnyAuthorityForAnyUO('ETI-PEV-INV-ER')")
+  @PreAuthorize("hasAnyAuthorityForAnyUO('ETI-MEM-INV-ER')")
   Memoria replaceMemoria(@Validated({ Update.class, Default.class }) @RequestBody Memoria updatedMemoria,
       @PathVariable Long id) {
     log.debug("replaceMemoria(Memoria updatedMemoria, Long id) - start");
@@ -268,7 +269,7 @@ public class MemoriaController {
    * @return {@link Memoria} correspondiente al id.
    */
   @GetMapping("/{id}")
-  @PreAuthorize("hasAnyAuthorityForAnyUO('ETI-PEV-INV-VR', 'ETI-PEV-V')")
+  @PreAuthorize("hasAnyAuthorityForAnyUO('ETI-MEM-INV-ER', 'ETI-MEM-V')")
   Memoria one(@PathVariable Long id) {
     log.debug("Memoria one(Long id) - start");
     Memoria returnValue = service.findById(id);
@@ -282,6 +283,7 @@ public class MemoriaController {
    * @param id Identificador de {@link Memoria}.
    */
   @DeleteMapping("/{id}")
+  @PreAuthorize("hasAuthorityForAnyUO('ETI-MEM-INV-BR')")
   void delete(@PathVariable Long id) {
     log.debug("delete(Long id) - start");
     Memoria memoria = this.one(id);
@@ -327,8 +329,8 @@ public class MemoriaController {
    * 
    * @return la lista de entidades {@link DocumentacionMemoria} paginadas.
    */
-  @PreAuthorize("hasAnyAuthorityForAnyUO('ETI-PEV-INV-ER', 'ETI-PEV-V', 'ETI-MEM-EDOC')")
   @GetMapping("/{id}/documentacion-formulario")
+  @PreAuthorize("hasAnyAuthorityForAnyUO('ETI-MEM-INV-ER', 'ETI-MEM-V', 'ETI-MEM-EDOC')")
   ResponseEntity<Page<DocumentacionMemoria>> getDocumentacionFormulario(@PathVariable Long id,
       @RequestPageable(sort = "s") Pageable pageable) {
     log.debug("getDocumentacionFormulario(Long id, Pageable pageable) - start");
@@ -350,8 +352,8 @@ public class MemoriaController {
    * @param pageable la información de la paginación.
    * @return la lista de entidades {@link DocumentacionMemoria} paginadas.
    */
-  @PreAuthorize("hasAnyAuthorityForAnyUO('ETI-PEV-INV-ER', 'ETI-PEV-V', 'ETI-MEM-EDOC')")
   @GetMapping("/{id}/documentacion-seguimiento-anual")
+  @PreAuthorize("hasAnyAuthorityForAnyUO('ETI-MEM-INV-ER', 'ETI-MEM-V', 'ETI-MEM-EDOC')")
   ResponseEntity<Page<DocumentacionMemoria>> getDocumentacionSeguimientoAnual(@PathVariable Long id,
       @RequestPageable(sort = "s") Pageable pageable) {
     log.debug("getDocumentacionSeguimientoAnual(Long id, Pageable pageable) - start");
@@ -373,8 +375,8 @@ public class MemoriaController {
    * @param pageable la información de la paginación.
    * @return la lista de entidades {@link DocumentacionMemoria} paginadas.
    */
-  @PreAuthorize("hasAnyAuthorityForAnyUO('ETI-PEV-INV-ER', 'ETI-PEV-V', 'ETI-MEM-EDOC')")
   @GetMapping("/{id}/documentacion-seguimiento-final")
+  @PreAuthorize("hasAnyAuthorityForAnyUO('ETI-MEM-INV-ER', 'ETI-MEM-V', 'ETI-MEM-EDOC')")
   ResponseEntity<Page<DocumentacionMemoria>> getDocumentacionSeguimientoFinal(@PathVariable Long id,
       @RequestPageable(sort = "s") Pageable pageable) {
     log.debug("getDocumentacionSeguimientoFinal(Long id, Pageable pageable) - start");
@@ -396,8 +398,8 @@ public class MemoriaController {
    * @param pageable la información de la paginación.
    * @return la lista de entidades {@link DocumentacionMemoria} paginadas.
    */
-  @PreAuthorize("hasAnyAuthorityForAnyUO('ETI-PEV-INV-ER', 'ETI-PEV-V', 'ETI-MEM-EDOC')")
   @GetMapping("/{id}/documentacion-retrospectiva")
+  @PreAuthorize("hasAnyAuthorityForAnyUO('ETI-MEM-INV-ER', 'ETI-MEM-V', 'ETI-MEM-EDOC')")
   ResponseEntity<Page<DocumentacionMemoria>> getDocumentacionRetrospectiva(@PathVariable Long id,
       @RequestPageable(sort = "s") Pageable pageable) {
     log.debug("getDocumentacionRetrospectiva(Long id, Pageable pageable) - start");
@@ -445,7 +447,7 @@ public class MemoriaController {
    * @return la lista de entidades {@link Memoria} paginadas.
    */
   @GetMapping("/persona")
-  @PreAuthorize("hasAnyAuthorityForAnyUO('ETI-PEV-INV-VR', 'ETI-PEV-V')")
+  @PreAuthorize("hasAnyAuthorityForAnyUO('ETI-MEM-INV-VR', 'ETI-MEM-V')")
   ResponseEntity<Page<MemoriaPeticionEvaluacion>> findAllMemoriasEvaluacionByPersonaRef(
       @RequestParam(name = "q", required = false) String query, @RequestPageable(sort = "s") Pageable paging,
       Authentication authentication) {
@@ -472,8 +474,8 @@ public class MemoriaController {
    * @param authentication       Authentication
    * @return Nueva {@link DocumentacionMemoria} creada.
    */
-  @PreAuthorize("hasAnyAuthorityForAnyUO('ETI-PEV-INV-ER', 'ETI-PEV-V', 'ETI-MEM-EDOC')")
   @PostMapping("/{id}/documentacion-inicial")
+  @PreAuthorize("hasAnyAuthorityForAnyUO('ETI-MEM-INV-ER', 'ETI-MEM-V', 'ETI-MEM-EDOC')")
   public ResponseEntity<DocumentacionMemoria> newDocumentacionMemoriaInicial(@PathVariable Long id,
       @Valid @RequestBody DocumentacionMemoria documentacionMemoria, Authentication authentication) {
     log.debug("newDocumentacionMemoriaInicial(Long id, DocumentacionMemoria documentacionMemoria) - start");
@@ -492,8 +494,8 @@ public class MemoriaController {
    *                             crear.
    * @return Nueva {@link DocumentacionMemoria} creada.
    */
-  @PreAuthorize("hasAnyAuthorityForAnyUO('ETI-PEV-INV-ER', 'ETI-PEV-V', 'ETI-MEM-EDOC')")
   @PostMapping("/{id}/documentacion-seguimiento-anual")
+  @PreAuthorize("hasAnyAuthorityForAnyUO('ETI-MEM-INV-ER', 'ETI-MEM-V', 'ETI-MEM-EDOC')")
   public ResponseEntity<DocumentacionMemoria> newDocumentacionMemoriaSeguimientoAnual(@PathVariable Long id,
       @Valid @RequestBody DocumentacionMemoria documentacionMemoria) {
 
@@ -512,8 +514,8 @@ public class MemoriaController {
    *                             crear.
    * @return Nueva {@link DocumentacionMemoria} creada.
    */
-  @PreAuthorize("hasAnyAuthorityForAnyUO('ETI-PEV-INV-ER', 'ETI-PEV-V', 'ETI-MEM-EDOC')")
   @PostMapping("/{id}/documentacion-seguimiento-final")
+  @PreAuthorize("hasAnyAuthorityForAnyUO('ETI-MEM-INV-ER', 'ETI-MEM-V', 'ETI-MEM-EDOC')")
   public ResponseEntity<DocumentacionMemoria> newDocumentacionMemoriaSeguimientoFinal(@PathVariable Long id,
       @Valid @RequestBody DocumentacionMemoria documentacionMemoria) {
 
@@ -532,8 +534,8 @@ public class MemoriaController {
    *                             crear.
    * @return Nueva {@link DocumentacionMemoria} creada.
    */
-  @PreAuthorize("hasAnyAuthorityForAnyUO('ETI-PEV-INV-ER', 'ETI-PEV-V', 'ETI-MEM-EDOC')")
   @PostMapping("/{id}/documentacion-retrospectiva")
+  @PreAuthorize("hasAnyAuthorityForAnyUO('ETI-MEM-INV-ER', 'ETI-MEM-V', 'ETI-MEM-EDOC')")
   public ResponseEntity<DocumentacionMemoria> newDocumentacionMemoriaRetrospectiva(@PathVariable Long id,
       @Valid @RequestBody DocumentacionMemoria documentacionMemoria) {
 
@@ -553,7 +555,7 @@ public class MemoriaController {
    * @return listado paginado de {@link Informe}
    */
   @GetMapping("/{id}/informes")
-  @PreAuthorize("hasAnyAuthorityForAnyUO('ETI-PEV-INV-ER', 'ETI-PEV-V')")
+  @PreAuthorize("hasAnyAuthorityForAnyUO('ETI-MEM-INV-ER', 'ETI-MEM-V')")
   public ResponseEntity<Page<Informe>> getInformesFormulario(@PathVariable Long id,
       @RequestPageable(sort = "s") Pageable pageable) {
 
@@ -578,7 +580,7 @@ public class MemoriaController {
    * @return la lista de entidades {@link Evaluacion} paginadas.
    */
   @GetMapping("/{id}/evaluaciones")
-  @PreAuthorize("hasAnyAuthorityForAnyUO('ETI-PEV-INV-ER', 'ETI-PEV-V')")
+  @PreAuthorize("hasAnyAuthorityForAnyUO('ETI-MEM-INV-ER', 'ETI-MEM-V')")
   ResponseEntity<Page<Evaluacion>> getEvaluacionesMemoria(@PathVariable Long id,
       @RequestPageable(sort = "s") Pageable pageable) {
     log.debug("getEvaluacionesMemoria(Long id, Pageable pageable) - start");
@@ -596,8 +598,8 @@ public class MemoriaController {
    * @param id                     Id {@link Memoria}.
    * @param idDocumentacionMemoria id {@link DocumentacionMemoria} a eliminar.
    */
-  @PreAuthorize("hasAnyAuthorityForAnyUO('ETI-PEV-INV-ER', 'ETI-MEM-EDOC')")
   @DeleteMapping("/{id}/documentacion-seguimiento-anual/{idDocumentacionMemoria}")
+  @PreAuthorize("hasAnyAuthorityForAnyUO('ETI-MEM-INV-ER', 'ETI-MEM-EDOC')")
   void deleteDocumentacionSeguimientoAnual(@PathVariable Long id, @PathVariable Long idDocumentacionMemoria) {
     log.debug("deleteDocumentacionSeguimientoAnual(Long id, Long idDocumentacionMemoria) - start");
     documentacionMemoriaService.deleteDocumentacionSeguimientoAnual(id, idDocumentacionMemoria);
@@ -610,8 +612,8 @@ public class MemoriaController {
    * @param id                     Id {@link Memoria}.
    * @param idDocumentacionMemoria id {@link DocumentacionMemoria} a eliminar.
    */
-  @PreAuthorize("hasAnyAuthorityForAnyUO('ETI-PEV-INV-ER', 'ETI-MEM-EDOC')")
   @DeleteMapping("/{id}/documentacion-seguimiento-final/{idDocumentacionMemoria}")
+  @PreAuthorize("hasAnyAuthorityForAnyUO('ETI-MEM-INV-ER', 'ETI-MEM-EDOC')")
   void deleteDocumentacionSeguimientoFinal(@PathVariable Long id, @PathVariable Long idDocumentacionMemoria) {
     log.debug("deleteDocumentacionSeguimientoFinal(Long id, Long idDocumentacionMemoria) - start");
     documentacionMemoriaService.deleteDocumentacionSeguimientoFinal(id, idDocumentacionMemoria);
@@ -624,8 +626,8 @@ public class MemoriaController {
    * @param id                     Id {@link Memoria}.
    * @param idDocumentacionMemoria id {@link DocumentacionMemoria} a eliminar.
    */
-  @PreAuthorize("hasAnyAuthorityForAnyUO('ETI-PEV-INV-ER', 'ETI-MEM-EDOC')")
   @DeleteMapping("/{id}/documentacion-retrospectiva/{idDocumentacionMemoria}")
+  @PreAuthorize("hasAnyAuthorityForAnyUO('ETI-MEM-INV-ER', 'ETI-MEM-EDOC')")
   void deleteDocumentacionRetrospectiva(@PathVariable Long id, @PathVariable Long idDocumentacionMemoria) {
     log.debug("deleteDocumentacionRetrospectiva(Long id, Long idDocumentacionMemoria) - start");
     documentacionMemoriaService.deleteDocumentacionRetrospectiva(id, idDocumentacionMemoria);
@@ -639,7 +641,7 @@ public class MemoriaController {
    * @return la {@link Memoria} si el estado se ha podido actualizar
    */
   @GetMapping("/{id}/recuperar-estado-anterior")
-  @PreAuthorize("hasAuthorityForAnyUO('ETI-PEV-V')")
+  @PreAuthorize("hasAuthorityForAnyUO('ETI-MEM-CEST')")
   ResponseEntity<Memoria> recuperarEstadoAnterior(@PathVariable Long id) {
     log.debug("recuperarEstadoAnterior(Long id) - start");
     Memoria estadoReestablecido = service.updateEstadoAnteriorMemoria(id);
@@ -654,7 +656,7 @@ public class MemoriaController {
    * @param id Id de {@link Memoria}.
    */
   @PutMapping("/{id}/enviar-secretaria")
-  @PreAuthorize("hasAnyAuthorityForAnyUO('ETI-PEV-INV-ER')")
+  @PreAuthorize("hasAuthorityForAnyUO('ETI-MEM-INV-ESCR')")
   void enviarSecretaria(@PathVariable Long id, Authentication authentication) {
     log.debug("enviarSecretaria(Long id) - start");
     String personaRef = authentication.getName();
@@ -668,7 +670,7 @@ public class MemoriaController {
    * @param id Id de {@link Memoria}.
    */
   @PutMapping("/{id}/enviar-secretaria-retrospectiva")
-  @PreAuthorize("hasAnyAuthorityForAnyUO('ETI-PEV-INV-ER')")
+  @PreAuthorize("hasAuthorityForAnyUO('ETI-MEM-INV-ERTR')")
   void enviarSecretariaRetrospectiva(@PathVariable Long id, Authentication authentication) {
     log.debug("enviarSecretariaRetrospectiva(Long id) - start");
     String personaRef = authentication.getName();
@@ -683,8 +685,8 @@ public class MemoriaController {
    * @param idDocumentacionMemoria id {@link DocumentacionMemoria} a eliminar.
    * @param authentication         Authentication
    */
-  @PreAuthorize("hasAnyAuthorityForAnyUO('ETI-PEV-INV-ER', 'ETI-MEM-EDOC')")
   @DeleteMapping("/{id}/documentacion-inicial/{idDocumentacionMemoria}")
+  @PreAuthorize("hasAnyAuthorityForAnyUO('ETI-MEM-INV-ER', 'ETI-MEM-EDOC')")
   void deleteDocumentacionInicial(@PathVariable Long id, @PathVariable Long idDocumentacionMemoria,
       Authentication authentication) {
     log.debug("deleteDocumentacionRetrospectiva(Long id, Long idDocumentacionMemoria) - start");
@@ -733,7 +735,7 @@ public class MemoriaController {
    * @return el {@link Informe}
    */
   @GetMapping("/{id}/informe/ultima-version")
-  @PreAuthorize("hasAnyAuthorityForAnyUO('ETI-PEV-INV-ER', 'ETI-PEV-V', 'ETI-EVC-EVALR')")
+  @PreAuthorize("hasAnyAuthorityForAnyUO('ETI-MEM-INV-ER', 'ETI-MEM-V', 'ETI-EVC-EVALR')")
   public ResponseEntity<Informe> getInformeFormularioUltimaVersion(@PathVariable Long id) {
 
     Optional<Informe> returnValue = informeService.findFirstByMemoriaOrderByVersionDesc(id);
@@ -757,7 +759,7 @@ public class MemoriaController {
    *         permite enviar a secretaría
    */
   @RequestMapping(path = "/{id}/enviar-secretaria", method = RequestMethod.HEAD)
-  @PreAuthorize("hasAuthorityForAnyUO('ETI-PEV-INV-ER')")
+  @PreAuthorize("hasAuthorityForAnyUO('ETI-MEM-INV-ESCR')")
   ResponseEntity<Boolean> checkDatosAdjuntosExists(@PathVariable Long id,
       @RequestPageable(sort = "s") Pageable pageable) {
     log.debug("checkDatosAdjuntosExists(Long id) - start");
@@ -768,7 +770,7 @@ public class MemoriaController {
 
   /**
    * Se actualiza el estado de la memoria a "Archivado" de {@link Memoria} que han
-   * pasado "diasArchivadaPendienteCorrecciones" días desde la fecha de estado de
+   * pasado "mesesArchivadaPendienteCorrecciones" días desde la fecha de estado de
    * una memoria cuyo estado es "Pendiente Correcciones"
    * 
    * @return Los ids de memorias que pasan al estado "Archivado"
@@ -785,7 +787,7 @@ public class MemoriaController {
 
   /**
    * Se actualiza el estado de la memoria a "Archivado" de {@link Memoria} que han
-   * pasado "mesesArchivadaInactivo" meses desde la fecha de estado de una memoria
+   * pasado "diasArchivadaInactivo" meses desde la fecha de estado de una memoria
    * cuyo estados son "Favorable Pendiente de Modificaciones Mínimas" o "No
    * procede evaluar" o "Solicitud modificación"
    * 
@@ -800,4 +802,50 @@ public class MemoriaController {
     return new ResponseEntity<>(String.format("archivarInactivos() - Archivadas %d memorias. Ids: %s",
         archivadas.size(), Arrays.toString(archivadas.toArray())), HttpStatus.OK);
   }
+
+  /**
+   * * Devuelve el informe con la última versión
+   * 
+   * @param id             identificador de la {@link Memoria}
+   * @param tipoEvaluacion identificador del tipo de evaluación
+   * @return el {@link Informe}
+   */
+  @GetMapping("/{id}/informe/ultima-version/tipo/{tipoEvaluacion}")
+  @PreAuthorize("hasAnyAuthorityForAnyUO('ETI-MEM-INV-ER', 'ETI-MEM-V', 'ETI-EVC-EVALR')")
+  public ResponseEntity<Informe> getInformeFormularioUltimaVersionTipoEvaluacion(@PathVariable Long id,
+      @PathVariable Long tipoEvaluacion) {
+    log.debug("getInformeFormularioUltimaVersionTipoEvaluacion(Long id, Long tipoEvaluacion) - start");
+    Optional<Informe> returnValue = informeService.findByMemoriaAndTipoEvaluacion(id, tipoEvaluacion);
+
+    if (!returnValue.isPresent()) {
+      log.debug("getInformeFormularioUltimaVersionTipoEvaluacion(Long id, Long tipoEvaluacion) - end");
+      return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    log.debug("getInformeFormularioUltimaVersionTipoEvaluacion(Long id, Long tipoEvaluacion) - end");
+    return new ResponseEntity<>(returnValue.get(), HttpStatus.OK);
+
+  }
+
+  /**
+   * Comprueba si la persona es responsable de la {@link Memoria} o creador de la
+   * {@link PeticionEvaluacion} con el id de {@link Memoria} indicado.
+   * 
+   * @param id             Identificador de {@link Memoria}.
+   * @param authentication Authentication
+   * @return HTTP 200 si existe y HTTP 204 si no.
+   */
+  @RequestMapping(path = "/{id}/responsable-creador", method = RequestMethod.HEAD)
+  @PreAuthorize("hasAuthorityForAnyUO('ETI-MEM-INV-ER')")
+  public ResponseEntity<?> isResponsableOrCreador(@PathVariable Long id, Authentication authentication) {
+    log.debug("isResponsableOrCreador(Long id) - start");
+    String personaRef = authentication.getName();
+    if (service.isMemoriaWithPersonaRefCreadorPeticionEvaluacionOrResponsableMemoria(personaRef, id)) {
+      log.debug("isResponsableOrCreador(Long id) - end");
+      return new ResponseEntity<>(HttpStatus.OK);
+    }
+    log.debug("isResponsableOrCreador(Long id) - end");
+    return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+  }
+
 }

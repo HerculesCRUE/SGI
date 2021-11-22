@@ -20,6 +20,32 @@ export interface SolicitudCambioEstadoModalComponentData {
   comentario: string;
   isInvestigador: boolean;
 }
+
+export const ESTADO_MAP_INVESTIGADOR: Map<Estado, Map<Estado, string>> = new Map();
+ESTADO_MAP_INVESTIGADOR.set(Estado.BORRADOR,
+  new Map([[Estado.SOLICITADA, ESTADO_MAP.get(Estado.SOLICITADA)], [Estado.DESISTIDA, ESTADO_MAP.get(Estado.DESISTIDA)]]));
+
+ESTADO_MAP_INVESTIGADOR.set(Estado.SUBSANACION, new Map([
+  [Estado.PRESENTADA_SUBSANACION, ESTADO_MAP.get(Estado.PRESENTADA_SUBSANACION)],
+  [Estado.DESISTIDA, ESTADO_MAP.get(Estado.DESISTIDA)]
+]));
+ESTADO_MAP_INVESTIGADOR.set(Estado.EXCLUIDA_PROVISIONAL, new Map([
+  [Estado.ALEGACION_FASE_ADMISION, ESTADO_MAP.get(Estado.ALEGACION_FASE_ADMISION)],
+  [Estado.DESISTIDA, ESTADO_MAP.get(Estado.DESISTIDA)]
+]));
+ESTADO_MAP_INVESTIGADOR.set(Estado.EXCLUIDA_DEFINITIVA, new Map([
+  [Estado.RECURSO_FASE_ADMISION, ESTADO_MAP.get(Estado.RECURSO_FASE_ADMISION)],
+  [Estado.DESISTIDA, ESTADO_MAP.get(Estado.DESISTIDA)]
+]));
+ESTADO_MAP_INVESTIGADOR.set(Estado.DENEGADA_PROVISIONAL, new Map([
+  [Estado.ALEGACION_FASE_PROVISIONAL, ESTADO_MAP.get(Estado.ALEGACION_FASE_PROVISIONAL)],
+  [Estado.DESISTIDA, ESTADO_MAP.get(Estado.DESISTIDA)]
+]));
+ESTADO_MAP_INVESTIGADOR.set(Estado.DENEGADA, new Map([
+  [Estado.RECURSO_FASE_CONCESION, ESTADO_MAP.get(Estado.RECURSO_FASE_CONCESION)],
+  [Estado.DESISTIDA, ESTADO_MAP.get(Estado.DESISTIDA)]
+]));
+
 @Component({
   selector: 'sgi-cambio-estado-modal',
   templateUrl: './cambio-estado-modal.component.html',
@@ -50,13 +76,18 @@ export class CambioEstadoModalComponent extends
     this.fxLayoutProperties.layout = 'row wrap';
     this.fxLayoutProperties.xs = 'column';
 
-    const estados = new Map<string, string>();
-    ESTADO_MAP.forEach((value, key) => {
-      if (key !== this.data.estadoActual) {
-        estados.set(key, value);
-      }
-    });
-    this.estadosNuevos = estados;
+    if (this.data?.isInvestigador) {
+      this.estadosNuevos = ESTADO_MAP_INVESTIGADOR.get(this.data.estadoActual);
+    } else {
+      const estados = new Map<string, string>();
+      ESTADO_MAP.forEach((value, key) => {
+        if (key !== this.data.estadoActual) {
+          estados.set(key, value);
+        }
+      });
+      this.estadosNuevos = estados;
+
+    }
   }
 
   ngOnInit(): void {

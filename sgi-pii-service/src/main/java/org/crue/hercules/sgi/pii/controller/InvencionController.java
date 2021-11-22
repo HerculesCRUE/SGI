@@ -20,6 +20,7 @@ import org.crue.hercules.sgi.pii.dto.InvencionSectorAplicacionInput;
 import org.crue.hercules.sgi.pii.dto.InvencionSectorAplicacionOutput;
 import org.crue.hercules.sgi.pii.dto.PeriodoTitularidadInput;
 import org.crue.hercules.sgi.pii.dto.PeriodoTitularidadOutput;
+import org.crue.hercules.sgi.pii.dto.RepartoOutput;
 import org.crue.hercules.sgi.pii.dto.SolicitudProteccionOutput;
 import org.crue.hercules.sgi.pii.exceptions.NoRelatedEntitiesException;
 import org.crue.hercules.sgi.pii.model.InformePatentabilidad;
@@ -31,6 +32,7 @@ import org.crue.hercules.sgi.pii.model.InvencionIngreso;
 import org.crue.hercules.sgi.pii.model.InvencionInventor;
 import org.crue.hercules.sgi.pii.model.InvencionSectorAplicacion;
 import org.crue.hercules.sgi.pii.model.PeriodoTitularidad;
+import org.crue.hercules.sgi.pii.model.Reparto;
 import org.crue.hercules.sgi.pii.model.SolicitudProteccion;
 import org.crue.hercules.sgi.pii.service.InformePatentabilidadService;
 import org.crue.hercules.sgi.pii.service.InvencionAreaConocimientoService;
@@ -41,6 +43,7 @@ import org.crue.hercules.sgi.pii.service.InvencionInventorService;
 import org.crue.hercules.sgi.pii.service.InvencionSectorAplicacionService;
 import org.crue.hercules.sgi.pii.service.InvencionService;
 import org.crue.hercules.sgi.pii.service.PeriodoTitularidadService;
+import org.crue.hercules.sgi.pii.service.RepartoService;
 import org.crue.hercules.sgi.pii.service.SolicitudProteccionService;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
@@ -79,6 +82,7 @@ public class InvencionController {
   public static final String PATH_INVENCION_INGRESO = "/{invencionId}/ingresos";
   public static final String PATH_PERIODOSTITULARIDAD = "/{invencionId}/periodostitularidad";
   public static final String PATH_PERIODOTITULARIDAD_TITULAR = PATH_PERIODOSTITULARIDAD + "/{periodotitularidadId}";
+  public static final String PATH_REPARTO = "/{invencionId}/repartos";
 
   private ModelMapper modelMapper;
 
@@ -105,6 +109,9 @@ public class InvencionController {
   /** InvencionIngreso service */
   private final InvencionIngresoService invencionIngresoService;
 
+  /** Reparto service */
+  private final RepartoService repartoService;
+
   public InvencionController(ModelMapper modelMapper, InvencionService invencionService,
       InvencionSectorAplicacionService invencionSectorAplicacionService,
       InvencionDocumentoService invencionDocumentoService,
@@ -112,7 +119,7 @@ public class InvencionController {
       InformePatentabilidadService informePatentabilidadService,
       final SolicitudProteccionService solicitudProteccionService, InvencionInventorService invencionInventorService,
       InvencionGastoService invencionGastoService, InvencionIngresoService invencionIngresoService,
-      final PeriodoTitularidadService periodoTitularidadService) {
+      final PeriodoTitularidadService periodoTitularidadService, RepartoService repartoService) {
     this.modelMapper = modelMapper;
     this.service = invencionService;
     this.invencionInventorService = invencionInventorService;
@@ -124,6 +131,7 @@ public class InvencionController {
     this.invencionGastoService = invencionGastoService;
     this.invencionIngresoService = invencionIngresoService;
     this.periodoTitularidadService = periodoTitularidadService;
+    this.repartoService = repartoService;
   }
 
   /**
@@ -529,6 +537,32 @@ public class InvencionController {
     return ResponseEntity.ok().body(convertToPeriodoTitularidadPage(page));
   }
 
+  /**
+   * Devuelve los {@link Reparto} asociados a la {@link Invencion} con el id
+   * indicado.
+   * 
+   * @param invencionId Identificador de {@link Invencion}
+   * @param query       filtro de búsqueda.
+   * @param paging      pageable.
+   * @return {@link Reparto} asociados a la {@link Invencion}
+   */
+  @GetMapping(PATH_REPARTO)
+  @PreAuthorize("hasAnyAuthority('PII-INV-E', 'PII-INV-V')")
+  public ResponseEntity<Page<RepartoOutput>> findRepartos(@PathVariable Long invencionId,
+      @RequestParam(name = "q", required = false) String query, @RequestPageable(sort = "s") Pageable paging) {
+    log.debug("findRepartos(Long invencionId, String query, Pageable paging) - start");
+
+    Page<Reparto> page = repartoService.findByInvencionId(invencionId, query, paging);
+
+    if (page.isEmpty()) {
+      log.debug("findRepartos(Long invencionId, String query, Pageable paging) - end");
+      return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    log.debug("findRepartos(Long invencionId, String query, Pageable paging) - end");
+    return new ResponseEntity<>(convertReparto(page), HttpStatus.OK);
+  }
+
   private Page<PeriodoTitularidadOutput> convertToPeriodoTitularidadPage(Page<PeriodoTitularidad> page) {
     List<PeriodoTitularidadOutput> content = page.getContent().stream()
         .map((periodoTitularidad) -> convert(periodoTitularidad)).collect(Collectors.toList());
@@ -684,5 +718,16 @@ public class InvencionController {
 
   private InvencionIngresoOutput convert(InvencionIngreso entity) {
     return modelMapper.map(entity, InvencionIngresoOutput.class);
+  }
+
+  private Page<RepartoOutput> convertReparto(Page<Reparto> page) {
+    List<RepartoOutput> content = page.getContent().stream().map((reparto) -> convert(reparto))
+        .collect(Collectors.toList());
+
+    return new PageImpl<>(content, page.getPageable(), page.getTotalElements());
+  }
+
+  private RepartoOutput convert(Reparto reparto) {
+    return modelMapper.map(reparto, RepartoOutput.class);
   }
 }

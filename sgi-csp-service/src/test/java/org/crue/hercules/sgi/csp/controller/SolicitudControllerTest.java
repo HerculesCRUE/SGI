@@ -29,6 +29,7 @@ import org.crue.hercules.sgi.csp.model.TipoDocumento;
 import org.crue.hercules.sgi.csp.model.TipoFinanciacion;
 import org.crue.hercules.sgi.csp.model.TipoHito;
 import org.crue.hercules.sgi.csp.service.EstadoSolicitudService;
+import org.crue.hercules.sgi.csp.service.ProyectoService;
 import org.crue.hercules.sgi.csp.service.SolicitudDocumentoService;
 import org.crue.hercules.sgi.csp.service.SolicitudHitoService;
 import org.crue.hercules.sgi.csp.service.SolicitudModalidadService;
@@ -109,6 +110,9 @@ public class SolicitudControllerTest extends BaseControllerTest {
 
   @MockBean
   private SolicitudProyectoEntidadService solicitudProyectoEntidadService;
+  
+  @MockBean
+  private ProyectoService proyectoService;
 
   private static final String PATH_PARAMETER_ID = "/{id}";
   private static final String PATH_PARAMETER_DESACTIVAR = "/desactivar";
@@ -1242,8 +1246,8 @@ public class SolicitudControllerTest extends BaseControllerTest {
    * Función que devuelve un objeto SolicitudDocumento
    * 
    * @param solicitudDocumentoId
-   * @param convocatoriaId
-   * @param areaTematicaId
+   * @param solicitudId
+   * @param tipoDocumentoId
    * @return el objeto SolicitudDocumento
    */
   private SolicitudDocumento generarSolicitudDocumento(Long solicitudDocumentoId, Long solicitudId,

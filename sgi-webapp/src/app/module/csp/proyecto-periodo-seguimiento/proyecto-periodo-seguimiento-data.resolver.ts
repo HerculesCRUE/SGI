@@ -35,21 +35,23 @@ export class ProyectoPeriodoSeguimientoDataResolver extends SgiResolverResolver<
     const proyectoData: IProyectoData = route.parent.data[PROYECTO_DATA_KEY];
     const proyectoPeriodoSeguimientoId = Number(route.paramMap.get(PROYECTO_PERIODO_SEGUIMIENTO_ROUTE_PARAMS.ID));
     if (proyectoPeriodoSeguimientoId) {
-      return this.service.exists(proyectoPeriodoSeguimientoId).pipe(
-        switchMap((exist) => {
-          if (!exist) {
+      return this.service.findById(proyectoPeriodoSeguimientoId).pipe(
+        switchMap((proyectoPeriodoSeguimiento) => {
+          if (!proyectoPeriodoSeguimiento) {
             return throwError('NOT_FOUND');
           }
-          return this.loadProyectoPeriodoSeguimientoData(proyectoData, proyectoPeriodoSeguimientoId);
+          return this.loadProyectoPeriodoSeguimientoData(proyectoData, proyectoPeriodoSeguimiento.id,
+            proyectoPeriodoSeguimiento.convocatoriaPeriodoSeguimientoId);
         })
       );
     }
-    return this.loadProyectoPeriodoSeguimientoData(proyectoData, proyectoPeriodoSeguimientoId);
+    return this.loadProyectoPeriodoSeguimientoData(proyectoData, proyectoPeriodoSeguimientoId, null);
   }
 
   private loadProyectoPeriodoSeguimientoData(
     proyectoData: IProyectoData,
-    proyectoPeriodoSeguimientoId: number
+    proyectoPeriodoSeguimientoId: number,
+    convocatoriaPeriodoSeguimientoId: number
   ): Observable<IProyectoPeriodoSeguimientoData> {
     const options: SgiRestFindOptions = {
       sort: new RSQLSgiRestSort('numPeriodo', SgiRestSortDirection.ASC)
@@ -59,7 +61,7 @@ export class ProyectoPeriodoSeguimientoDataResolver extends SgiResolverResolver<
         return {
           proyecto: proyectoData.proyecto,
           proyectoPeriodosSeguimiento: periodos.items.filter(element => element.id !== proyectoPeriodoSeguimientoId),
-          convocatoriaPeriodoSeguimientoId: null,
+          convocatoriaPeriodoSeguimientoId,
           readonly: proyectoData.readonly
         };
       })

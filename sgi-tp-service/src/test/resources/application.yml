@@ -1,0 +1,165 @@
+server:
+  error:
+    whitelabel:
+      # Disble the default error page displayed in browsers in case of a server error
+      enabled: false
+
+sgi:
+  time-zone: "Europe/Madrid"
+
+spring:
+  profiles:
+    # Set spring-profile
+    include: test
+  jpa:
+    properties:
+      hibernate:
+        jdbc:
+          # see: https://vladmihalcea.com/how-to-store-date-time-and-timestamps-in-utc-time-zone-with-jdbc-and-hibernate/
+          '[time_zone]': UTC
+    # Disable Open Session In View
+    open-in-view: false
+  liquibase:
+    # No Liquibase contexts
+    contexts: none
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          # JSON Web Key endpoint (with the cryptographic key to validate JSON Web Signature)
+          jwk-set-uri: http://sgi-auth:8080/auth/realms/sgi/protocol/openid-connect/certs
+          user-name-claim: user_ref_id
+      client:
+        registration:
+          # "sgi" is the id used inside the redirect-uri-template, must be the same as your realm
+          sgi:
+            authorization-grant-type: authorization_code
+            provider: keycloak
+            scope: "openid,profile"
+            client-name: SGI (user login)
+            client-id: front
+            redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
+          tp-service:
+            authorization-grant-type: client_credentials
+            provider: keycloak
+            scope: "sgi-eti"
+            client-name: SGI (service login)
+            client-id: tp-service
+            client-secret: a397c654-5899-469d-8ab4-ccbb4898a104
+        provider:
+          keycloak:
+            issuer-uri: http://sgi-auth:8080/auth/realms/sgi
+            user-name-attribute: user_ref_id
+            token-uri: http://sgi-auth:8080/auth/realms/sgi/protocol/openid-connect/token
+---
+sgi:
+  rest:
+    api:
+      eti-url: "http://sgi-eti-service:4280"    
+      csp-url: "http://sgi-csp-service:4281"    
+      usr-url: "http://sgi-usr-service:4282"    
+      pii-url: "http://sgi-pii-service:4283"          
+      rel-url: "http://sgi-rel-service:4284"          
+      com-url: "http://sgi-com-service:4286"          
+      rep-url: "http://sgi-rep-service:4287"          
+
+spring:
+  profiles: test
+  datasource:
+    # Make sure database schema is created (schema.sql is executed)
+    initialization-mode: always
+    # We use a H2 in memory database
+    url: "jdbc:h2:mem:tptest;DB_CLOSE_DELAY=-1"
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+  liquibase:
+    # Enable Liquibase
+    enabled: true
+    # Set default Liquibase schema
+    default-schema: tp
+    # Schema to use for Liquibase objects
+    liquibase-schema: tp
+    # Set Liquibase contexts same as spring profiles
+    contexts: unit-test
+  jpa:
+    hibernate:
+      # Hibernate will use the entities to validate the database
+      # validate | update | create | create-drop
+      ddl-auto: none
+    properties:
+      hibernate:
+        # We use a H2 database with PostgreSQL compatibility mode
+        dialect: org.hibernate.dialect.H2Dialect
+        # Set default Hibernate schema
+        '[default_schema]': tp
+  test:
+    database:
+      # By default, tests annotated with @DataJpaTest will use an embedded in-memory database (replacing any explicit or usually auto-configured DataSource).
+      replace: none
+---
+sgi:
+  rest:
+    api:
+      eti-url: "http://sgi-eti-service:4280"    
+      csp-url: "http://sgi-csp-service:4281"    
+      usr-url: "http://sgi-usr-service:4282"    
+      pii-url: "http://sgi-pii-service:4283"          
+      rel-url: "http://sgi-rel-service:4284"          
+      com-url: "http://sgi-com-service:4286"          
+      rep-url: "http://sgi-rep-service:4287"          
+
+spring:
+  profiles: integration-test
+  datasource:
+    # Make sure database schema is created (schema.sql is executed)
+    initialization-mode: always
+    # We use PostgreSQL database
+    url: "jdbc:postgresql://postgres:5432/db"
+    driver-class-name: org.postgresql.Driver
+    username: postgres
+    password: admin
+  liquibase:
+    # Enable Liquibase
+    enabled: true
+    # Set default Liquibase schema
+    default-schema: tp
+    # Schema to use for Liquibase objects
+    liquibase-schema: tp
+    # Set Liquibase contexts same as spring profiles
+    contexts: integration-test
+  jpa:
+    hibernate:
+      # Hibernate will use the entities to validate the database
+      # validate | update | create | create-drop
+      ddl-auto: none
+    properties:
+      hibernate:
+        # We use a PostgreSQL database
+        dialect: org.hibernate.dialect.PostgreSQL95Dialect
+        # Set default Hibernate Schema
+        '[default_schema]': tp
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          # JSON Web Key endpoint (with the cryptographic key to validate JSON Web Signature)
+          jwk-set-uri: http://sgi-auth:8080/auth/realms/sgi/protocol/openid-connect/certs
+          user-name-claim: user_ref_id
+      client:
+        registration:
+          # "sgi" is the id used inside the redirect-uri-template, must be the same as your realm
+          sgi:
+            client-id: front
+            provider: keycloak
+            scope: "openid,profile"
+            redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
+            authorization-grant-type: authorization_code
+        provider:
+          keycloak:
+            issuer-uri: http://sgi-auth:8080/auth/realms/sgi
+            user-name-attribute: user_ref_id
+  test:
+    database:
+      # By default, tests annotated with @DataJpaTest will use an embedded in-memory database (replacing any explicit or usually auto-configured DataSource).
+      replace: none

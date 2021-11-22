@@ -34,7 +34,7 @@ sgi:
   rest:
     api:
       rep-url: "http://sgi-rep-service:4287"
-      sgdoc-url: "http://sgi-esb:8080"
+      sgdoc-url: "http://sgi-esb:8080/api/sgdoc"
       
 spring:
   profiles: dev
@@ -42,7 +42,7 @@ spring:
     # Make sure database schema is created (schema.sql is executed)
     initialization-mode: always
     # We use a H2 in file database with PostgreSQL compatibility mode
-    url: "jdbc:h2:./target/db/eti;INIT=CREATE SCHEMA IF NOT EXISTS eti\\;SET SCHEMA eti;MODE=PostgreSQL;DB_CLOSE_ON_EXIT=FALSE"
+    url: "jdbc:h2:./target/db/eti;MODE=PostgreSQL;DB_CLOSE_ON_EXIT=FALSE"
     driver-class-name: org.h2.Driver
     username: sa
     password:
@@ -55,6 +55,9 @@ spring:
     liquibase-schema: eti
     # Set Liquibase contexts same as spring profiles
     contexts: dev
+    # Set Liquibase changeLog parameters
+    parameters:
+      schemaPrefix: "eti."
   jpa:
     hibernate:
       # Make sure Hibernate will not use the entities to create, update or validate the database
@@ -105,11 +108,23 @@ spring:
 logging:
   level:
     liquibase:
+      statement:
+        # Log the Liquibase executable prepared statements
+        ExecutablePreparedStatementBase: DEBUG
       executor:
         jvm:
           # Log the Liquibase JDBC executor
           JdbcExecutor: DEBUG
     org:
+      crue:
+        hercules:
+          sgi:
+            framework:
+              liquibase:
+                change:
+                  custom:
+                    # Log the Liquibase JSLT Task Change
+                    JsltTaskChange: DEBUG
       hibernate:
         # Log the SQL statements
         SQL: DEBUG
@@ -136,7 +151,7 @@ spring:
     # Make sure database schema is created (schema.sql is executed)
     initialization-mode: always
     # We use PostgreSQL database
-    url: "jdbc:postgresql://postgres:5432/eti?currentSchema=eti"
+    url: "jdbc:postgresql://postgres:5432/eti"
     driver-class-name: org.postgresql.Driver
     username: postgres
     password: admin
@@ -147,6 +162,9 @@ spring:
     default-schema: eti
     # Schema to use for Liquibase objects
     liquibase-schema: eti
+    # Set Liquibase changeLog parameters
+    parameters:
+      schemaPrefix: "eti."
   jpa:
     hibernate:
       # Hibernate will use the entities to validate the database

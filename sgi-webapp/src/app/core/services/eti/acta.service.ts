@@ -2,13 +2,17 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { ACTA_WITH_NUM_EVALUACIONES_CONVERTER } from '@core/converters/eti/acta-with-num-evaluaciones.converter';
 import { ACTA_CONVERTER } from '@core/converters/eti/acta.converter';
+import { DOCUMENTO_CONVERTER } from '@core/converters/sgdoc/documento.converter';
 import { IActa } from '@core/models/eti/acta';
 import { IActaWithNumEvaluaciones } from '@core/models/eti/acta-with-num-evaluaciones';
 import { IActaBackend } from '@core/models/eti/backend/acta-backend';
 import { IActaWithNumEvaluacionesBackend } from '@core/models/eti/backend/acta-with-num-evaluaciones-backend';
+import { IDocumentoBackend } from '@core/models/sgdoc/backend/documento-backend';
+import { IDocumento } from '@core/models/sgdoc/documento';
 import { environment } from '@env';
 import { SgiMutableRestService, SgiRestFindOptions } from '@sgi/framework/http';
 import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -44,6 +48,29 @@ export class ActaService extends SgiMutableRestService<number, IActaBackend, IAc
    */
   finishActa(actaId: number): Observable<void> {
     return this.http.put<void>(`${this.endpointUrl}/${actaId}/finalizar`, null);
+  }
+
+  /**
+   * Obtiene el documento del acta
+   * @param idActa identificador del acta
+   */
+  getDocumentoActa(idActa: number): Observable<IDocumento> {
+    return this.http.get<IDocumentoBackend>(
+      `${this.endpointUrl}/${idActa}/documento`
+    ).pipe(
+      map(response => DOCUMENTO_CONVERTER.toTarget(response))
+    );
+  }
+
+  /**
+   * Comprueba si el usuario es miembro activo del comité del acta
+   * @param id Id del Acta
+   */
+  isMiembroActivoComite(id: number): Observable<boolean> {
+    const url = `${this.endpointUrl}/${id}/miembro-comite`;
+    return this.http.head(url, { observe: 'response' }).pipe(
+      map(x => x.status === 200)
+    );
   }
 
 }

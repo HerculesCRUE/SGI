@@ -12,10 +12,21 @@ import org.springframework.web.servlet.HandlerExceptionResolver;
 
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * Custom WebSecurityExceptionHandler that delegates the exception handling to a
+ * {@link HandlerExceptionResolver}.
+ */
 @Slf4j
 public class HandlerExceptionResolverDelegator implements WebSecurityExceptionHandler {
   private HandlerExceptionResolver resolver;
 
+  /**
+   * Creates a new {@link WebSecurityExceptionHandler} that delegates the
+   * exception handling to the provided {@link HandlerExceptionResolver}.
+   * 
+   * @param resolver the {@link HandlerExceptionResolver} to delegate de exception
+   *                 handling
+   */
   public HandlerExceptionResolverDelegator(HandlerExceptionResolver resolver) {
     log.debug("HandlerExceptionResolverDelegator(HandlerExceptionResolver resolver) - start");
     this.resolver = resolver;

@@ -10,7 +10,6 @@ import { IProyecto } from '@core/models/csp/proyecto';
 import { IProyectoPeriodoJustificacion } from '@core/models/csp/proyecto-periodo-justificacion';
 import { FxFlexProperties } from '@core/models/shared/flexLayout/fx-flex-properties';
 import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-properties';
-import { ProyectoService } from '@core/services/csp/proyecto.service';
 import { SnackBarService } from '@core/services/snack-bar.service';
 import { FormGroupUtil } from '@core/utils/form-group-util';
 import { DateValidator } from '@core/validators/date-validator';
@@ -73,7 +72,6 @@ export class ProyectoPeriodoJustificacionModalComponent
     protected snackBarService: SnackBarService,
     @Inject(MAT_DIALOG_DATA) public data: IProyectoPeriodoJustificacionModalData,
     public matDialogRef: MatDialogRef<ProyectoPeriodoJustificacionModalComponent>,
-    private proyectoService: ProyectoService,
     private readonly translate: TranslateService
   ) {
     super(snackBarService, matDialogRef, data);
@@ -94,7 +92,16 @@ export class ProyectoPeriodoJustificacionModalComponent
     super.ngOnInit();
     this.setupI18N();
 
-    this.checkShowDatosConvocatoriaPeriodoJustificacion(this.data.convocatoriaPeriodoJustificacion, this.data.proyectoPeriodoJustificacion);
+    this.checkShowDatosConvocatoriaPeriodoJustificacion(this.data.convocatoriaPeriodoJustificacion);
+
+    if (this.data.convocatoriaPeriodoJustificacion) {
+      this.subscriptions.push(this.formGroup.valueChanges.subscribe(
+        () => {
+          this.disabledCopy = !comparePeriodoJustificacion(this.data.convocatoriaPeriodoJustificacion,
+            this.getDatosForm().proyectoPeriodoJustificacion, this.data.proyecto.fechaInicio, this.data.proyecto.fechaFin);
+        }
+      ));
+    }
 
     this.textSaveOrUpdate = this.data.proyectoPeriodoJustificacion?.numPeriodo ? MSG_ACEPTAR : MSG_ANADIR;
   }
@@ -131,7 +138,9 @@ export class ProyectoPeriodoJustificacionModalComponent
     this.translate.get(
       PROYECTO_PERIODO_JUSTIFICACION_FECHA_FIN_KEY,
       MSG_PARAMS.CARDINALIRY.SINGULAR
-    ).subscribe((value) => this.msgParamFechaFinEntity = { entity: value, ...MSG_PARAMS.GENDER.FEMALE, ...MSG_PARAMS.CARDINALIRY.SINGULAR });
+    ).subscribe((value) => this.msgParamFechaFinEntity = {
+      entity: value, ...MSG_PARAMS.GENDER.FEMALE, ...MSG_PARAMS.CARDINALIRY.SINGULAR
+    });
 
     if (this.data.proyectoPeriodoJustificacion?.numPeriodo) {
       this.translate.get(
@@ -211,6 +220,21 @@ export class ProyectoPeriodoJustificacionModalComponent
         formGroup.get('tipoJustificacion').validator
       ]);
     }
+
+    if (this.data.convocatoriaPeriodoJustificacion) {
+      if (this.data.proyectoPeriodoJustificacion) {
+        this.disabledCopy = !comparePeriodoJustificacion(this.data.convocatoriaPeriodoJustificacion,
+          this.data.proyectoPeriodoJustificacion, this.data.proyecto.fechaInicio, this.data.proyecto.fechaFin);
+      } else {
+        formGroup.controls.tipoJustificacion.disable();
+        formGroup.controls.fechaInicio.disable();
+        formGroup.controls.fechaFin.disable();
+        formGroup.controls.fechaInicioPresentacion.disable();
+        formGroup.controls.fechaFinPresentacion.disable();
+        formGroup.controls.observaciones.disable();
+      }
+    }
+
     return formGroup;
   }
 
@@ -247,22 +271,8 @@ export class ProyectoPeriodoJustificacionModalComponent
     this.formGroup.get('numPeriodo').setValue(numPeriodo);
   }
 
-  private checkShowDatosConvocatoriaPeriodoJustificacion(
-    convocatoriaPeriodoJustificacion: IConvocatoriaPeriodoJustificacion,
-    proyectoPeriodoJusficacion: IProyectoPeriodoJustificacion) {
-
-    if (!convocatoriaPeriodoJustificacion) {
-      this.showDatosConvocatoriaPeriodoJustificacion = false;
-    } else if (!proyectoPeriodoJusficacion) {
-      this.showDatosConvocatoriaPeriodoJustificacion = true;
-      this.disabledCopy = !comparePeriodoJustificacion(this.data.convocatoriaPeriodoJustificacion,
-        this.getDatosForm().proyectoPeriodoJustificacion, this.data.proyecto.fechaInicio, this.data.proyecto.fechaFin);
-    } else if (comparePeriodoJustificacion(convocatoriaPeriodoJustificacion, proyectoPeriodoJusficacion,
-      this.data.proyecto.fechaInicio, this.data.proyecto.fechaFin)) {
-      this.showDatosConvocatoriaPeriodoJustificacion = true;
-    } else {
-      this.showDatosConvocatoriaPeriodoJustificacion = false;
-    }
+  private checkShowDatosConvocatoriaPeriodoJustificacion(convocatoriaPeriodoJustificacion: IConvocatoriaPeriodoJustificacion): void {
+    this.showDatosConvocatoriaPeriodoJustificacion = !!convocatoriaPeriodoJustificacion;
   }
 
   /**
@@ -295,6 +305,7 @@ export class ProyectoPeriodoJustificacionModalComponent
   }
 
   copyToProyecto(): void {
+    this.enableEditableControls();
     this.formGroup.get('fechaInicio').setValue(this.formGroup.get('fechaInicioConvocatoria').value);
     this.formGroup.get('fechaFin').setValue(this.formGroup.get('fechaFinConvocatoria').value);
     this.formGroup.get('fechaInicioPresentacion').setValue(
@@ -306,7 +317,7 @@ export class ProyectoPeriodoJustificacionModalComponent
   }
 
   /**
-   * Comprueba que el rango de fechas entre los 2 campos indicados no se superpone con ninguno de los rangos 
+   * Comprueba que el rango de fechas entre los 2 campos indicados no se superpone con ninguno de los rangos
    *
    * @param startRangeFieldName Nombre del campo que indica el inicio del rango.
    * @param endRangeFieldName Nombre del campo que indica el fin del rango.
@@ -365,4 +376,14 @@ export class ProyectoPeriodoJustificacionModalComponent
       }
     };
   }
+
+  private enableEditableControls(): void {
+    this.formGroup.controls.tipoJustificacion.enable();
+    this.formGroup.controls.fechaInicio.enable();
+    this.formGroup.controls.fechaFin.enable();
+    this.formGroup.controls.fechaInicioPresentacion.enable();
+    this.formGroup.controls.fechaFinPresentacion.enable();
+    this.formGroup.controls.observaciones.enable();
+  }
+
 }

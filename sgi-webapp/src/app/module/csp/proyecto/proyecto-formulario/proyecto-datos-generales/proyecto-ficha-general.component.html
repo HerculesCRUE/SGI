@@ -311,14 +311,8 @@
         [fxFlexOrder]="fxFlexProperties.order">
         <mat-form-field>
           <mat-label>{{'csp.proyecto.clasificacion-produccion' | translate}}</mat-label>
-          <mat-select formControlName="clasificacionCVN"
-            placeholder="{{'csp.proyecto.clasificacion-produccion' | translate}}">
-            <mat-option [value]="null"></mat-option>
-            <mat-option *ngFor="let clasificacionCVN of CLASIFICACION_CVN_MAP | keyvalue"
-              [value]="clasificacionCVN.key">
-              {{ clasificacionCVN.value | translate}}
-            </mat-option>
-          </mat-select>
+          <sgi-select-enum formControlName="clasificacionCVN" [enumMap]="CLASIFICACION_CVN_MAP">
+          </sgi-select-enum>
         </mat-form-field>
       </div>
 

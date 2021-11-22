@@ -189,8 +189,10 @@ export class PeticionEvaluacionTareasFragment extends Fragment {
           idEquipoTrabajo, wrappedTarea.value).pipe(
             // TODO: Eliminar casteo ya que el back no está devolviendo el atributo eliminable
             map((savedTarea: ITareaWithIsEliminable) => {
-              const index = this.tareas$.value.findIndex((currentTarea) => currentTarea === wrappedTarea);
-              this.tareas$[index] = new StatusWrapper<ITareaWithIsEliminable>(savedTarea);
+              const currentTareas = this.tareas$.value.filter((currentTarea) => currentTarea !== wrappedTarea);
+              savedTarea.equipoTrabajo = wrappedTarea.value.equipoTrabajo;
+              currentTareas.push(new StatusWrapper<ITareaWithIsEliminable>(savedTarea));
+              this.tareas$.next(currentTareas);
             })
           );
       }));

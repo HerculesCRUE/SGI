@@ -1,0 +1,155 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:pro="http://www.liquibase.org/xml/ns/pro" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-3.8.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+  <property name="schemaPrefix" value="" />
+
+  <changeSet context="!unit-test AND !integration-test" author="master" id="0000000000002-apartado">
+    <!-- FORMULARIO M10 -->
+    <!-- 2.1  Personal que llevará a cabo las tareas con seres humanos, sus muestras y/o sus datos-->
+    <update tableName="apartado">
+      <column name="esquema" valueClobFile="clob/0000000000002/m10_apartado_2_1.json" />
+      <where>:name=:value AND :name=:value AND padre_id IS NULL AND :name=:value</where>
+      <whereParams>
+        <param name="bloque_id" valueComputed="(select id from ${schemaPrefix}bloque where orden = '2' and formulario_id = (select id from ${schemaPrefix}formulario where nombre = 'M10'))" />
+        <param name="nombre" value="Personal que llevará a cabo las tareas con seres humanos, sus muestras y/o sus datos" />
+        <param name="orden" valueNumeric="1" />
+      </whereParams>
+    </update>
+
+    <!-- FORMULARIO M20-->
+    <!-- 3.2 Diseño metodológico del proyecto -->
+    <update tableName="apartado">
+      <column name="esquema" valueClobFile="clob/0000000000002/m20_apartado_3_2.json" />
+      <where>:name=:value AND :name=:value AND padre_id IS NULL AND :name=:value</where>
+      <whereParams>
+        <param name="bloque_id" valueComputed="(select id from ${schemaPrefix}bloque where orden = '3' and formulario_id = (select id from ${schemaPrefix}formulario where nombre = 'M20'))" />
+        <param name="nombre" value="Diseño metodológico del proyecto" />
+        <param name="orden" valueNumeric="2" />
+      </whereParams>
+    </update>
+
+    <!-- 3.7.10 Extracción de sangre -->
+    <update tableName="apartado">
+      <column name="esquema" valueClobFile="clob/0000000000002/m20_apartado_3_7_10.json" />
+      <where>:name=:value AND :name=:value AND :name=:value AND :name=:value</where>
+      <whereParams>
+        <param name="bloque_id" valueComputed="(select id from ${schemaPrefix}bloque where orden = '3' and formulario_id = (select id from ${schemaPrefix}formulario where nombre = 'M20'))" />
+        <param name="nombre" value="Extracción de sangre" />
+        <param name="padre_id" valueComputed="(select id from ${schemaPrefix}apartado where nombre = 'Proceso de experimentación al que va a ser sometido el animal')" />
+        <param name="orden" valueNumeric="10" />
+      </whereParams>
+    </update>
+
+    <!-- FORMULARIO M30-->
+    <!-- 4.2.1.1.1 Medidas de contención -->
+    <update tableName="apartado">
+      <column name="esquema" valueClobFile="clob/0000000000002/m30_apartado_4_2_1_1_1.json" />
+      <where>:name=:value AND :name=:value AND :name=:value AND :name=:value</where>
+      <whereParams>
+        <param name="bloque_id" valueComputed="(select id from ${schemaPrefix}bloque where orden = '4' and formulario_id = (select id from ${schemaPrefix}formulario where nombre = 'M30'))" />
+        <param name="nombre" value="Medidas de contención" />
+        <param name="padre_id" valueComputed="(select id from ${schemaPrefix}apartado where nombre = 'Laboratorio de la Universidad')" />
+        <param name="orden" valueNumeric="1" />
+      </whereParams>
+    </update>
+
+    <!-- 4.2.1.1.2 Equipos de seguridad -->
+    <update tableName="apartado">
+      <column name="esquema" valueClobFile="clob/0000000000002/m30_apartado_4_2_1_1_2.json" />
+      <where>:name=:value AND :name=:value AND :name=:value AND :name=:value</where>
+      <whereParams>
+        <param name="bloque_id" valueComputed="(select id from ${schemaPrefix}bloque where orden = '4' and formulario_id = (select id from ${schemaPrefix}formulario where nombre = 'M30'))" />
+        <param name="nombre" value="Equipos de seguridad" />
+        <param name="padre_id" valueComputed="(select id from ${schemaPrefix}apartado where nombre = 'Laboratorio de la Universidad')" />
+        <param name="orden" valueNumeric="2" />
+      </whereParams>
+    </update>
+
+    <!-- 4.2.1.1.3 Buenas prácticas de laboratorio -->
+    <update tableName="apartado">
+      <column name="esquema" valueClobFile="clob/0000000000002/m30_apartado_4_2_1_1_3.json" />
+      <where>:name=:value AND :name=:value AND :name=:value AND :name=:value</where>
+      <whereParams>
+        <param name="bloque_id" valueComputed="(select id from ${schemaPrefix}bloque where orden = '4' and formulario_id = (select id from ${schemaPrefix}formulario where nombre = 'M30'))" />
+        <param name="nombre" value="Buenas prácticas de laboratorio" />
+        <param name="padre_id" valueComputed="(select id from ${schemaPrefix}apartado where nombre = 'Laboratorio de la Universidad')" />
+        <param name="orden" valueNumeric="3" />
+      </whereParams>
+    </update>
+
+    <!-- 4.2.1.1.4 Instalaciones -->
+    <update tableName="apartado">
+      <column name="esquema" valueClobFile="clob/0000000000002/m30_apartado_4_2_1_1_4.json" />
+      <where>:name=:value AND :name=:value AND :name=:value AND :name=:value</where>
+      <whereParams>
+        <param name="bloque_id" valueComputed="(select id from ${schemaPrefix}bloque where orden = '4' and formulario_id = (select id from ${schemaPrefix}formulario where nombre = 'M30'))" />
+        <param name="nombre" value="Instalaciones" />
+        <param name="padre_id" valueComputed="(select id from ${schemaPrefix}apartado where nombre = 'Laboratorio de la Universidad')" />
+        <param name="orden" valueNumeric="4" />
+      </whereParams>
+    </update>
+
+    <!-- 4.2.3 Reducción de riesgos  -->
+    <update tableName="apartado">
+      <column name="esquema" valueClobFile="clob/0000000000002/m30_apartado_4_2_3.json" />
+      <where>:name=:value AND :name=:value AND :name=:value AND :name=:value</where>
+      <whereParams>
+        <param name="bloque_id" valueComputed="(select id from ${schemaPrefix}bloque where orden = '4' and formulario_id = (select id from ${schemaPrefix}formulario where nombre = 'M30'))" />
+        <param name="nombre" value="Reducción de riesgos" />
+        <param name="padre_id" valueComputed="(select id from ${schemaPrefix}apartado where nombre = 'Medidas técnicas de seguridad')" />
+        <param name="orden" valueNumeric="3" />
+      </whereParams>
+    </update>
+  </changeSet>
+
+  <!-- CHECKLIST -->
+  <changeSet context="!unit-test AND !integration-test" author="master" id="0000000000002-formly">
+    <update tableName="formly">
+      <column name="esquema" valueClobFile="clob/0000000000002/checklist.json" />
+      <where>:name=:value AND :name=:value</where>
+      <whereParams>
+        <param name="nombre" value="CHECKLIST" />
+        <param name="version" valueNumeric="1" />
+      </whereParams>
+    </update>
+  </changeSet>
+
+  <changeSet context="!unit-test AND !integration-test" author="master" id="0000000000002-comite-add-genero">
+    <!-- Cambio de nombre investigación y genero para cada comité -->
+    <update tableName="comite">
+      <column name="nombre_investigacion" value="Comisión de Ética de Investigación" />
+      <column name="genero" value="F" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueNumeric="1" />
+      </whereParams>
+    </update>
+    <update tableName="comite">
+      <column name="nombre_investigacion" value="Comité de Ética de Experimentación Animal" />
+      <column name="genero" value="M" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueNumeric="2" />
+      </whereParams>
+    </update>
+    <update tableName="comite">
+      <column name="nombre_investigacion" value="Comité de Ética de Bioseguridad en Experimentación" />
+      <column name="genero" value="M" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueNumeric="3" />
+      </whereParams>
+    </update>
+  </changeSet>
+
+  <changeSet context="!unit-test AND !integration-test" author="master" id="0000000000002-configuracion">
+    <update tableName="configuracion">
+      <column name="meses_archivada_pendiente_correcciones" valueNumeric="6" />
+      <column name="dias_archivada_inactivo" valueNumeric="45" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueNumeric="1" />
+      </whereParams>
+    </update>
+  </changeSet>
+
+</databaseChangeLog>

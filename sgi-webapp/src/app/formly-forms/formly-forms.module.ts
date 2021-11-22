@@ -12,6 +12,7 @@ import { TipoValorSocialComponent } from './types/tipo-valor-social.component';
 import { requiredChecked } from './validators/utils.validator';
 import { InfoDivWrapperComponent } from './wrappers/info-div/info-div.wrapper';
 import { PanelWrapperComponent } from './wrappers/panel/panel.wrapper';
+import { SubtitleDivWrapperComponent } from './wrappers/subtitle-div/subtitle-div.wrapper';
 import { TitleDivWrapperComponent } from './wrappers/title-div/title-div.wrapper';
 
 @NgModule({
@@ -20,6 +21,7 @@ import { TitleDivWrapperComponent } from './wrappers/title-div/title-div.wrapper
     TableTypeRepetible,
     PanelWrapperComponent,
     TitleDivWrapperComponent,
+    SubtitleDivWrapperComponent,
     InfoDivWrapperComponent,
     TipoValorSocialComponent
   ],
@@ -55,6 +57,10 @@ import { TitleDivWrapperComponent } from './wrappers/title-div/title-div.wrapper
         {
           name: 'title-div',
           component: TitleDivWrapperComponent
+        },
+        {
+          name: 'subtitle-div',
+          component: SubtitleDivWrapperComponent
         },
         {
           name: 'info-div',

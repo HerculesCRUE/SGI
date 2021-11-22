@@ -167,6 +167,7 @@ public class ProyectoServiceTest extends BaseServiceTest {
   private ProyectoPeriodoJustificacionRepository proyectoPeriodoJustificacionRepository;
   @Mock
   private EstadoProyectoPeriodoJustificacionRepository estadoProyectoPeriodoJustificacionRepository;
+  ProyectoFacturacionService proyectoFacturacionService;
 
   @Autowired
   private SgiConfigProperties sgiConfigProperties;
@@ -191,7 +192,7 @@ public class ProyectoServiceTest extends BaseServiceTest {
         proyectoConceptoGastoService, proyectoConceptoGastoCodigoEcService, convocatoriaConceptoGastoCodigoEcRepository,
         solicitudProyectoResponsableEconomicoRepository, proyectoResponsableEconomicoService, validator,
         convocatoriaPeriodoJustificacionRepository, proyectoPeriodoJustificacionRepository,
-        estadoProyectoPeriodoJustificacionRepository);
+        estadoProyectoPeriodoJustificacionRepository, proyectoFacturacionService);
   }
 
   @Test

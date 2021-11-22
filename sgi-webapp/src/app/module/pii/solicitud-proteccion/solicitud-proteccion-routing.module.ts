@@ -14,6 +14,7 @@ import { FragmentGuard } from '@core/guards/detail-form.guard';
 import { SOLICITUD_PROTECCION_ROUTE_PARAMS } from './solicitud-proteccion-route-params';
 import { SolicitudProteccionEditarComponent } from './solicitud-proteccion-editar/solicitud-proteccion-editar.component';
 import { RouterModule } from '@angular/router';
+import { SolicitudProteccionProcedimientosComponent } from './solicitud-proteccion-formulario/solicitud-proteccion-procedimientos/solicitud-proteccion-procedimientos.component';
 
 const MSG_NEW_TITLE = marker('title.new.entity');
 const SOLICITUD_PROTECCION_KEY = marker('pii.solicitud-proteccion');
@@ -44,6 +45,11 @@ const routes: SgiRoutes = [
         path: SOLICITUD_PROTECCION_ROUTE_NAMES.DATOS_GENERALES,
         component: SolicitudProteccionDatosGeneralesComponent,
         canDeactivate: [FragmentGuard]
+      },
+      {
+        path: SOLICITUD_PROTECCION_ROUTE_NAMES.PROCEDIMIENTOS,
+        component: SolicitudProteccionProcedimientosComponent,
+        canDeactivate: [FragmentGuard]
       }
     ]
   },
@@ -68,6 +74,11 @@ const routes: SgiRoutes = [
       {
         path: SOLICITUD_PROTECCION_ROUTE_NAMES.DATOS_GENERALES,
         component: SolicitudProteccionDatosGeneralesComponent,
+        canDeactivate: [FragmentGuard]
+      },
+      {
+        path: SOLICITUD_PROTECCION_ROUTE_NAMES.PROCEDIMIENTOS,
+        component: SolicitudProteccionProcedimientosComponent,
         canDeactivate: [FragmentGuard]
       }
     ]

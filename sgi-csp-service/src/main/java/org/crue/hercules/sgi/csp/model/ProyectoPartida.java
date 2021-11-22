@@ -45,8 +45,8 @@ public class ProyectoPartida extends BaseEntity {
   /** Id. */
   @Id
   @Column(name = "id", nullable = false)
-  @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "proyecto_proyecto_sge_seq")
-  @SequenceGenerator(name = "proyecto_proyecto_sge_seq", sequenceName = "proyecto_proyecto_sge_seq", allocationSize = 1)
+  @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "proyecto_partida_seq")
+  @SequenceGenerator(name = "proyecto_partida_seq", sequenceName = "proyecto_partida_seq", allocationSize = 1)
   private Long id;
 
   /** Proyecto Id */

@@ -1,5 +1,8 @@
 package org.crue.hercules.sgi.eti.service;
 
+import java.time.Instant;
+
+import org.crue.hercules.sgi.eti.dto.DocumentoOutput;
 import org.crue.hercules.sgi.eti.dto.EvaluacionWithIsEliminable;
 import org.crue.hercules.sgi.eti.dto.EvaluacionWithNumComentario;
 import org.crue.hercules.sgi.eti.exceptions.EvaluacionNotFoundException;
@@ -66,14 +69,14 @@ public interface EvaluacionService {
    * Obtener todas las entidades paginadas {@link Evaluacion} para una determinada
    * {@link Memoria} anteriores al id de evaluación recibido.
    *
-   * @param idMemoria    Id de {@link Memoria}.
-   * @param idEvaluacion Id de {@link Evaluacion}.
+   * @param idMemoria        Id de {@link Memoria}.
+   * @param idEvaluacion     Id de {@link Evaluacion}.
    * @param idTipoComentario Id de {@link TipoComentario}.
-   * @param pageable     la información de la paginación.
+   * @param pageable         la información de la paginación.
    * @return la lista de entidades {@link Evaluacion} paginadas.
    */
-  Page<EvaluacionWithNumComentario> findEvaluacionesAnterioresByMemoria(Long idMemoria, Long idEvaluacion, Long idTipoComentario,
-      Pageable pageable);
+  Page<EvaluacionWithNumComentario> findEvaluacionesAnterioresByMemoria(Long idMemoria, Long idEvaluacion,
+      Long idTipoComentario, Pageable pageable);
 
   /**
    * Devuelve una lista paginada y filtrada {@link Evaluacion} según su
@@ -185,4 +188,48 @@ public interface EvaluacionService {
    */
   Boolean hasAssignedEvaluacionesSeguimientoByEvaluador(String personaRef);
 
+  /**
+   * Identifica si el usuario es {@link Evaluador} en la {@link Evaluacion}
+   * 
+   * @param idEvaluacion identificador de la {@link Evaluacion}
+   * @param personaRef   El usuario de la petición
+   * @return true/false
+   */
+  Boolean isEvaluacionEvaluableByEvaluador(Long idEvaluacion, String personaRef);
+
+  /**
+   * Identifica si el usuario es {@link Evaluador} en la {@link Evaluacion} en
+   * Seguimiento
+   * 
+   * @param idEvaluacion identificador de la {@link Evaluacion} en Seguimiento
+   * @param personaRef   El usuario de la petición
+   * @return true/false
+   */
+  Boolean isEvaluacionSeguimientoEvaluableByEvaluador(Long idEvaluacion, String personaRef);
+
+  /**
+   * Retorna el identificador de la usuarioRef del presidente
+   * 
+   * @param idEvaluacion Id de {@link Evaluacion}.
+   * @return id del presidente
+   */
+  String findIdPresidenteByIdEvaluacion(Long idEvaluacion);
+
+  /**
+   * Retorna la primera fecha de envío a secretaría (histórico estado)
+   * 
+   * @param idEvaluacion Id de {@link Evaluacion}.
+   * @return fecha de envío a secretaría
+   */
+  Instant findFirstFechaEnvioSecretariaByIdEvaluacion(Long idEvaluacion);
+
+  DocumentoOutput generarDocumentoEvaluacion(Long idEvaluacion);
+
+  /**
+   * Obtiene el documento de la ficha del Evaluador
+   * 
+   * @param idEvaluacion id {@link Evaluacion}
+   * @return El documento del informe de la ficha del Evaluador
+   */
+  public DocumentoOutput generarDocumentoEvaluador(Long idEvaluacion);
 }

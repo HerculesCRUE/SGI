@@ -2,7 +2,10 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { IInvencionGasto } from '@core/models/pii/invencion-gasto';
 import { environment } from '@env';
-import { CreateCtor, mixinCreate, mixinUpdate, SgiRestBaseService, UpdateCtor } from '@sgi/framework/http';
+import {
+  CreateCtor, FindByIdCtor, mixinCreate,
+  mixinFindById, mixinUpdate, SgiRestBaseService, UpdateCtor
+} from '@sgi/framework/http';
 import { IInvencionGastoRequest } from './invencion-gasto-request';
 import { INVENCION_GASTO_REQUEST_CONVERTER } from './invencion-gasto-request.converter';
 import { IInvencionGastoResponse } from './invencion-gasto-response';
@@ -10,16 +13,20 @@ import { INVENCION_GASTO_RESPONSE_CONVERTER } from './invencion-gasto-response.c
 
 // tslint:disable-next-line: variable-name
 const _InvencionGastoServiceMixinBase:
+  FindByIdCtor<number, IInvencionGasto, IInvencionGastoResponse> &
   CreateCtor<IInvencionGasto, IInvencionGasto, IInvencionGastoRequest, IInvencionGastoResponse> &
   UpdateCtor<number, IInvencionGasto, IInvencionGasto, IInvencionGastoRequest, IInvencionGastoResponse> &
   typeof SgiRestBaseService =
-  mixinCreate(
-    mixinUpdate(
-      SgiRestBaseService,
+  mixinFindById(
+    mixinCreate(
+      mixinUpdate(
+        SgiRestBaseService,
+        INVENCION_GASTO_REQUEST_CONVERTER,
+        INVENCION_GASTO_RESPONSE_CONVERTER
+      ),
       INVENCION_GASTO_REQUEST_CONVERTER,
       INVENCION_GASTO_RESPONSE_CONVERTER
     ),
-    INVENCION_GASTO_REQUEST_CONVERTER,
     INVENCION_GASTO_RESPONSE_CONVERTER
   );
 

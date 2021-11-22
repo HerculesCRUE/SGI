@@ -8,6 +8,7 @@ import { ConvocatoriaService } from '@core/services/csp/convocatoria.service';
 import { DialogService } from '@core/services/dialog.service';
 import { SnackBarService } from '@core/services/snack-bar.service';
 import { TranslateService } from '@ngx-translate/core';
+import { SgiAuthService } from '@sgi/framework/auth';
 import { NGXLogger } from 'ngx-logger';
 import { BehaviorSubject, Subject } from 'rxjs';
 import { switchMap, tap } from 'rxjs/operators';
@@ -37,6 +38,7 @@ export class ConvocatoriaEditarComponent extends ActionComponent implements OnIn
   textoRegistrar = MSG_BUTTON_REGISTRAR;
   textoEditarSuccess: string;
   textoEditarError: string;
+  canEdit: boolean;
 
   disableRegistrar$: Subject<boolean> = new BehaviorSubject<boolean>(true);
   private registrable = false;
@@ -52,24 +54,28 @@ export class ConvocatoriaEditarComponent extends ActionComponent implements OnIn
     route: ActivatedRoute,
     public actionService: ConvocatoriaActionService,
     dialogService: DialogService,
+    private readonly authService: SgiAuthService,
     private convocatoriaService: ConvocatoriaService,
     private readonly translate: TranslateService
   ) {
     super(router, route, actionService, dialogService);
     this.disableRegistrar$.next(true);
-    this.subscriptions.push(
-      this.convocatoriaService.registrable(this.actionService.id).subscribe(
-        registrable => {
-          this.registrable = registrable;
-          this.disableRegistrar$.next(!registrable);
+    this.canEdit = this.authService.hasAuthority('CSP-CON-E');
+    if (this.canEdit) {
+      this.subscriptions.push(
+        this.convocatoriaService.registrable(this.actionService.id).subscribe(
+          registrable => {
+            this.registrable = registrable;
+            this.disableRegistrar$.next(!registrable);
+          }
+        )
+      );
+      this.subscriptions.push(this.actionService.status$.subscribe(
+        status => {
+          this.disableRegistrar$.next(!this.registrable || actionService.readonly || status.changes || status.errors);
         }
-      )
-    );
-    this.subscriptions.push(this.actionService.status$.subscribe(
-      status => {
-        this.disableRegistrar$.next(!this.registrable || actionService.readonly || status.changes || status.errors);
-      }
-    ));
+      ));
+    }
   }
 
   ngOnInit(): void {

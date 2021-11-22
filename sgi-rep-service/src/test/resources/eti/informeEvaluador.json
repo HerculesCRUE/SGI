@@ -1,0 +1,209 @@
+{
+  "bloques": [
+    {
+      "id": 1,
+      "nombre": "1. VALOR SOCIAL Y JUSTIFICACIÓN",
+      "orden": 1,
+      "apartados": [
+        {
+          "id": 2,
+          "nombre": "Justificación del uso de seres humanos",
+          "titulo": "1.2 Justificación del uso de seres humanos",
+          "orden": 2,
+          "elementos": [
+            {
+              "nombre": "",
+              "tipo": "comment",
+              "content": "Comentario1"
+            },
+            {
+              "nombre": "",
+              "tipo": "comment",
+              "content": "Comentario2"
+            }
+          ],
+          "apartadosHijos": []
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "nombre": "2. CUALIFICACIÓN DEL EQUIPO INVESTIGADOR",
+      "orden": 2,
+      "apartados": [
+        {
+          "id": 3,
+          "nombre": "Personal que llevará a cabo las tareas con seres humanos, sus muestras y/o sus datos",
+          "titulo": "2.1 Personal que llevará a cabo las tareas con seres humanos, sus muestras y/o sus datos",
+          "orden": 1,
+          "elementos": [
+            {
+              "nombre": "",
+              "tipo": "comment",
+              "content": "Comentario2"
+            }
+          ],
+          "apartadosHijos": []
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "nombre": "3. VALIDEZ CIENTÍFICA Y METODOLÓGICA",
+      "orden": 3,
+      "apartados": [
+        {
+          "id": 6,
+          "nombre": "Referencias de publicaciones científicas",
+          "titulo": "3.3 Referencias de publicaciones científicas",
+          "orden": 3,
+          "elementos": [
+            {
+              "nombre": "",
+              "tipo": "comment",
+              "content": "Comentario3"
+            }
+          ],
+          "apartadosHijos": []
+        },
+        {
+          "id": 7,
+          "nombre": "Intervenciones o pruebas en seres humanos",
+          "titulo": "3.4 Intervenciones o pruebas en seres humanos",
+          "orden": 4,
+          "elementos": [],
+          "apartadosHijos": [
+            {
+              "id": 9,
+              "nombre": "Reclutamiento realizado por personal ajeno al equipo investigador",
+              "titulo": "3.4.2 Reclutamiento realizado por personal ajeno al equipo investigador",
+              "orden": 2,
+              "elementos": [
+                {
+                  "nombre": "",
+                  "tipo": "comment",
+                  "content": "Comentario4"
+                }
+              ],
+              "apartadosHijos": []
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "evaluacion": {
+    "id": 1,
+    "memoria": {
+      "id": 1,
+      "numReferencia": "M10/2019/001",
+      "peticionEvaluacion": {
+        "id": 1,
+        "solicitudConvocatoriaRef": null,
+        "codigo": "PR_1",
+        "titulo": "PeticionEvaluacion1",
+        "tipoActividad": {
+          "id": 1,
+          "nombre": "Proyecto de investigación",
+          "activo": true
+        },
+        "tipoInvestigacionTutelada": null,
+        "existeFinanciacion": true,
+        "fuenteFinanciacion": "organismo financiador",
+        "estadoFinanciacion": "DENEGADO",
+        "importeFinanciacion": 2345.00,
+        "fechaInicio": "2018-12-04T18:47:38.927Z",
+        "fechaFin": "2018-12-04T18:47:38.927Z",
+        "resumen": "Resumen",
+        "valorSocial": "INVESTIGACION_FUNDAMENTAL",
+        "otroValorSocial": null,
+        "objetivos": "Objetivos",
+        "disMetodologico": "Diseño metodológico",
+        "externo": false,
+        "tieneFondosPropios": false,
+        "personaRef": "48517010",
+        "checklistId": null,
+        "activo": true
+      },
+      "comite": {
+        "id": 1,
+        "comite": "CEISH",
+        "formulario": {
+          "id": 1,
+          "nombre": "M10",
+          "descripcion": "Descripcion1"
+        },
+        "activo": true
+      },
+      "titulo": "Título M10/2019/001",
+      "personaRef": "02221287",
+      "tipoMemoria": {
+        "id": 1,
+        "nombre": "Nueva",
+        "activo": true
+      },
+      "estadoActual": {
+        "id": 12,
+        "nombre": "En secretaría seguimiento anual",
+        "activo": true
+      },
+      "fechaEnvioSecretaria": "2018-12-04T18:47:38.927Z",
+      "requiereRetrospectiva": false,
+      "retrospectiva": null,
+      "version": 2,
+      "codOrganoCompetente": null,
+      "activo": true,
+      "memoriaOriginal": null
+    },
+    "convocatoriaReunion": {
+      "id": 1,
+      "comite": {
+        "id": 1,
+        "comite": "CEISH",
+        "formulario": {
+          "id": 1,
+          "nombre": "M10",
+          "descripcion": "Descripcion1"
+        },
+        "activo": true
+      },
+      "fechaEvaluacion": "2018-12-04T18:47:38.927Z",
+      "fechaLimite": "2018-12-04T18:47:38.927Z",
+      "lugar": "Lugar 1",
+      "ordenDia": "Orden del día convocatoria reunión 1",
+      "anio": 2019,
+      "numeroActa": 1,
+      "tipoConvocatoriaReunion": {
+        "id": 1,
+        "nombre": "Ordinaria",
+        "activo": true
+      },
+      "horaInicio": 8,
+      "minutoInicio": 30,
+      "horaInicioSegunda": null,
+      "minutoInicioSegunda": null,
+      "fechaEnvio": "2018-12-04T18:47:38.927Z",
+      "activo": true
+    },
+    "tipoEvaluacion": {
+      "id": 2,
+      "nombre": "Memoria",
+      "activo": true
+    },
+    "dictamen": {
+      "id": 2,
+      "nombre": "Favorable pendiente de revisión mínima",
+      "tipoEvaluacion": {
+        "id": 2,
+        "nombre": "Memoria",
+        "activo": true
+      },
+      "activo": true
+    },
+    "fechaDictamen": "2018-12-04T18:47:38.927Z",
+    "version": 1,
+    "esRevMinima": false,
+    "comentario": null,
+    "activo": true
+  }
+}

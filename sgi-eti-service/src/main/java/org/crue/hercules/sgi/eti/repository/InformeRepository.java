@@ -4,6 +4,7 @@ import java.util.Optional;
 
 import org.crue.hercules.sgi.eti.model.Informe;
 import org.crue.hercules.sgi.eti.model.Memoria;
+import org.crue.hercules.sgi.eti.model.TipoEvaluacion;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -25,4 +26,14 @@ public interface InformeRepository extends JpaRepository<Informe, Long>, JpaSpec
   Optional<Informe> findFirstByMemoriaIdOrderByVersionDesc(Long idMemoria);
 
   Page<Informe> findByMemoriaId(Long idMemoria, Pageable pageable);
+
+  /**
+   * Devuelve el {@link Informe} filtrado por la {@link Memoria} y su tipo de
+   * evaluación
+   * 
+   * @param idMemoria        identificador de la {@link Memoria}
+   * @param idTipoEvaluacion identificador del {@link TipoEvaluacion}
+   * @return el {@link Informe}
+   */
+  Optional<Informe> findFirstByMemoriaIdAndTipoEvaluacionIdOrderByVersionDesc(Long idMemoria, Long idTipoEvaluacion);
 }

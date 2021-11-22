@@ -9,12 +9,14 @@ import { MSG_PARAMS } from '@core/i18n';
 import { IActaWithNumEvaluaciones } from '@core/models/eti/acta-with-num-evaluaciones';
 import { IComite } from '@core/models/eti/comite';
 import { TipoEstadoActa } from '@core/models/eti/tipo-estado-acta';
+import { IDocumento } from '@core/models/sgdoc/documento';
 import { FxFlexProperties } from '@core/models/shared/flexLayout/fx-flex-properties';
 import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-properties';
 import { ROUTE_NAMES } from '@core/route.names';
 import { ActaService } from '@core/services/eti/acta.service';
 import { ComiteService } from '@core/services/eti/comite.service';
 import { TipoEstadoActaService } from '@core/services/eti/tipo-estado-acta.service';
+import { DocumentoService, triggerDownloadToUser } from '@core/services/sgdoc/documento.service';
 import { SnackBarService } from '@core/services/snack-bar.service';
 import { LuxonUtils } from '@core/utils/luxon-utils';
 import { TranslateService } from '@ngx-translate/core';
@@ -66,7 +68,8 @@ export class ActaListadoComponent extends AbstractTablePaginationComponent<IActa
     protected readonly snackBarService: SnackBarService,
     private readonly comiteService: ComiteService,
     private readonly tipoEstadoActaService: TipoEstadoActaService,
-    private readonly translate: TranslateService
+    private readonly translate: TranslateService,
+    private readonly documentoService: DocumentoService
   ) {
 
     super(snackBarService, MSG_ERROR);
@@ -285,6 +288,22 @@ export class ActaListadoComponent extends AbstractTablePaginationComponent<IActa
    */
   hasFinalizarActa(acta: IActaWithNumEvaluaciones): boolean {
     return acta.estadoActa.id === 1 && acta.numEvaluacionesNoEvaluadas === 0;
+  }
+
+  /**
+   * Visualiza el informe seleccionado.
+   * @param documentoRef Referencia del informe..
+   */
+  visualizarInforme(idActa: number): void {
+    const documento: IDocumento = {} as IDocumento;
+    this.actasService.getDocumentoActa(idActa).pipe(
+      switchMap((documentoInfo: IDocumento) => {
+        documento.nombre = documentoInfo.nombre;
+        return this.documentoService.downloadFichero(documentoInfo.documentoRef);
+      })
+    ).subscribe(response => {
+      triggerDownloadToUser(response, documento.nombre);
+    });
   }
 
 }

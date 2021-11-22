@@ -9,6 +9,11 @@ import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
 import org.springframework.stereotype.Component;
 
+/**
+ * Provides a {@link AuthorizedClientServiceOAuth2AuthorizedClientManager} to be
+ * used by the {@link HttpEntityBuilder} to provide an OAuth 2 Client
+ * Authorization header in the HttpEntity.
+ */
 @Component
 public class OAuth2ClientConfiguration {
 

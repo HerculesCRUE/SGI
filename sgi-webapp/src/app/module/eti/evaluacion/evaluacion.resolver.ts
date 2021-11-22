@@ -5,15 +5,21 @@ import { IEvaluacion } from '@core/models/eti/evaluacion';
 import { SgiResolverResolver } from '@core/resolver/sgi-resolver';
 import { EvaluacionService } from '@core/services/eti/evaluacion.service';
 import { SnackBarService } from '@core/services/snack-bar.service';
+import { SgiAuthService } from '@sgi/framework/auth';
 import { NGXLogger } from 'ngx-logger';
-import { Observable } from 'rxjs';
+import { Observable, throwError } from 'rxjs';
+import { switchMap } from 'rxjs/operators';
 
 const MSG_NOT_FOUND = marker('error.load');
 
 @Injectable()
 export class EvaluacionResolver extends SgiResolverResolver<IEvaluacion> {
 
-  constructor(logger: NGXLogger, router: Router, snackBar: SnackBarService, private service: EvaluacionService) {
+  constructor(
+    logger: NGXLogger,
+    router: Router,
+    snackBar: SnackBarService,
+    private service: EvaluacionService) {
     super(logger, router, snackBar, MSG_NOT_FOUND);
   }
 

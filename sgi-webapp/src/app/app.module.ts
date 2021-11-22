@@ -8,6 +8,7 @@ import { BrowserModule, Meta } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { SgiErrorHttpInterceptor } from '@core/error-http-interceptor';
 import { SgiLanguageHttpInterceptor } from '@core/languague-http-interceptor';
+import { SgiRequestHttpInterceptor } from '@core/request-http-interceptor';
 import { TimeZoneService } from '@core/services/timezone.service';
 import { TIME_ZONE } from '@core/time-zone';
 import { environment } from '@env';
@@ -98,6 +99,11 @@ const appInitializerFn = (appConfig: ConfigService) => {
     {
       provide: HTTP_INTERCEPTORS,
       useClass: SgiErrorHttpInterceptor,
+      multi: true
+    },
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: SgiRequestHttpInterceptor,
       multi: true
     },
     {

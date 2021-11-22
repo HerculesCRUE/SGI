@@ -13,7 +13,8 @@ import { map } from 'rxjs/operators';
 export class IngresosInvencionService extends SgiRestBaseService {
   private static readonly MAPPING = '/ingresos-invencion';
 
-  constructor(protected http: HttpClient) {
+  constructor(
+    protected http: HttpClient) {
     super(
       `${environment.serviceServers.sgepii}${IngresosInvencionService.MAPPING}`,
       http
@@ -21,13 +22,13 @@ export class IngresosInvencionService extends SgiRestBaseService {
   }
 
   /**
-   * Obtiene los Ingresos asociados a la Invención.
+   * Obtiene los Ingresos asociados al ProyectoSGE.
    * 
-   * @param proyectoId Id del proyecto asociado a la Invención.
-   * @returns Lista de Ingresos asociados a la Invención.
+   * @param proyectoSgeId Id del ProyectoSGE asociado al Proyecto de CSP.
+   * @returns Lista de Ingresos asociados al ProyectoSGE.
    */
-  getIngresos(proyectoId: string): Observable<IDatoEconomico[]> {
-    const filter = new RSQLSgiRestFilter('proyectoId', SgiRestFilterOperator.EQUALS, proyectoId);
+  getIngresos(proyectoSgeId: string): Observable<IDatoEconomico[]> {
+    const filter = new RSQLSgiRestFilter('proyectoId', SgiRestFilterOperator.EQUALS, proyectoSgeId);
     const options: SgiRestFindOptions = {
       filter
     };
@@ -39,13 +40,14 @@ export class IngresosInvencionService extends SgiRestBaseService {
     );
   }
 
+
   /**
    * Obtiene la metainformación sobre las columnas dinámicas del Ingreso.
    * 
    * @param proyectoId Id del proyecto asociado a la Invención.
    * @returns Lista de las columnas.
    */
-  getColumnas(proyectoId: string): Observable<IColumna[]> {
+  getColumnas(proyectoId?: string): Observable<IColumna[]> {
     const filter = new RSQLSgiRestFilter('proyectoId', SgiRestFilterOperator.EQUALS, proyectoId);
     const options: SgiRestFindOptions = {
       filter

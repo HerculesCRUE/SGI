@@ -428,7 +428,7 @@ public class ConvocatoriaControllerTest extends BaseControllerTest {
   }
 
   @Test
-  @WithMockUser(username = "user", authorities = { "CSP-CON-V" })
+  @WithMockUser(username = "user", authorities = { "CSP-CON-E" })
   public void registrable_ConvocatoriaRegistrable_Returns200() throws Exception {
     // given: Existing id convocatoria registrable
     Long id = 1L;
@@ -444,7 +444,7 @@ public class ConvocatoriaControllerTest extends BaseControllerTest {
   }
 
   @Test
-  @WithMockUser(username = "user", authorities = { "CSP-CON-V" })
+  @WithMockUser(username = "user", authorities = { "CSP-CON-E" })
   public void registrable_ConvocatoriaNoRegistrable_Returns204() throws Exception {
     // given: Existing id convocatoria NO registrable
     Long id = 1L;

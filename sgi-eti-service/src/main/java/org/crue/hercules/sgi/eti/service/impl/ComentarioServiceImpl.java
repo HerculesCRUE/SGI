@@ -5,7 +5,9 @@ import java.util.Optional;
 import org.crue.hercules.sgi.eti.exceptions.ComentarioNotFoundException;
 import org.crue.hercules.sgi.eti.exceptions.EvaluacionNotFoundException;
 import org.crue.hercules.sgi.eti.model.Comentario;
+import org.crue.hercules.sgi.eti.model.Comite;
 import org.crue.hercules.sgi.eti.model.Evaluacion;
+import org.crue.hercules.sgi.eti.model.Formulario;
 import org.crue.hercules.sgi.eti.model.TipoComentario;
 import org.crue.hercules.sgi.eti.model.TipoEvaluacion;
 import org.crue.hercules.sgi.eti.repository.ComentarioRepository;
@@ -348,22 +350,17 @@ public class ComentarioServiceImpl implements ComentarioService {
    *
    * @param id       el id de la entidad {@link Evaluacion}.
    * @param pageable la información de la paginación.
+   * @param personaRef referencia de la persona
    * @return la lista de entidades {@link Comentario} paginadas.
    */
   @Override
   public Page<Comentario> findByEvaluacionIdEvaluador(Long id, Pageable pageable, String personaRef) {
-    log.debug("findByEvaluacionIdEvaluador(Long id, Pageable pageable) - start");
+    log.debug("findByEvaluacionIdEvaluador(Long id, Pageable pageable, String personaRef) - start");
     Assert.notNull(id, "El id de la evaluación no puede ser nulo para listar sus comentarios");
 
     return evaluacionRepository.findById(id).map(evaluacion -> {
-
-      Assert.isTrue(
-          (evaluacion.getEvaluador1().getPersonaRef()).equals(personaRef)
-              || evaluacion.getEvaluador2().getPersonaRef().equals(personaRef),
-          "El usuario no coincide con ninguno de los Evaluadores de la Evaluación.");
-
       Page<Comentario> returnValue = comentarioRepository.findByEvaluacionIdAndTipoComentarioId(id, 2L, pageable);
-      log.debug("findByEvaluacionIdEvaluador(Long id, Pageable pageable) - end");
+      log.debug("findByEvaluacionIdEvaluador(Long id, Pageable pageable, String personaRef) - end");
       return returnValue;
     }).orElseThrow(() -> new EvaluacionNotFoundException(id));
 
@@ -393,6 +390,19 @@ public class ComentarioServiceImpl implements ComentarioService {
   @Override
   public int countByEvaluacionId(Long id) {
     return comentarioRepository.countByEvaluacionId(id);
+  }
+
+  /**
+   * Obtiene el número total de {@link Comentario} para una determinada
+   * {@link Evaluacion} y un tipo de comentario {@link TipoComentario}.
+   * 
+   * @param id               Id de {@link Evaluacion}.
+   * @param idTipoComentario idTipoComentario de {@link TipoComentario}.
+   * @return número de {@link Comentario}
+   */
+  @Override
+  public int countByEvaluacionIdAndTipoComentarioId(Long id, Long idTipoComentario) {
+    return comentarioRepository.countByEvaluacionIdAndTipoComentarioId(id, idTipoComentario);
   }
 
   /**
@@ -480,36 +490,36 @@ public class ComentarioServiceImpl implements ComentarioService {
   private void validarTipoEvaluacionAndFormulario(Long idTipoEvaluacion, String comite, Long idFormulario) {
 
     switch (idTipoEvaluacion.intValue()) {
-      case 1: {
-        // Tipo Evaluación Retrospectiva
+    case 1: {
+      // Tipo Evaluación Retrospectiva
 
-        // El id formulario debe ser del tipo 6 - > Retrospectiva
-        Assert.isTrue(idFormulario.equals(6L), "El bloque seleccionado no es correcto para el tipo de evaluación.");
-        break;
-      }
-      case 2: {
-        // Tipo Evaluación Memoria
+      // El id formulario debe ser del tipo 6 - > Retrospectiva
+      Assert.isTrue(idFormulario.equals(6L), "El bloque seleccionado no es correcto para el tipo de evaluación.");
+      break;
+    }
+    case 2: {
+      // Tipo Evaluación Memoria
 
-        // El id formulario debe ser del tipo 1 - > M10 si el comité es CEI
-        Assert.isTrue(
-            (idFormulario.equals(1L) && comite.equals("CEI")) || (idFormulario.equals(2L) && comite.equals("CEEA"))
-                || (idFormulario.equals(3L) && comite.equals("CBE")),
-            "El bloque seleccionado no es correcto para el tipo de evaluación.");
+      // El id formulario debe ser del tipo 1 - > M10 si el comité es CEI
+      Assert.isTrue(
+          (idFormulario.equals(1L) && comite.equals("CEI")) || (idFormulario.equals(2L) && comite.equals("CEEA"))
+              || (idFormulario.equals(3L) && comite.equals("CBE")),
+          "El bloque seleccionado no es correcto para el tipo de evaluación.");
 
-        break;
-      }
-      case 3: {
-        // Tipo Evaluación Seguimiento Anual
+      break;
+    }
+    case 3: {
+      // Tipo Evaluación Seguimiento Anual
 
-        // El id formulario debe ser del tipo 4 - > Seguimiento Anual
-        Assert.isTrue(idFormulario.equals(4L), "El bloque seleccionado no es correcto para el tipo de evaluación.");
-        break;
-      }
-      case 4: {
-        // Tipo Evaluación Seguimiento Final
-        // El id formulario debe ser del tipo 5 - > Seguimiento Final
-        Assert.isTrue(idFormulario.equals(5L), "El bloque seleccionado no es correcto para el tipo de evaluación.");
-      }
+      // El id formulario debe ser del tipo 4 - > Seguimiento Anual
+      Assert.isTrue(idFormulario.equals(4L), "El bloque seleccionado no es correcto para el tipo de evaluación.");
+      break;
+    }
+    case 4: {
+      // Tipo Evaluación Seguimiento Final
+      // El id formulario debe ser del tipo 5 - > Seguimiento Final
+      Assert.isTrue(idFormulario.equals(5L), "El bloque seleccionado no es correcto para el tipo de evaluación.");
+    }
     }
   }
 

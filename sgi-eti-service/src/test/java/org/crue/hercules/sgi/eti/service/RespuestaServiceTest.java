@@ -12,6 +12,7 @@ import org.crue.hercules.sgi.eti.model.Comite;
 import org.crue.hercules.sgi.eti.model.Formulario;
 import org.crue.hercules.sgi.eti.model.Memoria;
 import org.crue.hercules.sgi.eti.model.Respuesta;
+import org.crue.hercules.sgi.eti.model.Comite.Genero;
 import org.crue.hercules.sgi.eti.repository.ApartadoRepository;
 import org.crue.hercules.sgi.eti.repository.BloqueRepository;
 import org.crue.hercules.sgi.eti.repository.RespuestaRepository;
@@ -216,7 +217,7 @@ public class RespuestaServiceTest extends BaseServiceTest {
 
     // then: Get a page with one hundred Respuestas
     Assertions.assertThat(page.getContent().size()).isEqualTo(100);
-    Assertions.assertThat(page.getNumber()).isEqualTo(0);
+    Assertions.assertThat(page.getNumber()).isZero();
     Assertions.assertThat(page.getSize()).isEqualTo(100);
     Assertions.assertThat(page.getTotalElements()).isEqualTo(100);
   }
@@ -350,6 +351,7 @@ public class RespuestaServiceTest extends BaseServiceTest {
     Comite comite = new Comite();
     comite.setId(id);
     comite.setFormulario(formulario);
+    comite.setGenero(Genero.M);
 
     memoria.setComite(comite);
 

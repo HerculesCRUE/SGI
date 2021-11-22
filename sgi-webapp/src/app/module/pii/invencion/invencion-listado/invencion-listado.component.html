@@ -250,18 +250,6 @@
               <mat-icon color="primary">border_color</mat-icon>
             </button>
           </ng-container>
-          <ng-container *sgiHasAuthority="'PII-INV-B'">
-            <button *ngIf="invencion.activo" mat-button matTooltip="{{'btn.delete' | translate}}"
-              (click)="deactivateInvencion(invencion)">
-              <mat-icon color="warn">highlight_off</mat-icon>
-            </button>
-          </ng-container>
-          <ng-container *sgiHasAuthority="'PII-INV-R'">
-            <button *ngIf="!invencion.activo" mat-button matTooltip="{{'btn.recover' | translate}}"
-              (click)="activateInvencion(invencion)">
-              <mat-icon color="accent">add_circle_outline</mat-icon>
-            </button>
-          </ng-container>
         </td>
       </ng-container>
 

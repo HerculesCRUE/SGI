@@ -1,17 +1,19 @@
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { IAreaTematica } from '@core/models/csp/area-tematica';
+import { Estado } from '@core/models/csp/estado-proyecto';
 import { ISolicitudProyecto, TipoPresupuesto } from '@core/models/csp/solicitud-proyecto';
 import { FormFragment } from '@core/services/action-service';
 import { ConvocatoriaService } from '@core/services/csp/convocatoria.service';
 import { SolicitudProyectoService } from '@core/services/csp/solicitud-proyecto.service';
 import { SolicitudService } from '@core/services/csp/solicitud.service';
 import { NGXLogger } from 'ngx-logger';
-import { BehaviorSubject, EMPTY, forkJoin, merge, Observable, of, Subject, Subscription } from 'rxjs';
+import { BehaviorSubject, EMPTY, Observable, of, Subject, Subscription } from 'rxjs';
 import { catchError, map, switchMap, take } from 'rxjs/operators';
+import { AreaTematicaModalData } from '../../modals/solicitud-area-tematica-modal/solicitud-area-tematica-modal.component';
 
 export interface AreaTematicaSolicitudData {
   rootTree: IAreaTematica;
-  areaTematicaConvocatoria: IAreaTematica;
+  areaTematicaConvocatoria: IAreaTematica[];
   areaTematicaSolicitud: IAreaTematica;
   readonly: boolean;
 }
@@ -21,15 +23,17 @@ export class SolicitudProyectoFichaGeneralFragment extends FormFragment<ISolicit
   areasTematicas$ = new BehaviorSubject<AreaTematicaSolicitudData[]>([]);
   readonly hasPopulatedSocios$ = new BehaviorSubject<boolean>(false);
   readonly hasPopulatedPeriodosSocios$ = new BehaviorSubject<boolean>(false);
-  hasConvocatoria = false;
   readonly coordinado$: Subject<boolean> = new BehaviorSubject<boolean>(false);
   readonly coordinadorExterno$: Subject<boolean> = new BehaviorSubject<boolean>(false);
   readonly tipoDesglosePresupuesto$: Subject<TipoPresupuesto> = new Subject<TipoPresupuesto>();
   readonly hasSolicitudSocio$ = new BehaviorSubject<boolean>(false);
+  public readonly userCanEdit: boolean;
 
   constructor(
     private readonly logger: NGXLogger,
     key: number,
+    private isInvestigador,
+    private estado,
     private solicitudService: SolicitudService,
     protected solicitudProyectoService: SolicitudProyectoService,
     private convocatoriaService: ConvocatoriaService,
@@ -41,6 +45,8 @@ export class SolicitudProyectoFichaGeneralFragment extends FormFragment<ISolicit
     super(key, true);
     this.setComplete(true);
     this.solicitudProyecto = {} as ISolicitudProyecto;
+
+    this.userCanEdit = !this.isInvestigador || (this.isInvestigador && (!!!key || this.estado.estado === Estado.BORRADOR));
 
     // Hack edit mode
     this.initialized$.pipe(
@@ -54,36 +60,53 @@ export class SolicitudProyectoFichaGeneralFragment extends FormFragment<ISolicit
 
   protected buildFormGroup(): FormGroup {
     const form = new FormGroup({
-      acronimo: new FormControl(null, [Validators.maxLength(50)]),
-      codExterno: new FormControl(undefined, [Validators.maxLength(250)]),
-      duracion: new FormControl(null, [Validators.min(1), Validators.max(9999)]),
-      colaborativo: new FormControl(null, []),
-      coordinado: new FormControl(undefined, [Validators.required]),
-      coordinadorExterno: new FormControl(undefined),
-      tipoDesglosePresupuesto: new FormControl(undefined, [Validators.required]),
-      objetivos: new FormControl(null, [Validators.maxLength(2000)]),
-      intereses: new FormControl(null, [Validators.maxLength(2000)]),
-      resultadosPrevistos: new FormControl(null, [Validators.maxLength(2000)]),
+      acronimo: new FormControl(
+        { value: null, disabled: (!this.userCanEdit) },
+        [Validators.maxLength(50)]),
+      codExterno: new FormControl(
+        { value: undefined, disabled: !this.userCanEdit },
+        [Validators.maxLength(250)]),
+      duracion: new FormControl(
+        { value: null, disabled: !this.userCanEdit },
+        [Validators.min(1), Validators.max(9999)]),
+
+      objetivos: new FormControl(
+        { value: null, disabled: !this.userCanEdit },
+        [Validators.maxLength(2000)]),
+      intereses: new FormControl(
+        { value: null, disabled: !this.userCanEdit },
+        [Validators.maxLength(2000)]),
+      resultadosPrevistos: new FormControl(
+        { value: null, disabled: !this.userCanEdit },
+        [Validators.maxLength(2000)]),
       peticionEvaluacionRef: new FormControl(null, [])
     });
+    if (this.isInvestigador) {
+      form.addControl('importeSolicitado', new FormControl({ value: null, disabled: !this.userCanEdit }));
+    } else {
+      form.addControl('colaborativo', new FormControl(null, []));
+      form.addControl('coordinado', new FormControl(undefined, [Validators.required]));
+      form.addControl('coordinadorExterno', new FormControl(undefined));
+      form.addControl('tipoDesglosePresupuesto', new FormControl(undefined, [Validators.required]));
+
+      this.subscriptions.push(
+        this.coordinadoValueChangeListener(form.controls.coordinado as FormControl, form.controls.coordinadorExterno as FormControl)
+      );
+
+      this.subscriptions.push(
+        this.coordinadoExternoValueChangeListener(form.controls.coordinadorExterno as FormControl)
+      );
+
+      this.subscriptions.push(
+        form.controls.tipoDesglosePresupuesto.valueChanges.subscribe((value) => {
+          this.tipoDesglosePresupuesto$.next(value);
+        })
+      );
+    }
 
     if (this.readonly) {
       form.disable();
     }
-
-    this.subscriptions.push(
-      this.coordinadoValueChangeListener(form.controls.coordinado as FormControl, form.controls.coordinadorExterno as FormControl)
-    );
-
-    this.subscriptions.push(
-      this.coordinadoExternoValueChangeListener(form.controls.coordinadorExterno as FormControl)
-    );
-
-    this.subscriptions.push(
-      form.controls.tipoDesglosePresupuesto.valueChanges.subscribe((value) => {
-        this.tipoDesglosePresupuesto$.next(value);
-      })
-    );
 
     return form;
   }
@@ -158,19 +181,36 @@ export class SolicitudProyectoFichaGeneralFragment extends FormFragment<ISolicit
     if (solicitudProyecto) {
       this.solicitudProyecto = solicitudProyecto;
     }
-    const controls = {
-      acronimo: solicitudProyecto?.acronimo,
-      codExterno: solicitudProyecto?.codExterno,
-      duracion: solicitudProyecto?.duracion,
-      colaborativo: solicitudProyecto?.colaborativo,
-      coordinado: solicitudProyecto?.coordinado,
-      coordinadorExterno: solicitudProyecto?.coordinadorExterno,
-      tipoDesglosePresupuesto: solicitudProyecto?.tipoPresupuesto,
-      objetivos: solicitudProyecto?.objetivos,
-      intereses: solicitudProyecto?.intereses,
-      resultadosPrevistos: solicitudProyecto?.resultadosPrevistos,
-      peticionEvaluacionRef: solicitudProyecto?.peticionEvaluacionRef
-    };
+    let controls;
+    if (this.isInvestigador) {
+      controls = {
+        acronimo: solicitudProyecto?.acronimo,
+        importeSolicitado: solicitudProyecto?.totalImporteSolicitado,
+        codExterno: solicitudProyecto?.codExterno,
+        duracion: solicitudProyecto?.duracion,
+        objetivos: solicitudProyecto?.objetivos,
+        intereses: solicitudProyecto?.intereses,
+        resultadosPrevistos: solicitudProyecto?.resultadosPrevistos,
+        peticionEvaluacionRef: solicitudProyecto?.peticionEvaluacionRef
+      };
+    } else {
+      controls = {
+        acronimo: solicitudProyecto?.acronimo,
+        codExterno: solicitudProyecto?.codExterno,
+        duracion: solicitudProyecto?.duracion,
+        colaborativo: solicitudProyecto?.colaborativo,
+        coordinado: solicitudProyecto?.coordinado,
+        coordinadorExterno: solicitudProyecto?.coordinadorExterno,
+        tipoDesglosePresupuesto: solicitudProyecto?.tipoPresupuesto,
+        objetivos: solicitudProyecto?.objetivos,
+        intereses: solicitudProyecto?.intereses,
+        resultadosPrevistos: solicitudProyecto?.resultadosPrevistos,
+        peticionEvaluacionRef: solicitudProyecto?.peticionEvaluacionRef
+      };
+    }
+    if (!this.userCanEdit) {
+      this.getFormGroup()?.disable();
+    }
 
     return controls;
   }
@@ -178,11 +218,8 @@ export class SolicitudProyectoFichaGeneralFragment extends FormFragment<ISolicit
   protected initializer(key: number): Observable<ISolicitudProyecto> {
 
     return this.solicitudService.findSolicitudProyecto(key).pipe(
-      switchMap((solicitudProyectoDatos) => {
-        return this.loadSolicitudProyecto(solicitudProyectoDatos);
-      }),
       switchMap(solicitudProyecto => {
-        if (solicitudProyecto?.id) {
+        if (solicitudProyecto?.id && !this.isInvestigador) {
           return this.solicitudProyectoService.hasSolicitudPresupuesto(solicitudProyecto.id).pipe(
             map(hasSolicitudPresupuesto => {
               this.disableTipoDesglosePresupuesto(hasSolicitudPresupuesto);
@@ -205,18 +242,51 @@ export class SolicitudProyectoFichaGeneralFragment extends FormFragment<ISolicit
         return of(solicitudProyecto);
       }),
       switchMap(solicitudProyecto => {
+        if (this.convocatoriaId) {
+          return this.convocatoriaService.findAreaTematicas(this.convocatoriaId).pipe(
+            map((results) => {
+              let nodes;
+              if (results.total > 0) {
+                nodes = results.items.map(convocatoriaAreaTematica => {
+                  const area: AreaTematicaSolicitudData = {
+                    rootTree: this.getFirstLevelAreaTematica(convocatoriaAreaTematica.areaTematica),
+                    areaTematicaConvocatoria: results.items.map(areaConvocatoria => areaConvocatoria.areaTematica),
+                    areaTematicaSolicitud: solicitudProyecto.areaTematica,
+                    readonly: this.readonly
+                  };
+                  return area;
+                });
+              } else if (solicitudProyecto.areaTematica) {
+                nodes = [{
+                  rootTree: this.getFirstLevelAreaTematica(solicitudProyecto.areaTematica),
+                  areaTematicaConvocatoria: null,
+                  areaTematicaSolicitud: solicitudProyecto.areaTematica,
+                  readonly: this.readonly
+                }];
+              }
+
+              this.areasTematicas$.next(nodes);
+              return results;
+            }),
+            switchMap(() => of(solicitudProyecto))
+          );
+        } else {
+          return of(solicitudProyecto);
+        }
+      }),
+      switchMap(solicitudProyecto => {
         this.hasPopulatedPeriodosSocios$.next(this.hasPopulatedPeriodosSocios);
         return of(solicitudProyecto);
       }),
       switchMap(solicitudProyecto => {
-        if (!solicitudProyecto?.id) {
-          return of(solicitudProyecto);
+        if (solicitudProyecto?.id && !this.isInvestigador) {
+          return this.solicitudProyectoService.hasSolicitudSocio(solicitudProyecto?.id).pipe(
+            map(hasSolicitudSocio => {
+              this.hasSolicitudSocio$.next(hasSolicitudSocio);
+              return solicitudProyecto;
+            }));
         }
-        return this.solicitudProyectoService.hasSolicitudSocio(solicitudProyecto?.id).pipe(
-          map(hasSolicitudSocio => {
-            this.hasSolicitudSocio$.next(hasSolicitudSocio);
-            return solicitudProyecto;
-          }));
+        return of(solicitudProyecto);
       }),
       catchError(error => {
         this.logger.error(error);
@@ -225,56 +295,65 @@ export class SolicitudProyectoFichaGeneralFragment extends FormFragment<ISolicit
     );
   }
 
-  private loadSolicitudProyecto(solicitudProyecto: ISolicitudProyecto): Observable<ISolicitudProyecto> {
-    if (solicitudProyecto?.id) {
-      return this.solicitudService.findById(solicitudProyecto.id).pipe(
-        switchMap(solicitud => {
-          if (solicitud?.convocatoriaId) {
-            this.hasConvocatoria = true;
-            return this.convocatoriaService.findAreaTematicas(solicitud.convocatoriaId).pipe(
-              map((results) => {
-                const nodes = results.items.map(convocatoriaAreaTematica => {
-                  const area: AreaTematicaSolicitudData = {
-                    rootTree: this.getFirstLevelAreaTematica(convocatoriaAreaTematica.areaTematica),
-                    areaTematicaConvocatoria: convocatoriaAreaTematica.areaTematica,
-                    areaTematicaSolicitud: solicitudProyecto.areaTematica,
-                    readonly: this.readonly
-                  };
-                  return area;
-                });
-                this.areasTematicas$.next(nodes);
-                return results;
-              }),
-              switchMap(() => of(solicitudProyecto))
-            );
-          }
-          return of(solicitudProyecto);
-        })
-      );
-    }
-    return of(solicitudProyecto);
-  }
-
   getFirstLevelAreaTematica(areaTematica: IAreaTematica): IAreaTematica {
-    if (areaTematica.padre) {
+    if (areaTematica?.padre) {
       return this.getFirstLevelAreaTematica(areaTematica.padre);
     }
     return areaTematica;
   }
 
+
+  deleteAreaTematica(): void {
+    this.solicitudProyecto.areaTematica = null;
+    if (this.areasTematicas$.value[0].areaTematicaConvocatoria) {
+      this.areasTematicas$.value[0].areaTematicaSolicitud = null;
+      this.areasTematicas$.next(this.areasTematicas$.value);
+    } else {
+      this.areasTematicas$.next([]);
+    }
+    this.setChanges(true);
+  }
+
+  updateAreaTematica(result: AreaTematicaModalData): void {
+    this.solicitudProyecto.areaTematica = result.areaTematicaSolicitud;
+
+    if (this.areasTematicas$.value?.length > 0) {
+      this.areasTematicas$.value[0].areaTematicaSolicitud = result.areaTematicaSolicitud;
+      this.areasTematicas$.next(this.areasTematicas$.value);
+    } else {
+      this.areasTematicas$.next(
+        [{
+          rootTree: result.padre,
+          areaTematicaSolicitud: result.areaTematicaSolicitud,
+          areaTematicaConvocatoria: result.areasTematicasConvocatoria,
+          readonly: this.readonly
+        } as AreaTematicaSolicitudData]
+      );
+    }
+
+    this.setChanges(true);
+  }
+
+
+
   getValue(): ISolicitudProyecto {
     const form = this.getFormGroup().controls;
     this.solicitudProyecto.acronimo = form.acronimo.value;
-    this.solicitudProyecto.codExterno = form.codExterno.value;
     this.solicitudProyecto.duracion = form.duracion.value;
-    this.solicitudProyecto.colaborativo = Boolean(form.colaborativo.value);
-    this.solicitudProyecto.coordinado = Boolean(form.coordinado.value);
-    this.solicitudProyecto.coordinadorExterno = Boolean(form.coordinadorExterno.value);
     this.solicitudProyecto.objetivos = form.objetivos.value;
     this.solicitudProyecto.intereses = form.intereses.value;
     this.solicitudProyecto.resultadosPrevistos = form.resultadosPrevistos.value;
-    this.solicitudProyecto.peticionEvaluacionRef = form.peticionEvaluacionRef.value;
-    this.solicitudProyecto.tipoPresupuesto = form.tipoDesglosePresupuesto.value;
+    this.solicitudProyecto.codExterno = form.codExterno.value;
+    if (this.isInvestigador) {
+      this.solicitudProyecto.totalImporteSolicitado = form.importeSolicitado.value;
+    } else {
+      this.solicitudProyecto.colaborativo = Boolean(form.colaborativo.value);
+      this.solicitudProyecto.coordinado = Boolean(form.coordinado.value);
+      this.solicitudProyecto.coordinadorExterno = Boolean(form.coordinadorExterno.value);
+      this.solicitudProyecto.peticionEvaluacionRef = form.peticionEvaluacionRef.value;
+      this.solicitudProyecto.tipoPresupuesto = form.tipoDesglosePresupuesto.value;
+
+    }
     return this.solicitudProyecto;
   }
 

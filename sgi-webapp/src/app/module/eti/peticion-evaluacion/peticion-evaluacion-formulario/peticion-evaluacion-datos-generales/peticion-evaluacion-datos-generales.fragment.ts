@@ -1,7 +1,9 @@
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { IChecklist } from '@core/models/eti/checklist';
 import { IPeticionEvaluacion, TipoValorSocial } from '@core/models/eti/peticion-evaluacion';
 import { IPersona } from '@core/models/sgp/persona';
 import { FormFragment } from '@core/services/action-service';
+import { ChecklistService } from '@core/services/eti/checklist/checklist.service';
 import { PeticionEvaluacionService } from '@core/services/eti/peticion-evaluacion.service';
 import { SgiAuthService } from '@sgi/framework/auth/public-api';
 import { BehaviorSubject, EMPTY, Observable, of } from 'rxjs';
@@ -10,6 +12,7 @@ import { catchError, map, switchMap } from 'rxjs/operators';
 export class PeticionEvaluacionDatosGeneralesFragment extends FormFragment<IPeticionEvaluacion> {
 
   private peticionEvaluacion: IPeticionEvaluacion;
+  private checklist: IChecklist;
   public readonly: boolean;
   public isTipoInvestigacionTutelada$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
 
@@ -21,6 +24,8 @@ export class PeticionEvaluacionDatosGeneralesFragment extends FormFragment<IPeti
     key: number,
     private service: PeticionEvaluacionService,
     sgiAuthService: SgiAuthService,
+    private checklistService: ChecklistService,
+    checklist: IChecklist,
     readonly: boolean,
   ) {
     super(key);
@@ -30,6 +35,7 @@ export class PeticionEvaluacionDatosGeneralesFragment extends FormFragment<IPeti
       activo: true
     } as IPeticionEvaluacion;
     this.readonly = readonly;
+    this.checklist = checklist;
   }
 
   protected buildFormGroup(): FormGroup {
@@ -143,13 +149,27 @@ export class PeticionEvaluacionDatosGeneralesFragment extends FormFragment<IPeti
 
   saveOrUpdate(): Observable<number | void> {
     const datosGenerales = this.getValue();
-    const obs = this.isEdit() ? this.service.update(datosGenerales.id, datosGenerales) : this.service.create(datosGenerales);
-    return obs.pipe(
-      map((value) => {
-        this.peticionEvaluacion = value;
-        return this.peticionEvaluacion.id;
-      })
-    );
+    if (this.checklist) {
+      return this.checklistService.create(this.checklist).pipe(
+        switchMap(checklist => {
+          datosGenerales.checklistId = checklist.id;
+          return this.service.create(datosGenerales).pipe(
+            map((value) => {
+              this.peticionEvaluacion = value;
+              return this.peticionEvaluacion.id;
+            })
+          );
+        })
+      );
+    } else {
+      const obs = this.isEdit() ? this.service.update(datosGenerales.id, datosGenerales) : this.service.create(datosGenerales);
+      return obs.pipe(
+        map((value) => {
+          this.peticionEvaluacion = value;
+          return this.peticionEvaluacion.id;
+        })
+      );
+    }
   }
 
   private addFinanciacionValidations(value: boolean) {

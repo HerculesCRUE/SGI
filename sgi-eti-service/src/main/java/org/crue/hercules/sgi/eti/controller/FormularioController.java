@@ -2,6 +2,7 @@ package org.crue.hercules.sgi.eti.controller;
 
 import org.crue.hercules.sgi.eti.model.Bloque;
 import org.crue.hercules.sgi.eti.model.Formulario;
+import org.crue.hercules.sgi.eti.model.Memoria;
 import org.crue.hercules.sgi.eti.service.BloqueService;
 import org.crue.hercules.sgi.eti.service.FormularioService;
 import org.crue.hercules.sgi.framework.web.bind.annotation.RequestPageable;
@@ -76,6 +77,20 @@ public class FormularioController {
     log.debug("Formulario one(Long id) - start");
     Formulario returnValue = formularioService.findById(id);
     log.debug("Formulario one(Long id) - end");
+    return returnValue;
+  }
+
+  /**
+   * Devuelve el {@link Formulario} a través del id de la memoria.
+   * 
+   * @param idMemoria Identificador de {@link Memoria}.
+   * @return {@link Formulario} correspondiente al id de la memoria.
+   */
+  @GetMapping("/{idMemoria}/memoria")
+  Formulario findByMemoriaId(@PathVariable Long idMemoria) {
+    log.debug("Formulario findByMemoriaId(Long idMemoria) - start");
+    Formulario returnValue = formularioService.findByMemoriaId(idMemoria);
+    log.debug("Formulario findByMemoriaId(Long idMemoria) - end");
     return returnValue;
   }
 

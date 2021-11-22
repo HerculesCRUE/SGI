@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
+import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { AbstractTablePaginationComponent } from '@core/component/abstract-table-pagination.component';
 import { HttpProblem } from '@core/errors/http-problem';
@@ -19,8 +19,6 @@ import { TipoProcedimientoModalComponent } from '../tipo-procedimiento-modal/tip
 const MSG_ERROR = marker('error.load');
 const MSG_CREATE = marker('btn.add.entity');
 const MSG_SAVE_SUCCESS = marker('msg.save.entity.success');
-const MSG_SAVE_ERROR = marker('error.save.entity');
-const MSG_UPDATE_ERROR = marker('error.update.entity');
 const MSG_UPDATE_SUCCESS = marker('msg.update.entity.success');
 const MSG_REACTIVE = marker('msg.reactivate.entity');
 const MSG_SUCCESS_REACTIVE = marker('msg.reactivate.entity.success');
@@ -44,9 +42,7 @@ export class TipoProcedimientoListadoComponent extends AbstractTablePaginationCo
 
   textoCrear: string;
   textoCrearSuccess: string;
-  textoCrearError: string;
   textoUpdateSuccess: string;
-  textoUpdateError: string;
   textoDesactivar: string;
   textoReactivar: string;
   textoErrorDesactivar: string;
@@ -102,35 +98,11 @@ export class TipoProcedimientoListadoComponent extends AbstractTablePaginationCo
     ).pipe(
       switchMap((value) => {
         return this.translate.get(
-          MSG_SAVE_ERROR,
-          { entity: value, ...MSG_PARAMS.GENDER.MALE }
-        );
-      })
-    ).subscribe((value) => this.textoCrearError = value);
-
-    this.translate.get(
-      TIPO_PROCEDIMIENTO_KEY,
-      MSG_PARAMS.CARDINALIRY.SINGULAR
-    ).pipe(
-      switchMap((value) => {
-        return this.translate.get(
           MSG_UPDATE_SUCCESS,
           { entity: value, ...MSG_PARAMS.GENDER.MALE }
         );
       })
     ).subscribe((value) => this.textoUpdateSuccess = value);
-
-    this.translate.get(
-      TIPO_PROCEDIMIENTO_KEY,
-      MSG_PARAMS.CARDINALIRY.SINGULAR
-    ).pipe(
-      switchMap((value) => {
-        return this.translate.get(
-          MSG_UPDATE_ERROR,
-          { entity: value, ...MSG_PARAMS.GENDER.MALE }
-        );
-      })
-    ).subscribe((value) => this.textoUpdateError = value);
 
     this.translate.get(
       TIPO_PROCEDIMIENTO_KEY,
@@ -277,28 +249,15 @@ export class TipoProcedimientoListadoComponent extends AbstractTablePaginationCo
    * @param tipoProcedimiento Tipo de Protección
    */
   openModal(tipoProcedimiento?: ITipoProcedimiento): void {
-    const config = {
-      panelClass: 'sgi-dialog-container',
+    const config: MatDialogConfig<ITipoProcedimiento> = {
       data: tipoProcedimiento
     };
     const dialogRef = this.matDialog.open(TipoProcedimientoModalComponent, config);
     dialogRef.afterClosed().subscribe(
       (result: ITipoProcedimiento) => {
         if (result) {
-          const subscription = tipoProcedimiento ? this.tipoProcedimientoService.update(tipoProcedimiento.id, result) :
-            this.tipoProcedimientoService.create(result);
-
-          subscription.subscribe(() => {
-            this.snackBarService.showSuccess(tipoProcedimiento ? this.textoUpdateSuccess : this.textoCrearSuccess);
-            this.loadTable();
-          }, (error) => {
-            this.logger.error(error);
-            if (error instanceof HttpProblem) {
-              this.snackBarService.showError(error);
-            } else {
-              this.snackBarService.showError(tipoProcedimiento ? this.textoUpdateError : this.textoCrearError);
-            }
-          });
+          this.snackBarService.showSuccess(tipoProcedimiento ? this.textoUpdateSuccess : this.textoCrearSuccess);
+          this.loadTable();
         }
       });
   }

@@ -2,13 +2,18 @@ import { FormControl, FormGroup, Validators } from "@angular/forms";
 import { IInvencion } from "@core/models/pii/invencion";
 import { IInvencionAreaConocimiento } from "@core/models/pii/invencion-area-conocimiento";
 import { IInvencionDocumento } from "@core/models/pii/invencion-documento";
+import { IInvencionInventor } from "@core/models/pii/invencion-inventor";
 import { IInvencionSectorAplicacion } from "@core/models/pii/invencion-sector-aplicacion";
+import { IPeriodoTitularidad } from "@core/models/pii/periodo-titularidad";
+import { IPeriodoTitularidadTitular } from "@core/models/pii/periodo-titularidad-titular";
 import { ISectorAplicacion } from "@core/models/pii/sector-aplicacion";
+import { IEmpresa } from "@core/models/sgemp/empresa";
 import { IAreaConocimiento } from "@core/models/sgo/area-conocimiento";
 import { FormFragment } from "@core/services/action-service";
 import { ProyectoService } from "@core/services/csp/proyecto.service";
 import { InvencionDocumentoService } from "@core/services/pii/invencion/invencion-documento/invencion-documento.service";
 import { InvencionService } from "@core/services/pii/invencion/invencion.service";
+import { PeriodoTitularidadService } from "@core/services/pii/invencion/periodo-titularidad/periodo-titularidad.service";
 import { AreaConocimientoService } from "@core/services/sgo/area-conocimiento.service";
 import { StatusWrapper } from "@core/utils/status-wrapper";
 import { DateTime } from "luxon";
@@ -46,6 +51,7 @@ export class InvencionDatosGeneralesFragment extends FormFragment<IInvencion> {
   private documentos$ = new BehaviorSubject<StatusWrapper<IInvencionDocumento>[]>([]);
   private invencion: IInvencion;
   private fragmentStatus: IInvencionDatosGeneralesFragmentStatus;
+  public inventores: IInvencionInventor[];
 
   constructor(
     private readonly logger: NGXLogger,
@@ -54,7 +60,8 @@ export class InvencionDatosGeneralesFragment extends FormFragment<IInvencion> {
     private readonly proyectoService: ProyectoService,
     private readonly areaConocimientoService: AreaConocimientoService,
     private readonly invencionDocumentoService: InvencionDocumentoService,
-    private readonly isEditPerm: boolean
+    private readonly isEditPerm: boolean,
+    private readonly periodoTitularidadService: PeriodoTitularidadService
   ) {
     super(key, true);
     this.invencion = {} as IInvencion;
@@ -98,6 +105,7 @@ export class InvencionDatosGeneralesFragment extends FormFragment<IInvencion> {
   }
 
   protected initializer(key: number): Observable<IInvencion> {
+
     return forkJoin({
       invencion: this.invencionService.findById(key),
       sectoresAplicacion: this.loadSectoresAplicacion(key),
@@ -257,6 +265,10 @@ export class InvencionDatosGeneralesFragment extends FormFragment<IInvencion> {
       );
     }
 
+    cascade = cascade.pipe(
+      mergeMap((createdInvencion: IInvencion) => this.persistPeriodoTitularidad(createdInvencion))
+    );
+
     return cascade;
   }
 
@@ -295,6 +307,76 @@ export class InvencionDatosGeneralesFragment extends FormFragment<IInvencion> {
         this.setChangesInvencionDatosGeneralesFragment();
       })
     );
+  }
+
+  private persistPeriodoTitularidad(invencion: IInvencion): Observable<IInvencion> {
+
+      return this.periodoTitularidadService.create(this.buildPeriodoTitularidadAtNow(invencion)).pipe(
+        switchMap(newPeriodoTitularidad => {
+          return this.createPeriodosTitularidadTitulares(newPeriodoTitularidad);
+        })
+      )
+
+  }
+
+  private buildPeriodoTitularidadAtNow(invencion: IInvencion): IPeriodoTitularidad {
+    return {
+      fechaInicio: DateTime.now(),
+      invencion: invencion,
+    } as IPeriodoTitularidad;
+  }
+
+  private createPeriodosTitularidadTitulares(periodoTitularidad: IPeriodoTitularidad): Observable<IInvencion> {
+
+    const titulares: IPeriodoTitularidadTitular[] = [];
+    for(let [key, value] of this.groupInventoresForEntities()) {
+      titulares.push(this.buildPeriodoTitularidadTitular(value, key, periodoTitularidad))
+    }
+    if(titulares.length === 0) {
+      return of(periodoTitularidad.invencion);
+    }
+    return this.persistsPeriodosTitularidadTitulares(titulares, periodoTitularidad);
+  }
+
+  private persistsPeriodosTitularidadTitulares(titulares: IPeriodoTitularidadTitular[], newPeriodoTitularidad: IPeriodoTitularidad): Observable<IInvencion> {
+    if (!titulares) {
+      return EMPTY;
+    }
+    return this.periodoTitularidadService.bulkSaveOrUpdatePeriodoTitularidadTitulares(newPeriodoTitularidad.id, titulares).pipe(
+      map(result => newPeriodoTitularidad.invencion),
+      catchError(error => {
+        this.logger.error(error);
+        return of(error);
+      })
+    );
+  }
+
+  private buildPeriodoTitularidadTitular(participacionPct: number, entidadRef: string, periodoTitularidad: IPeriodoTitularidad): IPeriodoTitularidadTitular {
+
+    return {
+      participacion: participacionPct,
+      titular: { id: entidadRef } as IEmpresa,
+      periodoTitularidad
+    } as IPeriodoTitularidadTitular;
+  }
+
+  private groupInventoresForEntities(): Map<string, number> {
+
+    const titularesMap = new Map<string, number>();
+
+    this.inventores.forEach(inventor => {
+      if (!inventor.inventor?.entidad?.id) {
+        return;
+      }
+      const currentPercent = titularesMap.get(inventor.inventor.entidad.id);
+      if (currentPercent) {
+        titularesMap.set(inventor.inventor.entidad.id, inventor.participacion + currentPercent);
+      } else {
+        titularesMap.set(inventor.inventor.entidad.id, inventor.participacion);
+      }
+    });
+
+    return titularesMap;
   }
 
   private updateInvencion(invencion: IInvencion): Observable<IInvencion> {
@@ -521,4 +603,5 @@ export class InvencionDatosGeneralesFragment extends FormFragment<IInvencion> {
   private hasInvencionEditingRequiredElements(): boolean {
     return this.sectoresAplicacion$.value.length > 0 && this.areasConocimiento$.value.length > 0;
   }
+
 }

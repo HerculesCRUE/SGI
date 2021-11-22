@@ -1,0 +1,66 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:pro="http://www.liquibase.org/xml/ns/pro" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-3.8.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+  <property name="schemaPrefix" value="" />
+
+  <changeSet context="!unit-test AND !integration-test" author="master" id="0000000000000-bean_method_tasks">
+    <insert tableName="bean_method_tasks">
+      <column name="id" valueSequenceNext="bean_method_tasks_seq" />
+      <column name="schedule_type" value="CRON" />
+      <column name="description" value="Desactivar tareas temporales pasadas" />
+      <column name="bean" value="beanMethodTaskService" />
+      <column name="method" value="disablePast" />
+    </insert>
+    <insert tableName="bean_method_tasks">
+      <column name="id" valueSequenceNext="bean_method_tasks_seq" />
+      <column name="schedule_type" value="CRON" />
+      <column name="description" value="Paso a archivado por no presentar de nuevo el informe" />
+      <column name="bean" value="sgiApiCallerTask" />
+      <column name="method" value="call" />
+    </insert>
+    <insert tableName="bean_method_tasks">
+      <column name="id" valueSequenceNext="bean_method_tasks_seq" />
+      <column name="schedule_type" value="CRON" />
+      <column name="description" value="Paso a archivado por inactividad" />
+      <column name="bean" value="sgiApiCallerTask" />
+      <column name="method" value="call" />
+    </insert>
+  </changeSet>
+
+  <changeSet context="!unit-test AND !integration-test" author="master" id="0000000000000-bean_method_task_params">
+    <insert tableName="bean_method_task_params">
+      <column name="bean_method_tasks_id" valueComputed="(select id from ${schemaPrefix}bean_method_tasks where description='Paso a archivado por no presentar de nuevo el informe')" />
+      <column name="param" value="ETI" />
+    </insert>
+    <insert tableName="bean_method_task_params">
+      <column name="bean_method_tasks_id" valueComputed="(select id from ${schemaPrefix}bean_method_tasks where description='Paso a archivado por no presentar de nuevo el informe')" />
+      <column name="param" value="/memorias/no-presentado/archivar" />
+    </insert>
+
+    <insert tableName="bean_method_task_params">
+      <column name="bean_method_tasks_id" valueComputed="(select id from ${schemaPrefix}bean_method_tasks where description='Paso a archivado por inactividad')" />
+      <column name="param" value="ETI" />
+    </insert>
+    <insert tableName="bean_method_task_params">
+      <column name="bean_method_tasks_id" valueComputed="(select id from ${schemaPrefix}bean_method_tasks where description='Paso a archivado por inactividad')" />
+      <column name="param" value="/memorias/inactivo/archivar" />
+    </insert>
+  </changeSet>
+
+  <changeSet context="!unit-test AND !integration-test" author="master" id="0000000000000-bean_method_cron_tasks">
+    <insert tableName="bean_method_cron_tasks">
+      <column name="id" valueComputed="(select id from ${schemaPrefix}bean_method_tasks where description='Desactivar tareas temporales pasadas')" />
+      <!-- Every day at 00:00:00 (second, minute, hour, day, month, weekday) -->
+      <column name="cron_expression" value="0 0 0 * * ?" />
+    </insert>
+    <insert tableName="bean_method_cron_tasks">
+      <column name="id" valueComputed="(select id from ${schemaPrefix}bean_method_tasks where description='Paso a archivado por no presentar de nuevo el informe')" />
+      <!-- Every day at 00:15:00 (second, minute, hour, day, month, weekday) -->
+      <column name="cron_expression" value="0 15 0 * * ?" />
+    </insert>
+    <insert tableName="bean_method_cron_tasks">
+      <column name="id" valueComputed="(select id from ${schemaPrefix}bean_method_tasks where description='Paso a archivado por inactividad')" />
+      <!-- Every day at 00:30:00 (second, minute, hour, day, month, weekday) -->
+      <column name="cron_expression" value="0 30 0 * * ?" />
+    </insert>
+  </changeSet>
+</databaseChangeLog>

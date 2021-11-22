@@ -5,6 +5,8 @@ import java.util.List;
 import org.crue.hercules.sgi.eti.dto.ConvocatoriaReunionDatosGenerales;
 import org.crue.hercules.sgi.eti.exceptions.ConvocatoriaReunionNotFoundException;
 import org.crue.hercules.sgi.eti.model.ConvocatoriaReunion;
+import org.crue.hercules.sgi.eti.model.Dictamen;
+import org.crue.hercules.sgi.eti.model.Evaluacion;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -118,4 +120,15 @@ public interface ConvocatoriaReunionService {
    * @return true si puede ser modificada / false si no puede ser modificada
    */
   Boolean modificable(Long id);
+
+  /**
+   * Retorna la fecha convocatoria y acta (codigo convocatoria) de la última
+   * evaluación de tipo memoria de la memoria original (y que no sea revisión
+   * mínima)
+   * 
+   * @param idEvaluacion Id de la {@link Evaluacion}
+   * @param idDictamen   Id del {@link Dictamen}
+   * @return ConvocatoriaReunion
+   */
+  ConvocatoriaReunion findConvocatoriaUltimaEvaluacionTipoMemoria(Long idEvaluacion, Long idDictamen);
 }

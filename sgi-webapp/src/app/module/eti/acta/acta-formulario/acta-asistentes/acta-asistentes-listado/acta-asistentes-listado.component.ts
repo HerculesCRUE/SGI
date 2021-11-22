@@ -8,7 +8,8 @@ import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-pro
 import { ConvocatoriaReunionService } from '@core/services/eti/convocatoria-reunion.service';
 import { StatusWrapper } from '@core/utils/status-wrapper';
 import { BehaviorSubject } from 'rxjs';
-import { ActaActionService, Rol } from '../../../acta.action.service';
+import { Rol } from '../../../acta-rol';
+import { ActaActionService } from '../../../acta.action.service';
 import { ActaAsistentesEditarModalComponent } from '../acta-asistentes-editar-modal/acta-asistentes-editar-modal.component';
 import { ActaAsistentesFragment } from './acta-asistentes-listado.fragment';
 

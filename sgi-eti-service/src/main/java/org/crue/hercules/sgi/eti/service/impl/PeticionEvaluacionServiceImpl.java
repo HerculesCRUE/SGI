@@ -12,10 +12,12 @@ import org.crue.hercules.sgi.eti.model.PeticionEvaluacion;
 import org.crue.hercules.sgi.eti.model.PeticionEvaluacion.TipoValorSocial;
 import org.crue.hercules.sgi.eti.repository.PeticionEvaluacionRepository;
 import org.crue.hercules.sgi.eti.repository.predicate.PeticionEvaluacionPredicateResolver;
+import org.crue.hercules.sgi.eti.repository.specification.MemoriaSpecifications;
 import org.crue.hercules.sgi.eti.repository.specification.PeticionEvaluacionSpecifications;
 import org.crue.hercules.sgi.eti.service.PeticionEvaluacionService;
 import org.crue.hercules.sgi.framework.rsql.SgiRSQLJPASupport;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
@@ -268,6 +270,29 @@ public class PeticionEvaluacionServiceImpl implements PeticionEvaluacionService 
         .findAllPeticionEvaluacionMemoria(specsMem, specsPet, pageable, personaRef);
     log.debug("findAllPeticionEvaluacionMemoria(String query, Pageable pageable,  String personaRef) - end");
     return returnValue;
+  }
+
+  /**
+   * Devuelve si la {@link PeticionEvaluacion} existe para la persona responsable
+   * de memorias o creador de la petición de evaluación
+   * 
+   * @param personaRef           usuario
+   * @param idPeticionEvaluacion identificador de la {@link PeticionEvaluacion}
+   * @return las entidades {@link PeticionEvaluacion}
+   */
+  @Override
+  public Boolean isPeticionWithPersonaRefCreadorPeticionEvaluacionOrResponsableMemoria(String personaRef,
+      Long idPeticionEvaluacion) {
+    log.debug(
+        "isPeticionWithPersonaRefCreadorPeticionEvaluacionOrResponsableMemoria(String personaRef, Long idPeticionEvaluacion) - start");
+    Specification<PeticionEvaluacion> specsPet = PeticionEvaluacionSpecifications.byId(idPeticionEvaluacion);
+    Specification<Memoria> specsMem = MemoriaSpecifications.byPeticionEvaluacion(idPeticionEvaluacion);
+
+    Page<PeticionEvaluacionWithIsEliminable> returnValue = peticionEvaluacionRepository
+        .findAllPeticionEvaluacionMemoria(specsMem, specsPet, PageRequest.of(0, 1), personaRef);
+    log.debug(
+        "isPeticionWithPersonaRefCreadorPeticionEvaluacionOrResponsableMemoria(String personaRef, Long idPeticionEvaluacion) - end");
+    return returnValue.hasContent();
   }
 
 }

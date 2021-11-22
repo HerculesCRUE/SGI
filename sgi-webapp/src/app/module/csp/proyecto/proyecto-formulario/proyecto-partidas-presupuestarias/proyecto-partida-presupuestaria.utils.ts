@@ -6,7 +6,7 @@ export function comparePartidaPresupuestaria(
   proyectoPartidaPresupuestaria: IPartidaPresupuestaria): boolean {
 
 
-  return proyectoPartidaPresupuestaria.descripcion !== convocatoriaPartidaPresupuestaria.descripcion
-    || proyectoPartidaPresupuestaria.codigo !== convocatoriaPartidaPresupuestaria.codigo
-    || proyectoPartidaPresupuestaria.tipoPartida !== convocatoriaPartidaPresupuestaria.tipoPartida;
+  return proyectoPartidaPresupuestaria.descripcion !== convocatoriaPartidaPresupuestaria?.descripcion
+    || proyectoPartidaPresupuestaria.codigo !== convocatoriaPartidaPresupuestaria?.codigo
+    || proyectoPartidaPresupuestaria.tipoPartida !== convocatoriaPartidaPresupuestaria?.tipoPartida;
 }

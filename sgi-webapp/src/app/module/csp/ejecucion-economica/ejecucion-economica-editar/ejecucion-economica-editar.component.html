@@ -63,6 +63,11 @@
       [title]="'menu.csp.ejecucion-economica.validacion-gastos' | translate"
       [fragment]="actionService.getFragment(actionService.FRAGMENT.VALIDACION_GASTOS)">
     </sgi-action-fragment-menu-item>
+    <sgi-action-fragment-menu-item *sgiHasAnyAuthorityForAnyUO="['CSP-EJEC-V', 'CSP-EJEC-E']"
+      [route]="[EJECUCION_ECONOMICA_ROUTE_NAMES.FACTURAS_EMITIDAS]"
+      [title]="'menu.csp.ejecucion-economica.facturas-emitidas' | translate"
+      [fragment]="actionService.getFragment(actionService.FRAGMENT.FACTURAS_EMITIDAS)">
+    </sgi-action-fragment-menu-item>
   </ng-container>
   <ng-container footer>
     <sgi-action-footer [texto]="textoEditar" [actionService]="actionService"></sgi-action-footer>

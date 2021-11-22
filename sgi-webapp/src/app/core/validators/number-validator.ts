@@ -1,4 +1,5 @@
 import { ValidatorFn, FormGroup, ValidationErrors, AbstractControl } from '@angular/forms';
+import { NumberUtils } from '@core/utils/number.utils';
 
 export class NumberValidator {
 
@@ -151,16 +152,16 @@ export class NumberValidator {
   static fieldsSumEqualsToValue(value: number, ...fieldsName: string[]): ValidatorFn {
     return (formGroup: FormGroup): ValidationErrors | null => {
       let hasAnyControlOtherErrors = false;
-      const totalValue = fieldsName.reduce(
+      const totalValue = NumberUtils.roundNumber(fieldsName.reduce(
         (accum, fieldName) => {
           const control = formGroup.controls[fieldName];
           const { fieldsSumNotEqualsToValue, ...otherErrors } = control.errors ?? {};
           hasAnyControlOtherErrors = hasAnyControlOtherErrors || Object.keys(otherErrors).length > 0;
-          const value = Number(control.value === null ? NaN : control.value);
-          return accum + value;
+          const controlValue = Number(control.value === null ? NaN : control.value);
+          return accum + controlValue;
         },
         0
-      );
+      ));
       if (hasAnyControlOtherErrors || isNaN(totalValue) || totalValue === value) {
         fieldsName.forEach(fieldName => {
           const control = formGroup.controls[fieldName];
@@ -177,6 +178,36 @@ export class NumberValidator {
           control.markAsTouched({ onlySelf: true });
         });
         return { fieldsSumNotEqualsToValue: { value } };
+      }
+    };
+  }
+
+  /**
+   * Comprueba que el segundo numero es anterior o igual al primero.
+   *
+   * @param firstNumberFieldName Nombre del campo contra el que se quiere hacer la validacion.
+   * @param secondNumberFieldName Nombre del campo que se quiere validar.
+   */
+  static isBeforeOrEqual(firstNumberFieldName: string, secondNumberFieldName: string): ValidatorFn {
+    return (formGroup: FormGroup): ValidationErrors | null => {
+
+      const numeroAnteriorControl = formGroup.controls[firstNumberFieldName];
+      const numeroPosteriorControl = formGroup.controls[secondNumberFieldName];
+
+      if (numeroPosteriorControl.errors && !numeroPosteriorControl.errors.after) {
+        return;
+      }
+
+      const numeroAnteriorNumber = numeroAnteriorControl.value;
+      const numeroPosteriorNumber = numeroPosteriorControl.value;
+      // if a 0 number (falsy value) is patched into the form !numeroAnteriorNumber is true
+      if (numeroPosteriorNumber && ((!numeroAnteriorNumber && numeroAnteriorNumber !== 0)
+        || numeroAnteriorNumber < numeroPosteriorNumber)) {
+        numeroPosteriorControl.setErrors({ beforeOrEqual: true });
+        numeroPosteriorControl.markAsTouched({ onlySelf: true });
+      } else if (numeroPosteriorControl.errors) {
+        delete numeroPosteriorControl.errors.beforeOrEqual;
+        numeroPosteriorControl.updateValueAndValidity({ onlySelf: true });
       }
     };
   }

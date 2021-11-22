@@ -105,7 +105,7 @@ public class FuenteFinanciacionController {
    * @return {@link FuenteFinanciacion} correspondiente al id.
    */
   @GetMapping("/{id}")
-  @PreAuthorize("hasAuthorityForAnyUO('AUTH')")
+  @PreAuthorize("hasAuthorityForAnyUO('CSP-SOL-E')")
   FuenteFinanciacionOutput findById(@PathVariable Long id) {
     log.debug("findById(Long id) - start");
     FuenteFinanciacion returnValue = service.findById(id);

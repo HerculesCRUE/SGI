@@ -71,8 +71,12 @@ public class SolicitudProteccionOutput implements Serializable {
   public static class ViaProteccion {
     Long id;
     String nombre;
+    String descripcion;
     TipoPropiedad tipoPropiedad;
     Boolean paisEspecifico;
+    Integer mesesPrioridad;
+    Boolean extensionInternacional;
+    Boolean variosPaises;
   }
 
   @Data

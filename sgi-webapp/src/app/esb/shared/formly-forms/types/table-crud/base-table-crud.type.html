@@ -9,7 +9,8 @@
       <ng-container *ngIf="currentField.name === HEADER_ACCIONES">
         <td mat-cell *matCellDef="let row; let i = dataIndex">
           <div class="action-button-container" *ngIf="!to.disabled">
-            <button mat-button matTooltip="{{'btn.edit' | translate}}" (click)="editItem(i)">
+            <button mat-button matTooltip="{{'btn.edit' | translate}}" (click)="editItem(i)"
+              *ngIf="getMode() !== TYPE_RENDER_COLUMN.CLASIFICATIONS">
               <mat-icon color="primary">border_color</mat-icon>
             </button>
             <button mat-button matTooltip="{{'btn.delete' | translate}}" (click)="removeItem(i)">

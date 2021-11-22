@@ -43,6 +43,8 @@ export interface IPeticionEvaluacionBackend {
   tieneFondosPropios: boolean;
   /** Referencia persona solicitante */
   personaRef: string;
+  /** Identificador checklist */
+  checklistId: number;
   /** Activo */
   activo: boolean;
 }

@@ -305,7 +305,7 @@ public class ConvocatoriaController {
    *         registrada
    */
   @RequestMapping(path = "/{id}/registrable", method = RequestMethod.HEAD)
-  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-CON-V', 'CSP-CON-INV-V', 'CSP-CON-E')")
+  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-CON-E')")
   ResponseEntity<Convocatoria> registrable(@PathVariable Long id) {
     log.debug("registrable(Long id) - start");
     boolean returnValue = service.registrable(id);

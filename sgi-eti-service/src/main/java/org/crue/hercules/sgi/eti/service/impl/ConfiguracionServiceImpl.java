@@ -60,12 +60,9 @@ public class ConfiguracionServiceImpl implements ConfiguracionService {
 
     return configuracionRepository.findById(configuracionActualizar.getId()).map(configuracion -> {
       configuracion
-          .setDiasArchivadaPendienteCorrecciones(configuracionActualizar.getDiasArchivadaPendienteCorrecciones());
+          .setMesesArchivadaPendienteCorrecciones(configuracionActualizar.getMesesArchivadaPendienteCorrecciones());
       configuracion.setDiasLimiteEvaluador(configuracionActualizar.getDiasLimiteEvaluador());
-      configuracion.setMesesArchivadaInactivo(configuracionActualizar.getMesesArchivadaInactivo());
-      configuracion.setMesesAvisoProyectoCEEA(configuracionActualizar.getMesesAvisoProyectoCEEA());
-      configuracion.setMesesAvisoProyectoCEI(configuracionActualizar.getMesesAvisoProyectoCEI());
-      configuracion.setMesesAvisoProyectoCBE(configuracionActualizar.getMesesAvisoProyectoCBE());
+      configuracion.setDiasArchivadaInactivo(configuracionActualizar.getDiasArchivadaInactivo());
 
       Configuracion returnValue = configuracionRepository.save(configuracion);
       log.debug("update(Configuracion configuracionActualizar) - end");

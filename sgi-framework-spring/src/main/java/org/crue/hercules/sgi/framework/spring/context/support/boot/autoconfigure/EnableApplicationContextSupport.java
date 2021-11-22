@@ -7,6 +7,11 @@ import java.lang.annotation.Target;
 
 import org.springframework.context.annotation.Import;
 
+/**
+ * Enables
+ * {@link org.crue.hercules.sgi.framework.spring.context.support.ApplicationContextSupport}
+ * auto configuration.
+ */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 @Import(ApplicationContextSupportAutoConfiguration.class)

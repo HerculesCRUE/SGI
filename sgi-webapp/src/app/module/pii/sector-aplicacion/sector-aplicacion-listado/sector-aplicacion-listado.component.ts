@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
+import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { AbstractTablePaginationComponent } from '@core/component/abstract-table-pagination.component';
 import { HttpProblem } from '@core/errors/http-problem';
@@ -17,8 +17,6 @@ import { SectorAplicacionModalComponent } from '../sector-aplicacion-modal/secto
 
 const MSG_ERROR = marker('error.load');
 const MSG_SAVE_SUCCESS = marker('msg.save.entity.success');
-const MSG_SAVE_ERROR = marker('error.save.entity');
-const MSG_UPDATE_ERROR = marker('error.update.entity');
 const MSG_UPDATE_SUCCESS = marker('msg.update.entity.success');
 const MSG_REACTIVE = marker('msg.reactivate.entity');
 const MSG_SUCCESS_REACTIVE = marker('msg.reactivate.entity.success');
@@ -40,9 +38,7 @@ export class SectorAplicacionListadoComponent extends AbstractTablePaginationCom
   msgParamEntity = {};
 
   textoCrearSuccess: string;
-  textoCrearError: string;
   textoUpdateSuccess: string;
-  textoUpdateError: string;
   textoDesactivar: string;
   textoReactivar: string;
   textoErrorDesactivar: string;
@@ -89,35 +85,11 @@ export class SectorAplicacionListadoComponent extends AbstractTablePaginationCom
     ).pipe(
       switchMap((value) => {
         return this.translate.get(
-          MSG_SAVE_ERROR,
-          { entity: value, ...MSG_PARAMS.GENDER.MALE }
-        );
-      })
-    ).subscribe((value) => this.textoCrearError = value);
-
-    this.translate.get(
-      SECTOR_APLICACION_KEY,
-      MSG_PARAMS.CARDINALIRY.SINGULAR
-    ).pipe(
-      switchMap((value) => {
-        return this.translate.get(
           MSG_UPDATE_SUCCESS,
           { entity: value, ...MSG_PARAMS.GENDER.MALE }
         );
       })
     ).subscribe((value) => this.textoUpdateSuccess = value);
-
-    this.translate.get(
-      SECTOR_APLICACION_KEY,
-      MSG_PARAMS.CARDINALIRY.SINGULAR
-    ).pipe(
-      switchMap((value) => {
-        return this.translate.get(
-          MSG_UPDATE_ERROR,
-          { entity: value, ...MSG_PARAMS.GENDER.MALE }
-        );
-      })
-    ).subscribe((value) => this.textoUpdateError = value);
 
     this.translate.get(
       SECTOR_APLICACION_KEY,
@@ -211,45 +183,28 @@ export class SectorAplicacionListadoComponent extends AbstractTablePaginationCom
   }
 
   /**
- * Abre un modal para añadir o actualizar un Sector de Aplicación
- *
- * @param sectorAplicacion Sector de Aplicación
- */
+   * Abre un modal para añadir o actualizar un Sector de Aplicación
+   *
+   * @param sectorAplicacion Sector de Aplicación
+   */
   openModal(sectorAplicacion?: ISectorAplicacion): void {
-    const config = {
-      panelClass: 'sgi-dialog-container',
+    const config: MatDialogConfig<ISectorAplicacion> = {
       data: sectorAplicacion
     };
     const dialogRef = this.matDialog.open(SectorAplicacionModalComponent, config);
     dialogRef.afterClosed().subscribe(
       (result: ISectorAplicacion) => {
         if (result) {
-          const subscription = sectorAplicacion ? this.sectorAplicacionService.update(sectorAplicacion.id, result) :
-            this.sectorAplicacionService.create(result);
-
-          subscription.subscribe(
-            () => {
-              this.snackBarService.showSuccess(sectorAplicacion ? this.textoUpdateSuccess : this.textoCrearSuccess);
-              this.loadTable();
-            },
-            (error) => {
-              this.logger.error(error);
-              if (error instanceof HttpProblem) {
-                this.snackBarService.showError(error);
-              }
-              else {
-                this.snackBarService.showError(sectorAplicacion ? this.textoUpdateError : this.textoCrearError);
-              }
-            }
-          );
+          this.snackBarService.showSuccess(sectorAplicacion ? this.textoUpdateSuccess : this.textoCrearSuccess);
+          this.loadTable();
         }
       });
   }
 
   /**
- * Desactivar un registro de Sector de Aplicación
- * @param sectorAplicacion  Sector de Aplicación.
- */
+   * Desactivar un registro de Sector de Aplicación
+   * @param sectorAplicacion  Sector de Aplicación.
+   */
   deactivateSectorAplicacion(sectorAplicacion: ISectorAplicacion): void {
     const subcription = this.dialogService.showConfirmation(this.textoDesactivar)
       .pipe(switchMap((accept) => {
@@ -277,9 +232,9 @@ export class SectorAplicacionListadoComponent extends AbstractTablePaginationCom
   }
 
   /**
- * Activar un registro de Sector de Aplicación
- * @param sectorAplicacion  Sector de Aplicación.
- */
+   * Activar un registro de Sector de Aplicación
+   * @param sectorAplicacion  Sector de Aplicación.
+   */
   activateSectorAplicacion(sectorAplicacion: ISectorAplicacion): void {
     const subcription = this.dialogService.showConfirmation(this.textoReactivar)
       .pipe(switchMap((accept) => {

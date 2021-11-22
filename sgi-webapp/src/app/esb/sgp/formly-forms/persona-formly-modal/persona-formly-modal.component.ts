@@ -10,7 +10,7 @@ import { FormlyUtils } from '@core/utils/formly-utils';
 import { TranslateService } from '@ngx-translate/core';
 import { NGXLogger } from 'ngx-logger';
 import { Observable, of } from 'rxjs';
-import { map, switchMap } from 'rxjs/operators';
+import { map, mergeMap, switchMap } from 'rxjs/operators';
 import { ACTION_MODAL_MODE, BaseFormlyModalComponent, IFormlyData } from 'src/app/esb/shared/formly-forms/core/base-formly-modal.component';
 
 const PERSONA_KEY = marker('sgp.persona');
@@ -184,9 +184,18 @@ export class PersonaFormlyModalComponent extends BaseFormlyModalComponent implem
 
       if (this.personaData.action === ACTION_MODAL_MODE.NEW) {
         this.parseFormlyToJSON();
-        this.subscriptions.push(this.personaService.createPersona(this.formlyData.model).subscribe(
-          () => {
-            this.matDialogRef.close();
+        this.subscriptions.push(this.personaService.createPersona(this.formlyData.model).pipe(
+          mergeMap(response =>
+            //TODO se busca a la persona según respuesta actual del servicio. Es posible que esta cambie
+            this.personaService.findById(response).pipe(
+              map(proyecto => {
+                return proyecto;
+              })
+            )
+          )
+        ).subscribe(
+          (respuestaPersona) => {
+            this.matDialogRef.close(respuestaPersona);
             this.snackBarService.showSuccess(this.textoCrearSuccess);
           },
           (error) => {

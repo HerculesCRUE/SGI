@@ -87,7 +87,7 @@ export class EvaluadorService extends SgiMutableRestService<number, IEvaluadorBa
   /**
    * Comprueba si el usuario es evaluador de alguna evaluación
    *
-  */
+   */
   hasAssignedEvaluaciones(): Observable<boolean> {
     const url = `${this.endpointUrl}/evaluaciones`;
     return this.http.head(url, { observe: 'response' }).pipe(
@@ -98,11 +98,12 @@ export class EvaluadorService extends SgiMutableRestService<number, IEvaluadorBa
   /**
    * Comprueba si el usuario es evaluador de alguna evaluación en seguimiento
    *
-  */
+   */
   hasAssignedEvaluacionesSeguimiento(): Observable<boolean> {
     const url = `${this.endpointUrl}/evaluaciones-seguimiento`;
     return this.http.head(url, { observe: 'response' }).pipe(
       map(response => response.status === 200)
     );
   }
+
 }

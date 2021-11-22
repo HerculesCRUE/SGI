@@ -36,7 +36,6 @@ export class ProyectoSocioDatosGeneralesComponent extends FormFragmentComponent<
   fxLayoutProperties: FxLayoutProperties;
   fxFlexProperties: FxFlexProperties;
   private subscriptions: Subscription[] = [];
-  private rolSocioFiltered: IRolSocio[] = [];
   rolSocios$: Observable<IRolSocio[]>;
 
   msgParamEntity = {};
@@ -138,32 +137,9 @@ export class ProyectoSocioDatosGeneralesComponent extends FormFragmentComponent<
   }
 
   private loadRolProyectos(): void {
-    const subscription = this.rolSocioService.findAll().pipe(
-      map(result => result.items)
-    ).subscribe(
-      res => {
-        this.rolSocioFiltered = res;
-        this.rolSocios$ = this.formGroup.get('rolSocio').valueChanges.pipe(
-          startWith(''),
-          map(value => this.filtroRolProyecto(value))
-        );
-      },
-      error => {
-        this.logger.error(error);
-        this.snackBarService.showError(MSG_ERROR_INIT);
-      }
-    );
-    this.subscriptions.push(subscription);
-  }
-
-  private filtroRolProyecto(value: string): IRolSocio[] {
-    const filterValue = value.toString().toLowerCase();
-    return this.rolSocioFiltered.filter(
-      rolSocio => rolSocio.nombre.toLowerCase().includes(filterValue));
-  }
-
-  getNombreRolSocio(rolProyecto?: IRolSocio): string {
-    return typeof rolProyecto === 'string' ? rolProyecto : rolProyecto?.nombre;
+    this.rolSocios$ = this.rolSocioService.findAll().pipe(
+      map((response) => response.items)
+    )
   }
 
   ngOnDestroy(): void {

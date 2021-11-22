@@ -7,6 +7,7 @@
 <mat-dialog-content>
   <form [formGroup]="formGroup">
     <div>
+      <h3 *ngIf="showDatosConvocatoriaPeriodoJustificacion">&nbsp;</h3>
       <!-- Número de periodo -->
       <div *ngIf="data.proyectoPeriodoJustificacion?.numPeriodo" [fxLayout.xs]="fxLayoutProperties.xs"
         [fxLayout]="fxLayoutProperties.layout" [fxLayoutGap]="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
@@ -243,8 +244,9 @@
       </div>
 
       <div class="separation-button" *ngIf="data.convocatoriaPeriodoJustificacion">
-        <button color="primary" aria-label="Center Align" mat-raised-button (click)="copyToProyecto()">
-          {{'label.csp.proyecto-concepto-gasto'| translate}}
+        <button color="primary" aria-label="Center Align" mat-raised-button (click)="copyToProyecto()"
+          [disabled]="disabledCopy">
+          {{'btn.csp.aplicar-proyecto'| translate}}
         </button>
       </div>
     </div>

@@ -44,6 +44,15 @@
     "secure": false,
     "logLevel": "debug"
   },
+  "/api/rep": {
+    "target": "http://sgi-rep-service:4287",
+    "pathRewrite": {
+      "^/api/rep": ""
+    },
+    "changeOrigin": true,
+    "secure": false,
+    "logLevel": "debug"
+  },
   "/api/sgp": {
     "target": "http://sgi-esb:8080",
     "changeOrigin": true,

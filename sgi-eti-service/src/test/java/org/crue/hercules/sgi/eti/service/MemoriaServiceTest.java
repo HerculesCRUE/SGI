@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.Optional;
 
 import org.assertj.core.api.Assertions;
-import org.crue.hercules.sgi.eti.config.RestApiProperties;
 import org.crue.hercules.sgi.eti.config.SgiConfigProperties;
 import org.crue.hercules.sgi.eti.dto.MemoriaPeticionEvaluacion;
 import org.crue.hercules.sgi.eti.exceptions.ComiteNotFoundException;
@@ -33,6 +32,7 @@ import org.crue.hercules.sgi.eti.model.TipoConvocatoriaReunion;
 import org.crue.hercules.sgi.eti.model.TipoEstadoMemoria;
 import org.crue.hercules.sgi.eti.model.TipoEvaluacion;
 import org.crue.hercules.sgi.eti.model.TipoMemoria;
+import org.crue.hercules.sgi.eti.model.Comite.Genero;
 import org.crue.hercules.sgi.eti.repository.ComentarioRepository;
 import org.crue.hercules.sgi.eti.repository.ComiteRepository;
 import org.crue.hercules.sgi.eti.repository.DocumentacionMemoriaRepository;
@@ -58,7 +58,6 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.web.client.RestTemplate;
 
 /**
  * MemoriaServiceTest
@@ -102,13 +101,16 @@ public class MemoriaServiceTest extends BaseServiceTest {
   private TareaRepository tareaRepository;
 
   @Mock
+  private InformeService informeService;
+
+  @Mock
+  private ReportService reportService;
+
+  @Mock
+  private SgdocService sgdocService;
+
+  @Mock
   private ConfiguracionService configuracionService;
-
-  @Mock
-  private RestTemplate restTemplate;
-
-  @Mock
-  private RestApiProperties restApiProperties;
 
   @Autowired
   private SgiConfigProperties sgiConfigProperties;
@@ -116,9 +118,9 @@ public class MemoriaServiceTest extends BaseServiceTest {
   @BeforeEach
   public void setUp() throws Exception {
     memoriaService = new MemoriaServiceImpl(sgiConfigProperties, memoriaRepository, estadoMemoriaRepository,
-        estadoRetrospectivaRepository, evaluacionRepository, comentarioRepository, informeFormularioService,
+        estadoRetrospectivaRepository, evaluacionRepository, comentarioRepository, informeService,
         peticionEvaluacionRepository, comiteRepository, documentacionMemoriaRepository, respuestaRepository,
-        tareaRepository, configuracionService, restApiProperties, restTemplate);
+        tareaRepository, configuracionService, reportService, sgdocService);
   }
 
   @Test
@@ -161,7 +163,7 @@ public class MemoriaServiceTest extends BaseServiceTest {
     Page<Memoria> page = memoriaService.findByComiteAndPeticionEvaluacion(1L, 1L, Pageable.unpaged());
     // then: Get a page with one hundred Memorias
     Assertions.assertThat(page.getContent().size()).isEqualTo(100);
-    Assertions.assertThat(page.getNumber()).isEqualTo(0);
+    Assertions.assertThat(page.getNumber()).isZero();
     Assertions.assertThat(page.getSize()).isEqualTo(100);
     Assertions.assertThat(page.getTotalElements()).isEqualTo(100);
 
@@ -648,7 +650,7 @@ public class MemoriaServiceTest extends BaseServiceTest {
 
     // then: Get a page with one hundred Memorias
     Assertions.assertThat(page.getContent().size()).isEqualTo(100);
-    Assertions.assertThat(page.getNumber()).isEqualTo(0);
+    Assertions.assertThat(page.getNumber()).isZero();
     Assertions.assertThat(page.getSize()).isEqualTo(100);
     Assertions.assertThat(page.getTotalElements()).isEqualTo(100);
   }
@@ -764,7 +766,7 @@ public class MemoriaServiceTest extends BaseServiceTest {
     // la fecha límite de la convocatoria de reunión y las que tengan una
     // retrospectiva en estado "En secretaría".
     Assertions.assertThat(page.getContent().size()).isEqualTo(100);
-    Assertions.assertThat(page.getNumber()).isEqualTo(0);
+    Assertions.assertThat(page.getNumber()).isZero();
     Assertions.assertThat(page.getSize()).isEqualTo(100);
     Assertions.assertThat(page.getTotalElements()).isEqualTo(100);
   }
@@ -793,7 +795,7 @@ public class MemoriaServiceTest extends BaseServiceTest {
     // fecha de envío es igual o menor a la fecha límite de la convocatoria de
     // reunión.
     Assertions.assertThat(page.getContent().size()).isEqualTo(100);
-    Assertions.assertThat(page.getNumber()).isEqualTo(0);
+    Assertions.assertThat(page.getNumber()).isZero();
     Assertions.assertThat(page.getSize()).isEqualTo(100);
     Assertions.assertThat(page.getTotalElements()).isEqualTo(100);
   }
@@ -864,7 +866,7 @@ public class MemoriaServiceTest extends BaseServiceTest {
     // evaluación
 
     Assertions.assertThat(page.getContent().size()).isEqualTo(100);
-    Assertions.assertThat(page.getNumber()).isEqualTo(0);
+    Assertions.assertThat(page.getNumber()).isZero();
     Assertions.assertThat(page.getSize()).isEqualTo(100);
     Assertions.assertThat(page.getTotalElements()).isEqualTo(100);
   }
@@ -1287,8 +1289,8 @@ public class MemoriaServiceTest extends BaseServiceTest {
    */
   private Comite generarMockComite(Long id, String comite, Boolean activo) {
     Formulario formulario = new Formulario(1L, "M10", "Descripcion");
-    return new Comite(id, comite, "nombreSecretario", "nombreInvestigacion", "nombreDecreto", "articulo", formulario,
-        activo);
+    return new Comite(id, comite, "nombreSecretario", "nombreInvestigacion", Genero.M, "nombreDecreto", "articulo",
+        formulario, activo);
 
   }
 
@@ -1394,8 +1396,8 @@ public class MemoriaServiceTest extends BaseServiceTest {
     peticionEvaluacion.setActivo(Boolean.TRUE);
 
     Formulario formulario = new Formulario(1L, "M10", "Descripcion");
-    Comite comite = new Comite(1L, "Comite1", "nombreSecretario", "nombreInvestigacion", "nombreDecreto", "articulo",
-        formulario, Boolean.TRUE);
+    Comite comite = new Comite(1L, "Comite1", "nombreSecretario", "nombreInvestigacion", Genero.M, "nombreDecreto",
+        "articulo", formulario, Boolean.TRUE);
 
     TipoMemoria tipoMemoria = new TipoMemoria();
     tipoMemoria.setId(1L);
@@ -1465,12 +1467,9 @@ public class MemoriaServiceTest extends BaseServiceTest {
     Configuracion configuracion = new Configuracion();
 
     configuracion.setId(1L);
-    configuracion.setDiasArchivadaPendienteCorrecciones(20);
+    configuracion.setMesesArchivadaPendienteCorrecciones(20);
     configuracion.setDiasLimiteEvaluador(3);
-    configuracion.setMesesArchivadaInactivo(2);
-    configuracion.setMesesAvisoProyectoCEEA(1);
-    configuracion.setMesesAvisoProyectoCEI(1);
-    configuracion.setMesesAvisoProyectoCBE(1);
+    configuracion.setDiasArchivadaInactivo(2);
 
     return configuracion;
   }

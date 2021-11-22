@@ -7,6 +7,8 @@ import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
+import org.crue.hercules.sgi.pii.model.TramoReparto.Tipo;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -20,11 +22,10 @@ import lombok.NoArgsConstructor;
 @Builder
 public class TramoRepartoInput implements Serializable {
   @NotNull
-  @Min(0)
+  @Min(1)
   private Integer desde;
 
-  @NotNull
-  @Min(0)
+  @Min(2)
   private Integer hasta;
 
   @NotNull
@@ -36,4 +37,7 @@ public class TramoRepartoInput implements Serializable {
   @Min(0)
   @Max(100)
   private BigDecimal porcentajeInventores;
+
+  @NotNull
+  private Tipo tipo;
 }

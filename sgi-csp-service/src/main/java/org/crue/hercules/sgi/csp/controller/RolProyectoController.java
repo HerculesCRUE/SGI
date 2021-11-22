@@ -84,7 +84,7 @@ public class RolProyectoController {
    *         filtradas.
    */
   @GetMapping()
-  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-SOL-E', 'CSP-SOL-V', 'CSP-PRO-C', 'CSP-PRO-E', 'CSP-PRO-V', 'CSP-PRO-B', 'CSP-PRO-R')")
+  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-SOL-E', 'CSP-SOL-V', 'CSP-PRO-C', 'CSP-PRO-E', 'CSP-PRO-V', 'CSP-PRO-B', 'CSP-PRO-R','CSP-SOL-INV-ER')")
   ResponseEntity<Page<RolProyecto>> findAll(@RequestParam(name = "q", required = false) String query,
       @RequestPageable(sort = "s") Pageable paging) {
     log.debug("findAll(String query,Pageable paging) - start");

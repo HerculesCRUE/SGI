@@ -16,10 +16,11 @@ import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-pro
 import { ConceptoGastoService } from '@core/services/csp/concepto-gasto.service';
 import { ConvocatoriaConceptoGastoService } from '@core/services/csp/convocatoria-concepto-gasto.service';
 import { ConvocatoriaService } from '@core/services/csp/convocatoria.service';
+import { CodigoEconomicoGastoService } from '@core/services/sge/codigo-economico-gasto.service';
 import { SnackBarService } from '@core/services/snack-bar.service';
 import { TranslateService } from '@ngx-translate/core';
 import { RSQLSgiRestFilter, SgiRestFilterOperator, SgiRestFindOptions } from '@sgi/framework/http';
-import { merge, Observable } from 'rxjs';
+import { merge, Observable, of } from 'rxjs';
 import { map, mergeMap, switchMap, tap } from 'rxjs/operators';
 
 export interface ConvocatoriaConceptoGastoCodigoEc extends IConvocatoriaConceptoGastoCodigoEc {
@@ -54,6 +55,8 @@ export class PartidaGastoModalComponent extends
   conceptosGasto$: Observable<IConceptoGasto[]>;
   private conceptosGastoCodigoEcPermitidos: ConvocatoriaConceptoGastoCodigoEc[] = [];
   private conceptosGastoCodigoEcNoPermitidos: ConvocatoriaConceptoGastoCodigoEc[] = [];
+  private conceptosGastoWithOutCodigoEcPermitidos: ConvocatoriaConceptoGastoCodigoEc[] = [];
+  private conceptosGastoWithOutCodigoEcNoPermitidos: ConvocatoriaConceptoGastoCodigoEc[] = [];
 
   dataSourceCodigosEconomicosPermitidos = new MatTableDataSource<ConvocatoriaConceptoGastoCodigoEc>();
   dataSourceCodigosEconomicosNoPermitidos = new MatTableDataSource<ConvocatoriaConceptoGastoCodigoEc>();
@@ -82,6 +85,7 @@ export class PartidaGastoModalComponent extends
     private conceptoGastoService: ConceptoGastoService,
     private convocatoriaService: ConvocatoriaService,
     private convocatoriaConceptoGastoService: ConvocatoriaConceptoGastoService,
+    private codigoEconomicoGastoService: CodigoEconomicoGastoService,
     private readonly translate: TranslateService
   ) {
     super(snackBarService, matDialogRef, data.partidaGasto);
@@ -127,6 +131,13 @@ export class PartidaGastoModalComponent extends
             ),
             this.getConvocatoriaConceptoGastoCodigoEcNoPermitidos(this.data.convocatoriaId, concovariaGastosMap).pipe(
               tap(result => this.conceptosGastoCodigoEcNoPermitidos = result)
+            ),
+            this.getConvocatoriaConceptosGastoPerimitidos(this.data.convocatoriaId).pipe(
+              tap(result => this.conceptosGastoWithOutCodigoEcPermitidos = result)
+            ),
+            this.getConvocatoriaConceptosGastoNoPerimitidos(this.data.convocatoriaId).pipe(
+              tap(result => this.conceptosGastoWithOutCodigoEcNoPermitidos = result)
+
             )
           )
           )
@@ -139,6 +150,16 @@ export class PartidaGastoModalComponent extends
             .filter(codigoEconomico => conceptoGasto.id === codigoEconomico.convocatoriaConceptoGasto?.conceptoGasto?.id);
           this.dataSourceCodigosEconomicosNoPermitidos.data = this.conceptosGastoCodigoEcNoPermitidos
             .filter(codigoEconomico => conceptoGasto.id === codigoEconomico.convocatoriaConceptoGasto?.conceptoGasto?.id);
+
+          if (this.dataSourceCodigosEconomicosPermitidos.data.length === 0) {
+            this.dataSourceCodigosEconomicosPermitidos.data = this.conceptosGastoWithOutCodigoEcPermitidos
+              .filter(conceptoPermitido => conceptoGasto.id === conceptoPermitido.convocatoriaConceptoGasto.conceptoGasto.id);
+          }
+
+          if (this.dataSourceCodigosEconomicosNoPermitidos.data.length === 0) {
+            this.dataSourceCodigosEconomicosNoPermitidos.data = this.conceptosGastoWithOutCodigoEcNoPermitidos
+              .filter(conceptoNoPermitido => conceptoGasto.id === conceptoNoPermitido.convocatoriaConceptoGasto.conceptoGasto.id);
+          }
 
           this.showCodigosEconomicosInfo = this.dataSourceCodigosEconomicosPermitidos.data.length > 0
             || this.dataSourceCodigosEconomicosNoPermitidos.data.length > 0;
@@ -287,6 +308,68 @@ export class PartidaGastoModalComponent extends
           };
           return data;
         });
+      }),
+      switchMap(conceptosGastoPermitidos => {
+        const requestsCodigoEconomico: Observable<ConvocatoriaConceptoGastoCodigoEc>[] = [];
+        conceptosGastoPermitidos.filter(convocatoriaConceptoGastoCodigoEc => !!convocatoriaConceptoGastoCodigoEc.codigoEconomico?.id)
+          .forEach(convocatoriaConceptoGastoCodigoEc => {
+            requestsCodigoEconomico.push(
+              this.codigoEconomicoGastoService.findById(convocatoriaConceptoGastoCodigoEc.codigoEconomico.id)
+                .pipe(
+                  map(codigoEconomico => {
+                    convocatoriaConceptoGastoCodigoEc.codigoEconomico = codigoEconomico;
+                    return convocatoriaConceptoGastoCodigoEc;
+                  })
+                )
+            );
+          });
+        return of(conceptosGastoPermitidos).pipe(
+          tap(() => merge(...requestsCodigoEconomico).subscribe())
+        );
+      }),
+    );
+  }
+
+  /**
+   * Carga todos los ConceptoGasto permitidos de la convocatoria
+   *
+   * @param convocatoriaId Id de la convocatoria
+   */
+  private getConvocatoriaConceptosGastoPerimitidos(
+    convocatoriaId: number,
+  ): Observable<ConvocatoriaConceptoGastoCodigoEc[]> {
+    return this.convocatoriaService.findAllConvocatoriaConceptoGastosPermitidos(convocatoriaId).pipe(
+      map(conceptosGastoPermitidos => {
+        return conceptosGastoPermitidos.items.map(convocatoriaConceptoGasto => {
+          const data: ConvocatoriaConceptoGastoCodigoEc = {
+            codigoEconomico: null,
+            convocatoriaConceptoGastoId: convocatoriaConceptoGasto.id,
+            convocatoriaConceptoGasto
+          } as ConvocatoriaConceptoGastoCodigoEc;
+          return data;
+        });
+      })
+    );
+  }
+
+  /**
+   * Carga todos los ConceptoGasto No permitidos de la convocatoria
+   *
+   * @param convocatoriaId Id de la convocatoria
+   */
+  private getConvocatoriaConceptosGastoNoPerimitidos(
+    convocatoriaId: number
+  ): Observable<ConvocatoriaConceptoGastoCodigoEc[]> {
+    return this.convocatoriaService.findAllConvocatoriaConceptoGastosNoPermitidos(convocatoriaId).pipe(
+      map(conceptosGastoNoPermitidos => {
+        return conceptosGastoNoPermitidos.items.map(convocatoriaConceptoGasto => {
+          const data: ConvocatoriaConceptoGastoCodigoEc = {
+            codigoEconomico: null,
+            convocatoriaConceptoGastoId: convocatoriaConceptoGasto.id,
+            convocatoriaConceptoGasto
+          } as ConvocatoriaConceptoGastoCodigoEc;
+          return data;
+        });
       })
     );
   }
@@ -314,7 +397,25 @@ export class PartidaGastoModalComponent extends
           };
           return data;
         });
-      })
+      }),
+      switchMap(conceptosGastoNoPermitidos => {
+        const requestsCodigoEconomico: Observable<ConvocatoriaConceptoGastoCodigoEc>[] = [];
+        conceptosGastoNoPermitidos.filter(convocatoriaConceptoGastoCodigoEc => !!convocatoriaConceptoGastoCodigoEc.codigoEconomico?.id)
+          .forEach(convocatoriaConceptoGastoCodigoEc => {
+            requestsCodigoEconomico.push(
+              this.codigoEconomicoGastoService.findById(convocatoriaConceptoGastoCodigoEc.codigoEconomico.id)
+                .pipe(
+                  map(codigoEconomico => {
+                    convocatoriaConceptoGastoCodigoEc.codigoEconomico = codigoEconomico;
+                    return convocatoriaConceptoGastoCodigoEc;
+                  })
+                )
+            );
+          });
+        return of(conceptosGastoNoPermitidos).pipe(
+          tap(() => merge(...requestsCodigoEconomico).subscribe())
+        );
+      }),
     );
   }
 

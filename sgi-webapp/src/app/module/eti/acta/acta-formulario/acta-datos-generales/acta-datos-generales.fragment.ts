@@ -5,7 +5,7 @@ import { ActaService } from '@core/services/eti/acta.service';
 import { TimeValidator } from '@core/validators/time-validator';
 import { EMPTY, merge, Observable, of } from 'rxjs';
 import { catchError, map, switchMap } from 'rxjs/operators';
-import { Rol } from '../../acta.action.service';
+import { Rol } from '../../acta-rol';
 
 export class ActaDatosGeneralesFragment extends FormFragment<IActa> {
 

@@ -6,7 +6,7 @@ export const INVENCION_ROUTE_NAMES = {
   INFORME_PATENTABILIDAD: 'informe-patentabilidad',
   SOLICITUDES_PROTECCION: 'solicitudes-proteccion',
   GASTOS: 'gastos',
-  CONTRATOS_ASCIADOS: 'contratos-asociados',
+  CONTRATOS: 'contratos',
   INGRESOS: 'ingresos',
   REPARTOS: 'repartos'
 };

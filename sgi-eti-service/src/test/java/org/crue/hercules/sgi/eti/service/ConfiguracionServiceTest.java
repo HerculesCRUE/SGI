@@ -37,15 +37,6 @@ public class ConfiguracionServiceTest extends BaseServiceTest {
     Assertions.assertThat(configuracion.getDiasLimiteEvaluador()).isEqualTo(3);
   }
 
-  // @Test
-  // public void findConfiguracion_NotFound_ThrowsConfiguracionNotFoundException()
-  // throws Exception {
-  // BDDMockito.given(configuracionRepository.findFirstByOrderByIdAsc()).willReturn(Optional.empty());
-
-  // Assertions.assertThatThrownBy(() -> configuracionService.findConfiguracion())
-  // .isInstanceOf(ConfiguracionNotFoundException.class);
-  // }
-
   @Test
   public void update_ReturnsConfiguracion() {
     // given: Una nueva configuracion con el servicio actualizado
@@ -75,19 +66,6 @@ public class ConfiguracionServiceTest extends BaseServiceTest {
 
   }
 
-  // @Test
-  // public void update_WithoutId_ThrowsIllegalArgumentException() {
-
-  // // given: Una Configuracion que venga sin id
-  // Configuracion configuracion = generarMockConfiguracion();
-
-  // Assertions.assertThatThrownBy(
-  // // when: update Configuracion
-  // () -> configuracionService.update(configuracion))
-  // // then: Lanza una excepción, el id es necesario
-  // .isInstanceOf(IllegalArgumentException.class);
-  // }
-
   /**
    * Función que devuelve un objeto Configuracion
    * 
@@ -99,12 +77,9 @@ public class ConfiguracionServiceTest extends BaseServiceTest {
     Configuracion configuracion = new Configuracion();
 
     configuracion.setId(1L);
-    configuracion.setDiasArchivadaPendienteCorrecciones(20);
+    configuracion.setMesesArchivadaPendienteCorrecciones(20);
     configuracion.setDiasLimiteEvaluador(3);
-    configuracion.setMesesArchivadaInactivo(2);
-    configuracion.setMesesAvisoProyectoCEEA(1);
-    configuracion.setMesesAvisoProyectoCEI(1);
-    configuracion.setMesesAvisoProyectoCBE(1);
+    configuracion.setDiasArchivadaInactivo(2);
 
     return configuracion;
   }
@@ -120,12 +95,9 @@ public class ConfiguracionServiceTest extends BaseServiceTest {
     Configuracion configuracion = new Configuracion();
 
     configuracion.setId(1L);
-    configuracion.setDiasArchivadaPendienteCorrecciones(20);
+    configuracion.setMesesArchivadaPendienteCorrecciones(20);
     configuracion.setDiasLimiteEvaluador(10);
-    configuracion.setMesesArchivadaInactivo(2);
-    configuracion.setMesesAvisoProyectoCEEA(1);
-    configuracion.setMesesAvisoProyectoCEI(1);
-    configuracion.setMesesAvisoProyectoCBE(1);
+    configuracion.setDiasArchivadaInactivo(2);
 
     return configuracion;
   }

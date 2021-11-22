@@ -12,6 +12,12 @@ import org.springframework.web.client.RestTemplate;
 public class RestTemplateProblemCustomizer implements RestTemplateCustomizer {
   private ObjectMapper mapper;
 
+  /**
+   * Creates new {@link RestTemplateProblemCustomizer}
+   * 
+   * @param mapper the {@link ObjectMapper} to use to create the
+   *               {@link RestTemplateProblemInterceptor}
+   */
   public RestTemplateProblemCustomizer(ObjectMapper mapper) {
     this.mapper = mapper;
   }

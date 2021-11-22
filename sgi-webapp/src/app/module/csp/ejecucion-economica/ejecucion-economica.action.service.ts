@@ -7,6 +7,7 @@ import { GastoProyectoService } from '@core/services/csp/gasto-proyecto/gasto-pr
 import { ProyectoAgrupacionGastoService } from '@core/services/csp/proyecto-agrupacion-gasto/proyecto-agrupacion-gasto.service';
 import { ProyectoAnualidadService } from '@core/services/csp/proyecto-anualidad/proyecto-anualidad.service';
 import { ProyectoService } from '@core/services/csp/proyecto.service';
+import { CalendarioFacturacionService } from '@core/services/sge/calendario-facturacion.service';
 import { EjecucionEconomicaService } from '@core/services/sge/ejecucion-economica.service';
 import { GastoService } from '@core/services/sge/gasto/gasto.service';
 import { PersonaService } from '@core/services/sgp/persona.service';
@@ -17,6 +18,7 @@ import { DetalleOperacionesModificacionesFragment } from './ejecucion-economica-
 import { EjecucionPresupuestariaEstadoActualFragment } from './ejecucion-economica-formulario/ejecucion-presupuestaria-estado-actual/ejecucion-presupuestaria-estado-actual.fragment';
 import { EjecucionPresupuestariaGastosFragment } from './ejecucion-economica-formulario/ejecucion-presupuestaria-gastos/ejecucion-presupuestaria-gastos.fragment';
 import { EjecucionPresupuestariaIngresosFragment } from './ejecucion-economica-formulario/ejecucion-presupuestaria-ingresos/ejecucion-presupuestaria-ingresos.fragment';
+import { FacturasEmitidasFragment } from './ejecucion-economica-formulario/facturas-emitidas/facturas-emitidas.fragment';
 import { FacturasGastosFragment } from './ejecucion-economica-formulario/facturas-gastos/facturas-gastos.fragment';
 import { PersonalContratadoFragment } from './ejecucion-economica-formulario/personal-contratado/personal-contratado.fragment';
 import { ProyectosFragment } from './ejecucion-economica-formulario/proyectos/proyectos.fragment';
@@ -44,7 +46,8 @@ export class EjecucionEconomicaActionService extends ActionService {
     FACTURAS_GASTOS: 'facturas-gastos',
     VIAJES_DIETAS: 'viajes-dietas',
     PERSONAL_CONTRATADO: 'personal-contratado',
-    VALIDACION_GASTOS: 'validacion-gastos'
+    VALIDACION_GASTOS: 'validacion-gastos',
+    FACTURAS_EMITIDAS: 'facturas-emitidas'
   };
 
   private proyectos: ProyectosFragment;
@@ -58,6 +61,7 @@ export class EjecucionEconomicaActionService extends ActionService {
   private viajesDietas: ViajesDietasFragment;
   private personalContratado: PersonalContratadoFragment;
   private validacionGastos: ValidacionGastosFragment;
+  private facturasEmitidas: FacturasEmitidasFragment;
 
   private readonly data: IEjecucionEconomicaData;
 
@@ -69,7 +73,8 @@ export class EjecucionEconomicaActionService extends ActionService {
     ejecucionEconomicaService: EjecucionEconomicaService,
     proyectoAgrupacionGastoService: ProyectoAgrupacionGastoService,
     gastoProyectoService: GastoProyectoService,
-    gastoService: GastoService
+    gastoService: GastoService,
+    calendarioFacturacionService: CalendarioFacturacionService
   ) {
     super();
 
@@ -120,6 +125,10 @@ export class EjecucionEconomicaActionService extends ActionService {
     this.validacionGastos = new ValidacionGastosFragment(
       id, this.data.proyectoSge, gastoService, proyectoService, gastoProyectoService, proyectoAgrupacionGastoService);
 
+    this.facturasEmitidas = new FacturasEmitidasFragment(
+      id, this.data.proyectoSge, this.data.proyectosRelacionados,
+      proyectoService, personaService, proyectoAnualidadService, calendarioFacturacionService);
+
     this.addFragment(this.FRAGMENT.PROYECTOS, this.proyectos);
     this.addFragment(this.FRAGMENT.EJECUCION_PRESUPUESTARIA_ESTADO_ACTUAL, this.ejecucionPresupuestariaEstadoActual);
     this.addFragment(this.FRAGMENT.EJECUCION_PRESUPUESTARIA_GASTOS, this.ejecucionPresupuestariaGastos);
@@ -131,6 +140,7 @@ export class EjecucionEconomicaActionService extends ActionService {
     this.addFragment(this.FRAGMENT.VIAJES_DIETAS, this.viajesDietas);
     this.addFragment(this.FRAGMENT.PERSONAL_CONTRATADO, this.personalContratado);
     this.addFragment(this.FRAGMENT.VALIDACION_GASTOS, this.validacionGastos);
+    this.addFragment(this.FRAGMENT.FACTURAS_EMITIDAS, this.facturasEmitidas)
   }
 
 }

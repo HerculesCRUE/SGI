@@ -45,6 +45,8 @@ export interface IPeticionEvaluacion {
   tieneFondosPropios: boolean;
   /** Referencia persona */
   solicitante: IPersona;
+  /** Identificador checklist */
+  checklistId: number;
   /** Activo */
   activo: boolean;
 }

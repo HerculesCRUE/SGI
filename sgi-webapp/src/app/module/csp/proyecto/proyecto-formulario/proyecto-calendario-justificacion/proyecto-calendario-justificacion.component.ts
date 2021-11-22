@@ -137,11 +137,11 @@ export class ProyectoCalendarioJustificacionComponent extends FragmentComponent 
     this.dataSource.sortData(this.dataSource.filteredData, this.dataSource.sort);
     const row = (this.paginator.pageSize * this.paginator.pageIndex) + rowIndex;
 
-    const proyectoPeriodoJusficacionTabla = this.dataSource.data
-      .filter(periodoJusficacion => periodoJusficacion.proyectoPeriodoJustificacion)
-      .map(periodoJusficacion => periodoJusficacion.proyectoPeriodoJustificacion.value);
+    let proyectoPeriodoJusficacionTabla = this.dataSource.data
+      .map(periodoJusficacion => periodoJusficacion.proyectoPeriodoJustificacion?.value);
 
     proyectoPeriodoJusficacionTabla.splice(row, 1);
+    proyectoPeriodoJusficacionTabla = proyectoPeriodoJusficacionTabla.filter(periodoJusficacion => !!periodoJusficacion);
 
     let proyectoPeriodoJustificacion: IProyectoPeriodoJustificacion;
     if (periodoJustificacionActualizar?.proyectoPeriodoJustificacion) {

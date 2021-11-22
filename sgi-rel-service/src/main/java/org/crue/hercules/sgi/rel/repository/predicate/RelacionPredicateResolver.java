@@ -8,6 +8,7 @@ import javax.persistence.criteria.Root;
 import org.crue.hercules.sgi.framework.rsql.SgiRSQLPredicateResolver;
 import org.crue.hercules.sgi.rel.model.Relacion;
 import org.crue.hercules.sgi.rel.model.Relacion_;
+import org.crue.hercules.sgi.rel.model.Relacion.TipoEntidad;
 
 import cz.jirutka.rsql.parser.ast.ComparisonNode;
 import cz.jirutka.rsql.parser.ast.ComparisonOperator;
@@ -17,7 +18,9 @@ public class RelacionPredicateResolver implements SgiRSQLPredicateResolver<Relac
 
   private enum Property {
     /* Proyecto ref */
-    PROYECTO_REF("proyectoRef");
+    PROYECTO_REF("proyectoRef"),
+    /* Invencion ref */
+    INVENCION_REF("invencionRef");
 
     private String code;
 
@@ -48,8 +51,8 @@ public class RelacionPredicateResolver implements SgiRSQLPredicateResolver<Relac
     return property != null;
   }
 
-  private Predicate buildByProyectoRef(ComparisonNode node, Root<Relacion> root, CriteriaQuery<?> query,
-      CriteriaBuilder cb) {
+  private Predicate buildByEntidadRef(ComparisonNode node, Root<Relacion> root, CriteriaQuery<?> query,
+      CriteriaBuilder cb, TipoEntidad tipoEntidad) {
     ComparisonOperator operator = node.getOperator();
     if (!operator.equals(RSQLOperators.EQUAL)) {
       // Unsupported Operator
@@ -60,23 +63,25 @@ public class RelacionPredicateResolver implements SgiRSQLPredicateResolver<Relac
       throw new IllegalArgumentException("Bad number of arguments for " + node.getSelector());
     }
 
-    String proyectoRef = node.getArguments().get(0);
+    String entidadRef = node.getArguments().get(0);
 
     return cb.or(
-        cb.and(cb.equal(root.get(Relacion_.TIPO_ENTIDAD_DESTINO), Relacion.TipoEntidad.PROYECTO),
-            cb.equal(root.get(Relacion_.ENTIDAD_DESTINO_REF), proyectoRef)),
-        cb.and(cb.equal(root.get(Relacion_.TIPO_ENTIDAD_ORIGEN), Relacion.TipoEntidad.PROYECTO),
-            cb.equal(root.get(Relacion_.ENTIDAD_ORIGEN_REF), proyectoRef)));
+        cb.and(cb.equal(root.get(Relacion_.TIPO_ENTIDAD_DESTINO), tipoEntidad),
+            cb.equal(root.get(Relacion_.ENTIDAD_DESTINO_REF), entidadRef)),
+        cb.and(cb.equal(root.get(Relacion_.TIPO_ENTIDAD_ORIGEN), tipoEntidad),
+            cb.equal(root.get(Relacion_.ENTIDAD_ORIGEN_REF), entidadRef)));
   }
 
   @Override
   public Predicate toPredicate(ComparisonNode node, Root<Relacion> root, CriteriaQuery<?> query,
       CriteriaBuilder criteriaBuilder) {
     switch (Property.fromCode(node.getSelector())) {
-      case PROYECTO_REF:
-        return buildByProyectoRef(node, root, query, criteriaBuilder);
-      default:
-        return null;
+    case PROYECTO_REF:
+      return buildByEntidadRef(node, root, query, criteriaBuilder, TipoEntidad.PROYECTO);
+    case INVENCION_REF:
+      return buildByEntidadRef(node, root, query, criteriaBuilder, TipoEntidad.INVENCION);
+    default:
+      return null;
     }
   }
 

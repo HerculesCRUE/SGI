@@ -8,6 +8,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { AbstractTablePaginationComponent } from '@core/component/abstract-table-pagination.component';
 import { TipoPartida } from '@core/enums/tipo-partida';
+import { MSG_PARAMS } from '@core/i18n';
 import { ESTADO_MAP } from '@core/models/csp/estado-proyecto';
 import { IProyectoAnualidadNotificacionSge } from '@core/models/csp/proyecto-anualidad-notificacion-sge';
 import { IProyectoAnualidadPartida } from '@core/models/sge/proyecto-anualidad-partida';
@@ -15,9 +16,11 @@ import { IProyectoSge } from '@core/models/sge/proyecto-sge';
 import { FxFlexProperties } from '@core/models/shared/flexLayout/fx-flex-properties';
 import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-properties';
 import { ProyectoAnualidadService } from '@core/services/csp/proyecto-anualidad/proyecto-anualidad.service';
+import { DialogService } from '@core/services/dialog.service';
 import { ProyectoSgeService } from '@core/services/sge/proyecto-sge.service';
 import { SnackBarService } from '@core/services/snack-bar.service';
 import { LuxonUtils } from '@core/utils/luxon-utils';
+import { TranslateService } from '@ngx-translate/core';
 import { RSQLSgiRestFilter, SgiRestFilter, SgiRestFilterOperator, SgiRestListResult } from '@sgi/framework/http';
 import { from, Observable, Subscription } from 'rxjs';
 import { map, mergeMap, switchMap, takeLast, tap } from 'rxjs/operators';
@@ -27,6 +30,7 @@ import { PROYECTO_ROUTE_NAMES } from '../../proyecto/proyecto-route-names';
 
 const MSG_ERROR = marker('error.load');
 const MSG_NOTIFICADO_SUCCESS = marker('msg.csp.notificacion-presupuesto-sge.success');
+const MSG_CONTINUE_NOTIFICACION_PRESUPUESTO_KEY = marker('msg.continue.notificacion.presupuesto');
 
 export interface IProyectoPartidaEnvioSge {
   proyectoAnualidadPartida: IProyectoAnualidadPartida;
@@ -61,7 +65,9 @@ export class NotificacionPresupuestoSgeListadoComponent extends AbstractTablePag
     protected snackBarService: SnackBarService,
     private proyectoAnualidadService: ProyectoAnualidadService,
     private router: Router,
+    private dialogService: DialogService,
     private route: ActivatedRoute,
+    private readonly translate: TranslateService,
     private readonly proyectoSgeService: ProyectoSgeService
   ) {
     super(snackBarService, MSG_ERROR);
@@ -201,11 +207,47 @@ export class NotificacionPresupuestoSgeListadoComponent extends AbstractTablePag
     }
   }
 
+  checkAllEnvioSge($event: MatCheckboxChange): void {
+    if ($event.checked) {
+      this.proyectoAnualidadEnvio = this.dataSource.data.filter(presupuesto => !presupuesto.enviadoSge);
+    } else {
+      this.proyectoAnualidadEnvio = [];
+    }
+  }
+
+  isCheckend(proyectoAnualidadNotificacionSge: IProyectoAnualidadNotificacionSge): Boolean {
+    const proyectoAnualidadNotificacionSgeCheckeado =
+      this.proyectoAnualidadEnvio.find(presupuesto => presupuesto.id === proyectoAnualidadNotificacionSge.id);
+
+    if (proyectoAnualidadNotificacionSgeCheckeado) {
+      return true;
+    }
+    return false;
+  }
+
+  isAllSelected(): Boolean {
+    const presupuestosNofificacion = this.dataSource.data.filter(presupuesto => !presupuesto.enviadoSge);
+    if (this.proyectoAnualidadEnvio.length === presupuestosNofificacion.length) {
+      return true;
+    }
+    return false;
+  }
+
   notificarSge(): void {
     if (this.proyectoAnualidadEnvio.length === 0) {
       return;
     }
 
+    this.dialogService.showConfirmation(MSG_CONTINUE_NOTIFICACION_PRESUPUESTO_KEY).subscribe(
+      (aceptado) => {
+        if (aceptado) {
+          this.enviarSges();
+        }
+      }
+    )
+  }
+
+  enviarSges() {
     const proyectoAnualidadesPartidas: IProyectoAnualidadPartida[] = [];
 
     this.subscriptions.push(

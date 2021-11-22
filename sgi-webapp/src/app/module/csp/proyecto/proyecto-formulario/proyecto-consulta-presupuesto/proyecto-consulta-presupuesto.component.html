@@ -53,6 +53,7 @@
               {{element.expanded ? 'expand_more' : 'chevron_right'}}
             </mat-icon>
             {{element.level === 0 ? element.item.proyectoAnualidad.anio : '' }}
+            {{element.level === 0 && element.item.proyectoAnualidad.anio == null ? msgParamAnualidadGenerica : ''}}
           </mat-cell>
         </ng-container>
 

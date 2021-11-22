@@ -52,9 +52,8 @@ public class Solicitud extends BaseEntity {
   private Long id;
 
   /** Titulo */
-  @Column(name = "titulo", length = 250, nullable = false)
+  @Column(name = "titulo", length = 250, nullable = true)
   @Size(max = 250)
-  @NotNull
   private String titulo;
 
   /** Convocatoria Id */
