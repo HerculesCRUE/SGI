@@ -143,8 +143,12 @@
   </changeSet>
 
   <!--Inserción de Proyecto Anualidad -->
-  <changeSet context="dev" author="master" id="0000000000002-proyecto_anualidad">
-
+  <changeSet context="dev" author="master" id="0000000000002-proyecto_anualidad-01">
+    <preConditions onFail="MARK_RAN" onError="CONTINUE">
+      <sqlCheck expectedResult="0">
+        SELECT COUNT(*) FROM ${schemaPrefix}proyecto_anualidad WHERE proyecto_id=1 AND anio=2021
+      </sqlCheck>
+    </preConditions>
     <insert tableName="proyecto_anualidad">
       <column name="id" valueSequenceNext="proyecto_anualidad_seq" />
       <column name="proyecto_id" valueNumeric="1" />
@@ -158,7 +162,13 @@
       <column name="fecha_inicio" valueDate="2020-12-31T23:00:00" />
       <column name="presupuestar" valueBoolean="true" />
     </insert>
-
+  </changeSet>
+  <changeSet context="dev" author="master" id="0000000000002-proyecto_anualidad-02">
+    <preConditions onFail="MARK_RAN" onError="CONTINUE">
+      <sqlCheck expectedResult="0">
+        SELECT COUNT(*) FROM ${schemaPrefix}proyecto_anualidad WHERE proyecto_id=1 AND anio=2022
+      </sqlCheck>
+    </preConditions>
     <insert tableName="proyecto_anualidad">
       <column name="id" valueSequenceNext="proyecto_anualidad_seq" />
       <column name="proyecto_id" valueNumeric="1" />
@@ -172,7 +182,13 @@
       <column name="fecha_inicio" valueDate="2021-12-31T23:00:00" />
       <column name="presupuestar" valueBoolean="true" />
     </insert>
-
+  </changeSet>
+  <changeSet context="dev" author="master" id="0000000000002-proyecto_anualidad-03">
+    <preConditions onFail="MARK_RAN" onError="CONTINUE">
+      <sqlCheck expectedResult="0">
+        SELECT COUNT(*) FROM ${schemaPrefix}proyecto_anualidad WHERE proyecto_id=2 AND anio=2021
+      </sqlCheck>
+    </preConditions>
     <insert tableName="proyecto_anualidad">
       <column name="id" valueSequenceNext="proyecto_anualidad_seq" />
       <column name="proyecto_id" valueNumeric="2" />
@@ -186,7 +202,13 @@
       <column name="fecha_inicio" valueDate="2020-12-31T23:00:00" />
       <column name="presupuestar" valueBoolean="true" />
     </insert>
-
+  </changeSet>
+  <changeSet context="dev" author="master" id="0000000000002-proyecto_anualidad-04">
+    <preConditions onFail="MARK_RAN" onError="CONTINUE">
+      <sqlCheck expectedResult="0">
+        SELECT COUNT(*) FROM ${schemaPrefix}proyecto_anualidad WHERE proyecto_id=2 AND anio=2022
+      </sqlCheck>
+    </preConditions>
     <insert tableName="proyecto_anualidad">
       <column name="id" valueSequenceNext="proyecto_anualidad_seq" />
       <column name="proyecto_id" valueNumeric="2" />
@@ -200,7 +222,13 @@
       <column name="fecha_inicio" valueDate="2021-12-31T23:00:00" />
       <column name="presupuestar" valueBoolean="true" />
     </insert>
-
+  </changeSet>
+  <changeSet context="dev" author="master" id="0000000000002-proyecto_anualidad-05">
+    <preConditions onFail="MARK_RAN" onError="CONTINUE">
+      <sqlCheck expectedResult="0">
+        SELECT COUNT(*) FROM ${schemaPrefix}proyecto_anualidad WHERE proyecto_id=1 AND anio=2023
+      </sqlCheck>
+    </preConditions>
     <insert tableName="proyecto_anualidad">
       <column name="id" valueSequenceNext="proyecto_anualidad_seq" />
       <column name="proyecto_id" valueNumeric="2" />
@@ -221,7 +249,7 @@
 
     <insert tableName="anualidad_gasto">
       <column name="id" valueSequenceNext="anualidad_gasto_seq" />
-      <column name="proyecto_anualidad_id" valueNumeric="1" />
+      <column name="proyecto_anualidad_id" valueComputed="(SELECT id FROM ${schemaPrefix}proyecto_anualidad WHERE proyecto_id=1 AND anio=2021)" />
       <column name="created_by" value="00391433" />
       <column name="creation_date" valueDate="2021-10-07T09:00:20" />
       <column name="last_modified_by" value="00391433" />
@@ -239,7 +267,7 @@
 
     <insert tableName="anualidad_gasto">
       <column name="id" valueSequenceNext="anualidad_gasto_seq" />
-      <column name="proyecto_anualidad_id" valueNumeric="1" />
+      <column name="proyecto_anualidad_id" valueComputed="(SELECT id FROM ${schemaPrefix}proyecto_anualidad WHERE proyecto_id=1 AND anio=2021)" />
       <column name="created_by" value="00391433" />
       <column name="creation_date" valueDate="2021-10-07T09:00:20" />
       <column name="last_modified_by" value="00391433" />
@@ -257,7 +285,7 @@
 
     <insert tableName="anualidad_gasto">
       <column name="id" valueSequenceNext="anualidad_gasto_seq" />
-      <column name="proyecto_anualidad_id" valueNumeric="2" />
+      <column name="proyecto_anualidad_id" valueComputed="(SELECT id FROM ${schemaPrefix}proyecto_anualidad WHERE proyecto_id=1 AND anio=2022)" />
       <column name="created_by" value="00391433" />
       <column name="creation_date" valueDate="2021-10-07T09:00:20" />
       <column name="last_modified_by" value="00391433" />
@@ -275,7 +303,7 @@
 
     <insert tableName="anualidad_gasto">
       <column name="id" valueSequenceNext="anualidad_gasto_seq" />
-      <column name="proyecto_anualidad_id" valueNumeric="3" />
+      <column name="proyecto_anualidad_id" valueComputed="(SELECT id FROM ${schemaPrefix}proyecto_anualidad WHERE proyecto_id=2 AND anio=2021)" />
       <column name="created_by" value="00391433" />
       <column name="creation_date" valueDate="2021-10-07T09:00:20" />
       <column name="last_modified_by" value="00391433" />
@@ -293,7 +321,7 @@
 
     <insert tableName="anualidad_gasto">
       <column name="id" valueSequenceNext="anualidad_gasto_seq" />
-      <column name="proyecto_anualidad_id" valueNumeric="3" />
+      <column name="proyecto_anualidad_id" valueComputed="(SELECT id FROM ${schemaPrefix}proyecto_anualidad WHERE proyecto_id=2 AND anio=2021)" />
       <column name="created_by" value="00391433" />
       <column name="creation_date" valueDate="2021-10-07T09:00:20" />
       <column name="last_modified_by" value="00391433" />
@@ -311,7 +339,7 @@
 
     <insert tableName="anualidad_gasto">
       <column name="id" valueSequenceNext="anualidad_gasto_seq" />
-      <column name="proyecto_anualidad_id" valueNumeric="4" />
+      <column name="proyecto_anualidad_id" valueComputed="(SELECT id FROM ${schemaPrefix}proyecto_anualidad WHERE proyecto_id=2 AND anio=2022)" />
       <column name="created_by" value="00391433" />
       <column name="creation_date" valueDate="2021-10-07T09:00:20" />
       <column name="last_modified_by" value="00391433" />
@@ -329,7 +357,7 @@
 
     <insert tableName="anualidad_gasto">
       <column name="id" valueSequenceNext="anualidad_gasto_seq" />
-      <column name="proyecto_anualidad_id" valueNumeric="5" />
+      <column name="proyecto_anualidad_id" valueComputed="(SELECT id FROM ${schemaPrefix}proyecto_anualidad WHERE proyecto_id=1 AND anio=2023)" />
       <column name="created_by" value="00391433" />
       <column name="creation_date" valueDate="2021-10-07T09:00:20" />
       <column name="last_modified_by" value="00391433" />
