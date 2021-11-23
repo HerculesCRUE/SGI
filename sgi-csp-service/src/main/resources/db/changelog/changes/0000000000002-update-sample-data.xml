@@ -1,6 +1,6 @@
 <?xml version="1.1" encoding="UTF-8" standalone="no"?>
 <databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:pro="http://www.liquibase.org/xml/ns/pro" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-3.8.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
-
+  <property name="schemaPrefix" value="" />
 
   <changeSet context="dev" author="master" id="0000000000002-proyecto">
     <!-- Cambio de anualidades del Proyecto con id=2 -->
@@ -55,8 +55,12 @@
   </changeSet>
 
   <!--Inserción de Proyecto Partida -->
-  <changeSet context="dev" author="master" id="0000000000002-proyecto_partida">
-
+  <changeSet context="dev" author="master" id="0000000000002-proyecto_partida-01">
+    <preConditions onFail="MARK_RAN" onError="CONTINUE">
+      <sqlCheck expectedResult="0">
+        SELECT COUNT(*) FROM ${schemaPrefix}proyecto_partida WHERE proyecto_id=1 AND codigo='08.002B.541A.64215' AND tipo_partida='GASTO'
+      </sqlCheck>
+    </preConditions>
     <insert tableName="proyecto_partida">
       <column name="id" valueSequenceNext="proyecto_partida_seq" />
       <column name="proyecto_id" valueNumeric="1" />
@@ -67,7 +71,13 @@
       <column name="codigo" value="08.002B.541A.64215" />
       <column name="tipo_partida" value="GASTO" />
     </insert>
-
+  </changeSet>
+  <changeSet context="dev" author="master" id="0000000000002-proyecto_partida-02">
+    <preConditions onFail="MARK_RAN" onError="CONTINUE">
+      <sqlCheck expectedResult="0">
+        SELECT COUNT(*) FROM ${schemaPrefix}proyecto_partida WHERE proyecto_id=2 AND codigo='08.002B.541A.64215' AND tipo_partida='GASTO'
+      </sqlCheck>
+    </preConditions>
     <insert tableName="proyecto_partida">
       <column name="id" valueSequenceNext="proyecto_partida_seq" />
       <column name="proyecto_id" valueNumeric="2" />
@@ -78,7 +88,13 @@
       <column name="codigo" value="08.002B.541A.64215" />
       <column name="tipo_partida" value="GASTO" />
     </insert>
-
+  </changeSet>
+  <changeSet context="dev" author="master" id="0000000000002-proyecto_partida-03">
+    <preConditions onFail="MARK_RAN" onError="CONTINUE">
+      <sqlCheck expectedResult="0">
+        SELECT COUNT(*) FROM ${schemaPrefix}proyecto_partida WHERE proyecto_id=2 AND codigo='08.002B.541A.64215' AND tipo_partida='GASTO'
+      </sqlCheck>
+    </preConditions>
     <insert tableName="proyecto_partida">
       <column name="id" valueSequenceNext="proyecto_partida_seq" />
       <column name="proyecto_id" valueNumeric="3" />
@@ -218,7 +234,7 @@
       <column name="proyecto_sge_ref" value="33939" />
 
       <column name="concepto_gasto_id" valueNumeric="9" />
-      <column name="proyecto_partida_id" valueNumeric="1" />
+      <column name="proyecto_partida_id" valueComputed="(SELECT id FROM ${schemaPrefix}proyecto_partida WHERE proyecto_id=1 AND codigo='08.002B.541A.64215' AND tipo_partida='GASTO')" />
     </insert>
 
     <insert tableName="anualidad_gasto">
@@ -236,7 +252,7 @@
       <column name="proyecto_sge_ref" value="33939" />
 
       <column name="concepto_gasto_id" valueNumeric="3" />
-      <column name="proyecto_partida_id" valueNumeric="1" />
+      <column name="proyecto_partida_id" valueComputed="(SELECT id FROM ${schemaPrefix}proyecto_partida WHERE proyecto_id=1 AND codigo='08.002B.541A.64215' AND tipo_partida='GASTO')" />
     </insert>
 
     <insert tableName="anualidad_gasto">
@@ -254,7 +270,7 @@
       <column name="proyecto_sge_ref" value="33939" />
 
       <column name="concepto_gasto_id" valueNumeric="1" />
-      <column name="proyecto_partida_id" valueNumeric="1" />
+      <column name="proyecto_partida_id" valueComputed="(SELECT id FROM ${schemaPrefix}proyecto_partida WHERE proyecto_id=1 AND codigo='08.002B.541A.64215' AND tipo_partida='GASTO')" />
     </insert>
 
     <insert tableName="anualidad_gasto">
@@ -272,7 +288,7 @@
       <column name="proyecto_sge_ref" value="34123" />
 
       <column name="concepto_gasto_id" valueNumeric="4" />
-      <column name="proyecto_partida_id" valueNumeric="2" />
+      <column name="proyecto_partida_id" valueComputed="(SELECT id FROM ${schemaPrefix}proyecto_partida WHERE proyecto_id=2 AND codigo='08.002B.541A.64215' AND tipo_partida='GASTO')" />
     </insert>
 
     <insert tableName="anualidad_gasto">
@@ -290,7 +306,7 @@
       <column name="proyecto_sge_ref" value="34123" />
 
       <column name="concepto_gasto_id" valueNumeric="9" />
-      <column name="proyecto_partida_id" valueNumeric="2" />
+      <column name="proyecto_partida_id" valueComputed="(SELECT id FROM ${schemaPrefix}proyecto_partida WHERE proyecto_id=2 AND codigo='08.002B.541A.64215' AND tipo_partida='GASTO')" />
     </insert>
 
     <insert tableName="anualidad_gasto">
@@ -308,7 +324,7 @@
       <column name="proyecto_sge_ref" value="34123" />
 
       <column name="concepto_gasto_id" valueNumeric="5" />
-      <column name="proyecto_partida_id" valueNumeric="2" />
+      <column name="proyecto_partida_id" valueComputed="(SELECT id FROM ${schemaPrefix}proyecto_partida WHERE proyecto_id=2 AND codigo='08.002B.541A.64215' AND tipo_partida='GASTO')" />
     </insert>
 
     <insert tableName="anualidad_gasto">
@@ -326,7 +342,7 @@
       <column name="proyecto_sge_ref" value="34123" />
 
       <column name="concepto_gasto_id" valueNumeric="1" />
-      <column name="proyecto_partida_id" valueNumeric="2" />
+      <column name="proyecto_partida_id" valueComputed="(SELECT id FROM ${schemaPrefix}proyecto_partida WHERE proyecto_id=2 AND codigo='08.002B.541A.64215' AND tipo_partida='GASTO')" />
     </insert>
   </changeSet>
 
