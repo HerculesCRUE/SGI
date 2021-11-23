@@ -226,7 +226,7 @@
   <changeSet context="dev" author="master" id="0000000000002-proyecto_anualidad-05">
     <preConditions onFail="MARK_RAN" onError="CONTINUE">
       <sqlCheck expectedResult="0">
-        SELECT COUNT(*) FROM ${schemaPrefix}proyecto_anualidad WHERE proyecto_id=1 AND anio=2023
+        SELECT COUNT(*) FROM ${schemaPrefix}proyecto_anualidad WHERE proyecto_id=2 AND anio=2023
       </sqlCheck>
     </preConditions>
     <insert tableName="proyecto_anualidad">
@@ -357,7 +357,7 @@
 
     <insert tableName="anualidad_gasto">
       <column name="id" valueSequenceNext="anualidad_gasto_seq" />
-      <column name="proyecto_anualidad_id" valueComputed="(SELECT id FROM ${schemaPrefix}proyecto_anualidad WHERE proyecto_id=1 AND anio=2023)" />
+      <column name="proyecto_anualidad_id" valueComputed="(SELECT id FROM ${schemaPrefix}proyecto_anualidad WHERE proyecto_id=2 AND anio=2023)" />
       <column name="created_by" value="00391433" />
       <column name="creation_date" valueDate="2021-10-07T09:00:20" />
       <column name="last_modified_by" value="00391433" />
