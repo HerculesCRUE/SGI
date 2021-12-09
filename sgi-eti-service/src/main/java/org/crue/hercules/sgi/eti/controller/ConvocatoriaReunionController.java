@@ -366,7 +366,7 @@ public class ConvocatoriaReunionController {
    * @return {@link ConvocatoriaReunion}
    */
   @GetMapping(path = "/{idEvaluacion}/{idDictamen}/convocatoria-ultima-evaluacion")
-  @PreAuthorize("hasAuthorityForAnyUO('ETI-EVC-EVAL')")
+  @PreAuthorize("hasAnyAuthorityForAnyUO('ETI-EVC-EVAL', 'ETI-EVC-INV-EVALR')")
   public ResponseEntity<ConvocatoriaReunion> findConvocatoriaUltimaEvaluacionTipoMemoria(
       @PathVariable Long idEvaluacion, @PathVariable Long idDictamen) {
     log.debug("findConvocatoriaUltimaEvaluacionTipoMemoria(Long idEvaluacion, idDictamen) - start");

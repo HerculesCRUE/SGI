@@ -121,8 +121,8 @@ export class MemoriaListadoGesComponent extends AbstractTablePaginationComponent
     ).subscribe((value) => this.textoCrear = value);
   }
 
-  protected createObservable(): Observable<SgiRestListResult<IMemoriaPeticionEvaluacion>> {
-    const observable$ = this.memoriaService.findAll(this.getFindOptions());
+  protected createObservable(reset?: boolean): Observable<SgiRestListResult<IMemoriaPeticionEvaluacion>> {
+    const observable$ = this.memoriaService.findAll(this.getFindOptions(reset));
     // TODO: Eliminar casteo cuando se solucion la respuesta del back
     return observable$ as unknown as Observable<SgiRestListResult<IMemoriaPeticionEvaluacion>>;
   }

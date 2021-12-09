@@ -178,8 +178,8 @@ export class TipoProcedimientoListadoComponent extends AbstractTablePaginationCo
 
   }
 
-  protected createObservable(): Observable<SgiRestListResult<ITipoProcedimiento>> {
-    const observable$ = this.tipoProcedimientoService.findTodos(this.getFindOptions());
+  protected createObservable(reset?: boolean): Observable<SgiRestListResult<ITipoProcedimiento>> {
+    const observable$ = this.tipoProcedimientoService.findTodos(this.getFindOptions(reset));
     return observable$;
   }
   protected initColumns(): void {

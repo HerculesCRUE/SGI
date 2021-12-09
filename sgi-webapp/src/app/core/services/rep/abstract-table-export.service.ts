@@ -1,6 +1,6 @@
 import { Directive } from '@angular/core';
-import { FieldOrientationType } from '@core/models/rep/field-orientation.enum';
-import { OutputReportType } from '@core/models/rep/output-report.enum';
+import { FieldOrientation } from '@core/models/rep/field-orientation.enum';
+import { OutputReport, OUTPUT_REPORT_TYPE_EXTENSION_MAP } from '@core/models/rep/output-report.enum';
 import { ISgiColumnReport } from '@core/models/rep/sgi-column-report';
 import { ISgiDynamicReport } from '@core/models/rep/sgi-dynamic-report';
 import { ISgiGroupReport } from '@core/models/rep/sgi-group.report';
@@ -23,12 +23,22 @@ export interface IReportConfig<T> {
   /**
    * Tipo de exportación: PDF, EXCEL, HTML, CSV, etc
    */
-  outputType?: OutputReportType;
+  outputType?: OutputReport;
+
+  /**
+   * Disposición de las filas en horizontal o vertical
+   */
+  fieldOrientation?: FieldOrientation;
 
   /**
    * Opciones de configuración del informe
    */
   reportOptions?: T;
+}
+
+export enum RelationsTypeView {
+  TABLE = 'TABLE',
+  LIST = 'LIST'
 }
 
 export interface IReportOptions {
@@ -40,7 +50,7 @@ export interface IReportOptions {
   /**
    * Indica la disposición de los elementos que son relaciones: tabla o lista de columnas por cada registro de la relación
    */
-  relationsOrientationTable?: boolean;
+  relationsTypeView?: RelationsTypeView;
 
   /**
    * Ancho mínimo de columna, sino lo informamos cogerá el tamaño por
@@ -65,8 +75,8 @@ export abstract class AbstractTableExportService<T, R extends IReportOptions> im
   public export(reportConfig: IReportConfig<R>): Observable<void> {
 
     const report: ISgiDynamicReport = {
-      outputReportType: reportConfig.outputType,
-      fieldOrientationType: this.getFieldOrientationTypeByExportType(reportConfig.outputType),
+      outputType: reportConfig.outputType,
+      fieldOrientation: this.getFieldOrientationByExportType(reportConfig),
       columnMinWidth: reportConfig.reportOptions?.columnMinWidth,
       title: reportConfig.title,
       filters: [],
@@ -96,10 +106,18 @@ export abstract class AbstractTableExportService<T, R extends IReportOptions> im
         return this.reportService.downloadDynamicReport(report);
       }),
       map((data: Blob) => {
-        triggerDownloadToUser(data, REPORT_NAME);
+        triggerDownloadToUser(data, this.getReportName(reportConfig));
         return (void 0);
       })
     );
+  }
+
+  protected getReportName(reportConfig: IReportConfig<R>): string {
+    let reportName = REPORT_NAME;
+    if (reportConfig.outputType) {
+      reportName += '.' + OUTPUT_REPORT_TYPE_EXTENSION_MAP.get(reportConfig.outputType);
+    }
+    return reportName;
   }
 
   protected abstract getGroupBy(): ISgiGroupReport;
@@ -110,11 +128,13 @@ export abstract class AbstractTableExportService<T, R extends IReportOptions> im
 
   protected abstract getColumns(resultados: T[], reportConfig: IReportConfig<R>): Observable<ISgiColumnReport[]>;
 
-  protected getFieldOrientationTypeByExportType(exportType: OutputReportType): FieldOrientationType {
-    let fieldOrientationType: FieldOrientationType = FieldOrientationType.HORIZONTAL;
-    if (exportType === OutputReportType.PDF) {
-      fieldOrientationType = FieldOrientationType.VERTICAL;
+  protected getFieldOrientationByExportType(reportConfig: IReportConfig<R>): FieldOrientation {
+    if (!reportConfig.fieldOrientation) {
+      let fieldOrientation: FieldOrientation = FieldOrientation.HORIZONTAL;
+      if (reportConfig.outputType === OutputReport.PDF || reportConfig.outputType === OutputReport.RTF) {
+        fieldOrientation = FieldOrientation.VERTICAL;
+      }
+      return fieldOrientation;
     }
-    return fieldOrientationType;
   }
 }

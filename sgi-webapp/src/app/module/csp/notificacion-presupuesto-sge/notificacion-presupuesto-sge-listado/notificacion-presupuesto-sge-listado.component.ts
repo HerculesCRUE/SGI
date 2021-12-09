@@ -141,8 +141,8 @@ export class NotificacionPresupuestoSgeListadoComponent extends AbstractTablePag
     this.search();
   }
 
-  protected createObservable(): Observable<SgiRestListResult<IProyectoAnualidadNotificacionSge>> {
-    return this.proyectoAnualidadService.findNotificacionesSge(this.getFindOptions());
+  protected createObservable(reset?: boolean): Observable<SgiRestListResult<IProyectoAnualidadNotificacionSge>> {
+    return this.proyectoAnualidadService.findNotificacionesSge(this.getFindOptions(reset));
   }
   protected initColumns(): void {
     this.columnas = [

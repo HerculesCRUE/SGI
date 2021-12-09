@@ -3,10 +3,15 @@ package org.crue.hercules.sgi.csp.service;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.assertj.core.api.Assertions;
+import org.crue.hercules.sgi.csp.controller.BaseControllerTest;
 import org.crue.hercules.sgi.csp.model.EstadoSolicitud;
+import org.crue.hercules.sgi.csp.model.Programa;
+import org.crue.hercules.sgi.csp.model.Solicitud;
 import org.crue.hercules.sgi.csp.repository.EstadoSolicitudRepository;
+import org.crue.hercules.sgi.csp.repository.SolicitudRepository;
 import org.crue.hercules.sgi.csp.service.impl.EstadoSolicitudServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -21,21 +26,23 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.test.context.support.WithMockUser;
 
 /**
  * EstadoSolicitudServiceTest
  */
-@ExtendWith(MockitoExtension.class)
-public class EstadoSolicitudServiceTest {
+public class EstadoSolicitudServiceTest extends BaseServiceTest {
 
   @Mock
   private EstadoSolicitudRepository repository;
+  @Mock
+  private SolicitudRepository solicitudRepository;
 
   private EstadoSolicitudService service;
 
   @BeforeEach
   public void setUp() throws Exception {
-    service = new EstadoSolicitudServiceImpl(repository);
+    service = new EstadoSolicitudServiceImpl(repository, solicitudRepository);
   }
 
   @Test
@@ -84,14 +91,16 @@ public class EstadoSolicitudServiceTest {
   }
 
   @Test
+  @WithMockUser(username = "user", authorities = { "CSP-SOL-E" })
   public void findAllBySolicitud_ReturnsPage() {
     // given: Una lista con 37 EstadoSolicitud
     Long solicitudId = 1L;
+    Solicitud solicitud = generarMockSolicitud(solicitudId, 1L, null);
     List<EstadoSolicitud> estadosSolicitud = new ArrayList<>();
     for (long i = 1; i <= 37; i++) {
       estadosSolicitud.add(generarMockEstadoSolicitud(i));
     }
-
+    BDDMockito.given(solicitudRepository.findById(ArgumentMatchers.<Long>any())).willReturn(Optional.of(solicitud));
     BDDMockito.given(repository.findAllBySolicitudId(ArgumentMatchers.anyLong(), ArgumentMatchers.<Pageable>any()))
         .willAnswer(new Answer<Page<EstadoSolicitud>>() {
           @Override
@@ -138,5 +147,42 @@ public class EstadoSolicitudServiceTest {
     estadoSolicitud.setFechaEstado(Instant.now());
 
     return estadoSolicitud;
+  }
+
+  /**
+   * Función que devuelve un objeto Solicitud
+   * 
+   * @param id                  id del Solicitud
+   * @param convocatoriaId      id de la Convocatoria
+   * @param convocatoriaExterna convocatoria externa
+   * @return el objeto Solicitud
+   */
+  private Solicitud generarMockSolicitud(Long id, Long convocatoriaId, String convocatoriaExterna) {
+    EstadoSolicitud estadoSolicitud = new EstadoSolicitud();
+    estadoSolicitud.setId(1L);
+    estadoSolicitud.setEstado(EstadoSolicitud.Estado.BORRADOR);
+
+    Programa programa = new Programa();
+    programa.setId(1L);
+
+    Solicitud solicitud = new Solicitud();
+    solicitud.setId(id);
+    solicitud.setTitulo("titulo");
+    solicitud.setCodigoExterno(null);
+    solicitud.setConvocatoriaId(convocatoriaId);
+    solicitud.setCreadorRef("usr-001");
+    solicitud.setSolicitanteRef("usr-002");
+    solicitud.setObservaciones("observaciones-" + String.format("%03d", id));
+    solicitud.setConvocatoriaExterna(convocatoriaExterna);
+    solicitud.setUnidadGestionRef("1");
+    solicitud.setActivo(true);
+
+    if (id != null) {
+      solicitud.setEstado(estadoSolicitud);
+      solicitud.setCodigoRegistroInterno("SGI_SLC1202011061027");
+      solicitud.setCreadorRef("usr-001");
+    }
+
+    return solicitud;
   }
 }

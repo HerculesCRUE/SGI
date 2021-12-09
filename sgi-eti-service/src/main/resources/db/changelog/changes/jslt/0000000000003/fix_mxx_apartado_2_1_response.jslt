@@ -1,0 +1,12 @@
+{
+   "equipoInvestigador":[
+      for (.equipoInvestigador){
+         "nombre":.nombre,
+         "email":"",
+         "vinculacion":.vinculacion,
+         "nivelAcademico":.nivelAcademico,
+         "tarea":.tarea,
+         "experiencia":.experiencia
+      }
+   ]
+}

@@ -37,6 +37,18 @@
           <input type="text" placeholder="{{'csp.proyecto.id' | translate}}" matInput formControlName="id" required>
         </mat-form-field>
       </div>
+      <!-- Identificadores Sge -->
+      <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
+        [fxFlexOrder]="fxFlexProperties.order" *ngIf="this.formPart.isEdit()">
+        <mat-form-field>
+          <mat-label>{{'csp.proyecto.codigos-sge' | translate}}</mat-label>
+          <mat-select matNativeControl formControlName="codigosSge" multiple>
+            <mat-option *ngFor="let proyecto of this.proyectosSge" [value]="proyecto">
+              {{proyecto.value.proyectoSge.id}}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
     </div>
     <div [fxLayout.xs]="fxLayoutProperties.xs" [fxLayout]="fxLayoutProperties.layout"
       [fxLayoutGap]="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
@@ -69,16 +81,22 @@
         </mat-form-field>
       </div>
 
-      <!-- Identificadores Sge -->
+      <!-- Tipo de ámbito geográfico -->
       <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
         [fxFlexOrder]="fxFlexProperties.order">
-        <mat-form-field *ngIf="this.formPart.isEdit()">
-          <mat-label>{{'csp.proyecto.codigos-sge' | translate}}</mat-label>
-          <mat-select matNativeControl formControlName="codigosSge" multiple>
-            <mat-option *ngFor="let proyecto of this.proyectosSge" [value]="proyecto">
-              {{proyecto.value.proyectoSge.id}}
-            </mat-option>
-          </mat-select>
+        <mat-form-field>
+          <mat-label>{{'csp.proyecto.ambito-geografico' | translate}}</mat-label>
+          <sgi-select-tipo-ambito-geografico formControlName="ambitoGeografico" [required]="formPart.abiertoRequired">
+          </sgi-select-tipo-ambito-geografico>
+          <sgi-field-info matSuffix [visible]="!formPart.readonly && (formPart.ambitoGeograficoConvocatoria$ | async)"
+            message="{{textoInfoAmbitoGeograficoConvocatoria}}">
+          </sgi-field-info>
+          <mat-error *ngIf="formGroup.controls.ambitoGeografico.errors?.required">
+            {{'error.required.entity' | translate:msgParamAmbitoGeograficoEntity}}
+          </mat-error>
+          <mat-error *ngIf="formGroup.controls.ambitoGeografico.errors?.vacio">
+            {{'error.invalid.entity' | translate:msgParamAmbitoGeograficoEntity}}
+          </mat-error>
         </mat-form-field>
       </div>
 
@@ -139,22 +157,13 @@
         </mat-form-field>
       </div>
 
-      <!-- Tipo de ámbito geográfico -->
+      <!-- Proyectos Relacionados -->
       <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
-        [fxFlexOrder]="fxFlexProperties.order">
-        <mat-form-field>
-          <mat-label>{{'csp.proyecto.ambito-geografico' | translate}}</mat-label>
-          <sgi-select-tipo-ambito-geografico formControlName="ambitoGeografico" [required]="formPart.abiertoRequired">
-          </sgi-select-tipo-ambito-geografico>
-          <sgi-field-info matSuffix [visible]="!formPart.readonly && (formPart.ambitoGeograficoConvocatoria$ | async)"
-            message="{{textoInfoAmbitoGeograficoConvocatoria}}">
-          </sgi-field-info>
-          <mat-error *ngIf="formGroup.controls.ambitoGeografico.errors?.required">
-            {{'error.required.entity' | translate:msgParamAmbitoGeograficoEntity}}
-          </mat-error>
-          <mat-error *ngIf="formGroup.controls.ambitoGeografico.errors?.vacio">
-            {{'error.invalid.entity' | translate:msgParamAmbitoGeograficoEntity}}
-          </mat-error>
+        [fxFlexOrder]="fxFlexProperties.order" *ngIf="formPart.isEdit()">
+        <mat-form-field class="input-form">
+          <mat-label>{{'csp.proyecto.proyectos-relacionados' | translate}}</mat-label>
+          <input type="text" placeholder="{{'csp.proyecto.proyectos-relacionados' | translate}}" matInput
+            formControlName="proyectosRelacionados" readonly>
         </mat-form-field>
       </div>
 

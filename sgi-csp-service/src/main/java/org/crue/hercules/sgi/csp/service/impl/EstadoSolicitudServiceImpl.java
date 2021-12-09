@@ -1,11 +1,16 @@
 package org.crue.hercules.sgi.csp.service.impl;
 
+import org.crue.hercules.sgi.csp.exceptions.SolicitudNotFoundException;
+import org.crue.hercules.sgi.csp.exceptions.UserNotAuthorizedToAccessSolicitudException;
 import org.crue.hercules.sgi.csp.model.EstadoSolicitud;
 import org.crue.hercules.sgi.csp.model.Solicitud;
 import org.crue.hercules.sgi.csp.repository.EstadoSolicitudRepository;
+import org.crue.hercules.sgi.csp.repository.SolicitudRepository;
 import org.crue.hercules.sgi.csp.service.EstadoSolicitudService;
+import org.crue.hercules.sgi.framework.security.core.context.SgiSecurityContextHolder;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
@@ -21,9 +26,11 @@ import lombok.extern.slf4j.Slf4j;
 public class EstadoSolicitudServiceImpl implements EstadoSolicitudService {
 
   private final EstadoSolicitudRepository repository;
+  private final SolicitudRepository solicitudRepository;
 
-  public EstadoSolicitudServiceImpl(EstadoSolicitudRepository repository) {
+  public EstadoSolicitudServiceImpl(EstadoSolicitudRepository repository, SolicitudRepository solicitudRepository) {
     this.repository = repository;
+    this.solicitudRepository = solicitudRepository;
   }
 
   /**
@@ -50,17 +57,37 @@ public class EstadoSolicitudServiceImpl implements EstadoSolicitudService {
   /**
    * Obtiene las {@link EstadoSolicitud} para una {@link Solicitud}.
    *
-   * @param idSolicitud el id de la {@link Solicitud}.
+   * @param solicitudId el id de la {@link Solicitud}.
    * @param paging      la información de la paginación.
    * @return la lista de entidades {@link EstadoSolicitud} de la {@link Solicitud}
    *         paginadas.
    */
   @Override
-  public Page<EstadoSolicitud> findAllBySolicitud(Long idSolicitud, Pageable paging) {
+  public Page<EstadoSolicitud> findAllBySolicitud(Long solicitudId, Pageable paging) {
     log.debug("findAllBySolicitud(Long solicitudId, Pageable paging) - start");
-    Page<EstadoSolicitud> returnValue = repository.findAllBySolicitudId(idSolicitud, paging);
+
+    Solicitud solicitud = solicitudRepository.findById(solicitudId)
+        .orElseThrow(() -> new SolicitudNotFoundException(solicitudId));
+    if (!(hasAuthorityViewInvestigador(solicitud) || hasAuthorityViewUnidadGestion(solicitud))) {
+      throw new UserNotAuthorizedToAccessSolicitudException();
+    }
+
+    Page<EstadoSolicitud> returnValue = repository.findAllBySolicitudId(solicitudId, paging);
     log.debug("findAllBySolicitud(Long solicitudId, Pageable paging) - end");
     return returnValue;
+  }
+
+  private boolean hasAuthorityViewInvestigador(Solicitud solicitud) {
+    return SgiSecurityContextHolder.hasAuthorityForAnyUO("CSP-SOL-INV-ER")
+        && solicitud.getSolicitanteRef().equals(getAuthenticationPersonaRef());
+  }
+
+  private String getAuthenticationPersonaRef() {
+    return SecurityContextHolder.getContext().getAuthentication().getName();
+  }
+
+  private boolean hasAuthorityViewUnidadGestion(Solicitud solicitud) {
+    return SgiSecurityContextHolder.hasAuthorityForUO("CSP-SOL-E", solicitud.getUnidadGestionRef());
   }
 
 }

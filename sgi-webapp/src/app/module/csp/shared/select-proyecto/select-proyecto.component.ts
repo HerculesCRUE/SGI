@@ -1,10 +1,11 @@
-import { Attribute, ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, Inject, Optional, Self } from '@angular/core';
+import { Attribute, ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, Inject, Input, Optional, Self } from '@angular/core';
 import { NgControl } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { MatFormField, MatFormFieldControl, MAT_FORM_FIELD } from '@angular/material/form-field';
 import { SelectDialogComponent } from '@core/component/select-dialog/select-dialog.component';
 import { IProyecto } from '@core/models/csp/proyecto';
-import { SearchProyectoModalComponent } from './dialog/search-proyecto.component';
+import { IPersona } from '@core/models/sgp/persona';
+import { SearchProyectoModalComponent, SearchProyectoModalData } from './dialog/search-proyecto.component';
 
 @Component({
   selector: 'sgi-select-proyecto',
@@ -42,6 +43,21 @@ import { SearchProyectoModalComponent } from './dialog/search-proyecto.component
 })
 export class SelectProyectoComponent extends SelectDialogComponent<SearchProyectoModalComponent, IProyecto> {
 
+  @Input()
+  get personas(): IPersona[] {
+    return this._personas;
+  }
+  set personas(value: IPersona[]) {
+    if (Array.isArray(value)) {
+      this._personas = value;
+    }
+    else {
+      this._personas = value ? [value] : [];
+    }
+  }
+  // tslint:disable-next-line: variable-name
+  private _personas: IPersona[] = [];
+
   constructor(
     changeDetectorRef: ChangeDetectorRef,
     elementRef: ElementRef,
@@ -50,6 +66,12 @@ export class SelectProyectoComponent extends SelectDialogComponent<SearchProyect
     @Attribute('tabindex') tabIndex: string,
     dialog: MatDialog) {
     super(changeDetectorRef, elementRef, parentFormField, ngControl, tabIndex, dialog, SearchProyectoModalComponent);
+  }
+
+  protected getDialogData(): SearchProyectoModalData {
+    return {
+      personas: this._personas
+    };
   }
 
   get displayValue(): string {

@@ -117,8 +117,8 @@ export class ActaListadoComponent extends AbstractTablePaginationComponent<IActa
     ).subscribe((value) => this.textoCrear = value);
   }
 
-  protected createObservable(): Observable<SgiRestListResult<IActaWithNumEvaluaciones>> {
-    const observable$ = this.actasService.findActivasWithEvaluaciones(this.getFindOptions());
+  protected createObservable(reset?: boolean): Observable<SgiRestListResult<IActaWithNumEvaluaciones>> {
+    const observable$ = this.actasService.findActivasWithEvaluaciones(this.getFindOptions(reset));
     return observable$;
   }
 

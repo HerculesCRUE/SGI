@@ -1,5 +1,7 @@
 package org.crue.hercules.sgi.csp.service;
 
+import java.math.BigDecimal;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -8,9 +10,13 @@ import org.assertj.core.api.Assertions;
 import org.crue.hercules.sgi.csp.exceptions.ConvocatoriaEntidadConvocanteNotFoundException;
 import org.crue.hercules.sgi.csp.exceptions.ConvocatoriaNotFoundException;
 import org.crue.hercules.sgi.csp.exceptions.ProgramaNotFoundException;
+import org.crue.hercules.sgi.csp.model.ConfiguracionSolicitud;
 import org.crue.hercules.sgi.csp.model.Convocatoria;
 import org.crue.hercules.sgi.csp.model.ConvocatoriaEntidadConvocante;
+import org.crue.hercules.sgi.csp.model.ConvocatoriaFase;
 import org.crue.hercules.sgi.csp.model.Programa;
+import org.crue.hercules.sgi.csp.model.TipoFase;
+import org.crue.hercules.sgi.csp.repository.ConfiguracionSolicitudRepository;
 import org.crue.hercules.sgi.csp.repository.ConvocatoriaEntidadConvocanteRepository;
 import org.crue.hercules.sgi.csp.repository.ConvocatoriaRepository;
 import org.crue.hercules.sgi.csp.repository.ProgramaRepository;
@@ -26,6 +32,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.security.test.context.support.WithMockUser;
 
 /**
  * ConvocatoriaEntidadConvocanteServiceTest
@@ -40,13 +47,15 @@ public class ConvocatoriaEntidadConvocanteServiceTest extends BaseServiceTest {
   private ProgramaRepository programaRepository;
   @Mock
   private ConvocatoriaService convocatoriaService;
+  @Mock
+  ConfiguracionSolicitudRepository configuracionSolicitudRepository;
 
   private ConvocatoriaEntidadConvocanteService service;
 
   @BeforeEach
   public void setUp() throws Exception {
     service = new ConvocatoriaEntidadConvocanteServiceImpl(repository, convocatoriaRepository, programaRepository,
-        convocatoriaService);
+        convocatoriaService, configuracionSolicitudRepository);
   }
 
   @Test
@@ -442,14 +451,17 @@ public class ConvocatoriaEntidadConvocanteServiceTest extends BaseServiceTest {
   }
 
   @Test
+  @WithMockUser(username = "user", authorities = { "CSP-CON-E" })
   public void findAllByConvocatoria_ReturnsPage() {
     // given: Una lista con 37 ConvocatoriaEntidadGestora para la Convocatoria
     Long convocatoriaId = 1L;
+    Convocatoria convocatoria = generarMockConvocatoria(convocatoriaId);
     List<ConvocatoriaEntidadConvocante> convocatoriasEntidadesConvocantes = new ArrayList<>();
     for (long i = 1; i <= 37; i++) {
       convocatoriasEntidadesConvocantes.add(generarMockConvocatoriaEntidadConvocante(i, convocatoriaId));
     }
-
+    BDDMockito.given(convocatoriaRepository.findById(ArgumentMatchers.<Long>any()))
+        .willReturn(Optional.of(convocatoria));
     BDDMockito.given(repository.findAll(ArgumentMatchers.<Specification<ConvocatoriaEntidadConvocante>>any(),
         ArgumentMatchers.<Pageable>any())).willAnswer((InvocationOnMock invocation) -> {
           Pageable pageable = invocation.getArgument(1, Pageable.class);

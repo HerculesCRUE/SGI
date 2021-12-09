@@ -6,9 +6,13 @@ import java.util.Optional;
 
 import org.assertj.core.api.Assertions;
 import org.crue.hercules.sgi.csp.exceptions.SolicitudDocumentoNotFoundException;
+import org.crue.hercules.sgi.csp.model.ConfiguracionSolicitud;
+import org.crue.hercules.sgi.csp.model.Convocatoria;
+import org.crue.hercules.sgi.csp.model.Solicitud;
 import org.crue.hercules.sgi.csp.model.SolicitudDocumento;
 import org.crue.hercules.sgi.csp.model.TipoDocumento;
 import org.crue.hercules.sgi.csp.repository.SolicitudDocumentoRepository;
+import org.crue.hercules.sgi.csp.repository.SolicitudRepository;
 import org.crue.hercules.sgi.csp.service.impl.SolicitudDocumentoServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -25,6 +29,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.security.test.context.support.WithMockUser;
 
 @ExtendWith(MockitoExtension.class)
 public class SolicitudDocumentoServiceTest extends BaseServiceTest {
@@ -35,11 +40,14 @@ public class SolicitudDocumentoServiceTest extends BaseServiceTest {
   @Mock
   private SolicitudService solicitudService;
 
+  @Mock
+  private SolicitudRepository solicitudRepository;
+
   private SolicitudDocumentoService service;
 
   @BeforeEach
   public void setUp() throws Exception {
-    service = new SolicitudDocumentoServiceImpl(solicitudDocumentoRepository, solicitudService);
+    service = new SolicitudDocumentoServiceImpl(solicitudDocumentoRepository, solicitudService, solicitudRepository);
   }
 
   @Test
@@ -305,9 +313,15 @@ public class SolicitudDocumentoServiceTest extends BaseServiceTest {
   }
 
   @Test
+  @WithMockUser(username = "user", authorities = { "CSP-SOL-E" })
   public void findAll_ReturnsPage() {
     // given: Una lista con 37 SolicitudDocumento
     Long solicitudId = 1L;
+    Solicitud solicitud = new Solicitud();
+    solicitud.setId(solicitudId);
+    BDDMockito.given(solicitudRepository.findById(ArgumentMatchers.<Long>any()))
+        .willReturn(Optional.of(solicitud));
+
     List<SolicitudDocumento> solicitudDocumentos = new ArrayList<>();
     for (long i = 1; i <= 37; i++) {
       solicitudDocumentos.add(generarSolicitudDocumento(i, i, i));

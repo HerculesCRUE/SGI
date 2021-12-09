@@ -95,8 +95,8 @@ export class SolicitudListadoInvComponent extends AbstractTablePaginationCompone
     });
   }
 
-  protected createObservable(): Observable<SgiRestListResult<SolicitudListado>> {
-    const observable$ = this.solicitudService.findAllInvestigador(this.getFindOptions()).pipe(
+  protected createObservable(reset?: boolean): Observable<SgiRestListResult<SolicitudListado>> {
+    const observable$ = this.solicitudService.findAllInvestigador(this.getFindOptions(reset)).pipe(
       map(response => {
         return response as SgiRestListResult<SolicitudListado>;
       }),

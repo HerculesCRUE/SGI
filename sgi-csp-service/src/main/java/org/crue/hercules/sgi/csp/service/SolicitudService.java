@@ -24,6 +24,7 @@ import org.crue.hercules.sgi.csp.exceptions.SolicitudNotFoundException;
 import org.crue.hercules.sgi.csp.exceptions.SolicitudProyectoNotFoundException;
 import org.crue.hercules.sgi.csp.exceptions.SolicitudProyectoWithoutSocioCoordinadorException;
 import org.crue.hercules.sgi.csp.exceptions.SolicitudWithoutRequeridedDocumentationException;
+import org.crue.hercules.sgi.csp.exceptions.UserNotAuthorizedToAccessSolicitudException;
 import org.crue.hercules.sgi.csp.exceptions.UserNotAuthorizedToModifySolicitudException;
 import org.crue.hercules.sgi.csp.exceptions.eti.GetPeticionEvaluacionException;
 import org.crue.hercules.sgi.csp.model.ConfiguracionSolicitud;
@@ -274,7 +275,7 @@ public class SolicitudService {
     Assert.notNull(id, "Solicitud id no puede ser null para desactivar un Solicitud");
 
     return repository.findById(id).map(solicitud -> {
-      String authorityInv = "CSP-SOL-BR-INV";
+      String authorityInv = "CSP-SOL-INV-BR";
       boolean hasAuthorityInv = SgiSecurityContextHolder.hasAuthority(authorityInv);
 
       if (hasAuthorityInv) {
@@ -311,6 +312,10 @@ public class SolicitudService {
   public Solicitud findById(Long id) {
     log.debug("findById(Long id) - start");
     final Solicitud returnValue = repository.findById(id).orElseThrow(() -> new SolicitudNotFoundException(id));
+
+    if (!(hasAuthorityViewInvestigador(returnValue) || hasAuthorityViewUnidadGestion(returnValue))) {
+      throw new UserNotAuthorizedToAccessSolicitudException();
+    }
 
     String authorityVisualizar = "CSP-SOL-V";
 
@@ -808,28 +813,50 @@ public class SolicitudService {
         throw new SolicitudProyectoNotFoundException(solicitud.getId());
       }
 
-      // En caso de sea colaborativo y no tenga coordinador externo
-      if (solicitudProyecto.getColaborativo() && solicitudProyecto.getCoordinadorExterno() == null) {
-        log.debug("validateCambioNoDesistidaRenunciada(Solicitud solicitud) - end");
-        throw new ColaborativoWithoutCoordinadorExternoException();
-      }
-
       if (!isSolicitanteMiembroEquipo(solicitudProyecto.getId(), solicitud.getSolicitanteRef())) {
         log.debug("validateCambioNoDesistidaRenunciada(Solicitud solicitud) - end");
         throw new MissingInvestigadorPrincipalInSolicitudProyectoEquipoException();
       }
 
-      if (solicitudProyecto.getColaborativo() && solicitudProyecto.getCoordinadorExterno()) {
-        List<SolicitudProyectoSocio> solicitudProyectoSocios = solicitudProyectoSocioRepository
-            .findAllBySolicitudProyectoIdAndRolSocioCoordinadorTrue(solicitudProyecto.getId());
-
-        if (CollectionUtils.isEmpty(solicitudProyectoSocios)) {
+      if (!hasAuthorityEditInvestigador()) {
+        // En caso de sea colaborativo y no tenga coordinador externo
+        if (Boolean.TRUE.equals(solicitudProyecto.getColaborativo())
+            && solicitudProyecto.getCoordinadorExterno() == null) {
           log.debug("validateCambioNoDesistidaRenunciada(Solicitud solicitud) - end");
-          throw new SolicitudProyectoWithoutSocioCoordinadorException();
+          throw new ColaborativoWithoutCoordinadorExternoException();
+        }
+
+        if (solicitudProyecto.getColaborativo() && solicitudProyecto.getCoordinadorExterno()) {
+          List<SolicitudProyectoSocio> solicitudProyectoSocios = solicitudProyectoSocioRepository
+              .findAllBySolicitudProyectoIdAndRolSocioCoordinadorTrue(solicitudProyecto.getId());
+
+          if (CollectionUtils.isEmpty(solicitudProyectoSocios)) {
+            log.debug("validateCambioNoDesistidaRenunciada(Solicitud solicitud) - end");
+            throw new SolicitudProyectoWithoutSocioCoordinadorException();
+          }
         }
       }
+
     }
     log.debug("validateCambioNoDesistidaRenunciada(Solicitud solicitud) - end");
+  }
+
+  private boolean hasAuthorityEditInvestigador() {
+    return SgiSecurityContextHolder.hasAuthorityForAnyUO("CSP-SOL-INV-ER");
+  }
+
+  private boolean hasAuthorityViewInvestigador(Solicitud solicitud) {
+    return SgiSecurityContextHolder.hasAuthorityForAnyUO("CSP-SOL-INV-ER")
+        && solicitud.getSolicitanteRef().equals(getAuthenticationPersonaRef());
+  }
+
+  private String getAuthenticationPersonaRef() {
+    return SecurityContextHolder.getContext().getAuthentication().getName();
+  }
+
+  private boolean hasAuthorityViewUnidadGestion(Solicitud solicitud) {
+    return SgiSecurityContextHolder.hasAuthorityForUO("CSP-SOL-E", solicitud.getUnidadGestionRef())
+        || SgiSecurityContextHolder.hasAuthorityForUO("CSP-SOL-V", solicitud.getUnidadGestionRef());
   }
 
   private boolean isEntidadFinanciadora(Solicitud solicitud) {

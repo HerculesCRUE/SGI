@@ -73,7 +73,8 @@ public class InformeFavorableModificacionReportService extends InformeEvaluacion
     elementsRow.add(formatInstantToString(evaluacion.getFechaDictamen(), pattern));
 
     columnsData.add("numeroActa");
-    elementsRow.add(evaluacion.getConvocatoriaReunion().getNumeroActa());
+    elementsRow
+        .add(evaluacion.getConvocatoriaReunion().getNumeroActa() + "/" + evaluacion.getConvocatoriaReunion().getAnio());
 
     columnsData.add("referenciaMemoria");
     elementsRow.add(evaluacion.getMemoria().getNumReferencia());
@@ -86,8 +87,9 @@ public class InformeFavorableModificacionReportService extends InformeEvaluacion
     return tableModel;
   }
 
-  public void getReportInformeFavorableModificacion(ReportInformeFavorableModificacion sgiReport, Long idEvaluacion) {
+  public byte[] getReportInformeFavorableModificacion(ReportInformeFavorableModificacion sgiReport, Long idEvaluacion) {
     getReportFromIdEvaluacion(sgiReport, idEvaluacion, "informeFavorableModificacion");
+    return sgiReport.getContent();
   }
 
 }

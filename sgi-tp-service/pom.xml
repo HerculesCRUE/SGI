@@ -9,7 +9,7 @@
   </parent>
   <groupId>org.crue.hercules.sgi</groupId>
   <artifactId>sgi-tp-service</artifactId>
-  <version>0.0.4</version>
+  <version>0.0.5</version>
   <name>sgi-tp-service</name>
   <description>Tareas Programadas SGI HERCULES</description>
 
@@ -503,13 +503,8 @@
         <artifactId>jacoco-maven-plugin</artifactId>
         <configuration>
           <excludes>
-            <exclude>**/generated/**</exclude>
-            <exclude>**/scratch/**</exclude>
-            <exclude>**/config/**</exclude>
-            <exclude>**/model/**</exclude>
-            <exclude>**/specification/**</exclude>
-            <exclude>**/dto/**</exclude>
-            <exclude>**/exceptions/**</exclude>
+            <!-- Exclude the JPA meta model classes from the report -->
+            <exclude>**/*_.class</exclude>
           </excludes>
         </configuration>
         <executions>
@@ -660,6 +655,10 @@
           appear, making them easier to view.
           -->
           <quiet>true</quiet>
+          <!-- Exclude the JPA meta model classes from javadoc -->
+          <sourceFileExcludes>
+            <sourceFileExclude>**/*_.java</sourceFileExclude>
+          </sourceFileExcludes>
         </configuration>
       </plugin>
 
@@ -736,9 +735,9 @@
                   <time>20000</time>
                 </wait>
                 <env>
-                  <POSTGRES_USER>postgres</POSTGRES_USER>
-                  <POSTGRES_PASSWORD>admin</POSTGRES_PASSWORD>
-                  <POSTGRES_DB>db</POSTGRES_DB>
+                  <POSTGRES_USER>tp</POSTGRES_USER>
+                  <POSTGRES_PASSWORD>tp</POSTGRES_PASSWORD>
+                  <POSTGRES_DB>tp</POSTGRES_DB>
                 </env>
               </run>
             </image>

@@ -358,27 +358,51 @@ export class PeriodoTitularidadFragment extends Fragment {
       this.periodosTitularidadSelectedShared.pipe(
         switchMap(elem => {
           if (!elem?.value?.id) {
-            return of([]);
+            const previousPeriodo = this.previousPeriodoTitularidadHistorico;
+            if (previousPeriodo?.value?.id) {
+              return this.getTitularesByPeriodo(previousPeriodo.value).pipe(
+                map(titulares => {
+                  titulares.forEach(titular => {
+                    titular.setCreated();
+                    delete titular.value.id;
+                    titular.value.periodoTitularidad = elem.value;
+                  });
+                  return titulares;
+                })
+              );
+            } else {
+              return of([]);
+            }
           }
-          return this.periodoTitularidadService.findTitularesByPeriodoTitularidad(elem.value.id).pipe(
-            flatMap(requestResult => requestResult.items),
-            flatMap(titularidadTitular => this.empresaService.findById(titularidadTitular.titular.id).pipe(
-              catchError((err) => {
-                this.logger.error(err);
-                return of({ id: titularidadTitular.titular.id } as IEmpresa);
-              }),
-              map(empresa => {
-                titularidadTitular.titular = empresa;
-                return new StatusWrapper(titularidadTitular);
-              }))),
-            reduce<StatusWrapper<IPeriodoTitularidadTitular>,
-              StatusWrapper<IPeriodoTitularidadTitular>[]>((all, current) => [...all, current], [])
-          );
+          return this.getTitularesByPeriodo(elem.value);
         }),
       ).subscribe(elem => {
         this.deletedTitulares = [];
         this.periodosTitularidadTitulares.next(elem);
       })
+    );
+  }
+
+  /**
+   * Encuentra los {@link IPeriodoTitularidadTitular} asociados a un {@link IPeriodoTitularidad} pasado por parámetro.
+   *
+   * @param periodoTitularidad {@link IPeriodoTitularidad} al que se le desea encontrar los {@link IPeriodoTitularidadTitular} asociados
+   * @returns Listado de StatusWrapper<{@link IPeriodoTitularidadTitular}>
+   */
+  private getTitularesByPeriodo(periodoTitularidad: IPeriodoTitularidad): Observable<StatusWrapper<IPeriodoTitularidadTitular>[]> {
+    return this.periodoTitularidadService.findTitularesByPeriodoTitularidad(periodoTitularidad.id).pipe(
+      flatMap(requestResult => requestResult.items),
+      flatMap(titularidadTitular => this.empresaService.findById(titularidadTitular.titular.id).pipe(
+        catchError((err) => {
+          this.logger.error(err);
+          return of({ id: titularidadTitular.titular.id } as IEmpresa);
+        }),
+        map(empresa => {
+          titularidadTitular.titular = empresa;
+          return new StatusWrapper(titularidadTitular);
+        }))),
+      reduce<StatusWrapper<IPeriodoTitularidadTitular>,
+        StatusWrapper<IPeriodoTitularidadTitular>[]>((all, current) => [...all, current], [])
     );
   }
 

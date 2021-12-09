@@ -1,20 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <artifacts>
-  <artifact name="datos-contacto-response-converter-mediator" groupId="org.crue.hercules.sgi.esb.sgp.resource" version="0.0.3" type="registry/resource" serverRole="EnterpriseIntegrator">
+  <artifact name="datos-contacto-response-converter-mediator" groupId="org.crue.hercules.sgi.esb.sgp.resource" version="0.0.5" type="registry/resource" serverRole="EnterpriseIntegrator">
     <item>
       <file>datos-contacto-response-converter-mediator.js</file>
       <path>/_system/governance/scripts/sgp</path>
       <mediaType>application/javascript</mediaType>
     </item>
   </artifact>
-  <artifact name="replace-tipo-colectivo-colectivos-ids-mediator" groupId="org.crue.hercules.sgi.esb.sgp.resource" version="0.0.3" type="registry/resource" serverRole="EnterpriseIntegrator">
+  <artifact name="replace-tipo-colectivo-colectivos-ids-mediator" groupId="org.crue.hercules.sgi.esb.sgp.resource" version="0.0.5" type="registry/resource" serverRole="EnterpriseIntegrator">
     <item>
       <file>replace-tipo-colectivo-colectivos-ids-mediator.js</file>
       <path>/_system/governance/scripts/sgp</path>
       <mediaType>application/javascript</mediaType>
     </item>
   </artifact>
-  <artifact name="vinculacion-response-converter-mediator" groupId="org.crue.hercules.sgi.esb.sgp.resource" version="0.0.3" type="registry/resource" serverRole="EnterpriseIntegrator">
+  <artifact name="vinculacion-response-converter-mediator" groupId="org.crue.hercules.sgi.esb.sgp.resource" version="0.0.5" type="registry/resource" serverRole="EnterpriseIntegrator">
     <item>
       <file>vinculacion-response-converter-mediator.js</file>
       <path>/_system/governance/scripts/sgp</path>

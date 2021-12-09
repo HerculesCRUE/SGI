@@ -209,8 +209,8 @@ export class TipoProteccionListadoComponent extends AbstractTablePaginationCompo
 
   }
 
-  protected createObservable(): Observable<SgiRestListResult<ITipoProteccion>> {
-    const observable$ = this.tipoProteccionService.findTodos(this.getFindOptions());
+  protected createObservable(reset?: boolean): Observable<SgiRestListResult<ITipoProteccion>> {
+    const observable$ = this.tipoProteccionService.findTodos(this.getFindOptions(reset));
     return observable$;
   }
 

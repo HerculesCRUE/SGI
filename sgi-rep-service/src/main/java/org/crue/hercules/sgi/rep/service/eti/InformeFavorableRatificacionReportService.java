@@ -44,8 +44,9 @@ public class InformeFavorableRatificacionReportService extends InformeEvaluacion
     return tableModel;
   }
 
-  public void getReportInformeFavorableRatificacion(ReportInformeFavorableRatificacion sgiReport, Long idEvaluacion) {
+  public byte[] getReportInformeFavorableRatificacion(ReportInformeFavorableRatificacion sgiReport, Long idEvaluacion) {
     getReportFromIdEvaluacion(sgiReport, idEvaluacion, "informeFavorableRatificacion");
+    return sgiReport.getContent();
   }
 
 }

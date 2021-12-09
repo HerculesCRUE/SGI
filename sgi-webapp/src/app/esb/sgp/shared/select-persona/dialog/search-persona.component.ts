@@ -6,6 +6,7 @@ import { MatSort } from '@angular/material/sort';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { HttpProblem } from '@core/errors/http-problem';
 import { MSG_PARAMS } from '@core/i18n';
+import { IEmpresa } from '@core/models/sgemp/empresa';
 import { IPersona } from '@core/models/sgp/persona';
 import { EmpresaService } from '@core/services/sgemp/empresa.service';
 import { PersonaService } from '@core/services/sgp/persona.service';
@@ -14,8 +15,8 @@ import { TranslateService } from '@ngx-translate/core';
 import { SgiAuthService } from '@sgi/framework/auth';
 import { RSQLSgiRestFilter, RSQLSgiRestSort, SgiRestFilter, SgiRestFilterOperator, SgiRestSortDirection } from '@sgi/framework/http';
 import { NGXLogger } from 'ngx-logger';
-import { merge, Observable, of } from 'rxjs';
-import { catchError, map, switchMap, tap } from 'rxjs/operators';
+import { from, merge, Observable, of } from 'rxjs';
+import { catchError, map, mergeMap, switchMap, tap, toArray } from 'rxjs/operators';
 import { ACTION_MODAL_MODE } from 'src/app/esb/shared/formly-forms/core/base-formly-modal.component';
 import { IPersonaFormlyData, PersonaFormlyModalComponent } from '../../../formly-forms/persona-formly-modal/persona-formly-modal.component';
 
@@ -35,7 +36,7 @@ export class SearchPersonaModalComponent implements OnInit, AfterViewInit {
 
   formGroup: FormGroup;
 
-  displayedColumns = ['nombre', 'apellidos', 'numeroDocumento', 'entidad', 'acciones'];
+  displayedColumns = ['nombre', 'apellidos', 'email', 'entidad', 'acciones'];
   elementosPagina = [5, 10, 25, 100];
   totalElementos = 0;
 
@@ -99,24 +100,36 @@ export class SearchPersonaModalComponent implements OnInit, AfterViewInit {
         }
       )
       .pipe(
-        switchMap(response => {
-          const requestsEmpresa: Observable<IPersona>[] = [];
-          response.items.forEach(persona => {
-            if (persona.entidad) {
-              requestsEmpresa.push(this.empresaService.findById(persona.entidad.id).pipe(
-                map(empresa => {
-                  persona.entidad = empresa;
-                  return persona;
-                })
-              ));
-            } else {
-              requestsEmpresa.push(of(persona));
-            }
-          });
-          return of(response).pipe(
-            tap(() => merge(...requestsEmpresa).subscribe())
-          );
-        }),
+        switchMap(response =>
+          from(response.items).pipe(
+            mergeMap(persona => {
+              if (persona.entidad) {
+                return this.empresaService.findById(persona.entidad.id).pipe(
+                  map(empresa => {
+                    persona.entidad = empresa;
+                    return persona;
+                  })
+                );
+              }
+              return of(persona);
+            }),
+            mergeMap(persona => {
+              if (persona.entidadPropia) {
+                return this.empresaService.findById(persona.entidadPropia.id).pipe(
+                  map(empresa => {
+                    persona.entidadPropia = empresa;
+                    return persona;
+                  })
+                );
+              }
+              return of(persona);
+            }),
+            toArray(),
+            map(() => {
+              return response;
+            })
+          )
+        ),
         map((response) => {
           // Map response total
           this.totalElementos = response.total;

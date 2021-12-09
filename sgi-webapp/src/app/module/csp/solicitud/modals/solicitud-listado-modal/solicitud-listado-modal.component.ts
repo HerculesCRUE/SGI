@@ -2,9 +2,9 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
-import { BaseExportModalComponent } from '@core/component/base-export-modal/base-export-modal.component';
+import { BaseExportModalComponent } from '@core/component/base-export/base-export-modal.component';
 import { MSG_PARAMS } from '@core/i18n';
-import { OutputReportType } from '@core/models/rep/output-report.enum';
+import { OutputReport } from '@core/models/rep/output-report.enum';
 import { IReportConfig, IReportOptions } from '@core/services/rep/abstract-table-export.service';
 import { SnackBarService } from '@core/services/snack-bar.service';
 import { TranslateService } from '@ngx-translate/core';
@@ -23,7 +23,7 @@ export interface ISolicitudListadoModalData {
   styleUrls: ['./solicitud-listado-modal.component.scss']
 })
 export class SolicitudListadoModalComponent extends BaseExportModalComponent<IReportOptions> implements OnInit {
-  reportTitle: string;
+  private reportTitle: string;
 
   constructor(
     matDialogRef: MatDialogRef<SolicitudListadoModalComponent>,
@@ -43,7 +43,7 @@ export class SolicitudListadoModalComponent extends BaseExportModalComponent<IRe
 
   protected buildFormGroup(): FormGroup {
     return new FormGroup({
-      outputReportType: new FormControl(this.outputReportType, Validators.required),
+      outputType: new FormControl(this.outputType, Validators.required),
       reportTitle: new FormControl(this.reportTitle, Validators.required),
       showMiembrosEquipo: new FormControl(false),
       showEntidadesConvocantes: new FormControl(false),
@@ -53,10 +53,10 @@ export class SolicitudListadoModalComponent extends BaseExportModalComponent<IRe
   protected getReportOptions(): IReportConfig<IReportOptions> {
     const reportModalData: IReportConfig<IReportOptions> = {
       title: this.formGroup.controls.reportTitle.value,
-      outputType: this.formGroup.controls.outputReportType.value,
+      outputType: this.formGroup.controls.outputType.value,
       reportOptions: {
-        relationsOrientationTable: this.formGroup.controls.outputReportType.value === OutputReportType.PDF,
         findOptions: this.modalData.findOptions,
+        relationsTypeView: this.getRelationsTypeView(this.formGroup.controls.outputType.value),
         columnMinWidth: 120
       }
     };

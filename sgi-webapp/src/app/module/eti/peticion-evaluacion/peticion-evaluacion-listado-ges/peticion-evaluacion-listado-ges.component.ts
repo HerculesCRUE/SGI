@@ -117,8 +117,8 @@ export class PeticionEvaluacionListadoGesComponent extends AbstractTablePaginati
     ).subscribe((value) => this.textoCrear = value);
   }
 
-  protected createObservable(): Observable<SgiRestListResult<IPeticionEvaluacion>> {
-    return this.peticionesEvaluacionService.findAll(this.getFindOptions()).pipe(
+  protected createObservable(reset?: boolean): Observable<SgiRestListResult<IPeticionEvaluacion>> {
+    return this.peticionesEvaluacionService.findAll(this.getFindOptions(reset)).pipe(
       map((response) => {
         // Return the values
         return response;

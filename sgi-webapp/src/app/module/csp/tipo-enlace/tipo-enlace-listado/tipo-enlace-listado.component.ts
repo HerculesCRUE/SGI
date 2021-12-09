@@ -188,8 +188,8 @@ export class TipoEnlaceListadoComponent extends AbstractTablePaginationComponent
 
   }
 
-  protected createObservable(): Observable<SgiRestListResult<ITipoEnlace>> {
-    const observable$ = this.tipoEnlaceService.findTodos(this.getFindOptions());
+  protected createObservable(reset?: boolean): Observable<SgiRestListResult<ITipoEnlace>> {
+    const observable$ = this.tipoEnlaceService.findTodos(this.getFindOptions(reset));
     return observable$;
   }
 

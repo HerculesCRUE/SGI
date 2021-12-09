@@ -31,8 +31,11 @@ public class EstadoValidacionIPController {
   private final EstadoValidacionIPService estadoValidacionIPService;
 
   /**
-   * Busca objetos de tipo {@link EstadoValidacionIPOutput} según la query de entrada
-   * @param query {@link String} con los parámetros de búsqueda
+   * Busca objetos de tipo {@link EstadoValidacionIPOutput} según la query de
+   * entrada
+   * 
+   * @param query  {@link String} con los parámetros de búsqueda
+   * @param paging {@link Pageable}
    * @return lista de objetos de tipo {@link EstadoValidacionIPOutput}
    */
   @GetMapping
@@ -49,7 +52,7 @@ public class EstadoValidacionIPController {
     return this.modelMapper.map(entity, EstadoValidacionIPOutput.class);
   }
 
-  List<EstadoValidacionIPOutput>entitiesToOutputs(List<EstadoValidacionIP>entities) {
+  List<EstadoValidacionIPOutput> entitiesToOutputs(List<EstadoValidacionIP> entities) {
     return entities.stream().map(this::entityToOutput).collect(Collectors.toList());
   }
 

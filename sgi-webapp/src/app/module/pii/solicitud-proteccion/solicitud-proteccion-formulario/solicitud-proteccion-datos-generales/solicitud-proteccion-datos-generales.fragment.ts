@@ -1,3 +1,4 @@
+import { getFechaFinPeriodoSeguimiento } from 'src/app/module/csp/proyecto-periodo-seguimiento/proyecto-periodo-seguimiento.utils';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { TipoPropiedad } from '@core/enums/tipo-propiedad';
 import { IInvencion } from '@core/models/pii/invencion';
@@ -231,7 +232,8 @@ export class SolicitudProteccionDatosGeneralesFragment extends FormFragment<ISol
 
     this.solicitudProteccion.agentePropiedad = formCtrls.agentePropiedad.value;
     this.solicitudProteccion.comentarios = formCtrls.comentarios.value;
-    this.solicitudProteccion.fechaFinPriorPresFasNacRec = formCtrls.fechaFinPrioridad.value;
+    this.solicitudProteccion.fechaFinPriorPresFasNacRec =
+      this.shouldShowFechaFinPrioridad(formCtrls.viaProteccion.value) ? formCtrls.fechaFinPrioridad.value : null;
     this.solicitudProteccion.fechaPrioridadSolicitud = formCtrls.fechaPrioridad.value;
     this.solicitudProteccion.numeroSolicitud = formCtrls.numeroSolicitud.value;
     this.solicitudProteccion.numeroPublicacion = formCtrls.numeroPublicacion.value;
@@ -350,7 +352,7 @@ export class SolicitudProteccionDatosGeneralesFragment extends FormFragment<ISol
           form.controls.fechaFinPrioridad.setValue(null);
         } else {
           form.controls.fechaFinPrioridad.setValidators([Validators.required]);
-          if (form.controls.viaProteccion.dirty) {
+          if (form.controls.viaProteccion.dirty && form.controls.fechaPrioridad.dirty) {
             this.resolveFechaFinPrioridad(via);
           }
         }
@@ -501,7 +503,6 @@ export class SolicitudProteccionDatosGeneralesFragment extends FormFragment<ISol
   }
 
   private shouldShowFechaFinPrioridad(viaProteccion: IViaProteccion): boolean {
-
     return viaProteccion.extensionInternacional
       || (TipoPropiedad.INDUSTRIAL === this.tipoPropiedad && !this.solicitudesBefore);
   }

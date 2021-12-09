@@ -226,7 +226,7 @@
         </mat-error>
       </mat-form-field>
     </div>
-    <div *ngIf="formPart.isViaEuropea$ | async">
+    <div *ngIf="(formPart.isViaEuropea$ | async) && formPart.getKey() ">
       <sgi-solicitud-proteccion-paises-validados></sgi-solicitud-proteccion-paises-validados>
     </div>
 

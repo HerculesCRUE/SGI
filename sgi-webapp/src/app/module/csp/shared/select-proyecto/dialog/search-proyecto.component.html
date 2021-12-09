@@ -8,6 +8,18 @@
 <mat-dialog-content fxLayout="column" fxLayoutGap="10px">
   <form [formGroup]="formGroup" fxLayout="column">
     <div fxFlex fxLayout="row" fxLayoutGap="10px">
+      <!-- Identificador interno -->
+      <mat-form-field fxFlex="33">
+        <mat-label>{{ 'csp.proyecto.id' | translate }}</mat-label>
+        <input matInput formControlName="identificadorInterno" type="number" />
+      </mat-form-field>
+      <!-- Código identificación en SGE -->
+      <mat-form-field fxFlex="33">
+        <mat-label>{{'csp.proyecto.codigo-identificacion-sge' | translate}}</mat-label>
+        <input matInput formControlName="codigoIdentificacionSGE" type="text" />
+      </mat-form-field>
+    </div>
+    <div fxFlex fxLayout="row" fxLayoutGap="10px">
       <mat-form-field fxFlex>
         <mat-label>{{'csp.proyecto.titulo' | translate}}</mat-label>
         <input matInput formControlName="titulo" type="text" />
@@ -21,6 +33,19 @@
         <input matInput formControlName="codigoExterno" type="text" />
       </mat-form-field>
     </div>
+    <div fxFlex fxLayout="row" fxLayoutGap="10px">
+      <!-- Modelo de Ejecución -->
+      <mat-form-field fxFlex="33">
+        <mat-label>{{'csp.proyecto.modelo-ejecucion' | translate}}</mat-label>
+        <sgi-select-modelo-ejecucion formControlName="modeloEjecucion"></sgi-select-modelo-ejecucion>
+      </mat-form-field>
+      <!-- Tipo finalidad -->
+      <mat-form-field fxFlex="33">
+        <mat-label>{{'csp.proyecto.tipo-finalidad' | translate}}</mat-label>
+        <sgi-select-tipo-finalidad formControlName="tipoFinalidad"></sgi-select-tipo-finalidad>
+      </mat-form-field>
+    </div>
+    <!-- Rangos de Fechas -->
     <div fxFlex fxLayout="row" fxLayoutGap="10px">
       <div fxFlex fxLayout="row" fxLayoutGap="10px">
         <mat-form-field fxFlex>
@@ -52,33 +77,66 @@
       </div>
     </div>
     <div fxFlex fxLayout="row" fxLayoutGap="10px">
-      <mat-form-field fxFlex>
+      <!-- Responsable -->
+      <mat-form-field fxFlex="33">
         <mat-label>{{'csp.proyecto.responsable' | translate}}</mat-label>
         <sgi-select-persona formControlName="responsableProyecto"></sgi-select-persona>
       </mat-form-field>
-      <mat-form-field fxFlex>
-        <mat-label>{{'csp.proyecto.modelo-ejecucion' | translate}}</mat-label>
-        <sgi-select-modelo-ejecucion formControlName="modeloEjecucion"></sgi-select-modelo-ejecucion>
+      <!-- Miembro equipo -->
+      <mat-form-field fxFlex="33">
+        <mat-label>{{ 'csp.proyecto.miembro-equipo' | translate }}</mat-label>
+        <sgi-select-persona formControlName="miembroEquipo"></sgi-select-persona>
       </mat-form-field>
     </div>
     <div fxFlex fxLayout="row" fxLayoutGap="10px">
+      <!-- Convocatoria -->
       <mat-form-field fxFlex>
         <mat-label>{{'csp.proyecto.convocatoria' | translate}}</mat-label>
         <sgi-select-convocatoria formControlName="convocatoria"></sgi-select-convocatoria>
       </mat-form-field>
+      <!-- Entidad Financiadora -->
       <mat-form-field fxFlex>
         <mat-label>{{'csp.proyecto-entidad-financiadora' | translate}}</mat-label>
         <sgi-select-empresa formControlName="entidadFinanciadora"></sgi-select-empresa>
       </mat-form-field>
     </div>
+    <!-- cualquier miembro participante -->
+    <ng-container *ngIf="data?.personas?.length > 0">
+      <div fxFlex fxLayout="row" fxLayoutGap="10px">
+        <mat-checkbox fxFlex="100" formControlName="miembrosParticipantes" fxFlex="100">{{
+          'csp.proyecto.cualquier-miembro-participante' | translate }}
+        </mat-checkbox>
+      </div>
+      <div fxFlex fxLayout="row" fxLayoutGap="10px">
+        <span fxFlex="100" [matTooltip]="msgMiembrosEquipoFullName" class="truncate">{{
+          msgMiembrosEquipoFullName }}</span>
+      </div>
+      </ng-container>
+
   </form>
   <div fxFlex fxLayoutAlign="start">
     <button color="primary" mat-raised-button (click)="search(true)">{{'btn.search' |
       translate}}</button>
   </div>
   <div class="mat-elevation-z3">
-    <table mat-table [dataSource]="proyectos$ | async" matSort matSortActive="titulo" matSortDirection="asc"
+    <table mat-table [dataSource]="proyectos$ | async" matSort matSortActive="id" matSortDirection="desc"
       matSortDisableClear>
+      <ng-container matColumnDef="id">
+        <th mat-header-cell *matHeaderCellDef>
+          {{'csp.proyecto.id-interno' | translate}}
+        </th>
+        <td mat-cell *matCellDef="let element">
+          {{ element.id }}
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="codigoSGE">
+        <th mat-header-cell *matHeaderCellDef>
+          {{'csp.proyecto.codigo-sge' | translate}}
+        </th>
+        <td mat-cell *matCellDef="let element">
+          {{ element.proyectosSGE }}
+        </td>
+      </ng-container>
       <ng-container matColumnDef="titulo">
         <th mat-header-cell *matHeaderCellDef>
           {{'csp.proyecto.titulo' | translate}}

@@ -190,8 +190,8 @@ export class TipoDocumentoListadoComponent extends AbstractTablePaginationCompon
 
   }
 
-  protected createObservable(): Observable<SgiRestListResult<ITipoDocumento>> {
-    const observable$ = this.tipoDocumentoService.findTodos(this.getFindOptions());
+  protected createObservable(reset?: boolean): Observable<SgiRestListResult<ITipoDocumento>> {
+    const observable$ = this.tipoDocumentoService.findTodos(this.getFindOptions(reset));
     return observable$;
   }
 

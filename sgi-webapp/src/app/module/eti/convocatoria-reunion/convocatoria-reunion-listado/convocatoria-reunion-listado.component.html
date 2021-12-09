@@ -24,22 +24,22 @@
       <div class="col">
         <mat-form-field>
           <mat-label>{{'eti.convocatoria-reunion.fecha-evaluacion.desde' | translate}}</mat-label>
-          <input matInput formControlName="fechaEvaluacionDesde" [ngxMatDatetimePicker]="pickerFechaEvaluacionDesde"
+          <input matInput formControlName="fechaEvaluacionDesde" [matDatepicker]="pickerFechaEvaluacionDesde"
             [placeholder]="'eti.convocatoria-reunion.fecha-evaluacion.desde' | translate">
           <mat-datepicker-toggle matSuffix [for]="pickerFechaEvaluacionDesde"></mat-datepicker-toggle>
-          <ngx-mat-datetime-picker #pickerFechaEvaluacionDesde showSeconds="true" [defaultTime]="[0,0,0]">
-          </ngx-mat-datetime-picker>
+          <mat-datepicker #pickerFechaEvaluacionDesde>
+          </mat-datepicker>
         </mat-form-field>
       </div>
 
       <div class="col">
         <mat-form-field>
           <mat-label>{{'eti.convocatoria-reunion.fecha-evaluacion.hasta' | translate}}</mat-label>
-          <input matInput formControlName="fechaEvaluacionHasta" [ngxMatDatetimePicker]="pickerFechaEvaluacionHasta"
+          <input matInput formControlName="fechaEvaluacionHasta" [matDatepicker]="pickerFechaEvaluacionHasta"
             placeholder="{{'eti.convocatoria-reunion.fecha-evaluacion.hasta' | translate}}">
           <mat-datepicker-toggle matSuffix [for]="pickerFechaEvaluacionHasta"></mat-datepicker-toggle>
-          <ngx-mat-datetime-picker #pickerFechaEvaluacionHasta showSeconds="true" [defaultTime]="[23,59,59]">
-          </ngx-mat-datetime-picker>
+          <mat-datepicker #pickerFechaEvaluacionHasta>
+          </mat-datepicker>
         </mat-form-field>
       </div>
 
@@ -88,7 +88,7 @@
       <ng-container matColumnDef="fechaEvaluacion">
         <th mat-header-cell *matHeaderCellDef mat-sort-header>
           {{'eti.convocatoria-reunion.fecha-evaluacion' | translate}} </th>
-        <td mat-cell *matCellDef="let convocatoriaReunion"> {{convocatoriaReunion.fechaEvaluacion | luxon:'short'}}
+        <td mat-cell *matCellDef="let convocatoriaReunion"> {{convocatoriaReunion.fechaEvaluacion | luxon:'shortDate'}}
         </td>
       </ng-container>
 

@@ -191,7 +191,7 @@ public class SolicitudController {
    * @return Solicitud {@link Solicitud} actualizado
    */
   @PutMapping("/{id}")
-  @PreAuthorize("hasAuthorityForAnyUO('CSP-SOL-E')")
+  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-SOL-E', 'CSP-SOL-INV-ER')")
   public Solicitud update(@Valid @RequestBody Solicitud solicitud, @PathVariable Long id) {
     log.debug("update(Solicitud solicitud, Long id) - start");
 
@@ -220,13 +220,12 @@ public class SolicitudController {
   /**
    * Desactiva la {@link Solicitud} con id indicado.
    * 
-   * @param id             Identificador de {@link Solicitud}.
-   * @param authentication {@link Authentication}.
+   * @param id Identificador de {@link Solicitud}.
    * @return {@link Solicitud} actualizado.
    */
   @PatchMapping("/{id}/desactivar")
-  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-SOL-B', 'CSP-SOL-BR-INV', 'CSP-SOL-INV-ER')")
-  Solicitud desactivar(@PathVariable Long id) {
+  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-SOL-B', 'CSP-SOL-INV-BR')")
+  public Solicitud desactivar(@PathVariable Long id) {
     log.debug("desactivar(Long id) - start");
 
     Solicitud returnValue = service.disable(id);

@@ -9,6 +9,7 @@ import javax.validation.Validator;
 import org.assertj.core.api.Assertions;
 import org.crue.hercules.sgi.csp.exceptions.SolicitudProyectoEquipoNotFoundException;
 import org.crue.hercules.sgi.csp.model.RolProyecto;
+import org.crue.hercules.sgi.csp.model.Solicitud;
 import org.crue.hercules.sgi.csp.model.SolicitudProyectoEquipo;
 import org.crue.hercules.sgi.csp.repository.RolProyectoRepository;
 import org.crue.hercules.sgi.csp.repository.SolicitudProyectoEquipoRepository;
@@ -29,12 +30,12 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.security.test.context.support.WithMockUser;
 
 /**
  * SolicitudProyectoEquipoServiceTest
  */
-@ExtendWith(MockitoExtension.class)
-public class SolicitudProyectoEquipoServiceTest {
+public class SolicitudProyectoEquipoServiceTest extends BaseServiceTest {
 
   @Mock
   private SolicitudProyectoEquipoRepository repository;
@@ -90,9 +91,14 @@ public class SolicitudProyectoEquipoServiceTest {
   }
 
   @Test
+  @WithMockUser(username = "user", authorities = { "CSP-SOL-E" })
   public void findAll_ReturnsPage() {
     // given: Una lista con 37 SolicitudProyectoEquipo
     Long solicitudId = 1L;
+    Solicitud solicitud = new Solicitud();
+    solicitud.setId(solicitudId);
+    BDDMockito.given(solicitudRepository.findById(ArgumentMatchers.<Long>any()))
+        .willReturn(Optional.of(solicitud));
     List<SolicitudProyectoEquipo> solicitudProyectoEquipo = new ArrayList<>();
     for (long i = 1; i <= 37; i++) {
       solicitudProyectoEquipo.add(generarSolicitudProyectoEquipo(i, i, i));

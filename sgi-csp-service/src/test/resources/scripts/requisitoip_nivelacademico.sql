@@ -12,7 +12,7 @@
   }
 */
 
-INSERT INTO csp.requisitoip_nivelacademico
+INSERT INTO test.requisitoip_nivelacademico
   (id, requisitoip_id, nivelacademico_ref) 
 VALUES
   (1, 1, 'ref1'),
@@ -21,4 +21,4 @@ VALUES
   (4, 2, 'ref1'),
   (5, 2, 'ref2');
 
-ALTER SEQUENCE csp.requisitoip_nivelacademico_seq RESTART WITH 6;
+ALTER SEQUENCE test.requisitoip_nivelacademico_seq RESTART WITH 6;

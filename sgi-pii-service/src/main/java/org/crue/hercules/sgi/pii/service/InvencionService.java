@@ -53,7 +53,8 @@ public class InvencionService {
    */
   public Page<Invencion> findActivos(String query, Pageable pageable) {
     log.debug("findActivos(String query, Pageable pageable) - start");
-    Specification<Invencion> specs = InvencionSpecifications.activos().and(SgiRSQLJPASupport.toSpecification(query));
+    Specification<Invencion> specs = InvencionSpecifications
+        .distinct().and(InvencionSpecifications.activos().and(SgiRSQLJPASupport.toSpecification(query)));
 
     Page<Invencion> returnValue = repository.findAll(specs, pageable);
     log.debug("findActivos(String query, Pageable pageable) - end");

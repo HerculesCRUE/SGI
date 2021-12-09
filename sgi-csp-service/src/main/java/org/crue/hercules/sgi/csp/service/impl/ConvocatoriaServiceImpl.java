@@ -7,8 +7,10 @@ import java.util.Optional;
 import org.apache.commons.lang3.StringUtils;
 import org.crue.hercules.sgi.csp.exceptions.ConfiguracionSolicitudNotFoundException;
 import org.crue.hercules.sgi.csp.exceptions.ConvocatoriaNotFoundException;
+import org.crue.hercules.sgi.csp.exceptions.UserNotAuthorizedToAccessConvocatoriaException;
 import org.crue.hercules.sgi.csp.model.ConfiguracionSolicitud;
 import org.crue.hercules.sgi.csp.model.Convocatoria;
+import org.crue.hercules.sgi.csp.model.Convocatoria.Estado;
 import org.crue.hercules.sgi.csp.model.ConvocatoriaPeriodoSeguimientoCientifico;
 import org.crue.hercules.sgi.csp.model.ModeloTipoFinalidad;
 import org.crue.hercules.sgi.csp.model.ModeloUnidad;
@@ -364,6 +366,17 @@ public class ConvocatoriaServiceImpl implements ConvocatoriaService {
   public Convocatoria findById(Long id) {
     log.debug("findById(Long id) - start");
     final Convocatoria returnValue = repository.findById(id).orElseThrow(() -> new ConvocatoriaNotFoundException(id));
+
+    if (hasAuthorityViewInvestigador()) {
+      ConfiguracionSolicitud configuracionSolicitud = configuracionSolicitudRepository.findByConvocatoriaId(id)
+          .orElseThrow(() -> new ConfiguracionSolicitudNotFoundException(id));
+
+      if (!returnValue.getEstado().equals(Estado.REGISTRADA)
+          || Boolean.FALSE.equals(configuracionSolicitud.getTramitacionSGI())) {
+        throw new UserNotAuthorizedToAccessConvocatoriaException();
+      }
+    }
+
     log.debug("findById(Long id) - end");
     return returnValue;
   }
@@ -791,4 +804,7 @@ public class ConvocatoriaServiceImpl implements ConvocatoriaService {
     return cloned;
   }
 
+  private boolean hasAuthorityViewInvestigador() {
+    return SgiSecurityContextHolder.hasAuthorityForAnyUO("CSP-CON-INV-V");
+  }
 }

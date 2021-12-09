@@ -1,23 +1,34 @@
-import { AfterViewInit, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { FormControl, FormGroup } from '@angular/forms';
-import { MatDialogRef } from '@angular/material/dialog';
+import { AfterViewInit, Component, ElementRef, Inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MSG_PARAMS } from '@core/i18n';
 import { IProyecto } from '@core/models/csp/proyecto';
+import { IProyectoProyectoSge } from '@core/models/csp/proyecto-proyecto-sge';
+import { IPersona } from '@core/models/sgp/persona';
 import { ProyectoService } from '@core/services/csp/proyecto.service';
+import { PersonaService } from '@core/services/sgp/persona.service';
 import { LuxonUtils } from '@core/utils/luxon-utils';
-import { RSQLSgiRestFilter, RSQLSgiRestSort, SgiRestFilter, SgiRestFilterOperator, SgiRestFindOptions, SgiRestSortDirection } from '@sgi/framework/http';
-import { merge, Subject, Subscription } from 'rxjs';
-import { tap } from 'rxjs/operators';
+import { TranslateService } from '@ngx-translate/core';
+import { RSQLSgiRestFilter, RSQLSgiRestSort, SgiRestFilter, SgiRestFilterOperator, SgiRestFindOptions, SgiRestListResult, SgiRestSortDirection } from '@sgi/framework/http';
+import { merge, of, Subject, Subscription } from 'rxjs';
+import { map, switchMap, tap } from 'rxjs/operators';
 
+export interface SearchProyectoModalData {
+  personas: IPersona[]
+}
+
+interface IProyectoListado extends IProyecto {
+  proyectosSGE: string;
+}
 @Component({
   templateUrl: './search-proyecto.component.html',
   styleUrls: ['./search-proyecto.component.scss']
 })
 export class SearchProyectoModalComponent implements OnInit, AfterViewInit, OnDestroy {
   formGroup: FormGroup;
-  displayedColumns = ['titulo', 'acronimo', 'codigoExterno', 'fechaInicio',
+  displayedColumns = ['id', 'codigoSGE', 'titulo', 'acronimo', 'codigoExterno', 'fechaInicio',
     'fechaFin', 'fechaFinDefinitiva', 'modeloEjecucion', 'acciones'];
   elementosPagina = [5, 10, 25, 100];
   totalElementos = 0;
@@ -25,7 +36,8 @@ export class SearchProyectoModalComponent implements OnInit, AfterViewInit, OnDe
   @ViewChild(MatPaginator, { static: false }) private paginator: MatPaginator;
 
   private subscriptions: Subscription[] = [];
-  readonly proyectos$ = new Subject<IProyecto[]>();
+  readonly proyectos$ = new Subject<IProyectoListado[]>();
+  public msgMiembrosEquipoFullName: string;
 
   get MSG_PARAMS() {
     return MSG_PARAMS;
@@ -33,8 +45,12 @@ export class SearchProyectoModalComponent implements OnInit, AfterViewInit, OnDe
 
   constructor(
     public dialogRef: MatDialogRef<SearchProyectoModalComponent, IProyecto>,
-    private readonly proyectoService: ProyectoService
-  ) { }
+    private readonly translate: TranslateService,
+    private readonly proyectoService: ProyectoService,
+    @Inject(MAT_DIALOG_DATA) public data: SearchProyectoModalData,
+    private personaService: PersonaService
+  ) {
+  }
 
   ngOnInit(): void {
     this.formGroup = new FormGroup({
@@ -48,8 +64,23 @@ export class SearchProyectoModalComponent implements OnInit, AfterViewInit, OnDe
       responsableProyecto: new FormControl(),
       modeloEjecucion: new FormControl(),
       convocatoria: new FormControl(),
-      entidadFinanciadora: new FormControl()
+      entidadFinanciadora: new FormControl(),
+      identificadorInterno: new FormControl(null, [Validators.pattern(/^[0-9]\d*$/)]),
+      codigoIdentificacionSGE: new FormControl(),
+      tipoFinalidad: new FormControl(),
+      miembroEquipo: new FormControl(),
+      miembrosParticipantes: new FormControl()
     });
+
+    this.setNombresMiembrosParticipantes();
+  }
+
+  private setNombresMiembrosParticipantes(): void {
+    if (this.data.personas?.length > 0) {
+      this.msgMiembrosEquipoFullName = this.data.personas.map((persona: IPersona) => {
+        return persona.nombre + ' ' + persona.apellidos;
+      }).join(', ');
+    }
   }
 
   ngAfterViewInit(): void {
@@ -81,11 +112,37 @@ export class SearchProyectoModalComponent implements OnInit, AfterViewInit, OnDe
       filter: this.buildFilter()
     };
 
-    this.proyectoService.findAll(options).subscribe(result => {
-      this.totalElementos = result.total;
-      this.proyectos$.next(result.items);
-    });
+    this.subscriptions.push(
+      this.proyectoService.findAll(options)
+        .pipe(
+          map((response: SgiRestListResult<IProyectoListado>) => {
+            this.totalElementos = response.total;
+            return response.items;
+          }), switchMap(items => {
+            items.map(item => this.resolveProyectosSgeSubscription(item));
+            const proyectos: number[] = [];
+            return of(items.filter(proyecto => {
+              if (!proyectos.includes(proyecto.id)) {
+                proyectos.push(proyecto.id);
+                return true;
+              }
+              return false;
+            }));
+          })).subscribe(result => {
+            this.proyectos$.next(result);
+          }));
   }
+
+  private resolveProyectosSgeSubscription(item: IProyectoListado): void {
+    this.subscriptions.push(
+      this.proyectoService.findAllProyectosSgeProyecto(item.id)
+      .pipe(
+        switchMap((proyectosSge: SgiRestListResult<IProyectoProyectoSge>) => {
+          item.proyectosSGE = proyectosSge.items.map(element => element.proyectoSge.id).join(', ');
+          return of(item);
+        })).subscribe());
+  }
+
   private buildFilter(): SgiRestFilter {
     const controls = this.formGroup.controls;
     const filter = new RSQLSgiRestFilter('titulo', SgiRestFilterOperator.LIKE_ICASE, controls.titulo.value)
@@ -109,7 +166,15 @@ export class SearchProyectoModalComponent implements OnInit, AfterViewInit, OnDe
     }
     filter.and('modeloEjecucion.id', SgiRestFilterOperator.EQUALS, controls.modeloEjecucion.value?.id?.toString())
       .and('convocatoria.id', SgiRestFilterOperator.EQUALS, controls.convocatoria.value?.id?.toString())
-      .and('entidadesFinanciadoras.id', SgiRestFilterOperator.EQUALS, controls.entidadFinanciadora.value?.id?.toString());
+      .and('entidadesFinanciadoras.id', SgiRestFilterOperator.EQUALS, controls.entidadFinanciadora.value?.id?.toString())
+      .and('id', SgiRestFilterOperator.EQUALS, controls.identificadorInterno.value?.toString())
+      .and('identificadoresSge.proyectoSgeRef', SgiRestFilterOperator.EQUALS, controls.codigoIdentificacionSGE.value?.toString())
+      .and('finalidad.id', SgiRestFilterOperator.EQUALS, controls.tipoFinalidad.value?.id.toString())
+      .and('equipo.personaRef', SgiRestFilterOperator.EQUALS, controls.miembroEquipo.value?.id.toString());
+
+    if (controls.miembrosParticipantes.value) {
+      filter.and('equipo.personaRef', SgiRestFilterOperator.IN, this.data.personas.map(persona => persona.id));
+    }
     return filter;
   }
 

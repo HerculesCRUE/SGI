@@ -62,7 +62,7 @@ export class InvencionRepartoEquipoInventorFragment extends Fragment {
   displayIngresosColumns: string[] = [];
   ingresosColumns: IColumnDefinition[] = [];
   displayEquipoInventorColumns: string[] = [];
-  private _displayEquipoInventorColumns = ['nombre', 'apellidos', 'numeroDocumento',
+  private _displayEquipoInventorColumns = ['nombre', 'apellidos', 'persona',
     'entidad', 'participacion', 'porcentajeRepartoInventor', 'importeNomina',
     'importeProyecto', 'importeOtros', 'importeTotal'];
   displayEquipoInventorFooterColumns: string[] = [];
@@ -467,39 +467,42 @@ export class InvencionRepartoEquipoInventorFragment extends Fragment {
     this.setChanges(true);
   }
 
-  onImporteRepartoEquipoInventorChanges(importeRepartoEquipoInventor: number, isUserInput: boolean): void {
+  onImporteRepartoEquipoInventorChanges(importeRepartoEquipoInventor: number, isUserInput: boolean, isError?: boolean): void {
     if (isUserInput) {
       this.reparto.importeEquipoInventor = importeRepartoEquipoInventor;
     }
     this.importeRepartoEquipoInventor = importeRepartoEquipoInventor;
     const current = this.repartoEquipoInventorTableData$.value;
     this.repartoEquipoInventorTableData$.next(
-      this.recalculateArrayRepartoEquipoInventorTableData(current, importeRepartoEquipoInventor, isUserInput)
+      this.recalculateArrayRepartoEquipoInventorTableData(current, importeRepartoEquipoInventor, isUserInput, isError)
     );
     this.calculateImporteTotalSumEquipoInventor();
     this.updateFragmentStatus();
-    this.setChanges(this.hasArrayRepartoEquipoInventorTableDataAnyError());
+    this.setChanges(isUserInput);
   }
 
   private recalculateArrayRepartoEquipoInventorTableData(
     current: StatusWrapper<IRepartoEquipoInventorTableData>[],
     importeRepartoEquipoInventor: number,
-    isUserInput: boolean
+    isUserInput: boolean,
+    isError: boolean
   ): StatusWrapper<IRepartoEquipoInventorTableData>[] {
     return current.map(wrapper => {
       return isUserInput ?
-        this.recalculateRepartoEquipoInventorTableData(wrapper, importeRepartoEquipoInventor) :
+        this.recalculateRepartoEquipoInventorTableData(wrapper, importeRepartoEquipoInventor, isError) :
         this.initializeRepartoEquipoInventorTableData(wrapper, importeRepartoEquipoInventor);
     });
   }
 
   private recalculateRepartoEquipoInventorTableData(
     wrapper: StatusWrapper<IRepartoEquipoInventorTableData>,
-    importeRepartoEquipoInventor?: number
+    importeRepartoEquipoInventor?: number,
+    isError?: boolean
   ): StatusWrapper<IRepartoEquipoInventorTableData> {
-    if (importeRepartoEquipoInventor) {
-      wrapper.value.importeTotalInventor = this.calculateImporteTotalInventor(
-        wrapper.value, importeRepartoEquipoInventor);
+    if (!isError) {
+      wrapper.value.importeTotalInventor = typeof importeRepartoEquipoInventor === 'number' ?
+        this.calculateImporteTotalInventor(wrapper.value, importeRepartoEquipoInventor) :
+        this.initializeImporteTotalInventor(wrapper.value);
     }
     wrapper.value.hasError = this.hasErrorRepartoEquipoInventorTableData(
       wrapper.value.repartoEquipoInventor, wrapper.value.importeTotalInventor
@@ -511,8 +514,9 @@ export class InvencionRepartoEquipoInventorFragment extends Fragment {
     wrapper: StatusWrapper<IRepartoEquipoInventorTableData>,
     importeRepartoEquipoInventor: number
   ): StatusWrapper<IRepartoEquipoInventorTableData> {
-    wrapper.value.importeTotalInventor = this.initializeImporteTotalInventor(
-      wrapper.value, importeRepartoEquipoInventor);
+    wrapper.value.importeTotalInventor = typeof this.importeEquipoInventor === 'number' ?
+      this.initializeImporteTotalInventor(wrapper.value) :
+      this.calculateInitialImporteTotalInventor(wrapper.value, importeRepartoEquipoInventor);
     wrapper.value.hasError = this.hasErrorRepartoEquipoInventorTableData(
       wrapper.value.repartoEquipoInventor, wrapper.value.importeTotalInventor
     );
@@ -530,16 +534,27 @@ export class InvencionRepartoEquipoInventorFragment extends Fragment {
     return (totalReparto * repartoEquipoInventorTableData.porcentajeRepartoInventor) / 100;
   }
 
-  private initializeImporteTotalInventor(repartoEquipoInventorTableData: IRepartoEquipoInventorTableData, totalReparto: number): number {
-    if (!this.reparto.importeEquipoInventor) {
-      return this.calculateImporteTotalInventor(repartoEquipoInventorTableData, totalReparto);
+  private calculateInitialImporteTotalInventor(
+    repartoEquipoInventorTableData: IRepartoEquipoInventorTableData, totalReparto: number
+  ): number {
+    /*
+     Obtenemos la suma de los importes parciales para saber si el inventor ya tenía asignado
+     algún valor. Esto se hace para evitar errores en el pre-cálculo de los importes cuando no
+     se ha modificado el input el importe destinado al equipo inventor. Ya que la cantidad calculada
+     puede diferir de la cantidad total indicada.
+    */
+    const initialImporte = this.initializeImporteTotalInventor(repartoEquipoInventorTableData);
+    if (initialImporte > 0) {
+      // Se devuelve la suma de los importes para evitar errores de caáculo.
+      return initialImporte;
     }
+    return (totalReparto * repartoEquipoInventorTableData.porcentajeRepartoInventor) / 100;
+  }
 
-    const importeTotalInventor = repartoEquipoInventorTableData.repartoEquipoInventor.importeNomina +
+  private initializeImporteTotalInventor(repartoEquipoInventorTableData: IRepartoEquipoInventorTableData): number {
+    return repartoEquipoInventorTableData.repartoEquipoInventor.importeNomina +
       repartoEquipoInventorTableData.repartoEquipoInventor.importeProyecto +
       repartoEquipoInventorTableData.repartoEquipoInventor.importeOtros;
-
-    return NumberUtils.roundNumber(importeTotalInventor);
   }
 
   private calculateImporteTotalSumEquipoInventor(): void {
@@ -672,7 +687,7 @@ export class InvencionRepartoEquipoInventorFragment extends Fragment {
     this.isRightTotalSumImporteTotalInventor =
       NumberUtils.roundNumber(this.importeTotalSumEquipoInventor) !==
       NumberUtils.roundNumber(this.importeRepartoEquipoInventor);
-    return NumberUtils.roundNumber(this.importeRepartoEquipoInventor) <= 0 ||
+    return NumberUtils.roundNumber(this.importeRepartoEquipoInventor) < 0 ||
       this.isRightTotalSumImporteTotalInventor ||
       this.hasArrayRepartoEquipoInventorTableDataAnyError();
   }

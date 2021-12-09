@@ -148,10 +148,8 @@ public class SolicitudProteccionService {
           solicitudProteccionExistente.setNumeroSolicitud(solicitudProteccion.getNumeroSolicitud());
           solicitudProteccionExistente.setComentarios(solicitudProteccion.getComentarios());
           solicitudProteccionExistente.setNumeroRegistro(solicitudProteccion.getNumeroRegistro());
-          if (solicitudProteccion.getFechaFinPriorPresFasNacRec() != null) {
-            solicitudProteccionExistente
-                .setFechaFinPriorPresFasNacRec(solicitudProteccion.getFechaFinPriorPresFasNacRec());
-          }
+          solicitudProteccionExistente
+              .setFechaFinPriorPresFasNacRec(solicitudProteccion.getFechaFinPriorPresFasNacRec());
 
           if (solicitudProteccionExistente.getViaProteccion().getTipoPropiedad().equals(TipoPropiedad.INDUSTRIAL)) {
             solicitudProteccionExistente.setEstado(solicitudProteccion.getEstado());

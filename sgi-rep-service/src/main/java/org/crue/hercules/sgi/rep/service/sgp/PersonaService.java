@@ -2,7 +2,7 @@ package org.crue.hercules.sgi.rep.service.sgp;
 
 import org.crue.hercules.sgi.framework.http.HttpEntityBuilder;
 import org.crue.hercules.sgi.rep.config.RestApiProperties;
-import org.crue.hercules.sgi.rep.dto.eti.DatosContactoDto;
+import org.crue.hercules.sgi.rep.dto.sgp.DatosContactoDto;
 import org.crue.hercules.sgi.rep.dto.sgp.PersonaDto;
 import org.crue.hercules.sgi.rep.dto.sgp.PersonaDto.DatosAcademicosDto;
 import org.crue.hercules.sgi.rep.dto.sgp.PersonaDto.VinculacionDto;

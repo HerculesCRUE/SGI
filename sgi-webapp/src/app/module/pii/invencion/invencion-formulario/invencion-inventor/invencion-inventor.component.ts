@@ -34,7 +34,7 @@ export class InvencionInventorComponent extends FragmentComponent implements OnI
   msgErrorParticipacion: string;
   msgConfirmDelete: string;
 
-  columnas = ['nombre', 'apellidos', 'numeroDocumento', 'entidad', 'participacion', 'esReparto', 'acciones'];
+  columnas = ['nombre', 'apellidos', 'persona', 'entidad', 'participacion', 'esReparto', 'acciones'];
   elementosPagina = [5, 10, 25, 100];
   dataSource = new MatTableDataSource<StatusWrapper<IInvencionInventor>>();
   isInvecionInvtoresEmpty: boolean;

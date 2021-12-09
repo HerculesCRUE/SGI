@@ -127,6 +127,7 @@ export class ProyectoProyectosSgeFragment extends Fragment {
             const proyectoSge = wrappedProyectoSge.value;
             proyectoSge.id = createdProyectoSge.id;
             this.proyectosSge$.value[index] = new StatusWrapper<IProyectoProyectoSge>(proyectoSge);
+            this.proyectosSge$.next(this.proyectosSge$.value);
           })
         );
       })
@@ -135,7 +136,7 @@ export class ProyectoProyectosSgeFragment extends Fragment {
 
   private isSaveOrUpdateComplete(): boolean {
     const touched: boolean = this.proyectosSge$.value.some((wrapper) => wrapper.touched);
-    return (this.proyectosSgeEliminados.length > 0 || touched);
+    return !(this.proyectosSgeEliminados.length > 0 || touched);
   }
 
 }

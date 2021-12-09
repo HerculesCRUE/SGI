@@ -15,9 +15,9 @@
       [fxFlexOrder]="fxFlexProperties.order">
       <mat-form-field color="primary">
         <mat-label>{{'eti.evaluacion.fecha-evaluacion'| translate}}</mat-label>
-        <input matInput [ngxMatDatetimePicker]="fechaEvaluacion" formControlName="fechaEvaluacion">
+        <input matInput [matDatepicker]="fechaEvaluacion" formControlName="fechaEvaluacion">
         <mat-datepicker-toggle class="fechaIcon" matSuffix [for]="fechaEvaluacion"></mat-datepicker-toggle>
-        <ngx-mat-datetime-picker #fechaEvaluacion showSeconds="true" [defaultTime]="[0,0,0]"></ngx-mat-datetime-picker>
+        <mat-datepicker #fechaEvaluacion></mat-datepicker>
       </mat-form-field>
     </div>
     <!--Referencia Memoria-->

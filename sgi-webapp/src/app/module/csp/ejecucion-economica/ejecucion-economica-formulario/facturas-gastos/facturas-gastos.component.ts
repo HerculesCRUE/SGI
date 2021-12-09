@@ -4,6 +4,7 @@ import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { MatSelect } from '@angular/material/select';
 import { MatTableDataSource } from '@angular/material/table';
 import { FragmentComponent } from '@core/component/fragment.component';
+import { HttpProblem } from '@core/errors/http-problem';
 import { MSG_PARAMS } from '@core/i18n';
 import { IDatoEconomicoDetalle } from '@core/models/sge/dato-economico-detalle';
 import { FxFlexProperties } from '@core/models/shared/flexLayout/fx-flex-properties';
@@ -14,6 +15,7 @@ import { EjecucionEconomicaActionService } from '../../ejecucion-economica.actio
 import { FacturasGastosModalComponent } from '../../modals/facturas-gastos-modal/facturas-gastos-modal.component';
 import { RowTreeDesglose } from '../desglose-economico.fragment';
 import { IDesglose } from '../facturas-justificantes.fragment';
+import { FacturasGastosExportModalComponent } from './export/facturas-gastos-export-modal.component';
 import { FacturasGastosFragment } from './facturas-gastos.fragment';
 
 @Component({
@@ -71,9 +73,26 @@ export class FacturasGastosComponent extends FragmentComponent implements OnInit
     ));
   }
 
+  openExportModal(): void {
+
+    this.subscriptions.push(this.formPart.loadDataExport().subscribe(
+      (exportData) => {
+        const config = {
+          data: exportData
+        };
+        this.matDialog.open(FacturasGastosExportModalComponent, config);
+      },
+      (error) => {
+        if (error instanceof HttpProblem) {
+          this.formPart.pushProblems(error);
+        }
+      })
+    );
+  }
+
   public clearDesglose(): void {
     this.formPart.clearRangos();
-    this.selectAnualidades.options.forEach((item: MatOption) => { item.deselect() });
+    this.selectAnualidades.options.forEach((item: MatOption) => item.deselect());
     this.formPart.clearDesglose();
   }
 

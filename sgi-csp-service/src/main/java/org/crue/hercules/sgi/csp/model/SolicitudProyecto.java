@@ -75,8 +75,7 @@ public class SolicitudProyecto extends BaseEntity {
   private Integer duracion;
 
   /** Colaborativo */
-  @Column(name = "colaborativo", columnDefinition = "boolean default false", nullable = false)
-  @NotNull
+  @Column(name = "colaborativo", nullable = true)
   private Boolean colaborativo;
 
   /** Coordinador externo */
@@ -84,8 +83,7 @@ public class SolicitudProyecto extends BaseEntity {
   private Boolean coordinadorExterno;
 
   /** Coordinado */
-  @Column(name = "coordinado", columnDefinition = "boolean default false", nullable = false)
-  @NotNull
+  @Column(name = "coordinado", nullable = true)
   private Boolean coordinado;
 
   /** Objetivos */
@@ -117,9 +115,8 @@ public class SolicitudProyecto extends BaseEntity {
   private String peticionEvaluacionRef;
 
   /** Tipo presupuesto */
-  @Column(name = "tipo_presupuesto", length = 50, nullable = false)
+  @Column(name = "tipo_presupuesto", length = 50, nullable = true)
   @Enumerated(EnumType.STRING)
-  @NotNull
   private TipoPresupuesto tipoPresupuesto;
 
   /** Importe Solicitado */

@@ -45,7 +45,7 @@ export class ConvocatoriaEnlaceFragment extends Fragment {
   public deleteEnlace(wrapper: StatusWrapper<IConvocatoriaEnlace>): void {
     const current = this.enlace$.value;
     const index = current.findIndex(
-      (value: StatusWrapper<IConvocatoriaEnlace>) => value === wrapper
+      (value: StatusWrapper<IConvocatoriaEnlace>) => value.value === wrapper.value
     );
     if (index >= 0) {
       if (!wrapper.created) {
@@ -99,9 +99,12 @@ export class ConvocatoriaEnlaceFragment extends Fragment {
     return from(createdEnlaces).pipe(
       mergeMap((wrappedEnlaces) => {
         return this.convocatoriaEnlaceService.create(wrappedEnlaces.value).pipe(
-          map((updatedEnlaces) => {
+          map((createdEnlace) => {
             const index = this.enlace$.value.findIndex((currentEnlaces) => currentEnlaces === wrappedEnlaces);
-            this.enlace$.value[index] = new StatusWrapper<IConvocatoriaEnlace>(updatedEnlaces);
+            const enlaceListado = wrappedEnlaces.value;
+            enlaceListado.id = createdEnlace.id;
+            this.enlace$.value[index] = new StatusWrapper<IConvocatoriaEnlace>(enlaceListado);
+            this.enlace$.next(this.enlace$.value);
           })
         );
       })
@@ -127,7 +130,7 @@ export class ConvocatoriaEnlaceFragment extends Fragment {
 
   private isSaveOrUpdateComplete(): boolean {
     const touched: boolean = this.enlace$.value.some((wrapper) => wrapper.touched);
-    return (this.enlaceEliminados.length > 0 || touched);
+    return !(this.enlaceEliminados.length > 0 || touched);
   }
 
   getSelectedUrls(): string[] {

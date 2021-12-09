@@ -107,7 +107,7 @@
         <th mat-header-cell *matHeaderCellDef>
           {{'eti.memoria.fecha-evaluacion' | translate}}
         </th>
-        <td mat-cell *matCellDef="let memoria"> {{memoria.fechaEvaluacion | luxon:'short'}} </td>
+        <td mat-cell *matCellDef="let memoria"> {{memoria.fechaEvaluacion | luxon:'shortDate'}} </td>
       </ng-container>
 
       <!-- Fecha límite -->

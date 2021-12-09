@@ -1,14 +1,13 @@
 import { Injectable } from '@angular/core';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
-import { Estado, ESTADO_MAP, IConvocatoria } from '@core/models/csp/convocatoria';
+import { Estado, ESTADO_MAP } from '@core/models/csp/convocatoria';
 import { IConvocatoriaEnlace } from '@core/models/csp/convocatoria-enlace';
 import { IConvocatoriaEntidadConvocante } from '@core/models/csp/convocatoria-entidad-convocante';
 import { IConvocatoriaEntidadFinanciadora } from '@core/models/csp/convocatoria-entidad-financiadora';
 import { IConvocatoriaFase } from '@core/models/csp/convocatoria-fase';
-import { ISgiColumnReport } from '@core/models/rep/sgi-column-report';
+import { ColumnType, ISgiColumnReport } from '@core/models/rep/sgi-column-report';
 import { ISgiGroupReport } from '@core/models/rep/sgi-group.report';
 import { ISgiRowReport } from '@core/models/rep/sgi-row.report';
-import { TypeColumnReportEnum } from '@core/models/rep/type-column-report-enum';
 import { IEmpresa } from '@core/models/sgemp/empresa';
 import { ConvocatoriaService } from '@core/services/csp/convocatoria.service';
 import { AbstractTableExportService, IReportConfig, IReportOptions } from '@core/services/rep/abstract-table-export.service';
@@ -17,7 +16,6 @@ import { EmpresaService } from '@core/services/sgemp/empresa.service';
 import { SnackBarService } from '@core/services/snack-bar.service';
 import { LuxonUtils } from '@core/utils/luxon-utils';
 import { TranslateService } from '@ngx-translate/core';
-import { SgiRestListResult } from '@sgi/framework/http';
 import { NGXLogger } from 'ngx-logger';
 import { Observable, of, zip } from 'rxjs';
 import { map, switchMap, takeLast } from 'rxjs/operators';
@@ -37,9 +35,7 @@ const ENTIDAD_FINANCIADORA_KEY = marker('csp.entidad-financiadora.empresa-econom
 const FUENTE_FINANCIACION_KEY = marker('csp.convocatoria.fuente-financiacion');
 const ESTADO_KEY = marker('csp.convocatoria.estado');
 
-@Injectable({
-  providedIn: 'root',
-})
+@Injectable()
 export class ConvocatoriaListadoService extends AbstractTableExportService<IConvocatoriaReportData, IReportOptions> {
 
   constructor(
@@ -187,47 +183,47 @@ export class ConvocatoriaListadoService extends AbstractTableExportService<IConv
       {
         title: this.translate.instant(TITLE_KEY),
         name: 'titulo',
-        type: TypeColumnReportEnum.STRING,
+        type: ColumnType.STRING,
       },
       {
         title: this.translate.instant(REFERENCIA_KEY),
         name: 'codigo',
-        type: TypeColumnReportEnum.STRING
+        type: ColumnType.STRING
       },
       {
         title: this.translate.instant(FECHA_INICIO_KEY),
         name: 'fechaInicio',
-        type: TypeColumnReportEnum.DATE
+        type: ColumnType.DATE
       },
       {
         title: this.translate.instant(FECHA_FIN_KEY),
         name: 'fechaFin',
-        type: TypeColumnReportEnum.DATE
+        type: ColumnType.DATE
       },
       {
         title: this.translate.instant(ENTIDAD_CONVOCANTE_KEY),
         name: 'entidadConvocante',
-        type: TypeColumnReportEnum.STRING
+        type: ColumnType.STRING
       },
       {
         title: this.translate.instant(PLAN_INVESTIGACION_KEY),
         name: 'planInvestigacion',
-        type: TypeColumnReportEnum.STRING
+        type: ColumnType.STRING
       },
       {
         title: this.translate.instant(ENTIDAD_FINANCIADORA_KEY),
         name: 'entidadFinanciadora',
-        type: TypeColumnReportEnum.STRING
+        type: ColumnType.STRING
       },
       {
         title: this.translate.instant(FUENTE_FINANCIACION_KEY),
         name: 'fuenteFinanciacion',
-        type: TypeColumnReportEnum.STRING
+        type: ColumnType.STRING
       },
       {
         title: this.translate.instant(ESTADO_KEY),
         name: 'estado',
-        type: TypeColumnReportEnum.STRING
+        type: ColumnType.STRING
       }
 
     ];

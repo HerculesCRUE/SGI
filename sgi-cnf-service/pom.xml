@@ -9,9 +9,9 @@
   </parent>
   <groupId>org.crue.hercules.sgi</groupId>
   <artifactId>sgi-cnf-service</artifactId>
-  <version>0.0.4</version>
+  <version>0.0.5</version>
   <name>sgi-cnf-service</name>
-  <description>Tareas Programadas SGI HERCULES</description>
+  <description>Configuración SGI HERCULES</description>
 
   <dependencies>
     <dependency>
@@ -49,7 +49,7 @@
     <dependency>
       <groupId>com.h2database</groupId>
       <artifactId>h2</artifactId>
-      <version>1.4.200</version>
+      <version>${h2.version}</version>
       <scope>runtime</scope>
     </dependency>
     <dependency>
@@ -144,6 +144,7 @@
     <org.hibernate-jpamodelgen.version>5.3.15.Final</org.hibernate-jpamodelgen.version>
     <org.modelmapper.version>2.3.5</org.modelmapper.version>
     <lombok.version>1.18.20</lombok.version>
+    <h2.version>1.4.200</h2.version>
 
     <!-- Plugin versions (only those that are not defined in `spring-boot-starter-parent`) -->
     <docker-maven-plugin.version>0.33.0</docker-maven-plugin.version>

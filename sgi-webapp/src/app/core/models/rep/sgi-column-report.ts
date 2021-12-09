@@ -1,13 +1,21 @@
-import { FieldOrientationType } from './field-orientation.enum';
-import { TypeColumnReportEnum } from './type-column-report-enum';
+import { FieldOrientation } from './field-orientation.enum';
 
 export interface ISgiColumnReport {
   title: string;
   name: string;
-  type: TypeColumnReportEnum;
+  type: ColumnType;
   format?: string;
-  fieldOrientationType?: FieldOrientationType;
+  fieldOrientation?: FieldOrientation;
   columns?: ISgiColumnReport[];
+}
+
+export enum ColumnType {
+  STRING = 'STRING',
+  DATE = 'DATE',
+  NUMBER = 'NUMBER',
+  BOOLEAN = 'BOOLEAN',
+  FORMULA = 'FORMULA',
+  SUBREPORT = 'SUBREPORT'
 }
 
 

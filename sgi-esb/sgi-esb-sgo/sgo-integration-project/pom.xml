@@ -4,10 +4,10 @@
   <parent>
     <groupId>org.crue.hercules.sgi.esb.sgo</groupId>
     <artifactId>sgi-esb-sgo</artifactId>
-    <version>0.0.3</version>
+    <version>0.0.5</version>
   </parent>
   <artifactId>sgo-integration-project</artifactId>
-  <version>0.0.3</version>
+  <version>0.0.5</version>
   <packaging>pom</packaging>
   <name>sgo-integration-project</name>
   <description>sgo-integration-project</description>

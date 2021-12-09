@@ -60,8 +60,8 @@ export class ViaProteccionListadoComponent extends AbstractTablePaginationCompon
     super(snackBarService, MSG_ERROR);
   }
 
-  protected createObservable(): Observable<SgiRestListResult<IViaProteccion>> {
-    return this.viaProteccionService.findTodos(this.getFindOptions());
+  protected createObservable(reset?: boolean): Observable<SgiRestListResult<IViaProteccion>> {
+    return this.viaProteccionService.findTodos(this.getFindOptions(reset));
   }
 
   protected initColumns(): void {

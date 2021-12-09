@@ -16,6 +16,8 @@ import org.crue.hercules.sgi.pii.dto.InvencionInput;
 import org.crue.hercules.sgi.pii.dto.InvencionInventorInput;
 import org.crue.hercules.sgi.pii.dto.InvencionInventorOutput;
 import org.crue.hercules.sgi.pii.dto.InvencionOutput;
+import org.crue.hercules.sgi.pii.dto.InvencionPalabraClaveInput;
+import org.crue.hercules.sgi.pii.dto.InvencionPalabraClaveOutput;
 import org.crue.hercules.sgi.pii.dto.InvencionSectorAplicacionInput;
 import org.crue.hercules.sgi.pii.dto.InvencionSectorAplicacionOutput;
 import org.crue.hercules.sgi.pii.dto.PeriodoTitularidadInput;
@@ -30,6 +32,7 @@ import org.crue.hercules.sgi.pii.model.InvencionDocumento;
 import org.crue.hercules.sgi.pii.model.InvencionGasto;
 import org.crue.hercules.sgi.pii.model.InvencionIngreso;
 import org.crue.hercules.sgi.pii.model.InvencionInventor;
+import org.crue.hercules.sgi.pii.model.InvencionPalabraClave;
 import org.crue.hercules.sgi.pii.model.InvencionSectorAplicacion;
 import org.crue.hercules.sgi.pii.model.PeriodoTitularidad;
 import org.crue.hercules.sgi.pii.model.Reparto;
@@ -40,6 +43,7 @@ import org.crue.hercules.sgi.pii.service.InvencionDocumentoService;
 import org.crue.hercules.sgi.pii.service.InvencionGastoService;
 import org.crue.hercules.sgi.pii.service.InvencionIngresoService;
 import org.crue.hercules.sgi.pii.service.InvencionInventorService;
+import org.crue.hercules.sgi.pii.service.InvencionPalabraClaveService;
 import org.crue.hercules.sgi.pii.service.InvencionSectorAplicacionService;
 import org.crue.hercules.sgi.pii.service.InvencionService;
 import org.crue.hercules.sgi.pii.service.PeriodoTitularidadService;
@@ -83,6 +87,7 @@ public class InvencionController {
   public static final String PATH_PERIODOSTITULARIDAD = "/{invencionId}/periodostitularidad";
   public static final String PATH_PERIODOTITULARIDAD_TITULAR = PATH_PERIODOSTITULARIDAD + "/{periodotitularidadId}";
   public static final String PATH_REPARTO = "/{invencionId}/repartos";
+  public static final String PATH_PALABRAS_CLAVE = "/{invencionId}/palabrasclave";
 
   private ModelMapper modelMapper;
 
@@ -112,6 +117,9 @@ public class InvencionController {
   /** Reparto service */
   private final RepartoService repartoService;
 
+  /** InvencionPalabraClave service */
+  private final InvencionPalabraClaveService invencionPalabraClaveService;
+
   public InvencionController(ModelMapper modelMapper, InvencionService invencionService,
       InvencionSectorAplicacionService invencionSectorAplicacionService,
       InvencionDocumentoService invencionDocumentoService,
@@ -119,7 +127,8 @@ public class InvencionController {
       InformePatentabilidadService informePatentabilidadService,
       final SolicitudProteccionService solicitudProteccionService, InvencionInventorService invencionInventorService,
       InvencionGastoService invencionGastoService, InvencionIngresoService invencionIngresoService,
-      final PeriodoTitularidadService periodoTitularidadService, RepartoService repartoService) {
+      final PeriodoTitularidadService periodoTitularidadService, RepartoService repartoService,
+      InvencionPalabraClaveService invencionPalabraClaveService) {
     this.modelMapper = modelMapper;
     this.service = invencionService;
     this.invencionInventorService = invencionInventorService;
@@ -132,6 +141,7 @@ public class InvencionController {
     this.invencionIngresoService = invencionIngresoService;
     this.periodoTitularidadService = periodoTitularidadService;
     this.repartoService = repartoService;
+    this.invencionPalabraClaveService = invencionPalabraClaveService;
   }
 
   /**
@@ -563,6 +573,56 @@ public class InvencionController {
     return new ResponseEntity<>(convertReparto(page), HttpStatus.OK);
   }
 
+  /**
+   * Devuelve las {@link InvencionPalabraClave} asociadas a la
+   * {@link Invencion} con el id indicado
+   * 
+   * @param invencionId Identificador de {@link Invencion}
+   * @param query       filtro de búsqueda.
+   * @param paging      pageable.
+   * @return {@link InvencionPalabraClave} correspondientes al id de la
+   *         {@link Invencion}
+   */
+  @GetMapping(PATH_PALABRAS_CLAVE)
+  @PreAuthorize("hasAnyAuthority('PII-INV-E', 'PII-INV-V', 'PII-INV-C')")
+  public Page<InvencionPalabraClaveOutput> findPalabrasClave(@PathVariable Long invencionId,
+      @RequestParam(name = "q", required = false) String query, @RequestPageable(sort = "s") Pageable paging) {
+    log.debug("findPalabrasClave(@PathVariable Long invencionId, String query, Pageable paging) - start");
+    Page<InvencionPalabraClaveOutput> returnValue = convertInvencionPalabraClave(
+        invencionPalabraClaveService.findByInvencionId(invencionId, query, paging));
+    log.debug("findPalabrasClave(@PathVariable Long invencionId, String query, Pageable paging) - end");
+    return returnValue;
+  }
+
+  /**
+   * Actualiza la lista de {@link InvencionPalabraClave} asociadas a la
+   * {@link Invencion} con el id indicado
+   * 
+   * @param invencionId   identificador de la {@link Invencion}
+   * @param palabrasClave nueva lista de {@link InvencionPalabraClave} de
+   *                      la {@link Invencion}
+   * @return la nueva lista de {@link InvencionPalabraClave} asociadas a la
+   *         {@link Invencion}
+   */
+  @PatchMapping(PATH_PALABRAS_CLAVE)
+  @PreAuthorize("hasAnyAuthority('PII-INV-E', 'PII-INV-C')")
+  public ResponseEntity<List<InvencionPalabraClaveOutput>> updatePalabrasClave(@PathVariable Long invencionId,
+      @Valid @RequestBody List<InvencionPalabraClaveInput> palabrasClave) {
+    log.debug("updatePalabrasClave(Long invencionId, List<InvencionPalabraClaveInput> palabrasClave) - start");
+
+    palabrasClave.stream().forEach(palabraClave -> {
+      if (!palabraClave.getInvencionId().equals(invencionId)) {
+        throw new NoRelatedEntitiesException(InvencionPalabraClave.class, Invencion.class);
+      }
+    });
+
+    List<InvencionPalabraClaveOutput> returnValue = convertInvencionPalabraClave(
+        invencionPalabraClaveService.updatePalabrasClave(invencionId,
+            convertInvencionPalabraClaveInputs(invencionId, palabrasClave)));
+    log.debug("updatePalabrasClave(Long invencionId, List<InvencionPalabraClaveInput> palabrasClave) - end");
+    return new ResponseEntity<>(returnValue, HttpStatus.OK);
+  }
+
   private Page<PeriodoTitularidadOutput> convertToPeriodoTitularidadPage(Page<PeriodoTitularidad> page) {
     List<PeriodoTitularidadOutput> content = page.getContent().stream()
         .map((periodoTitularidad) -> convert(periodoTitularidad)).collect(Collectors.toList());
@@ -729,5 +789,34 @@ public class InvencionController {
 
   private RepartoOutput convert(Reparto reparto) {
     return modelMapper.map(reparto, RepartoOutput.class);
+  }
+
+  private Page<InvencionPalabraClaveOutput> convertInvencionPalabraClave(Page<InvencionPalabraClave> page) {
+    List<InvencionPalabraClaveOutput> content = page.getContent().stream()
+        .map((invencionPalabraClave) -> convert(invencionPalabraClave))
+        .collect(Collectors.toList());
+
+    return new PageImpl<>(content, page.getPageable(), page.getTotalElements());
+  }
+
+  private List<InvencionPalabraClaveOutput> convertInvencionPalabraClave(List<InvencionPalabraClave> list) {
+    return list.stream()
+        .map((invencionPalabraClave) -> convert(invencionPalabraClave))
+        .collect(Collectors.toList());
+  }
+
+  private InvencionPalabraClaveOutput convert(InvencionPalabraClave invencionPalabraClave) {
+    return modelMapper.map(invencionPalabraClave, InvencionPalabraClaveOutput.class);
+  }
+
+  private List<InvencionPalabraClave> convertInvencionPalabraClaveInputs(Long invencionId,
+      List<InvencionPalabraClaveInput> inputs) {
+    return inputs.stream().map((input) -> convert(invencionId, input)).collect(Collectors.toList());
+  }
+
+  private InvencionPalabraClave convert(Long invencionId, InvencionPalabraClaveInput input) {
+    InvencionPalabraClave entity = modelMapper.map(input, InvencionPalabraClave.class);
+    entity.setInvencionId(invencionId);
+    return entity;
   }
 }

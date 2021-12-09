@@ -39,7 +39,7 @@ public class SgiReportDto {
   private Float columnMinWidth;
 
   // Disposición de los campos en el informe: horizontal o vertical
-  private FieldOrientationType fieldOrientationType;
+  private FieldOrientation fieldOrientation;
 
   @JsonIgnore
   private Map<String, TableModel> dataModel;
@@ -48,12 +48,12 @@ public class SgiReportDto {
   private Map<String, Object> parameters;
 
   @NotNull
-  private OutputReportType outputReportType;
+  private OutputType outputType;
 
   @JsonIgnore
   private byte[] content;
 
-  public enum FieldOrientationType {
+  public enum FieldOrientation {
     HORIZONTAL, VERTICAL
   }
 

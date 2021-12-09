@@ -97,7 +97,7 @@ export class ProyectoClasificacionesFragment extends Fragment {
   public deleteClasificacion(wrapper: StatusWrapper<ProyectoClasificacionListado>) {
     const current = this.clasificaciones$.value;
     const index = current.findIndex(
-      (value) => value === wrapper
+      (value) => value.value === wrapper.value
     );
     if (index >= 0) {
       if (!wrapper.created) {
@@ -160,6 +160,7 @@ export class ProyectoClasificacionesFragment extends Fragment {
             const clasificacionListado = wrappedClasificacion.value;
             clasificacionListado.id = createdClasificacion.id;
             this.clasificaciones$.value[index] = new StatusWrapper<ProyectoClasificacionListado>(clasificacionListado);
+            this.clasificaciones$.next(this.clasificaciones$.value);
           })
         );
       })
@@ -168,7 +169,7 @@ export class ProyectoClasificacionesFragment extends Fragment {
 
   private isSaveOrUpdateComplete(): boolean {
     const touched: boolean = this.clasificaciones$.value.some((wrapper) => wrapper.touched);
-    return (this.clasificacionesEliminadas.length > 0 || touched);
+    return !(this.clasificacionesEliminadas.length > 0 || touched);
   }
 
   private getNiveles(proyectoClasificacion: ProyectoClasificacionListado):

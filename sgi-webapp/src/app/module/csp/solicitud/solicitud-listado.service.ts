@@ -2,10 +2,9 @@ import { Injectable } from '@angular/core';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { Estado, ESTADO_MAP } from '@core/models/csp/estado-solicitud';
 import { ISolicitudProyecto } from '@core/models/csp/solicitud-proyecto';
-import { ISgiColumnReport } from '@core/models/rep/sgi-column-report';
+import { ColumnType, ISgiColumnReport } from '@core/models/rep/sgi-column-report';
 import { ISgiGroupReport } from '@core/models/rep/sgi-group.report';
 import { ISgiRowReport } from '@core/models/rep/sgi-row.report';
-import { TypeColumnReportEnum } from '@core/models/rep/type-column-report-enum';
 import { ConvocatoriaService } from '@core/services/csp/convocatoria.service';
 import { SolicitudService } from '@core/services/csp/solicitud.service';
 import { AbstractTableExportService, IReportConfig, IReportOptions } from '@core/services/rep/abstract-table-export.service';
@@ -32,9 +31,7 @@ const ESTADO_KEY = marker('csp.solicitud.estado');
 const TITULO_KEY = marker('csp.solicitud.titulo-listado');
 const FECHA_ESTADO_KEY = marker('csp.solicitud.estado-solicitud.fecha');
 
-@Injectable({
-  providedIn: 'root',
-})
+@Injectable()
 export class SolicitudListadoService extends AbstractTableExportService<ISolicitudReportData, IReportOptions> {
 
   constructor(
@@ -149,37 +146,37 @@ export class SolicitudListadoService extends AbstractTableExportService<ISolicit
       {
         title: this.translate.instant(CODIGO_INTERNO_KEY),
         name: 'codigoRegistroInterno',
-        type: TypeColumnReportEnum.STRING,
+        type: ColumnType.STRING,
       },
       {
         title: this.translate.instant(CODIGO_EXTERNO_KEY),
         name: 'codigoExterno',
-        type: TypeColumnReportEnum.STRING
+        type: ColumnType.STRING
       },
       {
         title: this.translate.instant(REFERENCIA_KEY),
         name: 'referencia',
-        type: TypeColumnReportEnum.STRING
+        type: ColumnType.STRING
       },
       {
         title: this.translate.instant(SOLICITANTE_KEY),
         name: 'solicitante',
-        type: TypeColumnReportEnum.STRING
+        type: ColumnType.STRING
       },
       {
         title: this.translate.instant(ESTADO_KEY),
         name: 'estado',
-        type: TypeColumnReportEnum.STRING
+        type: ColumnType.STRING
       },
       {
         title: this.translate.instant(TITULO_KEY),
         name: 'titulo',
-        type: TypeColumnReportEnum.STRING
+        type: ColumnType.STRING
       },
       {
         title: this.translate.instant(FECHA_ESTADO_KEY),
         name: 'fechaEstado',
-        type: TypeColumnReportEnum.DATE
+        type: ColumnType.DATE
       }
     ];
     return of(columns);

@@ -13,7 +13,7 @@ import { LuxonUtils } from '@core/utils/luxon-utils';
 import { RSQLSgiRestFilter, SgiRestFilterOperator, SgiRestFindOptions } from '@sgi/framework/http';
 import { from, Observable, of } from 'rxjs';
 import { catchError, combineAll, concatMap, map, switchMap, tap } from 'rxjs/operators';
-import { DesgloseEconomicoFragment, IColumnDefinition, RowTreeDesglose } from './desglose-economico.fragment';
+import { DesgloseEconomicoFragment, IColumnDefinition, IDesgloseEconomicoExportData, RowTreeDesglose } from './desglose-economico.fragment';
 
 export interface IDesglose extends IDatoEconomico {
   proyecto: IProyecto;
@@ -78,13 +78,14 @@ export abstract class FacturasJustificantesFragment extends DesgloseEconomicoFra
     );
   }
 
-  protected abstract getColumns(): Observable<IColumnDefinition[]>;
+  protected abstract getColumns(reducida?: boolean): Observable<IColumnDefinition[]>;
 
   protected abstract getDatosEconomicos(
     anualidades: string[],
     devengosRang?: any,
     contabilizacionRange?: any,
-    pagosRang?: any
+    pagosRang?: any,
+    reducida?: boolean
   ): Observable<IDatoEconomico[]>;
 
   protected buildRows(datosEconomicos: IDatoEconomico[]): Observable<RowTreeDesglose<IDesglose>[]> {
@@ -196,6 +197,46 @@ export abstract class FacturasJustificantesFragment extends DesgloseEconomicoFra
 
   }
 
+  public loadDataExport(): Observable<IDesgloseEconomicoExportData> {
+    const anualidades = this.aniosControl.value ?? [];
+    const fechas = this.formGroupFechas.controls;
+    const devengoRange = {
+      desde: LuxonUtils.toBackend(fechas.devengoDesde.value, true),
+      hasta: LuxonUtils.toBackend(fechas.devengoHasta.value, true)
+    };
+    const contabilizacionRange = {
+      desde: LuxonUtils.toBackend(fechas.contabilizacionDesde.value, true),
+      hasta: LuxonUtils.toBackend(fechas.contabilizacionHasta.value, true)
+    };
+    const pagoRange = {
+      desde: LuxonUtils.toBackend(fechas.pagoDesde.value, true),
+      hasta: LuxonUtils.toBackend(fechas.pagoHasta.value, true)
+    };
+    const exportData: IDesgloseEconomicoExportData = {
+      data: [],
+      columns: []
+    };
+    return of(exportData).pipe(
+      switchMap((exportDataResult) => {
+        return this.getDatosEconomicos(anualidades, devengoRange, contabilizacionRange, pagoRange, false).pipe(
+          map(data => {
+            this.sortRowsDesglose(data as IDesglose[]);
+            exportDataResult.data = data;
+            return exportDataResult;
+          })
+        );
+      }),
+      switchMap((exportDataResult) => {
+        return this.getColumns(false).pipe(
+          map((columns) => {
+            exportDataResult.columns = columns;
+            return exportDataResult;
+          })
+        );
+      })
+    );
+  }
+
   public loadDesglose(): void {
     const anualidades = this.aniosControl.value ?? [];
     const fechas = this.formGroupFechas.controls;
@@ -211,7 +252,7 @@ export abstract class FacturasJustificantesFragment extends DesgloseEconomicoFra
       desde: LuxonUtils.toBackend(fechas.pagoDesde.value, true),
       hasta: LuxonUtils.toBackend(fechas.pagoHasta.value, true)
     };
-    this.getDatosEconomicos(anualidades, devengoRange, contabilizacionRange, pagoRange)
+    this.getDatosEconomicos(anualidades, devengoRange, contabilizacionRange, pagoRange, true)
       .pipe(
         switchMap(response => this.buildRows(response))
       ).subscribe(
@@ -221,13 +262,14 @@ export abstract class FacturasJustificantesFragment extends DesgloseEconomicoFra
             r.compute(this.columns);
             regs.push(...this.addChilds(r));
           });
-          this.sortRows(regs);
+          this.sortRowsTree(regs);
           this.desglose$.next(regs);
         }
       );
   }
 
-  protected abstract sortRows(rows: RowTreeDesglose<IDesglose>[]): void;
+  protected abstract sortRowsTree(rows: RowTreeDesglose<IDesglose>[]): void;
+  protected abstract sortRowsDesglose(rows: IDesglose[]): void;
 
   protected getItemLevel(item: RowTreeDesglose<IDesglose>, level: number): RowTreeDesglose<IDesglose> {
     if (item.level === level) {
@@ -239,19 +281,31 @@ export abstract class FacturasJustificantesFragment extends DesgloseEconomicoFra
     }
   }
 
-  protected compareAnualidad(itemA: RowTreeDesglose<IDesglose>, itemB: RowTreeDesglose<IDesglose>): number {
+  protected compareAnualidadRowTree(itemA: RowTreeDesglose<IDesglose>, itemB: RowTreeDesglose<IDesglose>): number {
     const anualidadItemA = this.getItemLevel(itemA, 0)?.item?.anualidad ?? '';
     const anualidadItemB = this.getItemLevel(itemB, 0)?.item?.anualidad ?? '';
     return anualidadItemA.localeCompare(anualidadItemB);
   }
 
-  protected compareProyectoTitulo(itemA: RowTreeDesglose<IDesglose>, itemB: RowTreeDesglose<IDesglose>): number {
+  protected compareAnualidadDesglose(itemA: IDesglose, itemB: IDesglose): number {
+    const anualidadItemA = itemA?.anualidad ?? '';
+    const anualidadItemB = itemB?.anualidad ?? '';
+    return anualidadItemA.localeCompare(anualidadItemB);
+  }
+
+  protected compareProyectoTituloRowTree(itemA: RowTreeDesglose<IDesglose>, itemB: RowTreeDesglose<IDesglose>): number {
     const tituloProyectoItemA = this.getItemLevel(itemA, 0)?.item?.proyecto?.titulo ?? '';
     const tituloProyectoItemB = this.getItemLevel(itemB, 0)?.item?.proyecto?.titulo ?? '';
     return tituloProyectoItemA.localeCompare(tituloProyectoItemB);
   }
 
-  protected compareAgrupacionGastoNombre(itemA: RowTreeDesglose<IDesglose>, itemB: RowTreeDesglose<IDesglose>): number {
+  protected compareProyectoTituloDesglose(itemA: IDesglose, itemB: IDesglose): number {
+    const tituloProyectoItemA = itemA?.proyecto?.titulo ?? '';
+    const tituloProyectoItemB = itemB?.proyecto?.titulo ?? '';
+    return tituloProyectoItemA.localeCompare(tituloProyectoItemB);
+  }
+
+  protected compareAgrupacionGastoNombreRowTree(itemA: RowTreeDesglose<IDesglose>, itemB: RowTreeDesglose<IDesglose>): number {
     if (!itemA || !itemB || itemA.level < 1 || itemB.level < 1) {
       return 0;
     }
@@ -261,7 +315,13 @@ export abstract class FacturasJustificantesFragment extends DesgloseEconomicoFra
     return nombreAgrupacionGastoItemA.localeCompare(nombreAgrupacionGastoItemB);
   }
 
-  protected compareConceptoGastoNombre(itemA: RowTreeDesglose<IDesglose>, itemB: RowTreeDesglose<IDesglose>): number {
+  protected compareAgrupacionGastoNombreDesglose(itemA: IDesglose, itemB: IDesglose): number {
+    const nombreAgrupacionGastoItemA = itemA?.agrupacionGasto?.nombre ?? '';
+    const nombreAgrupacionGastoItemB = itemB?.agrupacionGasto?.nombre ?? '';
+    return nombreAgrupacionGastoItemA.localeCompare(nombreAgrupacionGastoItemB);
+  }
+
+  protected compareConceptoGastoNombreRowTree(itemA: RowTreeDesglose<IDesglose>, itemB: RowTreeDesglose<IDesglose>): number {
     if (!itemA || !itemB || itemA.level < 2 || itemB.level < 2) {
       return 0;
     }
@@ -271,7 +331,13 @@ export abstract class FacturasJustificantesFragment extends DesgloseEconomicoFra
     return nombreConceptoGastoItemA.localeCompare(nombreConceptoGastoItemB);
   }
 
-  protected comparePartidaPresupuestaria(itemA: RowTreeDesglose<IDesglose>, itemB: RowTreeDesglose<IDesglose>): number {
+  protected compareConceptoGastoNombreDesglose(itemA: IDesglose, itemB: IDesglose): number {
+    const nombreConceptoGastoItemA = itemA?.conceptoGasto?.nombre ?? '';
+    const nombreConceptoGastoItemB = itemB?.conceptoGasto?.nombre ?? '';
+    return nombreConceptoGastoItemA.localeCompare(nombreConceptoGastoItemB);
+  }
+
+  protected comparePartidaPresupuestariaRowTree(itemA: RowTreeDesglose<IDesglose>, itemB: RowTreeDesglose<IDesglose>): number {
     if (!itemA || !itemB || itemA.level < 3 || itemB.level < 3) {
       return 0;
     }
@@ -281,13 +347,25 @@ export abstract class FacturasJustificantesFragment extends DesgloseEconomicoFra
     return partidaPresupuestariaItemA.localeCompare(partidaPresupuestariaItemB);
   }
 
-  protected compareCodigoEconomico(itemA: RowTreeDesglose<IDesglose>, itemB: RowTreeDesglose<IDesglose>): number {
+  protected comparePartidaPresupuestariaDesglose(itemA: IDesglose, itemB: IDesglose): number {
+    const partidaPresupuestariaItemA = itemA?.partidaPresupuestaria ?? '';
+    const partidaPresupuestariaItemB = itemB?.partidaPresupuestaria ?? '';
+    return partidaPresupuestariaItemA.localeCompare(partidaPresupuestariaItemB);
+  }
+
+  protected compareCodigoEconomicoRowTree(itemA: RowTreeDesglose<IDesglose>, itemB: RowTreeDesglose<IDesglose>): number {
     if (!itemA || !itemB || itemA.level < 3 || itemB.level < 3) {
       return 0;
     }
 
     const codigoEconomicoItemA = this.getItemLevel(itemA, 3)?.item?.codigoEconomico?.id ?? '';
     const codigoEconomicoItemB = this.getItemLevel(itemB, 3)?.item?.codigoEconomico?.id ?? '';
+    return codigoEconomicoItemA.localeCompare(codigoEconomicoItemB);
+  }
+
+  protected compareCodigoEconomicoDesglose(itemA: IDesglose, itemB: IDesglose): number {
+    const codigoEconomicoItemA = itemA?.codigoEconomico?.id ?? '';
+    const codigoEconomicoItemB = itemB?.codigoEconomico?.id ?? '';
     return codigoEconomicoItemA.localeCompare(codigoEconomicoItemB);
   }
 }

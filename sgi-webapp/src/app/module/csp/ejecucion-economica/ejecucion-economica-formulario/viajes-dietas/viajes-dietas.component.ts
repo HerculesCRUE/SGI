@@ -5,6 +5,7 @@ import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { MatSelect } from '@angular/material/select';
 import { MatTableDataSource } from '@angular/material/table';
 import { FragmentComponent } from '@core/component/fragment.component';
+import { HttpProblem } from '@core/errors/http-problem';
 import { MSG_PARAMS } from '@core/i18n';
 import { FxFlexProperties } from '@core/models/shared/flexLayout/fx-flex-properties';
 import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-properties';
@@ -16,6 +17,7 @@ import { EjecucionEconomicaActionService } from '../../ejecucion-economica.actio
 import { DatoEconomicoDetalleModalData, ViajesDietasModalComponent } from '../../modals/viajes-dietas-modal/viajes-dietas-modal.component';
 import { RowTreeDesglose } from '../desglose-economico.fragment';
 import { IDesglose } from '../facturas-justificantes.fragment';
+import { ViajesDietasExportModalComponent } from './export/viajes-dietas-export-modal.component';
 import { ViajesDietasFragment } from './viajes-dietas.fragment';
 
 @Component({
@@ -99,9 +101,27 @@ export class ViajesDietasComponent extends FragmentComponent implements OnInit, 
     ));
   }
 
+
+  openExportModal(): void {
+
+    this.subscriptions.push(this.formPart.loadDataExport().subscribe(
+      (exportData) => {
+        const config = {
+          data: exportData
+        };
+        this.matDialog.open(ViajesDietasExportModalComponent, config);
+      },
+      (error) => {
+        if (error instanceof HttpProblem) {
+          this.formPart.pushProblems(error);
+        }
+      })
+    );
+  }
+
   public clearDesglose(): void {
     this.formPart.clearRangos();
-    this.selectAnualidades.options.forEach((item: MatOption) => { item.deselect() });
+    this.selectAnualidades.options.forEach((item: MatOption) => item.deselect());
     this.formPart.clearDesglose();
   }
 

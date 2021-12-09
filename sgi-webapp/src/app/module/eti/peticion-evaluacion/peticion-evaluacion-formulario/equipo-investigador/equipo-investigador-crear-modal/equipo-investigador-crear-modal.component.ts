@@ -69,7 +69,6 @@ export class EquipoInvestigadorCrearModalComponent extends
    * @param persona persona seleccionada
    */
   private onSelectPersona(personaSeleccionada: IPersona): void {
-    this.formGroup.controls.numDocumento.setValue(personaSeleccionada.numeroDocumento);
     this.formGroup.controls.nombreCompleto.setValue(`${personaSeleccionada.nombre} ${personaSeleccionada.apellidos}`);
 
     this.subscriptions.push(
@@ -100,7 +99,6 @@ export class EquipoInvestigadorCrearModalComponent extends
 
   protected getFormGroup(): FormGroup {
     const formGroup = new FormGroup({
-      numDocumento: new FormControl({ value: '', disabled: true }),
       nombreCompleto: new FormControl({ value: '', disabled: true }),
       vinculacion: new FormControl({ value: '', disabled: true }),
       nivelAcademico: new FormControl({ value: '', disabled: true }),

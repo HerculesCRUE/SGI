@@ -15,7 +15,7 @@ import org.springframework.test.context.ContextConfiguration;
 
 @ContextConfiguration(initializers = { Oauth2WireMockInitializer.class })
 @ActiveProfiles(resolver = SgiTestProfileResolver.class)
-public class BaseIT {
+public abstract class BaseIT {
 
   @Autowired
   protected TestRestTemplate restTemplate;

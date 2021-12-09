@@ -19,6 +19,7 @@ import { GastosInvencionService } from '@core/services/sgepii/gastos-invencion.s
 import { IngresosInvencionService } from '@core/services/sgepii/ingresos-invencion.service';
 import { AreaConocimientoService } from '@core/services/sgo/area-conocimiento.service';
 import { PaisService } from '@core/services/sgo/pais/pais.service';
+import { PalabraClaveService } from '@core/services/sgo/palabra-clave.service';
 import { PersonaService } from '@core/services/sgp/persona.service';
 import { StatusWrapper } from '@core/utils/status-wrapper';
 import { NGXLogger } from 'ngx-logger';
@@ -94,6 +95,7 @@ export class InvencionActionService extends ActionService {
     sectorLicenciadoService: SectorLicenciadoService,
     relacionService: RelacionService,
     paisService: PaisService,
+    palabraClaveService: PalabraClaveService
   ) {
     super();
 
@@ -104,7 +106,7 @@ export class InvencionActionService extends ActionService {
     }
 
     this.datosGenerales = new InvencionDatosGeneralesFragment(null, this.id, invencionService, proyectoService, areaConocimientoService,
-      invencionDocumentoService, this.canEdit, this.periodoTitularidadService);
+      invencionDocumentoService, this.canEdit, this.periodoTitularidadService, palabraClaveService);
     this.invencionInventoresFragment = new InvencionInventorFragment(this.id, logger, invencionService,
       personaService, empresaService, this.canEdit);
 

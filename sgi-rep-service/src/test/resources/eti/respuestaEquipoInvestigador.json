@@ -1,0 +1,20 @@
+{
+  "equipoInvestigador": [
+    {
+      "nombre": "nombre-005",
+      "nif": "00000005M",
+      "vinculacion": "PDI",
+      "nivelAcademico": null,
+      "tarea": "Tarea1",
+      "experiencia": "Experiencia1"
+    },
+    {
+      "nombre": "nombre-007",
+      "nif": "00000007F",
+      "vinculacion": "PDI",
+      "nivelAcademico": null,
+      "tarea": "Tarea2",
+      "experiencia": "Experiencia2"
+    }
+  ]
+}

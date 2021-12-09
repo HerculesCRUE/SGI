@@ -1,10 +1,17 @@
 package org.crue.hercules.sgi.csp.service.impl;
 
+import org.crue.hercules.sgi.csp.exceptions.ConfiguracionSolicitudNotFoundException;
+import org.crue.hercules.sgi.csp.exceptions.ConvocatoriaNotFoundException;
 import org.crue.hercules.sgi.csp.exceptions.ConvocatoriaPartidaNotFoundException;
+import org.crue.hercules.sgi.csp.exceptions.UserNotAuthorizedToAccessConvocatoriaException;
+import org.crue.hercules.sgi.csp.model.ConfiguracionSolicitud;
 import org.crue.hercules.sgi.csp.model.Convocatoria;
+import org.crue.hercules.sgi.csp.model.Convocatoria.Estado;
 import org.crue.hercules.sgi.csp.model.ConvocatoriaPartida;
 import org.crue.hercules.sgi.csp.repository.ConfiguracionRepository;
+import org.crue.hercules.sgi.csp.repository.ConfiguracionSolicitudRepository;
 import org.crue.hercules.sgi.csp.repository.ConvocatoriaPartidaRepository;
+import org.crue.hercules.sgi.csp.repository.ConvocatoriaRepository;
 import org.crue.hercules.sgi.csp.repository.specification.ConvocatoriaPartidaSpecifications;
 import org.crue.hercules.sgi.csp.service.ConvocatoriaPartidaService;
 import org.crue.hercules.sgi.framework.rsql.SgiRSQLJPASupport;
@@ -28,11 +35,16 @@ public class ConvocatoriaPartidaServiceImpl implements ConvocatoriaPartidaServic
 
   private final ConvocatoriaPartidaRepository repository;
   private final ConfiguracionRepository configuracionRepository;
+  private final ConvocatoriaRepository convocatoriaRepository;
+  private final ConfiguracionSolicitudRepository configuracionSolicitudRepository;
 
   public ConvocatoriaPartidaServiceImpl(ConvocatoriaPartidaRepository repository,
-      ConfiguracionRepository configuracionRepository) {
+      ConfiguracionRepository configuracionRepository, ConvocatoriaRepository convocatoriaRepository,
+      ConfiguracionSolicitudRepository configuracionSolicitudRepository) {
     this.repository = repository;
     this.configuracionRepository = configuracionRepository;
+    this.convocatoriaRepository = convocatoriaRepository;
+    this.configuracionSolicitudRepository = configuracionSolicitudRepository;
   }
 
   /**
@@ -130,16 +142,31 @@ public class ConvocatoriaPartidaServiceImpl implements ConvocatoriaPartidaServic
   /**
    * Obtiene las {@link ConvocatoriaPartida} para una {@link Convocatoria}.
    *
-   * @param idConvocatoria el id de la {@link Convocatoria}.
+   * @param convocatoriaId el id de la {@link Convocatoria}.
    * @param query          la información del filtro.
    * @param pageable       la información de la paginación.
    * @return la lista de entidades {@link ConvocatoriaPartida} de la
    *         {@link Convocatoria} paginadas.
    */
   @Override
-  public Page<ConvocatoriaPartida> findAllByConvocatoria(Long idConvocatoria, String query, Pageable pageable) {
+  public Page<ConvocatoriaPartida> findAllByConvocatoria(Long convocatoriaId, String query, Pageable pageable) {
     log.debug("findAllByConvocatoria(Long convocatoriaId, String query, Pageable pageable) - start");
-    Specification<ConvocatoriaPartida> specs = ConvocatoriaPartidaSpecifications.byConvocatoriaId(idConvocatoria)
+
+    Convocatoria convocatoria = convocatoriaRepository.findById(
+        convocatoriaId)
+        .orElseThrow(() -> new ConvocatoriaNotFoundException(convocatoriaId));
+    if (hasAuthorityViewInvestigador()) {
+      ConfiguracionSolicitud configuracionSolicitud = configuracionSolicitudRepository
+          .findByConvocatoriaId(convocatoriaId)
+          .orElseThrow(() -> new ConfiguracionSolicitudNotFoundException(convocatoriaId));
+      if (!convocatoria.getEstado().equals(Estado.REGISTRADA)
+          || Boolean.FALSE.equals(configuracionSolicitud.getTramitacionSGI())) {
+        throw new UserNotAuthorizedToAccessConvocatoriaException();
+      }
+    }
+
+    Specification<ConvocatoriaPartida> specs = ConvocatoriaPartidaSpecifications.byConvocatoriaId(
+        convocatoriaId)
         .and(SgiRSQLJPASupport.toSpecification(query));
 
     Page<ConvocatoriaPartida> returnValue = repository.findAll(specs, pageable);
@@ -196,6 +223,10 @@ public class ConvocatoriaPartidaServiceImpl implements ConvocatoriaPartidaServic
 
     log.debug("modificable(Long id, String unidadConvocatoria) - end");
     return false;
+  }
+
+  private boolean hasAuthorityViewInvestigador() {
+    return SgiSecurityContextHolder.hasAuthorityForAnyUO("CSP-CON-INV-V");
   }
 
 }

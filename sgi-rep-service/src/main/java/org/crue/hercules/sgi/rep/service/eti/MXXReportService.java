@@ -27,11 +27,13 @@ import org.crue.hercules.sgi.rep.dto.eti.BloqueOutput;
 import org.crue.hercules.sgi.rep.dto.eti.BloquesReportInput;
 import org.crue.hercules.sgi.rep.dto.eti.BloquesReportOutput;
 import org.crue.hercules.sgi.rep.dto.eti.ElementOutput;
+import org.crue.hercules.sgi.rep.dto.eti.FormularioDto;
 import org.crue.hercules.sgi.rep.dto.eti.MXXReportOutput;
 import org.crue.hercules.sgi.rep.dto.eti.MemoriaDto;
 import org.crue.hercules.sgi.rep.dto.eti.MemoriaPeticionEvaluacionDto;
 import org.crue.hercules.sgi.rep.dto.eti.PeticionEvaluacionDto;
 import org.crue.hercules.sgi.rep.dto.sgp.PersonaDto;
+import org.crue.hercules.sgi.rep.dto.sgp.EmailDto;
 import org.crue.hercules.sgi.rep.exceptions.GetDataReportException;
 import org.crue.hercules.sgi.rep.service.sgp.PersonaService;
 import org.pentaho.reporting.engine.classic.core.MasterReport;
@@ -127,14 +129,20 @@ public class MXXReportService extends BaseApartadosRespuestasReportService {
    * @param reportOutput SgiReport
    * @param idMemoria    Id de la memoria
    * @param idFormulario Id del formulario
+   * @return byte[] Report
    */
-  public void getReportMXX(SgiReportDto reportOutput, Long idMemoria, Long idFormulario) {
-
+  public byte[] getReportMXX(SgiReportDto reportOutput, Long idMemoria, Long idFormulario) {
     Assert.notNull(idMemoria,
         // Defer message resolution untill is needed
         () -> ProblemMessage.builder().key(Assert.class, "notNull")
             .parameter("field", ApplicationContextSupport.getMessage("id"))
             .parameter("entity", ApplicationContextSupport.getMessage(MemoriaDto.class)).build());
+    Assert.notNull(
+        idFormulario,
+        // Defer message resolution untill is needed
+        () -> ProblemMessage.builder().key(Assert.class, "notNull")
+            .parameter("field", ApplicationContextSupport.getMessage("id"))
+            .parameter("entity", ApplicationContextSupport.getMessage(FormularioDto.class)).build());
 
     MXXReportOutput mxxReportOutput = this.getMXX(idMemoria, idFormulario);
 
@@ -143,6 +151,8 @@ public class MXXReportService extends BaseApartadosRespuestasReportService {
     getTituloMXX(hmTableModel, mxxReportOutput.getMemoria());
 
     getReportMXXIntern(reportOutput, hmTableModel);
+
+    return reportOutput.getContent();
   }
 
   private void getTituloMXX(Map<String, TableModel> hmTableModel, MemoriaDto memoria) {
@@ -330,7 +340,7 @@ public class MXXReportService extends BaseApartadosRespuestasReportService {
     ElementOutput dataSolicitanteElement = ElementOutput.builder()
       .nombre("")
       .tipo(DATOS_SOLICITANTE_TYPE)
-      .content(personaRef)
+      .content(StringUtils.hasText(personaRef) ? personaRef: "")
       .build();
     // @formatter:on
 
@@ -507,7 +517,6 @@ public class MXXReportService extends BaseApartadosRespuestasReportService {
         String personaRef = elemento.getContent();
 
         columnsDataSolicitante.add("nombre");
-        columnsDataSolicitante.add("nif");
         columnsDataSolicitante.add("telefono");
         columnsDataSolicitante.add("email");
         columnsDataSolicitante.add("departamento");
@@ -537,14 +546,17 @@ public class MXXReportService extends BaseApartadosRespuestasReportService {
       }
 
       String telefono = "";
-      if (null != persona.getDatosContacto() && null != persona.getDatosContacto().getEmails()
-          && !persona.getDatosContacto().getEmails().isEmpty()) {
-        telefono = persona.getDatosContacto().getEmails().get(0);
-      }
-      String email = "";
       if (null != persona.getDatosContacto() && null != persona.getDatosContacto().getTelefonos()
           && !persona.getDatosContacto().getTelefonos().isEmpty()) {
-        email = persona.getDatosContacto().getTelefonos().get(0);
+        telefono = persona.getDatosContacto().getTelefonos().get(0);
+      }
+      String email = "";
+      if (null != persona.getDatosContacto() && null != persona.getDatosContacto().getEmails()
+          && !persona.getDatosContacto().getEmails().isEmpty()) {
+        email = persona.getDatosContacto().getEmails().stream()
+            .filter(e -> null != e.getPrincipal() && e.getPrincipal().equals(Boolean.TRUE)).findFirst()
+            .orElse(new EmailDto())
+            .getEmail();
       }
 
       String departamento = "";
@@ -558,7 +570,6 @@ public class MXXReportService extends BaseApartadosRespuestasReportService {
       }
 
       elementsRow.add(persona.getNombre());
-      elementsRow.add(persona.getNumeroDocumento());
       elementsRow.add(telefono);
       elementsRow.add(email);
       elementsRow.add(departamento);

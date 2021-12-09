@@ -62,7 +62,7 @@
               <mat-icon color="primary">border_color</mat-icon>
             </button>
             <button mat-button matTooltip="{{'btn.delete' | translate}}"
-              *ngIf="element.partidaPresupuestaria && (!element.partidaPresupuestaria?.value.id || formPart.mapModificable.get(element.partidaPresupuestaria.value.id)) && element.canEdit"
+              *ngIf="!element.partidaPresupuestaria?.value.id || formPart.mapModificable.get(element.partidaPresupuestaria.value.id) && element.canEdit"
               (click)="deletePartidaPresupuestaria(element.partidaPresupuestaria)">
               <mat-icon color="warn">highlight_off</mat-icon>
             </button>

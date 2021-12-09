@@ -40,7 +40,7 @@ export class TableCRUDClasificacionesTypeComponent extends BaseTableCRUDTypeComp
     const clasificacionModel: any = clasificacion.id;
 
     if (addToModel) {
-      this.add(clasificacionModel);
+      this.add(null, clasificacionModel);
     }
     this.customModel.push(customClasificacionModel);
   }

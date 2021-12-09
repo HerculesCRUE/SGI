@@ -14,11 +14,11 @@
         </td>
       </ng-container>
       <!-- nº identificacion Column -->
-      <ng-container matColumnDef="numIdentificacion">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'csp.proyecto-equipo.numero-identificacion' |
+      <ng-container matColumnDef="persona">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'csp.proyecto-equipo.email' |
           translate}}
         </th>
-        <td mat-cell *matCellDef="let wrapper"> {{wrapper.value.proyectoEquipo?.persona?.numeroDocumento}} </td>
+        <td mat-cell *matCellDef="let wrapper"> {{wrapper.value.proyectoEquipo?.persona | personaEmail}} </td>
       </ng-container>
 
       <!-- nombre Column -->

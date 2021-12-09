@@ -1,0 +1,35 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:pro="http://www.liquibase.org/xml/ns/pro" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-3.8.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+  <property name="schemaPrefix" value="" />
+
+  <changeSet context="!unit-test AND !integration-test" author="master" id="0000000000003-respuesta">
+    <customChange class="org.crue.hercules.sgi.framework.liquibase.change.custom.JsltTaskChange">
+      <param name="tableName" value="respuesta" />
+      <param name="idColumnName" value="id" />
+      <param name="jsonColumnName" value="valor" />
+      <param name="where">
+        <![CDATA[ apartado_id = (select id from ${schemaPrefix}apartado where bloque_id = (select id from ${schemaPrefix}bloque where orden = '2' and formulario_id = (select id from ${schemaPrefix}formulario where nombre = 'M10')) and nombre = 'Personal que llevará a cabo las tareas con seres humanos, sus muestras y/o sus datos' and padre_id is null) ]]>
+      </param>
+      <param name="jsltFile" value="classpath*:db/changelog/changes/jslt/0000000000003/fix_mxx_apartado_2_1_response.jslt" />
+    </customChange>
+    <customChange class="org.crue.hercules.sgi.framework.liquibase.change.custom.JsltTaskChange">
+      <param name="tableName" value="respuesta" />
+      <param name="idColumnName" value="id" />
+      <param name="jsonColumnName" value="valor" />
+      <param name="where">
+        <![CDATA[ apartado_id = (select id from ${schemaPrefix}apartado where bloque_id = (select id from ${schemaPrefix}bloque where orden = '2' and formulario_id = (select id from ${schemaPrefix}formulario where nombre = 'M20')) and nombre = 'Personal que llevará a cabo las tareas animales' and padre_id is null) ]]>
+      </param>
+      <param name="jsltFile" value="classpath*:db/changelog/changes/jslt/0000000000003/fix_mxx_apartado_2_1_response.jslt" />
+    </customChange>
+    <customChange class="org.crue.hercules.sgi.framework.liquibase.change.custom.JsltTaskChange">
+      <param name="tableName" value="respuesta" />
+      <param name="idColumnName" value="id" />
+      <param name="jsonColumnName" value="valor" />
+      <param name="where">
+        <![CDATA[ apartado_id = (select id from ${schemaPrefix}apartado where bloque_id = (select id from ${schemaPrefix}bloque where orden = '2' and formulario_id = (select id from ${schemaPrefix}formulario where nombre = 'M30')) and nombre = 'Personal que llevará a cabo las tareas con agentes biológicos, OMG, Sustancias Químicas Peligrosas, Sustancias Radiactivas y/o Nanoparticulas' and padre_id is null) ]]>
+      </param>
+      <param name="jsltFile" value="classpath*:db/changelog/changes/jslt/0000000000003/fix_mxx_apartado_2_1_response.jslt" />
+    </customChange>
+  </changeSet>
+
+</databaseChangeLog>

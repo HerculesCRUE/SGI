@@ -12,7 +12,7 @@
   }
 */
 
-INSERT INTO csp.requisitoequipo_nivelacademico
+INSERT INTO test.requisitoequipo_nivelacademico
   (id, requisitoequipo_id, nivelacademico_ref) 
 VALUES
   (1, 1, 'ref1'),
@@ -21,4 +21,4 @@ VALUES
   (4, 2, 'ref1'),
   (5, 2, 'ref2');
 
-ALTER SEQUENCE csp.requisitoequipo_nivelacademico_seq RESTART WITH 6;
+ALTER SEQUENCE test.requisitoequipo_nivelacademico_seq RESTART WITH 6;

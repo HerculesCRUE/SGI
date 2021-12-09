@@ -5,6 +5,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.OutputStream;
 import java.net.URL;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
@@ -19,14 +21,15 @@ import javax.validation.Valid;
 import javax.validation.groups.Default;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.crue.hercules.sgi.rep.config.SgiConfigProperties;
-import org.crue.hercules.sgi.rep.dto.OutputReportType;
+import org.crue.hercules.sgi.rep.dto.OutputType;
 import org.crue.hercules.sgi.rep.dto.SgiReportDto;
-import org.crue.hercules.sgi.rep.dto.SgiReportDto.FieldOrientationType;
+import org.crue.hercules.sgi.rep.dto.SgiReportDto.FieldOrientation;
 import org.crue.hercules.sgi.rep.exceptions.GetDataReportException;
 import org.pentaho.reporting.engine.classic.core.ClassicEngineBoot;
 import org.pentaho.reporting.engine.classic.core.DataFactory;
@@ -86,6 +89,7 @@ public class SgiReportService {
   public static final Float WIDTH_FIELD_DEFAULT = 50f;
 
   protected static final String DATE_PATTERN_DEFAULT = "dd/MM/yyyy";
+  protected static final String NUMBER_PATTERN_DEFAULT = "0.00";
 
   public SgiReportService(SgiConfigProperties sgiConfigProperties) {
     this.sgiConfigProperties = sgiConfigProperties;
@@ -125,14 +129,14 @@ public class SgiReportService {
         }
       }
 
-      sgiReport.setContent(generateReportOutput(sgiReport.getOutputReportType(), report));
+      sgiReport.setContent(generateReportOutput(sgiReport.getOutputType(), report));
     } catch (Exception e) {
       log.error(e.getMessage());
       throw new GetDataReportException();
     }
   }
 
-  protected byte[] generateReportOutput(final OutputReportType outputType, final MasterReport report) {
+  protected byte[] generateReportOutput(final OutputType outputType, final MasterReport report) {
     byte[] reportContent = null;
     try {
       ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -355,13 +359,28 @@ public class SgiReportService {
     return result;
   }
 
+  protected String formatNumberString(String numberString, String pattern) {
+    String result = "";
+
+    if (StringUtils.hasText(numberString) && NumberUtils.isParsable(numberString)) {
+      pattern = StringUtils.hasText(pattern) ? pattern : NUMBER_PATTERN_DEFAULT;
+      DecimalFormat decimalFormat = new DecimalFormat(pattern,
+          DecimalFormatSymbols.getInstance(LocaleContextHolder.getLocale()));
+      result = decimalFormat.format(Double.parseDouble(numberString));
+    }
+
+    return result;
+  }
+
+  protected String formatNumberString(String numberString) {
+    return formatNumberString(numberString, NUMBER_PATTERN_DEFAULT);
+  }
+
   protected void setCustomWidthSubReport(SgiReportDto reportDto, Integer numColumns) {
     initConfigurationSubReport(reportDto);
 
-    if ((reportDto.getOutputReportType().equals(OutputReportType.PDF)
-        || reportDto.getOutputReportType().equals(OutputReportType.RTF)
-        || reportDto.getOutputReportType().equals(OutputReportType.HTML)) && null != numColumns
-        && numColumns.compareTo(0) > 0) {
+    if ((reportDto.getOutputType().equals(OutputType.PDF) || reportDto.getOutputType().equals(OutputType.RTF)
+        || reportDto.getOutputType().equals(OutputType.HTML)) && null != numColumns && numColumns.compareTo(0) > 0) {
 
       float customFieldWidth = reportDto.getCustomWidth() / numColumns;
       reportDto.setColumnMinWidth(
@@ -371,17 +390,16 @@ public class SgiReportService {
 
   protected void initConfigurationSubReport(SgiReportDto reportDto) {
 
-    if (null == reportDto.getOutputReportType()) {
-      reportDto.setOutputReportType(OutputReportType.PDF);
+    if (null == reportDto.getOutputType()) {
+      reportDto.setOutputType(OutputType.PDF);
     }
 
-    if (null == reportDto.getFieldOrientationType()) {
-      reportDto.setFieldOrientationType(FieldOrientationType.HORIZONTAL);
+    if (null == reportDto.getFieldOrientation()) {
+      reportDto.setFieldOrientation(FieldOrientation.HORIZONTAL);
     }
 
     if (null == reportDto.getColumnMinWidth()) {
-      if (reportDto.getOutputReportType().equals(OutputReportType.XLS)
-          || reportDto.getOutputReportType().equals(OutputReportType.XLSX)) {
+      if (reportDto.getOutputType().equals(OutputType.XLS) || reportDto.getOutputType().equals(OutputType.XLSX)) {
 
         reportDto.setColumnMinWidth(WIDTH_FIELD_EXCEL_DEFAULT);
       } else {
@@ -390,8 +408,7 @@ public class SgiReportService {
       }
     }
 
-    if (reportDto.getOutputReportType().equals(OutputReportType.PDF)
-        || reportDto.getOutputReportType().equals(OutputReportType.RTF)) {
+    if (reportDto.getOutputType().equals(OutputType.PDF) || reportDto.getOutputType().equals(OutputType.RTF)) {
       if (null == reportDto.getCustomWidth()) {
         reportDto.setCustomWidth(WIDTH_PORTRAIT);
       }

@@ -4,9 +4,9 @@
       matSortDisableClear>
 
       <!-- Numero documento Column -->
-      <ng-container matColumnDef="evaluador.numeroDocumento">
-        <th mat-header-cell *matHeaderCellDef> {{'eti.acta.asistente.nif' | translate}} </th>
-        <td mat-cell *matCellDef="let wrapper"> {{wrapper.value.evaluador.persona.numeroDocumento}} </td>
+      <ng-container matColumnDef="evaluador.persona">
+        <th mat-header-cell *matHeaderCellDef> {{'eti.acta.asistente.email' | translate}} </th>
+        <td mat-cell *matCellDef="let wrapper"> {{wrapper.value.evaluador.persona | personaEmail}} </td>
       </ng-container>
 
       <!-- Fecha evaluacion Column -->

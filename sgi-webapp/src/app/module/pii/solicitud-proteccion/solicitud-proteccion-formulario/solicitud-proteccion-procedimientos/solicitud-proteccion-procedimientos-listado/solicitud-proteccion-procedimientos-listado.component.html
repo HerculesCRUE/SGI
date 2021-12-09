@@ -39,7 +39,8 @@
           </button>
         </ng-container>
         <ng-container *sgiHasAuthority="'PII-INV-B'">
-          <button mat-button matTooltip="{{'btn.delete' | translate}}" (click)="deleteProcedimiento(procedimiento)">
+          <button mat-button matTooltip="{{'btn.delete' | translate}}"
+            (click)="deleteProcedimiento(procedimiento);$any($event).stopPropagation()">
             <mat-icon color="warn">highlight_off</mat-icon>
           </button>
         </ng-container>

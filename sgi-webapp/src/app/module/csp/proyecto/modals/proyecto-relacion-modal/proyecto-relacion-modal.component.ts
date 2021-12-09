@@ -5,6 +5,7 @@ import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { BaseModalComponent } from '@core/component/base-modal.component';
 import { MSG_PARAMS } from '@core/i18n';
 import { TipoEntidad, TIPO_ENTIDAD_MAP } from '@core/models/rel/relacion';
+import { IPersona } from '@core/models/sgp/persona';
 import { FxFlexProperties } from '@core/models/shared/flexLayout/fx-flex-properties';
 import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-properties';
 import { SnackBarService } from '@core/services/snack-bar.service';
@@ -12,7 +13,7 @@ import { ProyectoRelacionValidator } from '@core/validators/proyecto-relacion-va
 import { TranslateService } from '@ngx-translate/core';
 import { SgiAuthService } from '@sgi/framework/auth';
 import { switchMap } from 'rxjs/operators';
-import { IProyectoRelacionTableData, TIPO_RELACION_MAP } from '../../proyecto-formulario/proyecto-relaciones/proyecto-relaciones.fragment';
+import { IProyectoRelacionTableData } from '../../proyecto-formulario/proyecto-relaciones/proyecto-relaciones.fragment';
 
 const MSG_ANADIR = marker('btn.add');
 const MSG_ACEPTAR = marker('btn.ok');
@@ -27,6 +28,7 @@ export interface IProyectoRelacionModalData {
   relacion: IProyectoRelacionTableData;
   readonly: boolean;
   entitiesAlreadyRelated: IProyectoRelacionTableData[];
+  miembrosEquipoProyecto: IPersona[];
 }
 
 @Component({
@@ -56,10 +58,6 @@ export class ProyectoRelacionModalComponent extends BaseModalComponent<IProyecto
 
   get TIPO_ENTIDAD() {
     return TipoEntidad;
-  }
-
-  get TIPO_RELACION_MAP() {
-    return TIPO_RELACION_MAP;
   }
 
   get relacion() {
@@ -93,7 +91,6 @@ export class ProyectoRelacionModalComponent extends BaseModalComponent<IProyecto
   protected getDatosForm(): IProyectoRelacionTableData {
     this.relacion.tipoEntidadRelacionada = this.formGroup.controls.tipoEntidadRelacionada.value;
     this.relacion.entidadRelacionada = this.formGroup.controls.entidadRelacionada.value;
-    this.relacion.tipoRelacion = this.formGroup.controls.tipoRelacion.value;
     this.relacion.observaciones = this.formGroup.controls.observaciones.value;
 
     return this.relacion;
@@ -103,7 +100,6 @@ export class ProyectoRelacionModalComponent extends BaseModalComponent<IProyecto
     const formGroup = new FormGroup({
       tipoEntidadRelacionada: new FormControl(this.relacion?.tipoEntidadRelacionada, Validators.required),
       entidadRelacionada: new FormControl(this.relacion?.entidadRelacionada, Validators.required),
-      tipoRelacion: new FormControl({ value: this.relacion?.tipoRelacion, disabled: true }, Validators.required),
       observaciones: new FormControl(this.relacion?.observaciones, Validators.maxLength(2000)),
     }, ProyectoRelacionValidator.notRepeatedProyectoRelacion(this.data.entitiesAlreadyRelated));
 
@@ -117,23 +113,15 @@ export class ProyectoRelacionModalComponent extends BaseModalComponent<IProyecto
       formGroup.disable();
     }
     if (this.relacion?.tipoEntidadRelacionada) {
-      this.updateTipoRelacionState(formGroup, this.relacion?.tipoEntidadRelacionada);
       formGroup.controls.tipoEntidadRelacionada.disable();
       formGroup.controls.entidadRelacionada.disable();
     }
 
     this.subscriptions.push(
       formGroup.controls.tipoEntidadRelacionada.valueChanges.subscribe((tipoEntidadSelected: TipoEntidad) => {
-        this.updateTipoRelacionState(formGroup, tipoEntidadSelected);
         formGroup.controls.entidadRelacionada.reset();
       })
     );
-  }
-
-  private updateTipoRelacionState(formGroup: FormGroup, tipoEntidad: TipoEntidad): void {
-    tipoEntidad === TipoEntidad.PROYECTO ?
-      formGroup.controls.tipoRelacion.enable() :
-      formGroup.controls.tipoRelacion.disable();
   }
 
   private setupI18N(): void {

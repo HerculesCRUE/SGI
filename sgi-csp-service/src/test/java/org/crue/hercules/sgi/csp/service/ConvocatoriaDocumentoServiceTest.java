@@ -1,5 +1,6 @@
 package org.crue.hercules.sgi.csp.service;
 
+import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
@@ -9,8 +10,10 @@ import org.assertj.core.api.Assertions;
 import org.crue.hercules.sgi.csp.enums.ClasificacionCVN;
 import org.crue.hercules.sgi.csp.exceptions.ConvocatoriaDocumentoNotFoundException;
 import org.crue.hercules.sgi.csp.exceptions.ConvocatoriaNotFoundException;
+import org.crue.hercules.sgi.csp.model.ConfiguracionSolicitud;
 import org.crue.hercules.sgi.csp.model.Convocatoria;
 import org.crue.hercules.sgi.csp.model.ConvocatoriaDocumento;
+import org.crue.hercules.sgi.csp.model.ConvocatoriaFase;
 import org.crue.hercules.sgi.csp.model.ModeloEjecucion;
 import org.crue.hercules.sgi.csp.model.ModeloTipoDocumento;
 import org.crue.hercules.sgi.csp.model.ModeloTipoFase;
@@ -20,6 +23,7 @@ import org.crue.hercules.sgi.csp.model.TipoDocumento;
 import org.crue.hercules.sgi.csp.model.TipoFase;
 import org.crue.hercules.sgi.csp.model.TipoFinalidad;
 import org.crue.hercules.sgi.csp.model.TipoRegimenConcurrencia;
+import org.crue.hercules.sgi.csp.repository.ConfiguracionSolicitudRepository;
 import org.crue.hercules.sgi.csp.repository.ConvocatoriaDocumentoRepository;
 import org.crue.hercules.sgi.csp.repository.ConvocatoriaRepository;
 import org.crue.hercules.sgi.csp.repository.ModeloTipoDocumentoRepository;
@@ -36,6 +40,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.security.test.context.support.WithMockUser;
 
 /**
  * ConvocatoriaDocumentoServiceTest
@@ -50,13 +55,15 @@ public class ConvocatoriaDocumentoServiceTest extends BaseServiceTest {
   private ModeloTipoFaseRepository modeloTipoFaseRepository;
   @Mock
   private ModeloTipoDocumentoRepository modeloTipoDocumentoRepository;
+  @Mock
+  ConfiguracionSolicitudRepository configuracionSolicitudRepository;
 
   private ConvocatoriaDocumentoService service;
 
   @BeforeEach
   public void setUp() throws Exception {
     service = new ConvocatoriaDocumentoServiceImpl(repository, convocatoriaRepository, modeloTipoFaseRepository,
-        modeloTipoDocumentoRepository);
+        modeloTipoDocumentoRepository, configuracionSolicitudRepository);
   }
 
   @Test
@@ -998,14 +1005,17 @@ public class ConvocatoriaDocumentoServiceTest extends BaseServiceTest {
   }
 
   @Test
+  @WithMockUser(username = "user", authorities = { "CSP-CON-E" })
   public void findAllByConvocatoria_ReturnsPage() {
     // given: Una lista con 37 ConvocatoriaDocumento para la Convocatoria
     Long convocatoriaId = 1L;
+    Convocatoria convocatoria = generarMockConvocatoria(convocatoriaId);
     List<ConvocatoriaDocumento> convocatoriasEntidadesConvocantes = new ArrayList<>();
     for (long i = 1; i <= 37; i++) {
       convocatoriasEntidadesConvocantes.add(generarMockConvocatoriaDocumento(i, 1L, 1L, 1L));
     }
-
+    BDDMockito.given(convocatoriaRepository.findById(ArgumentMatchers.<Long>any()))
+        .willReturn(Optional.of(convocatoria));
     BDDMockito.given(repository.findAll(ArgumentMatchers.<Specification<ConvocatoriaDocumento>>any(),
         ArgumentMatchers.<Pageable>any())).willAnswer((InvocationOnMock invocation) -> {
           Pageable pageable = invocation.getArgument(1, Pageable.class);

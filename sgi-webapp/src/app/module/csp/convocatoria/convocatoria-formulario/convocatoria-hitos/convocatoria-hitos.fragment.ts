@@ -45,7 +45,7 @@ export class ConvocatoriaHitosFragment extends Fragment {
   public deleteHito(wrapper: StatusWrapper<IConvocatoriaHito>) {
     const current = this.hitos$.value;
     const index = current.findIndex(
-      (value) => value === wrapper
+      (value) => value.value === wrapper.value
     );
     if (index >= 0) {
       if (!wrapper.created) {
@@ -100,9 +100,12 @@ export class ConvocatoriaHitosFragment extends Fragment {
     return from(createdHitos).pipe(
       mergeMap((wrappedHitos) => {
         return this.convocatoriaHitoService.create(wrappedHitos.value).pipe(
-          map((updatedHitos) => {
+          map((createdHito) => {
             const index = this.hitos$.value.findIndex((currenthitos) => currenthitos === wrappedHitos);
-            this.hitos$.value[index] = new StatusWrapper<IConvocatoriaHito>(updatedHitos);
+            const hitoListado = wrappedHitos.value;
+            hitoListado.id = createdHito.id;
+            this.hitos$.value[index] = new StatusWrapper<IConvocatoriaHito>(hitoListado);
+            this.hitos$.next(this.hitos$.value);
           })
         );
       })
@@ -128,7 +131,7 @@ export class ConvocatoriaHitosFragment extends Fragment {
 
   private isSaveOrUpdateComplete(): boolean {
     const touched: boolean = this.hitos$.value.some((wrapper) => wrapper.touched);
-    return (this.hitosEliminados.length > 0 || touched);
+    return !(this.hitosEliminados.length > 0 || touched);
   }
 
 }

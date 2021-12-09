@@ -26,10 +26,12 @@ const SECTOR_LICENCIADO_FECHA_FIN_KEY = marker('pii.sector-licenciado.fecha-fin'
 const SECTOR_LICENCIADO_SECTOR_KEY = marker('pii.sector-licenciado.sector');
 const SECTOR_LICENCIADO_KEY = marker('pii.sector-licenciado');
 const TITLE_NEW_ENTITY = marker('title.new.entity');
+const MSG_SECTOR_LICENCIADO_DUPLICADO = marker('pii.sector-licenciado.duplicado');
 
 export interface ISectorLicenciadoModalData {
   sectorLicenciado: ISectorLicenciado;
   readonly: boolean;
+  existingEntities: ISectorLicenciado[];
 }
 
 @Component({
@@ -51,6 +53,7 @@ export class SectorLicenciadoModalComponent
 
   textSaveOrUpdate: string;
   title: string;
+  errorSectorLicenciado: string;
 
   paises$: Observable<IPais[]>;
   sectoresAplicacion$: Observable<ISectorAplicacion[]>;
@@ -132,6 +135,18 @@ export class SectorLicenciadoModalComponent
     ).subscribe((value) =>
       this.msgParamSectorEntity = { entity: value, ...MSG_PARAMS.GENDER.MALE, ...MSG_PARAMS.CARDINALIRY.SINGULAR });
 
+    this.translate.get(
+      SECTOR_LICENCIADO_KEY,
+      MSG_PARAMS.CARDINALIRY.SINGULAR
+    ).pipe(
+      switchMap((value) => {
+        return this.translate.get(
+          MSG_SECTOR_LICENCIADO_DUPLICADO,
+          { entity: value, ...MSG_PARAMS.GENDER.MALE }
+        );
+      })
+    ).subscribe((value) => this.errorSectorLicenciado = value);
+
     if (this.entity?.pais) {
       this.translate.get(
         SECTOR_LICENCIADO_KEY,
@@ -174,4 +189,33 @@ export class SectorLicenciadoModalComponent
     this.fxFlexProperties50.gtMd = '0 1 calc(49%-10px)';
     this.fxFlexProperties50.order = '2';
   }
+
+  protected getFormStatus(): ISectorLicenciado {
+    const sector = {} as ISectorLicenciado;
+    sector.pais = this.formGroup.controls.pais.value;
+    sector.exclusividad = this.formGroup.controls.exclusividad.value;
+    sector.fechaInicioLicencia = this.formGroup.controls.fechaInicio.value;
+    sector.fechaFinLicencia = this.formGroup.controls.fechaFin.value;
+    sector.sectorAplicacion = this.formGroup.controls.sector.value;
+
+    return sector;
+  }
+
+  saveOrUpdate(): void {
+    if (this.isDuplicateSectorLicenciado(this.getFormStatus())) {
+      this.snackBarService.showError(this.errorSectorLicenciado);
+      return;
+    } else {
+      super.saveOrUpdate();
+    }
+  }
+
+  private isDuplicateSectorLicenciado(elem: ISectorLicenciado): boolean {
+    return this.data.existingEntities
+      .some(existentSector =>
+        existentSector.pais?.id === elem.pais?.id
+        && existentSector.sectorAplicacion?.id === elem.sectorAplicacion?.id
+        && existentSector.exclusividad === elem.exclusividad);
+  }
+
 }

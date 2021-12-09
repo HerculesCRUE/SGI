@@ -259,8 +259,8 @@ export class ConvocatoriaListadoComponent extends AbstractTablePaginationCompone
     ).subscribe((value) => this.textErrorCloning = value);
   }
 
-  protected createObservable(): Observable<SgiRestListResult<IConvocatoriaListado>> {
-    const observable$ = this.convocatoriaService.findAllTodosRestringidos(this.getFindOptions()).pipe(
+  protected createObservable(reset?: boolean): Observable<SgiRestListResult<IConvocatoriaListado>> {
+    return this.convocatoriaService.findAllTodosRestringidos(this.getFindOptions(reset)).pipe(
       map(result => {
         const convocatorias = result.items.map((convocatoria) => {
           return {
@@ -279,6 +279,9 @@ export class ConvocatoriaListadoComponent extends AbstractTablePaginationCompone
         } as SgiRestListResult<IConvocatoriaListado>;
       }),
       switchMap((result) => {
+        if (result.items.length === 0) {
+          return of(result);
+        }
         return from(result.items).pipe(
           mergeMap(element => {
             if (this.authService.hasAnyAuthorityForAnyUO(['CSP-CON-E', 'CSP-CON-V'])) {
@@ -363,8 +366,6 @@ export class ConvocatoriaListadoComponent extends AbstractTablePaginationCompone
         );
       }),
     );
-
-    return observable$;
   }
 
   protected initColumns(): void {

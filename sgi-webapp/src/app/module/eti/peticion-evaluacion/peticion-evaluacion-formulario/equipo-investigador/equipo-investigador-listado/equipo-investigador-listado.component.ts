@@ -1,5 +1,5 @@
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
+import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
@@ -19,6 +19,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { SgiAuthService } from '@sgi/framework/auth';
 import { Subscription } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
+import { getPersonaEmailListConcatenated } from 'src/app/esb/sgp/shared/pipes/persona-email.pipe';
 import { PeticionEvaluacionActionService } from '../../../peticion-evaluacion.action.service';
 import {
   EquipoInvestigadorCrearModalComponent
@@ -66,7 +67,7 @@ export class EquipoInvestigadorListadoComponent extends FragmentComponent implem
     super(actionService.FRAGMENT.EQUIPO_INVESTIGADOR, actionService);
     this.listadoFragment = this.fragment as EquipoInvestigadorListadoFragment;
 
-    this.displayedColumns = ['numDocumento', 'nombreCompleto', 'vinculacion', 'nivelAcademico', 'acciones'];
+    this.displayedColumns = ['persona', 'nombreCompleto', 'vinculacion', 'nivelAcademico', 'acciones'];
   }
 
   ngOnInit(): void {
@@ -81,8 +82,8 @@ export class EquipoInvestigadorListadoComponent extends FragmentComponent implem
     this.datasource.sortingDataAccessor =
       (wrapper: StatusWrapper<IEquipoTrabajoWithIsEliminable>, property: string) => {
         switch (property) {
-          case 'numDocumento':
-            return wrapper.value?.persona?.numeroDocumento;
+          case 'persona':
+            return getPersonaEmailListConcatenated(wrapper.value?.persona);
           case 'nombreCompleto':
             return wrapper.value?.persona?.nombre
               + ' ' + wrapper.value?.persona?.apellidos;
@@ -116,8 +117,9 @@ export class EquipoInvestigadorListadoComponent extends FragmentComponent implem
    * Abre la ventana modal para añadir una persona al equipo de trabajo
    */
   openModalAddEquipoTrabajo(): void {
-    const config = {
-      panelClass: 'sgi-dialog-container'
+    const config: MatDialogConfig = {
+      panelClass: 'sgi-dialog-container',
+      minWidth: '700px',
     };
 
     const dialogRef = this.matDialog.open(EquipoInvestigadorCrearModalComponent, config);

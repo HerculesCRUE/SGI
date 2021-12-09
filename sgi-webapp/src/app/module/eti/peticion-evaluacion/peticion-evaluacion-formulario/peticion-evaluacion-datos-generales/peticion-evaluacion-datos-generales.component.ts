@@ -132,7 +132,7 @@ export class PeticionEvaluacionDatosGeneralesComponent extends FormFragmentCompo
     this.translate.get(
       PETICION_EVALUACION_FINANCIACION_KEY,
       MSG_PARAMS.CARDINALIRY.SINGULAR
-    ).subscribe((value) => this.msgParamFinanciacionEntity = { entity: value, ...MSG_PARAMS.GENDER.FEMALE, ...MSG_PARAMS.CARDINALIRY.SINGULAR });
+    ).subscribe((value) => this.msgParamFinanciacionEntity = { entity: value, ...MSG_PARAMS.GENDER.MALE, ...MSG_PARAMS.CARDINALIRY.SINGULAR });
 
     this.translate.get(
       PETICION_EVALUACION_FECHA_INICIO_KEY,
@@ -167,27 +167,26 @@ export class PeticionEvaluacionDatosGeneralesComponent extends FormFragmentCompo
     this.translate.get(
       PETICION_EVALUACION_TIPO_ACTIVIDAD_KEY,
       MSG_PARAMS.CARDINALIRY.SINGULAR
-    ).subscribe((value) => this.msgParamTipoActividadEntity = { entity: value, ...MSG_PARAMS.GENDER.MALE });
+    ).subscribe((value) => this.msgParamTipoActividadEntity = { entity: value, ...MSG_PARAMS.GENDER.MALE, ...MSG_PARAMS.CARDINALIRY.SINGULAR });
 
     this.translate.get(
       PETICION_EVALUACION_TIPO_INVESTIGACION_TUTELADA_KEY,
       MSG_PARAMS.CARDINALIRY.SINGULAR
-    ).subscribe((value) => this.msgParamTipoInvestigacionTuteladaEntity = { entity: value, ...MSG_PARAMS.GENDER.MALE });
+    ).subscribe((value) => this.msgParamTipoInvestigacionTuteladaEntity = { entity: value, ...MSG_PARAMS.GENDER.MALE, ...MSG_PARAMS.CARDINALIRY.SINGULAR });
 
     this.translate.get(
-      PETICION_EVALUACION_EXISTE_FINANCIACION_KEY,
-      MSG_PARAMS.CARDINALIRY.SINGULAR
-    ).subscribe((value) => this.msgParamExisteFinanciacionEntity = { entity: value, ...MSG_PARAMS.GENDER.MALE });
+      PETICION_EVALUACION_EXISTE_FINANCIACION_KEY
+    ).subscribe((value) => this.msgParamExisteFinanciacionEntity = { entity: value, ...MSG_PARAMS.GENDER.MALE, ...MSG_PARAMS.CARDINALIRY.SINGULAR });
 
     this.translate.get(
       PETICION_EVALUACION_ESTADO_FINANCIACION_KEY,
       MSG_PARAMS.CARDINALIRY.SINGULAR
-    ).subscribe((value) => this.msgParamEstadoFinanciacionEntity = { entity: value, ...MSG_PARAMS.GENDER.MALE });
+    ).subscribe((value) => this.msgParamEstadoFinanciacionEntity = { entity: value, ...MSG_PARAMS.GENDER.MALE, ...MSG_PARAMS.CARDINALIRY.SINGULAR });
 
     this.translate.get(
       PETICION_EVALUACION_IMPORTE_FINANCIACION_KEY,
       MSG_PARAMS.CARDINALIRY.SINGULAR
-    ).subscribe((value) => this.msgParamImporteFinanciacionEntity = { entity: value, ...MSG_PARAMS.GENDER.MALE });
+    ).subscribe((value) => this.msgParamImporteFinanciacionEntity = { entity: value, ...MSG_PARAMS.GENDER.MALE, ...MSG_PARAMS.CARDINALIRY.SINGULAR });
 
     this.translate.get(
       PETICION_EVALUACION_OTRO_VALOR_SOCIAL_KEY,

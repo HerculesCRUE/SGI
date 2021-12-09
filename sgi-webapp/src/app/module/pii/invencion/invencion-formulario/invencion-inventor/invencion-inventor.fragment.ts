@@ -202,7 +202,25 @@ export class InvencionInventorFragment extends Fragment {
                 return of(invencionInventorEntidad);
               })
             );
-        }
+        }),
+        mergeMap(invencionInventorEntidad => {
+          if (!invencionInventorEntidad.inventor?.entidadPropia?.id) {
+            invencionInventorEntidad.inventor.entidadPropia = {} as IEmpresa;
+            return of(invencionInventorEntidad);
+          }
+          return this.empresaService
+            .findById(invencionInventorEntidad.inventor?.entidadPropia?.id).pipe(
+              map(entidad => {
+                invencionInventorEntidad.inventor.entidadPropia = entidad;
+                return invencionInventorEntidad;
+              }),
+              catchError(err => {
+                this.logger.error(err);
+                invencionInventorEntidad.inventor.entidadPropia = {} as IEmpresa;
+                return of(invencionInventorEntidad);
+              })
+            );
+        },
         )
       )
 

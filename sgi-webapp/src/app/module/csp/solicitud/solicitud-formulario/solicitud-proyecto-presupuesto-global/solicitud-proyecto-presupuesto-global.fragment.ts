@@ -341,9 +341,12 @@ export class SolicitudProyectoPresupuestoGlobalFragment extends FormFragment<ISo
         const solicitudProyectoPresupuesto = wrapped.value;
         solicitudProyectoPresupuesto.solicitudProyectoId = this.getKey() as number;
         return this.solicitudProyectoPresupuestoService.create(solicitudProyectoPresupuesto).pipe(
-          map((updated) => {
+          map((created) => {
             const index = this.partidasGastos$.value.findIndex((current) => current === wrapped);
-            this.partidasGastos$.value[index] = new StatusWrapper<ISolicitudProyectoPresupuesto>(updated);
+            const solicitudProyectoPresupuestoListado = wrapped.value;
+            solicitudProyectoPresupuestoListado.id = created.id;
+            this.partidasGastos$.value[index] = new StatusWrapper<ISolicitudProyectoPresupuesto>(solicitudProyectoPresupuestoListado);
+            this.partidasGastos$.next(this.partidasGastos$.value);
           })
         );
       }),
@@ -353,7 +356,7 @@ export class SolicitudProyectoPresupuestoGlobalFragment extends FormFragment<ISo
 
   private isSaveOrUpdateComplete(): boolean {
     const touched: boolean = this.partidasGastos$.value.some((wrapper) => wrapper.touched);
-    return (this.partidasGastosEliminadas.length > 0 || touched);
+    return !(this.partidasGastosEliminadas.length > 0 || touched);
   }
 
 }

@@ -1,7 +1,8 @@
 {
-  "customWidth": 450,
-  "fieldOrientationType": "VERTICAL",
-  "outputReportType": "PDF",
+  "customWidth": 630,
+  "columnMinWidth": 60,
+  "fieldOrientation": "HORIZONTAL",
+  "outputType": "PDF",
   "title": "Listado de proyectos",
   "filters": [
     {
@@ -21,53 +22,53 @@
   "columns": [
     {
       "name": "Id",
-      "type": "STRING",
-      "format": null
+      "type": "NUMBER",
+      "format": "#"
     },
     {
       "name": "Convocatoria",
-      "type": "STRING",
-      "format": null
+      "type": "NUMBER",
+      "format": ""
     },
     {
       "name": "Solicitud",
-      "type": "STRING",
-      "format": null
+      "type": "NUMBER",
+      "format": ""
     },
     {
       "name": "Estado",
       "type": "STRING",
-      "format": null
+      "format": ""
     },
     {
       "name": "Título",
       "type": "STRING",
-      "format": null
+      "format": ""
     },
     {
       "name": "Acrónimo",
       "type": "STRING",
-      "format": null
+      "format": ""
     },
     {
       "name": "Cod. externo",
       "type": "STRING",
-      "format": null
+      "format": ""
     },
     {
       "name": "Fecha inicio",
-      "type": "STRING",
-      "format": null
+      "type": "DATE",
+      "format": "dd/MM/yy"
     },
     {
       "name": "Fecha fin",
-      "type": "STRING",
-      "format": null
+      "type": "DATE",
+      "format": ""
     },
     {
       "name": "Fecha fin definitiva",
-      "type": "STRING",
-      "format": null
+      "type": "DATE",
+      "format": ""
     },
     {
       "name": "Investigador1",
@@ -160,14 +161,14 @@
       "elements": [
         1,
         2,
-        "",
+        null,
         "BORRADOR",
         "Proyecto 1 CGF/OPE-1",
         "PCGFOPE1",
         "PCGFOPE1",
-        "01/02/2021",
-        "31/12/2022",
-        "",
+        "2018-09-16T08:00:00Z",
+        "2021-09-16T08:00:00Z",
+        "2022-09-16T08:00:00Z",
         "ANGEL LUIS ABAD NAVARRO",
         "EDUARDO ABADIA FLORES",
         "MARIA ANGELES ABAD MATEO",
@@ -191,14 +192,14 @@
       "elements": [
         2,
         3,
-        "",
+        null,
         "BORRADOR",
         "Título proyecto CGF/OPE2",
         "PCGFOPE2",
         "PCGFOPE2",
-        "01/02/2021",
-        "05/12/2023",
-        "06/12/2023",
+        "2018-09-16T08:00:00Z",
+        "2021-09-16T08:00:00Z",
+        "2022-09-16T08:00:00Z",
         "LEILA ABAD BARBERA",
         "MARIA ASUNCION MORTE GOMEZ",
         "LEILA ABAD BARBERA",
@@ -222,14 +223,14 @@
       "elements": [
         3,
         4,
-        "",
+        null,
         "BORRADOR",
         "Proyecto conv CGF/OPE-3",
         "PCOPE-3",
         "PCOPE-3",
-        "02/02/2021",
-        "30/04/2021",
-        "",
+        "2018-09-16T08:00:00Z",
+        "2021-09-16T08:00:00Z",
+        "2022-09-16T08:00:00Z",
         "LUIS ALBERTO MEJIA TROYA",
         "OSCAR NAVARRO TORRES",
         "LORENA ALBALADEJO MARICO",

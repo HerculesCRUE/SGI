@@ -1,6 +1,7 @@
 <div class="sgi-dialog-header" fxLayout="row" fxLayoutGap="20px">
   <span fxFlexAlign="center" mat-mat-dialog-title role="heading" aria-level="3" fxFlex>
-    {{(!paisValidado?.created ? 'btn.edit.entity' : 'title.new.entity') | translate:msgParamTituloEntity}}
+    {{(!paisValidado?.created ? 'pii.solicitud-proteccion.pais-validado.titulo' : 'title.new.entity') |
+    translate:msgParamTituloEntity}}
   </span>
   <button fxFlex="nogrow" mat-icon-button mat-dialog-close>
     <mat-icon class="close-icon">close</mat-icon>
@@ -54,7 +55,7 @@
   <button color="accent" (click)="saveOrUpdate()" mat-raised-button type="submit"
     [disabled]="!formGroup.valid || formGroup.pristine">
     <mat-icon class="save-icon">save</mat-icon>
-    {{( paisValidado?.created ? 'btn.ok': 'btn.add' )| translate}}
+    {{( paisValidado?.created ? 'btn.add' : 'btn.ok' )| translate}}
   </button>
   <button class="link-cancelar" mat-button type="button" mat-dialog-close>
     {{'btn.cancel' | translate}}

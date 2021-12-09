@@ -250,8 +250,8 @@ export class ResultadoInformePatentabilidadListadoComponent
     throw new Error('Method not implemented.');
   }
 
-  protected createObservable(): Observable<SgiRestListResult<IResultadoInformePatentibilidad>> {
-    const observable$ = this.resultadoInformePatentabilidadService.findTodos(this.getFindOptions());
+  protected createObservable(reset?: boolean): Observable<SgiRestListResult<IResultadoInformePatentibilidad>> {
+    const observable$ = this.resultadoInformePatentabilidadService.findTodos(this.getFindOptions(reset));
     return observable$;
   }
 

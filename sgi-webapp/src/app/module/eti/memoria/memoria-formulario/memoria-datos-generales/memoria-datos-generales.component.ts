@@ -146,9 +146,17 @@ export class MemoriaDatosGeneralesComponent extends FormFragmentComponent<IMemor
     this.subscriptions.forEach(subscription => subscription.unsubscribe());
   }
 
-  displayerPersonaResponsable(personaResponsable: IPersona): string {
+  displayerPersonaResponsable = (personaResponsable: IPersona): string => {
     return personaResponsable && personaResponsable.id ?
-      `${personaResponsable?.nombre} ${personaResponsable?.apellidos} (${personaResponsable?.numeroDocumento})` : null;
+      `${personaResponsable?.nombre} ${personaResponsable?.apellidos} (${this.getEmailPrincipal(personaResponsable)})` : null;
+  }
+
+  private getEmailPrincipal({ emails }: IPersona): string {
+    if (!emails) {
+      return '';
+    }
+    const emailDataPrincipal = emails.find(emailData => emailData.principal);
+    return emailDataPrincipal?.email ?? '';
   }
 
   displayerMemoria(memoria: IMemoria): string {

@@ -1,7 +1,6 @@
 package org.crue.hercules.sgi.rep.service;
 
 import java.awt.Color;
-import java.io.File;
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
@@ -20,16 +19,15 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 import javax.validation.Valid;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.crue.hercules.sgi.rep.config.SgiConfigProperties;
-import org.crue.hercules.sgi.rep.dto.OutputReportType;
+import org.crue.hercules.sgi.rep.dto.OutputType;
 import org.crue.hercules.sgi.rep.dto.SgiDynamicReportDto;
+import org.crue.hercules.sgi.rep.dto.SgiDynamicReportDto.ColumnType;
 import org.crue.hercules.sgi.rep.dto.SgiDynamicReportDto.SgiColumReportDto;
 import org.crue.hercules.sgi.rep.dto.SgiDynamicReportDto.SgiGroupReportDto;
 import org.crue.hercules.sgi.rep.dto.SgiDynamicReportDto.SgiRowReportDto;
-import org.crue.hercules.sgi.rep.dto.SgiDynamicReportDto.TypeColumnReportEnum;
-import org.crue.hercules.sgi.rep.dto.SgiReportDto.FieldOrientationType;
+import org.crue.hercules.sgi.rep.dto.SgiReportDto.FieldOrientation;
 import org.crue.hercules.sgi.rep.exceptions.GetDataReportException;
 import org.pentaho.reporting.engine.classic.core.ElementAlignment;
 import org.pentaho.reporting.engine.classic.core.MasterReport;
@@ -72,7 +70,7 @@ public class SgiDynamicReportService extends SgiReportService {
     super(sgiConfigProperties);
   }
 
-  public void generateDynamicReport(@Valid SgiDynamicReportDto sgiReport) {
+  public byte[] generateDynamicReport(@Valid SgiDynamicReportDto sgiReport) {
     log.debug("generateDynamicReport(sgiReport) - start");
 
     try {
@@ -89,18 +87,20 @@ public class SgiDynamicReportService extends SgiReportService {
 
       setTableModelDetails(sgiReport, report);
 
-      sgiReport.setContent(generateReportOutput(sgiReport.getOutputReportType(), report));
+      sgiReport.setContent(generateReportOutput(sgiReport.getOutputType(), report));
 
     } catch (Exception e) {
       log.error(e.getMessage(), e);
       throw new GetDataReportException();
     }
+
+    return sgiReport.getContent();
   }
 
   protected void setReportConfiguration(SgiDynamicReportDto sgiReport) {
 
-    if (null == sgiReport.getFieldOrientationType()) {
-      sgiReport.setFieldOrientationType(FieldOrientationType.HORIZONTAL);
+    if (null == sgiReport.getFieldOrientation()) {
+      sgiReport.setFieldOrientation(FieldOrientation.HORIZONTAL);
     }
 
     if (null == sgiReport.getCustomWidth()) {
@@ -108,7 +108,7 @@ public class SgiDynamicReportService extends SgiReportService {
     }
 
     if (sgiReport.getCustomWidth().compareTo(WIDTH_PORTRAIT) > 0) {
-      if (sgiReport.getOutputReportType().equals(OutputReportType.PDF)) {
+      if (sgiReport.getOutputType().equals(OutputType.PDF) || sgiReport.getOutputType().equals(OutputType.RTF)) {
         sgiReport.setCustomWidth(WIDTH_LANDSCAPE);
       }
       sgiReport.setPath("report/common/dynamicLandscape.prpt");
@@ -122,7 +122,7 @@ public class SgiDynamicReportService extends SgiReportService {
   }
 
   protected void setTableModelDetails(SgiDynamicReportDto sgiReport, final MasterReport report) {
-    if (sgiReport.getFieldOrientationType().equals(FieldOrientationType.VERTICAL)) {
+    if (sgiReport.getFieldOrientation().equals(FieldOrientation.VERTICAL)) {
       getDynamicSubReportTableCrudVertical(sgiReport, report);
     } else {
       getDynamicSubReportTableCrudHorizontal(sgiReport, report);
@@ -171,7 +171,7 @@ public class SgiDynamicReportService extends SgiReportService {
     setDataFactoryToSubReport(subReportTableCrud, sgiReport.getDataModel().get(tableModelName), queryDetails);
 
     if (null != sgiReport.getGroupBy() && StringUtils.hasText(sgiReport.getGroupBy().getName())
-        && sgiReport.getFieldOrientationType().equals(FieldOrientationType.VERTICAL)) {
+        && sgiReport.getFieldOrientation().equals(FieldOrientation.VERTICAL)) {
       addGroup((RelationalGroup) subReportTableCrud.getGroup(0), sgiReport);
     }
     return subReportTableCrud;
@@ -265,9 +265,9 @@ public class SgiDynamicReportService extends SgiReportService {
     Vector<Vector<Object>> rowsData = new Vector<>();
     sgiReport.getRows().forEach(row -> {
 
-      SgiDynamicReportDto rowSgiDynamicReportDto = SgiDynamicReportDto.builder()
-          .outputReportType(sgiReport.getOutputReportType()).fieldOrientationType(sgiReport.getFieldOrientationType())
-          .columns(sgiReport.getColumns()).rows(Arrays.asList(row)).build();
+      SgiDynamicReportDto rowSgiDynamicReportDto = SgiDynamicReportDto.builder().outputType(sgiReport.getOutputType())
+          .fieldOrientation(sgiReport.getFieldOrientation()).columns(sgiReport.getColumns()).rows(Arrays.asList(row))
+          .build();
       Vector<Object> elementsRow = getRowsTableModelDynamic(rowSgiDynamicReportDto);
 
       rowsData.add(elementsRow);
@@ -285,36 +285,59 @@ public class SgiDynamicReportService extends SgiReportService {
       SgiColumReportDto sgiColumReportDto = reportDto.getColumns().get(columnIndex);
       switch (sgiColumReportDto.getType()) {
 
-      case DATE:
-        if (StringUtils.hasText((String) row.getElements().get(columnIndex))) {
-          Instant fechaInstant = Instant.parse((String) row.getElements().get(columnIndex));
-          if ((reportDto.getOutputReportType().equals(OutputReportType.XLS)
-              || reportDto.getOutputReportType().equals(OutputReportType.XLSX))
-              && (reportDto.getFieldOrientationType().equals(FieldOrientationType.HORIZONTAL))) {
-            elementsRow.add(formatInstantToDate(fechaInstant));
-          } else {
-            elementsRow.add(formatInstantToString(fechaInstant, sgiColumReportDto.getFormat()));
-          }
-        } else {
-          elementsRow.add("");
-        }
-        break;
-      case SUBREPORT:
-        SgiDynamicReportDto rowSgiDynamicReportDto = SgiDynamicReportDto.builder()
-            .outputReportType(reportDto.getOutputReportType()).fieldOrientationType(reportDto.getFieldOrientationType())
-            .columns(reportDto.getColumns()).rows(Arrays.asList(row)).build();
-        Vector<Object> elementsRowSubReport = new Vector<>();
-        getRowsSubreport(rowSgiDynamicReportDto, columnIndex, elementsRowSubReport);
-        elementsRow.add(elementsRowSubReport);
-        break;
-      case NUMBER:
-      case STRING:
-      default:
-        elementsRow.add(row.getElements().get(columnIndex));
+        case DATE:
+          elementsRow.add(parseElementDate(reportDto, row, columnIndex, sgiColumReportDto));
+          break;
+        case SUBREPORT:
+          SgiDynamicReportDto rowSgiDynamicReportDto = SgiDynamicReportDto.builder()
+              .outputType(reportDto.getOutputType())
+              .fieldOrientation(reportDto.getFieldOrientation()).columns(reportDto.getColumns())
+              .rows(Arrays.asList(row))
+              .build();
+          Vector<Object> elementsRowSubReport = new Vector<>();
+          getRowsSubreport(rowSgiDynamicReportDto, columnIndex, elementsRowSubReport);
+          elementsRow.add(elementsRowSubReport);
+          break;
+        case NUMBER:
+          elementsRow.add(parseElementNumber(reportDto, row, columnIndex, sgiColumReportDto));
+          break;
+        case STRING:
+        default:
+          elementsRow.add(row.getElements().get(columnIndex));
       }
     }
     return elementsRow;
 
+  }
+
+  private Object parseElementNumber(SgiDynamicReportDto reportDto, SgiRowReportDto row, int columnIndex,
+      SgiColumReportDto sgiColumReportDto) {
+    Object result = "";
+    if (reportDto.getOutputType().equals(OutputType.XLS) || reportDto.getOutputType().equals(OutputType.XLSX)) {
+      result = row.getElements().get(columnIndex);
+    } else {
+      Object element = row.getElements().get(columnIndex);
+      if (null != element) {
+        result = formatNumberString(element.toString(), sgiColumReportDto.getFormat());
+      }
+    }
+    return result;
+  }
+
+  private Object parseElementDate(SgiDynamicReportDto reportDto, SgiRowReportDto row, int columnIndex,
+      SgiColumReportDto sgiColumReportDto) {
+    Object result = "";
+
+    if (StringUtils.hasText((String) row.getElements().get(columnIndex))) {
+      Instant fechaInstant = Instant.parse((String) row.getElements().get(columnIndex));
+      if ((reportDto.getOutputType().equals(OutputType.XLS) || reportDto.getOutputType().equals(OutputType.XLSX))
+          && (reportDto.getFieldOrientation().equals(FieldOrientation.HORIZONTAL))) {
+        result = formatInstantToDate(fechaInstant);
+      } else {
+        result = formatInstantToString(fechaInstant, sgiColumReportDto.getFormat());
+      }
+    }
+    return result;
   }
 
   private void getRowsSubreport(SgiDynamicReportDto reportDto, int columnIndex, Vector<Object> rows) {
@@ -338,8 +361,8 @@ public class SgiDynamicReportService extends SgiReportService {
       LinkedHashMap<String, List<Object>> hmRowSubreport = (LinkedHashMap<String, List<Object>>) objRowSubreport;
       for (Entry<String, List<Object>> entryRowSubreport : hmRowSubreport.entrySet()) {
         SgiRowReportDto rowSubreport = SgiRowReportDto.builder().elements(entryRowSubreport.getValue()).build();
-        SgiDynamicReportDto rowSgiDynamicReportDto = SgiDynamicReportDto.builder()
-            .outputReportType(reportDto.getOutputReportType()).fieldOrientationType(reportDto.getFieldOrientationType())
+        SgiDynamicReportDto rowSgiDynamicReportDto = SgiDynamicReportDto.builder().outputType(reportDto.getOutputType())
+            .fieldOrientation(reportDto.getFieldOrientation())
             .columns(reportDto.getColumns().get(columnIndex).getColumns()).rows(Arrays.asList(rowSubreport)).build();
         elementsRow.addAll(getRowsTableModelDynamic(rowSgiDynamicReportDto));
       }
@@ -356,8 +379,8 @@ public class SgiDynamicReportService extends SgiReportService {
     for (SgiRowReportDto rowSubreport : rowsSubreport) {
       Vector<Object> elementsRow = new Vector<>();
 
-      SgiDynamicReportDto rowSgiDynamicReportDto = SgiDynamicReportDto.builder()
-          .outputReportType(reportDto.getOutputReportType()).fieldOrientationType(reportDto.getFieldOrientationType())
+      SgiDynamicReportDto rowSgiDynamicReportDto = SgiDynamicReportDto.builder().outputType(reportDto.getOutputType())
+          .fieldOrientation(reportDto.getFieldOrientation())
           .columns(reportDto.getColumns().get(columnIndex).getColumns()).rows(Arrays.asList(rowSubreport)).build();
       elementsRow.addAll(getRowsTableModelDynamic(rowSgiDynamicReportDto));
       rows.add(elementsRow);
@@ -376,7 +399,7 @@ public class SgiDynamicReportService extends SgiReportService {
 
     final SubReport subreport = new SubReport();
 
-    if (reportDto.getFieldOrientationType().equals(FieldOrientationType.HORIZONTAL)) {
+    if (reportDto.getFieldOrientation().equals(FieldOrientation.HORIZONTAL)) {
       TableModel tableModel = reportDto.getDataModel().get(NAME_GENERAL_TABLE_MODEL);
       getHorizontalElements(reportDto, subreport, tableModel);
     } else {
@@ -398,7 +421,9 @@ public class SgiDynamicReportService extends SgiReportService {
       String fieldName = tableModel.getColumnName(columnIndex);
       SgiColumReportDto columnReportDto = reportDto.getColumns().stream().filter(c -> c.getName().equals(fieldName))
           .findFirst().orElseThrow(GetDataReportException::new);
-      labelFactory.setText(columnReportDto.getTitle());
+      String title = StringUtils.hasText(columnReportDto.getTitle()) ? columnReportDto.getTitle()
+          : columnReportDto.getName();
+      labelFactory.setText(title);
       labelFactory.setX(posX);
       labelFactory.setY(posY);
       labelFactory.setMinimumWidth(minimumWidth);
@@ -419,9 +444,8 @@ public class SgiDynamicReportService extends SgiReportService {
       FieldElementGeneratorDto fieldElementGeneratorDto = FieldElementGeneratorDto.builder().posX(posX)
           .minimumWidth(minimumWidth).fieldName(fieldName).build();
 
-      if (CollectionUtils.isEmpty(reportDto.getColumns())
-          || (!reportDto.getOutputReportType().equals(OutputReportType.XLS)
-              && !reportDto.getOutputReportType().equals(OutputReportType.XLSX))) {
+      if (CollectionUtils.isEmpty(reportDto.getColumns()) || (!reportDto.getOutputType().equals(OutputType.XLS)
+          && !reportDto.getOutputType().equals(OutputType.XLSX))) {
         TextFieldElementFactory textFieldElementFactory = new TextFieldElementFactory();
         initTextFieldHorizontalElement(textFieldElementFactory, fieldElementGeneratorDto);
         subreport.getItemBand().addElement(textFieldElementFactory.createElement());
@@ -445,32 +469,32 @@ public class SgiDynamicReportService extends SgiReportService {
 
   private void getElementByTypeForExcel(final SubReport subreport, FieldElementGeneratorDto fieldElementGeneratorDto) {
     switch (fieldElementGeneratorDto.getColumnReportDto().getType()) {
-    case NUMBER:
-      NumberFieldElementFactory numberFieldElementFactory = new NumberFieldElementFactory();
-      initTextFieldHorizontalElement(numberFieldElementFactory, fieldElementGeneratorDto);
-      subreport.getItemBand().addElement(numberFieldElementFactory.createElement());
-      break;
-    case DATE:
-      DateFieldElementFactory dateFieldElementFactory = new DateFieldElementFactory();
-      initTextFieldHorizontalElement(dateFieldElementFactory, fieldElementGeneratorDto);
-      String format = StringUtils.isEmpty(fieldElementGeneratorDto.getColumnReportDto().getFormat())
-          ? DATE_PATTERN_DEFAULT
-          : fieldElementGeneratorDto.getColumnReportDto().getFormat();
-      dateFieldElementFactory.setFormat(new SimpleDateFormat(format));
-      subreport.getItemBand().addElement(dateFieldElementFactory.createElement());
-      break;
-    case SUBREPORT:
-      log.debug("Not supported. The element is displayed as a empty string");
-      LabelElementFactory labelElementFactory = new LabelElementFactory();
-      initLabelHorizontalElement(labelElementFactory, fieldElementGeneratorDto);
-      labelElementFactory.setText("");
-      subreport.getItemBand().addElement(labelElementFactory.createElement());
-      break;
-    case STRING:
-    default:
-      TextFieldElementFactory textFieldElementFactory = new TextFieldElementFactory();
-      initTextFieldHorizontalElement(textFieldElementFactory, fieldElementGeneratorDto);
-      subreport.getItemBand().addElement(textFieldElementFactory.createElement());
+      case NUMBER:
+        NumberFieldElementFactory numberFieldElementFactory = new NumberFieldElementFactory();
+        initTextFieldHorizontalElement(numberFieldElementFactory, fieldElementGeneratorDto);
+        subreport.getItemBand().addElement(numberFieldElementFactory.createElement());
+        break;
+      case DATE:
+        DateFieldElementFactory dateFieldElementFactory = new DateFieldElementFactory();
+        initTextFieldHorizontalElement(dateFieldElementFactory, fieldElementGeneratorDto);
+        String format = StringUtils.isEmpty(fieldElementGeneratorDto.getColumnReportDto().getFormat())
+            ? DATE_PATTERN_DEFAULT
+            : fieldElementGeneratorDto.getColumnReportDto().getFormat();
+        dateFieldElementFactory.setFormat(new SimpleDateFormat(format));
+        subreport.getItemBand().addElement(dateFieldElementFactory.createElement());
+        break;
+      case SUBREPORT:
+        log.debug("Not supported. The element is displayed as a empty string");
+        LabelElementFactory labelElementFactory = new LabelElementFactory();
+        initLabelHorizontalElement(labelElementFactory, fieldElementGeneratorDto);
+        labelElementFactory.setText("");
+        subreport.getItemBand().addElement(labelElementFactory.createElement());
+        break;
+      case STRING:
+      default:
+        TextFieldElementFactory textFieldElementFactory = new TextFieldElementFactory();
+        initTextFieldHorizontalElement(textFieldElementFactory, fieldElementGeneratorDto);
+        subreport.getItemBand().addElement(textFieldElementFactory.createElement());
     }
   }
 
@@ -515,9 +539,11 @@ public class SgiDynamicReportService extends SgiReportService {
     Vector<Vector<Object>> rowsData = new Vector<>();
     for (int rowIndex = 0; rowIndex < tableModel.getRowCount(); rowIndex++) {
       for (int columnIndex = 0; columnIndex < tableModel.getColumnCount(); columnIndex++) {
-        if (!columns.get(columnIndex).getType().equals(TypeColumnReportEnum.SUBREPORT)) {
+        if (!columns.get(columnIndex).getType().equals(ColumnType.SUBREPORT)) {
           Vector<Object> elementsRow = new Vector<>();
-          elementsRow.add(columns.get(columnIndex).getTitle() + ":");
+          String title = StringUtils.hasText(columns.get(columnIndex).getTitle()) ? columns.get(columnIndex).getTitle()
+              : columns.get(columnIndex).getName();
+          elementsRow.add(title + ":");
           elementsRow.add(tableModel.getValueAt(rowIndex, columnIndex));
           rowsData.add(elementsRow);
         }
@@ -574,7 +600,10 @@ public class SgiDynamicReportService extends SgiReportService {
           Vector<Vector<Object>> rowsData = new Vector<>();
           for (int columnIndex = 0; columnIndex < columnSubReport.getColumns().size(); columnIndex++) {
             Vector<Object> elementsRow = new Vector<>();
-            elementsRow.add(columnSubReport.getColumns().get(columnIndex).getTitle() + ":");
+            String title = StringUtils.hasText(columnSubReport.getColumns().get(columnIndex).getTitle())
+                ? columnSubReport.getColumns().get(columnIndex).getTitle()
+                : columnSubReport.getColumns().get(columnIndex).getName();
+            elementsRow.add(title + ":");
             elementsRow.add(row.get(columnIndex));
             rowsData.add(elementsRow);
           }
@@ -708,7 +737,7 @@ public class SgiDynamicReportService extends SgiReportService {
     TableModel tableModel = reportDto.getDataModel().get(NAME_GENERAL_TABLE_MODEL);
 
     List<SgiColumReportDto> columnsSubReport = reportDto.getColumns().stream()
-        .filter(column -> column.getType().equals(TypeColumnReportEnum.SUBREPORT)).collect(Collectors.toList());
+        .filter(column -> column.getType().equals(ColumnType.SUBREPORT)).collect(Collectors.toList());
 
     if (!CollectionUtils.isEmpty(columnsSubReport)) {
 
@@ -716,16 +745,16 @@ public class SgiDynamicReportService extends SgiReportService {
         final SubReport subreportHeaderInner = getHeaderInnerSubReportFromTableModel(reportDto, columnSubReport);
         subreport.getItemBand().addSubReport(subreportHeaderInner);
 
-        if (null != columnSubReport.getFieldOrientationType()
-            && columnSubReport.getFieldOrientationType().equals(FieldOrientationType.HORIZONTAL)
-            && !reportDto.getOutputReportType().equals(OutputReportType.XLS)
-            && !reportDto.getOutputReportType().equals(OutputReportType.XLSX)) {
+        if (null != columnSubReport.getFieldOrientation()
+            && columnSubReport.getFieldOrientation().equals(FieldOrientation.HORIZONTAL)
+            && !reportDto.getOutputType().equals(OutputType.XLS)
+            && !reportDto.getOutputType().equals(OutputType.XLSX)) {
           final SubReport subreportInner = new SubReport();
           TableModel horizontalTableModelInner = getHorizontalTableModelInnerSubReportType(columnSubReport, tableModel);
 
           SgiDynamicReportDto horizontalReportDto = SgiDynamicReportDto.builder()
-              .customWidth(reportDto.getCustomWidth()).fieldOrientationType(columnSubReport.getFieldOrientationType())
-              .columnMinWidth(reportDto.getColumnMinWidth()).outputReportType(reportDto.getOutputReportType())
+              .customWidth(reportDto.getCustomWidth()).fieldOrientation(columnSubReport.getFieldOrientation())
+              .outputType(reportDto.getOutputType())
               .columns(columnSubReport.getColumns()).build();
 
           Integer numColumns = columnSubReport.getColumns().size();
@@ -743,16 +772,6 @@ public class SgiDynamicReportService extends SgiReportService {
           });
         }
       });
-    }
-  }
-
-  protected void toJsonFile(SgiDynamicReportDto sgiDynamicReportDto) {
-    try {
-      String jsonSgiDynamicReportDto = sgiDynamicReportDto.toJson();
-      File file = File.createTempFile("jsonSgiDynamicReportDto", ".json");
-      FileUtils.writeStringToFile(file, jsonSgiDynamicReportDto);
-    } catch (Exception e) {
-      log.debug(e.getMessage());
     }
   }
 

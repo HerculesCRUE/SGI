@@ -50,8 +50,9 @@ public class GastoProyectoController {
   /**
    * Instancia un nuevo GastoProyectoController.
    * 
-   * @param modelMapper {@link ModelMapper}
-   * @param service     {@link GastoProyectoService}
+   * @param modelMapper                {@link ModelMapper}
+   * @param service                    {@link GastoProyectoService}
+   * @param estadoGastoProyectoService {@link EstadoGastoProyectoService}
    */
   public GastoProyectoController(ModelMapper modelMapper, GastoProyectoService service,
       EstadoGastoProyectoService estadoGastoProyectoService) {

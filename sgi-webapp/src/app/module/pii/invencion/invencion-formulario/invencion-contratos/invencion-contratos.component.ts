@@ -154,7 +154,8 @@ export class InvencionContratosComponent extends FragmentComponent implements On
   openModal(wrapper?: StatusWrapper<ISectorLicenciado>, rowIndex?: number): void {
     const data: ISectorLicenciadoModalData = {
       sectorLicenciado: wrapper ? wrapper.value : {} as ISectorLicenciado,
-      readonly: !this.formPart.hasEditPerm()
+      readonly: !this.formPart.hasEditPerm(),
+      existingEntities: this.dataSourceSectoresLicenciados.data.map(elem => elem.value)
     };
 
     const config: MatDialogConfig = {

@@ -140,13 +140,13 @@ export class EvaluadorListadoComponent extends AbstractTablePaginationComponent<
 
   }
 
-  protected createObservable(): Observable<SgiRestListResult<IEvaluador>> {
-    const observable$ = this.evaluadoresService.findAll(this.getFindOptions());
+  protected createObservable(reset?: boolean): Observable<SgiRestListResult<IEvaluador>> {
+    const observable$ = this.evaluadoresService.findAll(this.getFindOptions(reset));
     return observable$;
   }
 
   protected initColumns(): void {
-    this.displayedColumns = ['nombre', 'numeroDocumento', 'comite', 'cargoComite', 'fechaAlta', 'fechaBaja', 'estado', 'acciones'];
+    this.displayedColumns = ['nombre', 'persona', 'comite', 'cargoComite', 'fechaAlta', 'fechaBaja', 'estado', 'acciones'];
   }
 
   protected createFilter(): SgiRestFilter {

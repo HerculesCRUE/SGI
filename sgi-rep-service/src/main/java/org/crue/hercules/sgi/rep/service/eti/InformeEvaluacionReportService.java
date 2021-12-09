@@ -20,6 +20,7 @@ import org.crue.hercules.sgi.rep.dto.eti.ComentarioDto;
 import org.crue.hercules.sgi.rep.dto.eti.EvaluacionDto;
 import org.crue.hercules.sgi.rep.dto.eti.InformeEvaluacionEvaluadorReportOutput;
 import org.crue.hercules.sgi.rep.dto.sgp.PersonaDto;
+import org.crue.hercules.sgi.rep.dto.sgp.EmailDto;
 import org.crue.hercules.sgi.rep.exceptions.GetDataReportException;
 import org.crue.hercules.sgi.rep.service.sgp.PersonaService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -70,22 +71,20 @@ public class InformeEvaluacionReportService extends BaseEvaluadorEvaluacionRepor
     elementsRow.add(evaluacion.getVersion());
 
     columnsDataTitulo.add("nombreResponsable");
-    columnsDataTitulo.add("nifResponsable");
     columnsDataTitulo.add("emailResponsable");
 
     try {
       String personaRef = evaluacion.getMemoria().getPeticionEvaluacion().getPersonaRef();
       PersonaDto persona = personaService.findById(personaRef);
-      persona.setDatosContacto(personaService.findDatosContactoByPersonaId(personaRef));
 
       elementsRow.add(persona.getNombre() + " " + persona.getApellidos());
 
-      elementsRow.add(persona.getNumeroDocumento());
-
       String email = "";
-      if (null != persona.getDatosContacto() && null != persona.getDatosContacto().getTelefonos()
-          && !persona.getDatosContacto().getTelefonos().isEmpty()) {
-        email = persona.getDatosContacto().getTelefonos().get(0);
+      if (null != persona.getEmails() && !persona.getEmails().isEmpty()) {
+        email = persona.getEmails().stream()
+            .filter(e -> null != e.getPrincipal() && e.getPrincipal().equals(Boolean.TRUE)).findFirst()
+            .orElse(new EmailDto())
+            .getEmail();
       }
       elementsRow.add(email);
     } catch (Exception e) {
@@ -168,30 +167,31 @@ public class InformeEvaluacionReportService extends BaseEvaluadorEvaluacionRepor
       informeEvaluacionEvaluadorReportOutput.setEvaluacion(evaluacion);
 
       List<ComentarioDto> comentarios = evaluacionService.findByEvaluacionIdGestor(idEvaluacion);
-      final Set<Long> apartados = new HashSet<>();
       if (null != comentarios && !comentarios.isEmpty()) {
+        final Set<Long> apartados = new HashSet<>();
         comentarios.forEach(c -> getApartadoService().findTreeApartadosById(apartados, c.getApartado()));
-      }
+        Long idFormulario = comentarios.get(0).getApartado().getBloque().getFormulario().getId();
 
-      // @formatter:off
-      BloquesReportInput etiBloquesReportInput = BloquesReportInput.builder()
+        // @formatter:off
+        BloquesReportInput etiBloquesReportInput = BloquesReportInput.builder()
         .idMemoria(idEvaluacion)
-        .idFormulario(evaluacion.getMemoria().getComite().getFormulario().getId())
+        .idFormulario(idFormulario)
         .mostrarRespuestas(false)
         .mostrarContenidoApartado(false)
         .comentarios(comentarios)
         .apartados(apartados)
         .build();
-      // @formatter:on
+        // @formatter:on
 
-      BloquesReportOutput reportOutput = getDataFromApartadosAndRespuestas(etiBloquesReportInput);
+        BloquesReportOutput reportOutput = getDataFromApartadosAndRespuestas(etiBloquesReportInput);
 
-      final int orden = informeEvaluacionEvaluadorReportOutput.getBloques().size();
-      for (BloqueOutput bloque : reportOutput.getBloques()) {
-        bloque.setOrden(bloque.getOrden() + orden);
+        final int orden = informeEvaluacionEvaluadorReportOutput.getBloques().size();
+        for (BloqueOutput bloque : reportOutput.getBloques()) {
+          bloque.setOrden(bloque.getOrden() + orden);
+        }
+
+        informeEvaluacionEvaluadorReportOutput.getBloques().addAll(reportOutput.getBloques());
       }
-
-      informeEvaluacionEvaluadorReportOutput.getBloques().addAll(reportOutput.getBloques());
 
     } catch (Exception e) {
       log.error(e.getMessage(), e);

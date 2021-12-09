@@ -16,6 +16,20 @@
     </faultSequence>
   </resource>
 
+  <resource methods="GET" uri-template="/proyectos/{id}/anualidades">
+    <inSequence>
+      <send>
+        <endpoint key="sgicsp-endpoint"/>
+      </send>
+    </inSequence>
+    <outSequence>
+      <respond/>
+    </outSequence>
+    <faultSequence>
+      <sequence key="error-handling-sequence"/>
+    </faultSequence>
+  </resource>
+
   <resource methods="GET" uri-template="/proyectos/{id}/contexto">
     <inSequence>
       <!-- Get URL from HTTP transport properties-->
@@ -115,6 +129,27 @@
     </outSequence>
     <faultSequence>
       <sequence key="error-handling-sequence"/>
+    </faultSequence>
+  </resource>
+
+  <resource methods="GET" uri-template="/proyectos/{id}/proyectoclasificaciones">
+    <inSequence>
+      <property name="url" expression="get-property('axis2','REST_URL_POSTFIX')" />
+      <rewrite inProperty="url" outProperty="url">
+        <rewriterule>
+          <action type="replace" regex="proyectoclasificaciones" value="proyecto-clasificaciones" fragment="path" />
+        </rewriterule>
+      </rewrite>
+      <property name="REST_URL_POSTFIX" scope="axis2" expression="get-property('url')" />
+      <send>
+        <endpoint key="sgicsp-endpoint" />
+      </send>
+    </inSequence>
+    <outSequence>
+      <respond />
+    </outSequence>
+    <faultSequence>
+      <sequence key="error-handling-sequence" />
     </faultSequence>
   </resource>
 

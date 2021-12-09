@@ -38,7 +38,7 @@
               placeholder="{{'csp.proyecto-relacion.invencion' | translate}}" formControlName="entidadRelacionada"
               required>
             </sgi-select-invencion>
-            <sgi-select-proyecto *ngSwitchCase="TIPO_ENTIDAD.PROYECTO"
+            <sgi-select-proyecto [personas]="data.miembrosEquipoProyecto" *ngSwitchCase="TIPO_ENTIDAD.PROYECTO"
               placeholder="{{'csp.proyecto-relacion.proyecto' | translate}}" formControlName="entidadRelacionada"
               required>
             </sgi-select-proyecto>
@@ -49,22 +49,6 @@
           </mat-error>
           <mat-error *ngIf="formGroup.controls.entidadRelacionada.errors?.notRepeatedProyectoRelacion">
             {{'csp.proyecto-relacion.error.notRepeatedProyectoRelacion' | translate}}
-          </mat-error>
-        </mat-form-field>
-      </div>
-    </div>
-
-    <!-- Tipo relacion -->
-    <div [fxLayout]="fxLayoutProperties.layout" [fxLayoutAlign]="fxLayoutProperties.layoutAlign"
-      *ngIf="formGroup?.controls?.tipoRelacion?.enabled">
-      <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
-        [fxFlexOrder]="fxFlexProperties.order">
-        <mat-form-field fxFill>
-          <mat-label>{{'csp.proyecto-relacion.tipo-relacion' | translate}}</mat-label>
-          <sgi-select-enum formControlName="tipoRelacion" [enumMap]="TIPO_RELACION_MAP" required>
-          </sgi-select-enum>
-          <mat-error *ngIf="formGroup.controls.tipoRelacion.errors?.required">
-            {{'error.required.entity' | translate:msgParamTipoRelacion}}
           </mat-error>
         </mat-form-field>
       </div>

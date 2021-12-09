@@ -51,7 +51,7 @@ export class TableCRUDModalComponent implements OnInit {
     if (this.tableCRUDModalData?.fieldGroup) {
       this.fields = [...this.tableCRUDModalData.fieldGroup];
     }
-    this.model = this.tableCRUDModalData?.formModel ? this.tableCRUDModalData.formModel : {};
+    this.model = this.tableCRUDModalData?.formModel ?? {};
     this.entity = this.tableCRUDModalData?.entity?.name;
     this.gender = this.tableCRUDModalData?.entity?.gender;
   }

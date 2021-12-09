@@ -190,8 +190,8 @@ export class TipoHitoListadoComponent extends AbstractTablePaginationComponent<I
 
   }
 
-  protected createObservable(): Observable<SgiRestListResult<ITipoHito>> {
-    const observable$ = this.tipoHitoService.findTodos(this.getFindOptions());
+  protected createObservable(reset?: boolean): Observable<SgiRestListResult<ITipoHito>> {
+    const observable$ = this.tipoHitoService.findTodos(this.getFindOptions(reset));
     return observable$;
   }
 

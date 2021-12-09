@@ -187,8 +187,8 @@ export class TipoFinanciacionListadoComponent extends AbstractTablePaginationCom
 
   }
 
-  protected createObservable(): Observable<SgiRestListResult<ITipoFinanciacion>> {
-    const observable$ = this.tipoFinanciacionService.findTodos(this.getFindOptions());
+  protected createObservable(reset?: boolean): Observable<SgiRestListResult<ITipoFinanciacion>> {
+    const observable$ = this.tipoFinanciacionService.findTodos(this.getFindOptions(reset));
     return observable$;
   }
 

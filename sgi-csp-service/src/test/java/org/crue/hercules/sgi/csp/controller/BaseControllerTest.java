@@ -15,7 +15,7 @@ import org.springframework.test.web.servlet.MockMvc;
 // not take the security configurations.
 @Import(SecurityConfig.class)
 @ActiveProfiles(resolver = SgiTestProfileResolver.class)
-public class BaseControllerTest {
+public abstract class BaseControllerTest {
 
   @Autowired
   protected MockMvc mockMvc;

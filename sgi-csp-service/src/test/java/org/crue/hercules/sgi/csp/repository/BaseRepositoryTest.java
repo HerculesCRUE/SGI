@@ -6,7 +6,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.test.context.ActiveProfiles;
 
 @ActiveProfiles(resolver = SgiTestProfileResolver.class)
-public class BaseRepositoryTest {
+public abstract class BaseRepositoryTest {
 
   @Autowired
   protected TestEntityManager entityManager;

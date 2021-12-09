@@ -477,7 +477,7 @@ public class ConvocatoriaController {
    * @return HTTP 200 si existe alguna relación y HTTP 204 si no.
    */
   @RequestMapping(path = "/{id}/convocatoriahitos", method = RequestMethod.HEAD)
-  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-CONV-V', 'CSP-CON-E')")
+  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-CON-V', 'CSP-CON-E')")
   public ResponseEntity<?> hasConvocatoriaHitos(@PathVariable Long id) {
     log.debug("Convocatoria hasConvocatoriaHitos(Long id) - start");
     if (convocatoriaHitoService.existsByConvocatoriaId(id)) {
@@ -618,7 +618,7 @@ public class ConvocatoriaController {
    * @return HTTP 200 si existe alguna relación y HTTP 204 si no.
    */
   @RequestMapping(path = "/{id}/convocatoriafases", method = RequestMethod.HEAD)
-  // @PreAuthorize("hasAuthorityForAnyUO('CSP-CONV-V')")
+  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-CON-V', 'CSP-CON-E')")
   public ResponseEntity<?> hasConvocatoriaFases(@PathVariable Long id) {
     log.debug("Convocatoria hasConvocatoriaFases(Long id) - start");
     if (convocatoriaFaseService.existsByConvocatoriaId(id)) {
@@ -697,7 +697,7 @@ public class ConvocatoriaController {
    * @return HTTP 200 si existe alguna relación y HTTP 204 si no.
    */
   @RequestMapping(path = "/{id}/convocatoriadocumentos", method = RequestMethod.HEAD)
-  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-CONV-V', 'CSP-CON-E')")
+  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-CON-V', 'CSP-CON-E')")
   public ResponseEntity<?> hasConvocatoriaDocumentos(@PathVariable Long id) {
     log.debug("Convocatoria hasConvocatoriaDocumentos(Long id) - start");
     if (convocatoriaDocumentoService.existsByConvocatoriaId(id)) {
@@ -746,7 +746,7 @@ public class ConvocatoriaController {
    * @return HTTP 200 si existe alguna relación y HTTP 204 si no.
    */
   @RequestMapping(path = "/{id}/convocatoriaenlaces", method = RequestMethod.HEAD)
-  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-CONV-V', 'CSP-CON-E')")
+  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-CON-V', 'CSP-CON-E')")
   public ResponseEntity<?> hasConvocatoriaEnlaces(@PathVariable Long id) {
     log.debug("Convocatoria hasConvocatoriaEnlaces(Long id) - start");
     if (convocatoriaEnlaceService.existsByConvocatoriaId(id)) {

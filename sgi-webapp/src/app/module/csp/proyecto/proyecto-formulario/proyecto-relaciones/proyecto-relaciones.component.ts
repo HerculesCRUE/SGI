@@ -6,7 +6,7 @@ import { MatTableDataSource } from '@angular/material/table';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { FragmentComponent } from '@core/component/fragment.component';
 import { MSG_PARAMS } from '@core/i18n';
-import { TIPO_ENTIDAD_MAP } from '@core/models/rel/relacion';
+import { TipoEntidad, TIPO_ENTIDAD_MAP } from '@core/models/rel/relacion';
 import { DialogService } from '@core/services/dialog.service';
 import { StatusWrapper } from '@core/utils/status-wrapper';
 import { TranslateService } from '@ngx-translate/core';
@@ -14,7 +14,7 @@ import { Subscription } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { IProyectoRelacionModalData, ProyectoRelacionModalComponent } from '../../modals/proyecto-relacion-modal/proyecto-relacion-modal.component';
 import { ProyectoActionService } from '../../proyecto.action.service';
-import { ProyectoRelacionFragment, IProyectoRelacionTableData, TIPO_RELACION_MAP } from './proyecto-relaciones.fragment';
+import { ProyectoRelacionFragment, IProyectoRelacionTableData } from './proyecto-relaciones.fragment';
 
 const MSG_DELETE = marker('msg.delete.entity');
 const PROYECTO_RELACION_KEY = marker('csp.proyecto-relacion');
@@ -28,7 +28,7 @@ export class ProyectoRelacionesComponent extends FragmentComponent implements On
   private subscriptions: Subscription[] = [];
   formPart: ProyectoRelacionFragment;
 
-  displayedColumns = ['tipoEntidadRelacionada', 'entidadRelacionada', 'tipoRelacion', 'observaciones', 'acciones'];
+  displayedColumns = ['tipoEntidadRelacionada', 'entidadRelacionada', 'refEntidadConvocante', 'codigoSGE', 'observaciones', 'acciones'];
   elementosPagina = [5, 10, 25, 100];
 
   dataSource = new MatTableDataSource<StatusWrapper<IProyectoRelacionTableData>>();
@@ -46,8 +46,8 @@ export class ProyectoRelacionesComponent extends FragmentComponent implements On
     return TIPO_ENTIDAD_MAP;
   }
 
-  get TIPO_RELACION_MAP() {
-    return TIPO_RELACION_MAP;
+  get TipoEntidad() {
+    return TipoEntidad;
   }
 
   constructor(
@@ -79,8 +79,10 @@ export class ProyectoRelacionesComponent extends FragmentComponent implements On
             return wrapper.value.tipoEntidadRelacionada;
           case 'entidadRelacionada':
             return wrapper.value.entidadRelacionada.titulo;
-          case 'tipoRelacion':
-            return wrapper.value.tipoRelacion;
+          case 'refEntidadConvocante':
+            return wrapper.value.entidadConvocanteRef;
+          case 'codigoSGE':
+            return wrapper.value.codigosSge;
           case 'observaciones':
             return wrapper.value.observaciones;
           default:
@@ -113,7 +115,8 @@ export class ProyectoRelacionesComponent extends FragmentComponent implements On
     const data: IProyectoRelacionModalData = {
       relacion: wrapper ? wrapper.value : {} as IProyectoRelacionTableData,
       readonly: !this.formPart.hasEditPerm(),
-      entitiesAlreadyRelated: wrapper ? [] : [...this.getAlreadyRelatedEntities(wrapper), this.formPart.getCurrentProyectoAsSelfRelated()]
+      entitiesAlreadyRelated: wrapper ? [] : [...this.getAlreadyRelatedEntities(wrapper), this.formPart.getCurrentProyectoAsSelfRelated()],
+      miembrosEquipoProyecto: this.formPart.miembrosEquipoProyecto
     };
 
     const config: MatDialogConfig = {

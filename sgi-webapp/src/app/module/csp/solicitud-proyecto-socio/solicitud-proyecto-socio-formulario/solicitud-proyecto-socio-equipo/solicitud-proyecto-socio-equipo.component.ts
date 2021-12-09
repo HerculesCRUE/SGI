@@ -1,5 +1,5 @@
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
+import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
@@ -12,6 +12,7 @@ import { StatusWrapper } from '@core/utils/status-wrapper';
 import { TranslateService } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
+import { getPersonaEmailListConcatenated } from 'src/app/esb/sgp/shared/pipes/persona-email.pipe';
 import { MiembroEquipoSolicitudModalComponent, MiembroEquipoSolicitudModalData } from '../../../shared/miembro-equipo-solicitud-modal/miembro-equipo-solicitud-modal.component';
 import { SolicitudProyectoSocioActionService } from '../../solicitud-proyecto-socio.action.service';
 import { SolicitudProyectoSocioEquipoFragment } from './solicitud-proyecto-socio-equipo.fragment';
@@ -65,7 +66,7 @@ export class SolicitudProyectoSocioEquipoComponent extends FragmentComponent imp
     this.dataSource.sortingDataAccessor = (wrapper, property) => {
       switch (property) {
         case 'persona':
-          return wrapper.value.persona.numeroDocumento;
+          return getPersonaEmailListConcatenated(wrapper.value.persona);
         case 'nombre':
           return wrapper.value.persona.nombre;
         case 'apellidos':
@@ -126,8 +127,9 @@ export class SolicitudProyectoSocioEquipoComponent extends FragmentComponent imp
       data.selectedEntidades.splice(row, 1);
     }
 
-    const config = {
+    const config: MatDialogConfig = {
       panelClass: 'sgi-dialog-container',
+      minWidth: '700px',
       data
     };
     const dialogRef = this.matDialog.open(MiembroEquipoSolicitudModalComponent, config);

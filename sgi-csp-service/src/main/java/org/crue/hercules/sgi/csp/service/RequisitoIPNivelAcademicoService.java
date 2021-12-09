@@ -4,12 +4,20 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.crue.hercules.sgi.csp.exceptions.ConfiguracionSolicitudNotFoundException;
+import org.crue.hercules.sgi.csp.exceptions.ConvocatoriaNotFoundException;
+import org.crue.hercules.sgi.csp.exceptions.UserNotAuthorizedToAccessConvocatoriaException;
+import org.crue.hercules.sgi.csp.model.ConfiguracionSolicitud;
 import org.crue.hercules.sgi.csp.model.Convocatoria;
+import org.crue.hercules.sgi.csp.model.Convocatoria.Estado;
 import org.crue.hercules.sgi.csp.model.RequisitoIP;
 import org.crue.hercules.sgi.csp.model.RequisitoIPNivelAcademico;
+import org.crue.hercules.sgi.csp.repository.ConfiguracionSolicitudRepository;
+import org.crue.hercules.sgi.csp.repository.ConvocatoriaRepository;
 import org.crue.hercules.sgi.csp.repository.RequisitoIPNivelAcademicoRepository;
 import org.crue.hercules.sgi.csp.repository.specification.RequisitoIPNivelAcademicoSpecifications;
 import org.crue.hercules.sgi.framework.problem.message.ProblemMessage;
+import org.crue.hercules.sgi.framework.security.core.context.SgiSecurityContextHolder;
 import org.crue.hercules.sgi.framework.spring.context.support.ApplicationContextSupport;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
@@ -29,9 +37,15 @@ import lombok.extern.slf4j.Slf4j;
 public class RequisitoIPNivelAcademicoService {
 
   private final RequisitoIPNivelAcademicoRepository repository;
+  private final ConvocatoriaRepository convocatoriaRepository;
+  private final ConfiguracionSolicitudRepository configuracionSolicitudRepository;
 
-  public RequisitoIPNivelAcademicoService(RequisitoIPNivelAcademicoRepository repository) {
+  public RequisitoIPNivelAcademicoService(RequisitoIPNivelAcademicoRepository repository,
+      ConvocatoriaRepository convocatoriaRepository,
+      ConfiguracionSolicitudRepository configuracionSolicitudRepository) {
     this.repository = repository;
+    this.convocatoriaRepository = convocatoriaRepository;
+    this.configuracionSolicitudRepository = configuracionSolicitudRepository;
   }
 
   /**
@@ -102,11 +116,27 @@ public class RequisitoIPNivelAcademicoService {
   public List<RequisitoIPNivelAcademico> findByConvocatoria(Long convocatoriaId) {
     log.debug("findByConvocatoria(Long requisitoIPId) - start");
 
+    Convocatoria convocatoria = convocatoriaRepository.findById(convocatoriaId)
+        .orElseThrow(() -> new ConvocatoriaNotFoundException(convocatoriaId));
+    if (hasAuthorityViewInvestigador()) {
+      ConfiguracionSolicitud configuracionSolicitud = configuracionSolicitudRepository
+          .findByConvocatoriaId(convocatoriaId)
+          .orElseThrow(() -> new ConfiguracionSolicitudNotFoundException(convocatoriaId));
+      if (!convocatoria.getEstado().equals(Estado.REGISTRADA)
+          || Boolean.FALSE.equals(configuracionSolicitud.getTramitacionSGI())) {
+        throw new UserNotAuthorizedToAccessConvocatoriaException();
+      }
+    }
+
     Specification<RequisitoIPNivelAcademico> specs = RequisitoIPNivelAcademicoSpecifications
         .byConvocatoriaId(convocatoriaId);
 
     List<RequisitoIPNivelAcademico> returnValue = repository.findAll(specs);
     log.debug("findByConvocatoria(Long requisitoIPId) - end");
     return returnValue;
+  }
+
+  private boolean hasAuthorityViewInvestigador() {
+    return SgiSecurityContextHolder.hasAuthorityForAnyUO("CSP-CON-INV-V");
   }
 }

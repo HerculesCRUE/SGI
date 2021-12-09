@@ -25,6 +25,7 @@ function mediate(mc) {
       }
       if (vinculacion.departamentoPDI) {
         vinculacionResponse.departamento = vinculacion.departamentoPDI;
+        vinculacionResponse.departamento.nombre = vinculacionResponse.departamento.nombre.replace(/"/g, '\\\"');
       }
     } else if (vinculacion.categoriaProfesionalPAS) {
       if (vinculacion.categoriaProfesionalPAS) {
@@ -35,6 +36,7 @@ function mediate(mc) {
       }
       if (vinculacion.departamentoPAS) {
         vinculacionResponse.departamento = vinculacion.departamentoPAS;
+        vinculacionResponse.departamento.nombre = vinculacionResponse.departamento.nombre.replace(/"/g, '\\\"');
       }
     }
 

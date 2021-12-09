@@ -35,6 +35,9 @@
         <sgi-select-persona placeholder="{{'csp.solicitud.solicitante' | translate}}" formControlName="solicitante"
           [tipoColectivo]="tipoColectivoSolicitante" required>
         </sgi-select-persona>
+        <mat-error *ngIf="formGroup.controls.solicitante.errors?.required">
+          {{'error.required.entity' | translate:msgParamSolicitanteEntity}}
+        </mat-error>
       </mat-form-field>
     </div>
 
@@ -47,6 +50,9 @@
           formControlName="convocatoria" [required]="formPart.convocatoriaRequired">
           [value]="this.formPart.convocatoria$ | async">
         </sgi-select-convocatoria>
+        <mat-error *ngIf="formGroup.controls.convocatoria.errors?.required">
+          {{'error.required.entity' | translate:msgParamConvocatoriaEntity}}
+        </mat-error>
       </mat-form-field>
     </div>
 
@@ -80,6 +86,9 @@
             {{ formularioSolicitud.value | translate}}
           </mat-option>
         </mat-select>
+        <mat-error *ngIf="formGroup.controls.formularioSolicitud.errors?.required">
+          {{'error.required.entity' | translate:msgParamFormularioSolicitudEntity}}
+        </mat-error>
       </mat-form-field>
 
     </div>

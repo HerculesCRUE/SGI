@@ -95,8 +95,8 @@ export class ConvocatoriaReunionListadoComponent
   }
 
 
-  protected createObservable(): Observable<SgiRestListResult<IConvocatoriaReunion>> {
-    const observable$ = this.convocatoriaReunionService.findAll(this.getFindOptions()).pipe(
+  protected createObservable(reset?: boolean): Observable<SgiRestListResult<IConvocatoriaReunion>> {
+    const observable$ = this.convocatoriaReunionService.findAll(this.getFindOptions(reset)).pipe(
       map(response => {
         const convocatorias = response.items;
         convocatorias.forEach(convocatoriaReunion => {

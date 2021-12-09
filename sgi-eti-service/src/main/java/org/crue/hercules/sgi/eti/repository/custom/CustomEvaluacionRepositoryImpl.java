@@ -756,8 +756,8 @@ public class CustomEvaluacionRepositoryImpl implements CustomEvaluacionRepositor
     Root<Evaluacion> subqRoot = queryRetrospectiva.from(Evaluacion.class);
 
     Predicate requiereRetrospectiva = cb.isTrue(subqRoot.get(Evaluacion_.memoria).get(Memoria_.requiereRetrospectiva));
-    Predicate estadoRetrospectiva = cb
-        .equal(subqRoot.get(Evaluacion_.memoria).get(Memoria_.retrospectiva).get(Retrospectiva_.id), 4L);
+    Predicate estadoRetrospectiva = cb.equal(subqRoot.get(Evaluacion_.memoria).get(Memoria_.retrospectiva)
+        .get(Retrospectiva_.estadoRetrospectiva).get(EstadoRetrospectiva_.id), 4L);
     Predicate comite = cb.equal(subqRoot.get(Evaluacion_.memoria).get(Memoria_.comite).get(Comite_.id), 2L);
     Predicate tipoEvaluacion = cb.equal(subqRoot.get(Evaluacion_.tipoEvaluacion).get(TipoEvaluacion_.id), 1L);
     Predicate evaluador = cb.or(
@@ -767,7 +767,7 @@ public class CustomEvaluacionRepositoryImpl implements CustomEvaluacionRepositor
     queryRetrospectiva.select(subqRoot.get(Evaluacion_.id))
         .where(cb.and(requiereRetrospectiva, estadoRetrospectiva, comite, tipoEvaluacion, evaluador, memoriaVersion));
 
-    Predicate retrospectiva = cb.in(root.get(Evaluacion_.memoria).get(Memoria_.id)).value(queryRetrospectiva);
+    Predicate retrospectiva = cb.in(root.get(Evaluacion_.id)).value(queryRetrospectiva);
 
     listPredicates.add(cb.or(memoria, retrospectiva));
 

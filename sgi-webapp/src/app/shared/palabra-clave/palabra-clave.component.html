@@ -1,0 +1,17 @@
+<mat-chip-list #chipList [placeholder]="placeholder" selectable="false">
+  <mat-chip *ngFor="let palabra of value" selectable="false" removable="true" [disabled]="disabled"
+    (removed)="_remove(palabra)">
+    {{palabra}}
+    <mat-icon matChipRemove *ngIf="!disabled">cancel</mat-icon>
+  </mat-chip>
+  <input #palabraInput [formControl]="palabraInputCtrl" [matAutocomplete]="auto" [matChipInputFor]="chipList"
+    (matChipInputTokenEnd)="_add($event)" placeholder="{{'sgo.palabras-clave.nueva-palabra' | translate}}">
+</mat-chip-list>
+<mat-autocomplete #auto="matAutocomplete" (optionSelected)="_selected($event)">
+  <mat-option *ngFor="let palabra of searchResult$ | async" [value]="palabra">
+    {{palabra}}
+  </mat-option>
+  <div class="page" fxFlex="1 1" fxFlexAlign="center" fxLayoutAlign="center">
+    <span>{{filterElements}} {{'label.page.of' | translate}} {{totalElements}}</span>
+  </div>
+</mat-autocomplete>

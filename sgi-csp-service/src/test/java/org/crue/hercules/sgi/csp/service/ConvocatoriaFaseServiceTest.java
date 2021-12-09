@@ -1,5 +1,6 @@
 package org.crue.hercules.sgi.csp.service;
 
+import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -37,6 +38,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.security.test.context.support.WithMockUser;
 
 /**
  * ConvocatoriaFaseServiceTest
@@ -521,14 +523,17 @@ public class ConvocatoriaFaseServiceTest extends BaseServiceTest {
   }
 
   @Test
+  @WithMockUser(username = "user", authorities = { "CSP-CON-E" })
   public void findAllByConvocatoria_ReturnsPage() {
     // given: Una lista con 37 ConvocatoriaFase para la Convocatoria
     Long convocatoriaId = 1L;
+    Convocatoria convocatoria = generarMockConvocatoria(convocatoriaId);
     List<ConvocatoriaFase> convocatoriasEntidadesConvocantes = new ArrayList<>();
     for (long i = 1; i <= 37; i++) {
       convocatoriasEntidadesConvocantes.add(generarMockConvocatoriaFase(Long.valueOf(i)));
     }
-
+    BDDMockito.given(convocatoriaRepository.findById(ArgumentMatchers.<Long>any()))
+        .willReturn(Optional.of(convocatoria));
     BDDMockito.given(
         repository.findAll(ArgumentMatchers.<Specification<ConvocatoriaFase>>any(), ArgumentMatchers.<Pageable>any()))
         .willAnswer((InvocationOnMock invocation) -> {
@@ -720,6 +725,10 @@ public class ConvocatoriaFaseServiceTest extends BaseServiceTest {
         .observaciones("observaciones" + id)
         .build();
     // @formatter:on
+  }
+
+  private Convocatoria generarMockConvocatoria(Long convocatoriaId) {
+    return Convocatoria.builder().id(convocatoriaId).build();
   }
 
 }

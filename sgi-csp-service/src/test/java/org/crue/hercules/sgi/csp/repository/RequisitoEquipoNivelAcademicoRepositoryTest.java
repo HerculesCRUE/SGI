@@ -11,14 +11,10 @@ import org.crue.hercules.sgi.csp.repository.specification.RequisitoEquipoNivelAc
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.data.jpa.domain.Specification;
 
 @DataJpaTest
-public class RequisitoEquipoNivelAcademicoRepositoryTest {
-  @Autowired
-  private TestEntityManager entityManager;
-
+public class RequisitoEquipoNivelAcademicoRepositoryTest extends BaseRepositoryTest {
   @Autowired
   private RequisitoEquipoNivelAcademicoRepository repository;
 

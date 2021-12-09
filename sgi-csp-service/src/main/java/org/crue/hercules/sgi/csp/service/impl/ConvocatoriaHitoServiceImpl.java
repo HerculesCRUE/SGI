@@ -3,17 +3,23 @@ package org.crue.hercules.sgi.csp.service.impl;
 import java.time.Instant;
 import java.util.Optional;
 
+import org.crue.hercules.sgi.csp.exceptions.ConfiguracionSolicitudNotFoundException;
 import org.crue.hercules.sgi.csp.exceptions.ConvocatoriaHitoNotFoundException;
 import org.crue.hercules.sgi.csp.exceptions.ConvocatoriaNotFoundException;
+import org.crue.hercules.sgi.csp.exceptions.UserNotAuthorizedToAccessConvocatoriaException;
+import org.crue.hercules.sgi.csp.model.ConfiguracionSolicitud;
 import org.crue.hercules.sgi.csp.model.Convocatoria;
+import org.crue.hercules.sgi.csp.model.Convocatoria.Estado;
 import org.crue.hercules.sgi.csp.model.ConvocatoriaHito;
 import org.crue.hercules.sgi.csp.model.ModeloTipoHito;
+import org.crue.hercules.sgi.csp.repository.ConfiguracionSolicitudRepository;
 import org.crue.hercules.sgi.csp.repository.ConvocatoriaHitoRepository;
 import org.crue.hercules.sgi.csp.repository.ConvocatoriaRepository;
 import org.crue.hercules.sgi.csp.repository.ModeloTipoHitoRepository;
 import org.crue.hercules.sgi.csp.repository.specification.ConvocatoriaHitoSpecifications;
 import org.crue.hercules.sgi.csp.service.ConvocatoriaHitoService;
 import org.crue.hercules.sgi.framework.rsql.SgiRSQLJPASupport;
+import org.crue.hercules.sgi.framework.security.core.context.SgiSecurityContextHolder;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -34,12 +40,15 @@ public class ConvocatoriaHitoServiceImpl implements ConvocatoriaHitoService {
   private final ConvocatoriaHitoRepository repository;
   private final ConvocatoriaRepository convocatoriaRepository;
   private final ModeloTipoHitoRepository modeloTipoHitoRepository;
+  private final ConfiguracionSolicitudRepository configuracionSolicitudRepository;
 
   public ConvocatoriaHitoServiceImpl(ConvocatoriaHitoRepository convocatoriaHitoRepository,
-      ConvocatoriaRepository convocatoriaRepository, ModeloTipoHitoRepository modeloTipoHitoRepository) {
+      ConvocatoriaRepository convocatoriaRepository, ModeloTipoHitoRepository modeloTipoHitoRepository,
+      ConfiguracionSolicitudRepository configuracionSolicitudRepository) {
     this.repository = convocatoriaHitoRepository;
     this.convocatoriaRepository = convocatoriaRepository;
     this.modeloTipoHitoRepository = modeloTipoHitoRepository;
+    this.configuracionSolicitudRepository = configuracionSolicitudRepository;
   }
 
   /**
@@ -236,6 +245,19 @@ public class ConvocatoriaHitoServiceImpl implements ConvocatoriaHitoService {
   @Override
   public Page<ConvocatoriaHito> findAllByConvocatoria(Long convocatoriaId, String query, Pageable pageable) {
     log.debug("findAllByConvocatoria(Long idConvocatoria, String query, Pageable pageable) - start");
+
+    Convocatoria convocatoria = convocatoriaRepository.findById(convocatoriaId)
+        .orElseThrow(() -> new ConvocatoriaNotFoundException(convocatoriaId));
+    if (hasAuthorityViewInvestigador()) {
+      ConfiguracionSolicitud configuracionSolicitud = configuracionSolicitudRepository
+          .findByConvocatoriaId(convocatoriaId)
+          .orElseThrow(() -> new ConfiguracionSolicitudNotFoundException(convocatoriaId));
+      if (!convocatoria.getEstado().equals(Estado.REGISTRADA)
+          || Boolean.FALSE.equals(configuracionSolicitud.getTramitacionSGI())) {
+        throw new UserNotAuthorizedToAccessConvocatoriaException();
+      }
+    }
+
     Specification<ConvocatoriaHito> specs = ConvocatoriaHitoSpecifications.byConvocatoriaId(convocatoriaId)
         .and(SgiRSQLJPASupport.toSpecification(query));
 
@@ -248,5 +270,9 @@ public class ConvocatoriaHitoServiceImpl implements ConvocatoriaHitoService {
   @Override
   public boolean existsByConvocatoriaId(Long convocatoriaId) {
     return repository.existsByConvocatoriaId(convocatoriaId);
+  }
+
+  private boolean hasAuthorityViewInvestigador() {
+    return SgiSecurityContextHolder.hasAuthorityForAnyUO("CSP-CON-INV-V");
   }
 }

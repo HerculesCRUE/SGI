@@ -22,7 +22,7 @@ public class EstadoValidacionIPService {
    * según la query de entrada
    * 
    * @param query  parámetros de entrada
-   * @param paging
+   * @param paging {@link Pageable}
    * @return lista de objetos de tipo {@link EstadoValidacionIP}
    */
   public Page<EstadoValidacionIP> findAll(String query, Pageable paging) {

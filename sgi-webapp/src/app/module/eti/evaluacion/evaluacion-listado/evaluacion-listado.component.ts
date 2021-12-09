@@ -103,8 +103,8 @@ export class EvaluacionListadoComponent extends AbstractTablePaginationComponent
     this.loadTipoConvocatoriasReunion();
   }
 
-  protected createObservable(): Observable<SgiRestListResult<IEvaluacion>> {
-    const observable$ = this.evaluacionesService.findAllByMemoriaAndRetrospectivaEnEvaluacion(this.getFindOptions());
+  protected createObservable(reset?: boolean): Observable<SgiRestListResult<IEvaluacion>> {
+    const observable$ = this.evaluacionesService.findAllByMemoriaAndRetrospectivaEnEvaluacion(this.getFindOptions(reset));
     return observable$;
   }
 

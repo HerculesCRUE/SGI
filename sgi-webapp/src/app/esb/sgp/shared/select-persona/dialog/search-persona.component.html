@@ -46,21 +46,21 @@
         </td>
       </ng-container>
       <!-- Numero documento Colum -->
-      <ng-container matColumnDef="numeroDocumento">
+      <ng-container matColumnDef="email">
         <th mat-header-cell *matHeaderCellDef mat-sort-header>
-          {{'sgp.numero-documento' | translate}}
+          {{'sgp.email' | translate}}
         </th>
         <td mat-cell *matCellDef="let persona">
-          {{persona.numeroDocumento}}
+          {{persona | personaEmail}}
         </td>
       </ng-container>
       <!-- Entidad externa Colum -->
       <ng-container matColumnDef="entidad">
         <th mat-header-cell *matHeaderCellDef>
-          {{'sgp.entidad-externa' | translate}}
+          {{'sgp.entidad' | translate}}
         </th>
         <td mat-cell *matCellDef="let persona">
-          {{persona.entidad?.nombre}}
+          {{persona | personaEntidad}}
         </td>
       </ng-container>
       <!-- Acciones Column -->

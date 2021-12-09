@@ -1,5 +1,5 @@
 
-INSERT INTO csp.tipo_regimen_concurrencia 
+INSERT INTO test.tipo_regimen_concurrencia 
   (id, nombre, activo) 
 VALUES 
   (1, 'nombre-001', true),

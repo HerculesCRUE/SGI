@@ -52,6 +52,7 @@ import { ProyectoProyectosSgeComponent } from './proyecto-formulario/proyecto-pr
 import { ProyectoRelacionesComponent } from './proyecto-formulario/proyecto-relaciones/proyecto-relaciones.component';
 import { ProyectoResponsableEconomicoComponent } from './proyecto-formulario/proyecto-responsable-economico/proyecto-responsable-economico.component';
 import { ProyectoSociosComponent } from './proyecto-formulario/proyecto-socios/proyecto-socios.component';
+import { ProyectoListadoService } from './proyecto-listado.service';
 import { ProyectoListadoComponent } from './proyecto-listado/proyecto-listado.component';
 import { ProyectoRoutingModule } from './proyecto-routing.module';
 
@@ -117,7 +118,8 @@ import { ProyectoRoutingModule } from './proyecto-routing.module';
   ],
   providers: [
     ProyectoDataResolver,
-    ProyectoEntidadConvocantePlanPipe
+    ProyectoEntidadConvocantePlanPipe,
+    ProyectoListadoService
   ]
 })
 export class ProyectoModule { }

@@ -20,6 +20,24 @@
     </faultSequence>
   </resource>
 
+  <resource methods="GET" url-mapping="/empresas/modificadas-ids">
+    <inSequence>
+      <call-template target="sgi-auth-sequence-template">
+        <with-param name="requiredAuthorities" value="" />
+      </call-template>
+      <sequence key="sgemp-add-x-api-key-sequence" />
+      <send>
+        <endpoint key="sgemp-endpoint" />
+      </send>
+    </inSequence>
+    <outSequence>
+      <respond />
+    </outSequence>
+    <faultSequence>
+      <sequence key="error-handling-sequence" />
+    </faultSequence>
+  </resource>
+
   <resource methods="GET" uri-template="/empresas/{id}">
     <inSequence>
       <call-template target="sgi-auth-sequence-template">
@@ -41,7 +59,7 @@
   <resource methods="POST" url-mapping="/empresas/formly">
     <inSequence>
       <call-template target="sgi-auth-sequence-template">
-        <with-param name="requiredAuthorities" value=""/>
+        <with-param name="requiredAuthorities" value="ESB-EMP-C"/>
       </call-template>
       <sequence key="sgemp-add-x-api-key-sequence"/>
       <send>
@@ -59,7 +77,7 @@
   <resource methods="PUT" uri-template="/empresas/formly/{id}">
     <inSequence>
       <call-template target="sgi-auth-sequence-template">
-        <with-param name="requiredAuthorities" value=""/>
+        <with-param name="requiredAuthorities" value="ESB-EMP-E"/>
       </call-template>
       <sequence key="sgemp-add-x-api-key-sequence"/>
       <send>
@@ -77,7 +95,7 @@
   <resource methods="GET" uri-template="/empresas/formly/{id}">
     <inSequence>
       <call-template target="sgi-auth-sequence-template">
-        <with-param name="requiredAuthorities" value=""/>
+        <with-param name="requiredAuthorities" value="ESB-EMP-E,ESB-EMP-V"/>
       </call-template>
       <sequence key="sgemp-add-x-api-key-sequence"/>
       <send>
@@ -95,7 +113,7 @@
   <resource methods="GET" url-mapping="/empresas/formly/create">
     <inSequence>
       <call-template target="sgi-auth-sequence-template">
-        <with-param name="requiredAuthorities" value=""/>
+        <with-param name="requiredAuthorities" value="ESB-EMP-C"/>
       </call-template>
       <sequence key="sgemp-add-x-api-key-sequence"/>
 
@@ -520,7 +538,7 @@
   <resource methods="GET" url-mapping="/empresas/formly/update">
     <inSequence>
       <call-template target="sgi-auth-sequence-template">
-        <with-param name="requiredAuthorities" value=""/>
+        <with-param name="requiredAuthorities" value="ESB-EMP-E"/>
       </call-template>
       <sequence key="sgemp-add-x-api-key-sequence"/>
 
@@ -952,7 +970,7 @@
   <resource methods="GET" url-mapping="/empresas/formly/view">
     <inSequence>
       <call-template target="sgi-auth-sequence-template">
-        <with-param name="requiredAuthorities" value=""/>
+        <with-param name="requiredAuthorities" value="ESB-EMP-E,ESB-EMP-V"/>
       </call-template>
       <sequence key="sgemp-add-x-api-key-sequence"/>
 

@@ -15,6 +15,7 @@ import org.crue.hercules.sgi.csp.exceptions.MissingInvestigadorPrincipalInSolici
 import org.crue.hercules.sgi.csp.exceptions.RolProyectoNotFoundException;
 import org.crue.hercules.sgi.csp.exceptions.SolicitudNotFoundException;
 import org.crue.hercules.sgi.csp.exceptions.SolicitudProyectoEquipoNotFoundException;
+import org.crue.hercules.sgi.csp.exceptions.UserNotAuthorizedToAccessSolicitudException;
 import org.crue.hercules.sgi.csp.model.Solicitud;
 import org.crue.hercules.sgi.csp.model.SolicitudProyecto;
 import org.crue.hercules.sgi.csp.model.SolicitudProyectoEquipo;
@@ -26,10 +27,12 @@ import org.crue.hercules.sgi.csp.repository.specification.SolicitudProyectoEquip
 import org.crue.hercules.sgi.csp.service.SolicitudProyectoEquipoService;
 import org.crue.hercules.sgi.framework.problem.message.ProblemMessage;
 import org.crue.hercules.sgi.framework.rsql.SgiRSQLJPASupport;
+import org.crue.hercules.sgi.framework.security.core.context.SgiSecurityContextHolder;
 import org.crue.hercules.sgi.framework.spring.context.support.ApplicationContextSupport;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
@@ -86,21 +89,27 @@ public class SolicitudProyectoEquipoServiceImpl implements SolicitudProyectoEqui
    * Obtiene las {@link SolicitudProyectoEquipo} para un
    * {@link SolicitudProyecto}.
    *
-   * @param solicitudProyectoId el id del {@link SolicitudProyecto}.
-   * @param query               la información del filtro.
-   * @param paging              la información de la paginación.
+   * @param solicitudId el id del {@link SolicitudProyecto}.
+   * @param query       la información del filtro.
+   * @param paging      la información de la paginación.
    * @return la lista de entidades {@link SolicitudProyectoEquipo} del
    *         {@link SolicitudProyecto} paginadas.
    */
   @Override
-  public Page<SolicitudProyectoEquipo> findAllBySolicitud(Long solicitudProyectoId, String query, Pageable paging) {
-    log.debug("findAllBySolicitudProyecto(Long solicitudProyectoId, String query, Pageable paging) - start");
+  public Page<SolicitudProyectoEquipo> findAllBySolicitud(Long solicitudId, String query, Pageable paging) {
+    log.debug("findAllBySolicitudProyecto(Long solicitudId, String query, Pageable paging) - start");
 
-    Specification<SolicitudProyectoEquipo> specs = SolicitudProyectoEquipoSpecifications
-        .bySolicitudId(solicitudProyectoId).and(SgiRSQLJPASupport.toSpecification(query));
+    Solicitud solicitud = solicitudRepository.findById(solicitudId)
+        .orElseThrow(() -> new SolicitudNotFoundException(solicitudId));
+    if (!(hasAuthorityViewInvestigador(solicitud) || hasAuthorityViewUnidadGestion(solicitud))) {
+      throw new UserNotAuthorizedToAccessSolicitudException();
+    }
+
+    Specification<SolicitudProyectoEquipo> specs = SolicitudProyectoEquipoSpecifications.bySolicitudId(solicitudId)
+        .and(SgiRSQLJPASupport.toSpecification(query));
 
     Page<SolicitudProyectoEquipo> returnValue = repository.findAll(specs, paging);
-    log.debug("findAllBySolicitudProyecto(Long solicitudProyectoId, String query, Pageable paging) - end");
+    log.debug("findAllBySolicitudProyecto(Long solicitudId, String query, Pageable paging) - end");
     return returnValue;
   }
 
@@ -232,4 +241,17 @@ public class SolicitudProyectoEquipoServiceImpl implements SolicitudProyectoEqui
 
   }
 
+  private boolean hasAuthorityViewInvestigador(Solicitud solicitud) {
+    return SgiSecurityContextHolder.hasAuthorityForAnyUO("CSP-SOL-INV-ER")
+        && solicitud.getSolicitanteRef().equals(getAuthenticationPersonaRef());
+  }
+
+  private String getAuthenticationPersonaRef() {
+    return SecurityContextHolder.getContext().getAuthentication().getName();
+  }
+
+  private boolean hasAuthorityViewUnidadGestion(Solicitud solicitud) {
+    return SgiSecurityContextHolder.hasAuthorityForUO("CSP-SOL-E", solicitud.getUnidadGestionRef())
+        || SgiSecurityContextHolder.hasAuthorityForUO("CSP-SOL-V", solicitud.getUnidadGestionRef());
+  }
 }

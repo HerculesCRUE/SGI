@@ -1,0 +1,359 @@
+{
+  "customWidth": 450,
+  "columnMinWidth": 150,
+  "fieldOrientation": "VERTICAL",
+  "outputType": "PDF",
+  "title": "Listado de proyectos",
+  "filters": [
+    {
+      "name": "Fecha desde",
+      "filter": "12/10/2021"
+    },
+    {
+      "name": "Fecha hasta",
+      "filter": "22/10/2021"
+    }
+  ],
+  "groupBy": {
+    "name": "Título",
+    "visible": true,
+    "visibleInReport": true
+  },
+  "columns": [
+    {
+      "name": "Id",
+      "type": "NUMBER",
+      "format": ""
+    },
+    {
+      "name": "Convocatoria",
+      "type": "NUMBER",
+      "format": ""
+    },
+    {
+      "name": "Solicitud",
+      "type": "NUMBER",
+      "format": ""
+    },
+    {
+      "name": "Estado",
+      "type": "STRING",
+      "format": ""
+    },
+    {
+      "name": "Título",
+      "type": "STRING",
+      "format": ""
+    },
+    {
+      "name": "Acrónimo",
+      "type": "STRING",
+      "format": ""
+    },
+    {
+      "name": "Cod. externo",
+      "type": "STRING",
+      "format": ""
+    },
+    {
+      "name": "Fecha inicio",
+      "type": "DATE",
+      "format": "dd/MM/yy"
+    },
+    {
+      "name": "Fecha fin",
+      "type": "DATE",
+      "format": ""
+    },
+    {
+      "name": "Fecha fin definitiva",
+      "type": "DATE",
+      "format": ""
+    },
+    {
+      "title": "Equipo (CIF - Nombre y apellidos - Fecha1- Fecha2 - Fecha3)",
+      "name": "equipo",
+      "type": "SUBREPORT",
+      "format": null,
+      "fieldOrientation": "VERTICAL",
+      "columns": [
+        {
+          "name": "Investigador",
+          "type": "STRING",
+          "format": ""
+        }
+      ],
+      "groupBy": {
+        "name": "equipo",
+        "visible": true,
+        "visibleInReport": true
+      }
+    },
+    {
+      "title": "Entidades convocantes",
+      "name": "entidadesConvocantes",
+      "type": "SUBREPORT",
+      "format": null,
+      "fieldOrientation": "VERTICAL",
+      "columns": [
+        {
+          "name": "Razón social",
+          "type": "STRING",
+          "format": ""
+        },
+        {
+          "name": "CIF",
+          "type": "STRING",
+          "format": ""
+        },
+        {
+          "name": "fecha1",
+          "type": "DATE"
+        },
+        {
+          "name": "fecha2",
+          "type": "DATE"
+        },
+        {
+          "name": "fecha3",
+          "type": "DATE"
+        }
+      ],
+      "groupBy": {
+        "name": "entidadesConvocantes",
+        "visible": true,
+        "visibleInReport": true
+      }
+    },
+    {
+      "title": "Entidades financiadoras",
+      "name": "entidadesFinanciadoras",
+      "type": "SUBREPORT",
+      "format": null,
+      "fieldOrientation": "HORIZONTAL",
+      "columns": [
+        {
+          "name": "Razón social",
+          "type": "STRING",
+          "format": ""
+        },
+        {
+          "name": "CIF",
+          "type": "STRING",
+          "format": ""
+        },
+        {
+          "name": "fecha1",
+          "type": "DATE"
+        },
+        {
+          "name": "fecha2",
+          "type": "DATE"
+        },
+        {
+          "name": "fecha3",
+          "type": "DATE"
+        }
+      ],
+      "groupBy": {
+        "name": "entidadesFinanciadoras",
+        "visible": true,
+        "visibleInReport": true
+      }
+    }
+  ],
+  "rows": [
+    {
+      "elements": [
+        1,
+        2,
+        3,
+        "BORRADOR",
+        "Proyecto 1 CGF/OPE-1",
+        "PCGFOPE1",
+        "PCGFOPE1",
+        "2018-09-16T08:00:00Z",
+        "2021-09-16T08:00:00Z",
+        "2022-09-16T08:00:00Z",
+        {
+          "rows": [
+            {
+              "elements": [
+                "12345678F\n ANGEL LUIS ABAD NAVARRO\n 22/11/2021\n 22/11/2021\n 22/11/2021"
+              ]
+            },
+            {
+              "elements": [
+                "CIF - Nombre y apellidos - Fecha1- Fecha2 - Fecha3\n12345678F - MARIA ANGELES ABAD MATEO - 22/11/2021 - 22/11/2021 - 22/11/2021"
+              ]
+            },
+            {
+              "elements": [
+                "EDUARDO ABADIA FLORES"
+              ]
+            },
+            {
+              "elements": [
+                "MARTA MUÑOZ BAQUERO"
+              ]
+            },
+            {
+              "elements": [
+                "ALMUDENA DIAZ RODRIGUEZ"
+              ]
+            }
+          ]
+        },
+        {
+          "rows": [
+            {
+              "elements": [
+                "EUROPEAN COMMISION",
+                "G0021150H",
+                "2018-09-16T08:00:00Z",
+                "2021-09-16T08:00:00Z",
+                "2022-09-16T08:00:00Z"
+              ]
+            },
+            {
+              "elements": [
+                "SIEMENS REDES CORPORATIVAS",
+                "A78154788",
+                "2018-09-16T08:00:00Z",
+                "2021-09-16T08:00:00Z",
+                "2022-09-16T08:00:00Z"
+              ]
+            },
+            {
+              "elements": [
+                "VALENCIA VISION,S.L.",
+                "B46443990",
+                "2018-09-16T08:00:00Z",
+                "2021-09-16T08:00:00Z",
+                "2022-09-16T08:00:00Z"
+              ]
+            }
+          ]
+        },
+        {
+          "rows": [
+            {
+              "elements": [
+                "EUROPEAN COMMISION",
+                "G0021150H",
+                "2018-09-16T08:00:00Z",
+                "2021-09-16T08:00:00Z",
+                "2022-09-16T08:00:00Z"
+              ]
+            },
+            {
+              "elements": [
+                "FUNDACION UNIVERSIDAD EMPRESA REGION DE MURCIA",
+                "G30164099",
+                "2018-09-16T08:00:00Z",
+                "2021-09-16T08:00:00Z",
+                "2022-09-16T08:00:00Z"
+              ]
+            },
+            {
+              "elements": [
+                "LIBRERIA UNIVERSITARIA TECNICO EMPRESARIAL, S.L.",
+                "B11325651",
+                "2018-09-16T08:00:00Z",
+                "2021-09-16T08:00:00Z",
+                "2022-09-16T08:00:00Z"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "elements": [
+        2,
+        3,
+        3,
+        "BORRADOR",
+        "Título proyecto CGF/OPE2",
+        "PCGFOPE2",
+        "PCGFOPE2",
+        "2018-09-16T08:00:00Z",
+        "2021-09-16T08:00:00Z",
+        "2022-09-16T08:00:00Z",
+        {
+          "rows": [
+            {
+              "elements": [
+                "LEILA ABAD BARBERA"
+              ]
+            },
+            {
+              "elements": [
+                "MARIA ASUNCION MORTE GOMEZ"
+              ]
+            },
+            {
+              "elements": [
+                "LEILA ABAD BARBERA"
+              ]
+            },
+            {
+              "elements": [
+                "LEILA ABAD BARBERA"
+              ]
+            },
+            {
+              "elements": [
+                "MARIA ABAD HURTADO"
+              ]
+            }
+          ]
+        },
+        {
+          "rows": [
+            {
+              "elements": [
+                "AGENCIA ESTATAL DE INVESTIGACION",
+                "Q2802338J"
+              ]
+            },
+            {
+              "elements": [
+                "EMPRESA NACIONAL ADARO S.A.",
+                "A28003580"
+              ]
+            },
+            {
+              "elements": [
+                "EL CORTE INGLES S.A. (MURCIA)",
+                "A28017895"
+              ]
+            }
+          ]
+        },
+        {
+          "rows": [
+            {
+              "elements": [
+                "EUROPEAN COMMISION",
+                "G0021150H"
+              ]
+            },
+            {
+              "elements": [
+                "CIFEA LORCA",
+                "S3011001I"
+              ]
+            },
+            {
+              "elements": [
+                "BANCO DE ANDALUCIA, S.A.",
+                "A11600624"
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

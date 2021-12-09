@@ -105,9 +105,12 @@ export class ProyectoPlazosFragment extends Fragment {
     return from(createdPlazos).pipe(
       mergeMap((wrappedPlazos) => {
         return this.proyectoPlazoService.create(wrappedPlazos.value).pipe(
-          map((result) => {
+          map((createdPlazo) => {
             const index = this.plazos$.value.findIndex((currentPlazos) => currentPlazos === wrappedPlazos);
-            this.plazos$.value[index] = new StatusWrapper<IProyectoPlazos>(result);
+            const plazoListado = wrappedPlazos.value;
+            plazoListado.id = createdPlazo.id;
+            this.plazos$.value[index] = new StatusWrapper<IProyectoPlazos>(plazoListado);
+            this.plazos$.next(this.plazos$.value);
           })
         );
       })
@@ -133,6 +136,6 @@ export class ProyectoPlazosFragment extends Fragment {
 
   private isSaveOrUpdateComplete(): boolean {
     const touched: boolean = this.plazos$.value.some((wrapper) => wrapper.touched);
-    return (this.plazosEliminados.length > 0 || touched);
+    return !(this.plazosEliminados.length > 0 || touched);
   }
 }

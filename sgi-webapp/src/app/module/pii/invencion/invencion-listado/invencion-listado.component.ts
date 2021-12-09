@@ -131,6 +131,7 @@ export class InvencionListadoComponent extends AbstractTablePaginationComponent<
       solicitudViaProteccion: new FormControl(null),
       solicitudPais: new FormControl(null),
       solicitudEstado: new FormControl(''),
+      palabrasClave: new FormControl(null),
     });
     this.loadViasProteccion();
     this.loadPaises();
@@ -147,8 +148,8 @@ export class InvencionListadoComponent extends AbstractTablePaginationComponent<
     ));
   }
 
-  protected createObservable(): Observable<SgiRestListResult<IInvencion>> {
-    const observable$ = this.invencionService.findTodos(this.getFindOptions());
+  protected createObservable(reset?: boolean): Observable<SgiRestListResult<IInvencion>> {
+    const observable$ = this.invencionService.findTodos(this.getFindOptions(reset));
     return observable$;
   }
 
@@ -185,9 +186,25 @@ export class InvencionListadoComponent extends AbstractTablePaginationComponent<
         .and('solicitudesProteccion.viaProteccion.id', SgiRestFilterOperator.EQUALS, controls.solicitudViaProteccion.value?.id?.toString())
         .and('solicitudesProteccion.paisProteccionRef', SgiRestFilterOperator.EQUALS, controls.solicitudPais.value?.id?.toString())
         .and('solicitudesProteccion.estado', SgiRestFilterOperator.EQUALS, controls.solicitudEstado.value);
+      const palabrasClave = controls.palabrasClave.value as string[];
+      if (Array.isArray(palabrasClave) && palabrasClave.length > 0) {
+        filter.and(this.createPalabrasClaveFilter(palabrasClave));
+      }
     }
 
     return filter;
+  }
+
+  private createPalabrasClaveFilter(palabrasClave: string[]): SgiRestFilter {
+    let palabrasClaveFilter: SgiRestFilter;
+    palabrasClave.forEach(palabraClave => {
+      if (palabrasClaveFilter) {
+        palabrasClaveFilter.or('palabrasClave.palabraClaveRef', SgiRestFilterOperator.LIKE_ICASE, palabraClave);
+      } else {
+        palabrasClaveFilter = new RSQLSgiRestFilter('palabrasClave.palabraClaveRef', SgiRestFilterOperator.LIKE_ICASE, palabraClave);
+      }
+    });
+    return palabrasClaveFilter;
   }
 
   onClearFilters() {

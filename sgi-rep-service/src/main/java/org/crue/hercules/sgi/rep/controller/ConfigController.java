@@ -3,7 +3,9 @@ package org.crue.hercules.sgi.rep.controller;
 import java.util.TimeZone;
 
 import org.crue.hercules.sgi.rep.config.SgiConfigProperties;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,7 +20,12 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping(ConfigController.MAPPING)
 @Slf4j
 public class ConfigController {
-  public static final String MAPPING = "/config";
+  /** The URL path delimiter */
+  public static final String PATH_DELIMITER = "/";
+  /** The controller base path mapping */
+  public static final String MAPPING = PATH_DELIMITER + "config";
+  /** The path to request the Time Zone */
+  public static final String PATH_TIMEZONE = PATH_DELIMITER + "time-zone";
 
   private final SgiConfigProperties sgiConfigProperties;
 
@@ -28,7 +35,9 @@ public class ConfigController {
    * @param sgiConfigProperties {@link SgiConfigProperties}
    */
   public ConfigController(SgiConfigProperties sgiConfigProperties) {
+    log.debug("ConfigController(SgiConfigProperties sgiConfigProperties) - start");
     this.sgiConfigProperties = sgiConfigProperties;
+    log.debug("ConfigController(SgiConfigProperties sgiConfigProperties) - end");
   }
 
   /**
@@ -36,10 +45,12 @@ public class ConfigController {
    * 
    * @return {@link String} con el identificador de {@link TimeZone} configurado.
    */
-  @GetMapping(value = "/time-zone", produces = MediaType.TEXT_PLAIN_VALUE)
+  @GetMapping(value = PATH_TIMEZONE, produces = MediaType.TEXT_PLAIN_VALUE)
   @PreAuthorize("isAuthenticated()")
-  public String timeZone() {
+  public ResponseEntity<String> timeZone() {
     log.debug("timeZone() - start");
-    return sgiConfigProperties.getTimeZone().getID();
+    String returnValue = sgiConfigProperties.getTimeZone().getID();
+    log.debug("timeZone() - end");
+    return new ResponseEntity<>(returnValue, HttpStatus.OK);
   }
 }

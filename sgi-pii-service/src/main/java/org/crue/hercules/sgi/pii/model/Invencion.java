@@ -87,6 +87,11 @@ public class Invencion extends BaseActivableEntity {
   @Setter(AccessLevel.NONE)
   private final List<SolicitudProteccion> solicitudesProteccion = null;
 
+  @OneToMany(mappedBy = "invencion")
+  @Getter(AccessLevel.NONE)
+  @Setter(AccessLevel.NONE)
+  private final List<InvencionPalabraClave> palabrasClave = null;
+
   /**
    * Interfaz para marcar validaciones en la creacion de la entidad.
    */

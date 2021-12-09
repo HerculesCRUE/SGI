@@ -90,7 +90,7 @@ public class InformeFavorableMemoriaReportService extends InformeEvaluacionBaseR
     return tableModel;
   }
 
-  public void getReportInformeFavorableMemoria(ReportInformeFavorableMemoria sgiReport, Long idEvaluacion) {
+  public byte[] getReportInformeFavorableMemoria(ReportInformeFavorableMemoria sgiReport, Long idEvaluacion) {
     try {
 
       final MasterReport report = getReportDefinition(sgiReport.getPath());
@@ -113,12 +113,14 @@ public class InformeFavorableMemoriaReportService extends InformeEvaluacionBaseR
       SubReport subreportEquipoInvestigador = (SubReport) bandEquipoInvestigador.getElement(0);
       subreportEquipoInvestigador.setDataFactory(dataFactorySubReportEquipoInvestigador);
 
-      sgiReport.setContent(generateReportOutput(sgiReport.getOutputReportType(), report));
+      sgiReport.setContent(generateReportOutput(sgiReport.getOutputType(), report));
 
     } catch (Exception e) {
       log.error(e.getMessage(), e);
       throw new GetDataReportException();
     }
+
+    return sgiReport.getContent();
   }
 
 }

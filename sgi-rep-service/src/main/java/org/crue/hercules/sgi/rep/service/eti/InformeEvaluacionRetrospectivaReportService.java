@@ -64,9 +64,10 @@ public class InformeEvaluacionRetrospectivaReportService extends InformeEvaluaci
     return tableModel;
   }
 
-  public void getReportInformeEvaluacionRetrospectiva(ReportInformeEvaluacionRetrospectiva sgiReport,
+  public byte[] getReportInformeEvaluacionRetrospectiva(ReportInformeEvaluacionRetrospectiva sgiReport,
       InformeEvaluacionReportInput input) {
     getReportFromIdEvaluacion(sgiReport, input.getIdEvaluacion(), "informeEvaluacionRetrospectiva");
+    return sgiReport.getContent();
   }
 
 }

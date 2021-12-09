@@ -35,8 +35,7 @@ import { BehaviorSubject, merge, Observable, of, Subscription } from 'rxjs';
 import { catchError, map, switchMap, tap } from 'rxjs/operators';
 import { CONVOCATORIA_ACTION_LINK_KEY } from '../../convocatoria/convocatoria.action.service';
 import { SOLICITUD_ACTION_LINK_KEY } from '../../solicitud/solicitud.action.service';
-import { IProyectoListadoModalData, ProyectoListadoModalComponent }
-  from '../modals/proyecto-listado-modal/proyecto-listado-modal.component';
+import { IProyectoListadoModalData, ProyectoListadoModalComponent } from '../modals/proyecto-listado-modal/proyecto-listado-modal.component';
 
 const MSG_ERROR = marker('error.load');
 const MSG_BUTTON_NEW = marker('btn.add.entity');
@@ -291,12 +290,12 @@ export class ProyectoListadoComponent extends AbstractTablePaginationComponent<I
     this.onSearch();
   }
 
-  protected createObservable(): Observable<SgiRestListResult<IProyectoListadoData>> {
+  protected createObservable(reset?: boolean): Observable<SgiRestListResult<IProyectoListadoData>> {
     let observable$: Observable<SgiRestListResult<IProyecto>> = null;
     if (this.authService.hasAuthorityForAnyUO('CSP-PRO-R')) {
-      observable$ = this.proyectoService.findTodos(this.getFindOptions());
+      observable$ = this.proyectoService.findTodos(this.getFindOptions(reset));
     } else {
-      observable$ = this.proyectoService.findAll(this.getFindOptions());
+      observable$ = this.proyectoService.findAll(this.getFindOptions(reset));
     }
     return observable$.pipe(
       map((response) => {

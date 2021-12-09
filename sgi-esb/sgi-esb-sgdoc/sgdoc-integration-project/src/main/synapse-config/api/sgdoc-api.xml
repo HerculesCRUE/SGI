@@ -24,6 +24,7 @@
         <with-param name="requiredAuthorities" value=""/>
       </call-template>
       <property name="messageType" value="multipart/form-data" scope="axis2"/>
+      <property name="DECODE_MULTIPART_DATA" value="true" scope="axis2" type="BOOLEAN" />
       <send>
         <endpoint key="sgdoc-endpoint"/>
       </send>

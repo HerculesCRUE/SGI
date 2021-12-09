@@ -6,6 +6,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { SgiAuthModule } from '@sgi/framework/auth';
 import { SharedModule } from '@shared/shared.module';
 import { SgempSharedModule } from 'src/app/esb/sgemp/shared/sgemp-shared.module';
+import { SgpSharedModule } from 'src/app/esb/sgp/shared/sgp-shared.module';
 import { SolicitudProyectoSocioPeriodoJustificacionModalComponent } from './modals/solicitud-proyecto-socio-periodo-justificacion-modal/solicitud-proyecto-socio-periodo-justificacion-modal.component';
 import { SolicitudProyectoSocioPeriodoPagoModalComponent } from './modals/solicitud-proyecto-socio-periodo-pago-modal/solicitud-proyecto-socio-periodo-pago-modal.component';
 import { SolicitudProyectoSocioCrearComponent } from './solicitud-proyecto-socio-crear/solicitud-proyecto-socio-crear.component';
@@ -37,7 +38,8 @@ import { SolicitudProyectoSocioRouting } from './solicitud-proyecto-socio-routin
     SgiAuthModule,
     FormsModule,
     ReactiveFormsModule,
-    SgempSharedModule
+    SgempSharedModule,
+    SgpSharedModule
   ],
   providers: [
     SolicitudProyectoSocioDataResolver

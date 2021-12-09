@@ -1,5 +1,5 @@
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
+import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
@@ -14,6 +14,7 @@ import { StatusWrapper } from '@core/utils/status-wrapper';
 import { TranslateService } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
+import { getPersonaEmailListConcatenated } from 'src/app/esb/sgp/shared/pipes/persona-email.pipe';
 import { ProyectoResponsableEconomicoModalComponent, ProyectoResponsableEconomicoModalData } from '../../modals/proyecto-responsable-economico-modal/proyecto-responsable-economico-modal.component';
 import { ProyectoActionService } from '../../proyecto.action.service';
 import { ProyectoResponsableEconomicoFragment } from './proyecto-responsable-economico.fragment';
@@ -30,7 +31,7 @@ export class ProyectoResponsableEconomicoComponent extends FragmentComponent imp
   private subscriptions: Subscription[] = [];
   formPart: ProyectoResponsableEconomicoFragment;
 
-  displayedColumns = ['numIdentificacion', 'nombre', 'apellidos', 'fechaInicio', 'fechaFin', 'acciones'];
+  displayedColumns = ['persona', 'nombre', 'apellidos', 'fechaInicio', 'fechaFin', 'acciones'];
   elementsPage = [5, 10, 25, 100];
 
   msgParamEntity = {};
@@ -60,8 +61,8 @@ export class ProyectoResponsableEconomicoComponent extends FragmentComponent imp
     this.dataSource.sortingDataAccessor =
       (wrapper: StatusWrapper<IProyectoEquipo>, property: string) => {
         switch (property) {
-          case 'numIdentificacion':
-            return wrapper.value.persona.numeroDocumento;
+          case 'persona':
+            return getPersonaEmailListConcatenated(wrapper.value.persona);
           case 'nombre':
             return wrapper.value.persona.nombre;
           case 'apellidos':
@@ -116,8 +117,9 @@ export class ProyectoResponsableEconomicoComponent extends FragmentComponent imp
       readonly: this.formPart.readonly
     };
 
-    const config = {
+    const config: MatDialogConfig = {
       panelClass: 'sgi-dialog-container',
+      minWidth: '700px',
       data
     };
     const dialogRef = this.matDialog.open(ProyectoResponsableEconomicoModalComponent, config);

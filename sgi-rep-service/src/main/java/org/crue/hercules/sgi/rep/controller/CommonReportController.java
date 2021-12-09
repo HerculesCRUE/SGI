@@ -44,11 +44,11 @@ public class CommonReportController {
 
     log.debug("getDynamic(SgiDynamicReportDto) - start");
 
-    sgiDynamicReportService.generateDynamicReport(sgiReport);
-    ByteArrayResource archivo = new ByteArrayResource(sgiReport.getContent());
+    byte[] reportContent = sgiDynamicReportService.generateDynamicReport(sgiReport);
+    ByteArrayResource archivo = new ByteArrayResource(reportContent);
 
     HttpHeaders headers = new HttpHeaders();
-    headers.add("Content-Type", sgiReport.getOutputReportType().getType());
+    headers.add("Content-Type", sgiReport.getOutputType().getType());
 
     return new ResponseEntity<>(archivo, headers, HttpStatus.OK);
   }

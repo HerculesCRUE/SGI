@@ -2,4 +2,9 @@
   mat-dialog-content {
     min-width: 75vw;
   }
+  .truncate {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
 }

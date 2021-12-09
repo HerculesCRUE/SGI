@@ -180,7 +180,7 @@ public class SgiFormlyService {
     String fieldKey = respuestaEvaluateDto.getFieldKey();
     String fieldType = respuestaEvaluateDto.getFieldTypeTableCrud();
     String contentTableCrud = parseTableCrudField(respuestaEvaluateDto);
-    if (StringUtils.hasLength(contentTableCrud)) {
+    if (StringUtils.hasText(contentTableCrud)) {
       elementOutput = ElementOutput.builder().content(contentTableCrud).tipo(fieldType).nombre(fieldKey).build();
     }
     return elementOutput;
@@ -318,40 +318,40 @@ public class SgiFormlyService {
     String respuestaFieldConfig = getRespuestaStringByKey(respuestaEvaluateDto.getRespuestaKeyField(),
         respuestaEvaluateDto.getRespuestaJson(), respuestaEvaluateDto.getRespuestaIndex());
     switch (respuestaEvaluateDto.getFieldTypeTableCrud()) {
-    case VALOR_SOCIAL_TYPE:
-      if (StringUtils.hasText(respuestaFieldConfig)) {
-        respuestaFieldConfig = TipoValorSocialI18n.getI18nMessageFromValorSocialEnum(respuestaFieldConfig);
-      }
-      break;
-    case DATEPICKER_TYPE:
-      String dtFormatDatePickerOut = "dd/MM/yyyy";
-      respuestaFieldConfig = formatDatePickerCustom(dtFormatDatePickerOut, respuestaFieldConfig,
-          "yyyy-MM-dd'T'HH:mm:ss.SSSXXX");
-      break;
-    case DATETIMEPICKER_TYPE:
-      String dtFormatDateTimePickerOut = "dd/MM/yyyy HH:mm:ss";
-      respuestaFieldConfig = formatDatePicker(dtFormatDateTimePickerOut, respuestaFieldConfig);
-      break;
-    case MULTICHECKBOX_TYPE:
-      List<String> respuestasFieldConfig = getRespuestaListByKey(respuestaEvaluateDto.getFieldKey(),
-          respuestaEvaluateDto.getRespuestaJson(), respuestaEvaluateDto.getRespuestaIndex());
-      respuestaFieldConfig = evaluateOptionListField(respuestaEvaluateDto.getJsonFieldItem(), respuestasFieldConfig);
-      break;
-    case SELECT_TYPE:
-    case RADIO_TYPE:
-    case DOCUMENTO_TYPE:
-      if (null != respuestaFieldConfig) {
-        respuestaFieldConfig = evaluateOptionListField(respuestaEvaluateDto.getJsonFieldItem(),
-            Arrays.asList(respuestaFieldConfig));
-      }
-      break;
-    case CHECKBOX_TYPE:
-      if (null != respuestaFieldConfig) {
-        respuestaFieldConfig = respuestaFieldConfig.equals("true") ? ANSWER_YES : ANSWER_NO;
-      }
-      break;
-    default:
-      log.debug("respuestaFieldConfig generic");
+      case VALOR_SOCIAL_TYPE:
+        if (StringUtils.hasText(respuestaFieldConfig)) {
+          respuestaFieldConfig = TipoValorSocialI18n.getI18nMessageFromValorSocialEnum(respuestaFieldConfig);
+        }
+        break;
+      case DATEPICKER_TYPE:
+        String dtFormatDatePickerOut = "dd/MM/yyyy";
+        respuestaFieldConfig = formatDatePickerCustom(dtFormatDatePickerOut, respuestaFieldConfig,
+            "yyyy-MM-dd'T'HH:mm:ss.SSSXXX");
+        break;
+      case DATETIMEPICKER_TYPE:
+        String dtFormatDateTimePickerOut = "dd/MM/yyyy HH:mm:ss";
+        respuestaFieldConfig = formatDatePicker(dtFormatDateTimePickerOut, respuestaFieldConfig);
+        break;
+      case MULTICHECKBOX_TYPE:
+        List<String> respuestasFieldConfig = getRespuestaListByKey(respuestaEvaluateDto.getFieldKey(),
+            respuestaEvaluateDto.getRespuestaJson(), respuestaEvaluateDto.getRespuestaIndex());
+        respuestaFieldConfig = evaluateOptionListField(respuestaEvaluateDto.getJsonFieldItem(), respuestasFieldConfig);
+        break;
+      case SELECT_TYPE:
+      case RADIO_TYPE:
+      case DOCUMENTO_TYPE:
+        if (null != respuestaFieldConfig) {
+          respuestaFieldConfig = evaluateOptionListField(respuestaEvaluateDto.getJsonFieldItem(),
+              Arrays.asList(respuestaFieldConfig));
+        }
+        break;
+      case CHECKBOX_TYPE:
+        if (null != respuestaFieldConfig) {
+          respuestaFieldConfig = respuestaFieldConfig.equals("true") ? ANSWER_YES : ANSWER_NO;
+        }
+        break;
+      default:
+        log.debug("respuestaFieldConfig generic");
     }
 
     return respuestaFieldConfig;

@@ -2,7 +2,7 @@ package org.crue.hercules.sgi.rep.controller;
 
 import javax.validation.Valid;
 
-import org.crue.hercules.sgi.rep.dto.OutputReportType;
+import org.crue.hercules.sgi.rep.dto.OutputType;
 import org.crue.hercules.sgi.rep.dto.eti.InformeEvaluacionReportInput;
 import org.crue.hercules.sgi.rep.dto.eti.ReportInformeActa;
 import org.crue.hercules.sgi.rep.dto.eti.ReportInformeEvaluacion;
@@ -44,6 +44,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class EtiReportController {
   public static final String MAPPING = "/report/eti";
+  private static final OutputType OUTPUT_TYPE_PDF = OutputType.PDF;
 
   private final MXXReportService mxxReportService;
   private final InformeEvaluacionReportService informeEvaluacionReportService;
@@ -87,14 +88,15 @@ public class EtiReportController {
     log.debug("getMXX(idMemoria, idFormulario) - start");
 
     ReportMXX report = new ReportMXX();
-    report.setOutputReportType(OutputReportType.PDF);
+    report.setOutputType(OUTPUT_TYPE_PDF);
 
-    mxxReportService.getReportMXX(report, idMemoria, idFormulario);
-    ByteArrayResource archivo = new ByteArrayResource(report.getContent());
+    byte[] reportContent = mxxReportService.getReportMXX(report, idMemoria, idFormulario);
+    ByteArrayResource archivo = new ByteArrayResource(reportContent);
 
     HttpHeaders headers = new HttpHeaders();
-    headers.add(HttpHeaders.CONTENT_TYPE, OutputReportType.PDF.getType());
+    headers.add(HttpHeaders.CONTENT_TYPE, OUTPUT_TYPE_PDF.getType());
 
+    log.debug("getMXX(idMemoria, idFormulario) - end");
     return new ResponseEntity<>(archivo, headers, HttpStatus.OK);
   }
 
@@ -111,14 +113,15 @@ public class EtiReportController {
     log.debug("getInformeEvaluacion(idEvaluacion) - start");
 
     ReportInformeEvaluacion report = new ReportInformeEvaluacion();
-    report.setOutputReportType(OutputReportType.PDF);
+    report.setOutputType(OUTPUT_TYPE_PDF);
 
-    informeEvaluacionReportService.getReportInformEvaludorEvaluacion(report, idEvaluacion);
-    ByteArrayResource archivo = new ByteArrayResource(report.getContent());
+    byte[] reportContent = informeEvaluacionReportService.getReportInformeEvaluadorEvaluacion(report, idEvaluacion);
+    ByteArrayResource archivo = new ByteArrayResource(reportContent);
 
     HttpHeaders headers = new HttpHeaders();
-    headers.add(HttpHeaders.CONTENT_TYPE, OutputReportType.PDF.getType());
+    headers.add(HttpHeaders.CONTENT_TYPE, OUTPUT_TYPE_PDF.getType());
 
+    log.debug("getInformeEvaluacion(idEvaluacion) - end");
     return new ResponseEntity<>(archivo, headers, HttpStatus.OK);
   }
 
@@ -135,14 +138,15 @@ public class EtiReportController {
     log.debug("getInformeEvaluador(idEvaluacion) - start");
 
     ReportInformeEvaluador report = new ReportInformeEvaluador();
-    report.setOutputReportType(OutputReportType.PDF);
+    report.setOutputType(OUTPUT_TYPE_PDF);
 
-    informeEvaluadorReportService.getReportInformEvaludorEvaluacion(report, idEvaluacion);
-    ByteArrayResource archivo = new ByteArrayResource(report.getContent());
+    byte[] reportContent = informeEvaluadorReportService.getReportInformeEvaluadorEvaluacion(report, idEvaluacion);
+    ByteArrayResource archivo = new ByteArrayResource(reportContent);
 
     HttpHeaders headers = new HttpHeaders();
-    headers.add(HttpHeaders.CONTENT_TYPE, OutputReportType.PDF.getType());
+    headers.add(HttpHeaders.CONTENT_TYPE, OUTPUT_TYPE_PDF.getType());
 
+    log.debug("getInformeEvaluador(idEvaluacion) - end");
     return new ResponseEntity<>(archivo, headers, HttpStatus.OK);
   }
 
@@ -157,16 +161,17 @@ public class EtiReportController {
   @PreAuthorize("hasAnyAuthorityForAnyUO('ETI-EVC-EVAL', 'ETI-EVC-INV-EVALR')")
   public ResponseEntity<Resource> getInformeFavorableMemoria(@PathVariable Long idEvaluacion) {
 
-    log.debug("getInformeFavorableMemoria(input) - start");
+    log.debug("getInformeFavorableMemoria(idEvaluacion) - start");
 
     ReportInformeFavorableMemoria report = new ReportInformeFavorableMemoria();
-    report.setOutputReportType(OutputReportType.PDF);
+    report.setOutputType(OUTPUT_TYPE_PDF);
 
-    informeFavorableMemoriaReportService.getReportInformeFavorableMemoria(report, idEvaluacion);
-    ByteArrayResource archivo = new ByteArrayResource(report.getContent());
+    byte[] reportContent = informeFavorableMemoriaReportService.getReportInformeFavorableMemoria(report, idEvaluacion);
+    ByteArrayResource archivo = new ByteArrayResource(reportContent);
 
     HttpHeaders headers = new HttpHeaders();
-    headers.add(HttpHeaders.CONTENT_TYPE, OutputReportType.PDF.getType());
+    headers.add(HttpHeaders.CONTENT_TYPE, OUTPUT_TYPE_PDF.getType());
+    log.debug("getInformeFavorableMemoria(idEvaluacion) - end");
 
     return new ResponseEntity<>(archivo, headers, HttpStatus.OK);
   }
@@ -182,17 +187,18 @@ public class EtiReportController {
   @PreAuthorize("hasAnyAuthorityForAnyUO('ETI-ACT-DES', 'ETI-ACT-DESR', 'ETI-ACT-INV-DESR')")
   public ResponseEntity<Resource> getInformeActa(@PathVariable Long idActa) {
 
-    log.debug("getInformeActa(input) - start");
+    log.debug("getInformeActa(idActa) - start");
 
     ReportInformeActa report = new ReportInformeActa();
-    report.setOutputReportType(OutputReportType.PDF);
+    report.setOutputType(OUTPUT_TYPE_PDF);
 
-    informeActaReportService.getReportInformeActa(report, idActa);
-    ByteArrayResource archivo = new ByteArrayResource(report.getContent());
+    byte[] reportContent = informeActaReportService.getReportInformeActa(report, idActa);
+    ByteArrayResource archivo = new ByteArrayResource(reportContent);
 
     HttpHeaders headers = new HttpHeaders();
-    headers.add(HttpHeaders.CONTENT_TYPE, OutputReportType.PDF.getType());
+    headers.add(HttpHeaders.CONTENT_TYPE, OUTPUT_TYPE_PDF.getType());
 
+    log.debug("getInformeActa(idActa) - end");
     return new ResponseEntity<>(archivo, headers, HttpStatus.OK);
   }
 
@@ -211,14 +217,16 @@ public class EtiReportController {
     log.debug("getInformeEvaluacionRetrospectiva(input) - start");
 
     ReportInformeEvaluacionRetrospectiva report = new ReportInformeEvaluacionRetrospectiva();
-    report.setOutputReportType(OutputReportType.PDF);
+    report.setOutputType(OUTPUT_TYPE_PDF);
 
-    informeEvaluacionRetrospectivaReportService.getReportInformeEvaluacionRetrospectiva(report, input);
-    ByteArrayResource archivo = new ByteArrayResource(report.getContent());
+    byte[] reportContent = informeEvaluacionRetrospectivaReportService.getReportInformeEvaluacionRetrospectiva(report,
+        input);
+    ByteArrayResource archivo = new ByteArrayResource(reportContent);
 
     HttpHeaders headers = new HttpHeaders();
-    headers.add(HttpHeaders.CONTENT_TYPE, OutputReportType.PDF.getType());
+    headers.add(HttpHeaders.CONTENT_TYPE, OUTPUT_TYPE_PDF.getType());
 
+    log.debug("getInformeEvaluacionRetrospectiva(input) - end");
     return new ResponseEntity<>(archivo, headers, HttpStatus.OK);
   }
 
@@ -233,17 +241,19 @@ public class EtiReportController {
   @PreAuthorize("hasAnyAuthorityForAnyUO('ETI-EVC-EVAL', 'ETI-EVC-INV-EVALR')")
   public ResponseEntity<Resource> getInformeFavorableModificacion(@PathVariable Long idEvaluacion) {
 
-    log.debug("getInformeFavorableModificacion(input) - start");
+    log.debug("getInformeFavorableModificacion(idEvaluacion) - start");
 
     ReportInformeFavorableModificacion report = new ReportInformeFavorableModificacion();
-    report.setOutputReportType(OutputReportType.PDF);
+    report.setOutputType(OUTPUT_TYPE_PDF);
 
-    informeFavorableModificacionReportService.getReportInformeFavorableModificacion(report, idEvaluacion);
-    ByteArrayResource archivo = new ByteArrayResource(report.getContent());
+    byte[] reportContent = informeFavorableModificacionReportService.getReportInformeFavorableModificacion(report,
+        idEvaluacion);
+    ByteArrayResource archivo = new ByteArrayResource(reportContent);
 
     HttpHeaders headers = new HttpHeaders();
-    headers.add(HttpHeaders.CONTENT_TYPE, OutputReportType.PDF.getType());
+    headers.add(HttpHeaders.CONTENT_TYPE, OUTPUT_TYPE_PDF.getType());
 
+    log.debug("getInformeFavorableModificacion(idEvaluacion) - end");
     return new ResponseEntity<>(archivo, headers, HttpStatus.OK);
   }
 
@@ -258,17 +268,19 @@ public class EtiReportController {
   @PreAuthorize("hasAnyAuthorityForAnyUO('ETI-EVC-EVAL', 'ETI-EVC-INV-EVALR')")
   public ResponseEntity<Resource> getInformeFavorableRatificacion(@PathVariable Long idEvaluacion) {
 
-    log.debug("getInformeFavorableRatificacion(input) - start");
+    log.debug("getInformeFavorableRatificacion(idEvaluacion) - start");
 
     ReportInformeFavorableRatificacion report = new ReportInformeFavorableRatificacion();
-    report.setOutputReportType(OutputReportType.PDF);
+    report.setOutputType(OUTPUT_TYPE_PDF);
 
-    informeFavorableRatificacionReportService.getReportInformeFavorableRatificacion(report, idEvaluacion);
-    ByteArrayResource archivo = new ByteArrayResource(report.getContent());
+    byte[] reportContent = informeFavorableRatificacionReportService.getReportInformeFavorableRatificacion(report,
+        idEvaluacion);
+    ByteArrayResource archivo = new ByteArrayResource(reportContent);
 
     HttpHeaders headers = new HttpHeaders();
-    headers.add(HttpHeaders.CONTENT_TYPE, OutputReportType.PDF.getType());
+    headers.add(HttpHeaders.CONTENT_TYPE, OUTPUT_TYPE_PDF.getType());
 
+    log.debug("getInformeFavorableRatificacion(idEvaluacion) - end");
     return new ResponseEntity<>(archivo, headers, HttpStatus.OK);
   }
 

@@ -55,7 +55,7 @@ public abstract class InformeEvaluacionBaseReportService extends SgiReportServic
       dataFactory.addTable(queryGeneral, tableModelGeneral);
       report.setDataFactory(dataFactory);
 
-      sgiReport.setContent(generateReportOutput(sgiReport.getOutputReportType(), report));
+      sgiReport.setContent(generateReportOutput(sgiReport.getOutputType(), report));
 
       return report;
 

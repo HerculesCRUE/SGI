@@ -190,8 +190,8 @@ export class TipoFaseListadoComponent extends AbstractTablePaginationComponent<I
 
   }
 
-  protected createObservable(): Observable<SgiRestListResult<ITipoFase>> {
-    const observable$ = this.tipoFaseService.findTodos(this.getFindOptions());
+  protected createObservable(reset?: boolean): Observable<SgiRestListResult<ITipoFase>> {
+    const observable$ = this.tipoFaseService.findTodos(this.getFindOptions(reset));
     return observable$;
   }
 

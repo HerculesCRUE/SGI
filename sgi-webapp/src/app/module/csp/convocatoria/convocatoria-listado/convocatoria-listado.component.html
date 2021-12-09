@@ -347,12 +347,10 @@
       <tr mat-row *matRowDef="let row; columns: columnas;"></tr>
     </table>
     <div class="paginator-export">
-      <div class="export-footer">
-        <button mat-button matTooltip="{{'btn.export' | translate}}" (click)="openExportModal()"
-          [disabled]="totalElementos<=0">
-          <mat-icon color="primary">insert_chart_outlined</mat-icon>
-        </button>
-      </div>
+      <button mat-button matTooltip="{{'btn.export' | translate}}" (click)="openExportModal()"
+        [disabled]="totalElementos<=0">
+        <mat-icon color="primary">insert_chart_outlined</mat-icon>
+      </button>
       <mat-paginator [pageSizeOptions]="elementosPagina" [length]="totalElementos" showFirstLastButtons>
       </mat-paginator>
     </div>

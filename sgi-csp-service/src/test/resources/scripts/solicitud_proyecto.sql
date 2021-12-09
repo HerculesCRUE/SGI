@@ -14,7 +14,7 @@
   }
 */
 
-INSERT INTO csp.solicitud_proyecto
+INSERT INTO test.solicitud_proyecto
   (id, colaborativo, tipo_presupuesto) 
 VALUES
   (1, true, 'POR_ENTIDAD'),

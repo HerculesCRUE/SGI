@@ -27,6 +27,9 @@ const SOLICITUD_OBSERVACIONES_KEY = marker('csp.solicitud.observaciones');
 const SOLICITUD_UNIDAD_GESTION_KEY = marker('csp.solicitud.unidad-gestion');
 const SOLICITUD_ENTIDAD_CONVOCANTE_KEY = marker('csp.solicitud-entidad-convocante');
 const SOLICITUD_TITULO_KEY = marker('csp.solicitud.titulo');
+const SOLICITUD_FORMULARIO_SOLICITUD_KEY = marker('csp.solicitud.tipo-formulario');
+const SOLICITUD_CONVOCATORIA_KEY = marker('csp.solicitud.convocatoria');
+const SOLICITUD_SOLICITANTE_KEY = marker('csp.solicitud.solicitante');
 
 @Component({
   selector: 'sgi-solicitud-datos-generales',
@@ -53,6 +56,9 @@ export class SolicitudDatosGeneralesComponent extends FormFragmentComponent<ISol
   msgParamObservacionesEntity = {};
   msgParamUnidadGestionEntity = {};
   msgParamTituloEntity = {};
+  msgParamFormularioSolicitudEntity = {};
+  msgParamConvocatoriaEntity = {};
+  msgParamSolicitanteEntity = {};
 
   dataSourceEntidadesConvocantes: MatTableDataSource<SolicitudModalidadEntidadConvocanteListado>;
   @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
@@ -186,6 +192,24 @@ export class SolicitudDatosGeneralesComponent extends FormFragmentComponent<ISol
       SOLICITUD_TITULO_KEY,
       MSG_PARAMS.CARDINALIRY.SINGULAR
     ).subscribe((value) => this.msgParamTituloEntity = { entity: value, ...MSG_PARAMS.GENDER.MALE, ...MSG_PARAMS.CARDINALIRY.SINGULAR });
+
+    this.translate.get(
+      SOLICITUD_FORMULARIO_SOLICITUD_KEY,
+      MSG_PARAMS.CARDINALIRY.SINGULAR
+    ).subscribe((value) => this.msgParamFormularioSolicitudEntity =
+      { entity: value, ...MSG_PARAMS.GENDER.MALE, ...MSG_PARAMS.CARDINALIRY.SINGULAR });
+
+    this.translate.get(
+      SOLICITUD_CONVOCATORIA_KEY,
+      MSG_PARAMS.CARDINALIRY.SINGULAR
+    ).subscribe((value) => this.msgParamConvocatoriaEntity =
+      { entity: value, ...MSG_PARAMS.GENDER.FEMALE, ...MSG_PARAMS.CARDINALIRY.SINGULAR });
+
+    this.translate.get(
+      SOLICITUD_SOLICITANTE_KEY,
+      MSG_PARAMS.CARDINALIRY.SINGULAR
+    ).subscribe((value) => this.msgParamSolicitanteEntity =
+      { entity: value, ...MSG_PARAMS.GENDER.MALE, ...MSG_PARAMS.CARDINALIRY.SINGULAR });
   }
 
   ngOnDestroy(): void {

@@ -5,6 +5,7 @@ import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { MSG_PARAMS } from '@core/i18n';
 import { Estado, IEstadoProyecto } from '@core/models/csp/estado-proyecto';
 import { IProyecto } from '@core/models/csp/proyecto';
+import { IProyectoEquipo } from '@core/models/csp/proyecto-equipo';
 import { IProyectoProyectoSge } from '@core/models/csp/proyecto-proyecto-sge';
 import { IProyectoSocio } from '@core/models/csp/proyecto-socio';
 import { ActionService } from '@core/services/action-service';
@@ -268,7 +269,8 @@ export class ProyectoActionService extends ActionService {
       this.data?.readonly,
       this.data?.disableCoordinadorExterno,
       this.data?.hasAnyProyectoSocioCoordinador,
-      this.data?.isVisor
+      this.data?.isVisor,
+      relacionService
     );
 
     this.addFragment(this.FRAGMENT.FICHA_GENERAL, this.fichaGeneral);
@@ -421,6 +423,16 @@ export class ProyectoActionService extends ActionService {
           this.proyectosSge$.next(value);
         }));
       }
+
+      this.subscriptions.push(
+        this.relaciones.initialized$.subscribe(value => {
+          if (value) {
+            this.proyectoEquipo.initialize();
+          }
+        }));
+
+      this.subscribeToMiembrosProyectoEquipoChangeList();
+
     }
 
     this.subscriptions.push(this.fichaGeneral.iva$.subscribe(newIVA => {
@@ -428,6 +440,14 @@ export class ProyectoActionService extends ActionService {
         this.proyectoCalendarioFacturacion.proyectoIVA = newIVA;
       }
     }));
+  }
+
+  private subscribeToMiembrosProyectoEquipoChangeList(): void {
+    if (this.proyectoEquipo) {
+      this.subscriptions.push(
+        this.proyectoEquipo.equipos$.subscribe(personas => this.relaciones.miembrosEquipoProyecto = personas.map(personaListado => personaListado.value.proyectoEquipo.persona))
+      );
+    }
   }
 
   private addSolicitudLink(idSolicitud: number): void {

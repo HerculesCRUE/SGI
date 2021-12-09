@@ -172,8 +172,8 @@ export class AreaTematicaListadoComponent extends AbstractTablePaginationCompone
     this.onSearch();
   }
 
-  protected createObservable(): Observable<SgiRestListResult<IAreaTematica>> {
-    const observable$ = this.areaTematicaService.findTodos(this.getFindOptions());
+  protected createObservable(reset?: boolean): Observable<SgiRestListResult<IAreaTematica>> {
+    const observable$ = this.areaTematicaService.findTodos(this.getFindOptions(reset));
     return observable$;
   }
 

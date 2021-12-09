@@ -32,14 +32,22 @@
         </td>
       </ng-container>
 
-      <!-- Tipo realción Column -->
-      <ng-container matColumnDef="tipoRelacion">
+      <!-- Ref Entidad Convocante -->
+      <ng-container matColumnDef="refEntidadConvocante">
         <th mat-header-cell *matHeaderCellDef mat-sort-header>
-          {{'csp.proyecto-relacion.tipo-relacion' | translate}}
+          {{'csp.proyecto-relacion.ref-entidad-convocante' | translate}}
         </th>
-        <td mat-cell *matCellDef="let wrapper">
-          {{ TIPO_RELACION_MAP.get(wrapper.value.tipoRelacion) | translate}}
-        </td>
+        <td mat-cell *matCellDef="let wrapper"> {{ wrapper.value.tipoEntidadRelacionada === TipoEntidad.PROYECTO ?
+          wrapper.value.entidadConvocanteRef : '' }} </td>
+        </ng-container>
+
+        <!-- Código SGE -->
+        <ng-container matColumnDef="codigoSGE">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>
+            {{'csp.proyecto-relacion.codigo-sge' | translate}}
+          </th>
+          <td mat-cell *matCellDef="let wrapper"> {{wrapper.value.tipoEntidadRelacionada === TipoEntidad.PROYECTO ?
+            wrapper.value.codigosSge : '' }} </td>
       </ng-container>
 
       <!-- Observaciones Column -->

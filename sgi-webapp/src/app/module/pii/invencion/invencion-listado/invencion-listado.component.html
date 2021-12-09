@@ -82,8 +82,19 @@
       </div>
 
     </div>
+
     <!-- Búsqueda Avanzada -->
     <ng-container *ngIf="isBusquedaAvanzada">
+      <!-- Palabras clave -->
+      <div fxFlex="100%">
+        <mat-form-field fxFill>
+          <mat-label>{{'pii.invencion.palabras-clave' | translate}}</mat-label>
+          <sgi-palabra-clave formControlName="palabrasClave" id="palabrasClave"
+            placeholder="{{'pii.invencion.palabras-clave' | translate}}"></sgi-palabra-clave>
+        </mat-form-field>
+      </div>
+
+
       <div fxFlex="100%">
         <h3>{{'pii.invencion.busqueda.titulo-avanzada' | translate}}</h3>
       </div>

@@ -98,9 +98,12 @@ export class ProyectoPaqueteTrabajoFragment extends Fragment {
     return from(createdPaquetes).pipe(
       mergeMap((wrappedPaquetes) => {
         return this.proyectoPaqueteTrabajoService.create(wrappedPaquetes.value).pipe(
-          map((updatedPaquetes) => {
+          map((createdPaquete) => {
             const index = this.paquetesTrabajo$.value.findIndex((currentPaquetes) => currentPaquetes === wrappedPaquetes);
-            this.paquetesTrabajo$.value[index] = new StatusWrapper<IProyectoPaqueteTrabajo>(updatedPaquetes);
+            const paquetesDeTrabajoListado = wrappedPaquetes.value;
+            paquetesDeTrabajoListado.id = createdPaquete.id;
+            this.paquetesTrabajo$.value[index] = new StatusWrapper<IProyectoPaqueteTrabajo>(paquetesDeTrabajoListado);
+            this.paquetesTrabajo$.next(this.paquetesTrabajo$.value);
           })
         );
       })
@@ -126,7 +129,7 @@ export class ProyectoPaqueteTrabajoFragment extends Fragment {
 
   private isSaveOrUpdateComplete(): boolean {
     const touched: boolean = this.paquetesTrabajo$.value.some((wrapper) => wrapper.touched);
-    return (this.paquetesTrabajoEliminados.length > 0 || touched);
+    return !(this.paquetesTrabajoEliminados.length > 0 || touched);
   }
 
 }

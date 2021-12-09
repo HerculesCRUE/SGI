@@ -82,11 +82,11 @@ public class SgiDynamicReportDto extends SgiReportDto {
     @NotNull
     private String name;
     @NotNull
-    private TypeColumnReportEnum type;
+    private ColumnType type;
 
     private String format;
 
-    private FieldOrientationType fieldOrientationType;
+    private FieldOrientation fieldOrientation;
 
     private List<SgiColumReportDto> columns;
   }
@@ -118,7 +118,7 @@ public class SgiDynamicReportDto extends SgiReportDto {
     return result;
   }
 
-  public enum TypeColumnReportEnum {
+  public enum ColumnType {
     STRING, DATE, NUMBER, BOOLEAN, FORMULA, SUBREPORT
   }
 }

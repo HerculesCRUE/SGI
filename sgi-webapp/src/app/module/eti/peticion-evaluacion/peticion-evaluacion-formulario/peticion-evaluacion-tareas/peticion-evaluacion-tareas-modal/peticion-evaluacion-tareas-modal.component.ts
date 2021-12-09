@@ -272,9 +272,17 @@ export class PeticionEvaluacionTareasModalComponent extends
    * @param persona la entidad IPersona
    * returns persona del equipo de trabajo
    */
-  displayerPersonaEquipoTrabajo(persona: IPersona): string {
+  displayerPersonaEquipoTrabajo = (persona: IPersona): string => {
     return persona && persona.id ?
-      `${persona?.nombre} ${persona?.apellidos} (${persona?.numeroDocumento})` : null;
+      `${persona?.nombre} ${persona?.apellidos} (${this.getEmailPrincipal(persona)})` : null;
+  }
+
+  private getEmailPrincipal({ emails }: IPersona): string {
+    if (!emails) {
+      return '';
+    }
+    const emailDataPrincipal = emails.find(emailData => emailData.principal);
+    return emailDataPrincipal?.email ?? '';
   }
 
   /**

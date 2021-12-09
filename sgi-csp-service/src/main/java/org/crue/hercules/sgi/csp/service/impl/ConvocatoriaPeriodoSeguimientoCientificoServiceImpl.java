@@ -11,19 +11,25 @@ import javax.validation.ConstraintViolationException;
 import javax.validation.Validator;
 
 import org.crue.hercules.sgi.csp.enums.TipoSeguimiento;
+import org.crue.hercules.sgi.csp.exceptions.ConfiguracionSolicitudNotFoundException;
 import org.crue.hercules.sgi.csp.exceptions.ConvocatoriaNotFoundException;
 import org.crue.hercules.sgi.csp.exceptions.ConvocatoriaPeriodoSeguimientoCientificoNotFoundException;
 import org.crue.hercules.sgi.csp.exceptions.NoRelatedEntitiesException;
 import org.crue.hercules.sgi.csp.exceptions.PeriodoLongerThanConvocatoriaException;
 import org.crue.hercules.sgi.csp.exceptions.PeriodoWrongOrderException;
 import org.crue.hercules.sgi.csp.exceptions.TipoFinalException;
+import org.crue.hercules.sgi.csp.exceptions.UserNotAuthorizedToAccessConvocatoriaException;
+import org.crue.hercules.sgi.csp.model.ConfiguracionSolicitud;
 import org.crue.hercules.sgi.csp.model.Convocatoria;
+import org.crue.hercules.sgi.csp.model.Convocatoria.Estado;
 import org.crue.hercules.sgi.csp.model.ConvocatoriaPeriodoSeguimientoCientifico;
+import org.crue.hercules.sgi.csp.repository.ConfiguracionSolicitudRepository;
 import org.crue.hercules.sgi.csp.repository.ConvocatoriaPeriodoSeguimientoCientificoRepository;
 import org.crue.hercules.sgi.csp.repository.ConvocatoriaRepository;
 import org.crue.hercules.sgi.csp.repository.specification.ConvocatoriaPeriodoSeguimientoCientificoSpecifications;
 import org.crue.hercules.sgi.csp.service.ConvocatoriaPeriodoSeguimientoCientificoService;
 import org.crue.hercules.sgi.framework.rsql.SgiRSQLJPASupport;
+import org.crue.hercules.sgi.framework.security.core.context.SgiSecurityContextHolder;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -45,12 +51,15 @@ public class ConvocatoriaPeriodoSeguimientoCientificoServiceImpl
   private final Validator validator;
   private final ConvocatoriaPeriodoSeguimientoCientificoRepository repository;
   private final ConvocatoriaRepository convocatoriaRepository;
+  private final ConfiguracionSolicitudRepository configuracionSolicitudRepository;
 
   public ConvocatoriaPeriodoSeguimientoCientificoServiceImpl(Validator validator,
-      ConvocatoriaPeriodoSeguimientoCientificoRepository repository, ConvocatoriaRepository convocatoriaRepository) {
+      ConvocatoriaPeriodoSeguimientoCientificoRepository repository, ConvocatoriaRepository convocatoriaRepository,
+      ConfiguracionSolicitudRepository configuracionSolicitudRepository) {
     this.validator = validator;
     this.repository = repository;
     this.convocatoriaRepository = convocatoriaRepository;
+    this.configuracionSolicitudRepository = configuracionSolicitudRepository;
   }
 
   /**
@@ -157,6 +166,19 @@ public class ConvocatoriaPeriodoSeguimientoCientificoServiceImpl
   public Page<ConvocatoriaPeriodoSeguimientoCientifico> findAllByConvocatoria(Long convocatoriaId, String query,
       Pageable pageable) {
     log.debug("findAllByConvocatoria(Long convocatoriaId, String query, Pageable pageable) - start");
+
+    Convocatoria convocatoria = convocatoriaRepository.findById(convocatoriaId)
+        .orElseThrow(() -> new ConvocatoriaNotFoundException(convocatoriaId));
+    if (hasAuthorityViewInvestigador()) {
+      ConfiguracionSolicitud configuracionSolicitud = configuracionSolicitudRepository
+          .findByConvocatoriaId(convocatoriaId)
+          .orElseThrow(() -> new ConfiguracionSolicitudNotFoundException(convocatoriaId));
+      if (!convocatoria.getEstado().equals(Estado.REGISTRADA)
+          || Boolean.FALSE.equals(configuracionSolicitud.getTramitacionSGI())) {
+        throw new UserNotAuthorizedToAccessConvocatoriaException();
+      }
+    }
+
     Specification<ConvocatoriaPeriodoSeguimientoCientifico> specs = ConvocatoriaPeriodoSeguimientoCientificoSpecifications
         .byConvocatoriaId(convocatoriaId).and(SgiRSQLJPASupport.toSpecification(query));
 
@@ -254,5 +276,9 @@ public class ConvocatoriaPeriodoSeguimientoCientificoServiceImpl
       // Guardamos el tipo del periodo actual para comparar con los siguientes
       tipo = periodo.getTipoSeguimiento();
     }
+  }
+
+  private boolean hasAuthorityViewInvestigador() {
+    return SgiSecurityContextHolder.hasAuthorityForAnyUO("CSP-CON-INV-V");
   }
 }

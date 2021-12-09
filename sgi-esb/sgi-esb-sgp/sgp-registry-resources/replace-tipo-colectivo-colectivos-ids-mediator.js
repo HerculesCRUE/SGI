@@ -6,20 +6,22 @@ function mediate(mc) {
   log.info("replace-tipo-colectivo-colectivos-ids-mediator.mediate() - start");
 
   var path = decodeURI(mc.getProperty('path'));
-  log.info("replace-tipo-colectivo-colectivos-ids-mediator.mediate() - initial query: " + path);
-  var regex = /tipoColectivo==([^;,&)])*[;,]?/g;
+  var hasRsqlParams = mc.getProperty('hasRsqlParams') == String(true);
+  log.info("replace-tipo-colectivo-colectivos-ids-mediator.mediate() - initial query: " + path + ", hasRsqlParams: " + hasRsqlParams);
+  var regex = hasRsqlParams ? /tipoColectivo==([^;,&)])*[;,]?/g : /tipoColectivo=([^;,&)])*[;,]?/g;
   var tipoColectivoQueries = path.match(regex);
   if (tipoColectivoQueries) {
     var tipoColectivoQuery = tipoColectivoQueries[0];
 
-    var regexSeparador = /[;,]/g;
+    var regexSeparador = hasRsqlParams ? /[;,]/g : /[&]/g;
     if (regexSeparador.test(tipoColectivoQuery)) {
       tipoColectivoQuery = tipoColectivoQuery.substring(0, tipoColectivoQuery.length - 1);
     }
 
     // Remplaza el tipoColectivo por los colectivos correspondientes
-    var tipoColectivoId = tipoColectivoQuery.split("==")[1].replace(/"/g, '');
-    var filterColectivos = 'colectivoId=in=(#ids#)';
+    var tipoColectivoId = hasRsqlParams ? tipoColectivoQuery.split("==")[1].replace(/"/g, '')
+      : tipoColectivoQuery.split("=")[1].replace(/"/g, '');
+    var filterColectivos = hasRsqlParams ? 'colectivoId=in=(#ids#)' : 'colectivoId=(#ids#)';
     var colectivosId = '';
     switch (tipoColectivoId) {
       case 'SOLICITANTE_ETICA':
@@ -39,6 +41,9 @@ function mediate(mc) {
         break;
       case 'AUTOR_INVENCION':
         colectivosId = '1,2,3,4';
+        break;
+      case 'RESPONSABLE_PROYECTO_EXTERNO':
+        colectivosId = '4';
         break;
       default:
         colectivosId = '0';

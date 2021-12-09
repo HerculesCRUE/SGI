@@ -35,7 +35,11 @@ export class EjecucionEconomicaService extends SgiRestBaseService {
     );
   }
 
-  private getColumnas(proyectoEconomicoId: string, tipoOperacion: TipoOperacion, reducido = false): Observable<IColumna[]> {
+  private getColumnas(
+    proyectoEconomicoId: string,
+    tipoOperacion: TipoOperacion,
+    reducido = false
+  ): Observable<IColumna[]> {
     const filter = new RSQLSgiRestFilter('proyectoId', SgiRestFilterOperator.EQUALS, proyectoEconomicoId)
       .and('tipoOperacion', SgiRestFilterOperator.EQUALS, tipoOperacion).and('reducida', SgiRestFilterOperator.EQUALS, `${reducido}`);
     const options: SgiRestFindOptions = {
@@ -73,16 +77,16 @@ export class EjecucionEconomicaService extends SgiRestBaseService {
     return this.getColumnas(proyectoEconomicoId, TipoOperacion.DETALLE_OPERACIONES_MODIFICACIONES);
   }
 
-  getColumnasFacturasGastos(proyectoEconomicoId: string): Observable<IColumna[]> {
-    return this.getColumnas(proyectoEconomicoId, TipoOperacion.FACTURAS_JUSTIFICANTES_FACTURAS_GASTOS, true);
+  getColumnasFacturasGastos(proyectoEconomicoId: string, reducida = true): Observable<IColumna[]> {
+    return this.getColumnas(proyectoEconomicoId, TipoOperacion.FACTURAS_JUSTIFICANTES_FACTURAS_GASTOS, reducida);
   }
 
-  getColumnasViajesDietas(proyectoEconomicoId: string): Observable<IColumna[]> {
-    return this.getColumnas(proyectoEconomicoId, TipoOperacion.FACTURAS_JUSTIFICANTES_VIAJES_DIETAS, true);
+  getColumnasViajesDietas(proyectoEconomicoId: string, reducida = true): Observable<IColumna[]> {
+    return this.getColumnas(proyectoEconomicoId, TipoOperacion.FACTURAS_JUSTIFICANTES_VIAJES_DIETAS, reducida);
   }
 
-  getColumnasPersonalContratado(proyectoEconomicoId: string): Observable<IColumna[]> {
-    return this.getColumnas(proyectoEconomicoId, TipoOperacion.FACTURAS_JUSTIFICANTES_PERSONAL_CONTRATADO, true);
+  getColumnasPersonalContratado(proyectoEconomicoId: string, reducida = true): Observable<IColumna[]> {
+    return this.getColumnas(proyectoEconomicoId, TipoOperacion.FACTURAS_JUSTIFICANTES_PERSONAL_CONTRATADO, reducida);
   }
 
   private getDatosEconomicos(
@@ -163,16 +167,17 @@ export class EjecucionEconomicaService extends SgiRestBaseService {
   getFacturasGastos(
     proyectoEconomicoId: string,
     anualidades: string[] = [],
+    reducida = true,
     fechaPagoRange?: { desde: string, hasta: string },
     fechaDevengoRange?: { desde: string, hasta: string },
-    fechaContabilizacionRange?: { desde: string, hasta: string }
+    fechaContabilizacionRange?: { desde: string, hasta: string },
   ): Observable<IDatoEconomico[]> {
     return this.getDatosEconomicos(
       null,
       proyectoEconomicoId,
       TipoOperacion.FACTURAS_JUSTIFICANTES_FACTURAS_GASTOS,
       anualidades,
-      true,
+      reducida,
       fechaPagoRange,
       fechaDevengoRange,
       fechaContabilizacionRange
@@ -182,6 +187,7 @@ export class EjecucionEconomicaService extends SgiRestBaseService {
   getViajesDietas(
     proyectoEconomicoId: string,
     anualidades: string[] = [],
+    reducida = true,
     fechaPagoRange?: { desde: string, hasta: string },
     fechaDevengoRange?: { desde: string, hasta: string },
     fechaContabilizacionRange?: { desde: string, hasta: string }
@@ -191,7 +197,7 @@ export class EjecucionEconomicaService extends SgiRestBaseService {
       proyectoEconomicoId,
       TipoOperacion.FACTURAS_JUSTIFICANTES_VIAJES_DIETAS,
       anualidades,
-      true,
+      reducida,
       fechaPagoRange,
       fechaDevengoRange,
       fechaContabilizacionRange
@@ -201,6 +207,7 @@ export class EjecucionEconomicaService extends SgiRestBaseService {
   getPersonalContratado(
     proyectoEconomicoId: string,
     anualidades: string[] = [],
+    reducida = true,
     fechaPagoRange?: { desde: string, hasta: string },
     fechaDevengoRange?: { desde: string, hasta: string },
     fechaContabilizacionRange?: { desde: string, hasta: string }
@@ -210,7 +217,7 @@ export class EjecucionEconomicaService extends SgiRestBaseService {
       proyectoEconomicoId,
       TipoOperacion.FACTURAS_JUSTIFICANTES_PERSONAL_CONTRATADO,
       anualidades,
-      true,
+      reducida,
       fechaPagoRange,
       fechaDevengoRange,
       fechaContabilizacionRange

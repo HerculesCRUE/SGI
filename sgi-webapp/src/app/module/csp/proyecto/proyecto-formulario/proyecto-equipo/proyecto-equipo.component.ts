@@ -1,5 +1,5 @@
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
+import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
@@ -14,6 +14,7 @@ import { StatusWrapper } from '@core/utils/status-wrapper';
 import { TranslateService } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
+import { getPersonaEmailListConcatenated } from 'src/app/esb/sgp/shared/pipes/persona-email.pipe';
 import { MiembroEquipoProyectoModalComponent, MiembroEquipoProyectoModalData } from '../../../shared/miembro-equipo-proyecto-modal/miembro-equipo-proyecto-modal.component';
 import { ProyectoActionService } from '../../proyecto.action.service';
 import { IProyectoEquipoListado, ProyectoEquipoFragment } from './proyecto-equipo.fragment';
@@ -47,7 +48,7 @@ export class ProyectoEquipoComponent extends FragmentComponent implements OnInit
   formPart: ProyectoEquipoFragment;
 
   elementosPagina = [5, 10, 25, 100];
-  displayedColumns = ['helpIcon', 'numIdentificacion', 'nombre', 'apellidos', 'rolEquipo', 'fechaInicio', 'fechaFin', 'horas', 'acciones'];
+  displayedColumns = ['helpIcon', 'persona', 'nombre', 'apellidos', 'rolEquipo', 'fechaInicio', 'fechaFin', 'horas', 'acciones'];
 
   modalTitleEntity: string;
   msgParamEntity = {};
@@ -79,8 +80,8 @@ export class ProyectoEquipoComponent extends FragmentComponent implements OnInit
     this.dataSource.sortingDataAccessor =
       (wrapper: StatusWrapper<IProyectoEquipoListado>, property: string) => {
         switch (property) {
-          case 'numIdentificacion':
-            return wrapper.value.proyectoEquipo.persona.numeroDocumento;
+          case 'persona':
+            return getPersonaEmailListConcatenated(wrapper.value.proyectoEquipo.persona);
           case 'nombre':
             return wrapper.value.proyectoEquipo.persona.nombre;
           case 'apellidos':
@@ -225,8 +226,9 @@ export class ProyectoEquipoComponent extends FragmentComponent implements OnInit
       data.selectedEntidades = filtered;
     }
 
-    const config = {
+    const config: MatDialogConfig = {
       panelClass: 'sgi-dialog-container',
+      minWidth: '700px',
       data
     };
     const dialogRef = this.matDialog.open(MiembroEquipoProyectoModalComponent, config);

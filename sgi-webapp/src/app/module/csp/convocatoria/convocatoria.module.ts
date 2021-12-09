@@ -38,6 +38,7 @@ import { ConvocatoriaSeguimientoCientificoModalComponent } from './modals/convoc
 import { CategoriaProfesionalModalComponent } from './modals/categoria-profesional-modal/categoria-profesional-modal.component';
 import { NivelAcademicoModalComponent } from './modals/nivel-academico-modal/nivel-academico-modal.component';
 import { ConvocatoriaListadoModalComponent } from './modals/convocatoria-listado-modal/convocatoria-listado-modal.component';
+import { ConvocatoriaListadoService } from './convocatoria-listado.service';
 
 @NgModule({
   declarations: [
@@ -84,7 +85,8 @@ import { ConvocatoriaListadoModalComponent } from './modals/convocatoria-listado
     SgempSharedModule
   ],
   providers: [
-    ConvocatoriaDataResolver
+    ConvocatoriaDataResolver,
+    ConvocatoriaListadoService
   ]
 })
 export class ConvocatoriaModule { }

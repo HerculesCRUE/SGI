@@ -487,6 +487,233 @@
       <sequence key="error-handling-sequence" />
     </faultSequence>
   </resource>
+  <resource methods="GET" url-mapping="/proyectos/formly/update">
+    <inSequence>
+      <call-template target="sgi-auth-sequence-template">
+        <with-param name="requiredAuthorities" value="" />
+      </call-template>
+      <payloadFactory media-type="json">
+        <format>
+[
+  {
+    "wrappers": [
+      "global"
+    ],
+    "templateOptions": {
+      "styles": "{ \"width\": \"700px\" }"
+    },
+    "fieldGroup": [
+      {
+        "wrappers": [
+          "mat-card-group"
+        ],
+        "templateOptions": {
+          "label": ""
+        },
+        "fieldGroup": [
+          {
+            "fieldGroup": [
+              {
+                "fieldGroupClassName": "row-formly",
+                "fieldGroup": [
+                  {
+                    "key": "proyectoSgiId",
+                    "type": "input",
+                    "className": "flex-1",
+                    "templateOptions": {
+                      "label": "Identificador proyecto SGI",
+                      "disabled": true
+                    },
+                    "expressionProperties": {
+                      "model.proyectoSgiId": "formState.mainModel.proyecto.id"
+                    }
+                  },
+                  {
+                    "key": "proyectoSgeId",
+                    "type": "input",
+                    "className": "flex-1",
+                    "templateOptions": {
+                      "label": "Identificador proyecto SGE",
+                      "disabled": true
+                    },
+                    "expressionProperties": {
+                      "model.proyectoSgeId": "formState.mainModel.sgeId"
+                    }
+                  }
+                ]
+              },
+              {
+                "key": "titulo",
+                "type": "input",
+                "templateOptions": {
+                  "label": "Título proyecto",
+                  "required": true,
+                  "disabled": true
+                },
+                "expressionProperties": {
+                  "model.titulo": "formState.mainModel.proyecto.titulo"
+                }
+              },
+              {
+                "fieldGroupClassName": "row-formly",
+                "fieldGroup": [
+                  {
+                    "key": "fechaInicio",
+                    "type": "dateTimePicker",
+                    "className": "flex-1",
+                    "templateOptions": {
+                      "label": "Fecha inicio",
+                      "placeholder": "Introduce fecha inicio",
+                      "disabled": true
+                    },
+                    "expressionProperties": {
+                      "model.fechaInicio": "formState.mainModel.proyecto.fechaInicio"
+                    }
+                  },
+                  {
+                    "key": "fechaFin",
+                    "type": "dateTimePicker",
+                    "className": "flex-1",
+                    "templateOptions": {
+                      "label": "Fecha fin",
+                      "placeholder": "Introduce fecha fin",
+                      "disabled": true
+                    },
+                    "expressionProperties": {
+                      "model.fechaFin": "formState.mainModel.proyecto.fechaFin"
+                    }
+                  }
+                ]
+              },
+              {
+                "key": "numeroDocumentoResponsable",
+                "type": "input",
+                "templateOptions": {
+                  "label": "Identificador número de documento del responsable",
+                  "disabled": true
+                },
+                "expressionProperties": {
+                  "model.numeroDocumentoResponsable": "formState.mainModel.numeroDocumentoResponsable"
+                }
+              },
+              {
+                "fieldGroupClassName": "row-formly",
+                "fieldGroup": [
+                  {
+                    "key": "modeloEjecucion",
+                    "type": "select-object",
+                    "className": "flex-1",
+                    "templateOptions": {
+                      "label": "Modelo de ejecución",
+                      "required": true,
+                      "disabled": true,
+                      "modelKeyCompareProp": "id",
+                      "modelKeyLabelProp": "nombre",
+                      "modelKeyValueProp": "modeloEjecucion"
+                    },
+                    "expressionProperties": {
+                      "model.modeloEjecucion": "formState.mainModel.proyecto.modeloEjecucion"
+                    }
+                  },
+                  {
+                    "key": "tipoFinalidad",
+                    "type": "select-object",
+                    "className": "flex-1",
+                    "templateOptions": {
+                      "label": "Tipo de finalidad",
+                      "required": true,
+                      "disabled": true,
+                      "modelKeyCompareProp": "id",
+                      "modelKeyLabelProp": "nombre",
+                      "modelKeyValueProp": "tipoFinalidad"
+                    },
+                    "expressionProperties": {
+                      "model.tipoFinalidad": "formState.mainModel.proyecto.finalidad"
+                    }
+                  }
+                ]
+              },
+              {
+                "fieldGroupClassName": "row-formly",
+                "fieldGroup": [
+                  {
+                    "key": "importeTotalGastos",
+                    "type": "input",
+                    "className": "flex-1",
+                    "templateOptions": {
+                      "label": "Importe total previsto de gastos",
+                      "type": "number",
+                      "min": 0
+                    },
+                    "expressionProperties": {
+                      "model.importeTotalGastos": "formState.mainModel.importeTotalGastos"
+                    }
+                  },
+                  {
+                    "key": "importeTotalIngresos",
+                    "type": "input",
+                    "className": "flex-1",
+                    "templateOptions": {
+                      "label": "Importe total previsto de ingresos",
+                      "type": "number",
+                      "min": 0
+                    },
+                    "expressionProperties": {
+                      "model.importeTotalIngresos": "formState.mainModel.importeTotalIngresos"
+                    }
+                  }
+                ]
+              },
+              {
+                "fieldGroupClassName": "row-formly",
+                "fieldGroup": [
+                  {
+                    "key": "porIva",
+                    "type": "input",
+                    "className": "flex-1",
+                    "templateOptions": {
+                      "label": "% IVA",
+                      "type": "number",
+                      "min": 0,
+                      "disabled": true
+                    },
+                    "expressionProperties": {
+                      "model.porIva": "formState.mainModel.porIva"
+                    }
+                  },
+                  {
+                    "key": "causaExencion",
+                    "type": "input",
+                    "className": "flex-1",
+                    "templateOptions": {
+                      "label": "Causa exención",
+                      "disabled": true
+                    },
+                    "expressionProperties": {
+                      "model.causaExencion": "formState.mainModel.causaExencionDesc"
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+]
+        </format>
+        <args />
+      </payloadFactory>
+      <respond />
+    </inSequence>
+    <outSequence>
+      <respond />
+    </outSequence>
+    <faultSequence>
+      <sequence key="error-handling-sequence" />
+    </faultSequence>
+  </resource>
   <resource methods="POST" url-mapping="/proyectos/formly">
     <inSequence>
       <call-template target="sgi-auth-sequence-template">
@@ -496,6 +723,40 @@
       <send>
         <endpoint key="sge-endpoint" />
       </send>
+    </inSequence>
+    <outSequence>
+      <respond />
+    </outSequence>
+    <faultSequence>
+      <sequence key="error-handling-sequence" />
+    </faultSequence>
+  </resource>
+  <resource methods="PUT" uri-template="/proyectos/formly/{id}">
+    <inSequence>
+      <call-template target="sgi-auth-sequence-template">
+        <with-param name="requiredAuthorities" value="" />
+      </call-template>
+
+      <log level="custom">
+        <property name="SGI_ESB_CONTEXT" expression="get-property('env', 'SGI_ESB_CONTEXT')" />
+      </log>
+
+      <switch source="get-property('env', 'SGI_ESB_CONTEXT')">
+        <case regex="dev">
+          <log level="custom">
+            <property name="response" value="dev mock" />
+          </log>
+          <property name="NO_ENTITY_BODY" value="true" scope="axis2" type="BOOLEAN" />
+          <respond />
+        </case>
+        <default>
+          <sequence key="sge-add-x-api-key-sequence" />
+          <send>
+            <endpoint key="sge-endpoint" />
+          </send>
+        </default>
+      </switch>
+
     </inSequence>
     <outSequence>
       <respond />
@@ -595,6 +856,61 @@
     <inSequence>
       <send>
         <endpoint key="sgicsp-endpoint" />
+      </send>
+    </inSequence>
+    <outSequence>
+      <respond />
+    </outSequence>
+    <faultSequence>
+      <sequence key="error-handling-sequence" />
+    </faultSequence>
+  </resource>
+
+  <!-- periodos amortizacion -->
+  <resource methods="POST" url-mapping="/periodos-amortizacion">
+    <inSequence>
+      <call-template target="sgi-auth-sequence-template">
+        <with-param name="requiredAuthorities" value="" />
+      </call-template>
+      <sequence key="sge-add-x-api-key-sequence" />
+      <send>
+        <endpoint key="sge-endpoint" />
+      </send>
+    </inSequence>
+    <outSequence>
+      <respond />
+    </outSequence>
+    <faultSequence>
+      <sequence key="error-handling-sequence" />
+    </faultSequence>
+  </resource>
+
+  <resource methods="PUT" uri-template="/periodos-amortizacion/{id}">
+    <inSequence>
+      <call-template target="sgi-auth-sequence-template">
+        <with-param name="requiredAuthorities" value="" />
+      </call-template>
+      <sequence key="sge-add-x-api-key-sequence" />
+      <send>
+        <endpoint key="sge-endpoint" />
+      </send>
+    </inSequence>
+    <outSequence>
+      <respond />
+    </outSequence>
+    <faultSequence>
+      <sequence key="error-handling-sequence" />
+    </faultSequence>
+  </resource>
+
+  <resource methods="DELETE" uri-template="/periodos-amortizacion/{id}">
+    <inSequence>
+      <call-template target="sgi-auth-sequence-template">
+        <with-param name="requiredAuthorities" value="" />
+      </call-template>
+      <sequence key="sge-add-x-api-key-sequence" />
+      <send>
+        <endpoint key="sge-endpoint" />
       </send>
     </inSequence>
     <outSequence>

@@ -5,14 +5,13 @@ import { Estado, ESTADO_MAP } from '@core/models/csp/estado-proyecto';
 import { IProyecto } from '@core/models/csp/proyecto';
 import { IProyectoEntidadConvocante } from '@core/models/csp/proyecto-entidad-convocante';
 import { IProyectoEquipo } from '@core/models/csp/proyecto-equipo';
-import { FieldOrientationType } from '@core/models/rep/field-orientation.enum';
-import { ISgiColumnReport } from '@core/models/rep/sgi-column-report';
+import { FieldOrientation } from '@core/models/rep/field-orientation.enum';
+import { ColumnType, ISgiColumnReport } from '@core/models/rep/sgi-column-report';
 import { ISgiGroupReport } from '@core/models/rep/sgi-group.report';
 import { ISgiRowReport } from '@core/models/rep/sgi-row.report';
-import { TypeColumnReportEnum } from '@core/models/rep/type-column-report-enum';
 import { IEmpresa } from '@core/models/sgemp/empresa';
 import { ProyectoService } from '@core/services/csp/proyecto.service';
-import { AbstractTableExportService, IReportConfig, IReportOptions } from '@core/services/rep/abstract-table-export.service';
+import { AbstractTableExportService, IReportConfig, IReportOptions, RelationsTypeView } from '@core/services/rep/abstract-table-export.service';
 import { ReportService } from '@core/services/rep/report.service';
 import { EmpresaService } from '@core/services/sgemp/empresa.service';
 import { PersonaService } from '@core/services/sgp/persona.service';
@@ -55,9 +54,7 @@ export const INVESTIGADOR_FIELD = 'investigador';
 export const ENTIDAD_CONVOCANTE_FIELD = 'entidadConvocante';
 export const ENTIDAD_CONVOCANTE_CIF_FIELD = 'cifEntidadConvocante';
 
-@Injectable({
-  providedIn: 'root',
-})
+@Injectable()
 export class ProyectoListadoService extends AbstractTableExportService<IProyectoReportData, IProyectoReportOptions> {
 
   constructor(
@@ -105,11 +102,11 @@ export class ProyectoListadoService extends AbstractTableExportService<IProyecto
         row.elements.push(LuxonUtils.toBackend(proyecto.fechaFin));
 
         if (reportConfig.reportOptions?.showMiembrosEquipo) {
-          this.fillRowsEquipo(proyecto, row.elements, reportConfig.reportOptions?.relationsOrientationTable);
+          this.fillRowsEquipo(proyecto, row.elements, reportConfig.reportOptions?.relationsTypeView);
         }
 
         if (reportConfig.reportOptions?.showEntidadesConvocantes) {
-          this.fillRowsEntidadesConvocantes(proyecto, row.elements, reportConfig.reportOptions?.relationsOrientationTable);
+          this.fillRowsEntidadesConvocantes(proyecto, row.elements, reportConfig.reportOptions?.relationsTypeView);
         }
         return row;
       })
@@ -236,11 +233,11 @@ export class ProyectoListadoService extends AbstractTableExportService<IProyecto
 
   private getEquipoColumns(proyectos: IProyectoReportData[], reportConfig: IReportConfig<IProyectoReportOptions>): ISgiColumnReport[] {
     const columns: ISgiColumnReport[] = [];
-    if (reportConfig.reportOptions?.relationsOrientationTable) {
+    if (reportConfig.reportOptions?.relationsTypeView) {
       columns.push({
         name: INVESTIGADOR_FIELD,
         title: this.translate.instant(INVESTIGADOR_KEY),
-        type: TypeColumnReportEnum.STRING
+        type: ColumnType.STRING
       });
     } else {
       const maxNumEquipos = Math.max(...proyectos.map(p => p.equipo.length));
@@ -250,18 +247,18 @@ export class ProyectoListadoService extends AbstractTableExportService<IProyecto
         const columnInvestigador: ISgiColumnReport = {
           name: INVESTIGADOR_FIELD + idInvestigador,
           title: titleInvestigador + idInvestigador,
-          type: TypeColumnReportEnum.STRING,
+          type: ColumnType.STRING,
         };
         columns.push(columnInvestigador);
       }
     }
 
-    if (reportConfig.reportOptions?.relationsOrientationTable) {
+    if (reportConfig.reportOptions?.relationsTypeView) {
       const columnEquipo: ISgiColumnReport = {
         name: EQUIPO_FIELD,
         title: this.translate.instant(EQUIPO_KEY),
-        type: TypeColumnReportEnum.SUBREPORT,
-        fieldOrientationType: FieldOrientationType.VERTICAL,
+        type: ColumnType.SUBREPORT,
+        fieldOrientation: FieldOrientation.VERTICAL,
         columns
       };
       return [columnEquipo];
@@ -273,16 +270,16 @@ export class ProyectoListadoService extends AbstractTableExportService<IProyecto
   private getEntidadesConvocantesColumns(proyectos: IProyectoReportData[], reportConfig: IReportConfig<IProyectoReportOptions>):
     ISgiColumnReport[] {
     const columns: ISgiColumnReport[] = [];
-    if (reportConfig.reportOptions?.relationsOrientationTable) {
+    if (reportConfig.reportOptions?.relationsTypeView) {
       columns.push({
         name: 'razonSocial',
         title: this.translate.instant(ENTIDAD_CONVOCANTE_NOMBRE_KEY),
-        type: TypeColumnReportEnum.STRING
+        type: ColumnType.STRING
       });
       columns.push({
         name: 'cif',
         title: this.translate.instant(ENTIDAD_CONVOCANTE_CIF_KEY),
-        type: TypeColumnReportEnum.STRING
+        type: ColumnType.STRING
       });
     } else {
       const maxNumEntidasConvocantes = Math.max(...proyectos.map(p => p.entidadesConvocantes.length));
@@ -294,24 +291,24 @@ export class ProyectoListadoService extends AbstractTableExportService<IProyecto
         const columnEntidadConvocante: ISgiColumnReport = {
           name: ENTIDAD_CONVOCANTE_FIELD + idEntidadConvocante,
           title: titleEntidadConvocante + idEntidadConvocante,
-          type: TypeColumnReportEnum.STRING,
+          type: ColumnType.STRING,
         };
         columns.push(columnEntidadConvocante);
         const columnCifEntidadConvocante: ISgiColumnReport = {
           name: ENTIDAD_CONVOCANTE_CIF_FIELD + idEntidadConvocante,
           title: titleCifEntidadConvocante + idEntidadConvocante,
-          type: TypeColumnReportEnum.STRING,
+          type: ColumnType.STRING,
         };
         columns.push(columnCifEntidadConvocante);
       }
     }
 
-    if (reportConfig.reportOptions?.relationsOrientationTable) {
+    if (reportConfig.reportOptions?.relationsTypeView) {
       const columnEquipo: ISgiColumnReport = {
         name: ENTIDAD_CONVOCANTE_FIELD,
         title: this.translate.instant(ENTIDAD_CONVOCANTE_KEY),
-        type: TypeColumnReportEnum.SUBREPORT,
-        fieldOrientationType: FieldOrientationType.HORIZONTAL,
+        type: ColumnType.SUBREPORT,
+        fieldOrientation: FieldOrientation.HORIZONTAL,
         columns
       };
       return [columnEquipo];
@@ -327,27 +324,27 @@ export class ProyectoListadoService extends AbstractTableExportService<IProyecto
       {
         title: this.translate.instant(TITULO_KEY),
         name: 'titulo',
-        type: TypeColumnReportEnum.STRING,
+        type: ColumnType.STRING,
       },
       {
         title: this.translate.instant(ESTADO_KEY),
         name: 'estado',
-        type: TypeColumnReportEnum.STRING
+        type: ColumnType.STRING
       },
       {
         title: this.translate.instant(ACRONIMO_KEY),
         name: 'acronimo',
-        type: TypeColumnReportEnum.STRING
+        type: ColumnType.STRING
       },
       {
         title: this.translate.instant(FECHA_INICIO_KEY),
         name: 'fechaInicio',
-        type: TypeColumnReportEnum.DATE
+        type: ColumnType.DATE
       },
       {
         title: this.translate.instant(FECHA_FIN_KEY),
         name: 'fechaFin',
-        type: TypeColumnReportEnum.DATE
+        type: ColumnType.DATE
       }
 
     ];
@@ -361,8 +358,8 @@ export class ProyectoListadoService extends AbstractTableExportService<IProyecto
     return of(columnsReport);
   }
 
-  private fillRowsEquipo(proyecto: IProyectoReportData, elementsRow: any[], exportAsSubReport: boolean) {
-    if (exportAsSubReport) {
+  private fillRowsEquipo(proyecto: IProyectoReportData, elementsRow: any[], relationsTypeView: RelationsTypeView) {
+    if (relationsTypeView === RelationsTypeView.TABLE) {
       const rowsReport: ISgiRowReport[] = [];
 
       proyecto.equipo?.forEach(miembroEquipo => {
@@ -389,8 +386,8 @@ export class ProyectoListadoService extends AbstractTableExportService<IProyecto
     return miembroEquipo.persona.nombre + ' ' + miembroEquipo.persona.apellidos;
   }
 
-  private fillRowsEntidadesConvocantes(proyecto: IProyectoReportData, elementsRow: any[], exportAsSubReport: boolean) {
-    if (exportAsSubReport) {
+  private fillRowsEntidadesConvocantes(proyecto: IProyectoReportData, elementsRow: any[], relationsTypeView: RelationsTypeView) {
+    if (relationsTypeView === RelationsTypeView.TABLE) {
 
       const rowsReport: ISgiRowReport[] = [];
 

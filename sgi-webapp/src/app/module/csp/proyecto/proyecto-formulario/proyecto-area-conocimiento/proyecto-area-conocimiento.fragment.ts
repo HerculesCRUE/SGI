@@ -108,6 +108,7 @@ export class ProyectoAreaConocimientoFragment extends Fragment {
             const areaConocimientoListado = wrappedAreaConocimiento.value;
             areaConocimientoListado.id = createdAreaConocimiento.id;
             this.areasConocimiento$.value[index] = new StatusWrapper<ProyectoAreaConocimientoListado>(areaConocimientoListado);
+            this.areasConocimiento$.next(this.areasConocimiento$.value);
           })
         );
       })
@@ -117,7 +118,7 @@ export class ProyectoAreaConocimientoFragment extends Fragment {
   public deleteArea(wrapper: StatusWrapper<ProyectoAreaConocimientoListado>) {
     const current = this.areasConocimiento$.value;
     const index = current.findIndex(
-      (value) => value === wrapper
+      (value) => value.value === wrapper.value
     );
     if (index >= 0) {
       if (!wrapper.created) {
@@ -162,7 +163,7 @@ export class ProyectoAreaConocimientoFragment extends Fragment {
 
   private isSaveOrUpdateComplete(): boolean {
     const touched: boolean = this.areasConocimiento$.value.some((wrapper) => wrapper.touched);
-    return (this.areasConocimientoEliminadas.length > 0 || touched);
+    return !(this.areasConocimientoEliminadas.length > 0 || touched);
   }
 
   private getNiveles(proyectoAreaConocimiento: ProyectoAreaConocimientoListado):

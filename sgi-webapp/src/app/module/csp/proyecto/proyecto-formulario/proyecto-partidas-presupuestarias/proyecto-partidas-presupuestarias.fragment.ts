@@ -200,7 +200,7 @@ export class ProyectoPartidasPresupuestariasFragment extends Fragment {
   deletePartidaPresupuestaria(wrapper: StatusWrapper<IProyectoPartida>) {
     const current = this.partidasPresupuestarias$.value;
     const index = current.findIndex(
-      (value) => value.partidaPresupuestaria === wrapper
+      (value) => value.partidaPresupuestaria.value === wrapper.value
     );
     if (index >= 0) {
       if (!wrapper.created) {
@@ -265,16 +265,21 @@ export class ProyectoPartidasPresupuestariasFragment extends Fragment {
             const index = this.partidasPresupuestarias$.value
               .findIndex((currentPartidaPresupuestariaListado) => currentPartidaPresupuestariaListado.partidaPresupuestaria?.value.id
                 === partidaPresupuestariaListado.partidaPresupuestaria.value.id);
+            const partidasPresupuestariaListado = partidaPresupuestariaListado.partidaPresupuestaria.value;
+            partidasPresupuestariaListado.id = createdPartidaPresupuestaria.id;
             this.partidasPresupuestarias$.value[index] = {
-              partidaPresupuestaria: new StatusWrapper<IProyectoPartida>(createdPartidaPresupuestaria),
+              partidaPresupuestaria: new StatusWrapper<IProyectoPartida>(partidasPresupuestariaListado),
               codigo: createdPartidaPresupuestaria.codigo,
               descripcion: createdPartidaPresupuestaria.descripcion,
               tipoPartida: createdPartidaPresupuestaria.tipoPartida,
+              canEdit: true,
               help: {
                 class: HelpIconClass.WARNING,
                 tooltip: PARTIDA_PRESUPUESTARIA_NO_CONVOCATORIA_KEY
               }
             } as IPartidaPresupuestariaListado;
+            this.mapModificable.set(createdPartidaPresupuestaria.id, true);
+            this.partidasPresupuestarias$.next(this.partidasPresupuestarias$.value);
           })
         );
       })

@@ -1,7 +1,7 @@
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { MatDialogModule, MatDialogRef } from '@angular/material/dialog';
+import { MatDialogModule, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RouterTestingModule } from '@angular/router/testing';
 import TestUtils from '@core/utils/test-utils';
@@ -9,7 +9,7 @@ import { MaterialDesignModule } from '@material/material-design.module';
 import { SgiAuthModule, SgiAuthService } from '@sgi/framework/auth';
 import { LoggerTestingModule } from 'ngx-logger/testing';
 import { CspSharedModule } from '../../csp-shared.module';
-import { SearchProyectoModalComponent } from './search-proyecto.component';
+import { SearchProyectoModalComponent, SearchProyectoModalData } from './search-proyecto.component';
 
 describe('SearchProyectoModalComponent', () => {
   let component: SearchProyectoModalComponent;
@@ -19,6 +19,10 @@ describe('SearchProyectoModalComponent', () => {
     const mockDialogRef = {
       close: jasmine.createSpy('close'),
     };
+    // Mock MAT_DIALOG
+    const matDialogData = {
+      personas: []
+    } as SearchProyectoModalData;
 
     TestBed.configureTestingModule({
       imports: [
@@ -35,10 +39,8 @@ describe('SearchProyectoModalComponent', () => {
         CspSharedModule
       ],
       providers: [
-        {
-          provide: MatDialogRef,
-          useValue: mockDialogRef,
-        },
+        { provide: MatDialogRef, useValue: mockDialogRef },
+        { provide: MAT_DIALOG_DATA, useValue: matDialogData },
         SgiAuthService
       ],
       declarations: [SearchProyectoModalComponent],

@@ -16,7 +16,7 @@
   }
 */
 
-INSERT INTO csp.solicitud_proyecto_presupuesto
+INSERT INTO test.solicitud_proyecto_presupuesto
   (id, solicitud_proyecto_id, concepto_gasto_id, solicitud_proyecto_entidad_id, anualidad, importe_solicitado, observaciones) 
 VALUES 
   (1, 1, 1, null, 2020, 1000, 'observaciones-001'),

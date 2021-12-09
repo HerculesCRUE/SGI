@@ -1,6 +1,6 @@
 import { Component, Input } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
-import { BaseExportModalComponent } from '@core/component/base-export-modal/base-export-modal.component';
+import { BaseExportModalComponent } from '@core/component/base-export/base-export-modal.component';
 
 @Component({
   selector: 'sgi-export-dialog',

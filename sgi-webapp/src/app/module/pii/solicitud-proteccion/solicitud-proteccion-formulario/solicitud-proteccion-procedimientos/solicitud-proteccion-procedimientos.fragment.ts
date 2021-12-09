@@ -189,8 +189,10 @@ export class SolicitudProteccionProcedimientosFragment extends Fragment {
     if (index >= 0) {
       current.splice(index, 1);
       this.procedimientos.next(current);
-      procedimientoToDelete.setDeleted();
-      this.procedimientosToDelete.push(procedimientoToDelete);
+      if (procedimientoToDelete.value?.id) {
+        procedimientoToDelete.setDeleted();
+        this.procedimientosToDelete.push(procedimientoToDelete);
+      }
       this.checkChanges();
     }
   }

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <artifacts>
-  <artifact name="invenciones-response-converter-mediator" groupId="org.crue.hercules.sgi.esb.sgepii.resource" version="0.0.3" type="registry/resource" serverRole="EnterpriseIntegrator">
+  <artifact name="invenciones-response-converter-mediator" groupId="org.crue.hercules.sgi.esb.sgepii.resource" version="0.0.5" type="registry/resource" serverRole="EnterpriseIntegrator">
     <item>
       <file>invenciones-response-converter-mediator.js</file>
       <path>/_system/governance/scripts/sgepii</path>

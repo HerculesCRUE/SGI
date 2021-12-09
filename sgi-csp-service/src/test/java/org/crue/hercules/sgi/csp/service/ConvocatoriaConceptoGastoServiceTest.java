@@ -10,6 +10,7 @@ import org.crue.hercules.sgi.csp.exceptions.ConvocatoriaConceptoGastoNotFoundExc
 import org.crue.hercules.sgi.csp.model.ConceptoGasto;
 import org.crue.hercules.sgi.csp.model.ConvocatoriaConceptoGasto;
 import org.crue.hercules.sgi.csp.repository.ConceptoGastoRepository;
+import org.crue.hercules.sgi.csp.repository.ConfiguracionSolicitudRepository;
 import org.crue.hercules.sgi.csp.repository.ConvocatoriaConceptoGastoCodigoEcRepository;
 import org.crue.hercules.sgi.csp.repository.ConvocatoriaConceptoGastoRepository;
 import org.crue.hercules.sgi.csp.repository.ConvocatoriaRepository;
@@ -42,11 +43,13 @@ public class ConvocatoriaConceptoGastoServiceTest extends BaseServiceTest {
   private ConvocatoriaConceptoGastoService service;
   @Mock
   private ConvocatoriaConceptoGastoCodigoEcRepository convocatoriaConceptoGastoCodigoEcRepository;
+  @Mock
+  ConfiguracionSolicitudRepository configuracionSolicitudRepository;
 
   @BeforeEach
   public void setUp() throws Exception {
     service = new ConvocatoriaConceptoGastoServiceImpl(repository, convocatoriaRepository, conceptoGastoRepository,
-        convocatoriaConceptoGastoCodigoEcRepository);
+        convocatoriaConceptoGastoCodigoEcRepository, configuracionSolicitudRepository);
   }
 
   @Test

@@ -16,6 +16,7 @@ import { InvencionRepartoEquipoInventorComponent } from './invencion-reparto-for
 import { RepartoEquipoModalComponent } from './modals/reparto-equipo-modal/reparto-equipo-modal.component';
 import { CspSharedModule } from '../../csp/shared/csp-shared.module';
 import { InvencionRepartoDataResolverService } from './services/invencion-reparto-data-resolver.service';
+import { SgpSharedModule } from 'src/app/esb/sgp/shared/sgp-shared.module';
 
 
 @NgModule({
@@ -37,7 +38,8 @@ import { InvencionRepartoDataResolverService } from './services/invencion-repart
     TranslateModule,
     FormsModule,
     SgiAuthModule,
-    CspSharedModule
+    CspSharedModule,
+    SgpSharedModule
   ],
   providers: [
     InvencionRepartoDataResolverService,

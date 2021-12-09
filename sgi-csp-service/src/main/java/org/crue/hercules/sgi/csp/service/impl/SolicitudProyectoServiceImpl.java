@@ -18,6 +18,7 @@ import org.crue.hercules.sgi.csp.repository.SolicitudProyectoRepository;
 import org.crue.hercules.sgi.csp.repository.SolicitudRepository;
 import org.crue.hercules.sgi.csp.service.SolicitudProyectoService;
 import org.crue.hercules.sgi.csp.service.SolicitudService;
+import org.crue.hercules.sgi.framework.security.core.context.SgiSecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
@@ -226,13 +227,13 @@ public class SolicitudProyectoServiceImpl implements SolicitudProyectoService {
 
     Assert.notNull(solicitudProyecto.getId(),
         "El id no puede ser null para realizar la acción sobre SolicitudProyecto");
+    if (!SgiSecurityContextHolder.hasAuthorityForAnyUO("CSP-SOL-INV-ER")) {
+      Assert.notNull(solicitudProyecto.getColaborativo(),
+          "Colaborativo no puede ser null para realizar la acción sobre SolicitudProyecto");
 
-    Assert.notNull(solicitudProyecto.getColaborativo(),
-        "Colaborativo no puede ser null para realizar la acción sobre SolicitudProyecto");
-
-    Assert.notNull(solicitudProyecto.getTipoPresupuesto(),
-        "Tipo presupuesto no puede ser null para realizar la acción sobre SolicitudProyecto");
-
+      Assert.notNull(solicitudProyecto.getTipoPresupuesto(),
+          "Tipo presupuesto no puede ser null para realizar la acción sobre SolicitudProyecto");
+    }
     if (!solicitudRepository.existsById(solicitudProyecto.getId())) {
       throw new SolicitudNotFoundException(solicitudProyecto.getId());
     }

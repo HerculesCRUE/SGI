@@ -165,8 +165,8 @@ export class SectorAplicacionListadoComponent extends AbstractTablePaginationCom
 
   }
 
-  protected createObservable(): Observable<SgiRestListResult<ISectorAplicacion>> {
-    const observable$ = this.sectorAplicacionService.findTodos(this.getFindOptions());
+  protected createObservable(reset?: boolean): Observable<SgiRestListResult<ISectorAplicacion>> {
+    const observable$ = this.sectorAplicacionService.findTodos(this.getFindOptions(reset));
     return observable$;
   }
 

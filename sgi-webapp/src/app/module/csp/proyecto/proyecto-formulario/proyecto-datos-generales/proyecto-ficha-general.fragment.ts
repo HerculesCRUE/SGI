@@ -3,11 +3,12 @@ import { IConvocatoria } from '@core/models/csp/convocatoria';
 import { Estado } from '@core/models/csp/estado-proyecto';
 import { IProyecto } from '@core/models/csp/proyecto';
 import { IProyectoIVA } from '@core/models/csp/proyecto-iva';
-import { ISolicitud } from '@core/models/csp/solicitud';
 import { IProyectoProrroga, Tipo } from '@core/models/csp/proyecto-prorroga';
+import { ISolicitud } from '@core/models/csp/solicitud';
 import { ISolicitudProyecto } from '@core/models/csp/solicitud-proyecto';
 import { ITipoAmbitoGeografico } from '@core/models/csp/tipo-ambito-geografico';
 import { IModeloEjecucion, ITipoFinalidad } from '@core/models/csp/tipos-configuracion';
+import { IRelacion, TipoEntidad } from '@core/models/rel/relacion';
 import { IUnidadGestion } from '@core/models/usr/unidad-gestion';
 import { FormFragment } from '@core/services/action-service';
 import { ConvocatoriaService } from '@core/services/csp/convocatoria.service';
@@ -18,13 +19,14 @@ import { SolicitudService } from '@core/services/csp/solicitud.service';
 import { TipoAmbitoGeograficoService } from '@core/services/csp/tipo-ambito-geografico.service';
 import { TipoFinalidadService } from '@core/services/csp/tipo-finalidad.service';
 import { UnidadGestionService } from '@core/services/csp/unidad-gestion.service';
+import { RelacionService } from '@core/services/rel/relaciones/relacion.service';
 import { StatusWrapper } from '@core/utils/status-wrapper';
 import { DateValidator } from '@core/validators/date-validator';
 import { IsEntityValidator } from '@core/validators/is-entity-validador';
-import { RSQLSgiRestSort, SgiRestFindOptions, SgiRestSortDirection } from '@sgi/framework/http';
+import { RSQLSgiRestFilter, RSQLSgiRestSort, SgiRestFilterOperator, SgiRestFindOptions, SgiRestListResult, SgiRestSortDirection } from '@sgi/framework/http';
 import { NGXLogger } from 'ngx-logger';
-import { BehaviorSubject, EMPTY, merge, Observable, of, Subject, Subscription } from 'rxjs';
-import { catchError, map, switchMap } from 'rxjs/operators';
+import { BehaviorSubject, EMPTY, from, merge, Observable, of, Subject, Subscription } from 'rxjs';
+import { catchError, map, mergeMap, switchMap, toArray } from 'rxjs/operators';
 
 interface IProyectoDatosGenerales extends IProyecto {
   convocatoria: IConvocatoria;
@@ -90,6 +92,7 @@ export class ProyectoFichaGeneralFragment extends FormFragment<IProyecto> {
     public disableCoordinadorExterno: boolean,
     private hasAnyProyectoSocioCoordinador: boolean,
     public isVisor: boolean,
+    private relacionService: RelacionService
   ) {
     super(key);
     // TODO: Eliminar la declaración de activo, ya que no debería ser necesaria
@@ -240,6 +243,7 @@ export class ProyectoFichaGeneralFragment extends FormFragment<IProyecto> {
         disabled: true
       }),
       solicitudProyecto: new FormControl({ value: '', disabled: true }),
+      proyectosRelacionados: new FormControl({ value: '', disabled: true })
     },
       {
         validators: [
@@ -389,6 +393,11 @@ export class ProyectoFichaGeneralFragment extends FormFragment<IProyecto> {
     } else {
       form.disable();
     }
+
+    this.subscriptions.push(
+      this.getCodigosExternosProyectosRelacionados().subscribe(codigos => {
+        form.controls?.proyectosRelacionados.setValue(codigos.map(codigo => codigo).join(', '));
+      }));
 
     return form;
   }
@@ -779,6 +788,33 @@ export class ProyectoFichaGeneralFragment extends FormFragment<IProyecto> {
       }
       return null;
     };
+  }
+
+  private getCodigosExternosProyectosRelacionados(): Observable<string[]> {
+    const options: SgiRestFindOptions = {
+      filter: new RSQLSgiRestFilter('entidadOrigenRef', SgiRestFilterOperator.EQUALS, this.getKey().toString())
+        .or('entidadDestinoRef', SgiRestFilterOperator.EQUALS, this.getKey().toString())
+        .and('tipoEntidadOrigen', SgiRestFilterOperator.EQUALS, TipoEntidad.PROYECTO)
+        .and('tipoEntidadDestino', SgiRestFilterOperator.EQUALS, TipoEntidad.PROYECTO)
+    };
+
+    return this.relacionService.findAll(options).pipe(
+      map(response => this.getProyectosRelacionadosIds(response.items)),
+      switchMap(proyectosIds => {
+        return from(proyectosIds).pipe(
+          mergeMap(proyectoId => this.service.findById(proyectoId).pipe(
+            map(response => response.codigoExterno))),
+          toArray()
+        )
+      }));
+  }
+
+  private getProyectosRelacionadosIds(relaciones: IRelacion[]): number[] {
+    return relaciones.map(relacion => this.getEntidadRelacionadaId(relacion));
+  }
+
+  private getEntidadRelacionadaId(relacion: IRelacion): number {
+    return relacion.entidadOrigen.id === this.getKey() ? relacion.entidadDestino.id : relacion.entidadOrigen.id;
   }
 
 }

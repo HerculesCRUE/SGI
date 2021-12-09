@@ -18,18 +18,18 @@
         <td mat-cell *matCellDef="let inventor">{{inventor.value.inventor?.apellidos}}</td>
       </ng-container>
       <!-- Apellidos -->
-      <ng-container matColumnDef="numeroDocumento">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'pii.invencion-inventor.numero-documento' |
+      <ng-container matColumnDef="persona">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'pii.invencion-inventor.email' |
           translate}}
         </th>
-        <td mat-cell *matCellDef="let inventor">{{inventor.value.inventor?.numeroDocumento}}</td>
+        <td mat-cell *matCellDef="let inventor">{{inventor.value.inventor | personaEmail}}</td>
       </ng-container>
       <!-- Entidad -->
       <ng-container matColumnDef="entidad">
         <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'pii.invencion-inventor.entidad' |
           translate}}
         </th>
-        <td mat-cell *matCellDef="let inventor">{{inventor.value.inventor?.entidad?.nombre}}</td>
+        <td mat-cell *matCellDef="let inventor">{{inventor.value.inventor | personaEntidad}}</td>
       </ng-container>
       <!-- Porcentaje Participacion -->
       <ng-container matColumnDef="participacion">

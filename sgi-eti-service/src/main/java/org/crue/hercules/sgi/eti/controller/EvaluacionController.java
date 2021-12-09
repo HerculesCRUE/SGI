@@ -502,7 +502,7 @@ public class EvaluacionController {
    * @return fecha de envío a secretaría
    */
   @GetMapping("/{idEvaluacion}/primera-fecha-envio-secretaria")
-  @PreAuthorize("hasAuthorityForAnyUO('ETI-EVC-EVAL')")
+  @PreAuthorize("hasAnyAuthorityForAnyUO('ETI-EVC-EVAL', 'ETI-EVC-INV-EVALR')")
   ResponseEntity<Instant> findFirstFechaEnvioSecretariaByIdEvaluacion(@PathVariable Long idEvaluacion) {
     log.debug("findFirstFechaEnvioSecretariaByIdEvaluacion(@PathVariable Long idEvaluacion) - start");
     Instant fechaEnvioSecretaria = service.findFirstFechaEnvioSecretariaByIdEvaluacion(idEvaluacion);
@@ -517,7 +517,7 @@ public class EvaluacionController {
    * @return el documento del evaluador
    */
   @GetMapping("/{idEvaluacion}/documento-evaluador")
-  @PreAuthorize("hasAuthorityForAnyUO('ETI-EVC-EVAL')")
+  @PreAuthorize("hasAnyAuthorityForAnyUO('ETI-EVC-EVAL', 'ETI-EVC-INV-EVALR')")
   public ResponseEntity<DocumentoOutput> documentoEvaluador(@PathVariable Long idEvaluacion) {
     log.debug("documentoEvaluador(@PathVariable Long idEvaluacion) - start");
     DocumentoOutput documento = service.generarDocumentoEvaluador(idEvaluacion);

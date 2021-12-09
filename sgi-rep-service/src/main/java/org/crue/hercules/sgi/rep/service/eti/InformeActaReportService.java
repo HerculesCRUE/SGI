@@ -156,7 +156,7 @@ public class InformeActaReportService extends SgiReportService {
     return tableModel;
   }
 
-  public void getReportInformeActa(ReportInformeActa sgiReport, Long idActa) {
+  public byte[] getReportInformeActa(ReportInformeActa sgiReport, Long idActa) {
     try {
 
       final MasterReport report = getReportDefinition(sgiReport.getPath());
@@ -186,12 +186,14 @@ public class InformeActaReportService extends SgiReportService {
       SubReport subreportMemoriasEvaluadas = (SubReport) bandMemoriasEvaluadas.getElement(0);
       subreportMemoriasEvaluadas.setDataFactory(dataFactorySubReportMemoriasEvaluadas);
 
-      sgiReport.setContent(generateReportOutput(sgiReport.getOutputReportType(), report));
+      sgiReport.setContent(generateReportOutput(sgiReport.getOutputType(), report));
 
     } catch (Exception e) {
       log.error(e.getMessage(), e);
       throw new GetDataReportException();
     }
+
+    return sgiReport.getContent();
   }
 
   private DefaultTableModel getTableModelMemoriasEvaluadas(ActaDto acta) {

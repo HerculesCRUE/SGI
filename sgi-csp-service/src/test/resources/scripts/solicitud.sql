@@ -13,7 +13,7 @@
   }
 */
 
-INSERT INTO csp.solicitud 
+INSERT INTO test.solicitud 
   (id, titulo ,codigo_externo, codigo_registro_interno, estado_solicitud_id, convocatoria_id, creador_ref, solicitante_ref, observaciones, convocatoria_externa, unidad_gestion_ref, formulario_solicitud, activo)
 VALUES 
   (1, 'titulo', null, 'SGI_SLC1202011061027', null, 1, 'usr-001', 'usr-002', 'observaciones-001', null, '2', 'PROYECTO', true),

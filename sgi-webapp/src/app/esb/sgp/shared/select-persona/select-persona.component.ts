@@ -12,7 +12,8 @@ export enum TipoColectivo {
   EQUIPO_TRABAJO_ETICA = 'EQUIPO_TRABAJO_ETICA',
   SOLICITANTE_CSP = 'SOLICITANTE_CSP',
   RESPONSABLE_ECONOMICO_CSP = 'RESPONSABLE_ECONOMICO_CSP',
-  AUTOR_INVENCION = 'AUTOR_INVENCION'
+  AUTOR_INVENCION = 'AUTOR_INVENCION',
+  RESPONSABLE_PROYECTO_EXTERNO = 'RESPONSABLE_PROYECTO_EXTERNO'
 }
 
 @Component({
@@ -92,7 +93,15 @@ export class SelectPersonaComponent extends SelectDialogComponent<SearchPersonaM
       return '';
     }
 
-    return `${this.value.nombre} ${this.value.apellidos} (${this.value.numeroDocumento})`;
+    return `${this.value.nombre} ${this.value.apellidos} (${this.getEmailPrincipal(this.value)})`;
+  }
+
+  private getEmailPrincipal({ emails }: IPersona): string {
+    if (!emails) {
+      return '';
+    }
+    const emailDataPrincipal = emails.find(emailData => emailData.principal);
+    return emailDataPrincipal?.email ?? '';
   }
 
 }

@@ -25,13 +25,22 @@ export class PersonalContratadoFragment extends FacturasJustificantesFragment {
     gastoProyectoService: GastoProyectoService,
     private ejecucionEconomicaService: EjecucionEconomicaService
   ) {
-    super(key, proyectoSge, proyectosRelacionados, proyectoService, personaService, proyectoAnualidadService, proyectoAgrupacionGastoService, gastoProyectoService);
+    super(
+      key,
+      proyectoSge,
+      proyectosRelacionados,
+      proyectoService,
+      personaService,
+      proyectoAnualidadService,
+      proyectoAgrupacionGastoService,
+      gastoProyectoService
+    );
   }
 
   protected onInitialize(): void {
     super.onInitialize();
 
-    this.subscriptions.push(this.getColumns().subscribe(
+    this.subscriptions.push(this.getColumns(true).subscribe(
       (columns) => {
         this.columns = columns;
         this.displayColumns = ['anualidad', 'proyecto', 'agrupacionGasto', 'conceptoGasto', 'aplicacionPresupuestaria', 'codigoEconomico', ...columns.map(column => column.id), 'acciones'];
@@ -39,29 +48,46 @@ export class PersonalContratadoFragment extends FacturasJustificantesFragment {
     ));
   }
 
-  protected getColumns(): Observable<IColumnDefinition[]> {
-    return this.ejecucionEconomicaService.getColumnasPersonalContratado(this.proyectoSge.id)
+  protected getColumns(reducida?: boolean): Observable<IColumnDefinition[]> {
+    return this.ejecucionEconomicaService.getColumnasPersonalContratado(this.proyectoSge.id, reducida)
       .pipe(
         map(response => this.toColumnDefinition(response))
       );
   }
 
-  protected getDatosEconomicos(anualidades: string[], devengosRange?: any, contabilizacionRange?: any, pagosRange?: any): Observable<IDatoEconomico[]> {
-    return this.ejecucionEconomicaService.getPersonalContratado(this.proyectoSge.id, anualidades, pagosRange, devengosRange, contabilizacionRange);
+  protected getDatosEconomicos(
+    anualidades: string[],
+    devengosRange?: any,
+    contabilizacionRange?: any,
+    pagosRange?: any,
+    reducida?: boolean): Observable<IDatoEconomico[]> {
+    return this.ejecucionEconomicaService.getPersonalContratado(
+      this.proyectoSge.id, anualidades, reducida, pagosRange, devengosRange, contabilizacionRange);
   }
 
   public clearRangos(): void {
     this.formGroupFechas.reset();
   }
 
-  protected sortRows(rows: RowTreeDesglose<IDesglose>[]): void {
+  protected sortRowsTree(rows: RowTreeDesglose<IDesglose>[]): void {
     rows.sort((a, b) => {
-      return this.compareAnualidad(b, a)
-        || this.compareProyectoTitulo(a, b)
-        || this.compareAgrupacionGastoNombre(a, b)
-        || this.compareConceptoGastoNombre(a, b)
-        || this.comparePartidaPresupuestaria(a, b)
-        || this.compareCodigoEconomico(a, b);
+      return this.compareAnualidadRowTree(b, a)
+        || this.compareProyectoTituloRowTree(a, b)
+        || this.compareAgrupacionGastoNombreRowTree(a, b)
+        || this.compareConceptoGastoNombreRowTree(a, b)
+        || this.comparePartidaPresupuestariaRowTree(a, b)
+        || this.compareCodigoEconomicoRowTree(a, b);
+    });
+  }
+
+  protected sortRowsDesglose(rows: IDesglose[]): void {
+    rows.sort((a, b) => {
+      return this.compareAnualidadDesglose(b, a)
+        || this.compareProyectoTituloDesglose(a, b)
+        || this.compareAgrupacionGastoNombreDesglose(a, b)
+        || this.compareConceptoGastoNombreDesglose(a, b)
+        || this.comparePartidaPresupuestariaDesglose(a, b)
+        || this.compareCodigoEconomicoDesglose(a, b);
     });
   }
 

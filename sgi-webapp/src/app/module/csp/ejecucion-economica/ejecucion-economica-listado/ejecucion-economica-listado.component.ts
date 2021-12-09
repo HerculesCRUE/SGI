@@ -91,8 +91,8 @@ export class EjecucionEconomicaListadoComponent extends AbstractTablePaginationC
     this.loadColectivos();
   }
 
-  protected createObservable(): Observable<SgiRestListResult<IProyectoProyectoSge>> {
-    const observable$ = this.proyectoProyectoSgeService.findAll(this.getFindOptions()).pipe(
+  protected createObservable(reset?: boolean): Observable<SgiRestListResult<IProyectoProyectoSge>> {
+    const observable$ = this.proyectoProyectoSgeService.findAll(this.getFindOptions(reset)).pipe(
       switchMap(response => {
         const requestsProyecto: Observable<IProyectoProyectoSge>[] = [];
         response.items.forEach(ejecucionEconomicaListado => {

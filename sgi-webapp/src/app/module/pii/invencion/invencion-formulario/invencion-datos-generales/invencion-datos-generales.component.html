@@ -278,6 +278,18 @@
 
     </section>
 
+    <!-- Palabras clave -->
+    <div [fxLayout]="fxLayoutProperties.layout" [fxLayoutAlign]="fxLayoutProperties.layoutAlign">
+      <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
+        [fxFlexOrder]="fxFlexProperties.order">
+        <mat-form-field fxFill>
+          <mat-label>{{'pii.invencion.palabras-clave' | translate}}</mat-label>
+          <sgi-palabra-clave formControlName="palabrasClave" id="palabrasClave"
+            placeholder="{{'pii.invencion.palabras-clave' | translate}}"></sgi-palabra-clave>
+        </mat-form-field>
+      </div>
+    </div>
+
     <!-- Comentarios -->
     <div [fxLayout]="fxLayoutProperties.layout" [fxLayoutAlign]="fxLayoutProperties.layoutAlign">
       <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"

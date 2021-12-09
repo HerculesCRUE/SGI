@@ -166,8 +166,8 @@ export class MemoriaListadoInvComponent extends AbstractTablePaginationComponent
     ).subscribe((value) => this.textoCrear = value);
   }
 
-  protected createObservable(): Observable<SgiRestListResult<IMemoriaPeticionEvaluacion>> {
-    const observable$ = this.memoriaService.findAllMemoriasEvaluacionByPersonaRef(this.getFindOptions());
+  protected createObservable(reset?: boolean): Observable<SgiRestListResult<IMemoriaPeticionEvaluacion>> {
+    const observable$ = this.memoriaService.findAllMemoriasEvaluacionByPersonaRef(this.getFindOptions(reset));
     return observable$;
   }
 

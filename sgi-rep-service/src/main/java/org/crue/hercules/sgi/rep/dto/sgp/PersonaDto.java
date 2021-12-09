@@ -1,9 +1,9 @@
 package org.crue.hercules.sgi.rep.dto.sgp;
 
 import java.io.Serializable;
+import java.util.List;
 
 import org.crue.hercules.sgi.rep.dto.BaseRestDto;
-import org.crue.hercules.sgi.rep.dto.eti.DatosContactoDto;
 import org.crue.hercules.sgi.rep.dto.sgemp.EmpresaDto;
 
 import lombok.AllArgsConstructor;
@@ -28,6 +28,7 @@ public class PersonaDto extends BaseRestDto {
   private VinculacionDto vinculacion;
   private DatosAcademicosDto datosAcademicos;
   private EmpresaDto entidad;
+  private List<EmailDto> emails;
 
   @Data
   @EqualsAndHashCode(callSuper = false)

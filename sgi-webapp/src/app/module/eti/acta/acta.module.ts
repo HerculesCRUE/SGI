@@ -5,6 +5,7 @@ import { MaterialDesignModule } from '@material/material-design.module';
 import { TranslateModule } from '@ngx-translate/core';
 import { SgiAuthModule } from '@sgi/framework/auth';
 import { SharedModule } from '@shared/shared.module';
+import { SgpSharedModule } from 'src/app/esb/sgp/shared/sgp-shared.module';
 import { ActaCrearComponent } from './acta-crear/acta-crear.component';
 import { ActaEditarComponent } from './acta-editar/acta-editar.component';
 import {
@@ -39,7 +40,8 @@ import { ActaResolver } from './acta.resolver';
     MaterialDesignModule,
     SgiAuthModule,
     FormsModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    SgpSharedModule
   ],
   providers: [
     ActaResolver

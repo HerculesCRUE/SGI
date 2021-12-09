@@ -197,11 +197,12 @@ export class ProyectoEntidadesFinanciadorasFragment extends Fragment {
     return from(created).pipe(
       mergeMap((wrapped) => {
         return this.proyectoEntidadFinanciadoraService.create(wrapped.value).pipe(
-          map((update: IEntidadFinanciadora) => {
+          map((createdproyectoEntidadFinanciadora: IEntidadFinanciadora) => {
             const index = target$.value.findIndex((current) => current === wrapped);
-            update.hasPresupuesto = wrapped.value.hasPresupuesto;
-            update.empresa = wrapped.value.empresa;
-            target$.value[index] = new StatusWrapper<IEntidadFinanciadora>(update);
+            const proyectoEntidadFinanciadoraListado = wrapped.value;
+            proyectoEntidadFinanciadoraListado.id = createdproyectoEntidadFinanciadora.id;
+            target$.value[index] = new StatusWrapper<IEntidadFinanciadora>(proyectoEntidadFinanciadoraListado);
+            target$.next(target$.value);
           })
         );
       }));
@@ -210,6 +211,6 @@ export class ProyectoEntidadesFinanciadorasFragment extends Fragment {
   private isSaveOrUpdateComplete(): boolean {
     const touched = this.entidadesPropias$.value.some((wrapper) => wrapper.touched) ||
       this.entidadesAjenas$.value.some((wrapper) => wrapper.touched);
-    return (this.entidadesEliminadas.length > 0 || touched);
+    return !(this.entidadesEliminadas.length > 0 || touched);
   }
 }

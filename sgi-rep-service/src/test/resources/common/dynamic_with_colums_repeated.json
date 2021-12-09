@@ -1,0 +1,254 @@
+{
+  "customWidth": 630,
+  "columnMinWidth": 10,
+  "fieldOrientation": "HORIZONTAL",
+  "outputType": "PDF",
+  "title": "Listado de proyectos",
+  "filters": [
+    {
+      "name": "Fecha desde",
+      "filter": "12/10/2021"
+    },
+    {
+      "name": "Fecha hasta",
+      "filter": "22/10/2021"
+    }
+  ],
+  "groupBy": {
+    "name": "Título",
+    "visible": true,
+    "visibleInReport": true
+  },
+  "columns": [
+    {
+      "name": "Id",
+      "type": "NUMBER",
+      "format": ""
+    },
+    {
+      "name": "Convocatoria",
+      "type": "NUMBER",
+      "format": ""
+    },
+    {
+      "name": "Solicitud",
+      "type": "SUBREPORT",
+      "format": ""
+    },
+    {
+      "name": "Estado",
+      "type": "STRING",
+      "format": ""
+    },
+    {
+      "name": "Título",
+      "type": "STRING",
+      "format": ""
+    },
+    {
+      "name": "Acrónimo",
+      "type": "STRING",
+      "format": ""
+    },
+    {
+      "name": "Cod. externo",
+      "type": "STRING",
+      "format": ""
+    },
+    {
+      "name": "Fecha inicio",
+      "type": "DATE",
+      "format": "dd/MM/yy"
+    },
+    {
+      "name": "Fecha fin",
+      "type": "DATE",
+      "format": ""
+    },
+    {
+      "name": "Fecha fin definitiva",
+      "type": "DATE",
+      "format": ""
+    },
+    {
+      "name": "Investigador1",
+      "type": "STRING",
+      "format": null
+    },
+    {
+      "name": "Investigador2",
+      "type": "STRING",
+      "format": null
+    },
+    {
+      "name": "Investigador3",
+      "type": "STRING",
+      "format": null
+    },
+    {
+      "name": "Investigador4",
+      "type": "STRING",
+      "format": null
+    },
+    {
+      "name": "Investigador5",
+      "type": "STRING",
+      "format": null
+    },
+    {
+      "name": "Entidad convocante1",
+      "type": "STRING",
+      "format": null
+    },
+    {
+      "name": "Cif entidad convocante1",
+      "type": "STRING",
+      "format": null
+    },
+    {
+      "name": "Entidad convocante2",
+      "type": "STRING",
+      "format": null
+    },
+    {
+      "name": "Cif entidad convocante2",
+      "type": "STRING",
+      "format": null
+    },
+    {
+      "name": "Entidad convocante3",
+      "type": "STRING",
+      "format": null
+    },
+    {
+      "name": "Cif entidad convocante3",
+      "type": "STRING",
+      "format": null
+    },
+    {
+      "name": "Entidad financiadora1",
+      "type": "STRING",
+      "format": null
+    },
+    {
+      "name": "Cif entidad financiadora1",
+      "type": "STRING",
+      "format": null
+    },
+    {
+      "name": "Entidad financiadora2",
+      "type": "STRING",
+      "format": null
+    },
+    {
+      "name": "Cif entidad financiadora2",
+      "type": "STRING",
+      "format": null
+    },
+    {
+      "name": "Entidad financiadora3",
+      "type": "STRING",
+      "format": null
+    },
+    {
+      "name": "Cif entidad financiadora3",
+      "type": "STRING",
+      "format": null
+    }
+  ],
+  "rows": [
+    {
+      "elements": [
+        1,
+        2,
+        null,
+        "BORRADOR",
+        "Proyecto 1 CGF/OPE-1",
+        "PCGFOPE1",
+        "PCGFOPE1",
+        "2018-09-16T08:00:00Z",
+        "2021-09-16T08:00:00Z",
+        "2022-09-16T08:00:00Z",
+        "ANGEL LUIS ABAD NAVARRO",
+        "EDUARDO ABADIA FLORES",
+        "MARIA ANGELES ABAD MATEO",
+        "MARTA MUÑOZ BAQUERO",
+        "ALMUDENA DIAZ RODRIGUEZ",
+        "EUROPEAN COMMISION",
+        "G0021150H",
+        "SIEMENS REDES CORPORATIVAS",
+        "A78154788",
+        "VALENCIA VISION,S.L.",
+        "B46443990",
+        "EUROPEAN COMMISION",
+        "G0021150H",
+        "FUNDACION UNIVERSIDAD EMPRESA REGION DE MURCIA",
+        "G30164099",
+        "LIBRERIA UNIVERSITARIA TECNICO EMPRESARIAL, S.L.",
+        "B11325651"
+      ]
+    },
+    {
+      "elements": [
+        2,
+        3,
+        null,
+        "BORRADOR",
+        "Título proyecto CGF/OPE2",
+        "PCGFOPE2",
+        "PCGFOPE2",
+        "2018-09-16T08:00:00Z",
+        "2021-09-16T08:00:00Z",
+        "2022-09-16T08:00:00Z",
+        "LEILA ABAD BARBERA",
+        "MARIA ASUNCION MORTE GOMEZ",
+        "LEILA ABAD BARBERA",
+        "LEILA ABAD BARBERA",
+        "MARIA ABAD HURTADO",
+        "AGENCIA ESTATAL DE INVESTIGACION",
+        "Q2802338J",
+        "EMPRESA NACIONAL ADARO S.A.",
+        "A28003580",
+        "EL CORTE INGLES S.A. (MURCIA)",
+        "A28017895",
+        "EUROPEAN COMMISION",
+        "G0021150H",
+        "CIFEA LORCA",
+        "S3011001I",
+        "BANCO DE ANDALUCIA, S.A.",
+        "A11600624"
+      ]
+    },
+    {
+      "elements": [
+        3,
+        4,
+        null,
+        "BORRADOR",
+        "Proyecto conv CGF/OPE-3",
+        "PCOPE-3",
+        "PCOPE-3",
+        "2018-09-16T08:00:00Z",
+        "2021-09-16T08:00:00Z",
+        "2022-09-16T08:00:00Z",
+        "LUIS ALBERTO MEJIA TROYA",
+        "OSCAR NAVARRO TORRES",
+        "LORENA ALBALADEJO MARICO",
+        "ELENA BIBIANA ABELLAN LOPEZ",
+        "JUANA MARIA ABELLANEDA CUADRADO",
+        "EUROPEAN COMMISION",
+        "G0021150H",
+        "MINIST. DE ECONOMIA Y HACIENDA",
+        "F2831001I",
+        "I.N.E.M. FISCALIDAD EMPRESA",
+        "Q3019006J",
+        "UNIVERSIDAD DE MURCIA",
+        "Q3018001B",
+        "AGENCIA ESTATAL DE INVESTIGACION",
+        "Q2802338J",
+        "AGENCIA ESTATAL DE LA ADMINISTRACION TRIBUTARIA.DELEGACION ESPECIAL DE MURCIA",
+        "Q2826000H"
+      ]
+    }
+  ]
+}

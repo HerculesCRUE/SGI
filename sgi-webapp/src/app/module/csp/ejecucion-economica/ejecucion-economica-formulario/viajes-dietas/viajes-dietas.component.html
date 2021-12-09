@@ -120,6 +120,12 @@
           [class.expanded-row]="!!row.parent && !!!row.parent?.expanded">
         </mat-row>
       </mat-table>
+      <div class="export-footer">
+        <button mat-button matTooltip="{{'btn.export' | translate}}" (click)="openExportModal()"
+          [disabled]="!dataSourceDesglose.data.length">
+          <mat-icon color="primary">insert_chart_outlined</mat-icon>
+        </button>
+      </div>
     </div>
   </div>
 </sgi-fragment>

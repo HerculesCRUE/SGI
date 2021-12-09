@@ -21,12 +21,13 @@ import org.mockito.BDDMockito;
 import org.mockito.Mock;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.test.context.support.WithMockUser;
 
 /**
  * SolicitudProyectoServiceTest
  */
 @ExtendWith(MockitoExtension.class)
-public class SolicitudProyectoServiceTest {
+public class SolicitudProyectoServiceTest extends BaseServiceTest {
 
   @Mock
   private SolicitudProyectoRepository repository;
@@ -52,6 +53,7 @@ public class SolicitudProyectoServiceTest {
   }
 
   @Test
+  @WithMockUser(authorities = { "CSP-SOL-C" })
   public void create__ReturnsSolicitudProyecto() {
     // given: Un nuevo SolicitudProyecto
     SolicitudProyecto solicitudProyecto = generarSolicitudProyecto(1L);
@@ -89,6 +91,7 @@ public class SolicitudProyectoServiceTest {
   }
 
   @Test
+  @WithMockUser(authorities = { "CSP-SOL-C" })
   public void create_WithoutColaborativo_ThrowsIllegalArgumentException() {
     // given: Un nuevo SolicitudProyecto que no tiene colaborativo
     SolicitudProyecto solicitudProyecto = generarSolicitudProyecto(1L);
@@ -102,6 +105,7 @@ public class SolicitudProyectoServiceTest {
   }
 
   @Test
+  @WithMockUser(authorities = { "CSP-SOL-C" })
   public void create_WithNoExistingSolicitud_ThrowsSolicitudNotFoundException() {
     // given: Un nuevo SolicitudProyecto que tiene una solicitud que no existe
     SolicitudProyecto solicitudProyecto = generarSolicitudProyecto(1L);
@@ -115,6 +119,7 @@ public class SolicitudProyectoServiceTest {
   }
 
   @Test
+  @WithMockUser(authorities = { "CSP-SOL-E" })
   public void update_ReturnsSolicitudProyecto() {
     // given: Un nuevo SolicitudProyecto con el titulo actualizado
     SolicitudProyecto solicitudProyecto = generarSolicitudProyecto(3L);
@@ -139,6 +144,7 @@ public class SolicitudProyectoServiceTest {
   }
 
   @Test
+  @WithMockUser(authorities = { "CSP-SOL-E" })
   public void update_WithSolicitudNotExist_ThrowsSolicitudNotFoundException() {
     // given: Un SolicitudProyecto actualizado con un programa que no existe
     SolicitudProyecto solicitudProyecto = generarSolicitudProyecto(1L);
@@ -152,6 +158,7 @@ public class SolicitudProyectoServiceTest {
   }
 
   @Test
+  @WithMockUser(authorities = { "CSP-SOL-E" })
   public void update_WithIdNotExist_ThrowsSolicitudProyectoNotFoundException() {
     // given: Un SolicitudProyecto actualizado con un id que no existe
     SolicitudProyecto solicitudProyecto = generarSolicitudProyecto(1L);
@@ -169,6 +176,7 @@ public class SolicitudProyectoServiceTest {
   }
 
   @Test
+  @WithMockUser(authorities = { "CSP-SOL-E" })
   public void update_WithoutColaborativo_ThrowsIllegalArgumentException() {
     // given: Un nuevo SolicitudProyecto que no tiene colaborativo
     SolicitudProyecto solicitudProyecto = generarSolicitudProyecto(1L);

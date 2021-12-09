@@ -65,12 +65,12 @@
       </ng-container>
 
       <!-- Numero documento -->
-      <ng-container matColumnDef="numeroDocumento">
+      <ng-container matColumnDef="persona">
         <th mat-header-cell *matHeaderCellDef>
-          {{'eti.evaluador.numero-documento' | translate}}
+          {{'eti.evaluador.email' | translate}}
         </th>
         <td mat-cell *matCellDef="let evaluador">
-          {{evaluador.persona?.numeroDocumento}}</td>
+          {{evaluador.persona | personaEmail}}</td>
       </ng-container>
 
       <!-- Comite Column -->

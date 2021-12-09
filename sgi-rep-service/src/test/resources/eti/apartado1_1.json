@@ -1,0 +1,48 @@
+[
+  {
+    "key": "ap1_1",
+    "wrappers": [
+      "expansion-panel"
+    ],
+    "templateOptions": {
+      "expressionLock": "formState.memoria.tipoMemoria.id === 3",
+      "label": "1.1 Valor social del proyecto"
+    },
+    "fieldGroup": [
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "Para completa esta secci\u00f3n ir a <b>'Datos generales'<\/b>."
+      },
+      {
+        "template": "<p>A continuaci\u00f3n se muestra la finalidad principal del proyecto o campo en el que se espera un aumento del conocimiento o un beneficio social \u00faltimo que justifique su realizaci\u00f3n.<\/p>"
+      },
+      {
+        "key": "valorSocial",
+        "type": "tipo-valor-social",
+        "templateOptions": {
+          "label": "Valor social",
+          "placeholder": "",
+          "required": true,
+          "disabled": true,
+          "expressionModelValue": "formState.memoria.peticionEvaluacion.valorSocial"
+        }
+      },
+      {
+        "key": "otroValorSocial",
+        "type": "textarea",
+        "hideExpression": "formState.memoria.peticionEvaluacion.valorSocial !== 'OTRA_FINALIDAD'",
+        "templateOptions": {
+          "placeholder": "Especificar",
+          "label": "Especificar",
+          "disabled": true,
+          "autosize": true,
+          "autosizeMinRows": "1",
+          "autosizeMaxRows": "10",
+          "expressionModelValue": "formState.memoria.peticionEvaluacion.otroValorSocial"
+        }
+      }
+    ]
+  }
+]

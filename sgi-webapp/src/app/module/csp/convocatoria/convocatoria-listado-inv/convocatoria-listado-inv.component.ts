@@ -128,10 +128,10 @@ export class ConvocatoriaListadoInvComponent extends AbstractTablePaginationComp
     ).subscribe((value) => this.msgParamAreaTematicaEntity = { entity: value });
   }
 
-  protected createObservable(): Observable<SgiRestListResult<IConvocatoriaListado>> {
+  protected createObservable(reset?: boolean): Observable<SgiRestListResult<IConvocatoriaListado>> {
     const observable$ = this.getDatosPersona().pipe(
       switchMap(() => {
-        return this.convocatoriaService.findAllInvestigador(this.getFindOptions()).pipe(
+        return this.convocatoriaService.findAllInvestigador(this.getFindOptions(reset)).pipe(
           map(result => {
             const convocatorias = result.items.map((convocatoria) => {
               return {

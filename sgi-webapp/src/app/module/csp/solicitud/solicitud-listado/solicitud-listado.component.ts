@@ -260,9 +260,9 @@ export class SolicitudListadoComponent extends AbstractTablePaginationComponent<
     ).subscribe((value) => this.textoErrorReactivar = value);
   }
 
-  protected createObservable(): Observable<SgiRestListResult<ISolicitudListado>> {
+  protected createObservable(reset?: boolean): Observable<SgiRestListResult<ISolicitudListado>> {
 
-    const observable$ = this.solicitudService.findAllTodos(this.getFindOptions()).pipe(
+    const observable$ = this.solicitudService.findAllTodos(this.getFindOptions(reset)).pipe(
       map(response => {
         return response as SgiRestListResult<ISolicitudListado>;
       }),

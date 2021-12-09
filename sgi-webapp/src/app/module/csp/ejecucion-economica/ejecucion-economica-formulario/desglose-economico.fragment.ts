@@ -1,3 +1,5 @@
+import { S } from '@angular/cdk/keycodes';
+import { expressionType } from '@angular/compiler/src/output/output_ast';
 import { FormControl } from '@angular/forms';
 import { HttpProblem } from '@core/errors/http-problem';
 import { IProyecto } from '@core/models/csp/proyecto';
@@ -81,6 +83,11 @@ export interface IProyectoRelacion {
   proyectoSge: IProyectoSge;
   proyecto: IProyecto;
   ip: IPersona;
+}
+
+export interface IDesgloseEconomicoExportData {
+  data: IDatoEconomico[];
+  columns: IColumnDefinition[];
 }
 
 export abstract class DesgloseEconomicoFragment<T extends IDatoEconomico> extends Fragment {
@@ -167,7 +174,7 @@ export abstract class DesgloseEconomicoFragment<T extends IDatoEconomico> extend
     );
   }
 
-  protected abstract getColumns(): Observable<IColumnDefinition[]>;
+  protected abstract getColumns(reducida?: boolean): Observable<IColumnDefinition[]>;
 
   protected toColumnDefinition(columnas: IColumna[]): IColumnDefinition[] {
     return columnas.map(columna => {
@@ -206,6 +213,32 @@ export abstract class DesgloseEconomicoFragment<T extends IDatoEconomico> extend
     return of(void 0);
   }
 
+  public loadDataExport(): Observable<IDesgloseEconomicoExportData> {
+    const anualidades = this.aniosControl.value ?? [];
+    const exportData: IDesgloseEconomicoExportData = {
+      data: [],
+      columns: []
+    };
+    return of(exportData).pipe(
+      switchMap((exportDataResult) => {
+        return this.getDatosEconomicos(anualidades).pipe(
+          map(data => {
+            exportDataResult.data = data;
+            return exportDataResult;
+          })
+        );
+      }),
+      switchMap((exportDataResult) => {
+        return this.getColumns(false).pipe(
+          map((columns) => {
+            exportDataResult.columns = columns;
+            return exportDataResult;
+          })
+        );
+      })
+    );
+  }
+
   public loadDesglose(): void {
     const anualidades = this.aniosControl.value ?? [];
     this.getDatosEconomicos(anualidades)
@@ -238,7 +271,9 @@ export abstract class DesgloseEconomicoFragment<T extends IDatoEconomico> extend
   protected abstract buildRows(datosEconomicos: IDatoEconomico[]): Observable<RowTreeDesglose<T>[]>;
 
   protected processColumnsValues(
-    columns: { [name: string]: string | number | boolean; },
+    columns: {
+      [name: string]: string | number | boolean;
+    },
     columnDefinitions: IColumnDefinition[],
     clear: boolean
   ): { [name: string]: string | number | boolean; } {

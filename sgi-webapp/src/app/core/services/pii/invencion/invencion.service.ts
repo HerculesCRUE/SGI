@@ -7,6 +7,7 @@ import { IInvencionDocumento } from '@core/models/pii/invencion-documento';
 import { IInvencionGasto } from '@core/models/pii/invencion-gasto';
 import { IInvencionIngreso } from '@core/models/pii/invencion-ingreso';
 import { IInvencionInventor } from '@core/models/pii/invencion-inventor';
+import { IInvencionPalabraClave } from '@core/models/pii/invencion-palabra-clave';
 import { IInvencionSectorAplicacion } from '@core/models/pii/invencion-sector-aplicacion';
 import { IPeriodoTitularidad } from '@core/models/pii/periodo-titularidad';
 import { IReparto } from '@core/models/pii/reparto';
@@ -42,6 +43,9 @@ import { IInvencionGastoResponse } from './invencion-gasto/invencion-gasto-respo
 import { INVENCION_GASTO_RESPONSE_CONVERTER } from './invencion-gasto/invencion-gasto-response.converter';
 import { IInvencionIngresoResponse } from './invencion-ingreso/invencion-ingreso-response';
 import { INVENCION_INGRESO_RESPONSE_CONVERTER } from './invencion-ingreso/invencion-ingreso-response.converter';
+import { INVENCION_PALABRACLAVE_REQUEST_CONVERTER } from './invencion-palabra-clave/invencion-palabra-clave-request.converter';
+import { IInvencionPalabraClaveResponse } from './invencion-palabra-clave/invencion-palabra-clave-response';
+import { INVENCION_PALABRACLAVE_RESPONSE_CONVERTER } from './invencion-palabra-clave/invencion-palabra-clave-response.converter';
 import { IInvencionRequest } from './invencion-request';
 import { INVENCION_REQUEST_CONVERTER } from './invencion-request.converter';
 import { IInvencionResponse } from './invencion-response';
@@ -329,5 +333,30 @@ export class InvencionService extends _InvencionServiceMixinBase {
       `${this.endpointUrl}/${id}/repartos`,
       options,
       REPARTO_RESPONSE_CONVERTER);
+  }
+
+  /**
+   * Recupera las Palabras Clave asociadas a la Invencion con el id indicado.
+   *
+   * @param id Id de la Invencion
+   */
+  findPalabrasClave(id: number, options?: SgiRestFindOptions): Observable<SgiRestListResult<IInvencionPalabraClave>> {
+    return this.find<IInvencionPalabraClaveResponse, IInvencionPalabraClave>(
+      `${this.endpointUrl}/${id}/palabrasclave`,
+      options,
+      INVENCION_PALABRACLAVE_RESPONSE_CONVERTER);
+  }
+
+  /**
+   * Actualiza las Palabras Clave  asociadas a la Invencion con el id indicado
+   * @param id Identificador del Invencion
+   * @param palabrasClave Palabras Clave a actualizar
+   */
+  updatePalabrasClave(id: number, palabrasClave: IInvencionPalabraClave[]): Observable<IInvencionPalabraClave[]> {
+    return this.http.patch<IInvencionPalabraClaveResponse[]>(`${this.endpointUrl}/${id}/palabrasclave`,
+      INVENCION_PALABRACLAVE_REQUEST_CONVERTER.fromTargetArray(palabrasClave)
+    ).pipe(
+      map((response => INVENCION_PALABRACLAVE_RESPONSE_CONVERTER.toTargetArray(response)))
+    );
   }
 }

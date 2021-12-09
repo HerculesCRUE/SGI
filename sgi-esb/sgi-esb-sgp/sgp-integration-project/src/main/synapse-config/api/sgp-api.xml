@@ -59,42 +59,6 @@
 
 
   <!-- datos-academicos -->
-  <resource methods="POST" url-mapping="/datos-academicos">
-    <inSequence>
-      <call-template target="sgi-auth-sequence-template">
-        <with-param name="requiredAuthorities" value=""/>
-      </call-template>
-      <sequence key="sgp-add-x-api-key-sequence"/>
-      <send>
-        <endpoint key="sgp-endpoint"/>
-      </send>
-    </inSequence>
-    <outSequence>
-      <respond/>
-    </outSequence>
-    <faultSequence>
-      <sequence key="error-handling-sequence"/>
-    </faultSequence>
-  </resource>
-
-  <resource methods="GET" url-mapping="/datos-academicos/formly/create">
-    <inSequence>
-      <call-template target="sgi-auth-sequence-template">
-        <with-param name="requiredAuthorities" value=""/>
-      </call-template>
-      <sequence key="sgp-add-x-api-key-sequence"/>
-      <send>
-        <endpoint key="sgp-endpoint"/>
-      </send>
-    </inSequence>
-    <outSequence>
-      <respond/>
-    </outSequence>
-    <faultSequence>
-      <sequence key="error-handling-sequence"/>
-    </faultSequence>
-  </resource>
-
   <resource methods="GET" uri-template="/datos-academicos/persona/{id}">
     <inSequence>
       <call-template target="sgi-auth-sequence-template">
@@ -115,42 +79,6 @@
 
   
   <!-- datos-contacto -->
-  <resource methods="POST" url-mapping="/datos-contacto">
-    <inSequence>
-      <call-template target="sgi-auth-sequence-template">
-        <with-param name="requiredAuthorities" value=""/>
-      </call-template>
-      <sequence key="sgp-add-x-api-key-sequence"/>
-      <send>
-        <endpoint key="sgp-endpoint"/>
-      </send>
-    </inSequence>
-    <outSequence>
-      <respond/>
-    </outSequence>
-    <faultSequence>
-      <sequence key="error-handling-sequence"/>
-    </faultSequence>
-  </resource>
-
-  <resource methods="GET" url-mapping="/datos-contacto/formly/create">
-    <inSequence>
-      <call-template target="sgi-auth-sequence-template">
-        <with-param name="requiredAuthorities" value=""/>
-      </call-template>
-      <sequence key="sgp-add-x-api-key-sequence"/>
-      <send>
-        <endpoint key="sgp-endpoint"/>
-      </send>
-    </inSequence>
-    <outSequence>
-      <respond/>
-    </outSequence>
-    <faultSequence>
-      <sequence key="error-handling-sequence"/>
-    </faultSequence>
-  </resource>
-
   <resource methods="GET" uri-template="/datos-contacto/persona/{id}">
     <inSequence>
       <call-template target="sgi-auth-sequence-template">
@@ -172,42 +100,6 @@
 
 
   <!-- datos-personales -->
-  <resource methods="POST" url-mapping="/datos-personales">
-    <inSequence>
-      <call-template target="sgi-auth-sequence-template">
-        <with-param name="requiredAuthorities" value=""/>
-      </call-template>
-      <sequence key="sgp-add-x-api-key-sequence"/>
-      <send>
-        <endpoint key="sgp-endpoint"/>
-      </send>
-    </inSequence>
-    <outSequence>
-      <respond/>
-    </outSequence>
-    <faultSequence>
-      <sequence key="error-handling-sequence"/>
-    </faultSequence>
-  </resource>
-
-  <resource methods="GET" url-mapping="/datos-personales/formly/create">
-    <inSequence>
-      <call-template target="sgi-auth-sequence-template">
-        <with-param name="requiredAuthorities" value=""/>
-      </call-template>
-      <sequence key="sgp-add-x-api-key-sequence"/>
-      <send>
-        <endpoint key="sgp-endpoint"/>
-      </send>
-    </inSequence>
-    <outSequence>
-      <respond/>
-    </outSequence>
-    <faultSequence>
-      <sequence key="error-handling-sequence"/>
-    </faultSequence>
-  </resource>
-
   <resource methods="GET" uri-template="/datos-personales/persona/{id}">
     <inSequence>
       <call-template target="sgi-auth-sequence-template">
@@ -273,6 +165,7 @@
       </call-template>
       <sequence key="sgp-add-x-api-key-sequence"/>
       <property name="path" expression="get-property('axis2','REST_URL_POSTFIX')" type="STRING"/>
+      <property name="hasRsqlParams" value="true" type="STRING"/>
       <script key="gov:scripts/sgp/replace-tipo-colectivo-colectivos-ids-mediator.js" language="js"/>
       <property name="REST_URL_POSTFIX" scope="axis2" type="STRING" expression="get-property('pathWithColectivosIds')" />
       <send>
@@ -287,7 +180,7 @@
     </faultSequence>
   </resource>
 
-  <resource methods="POST" url-mapping="/personas">
+  <resource methods="GET" uri-template="/personas/{id}">
     <inSequence>
       <call-template target="sgi-auth-sequence-template">
         <with-param name="requiredAuthorities" value=""/>
@@ -305,7 +198,25 @@
     </faultSequence>
   </resource>
 
-  <resource methods="GET" uri-template="/personas/{id}">
+  <resource methods="POST" url-mapping="/personas/formly">
+    <inSequence>
+      <call-template target="sgi-auth-sequence-template">
+        <with-param name="requiredAuthorities" value=""/>
+      </call-template>
+      <sequence key="sgp-add-x-api-key-sequence"/>
+      <send>
+        <endpoint key="sgp-endpoint"/>
+      </send>
+    </inSequence>
+    <outSequence>
+      <respond/>
+    </outSequence>
+    <faultSequence>
+      <sequence key="error-handling-sequence"/>
+    </faultSequence>
+  </resource>
+
+  <resource methods="PUT" uri-template="/personas/formly/{id}">
     <inSequence>
       <call-template target="sgi-auth-sequence-template">
         <with-param name="requiredAuthorities" value=""/>
@@ -898,7 +809,10 @@
         },
         "fieldGroup": [
           {
-            "template": ""
+            "wrappers": [
+              "subtitle-div"
+            ],
+            "template": "<p>Datos en entidad propia/PDI</p>"
           },
           {
             "fieldGroupClassName": "row-formly",
@@ -991,7 +905,10 @@
             }
           },
           {
-            "template": ""
+            "wrappers": [
+              "subtitle-div"
+            ],
+            "template": "<p>Datos en entidad propia/PAS</p>"
           },
           {
             "fieldGroupClassName": "row-formly",
@@ -1537,7 +1454,10 @@
         },
         "fieldGroup": [
           {
-            "template": ""
+            "wrappers": [
+              "subtitle-div"
+            ],
+            "template": "<p>Datos en entidad propia/PDI</p>"
           },
           {
             "fieldGroupClassName": "row-formly",
@@ -1630,7 +1550,10 @@
             }
           },
           {
-            "template": ""
+            "wrappers": [
+              "subtitle-div"
+            ],
+            "template": "<p>Datos en entidad propia/PAS</p>"
           },
           {
             "fieldGroupClassName": "row-formly",
@@ -2006,7 +1929,49 @@
     </faultSequence>
   </resource>
 
-    <resource methods="GET" uri-mapping="/personas/modificadas-ids">
+  <resource methods="GET" uri-mapping="/personas/modificadas-ids">
+    <inSequence>
+      <call-template target="sgi-auth-sequence-template">
+        <with-param name="requiredAuthorities" value=""/>
+      </call-template>
+      <sequence key="sgp-add-x-api-key-sequence"/>
+      <send>
+        <endpoint key="sgp-endpoint"/>
+      </send>
+    </inSequence>
+    <outSequence>
+      <respond/>
+    </outSequence>
+    <faultSequence>
+      <sequence key="error-handling-sequence"/>
+    </faultSequence>
+  </resource>
+
+  <!-- personas autocomplete -->
+  <resource methods="GET" url-mapping="/personasFast">
+    <inSequence>
+      <call-template target="sgi-auth-sequence-template">
+        <with-param name="requiredAuthorities" value=""/>
+      </call-template>
+      <sequence key="sgp-add-x-api-key-sequence"/>
+      <property name="path" expression="get-property('axis2','REST_URL_POSTFIX')" type="STRING"/>
+      <property name="hasRsqlParams" value="false" type="STRING"/>
+      <script key="gov:scripts/sgp/replace-tipo-colectivo-colectivos-ids-mediator.js" language="js"/>
+      <property name="REST_URL_POSTFIX" scope="axis2" type="STRING" expression="get-property('pathWithColectivosIds')" />
+      <send>
+        <endpoint key="sgp-endpoint"/>
+      </send>
+    </inSequence>
+    <outSequence>
+      <respond/>
+    </outSequence>
+    <faultSequence>
+      <sequence key="error-handling-sequence"/>
+    </faultSequence>
+  </resource>
+
+  <!-- sexenios -->
+  <resource methods="GET" uri-template="/sexenios/persona/{id}">
     <inSequence>
       <call-template target="sgi-auth-sequence-template">
         <with-param name="requiredAuthorities" value=""/>
@@ -2065,42 +2030,6 @@
 
 
   <!-- vinculaciones -->
-  <resource methods="POST" url-mapping="/vinculaciones">
-    <inSequence>
-      <call-template target="sgi-auth-sequence-template">
-        <with-param name="requiredAuthorities" value=""/>
-      </call-template>
-      <sequence key="sgp-add-x-api-key-sequence"/>
-      <send>
-        <endpoint key="sgp-endpoint"/>
-      </send>
-    </inSequence>
-    <outSequence>
-      <respond/>
-    </outSequence>
-    <faultSequence>
-      <sequence key="error-handling-sequence"/>
-    </faultSequence>
-  </resource>
-
-  <resource methods="GET" url-mapping="/vinculaciones/formly/create">
-    <inSequence>
-      <call-template target="sgi-auth-sequence-template">
-        <with-param name="requiredAuthorities" value=""/>
-      </call-template>
-      <sequence key="sgp-add-x-api-key-sequence"/>
-      <send>
-        <endpoint key="sgp-endpoint"/>
-      </send>
-    </inSequence>
-    <outSequence>
-      <respond/>
-    </outSequence>
-    <faultSequence>
-      <sequence key="error-handling-sequence"/>
-    </faultSequence>
-  </resource>
-
   <resource methods="GET" uri-template="/vinculaciones/persona/{id}">
     <inSequence>
       <call-template target="sgi-auth-sequence-template">

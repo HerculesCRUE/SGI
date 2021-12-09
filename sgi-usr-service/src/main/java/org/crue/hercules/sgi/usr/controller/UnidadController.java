@@ -66,7 +66,7 @@ public class UnidadController {
    * @param paging pageable.
    */
   @GetMapping("/restringidos")
-  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-CON-V', 'CSP-CON-C','CSP-CON-E', 'CSP-SOL-C', 'CSP-SOL-E', 'CSP-SOL-V', 'CSP-PRO-V', 'CSP-PRO-C', 'CSP-PRO-E', 'CSP-PRO-B', 'CSP-PRO-R')")
+  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-CON-V', 'CSP-CON-C','CSP-CON-E','CSP-CON-INV-V', 'CSP-SOL-C', 'CSP-SOL-E', 'CSP-SOL-V', 'CSP-PRO-V', 'CSP-PRO-C', 'CSP-PRO-E', 'CSP-PRO-B', 'CSP-PRO-R')")
   public ResponseEntity<Page<Unidad>> findAllTodosRestringidos(@RequestParam(name = "q", required = false) String query,
       @RequestPageable(sort = "s") Pageable paging) {
     log.debug("findAllTodosRestringidos(String query, Pageable paging, Authentication atuhentication) - start");

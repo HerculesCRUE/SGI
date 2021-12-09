@@ -100,8 +100,8 @@ export class GestionSeguimientoListadoComponent extends AbstractTablePaginationC
     this.loadConvocatoriasReunion();
   }
 
-  protected createObservable(): Observable<SgiRestListResult<IEvaluacion>> {
-    const observable$ = this.evaluacionesService.findSeguimientoMemoria(this.getFindOptions());
+  protected createObservable(reset?: boolean): Observable<SgiRestListResult<IEvaluacion>> {
+    const observable$ = this.evaluacionesService.findSeguimientoMemoria(this.getFindOptions(reset));
     return observable$;
   }
 

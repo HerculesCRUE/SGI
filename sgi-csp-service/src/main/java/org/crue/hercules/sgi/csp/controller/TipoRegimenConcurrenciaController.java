@@ -45,7 +45,7 @@ public class TipoRegimenConcurrenciaController {
    *         filtradas.
    */
   @GetMapping()
-  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-CON-C', 'CSP-CON-V', 'CSP-CON-E')")
+  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-CON-C', 'CSP-CON-INV-V', 'CSP-CON-V', 'CSP-CON-E')")
   ResponseEntity<Page<TipoRegimenConcurrencia>> findAll(@RequestParam(name = "q", required = false) String query,
       @RequestPageable(sort = "s") Pageable paging) {
     log.debug("findAll(String query,Pageable paging) - start");

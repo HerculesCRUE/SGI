@@ -11,14 +11,10 @@ import org.crue.hercules.sgi.csp.repository.specification.RequisitoEquipoCategor
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.data.jpa.domain.Specification;
 
 @DataJpaTest
-public class RequisitoEquipoCategoriaProfesionalRepositoryTest {
-  @Autowired
-  private TestEntityManager entityManager;
-
+public class RequisitoEquipoCategoriaProfesionalRepositoryTest extends BaseRepositoryTest {
   @Autowired
   private RequisitoEquipoCategoriaProfesionalRepository repository;
 

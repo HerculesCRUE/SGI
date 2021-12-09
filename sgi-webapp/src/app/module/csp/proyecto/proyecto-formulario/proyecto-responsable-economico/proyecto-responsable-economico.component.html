@@ -5,12 +5,12 @@
       matSortDisableClear>
 
       <!-- nº identificacion Column -->
-      <ng-container matColumnDef="numIdentificacion">
+      <ng-container matColumnDef="persona">
         <th mat-header-cell *matHeaderCellDef mat-sort-header>
-          {{'csp.proyecto-responsable-economico.numero-identificacion' | translate}}
+          {{'csp.proyecto-responsable-economico.email' | translate}}
         </th>
         <td mat-cell *matCellDef="let wrapper">
-          {{wrapper.value.persona.numeroDocumento}}
+          {{wrapper.value.persona | personaEmail}}
         </td>
       </ng-container>
 

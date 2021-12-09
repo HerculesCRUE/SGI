@@ -76,8 +76,8 @@ export class SeguimientoListadoComponent extends AbstractTablePaginationComponen
     this.formGroup.controls.fechaEvaluacionFin.setValue(null);
   }
 
-  protected createObservable(): Observable<SgiRestListResult<IEvaluacion>> {
-    const observable$ = this.evaluadorService.getSeguimientos(this.getFindOptions());
+  protected createObservable(reset?: boolean): Observable<SgiRestListResult<IEvaluacion>> {
+    const observable$ = this.evaluadorService.getSeguimientos(this.getFindOptions(reset));
     return observable$;
   }
 

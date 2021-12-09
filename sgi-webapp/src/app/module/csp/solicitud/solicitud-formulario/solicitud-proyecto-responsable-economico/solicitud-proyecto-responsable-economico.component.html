@@ -4,12 +4,12 @@
     <table mat-table [dataSource]="dataSource" matSort matSortActive="id" matSortDirection="asc" matSortDisableClear>
 
       <!-- Nº identificacion Column -->
-      <ng-container matColumnDef="numeroDocumento">
+      <ng-container matColumnDef="persona">
         <th mat-header-cell *matHeaderCellDef mat-sort-header>
-          {{'csp.solicitud-proyecto-responsable-economico.numero-identificacion' | translate}}
+          {{'csp.solicitud-proyecto-responsable-economico.email' | translate}}
         </th>
         <td mat-cell *matCellDef="let wrapper">
-          {{wrapper.value.persona.numeroDocumento}}
+          {{wrapper.value.persona | personaEmail}}
         </td>
       </ng-container>
 

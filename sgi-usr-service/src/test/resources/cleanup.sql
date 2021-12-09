@@ -1,3 +1,3 @@
 -- vacia la bd
--- DELETE FROM usr.tabla
-DELETE FROM usr.unidad;
+-- DELETE FROM test.tabla
+DELETE FROM test.unidad;

@@ -90,8 +90,8 @@ export class EvaluacionEvaluadorListadoComponent extends AbstractTablePagination
     this.formGroup.controls.fechaEvaluacionFin.setValue(null);
   }
 
-  protected createObservable(): Observable<SgiRestListResult<IEvaluacion>> {
-    return this.evaluadorService.getEvaluaciones(this.getFindOptions());
+  protected createObservable(reset?: boolean): Observable<SgiRestListResult<IEvaluacion>> {
+    return this.evaluadorService.getEvaluaciones(this.getFindOptions(reset));
   }
 
   protected initColumns() {

@@ -13,5 +13,5 @@ scripts = {
       // @formatter:on
   }
 */
-INSERT INTO csp.proyecto_entidad_convocante (id, entidad_ref, proyecto_id, programa_id, programa_convocatoria_id) 
+INSERT INTO test.proyecto_entidad_convocante (id, entidad_ref, proyecto_id, programa_id, programa_convocatoria_id) 
 VALUES (1, 'ent-001', 1, 8, 4);

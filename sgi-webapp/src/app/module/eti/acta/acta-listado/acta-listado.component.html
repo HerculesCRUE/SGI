@@ -25,22 +25,22 @@
       <div class="col">
         <mat-form-field color="primary">
           <mat-label>{{'eti.acta.fecha-evaluacion.inicio'| translate}}</mat-label>
-          <input matInput [ngxMatDatetimePicker]="pickerFechaEvaluacionInicio" formControlName="fechaEvaluacionInicio">
+          <input matInput [matDatepicker]="pickerFechaEvaluacionInicio" formControlName="fechaEvaluacionInicio">
           <mat-datepicker-toggle class="fechaIcon" matSuffix [for]="pickerFechaEvaluacionInicio">
           </mat-datepicker-toggle>
-          <ngx-mat-datetime-picker #pickerFechaEvaluacionInicio showSeconds="true" [defaultTime]="[0,0,0]">
-          </ngx-mat-datetime-picker>
+          <mat-datepicker #pickerFechaEvaluacionInicio>
+          </mat-datepicker>
         </mat-form-field>
       </div>
 
       <!-- Fechas fin evaluacion-->
       <div class="col">
-        <mat-form-field color="primary">
+        <mat-form-field color="primary" sgiEndDate>
           <mat-label>{{'eti.acta.fecha-evaluacion.fin'| translate}}</mat-label>
-          <input matInput [ngxMatDatetimePicker]="pickerFechaEvaluacionFin" formControlName="fechaEvaluacionFin">
+          <input matInput [matDatepicker]="pickerFechaEvaluacionFin" formControlName="fechaEvaluacionFin">
           <mat-datepicker-toggle class="fechaIcon" matSuffix [for]="pickerFechaEvaluacionFin"></mat-datepicker-toggle>
-          <ngx-mat-datetime-picker #pickerFechaEvaluacionFin showSeconds="true" [defaultTime]="[23,59,59]">
-          </ngx-mat-datetime-picker>
+          <mat-datepicker #pickerFechaEvaluacionFin>
+          </mat-datepicker>
         </mat-form-field>
       </div>
 

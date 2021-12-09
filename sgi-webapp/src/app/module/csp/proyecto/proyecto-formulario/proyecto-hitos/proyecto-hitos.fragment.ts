@@ -98,9 +98,12 @@ export class ProyectoHitosFragment extends Fragment {
     return from(createdHitos).pipe(
       mergeMap((wrappedHitos) => {
         return this.proyectoHitoService.create(wrappedHitos.value).pipe(
-          map((updatedHitos) => {
+          map((createdHito) => {
             const index = this.hitos$.value.findIndex((currenthitos) => currenthitos === wrappedHitos);
-            this.hitos$.value[index] = new StatusWrapper<IProyectoHito>(updatedHitos);
+            const hitoListado = wrappedHitos.value;
+            hitoListado.id = createdHito.id;
+            this.hitos$.value[index] = new StatusWrapper<IProyectoHito>(hitoListado);
+            this.hitos$.next(this.hitos$.value);
           })
         );
       })
@@ -126,7 +129,7 @@ export class ProyectoHitosFragment extends Fragment {
 
   private isSaveOrUpdateComplete(): boolean {
     const touched: boolean = this.hitos$.value.some((wrapper) => wrapper.touched);
-    return (this.hitosEliminados.length > 0 || touched);
+    return !(this.hitosEliminados.length > 0 || touched);
   }
 
 }

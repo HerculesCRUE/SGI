@@ -3,12 +3,12 @@
     <table mat-table [dataSource]="datasource" matSort matSortActive="id" matSortDirection="asc" matSortDisableClear>
 
       <!-- Persona identificador -->
-      <ng-container matColumnDef="identificador">
+      <ng-container matColumnDef="persona">
         <th mat-header-cell *matHeaderCellDef mat-sort-header>
-          {{'eti.evaluador.conflicto-interes.identificador' | translate}}
+          {{'eti.evaluador.conflicto-interes.email' | translate}}
         </th>
         <td mat-cell *matCellDef="let wrapper">
-          {{wrapper.value.personaConflicto?.numeroDocumento}}
+          {{wrapper.value.personaConflicto | personaEmail}}
         </td>
       </ng-container>
 

@@ -35,6 +35,7 @@ import { SolicitudProyectoPresupuestoEntidadesComponent } from './solicitud-form
 import { SolicitudProyectoPresupuestoGlobalComponent } from './solicitud-formulario/solicitud-proyecto-presupuesto-global/solicitud-proyecto-presupuesto-global.component';
 import { SolicitudProyectoResponsableEconomicoComponent } from './solicitud-formulario/solicitud-proyecto-responsable-economico/solicitud-proyecto-responsable-economico.component';
 import { SolicitudProyectoSocioComponent } from './solicitud-formulario/solicitud-proyecto-socio/solicitud-proyecto-socio.component';
+import { SolicitudListadoService } from './solicitud-listado.service';
 import { SolicitudListadoComponent } from './solicitud-listado/solicitud-listado.component';
 import { SolicitudRoutingModule } from './solicitud-routing.module';
 
@@ -82,7 +83,8 @@ import { SolicitudRoutingModule } from './solicitud-routing.module';
   ],
   providers: [
     SolicitudDataResolver,
-    SolicitudCrearGuard
+    SolicitudCrearGuard,
+    SolicitudListadoService
   ]
 })
 export class SolicitudModule { }

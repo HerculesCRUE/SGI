@@ -2,7 +2,7 @@ package org.crue.hercules.sgi.rep.integration.eti;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-import org.crue.hercules.sgi.rep.dto.OutputReportType;
+import org.crue.hercules.sgi.rep.dto.OutputType;
 import org.crue.hercules.sgi.rep.dto.SgiReportDto;
 import org.crue.hercules.sgi.rep.integration.BaseIT;
 import org.crue.hercules.sgi.rep.service.eti.InformeEvaluacionReportService;
@@ -27,7 +27,7 @@ class InformeEvaluacionReportServiceIT extends BaseIT {
     SgiReportDto report = SgiReportDto.builder()
       .path(reportPath)
       .name(reportName)
-      .outputReportType(OutputReportType.PDF)
+      .outputType(OutputType.PDF)
       .build();
 
     // @formatter:on

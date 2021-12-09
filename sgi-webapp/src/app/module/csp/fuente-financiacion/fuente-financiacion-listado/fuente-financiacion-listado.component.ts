@@ -229,8 +229,8 @@ export class FuenteFinanciacionListadoComponent extends AbstractTablePaginationC
 
   }
 
-  protected createObservable(): Observable<SgiRestListResult<IFuenteFinanciacion>> {
-    const observable$ = this.fuenteFinanciacionService.findTodos(this.getFindOptions());
+  protected createObservable(reset?: boolean): Observable<SgiRestListResult<IFuenteFinanciacion>> {
+    const observable$ = this.fuenteFinanciacionService.findTodos(this.getFindOptions(reset));
     return observable$;
   }
 

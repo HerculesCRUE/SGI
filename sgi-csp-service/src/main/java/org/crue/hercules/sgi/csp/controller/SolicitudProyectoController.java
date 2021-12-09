@@ -65,7 +65,7 @@ public class SolicitudProyectoController {
    * @return Nuevo {@link SolicitudProyecto} creado.
    */
   @PostMapping
-  @PreAuthorize("hasAuthorityForAnyUO('CSP-SOL-E')")
+  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-SOL-E', 'CSP-SOL-INV-ER')")
   public ResponseEntity<SolicitudProyecto> create(@Valid @RequestBody SolicitudProyecto solicitudProyecto) {
     log.debug("create(SolicitudProyecto solicitudProyecto) - start");
     SolicitudProyecto returnValue = service.create(solicitudProyecto);

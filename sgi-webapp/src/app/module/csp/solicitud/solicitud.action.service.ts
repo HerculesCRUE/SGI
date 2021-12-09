@@ -269,7 +269,7 @@ export class SolicitudActionService extends ActionService {
         this.addFragment(this.FRAGMENT.HITOS, this.hitos);
 
 
-        if (this.data.solicitud.formularioSolicitud === FormularioSolicitud.PROYECTO) {
+        if (this.isFormularioSolicitudProyecto()) {
           this.addFragment(this.FRAGMENT.PROYECTO_DATOS, this.proyectoDatos);
           this.addFragment(this.FRAGMENT.EQUIPO_PROYECTO, this.equipoProyecto);
           this.addFragment(this.FRAGMENT.SOCIOS, this.socio);
@@ -280,9 +280,7 @@ export class SolicitudActionService extends ActionService {
           this.addFragment(this.FRAGMENT.PROYECTO_AREA_CONOCIMIENTO, this.areaConocimiento);
           this.addFragment(this.FRAGMENT.RESPONSABLE_ECONOMICO, this.responsableEconomico);
           this.addFragment(this.FRAGMENT.AUTOEVALUACION, this.autoevaluacion);
-        }
 
-        if (this.data.solicitud.formularioSolicitud === FormularioSolicitud.PROYECTO) {
           this.subscriptions.push(
             solicitudService.hasConvocatoriaSGI(this.data.solicitud.id).subscribe((hasConvocatoriaSgi) => {
               if (hasConvocatoriaSgi) {
@@ -314,20 +312,6 @@ export class SolicitudActionService extends ActionService {
             const rowTableData = value.length > 0;
             this.proyectoDatos.disableProyectoCoordinadoIfAnySocioExists(rowTableData);
           }));
-
-          this.subscriptions.push(this.proyectoDatos.status$.subscribe(
-            (status) => {
-              if (this.proyectoDatos.isInitialized() && !Boolean(this.proyectoDatos.getValue()?.id)) {
-                if (status.changes && status.errors) {
-                  this.datosProyectoComplete$.next(false);
-                }
-                else if (status.changes && !status.errors) {
-                  this.datosProyectoComplete$.next(true);
-                  this.equipoProyecto.initialize();
-                }
-              }
-            }
-          ));
 
           this.subscriptions.push(this.socio.proyectoSocios$.subscribe(
             (proyectoSocios) => {
@@ -365,21 +349,48 @@ export class SolicitudActionService extends ActionService {
       this.datosGenerales.initialize();
 
       // Inicializamos los datos del proyecto
-      if (this.data?.solicitud.formularioSolicitud === FormularioSolicitud.PROYECTO) {
+      if (this.isFormularioSolicitudProyecto()) {
         this.proyectoDatos.initialize();
         this.datosProyectoComplete$.next(true);
-      }
-      this.subscriptions.push(this.proyectoDatos.initialized$.subscribe(
-        (value) => {
-          if (value) {
-            this.autoevaluacion.solicitudProyectoData$.next({
-              checklistRef: this.proyectoDatos.getValue().checklistRef,
-              readonly: this.readonly || !!this.proyectoDatos.getValue().peticionEvaluacionRef
-            });
+
+        this.subscriptions.push(this.proyectoDatos.status$.subscribe(
+          (status) => {
+            if (this.proyectoDatos.isInitialized() && !Boolean(this.proyectoDatos.getValue()?.id)) {
+              if (status.changes && status.errors) {
+                this.datosProyectoComplete$.next(false);
+              }
+              else if (status.changes && !status.errors) {
+                this.datosProyectoComplete$.next(true);
+                this.equipoProyecto.initialize();
+              }
+            }
           }
-        }
-      ));
+        ));
+
+        this.subscriptions.push(this.proyectoDatos.initialized$.subscribe(
+          (value) => {
+            if (value) {
+              this.autoevaluacion.solicitudProyectoData$.next({
+                checklistRef: this.proyectoDatos.getValue().checklistRef,
+                readonly: this.readonly || !!this.proyectoDatos.getValue().peticionEvaluacionRef
+              });
+            }
+          }
+        ));
+
+        this.subscriptions.push(this.datosGenerales.initialized$.subscribe(
+          (value) => {
+            if (value) {
+              if (!this.proyectoDatos.isEdit() && this.isInvestigador) {
+                this.equipoProyecto.initialize();
+              }
+            }
+          }
+        ));
+
+      }
     }
+
     this.hasAnySolicitudProyectoSocioWithRolCoordinador$.next(this.data?.hasAnySolicitudProyectoSocioWithRolCoordinador);
   }
 
@@ -443,6 +454,21 @@ export class SolicitudActionService extends ActionService {
           switchMap(() => this.datosGenerales.saveOrUpdate().pipe(tap(() => this.datosGenerales.refreshInitialState(true))))
         );
       }
+
+      // Si se modifica alguna pestaña desde el perfil investigador y no se ha creado la ficha general se fuerza que se cree
+      // aunque no tenga cambios
+      if (this.isInvestigador
+        && this.isFormularioSolicitudProyecto()
+        && !this.proyectoDatos.isEdit()
+        && (this.areaConocimiento.hasChanges()
+          || this.clasificaciones.hasChanges()
+          || this.equipoProyecto.hasChanges()
+          || this.autoevaluacion.hasChanges())) {
+        cascade = cascade.pipe(
+          switchMap(() => this.proyectoDatos.saveOrUpdate().pipe(tap(() => this.proyectoDatos.refreshInitialState(true))))
+        );
+      }
+
       if (this.autoevaluacion.hasChanges() && !this.autoevaluacion.isEdit()) {
         if (this.proyectoDatos.hasChanges()) {
           cascade = cascade.pipe(
@@ -578,6 +604,10 @@ export class SolicitudActionService extends ActionService {
     };
 
     this.addActionLink(actionLinkOptions);
+  }
+
+  private isFormularioSolicitudProyecto(): boolean {
+    return this.data.solicitud.formularioSolicitud === FormularioSolicitud.PROYECTO;
   }
 
 }

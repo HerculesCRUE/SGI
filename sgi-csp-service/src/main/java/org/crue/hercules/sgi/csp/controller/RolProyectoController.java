@@ -54,7 +54,7 @@ public class RolProyectoController {
    */
   @GetMapping("/{id}")
   @PreAuthorize("hasAuthorityForAnyUO('AUTH')")
-  RolProyecto findById(@PathVariable Long id) {
+  public RolProyecto findById(@PathVariable Long id) {
     log.debug("RolProyecto findById(Long id) - start");
     RolProyecto returnValue = service.findById(id);
     log.debug("RolProyecto findById(Long id) - end");
@@ -67,8 +67,8 @@ public class RolProyectoController {
    * @return RolProyecto {@link RolProyecto} correspondiente al orden "PRINCIPAL"
    */
   @GetMapping("/principal")
-  @PreAuthorize("hasAuthorityForAnyUO('CSP-SOL-E')")
-  RolProyecto findPrincipal() {
+  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-SOL-E', 'CSP-SOL-INV-ER')")
+  public RolProyecto findPrincipal() {
     log.debug("RolProyecto findById() - start");
     RolProyecto returnValue = service.findPrincipal();
     log.debug("RolProyecto findById() - end");
@@ -85,7 +85,7 @@ public class RolProyectoController {
    */
   @GetMapping()
   @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-SOL-E', 'CSP-SOL-V', 'CSP-PRO-C', 'CSP-PRO-E', 'CSP-PRO-V', 'CSP-PRO-B', 'CSP-PRO-R','CSP-SOL-INV-ER')")
-  ResponseEntity<Page<RolProyecto>> findAll(@RequestParam(name = "q", required = false) String query,
+  public ResponseEntity<Page<RolProyecto>> findAll(@RequestParam(name = "q", required = false) String query,
       @RequestPageable(sort = "s") Pageable paging) {
     log.debug("findAll(String query,Pageable paging) - start");
     Page<RolProyecto> page = service.findAll(query, paging);
@@ -105,8 +105,8 @@ public class RolProyectoController {
    * @return el listado de entidades {@link RolProyectoColectivo}.
    */
   @GetMapping("/{id}/colectivos")
-  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-PRO-C', 'CSP-PRO-V', 'CSP-PRO-E', 'CSP-PRO-B', 'CSP-PRO-R')")
-  ResponseEntity<List<String>> findAllColectivos(@PathVariable Long id) {
+  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-PRO-C', 'CSP-PRO-V', 'CSP-PRO-E', 'CSP-PRO-B', 'CSP-PRO-R', 'CSP-SOL-INV-ER')")
+  public ResponseEntity<List<String>> findAllColectivos(@PathVariable Long id) {
     log.debug("findAllColectivos(Long id) - start");
     List<String> listadoColectivos = serviceRolProyectoColectivo.findAllColectivos(id);
 

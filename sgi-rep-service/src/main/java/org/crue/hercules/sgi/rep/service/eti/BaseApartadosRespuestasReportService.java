@@ -19,7 +19,7 @@ import org.apache.commons.lang3.RandomStringUtils;
 import org.crue.hercules.sgi.rep.config.SgiConfigProperties;
 import org.crue.hercules.sgi.rep.dto.SgiDynamicReportDto;
 import org.crue.hercules.sgi.rep.dto.SgiDynamicReportDto.SgiColumReportDto;
-import org.crue.hercules.sgi.rep.dto.SgiDynamicReportDto.TypeColumnReportEnum;
+import org.crue.hercules.sgi.rep.dto.SgiDynamicReportDto.ColumnType;
 import org.crue.hercules.sgi.rep.dto.eti.ApartadoDto;
 import org.crue.hercules.sgi.rep.dto.eti.ApartadoOutput;
 import org.crue.hercules.sgi.rep.dto.eti.BloqueDto;
@@ -384,8 +384,7 @@ public abstract class BaseApartadosRespuestasReportService extends SgiDynamicRep
 
     for (int columnIndex = 0; columnIndex < tableModel.getColumnCount(); columnIndex++) {
       String name = tableModel.getColumnName(columnIndex);
-      sgiReportDto.getColumns()
-          .add(SgiColumReportDto.builder().type(TypeColumnReportEnum.STRING).name(name).title(name).build());
+      sgiReportDto.getColumns().add(SgiColumReportDto.builder().type(ColumnType.STRING).name(name).title(name).build());
     }
 
     SubReport subReportTableCrud = getSubreportTableCrud(sgiReportDto);

@@ -1,5 +1,5 @@
-import { FieldOrientationType } from './field-orientation.enum';
-import { OutputReportType } from './output-report.enum';
+import { FieldOrientation } from './field-orientation.enum';
+import { OutputReport as OutputReport } from './output-report.enum';
 import { ISgiColumnReport } from './sgi-column-report';
 import { ISgiFilterReport } from './sgi-filter-report';
 import { ISgiGroupReport } from './sgi-group.report';
@@ -22,12 +22,12 @@ export interface ISgiDynamicReport {
   /**
    *  Disposición de los campos en el informe: horizontal o vertical
    */
-  fieldOrientationType?: FieldOrientationType;
+  fieldOrientation?: FieldOrientation;
 
   /**
    * Tipo de exportación: PDF, EXCEL, HTML, etc
    */
-  outputReportType: OutputReportType;
+  outputType: OutputReport;
 
   /**
    * Título del informe

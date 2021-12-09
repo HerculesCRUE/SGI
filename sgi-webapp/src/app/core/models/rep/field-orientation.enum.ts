@@ -1,4 +1,4 @@
-export enum FieldOrientationType {
+export enum FieldOrientation {
   HORIZONTAL = 'HORIZONTAL',
   VERTICAL = 'VERTICAL'
 }

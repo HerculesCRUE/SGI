@@ -1,0 +1,27 @@
+{
+  "ap3_6_1": {
+    "animalesExperimentacionTable": [
+      {
+        "especie": "2",
+        "nombreCientifico": "sdf",
+        "cepa": "sdf",
+        "sexo": "2",
+        "edadPeso": "sdf",
+        "procedencia": "2"
+      }
+    ]
+  },
+  "ap3_6_2": {
+    "animalesModificadosGeneticamenteRadio": "no"
+  },
+  "ap3_6_3": {
+    "animalesProtegidosRadio": "no"
+  },
+  "ap3_6_4": {
+    "totalAnimalesUtilizar": "345"
+  },
+  "ap3_6_5": {
+    "fechaUsoAnimalesDesde": "2021-09-01T00:00:00.000+02:00",
+    "fechaUsoAnimalesHasta": "2021-09-23T00:00:00.000+02:00"
+  }
+}

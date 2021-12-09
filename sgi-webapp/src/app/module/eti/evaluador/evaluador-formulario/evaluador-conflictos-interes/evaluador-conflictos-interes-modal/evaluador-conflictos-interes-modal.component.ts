@@ -11,7 +11,6 @@ import { SnackBarService } from '@core/services/snack-bar.service';
 import { FormGroupUtil } from '@core/utils/form-group-util';
 import { TranslateService } from '@ngx-translate/core';
 import { TipoColectivo } from 'src/app/esb/sgp/shared/select-persona/select-persona.component';
-import { Subscription } from 'rxjs';
 
 const MSG_ERROR_FORM = marker('error.form-group');
 const CONFLICTO_INTERES_KEY = marker('eti.evaluador.conflicto-interes');
@@ -28,8 +27,6 @@ export class EvaluadorConflictosInteresModalComponent implements OnInit, OnDestr
   FormGroupUtil = FormGroupUtil;
   formGroup: FormGroup;
   fxLayoutProperties: FxLayoutProperties;
-
-  personaChangeSuscripcion: Subscription;
 
   nuevaPersonaConflicto: IPersona;
   msgParamConflictoInteresEntity = {};
@@ -70,13 +67,7 @@ export class EvaluadorConflictosInteresModalComponent implements OnInit, OnDestr
   private initFormGroup() {
     this.formGroup = new FormGroup({
       persona: new FormControl(null, [Validators.required]),
-      identificador: new FormControl({ value: '', disabled: true }, [Validators.required]),
     });
-
-    this.personaChangeSuscripcion =
-      this.formGroup.controls.persona.valueChanges.subscribe((value) => {
-        this.formGroup.controls.identificador.setValue(`${value.numeroDocumento}`);
-      });
   }
 
   /**
@@ -124,7 +115,6 @@ export class EvaluadorConflictosInteresModalComponent implements OnInit, OnDestr
   }
 
   ngOnDestroy(): void {
-    this.personaChangeSuscripcion?.unsubscribe();
   }
 
 }

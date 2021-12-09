@@ -15,6 +15,7 @@ import org.crue.hercules.sgi.csp.model.TipoAmbitoGeografico;
 import org.crue.hercules.sgi.csp.model.TipoEnlace;
 import org.crue.hercules.sgi.csp.model.TipoFinalidad;
 import org.crue.hercules.sgi.csp.model.TipoRegimenConcurrencia;
+import org.crue.hercules.sgi.csp.repository.ConfiguracionSolicitudRepository;
 import org.crue.hercules.sgi.csp.repository.ConvocatoriaEnlaceRepository;
 import org.crue.hercules.sgi.csp.repository.ConvocatoriaRepository;
 import org.crue.hercules.sgi.csp.repository.ModeloTipoEnlaceRepository;
@@ -37,12 +38,15 @@ public class ConvocatoriaEnlaceServiceTest extends BaseServiceTest {
   private ConvocatoriaRepository convocatoriaRepository;
   @Mock
   private ModeloTipoEnlaceRepository modeloTipoEnlaceRepository;
+  @Mock
+  ConfiguracionSolicitudRepository configuracionSolicitudRepository;
 
   private ConvocatoriaEnlaceService service;
 
   @BeforeEach
   public void setUp() throws Exception {
-    service = new ConvocatoriaEnlaceServiceImpl(repository, convocatoriaRepository, modeloTipoEnlaceRepository);
+    service = new ConvocatoriaEnlaceServiceImpl(repository, convocatoriaRepository, modeloTipoEnlaceRepository,
+        configuracionSolicitudRepository);
   }
 
   @Test

@@ -92,8 +92,9 @@ public abstract class BaseEvaluadorEvaluacionReportService extends BaseApartados
    * 
    * @param reportOutput SgiReport
    * @param idEvaluacion Id de la evaluación
+   * @return byte[] Report
    */
-  public void getReportInformEvaludorEvaluacion(SgiReportDto reportOutput, Long idEvaluacion) {
+  public byte[] getReportInformeEvaluadorEvaluacion(SgiReportDto reportOutput, Long idEvaluacion) {
 
     InformeEvaluacionEvaluadorReportOutput informeEvaluacionEvaluadorReportOutput = this
         .getInformeEvaluadorEvaluacion(idEvaluacion);
@@ -103,6 +104,8 @@ public abstract class BaseEvaluadorEvaluacionReportService extends BaseApartados
     getBloque0(hmTableModel, informeEvaluacionEvaluadorReportOutput.getEvaluacion());
 
     getReportInformeEvaluadorEvaluacionIntern(reportOutput, hmTableModel);
+
+    return reportOutput.getContent();
   }
 
   /**
@@ -147,21 +150,21 @@ public abstract class BaseEvaluadorEvaluacionReportService extends BaseApartados
     String elementType = queryKeys[2];
 
     switch (actionType) {
-    case BLOQUE_0:
-      SubReport subReport = (SubReport) report.getReportHeader().getElement(0);
-      subReport.setQuery(queryKey);
-      TableDataFactory dataFactorySubReport = new TableDataFactory();
-      dataFactorySubReport.addTable(queryKey, tableModel);
-      subReport.setDataFactory(dataFactorySubReport);
-      break;
-    case SUBREPORT_TYPE:
-      String elementKey = queryKeys[3];
-      if (elementType.equals(SgiFormlyService.TABLE_CRUD_TYPE)) {
-        generateSubreportTableCrud(report, queryKey, tableModel, elementKey);
-      }
-      break;
-    default:
-      dataFactory.addTable(queryKey, tableModel);
+      case BLOQUE_0:
+        SubReport subReport = (SubReport) report.getReportHeader().getElement(0);
+        subReport.setQuery(queryKey);
+        TableDataFactory dataFactorySubReport = new TableDataFactory();
+        dataFactorySubReport.addTable(queryKey, tableModel);
+        subReport.setDataFactory(dataFactorySubReport);
+        break;
+      case SUBREPORT_TYPE:
+        String elementKey = queryKeys[3];
+        if (elementType.equals(SgiFormlyService.TABLE_CRUD_TYPE)) {
+          generateSubreportTableCrud(report, queryKey, tableModel, elementKey);
+        }
+        break;
+      default:
+        dataFactory.addTable(queryKey, tableModel);
     }
   }
 

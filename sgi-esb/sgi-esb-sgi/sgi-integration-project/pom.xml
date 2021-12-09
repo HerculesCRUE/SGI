@@ -4,10 +4,10 @@
   <parent>
     <groupId>org.crue.hercules.sgi.esb.sgi</groupId>
     <artifactId>sgi-esb-sgi</artifactId>
-    <version>0.0.3</version>
+    <version>0.0.5</version>
   </parent>
   <artifactId>sgi-integration-project</artifactId>
-  <version>0.0.3</version>
+  <version>0.0.5</version>
   <packaging>pom</packaging>
   <name>sgi-integration-project</name>
   <description>Proyecto para la integración del SGI con el SGE-PII (Sistema de Gestión Económica)</description>

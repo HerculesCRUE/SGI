@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
+import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
@@ -15,6 +15,7 @@ import { SnackBarService } from '@core/services/snack-bar.service';
 import { StatusWrapper } from '@core/utils/status-wrapper';
 import { TranslateService } from '@ngx-translate/core';
 import { switchMap } from 'rxjs/operators';
+import { getPersonaEmailListConcatenated } from 'src/app/esb/sgp/shared/pipes/persona-email.pipe';
 import { EvaluadorActionService } from '../../../evaluador.action.service';
 import { EvaluadorConflictosInteresModalComponent } from '../evaluador-conflictos-interes-modal/evaluador-conflictos-interes-modal.component';
 import { EvaluadorConflictosInteresFragment } from './evaluador-conflictos-interes-listado.fragment';
@@ -58,7 +59,7 @@ export class EvaluadorConflictosInteresListadoComponent extends FragmentComponen
     super(actionService.FRAGMENT.CONFLICTO_INTERES, actionService);
     this.listadoFragment = this.fragment as EvaluadorConflictosInteresFragment;
 
-    this.displayedColumns = ['identificador', 'nombreCompleto', 'acciones'];
+    this.displayedColumns = ['persona', 'nombreCompleto', 'acciones'];
 
   }
 
@@ -75,8 +76,8 @@ export class EvaluadorConflictosInteresListadoComponent extends FragmentComponen
     this.datasource.sortingDataAccessor =
       (wrapper: StatusWrapper<IConflictoInteres>, property: string) => {
         switch (property) {
-          case 'identificador':
-            return wrapper.value.personaConflicto.numeroDocumento;
+          case 'persona':
+            return getPersonaEmailListConcatenated(wrapper.value.personaConflicto);
           case 'nombreCompleto':
             return wrapper.value.personaConflicto.nombre
               + ' ' + wrapper.value.personaConflicto.apellidos;
@@ -111,8 +112,9 @@ export class EvaluadorConflictosInteresListadoComponent extends FragmentComponen
   openModalAddConflicto(): void {
     const conflictos: IConflictoInteres[] = this.listadoFragment.conflictos$.value.map(conflicto => conflicto.value);
 
-    const config = {
+    const config: MatDialogConfig = {
       panelClass: 'sgi-dialog-container',
+      minWidth: '700px',
       data: conflictos
     };
 

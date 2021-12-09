@@ -214,6 +214,6 @@ export class SeguimientoComentarioFragment extends Fragment {
 
   setDictamen(dictamen: IDictamen) {
     this.dictamen = dictamen;
-    this.setErrors((this.dictamen.id === 6 || this.dictamen.id === 8) && this.comentarios$.value.length === 0);
+    this.setErrors((this.dictamen?.id === 6 || this.dictamen?.id === 8) && this.comentarios$.value.length === 0);
   }
 }

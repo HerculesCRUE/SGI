@@ -41,7 +41,7 @@ export class ActaAsistentesListadoComponent extends FragmentComponent implements
     super(actionService.FRAGMENT.ASISTENTES, actionService);
     this.asistentes$ = (this.fragment as ActaAsistentesFragment).asistentes$;
 
-    this.displayedColumns = ['evaluador.numeroDocumento', 'evaluador.nombre', 'asistencia', 'motivo', 'acciones'];
+    this.displayedColumns = ['evaluador.persona', 'evaluador.nombre', 'asistencia', 'motivo', 'acciones'];
   }
 
   ngOnInit() {

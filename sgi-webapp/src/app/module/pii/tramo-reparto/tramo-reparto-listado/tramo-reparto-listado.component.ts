@@ -61,8 +61,8 @@ export class TramoRepartoListadoComponent extends AbstractTablePaginationCompone
     this.setupI18N();
   }
 
-  protected createObservable(): Observable<SgiRestListResult<ITramoReparto>> {
-    const observable$ = this.tramoRepartoService.findAll(this.getFindOptions());
+  protected createObservable(reset?: boolean): Observable<SgiRestListResult<ITramoReparto>> {
+    const observable$ = this.tramoRepartoService.findAll(this.getFindOptions(reset));
     return observable$;
   }
 

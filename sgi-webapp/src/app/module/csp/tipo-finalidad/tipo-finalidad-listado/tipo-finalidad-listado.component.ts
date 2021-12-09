@@ -190,8 +190,8 @@ export class TipoFinalidadListadoComponent extends AbstractTablePaginationCompon
 
   }
 
-  protected createObservable(): Observable<SgiRestListResult<ITipoFinalidad>> {
-    const observable$ = this.tipoFinalidadService.findTodos(this.getFindOptions());
+  protected createObservable(reset?: boolean): Observable<SgiRestListResult<ITipoFinalidad>> {
+    const observable$ = this.tipoFinalidadService.findTodos(this.getFindOptions(reset));
     return observable$;
   }
 

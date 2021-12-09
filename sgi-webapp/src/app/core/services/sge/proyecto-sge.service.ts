@@ -32,7 +32,7 @@ export class ProyectoSgeService extends SgiMutableRestService<string, IProyectoS
     return this.http.post<string>(`${this.endpointUrl}/formly`, model);
   }
 
-  updateProyecto(id: number, model: any): Observable<void> {
+  updateProyecto(id: string, model: any): Observable<void> {
     return this.http.put<void>(`${this.endpointUrl}/formly/${id}`, model);
   }
 

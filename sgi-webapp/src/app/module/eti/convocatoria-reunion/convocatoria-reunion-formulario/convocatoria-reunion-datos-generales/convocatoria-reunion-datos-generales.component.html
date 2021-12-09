@@ -38,11 +38,11 @@
         <mat-form-field>
           <mat-label>{{'eti.convocatoria-reunion.fecha-evaluacion' | translate}}
           </mat-label>
-          <input matInput formControlName="fechaEvaluacion" [ngxMatDatetimePicker]="pickerFechaEvaluacion"
+          <input matInput formControlName="fechaEvaluacion" [matDatepicker]="pickerFechaEvaluacion"
             [placeholder]="'eti.convocatoria-reunion.fecha-evaluacion' | translate" required>
           <mat-datepicker-toggle matSuffix [for]="pickerFechaEvaluacion"></mat-datepicker-toggle>
-          <ngx-mat-datetime-picker #pickerFechaEvaluacion showSeconds="true" [defaultTime]="[0,0,0]">
-          </ngx-mat-datetime-picker>
+          <mat-datepicker #pickerFechaEvaluacion>
+          </mat-datepicker>
           <mat-error *ngIf="formGroup.controls.fechaEvaluacion.errors?.required">
             {{'error.required.entity' | translate:msgParamFechaEvaluacionEntity}}
           </mat-error>

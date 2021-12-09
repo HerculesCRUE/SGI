@@ -89,7 +89,7 @@ export abstract class AbstractTablePaginationComponent<T> implements OnInit, OnD
    */
   protected getObservableLoadTable(reset?: boolean): Observable<T[]> {
     // Do the request with paginator/sort/filter values
-    const observable$ = this.createObservable();
+    const observable$ = this.createObservable(reset);
     return observable$?.pipe(
       map((response: SgiRestListResult<T>) => {
         // Map respose total
@@ -140,7 +140,7 @@ export abstract class AbstractTablePaginationComponent<T> implements OnInit, OnD
   /**
    * Crea la petición al servidor para cargar los datos de la tabla
    */
-  protected abstract createObservable(): Observable<SgiRestListResult<T>>;
+  protected abstract createObservable(reset?: boolean): Observable<SgiRestListResult<T>>;
 
   /**
    * Crea e indica el orden las columnas de la tabla

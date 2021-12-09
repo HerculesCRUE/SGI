@@ -140,31 +140,31 @@ public class InformeEvaluadorReportService extends BaseEvaluadorEvaluacionReport
       iInformeEvaluacionEvaluadorReportOutput.setEvaluacion(evaluacion);
 
       List<ComentarioDto> comentarios = evaluacionService.findByEvaluacionIdEvaluador(idEvaluacion);
-      final Set<Long> apartados = new HashSet<>();
       if (null != comentarios && !comentarios.isEmpty()) {
+        final Set<Long> apartados = new HashSet<>();
         comentarios.forEach(c -> getApartadoService().findTreeApartadosById(apartados, c.getApartado()));
+        Long idFormulario = comentarios.get(0).getApartado().getBloque().getFormulario().getId();
+
+        // @formatter:off
+        BloquesReportInput bloquesReportInput = BloquesReportInput.builder()
+          .idMemoria(idEvaluacion)
+          .idFormulario(idFormulario)
+          .mostrarRespuestas(false)
+          .mostrarContenidoApartado(false)
+          .comentarios(comentarios)
+          .apartados(apartados)
+          .build();
+        // @formatter:on
+
+        BloquesReportOutput reportOutput = getDataFromApartadosAndRespuestas(bloquesReportInput);
+
+        final int orden = iInformeEvaluacionEvaluadorReportOutput.getBloques().size();
+        for (BloqueOutput bloque : reportOutput.getBloques()) {
+          bloque.setOrden(bloque.getOrden() + orden);
+        }
+
+        iInformeEvaluacionEvaluadorReportOutput.getBloques().addAll(reportOutput.getBloques());
       }
-
-      // @formatter:off
-      BloquesReportInput bloquesReportInput = BloquesReportInput.builder()
-        .idMemoria(idEvaluacion)
-        .idFormulario(evaluacion.getMemoria().getComite().getFormulario().getId())
-        .mostrarRespuestas(false)
-        .mostrarContenidoApartado(false)
-        .comentarios(comentarios)
-        .apartados(apartados)
-        .build();
-      // @formatter:on
-
-      BloquesReportOutput reportOutput = getDataFromApartadosAndRespuestas(bloquesReportInput);
-
-      final int orden = iInformeEvaluacionEvaluadorReportOutput.getBloques().size();
-      for (BloqueOutput bloque : reportOutput.getBloques()) {
-        bloque.setOrden(bloque.getOrden() + orden);
-      }
-
-      iInformeEvaluacionEvaluadorReportOutput.getBloques().addAll(reportOutput.getBloques());
-
     } catch (Exception e) {
       log.error(e.getMessage(), e);
       throw new GetDataReportException();

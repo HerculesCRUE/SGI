@@ -363,7 +363,7 @@ export class SolicitudProyectoFichaGeneralFragment extends FormFragment<ISolicit
 
   saveOrUpdate(): Observable<void> {
     const solicitudProyecto = this.getValue();
-    const observable$ = this.solicitudProyecto.id ? this.update(solicitudProyecto) : this.create(solicitudProyecto);
+    const observable$ = this.isEdit() ? this.update(solicitudProyecto) : this.create(solicitudProyecto);
     return observable$.pipe(
       map(value => {
         this.setChanges(false);
@@ -371,6 +371,10 @@ export class SolicitudProyectoFichaGeneralFragment extends FormFragment<ISolicit
         return void 0;
       })
     );
+  }
+
+  isEdit(): boolean {
+    return !!this.solicitudProyecto?.id;
   }
 
   private create(solicitudProyecto: ISolicitudProyecto): Observable<ISolicitudProyecto> {

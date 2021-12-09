@@ -216,8 +216,8 @@ export class ConceptoGastoListadoComponent extends AbstractTablePaginationCompon
     return filter;
   }
 
-  protected createObservable(): Observable<SgiRestListResult<any>> {
-    const observable$ = this.conceptoGastoService.findTodos(this.getFindOptions());
+  protected createObservable(reset?: boolean): Observable<SgiRestListResult<any>> {
+    const observable$ = this.conceptoGastoService.findTodos(this.getFindOptions(reset));
     return observable$;
   }
 
