@@ -1,26 +1,35 @@
 package org.crue.hercules.sgi.csp.service.impl;
 
+import java.util.ArrayList;
+import java.util.Objects;
+
 import org.crue.hercules.sgi.csp.exceptions.ConfiguracionSolicitudNotFoundException;
 import org.crue.hercules.sgi.csp.exceptions.ConvocatoriaEntidadConvocanteNotFoundException;
 import org.crue.hercules.sgi.csp.exceptions.ConvocatoriaNotFoundException;
 import org.crue.hercules.sgi.csp.exceptions.ProgramaNotFoundException;
 import org.crue.hercules.sgi.csp.exceptions.UserNotAuthorizedToAccessConvocatoriaException;
+import org.crue.hercules.sgi.csp.exceptions.UserNotAuthorizedToAccessSolicitudException;
 import org.crue.hercules.sgi.csp.model.ConfiguracionSolicitud;
 import org.crue.hercules.sgi.csp.model.Convocatoria;
 import org.crue.hercules.sgi.csp.model.Convocatoria.Estado;
 import org.crue.hercules.sgi.csp.model.ConvocatoriaEntidadConvocante;
+import org.crue.hercules.sgi.csp.model.Solicitud;
 import org.crue.hercules.sgi.csp.repository.ConfiguracionSolicitudRepository;
 import org.crue.hercules.sgi.csp.repository.ConvocatoriaEntidadConvocanteRepository;
 import org.crue.hercules.sgi.csp.repository.ConvocatoriaRepository;
 import org.crue.hercules.sgi.csp.repository.ProgramaRepository;
+import org.crue.hercules.sgi.csp.repository.SolicitudRepository;
 import org.crue.hercules.sgi.csp.repository.specification.ConvocatoriaEntidadConvocanteSpecifications;
+import org.crue.hercules.sgi.csp.repository.specification.SolicitudSpecifications;
 import org.crue.hercules.sgi.csp.service.ConvocatoriaEntidadConvocanteService;
 import org.crue.hercules.sgi.csp.service.ConvocatoriaService;
 import org.crue.hercules.sgi.framework.rsql.SgiRSQLJPASupport;
 import org.crue.hercules.sgi.framework.security.core.context.SgiSecurityContextHolder;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
@@ -41,16 +50,19 @@ public class ConvocatoriaEntidadConvocanteServiceImpl implements ConvocatoriaEnt
   private final ProgramaRepository programaRepository;
   private final ConvocatoriaService convocatoriaService;
   private final ConfiguracionSolicitudRepository configuracionSolicitudRepository;
+  private final SolicitudRepository solicitudRepository;
 
   public ConvocatoriaEntidadConvocanteServiceImpl(
       ConvocatoriaEntidadConvocanteRepository convocatoriaEntidadConvocanteRepository,
       ConvocatoriaRepository convocatoriaRepository, ProgramaRepository programaRepository,
-      ConvocatoriaService convocatoriaService, ConfiguracionSolicitudRepository configuracionSolicitudRepository) {
+      ConvocatoriaService convocatoriaService, ConfiguracionSolicitudRepository configuracionSolicitudRepository,
+      SolicitudRepository solicitudRepository) {
     this.repository = convocatoriaEntidadConvocanteRepository;
     this.convocatoriaRepository = convocatoriaRepository;
     this.programaRepository = programaRepository;
     this.convocatoriaService = convocatoriaService;
     this.configuracionSolicitudRepository = configuracionSolicitudRepository;
+    this.solicitudRepository = solicitudRepository;
   }
 
   /**
@@ -78,7 +90,8 @@ public class ConvocatoriaEntidadConvocanteServiceImpl implements ConvocatoriaEnt
     // comprobar si convocatoria es modificable
     Assert.isTrue(
         convocatoriaService.isRegistradaConSolicitudesOProyectos(convocatoriaEntidadConvocante.getConvocatoriaId(),
-            convocatoria.getUnidadGestionRef(), new String[] { "CSP-CON-E", "CSP-CON-C" }),
+            convocatoria.getUnidadGestionRef(), new String[] {
+                "CSP-CON-E", "CSP-CON-C" }),
         "No se puede crear ConvocatoriaEntidadConvocante. No tiene los permisos necesarios o la convocatoria está registrada y cuenta con solicitudes o proyectos asociados");
 
     Assert.isTrue(
@@ -127,9 +140,11 @@ public class ConvocatoriaEntidadConvocanteServiceImpl implements ConvocatoriaEnt
               null, new String[] { "CSP-CON-E" }),
           "No se puede modificar ConvocatoriaEntidadConvocante. No tiene los permisos necesarios o la convocatoria está registrada y cuenta con solicitudes o proyectos asociados");
 
-      repository.findByConvocatoriaIdAndEntidadRef(convocatoriaEntidadConvocanteActualizar.getConvocatoriaId(),
-          convocatoriaEntidadConvocanteActualizar.getEntidadRef()).ifPresent(convocatoriaR -> {
-            Assert.isTrue(convocatoriaEntidadConvocante.getId() == convocatoriaR.getId(),
+      repository
+          .findByConvocatoriaIdAndEntidadRef(convocatoriaEntidadConvocanteActualizar.getConvocatoriaId(),
+              convocatoriaEntidadConvocanteActualizar.getEntidadRef())
+          .ifPresent(convocatoriaR -> {
+            Assert.isTrue(convocatoriaEntidadConvocante.getId().equals(convocatoriaR.getId()),
                 "Ya existe una asociación activa para esa Convocatoria y Entidad");
           });
 
@@ -207,6 +222,7 @@ public class ConvocatoriaEntidadConvocanteServiceImpl implements ConvocatoriaEnt
    * @return la lista de entidades {@link ConvocatoriaEntidadConvocante} de la
    *         {@link Convocatoria} paginadas.
    */
+  @Override
   public Page<ConvocatoriaEntidadConvocante> findAllByConvocatoria(Long convocatoriaId, String query,
       Pageable pageable) {
     log.debug("findAllByConvocatoria(Long idConvocatoria, String query, Pageable pageable) - start");
@@ -228,6 +244,39 @@ public class ConvocatoriaEntidadConvocanteServiceImpl implements ConvocatoriaEnt
 
     Page<ConvocatoriaEntidadConvocante> returnValue = repository.findAll(specs, pageable);
     log.debug("findAllByConvocatoria(Long idConvocatoria, String query, Pageable pageable) - end");
+    return returnValue;
+  }
+
+  /**
+   * Obtiene las {@link ConvocatoriaEntidadConvocante} de la {@link Convocatoria}
+   * para una {@link Solicitud} si el usuario que realiza la peticion es el
+   * solicitante de la {@link Solicitud}.
+   *
+   * @param solicitudId el id de la {@link Convocatoria}.
+   * @param pageable    la información de la paginación.
+   * @return la lista de entidades {@link ConvocatoriaEntidadConvocante} de la
+   *         {@link Convocatoria} paginadas.
+   */
+  @Override
+  public Page<ConvocatoriaEntidadConvocante> findAllBySolicitudAndUserIsSolicitante(Long solicitudId,
+      Pageable pageable) {
+    log.debug("findAllBySolicitudAndUserIsSolicitante(Long solicitudId, Pageable pageable) - start");
+
+    String personaRef = SecurityContextHolder.getContext().getAuthentication().getName();
+
+    Solicitud solicitud = solicitudRepository.findOne(SolicitudSpecifications.bySolicitante(personaRef).and(
+        SolicitudSpecifications.byId(solicitudId)))
+        .orElseThrow(UserNotAuthorizedToAccessSolicitudException::new);
+
+    if (Objects.isNull(solicitud.getConvocatoriaId())) {
+      return new PageImpl<>(new ArrayList<>());
+    }
+
+    Specification<ConvocatoriaEntidadConvocante> specs = ConvocatoriaEntidadConvocanteSpecifications
+        .byConvocatoriaId(solicitud.getConvocatoriaId());
+
+    Page<ConvocatoriaEntidadConvocante> returnValue = repository.findAll(specs, pageable);
+    log.debug("findAllBySolicitudAndUserIsSolicitante(Long solicitudId, Pageable pageable) - end");
     return returnValue;
   }
 

@@ -80,8 +80,8 @@ public class GastoProyectoService {
 
       // Si hay modificaciones en el estado o en su comentario asociado, creamos un
       // nuevo estado para reflejar el cambio en el histórico de estados
-      if (gastoProyectoExistente.getEstado().getEstado() != gastoProyecto.getEstado().getEstado()
-          || !gastoProyectoExistente.getEstado().getComentario().equals(gastoProyecto.getEstado().getComentario())) {
+      if ((gastoProyectoExistente.getEstado() != null && gastoProyecto.getEstado() != null) && (gastoProyectoExistente.getEstado().getEstado() != gastoProyecto.getEstado().getEstado()
+          || !gastoProyectoExistente.getEstado().getComentario().equals(gastoProyecto.getEstado().getComentario()))) {
 
         EstadoGastoProyecto estadoGastoProyectoNuevo = new EstadoGastoProyecto();
         estadoGastoProyectoNuevo.setComentario(gastoProyecto.getEstado().getComentario());

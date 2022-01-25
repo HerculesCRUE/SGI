@@ -3,6 +3,8 @@ package org.crue.hercules.sgi.csp.controller;
 import javax.validation.Valid;
 
 import org.crue.hercules.sgi.csp.model.SolicitudProyectoAreaConocimiento;
+import org.crue.hercules.sgi.csp.model.SolicitudProyectoClasificacion;
+import org.crue.hercules.sgi.csp.model.SolicitudProyectoEntidadFinanciadoraAjena;
 import org.crue.hercules.sgi.csp.service.SolicitudProyectoAreaConocimientoService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -65,7 +67,7 @@ public class SolicitudProyectoAreaConocimientoController {
   @DeleteMapping("/{id}")
   @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-SOL-E', 'CSP-SOL-INV-ER')")
   @ResponseStatus(value = HttpStatus.NO_CONTENT)
-  void deleteById(@PathVariable Long id) {
+  public void deleteById(@PathVariable Long id) {
     log.debug("deleteById(Long id) - start");
     service.delete(id);
     log.debug("deleteById(Long id) - end");

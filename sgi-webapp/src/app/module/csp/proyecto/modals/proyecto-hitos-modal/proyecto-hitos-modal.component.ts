@@ -5,22 +5,16 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { BaseModalComponent } from '@core/component/base-modal.component';
 import { MSG_PARAMS } from '@core/i18n';
-import { IModeloTipoHito } from '@core/models/csp/modelo-tipo-hito';
 import { IProyectoHito } from '@core/models/csp/proyecto-hito';
 import { ITipoHito } from '@core/models/csp/tipos-configuracion';
 import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-properties';
-import { ModeloEjecucionService } from '@core/services/csp/modelo-ejecucion.service';
 import { SnackBarService } from '@core/services/snack-bar.service';
 import { IsEntityValidator } from '@core/validators/is-entity-validador';
 import { TipoHitoValidator } from '@core/validators/tipo-hito-validator';
 import { TranslateService } from '@ngx-translate/core';
-import { SgiRestListResult } from '@sgi/framework/http/types';
 import { DateTime } from 'luxon';
-import { NGXLogger } from 'ngx-logger';
-import { BehaviorSubject } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 
-const MSG_ERROR_INIT = marker('error.load');
 const MSG_ANADIR = marker('btn.add');
 const MSG_ACEPTAR = marker('btn.ok');
 const PROYECTO_HITO_FECHA_KEY = marker('csp.proyecto-hito.fecha');
@@ -46,8 +40,6 @@ export class ProyectoHitosModalComponent extends
 
   fxLayoutProperties: FxLayoutProperties;
 
-  tiposHitos$: BehaviorSubject<ITipoHito[]> = new BehaviorSubject<ITipoHito[]>([]);
-
   textSaveOrUpdate: string;
 
   msgParamFechaEntity = {};
@@ -56,12 +48,11 @@ export class ProyectoHitosModalComponent extends
   title: string;
 
   constructor(
-    private readonly logger: NGXLogger,
     public matDialogRef: MatDialogRef<ProyectoHitosModalComponent>,
-    private modeloEjecucionService: ModeloEjecucionService,
     @Inject(MAT_DIALOG_DATA) public data: ProyectoHitosModalComponentData,
     protected snackBarService: SnackBarService,
-    private readonly translate: TranslateService) {
+    private readonly translate: TranslateService
+  ) {
     super(snackBarService, matDialogRef, data);
 
     this.fxLayoutProperties = new FxLayoutProperties();
@@ -82,7 +73,6 @@ export class ProyectoHitosModalComponent extends
     this.subscriptions.push(suscriptionFecha);
 
     this.textSaveOrUpdate = this.data?.hito?.tipoHito ? MSG_ACEPTAR : MSG_ANADIR;
-    this.loadTiposHito();
     this.subscriptions.push(this.formGroup.get('fecha').valueChanges.subscribe(() => this.validarFecha())
     );
     this.validarFecha();
@@ -154,18 +144,6 @@ export class ProyectoHitosModalComponent extends
     this.formGroup.setValidators([
       TipoHitoValidator.notInDate('fecha', fechas, this.data?.hitos?.map(hito => hito.tipoHito))
     ]);
-  }
-
-
-  loadTiposHito() {
-    this.subscriptions.push(
-      this.modeloEjecucionService.findModeloTipoHitoProyecto(this.data.idModeloEjecucion).subscribe(
-        (res: SgiRestListResult<IModeloTipoHito>) => this.tiposHitos$.next(res.items.map(modelo => modelo.tipoHito)),
-        (error) => {
-          this.logger.error(error);
-          this.snackBarService.showError(MSG_ERROR_INIT);
-        })
-    );
   }
 
   protected getDatosForm(): ProyectoHitosModalComponentData {

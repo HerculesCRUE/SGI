@@ -39,10 +39,10 @@
         <th mat-header-cell *matHeaderCellDef> {{'label.actions' | translate}} </th>
         <td mat-cell *matCellDef="let tipoProteccion">
           <ng-container *sgiHasAuthority="'PII-TPR-E'">
-            <button *ngIf="tipoProteccion.activo" [routerLink]="[tipoProteccion.id]" mat-button
+            <a *ngIf="tipoProteccion.activo" [routerLink]="[tipoProteccion.id]" mat-button
               matTooltip="{{'btn.edit' | translate}}">
               <mat-icon color="primary">border_color</mat-icon>
-            </button>
+            </a>
           </ng-container>
           <ng-container *sgiHasAuthority="'PII-TPR-B'">
             <button *ngIf="tipoProteccion.activo" mat-button matTooltip="{{'btn.delete' | translate}}"

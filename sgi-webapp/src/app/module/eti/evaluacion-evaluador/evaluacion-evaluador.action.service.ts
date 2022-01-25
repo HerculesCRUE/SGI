@@ -1,3 +1,4 @@
+import { X } from '@angular/cdk/keycodes';
 import { Injectable } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
@@ -34,6 +35,11 @@ export class EvaluacionEvaluadorActionService extends EvaluacionFormularioAction
     this.addFragment(this.FRAGMENT.COMENTARIOS, this.comentarios);
     this.addFragment(this.FRAGMENT.MEMORIA, this.datosMemoria);
     this.addFragment(this.FRAGMENT.DOCUMENTACION, this.documentacion);
+
+    this.comentarios.initialize();
+    this.comentarios.comentarios$.subscribe(_ => {
+      this.comentarios.setDictamen(this.evaluacion?.dictamen);
+    });
   }
 
   getEvaluacion(): IEvaluacion {

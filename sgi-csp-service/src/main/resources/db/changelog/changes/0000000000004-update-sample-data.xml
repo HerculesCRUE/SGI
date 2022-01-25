@@ -1,0 +1,203 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:pro="http://www.liquibase.org/xml/ns/pro" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-3.8.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+  <property name="schemaPrefix" value="" />
+
+  <changeSet context="dev" author="master" id="0000000000004-tipo_facturacion">
+    <update tableName="tipo_facturacion">
+      <column name="nombre" value="Sin requisito" />
+      <column name="activo" valueBoolean="true" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="nombre" value="Pago En Efectivo" />
+      </whereParams>
+    </update>
+    <update tableName="tipo_facturacion">
+      <column name="nombre" value="Informe" />
+      <column name="activo" valueBoolean="true" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="nombre" value="Única" />
+      </whereParams>
+    </update>
+    <update tableName="tipo_facturacion">
+      <column name="nombre" value="Prototipo" />
+      <column name="activo" valueBoolean="true" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="nombre" value="Pago A Plazos" />
+      </whereParams>
+    </update>
+    <insert tableName="tipo_facturacion">
+      <column name="id" valueSequenceNext="tipo_facturacion_seq" />
+      <column name="nombre" value="Trabajo" />
+    </insert>
+    <insert tableName="tipo_facturacion">
+      <column name="id" valueSequenceNext="tipo_facturacion_seq" />
+      <column name="nombre" value="Análisis" />
+    </insert>
+    <insert tableName="tipo_facturacion">
+      <column name="id" valueSequenceNext="tipo_facturacion_seq" />
+      <column name="nombre" value="Memoria" />
+    </insert>
+    <insert tableName="tipo_facturacion">
+      <column name="id" valueSequenceNext="tipo_facturacion_seq" />
+      <column name="nombre" value="Mitad de trabajo" />
+    </insert>
+    <insert tableName="tipo_facturacion">
+      <column name="id" valueSequenceNext="tipo_facturacion_seq" />
+      <column name="nombre" value="Hito" />
+    </insert>
+  </changeSet>
+
+  <changeSet context="dev" author="master" id="0000000000004-proyecto_equipo">
+    <update tableName="proyecto_equipo">
+      <column name="fecha_fin" value="2021-09-01T21:59:59" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueNumeric="1" />
+      </whereParams>
+    </update>
+    <update tableName="proyecto_equipo">
+      <column name="fecha_inicio" value="2021-09-01T22:00:00" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueNumeric="7" />
+      </whereParams>
+    </update>
+    <update tableName="proyecto_equipo">
+      <column name="fecha_inicio" valueDate="2021-09-01T22:00:00" />
+      <column name="fecha_fin" valueDate="2021-12-31T22:59:59" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueNumeric="8" />
+      </whereParams>
+    </update>
+    <update tableName="proyecto_equipo">
+      <column name="fecha_fin" valueDate="2021-03-31T21:59:59" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueNumeric="10" />
+      </whereParams>
+    </update>
+    <update tableName="proyecto_equipo">
+      <column name="fecha_inicio" valueDate="2021-02-01T23:00:00" />
+      <column name="fecha_fin" valueDate="2021-04-30T21:59:59" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueNumeric="13" />
+      </whereParams>
+    </update>
+    <update tableName="proyecto_equipo">
+      <column name="fecha_inicio" valueDate="2021-02-01T23:00:00" />
+      <column name="fecha_fin" valueDate="2021-03-02T22:59:59" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueNumeric="14" />
+      </whereParams>
+    </update>
+  </changeSet>
+
+  <changeSet context="dev" author="master" id="0000000000004-autorizacion">
+    <insert tableName="autorizacion">
+      <column name="id" valueSequenceNext="autorizacion_seq" />
+      <column name="titulo_proyecto" value="Proyecto 1" />
+      <column name="solicitante_ref" value="33870580" />
+      <column name="responsable_ref" value="23302408" />
+      <column name="entidad_ref" value="00051494" />
+    </insert>
+    <insert tableName="autorizacion">
+      <column name="id" valueSequenceNext="autorizacion_seq" />
+      <column name="titulo_proyecto" value="Proyecto 2" />
+      <column name="solicitante_ref" value="33870580" />
+      <column name="responsable_ref" value="23302408" />
+      <column name="entidad_ref" value="00051494" />
+    </insert>
+  </changeSet>
+
+  <changeSet context="dev" author="master" id="0000000000004-estado_autorizacion">
+    <insert tableName="estado_autorizacion">
+      <column name="id" valueSequenceNext="estado_autorizacion_seq" />
+      <column name="estado" value="BORRADOR" />
+      <column name="fecha" valueDate="2021-09-07T11:11:00" />
+      <column name="autorizacion_id" valueNumeric="1" />
+    </insert>
+    <insert tableName="estado_autorizacion">
+      <column name="id" valueSequenceNext="estado_autorizacion_seq" />
+      <column name="estado" value="BORRADOR" />
+      <column name="fecha" valueDate="2021-09-07T11:11:00" />
+      <column name="autorizacion_id" valueNumeric="2" />
+    </insert>
+  </changeSet>
+
+  <changeSet context="dev" author="master" id="0000000000004-autorizacion_update">
+    <update tableName="autorizacion">
+      <column name="estado_id" valueNumeric="1" />
+      <where>id=1</where>
+    </update>
+    <update tableName="autorizacion">
+      <column name="estado_id" valueNumeric="2" />
+      <where>id=2</where>
+    </update>
+  </changeSet>
+
+  <changeSet context="dev" author="master" id="0000000000004-notificacion_proyecto_externo_cvn">
+    <insert tableName="notificacion_proyecto_externo_cvn">
+      <column name="id" valueSequenceNext="notificacion_proyecto_externo_cvn_seq" />
+      <column name="titulo" value="Notificación 1 con Entidad y Solicitante" />
+      <column name="fecha_inicio" valueDate="2021-10-07T14:00:00" />
+      <column name="fecha_fin" valueDate="2022-01-01T14:00:00" />
+      <column name="solicitante_ref" value="33870580" />
+      <column name="autorizacion_id" valueNumeric="1" />
+      <column name="responsable_ref" value="23302408" />
+      <column name="entidad_participacion_ref" value="00132245" />
+    </insert>
+    <insert tableName="notificacion_proyecto_externo_cvn">
+      <column name="id" valueSequenceNext="notificacion_proyecto_externo_cvn_seq" />
+      <column name="titulo" value="Notificación 2 con Entidad y Solicitante" />
+      <column name="fecha_inicio" valueDate="2021-11-07T14:00:00" />
+      <column name="fecha_fin" valueDate="2022-02-01T14:00:00" />
+      <column name="solicitante_ref" value="33870580" />
+      <column name="responsable_ref" value="23302408" />
+      <column name="entidad_participacion_ref" value="00132245" />
+    </insert>
+    <insert tableName="notificacion_proyecto_externo_cvn">
+      <column name="id" valueSequenceNext="notificacion_proyecto_externo_cvn_seq" />
+      <column name="titulo" value="Notificación 3 con Entidad y Solicitante" />
+      <column name="fecha_inicio" valueDate="2021-12-07T14:00:00" />
+      <column name="fecha_fin" valueDate="2022-03-01T14:00:00" />
+      <column name="solicitante_ref" value="74439415" />
+      <column name="responsable_ref" value="74439415" />
+      <column name="entidad_participacion_ref" value="U0011919" />
+    </insert>
+    <insert tableName="notificacion_proyecto_externo_cvn">
+      <column name="id" valueSequenceNext="notificacion_proyecto_externo_cvn_seq" />
+      <column name="titulo" value="Notificación 1 sin Entidad y Solicitante" />
+      <column name="fecha_inicio" valueDate="2021-10-17T14:00:00" />
+      <column name="fecha_fin" valueDate="2022-01-21T14:00:00" />
+      <column name="solicitante_ref" value="74439415" />
+      <column name="datos_responsable" value="Responsable 1" />
+      <column name="datos_entidad_participacion" value="Brécol S.L." />
+    </insert>
+    <insert tableName="notificacion_proyecto_externo_cvn">
+      <column name="id" valueSequenceNext="notificacion_proyecto_externo_cvn_seq" />
+      <column name="titulo" value="Notificación 2 sin Entidad y Solicitante" />
+      <column name="fecha_inicio" valueDate="2021-11-17T14:00:00" />
+      <column name="fecha_fin" valueDate="2022-02-21T14:00:00" />
+      <column name="solicitante_ref" value="74439415" />
+      <column name="datos_responsable" value="Responsable 2" />
+      <column name="datos_entidad_participacion" value="Lomo S.A." />
+    </insert>
+  </changeSet>
+
+  <changeSet context="!unit-test AND !integration-test" author="master" id="0000000000004-modelo_ejecucion">
+    <update tableName="modelo_ejecucion">
+      <column name="externo" value="false" />
+      <where>externo is null</where>
+    </update>
+    <update tableName="modelo_ejecucion">
+      <column name="contrato" value="false" />
+      <where>contrato is null</where>
+    </update>
+  </changeSet>
+
+</databaseChangeLog>

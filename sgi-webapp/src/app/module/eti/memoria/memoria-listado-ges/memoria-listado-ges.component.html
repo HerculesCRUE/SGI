@@ -123,9 +123,9 @@
         <th mat-header-cell *matHeaderCellDef> {{'label.actions' | translate}} </th>
         <td mat-cell *matCellDef="let memoria;let i=index;">
           <ng-container>
-            <button mat-button [routerLink]="[memoria.id]" matTooltip="{{'btn.view' | translate}}">
+            <a mat-button [routerLink]="[memoria.id]" matTooltip="{{'btn.view' | translate}}">
               <mat-icon color="primary">visibility</mat-icon>
-            </button>
+            </a>
             <button *ngIf="memoria.estadoActual.id === 3 || memoria.estadoActual.id === 4 || 
               memoria.estadoActual.id === 10 || memoria.estadoActual.id === 5" mat-button
               (click)="recuperarEstadoAnterior(memoria)" matTooltip="{{'btn.eti.memoria.estado-anterior' | translate}}">

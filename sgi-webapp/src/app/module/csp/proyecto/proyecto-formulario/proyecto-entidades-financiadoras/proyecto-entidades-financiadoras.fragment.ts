@@ -16,6 +16,7 @@ export interface IEntidadFinanciadora extends IProyectoEntidadFinanciadora {
 export class ProyectoEntidadesFinanciadorasFragment extends Fragment {
   entidadesPropias$ = new BehaviorSubject<StatusWrapper<IEntidadFinanciadora>[]>([]);
   entidadesAjenas$ = new BehaviorSubject<StatusWrapper<IEntidadFinanciadora>[]>([]);
+  entidadesFinanciadorasSincronizadas$ = new BehaviorSubject<StatusWrapper<IEntidadFinanciadora>[]>([]);
   private entidadesEliminadas: StatusWrapper<IEntidadFinanciadora>[] = [];
 
   constructor(
@@ -75,6 +76,16 @@ export class ProyectoEntidadesFinanciadorasFragment extends Fragment {
         ).subscribe();
       this.subscriptions.push(subscription);
     }
+
+    this.entidadesAjenas$.subscribe(entidadesAjenasActualizadas => {
+      this.entidadesFinanciadorasSincronizadas$.next([...entidadesAjenasActualizadas, ...this.entidadesPropias$.value])
+    }
+    );
+
+    this.entidadesPropias$.subscribe(entidadesPropiasActualizadas => {
+      this.entidadesFinanciadorasSincronizadas$.next([...entidadesPropiasActualizadas, ...this.entidadesAjenas$.value])
+    }
+    );
   }
 
   private fillEmpresa(entidades: StatusWrapper<IEntidadFinanciadora>[]):

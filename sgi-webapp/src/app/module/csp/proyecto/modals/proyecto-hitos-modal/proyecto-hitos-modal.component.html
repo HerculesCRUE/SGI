@@ -11,7 +11,8 @@
       [fxLayoutGap]="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
       <mat-form-field>
         <mat-label>{{'csp.proyecto-hito.tipo' | translate}}</mat-label>
-        <sgi-select-entity formControlName="tipoHito" [options]="tiposHitos$ | async" required></sgi-select-entity>
+        <sgi-select-tipo-hito formControlName="tipoHito" required [modeloEjecucionId]="data.idModeloEjecucion"
+          relation="proyecto"></sgi-select-tipo-hito>
         <mat-error *ngIf="formGroup.controls.tipoHito.errors?.required">
           {{'error.required.entity' | translate:msgParamTipoEntity}}
         </mat-error>

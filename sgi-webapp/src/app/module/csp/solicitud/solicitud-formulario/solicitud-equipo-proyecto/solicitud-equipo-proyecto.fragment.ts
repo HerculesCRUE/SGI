@@ -50,6 +50,7 @@ export class SolicitudEquipoProyectoFragment extends Fragment {
   proyectoEquipos$ = new BehaviorSubject<StatusWrapper<ISolicitudProyectoEquipoListado>[]>([]);
 
   requisitosConvocatoria: RequisitosConvocatoria;
+  solicitudId: number;
 
   constructor(
     key: number,
@@ -72,9 +73,9 @@ export class SolicitudEquipoProyectoFragment extends Fragment {
   }
 
   protected onInitialize(): void {
-    const id = this.getKey() as number;
-    if (id) {
-      const existsSolicitudProyecto$ = this.solicitudService.existsSolictudProyecto(id).pipe(share());
+    this.solicitudId = this.getKey() as number;
+    if (this.solicitudId) {
+      const existsSolicitudProyecto$ = this.solicitudService.existsSolictudProyecto(this.solicitudId).pipe(share());
 
       this.subscriptions.push(existsSolicitudProyecto$.pipe(
         filter(exist => !exist),
@@ -84,7 +85,7 @@ export class SolicitudEquipoProyectoFragment extends Fragment {
       ).subscribe((rol) => {
         const solicitudProyectoEquipo = {
           solicitudProyectoEquipo: {
-            solicitudProyectoId: id,
+            solicitudProyectoId: this.solicitudId,
             rolProyecto: rol,
             persona: this.actionService.solicitante
           } as ISolicitudProyectoEquipo,
@@ -97,7 +98,7 @@ export class SolicitudEquipoProyectoFragment extends Fragment {
       this.subscriptions.push(existsSolicitudProyecto$.pipe(
         filter(exist => exist),
         switchMap(() => {
-          return this.solicitudService.findAllSolicitudProyectoEquipo(id).pipe(
+          return this.solicitudService.findAllSolicitudProyectoEquipo(this.solicitudId).pipe(
             map(result => result.items.map(solicitudProyectoEquipo =>
               new StatusWrapper<ISolicitudProyectoEquipoListado>({ solicitudProyectoEquipo } as ISolicitudProyectoEquipoListado))));
         }),
@@ -257,11 +258,13 @@ export class SolicitudEquipoProyectoFragment extends Fragment {
     if (this.requisitosConvocatoria) {
       return of(this.requisitosConvocatoria);
     } else {
-      const nivelesAcademicosRequisitosEquipo$ = this.convocatoriaService.findRequisitosEquipoNivelesAcademicos(convocatoriaId).pipe(
+      let nivelesAcademicosRequisitosEquipo$ = this.isInvestigador && this.solicitudId ? this.solicitudService.findRequisitosEquipoNivelesAcademicos(this.solicitudId) : this.convocatoriaService.findRequisitosEquipoNivelesAcademicos(convocatoriaId);
+      nivelesAcademicosRequisitosEquipo$ = nivelesAcademicosRequisitosEquipo$.pipe(
         tap(nivelesAcademicos => requisitosConvocatoria.nivelesAcademicosRequisitosEquipo = nivelesAcademicos)
       );
 
-      const nivelesAcademicosRequisitosIp$ = this.convocatoriaService.findRequisitosIpNivelesAcademicos(convocatoriaId).pipe(
+      let nivelesAcademicosRequisitosIp$ = this.isInvestigador && this.solicitudId ? this.solicitudService.findRequisitosIpNivelesAcademicos(this.solicitudId) : this.convocatoriaService.findRequisitosIpNivelesAcademicos(convocatoriaId);
+      nivelesAcademicosRequisitosIp$ = nivelesAcademicosRequisitosIp$.pipe(
         tap(nivelesAcademicos => requisitosConvocatoria.nivelesAcademicosRequisitosIp = nivelesAcademicos)
       );
 
@@ -271,12 +274,11 @@ export class SolicitudEquipoProyectoFragment extends Fragment {
             requisitosConvocatoria.categoriasProfesionalesRequisitosEquipo = categorias.map(element => element.categoriaProfesional))
         );
 
-      const categoriasProfesionalesRequisitosIp$ = this.convocatoriaService.findRequisitosIpCategoriasProfesionales(convocatoriaId)
-        .pipe(
-          tap(categorias =>
-            requisitosConvocatoria.categoriasProfesionalesRequisitosIp = categorias.map(element => element.categoriaProfesional))
-        );
-
+      let categoriasProfesionalesRequisitosIp$ = this.isInvestigador && this.solicitudId ? this.solicitudService.findRequisitosIpCategoriasProfesionales(this.solicitudId) : this.convocatoriaService.findRequisitosIpCategoriasProfesionales(convocatoriaId);
+      categoriasProfesionalesRequisitosIp$ = categoriasProfesionalesRequisitosIp$.pipe(
+        tap(categorias =>
+          requisitosConvocatoria.categoriasProfesionalesRequisitosIp = categorias.map(element => element.categoriaProfesional))
+      );
 
       const requisitosIp$ = this.convocatoriaRequisitoIpService.getRequisitoIPConvocatoria(convocatoriaId)
         .pipe(

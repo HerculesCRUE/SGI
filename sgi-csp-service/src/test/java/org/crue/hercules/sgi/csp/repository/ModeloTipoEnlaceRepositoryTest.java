@@ -24,10 +24,10 @@ public class ModeloTipoEnlaceRepositoryTest extends BaseRepositoryTest {
 
     // given: 2 ModeloTipoEnlace de los que 1 coincide con los ids de
     // ModeloEjecucion y TipoEnlace
-    ModeloEjecucion modeloEjecucion1 = new ModeloEjecucion(null, "nombre-1", "descripcion-1", true);
+    ModeloEjecucion modeloEjecucion1 = new ModeloEjecucion(null, "nombre-1", "descripcion-1", true, false, false);
     entityManager.persistAndFlush(modeloEjecucion1);
 
-    ModeloEjecucion modeloEjecucion2 = new ModeloEjecucion(null, "nombre-2", "descripcion-2", true);
+    ModeloEjecucion modeloEjecucion2 = new ModeloEjecucion(null, "nombre-2", "descripcion-2", true, false, false);
     entityManager.persistAndFlush(modeloEjecucion2);
 
     TipoEnlace tipoEnlace1 = new TipoEnlace(null, "nombre-1", "descripcion-1", true);
@@ -64,10 +64,10 @@ public class ModeloTipoEnlaceRepositoryTest extends BaseRepositoryTest {
 
     // given: 2 ModeloEjecucion que no coinciden con los ids de
     // ModeloEjecucion y TipoEnlace
-    ModeloEjecucion modeloEjecucion1 = new ModeloEjecucion(null, "nombre-1", "descripcion-1", true);
+    ModeloEjecucion modeloEjecucion1 = new ModeloEjecucion(null, "nombre-1", "descripcion-1", true, false, false);
     entityManager.persistAndFlush(modeloEjecucion1);
 
-    ModeloEjecucion modeloEjecucion2 = new ModeloEjecucion(null, "nombre-2", "descripcion-2", true);
+    ModeloEjecucion modeloEjecucion2 = new ModeloEjecucion(null, "nombre-2", "descripcion-2", true, false, false);
     entityManager.persistAndFlush(modeloEjecucion2);
 
     TipoEnlace tipoEnlace1 = new TipoEnlace(null, "nombre-1", "descripcion-1", true);

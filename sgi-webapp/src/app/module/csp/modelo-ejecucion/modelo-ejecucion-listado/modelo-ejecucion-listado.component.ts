@@ -35,7 +35,7 @@ const MODELO_EJECUCION_KEY = marker('csp.modelo-ejecucion');
 })
 export class ModeloEjecucionListadoComponent extends AbstractTablePaginationComponent<IModeloEjecucion> implements OnInit {
   ROUTE_NAMES = ROUTE_NAMES;
-  textoCrear: string;
+  msgParamEntity = {};
 
   textoDesactivar: string;
   textoReactivar: string;
@@ -90,7 +90,7 @@ export class ModeloEjecucionListadoComponent extends AbstractTablePaginationComp
           { entity: value }
         );
       })
-    ).subscribe((value) => this.textoCrear = value);
+    ).subscribe((value) => this.msgParamEntity = { entity: value });
 
     this.translate.get(
       MODELO_EJECUCION_KEY,

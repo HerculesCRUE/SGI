@@ -67,10 +67,12 @@ public class ProyectoEntidadConvocanteController {
    * @param id     Identificador de {@link Proyecto}.
    * @param query  filtro de búsqueda.
    * @param paging pageable.
+   * @return el listado de entidades {@link ProyectoEntidadConvocanteDto}
+   *         paginados y filtrados.
    */
   @GetMapping
   @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-PRO-V', 'CSP-PRO-E')")
-  ResponseEntity<Page<ProyectoEntidadConvocanteDto>> findAllEntidadConvocantes(@PathVariable Long id,
+  public ResponseEntity<Page<ProyectoEntidadConvocanteDto>> findAllEntidadConvocantes(@PathVariable Long id,
       @RequestParam(name = "q", required = false) String query, @RequestPageable(sort = "s") Pageable paging) {
     log.debug("findAllEntidadConvocantes(Long id, String query, Pageable paging) - start");
 
@@ -108,13 +110,15 @@ public class ProyectoEntidadConvocanteController {
    * Actualiza el {@link Programa} del {@link ProyectoEntidadConvocante} con el id
    * indicado.
    * 
-   * @param id       id {@link ProyectoEntidadConvocante} a actualizar.
-   * @param programa {@link Programa} a fijar.
+   * @param id                  id {@link ProyectoEntidadConvocante} a actualizar.
+   * @param entidadConvocanteId Identificador de
+   *                            {@link ProyectoEntidadConvocante}.
+   * @param programa            {@link Programa} a fijar.
    * @return {@link ProyectoEntidadConvocante} actualizado.
    */
   @PatchMapping(ProyectoEntidadConvocanteController.PATH_ENTIDADCONVOCANTE_PROGRAMA)
   @PreAuthorize("hasAuthorityForAnyUO('CSP-PRO-E')")
-  ProyectoEntidadConvocante setPrograma(@PathVariable Long id, @PathVariable Long entidadConvocanteId,
+  public ProyectoEntidadConvocante setPrograma(@PathVariable Long id, @PathVariable Long entidadConvocanteId,
       @RequestBody(required = false) Programa programa) {
     log.debug("update(ProyectoEntidadConvocante proyectoEntidadConvocante, Long id) - start");
     ProyectoEntidadConvocante returnValue = service.setPrograma(entidadConvocanteId, programa);
@@ -125,12 +129,15 @@ public class ProyectoEntidadConvocanteController {
   /**
    * Borra el {@link ProyectoEntidadConvocante} con id indicado.
    * 
-   * @param id Identificador de {@link ProyectoEntidadConvocante}.
+   * @param id                  Identificador de
+   *                            {@link Proyecto}.
+   * @param entidadConvocanteId Identificador de
+   *                            {@link ProyectoEntidadConvocante}.
    */
   @DeleteMapping(ProyectoEntidadConvocanteController.PATH_ENTIDADCONVOCANTE)
   @PreAuthorize("hasAuthorityForAnyUO('CSP-PRO-E')")
   @ResponseStatus(value = HttpStatus.NO_CONTENT)
-  void deleteById(@PathVariable Long id, @PathVariable Long entidadConvocanteId) {
+  public void deleteById(@PathVariable Long id, @PathVariable Long entidadConvocanteId) {
     log.debug("deleteById(Long id) - start");
     service.delete(entidadConvocanteId);
     log.debug("deleteById(Long id) - end");
@@ -149,7 +156,7 @@ public class ProyectoEntidadConvocanteController {
 
   private Page<ProyectoEntidadConvocanteDto> convert(Page<ProyectoEntidadConvocante> page) {
     List<ProyectoEntidadConvocanteDto> content = page.getContent().stream()
-        .map((proyectoEntidadConvocante) -> convert(proyectoEntidadConvocante)).collect(Collectors.toList());
+        .map(proyectoEntidadConvocante -> convert(proyectoEntidadConvocante)).collect(Collectors.toList());
 
     return new PageImpl<>(content, page.getPageable(), page.getTotalElements());
   }

@@ -1,0 +1,35 @@
+[
+  {
+    "key": "ap5_2",
+    "wrappers": [
+      "expansion-panel"
+    ],
+    "templateOptions": {
+      "expressionLock": "formState.memoria.tipoMemoria.id === 3",
+      "label": "5.2 Documento de cesión de datos"
+    },
+    "fieldGroup": [
+      {
+        "template": "<p>A veces hay documento de cesión de datos (del profesor al alumno para Investigación tutelada, de clínicos a</p><p>investigadores de la Universidad, a través de Biobancos).</p>"
+      },
+      {
+        "key": "documentoCesion",
+        "type": "documento",
+        "templateOptions": {
+          "label": "Indicar",
+          "required": true,
+          "options": [
+            {
+              "value": 0,
+              "label": "No"
+            },
+            {
+              "value": 5,
+              "label": "Sí"
+            }
+          ]
+        }
+      }
+    ]
+  }
+]

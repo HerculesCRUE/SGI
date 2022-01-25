@@ -148,4 +148,9 @@ public class Solicitud extends BaseEntity {
   @Getter(AccessLevel.NONE)
   @Setter(AccessLevel.NONE)
   private final List<Proyecto> proyectos = null;
+
+  @OneToMany(mappedBy = "solicitud")
+  @Getter(AccessLevel.NONE)
+  @Setter(AccessLevel.NONE)
+  private final List<SolicitudPalabraClave> palabrasClave = null;
 }

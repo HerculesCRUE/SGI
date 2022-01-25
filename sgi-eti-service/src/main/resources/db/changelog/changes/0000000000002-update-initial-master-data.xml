@@ -2,7 +2,7 @@
 <databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:pro="http://www.liquibase.org/xml/ns/pro" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-3.8.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
   <property name="schemaPrefix" value="" />
 
-  <changeSet context="!unit-test AND !integration-test" author="master" id="0000000000002-apartado">
+  <changeSet context="!test" author="master" id="0000000000002-apartado">
     <!-- FORMULARIO M10 -->
     <!-- 2.1  Personal que llevará a cabo las tareas con seres humanos, sus muestras y/o sus datos-->
     <update tableName="apartado">
@@ -102,7 +102,7 @@
   </changeSet>
 
   <!-- CHECKLIST -->
-  <changeSet context="!unit-test AND !integration-test" author="master" id="0000000000002-formly">
+  <changeSet context="!test" author="master" id="0000000000002-formly">
     <update tableName="formly">
       <column name="esquema" valueClobFile="clob/0000000000002/checklist.json" />
       <where>:name=:value AND :name=:value</where>
@@ -113,7 +113,7 @@
     </update>
   </changeSet>
 
-  <changeSet context="!unit-test AND !integration-test" author="master" id="0000000000002-comite-add-genero">
+  <changeSet context="!test" author="master" id="0000000000002-comite-add-genero">
     <!-- Cambio de nombre investigación y genero para cada comité -->
     <update tableName="comite">
       <column name="nombre_investigacion" value="Comisión de Ética de Investigación" />
@@ -141,7 +141,7 @@
     </update>
   </changeSet>
 
-  <changeSet context="!unit-test AND !integration-test" author="master" id="0000000000002-configuracion">
+  <changeSet context="!test" author="master" id="0000000000002-configuracion">
     <update tableName="configuracion">
       <column name="meses_archivada_pendiente_correcciones" valueNumeric="6" />
       <column name="dias_archivada_inactivo" valueNumeric="45" />

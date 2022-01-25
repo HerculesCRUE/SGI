@@ -51,20 +51,17 @@
         </mat-form-field>
         <mat-form-field class="input-form">
           <mat-label>{{'csp.proyecto-documento.fase' | translate}}</mat-label>
-          <mat-select placeholder="{{'csp.proyecto-documento.fase' | translate}}" formControlName="tipoFase"
-            [compareWith]="compareFase">
-            <mat-option [value]="null"></mat-option>
-            <mat-option *ngFor="let fase of tipoFases$ | async" [value]="fase">{{fase.nombre}}</mat-option>
-          </mat-select>
+          <sgi-select-tipo-fase #fase placeholder="{{'csp.proyecto-documento.fase' | translate}}"
+            formControlName="tipoFase" [modeloEjecucionId]="actionService.modeloEjecucionId" relation="proyecto">
+          </sgi-select-tipo-fase>
         </mat-form-field>
 
         <mat-form-field class="input-form">
           <mat-label>{{'csp.proyecto-documento.tipo' | translate}}</mat-label>
-          <mat-select placeholder="{{'csp.proyecto-documento.tipo' | translate}}" formControlName="tipoDocumento"
-            [compareWith]="compareTipoDocumento">
-            <mat-option [value]="null"></mat-option>
-            <mat-option *ngFor="let tipo of tiposDocumento" [value]="tipo">{{tipo.nombre}}</mat-option>
-          </mat-select>
+          <sgi-select-tipo-documento placeholder="{{'csp.proyecto-documento.tipo' | translate}}"
+            formControlName="tipoDocumento" [modeloEjecucionId]="actionService.modeloEjecucionId"
+            [tipoFaseId]="formGroup.controls.tipoFase.value?.id" [resetOnChange]="fase.selectionChange">
+          </sgi-select-tipo-documento>
         </mat-form-field>
         <mat-form-field class="input-form">
           <mat-label>{{'csp.proyecto-documento.fichero' | translate}}</mat-label>

@@ -1,0 +1,150 @@
+<sgi-menu-content>
+  <div class="mat-elevation-z4">
+    <form [formGroup]="formGroup" class="busqueda" [fxLayout.xs]="fxLayoutProperties.xs"
+      [fxLayout]="fxLayoutProperties.layout" fxLayoutGap="fxLayoutProperties.gap">
+      <div [fxLayout.xs]="fxLayoutProperties.xs" [fxLayout]="fxLayoutProperties.layout"
+        [fxLayoutGap]="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
+
+        <!-- Investigador -->
+        <div class="col" fxFlex="49%" fxFlex.sm="99%">
+          <mat-form-field class="input-form">
+            <mat-label>{{'csp.notificacion-cvn.investigador' | translate}}</mat-label>
+            <sgi-select-persona placeholder="{{'csp.notificacion-cvn.investigador' | translate}}"
+              formControlName="investigador" [tipoColectivo]="TIPO_COLECTIVO.SOLICITANTE_CSP"></sgi-select-persona>
+          </mat-form-field>
+        </div>
+
+        <!-- Titúlo -->
+        <div class="col" fxFlex="49%" fxFlex.sm="99%">
+          <mat-form-field>
+            <mat-label>{{'csp.notificacion-cvn.titulo' | translate}}</mat-label>
+            <input matInput placeholder="{{'csp.notificacion-cvn.titulo' | translate}}" formControlName="titulo">
+          </mat-form-field>
+        </div>
+
+        <!-- Fecha Inicio Proyecto Desde-->
+        <div class="col" fxFlex="24%" fxFlex.sm="49%">
+          <mat-form-field>
+            <mat-label>{{'csp.notificacion-cvn.fecha-inicio-proyecto-desde' | translate}}</mat-label>
+            <input matInput formControlName="fechaInicioProyectoDesde" [matDatepicker]="pickerFechaInicioProyectoDesde"
+              [placeholder]="'csp.notificacion-cvn.fecha-inicio-proyecto-desde' | translate">
+            <mat-datepicker-toggle matSuffix [for]="pickerFechaInicioProyectoDesde"></mat-datepicker-toggle>
+            <mat-datepicker #pickerFechaInicioProyectoDesde>
+            </mat-datepicker>
+          </mat-form-field>
+        </div>
+
+        <!-- Fecha Inicio Proyecto Hasta-->
+        <div class="col" fxFlex="24%" fxFlex.sm="49%">
+          <mat-form-field sgiEndDate>
+            <mat-label>{{'csp.notificacion-cvn.fecha-inicio-proyecto-hasta' | translate}}</mat-label>
+            <input matInput formControlName="fechaInicioProyectoHasta" [matDatepicker]="pickerFechaInicioProyectoHasta"
+              [placeholder]="'csp.notificacion-cvn.fecha-inicio-proyecto-hasta' | translate">
+            <mat-datepicker-toggle matSuffix [for]="pickerFechaInicioProyectoHasta"></mat-datepicker-toggle>
+            <mat-datepicker #pickerFechaInicioProyectoHasta>
+            </mat-datepicker>
+          </mat-form-field>
+        </div>
+        <!-- Fecha Fin Proyecto Desde-->
+        <div class="col" fxFlex="24%" fxFlex.sm="49%">
+          <mat-form-field>
+            <mat-label>{{'csp.notificacion-cvn.fecha-fin-proyecto-desde' | translate}}</mat-label>
+            <input matInput formControlName="fechaFinProyectoDesde" [matDatepicker]="pickerFechaFinProyectoDesde"
+              [placeholder]="'csp.notificacion-cvn.fecha-fin-proyecto-desde' | translate">
+            <mat-datepicker-toggle matSuffix [for]="pickerFechaFinProyectoDesde"></mat-datepicker-toggle>
+            <mat-datepicker #pickerFechaFinProyectoDesde>
+            </mat-datepicker>
+          </mat-form-field>
+        </div>
+
+        <!-- Fecha Fin Proyecto Hasta-->
+        <div class="col" fxFlex="24%" fxFlex.sm="49%">
+          <mat-form-field sgiEndDate>
+            <mat-label>{{'csp.notificacion-cvn.fecha-fin-proyecto-hasta' | translate}}</mat-label>
+            <input matInput formControlName="fechaFinProyectoHasta" [matDatepicker]="pickerFechaFinProyectoHasta"
+              [placeholder]="'csp.notificacion-cvn.fecha-fin-proyecto-hasta' | translate">
+            <mat-datepicker-toggle matSuffix [for]="pickerFechaFinProyectoHasta"></mat-datepicker-toggle>
+            <mat-datepicker #pickerFechaFinProyectoHasta>
+            </mat-datepicker>
+          </mat-form-field>
+        </div>
+
+        <!-- Entidad Participación -->
+        <div class="col" fxFlex="49%" fxFlex.sm="99%">
+          <mat-form-field class="input-form">
+            <mat-label>{{'csp.notificacion-cvn.entidad-participacion' | translate}}</mat-label>
+            <sgi-select-empresa placeholder="{{'csp.notificacion-cvn.entidad-participacion'}}"
+              formControlName="entidadParticipacion">
+            </sgi-select-empresa>
+          </mat-form-field>
+        </div>
+
+      </div>
+
+      <div class="buttons-final">
+        <div class="col filter-button">
+          <button color="primary" aria-label="Center Align" mat-raised-button (click)="onSearch()">
+            <mat-icon>search</mat-icon> {{'btn.search'| translate}}
+          </button>
+          <button color="warn" aria-label="Center Align" (click)="onClearFilters()" mat-button>{{'btn.clean'|
+            translate}}
+          </button>
+        </div>
+      </div>
+    </form>
+
+
+    <table mat-table [dataSource]="notificaciones$ | async" matSort matSortActive="id" matSortDirection="asc"
+      matSortDisableClear>
+
+      <!-- Investigador -->
+      <ng-container matColumnDef="investigador">
+        <th mat-header-cell *matHeaderCellDef> {{'csp.notificacion-cvn.investigador' | translate}} </th>
+        <td mat-cell *matCellDef="let element"> {{element.solicitante | personaNombreCompleto}}</td>
+      </ng-container>
+
+      <!-- Titulo Column -->
+      <ng-container matColumnDef="titulo">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'csp.notificacion-cvn.titulo' | translate}} </th>
+        <td mat-cell *matCellDef="let notificacion"> {{notificacion.titulo}}</td>
+      </ng-container>
+
+      <!-- Entidad Participacion Column -->
+      <ng-container matColumnDef="entidadParticipacion">
+        <th mat-header-cell *matHeaderCellDef> {{'csp.notificacion-cvn.entidad-participacion' | translate}} </th>
+        <td mat-cell *matCellDef="let notificacion"> {{notificacion | notificacionCvnEntidadParticipacion}}</td>
+      </ng-container>
+
+      <!-- IP -->
+      <ng-container matColumnDef="ip">
+        <th mat-header-cell *matHeaderCellDef> {{'csp.notificacion-cvn.ip' | translate}} </th>
+        <td mat-cell *matCellDef="let notificacion"> {{notificacion | notificacionCvnResponsable}}</td>
+      </ng-container>
+
+      <!-- fechaEstado Column -->
+      <ng-container matColumnDef="fechaInicio">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'csp.notificacion-cvn.fecha-inicio' | translate}} </th>
+        <td mat-cell *matCellDef="let notificacion">{{notificacion.fechaInicio | luxon:'shortDate'}}</td>
+      </ng-container>
+
+      <!-- fechaEstado Column -->
+      <ng-container matColumnDef="fechaFin">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'csp.notificacion-cvn.fecha-fin' | translate}} </th>
+        <td mat-cell *matCellDef="let notificacion">{{notificacion.fechaFin | luxon:'shortDate'}}</td>
+      </ng-container>
+
+      <!-- Acciones Column -->
+      <ng-container matColumnDef="acciones">
+        <th mat-header-cell *matHeaderCellDef> {{'label.actions' | translate}} </th>
+        <td mat-cell *matCellDef="let notificacion">
+        </td>
+      </ng-container>
+      <tr mat-header-row *matHeaderRowDef="columnas"></tr>
+      <tr mat-row *matRowDef="let row; columns: columnas;"></tr>
+    </table>
+    <div class="paginator-export">
+      <mat-paginator [pageSizeOptions]="elementosPagina" [length]="totalElementos" showFirstLastButtons>
+      </mat-paginator>
+    </div>
+  </div>
+</sgi-menu-content>

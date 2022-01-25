@@ -201,6 +201,7 @@ export class PersonaFormlyModalComponent extends BaseFormlyModalComponent implem
           (error) => {
             this.logger.error(error);
             this.snackBarService.showError(this.textoCrearError);
+            FormlyUtils.convertJSONToFormly(this.formlyData.model, this.formlyData.fields);
           }
         ));
       } else if (this.personaData.action === ACTION_MODAL_MODE.EDIT) {
@@ -212,9 +213,10 @@ export class PersonaFormlyModalComponent extends BaseFormlyModalComponent implem
             this.snackBarService.showSuccess(this.textoUpdateSuccess);
           },
           (error) => {
-            this.formlyData.model.areaConocimiento = areaConocimiento;
             this.logger.error(error);
             this.snackBarService.showError(this.textoUpdateError);
+            FormlyUtils.convertJSONToFormly(this.formlyData.model, this.formlyData.fields);
+            this.formlyData.model.areaConocimiento = areaConocimiento;
           }
         ));
       }

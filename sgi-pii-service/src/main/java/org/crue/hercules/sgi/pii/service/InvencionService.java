@@ -14,6 +14,7 @@ import org.crue.hercules.sgi.pii.exceptions.InvencionNotFoundException;
 import org.crue.hercules.sgi.pii.model.Invencion;
 import org.crue.hercules.sgi.pii.model.TipoProteccion;
 import org.crue.hercules.sgi.pii.repository.InvencionRepository;
+import org.crue.hercules.sgi.pii.repository.predicate.InvencionPredicateResolver;
 import org.crue.hercules.sgi.pii.repository.specification.InvencionSpecifications;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -54,7 +55,8 @@ public class InvencionService {
   public Page<Invencion> findActivos(String query, Pageable pageable) {
     log.debug("findActivos(String query, Pageable pageable) - start");
     Specification<Invencion> specs = InvencionSpecifications
-        .distinct().and(InvencionSpecifications.activos().and(SgiRSQLJPASupport.toSpecification(query)));
+        .distinct().and(InvencionSpecifications.activos()
+            .and(SgiRSQLJPASupport.toSpecification(query, InvencionPredicateResolver.getInstance())));
 
     Page<Invencion> returnValue = repository.findAll(specs, pageable);
     log.debug("findActivos(String query, Pageable pageable) - end");
@@ -70,7 +72,8 @@ public class InvencionService {
    */
   public Page<Invencion> findAll(String query, Pageable pageable) {
     log.debug("findAll(String query, Pageable pageable) - start");
-    Specification<Invencion> specs = InvencionSpecifications.distinct().and(SgiRSQLJPASupport.toSpecification(query));
+    Specification<Invencion> specs = InvencionSpecifications.distinct()
+        .and(SgiRSQLJPASupport.toSpecification(query, InvencionPredicateResolver.getInstance()));
 
     Page<Invencion> returnValue = repository.findAll(specs, pageable);
     log.debug("findAll(String query, Pageable pageable) - end");

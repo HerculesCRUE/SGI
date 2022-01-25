@@ -18,7 +18,7 @@ import cz.jirutka.rsql.parser.ast.ComparisonOperator;
 import cz.jirutka.rsql.parser.ast.RSQLOperators;
 
 public class TramoRepartoPredicateResolver implements SgiRSQLPredicateResolver<TramoReparto> {
-  private static final Pattern integerPattern = Pattern.compile("^\\d+$");
+  private static final Pattern POSITIVE_NUMBER_PATTERN = Pattern.compile("^\\d+$");
 
   private enum Property {
     /* Máximo valor Hasta */
@@ -66,7 +66,7 @@ public class TramoRepartoPredicateResolver implements SgiRSQLPredicateResolver<T
     subquery.select(cb.max(rootSubquery.get(TramoReparto_.hasta)));
     // Si el argumento es un id (entero positivo) se excluye dicho id para obtener
     // el hasta máximo
-    if (isPositiveInteger(selectedId)) {
+    if (isPositiveNumber(selectedId)) {
       subquery.where(cb.notEqual(rootSubquery.get(TramoReparto_.id), Long.parseLong(selectedId)));
     }
 
@@ -85,7 +85,7 @@ public class TramoRepartoPredicateResolver implements SgiRSQLPredicateResolver<T
       throw new IllegalArgumentException("Bad number of arguments for " + node.getSelector());
     }
     String argument = node.getArguments().get(0);
-    if (!isPositiveInteger(argument)) {
+    if (!isPositiveNumber(argument)) {
       throw new IllegalArgumentException("Argument should be a positive integer for " + node.getSelector());
     }
 
@@ -98,11 +98,11 @@ public class TramoRepartoPredicateResolver implements SgiRSQLPredicateResolver<T
             cb.lessThanOrEqualTo(root.get(TramoReparto_.desde), value)));
   }
 
-  public boolean isPositiveInteger(String strInt) {
-    if (strInt == null) {
+  public boolean isPositiveNumber(String value) {
+    if (value == null) {
       return false;
     }
-    return integerPattern.matcher(strInt).matches();
+    return POSITIVE_NUMBER_PATTERN.matcher(value).matches();
   }
 
   @Override
@@ -115,12 +115,12 @@ public class TramoRepartoPredicateResolver implements SgiRSQLPredicateResolver<T
   public Predicate toPredicate(ComparisonNode node, Root<TramoReparto> root, CriteriaQuery<?> query,
       CriteriaBuilder criteriaBuilder) {
     switch (Property.fromCode(node.getSelector())) {
-    case MAX_HASTA:
-      return buildByMaxHasta(node, root, query, criteriaBuilder);
-    case BETWEEN_DESDE_HASTA:
-      return buildByBetweenDesdeHasta(node, root, query, criteriaBuilder);
-    default:
-      return null;
+      case MAX_HASTA:
+        return buildByMaxHasta(node, root, query, criteriaBuilder);
+      case BETWEEN_DESDE_HASTA:
+        return buildByBetweenDesdeHasta(node, root, query, criteriaBuilder);
+      default:
+        return null;
     }
   }
 

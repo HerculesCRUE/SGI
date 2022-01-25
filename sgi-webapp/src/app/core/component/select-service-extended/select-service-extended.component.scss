@@ -1,0 +1,22 @@
+.mat-option.missing {
+  text-decoration: line-through;
+}
+
+:host {
+  .icon-wrapper {
+    margin-top: -0.2em;
+    color: rgba(0, 0, 0, 0.54);
+    .mat-icon-button {
+      height: 1.5em;
+      width: 1.5em;
+      font: inherit;
+      vertical-align: baseline;
+      .mat-icon {
+        font-size: 1.4em;
+        width: 1em;
+        height: 1em;
+        margin-top: -0.3em;
+      }
+    }
+  }
+}

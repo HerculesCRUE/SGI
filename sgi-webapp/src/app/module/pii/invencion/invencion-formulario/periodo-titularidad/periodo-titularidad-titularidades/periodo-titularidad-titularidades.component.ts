@@ -1,5 +1,5 @@
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
+import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
@@ -8,7 +8,7 @@ import { FragmentComponent } from '@core/component/fragment.component';
 import { MSG_PARAMS } from '@core/i18n';
 import { IPeriodoTitularidad } from '@core/models/pii/periodo-titularidad';
 import { DialogService } from '@core/services/dialog.service';
-import { Status, StatusWrapper } from '@core/utils/status-wrapper';
+import { StatusWrapper } from '@core/utils/status-wrapper';
 import { TranslateService } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
 import { filter, switchMap, take } from 'rxjs/operators';
@@ -183,9 +183,10 @@ export class PeriodoTitularidadTitularidadesComponent extends FragmentComponent 
       showFechaFin: !periodoTitularidad && !this.formPart.previousPeriodoTitularidadHistorico ? false : null
     };
 
-    const config = {
+    const config: MatDialogConfig = {
       panelClass: 'sgi-dialog-container',
       data: periodoTitularidadModalData,
+      minWidth: '500px',
     };
     const dialogRef = this.matDialog.open(PeriodoTitularidadModalComponent, config);
     dialogRef.afterClosed().subscribe(

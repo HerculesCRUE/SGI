@@ -101,7 +101,7 @@ public class ProyectoAgrupacionGastoController {
    */
   @RequestMapping(path = "/{id}", method = RequestMethod.HEAD)
   @PreAuthorize("hasAuthorityForAnyUO('CSP-PRO-E')")
-  public ResponseEntity<?> exists(@PathVariable Long id) {
+  public ResponseEntity<Void> exists(@PathVariable Long id) {
     log.debug("exists(Long id) - start");
     if (service.existsById(id)) {
       log.debug("exists(Long id) - end");
@@ -119,7 +119,7 @@ public class ProyectoAgrupacionGastoController {
    */
   @GetMapping("/{id}")
   @PreAuthorize("hasAuthorityForAnyUO('CSP-PRO-E')")
-  ProyectoAgrupacionGastoOutput findById(@PathVariable Long id) {
+  public ProyectoAgrupacionGastoOutput findById(@PathVariable Long id) {
     log.debug("findById(Long id) - start");
     ProyectoAgrupacionGastoOutput returnValue = convert(service.findById(id));
     log.debug("findById(Long id) - end");
@@ -134,7 +134,7 @@ public class ProyectoAgrupacionGastoController {
   @DeleteMapping("/{id}")
   @PreAuthorize("hasAuthorityForAnyUO('CSP-PRO-E')")
   @ResponseStatus(value = HttpStatus.NO_CONTENT)
-  void deleteById(@PathVariable Long id) {
+  public void deleteById(@PathVariable Long id) {
     log.debug("deleteById(Long id) - start");
     service.delete(id);
     log.debug("deleteById(Long id) - end");
@@ -144,23 +144,23 @@ public class ProyectoAgrupacionGastoController {
    * Devuelve todos los {@link AgrupacionGastoConceptoOutput} de un
    * {@link ProyectoAgrupacionGasto}
    * 
-   * @param query
-   * @param paging
+   * @param query  filtro de búsqueda.
+   * @param paging pageable.
    * @param id     del {@link ProyectoAgrupacionGasto}.
    * @return {@link ResponseEntity} con la lista de
    *         {@link AgrupacionGastoConceptoOutput} y el estado de la conexion.
    */
   @GetMapping("/{id}/agrupaciongastoconceptos")
   @PreAuthorize("hasAuthorityForAnyUO('CSP-PRO-E')")
-  ResponseEntity<Page<AgrupacionGastoConceptoOutput>> findAllById(@PathVariable Long id,
+  public ResponseEntity<Page<AgrupacionGastoConceptoOutput>> findAllById(@PathVariable Long id,
       @RequestParam(name = "q", required = false) String query, @RequestPageable(sort = "s") Pageable paging) {
-    log.debug("findAll(String query, Pageable paging) - start");
+    log.debug("findAllById(String query, Pageable paging) - start");
     Page<AgrupacionGastoConcepto> page = agrupacionGastoConceptoService.findAllByAgrupacionId(id, query, paging);
     if (page.isEmpty()) {
-      log.debug("findAll(String query, Pageable paging) - end");
+      log.debug("findAllById(String query, Pageable paging) - end");
       return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
-    log.debug("findAll(String query, Pageable paging) - end");
+    log.debug("findAllById(String query, Pageable paging) - end");
     return new ResponseEntity<>(convertAgrupacionGastoConcepto(page), HttpStatus.OK);
   }
 
@@ -169,11 +169,13 @@ public class ProyectoAgrupacionGastoController {
    * 
    * @param query  filtro de búsqueda.
    * @param paging pageable.
+   * @return el listado de entidades {@link ProyectoAgrupacionGasto}
+   *         paginadas y filtradas.
    */
   @GetMapping()
   @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-EJEC-E', 'CSP-EJEC-V', 'CSP-EJEC-INV-VR')")
-  ResponseEntity<Page<ProyectoAgrupacionGastoOutput>> findAll(@RequestParam(name = "q", required = false) String query,
-      @RequestPageable(sort = "s") Pageable paging) {
+  public ResponseEntity<Page<ProyectoAgrupacionGastoOutput>> findAll(
+      @RequestParam(name = "q", required = false) String query, @RequestPageable(sort = "s") Pageable paging) {
     log.debug("findAll(String query, Pageable paging) - start");
     Page<ProyectoAgrupacionGasto> page = service.findAll(query, paging);
 
@@ -196,7 +198,7 @@ public class ProyectoAgrupacionGastoController {
 
   private Page<ProyectoAgrupacionGastoOutput> convert(Page<ProyectoAgrupacionGasto> page) {
     List<ProyectoAgrupacionGastoOutput> content = page.getContent().stream()
-        .map((proyectoAgrupacion) -> convert(proyectoAgrupacion)).collect(Collectors.toList());
+        .map(proyectoAgrupacion -> convert(proyectoAgrupacion)).collect(Collectors.toList());
 
     return new PageImpl<>(content, page.getPageable(), page.getTotalElements());
   }
@@ -215,7 +217,7 @@ public class ProyectoAgrupacionGastoController {
 
   private Page<AgrupacionGastoConceptoOutput> convertAgrupacionGastoConcepto(Page<AgrupacionGastoConcepto> page) {
     List<AgrupacionGastoConceptoOutput> content = page.getContent().stream()
-        .map((agrupacionGastoConcepto) -> convertAgrupacionGastoConcepto(agrupacionGastoConcepto))
+        .map(agrupacionGastoConcepto -> convertAgrupacionGastoConcepto(agrupacionGastoConcepto))
         .collect(Collectors.toList());
 
     return new PageImpl<>(content, page.getPageable(), page.getTotalElements());

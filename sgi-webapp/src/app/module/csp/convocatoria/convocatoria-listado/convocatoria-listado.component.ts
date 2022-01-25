@@ -23,8 +23,8 @@ import { TranslateService } from '@ngx-translate/core';
 import { SgiAuthService } from '@sgi/framework/auth';
 import { RSQLSgiRestFilter, SgiRestFilter, SgiRestFilterOperator, SgiRestListResult } from '@sgi/framework/http/';
 import { NGXLogger } from 'ngx-logger';
-import { from, Observable, of } from 'rxjs';
-import { map, mergeAll, mergeMap, switchMap } from 'rxjs/operators';
+import { EMPTY, from, Observable, of } from 'rxjs';
+import { catchError, map, mergeAll, mergeMap, switchMap } from 'rxjs/operators';
 import { ConvocatoriaListadoModalComponent, IConvocatoriaListadoModalData } from '../modals/convocatoria-listado-modal/convocatoria-listado-modal.component';
 
 const MSG_BUTTON_ADD = marker('btn.add.entity');
@@ -134,6 +134,7 @@ export class ConvocatoriaListadoComponent extends AbstractTablePaginationCompone
       entidadFinanciadora: new FormControl(null),
       fuenteFinanciacion: new FormControl(null),
       areaTematica: new FormControl(null),
+      palabrasClave: new FormControl(null),
     });
 
 
@@ -318,6 +319,10 @@ export class ConvocatoriaListadoComponent extends AbstractTablePaginationCompone
                       convocatoriaListado.entidadFinanciadoraEmpresa = empresa;
                       return convocatoriaListado;
                     }),
+                    catchError((error) => {
+                      this.logger.error(error);
+                      return EMPTY;
+                    })
                   );
                 }
                 return of(convocatoriaListado);
@@ -353,6 +358,10 @@ export class ConvocatoriaListadoComponent extends AbstractTablePaginationCompone
                           convocatoriaListado.entidadConvocanteEmpresa = empresa;
                           return convocatoriaListado;
                         }),
+                        catchError((error) => {
+                          this.logger.error(error);
+                          return EMPTY;
+                        })
                       );
                     }
                     return of(convocatoriaListado);
@@ -408,7 +417,24 @@ export class ConvocatoriaListadoComponent extends AbstractTablePaginationCompone
       .and('entidadesFinanciadoras.fuenteFinanciacion.id', SgiRestFilterOperator.EQUALS, controls.fuenteFinanciacion.value?.id?.toString())
       .and('areasTematicas.areaTematica.id', SgiRestFilterOperator.EQUALS, controls.areaTematica.value?.id?.toString());
 
+    const palabrasClave = controls.palabrasClave.value as string[];
+    if (Array.isArray(palabrasClave) && palabrasClave.length > 0) {
+      filter.and(this.createPalabrasClaveFilter(palabrasClave));
+    }
+
     return filter;
+  }
+
+  private createPalabrasClaveFilter(palabrasClave: string[]): SgiRestFilter {
+    let palabrasClaveFilter: SgiRestFilter;
+    palabrasClave.forEach(palabraClave => {
+      if (palabrasClaveFilter) {
+        palabrasClaveFilter.or('palabrasClave.palabraClaveRef', SgiRestFilterOperator.LIKE_ICASE, palabraClave);
+      } else {
+        palabrasClaveFilter = new RSQLSgiRestFilter('palabrasClave.palabraClaveRef', SgiRestFilterOperator.LIKE_ICASE, palabraClave);
+      }
+    });
+    return palabrasClaveFilter;
   }
 
   onClearFilters() {

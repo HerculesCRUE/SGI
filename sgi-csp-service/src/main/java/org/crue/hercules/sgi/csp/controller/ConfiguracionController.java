@@ -43,7 +43,7 @@ public class ConfiguracionController {
    */
   @GetMapping()
   @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-PRO-E')")
-  ResponseEntity<Configuracion> findConfiguracion() {
+  public ResponseEntity<Configuracion> findConfiguracion() {
     log.debug("findConfiguracion() - start");
     Configuracion configuracion = service.findConfiguracion();
     log.debug("findConfiguracion() - end");
@@ -59,7 +59,8 @@ public class ConfiguracionController {
    */
   @PutMapping("/{id}")
   @PreAuthorize("hasAuthorityForAnyUO('CSP-CNF-E')")
-  Configuracion replaceConfiguracion(@Valid @RequestBody Configuracion updatedConfiguracion, @PathVariable Long id) {
+  public Configuracion replaceConfiguracion(@Valid @RequestBody Configuracion updatedConfiguracion,
+      @PathVariable Long id) {
     log.debug("replaceConfiguracion(Configuracion updatedConfiguracion, Long id) - start");
     updatedConfiguracion.setId(id);
     Configuracion returnValue = service.update(updatedConfiguracion);

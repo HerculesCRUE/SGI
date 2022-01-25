@@ -14,6 +14,7 @@ import { MaterialDesignModule } from '@material/material-design.module';
 import { SgiAuthModule, SgiAuthService } from '@sgi/framework/auth';
 import { SharedModule } from '@shared/shared.module';
 import { LoggerTestingModule } from 'ngx-logger/testing';
+import { CspSharedModule } from '../csp-shared.module';
 import { PartidaGastoDataModal, PartidaGastoModalComponent } from './partida-gasto-modal.component';
 
 describe('PartidaGastoModalComponent', () => {
@@ -45,7 +46,8 @@ describe('PartidaGastoModalComponent', () => {
         RouterTestingModule,
         ReactiveFormsModule,
         SgiAuthModule,
-        SharedModule
+        SharedModule,
+        CspSharedModule
       ],
       providers: [
         { provide: SnackBarService, useValue: TestUtils.getSnackBarServiceSpy() },

@@ -289,9 +289,6 @@
           <mat-error *ngIf="formGroup.controls.fechaFinDefinitiva.errors?.after">
             {{'error.after.fecha-fin-definitiva' | translate}}
           </mat-error>
-          <mat-error *ngIf="formGroup.controls.fechaFinDefinitiva.errors?.afterThanProrroga">
-            {{'error.afterThanProrroga.fecha-fin-definitiva' | translate}}
-          </mat-error>
         </mat-form-field>
       </div>
 
@@ -379,6 +376,19 @@
         </mat-form-field>
       </div>
 
+    </div>
+
+    <!-- Palabras Clave -->
+    <div [fxLayout.xs]="fxLayoutProperties.xs" [fxLayout]="fxLayoutProperties.layout"
+      [fxLayoutGap]="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
+      <div [fxFlex.sm]="fxFlexPropertiesInline.sm" [fxFlex.md]="fxFlexPropertiesInline.md"
+        [fxFlex.gt-md]="fxFlexPropertiesInline.gtMd" [fxFlexOrder]="fxFlexPropertiesInline.order">
+        <mat-form-field fxFill>
+          <mat-label>{{'csp.proyecto.palabras-clave' | translate}}</mat-label>
+          <sgi-palabra-clave formControlName="palabrasClave" id="palabrasClave"
+            placeholder="{{'csp.proyecto.palabras-clave' | translate}}"></sgi-palabra-clave>
+        </mat-form-field>
+      </div>
     </div>
 
     <div [fxLayout.xs]="fxLayoutProperties.xs" [fxLayout]="fxLayoutProperties.layout"

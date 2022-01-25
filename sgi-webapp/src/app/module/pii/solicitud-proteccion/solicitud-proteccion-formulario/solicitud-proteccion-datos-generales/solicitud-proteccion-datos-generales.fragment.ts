@@ -352,7 +352,7 @@ export class SolicitudProteccionDatosGeneralesFragment extends FormFragment<ISol
           form.controls.fechaFinPrioridad.setValue(null);
         } else {
           form.controls.fechaFinPrioridad.setValidators([Validators.required]);
-          if (form.controls.viaProteccion.dirty && form.controls.fechaPrioridad.dirty) {
+          if (form.controls.viaProteccion.dirty && form.controls.fechaPrioridad.value) {
             this.resolveFechaFinPrioridad(via);
           }
         }

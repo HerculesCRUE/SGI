@@ -46,7 +46,7 @@ public class TipoRegimenConcurrenciaController {
    */
   @GetMapping()
   @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-CON-C', 'CSP-CON-INV-V', 'CSP-CON-V', 'CSP-CON-E')")
-  ResponseEntity<Page<TipoRegimenConcurrencia>> findAll(@RequestParam(name = "q", required = false) String query,
+  public ResponseEntity<Page<TipoRegimenConcurrencia>> findAll(@RequestParam(name = "q", required = false) String query,
       @RequestPageable(sort = "s") Pageable paging) {
     log.debug("findAll(String query,Pageable paging) - start");
     Page<TipoRegimenConcurrencia> page = service.findAll(query, paging);
@@ -68,7 +68,7 @@ public class TipoRegimenConcurrenciaController {
    */
   @GetMapping("/{id}")
   @PreAuthorize("hasAuthorityForAnyUO('AUTH')")
-  TipoRegimenConcurrencia findById(@PathVariable Long id) {
+  public TipoRegimenConcurrencia findById(@PathVariable Long id) {
     log.debug("TipoRegimenConcurrencia findById(Long id) - start");
     TipoRegimenConcurrencia returnValue = service.findById(id);
     log.debug("TipoRegimenConcurrencia findById(Long id) - end");

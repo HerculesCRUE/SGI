@@ -128,6 +128,7 @@ public class SolicitudProteccionController {
    * con el id indicado.
    * 
    * @param solicitudProteccionId Identificador de {@link SolicitudProteccion}
+   * @param paging                Información de paginación
    * @return {@link PaisValidado} asociados a la {@link SolicitudProteccion}
    */
   @GetMapping(PATH_PAISESVALIDADOS)
@@ -154,6 +155,7 @@ public class SolicitudProteccionController {
    * con el id indicado.
    * 
    * @param solicitudProteccionId Identificador de {@link SolicitudProteccion}
+   * @param paging                Información de paginación
    * @return Elementos paginados de tipo {@link Procedimiento} asociados a la
    *         {@link SolicitudProteccion}
    */

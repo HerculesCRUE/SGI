@@ -51,7 +51,7 @@ public class ProyectoSocioPeriodoJustificacionDocumentoController {
    */
   @GetMapping("/{id}")
   @PreAuthorize("hasAuthorityForAnyUO('AUTH')")
-  ProyectoSocioPeriodoJustificacionDocumento findById(@PathVariable Long id) {
+  public ProyectoSocioPeriodoJustificacionDocumento findById(@PathVariable Long id) {
     log.debug("findById(Long id) - start");
     ProyectoSocioPeriodoJustificacionDocumento returnValue = service.findById(id);
     log.debug("findById(Long id) - end");

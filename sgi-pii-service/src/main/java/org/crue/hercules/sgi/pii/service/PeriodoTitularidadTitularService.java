@@ -117,8 +117,8 @@ public class PeriodoTitularidadTitularService {
    * Devuelve todos los {@link PeriodoTitularidadTitular} asociados al
    * {@link PeriodoTitularidad}
    * 
-   * @param periodoTitularidadId
-   * @return
+   * @param periodoTitularidadId el identificador de referencia para la búsqueda
+   * @return la lista de {@link PeriodoTitularidadTitular}
    */
   public List<PeriodoTitularidadTitular> findAllByPeriodoTitularidadId(Long periodoTitularidadId)
       throws PeriodoTitularidadNotFoundException {

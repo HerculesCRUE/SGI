@@ -51,7 +51,8 @@ public class ProyectoPaqueteTrabajoController {
    */
   @PostMapping
   @PreAuthorize("hasAuthorityForAnyUO('CSP-PRO-E')")
-  ResponseEntity<ProyectoPaqueteTrabajo> create(@Valid @RequestBody ProyectoPaqueteTrabajo proyectoPaqueteTrabajo) {
+  public ResponseEntity<ProyectoPaqueteTrabajo> create(
+      @Valid @RequestBody ProyectoPaqueteTrabajo proyectoPaqueteTrabajo) {
     log.debug("create(ProyectoPaqueteTrabajo proyectoPaqueteTrabajo) - start");
     ProyectoPaqueteTrabajo returnValue = service.create(proyectoPaqueteTrabajo);
     log.debug("create(ProyectoPaqueteTrabajo proyectoPaqueteTrabajo) - end");
@@ -67,7 +68,7 @@ public class ProyectoPaqueteTrabajoController {
    */
   @PutMapping("/{id}")
   @PreAuthorize("hasAuthorityForAnyUO('CSP-PRO-E')")
-  ProyectoPaqueteTrabajo update(
+  public ProyectoPaqueteTrabajo update(
       @Validated({ Update.class, Default.class }) @RequestBody ProyectoPaqueteTrabajo proyectoPaqueteTrabajo,
       @PathVariable Long id) {
     log.debug("update(ProyectoPaqueteTrabajo proyectoPaqueteTrabajo, Long id) - start");
@@ -85,7 +86,7 @@ public class ProyectoPaqueteTrabajoController {
   @DeleteMapping("/{id}")
   @PreAuthorize("hasAuthorityForAnyUO('CSP-PRO-E')")
   @ResponseStatus(value = HttpStatus.NO_CONTENT)
-  void deleteById(@PathVariable Long id) {
+  public void deleteById(@PathVariable Long id) {
     log.debug("deleteById(Long id) - start");
     service.delete(id);
     log.debug("deleteById(Long id) - end");
@@ -99,7 +100,7 @@ public class ProyectoPaqueteTrabajoController {
    */
   @GetMapping("/{id}")
   @PreAuthorize("hasAuthorityForAnyUO('AUTH')")
-  ProyectoPaqueteTrabajo findById(@PathVariable Long id) {
+  public ProyectoPaqueteTrabajo findById(@PathVariable Long id) {
     log.debug("findById(Long id) - start");
     ProyectoPaqueteTrabajo returnValue = service.findById(id);
     log.debug("findById(Long id) - end");

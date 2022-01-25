@@ -1,4 +1,4 @@
-<a mat-list-item [routerLink]="route" [routerLinkActive]="['is-active']">
+<button mat-list-item [routerLink]="route" [routerLinkActive]="['is-active']">
   <div>
     <span>{{title}}</span>
     <span *ngIf="fragment?.status$ | async as status;">
@@ -11,4 +11,4 @@
       </sgi-icon-problems>
     </span>
   </div>
-</a>
+</button>

@@ -54,4 +54,14 @@ public class ModeloEjecucion extends BaseEntity {
   @NotNull(groups = { Update.class })
   private Boolean activo;
 
+  /** Externo */
+  @Column(name = "externo", columnDefinition = "boolean default false", nullable = false)
+  @NotNull
+  private Boolean externo;
+
+  /** Contrato */
+  @Column(name = "contrato", columnDefinition = "boolean default false", nullable = false)
+  @NotNull
+  private Boolean contrato;
+
 }

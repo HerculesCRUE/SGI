@@ -91,7 +91,7 @@ public class SolicitudHitoController {
    */
   @GetMapping("/{id}")
   @PreAuthorize("hasAuthorityForAnyUO('AUTH')")
-  SolicitudHito findById(@PathVariable Long id) {
+  public SolicitudHito findById(@PathVariable Long id) {
     log.debug("SolicitudHito findById(Long id) - start");
     SolicitudHito returnValue = service.findById(id);
     log.debug("SolicitudHito findById(Long id) - end");
@@ -106,7 +106,7 @@ public class SolicitudHitoController {
   @DeleteMapping("/{id}")
   @PreAuthorize("hasAuthorityForAnyUO('CSP-SOL-E')")
   @ResponseStatus(value = HttpStatus.NO_CONTENT)
-  void deleteById(@PathVariable Long id) {
+  public void deleteById(@PathVariable Long id) {
     log.debug("deleteById(Long id) - start");
     service.delete(id);
     log.debug("deleteById(Long id) - end");

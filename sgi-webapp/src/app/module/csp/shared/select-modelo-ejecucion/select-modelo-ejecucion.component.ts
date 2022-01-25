@@ -1,19 +1,24 @@
+import { PlatformLocation } from '@angular/common';
 import { Component, Input, Optional, Self } from '@angular/core';
 import { NgControl } from '@angular/forms';
 import { ErrorStateMatcher } from '@angular/material/core';
 import { MatFormFieldControl } from '@angular/material/form-field';
-import { SelectServiceComponent } from '@core/component/select-service/select-service.component';
+import { SelectServiceExtendedComponent } from '@core/component/select-service-extended/select-service-extended.component';
 import { IModeloEjecucion } from '@core/models/csp/tipos-configuracion';
+import { Module } from '@core/module';
+import { ROUTE_NAMES } from '@core/route.names';
 import { ModeloEjecucionService } from '@core/services/csp/modelo-ejecucion.service';
 import { ModeloUnidadService } from '@core/services/csp/modelo-unidad.service';
+import { SgiAuthService } from '@sgi/framework/auth';
 import { RSQLSgiRestFilter, RSQLSgiRestSort, SgiRestFilterOperator, SgiRestFindOptions, SgiRestSortDirection } from '@sgi/framework/http';
 import { Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { CSP_ROUTE_NAMES } from '../../csp-route-names';
 
 @Component({
   selector: 'sgi-select-modelo-ejecucion',
-  templateUrl: '../../../../core/component/select-common/select-common.component.html',
-  styleUrls: ['../../../../core/component/select-common/select-common.component.scss'],
+  templateUrl: '../../../../core/component/select-service-extended/select-service-extended.component.html',
+  styleUrls: ['../../../../core/component/select-service-extended/select-service-extended.component.scss'],
   providers: [
     {
       provide: MatFormFieldControl,
@@ -21,7 +26,7 @@ import { map } from 'rxjs/operators';
     }
   ]
 })
-export class SelectModeloEjecucionComponent extends SelectServiceComponent<IModeloEjecucion> {
+export class SelectModeloEjecucionComponent extends SelectServiceExtendedComponent<IModeloEjecucion> {
 
   private requestByUnidadGestion = false;
 
@@ -44,10 +49,14 @@ export class SelectModeloEjecucionComponent extends SelectServiceComponent<IMode
 
   constructor(
     defaultErrorStateMatcher: ErrorStateMatcher,
+    @Self() @Optional() ngControl: NgControl,
+    platformLocation: PlatformLocation,
     private service: ModeloEjecucionService,
     private unidadModeloService: ModeloUnidadService,
-    @Self() @Optional() ngControl: NgControl) {
-    super(defaultErrorStateMatcher, ngControl);
+    private authService: SgiAuthService
+  ) {
+    super(defaultErrorStateMatcher, ngControl, platformLocation);
+    this.addTarget = `/${Module.CSP.path}/${CSP_ROUTE_NAMES.MODELO_EJECUCION}/${ROUTE_NAMES.NEW}`;
   }
 
   protected loadServiceOptions(): Observable<IModeloEjecucion[]> {
@@ -72,4 +81,7 @@ export class SelectModeloEjecucionComponent extends SelectServiceComponent<IMode
     }
   }
 
+  protected isAddAuthorized(): boolean {
+    return this.authService.hasAuthorityForAnyUO('CSP-ME-C');
+  }
 }

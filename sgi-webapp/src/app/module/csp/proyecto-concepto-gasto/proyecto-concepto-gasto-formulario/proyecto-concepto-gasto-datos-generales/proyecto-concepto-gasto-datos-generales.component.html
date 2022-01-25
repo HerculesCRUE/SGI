@@ -11,8 +11,8 @@
             <mat-label>
               {{'csp.proyecto-concepto-gasto' | translate:MSG_PARAMS.CARDINALIRY.SINGULAR}}
             </mat-label>
-            <sgi-select-entity formControlName="conceptoGasto" required [options]="conceptosGasto$ | async">
-            </sgi-select-entity>
+            <sgi-select-concepto-gasto formControlName="conceptoGasto" required>
+            </sgi-select-concepto-gasto>
             <mat-error *ngIf="formGroup.controls.conceptoGasto.errors?.required">
               {{'error.invalid.entity' | translate:msgParamConceptoGastoEntity}}
             </mat-error>
@@ -130,8 +130,8 @@
             <mat-label>
               {{'csp.proyecto-concepto-gasto' | translate:MSG_PARAMS.CARDINALIRY.SINGULAR}}
             </mat-label>
-            <sgi-select-entity formControlName="conceptoGastoConvocatoria" [options]="conceptosGasto$ | async">
-            </sgi-select-entity>
+            <sgi-select-concepto-gasto formControlName="conceptoGastoConvocatoria">
+            </sgi-select-concepto-gasto>
           </mat-form-field>
         </div>
         <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"

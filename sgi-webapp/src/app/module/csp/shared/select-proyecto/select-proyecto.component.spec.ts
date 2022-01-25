@@ -6,6 +6,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RouterTestingModule } from '@angular/router/testing';
 import TestUtils from '@core/utils/test-utils';
 import { MaterialDesignModule } from '@material/material-design.module';
+import { LoggerTestingModule } from 'ngx-logger/testing';
 import { SelectProyectoComponent } from './select-proyecto.component';
 
 describe('SelectProyectoComponent', () => {
@@ -26,7 +27,8 @@ describe('SelectProyectoComponent', () => {
         MatDialogModule,
         TestUtils.getIdiomas(),
         FormsModule,
-        ReactiveFormsModule
+        ReactiveFormsModule,
+        LoggerTestingModule
       ],
       providers: [
         {

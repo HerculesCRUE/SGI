@@ -27,7 +27,7 @@ public class FuenteFinanciacionOutput implements Serializable {
   @NoArgsConstructor
   @AllArgsConstructor
   @Builder
-  public static class TipoAmbitoGeografico {
+  public static class TipoAmbitoGeografico implements Serializable {
     private Long id;
     private String nombre;
   }
@@ -37,7 +37,7 @@ public class FuenteFinanciacionOutput implements Serializable {
   @NoArgsConstructor
   @AllArgsConstructor
   @Builder
-  public static class TipoOrigenFuenteFinanciacion {
+  public static class TipoOrigenFuenteFinanciacion implements Serializable {
     private Long id;
     private String nombre;
   }

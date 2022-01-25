@@ -80,7 +80,7 @@ public class TipoEnlaceController {
    */
   @PatchMapping("/{id}/reactivar")
   @PreAuthorize("hasAuthorityForAnyUO('CSP-TENL-R')")
-  TipoEnlace reactivar(@PathVariable Long id) {
+  public TipoEnlace reactivar(@PathVariable Long id) {
     log.debug("reactivar(Long id) - start");
     TipoEnlace returnValue = service.enable(id);
     log.debug("reactivar(Long id) - end");
@@ -95,7 +95,7 @@ public class TipoEnlaceController {
    */
   @PatchMapping("/{id}/desactivar")
   @PreAuthorize("hasAuthorityForAnyUO('CSP-TENL-B')")
-  TipoEnlace desactivar(@PathVariable Long id) {
+  public TipoEnlace desactivar(@PathVariable Long id) {
     log.debug("desactivar(Long id) - start");
     TipoEnlace returnValue = service.disable(id);
     log.debug("desactivar(Long id) - end");
@@ -111,7 +111,7 @@ public class TipoEnlaceController {
    */
   @GetMapping()
   @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-ME-C', 'CSP-ME-E')")
-  ResponseEntity<Page<TipoEnlace>> findAll(@RequestParam(name = "q", required = false) String query,
+  public ResponseEntity<Page<TipoEnlace>> findAll(@RequestParam(name = "q", required = false) String query,
       @RequestPageable(sort = "s") Pageable paging) {
     log.debug("findAll(String query,Pageable paging) - start");
     Page<TipoEnlace> page = service.findAll(query, paging);
@@ -133,7 +133,7 @@ public class TipoEnlaceController {
    */
   @GetMapping("/todos")
   @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-TENL-V', 'CSP-TENL-C', 'CSP-TENL-E', 'CSP-TENL-B', 'CSP-TENL-R')")
-  ResponseEntity<Page<TipoEnlace>> findAllTodos(@RequestParam(name = "q", required = false) String query,
+  public ResponseEntity<Page<TipoEnlace>> findAllTodos(@RequestParam(name = "q", required = false) String query,
       @RequestPageable(sort = "s") Pageable paging) {
     log.debug("findAllTodos(String query, Pageable paging) - start");
     Page<TipoEnlace> page = service.findAllTodos(query, paging);
@@ -155,7 +155,7 @@ public class TipoEnlaceController {
    */
   @GetMapping("/{id}")
   @PreAuthorize("hasAuthorityForAnyUO('AUTH')")
-  TipoEnlace findById(@PathVariable Long id) {
+  public TipoEnlace findById(@PathVariable Long id) {
     log.debug("TipoEnlace findById(Long id) - start");
     TipoEnlace returnValue = service.findById(id);
     log.debug("TipoEnlace findById(Long id) - end");

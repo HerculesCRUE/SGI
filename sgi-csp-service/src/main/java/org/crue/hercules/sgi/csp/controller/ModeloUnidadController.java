@@ -45,10 +45,12 @@ public class ModeloUnidadController {
    * 
    * @param query  filtro de búsqueda.
    * @param paging pageable.
+   * @return el listado de entidades {@link ModeloUnidad}
+   *         paginadas y filtradas.
    */
   @GetMapping()
   @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-CON-V', 'CSP-CON-C', 'CSP-CON-E', 'CSP-CON-INV-V', 'CSP-PRO-C', 'CSP-PRO-V', 'CSP-PRO-E')")
-  ResponseEntity<Page<ModeloUnidad>> findAll(@RequestParam(name = "q", required = false) String query,
+  public ResponseEntity<Page<ModeloUnidad>> findAll(@RequestParam(name = "q", required = false) String query,
       @RequestPageable(sort = "s") Pageable paging) {
     log.debug("findAll(String query, Pageable paging) - start");
     Page<ModeloUnidad> page = service.findAll(query, paging);
@@ -85,7 +87,7 @@ public class ModeloUnidadController {
   @DeleteMapping("/{id}")
   @PreAuthorize("hasAuthorityForAnyUO('CSP-ME-E')")
   @ResponseStatus(value = HttpStatus.NO_CONTENT)
-  void deleteById(@PathVariable Long id) {
+  public void deleteById(@PathVariable Long id) {
     log.debug("deleteById(Long id) - start");
     service.disable(id);
     log.debug("deleteById(Long id) - end");
@@ -99,7 +101,7 @@ public class ModeloUnidadController {
    */
   @GetMapping("/{id}")
   @PreAuthorize("hasAuthorityForAnyUO('AUTH')")
-  ModeloUnidad findById(@PathVariable Long id) {
+  public ModeloUnidad findById(@PathVariable Long id) {
     log.debug("findById(Long id) - start");
     ModeloUnidad returnValue = service.findById(id);
     log.debug("findById(Long id) - end");

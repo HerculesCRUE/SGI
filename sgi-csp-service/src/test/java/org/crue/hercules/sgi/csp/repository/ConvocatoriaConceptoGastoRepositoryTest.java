@@ -83,6 +83,8 @@ public class ConvocatoriaConceptoGastoRepositoryTest extends BaseRepositoryTest 
     ModeloEjecucion modeloEjecucion = ModeloEjecucion.builder()
         .nombre("nombreModeloEjecucion" + suffix)
         .activo(Boolean.TRUE)
+        .externo(Boolean.FALSE)
+        .contrato(Boolean.FALSE)
         .build();
     entityManager.persistAndFlush(modeloEjecucion);
 

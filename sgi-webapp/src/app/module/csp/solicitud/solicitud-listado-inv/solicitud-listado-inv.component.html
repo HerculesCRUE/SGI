@@ -11,7 +11,7 @@
         <mat-form-field>
           <mat-label>{{'csp.solicitud.convocatoria' | translate}}</mat-label>
           <sgi-select-convocatoria placeholder="{{'csp.solicitud.convocatoria' | translate}}"
-            formControlName="convocatoria" investigador="true">
+            formControlName="convocatoria" investigador="true" extended="false">
           </sgi-select-convocatoria>
         </mat-form-field>
       </div>
@@ -117,16 +117,16 @@
         <th mat-header-cell *matHeaderCellDef> {{'label.actions' | translate}} </th>
         <td mat-cell *matCellDef="let element">
           <ng-container *sgiHasAnyAuthority="['CSP-SOL-INV-ER', 'CSP-SOL-INV-BR']">
-            <button mat-button matTooltip="{{'btn.view' | translate}}" *ngIf="!element.modificable"
+            <a mat-button matTooltip="{{'btn.view' | translate}}" *ngIf="!element.modificable"
               [routerLink]="[element.id]">
               <mat-icon color="primary">visibility</mat-icon>
-            </button>
+            </a>
           </ng-container>
           <ng-container *sgiHasAnyAuthority="['CSP-SOL-INV-ER']">
-            <button *ngIf="element.modificable" mat-button matTooltip="{{'btn.edit' | translate}}"
+            <a *ngIf="element.modificable" mat-button matTooltip="{{'btn.edit' | translate}}"
               [routerLink]="[element.id]">
               <mat-icon color="primary">border_color</mat-icon>
-            </button>
+            </a>
           </ng-container>
           <ng-container *sgiHasAnyAuthority="['CSP-SOL-INV-BR']">
             <button *ngIf="element.eliminable" mat-button matTooltip="{{'btn.delete' | translate}}"

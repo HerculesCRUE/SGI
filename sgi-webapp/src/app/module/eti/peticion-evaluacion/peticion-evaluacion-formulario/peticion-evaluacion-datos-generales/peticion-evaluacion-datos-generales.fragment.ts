@@ -6,7 +6,7 @@ import { FormFragment } from '@core/services/action-service';
 import { ChecklistService } from '@core/services/eti/checklist/checklist.service';
 import { PeticionEvaluacionService } from '@core/services/eti/peticion-evaluacion.service';
 import { SgiAuthService } from '@sgi/framework/auth/public-api';
-import { BehaviorSubject, EMPTY, Observable, of } from 'rxjs';
+import { BehaviorSubject, EMPTY, Observable, of, Subject } from 'rxjs';
 import { catchError, map, switchMap } from 'rxjs/operators';
 
 export class PeticionEvaluacionDatosGeneralesFragment extends FormFragment<IPeticionEvaluacion> {
@@ -18,6 +18,7 @@ export class PeticionEvaluacionDatosGeneralesFragment extends FormFragment<IPeti
 
   public mostrarCamposFinanciacion$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
   public mostrarCampoEspecificarValorSocial$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
+  public solicitantePeticionEvaluacion$ = new Subject<IPersona>();
 
   constructor(
     private fb: FormBuilder,
@@ -75,6 +76,7 @@ export class PeticionEvaluacionDatosGeneralesFragment extends FormFragment<IPeti
       switchMap((value: IPeticionEvaluacion) => {
         this.peticionEvaluacion = value;
         this.isTipoInvestigacionTutelada$.next(this.peticionEvaluacion.tipoInvestigacionTutelada ? true : false);
+        this.solicitantePeticionEvaluacion$.next(value.solicitante);
         return of(value);
       }),
       catchError(() => {

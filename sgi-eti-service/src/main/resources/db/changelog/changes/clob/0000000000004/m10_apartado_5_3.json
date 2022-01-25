@@ -1,0 +1,47 @@
+[
+  {
+    "key": "ap5_3",
+    "wrappers": [
+      "expansion-panel"
+    ],
+    "templateOptions": {
+      "expressionLock": "formState.memoria.tipoMemoria.id === 3",
+      "label": "5.3 Documento de autorización"
+    },
+    "fieldGroup": [
+      {
+        "template": "<p>Si parte de su proyecto se realiza fuera de las instalaciones de la Universidad ¿dispone de Documento de</p><p>Autorización del Responsable del Centro o lugar?</p>"
+      },
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "<p>En general, cualquier faceta de un estudio que se realice fuera de las instalaciones de la Universidad requerirá de la autorización o acuerdo firmado por parte del/la responsable del Centro o instalaciones donde se vaya a realizar esa fase del proyecto, incluido el reclutamiento de sujetos para el estudio, distribución de información sobre el proyecto, toma de muestras, realización de encuestas, realización de pruebas físicas o psicológicas, recopilación de datos, etc.</p>"
+      },
+      {
+        "key": "documentoAutorizacion",
+        "type": "documento",
+        "templateOptions": {
+          "label": "Indicar",
+          "required": true,
+          "options": [
+            {
+              "value": 0,
+              "label": "No"
+            },
+            {
+              "value": 6,
+              "label": "Sí"
+            }
+          ]
+        }
+      },
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "<p>Nota: describir en los apartados '3.4.1 Proceso de reclutamiento y/o 3.5.3 Descripción de las intervenciones'.</p>"
+      }
+    ]
+  }
+]

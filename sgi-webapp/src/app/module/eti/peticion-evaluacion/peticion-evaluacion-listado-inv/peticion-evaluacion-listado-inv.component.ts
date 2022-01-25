@@ -133,8 +133,7 @@ export class PeticionEvaluacionListadoInvComponent extends AbstractTablePaginati
   }
 
   protected createObservable(): Observable<SgiRestListResult<IPeticionEvaluacionWithIsEliminable>> {
-    const observable$ = this.peticionesEvaluacionService.findAllPeticionEvaluacionMemoria(this.getFindOptions());
-    return observable$;
+    return this.peticionesEvaluacionService.findAllPeticionEvaluacionMemoria(this.getFindOptions());
   }
 
   protected createFilter(): SgiRestFilter {

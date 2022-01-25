@@ -6,13 +6,11 @@ import { BaseModalComponent } from '@core/component/base-modal.component';
 import { MSG_PARAMS } from '@core/i18n';
 import { IModeloTipoFase } from '@core/models/csp/modelo-tipo-fase';
 import { ITipoFase } from '@core/models/csp/tipos-configuracion';
-import { TipoFaseService } from '@core/services/csp/tipo-fase.service';
 import { DialogService } from '@core/services/dialog.service';
 import { SnackBarService } from '@core/services/snack-bar.service';
 import { requiredChecked } from '@core/validators/checkbox-validator';
 import { TranslateService } from '@ngx-translate/core';
-import { Observable } from 'rxjs';
-import { map, switchMap } from 'rxjs/operators';
+import { switchMap } from 'rxjs/operators';
 
 const MSG_ANADIR = marker('btn.add');
 const MSG_ACEPTAR = marker('btn.ok');
@@ -32,7 +30,6 @@ export interface ModeloEjecucionTipoFaseModalData {
 })
 export class ModeloEjecucionTipoFaseModalComponent extends
   BaseModalComponent<IModeloTipoFase, ModeloEjecucionTipoFaseModalComponent> implements OnInit {
-  tipoFases$: Observable<ITipoFase[]>;
 
   textSaveOrUpdate: string;
   title: string;
@@ -43,22 +40,10 @@ export class ModeloEjecucionTipoFaseModalComponent extends
     protected snackBarService: SnackBarService,
     public matDialogRef: MatDialogRef<ModeloEjecucionTipoFaseModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data: ModeloEjecucionTipoFaseModalData,
-    private tipoFaseService: TipoFaseService,
     protected dialogService: DialogService,
     private readonly translate: TranslateService
   ) {
     super(snackBarService, matDialogRef, data.modeloTipoFase);
-
-    this.tipoFases$ = this.tipoFaseService.findAll().pipe(
-      map(response => {
-        if (!this.data.modeloTipoFase.tipoFase) {
-          return response.items.filter(tipoFase => {
-            return !this.data.tipoFases.some(currentTipo => currentTipo.id === tipoFase.id);
-          });
-        }
-        return response.items;
-      })
-    );
   }
 
   ngOnInit(): void {

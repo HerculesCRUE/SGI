@@ -22,7 +22,9 @@ describe('SearchEmpresaModalComponent', () => {
 
     // Mock MAT_DIALOG
     const matDialogData: SearchEmpresaModalData = {
-      selectedEmpresas: []
+      searchTerm: '',
+      selectedEmpresas: [],
+      extended: true
     };
 
     TestBed.configureTestingModule({

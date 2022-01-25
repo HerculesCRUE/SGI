@@ -50,7 +50,7 @@ public class ConvocatoriaFaseController {
    */
   @GetMapping("/{id}")
   @PreAuthorize("hasAuthorityForAnyUO('AUTH')")
-  ConvocatoriaFase findById(@PathVariable Long id) {
+  public ConvocatoriaFase findById(@PathVariable Long id) {
     log.debug("findById(Long id) - start");
     ConvocatoriaFase returnValue = service.findById(id);
     log.debug("findById(Long id) - end");
@@ -65,7 +65,7 @@ public class ConvocatoriaFaseController {
    */
   @PostMapping
   @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-CON-C','CSP-CON-E')")
-  ResponseEntity<ConvocatoriaFase> create(@Valid @RequestBody ConvocatoriaFase convocatoriaFase) {
+  public ResponseEntity<ConvocatoriaFase> create(@Valid @RequestBody ConvocatoriaFase convocatoriaFase) {
     log.debug("create(ConvocatoriaFase convocatoriaFase) - start");
     ConvocatoriaFase returnValue = service.create(convocatoriaFase);
     log.debug("create(ConvocatoriaFase convocatoriaFase) - end");
@@ -81,7 +81,8 @@ public class ConvocatoriaFaseController {
    */
   @PutMapping("/{id}")
   @PreAuthorize("hasAuthorityForAnyUO('CSP-CON-E')")
-  ConvocatoriaFase update(@Validated({ Update.class, Default.class }) @RequestBody ConvocatoriaFase convocatoriaFase,
+  public ConvocatoriaFase update(
+      @Validated({ Update.class, Default.class }) @RequestBody ConvocatoriaFase convocatoriaFase,
       @PathVariable Long id) {
     log.debug("update(ConvocatoriaFase convocatoriaFase, Long id) - start");
     convocatoriaFase.setId(id);
@@ -98,7 +99,7 @@ public class ConvocatoriaFaseController {
   @DeleteMapping("/{id}")
   @PreAuthorize("hasAuthorityForAnyUO('CSP-CON-E')")
   @ResponseStatus(value = HttpStatus.NO_CONTENT)
-  void deleteById(@PathVariable Long id) {
+  public void deleteById(@PathVariable Long id) {
     log.debug("deleteById(Long id) - start");
     service.delete(id);
     log.debug("deleteById(Long id) - end");

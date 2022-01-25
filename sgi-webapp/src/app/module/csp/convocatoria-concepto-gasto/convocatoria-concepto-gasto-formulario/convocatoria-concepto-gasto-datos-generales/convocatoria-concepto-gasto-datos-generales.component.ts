@@ -2,14 +2,11 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { FormFragmentComponent } from '@core/component/fragment.component';
 import { MSG_PARAMS } from '@core/i18n';
-import { IConceptoGasto } from '@core/models/csp/concepto-gasto';
 import { IConvocatoriaConceptoGasto } from '@core/models/csp/convocatoria-concepto-gasto';
 import { FxFlexProperties } from '@core/models/shared/flexLayout/fx-flex-properties';
 import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-properties';
-import { ConceptoGastoService } from '@core/services/csp/concepto-gasto.service';
 import { TranslateService } from '@ngx-translate/core';
-import { Observable, Subscription } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { Subscription } from 'rxjs';
 import { ConvocatoriaConceptoGastoActionService } from '../../convocatoria-concepto-gasto.action.service';
 import { ConvocatoriaConceptoGastoDatosGeneralesFragment } from './convocatoria-concepto-gasto-datos-generales.fragment';
 
@@ -29,7 +26,6 @@ export class ConvocatoriaConceptoGastoDatosGeneralesComponent
   fxFlexProperties: FxFlexProperties;
 
   private subscriptions: Subscription[] = [];
-  conceptosGasto$: Observable<IConceptoGasto[]>;
 
   textSaveOrUpdate: string;
 
@@ -37,7 +33,6 @@ export class ConvocatoriaConceptoGastoDatosGeneralesComponent
   msgParamCostesIndirectos = {};
 
   constructor(
-    conceptoGastoService: ConceptoGastoService,
     public readonly actionService: ConvocatoriaConceptoGastoActionService,
     private readonly translate: TranslateService
   ) {
@@ -51,10 +46,6 @@ export class ConvocatoriaConceptoGastoDatosGeneralesComponent
     this.fxFlexProperties.md = '0 1 calc(100%-10px)';
     this.fxFlexProperties.gtMd = '0 1 calc(100%-10px)';
     this.fxFlexProperties.order = '2';
-
-    this.conceptosGasto$ = conceptoGastoService.findAll().pipe(
-      map(response => response.items)
-    );
   }
 
   ngOnInit(): void {

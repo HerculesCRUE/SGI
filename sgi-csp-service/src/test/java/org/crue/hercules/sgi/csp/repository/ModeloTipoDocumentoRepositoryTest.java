@@ -26,10 +26,10 @@ public class ModeloTipoDocumentoRepositoryTest extends BaseRepositoryTest {
   public void findByModeloEjecucionIdAndTipoDocumentoId_ReturnsModeloTipoDocumentoList() throws Exception {
     // given: 2 ModeloTipoDocumento de los que 1 coincide con los ids de
     // ModeloEjecucion y TipoDocumento
-    ModeloEjecucion modeloEjecucion1 = new ModeloEjecucion(null, "nombre-1", "descripcion-1", true);
+    ModeloEjecucion modeloEjecucion1 = new ModeloEjecucion(null, "nombre-1", "descripcion-1", true, false, false);
     entityManager.persistAndFlush(modeloEjecucion1);
 
-    ModeloEjecucion modeloEjecucion2 = new ModeloEjecucion(null, "nombre-2", "descripcion-2", true);
+    ModeloEjecucion modeloEjecucion2 = new ModeloEjecucion(null, "nombre-2", "descripcion-2", true, false, false);
     entityManager.persistAndFlush(modeloEjecucion2);
 
     TipoDocumento tipoDocumento1 = new TipoDocumento(null, "nombre-1", "descripcion-1", true);
@@ -68,10 +68,10 @@ public class ModeloTipoDocumentoRepositoryTest extends BaseRepositoryTest {
   public void findByModeloEjecucionIdAndTipoDocumentoId_NoExiste_ReturnsEmptyList() throws Exception {
     // given: 2 ModeloTipoDocumento que no coinciden con los ids de
     // ModeloEjecucion y TipoDocumento
-    ModeloEjecucion modeloEjecucion1 = new ModeloEjecucion(null, "nombre-1", "descripcion-1", true);
+    ModeloEjecucion modeloEjecucion1 = new ModeloEjecucion(null, "nombre-1", "descripcion-1", true, false, false);
     entityManager.persistAndFlush(modeloEjecucion1);
 
-    ModeloEjecucion modeloEjecucion2 = new ModeloEjecucion(null, "nombre-2", "descripcion-2", true);
+    ModeloEjecucion modeloEjecucion2 = new ModeloEjecucion(null, "nombre-2", "descripcion-2", true, false, false);
     entityManager.persistAndFlush(modeloEjecucion2);
 
     TipoDocumento tipoDocumento1 = new TipoDocumento(null, "nombre-1", "descripcion-1", true);
@@ -104,10 +104,10 @@ public class ModeloTipoDocumentoRepositoryTest extends BaseRepositoryTest {
       throws Exception {
     // given: 2 ModeloTipoDocumento de los que 1 coincide con los ids de
     // ModeloEjecucion, ModeloTipoFase y TipoDocumento
-    ModeloEjecucion modeloEjecucion1 = new ModeloEjecucion(null, "nombre-1", "descripcion-1", true);
+    ModeloEjecucion modeloEjecucion1 = new ModeloEjecucion(null, "nombre-1", "descripcion-1", true, false, false);
     entityManager.persistAndFlush(modeloEjecucion1);
 
-    ModeloEjecucion modeloEjecucion2 = new ModeloEjecucion(null, "nombre-2", "descripcion-2", true);
+    ModeloEjecucion modeloEjecucion2 = new ModeloEjecucion(null, "nombre-2", "descripcion-2", true, false, false);
     entityManager.persistAndFlush(modeloEjecucion2);
 
     TipoFase tipoFase1 = new TipoFase(null, "nombre-1", "descripcion-1", true);
@@ -163,10 +163,10 @@ public class ModeloTipoDocumentoRepositoryTest extends BaseRepositoryTest {
       throws Exception {
     // given: 2 ModeloTipoDocumento que no coinciden con los ids de
     // ModeloEjecucion, ModeloTipoFase y TipoDocumento
-    ModeloEjecucion modeloEjecucion1 = new ModeloEjecucion(null, "nombre-1", "descripcion-1", true);
+    ModeloEjecucion modeloEjecucion1 = new ModeloEjecucion(null, "nombre-1", "descripcion-1", true, false, false);
     entityManager.persistAndFlush(modeloEjecucion1);
 
-    ModeloEjecucion modeloEjecucion2 = new ModeloEjecucion(null, "nombre-2", "descripcion-2", true);
+    ModeloEjecucion modeloEjecucion2 = new ModeloEjecucion(null, "nombre-2", "descripcion-2", true, false, false);
     entityManager.persistAndFlush(modeloEjecucion2);
 
     TipoFase tipoFase1 = new TipoFase(null, "nombre-1", "descripcion-1", true);

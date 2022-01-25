@@ -6,23 +6,20 @@ import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { FragmentComponent } from '@core/component/fragment.component';
 import { MSG_PARAMS } from '@core/i18n';
 import { IProyectoDocumento } from '@core/models/csp/proyecto-documento';
-import { ITipoDocumento, ITipoFase } from '@core/models/csp/tipos-configuracion';
+import { ITipoFase } from '@core/models/csp/tipos-configuracion';
 import { FxFlexProperties } from '@core/models/shared/flexLayout/fx-flex-properties';
 import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-properties';
 import { Group } from '@core/services/action-service';
-import { ModeloEjecucionService } from '@core/services/csp/modelo-ejecucion.service';
 import { DialogService } from '@core/services/dialog.service';
 import { DocumentoService, triggerDownloadToUser } from '@core/services/sgdoc/documento.service';
 import { SnackBarService } from '@core/services/snack-bar.service';
 import { StatusWrapper } from '@core/utils/status-wrapper';
 import { IsEntityValidator } from '@core/validators/is-entity-validador';
 import { TranslateService } from '@ngx-translate/core';
-import { RSQLSgiRestFilter, SgiRestFilterOperator, SgiRestFindOptions } from '@sgi/framework/http';
 import { SgiFileUploadComponent, UploadEvent } from '@shared/file-upload/file-upload.component';
 import { NGXLogger } from 'ngx-logger';
-import { of, Subscription } from 'rxjs';
-import { Observable } from 'rxjs/internal/Observable';
-import { map, switchMap, tap } from 'rxjs/operators';
+import { Subscription } from 'rxjs';
+import { switchMap } from 'rxjs/operators';
 import { ProyectoActionService } from '../../proyecto.action.service';
 import { NodeDocumento, ProyectoDocumentosFragment } from './proyecto-documentos.fragment';
 
@@ -67,16 +64,12 @@ export class ProyectoDocumentosComponent extends FragmentComponent implements On
   }
 
   uploading = false;
-  tiposDocumento: ITipoDocumento[] = [];
-  tipoFases$: Observable<ITipoFase[]> = of([]);
 
   msgParamEntity = {};
   msgParamFicheroEntity = {};
   msgParamNombreEntity = {};
   msgParamVisibleEntity = {};
   textoDelete: string;
-
-  private tipoDocumentosFase = new Map<number, ITipoDocumento[]>();
 
   fxFlexProperties: FxFlexProperties;
   fxLayoutProperties: FxLayoutProperties;
@@ -92,16 +85,12 @@ export class ProyectoDocumentosComponent extends FragmentComponent implements On
   private transformer = (node: NodeDocumento, level: number) => node;
 
   hasChild = (_: number, node: NodeDocumento) => node.childs.length > 0;
-  compareFase = (option: ITipoFase, value: ITipoFase) => option?.id === value?.id;
-  compareTipoDocumento = (option: ITipoDocumento, value: ITipoDocumento) => option?.id === value?.id;
-
 
   constructor(
     protected logger: NGXLogger,
     private dialogService: DialogService,
     public actionService: ProyectoActionService,
     private snackBarService: SnackBarService,
-    private modeloEjecucionService: ModeloEjecucionService,
     private documentoService: DocumentoService,
     private readonly translate: TranslateService
   ) {
@@ -152,36 +141,10 @@ export class ProyectoDocumentosComponent extends FragmentComponent implements On
 
     this.group.initialize();
 
-    const idModeloEjecucion = this.actionService.modeloEjecucionId;
-    const options: SgiRestFindOptions = {
-      filter: new RSQLSgiRestFilter('proyecto', SgiRestFilterOperator.EQUALS, 'true')
-    };
-    this.subscriptions.push(
-      this.modeloEjecucionService.findModeloTipoDocumento(idModeloEjecucion).pipe(
-        tap(() => {
-          this.tipoFases$ = this.modeloEjecucionService.findModeloTipoFaseModeloEjecucion(idModeloEjecucion, options).pipe(
-            map(modeloTipoFases => modeloTipoFases.items.map(modeloTipoFase => modeloTipoFase.tipoFase))
-          );
-        })
-      ).subscribe(
-        (tipos) => {
-          tipos.items.forEach((tipo) => {
-            const idTipoFase = tipo.modeloTipoFase ? tipo.modeloTipoFase.tipoFase.id : null;
-            let tiposDocumentos = this.tipoDocumentosFase.get(idTipoFase);
-            if (!tiposDocumentos) {
-              tiposDocumentos = [];
-              this.tipoDocumentosFase.set(idTipoFase, tiposDocumentos);
-            }
-            tiposDocumentos.push(tipo.tipoDocumento);
-          });
-        }
-      )
-    );
     this.subscriptions.push(this.formGroup.controls.tipoFase.valueChanges.subscribe((value: ITipoFase) => {
       if (this.viewMode === VIEW_MODE.EDIT || this.viewMode === VIEW_MODE.NEW) {
         this.formGroup.controls.tipoDocumento.reset();
       }
-      this.tiposDocumento = this.tipoDocumentosFase.get(value ? value.id : null);
     }));
     this.switchToNone();
   }

@@ -5,14 +5,10 @@ import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { BaseModalComponent } from '@core/component/base-modal.component';
 import { MSG_PARAMS } from '@core/i18n';
 import { IDocumentoRequeridoSolicitud } from '@core/models/csp/documento-requerido-solicitud';
-import { ITipoDocumento } from '@core/models/csp/tipos-configuracion';
 import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-properties';
-import { ModeloEjecucionService } from '@core/services/csp/modelo-ejecucion.service';
 import { SnackBarService } from '@core/services/snack-bar.service';
 import { TranslateService } from '@ngx-translate/core';
-import { RSQLSgiRestFilter, SgiRestFilterOperator, SgiRestFindOptions } from '@sgi/framework/http';
-import { Observable } from 'rxjs';
-import { map, switchMap } from 'rxjs/operators';
+import { switchMap } from 'rxjs/operators';
 
 const MSG_ANADIR = marker('btn.add');
 const MSG_ACEPTAR = marker('btn.ok');
@@ -36,7 +32,6 @@ export class ConvocatoriaConfiguracionSolicitudesModalComponent
   implements OnInit {
   fxLayoutProperties: FxLayoutProperties;
 
-  documentosRequeridos$: Observable<ITipoDocumento[]>;
   textSaveOrUpdate: string;
   title: string;
 
@@ -46,24 +41,12 @@ export class ConvocatoriaConfiguracionSolicitudesModalComponent
     protected readonly snackBarService: SnackBarService,
     public readonly matDialogRef: MatDialogRef<ConvocatoriaConfiguracionSolicitudesModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data: ConvocatoriaConfiguracionSolicitudesModalData,
-    modeloEjecucionService: ModeloEjecucionService,
     private readonly translate: TranslateService
   ) {
     super(snackBarService, matDialogRef, data);
     this.fxLayoutProperties = new FxLayoutProperties();
     this.fxLayoutProperties.layout = 'row';
     this.fxLayoutProperties.layoutAlign = 'row';
-
-    const options: SgiRestFindOptions = {
-      filter: new RSQLSgiRestFilter(
-        'modeloTipoFase.tipoFase.id',
-        SgiRestFilterOperator.EQUALS,
-        this.data.tipoFaseId ? this.data.tipoFaseId.toString() : null
-      )
-    };
-    this.documentosRequeridos$ = modeloEjecucionService.findModeloTipoDocumento(this.data.modeloEjecucionId, options).pipe(
-      map(response => response.items.map(modeloDocumento => modeloDocumento.tipoDocumento))
-    );
   }
 
   ngOnInit(): void {

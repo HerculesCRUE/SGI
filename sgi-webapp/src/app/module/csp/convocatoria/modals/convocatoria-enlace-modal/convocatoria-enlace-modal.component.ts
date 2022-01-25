@@ -5,14 +5,11 @@ import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { BaseModalComponent } from '@core/component/base-modal.component';
 import { MSG_PARAMS } from '@core/i18n';
 import { IConvocatoriaEnlace } from '@core/models/csp/convocatoria-enlace';
-import { ITipoEnlace } from '@core/models/csp/tipos-configuracion';
 import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-properties';
-import { ModeloEjecucionService } from '@core/services/csp/modelo-ejecucion.service';
 import { SnackBarService } from '@core/services/snack-bar.service';
 import { StringValidator } from '@core/validators/string-validator';
 import { TranslateService } from '@ngx-translate/core';
-import { Observable } from 'rxjs';
-import { map, switchMap } from 'rxjs/operators';
+import { switchMap } from 'rxjs/operators';
 
 const MSG_ANADIR = marker('btn.add');
 const MSG_ACEPTAR = marker('btn.ok');
@@ -37,7 +34,6 @@ export class ConvocatoriaEnlaceModalComponent extends
   BaseModalComponent<ConvocatoriaEnlaceModalComponentData, ConvocatoriaEnlaceModalComponent> implements OnInit {
   fxLayoutProperties: FxLayoutProperties;
 
-  tiposEnlace$: Observable<ITipoEnlace[]>;
   textSaveOrUpdate: string;
 
   msgParamUrlEntity = {};
@@ -48,7 +44,6 @@ export class ConvocatoriaEnlaceModalComponent extends
   constructor(
     protected snackBarService: SnackBarService,
     public matDialogRef: MatDialogRef<ConvocatoriaEnlaceModalComponent>,
-    modeloEjecucionService: ModeloEjecucionService,
     @Inject(MAT_DIALOG_DATA) public data: ConvocatoriaEnlaceModalComponentData,
     private readonly translate: TranslateService
   ) {
@@ -56,10 +51,6 @@ export class ConvocatoriaEnlaceModalComponent extends
     this.fxLayoutProperties = new FxLayoutProperties();
     this.fxLayoutProperties.layout = 'row';
     this.fxLayoutProperties.layoutAlign = 'row';
-
-    this.tiposEnlace$ = modeloEjecucionService.findModeloTipoEnlace(this.data.idModeloEjecucion).pipe(
-      map(response => response.items.map(modeloTipoEnlace => modeloTipoEnlace.tipoEnlace))
-    );
   }
 
   ngOnInit() {

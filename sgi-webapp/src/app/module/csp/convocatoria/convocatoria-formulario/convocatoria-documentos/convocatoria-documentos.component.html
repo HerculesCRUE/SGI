@@ -61,14 +61,16 @@
         </mat-form-field>
         <mat-form-field class="input-form">
           <mat-label>{{'csp.convocatoria-documento.fase' | translate}}</mat-label>
-          <sgi-select-entity #fase formControlName="fase" [options]="tipoFases$ | async">
-          </sgi-select-entity>
+          <sgi-select-tipo-fase #fase formControlName="fase" [modeloEjecucionId]="actionService.modeloEjecucionId"
+            relation="convocatoria">
+          </sgi-select-tipo-fase>
         </mat-form-field>
         <mat-form-field class="input-form">
           <mat-label>{{'csp.documento.tipo' | translate}}</mat-label>
-          <sgi-select-entity formControlName="tipoDocumento" [options]="tiposDocumento$ | async"
+          <sgi-select-tipo-documento formControlName="tipoDocumento"
+            [modeloEjecucionId]="actionService.modeloEjecucionId" [tipoFaseId]="formGroup.controls.fase.value?.id"
             [resetOnChange]="fase.selectionChange">
-          </sgi-select-entity>
+          </sgi-select-tipo-documento>
         </mat-form-field>
         <mat-form-field class="input-form">
           <mat-label>{{'csp.convocatoria-documento.publico' | translate}}</mat-label>

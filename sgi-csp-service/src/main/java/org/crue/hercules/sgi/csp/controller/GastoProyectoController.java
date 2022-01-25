@@ -66,10 +66,12 @@ public class GastoProyectoController {
    * 
    * @param query  filtro de búsqueda.
    * @param paging pageable.
+   * @return el listado de entidades {@link GastoProyectoOutput}
+   *         paginadas y filtradas.
    */
   @GetMapping
   @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-EJEC-E', 'CSP-EJEC-V', 'CSP-EJEC-INV-VR')")
-  ResponseEntity<Page<GastoProyectoOutput>> findAll(@RequestParam(name = "q", required = false) String query,
+  public ResponseEntity<Page<GastoProyectoOutput>> findAll(@RequestParam(name = "q", required = false) String query,
       @RequestPageable(sort = "s") Pageable paging) {
     log.debug("findAllTodos(String query, Pageable paging) - start");
     Page<GastoProyecto> page = service.findAll(query, paging);
@@ -91,7 +93,7 @@ public class GastoProyectoController {
    */
   @PostMapping
   @PreAuthorize("hasAuthorityForAnyUO('CSP-EJEC-E')")
-  ResponseEntity<GastoProyectoOutput> create(@Valid @RequestBody GastoProyectoInput gastoProyecto) {
+  public ResponseEntity<GastoProyectoOutput> create(@Valid @RequestBody GastoProyectoInput gastoProyecto) {
     log.debug("create(GastoProyecto gastoProyecto) - start");
 
     GastoProyecto returnValue = service.create(convert(gastoProyecto));
@@ -106,11 +108,13 @@ public class GastoProyectoController {
    * 
    * @param id     Identificador de {@link GastoProyecto}.
    * @param paging pageable.
+   * @return el listado de entidades {@link EstadoGastoProyecto}
+   *         paginadas y filtradas del {@link GastoProyecto}.
    */
 
   @GetMapping("/{id}/estadosgastoproyecto")
   @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-EJEC-E', 'CSP-EJEC-V', 'CSP-EJEC-INV-VR')")
-  ResponseEntity<Page<EstadoGastoProyecto>> findAllEstadoGastoProyecto(@PathVariable Long id,
+  public ResponseEntity<Page<EstadoGastoProyecto>> findAllEstadoGastoProyecto(@PathVariable Long id,
       @RequestPageable(sort = "s") Pageable paging) {
     log.debug("findAllEstadoGastoProyecto(Long id, Pageable paging) - start");
     Page<EstadoGastoProyecto> page = estadoGastoProyectoService.findAllByGastoProyecto(id, paging);
@@ -134,7 +138,7 @@ public class GastoProyectoController {
    */
   @PutMapping("/{id}")
   @PreAuthorize("hasAuthorityForAnyUO('CSP-EJEC-E')")
-  GastoProyectoOutput update(@Valid @RequestBody GastoProyectoInput gastoProyecto, @PathVariable Long id) {
+  public GastoProyectoOutput update(@Valid @RequestBody GastoProyectoInput gastoProyecto, @PathVariable Long id) {
     log.debug("update(GastoProyecto gastoProyecto, Long id) - start");
 
     GastoProyecto returnValue = service.update(convert(id, gastoProyecto));
@@ -158,7 +162,7 @@ public class GastoProyectoController {
   }
 
   private Page<GastoProyectoOutput> convert(Page<GastoProyecto> page) {
-    List<GastoProyectoOutput> content = page.getContent().stream().map((gastoProyecto) -> convert(gastoProyecto))
+    List<GastoProyectoOutput> content = page.getContent().stream().map(gastoProyecto -> convert(gastoProyecto))
         .collect(Collectors.toList());
 
     return new PageImpl<>(content, page.getPageable(), page.getTotalElements());

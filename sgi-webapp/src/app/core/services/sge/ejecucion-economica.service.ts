@@ -1,5 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { DATO_ECONOMICO_CONVERTER } from '@core/converters/sge/dato-economico.converter';
+import { IDatoEconomicoBackend } from '@core/models/sge/backend/dato-economico-backend';
 import { IColumna } from '@core/models/sge/columna';
 import { IDatoEconomico } from '@core/models/sge/dato-economico';
 import { IDatoEconomicoDetalle } from '@core/models/sge/dato-economico-detalle';
@@ -121,9 +123,10 @@ export class EjecucionEconomicaService extends SgiRestBaseService {
       filter,
       sort
     };
-    return this.find<IDatoEconomico, IDatoEconomico>(
+    return this.find<IDatoEconomicoBackend, IDatoEconomico>(
       `${this.endpointUrl}`,
-      options
+      options,
+      DATO_ECONOMICO_CONVERTER
     ).pipe(
       map(response => response.items)
     );

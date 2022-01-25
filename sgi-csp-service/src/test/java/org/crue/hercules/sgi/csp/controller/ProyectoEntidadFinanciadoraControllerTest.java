@@ -185,7 +185,7 @@ public class ProyectoEntidadFinanciadoraControllerTest extends BaseControllerTes
   }
 
   @Test
-  @WithMockUser(username = "user", authorities = { "AUTH" })
+  @WithMockUser(username = "user", authorities = { "CSP-PRO-E" })
   public void findById_WithExistingId_ReturnsProyectoEntidadFinanciadora() throws Exception {
     // given: existing id
     BDDMockito.given(service.findById(ArgumentMatchers.anyLong())).willAnswer((InvocationOnMock invocation) -> {
@@ -210,7 +210,7 @@ public class ProyectoEntidadFinanciadoraControllerTest extends BaseControllerTes
   }
 
   @Test
-  @WithMockUser(username = "user", authorities = { "AUTH" })
+  @WithMockUser(username = "user", authorities = { "CSP-PRO-E" })
   public void findById_WithNoExistingId_Returns404() throws Exception {
     // given: no existing id
     BDDMockito.given(service.findById(ArgumentMatchers.anyLong())).will((InvocationOnMock invocation) -> {

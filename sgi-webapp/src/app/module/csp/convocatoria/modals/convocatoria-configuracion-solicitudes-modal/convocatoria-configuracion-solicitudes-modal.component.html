@@ -10,8 +10,9 @@
     <div [fxLayout]="fxLayoutProperties.layout" [fxLayoutAlign]="fxLayoutProperties.layoutAlign">
       <mat-form-field>
         <mat-label>{{'csp.documento.tipo' | translate}}</mat-label>
-        <sgi-select-entity formControlName="tipoDocumento" [options]="documentosRequeridos$ | async" required>
-        </sgi-select-entity>
+        <sgi-select-tipo-documento formControlName="tipoDocumento" [modeloEjecucionId]="data.modeloEjecucionId"
+          [tipoFaseId]="data.tipoFaseId" required>
+        </sgi-select-tipo-documento>
         <mat-error *ngIf="formGroup.controls.tipoDocumento.errors?.required">
           {{'error.required.entity' | translate:msgParamTipoDocumentoEntity}}
         </mat-error>

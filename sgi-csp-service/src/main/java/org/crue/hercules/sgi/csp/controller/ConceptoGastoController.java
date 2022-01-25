@@ -50,20 +50,22 @@ public class ConceptoGastoController {
    * 
    * @param query  filtro de búsqueda.
    * @param paging pageable.
+   * @return el listado de entidades {@link ConceptoGasto}
+   *         paginadas y filtradas.
    */
   @GetMapping()
   @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-CON-E', 'CSP-CON-V', 'CSP-CON-INV-V', 'CSP-SOL-E', 'CSP-SOL-V')")
-  ResponseEntity<Page<ConceptoGasto>> findAll(@RequestParam(name = "q", required = false) String query,
+  public ResponseEntity<Page<ConceptoGasto>> findAll(@RequestParam(name = "q", required = false) String query,
       @RequestPageable(sort = "s") Pageable paging) {
     log.debug("findAll(String query, Pageable paging) - start");
     Page<ConceptoGasto> page = service.findAll(query, paging);
 
     if (page.isEmpty()) {
-      log.debug("findAll(String query, Pageable paging) - end");
+      log.debug("findAll(String query, Pageable paging) - page is empty ");
       return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
-    log.debug("findAll(String query, Pageable paging) - end");
+    log.debug("findAll(String query, Pageable paging) - content found");
     return new ResponseEntity<>(page, HttpStatus.OK);
   }
 
@@ -72,10 +74,12 @@ public class ConceptoGastoController {
    * 
    * @param query  filtro de búsqueda.
    * @param paging pageable.
+   * @return el listado de entidades {@link ConceptoGasto}
+   *         paginadas y filtradas.
    */
   @GetMapping("/todos")
   @PreAuthorize("hasAnyAuthority('CSP-TGTO-V', 'CSP-TGTO-C', 'CSP-TGTO-E', 'CSP-TGTO-B', 'CSP-TGTO-R')")
-  ResponseEntity<Page<ConceptoGasto>> findAllTodos(@RequestParam(name = "q", required = false) String query,
+  public ResponseEntity<Page<ConceptoGasto>> findAllTodos(@RequestParam(name = "q", required = false) String query,
       @RequestPageable(sort = "s") Pageable paging) {
     log.debug("findAllTodos(String query, Pageable paging) - start");
     Page<ConceptoGasto> page = service.findAllTodos(query, paging);
@@ -97,7 +101,7 @@ public class ConceptoGastoController {
    */
   @GetMapping("/{id}")
   @PreAuthorize("hasAuthorityForAnyUO('AUTH')")
-  ConceptoGasto findById(@PathVariable Long id) {
+  public ConceptoGasto findById(@PathVariable Long id) {
     log.debug("findById(Long id) - start");
     ConceptoGasto returnValue = service.findById(id);
     log.debug("findById(Long id) - end");
@@ -112,7 +116,7 @@ public class ConceptoGastoController {
    */
   @PostMapping
   @PreAuthorize("hasAuthority('CSP-TGTO-C')")
-  ResponseEntity<ConceptoGasto> create(@Valid @RequestBody ConceptoGasto conceptoGasto) {
+  public ResponseEntity<ConceptoGasto> create(@Valid @RequestBody ConceptoGasto conceptoGasto) {
     log.debug("create(ConceptoGasto conceptoGasto) - start");
     ConceptoGasto returnValue = service.create(conceptoGasto);
     log.debug("create(ConceptoGasto conceptoGasto) - end");
@@ -128,7 +132,7 @@ public class ConceptoGastoController {
    */
   @PutMapping("/{id}")
   @PreAuthorize("hasAuthority('CSP-TGTO-E')")
-  ConceptoGasto update(@Validated({ Update.class, Default.class }) @RequestBody ConceptoGasto conceptoGasto,
+  public ConceptoGasto update(@Validated({ Update.class, Default.class }) @RequestBody ConceptoGasto conceptoGasto,
       @PathVariable Long id) {
     log.debug("update(ConceptoGasto conceptoGasto, Long id) - start");
     conceptoGasto.setId(id);
@@ -145,7 +149,7 @@ public class ConceptoGastoController {
    */
   @PatchMapping("/{id}/reactivar")
   @PreAuthorize("hasAuthority('CSP-TGTO-R')")
-  ConceptoGasto reactivar(@PathVariable Long id) {
+  public ConceptoGasto reactivar(@PathVariable Long id) {
     log.debug("reactivar(Long id) - start");
     ConceptoGasto returnValue = service.enable(id);
     log.debug("reactivar(Long id) - end");
@@ -156,10 +160,11 @@ public class ConceptoGastoController {
    * Desactiva el {@link ConceptoGasto} con id indicado.
    * 
    * @param id Identificador de {@link ConceptoGasto}.
+   * @return el {@link ConceptoGasto} desactivado
    */
   @PatchMapping("/{id}/desactivar")
   @PreAuthorize("hasAuthority('CSP-TGTO-B')")
-  ConceptoGasto desactivar(@PathVariable Long id) {
+  public ConceptoGasto desactivar(@PathVariable Long id) {
     log.debug("desactivar(Long id) - start");
     ConceptoGasto returnValue = service.disable(id);
     log.debug("desactivar(Long id) - end");
@@ -168,8 +173,9 @@ public class ConceptoGastoController {
 
   @GetMapping("/{id}/no-proyectoagrupacion")
   @PreAuthorize("hasAuthorityForAnyUO('CSP-PRO-E')")
-  ResponseEntity<Page<ConceptoGasto>> findAllNotInAgrupacion(@RequestParam(name = "q", required = false) String query,
-      @RequestPageable(sort = "s") Pageable paging, @PathVariable Long id) {
+  public ResponseEntity<Page<ConceptoGasto>> findAllNotInAgrupacion(
+      @RequestParam(name = "q", required = false) String query, @RequestPageable(sort = "s") Pageable paging,
+      @PathVariable Long id) {
     log.debug("findAll(String query, Pageable paging) - start");
     Page<ConceptoGasto> page = service.findAllNotInAgrupacion(id, query, paging);
     if (page.isEmpty()) {

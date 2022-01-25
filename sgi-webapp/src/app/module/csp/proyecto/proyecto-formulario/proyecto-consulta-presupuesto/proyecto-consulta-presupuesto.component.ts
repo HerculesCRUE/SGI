@@ -4,18 +4,20 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatTableDataSource } from '@angular/material/table';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { FragmentComponent } from '@core/component/fragment.component';
+import { HttpProblem } from '@core/errors/http-problem';
 import { IAnualidadGasto } from '@core/models/csp/anualidad-gasto';
 import { IProyectoAnualidad } from '@core/models/csp/proyecto-anualidad';
 import { IProyectoPartida } from '@core/models/csp/proyecto-partida';
 import { FxFlexProperties } from '@core/models/shared/flexLayout/fx-flex-properties';
 import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-properties';
-import { DialogService } from '@core/services/dialog.service';
 import { CodigoEconomicoGastoService } from '@core/services/sge/codigo-economico-gasto.service';
 import { TranslateService } from '@ngx-translate/core';
-import { Subscription } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { from, Subscription } from 'rxjs';
+import { map, mergeMap, switchMap, takeLast } from 'rxjs/operators';
 import { ProyectoActionService } from '../../proyecto.action.service';
-import { IAnualidadGastoWithProyectoAgrupacionGasto, ProyectoConsultaPresupuestoFragment } from './proyecto-consulta-presupuesto.fragment';
+import { ProyectoConsultaPresupuestoExportModalComponent } from './export/proyecto-consulta-presupuesto-export-modal.component';
+import { IConsultaPresupuestoExportData } from './export/proyecto-consulta-presupuesto-export.service';
+import { ProyectoConsultaPresupuestoFragment } from './proyecto-consulta-presupuesto.fragment';
 
 const ANUALIDAD_GENERICA_KEY = marker('csp.proyecto-presupuesto.generica');
 
@@ -53,9 +55,9 @@ abstract class RowTree<T> {
   }
 }
 
-class RowTreePresupuesto extends RowTree<IAnualidadGastoWithProyectoAgrupacionGasto> {
+class RowTreePresupuesto extends RowTree<IAnualidadGasto> {
 
-  constructor(item: IAnualidadGastoWithProyectoAgrupacionGasto) {
+  constructor(item: IAnualidadGasto) {
     super(item);
   }
 
@@ -72,7 +74,6 @@ class RowTreePresupuesto extends RowTree<IAnualidadGastoWithProyectoAgrupacionGa
   }
 }
 const DIR_ASC = 1;
-const DIR_DESC = -1;
 
 @Component({
   selector: 'sgi-proyecto-consulta-presupuesto',
@@ -83,7 +84,7 @@ export class ProyectoConsultaPresupuestoComponent extends FragmentComponent impl
   public filterForm: FormGroup;
   private subscriptions: Subscription[] = [];
   formPart: ProyectoConsultaPresupuestoFragment;
-  msgParamAnualidadGenerica: String;
+  msgParamAnualidadGenerica: string;
 
   fxFlexProperties: FxFlexProperties;
   fxFlexPropertiesOne: FxFlexProperties;
@@ -93,7 +94,6 @@ export class ProyectoConsultaPresupuestoComponent extends FragmentComponent impl
 
   displayedColumns = [
     'anualidad',
-    'agrupacionGastos',
     'conceptoGasto',
     'aplicacionPresupuestaria',
     'codigoEconomico',
@@ -105,7 +105,6 @@ export class ProyectoConsultaPresupuestoComponent extends FragmentComponent impl
   constructor(
     public actionService: ProyectoActionService,
     private matDialog: MatDialog,
-    private dialogService: DialogService,
     private readonly translate: TranslateService,
     private codigoEconomicoGastoService: CodigoEconomicoGastoService
   ) {
@@ -129,13 +128,12 @@ export class ProyectoConsultaPresupuestoComponent extends FragmentComponent impl
 
     this.subscriptions.push(
       this.formPart.anualidadesGastos$.pipe(
-        map((gastosAnualidad: IAnualidadGastoWithProyectoAgrupacionGasto[]) => {
+        map((gastosAnualidad: IAnualidadGasto[]) => {
 
-          this.sortCollectionByProperty<IAnualidadGastoWithProyectoAgrupacionGasto>(gastosAnualidad, DIR_ASC, 'codigoEconomico', 'id');
-          this.sortCollectionByProperty<IAnualidadGastoWithProyectoAgrupacionGasto>(gastosAnualidad, DIR_ASC, 'proyectoPartida', 'codigo');
-          this.sortCollectionByProperty<IAnualidadGastoWithProyectoAgrupacionGasto>(gastosAnualidad, DIR_ASC, 'conceptoGasto', 'nombre');
-          this.sortCollectionByProperty<IAnualidadGastoWithProyectoAgrupacionGasto>(gastosAnualidad, DIR_ASC, 'proyectoAgrupacionGasto', 'nombre');
-          this.sortCollectionByProperty<IAnualidadGastoWithProyectoAgrupacionGasto>(gastosAnualidad, DIR_ASC, 'proyectoAnualidad', 'anio');
+          this.sortCollectionByProperty<IAnualidadGasto>(gastosAnualidad, DIR_ASC, 'codigoEconomico', 'id');
+          this.sortCollectionByProperty<IAnualidadGasto>(gastosAnualidad, DIR_ASC, 'proyectoPartida', 'codigo');
+          this.sortCollectionByProperty<IAnualidadGasto>(gastosAnualidad, DIR_ASC, 'conceptoGasto', 'nombre');
+          this.sortCollectionByProperty<IAnualidadGasto>(gastosAnualidad, DIR_ASC, 'proyectoAnualidad', 'anio');
 
           const root = this.convertToRowTree(gastosAnualidad);
           const rows: RowTreePresupuesto[] = [];
@@ -194,7 +192,7 @@ export class ProyectoConsultaPresupuestoComponent extends FragmentComponent impl
     return concepto.conceptoGasto.nombre;
   }
 
-  private convertToRowTree(anualidadesGastos: IAnualidadGastoWithProyectoAgrupacionGasto[]): RowTreePresupuesto[] {
+  private convertToRowTree(anualidadesGastos: IAnualidadGasto[]): RowTreePresupuesto[] {
 
     const root: RowTreePresupuesto[] = [];
     this.mapTree.clear();
@@ -207,21 +205,20 @@ export class ProyectoConsultaPresupuestoComponent extends FragmentComponent impl
             proyectoAnualidad: element.proyectoAnualidad,
             importePresupuesto: 0,
             importeConcedido: 0
-          } as IAnualidadGastoWithProyectoAgrupacionGasto
+          } as IAnualidadGasto
         );
         this.mapTree.set(keyAnualidad, anualidad);
         root.push(anualidad);
       }
-      const proyectoAgrupacionTree = this.resolveProyectoAgrupacionGroupingParent(element, anualidad);
 
-      const conceptoGastoTree = this.resolveConceptoGastoGroupingParent(element, proyectoAgrupacionTree);
+      const conceptoGastoTree = this.resolveConceptoGastoGroupingParent(element, anualidad);
 
       const rowTree = new RowTreePresupuesto({
         codigoEconomico: element.codigoEconomico,
         proyectoPartida: element.proyectoPartida,
         importePresupuesto: element.importePresupuesto,
         importeConcedido: element.importeConcedido
-      } as IAnualidadGastoWithProyectoAgrupacionGasto);
+      } as IAnualidadGasto);
       this.resolveCodigoEconomico(rowTree);
       conceptoGastoTree.addChild(rowTree);
     });
@@ -238,41 +235,22 @@ export class ProyectoConsultaPresupuestoComponent extends FragmentComponent impl
   }
 
   private resolveConceptoGastoGroupingParent(
-    element: IAnualidadGastoWithProyectoAgrupacionGasto,
+    element: IAnualidadGasto,
     proyectoAgrupacionTree: RowTreePresupuesto): RowTreePresupuesto {
 
-    const keyConceptoGastoTree = `${element.proyectoAnualidad.anio}-proyecto-agrupacion-${element.proyectoAgrupacionGasto.id}-concepto-${element.conceptoGasto.id}`;
+    const keyConceptoGastoTree = `${element.proyectoAnualidad.anio}-concepto-${element.conceptoGasto.id}`;
     let conceptoGastoTree = this.mapTree.get(keyConceptoGastoTree);
     if (!conceptoGastoTree) {
       conceptoGastoTree = new RowTreePresupuesto({
         conceptoGasto: element.conceptoGasto,
         importePresupuesto: 0,
         importeConcedido: 0
-      } as IAnualidadGastoWithProyectoAgrupacionGasto
+      } as IAnualidadGasto
       );
       this.mapTree.set(keyConceptoGastoTree, conceptoGastoTree);
       proyectoAgrupacionTree.addChild(conceptoGastoTree);
     }
     return conceptoGastoTree;
-  }
-
-  private resolveProyectoAgrupacionGroupingParent(
-    element: IAnualidadGastoWithProyectoAgrupacionGasto,
-    anualidad: RowTreePresupuesto): RowTreePresupuesto {
-
-    const keyProyectoAgrupacionGasto = `${element.proyectoAnualidad.anio}-proyecto-agrupacion-${element.proyectoAgrupacionGasto.nombre}`;
-    let proyectoAgrupacionTree = this.mapTree.get(keyProyectoAgrupacionGasto);
-    if (!proyectoAgrupacionTree) {
-      proyectoAgrupacionTree = new RowTreePresupuesto({
-        proyectoAgrupacionGasto: element.proyectoAgrupacionGasto,
-        importePresupuesto: 0,
-        importeConcedido: 0
-      } as IAnualidadGastoWithProyectoAgrupacionGasto
-      );
-      this.mapTree.set(keyProyectoAgrupacionGasto, proyectoAgrupacionTree);
-      anualidad.addChild(proyectoAgrupacionTree);
-    }
-    return proyectoAgrupacionTree;
   }
 
   private addChilds(root: RowTreePresupuesto): RowTreePresupuesto[] {
@@ -306,7 +284,7 @@ export class ProyectoConsultaPresupuestoComponent extends FragmentComponent impl
   }
 
   public filterTable(): void {
-    let filteredAnualidadesGasto: IAnualidadGastoWithProyectoAgrupacionGasto[] = [...this.formPart.pureAnualidadesGastos];
+    let filteredAnualidadesGasto: IAnualidadGasto[] = [...this.formPart.pureAnualidadesGastos];
     const form = this.filterForm.controls;
 
     if (form.anualidad.value) {
@@ -325,5 +303,50 @@ export class ProyectoConsultaPresupuestoComponent extends FragmentComponent impl
     }
 
     this.formPart.anualidadesGastos$.next(filteredAnualidadesGasto);
+  }
+
+  openExportModal(): void {
+
+    this.subscriptions.push(
+      this.formPart.anualidadesGastos$.pipe(
+        map((gastosAnualidad: IAnualidadGasto[]) => {
+
+          this.sortCollectionByProperty<IAnualidadGasto>(gastosAnualidad, DIR_ASC, 'codigoEconomico', 'id');
+          this.sortCollectionByProperty<IAnualidadGasto>(gastosAnualidad, DIR_ASC, 'proyectoPartida', 'codigo');
+          this.sortCollectionByProperty<IAnualidadGasto>(gastosAnualidad, DIR_ASC, 'conceptoGasto', 'nombre');
+          this.sortCollectionByProperty<IAnualidadGasto>(gastosAnualidad, DIR_ASC, 'proyectoAnualidad', 'anio');
+
+          return gastosAnualidad;
+        }),
+        switchMap((anualidadesGastos) => {
+          return from(anualidadesGastos).pipe(
+            mergeMap(anualidadGasto => {
+              return this.codigoEconomicoGastoService.findById(anualidadGasto.codigoEconomico.id).pipe(
+                map((value) => {
+                  anualidadGasto.codigoEconomico = value;
+                  return anualidadesGastos;
+                })
+              );
+            }),
+            takeLast(1)
+          );
+        })
+      ).subscribe(
+        (anualidadesGastos) => {
+          const exportData: IConsultaPresupuestoExportData = {
+            data: anualidadesGastos,
+            columns: []
+          };
+          const config = {
+            data: exportData
+          };
+          this.matDialog.open(ProyectoConsultaPresupuestoExportModalComponent, config);
+        },
+        (error) => {
+          if (error instanceof HttpProblem) {
+            this.formPart.pushProblems(error);
+          }
+        })
+    );
   }
 }

@@ -25,4 +25,6 @@ export interface IMemoriaPeticionEvaluacionBackend {
   isResponsable: boolean;
   /** activo */
   activo: boolean;
+  /** Solicitante peticion evaluacion */
+  solicitanteRef;
 }

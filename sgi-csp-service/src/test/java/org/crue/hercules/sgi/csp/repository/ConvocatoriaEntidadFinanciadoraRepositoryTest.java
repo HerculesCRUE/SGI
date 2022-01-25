@@ -114,13 +114,13 @@ public class ConvocatoriaEntidadFinanciadoraRepositoryTest extends BaseRepositor
       persistList.add(entityManager.persistAndFlush(entidad));
     }
 
-    Long convocatoriaIdBuscado = 3L;
+    Long convocatoriaIdBuscado = 3000L;
 
     // when: se busca el ConvocatoriaEntidadFinanciadora por ConvocatoriaId
     List<ConvocatoriaEntidadFinanciadora> dataFound = repository.findByConvocatoriaId(convocatoriaIdBuscado);
 
     // then: Se comprueba que no se obtiene ningún valor y la lista está vacia
     Assertions.assertThat(dataFound).isNotNull();
-    Assertions.assertThat(dataFound.size()).isEqualTo(0);
+    Assertions.assertThat(dataFound.size()).isZero();
   }
 }

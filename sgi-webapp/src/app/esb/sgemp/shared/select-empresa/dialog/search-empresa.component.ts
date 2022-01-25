@@ -4,6 +4,7 @@ import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dial
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
+import { SearchModalData } from '@core/component/select-dialog/select-dialog.component';
 import { HttpProblem } from '@core/errors/http-problem';
 import { MSG_PARAMS } from '@core/i18n';
 import { IEmpresa } from '@core/models/sgemp/empresa';
@@ -21,7 +22,7 @@ import { EmpresaFormlyModalComponent, IEmpresaFormlyData } from '../../../formly
 const MSG_LISTADO_ERROR = marker('error.load');
 const TIPO_EMPRESA_KEY = marker('sgemp.empresa');
 
-export interface SearchEmpresaModalData {
+export interface SearchEmpresaModalData extends SearchModalData {
   selectedEmpresas: IEmpresa[];
 }
 
@@ -62,7 +63,7 @@ export class SearchEmpresaModalComponent implements OnInit, AfterViewInit {
 
   ngOnInit(): void {
     this.formGroup = new FormGroup({
-      datosEmpresa: new FormControl()
+      datosEmpresa: new FormControl(this.data.searchTerm)
     });
     this.setupI18N();
   }
@@ -82,6 +83,10 @@ export class SearchEmpresaModalComponent implements OnInit, AfterViewInit {
     ).pipe(
       tap(() => this.search())
     ).subscribe();
+
+    if (this.data.searchTerm) {
+      this.search();
+    }
   }
 
   closeModal(empresa?: IEmpresa): void {

@@ -1,7 +1,7 @@
 <?xml version="1.1" encoding="UTF-8" standalone="no"?>
 <databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:pro="http://www.liquibase.org/xml/ns/pro" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-3.8.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
 
-  <changeSet context="!unit-test AND !integration-test" author="master" id="0000000000000-tipo_origen_fuente_financiacion">
+  <changeSet context="!test" author="master" id="0000000000000-tipo_origen_fuente_financiacion">
     <insert tableName="tipo_origen_fuente_financiacion">
       <column name="id" valueSequenceNext="tipo_origen_fuente_financiacion_seq" />
       <column name="nombre" value="Público" />
@@ -14,7 +14,7 @@
     </insert>
   </changeSet>
 
-  <changeSet context="!unit-test AND !integration-test" author="master" id="0000000000000-tipo_regimen_concurrencia">
+  <changeSet context="!test" author="master" id="0000000000000-tipo_regimen_concurrencia">
     <insert tableName="tipo_regimen_concurrencia">
       <column name="id" valueSequenceNext="tipo_regimen_concurrencia_seq" />
       <column name="nombre" value="Concesión directa" />
@@ -27,7 +27,7 @@
     </insert>
   </changeSet>
 
-  <changeSet context="!unit-test AND !integration-test" author="master" id="0000000000000-tipo_ambito_geografico">
+  <changeSet context="!test" author="master" id="0000000000000-tipo_ambito_geografico">
     <insert tableName="tipo_ambito_geografico">
       <column name="id" valueSequenceNext="tipo_ambito_geografico_seq" />
       <column name="nombre" value="Propio" />
@@ -60,7 +60,7 @@
     </insert>
   </changeSet>
 
-  <changeSet context="!unit-test AND !integration-test" author="master" id="0000000000000-configuracion">
+  <changeSet context="!test" author="master" id="0000000000000-configuracion">
     <insert tableName="configuracion">
       <column name="id" valueSequenceNext="configuracion_seq" />
       <column name="formato_partida_presupuestaria" value="^[A-Z0-9]{2}&#92;.[A-Z0-9]{4}&#92;.[A-Z0-9]{4}(&#92;.[A-Z0-9]{5,})$" />

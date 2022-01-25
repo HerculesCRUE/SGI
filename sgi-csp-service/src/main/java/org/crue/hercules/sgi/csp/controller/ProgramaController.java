@@ -53,7 +53,7 @@ public class ProgramaController {
    */
   @GetMapping("/{id}")
   @PreAuthorize("hasAuthorityForAnyUO ('CSP-PRG-E')")
-  Programa findById(@PathVariable Long id) {
+  public Programa findById(@PathVariable Long id) {
     log.debug("findById(Long id) - start");
     Programa returnValue = service.findById(id);
     log.debug("findById(Long id) - end");
@@ -68,7 +68,7 @@ public class ProgramaController {
    */
   @PostMapping
   @PreAuthorize("hasAuthorityForAnyUO ('CSP-PRG-C')")
-  ResponseEntity<Programa> create(@Valid @RequestBody Programa programa) {
+  public ResponseEntity<Programa> create(@Valid @RequestBody Programa programa) {
     log.debug("create(Programa programa) - start");
     Programa returnValue = service.create(programa);
     log.debug("create(Programa programa) - end");
@@ -84,7 +84,8 @@ public class ProgramaController {
    */
   @PutMapping("/{id}")
   @PreAuthorize("hasAuthorityForAnyUO ('CSP-PRG-E')")
-  Programa update(@Validated({ Update.class, Default.class }) @RequestBody Programa programa, @PathVariable Long id) {
+  public Programa update(@Validated({ Update.class, Default.class }) @RequestBody Programa programa,
+      @PathVariable Long id) {
     log.debug("update(Programa programa, Long id) - start");
     programa.setId(id);
     Programa returnValue = service.update(programa);
@@ -100,7 +101,7 @@ public class ProgramaController {
    */
   @PatchMapping("/{id}/reactivar")
   @PreAuthorize("hasAuthorityForAnyUO ('CSP-PRG-R')")
-  Programa reactivar(@PathVariable Long id) {
+  public Programa reactivar(@PathVariable Long id) {
     log.debug("reactivar(Long id) - start");
     Programa returnValue = service.enable(id);
     log.debug("reactivar(Long id) - end");
@@ -115,7 +116,7 @@ public class ProgramaController {
    */
   @PatchMapping("/{id}/desactivar")
   @PreAuthorize("hasAnyAuthorityForAnyUO ('CSP-PRG-B', 'CSP-PRG-E')")
-  Programa desactivar(@PathVariable Long id) {
+  public Programa desactivar(@PathVariable Long id) {
     log.debug("desactivar(Long id) - start");
     Programa returnValue = service.disable(id);
     log.debug("desactivar(Long id) - end");
@@ -125,13 +126,13 @@ public class ProgramaController {
   /**
    * Devuelve todas las entidades {@link Programa} activos paginadas
    *
-   * @param query    la información del filtro.
-   * @param pageable la información de la paginación.
+   * @param query  la información del filtro.
+   * @param paging la información de la paginación.
    * @return la lista de entidades {@link Programa} paginadas
    */
   @GetMapping()
   @PreAuthorize("hasAuthorityForAnyUO ('AUTH')")
-  ResponseEntity<Page<Programa>> findAll(@RequestParam(name = "q", required = false) String query,
+  public ResponseEntity<Page<Programa>> findAll(@RequestParam(name = "q", required = false) String query,
       @RequestPageable(sort = "s") Pageable paging) {
     log.debug("findAll(String query, Pageable paging) - start");
     Page<Programa> page = service.findAll(query, paging);
@@ -149,13 +150,13 @@ public class ProgramaController {
    * Devuelve todas las entidades {@link Programa} activos con padre null (los
    * planes) paginadas
    *
-   * @param query    la información del filtro.
-   * @param pageable la información de la paginación.
+   * @param query  la información del filtro.
+   * @param paging la información de la paginación.
    * @return la lista de entidades {@link Programa} paginadas
    */
   @GetMapping("/plan")
   @PreAuthorize("hasAnyAuthorityForAnyUO ('CSP-CON-C', 'CSP-CON-E','CSP-CON-V','CSP-CON-INV-V', 'CSP-SOL-V', 'CSP-SOL-C', 'CSP-SOL-E', 'CSP-SOL-B', 'CSP-SOL-R', 'CSP-PRO-C', 'CSP-PRO-V', 'CSP-PRO-E', 'CSP-PRO-B', 'CSP-PRO-R')")
-  ResponseEntity<Page<Programa>> findAllPlan(@RequestParam(name = "q", required = false) String query,
+  public ResponseEntity<Page<Programa>> findAllPlan(@RequestParam(name = "q", required = false) String query,
       @RequestPageable(sort = "s") Pageable paging) {
     log.debug("findAllPlan(String query, Pageable paging) - start");
     Page<Programa> page = service.findAllPlan(query, paging);
@@ -173,13 +174,13 @@ public class ProgramaController {
    * Devuelve todas las entidades {@link Programa} con padre null (los planes)
    * paginadas
    *
-   * @param query    la información del filtro.
-   * @param pageable la información de la paginación.
+   * @param query  la información del filtro.
+   * @param paging la información de la paginación.
    * @return la lista de entidades {@link Programa} paginadas
    */
   @GetMapping("/plan/todos")
   @PreAuthorize("hasAnyAuthority ('CSP-PRG-V', 'CSP-PRG-C', 'CSP-PRG-E', 'CSP-PRG-B', 'CSP-PRG-R')")
-  ResponseEntity<Page<Programa>> findAllTodosPlan(@RequestParam(name = "q", required = false) String query,
+  public ResponseEntity<Page<Programa>> findAllTodosPlan(@RequestParam(name = "q", required = false) String query,
       @RequestPageable(sort = "s") Pageable paging) {
     log.debug("findAllTodosPlan(String query, Pageable paging) - start");
     Page<Programa> page = service.findAllTodosPlan(query, paging);
@@ -197,13 +198,14 @@ public class ProgramaController {
    * Devuelve todas las entidades {@link Programa} hijos directos del
    * {@link Programa} con el id indicado paginadas
    *
-   * @param query    la información del filtro.
-   * @param pageable la información de la paginación.
+   * @param id     id del {@link Programa} padre.
+   * @param query  la información del filtro.
+   * @param paging la información de la paginación.
    * @return la lista de entidades {@link Programa} paginadas
    */
   @GetMapping("/{id}/hijos")
   @PreAuthorize("hasAnyAuthorityForAnyUO ('CSP-CON-C', 'CSP-CON-E', 'CSP-CON-V', 'CSP-CON-INV-V', 'CSP-SOL-E', 'CSP-SOL-V', 'CSP-PRO-E', 'CSP-PRG-E')")
-  ResponseEntity<Page<Programa>> findAllHijosPrograma(@PathVariable Long id,
+  public ResponseEntity<Page<Programa>> findAllHijosPrograma(@PathVariable Long id,
       @RequestParam(name = "q", required = false) String query, @RequestPageable(sort = "s") Pageable paging) {
     log.debug("findAllHijosPrograma(String query, Pageable paging) - start");
     Page<Programa> page = service.findAllHijosPrograma(id, query, paging);

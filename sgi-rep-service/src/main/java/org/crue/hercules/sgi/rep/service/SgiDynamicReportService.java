@@ -603,7 +603,7 @@ public class SgiDynamicReportService extends SgiReportService {
             String title = StringUtils.hasText(columnSubReport.getColumns().get(columnIndex).getTitle())
                 ? columnSubReport.getColumns().get(columnIndex).getTitle()
                 : columnSubReport.getColumns().get(columnIndex).getName();
-            elementsRow.add(title + ":");
+            elementsRow.add(title + " " + (rowIndex + 1) + ":");
             elementsRow.add(row.get(columnIndex));
             rowsData.add(elementsRow);
           }

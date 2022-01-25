@@ -10,7 +10,8 @@
     <div [fxLayout]="fxLayoutProperties.layout" [fxLayoutAlign]="fxLayoutProperties.layoutAlign">
       <mat-form-field>
         <mat-label>{{'csp.modelo-ejecucion-tipo-fase.tipo' | translate}}</mat-label>
-        <sgi-select-entity formControlName="tipoFase" required [options]="tipoFases$ | async"></sgi-select-entity>
+        <sgi-select-tipo-fase formControlName="tipoFase" [excluded]="this.data.tipoFases" required>
+        </sgi-select-tipo-fase>
         <mat-error *ngIf="formGroup.controls.tipoFase.errors?.required">
           {{'error.required.entity' | translate:msgParamTipoEntiy}}
         </mat-error>

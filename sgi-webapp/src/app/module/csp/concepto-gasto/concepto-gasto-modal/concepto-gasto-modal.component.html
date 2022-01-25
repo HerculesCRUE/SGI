@@ -25,6 +25,9 @@
         <mat-label>{{'label.csp.concepto-gasto.costes-indirectos' | translate}}
         </mat-label>
         <sgi-select-boolean formControlName="costesIndirectos" required></sgi-select-boolean>
+        <sgi-field-info matSuffix visible="true"
+          message="{{'csp.concepto-gasto.costes-indirectos.tooltip' | translate}}">
+        </sgi-field-info>
         <mat-error *ngIf="formGroup.controls.costesIndirectos.errors?.required">
           {{'error.required.entity' | translate:msgParamCostesIndirectos}}
         </mat-error>

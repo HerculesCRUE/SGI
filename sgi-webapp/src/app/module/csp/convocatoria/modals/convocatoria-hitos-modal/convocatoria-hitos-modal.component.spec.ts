@@ -13,6 +13,7 @@ import { MaterialDesignModule } from '@material/material-design.module';
 import { SgiAuthModule, SgiAuthService } from '@sgi/framework/auth';
 import { SharedModule } from '@shared/shared.module';
 import { LoggerTestingModule } from 'ngx-logger/testing';
+import { CspSharedModule } from '../../../shared/csp-shared.module';
 import { ConvocatoriaHitosModalComponent } from './convocatoria-hitos-modal.component';
 
 describe('ConvocatoriaHitosModalComponent', () => {
@@ -40,7 +41,8 @@ describe('ConvocatoriaHitosModalComponent', () => {
         RouterTestingModule,
         ReactiveFormsModule,
         SgiAuthModule,
-        SharedModule
+        SharedModule,
+        CspSharedModule
       ],
       providers: [
         { provide: SnackBarService, useValue: TestUtils.getSnackBarServiceSpy() },

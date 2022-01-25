@@ -1,0 +1,21 @@
+<div fxLayout="row">
+  <mat-select tabindex="0">
+    <mat-option *ngIf="!required" [value]="null"></mat-option>
+    <mat-option *ngFor="let value of selectValues" [value]="value.item" [class.missing]="value.missing"
+      [disabled]="value.disabled">{{
+      value.displayText
+      }}</mat-option>
+  </mat-select>
+  <div fxLayout="row" *ngIf="!disabled && extended">
+    <div class="icon-wrapper" *ngIf="!disabled && reloadable">
+      <button mat-icon-button type="button" (click)="reload($event)">
+        <mat-icon>cached</mat-icon>
+      </button>
+    </div>
+    <div class="icon-wrapper" *ngIf="!disabled && addable">
+      <button mat-icon-button type="button" (click)="add($event)">
+        <mat-icon>add</mat-icon>
+      </button>
+    </div>
+  </div>
+</div>

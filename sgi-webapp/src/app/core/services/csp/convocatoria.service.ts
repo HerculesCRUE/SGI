@@ -14,6 +14,7 @@ import { CONVOCATORIA_PARTIDA_PRESUPUESTARIA_CONVERTER } from '@core/converters/
 import { CONVOCATORIA_PERIODO_JUSTIFICACION_CONVERTER } from '@core/converters/csp/convocatoria-periodo-justificacion.converter';
 import { CONVOCATORIA_PERIODO_SEGUIMIENTO_CIENTIFICO_CONVERTER } from '@core/converters/csp/convocatoria-periodo-seguimiento-cientifico.converter';
 import { CONVOCATORIA_CONVERTER } from '@core/converters/csp/convocatoria.converter';
+import { FormularioSolicitud } from '@core/enums/formulario-solicitud';
 import { IConvocatoriaAreaTematicaBackend } from '@core/models/csp/backend/convocatoria-area-tematica-backend';
 import { IConvocatoriaBackend } from '@core/models/csp/backend/convocatoria-backend';
 import { IConvocatoriaConceptoGastoBackend } from '@core/models/csp/backend/convocatoria-concepto-gasto-backend';
@@ -39,6 +40,7 @@ import { IConvocatoriaEntidadFinanciadora } from '@core/models/csp/convocatoria-
 import { IConvocatoriaEntidadGestora } from '@core/models/csp/convocatoria-entidad-gestora';
 import { IConvocatoriaFase } from '@core/models/csp/convocatoria-fase';
 import { IConvocatoriaHito } from '@core/models/csp/convocatoria-hito';
+import { IConvocatoriaPalabraClave } from '@core/models/csp/convocatoria-palabra-clave';
 import { IConvocatoriaPartidaPresupuestaria } from '@core/models/csp/convocatoria-partida-presupuestaria';
 import { IConvocatoriaPeriodoJustificacion } from '@core/models/csp/convocatoria-periodo-justificacion';
 import { IConvocatoriaPeriodoSeguimientoCientifico } from '@core/models/csp/convocatoria-periodo-seguimiento-cientifico';
@@ -51,6 +53,9 @@ import { environment } from '@env';
 import { SgiMutableRestService, SgiRestFindOptions, SgiRestListResult } from '@sgi/framework/http/';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { CONVOCATORIA_PALABRACLAVE_REQUEST_CONVERTER } from './convocatoria-palabra-clave/convocatoria-palabra-clave-request.converter';
+import { IConvocatoriaPalabraClaveResponse } from './convocatoria-palabra-clave/convocatoria-palabra-clave-response';
+import { CONVOCATORIA_PALABRACLAVE_RESPONSE_CONVERTER } from './convocatoria-palabra-clave/convocatoria-palabra-clave-response.converter';
 import { IRequisitoEquipoCategoriaProfesionalResponse } from './requisito-equipo-categoria-profesional/requisito-equipo-categoria-profesional-response';
 import { REQUISITO_EQUIPO_CATEGORIA_PROFESIONAL_RESPONSE_CONVERTER } from './requisito-equipo-categoria-profesional/requisito-equipo-categoria-profesional-response.converter';
 import { IRequisitoEquipoNivelAcademicoResponse } from './requisito-equipo-nivel-academico/requisito-equipo-nivel-academico-response';
@@ -495,6 +500,43 @@ export class ConvocatoriaService extends SgiMutableRestService<number, IConvocat
   public clone(convocatoriaId: number): Observable<number> {
     const url = `${this.endpointUrl}/${convocatoriaId}/clone`;
     return this.http.post<number>(url, {});
+  }
+
+  /**
+   * Recupera las Palabras Clave asociadas a la Convocatoria con el id indicado.
+   *
+   * @param id de la Convocatoria
+   */
+  findPalabrasClave(id: number, options?: SgiRestFindOptions): Observable<SgiRestListResult<IConvocatoriaPalabraClave>> {
+    return this.find<IConvocatoriaPalabraClaveResponse, IConvocatoriaPalabraClave>(
+      `${this.endpointUrl}/${id}/palabrasclave`,
+      options,
+      CONVOCATORIA_PALABRACLAVE_RESPONSE_CONVERTER);
+  }
+
+  /**
+   * Actualiza las Palabras Clave  asociadas a la Convocatoria con el id indicado.
+   *
+   * @param id Identificador de la Convocatoria
+   * @param palabrasClave Palabras Clave a actualizar
+   */
+  updatePalabrasClave(id: number, palabrasClave: IConvocatoriaPalabraClave[]): Observable<IConvocatoriaPalabraClave[]> {
+    return this.http.patch<IConvocatoriaPalabraClaveResponse[]>(`${this.endpointUrl}/${id}/palabrasclave`,
+      CONVOCATORIA_PALABRACLAVE_REQUEST_CONVERTER.fromTargetArray(palabrasClave)
+    ).pipe(
+      map((response => CONVOCATORIA_PALABRACLAVE_RESPONSE_CONVERTER.toTargetArray(response)))
+    );
+  }
+
+  /**
+   * Devuelve el tipo de formulario solicitud de una convocatoria
+   *
+   * @param convocatoriaId Id de la convocatoria
+   */
+  getFormularioSolicitud(convocatoriaId: number): Observable<FormularioSolicitud> {
+    return this.http.get<FormularioSolicitud>(
+      `${this.endpointUrl}/${convocatoriaId}/formulariosolicitud`
+    );
   }
 
 }

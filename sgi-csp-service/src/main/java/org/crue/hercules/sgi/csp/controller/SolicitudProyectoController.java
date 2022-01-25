@@ -101,7 +101,7 @@ public class SolicitudProyectoController {
    */
   @GetMapping("/{id}")
   @PreAuthorize("hasAuthorityForAnyUO('CSP-PRO-E')")
-  SolicitudProyecto findById(@PathVariable Long id) {
+  public SolicitudProyecto findById(@PathVariable Long id) {
     log.debug("SolicitudProyecto findById(Long id) - start");
     SolicitudProyecto returnValue = service.findById(id);
     log.debug("SolicitudProyecto findById(Long id) - end");
@@ -116,7 +116,7 @@ public class SolicitudProyectoController {
   @DeleteMapping("/{id}")
   @PreAuthorize("hasAuthorityForAnyUO('AUTH')")
   @ResponseStatus(value = HttpStatus.NO_CONTENT)
-  void deleteById(@PathVariable Long id) {
+  public void deleteById(@PathVariable Long id) {
     log.debug("deleteById(Long id) - start");
     service.delete(id);
     log.debug("deleteById(Long id) - end");
@@ -126,16 +126,18 @@ public class SolicitudProyectoController {
    * Comprueba si existen datos vinculados a la {@link SolicitudProyecto} de
    * {@link SolicitudProyectoPresupuesto}
    *
-   * @param id Id del {@link SolicitudProyectoPresupuesto}.
-   * @return
+   * @param id Id del {@link SolicitudProyecto}.
+   * @return {@link HttpStatus#OK} si tiene {@link SolicitudProyectoPresupuesto},
+   *         {@link HttpStatus#NO_CONTENT} en cualquier otro caso
    */
   @RequestMapping(path = "/{id}/solicitudpresupuesto", method = RequestMethod.HEAD)
   @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-SOL-E','CSP-SOL-V')")
-  ResponseEntity<SolicitudProyecto> hasSolicitudPresupuesto(@PathVariable Long id) {
+  public ResponseEntity<Void> hasSolicitudPresupuesto(@PathVariable Long id) {
     log.debug("hasSolicitudPresupuesto(Long id) - start");
     Boolean returnValue = solicitudProyectoPresupuestoService.hasSolicitudPresupuesto(id);
     log.debug("hasSolicitudPresupuesto(Long id) - end");
-    return returnValue ? new ResponseEntity<>(HttpStatus.OK) : new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    return returnValue.booleanValue() ? new ResponseEntity<>(HttpStatus.OK)
+        : new ResponseEntity<>(HttpStatus.NO_CONTENT);
   }
 
   /**
@@ -143,15 +145,17 @@ public class SolicitudProyectoController {
    * {@link SolicitudProyectoSocio}
    *
    * @param id Id del {@link SolicitudProyectoSocio}.
-   * @return
+   * @return {@link HttpStatus#OK} si tiene {@link SolicitudProyectoSocio},
+   *         {@link HttpStatus#NO_CONTENT} en cualquier otro caso
    */
   @RequestMapping(path = "/{id}/solicitudsocio", method = RequestMethod.HEAD)
   @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-SOL-E','CSP-SOL-V')")
-  ResponseEntity<SolicitudProyecto> hasSolicitudSocio(@PathVariable Long id) {
+  public ResponseEntity<SolicitudProyecto> hasSolicitudSocio(@PathVariable Long id) {
     log.debug("hasSolicitudSocio(Long id) - start");
     Boolean returnValue = solicitudProyectoSocioService.hasSolicitudSocio(id);
     log.debug("hasSolicitudSocio(Long id) - end");
-    return returnValue ? new ResponseEntity<>(HttpStatus.OK) : new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    return returnValue.booleanValue() ? new ResponseEntity<>(HttpStatus.OK)
+        : new ResponseEntity<>(HttpStatus.NO_CONTENT);
   }
 
   @RequestMapping(path = "/{solicitudProyectoId}/solicitudproyectosocios/periodospago", method = RequestMethod.HEAD)

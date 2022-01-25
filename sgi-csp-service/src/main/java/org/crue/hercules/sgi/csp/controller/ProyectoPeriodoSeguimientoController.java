@@ -64,7 +64,7 @@ public class ProyectoPeriodoSeguimientoController {
    */
   @PostMapping
   @PreAuthorize("hasAuthorityForAnyUO('CSP-PRO-E')")
-  ResponseEntity<ProyectoPeriodoSeguimiento> create(
+  public ResponseEntity<ProyectoPeriodoSeguimiento> create(
       @Valid @RequestBody ProyectoPeriodoSeguimiento proyectoPeriodoSeguimiento) {
     log.debug("create(ProyectoPeriodoSeguimiento proyectoPeriodoSeguimiento) - start");
     ProyectoPeriodoSeguimiento returnValue = service.create(proyectoPeriodoSeguimiento);
@@ -75,7 +75,7 @@ public class ProyectoPeriodoSeguimientoController {
   /**
    * Actualiza el {@link ProyectoPeriodoSeguimiento} con el id indicado.
    * 
-   * @param proyectoPeriodoSeguimiento {@link ProyectoPeriodo Seguimiento} a
+   * @param proyectoPeriodoSeguimiento {@link ProyectoPeriodoSeguimiento} a
    *                                   actualizar.
    * @param id                         id {@link ProyectoPeriodoSeguimiento} a
    *                                   actualizar.
@@ -83,7 +83,7 @@ public class ProyectoPeriodoSeguimientoController {
    */
   @PutMapping("/{id}")
   @PreAuthorize("hasAuthorityForAnyUO('CSP-PRO-E')")
-  ProyectoPeriodoSeguimiento update(
+  public ProyectoPeriodoSeguimiento update(
       @Validated({ Update.class, Default.class }) @RequestBody ProyectoPeriodoSeguimiento proyectoPeriodoSeguimiento,
       @PathVariable Long id) {
     log.debug("update(ProyectoPeriodoSeguimiento proyectoPeriodoSeguimiento, Long id) - start");
@@ -101,7 +101,7 @@ public class ProyectoPeriodoSeguimientoController {
   @DeleteMapping("/{id}")
   @PreAuthorize("hasAuthorityForAnyUO('CSP-PRO-E')")
   @ResponseStatus(value = HttpStatus.NO_CONTENT)
-  void deleteById(@PathVariable Long id) {
+  public void deleteById(@PathVariable Long id) {
     log.debug("deleteById(Long id) - start");
     service.delete(id);
     log.debug("deleteById(Long id) - end");
@@ -116,7 +116,7 @@ public class ProyectoPeriodoSeguimientoController {
    */
   @RequestMapping(path = "/{id}", method = RequestMethod.HEAD)
   @PreAuthorize("hasAuthorityForAnyUO('CSP-PRO-E')")
-  public ResponseEntity<?> exists(@PathVariable Long id) {
+  public ResponseEntity<Void> exists(@PathVariable Long id) {
     log.debug("ProyectoPeriodoSeguimiento exists(Long id) - start");
     if (service.existsById(id)) {
       log.debug("ProyectoPeriodoSeguimiento exists(Long id) - end");
@@ -134,7 +134,7 @@ public class ProyectoPeriodoSeguimientoController {
    */
   @GetMapping("/{id}")
   @PreAuthorize("hasAuthorityForAnyUO('CSP-PRO-E')")
-  ProyectoPeriodoSeguimiento findById(@PathVariable Long id) {
+  public ProyectoPeriodoSeguimiento findById(@PathVariable Long id) {
     log.debug("findById(Long id) - start");
     ProyectoPeriodoSeguimiento returnValue = service.findById(id);
     log.debug("findById(Long id) - end");
@@ -149,10 +149,12 @@ public class ProyectoPeriodoSeguimientoController {
    * @param id     Identificador de {@link ProyectoPeriodoSeguimiento}.
    * @param query  filtro de búsqueda.
    * @param paging pageable.
+   * @return el listado de entidades {@link ProyectoPeriodoSeguimientoDocumento}
+   *         paginadas y filtradas.
    */
   @GetMapping("/{id}/proyectoperiodoseguimientodocumentos")
   @PreAuthorize("hasAuthorityForAnyUO('CSP-PRO-E')")
-  ResponseEntity<Page<ProyectoPeriodoSeguimientoDocumento>> findAllProyectoPeriodoSeguimientoDocumentos(
+  public ResponseEntity<Page<ProyectoPeriodoSeguimientoDocumento>> findAllProyectoPeriodoSeguimientoDocumentos(
       @PathVariable Long id, @RequestParam(name = "q", required = false) String query,
       @RequestPageable(sort = "s") Pageable paging) {
     log.debug("findAllProyectoPeriodoSeguimientoDocumentos(Long id, String query, Pageable paging) - start");
@@ -177,7 +179,7 @@ public class ProyectoPeriodoSeguimientoController {
    */
   @RequestMapping(path = "/{id}/proyectoperiodoseguimientodocumentos", method = RequestMethod.HEAD)
   @PreAuthorize("hasAuthorityForAnyUO('CSP-PRO-E')")
-  public ResponseEntity<?> existsDocumentos(@PathVariable Long id) {
+  public ResponseEntity<Void> existsDocumentos(@PathVariable Long id) {
     log.debug("existsDocumentos(Long id) - start");
     boolean returnValue = proyectoPeriodoSeguimientoDocumentoService.existsByProyectoPeriodoSeguimiento(id);
 

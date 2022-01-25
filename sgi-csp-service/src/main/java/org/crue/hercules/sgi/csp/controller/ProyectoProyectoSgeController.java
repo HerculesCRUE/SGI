@@ -46,7 +46,7 @@ public class ProyectoProyectoSgeController {
    */
   @GetMapping("/{id}")
   @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-PRO-E', 'CSP-EJEC-V', 'CSP-EJEC-E')")
-  ProyectoProyectoSge findById(@PathVariable Long id) {
+  public ProyectoProyectoSge findById(@PathVariable Long id) {
     log.debug("findById(Long id) - start");
     ProyectoProyectoSge returnValue = service.findById(id);
     log.debug("findById(Long id) - end");
@@ -76,7 +76,7 @@ public class ProyectoProyectoSgeController {
   @DeleteMapping("/{id}")
   @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-PRO-E')")
   @ResponseStatus(value = HttpStatus.NO_CONTENT)
-  void deleteById(@PathVariable Long id) {
+  public void deleteById(@PathVariable Long id) {
     log.debug("deleteById(Long id) - start");
     service.delete(id);
     log.debug("deleteById(Long id) - end");
@@ -93,7 +93,7 @@ public class ProyectoProyectoSgeController {
    */
   @GetMapping()
   @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-EJEC-V', 'CSP-EJEC-E')")
-  ResponseEntity<Page<ProyectoProyectoSge>> findAll(@RequestParam(name = "q", required = false) String query,
+  public ResponseEntity<Page<ProyectoProyectoSge>> findAll(@RequestParam(name = "q", required = false) String query,
       @RequestPageable(sort = "s") Pageable paging) {
     log.debug("findAll(String query, Pageable paging) - start");
 

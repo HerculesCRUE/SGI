@@ -8,6 +8,7 @@ import { IEntidadFinanciadora } from '@core/models/csp/entidad-financiadora';
 import { SnackBarService } from '@core/services/snack-bar.service';
 import TestUtils from '@core/utils/test-utils';
 import { MaterialDesignModule } from '@material/material-design.module';
+import { SgiAuthModule, SgiAuthService } from '@sgi/framework/auth';
 import { SharedModule } from '@shared/shared.module';
 import { LoggerTestingModule } from 'ngx-logger/testing';
 import { CspSharedModule } from '../csp-shared.module';
@@ -38,12 +39,14 @@ describe('EntidadFinanciadoraModalComponent', () => {
         FormsModule,
         ReactiveFormsModule,
         SharedModule,
-        CspSharedModule
+        CspSharedModule,
+        SgiAuthModule
       ],
       providers: [
         { provide: SnackBarService, useValue: TestUtils.getSnackBarServiceSpy() },
         { provide: MatDialogRef, useValue: data },
         { provide: MAT_DIALOG_DATA, useValue: data },
+        SgiAuthService
       ],
     })
       .compileComponents();

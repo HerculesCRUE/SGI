@@ -56,8 +56,8 @@ export class ValidacionGastosComponent extends FragmentComponent implements OnIn
           return gasto.anualidad;
         case 'proyecto':
           return gasto.proyecto?.titulo;
-        case 'agrupacionGasto':
-          return gasto.agrupacionGasto?.nombre;
+        case 'clasificacionSGE':
+          return gasto.clasificacionSGE?.nombre;
         case 'conceptoGasto':
           return gasto.conceptoGasto?.nombre;
         case 'aplicacionPresupuestaria':
@@ -75,8 +75,8 @@ export class ValidacionGastosComponent extends FragmentComponent implements OnIn
         data.sort((a, b) => {
           return b.anualidad.localeCompare(a.anualidad)
             || a.proyecto?.titulo.localeCompare(b.proyecto?.titulo)
-            || a.agrupacionGasto?.nombre.localeCompare(b.agrupacionGasto?.nombre)
             || a.conceptoGasto?.nombre.localeCompare(b.conceptoGasto?.nombre)
+            || a.clasificacionSGE?.nombre.localeCompare(b.clasificacionSGE?.nombre)
             || a.partidaPresupuestaria.localeCompare(b.partidaPresupuestaria)
             || `${a.codigoEconomico?.id} ${a.codigoEconomico?.nombre ? '-' : ''} ${a.codigoEconomico?.nombre}`
               .localeCompare(`${b.codigoEconomico?.id} ${b.codigoEconomico?.nombre ? '-' : ''} ${b.codigoEconomico?.nombre}`);

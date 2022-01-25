@@ -20,6 +20,7 @@ import { MemoriaService } from '@core/services/eti/memoria.service';
 import { TipoEstadoMemoriaService } from '@core/services/eti/tipo-estado-memoria.service';
 import { SnackBarService } from '@core/services/snack-bar.service';
 import { TranslateService } from '@ngx-translate/core';
+import { SgiAuthService } from '@sgi/framework/auth';
 import { RSQLSgiRestFilter, SgiRestFilter, SgiRestFilterOperator, SgiRestListResult } from '@sgi/framework/http';
 import { NGXLogger } from 'ngx-logger';
 import { Observable, of } from 'rxjs';
@@ -81,7 +82,8 @@ export class MemoriaListadoInvComponent extends AbstractTablePaginationComponent
     private readonly memoriaService: MemoriaService,
     protected readonly snackBarService: SnackBarService,
     protected readonly dialogService: DialogService,
-    private readonly translate: TranslateService
+    private readonly translate: TranslateService,
+    private authService: SgiAuthService
   ) {
     super(snackBarService, MSG_ERROR);
 
@@ -167,8 +169,7 @@ export class MemoriaListadoInvComponent extends AbstractTablePaginationComponent
   }
 
   protected createObservable(reset?: boolean): Observable<SgiRestListResult<IMemoriaPeticionEvaluacion>> {
-    const observable$ = this.memoriaService.findAllMemoriasEvaluacionByPersonaRef(this.getFindOptions(reset));
-    return observable$;
+    return this.memoriaService.findAllMemoriasEvaluacionByPersonaRef(this.getFindOptions(reset));
   }
 
   protected initColumns(): void {
@@ -279,23 +280,23 @@ export class MemoriaListadoInvComponent extends AbstractTablePaginationComponent
       (estadoMemoria => estadoMemoria.nombre.toLowerCase().includes(filterValue));
   }
 
-  hasPermisoEnviarSecretaria(estadoMemoriaId: number, responsable: boolean): boolean {
+  hasPermisoEnviarSecretaria(estadoMemoriaId: number, solicitanteRef: string): boolean {
     // Si el estado es 'Completada', 'Favorable pendiente de modificaciones mínima',
     // 'Pendiente de correcciones', 'Completada seguimiento anual',
     // 'Completada seguimiento final' o 'En aclaracion seguimiento final' se muestra el botón de enviar.
     if ((estadoMemoriaId === ESTADO_MEMORIA.COMPLETADA || estadoMemoriaId === ESTADO_MEMORIA.FAVORABLE_PENDIENTE_MODIFICACIONES_MINIMAS
       || estadoMemoriaId === ESTADO_MEMORIA.PENDIENTE_CORRECCIONES || estadoMemoriaId === ESTADO_MEMORIA.COMPLETADA_SEGUIMIENTO_ANUAL
       || estadoMemoriaId === ESTADO_MEMORIA.COMPLETADA_SEGUIMIENTO_FINAL
-      || estadoMemoriaId === ESTADO_MEMORIA.EN_ACLARACION_SEGUIMIENTO_FINAL) && !responsable) {
+      || estadoMemoriaId === ESTADO_MEMORIA.EN_ACLARACION_SEGUIMIENTO_FINAL) && this.isUserSolicitantePeticionEvaluacion(solicitanteRef)) {
       return true;
     } else {
       return false;
     }
   }
 
-  hasPermisoEliminar(estadoMemoriaId: number): boolean {
+  hasPermisoEliminar(estadoMemoriaId: number, solicitanteRef: string): boolean {
     // Si el estado es 'En elaboración' o 'Completada'.
-    return (estadoMemoriaId === 1 || estadoMemoriaId === 2);
+    return (estadoMemoriaId === 1 || estadoMemoriaId === 2) && this.isUserSolicitantePeticionEvaluacion(solicitanteRef);
   }
 
   enviarSecretaria(memoria: IMemoriaPeticionEvaluacion) {
@@ -377,12 +378,12 @@ export class MemoriaListadoInvComponent extends AbstractTablePaginationComponent
       );
   }
 
-  hasPermisoEnviarSecretariaRetrospectiva(memoria: IMemoria, responsable: boolean): boolean {
+  hasPermisoEnviarSecretariaRetrospectiva(memoria: IMemoria, solicitanteRef: string): boolean {
     // Si el estado es 'Completada', es de tipo CEEA y requiere retrospectiva se muestra el botón de enviar.
     // Si la retrospectiva ya está 'En secretaría' no se muestra el botón.
     // El estado de la memoria debe de ser mayor a FIN_EVALUACION
     return (memoria.estadoActual.id >= ESTADO_MEMORIA.FIN_EVALUACION && memoria.comite.id === COMITE.CEEA && memoria.requiereRetrospectiva
-      && memoria.retrospectiva.estadoRetrospectiva.id === ESTADO_RETROSPECTIVA.COMPLETADA && !responsable);
+      && memoria.retrospectiva.estadoRetrospectiva.id === ESTADO_RETROSPECTIVA.COMPLETADA && this.isUserSolicitantePeticionEvaluacion(solicitanteRef));
   }
 
   enviarSecretariaRetrospectiva(memoria: IMemoriaPeticionEvaluacion) {
@@ -408,4 +409,9 @@ export class MemoriaListadoInvComponent extends AbstractTablePaginationComponent
         }
       );
   }
+
+  private isUserSolicitantePeticionEvaluacion(userRef: string): boolean {
+    return userRef === this.authService.authStatus$.value.userRefId;
+  }
+
 }

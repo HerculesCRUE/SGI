@@ -6,14 +6,12 @@ import { MatTableDataSource } from '@angular/material/table';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { BaseModalComponent } from '@core/component/base-modal.component';
 import { MSG_PARAMS } from '@core/i18n';
-import { IConceptoGasto } from '@core/models/csp/concepto-gasto';
 import { IConvocatoriaConceptoGasto } from '@core/models/csp/convocatoria-concepto-gasto';
 import { IConvocatoriaConceptoGastoCodigoEc } from '@core/models/csp/convocatoria-concepto-gasto-codigo-ec';
 import { IPartidaGasto } from '@core/models/csp/partida-gasto';
 import { ISolicitudProyectoPresupuesto } from '@core/models/csp/solicitud-proyecto-presupuesto';
 import { FxFlexProperties } from '@core/models/shared/flexLayout/fx-flex-properties';
 import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-properties';
-import { ConceptoGastoService } from '@core/services/csp/concepto-gasto.service';
 import { ConvocatoriaConceptoGastoService } from '@core/services/csp/convocatoria-concepto-gasto.service';
 import { ConvocatoriaService } from '@core/services/csp/convocatoria.service';
 import { CodigoEconomicoGastoService } from '@core/services/sge/codigo-economico-gasto.service';
@@ -52,7 +50,6 @@ const TITLE_NEW_ENTITY = marker('title.new.entity');
 export class PartidaGastoModalComponent extends
   BaseModalComponent<IPartidaGasto, PartidaGastoDataModal> implements OnInit {
 
-  conceptosGasto$: Observable<IConceptoGasto[]>;
   private conceptosGastoCodigoEcPermitidos: ConvocatoriaConceptoGastoCodigoEc[] = [];
   private conceptosGastoCodigoEcNoPermitidos: ConvocatoriaConceptoGastoCodigoEc[] = [];
   private conceptosGastoWithOutCodigoEcPermitidos: ConvocatoriaConceptoGastoCodigoEc[] = [];
@@ -82,7 +79,6 @@ export class PartidaGastoModalComponent extends
     protected snackBarService: SnackBarService,
     public matDialogRef: MatDialogRef<PartidaGastoDataModal>,
     @Inject(MAT_DIALOG_DATA) public data: PartidaGastoDataModal,
-    private conceptoGastoService: ConceptoGastoService,
     private convocatoriaService: ConvocatoriaService,
     private convocatoriaConceptoGastoService: ConvocatoriaConceptoGastoService,
     private codigoEconomicoGastoService: CodigoEconomicoGastoService,
@@ -112,10 +108,6 @@ export class PartidaGastoModalComponent extends
     this.fxLayoutProperties.gap = '20px';
     this.fxLayoutProperties.layout = 'row wrap';
     this.fxLayoutProperties.xs = 'column';
-
-    this.conceptosGasto$ = this.conceptoGastoService.findAll().pipe(
-      map((conceptosGasto) => conceptosGasto.items)
-    );
   }
 
   ngOnInit(): void {

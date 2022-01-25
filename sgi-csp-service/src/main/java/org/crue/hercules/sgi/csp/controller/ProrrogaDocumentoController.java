@@ -50,7 +50,7 @@ public class ProrrogaDocumentoController {
    */
   @PostMapping
   @PreAuthorize("hasAuthorityForAnyUO('CSP-PRO-E')")
-  ResponseEntity<ProrrogaDocumento> create(@Valid @RequestBody ProrrogaDocumento prorrogaDocumento) {
+  public ResponseEntity<ProrrogaDocumento> create(@Valid @RequestBody ProrrogaDocumento prorrogaDocumento) {
     log.debug("create(ProrrogaDocumento prorrogaDocumento) - start");
     ProrrogaDocumento returnValue = service.create(prorrogaDocumento);
     log.debug("create(ProrrogaDocumento prorrogaDocumento) - end");
@@ -66,7 +66,8 @@ public class ProrrogaDocumentoController {
    */
   @PutMapping("/{id}")
   @PreAuthorize("hasAuthorityForAnyUO('CSP-PRO-E')")
-  ProrrogaDocumento update(@Validated({ Update.class, Default.class }) @RequestBody ProrrogaDocumento prorrogaDocumento,
+  public ProrrogaDocumento update(
+      @Validated({ Update.class, Default.class }) @RequestBody ProrrogaDocumento prorrogaDocumento,
       @PathVariable Long id) {
     log.debug("update(ProrrogaDocumento prorrogaDocumento, Long id) - start");
     prorrogaDocumento.setId(id);
@@ -83,7 +84,7 @@ public class ProrrogaDocumentoController {
   @DeleteMapping("/{id}")
   @PreAuthorize("hasAuthorityForAnyUO('CSP-PRO-E')")
   @ResponseStatus(value = HttpStatus.NO_CONTENT)
-  void deleteById(@PathVariable Long id) {
+  public void deleteById(@PathVariable Long id) {
     log.debug("deleteById(Long id) - start");
     service.delete(id);
     log.debug("deleteById(Long id) - end");
@@ -97,7 +98,7 @@ public class ProrrogaDocumentoController {
    */
   @GetMapping("/{id}")
   @PreAuthorize("hasAuthorityForAnyUO('AUTH')")
-  ProrrogaDocumento findById(@PathVariable Long id) {
+  public ProrrogaDocumento findById(@PathVariable Long id) {
     log.debug("findById(Long id) - start");
     ProrrogaDocumento returnValue = service.findById(id);
     log.debug("findById(Long id) - end");

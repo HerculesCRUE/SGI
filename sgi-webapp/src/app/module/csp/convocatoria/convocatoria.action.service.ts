@@ -28,6 +28,7 @@ import { ProyectoService } from '@core/services/csp/proyecto.service';
 import { UnidadGestionService } from '@core/services/csp/unidad-gestion.service';
 import { DialogService } from '@core/services/dialog.service';
 import { EmpresaService } from '@core/services/sgemp/empresa.service';
+import { PalabraClaveService } from '@core/services/sgo/palabra-clave.service';
 import { CategoriaProfesionalService } from '@core/services/sgp/categoria-profesional.service';
 import { NivelAcademicosService } from '@core/services/sgp/nivel-academico.service';
 import { NGXLogger } from 'ngx-logger';
@@ -155,6 +156,7 @@ export class ConvocatoriaActionService extends ActionService implements OnDestro
     nivelAcademicoService: NivelAcademicosService,
     categoriaProfesionaService: CategoriaProfesionalService,
     dialogService: DialogService,
+    palabraClaveService: PalabraClaveService
   ) {
     super();
     this.id = Number(route.snapshot.paramMap.get(CONVOCATORIA_ROUTE_PARAMS.ID));
@@ -169,7 +171,7 @@ export class ConvocatoriaActionService extends ActionService implements OnDestro
     this.datosGenerales = new ConvocatoriaDatosGeneralesFragment(
       logger, this.id, convocatoriaService, proyectoService, empresaService,
       convocatoriaEntidadGestoraService, unidadGestionService, convocatoriaAreaTematicaService, configuracionSolicitudService,
-      this.readonly, this.canEdit);
+      this.readonly, this.canEdit, palabraClaveService);
     this.periodoJustificacion = new ConvocatoriaPeriodosJustificacionFragment(
       this.id, convocatoriaService, convocatoriaPeriodoJustificacionService);
     this.entidadesConvocantes = new ConvocatoriaEntidadesConvocantesFragment(

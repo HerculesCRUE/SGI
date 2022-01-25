@@ -82,7 +82,7 @@ public class ProyectoAnualidadController {
    */
   @PostMapping
   @PreAuthorize("hasAuthorityForAnyUO('CSP-PRO-E')")
-  ResponseEntity<ProyectoAnualidadOutput> create(@Valid @RequestBody ProyectoAnualidadInput proyectoAnualidad) {
+  public ResponseEntity<ProyectoAnualidadOutput> create(@Valid @RequestBody ProyectoAnualidadInput proyectoAnualidad) {
     log.debug("create(ProyectoAnualidad proyectoAnualidad) - start");
     ProyectoAnualidad returnValue = service.create(convert(proyectoAnualidad));
     log.debug("create(ProyectoAnualidad proyectoAnualidad) - end");
@@ -97,7 +97,7 @@ public class ProyectoAnualidadController {
   @DeleteMapping("/{id}")
   @PreAuthorize("hasAuthorityForAnyUO('CSP-PRO-E')")
   @ResponseStatus(value = HttpStatus.NO_CONTENT)
-  void deleteById(@PathVariable Long id) {
+  public void deleteById(@PathVariable Long id) {
     log.debug("deleteById(Long id) - start");
     service.delete(id);
     log.debug("deleteById(Long id) - end");
@@ -110,10 +110,12 @@ public class ProyectoAnualidadController {
    * @param id     Identificador de {@link ProyectoAnualidad}.
    * @param query  filtro de búsqueda.
    * @param paging pageable.
+   * @return el listado de entidades {@link AnualidadGastoOutput}
+   *         paginadas y filtradas del {@link ProyectoAnualidad}.
    */
   @GetMapping("/{id}/anualidadgastos")
   @PreAuthorize("hasAuthorityForAnyUO('CSP-PRO-E')")
-  ResponseEntity<Page<AnualidadGastoOutput>> findAllAnualidadGasto(@PathVariable Long id,
+  public ResponseEntity<Page<AnualidadGastoOutput>> findAllAnualidadGasto(@PathVariable Long id,
       @RequestParam(name = "q", required = false) String query, @RequestPageable(sort = "s") Pageable paging) {
     log.debug("findAllAnualidadGasto(Long id, String query, Pageable paging) - start");
     Page<AnualidadGasto> page = anualidadGastoService.findAllByProyectoAnualidad(id, query, paging);
@@ -134,10 +136,12 @@ public class ProyectoAnualidadController {
    * @param id     Identificador de {@link ProyectoAnualidad}.
    * @param query  filtro de búsqueda.
    * @param paging pageable.
+   * @return el listado de entidades {@link AnualidadIngresoOutput}
+   *         paginadas y filtradas del {@link ProyectoAnualidad}.
    */
   @GetMapping("/{id}/anualidadingresos")
   @PreAuthorize("hasAuthorityForAnyUO('CSP-PRO-E')")
-  ResponseEntity<Page<AnualidadIngresoOutput>> findAllAnualidadIngreso(@PathVariable Long id,
+  public ResponseEntity<Page<AnualidadIngresoOutput>> findAllAnualidadIngreso(@PathVariable Long id,
       @RequestParam(name = "q", required = false) String query, @RequestPageable(sort = "s") Pageable paging) {
     log.debug("findAllAnualidadIngreso(Long id, String query, Pageable paging) - start");
     Page<AnualidadIngreso> page = anualidadIngresoService.findAllByProyectoAnualiadad(id, query, paging);
@@ -156,10 +160,12 @@ public class ProyectoAnualidadController {
    * 
    * @param query  filtro de búsqueda.
    * @param paging pageable.
+   * @return el listado de entidades {@link ProyectoAnualidad}
+   *         paginadas y filtradas.
    */
   @GetMapping()
   @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-EJEC-E', 'CSP-EJEC-V', 'CSP-EJEC-INV-VR')")
-  ResponseEntity<Page<ProyectoAnualidadOutput>> findAll(@RequestParam(name = "q", required = false) String query,
+  public ResponseEntity<Page<ProyectoAnualidadOutput>> findAll(@RequestParam(name = "q", required = false) String query,
       @RequestPageable(sort = "s") Pageable paging) {
     log.debug("findAll(String query, Pageable paging) - start");
     Page<ProyectoAnualidad> page = service.findAll(query, paging);
@@ -181,7 +187,7 @@ public class ProyectoAnualidadController {
    */
   @GetMapping("/{id}")
   @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-PRO-V', 'CSP-PRO-E')")
-  ProyectoAnualidad findById(@PathVariable Long id) {
+  public ProyectoAnualidad findById(@PathVariable Long id) {
     log.debug("ProyectoAnualidad findById(Long id) - start");
 
     ProyectoAnualidad returnValue = service.findById(id);
@@ -193,14 +199,12 @@ public class ProyectoAnualidadController {
    * Recupera el resumen de {@link AnualidadGasto} y {@link AnualidadIngreso}
    * ({@link AnualidadResumen}) de una {@link ProyectoAnualidad}.
    * 
-   * @param id     Identificador de {@link ProyectoAnualidad}.
-   * @param query  filtro de búsqueda.
-   * @param paging pageable.
+   * @param id Identificador de {@link ProyectoAnualidad}.
    * @return Listado del resumen de {@link AnualidadResumen}.
    */
   @GetMapping("/{id}/partidas-resumen")
   @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-PRO-V', 'CSP-PRO-E')")
-  List<AnualidadResumen> getPartidasResumen(@PathVariable Long id) {
+  public List<AnualidadResumen> getPartidasResumen(@PathVariable Long id) {
     log.debug(" Page<AnualidadResumen> getPartidasResumen(Long id) - start");
 
     List<AnualidadResumen> returnValue = service.getPartidasResumen(id);
@@ -212,13 +216,12 @@ public class ProyectoAnualidadController {
    * Recupera los {@link ProyectoAnualidadNotificacionSge} que cumplan las
    * condiciones de búsqueda y tengan a true el indicador presupuestar.
    * 
-   * @param query  filtro de búsqueda.
-   * @param paging pageable.
+   * @param query filtro de búsqueda.
    * @return Listado de {@link ProyectoAnualidadNotificacionSge}.
    */
   @GetMapping("/notificaciones-sge")
   @PreAuthorize("hasAuthorityForAnyUO('CSP-EJEC-E')")
-  List<ProyectoAnualidadNotificacionSge> findAllNotificacionesSge(
+  public List<ProyectoAnualidadNotificacionSge> findAllNotificacionesSge(
       @RequestParam(name = "q", required = false) String query) {
     log.debug("findAllNotificacionesSge(String query, Pageable paging) - start");
 
@@ -259,23 +262,23 @@ public class ProyectoAnualidadController {
 
   private Page<ProyectoAnualidadOutput> convert(Page<ProyectoAnualidad> page) {
     List<ProyectoAnualidadOutput> content = page.getContent().stream()
-        .map((proyectoAnualidad) -> convert(proyectoAnualidad)).collect(Collectors.toList());
+        .map(proyectoAnualidad -> convert(proyectoAnualidad)).collect(Collectors.toList());
 
     return new PageImpl<>(content, page.getPageable(), page.getTotalElements());
   }
 
   private Page<AnualidadGastoOutput> convertPageAnualidadGasto(Page<AnualidadGasto> page) {
-    List<AnualidadGastoOutput> content = page.getContent().stream().map((anualidadGasto) -> {
-      return modelMapper.map(anualidadGasto, AnualidadGastoOutput.class);
-    }).collect(Collectors.toList());
+    List<AnualidadGastoOutput> content = page.getContent().stream()
+        .map(anualidadGasto -> modelMapper.map(anualidadGasto, AnualidadGastoOutput.class))
+        .collect(Collectors.toList());
 
     return new PageImpl<>(content, page.getPageable(), page.getTotalElements());
   }
 
   private Page<AnualidadIngresoOutput> convertPageAnualidadIngreso(Page<AnualidadIngreso> page) {
-    List<AnualidadIngresoOutput> content = page.getContent().stream().map((anualidadIngreso) -> {
-      return modelMapper.map(anualidadIngreso, AnualidadIngresoOutput.class);
-    }).collect(Collectors.toList());
+    List<AnualidadIngresoOutput> content = page.getContent().stream()
+        .map(anualidadIngreso -> modelMapper.map(anualidadIngreso, AnualidadIngresoOutput.class))
+        .collect(Collectors.toList());
 
     return new PageImpl<>(content, page.getPageable(), page.getTotalElements());
   }

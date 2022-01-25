@@ -13,6 +13,7 @@ import { LoggerTestingModule } from 'ngx-logger/testing';
 import { IDesgloseEconomicoExportData } from '../../desglose-economico.fragment';
 import { FacturasGastosExportService } from './facturas-gastos-export.service';
 import { FacturasGastosExportModalComponent } from './facturas-gastos-export-modal.component';
+import { LuxonDatePipe } from '@shared/luxon-date-pipe';
 
 describe('FacturasGastosExportModalComponent', () => {
   let component: FacturasGastosExportModalComponent;
@@ -40,7 +41,8 @@ describe('FacturasGastosExportModalComponent', () => {
         { provide: SnackBarService, useValue: TestUtils.getSnackBarServiceSpy() },
         { provide: MatDialogRef, useValue: TestUtils.buildDialogActionMatDialogRef() },
         { provide: MAT_DIALOG_DATA, useValue: {} as IDesgloseEconomicoExportData },
-        FacturasGastosExportService
+        FacturasGastosExportService,
+        LuxonDatePipe
       ]
     })
       .compileComponents();

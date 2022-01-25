@@ -5,6 +5,7 @@ import { MaterialDesignModule } from '@material/material-design.module';
 import { TranslateModule } from '@ngx-translate/core';
 import { SgiAuthModule } from '@sgi/framework/auth';
 import { SharedModule } from '@shared/shared.module';
+import { CspSharedModule } from '../shared/csp-shared.module';
 import { ProyectoProrrogaCrearComponent } from './proyecto-prorroga-crear/proyecto-prorroga-crear.component';
 import { ProyectoProrrogaDataResolver } from './proyecto-prorroga-data.resolver';
 import { ProyectoProrrogaEditarComponent } from './proyecto-prorroga-editar/proyecto-prorroga-editar.component';
@@ -27,7 +28,8 @@ import { ProyectoProrrogaRouting } from './proyecto-prorroga-routing.module';
     ProyectoProrrogaRouting,
     SgiAuthModule,
     FormsModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    CspSharedModule
   ],
   providers: [
     ProyectoProrrogaDataResolver

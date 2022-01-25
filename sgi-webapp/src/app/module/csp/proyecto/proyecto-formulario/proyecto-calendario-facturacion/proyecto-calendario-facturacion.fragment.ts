@@ -1,8 +1,6 @@
-import { I } from '@angular/cdk/keycodes';
 import { IEstadoValidacionIP, TipoEstadoValidacion } from '@core/models/csp/estado-validacion-ip';
 import { IProyecto } from '@core/models/csp/proyecto';
 import { IProyectoFacturacion } from '@core/models/csp/proyecto-facturacion';
-import { IFacturaPrevistaEmitida } from '@core/models/sge/factura-prevista-emitida';
 import { Fragment } from '@core/services/action-service';
 import { ProyectoFacturacionService } from '@core/services/csp/proyecto-facturacion/proyecto-facturacion.service';
 import { ProyectoService } from '@core/services/csp/proyecto.service';
@@ -43,25 +41,28 @@ export class ProyectoCalendarioFacturacionFragment extends Fragment {
   }
 
   private loadProyectosFacturacionByProyectoId(): void {
+    this.loadProyectosFacturacionByProyectoIdSubscription =
+      this.proyectoService.findProyectosFacturacionByProyectoId(this.getKey() as number).pipe(
+        map(response => response.items.map(item => {
+          const data = item as IProyectoFacturacionData;
 
-    this.loadProyectosFacturacionByProyectoIdSubscription = this.proyectoService.findProyectosFacturacionByProyectoId(this.getKey() as number).pipe(
-      map(response => response.items.map(item => {
-        const data = item as IProyectoFacturacionData;
+          if (data.fechaConformidad && data.numeroPrevision) {
+            const filter = new RSQLSgiRestFilter('proyectoIdSGI', SgiRestFilterOperator.EQUALS, item.proyectoId?.toString())
+              .and('numeroPrevision', SgiRestFilterOperator.EQUALS, data.numeroPrevision.toString());
 
-        if (data.fechaConformidad && data.numeroPrevision) {
-
-          const filter = new RSQLSgiRestFilter('proyectoIdSGI',
-            SgiRestFilterOperator.EQUALS, item.proyectoId?.toString())
-            .and('numeroPrevision', SgiRestFilterOperator.EQUALS, data.numeroPrevision.toString());
-
-          this.subscriptions.push(this.facturaPrevistaEmitidaService.findAll({ filter })
-            .pipe(
-              map(facturasEmitidas => facturasEmitidas.items.length === 1 ? facturasEmitidas.items[0] : null)
-            ).subscribe((factura: IFacturaPrevistaEmitida) => data.numeroFacturaEmitida = factura?.numeroFactura));
-        }
-        return new StatusWrapper(data);
-      }))
-    ).subscribe((data: StatusWrapper<IProyectoFacturacionData>[]) => this.proyectosFacturacion$.next(data));
+            return this.facturaPrevistaEmitidaService.findAll({ filter }).pipe(
+              map(facturasEmitidas => {
+                if (facturasEmitidas.items.length === 1) {
+                  data.numeroFacturaEmitida = facturasEmitidas.items[0]?.numeroFactura;
+                }
+                return new StatusWrapper(data);
+              })
+            );
+          } else {
+            return new StatusWrapper(data);
+          }
+        }))
+      ).subscribe((data: StatusWrapper<IProyectoFacturacionData>[]) => this.proyectosFacturacion$.next(data));
 
     this.subscriptions.push(this.loadProyectosFacturacionByProyectoIdSubscription);
   }

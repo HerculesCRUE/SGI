@@ -24,7 +24,7 @@
       [fxFlexOrder]="fxFlexProperties.order">
       <mat-form-field class="input-form">
         <mat-label>{{'csp.convocatoria-requisito-ip.edad-maxima' | translate}}</mat-label>
-        <input matInput formControlName="edadMaxima" type="number" id="edadMaxima" min="0"
+        <input matInput formControlName="edadMaxima" type="number" id="edadMaxima" min="0" step="1"
           placeholder="{{'csp.convocatoria-requisito-ip.edad-maxima' | translate}}">
         <mat-error *ngIf="formGroup.controls.edadMaxima.hasError('max')">
           {{'error.max.digit' | translate}}

@@ -46,7 +46,7 @@ public class AreaTematicaController {
    */
   @GetMapping("/{id}")
   @PreAuthorize("hasAuthority('CSP-AREA-E')")
-  AreaTematica findById(@PathVariable Long id) {
+  public AreaTematica findById(@PathVariable Long id) {
     log.debug("findById(Long id) - start");
     AreaTematica returnValue = service.findById(id);
     log.debug("findById(Long id) - end");
@@ -61,7 +61,7 @@ public class AreaTematicaController {
    */
   @PostMapping
   @PreAuthorize("hasAuthority('CSP-AREA-C')")
-  ResponseEntity<AreaTematica> create(@Valid @RequestBody AreaTematica areaTematica) {
+  public ResponseEntity<AreaTematica> create(@Valid @RequestBody AreaTematica areaTematica) {
     log.debug("create(AreaTematica areaTematica) - start");
     AreaTematica returnValue = service.create(areaTematica);
     log.debug("create(AreaTematica areaTematica) - end");
@@ -77,7 +77,7 @@ public class AreaTematicaController {
    */
   @PutMapping("/{id}")
   @PreAuthorize("hasAuthorityForAnyUO('CSP-AREA-E')")
-  AreaTematica update(@Validated({ Update.class, Default.class }) @RequestBody AreaTematica areaTematica,
+  public AreaTematica update(@Validated({ Update.class, Default.class }) @RequestBody AreaTematica areaTematica,
       @PathVariable Long id) {
     log.debug("update(AreaTematica areaTematica, Long id) - start");
     areaTematica.setId(id);
@@ -94,7 +94,7 @@ public class AreaTematicaController {
    */
   @PatchMapping("/{id}/reactivar")
   @PreAuthorize("hasAuthority('CSP-AREA-R')")
-  AreaTematica reactivar(@PathVariable Long id) {
+  public AreaTematica reactivar(@PathVariable Long id) {
     log.debug("reactivar(Long id) - start");
     AreaTematica returnValue = service.enable(id);
     log.debug("reactivar(Long id) - end");
@@ -109,7 +109,7 @@ public class AreaTematicaController {
    */
   @PatchMapping("/{id}/desactivar")
   @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-AREA-E', 'CSP-AREA-B')")
-  AreaTematica desactivar(@PathVariable Long id) {
+  public AreaTematica desactivar(@PathVariable Long id) {
     log.debug("desactivar(Long id) - start");
     AreaTematica returnValue = service.disable(id);
     log.debug("desactivar(Long id) - end");
@@ -119,13 +119,13 @@ public class AreaTematicaController {
   /**
    * Devuelve todas las entidades {@link AreaTematica} activos paginadas
    *
-   * @param query    la información del filtro.
-   * @param pageable la información de la paginación.
+   * @param query  la información del filtro.
+   * @param paging la información de la paginación.
    * @return la lista de entidades {@link AreaTematica} paginadas
    */
   @GetMapping()
   @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-CON-INV-V', 'CSP-SOL-INV-C', 'CSP-SOL-INV-ER')")
-  ResponseEntity<Page<AreaTematica>> findAll(@RequestParam(name = "q", required = false) String query,
+  public ResponseEntity<Page<AreaTematica>> findAll(@RequestParam(name = "q", required = false) String query,
       @RequestPageable(sort = "s") Pageable paging) {
     log.debug("findAll(String query, Pageable paging) - start");
     Page<AreaTematica> page = service.findAll(query, paging);
@@ -143,13 +143,13 @@ public class AreaTematicaController {
    * Devuelve todas las entidades {@link AreaTematica} activos con padre null (los
    * grupo) paginadas
    *
-   * @param query    la información del filtro.
-   * @param pageable la información de la paginación.
+   * @param query  la información del filtro.
+   * @param paging la información de la paginación.
    * @return la lista de entidades {@link AreaTematica} paginadas
    */
   @GetMapping("/grupo")
   @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-CON-V', 'CSP-CON-C', 'CSP-CON-E','CSP-CON-R','CSP-CON-B','CSP-PRO-E', 'CSP-SOL-INV-C' ,'CSP-SOL-INV-ER')")
-  ResponseEntity<Page<AreaTematica>> findAllGrupo(@RequestParam(name = "q", required = false) String query,
+  public ResponseEntity<Page<AreaTematica>> findAllGrupo(@RequestParam(name = "q", required = false) String query,
       @RequestPageable(sort = "s") Pageable paging) {
     log.debug("findAllGrupo(String query, Pageable paging) - start");
     Page<AreaTematica> page = service.findAllGrupo(query, paging);
@@ -167,13 +167,13 @@ public class AreaTematicaController {
    * Devuelve todas las entidades {@link AreaTematica} con padre null (los grupos)
    * paginadas
    *
-   * @param query    la información del filtro.
-   * @param pageable la información de la paginación.
+   * @param query  la información del filtro.
+   * @param paging la información de la paginación.
    * @return la lista de entidades {@link AreaTematica} paginadas
    */
   @GetMapping("/grupo/todos")
   @PreAuthorize("hasAnyAuthority('CSP-AREA-V', 'CSP-AREA-C', 'CSP-AREA-E', 'CSP-AREA-B', 'CSP-AREA-R', 'CSP-SOL-INV-C', 'CSP-SOL-INV-ER')")
-  ResponseEntity<Page<AreaTematica>> findAllTodosGrupo(@RequestParam(name = "q", required = false) String query,
+  public ResponseEntity<Page<AreaTematica>> findAllTodosGrupo(@RequestParam(name = "q", required = false) String query,
       @RequestPageable(sort = "s") Pageable paging) {
     log.debug("findAllTodosGrupo(String query, Pageable paging) - start");
     Page<AreaTematica> page = service.findAllTodosGrupo(query, paging);
@@ -191,13 +191,14 @@ public class AreaTematicaController {
    * Devuelve todas las entidades {@link AreaTematica} hijos directos del
    * {@link AreaTematica} con el id indicado paginadas
    *
-   * @param query    la información del filtro.
-   * @param pageable la información de la paginación.
+   * @param id     Identificador de {@link AreaTematica}.
+   * @param query  la información del filtro.
+   * @param paging la información de la paginación.
    * @return la lista de entidades {@link AreaTematica} paginadas
    */
   @GetMapping("/{id}/hijos")
   @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-CON-C', 'CSP-CON-E', 'CSP-PRO-E', 'CSP-AREA-E', 'CSP-SOL-INV-C', 'CSP-SOL-INV-ER')")
-  ResponseEntity<Page<AreaTematica>> findAllHijosAreaTematica(@PathVariable Long id,
+  public ResponseEntity<Page<AreaTematica>> findAllHijosAreaTematica(@PathVariable Long id,
       @RequestParam(name = "q", required = false) String query, @RequestPageable(sort = "s") Pageable paging) {
     log.debug("findAllHijosAreaTematica(String query, Pageable paging) - start");
     Page<AreaTematica> page = service.findAllHijosAreaTematica(id, query, paging);

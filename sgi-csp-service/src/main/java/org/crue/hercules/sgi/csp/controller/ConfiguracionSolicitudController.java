@@ -102,7 +102,7 @@ public class ConfiguracionSolicitudController {
    */
   @GetMapping("/{id}")
   @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-CON-E', 'CSP-CON-V', 'CSP-CON-INV-V', 'CSP-SOL-C', 'CSP-SOL-E', 'CSP-SOL-V')")
-  ResponseEntity<ConfiguracionSolicitud> findByConvocatoriaId(@PathVariable Long id) {
+  public ResponseEntity<ConfiguracionSolicitud> findByConvocatoriaId(@PathVariable Long id) {
     log.debug("ConfiguracionSolicitud findByConvocatoriaId(Long id) - start");
     ConfiguracionSolicitud returnValue = service.findByConvocatoriaId(id);
 
@@ -128,10 +128,12 @@ public class ConfiguracionSolicitudController {
    * @param id     Identificador de {@link Convocatoria}.
    * @param query  filtro de búsqueda.
    * @param paging pageable.
+   * @return el listado de entidades {@link DocumentoRequeridoSolicitud}
+   *         paginadas y filtradas de la {@link Convocatoria}.
    */
   @GetMapping("/{id}/documentorequiridosolicitudes")
   @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-CON-E', 'CSP-CON-V', 'CSP-CON-INV-V', 'CSP-SOL-E', 'CSP-SOL-V')")
-  ResponseEntity<Page<DocumentoRequeridoSolicitud>> findAllConvocatoriaDocumentoRequeridoSolicitud(
+  public ResponseEntity<Page<DocumentoRequeridoSolicitud>> findAllConvocatoriaDocumentoRequeridoSolicitud(
       @PathVariable Long id, @RequestParam(name = "q", required = false) String query,
       @RequestPageable(sort = "s") Pageable paging) {
     log.debug("findAllConvocatoriaDocumentoRequeridoSolicitud(Long id, String query, Pageable paging) - start");
@@ -155,10 +157,12 @@ public class ConfiguracionSolicitudController {
    * @param id     Identificador de {@link Convocatoria}.
    * @param query  filtro de búsqueda.
    * @param paging pageable.
+   * @return el listado de entidades {@link TipoDocumento}
+   *         paginadas y filtradas de la {@link Convocatoria}.
    */
   @GetMapping("/{id}/tipodocumentofasepresentaciones")
   @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-SOL-E', 'CSP-SOL-V', 'CSP-SOL-INV-ER')")
-  ResponseEntity<Page<TipoDocumento>> findAllTipoDocumentosFasePresentacion(@PathVariable Long id,
+  public ResponseEntity<Page<TipoDocumento>> findAllTipoDocumentosFasePresentacion(@PathVariable Long id,
       @RequestParam(name = "q", required = false) String query, @RequestPageable(sort = "s") Pageable paging) {
     log.debug("findAllTipoDocumentosFasePresentacion(Long id, Pageable paging) - start");
     Page<TipoDocumento> page = tipoDocumentoService.findAllTipoDocumentosFasePresentacionConvocatoria(id, paging);

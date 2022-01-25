@@ -40,7 +40,7 @@ public interface PeriodoTitularidadRepository
    * fecha pasada por parametros.
    * 
    * @param invencionId id de la {@link Invencion}
-   * @param date
+   * @param date        la fecha de referencia para la búsqueda
    * @return el {@link PeriodoTitularidad}
    */
   Optional<PeriodoTitularidad> findByInvencionIdAndFechaFinGreaterThanEqual(Long invencionId, Instant date);

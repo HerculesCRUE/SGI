@@ -6,11 +6,9 @@ import { BaseModalComponent } from '@core/component/base-modal.component';
 import { MSG_PARAMS } from '@core/i18n';
 import { IModeloTipoEnlace } from '@core/models/csp/modelo-tipo-enlace';
 import { ITipoEnlace } from '@core/models/csp/tipos-configuracion';
-import { TipoEnlaceService } from '@core/services/csp/tipo-enlace.service';
 import { SnackBarService } from '@core/services/snack-bar.service';
 import { TranslateService } from '@ngx-translate/core';
-import { Observable } from 'rxjs';
-import { map, switchMap } from 'rxjs/operators';
+import { switchMap } from 'rxjs/operators';
 
 const MODELO_EJECUCION_TIPO_ENLACE = marker('csp.tipo-enlace');
 const MODELO_EJECUCION_TIPO_ENLACE_TIPO = marker('csp.modelo-ejecucion-tipo-enlace.tipo');
@@ -29,7 +27,6 @@ export interface ModeloEjecucionTipoEnlaceModalData {
 })
 export class ModeloEjecucionTipoEnlaceModalComponent extends
   BaseModalComponent<IModeloTipoEnlace, ModeloEjecucionTipoEnlaceModalComponent> implements OnInit {
-  tipoEnlaces$: Observable<ITipoEnlace[]>;
 
   msgParamTipoEntiy = {};
   title: string;
@@ -40,19 +37,10 @@ export class ModeloEjecucionTipoEnlaceModalComponent extends
     protected readonly snackBarService: SnackBarService,
     public readonly matDialogRef: MatDialogRef<ModeloEjecucionTipoEnlaceModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data: ModeloEjecucionTipoEnlaceModalData,
-    private readonly tipoEnlaceService: TipoEnlaceService,
     private readonly translate: TranslateService
   ) {
     super(snackBarService, matDialogRef, data.modeloTipoEnlace);
     this.textSaveOrUpdate = this.data.modeloTipoEnlace?.tipoEnlace ? MSG_ACEPTAR : MSG_ANADIR;
-
-    this.tipoEnlaces$ = this.tipoEnlaceService.findAll().pipe(
-      map(result => {
-        return result.items.filter((tipoEnlace: ITipoEnlace) => {
-          return !this.data.tipoEnlaces.some((currentTipo) => currentTipo.id === tipoEnlace.id);
-        });
-      })
-    );
   }
 
   ngOnInit(): void {

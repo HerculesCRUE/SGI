@@ -2,10 +2,14 @@ package org.crue.hercules.sgi.csp.integration;
 
 import java.net.URI;
 import java.time.Instant;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
 import org.assertj.core.api.Assertions;
+import org.crue.hercules.sgi.csp.controller.ConvocatoriaController;
+import org.crue.hercules.sgi.csp.dto.ConvocatoriaPalabraClaveInput;
+import org.crue.hercules.sgi.csp.dto.ConvocatoriaPalabraClaveOutput;
 import org.crue.hercules.sgi.csp.enums.ClasificacionCVN;
 import org.crue.hercules.sgi.csp.enums.FormularioSolicitud;
 import org.crue.hercules.sgi.csp.enums.TipoSeguimiento;
@@ -65,6 +69,7 @@ public class ConvocatoriaIT extends BaseIT {
   private static final String PATH_ENTIDAD_CONCEPTO_GASTOS_PERMITIDOS = "/convocatoriagastos/permitidos";
   private static final String PATH_ENTIDAD_CONCEPTO_GASTOS_NO_PERMITIDOS = "/convocatoriagastos/nopermitidos";
   private static final String PATH_PARAMETER_RESTRINGIDOS = "/restringidos";
+  private static final String PATH_PALABRAS_CLAVE = ConvocatoriaController.PATH_PALABRAS_CLAVE;
 
   private HttpEntity<Convocatoria> buildRequest(HttpHeaders headers, Convocatoria entity) throws Exception {
     headers = (headers != null ? headers : new HttpHeaders());
@@ -74,6 +79,16 @@ public class ConvocatoriaIT extends BaseIT {
         "CSP-CON-R", "CSP-CON-E", "CSP-CON-INV-V", "CSP-CON-V", "AUTH")));
 
     HttpEntity<Convocatoria> request = new HttpEntity<>(entity, headers);
+    return request;
+  }
+
+  private HttpEntity<Object> buildGenericRequest(HttpHeaders headers, Object entity, String... roles) throws Exception {
+    headers = (headers != null ? headers : new HttpHeaders());
+    headers.setContentType(MediaType.APPLICATION_JSON);
+    headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
+    headers.set("Authorization", String.format("bearer %s", tokenBuilder.buildToken("user", roles)));
+
+    HttpEntity<Object> request = new HttpEntity<>(entity, headers);
     return request;
   }
 
@@ -1029,6 +1044,59 @@ public class ConvocatoriaIT extends BaseIT {
         .isEqualTo("obs-" + String.format("%03d", 5));
     Assertions.assertThat(convocatoriaConceptoGastos.get(2).getObservaciones()).as("get(2).getObservaciones()")
         .isEqualTo("obs-" + String.format("%03d", 4));
+  }
+
+  @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = { 
+    // @formatter:off
+    "classpath:scripts/modelo_ejecucion.sql",
+    "classpath:scripts/tipo_finalidad.sql",
+    "classpath:scripts/tipo_regimen_concurrencia.sql",
+    "classpath:scripts/tipo_ambito_geografico.sql",
+    "classpath:scripts/convocatoria.sql"
+    // @formatter:on
+  })
+  @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
+  @Test
+  void updatePalabrasClave_ReturnsConvocatoriaPalabraClaveOutputList() throws Exception {
+    HttpHeaders headers = new HttpHeaders();
+    headers.set("Authorization", String.format("bearer %s", tokenBuilder.buildToken("user", "CSP-CGAS-V")));
+    headers.add("X-Page", "0");
+    headers.add("X-Page-Size", "10");
+    String sort = "id,desc";
+    String filter = "";
+    
+    Long convocatoriaId = 1L;
+    List<ConvocatoriaPalabraClaveInput> toUpdate = Arrays.asList(
+        buildMockConvocatoriaPalabraClaveInput(convocatoriaId, "palabra-ref-uptd-1"),
+        buildMockConvocatoriaPalabraClaveInput(convocatoriaId, "palabra-ref-uptd-2"),
+        buildMockConvocatoriaPalabraClaveInput(convocatoriaId, "palabra-ref-uptd-3"));
+
+    URI uri = UriComponentsBuilder.fromUriString(CONTROLLER_BASE_PATH + PATH_PALABRAS_CLAVE)
+    .queryParam("s", sort).queryParam("q", filter).buildAndExpand(convocatoriaId).toUri();
+
+    final ResponseEntity<List<ConvocatoriaPalabraClaveOutput>> response = restTemplate.exchange(uri, HttpMethod.PATCH,
+        buildGenericRequest(null, toUpdate, "CSP-CON-E"), new ParameterizedTypeReference<List<ConvocatoriaPalabraClaveOutput>>() {
+        });
+
+    Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+    
+    List<ConvocatoriaPalabraClaveOutput> updated = response.getBody();
+    Assertions.assertThat(updated.size()).isEqualTo(3);
+
+    Assertions.assertThat(updated.get(0)).isNotNull();
+    Assertions.assertThat(updated.get(1)).isNotNull();
+    Assertions.assertThat(updated.get(2)).isNotNull();
+
+    Assertions.assertThat(updated.get(0).getPalabraClaveRef()).isEqualTo("palabra-ref-uptd-1");
+    Assertions.assertThat(updated.get(1).getPalabraClaveRef()).isEqualTo("palabra-ref-uptd-2");
+    Assertions.assertThat(updated.get(2).getPalabraClaveRef()).isEqualTo("palabra-ref-uptd-3");
+  }
+
+  private ConvocatoriaPalabraClaveInput buildMockConvocatoriaPalabraClaveInput(Long solicitudId, String palabraRef) {
+    return ConvocatoriaPalabraClaveInput.builder()
+    .convocatoriaId(solicitudId)
+    .palabraClaveRef(palabraRef)
+    .build();
   }
 
   /**

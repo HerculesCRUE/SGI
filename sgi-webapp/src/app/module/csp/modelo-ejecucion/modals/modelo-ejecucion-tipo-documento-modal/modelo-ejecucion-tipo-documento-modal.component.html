@@ -10,9 +10,9 @@
     <div [fxLayout]="fxLayoutProperties.layout" [fxLayoutAlign]="fxLayoutProperties.layoutAlign">
       <mat-form-field>
         <mat-label>{{'csp.documento.tipo' | translate}}</mat-label>
-            <sgi-select-entity #tipoDocumento formControlName="tipoDocumento" required
-              [options]="tipoDocumentos$ | async">
-            </sgi-select-entity>
+        <sgi-select-tipo-documento #tipoDocumento formControlName="tipoDocumento" required
+          [disableWith]="disablerTipoDocumento">
+        </sgi-select-tipo-documento>
         <mat-error *ngIf="formGroup.controls.tipoDocumento.errors?.required">
           {{'error.required.entity' | translate:msgParamTipoEntiy}}
         </mat-error>
@@ -22,9 +22,9 @@
     <div [fxLayout]="fxLayoutProperties.layout" [fxLayoutAlign]="fxLayoutProperties.layoutAlign">
       <mat-form-field>
         <mat-label>{{'csp.modelo-ejecucion-tipo-documento.fase' | translate}}</mat-label>
-            <sgi-select-entity formControlName="tipoFase" [required]="isFaseRequired" [options]="tipoFases$ | async"
-              [resetOnChange]="tipoDocumento.selectionChange">
-            </sgi-select-entity>
+        <sgi-select-entity formControlName="tipoFase" [required]="isFaseRequired" [options]="tipoFases$ | async"
+          [resetOnChange]="tipoDocumento.selectionChange">
+        </sgi-select-entity>
         <mat-error *ngIf="formGroup.controls.tipoFase.errors?.required">
           {{'error.required.entity' | translate:msgParamFaseEntiy}}
         </mat-error>

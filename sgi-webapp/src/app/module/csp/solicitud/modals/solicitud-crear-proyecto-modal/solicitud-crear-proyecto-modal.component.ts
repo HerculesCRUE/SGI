@@ -11,19 +11,16 @@ import { ESTADO_MAP } from '@core/models/csp/estado-proyecto';
 import { IProyecto } from '@core/models/csp/proyecto';
 import { ISolicitud } from '@core/models/csp/solicitud';
 import { ISolicitudProyecto } from '@core/models/csp/solicitud-proyecto';
-import { IModeloEjecucion } from '@core/models/csp/tipos-configuracion';
 import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-properties';
 import { ConvocatoriaService } from '@core/services/csp/convocatoria.service';
-import { ModeloUnidadService } from '@core/services/csp/modelo-unidad.service';
 import { ProyectoService } from '@core/services/csp/proyecto.service';
 import { SnackBarService } from '@core/services/snack-bar.service';
 import { DateValidator } from '@core/validators/date-validator';
 import { TranslateService } from '@ngx-translate/core';
-import { RSQLSgiRestFilter, RSQLSgiRestSort, SgiRestFilterOperator, SgiRestFindOptions, SgiRestListResult, SgiRestSortDirection } from '@sgi/framework/http';
+import { RSQLSgiRestFilter, SgiRestFilterOperator, SgiRestFindOptions } from '@sgi/framework/http';
 import { DateTime } from 'luxon';
-import { NGXLogger } from 'ngx-logger';
 import { merge, Observable, of } from 'rxjs';
-import { map, startWith, switchMap, tap } from 'rxjs/operators';
+import { map, switchMap, tap } from 'rxjs/operators';
 
 const MSG_ACEPTAR = marker('btn.ok');
 const SOLICITUD_PROYECTO_FECHA_INICIO_KEY = marker('csp.solicitud-proyecto.fecha-inicio');
@@ -38,7 +35,7 @@ export interface ISolicitudCrearProyectoModalData {
 
 interface IProyectoData extends IProyecto {
   prorrogado: boolean;
-  proyectosSGE: string
+  proyectosSGE: string;
 }
 
 @Component({
@@ -76,7 +73,6 @@ export class SolicitudCrearProyectoModalComponent
     @Inject(MAT_DIALOG_DATA)
     public data: ISolicitudCrearProyectoModalData,
     private readonly proyectoService: ProyectoService,
-    private logger: NGXLogger,
     private readonly translate: TranslateService,
     private convocatoriaService: ConvocatoriaService
   ) {
@@ -123,7 +119,7 @@ export class SolicitudCrearProyectoModalComponent
     this.translate.get(
       SOLICITUD_PROYECTO_TITULO_KEY,
       MSG_PARAMS.CARDINALIRY.SINGULAR
-    ).subscribe((value) => this.msgParamTituloEntity = {entity: value, ...MSG_PARAMS.GENDER.MALE, ...MSG_PARAMS.CARDINALIRY.SINGULAR});
+    ).subscribe((value) => this.msgParamTituloEntity = { entity: value, ...MSG_PARAMS.GENDER.MALE, ...MSG_PARAMS.CARDINALIRY.SINGULAR });
   }
 
   protected getFormGroup(): FormGroup {

@@ -227,6 +227,17 @@
       </mat-form-field>
     </div>
 
+    <!-- Palabras Clave -->
+    <div [fxFlex.sm]="fxFlexPropertiesInline.sm" [fxFlex.md]="fxFlexPropertiesInline.md"
+      [fxFlex.gt-md]="fxFlexPropertiesInline.gtMd" [fxFlexOrder]="fxFlexPropertiesInline.order">
+      <mat-form-field fxFill>
+        <mat-label>{{'csp.convocatoria.palabras-clave' | translate}}</mat-label>
+        <sgi-palabra-clave formControlName="palabrasClave" id="palabrasClave"
+          placeholder="{{'csp.convocatoria.palabras-clave' | translate}}"></sgi-palabra-clave>
+      </mat-form-field>
+    </div>
+
+
     <!-- Objeto -->
     <div [fxFlex.sm]="fxFlexPropertiesInline.sm" [fxFlex.md]="fxFlexProperties.md"
       [fxFlex.gt-md]="fxFlexPropertiesInline.gtMd" [fxFlexOrder]="fxFlexPropertiesInline.order">

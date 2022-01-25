@@ -27,6 +27,8 @@ public class ProyectoPeriodoSeguimientoDocumentoRepositoryTest extends BaseRepos
     ModeloEjecucion modeloEjecucion = ModeloEjecucion.builder()
         .nombre("nombreModeloEjecucion")
         .activo(Boolean.TRUE)
+        .contrato(Boolean.FALSE)
+        .externo(Boolean.FALSE)
         .build();
     entityManager.persistAndFlush(modeloEjecucion);
 
@@ -78,6 +80,8 @@ public class ProyectoPeriodoSeguimientoDocumentoRepositoryTest extends BaseRepos
     ModeloEjecucion modeloEjecucion = ModeloEjecucion.builder()
         .nombre("nombreModeloEjecucion")
         .activo(Boolean.TRUE)
+        .contrato(Boolean.FALSE)
+        .externo(Boolean.FALSE)
         .build();
     entityManager.persistAndFlush(modeloEjecucion);
 
@@ -139,6 +143,8 @@ public class ProyectoPeriodoSeguimientoDocumentoRepositoryTest extends BaseRepos
     ModeloEjecucion modeloEjecucion = ModeloEjecucion.builder()
         .nombre("nombreModeloEjecucion")
         .activo(Boolean.TRUE)
+        .contrato(Boolean.FALSE)
+        .externo(Boolean.FALSE)
         .build();
     entityManager.persistAndFlush(modeloEjecucion);
 

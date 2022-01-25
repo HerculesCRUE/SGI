@@ -35,6 +35,7 @@ export class SolicitudAutoevaluacionFragment extends Fragment {
   private solicitud: ISolicitud;
 
   public readonly solicitudProyectoData$: Subject<SolicitudProyectoData> = new BehaviorSubject<SolicitudProyectoData>(undefined);
+  public isFormFullFilled: boolean;
 
   constructor(
     solicitud: ISolicitud,
@@ -88,6 +89,7 @@ export class SolicitudAutoevaluacionFragment extends Fragment {
             tap((checklist: IChecklist) => {
               this.data.formly = checklist.formly;
               this.data.model = checklist.respuesta;
+              this.isFormFullFilled = this.checkIsFormFullFilled(this.data.formly.esquema, this.data.model);
 
               if (value.readonly) {
                 this.switchToReadonly(this.data.formly.esquema);
@@ -131,6 +133,11 @@ export class SolicitudAutoevaluacionFragment extends Fragment {
   saveOrUpdate(): Observable<string> {
     if (this.getKey()) {
       return this.checklistService.updateRespuesta(Number.parseInt(this.getKey() as string, 10), this.data.model).pipe(
+        tap(() => {
+          this.isFormFullFilled = this.checkIsFormFullFilled(this.data.formly.esquema, this.data.model);
+          this.refreshInitialState(true);
+          this.group.refreshInitialState(true);
+        }),
         map(checklist => checklist.id.toString())
       );
     }
@@ -144,8 +151,10 @@ export class SolicitudAutoevaluacionFragment extends Fragment {
       }).pipe(
         map(checklist => checklist.id.toString()),
         tap(id => {
+          this.isFormFullFilled = this.checkIsFormFullFilled(this.data.formly.esquema, this.data.model);
           this.setKey(id);
           this.refreshInitialState(true);
+          this.group.refreshInitialState(true);
         })
       );
     }
@@ -156,4 +165,11 @@ export class SolicitudAutoevaluacionFragment extends Fragment {
       this.group.forceUpdate(markAllTouched);
     }
   }
+
+  private checkIsFormFullFilled(fieldConfig: FormlyFieldConfig[], model: any): boolean {
+    return fieldConfig
+      .filter(field => field.key)
+      .every(field => typeof model[field.key as string] === 'boolean');
+  }
+
 }

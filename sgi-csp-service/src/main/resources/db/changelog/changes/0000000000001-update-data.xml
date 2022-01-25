@@ -2,7 +2,7 @@
 <databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:pro="http://www.liquibase.org/xml/ns/pro" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-3.8.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
   <property name="schemaPrefix" value="" />
 
-  <changeSet context="!unit-test AND !integration-test" author="master" id="0000000000001-solicitud_proyecto_entidad">
+  <changeSet context="!test" author="master" id="0000000000001-solicitud_proyecto_entidad">
     <!-- Carga de la nueva tabla solicitud_proyecto_entidad a partir de datos existentes en convocatoria_entidad_financiadora -->
     <sql dbms="!postgresql">INSERT INTO ${schemaPrefix}solicitud_proyecto_entidad(id, created_by, creation_date, last_modified_by, last_modified_date, solicitud_proyecto_id, convocatoria_entidad_financiadora_id, convocatoria_entidad_gestora_id, solicitud_proyecto_entidad_financiadora_ajena_id) 
       SELECT 
@@ -94,7 +94,7 @@
     </sql>
   </changeSet>
 
-  <changeSet context="!unit-test AND !integration-test" author="master" id="0000000000001-solicitud_proyecto_presupuesto">
+  <changeSet context="!test" author="master" id="0000000000001-solicitud_proyecto_presupuesto">
     <!-- Actualizar solicitud_proyecto_entidad_id en solicitud_proyecto_presupuesto -->
     <sql>
       UPDATE ${schemaPrefix}solicitud_proyecto_presupuesto spp SET solicitud_proyecto_entidad_id=(
@@ -142,7 +142,7 @@
     </sql>
   </changeSet>
 
-  <changeSet context="!unit-test AND !integration-test" author="master" id="0000000000001-solicitud">
+  <changeSet context="!test" author="master" id="0000000000001-solicitud">
     <update tableName="solicitud">
       <column name="formulario_solicitud" value="PROYECTO" />
       <where>:name=:value</where>
@@ -152,7 +152,7 @@
     </update>
   </changeSet>
 
-  <changeSet context="!unit-test AND !integration-test" author="master" id="0000000000001-configuracion_solicitud">
+  <changeSet context="!test" author="master" id="0000000000001-configuracion_solicitud">
     <update tableName="configuracion_solicitud">
       <column name="formulario_solicitud" value="PROYECTO" />
       <where>:name=:value</where>
@@ -162,7 +162,7 @@
     </update>
   </changeSet>
 
-  <changeSet context="!unit-test AND !integration-test" author="master" id="0000000000001-convocatoria">
+  <changeSet context="!test" author="master" id="0000000000001-convocatoria">
     <sql>
       UPDATE ${schemaPrefix}convocatoria conv SET formulario_solicitud=(
         SELECT

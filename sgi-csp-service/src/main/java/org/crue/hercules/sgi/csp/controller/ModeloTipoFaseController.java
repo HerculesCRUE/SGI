@@ -50,7 +50,7 @@ public class ModeloTipoFaseController {
    */
   @GetMapping("/{id}")
   @PreAuthorize("hasAuthorityForAnyUO('AUTH')")
-  ModeloTipoFase findById(@PathVariable Long id) {
+  public ModeloTipoFase findById(@PathVariable Long id) {
     log.debug("findById(Long id) - start");
     ModeloTipoFase returnValue = modeloTipoFaseService.findById(id);
     log.debug("findById(Long id) - end");
@@ -65,7 +65,7 @@ public class ModeloTipoFaseController {
    */
   @PostMapping
   @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-ME-C', 'CSP-ME-E')")
-  ResponseEntity<ModeloTipoFase> create(@Valid @RequestBody ModeloTipoFase modeloTipoFase) {
+  public ResponseEntity<ModeloTipoFase> create(@Valid @RequestBody ModeloTipoFase modeloTipoFase) {
     log.debug("create(ModeloTipoFase modeloTipoFase) - start");
     ModeloTipoFase returnValue = modeloTipoFaseService.create(modeloTipoFase);
     log.debug("create(ModeloTipoFase modeloTipoFase) - end");
@@ -81,7 +81,7 @@ public class ModeloTipoFaseController {
    */
   @PutMapping("/{id}")
   @PreAuthorize("hasAuthorityForAnyUO('CSP-ME-E')")
-  ModeloTipoFase update(@Validated @RequestBody ModeloTipoFase modeloTipoFase, @PathVariable Long id) {
+  public ModeloTipoFase update(@Validated @RequestBody ModeloTipoFase modeloTipoFase, @PathVariable Long id) {
     log.debug("update(ModeloTipoFase modeloTipoFase, Long id) - start");
     modeloTipoFase.setId(id);
     ModeloTipoFase returnValue = modeloTipoFaseService.update(modeloTipoFase);
@@ -97,7 +97,7 @@ public class ModeloTipoFaseController {
   @DeleteMapping("/{id}")
   @PreAuthorize("hasAuthorityForAnyUO('CSP-ME-E')")
   @ResponseStatus(value = HttpStatus.NO_CONTENT)
-  void deleteById(@PathVariable Long id) {
+  public void deleteById(@PathVariable Long id) {
     log.debug("deleteById(Long id) - start");
     modeloTipoFaseService.disable(id);
     log.debug("deleteById(Long id) - end");

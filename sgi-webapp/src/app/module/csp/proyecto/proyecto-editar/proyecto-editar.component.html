@@ -119,15 +119,15 @@
         [title]="'menu.csp.proyectos.configuracion-economica.presupuesto'  | translate:MSG_PARAMS.CARDINALIRY.PLURAL"
         [fragment]="actionService.getFragment(actionService.FRAGMENT.PRESUPUESTO)">
       </sgi-action-fragment-menu-item>
-      <sgi-action-fragment-menu-item *sgiHasAnyAuthorityForAnyUO="['CSP-PRO-E']"
-        [route]="[PROYECTO_ROUTE_NAMES.AGRUPACIONES_GASTO]"
-        [title]="'csp.proyecto-agrupacion-gasto' | translate:MSG_PARAMS.CARDINALIRY.PLURAL"
-        [fragment]="actionService.getFragment(actionService.FRAGMENT.AGRUPACIONES_GASTO)">
-      </sgi-action-fragment-menu-item>
       <sgi-action-fragment-menu-item *sgiHasAnyAuthorityForAnyUO="['CSP-PRO-V', 'CSP-PRO-E']"
         [route]="[PROYECTO_ROUTE_NAMES.CONSULTA_PRESUPUESTO]"
         [title]="'csp.proyectos.configuracion-economica.consulta-presupuesto' | translate"
         [fragment]="actionService.getFragment(actionService.FRAGMENT.CONSULTA_PRESUPUESTO)">
+      </sgi-action-fragment-menu-item>
+      <sgi-action-fragment-menu-item *sgiHasAnyAuthorityForAnyUO="['CSP-PRO-V', 'CSP-PRO-E']"
+        [route]="[PROYECTO_ROUTE_NAMES.AMORTIZACION_FONDOS]"
+        [title]="'csp.proyectos.configuracion-economica.amortizacion-fondos' | translate"
+        [fragment]="actionService.getFragment(actionService.FRAGMENT.AMORTIZACION_FONDOS)">
       </sgi-action-fragment-menu-item>
       <sgi-action-fragment-menu-item *sgiHasAnyAuthorityForAnyUO="['CSP-PRO-V', 'CSP-PRO-E']"
         [route]="[PROYECTO_ROUTE_NAMES.CALENDARIO_FACTURACION]"

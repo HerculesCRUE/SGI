@@ -40,8 +40,8 @@ public class TipoOrigenFuenteFinanciacionController {
    *         paginadas y filtradas.
    */
   @GetMapping()
-  ResponseEntity<Page<TipoOrigenFuenteFinanciacion>> findAll(@RequestParam(name = "q", required = false) String query,
-      @RequestPageable(sort = "s") Pageable paging) {
+  public ResponseEntity<Page<TipoOrigenFuenteFinanciacion>> findAll(
+      @RequestParam(name = "q", required = false) String query, @RequestPageable(sort = "s") Pageable paging) {
     log.debug("findAll(String query,Pageable paging) - start");
     Page<TipoOrigenFuenteFinanciacion> page = service.findAll(query, paging);
 

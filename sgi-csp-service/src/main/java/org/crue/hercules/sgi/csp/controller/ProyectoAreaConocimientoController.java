@@ -1,7 +1,6 @@
 package org.crue.hercules.sgi.csp.controller;
 
-import javax.validation.Valid;
-
+import lombok.extern.slf4j.Slf4j;
 import org.crue.hercules.sgi.csp.model.ProyectoAreaConocimiento;
 import org.crue.hercules.sgi.csp.service.ProyectoAreaConocimientoService;
 import org.springframework.http.HttpStatus;
@@ -15,15 +14,17 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import lombok.extern.slf4j.Slf4j;
+import javax.validation.Valid;
 
 /**
  * ProyectoAreaConocimientoController
  */
 @RestController
-@RequestMapping("/proyecto-areas-conocimiento")
+@RequestMapping(ProyectoAreaConocimientoController.MAPPING)
 @Slf4j
 public class ProyectoAreaConocimientoController {
+
+  public static final String MAPPING = "/proyecto-areas-conocimiento";
 
   /** ProyectoAreasConocimientoService service */
   private final ProyectoAreaConocimientoService service;
@@ -63,7 +64,7 @@ public class ProyectoAreaConocimientoController {
   @DeleteMapping("/{id}")
   @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-PRO-E')")
   @ResponseStatus(value = HttpStatus.NO_CONTENT)
-  void deleteById(@PathVariable Long id) {
+  public void deleteById(@PathVariable Long id) {
     log.debug("deleteById(Long id) - start");
     service.delete(id);
     log.debug("deleteById(Long id) - end");

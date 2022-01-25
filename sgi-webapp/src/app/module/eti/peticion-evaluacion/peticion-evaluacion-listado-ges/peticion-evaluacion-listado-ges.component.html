@@ -133,9 +133,9 @@
         <th mat-header-cell *matHeaderCellDef> {{'label.actions' | translate}} </th>
         <td mat-cell *matCellDef="let peticionEvaluacion;let i=index;">
           <ng-container *sgiHasAuthorityForAnyUO="'ETI-PEV-V'">
-            <button mat-button [routerLink]="[peticionEvaluacion.id]" matTooltip="{{'btn.view' | translate}}">
+            <a mat-button [routerLink]="[peticionEvaluacion.id]" matTooltip="{{'btn.view' | translate}}">
               <mat-icon color="primary">visibility</mat-icon>
-            </button>
+            </a>
           </ng-container>
         </td>
       </ng-container>

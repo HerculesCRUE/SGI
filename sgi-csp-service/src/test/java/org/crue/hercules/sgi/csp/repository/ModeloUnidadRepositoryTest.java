@@ -22,10 +22,10 @@ public class ModeloUnidadRepositoryTest extends BaseRepositoryTest {
   public void findByModeloEjecucionIdAndUnidadGestionRef_ReturnsModeloUnidad() throws Exception {
     // given: 2 ModeloUnidad de los que 1 coincide con los id de
     // ModeloEjecucion y UnidadGestionRef
-    ModeloEjecucion modeloEjecucion1 = new ModeloEjecucion(null, "nombre-1", "descripcion-1", true);
+    ModeloEjecucion modeloEjecucion1 = new ModeloEjecucion(null, "nombre-1", "descripcion-1", true, false, false);
     entityManager.persistAndFlush(modeloEjecucion1);
 
-    ModeloEjecucion modeloEjecucion2 = new ModeloEjecucion(null, "nombre-2", "descripcion-2", true);
+    ModeloEjecucion modeloEjecucion2 = new ModeloEjecucion(null, "nombre-2", "descripcion-2", true, false, false);
     entityManager.persistAndFlush(modeloEjecucion2);
 
     ModeloUnidad modeloUnidad1 = new ModeloUnidad(null, "unidad-1", modeloEjecucion1, true);
@@ -55,10 +55,10 @@ public class ModeloUnidadRepositoryTest extends BaseRepositoryTest {
   public void findByModeloEjecucionIdAndUnidadGestionRef_NoExiste_ReturnsNull() throws Exception {
     // given: 2 ModeloUnidad de los que ninguno coincide con los id de
     // ModeloEjecucion y UnidadGestionRef
-    ModeloEjecucion modeloEjecucion1 = new ModeloEjecucion(null, "nombre-1", "descripcion-1", true);
+    ModeloEjecucion modeloEjecucion1 = new ModeloEjecucion(null, "nombre-1", "descripcion-1", true, false, false);
     entityManager.persistAndFlush(modeloEjecucion1);
 
-    ModeloEjecucion modeloEjecucion2 = new ModeloEjecucion(null, "nombre-2", "descripcion-2", true);
+    ModeloEjecucion modeloEjecucion2 = new ModeloEjecucion(null, "nombre-2", "descripcion-2", true, false, false);
     entityManager.persistAndFlush(modeloEjecucion2);
 
     ModeloUnidad modeloUnidad1 = new ModeloUnidad(null, "unidad-1", modeloEjecucion1, true);

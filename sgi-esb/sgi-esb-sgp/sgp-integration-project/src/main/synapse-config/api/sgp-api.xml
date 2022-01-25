@@ -201,7 +201,7 @@
   <resource methods="POST" url-mapping="/personas/formly">
     <inSequence>
       <call-template target="sgi-auth-sequence-template">
-        <with-param name="requiredAuthorities" value=""/>
+        <with-param name="requiredAuthorities" value="ESB-PER-C"/>
       </call-template>
       <sequence key="sgp-add-x-api-key-sequence"/>
       <send>
@@ -219,7 +219,7 @@
   <resource methods="PUT" uri-template="/personas/formly/{id}">
     <inSequence>
       <call-template target="sgi-auth-sequence-template">
-        <with-param name="requiredAuthorities" value=""/>
+        <with-param name="requiredAuthorities" value="ESB-PER-E"/>
       </call-template>
       <sequence key="sgp-add-x-api-key-sequence"/>
       <send>
@@ -237,7 +237,7 @@
   <resource methods="GET" url-mapping="/personas/formly/create">
     <inSequence>
       <call-template target="sgi-auth-sequence-template">
-        <with-param name="requiredAuthorities" value=""/>
+        <with-param name="requiredAuthorities" value="ESB-PER-C"/>
       </call-template>
       <sequence key="sgp-add-x-api-key-sequence"/>
 
@@ -606,7 +606,7 @@
   <resource methods="GET" url-mapping="/personas/formly/update">
     <inSequence>
       <call-template target="sgi-auth-sequence-template">
-        <with-param name="requiredAuthorities" value=""/>
+        <with-param name="requiredAuthorities" value="ESB-PER-E"/>
       </call-template>
       <sequence key="sgp-add-x-api-key-sequence"/>
 
@@ -1251,7 +1251,7 @@
   <resource methods="GET" url-mapping="/personas/formly/view">
     <inSequence>
       <call-template target="sgi-auth-sequence-template">
-        <with-param name="requiredAuthorities" value=""/>
+        <with-param name="requiredAuthorities" value="ESB-PER-V"/>
       </call-template>
       <sequence key="sgp-add-x-api-key-sequence"/>
 
@@ -1896,7 +1896,7 @@
   <resource methods="GET" uri-template="/personas/formly/{id}">
     <inSequence>
       <call-template target="sgi-auth-sequence-template">
-        <with-param name="requiredAuthorities" value=""/>
+        <with-param name="requiredAuthorities" value="ESB-PER-E,ESB-PER-V"/>
       </call-template>
       <sequence key="sgp-add-x-api-key-sequence"/>
       <send>

@@ -7,3 +7,4 @@ INSERT INTO test.rol_socio (id, abreviatura, nombre, descripcion, coordinador, a
 INSERT INTO test.rol_socio (id, abreviatura, nombre, descripcion, coordinador, activo) VALUES(6, '006', 'nombre-006', 'descripcion-6' , false, true);
 INSERT INTO test.rol_socio (id, abreviatura, nombre, descripcion, coordinador, activo) VALUES(7, '007', 'nombre-007', 'descripcion-7' , false, false);
 INSERT INTO test.rol_socio (id, abreviatura, nombre, descripcion, coordinador, activo) VALUES(8, '008', 'nombre-008', 'descripcion-008' , false, false);
+INSERT INTO test.rol_socio (id, abreviatura, nombre, descripcion, coordinador, activo) VALUES(9, '009', 'nombre-009', 'descripcion-009' , true, false);

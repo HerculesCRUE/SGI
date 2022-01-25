@@ -38,6 +38,7 @@ import lombok.extern.slf4j.Slf4j;
 @Transactional(readOnly = true)
 public class ConvocatoriaConceptoGastoServiceImpl implements ConvocatoriaConceptoGastoService {
 
+  private static final String MESSAGE_NUMBERO_MESES_MAYOR_DURACION_CONVOCATORIA = "El número de meses no puede ser mayor a la duración de meses de la convocatoria";
   private final ConvocatoriaConceptoGastoRepository repository;
   private final ConvocatoriaRepository convocatoriaRepository;
   private final ConceptoGastoRepository conceptoGastoRepository;
@@ -94,10 +95,10 @@ public class ConvocatoriaConceptoGastoServiceImpl implements ConvocatoriaConcept
         Assert.isTrue(
             (convocatoriaConceptoGasto.getMesFinal() - convocatoriaConceptoGasto.getMesInicial()) <= convocatoria
                 .getDuracion(),
-            "El número de meses no puede ser mayor a la duración de meses de la convocatoria");
+            MESSAGE_NUMBERO_MESES_MAYOR_DURACION_CONVOCATORIA);
       } else {
         Assert.isTrue((12 - convocatoriaConceptoGasto.getMesInicial()) <= convocatoria.getDuracion(),
-            "El número de meses no puede ser mayor a la duración de meses de la convocatoria");
+            MESSAGE_NUMBERO_MESES_MAYOR_DURACION_CONVOCATORIA);
       }
     }
 
@@ -155,10 +156,10 @@ public class ConvocatoriaConceptoGastoServiceImpl implements ConvocatoriaConcept
         Assert.isTrue(
             (convocatoriaConceptoGastoActualizar.getMesFinal()
                 - convocatoriaConceptoGastoActualizar.getMesInicial()) <= convocatoria.getDuracion(),
-            "El número de meses no puede ser mayor a la duración de meses de la convocatoria");
+            MESSAGE_NUMBERO_MESES_MAYOR_DURACION_CONVOCATORIA);
       } else {
         Assert.isTrue((12 - convocatoriaConceptoGastoActualizar.getMesInicial()) <= convocatoria.getDuracion(),
-            "El número de meses no puede ser mayor a la duración de meses de la convocatoria");
+            MESSAGE_NUMBERO_MESES_MAYOR_DURACION_CONVOCATORIA);
       }
 
     }
@@ -198,18 +199,15 @@ public class ConvocatoriaConceptoGastoServiceImpl implements ConvocatoriaConcept
 
     Assert.notNull(id, "ConvocatoriaConceptoGasto id no puede ser null para eliminar un ConvocatoriaConceptoGasto");
 
-    repository.findById(id).map(convocatoriaConvocatoriaConceptoGasto -> {
-
-      return convocatoriaConvocatoriaConceptoGasto;
-    }).orElseThrow(() -> new ConvocatoriaConceptoGastoNotFoundException(id));
+    repository.findById(id).map(convocatoriaConvocatoriaConceptoGasto -> convocatoriaConvocatoriaConceptoGasto)
+        .orElseThrow(() -> new ConvocatoriaConceptoGastoNotFoundException(id));
 
     List<ConvocatoriaConceptoGastoCodigoEc> codigosEconomicos = convocatoriaConceptoGastoCodigoEcRepository
         .findAllByConvocatoriaConceptoGastoId(id);
 
     if (codigosEconomicos != null) {
-      codigosEconomicos.stream().forEach(codigoEconomico -> {
-        convocatoriaConceptoGastoCodigoEcRepository.deleteById(codigoEconomico.getId());
-      });
+      codigosEconomicos.stream()
+          .forEach(codigoEconomico -> convocatoriaConceptoGastoCodigoEcRepository.deleteById(codigoEconomico.getId()));
     }
 
     repository.deleteById(id);

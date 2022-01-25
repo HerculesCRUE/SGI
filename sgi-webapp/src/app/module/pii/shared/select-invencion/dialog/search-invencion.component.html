@@ -81,11 +81,9 @@
           {{'label.actions' | translate}}
         </th>
         <td mat-cell *matCellDef="let invencion">
-          <ng-container>
-            <button mat-button matTooltip="{{'btn.select' | translate}}" (click)="closeModal(invencion)">
-              <mat-icon color="primary">done_outline</mat-icon>
-            </button>
-          </ng-container>
+          <button mat-button matTooltip="{{'btn.select' | translate}}" (click)="closeModal(invencion)">
+            <mat-icon color="primary">done_outline</mat-icon>
+          </button>
         </td>
       </ng-container>
       <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
@@ -93,6 +91,12 @@
     </table>
     <mat-paginator [pageSizeOptions]="elementosPagina" [length]="totalElementos" showFirstLastButtons>
     </mat-paginator>
+  </div>
+  <div class="separation-button" *ngIf="data.extended">
+    <button color="three" mat-raised-button *sgiHasAuthorityForAnyUO="'PII-INV-C'" (click)="openCreate()">
+      <mat-icon color="accent">add_circle</mat-icon>
+      {{ 'btn.add.entity' | translate:msgParamEntity }}
+    </button>
   </div>
 </mat-dialog-content>
 <mat-dialog-actions>

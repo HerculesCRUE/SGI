@@ -21,7 +21,6 @@ const MSG_ERROR = marker('error.update.entity');
 const PROYECTO_KEY = marker('csp.proyecto');
 const MSG_BUTTON_CAMBIO_ESTADO = marker('csp.proyecto.cambio-estado');
 const MSG_CAMBIO_ESTADO_SUCCESS = marker('msg.csp.cambio-estado.success');
-const MSG_CAMBIO_ESTADO_ERROR = marker('error.csp.proyecto.cambio-estado');
 
 @Component({
   selector: 'sgi-proyecto-editar',
@@ -147,6 +146,8 @@ export class ProyectoEditarComponent extends ActionComponent implements OnInit {
       estadoActual: this.actionService.estado,
       estadoNuevo: null,
       comentario: null,
+      proyecto: this.actionService.proyecto,
+      proyectoHasMiembrosEquipo: this.actionService.hasMiembrosEquipo
     };
     const config = {
       panelClass: 'sgi-dialog-container',
@@ -154,30 +155,13 @@ export class ProyectoEditarComponent extends ActionComponent implements OnInit {
     };
     const dialogRef = this.matDialog.open(CambioEstadoModalComponent, config);
     dialogRef.afterClosed().subscribe(
-      (modalData: ProyectoCambioEstadoModalComponentData) => {
+      (modalData: IEstadoProyecto) => {
         if (modalData) {
-          const estadoProyecto = {
-            estado: modalData.estadoNuevo,
-            comentario: modalData.comentario
-          } as IEstadoProyecto;
-          this.actionService.cambiarEstado(estadoProyecto).subscribe(
-            () => { },
-            (error) => {
-              this.logger.error(error);
-              if (error instanceof HttpProblem) {
-                this.snackBarService.showError(error);
-              }
-              else {
-                this.snackBarService.showError(MSG_CAMBIO_ESTADO_ERROR);
-              }
-            },
-            () => {
-              this.snackBarService.showSuccess(MSG_CAMBIO_ESTADO_SUCCESS);
-              this.router.navigate(['../'], { relativeTo: this.activatedRoute });
-            }
-          );
+          this.snackBarService.showSuccess(MSG_CAMBIO_ESTADO_SUCCESS);
+          this.router.navigate(['../'], { relativeTo: this.activatedRoute });
         }
       }
+
     );
   }
 

@@ -89,6 +89,13 @@ export class SolicitudDocumentosFragment extends Fragment {
 
   private nodeLookup = new Map<string, NodeDocumentoSolicitud>();
 
+  private tiposDocumentosIdsRequired: string[];
+
+  get hasRequiredDocumentos(): boolean {
+    return this.tiposDocumentosIdsRequired.every(tipoRequeridoId =>
+      this.nodeLookup.get(tipoRequeridoId).childs.length > 0);
+  }
+
   constructor(
     private readonly logger: NGXLogger,
     private solicitudId: number,
@@ -107,7 +114,8 @@ export class SolicitudDocumentosFragment extends Fragment {
     if (this.convocatoriaId) {
       convocatoriaDocumentoRequeridoSolicitud$ =
         this.configuracionSolicitudService.findAllConvocatoriaDocumentoRequeridoSolicitud(this.convocatoriaId).pipe(
-          map((result) => result.items)
+          map((result) => result.items),
+          tap(documentosRequeridos => this.tiposDocumentosIdsRequired = documentosRequeridos.map(tipo => tipo.tipoDocumento.id.toString()))
         );
     } else {
       convocatoriaDocumentoRequeridoSolicitud$ = of([]);

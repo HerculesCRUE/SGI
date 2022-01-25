@@ -1,14 +1,16 @@
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { IAreaTematica } from '@core/models/csp/area-tematica';
 import { Estado } from '@core/models/csp/estado-proyecto';
+import { ISolicitudPalabraClave } from '@core/models/csp/solicitud-palabra-clave';
 import { ISolicitudProyecto, TipoPresupuesto } from '@core/models/csp/solicitud-proyecto';
 import { FormFragment } from '@core/services/action-service';
 import { ConvocatoriaService } from '@core/services/csp/convocatoria.service';
 import { SolicitudProyectoService } from '@core/services/csp/solicitud-proyecto.service';
 import { SolicitudService } from '@core/services/csp/solicitud.service';
+import { PalabraClaveService } from '@core/services/sgo/palabra-clave.service';
 import { NGXLogger } from 'ngx-logger';
 import { BehaviorSubject, EMPTY, Observable, of, Subject, Subscription } from 'rxjs';
-import { catchError, map, switchMap, take } from 'rxjs/operators';
+import { catchError, map, mergeMap, switchMap, take, tap } from 'rxjs/operators';
 import { AreaTematicaModalData } from '../../modals/solicitud-area-tematica-modal/solicitud-area-tematica-modal.component';
 
 export interface AreaTematicaSolicitudData {
@@ -28,6 +30,7 @@ export class SolicitudProyectoFichaGeneralFragment extends FormFragment<ISolicit
   readonly tipoDesglosePresupuesto$: Subject<TipoPresupuesto> = new Subject<TipoPresupuesto>();
   readonly hasSolicitudSocio$ = new BehaviorSubject<boolean>(false);
   public readonly userCanEdit: boolean;
+  private solicitudId: number;
 
   constructor(
     private readonly logger: NGXLogger,
@@ -40,7 +43,8 @@ export class SolicitudProyectoFichaGeneralFragment extends FormFragment<ISolicit
     public readonly: boolean,
     private convocatoriaId: number,
     public hasAnySolicitudProyectoSocioWithRolCoordinador$: BehaviorSubject<boolean>,
-    private hasPopulatedPeriodosSocios: boolean
+    private hasPopulatedPeriodosSocios: boolean,
+    private readonly palabraClaveService: PalabraClaveService
   ) {
     super(key, true);
     this.setComplete(true);
@@ -79,7 +83,8 @@ export class SolicitudProyectoFichaGeneralFragment extends FormFragment<ISolicit
       resultadosPrevistos: new FormControl(
         { value: null, disabled: !this.userCanEdit },
         [Validators.maxLength(2000)]),
-      peticionEvaluacionRef: new FormControl(null, [])
+      peticionEvaluacionRef: new FormControl(null, []),
+      palabrasClave: new FormControl(null)
     });
     if (this.isInvestigador) {
       form.addControl('importeSolicitado', new FormControl({ value: null, disabled: !this.userCanEdit }));
@@ -216,6 +221,7 @@ export class SolicitudProyectoFichaGeneralFragment extends FormFragment<ISolicit
   }
 
   protected initializer(key: number): Observable<ISolicitudProyecto> {
+    this.solicitudId = key;
 
     return this.solicitudService.findSolicitudProyecto(key).pipe(
       switchMap(solicitudProyecto => {
@@ -231,7 +237,8 @@ export class SolicitudProyectoFichaGeneralFragment extends FormFragment<ISolicit
       }),
       switchMap(solicitudProyecto => {
         if (this.convocatoriaId && !solicitudProyecto?.id) {
-          return this.convocatoriaService.findById(this.convocatoriaId).pipe(
+          const convocatoriaSolicitud$ = this.isInvestigador ? this.solicitudService.findConvocatoria(this.solicitudId) : this.convocatoriaService.findById(this.convocatoriaId);
+          return convocatoriaSolicitud$.pipe(
             map(convocatoria => {
               solicitudProyecto = {} as ISolicitudProyecto;
               solicitudProyecto.duracion = convocatoria.duracion;
@@ -288,6 +295,13 @@ export class SolicitudProyectoFichaGeneralFragment extends FormFragment<ISolicit
         }
         return of(solicitudProyecto);
       }),
+      switchMap(solicitudProyecto =>
+        this.solicitudService.findPalabrasClave(key).pipe(
+          map(({ items }) => items.map(solicitudPalabraClave => solicitudPalabraClave.palabraClave)),
+          tap(palabrasClave => this.getFormGroup().controls.palabrasClave.setValue(palabrasClave)),
+          map(() => solicitudProyecto)
+        )
+      ),
       catchError(error => {
         this.logger.error(error);
         return EMPTY;
@@ -383,7 +397,28 @@ export class SolicitudProyectoFichaGeneralFragment extends FormFragment<ISolicit
   }
 
   private update(solicitudProyecto: ISolicitudProyecto): Observable<ISolicitudProyecto> {
-    return this.solicitudProyectoService.update(solicitudProyecto.id, solicitudProyecto);
+    let cascade = this.solicitudProyectoService.update(solicitudProyecto.id, solicitudProyecto);
+
+    if (this.getFormGroup().controls.palabrasClave.dirty) {
+      cascade = cascade.pipe(
+        mergeMap((updatedSolicitudProyecto: ISolicitudProyecto) => this.saveOrUpdatePalabrasClave(updatedSolicitudProyecto))
+      );
+    }
+
+    return cascade;
+  }
+
+  private saveOrUpdatePalabrasClave(updatedSolicitudProyecto: ISolicitudProyecto): Observable<ISolicitudProyecto> {
+    const proyectoId = this.getKey() as number;
+    const palabrasClave = this.getFormGroup().controls.palabrasClave.value ?? [];
+    const proyectoPalabrasClave: ISolicitudPalabraClave[] = palabrasClave.map(palabraClave => ({
+      solicitud: { id: proyectoId },
+      palabraClave
+    } as ISolicitudPalabraClave));
+    return this.palabraClaveService.update(palabrasClave).pipe(
+      mergeMap(() => this.solicitudService.updatePalabrasClave(proyectoId, proyectoPalabrasClave)),
+      map(() => updatedSolicitudProyecto)
+    );
   }
 
   private disableCoordinadorExterno(isCoordinadorExterno: boolean, hasPopulatedPeriodosSocios: boolean): void {

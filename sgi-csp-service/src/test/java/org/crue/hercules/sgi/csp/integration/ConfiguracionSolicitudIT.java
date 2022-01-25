@@ -10,6 +10,7 @@ import org.assertj.core.api.Assertions;
 import org.crue.hercules.sgi.csp.model.ConfiguracionSolicitud;
 import org.crue.hercules.sgi.csp.model.ConvocatoriaFase;
 import org.crue.hercules.sgi.csp.model.DocumentoRequeridoSolicitud;
+import org.crue.hercules.sgi.csp.model.TipoDocumento;
 import org.crue.hercules.sgi.csp.model.TipoFase;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -27,11 +28,12 @@ import org.springframework.web.util.UriComponentsBuilder;
  * Test de integracion de ConfiguracionSolicitud.
  */
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class ConfiguracionSolicitudIT extends BaseIT {
+class ConfiguracionSolicitudIT extends BaseIT {
 
   private static final String PATH_PARAMETER_ID = "/{id}";
   private static final String PATH_PARAMETER_DOCUMENTOS = "/documentorequiridosolicitudes";
   private static final String CONTROLLER_BASE_PATH = "/convocatoria-configuracionsolicitudes";
+  private static final String PATH_TIPO_DOCUMENTO_FASE_PRESENTACIONES = "/tipodocumentofasepresentaciones";
 
   private HttpEntity<ConfiguracionSolicitud> buildRequest(HttpHeaders headers, ConfiguracionSolicitud entity)
       throws Exception {
@@ -39,7 +41,7 @@ public class ConfiguracionSolicitudIT extends BaseIT {
     headers.setContentType(MediaType.APPLICATION_JSON);
     headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
     headers.set("Authorization", String.format("bearer %s",
-        tokenBuilder.buildToken("user", "CSP-CON-C", "CSP-CON-E", "CSP-CON-B", "CSP-CON-V")));
+        tokenBuilder.buildToken("user", "CSP-CON-C", "CSP-CON-E", "CSP-CON-B", "CSP-CON-V", "CSP-SOL-V")));
 
     HttpEntity<ConfiguracionSolicitud> request = new HttpEntity<>(entity, headers);
     return request;
@@ -48,7 +50,7 @@ public class ConfiguracionSolicitudIT extends BaseIT {
   @Sql
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void create_ReturnsConfiguracionSolicitud() throws Exception {
+  void create_ReturnsConfiguracionSolicitud() throws Exception {
 
     // given: new ConfiguracionSolicitud
     ConfiguracionSolicitud configuracionSolicitud = generarMockConfiguracionSolicitud(1L, 1L, 1L);
@@ -76,7 +78,7 @@ public class ConfiguracionSolicitudIT extends BaseIT {
   @Sql
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void update_ReturnsConfiguracionSolicitud() throws Exception {
+  void update_ReturnsConfiguracionSolicitud() throws Exception {
 
     // given: existing ConfiguracionSolicitud to be updated
     ConfiguracionSolicitud configuracionSolicitud = generarMockConfiguracionSolicitud(1L, 1L, 1L);
@@ -107,7 +109,7 @@ public class ConfiguracionSolicitudIT extends BaseIT {
   @Sql
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void findByIdConvocatoria_ReturnsConfiguracionSolicitud() throws Exception {
+  void findByIdConvocatoria_ReturnsConfiguracionSolicitud() throws Exception {
     Long convocatoriaId = 2L;
 
     final ResponseEntity<ConfiguracionSolicitud> response = restTemplate.exchange(
@@ -126,6 +128,20 @@ public class ConfiguracionSolicitudIT extends BaseIT {
         .isEqualTo(new BigDecimal("54321.00"));
 
   }
+  
+  @Sql
+  @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
+  @Test
+  void findByIdConvocatoria_ReturnsStatusCode204() throws Exception {
+    Long convocatoriaId = 2L;
+
+    final ResponseEntity<ConfiguracionSolicitud> response = restTemplate.exchange(
+        CONTROLLER_BASE_PATH + PATH_PARAMETER_ID, HttpMethod.GET, buildRequest(null, null),
+        ConfiguracionSolicitud.class, convocatoriaId);
+
+    Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
+
+  }
 
   /*
    * DOCUMENTOS REQUERIDOS SOLICITUD
@@ -134,7 +150,7 @@ public class ConfiguracionSolicitudIT extends BaseIT {
   @Sql
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void findAllDocumentoRequeridoSolicitud_WithPagingSortingAndFiltering_ReturnsDocumentoRequeridoSolicitudSubList()
+  void findAllDocumentoRequeridoSolicitud_WithPagingSortingAndFiltering_ReturnsDocumentoRequeridoSolicitudSubList()
       throws Exception {
     HttpHeaders headers = new HttpHeaders();
     headers.set("Authorization", String.format("bearer %s", tokenBuilder.buildToken("user", "CSP-CON-V")));
@@ -167,6 +183,52 @@ public class ConfiguracionSolicitudIT extends BaseIT {
     Assertions.assertThat(documentos.get(2).getObservaciones()).as("get(2).getObservaciones()")
         .isEqualTo("observaciones-" + String.format("%03d", 6));
 
+  }
+  
+  @Test
+  void findAllDocumentoRequeridoSolicitud_WithPagingSortingAndFiltering_ReturnsStatusCode204()
+      throws Exception {
+    HttpHeaders headers = new HttpHeaders();
+    headers.set("Authorization", String.format("bearer %s", tokenBuilder.buildToken("user", "CSP-CON-V")));
+    headers.add("X-Page", "0");
+    headers.add("X-Page-Size", "10");
+    String sort = "id,desc";
+    String filter = "observaciones=ke=-00";
+
+    Long convocatoriaId = 2L;
+
+    URI uri = UriComponentsBuilder.fromUriString(CONTROLLER_BASE_PATH + PATH_PARAMETER_ID + PATH_PARAMETER_DOCUMENTOS)
+        .queryParam("s", sort).queryParam("q", filter).buildAndExpand(convocatoriaId).toUri();
+
+    final ResponseEntity<List<DocumentoRequeridoSolicitud>> response = restTemplate.exchange(uri, HttpMethod.GET,
+        buildRequest(headers, null), new ParameterizedTypeReference<List<DocumentoRequeridoSolicitud>>() {
+        });
+
+    Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
+
+  }
+
+  @Sql
+  @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
+  @Test
+  void findAllTipoDocumentosFasePresentacion_WithPagingSortingAndFiltering_ReturnsNoContentStatusCode() throws Exception {
+    HttpHeaders headers = new HttpHeaders();
+    headers.set("Authorization", String.format("bearer %s", tokenBuilder.buildToken("user", "CSP-SOL-V")));
+    headers.add("X-Page", "0");
+    headers.add("X-Page-Size", "10");
+    String sort = "id,desc";
+    String filter = "";
+
+    Long convocatoriaId = 1L;
+
+    URI uri = UriComponentsBuilder.fromUriString(CONTROLLER_BASE_PATH + PATH_PARAMETER_ID + PATH_TIPO_DOCUMENTO_FASE_PRESENTACIONES)
+        .queryParam("s", sort).queryParam("q", filter).buildAndExpand(convocatoriaId).toUri();
+
+    final ResponseEntity<List<TipoDocumento>> response = restTemplate.exchange(uri, HttpMethod.GET,
+        buildRequest(headers, null), new ParameterizedTypeReference<List<TipoDocumento>>() {
+        });
+
+    Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
   }
 
   /**

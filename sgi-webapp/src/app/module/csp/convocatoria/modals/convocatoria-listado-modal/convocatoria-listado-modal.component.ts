@@ -4,8 +4,7 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { BaseExportModalComponent } from '@core/component/base-export/base-export-modal.component';
 import { MSG_PARAMS } from '@core/i18n';
-import { OutputReport } from '@core/models/rep/output-report.enum';
-import { IReportConfig, IReportOptions, RelationsTypeView } from '@core/services/rep/abstract-table-export.service';
+import { IReportConfig, IReportOptions } from '@core/services/rep/abstract-table-export.service';
 import { SnackBarService } from '@core/services/snack-bar.service';
 import { TranslateService } from '@ngx-translate/core';
 import { SgiRestFindOptions } from '@sgi/framework/http';
@@ -44,9 +43,7 @@ export class ConvocatoriaListadoModalComponent extends BaseExportModalComponent<
   protected buildFormGroup(): FormGroup {
     return new FormGroup({
       outputType: new FormControl(this.outputType, Validators.required),
-      reportTitle: new FormControl(this.reportTitle, Validators.required),
-      showMiembrosEquipo: new FormControl(false),
-      showEntidadesConvocantes: new FormControl(false),
+      reportTitle: new FormControl(this.reportTitle, Validators.required)
     });
   }
 
@@ -56,7 +53,6 @@ export class ConvocatoriaListadoModalComponent extends BaseExportModalComponent<
       outputType: this.formGroup.controls.outputType.value,
       reportOptions: {
         findOptions: this.modalData.findOptions,
-        relationsTypeView: this.getRelationsTypeView(this.formGroup.controls.outputType.value),
         columnMinWidth: 120
       }
     };

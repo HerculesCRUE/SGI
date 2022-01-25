@@ -11,7 +11,8 @@
           <mat-form-field>
             <mat-label>{{'csp.solicitud.convocatoria' | translate}}</mat-label>
             <sgi-select-convocatoria [authorities]="['CSP-PRO-V', ' CSP-PRO-E', 'CSP-PRO-B', 'CSP-PRO-R']"
-              placeholder="{{'csp.solicitud.convocatoria' | translate}}" formControlName="convocatoria">
+              placeholder="{{'csp.solicitud.convocatoria' | translate}}" formControlName="convocatoria"
+              extended="false">
             </sgi-select-convocatoria>
           </mat-form-field>
         </div>
@@ -237,7 +238,21 @@
           [fxFlexOrder]="fxFlexProperties.order">
           <mat-form-field class="input-form">
             <mat-label>{{'csp.solicitud.fuente-financiacion' | translate}}</mat-label>
-            <sgi-select-fuente-financiacion formControlName="fuenteFinanciacion"></sgi-select-fuente-financiacion>
+            <sgi-select-fuente-financiacion formControlName="fuenteFinanciacion" extended="false">
+            </sgi-select-fuente-financiacion>
+          </mat-form-field>
+        </div>
+      </div>
+
+
+      <!-- Palabras clave -->
+      <div [fxLayout.xs]="fxLayoutProperties.xs" [fxLayout]="fxLayoutProperties.layout"
+        [fxLayoutGap]="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
+        <div fxFlex="100%">
+          <mat-form-field fxFill>
+            <mat-label>{{'csp.solicitud.palabras-clave' | translate}}</mat-label>
+            <sgi-palabra-clave formControlName="palabrasClave" id="palabrasClave"
+              placeholder="{{'csp.solicitud.palabras-clave' | translate}}"></sgi-palabra-clave>
           </mat-form-field>
         </div>
       </div>
@@ -351,15 +366,15 @@
         <th mat-header-cell *matHeaderCellDef> {{'label.actions' | translate}} </th>
         <td mat-cell *matCellDef="let element">
           <ng-container *sgiHasAnyAuthority="['CSP-SOL-V', 'CSP-SOL-V_' + element.unidadGestion.id ]">
-            <button mat-button matTooltip="{{'btn.view' | translate}}" *ngIf="!mapModificable.get(element.id)"
+            <a mat-button matTooltip="{{'btn.view' | translate}}" *ngIf="!mapModificable.get(element.id)"
               [routerLink]="[element.id]">
               <mat-icon color="primary">visibility</mat-icon>
-            </button>
+            </a>
           </ng-container>
           <ng-container *sgiHasAnyAuthority="['CSP-SOL-E', 'CSP-SOL-E_' + element.unidadGestion.id ]">
-            <button mat-button matTooltip="{{'btn.edit' | translate}}" [routerLink]="[element.id]">
+            <a mat-button matTooltip="{{'btn.edit' | translate}}" [routerLink]="[element.id]">
               <mat-icon color="primary">border_color</mat-icon>
-            </button>
+            </a>
           </ng-container>
           <ng-container *sgiHasAnyAuthority="['CSP-SOL-B', 'CSP-SOL-B_' + element.unidadGestion.id ]">
             <button *ngIf="element.estado.estado === Estado.BORRADOR && element.activo === true" mat-button

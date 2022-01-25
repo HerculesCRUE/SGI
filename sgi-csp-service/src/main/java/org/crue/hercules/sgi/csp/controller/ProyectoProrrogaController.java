@@ -63,7 +63,7 @@ public class ProyectoProrrogaController {
    */
   @PostMapping
   @PreAuthorize("hasAuthorityForAnyUO('CSP-PRO-E')")
-  ResponseEntity<ProyectoProrroga> create(@Valid @RequestBody ProyectoProrroga proyectoProrroga) {
+  public ResponseEntity<ProyectoProrroga> create(@Valid @RequestBody ProyectoProrroga proyectoProrroga) {
     log.debug("create(ProyectoProrroga proyectoProrroga) - start");
     ProyectoProrroga returnValue = service.create(proyectoProrroga);
     log.debug("create(ProyectoProrroga proyectoProrroga) - end");
@@ -79,7 +79,8 @@ public class ProyectoProrrogaController {
    */
   @PutMapping("/{id}")
   @PreAuthorize("hasAuthorityForAnyUO('CSP-PRO-E')")
-  ProyectoProrroga update(@Validated({ Update.class, Default.class }) @RequestBody ProyectoProrroga proyectoProrroga,
+  public ProyectoProrroga update(
+      @Validated({ Update.class, Default.class }) @RequestBody ProyectoProrroga proyectoProrroga,
       @PathVariable Long id) {
     log.debug("update(ProyectoProrroga proyectoProrroga, Long id) - start");
     proyectoProrroga.setId(id);
@@ -96,7 +97,7 @@ public class ProyectoProrrogaController {
   @DeleteMapping("/{id}")
   @PreAuthorize("hasAuthorityForAnyUO('CSP-PRO-E')")
   @ResponseStatus(value = HttpStatus.NO_CONTENT)
-  void deleteById(@PathVariable Long id) {
+  public void deleteById(@PathVariable Long id) {
     log.debug("deleteById(Long id) - start");
     service.delete(id);
     log.debug("deleteById(Long id) - end");
@@ -110,7 +111,7 @@ public class ProyectoProrrogaController {
    */
   @RequestMapping(path = "/{id}", method = RequestMethod.HEAD)
   @PreAuthorize("hasAuthorityForAnyUO('CSP-PRO-E')")
-  public ResponseEntity<?> exists(@PathVariable Long id) {
+  public ResponseEntity<Void> exists(@PathVariable Long id) {
     log.debug("ProyectoProrroga exists(Long id) - start");
     if (service.existsById(id)) {
       log.debug("ProyectoProrroga exists(Long id) - end");
@@ -128,7 +129,7 @@ public class ProyectoProrrogaController {
    */
   @GetMapping("/{id}")
   @PreAuthorize("hasAuthorityForAnyUO('CSP-PRO-E')")
-  ProyectoProrroga findById(@PathVariable Long id) {
+  public ProyectoProrroga findById(@PathVariable Long id) {
     log.debug("findById(Long id) - start");
     ProyectoProrroga returnValue = service.findById(id);
     log.debug("findById(Long id) - end");
@@ -148,10 +149,12 @@ public class ProyectoProrrogaController {
    * @param id     Identificador de {@link ProyectoProrroga}.
    * @param query  filtro de búsqueda.
    * @param paging pageable.
+   * @return el listado de entidades {@link ProrrogaDocumento}
+   *         paginados y filtrados.
    */
   @GetMapping("/{id}/prorrogadocumentos")
   @PreAuthorize("hasAuthorityForAnyUO('CSP-PRO-E')")
-  ResponseEntity<Page<ProrrogaDocumento>> findAllProrrogaDocumento(@PathVariable Long id,
+  public ResponseEntity<Page<ProrrogaDocumento>> findAllProrrogaDocumento(@PathVariable Long id,
       @RequestParam(name = "q", required = false) String query, @RequestPageable(sort = "s") Pageable paging) {
     log.debug("findAllProrrogaDocumento(Long id, String query, Pageable paging) - start");
     Page<ProrrogaDocumento> page = prorrogaDocumentoService.findAllByProyectoProrroga(id, query, paging);

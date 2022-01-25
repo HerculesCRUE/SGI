@@ -27,6 +27,10 @@ import lombok.extern.slf4j.Slf4j;
 @Transactional(readOnly = true)
 public class ConceptoGastoServiceImpl implements ConceptoGastoService {
 
+  private static final String MESSAGE_CONCEPTO_GASTO_EXISTE = "Ya existe un ConceptoGasto con el nombre ";
+  private static final String PROBLEM_MESSAGE_KEY_NOT_NULL = "notNull";
+  private static final String PROBLEM_MESSAGE_PARAMETER_KEY_ENTITY = "entity";
+  private static final String PROBLEM_MESSAGE_PARAMETER_KEY_FIELD = "field";
   private final ConceptoGastoRepository repository;
 
   public ConceptoGastoServiceImpl(ConceptoGastoRepository conceptoGastoRepository) {
@@ -46,16 +50,18 @@ public class ConceptoGastoServiceImpl implements ConceptoGastoService {
 
     Assert.isNull(conceptoGasto.getId(),
         () -> ProblemMessage.builder().key(Assert.class, "isNull")
-            .parameter("field", ApplicationContextSupport.getMessage("id"))
-            .parameter("entity", ApplicationContextSupport.getMessage(ConceptoGasto.class)).build());
+            .parameter(PROBLEM_MESSAGE_PARAMETER_KEY_FIELD, ApplicationContextSupport.getMessage("id"))
+            .parameter(PROBLEM_MESSAGE_PARAMETER_KEY_ENTITY, ApplicationContextSupport.getMessage(ConceptoGasto.class))
+            .build());
 
     Assert.notNull(conceptoGasto.getCostesIndirectos(),
-        () -> ProblemMessage.builder().key(Assert.class, "notNull")
-            .parameter("field", ApplicationContextSupport.getMessage("costesIndirectos"))
-            .parameter("entity", ApplicationContextSupport.getMessage(ConceptoGasto.class)).build());
+        () -> ProblemMessage.builder().key(Assert.class, PROBLEM_MESSAGE_KEY_NOT_NULL)
+            .parameter(PROBLEM_MESSAGE_PARAMETER_KEY_FIELD, ApplicationContextSupport.getMessage("costesIndirectos"))
+            .parameter(PROBLEM_MESSAGE_PARAMETER_KEY_ENTITY, ApplicationContextSupport.getMessage(ConceptoGasto.class))
+            .build());
 
     Assert.isTrue(!(repository.findByNombreAndActivoIsTrue(conceptoGasto.getNombre()).isPresent()),
-        "Ya existe un ConceptoGasto con el nombre " + conceptoGasto.getNombre());
+        MESSAGE_CONCEPTO_GASTO_EXISTE + conceptoGasto.getNombre());
 
     conceptoGasto.setActivo(true);
     ConceptoGasto returnValue = repository.save(conceptoGasto);
@@ -77,19 +83,20 @@ public class ConceptoGastoServiceImpl implements ConceptoGastoService {
     log.debug("update(ConceptoGasto conceptoGastoActualizar) - start");
 
     Assert.notNull(conceptoGastoActualizar.getId(),
-        () -> ProblemMessage.builder().key(Assert.class, "notNull")
-            .parameter("field", ApplicationContextSupport.getMessage("id"))
-            .parameter("entity", ApplicationContextSupport.getMessage(ConceptoGasto.class)).build());
+        () -> ProblemMessage.builder().key(Assert.class, PROBLEM_MESSAGE_KEY_NOT_NULL)
+            .parameter(PROBLEM_MESSAGE_PARAMETER_KEY_FIELD, ApplicationContextSupport.getMessage("id"))
+            .parameter(PROBLEM_MESSAGE_PARAMETER_KEY_ENTITY, ApplicationContextSupport.getMessage(ConceptoGasto.class))
+            .build());
 
     Assert.notNull(conceptoGastoActualizar.getCostesIndirectos(),
-        () -> ProblemMessage.builder().key(Assert.class, "notNull")
-            .parameter("field", ApplicationContextSupport.getMessage("costesIndirectos"))
-            .parameter("entity", ApplicationContextSupport.getMessage(ConceptoGasto.class)).build());
+        () -> ProblemMessage.builder().key(Assert.class, PROBLEM_MESSAGE_KEY_NOT_NULL)
+            .parameter(PROBLEM_MESSAGE_PARAMETER_KEY_FIELD, ApplicationContextSupport.getMessage("costesIndirectos"))
+            .parameter(PROBLEM_MESSAGE_PARAMETER_KEY_ENTITY, ApplicationContextSupport.getMessage(ConceptoGasto.class))
+            .build());
 
-    repository.findByNombreAndActivoIsTrue(conceptoGastoActualizar.getNombre()).ifPresent((conceptoGastoExistente) -> {
-      Assert.isTrue(conceptoGastoActualizar.getId() == conceptoGastoExistente.getId(),
-          "Ya existe un ConceptoGasto con el nombre " + conceptoGastoExistente.getNombre());
-    });
+    repository.findByNombreAndActivoIsTrue(conceptoGastoActualizar.getNombre()).ifPresent(
+        conceptoGastoExistente -> Assert.isTrue(conceptoGastoActualizar.getId() == conceptoGastoExistente.getId(),
+            MESSAGE_CONCEPTO_GASTO_EXISTE + conceptoGastoExistente.getNombre()));
 
     return repository.findById(conceptoGastoActualizar.getId()).map(conceptoGasto -> {
       conceptoGasto.setNombre(conceptoGastoActualizar.getNombre());
@@ -121,10 +128,9 @@ public class ConceptoGastoServiceImpl implements ConceptoGastoService {
         return conceptoGasto;
       }
 
-      repository.findByNombreAndActivoIsTrue(conceptoGasto.getNombre()).ifPresent((conceptoGastoExistente) -> {
-        Assert.isTrue(conceptoGasto.getId() == conceptoGastoExistente.getId(),
-            "Ya existe un ConceptoGasto con el nombre " + conceptoGastoExistente.getNombre());
-      });
+      repository.findByNombreAndActivoIsTrue(conceptoGasto.getNombre())
+          .ifPresent(conceptoGastoExistente -> Assert.isTrue(conceptoGasto.getId() == conceptoGastoExistente.getId(),
+              MESSAGE_CONCEPTO_GASTO_EXISTE + conceptoGastoExistente.getNombre()));
 
       conceptoGasto.setActivo(true);
 

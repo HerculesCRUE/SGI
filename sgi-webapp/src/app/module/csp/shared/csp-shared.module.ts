@@ -3,6 +3,7 @@ import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MaterialDesignModule } from '@material/material-design.module';
 import { TranslateModule } from '@ngx-translate/core';
+import { SgiAuthModule } from '@sgi/framework/auth';
 import { SharedModule } from '@shared/shared.module';
 import { SgeFormlyFormsModule } from 'src/app/esb/sge/formly-forms/sge-formly-forms.module';
 import { SgempSharedModule } from 'src/app/esb/sgemp/shared/sgemp-shared.module';
@@ -14,6 +15,7 @@ import { PartidaGastoModalComponent } from './partida-gasto-modal/partida-gasto-
 import { PartidaPresupuestariaModalComponent } from './partida-presupuestaria-modal/partida-presupuestaria-modal.component';
 import { SearchProyectosEconomicosModalComponent } from './search-proyectos-economicos-modal/search-proyectos-economicos-modal.component';
 import { SelectAreaTematicaComponent } from './select-area-tematica/select-area-tematica.component';
+import { SelectConceptoGastoComponent } from './select-concepto-gasto/select-concepto-gasto.component';
 import { SearchConvocatoriaModalComponent } from './select-convocatoria/dialog/search-convocatoria.component';
 import { SelectConvocatoriaComponent } from './select-convocatoria/select-convocatoria.component';
 import { SelectFuenteFinanciacionComponent } from './select-fuente-financiacion/select-fuente-financiacion.component';
@@ -22,7 +24,12 @@ import { SelectProgramaComponent } from './select-programa/select-programa.compo
 import { SearchProyectoModalComponent } from './select-proyecto/dialog/search-proyecto.component';
 import { SelectProyectoComponent } from './select-proyecto/select-proyecto.component';
 import { SelectTipoAmbitoGeograficoComponent } from './select-tipo-ambito-geografico/select-tipo-ambito-geografico.component';
+import { SelectTipoDocumentoComponent } from './select-tipo-documento/select-tipo-documento.component';
+import { SelectTipoEnlaceComponent } from './select-tipo-enlace/select-tipo-enlace.component';
+import { SelectTipoFaseComponent } from './select-tipo-fase/select-tipo-fase.component';
 import { SelectTipoFinalidadComponent } from './select-tipo-finalidad/select-tipo-finalidad.component';
+import { SelectTipoFinanciacionComponent } from './select-tipo-financiacion/select-tipo-financiacion.component';
+import { SelectTipoHitoComponent } from './select-tipo-hito/select-tipo-hito.component';
 import { SelectUnidadGestionComponent } from './select-unidad-gestion/select-unidad-gestion.component';
 import { SolicitiudPresupuestoModalComponent } from './solicitud-presupuesto-modal/solicitud-presupuesto-modal.component';
 
@@ -45,7 +52,13 @@ import { SolicitiudPresupuestoModalComponent } from './solicitud-presupuesto-mod
     SolicitiudPresupuestoModalComponent,
     PartidaPresupuestariaModalComponent,
     SearchProyectoModalComponent,
-    SelectProyectoComponent
+    SelectProyectoComponent,
+    SelectTipoFaseComponent,
+    SelectTipoEnlaceComponent,
+    SelectTipoDocumentoComponent,
+    SelectTipoHitoComponent,
+    SelectConceptoGastoComponent,
+    SelectTipoFinanciacionComponent
   ],
   imports: [
     SharedModule,
@@ -56,7 +69,8 @@ import { SolicitiudPresupuestoModalComponent } from './solicitud-presupuesto-mod
     ReactiveFormsModule,
     SgeFormlyFormsModule,
     SgempSharedModule,
-    SgpSharedModule
+    SgpSharedModule,
+    SgiAuthModule
   ],
   exports: [
     EntidadFinanciadoraModalComponent,
@@ -73,7 +87,13 @@ import { SolicitiudPresupuestoModalComponent } from './solicitud-presupuesto-mod
     SelectUnidadGestionComponent,
     SearchProyectosEconomicosModalComponent,
     SolicitiudPresupuestoModalComponent,
-    SelectProyectoComponent
+    SelectProyectoComponent,
+    SelectTipoFaseComponent,
+    SelectTipoEnlaceComponent,
+    SelectTipoDocumentoComponent,
+    SelectTipoHitoComponent,
+    SelectConceptoGastoComponent,
+    SelectTipoFinanciacionComponent
   ]
 })
 export class CspSharedModule { }

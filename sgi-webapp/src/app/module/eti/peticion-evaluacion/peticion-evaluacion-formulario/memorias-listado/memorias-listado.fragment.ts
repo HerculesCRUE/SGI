@@ -1,4 +1,5 @@
 import { IMemoriaPeticionEvaluacion } from '@core/models/eti/memoria-peticion-evaluacion';
+import { IPersona } from '@core/models/sgp/persona';
 import { Fragment } from '@core/services/action-service';
 import { MemoriaService } from '@core/services/eti/memoria.service';
 import { PeticionEvaluacionService } from '@core/services/eti/peticion-evaluacion.service';
@@ -11,6 +12,8 @@ export class MemoriasListadoFragment extends Fragment {
   memorias$: BehaviorSubject<StatusWrapper<IMemoriaPeticionEvaluacion>[]> =
     new BehaviorSubject<StatusWrapper<IMemoriaPeticionEvaluacion>[]>([]);
   private deleted: StatusWrapper<IMemoriaPeticionEvaluacion>[] = [];
+
+  solicitantePeticionEvaluacion: IPersona;
 
   constructor(key: number, private service: PeticionEvaluacionService, private memoriaService: MemoriaService) {
     super(key);

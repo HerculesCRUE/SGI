@@ -50,6 +50,7 @@ import org.crue.hercules.sgi.csp.service.ConvocatoriaEntidadFinanciadoraService;
 import org.crue.hercules.sgi.csp.service.ConvocatoriaEntidadGestoraService;
 import org.crue.hercules.sgi.csp.service.ConvocatoriaFaseService;
 import org.crue.hercules.sgi.csp.service.ConvocatoriaHitoService;
+import org.crue.hercules.sgi.csp.service.ConvocatoriaPalabraClaveService;
 import org.crue.hercules.sgi.csp.service.ConvocatoriaPartidaService;
 import org.crue.hercules.sgi.csp.service.ConvocatoriaPeriodoJustificacionService;
 import org.crue.hercules.sgi.csp.service.ConvocatoriaPeriodoSeguimientoCientificoService;
@@ -120,6 +121,8 @@ public class ConvocatoriaControllerTest extends BaseControllerTest {
   private RequisitoEquipoCategoriaProfesionalService requisitoEquipoCategoriaProfesionalService;
   @MockBean
   private RequisitoEquipoNivelAcademicoService requisitoEquipoNivelAcademicoService;
+  @MockBean
+  private ConvocatoriaPalabraClaveService convocatoriaPalabraClaveService;
 
   private static final String PATH_PARAMETER_ID = "/{id}";
   private static final String PATH_PARAMETER_DESACTIVAR = "/desactivar";

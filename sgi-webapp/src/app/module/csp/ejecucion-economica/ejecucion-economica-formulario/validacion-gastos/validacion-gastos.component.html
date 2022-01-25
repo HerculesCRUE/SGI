@@ -83,16 +83,6 @@
           </mat-cell>
         </ng-container>
 
-        <!-- Agrupacion gasto Column -->
-        <ng-container matColumnDef="agrupacionGasto">
-          <mat-header-cell mat-header-cell *matHeaderCellDef mat-sort-header>
-            {{'sge.dato-economico.agrupacion-gasto' | translate}}
-          </mat-header-cell>
-          <mat-cell mat-cell *matCellDef="let element">
-            {{ element.agrupacionGasto?.nombre }}
-          </mat-cell>
-        </ng-container>
-
         <!-- Concepto gasto Column -->
         <ng-container matColumnDef="conceptoGasto">
           <mat-header-cell mat-header-cell *matHeaderCellDef mat-sort-header>
@@ -100,6 +90,16 @@
           </mat-header-cell>
           <mat-cell mat-cell *matCellDef="let element">
             {{ element.conceptoGasto?.nombre }}
+          </mat-cell>
+        </ng-container>
+
+        <!-- Clasificacion SGE Column -->
+        <ng-container matColumnDef="clasificacionSGE">
+          <mat-header-cell mat-header-cell *matHeaderCellDef mat-sort-header>
+            {{'sge.dato-economico.clasificacion-sge' | translate}}
+          </mat-header-cell>
+          <mat-cell mat-cell *matCellDef="let element">
+            {{ element.clasificacionSGE?.nombre }}
           </mat-cell>
         </ng-container>
 
@@ -121,6 +121,15 @@
           <mat-cell mat-cell *matCellDef="let element">
             {{ element.codigoEconomico?.id }}
             {{ element.codigoEconomico?.nombre ? ' - ' + element.codigoEconomico?.nombre : '' }}
+          </mat-cell>
+        </ng-container>
+
+        <!-- Fecha Devengo Column -->
+        <ng-container matColumnDef="fechaDevengo">
+          <mat-header-cell *matHeaderCellDef>{{'sge.dato-economico.fecha-devengo' | translate}}
+          </mat-header-cell>
+          <mat-cell *matCellDef="let element">
+            {{element.fechaDevengo | luxon:'shortDate'}}
           </mat-cell>
         </ng-container>
 

@@ -1,5 +1,7 @@
 package org.crue.hercules.sgi.csp.service;
 
+import org.crue.hercules.sgi.csp.enums.FormularioSolicitud;
+import org.crue.hercules.sgi.csp.model.Autorizacion;
 import org.crue.hercules.sgi.csp.model.Convocatoria;
 import org.crue.hercules.sgi.csp.model.Proyecto;
 import org.crue.hercules.sgi.csp.model.Solicitud;
@@ -167,5 +169,34 @@ public interface ConvocatoriaService {
    * @return un objeto de tipo {@link Convocatoria}
    */
   Convocatoria clone(Long convocatoriaId);
+
+  /**
+   * Devuelve la {@link Convocatoria} asociada a la {@link Solicitud} con el id
+   * indicado si el usuario que realiza la peticion es el solicitante de la
+   * {@link Solicitud}.
+   * 
+   * @param solicitudId Identificador de {@link Solicitud}.
+   * @return {@link Convocatoria} correspondiente a la {@link Solicitud}.
+   */
+  Convocatoria findBySolicitudIdAndUserIsSolicitante(Long solicitudId);
+
+  /**
+   * Devuelve la {@link Convocatoria} asociada a la {@link Autorizacion} con el id
+   * indicado si el usuario que realiza la peticion es el solicitante de la
+   * {@link Autorizacion}.
+   * 
+   * @param autorizacionId Identificador de {@link Autorizacion}.
+   * @return {@link Convocatoria} correspondiente a la {@link Autorizacion}.
+   */
+  Convocatoria findByAutorizacionIdAndUserIsSolicitante(Long autorizacionId);
+
+  /**
+   * Devuelve el {@link FormularioSolicitud} de la {@link Convocatoria}
+   * 
+   * @param id Identificador de {@link Convocatoria}.
+   * @return {@link FormularioSolicitud} correspondiente a la
+   *         {@link Convocatoria}.
+   */
+  FormularioSolicitud findFormularioSolicitudById(Long id);
 
 }

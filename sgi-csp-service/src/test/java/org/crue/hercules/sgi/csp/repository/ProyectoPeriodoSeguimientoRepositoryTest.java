@@ -27,6 +27,8 @@ public class ProyectoPeriodoSeguimientoRepositoryTest extends BaseRepositoryTest
     ModeloEjecucion modeloEjecucion = ModeloEjecucion.builder()
         .nombre("nombreModeloEjecucion")
         .activo(Boolean.TRUE)
+        .contrato(Boolean.FALSE)
+        .externo(Boolean.FALSE)
         .build();
     entityManager.persistAndFlush(modeloEjecucion);
 
@@ -84,6 +86,8 @@ public class ProyectoPeriodoSeguimientoRepositoryTest extends BaseRepositoryTest
     ModeloEjecucion modeloEjecucion = ModeloEjecucion.builder()
         .nombre("nombreModeloEjecucion")
         .activo(Boolean.TRUE)
+        .contrato(Boolean.FALSE)
+        .externo(Boolean.FALSE)
         .build();
     entityManager.persistAndFlush(modeloEjecucion);
 

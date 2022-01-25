@@ -72,7 +72,7 @@ public class ProyectoSocioPeriodoJustificacionController {
    */
   @GetMapping("/{id}")
   @PreAuthorize("hasAuthorityForAnyUO('CSP-PRO-E')")
-  ProyectoSocioPeriodoJustificacion findById(@PathVariable Long id) {
+  public ProyectoSocioPeriodoJustificacion findById(@PathVariable Long id) {
     log.debug("findById(Long id) - start");
     ProyectoSocioPeriodoJustificacion returnValue = service.findById(id);
     log.debug("findById(Long id) - end");
@@ -88,7 +88,7 @@ public class ProyectoSocioPeriodoJustificacionController {
    */
   @RequestMapping(path = "/{id}", method = RequestMethod.HEAD)
   @PreAuthorize("hasAuthorityForAnyUO('CSP-PRO-E')")
-  public ResponseEntity<?> exists(@PathVariable Long id) {
+  public ResponseEntity<Void> exists(@PathVariable Long id) {
     log.debug("exists(Long id) - start");
     if (service.existsById(id)) {
       log.debug("exists(Long id) - end");
@@ -131,7 +131,7 @@ public class ProyectoSocioPeriodoJustificacionController {
    */
   @PostMapping
   @PreAuthorize("hasAuthorityForAnyUO('CSP-PRO-E')")
-  ResponseEntity<ProyectoSocioPeriodoJustificacion> create(
+  public ResponseEntity<ProyectoSocioPeriodoJustificacion> create(
       @Valid @RequestBody ProyectoSocioPeriodoJustificacion proyectoSocioPeriodoJustificacion) {
     log.debug("create(ProyectoSocioPeriodoJustificacion requisitoEquipo) - start");
     ProyectoSocioPeriodoJustificacion returnValue = service.create(proyectoSocioPeriodoJustificacion);
@@ -151,7 +151,7 @@ public class ProyectoSocioPeriodoJustificacionController {
    */
   @PutMapping("/{id}")
   @PreAuthorize("hasAuthorityForAnyUO('CSP-PRO-E')")
-  ProyectoSocioPeriodoJustificacion update(
+  public ProyectoSocioPeriodoJustificacion update(
       @Validated({ Update.class,
           Default.class }) @RequestBody ProyectoSocioPeriodoJustificacion proyectoSocioPeriodoJustificacion,
       @PathVariable Long id) {
@@ -169,10 +169,13 @@ public class ProyectoSocioPeriodoJustificacionController {
    * @param id     Identificador de {@link ProyectoSocioPeriodoJustificacion}.
    * @param query  filtro de búsqueda.
    * @param paging pageable.
+   * @return el listado de entidades
+   *         {@link ProyectoSocioPeriodoJustificacionDocumento}
+   *         paginados y filtrados.
    */
   @GetMapping("/{id}/proyectosocioperiodojustificaciondocumentos")
   @PreAuthorize("hasAuthorityForAnyUO('CSP-PRO-E')")
-  ResponseEntity<Page<ProyectoSocioPeriodoJustificacionDocumento>> findAllProyectoSocioPeriodoJustificacion(
+  public ResponseEntity<Page<ProyectoSocioPeriodoJustificacionDocumento>> findAllProyectoSocioPeriodoJustificacion(
       @PathVariable Long id, @RequestParam(name = "q", required = false) String query,
       @RequestPageable(sort = "s") Pageable paging) {
     log.debug("findAllProyectoSocioPeriodoJustificacion(Long id, String query, Pageable paging) - start");

@@ -94,9 +94,9 @@ public class Convocatoria extends BaseEntity {
   private Instant fechaConcesion;
 
   /** Titulo */
-  @Column(name = "titulo", length = 250, nullable = false)
+  @Column(name = "titulo", length = 1000, nullable = false)
   @NotBlank
-  @Size(max = 250)
+  @Size(max = 1000)
   private String titulo;
 
   /** Objeto */
@@ -231,4 +231,9 @@ public class Convocatoria extends BaseEntity {
   @Getter(AccessLevel.NONE)
   @Setter(AccessLevel.NONE)
   private final List<Solicitud> solicitudes = null;
+
+  @OneToMany(mappedBy = "convocatoria")
+  @Getter(AccessLevel.NONE)
+  @Setter(AccessLevel.NONE)
+  private final List<ConvocatoriaPalabraClave> palabrasClave = null;
 }

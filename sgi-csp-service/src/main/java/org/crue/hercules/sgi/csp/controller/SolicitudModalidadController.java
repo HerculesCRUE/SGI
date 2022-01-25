@@ -94,7 +94,7 @@ public class SolicitudModalidadController {
    */
   @GetMapping("/{id}")
   @PreAuthorize("hasAuthorityForAnyUO('AUTH')")
-  SolicitudModalidad findById(@PathVariable Long id) {
+  public SolicitudModalidad findById(@PathVariable Long id) {
     log.debug("SolicitudModalidad findById(Long id) - start");
     SolicitudModalidad returnValue = service.findById(id);
     log.debug("SolicitudModalidad findById(Long id) - end");

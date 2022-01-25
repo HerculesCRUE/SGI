@@ -1,17 +1,31 @@
-import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
+import { Component, Inject } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
-import { BaseModalComponent } from '@core/component/base-modal.component';
+import { DialogActionComponent } from '@core/component/dialog-action.component';
+import { FormularioSolicitud } from '@core/enums/formulario-solicitud';
+import { Problem, ValidationHttpProblem } from '@core/errors/http-problem';
 import { MSG_PARAMS } from '@core/i18n';
-import { Estado, ESTADO_MAP } from '@core/models/csp/estado-solicitud';
+import { Estado, ESTADO_MAP, IEstadoSolicitud } from '@core/models/csp/estado-solicitud';
+import { ISolicitud } from '@core/models/csp/solicitud';
+import { ISolicitudProyecto } from '@core/models/csp/solicitud-proyecto';
 import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-properties';
+import { SolicitudService } from '@core/services/csp/solicitud.service';
 import { SnackBarService } from '@core/services/snack-bar.service';
 import { TranslateService } from '@ngx-translate/core';
 import { DateTime } from 'luxon';
+import { Observable, of, throwError } from 'rxjs';
+import { map, switchMap } from 'rxjs/operators';
 
 const SOLICITUD_CAMBIO_ESTADO_COMENTARIO = marker('csp.solicitud.estado-solicitud.comentario');
 const SOLICITUD_CAMBIO_ESTADO_FECHA_ESTADO = marker('csp.solicitud.estado-solicitud.fecha');
+
+const MSG_FIELD_REQUIRED = marker('error.required.field');
+const MSG_DOCUMENTOS_CONVOCATORIA_REQUIRED = marker('msg.csp.solicitud.documentos-requeridos');
+const SOLICITUD_PROYECTO_COORDINADO = marker('csp.solicitud-datos-proyecto-ficha-general.proyecto-coordinado');
+const SOLICITUD_PROYECTO_COORDINADOR_EXTERNO = marker('csp.solicitud-datos-proyecto-ficha-general.coordinador-externo');
+const MSG_SOLICITUD_EQUIPO_SOLICITANTE_REQUIRED = marker('msg.csp.solicitud.solicitante-miembro-equipo');
+const MSG_SOLICITUD_AUTOEVALUACION_ETICA_REQUIRED = marker('msg.csp.solicitud.autoevaluacion-etica-completada');
 
 export interface SolicitudCambioEstadoModalComponentData {
   estadoActual: Estado;
@@ -19,6 +33,11 @@ export interface SolicitudCambioEstadoModalComponentData {
   fechaEstado: DateTime;
   comentario: string;
   isInvestigador: boolean;
+  hasRequiredDocumentos: boolean;
+  solicitud: ISolicitud;
+  solicitudProyecto: ISolicitudProyecto;
+  isSolicitanteInSolicitudEquipo: boolean;
+  isAutoevaluacionEticaFullFilled: boolean;
 }
 
 export const ESTADO_MAP_INVESTIGADOR: Map<Estado, Map<Estado, string>> = new Map();
@@ -51,25 +70,32 @@ ESTADO_MAP_INVESTIGADOR.set(Estado.DENEGADA, new Map([
   templateUrl: './cambio-estado-modal.component.html',
   styleUrls: ['./cambio-estado-modal.component.scss']
 })
-export class CambioEstadoModalComponent extends
-  BaseModalComponent<SolicitudCambioEstadoModalComponentData, CambioEstadoModalComponent> implements OnInit, OnDestroy {
+export class CambioEstadoModalComponent
+  extends DialogActionComponent<SolicitudCambioEstadoModalComponentData, IEstadoSolicitud> {
 
   fxLayoutProperties: FxLayoutProperties;
 
   msgParamComentarioEntity = {};
   msgParamFechaEstadoEntity = {};
+  msgDocumentosConvocatoriaRequired: string;
+  msgSolicitudProyectoCoordinadoRequired: string;
+  msgSolicitudProyectoCoordinadorExternoRequired: string;
+  msgSolicitudEquipoSolicitanteRequired: string;
+  msgAutoevaluacionEticaeRequired: string;
   readonly estadosNuevos: Map<string, string>;
+  confirmDialogService: any;
 
   get ESTADO_MAP() {
     return ESTADO_MAP;
   }
 
   constructor(
-    public matDialogRef: MatDialogRef<CambioEstadoModalComponent>,
+    matDialogRef: MatDialogRef<CambioEstadoModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data: SolicitudCambioEstadoModalComponentData,
     protected snackBarService: SnackBarService,
+    private solicitudService: SolicitudService,
     private readonly translate: TranslateService) {
-    super(snackBarService, matDialogRef, data);
+    super(matDialogRef, true);
 
     this.fxLayoutProperties = new FxLayoutProperties();
     this.fxLayoutProperties.gap = '20px';
@@ -110,28 +136,91 @@ export class CambioEstadoModalComponent extends
       ...MSG_PARAMS.CARDINALIRY.SINGULAR
     });
 
+    this.msgDocumentosConvocatoriaRequired = this.translate.instant(MSG_DOCUMENTOS_CONVOCATORIA_REQUIRED);
+    this.msgSolicitudProyectoCoordinadoRequired = this.translate.instant(MSG_FIELD_REQUIRED, { field: this.translate.instant(SOLICITUD_PROYECTO_COORDINADO) });
+    this.msgSolicitudProyectoCoordinadorExternoRequired = this.translate.instant(MSG_FIELD_REQUIRED, { field: this.translate.instant(SOLICITUD_PROYECTO_COORDINADOR_EXTERNO) });
+    this.msgSolicitudEquipoSolicitanteRequired = this.translate.instant(MSG_SOLICITUD_EQUIPO_SOLICITANTE_REQUIRED);
+    this.msgAutoevaluacionEticaeRequired = this.translate.instant(MSG_SOLICITUD_AUTOEVALUACION_ETICA_REQUIRED);
   }
 
-  protected getDatosForm(): SolicitudCambioEstadoModalComponentData {
-    this.data.estadoActual = this.formGroup.controls.estadoActual.value;
-    this.data.estadoNuevo = this.formGroup.controls.estadoNuevo.value;
-    this.data.fechaEstado = this.formGroup.controls.fechaEstado.value;
-    this.data.comentario = this.formGroup.controls.comentario.value;
-    return this.data;
+  protected getValue(): IEstadoSolicitud {
+    return {
+      id: undefined,
+      solicitudId: this.data.solicitud.id,
+      estado: this.formGroup.controls.estadoNuevo.value,
+      fechaEstado: this.formGroup.controls.fechaEstado.value,
+      comentario: this.formGroup.controls.comentario.value
+    };
   }
 
-  protected getFormGroup(): FormGroup {
-    const formGroup = new FormGroup({
+  protected buildFormGroup(): FormGroup {
+    return new FormGroup({
       estadoActual: new FormControl({ value: this.data.estadoActual, disabled: true }),
       estadoNuevo: new FormControl(this.data.estadoNuevo),
       fechaEstado: new FormControl({ value: DateTime.now(), disabled: this.data.isInvestigador }, Validators.required),
       comentario: new FormControl('', [Validators.maxLength(2000)])
     });
-    return formGroup;
   }
 
-  ngOnDestroy(): void {
-    super.ngOnDestroy();
+  protected saveOrUpdate(): Observable<IEstadoSolicitud> {
+    const estadoNew = this.getValue();
+
+    return this.validateCambioEstado(estadoNew.estado).pipe(
+      switchMap(() => this.solicitudService.cambiarEstado(this.data.solicitud.id, estadoNew)),
+      map(() => estadoNew)
+    );
+  }
+
+  private validateCambioEstado(estado: Estado): Observable<never | void> {
+    const problems: Problem[] = [];
+
+    if (![Estado.DESISTIDA, Estado.RENUNCIADA].includes(estado)) {
+      problems.push(...this.validateRequiredDocumentos());
+      if (this.data.solicitud.formularioSolicitud === FormularioSolicitud.PROYECTO) {
+        problems.push(...this.validateSolicitudProyecto());
+      }
+    }
+
+    if (problems.length > 0) {
+      return throwError(problems);
+    }
+
+    return of(void 0);
+  }
+
+  private validateRequiredDocumentos(): Problem[] {
+    const problems: Problem[] = [];
+    if (!this.data.hasRequiredDocumentos) {
+      problems.push(this.buildValidationProblem(this.msgDocumentosConvocatoriaRequired));
+    }
+    return problems;
+  }
+
+  private validateSolicitudProyecto(): Problem[] {
+    const problems: Problem[] = [];
+
+    if (this.data.solicitudProyecto.coordinado === undefined || this.data.solicitudProyecto.coordinado === null) {
+      problems.push(this.buildValidationProblem(this.msgSolicitudProyectoCoordinadoRequired));
+    }
+
+    if (!!this.data.solicitudProyecto.coordinado
+      && (this.data.solicitudProyecto.coordinadorExterno === undefined || this.data.solicitudProyecto.coordinadorExterno === null)) {
+      problems.push(this.buildValidationProblem(this.msgSolicitudProyectoCoordinadorExternoRequired));
+    }
+
+    if (!this.data.isSolicitanteInSolicitudEquipo) {
+      problems.push(this.buildValidationProblem(this.msgSolicitudEquipoSolicitanteRequired));
+    }
+
+    if (!this.data.isAutoevaluacionEticaFullFilled) {
+      problems.push(this.buildValidationProblem(this.msgAutoevaluacionEticaeRequired));
+    }
+
+    return problems;
+  }
+
+  private buildValidationProblem(msgError: string): ValidationHttpProblem {
+    return new ValidationHttpProblem({ title: msgError } as Problem);
   }
 
 }

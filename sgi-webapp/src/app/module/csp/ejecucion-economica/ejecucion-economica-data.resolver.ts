@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { ActivatedRouteSnapshot, Router } from '@angular/router';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { SgiResolverResolver } from '@core/resolver/sgi-resolver';
+import { ConfiguracionService } from '@core/services/csp/configuracion.service';
 import { ProyectoProyectoSgeService } from '@core/services/csp/proyecto-proyecto-sge.service';
 import { ProyectoService } from '@core/services/csp/proyecto.service';
 import { ProyectoSgeService } from '@core/services/sge/proyecto-sge.service';
@@ -26,7 +27,8 @@ export class EjecucionEconomicaDataResolver extends SgiResolverResolver<IEjecuci
     snackBar: SnackBarService,
     private service: ProyectoProyectoSgeService,
     private proyectoService: ProyectoService,
-    private proyectoSgeService: ProyectoSgeService
+    private proyectoSgeService: ProyectoSgeService,
+    private configuracionService: ConfiguracionService,
   ) {
     super(logger, router, snackBar, MSG_NOT_FOUND);
   }
@@ -66,7 +68,15 @@ export class EjecucionEconomicaDataResolver extends SgiResolverResolver<IEjecuci
           }),
           takeLast(1)
         );
-      })
+      }),
+      switchMap(data =>
+        this.configuracionService.getConfiguracion().pipe(
+          map(configuracion => {
+            data.configuracion = configuracion;
+            return data;
+          })
+        )
+      )
     );
   }
 }

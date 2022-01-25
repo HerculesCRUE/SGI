@@ -5,6 +5,7 @@ import { MaterialDesignModule } from '@material/material-design.module';
 import { TranslateModule } from '@ngx-translate/core';
 import { SgiAuthModule } from '@sgi/framework/auth';
 import { SharedModule } from '@shared/shared.module';
+import { CspSharedModule } from '../shared/csp-shared.module';
 import { ProyectoConceptoGastoCodigoEcModalComponent } from './modals/proyecto-concepto-gasto-codigo-ec-modal/proyecto-concepto-gasto-codigo-ec-modal.component';
 import { ProyectoConceptoGastoCrearComponent } from './proyecto-concepto-gasto-crear/proyecto-concepto-gasto-crear.component';
 import { ProyectoConceptoGastoDataResolver } from './proyecto-concepto-gasto-data.resolver';
@@ -29,7 +30,8 @@ import { ProyectoConceptoGastoRouting } from './proyecto-concepto-gasto-routing.
     ProyectoConceptoGastoRouting,
     SgiAuthModule,
     FormsModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    CspSharedModule
   ],
   providers: [
     ProyectoConceptoGastoDataResolver

@@ -59,8 +59,12 @@ public class PeriodoTitularidadController {
   /**
    * Instancia un nuevo {@link PeriodoTitularidadController}.
    * 
-   * @param service     Instancia de {@link PeriodoTitularidadService}
-   * @param modelMapper Instancia de {@link ModelMapper}
+   * @param service                          Instancia de
+   *                                         {@link PeriodoTitularidadService}
+   * @param modelMapper                      Instancia de {@link ModelMapper}
+   * @param invencionService                 Instancia de {@link InvencionService}
+   * @param periodoTitularidadTitularService Instancia de
+   *                                         {@link PeriodoTitularidadTitularService}
    */
   public PeriodoTitularidadController(ModelMapper modelMapper, PeriodoTitularidadService service,
       InvencionService invencionService, PeriodoTitularidadTitularService periodoTitularidadTitularService) {

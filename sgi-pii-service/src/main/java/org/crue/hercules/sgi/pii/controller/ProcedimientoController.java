@@ -121,6 +121,7 @@ public class ProcedimientoController {
    * {@link Procedimiento} con el id indicado.
    * 
    * @param procedimientoId Identificador del {@link Procedimiento}
+   * @param paging          Información de paginación
    * @return Elementos paginados de tipo {@link ProcedimientoDocumento} asociados
    *         al {@link Procedimiento}
    */

@@ -9,8 +9,9 @@ import { SnackBarService } from '@core/services/snack-bar.service';
 import { TranslateService } from '@ngx-translate/core';
 import { NGXLogger } from 'ngx-logger';
 import { switchMap } from 'rxjs/operators';
+import { EJECUCION_ECONOMICA_DATA_KEY } from '../ejecucion-economica-data.resolver';
 import { EJECUCION_ECONOMICA_ROUTE_NAMES } from '../ejecucion-economica-route-names';
-import { EjecucionEconomicaActionService } from '../ejecucion-economica.action.service';
+import { EjecucionEconomicaActionService, IEjecucionEconomicaData } from '../ejecucion-economica.action.service';
 
 const MSG_BUTTON_EDIT = marker('btn.save.entity');
 const MSG_SUCCESS = marker('msg.update.entity.success');
@@ -33,6 +34,8 @@ export class EjecucionEconomicaEditarComponent extends ActionComponent implement
   textoEditarSuccess: string;
   textoEditarError: string;
 
+  private readonly data: IEjecucionEconomicaData;
+
   constructor(
     private readonly logger: NGXLogger,
     protected snackBarService: SnackBarService,
@@ -43,6 +46,7 @@ export class EjecucionEconomicaEditarComponent extends ActionComponent implement
     private readonly translate: TranslateService
   ) {
     super(router, route, actionService, dialogService);
+    this.data = route.snapshot.data[EJECUCION_ECONOMICA_DATA_KEY];
   }
 
   ngOnInit(): void {
@@ -110,6 +114,10 @@ export class EjecucionEconomicaEditarComponent extends ActionComponent implement
 
   cancel(): void {
     this.returnUrl();
+  }
+
+  get validacionGastos(): boolean {
+    return this.data?.configuracion?.validacionGastos;
   }
 
   private returnUrl() {

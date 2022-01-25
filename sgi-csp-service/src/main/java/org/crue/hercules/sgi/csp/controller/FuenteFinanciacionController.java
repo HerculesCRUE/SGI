@@ -59,11 +59,13 @@ public class FuenteFinanciacionController {
    * 
    * @param query  filtro de búsqueda.
    * @param paging pageable.
+   * @return el listado de entidades {@link FuenteFinanciacion}
+   *         paginadas y filtradas.
    */
   @GetMapping()
   @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-CON-V','CSP-CON-E','CSP-CON-C','CSP-CON-INV-V','CSP-SOL-V', 'CSP-SOL-C', 'CSP-SOL-E', 'CSP-SOL-B', 'CSP-PRO-C', 'CSP-SOL-R', 'CSP-PRO-V', 'CSP-PRO-E', 'CSP-PRO-B', 'CSP-PRO-R')")
-  ResponseEntity<Page<FuenteFinanciacionOutput>> findActivos(@RequestParam(name = "q", required = false) String query,
-      @RequestPageable(sort = "s") Pageable paging) {
+  public ResponseEntity<Page<FuenteFinanciacionOutput>> findActivos(
+      @RequestParam(name = "q", required = false) String query, @RequestPageable(sort = "s") Pageable paging) {
     log.debug("findAll(String query, Pageable paging) - start");
     Page<FuenteFinanciacion> page = service.findActivos(query, paging);
 
@@ -81,11 +83,13 @@ public class FuenteFinanciacionController {
    * 
    * @param query  filtro de búsqueda.
    * @param paging pageable.
+   * @return el listado de entidades {@link FuenteFinanciacion}
+   *         paginadas y filtradas.
    */
   @GetMapping("/todos")
   @PreAuthorize("hasAnyAuthority('CSP-FNT-V', 'CSP-FNT-C', 'CSP-FNT-E', 'CSP-FNT-B', 'CSP-FNT-R')")
-  ResponseEntity<Page<FuenteFinanciacionOutput>> findAll(@RequestParam(name = "q", required = false) String query,
-      @RequestPageable(sort = "s") Pageable paging) {
+  public ResponseEntity<Page<FuenteFinanciacionOutput>> findAll(
+      @RequestParam(name = "q", required = false) String query, @RequestPageable(sort = "s") Pageable paging) {
     log.debug("findAllTodos(String query, Pageable paging) - start");
     Page<FuenteFinanciacion> page = service.findAll(query, paging);
 
@@ -106,7 +110,7 @@ public class FuenteFinanciacionController {
    */
   @GetMapping("/{id}")
   @PreAuthorize("hasAuthorityForAnyUO('CSP-SOL-E')")
-  FuenteFinanciacionOutput findById(@PathVariable Long id) {
+  public FuenteFinanciacionOutput findById(@PathVariable Long id) {
     log.debug("findById(Long id) - start");
     FuenteFinanciacion returnValue = service.findById(id);
     log.debug("findById(Long id) - end");
@@ -121,7 +125,8 @@ public class FuenteFinanciacionController {
    */
   @PostMapping
   @PreAuthorize("hasAuthority('CSP-FNT-C')")
-  ResponseEntity<FuenteFinanciacionOutput> create(@Valid @RequestBody FuenteFinanciacionInput fuenteFinanciacion) {
+  public ResponseEntity<FuenteFinanciacionOutput> create(
+      @Valid @RequestBody FuenteFinanciacionInput fuenteFinanciacion) {
     log.debug("create(FuenteFinanciacion fuenteFinanciacion) - start");
     FuenteFinanciacion returnValue = service.create(convert(fuenteFinanciacion));
     log.debug("create(FuenteFinanciacion fuenteFinanciacion) - end");
@@ -137,7 +142,7 @@ public class FuenteFinanciacionController {
    */
   @PutMapping("/{id}")
   @PreAuthorize("hasAuthority('CSP-FNT-E')")
-  FuenteFinanciacionOutput update(@Valid @RequestBody FuenteFinanciacionInput fuenteFinanciacion,
+  public FuenteFinanciacionOutput update(@Valid @RequestBody FuenteFinanciacionInput fuenteFinanciacion,
       @PathVariable Long id) {
     log.debug("update(FuenteFinanciacion fuenteFinanciacion, Long id) - start");
     FuenteFinanciacion returnValue = service.update(convert(id, fuenteFinanciacion));
@@ -153,7 +158,7 @@ public class FuenteFinanciacionController {
    */
   @PatchMapping("/{id}/activar")
   @PreAuthorize("hasAuthorityForAnyUO('CSP-FNT-R')")
-  FuenteFinanciacionOutput activar(@PathVariable Long id) {
+  public FuenteFinanciacionOutput activar(@PathVariable Long id) {
     log.debug("reactivar(Long id) - start");
     FuenteFinanciacion returnValue = service.activar(id);
     log.debug("reactivar(Long id) - end");
@@ -164,10 +169,11 @@ public class FuenteFinanciacionController {
    * Desactiva el {@link FuenteFinanciacion} con id indicado.
    * 
    * @param id Identificador de {@link FuenteFinanciacion}.
+   * @return {@link FuenteFinanciacion} desactivada.
    */
   @PatchMapping("/{id}/desactivar")
   @PreAuthorize("hasAuthority('CSP-FNT-B')")
-  FuenteFinanciacionOutput desactivar(@PathVariable Long id) {
+  public FuenteFinanciacionOutput desactivar(@PathVariable Long id) {
     log.debug("desactivar(Long id) - start");
     FuenteFinanciacion returnValue = service.desactivar(id);
     log.debug("desactivar(Long id) - end");
@@ -190,7 +196,7 @@ public class FuenteFinanciacionController {
 
   private Page<FuenteFinanciacionOutput> convert(Page<FuenteFinanciacion> page) {
     List<FuenteFinanciacionOutput> content = page.getContent().stream()
-        .map((fuenteFinanciacion) -> convert(fuenteFinanciacion)).collect(Collectors.toList());
+        .map(fuenteFinanciacion -> convert(fuenteFinanciacion)).collect(Collectors.toList());
 
     return new PageImpl<>(content, page.getPageable(), page.getTotalElements());
   }

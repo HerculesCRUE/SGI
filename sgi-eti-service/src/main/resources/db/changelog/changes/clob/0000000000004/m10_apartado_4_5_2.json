@@ -1,0 +1,79 @@
+[
+  {
+    "key": "ap4_5_2",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "expressionLock": "formState.memoria.tipoMemoria.id === 3",
+      "label": "4.5.2 Consejo genético"
+    },
+    "hideExpression": "!formState.mainModel.ap4_5.estudiosGeneticosRadio || formState.mainModel.ap4_5.estudiosGeneticosRadio === 'no'",
+    "fieldGroup": [
+      {
+        "template": "<p>¿Se va a proporcionar consejo genético?</p>"
+      },
+      {
+        "key": "proporcionarConsejoGeneticoRadio",
+        "type": "radio",
+        "templateOptions": {
+          "required": true,
+          "label": "Elige opción:",
+          "options": [
+            {
+              "value": "no",
+              "label": "No"
+            },
+            {
+              "value": "si",
+              "label": "Sí"
+            }
+          ]
+        }
+      },
+      {
+        "template": "<p>En caso afirmativo ¿se cuenta en el equipo con una persona experta en este campo para informar al donante sobre los resultados?</p>"
+      },
+      {
+        "key": "personaExpertaConsejoGeneticoRadio",
+        "type": "radio",
+        "required": true,
+        "templateOptions": {
+          "required": true,
+          "label": "Elige opción:",
+          "options": [
+            {
+              "value": "no",
+              "label": "No"
+            },
+            {
+              "value": "si",
+              "label": "Sí"
+            }
+          ]
+        }
+      },
+      {
+        "template": "<p>En caso afirmativo ¿se ha incluido esta información en el documento de consentimiento? Ver apartado 4.4.10</p>"
+      },
+      {
+        "key": "documentoConsejoGeneticoRadio",
+        "type": "radio",
+        "templateOptions": {
+          "required": true,
+          "label": "Elige opción:",
+          "options": [
+            {
+              "value": "no",
+              "label": "No"
+            },
+            {
+              "value": "si",
+              "label": "Sí"
+            }
+          ]
+        }
+      }
+    ]
+  }
+]

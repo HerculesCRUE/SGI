@@ -7,13 +7,11 @@ import { MSG_PARAMS } from '@core/i18n';
 import { IConvocatoriaFase } from '@core/models/csp/convocatoria-fase';
 import { ITipoFase } from '@core/models/csp/tipos-configuracion';
 import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-properties';
-import { ModeloEjecucionService } from '@core/services/csp/modelo-ejecucion.service';
 import { SnackBarService } from '@core/services/snack-bar.service';
 import { DateValidator } from '@core/validators/date-validator';
 import { IRange, RangeValidator } from '@core/validators/range-validator';
 import { TranslateService } from '@ngx-translate/core';
-import { Observable } from 'rxjs';
-import { map, switchMap, tap } from 'rxjs/operators';
+import { switchMap, tap } from 'rxjs/operators';
 
 const MSG_ANADIR = marker('btn.add');
 const MSG_ACEPTAR = marker('btn.ok');
@@ -40,8 +38,6 @@ export class ConvocatoriaPlazosFaseModalComponent extends
   BaseModalComponent<ConvocatoriaPlazosFaseModalComponentData, ConvocatoriaPlazosFaseModalComponent> implements OnInit, OnDestroy {
   fxLayoutProperties: FxLayoutProperties;
   fxLayoutProperties2: FxLayoutProperties;
-  tiposFases$: Observable<ITipoFase[]>;
-
 
   textSaveOrUpdate: string;
   title: string;
@@ -55,7 +51,6 @@ export class ConvocatoriaPlazosFaseModalComponent extends
     protected snackBarService: SnackBarService,
     @Inject(MAT_DIALOG_DATA) public data: ConvocatoriaPlazosFaseModalComponentData,
     public matDialogRef: MatDialogRef<ConvocatoriaPlazosFaseModalComponent>,
-    modeloEjecucionService: ModeloEjecucionService,
     private readonly translate: TranslateService
   ) {
     super(snackBarService, matDialogRef, data);
@@ -70,10 +65,6 @@ export class ConvocatoriaPlazosFaseModalComponent extends
     this.fxLayoutProperties2.gap = '20px';
     this.fxLayoutProperties2.layout = 'row';
     this.fxLayoutProperties2.xs = 'column';
-
-    this.tiposFases$ = modeloEjecucionService.findModeloTipoFaseModeloEjecucionConvocatoria(this.data.idModeloEjecucion).pipe(
-      map(response => response.items.map(modeloTipoFase => modeloTipoFase.tipoFase))
-    );
   }
 
   ngOnInit(): void {

@@ -4,10 +4,10 @@
   <parent>
     <groupId>org.crue.hercules.sgi.esb.sgemp</groupId>
     <artifactId>sgi-esb-sgemp</artifactId>
-    <version>0.0.5</version>
+    <version>0.0.6</version>
   </parent>
   <artifactId>sgemp-composite-application</artifactId>
-  <version>0.0.5</version>
+  <version>0.0.6</version>
   <packaging>carbon/application</packaging>
   <name>sgemp-composite-application</name>
   <description>sgemp-composite-application</description>
@@ -15,6 +15,8 @@
     <org.crue.hercules.sgi.esb.sgemp.endpoint_._sgemp-endpoint>capp/EnterpriseServiceBus</org.crue.hercules.sgi.esb.sgemp.endpoint_._sgemp-endpoint>
     <org.crue.hercules.sgi.esb.sgemp.sequence_._sgemp-add-x-api-key-sequence>capp/EnterpriseServiceBus</org.crue.hercules.sgi.esb.sgemp.sequence_._sgemp-add-x-api-key-sequence>
     <org.crue.hercules.sgi.esb.sgemp.resource_._datos-contacto-response-converter-mediator>capp/EnterpriseIntegrator</org.crue.hercules.sgi.esb.sgemp.resource_._datos-contacto-response-converter-mediator>
+    <org.crue.hercules.sgi.esb.sgemp.resource_._empresa-sectores-industriales-response-converter-mediator>capp/EnterpriseIntegrator</org.crue.hercules.sgi.esb.sgemp.resource_._empresa-sectores-industriales-response-converter-mediator>
+    <org.crue.hercules.sgi.esb.sgemp.resource_._empresa-sectores-industriales-request-converter-mediator>capp/EnterpriseIntegrator</org.crue.hercules.sgi.esb.sgemp.resource_._empresa-sectores-industriales-request-converter-mediator>
     <org.crue.hercules.sgi.esb.sgemp.api_._sgemp-api>capp/EnterpriseServiceBus</org.crue.hercules.sgi.esb.sgemp.api_._sgemp-api>
     <org.crue.hercules.sgi.esb.sgemp.endpoint_._sgo-endpoint>capp/EnterpriseServiceBus</org.crue.hercules.sgi.esb.sgemp.endpoint_._sgo-endpoint>
     <artifact.types>jaggery/app=zip,synapse/priority-executor=xml,synapse/inbound-endpoint=xml,service/rule=aar,synapse/message-store=xml,event/stream=json,service/meta=xml,datasource/datasource=xml,synapse/proxy-service=xml,bpel/workflow=zip,synapse/sequence=xml,synapse/endpointTemplate=xml,carbon/application=car,wso2/gadget=dar,synapse/api=xml,synapse/event-source=xml,synapse/message-processors=xml,event/receiver=xml,lib/dataservice/validator=jar,synapse/template=xml,synapse/endpoint=xml,lib/carbon/ui=jar,lib/synapse/mediator=jar,event/publisher=xml,synapse/local-entry=xml,synapse/task=xml,webapp/jaxws=war,registry/resource=zip,synapse/configuration=xml,service/axis2=aar,synapse/lib=zip,synapse/sequenceTemplate=xml,event/execution-plan=siddhiql,service/dataservice=dbs,web/application=war,lib/library/bundle=jar</artifact.types>
@@ -25,31 +27,43 @@
     <dependency>
       <groupId>org.crue.hercules.sgi.esb.sgemp.api</groupId>
       <artifactId>sgemp-api</artifactId>
-      <version>0.0.5</version>
+      <version>0.0.6</version>
       <type>xml</type>
     </dependency>
     <dependency>
       <groupId>org.crue.hercules.sgi.esb.sgemp.endpoint</groupId>
       <artifactId>sgemp-endpoint</artifactId>
-      <version>0.0.5</version>
+      <version>0.0.6</version>
       <type>xml</type>
     </dependency>
     <dependency>
       <groupId>org.crue.hercules.sgi.esb.sgemp.sequence</groupId>
       <artifactId>sgemp-add-x-api-key-sequence</artifactId>
-      <version>0.0.5</version>
+      <version>0.0.6</version>
       <type>xml</type>
     </dependency>
     <dependency>
       <groupId>org.crue.hercules.sgi.esb.sgemp.resource</groupId>
       <artifactId>datos-contacto-response-converter-mediator</artifactId>
-      <version>0.0.5</version>
+      <version>0.0.6</version>
+      <type>zip</type>
+    </dependency>
+    <dependency>
+      <groupId>org.crue.hercules.sgi.esb.sgemp.resource</groupId>
+      <artifactId>empresa-sectores-industriales-response-converter-mediator</artifactId>
+      <version>0.0.6</version>
+      <type>zip</type>
+    </dependency>
+    <dependency>
+      <groupId>org.crue.hercules.sgi.esb.sgemp.resource</groupId>
+      <artifactId>empresa-sectores-industriales-request-converter-mediator</artifactId>
+      <version>0.0.6</version>
       <type>zip</type>
     </dependency>
     <dependency>
       <groupId>org.crue.hercules.sgi.esb.sgemp.endpoint</groupId>
       <artifactId>sgo-endpoint</artifactId>
-      <version>0.0.5</version>
+      <version>0.0.6</version>
       <type>xml</type>
     </dependency>
   </dependencies>

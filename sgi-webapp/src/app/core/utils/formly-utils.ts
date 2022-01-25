@@ -59,9 +59,9 @@ export class FormlyUtils {
           if (arrTableOne && arrTableOne instanceof Array && arrTableOne.length > 0) {
             if (!toJSON) {
               const nameElement = fieldTableOne.fieldArray.fieldGroup[0].key as string;
-              arrTableOne.forEach(element => arrNewModel.push({ [nameElement]: element }));
+              arrTableOne.forEach(element => arrNewModel.push({ [nameElement]: element[nameElement] ?? element }));
             } else {
-              arrTableOne.forEach(element => arrNewModel.push(Object.values(element)));
+              arrTableOne.forEach(element => arrNewModel.push(Object.values(element)[0]));
             }
           }
           model[key] = arrNewModel;

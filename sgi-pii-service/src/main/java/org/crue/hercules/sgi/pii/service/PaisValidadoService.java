@@ -37,6 +37,7 @@ public class PaisValidadoService {
    * Obtiene los {@link PaisValidado} asociados a la {@link SolicitudProteccion}
    *
    * @param solicitudProteccionId el id de la {@link SolicitudProteccion}.
+   * @param pageable              la información de página.
    * @return la lista paginada y/o filtrada {@link PaisValidado}.
    */
   public Page<PaisValidado> findBySolicitudProteccionId(Long solicitudProteccionId, Pageable pageable) {

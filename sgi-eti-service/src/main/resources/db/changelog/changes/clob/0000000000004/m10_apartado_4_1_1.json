@@ -1,0 +1,61 @@
+[
+  {
+    "key": "ap4_1_1",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "expressionLock": "formState.memoria.tipoMemoria.id === 3",
+      "label": "4.1.1 Tipo de riesgos o molestias"
+    },
+    "hideExpression": "!formState.bloques[3].ap3_4.intervencionesSeresHumanosRadio || formState.bloques[3].ap3_4.intervencionesSeresHumanosRadio === 'no'",
+    "fieldGroup": [
+      {
+        "template": "<p>Señale a continuación el tipo de riesgos y/o molestias que se ocasionarán al sujeto de investigación debido a las intervenciones o pruebas que se le realizarán para el proyecto.</p>"
+      },
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "<p>La consideración de riesgo o molestia debe realizarse en un sentido amplio, ya que no sólo hay que tener en cuenta los riesgos fisicos para la salud (como en el caso de pruebas invasivas, por ejemplo) sino también posibles daños psicológicos (por ejemplo cuando se tratan 'temas sensibles') o las molestias ocasionadas por la simple intromisión en la initimidad del sujeto de estudio o el uso de su tiempo.</p>"
+      },
+      {
+        "type": "multicheckbox",
+        "key": "tipoRiesgosOMolestiasCheck",
+        "templateOptions": {
+          "label": "Opciones",
+          "type": "array",
+          "required": true,
+          "options": [
+            {
+              "value": "riesgoFisico",
+              "label": "Riesgo físico"
+            },
+            {
+              "value": "riesgoPsicologico",
+              "label": "Riesgo Psicológico"
+            },
+            {
+              "value": "intromisionIntimidad",
+              "label": "Intromisión en la intimidad"
+            },
+            {
+              "value": "usoTiempo",
+              "label": "Uso de su tiempo"
+            },
+            {
+              "value": "sinRiesgoPorTratarseDeDatos",
+              "label": "Sin riesgo por tratarse de datos/muestras anónimas"
+            }
+          ]
+        }
+      },
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "<p>Nota: los posibles daños/molestias deben relacionarse con las intervenciones descritas detalladamente en el apartado <strong>'3.4.3 Descripción de las intervenciones o pruebas'</strong></p><p>Recuerde que el/la participante debe ser informado debidamente de las molestias y los posibles riesgos y beneficios de la investigación y debe ser informado de ello en <strong>el documento de consentimiento</strong> (apartado '4.4.2 Información obligatoria mínima').</p><p>Para obtener más información sobre la información mínima exigida consultar el <a href='http://www.boe.es/buscar/act.php?id=BOE-A-2007-12945&p=20110602&tn=1#a15' target='_blank'>artículo 15</a> de la LIB 14/2007 y en <a href='https://www.um.es/web/comision-etica-investigacion/comision-etica' target='_blank'>página de la Web de la Comisión de Ética de Investigación</a>.</p>"
+      }
+    ]
+  }
+]

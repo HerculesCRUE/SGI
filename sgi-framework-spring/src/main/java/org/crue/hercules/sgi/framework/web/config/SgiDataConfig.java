@@ -60,7 +60,7 @@ public class SgiDataConfig {
         }
       }
     }
-    log.warn("Unknown database driver: {0}", driverClassName);
+    log.warn("Unknown database driver: {}", driverClassName);
     log.debug("databaseDriver(String driverClassName) - end");
     return DatabaseDriver.UNKNOWN;
   }
@@ -124,7 +124,7 @@ public class SgiDataConfig {
       log.debug("customize(Map<String, Object> hibernateProperties) - start");
       if (hibernateProperties.containsKey(HIBERNATE_CUSTOM_DEFAULT_SCHEMA_PARAM)) {
         Object propertyValue = hibernateProperties.get(HIBERNATE_CUSTOM_DEFAULT_SCHEMA_PARAM);
-        log.info("{0}={1}", HIBERNATE_CUSTOM_DEFAULT_SCHEMA_PARAM, propertyValue);
+        log.info("{}={}", HIBERNATE_CUSTOM_DEFAULT_SCHEMA_PARAM, propertyValue);
         hibernateProperties.put(AvailableSettings.DEFAULT_SCHEMA, propertyValue);
       }
       // Prevent Hibernate Validator from creating it's own ConstraintValidatorManager

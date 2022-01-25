@@ -1,7 +1,5 @@
 package org.crue.hercules.sgi.csp.controller;
 
-import java.util.stream.Collectors;
-
 import org.crue.hercules.sgi.csp.dto.FacturaEmitidaOutput;
 import org.crue.hercules.sgi.csp.model.ProyectoFacturacion;
 import org.crue.hercules.sgi.csp.service.ProyectoFacturacionService;
@@ -17,10 +15,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.stream.Collectors;
+
 @Validated
 @RestController
 @RequestMapping(path = "/facturas-previstas")
 public class FacturaPrevistaController {
+
+  public static final String MAPPING = "/facturas-previstas";
 
   private final ModelMapper modelMapper;
   private final ProyectoFacturacionService proyectoFacturacionService;

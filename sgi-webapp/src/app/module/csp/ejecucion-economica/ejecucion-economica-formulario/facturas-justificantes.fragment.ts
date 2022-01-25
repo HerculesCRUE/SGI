@@ -1,18 +1,21 @@
 import { FormControl, FormGroup } from '@angular/forms';
 import { IConceptoGasto } from '@core/models/csp/concepto-gasto';
+import { IConfiguracion } from '@core/models/csp/configuracion';
 import { IProyecto } from '@core/models/csp/proyecto';
 import { IProyectoAgrupacionGasto } from '@core/models/csp/proyecto-agrupacion-gasto';
+import { IProyectoConceptoGasto } from '@core/models/csp/proyecto-concepto-gasto';
 import { IDatoEconomico } from '@core/models/sge/dato-economico';
 import { IProyectoSge } from '@core/models/sge/proyecto-sge';
 import { GastoProyectoService } from '@core/services/csp/gasto-proyecto/gasto-proyecto-service';
-import { ProyectoAgrupacionGastoService } from '@core/services/csp/proyecto-agrupacion-gasto/proyecto-agrupacion-gasto.service';
 import { ProyectoAnualidadService } from '@core/services/csp/proyecto-anualidad/proyecto-anualidad.service';
+import { ProyectoConceptoGastoCodigoEcService } from '@core/services/csp/proyecto-concepto-gasto-codigo-ec.service';
+import { ProyectoConceptoGastoService } from '@core/services/csp/proyecto-concepto-gasto.service';
 import { ProyectoService } from '@core/services/csp/proyecto.service';
 import { PersonaService } from '@core/services/sgp/persona.service';
 import { LuxonUtils } from '@core/utils/luxon-utils';
 import { RSQLSgiRestFilter, SgiRestFilterOperator, SgiRestFindOptions } from '@sgi/framework/http';
 import { from, Observable, of } from 'rxjs';
-import { catchError, combineAll, concatMap, map, switchMap, tap } from 'rxjs/operators';
+import { combineAll, concatMap, map, mergeMap, switchMap } from 'rxjs/operators';
 import { DesgloseEconomicoFragment, IColumnDefinition, IDesgloseEconomicoExportData, RowTreeDesglose } from './desglose-economico.fragment';
 
 export interface IDesglose extends IDatoEconomico {
@@ -24,7 +27,7 @@ export interface IDesglose extends IDatoEconomico {
 export abstract class FacturasJustificantesFragment extends DesgloseEconomicoFragment<IDesglose> {
 
   private proyectosMap = new Map<string, IProyecto>();
-  private agrupacionGastoMap = new Map<string, IProyectoAgrupacionGasto>();
+  private proyectoConceptoGastosMap = new Map<string, IProyectoConceptoGasto>();
 
   readonly formGroupFechas = new FormGroup({
     devengoDesde: new FormControl(),
@@ -42,8 +45,10 @@ export abstract class FacturasJustificantesFragment extends DesgloseEconomicoFra
     protected proyectoService: ProyectoService,
     personaService: PersonaService,
     proyectoAnualidadService: ProyectoAnualidadService,
-    private proyectoAgrupacionGasto: ProyectoAgrupacionGastoService,
-    protected gastoProyectoService: GastoProyectoService
+    protected gastoProyectoService: GastoProyectoService,
+    private proyectoConceptoGastoCodigoEcService: ProyectoConceptoGastoCodigoEcService,
+    private proyectoConceptoGastoService: ProyectoConceptoGastoService,
+    private configuracion: IConfiguracion,
   ) {
     super(key, proyectoSge, proyectosRelacionados, proyectoService, personaService, proyectoAnualidadService);
     this.setComplete(true);
@@ -52,30 +57,8 @@ export abstract class FacturasJustificantesFragment extends DesgloseEconomicoFra
     });
   }
 
-  private getAgrupacionGasto(proyectoId: string, id: string): Observable<IProyectoAgrupacionGasto> {
-    const key = `${proyectoId}-${id}`;
-    const existing = this.agrupacionGastoMap.get(key);
-    if (existing) {
-      return of(existing);
-    }
-    const options: SgiRestFindOptions = {
-      filter: new RSQLSgiRestFilter('proyectoId', SgiRestFilterOperator.EQUALS, proyectoId)
-        .and('conceptos.conceptoGasto.id', SgiRestFilterOperator.EQUALS, id)
-    };
-    return this.proyectoAgrupacionGasto.findAll(options).pipe(
-      map(response => {
-        if (response.items.length) {
-          return response.items[0];
-        }
-        return { nombre: 'Sin clasificar' } as IProyectoAgrupacionGasto;
-      }),
-      catchError(error => {
-        return of({ nombre: 'Sin clasificar' } as IProyectoAgrupacionGasto);
-      }),
-      tap((proyectoAgrupacionGasto) => {
-        this.agrupacionGastoMap.set(key, proyectoAgrupacionGasto);
-      })
-    );
+  protected onInitialize(): void {
+    super.onInitialize();
   }
 
   protected abstract getColumns(reducida?: boolean): Observable<IColumnDefinition[]>;
@@ -89,54 +72,20 @@ export abstract class FacturasJustificantesFragment extends DesgloseEconomicoFra
   ): Observable<IDatoEconomico[]>;
 
   protected buildRows(datosEconomicos: IDatoEconomico[]): Observable<RowTreeDesglose<IDesglose>[]> {
-    return from(datosEconomicos).pipe(
-      concatMap((datoEconomico: IDesglose) => {
-        const options: SgiRestFindOptions = {
-          filter: new RSQLSgiRestFilter('gastoRef', SgiRestFilterOperator.EQUALS, datoEconomico.id)
-        };
-        return this.gastoProyectoService.findAll(options).pipe(
-          map(response => {
-            if (response.items.length) {
-              datoEconomico.proyecto = this.proyectosMap.get(response.items[0].proyectoId.toString());
-              datoEconomico.conceptoGasto = response.items[0].conceptoGasto;
-            }
-            else {
-              datoEconomico.proyecto = { titulo: 'Sin clasificar' } as IProyecto;
-              datoEconomico.conceptoGasto = { nombre: 'Sin clasificar' } as IConceptoGasto;
-            }
-            return datoEconomico;
-          }),
-        );
-      }),
-      concatMap((datoEconomico: IDesglose) => {
-        if (datoEconomico.proyecto.id && datoEconomico.conceptoGasto.id) {
-          return this.getAgrupacionGasto(datoEconomico.proyecto.id.toString(), datoEconomico.conceptoGasto.id.toString()).pipe(
-            map(agrupacion => {
-              datoEconomico.agrupacionGasto = agrupacion;
-              return datoEconomico;
-            })
-          );
-        }
-        datoEconomico.agrupacionGasto = { nombre: 'Sin clasificar' } as IProyectoAgrupacionGasto;
-        return of(datoEconomico);
-      }),
-      map(final => of(final))
-    ).pipe(
-      combineAll(),
+    return this.fillDatosEconomicos(datosEconomicos).pipe(
       map(values => {
         const root: RowTreeDesglose<IDesglose>[] = [];
         const mapTree = new Map<string, RowTreeDesglose<IDesglose>>();
         values.forEach(element => {
           const keyAnualidad = `${element.anualidad}-${element.proyecto?.id ?? 0}`;
-          const keyAgrupacion = `${keyAnualidad}-${element.agrupacionGasto?.id ?? 0}`;
-          const keyConcepto = `${keyAgrupacion}-${element.conceptoGasto?.id ?? 0}`;
+          const keyConcepto = `${keyAnualidad}-${element.conceptoGasto?.id ?? 0}`;
+          const keyClasificacionSGE = `${keyConcepto}-${element.clasificacionSGE?.id ?? 0}`;
           let anualidad = mapTree.get(keyAnualidad);
           if (!anualidad) {
             anualidad = new RowTreeDesglose(
               {
                 anualidad: element.anualidad,
                 proyecto: element.proyecto,
-                agrupacionGasto: {},
                 conceptoGasto: {},
                 partidaPresupuestaria: '',
                 codigoEconomico: {},
@@ -146,29 +95,12 @@ export abstract class FacturasJustificantesFragment extends DesgloseEconomicoFra
             mapTree.set(keyAnualidad, anualidad);
             root.push(anualidad);
           }
-          let agrupacion = mapTree.get(keyAgrupacion);
-          if (!agrupacion) {
-            agrupacion = new RowTreeDesglose(
-              {
-                anualidad: '',
-                proyecto: {},
-                agrupacionGasto: element.agrupacionGasto,
-                conceptoGasto: {},
-                partidaPresupuestaria: '',
-                codigoEconomico: {},
-                columnas: this.processColumnsValues(element.columnas, this.columns, true)
-              } as IDesglose
-            );
-            mapTree.set(keyAgrupacion, agrupacion);
-            anualidad.addChild(agrupacion);
-          }
           let conceptoGasto = mapTree.get(keyConcepto);
           if (!conceptoGasto) {
             conceptoGasto = new RowTreeDesglose(
               {
                 anualidad: '',
                 proyecto: {},
-                agrupacionGasto: {},
                 conceptoGasto: element.conceptoGasto,
                 partidaPresupuestaria: '',
                 codigoEconomico: {},
@@ -176,17 +108,33 @@ export abstract class FacturasJustificantesFragment extends DesgloseEconomicoFra
               } as IDesglose
             );
             mapTree.set(keyConcepto, conceptoGasto);
-            agrupacion.addChild(conceptoGasto);
+            anualidad.addChild(conceptoGasto);
           }
-          conceptoGasto.addChild(new RowTreeDesglose(
+          let clasificacionSGE = mapTree.get(keyClasificacionSGE);
+          if (!clasificacionSGE) {
+            clasificacionSGE = new RowTreeDesglose(
+              {
+                anualidad: '',
+                proyecto: {},
+                conceptoGasto: {},
+                clasificacionSGE: element.clasificacionSGE,
+                partidaPresupuestaria: '',
+                codigoEconomico: {},
+                columnas: this.processColumnsValues(element.columnas, this.columns, true)
+              } as IDesglose
+            );
+            mapTree.set(keyClasificacionSGE, clasificacionSGE);
+            conceptoGasto.addChild(clasificacionSGE);
+          }
+          clasificacionSGE.addChild(new RowTreeDesglose(
             {
               id: element.id,
               anualidad: '',
               proyecto: {},
-              agrupacionGasto: {},
               conceptoGasto: {},
               partidaPresupuestaria: element.partidaPresupuestaria,
               codigoEconomico: element.codigoEconomico,
+              fechaDevengo: element.fechaDevengo,
               columnas: this.processColumnsValues(element.columnas, this.columns, false)
             } as IDesglose
           ));
@@ -194,7 +142,78 @@ export abstract class FacturasJustificantesFragment extends DesgloseEconomicoFra
         return root;
       })
     );
+  }
 
+  protected fillDatosEconomicos(datosEconomicos: IDatoEconomico[]): Observable<IDesglose[]> {
+    return from(datosEconomicos).pipe(
+      concatMap((datoEconomico: IDesglose) => {
+        if (this.configuracion?.validacionGastos) {
+          const options: SgiRestFindOptions = {
+            filter: new RSQLSgiRestFilter('gastoRef', SgiRestFilterOperator.EQUALS, datoEconomico.id)
+          };
+          return this.gastoProyectoService.findAll(options).pipe(
+            map(response => {
+              if (response.items.length) {
+                datoEconomico.proyecto = this.proyectosMap.get(response.items[0].proyectoId.toString());
+                datoEconomico.conceptoGasto = response.items[0].conceptoGasto;
+              }
+              else {
+                datoEconomico.proyecto = { titulo: 'Sin clasificar' } as IProyecto;
+                datoEconomico.conceptoGasto = { nombre: 'Sin clasificar' } as IConceptoGasto;
+              }
+              return datoEconomico;
+            }),
+          );
+        } else {
+          const options: SgiRestFindOptions = {
+            filter: new RSQLSgiRestFilter('codigoEconomicoRef', SgiRestFilterOperator.EQUALS, datoEconomico.codigoEconomico.id)
+              .and(
+                new RSQLSgiRestFilter(
+                  new RSQLSgiRestFilter(
+                    'fechaInicio', SgiRestFilterOperator.LOWER_OR_EQUAL, LuxonUtils.toBackend(datoEconomico.fechaDevengo)
+                  ).and('fechaFin', SgiRestFilterOperator.GREATHER_OR_EQUAL, LuxonUtils.toBackend(datoEconomico.fechaDevengo))
+                ).or(
+                  new RSQLSgiRestFilter(
+                    'fechaInicio', SgiRestFilterOperator.LOWER_OR_EQUAL, LuxonUtils.toBackend(datoEconomico.fechaDevengo)
+                  )
+                    .and('fechaFin', SgiRestFilterOperator.IS_NULL, '')
+                ).or(
+                  new RSQLSgiRestFilter('fechaInicio', SgiRestFilterOperator.IS_NULL, '')
+                    .and('fechaFin', SgiRestFilterOperator.IS_NULL, '')
+                )
+              )
+              .and('proyectoConceptoGasto.proyectoId', SgiRestFilterOperator.IN, this.proyectosRelacionados.map(({ id }) => id.toString()))
+          };
+          return this.proyectoConceptoGastoCodigoEcService.findAll(options).pipe(
+            mergeMap(({ items }) => {
+              if (items.length === 1) {
+                const proyectoConceptoGasto = this.proyectoConceptoGastosMap.get(items[0].proyectoConceptoGasto.id.toString());
+                if (!proyectoConceptoGasto) {
+                  return this.proyectoConceptoGastoService.findById(items[0].proyectoConceptoGasto.id).pipe(
+                    map(proyectoConceptoGastoFetched => {
+                      this.proyectoConceptoGastosMap.set(proyectoConceptoGastoFetched.id.toString(), proyectoConceptoGastoFetched);
+                      datoEconomico.proyecto = this.proyectosMap.get(proyectoConceptoGastoFetched.proyectoId.toString());
+                      datoEconomico.conceptoGasto = proyectoConceptoGastoFetched.conceptoGasto;
+                      return datoEconomico;
+                    })
+                  );
+                }
+                datoEconomico.proyecto = this.proyectosMap.get(proyectoConceptoGasto.proyectoId.toString());
+                datoEconomico.conceptoGasto = proyectoConceptoGasto.conceptoGasto;
+                return of(datoEconomico);
+              } else {
+                datoEconomico.proyecto = { titulo: 'Sin clasificar' } as IProyecto;
+                datoEconomico.conceptoGasto = { nombre: 'Sin clasificar' } as IConceptoGasto;
+                return of(datoEconomico);
+              }
+            })
+          );
+        }
+      }),
+      map(final => of(final))
+    ).pipe(
+      combineAll()
+    );
   }
 
   public loadDataExport(): Observable<IDesgloseEconomicoExportData> {
@@ -218,9 +237,9 @@ export abstract class FacturasJustificantesFragment extends DesgloseEconomicoFra
     };
     return of(exportData).pipe(
       switchMap((exportDataResult) => {
-        return this.getDatosEconomicos(anualidades, devengoRange, contabilizacionRange, pagoRange, false).pipe(
+        return this.getDatosEconomicosToDesglose(anualidades, devengoRange, contabilizacionRange, pagoRange, false).pipe(
           map(data => {
-            this.sortRowsDesglose(data as IDesglose[]);
+            this.sortRowsDesglose(data);
             exportDataResult.data = data;
             return exportDataResult;
           })
@@ -235,6 +254,17 @@ export abstract class FacturasJustificantesFragment extends DesgloseEconomicoFra
         );
       })
     );
+  }
+
+  public getDatosEconomicosToDesglose(
+    anualidades: string[],
+    devengosRange?: any,
+    contabilizacionRange?: any,
+    pagosRange?: any,
+    reducida?: boolean
+  ): Observable<IDesglose[]> {
+    return this.getDatosEconomicos(anualidades, devengosRange, contabilizacionRange, pagosRange, false).pipe(
+      switchMap(response => this.fillDatosEconomicos(response)));
   }
 
   public loadDesglose(): void {
@@ -305,22 +335,6 @@ export abstract class FacturasJustificantesFragment extends DesgloseEconomicoFra
     return tituloProyectoItemA.localeCompare(tituloProyectoItemB);
   }
 
-  protected compareAgrupacionGastoNombreRowTree(itemA: RowTreeDesglose<IDesglose>, itemB: RowTreeDesglose<IDesglose>): number {
-    if (!itemA || !itemB || itemA.level < 1 || itemB.level < 1) {
-      return 0;
-    }
-
-    const nombreAgrupacionGastoItemA = this.getItemLevel(itemA, 1)?.item?.agrupacionGasto?.nombre ?? '';
-    const nombreAgrupacionGastoItemB = this.getItemLevel(itemB, 1)?.item?.agrupacionGasto?.nombre ?? '';
-    return nombreAgrupacionGastoItemA.localeCompare(nombreAgrupacionGastoItemB);
-  }
-
-  protected compareAgrupacionGastoNombreDesglose(itemA: IDesglose, itemB: IDesglose): number {
-    const nombreAgrupacionGastoItemA = itemA?.agrupacionGasto?.nombre ?? '';
-    const nombreAgrupacionGastoItemB = itemB?.agrupacionGasto?.nombre ?? '';
-    return nombreAgrupacionGastoItemA.localeCompare(nombreAgrupacionGastoItemB);
-  }
-
   protected compareConceptoGastoNombreRowTree(itemA: RowTreeDesglose<IDesglose>, itemB: RowTreeDesglose<IDesglose>): number {
     if (!itemA || !itemB || itemA.level < 2 || itemB.level < 2) {
       return 0;
@@ -335,6 +349,22 @@ export abstract class FacturasJustificantesFragment extends DesgloseEconomicoFra
     const nombreConceptoGastoItemA = itemA?.conceptoGasto?.nombre ?? '';
     const nombreConceptoGastoItemB = itemB?.conceptoGasto?.nombre ?? '';
     return nombreConceptoGastoItemA.localeCompare(nombreConceptoGastoItemB);
+  }
+
+  protected compareClasificacionSGENombreRowTree(itemA: RowTreeDesglose<IDesglose>, itemB: RowTreeDesglose<IDesglose>): number {
+    if (!itemA || !itemB || itemA.level < 1 || itemB.level < 1) {
+      return 0;
+    }
+
+    const nombreClasificacionSGEItemA = this.getItemLevel(itemA, 1)?.item?.clasificacionSGE?.nombre ?? '';
+    const nombreClasificacionSGEItemB = this.getItemLevel(itemB, 1)?.item?.clasificacionSGE?.nombre ?? '';
+    return nombreClasificacionSGEItemA.localeCompare(nombreClasificacionSGEItemB);
+  }
+
+  protected compareClasificacionSGENombreDesglose(itemA: IDesglose, itemB: IDesglose): number {
+    const nombreClasificacionSGEItemA = itemA?.clasificacionSGE?.nombre ?? '';
+    const nombreClasificacionSGEItemB = itemB?.clasificacionSGE?.nombre ?? '';
+    return nombreClasificacionSGEItemA.localeCompare(nombreClasificacionSGEItemB);
   }
 
   protected comparePartidaPresupuestariaRowTree(itemA: RowTreeDesglose<IDesglose>, itemB: RowTreeDesglose<IDesglose>): number {

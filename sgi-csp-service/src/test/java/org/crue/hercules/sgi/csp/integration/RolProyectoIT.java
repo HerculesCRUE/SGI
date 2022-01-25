@@ -26,13 +26,16 @@ public class RolProyectoIT extends BaseIT {
 
   private static final String PATH_PARAMETER_ID = "/{id}";
   private static final String CONTROLLER_BASE_PATH = "/rolproyectos";
+  private static final String PATH_PRINCIPAL = "/principal";
+  private static final String PATH_COLECTIVOS = "/colectivos";
 
   private HttpEntity<RolProyecto> buildRequest(HttpHeaders headers, RolProyecto entity) throws Exception {
     headers = (headers != null ? headers : new HttpHeaders());
     headers.setContentType(MediaType.APPLICATION_JSON);
     headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
     headers.set("Authorization",
-        String.format("bearer %s", tokenBuilder.buildToken("user", "AUTH", "CSP-SOL-E", "CSP-SOL-V")));
+        String.format("bearer %s",
+            tokenBuilder.buildToken("user", "AUTH", "CSP-SOL-E", "CSP-SOL-V", "CSP_PRO_C", "CSP-SOL-INV-ER")));
 
     HttpEntity<RolProyecto> request = new HttpEntity<>(entity, headers);
     return request;
@@ -97,4 +100,55 @@ public class RolProyectoIT extends BaseIT {
     Assertions.assertThat(responseData.get(2).getDescripcion()).as("get(2).getDescripcion())")
         .isEqualTo("descripcion-" + String.format("%03d", 1));
   }
+
+  @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = {
+    // @formatter:off
+    "classpath:scripts/rol_proyecto.sql"
+    // @formatter:on
+  })
+  @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
+  @Test
+  void findPrincipal_ReturnRolProyecto() throws Exception {
+    URI uri = UriComponentsBuilder.fromUriString(CONTROLLER_BASE_PATH + PATH_PRINCIPAL).build().toUri();
+
+    final ResponseEntity<RolProyecto> response = restTemplate.exchange(uri, HttpMethod.GET, buildRequest(null, null),
+        RolProyecto.class);
+
+    Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+    RolProyecto rol = response.getBody();
+    Assertions.assertThat(rol).isNotNull();
+    Assertions.assertThat(rol.getRolPrincipal()).isTrue();
+    Assertions.assertThat(rol.getActivo()).isTrue();
+    Assertions.assertThat(rol.getId()).isEqualTo(1L);
+
+  }
+
+  @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = {
+    // @formatter:off
+    "classpath:scripts/rol_proyecto.sql",
+    "classpath:scripts/rol_proyecto_colectivo.sql"
+    // @formatter:on
+  })
+  @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
+  @Test
+  void findAllColectivos_ReturnsStringList() throws Exception {
+    Long rolId = 1L;
+
+    URI uri = UriComponentsBuilder.fromUriString(CONTROLLER_BASE_PATH + PATH_PARAMETER_ID + PATH_COLECTIVOS)
+        .buildAndExpand(rolId)
+        .toUri();
+
+    final ResponseEntity<List<String>> response = restTemplate.exchange(uri, HttpMethod.GET, buildRequest(null, null),
+        new ParameterizedTypeReference<List<String>>() {
+        });
+
+    Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+
+    List<String> colectivos = response.getBody();
+
+    Assertions.assertThat(colectivos.isEmpty()).isFalse();
+    Assertions.assertThat(colectivos.size()).isEqualTo(2);
+
+  }
+
 }

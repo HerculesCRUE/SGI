@@ -58,7 +58,6 @@ public class ChecklistInput implements Serializable {
   @JsonProperty(value = "respuesta")
   public void setRespuestaRaw(JsonNode jsonNode) throws IOException {
     // this leads to non-standard json:
-    // setJson(jsonNode.toString());
 
     if (jsonNode.isNull()) {
       setRespuesta(null);

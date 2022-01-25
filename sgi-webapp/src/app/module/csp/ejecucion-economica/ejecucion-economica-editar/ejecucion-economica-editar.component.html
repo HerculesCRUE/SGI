@@ -58,11 +58,13 @@
         [fragment]="actionService.getFragment(actionService.FRAGMENT.PERSONAL_CONTRATADO)">
       </sgi-action-fragment-menu-item>
     </sgi-action-fragment-menu-group>
-    <sgi-action-fragment-menu-item *sgiHasAnyAuthorityForAnyUO="['CSP-EJEC-V', 'CSP-EJEC-E']"
-      [route]="[EJECUCION_ECONOMICA_ROUTE_NAMES.VALIDACION_GASTOS]"
-      [title]="'menu.csp.ejecucion-economica.validacion-gastos' | translate"
-      [fragment]="actionService.getFragment(actionService.FRAGMENT.VALIDACION_GASTOS)">
-    </sgi-action-fragment-menu-item>
+    <ng-container *ngIf="validacionGastos">
+      <sgi-action-fragment-menu-item *sgiHasAnyAuthorityForAnyUO="['CSP-EJEC-V', 'CSP-EJEC-E']"
+        [route]="[EJECUCION_ECONOMICA_ROUTE_NAMES.VALIDACION_GASTOS]"
+        [title]="'menu.csp.ejecucion-economica.validacion-gastos' | translate"
+        [fragment]="actionService.getFragment(actionService.FRAGMENT.VALIDACION_GASTOS)">
+      </sgi-action-fragment-menu-item>
+    </ng-container>
     <sgi-action-fragment-menu-item *sgiHasAnyAuthorityForAnyUO="['CSP-EJEC-V', 'CSP-EJEC-E']"
       [route]="[EJECUCION_ECONOMICA_ROUTE_NAMES.FACTURAS_EMITIDAS]"
       [title]="'menu.csp.ejecucion-economica.facturas-emitidas' | translate"

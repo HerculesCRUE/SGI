@@ -39,6 +39,9 @@ export class EvaluacionActionService extends EvaluacionFormularioActionService {
 
     this.comentarios.initialize();
     this.evaluaciones.setComentarios(this.comentarios.comentarios$);
+    this.comentarios.comentarios$.subscribe(_ => {
+      this.comentarios.setDictamen(this.evaluacion?.dictamen);
+    });
   }
 
   getRol(): Rol {

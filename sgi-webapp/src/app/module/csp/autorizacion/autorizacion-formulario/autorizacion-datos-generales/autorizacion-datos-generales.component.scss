@@ -1,0 +1,15 @@
+:host{
+ .info-message {
+    text-align: left;
+    display: flex;
+    align-items:center;
+
+    .info-icon{
+        margin-right: 1rem;
+    }
+  }
+
+  .inline{
+    display: inline-block;
+  }
+}

@@ -2,8 +2,11 @@ package org.crue.hercules.sgi.csp.service.impl;
 
 import org.crue.hercules.sgi.csp.exceptions.ModeloEjecucionNotFoundException;
 import org.crue.hercules.sgi.csp.model.ModeloEjecucion;
+import org.crue.hercules.sgi.csp.model.Proyecto;
 import org.crue.hercules.sgi.csp.repository.ModeloEjecucionRepository;
+import org.crue.hercules.sgi.csp.repository.ProyectoRepository;
 import org.crue.hercules.sgi.csp.repository.specification.ModeloEjecucionSpecifications;
+import org.crue.hercules.sgi.csp.repository.specification.ProyectoSpecifications;
 import org.crue.hercules.sgi.csp.service.ModeloEjecucionService;
 import org.crue.hercules.sgi.framework.rsql.SgiRSQLJPASupport;
 import org.springframework.data.domain.Page;
@@ -23,10 +26,14 @@ import lombok.extern.slf4j.Slf4j;
 @Transactional(readOnly = true)
 public class ModeloEjecucionServiceImpl implements ModeloEjecucionService {
 
+  private static final String MESSAGE_YA_EXISTE_UN_MODELO_EJECUCION_ACTIVO_CON_EL_NOMBRE_PREFFIX = "Ya existe un ModeloEjecucion activo con el nombre '";
   private final ModeloEjecucionRepository modeloEjecucionRepository;
+  private final ProyectoRepository proyectoRepository;
 
-  public ModeloEjecucionServiceImpl(ModeloEjecucionRepository modeloEjecucionRepository) {
+  public ModeloEjecucionServiceImpl(ModeloEjecucionRepository modeloEjecucionRepository,
+      ProyectoRepository proyectoRepository) {
     this.modeloEjecucionRepository = modeloEjecucionRepository;
+    this.proyectoRepository = proyectoRepository;
   }
 
   /**
@@ -42,7 +49,7 @@ public class ModeloEjecucionServiceImpl implements ModeloEjecucionService {
 
     Assert.isNull(modeloEjecucion.getId(), "ModeloEjecucion id tiene que ser null para crear un nuevo ModeloEjecucion");
     Assert.isTrue(!(modeloEjecucionRepository.findByNombreAndActivoIsTrue(modeloEjecucion.getNombre()).isPresent()),
-        "Ya existe un ModeloEjecucion activo con el nombre '" + modeloEjecucion.getNombre() + "'");
+        MESSAGE_YA_EXISTE_UN_MODELO_EJECUCION_ACTIVO_CON_EL_NOMBRE_PREFFIX + modeloEjecucion.getNombre() + "'");
 
     modeloEjecucion.setActivo(true);
 
@@ -67,10 +74,11 @@ public class ModeloEjecucionServiceImpl implements ModeloEjecucionService {
     Assert.notNull(modeloEjecucionActualizar.getId(),
         "ModeloEjecucion id no puede ser null para actualizar un ModeloEjecucion");
     modeloEjecucionRepository.findByNombreAndActivoIsTrue(modeloEjecucionActualizar.getNombre())
-        .ifPresent((modeloEjecucionExistente) -> {
-          Assert.isTrue(modeloEjecucionActualizar.getId() == modeloEjecucionExistente.getId(),
-              "Ya existe un ModeloEjecucion activo con el nombre '" + modeloEjecucionExistente.getNombre() + "'");
-        });
+        .ifPresent(modeloEjecucionExistente -> Assert
+            .isTrue(modeloEjecucionActualizar.getId().equals(modeloEjecucionExistente.getId()),
+                MESSAGE_YA_EXISTE_UN_MODELO_EJECUCION_ACTIVO_CON_EL_NOMBRE_PREFFIX
+                    + modeloEjecucionExistente.getNombre()
+                    + "'"));
 
     return modeloEjecucionRepository.findById(modeloEjecucionActualizar.getId()).map(modeloEjecucion -> {
       modeloEjecucion.setNombre(modeloEjecucionActualizar.getNombre());
@@ -101,7 +109,7 @@ public class ModeloEjecucionServiceImpl implements ModeloEjecucionService {
       }
 
       Assert.isTrue(!(modeloEjecucionRepository.findByNombreAndActivoIsTrue(modeloEjecucion.getNombre()).isPresent()),
-          "Ya existe un ModeloEjecucion activo con el nombre '" + modeloEjecucion.getNombre() + "'");
+          MESSAGE_YA_EXISTE_UN_MODELO_EJECUCION_ACTIVO_CON_EL_NOMBRE_PREFFIX + modeloEjecucion.getNombre() + "'");
 
       modeloEjecucion.setActivo(true);
       ModeloEjecucion returnValue = modeloEjecucionRepository.save(modeloEjecucion);
@@ -188,4 +196,21 @@ public class ModeloEjecucionServiceImpl implements ModeloEjecucionService {
     return returnValue;
   }
 
+  /**
+   * Obtiene un Booleano indicando si el modelo de ejecucion esta asociado a algun
+   * proyecto
+   *
+   * @param id el id de la entidad {@link ModeloEjecucion}.
+   * @return true si existe algun proyecto asociado y false si no tiene ninguno.
+   */
+  @Override
+  public Boolean hasProyectosAsociados(Long id) {
+    log.debug("hasProyectosAsociados(id)- start");
+
+    Specification<Proyecto> specs = ProyectoSpecifications.byModeloEjecucionId(id);
+
+    Boolean returnValue = proyectoRepository.count(specs) > 0 ? true : false;
+    log.debug("hasProyectosAsociados(id) - end");
+    return returnValue;
+  }
 }

@@ -32,6 +32,7 @@ public class ProyectoSocioIT extends BaseIT {
 
   private static final String PATH_PARAMETER_ID = "/{id}";
   private static final String CONTROLLER_BASE_PATH = "/proyectosocios";
+  private static final String PATH_VINCULACIONES = "/vinculaciones";
 
   private HttpEntity<ProyectoSocio> buildRequest(HttpHeaders headers, ProyectoSocio entity) throws Exception {
     headers = (headers != null ? headers : new HttpHeaders());
@@ -141,7 +142,7 @@ public class ProyectoSocioIT extends BaseIT {
       "classpath:scripts/proyecto_socio.sql" })
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void existsById_Returns200() throws Exception {
+  void existsById_Returns200() throws Exception {
     // given: existing id
     Long id = 1L;
     // when: exists by id
@@ -149,6 +150,23 @@ public class ProyectoSocioIT extends BaseIT {
         HttpMethod.HEAD, buildRequest(null, null), ProyectoSocio.class, id);
     // then: 200 OK
     Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+  }
+  
+  @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = { "classpath:scripts/modelo_ejecucion.sql",
+      "classpath:scripts/modelo_unidad.sql", "classpath:scripts/tipo_finalidad.sql",
+      "classpath:scripts/tipo_ambito_geografico.sql", "classpath:scripts/proyecto.sql",
+      "classpath:scripts/estado_proyecto.sql", "classpath:scripts/rol_socio.sql", "classpath:scripts/rol_proyecto.sql",
+      "classpath:scripts/proyecto_socio.sql" })
+  @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
+  @Test
+  void existsById_ReturnsStatusCode204() throws Exception {
+    // given: existing id
+    Long id = 11L;
+    // when: exists by id
+    final ResponseEntity<ProyectoSocio> response = restTemplate.exchange(CONTROLLER_BASE_PATH + PATH_PARAMETER_ID,
+        HttpMethod.HEAD, buildRequest(null, null), ProyectoSocio.class, id);
+    // then: 204 NO CONTENT
+    Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
   }
 
   @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = { "classpath:scripts/modelo_ejecucion.sql",
@@ -213,6 +231,29 @@ public class ProyectoSocioIT extends BaseIT {
     Assertions.assertThat(responseHeaders.getFirst("X-Page")).as("X-Page").isEqualTo("0");
     Assertions.assertThat(responseHeaders.getFirst("X-Page-Size")).as("X-Page-Size").isEqualTo("10");
   }
+  
+  @Test
+  void findAllProyectoSocioPeriodoPago_WithPagingSortingAndFiltering_ReturnsStatusCode204()
+      throws Exception {
+    HttpHeaders headers = new HttpHeaders();
+    headers.set("Authorization", String.format("bearer %s", tokenBuilder.buildToken("user", "CSP-SOL-E")));
+    headers.add("X-Page", "0");
+    headers.add("X-Page-Size", "10");
+    String sort = "id,desc";
+    String filter = "proyectoSocio.id==1";
+
+    Long solicitudId = 1L;
+
+    URI uri = UriComponentsBuilder
+        .fromUriString(CONTROLLER_BASE_PATH + PATH_PARAMETER_ID + "/proyectosocioperiodopagos").queryParam("s", sort)
+        .queryParam("q", filter).buildAndExpand(solicitudId).toUri();
+
+    final ResponseEntity<List<ProyectoSocioPeriodoPago>> response = restTemplate.exchange(uri, HttpMethod.GET,
+        buildRequest(headers, null), new ParameterizedTypeReference<List<ProyectoSocioPeriodoPago>>() {
+        });
+
+    Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
+  }
 
   /*
    *
@@ -259,6 +300,28 @@ public class ProyectoSocioIT extends BaseIT {
         .isEqualTo("personaRef-" + String.format("%03d", 2));
     Assertions.assertThat(proyectoSocioEquipos.get(2).getPersonaRef()).as("get(2).getPersonaRef()")
         .isEqualTo("personaRef-" + String.format("%03d", 1));
+  }
+  
+  @Test
+  public void findAllProyectoSocioEquipo_WithPagingSortingAndFiltering_ReturnsStatusCode204()
+      throws Exception {
+    HttpHeaders headers = new HttpHeaders();
+    headers.set("Authorization", String.format("bearer %s", tokenBuilder.buildToken("user", "CSP-CPSCI-V")));
+    headers.add("X-Page", "0");
+    headers.add("X-Page-Size", "10");
+    String sort = "id,desc";
+    String filter = "personaRef=ke=person";
+
+    Long convocatoriaId = 1L;
+
+    URI uri = UriComponentsBuilder.fromUriString(CONTROLLER_BASE_PATH + PATH_PARAMETER_ID + "/proyectosocioequipos")
+        .queryParam("s", sort).queryParam("q", filter).buildAndExpand(convocatoriaId).toUri();
+
+    final ResponseEntity<List<ProyectoSocioEquipo>> response = restTemplate.exchange(uri, HttpMethod.GET,
+        buildRequest(headers, null), new ParameterizedTypeReference<List<ProyectoSocioEquipo>>() {
+        });
+
+    Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
   }
 
   /*
@@ -307,6 +370,63 @@ public class ProyectoSocioIT extends BaseIT {
         .isEqualTo("observaciones " + 2);
     Assertions.assertThat(convocatoriaPeriodoJustificaciones.get(2).getObservaciones()).as("get(2).getObservaciones()")
         .isEqualTo("observaciones " + 1);
+  }
+
+  @Test
+  public void findAllProyectoSocioPeriodoJustificacion_WithPagingSortingAndFiltering_ReturnsStatusCode204()
+      throws Exception {
+    HttpHeaders headers = new HttpHeaders();
+    headers.set("Authorization", String.format("bearer %s", tokenBuilder.buildToken("user", "CSP-CENL-V")));
+    headers.add("X-Page", "0");
+    headers.add("X-Page-Size", "10");
+    String sort = "id,desc";
+    String filter = "observaciones=ke=observ";
+
+    Long convocatoriaId = 1L;
+
+    URI uri = UriComponentsBuilder
+        .fromUriString(CONTROLLER_BASE_PATH + PATH_PARAMETER_ID + "/proyectosocioperiodojustificaciones")
+        .queryParam("s", sort).queryParam("q", filter).buildAndExpand(convocatoriaId).toUri();
+
+    final ResponseEntity<List<ProyectoSocioPeriodoJustificacion>> response = restTemplate.exchange(uri, HttpMethod.GET,
+        buildRequest(headers, null), new ParameterizedTypeReference<List<ProyectoSocioPeriodoJustificacion>>() {
+        });
+
+    Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
+  }
+
+  @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = { "classpath:scripts/modelo_ejecucion.sql",
+      "classpath:scripts/modelo_unidad.sql", "classpath:scripts/tipo_finalidad.sql",
+      "classpath:scripts/tipo_ambito_geografico.sql", "classpath:scripts/proyecto.sql",
+      "classpath:scripts/estado_proyecto.sql", "classpath:scripts/rol_socio.sql", "classpath:scripts/rol_proyecto.sql",
+      "classpath:scripts/proyecto_socio.sql", "classpath:scripts/proyecto_socio_periodo_justificacion.sql" })
+  @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
+  @Test
+  void vinculaciones_ReturnsStatusCode200() throws Exception {
+    // given: existing id
+    Long id = 1L;
+    // when: vinculaciones exists
+    final ResponseEntity<Void> response = restTemplate.exchange(CONTROLLER_BASE_PATH + PATH_PARAMETER_ID + PATH_VINCULACIONES,
+        HttpMethod.HEAD, buildRequest(null, null), Void.class, id);
+    // then: 200 OK
+    Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+  }
+
+  @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = { "classpath:scripts/modelo_ejecucion.sql",
+      "classpath:scripts/modelo_unidad.sql", "classpath:scripts/tipo_finalidad.sql",
+      "classpath:scripts/tipo_ambito_geografico.sql", "classpath:scripts/proyecto.sql",
+      "classpath:scripts/estado_proyecto.sql", "classpath:scripts/rol_socio.sql", "classpath:scripts/rol_proyecto.sql",
+      "classpath:scripts/proyecto_socio.sql", "classpath:scripts/proyecto_socio_periodo_justificacion.sql" })
+  @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
+  @Test
+  void vinculaciones_ReturnsStatusCode204() throws Exception {
+    // given: existing id
+    Long id = 11L;
+    // when: vinculaciones exists
+    final ResponseEntity<Void> response = restTemplate.exchange(CONTROLLER_BASE_PATH + PATH_PARAMETER_ID + PATH_VINCULACIONES,
+        HttpMethod.HEAD, buildRequest(null, null), Void.class, id);
+    // then: 200 OK
+    Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
   }
 
   /**

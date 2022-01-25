@@ -9,7 +9,6 @@ import org.crue.hercules.sgi.csp.dto.AgrupacionGastoConceptoInput;
 import org.crue.hercules.sgi.csp.dto.AgrupacionGastoConceptoOutput;
 import org.crue.hercules.sgi.csp.model.AgrupacionGastoConcepto;
 import org.crue.hercules.sgi.csp.service.AgrupacionGastoConceptoService;
-import org.crue.hercules.sgi.csp.service.ProyectoConceptoGastoService;
 import org.crue.hercules.sgi.framework.web.bind.annotation.RequestPageable;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
@@ -45,8 +44,7 @@ public class AgrupacionGastoConceptoController {
 
   ModelMapper modelMapper;
 
-  public AgrupacionGastoConceptoController(ModelMapper modelMapper, AgrupacionGastoConceptoService service,
-      ProyectoConceptoGastoService proyectoConceptoGastoService) {
+  public AgrupacionGastoConceptoController(ModelMapper modelMapper, AgrupacionGastoConceptoService service) {
     this.modelMapper = modelMapper;
     this.service = service;
   }
@@ -95,7 +93,7 @@ public class AgrupacionGastoConceptoController {
    */
   @RequestMapping(path = "/{id}", method = RequestMethod.HEAD)
   @PreAuthorize("hasAuthorityForAnyUO('CSP-PRO-E')")
-  public ResponseEntity<?> exists(@PathVariable Long id) {
+  public ResponseEntity<Void> exists(@PathVariable Long id) {
     log.debug("exists(Long id) - start");
     if (service.existsById(id)) {
       log.debug("exists(Long id) - end");
@@ -113,7 +111,7 @@ public class AgrupacionGastoConceptoController {
    */
   @GetMapping("/{id}")
   @PreAuthorize("hasAuthorityForAnyUO('CSP-PRO-E')")
-  AgrupacionGastoConceptoOutput findById(@PathVariable Long id) {
+  public AgrupacionGastoConceptoOutput findById(@PathVariable Long id) {
     log.debug("findById(Long id) - start");
     AgrupacionGastoConceptoOutput returnValue = convert(service.findById(id));
     log.debug("findById(Long id) - end");
@@ -128,7 +126,7 @@ public class AgrupacionGastoConceptoController {
   @DeleteMapping("/{id}")
   @PreAuthorize("hasAuthorityForAnyUO('CSP-PRO-E')")
   @ResponseStatus(value = HttpStatus.NO_CONTENT)
-  void deleteById(@PathVariable Long id) {
+  public void deleteById(@PathVariable Long id) {
     log.debug("deleteById(Long id) - start");
     service.delete(id);
     log.debug("deleteById(Long id) - end");
@@ -138,14 +136,14 @@ public class AgrupacionGastoConceptoController {
    * Devuelve todas las entidades {@link AgrupacionGastoConcepto} activos
    * paginadas
    *
-   * @param query    la información del filtro.
-   * @param pageable la información de la paginación.
+   * @param query  la información del filtro.
+   * @param paging la información de la paginación.
    * @return la lista de entidades {@link AgrupacionGastoConcepto} paginadas
    */
   @GetMapping()
   @PreAuthorize("hasAuthorityForAnyUO('CSP-PRO-E')")
-  ResponseEntity<Page<AgrupacionGastoConceptoOutput>> findAll(@RequestParam(name = "q", required = false) String query,
-      @RequestPageable(sort = "s") Pageable paging) {
+  public ResponseEntity<Page<AgrupacionGastoConceptoOutput>> findAll(
+      @RequestParam(name = "q", required = false) String query, @RequestPageable(sort = "s") Pageable paging) {
     log.debug("findAll(String query, Pageable paging) - start");
     Page<AgrupacionGastoConcepto> page = service.findAll(paging);
     if (page.isEmpty()) {
@@ -173,7 +171,7 @@ public class AgrupacionGastoConceptoController {
 
   private Page<AgrupacionGastoConceptoOutput> convert(Page<AgrupacionGastoConcepto> page) {
     List<AgrupacionGastoConceptoOutput> content = page.getContent().stream()
-        .map((agrupacionGastoConcepto) -> convert(agrupacionGastoConcepto)).collect(Collectors.toList());
+        .map(agrupacionGastoConcepto -> convert(agrupacionGastoConcepto)).collect(Collectors.toList());
 
     return new PageImpl<>(content, page.getPageable(), page.getTotalElements());
   }

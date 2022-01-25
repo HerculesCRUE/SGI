@@ -43,9 +43,6 @@
         <mat-error *ngIf="formGroup.controls.fechaInicio.errors?.required">
           {{'error.required.entity' | translate:msgParamFechaInicioEntity}}
         </mat-error>
-        <mat-error *ngIf="formGroup.controls.fechaInicio.errors?.minDate">
-          {{'error.pii.invencion-titularidad.periodo-titularidad.fecha-inicio.min' | translate}}
-        </mat-error>
         <mat-error *ngIf="formGroup.controls.fechaInicio.errors?.after">
           {{'error.pii.invencion-titularidad.periodo-titularidad.fecha-inicio.after' | translate}}
         </mat-error>

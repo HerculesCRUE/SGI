@@ -88,8 +88,8 @@ public class ModeloTipoDocumentoServiceImpl implements ModeloTipoDocumentoServic
                 () -> new ModeloTipoFaseNotFoundException(modeloTipoDocumento.getModeloTipoFase().getId())));
 
         Assert.isTrue(
-            modeloTipoDocumento.getModeloEjecucion().getId() == modeloTipoDocumento.getModeloTipoFase()
-                .getModeloEjecucion().getId(),
+            modeloTipoDocumento.getModeloEjecucion().getId().equals(modeloTipoDocumento.getModeloTipoFase()
+                .getModeloEjecucion().getId()),
             "El ModeloEjecucion '" + modeloTipoDocumento.getModeloEjecucion().getNombre()
                 + "' no coincide con el ModeloEjecucion del ModeloTipoFase asociado '"
                 + modeloTipoDocumento.getModeloTipoFase().getModeloEjecucion().getNombre() + "'");

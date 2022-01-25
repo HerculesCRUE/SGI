@@ -46,6 +46,7 @@ public class PeriodoTitularidadService {
    * Guardar un nuevo {@link PeriodoTitularidad}.
    *
    * @param periodoTitularidad la entidad {@link PeriodoTitularidad} a guardar.
+   * @param fechaFinPrevious   la fecha fin del anterior periodo.
    * @return la entidad {@link PeriodoTitularidad} persistida.
    */
   @Transactional

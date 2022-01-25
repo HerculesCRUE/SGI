@@ -17,6 +17,8 @@ export interface SelectValue<T> {
   displayText: string;
   /** Indicate if is a missing option */
   missing: boolean;
+  /** Indicate if the option is selectable */
+  disabled: boolean;
 }
 
 /** Base class that provide common functionality to SGI select */
@@ -273,6 +275,22 @@ export abstract class SelectCommonComponent<T>
   // tslint:disable-next-line: variable-name
   private _displayWith: (option: T) => string = (option) => `${option}`;
 
+  /**
+   * Function to resolve if the option should be disabled.
+   */
+  @Input()
+  get disableWith() {
+    return this._disableWith;
+  }
+  set disableWith(fn: (option: T) => boolean) {
+    this._disableWith = fn;
+    if (this.ready) {
+      this.refreshDisableValue();
+    }
+  }
+  // tslint:disable-next-line: variable-name
+  private _disableWith: (option: T) => boolean = () => false;
+
   /** `View -> model callback called when value changes` */
   // tslint:disable-next-line: variable-name
   private _onChange: (value: any) => void = () => { };
@@ -369,7 +387,8 @@ export abstract class SelectCommonComponent<T>
       return {
         item: option,
         displayText: this.displayWith(option),
-        missing: false
+        missing: false,
+        disabled: this.disableWith(option)
       };
     });
   }
@@ -377,6 +396,10 @@ export abstract class SelectCommonComponent<T>
   private refreshDisplayValue(): void {
     this.selectValues.forEach((value => value.displayText = this.displayWith(value.item)));
     this.selectValues.sort(this.sortWith);
+  }
+
+  private refreshDisableValue(): void {
+    this.selectValues.forEach((value => value.disabled = value.missing ? false : this.disableWith(value.item)));
   }
 
   /** Reset the selected value to null */
@@ -395,7 +418,8 @@ export abstract class SelectCommonComponent<T>
           const missingValue: SelectValue<T> = {
             item: value,
             displayText: this.displayWith(value),
-            missing: true
+            missing: true,
+            disabled: false
           };
           const insertIndex = this.getInsertIndex(this.selectValues, missingValue);
           this.selectValues.splice(insertIndex, 0, missingValue);

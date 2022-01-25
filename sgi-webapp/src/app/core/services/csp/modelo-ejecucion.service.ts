@@ -12,6 +12,7 @@ import { IModeloEjecucion } from '@core/models/csp/tipos-configuracion';
 import { environment } from '@env';
 import { SgiRestFindOptions, SgiRestListResult, SgiRestService } from '@sgi/framework/http/';
 import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -29,6 +30,13 @@ export class ModeloEjecucionService extends SgiRestService<number, IModeloEjecuc
 
   findModeloTipoEnlace(id: number, options?: SgiRestFindOptions): Observable<SgiRestListResult<IModeloTipoEnlace>> {
     return this.find<IModeloTipoEnlace, IModeloTipoEnlace>(`${this.endpointUrl}/${id}/modelotipoenlaces`, options);
+  }
+
+  hasProyectosAsociados(id: number): Observable<boolean> {
+    const url = `${this.endpointUrl}/${id}/proyectos`;
+    return this.http.head(url, { observe: 'response' }).pipe(
+      map(response => response.status === 200)
+    );
   }
 
   findModeloTipoFinalidad(id: number, options?: SgiRestFindOptions): Observable<SgiRestListResult<IModeloTipoFinalidad>> {

@@ -16,7 +16,7 @@ const routes: SgiRoutes = [
     data: {
       title: MSG_FORMULARIO_TITLE,
       titleParams: MSG_PARAMS.CARDINALIRY.PLURAL,
-      hasAuthorityForAnyUO: 'ETI-CHK-E'
+      hasAuthorityForAnyUO: 'ETI-CHK-INV-E'
     }
   }
 ];

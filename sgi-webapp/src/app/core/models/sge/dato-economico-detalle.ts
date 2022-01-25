@@ -11,4 +11,6 @@ export interface IDatoEconomicoDetalle {
     nombre: string;
     valor: string;
   }[];
+  clasificacionSGE: any;
+  fechaDevengo: string;
 }

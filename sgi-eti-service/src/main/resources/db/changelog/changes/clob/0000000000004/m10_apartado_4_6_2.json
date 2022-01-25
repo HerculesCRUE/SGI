@@ -1,0 +1,53 @@
+[
+  {
+    "key": "ap4_6_2",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "expressionLock": "formState.memoria.tipoMemoria.id === 3",
+      "label": "4.6.2 Beneficio formativo para el estudiante"
+    },
+    "hideExpression": "!formState.mainModel.ap4_6.estudiantesSujetosInvestigacionRadio || formState.mainModel.ap4_6.estudiantesSujetosInvestigacionRadio === 'no'",
+    "fieldGroup": [
+      {
+        "template": "<p>La participación como sujeto de investigación ¿reporta a algún beneficio formativo al estudiante?</p>"
+      },
+      {
+        "key": "beneficioFormativoEstudianteRadio",
+        "type": "radio",
+        "templateOptions": {
+          "required": true,
+          "label": "Elige opción:",
+          "options": [
+            {
+              "value": "no",
+              "label": "No"
+            },
+            {
+              "value": "si",
+              "label": "Sí"
+            }
+          ]
+        }
+      },
+      {
+        "template": "Especificar",
+        "hideExpression": "!model.beneficioFormativoEstudianteRadio || model.beneficioFormativoEstudianteRadio === 'no'"
+      },
+      {
+        "key": "especificarBeneficioFormativo",
+        "type": "textarea",
+        "hideExpression": "!model.beneficioFormativoEstudianteRadio || model.beneficioFormativoEstudianteRadio === 'no'",
+        "templateOptions": {
+          "label": "Especificar",
+          "placeholder": "Especificar",
+          "required": true,
+          "autosize": true,
+          "autosizeMinRows": "1",
+          "autosizeMaxRows": "10"
+        }
+      }
+    ]
+  }
+]

@@ -36,9 +36,12 @@ export class GestionSeguimientoActionService extends SeguimientoFormularioAction
     this.addFragment(this.FRAGMENT.COMENTARIOS, this.comentarios);
     this.addFragment(this.FRAGMENT.EVALUACIONES, this.evaluaciones);
     this.addFragment(this.FRAGMENT.DOCUMENTACION, this.documentacion);
+
+    this.comentarios.initialize();
     this.evaluaciones.setComentarios(this.comentarios.comentarios$);
-
-
+    this.comentarios.comentarios$.subscribe(_ => {
+      this.comentarios.setDictamen(this.evaluacion?.dictamen);
+    });
   }
 
   getEvaluacion(): IEvaluacion {

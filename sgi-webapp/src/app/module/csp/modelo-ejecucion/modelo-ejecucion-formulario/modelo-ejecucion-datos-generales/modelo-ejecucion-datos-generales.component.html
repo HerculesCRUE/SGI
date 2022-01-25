@@ -26,5 +26,38 @@
         </mat-form-field>
       </div>
     </div>
+
+    <div [fxLayout]="fxLayoutProperties.layout" [fxLayoutAlign]="fxLayoutProperties.layoutAlign">
+      <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
+        [fxFlexOrder]="fxFlexProperties.order">
+        {{'csp.modelo-ejecucion.caracteristicas' | translate}}
+      </div>
+    </div>
+
+    <!-- Externo -->
+    <div [fxLayout]="fxLayoutProperties.layout" [fxLayoutAlign]="fxLayoutProperties.layoutAlign">
+      <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
+        [fxFlexOrder]="fxFlexProperties.order">
+        <sgi-field-info matSuffix [visible]="formPart.hasProyectosAsociados"
+          message="{{'info.csp.modelo-ejecucion-proyecto.tooltip' | translate}}">
+        </sgi-field-info>
+        <mat-checkbox formControlName="externo">
+          {{'csp.modelo-ejecucion.externo' | translate}}
+        </mat-checkbox>
+      </div>
+    </div>
+
+    <!-- Contrato -->
+    <div [fxLayout]="fxLayoutProperties.layout" [fxLayoutAlign]="fxLayoutProperties.layoutAlign">
+      <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
+        [fxFlexOrder]="fxFlexProperties.order">
+        <sgi-field-info matSuffix [visible]="formPart.hasProyectosAsociados"
+          message="{{'info.csp.modelo-ejecucion-proyecto.tooltip' | translate}}">
+        </sgi-field-info>
+        <mat-checkbox formControlName="contrato">
+          {{'csp.modelo-ejecucion.contrato' | translate}}
+        </mat-checkbox>
+      </div>
+    </div>
   </form>
 </sgi-fragment>

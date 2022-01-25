@@ -166,7 +166,8 @@ export class SolicitudListadoComponent extends AbstractTablePaginationComponent<
       entidadConvocante: new FormControl(undefined),
       planInvestigacion: new FormControl(undefined),
       entidadFinanciadora: new FormControl(undefined),
-      fuenteFinanciacion: new FormControl(undefined)
+      fuenteFinanciacion: new FormControl(undefined),
+      palabrasClave: new FormControl(null),
     });
 
     this.getPlanesInvestigacion();
@@ -262,7 +263,7 @@ export class SolicitudListadoComponent extends AbstractTablePaginationComponent<
 
   protected createObservable(reset?: boolean): Observable<SgiRestListResult<ISolicitudListado>> {
 
-    const observable$ = this.solicitudService.findAllTodos(this.getFindOptions(reset)).pipe(
+    return this.solicitudService.findAllTodos(this.getFindOptions(reset)).pipe(
       map(response => {
         return response as SgiRestListResult<ISolicitudListado>;
       }),
@@ -292,7 +293,7 @@ export class SolicitudListadoComponent extends AbstractTablePaginationComponent<
 
         const solicitudes = response.items;
         const personaIdsSolicitantes = new Set<string>(solicitudes.map((solicitud) => solicitud.solicitante.id));
-        const solicitudesWithDatosSolicitante$ = this.personaService.findAllByIdIn([...personaIdsSolicitantes]).pipe(
+        return this.personaService.findAllByIdIn([...personaIdsSolicitantes]).pipe(
           map((result) => {
             const personas = result.items;
 
@@ -318,11 +319,8 @@ export class SolicitudListadoComponent extends AbstractTablePaginationComponent<
           catchError(() => of(response))
         );
 
-        return solicitudesWithDatosSolicitante$;
       })
     );
-
-    return observable$;
   }
 
   protected initColumns(): void {
@@ -385,9 +383,26 @@ export class SolicitudListadoComponent extends AbstractTablePaginationComponent<
         .and('convocatoria.entidadesFinanciadoras.entidadRef', SgiRestFilterOperator.EQUALS, controls.entidadFinanciadora.value?.id)
         .and('convocatoria.entidadesFinanciadoras.fuenteFinanciacion.id',
           SgiRestFilterOperator.EQUALS, controls.fuenteFinanciacion.value?.id?.toString());
+
+      const palabrasClave = controls.palabrasClave.value as string[];
+      if (Array.isArray(palabrasClave) && palabrasClave.length > 0) {
+        filter.and(this.createPalabrasClaveFilter(palabrasClave));
+      }
     }
 
     return filter;
+  }
+
+  private createPalabrasClaveFilter(palabrasClave: string[]): SgiRestFilter {
+    let palabrasClaveFilter: SgiRestFilter;
+    palabrasClave.forEach(palabraClave => {
+      if (palabrasClaveFilter) {
+        palabrasClaveFilter.or('palabrasClave.palabraClaveRef', SgiRestFilterOperator.LIKE_ICASE, palabraClave);
+      } else {
+        palabrasClaveFilter = new RSQLSgiRestFilter('palabrasClave.palabraClaveRef', SgiRestFilterOperator.LIKE_ICASE, palabraClave);
+      }
+    });
+    return palabrasClaveFilter;
   }
 
   /**

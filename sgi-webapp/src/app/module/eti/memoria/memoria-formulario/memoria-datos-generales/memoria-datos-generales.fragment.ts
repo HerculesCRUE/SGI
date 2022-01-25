@@ -95,7 +95,7 @@ export class MemoriaDatosGeneralesFragment extends FormFragment<IMemoria>  {
       comite: value.comite,
       tipoMemoria: value.tipoMemoria,
       titulo: value.titulo,
-      personaResponsable: value.responsable,
+      personaResponsable: value.responsable?.id ? value.responsable : null,
       codOrganoCompetente: value.codOrganoCompetente,
       memoriaOriginal: value.memoriaOriginal
     };

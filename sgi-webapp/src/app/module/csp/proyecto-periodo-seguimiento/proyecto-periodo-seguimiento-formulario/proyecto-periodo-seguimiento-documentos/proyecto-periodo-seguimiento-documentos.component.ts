@@ -6,18 +6,15 @@ import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { FragmentComponent } from '@core/component/fragment.component';
 import { MSG_PARAMS } from '@core/i18n';
 import { IProyectoPeriodoSeguimientoDocumento } from '@core/models/csp/proyecto-periodo-seguimiento-documento';
-import { ITipoDocumento, ITipoFase } from '@core/models/csp/tipos-configuracion';
 import { FxFlexProperties } from '@core/models/shared/flexLayout/fx-flex-properties';
 import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-properties';
 import { Group } from '@core/services/action-service';
-import { ModeloEjecucionService } from '@core/services/csp/modelo-ejecucion.service';
 import { DialogService } from '@core/services/dialog.service';
 import { DocumentoService, triggerDownloadToUser } from '@core/services/sgdoc/documento.service';
 import { SnackBarService } from '@core/services/snack-bar.service';
 import { StatusWrapper } from '@core/utils/status-wrapper';
 import { IsEntityValidator } from '@core/validators/is-entity-validador';
 import { TranslateService } from '@ngx-translate/core';
-import { RSQLSgiRestFilter, SgiRestFilterOperator, SgiRestFindOptions } from '@sgi/framework/http';
 import { SgiFileUploadComponent, UploadEvent } from '@shared/file-upload/file-upload.component';
 import { Subscription } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
@@ -74,8 +71,6 @@ export class ProyectoPeriodoSeguimientoDocumentosComponent extends FragmentCompo
 
   uploading = false;
 
-  tiposDocumento: ITipoDocumento[] = [];
-
   private getLevel = (node: NodeDocumento) => node.level;
   private isExpandable = (node: NodeDocumento) => node.childs.length > 0;
   private getChildren = (node: NodeDocumento): NodeDocumento[] => node.childs;
@@ -83,13 +78,9 @@ export class ProyectoPeriodoSeguimientoDocumentosComponent extends FragmentCompo
 
   hasChild = (_: number, node: NodeDocumento) => node.childs.length > 0;
 
-  compareFase = (option: ITipoFase, value: ITipoFase) => option?.id === value?.id;
-  compareTipoDocumento = (option: ITipoDocumento, value: ITipoDocumento) => option?.id === value?.id;
-
   constructor(
     private dialogService: DialogService,
     public actionService: ProyectoPeriodoSeguimientoActionService,
-    private modeloEjecucionService: ModeloEjecucionService,
     private documentoService: DocumentoService,
     private snackBar: SnackBarService,
     private readonly translate: TranslateService
@@ -127,17 +118,6 @@ export class ProyectoPeriodoSeguimientoDocumentosComponent extends FragmentCompo
       comentario: new FormControl('')
     }));
     this.group.initialize();
-    const id = this.actionService.proyectoModeloEjecucionId;
-    const options: SgiRestFindOptions = {
-      filter: new RSQLSgiRestFilter('tipoDocumento.activo', SgiRestFilterOperator.EQUALS, 'true')
-    };
-    this.subscriptions.push(
-      this.modeloEjecucionService.findModeloTipoDocumento(id, options).subscribe(
-        (tipos) => {
-          this.tiposDocumento = tipos.items.filter(tipo => tipo.modeloTipoFase === null).map(t => t.tipoDocumento);
-        }
-      )
-    );
 
     this.switchToNone();
   }

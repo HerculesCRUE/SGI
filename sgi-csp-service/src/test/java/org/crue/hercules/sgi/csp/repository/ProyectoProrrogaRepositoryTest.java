@@ -53,14 +53,14 @@ public class ProyectoProrrogaRepositoryTest extends BaseRepositoryTest {
     generarMockProyectoProrroga("-001", proyecto, Instant.parse("2020-01-01T00:00:00Z"));
     generarMockProyectoProrroga("-002", proyecto, Instant.parse("2020-02-01T23:59:59Z"));
 
-    Long idProyectoBusqueda = 2L;
+    Long idProyectoBusqueda = 2000L;
 
     // when: recupera el ProyectoProrroga para un proyecto con la fecha de concesión
     // más reciente
     Optional<ProyectoProrroga> result = repository.findFirstByProyectoIdOrderByFechaConcesionDesc(idProyectoBusqueda);
 
     // then: No encuentra ProyectoProrroga buscado
-    Assertions.assertThat(result.isPresent()).isFalse();
+    Assertions.assertThat(result).isNotPresent();
   }
 
   @Test
@@ -119,6 +119,8 @@ public class ProyectoProrrogaRepositoryTest extends BaseRepositoryTest {
     ModeloEjecucion modeloEjecucion = ModeloEjecucion.builder()
         .nombre("nombreModeloEjecucion" + suffix)
         .activo(Boolean.TRUE)
+        .contrato(Boolean.FALSE)
+        .externo(Boolean.FALSE)
         .build();
     entityManager.persistAndFlush(modeloEjecucion);
 

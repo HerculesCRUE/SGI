@@ -4,9 +4,9 @@ import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dial
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
+import { SearchModalData } from '@core/component/select-dialog/select-dialog.component';
 import { HttpProblem } from '@core/errors/http-problem';
 import { MSG_PARAMS } from '@core/i18n';
-import { IEmpresa } from '@core/models/sgemp/empresa';
 import { IPersona } from '@core/models/sgp/persona';
 import { EmpresaService } from '@core/services/sgemp/empresa.service';
 import { PersonaService } from '@core/services/sgp/persona.service';
@@ -23,7 +23,7 @@ import { IPersonaFormlyData, PersonaFormlyModalComponent } from '../../../formly
 const MSG_LISTADO_ERROR = marker('error.load');
 const TIPO_PERSONA_KEY = marker('sgp.persona');
 
-export interface SearchPersonaModalData {
+export interface SearchPersonaModalData extends SearchModalData {
   tipoColectivo: string;
   colectivos: string[];
 }
@@ -61,7 +61,7 @@ export class SearchPersonaModalComponent implements OnInit, AfterViewInit {
 
   ngOnInit(): void {
     this.formGroup = new FormGroup({
-      datosPersona: new FormControl()
+      datosPersona: new FormControl(this.data.searchTerm)
     });
     this.isInvestigador = this.authService.hasAuthority('CSP-SOL-INV-ER');
     this.setupI18N();
@@ -81,6 +81,10 @@ export class SearchPersonaModalComponent implements OnInit, AfterViewInit {
     ).pipe(
       tap(() => this.search())
     ).subscribe();
+
+    if (this.data.searchTerm) {
+      this.search();
+    }
   }
 
   closeModal(persona?: IPersona): void {

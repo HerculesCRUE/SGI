@@ -1249,7 +1249,7 @@ public class MemoriaControllerTest extends BaseControllerTest {
 
     return new MemoriaPeticionEvaluacion(id, numReferencia, titulo, generarMockComite(id, "comite" + id, true),
         generarMockTipoEstadoMemoria(1L, "En elaboración", Boolean.TRUE), false, null,
-        Instant.parse("2020-05-15T00:00:00Z"), Instant.now(), false, true);
+        Instant.parse("2020-05-15T00:00:00Z"), Instant.now(), false, true, "1111");
   }
 
   /**

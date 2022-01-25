@@ -4,24 +4,18 @@ import { MatAutocompleteTrigger } from '@angular/material/autocomplete';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { MSG_PARAMS } from '@core/i18n';
-import { IModeloTipoHito } from '@core/models/csp/modelo-tipo-hito';
 import { ISolicitudHito } from '@core/models/csp/solicitud-hito';
 import { ITipoHito } from '@core/models/csp/tipos-configuracion';
 import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-properties';
-import { ModeloEjecucionService } from '@core/services/csp/modelo-ejecucion.service';
 import { SnackBarService } from '@core/services/snack-bar.service';
 import { FormGroupUtil } from '@core/utils/form-group-util';
 import { IsEntityValidator } from '@core/validators/is-entity-validador';
 import { TipoHitoValidator } from '@core/validators/tipo-hito-validator';
 import { TranslateService } from '@ngx-translate/core';
-import { SgiRestListResult } from '@sgi/framework/http/types';
 import { DateTime } from 'luxon';
-import { NGXLogger } from 'ngx-logger';
-import { BehaviorSubject, Observable, Subscription } from 'rxjs';
-import { map, startWith, switchMap } from 'rxjs/operators';
+import { Subscription } from 'rxjs';
+import { switchMap } from 'rxjs/operators';
 
-const MSG_ERROR_INIT = marker('error.load');
-const MSG_ERROR_TIPOS = marker('error.csp.convocatoria-tipo-hito');
 const MSG_ERROR_FORM_GROUP = marker('error.form-group');
 const MSG_ANADIR = marker('btn.add');
 const MSG_ACEPTAR = marker('btn.ok');
@@ -37,6 +31,7 @@ export interface SolicitudHitosModalComponentData {
   idModeloEjecucion: number;
   readonly: boolean;
 }
+
 @Component({
   templateUrl: './solicitud-hitos-modal.component.html',
   styleUrls: ['./solicitud-hitos-modal.component.scss']
@@ -46,8 +41,6 @@ export class SolicitiudHitosModalComponent implements OnInit, OnDestroy {
   @ViewChild(MatAutocompleteTrigger) autocomplete: MatAutocompleteTrigger;
   formGroup: FormGroup;
   fxLayoutProperties: FxLayoutProperties;
-
-  tiposHito$: BehaviorSubject<ITipoHito[]> = new BehaviorSubject<ITipoHito[]>([]);
 
   textSaveOrUpdate: string;
   title: string;
@@ -59,12 +52,11 @@ export class SolicitiudHitosModalComponent implements OnInit, OnDestroy {
   msgParamComentarioEntity = {};
 
   constructor(
-    private readonly logger: NGXLogger,
     public matDialogRef: MatDialogRef<SolicitiudHitosModalComponent>,
-    private modeloEjecucionService: ModeloEjecucionService,
     @Inject(MAT_DIALOG_DATA) public data: SolicitudHitosModalComponentData,
     private snackBarService: SnackBarService,
-    private readonly translate: TranslateService) {
+    private readonly translate: TranslateService
+  ) {
     this.fxLayoutProperties = new FxLayoutProperties();
     this.fxLayoutProperties.gap = '20px';
     this.fxLayoutProperties.layout = 'row wrap';
@@ -99,7 +91,6 @@ export class SolicitiudHitosModalComponent implements OnInit, OnDestroy {
     this.suscripciones.push(suscriptionFecha);
 
     this.textSaveOrUpdate = this.data?.hito?.tipoHito ? MSG_ACEPTAR : MSG_ANADIR;
-    this.loadTiposHito();
     this.suscripciones.push(this.formGroup.get('fechaInicio').valueChanges.subscribe(
       (value) => this.validarFecha(value)));
   }
@@ -170,22 +161,6 @@ export class SolicitiudHitosModalComponent implements OnInit, OnDestroy {
     } else {
       this.formGroup.get('aviso').enable();
     }
-  }
-
-  loadTiposHito() {
-    this.suscripciones.push(
-      this.modeloEjecucionService.findModeloTipoHitoSolicitud(this.data.idModeloEjecucion)
-        .subscribe(
-          (res: SgiRestListResult<IModeloTipoHito>) => this.tiposHito$.next(res.items.map(modelo => modelo.tipoHito)),
-          (error) => {
-            this.logger.error(error);
-            if (this.data.idModeloEjecucion) {
-              this.snackBarService.showError(MSG_ERROR_INIT);
-            } else {
-              this.snackBarService.showError(MSG_ERROR_TIPOS);
-            }
-          })
-    );
   }
 
   saveOrUpdate(): void {

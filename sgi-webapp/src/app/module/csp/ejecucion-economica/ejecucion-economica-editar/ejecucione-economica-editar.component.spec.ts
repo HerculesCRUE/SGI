@@ -22,7 +22,10 @@ describe('EjecucionEconomicaEditarComponent', () => {
     [EJECUCION_ECONOMICA_DATA_KEY]: {
       proyectoSge: {},
       proyectosRelacionados: [],
-      readonly: false
+      readonly: false,
+      configuracion: {
+        validacionGastos: false
+      }
     } as IEjecucionEconomicaData
   };
   const routeMock = TestUtils.buildActivatedRouteMock('1', routeData);

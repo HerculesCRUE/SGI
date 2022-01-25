@@ -38,13 +38,13 @@ public class TipoFinanciacionController {
   /**
    * Devuelve todas las entidades {@link TipoFinanciacion} activos paginadas
    *
-   * @param query    la información del filtro.
-   * @param pageable la información de la paginación.
+   * @param query  la información del filtro.
+   * @param paging la información de la paginación.
    * @return la lista de entidades {@link TipoFinanciacion} paginadas
    */
   @GetMapping()
   @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-CON-V', 'CSP-CON-C', 'CSP-CON-E', 'CSP-CON-INV-V', 'CSP-SOL-E', 'CSP-SOL-V', 'CSP-PRO-E')")
-  ResponseEntity<Page<TipoFinanciacion>> findAll(@RequestParam(name = "q", required = false) String query,
+  public ResponseEntity<Page<TipoFinanciacion>> findAll(@RequestParam(name = "q", required = false) String query,
       @RequestPageable(sort = "s") Pageable paging) {
     log.debug("findAll(String query, Pageable paging) - start");
     Page<TipoFinanciacion> page = tipoFinanciacionService.findAll(query, paging);
@@ -61,13 +61,13 @@ public class TipoFinanciacionController {
   /**
    * Devuelve todas las entidades {@link TipoFinanciacion} paginadas
    *
-   * @param query    la información del filtro.
-   * @param pageable la información de la paginación.
+   * @param query  la información del filtro.
+   * @param paging la información de la paginación.
    * @return la lista de entidades {@link TipoFinanciacion} paginadas
    */
   @GetMapping("/todos")
   @PreAuthorize("hasAnyAuthority('CSP-TFNA-V', 'CSP-TFNA-C', 'CSP-TFNA-E', 'CSP-TFNA-B', 'CSP-TFNA-R')")
-  ResponseEntity<Page<TipoFinanciacion>> findAllTodos(@RequestParam(name = "q", required = false) String query,
+  public ResponseEntity<Page<TipoFinanciacion>> findAllTodos(@RequestParam(name = "q", required = false) String query,
       @RequestPageable(sort = "s") Pageable paging) {
     log.debug("findAllTodos(String query, Pageable paging) - start");
     Page<TipoFinanciacion> page = tipoFinanciacionService.findAllTodos(query, paging);
@@ -105,7 +105,7 @@ public class TipoFinanciacionController {
    */
   @GetMapping("/{id}")
   @PreAuthorize("hasAuthorityForAnyUO('AUTH')")
-  TipoFinanciacion findById(@PathVariable Long id) {
+  public TipoFinanciacion findById(@PathVariable Long id) {
     log.debug("findById(Long id) - start");
     TipoFinanciacion returnTipoFinanciacion = tipoFinanciacionService.findById(id);
     log.debug("findById(Long id) - end");
@@ -121,7 +121,7 @@ public class TipoFinanciacionController {
    */
   @PutMapping("/{id}")
   @PreAuthorize("hasAuthorityForAnyUO('CSP-TFNA-E')")
-  TipoFinanciacion update(@PathVariable Long id, @Valid @RequestBody TipoFinanciacion updatedTipoFinanciacion) {
+  public TipoFinanciacion update(@PathVariable Long id, @Valid @RequestBody TipoFinanciacion updatedTipoFinanciacion) {
     log.debug("update(Long id, TipoFinanciacion updatedTipoFinanciacion) - start");
     updatedTipoFinanciacion.setId(id);
     TipoFinanciacion returnTipoFinanciacion = tipoFinanciacionService.update(updatedTipoFinanciacion);
@@ -137,7 +137,7 @@ public class TipoFinanciacionController {
    */
   @PatchMapping("/{id}/reactivar")
   @PreAuthorize("hasAuthorityForAnyUO('CSP-TFNA-R')")
-  TipoFinanciacion reactivar(@PathVariable Long id) {
+  public TipoFinanciacion reactivar(@PathVariable Long id) {
     log.debug("reactivar(Long id) - start");
     TipoFinanciacion returnValue = tipoFinanciacionService.enable(id);
     log.debug("reactivar(Long id) - end");
@@ -152,7 +152,7 @@ public class TipoFinanciacionController {
    */
   @PatchMapping("/{id}/desactivar")
   @PreAuthorize("hasAuthorityForAnyUO('CSP-TFNA-B')")
-  TipoFinanciacion desactivar(@PathVariable Long id) {
+  public TipoFinanciacion desactivar(@PathVariable Long id) {
     log.debug("desactivar(Long id) - start");
     TipoFinanciacion returnValue = tipoFinanciacionService.disable(id);
     log.debug("desactivar(Long id) - end");

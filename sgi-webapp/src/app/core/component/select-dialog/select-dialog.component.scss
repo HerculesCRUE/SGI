@@ -1,23 +1,32 @@
 @import "~@angular/material/theming";
 
-.mat-select-trigger {
-  cursor: default;
 
-  .mat-select-value {
-    .mat-input-element {
-      cursor: default;
-    }
-    .mat-select-placeholder {
-      @include user-select(none);
-    }
-  }
-
+:host {
   .icon-wrapper {
-    cursor: pointer;
     color: rgba(0, 0, 0, 0.54);
+    margin-top: -0.2em;
     &.disabled {
-      cursor: default;
       color: rgba(0, 0, 0, 0.38);
     }
+    .mat-icon-button {
+      height: 1.5em;
+      width: 1.5em;
+      font: inherit;
+      vertical-align: baseline;
+      .mat-icon {
+        font-size: 1.4em;
+        width: 1em;
+        height: 1em;
+        margin-top: -0.3em;
+      }
+    }
   }
+}
+
+.page {
+    border-top-width: 1px;
+    border-top-style: solid;
+    border-top-color: rgba(0, 0, 0, 0.12);
+    color: rgba(0, 0, 0, 0.54);
+    font-size: 12px;
 }

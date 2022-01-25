@@ -4,4 +4,6 @@ export interface IConfiguracion {
   formatoPartidaPresupuestaria: string;
   /** Plantilla informativa del formato del código de las partidas presupuestarias */
   plantillaFormatoPartidaPresupuestaria: string;
+  /** Determina cuándo la validación de gastos está activa en la app */
+  validacionGastos: boolean;
 }

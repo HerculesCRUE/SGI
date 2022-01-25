@@ -46,7 +46,7 @@ public class FormlyController {
    * @return FormlyOutput El Formly con el id solicitado
    */
   @GetMapping("/{id:[\\d]+}")
-  @PreAuthorize("hasAnyAuthority('ETI-CHKLST-MOD-V', 'ETI-CHKLST-MOD-C', 'ETI-CHK-E')")
+  @PreAuthorize("hasAnyAuthority('ETI-CHKLST-MOD-V', 'ETI-CHKLST-MOD-C', 'ETI-CHK-INV-E')")
   FormlyOutput getById(@PathVariable Long id) {
     log.debug("getById(@PathVariable Long id) - start");
     Formly formly = service.getById(id);
@@ -63,7 +63,7 @@ public class FormlyController {
    * @return FormlyOutput La última versión del Formly con el nombre solicitado.
    */
   @GetMapping("/{nombre:[^\\d].*}")
-  @PreAuthorize("hasAnyAuthority('ETI-CHKLST-MOD-V', 'ETI-CHKLST-MOD-C', 'ETI-CHK-E')")
+  @PreAuthorize("hasAnyAuthority('ETI-CHKLST-MOD-V', 'ETI-CHKLST-MOD-C', 'ETI-CHK-INV-E')")
   FormlyOutput getByNombre(@PathVariable String nombre) {
     log.debug("getByNombre(@PathVariable String nombre) - start");
     Formly formly = service.getByNombre(nombre);

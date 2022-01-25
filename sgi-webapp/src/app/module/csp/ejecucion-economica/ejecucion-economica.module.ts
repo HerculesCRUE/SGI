@@ -5,6 +5,7 @@ import { FormlyFormsModule } from '@formly-forms/formly-forms.module';
 import { MaterialDesignModule } from '@material/material-design.module';
 import { TranslateModule } from '@ngx-translate/core';
 import { SgiAuthModule } from '@sgi/framework/auth';
+import { LuxonDatePipe } from '@shared/luxon-date-pipe';
 import { SharedModule } from '@shared/shared.module';
 import { SgoSharedModule } from 'src/app/esb/sgo/shared/sgo-shared.module';
 import { SgpSharedModule } from 'src/app/esb/sgp/shared/sgp-shared.module';
@@ -114,7 +115,8 @@ import { ViajesDietasModalComponent } from './modals/viajes-dietas-modal/viajes-
     EjecucionPresupuestariaIngresosExportService,
     FacturasGastosExportService,
     PersonalContratadoExportService,
-    ViajesDietasExportService
+    ViajesDietasExportService,
+    LuxonDatePipe
   ]
 })
 export class EjecucionEconomicaModule { }

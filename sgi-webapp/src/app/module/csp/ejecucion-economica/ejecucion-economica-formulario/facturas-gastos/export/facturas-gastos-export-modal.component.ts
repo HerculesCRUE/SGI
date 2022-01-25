@@ -3,7 +3,6 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { BaseExportModalComponent } from '@core/component/base-export/base-export-modal.component';
-import { OutputReport } from '@core/models/rep/output-report.enum';
 import { IReportConfig } from '@core/services/rep/abstract-table-export.service';
 import { SnackBarService } from '@core/services/snack-bar.service';
 import { TranslateService } from '@ngx-translate/core';
@@ -50,7 +49,6 @@ export class FacturasGastosExportModalComponent
       reportOptions: {
         data: this.modalData.data,
         columns: this.modalData.columns,
-        relationsTypeView: this.getRelationsTypeView(this.formGroup.controls.outputType.value),
         columnMinWidth: 120
       }
     };

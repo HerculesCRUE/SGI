@@ -4,6 +4,7 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import org.crue.hercules.sgi.csp.exceptions.ProyectoEquipoNotFoundException;
@@ -59,16 +60,17 @@ public class ProyectoEquipoServiceImpl implements ProyectoEquipoService {
 
     List<ProyectoEquipo> proyectoEquipoesBD = repository.findAllByProyectoId(proyectoId);
 
-    // Periodos eliminados
+    // Miembros del equipo eliminados
     List<ProyectoEquipo> proyectoEquiposEliminar = proyectoEquipoesBD.stream()
-        .filter(periodo -> !proyectoEquipos.stream().map(ProyectoEquipo::getId).anyMatch(id -> id == periodo.getId()))
+        .filter(periodo -> proyectoEquipos.stream().map(ProyectoEquipo::getId)
+            .noneMatch(id -> Objects.equals(id, periodo.getId())))
         .collect(Collectors.toList());
 
     if (!proyectoEquiposEliminar.isEmpty()) {
       repository.deleteAll(proyectoEquiposEliminar);
     }
 
-    // Ordena los periodos por mesInicial
+    // Ordena los miembros del equipo por mesInicial
     List<ProyectoEquipo> proyectoEquipoFechaInicioNull = proyectoEquipos.stream()
         .filter(periodo -> periodo.getFechaInicio() == null).collect(Collectors.toList());
 
@@ -85,17 +87,16 @@ public class ProyectoEquipoServiceImpl implements ProyectoEquipoService {
     proyectoEquipoAll.addAll(proyectoEquipoConFechaInicio);
 
     // Validaciones
-
     ProyectoEquipo proyectoEquipoAnterior = null;
     for (ProyectoEquipo proyectoEquipo : proyectoEquipoAll) {
 
       // actualizando
       if (proyectoEquipo.getId() != null) {
         ProyectoEquipo proyectoEquipoBD = proyectoEquipoesBD.stream()
-            .filter(periodo -> periodo.getId() == proyectoEquipo.getId()).findFirst()
+            .filter(periodo -> periodo.getId().equals(proyectoEquipo.getId())).findFirst()
             .orElseThrow(() -> new ProyectoEquipoNotFoundException(proyectoEquipo.getId()));
 
-        Assert.isTrue(proyectoEquipoBD.getProyectoId() == proyectoEquipo.getProyectoId(),
+        Assert.isTrue(proyectoEquipoBD.getProyectoId().equals(proyectoEquipo.getProyectoId()),
             "No se puede modificar el proyecto del ProyectoEquipo");
       }
 

@@ -35,6 +35,7 @@ import { FormlyService } from '@core/services/eti/formly/formly.service';
 import { EmpresaService } from '@core/services/sgemp/empresa.service';
 import { AreaConocimientoService } from '@core/services/sgo/area-conocimiento.service';
 import { ClasificacionService } from '@core/services/sgo/clasificacion.service';
+import { PalabraClaveService } from '@core/services/sgo/palabra-clave.service';
 import { DatosAcademicosService } from '@core/services/sgp/datos-academicos.service';
 import { DatosPersonalesService } from '@core/services/sgp/datos-personales.service';
 import { PersonaService } from '@core/services/sgp/persona.service';
@@ -126,6 +127,11 @@ export class SolicitudActionService extends ActionService {
 
   private readonly data: ISolicitudData;
   private convocatoria: IConvocatoria;
+  private _isSolicitanteInSolicitudEquipo: boolean;
+
+  get solicitud(): ISolicitud {
+    return this.datosGenerales.getValue();
+  }
 
   get formularioSolicitud(): FormularioSolicitud {
     return this.datosGenerales.getValue().formularioSolicitud;
@@ -149,6 +155,22 @@ export class SolicitudActionService extends ActionService {
 
   get solicitante(): IPersona {
     return this.datosGenerales.getValue().solicitante;
+  }
+
+  get solicitudProyecto(): ISolicitudProyecto {
+    return this.proyectoDatos.getValue();
+  }
+
+  get isSolicitanteInSolicitudEquipo(): boolean {
+    return this._isSolicitanteInSolicitudEquipo;
+  }
+
+  get isAutoevaluacionEticaFullfilled() {
+    return this.autoevaluacion.isFormFullFilled;
+  }
+
+  get hasRequiredDocumentos() {
+    return this.documentos.hasRequiredDocumentos;
   }
 
   get readonly(): boolean {
@@ -187,7 +209,8 @@ export class SolicitudActionService extends ActionService {
     private dialogService: DialogService,
     rolProyectoService: RolProyectoService,
     private translate: TranslateService,
-    datosPersonalesService: DatosPersonalesService
+    datosPersonalesService: DatosPersonalesService,
+    palabraClaveService: PalabraClaveService
   ) {
     super();
 
@@ -209,7 +232,6 @@ export class SolicitudActionService extends ActionService {
       logger,
       this.data?.solicitud?.id,
       solicitudService,
-      configuracionSolicitudService,
       convocatoriaService,
       empresaService,
       personaService,
@@ -233,7 +255,7 @@ export class SolicitudActionService extends ActionService {
     this.proyectoDatos = new SolicitudProyectoFichaGeneralFragment(logger, this.data?.solicitud?.id,
       this.isInvestigador, this.data?.solicitud.estado, solicitudService,
       solicitudProyectoService, convocatoriaService, this.readonly, this.data?.solicitud.convocatoriaId,
-      this.hasAnySolicitudProyectoSocioWithRolCoordinador$, this.data?.hasPopulatedPeriodosSocios);
+      this.hasAnySolicitudProyectoSocioWithRolCoordinador$, this.data?.hasPopulatedPeriodosSocios, palabraClaveService);
     this.equipoProyecto = new SolicitudEquipoProyectoFragment(this.data?.solicitud?.id, this.data?.solicitud?.convocatoriaId,
       solicitudService, solicitudProyectoEquipoService, this, rolProyectoService,
       convocatoriaService, datosAcademicosService, convocatoriaRequisitoIpService, vinculacionService,
@@ -381,12 +403,17 @@ export class SolicitudActionService extends ActionService {
         this.subscriptions.push(this.datosGenerales.initialized$.subscribe(
           (value) => {
             if (value) {
-              if (!this.proyectoDatos.isEdit() && this.isInvestigador) {
-                this.equipoProyecto.initialize();
-              }
+              this.equipoProyecto.initialize();
+              this.documentos.initialize();
             }
           }
         ));
+
+        this.subscriptions.push(
+          this.equipoProyecto.proyectoEquipos$.subscribe(
+            proyectoEquipo => this._isSolicitanteInSolicitudEquipo = proyectoEquipo.some(miembroEquipo =>
+              miembroEquipo.value.solicitudProyectoEquipo.persona.id === this.solicitud.solicitante.id))
+        );
 
       }
     }

@@ -10,6 +10,7 @@ import { ProyectoCrearComponent } from './proyecto-crear/proyecto-crear.componen
 import { ProyectoDataResolver, PROYECTO_DATA_KEY } from './proyecto-data.resolver';
 import { ProyectoEditarComponent } from './proyecto-editar/proyecto-editar.component';
 import { ProyectoAgrupacionesGastoComponent } from './proyecto-formulario/proyecto-agrupaciones-gasto/proyecto-agrupaciones-gasto.component';
+import { ProyectoAmortizacionFondosComponent } from './proyecto-formulario/proyecto-amortizacion-fondos/proyecto-amortizacion-fondos.component';
 import { ProyectoAreaConocimientoComponent } from './proyecto-formulario/proyecto-area-conocimiento/proyecto-area-conocimiento.component';
 import { ProyectoCalendarioFacturacionComponent } from './proyecto-formulario/proyecto-calendario-facturacion/proyecto-calendario-facturacion.component';
 import { ProyectoCalendarioJustificacionComponent } from './proyecto-formulario/proyecto-calendario-justificacion/proyecto-calendario-justificacion.component';
@@ -276,6 +277,11 @@ const routes: SgiAuthRoutes = [
       {
         path: PROYECTO_ROUTE_NAMES.CONSULTA_PRESUPUESTO,
         component: ProyectoConsultaPresupuestoComponent,
+        canDeactivate: [FragmentGuard]
+      },
+      {
+        path: PROYECTO_ROUTE_NAMES.AMORTIZACION_FONDOS,
+        component: ProyectoAmortizacionFondosComponent,
         canDeactivate: [FragmentGuard]
       },
       {

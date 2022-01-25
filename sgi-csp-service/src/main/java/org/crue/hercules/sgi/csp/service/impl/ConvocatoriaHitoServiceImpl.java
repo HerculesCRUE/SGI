@@ -37,6 +37,7 @@ import lombok.extern.slf4j.Slf4j;
 @Transactional(readOnly = true)
 public class ConvocatoriaHitoServiceImpl implements ConvocatoriaHitoService {
 
+  private static final String TIPO_HITO_TEMPLATE = "TipoHito '";
   private final ConvocatoriaHitoRepository repository;
   private final ConvocatoriaRepository convocatoriaRepository;
   private final ModeloTipoHitoRepository modeloTipoHitoRepository;
@@ -88,7 +89,7 @@ public class ConvocatoriaHitoServiceImpl implements ConvocatoriaHitoService {
 
     // Está asignado al ModeloEjecucion
     Assert.isTrue(modeloTipoHito.isPresent(),
-        "TipoHito '" + convocatoriaHito.getTipoHito().getNombre() + "' no disponible para el ModeloEjecucion '"
+        TIPO_HITO_TEMPLATE + convocatoriaHito.getTipoHito().getNombre() + "' no disponible para el ModeloEjecucion '"
             + ((modeloEjecucionId != null) ? convocatoria.getModeloEjecucion().getNombre()
                 : "Convocatoria sin modelo asignado")
             + "'");
@@ -99,7 +100,7 @@ public class ConvocatoriaHitoServiceImpl implements ConvocatoriaHitoService {
 
     // El TipoHito está activo
     Assert.isTrue(modeloTipoHito.get().getTipoHito().getActivo(),
-        "TipoHito '" + modeloTipoHito.get().getTipoHito().getNombre() + "' no está activo");
+        TIPO_HITO_TEMPLATE + modeloTipoHito.get().getTipoHito().getNombre() + "' no está activo");
 
     convocatoriaHito.setTipoHito(modeloTipoHito.get().getTipoHito());
 
@@ -152,7 +153,7 @@ public class ConvocatoriaHitoServiceImpl implements ConvocatoriaHitoService {
 
       // Está asignado al ModeloEjecucion
       Assert.isTrue(modeloTipoHito.isPresent(),
-          "TipoHito '" + convocatoriaHitoActualizar.getTipoHito().getNombre()
+          TIPO_HITO_TEMPLATE + convocatoriaHitoActualizar.getTipoHito().getNombre()
               + "' no disponible para el ModeloEjecucion '"
               + ((modeloEjecucionId != null) ? convocatoria.getModeloEjecucion().getNombre()
                   : "Convocatoria sin modelo asignado")
@@ -170,7 +171,7 @@ public class ConvocatoriaHitoServiceImpl implements ConvocatoriaHitoService {
       Assert.isTrue(
           modeloTipoHito.get().getTipoHito().getId() == convocatoriaHito.getTipoHito().getId()
               || modeloTipoHito.get().getTipoHito().getActivo(),
-          "TipoHito '" + modeloTipoHito.get().getTipoHito().getNombre() + "' no está activo");
+          TIPO_HITO_TEMPLATE + modeloTipoHito.get().getTipoHito().getNombre() + "' no está activo");
 
       convocatoriaHitoActualizar.setTipoHito(modeloTipoHito.get().getTipoHito());
 
@@ -180,10 +181,9 @@ public class ConvocatoriaHitoServiceImpl implements ConvocatoriaHitoService {
       repository
           .findByConvocatoriaIdAndFechaAndTipoHitoId(convocatoriaHitoActualizar.getConvocatoriaId(),
               convocatoriaHitoActualizar.getFecha(), convocatoriaHitoActualizar.getTipoHito().getId())
-          .ifPresent((convocatoriaHitoExistente) -> {
-            Assert.isTrue(convocatoriaHitoActualizar.getId() == convocatoriaHitoExistente.getId(),
-                "Ya existe un Hito con el mismo tipo en esa fecha");
-          });
+          .ifPresent(convocatoriaHitoExistente -> Assert.isTrue(
+              convocatoriaHitoActualizar.getId() == convocatoriaHitoExistente.getId(),
+              "Ya existe un Hito con el mismo tipo en esa fecha"));
 
       convocatoriaHito.setFecha(convocatoriaHitoActualizar.getFecha());
       convocatoriaHito.setComentario(convocatoriaHitoActualizar.getComentario());

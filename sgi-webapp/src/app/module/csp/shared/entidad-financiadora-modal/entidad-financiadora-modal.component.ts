@@ -5,14 +5,10 @@ import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { BaseModalComponent } from '@core/component/base-modal.component';
 import { MSG_PARAMS } from '@core/i18n';
 import { IEntidadFinanciadora } from '@core/models/csp/entidad-financiadora';
-import { ITipoFinalidad } from '@core/models/csp/tipos-configuracion';
 import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-properties';
-import { TipoFinanciacionService } from '@core/services/csp/tipo-financiacion.service';
 import { SnackBarService } from '@core/services/snack-bar.service';
 import { NumberValidator } from '@core/validators/number-validator';
 import { TranslateService } from '@ngx-translate/core';
-import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
 
 export interface EntidadFinanciadoraDataModal {
   title: string;
@@ -33,7 +29,6 @@ const ENTIDAD_FINANCIADORA_IMPORTE_FINANCIACION_KEY = marker('csp.entidad-financ
 export class EntidadFinanciadoraModalComponent extends
   BaseModalComponent<IEntidadFinanciadora, EntidadFinanciadoraModalComponent> implements OnInit {
 
-  tiposFinanciacion$: Observable<ITipoFinalidad[]>;
   textSaveOrUpdate: string;
   title: string;
 
@@ -45,17 +40,12 @@ export class EntidadFinanciadoraModalComponent extends
     protected snackBarService: SnackBarService,
     public matDialogRef: MatDialogRef<EntidadFinanciadoraModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data: EntidadFinanciadoraDataModal,
-    tipoFinanciacionService: TipoFinanciacionService,
     private readonly translate: TranslateService
   ) {
     super(snackBarService, matDialogRef, data.entidad);
     this.fxLayoutProperties = new FxLayoutProperties();
     this.fxLayoutProperties.layout = 'row';
     this.fxLayoutProperties.layoutAlign = 'row';
-
-    this.tiposFinanciacion$ = tipoFinanciacionService.findAll().pipe(
-      map((tipoFinanciaciones) => tipoFinanciaciones.items)
-    );
   }
 
   ngOnInit(): void {

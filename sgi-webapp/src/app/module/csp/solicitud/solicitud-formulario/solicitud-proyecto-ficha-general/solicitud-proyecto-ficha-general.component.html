@@ -131,6 +131,20 @@
       </div>
     </div>
 
+    <!-- Palabras Clave -->
+    <div [fxLayout.xs]="fxLayoutProperties.xs" [fxLayout]="fxLayoutProperties.layout"
+      [fxLayoutGap]="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
+      <div [fxFlex.sm]="fxFlexProperties100.sm" [fxFlex.md]="fxFlexProperties100.md"
+        [fxFlex.gt-md]="fxFlexProperties100.gtMd" [fxFlexOrder]="fxFlexProperties100.order">
+        <mat-form-field fxFill>
+          <mat-label>{{'csp.solicitud-datos-proyecto-ficha-general.palabras-clave' | translate}}</mat-label>
+          <sgi-palabra-clave formControlName="palabrasClave" id="palabrasClave"
+            placeholder="{{'csp.solicitud-datos-proyecto-ficha-general.palabras-clave' | translate}}">
+          </sgi-palabra-clave>
+        </mat-form-field>
+      </div>
+    </div>
+
     <!-- Objetivos -->
     <div>
       <div [fxLayout]="fxLayoutProperties.layout" [fxLayoutAlign]="fxLayoutProperties.layoutAlign">

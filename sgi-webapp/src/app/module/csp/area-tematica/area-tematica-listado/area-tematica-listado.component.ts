@@ -36,13 +36,13 @@ const AREA_TEMATICA_KEY = marker('csp.area-tematica');
 })
 export class AreaTematicaListadoComponent extends AbstractTablePaginationComponent<IAreaTematica> implements OnInit {
   ROUTE_NAMES = ROUTE_NAMES;
-  textoCrear: string;
   textoDesactivar: string;
   textoReactivar: string;
   textoErrorDesactivar: string;
   textoSuccessDesactivar: string;
   textoSuccessReactivar: string;
   textoErrorReactivar: string;
+  msgParamEntity = {};
 
   fxFlexProperties: FxFlexProperties;
   fxLayoutProperties: FxLayoutProperties;
@@ -90,7 +90,7 @@ export class AreaTematicaListadoComponent extends AbstractTablePaginationCompone
           { entity: value }
         );
       })
-    ).subscribe((value) => this.textoCrear = value);
+    ).subscribe((value) => this.msgParamEntity = { entity: value });
 
     this.translate.get(
       AREA_TEMATICA_KEY,

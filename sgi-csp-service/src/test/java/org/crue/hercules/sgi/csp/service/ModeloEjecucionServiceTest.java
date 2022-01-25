@@ -8,6 +8,7 @@ import org.assertj.core.api.Assertions;
 import org.crue.hercules.sgi.csp.exceptions.ModeloEjecucionNotFoundException;
 import org.crue.hercules.sgi.csp.model.ModeloEjecucion;
 import org.crue.hercules.sgi.csp.repository.ModeloEjecucionRepository;
+import org.crue.hercules.sgi.csp.repository.ProyectoRepository;
 import org.crue.hercules.sgi.csp.service.impl.ModeloEjecucionServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -30,11 +31,13 @@ public class ModeloEjecucionServiceTest extends BaseServiceTest {
   @Mock
   private ModeloEjecucionRepository modeloEjecucionRepository;
 
+  private ProyectoRepository proyectoRepository;
+
   private ModeloEjecucionService modeloEjecucionService;
 
   @BeforeEach
   public void setUp() throws Exception {
-    modeloEjecucionService = new ModeloEjecucionServiceImpl(modeloEjecucionRepository);
+    modeloEjecucionService = new ModeloEjecucionServiceImpl(modeloEjecucionRepository, proyectoRepository);
   }
 
   @Test

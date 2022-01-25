@@ -181,7 +181,7 @@ public class ProyectoEntidadFinanciadoraIT extends BaseIT {
     Long idProyectoEntidadFinanciadora = 1L;
 
     final ResponseEntity<ProyectoEntidadFinanciadora> response = restTemplate.exchange(
-        CONTROLLER_BASE_PATH + PATH_PARAMETER_ID, HttpMethod.GET, buildRequest(null, null, "AUTH"),
+        CONTROLLER_BASE_PATH + PATH_PARAMETER_ID, HttpMethod.GET, buildRequest(null, null, "CSP-PRO-E"),
         ProyectoEntidadFinanciadora.class, idProyectoEntidadFinanciadora);
 
     Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);

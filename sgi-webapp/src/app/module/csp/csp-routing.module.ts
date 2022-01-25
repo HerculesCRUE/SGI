@@ -24,6 +24,8 @@ const MSG_AREA_TEMATICA_TITLE = marker('menu.csp.configuraciones.areas-tematicas
 const MSG_EJECUCION_ECONOMICA_TITLE = marker('menu.csp.ejecucion-economica');
 const MSG_NOTIFICACION_PRESUPUESTO_SGE_TITLE = marker('menu.csp.notificacion-presupuesto-sge');
 const PROYECTO_KEY = marker('csp.proyectos');
+const AUTORIZACION_KEY = marker('csp.autorizacion');
+const NOTIFICACION_CVN_KEY = marker('csp.notificacion-cvn');
 
 const routes: SgiRoutes = [
   {
@@ -242,6 +244,32 @@ const routes: SgiRoutes = [
           title: MSG_NOTIFICACION_PRESUPUESTO_SGE_TITLE,
           titleParams: MSG_PARAMS.CARDINALIRY.SINGULAR,
           hasAuthorityForAnyUO: 'CSP-EJEC-E'
+        }
+      },
+      {
+        path: CSP_ROUTE_NAMES.AUTORIZACION,
+        loadChildren: () =>
+          import('./autorizacion/autorizacion.module').then(
+            (m) => m.AutorizacionModule
+          ),
+        canActivate: [SgiAuthGuard],
+        data: {
+          title: AUTORIZACION_KEY,
+          titleParams: MSG_PARAMS.CARDINALIRY.PLURAL,
+          hasAnyAuthorityForAnyUO: ['CSP-AUT-E', 'CSP-AUT-V', 'CSP-AUT-B', 'CSP-AUT-INV-C', 'CSP-AUT-INV-ER', 'CSP-AUT-INV-BR'],
+        }
+      },
+      {
+        path: CSP_ROUTE_NAMES.NOTIFICACION_CVN,
+        loadChildren: () =>
+          import('./notificacion-cvn/notificacion-cvn.module').then(
+            (m) => m.NotificacionCvnModule
+          ),
+        canActivate: [SgiAuthGuard],
+        data: {
+          title: NOTIFICACION_CVN_KEY,
+          titleParams: MSG_PARAMS.CARDINALIRY.PLURAL,
+          hasAnyAuthorityForAnyUO: ['CSP-CVPR-V', 'CSP-CVPR-E']
         }
       },
       { path: '**', component: null }

@@ -6,13 +6,11 @@ import { BaseModalComponent } from '@core/component/base-modal.component';
 import { MSG_PARAMS } from '@core/i18n';
 import { IModeloTipoHito } from '@core/models/csp/modelo-tipo-hito';
 import { ITipoHito } from '@core/models/csp/tipos-configuracion';
-import { TipoHitoService } from '@core/services/csp/tipo-hito.service';
 import { DialogService } from '@core/services/dialog.service';
 import { SnackBarService } from '@core/services/snack-bar.service';
 import { requiredChecked } from '@core/validators/checkbox-validator';
 import { TranslateService } from '@ngx-translate/core';
-import { Observable } from 'rxjs';
-import { map, switchMap } from 'rxjs/operators';
+import { switchMap } from 'rxjs/operators';
 
 export interface ModeloEjecucionTipoHitoModalData {
   modeloTipoHito: IModeloTipoHito;
@@ -33,7 +31,6 @@ const TITLE_NEW_ENTITY = marker('title.new.entity');
 })
 export class ModeloEjecucionTipoHitoModalComponent extends
   BaseModalComponent<IModeloTipoHito, ModeloEjecucionTipoHitoModalComponent> implements OnInit {
-  tipoHitos$: Observable<ITipoHito[]>;
 
   textSaveOrUpdate: string;
   title: string;
@@ -44,22 +41,10 @@ export class ModeloEjecucionTipoHitoModalComponent extends
     protected snackBarService: SnackBarService,
     public matDialogRef: MatDialogRef<ModeloEjecucionTipoHitoModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data: ModeloEjecucionTipoHitoModalData,
-    private tipoHitoService: TipoHitoService,
     protected dialogService: DialogService,
     private readonly translate: TranslateService
   ) {
     super(snackBarService, matDialogRef, data.modeloTipoHito);
-
-    this.tipoHitos$ = this.tipoHitoService.findTodos().pipe(
-      map(response => {
-        if (!this.data.modeloTipoHito.tipoHito) {
-          return response.items.filter(tipoHito => {
-            return !this.data.tipoHitos.some(currentTipo => currentTipo.id === tipoHito.id);
-          });
-        }
-        return response.items;
-      })
-    );
   }
 
   ngOnInit(): void {

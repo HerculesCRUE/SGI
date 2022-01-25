@@ -74,7 +74,7 @@ public class SolicitudProyectoSocioPeriodoPagoController {
    */
   @GetMapping("/{id}")
   @PreAuthorize("hasAuthorityForAnyUO('CSP-SOL-E')")
-  SolicitudProyectoSocioPeriodoPago findById(@PathVariable Long id) {
+  public SolicitudProyectoSocioPeriodoPago findById(@PathVariable Long id) {
     log.debug("SolicitudProyectoSocioPeriodoPago findById(Long id) - start");
     SolicitudProyectoSocioPeriodoPago returnValue = service.findById(id);
     log.debug("SolicitudProyectoSocioPeriodoPago findById(Long id) - end");

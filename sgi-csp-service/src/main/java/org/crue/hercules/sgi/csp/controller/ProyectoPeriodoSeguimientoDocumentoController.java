@@ -35,34 +35,34 @@ public class ProyectoPeriodoSeguimientoDocumentoController {
   /**
    * Instancia un nuevo ProyectoPeriodoSeguimientoDocumentoController.
    * 
-   * @param ProyectoPeriodoSeguimientoDocumentoService {@link ProyectoPeriodoSeguimientoDocumentoService}.
+   * @param proyectoPeriodoSeguimientoDocumentoService {@link ProyectoPeriodoSeguimientoDocumentoService}.
    */
   public ProyectoPeriodoSeguimientoDocumentoController(
-      ProyectoPeriodoSeguimientoDocumentoService ProyectoPeriodoSeguimientoDocumentoService) {
-    this.service = ProyectoPeriodoSeguimientoDocumentoService;
+      ProyectoPeriodoSeguimientoDocumentoService proyectoPeriodoSeguimientoDocumentoService) {
+    this.service = proyectoPeriodoSeguimientoDocumentoService;
   }
 
   /**
    * Crea nuevo {@link ProyectoPeriodoSeguimientoDocumento}
    * 
-   * @param ProyectoPeriodoSeguimientoDocumento {@link ProyectoPeriodoSeguimientoDocumento}.
+   * @param proyectoPeriodoSeguimientoDocumento {@link ProyectoPeriodoSeguimientoDocumento}.
    *                                            que se quiere crear.
    * @return Nuevo {@link ProyectoPeriodoSeguimientoDocumento} creado.
    */
   @PostMapping
   @PreAuthorize("hasAuthorityForAnyUO('CSP-PRO-E')")
   public ResponseEntity<ProyectoPeriodoSeguimientoDocumento> create(
-      @Valid @RequestBody ProyectoPeriodoSeguimientoDocumento ProyectoPeriodoSeguimientoDocumento) {
-    log.debug("create(ProyectoPeriodoSeguimientoDocumento ProyectoPeriodoSeguimientoDocumento) - start");
-    ProyectoPeriodoSeguimientoDocumento returnValue = service.create(ProyectoPeriodoSeguimientoDocumento);
-    log.debug("create(ProyectoPeriodoSeguimientoDocumento ProyectoPeriodoSeguimientoDocumento) - end");
+      @Valid @RequestBody ProyectoPeriodoSeguimientoDocumento proyectoPeriodoSeguimientoDocumento) {
+    log.debug("create(ProyectoPeriodoSeguimientoDocumento proyectoPeriodoSeguimientoDocumento) - start");
+    ProyectoPeriodoSeguimientoDocumento returnValue = service.create(proyectoPeriodoSeguimientoDocumento);
+    log.debug("create(ProyectoPeriodoSeguimientoDocumento proyectoPeriodoSeguimientoDocumento) - end");
     return new ResponseEntity<>(returnValue, HttpStatus.CREATED);
   }
 
   /**
    * Actualiza {@link ProyectoPeriodoSeguimientoDocumento}.
    * 
-   * @param ProyectoPeriodoSeguimientoDocumento {@link ProyectoPeriodoSeguimientoDocumento}
+   * @param proyectoPeriodoSeguimientoDocumento {@link ProyectoPeriodoSeguimientoDocumento}
    *                                            a actualizar.
    * @param id                                  Identificador
    *                                            {@link ProyectoPeriodoSeguimientoDocumento}
@@ -74,11 +74,11 @@ public class ProyectoPeriodoSeguimientoDocumentoController {
   @PutMapping("/{id}")
   @PreAuthorize("hasAuthorityForAnyUO('CSP-PRO-E')")
   public ProyectoPeriodoSeguimientoDocumento update(
-      @Valid @RequestBody ProyectoPeriodoSeguimientoDocumento ProyectoPeriodoSeguimientoDocumento,
+      @Valid @RequestBody ProyectoPeriodoSeguimientoDocumento proyectoPeriodoSeguimientoDocumento,
       @PathVariable Long id, Authentication authentication) {
     log.debug("update(ProyectoPeriodoSeguimientoDocumento ProyectoPeriodoSeguimientoDocumento, Long id) - start");
-    ProyectoPeriodoSeguimientoDocumento.setId(id);
-    ProyectoPeriodoSeguimientoDocumento returnValue = service.update(ProyectoPeriodoSeguimientoDocumento);
+    proyectoPeriodoSeguimientoDocumento.setId(id);
+    ProyectoPeriodoSeguimientoDocumento returnValue = service.update(proyectoPeriodoSeguimientoDocumento);
     log.debug("update(ProyectoPeriodoSeguimientoDocumento ProyectoPeriodoSeguimientoDocumento, Long id) - end");
     return returnValue;
   }
@@ -92,7 +92,7 @@ public class ProyectoPeriodoSeguimientoDocumentoController {
    */
   @GetMapping("/{id}")
   @PreAuthorize("hasAuthorityForAnyUO('AUTH')")
-  ProyectoPeriodoSeguimientoDocumento findById(@PathVariable Long id) {
+  public ProyectoPeriodoSeguimientoDocumento findById(@PathVariable Long id) {
     log.debug("ProyectoPeriodoSeguimientoDocumento findById(Long id) - start");
     ProyectoPeriodoSeguimientoDocumento returnValue = service.findById(id);
     log.debug("ProyectoPeriodoSeguimientoDocumento findById(Long id) - end");
@@ -107,7 +107,7 @@ public class ProyectoPeriodoSeguimientoDocumentoController {
   @DeleteMapping("/{id}")
   @PreAuthorize("hasAuthorityForAnyUO('CSP-PRO-E')")
   @ResponseStatus(value = HttpStatus.NO_CONTENT)
-  void deleteById(@PathVariable Long id) {
+  public void deleteById(@PathVariable Long id) {
     log.debug("deleteById(Long id) - start");
     service.delete(id);
     log.debug("deleteById(Long id) - end");

@@ -10,7 +10,7 @@
       *sgiHasAnyAuthorityForAnyUO="['ETI-MEM-INV-VR', 'ETI-MEM-INV-ER', 'ETI-MEM-INV-BR', 'ETI-MEM-INV-ESCR', 'ETI-MEM-INV-ERTR']"
       [route]="[INV_ROUTE_NAMES.MEMORIAS]" title="{{'menu.principal.inv.memorias' | translate}}">
     </sgi-menu-subitem>
-    <sgi-menu-subitem *sgiHasAuthorityForAnyUO="'ETI-CHK-E'" [route]="[INV_ROUTE_NAMES.CHECKLIST]"
+    <sgi-menu-subitem *sgiHasAuthorityForAnyUO="'ETI-CHK-INV-E'" [route]="[INV_ROUTE_NAMES.CHECKLIST]"
       title="{{'menu.principal.inv.checklist' | translate}}">
     </sgi-menu-subitem>
     <ng-container *ngIf="showEvaluaciones">
@@ -36,13 +36,9 @@
     <sgi-menu-subitem *sgiHasAnyAuthorityForAnyUO="['CSP-SOL-INV-ER', 'CSP-SOL-INV-BR']"
       [route]="[INV_ROUTE_NAMES.SOLICITUDES]" title="{{'csp.solicitud' | translate:MSG_PARAMS.CARDINALIRY.PLURAL}}">
     </sgi-menu-subitem>
-    <sgi-menu-subitem title="{{'csp.proyecto' | translate:MSG_PARAMS.CARDINALIRY.PLURAL}}">
-    </sgi-menu-subitem>
-    <sgi-menu-subitem title="{{'menu.principal.inv.ejecucionEconomica' | translate}}">
-    </sgi-menu-subitem>
-    <sgi-menu-subitem title="{{'menu.principal.inv.timesheet' | translate}}">
-    </sgi-menu-subitem>
-    <sgi-menu-subitem title="{{'menu.principal.inv.GRUPO' | translate}}">
+    <sgi-menu-subitem *sgiHasAnyAuthorityForAnyUO="['CSP-AUT-INV-C', 'CSP-AUT-INV-ER','CSP-AUT-INV-BR'] "
+      title="{{'menu.csp.autorizaciones-proyectos-externos' | translate:MSG_PARAMS.CARDINALIRY.PLURAL}}"
+      [route]="[INV_ROUTE_NAMES.AUTORIZACIONES]">
     </sgi-menu-subitem>
   </sgi-menu-group>
 </sgi-root>

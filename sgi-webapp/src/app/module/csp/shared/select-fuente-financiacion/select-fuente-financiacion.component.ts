@@ -1,18 +1,22 @@
+import { PlatformLocation } from '@angular/common';
 import { Component, Optional, Self } from '@angular/core';
 import { NgControl } from '@angular/forms';
 import { ErrorStateMatcher } from '@angular/material/core';
+import { MatDialog } from '@angular/material/dialog';
 import { MatFormFieldControl } from '@angular/material/form-field';
-import { SelectServiceComponent } from '@core/component/select-service/select-service.component';
+import { SelectServiceExtendedComponent } from '@core/component/select-service-extended/select-service-extended.component';
 import { IFuenteFinanciacion } from '@core/models/csp/fuente-financiacion';
 import { FuenteFinanciacionService } from '@core/services/csp/fuente-financiacion/fuente-financiacion.service';
+import { SgiAuthService } from '@sgi/framework/auth';
 import { RSQLSgiRestSort, SgiRestFindOptions, SgiRestSortDirection } from '@sgi/framework/http';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { FuenteFinanciacionModalComponent } from '../../fuente-financiacion/fuente-financiacion-modal/fuente-financiacion-modal.component';
 
 @Component({
   selector: 'sgi-select-fuente-financiacion',
-  templateUrl: '../../../../core/component/select-common/select-common.component.html',
-  styleUrls: ['../../../../core/component/select-common/select-common.component.scss'],
+  templateUrl: '../../../../core/component/select-service-extended/select-service-extended.component.html',
+  styleUrls: ['../../../../core/component/select-service-extended/select-service-extended.component.scss'],
   providers: [
     {
       provide: MatFormFieldControl,
@@ -20,13 +24,19 @@ import { map } from 'rxjs/operators';
     }
   ]
 })
-export class SelectFuenteFinanciacionComponent extends SelectServiceComponent<IFuenteFinanciacion> {
+export class SelectFuenteFinanciacionComponent extends SelectServiceExtendedComponent<IFuenteFinanciacion> {
 
   constructor(
     defaultErrorStateMatcher: ErrorStateMatcher,
+    @Self() @Optional() ngControl: NgControl,
+    platformLocation: PlatformLocation,
+    dialog: MatDialog,
     private service: FuenteFinanciacionService,
-    @Self() @Optional() ngControl: NgControl) {
-    super(defaultErrorStateMatcher, ngControl);
+    private authService: SgiAuthService
+  ) {
+    super(defaultErrorStateMatcher, ngControl, platformLocation, dialog);
+
+    this.addTarget = FuenteFinanciacionModalComponent;
   }
 
   protected loadServiceOptions(): Observable<IFuenteFinanciacion[]> {
@@ -34,5 +44,9 @@ export class SelectFuenteFinanciacionComponent extends SelectServiceComponent<IF
       sort: new RSQLSgiRestSort('nombre', SgiRestSortDirection.ASC)
     };
     return this.service.findAll(findOptions).pipe(map(response => response.items));
+  }
+
+  protected isAddAuthorized(): boolean {
+    return this.authService.hasAuthority('CSP-FNT-C');
   }
 }

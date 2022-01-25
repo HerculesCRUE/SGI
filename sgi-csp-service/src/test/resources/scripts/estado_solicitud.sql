@@ -15,3 +15,5 @@ UPDATE test.solicitud SET estado_solicitud_id=4 WHERE id=2;
 UPDATE test.solicitud SET estado_solicitud_id=5 WHERE id=3;
 UPDATE test.solicitud SET estado_solicitud_id=6 WHERE id=4;
 UPDATE test.solicitud SET estado_solicitud_id=7 WHERE id=5;
+
+alter sequence test.estado_solicitud_seq restart with 8;

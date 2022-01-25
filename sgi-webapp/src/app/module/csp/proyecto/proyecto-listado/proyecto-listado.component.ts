@@ -35,7 +35,7 @@ import { BehaviorSubject, merge, Observable, of, Subscription } from 'rxjs';
 import { catchError, map, switchMap, tap } from 'rxjs/operators';
 import { CONVOCATORIA_ACTION_LINK_KEY } from '../../convocatoria/convocatoria.action.service';
 import { SOLICITUD_ACTION_LINK_KEY } from '../../solicitud/solicitud.action.service';
-import { IProyectoListadoModalData, ProyectoListadoModalComponent } from '../modals/proyecto-listado-modal/proyecto-listado-modal.component';
+import { IProyectoListadoModalData, ProyectoListadoExportModalComponent } from '../modals/proyecto-listado-export-modal/proyecto-listado-export-modal.component';
 
 const MSG_ERROR = marker('error.load');
 const MSG_BUTTON_NEW = marker('btn.add.entity');
@@ -186,7 +186,8 @@ export class ProyectoListadoComponent extends AbstractTablePaginationComponent<I
       fuenteFinanciacion: new FormControl(''),
       codigoExterno: new FormControl(''),
       finalizado: new FormControl(''),
-      prorrogado: new FormControl('')
+      prorrogado: new FormControl(''),
+      palabrasClave: new FormControl(null),
     });
     this.loadAmbitoGeografico();
     this.loadPlanInvestigacion();
@@ -383,7 +384,24 @@ export class ProyectoListadoComponent extends AbstractTablePaginationComponent<I
       .and('prorrogado', SgiRestFilterOperator.EQUALS, controls.prorrogado.value?.toString())
       .and('solicitudId', SgiRestFilterOperator.EQUALS, this.solicitudId?.toString());
 
+    const palabrasClave = controls.palabrasClave.value as string[];
+    if (Array.isArray(palabrasClave) && palabrasClave.length > 0) {
+      filter.and(this.createPalabrasClaveFilter(palabrasClave));
+    }
+
     return filter;
+  }
+
+  private createPalabrasClaveFilter(palabrasClave: string[]): SgiRestFilter {
+    let palabrasClaveFilter: SgiRestFilter;
+    palabrasClave.forEach(palabraClave => {
+      if (palabrasClaveFilter) {
+        palabrasClaveFilter.or('palabrasClave.palabraClaveRef', SgiRestFilterOperator.LIKE_ICASE, palabraClave);
+      } else {
+        palabrasClaveFilter = new RSQLSgiRestFilter('palabrasClave.palabraClaveRef', SgiRestFilterOperator.LIKE_ICASE, palabraClave);
+      }
+    });
+    return palabrasClaveFilter;
   }
 
   /**
@@ -573,6 +591,6 @@ export class ProyectoListadoComponent extends AbstractTablePaginationComponent<I
     const config = {
       data
     };
-    this.matDialog.open(ProyectoListadoModalComponent, config);
+    this.matDialog.open(ProyectoListadoExportModalComponent, config);
   }
 }

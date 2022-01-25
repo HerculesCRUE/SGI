@@ -27,6 +27,8 @@ public class ProyectoEntidadConvocanteRepositoryTest extends BaseRepositoryTest 
         .nombre("nombre-1")
         .descripcion("descripcion-1")
         .activo(true)
+        .contrato(Boolean.FALSE)
+        .externo(Boolean.FALSE)
       .build()
     );
     Proyecto proyecto = entityManager.persistAndFlush(
@@ -73,6 +75,8 @@ public class ProyectoEntidadConvocanteRepositoryTest extends BaseRepositoryTest 
         .nombre("nombre-1")
         .descripcion("descripcion-1")
         .activo(true)
+        .contrato(Boolean.FALSE)
+        .externo(Boolean.FALSE)
       .build()
     );
     Proyecto proyecto = entityManager.persistAndFlush(

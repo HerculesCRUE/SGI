@@ -83,7 +83,7 @@ public class SolicitudDocumentoController {
    */
   @GetMapping("/{id}")
   @PreAuthorize("hasAuthorityForAnyUO('AUTH')")
-  SolicitudDocumento findById(@PathVariable Long id) {
+  public SolicitudDocumento findById(@PathVariable Long id) {
     log.debug("SolicitudDocumento findById(Long id) - start");
     SolicitudDocumento returnValue = service.findById(id);
     log.debug("SolicitudDocumento findById(Long id) - end");
@@ -98,7 +98,7 @@ public class SolicitudDocumentoController {
   @DeleteMapping("/{id}")
   @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-SOL-E','CSP-SOL-INV-ER')")
   @ResponseStatus(value = HttpStatus.NO_CONTENT)
-  void deleteById(@PathVariable Long id) {
+  public void deleteById(@PathVariable Long id) {
     log.debug("deleteById(Long id) - start");
     service.delete(id);
     log.debug("deleteById(Long id) - end");

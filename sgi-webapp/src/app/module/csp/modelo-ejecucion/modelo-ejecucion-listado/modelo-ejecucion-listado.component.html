@@ -69,10 +69,10 @@
         <th mat-header-cell *matHeaderCellDef> {{'label.actions' | translate}} </th>
         <td mat-cell *matCellDef="let modeloEjecucion">
           <ng-container *sgiHasAuthorityForAnyUO="'CSP-ME-E'">
-            <button *ngIf="modeloEjecucion.activo === true" mat-button matTooltip="{{'btn.edit' | translate}}"
+            <a *ngIf="modeloEjecucion.activo === true" mat-button matTooltip="{{'btn.edit' | translate}}"
               [routerLink]="[modeloEjecucion.id]">
               <mat-icon color="primary">border_color</mat-icon>
-            </button>
+            </a>
           </ng-container>
           <ng-container *sgiHasAuthorityForAnyUO="'CSP-ME-B'">
             <button *ngIf="modeloEjecucion.activo === true" mat-button matTooltip="{{'btn.delete' | translate}}"
@@ -95,7 +95,12 @@
     <mat-paginator [pageSizeOptions]="elementosPagina" [length]="totalElementos" showFirstLastButtons>
     </mat-paginator>
   </div>
-  <sgi-menu-content-footer *sgiHasAuthorityForAnyUO="'CSP-ME-C'">
-    <sgi-footer-crear [texto]="textoCrear" [route]="ROUTE_NAMES.NEW"></sgi-footer-crear>
-  </sgi-menu-content-footer>
+  <ng-container *sgiHasAuthorityForAnyUO="'CSP-ME-C'">
+    <div class="separation-button">
+      <button color="three" aria-label="Center Align" mat-raised-button [routerLink]="ROUTE_NAMES.NEW">
+        <mat-icon color="accent">add_circle</mat-icon>
+        {{ 'btn.add.entity' | translate:msgParamEntity }}
+      </button>
+    </div>
+  </ng-container>
 </sgi-menu-content>

@@ -45,6 +45,9 @@
     <div class="separacion">
       <button color="primary" md-button mat-raised-button (click)="buscarConvocatorias(true)">{{'btn.search' |
         translate}}</button>
+      <button color="warn" aria-label="Center Align" (click)="onClearFilters()" mat-button>{{'btn.clean'|
+        translate}}
+      </button>
     </div>
   </form>
   <!-- Tabla resultados -->
@@ -130,11 +133,9 @@
           {{'label.actions' | translate}}
         </th>
         <td mat-cell *matCellDef="let row">
-          <ng-container>
-            <button color="three" mat-raised-button (click)="closeModal(row.convocatoria)">
-              {{'btn.select' | translate}}
-            </button>
-          </ng-container>
+          <button mat-button matTooltip="{{'btn.select' | translate}}" (click)="closeModal(row.convocatoria)">
+            <mat-icon color="primary">done_outline</mat-icon>
+          </button>
         </td>
       </ng-container>
 
@@ -143,6 +144,12 @@
     </table>
     <mat-paginator [pageSizeOptions]="elementosPagina" [length]="totalElementos" showFirstLastButtons>
     </mat-paginator>
+  </div>
+  <div class="separation-button" *ngIf="data.extended">
+    <button color="three" mat-raised-button *sgiHasAuthorityForAnyUO="'CSP-CON-C'" (click)="openCreate()">
+      <mat-icon color="accent">add_circle</mat-icon>
+      {{ 'btn.add.entity' | translate:msgParamEntity }}
+    </button>
   </div>
 </mat-dialog-content>
 <mat-dialog-actions>

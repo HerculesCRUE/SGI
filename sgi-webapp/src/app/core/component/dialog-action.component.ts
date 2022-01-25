@@ -116,6 +116,11 @@ export abstract class DialogActionComponent<T, R> implements OnInit, OnDestroy {
     }
   }
 
+  private clearProblems(): void {
+    this.problems$.next([]);
+    this.setProblems(false);
+  }
+
   ngOnInit(): void {
     this.initialize();
   }
@@ -136,11 +141,25 @@ export abstract class DialogActionComponent<T, R> implements OnInit, OnDestroy {
     this.formGroup.markAllAsTouched();
     if (this.formGroup.valid) {
       this.subscriptions.push(this.saveOrUpdate().pipe(
+        tap(() =>
+          () => this.clearProblems(),
+          () => this.clearProblems()
+        ),
         catchError(error => {
-          if (error instanceof HttpProblem) {
-            this.pushProblems(error);
-            error.managed = true;
+          const errors: Problem[] = [];
+          if (Array.isArray(error)) {
+            errors.push(...error);
+          } else {
+            errors.push(error);
           }
+
+          errors.forEach(e => {
+            if (e instanceof HttpProblem) {
+              this.pushProblems(e);
+              e.managed = true;
+            }
+          })
+
           return throwError(error);
         }),
         tap((result) => this.close(result))

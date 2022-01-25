@@ -41,6 +41,7 @@ public class UnidadController {
    * 
    * @param query  filtro de búsqueda.
    * @param paging pageable.
+   * @return la lista de {@link Unidad} solicitada
    */
   @GetMapping()
   @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-SOL-E', 'CSP-SOL-V', 'CSP-PRO-V', 'CSP-PRO-C', 'CSP-PRO-E', 'CSP-PRO-B', 'CSP-PRO-R', 'CSP-ME-C', 'CSP-ME-E')")
@@ -64,6 +65,7 @@ public class UnidadController {
    * 
    * @param query  filtro de búsqueda.
    * @param paging pageable.
+   * @return la lista de {@link Unidad} solicitada
    */
   @GetMapping("/restringidos")
   @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-CON-V', 'CSP-CON-C','CSP-CON-E','CSP-CON-INV-V', 'CSP-SOL-C', 'CSP-SOL-E', 'CSP-SOL-V', 'CSP-PRO-V', 'CSP-PRO-C', 'CSP-PRO-E', 'CSP-PRO-B', 'CSP-PRO-R')")

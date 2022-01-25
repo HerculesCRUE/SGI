@@ -1,0 +1,81 @@
+<sgi-export-dialog [title]="title">
+  <form [formGroup]="formGroup">
+    <!-- Title -->
+    <mat-form-field>
+      <mat-label>{{'csp.proyecto.titulo' | translate}}</mat-label>
+      <input matInput placeholder="{{'csp.proyecto.titulo' | translate}}" formControlName="reportTitle">
+    </mat-form-field>
+
+    <!-- OutputReportType -->
+    <mat-form-field>
+      <mat-label>{{'export.type' | translate}}</mat-label>
+      <sgi-select-enum formControlName="outputType" required [enumMap]="OUTPUT_REPORT_TYPE_MAP">
+      </sgi-select-enum>
+    </mat-form-field>
+
+    <!-- Columns visibility -->
+    <mat-label>{{'export.columns' | translate}}</mat-label>
+
+    <div class="row-visibility">
+      <div class="columns-visibility">
+
+        <mat-checkbox color="primary" class="checkbox" formControlName="showAreasConocimiento">
+          {{'label.areas-conocimiento' | translate}}
+        </mat-checkbox>
+        <mat-checkbox color="primary" class="checkbox" formControlName="showClasificaciones">
+          {{'csp.proyecto-clasificacion' | translate:MSG_PARAMS.CARDINALIRY.PLURAL}}
+        </mat-checkbox>
+        <mat-checkbox color="primary" class="checkbox" formControlName="showRelaciones">
+          {{'menu.csp.proyectos.datos-generales.relaciones' | translate}}
+        </mat-checkbox>
+        <mat-checkbox color="primary" class="checkbox" formControlName="showEntidadGestora">
+          {{'csp.proyecto-entidad-gestora.entidad-gestora' | translate}}
+        </mat-checkbox>
+        <mat-checkbox color="primary" class="checkbox" formControlName="showEntidadesConvocantes">
+          {{'csp.proyecto-entidad-convocante.programa' | translate}}
+        </mat-checkbox>
+        <mat-checkbox color="primary" class="checkbox" formControlName="showEntidadesFinanciadoras">
+          {{'menu.csp.solicitudes.entidades-financiadoras' | translate}}
+        </mat-checkbox>
+        <mat-checkbox color="primary" class="checkbox" formControlName="showMiembrosEquipo">
+          {{'csp.proyecto-equipo' | translate}}
+        </mat-checkbox>
+        <mat-checkbox color="primary" class="checkbox" formControlName="showResponsablesEconomicos">
+          {{'csp.proyecto-responsable-economico' | translate}}
+        </mat-checkbox>
+        <mat-checkbox color="primary" class="checkbox" formControlName="showSocios">
+          {{'csp.proyecto-socio' | translate:MSG_PARAMS.CARDINALIRY.PLURAL}}
+        </mat-checkbox>
+      </div>
+      <div class="columns-visibility">
+        <mat-checkbox color="primary" class="checkbox" formControlName="showProrrogas">
+          {{'label.csp.documentos.prorroga' | translate:MSG_PARAMS.CARDINALIRY.PLURAL}}
+        </mat-checkbox>
+        <mat-checkbox color="primary" class="checkbox" formControlName="showConvocatoria">
+          {{'csp.ejecucion-economica.convocatoria' | translate}}
+        </mat-checkbox>
+        <mat-checkbox color="primary" class="checkbox" formControlName="showSolicitud">
+          {{'csp.proyecto.solicitud' | translate}}
+        </mat-checkbox>
+        <mat-checkbox color="primary" class="checkbox" formControlName="showSeguimientosCientificos">
+          {{'menu.csp.proyectos.seguimientos-cientificos' | translate}}
+        </mat-checkbox>
+        <mat-checkbox color="primary" class="checkbox" formControlName="showEligibilidad">
+          {{'csp.convocatoria-elegibilidad' | translate}}
+        </mat-checkbox>
+        <mat-checkbox color="primary" class="checkbox" formControlName="showPartidasPresupuestarias">
+          {{'csp.convocatoria-partida-presupuestaria' | translate:MSG_PARAMS.CARDINALIRY.PLURAL}}
+        </mat-checkbox>
+        <mat-checkbox color="primary" class="checkbox" formControlName="showPresupuesto">
+          {{'menu.csp.proyectos.configuracion-economica.presupuesto' | translate}}
+        </mat-checkbox>
+        <mat-checkbox color="primary" class="checkbox" formControlName="showCalendarioJustificacion">
+          {{'csp.proyectos.configuracion-economica.calendario_justificacion' | translate}}
+        </mat-checkbox>
+        <mat-checkbox color="primary" class="checkbox" formControlName="showCalendarioFacturacion">
+          {{'csp.proyectos.configuracion-economica.calendario_facturacion' | translate}}
+        </mat-checkbox>
+      </div>
+    </div>
+  </form>
+</sgi-export-dialog>

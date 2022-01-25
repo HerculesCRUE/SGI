@@ -158,7 +158,8 @@ public class CustomProyectoAnualidadRepositoryImpl implements CustomProyectoAnua
                 .alias("codigoPartidaPresupuestaria"),
             cb.sum(rootGasto.get(AnualidadGasto_.importePresupuesto)).alias("importePresupuesto"),
             cb.sum(rootGasto.get(AnualidadGasto_.importeConcedido)).alias("importeConcedido"))
-        .groupBy(rootGasto.get(AnualidadGasto_.proyectoPartida).get(ProyectoPartida_.id));
+        .groupBy(rootGasto.get(AnualidadGasto_.proyectoPartida).get(ProyectoPartida_.id),
+            rootGasto.get(AnualidadGasto_.proyectoPartida).get(ProyectoPartida_.codigo));
 
     // ANUALIDAD INGRESO
     CriteriaQuery<AnualidadResumen> cqAnualidadIngreso = cb.createQuery(AnualidadResumen.class);
@@ -174,7 +175,8 @@ public class CustomProyectoAnualidadRepositoryImpl implements CustomProyectoAnua
             rootIngreso.get(AnualidadIngreso_.proyectoPartida).get(ProyectoPartida_.codigo)
                 .alias("codigoPartidaPresupuestaria"),
             cb.sum(rootIngreso.get(AnualidadIngreso_.importeConcedido)).alias("importeConcedido"))
-        .groupBy(rootIngreso.get(AnualidadIngreso_.proyectoPartida).get(ProyectoPartida_.id));
+        .groupBy(rootIngreso.get(AnualidadIngreso_.proyectoPartida).get(ProyectoPartida_.id),
+            rootIngreso.get(AnualidadIngreso_.proyectoPartida).get(ProyectoPartida_.codigo));
 
     TypedQuery<AnualidadResumen> typedQueryGastos = entityManager.createQuery(cqAnualidadGasto);
     List<AnualidadResumen> resultGastos = typedQueryGastos.getResultList();

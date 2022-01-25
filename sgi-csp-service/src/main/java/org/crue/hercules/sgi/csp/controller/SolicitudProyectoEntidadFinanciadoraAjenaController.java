@@ -62,7 +62,7 @@ public class SolicitudProyectoEntidadFinanciadoraAjenaController {
    */
   @GetMapping("/{id}")
   @PreAuthorize("hasAuthorityForAnyUO('AUTH')")
-  SolicitudProyectoEntidadFinanciadoraAjena findById(@PathVariable Long id) {
+  public SolicitudProyectoEntidadFinanciadoraAjena findById(@PathVariable Long id) {
     log.debug("findById(Long id) - start");
     SolicitudProyectoEntidadFinanciadoraAjena returnValue = service.findById(id);
     log.debug("findById(Long id) - end");
@@ -99,7 +99,7 @@ public class SolicitudProyectoEntidadFinanciadoraAjenaController {
    */
   @PutMapping("/{id}")
   @PreAuthorize("hasAuthorityForAnyUO('CSP-SOL-E')")
-  SolicitudProyectoEntidadFinanciadoraAjena update(@Validated({ Update.class,
+  public SolicitudProyectoEntidadFinanciadoraAjena update(@Validated({ Update.class,
       Default.class }) @RequestBody SolicitudProyectoEntidadFinanciadoraAjena solicitudProyectoEntidadFinanciadoraAjena,
       @PathVariable Long id) {
     log.debug(
@@ -120,7 +120,7 @@ public class SolicitudProyectoEntidadFinanciadoraAjenaController {
   @DeleteMapping("/{id}")
   @PreAuthorize("hasAuthorityForAnyUO('CSP-SOL-E')")
   @ResponseStatus(value = HttpStatus.NO_CONTENT)
-  void deleteById(@PathVariable Long id) {
+  public void deleteById(@PathVariable Long id) {
     log.debug("deleteById(Long id) - start");
     service.delete(id);
     log.debug("deleteById(Long id) - end");
@@ -130,15 +130,13 @@ public class SolicitudProyectoEntidadFinanciadoraAjenaController {
    * Comprueba la existencia de {@link SolicitudProyectoPresupuesto} asociados a
    * una {@link SolicitudProyectoEntidadFinanciadoraAjena}
    * 
-   * @param id                         Id de la Solicitud
-   * @param entidadFinanciadoraAjenaId Id de la
-   *                                   SolicitudProyectoEntidadFinanciadoraAjena
-   * @return {@link HttpStatus.OK} si existe alguna relación,
-   *         {@link HttpStatus.NO_CONTENT} en cualquier otro caso
+   * @param id Id de la Solicitud
+   * @return {@link HttpStatus#OK} si existe alguna relación,
+   *         {@link HttpStatus#NO_CONTENT} en cualquier otro caso
    */
   @RequestMapping(path = "/{id}/solicitudproyectopresupuestos", method = RequestMethod.HEAD)
   @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-SOL-E', 'CSP-SOL-V')")
-  ResponseEntity<?> hasSolicitudProyectoPresupuestoEntidad(@PathVariable Long id) {
+  public ResponseEntity<Void> hasSolicitudProyectoPresupuestoEntidad(@PathVariable Long id) {
     log.debug("hasSolicitudProyectoPresupuestoEntidad(Long id) - start");
     boolean returnValue = solicitudProyectoPresupuestoService.existsBySolicitudProyectoEntidadFinanciadoraAjena(id);
 
@@ -156,7 +154,7 @@ public class SolicitudProyectoEntidadFinanciadoraAjenaController {
    */
   @GetMapping("/{id}/solicitudproyectoentidad")
   @PreAuthorize("hasAuthorityForAnyUO('CSP-SOL-E')")
-  SolicitudProyectoEntidad findBySolicitudProyectoEntidadFinanciadoraAjena(@PathVariable Long id) {
+  public SolicitudProyectoEntidad findBySolicitudProyectoEntidadFinanciadoraAjena(@PathVariable Long id) {
     log.debug("findBySolicitudProyectoEntidadFinanciadoraAjena(Long id) - start");
     SolicitudProyectoEntidad returnValue = solicitudProyectoEntidadService
         .findBySolicitudProyectoEntidadFinanciadoraAjena(id);

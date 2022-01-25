@@ -93,6 +93,12 @@ public class SolicitudProyectoPresupuestoIT extends BaseIT {
     "classpath:scripts/estado_solicitud.sql",
     "classpath:scripts/solicitud_proyecto.sql",
     "classpath:scripts/concepto_gasto.sql",
+    "classpath:scripts/tipo_origen_fuente_financiacion.sql",
+    "classpath:scripts/fuente_financiacion.sql",
+    "classpath:scripts/tipo_financiacion.sql",
+    "classpath:scripts/convocatoria_entidad_financiadora.sql",
+    "classpath:scripts/convocatoria_entidad_gestora.sql",
+    "classpath:scripts/solicitud_proyecto_entidad.sql",
     "classpath:scripts/solicitud_proyecto_presupuesto.sql"
     // @formatter:on
   })
@@ -136,6 +142,12 @@ public class SolicitudProyectoPresupuestoIT extends BaseIT {
     "classpath:scripts/estado_solicitud.sql",
     "classpath:scripts/solicitud_proyecto.sql",
     "classpath:scripts/concepto_gasto.sql",
+    "classpath:scripts/tipo_origen_fuente_financiacion.sql",
+    "classpath:scripts/fuente_financiacion.sql",
+    "classpath:scripts/tipo_financiacion.sql",
+    "classpath:scripts/convocatoria_entidad_financiadora.sql",
+    "classpath:scripts/convocatoria_entidad_gestora.sql",
+    "classpath:scripts/solicitud_proyecto_entidad.sql",
     "classpath:scripts/solicitud_proyecto_presupuesto.sql"
     // @formatter:on
   })
@@ -162,6 +174,12 @@ public class SolicitudProyectoPresupuestoIT extends BaseIT {
     "classpath:scripts/estado_solicitud.sql",
     "classpath:scripts/solicitud_proyecto.sql",
     "classpath:scripts/concepto_gasto.sql",
+    "classpath:scripts/tipo_origen_fuente_financiacion.sql",
+    "classpath:scripts/fuente_financiacion.sql",
+    "classpath:scripts/tipo_financiacion.sql",
+    "classpath:scripts/convocatoria_entidad_financiadora.sql",
+    "classpath:scripts/convocatoria_entidad_gestora.sql",
+    "classpath:scripts/solicitud_proyecto_entidad.sql",
     "classpath:scripts/solicitud_proyecto_presupuesto.sql"
     // @formatter:on
   })
@@ -188,6 +206,12 @@ public class SolicitudProyectoPresupuestoIT extends BaseIT {
     "classpath:scripts/estado_solicitud.sql",
     "classpath:scripts/solicitud_proyecto.sql",
     "classpath:scripts/concepto_gasto.sql",
+    "classpath:scripts/tipo_origen_fuente_financiacion.sql",
+    "classpath:scripts/fuente_financiacion.sql",
+    "classpath:scripts/tipo_financiacion.sql",
+    "classpath:scripts/convocatoria_entidad_financiadora.sql",
+    "classpath:scripts/convocatoria_entidad_gestora.sql",
+    "classpath:scripts/solicitud_proyecto_entidad.sql",
     "classpath:scripts/solicitud_proyecto_presupuesto.sql"
     // @formatter:on
   })

@@ -4,23 +4,17 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { BaseModalComponent } from '@core/component/base-modal.component';
 import { MSG_PARAMS } from '@core/i18n';
-import { IModeloTipoFase } from '@core/models/csp/modelo-tipo-fase';
 import { IProyectoPlazos } from '@core/models/csp/proyecto-plazo';
 import { ITipoFase } from '@core/models/csp/tipos-configuracion';
 import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-properties';
-import { ModeloEjecucionService } from '@core/services/csp/modelo-ejecucion.service';
 import { SnackBarService } from '@core/services/snack-bar.service';
 import { DateValidator } from '@core/validators/date-validator';
 import { NullIdValidador } from '@core/validators/null-id-validador';
 import { IRange, RangeValidator } from '@core/validators/range-validator';
 import { TranslateService } from '@ngx-translate/core';
-import { SgiRestListResult } from '@sgi/framework/http';
 import { DateTime } from 'luxon';
-import { NGXLogger } from 'ngx-logger';
-import { BehaviorSubject, Observable } from 'rxjs';
-import { map, startWith, switchMap } from 'rxjs/operators';
+import { switchMap } from 'rxjs/operators';
 
-const MSG_ERROR_INIT = marker('error.load');
 const MSG_ANADIR = marker('btn.add');
 const MSG_ACEPTAR = marker('btn.ok');
 const PROYECTO_PLAZO_FECHA_INICIO_KEY = marker('csp.proyecto.plazo.fecha-inicio');
@@ -47,7 +41,6 @@ export class ProyectoPlazosModalComponent extends
 
   fxLayoutProperties: FxLayoutProperties;
   fxLayoutProperties2: FxLayoutProperties;
-  tiposFase$: BehaviorSubject<ITipoFase[]> = new BehaviorSubject<ITipoFase[]>([]);
 
   textSaveOrUpdate: string;
 
@@ -58,11 +51,9 @@ export class ProyectoPlazosModalComponent extends
   title: string;
 
   constructor(
-    private readonly logger: NGXLogger,
     protected snackBarService: SnackBarService,
     @Inject(MAT_DIALOG_DATA) public data: ProyectoPlazosModalComponentData,
     public matDialogRef: MatDialogRef<ProyectoPlazosModalComponent>,
-    private modeloEjecucionService: ModeloEjecucionService,
     private readonly translate: TranslateService
   ) {
     super(snackBarService, matDialogRef, data);
@@ -86,8 +77,6 @@ export class ProyectoPlazosModalComponent extends
     this.createValidatorDate(this.data?.plazo?.tipoFase);
     this.subscriptions.push(this.formGroup.controls.tipoFase.valueChanges.subscribe((value) => this.createValidatorDate(value)));
     this.subscriptions.push(this.formGroup.controls.fechaFin.valueChanges.subscribe((value) => this.validatorGeneraAviso(value)));
-
-    this.loadTipoFases();
 
     this.validatorGeneraAviso(this.formGroup.controls.fechaFin.value);
     this.textSaveOrUpdate = this.data.plazo?.tipoFase ? MSG_ACEPTAR : MSG_ANADIR;
@@ -176,17 +165,6 @@ export class ProyectoPlazosModalComponent extends
       DateValidator.isBefore('fechaFin', 'fechaInicio'),
       RangeValidator.notOverlaps('fechaInicio', 'fechaFin', rangoFechas)
     ]);
-  }
-
-  loadTipoFases() {
-    this.subscriptions.push(
-      this.modeloEjecucionService.findModeloTipoFaseModeloEjecucionProyecto(this.data.idModeloEjecucion).subscribe(
-        (res: SgiRestListResult<IModeloTipoFase>) => this.tiposFase$.next(res.items.map(modelo => modelo.tipoFase)),
-        (error) => {
-          this.logger.error(error);
-          this.snackBarService.showError(MSG_ERROR_INIT);
-        })
-    );
   }
 
   protected getDatosForm(): ProyectoPlazosModalComponentData {

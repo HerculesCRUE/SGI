@@ -82,7 +82,7 @@ public class ModeloEjecucionControllerTest extends BaseControllerTest {
   @WithMockUser(username = "user", authorities = { "CSP-ME-C" })
   public void create_ReturnsModeloEjecucion() throws Exception {
     // given: Un ModeloEjecucion nuevo
-    String modeloEjecucionJson = "{ \"nombre\": \"nombre-1\", \"descripcion\": \"descripcion-1\" }";
+    String modeloEjecucionJson = "{ \"nombre\": \"nombre-1\", \"descripcion\": \"descripcion-1\", \"externo\": false, \"contrato\": false }";
 
     BDDMockito.given(modeloEjecucionService.create(ArgumentMatchers.<ModeloEjecucion>any()))
         .will((InvocationOnMock invocation) -> {
@@ -131,7 +131,7 @@ public class ModeloEjecucionControllerTest extends BaseControllerTest {
   @WithMockUser(username = "user", authorities = { "CSP-ME-E" })
   public void update_ReturnsModeloEjecucion() throws Exception {
     // given: Un ModeloEjecucion a modificar
-    String modeloEjecucionJson = "{\"id\": \"1\", \"nombre\": \"nombre-1-modificado\", \"descripcion\": \"descripcion-1\", \"activo\": true }";
+    String modeloEjecucionJson = "{\"id\": \"1\", \"nombre\": \"nombre-1-modificado\", \"descripcion\": \"descripcion-1\", \"activo\": true, \"externo\": false, \"contrato\": false  }";
     ModeloEjecucion modeloEjecucionSinModificar = generarMockModeloEjecucion(1L, "nombre-1");
 
     BDDMockito.given(modeloEjecucionService.findById(ArgumentMatchers.<Long>any()))
@@ -149,15 +149,16 @@ public class ModeloEjecucionControllerTest extends BaseControllerTest {
         .andExpect(MockMvcResultMatchers.status().isOk()).andExpect(MockMvcResultMatchers.jsonPath("id").value(1))
         .andExpect(MockMvcResultMatchers.jsonPath("nombre").value("nombre-1-modificado"))
         .andExpect(MockMvcResultMatchers.jsonPath("descripcion").value("descripcion-1"))
-        .andExpect(MockMvcResultMatchers.jsonPath("activo").value(true));
+        .andExpect(MockMvcResultMatchers.jsonPath("activo").value(true))
+        .andExpect(MockMvcResultMatchers.jsonPath("externo").value(false))
+        .andExpect(MockMvcResultMatchers.jsonPath("contrato").value(false));
   }
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-ME-E" })
   public void update_WithIdNotExist_Returns404() throws Exception {
     // given: Un ModeloEjecucion a modificar
-    String modeloEjecucionJson = "{\"id\": \"1\", \"nombre\": \"nombre-1-modificado\", \"descripcion\": \"descripcion-1\", \"activo\": true }";
-
+    String modeloEjecucionJson = "{\"id\": \"1\", \"nombre\": \"nombre-1-modificado\", \"descripcion\": \"descripcion-1\", \"activo\": true, \"externo\": false, \"contrato\": false }";
     BDDMockito.given(modeloEjecucionService.update(ArgumentMatchers.<ModeloEjecucion>any()))
         .will((InvocationOnMock invocation) -> {
           throw new ModeloEjecucionNotFoundException(((ModeloEjecucion) invocation.getArgument(0)).getId());

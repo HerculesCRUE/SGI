@@ -27,9 +27,11 @@ import lombok.extern.slf4j.Slf4j;
  * ProyectoConceptoGastoCodigoEcController
  */
 @RestController
-@RequestMapping("/proyectoconceptogastocodigosec")
+@RequestMapping(ProyectoConceptoGastoCodigoEcController.MAPPING)
 @Slf4j
 public class ProyectoConceptoGastoCodigoEcController {
+
+  public static final String MAPPING = "/proyectoconceptogastocodigosec";
 
   /** ProyectoConceptoGastoCodigoEc service */
   private final ProyectoConceptoGastoCodigoEcService service;
@@ -51,7 +53,7 @@ public class ProyectoConceptoGastoCodigoEcController {
    */
   @GetMapping("/{id}")
   @PreAuthorize("hasAuthorityForAnyUO('AUTH')")
-  ProyectoConceptoGastoCodigoEc findById(@PathVariable Long id) {
+  public ProyectoConceptoGastoCodigoEc findById(@PathVariable Long id) {
     log.debug("findById(Long id) - start");
     ProyectoConceptoGastoCodigoEc returnValue = service.findById(id);
     log.debug("findById(Long id) - end");
@@ -64,11 +66,13 @@ public class ProyectoConceptoGastoCodigoEcController {
    * 
    * @param query  filtro de búsqueda.
    * @param paging pageable.
+   * @return el listado de entidades {@link ProyectoConceptoGastoCodigoEc}
+   *         paginadas y filtradas.
    */
   @GetMapping()
-  @PreAuthorize("hasAnyAuthorityForAnyUO( 'CSP-PRO-E')")
-  ResponseEntity<Page<ProyectoConceptoGastoCodigoEc>> findAll(@RequestParam(name = "q", required = false) String query,
-      @RequestPageable(sort = "s") Pageable paging) {
+  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-PRO-E')")
+  public ResponseEntity<Page<ProyectoConceptoGastoCodigoEc>> findAll(
+      @RequestParam(name = "q", required = false) String query, @RequestPageable(sort = "s") Pageable paging) {
     log.debug("findAll(String query, Pageable paging) - start");
 
     Page<ProyectoConceptoGastoCodigoEc> page = service.findAll(query, paging);

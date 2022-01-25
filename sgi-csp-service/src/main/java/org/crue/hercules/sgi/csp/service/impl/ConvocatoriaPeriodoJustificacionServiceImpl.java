@@ -3,6 +3,7 @@ package org.crue.hercules.sgi.csp.service.impl;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -100,7 +101,7 @@ public class ConvocatoriaPeriodoJustificacionServiceImpl implements Convocatoria
 
     // Id's de periodos a modificar (tienen id)
     List<Long> idsPeriodosModificados = periodos.stream().map(ConvocatoriaPeriodoJustificacion::getId)
-        .filter(id -> id != null).collect(Collectors.toList());
+        .filter(Objects::nonNull).collect(Collectors.toList());
 
     // Id's de periodos existentes en base de datos
     List<Long> idsPeriodosExistentes = periodosBD.stream().map(ConvocatoriaPeriodoJustificacion::getId)
@@ -217,19 +218,7 @@ public class ConvocatoriaPeriodoJustificacionServiceImpl implements Convocatoria
     TipoJustificacion tipo = null;
     for (int i = 0; i < periodos.size(); i++) {
       ConvocatoriaPeriodoJustificacion periodo = periodos.get(i);
-      // Validado por anotaciones en la entidad
-      /*
-       * if (periodo.getMesInicial() .compareTo(periodo.getMesFinal()) > 0) { // Mes
-       * fin debe ser mayor o igual que mes inicio }
-       */
-      // Validado por anotaciones en la entidad
-      /*
-       * if (periodo.getFechaInicioPresentacion() != null &&
-       * periodo.getFechaFinPresentacion() != null && periodo
-       * .getFechaInicioPresentacion().compareTo(periodo.getFechaFinPresentacion()) >
-       * 0) { // La fecha de fin de presentación debe ser mayor o igual que la de
-       * inicio de // presentación }
-       */
+
       // Invocar validaciones anotadas en ConvocatoriaPeriodoJustificacion
       Set<ConstraintViolation<ConvocatoriaPeriodoJustificacion>> result = validator.validate(periodo);
       if (!result.isEmpty()) {

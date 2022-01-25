@@ -7,6 +7,8 @@ interface TipoConfiguracion {
 
 // tslint:disable: no-empty-interface
 export interface IModeloEjecucion extends TipoConfiguracion {
+  externo: boolean;
+  contrato: boolean;
 }
 
 export interface ITipoDocumento extends TipoConfiguracion {

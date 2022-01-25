@@ -58,7 +58,7 @@ public class SolicitudProyectoResponsableEconomicoController {
    */
   @GetMapping("/{id}")
   @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-SOL-E', 'CSP-SOL-INV-ER')")
-  SolicitudProyectoResponsableEconomicoOutput findById(@PathVariable Long id) {
+  public SolicitudProyectoResponsableEconomicoOutput findById(@PathVariable Long id) {
     log.debug("findById(Long id) - start");
     SolicitudProyectoResponsableEconomico returnValue = service.findById(id);
     log.debug("findById(Long id) - end");
@@ -88,7 +88,7 @@ public class SolicitudProyectoResponsableEconomicoController {
 
   private Page<SolicitudProyectoResponsableEconomicoOutput> convert(Page<SolicitudProyectoResponsableEconomico> page) {
     List<SolicitudProyectoResponsableEconomicoOutput> content = page.getContent().stream()
-        .map((responsableEconomico) -> convert(responsableEconomico)).collect(Collectors.toList());
+        .map(responsableEconomico -> convert(responsableEconomico)).collect(Collectors.toList());
 
     return new PageImpl<>(content, page.getPageable(), page.getTotalElements());
   }
@@ -103,9 +103,7 @@ public class SolicitudProyectoResponsableEconomicoController {
 
   private List<SolicitudProyectoResponsableEconomico> convert(Long solicitudProyectoId,
       List<SolicitudProyectoResponsableEconomicoInput> list) {
-    List<SolicitudProyectoResponsableEconomico> content = list.stream()
-        .map((responsableEconomico) -> convert(solicitudProyectoId, responsableEconomico)).collect(Collectors.toList());
-
-    return content;
+    return list.stream().map(responsableEconomico -> convert(solicitudProyectoId, responsableEconomico))
+        .collect(Collectors.toList());
   }
 }

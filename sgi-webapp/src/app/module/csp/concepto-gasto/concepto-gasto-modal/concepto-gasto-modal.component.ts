@@ -89,7 +89,7 @@ export class ConceptoGastoModalComponent extends DialogActionComponent<IConcepto
     return new FormGroup({
       nombre: new FormControl(this.conceptoGasto?.nombre ?? '', Validators.required),
       descripcion: new FormControl(this.conceptoGasto?.descripcion ?? ''),
-      costesIndirectos: new FormControl({ value: this.conceptoGasto?.costesIndirectos, disabled: true }, Validators.required)
+      costesIndirectos: new FormControl(this.conceptoGasto?.costesIndirectos, Validators.required)
     });
   }
 

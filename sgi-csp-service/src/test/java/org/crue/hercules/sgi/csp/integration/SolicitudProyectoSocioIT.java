@@ -21,6 +21,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.jdbc.Sql;
+import org.springframework.test.context.jdbc.Sql.ExecutionPhase;
 import org.springframework.web.util.UriComponentsBuilder;
 
 /**
@@ -31,6 +32,7 @@ public class SolicitudProyectoSocioIT extends BaseIT {
 
   private static final String PATH_PARAMETER_ID = "/{id}";
   private static final String CONTROLLER_BASE_PATH = "/solicitudproyectosocio";
+  private static final String PATH_VINCULACIONES = "/vinculaciones";
 
   private HttpEntity<SolicitudProyectoSocio> buildRequest(HttpHeaders headers, SolicitudProyectoSocio entity)
       throws Exception {
@@ -218,7 +220,7 @@ public class SolicitudProyectoSocioIT extends BaseIT {
   @Sql
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void findAllSolicitudProyectoSocioPeriodoJustificacion_WithPagingSortingAndFiltering_ReturnsSolicitudPeriodoJustificacionSubList()
+  void findAllSolicitudProyectoSocioPeriodoJustificacion_WithPagingSortingAndFiltering_ReturnsSolicitudPeriodoJustificacionSubList()
       throws Exception {
     HttpHeaders headers = new HttpHeaders();
     headers.set("Authorization", String.format("bearer %s", tokenBuilder.buildToken("user", "CSP-SOL-E")));
@@ -245,6 +247,64 @@ public class SolicitudProyectoSocioIT extends BaseIT {
     HttpHeaders responseHeaders = response.getHeaders();
     Assertions.assertThat(responseHeaders.getFirst("X-Page")).as("X-Page").isEqualTo("0");
     Assertions.assertThat(responseHeaders.getFirst("X-Page-Size")).as("X-Page-Size").isEqualTo("10");
+  }
+
+  @Sql(executionPhase = ExecutionPhase.BEFORE_TEST_METHOD, scripts = {
+    // @formatter:off
+    "classpath:scripts/modelo_ejecucion.sql",
+    "classpath:scripts/tipo_finalidad.sql",
+    "classpath:scripts/tipo_regimen_concurrencia.sql",
+    "classpath:scripts/tipo_ambito_geografico.sql",
+    "classpath:scripts/convocatoria.sql",
+    "classpath:scripts/solicitud.sql",
+    "classpath:scripts/estado_solicitud.sql",
+    "classpath:scripts/solicitud_proyecto.sql",
+    "classpath:scripts/rol_socio.sql",
+    "classpath:scripts/solicitud_proyecto_socio.sql"
+    // @formatter:on
+  })
+  @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
+  @Test
+  void vinculaciones_ReturnStatusCode204() throws Exception {
+    Long solicitudProyectoSocioId = 1L;
+
+    URI uri = UriComponentsBuilder.fromUriString(CONTROLLER_BASE_PATH + PATH_PARAMETER_ID + PATH_VINCULACIONES)
+        .buildAndExpand(solicitudProyectoSocioId).toUri();
+
+    final ResponseEntity<Void> response = restTemplate.exchange(uri, HttpMethod.HEAD, buildRequest(null, null),
+        Void.class);
+
+    Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
+
+  }
+
+  @Sql(executionPhase = ExecutionPhase.BEFORE_TEST_METHOD, scripts = {
+    // @formatter:off
+    "classpath:scripts/modelo_ejecucion.sql",
+    "classpath:scripts/tipo_finalidad.sql",
+    "classpath:scripts/tipo_regimen_concurrencia.sql",
+    "classpath:scripts/tipo_ambito_geografico.sql",
+    "classpath:scripts/convocatoria.sql",
+    "classpath:scripts/solicitud.sql",
+    "classpath:scripts/estado_solicitud.sql",
+    "classpath:scripts/solicitud_proyecto.sql",
+    "classpath:scripts/rol_socio.sql",
+    "classpath:scripts/solicitud_proyecto_socio.sql"
+    // @formatter:on
+  })
+  @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
+  @Test
+  void exists_ReturnStatusCode200() throws Exception {
+    Long solicitudProyectoSocioId = 1L;
+
+    URI uri = UriComponentsBuilder.fromUriString(CONTROLLER_BASE_PATH + PATH_PARAMETER_ID)
+        .buildAndExpand(solicitudProyectoSocioId).toUri();
+
+    final ResponseEntity<Void> response = restTemplate.exchange(uri, HttpMethod.HEAD, buildRequest(null, null),
+        Void.class);
+
+    Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+
   }
 
   /**

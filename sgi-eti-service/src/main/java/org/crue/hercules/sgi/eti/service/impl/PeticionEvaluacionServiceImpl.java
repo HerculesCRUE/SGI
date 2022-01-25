@@ -181,6 +181,8 @@ public class PeticionEvaluacionServiceImpl implements PeticionEvaluacionService 
 
     Assert.notNull(peticionEvaluacionActualizar.getId(),
         "PeticionEvaluacion id no puede ser null para actualizar una petición de evaluación");
+    Assert.notNull(peticionEvaluacionActualizar.getTitulo(),
+        "PeticionEvaluacion titulo no puede ser null para actualizar una petición de evaluación");
 
     if (peticionEvaluacionActualizar.getExisteFinanciacion()) {
       Assert.notNull(peticionEvaluacionActualizar.getFuenteFinanciacion(),

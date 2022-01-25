@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <artifacts>
-  <artifact name="error-handling-sequence" groupId="org.crue.hercules.sgi.esb.sequence" version="0.0.5" type="synapse/sequence" serverRole="EnterpriseServiceBus">
+  <artifact name="error-handling-sequence" groupId="org.crue.hercules.sgi.esb.sequence" version="0.0.6" type="synapse/sequence" serverRole="EnterpriseServiceBus">
     <file>src/main/synapse-config/sequences/error-handling-sequence.xml</file>
   </artifact>
-  <artifact name="sgi-auth-sequence-template" groupId="org.crue.hercules.sgi.esb.template" version="0.0.5" type="synapse/sequenceTemplate" serverRole="EnterpriseServiceBus">
+  <artifact name="sgi-auth-sequence-template" groupId="org.crue.hercules.sgi.esb.template" version="0.0.6" type="synapse/sequenceTemplate" serverRole="EnterpriseServiceBus">
     <file>src/main/synapse-config/templates/sgi-auth-sequence-template.xml</file>
   </artifact>
 </artifacts>

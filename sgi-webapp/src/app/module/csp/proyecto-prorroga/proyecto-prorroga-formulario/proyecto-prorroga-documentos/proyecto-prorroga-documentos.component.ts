@@ -6,11 +6,9 @@ import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { FragmentComponent } from '@core/component/fragment.component';
 import { MSG_PARAMS } from '@core/i18n';
 import { IProyectoProrrogaDocumento } from '@core/models/csp/proyecto-prorroga-documento';
-import { ITipoDocumento, ITipoFase } from '@core/models/csp/tipos-configuracion';
 import { FxFlexProperties } from '@core/models/shared/flexLayout/fx-flex-properties';
 import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-properties';
 import { Group } from '@core/services/action-service';
-import { ModeloEjecucionService } from '@core/services/csp/modelo-ejecucion.service';
 import { DialogService } from '@core/services/dialog.service';
 import { DocumentoService, triggerDownloadToUser } from '@core/services/sgdoc/documento.service';
 import { SnackBarService } from '@core/services/snack-bar.service';
@@ -67,8 +65,6 @@ export class ProyectoProrrogaDocumentosComponent extends FragmentComponent imple
 
   uploading = false;
 
-  tiposDocumento: ITipoDocumento[] = [];
-
   msgParamEntity = {};
   msgParamFicheroEntity = {};
   msgParamNombreEntity = {};
@@ -83,13 +79,9 @@ export class ProyectoProrrogaDocumentosComponent extends FragmentComponent imple
 
   hasChild = (_: number, node: NodeDocumento) => node.childs.length > 0;
 
-  compareFase = (option: ITipoFase, value: ITipoFase) => option?.id === value?.id;
-  compareTipoDocumento = (option: ITipoDocumento, value: ITipoDocumento) => option?.id === value?.id;
-
   constructor(
     private dialogService: DialogService,
-    private actionService: ProyectoProrrogaActionService,
-    private modeloEjecucionService: ModeloEjecucionService,
+    actionService: ProyectoProrrogaActionService,
     private documentoService: DocumentoService,
     private snackBar: SnackBarService,
     private readonly translate: TranslateService
@@ -127,14 +119,6 @@ export class ProyectoProrrogaDocumentosComponent extends FragmentComponent imple
       comentario: new FormControl('')
     }));
     this.group.initialize();
-    const id = this.formPart.proyectoModeloEjecucionId;
-    this.subscriptions.push(
-      this.modeloEjecucionService.findModeloTipoDocumento(id).subscribe(
-        (tipos) => {
-          this.tiposDocumento = tipos.items.filter(tipo => !tipo.modeloTipoFase).map(tipo => tipo.tipoDocumento);
-        }
-      )
-    );
 
     this.switchToNone();
   }

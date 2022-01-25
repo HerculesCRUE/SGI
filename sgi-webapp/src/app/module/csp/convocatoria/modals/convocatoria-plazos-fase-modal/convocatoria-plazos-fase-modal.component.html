@@ -52,7 +52,8 @@
       [fxLayoutGap]="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
       <mat-form-field>
         <mat-label>{{'csp.convocatoria-fase.tipo' | translate}}</mat-label>
-        <sgi-select-entity formControlName="tipoFase" required [options]="tiposFases$ | async"></sgi-select-entity>
+        <sgi-select-tipo-fase formControlName="tipoFase" required [modeloEjecucionId]="data.idModeloEjecucion"
+          relation="convocatoria"></sgi-select-tipo-fase>
         <mat-error *ngIf="formGroup.controls.tipoFase.errors?.required">
           {{'error.required.entity' | translate:msgParamTipoEntity}}
         </mat-error>

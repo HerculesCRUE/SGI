@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { IEmpresa } from '@core/models/sgemp/empresa';
 import { environment } from '@env';
 import { FormlyFieldConfig } from '@ngx-formly/core';
-import { SgiRestService } from '@sgi/framework/http';
+import { RSQLSgiRestFilter, SgiRestFilterOperator, SgiRestFindOptions, SgiRestListResult, SgiRestService } from '@sgi/framework/http';
 import { Observable } from 'rxjs';
 
 @Injectable({
@@ -39,5 +39,19 @@ export class EmpresaService extends SgiRestService<string, IEmpresa> {
 
   getFormlyView(): Observable<FormlyFieldConfig[]> {
     return this.http.get<FormlyFieldConfig[]>(`${this.endpointUrl}/formly/view`);
+  }
+
+  /**
+   * Busca todas las empresas que tengan alguno de los ids de la lista
+   *
+   * @param ids lista de identificadores de empresa
+   * @returns la lista de empresas
+   */
+  findAllByIdIn(ids: string[]): Observable<SgiRestListResult<IEmpresa>> {
+    const options: SgiRestFindOptions = {
+      filter: new RSQLSgiRestFilter('id', SgiRestFilterOperator.IN, ids)
+    };
+
+    return this.findAll(options);
   }
 }

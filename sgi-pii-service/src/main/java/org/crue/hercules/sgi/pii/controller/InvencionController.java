@@ -526,6 +526,8 @@ public class InvencionController {
    * el id indicado.
    * 
    * @param invencionId Identificador de {@link Invencion}
+   * @param query       Las restricciones RSL a aplicacar a la consulta
+   * @param paging      La información de paginación
    * @return {@link PeriodoTitularidad} asociados a la {@link Invencion}
    */
   @GetMapping(PATH_PERIODOSTITULARIDAD)

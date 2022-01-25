@@ -332,4 +332,9 @@ public class Proyecto extends BaseEntity {
   @Setter(AccessLevel.NONE)
   private final List<ProyectoAnualidad> proyectosAnualidad = null;
 
+  @OneToMany(mappedBy = "proyecto")
+  @Getter(AccessLevel.NONE)
+  @Setter(AccessLevel.NONE)
+  private final List<ProyectoPalabraClave> palabrasClave = null;
+
 }

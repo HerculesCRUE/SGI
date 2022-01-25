@@ -38,13 +38,13 @@ public class TipoHitoController {
   /**
    * Devuelve todas las entidades {@link TipoHito} activos paginadas
    *
-   * @param query    la información del filtro.
-   * @param pageable la información de la paginación.
+   * @param query  la información del filtro.
+   * @param paging la información de la paginación.
    * @return la lista de entidades {@link TipoHito} paginadas
    */
   @GetMapping()
   @PreAuthorize("hasAuthority('AUTH')")
-  ResponseEntity<Page<TipoHito>> findAll(@RequestParam(name = "q", required = false) String query,
+  public ResponseEntity<Page<TipoHito>> findAll(@RequestParam(name = "q", required = false) String query,
       @RequestPageable(sort = "s") Pageable paging) {
     log.debug("findAll(String query, Pageable paging) - start");
     Page<TipoHito> page = tipoHitoService.findAll(query, paging);
@@ -61,13 +61,13 @@ public class TipoHitoController {
   /**
    * Devuelve todas las entidades {@link TipoHito} paginadas
    *
-   * @param query    la información del filtro.
-   * @param pageable la información de la paginación.
+   * @param query  la información del filtro.
+   * @param paging la información de la paginación.
    * @return la lista de entidades {@link TipoHito} paginadas
    */
   @GetMapping("/todos")
   @PreAuthorize("hasAnyAuthority('CSP-THITO-V', 'CSP-THITO-C', 'CSP-THITO-E', 'CSP-THITO-B', 'CSP-THITO-R', 'CSP-ME-C', 'CSP-ME-E')")
-  ResponseEntity<Page<TipoHito>> findAllTodos(@RequestParam(name = "q", required = false) String query,
+  public ResponseEntity<Page<TipoHito>> findAllTodos(@RequestParam(name = "q", required = false) String query,
       @RequestPageable(sort = "s") Pageable paging) {
     log.debug("findAllTodos(String query, Pageable paging) - start");
     Page<TipoHito> page = tipoHitoService.findAllTodos(query, paging);
@@ -104,7 +104,7 @@ public class TipoHitoController {
    */
   @GetMapping("/{id}")
   @PreAuthorize("hasAuthority('AUTH')")
-  TipoHito findById(@PathVariable Long id) {
+  public TipoHito findById(@PathVariable Long id) {
     log.debug("findById(Long id) - start");
     TipoHito returnTipoHito = tipoHitoService.findById(id);
     log.debug("findById(Long id) - end");
@@ -120,7 +120,7 @@ public class TipoHitoController {
    */
   @PutMapping("/{id}")
   @PreAuthorize("hasAuthority('CSP-THITO-E')")
-  TipoHito update(@PathVariable Long id, @Valid @RequestBody TipoHito updatedTipoHito) {
+  public TipoHito update(@PathVariable Long id, @Valid @RequestBody TipoHito updatedTipoHito) {
     log.debug("updateTipoHito(Long id, TipoHito updatedTipoHito) - start");
     updatedTipoHito.setId(id);
     TipoHito returnTipoHito = tipoHitoService.update(updatedTipoHito);
@@ -136,7 +136,7 @@ public class TipoHitoController {
    */
   @PatchMapping("/{id}/reactivar")
   @PreAuthorize("hasAuthority('CSP-THITO-R')")
-  TipoHito reactivar(@PathVariable Long id) {
+  public TipoHito reactivar(@PathVariable Long id) {
     log.debug("reactivar(Long id) - start");
     TipoHito returnValue = tipoHitoService.enable(id);
     log.debug("reactivar(Long id) - end");
@@ -151,7 +151,7 @@ public class TipoHitoController {
    */
   @PatchMapping("/{id}/desactivar")
   @PreAuthorize("hasAuthority('CSP-THITO-B')")
-  TipoHito desactivar(@PathVariable Long id) {
+  public TipoHito desactivar(@PathVariable Long id) {
     log.debug("desactivar(Long id) - start");
     TipoHito returnValue = tipoHitoService.disable(id);
     log.debug("desactivar(Long id) - end");

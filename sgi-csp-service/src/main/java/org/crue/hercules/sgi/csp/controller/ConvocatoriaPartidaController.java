@@ -51,7 +51,7 @@ public class ConvocatoriaPartidaController {
    */
   @GetMapping("/{id}")
   @PreAuthorize("hasAuthorityForAnyUO('AUTH')")
-  ConvocatoriaPartida findById(@PathVariable Long id) {
+  public ConvocatoriaPartida findById(@PathVariable Long id) {
     log.debug("findById(Long id) - start");
     ConvocatoriaPartida returnValue = service.findById(id);
     log.debug("findById(Long id) - end");
@@ -66,7 +66,7 @@ public class ConvocatoriaPartidaController {
    */
   @PostMapping
   @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-CON-C', 'CSP-CON-E')")
-  ResponseEntity<ConvocatoriaPartida> create(@Valid @RequestBody ConvocatoriaPartida convocatoriaPartida) {
+  public ResponseEntity<ConvocatoriaPartida> create(@Valid @RequestBody ConvocatoriaPartida convocatoriaPartida) {
     log.debug("create(ConvocatoriaPartida convocatoriaPartida) - start");
     ConvocatoriaPartida returnValue = service.create(convocatoriaPartida);
     log.debug("create(ConvocatoriaPartida convocatoriaPartida) - end");
@@ -82,7 +82,7 @@ public class ConvocatoriaPartidaController {
    */
   @PutMapping("/{id}")
   @PreAuthorize("hasAuthorityForAnyUO('CSP-CON-E')")
-  ConvocatoriaPartida update(
+  public ConvocatoriaPartida update(
       @Validated({ Update.class, Default.class }) @RequestBody ConvocatoriaPartida convocatoriaPartida,
       @PathVariable Long id) {
     log.debug("update(ConvocatoriaPartida convocatoriaPartida, Long id) - start");
@@ -100,7 +100,7 @@ public class ConvocatoriaPartidaController {
   @DeleteMapping("/{id}")
   @PreAuthorize("hasAuthorityForAnyUO('CSP-CON-E')")
   @ResponseStatus(value = HttpStatus.NO_CONTENT)
-  void deleteById(@PathVariable Long id) {
+  public void deleteById(@PathVariable Long id) {
     log.debug("deleteById(Long id) - start");
     service.delete(id);
     log.debug("deleteById(Long id) - end");
@@ -116,7 +116,7 @@ public class ConvocatoriaPartidaController {
    */
   @RequestMapping(path = "/{id}/modificable", method = RequestMethod.HEAD)
   @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-CON-E', 'CSP-CON-V')")
-  ResponseEntity<ConvocatoriaPartida> modificable(@PathVariable Long id) {
+  public ResponseEntity<ConvocatoriaPartida> modificable(@PathVariable Long id) {
     log.debug("modificable(Long id) - start");
     boolean returnValue = service.modificable(id, "CSP-CON-E");
     log.debug("modificable(Long id) - end");

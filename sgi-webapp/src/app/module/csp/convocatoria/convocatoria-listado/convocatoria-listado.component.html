@@ -90,7 +90,7 @@
             <mat-label>{{'csp.convocatoria.modelo-ejecucion' | translate}}</mat-label>
             <sgi-select-modelo-ejecucion #modeloEjecucion formControlName="modeloEjecucion"
               [unidadGestionRef]="formGroup.controls.unidadGestion.value?.id"
-              [resetOnChange]="unidadGestion.selectionChange">
+              [resetOnChange]="unidadGestion.selectionChange" extended="false">
             </sgi-select-modelo-ejecucion>
           </mat-form-field>
         </div>
@@ -102,7 +102,7 @@
             <mat-label>{{'csp.convocatoria.finalidad' | translate}}</mat-label>
             <sgi-select-tipo-finalidad formControlName="finalidad"
               [modeloEjecucionId]="formGroup.controls.modeloEjecucion.value?.id"
-              [resetOnChange]="modeloEjecucion.selectionChange">
+              [resetOnChange]="modeloEjecucion.selectionChange" extended="false">
             </sgi-select-tipo-finalidad>
           </mat-form-field>
         </div>
@@ -187,7 +187,8 @@
           [fxFlexOrder]="fxFlexProperties.order">
           <mat-form-field class="input-form">
             <mat-label>{{'csp.convocatoria.fuente-financiacion' | translate}}</mat-label>
-            <sgi-select-fuente-financiacion formControlName="fuenteFinanciacion"></sgi-select-fuente-financiacion>
+            <sgi-select-fuente-financiacion formControlName="fuenteFinanciacion" extended="false">
+            </sgi-select-fuente-financiacion>
           </mat-form-field>
         </div>
 
@@ -219,6 +220,18 @@
           </mat-form-field>
         </div>
 
+      </div>
+
+      <!-- Palabras clave -->
+      <div [fxLayout.xs]="fxLayoutProperties.xs" [fxLayout]="fxLayoutProperties.layout"
+        [fxLayoutGap]="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
+        <div fxFlex="100%">
+          <mat-form-field fxFill>
+            <mat-label>{{'csp.convocatoria.palabras-clave' | translate}}</mat-label>
+            <sgi-palabra-clave formControlName="palabrasClave" id="palabrasClave"
+              placeholder="{{'csp.convocatoria.palabras-clave' | translate}}"></sgi-palabra-clave>
+          </mat-form-field>
+        </div>
       </div>
 
       <div class="buttons-final">
@@ -313,15 +326,15 @@
         <th mat-header-cell *matHeaderCellDef> {{'label.actions' | translate}} </th>
         <td mat-cell *matCellDef="let element">
           <ng-container *sgiHasAnyAuthority="['CSP-CON-V', 'CSP-CON-V_' + element.convocatoria.unidadGestion.id ]">
-            <button mat-button matTooltip="{{'btn.view' | translate}}" [routerLink]="[element.convocatoria.id]">
+            <a mat-button matTooltip="{{'btn.view' | translate}}" [routerLink]="[element.convocatoria.id]">
               <mat-icon color="primary">visibility</mat-icon>
-            </button>
+            </a>
           </ng-container>
           <ng-container *sgiHasAnyAuthority="['CSP-CON-E', 'CSP-CON-E_' + element.convocatoria.unidadGestion.id ]">
-            <button *ngIf="element.convocatoria.activo===true" mat-button matTooltip="{{'btn.edit' | translate}}"
+            <a *ngIf="element.convocatoria.activo===true" mat-button matTooltip="{{'btn.edit' | translate}}"
               [routerLink]="[element.convocatoria.id]">
               <mat-icon color="primary">border_color</mat-icon>
-            </button>
+            </a>
           </ng-container>
           <ng-container *sgiHasAnyAuthority="['CSP-CON-B', 'CSP-CON-B_' + element.convocatoria.unidadGestion.id ]">
             <button *ngIf="element.convocatoria.estado === Estado.BORRADOR &&  element.convocatoria.activo === true"

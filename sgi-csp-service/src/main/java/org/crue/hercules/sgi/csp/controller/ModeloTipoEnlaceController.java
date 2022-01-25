@@ -58,7 +58,7 @@ public class ModeloTipoEnlaceController {
   @DeleteMapping("/{id}")
   @PreAuthorize("hasAuthorityForAnyUO('CSP-ME-E')")
   @ResponseStatus(value = HttpStatus.NO_CONTENT)
-  void deleteById(@PathVariable Long id) {
+  public void deleteById(@PathVariable Long id) {
     log.debug("deleteById(Long id) - start");
     service.disable(id);
     log.debug("deleteById(Long id) - end");
@@ -72,7 +72,7 @@ public class ModeloTipoEnlaceController {
    */
   @GetMapping("/{id}")
   @PreAuthorize("hasAuthorityForAnyUO('AUTH')")
-  ModeloTipoEnlace findById(@PathVariable Long id) {
+  public ModeloTipoEnlace findById(@PathVariable Long id) {
     log.debug("findById(Long id) - start");
     ModeloTipoEnlace returnValue = service.findById(id);
     log.debug("findById(Long id) - end");

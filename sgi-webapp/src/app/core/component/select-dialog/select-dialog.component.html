@@ -1,13 +1,25 @@
-<div class="mat-select-trigger">
-  <div class="mat-select-value" fxFlex="grow" [ngSwitch]="empty" [attr.id]="_valueId">
-    <span class="mat-select-placeholder" *ngSwitchCase="true">{{placeholder || '\u00A0'}}</span>
-    <span *ngSwitchCase="false" [ngSwitch]="!!value">
-      <input type="text" class="mat-input-element" tabindex="-1" readonly *ngSwitchDefault
-        [value]="displayValue || '\u00A0'">
-    </span>
-  </div>
+<div fxLayout="row">
+  <input class="mat-input-element" #searchInput [formControl]="searchInputCtrl" [matAutocomplete]="auto"
+    [placeholder]="placeholder" *ngIf="empty" [attr.tabindex]="disabled ? -1 : null">
 
-  <div class="icon-wrapper" fxFlexAlign="center" [class.disabled]="disabled" (click)="showDialog()">
-    <mat-icon>search</mat-icon>
+  <input #displayInput type="text" class="mat-input-element" readonly [disabled]="disabled"
+    [attr.tabindex]="disabled ? -1 : null" *ngIf="!empty" [value]="displayWith(this.value)">
+
+  <div class="icon-wrapper" [class.disabled]="disabled">
+    <button #dialogButton mat-icon-button type="button" [disabled]="disabled" (click)="showDialog()"
+      [attr.tabindex]="disabled ? -1 : null">
+      <mat-icon>search</mat-icon>
+    </button>
   </div>
 </div>
+<mat-autocomplete #auto="matAutocomplete" (optionSelected)="_selected($event)" autoActiveFirstOption="true"
+  class="sgi-results">
+
+  <div class="page" fxFlex="1 1" fxFlexAlign="center" fxLayoutAlign="center">
+    <span *ngIf="tooManyResults">{{'label.search.too-many-results' | translate}}</span>
+  </div>
+  <mat-option *ngFor="let result of searchResult$ | async" [value]="result">
+    {{displayWith(result)}}
+  </mat-option>
+
+</mat-autocomplete>

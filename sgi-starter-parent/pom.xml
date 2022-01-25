@@ -1,0 +1,523 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-parent</artifactId>
+    <version>2.3.9.RELEASE</version>
+  </parent>
+
+  <groupId>org.crue.hercules.sgi</groupId>
+  <artifactId>sgi-starter-parent</artifactId>
+  <version>0.0.6</version>
+  <packaging>pom</packaging>
+  <name>sgi-starter-parent</name>
+  <description>Parent pom providing dependency and plugin management for applications built with Maven</description>
+  <url>https://github.com/HerculesCRUE/SGI</url>
+
+  <licenses>
+    <license>
+      <name>GNU General Public License, Version 3</name>
+      <url>https://www.gnu.org/licenses/gpl-3.0.html</url>
+    </license>
+  </licenses>
+
+  <developers>
+    <developer>
+      <name>Treelogic</name>
+      <email>info@treelogic.com</email>
+      <organization>Tree Technology</organization>
+      <organizationUrl>https://www.treelogic.com</organizationUrl>
+    </developer>
+  </developers>
+
+  <scm>
+    <url>https://github.com/HerculesCRUE/SGI</url>
+  </scm>
+
+  <properties>
+    <!-- Distribution Management URL's -->
+    <dist.repo.rel.url>file:///maven-repositories/releases/</dist.repo.rel.url>
+    <dist.repo.snap.url>file:///maven-repositories/snapshots/</dist.repo.snap.url>
+    <!-- spring-boot-starter-parent version to allow reconfiguration of spring boot dependencies defined there  -->
+    <spring-boot-starter-parent.version>2.3.9.RELEASE</spring-boot-starter-parent.version>
+    <!-- Dependencies versions (not defined in parent pom) -->
+    <classic-core.version>8.3.0.24-1314</classic-core.version>
+    <commons-collections4.version>4.4</commons-collections4.version>
+    <commons-email.version>1.5</commons-email.version>
+    <greenmail.version>1.6.5</greenmail.version>
+    <jakarta.validation-api.version>2.0.2</jakarta.validation-api.version>
+    <jslt.version>0.1.11</jslt.version>
+    <json-path.version>2.6.0</json-path.version>
+    <lombok.version>1.18.20</lombok.version> <!-- Update Lombok to be JDK 16 compatible -->
+    <modelmapper.version>2.3.5</modelmapper.version>
+    <rsql-jpa-spring-boot-starter.version>5.0.9</rsql-jpa-spring-boot-starter.version>
+    <spel-scriptengine.version>1.0.0</spel-scriptengine.version>
+    <wiremock-jre8.version>2.31.0</wiremock-jre8.version>
+    <!-- Plugin versions (not defined in parent pom) -->
+    <liquibase-maven-plugin.version>4.5.0</liquibase-maven-plugin.version>
+    <sonar-maven-plugin.version>3.7.0.1746</sonar-maven-plugin.version>
+    <jacoco-maven-plugin.version>0.8.7</jacoco-maven-plugin.version>
+    <!-- Test execution modifiers -->
+    <skipTests>false</skipTests>
+    <skipUnitTests>${skipTests}</skipUnitTests>
+    <skipIntegrationTests>${skipTests}</skipIntegrationTests>
+    <!-- Define "argLine" as a Maven property rather than as part of the configuration of maven-surefire-plugin -->
+    <argLine>-Duser.timezone=UTC</argLine>
+  </properties>
+
+  <distributionManagement>
+    <repository>
+      <id>releases</id>
+      <url>${dist.repo.rel.url}</url>
+    </repository>
+    <snapshotRepository>
+      <id>snapshots</id>
+      <url>${dist.repo.snap.url}</url>
+    </snapshotRepository>
+  </distributionManagement>
+
+  <dependencyManagement>
+    <dependencies>
+      <!-- 
+        Pentaho Reporting Engine Classic Core - Java class library for generating reports
+        https://github.com/pentaho/pentaho-reporting
+      -->
+      <dependency>
+        <groupId>org.pentaho.reporting.engine</groupId>
+        <artifactId>classic-core</artifactId>
+        <version>${classic-core.version}</version>
+        <exclusions>
+          <exclusion>
+            <groupId>xml-apis</groupId>
+            <artifactId>xml-apis-ext</artifactId>
+          </exclusion>
+        </exclusions>
+      </dependency>
+      <!-- 
+        Apache Commons Collections - Powerful data structures that accelerate development of most significant Java applications
+        https://commons.apache.org/proper/commons-collections/index.html
+      -->
+      <dependency>
+        <groupId>org.apache.commons</groupId>
+        <artifactId>commons-collections4</artifactId>
+        <version>${commons-collections4.version}</version>
+      </dependency>
+      <!-- 
+        Commons Email - An API for sending email built on top of the Java Mail API, which it aims to simplify.
+        https://commons.apache.org/proper/commons-email/
+      -->
+      <dependency>
+        <groupId>org.apache.commons</groupId>
+        <artifactId>commons-email</artifactId>
+        <version>${commons-email.version}</version>
+      </dependency>
+      <!-- 
+        GreenMail - An easy-to-use test suite of email servers for testing purposes
+        https://greenmail-mail-test.github.io/greenmail/
+      -->
+      <dependency>
+        <groupId>com.icegreen</groupId>
+        <artifactId>greenmail-junit5</artifactId>
+        <version>${greenmail.version}</version>
+      </dependency>
+      <!--
+        JSLT - A complete query and transformation language for JSON.
+        https://github.com/schibsted/jslt
+      -->
+      <dependency>
+        <groupId>com.schibsted.spt.data</groupId>
+        <artifactId>jslt</artifactId>
+        <version>${jslt.version}</version>
+      </dependency>
+      <!-- 
+        Jayway JsonPath - A Java DSL for reading JSON documents.
+        https://github.com/json-path/JsonPath
+      -->
+      <dependency>
+        <groupId>com.jayway.jsonpath</groupId>
+        <artifactId>json-path</artifactId>
+        <version>${json-path.version}</version>
+      </dependency>
+      <!--
+        ModelMapper - Makes object mapping easy.
+        http://modelmapper.org/
+      -->
+      <dependency>
+        <groupId>org.modelmapper</groupId>
+        <artifactId>modelmapper</artifactId>
+        <version>${modelmapper.version}</version>
+      </dependency>
+      <!--
+        RSQL to Spring JPA translation - Translate RSQL query into org.springframework.data.jpa.domain.Specification or com.querydsl.core.types.Predicate.
+        https://github.com/perplexhub/rsql-jpa-specification
+      -->
+      <dependency>
+        <groupId>io.github.perplexhub</groupId>
+        <artifactId>rsql-jpa-spring-boot-starter</artifactId>
+        <version>${rsql-jpa-spring-boot-starter.version}</version>
+      </dependency>
+      <!-- 
+        Spring Expression Language - A powerful expression language that supports querying and manipulating an object graph at runtime (see: https://docs.spring.io/spring-framework/docs/current/reference/html/core.html#expressions).
+        https://github.com/eobermuhlner/spel-scriptengine
+      -->
+      <dependency>
+        <groupId>ch.obermuhlner</groupId>
+        <artifactId>spel-scriptengine</artifactId>
+        <version>${spel-scriptengine.version}</version>
+      </dependency>
+      <!--
+        Spring Boot Test Starter - Imports both Spring Boot test modules as well as JUnit Jupiter, AssertJ, Hamcrest, and a number of other useful libraries.
+        https://docs.spring.io/spring-boot/docs/current/reference/htmlsingle/#features.testing
+      -->
+      <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-test</artifactId>
+        <version>${spring-boot-starter-parent.version}</version>
+        <exclusions>
+          <exclusion>
+            <groupId>org.junit.vintage</groupId>
+            <artifactId>junit-vintage-engine</artifactId>
+          </exclusion>
+        </exclusions>
+      </dependency>
+      <!--
+        WireMock - Simulator for HTTP-based APIs.
+        http://wiremock.org/
+      -->
+      <dependency>
+        <groupId>com.github.tomakehurst</groupId>
+        <artifactId>wiremock-jre8</artifactId>
+        <version>${wiremock-jre8.version}</version>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+
+  <build>
+    <pluginManagement>
+      <plugins>
+        <!--
+          JaCoCo Maven Plugin - Code coverage report for JVM languages.
+          http://www.eclemma.org/jacoco/
+        -->
+        <plugin>
+          <groupId>org.jacoco</groupId>
+          <artifactId>jacoco-maven-plugin</artifactId>
+          <version>${jacoco-maven-plugin.version}</version>
+          <configuration>
+            <excludes>
+              <!-- Exclude the JPA meta model classes from the report -->
+              <exclude>**/*_.class</exclude>
+            </excludes>
+          </configuration>
+          <executions>
+            <execution>
+              <!-- Unit test analisys config -->
+              <id>ut-prepare-agent</id>
+              <goals>
+                <goal>prepare-agent</goal>
+              </goals>
+              <configuration>
+                <!-- Sets the path to the file where the execution data will be generated -->
+                <destFile>${project.build.directory}/coverage-reports/jacoco-ut.exec</destFile>
+              </configuration>
+            </execution>
+            <execution>
+              <!-- Integration test analisys config -->
+              <id>it-prepare-agent</id>
+              <goals>
+                <goal>prepare-agent-integration</goal>
+              </goals>
+              <configuration>
+                <!-- Sets the path to the file where the execution data will be generated -->
+                <destFile>${project.build.directory}/coverage-reports/jacoco-it.exec</destFile>
+              </configuration>
+            </execution>
+            <execution>
+              <!-- Unit test report generation config -->
+              <id>ut-report</id>
+              <phase>test</phase>
+              <goals>
+                <goal>report</goal>
+              </goals>
+              <configuration>
+                <!-- Sets the path to the file which contains the execution data -->
+                <dataFile>${project.build.directory}/coverage-reports/jacoco-ut.exec</dataFile>
+                <!-- Sets the output directory for the unit tests code coverage report -->
+                <outputDirectory>${project.reporting.outputDirectory}/jacoco-ut</outputDirectory>
+              </configuration>
+            </execution>
+            <execution>
+              <!-- Integration test report generation config -->
+              <id>it-report</id>
+              <!-- Could be integration-test but then maven-failsafe-plugin should be defined before as is associated to same integration-test phase -->
+              <phase>post-integration-test</phase>
+              <goals>
+                <goal>report-integration</goal>
+              </goals>
+              <configuration>
+                <!-- Sets the path to the file which contains the execution data -->
+                <dataFile>${project.build.directory}/coverage-reports/jacoco-it.exec</dataFile>
+                <!-- Sets the output directory for the integration tests code coverage report -->
+                <outputDirectory>${project.reporting.outputDirectory}/jacoco-it</outputDirectory>
+              </configuration>
+            </execution>
+            <execution>
+              <!-- Merge unit an integration tests execution data -->
+              <id>merge-results</id>
+              <phase>verify</phase>
+              <goals>
+                <goal>merge</goal>
+              </goals>
+              <configuration>
+                <fileSets>
+                  <fileSet>
+                    <directory>${project.build.directory}/coverage-reports</directory>
+                    <include>*.exec</include>
+                  </fileSet>
+                </fileSets>
+                <destFile>${project.build.directory}/coverage-reports/aggregate.exec</destFile>
+              </configuration>
+            </execution>
+            <execution>
+              <!-- Unit and integration test merged report generation config -->
+              <id>merge-report</id>
+              <phase>verify</phase>
+              <goals>
+                <goal>report</goal>
+              </goals>
+              <configuration>
+                <!-- Sets the path to the file which contains the execution data -->
+                <dataFile>${project.build.directory}/coverage-reports/aggregate.exec</dataFile>
+                <!-- Sets the output directory for the code coverage report -->
+                <outputDirectory>${project.reporting.outputDirectory}/jacoco</outputDirectory>
+              </configuration>
+            </execution>
+          </executions>
+        </plugin>
+        <!-- 
+          Maven Liquibase Plugin - Generates liquibase changesets.
+          https://www.liquibase.org/documentation/maven/index.html
+        -->
+        <plugin>
+          <groupId>org.liquibase</groupId>
+          <artifactId>liquibase-maven-plugin</artifactId>
+          <version>${liquibase-maven-plugin.version}</version>
+          <configuration>
+            <verbose>true</verbose>
+            <logging>debug</logging>
+            <!-- see: http://blog.nutpan.com/2012/03/liquibase-maven-plugin-issue-with-non.html -->
+            <promptOnNonLocalDatabase>false</promptOnNonLocalDatabase>
+          </configuration>
+          <dependencies>
+            <dependency>
+              <groupId>org.liquibase.ext</groupId>
+              <artifactId>liquibase-hibernate5</artifactId>
+              <version>${liquibase-maven-plugin.version}</version>
+              <exclusions>
+                <exclusion>
+                  <groupId>org.hibernate</groupId>
+                  <artifactId>hibernate-core</artifactId>
+                </exclusion>
+                <exclusion>
+                  <groupId>org.hibernate</groupId>
+                  <artifactId>hibernate-entitymanager</artifactId>
+                </exclusion>
+                <exclusion>
+                  <groupId>org.hibernate</groupId>
+                  <artifactId>hibernate-envers</artifactId>
+                </exclusion>
+                <exclusion>
+                  <groupId>org.hibernate.javax.persistence</groupId>
+                  <artifactId>hibernate-jpa-2.0-api</artifactId>
+                </exclusion>
+                <exclusion>
+                  <groupId>org.liquibase</groupId>
+                  <artifactId>liquibase-test-harness</artifactId>
+                </exclusion>
+              </exclusions>
+            </dependency>
+            <dependency>
+              <groupId>org.springframework.boot</groupId>
+              <artifactId>spring-boot-starter-data-jpa</artifactId>
+              <version>${spring-boot-starter-parent.version}</version>
+            </dependency>
+            <dependency>
+              <groupId>jakarta.validation</groupId>
+              <artifactId>jakarta.validation-api</artifactId>
+              <version>${jakarta.validation-api.version}</version>
+            </dependency>
+          </dependencies>
+        </plugin>
+        <!--
+          Maven Compiler Plugin - Compile the sources of the project.
+          https://maven.apache.org/plugins/maven-compiler-plugin/
+        -->
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-compiler-plugin</artifactId>
+          <configuration>
+            <annotationProcessorPaths>
+              <!-- Lombok Code Generator -->
+              <path>
+                <groupId>org.projectlombok</groupId>
+                <artifactId>lombok</artifactId>
+                <version>${lombok.version}</version>
+              </path>
+              <!-- JPA Static Metamodel Generator -->
+              <path>
+                <groupId>org.hibernate</groupId>
+                <artifactId>hibernate-jpamodelgen</artifactId>
+                <version>${hibernate.version}</version>
+              </path>
+              <!-- Spring Configuration Metadata Generator -->
+              <path>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-configuration-processor</artifactId>
+                <version>${spring-boot-starter-parent.version}</version>
+              </path>
+            </annotationProcessorPaths>
+          </configuration>
+        </plugin>
+        <!--
+          Maven Failsafe Plugin - Runs integration tests.
+          http://maven.apache.org/surefire/maven-failsafe-plugin/
+        -->
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-failsafe-plugin</artifactId>
+          <configuration>
+            <skipTests>${skipIntegrationTests}</skipTests>
+          </configuration>
+          <executions>
+            <execution>
+              <goals>
+                <goal>integration-test</goal>
+              </goals>
+            </execution>
+          </executions>
+        </plugin>
+        <!--
+          Maven JAR Plugin - Provides the capability to build jars.
+          https://maven.apache.org/plugins/maven-jar-plugin/
+        -->
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-jar-plugin</artifactId>
+          <configuration>
+            <archive>
+              <index>false</index>
+              <manifest>
+                <addClasspath>true</addClasspath>
+                <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+                <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
+                <packageName>${project.groupId}</packageName>
+              </manifest>
+              <manifestEntries>
+                <name>${manifest.name}</name>
+                <BuildTime>${maven.build.timestamp}</BuildTime>
+              </manifestEntries>
+            </archive>
+          </configuration>
+        </plugin>
+        <!--
+          Maven Javadoc Plugin - Uses the Javadoc tool to generate javadocs for the specified project.
+          https://maven.apache.org/plugins/maven-javadoc-plugin/
+        -->
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-javadoc-plugin</artifactId>
+          <executions>
+            <execution>
+              <id>attach-javadocs</id>
+              <goals>
+                <goal>jar</goal>
+              </goals>
+            </execution>
+          </executions>
+          <configuration>
+            <!--
+              Shuts off non-error and non-warning messages, leaving only the warnings and errors
+              appear, making them easier to view.
+            -->
+            <quiet>true</quiet>
+            <!-- Exclude the JPA meta model classes from javadoc -->
+            <sourceFileExcludes>
+              <sourceFileExclude>**/*_.java</sourceFileExclude>
+            </sourceFileExcludes>
+          </configuration>
+        </plugin>
+        <!--
+          Maven Source Plugin - Creates a jar archive of the source files of the current project.
+          https://maven.apache.org/plugins/maven-source-plugin/
+        -->
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-source-plugin</artifactId>
+          <executions>
+            <!-- Source plugin is bound to the deploy phase -->
+            <execution>
+              <!-- Generates the jar for the deployment -->
+              <id>attach-sources</id>
+              <goals>
+                <goal>jar-no-fork</goal>
+              </goals>
+            </execution>
+          </executions>
+        </plugin>
+        <!--
+          Surefire Maven Plugin - Runs unit tests.
+          http://maven.apache.org/surefire/maven-surefire-plugin/
+        -->
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-surefire-plugin</artifactId>
+          <configuration>
+            <skipTests>${skipUnitTests}</skipTests>
+          </configuration>
+        </plugin>
+        <!--
+          SonarScanner for Maven - Executes the SonarQube analysis via a regular Maven goal.
+          https://docs.sonarqube.org/latest/analysis/scan/sonarscanner-for-maven/
+        -->
+        <plugin>
+          <groupId>org.sonarsource.scanner.maven</groupId>
+          <artifactId>sonar-maven-plugin</artifactId>
+          <version>${sonar-maven-plugin.version}</version>
+        </plugin>
+        <!--
+          Spring Boot Maven Plugin - Spring Boot support in Apache Maven.
+          http://docs.spring.io/spring-boot/docs/current/maven-plugin/
+        -->
+        <plugin>
+          <groupId>org.springframework.boot</groupId>
+          <artifactId>spring-boot-maven-plugin</artifactId>
+          <configuration>
+            <jvmArguments>
+            -Xmx256m
+            -Xss256k
+          </jvmArguments>
+            <profiles>
+              <!-- Set default active profile -->
+              <profile>${spring.profiles.active}</profile>
+            </profiles>
+            <!--
+              Create 2 artifacts: one as dependency and another as executable fat JAR
+              See https://docs.spring.io/spring-boot/docs/current/reference/html/howto-build.html#howto-create-an-additional-executable-jar
+            -->
+            <classifier>exec</classifier>
+          </configuration>
+          <executions>
+            <execution>
+              <id>build-info</id>
+              <goals>
+                <goal>build-info</goal>
+              </goals>
+            </execution>
+          </executions>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+  </build>
+</project>

@@ -57,7 +57,7 @@ public class ProyectoResponsableEconomicoController {
    */
   @GetMapping("/{id}")
   @PreAuthorize("hasAuthorityForAnyUO('CSP-PRO-E')")
-  ProyectoResponsableEconomicoOutput findById(@PathVariable Long id) {
+  public ProyectoResponsableEconomicoOutput findById(@PathVariable Long id) {
     log.debug("findById(Long id) - start");
     ProyectoResponsableEconomico returnValue = service.findById(id);
     log.debug("findById(Long id) - end");
@@ -85,7 +85,7 @@ public class ProyectoResponsableEconomicoController {
 
   private Page<ProyectoResponsableEconomicoOutput> convert(Page<ProyectoResponsableEconomico> page) {
     List<ProyectoResponsableEconomicoOutput> content = page.getContent().stream()
-        .map((responsableEconomico) -> convert(responsableEconomico)).collect(Collectors.toList());
+        .map(responsableEconomico -> convert(responsableEconomico)).collect(Collectors.toList());
 
     return new PageImpl<>(content, page.getPageable(), page.getTotalElements());
   }
@@ -99,9 +99,7 @@ public class ProyectoResponsableEconomicoController {
   }
 
   private List<ProyectoResponsableEconomico> convert(Long proyectoId, List<ProyectoResponsableEconomicoInput> list) {
-    List<ProyectoResponsableEconomico> content = list.stream()
-        .map((responsableEconomico) -> convert(proyectoId, responsableEconomico)).collect(Collectors.toList());
-
-    return content;
+    return list.stream().map(responsableEconomico -> convert(proyectoId, responsableEconomico))
+        .collect(Collectors.toList());
   }
 }

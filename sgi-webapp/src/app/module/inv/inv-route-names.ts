@@ -11,5 +11,6 @@ export const INV_ROUTE_NAMES = {
   CHECKLIST: CHECKLIST_ROUTE,
   ACTAS: ACTAS_ROUTE,
   CONVOCATORIAS: 'convocatorias',
-  SOLICITUDES: 'solicitudes'
+  SOLICITUDES: 'solicitudes',
+  AUTORIZACIONES: 'autorizaciones'
 };

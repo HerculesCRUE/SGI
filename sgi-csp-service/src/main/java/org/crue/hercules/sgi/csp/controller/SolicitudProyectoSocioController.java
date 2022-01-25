@@ -114,7 +114,7 @@ public class SolicitudProyectoSocioController {
    */
   @RequestMapping(path = "/{id}", method = RequestMethod.HEAD)
   @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-SOL-E', 'CSP-SOL-V')")
-  public ResponseEntity<?> exists(@PathVariable Long id) {
+  public ResponseEntity<Void> exists(@PathVariable Long id) {
     log.debug("SolicitudProyectoSocio exists(Long id) - start");
     if (service.existsById(id)) {
       log.debug("SolicitudProyectoSocio exists(Long id) - end");
@@ -133,7 +133,7 @@ public class SolicitudProyectoSocioController {
    */
   @GetMapping("/{id}")
   @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-SOL-E', 'CSP-SOL-V')")
-  SolicitudProyectoSocio findById(@PathVariable Long id) {
+  public SolicitudProyectoSocio findById(@PathVariable Long id) {
     log.debug("SolicitudProyectoSocio findById(Long id) - start");
     SolicitudProyectoSocio returnValue = service.findById(id);
     log.debug("SolicitudProyectoSocio findById(Long id) - end");
@@ -148,7 +148,7 @@ public class SolicitudProyectoSocioController {
   @DeleteMapping("/{id}")
   @PreAuthorize("hasAuthorityForAnyUO('CSP-SOL-E')")
   @ResponseStatus(value = HttpStatus.NO_CONTENT)
-  void deleteById(@PathVariable Long id) {
+  public void deleteById(@PathVariable Long id) {
     log.debug("deleteById(Long id) - start");
     service.delete(id);
     log.debug("deleteById(Long id) - end");
@@ -160,10 +160,12 @@ public class SolicitudProyectoSocioController {
    * @param id     Identificador de {@link SolicitudProyectoSocioPeriodoPago}.
    * @param query  filtro de búsqueda.
    * @param paging pageable.
+   * @return el listado de entidades {@link SolicitudProyectoSocioPeriodoPago}
+   *         paginadas y filtradas.
    */
   @GetMapping("/{id}/solicitudproyectosocioperiodopago")
   @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-SOL-E','CSP-SOL-V')")
-  ResponseEntity<Page<SolicitudProyectoSocioPeriodoPago>> findAllSolicitudProyectoSocioPeriodoPago(
+  public ResponseEntity<Page<SolicitudProyectoSocioPeriodoPago>> findAllSolicitudProyectoSocioPeriodoPago(
       @PathVariable Long id, @RequestParam(name = "q", required = false) String query,
       @RequestPageable(sort = "s") Pageable paging) {
     log.debug("findAllSolicitudProyectoSocioPeriodoPago(Long id, String query, Pageable paging) - start");
@@ -191,7 +193,7 @@ public class SolicitudProyectoSocioController {
    */
   @GetMapping("/{id}/solicitudproyectosocioequipo")
   @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-SOL-E', 'CSP-SOL-V')")
-  ResponseEntity<Page<SolicitudProyectoSocioEquipo>> findAllSolicitudProyectoSocioEquipo(@PathVariable Long id,
+  public ResponseEntity<Page<SolicitudProyectoSocioEquipo>> findAllSolicitudProyectoSocioEquipo(@PathVariable Long id,
       @RequestParam(name = "q", required = false) String query, @RequestPageable(sort = "s") Pageable paging) {
     log.debug("findAllSolicitudProyectoSocioEquipo(Long id, String query, Pageable paging) - start");
     Page<SolicitudProyectoSocioEquipo> page = solicitudProyectoEquipoSocioService.findAllBySolicitudProyectoSocio(id,
@@ -207,8 +209,8 @@ public class SolicitudProyectoSocioController {
   }
 
   /*
-   * Devuelve una lista paginada de {@link
-   * SolicitudProyectoSocioPeriodoJustificacion}
+   * Devuelve una lista de {@link SolicitudProyectoSocioPeriodoJustificacion}
+   * paginada
    * 
    * @param id Identificador de {@link
    * SolicitudProyectoSocioPeriodoJustificacion}.
@@ -219,7 +221,7 @@ public class SolicitudProyectoSocioController {
    */
   @GetMapping("/{id}/solicitudproyectosocioperiodojustificaciones")
   @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-SOL-E', 'CSP-SOL-V')")
-  ResponseEntity<Page<SolicitudProyectoSocioPeriodoJustificacion>> findAllSolicitudProyectoSocioPeriodoJustificacion(
+  public ResponseEntity<Page<SolicitudProyectoSocioPeriodoJustificacion>> findAllSolicitudProyectoSocioPeriodoJustificacion(
       @PathVariable Long id, @RequestParam(name = "q", required = false) String query,
       @RequestPageable(sort = "s") Pageable paging) {
     log.debug("findAllSolicitudProyectoSocioPeriodoJustificacion(Long id, String query, Pageable paging) - start");
@@ -249,11 +251,12 @@ public class SolicitudProyectoSocioController {
    */
   @RequestMapping(path = "/{id}/vinculaciones", method = RequestMethod.HEAD)
   @PreAuthorize("hasAuthorityForAnyUO('CSP-SOL-E')")
-  ResponseEntity<Boolean> vinculaciones(@PathVariable Long id) {
+  public ResponseEntity<Boolean> vinculaciones(@PathVariable Long id) {
     log.debug("vinculaciones(Long id) - start");
     Boolean returnValue = service.vinculaciones(id);
     log.debug("vinculaciones(Long id) - end");
-    return returnValue ? new ResponseEntity<>(HttpStatus.OK) : new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    return returnValue.booleanValue() ? new ResponseEntity<>(HttpStatus.OK)
+        : new ResponseEntity<>(HttpStatus.NO_CONTENT);
   }
 
 }

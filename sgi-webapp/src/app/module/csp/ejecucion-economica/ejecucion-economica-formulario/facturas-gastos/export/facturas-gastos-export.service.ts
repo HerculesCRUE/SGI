@@ -6,7 +6,9 @@ import { ISgiRowReport } from '@core/models/rep/sgi-row.report';
 import { IDatoEconomico } from '@core/models/sge/dato-economico';
 import { AbstractTableExportService, IReportConfig } from '@core/services/rep/abstract-table-export.service';
 import { ReportService } from '@core/services/rep/report.service';
+import { LuxonUtils } from '@core/utils/luxon-utils';
 import { TranslateService } from '@ngx-translate/core';
+import { LuxonDatePipe } from '@shared/luxon-date-pipe';
 import { NGXLogger } from 'ngx-logger';
 import { Observable, of } from 'rxjs';
 import { IEjecucionPresupuestariaReportOptions } from '../../../common/ejecucion-presupuestaria-report-options';
@@ -15,10 +17,11 @@ import { IDesglose } from '../../facturas-justificantes.fragment';
 
 const ANUALIDAD_KEY = marker('sge.dato-economico.anualidad');
 const PROYECTO_KEY = marker('sge.dato-economico.proyecto');
-const AGRUPACION_GASTO_KEY = marker('sge.dato-economico.agrupacion-gasto');
+const CLASIFICACION_SGE_KEY = marker('sge.dato-economico.clasificacion-sge');
 const CONCEPTO_GASTO_KEY = marker('sge.dato-economico.concepto-gasto');
 const APLICACION_PRESUPUESTARIA_KEY = marker('sge.dato-economico.partida-presupuestaria');
 const CODIGO_ECONOMICO_KEY = marker('sge.dato-economico.codigo-economico');
+const FECHA_DEVENGO_KEY = marker('sge.dato-economico.fecha-devengo');
 
 @Injectable()
 export class FacturasGastosExportService
@@ -27,6 +30,7 @@ export class FacturasGastosExportService
   constructor(
     protected readonly logger: NGXLogger,
     protected readonly translate: TranslateService,
+    private luxonDatePipe: LuxonDatePipe,
     protected reportService: ReportService
   ) {
     super(reportService);
@@ -42,11 +46,16 @@ export class FacturasGastosExportService
       };
       row.elements.push(item.anualidad);
       row.elements.push(item.proyecto?.titulo ?? 'Sin clasificar');
-      row.elements.push(item.agrupacionGasto?.nombre ?? 'Sin clasificar');
       row.elements.push(item.conceptoGasto?.nombre ?? 'Sin clasificar');
+      row.elements.push(item.clasificacionSGE.nombre ?? 'Sin clasificar');
       row.elements.push(item.partidaPresupuestaria);
       const codigoEconomico = item.codigoEconomico?.id + (item.codigoEconomico?.nombre ? ' - ' + item.codigoEconomico.nombre : '');
       row.elements.push(codigoEconomico);
+      const fechaDevengo = this.isExcelOrCsv(reportConfig.outputType)
+        ? LuxonUtils.toBackend(item.fechaDevengo) ?? ''
+        : (this.luxonDatePipe.transform(item.fechaDevengo, 'shortDate') ?? '');
+      row.elements.push(fechaDevengo);
+
       reportConfig.reportOptions.columns.forEach((column, index) => {
         const value = item.columnas[column.id] ?? 0;
         row.elements.push(value);
@@ -83,13 +92,13 @@ export class FacturasGastosExportService
         type: ColumnType.STRING
       },
       {
-        title: this.translate.instant(AGRUPACION_GASTO_KEY),
-        name: 'agrupacionGasto',
+        title: this.translate.instant(CONCEPTO_GASTO_KEY),
+        name: 'conceptoGasto',
         type: ColumnType.STRING
       },
       {
-        title: this.translate.instant(CONCEPTO_GASTO_KEY),
-        name: 'conceptoGasto',
+        title: this.translate.instant(CLASIFICACION_SGE_KEY),
+        name: 'clasificacionSGE',
         type: ColumnType.STRING
       },
       {
@@ -101,6 +110,11 @@ export class FacturasGastosExportService
         title: this.translate.instant(CODIGO_ECONOMICO_KEY),
         name: 'codigoEconomico',
         type: ColumnType.STRING
+      },
+      {
+        title: this.translate.instant(FECHA_DEVENGO_KEY),
+        name: 'fechaDevengo',
+        type: ColumnType.DATE
       }
     ];
 

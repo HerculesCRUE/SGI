@@ -80,7 +80,7 @@ public class RequisitoEquipoController {
    */
   @PostMapping
   @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-CON-C','CSP-CON-E')")
-  ResponseEntity<RequisitoEquipo> create(@Valid @RequestBody RequisitoEquipo requisitoEquipo) {
+  public ResponseEntity<RequisitoEquipo> create(@Valid @RequestBody RequisitoEquipo requisitoEquipo) {
     log.debug("create(RequisitoEquipo requisitoEquipo) - start");
     RequisitoEquipo returnValue = service.create(requisitoEquipo);
     log.debug("create(RequisitoEquipo requisitoEquipo) - end");
@@ -97,8 +97,8 @@ public class RequisitoEquipoController {
    */
   @PutMapping("/{id}")
   @PreAuthorize("hasAuthorityForAnyUO('CSP-CON-E')")
-  RequisitoEquipo update(@Validated({ Update.class, Default.class }) @RequestBody RequisitoEquipo requisitoEquipo,
-      @PathVariable Long id) {
+  public RequisitoEquipo update(
+      @Validated({ Update.class, Default.class }) @RequestBody RequisitoEquipo requisitoEquipo, @PathVariable Long id) {
     log.debug("update(RequisitoEquipo requisitoEquipo, Long id) - start");
     RequisitoEquipo returnValue = service.update(requisitoEquipo, id);
     log.debug("update(RequisitoEquipo requisitoEquipo, Long id) - end");
@@ -113,7 +113,7 @@ public class RequisitoEquipoController {
    */
   @GetMapping("/{id}")
   @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-CON-E', 'CSP-CON-V', 'CSP-CON-INV-V')")
-  ResponseEntity<RequisitoEquipo> findByConvocatoriaId(@PathVariable Long id) {
+  public ResponseEntity<RequisitoEquipo> findByConvocatoriaId(@PathVariable Long id) {
     log.debug("RequisitoEquipo findByConvocatoriaId(Long id) - start");
     RequisitoEquipo returnValue = service.findByConvocatoriaId(id);
 
@@ -242,12 +242,12 @@ public class RequisitoEquipoController {
 
   private List<RequisitoEquipoNivelAcademico> convertRequisitoEquipoNivelAcademicoInputs(
       List<RequisitoEquipoNivelAcademicoInput> inputs) {
-    return inputs.stream().map((input) -> convert(input)).collect(Collectors.toList());
+    return inputs.stream().map(input -> convert(input)).collect(Collectors.toList());
   }
 
   private List<RequisitoEquipoCategoriaProfesional> convertRequisitoEquipoCategoriaProfesionalInputs(
       List<RequisitoEquipoCategoriaProfesionalInput> inputs) {
-    return inputs.stream().map((input) -> convert(input)).collect(Collectors.toList());
+    return inputs.stream().map(input -> convert(input)).collect(Collectors.toList());
   }
 
   private RequisitoEquipoNivelAcademico convert(Long id, RequisitoEquipoNivelAcademicoInput input) {
@@ -264,11 +264,11 @@ public class RequisitoEquipoController {
 
   private List<RequisitoEquipoNivelAcademicoOutput> convertRequisitoEquipoNivelAcademicos(
       List<RequisitoEquipoNivelAcademico> entities) {
-    return entities.stream().map((entity) -> convert(entity)).collect(Collectors.toList());
+    return entities.stream().map(entity -> convert(entity)).collect(Collectors.toList());
   }
 
   private List<RequisitoEquipoCategoriaProfesionalOutput> convertRequisitoEquipoCategoriaProfesionales(
       List<RequisitoEquipoCategoriaProfesional> entities) {
-    return entities.stream().map((entity) -> convert(entity)).collect(Collectors.toList());
+    return entities.stream().map(entity -> convert(entity)).collect(Collectors.toList());
   }
 }

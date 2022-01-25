@@ -225,7 +225,7 @@ public class ProyectoAnualidadService {
   public ProyectoAnualidad notificarSge(final Long id) {
     log.debug("notificarSge(Long id) - start");
 
-    return repository.findById(id).map((data) -> {
+    return repository.findById(id).map(data -> {
       data.setEnviadoSge(true);
       ProyectoAnualidad returnValue = repository.save(data);
 

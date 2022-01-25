@@ -1,4 +1,7 @@
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
+import { Module } from '@core/module';
+import { CSP_ROUTE_NAMES } from 'src/app/module/csp/csp-route-names';
+import { PII_ROUTE_NAMES } from 'src/app/module/pii/pii-route-names';
 import { IConvocatoria } from '../csp/convocatoria';
 import { IProyecto } from '../csp/proyecto';
 import { IInvencion } from '../pii/invencion';
@@ -24,8 +27,8 @@ export const TIPO_ENTIDAD_MAP: Map<TipoEntidad, string> = new Map([
   [TipoEntidad.INVENCION, marker('rel.relacion.tipo-entidad.INVENCION')]
 ]);
 
-export const TIPO_ENTIDAD_HREF_MAP: Map<TipoEntidad, '/csp/convocatoria' | '/pii/invenciones' | '/csp/proyectos'> = new Map([
-  [TipoEntidad.CONVOCATORIA, '/csp/convocatoria'],
-  [TipoEntidad.INVENCION, '/pii/invenciones'],
-  [TipoEntidad.PROYECTO, '/csp/proyectos'],
+export const TIPO_ENTIDAD_HREF_MAP: Map<TipoEntidad, string> = new Map([
+  [TipoEntidad.CONVOCATORIA, `/${Module.CSP.path}/${CSP_ROUTE_NAMES.CONVOCATORIA}`],
+  [TipoEntidad.INVENCION, `/${Module.PII.path}/${PII_ROUTE_NAMES.INVENCION}`],
+  [TipoEntidad.PROYECTO, `/${Module.CSP.path}/${CSP_ROUTE_NAMES.PROYECTO}`],
 ]);

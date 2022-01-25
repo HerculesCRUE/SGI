@@ -67,7 +67,7 @@ public class DocumentoRequeridoSolicitudController {
    */
   @PutMapping("/{id}")
   @PreAuthorize("hasAuthorityForAnyUO('CSP-CON-E')")
-  DocumentoRequeridoSolicitud update(@Valid @RequestBody DocumentoRequeridoSolicitud documentoRequeridoSolicitud,
+  public DocumentoRequeridoSolicitud update(@Valid @RequestBody DocumentoRequeridoSolicitud documentoRequeridoSolicitud,
       @PathVariable Long id) {
     log.debug("update(DocumentoRequeridoSolicitud documentoRequeridoSolicitud, Long id) - start");
     documentoRequeridoSolicitud.setId(id);
@@ -84,7 +84,7 @@ public class DocumentoRequeridoSolicitudController {
   @DeleteMapping("/{id}")
   @PreAuthorize("hasAuthorityForAnyUO('CSP-CON-E')")
   @ResponseStatus(value = HttpStatus.NO_CONTENT)
-  void deleteById(@PathVariable Long id) {
+  public void deleteById(@PathVariable Long id) {
     log.debug("deleteById(Long id) - start");
     service.delete(id);
     log.debug("deleteById(Long id) - end");
@@ -98,7 +98,7 @@ public class DocumentoRequeridoSolicitudController {
    */
   @GetMapping("/{id}")
   @PreAuthorize("hasAuthorityForAnyUO('AUTH')")
-  DocumentoRequeridoSolicitud findById(@PathVariable Long id) {
+  public DocumentoRequeridoSolicitud findById(@PathVariable Long id) {
     log.debug("findById(Long id) - start");
     DocumentoRequeridoSolicitud returnValue = service.findById(id);
     log.debug("findById(Long id) - end");

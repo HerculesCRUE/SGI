@@ -80,7 +80,7 @@ public class TipoFinalidadController {
    */
   @PatchMapping("/{id}/reactivar")
   @PreAuthorize("hasAuthority('CSP-TFIN-R')")
-  TipoFinalidad reactivar(@PathVariable Long id) {
+  public TipoFinalidad reactivar(@PathVariable Long id) {
     log.debug("reactivar(Long id) - start");
     TipoFinalidad returnValue = service.enable(id);
     log.debug("reactivar(Long id) - end");
@@ -95,7 +95,7 @@ public class TipoFinalidadController {
    */
   @PatchMapping("/{id}/desactivar")
   @PreAuthorize("hasAuthority('CSP-TFIN-B')")
-  TipoFinalidad desactivar(@PathVariable Long id) {
+  public TipoFinalidad desactivar(@PathVariable Long id) {
     log.debug("desactivar(Long id) - start");
     TipoFinalidad returnValue = service.disable(id);
     log.debug("desactivar(Long id) - end");
@@ -110,8 +110,8 @@ public class TipoFinalidadController {
    * @return el listado de entidades {@link TipoFinalidad} paginadas y filtradas.
    */
   @GetMapping()
-  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-CON-INV-V', 'CSP-ME-C', 'CSP-ME-E')")
-  ResponseEntity<Page<TipoFinalidad>> findAll(@RequestParam(name = "q", required = false) String query,
+  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-CON-INV-V', 'CSP-ME-C', 'CSP-ME-E', 'CSP-PRO-E', 'CSP-PRO-V', 'CSP-PRO-MOD-V')")
+  public ResponseEntity<Page<TipoFinalidad>> findAll(@RequestParam(name = "q", required = false) String query,
       @RequestPageable(sort = "s") Pageable paging) {
     log.debug("findAll(String query, Pageable paging) - start");
     Page<TipoFinalidad> page = service.findAll(query, paging);
@@ -133,7 +133,7 @@ public class TipoFinalidadController {
    */
   @GetMapping("/todos")
   @PreAuthorize("hasAnyAuthority('CSP-TFIN-V','CSP-TFIN-C','CSP-TFIN-E', 'CSP-TFIN-B', 'CSP-TFIN-R')")
-  ResponseEntity<Page<TipoFinalidad>> findAllTodos(@RequestParam(name = "q", required = false) String query,
+  public ResponseEntity<Page<TipoFinalidad>> findAllTodos(@RequestParam(name = "q", required = false) String query,
       @RequestPageable(sort = "s") Pageable paging) {
     log.debug("findAllTodos(String query,Pageable paging) - start");
     Page<TipoFinalidad> page = service.findAllTodos(query, paging);
@@ -154,7 +154,7 @@ public class TipoFinalidadController {
    */
   @GetMapping("/{id}")
   @PreAuthorize("hasAuthorityForAnyUO('CSP-PRO-C')")
-  TipoFinalidad findById(@PathVariable Long id) {
+  public TipoFinalidad findById(@PathVariable Long id) {
     log.debug("TipoFinalidad findById(Long id) - start");
     TipoFinalidad returnValue = service.findById(id);
     log.debug("TipoFinalidad findById(Long id) - end");

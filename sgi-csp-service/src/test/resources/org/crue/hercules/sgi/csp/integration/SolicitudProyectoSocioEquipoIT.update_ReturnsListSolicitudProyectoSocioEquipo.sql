@@ -52,7 +52,7 @@ INSERT INTO test.estado_solicitud (id, solicitud_id, estado, fecha_estado, comen
 UPDATE test.solicitud SET estado_solicitud_id = 1 WHERE id = 1;
 
 -- SOLICITUD PROYECTO DATOS
-INSERT INTO test.solicitud_proyecto (id, colaborativo, tipo_presupuesto) /*olmo*/
+INSERT INTO test.solicitud_proyecto (id, colaborativo, tipo_presupuesto)
 VALUES (1, true, 'GLOBAL');
 
 -- ROL SOCIO

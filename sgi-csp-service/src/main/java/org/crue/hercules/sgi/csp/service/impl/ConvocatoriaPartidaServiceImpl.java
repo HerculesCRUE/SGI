@@ -112,12 +112,10 @@ public class ConvocatoriaPartidaServiceImpl implements ConvocatoriaPartidaServic
 
     Assert.notNull(id, "ConvocatoriaPartida id no puede ser null para eliminar un ConvocatoriaPartida");
 
-    repository.findById(id).map(convocatoriaPartida -> {
-
-      // TODO Incluir restricción de convocatorias asociadas a proyectos con
-      // presupuesto
-      return convocatoriaPartida;
-    }).orElseThrow(() -> new ConvocatoriaPartidaNotFoundException(id));
+    repository.findById(id).map(convocatoriaPartida ->
+    // TODO Incluir restricción de convocatorias asociadas a proyectos con
+    // presupuesto
+    convocatoriaPartida).orElseThrow(() -> new ConvocatoriaPartidaNotFoundException(id));
 
     repository.deleteById(id);
     log.debug("delete(Long id) - end");
@@ -188,10 +186,10 @@ public class ConvocatoriaPartidaServiceImpl implements ConvocatoriaPartidaServic
     Assert.isTrue(convocatoriaPartida.getCodigo() != null,
         "Codigo no puede ser null para realizar la acción sobre ConvocatoriaPartida");
 
-    configuracionRepository.findFirstByOrderByIdAsc().ifPresent(configuracion -> {
-      Assert.isTrue(convocatoriaPartida.getCodigo().matches(configuracion.getFormatoPartidaPresupuestaria()),
-          "Formato de codigo no valido");
-    });
+    configuracionRepository.findFirstByOrderByIdAsc()
+        .ifPresent(configuracion -> Assert.isTrue(
+            convocatoriaPartida.getCodigo().matches(configuracion.getFormatoPartidaPresupuestaria()),
+            "Formato de codigo no valido"));
 
     Assert.isTrue(this.modificable(convocatoriaPartida.getId(), "CSP-CON-E"),
         "No se puede modificar ConvocatoriaPartida. No tiene los permisos necesarios o el proyecto de la convocatoria tiene presupuestos anuales asignados.");

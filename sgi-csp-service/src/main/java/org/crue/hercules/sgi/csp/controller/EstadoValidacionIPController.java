@@ -1,8 +1,6 @@
 package org.crue.hercules.sgi.csp.controller;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
+import lombok.RequiredArgsConstructor;
 import org.crue.hercules.sgi.csp.dto.EstadoValidacionIPOutput;
 import org.crue.hercules.sgi.csp.model.EstadoValidacionIP;
 import org.crue.hercules.sgi.csp.service.EstadoValidacionIPService;
@@ -19,13 +17,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import lombok.RequiredArgsConstructor;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Validated
 @RequiredArgsConstructor
 @RestController
-@RequestMapping(path = "/estadosvalidacionip")
+@RequestMapping(path = EstadoValidacionIPController.MAPPING)
 public class EstadoValidacionIPController {
+
+  public static final String MAPPING = "/estadosvalidacionip";
 
   private final ModelMapper modelMapper;
   private final EstadoValidacionIPService estadoValidacionIPService;
@@ -58,9 +59,8 @@ public class EstadoValidacionIPController {
 
   private Page<EstadoValidacionIPOutput> convertToEstadoValidacionIPOutputPage(Page<EstadoValidacionIP> page) {
 
-    return new PageImpl<EstadoValidacionIPOutput>(
-        page.getContent().stream().map(this::entityToOutput).collect(Collectors.toList()), page.getPageable(),
-        page.getTotalElements());
+    return new PageImpl<>(page.getContent().stream().map(this::entityToOutput).collect(Collectors.toList()),
+        page.getPageable(), page.getTotalElements());
 
   }
 

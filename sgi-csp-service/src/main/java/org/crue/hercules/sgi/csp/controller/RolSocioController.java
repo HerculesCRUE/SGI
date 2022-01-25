@@ -44,7 +44,7 @@ public class RolSocioController {
    */
   @GetMapping("/{id}")
   @PreAuthorize("hasAuthorityForAnyUO('AUTH')")
-  RolSocio findById(@PathVariable Long id) {
+  public RolSocio findById(@PathVariable Long id) {
     log.debug("RolSocio findById(Long id) - start");
     RolSocio returnValue = service.findById(id);
     log.debug("RolSocio findById(Long id) - end");
@@ -61,7 +61,7 @@ public class RolSocioController {
    */
   @GetMapping()
   @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-PRO-E', 'CSP-SOL-E', 'CSP-SOL-V')")
-  ResponseEntity<Page<RolSocio>> findAll(@RequestParam(name = "q", required = false) String query,
+  public ResponseEntity<Page<RolSocio>> findAll(@RequestParam(name = "q", required = false) String query,
       @RequestPageable(sort = "s") Pageable paging) {
     log.debug("findAll(String query,Pageable paging) - start");
     Page<RolSocio> page = service.findAll(query, paging);

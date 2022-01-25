@@ -48,7 +48,7 @@ public class ConvocatoriaPeriodoJustificacionController {
    */
   @GetMapping("/{id}")
   @PreAuthorize("hasAuthorityForAnyUO('AUTH')")
-  ConvocatoriaPeriodoJustificacion findById(@PathVariable Long id) {
+  public ConvocatoriaPeriodoJustificacion findById(@PathVariable Long id) {
     log.debug("findById(Long id) - start");
     ConvocatoriaPeriodoJustificacion returnValue = service.findById(id);
     log.debug("findById(Long id) - end");

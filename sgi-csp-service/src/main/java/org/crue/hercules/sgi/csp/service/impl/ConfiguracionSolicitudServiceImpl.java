@@ -94,7 +94,7 @@ public class ConfiguracionSolicitudServiceImpl implements ConfiguracionSolicitud
 
     Assert.notNull(convocatoriaId, "Convocatoria no puede ser null en ConfiguracionSolicitud");
 
-    return repository.findByConvocatoriaId(configuracionSolicitud.getConvocatoriaId()).map((data) -> {
+    return repository.findByConvocatoriaId(configuracionSolicitud.getConvocatoriaId()).map(data -> {
 
       // validar y establecer los datos
       validarConfiguracionSolicitud(configuracionSolicitud, data);

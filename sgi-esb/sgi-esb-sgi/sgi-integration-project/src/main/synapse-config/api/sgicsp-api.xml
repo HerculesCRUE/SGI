@@ -153,6 +153,20 @@
     </faultSequence>
   </resource>
 
+  <resource methods="GET" uri-template="/proyectos/{id}/notificacionesproyectos">
+    <inSequence>
+      <send>
+        <endpoint key="sgicsp-endpoint" />
+      </send>
+    </inSequence>
+    <outSequence>
+      <respond />
+    </outSequence>
+    <faultSequence>
+      <sequence key="error-handling-sequence" />
+    </faultSequence>
+  </resource>
+
   <resource methods="GET" url-mapping="/proyectos/modificados-ids">
     <inSequence>
       <send>
@@ -164,6 +178,49 @@
     </outSequence>
     <faultSequence>
       <sequence key="error-handling-sequence"/>
+    </faultSequence>
+  </resource>
+
+  <!-- Autorizaciones y notificaciones Proyectos externos -->
+  <resource methods="GET" uri-template="/autorizaciones/{id}">
+    <inSequence>
+      <send>
+        <endpoint key="sgicsp-endpoint"/>
+      </send>
+    </inSequence>
+    <outSequence>
+      <respond/>
+    </outSequence>
+    <faultSequence>
+      <sequence key="error-handling-sequence"/>
+    </faultSequence>
+  </resource>
+
+  <resource methods="GET" url-mapping="/autorizaciones/modificadas-ids">
+    <inSequence>
+      <send>
+        <endpoint key="sgicsp-endpoint"/>
+      </send>
+    </inSequence>
+    <outSequence>
+      <respond/>
+    </outSequence>
+    <faultSequence>
+      <sequence key="error-handling-sequence"/>
+    </faultSequence>
+  </resource>
+
+  <resource methods="POST" url-mapping="/notificaciones-proyectos">
+    <inSequence>
+      <send>
+        <endpoint key="sgicsp-endpoint" />
+      </send>
+    </inSequence>
+    <outSequence>
+      <respond />
+    </outSequence>
+    <faultSequence>
+      <sequence key="error-handling-sequence" />
     </faultSequence>
   </resource>
 

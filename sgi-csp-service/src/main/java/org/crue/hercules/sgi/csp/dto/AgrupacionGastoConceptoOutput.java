@@ -1,12 +1,12 @@
 package org.crue.hercules.sgi.csp.dto;
 
-import java.io.Serializable;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+
+import java.io.Serializable;
 
 @Data
 @EqualsAndHashCode(callSuper = false)
@@ -23,7 +23,7 @@ public class AgrupacionGastoConceptoOutput implements Serializable {
   @NoArgsConstructor
   @AllArgsConstructor
   @Builder
-  public static class ConceptoGasto {
+  public static class ConceptoGasto implements Serializable {
     private Long id;
     private String nombre;
   }

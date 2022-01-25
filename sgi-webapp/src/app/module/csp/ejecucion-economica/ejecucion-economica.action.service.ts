@@ -1,11 +1,13 @@
 import { Injectable } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { IConfiguracion } from '@core/models/csp/configuracion';
 import { IProyecto } from '@core/models/csp/proyecto';
 import { IProyectoSge } from '@core/models/sge/proyecto-sge';
 import { ActionService } from '@core/services/action-service';
 import { GastoProyectoService } from '@core/services/csp/gasto-proyecto/gasto-proyecto-service';
-import { ProyectoAgrupacionGastoService } from '@core/services/csp/proyecto-agrupacion-gasto/proyecto-agrupacion-gasto.service';
 import { ProyectoAnualidadService } from '@core/services/csp/proyecto-anualidad/proyecto-anualidad.service';
+import { ProyectoConceptoGastoCodigoEcService } from '@core/services/csp/proyecto-concepto-gasto-codigo-ec.service';
+import { ProyectoConceptoGastoService } from '@core/services/csp/proyecto-concepto-gasto.service';
 import { ProyectoService } from '@core/services/csp/proyecto.service';
 import { CalendarioFacturacionService } from '@core/services/sge/calendario-facturacion.service';
 import { EjecucionEconomicaService } from '@core/services/sge/ejecucion-economica.service';
@@ -30,6 +32,7 @@ export interface IEjecucionEconomicaData {
   readonly: boolean;
   proyectoSge: IProyectoSge;
   proyectosRelacionados: IProyecto[];
+  configuracion: IConfiguracion;
 }
 
 @Injectable()
@@ -71,10 +74,11 @@ export class EjecucionEconomicaActionService extends ActionService {
     personaService: PersonaService,
     proyectoAnualidadService: ProyectoAnualidadService,
     ejecucionEconomicaService: EjecucionEconomicaService,
-    proyectoAgrupacionGastoService: ProyectoAgrupacionGastoService,
     gastoProyectoService: GastoProyectoService,
     gastoService: GastoService,
-    calendarioFacturacionService: CalendarioFacturacionService
+    calendarioFacturacionService: CalendarioFacturacionService,
+    proyectoConceptoGastoCodigoEcService: ProyectoConceptoGastoCodigoEcService,
+    proyectoConceptoGastoService: ProyectoConceptoGastoService,
   ) {
     super();
 
@@ -109,21 +113,24 @@ export class EjecucionEconomicaActionService extends ActionService {
 
     this.facturasGastos = new FacturasGastosFragment(
       id, this.data.proyectoSge, this.data.proyectosRelacionados,
-      proyectoService, personaService, proyectoAnualidadService, proyectoAgrupacionGastoService,
-      gastoProyectoService, ejecucionEconomicaService);
+      proyectoService, personaService, proyectoAnualidadService,
+      gastoProyectoService, ejecucionEconomicaService, proyectoConceptoGastoCodigoEcService,
+      proyectoConceptoGastoService, this.data.configuracion);
 
     this.viajesDietas = new ViajesDietasFragment(
       id, this.data.proyectoSge, this.data.proyectosRelacionados,
-      proyectoService, personaService, proyectoAnualidadService, proyectoAgrupacionGastoService,
-      gastoProyectoService, ejecucionEconomicaService);
+      proyectoService, personaService, proyectoAnualidadService,
+      gastoProyectoService, ejecucionEconomicaService, proyectoConceptoGastoCodigoEcService,
+      proyectoConceptoGastoService, this.data.configuracion);
 
     this.personalContratado = new PersonalContratadoFragment(
       id, this.data.proyectoSge, this.data.proyectosRelacionados,
-      proyectoService, personaService, proyectoAnualidadService, proyectoAgrupacionGastoService,
-      gastoProyectoService, ejecucionEconomicaService);
+      proyectoService, personaService, proyectoAnualidadService,
+      gastoProyectoService, ejecucionEconomicaService, proyectoConceptoGastoCodigoEcService,
+      proyectoConceptoGastoService, this.data.configuracion);
 
     this.validacionGastos = new ValidacionGastosFragment(
-      id, this.data.proyectoSge, gastoService, proyectoService, gastoProyectoService, proyectoAgrupacionGastoService);
+      id, this.data.proyectoSge, gastoService, proyectoService, gastoProyectoService);
 
     this.facturasEmitidas = new FacturasEmitidasFragment(
       id, this.data.proyectoSge, this.data.proyectosRelacionados,

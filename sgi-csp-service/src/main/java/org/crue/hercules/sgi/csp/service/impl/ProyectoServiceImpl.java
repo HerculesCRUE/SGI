@@ -1,7 +1,6 @@
 package org.crue.hercules.sgi.csp.service.impl;
 
 import java.time.Instant;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -434,41 +433,36 @@ public class ProyectoServiceImpl implements ProyectoService {
   }
 
   /**
-   * Se obtienen los {@link ProyectoEquipo} a actualizar la fecha de fin del
-   * equipo
+   * Se obtienen los {@link ProyectoEquipo} con las fechas de inicio y fin
+   * adaptadas a la nueva fecha de fin
    *
-   * @param proyectoId    identificador del {@link Proyecto}
-   * @param fechaBusqueda fecha fin para filtrar el {@link ProyectoEquipo}
-   * @param fechaFinNew   fecha fin nueva para actualizar el
-   *                      {@link ProyectoEquipo}
+   * @param proyectoId          identificador del {@link Proyecto}
+   * @param fechaFinMaxPrevious fecha fin previa maxima para los
+   *                            {@link ProyectoEquipo} del {@link Proyecto}
+   * @param fechaFinNew         fecha fin nueva para actualizar el
+   *                            {@link ProyectoEquipo}
+   * @return la lista con los miembros del equipo del {@link Proyecto} con las
+   *         fechas adaptadas a la nueva fecha de fin
    */
-  private List<ProyectoEquipo> getEquiposUpdateFechaFinProyectoEquipo(Long proyectoId, Instant fechaBusqueda,
+  private List<ProyectoEquipo> getEquiposUpdateFechaFinProyectoEquipo(Long proyectoId, Instant fechaFinMaxPrevious,
       Instant fechaFinNew) {
-    List<ProyectoEquipo> equipos = new ArrayList<ProyectoEquipo>();
-    List<ProyectoEquipo> equiposFechaFinIgualAFechaFinActual = proyectoEquipoService
-        .findAllByProyectoIdAndFechaFin(proyectoId, fechaBusqueda);
-    if (!CollectionUtils.isEmpty(equiposFechaFinIgualAFechaFinActual)) {
-      equipos.addAll(
-          equiposFechaFinIgualAFechaFinActual.stream().filter(e -> !equipos.contains(e)).collect(Collectors.toList()));
-    }
+    return proyectoEquipoService.findAllByProyectoId(proyectoId).stream().map(miembroEquipo -> {
+      if (miembroEquipo.getFechaInicio() != null && miembroEquipo.getFechaInicio().compareTo(fechaFinNew) > 0) {
+        // La fecha de inicio nunca puede ser superior a la de fin
+        miembroEquipo.setFechaInicio(fechaFinNew);
+      }
 
-    if (!CollectionUtils.isEmpty(equipos)) {
-      equipos.stream().map(equipo -> {
-        equipo.setFechaFin(fechaFinNew);
-        if (equipo.getFechaInicio() != null && equipo.getFechaInicio().compareTo(fechaFinNew) > 0) {
-          // La fecha de inicio nunca puede ser superior a la de fin
-          equipo.setFechaInicio(fechaFinNew);
-        }
-        return equipo;
-      }).collect(Collectors.toList());
-    }
-    List<ProyectoEquipo> proyectoEquiposBD = proyectoEquipoService.findAllByProyectoId(proyectoId);
-    if (!CollectionUtils.isEmpty(proyectoEquiposBD)) {
-      equipos.addAll(proyectoEquiposBD.stream()
-          .filter(equipo -> !equipos.stream().map(ProyectoEquipo::getId).anyMatch(id -> id == equipo.getId()))
-          .collect(Collectors.toList()));
-    }
-    return equipos;
+      if (miembroEquipo.getFechaFin() != null
+          && (miembroEquipo.getFechaFin().compareTo(fechaFinNew) > 0 || miembroEquipo
+              .getFechaFin().compareTo(fechaFinMaxPrevious) == 0)) {
+        // Se actualizan con la nueva fecha fin maxima los miembros con fecha fin igual
+        // a la fecha fin maxima previa y los que tengan una fecha de fin superior a la
+        // nueva fecha de fin
+        miembroEquipo.setFechaFin(fechaFinNew);
+      }
+
+      return miembroEquipo;
+    }).collect(Collectors.toList());
   }
 
   /**
@@ -586,8 +580,9 @@ public class ProyectoServiceImpl implements ProyectoService {
   public Page<Proyecto> findAllTodosRestringidos(String query, Pageable paging) {
     log.debug("findAll(String query, Pageable paging) - start");
 
-    Specification<Proyecto> specs = SgiRSQLJPASupport.toSpecification(query,
-        ProyectoPredicateResolver.getInstance(programaRepository, proyectoProrrogaRepository));
+    Specification<Proyecto> specs = ProyectoSpecifications.distinct()
+        .and(SgiRSQLJPASupport.toSpecification(query,
+            ProyectoPredicateResolver.getInstance(programaRepository, proyectoProrrogaRepository)));
 
     List<String> unidadesGestion = SgiSecurityContextHolder
         .getUOsForAnyAuthority(new String[] { "CSP-PRO-V", "CSP-PRO-C", "CSP-PRO-E", "CSP-PRO-B", "CSP-PRO-R" });
@@ -870,7 +865,7 @@ public class ProyectoServiceImpl implements ProyectoService {
     List<ConvocatoriaEntidadFinanciadora> entidadesConvocatoria = convocatoriaEntidadFinanciadoraRepository
         .findByConvocatoriaId(convocatoriaId);
     entidadesConvocatoria.stream().forEach((entidadConvocatoria) -> {
-      log.debug("Copy ConvocatoriaEntidadFinanciadora with id: {0}", entidadConvocatoria.getId());
+      log.debug("Copy ConvocatoriaEntidadFinanciadora with id: {}", entidadConvocatoria.getId());
       ProyectoEntidadFinanciadora entidadProyecto = new ProyectoEntidadFinanciadora();
       entidadProyecto.setProyectoId(proyectoId);
       entidadProyecto.setEntidadRef(entidadConvocatoria.getEntidadRef());
@@ -897,7 +892,7 @@ public class ProyectoServiceImpl implements ProyectoService {
     convocatoriaPeriodoSeguimientoCientificoRepository
         .findAllByConvocatoriaIdOrderByMesInicial(proyecto.getConvocatoriaId()).forEach((convocatoriaSeguimiento) -> {
 
-          log.debug("Copy ConvocatoriaPeriodoSeguimientoCientifico with id: {0}", convocatoriaSeguimiento.getId());
+          log.debug("Copy ConvocatoriaPeriodoSeguimientoCientifico with id: {}", convocatoriaSeguimiento.getId());
 
           ProyectoPeriodoSeguimiento.ProyectoPeriodoSeguimientoBuilder projectBuilder = ProyectoPeriodoSeguimiento
               .builder();
@@ -940,7 +935,7 @@ public class ProyectoServiceImpl implements ProyectoService {
     List<ConvocatoriaEntidadGestora> entidadesConvocatoria = convocatoriaEntidadGestoraRepository
         .findAllByConvocatoriaId(proyecto.getConvocatoriaId());
     entidadesConvocatoria.stream().forEach((entidadConvocatoria) -> {
-      log.debug("Copy copyEntidadesGestoras with id: {0}", entidadConvocatoria.getId());
+      log.debug("Copy copyEntidadesGestoras with id: {}", entidadConvocatoria.getId());
       ProyectoEntidadGestora entidadProyecto = new ProyectoEntidadGestora();
       entidadProyecto.setProyectoId(proyecto.getId());
       entidadProyecto.setEntidadRef(entidadConvocatoria.getEntidadRef());
@@ -1038,7 +1033,7 @@ public class ProyectoServiceImpl implements ProyectoService {
     List<SolicitudProyectoAreaConocimiento> areasConocimineto = solicitudProyectoAreaConocimientoRepository
         .findAllBySolicitudProyectoId(solicitudProyectoId);
     areasConocimineto.stream().forEach((areaConocimentoSolicitud) -> {
-      log.debug("Copy SolicitudProyectoAreaConocimiento with id: {0}", areaConocimentoSolicitud.getId());
+      log.debug("Copy SolicitudProyectoAreaConocimiento with id: {}", areaConocimentoSolicitud.getId());
       ProyectoAreaConocimiento areaConocimientoProyecto = new ProyectoAreaConocimiento();
       areaConocimientoProyecto.setProyectoId(proyecto.getId());
       areaConocimientoProyecto.setAreaConocimientoRef(areaConocimentoSolicitud.getAreaConocimientoRef());
@@ -1059,7 +1054,7 @@ public class ProyectoServiceImpl implements ProyectoService {
     List<SolicitudProyectoClasificacion> clasificaciones = solicitudProyectoClasificacionRepository
         .findAllBySolicitudProyectoId(solicitudProyectoId);
     clasificaciones.stream().forEach((clasificacionSolicitud) -> {
-      log.debug("Copy SolicitudProyectoClasificacion with id: {0}", clasificacionSolicitud.getId());
+      log.debug("Copy SolicitudProyectoClasificacion with id: {}", clasificacionSolicitud.getId());
       ProyectoClasificacion clasificacionProyecto = new ProyectoClasificacion();
       clasificacionProyecto.setProyectoId(proyecto.getId());
       clasificacionProyecto.setClasificacionRef(clasificacionSolicitud.getClasificacionRef());
@@ -1104,7 +1099,7 @@ public class ProyectoServiceImpl implements ProyectoService {
     List<SolicitudModalidad> entidadesSolicitud = solicitudModalidadRepository
         .findAllBySolicitudId(proyecto.getSolicitudId());
     entidadesSolicitud.stream().forEach((entidadSolicitud) -> {
-      log.debug("Copy SolicitudModalidad with id: {0}", entidadSolicitud.getId());
+      log.debug("Copy SolicitudModalidad with id: {}", entidadSolicitud.getId());
       ProyectoEntidadConvocante entidadProyecto = new ProyectoEntidadConvocante();
       entidadProyecto.setProyectoId(proyecto.getId());
       entidadProyecto.setPrograma(entidadSolicitud.getPrograma());
@@ -1126,7 +1121,7 @@ public class ProyectoServiceImpl implements ProyectoService {
     List<SolicitudProyectoEntidadFinanciadoraAjena> entidadesSolicitud = solicitudProyectoEntidadFinanciadoraAjenaRepository
         .findAllBySolicitudProyectoId(solicitudProyectoId);
     entidadesSolicitud.stream().forEach((entidadSolicitud) -> {
-      log.debug("Copy SolicitudProyectoEntidadFinanciadoraAjena with id: {0}", entidadSolicitud.getId());
+      log.debug("Copy SolicitudProyectoEntidadFinanciadoraAjena with id: {}", entidadSolicitud.getId());
       ProyectoEntidadFinanciadora entidadProyecto = new ProyectoEntidadFinanciadora();
       entidadProyecto.setProyectoId(proyecto.getId());
       entidadProyecto.setEntidadRef(entidadSolicitud.getEntidadRef());
@@ -1154,7 +1149,7 @@ public class ProyectoServiceImpl implements ProyectoService {
     List<ProyectoEquipo> proyectoEquipos = solicitudEquipoRepository.findAllBySolicitudProyectoId(solicitudProyectoId)
         .stream().map((solicitudProyectoEquipo) -> {
 
-          log.debug("Copy SolicitudProyectoEquipo with id: {0}", solicitudProyectoEquipo.getId());
+          log.debug("Copy SolicitudProyectoEquipo with id: {}", solicitudProyectoEquipo.getId());
 
           ProyectoEquipo.ProyectoEquipoBuilder proyectoEquipoBuilder = ProyectoEquipo.builder();
           proyectoEquipoBuilder.proyectoId(proyecto.getId());
@@ -1194,7 +1189,7 @@ public class ProyectoServiceImpl implements ProyectoService {
 
     List<ProyectoResponsableEconomico> responsablesEconomicosProyecto = solicitudProyectoResponsableEconomicoRepository
         .findAllBySolicitudProyectoId(solicitudProyectoId).stream().map(responsableEconomicoSolicitud -> {
-          log.debug("Copy SolicitudProyectoResponsableEconomico with id: {0}", responsableEconomicoSolicitud.getId());
+          log.debug("Copy SolicitudProyectoResponsableEconomico with id: {}", responsableEconomicoSolicitud.getId());
 
           ProyectoResponsableEconomico proyectoResponsableEconomico = ProyectoResponsableEconomico.builder()
               .proyectoId(proyecto.getId()).personaRef(responsableEconomicoSolicitud.getPersonaRef()).build();
@@ -1235,7 +1230,7 @@ public class ProyectoServiceImpl implements ProyectoService {
 
     solicitudSocioRepository.findAllBySolicitudProyectoId(solicitudProyectoId).stream().forEach((entidadSolicitud) -> {
 
-      log.debug("Copy SolicitudProyectoSocio with id: {0}", entidadSolicitud.getId());
+      log.debug("Copy SolicitudProyectoSocio with id: {}", entidadSolicitud.getId());
 
       ProyectoSocio proyectoSocio = createProyectoSocio(proyecto, entidadSolicitud);
 
@@ -1276,7 +1271,7 @@ public class ProyectoServiceImpl implements ProyectoService {
     solicitudPeriodoJustificacionRepository.findAllBySolicitudProyectoSocioId(entidadSolicitud.getId()).stream()
         .forEach((entidadPeriodoJustificacionSolicitud) -> {
 
-          log.debug("Copy ProyectoSocioPeriodoJustificacion with id: {0}",
+          log.debug("Copy ProyectoSocioPeriodoJustificacion with id: {}",
               entidadPeriodoJustificacionSolicitud.getId());
 
           ProyectoSocioPeriodoJustificacion proyectoSocioPeriodoJustificacion = ProyectoSocioPeriodoJustificacion
@@ -1326,7 +1321,7 @@ public class ProyectoServiceImpl implements ProyectoService {
 
     List<ProyectoSocioEquipo> proyectoSocioEquipos = solicitudEquipoSocioRepository
         .findAllBySolicitudProyectoSocioId(entidadSolicitud.getId()).stream().map((entidadEquipoSolicitud) -> {
-          log.debug("Copy SolicitudProyectoSocioEquipo with id: {0}", entidadEquipoSolicitud.getId());
+          log.debug("Copy SolicitudProyectoSocioEquipo with id: {}", entidadEquipoSolicitud.getId());
           return ProyectoSocioEquipo.builder()
               .fechaInicio(PeriodDateUtil.calculateFechaInicioPeriodo(proyecto.getFechaInicio(),
                   entidadEquipoSolicitud.getMesInicio(), sgiConfigProperties.getTimeZone()))
@@ -1373,7 +1368,7 @@ public class ProyectoServiceImpl implements ProyectoService {
         .findAllByConvocatoriaIdAndConceptoGastoActivoTrue(proyecto.getConvocatoriaId());
 
     conceptosGastoConvocatoria.stream().forEach((conceptoGastoConvocatoria) -> {
-      log.debug("Copy ConvocatoriaConceptoGasto with id: {0}", conceptoGastoConvocatoria.getId());
+      log.debug("Copy ConvocatoriaConceptoGasto with id: {}", conceptoGastoConvocatoria.getId());
       ProyectoConceptoGasto conceptoGastoProyecto = new ProyectoConceptoGasto();
       conceptoGastoProyecto.setProyectoId(proyecto.getId());
       conceptoGastoProyecto.setConceptoGasto(conceptoGastoConvocatoria.getConceptoGasto());
@@ -1423,7 +1418,7 @@ public class ProyectoServiceImpl implements ProyectoService {
 
     List<ProyectoConceptoGastoCodigoEc> proyectoConceptoGastoCodigoEcs = codigosEconomicosConceptosGastoConvocatoria
         .stream().map((codigoEconomicoConvocatoria) -> {
-          log.debug("Copy ConvocatoriaConceptoGastoCodigoEc with id: {0}", codigoEconomicoConvocatoria.getId());
+          log.debug("Copy ConvocatoriaConceptoGastoCodigoEc with id: {}", codigoEconomicoConvocatoria.getId());
           ProyectoConceptoGastoCodigoEc codigoEconomicoProyecto = new ProyectoConceptoGastoCodigoEc();
           codigoEconomicoProyecto.setProyectoConceptoGastoId(proyectoConceptoGastoId);
           codigoEconomicoProyecto.setCodigoEconomicoRef(codigoEconomicoConvocatoria.getCodigoEconomicoRef());
@@ -1467,7 +1462,7 @@ public class ProyectoServiceImpl implements ProyectoService {
 
     if (partidasConvocatoria != null && partidasConvocatoria.hasContent()) {
       partidasConvocatoria.getContent().stream().forEach((partidaConvocatoria) -> {
-        log.debug("Copy copyPartidasPresupuestarias with id: {0}", partidaConvocatoria.getId());
+        log.debug("Copy copyPartidasPresupuestarias with id: {}", partidaConvocatoria.getId());
         ProyectoPartida partidaProyecto = new ProyectoPartida();
         partidaProyecto.setProyectoId(proyectoId);
         partidaProyecto.setCodigo(partidaConvocatoria.getCodigo());
@@ -1589,17 +1584,19 @@ public class ProyectoServiceImpl implements ProyectoService {
     Instant fechaActual = Instant.now();
     if (estadoProyecto.getEstado() == EstadoProyecto.Estado.RENUNCIADO
         || estadoProyecto.getEstado() == EstadoProyecto.Estado.RESCINDIDO) {
+
+      Instant fechaFinNew = fechaActual.atZone(sgiConfigProperties.getTimeZone().toZoneId()).withHour(23)
+          .withMinute(59).withSecond(59).withNano(0).toInstant();
+
+      Instant fechaFinPrevious = proyecto.getFechaFinDefinitiva() != null ? proyecto.getFechaFinDefinitiva()
+          : proyecto.getFechaFin();
+
       // La fecha debe actualizarse también para los miembros de los equipos.
-      List<ProyectoEquipo> equiposActualizados;
-      if (proyecto.getFechaFinDefinitiva() != null) {
-        equiposActualizados = getEquiposUpdateFechaFinProyectoEquipo(proyecto.getId(), proyecto.getFechaFinDefinitiva(),
-            fechaActual);
-      } else {
-        equiposActualizados = getEquiposUpdateFechaFinProyectoEquipo(proyecto.getId(), proyecto.getFechaFin(),
-            fechaActual);
-      }
+      List<ProyectoEquipo> equiposActualizados = getEquiposUpdateFechaFinProyectoEquipo(proyecto.getId(),
+          fechaFinPrevious, fechaFinNew);
+
       proyectoEquipoService.update(proyecto.getId(), equiposActualizados);
-      proyecto.setFechaFinDefinitiva(fechaActual);
+      proyecto.setFechaFinDefinitiva(fechaFinNew);
     }
 
     // Se cambia el estado del proyecto
@@ -1625,9 +1622,11 @@ public class ProyectoServiceImpl implements ProyectoService {
     final ProyectoPresupuestoTotales returnValue = repository.getTotales(proyectoId);
 
     returnValue.setImporteTotalPresupuesto(
-        returnValue.getImporteTotalPresupuestoUniversidadSinCosteIndirecto().add(returnValue.getImporteTotalPresupuestoSocios()));
+        returnValue.getImporteTotalPresupuestoUniversidadSinCosteIndirecto()
+            .add(returnValue.getImporteTotalPresupuestoSocios()));
     returnValue.setImporteTotalConcedido(
-        returnValue.getImporteTotalConcedidoUniversidadSinCosteIndirecto().add(returnValue.getImporteTotalConcedidoSocios()));
+        returnValue.getImporteTotalConcedidoUniversidadSinCosteIndirecto()
+            .add(returnValue.getImporteTotalConcedidoSocios()));
     log.debug("getTotales(Long proyectoId) - end");
     return returnValue;
   }

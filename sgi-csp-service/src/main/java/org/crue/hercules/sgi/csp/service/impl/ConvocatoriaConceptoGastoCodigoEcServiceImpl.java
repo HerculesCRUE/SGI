@@ -174,8 +174,8 @@ public class ConvocatoriaConceptoGastoCodigoEcServiceImpl implements Convocatori
 
     Specification<ConvocatoriaConceptoGastoCodigoEc> specs = Specification.where(specByConvocatoriaConceptoGasto)
         .and(specByConceptoGastoActivo);
-    Page<ConvocatoriaConceptoGastoCodigoEc> returnValue = repository.findAll(specs, pageable);
-    return returnValue;
+
+    return repository.findAll(specs, pageable);
   }
 
   /**

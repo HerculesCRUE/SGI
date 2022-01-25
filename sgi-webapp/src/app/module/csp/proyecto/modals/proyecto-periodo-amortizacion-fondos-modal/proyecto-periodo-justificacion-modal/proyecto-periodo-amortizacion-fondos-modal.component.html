@@ -1,0 +1,133 @@
+<div class="sgi-dialog-header" fxLayout="row" fxLayoutGap="20px">
+  <span fxFlexAlign="center" mat-mat-dialog-title role="heading" aria-level="3" fxFlex>{{title | translate}}</span>
+  <button fxFlex="nogrow" mat-icon-button mat-dialog-close>
+    <mat-icon class="close-icon">close</mat-icon>
+  </button>
+</div>
+<mat-dialog-content>
+  <form [formGroup]="formGroup">
+    <div>
+      <!-- Proyectos SGE ligados al proyecto SGI -->
+      <div>
+        <mat-form-field>
+          <mat-label>{{'csp.proyecto-amortizacion-fondos.periodo-amortizacion.identificador-sge'| translate}}
+          </mat-label>
+          <sgi-select-entity formControlName="identificadorSge" [options]="data.proyectosSGE" required
+            [displayWith]="displayerIdentificadorSge" [compareWith]="comparerIdentificadorSge"
+            [sortWith]="sorterIdentificadorSge">
+          </sgi-select-entity>
+          <mat-error *ngIf="formGroup.controls.identificadorSge.errors?.required">
+            {{'error.required.entity' | translate:msgParamProyectoSgeEntity}}
+          </mat-error>
+        </mat-form-field>
+      </div>
+
+      <!-- Entidad financiadora -->
+      <div>
+        <mat-form-field>
+          <mat-label>
+            {{'csp.proyecto-amortizacion-fondos.periodo-amortizacion.select-entidad-financiadora'|
+            translate}}
+          </mat-label>
+          <sgi-select-entity formControlName="entidadFinanciadora" [options]="data.entidadesFinanciadoras" required
+            [displayWith]="displayerEntidadFinanciadora">
+          </sgi-select-entity>
+          <mat-error *ngIf="formGroup.controls.entidadFinanciadora.errors?.required">
+            {{'error.required.entity' | translate:msgParamEntidadFinanciadoraEntity}}
+          </mat-error>
+        </mat-form-field>
+      </div>
+      <!-- Tercer bloque -->
+      <div [fxLayout.xs]="fxLayoutProperties.xs" [fxLayout]="fxLayoutProperties.layout"
+        [fxLayoutGap]="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
+        <!-- Anualidad -->
+        <div>
+          <mat-form-field>
+            <mat-label>
+              {{'csp.proyecto-amortizacion-fondos.periodo-amortizacion.anualidad'|
+              translate}}
+            </mat-label>
+            <sgi-select-entity formControlName="anualidad" [options]=" anualidades$ | async" required
+              [displayWith]="displayerAnualidad">
+            </sgi-select-entity>
+            <mat-error *ngIf="formGroup.controls.anualidad.errors?.required">
+              {{'error.required.entity' | translate:msgParamAnualidadEntity}}
+            </mat-error>
+          </mat-form-field>
+        </div>
+        <!-- Fecha Inicio Anualidad -->
+        <div>
+          <mat-form-field>
+            <mat-label>
+              {{'csp.proyecto-amortizacion-fondos.periodo-amortizacion.fecha-inicio-anualidad' | translate}}
+            </mat-label>
+            <input matInput [matDatepicker]="picker1" formControlName="fechaInicioAnualidad">
+            <mat-datepicker-toggle class=" fechaIcon" matSuffix [for]="picker1"></mat-datepicker-toggle>
+            <mat-datepicker #picker1>
+            </mat-datepicker>
+          </mat-form-field>
+        </div>
+
+        <!-- Fecha Fin Anualidad  -->
+        <div>
+          <mat-form-field>
+            <mat-label>
+              {{'csp.proyecto-amortizacion-fondos.periodo-amortizacion.fecha-fin-anualidad' | translate}}
+            </mat-label>
+            <input matInput [matDatepicker]="picker2" formControlName="fechaFinAnualidad">
+            <mat-datepicker-toggle class=" fechaIcon" matSuffix [for]="picker2"></mat-datepicker-toggle>
+            <mat-datepicker #picker2>
+            </mat-datepicker>
+          </mat-form-field>
+        </div>
+      </div>
+
+      <!-- Cuarto bloque -->
+      <div [fxLayout.xs]="fxLayoutProperties.xs" [fxLayout]="fxLayoutProperties.layout"
+        [fxLayoutGap]="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
+        <!-- Fecha Límite amortizacion -->
+        <div>
+          <mat-form-field>
+            <mat-label>
+              {{'csp.proyecto-amortizacion-fondos.periodo-amortizacion.fecha-limite-amortizacion' | translate}}
+            </mat-label>
+            <input matInput [matDatepicker]="picker3" formControlName="fechaLimiteAmortizacion" required>
+            <mat-datepicker-toggle class=" fechaIcon" matSuffix [for]="picker3"></mat-datepicker-toggle>
+            <mat-datepicker #picker3></mat-datepicker>
+            <mat-error *ngIf="formGroup.controls.fechaLimiteAmortizacion.errors?.required">
+              {{'error.required.entity' | translate:msgParamFechaLimiteAmortizacion}}
+            </mat-error>
+          </mat-form-field>
+        </div>
+
+        <!-- Importe  -->
+        <div>
+          <mat-form-field>
+            <mat-label>
+              {{'csp.proyecto-amortizacion-fondos.periodo-amortizacion.importe' | translate}}
+            </mat-label>
+            <input matInput formControlName="importe" type="number" min="0" step="1" required
+              placeholder="{{'csp.proyecto-amortizacion-fondos.periodo-amortizacion.importe' | translate}}">
+            <mat-error *ngIf="formGroup.controls.importe.errors?.min">
+              {{'error.min.entity' | translate:msgParamImporte}}
+            </mat-error>
+            <mat-error *ngIf="formGroup.controls.importe.errors?.max">
+              {{'error.max.entity' | translate:msgParamImporte}}
+            </mat-error>
+            <mat-error *ngIf="formGroup.controls.importe.errors?.required">
+              {{'error.required.entity' | translate:msgParamImporte}}
+            </mat-error>
+          </mat-form-field>
+        </div>
+      </div>
+    </div>
+  </form>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <button color="accent" (click)="saveOrUpdate()" mat-raised-button type="submit"
+    *sgiHasAnyAuthorityForAnyUO="['CSP-CON-C', 'CSP-CON-E']">
+    <mat-icon class="save-icon">save</mat-icon>{{textSaveOrUpdate | translate}}
+  </button>
+  <button class="link-cancelar" mat-button type="button" mat-dialog-close>{{'btn.cancel' |
+    translate}}</button>
+</mat-dialog-actions>

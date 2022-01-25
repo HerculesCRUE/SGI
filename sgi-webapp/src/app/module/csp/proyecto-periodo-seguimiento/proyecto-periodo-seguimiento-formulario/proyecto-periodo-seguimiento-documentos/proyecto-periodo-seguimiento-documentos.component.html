@@ -62,11 +62,9 @@
         <mat-form-field class="input-form">
           <mat-label>{{'csp.documento.tipo' | translate}}
           </mat-label>
-          <mat-select placeholder="{{'csp.documento.tipo' | translate}}" formControlName="tipoDocumento"
-            [compareWith]="compareTipoDocumento">
-            <mat-option [value]="null"></mat-option>
-            <mat-option *ngFor="let tipo of tiposDocumento" [value]="tipo">{{tipo.nombre}}</mat-option>
-          </mat-select>
+          <sgi-select-tipo-documento placeholder="{{'csp.documento.tipo' | translate}}" formControlName="tipoDocumento"
+            [modeloEjecucionId]="actionService.proyectoModeloEjecucionId" tipoFaseId="null">
+          </sgi-select-tipo-documento>
         </mat-form-field>
         <mat-form-field class="input-form">
           <mat-label>{{'csp.proyecto-periodo-seguimiento.documento.visible' | translate}}</mat-label>

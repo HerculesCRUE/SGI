@@ -1,0 +1,47 @@
+[
+  {
+    "key": "ap5_5",
+    "wrappers": [
+      "expansion-panel"
+    ],
+    "templateOptions": {
+      "expressionLock": "formState.memoria.tipoMemoria.id === 3",
+      "label": "5.5 Informe de la Comisión de Garantías"
+    },
+    "fieldGroup": [
+      {
+        "template": "¿Su proyecto requiere informe previo favorable de la Comisión de Garantías?"
+      },
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "<p>Requerirán el informe previo favorable de la Comisión de Garantías para la Donación y Utilización de Células y Tejidos Humanos, los proyectos de investigación que versen en todo o en parte sobre las siguientes materias:</p><ul><li>La investigación con preembriones humanos para la derivación de líneas celulares, para la investigación embriológica y para otros usos de investigación, excepto aquellos relacionados con el desarrollo y aplicación de las técnicas de reproducción asistida.</li><li>La investigación con células troncales embrionarias humanas.</li><li>La activación de ovocitos mediante transferencia nuclear para su uso con fines terapéuticos o de investigación.</li><li>Cualquier otra técnica que, utilizando en todo o en parte muestras biológicas de origen humano, pueda dar lugar a la obtención de células troncales.</li><li>La investigación con células o tejidos embrionarios obtenidos por cualquiera de los procedimientos señalados en el <a href='https://www.boe.es/buscar/act.php?id=BOE-A-2007-12945&p=20110602&tn=1#a33' target='_blank'>artículo 33.2</a>.</li><li>Cualquier otra línea de investigación que incluya material celular de origen embrionario humano u otro funcionalmente semejante.</li><li>La investigación con líneas de células troncales embrionarias que provengan de otro país, intracomunitario o extracomunitario. Dicho origen vendrá especificado en el proyecto presentado a informe.</li></ul><p>Para más información consultar el <a href='https://www.boe.es/buscar/act.php?id=BOE-A-2007-12945&p=20110602&tn=1#a35' target='_blank'>artículo 35 de la LIB 14/2007</a></p>"
+      },
+      {
+        "key": "informeComisionGarantiasRadio",
+        "type": "documento",
+        "templateOptions": {
+          "label": "Indicar",
+          "required": true,
+          "options": [
+            {
+              "value": 0,
+              "label": "No"
+            },
+            {
+              "value": 8,
+              "label": "Sí"
+            }
+          ]
+        }
+      },
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "<p>Nota: sólo se podrá constestar <b>Sí</b> si en el apartado '3.5 Muestras biológicas de origen humano' se ha seleccionado alguna de las opciones marcadas con asterisco <b>*</b>.</p>"
+      }
+    ]
+  }
+]

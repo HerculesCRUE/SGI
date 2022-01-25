@@ -9,7 +9,7 @@ import { ReportService } from '@core/services/rep/report.service';
 import { triggerDownloadToUser } from '@core/services/sgdoc/documento.service';
 import { SgiRestFindOptions } from '@sgi/framework/http';
 import { Observable } from 'rxjs';
-import { map, switchMap } from 'rxjs/operators';
+import { catchError, map, switchMap } from 'rxjs/operators';
 
 
 const REPORT_NAME = 'report';
@@ -36,21 +36,11 @@ export interface IReportConfig<T> {
   reportOptions?: T;
 }
 
-export enum RelationsTypeView {
-  TABLE = 'TABLE',
-  LIST = 'LIST'
-}
-
 export interface IReportOptions {
   /**
    * Filtros de consulta para la obtención de datos del informe
    */
   findOptions?: SgiRestFindOptions;
-
-  /**
-   * Indica la disposición de los elementos que son relaciones: tabla o lista de columnas por cada registro de la relación
-   */
-  relationsTypeView?: RelationsTypeView;
 
   /**
    * Ancho mínimo de columna, sino lo informamos cogerá el tamaño por
@@ -136,5 +126,9 @@ export abstract class AbstractTableExportService<T, R extends IReportOptions> im
       }
       return fieldOrientation;
     }
+  }
+
+  protected isExcelOrCsv(outputType: OutputReport): boolean {
+    return (outputType === OutputReport.XLS || outputType === OutputReport.XLSX || outputType === OutputReport.CSV);
   }
 }

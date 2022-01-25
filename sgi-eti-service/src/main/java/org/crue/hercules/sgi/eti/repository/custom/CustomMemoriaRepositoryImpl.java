@@ -219,7 +219,8 @@ public class CustomMemoriaRepositoryImpl implements CustomMemoriaRepository {
     cq.multiselect(root.get(Memoria_.id), root.get(Memoria_.numReferencia), root.get(Memoria_.titulo),
         root.get(Memoria_.comite), root.get(Memoria_.estadoActual), defaultDate, defaultDate,
         isResponsable(root, cb, cq, personaRefConsulta).isNotNull().alias("isResponsable"), root.get(Memoria_.activo),
-        root.get(Memoria_.requiereRetrospectiva), joinMemoriaRetrospectiva.alias("retrospectiva")).distinct(true);
+        root.get(Memoria_.requiereRetrospectiva), joinMemoriaRetrospectiva.alias("retrospectiva"),
+        root.get(Memoria_.peticionEvaluacion).get(PeticionEvaluacion_.personaRef)).distinct(true);
 
     cq.where(cb.equal(root.get(Memoria_.peticionEvaluacion).get(PeticionEvaluacion_.id), idPeticionEvaluacion),
         cb.isTrue(root.get(Memoria_.activo)));
@@ -256,8 +257,8 @@ public class CustomMemoriaRepositoryImpl implements CustomMemoriaRepository {
     countQuery.select(cb.count(rootCount));
     Join<Memoria, Retrospectiva> joinMemoriaRetrospectiva = root.join(Memoria_.retrospectiva, JoinType.LEFT);
 
-    List<Predicate> predicates = new ArrayList<Predicate>();
-    List<Predicate> predicatesCount = new ArrayList<Predicate>();
+    List<Predicate> predicates = new ArrayList<>();
+    List<Predicate> predicatesCount = new ArrayList<>();
 
     if (personaRefConsulta != null) {
       Predicate predicateMemoria = cb.in(root.get(Memoria_.peticionEvaluacion).get(PeticionEvaluacion_.id))
@@ -291,7 +292,8 @@ public class CustomMemoriaRepositoryImpl implements CustomMemoriaRepository {
     cq.multiselect(root.get(Memoria_.id), root.get(Memoria_.numReferencia), root.get(Memoria_.titulo),
         root.get(Memoria_.comite), root.get(Memoria_.estadoActual), defaultDate, defaultDate,
         isResponsable(root, cb, cq, personaRefConsulta).isNotNull().alias("isResponsable"), root.get(Memoria_.activo),
-        root.get(Memoria_.requiereRetrospectiva), joinMemoriaRetrospectiva.alias("retrospectiva")).distinct(true);
+        root.get(Memoria_.requiereRetrospectiva), joinMemoriaRetrospectiva.alias("retrospectiva"),
+        root.get(Memoria_.peticionEvaluacion).get(PeticionEvaluacion_.personaRef)).distinct(true);
 
     cq.where(predicates.toArray(new Predicate[] {}));
 
@@ -312,7 +314,7 @@ public class CustomMemoriaRepositoryImpl implements CustomMemoriaRepository {
     List<MemoriaPeticionEvaluacion> result = typedQuery.getResultList().stream().map(this::resolveMemoriaDates)
         .collect(Collectors.toList());
 
-    Page<MemoriaPeticionEvaluacion> returnValue = new PageImpl<MemoriaPeticionEvaluacion>(result, pageable, count);
+    Page<MemoriaPeticionEvaluacion> returnValue = new PageImpl<>(result, pageable, count);
 
     log.debug("findAllMemoriasEvaluaciones( Pageable pageable) - end");
     return returnValue;
@@ -459,7 +461,7 @@ public class CustomMemoriaRepositoryImpl implements CustomMemoriaRepository {
     Subquery<Long> queryGetIdPeticionEvaluacion = cq.subquery(Long.class);
     Root<Memoria> subqRoot = queryGetIdPeticionEvaluacion.from(Memoria.class);
 
-    List<Predicate> predicates = new ArrayList<Predicate>();
+    List<Predicate> predicates = new ArrayList<>();
     predicates.add(cb.isTrue(subqRoot.get(Memoria_.peticionEvaluacion).get(PeticionEvaluacion_.activo)));
     predicates.add(cb.isTrue(subqRoot.get(Memoria_.activo)));
     if (personaRef != null) {

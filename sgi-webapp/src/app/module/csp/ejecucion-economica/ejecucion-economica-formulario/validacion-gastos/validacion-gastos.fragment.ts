@@ -2,12 +2,10 @@ import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { IConceptoGasto } from '@core/models/csp/concepto-gasto';
 import { Estado as EstadoGastoProyecto } from '@core/models/csp/estado-gasto-proyecto';
 import { IProyecto } from '@core/models/csp/proyecto';
-import { IProyectoAgrupacionGasto } from '@core/models/csp/proyecto-agrupacion-gasto';
 import { IDatoEconomico } from '@core/models/sge/dato-economico';
 import { IProyectoSge } from '@core/models/sge/proyecto-sge';
 import { Fragment } from '@core/services/action-service';
 import { GastoProyectoService } from '@core/services/csp/gasto-proyecto/gasto-proyecto-service';
-import { ProyectoAgrupacionGastoService } from '@core/services/csp/proyecto-agrupacion-gasto/proyecto-agrupacion-gasto.service';
 import { ProyectoService } from '@core/services/csp/proyecto.service';
 import { GastoService } from '@core/services/sge/gasto/gasto.service';
 import { RSQLSgiRestFilter, SgiRestFilterOperator, SgiRestFindOptions } from '@sgi/framework/http';
@@ -17,7 +15,6 @@ import { IColumnDefinition } from '../desglose-economico.fragment';
 
 export interface ValidacionGasto extends IDatoEconomico {
   proyecto: IProyecto;
-  agrupacionGasto: IProyectoAgrupacionGasto;
   conceptoGasto: IConceptoGasto;
 }
 
@@ -35,7 +32,6 @@ export const ESTADO_TIPO_MAP: Map<EstadoTipo, string> = new Map([
 
 export class ValidacionGastosFragment extends Fragment {
   private proyectosMap = new Map<number, IProyecto>();
-  private agrupacionesGastosMap = new Map<string, IProyectoAgrupacionGasto>();
   readonly gastos$ = new BehaviorSubject<ValidacionGasto[]>([]);
 
   displayColumns: string[] = [];
@@ -51,7 +47,6 @@ export class ValidacionGastosFragment extends Fragment {
     private gastoService: GastoService,
     private proyectoService: ProyectoService,
     private gastoProyectoService: GastoProyectoService,
-    private proyectoAgrupacionGastoService: ProyectoAgrupacionGastoService
   ) {
     super(key);
     this.setComplete(true);
@@ -64,10 +59,11 @@ export class ValidacionGastosFragment extends Fragment {
         this.displayColumns = [
           'anualidad',
           'proyecto',
-          'agrupacionGasto',
           'conceptoGasto',
+          'clasificacionSGE',
           'aplicacionPresupuestaria',
           'codigoEconomico',
+          'fechaDevengo',
           ...columns.map(column => column.id),
           'acciones'
         ];
@@ -130,17 +126,6 @@ export class ValidacionGastosFragment extends Fragment {
                   return of(validacionGasto);
                 }),
               );
-            }),
-            concatMap((validacionGasto: ValidacionGasto) => {
-              if (validacionGasto.proyecto?.id && validacionGasto.conceptoGasto?.id) {
-                return this.getAgrupacionGasto(validacionGasto.proyecto.id.toString(), validacionGasto.conceptoGasto.id.toString()).pipe(
-                  map(agrupacion => {
-                    validacionGasto.agrupacionGasto = agrupacion;
-                    return validacionGasto;
-                  })
-                );
-              }
-              return of(validacionGasto);
             })
           );
         }),
@@ -163,26 +148,6 @@ export class ValidacionGastosFragment extends Fragment {
     return this.proyectoService.findById(proyectoId).pipe(
       tap((proyecto) => {
         this.proyectosMap.set(key, proyecto);
-      })
-    );
-  }
-
-  private getAgrupacionGasto(proyectoId: string, id: string): Observable<IProyectoAgrupacionGasto> {
-    const key = `${proyectoId}-${id}`;
-    const existing = this.agrupacionesGastosMap.get(key);
-    if (existing) {
-      return of(existing);
-    }
-    const options: SgiRestFindOptions = {
-      filter: new RSQLSgiRestFilter('proyectoId', SgiRestFilterOperator.EQUALS, proyectoId)
-        .and('conceptos.conceptoGasto.id', SgiRestFilterOperator.EQUALS, id)
-    };
-    return this.proyectoAgrupacionGastoService.findAll(options).pipe(
-      map(response => {
-        return response.items.length ? response.items[0] : null;
-      }),
-      tap((proyectoAgrupacionGasto) => {
-        this.agrupacionesGastosMap.set(key, proyectoAgrupacionGasto);
       })
     );
   }

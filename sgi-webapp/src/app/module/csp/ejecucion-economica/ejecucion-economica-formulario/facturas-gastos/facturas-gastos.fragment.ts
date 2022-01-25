@@ -1,9 +1,11 @@
+import { IConfiguracion } from '@core/models/csp/configuracion';
 import { IProyecto } from '@core/models/csp/proyecto';
 import { IDatoEconomico } from '@core/models/sge/dato-economico';
 import { IProyectoSge } from '@core/models/sge/proyecto-sge';
 import { GastoProyectoService } from '@core/services/csp/gasto-proyecto/gasto-proyecto-service';
-import { ProyectoAgrupacionGastoService } from '@core/services/csp/proyecto-agrupacion-gasto/proyecto-agrupacion-gasto.service';
 import { ProyectoAnualidadService } from '@core/services/csp/proyecto-anualidad/proyecto-anualidad.service';
+import { ProyectoConceptoGastoCodigoEcService } from '@core/services/csp/proyecto-concepto-gasto-codigo-ec.service';
+import { ProyectoConceptoGastoService } from '@core/services/csp/proyecto-concepto-gasto.service';
 import { ProyectoService } from '@core/services/csp/proyecto.service';
 import { EjecucionEconomicaService } from '@core/services/sge/ejecucion-economica.service';
 import { PersonaService } from '@core/services/sgp/persona.service';
@@ -21,11 +23,14 @@ export class FacturasGastosFragment extends FacturasJustificantesFragment {
     proyectoService: ProyectoService,
     personaService: PersonaService,
     proyectoAnualidadService: ProyectoAnualidadService,
-    proyectoAgrupacionGastoService: ProyectoAgrupacionGastoService,
     gastoProyectoService: GastoProyectoService,
-    private ejecucionEconomicaService: EjecucionEconomicaService
+    private ejecucionEconomicaService: EjecucionEconomicaService,
+    proyectoConceptoGastoCodigoEcService: ProyectoConceptoGastoCodigoEcService,
+    proyectoConceptoGastoService: ProyectoConceptoGastoService,
+    configuracion: IConfiguracion,
   ) {
-    super(key, proyectoSge, proyectosRelacionados, proyectoService, personaService, proyectoAnualidadService, proyectoAgrupacionGastoService, gastoProyectoService);
+    super(key, proyectoSge, proyectosRelacionados, proyectoService, personaService, proyectoAnualidadService,
+      gastoProyectoService, proyectoConceptoGastoCodigoEcService, proyectoConceptoGastoService, configuracion);
   }
 
   protected onInitialize(): void {
@@ -34,7 +39,17 @@ export class FacturasGastosFragment extends FacturasJustificantesFragment {
     this.subscriptions.push(this.getColumns(true).subscribe(
       (columns) => {
         this.columns = columns;
-        this.displayColumns = ['anualidad', 'proyecto', 'agrupacionGasto', 'conceptoGasto', 'aplicacionPresupuestaria', 'codigoEconomico', ...columns.map(column => column.id), 'acciones'];
+        this.displayColumns = [
+          'anualidad',
+          'proyecto',
+          'conceptoGasto',
+          'clasificacionSGE',
+          'aplicacionPresupuestaria',
+          'codigoEconomico',
+          'fechaDevengo',
+          ...columns.map(column => column.id),
+          'acciones'
+        ];
       }
     ));
   }
@@ -71,8 +86,8 @@ export class FacturasGastosFragment extends FacturasJustificantesFragment {
     rows.sort((a, b) => {
       return this.compareAnualidadRowTree(b, a)
         || this.compareProyectoTituloRowTree(a, b)
-        || this.compareAgrupacionGastoNombreRowTree(a, b)
         || this.compareConceptoGastoNombreRowTree(a, b)
+        || this.compareClasificacionSGENombreRowTree(a, b)
         || this.comparePartidaPresupuestariaRowTree(a, b)
         || this.compareCodigoEconomicoRowTree(a, b);
     });
@@ -82,8 +97,8 @@ export class FacturasGastosFragment extends FacturasJustificantesFragment {
     rows.sort((a, b) => {
       return this.compareAnualidadDesglose(b, a)
         || this.compareProyectoTituloDesglose(a, b)
-        || this.compareAgrupacionGastoNombreDesglose(a, b)
         || this.compareConceptoGastoNombreDesglose(a, b)
+        || this.compareClasificacionSGENombreDesglose(a, b)
         || this.comparePartidaPresupuestariaDesglose(a, b)
         || this.compareCodigoEconomicoDesglose(a, b);
     });

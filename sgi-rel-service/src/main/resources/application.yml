@@ -9,7 +9,7 @@ sgi:
 spring:
   profiles:
     # Set spring-profile using maven
-    include: @spring.profiles.active@
+    active: @spring.profiles.active@
   datasource:
     # Make sure database schema is created (schema.sql is executed): always/never
     initialization-mode: always
@@ -194,7 +194,7 @@ spring:
         '[default_schema]': test
   liquibase:
     # Set Liquibase contexts
-    contexts: unit-test
+    contexts: test
   security:
     oauth2:
       resourceserver:
@@ -207,7 +207,7 @@ spring:
 ---
 spring:
   # Set spring-profile
-  profiles: integration-test
+  profiles: test-postgres
   datasource:
     # We use PostgreSQL database
     url: "jdbc:postgresql://postgres:5432/db"
@@ -223,7 +223,7 @@ spring:
         '[default_schema]': test
   liquibase:
     # Set Liquibase contexts
-    contexts: integration-test
+    contexts: test
   security:
     oauth2:
       resourceserver:

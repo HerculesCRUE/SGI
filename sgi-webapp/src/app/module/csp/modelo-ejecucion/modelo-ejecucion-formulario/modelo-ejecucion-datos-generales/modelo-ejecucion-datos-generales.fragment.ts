@@ -1,13 +1,15 @@
 import { FormControl, FormGroup } from '@angular/forms';
+import { TipoHorasAnuales } from '@core/models/csp/proyecto';
 import { IModeloEjecucion } from '@core/models/csp/tipos-configuracion';
 import { FormFragment } from '@core/services/action-service';
 import { ModeloEjecucionService } from '@core/services/csp/modelo-ejecucion.service';
 import { NGXLogger } from 'ngx-logger';
 import { EMPTY, Observable } from 'rxjs';
-import { catchError, map, tap } from 'rxjs/operators';
+import { catchError, map, switchMap, tap } from 'rxjs/operators';
 
 export class ModeloEjecucionDatosGeneralesFragment extends FormFragment<IModeloEjecucion> {
   modeloEjecucion: IModeloEjecucion;
+  hasProyectosAsociados: Boolean;
 
   constructor(
     private readonly logger: NGXLogger,
@@ -23,6 +25,8 @@ export class ModeloEjecucionDatosGeneralesFragment extends FormFragment<IModeloE
     const fb = new FormGroup({
       nombre: new FormControl(''),
       descripcion: new FormControl(''),
+      externo: new FormControl(null),
+      contrato: new FormControl(null)
     });
     return fb;
   }
@@ -32,14 +36,28 @@ export class ModeloEjecucionDatosGeneralesFragment extends FormFragment<IModeloE
       id: modelo.id,
       activo: modelo.activo,
       descripcion: modelo.descripcion,
-      nombre: modelo.nombre
+      nombre: modelo.nombre,
+      externo: modelo.externo,
+      contrato: modelo.contrato
     } as IModeloEjecucion;
     this.modeloEjecucion = modelo;
     return result;
   }
 
   protected initializer(key: number): Observable<IModeloEjecucion> {
+    const idModelo: number = this.getKey() as number;
     return this.modeloEjecucionService.findById(key).pipe(
+      switchMap(modeloEjecucion => {
+        return this.modeloEjecucionService.hasProyectosAsociados(idModelo).pipe(
+          tap(hasProyectosAsociados => {
+            this.hasProyectosAsociados = hasProyectosAsociados;
+            if (hasProyectosAsociados) {
+              this.disableControls();
+            }
+          }),
+          map(() => modeloEjecucion)
+        );
+      }),
       catchError((error) => {
         this.logger.error(error);
         return EMPTY;
@@ -47,11 +65,18 @@ export class ModeloEjecucionDatosGeneralesFragment extends FormFragment<IModeloE
     );
   }
 
+  disableControls() {
+    this.getFormGroup().controls.externo.disable();
+    this.getFormGroup().controls.contrato.disable();
+  }
+
   getValue(): IModeloEjecucion {
     const form = this.getFormGroup().value;
     const modeloEjecucion = this.modeloEjecucion;
     modeloEjecucion.nombre = form.nombre;
     modeloEjecucion.descripcion = form.descripcion;
+    modeloEjecucion.externo = form.externo;
+    modeloEjecucion.contrato = form.contrato;
     return modeloEjecucion;
   }
 

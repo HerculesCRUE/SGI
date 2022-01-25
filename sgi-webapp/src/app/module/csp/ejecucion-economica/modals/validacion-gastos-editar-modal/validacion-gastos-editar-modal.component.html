@@ -7,11 +7,13 @@
 <mat-dialog-content>
   <div>
     <p>{{'sge.gasto.estado.actual' | translate}}: {{data?.estado | translate}}</p>
+    <p>{{'sge.dato-economico.clasificacion-sge' | translate}}: {{data?.clasificacionSGE?.nombre}}</p>
     <p>{{'sge.gasto.partida-presupuestaria' | translate}}: {{data?.partidaPresupuestaria}}</p>
     <p>{{'sge.gasto.codigo-economico' | translate}}: {{data?.codigoEconomico?.id}}
       {{data?.codigoEconomico?.nombre ? ' - ' + data?.codigoEconomico.nombre : '' }}
     </p>
     <p>{{'sge.gasto.anualidad' | translate}}: {{data?.anualidad}}</p>
+    <p>{{'sge.dato-economico.fecha-devengo' | translate}}: {{data?.fechaDevengo}}</p>
     <p *ngFor="let campo of data?.campos">{{campo?.nombre}}: {{campo?.valor}}</p>
   </div>
   <div>

@@ -7,11 +7,10 @@ import { MSG_PARAMS } from '@core/i18n';
 import { IModeloTipoDocumento } from '@core/models/csp/modelo-tipo-documento';
 import { IModeloTipoFase } from '@core/models/csp/modelo-tipo-fase';
 import { ITipoDocumento, ITipoFase } from '@core/models/csp/tipos-configuracion';
-import { TipoDocumentoService } from '@core/services/csp/tipo-documento.service';
 import { SnackBarService } from '@core/services/snack-bar.service';
 import { TranslateService } from '@ngx-translate/core';
-import { BehaviorSubject, Observable, Subject } from 'rxjs';
-import { map, switchMap } from 'rxjs/operators';
+import { BehaviorSubject, Subject } from 'rxjs';
+import { switchMap } from 'rxjs/operators';
 
 const MODELO_EJECUCUION_TIPO_DOCUMENTO_KEY = marker('csp.tipo-documento');
 const MODELO_EJECUCUION_TIPO_DOCUMENTO_TIPO_KEY = marker('csp.documento.tipo');
@@ -35,7 +34,7 @@ export interface ModeloTipoDocumentoModalData {
 })
 export class ModeloEjecucionTipoDocumentoModalComponent extends
   BaseModalComponent<IModeloTipoDocumento, ModeloEjecucionTipoDocumentoModalComponent> implements OnInit {
-  tipoDocumentos$: Observable<ITipoDocumento[]>;
+
   tipoFases$: Subject<ITipoFase[]> = new BehaviorSubject<ITipoFase[]>([]);
   isFaseRequired = false;
 
@@ -45,34 +44,32 @@ export class ModeloEjecucionTipoDocumentoModalComponent extends
 
   textSaveOrUpdate: string;
 
+  disablerTipoDocumento: (option: ITipoDocumento) => boolean;
+
   constructor(
     protected snackBarService: SnackBarService,
     public matDialogRef: MatDialogRef<ModeloEjecucionTipoDocumentoModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data: ModeloTipoDocumentoModalData,
-    private tipoDocumentoService: TipoDocumentoService,
-    private readonly translate: TranslateService) {
+    private readonly translate: TranslateService
+  ) {
     super(snackBarService, matDialogRef, data.modeloTipoDocumento);
     this.textSaveOrUpdate = this.data.modeloTipoDocumento?.tipoDocumento ? MSG_ACEPTAR : MSG_ANADIR;
 
-    this.tipoDocumentos$ = this.tipoDocumentoService.findAll().pipe(
-      map(result => {
-        // Se quitan de la lista los documentos que no pueden ser asignados
-        return result.items.filter(tipoDocumento => {
-          // Se filtra para quitar de la lista aquellos ya asignados sin ModeloTipoFase
-          let isSeleccionable = !this.data.modeloTipoDocumentos.find((modeloTipoDocumento) => {
-            return (modeloTipoDocumento.tipoDocumento.id === tipoDocumento.id)
-              && !modeloTipoDocumento.modeloTipoFase?.tipoFase?.id;
-          });
+    this.disablerTipoDocumento = (option: ITipoDocumento): boolean => {
+      // Se filtra para quitar de la lista aquellos ya asignados sin ModeloTipoFase
+      let isSeleccionable = !this.data.modeloTipoDocumentos.find((modeloTipoDocumento) => {
+        return (modeloTipoDocumento.tipoDocumento.id === option.id)
+          && !modeloTipoDocumento.modeloTipoFase?.tipoFase?.id;
+      });
 
-          // Se filtra para quitar de la lista aquellos que ya tienen todas las fases asignadas
-          if (isSeleccionable && this.data.tipoFases.length > 0) {
-            const fasesDisponibles = this.getTipoFaseDisponibles(tipoDocumento);
-            isSeleccionable = fasesDisponibles.length > 0;
-          }
-          return isSeleccionable;
-        });
-      })
-    );
+      // Se filtra para quitar de la lista aquellos que ya tienen todas las fases asignadas
+      if (isSeleccionable && this.data.tipoFases.length > 0) {
+        const fasesDisponibles = this.getTipoFaseDisponibles(option);
+        isSeleccionable = fasesDisponibles.length > 0;
+      }
+      return !isSeleccionable;
+    };
+
   }
 
   ngOnInit(): void {

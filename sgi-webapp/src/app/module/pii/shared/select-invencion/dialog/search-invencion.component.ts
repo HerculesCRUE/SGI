@@ -1,17 +1,30 @@
-import { AfterViewInit, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, Inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
-import { MatDialogRef } from '@angular/material/dialog';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
+import { Router } from '@angular/router';
+import { marker } from '@biesbjerg/ngx-translate-extract-marker';
+import { SearchModalData } from '@core/component/select-dialog/select-dialog.component';
 import { MSG_PARAMS } from '@core/i18n';
 import { IInvencion } from '@core/models/pii/invencion';
 import { ITipoProteccion } from '@core/models/pii/tipo-proteccion';
+import { Module } from '@core/module';
+import { ROUTE_NAMES } from '@core/route.names';
 import { InvencionService } from '@core/services/pii/invencion/invencion.service';
 import { TipoProteccionService } from '@core/services/pii/tipo-proteccion/tipo-proteccion.service';
 import { LuxonUtils } from '@core/utils/luxon-utils';
+import { TranslateService } from '@ngx-translate/core';
 import { RSQLSgiRestFilter, RSQLSgiRestSort, SgiRestFilter, SgiRestFilterOperator, SgiRestFindOptions, SgiRestSortDirection } from '@sgi/framework/http';
 import { merge, Observable, Subject, Subscription } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
+import { PII_ROUTE_NAMES } from '../../../pii-route-names';
+
+const ENTITY_KEY = marker('pii.invencion');
+
+export interface SearchInvencionModalData extends SearchModalData {
+
+}
 
 @Component({
   selector: 'sgi-search-invencion',
@@ -31,14 +44,19 @@ export class SearchInvencionModalComponent implements OnInit, AfterViewInit, OnD
   readonly invenciones$ = new Subject<IInvencion[]>();
   readonly tiposProteccion$: Observable<ITipoProteccion[]>;
 
+  msgParamEntity: {};
+
   get MSG_PARAMS() {
     return MSG_PARAMS;
   }
 
   constructor(
     public dialogRef: MatDialogRef<SearchInvencionModalComponent, IInvencion>,
+    @Inject(MAT_DIALOG_DATA) public data: SearchInvencionModalData,
     private readonly invencionService: InvencionService,
-    readonly tipoProteccionService: TipoProteccionService
+    readonly tipoProteccionService: TipoProteccionService,
+    private readonly translate: TranslateService,
+    private readonly router: Router
   ) {
     this.tiposProteccion$ = tipoProteccionService.findAll().pipe(map(({ items }) => items));
   }
@@ -48,9 +66,18 @@ export class SearchInvencionModalComponent implements OnInit, AfterViewInit, OnD
       id: new FormControl(),
       fechaComunicacionDesde: new FormControl(),
       fechaComunicacionHasta: new FormControl(),
-      titulo: new FormControl(),
+      titulo: new FormControl(this.data.searchTerm),
       tipoProteccion: new FormControl(),
     });
+    this.setupI18N();
+  }
+
+  private setupI18N(): void {
+    this.translate.get(
+      ENTITY_KEY,
+      MSG_PARAMS.CARDINALIRY.SINGULAR
+    ).subscribe((value) => this.msgParamEntity = { entity: value });
+
   }
 
   ngAfterViewInit(): void {
@@ -77,8 +104,8 @@ export class SearchInvencionModalComponent implements OnInit, AfterViewInit, OnD
   }
 
   /**
-  * Clean filters an reload the table
-  */
+   * Clean filters an reload the table
+   */
   onClearFilters(): void {
     this.formGroup.reset();
     this.search(true);
@@ -102,14 +129,16 @@ export class SearchInvencionModalComponent implements OnInit, AfterViewInit, OnD
 
   private buildFilter(): SgiRestFilter {
     const controls = this.formGroup.controls;
-    const filter = new RSQLSgiRestFilter('id', SgiRestFilterOperator.EQUALS, controls.id.value)
+
+    return new RSQLSgiRestFilter('id', SgiRestFilterOperator.EQUALS, controls.id.value)
       .and('fechaComunicacion', SgiRestFilterOperator.GREATHER_OR_EQUAL, LuxonUtils.toBackend(controls.fechaComunicacionDesde.value))
       .and('fechaComunicacion', SgiRestFilterOperator.LOWER_OR_EQUAL,
         LuxonUtils.toBackend(controls.fechaComunicacionHasta.value?.plus({ hour: 23, minutes: 59, seconds: 59 })))
       .and('titulo', SgiRestFilterOperator.LIKE_ICASE, controls.titulo.value)
-      // TODO incluir and anidado con or de tipoProteccion.id y tipoProteccion.padre.id
-      .and('tipoProteccion.id', SgiRestFilterOperator.EQUALS, controls.tipoProteccion.value?.id?.toString());
+      .and('tipoProteccion', SgiRestFilterOperator.EQUALS, controls.tipoProteccion.value?.id?.toString());;
+  }
 
-    return filter;
+  openCreate(): void {
+    window.open(this.router.serializeUrl(this.router.createUrlTree(['/', Module.PII.path, PII_ROUTE_NAMES.INVENCION, ROUTE_NAMES.NEW])), '_blank');
   }
 }

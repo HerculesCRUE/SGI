@@ -147,8 +147,7 @@ export class MemoriaDatosGeneralesComponent extends FormFragmentComponent<IMemor
   }
 
   displayerPersonaResponsable = (personaResponsable: IPersona): string => {
-    return personaResponsable && personaResponsable.id ?
-      `${personaResponsable?.nombre} ${personaResponsable?.apellidos} (${this.getEmailPrincipal(personaResponsable)})` : null;
+    return `${personaResponsable?.nombre} ${personaResponsable?.apellidos} (${this.getEmailPrincipal(personaResponsable)})`;
   }
 
   private getEmailPrincipal({ emails }: IPersona): string {

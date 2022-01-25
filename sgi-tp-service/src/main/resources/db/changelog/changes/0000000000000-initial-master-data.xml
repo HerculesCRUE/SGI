@@ -2,7 +2,7 @@
 <databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:pro="http://www.liquibase.org/xml/ns/pro" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-3.8.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
   <property name="schemaPrefix" value="" />
 
-  <changeSet context="!unit-test AND !integration-test" author="master" id="0000000000000-bean_method_tasks">
+  <changeSet context="!test" author="master" id="0000000000000-bean_method_tasks">
     <insert tableName="bean_method_tasks">
       <column name="id" valueSequenceNext="bean_method_tasks_seq" />
       <column name="schedule_type" value="CRON" />
@@ -26,7 +26,7 @@
     </insert>
   </changeSet>
 
-  <changeSet context="!unit-test AND !integration-test" author="master" id="0000000000000-bean_method_task_params">
+  <changeSet context="!test" author="master" id="0000000000000-bean_method_task_params">
     <insert tableName="bean_method_task_params">
       <column name="bean_method_tasks_id" valueComputed="(select id from ${schemaPrefix}bean_method_tasks where description='Paso a archivado por no presentar de nuevo el informe')" />
       <column name="param" value="ETI" />
@@ -46,7 +46,7 @@
     </insert>
   </changeSet>
 
-  <changeSet context="!unit-test AND !integration-test" author="master" id="0000000000000-bean_method_cron_tasks">
+  <changeSet context="!test" author="master" id="0000000000000-bean_method_cron_tasks">
     <insert tableName="bean_method_cron_tasks">
       <column name="id" valueComputed="(select id from ${schemaPrefix}bean_method_tasks where description='Desactivar tareas temporales pasadas')" />
       <!-- Every day at 00:00:00 (second, minute, hour, day, month, weekday) -->

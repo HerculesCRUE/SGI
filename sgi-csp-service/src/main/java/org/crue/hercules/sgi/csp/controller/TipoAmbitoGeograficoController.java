@@ -41,10 +41,12 @@ public class TipoAmbitoGeograficoController {
    * 
    * @param query  filtro de búsqueda.
    * @param paging pageable.
+   * @return el listado de entidades {@link TipoAmbitoGeografico}
+   *         paginadas y filtradas.
    */
   @GetMapping()
   @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-CON-V','CSP-CON-INV-V','CSP-CON-C','CSP-CON-E','CSP-CON-B','CSP-CON-R','CSP-PRO-V', 'CSP-PRO-C', 'CSP-PRO-E', 'CSP-PRO-B', 'CSP-PRO-R', 'CSP-FNT-V', 'CSP-FNT-C', 'CSP-FNT-E', 'CSP-FNT-B', 'CSP-FNT-R')")
-  ResponseEntity<Page<TipoAmbitoGeografico>> findAll(@RequestParam(name = "q", required = false) String query,
+  public ResponseEntity<Page<TipoAmbitoGeografico>> findAll(@RequestParam(name = "q", required = false) String query,
       @RequestPageable(sort = "s") Pageable paging) {
     log.debug("findAll(String query, Pageable paging) - start");
     Page<TipoAmbitoGeografico> page = service.findAll(query, paging);
@@ -66,7 +68,7 @@ public class TipoAmbitoGeograficoController {
    */
   @GetMapping("/{id}")
   @PreAuthorize("hasAuthorityForAnyUO('CSP-PRO-C')")
-  TipoAmbitoGeografico findById(@PathVariable Long id) {
+  public TipoAmbitoGeografico findById(@PathVariable Long id) {
     log.debug("findById(Long id) - start");
     TipoAmbitoGeografico returnValue = service.findById(id);
     log.debug("findById(Long id) - end");

@@ -96,7 +96,7 @@ public class DocumentoRequeridoSolicitudServiceImpl implements DocumentoRequerid
     Assert.notNull(documentoRequeridoSolicitud.getId(),
         "DocumentoRequeridoSolicitud id no puede ser null para actualizar un DocumentoRequeridoSolicitud");
 
-    return repository.findById(documentoRequeridoSolicitud.getId()).map((datosOriginales) -> {
+    return repository.findById(documentoRequeridoSolicitud.getId()).map(datosOriginales -> {
 
       validarDocumentoRequeridoSolicitud(documentoRequeridoSolicitud, datosOriginales, new String[] { "CSP-CON-E" });
 

@@ -31,7 +31,7 @@ export class TipoFaseModalComponent extends DialogActionComponent<ITipoFase, ITi
     private readonly tipoFaseService: TipoFaseService,
     private readonly translate: TranslateService
   ) {
-    super(matDialogRef, !!data.id);
+    super(matDialogRef, !!data?.id);
 
     if (this.isEdit()) {
       this.tipoFase = { ...data };

@@ -1,0 +1,78 @@
+[
+  {
+    "key": "ap3_4_2",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "expressionLock": "formState.memoria.tipoMemoria.id === 3",
+      "label": "3.4.2 Reclutamiento realizado por personal ajeno al equipo investigador"
+    },
+    "hideExpression": "!formState.mainModel.ap3_4.intervencionesSeresHumanosRadio || formState.mainModel.ap3_4.intervencionesSeresHumanosRadio === 'no'",
+    "fieldGroup": [
+      {
+        "template": "<p>¿El reclutamiento va a ser realizado por alguien ajeno al equipo investigador?</p>"
+      },
+      {
+        "key": "reclutamientoPersonalAjenoRadio",
+        "type": "radio",
+        "templateOptions": {
+          "label": "Elige opción:",
+          "required": true,
+          "options": [
+            {
+              "value": "no",
+              "label": "No"
+            },
+            {
+              "value": "si",
+              "label": "Sí"
+            }
+          ]
+        }
+      },
+      {
+        "template": "<p>¿Recibe algún tipo de compensación?</p>",
+        "hideExpression": "!model.reclutamientoPersonalAjenoRadio || model.reclutamientoPersonalAjenoRadio === 'no'"
+      },
+      {
+        "key": "tipoCompensacionRadio",
+        "type": "radio",
+        "hideExpression": "!model.reclutamientoPersonalAjenoRadio || model.reclutamientoPersonalAjenoRadio === 'no'",
+        "templateOptions": {
+          "label": "Elige opción:",
+          "required": true,
+          "options": [
+            {
+              "value": "no",
+              "label": "No"
+            },
+            {
+              "value": "si",
+              "label": "Sí"
+            }
+          ]
+        }
+      },
+      {
+        "key": "tipoCompensacionTexto",
+        "type": "textarea",
+        "hideExpression": "(!model.reclutamientoPersonalAjenoRadio || model.reclutamientoPersonalAjenoRadio === 'no') || ((!model.reclutamientoPersonalAjenoRadio || model.reclutamientoPersonalAjenoRadio === 'si') && (!model.tipoCompensacionRadio || model.tipoCompensacionRadio === 'no'))",
+        "templateOptions": {
+          "label": "Tipo de compensación",
+          "placeholder": "Tipo de compensación",
+          "required": true,
+          "autosize": true,
+          "autosizeMinRows": "1",
+          "autosizeMaxRows": "10"
+        }
+      },
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "<p>Nota: Si el reclutamiento se realiza desde un centro ajeno a la Universidad, y que además autoriza la realización de dicho proyecto en sus instalaciones, con sus asociados, etc,: 5.3. Autorización del centro: Añadir la tarea de reclutamiento en el Documento de Autorización.</p>"
+      }
+    ]
+  }
+]

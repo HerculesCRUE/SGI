@@ -203,8 +203,8 @@ export class ProyectoCalendarioFacturacionComponent extends FragmentComponent im
     });
   }
 
-  public openHistoricoEstadoValidacionIP(proyectoFacturacionId: number): void{
-    if(!proyectoFacturacionId){
+  public openHistoricoEstadoValidacionIP(proyectoFacturacionId: number): void {
+    if (!proyectoFacturacionId) {
       return;
     }
 

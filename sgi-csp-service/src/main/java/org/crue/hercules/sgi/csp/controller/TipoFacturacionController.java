@@ -22,7 +22,7 @@ public class TipoFacturacionController {
 
   @GetMapping()
   @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-PRO-V', 'CSP-PRO-C', 'CSP-PRO-E', 'CSP-PRO-B', 'CSP-PRO-MOD-V')")
-  ResponseEntity<List<TipoFacturacion>> findAll() {
+  public ResponseEntity<List<TipoFacturacion>> findAll() {
     List<TipoFacturacion> tipos = this.tipoFacturacionService.findAll();
     return CollectionUtils.isEmpty(tipos) ? ResponseEntity.noContent().build() : ResponseEntity.ok(tipos);
   }

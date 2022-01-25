@@ -13,6 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.jdbc.Sql;
+import org.springframework.test.context.jdbc.Sql.ExecutionPhase;
 
 /**
  * Test de integracion de ConvocatoriaEntidadGestora.
@@ -37,7 +38,7 @@ public class ConvocatoriaEntidadGestoraIT extends BaseIT {
   @Sql
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void create_ReturnsConvocatoriaEntidadGestora() throws Exception {
+  void create_ReturnsConvocatoriaEntidadGestora() throws Exception {
 
     // given: new ConvocatoriaEntidadGestora
     ConvocatoriaEntidadGestora newConvocatoriaEntidadGestora = ConvocatoriaEntidadGestora.builder().convocatoriaId(1L)
@@ -60,7 +61,7 @@ public class ConvocatoriaEntidadGestoraIT extends BaseIT {
   @Sql
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void delete_Return204() throws Exception {
+  void delete_Return204() throws Exception {
     // given: existing ConvocatoriaEntidadGestora to be deleted
     Long id = 1L;
 
@@ -72,5 +73,47 @@ public class ConvocatoriaEntidadGestoraIT extends BaseIT {
     // then: ConvocatoriaEntidadGestora deleted
     Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
 
+  }
+
+  @Sql(executionPhase = ExecutionPhase.BEFORE_TEST_METHOD, scripts = {
+    // @formatter:off
+    "classpath:scripts/tipo_fase.sql",
+    "classpath:scripts/tipo_documento.sql",
+    "classpath:scripts/modelo_ejecucion.sql",
+    "classpath:scripts/modelo_tipo_fase.sql",
+    "classpath:scripts/modelo_tipo_documento.sql",
+    "classpath:scripts/modelo_unidad.sql",
+    "classpath:scripts/tipo_finalidad.sql",
+    "classpath:scripts/tipo_ambito_geografico.sql",
+    "classpath:scripts/proyecto.sql",
+    "classpath:scripts/concepto_gasto.sql",
+    "classpath:scripts/proyecto_concepto_gasto.sql",
+    "classpath:scripts/tipo_regimen_concurrencia.sql",
+    "classpath:scripts/convocatoria.sql",
+    "classpath:scripts/convocatoria_entidad_gestora.sql"
+    // @formatter:on
+  })
+  @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
+  @Test
+  void update_ReturnsConvocatoriaEntidadGestora() throws Exception {
+    ConvocatoriaEntidadGestora toUpdate = ConvocatoriaEntidadGestora.builder()
+        .id(1L)
+        .convocatoriaId(1L)
+        .entidadRef("entidad-002")
+        .build();
+
+    Long toUpdateId = 1L;
+
+    final ResponseEntity<ConvocatoriaEntidadGestora> response = restTemplate.exchange(
+        CONTROLLER_BASE_PATH + PATH_PARAMETER_ID,
+        HttpMethod.PUT, buildRequest(null, toUpdate), ConvocatoriaEntidadGestora.class, toUpdateId);
+
+    Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+
+    ConvocatoriaEntidadGestora updated = response.getBody();
+
+    Assertions.assertThat(updated).isNotNull();
+    Assertions.assertThat(updated.getEntidadRef()).as("getEntidadRef()").isEqualTo(toUpdate.getEntidadRef());
+    Assertions.assertThat(updated.getConvocatoriaId()).as("getConvocatoriaId()").isEqualTo(toUpdate.getConvocatoriaId());
   }
 }

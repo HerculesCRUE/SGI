@@ -28,10 +28,12 @@ import lombok.extern.slf4j.Slf4j;
 @Transactional(readOnly = true)
 public class AreaTematicaServiceImpl implements AreaTematicaService {
 
+  private static final String MESSAGE_GRUPO_DUPLICADO = "Ya existe un grupo con el mismo nombre";
+
   private final AreaTematicaRepository repository;
 
-  private final int BUSCAR_NOMBRE = 1;
-  private final int BUSCAR_DESCRIPCION = 2;
+  private static final int BUSCAR_NOMBRE = 1;
+  private static final int BUSCAR_DESCRIPCION = 2;
 
   public AreaTematicaServiceImpl(AreaTematicaRepository areaTematicaRepository) {
     this.repository = areaTematicaRepository;
@@ -60,7 +62,7 @@ public class AreaTematicaServiceImpl implements AreaTematicaService {
     }
 
     if (areaTematica.getPadre() == null) {
-      Assert.isTrue(!existGrupoWithNombre(areaTematica.getNombre(), null), "Ya existe un grupo con el mismo nombre");
+      Assert.isTrue(!existGrupoWithNombre(areaTematica.getNombre(), null), MESSAGE_GRUPO_DUPLICADO);
     } else {
       // nombre(back) ==> abreviatura(front)
       // descripcion(back) ==> nombre(front)
@@ -116,7 +118,7 @@ public class AreaTematicaServiceImpl implements AreaTematicaService {
     return repository.findById(areaTematicaActualizar.getId()).map(areaTematica -> {
       if (areaTematica.getPadre() == null) {
         Assert.isTrue(!existGrupoWithNombre(areaTematicaActualizar.getNombre(), areaTematicaActualizar.getId()),
-            "Ya existe un grupo con el mismo nombre");
+            MESSAGE_GRUPO_DUPLICADO);
       } else {
         // nombre(back) ==> abreviatura(front)
         // descripcion(back) ==> nombre(front)
@@ -176,8 +178,7 @@ public class AreaTematicaServiceImpl implements AreaTematicaService {
 
       Assert.isTrue(areaTematica.getPadre() == null, "Solo se puede reactivar si es un grupo (AreaTematica sin padre)");
 
-      Assert.isTrue(!existGrupoWithNombre(areaTematica.getNombre(), areaTematica.getId()),
-          "Ya existe un grupo con el mismo nombre");
+      Assert.isTrue(!existGrupoWithNombre(areaTematica.getNombre(), areaTematica.getId()), MESSAGE_GRUPO_DUPLICADO);
 
       areaTematica.setActivo(true);
 
@@ -339,9 +340,8 @@ public class AreaTematicaServiceImpl implements AreaTematicaService {
         "existAreaTematicaNombreDescripcion(Long areaTematicaId, String textoBuscar,Long areaTematicaIdExcluir, int tipoBusqueda) - start");
 
     // Busca el areaTematica raiz
-    AreaTematica areaTematicaRaiz = repository.findById(areaTematicaId).map(areaTematica -> {
-      return areaTematica;
-    }).orElseThrow(() -> new AreaTematicaNotFoundException(areaTematicaId));
+    AreaTematica areaTematicaRaiz = repository.findById(areaTematicaId).map(areaTematica -> areaTematica)
+        .orElseThrow(() -> new AreaTematicaNotFoundException(areaTematicaId));
 
     while (areaTematicaRaiz.getPadre() != null) {
       areaTematicaRaiz = repository.findById(areaTematicaRaiz.getPadre().getId()).get();

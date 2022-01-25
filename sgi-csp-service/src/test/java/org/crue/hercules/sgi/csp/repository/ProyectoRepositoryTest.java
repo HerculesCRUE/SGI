@@ -92,6 +92,8 @@ public class ProyectoRepositoryTest extends BaseRepositoryTest {
     ModeloEjecucion modeloEjecucion = ModeloEjecucion.builder()
         .nombre("nombreModeloEjecucion" + suffix)
         .activo(Boolean.TRUE)
+        .contrato(Boolean.FALSE)
+        .externo(Boolean.FALSE)
         .build();
     entityManager.persistAndFlush(modeloEjecucion);
 

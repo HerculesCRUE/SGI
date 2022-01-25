@@ -10,6 +10,7 @@ import { MaterialDesignModule } from '@material/material-design.module';
 import { SgiAuthService } from '@sgi/framework/auth';
 import { SharedModule } from '@shared/shared.module';
 import { LoggerTestingModule } from 'ngx-logger/testing';
+import { CspSharedModule } from '../../../shared/csp-shared.module';
 import { PROYECTO_CONCEPTO_GASTO_DATA_KEY } from '../../proyecto-concepto-gasto-data.resolver';
 import { ProyectoConceptoGastoActionService, IProyectoConceptoGastoData } from '../../proyecto-concepto-gasto.action.service';
 import { ProyectoConceptoGastoDatosGeneralesComponent } from './proyecto-concepto-gasto-datos-generales.component';
@@ -47,7 +48,8 @@ describe('ProyectoConceptoGastoDatosGeneralesComponent', () => {
         RouterTestingModule,
         FormsModule,
         ReactiveFormsModule,
-        SharedModule
+        SharedModule,
+        CspSharedModule
       ],
       providers: [
         { provide: SnackBarService, useValue: TestUtils.getSnackBarServiceSpy() },

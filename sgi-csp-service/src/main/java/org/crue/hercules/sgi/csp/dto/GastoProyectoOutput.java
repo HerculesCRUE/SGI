@@ -32,7 +32,7 @@ public class GastoProyectoOutput implements Serializable {
   @NoArgsConstructor
   @AllArgsConstructor
   @Builder
-  public static class ConceptoGasto {
+  public static class ConceptoGasto implements Serializable {
     private Long id;
     private String nombre;
     private String descripcion;
@@ -43,7 +43,7 @@ public class GastoProyectoOutput implements Serializable {
   @NoArgsConstructor
   @AllArgsConstructor
   @Builder
-  public static class EstadoGastoProyecto {
+  public static class EstadoGastoProyecto implements Serializable {
     private Long id;
     private TipoEstadoGasto estado;
     private Instant fechaEstado;

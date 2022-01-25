@@ -80,7 +80,7 @@ public class RequisitoIPController {
    */
   @PostMapping
   @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-CON-C', 'CSP-CON-E')")
-  ResponseEntity<RequisitoIP> create(@Valid @RequestBody RequisitoIP requisitoIP) {
+  public ResponseEntity<RequisitoIP> create(@Valid @RequestBody RequisitoIP requisitoIP) {
     log.debug("create(RequisitoIP requisitoIP) - start");
     RequisitoIP returnValue = service.create(requisitoIP);
     log.debug("create(RequisitoIP requisitoIP) - end");
@@ -96,7 +96,7 @@ public class RequisitoIPController {
    */
   @PutMapping("/{id}")
   @PreAuthorize("hasAuthorityForAnyUO('CSP-CON-E')")
-  RequisitoIP update(@Validated({ Update.class, Default.class }) @RequestBody RequisitoIP requisitoIP,
+  public RequisitoIP update(@Validated({ Update.class, Default.class }) @RequestBody RequisitoIP requisitoIP,
       @PathVariable Long id) {
     log.debug("update(RequisitoIP requisitoIP, Long id) - start");
     RequisitoIP returnValue = service.update(requisitoIP, id);
@@ -112,7 +112,7 @@ public class RequisitoIPController {
    */
   @GetMapping("/{id}")
   @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-CON-E', 'CSP-CON-V', 'CSP-CON-INV-V')")
-  ResponseEntity<RequisitoIP> findByConvocatoriaId(@PathVariable Long id) {
+  public ResponseEntity<RequisitoIP> findByConvocatoriaId(@PathVariable Long id) {
     log.debug("RequisitoIP findByConvocatoriaId(Long id) - start");
     RequisitoIP returnValue = service.findByConvocatoria(id);
 
@@ -240,12 +240,12 @@ public class RequisitoIPController {
 
   private List<RequisitoIPNivelAcademico> convertRequisitoIPNivelAcademicoInputs(
       List<RequisitoIPNivelAcademicoInput> inputs) {
-    return inputs.stream().map((input) -> convert(input)).collect(Collectors.toList());
+    return inputs.stream().map(input -> convert(input)).collect(Collectors.toList());
   }
 
   private List<RequisitoIPCategoriaProfesional> convertRequisitoIPCategoriaProfesionalInputs(
       List<RequisitoIPCategoriaProfesionalInput> inputs) {
-    return inputs.stream().map((input) -> convert(input)).collect(Collectors.toList());
+    return inputs.stream().map(input -> convert(input)).collect(Collectors.toList());
   }
 
   private RequisitoIPNivelAcademico convert(Long id, RequisitoIPNivelAcademicoInput input) {
@@ -262,11 +262,11 @@ public class RequisitoIPController {
 
   private List<RequisitoIPNivelAcademicoOutput> convertRequisitoIPNivelAcademicos(
       List<RequisitoIPNivelAcademico> entities) {
-    return entities.stream().map((entity) -> convert(entity)).collect(Collectors.toList());
+    return entities.stream().map(entity -> convert(entity)).collect(Collectors.toList());
   }
 
   private List<RequisitoIPCategoriaProfesionalOutput> convertRequisitoIPCategoriaProfesionales(
       List<RequisitoIPCategoriaProfesional> entities) {
-    return entities.stream().map((entity) -> convert(entity)).collect(Collectors.toList());
+    return entities.stream().map(entity -> convert(entity)).collect(Collectors.toList());
   }
 }

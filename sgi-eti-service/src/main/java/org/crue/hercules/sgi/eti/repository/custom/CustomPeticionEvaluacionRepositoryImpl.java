@@ -92,7 +92,8 @@ public class CustomPeticionEvaluacionRepositoryImpl implements CustomPeticionEva
       }
     }
 
-    cq.multiselect(root.alias("peticionEvaluacion"), isNotEliminable(root, cb, cq).isNull().alias("eliminable"));
+    cq.multiselect(root.alias("peticionEvaluacion"),
+        isNotEliminable(root, cb, cq, personaRefConsulta).isNull().alias("eliminable"));
 
     cq.where(predicates.toArray(new Predicate[] {}));
     countQuery.where(predicatesCount.toArray(new Predicate[] {}));
@@ -166,7 +167,7 @@ public class CustomPeticionEvaluacionRepositoryImpl implements CustomPeticionEva
    */
 
   private Subquery<Long> isNotEliminable(Root<PeticionEvaluacion> root, CriteriaBuilder cb,
-      CriteriaQuery<PeticionEvaluacionWithIsEliminable> cq) {
+      CriteriaQuery<PeticionEvaluacionWithIsEliminable> cq, String personaRefConsulta) {
     log.debug("isNotEliminable : {} - start");
 
     Subquery<Long> queryNotEliminable = cq.subquery(Long.class);
@@ -174,9 +175,11 @@ public class CustomPeticionEvaluacionRepositoryImpl implements CustomPeticionEva
 
     queryNotEliminable.select(cb.min(rootQueryNotEliminable.get(Memoria_.id)))
         .where(
-            cb.not(rootQueryNotEliminable.get(Memoria_.estadoActual).get(TipoEstadoMemoria_.id)
-                .in(Arrays.asList(Constantes.TIPO_ESTADO_MEMORIA_EN_ELABORACION,
-                    Constantes.TIPO_ESTADO_MEMORIA_COMPLETADA))),
+            cb.or(
+                cb.equal(root.get(PeticionEvaluacion_.personaRef), personaRefConsulta).not(),
+                cb.not(rootQueryNotEliminable.get(Memoria_.estadoActual).get(TipoEstadoMemoria_.id)
+                    .in(Arrays.asList(Constantes.TIPO_ESTADO_MEMORIA_EN_ELABORACION,
+                        Constantes.TIPO_ESTADO_MEMORIA_COMPLETADA)))),
             cb.equal(rootQueryNotEliminable.get(Memoria_.peticionEvaluacion).get(PeticionEvaluacion_.id),
                 root.get(PeticionEvaluacion_.id)));
 

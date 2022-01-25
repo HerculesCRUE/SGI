@@ -10,7 +10,6 @@ import { ISolicitud } from '@core/models/csp/solicitud';
 import { FxFlexProperties } from '@core/models/shared/flexLayout/fx-flex-properties';
 import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-properties';
 import { ROUTE_NAMES } from '@core/route.names';
-import { ConvocatoriaService } from '@core/services/csp/convocatoria.service';
 import { SolicitudService } from '@core/services/csp/solicitud.service';
 import { DialogService } from '@core/services/dialog.service';
 import { SnackBarService } from '@core/services/snack-bar.service';
@@ -68,7 +67,6 @@ export class SolicitudListadoInvComponent extends AbstractTablePaginationCompone
     protected snackBarService: SnackBarService,
     private solicitudService: SolicitudService,
     private readonly translate: TranslateService,
-    private convocatoriaService: ConvocatoriaService,
     private sgiAuthService: SgiAuthService
   ) {
     super(snackBarService, MSG_ERROR);
@@ -96,7 +94,7 @@ export class SolicitudListadoInvComponent extends AbstractTablePaginationCompone
   }
 
   protected createObservable(reset?: boolean): Observable<SgiRestListResult<SolicitudListado>> {
-    const observable$ = this.solicitudService.findAllInvestigador(this.getFindOptions(reset)).pipe(
+    return this.solicitudService.findAllInvestigador(this.getFindOptions(reset)).pipe(
       map(response => {
         return response as SgiRestListResult<SolicitudListado>;
       }),
@@ -104,7 +102,7 @@ export class SolicitudListadoInvComponent extends AbstractTablePaginationCompone
         const requestsConvocatoria: Observable<SolicitudListado>[] = [];
         response.items.forEach(solicitud => {
           if (solicitud.convocatoriaId) {
-            requestsConvocatoria.push(this.convocatoriaService.findById(solicitud.convocatoriaId).pipe(
+            requestsConvocatoria.push(this.solicitudService.findConvocatoria(solicitud.id).pipe(
               map(convocatoria => {
                 solicitud.convocatoria = convocatoria;
                 return solicitud;
@@ -141,8 +139,6 @@ export class SolicitudListadoInvComponent extends AbstractTablePaginationCompone
         return response;
       })
     );
-
-    return observable$;
   }
 
   protected initColumns(): void {
@@ -163,11 +159,10 @@ export class SolicitudListadoInvComponent extends AbstractTablePaginationCompone
 
   protected createFilter(): SgiRestFilter {
     const controls = this.formGroup.controls;
-    const filter = new RSQLSgiRestFilter('convocatoria.id', SgiRestFilterOperator.EQUALS, controls.convocatoria.value?.id?.toString())
+
+    return new RSQLSgiRestFilter('convocatoria.id', SgiRestFilterOperator.EQUALS, controls.convocatoria.value?.id?.toString())
       .and('estado.estado', SgiRestFilterOperator.EQUALS, controls.estadoSolicitud.value)
       .and('titulo', SgiRestFilterOperator.LIKE_ICASE, controls.tituloSolicitud.value);
-
-    return filter;
   }
 
   /**

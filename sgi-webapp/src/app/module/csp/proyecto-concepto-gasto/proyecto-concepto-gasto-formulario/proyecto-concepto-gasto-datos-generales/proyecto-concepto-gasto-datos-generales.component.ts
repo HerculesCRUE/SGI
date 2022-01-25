@@ -2,14 +2,11 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { FormFragmentComponent } from '@core/component/fragment.component';
 import { MSG_PARAMS } from '@core/i18n';
-import { IConceptoGasto } from '@core/models/csp/concepto-gasto';
 import { IProyectoConceptoGasto } from '@core/models/csp/proyecto-concepto-gasto';
 import { FxFlexProperties } from '@core/models/shared/flexLayout/fx-flex-properties';
 import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-properties';
-import { ConceptoGastoService } from '@core/services/csp/concepto-gasto.service';
 import { TranslateService } from '@ngx-translate/core';
-import { Observable, Subscription } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { Subscription } from 'rxjs';
 import { ProyectoConceptoGastoActionService } from '../../proyecto-concepto-gasto.action.service';
 import { ProyectoConceptoGastoDatosGeneralesFragment } from './proyecto-concepto-gasto-datos-generales.fragment';
 
@@ -17,7 +14,6 @@ const MSG_ANADIR = marker('btn.add');
 const MSG_ACEPTAR = marker('btn.ok');
 const PROYECTO_CONCEPTO_GASTO_KEY = marker('csp.proyecto-concepto-gasto');
 const PROYECTO_CONCEPTO_GASTO_COSTES_INDIRECTOS_KEY = marker('csp.proyecto-concepto-gasto.costes-indirectos');
-
 
 @Component({
   templateUrl: './proyecto-concepto-gasto-datos-generales.component.html',
@@ -30,7 +26,6 @@ export class ProyectoConceptoGastoDatosGeneralesComponent
   fxFlexProperties: FxFlexProperties;
 
   private subscriptions: Subscription[] = [];
-  conceptosGasto$: Observable<IConceptoGasto[]>;
 
   textSaveOrUpdate: string;
 
@@ -44,7 +39,6 @@ export class ProyectoConceptoGastoDatosGeneralesComponent
   }
 
   constructor(
-    conceptoGastoService: ConceptoGastoService,
     public readonly actionService: ProyectoConceptoGastoActionService,
     private readonly translate: TranslateService
   ) {
@@ -58,10 +52,6 @@ export class ProyectoConceptoGastoDatosGeneralesComponent
     this.fxFlexProperties.md = '0 1 calc(100%-10px)';
     this.fxFlexProperties.gtMd = '0 1 calc(100%-10px)';
     this.fxFlexProperties.order = '2';
-
-    this.conceptosGasto$ = conceptoGastoService.findAll().pipe(
-      map(response => response.items)
-    );
   }
 
   ngOnInit(): void {

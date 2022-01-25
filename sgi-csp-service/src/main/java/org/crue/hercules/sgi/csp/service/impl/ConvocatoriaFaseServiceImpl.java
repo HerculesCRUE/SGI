@@ -40,6 +40,7 @@ import lombok.extern.slf4j.Slf4j;
 @Transactional(readOnly = true)
 public class ConvocatoriaFaseServiceImpl implements ConvocatoriaFaseService {
 
+  private static final String TIPO_FASE_TEMPLATE = "TipoFase '";
   private final ConvocatoriaFaseRepository repository;
   private final ConvocatoriaRepository convocatoriaRepository;
   private final ConfiguracionSolicitudRepository configuracionSolicitudRepository;
@@ -96,7 +97,7 @@ public class ConvocatoriaFaseServiceImpl implements ConvocatoriaFaseService {
 
     // Está asignado al ModeloEjecucion
     Assert.isTrue(modeloTipoFase.isPresent(),
-        "TipoFase '" + convocatoriaFase.getTipoFase().getNombre() + "' no disponible para el ModeloEjecucion '"
+        TIPO_FASE_TEMPLATE + convocatoriaFase.getTipoFase().getNombre() + "' no disponible para el ModeloEjecucion '"
             + ((modeloEjecucionId != null) ? convocatoria.getModeloEjecucion().getNombre()
                 : "Convocatoria sin modelo asignado")
             + "'");
@@ -107,7 +108,7 @@ public class ConvocatoriaFaseServiceImpl implements ConvocatoriaFaseService {
 
     // El TipoFase está activo
     Assert.isTrue(modeloTipoFase.get().getTipoFase().getActivo(),
-        "TipoFase '" + modeloTipoFase.get().getTipoFase().getNombre() + "' no está activo");
+        TIPO_FASE_TEMPLATE + modeloTipoFase.get().getTipoFase().getNombre() + "' no está activo");
 
     convocatoriaFase.setTipoFase(modeloTipoFase.get().getTipoFase());
 
@@ -170,7 +171,7 @@ public class ConvocatoriaFaseServiceImpl implements ConvocatoriaFaseService {
 
       // Está asignado al ModeloEjecucion
       Assert.isTrue(modeloTipoFase.isPresent(),
-          "TipoFase '" + convocatoriaFaseActualizar.getTipoFase().getNombre()
+          TIPO_FASE_TEMPLATE + convocatoriaFaseActualizar.getTipoFase().getNombre()
               + "' no disponible para el ModeloEjecucion '"
               + ((modeloEjecucionId != null) ? convocatoria.getModeloEjecucion().getNombre()
                   : "Convocatoria sin modelo asignado")
@@ -188,7 +189,7 @@ public class ConvocatoriaFaseServiceImpl implements ConvocatoriaFaseService {
       Assert.isTrue(
           modeloTipoFase.get().getTipoFase().getId() == convocatoriaFase.getTipoFase().getId()
               || modeloTipoFase.get().getTipoFase().getActivo(),
-          "TipoFase '" + modeloTipoFase.get().getTipoFase().getNombre() + "' no está activo");
+          TIPO_FASE_TEMPLATE + modeloTipoFase.get().getTipoFase().getNombre() + "' no está activo");
 
       convocatoriaFaseActualizar.setTipoFase(modeloTipoFase.get().getTipoFase());
 
@@ -338,15 +339,15 @@ public class ConvocatoriaFaseServiceImpl implements ConvocatoriaFaseService {
     log.debug("Boolean isModificable(Long convocatoriaId, Long convocatoriaFaseId) - start");
 
     Boolean returnValue = Boolean.TRUE;
+
     Optional<ConfiguracionSolicitud> configuraciSolicitud = configuracionSolicitudRepository
         .findByConvocatoriaId(convocatoriaId);
-    if (configuraciSolicitud.isPresent()) {
-      if (configuraciSolicitud.get().getFasePresentacionSolicitudes() != null
-          && configuraciSolicitud.get().getFasePresentacionSolicitudes().getId() == convocatoriaFaseId) {
 
-        returnValue = convocatoriaService.isRegistradaConSolicitudesOProyectos(convocatoriaId, null,
-            new String[] { "CSP-CON-E" });
-      }
+    if (configuraciSolicitud.isPresent() && configuraciSolicitud.get().getFasePresentacionSolicitudes() != null
+        && configuraciSolicitud.get().getFasePresentacionSolicitudes().getId() == convocatoriaFaseId) {
+
+      returnValue = convocatoriaService.isRegistradaConSolicitudesOProyectos(convocatoriaId, null,
+          new String[] { "CSP-CON-E" });
     }
     log.debug("Boolean isModificable(Long convocatoriaId, Long convocatoriaFaseId) - end");
     return returnValue;

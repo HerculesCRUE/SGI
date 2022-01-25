@@ -39,7 +39,7 @@ public class AnualidadGastoInput implements Serializable {
   @NoArgsConstructor
   @AllArgsConstructor
   @Builder
-  public static class ConceptoGasto {
+  public static class ConceptoGasto implements Serializable {
     private Long id;
   }
 
@@ -48,7 +48,7 @@ public class AnualidadGastoInput implements Serializable {
   @NoArgsConstructor
   @AllArgsConstructor
   @Builder
-  public static class ProyectoPartida {
+  public static class ProyectoPartida implements Serializable {
     private Long id;
   }
 }

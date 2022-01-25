@@ -46,4 +46,29 @@ public class SolicitudSpecifications {
     };
   }
 
+  /**
+   * {@link Solicitud} por id
+   * 
+   * @param id identificador de la {@link Solicitud}
+   * @return specification para obtener las {@link Solicitud} por id.
+   */
+  public static Specification<Solicitud> byId(Long id) {
+    return (root, query, cb) -> {
+      return cb.equal(root.get(Solicitud_.id), id);
+    };
+  }
+
+  /**
+   * Solo {@link Solicitud} distintas.
+   * 
+   * @return specification para obtener las entidades {@link Solicitud} distintas
+   *         solamente.
+   */
+  public static Specification<Solicitud> distinct() {
+    return (root, query, cb) -> {
+      query.distinct(true);
+      return null;
+    };
+  }
+
 }

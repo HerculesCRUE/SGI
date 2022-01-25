@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { PERSONA_CONVERTER } from '@core/converters/sgp/persona.converter';
 import { IPersonaBackend } from '@core/models/sgp/backend/persona-backend';
@@ -10,6 +10,7 @@ import {
 } from '@sgi/framework/http';
 import { Observable, of } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
+import { TipoColectivo } from 'src/app/esb/sgp/shared/select-persona/select-persona.component';
 
 @Injectable({
   providedIn: 'root'
@@ -98,4 +99,17 @@ export class PersonaService extends SgiMutableRestService<string, IPersonaBacken
     );
   }
 
+  findAutocomplete(term: string, tipoColectivo?: TipoColectivo, colectivos: string[] = []): Observable<IPersona[]> {
+    let params: HttpParams = new HttpParams();
+    params = params.append('busqueda', term);
+    if (colectivos.length) {
+      params = params.append('colectivoId', `(${colectivos.join(',')})`);
+    }
+    else if (tipoColectivo) {
+      params = params.append('tipoColectivo', tipoColectivo);
+    }
+    return this.http.get<IPersonaBackend[]>(`${this.endpointUrl}Fast`, { params }).pipe(
+      map(response => PERSONA_CONVERTER.toTargetArray(response))
+    );
+  }
 }

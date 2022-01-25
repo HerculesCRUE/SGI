@@ -41,7 +41,8 @@
     <div [fxLayout]="fxLayoutProperties.layout" [fxLayoutAlign]="fxLayoutProperties.layoutAlign">
       <mat-form-field fxFill>
         <mat-label>{{'csp.convocatoria-enlace.tipo-enlace' | translate}}</mat-label>
-        <sgi-select-entity formControlName="tipoEnlace" [options]="tiposEnlace$ |async"></sgi-select-entity>
+        <sgi-select-tipo-enlace formControlName="tipoEnlace" [modeloEjecucionId]="data.idModeloEjecucion">
+        </sgi-select-tipo-enlace>
       </mat-form-field>
     </div>
   </form>

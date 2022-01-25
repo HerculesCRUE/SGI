@@ -71,4 +71,13 @@ public interface ModeloEjecucionService {
    */
   ModeloEjecucion findById(Long id);
 
+  /**
+   * Obtiene un Booleano indicando si el modelo de ejecucion esta asociado a algun
+   * proyecto
+   *
+   * @param id el id de la entidad {@link ModeloEjecucion}.
+   * @return true si existe algun proyecto asociado y false si no tiene ninguno.
+   */
+  Boolean hasProyectosAsociados(Long id);
+
 }

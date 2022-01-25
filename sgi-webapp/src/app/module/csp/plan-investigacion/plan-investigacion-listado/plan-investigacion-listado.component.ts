@@ -35,7 +35,6 @@ const PLAN_INVESTIGACION_KEY = marker('csp.plan-investigacion');
 })
 export class PlanInvestigacionListadoComponent extends AbstractTablePaginationComponent<IPrograma> implements OnInit {
   ROUTE_NAMES = ROUTE_NAMES;
-  textoCrear: string;
   textoDesactivar: string;
   textoReactivar: string;
   textoErrorDesactivar: string;
@@ -91,7 +90,7 @@ export class PlanInvestigacionListadoComponent extends AbstractTablePaginationCo
           { entity: value }
         );
       })
-    ).subscribe((value) => this.textoCrear = value);
+    ).subscribe((value) => this.msgParamEntity = { entity: value });
 
 
     this.translate.get(

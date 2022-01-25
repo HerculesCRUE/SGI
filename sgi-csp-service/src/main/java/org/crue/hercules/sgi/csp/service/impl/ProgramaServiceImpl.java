@@ -1,6 +1,7 @@
 package org.crue.hercules.sgi.csp.service.impl;
 
 import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -27,6 +28,8 @@ import lombok.extern.slf4j.Slf4j;
 @Transactional(readOnly = true)
 public class ProgramaServiceImpl implements ProgramaService {
 
+  private static final String MESSAGE_YA_EXISTE_UN_PLAN_CON_EL_MISMO_NOMBRE = "Ya existe un plan con el mismo nombre";
+  private static final String MESSAGE_YA_EXISTE_UN_PROGRAMA_CON_EL_MISMO_NOMBRE_EN_EL_PLAN = "Ya existe un programa con el mismo nombre en el plan";
   private final ProgramaRepository repository;
 
   public ProgramaServiceImpl(ProgramaRepository programaRepository) {
@@ -56,10 +59,10 @@ public class ProgramaServiceImpl implements ProgramaService {
     }
 
     if (programa.getPadre() == null) {
-      Assert.isTrue(!existPlanWithNombre(programa.getNombre(), null), "Ya existe un plan con el mismo nombre");
+      Assert.isTrue(!existPlanWithNombre(programa.getNombre(), null), MESSAGE_YA_EXISTE_UN_PLAN_CON_EL_MISMO_NOMBRE);
     } else {
       Assert.isTrue(!existProgramaNombre(programa.getPadre().getId(), programa.getNombre(), null),
-          "Ya existe un programa con el mismo nombre en el plan");
+          MESSAGE_YA_EXISTE_UN_PROGRAMA_CON_EL_MISMO_NOMBRE_EN_EL_PLAN);
     }
 
     programa.setActivo(true);
@@ -95,10 +98,10 @@ public class ProgramaServiceImpl implements ProgramaService {
     return repository.findById(programaActualizar.getId()).map(programa -> {
       if (programa.getPadre() == null) {
         Assert.isTrue(!existPlanWithNombre(programaActualizar.getNombre(), programaActualizar.getId()),
-            "Ya existe un plan con el mismo nombre");
+            MESSAGE_YA_EXISTE_UN_PLAN_CON_EL_MISMO_NOMBRE);
       } else {
         Assert.isTrue(!existProgramaNombre(programaActualizar.getPadre().getId(), programaActualizar.getNombre(),
-            programa.getId()), "Ya existe un programa con el mismo nombre en el plan");
+            programa.getId()), MESSAGE_YA_EXISTE_UN_PROGRAMA_CON_EL_MISMO_NOMBRE_EN_EL_PLAN);
       }
 
       programa.setNombre(programaActualizar.getNombre());
@@ -125,17 +128,17 @@ public class ProgramaServiceImpl implements ProgramaService {
     Assert.notNull(id, "Programa id no puede ser null para reactivar un Programa");
 
     return repository.findById(id).map(programa -> {
-      if (programa.getActivo()) {
+      if (programa.getActivo().booleanValue()) {
         // Si esta activo no se hace nada
         return programa;
       }
 
       if (programa.getPadre() == null) {
         Assert.isTrue(!existPlanWithNombre(programa.getNombre(), programa.getId()),
-            "Ya existe un plan con el mismo nombre");
+            MESSAGE_YA_EXISTE_UN_PLAN_CON_EL_MISMO_NOMBRE);
       } else {
         Assert.isTrue(!existProgramaNombre(programa.getPadre().getId(), programa.getNombre(), programa.getId()),
-            "Ya existe un programa con el mismo nombre en el plan");
+            MESSAGE_YA_EXISTE_UN_PROGRAMA_CON_EL_MISMO_NOMBRE_EN_EL_PLAN);
       }
 
       programa.setActivo(true);
@@ -160,7 +163,7 @@ public class ProgramaServiceImpl implements ProgramaService {
     Assert.notNull(id, "Programa id no puede ser null para desactivar un Programa");
 
     return repository.findById(id).map(programa -> {
-      if (!programa.getActivo()) {
+      if (!programa.getActivo().booleanValue()) {
         // Si no esta activo no se hace nada
         return programa;
       }
@@ -295,22 +298,23 @@ public class ProgramaServiceImpl implements ProgramaService {
       return programa;
     }).orElseThrow(() -> new ProgramaNotFoundException(programaId));
 
-    while (programaRaiz.getPadre() != null) {
-      programaRaiz = repository.findById(programaRaiz.getPadre().getId()).get();
+    while (programaRaiz != null && programaRaiz.getPadre() != null) {
+      programaRaiz = repository.findById(programaRaiz.getPadre().getId()).orElse(null);
     }
 
     // Busca el nombre desde el nodo raiz nivel a nivel
     boolean nombreEncontrado = false;
 
-    List<Programa> programasHijos = repository.findByPadreIdInAndActivoIsTrue(Arrays.asList(programaRaiz.getId()));
+    List<Programa> programasHijos = programaRaiz == null ? new LinkedList<>()
+        : repository.findByPadreIdInAndActivoIsTrue(Arrays.asList(programaRaiz.getId()));
     nombreEncontrado = programasHijos.stream()
-        .anyMatch(programa -> programa.getNombre().equals(nombre) && programa.getId() != programaIdExcluir);
+        .anyMatch(programa -> programa.getNombre().equals(nombre) && !programa.getId().equals(programaIdExcluir));
 
     while (!nombreEncontrado && !programasHijos.isEmpty()) {
       programasHijos = repository
           .findByPadreIdInAndActivoIsTrue(programasHijos.stream().map(Programa::getId).collect(Collectors.toList()));
       nombreEncontrado = programasHijos.stream()
-          .anyMatch(programa -> programa.getNombre().equals(nombre) && programa.getId() != programaIdExcluir);
+          .anyMatch(programa -> programa.getNombre().equals(nombre) && !programa.getId().equals(programaIdExcluir));
     }
 
     log.debug("existProgramaNombre(Long programaId, String nombre, Long programaIdExcluir) - end");

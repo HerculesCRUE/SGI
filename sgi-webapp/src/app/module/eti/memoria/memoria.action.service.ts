@@ -31,7 +31,7 @@ import { MemoriaRetrospectivaFragment } from './memoria-formulario/memoria-retro
 import { MemoriaSeguimientoAnualFragment } from './memoria-formulario/memoria-seguimiento-anual/memoria-seguimiento-anual.fragment';
 import { MemoriaSeguimientoFinalFragment } from './memoria-formulario/memoria-seguimiento-final/memoria-seguimiento-final.fragment';
 
-const MSG_PETICIONES_EVALUACION = marker('eti.peticion-evaluacion');
+const MSG_PETICIONES_EVALUACION = marker('eti.peticion-evaluacion-link');
 
 @Injectable()
 export class MemoriaActionService extends ActionService {

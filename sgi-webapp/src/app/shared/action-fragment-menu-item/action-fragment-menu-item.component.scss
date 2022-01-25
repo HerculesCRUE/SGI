@@ -1,9 +1,12 @@
 @import "colors.scss";
 @import "typography.scss";
 
-a.mat-list-item {
+button.mat-list-item {
   font-size: map-get($sgi-typography-size, menu-secondary);
-  text-decoration-line: none;
+  cursor: pointer;
+  background-color: unset;
+  border-style: unset;
+
   &.is-active {
     background-color: map-get($sgi-custom-colors, white);
     font-weight: bold;

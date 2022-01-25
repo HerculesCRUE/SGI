@@ -62,6 +62,7 @@
         <with-param name="requiredAuthorities" value="ESB-EMP-C"/>
       </call-template>
       <sequence key="sgemp-add-x-api-key-sequence"/>
+      <script key="gov:scripts/sgemp/empresa-sectores-industriales-request-converter-mediator.js" language="js"/>
       <send>
         <endpoint key="sgemp-endpoint"/>
       </send>
@@ -80,6 +81,7 @@
         <with-param name="requiredAuthorities" value="ESB-EMP-E"/>
       </call-template>
       <sequence key="sgemp-add-x-api-key-sequence"/>
+      <script key="gov:scripts/sgemp/empresa-sectores-industriales-request-converter-mediator.js" language="js"/>
       <send>
         <endpoint key="sgemp-endpoint"/>
       </send>
@@ -103,6 +105,7 @@
       </send>
     </inSequence>
     <outSequence>
+      <script key="gov:scripts/sgemp/empresa-sectores-industriales-response-converter-mediator.js" language="js"/>
       <respond/>
     </outSequence>
     <faultSequence>

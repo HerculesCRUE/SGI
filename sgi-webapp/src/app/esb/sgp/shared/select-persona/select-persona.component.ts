@@ -1,9 +1,13 @@
-import { Attribute, ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, Inject, Input, Optional, Self } from '@angular/core';
+import { FocusMonitor } from '@angular/cdk/a11y';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, Inject, Input, Optional, Self } from '@angular/core';
 import { NgControl } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { MatFormField, MatFormFieldControl, MAT_FORM_FIELD } from '@angular/material/form-field';
-import { SelectDialogComponent } from '@core/component/select-dialog/select-dialog.component';
+import { SearchResult, SelectDialogComponent } from '@core/component/select-dialog/select-dialog.component';
 import { IPersona } from '@core/models/sgp/persona';
+import { PersonaService } from '@core/services/sgp/persona.service';
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { SearchPersonaModalComponent, SearchPersonaModalData } from './dialog/search-persona.component';
 
 export enum TipoColectivo {
@@ -21,27 +25,19 @@ export enum TipoColectivo {
   templateUrl: '../../../../core/component/select-dialog/select-dialog.component.html',
   styleUrls: ['../../../../core/component/select-dialog/select-dialog.component.scss'],
   // tslint:disable-next-line: no-inputs-metadata-property
-  inputs: ['disabled', 'disableRipple', 'tabIndex'],
+  inputs: ['disabled', 'disableRipple'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   // tslint:disable-next-line: no-host-metadata-property
   host: {
     role: 'search',
     'aria-autocomplete': 'none',
-    class: 'mat-select',
     '[attr.id]': 'id',
-    '[attr.tabindex]': 'tabIndex',
     '[attr.aria-label]': 'ariaLabel || null',
     '[attr.aria-required]': 'required.toString()',
     '[attr.aria-disabled]': 'disabled.toString()',
     '[attr.aria-invalid]': 'errorState',
     '[attr.aria-describedby]': 'ariaDescribedby || null',
-    '[class.mat-select-disabled]': 'disabled',
-    '[class.mat-select-invalid]': 'errorState',
-    '[class.mat-select-required]': 'required',
-    '[class.mat-select-empty]': 'empty',
     '(keydown)': 'handleKeydown($event)',
-    '(focus)': 'onFocus()',
-    '(blur)': 'onBlur()',
   },
   providers: [
     {
@@ -75,25 +71,20 @@ export class SelectPersonaComponent extends SelectDialogComponent<SearchPersonaM
     elementRef: ElementRef,
     @Optional() @Inject(MAT_FORM_FIELD) parentFormField: MatFormField,
     @Self() @Optional() ngControl: NgControl,
-    @Attribute('tabindex') tabIndex: string,
-    dialog: MatDialog) {
-
-    super(changeDetectorRef, elementRef, parentFormField, ngControl, tabIndex, dialog, SearchPersonaModalComponent);
+    dialog: MatDialog,
+    focusMonitor: FocusMonitor,
+    private readonly personaService: PersonaService
+  ) {
+    super(changeDetectorRef, elementRef, parentFormField, ngControl, dialog, SearchPersonaModalComponent, focusMonitor);
+    this.displayWith = (option) => `${option.nombre} ${option.apellidos}${this.getEmailPrincipal(option)}`;
   }
 
   protected getDialogData(): SearchPersonaModalData {
     return {
+      ...super.getDialogData(),
       tipoColectivo: this.tipoColectivo,
       colectivos: this._colectivos
     };
-  }
-
-  get displayValue(): string {
-    if (this.empty) {
-      return '';
-    }
-
-    return `${this.value.nombre} ${this.value.apellidos} (${this.getEmailPrincipal(this.value)})`;
   }
 
   private getEmailPrincipal({ emails }: IPersona): string {
@@ -101,7 +92,23 @@ export class SelectPersonaComponent extends SelectDialogComponent<SearchPersonaM
       return '';
     }
     const emailDataPrincipal = emails.find(emailData => emailData.principal);
-    return emailDataPrincipal?.email ?? '';
+    return emailDataPrincipal?.email ? ` (${emailDataPrincipal?.email})` : '';
   }
 
+  protected search(term: string): Observable<SearchResult<IPersona>> {
+    return this.personaService.findAutocomplete(term, this.tipoColectivo, this._colectivos).pipe(
+      map(response => {
+        if (response.length > 10) {
+          return {
+            items: response.slice(0, 9),
+            more: true
+          };
+        }
+        return {
+          items: response,
+          more: false
+        };
+      })
+    );
+  }
 }

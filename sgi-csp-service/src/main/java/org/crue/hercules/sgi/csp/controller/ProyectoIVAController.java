@@ -2,6 +2,7 @@ package org.crue.hercules.sgi.csp.controller;
 
 import javax.validation.Valid;
 
+import org.crue.hercules.sgi.csp.model.Proyecto;
 import org.crue.hercules.sgi.csp.model.ProyectoIVA;
 import org.crue.hercules.sgi.csp.service.ProyectoIVAService;
 import org.crue.hercules.sgi.framework.web.bind.annotation.RequestPageable;
@@ -48,7 +49,7 @@ public class ProyectoIVAController {
    */
   @PostMapping
   @PreAuthorize("hasAuthorityForAnyUO('CSP-PRO-E')")
-  ResponseEntity<ProyectoIVA> create(@Valid @RequestBody ProyectoIVA proyectoIVA) {
+  public ResponseEntity<ProyectoIVA> create(@Valid @RequestBody ProyectoIVA proyectoIVA) {
     log.debug("create(ProyectoIVA proyectoIVA) - start");
     ProyectoIVA returnValue = service.create(proyectoIVA);
     log.debug("create(ProyectoIVA proyectoIVA) - end");
@@ -58,12 +59,14 @@ public class ProyectoIVAController {
   /**
    * Devuelve todas las entidades {@link ProyectoIVA}
    *
-   * @param pageable la información de la paginación.
+   * @param proyectoId id {@link Proyecto}.
+   * @param query      filtro de búsqueda.
+   * @param pageable   la información de la paginación.
    * @return la lista de entidades {@link ProyectoIVA} paginadas
    */
   @GetMapping("/{proyectoId}/historico")
   @PreAuthorize("hasAuthorityForAnyUO('CSP-PRO-E')")
-  ResponseEntity<Page<ProyectoIVA>> findAllByProyectoId(@PathVariable Long proyectoId,
+  public ResponseEntity<Page<ProyectoIVA>> findAllByProyectoId(@PathVariable Long proyectoId,
       @RequestParam(name = "q", required = false) String query, @RequestPageable(sort = "s") Pageable pageable) {
     log.debug("findAllByProyectoI(String query, Pageable paging) - start");
 

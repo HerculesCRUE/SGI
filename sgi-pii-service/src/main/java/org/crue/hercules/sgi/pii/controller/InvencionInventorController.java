@@ -51,8 +51,10 @@ public class InvencionInventorController {
   /**
    * Devuelve una lista paginada y filtrada {@link InvencionInventor} activos.
    * 
-   * @param query  filtro de búsqueda.
-   * @param paging pageable.
+   * @param query       filtro de búsqueda.
+   * @param invencionId el identificador de la invención cuyos inventores se
+   *                    desean recuperar
+   * @param paging      pageable.
    * @return la lista de entidades {@link Invencion} paginadas y/o filtradas.
    */
   @GetMapping("/{id}/inventores")

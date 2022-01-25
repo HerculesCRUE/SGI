@@ -92,7 +92,7 @@ public class SolicitudProyectoPresupuestoController {
    */
   @GetMapping("/{id}")
   @PreAuthorize("hasAuthorityForAnyUO('AUTH')")
-  SolicitudProyectoPresupuesto findById(@PathVariable Long id) {
+  public SolicitudProyectoPresupuesto findById(@PathVariable Long id) {
     log.debug("findById(Long id) - start");
     SolicitudProyectoPresupuesto returnValue = service.findById(id);
     log.debug("findById(Long id) - end");
@@ -107,7 +107,7 @@ public class SolicitudProyectoPresupuestoController {
   @DeleteMapping("/{id}")
   @PreAuthorize("hasAuthorityForAnyUO('CSP-SOL-E')")
   @ResponseStatus(value = HttpStatus.NO_CONTENT)
-  void deleteById(@PathVariable Long id) {
+  public void deleteById(@PathVariable Long id) {
     log.debug("deleteById(Long id) - start");
     service.delete(id);
     log.debug("deleteById(Long id) - end");

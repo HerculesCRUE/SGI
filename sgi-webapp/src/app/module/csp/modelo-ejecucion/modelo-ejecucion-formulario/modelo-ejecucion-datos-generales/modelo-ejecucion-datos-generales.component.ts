@@ -7,6 +7,7 @@ import { FxFlexProperties } from '@core/models/shared/flexLayout/fx-flex-propert
 import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-properties';
 import { TranslateService } from '@ngx-translate/core';
 import { ModeloEjecucionActionService } from '../../modelo-ejecucion.action.service';
+import { ModeloEjecucionDatosGeneralesFragment } from './modelo-ejecucion-datos-generales.fragment';
 
 const MODELO_EJECUCION_NOMBRE_KEY = marker('csp.modelo-ejecucion.nombre');
 
@@ -16,6 +17,7 @@ const MODELO_EJECUCION_NOMBRE_KEY = marker('csp.modelo-ejecucion.nombre');
   styleUrls: ['./modelo-ejecucion-datos-generales.component.scss']
 })
 export class ModeloEjecucionDatosGeneralesComponent extends FormFragmentComponent<IModeloEjecucion> {
+  formPart: ModeloEjecucionDatosGeneralesFragment;
 
   fxFlexProperties: FxFlexProperties;
   fxLayoutProperties: FxLayoutProperties;
@@ -26,7 +28,6 @@ export class ModeloEjecucionDatosGeneralesComponent extends FormFragmentComponen
   constructor(
     readonly actionService: ModeloEjecucionActionService,
     private readonly translate: TranslateService
-
   ) {
     super(actionService.FRAGMENT.DATOS_GENERALES, actionService);
 
@@ -42,12 +43,12 @@ export class ModeloEjecucionDatosGeneralesComponent extends FormFragmentComponen
     this.fxLayoutProperties.gap = '20px';
     this.fxLayoutProperties.layout = 'row';
     this.fxLayoutProperties.xs = 'column';
+    this.formPart = this.fragment as ModeloEjecucionDatosGeneralesFragment;
   }
 
   ngOnInit(): void {
     super.ngOnInit();
     this.setupI18N();
-
   }
 
   private setupI18N(): void {

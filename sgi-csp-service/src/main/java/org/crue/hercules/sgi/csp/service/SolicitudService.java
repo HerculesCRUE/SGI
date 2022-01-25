@@ -342,8 +342,8 @@ public class SolicitudService {
   public Page<Solicitud> findAllRestringidos(String query, Pageable paging) {
     log.debug("findAll(String query, Pageable paging) - start");
 
-    Specification<Solicitud> specs = SolicitudSpecifications.activos()
-        .and(SgiRSQLJPASupport.toSpecification(query, SolicitudPredicateResolver.getInstance()));
+    Specification<Solicitud> specs = SolicitudSpecifications.distinct().and(SolicitudSpecifications.activos()
+        .and(SgiRSQLJPASupport.toSpecification(query, SolicitudPredicateResolver.getInstance())));
 
     Page<Solicitud> returnValue = repository.findAll(specs, paging);
     log.debug("findAll(String query, Pageable paging) - end");
@@ -360,7 +360,8 @@ public class SolicitudService {
   public Page<Solicitud> findAllTodosRestringidos(String query, Pageable paging) {
     log.debug("findAll(String query, Pageable paging) - start");
 
-    Specification<Solicitud> specs = SgiRSQLJPASupport.toSpecification(query, SolicitudPredicateResolver.getInstance());
+    Specification<Solicitud> specs = SolicitudSpecifications.distinct()
+        .and(SgiRSQLJPASupport.toSpecification(query, SolicitudPredicateResolver.getInstance()));
 
     List<String> unidadesGestion = SgiSecurityContextHolder.getUOsForAnyAuthority(
         new String[] { "CSP-SOL-E", "CSP-SOL-V", "CSP-SOL-B", "CSP-SOL-C", "CSP-SOL-R", "CSP-PRO-C" });
@@ -597,7 +598,7 @@ public class SolicitudService {
 
     solicitudProyectoEquipoRepository.findAllBySolicitudProyectoId(solicitudProyectoId).stream()
         .map((solicitudProyectoEquipo) -> {
-          log.debug("Copy SolicitudProyectoEquipo with id: {0}", solicitudProyectoEquipo.getId());
+          log.debug("Copy SolicitudProyectoEquipo with id: {}", solicitudProyectoEquipo.getId());
           EquipoTrabajo.EquipoTrabajoBuilder equipoTrabajo = EquipoTrabajo.builder();
           equipoTrabajo.peticionEvaluacion(peticionEvaluacion);
           equipoTrabajo.personaRef(solicitudProyectoEquipo.getPersonaRef());

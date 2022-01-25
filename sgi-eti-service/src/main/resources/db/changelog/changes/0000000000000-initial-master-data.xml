@@ -2,7 +2,7 @@
 <databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:pro="http://www.liquibase.org/xml/ns/pro" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-3.8.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
   <property name="schemaPrefix" value="" />
 
-  <changeSet context="!unit-test AND !integration-test" author="master" id="0000000000000-tipo_tarea">
+  <changeSet context="!test" author="master" id="0000000000000-tipo_tarea">
     <insert tableName="tipo_tarea">
       <column name="id" valueNumeric="1" />
       <column name="nombre" value="Diseño de proyecto y procedimientos" />
@@ -20,7 +20,7 @@
     </insert>
   </changeSet>
 
-  <changeSet context="!unit-test AND !integration-test" author="master" id="0000000000000-tipo_evaluacion">
+  <changeSet context="!test" author="master" id="0000000000000-tipo_evaluacion">
     <insert tableName="tipo_evaluacion">
       <column name="id" valueNumeric="1" />
       <column name="nombre" value="Retrospectiva" />
@@ -43,7 +43,7 @@
     </insert>
   </changeSet>
 
-  <changeSet context="!unit-test AND !integration-test" author="master" id="0000000000000-estado_retrospectiva">
+  <changeSet context="!test" author="master" id="0000000000000-estado_retrospectiva">
     <insert tableName="estado_retrospectiva">
       <column name="id" valueNumeric="1" />
       <column name="nombre" value="Pendiente" />
@@ -71,7 +71,7 @@
     </insert>
   </changeSet>
 
-  <changeSet context="!unit-test AND !integration-test" author="master" id="0000000000000-formacion_especifica">
+  <changeSet context="!test" author="master" id="0000000000000-formacion_especifica">
     <insert tableName="formacion_especifica">
       <column name="id" valueNumeric="1" />
       <column name="nombre" value="A: Cuidado de los animales" />
@@ -114,7 +114,7 @@
     </insert>
   </changeSet>
 
-  <changeSet context="!unit-test AND !integration-test" author="master" id="0000000000000-formulario">
+  <changeSet context="!test" author="master" id="0000000000000-formulario">
     <insert tableName="formulario">
       <column name="id" valueNumeric="1" />
       <column name="nombre" value="M10" />
@@ -147,7 +147,7 @@
     </insert>
   </changeSet>
 
-  <changeSet context="!unit-test AND !integration-test" author="master" id="0000000000000-comite">
+  <changeSet context="!test" author="master" id="0000000000000-comite">
     <validCheckSum>8:96b7755324c5488a592ddb83b3d1606a</validCheckSum>
     <insert tableName="comite">
       <column name="id" valueNumeric="1" />
@@ -169,7 +169,7 @@
     </insert>
   </changeSet>
 
-  <changeSet context="!unit-test AND !integration-test" author="master" id="0000000000000-dictamen">
+  <changeSet context="!test" author="master" id="0000000000000-dictamen">
     <validCheckSum>8:3da58590c304463f8018bf0be2c9629d</validCheckSum>
     <insert tableName="dictamen">
       <column name="id" valueNumeric="1" />
@@ -233,7 +233,7 @@
     </insert>
   </changeSet>
 
-  <changeSet context="!unit-test AND !integration-test" author="master" id="0000000000000-tipo_convocatoria_reunion">
+  <changeSet context="!test" author="master" id="0000000000000-tipo_convocatoria_reunion">
     <insert tableName="tipo_convocatoria_reunion">
       <column name="id" valueNumeric="1" />
       <column name="nombre" value="Ordinaria" />
@@ -251,7 +251,7 @@
     </insert>
   </changeSet>
 
-  <changeSet context="!unit-test AND !integration-test" author="master" id="0000000000000-cargo_comite">
+  <changeSet context="!test" author="master" id="0000000000000-cargo_comite">
     <insert tableName="cargo_comite">
       <column name="id" valueNumeric="1" />
       <column name="nombre" value="PRESIDENTE" />
@@ -264,7 +264,7 @@
     </insert>
   </changeSet>
 
-  <changeSet context="!unit-test AND !integration-test" author="master" id="0000000000000-tipo_estado_acta">
+  <changeSet context="!test" author="master" id="0000000000000-tipo_estado_acta">
     <insert tableName="tipo_estado_acta">
       <column name="id" valueNumeric="1" />
       <column name="nombre" value="En elaboración" />
@@ -277,7 +277,7 @@
     </insert>
   </changeSet>
 
-  <changeSet context="!unit-test AND !integration-test" author="master" id="0000000000000-tipo_comentario">
+  <changeSet context="!test" author="master" id="0000000000000-tipo_comentario">
     <insert tableName="tipo_comentario">
       <column name="id" valueNumeric="1" />
       <column name="nombre" value="GESTOR" />
@@ -290,7 +290,7 @@
     </insert>
   </changeSet>
 
-  <changeSet context="!unit-test AND !integration-test" author="master" id="0000000000000-tipo_documento">
+  <changeSet context="!test" author="master" id="0000000000000-tipo_documento">
     <validCheckSum>8:a637ec9e7707303de461709497609cb7</validCheckSum>
     <!-- Seguimiento anual -->
     <insert tableName="tipo_documento">
@@ -432,7 +432,7 @@
     </insert>
   </changeSet>
 
-  <changeSet context="!unit-test AND !integration-test" author="master" id="0000000000000-tipo_memoria">
+  <changeSet context="!test" author="master" id="0000000000000-tipo_memoria">
     <insert tableName="tipo_memoria">
       <column name="id" valueNumeric="1" />
       <column name="nombre" value="Nueva" />
@@ -450,7 +450,7 @@
     </insert>
   </changeSet>
 
-  <changeSet context="!unit-test AND !integration-test" author="master" id="0000000000000-tipo_estado_memoria">
+  <changeSet context="!test" author="master" id="0000000000000-tipo_estado_memoria">
     <insert tableName="tipo_estado_memoria">
       <column name="id" valueNumeric="1" />
       <column name="nombre" value="En elaboración" />
@@ -558,7 +558,7 @@
     </insert>
   </changeSet>
 
-  <changeSet context="!unit-test AND !integration-test" author="master" id="0000000000000-tipo_actividad">
+  <changeSet context="!test" author="master" id="0000000000000-tipo_actividad">
     <insert tableName="tipo_actividad">
       <column name="id" valueNumeric="1" />
       <column name="nombre" value="Proyecto de investigación" />
@@ -576,7 +576,7 @@
     </insert>
   </changeSet>
 
-  <changeSet context="!unit-test AND !integration-test" author="master" id="0000000000000-tipo_investigacion_tutelada">
+  <changeSet context="!test" author="master" id="0000000000000-tipo_investigacion_tutelada">
     <insert tableName="tipo_investigacion_tutelada">
       <column name="id" valueNumeric="1" />
       <column name="nombre" value="Tesis Doctoral" />
@@ -594,7 +594,7 @@
     </insert>
   </changeSet>
 
-  <changeSet context="!unit-test AND !integration-test" author="master" id="0000000000000-tipo_memoria_comite">
+  <changeSet context="!test" author="master" id="0000000000000-tipo_memoria_comite">
     <validCheckSum>8:684c930517144aaac2142d50ebc05faf</validCheckSum>
     <insert tableName="tipo_memoria_comite">
       <column name="id" valueSequenceNext="tipo_memoria_comite_seq" />
@@ -633,7 +633,7 @@
     </insert>
   </changeSet>
 
-  <changeSet context="!unit-test AND !integration-test" author="master" id="0000000000000-bloque">
+  <changeSet context="!test" author="master" id="0000000000000-bloque">
     <validCheckSum>8:b528185b014cd009ea339f41fe29d6c4</validCheckSum>
     <!-- FORMULARIO M10 -->
     <insert tableName="bloque">
@@ -751,7 +751,7 @@
     </insert>
   </changeSet>
 
-  <changeSet context="!unit-test AND !integration-test" author="master" id="0000000000000-apartado">
+  <changeSet context="!test" author="master" id="0000000000000-apartado">
     <validCheckSum>8:81020fbfc2e5aaa4bc416721051fda6f</validCheckSum>
     <!-- FORMULARIO M10 -->
     <!--I. VALOR SOCIAL Y JUSTIFICACIÓN-->
@@ -3494,7 +3494,7 @@
     </update>
   </changeSet>
 
-  <changeSet context="!unit-test AND !integration-test" author="master" id="0000000000000-configuracion">
+  <changeSet context="!test" author="master" id="0000000000000-configuracion">
     <insert tableName="configuracion">
       <column name="id" valueSequenceNext="configuracion_seq" />
       <column name="meses_archivada_inactivo" valueNumeric="6" />
@@ -3506,7 +3506,7 @@
     </insert>
   </changeSet>
 
-  <changeSet context="!unit-test AND !integration-test" author="master" id="0000000000000-formly">
+  <changeSet context="!test" author="master" id="0000000000000-formly">
     <insert tableName="formly">
       <column name="id" valueSequenceNext="formly_seq" />
       <column name="nombre" value="CHECKLIST" />

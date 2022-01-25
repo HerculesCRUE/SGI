@@ -1,10 +1,15 @@
-import { Attribute, ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, Inject, Input, Optional, Self } from '@angular/core';
+import { FocusMonitor } from '@angular/cdk/a11y';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, Inject, Input, Optional, Self } from '@angular/core';
 import { NgControl } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { MatFormField, MatFormFieldControl, MAT_FORM_FIELD } from '@angular/material/form-field';
-import { SelectDialogComponent } from '@core/component/select-dialog/select-dialog.component';
+import { SearchResult, SelectDialogComponent } from '@core/component/select-dialog/select-dialog.component';
 import { IProyecto } from '@core/models/csp/proyecto';
 import { IPersona } from '@core/models/sgp/persona';
+import { ProyectoService } from '@core/services/csp/proyecto.service';
+import { RSQLSgiRestFilter, RSQLSgiRestSort, SgiRestFilter, SgiRestFilterOperator, SgiRestFindOptions, SgiRestSortDirection } from '@sgi/framework/http';
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { SearchProyectoModalComponent, SearchProyectoModalData } from './dialog/search-proyecto.component';
 
 @Component({
@@ -12,27 +17,19 @@ import { SearchProyectoModalComponent, SearchProyectoModalData } from './dialog/
   templateUrl: '../../../../core/component/select-dialog/select-dialog.component.html',
   styleUrls: ['../../../../core/component/select-dialog/select-dialog.component.scss'],
   // tslint:disable-next-line: no-inputs-metadata-property
-  inputs: ['disabled', 'disableRipple', 'tabIndex'],
+  inputs: ['disabled', 'disableRipple'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   // tslint:disable-next-line: no-host-metadata-property
   host: {
     'role': 'search',
     'aria-autocomplete': 'none',
-    'class': 'mat-select',
     '[attr.id]': 'id',
-    '[attr.tabindex]': 'tabIndex',
     '[attr.aria-label]': 'ariaLabel || null',
     '[attr.aria-required]': 'required.toString()',
     '[attr.aria-disabled]': 'disabled.toString()',
     '[attr.aria-invalid]': 'errorState',
     '[attr.aria-describedby]': 'ariaDescribedby || null',
-    '[class.mat-select-disabled]': 'disabled',
-    '[class.mat-select-invalid]': 'errorState',
-    '[class.mat-select-required]': 'required',
-    '[class.mat-select-empty]': 'empty',
     '(keydown)': 'handleKeydown($event)',
-    '(focus)': 'onFocus()',
-    '(blur)': 'onBlur()',
   },
   providers: [
     {
@@ -63,22 +60,46 @@ export class SelectProyectoComponent extends SelectDialogComponent<SearchProyect
     elementRef: ElementRef,
     @Optional() @Inject(MAT_FORM_FIELD) parentFormField: MatFormField,
     @Self() @Optional() ngControl: NgControl,
-    @Attribute('tabindex') tabIndex: string,
-    dialog: MatDialog) {
-    super(changeDetectorRef, elementRef, parentFormField, ngControl, tabIndex, dialog, SearchProyectoModalComponent);
+    dialog: MatDialog,
+    focusMonitor: FocusMonitor,
+    private readonly proyectoService: ProyectoService
+  ) {
+    super(changeDetectorRef, elementRef, parentFormField, ngControl, dialog, SearchProyectoModalComponent, focusMonitor);
+    this.displayWith = (option) => option.titulo;
   }
 
   protected getDialogData(): SearchProyectoModalData {
     return {
+      ...super.getDialogData(),
       personas: this._personas
     };
   }
 
-  get displayValue(): string {
-    if (this.empty) {
-      return '';
-    }
-    return `${this.value.titulo}`;
+  protected search(term: string): Observable<SearchResult<IProyecto>> {
+    const options: SgiRestFindOptions = {
+      page: {
+        index: 0,
+        size: 10
+      },
+      sort: new RSQLSgiRestSort('titulo', SgiRestSortDirection.ASC),
+      filter: this.buildFilter(term)
+    };
+    return this.proyectoService.findAll(options).pipe(
+      map(response => {
+        return {
+          items: response.items,
+          more: response.total > response.items.length
+        };
+      })
+    );
   }
 
+  private buildFilter(term: string): SgiRestFilter {
+    const filter = new RSQLSgiRestFilter('titulo', SgiRestFilterOperator.LIKE_ICASE, term);
+
+    if (this._personas) {
+      filter.and('equipo.personaRef', SgiRestFilterOperator.IN, this._personas.map(persona => persona.id));
+    }
+    return filter;
+  }
 }

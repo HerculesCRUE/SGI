@@ -36,7 +36,7 @@ public class AnualidadIngresoOutput implements Serializable {
   @NoArgsConstructor
   @AllArgsConstructor
   @Builder
-  public static class ProyectoPartida {
+  public static class ProyectoPartida implements Serializable {
     private Long id;
     private String codigo;
   }
@@ -46,7 +46,7 @@ public class AnualidadIngresoOutput implements Serializable {
   @NoArgsConstructor
   @AllArgsConstructor
   @Builder
-  public static class ConceptGasto {
+  public static class ConceptGasto implements Serializable {
     private Long id;
     private String nombre;
   }

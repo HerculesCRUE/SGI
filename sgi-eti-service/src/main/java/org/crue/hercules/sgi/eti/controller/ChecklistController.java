@@ -67,7 +67,7 @@ public class ChecklistController {
    * @return Nuevo {@link Checklist} creado
    */
   @PostMapping
-  @PreAuthorize("hasAnyAuthority('ETI-CHKLST-MOD-C', 'ETI-CHK-E')")
+  @PreAuthorize("hasAnyAuthority('ETI-CHKLST-MOD-C', 'ETI-CHK-INV-E')")
   ResponseEntity<ChecklistOutput> create(@Valid @RequestBody ChecklistInput checklist) {
     log.debug("create(ChecklistInput checklist) - start");
     Checklist created = service.create(convert(checklist));
@@ -84,7 +84,7 @@ public class ChecklistController {
    * @return El {@link Checklist} actualizado
    */
   @PatchMapping("/{id}/respuesta")
-  @PreAuthorize("hasAnyAuthority('ETI-CHKLST-MOD-C', 'ETI-CHK-E')")
+  @PreAuthorize("hasAnyAuthority('ETI-CHKLST-MOD-C', 'ETI-CHK-INV-E')")
   ResponseEntity<ChecklistOutput> updateRespuesta(@PathVariable Long id, @NotEmpty @RequestBody String respuesta) {
     log.debug("update(Long id, String respuesta) - start");
     Checklist updated = service.updateRespuesta(id, respuesta);

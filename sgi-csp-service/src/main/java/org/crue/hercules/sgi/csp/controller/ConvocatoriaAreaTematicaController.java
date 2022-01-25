@@ -85,7 +85,7 @@ public class ConvocatoriaAreaTematicaController {
   @DeleteMapping("/{id}")
   @PreAuthorize("hasAuthorityForAnyUO('CSP-CON-E')")
   @ResponseStatus(value = HttpStatus.NO_CONTENT)
-  void deleteById(@PathVariable Long id) {
+  public void deleteById(@PathVariable Long id) {
     log.debug("deleteById(Long id) - start");
     service.delete(id);
     log.debug("deleteById(Long id) - end");
@@ -99,7 +99,7 @@ public class ConvocatoriaAreaTematicaController {
    */
   @GetMapping("/{id}")
   @PreAuthorize("hasAuthorityForAnyUO('AUTH')")
-  ConvocatoriaAreaTematica findById(@PathVariable Long id) {
+  public ConvocatoriaAreaTematica findById(@PathVariable Long id) {
     log.debug("findById(Long id) - start");
     ConvocatoriaAreaTematica returnValue = service.findById(id);
     log.debug("findById(Long id) - end");

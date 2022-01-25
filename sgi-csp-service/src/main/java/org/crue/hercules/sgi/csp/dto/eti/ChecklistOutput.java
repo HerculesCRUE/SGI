@@ -1,17 +1,11 @@
 package org.crue.hercules.sgi.csp.dto.eti;
 
-import java.io.IOException;
-import java.io.Serializable;
-import java.io.StringWriter;
-import java.time.Instant;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonRawValue;
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -20,6 +14,11 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.io.IOException;
+import java.io.Serializable;
+import java.io.StringWriter;
+import java.time.Instant;
 
 /**
  * Representación de salida del API REST de un Checklist.
@@ -54,7 +53,6 @@ public class ChecklistOutput implements Serializable {
   @JsonProperty(value = "respuesta")
   public void setRespuestaRaw(JsonNode jsonNode) throws IOException {
     // this leads to non-standard json:
-    // setJson(jsonNode.toString());
 
     if (jsonNode.isNull()) {
       setRespuesta(null);
@@ -73,7 +71,7 @@ public class ChecklistOutput implements Serializable {
   @NoArgsConstructor
   @AllArgsConstructor
   @Builder
-  public static class Formly {
+  public static class Formly implements Serializable {
     private Long id;
     @Getter(AccessLevel.NONE)
     @Setter(AccessLevel.NONE)
@@ -91,15 +89,15 @@ public class ChecklistOutput implements Serializable {
     @JsonProperty(value = "esquema")
     public void setEsquemaRaw(JsonNode jsonNode) throws IOException {
       // this leads to non-standard json:
-      // setJson(jsonNode.toString());
 
       if (jsonNode.isNull()) {
         setEsquema(null);
       } else {
         StringWriter stringWriter = new StringWriter();
         ObjectMapper objectMapper = new ObjectMapper();
-        JsonGenerator generator = new JsonFactory(objectMapper).createGenerator(stringWriter);
-        generator.writeTree(jsonNode);
+        try (JsonGenerator generator = new JsonFactory(objectMapper).createGenerator(stringWriter)) {
+          generator.writeTree(jsonNode);
+        }
         setEsquema(stringWriter.toString());
       }
     }

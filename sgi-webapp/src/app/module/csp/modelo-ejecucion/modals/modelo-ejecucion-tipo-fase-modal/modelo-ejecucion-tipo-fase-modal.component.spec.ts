@@ -9,8 +9,10 @@ import { ITipoFase } from '@core/models/csp/tipos-configuracion';
 import { SnackBarService } from '@core/services/snack-bar.service';
 import TestUtils from '@core/utils/test-utils';
 import { MaterialDesignModule } from '@material/material-design.module';
+import { SgiAuthModule, SgiAuthService } from '@sgi/framework/auth';
 import { SharedModule } from '@shared/shared.module';
 import { LoggerTestingModule } from 'ngx-logger/testing';
+import { CspSharedModule } from '../../../shared/csp-shared.module';
 import { ModeloEjecucionTipoFaseModalComponent } from './modelo-ejecucion-tipo-fase-modal.component';
 
 describe('ModeloEjecucionTipoFaseModalComponent', () => {
@@ -36,12 +38,15 @@ describe('ModeloEjecucionTipoFaseModalComponent', () => {
         RouterTestingModule,
         FormsModule,
         ReactiveFormsModule,
-        SharedModule
+        SharedModule,
+        CspSharedModule,
+        SgiAuthModule
       ],
       providers: [
         { provide: SnackBarService, useValue: TestUtils.getSnackBarServiceSpy() },
         { provide: MatDialogRef, useValue: data },
         { provide: MAT_DIALOG_DATA, useValue: data },
+        SgiAuthService
       ]
     })
       .compileComponents();

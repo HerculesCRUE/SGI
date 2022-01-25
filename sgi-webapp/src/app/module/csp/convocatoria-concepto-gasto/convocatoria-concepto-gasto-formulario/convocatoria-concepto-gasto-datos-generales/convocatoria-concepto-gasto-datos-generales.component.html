@@ -7,8 +7,8 @@
         [fxFlexOrder]="fxFlexProperties.order">
         <mat-form-field fxFill>
           <mat-label>{{'csp.convocatoria-elegibilidad.concepto-gasto.concepto-gasto' | translate}}</mat-label>
-          <sgi-select-entity formControlName="conceptoGasto" required [options]="conceptosGasto$ | async">
-          </sgi-select-entity>
+          <sgi-select-concepto-gasto formControlName="conceptoGasto" required>
+          </sgi-select-concepto-gasto>
           <mat-error *ngIf="formGroup.controls.conceptoGasto.errors?.required">
             {{'error.invalid.entity' | translate:msgParamConceptoGastoEntity}}
           </mat-error>

@@ -9,7 +9,6 @@ import { FxFlexProperties } from '@core/models/shared/flexLayout/fx-flex-propert
 import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-properties';
 import { EvaluacionService } from '@core/services/eti/evaluacion.service';
 import { TipoEvaluacionService } from '@core/services/eti/tipo-evaluacion.service';
-import { openInformeFavorableMemoria, openInformeFavorableTipoRatificacion } from '@core/services/pentaho.service';
 import { DocumentoService, triggerDownloadToUser } from '@core/services/sgdoc/documento.service';
 import { TranslateService } from '@ngx-translate/core';
 import { Observable, of, Subscription } from 'rxjs';
@@ -114,15 +113,6 @@ export class EvaluacionEvaluacionComponent extends FormFragmentComponent<IMemori
     this.evaluaciones.memoriaId = this.actionService.getEvaluacion()?.memoria?.id;
     this.evaluaciones.evaluacionId = this.actionService.getEvaluacion()?.id;
     this.evaluaciones.ngAfterViewInit();
-  }
-
-  generateInformeDictamenFavorable(idTipoMemoria: number): void {
-    if (idTipoMemoria === 1) {
-      openInformeFavorableMemoria(this.actionService.getEvaluacion()?.id);
-    }
-    else if (idTipoMemoria === 3) {
-      openInformeFavorableTipoRatificacion(this.actionService.getEvaluacion()?.id);
-    }
   }
 
   /**

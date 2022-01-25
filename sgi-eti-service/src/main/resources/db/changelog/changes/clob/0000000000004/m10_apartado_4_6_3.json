@@ -1,0 +1,128 @@
+[
+  {
+    "key": "ap4_6_3",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "expressionLock": "formState.memoria.tipoMemoria.id === 3",
+      "label": "4.6.3 Vinculación académica con el equipo investigador"
+    },
+    "hideExpression": "!formState.mainModel.ap4_6.estudiantesSujetosInvestigacionRadio || formState.mainModel.ap4_6.estudiantesSujetosInvestigacionRadio === 'no'",
+    "fieldGroup": [
+      {
+        "template": "<p>Los estudiantes que participen ¿van a tener vinculación académica con el equipo investigador?</p>"
+      },
+      {
+        "key": "vinculacionAcademicaEquipoInvestigadorRadio",
+        "type": "radio",
+        "templateOptions": {
+          "label": "Elige opción:",
+          "required": true,
+          "options": [
+            {
+              "value": "no",
+              "label": "No"
+            },
+            {
+              "value": "si",
+              "label": "Sí"
+            }
+          ]
+        }
+      },
+      {
+        "template": "Especificar cuál es esta vinculación y justificar la necesidad de esa elección"
+      },
+      {
+        "key": "especificarVinculacion",
+        "type": "textarea",
+        "templateOptions": {
+          "label": "Especificar",
+          "placeholder": "Especificar",
+          "required": true,
+          "autosize": true,
+          "autosizeMinRows": "1",
+          "autosizeMaxRows": "10"
+        }
+      },
+      {
+        "template": "<p>¿Algún miembro del equipo investigador va a calificar a los estudiantes?</p>"
+      },
+      {
+        "key": "calificacionEstudiantesRadio",
+        "type": "radio",
+        "templateOptions": {
+          "label": "Elige opción:",
+          "required": true,
+          "options": [
+            {
+              "value": "no",
+              "label": "No"
+            },
+            {
+              "value": "si",
+              "label": "Sí"
+            }
+          ]
+        }
+      },
+      {
+        "template": "<p>¿Qué medidas especiales van a adoptarse para proteger la voluntariedad de los alumnos vinculados académicamente con el equipo investigador?</p>",
+        "hideExpression": "!model.vinculacionAcademicaEquipoInvestigadorRadio || model.vinculacionAcademicaEquipoInvestigadorRadio !== 'si'"
+      },
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "<p>Es importante reducir al mínimo la posible influencia sobre el alumnado en el momento de la captación tanto por parte del profesorado como de la presión ejercida por el grupo.</p><ul><li><strong>Reclutamiento directo:</strong> es el que realiza el propio profesor en el aula o hablando con los alumnos, ofreciendo incentivos académicos, etc. Es lo menos recomendable, pues se produce coerción.</li><li><strong>Interposición de tercera persona no vinculada académicamente al alumnado:</strong> cuando es necesaria la captación directa se recomienda que no sea el profesor quien realice la captación, sino una tercera persona sin vinculación con el alumnado.</li><li><strong>Reclutamiento indirecto:</strong> mediante anuncios, folletos, etc.</li></ul>",
+        "hideExpression": "!model.vinculacionAcademicaEquipoInvestigadorRadio || model.vinculacionAcademicaEquipoInvestigadorRadio !== 'si'"
+      },
+      {
+        "template": "<p>Medidas</p>",
+        "hideExpression": "!model.vinculacionAcademicaEquipoInvestigadorRadio || model.vinculacionAcademicaEquipoInvestigadorRadio !== 'si'"
+      },
+      {
+        "key": "medidasEspecialesEquipoInvestigadorRadio",
+        "type": "radio",
+        "hideExpression": "!model.vinculacionAcademicaEquipoInvestigadorRadio || model.vinculacionAcademicaEquipoInvestigadorRadio !== 'si'",
+        "className": "vertical-radio",
+        "required": true,
+        "templateOptions": {
+          "label": "Opciones:",
+          "options": [
+            {
+              "value": "reclutamientoIndirecto",
+              "label": "Reclutamiento indirecto: Asegúrese de que está descrito en el apartado 3.4.1"
+            },
+            {
+              "value": "interposicionTerceraPersona",
+              "label": "Interposición de tercera persona para recabar consentimiento, almacenar los datos personales y codificarlos, trato directo con el estudiante al realizar las pruebas o experimentos. Identificar y aportar documento descriptivo de sus tareas y firma de compromiso para realizarlas si procede. Describir en el apartado 3.4.1"
+            },
+            {
+              "value": "otras",
+              "label": "Otras"
+            }
+          ]
+        }
+      },
+      {
+        "template": "Especificar",
+        "hideExpression": "!model.medidasEspecialesEquipoInvestigadorRadio || model.medidasEspecialesEquipoInvestigadorRadio !== 'otras'"
+      },
+      {
+        "key": "especificarOtras",
+        "type": "textarea",
+        "hideExpression": "!model.medidasEspecialesEquipoInvestigadorRadio || model.medidasEspecialesEquipoInvestigadorRadio !== 'otras'",
+        "templateOptions": {
+          "label": "Especificar",
+          "placeholder": "Especificar",
+          "required": true,
+          "autosize": true,
+          "autosizeMinRows": "1",
+          "autosizeMaxRows": "10"
+        }
+      }
+    ]
+  }
+]

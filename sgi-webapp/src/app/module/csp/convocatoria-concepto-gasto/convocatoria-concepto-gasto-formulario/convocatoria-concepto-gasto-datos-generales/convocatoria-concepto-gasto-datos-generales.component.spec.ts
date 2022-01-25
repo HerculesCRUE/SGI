@@ -10,6 +10,7 @@ import { MaterialDesignModule } from '@material/material-design.module';
 import { SgiAuthService } from '@sgi/framework/auth';
 import { SharedModule } from '@shared/shared.module';
 import { LoggerTestingModule } from 'ngx-logger/testing';
+import { CspSharedModule } from '../../../shared/csp-shared.module';
 import { CONVOCATORIA_CONCEPTO_GASTO_DATA_KEY } from '../../convocatoria-concepto-gasto-data.resolver';
 import { ConvocatoriaConceptoGastoActionService, IConvocatoriaConceptoGastoData } from '../../convocatoria-concepto-gasto.action.service';
 import { ConvocatoriaConceptoGastoDatosGeneralesComponent } from './convocatoria-concepto-gasto-datos-generales.component';
@@ -43,7 +44,8 @@ describe('ConvocatoriaConceptoGastoDatosGeneralesComponent', () => {
         RouterTestingModule,
         FormsModule,
         ReactiveFormsModule,
-        SharedModule
+        SharedModule,
+        CspSharedModule
       ],
       providers: [
         { provide: SnackBarService, useValue: TestUtils.getSnackBarServiceSpy() },

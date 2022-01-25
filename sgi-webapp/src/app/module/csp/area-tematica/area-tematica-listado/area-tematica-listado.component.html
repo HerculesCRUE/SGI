@@ -73,10 +73,10 @@
         <th mat-header-cell *matHeaderCellDef> {{'label.actions' | translate}} </th>
         <td mat-cell *matCellDef="let areaTematica">
           <ng-container *sgiHasAuthority="'CSP-AREA-E'">
-            <button *ngIf="areaTematica.activo ? true : false" mat-button matTooltip="{{'btn.edit' | translate}}"
+            <a *ngIf="areaTematica.activo ? true : false" mat-button matTooltip="{{'btn.edit' | translate}}"
               [routerLink]="[areaTematica.id]">
               <mat-icon color="primary">border_color</mat-icon>
-            </button>
+            </a>
           </ng-container>
           <ng-container *sgiHasAuthority="'CSP-AREA-B'">
             <button *ngIf="areaTematica.activo ? true : false" mat-button matTooltip="{{'btn.delete' | translate}}"
@@ -99,7 +99,12 @@
     <mat-paginator [pageSizeOptions]="elementosPagina" [length]="totalElementos" showFirstLastButtons>
     </mat-paginator>
   </div>
-  <sgi-menu-content-footer *sgiHasAuthority="'CSP-AREA-C'">
-    <sgi-footer-crear [texto]="textoCrear" [route]="ROUTE_NAMES.NEW"></sgi-footer-crear>
-  </sgi-menu-content-footer>
+  <ng-container *sgiHasAuthority="'CSP-AREA-C'">
+    <div class="separation-button">
+      <button color="three" aria-label="Center Align" mat-raised-button [routerLink]="ROUTE_NAMES.NEW">
+        <mat-icon color="accent">add_circle</mat-icon>
+        {{ 'btn.add.entity' | translate:msgParamEntity }}
+      </button>
+    </div>
+  </ng-container>
 </sgi-menu-content>

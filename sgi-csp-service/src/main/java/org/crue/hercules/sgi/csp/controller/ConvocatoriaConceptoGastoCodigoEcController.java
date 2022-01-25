@@ -47,7 +47,7 @@ public class ConvocatoriaConceptoGastoCodigoEcController {
    */
   @GetMapping("/{id}")
   @PreAuthorize("hasAuthorityForAnyUO('AUTH')")
-  ConvocatoriaConceptoGastoCodigoEc findById(@PathVariable Long id) {
+  public ConvocatoriaConceptoGastoCodigoEc findById(@PathVariable Long id) {
     log.debug("findById(Long id) - start");
     ConvocatoriaConceptoGastoCodigoEc returnValue = service.findById(id);
     log.debug("findById(Long id) - end");

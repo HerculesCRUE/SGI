@@ -1,7 +1,6 @@
 package org.crue.hercules.sgi.usr.service;
 
 import org.crue.hercules.sgi.framework.spring.context.support.boot.autoconfigure.ApplicationContextSupportAutoConfiguration;
-import org.crue.hercules.sgi.framework.test.context.support.SgiTestProfileResolver;
 import org.crue.hercules.sgi.usr.config.SgiConfigProperties;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -10,7 +9,6 @@ import org.springframework.boot.autoconfigure.validation.ValidationAutoConfigura
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.ConfigFileApplicationContextInitializer;
 import org.springframework.context.annotation.Import;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -18,7 +16,6 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 /**
  * BaseServiceTest
  */
-@ActiveProfiles(resolver = SgiTestProfileResolver.class)
 @ExtendWith(MockitoExtension.class)
 @ExtendWith(SpringExtension.class)
 @Import({ ValidationAutoConfiguration.class, MessageSourceAutoConfiguration.class,

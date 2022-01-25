@@ -6,7 +6,7 @@ import { ActionComponent } from '@core/component/action.component';
 import { FormularioSolicitud } from '@core/enums/formulario-solicitud';
 import { HttpProblem } from '@core/errors/http-problem';
 import { MSG_PARAMS } from '@core/i18n';
-import { Estado, IEstadoSolicitud } from '@core/models/csp/estado-solicitud';
+import { Estado } from '@core/models/csp/estado-solicitud';
 import { DialogService } from '@core/services/dialog.service';
 import { SnackBarService } from '@core/services/snack-bar.service';
 import { TranslateService } from '@ngx-translate/core';
@@ -157,7 +157,12 @@ export class SolicitudEditarComponent extends ActionComponent implements OnInit 
       estadoNuevo: null,
       fechaEstado: null,
       comentario: null,
-      isInvestigador: this.actionService.isInvestigador
+      isInvestigador: this.actionService.isInvestigador,
+      hasRequiredDocumentos: this.actionService.hasRequiredDocumentos,
+      solicitud: this.actionService.solicitud,
+      solicitudProyecto: this.actionService.solicitudProyecto,
+      isSolicitanteInSolicitudEquipo: this.actionService.isSolicitanteInSolicitudEquipo,
+      isAutoevaluacionEticaFullFilled: this.actionService.isAutoevaluacionEticaFullfilled
     };
     const config = {
       panelClass: 'sgi-dialog-container',
@@ -167,29 +172,9 @@ export class SolicitudEditarComponent extends ActionComponent implements OnInit 
     dialogRef.afterClosed().subscribe(
       (modalData: SolicitudCambioEstadoModalComponentData) => {
         if (modalData) {
-          const estadoSolicitud = {
-            estado: modalData.estadoNuevo,
-            fechaEstado: modalData.fechaEstado,
-            comentario: modalData.comentario
-          } as IEstadoSolicitud;
-          this.actionService.cambiarEstado(estadoSolicitud).subscribe(
-            () => { },
-            (error) => {
-              this.logger.error(error);
-              if (error instanceof HttpProblem) {
-                this.snackBarService.showError(error);
-              }
-              else {
-                this.snackBarService.showError(MSG_CAMBIO_ESTADO_ERROR);
-              }
-            },
-            () => {
-              this.snackBarService.showSuccess(MSG_CAMBIO_ESTADO_SUCCESS);
-              this.router.navigate(['../'], { relativeTo: this.activatedRoute });
-            }
-          );
+          this.snackBarService.showSuccess(MSG_CAMBIO_ESTADO_SUCCESS);
+          this.router.navigate(['../'], { relativeTo: this.activatedRoute });
         }
-
       }
     );
   }

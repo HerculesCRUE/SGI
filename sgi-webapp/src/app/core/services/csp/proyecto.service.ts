@@ -57,6 +57,7 @@ import { IProyectoEquipo } from '@core/models/csp/proyecto-equipo';
 import { IProyectoFacturacion } from '@core/models/csp/proyecto-facturacion';
 import { IProyectoHito } from '@core/models/csp/proyecto-hito';
 import { IProyectoIVA } from '@core/models/csp/proyecto-iva';
+import { IProyectoPalabraClave } from '@core/models/csp/proyecto-palabra-clave';
 import { IProyectoPaqueteTrabajo } from '@core/models/csp/proyecto-paquete-trabajo';
 import { IProyectoPartida } from '@core/models/csp/proyecto-partida';
 import { IProyectoPeriodoJustificacion } from '@core/models/csp/proyecto-periodo-justificacion';
@@ -89,6 +90,9 @@ import { IProyectoAnualidadResumenResponse } from './proyecto-anualidad/proyecto
 import { PROYECTO_ANUALIDAD_RESUMEN_RESPONSE_CONVERTER } from './proyecto-anualidad/proyecto-anualidad-resumen-response.converter';
 import { IProyectoFacturacionResponse } from './proyecto-facturacion/proyecto-facturacion-response';
 import { PROYECTO_FACTURACION_RESPONSE_CONVERTER } from './proyecto-facturacion/proyecto-facturacion-response.converter';
+import { PROYECTO_PALABRACLAVE_REQUEST_CONVERTER } from './proyecto-palabra-clave/proyecto-palabra-clave-request.converter';
+import { IProyectoPalabraClaveResponse } from './proyecto-palabra-clave/proyecto-palabra-clave-response';
+import { PROYECTO_PALABRACLAVE_RESPONSE_CONVERTER } from './proyecto-palabra-clave/proyecto-palabra-clave-response.converter';
 import { IProyectoPeriodoJustificacionResponse } from './proyecto-periodo-justificacion/proyecto-periodo-justificacion-response';
 import { PROYECTO_PERIODO_JUSTIFICACION_RESPONSE_CONVERTER } from './proyecto-periodo-justificacion/proyecto-periodo-justificacion-response.converter';
 import { IProyectoResponsableEconomicoResponse } from './proyecto-responsable-economico/proyecto-responsable-economico-response';
@@ -719,9 +723,35 @@ export class ProyectoService extends SgiMutableRestService<number, IProyectoBack
    */
   findProyectosFacturacionByProyectoId(
     proyectoId: number, options?: SgiRestFindOptions
-    ): Observable<SgiRestListResult<IProyectoFacturacion>> {
+  ): Observable<SgiRestListResult<IProyectoFacturacion>> {
 
-      return this.find<IProyectoFacturacionResponse, IProyectoFacturacion>(
-        `${this.endpointUrl}/${proyectoId}/proyectosfacturacion`, options, PROYECTO_FACTURACION_RESPONSE_CONVERTER);
+    return this.find<IProyectoFacturacionResponse, IProyectoFacturacion>(
+      `${this.endpointUrl}/${proyectoId}/proyectosfacturacion`, options, PROYECTO_FACTURACION_RESPONSE_CONVERTER);
+  }
+
+  /**
+   * Recupera las Palabras Clave asociadas al Proyecto con el id indicado.
+   *
+   * @param id del Proyecto
+   */
+  findPalabrasClave(id: number, options?: SgiRestFindOptions): Observable<SgiRestListResult<IProyectoPalabraClave>> {
+    return this.find<IProyectoPalabraClaveResponse, IProyectoPalabraClave>(
+      `${this.endpointUrl}/${id}/palabrasclave`,
+      options,
+      PROYECTO_PALABRACLAVE_RESPONSE_CONVERTER);
+  }
+
+  /**
+   * Actualiza las Palabras Clave  asociadas al Proyecto con el id indicado.
+   *
+   * @param id Identificador del Proyecto
+   * @param palabrasClave Palabras Clave a actualizar
+   */
+  updatePalabrasClave(id: number, palabrasClave: IProyectoPalabraClave[]): Observable<IProyectoPalabraClave[]> {
+    return this.http.patch<IProyectoPalabraClaveResponse[]>(`${this.endpointUrl}/${id}/palabrasclave`,
+      PROYECTO_PALABRACLAVE_REQUEST_CONVERTER.fromTargetArray(palabrasClave)
+    ).pipe(
+      map((response => PROYECTO_PALABRACLAVE_RESPONSE_CONVERTER.toTargetArray(response)))
+    );
   }
 }

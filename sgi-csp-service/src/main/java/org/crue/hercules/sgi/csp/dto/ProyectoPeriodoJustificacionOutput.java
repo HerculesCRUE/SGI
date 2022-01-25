@@ -33,7 +33,7 @@ public class ProyectoPeriodoJustificacionOutput implements Serializable {
   @NoArgsConstructor
   @AllArgsConstructor
   @Builder
-  public static class Proyecto {
+  public static class Proyecto implements Serializable {
     private Long id;
   }
 }

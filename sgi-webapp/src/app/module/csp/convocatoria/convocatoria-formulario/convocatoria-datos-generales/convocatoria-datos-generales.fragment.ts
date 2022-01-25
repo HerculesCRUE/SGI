@@ -4,6 +4,7 @@ import { IAreaTematica } from '@core/models/csp/area-tematica';
 import { Estado, IConvocatoria } from '@core/models/csp/convocatoria';
 import { IConvocatoriaAreaTematica } from '@core/models/csp/convocatoria-area-tematica';
 import { IConvocatoriaEntidadGestora } from '@core/models/csp/convocatoria-entidad-gestora';
+import { IConvocatoriaPalabraClave } from '@core/models/csp/convocatoria-palabra-clave';
 import { IModeloEjecucion } from '@core/models/csp/tipos-configuracion';
 import { IEmpresa } from '@core/models/sgemp/empresa';
 import { FormFragment } from '@core/services/action-service';
@@ -14,6 +15,7 @@ import { ConvocatoriaService } from '@core/services/csp/convocatoria.service';
 import { ProyectoService } from '@core/services/csp/proyecto.service';
 import { UnidadGestionService } from '@core/services/csp/unidad-gestion.service';
 import { EmpresaService } from '@core/services/sgemp/empresa.service';
+import { PalabraClaveService } from '@core/services/sgo/palabra-clave.service';
 import { StatusWrapper } from '@core/utils/status-wrapper';
 import { DateTime } from 'luxon';
 import { NGXLogger } from 'ngx-logger';
@@ -49,7 +51,8 @@ export class ConvocatoriaDatosGeneralesFragment extends FormFragment<IConvocator
     private convocatoriaAreaTematicaService: ConvocatoriaAreaTematicaService,
     private configuracionSolicitudService: ConfiguracionSolicitudService,
     public isConvocatoriaVinculada: boolean,
-    public hasEditPerm: boolean
+    public hasEditPerm: boolean,
+    private readonly palabraClaveService: PalabraClaveService
   ) {
     super(key, true);
     this.setComplete(true);
@@ -65,12 +68,12 @@ export class ConvocatoriaDatosGeneralesFragment extends FormFragment<IConvocator
   protected buildFormGroup(): FormGroup {
     const form = new FormGroup({
       estado: new FormControl({ value: null, disabled: true }),
-      codigo: new FormControl('', Validators.maxLength(50)),
+      codigo: new FormControl(null, Validators.maxLength(50)),
       unidadGestion: new FormControl(null, Validators.required),
       fechaPublicacion: new FormControl(null),
       fechaProvisional: new FormControl(null),
       fechaConcesion: new FormControl(null),
-      titulo: new FormControl('', [Validators.required, Validators.maxLength(250)]),
+      titulo: new FormControl('', [Validators.required, Validators.maxLength(1000)]),
       modeloEjecucion: new FormControl(null),
       finalidad: new FormControl(null),
       duracion: new FormControl('', [Validators.min(1), Validators.max(9999)]),
@@ -80,7 +83,8 @@ export class ConvocatoriaDatosGeneralesFragment extends FormFragment<IConvocator
       regimenConcurrencia: new FormControl(null),
       entidadGestora: new FormControl(null),
       objeto: new FormControl('', Validators.maxLength(2000)),
-      observaciones: new FormControl('', Validators.maxLength(2000))
+      observaciones: new FormControl('', Validators.maxLength(2000)),
+      palabrasClave: new FormControl(null)
     });
 
     if (!this.hasEditPerm) {
@@ -207,6 +211,13 @@ export class ConvocatoriaDatosGeneralesFragment extends FormFragment<IConvocator
           })
         );
       }),
+      switchMap(convocatoria =>
+        this.convocatoriaService.findPalabrasClave(key).pipe(
+          map(({ items }) => items.map(convocatoriaPalabraClave => convocatoriaPalabraClave.palabraClave)),
+          tap(palabrasClave => this.getFormGroup().controls.palabrasClave.setValue(palabrasClave)),
+          map(() => convocatoria)
+        )
+      ),
       tap(() => this.loadAreasTematicas(key)),
       catchError((error) => {
         this.logger.error(error);
@@ -323,18 +334,46 @@ export class ConvocatoriaDatosGeneralesFragment extends FormFragment<IConvocator
   }
 
   private create(convocatoria: IConvocatoria): Observable<IConvocatoria> {
-    return this.convocatoriaService.create(convocatoria).pipe(
+    let cascade = this.convocatoriaService.create(convocatoria).pipe(
       tap(result => this.convocatoria = result),
       switchMap((result) => this.saveOrUpdateConvocatoriaEntidadGestora(result)),
       switchMap((result) => this.saveOrUpdateAreasTematicas(result))
     );
+
+    if (this.getFormGroup().controls.palabrasClave.dirty) {
+      cascade = cascade.pipe(
+        mergeMap((createdConvocatoria: IConvocatoria) => this.saveOrUpdatePalabrasClave(createdConvocatoria))
+      );
+    }
+
+    return cascade;
   }
 
   private update(convocatoria: IConvocatoria): Observable<IConvocatoria> {
-    return this.convocatoriaService.update(convocatoria.id, convocatoria).pipe(
+    let cascade = this.convocatoriaService.update(convocatoria.id, convocatoria).pipe(
       tap(result => this.convocatoria = result),
       switchMap((result) => this.saveOrUpdateConvocatoriaEntidadGestora(result)),
       switchMap((result) => this.saveOrUpdateAreasTematicas(result))
+    );
+
+    if (this.getFormGroup().controls.palabrasClave.dirty) {
+      cascade = cascade.pipe(
+        mergeMap((updatedConvocatoria: IConvocatoria) => this.saveOrUpdatePalabrasClave(updatedConvocatoria))
+      );
+    }
+
+    return cascade;
+  }
+
+  private saveOrUpdatePalabrasClave(convocatoria: IConvocatoria): Observable<IConvocatoria> {
+    const palabrasClave = this.getFormGroup().controls.palabrasClave.value ?? [];
+    const proyectoPalabrasClave: IConvocatoriaPalabraClave[] = palabrasClave.map(palabraClave => ({
+      convocatoria,
+      palabraClave
+    } as IConvocatoriaPalabraClave));
+    return this.palabraClaveService.update(palabrasClave).pipe(
+      mergeMap(() => this.convocatoriaService.updatePalabrasClave(convocatoria.id, proyectoPalabrasClave)),
+      map(() => convocatoria)
     );
   }
 

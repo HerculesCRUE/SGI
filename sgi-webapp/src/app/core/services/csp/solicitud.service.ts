@@ -1,8 +1,9 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { CONVOCATORIA_ENTIDAD_CONVOCANTE_CONVERTER } from '@core/converters/csp/convocatoria-entidad-convocante.converter';
 import { CONVOCATORIA_ENTIDAD_FINANCIADORA_CONVERTER } from '@core/converters/csp/convocatoria-entidad-financiadora.converter';
+import { CONVOCATORIA_CONVERTER } from '@core/converters/csp/convocatoria.converter';
 import { ESTADO_SOLICITUD_CONVERTER } from '@core/converters/csp/estado-solicitud.converter';
-import { PROYECTO_CONVERTER } from '@core/converters/csp/proyecto.converter';
 import { SOLICITUD_DOCUMENTO_CONVERTER } from '@core/converters/csp/solicitud-documento.converter';
 import { SOLICITUD_HITO_CONVERTER } from '@core/converters/csp/solicitud-hito.converter';
 import { SOLICITUD_MODALIDAD_CONVERTER } from '@core/converters/csp/solicitud-modalidad.converter';
@@ -14,9 +15,10 @@ import { SOLICITUD_PROYECTO_PRESUPUESTO_CONVERTER } from '@core/converters/csp/s
 import { SOLICITUD_PROYECTO_SOCIO_CONVERTER } from '@core/converters/csp/solicitud-proyecto-socio.converter';
 import { SOLICITUD_PROYECTO_CONVERTER } from '@core/converters/csp/solicitud-proyecto.converter';
 import { SOLICITUD_CONVERTER } from '@core/converters/csp/solicitud.converter';
+import { IConvocatoriaBackend } from '@core/models/csp/backend/convocatoria-backend';
+import { IConvocatoriaEntidadConvocanteBackend } from '@core/models/csp/backend/convocatoria-entidad-convocante-backend';
 import { IConvocatoriaEntidadFinanciadoraBackend } from '@core/models/csp/backend/convocatoria-entidad-financiadora-backend';
 import { IEstadoSolicitudBackend } from '@core/models/csp/backend/estado-solicitud-backend';
-import { IProyectoBackend } from '@core/models/csp/backend/proyecto-backend';
 import { ISolicitudBackend } from '@core/models/csp/backend/solicitud-backend';
 import { ISolicitudDocumentoBackend } from '@core/models/csp/backend/solicitud-documento-backend';
 import { ISolicitudHitoBackend } from '@core/models/csp/backend/solicitud-hito-backend';
@@ -28,13 +30,18 @@ import { ISolicitudProyectoEntidadFinanciadoraAjenaBackend } from '@core/models/
 import { ISolicitudProyectoEquipoBackend } from '@core/models/csp/backend/solicitud-proyecto-equipo-backend';
 import { ISolicitudProyectoPresupuestoBackend } from '@core/models/csp/backend/solicitud-proyecto-presupuesto-backend';
 import { ISolicitudProyectoSocioBackend } from '@core/models/csp/backend/solicitud-proyecto-socio-backend';
+import { IConvocatoria } from '@core/models/csp/convocatoria';
+import { IConvocatoriaEntidadConvocante } from '@core/models/csp/convocatoria-entidad-convocante';
 import { IConvocatoriaEntidadFinanciadora } from '@core/models/csp/convocatoria-entidad-financiadora';
 import { IEstadoSolicitud } from '@core/models/csp/estado-solicitud';
-import { IProyecto } from '@core/models/csp/proyecto';
+import { IRequisitoEquipoNivelAcademico } from '@core/models/csp/requisito-equipo-nivel-academico';
+import { IRequisitoIPCategoriaProfesional } from '@core/models/csp/requisito-ip-categoria-profesional';
+import { IRequisitoIPNivelAcademico } from '@core/models/csp/requisito-ip-nivel-academico';
 import { ISolicitud } from '@core/models/csp/solicitud';
 import { ISolicitudDocumento } from '@core/models/csp/solicitud-documento';
 import { ISolicitudHito } from '@core/models/csp/solicitud-hito';
 import { ISolicitudModalidad } from '@core/models/csp/solicitud-modalidad';
+import { ISolicitudPalabraClave } from '@core/models/csp/solicitud-palabra-clave';
 import { ISolicitudProyecto } from '@core/models/csp/solicitud-proyecto';
 import { ISolicitudProyectoAreaConocimiento } from '@core/models/csp/solicitud-proyecto-area-conocimiento';
 import { ISolicitudProyectoClasificacion } from '@core/models/csp/solicitud-proyecto-clasificacion';
@@ -52,7 +59,16 @@ import { NGXLogger } from 'ngx-logger';
 import { from, Observable, of } from 'rxjs';
 import { catchError, map, mergeMap, switchMap } from 'rxjs/operators';
 import { PersonaService } from '../sgp/persona.service';
+import { IRequisitoEquipoNivelAcademicoResponse } from './requisito-equipo-nivel-academico/requisito-equipo-nivel-academico-response';
+import { REQUISITO_EQUIPO_NIVELACADEMICO_RESPONSE_CONVERTER } from './requisito-equipo-nivel-academico/requisito-equipo-nivel-academico-response.converter';
+import { IRequisitoIPCategoriaProfesionalResponse } from './requisito-ip-categoria-profesional/requisito-ip-categoria-profesional-response';
+import { REQUISITOIP_CATEGORIA_PROFESIONAL_RESPONSE_CONVERTER } from './requisito-ip-categoria-profesional/requisito-ip-categoria-profesional-response.converter';
+import { IRequisitoIPNivelAcademicoResponse } from './requisito-ip-nivel-academico/requisito-ip-nivel-academico-response';
+import { REQUISITOIP_NIVELACADEMICO_RESPONSE_CONVERTER } from './requisito-ip-nivel-academico/requisito-ip-nivel-academico-response.converter';
 import { SolicitudModalidadService } from './solicitud-modalidad.service';
+import { SOLICITUD_PALABRACLAVE_REQUEST_CONVERTER } from './solicitud-palabra-clave/solicitud-palabra-clave-request.converter';
+import { ISolicitudPalabraClaveResponse } from './solicitud-palabra-clave/solicitud-palabra-clave-response';
+import { SOLICITUD_PALABRACLAVE_RESPONSE_CONVERTER } from './solicitud-palabra-clave/solicitud-palabra-clave-response.converter';
 import { ISolicitudProyectoEntidadResponse } from './solicitud-proyecto-entidad/solicitud-proyecto-entidad-response';
 import { SOLICITUD_PROYECTO_ENTIDAD_RESPONSE_CONVERTER } from './solicitud-proyecto-entidad/solicitud-proyecto-entidad-response.converter';
 import { ISolicitudProyectoResponsableEconomicoResponse } from './solicitud-proyecto-responsable-economico/solicitud-proyecto-responsable-economico-response';
@@ -507,4 +523,83 @@ export class SolicitudService extends SgiMutableRestService<number, ISolicitudBa
   public findIdsProyectosBySolicitudId(solicitudId: number): Observable<number[]> {
     return this.http.get<number[]>(`${this.endpointUrl}/${solicitudId}/proyectosids`);
   }
+
+  /**
+   * Recupera las Palabras Clave asociadas a la Solicitud con el id indicado.
+   *
+   * @param id de la Solicitud
+   */
+  findPalabrasClave(id: number, options?: SgiRestFindOptions): Observable<SgiRestListResult<ISolicitudPalabraClave>> {
+    return this.find<ISolicitudPalabraClaveResponse, ISolicitudPalabraClave>(
+      `${this.endpointUrl}/${id}/palabrasclave`,
+      options,
+      SOLICITUD_PALABRACLAVE_RESPONSE_CONVERTER);
+  }
+
+  /**
+   * Actualiza las Palabras Clave  asociadas a la Solicitud con el id indicado.
+   *
+   * @param id Identificador de la Solicitud
+   * @param palabrasClave Palabras Clave a actualizar
+   */
+  updatePalabrasClave(id: number, palabrasClave: ISolicitudPalabraClave[]): Observable<ISolicitudPalabraClave[]> {
+    return this.http.patch<ISolicitudPalabraClaveResponse[]>(`${this.endpointUrl}/${id}/palabrasclave`,
+      SOLICITUD_PALABRACLAVE_REQUEST_CONVERTER.fromTargetArray(palabrasClave)
+    ).pipe(
+      map((response => SOLICITUD_PALABRACLAVE_RESPONSE_CONVERTER.toTargetArray(response)))
+    );
+  }
+
+  /**
+   * Devuelve los datos de la convocatoria de una solicitud
+   *
+   * @param solicitudId Id de la solicitud
+   */
+  findConvocatoria(solicitudId: number): Observable<IConvocatoria> {
+    return this.http.get<IConvocatoriaBackend>(
+      `${this.endpointUrl}/${solicitudId}/convocatoria`
+    ).pipe(
+      map(response => CONVOCATORIA_CONVERTER.toTarget(response))
+    );
+  }
+
+  findAllConvocatoriaEntidadConvocantes(id: number, options?: SgiRestFindOptions):
+    Observable<SgiRestListResult<IConvocatoriaEntidadConvocante>> {
+    return this.find<IConvocatoriaEntidadConvocanteBackend, IConvocatoriaEntidadConvocante>(
+      `${this.endpointUrl}/${id}/convocatoriaentidadconvocantes`,
+      options,
+      CONVOCATORIA_ENTIDAD_CONVOCANTE_CONVERTER
+    );
+  }
+
+  findRequisitosIpCategoriasProfesionales(id: number): Observable<IRequisitoIPCategoriaProfesional[]> {
+    const endpointUrl = `${this.endpointUrl}/${id}/categoriasprofesionalesrequisitosip`;
+    return this.http.get<IRequisitoIPCategoriaProfesionalResponse[]>(endpointUrl)
+      .pipe(
+        map(r => {
+          return REQUISITOIP_CATEGORIA_PROFESIONAL_RESPONSE_CONVERTER.toTargetArray(r);
+        })
+      );
+  }
+
+  findRequisitosEquipoNivelesAcademicos(id: number): Observable<IRequisitoEquipoNivelAcademico[]> {
+    const endpointUrl = `${this.endpointUrl}/${id}/nivelesrequisitosequipo`;
+    return this.http.get<IRequisitoEquipoNivelAcademicoResponse[]>(endpointUrl)
+      .pipe(
+        map(r => {
+          return REQUISITO_EQUIPO_NIVELACADEMICO_RESPONSE_CONVERTER.toTargetArray(r);
+        })
+      );
+  }
+
+  findRequisitosIpNivelesAcademicos(id: number): Observable<IRequisitoIPNivelAcademico[]> {
+    const endpointUrl = `${this.endpointUrl}/${id}/nivelesrequisitosip`;
+    return this.http.get<IRequisitoIPNivelAcademicoResponse[]>(endpointUrl)
+      .pipe(
+        map(r => {
+          return REQUISITOIP_NIVELACADEMICO_RESPONSE_CONVERTER.toTargetArray(r);
+        })
+      );
+  }
+
 }

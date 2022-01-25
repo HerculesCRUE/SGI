@@ -15,6 +15,7 @@ import { DialogComponent } from '@block/dialog/dialog.component';
 import { HeaderComponent } from '@block/header/header.component';
 import { IProyectoHito } from '@core/models/csp/proyecto-hito';
 import { SharedModule } from '@shared/shared.module';
+import { CspSharedModule } from '../../../shared/csp-shared.module';
 
 
 describe('ProyectoHitosModalComponent', () => {
@@ -42,7 +43,8 @@ describe('ProyectoHitosModalComponent', () => {
         RouterTestingModule,
         ReactiveFormsModule,
         SgiAuthModule,
-        SharedModule
+        SharedModule,
+        CspSharedModule
       ],
       providers: [
         { provide: SnackBarService, useValue: TestUtils.getSnackBarServiceSpy() },

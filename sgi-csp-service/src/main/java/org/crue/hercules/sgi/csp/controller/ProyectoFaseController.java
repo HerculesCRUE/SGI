@@ -50,7 +50,7 @@ public class ProyectoFaseController {
    */
   @PostMapping
   @PreAuthorize("hasAuthorityForAnyUO('CSP-PRO-E')")
-  ResponseEntity<ProyectoFase> create(@Valid @RequestBody ProyectoFase proyectoFase) {
+  public ResponseEntity<ProyectoFase> create(@Valid @RequestBody ProyectoFase proyectoFase) {
     log.debug("create(ProyectoFase proyectoFase) - start");
     ProyectoFase returnValue = service.create(proyectoFase);
     log.debug("create(ProyectoFase proyectoFase) - end");
@@ -66,7 +66,7 @@ public class ProyectoFaseController {
    */
   @PutMapping("/{id}")
   @PreAuthorize("hasAuthorityForAnyUO('CSP-PRO-E')")
-  ProyectoFase update(@Validated({ Update.class, Default.class }) @RequestBody ProyectoFase proyectoFase,
+  public ProyectoFase update(@Validated({ Update.class, Default.class }) @RequestBody ProyectoFase proyectoFase,
       @PathVariable Long id) {
     log.debug("update(ProyectoFase proyectoFase, Long id) - start");
     proyectoFase.setId(id);
@@ -83,7 +83,7 @@ public class ProyectoFaseController {
   @DeleteMapping("/{id}")
   @PreAuthorize("hasAuthorityForAnyUO('CSP-PRO-E')")
   @ResponseStatus(value = HttpStatus.NO_CONTENT)
-  void deleteById(@PathVariable Long id) {
+  public void deleteById(@PathVariable Long id) {
     log.debug("deleteById(Long id) - start");
     service.delete(id);
     log.debug("deleteById(Long id) - end");
@@ -97,7 +97,7 @@ public class ProyectoFaseController {
    */
   @GetMapping("/{id}")
   @PreAuthorize("hasAuthorityForAnyUO('AUTH')")
-  ProyectoFase findById(@PathVariable Long id) {
+  public ProyectoFase findById(@PathVariable Long id) {
     log.debug("findById(Long id) - start");
     ProyectoFase returnValue = service.findById(id);
     log.debug("findById(Long id) - end");

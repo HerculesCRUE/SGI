@@ -1,14 +1,19 @@
 package org.crue.hercules.sgi.csp.controller;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
+import org.crue.hercules.sgi.csp.dto.ConvocatoriaPalabraClaveInput;
+import org.crue.hercules.sgi.csp.dto.ConvocatoriaPalabraClaveOutput;
 import org.crue.hercules.sgi.csp.dto.RequisitoEquipoCategoriaProfesionalOutput;
 import org.crue.hercules.sgi.csp.dto.RequisitoEquipoNivelAcademicoOutput;
 import org.crue.hercules.sgi.csp.dto.RequisitoIPCategoriaProfesionalOutput;
 import org.crue.hercules.sgi.csp.dto.RequisitoIPNivelAcademicoOutput;
+import org.crue.hercules.sgi.csp.enums.FormularioSolicitud;
+import org.crue.hercules.sgi.csp.exceptions.NoRelatedEntitiesException;
 import org.crue.hercules.sgi.csp.model.Convocatoria;
 import org.crue.hercules.sgi.csp.model.ConvocatoriaAreaTematica;
 import org.crue.hercules.sgi.csp.model.ConvocatoriaConceptoGasto;
@@ -20,6 +25,7 @@ import org.crue.hercules.sgi.csp.model.ConvocatoriaEntidadFinanciadora;
 import org.crue.hercules.sgi.csp.model.ConvocatoriaEntidadGestora;
 import org.crue.hercules.sgi.csp.model.ConvocatoriaFase;
 import org.crue.hercules.sgi.csp.model.ConvocatoriaHito;
+import org.crue.hercules.sgi.csp.model.ConvocatoriaPalabraClave;
 import org.crue.hercules.sgi.csp.model.ConvocatoriaPartida;
 import org.crue.hercules.sgi.csp.model.ConvocatoriaPeriodoJustificacion;
 import org.crue.hercules.sgi.csp.model.ConvocatoriaPeriodoSeguimientoCientifico;
@@ -41,6 +47,7 @@ import org.crue.hercules.sgi.csp.service.ConvocatoriaEntidadFinanciadoraService;
 import org.crue.hercules.sgi.csp.service.ConvocatoriaEntidadGestoraService;
 import org.crue.hercules.sgi.csp.service.ConvocatoriaFaseService;
 import org.crue.hercules.sgi.csp.service.ConvocatoriaHitoService;
+import org.crue.hercules.sgi.csp.service.ConvocatoriaPalabraClaveService;
 import org.crue.hercules.sgi.csp.service.ConvocatoriaPartidaService;
 import org.crue.hercules.sgi.csp.service.ConvocatoriaPeriodoJustificacionService;
 import org.crue.hercules.sgi.csp.service.ConvocatoriaPeriodoSeguimientoCientificoService;
@@ -52,6 +59,7 @@ import org.crue.hercules.sgi.csp.service.RequisitoIPNivelAcademicoService;
 import org.crue.hercules.sgi.framework.web.bind.annotation.RequestPageable;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -81,6 +89,7 @@ public class ConvocatoriaController {
   public static final String PATH_CATEGORIAS_PROFESIONALES_REQUISITOS_EQUIPO = "/{id}/categoriasprofesionalesrequisitosequipo";
   public static final String PATH_NIVELES_REQUISITOS_EQUIPO = "/{id}/nivelesrequisitosequipo";
   public static final String PATH_NIVELES_REQUISITOS_IP = "/{id}/nivelesrequisitosip";
+  public static final String PATH_PALABRAS_CLAVE = "/{convocatoriaId}/palabrasclave";
 
   private ModelMapper modelMapper;
 
@@ -137,6 +146,9 @@ public class ConvocatoriaController {
   /** RequisitoEquipoNivelAcademicoService */
   private final RequisitoEquipoNivelAcademicoService requisitoEquipoNivelAcademicoService;
 
+  /**  */
+  private final ConvocatoriaPalabraClaveService convocatoriaPalabraClaveService;
+
   /**
    * Instancia un nuevo ConvocatoriaController.
    *
@@ -158,6 +170,7 @@ public class ConvocatoriaController {
    * @param requisitoIPCategoriaProfesionalService          {@link RequisitoIPCategoriaProfesionalService}.
    * @param requisitoEquipoCategoriaProfesionalService      {@link requisitoEquipoCategoriaProfesionalService}.
    * @param requisitoEquipoNivelAcademicoService            {@link requisitoEquipoNivelAcademicoService}.
+   * @param convocatoriaPalabraClaveService                 {@link ConvocatoriaPalabraClaveService}.
    * @param modelMapper                                     {@link ModelMapper}
    */
   public ConvocatoriaController(ConvocatoriaService convocatoriaService,
@@ -175,7 +188,9 @@ public class ConvocatoriaController {
       RequisitoIPNivelAcademicoService requisitoIPNivelAcademicoService,
       RequisitoIPCategoriaProfesionalService requisitoIPCategoriaProfesionalService,
       RequisitoEquipoCategoriaProfesionalService requisitoEquipoCategoriaProfesionalService,
-      RequisitoEquipoNivelAcademicoService requisitoEquipoNivelAcademicoService, ModelMapper modelMapper) {
+      RequisitoEquipoNivelAcademicoService requisitoEquipoNivelAcademicoService,
+      ConvocatoriaPalabraClaveService convocatoriaPalabraClaveService,
+      ModelMapper modelMapper) {
     this.service = convocatoriaService;
     this.convocatoriaAreaTematicaService = convocatoriaAreaTematicaService;
     this.convocatoriaDocumentoService = convocatoriaDocumentoService;
@@ -194,6 +209,7 @@ public class ConvocatoriaController {
     this.requisitoIPCategoriaProfesionalService = requisitoIPCategoriaProfesionalService;
     this.requisitoEquipoCategoriaProfesionalService = requisitoEquipoCategoriaProfesionalService;
     this.requisitoEquipoNivelAcademicoService = requisitoEquipoNivelAcademicoService;
+    this.convocatoriaPalabraClaveService = convocatoriaPalabraClaveService;
     this.modelMapper = modelMapper;
   }
 
@@ -288,7 +304,7 @@ public class ConvocatoriaController {
    */
   @RequestMapping(path = "/{id}/modificable", method = RequestMethod.HEAD)
   @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-CON-E', 'CSP-CON-V')")
-  ResponseEntity<Convocatoria> modificable(@PathVariable Long id) {
+  public ResponseEntity<Convocatoria> modificable(@PathVariable Long id) {
     log.debug("modificable(Long id) - start");
     boolean returnValue = service.isRegistradaConSolicitudesOProyectos(id, null,
         new String[] { "CSP-CON-E", "CSP-CON-V" });
@@ -306,7 +322,7 @@ public class ConvocatoriaController {
    */
   @RequestMapping(path = "/{id}/registrable", method = RequestMethod.HEAD)
   @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-CON-E')")
-  ResponseEntity<Convocatoria> registrable(@PathVariable Long id) {
+  public ResponseEntity<Convocatoria> registrable(@PathVariable Long id) {
     log.debug("registrable(Long id) - start");
     boolean returnValue = service.registrable(id);
     log.debug("registrable(Long id) - end");
@@ -321,7 +337,7 @@ public class ConvocatoriaController {
    */
   @RequestMapping(path = "/{id}", method = RequestMethod.HEAD)
   @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-CON-V', 'CSP-CON-INV-V', 'CSP-CON-E')")
-  public ResponseEntity<?> exists(@PathVariable Long id) {
+  public ResponseEntity<Void> exists(@PathVariable Long id) {
     log.debug("Convocatoria exists(Long id) - start");
     if (service.existsById(id)) {
       log.debug("Convocatoria exists(Long id) - end");
@@ -339,7 +355,7 @@ public class ConvocatoriaController {
    */
   @GetMapping("/{id}")
   @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-CON-V', 'CSP-CON-E', 'CSP-CON-INV-V', 'CSP-SOL-C', 'CSP-SOL-E', 'CSP-SOL-V', 'CSP-SOL-B', 'CSP-SOL-R', 'CSP-PRO-V', 'CSP-PRO-C', 'CSP-PRO-E')")
-  Convocatoria findById(@PathVariable Long id) {
+  public Convocatoria findById(@PathVariable Long id) {
     log.debug("Convocatoria findById(Long id) - start");
     Convocatoria returnValue = service.findById(id);
     log.debug("Convocatoria findById(Long id) - end");
@@ -356,7 +372,7 @@ public class ConvocatoriaController {
    */
   @GetMapping()
   @PreAuthorize("hasAuthorityForAnyUO('AUTH')")
-  ResponseEntity<Page<Convocatoria>> findAll(@RequestParam(name = "q", required = false) String query,
+  public ResponseEntity<Page<Convocatoria>> findAll(@RequestParam(name = "q", required = false) String query,
       @RequestPageable(sort = "s") Pageable paging) {
     log.debug("findAll(String query,Pageable paging) - start");
     Page<Convocatoria> page = service.findAll(query, paging);
@@ -379,8 +395,8 @@ public class ConvocatoriaController {
    */
   @GetMapping("/investigador")
   @PreAuthorize("hasAuthorityForAnyUO('CSP-CON-INV-V')")
-  ResponseEntity<Page<Convocatoria>> findAllInvestigador(@RequestParam(name = "q", required = false) String query,
-      @RequestPageable(sort = "s") Pageable paging) {
+  public ResponseEntity<Page<Convocatoria>> findAllInvestigador(
+      @RequestParam(name = "q", required = false) String query, @RequestPageable(sort = "s") Pageable paging) {
     log.debug("findAllInvestigador(String query,Pageable paging) - start");
     Page<Convocatoria> page = service.findAllInvestigador(query, paging);
 
@@ -402,8 +418,8 @@ public class ConvocatoriaController {
    */
   @GetMapping("/restringidos")
   @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-CON-V', 'CSP-SOL-C', 'CSP-PRO-C')")
-  ResponseEntity<Page<Convocatoria>> findAllRestringidos(@RequestParam(name = "q", required = false) String query,
-      @RequestPageable(sort = "s") Pageable paging) {
+  public ResponseEntity<Page<Convocatoria>> findAllRestringidos(
+      @RequestParam(name = "q", required = false) String query, @RequestPageable(sort = "s") Pageable paging) {
     log.debug("findAllRestringidos(String query, Pageable paging) - start");
 
     Page<Convocatoria> page = service.findAllRestringidos(query, paging);
@@ -425,8 +441,8 @@ public class ConvocatoriaController {
    */
   @GetMapping("/todos/restringidos")
   @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-CON-C','CSP-CON-V', 'CSP-CON-E', 'CSP-CON-INV-V','CSP-CON-B', 'CSP-CON-R')")
-  ResponseEntity<Page<Convocatoria>> findAllTodosRestringidos(@RequestParam(name = "q", required = false) String query,
-      @RequestPageable(sort = "s") Pageable paging) {
+  public ResponseEntity<Page<Convocatoria>> findAllTodosRestringidos(
+      @RequestParam(name = "q", required = false) String query, @RequestPageable(sort = "s") Pageable paging) {
     log.debug("findAllTodosRestringidos(String query,Pageable paging,) - start");
 
     Page<Convocatoria> page = service.findAllTodosRestringidos(query, paging);
@@ -452,10 +468,12 @@ public class ConvocatoriaController {
    * @param id     Identificador de {@link Convocatoria}.
    * @param query  filtro de búsqueda.
    * @param paging pageable.
+   * @return el listado de entidades {@link ConvocatoriaHito}
+   *         paginadas y filtradas de la {@link Convocatoria}.
    */
   @GetMapping("/{id}/convocatoriahitos")
   @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-CON-E', 'CSP-CON-V', 'CSP-CON-INV-V')")
-  ResponseEntity<Page<ConvocatoriaHito>> findAllConvocatoriaHito(@PathVariable Long id,
+  public ResponseEntity<Page<ConvocatoriaHito>> findAllConvocatoriaHito(@PathVariable Long id,
       @RequestParam(name = "q", required = false) String query, @RequestPageable(sort = "s") Pageable paging) {
     log.debug("findAllConvocatoriaHito(Long id, String query, Pageable paging) - start");
     Page<ConvocatoriaHito> page = convocatoriaHitoService.findAllByConvocatoria(id, query, paging);
@@ -496,15 +514,17 @@ public class ConvocatoriaController {
 
   /**
    * Devuelve una lista paginada y filtrada de
-   * {@link ConvocatoriaPartidaPresupuestaria} de la {@link Convocatoria}.
+   * {@link ConvocatoriaPartida} de la {@link Convocatoria}.
    *
    * @param id     Identificador de {@link Convocatoria}.
    * @param query  filtro de búsqueda.
    * @param paging pageable.
+   * @return el listado de entidades {@link ConvocatoriaPartida}
+   *         paginadas y filtradas de la {@link Convocatoria}.
    */
   @GetMapping("/{id}/convocatoria-partidas-presupuestarias")
   @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-CON-E', 'CSP-CON-V', 'CSP-CON-INV-V')")
-  ResponseEntity<Page<ConvocatoriaPartida>> findAllConvocatoriaPartida(@PathVariable Long id,
+  public ResponseEntity<Page<ConvocatoriaPartida>> findAllConvocatoriaPartida(@PathVariable Long id,
       @RequestParam(name = "q", required = false) String query, @RequestPageable(sort = "s") Pageable paging) {
     log.debug("findAllConvocatoriaPartida(Long id, String query, Pageable paging) - start");
     Page<ConvocatoriaPartida> page = convocatoriaPartidaService.findAllByConvocatoria(id, query, paging);
@@ -531,11 +551,14 @@ public class ConvocatoriaController {
    * @param id     Identificador de {@link Convocatoria}.
    * @param query  filtro de búsqueda.
    * @param paging pageable.
+   * @return el listado de entidades {@link ConvocatoriaEntidadFinanciadora}
+   *         paginadas y filtradas de la {@link Convocatoria}.
    */
   @GetMapping("/{id}/convocatoriaentidadfinanciadoras")
   @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-CON-C', 'CSP-CON-V', 'CSP-CON-B','CSP-CON-R','CSP-CON-INV-V', 'CSP-CON-E', 'CSP-SOL-C', 'CSP-SOL-E', 'CSP-SOL-V', 'CSP-PRO-C')")
-  ResponseEntity<Page<ConvocatoriaEntidadFinanciadora>> findAllConvocatoriaEntidadFinanciadora(@PathVariable Long id,
-      @RequestParam(name = "q", required = false) String query, @RequestPageable(sort = "s") Pageable paging) {
+  public ResponseEntity<Page<ConvocatoriaEntidadFinanciadora>> findAllConvocatoriaEntidadFinanciadora(
+      @PathVariable Long id, @RequestParam(name = "q", required = false) String query,
+      @RequestPageable(sort = "s") Pageable paging) {
     log.debug("findAllConvocatoriaEntidadFinanciadora(Long id, String query, Pageable paging) - start");
     Page<ConvocatoriaEntidadFinanciadora> page = convocatoriaEntidadFinanciadoraService.findAllByConvocatoria(id, query,
         paging);
@@ -563,10 +586,12 @@ public class ConvocatoriaController {
    * @param id     Identificador de {@link Convocatoria}.
    * @param query  filtro de búsqueda.
    * @param paging pageable.
+   * @return el listado de entidades {@link ConvocatoriaEntidadGestora}
+   *         paginadas y filtradas de la {@link Convocatoria}.
    */
   @GetMapping("/{id}/convocatoriaentidadgestoras")
   @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-CON-V', 'CSP-CON-INV-V', 'CSP-CON-E')")
-  ResponseEntity<Page<ConvocatoriaEntidadGestora>> findAllConvocatoriaEntidadGestora(@PathVariable Long id,
+  public ResponseEntity<Page<ConvocatoriaEntidadGestora>> findAllConvocatoriaEntidadGestora(@PathVariable Long id,
       @RequestParam(name = "q", required = false) String query, @RequestPageable(sort = "s") Pageable paging) {
     log.debug("findAllConvocatoriaEntidadGestora(Long id, String query, Pageable paging) - start");
     Page<ConvocatoriaEntidadGestora> page = convocatoriaEntidadGestoraService.findAllByConvocatoria(id, query, paging);
@@ -593,10 +618,12 @@ public class ConvocatoriaController {
    * @param id     Identificador de {@link Convocatoria}.
    * @param query  filtro de búsqueda.
    * @param paging pageable.
+   * @return el listado de entidades {@link ConvocatoriaFase}
+   *         paginadas y filtradas de la {@link Convocatoria}.
    */
   @GetMapping("/{id}/convocatoriafases")
   @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-CON-V', 'CSP-CON-INV-V', 'CSP-CON-E', 'CSP-SOL-C', 'CSP-PRO-C', 'CSP-CON-B', 'CSP-CON-R', 'CSP-CON-C')")
-  ResponseEntity<Page<ConvocatoriaFase>> findAllConvocatoriaFases(@PathVariable Long id,
+  public ResponseEntity<Page<ConvocatoriaFase>> findAllConvocatoriaFases(@PathVariable Long id,
       @RequestParam(name = "q", required = false) String query, @RequestPageable(sort = "s") Pageable paging) {
     log.debug("findAllConvocatoriaFase(Long id, String query, Pageable paging) - start");
     Page<ConvocatoriaFase> page = convocatoriaFaseService.findAllByConvocatoria(id, query, paging);
@@ -642,10 +669,12 @@ public class ConvocatoriaController {
    * @param id     Identificador de {@link Convocatoria}.
    * @param query  filtro de búsqueda.
    * @param paging pageable.
+   * @return el listado de entidades {@link ConvocatoriaAreaTematica}
+   *         paginadas y filtradas de la {@link Convocatoria}.
    */
   @GetMapping("/{id}/convocatoriaareatematicas")
   @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-CON-C', 'CSP-CON-V', 'CSP-CON-E', 'CSP-CON-INV-V', 'CSP-SOL-E', 'CSP-SOL-V')")
-  ResponseEntity<Page<ConvocatoriaAreaTematica>> findAllConvocatoriaAreaTematica(@PathVariable Long id,
+  public ResponseEntity<Page<ConvocatoriaAreaTematica>> findAllConvocatoriaAreaTematica(@PathVariable Long id,
       @RequestParam(name = "q", required = false) String query, @RequestPageable(sort = "s") Pageable paging) {
     log.debug("findAllConvocatoriaAreaTematica(Long id, String query, Pageable paging) - start");
     Page<ConvocatoriaAreaTematica> page = convocatoriaAreaTematicaService.findAllByConvocatoria(id, query, paging);
@@ -672,10 +701,12 @@ public class ConvocatoriaController {
    * @param id     Identificador de {@link Convocatoria}.
    * @param query  filtro de búsqueda.
    * @param paging pageable.
+   * @return el listado de entidades {@link ConvocatoriaDocumento}
+   *         paginadas y filtradas de la {@link Convocatoria}.
    */
   @GetMapping("/{id}/convocatoriadocumentos")
   @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-CON-E', 'CSP-CON-V', 'CSP-CON-INV-V')")
-  ResponseEntity<Page<ConvocatoriaDocumento>> findAllConvocatoriaDocumento(@PathVariable Long id,
+  public ResponseEntity<Page<ConvocatoriaDocumento>> findAllConvocatoriaDocumento(@PathVariable Long id,
       @RequestParam(name = "q", required = false) String query, @RequestPageable(sort = "s") Pageable paging) {
     log.debug("findAllConvocatoriaDocumento(Long id, String query, Pageable paging) - start");
     Page<ConvocatoriaDocumento> page = convocatoriaDocumentoService.findAllByConvocatoria(id, query, paging);
@@ -698,7 +729,7 @@ public class ConvocatoriaController {
    */
   @RequestMapping(path = "/{id}/convocatoriadocumentos", method = RequestMethod.HEAD)
   @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-CON-V', 'CSP-CON-E')")
-  public ResponseEntity<?> hasConvocatoriaDocumentos(@PathVariable Long id) {
+  public ResponseEntity<Void> hasConvocatoriaDocumentos(@PathVariable Long id) {
     log.debug("Convocatoria hasConvocatoriaDocumentos(Long id) - start");
     if (convocatoriaDocumentoService.existsByConvocatoriaId(id)) {
       log.debug("Convocatoria hasConvocatoriaDocumentos(Long id) - end");
@@ -721,10 +752,12 @@ public class ConvocatoriaController {
    * @param id     Identificador de {@link Convocatoria}.
    * @param query  filtro de búsqueda.
    * @param paging pageable.
+   * @return el listado de entidades {@link ConvocatoriaEnlace}
+   *         paginadas y filtradas de la {@link Convocatoria}.
    */
   @GetMapping("/{id}/convocatoriaenlaces")
   @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-CON-E', 'CSP-CON-V', 'CSP-CON-INV-V')")
-  ResponseEntity<Page<ConvocatoriaEnlace>> findAllConvocatoriaEnlace(@PathVariable Long id,
+  public ResponseEntity<Page<ConvocatoriaEnlace>> findAllConvocatoriaEnlace(@PathVariable Long id,
       @RequestParam(name = "q", required = false) String query, @RequestPageable(sort = "s") Pageable paging) {
     log.debug("findAllConvocatoriaEnlace(Long id, String query, Pageable paging) - start");
     Page<ConvocatoriaEnlace> page = convocatoriaEnlaceService.findAllByConvocatoria(id, query, paging);
@@ -747,7 +780,7 @@ public class ConvocatoriaController {
    */
   @RequestMapping(path = "/{id}/convocatoriaenlaces", method = RequestMethod.HEAD)
   @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-CON-V', 'CSP-CON-E')")
-  public ResponseEntity<?> hasConvocatoriaEnlaces(@PathVariable Long id) {
+  public ResponseEntity<Void> hasConvocatoriaEnlaces(@PathVariable Long id) {
     log.debug("Convocatoria hasConvocatoriaEnlaces(Long id) - start");
     if (convocatoriaEnlaceService.existsByConvocatoriaId(id)) {
       log.debug("Convocatoria hasConvocatoriaEnlaces(Long id) - end");
@@ -770,11 +803,14 @@ public class ConvocatoriaController {
    * @param id     Identificador de {@link Convocatoria}.
    * @param query  filtro de búsqueda.
    * @param paging pageable.
+   * @return el listado de entidades {@link ConvocatoriaEntidadConvocante}
+   *         paginadas y filtradas de la {@link Convocatoria}.
    */
   @GetMapping("/{id}/convocatoriaentidadconvocantes")
   @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-CON-V', 'CSP-CON-INV-V', 'CSP-SOL-INV-C', 'CSP-CON-C','CSP-CON-E', 'CSP-CON-R',  'CSP-CON-B', 'CSP-SOL-C', 'CSP-SOL-E', 'CSP-SOL-V', 'CSP-PRO-C')")
-  ResponseEntity<Page<ConvocatoriaEntidadConvocante>> findAllConvocatoriaEntidadConvocantes(@PathVariable Long id,
-      @RequestParam(name = "q", required = false) String query, @RequestPageable(sort = "s") Pageable paging) {
+  public ResponseEntity<Page<ConvocatoriaEntidadConvocante>> findAllConvocatoriaEntidadConvocantes(
+      @PathVariable Long id, @RequestParam(name = "q", required = false) String query,
+      @RequestPageable(sort = "s") Pageable paging) {
     log.debug("findAllConvocatoriaEntidadConvocantes(Long id, String query, Pageable paging) - start");
     Page<ConvocatoriaEntidadConvocante> page = convocatoriaEntidadConvocanteService.findAllByConvocatoria(id, query,
         paging);
@@ -801,11 +837,14 @@ public class ConvocatoriaController {
    * @param id     Identificador de {@link Convocatoria}.
    * @param query  filtro de búsqueda.
    * @param paging pageable.
+   * @return el listado de entidades {@link ConvocatoriaPeriodoJustificacion}
+   *         paginadas y filtradas de la {@link Convocatoria}.
    */
   @GetMapping("/{id}/convocatoriaperiodojustificaciones")
   @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-CON-E', 'CSP-CON-V', 'CSP-CON-INV-V')")
-  ResponseEntity<Page<ConvocatoriaPeriodoJustificacion>> findAllConvocatoriaPeriodoJustificacion(@PathVariable Long id,
-      @RequestParam(name = "q", required = false) String query, @RequestPageable(sort = "s") Pageable paging) {
+  public ResponseEntity<Page<ConvocatoriaPeriodoJustificacion>> findAllConvocatoriaPeriodoJustificacion(
+      @PathVariable Long id, @RequestParam(name = "q", required = false) String query,
+      @RequestPageable(sort = "s") Pageable paging) {
     log.debug("findAllConvocatoriaPeriodoJustificacion(Long id, String query, Pageable paging) - start");
     Page<ConvocatoriaPeriodoJustificacion> page = convocatoriaPeriodoJustificacionService.findAllByConvocatoria(id,
         query, paging);
@@ -827,15 +866,18 @@ public class ConvocatoriaController {
 
   /**
    * Devuelve una lista paginada y filtrada de
-   * {@link convocatoriaPeriodoSeguimientoCientifico} de la {@link Convocatoria}.
+   * {@link ConvocatoriaPeriodoSeguimientoCientifico} de la {@link Convocatoria}.
    *
    * @param id     Identificador de {@link Convocatoria}.
    * @param query  filtro de búsqueda.
    * @param paging pageable.
+   * @return el listado de entidades
+   *         {@link ConvocatoriaPeriodoSeguimientoCientifico}
+   *         paginadas y filtradas de la {@link Convocatoria}.
    */
   @GetMapping("/{id}/convocatoriaperiodoseguimientocientificos")
   @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-CON-E', 'CSP-CON-V', 'CSP-CON-INV-V', 'CSP-PRO-V', 'CSP-PRO-C', 'CSP-PRO-E')")
-  ResponseEntity<Page<ConvocatoriaPeriodoSeguimientoCientifico>> findAllConvocatoriaPeriodoSeguimientoCientifico(
+  public ResponseEntity<Page<ConvocatoriaPeriodoSeguimientoCientifico>> findAllConvocatoriaPeriodoSeguimientoCientifico(
       @PathVariable Long id, @RequestParam(name = "q", required = false) String query,
       @RequestPageable(sort = "s") Pageable paging) {
     log.debug("findAllConvocatoriaPeriodoSeguimientoCientifico(Long id, String query, Pageable paging) - start");
@@ -863,10 +905,12 @@ public class ConvocatoriaController {
    *
    * @param id     Identificador de {@link Convocatoria}.
    * @param paging pageable.
+   * @return el listado de entidades {@link ConvocatoriaConceptoGasto}
+   *         paginadas y filtradas de la {@link Convocatoria}.
    */
   @GetMapping("/{id}/convocatoriagastos/permitidos")
   @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-CON-E','CSP-CON-V', 'CSP-CON-INV-V')")
-  ResponseEntity<Page<ConvocatoriaConceptoGasto>> findAllConvocatoriaGastosPermitidos(@PathVariable Long id,
+  public ResponseEntity<Page<ConvocatoriaConceptoGasto>> findAllConvocatoriaGastosPermitidos(@PathVariable Long id,
       @RequestPageable(sort = "s") Pageable paging) {
     log.debug("findAllConvocatoriaGastosPermitidos(Long id, Pageable paging) - start");
     Page<ConvocatoriaConceptoGasto> page = convocatoriaConceptoGastoService.findAllByConvocatoriaAndPermitidoTrue(id,
@@ -886,10 +930,12 @@ public class ConvocatoriaController {
    *
    * @param id     Identificador de {@link Convocatoria}.
    * @param paging pageable.
+   * @return el listado de entidades {@link ConvocatoriaConceptoGasto}
+   *         paginadas y filtradas de la {@link Convocatoria}.
    */
   @GetMapping("/{id}/convocatoriagastos/nopermitidos")
   @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-CON-E', 'CSP-CON-V', 'CSP-CON-INV-V')")
-  ResponseEntity<Page<ConvocatoriaConceptoGasto>> findAllConvocatoriaGastosNoPermitidos(@PathVariable Long id,
+  public ResponseEntity<Page<ConvocatoriaConceptoGasto>> findAllConvocatoriaGastosNoPermitidos(@PathVariable Long id,
       @RequestPageable(sort = "s") Pageable paging) {
     log.debug("findAllConvocatoriaGastosNoPermitidos(Long id, Pageable paging) - start");
     Page<ConvocatoriaConceptoGasto> page = convocatoriaConceptoGastoService.findAllByConvocatoriaAndPermitidoFalse(id,
@@ -917,10 +963,12 @@ public class ConvocatoriaController {
    *
    * @param id     Identificador de {@link ConvocatoriaConceptoGasto}.
    * @param paging pageable.
+   * @return el listado de entidades {@link ConvocatoriaConceptoGastoCodigoEc}
+   *         paginadas y filtradas de la {@link Convocatoria}.
    */
   @GetMapping("/{id}/convocatoriagastocodigoec/permitidos")
   @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-SOL-E', 'CSP-SOL-V')")
-  ResponseEntity<Page<ConvocatoriaConceptoGastoCodigoEc>> findAllConvocatoriaGastosCodigoEcPermitidos(
+  public ResponseEntity<Page<ConvocatoriaConceptoGastoCodigoEc>> findAllConvocatoriaGastosCodigoEcPermitidos(
       @PathVariable Long id, @RequestPageable(sort = "s") Pageable paging) {
     log.debug("findAllConvocatoriaGastosCodigoEcPermitidos(Long id, Pageable paging) - start");
     Page<ConvocatoriaConceptoGastoCodigoEc> page = convocatoriaConceptoGastoCodigoEcService
@@ -941,10 +989,12 @@ public class ConvocatoriaController {
    *
    * @param id     Identificador de {@link Convocatoria}.
    * @param paging pageable.
+   * @return el listado de entidades {@link ConvocatoriaConceptoGastoCodigoEc}
+   *         paginadas y filtradas de la {@link Convocatoria}.
    */
   @GetMapping("/{id}/convocatoriagastocodigoec/nopermitidos")
   @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-SOL-E','CSP-SOL-V')")
-  ResponseEntity<Page<ConvocatoriaConceptoGastoCodigoEc>> findAllConvocatoriaGastosCodigoEcNoPermitidos(
+  public ResponseEntity<Page<ConvocatoriaConceptoGastoCodigoEc>> findAllConvocatoriaGastosCodigoEcNoPermitidos(
       @PathVariable Long id, @RequestPageable(sort = "s") Pageable paging) {
     log.debug("findAllConvocatoriaGastosCodigoEcNoPermitidos(Long id, Pageable paging) - start");
     Page<ConvocatoriaConceptoGastoCodigoEc> page = convocatoriaConceptoGastoCodigoEcService
@@ -968,7 +1018,7 @@ public class ConvocatoriaController {
    */
   @RequestMapping(path = "/{id}/tramitable", method = RequestMethod.HEAD)
   @PreAuthorize("hasAuthority('CSP-SOL-INV-C')")
-  ResponseEntity<Convocatoria> tramitable(@PathVariable Long id) {
+  public ResponseEntity<Convocatoria> tramitable(@PathVariable Long id) {
     log.debug("registrable(Long id) - start");
     boolean returnValue = service.tramitable(id);
     log.debug("registrable(Long id) - end");
@@ -1089,7 +1139,7 @@ public class ConvocatoriaController {
 
   private List<RequisitoEquipoCategoriaProfesionalOutput> convertRequisitoEquipoCategoriaProfesionales(
       List<RequisitoEquipoCategoriaProfesional> entities) {
-    return entities.stream().map((entity) -> convert(entity)).collect(Collectors.toList());
+    return entities.stream().map(this::convert).collect(Collectors.toList());
   }
 
   private RequisitoEquipoCategoriaProfesionalOutput convert(RequisitoEquipoCategoriaProfesional entity) {
@@ -1102,7 +1152,7 @@ public class ConvocatoriaController {
 
   private List<RequisitoEquipoNivelAcademicoOutput> convertRequisitosEquipoNivelesAcademicos(
       List<RequisitoEquipoNivelAcademico> entities) {
-    return entities.stream().map((entity) -> convert(entity)).collect(Collectors.toList());
+    return entities.stream().map(this::convert).collect(Collectors.toList());
   }
 
   private RequisitoIPNivelAcademicoOutput convert(RequisitoIPNivelAcademico entity) {
@@ -1111,16 +1161,117 @@ public class ConvocatoriaController {
 
   private List<RequisitoIPNivelAcademicoOutput> convertRequisitoIPNivelesAcademicos(
       List<RequisitoIPNivelAcademico> entities) {
-    return entities.stream().map((entity) -> convert(entity)).collect(Collectors.toList());
+    return entities.stream().map(this::convert).collect(Collectors.toList());
   }
 
   private List<RequisitoIPCategoriaProfesionalOutput> convertRequisitoIPCategoriasProfesionales(
       List<RequisitoIPCategoriaProfesional> entities) {
-    return entities.stream().map((entity) -> convertCategoriaProfesional(entity)).collect(Collectors.toList());
+    return entities.stream().map(this::convertCategoriaProfesional).collect(Collectors.toList());
   }
 
   private RequisitoIPCategoriaProfesionalOutput convertCategoriaProfesional(RequisitoIPCategoriaProfesional entity) {
     return modelMapper.map(entity, RequisitoIPCategoriaProfesionalOutput.class);
   }
 
+  /**
+   * Devuelve las {@link ConvocatoriaPalabraClave} asociadas a la entidad
+   * {@link Convocatoria} con el id indicado
+   * 
+   * @param convocatoriaId Identificador de {@link Convocatoria}
+   * @param query          filtro de búsqueda.
+   * @param paging         pageable.
+   * @return {@link ConvocatoriaPalabraClave} correspondientes al id de la entidad
+   *         {@link Convocatoria}
+   */
+  @GetMapping(PATH_PALABRAS_CLAVE)
+  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-CON-E', 'CSP-CON-V', 'CSP-CON-C', 'CSP-CON-INV-V')")
+  public Page<ConvocatoriaPalabraClaveOutput> findPalabrasClave(@PathVariable Long convocatoriaId,
+      @RequestParam(name = "q", required = false) String query, @RequestPageable(sort = "s") Pageable paging) {
+    log.debug("findPalabrasClave(@PathVariable Long convocatoriaId, String query, Pageable paging) - start");
+    Page<ConvocatoriaPalabraClaveOutput> returnValue = convertConvocatoriaPalabraClave(
+        convocatoriaPalabraClaveService.findByConvocatoriaId(convocatoriaId, query, paging));
+    log.debug("findPalabrasClave(@PathVariable Long convocatoriaId, String query, Pageable paging) - end");
+    return returnValue;
+  }
+
+  /**
+   * Actualiza la lista de {@link ConvocatoriaPalabraClave} asociadas a la entidad
+   * {@link Convocatoria} con el id indicado
+   * 
+   * @param convocatoriaId identificador de {@link Convocatoria}
+   * @param palabrasClave  nueva lista de {@link ConvocatoriaPalabraClave} de
+   *                       la entidad {@link Convocatoria}
+   * @return la nueva lista de {@link ConvocatoriaPalabraClave} asociadas a la
+   *         entidad {@link Convocatoria}
+   */
+  @PatchMapping(PATH_PALABRAS_CLAVE)
+  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-CON-E', 'CSP-CON-C')")
+  public ResponseEntity<List<ConvocatoriaPalabraClaveOutput>> updatePalabrasClave(@PathVariable Long convocatoriaId,
+      @Valid @RequestBody List<ConvocatoriaPalabraClaveInput> palabrasClave) {
+    log.debug("updatePalabrasClave(Long convocatoriaId, List<ConvocatoriaPalabraClave> palabrasClave) - start");
+
+    palabrasClave.stream().forEach(palabraClave -> {
+      if (!palabraClave.getConvocatoriaId().equals(convocatoriaId)) {
+        throw new NoRelatedEntitiesException(ConvocatoriaPalabraClave.class, Convocatoria.class);
+      }
+    });
+
+    List<ConvocatoriaPalabraClaveOutput> returnValue = convertConvocatoriaPalabraClave(
+        convocatoriaPalabraClaveService.updatePalabrasClave(convocatoriaId,
+            convertConvocatoriaPalabraClaveInputs(palabrasClave)));
+    log.debug("updatePalabrasClave(Long convocatoriaId, List<ConvocatoriaPalabraClave> palabrasClave) - end");
+    return new ResponseEntity<>(returnValue, HttpStatus.OK);
+  }
+
+  /**
+   * Devuelve el {@link FormularioSolicitud} de la {@link Convocatoria}
+   * 
+   * @param id Identificador de {@link Convocatoria}.
+   * @return {@link FormularioSolicitud} correspondiente a la
+   *         {@link Convocatoria}.
+   */
+  @GetMapping("/{id}/formulariosolicitud")
+  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-SOL-C', 'CSP-SOL-E', 'CSP-SOL-V','CSP-SOL-INV-C', 'CSP-SOL-INV-ER')")
+  public ResponseEntity<FormularioSolicitud> findFormularioSolicitudByConvocatoriaId(@PathVariable Long id) {
+    log.debug("findFormularioSolicitudByConvocatoriaId(Long id) - start");
+
+    FormularioSolicitud returnValue = service.findFormularioSolicitudById(id);
+
+    if (Objects.isNull(returnValue)) {
+      log.debug("findFormularioSolicitudByConvocatoriaId(Long id) - end");
+      return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    log.debug("findFormularioSolicitudByConvocatoriaId(Long id) - end");
+    return new ResponseEntity<>(returnValue, HttpStatus.OK);
+  }
+
+  private Page<ConvocatoriaPalabraClaveOutput> convertConvocatoriaPalabraClave(Page<ConvocatoriaPalabraClave> page) {
+    List<ConvocatoriaPalabraClaveOutput> content = page.getContent().stream()
+        .map(this::convert)
+        .collect(Collectors.toList());
+
+    return new PageImpl<>(content, page.getPageable(), page.getTotalElements());
+  }
+
+  private List<ConvocatoriaPalabraClaveOutput> convertConvocatoriaPalabraClave(List<ConvocatoriaPalabraClave> list) {
+    return list.stream()
+        .map(this::convert)
+        .collect(Collectors.toList());
+  }
+
+  private ConvocatoriaPalabraClaveOutput convert(ConvocatoriaPalabraClave convocatoriaPalabraClave) {
+    return modelMapper.map(convocatoriaPalabraClave, ConvocatoriaPalabraClaveOutput.class);
+  }
+
+
+  private List<ConvocatoriaPalabraClave> convertConvocatoriaPalabraClaveInputs(List<ConvocatoriaPalabraClaveInput> inputs) {
+    return inputs.stream().map(input -> convert(null, input)).collect(Collectors.toList());
+  }
+
+  private ConvocatoriaPalabraClave convert(Long id, ConvocatoriaPalabraClaveInput input) {
+    ConvocatoriaPalabraClave entity = modelMapper.map(input, ConvocatoriaPalabraClave.class);
+    entity.setId(id);
+    return entity;
+  }
 }

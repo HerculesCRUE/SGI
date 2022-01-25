@@ -95,6 +95,8 @@ export class PeticionEvaluacionActionService extends ActionService {
     this.fragmentos.push(this.tareas);
     this.fragmentos.push(this.memoriasListado);
 
+    this.datosGenerales.initialize();
+
     this.equipoInvestigadorListado.equiposTrabajo$.subscribe(list => {
       this.tareas.setEquiposTrabajo(list.map((equipoTrabajo) => equipoTrabajo.value));
     });
@@ -102,6 +104,13 @@ export class PeticionEvaluacionActionService extends ActionService {
     this.memoriasListado.memorias$.subscribe(list => {
       this.tareas.setMemorias(list.map((memoria) => memoria.value));
     });
+
+    this.subscriptions.push(
+      this.datosGenerales.solicitantePeticionEvaluacion$.subscribe((value) => {
+        this.memoriasListado.solicitantePeticionEvaluacion = value;
+      })
+    );
+
   }
 
   initializeEquiposInvestigador(): void {

@@ -3,9 +3,8 @@ import { FormBuilder } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { MSG_PARAMS } from '@core/i18n';
-import { Estado, IEstadoProyecto } from '@core/models/csp/estado-proyecto';
+import { Estado } from '@core/models/csp/estado-proyecto';
 import { IProyecto } from '@core/models/csp/proyecto';
-import { IProyectoEquipo } from '@core/models/csp/proyecto-equipo';
 import { IProyectoProyectoSge } from '@core/models/csp/proyecto-proyecto-sge';
 import { IProyectoSocio } from '@core/models/csp/proyecto-socio';
 import { ActionService } from '@core/services/action-service';
@@ -28,6 +27,7 @@ import { ProyectoHitoService } from '@core/services/csp/proyecto-hito.service';
 import { ProyectoIVAService } from '@core/services/csp/proyecto-iva.service';
 import { ProyectoPaqueteTrabajoService } from '@core/services/csp/proyecto-paquete-trabajo.service';
 import { ProyectoPartidaService } from '@core/services/csp/proyecto-partida.service';
+import { ProyectoPeriodoAmortizacionService } from '@core/services/csp/proyecto-periodo-amortizacion/proyecto-periodo-amortizacion.service';
 import { ProyectoPeriodoJustificacionService } from '@core/services/csp/proyecto-periodo-justificacion/proyecto-periodo-justificacion.service';
 import { ProyectoPeriodoSeguimientoService } from '@core/services/csp/proyecto-periodo-seguimiento.service';
 import { ProyectoPlazoService } from '@core/services/csp/proyecto-plazo.service';
@@ -45,10 +45,12 @@ import { InvencionService } from '@core/services/pii/invencion/invencion.service
 import { RelacionService } from '@core/services/rel/relaciones/relacion.service';
 import { DocumentoService } from '@core/services/sgdoc/documento.service';
 import { FacturaPrevistaEmitidaService } from '@core/services/sge/factura-prevista-emitida/factura-prevista-emitida.service';
+import { PeriodoAmortizacionService } from '@core/services/sge/periodo-amortizacion/periodo-amortizacion.service';
 import { ProyectoSgeService } from '@core/services/sge/proyecto-sge.service';
 import { EmpresaService } from '@core/services/sgemp/empresa.service';
 import { AreaConocimientoService } from '@core/services/sgo/area-conocimiento.service';
 import { ClasificacionService } from '@core/services/sgo/clasificacion.service';
+import { PalabraClaveService } from '@core/services/sgo/palabra-clave.service';
 import { DatosAcademicosService } from '@core/services/sgp/datos-academicos.service';
 import { DatosPersonalesService } from '@core/services/sgp/datos-personales.service';
 import { PersonaService } from '@core/services/sgp/persona.service';
@@ -62,6 +64,7 @@ import { switchMap, tap } from 'rxjs/operators';
 import { CSP_ROUTE_NAMES } from '../csp-route-names';
 import { PROYECTO_DATA_KEY } from './proyecto-data.resolver';
 import { ProyectoAgrupacionGastoFragment } from './proyecto-formulario/proyecto-agrupaciones-gasto/proyecto-agrupaciones-gasto.fragment';
+import { ProyectoAmortizacionFondosFragment } from './proyecto-formulario/proyecto-amortizacion-fondos/proyecto-amortizacion-fondos.fragment';
 import { ProyectoAreaConocimientoFragment } from './proyecto-formulario/proyecto-area-conocimiento/proyecto-area-conocimiento.fragment';
 import { ProyectoCalendarioFacturacionFragment } from './proyecto-formulario/proyecto-calendario-facturacion/proyecto-calendario-facturacion.fragment';
 import { ProyectoCalendarioJustificacionFragment } from './proyecto-formulario/proyecto-calendario-justificacion/proyecto-calendario-justificacion.fragment';
@@ -128,6 +131,7 @@ export class ProyectoActionService extends ActionService {
     AGRUPACIONES_GASTO: 'agrupaciones-gasto',
     CALENDARIO_JUSTIFICACION: 'calendario-justificacion',
     CONSULTA_PRESUPUESTO: 'consulta-presupuesto',
+    AMORTIZACION_FONDOS: 'amortizacion-fondos',
     RELACIONES: 'relaciones',
     CALENDARIO_FACTURACION: 'calendario-facturacion'
   };
@@ -156,6 +160,7 @@ export class ProyectoActionService extends ActionService {
   private proyectoAgrupacionGasto: ProyectoAgrupacionGastoFragment;
   private proyectoCalendarioJustificacion: ProyectoCalendarioJustificacionFragment;
   private consultaPresupuesto: ProyectoConsultaPresupuestoFragment;
+  private amortizacionFondos: ProyectoAmortizacionFondosFragment;
   private relaciones: ProyectoRelacionFragment;
   private proyectoCalendarioFacturacion: ProyectoCalendarioFacturacionFragment;
 
@@ -196,6 +201,10 @@ export class ProyectoActionService extends ActionService {
 
   get hasPopulatedSocios$() {
     return this.fichaGeneral.hasPopulatedSocios$;
+  }
+
+  get hasMiembrosEquipo() {
+    return !!this.relaciones.miembrosEquipoProyecto && this.relaciones.miembrosEquipoProyecto.length > 0;
   }
 
   constructor(
@@ -247,7 +256,10 @@ export class ProyectoActionService extends ActionService {
     invencionService: InvencionService,
     sgiAuthService: SgiAuthService,
     proyectoFacturacionService: ProyectoFacturacionService,
-    facturaPrevistaEmitidaService: FacturaPrevistaEmitidaService
+    facturaPrevistaEmitidaService: FacturaPrevistaEmitidaService,
+    palabraClaveService: PalabraClaveService,
+    proyectoPeriodoAmortizacionService: ProyectoPeriodoAmortizacionService,
+    periodoAmortizacionService: PeriodoAmortizacionService
   ) {
     super();
     this.data = route.snapshot.data[PROYECTO_DATA_KEY];
@@ -270,7 +282,8 @@ export class ProyectoActionService extends ActionService {
       this.data?.disableCoordinadorExterno,
       this.data?.hasAnyProyectoSocioCoordinador,
       this.data?.isVisor,
-      relacionService
+      relacionService,
+      palabraClaveService
     );
 
     this.addFragment(this.FRAGMENT.FICHA_GENERAL, this.fichaGeneral);
@@ -315,11 +328,11 @@ export class ProyectoActionService extends ActionService {
         proyectoAgrupacionGastoService, this.readonly, this.data?.isVisor);
       this.proyectoCalendarioJustificacion = new ProyectoCalendarioJustificacionFragment(this.data?.proyecto?.id, this.data?.proyecto,
         proyectoService, proyectoPeriodoJustificacionService, convocatoriaService);
-      this.consultaPresupuesto = new ProyectoConsultaPresupuestoFragment(this.data?.proyecto?.id, this.proyectoService,
-        proyectoAnualidadService, proyectoAgrupacionGastoService);
+      this.amortizacionFondos = new ProyectoAmortizacionFondosFragment(this.data?.proyecto?.id, this.data.proyecto?.solicitudId,
+        proyectoPeriodoAmortizacionService, proyectoEntidadFinanciadoraService, empresaService, proyectoAnualidadService, periodoAmortizacionService);
+      this.consultaPresupuesto = new ProyectoConsultaPresupuestoFragment(this.data?.proyecto?.id, this.proyectoService);
       this.relaciones = new ProyectoRelacionFragment(
         id, this.data.proyecto, this.readonly, relacionService, convocatoriaService, invencionService, proyectoService, sgiAuthService);
-
       this.proyectoCalendarioFacturacion = new ProyectoCalendarioFacturacionFragment(this.data?.proyecto?.id, this.data?.proyecto,
         proyectoService, proyectoFacturacionService, facturaPrevistaEmitidaService);
 
@@ -346,6 +359,7 @@ export class ProyectoActionService extends ActionService {
       this.addFragment(this.FRAGMENT.AGRUPACIONES_GASTO, this.proyectoAgrupacionGasto);
       this.addFragment(this.FRAGMENT.CALENDARIO_JUSTIFICACION, this.proyectoCalendarioJustificacion);
       this.addFragment(this.FRAGMENT.CONSULTA_PRESUPUESTO, this.consultaPresupuesto);
+      this.addFragment(this.FRAGMENT.AMORTIZACION_FONDOS, this.amortizacionFondos);
       this.addFragment(this.FRAGMENT.RELACIONES, this.relaciones);
       this.addFragment(this.FRAGMENT.CALENDARIO_FACTURACION, this.proyectoCalendarioFacturacion);
 
@@ -359,6 +373,16 @@ export class ProyectoActionService extends ActionService {
       }));
       this.subscriptions.push(this.fichaGeneral.permitePaquetesTrabajo$.subscribe((value) => {
         this.showPaquetesTrabajo$.next(Boolean(value));
+      }));
+
+      // Sincronización de las entidades financiadoras
+      this.subscriptions.push(this.amortizacionFondos.initialized$.subscribe(value => {
+        if (value) {
+          this.entidadesFinanciadoras.initialize();
+        }
+      }));
+      this.subscriptions.push(this.entidadesFinanciadoras.entidadesFinanciadorasSincronizadas$.subscribe(entidadesFinanciadoras => {
+        this.amortizacionFondos.entidadesFinanciadoras$.next(entidadesFinanciadoras)
       }));
 
       // Sincronización de las vinculaciones sobre modelo de ejecución
@@ -396,8 +420,10 @@ export class ProyectoActionService extends ActionService {
           )
         );
 
-        this.subscriptions.push(this.proyectosSge$.subscribe(value =>
-          this.fichaGeneral.vinculacionesProyectosSge$.next(value.length > 0)));
+        this.subscriptions.push(this.proyectosSge$.subscribe(value => {
+          this.fichaGeneral.vinculacionesProyectosSge$.next(value.length > 0);
+          this.amortizacionFondos.proyectosSGE$.next(value.map(wraper => wraper.value));
+        }));
 
         // Syncronize changes
         this.subscriptions.push(this.plazos.plazos$.subscribe(value => this.hasFases$.next(!!value.length)));
@@ -425,7 +451,7 @@ export class ProyectoActionService extends ActionService {
       }
 
       this.subscriptions.push(
-        this.relaciones.initialized$.subscribe(value => {
+        this.fichaGeneral.initialized$.subscribe(value => {
           if (value) {
             this.proyectoEquipo.initialize();
           }
@@ -436,7 +462,7 @@ export class ProyectoActionService extends ActionService {
     }
 
     this.subscriptions.push(this.fichaGeneral.iva$.subscribe(newIVA => {
-      if(this.proyectoCalendarioFacturacion){
+      if (this.proyectoCalendarioFacturacion) {
         this.proyectoCalendarioFacturacion.proyectoIVA = newIVA;
       }
     }));
@@ -488,14 +514,6 @@ export class ProyectoActionService extends ActionService {
     } else {
       return super.saveOrUpdate();
     }
-  }
-
-  /**
-   * Cambio de estado a **Presentada** desde:
-   * - **Borrador**
-   */
-  cambiarEstado(estadoNuevo: IEstadoProyecto): Observable<void> {
-    return this.proyectoService.cambiarEstado(this.fichaGeneral.getKey() as number, estadoNuevo);
   }
 
   private onProyectoSocioListChangeHandle(proyectoSocios: StatusWrapper<IProyectoSocio>[]): void {

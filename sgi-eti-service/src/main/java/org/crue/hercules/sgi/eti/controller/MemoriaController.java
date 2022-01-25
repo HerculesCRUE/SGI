@@ -448,7 +448,7 @@ public class MemoriaController {
    */
   @GetMapping("/persona")
   @PreAuthorize("hasAnyAuthorityForAnyUO('ETI-MEM-INV-VR', 'ETI-MEM-V')")
-  ResponseEntity<Page<MemoriaPeticionEvaluacion>> findAllMemoriasEvaluacionByPersonaRef(
+  public ResponseEntity<Page<MemoriaPeticionEvaluacion>> findAllMemoriasEvaluacionByPersonaRef(
       @RequestParam(name = "q", required = false) String query, @RequestPageable(sort = "s") Pageable paging,
       Authentication authentication) {
     log.debug("findAllMemoriasPeticionesEvaluacionByPersonaRef(String query,Pageable paging) - start");

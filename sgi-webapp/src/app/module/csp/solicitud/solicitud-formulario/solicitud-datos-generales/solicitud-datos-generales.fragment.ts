@@ -9,7 +9,6 @@ import { ISolicitudModalidad } from '@core/models/csp/solicitud-modalidad';
 import { IPersona } from '@core/models/sgp/persona';
 import { IUnidadGestion } from '@core/models/usr/unidad-gestion';
 import { FormFragment } from '@core/services/action-service';
-import { ConfiguracionSolicitudService } from '@core/services/csp/configuracion-solicitud.service';
 import { ConvocatoriaService } from '@core/services/csp/convocatoria.service';
 import { SolicitudModalidadService } from '@core/services/csp/solicitud-modalidad.service';
 import { SolicitudService } from '@core/services/csp/solicitud.service';
@@ -51,7 +50,6 @@ export class SolicitudDatosGeneralesFragment extends FormFragment<ISolicitud> {
     private readonly logger: NGXLogger,
     key: number,
     private service: SolicitudService,
-    private configuracionSolicitudService: ConfiguracionSolicitudService,
     private convocatoriaService: ConvocatoriaService,
     private empresaService: EmpresaService,
     private personaService: PersonaService,
@@ -89,7 +87,8 @@ export class SolicitudDatosGeneralesFragment extends FormFragment<ISolicitud> {
       }),
       switchMap((solicitud) => {
         if (solicitud.convocatoriaId) {
-          return this.convocatoriaService.findById(solicitud.convocatoriaId).pipe(
+          const convocatoriaSolicitud$ = this.isInvestigador ? this.service.findConvocatoria(solicitud.id) : this.convocatoriaService.findById(solicitud.convocatoriaId);
+          return convocatoriaSolicitud$.pipe(
             switchMap(convocatoria => {
               return this.loadEntidadesConvocantesModalidad(solicitud.id, convocatoria.id).pipe(
                 map(entidadesConvocantesListado => {
@@ -280,8 +279,8 @@ export class SolicitudDatosGeneralesFragment extends FormFragment<ISolicitud> {
     );
 
     this.subscriptions.push(
-      this.convocatoriaService.findById(convocatoria.id).subscribe(convocatoria => {
-        this.solicitud.formularioSolicitud = convocatoria.formularioSolicitud;
+      this.convocatoriaService.getFormularioSolicitud(convocatoria.id).subscribe(formularioSolicitud => {
+        this.solicitud.formularioSolicitud = formularioSolicitud;
       })
     );
 
@@ -455,8 +454,8 @@ export class SolicitudDatosGeneralesFragment extends FormFragment<ISolicitud> {
       );
 
       this.subscriptions.push(
-        this.convocatoriaService.findById(convocatoria.id).subscribe(convocatoria => {
-          this.getFormGroup().controls.formularioSolicitud.setValue(convocatoria.formularioSolicitud);
+        this.convocatoriaService.getFormularioSolicitud(convocatoria.id).subscribe(formularioSolicitud => {
+          this.getFormGroup().controls.formularioSolicitud.setValue(formularioSolicitud);
         })
       );
 
@@ -506,21 +505,20 @@ export class SolicitudDatosGeneralesFragment extends FormFragment<ISolicitud> {
    */
   private loadEntidadesConvocantesModalidad(solicitudId: number, convocatoriaId: number):
     Observable<SolicitudModalidadEntidadConvocanteListado[]> {
-
-    return this.convocatoriaService.findAllConvocatoriaEntidadConvocantes(convocatoriaId).pipe(
+    const convocatoriaEntidadConvocantes$ = this.isInvestigador && solicitudId ? this.service.findAllConvocatoriaEntidadConvocantes(solicitudId)
+      : this.convocatoriaService.findAllConvocatoriaEntidadConvocantes(convocatoriaId);
+    return convocatoriaEntidadConvocantes$.pipe(
       map(resultEntidadConvocantes => {
         if (resultEntidadConvocantes.total === 0) {
           return [] as SolicitudModalidadEntidadConvocanteListado[];
         }
 
-        const entidadesConvocantesModalidad = resultEntidadConvocantes.items.map(entidadConvocante => {
+        return resultEntidadConvocantes.items.map(entidadConvocante => {
           return {
             entidadConvocante,
             plan: this.getPlan(entidadConvocante.programa)
           } as SolicitudModalidadEntidadConvocanteListado;
         });
-
-        return entidadesConvocantesModalidad;
       }),
       mergeMap(entidadesConvocantesModalidad => {
         if (entidadesConvocantesModalidad.length === 0) {
@@ -548,7 +546,7 @@ export class SolicitudDatosGeneralesFragment extends FormFragment<ISolicitud> {
 
         return this.getSolicitudModalidades(solicitudId).pipe(
           switchMap(solicitudModalidades => {
-            entidadesConvocantesModalidad.map(element => {
+            entidadesConvocantesModalidad.forEach(element => {
               const solicitudModalidad = solicitudModalidades
                 .find(modalidad => modalidad.entidad.id === element.entidadConvocante.entidad.id);
               if (solicitudModalidad) {

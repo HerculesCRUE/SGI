@@ -95,15 +95,15 @@ export class PeriodoTitularidadModalComponent
 
   protected getFormGroup(): FormGroup {
     const fechaFinValidators: Array<ValidatorFn> = [DateValidator.minDate(this.entity.fechaInicioMinima)];
-    const fechaInicioValidators: Array<ValidatorFn> = [DateValidator.minDate(this.entity.fechaInicioMinima), Validators.required];
+    const fechaInicioValidators: Array<ValidatorFn> = [Validators.required];
 
-    if(this.showFechaFin()) {
+    if (this.showFechaFin()) {
       fechaFinValidators.push(Validators.required);
     }
     const form: FormGroup = new FormGroup({
-        fechaInicio: new FormControl(this.entity?.periodoTitularidad.value.fechaInicio, []),
-        fechaFin: new FormControl(this.entity?.periodoTitularidad.value.fechaFin, [])
-      });
+      fechaInicio: new FormControl(this.entity?.periodoTitularidad.value.fechaInicio, []),
+      fechaFin: new FormControl(this.entity?.periodoTitularidad.value.fechaFin, [])
+    });
 
     fechaInicioValidators.push(DateValidator.isAfterOther(form.controls.fechaFin));
     fechaFinValidators.push(DateValidator.isBeforeOther(form.controls.fechaInicio));

@@ -1,6 +1,5 @@
-import { Component, Inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { MatAutocompleteTrigger } from '@angular/material/autocomplete';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { BaseModalComponent } from '@core/component/base-modal.component';
@@ -8,13 +7,11 @@ import { MSG_PARAMS } from '@core/i18n';
 import { IConvocatoriaHito } from '@core/models/csp/convocatoria-hito';
 import { ITipoHito } from '@core/models/csp/tipos-configuracion';
 import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-properties';
-import { ModeloEjecucionService } from '@core/services/csp/modelo-ejecucion.service';
 import { SnackBarService } from '@core/services/snack-bar.service';
 import { TipoHitoValidator } from '@core/validators/tipo-hito-validator';
 import { TranslateService } from '@ngx-translate/core';
 import { DateTime } from 'luxon';
-import { Observable } from 'rxjs';
-import { map, switchMap } from 'rxjs/operators';
+import { switchMap } from 'rxjs/operators';
 
 const MSG_ANADIR = marker('btn.add');
 const MSG_ACEPTAR = marker('btn.ok');
@@ -39,11 +36,8 @@ export interface ConvocatoriaHitosModalComponentData {
 
 export class ConvocatoriaHitosModalComponent extends
   BaseModalComponent<ConvocatoriaHitosModalComponentData, ConvocatoriaHitosModalComponent> implements OnInit, OnDestroy {
-  @ViewChild(MatAutocompleteTrigger) autocomplete: MatAutocompleteTrigger;
 
   fxLayoutProperties: FxLayoutProperties;
-
-  tipoHitos$: Observable<ITipoHito[]>;
 
   textSaveOrUpdate: string;
   title: string;
@@ -54,19 +48,15 @@ export class ConvocatoriaHitosModalComponent extends
 
   constructor(
     public matDialogRef: MatDialogRef<ConvocatoriaHitosModalComponent>,
-    modeloEjecucionService: ModeloEjecucionService,
     @Inject(MAT_DIALOG_DATA) public data: ConvocatoriaHitosModalComponentData,
     protected snackBarService: SnackBarService,
-    private readonly translate: TranslateService) {
+    private readonly translate: TranslateService
+  ) {
     super(snackBarService, matDialogRef, data);
     this.fxLayoutProperties = new FxLayoutProperties();
     this.fxLayoutProperties.gap = '20px';
     this.fxLayoutProperties.layout = 'row wrap';
     this.fxLayoutProperties.xs = 'column';
-
-    this.tipoHitos$ = modeloEjecucionService.findModeloTipoHitoConvocatoria(this.data.idModeloEjecucion).pipe(
-      map(response => response.items.map(modeloTipoHito => modeloTipoHito.tipoHito))
-    );
   }
 
   ngOnInit(): void {

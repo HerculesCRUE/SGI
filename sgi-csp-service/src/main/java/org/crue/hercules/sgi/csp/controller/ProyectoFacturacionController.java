@@ -1,6 +1,7 @@
 package org.crue.hercules.sgi.csp.controller;
 
-import lombok.RequiredArgsConstructor;
+import javax.validation.Valid;
+
 import org.crue.hercules.sgi.csp.dto.ProyectoFacturacionInput;
 import org.crue.hercules.sgi.csp.dto.ProyectoFacturacionOutput;
 import org.crue.hercules.sgi.csp.model.ProyectoFacturacion;
@@ -19,13 +20,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.validation.Valid;
+import lombok.RequiredArgsConstructor;
 
 @Validated
 @RequiredArgsConstructor
 @RestController
-@RequestMapping(path = "/proyectosfacturacion")
+@RequestMapping(path = ProyectoFacturacionController.MAPPING)
 public class ProyectoFacturacionController {
+
+  public static final String MAPPING = "/proyectosfacturacion";
 
   private final ModelMapper modelMapper;
   private final ProyectoFacturacionService proyectoFacturacionService;

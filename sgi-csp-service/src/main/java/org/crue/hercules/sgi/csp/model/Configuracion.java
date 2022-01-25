@@ -48,4 +48,7 @@ public class Configuracion extends BaseEntity {
   @NotNull
   private String plantillaFormatoPartidaPresupuestaria;
 
+  /** Validacion gastos */
+  @Column(name = "validacion_gastos", columnDefinition = "boolean default false", nullable = true)
+  private Boolean validacionGastos;
 }

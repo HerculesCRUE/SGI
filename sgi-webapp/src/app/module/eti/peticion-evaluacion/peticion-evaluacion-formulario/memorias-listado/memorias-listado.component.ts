@@ -19,6 +19,7 @@ import { PeticionEvaluacionService } from '@core/services/eti/peticion-evaluacio
 import { SnackBarService } from '@core/services/snack-bar.service';
 import { StatusWrapper } from '@core/utils/status-wrapper';
 import { TranslateService } from '@ngx-translate/core';
+import { SgiAuthService } from '@sgi/framework/auth';
 import { NGXLogger } from 'ngx-logger';
 import { of, Subscription } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
@@ -77,7 +78,8 @@ export class MemoriasListadoComponent extends FragmentComponent implements OnIni
     protected readonly peticionEvaluacionService: PeticionEvaluacionService,
     protected readonly snackBarService: SnackBarService,
     private actionService: PeticionEvaluacionActionService,
-    private readonly translate: TranslateService
+    private readonly translate: TranslateService,
+    private authService: SgiAuthService
   ) {
     super(actionService.FRAGMENT.MEMORIAS, actionService);
     this.listadoFragment = this.fragment as MemoriasListadoFragment;
@@ -185,10 +187,10 @@ export class MemoriasListadoComponent extends FragmentComponent implements OnIni
     // Si el estado es 'Completada', 'Favorable pendiente de modificaciones mínima',
     // 'Pendiente de correcciones', 'Completada seguimiento anual',
     // 'Completada seguimiento final' o 'En aclaracion seguimiento final' se muestra el botón de enviar.
-    if (estadoMemoriaId === ESTADO_MEMORIA.COMPLETADA || estadoMemoriaId === ESTADO_MEMORIA.FAVORABLE_PENDIENTE_MODIFICACIONES_MINIMAS
+    if (this.isUserSolicitantePeticionEvaluacion() && (estadoMemoriaId === ESTADO_MEMORIA.COMPLETADA || estadoMemoriaId === ESTADO_MEMORIA.FAVORABLE_PENDIENTE_MODIFICACIONES_MINIMAS
       || estadoMemoriaId === ESTADO_MEMORIA.PENDIENTE_CORRECCIONES || estadoMemoriaId === ESTADO_MEMORIA.COMPLETADA_SEGUIMIENTO_ANUAL
       || estadoMemoriaId === ESTADO_MEMORIA.COMPLETADA_SEGUIMIENTO_FINAL
-      || estadoMemoriaId === ESTADO_MEMORIA.EN_ACLARACION_SEGUIMIENTO_FINAL) {
+      || estadoMemoriaId === ESTADO_MEMORIA.EN_ACLARACION_SEGUIMIENTO_FINAL)) {
       return true;
     } else {
       return false;
@@ -248,7 +250,7 @@ export class MemoriasListadoComponent extends FragmentComponent implements OnIni
   hasPermisoEnviarSecretariaRetrospectiva(memoria: IMemoria): boolean {
     // Si la retrospectiva ya está 'En secretaría' no se muestra el botón.
     // El estado de la memoria debe de ser mayor a FIN_EVALUACION
-    return (memoria.estadoActual.id >= ESTADO_MEMORIA.FIN_EVALUACION && memoria.comite.id === COMITE.CEEA && memoria.requiereRetrospectiva
+    return this.isUserSolicitantePeticionEvaluacion() && (memoria.estadoActual.id >= ESTADO_MEMORIA.FIN_EVALUACION && memoria.comite.id === COMITE.CEEA && memoria.requiereRetrospectiva
       && memoria.retrospectiva.estadoRetrospectiva.id === ESTADO_RETROSPECTIVA.COMPLETADA);
   }
 
@@ -278,11 +280,15 @@ export class MemoriasListadoComponent extends FragmentComponent implements OnIni
 
   hasPermisoEliminar(estadoMemoriaId: number): boolean {
     // Si el estado es 'En elaboración' o 'Completada'.
-    return (estadoMemoriaId === 1 || estadoMemoriaId === 2);
+    return this.isUserSolicitantePeticionEvaluacion() && (estadoMemoriaId === 1 || estadoMemoriaId === 2);
   }
 
   ngOnDestroy(): void {
     this.subscriptions?.forEach(x => x.unsubscribe());
+  }
+
+  private isUserSolicitantePeticionEvaluacion(): boolean {
+    return this.listadoFragment.solicitantePeticionEvaluacion?.id === this.authService.authStatus$.value.userRefId;
   }
 
 }

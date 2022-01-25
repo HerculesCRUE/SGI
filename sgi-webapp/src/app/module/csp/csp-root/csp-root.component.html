@@ -12,6 +12,17 @@
     [route]="[CSP_ROUTE_NAMES.PROYECTO]" icon="work"
     title="{{'csp.proyecto' | translate:MSG_PARAMS.CARDINALIRY.PLURAL}}">
   </sgi-menu-item>
+  <sgi-menu-group *sgiHasAnyAuthority="['CSP-CVPR-V', 'CSP-CVPR-E', 'CSP-AUT-E', 'CSP-AUT-V','CSP-AUT-B']"
+    title="{{'menu.csp.participacion-proyectos-externos' | translate:MSG_PARAMS.CARDINALIRY.PLURAL}}" icon="list_alt">
+    <sgi-menu-subitem *sgiHasAnyAuthority="['CSP-AUT-E', 'CSP-AUT-V','CSP-AUT-B']"
+      [route]="[CSP_ROUTE_NAMES.AUTORIZACION]" title="{{'csp.autorizacion' |
+              translate:MSG_PARAMS.CARDINALIRY.PLURAL}}">
+    </sgi-menu-subitem>
+    <sgi-menu-subitem *sgiHasAnyAuthority="['CSP-CVPR-V', 'CSP-CVPR-E']" [route]="[CSP_ROUTE_NAMES.NOTIFICACION_CVN]"
+      title="{{'csp.notificacion-cvn' |
+        translate:MSG_PARAMS.CARDINALIRY.PLURAL}}">
+    </sgi-menu-subitem>
+  </sgi-menu-group>
   <sgi-menu-item *sgiHasAnyAuthorityForAnyUO="['CSP-EJEC-V', 'CSP-EJEC-E']"
     [route]="[CSP_ROUTE_NAMES.EJECUCION_ECONOMICA]" icon="attach_money"
     title="{{'menu.csp.ejecucion-economica' | translate}}">

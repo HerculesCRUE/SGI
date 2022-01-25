@@ -24,4 +24,9 @@ VALUES
   (3, 1, 1, null, 2021, 3000, 'observaciones-003'),
   (4, 2, 1, null, 2020, 4000, 'observaciones-004'),
   (11, 1, 11, null, 2020, 11000, 'observaciones-011'),
-  (12, 1, 12, null, 2021, 12000, 'observaciones-012');
+  (12, 1, 12, null, 2021, 12000, 'observaciones-012'),
+  (21, 1, 12, 1, 2022, 12000, 'observaciones-021'),
+  (22, 1, 12, 1, 2022, 11000, 'observaciones-022'),
+  (23, 1, 12, 1, 2022, 10000, 'observaciones-023'),
+  (24, 1, 12, 1, 2022, 1000, 'observaciones-024'),
+  (25, 1, 12, 1, 2022, 5000, 'observaciones-025');

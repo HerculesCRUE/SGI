@@ -37,6 +37,7 @@ import lombok.extern.slf4j.Slf4j;
 
 public class ConvocatoriaEnlaceServiceImpl implements ConvocatoriaEnlaceService {
 
+  private static final String TIPO_ENLACE_TEMPLATE = "TipoEnlace '";
   private final ConvocatoriaEnlaceRepository repository;
   private final ConvocatoriaRepository convocatoriaRepository;
   private final ModeloTipoEnlaceRepository modeloTipoEnlaceRepository;
@@ -91,7 +92,7 @@ public class ConvocatoriaEnlaceServiceImpl implements ConvocatoriaEnlaceService 
 
         // Está asignado al ModeloEjecucion
         Assert.isTrue(modeloTipoEnlace.isPresent(),
-            "TipoEnlace '" + convocatoriaEnlace.getTipoEnlace().getNombre()
+            TIPO_ENLACE_TEMPLATE + convocatoriaEnlace.getTipoEnlace().getNombre()
                 + "' no disponible para el ModeloEjecucion '"
                 + ((modeloEjecucionId != null) ? convocatoria.getModeloEjecucion().getNombre()
                     : "Convocatoria sin modelo asignado")
@@ -105,7 +106,7 @@ public class ConvocatoriaEnlaceServiceImpl implements ConvocatoriaEnlaceService 
 
         // El TipoEnlace está activo
         Assert.isTrue(modeloTipoEnlace.get().getTipoEnlace().getActivo(),
-            "TipoEnlace '" + modeloTipoEnlace.get().getTipoEnlace().getNombre() + "' no está activo");
+            TIPO_ENLACE_TEMPLATE + modeloTipoEnlace.get().getTipoEnlace().getNombre() + "' no está activo");
 
         convocatoriaEnlace.setTipoEnlace(modeloTipoEnlace.get().getTipoEnlace());
 
@@ -167,7 +168,7 @@ public class ConvocatoriaEnlaceServiceImpl implements ConvocatoriaEnlaceService 
 
           // Está asignado al ModeloEjecucion
           Assert.isTrue(modeloTipoEnlace.isPresent(),
-              "TipoEnlace '" + convocatoriaEnlaceActualizar.getTipoEnlace().getNombre()
+              TIPO_ENLACE_TEMPLATE + convocatoriaEnlaceActualizar.getTipoEnlace().getNombre()
                   + "' no disponible para el ModeloEjecucion '"
                   + ((modeloEjecucionId != null) ? convocatoria.getModeloEjecucion().getNombre()
                       : "Convocatoria sin modelo asignado")
@@ -185,7 +186,7 @@ public class ConvocatoriaEnlaceServiceImpl implements ConvocatoriaEnlaceService 
           Assert.isTrue(
               modeloTipoEnlace.get().getTipoEnlace().getId() == convocatoriaEnlaceActualizar.getTipoEnlace().getId()
                   && modeloTipoEnlace.get().getTipoEnlace().getActivo(),
-              "TipoEnlace '" + modeloTipoEnlace.get().getTipoEnlace().getNombre() + "' no está activo");
+              TIPO_ENLACE_TEMPLATE + modeloTipoEnlace.get().getTipoEnlace().getNombre() + "' no está activo");
           convocatoriaEnlaceActualizar.setTipoEnlace(modeloTipoEnlace.get().getTipoEnlace());
         } else {
           convocatoriaEnlaceActualizar.setTipoEnlace(null);

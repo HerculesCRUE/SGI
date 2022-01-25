@@ -8,8 +8,10 @@ import { IModeloTipoFinalidad } from '@core/models/csp/modelo-tipo-finalidad';
 import { SnackBarService } from '@core/services/snack-bar.service';
 import TestUtils from '@core/utils/test-utils';
 import { MaterialDesignModule } from '@material/material-design.module';
+import { SgiAuthModule, SgiAuthService } from '@sgi/framework/auth';
 import { SharedModule } from '@shared/shared.module';
 import { LoggerTestingModule } from 'ngx-logger/testing';
+import { CspSharedModule } from '../../../shared/csp-shared.module';
 import { ModeloEjecucionTipoFinalidadModalComponent } from './modelo-ejecucion-tipo-finalidad-modal.component';
 
 describe('ModeloEjecucionTipoFinalidadModalComponent', () => {
@@ -30,12 +32,15 @@ describe('ModeloEjecucionTipoFinalidadModalComponent', () => {
         RouterTestingModule,
         FormsModule,
         ReactiveFormsModule,
-        SharedModule
+        SharedModule,
+        CspSharedModule,
+        SgiAuthModule
       ],
       providers: [
         { provide: SnackBarService, useValue: TestUtils.getSnackBarServiceSpy() },
         { provide: MatDialogRef, useValue: {} as IModeloTipoFinalidad },
         { provide: MAT_DIALOG_DATA, useValue: {} as IModeloTipoFinalidad },
+        SgiAuthService
       ],
     })
       .compileComponents();
