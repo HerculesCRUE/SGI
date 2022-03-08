@@ -242,7 +242,8 @@
       </table>
     </div>
     <br>
-    <button color="three" *ngIf="listadoAreaTematicas.data.length === 0" mat-raised-button (click)="openModal()">
+    <button color="three" *ngIf="listadoAreaTematicas.data.length === 0 && this.formPart.userCanEdit" mat-raised-button
+      (click)="openModal()">
       <mat-icon color="accent">add_circle</mat-icon>
       {{ 'btn.add.entity' | translate:msgParamAreaTematicaEntities }}
     </button>

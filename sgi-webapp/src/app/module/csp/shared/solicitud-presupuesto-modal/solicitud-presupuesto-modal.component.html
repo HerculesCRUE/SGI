@@ -83,6 +83,11 @@
   </mat-table>
 </mat-dialog-content>
 <mat-dialog-actions>
+  <button class="link-exportar" color="accent" mat-button type="button" (click)="openExportModal()" mat-raised-button
+    [disabled]="dataSource.data.length<1">
+    <mat-icon color="white">insert_chart_outlined</mat-icon>
+    {{'btn.export' | translate}}
+  </button>
   <button class="link-cancelar" mat-button type="button" mat-dialog-close>{{'btn.cancel' |
     translate}}</button>
 </mat-dialog-actions>

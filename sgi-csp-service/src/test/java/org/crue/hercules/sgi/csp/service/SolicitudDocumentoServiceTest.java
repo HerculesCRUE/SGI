@@ -6,8 +6,6 @@ import java.util.Optional;
 
 import org.assertj.core.api.Assertions;
 import org.crue.hercules.sgi.csp.exceptions.SolicitudDocumentoNotFoundException;
-import org.crue.hercules.sgi.csp.model.ConfiguracionSolicitud;
-import org.crue.hercules.sgi.csp.model.Convocatoria;
 import org.crue.hercules.sgi.csp.model.Solicitud;
 import org.crue.hercules.sgi.csp.model.SolicitudDocumento;
 import org.crue.hercules.sgi.csp.model.TipoDocumento;
@@ -54,6 +52,9 @@ public class SolicitudDocumentoServiceTest extends BaseServiceTest {
   public void create_ReturnsSolicitudDocumento() {
     // given: new SolicitudDocumento
     SolicitudDocumento newSolicitudDocumento = generarSolicitudDocumento(null, 1L, 1L);
+
+    BDDMockito.given(solicitudService.modificableEstadoAndDocumentos(ArgumentMatchers.anyLong()))
+        .willReturn(Boolean.TRUE);
 
     BDDMockito.given(solicitudDocumentoRepository.save(ArgumentMatchers.<SolicitudDocumento>any()))
         .willAnswer(new Answer<SolicitudDocumento>() {

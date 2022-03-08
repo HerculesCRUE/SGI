@@ -1,0 +1,307 @@
+<sgi-fragment title="{{ 'label.datos-generales' | translate }}">
+  <section *ngIf="formPart.getCamposProduccionCientificaWithConfiguracionMap$() | async as camposMap">
+    <section class="cvn-section" [fxLayout.xs]="fxLayoutProperties.xs" [fxLayout]="fxLayoutProperties.layout"
+      fxLayoutGap="fxLayoutProperties.gap">
+      <!-- Estado -->
+      <sgi-cvn-estado fxFlex="33%" fxFlex.sm="99%" [estado]="formPart.estadoProduccionCientifica">
+      </sgi-cvn-estado>
+      <!-- Título de la publicación  -->
+      <sgi-cvn-field fxFlex="66%" fxFlex.sm="99%" [campoCVN]="'060.010.010.030'"
+        [campoProduccionCientificaMap]="camposMap" [getValoresCampoFn]="formPart.getValoresCampo$">
+      </sgi-cvn-field>
+      <!-- Fecha de la publicación  -->
+      <sgi-cvn-field fxFlex="33%" fxFlex.sm="99%" [campoCVN]="'060.010.010.140'"
+        [campoProduccionCientificaMap]="camposMap" [getValoresCampoFn]="formPart.getValoresCampo$">
+      </sgi-cvn-field>
+      <!-- Tipo de producción -->
+      <sgi-cvn-field fxFlex="33%" fxFlex.sm="99%" [campoCVN]="'060.010.010.010'"
+        [campoProduccionCientificaMap]="camposMap" [getValoresCampoFn]="formPart.getValoresCampo$">
+      </sgi-cvn-field>
+      <!-- Tipo de soporte  -->
+      <sgi-cvn-field fxFlex="33%" fxFlex.sm="99%" [campoCVN]="'060.010.010.070'"
+        [campoProduccionCientificaMap]="camposMap" [getValoresCampoFn]="formPart.getValoresCampo$">
+      </sgi-cvn-field>
+      <!-- Nombre de la publicación  -->
+      <sgi-cvn-field fxFlex="66%" fxFlex.sm="99%" [campoCVN]="'060.010.010.210'"
+        [campoProduccionCientificaMap]="camposMap" [getValoresCampoFn]="formPart.getValoresCampo$">
+      </sgi-cvn-field>
+      <!-- ISBN - ISSN publicación  -->
+      <sgi-cvn-field fxFlex="33%" fxFlex.sm="99%" [campoCVN]="'060.010.010.160'"
+        [campoProduccionCientificaMap]="camposMap" [getValoresCampoFn]="formPart.getValoresCampo$">
+      </sgi-cvn-field>
+      <!-- Editorial  -->
+      <sgi-cvn-field fxFlex="33%" fxFlex.sm="99%" [campoCVN]="'060.010.010.100'"
+        [campoProduccionCientificaMap]="camposMap" [getValoresCampoFn]="formPart.getValoresCampo$">
+      </sgi-cvn-field>
+      <!-- Volumen - Número  -->
+      <sgi-cvn-field fxFlex="33%" fxFlex.sm="99%" [campoCVN]="'060.010.010.080'"
+        [campoProduccionCientificaMap]="camposMap" [getValoresCampoFn]="formPart.getValoresCampo$">
+      </sgi-cvn-field>
+      <!-- Página inicial - final  -->
+      <sgi-cvn-field fxFlex="33%" fxFlex.sm="99%" [campoCVN]="'060.010.010.090'"
+        [campoProduccionCientificaMap]="camposMap" [getValoresCampoFn]="formPart.getValoresCampo$">
+      </sgi-cvn-field>
+      <!-- Identificadores digitales  -->
+      <sgi-cvn-field fxFlex="66%" fxFlex.sm="99%" [campoCVN]="'060.010.010.400'"
+        [campoProduccionCientificaMap]="camposMap" [getValoresCampoFn]="formPart.getValoresCampo$">
+      </sgi-cvn-field>
+      <!-- Tipo identificadores digitales  -->
+      <sgi-cvn-field fxFlex="33%" fxFlex.sm="99%" [campoCVN]="'060.010.010.410'"
+        [campoProduccionCientificaMap]="camposMap" [getValoresCampoFn]="formPart.getValoresCampo$">
+      </sgi-cvn-field>
+    </section>
+    <mat-divider></mat-divider>
+    <section class="cvn-section" [fxLayout.xs]="fxLayoutProperties.xs" [fxLayout]="fxLayoutProperties.layout"
+      fxLayoutGap="fxLayoutProperties.gap">
+      <!-- Autor/a de correspondencia  -->
+      <sgi-cvn-field fxFlex="66%" fxFlex.sm="99%" [campoCVN]="'060.010.010.390'"
+        [campoProduccionCientificaMap]="camposMap" [getValoresCampoFn]="formPart.getAutorValoresCampo$">
+      </sgi-cvn-field>
+      <!-- Tipo Open Access  -->
+      <sgi-cvn-field fxFlex="33%" fxFlex.sm="99%" [campoCVN]="'TIPO_OPEN_ACCESS'"
+        [campoProduccionCientificaMap]="camposMap" [getValoresCampoFn]="formPart.getValoresCampo$">
+      </sgi-cvn-field>
+      <!-- Indice normalizado  -->
+      <sgi-cvn-field fxFlex="33%" fxFlex.sm="99%" [campoCVN]="'INDICE_NORMALIZADO'"
+        [campoProduccionCientificaMap]="camposMap" [getValoresCampoFn]="formPart.getValoresCampo$">
+      </sgi-cvn-field>
+      <!-- Publicación relevante  -->
+      <sgi-cvn-field fxFlex="33%" fxFlex.sm="99%" [campoCVN]="'060.010.010.300'"
+        [campoProduccionCientificaMap]="camposMap" [getValoresCampoFn]="formPart.getValoresCampo$">
+      </sgi-cvn-field>
+      <!-- Publicación muy televante  -->
+      <sgi-cvn-field fxFlex="33%" fxFlex.sm="99%" [campoCVN]="'PUBLICACION_MUY_RELEVANTE'"
+        [campoProduccionCientificaMap]="camposMap" [getValoresCampoFn]="formPart.getValoresCampo$">
+      </sgi-cvn-field>
+      <!-- Internacional  -->
+      <sgi-cvn-field fxFlex="33%" fxFlex.sm="99%" [campoCVN]="'INTERNACIONAL'"
+        [campoProduccionCientificaMap]="camposMap" [getValoresCampoFn]="formPart.getValoresCampo$">
+      </sgi-cvn-field>
+      <!-- Interdisciplinar  -->
+      <sgi-cvn-field fxFlex="66%" fxFlex.sm="99%" [campoCVN]="'INTERDISCIPLINAR'"
+        [campoProduccionCientificaMap]="camposMap" [getValoresCampoFn]="formPart.getValoresCampo$">
+      </sgi-cvn-field>
+    </section>
+  </section>
+  <!-- Índices Impacto -->
+  <section class="table-section publicacion-indices-impacto">
+    <div [fxLayout]="fxLayoutProperties.layout" [fxLayoutAlign]="fxLayoutProperties.layoutAlign">
+      <div fxFlex="99%" fxFlex.sm="99%">
+        <h2 id="indices-impacto-description">{{'prc.indices-impacto' | translate}}</h2>
+
+        <div class="mat-elevation-z4">
+          <table aria-describedby="indices-impacto-description" mat-table [dataSource]="indiceImpactoDataSource" matSort
+            matSortActive="fuente-impacto" matSortDirection="asc" matSortDisableClear #sortIndiceImpacto="matSort">
+
+            <!-- Fuente de Impacto Column -->
+            <ng-container matColumnDef="fuente-impacto">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                {{'prc.fuente-impacto.fuente-impacto' | translate}}
+              </th>
+              <td mat-cell *matCellDef="let indiceImpacto"> {{indiceImpacto | indiceImpactoFuenteImpacto}} </td>
+            </ng-container>
+
+            <!-- Año Column -->
+            <ng-container matColumnDef="anio">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                {{'prc.fuente-impacto.anio' | translate}}
+              </th>
+              <td mat-cell *matCellDef="let indiceImpacto"> {{indiceImpacto?.anio}} </td>
+            </ng-container>
+
+            <!-- Valor Column -->
+            <ng-container matColumnDef="valor">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                {{'prc.fuente-impacto.valor' | translate}}
+              </th>
+              <td mat-cell *matCellDef="let indiceImpacto"> {{indiceImpacto?.indice}} </td>
+            </ng-container>
+
+            <!-- Posición Publicación Column -->
+            <ng-container matColumnDef="posicion-publicacion">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                {{'prc.fuente-impacto.posicion-publicacion' | translate}}
+              </th>
+              <td mat-cell *matCellDef="let indiceImpacto"> {{indiceImpacto?.posicionPublicacion}} </td>
+            </ng-container>
+
+            <!-- Número de Revistas Column -->
+            <ng-container matColumnDef="numero-revistas">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                {{'prc.fuente-impacto.numero-revistas' | translate}}
+              </th>
+              <td mat-cell *matCellDef="let indiceImpacto"> {{indiceImpacto?.numeroRevistas}} </td>
+            </ng-container>
+
+            <!-- Cuartil Column -->
+            <ng-container matColumnDef="cuartil">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                {{'prc.fuente-impacto.cuartil' | translate}}
+              </th>
+              <td mat-cell *matCellDef="let indiceImpacto"> {{indiceImpacto | indiceImpactoCuartil}} </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="displayedColumnsIndiceImpacto"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumnsIndiceImpacto;"></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+  </section>
+  <!-- Autores -->
+  <section class="table-section publicacion-autores">
+    <div [fxLayout]="fxLayoutProperties.layout" [fxLayoutAlign]="fxLayoutProperties.layoutAlign">
+      <div fxFlex="99%" fxFlex.sm="99%">
+        <h2 id="autores-description">{{'prc.autores' | translate}}</h2>
+
+        <div class="mat-elevation-z4">
+          <table aria-describedby="autores-description" mat-table [dataSource]="autorDataSource" matSort
+            matSortActive="posicion" matSortDirection="asc" matSortDisableClear #sortAutor="matSort">
+
+            <!-- Firma Column -->
+            <ng-container matColumnDef="firma">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                {{'prc.autor.firma' | translate}}
+              </th>
+              <td mat-cell *matCellDef="let autor"> {{autor?.autor?.firma}} </td>
+            </ng-container>
+
+            <!-- Nombre Column -->
+            <ng-container matColumnDef="nombre">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                {{'prc.autor.nombre' | translate}}
+              </th>
+              <td mat-cell *matCellDef="let autor"> {{autor?.autor | autorNombre}} </td>
+            </ng-container>
+
+            <!-- Apellidos Column -->
+            <ng-container matColumnDef="apellidos">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                {{'prc.autor.apellidos' | translate}}
+              </th>
+              <td mat-cell *matCellDef="let autor"> {{autor?.autor | autorApellidos}} </td>
+            </ng-container>
+
+            <!-- Posición Column -->
+            <ng-container matColumnDef="posicion">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                {{'prc.autor.posicion' | translate}}
+              </th>
+              <td mat-cell *matCellDef="let autor"> {{autor?.autor?.orden}} </td>
+            </ng-container>
+
+            <!-- Estado Responsable GI Column -->
+            <ng-container matColumnDef="estado-responsable">
+              <th mat-header-cell *matHeaderCellDef>
+                {{'prc.autor.estado-responsable' | translate}}
+              </th>
+              <td mat-cell *matCellDef="let autor">{{autor?.grupos | autorGrupoEstado}}</td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="displayedColumnsAutor"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumnsAutor;"></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+  </section>
+  <!-- Proyectos -->
+  <section class="table-section publicacion-proyectos">
+    <div [fxLayout]="fxLayoutProperties.layout" [fxLayoutAlign]="fxLayoutProperties.layoutAlign">
+      <div fxFlex="99%" fxFlex.sm="99%">
+        <h2 id="proyectos-description">{{'prc.proyectos' | translate}}</h2>
+
+        <div class="mat-elevation-z4">
+          <table aria-describedby="proyectos-description" mat-table [dataSource]="proyectoDataSource" matSort
+            matSortActive="titulo" matSortDirection="asc" matSortDisableClear #sortProyecto="matSort">
+
+            <!-- Título Column -->
+            <ng-container matColumnDef="titulo">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                {{'prc.proyecto.titulo' | translate}}
+              </th>
+              <td mat-cell *matCellDef="let proyecto"> {{proyecto?.proyecto?.titulo}} </td>
+            </ng-container>
+
+            <!-- Acrónimo Column -->
+            <ng-container matColumnDef="acronimo">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                {{'prc.proyecto.acronimo' | translate}}
+              </th>
+              <td mat-cell *matCellDef="let proyecto"> {{proyecto?.proyecto?.acronimo}} </td>
+            </ng-container>
+
+            <!-- Ref. Entidad Convocante Column -->
+            <ng-container matColumnDef="codigo-externo">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                {{'prc.proyecto.codigo-externo' | translate}}
+              </th>
+              <td mat-cell *matCellDef="let proyecto"> {{proyecto?.proyecto?.codigoExterno}} </td>
+            </ng-container>
+
+            <!-- Fecha Inicio Column -->
+            <ng-container matColumnDef="fecha-inicio">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                {{'prc.proyecto.fecha-inicio' | translate}}
+              </th>
+              <td mat-cell *matCellDef="let proyecto"> {{proyecto?.proyecto?.fechaInicio | luxon:'shortDate'}} </td>
+            </ng-container>
+
+            <!-- Fecha Fin Column -->
+            <ng-container matColumnDef="fecha-fin">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                {{'prc.proyecto.fecha-fin' | translate}}
+              </th>
+              <td mat-cell *matCellDef="let proyecto">{{(proyecto?.proyecto?.fechaFinDefinitiva ||
+                proyecto.proyecto.fechaFin )| luxon:'shortDate'}}</td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="displayedColumnsProyecto"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumnsProyecto;"></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+  </section>
+  <!-- Acreditaciones -->
+  <section class="table-section publicacion-acreditaciones">
+    <div [fxLayout]="fxLayoutProperties.layout" [fxLayoutAlign]="fxLayoutProperties.layoutAlign">
+      <div fxFlex="99%" fxFlex.sm="99%">
+        <h2 id="acreditaciones-description">{{'prc.acreditaciones' | translate}}</h2>
+
+        <div class="mat-elevation-z4">
+          <table aria-describedby="acreditaciones-description" mat-table [dataSource]="acreditacionDataSource" matSort
+            matSortActive="url" matSortDirection="asc" matSortDisableClear #sortAcreditacion="matSort">
+
+            <!-- URL Column -->
+            <ng-container matColumnDef="url">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                {{'prc.acreditacion.url' | translate}}
+              </th>
+              <td mat-cell *matCellDef="let acreditacion">{{acreditacion?.url}} </td>
+            </ng-container>
+
+            <!-- Documento Column -->
+            <ng-container matColumnDef="documento">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                {{'prc.acreditacion.documento' | translate}}
+              </th>
+              <td mat-cell *matCellDef="let acreditacion">
+                <ng-container *ngIf="acreditacion?.documento">
+                  <span>{{acreditacion.documento?.nombre}}</span>
+                  <button mat-icon-button color="primary" matTooltip="{{'btn.download.file' | translate}}"
+                    (click)="downloadFile(acreditacion)">
+                    <mat-icon>arrow_downward</mat-icon>
+                  </button>
+                </ng-container>
+              </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="displayedColumnsAcreditacion"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumnsAcreditacion;"></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+  </section>
+</sgi-fragment>

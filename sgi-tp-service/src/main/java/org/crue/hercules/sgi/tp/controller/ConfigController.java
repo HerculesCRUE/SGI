@@ -1,5 +1,6 @@
 package org.crue.hercules.sgi.tp.controller;
 
+import java.util.Locale;
 import java.util.TimeZone;
 
 import org.crue.hercules.sgi.tp.config.SgiConfigProperties;
@@ -42,6 +43,20 @@ public class ConfigController {
     log.debug("timeZone() - start");
     String returnValue = sgiConfigProperties.getTimeZone().getID();
     log.debug("timeZone() - end");
+    return returnValue;
+  }
+
+  /**
+   * Devuelve el identificador de {@link Locale} configurado en la aplicación.
+   * 
+   * @return {@link String} con el identificador de {@link Locale} configurado.
+   */
+  @GetMapping(value = "/locale", produces = MediaType.TEXT_PLAIN_VALUE)
+  @PreAuthorize("isAuthenticated()")
+  public String locale() {
+    log.debug("locale() - start");
+    String returnValue = sgiConfigProperties.getLocale().getLanguage();
+    log.debug("locale() - end");
     return returnValue;
   }
 }

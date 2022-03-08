@@ -155,8 +155,16 @@ export class EvaluadorListadoComponent extends AbstractTablePaginationComponent<
     if (controls.estado.value) {
       // TODO: Revisar lógica
       filter
-        .and('fechaBaja', SgiRestFilterOperator.GREATHER_OR_EQUAL, LuxonUtils.toBackend(DateTime.now()))
-        .and('fechaAlta', SgiRestFilterOperator.LOWER_OR_EQUAL, LuxonUtils.toBackend(DateTime.now().plus({ days: 1 })));
+        .and(
+          new RSQLSgiRestFilter(
+            new RSQLSgiRestFilter(
+              'fechaBaja', SgiRestFilterOperator.GREATHER_OR_EQUAL, LuxonUtils.toBackend(DateTime.now())
+            ).and('fechaAlta', SgiRestFilterOperator.LOWER_OR_EQUAL, LuxonUtils.toBackend(DateTime.now().plus({ days: 1 })))
+          ).or(
+            new RSQLSgiRestFilter('fechaAlta', SgiRestFilterOperator.LOWER_OR_EQUAL, LuxonUtils.toBackend(DateTime.now().plus({ days: 1 })))
+              .and('fechaBaja', SgiRestFilterOperator.IS_NULL, '')
+          )
+        );
     }
     filter.and('personaRef', SgiRestFilterOperator.EQUALS, controls.solicitante.value.id);
 

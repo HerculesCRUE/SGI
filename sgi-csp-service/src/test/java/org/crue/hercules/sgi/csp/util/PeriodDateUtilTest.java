@@ -1,18 +1,46 @@
 package org.crue.hercules.sgi.csp.util;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import java.sql.Date;
 import java.time.Instant;
 import java.util.Calendar;
 import java.util.TimeZone;
 
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
-
-import static org.assertj.core.api.Assertions.assertThat;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 
 public class PeriodDateUtilTest {
 
   private static final int JULY = 7;
   private static final String UTC = "UTC";
+
+  @ParameterizedTest
+  @CsvSource(value = {// @formatter:off
+      "2021-01-08T00:00:00Z, 2021-12-31T23:59:59Z, 1, 1, 2021-01-08T00:00:00Z, 2021-02-07T23:59:59Z",
+      "2021-01-08T00:00:00Z, 2021-12-31T23:59:59Z, 1, 2, 2021-01-08T00:00:00Z, 2021-03-07T23:59:59Z",
+      "2021-01-08T00:00:00Z, 2021-12-31T23:59:59Z, 1, 3, 2021-01-08T00:00:00Z, 2021-04-07T23:59:59Z",
+      "2021-01-08T00:00:00Z, 2021-12-31T23:59:59Z, 4, 5, 2021-04-08T00:00:00Z, 2021-06-07T23:59:59Z",
+      "2021-01-31T00:00:00Z, 2021-12-31T23:59:59Z, 2, 2, 2021-02-28T00:00:00Z, 2021-03-30T23:59:59Z",
+      "2021-01-31T00:00:00Z, 2021-12-31T23:59:59Z, 3, 3, 2021-03-31T00:00:00Z, 2021-04-29T23:59:59Z",
+      "2021-02-28T00:00:00Z, 2021-12-31T23:59:59Z, 1, 3, 2021-02-28T00:00:00Z, 2021-05-27T23:59:59Z",
+      "2020-10-01T00:00:00Z, 2024-12-31T23:59:59Z, 1, 18, 2020-10-01T00:00:00Z, 2022-03-31T23:59:59Z",
+      "2020-10-01T00:00:00Z, 2024-12-31T23:59:59Z, 19, 36, 2022-04-01T00:00:00Z, 2023-09-30T23:59:59Z"
+      // @formatter:on
+  })
+  void test(Instant fechaInicioProyecto, Instant fechaFinProyecto, Integer mesInicioRango, Integer mesFinRango,
+      Instant fechaInicioRangoEsperada, Instant fechaFinRangoEsperada) {
+
+    Instant fechaRangoInicio = PeriodDateUtil.calculateFechaInicioPeriodo(fechaInicioProyecto, mesInicioRango,
+        TimeZone.getDefault());
+    Instant fechaRangoFin = PeriodDateUtil.calculateFechaFinPeriodo(fechaInicioProyecto, mesFinRango, fechaFinProyecto,
+        TimeZone.getDefault());
+
+    Assertions.assertThat(fechaRangoInicio).isEqualTo(fechaInicioRangoEsperada);
+    Assertions.assertThat(fechaRangoFin).isEqualTo(fechaFinRangoEsperada);
+  }
 
   @Test
   void calculateFechaInicioSeguimiento_should_return_a_valid_start_periodo_instant_when_is_called() {
@@ -29,7 +57,8 @@ public class PeriodDateUtilTest {
   @Test
   void calculateFechaFinSeguimiento_should_return_a_valid_end_periodo_instant_when_is_called() {
 
-    Instant result = PeriodDateUtil.calculateFechaFinPeriodo(DEFAULT_FECHA_INICIO(), 3, DEFAULT_FECHA_FIN(), TimeZone.getTimeZone(UTC));
+    Instant result = PeriodDateUtil.calculateFechaFinPeriodo(DEFAULT_FECHA_INICIO(), 3, DEFAULT_FECHA_FIN(),
+        TimeZone.getTimeZone(UTC));
 
     assertThat(result).isNotNull();
     Calendar cal = Calendar.getInstance();

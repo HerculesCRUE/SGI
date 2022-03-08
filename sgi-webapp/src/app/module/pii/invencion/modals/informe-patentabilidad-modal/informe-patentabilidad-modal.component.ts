@@ -5,16 +5,13 @@ import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { BaseModalComponent } from '@core/component/base-modal.component';
 import { MSG_PARAMS } from '@core/i18n';
 import { IInformePatentabilidad } from '@core/models/pii/informe-patentabilidad';
-import { IResultadoInformePatentibilidad } from '@core/models/pii/resultado-informe-patentabilidad';
 import { FxFlexProperties } from '@core/models/shared/flexLayout/fx-flex-properties';
 import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-properties';
-import { ResultadoInformePatentabilidadService } from '@core/services/pii/resultado-informe-patentabilidad/resultado-informe-patentabilidad.service';
 import { SnackBarService } from '@core/services/snack-bar.service';
 import { FormGroupUtil } from '@core/utils/form-group-util';
 import { TranslateService } from '@ngx-translate/core';
 import { SgiFileUploadComponent, UploadEvent } from '@shared/file-upload/file-upload.component';
-import { Observable } from 'rxjs';
-import { map, switchMap } from 'rxjs/operators';
+import { switchMap } from 'rxjs/operators';
 
 const MSG_ANADIR = marker('btn.add');
 const MSG_ACEPTAR = marker('btn.ok');
@@ -61,8 +58,6 @@ export class InformePatentabilidadModalComponent extends BaseModalComponent<IInf
   textSaveOrUpdate: string;
   title: string;
 
-  resultadosInforme$: Observable<IResultadoInformePatentibilidad[]>;
-
   @ViewChild(SgiFileUploadComponent) private uploader: SgiFileUploadComponent;
 
   get MSG_PARAMS() {
@@ -78,10 +73,8 @@ export class InformePatentabilidadModalComponent extends BaseModalComponent<IInf
     protected readonly snackBarService: SnackBarService,
     @Inject(MAT_DIALOG_DATA) public data: IInformePatentabilidadModalData,
     private readonly translate: TranslateService,
-    resultadoInformeService: ResultadoInformePatentabilidadService,
   ) {
     super(snackBarService, matDialogRef, null);
-    this.resultadosInforme$ = resultadoInformeService.findAll().pipe(map(response => response.items));
   }
 
   ngOnInit(): void {

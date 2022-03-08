@@ -1,17 +1,20 @@
+import { PercentPipe } from '@angular/common';
 import { Injectable } from '@angular/core';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { CLASIFICACION_CVN_MAP } from '@core/enums/clasificacion-cvn';
 import { ESTADO_MAP } from '@core/models/csp/estado-proyecto';
 import { CAUSA_EXENCION_MAP } from '@core/models/csp/proyecto';
 import { ColumnType, ISgiColumnReport } from '@core/models/rep/sgi-column-report';
+import { AreaTematicaService } from '@core/services/csp/area-tematica.service';
 import { ContextoProyectoService } from '@core/services/csp/contexto-proyecto.service';
 import { ProyectoService } from '@core/services/csp/proyecto.service';
+import { UnidadGestionService } from '@core/services/csp/unidad-gestion.service';
 import { AbstractTableExportFillService } from '@core/services/rep/abstract-table-export-fill.service';
 import { IReportConfig } from '@core/services/rep/abstract-table-export.service';
 import { LuxonUtils } from '@core/utils/luxon-utils';
 import { TranslateService } from '@ngx-translate/core';
 import { NGXLogger } from 'ngx-logger';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 import { IProyectoReportData, IProyectoReportOptions } from './proyecto-listado-export.service';
 
@@ -46,6 +49,9 @@ export class ProyectoGeneralListadoExportService extends AbstractTableExportFill
     protected readonly translate: TranslateService,
     private readonly proyectoService: ProyectoService,
     private readonly contextoProyectoService: ContextoProyectoService,
+    private readonly unidadGestionService: UnidadGestionService,
+    private readonly areaTematicaService: AreaTematicaService,
+    private readonly percentPipe: PercentPipe,
   ) {
     super(translate);
   }
@@ -69,6 +75,30 @@ export class ProyectoGeneralListadoExportService extends AbstractTableExportFill
             return proyectoData;
           })
         );
+      }),
+      switchMap(() => {
+        if (proyectoData.unidadGestion?.id) {
+          return this.unidadGestionService.findById(proyectoData.unidadGestion?.id).pipe(
+            map(unidadGestion => {
+              proyectoData.unidadGestion = unidadGestion;
+              return proyectoData;
+            })
+          );
+        } else {
+          return of(proyectoData);
+        }
+      }),
+      switchMap(() => {
+        if (proyectoData.contextoProyecto?.areaTematica?.id) {
+          return this.areaTematicaService.findById(proyectoData.contextoProyecto?.areaTematica?.id).pipe(
+            map(areaTematica => {
+              proyectoData.contextoProyecto.areaTematica = areaTematica;
+              return proyectoData;
+            })
+          );
+        } else {
+          return of(proyectoData);
+        }
       })
     );
   }
@@ -87,7 +117,7 @@ export class ProyectoGeneralListadoExportService extends AbstractTableExportFill
       {
         title: this.translate.instant(ID_SGE_KEY),
         name: 'idSGE',
-        type: ColumnType.NUMBER,
+        type: ColumnType.STRING,
         format: '#'
       },
       {
@@ -178,7 +208,7 @@ export class ProyectoGeneralListadoExportService extends AbstractTableExportFill
       {
         title: this.translate.instant(PORCENTAJE_IVA_KEY),
         name: 'porcentajeIVA',
-        type: ColumnType.NUMBER
+        type: ColumnType.STRING
       },
       {
         title: this.translate.instant(CAUSA_EXENCION_IVA_KEY),
@@ -213,14 +243,18 @@ export class ProyectoGeneralListadoExportService extends AbstractTableExportFill
     elementsRow.push(LuxonUtils.toBackend(proyecto.fechaInicio));
     elementsRow.push(LuxonUtils.toBackend(proyecto.fechaFin));
     elementsRow.push(LuxonUtils.toBackend(proyecto.fechaFinDefinitiva));
-    elementsRow.push(this.getI18nBooleanYesNo(proyecto.confidencial));
+    elementsRow.push(this.notIsNullAndNotUndefined(proyecto.confidencial) ? this.getI18nBooleanYesNo(proyecto.confidencial) : '');
     elementsRow.push(proyecto.clasificacionCVN ? this.translate.instant(CLASIFICACION_CVN_MAP.get(proyecto.clasificacionCVN)) : '');
-    elementsRow.push(this.getI18nBooleanYesNo(proyecto.coordinado));
-    elementsRow.push(this.getI18nBooleanYesNo(proyecto.coordinadorExterno));
-    elementsRow.push(this.getI18nBooleanYesNo(proyecto.colaborativo));
-    elementsRow.push(proyecto.iva?.iva);
+    elementsRow.push(this.notIsNullAndNotUndefined(proyecto.coordinado) ? this.getI18nBooleanYesNo(proyecto.coordinado) : '');
+    elementsRow.push(this.notIsNullAndNotUndefined(proyecto.coordinadorExterno) ? this.getI18nBooleanYesNo(proyecto.coordinadorExterno) : '');
+    elementsRow.push(this.notIsNullAndNotUndefined(proyecto.colaborativo) ? this.getI18nBooleanYesNo(proyecto.colaborativo) : '');
+    elementsRow.push(this.percentPipe.transform(proyecto.iva?.iva / 100));
     elementsRow.push(proyecto.causaExencion ? this.translate.instant(CAUSA_EXENCION_MAP.get(proyecto.causaExencion)) : '');
     elementsRow.push(proyecto.contextoProyecto?.areaTematica?.nombre);
     return elementsRow;
+  }
+
+  private notIsNullAndNotUndefined(value): boolean {
+    return value !== null && value !== undefined;
   }
 }

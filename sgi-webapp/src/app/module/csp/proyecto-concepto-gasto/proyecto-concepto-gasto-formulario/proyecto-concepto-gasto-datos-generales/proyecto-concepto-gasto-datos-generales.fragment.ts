@@ -103,7 +103,7 @@ export class ProyectoConceptoGastoDatosGeneralesFragment extends FormFragment<IP
 
   protected buildPatch(proyectoConceptoGasto: IProyectoConceptoGasto): { [key: string]: any; } {
     this.proyectoConceptoGasto = proyectoConceptoGasto;
-    const result = {
+    return {
       conceptoGasto: proyectoConceptoGasto.conceptoGasto,
       importeMaximo: proyectoConceptoGasto.importeMaximo,
       fechaInicio: proyectoConceptoGasto.fechaInicio,
@@ -112,7 +112,6 @@ export class ProyectoConceptoGastoDatosGeneralesFragment extends FormFragment<IP
       costesIndirectos: proyectoConceptoGasto.conceptoGasto.costesIndirectos,
       permitido: proyectoConceptoGasto.permitido
     };
-    return result;
   }
 
   protected initializer(key: number): Observable<IProyectoConceptoGasto> {

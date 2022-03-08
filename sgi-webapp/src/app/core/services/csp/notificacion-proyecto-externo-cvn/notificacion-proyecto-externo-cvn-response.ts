@@ -3,7 +3,7 @@ export interface INotificacionProyectoExternoCVNResponse {
   titulo: string;
   autorizacionId: number;
   proyectoId: number;
-  ambitoGeograficoId: number;
+  ambitoGeografico: string;
   codExterno: string;
   datosEntidadParticipacion: string;
   datosResponsable: string;

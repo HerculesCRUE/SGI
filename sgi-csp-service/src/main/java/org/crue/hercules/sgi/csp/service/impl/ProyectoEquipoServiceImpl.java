@@ -15,6 +15,7 @@ import org.crue.hercules.sgi.csp.repository.ProyectoEquipoRepository;
 import org.crue.hercules.sgi.csp.repository.ProyectoRepository;
 import org.crue.hercules.sgi.csp.repository.specification.ProyectoEquipoSpecifications;
 import org.crue.hercules.sgi.csp.service.ProyectoEquipoService;
+import org.crue.hercules.sgi.csp.util.ProyectoHelper;
 import org.crue.hercules.sgi.framework.rsql.SgiRSQLJPASupport;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -35,10 +36,13 @@ public class ProyectoEquipoServiceImpl implements ProyectoEquipoService {
 
   private final ProyectoEquipoRepository repository;
   private final ProyectoRepository proyectoRepository;
+  private final ProyectoHelper proyectoHelper;
 
-  public ProyectoEquipoServiceImpl(ProyectoEquipoRepository repository, ProyectoRepository proyectoRepository) {
+  public ProyectoEquipoServiceImpl(ProyectoEquipoRepository repository, ProyectoRepository proyectoRepository,
+      ProyectoHelper proyectoHelper) {
     this.repository = repository;
     this.proyectoRepository = proyectoRepository;
+    this.proyectoHelper = proyectoHelper;
   }
 
   /**
@@ -183,10 +187,14 @@ public class ProyectoEquipoServiceImpl implements ProyectoEquipoService {
    */
   public Page<ProyectoEquipo> findAllByProyecto(Long proyectoId, String query, Pageable pageable) {
     log.debug("findAllByProyecto(Long proyectoId, String query, Pageable pageable) - start");
+
     Specification<ProyectoEquipo> specs = ProyectoEquipoSpecifications.byProyectoId(proyectoId)
         .and(SgiRSQLJPASupport.toSpecification(query));
 
     Page<ProyectoEquipo> returnValue = repository.findAll(specs, pageable);
+
+    proyectoHelper.checkCanAccessProyecto(proyectoId);
+
     log.debug("findAllByProyecto(Long proyectoId, String query, Pageable pageable) - end");
     return returnValue;
   }

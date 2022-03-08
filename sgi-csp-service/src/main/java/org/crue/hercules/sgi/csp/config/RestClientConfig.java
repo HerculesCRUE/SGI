@@ -5,16 +5,18 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.crue.hercules.sgi.framework.problem.Problem;
 import org.crue.hercules.sgi.framework.problem.exception.ProblemException;
 import org.crue.hercules.sgi.framework.problem.spring.boot.web.client.RestTemplateProblemCustomizer;
+import org.crue.hercules.sgi.framework.web.config.OAuth2ClientConfiguration;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.web.client.RestTemplate;
 
 /**
  * Creación de los clientes de acceso al API rest de otros módulos.
  */
 @Configuration
-public class RestClientConfig {
+public class RestClientConfig extends OAuth2ClientConfiguration {
   /**
    * RestTemplate usado para el acceso al API rest de otros módulos.
    * 
@@ -23,7 +25,7 @@ public class RestClientConfig {
    */
   @Bean
   public RestTemplate restTemplate(RestTemplateBuilder restTemplateBuilder) {
-    return restTemplateBuilder.build();
+    return restTemplateBuilder.requestFactory(HttpComponentsClientHttpRequestFactory.class).build();
   }
 
   /**

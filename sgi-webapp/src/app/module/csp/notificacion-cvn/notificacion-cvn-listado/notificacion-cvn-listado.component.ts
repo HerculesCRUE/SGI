@@ -1,20 +1,36 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
+import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { AbstractTablePaginationComponent } from '@core/component/abstract-table-pagination.component';
+import { HttpProblem } from '@core/errors/http-problem';
+import { MSG_PARAMS } from '@core/i18n';
 import { INotificacionProyectoExternoCVN } from '@core/models/csp/notificacion-proyecto-externo-cvn';
 import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-properties';
 import { NotificacionProyectoExternoCvnService } from '@core/services/csp/notificacion-proyecto-externo-cvn/notificacion-proyecto-externo-cvn.service';
+import { DialogService } from '@core/services/dialog.service';
 import { EmpresaService } from '@core/services/sgemp/empresa.service';
 import { PersonaService } from '@core/services/sgp/persona.service';
 import { SnackBarService } from '@core/services/snack-bar.service';
 import { LuxonUtils } from '@core/utils/luxon-utils';
-import { SgiRestListResult, SgiRestFilter, RSQLSgiRestFilter, SgiRestFilterOperator } from '@sgi/framework/http';
-import { from, Observable, of } from 'rxjs';
-import { map, mergeMap, switchMap, toArray } from 'rxjs/operators';
+import { TranslateService } from '@ngx-translate/core';
+import { RSQLSgiRestFilter, SgiRestFilter, SgiRestFilterOperator, SgiRestListResult } from '@sgi/framework/http';
+import { NGXLogger } from 'ngx-logger';
+import { EMPTY, from, Observable, of } from 'rxjs';
+import { catchError, concatMap, filter, map, mergeMap, switchMap, toArray } from 'rxjs/operators';
 import { TipoColectivo } from 'src/app/esb/sgp/shared/select-persona/select-persona.component';
+import { CSP_ROUTE_NAMES } from '../../csp-route-names';
+import { NotificacionCvnAsociarAutorizacionModalComponent } from '../modals/notificacion-cvn-asociar-autorizacion-modal/notificacion-cvn-asociar-autorizacion-modal.component';
+import { NotificacionCvnAsociarProyectoModalComponent } from '../modals/notificacion-cvn-asociar-proyecto-modal/notificacion-cvn-asociar-proyecto-modal.component';
 
 const MSG_ERROR_LOAD = marker('error.load');
+const MSG_ASOCIAR_SUCCESS = marker('msg.asociar.entity.success');
+const AUTORIZACION_KEY = marker('csp.autorizacion');
+const PROYECTO_KEY = marker('csp.proyecto');
+const MGS_DESASOCIAR_AUTORIZACION_KEY = marker('csp.notificacion-cvn.desasociar-autorizacion');
+const MGS_DESASOCIAR_PROYECTO_KEY = marker('csp.notificacion-cvn.desasociar-proyecto');
+const MSG_ERROR_DESASOCIAR = marker('error.desasociar.entity');
+const MSG_SUCCESS_DESASOCIAR = marker('msg.desasociar.entity.success');
 
 @Component({
   selector: 'sgi-notificacion-cvn-listado',
@@ -26,13 +42,30 @@ export class NotificacionCvnListadoComponent extends AbstractTablePaginationComp
 
   notificaciones$: Observable<INotificacionProyectoExternoCVN[]>;
 
+  textoAsociarAutorizacionSuccess: string;
+  textoAsociarProyectoSuccess: string;
+  textoSuccessDesasociarAutorizacion: string;
+  textoSuccessDesasociarProyecto: string;
+  textoDesasociarAutorizacion: string;
+  textoDesasociarProyecto: string;
+  textoErrorDesasociarProyecto: string;
+  textoErrorDesasociarAutorizacion: string;
+  msgParamAutorizacionEntity = {};
+  msgParamProyectoEntity = {};
+
   TIPO_COLECTIVO = TipoColectivo;
+
+  CSP_ROUTE_NAMES = CSP_ROUTE_NAMES;
 
   constructor(
     protected readonly snackBarService: SnackBarService,
+    protected readonly logger: NGXLogger,
     private readonly notificacionProyectoExternoCvnService: NotificacionProyectoExternoCvnService,
     private readonly personaService: PersonaService,
-    private readonly empresaService: EmpresaService
+    private matDialog: MatDialog,
+    private readonly empresaService: EmpresaService,
+    private readonly translate: TranslateService,
+    private dialogService: DialogService,
   ) {
     super(snackBarService, MSG_ERROR_LOAD);
     this.initFlexProperties();
@@ -40,7 +73,103 @@ export class NotificacionCvnListadoComponent extends AbstractTablePaginationComp
 
   ngOnInit(): void {
     super.ngOnInit();
+    this.setupI18N();
     this.initFormGroup();
+  }
+
+  private setupI18N(): void {
+    this.translate.get(
+      AUTORIZACION_KEY,
+      MSG_PARAMS.CARDINALIRY.SINGULAR
+    ).pipe(
+      switchMap((value) => {
+        return this.translate.get(
+          MSG_ASOCIAR_SUCCESS,
+          { entity: value, ...MSG_PARAMS.GENDER.FEMALE }
+        );
+      })
+    ).subscribe((value) => this.textoAsociarAutorizacionSuccess = value);
+
+    this.translate.get(
+      PROYECTO_KEY,
+      MSG_PARAMS.CARDINALIRY.SINGULAR
+    ).pipe(
+      switchMap((value) => {
+        return this.translate.get(
+          MSG_ASOCIAR_SUCCESS,
+          { entity: value, ...MSG_PARAMS.GENDER.MALE }
+        );
+      })
+    ).subscribe((value) => this.textoAsociarProyectoSuccess = value);
+
+    this.translate.get(
+      AUTORIZACION_KEY,
+      MSG_PARAMS.CARDINALIRY.SINGULAR
+    ).subscribe((value) => this.msgParamAutorizacionEntity = { entity: value });
+
+    this.translate.get(
+      PROYECTO_KEY,
+      MSG_PARAMS.CARDINALIRY.SINGULAR
+    ).subscribe((value) => this.msgParamProyectoEntity = { entity: value });
+
+    this.translate.get(
+      AUTORIZACION_KEY,
+      MSG_PARAMS.CARDINALIRY.SINGULAR
+    ).pipe(
+      switchMap((value) => {
+        return this.translate.get(
+          MSG_SUCCESS_DESASOCIAR,
+          { entity: value, ...MSG_PARAMS.GENDER.FEMALE }
+        );
+      })
+    ).subscribe((value) => this.textoSuccessDesasociarAutorizacion = value);
+
+    this.translate.get(
+      AUTORIZACION_KEY,
+      MSG_PARAMS.CARDINALIRY.SINGULAR
+    ).pipe(
+      switchMap((value) => {
+        return this.translate.get(
+          MSG_ERROR_DESASOCIAR,
+          { entity: value, ...MSG_PARAMS.GENDER.FEMALE }
+        );
+      })
+    ).subscribe((value) => this.textoErrorDesasociarAutorizacion = value);
+
+    this.translate.get(
+      MGS_DESASOCIAR_AUTORIZACION_KEY,
+      MSG_PARAMS.CARDINALIRY.SINGULAR
+    ).subscribe((value) => this.textoDesasociarAutorizacion = value);
+
+    this.translate.get(
+      PROYECTO_KEY,
+      MSG_PARAMS.CARDINALIRY.SINGULAR
+    ).pipe(
+      switchMap((value) => {
+        return this.translate.get(
+          MSG_SUCCESS_DESASOCIAR,
+          { entity: value, ...MSG_PARAMS.GENDER.MALE }
+        );
+      })
+    ).subscribe((value) => this.textoSuccessDesasociarProyecto = value);
+
+    this.translate.get(
+      PROYECTO_KEY,
+      MSG_PARAMS.CARDINALIRY.SINGULAR
+    ).pipe(
+      switchMap((value) => {
+        return this.translate.get(
+          MSG_ERROR_DESASOCIAR,
+          { entity: value, ...MSG_PARAMS.GENDER.MALE }
+        );
+      })
+    ).subscribe((value) => this.textoErrorDesasociarProyecto = value);
+
+    this.translate.get(
+      MGS_DESASOCIAR_PROYECTO_KEY,
+      MSG_PARAMS.CARDINALIRY.SINGULAR
+    ).subscribe((value) => this.textoDesasociarProyecto = value);
+
   }
 
   private initFormGroup(): void {
@@ -58,9 +187,9 @@ export class NotificacionCvnListadoComponent extends AbstractTablePaginationComp
   protected createObservable(reset?: boolean): Observable<SgiRestListResult<INotificacionProyectoExternoCVN>> {
     return this.notificacionProyectoExternoCvnService.findAll(this.getFindOptions(reset)).pipe(
       switchMap(notificaciones => from(notificaciones.items).pipe(
-        mergeMap(notificacion => this.fillNotificacionSolicitante(notificacion)),
-        mergeMap(notificacion => this.fillNotificacionEntidadParticipacion(notificacion)),
-        mergeMap(notificacion => this.fillNotificacionInvestigadorPrincipal(notificacion)),
+        concatMap(notificacion => this.fillNotificacionSolicitante(notificacion)),
+        concatMap(notificacion => this.fillNotificacionEntidadParticipacion(notificacion)),
+        concatMap(notificacion => this.fillNotificacionInvestigadorPrincipal(notificacion)),
         toArray(),
         map(items => {
           notificaciones.items = items;
@@ -78,6 +207,10 @@ export class NotificacionCvnListadoComponent extends AbstractTablePaginationComp
       map(solicitante => {
         notificacion.solicitante = solicitante;
         return notificacion;
+      }),
+      catchError((error) => {
+        this.logger.error(error);
+        return of(notificacion);
       })
     );
   }
@@ -90,7 +223,12 @@ export class NotificacionCvnListadoComponent extends AbstractTablePaginationComp
       map(entidadParticipacion => {
         notificacion.entidadParticipacion = entidadParticipacion;
         return notificacion;
+      }),
+      catchError((error) => {
+        this.logger.error(error);
+        return of(notificacion);
       })
+
     );
   }
 
@@ -104,6 +242,10 @@ export class NotificacionCvnListadoComponent extends AbstractTablePaginationComp
       map(responsable => {
         notificacion.responsable = responsable;
         return notificacion;
+      }),
+      catchError((error) => {
+        this.logger.error(error);
+        return of(notificacion);
       })
     );
   }
@@ -143,5 +285,80 @@ export class NotificacionCvnListadoComponent extends AbstractTablePaginationComp
     this.fxLayoutProperties.gap = '1%';
     this.fxLayoutProperties.layout = 'row wrap';
     this.fxLayoutProperties.xs = 'column';
+  }
+
+
+  openModalAsociarAutorizacion(data: INotificacionProyectoExternoCVN): void {
+    const config: MatDialogConfig<INotificacionProyectoExternoCVN> = {
+      panelClass: 'sgi-dialog-container',
+      data
+    };
+    const dialogRef = this.matDialog.open(NotificacionCvnAsociarAutorizacionModalComponent, config);
+    dialogRef.afterClosed().pipe(
+      filter(result => !!result)
+    ).subscribe(() => {
+      this.snackBarService.showSuccess(this.textoAsociarAutorizacionSuccess);
+    });
+  }
+
+  openModalAsociarProyecto(data: INotificacionProyectoExternoCVN): void {
+    const config: MatDialogConfig<INotificacionProyectoExternoCVN> = {
+      panelClass: 'sgi-dialog-container',
+      data
+    };
+    const dialogRef = this.matDialog.open(NotificacionCvnAsociarProyectoModalComponent, config);
+    dialogRef.afterClosed().pipe(
+      filter(result => !!result)
+    ).subscribe(() => {
+      this.snackBarService.showSuccess(this.textoAsociarProyectoSuccess);
+    });
+  }
+
+  desasociarAutorizacion(data: INotificacionProyectoExternoCVN) {
+    const subcription = this.dialogService.showConfirmation(this.textoDesasociarAutorizacion).pipe(
+      switchMap((accept) => {
+        if (accept) {
+          return this.notificacionProyectoExternoCvnService.asociarAutorizacion(data.id, {} as INotificacionProyectoExternoCVN);
+        }
+      })).subscribe(
+        () => {
+          this.snackBarService.showSuccess(this.textoSuccessDesasociarAutorizacion);
+          this.loadTable();
+        },
+        (error) => {
+          this.logger.error(error);
+          if (error instanceof HttpProblem) {
+            this.snackBarService.showError(error);
+          }
+          else {
+            this.snackBarService.showError(this.textoErrorDesasociarProyecto);
+          }
+        }
+      );
+    this.suscripciones.push(subcription);
+  }
+
+  desasociarProyecto(data: INotificacionProyectoExternoCVN) {
+    const subcription = this.dialogService.showConfirmation(this.textoDesasociarProyecto).pipe(
+      switchMap((accept) => {
+        if (accept) {
+          return this.notificacionProyectoExternoCvnService.asociarProyecto(data.id, {} as INotificacionProyectoExternoCVN);
+        }
+      })).subscribe(
+        () => {
+          this.snackBarService.showSuccess(this.textoSuccessDesasociarProyecto);
+          this.loadTable();
+        },
+        (error) => {
+          this.logger.error(error);
+          if (error instanceof HttpProblem) {
+            this.snackBarService.showError(error);
+          }
+          else {
+            this.snackBarService.showError(this.textoErrorDesasociarAutorizacion);
+          }
+        }
+      );
+    this.suscripciones.push(subcription);
   }
 }

@@ -13,12 +13,13 @@ import { MiembroEquipoProyectoModalComponent } from './miembro-equipo-proyecto-m
 import { MiembroEquipoSolicitudModalComponent } from './miembro-equipo-solicitud-modal/miembro-equipo-solicitud-modal.component';
 import { PartidaGastoModalComponent } from './partida-gasto-modal/partida-gasto-modal.component';
 import { PartidaPresupuestariaModalComponent } from './partida-presupuestaria-modal/partida-presupuestaria-modal.component';
-import { SearchProyectosEconomicosModalComponent } from './search-proyectos-economicos-modal/search-proyectos-economicos-modal.component';
 import { SelectAreaTematicaComponent } from './select-area-tematica/select-area-tematica.component';
 import { SelectConceptoGastoComponent } from './select-concepto-gasto/select-concepto-gasto.component';
 import { SearchConvocatoriaModalComponent } from './select-convocatoria/dialog/search-convocatoria.component';
 import { SelectConvocatoriaComponent } from './select-convocatoria/select-convocatoria.component';
 import { SelectFuenteFinanciacionComponent } from './select-fuente-financiacion/select-fuente-financiacion.component';
+import { SearchGrupoModalComponent } from './select-grupo/dialog/search-grupo.component';
+import { SelectGrupoComponent } from './select-grupo/select-grupo.component';
 import { SelectModeloEjecucionComponent } from './select-modelo-ejecucion/select-modelo-ejecucion.component';
 import { SelectProgramaComponent } from './select-programa/select-programa.component';
 import { SearchProyectoModalComponent } from './select-proyecto/dialog/search-proyecto.component';
@@ -48,7 +49,6 @@ import { SolicitiudPresupuestoModalComponent } from './solicitud-presupuesto-mod
     SelectTipoAmbitoGeograficoComponent,
     SelectTipoFinalidadComponent,
     SelectUnidadGestionComponent,
-    SearchProyectosEconomicosModalComponent,
     SolicitiudPresupuestoModalComponent,
     PartidaPresupuestariaModalComponent,
     SearchProyectoModalComponent,
@@ -58,7 +58,9 @@ import { SolicitiudPresupuestoModalComponent } from './solicitud-presupuesto-mod
     SelectTipoDocumentoComponent,
     SelectTipoHitoComponent,
     SelectConceptoGastoComponent,
-    SelectTipoFinanciacionComponent
+    SelectTipoFinanciacionComponent,
+    SelectGrupoComponent,
+    SearchGrupoModalComponent
   ],
   imports: [
     SharedModule,
@@ -85,7 +87,6 @@ import { SolicitiudPresupuestoModalComponent } from './solicitud-presupuesto-mod
     SelectTipoAmbitoGeograficoComponent,
     SelectTipoFinalidadComponent,
     SelectUnidadGestionComponent,
-    SearchProyectosEconomicosModalComponent,
     SolicitiudPresupuestoModalComponent,
     SelectProyectoComponent,
     SelectTipoFaseComponent,
@@ -93,7 +94,8 @@ import { SolicitiudPresupuestoModalComponent } from './solicitud-presupuesto-mod
     SelectTipoDocumentoComponent,
     SelectTipoHitoComponent,
     SelectConceptoGastoComponent,
-    SelectTipoFinanciacionComponent
+    SelectTipoFinanciacionComponent,
+    SelectGrupoComponent
   ]
 })
 export class CspSharedModule { }

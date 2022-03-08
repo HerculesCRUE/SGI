@@ -29,6 +29,8 @@ const ENTIDAD_FINANCIADORA_KEY = marker('csp.proyecto-amortizacion-fondos.entida
 const ANUALIDAD_KEY = marker('csp.proyecto-amortizacion-fondos.periodo-amortizacion.anualidad');
 const IMPORTE_KEY = marker('csp.proyecto-amortizacion-fondos.periodo-amortizacion.importe');
 const FECHA_LIMITE_AMORTIZACION_KEY = marker('csp.proyecto-amortizacion-fondos.periodo-amortizacion.fecha-limite-amortizacion');
+const TIPO_FINANCIACION_NO_INFORMADO = marker('csp.proyecto-amortizacion-fondos.periodo-amortizacion.tipo-financiacion-no-informado');
+const FUENTE_FINANCIACION_NO_INFORMADA = marker('csp.proyecto-amortizacion-fondos.periodo-amortizacion.fuente-financiacion-no-informada');
 
 export interface IProyectoPeriodoAmortizacionModalData {
   proyectoId: number;
@@ -60,6 +62,30 @@ export class ProyectoPeriodoAmortizacionModalComponent
 
   textSaveOrUpdate: string;
   title: string;
+
+  readonly displayerEntidadFinanciadora = (entidadFinanciadora: IEntidadFinanciadora): string => {
+    let fuente = this.translate.instant(FUENTE_FINANCIACION_NO_INFORMADA);
+    let tipo = this.translate.instant(TIPO_FINANCIACION_NO_INFORMADO);
+    if (entidadFinanciadora?.fuenteFinanciacion?.nombre) {
+      fuente = entidadFinanciadora?.fuenteFinanciacion?.nombre;
+    }
+    if (entidadFinanciadora?.tipoFinanciacion?.nombre) {
+      tipo = entidadFinanciadora?.tipoFinanciacion?.nombre;
+    }
+    return entidadFinanciadora?.empresa?.nombre + ' - ' + fuente + ' - ' + tipo;
+  }
+
+  readonly comparerIdentificadorSge = (o1: StatusWrapper<IProyectoProyectoSge>, o2: StatusWrapper<IProyectoProyectoSge>): boolean => {
+    if (o1 && o2) {
+      return o1?.value?.proyectoSge?.id === o2?.value?.proyectoSge?.id;
+    }
+    return o1 === o2;
+  }
+  readonly displayerIdentificadorSge = (proyectoProyectoSGE: IProyectoProyectoSge): string => proyectoProyectoSGE.proyectoSge?.id ?? '';
+
+  readonly sorterIdentificadorSge = (o1: SelectValue<IProyectoProyectoSge>, o2: SelectValue<IProyectoProyectoSge>): number => o1?.displayText.localeCompare(o2?.displayText);
+
+  readonly displayerAnualidad = (proyectoAnualidad: IProyectoAnualidad): string => proyectoAnualidad?.anio?.toString() ?? '';
 
   constructor(
     protected snackBarService: SnackBarService,
@@ -217,29 +243,6 @@ export class ProyectoPeriodoAmortizacionModalComponent
       ).subscribe((value) => this.title = value);
     }
 
-  }
-
-  displayerIdentificadorSge(proyectoProyectoSGE: IProyectoProyectoSge): string {
-    return proyectoProyectoSGE.proyectoSge?.id ?? '';
-  }
-
-  sorterIdentificadorSge(o1: SelectValue<IProyectoProyectoSge>, o2: SelectValue<IProyectoProyectoSge>): number {
-    return o1?.displayText.localeCompare(o2?.displayText);
-  }
-
-  comparerIdentificadorSge(o1: StatusWrapper<IProyectoProyectoSge>, o2: StatusWrapper<IProyectoProyectoSge>): boolean {
-    if (o1 && o2) {
-      return o1?.value?.proyectoSge?.id === o2?.value?.proyectoSge?.id;
-    }
-    return o1 === o2;
-  }
-
-  displayerEntidadFinanciadora(entidadFinanciadora: IEntidadFinanciadora): string {
-    return entidadFinanciadora?.empresa?.nombre + ' - ' + entidadFinanciadora?.fuenteFinanciacion?.nombre + ' - ' + entidadFinanciadora?.tipoFinanciacion?.nombre;
-  }
-
-  displayerAnualidad(proyectoAnualidad: IProyectoAnualidad): string {
-    return proyectoAnualidad?.anio?.toString() ?? '';
   }
 
 }

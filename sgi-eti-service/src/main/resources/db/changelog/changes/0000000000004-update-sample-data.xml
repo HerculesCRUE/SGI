@@ -2,7 +2,7 @@
 <databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:pro="http://www.liquibase.org/xml/ns/pro" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-3.8.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
   <property name="schemaPrefix" value="" />
 
-  <changeSet context="!test" author="master" id="0000000000004-disable-evaluadores">
+  <changeSet context="dev" author="master" id="0000000000004-disable-evaluadores">
     <!-- Disable existent administrador-etica, tecnico-etica, investigador1-etica, solicitante-etica, investigador3-etica -->
     <!-- Disable future tecnico-etica, tecnico1-etica, tecnico2-etica, tecnico3-etica, investigador4-etica -->
     <update tableName="evaluador">
@@ -14,7 +14,7 @@
     </update>
   </changeSet>
 
-  <changeSet context="!test" author="master" id="0000000000004-enable-evaluador">
+  <changeSet context="dev" author="master" id="0000000000004-enable-evaluador">
     <!-- Enable investigador2-etica -->
     <update tableName="evaluador">
       <column name="fecha_baja" value="NULL"></column>
@@ -23,7 +23,7 @@
     </update>
   </changeSet>
 
-  <changeSet context="!test" author="master" id="0000000000004-fix-presidentes">
+  <changeSet context="dev" author="master" id="0000000000004-fix-presidentes">
     <!-- Switch existent 'PRESIDENT's to 'VOCAL', to prevent duplicates -->
     <update tableName="evaluador">
       <column name="cargo_comite_id" valueComputed="(SELECT id FROM ${schemaPrefix}cargo_comite WHERE nombre = 'VOCAL')"></column>
@@ -35,7 +35,7 @@
     </update>
   </changeSet>
 
-  <changeSet context="!test" author="master" id="0000000000004-add-evaluador">
+  <changeSet context="dev" author="master" id="0000000000004-add-evaluador">
     <!-- tecnico-etica -->
     <insert tableName="evaluador">
       <column name="id" valueSequenceNext="evaluador_seq" />

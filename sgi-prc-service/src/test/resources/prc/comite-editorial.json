@@ -1,0 +1,88 @@
+{
+  "idRef": "COMITE_EDITORIAL_5",
+  "epigrafeCVN": "060.030.030.000",
+  "campos": [
+    {
+      "codigoCVN": "060.030.030.010",
+      "valores": [
+        "Revista nature"
+      ]
+    },
+    {
+      "codigoCVN": "060.030.030.140",
+      "valores": [
+        "2020-07-15"
+      ]
+    },
+    {
+      "codigoCVN": "060.030.030.020",
+      "valores": [
+        "724"
+      ]
+    },
+    {
+      "codigoCVN": "ISSN",
+      "valores": [
+        "1268-5478"
+      ]
+    }
+  ],
+  "autores": [
+    {
+      "personaRef": "52364567",
+      "firma": "simon.apellido",
+      "nombre": "",
+      "apellidos": "",
+      "orden": 1,
+      "orcidID": "",
+      "ip": true
+    },
+    {
+      "personaRef": "02221287",
+      "firma": "enrique.apellido",
+      "nombre": "",
+      "apellidos": "",
+      "orden": 2,
+      "orcidID": "",
+      "ip": false
+    },
+    {
+      "personaRef": "01889311",
+      "firma": "",
+      "nombre": "Luis",
+      "apellidos": "García",
+      "orden": 3,
+      "orcidID": "",
+      "ip": false
+    }
+  ],
+  "indicesImpacto": [
+    {
+      "fuenteImpacto": "000",
+      "indice": 1.5,
+      "anio": "2020",
+      "otraFuenteImpacto": "",
+      "posicionPublicacion": 1,
+      "numeroRevista": 100,
+      "revista25": true
+    },
+    {
+      "fuenteImpacto": "010",
+      "indice": 1.6,
+      "anio": "2019",
+      "otraFuenteImpacto": "",
+      "posicionPublicacion": 45,
+      "numeroRevista": 100,
+      "revista25": false
+    }
+  ],
+  "proyectos": [
+    2
+  ],
+  "acreditaciones": [
+    {
+      "url": "www.paginamipublicacion.es",
+      "documentoRef": ""
+    }
+  ]
+}

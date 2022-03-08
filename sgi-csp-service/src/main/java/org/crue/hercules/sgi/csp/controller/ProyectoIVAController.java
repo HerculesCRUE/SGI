@@ -65,7 +65,7 @@ public class ProyectoIVAController {
    * @return la lista de entidades {@link ProyectoIVA} paginadas
    */
   @GetMapping("/{proyectoId}/historico")
-  @PreAuthorize("hasAuthorityForAnyUO('CSP-PRO-E')")
+  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-PRO-E', 'CSP-PRO-INV-VR')")
   public ResponseEntity<Page<ProyectoIVA>> findAllByProyectoId(@PathVariable Long proyectoId,
       @RequestParam(name = "q", required = false) String query, @RequestPageable(sort = "s") Pageable pageable) {
     log.debug("findAllByProyectoI(String query, Pageable paging) - start");

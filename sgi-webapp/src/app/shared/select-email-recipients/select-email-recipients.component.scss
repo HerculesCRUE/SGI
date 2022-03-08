@@ -1,0 +1,31 @@
+@import "~@angular/material/theming";
+
+:host {
+  .icon-wrapper {
+    color: rgba(0, 0, 0, 0.54);
+    margin-top: -0.2em;
+    &.disabled {
+      color: rgba(0, 0, 0, 0.38);
+    }
+    .mat-icon-button {
+      height: 1.5em;
+      width: 1.5em;
+      font: inherit;
+      vertical-align: baseline;
+      .mat-icon {
+        font-size: 1.4em;
+        width: 1em;
+        height: 1em;
+        margin-top: -0.3em;
+      }
+    }
+  }
+}
+
+.page {
+    border-top-width: 1px;
+    border-top-style: solid;
+    border-top-color: rgba(0, 0, 0, 0.12);
+    color: rgba(0, 0, 0, 0.54);
+    font-size: 12px;
+}

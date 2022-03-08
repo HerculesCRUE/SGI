@@ -416,7 +416,7 @@ public class ModeloEjecucionController {
    *         paginadas y filtradas del {@link ModeloEjecucion}.
    */
   @GetMapping("/{id}/modelotipohitos")
-  @PreAuthorize("hasAuthorityForAnyUO('CSP-ME-E')")
+  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-ME-E','CSP-CON-C','CSP-CON-E','CSP-CON-V','CSP-CON-INV-V','CSP-PRO-E','CSP-SOL-E','CSP-SOL-V' )")
   public ResponseEntity<Page<ModeloTipoHito>> findAllModeloTipoHitos(@PathVariable Long id,
       @RequestParam(name = "q", required = false) String query, @RequestPageable(sort = "s") Pageable paging) {
     log.debug("findAllModeloTipoHitos(Long id, String query, Pageable paging) - start");

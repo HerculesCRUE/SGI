@@ -8,7 +8,7 @@ import org.crue.hercules.sgi.rep.config.SgiConfigProperties;
 import org.crue.hercules.sgi.rep.dto.eti.EvaluacionDto;
 import org.crue.hercules.sgi.rep.dto.eti.InformeEvaluacionReportInput;
 import org.crue.hercules.sgi.rep.dto.eti.ReportInformeEvaluacionRetrospectiva;
-import org.crue.hercules.sgi.rep.service.sgp.PersonaService;
+import org.crue.hercules.sgi.rep.service.sgi.SgiApiSgpService;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
@@ -22,7 +22,7 @@ public class InformeEvaluacionRetrospectivaReportService extends InformeEvaluaci
   private final EvaluacionService evaluacionService;
 
   public InformeEvaluacionRetrospectivaReportService(SgiConfigProperties sgiConfigProperties,
-      PersonaService personaService, EvaluacionService evaluacionService) {
+      SgiApiSgpService personaService, EvaluacionService evaluacionService) {
 
     super(sgiConfigProperties, personaService, evaluacionService);
     this.evaluacionService = evaluacionService;

@@ -8,6 +8,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.Size;
@@ -95,8 +96,9 @@ public class Autorizacion extends BaseEntity {
   private Long convocatoriaId;
 
   /** Estado Autorizacion */
-  @Column(name = "estado_id", nullable = true)
-  private Long estadoId;
+  @ManyToOne
+  @JoinColumn(name = "estado_id", foreignKey = @ForeignKey(name = "FK_AUTORIZACION_AUTORIZACIONESTADO"))
+  private EstadoAutorizacion estado;
 
   // Relation mappings for JPA metamodel generation only
   @ManyToOne
@@ -105,9 +107,9 @@ public class Autorizacion extends BaseEntity {
   @Setter(AccessLevel.NONE)
   private final Convocatoria convocatoria = null;
 
-  @ManyToOne
-  @JoinColumn(name = "estado_id", insertable = false, updatable = false, foreignKey = @ForeignKey(name = "FK_AUTORIZACIONESTADO_AUTORIZACION"))
+  @OneToOne(mappedBy = "autorizacion")
   @Getter(AccessLevel.NONE)
   @Setter(AccessLevel.NONE)
-  private final EstadoAutorizacion estado = null;
+  private final NotificacionProyectoExternoCVN notificacionProyectoExternoCvn = null;
+
 }

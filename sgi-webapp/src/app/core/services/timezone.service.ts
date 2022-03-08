@@ -8,6 +8,9 @@ import { catchError, tap } from 'rxjs/operators';
 import { ConfigService as CspConfigService } from './csp/config.service';
 import { ConfigService as EtiConfigService } from './eti/config.service';
 import { ConfigService as PiiConfigService } from './pii/config.service';
+import { ConfigService as PrcConfigService } from './prc/config.service';
+import { ConfigService as RelConfigService } from './rel/config.service';
+import { ConfigService as RepConfigService } from './rep/config.service';
 import { ConfigService as UsrConfigService } from './usr/config.service';
 
 export interface TimeZoneConfigService {
@@ -36,7 +39,10 @@ export class TimeZoneService implements OnDestroy {
     cspConfigService: CspConfigService,
     etiConfigService: EtiConfigService,
     piiConfigService: PiiConfigService,
-    usrConfigService: UsrConfigService
+    usrConfigService: UsrConfigService,
+    repConfigService: RepConfigService,
+    relConfigService: RelConfigService,
+    prcConfigService: PrcConfigService
   ) {
     Settings.defaultZoneName = this._zone$.getValue();
     if (authService.isAuthenticated()) {
@@ -45,6 +51,9 @@ export class TimeZoneService implements OnDestroy {
         this.buildRequest('ETI', etiConfigService),
         this.buildRequest('PII', piiConfigService),
         this.buildRequest('USR', usrConfigService),
+        this.buildRequest('REP', repConfigService),
+        this.buildRequest('REL', relConfigService),
+        this.buildRequest('PRC', prcConfigService)
       ).subscribe();
     } else {
       logger.warn('No authenticated user');

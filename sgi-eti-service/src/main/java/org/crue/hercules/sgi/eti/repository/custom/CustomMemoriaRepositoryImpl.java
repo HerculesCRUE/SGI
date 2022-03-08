@@ -218,7 +218,9 @@ public class CustomMemoriaRepositoryImpl implements CustomMemoriaRepository {
 
     cq.multiselect(root.get(Memoria_.id), root.get(Memoria_.numReferencia), root.get(Memoria_.titulo),
         root.get(Memoria_.comite), root.get(Memoria_.estadoActual), defaultDate, defaultDate,
-        isResponsable(root, cb, cq, personaRefConsulta).isNotNull().alias("isResponsable"), root.get(Memoria_.activo),
+        cb.selectCase().when(cb.isNotNull(isResponsable(root, cb, cq, personaRefConsulta)), true).otherwise(false)
+            .alias("isResponsable"),
+        root.get(Memoria_.activo),
         root.get(Memoria_.requiereRetrospectiva), joinMemoriaRetrospectiva.alias("retrospectiva"),
         root.get(Memoria_.peticionEvaluacion).get(PeticionEvaluacion_.personaRef)).distinct(true);
 
@@ -291,7 +293,9 @@ public class CustomMemoriaRepositoryImpl implements CustomMemoriaRepository {
 
     cq.multiselect(root.get(Memoria_.id), root.get(Memoria_.numReferencia), root.get(Memoria_.titulo),
         root.get(Memoria_.comite), root.get(Memoria_.estadoActual), defaultDate, defaultDate,
-        isResponsable(root, cb, cq, personaRefConsulta).isNotNull().alias("isResponsable"), root.get(Memoria_.activo),
+        cb.selectCase().when(cb.isNotNull(isResponsable(root, cb, cq, personaRefConsulta)), true).otherwise(false)
+            .alias("isResponsable"),
+        root.get(Memoria_.activo),
         root.get(Memoria_.requiereRetrospectiva), joinMemoriaRetrospectiva.alias("retrospectiva"),
         root.get(Memoria_.peticionEvaluacion).get(PeticionEvaluacion_.personaRef)).distinct(true);
 

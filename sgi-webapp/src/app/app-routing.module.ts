@@ -51,6 +51,14 @@ const routes: SgiRoutes = [
     canActivate: [SgiAuthGuard, AllowModuleGuard]
   },
   {
+    path: APP_ROUTE_NAMES.PRC,
+    loadChildren: () =>
+      import('./module/prc/prc.module').then(
+        (m) => m.PrcModule
+      ),
+    canActivate: [SgiAuthGuard, AllowModuleGuard]
+  },
+  {
     path: '**',
     component: RootComponent
   },

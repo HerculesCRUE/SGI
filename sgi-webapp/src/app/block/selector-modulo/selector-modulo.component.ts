@@ -7,6 +7,8 @@ import { Module } from '@core/module';
 const MSG_MODULO_CSP = marker('title.modulo.csp');
 const MSG_MODULO_ETI = marker('title.modulo.eti');
 const MSG_MODULO_INV = marker('title.modulo.inv');
+const MSG_MODULO_PII = marker('title.modulo.pii');
+const MSG_MODULO_PRC = marker('title.modulo.prc');
 
 interface SelectorModulo {
   module: Module;
@@ -36,6 +38,14 @@ export class SelectorModuloComponent {
       {
         module: Module.INV,
         nombre: MSG_MODULO_INV
+      },
+      {
+        module: Module.PII,
+        nombre: MSG_MODULO_PII
+      },
+      {
+        module: Module.PRC,
+        nombre: MSG_MODULO_PRC
       }
     ];
   }

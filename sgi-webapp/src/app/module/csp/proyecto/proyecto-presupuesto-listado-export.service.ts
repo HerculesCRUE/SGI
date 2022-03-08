@@ -213,27 +213,27 @@ export class ProyectoPresupuestoListadoExportService extends AbstractTableExport
 
       const presupuestoElementsRow: any[] = [];
 
-      let presupuestoTable = this.decimalPipe.transform(presupuesto?.importeTotalPresupuestoUniversidadSinCosteIndirecto, '.2-2') ?? '';
+      let presupuestoTable = this.decimalPipe.transform(presupuesto?.importeTotalPresupuestoUniversidadSinCosteIndirecto, '.2-2') ?? '0';
       presupuestoTable += '\n';
-      presupuestoTable += this.decimalPipe.transform(presupuesto?.importeTotalPresupuestoUniversidadCostesIndirectos, '.2-2') ?? '';
+      presupuestoTable += this.decimalPipe.transform(presupuesto?.importeTotalPresupuestoUniversidadCostesIndirectos, '.2-2') ?? '0';
       presupuestoTable += '\n';
       presupuestoTable += this.decimalPipe.transform((presupuesto?.importeTotalPresupuestoUniversidadSinCosteIndirecto +
-        presupuesto?.importeTotalPresupuestoUniversidadCostesIndirectos), '.2-2') ?? '';
+        presupuesto?.importeTotalPresupuestoUniversidadCostesIndirectos), '.2-2') ?? '0';
       presupuestoTable += '\n';
-      presupuestoTable += this.decimalPipe.transform(presupuesto?.importeTotalConcedidoUniversidadSinCosteIndirecto, '.2-2') ?? '';
+      presupuestoTable += this.decimalPipe.transform(presupuesto?.importeTotalConcedidoUniversidadSinCosteIndirecto, '.2-2') ?? '0';
       presupuestoTable += '\n';
-      presupuestoTable += this.decimalPipe.transform(presupuesto?.importeTotalConcedidoUniversidadCostesIndirectos, '.2-2') ?? '';
+      presupuestoTable += this.decimalPipe.transform(presupuesto?.importeTotalConcedidoUniversidadCostesIndirectos, '.2-2') ?? '0';
       presupuestoTable += '\n';
       presupuestoTable += this.decimalPipe.transform((presupuesto?.importeTotalConcedidoUniversidadSinCosteIndirecto +
-        presupuesto?.importeTotalConcedidoUniversidadCostesIndirectos), '.2-2') ?? '';
+        presupuesto?.importeTotalConcedidoUniversidadCostesIndirectos), '.2-2') ?? '0';
       presupuestoTable += '\n';
-      presupuestoTable += this.decimalPipe.transform(presupuesto?.importeTotalPresupuestoSocios, '.2-2') ?? '';
+      presupuestoTable += this.decimalPipe.transform(presupuesto?.importeTotalPresupuestoSocios, '.2-2') ?? '0';
       presupuestoTable += '\n';
-      presupuestoTable += this.decimalPipe.transform(presupuesto?.importeTotalConcedidoSocios, '.2-2') ?? '';
+      presupuestoTable += this.decimalPipe.transform(presupuesto?.importeTotalConcedidoSocios, '.2-2') ?? '0';
       presupuestoTable += '\n';
-      presupuestoTable += this.decimalPipe.transform(presupuesto?.importeTotalPresupuesto, '.2-2') ?? '';
+      presupuestoTable += this.decimalPipe.transform(presupuesto?.importeTotalPresupuesto, '.2-2') ?? '0';
       presupuestoTable += '\n';
-      presupuestoTable += this.decimalPipe.transform(presupuesto?.importeTotalConcedido, '.2-2') ?? '';
+      presupuestoTable += this.decimalPipe.transform(presupuesto?.importeTotalConcedido, '.2-2') ?? '0';
 
       presupuestoElementsRow.push(presupuestoTable);
 
@@ -251,34 +251,34 @@ export class ProyectoPresupuestoListadoExportService extends AbstractTableExport
     if (proyecto) {
       const presupuesto = proyecto.presupuesto;
       elementsRow.push(presupuesto?.importeTotalPresupuestoUniversidadSinCosteIndirecto ?
-        presupuesto?.importeTotalPresupuestoUniversidadSinCosteIndirecto.toString() : '');
+        presupuesto?.importeTotalPresupuestoUniversidadSinCosteIndirecto.toString() : '0');
       elementsRow.push(presupuesto?.importeTotalPresupuestoUniversidadCostesIndirectos ?
-        presupuesto?.importeTotalPresupuestoUniversidadCostesIndirectos.toString() : '');
+        presupuesto?.importeTotalPresupuestoUniversidadCostesIndirectos.toString() : '0');
       elementsRow.push(presupuesto?.importeTotalPresupuestoUniversidadSinCosteIndirecto &&
         presupuesto?.importeTotalPresupuestoUniversidadCostesIndirectos ?
-        (presupuesto?.importeTotalPresupuestoUniversidadSinCosteIndirecto + presupuesto?.importeTotalPresupuestoUniversidadCostesIndirectos).toString() : '');
+        (presupuesto?.importeTotalPresupuestoUniversidadSinCosteIndirecto + presupuesto?.importeTotalPresupuestoUniversidadCostesIndirectos).toString() : '0');
       elementsRow.push(presupuesto?.importeTotalConcedidoUniversidadSinCosteIndirecto ?
-        presupuesto?.importeTotalConcedidoUniversidadSinCosteIndirecto.toString() : '');
+        presupuesto?.importeTotalConcedidoUniversidadSinCosteIndirecto.toString() : '0');
       elementsRow.push(presupuesto?.importeTotalConcedidoUniversidadCostesIndirectos ?
-        presupuesto?.importeTotalConcedidoUniversidadCostesIndirectos.toString() : '');
+        presupuesto?.importeTotalConcedidoUniversidadCostesIndirectos.toString() : '0');
       elementsRow.push(presupuesto?.importeTotalConcedidoUniversidadSinCosteIndirecto &&
         presupuesto?.importeTotalConcedidoUniversidadCostesIndirectos ?
-        (presupuesto?.importeTotalConcedidoUniversidadSinCosteIndirecto + presupuesto?.importeTotalConcedidoUniversidadCostesIndirectos).toString() : '');
-      elementsRow.push(presupuesto?.importeTotalPresupuestoSocios ? presupuesto?.importeTotalPresupuestoSocios.toString() : '');
-      elementsRow.push(presupuesto?.importeTotalConcedidoSocios ? presupuesto?.importeTotalConcedidoSocios.toString() : '');
-      elementsRow.push(presupuesto?.importeTotalPresupuesto ? presupuesto?.importeTotalPresupuesto.toString() : '');
-      elementsRow.push(presupuesto?.importeTotalConcedido ? presupuesto?.importeTotalConcedido.toString() : '');
+        (presupuesto?.importeTotalConcedidoUniversidadSinCosteIndirecto + presupuesto?.importeTotalConcedidoUniversidadCostesIndirectos).toString() : '0');
+      elementsRow.push(presupuesto?.importeTotalPresupuestoSocios ? presupuesto?.importeTotalPresupuestoSocios.toString() : '0');
+      elementsRow.push(presupuesto?.importeTotalConcedidoSocios ? presupuesto?.importeTotalConcedidoSocios.toString() : '0');
+      elementsRow.push(presupuesto?.importeTotalPresupuesto ? presupuesto?.importeTotalPresupuesto.toString() : '0');
+      elementsRow.push(presupuesto?.importeTotalConcedido ? presupuesto?.importeTotalConcedido.toString() : '0');
     } else {
-      elementsRow.push('');
-      elementsRow.push('');
-      elementsRow.push('');
-      elementsRow.push('');
-      elementsRow.push('');
-      elementsRow.push('');
-      elementsRow.push('');
-      elementsRow.push('');
-      elementsRow.push('');
-      elementsRow.push('');
+      elementsRow.push('0');
+      elementsRow.push('0');
+      elementsRow.push('0');
+      elementsRow.push('0');
+      elementsRow.push('0');
+      elementsRow.push('0');
+      elementsRow.push('0');
+      elementsRow.push('0');
+      elementsRow.push('0');
+      elementsRow.push('0');
     }
   }
 }

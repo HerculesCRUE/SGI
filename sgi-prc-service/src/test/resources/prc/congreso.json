@@ -1,0 +1,122 @@
+{
+  "idRef": "CONGRESO_4",
+  "epigrafeCVN": "060.010.020.000",
+  "campos": [
+    {
+      "codigoCVN": "060.010.020.030",
+      "valores": [
+        "Adopción empresarial de la IA"
+      ]
+    },
+    {
+      "codigoCVN": "060.010.020.190",
+      "valores": [
+        "2020-11-15T00:00:00Z"
+      ]
+    },
+    {
+      "codigoCVN": "060.010.020.380",
+      "valores": [
+        "2020-11-16T00:00:00Z"
+      ]
+    },
+    {
+      "codigoCVN": "060.010.020.010",
+      "valores": [
+        "008"
+      ]
+    },
+    {
+      "codigoCVN": "060.010.020.080",
+      "valores": [
+        "010"
+      ]
+    },
+    {
+      "codigoCVN": "060.010.020.100",
+      "valores": [
+        "Congreso XX de BigData"
+      ]
+    },
+    {
+      "codigoCVN": "060.010.020.320",
+      "valores": [
+        "978-84-10-20602-7"
+      ]
+    },
+    {
+      "codigoCVN": "060.010.020.370",
+      "valores": [
+        "Efecto empresarial en la IA "
+      ]
+    },
+    {
+      "codigoCVN": "060.010.020.390",
+      "valores": [
+        "52364567"
+      ]
+    },
+    {
+      "codigoCVN": "060.010.020.050",
+      "valores": [
+        "730"
+      ]
+    },
+    {
+      "codigoCVN": "RESUMEN_REVISTA",
+      "valores": [
+        "true"
+      ]
+    }
+  ],
+  "autores": [
+    {
+      "personaRef": "52364567",
+      "firma": "simon.apellido",
+      "nombre": "",
+      "apellidos": "",
+      "orden": 1,
+      "orcidID": "PRUEBA",
+      "ip": true
+    },
+    {
+      "personaRef": "02221287",
+      "firma": "enrique.apellido",
+      "nombre": "",
+      "apellidos": "",
+      "orden": 2,
+      "orcidID": "PRUEBA",
+      "ip": false
+    },
+    {
+      "personaRef": "",
+      "firma": "",
+      "nombre": "María",
+      "apellidos": "García Fernández",
+      "orden": 3,
+      "orcidID": "PRUEBA",
+      "ip": false
+    }
+  ],
+  "indicesImpacto": [
+    {
+      "fuenteImpacto": "GII-GRIN-SCIE",
+      "ranking": "CLASE1",
+      "anio": "2020"
+    },
+    {
+      "fuenteImpacto": "CORE",
+      "ranking": "A_POR",
+      "anio": "2019"
+    }
+  ],
+  "proyectos": [
+    3
+  ],
+  "acreditaciones": [
+    {
+      "url": "www.paginamipublicacion.es",
+      "documentoRef": ""
+    }
+  ]
+}

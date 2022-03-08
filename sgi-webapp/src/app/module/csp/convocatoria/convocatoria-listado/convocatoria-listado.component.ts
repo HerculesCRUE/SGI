@@ -25,7 +25,7 @@ import { RSQLSgiRestFilter, SgiRestFilter, SgiRestFilterOperator, SgiRestListRes
 import { NGXLogger } from 'ngx-logger';
 import { EMPTY, from, Observable, of } from 'rxjs';
 import { catchError, map, mergeAll, mergeMap, switchMap } from 'rxjs/operators';
-import { ConvocatoriaListadoModalComponent, IConvocatoriaListadoModalData } from '../modals/convocatoria-listado-modal/convocatoria-listado-modal.component';
+import { ConvocatoriaListadoExportModalComponent, IConvocatoriaListadoModalData } from '../modals/convocatoria-listado-export-modal/convocatoria-listado-export-modal.component';
 
 const MSG_BUTTON_ADD = marker('btn.add.entity');
 const MSG_ERROR_LOAD = marker('error.load');
@@ -545,7 +545,7 @@ export class ConvocatoriaListadoComponent extends AbstractTablePaginationCompone
     const config = {
       data
     };
-    this.matDialog.open(ConvocatoriaListadoModalComponent, config);
+    this.matDialog.open(ConvocatoriaListadoExportModalComponent, config);
   }
 
 }

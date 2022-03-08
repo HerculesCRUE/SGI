@@ -232,7 +232,7 @@ export class ProyectoPresupuestoComponent extends FormFragmentComponent<IProyect
       }
     } else {
       this.formPart.disableAddAnualidad$.next(false);
-      if (this.formGroup.controls.anualidades.disabled) {
+      if (this.formGroup.controls.anualidades.disabled && !this.formPart.isVisor) {
         this.formGroup.controls.anualidades.enable();
       }
     }

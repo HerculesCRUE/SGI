@@ -10,6 +10,7 @@ import { SgiAuthGuard } from '@sgi/framework/auth';
 import { AutorizacionCrearComponent } from './autorizacion-crear/autorizacion-crear.component';
 import { AutorizacionDataResolver, AUTORIZACION_DATA_KEY } from './autorizacion-data.resolver';
 import { AutorizacionEditarComponent } from './autorizacion-editar/autorizacion-editar.component';
+import { AutorizacionCertificadosComponent } from './autorizacion-formulario/autorizacion-certificados/autorizacion-certificados.component';
 import { AutorizacionDatosGeneralesComponent } from './autorizacion-formulario/autorizacion-datos-generales/autorizacion-datos-generales.component';
 import { AutorizacionHistoricoEstadosComponent } from './autorizacion-formulario/autorizacion-historico-estados/autorizacion-historico-estados.component';
 import { AutorizacionListadoComponent } from './autorizacion-listado/autorizacion-listado.component';
@@ -65,7 +66,7 @@ const routes: SgiRoutes = [
     data: {
       title: AUTORIZACION_TITLE_KEY,
       titleParams: MSG_PARAMS.CARDINALIRY.SINGULAR,
-      hasAnyAuthorityForAnyUO: ['CSP-AUT-E', 'CSP-AUT-INV-C', 'CSP-AUT-INV-ER', 'CSP-AUT-INV-BR'],
+      hasAnyAuthorityForAnyUO: ['CSP-AUT-E', 'CSP-AUT-INV-C', 'CSP-AUT-INV-ER', 'CSP-AUT-INV-BR', 'CSP-AUT-V'],
     },
     children: [
       {
@@ -81,6 +82,11 @@ const routes: SgiRoutes = [
       {
         path: AUTORIZACION_ROUTE_NAMES.HISTORICO_ESTADOS,
         component: AutorizacionHistoricoEstadosComponent,
+        canDeactivate: [FragmentGuard],
+      },
+      {
+        path: AUTORIZACION_ROUTE_NAMES.CERTIFICADOS,
+        component: AutorizacionCertificadosComponent,
         canDeactivate: [FragmentGuard],
       },
     ]

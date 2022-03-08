@@ -12,7 +12,8 @@ export class EvaluadorDatosGeneralesFragment extends FormFragment<IEvaluador> {
 
   private evaluador: IEvaluador;
   constructor(private fb: FormBuilder, key: number, private service: EvaluadorService, private personaService: PersonaService) {
-    super(key);
+    super(key, true);
+    this.setComplete(true);
     this.evaluador = {} as IEvaluador;
     this.evaluador.activo = true;
   }
@@ -74,7 +75,9 @@ export class EvaluadorDatosGeneralesFragment extends FormFragment<IEvaluador> {
     const obs = this.isEdit() ? this.service.update(datosGenerales.id, datosGenerales) : this.service.create(datosGenerales);
     return obs.pipe(
       map((value) => {
+        this.setChanges(false);
         this.evaluador = value;
+        this.refreshInitialState(true);
         return this.evaluador.id;
       })
     );

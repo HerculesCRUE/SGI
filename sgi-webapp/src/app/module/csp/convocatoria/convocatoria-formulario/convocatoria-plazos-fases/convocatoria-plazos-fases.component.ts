@@ -93,7 +93,7 @@ export class ConvocatoriaPlazosFasesComponent extends FragmentComponent implemen
    */
   openModalPlazos(plazo?: StatusWrapper<IConvocatoriaFase>): void {
     const datosPlazosFases: ConvocatoriaPlazosFaseModalComponentData = {
-      plazos: this.formPart.getConvocatoriasFases(),
+      plazos: this.dataSource.data.filter(existing => existing !== plazo).map(wrapper => wrapper.value),
       plazo: plazo ? plazo.value : {} as IConvocatoriaFase,
       idModeloEjecucion: this.actionService.modeloEjecucionId,
       readonly: this.formPart.readonly,

@@ -1,3 +1,4 @@
+import { DateTime } from 'luxon';
 import { IDocumento } from './documento';
 
 export interface IDatoEconomicoDetalle {
@@ -12,5 +13,5 @@ export interface IDatoEconomicoDetalle {
     valor: string;
   }[];
   clasificacionSGE: any;
-  fechaDevengo: string;
+  fechaDevengo: DateTime;
 }

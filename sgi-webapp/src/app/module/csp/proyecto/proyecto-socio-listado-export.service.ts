@@ -1,3 +1,4 @@
+import { DecimalPipe } from '@angular/common';
 import { Injectable } from '@angular/core';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { MSG_PARAMS } from '@core/i18n';
@@ -45,6 +46,7 @@ export class ProyectoSocioListadoExportService extends AbstractTableExportFillSe
     private luxonDatePipe: LuxonDatePipe,
     private readonly proyectoService: ProyectoService,
     private empresaService: EmpresaService,
+    private readonly decimalPipe: DecimalPipe,
   ) {
     super(translate);
   }
@@ -122,7 +124,7 @@ export class ProyectoSocioListadoExportService extends AbstractTableExportFillSe
   private getColumnsSocioExcel(proyectos: IProyectoReportData[]): ISgiColumnReport[] {
     const columns: ISgiColumnReport[] = [];
 
-    const maxNumSocios = Math.max(...proyectos.map(p => p.socios?.length));
+    const maxNumSocios = Math.max(...proyectos.map(p => p.socios ? p.socios?.length : 0));
     const titleSocio = this.translate.instant(SOCIO_KEY, MSG_PARAMS.CARDINALIRY.SINGULAR);
     for (let i = 0; i < maxNumSocios; i++) {
       const idSocio: string = String(i + 1);
@@ -150,7 +152,7 @@ export class ProyectoSocioListadoExportService extends AbstractTableExportFillSe
       const columnNumInvestigadoresSocio: ISgiColumnReport = {
         name: SOCIO_NUM_INVESTIGADORES_FIELD + idSocio,
         title: titleSocio + idSocio + ': ' + this.translate.instant(SOCIO_NUM_INVESTIGADORES_KEY),
-        type: ColumnType.NUMBER,
+        type: ColumnType.STRING,
       };
       columns.push(columnNumInvestigadoresSocio);
 
@@ -171,14 +173,14 @@ export class ProyectoSocioListadoExportService extends AbstractTableExportFillSe
       const columnImportePresupuestoSocio: ISgiColumnReport = {
         name: SOCIO_IMPORTE_PRESUPUESTO_FIELD + idSocio,
         title: titleSocio + idSocio + ': ' + this.translate.instant(SOCIO_IMPORTE_PRESUPUESTO_KEY),
-        type: ColumnType.NUMBER,
+        type: ColumnType.STRING,
       };
       columns.push(columnImportePresupuestoSocio);
 
       const columnImporteConcedidoSocio: ISgiColumnReport = {
         name: SOCIO_IMPORTE_CONCEDIDO_FIELD + idSocio,
         title: titleSocio + idSocio + ': ' + this.translate.instant(SOCIO_IMPORTE_CONCEDIDO_KEY),
-        type: ColumnType.NUMBER,
+        type: ColumnType.STRING,
       };
       columns.push(columnImporteConcedidoSocio);
     }
@@ -192,9 +194,9 @@ export class ProyectoSocioListadoExportService extends AbstractTableExportFillSe
     if (!this.isExcelOrCsv(reportConfig.outputType)) {
       this.fillRowsSocioNotExcel(proyecto, elementsRow);
     } else {
-      const maxNumSocio = Math.max(...proyectos.map(p => p.socios?.length));
+      const maxNumSocio = Math.max(...proyectos.map(p => p.socios ? p.socios?.length : 0));
       for (let i = 0; i < maxNumSocio; i++) {
-        const socio = proyecto.socios[i] ?? null;
+        const socio = proyecto.socios ? proyecto.socios[i] ?? null : null;
         this.fillRowsSocioExcel(elementsRow, socio);
       }
     }
@@ -241,11 +243,11 @@ export class ProyectoSocioListadoExportService extends AbstractTableExportFillSe
       elementsRow.push(socio.empresa?.nombre ?? '');
       elementsRow.push(socio.empresa?.numeroIdentificacion ?? '');
       elementsRow.push(socio.rolSocio?.nombre ?? '');
-      elementsRow.push(socio.numInvestigadores ?? '');
+      elementsRow.push(socio.numInvestigadores ? socio.numInvestigadores.toString() : '');
       elementsRow.push(LuxonUtils.toBackend(socio.fechaInicio) ?? '');
       elementsRow.push(LuxonUtils.toBackend(socio.fechaFin) ?? '');
-      elementsRow.push(socio.importePresupuesto ?? '');
-      elementsRow.push(socio.importeConcedido ?? '');
+      elementsRow.push(this.decimalPipe.transform(socio.importePresupuesto, '.2-2') ?? '');
+      elementsRow.push(this.decimalPipe.transform(socio.importeConcedido, '.2-2') ?? '');
     } else {
       elementsRow.push('');
       elementsRow.push('');

@@ -34,6 +34,7 @@ import { PeriodoTitularidadTitularModalComponent } from './modals/periodo-titula
 import { InvencionContratosComponent } from './invencion-formulario/invencion-contratos/invencion-contratos.component';
 import { SectorLicenciadoModalComponent } from './modals/sector-licenciado-modal/sector-licenciado-modal.component';
 import { InvencionRepartosComponent } from './invencion-formulario/invencion-repartos/invencion-repartos.component';
+import { PiiSharedModule } from '../shared/pii-shared.module';
 
 @NgModule({
   declarations: [
@@ -73,7 +74,8 @@ import { InvencionRepartosComponent } from './invencion-formulario/invencion-rep
     CspSharedModule,
     SgpSharedModule,
     SgoSharedModule,
-    SgempSharedModule
+    SgempSharedModule,
+    PiiSharedModule
   ],
   providers: [
     InvencionResolver

@@ -21,7 +21,7 @@ import org.springframework.test.context.jdbc.Sql;
  * Test de integracion de ProyectoPeriodoSeguimiento.
  */
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class ProyectoPeriodoSeguimientoIT extends BaseIT {
+class ProyectoPeriodoSeguimientoIT extends BaseIT {
 
   private static final String PATH_PARAMETER_ID = "/{id}";
   private static final String CONTROLLER_BASE_PATH = "/proyectoperiodoseguimientos";
@@ -41,11 +41,14 @@ public class ProyectoPeriodoSeguimientoIT extends BaseIT {
 
   @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = { "classpath:scripts/modelo_ejecucion.sql",
       "classpath:scripts/modelo_unidad.sql", "classpath:scripts/tipo_finalidad.sql",
-      "classpath:scripts/tipo_ambito_geografico.sql", "classpath:scripts/proyecto.sql",
+      "classpath:scripts/tipo_ambito_geografico.sql",
+      "classpath:scripts/tipo_regimen_concurrencia.sql",
+      "classpath:scripts/convocatoria.sql",
+      "classpath:scripts/proyecto.sql",
       "classpath:scripts/estado_proyecto.sql" })
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void create_ReturnsProyectoPeriodoSeguimiento() throws Exception {
+  void create_ReturnsProyectoPeriodoSeguimiento() throws Exception {
     // given: new ProyectoPeriodoSeguimiento
     ProyectoPeriodoSeguimiento newProyectoPeriodoSeguimiento = generarMockProyectoPeriodoSeguimiento(1L, 1L);
     newProyectoPeriodoSeguimiento.setId(null);
@@ -69,11 +72,14 @@ public class ProyectoPeriodoSeguimientoIT extends BaseIT {
 
   @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = { "classpath:scripts/modelo_ejecucion.sql",
       "classpath:scripts/modelo_unidad.sql", "classpath:scripts/tipo_finalidad.sql",
-      "classpath:scripts/tipo_ambito_geografico.sql", "classpath:scripts/proyecto.sql",
+      "classpath:scripts/tipo_ambito_geografico.sql",
+      "classpath:scripts/tipo_regimen_concurrencia.sql",
+      "classpath:scripts/convocatoria.sql",
+      "classpath:scripts/proyecto.sql",
       "classpath:scripts/estado_proyecto.sql", "classpath:scripts/proyecto_periodo_seguimiento.sql" })
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void update_ReturnsProyectoPeriodoSeguimiento() throws Exception {
+  void update_ReturnsProyectoPeriodoSeguimiento() throws Exception {
     Long idProyectoPeriodoSeguimiento = 1L;
     ProyectoPeriodoSeguimiento proyectoPeriodoSeguimiento = generarMockProyectoPeriodoSeguimiento(
         idProyectoPeriodoSeguimiento, 1L);
@@ -101,11 +107,14 @@ public class ProyectoPeriodoSeguimientoIT extends BaseIT {
 
   @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = { "classpath:scripts/modelo_ejecucion.sql",
       "classpath:scripts/modelo_unidad.sql", "classpath:scripts/tipo_finalidad.sql",
-      "classpath:scripts/tipo_ambito_geografico.sql", "classpath:scripts/proyecto.sql",
+      "classpath:scripts/tipo_ambito_geografico.sql",
+      "classpath:scripts/tipo_regimen_concurrencia.sql",
+      "classpath:scripts/convocatoria.sql",
+      "classpath:scripts/proyecto.sql",
       "classpath:scripts/estado_proyecto.sql", "classpath:scripts/proyecto_periodo_seguimiento.sql" })
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void delete_Return204() throws Exception {
+  void delete_Return204() throws Exception {
     Long idProyectoPeriodoSeguimiento = 1L;
 
     final ResponseEntity<ProyectoPeriodoSeguimiento> response = restTemplate.exchange(
@@ -117,11 +126,14 @@ public class ProyectoPeriodoSeguimientoIT extends BaseIT {
 
   @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = { "classpath:scripts/modelo_ejecucion.sql",
       "classpath:scripts/modelo_unidad.sql", "classpath:scripts/tipo_finalidad.sql",
-      "classpath:scripts/tipo_ambito_geografico.sql", "classpath:scripts/proyecto.sql",
+      "classpath:scripts/tipo_ambito_geografico.sql",
+      "classpath:scripts/tipo_regimen_concurrencia.sql",
+      "classpath:scripts/convocatoria.sql",
+      "classpath:scripts/proyecto.sql",
       "classpath:scripts/estado_proyecto.sql", "classpath:scripts/proyecto_periodo_seguimiento.sql" })
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void existsById_Returns200() throws Exception {
+  void existsById_Returns200() throws Exception {
     // given: existing id
     Long id = 1L;
     // when: exists by id
@@ -133,7 +145,7 @@ public class ProyectoPeriodoSeguimientoIT extends BaseIT {
 
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void existsById_Returns204() throws Exception {
+  void existsById_Returns204() throws Exception {
     // given: no existing id
     Long id = 1L;
     // when: exists by id
@@ -145,11 +157,14 @@ public class ProyectoPeriodoSeguimientoIT extends BaseIT {
 
   @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = { "classpath:scripts/modelo_ejecucion.sql",
       "classpath:scripts/modelo_unidad.sql", "classpath:scripts/tipo_finalidad.sql",
-      "classpath:scripts/tipo_ambito_geografico.sql", "classpath:scripts/proyecto.sql",
+      "classpath:scripts/tipo_ambito_geografico.sql",
+      "classpath:scripts/tipo_regimen_concurrencia.sql",
+      "classpath:scripts/convocatoria.sql",
+      "classpath:scripts/proyecto.sql",
       "classpath:scripts/estado_proyecto.sql", "classpath:scripts/proyecto_periodo_seguimiento.sql" })
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void findById_ReturnsProyectoPeriodoSeguimiento() throws Exception {
+  void findById_ReturnsProyectoPeriodoSeguimiento() throws Exception {
     Long idProyectoPeriodoSeguimiento = 1L;
 
     final ResponseEntity<ProyectoPeriodoSeguimiento> response = restTemplate.exchange(

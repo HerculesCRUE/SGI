@@ -1213,6 +1213,23 @@ public class SolicitudControllerTest extends BaseControllerTest {
         .andExpect(MockMvcResultMatchers.status().isNoContent());
   }
 
+  @Test
+  @WithMockUser(username = "user", authorities = { "CSP-SOL-ETI-V" })
+  public void getCodigoRegistroInterno_WithExistingId_ReturnsSolicitud() throws Exception {
+    // given: existing id
+    BDDMockito.given(service.findById(ArgumentMatchers.anyLong())).willAnswer((InvocationOnMock invocation) -> {
+      return generarMockSolicitud(invocation.getArgument(0));
+    });
+
+    // when: find by existing id
+    mockMvc
+        .perform(MockMvcRequestBuilders.get(CONTROLLER_BASE_PATH + PATH_PARAMETER_ID + "/codigo-registro-interno", 1L)
+            .with(SecurityMockMvcRequestPostProcessors.csrf()).accept(MediaType.APPLICATION_JSON))
+        .andDo(SgiMockMvcResultHandlers.printOnError())
+        // then: response is OK
+        .andExpect(MockMvcResultMatchers.status().isOk());
+  }
+
   /**
    * Función que devuelve un objeto Solicitud
    * 

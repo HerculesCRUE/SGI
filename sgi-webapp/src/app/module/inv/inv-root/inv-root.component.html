@@ -1,6 +1,9 @@
 <sgi-root>
   <!-- ETICA -->
-  <sgi-menu-group title="{{'menu.principal.inv.etica' | translate}}" icon="list_alt">
+  <sgi-menu-group title="{{'menu.principal.inv.etica' | translate}}" icon="policy">
+    <sgi-menu-subitem *sgiHasAuthorityForAnyUO="'ETI-CHK-INV-E'" [route]="[INV_ROUTE_NAMES.CHECKLIST]"
+      title="{{'menu.principal.inv.autoevaluacion' | translate}}">
+    </sgi-menu-subitem>
     <sgi-menu-subitem
       *sgiHasAnyAuthorityForAnyUO="['ETI-PEV-INV-VR', 'ETI-PEV-INV-C', 'ETI-PEV-INV-ER', 'ETI-PEV-INV-BR']"
       [route]="[INV_ROUTE_NAMES.PETICIONES_EVALUACION]"
@@ -10,8 +13,8 @@
       *sgiHasAnyAuthorityForAnyUO="['ETI-MEM-INV-VR', 'ETI-MEM-INV-ER', 'ETI-MEM-INV-BR', 'ETI-MEM-INV-ESCR', 'ETI-MEM-INV-ERTR']"
       [route]="[INV_ROUTE_NAMES.MEMORIAS]" title="{{'menu.principal.inv.memorias' | translate}}">
     </sgi-menu-subitem>
-    <sgi-menu-subitem *sgiHasAuthorityForAnyUO="'ETI-CHK-INV-E'" [route]="[INV_ROUTE_NAMES.CHECKLIST]"
-      title="{{'menu.principal.inv.checklist' | translate}}">
+    <sgi-menu-subitem *sgiHasAnyAuthorityForAnyUO="['ETI-ACT-INV-ER', 'ETI-ACT-ER']" [route]="[INV_ROUTE_NAMES.ACTAS]"
+      title="{{'menu.principal.inv.actas' | translate}}">
     </sgi-menu-subitem>
     <ng-container *ngIf="showEvaluaciones">
       <sgi-menu-subitem *sgiHasAnyAuthorityForAnyUO="['ETI-EVC-INV-VR', 'ETI-EVC-INV-EVALR']"
@@ -23,18 +26,18 @@
         [route]="[INV_ROUTE_NAMES.SEGUIMIENTOS]" title="{{'menu.principal.inv.seguimientos' | translate}}">
       </sgi-menu-subitem>
     </ng-container>
-    <sgi-menu-subitem *sgiHasAnyAuthorityForAnyUO="['ETI-ACT-INV-ER', 'ETI-ACT-ER']" [route]="[INV_ROUTE_NAMES.ACTAS]"
-      title="{{'menu.principal.inv.actas' | translate}}">
-    </sgi-menu-subitem>
   </sgi-menu-group>
 
   <!-- CSP -->
-  <sgi-menu-group title="{{'menu.principal.inv.csp' | translate}}" icon="assignment_late">
+  <sgi-menu-group title="{{'menu.principal.inv.csp' | translate}}" icon="business_center">
     <sgi-menu-subitem *sgiHasAuthorityForAnyUO="'CSP-CON-INV-V'" [route]="[INV_ROUTE_NAMES.CONVOCATORIAS]"
       title="{{'menu.principal.inv.convocatoria' | translate}}">
     </sgi-menu-subitem>
     <sgi-menu-subitem *sgiHasAnyAuthorityForAnyUO="['CSP-SOL-INV-ER', 'CSP-SOL-INV-BR']"
       [route]="[INV_ROUTE_NAMES.SOLICITUDES]" title="{{'csp.solicitud' | translate:MSG_PARAMS.CARDINALIRY.PLURAL}}">
+    </sgi-menu-subitem>
+    <sgi-menu-subitem *sgiHasAuthorityForAnyUO="'CSP-PRO-INV-VR'" [route]="[INV_ROUTE_NAMES.PROYECTOS]"
+      title="{{'menu.principal.inv.proyectos' | translate}}">
     </sgi-menu-subitem>
     <sgi-menu-subitem *sgiHasAnyAuthorityForAnyUO="['CSP-AUT-INV-C', 'CSP-AUT-INV-ER','CSP-AUT-INV-BR'] "
       title="{{'menu.csp.autorizaciones-proyectos-externos' | translate:MSG_PARAMS.CARDINALIRY.PLURAL}}"

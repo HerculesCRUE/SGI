@@ -94,6 +94,10 @@ public class RolProyecto extends BaseEntity {
   @Column(name = "rol_principal", columnDefinition = "boolean default false", nullable = true)
   private Boolean rolPrincipal;
 
+  /** Baremable PRC */
+  @Column(name = "baremable_prc", columnDefinition = "boolean default false", nullable = true)
+  private Boolean baremablePRC;
+
   /** Orden */
   @Column(name = "orden", nullable = true)
   @Enumerated(EnumType.STRING)

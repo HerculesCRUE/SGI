@@ -1,13 +1,11 @@
 <footer class="separation footer">
   <div class="botonera" fxLayout="row" fxLayoutAlign="baseline center" fxLayoutGap="5px">
-    <sgi-action-footer-button (buttonClick)="save()" [text]="texto"
+    <sgi-action-footer-button action="save" [text]="texto"
       [disabled]="(status.edit && (!status.changes || status.errors)) || (!status.edit && !status.complete)">
-
     </sgi-action-footer-button>
     <ng-content></ng-content>
-    <button class="link-cancelar" mat-button (click)="cancel()">
-      <span class="underline">{{'btn.cancel' | translate}}</span>
-    </button>
+    <sgi-action-footer-button action="cancel" type="cancel" text="{{'btn.cancel' | translate}}">
+    </sgi-action-footer-button>
     <sgi-action-footer-message typeMessage="changes" *ngIf="status.changes && !status.errors && !status.problems">
     </sgi-action-footer-message>
     <sgi-action-footer-message typeMessage="errors" *ngIf="status.errors && !status.problems">

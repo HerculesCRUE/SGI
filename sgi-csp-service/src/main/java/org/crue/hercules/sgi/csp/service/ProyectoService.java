@@ -56,6 +56,15 @@ public interface ProyectoService {
   Proyecto findById(final Long id);
 
   /**
+   * Obtiene una entidad {@link Proyecto} por id.
+   * Sin hacer comprobaciones de la Unidad de Gestión.
+   * 
+   * @param id Identificador de la entidad {@link Proyecto}.
+   * @return Proyecto la entidad {@link Proyecto}.
+   */
+  Proyecto findProyectoResumenById(final Long id);
+
+  /**
    * Obtiene todas las entidades {@link Proyecto} activas paginadas y filtradas.
    *
    * @param query  información del filtro.
@@ -64,6 +73,18 @@ public interface ProyectoService {
    *         filtradas.
    */
   Page<Proyecto> findAllRestringidos(String query, Pageable paging);
+
+  /**
+   * Obtiene todas las entidades {@link Proyecto} activas paginadas y filtradas a
+   * las que tiene acceso el investigador que ha inciado sesión
+   *
+   * @param query  información del filtro.
+   * @param paging información de paginación.
+   * @return el listado de entidades {@link Proyecto} activas paginadas y
+   *         filtradas a
+   *         las que tiene acceso el investigador que ha inciado sesión
+   */
+  Page<Proyecto> findAllActivosInvestigador(String query, Pageable paging);
 
   /**
    * Obtiene todas las entidades {@link Proyecto} paginadas y filtradas.
@@ -123,16 +144,22 @@ public interface ProyectoService {
   List<Long> findIds(String query);
 
   /**
-   * Busca todos los objetos de tipo {@link ProyectoFacturacion} cuyo proyectoId sea igual al recibido por parámetro
-   * @param proyectoId id del {@link Proyecto} del que cuelgan la lista de objetos {@link ProyectoFacturacion} a buscar
-   * @param query información del filtro.
-   * @param paging información de paginación
-   * @return objeto {@link Page} con el listado de objetos de tipo {@link ProyectoFacturacion}
+   * Busca todos los objetos de tipo {@link ProyectoFacturacion} cuyo proyectoId
+   * sea igual al recibido por parámetro
+   * 
+   * @param proyectoId id del {@link Proyecto} del que cuelgan la lista de objetos
+   *                   {@link ProyectoFacturacion} a buscar
+   * @param query      información del filtro.
+   * @param paging     información de paginación
+   * @return objeto {@link Page} con el listado de objetos de tipo
+   *         {@link ProyectoFacturacion}
    */
   Page<ProyectoFacturacion> findAllProyectoFacturacionByProyectoId(Long proyectoId, String query, Pageable paging);
 
   /**
-   * Obtiene una lista de identificadores de los objetos de tipo {@link Proyecto} filtrados por solicitudId
+   * Obtiene una lista de identificadores de los objetos de tipo {@link Proyecto}
+   * filtrados por solicitudId
+   * 
    * @param solicitudId id del objeto de tipo {@link Solicitud} referenciado
    * @return lista de ids de los {@link Proyecto}
    */

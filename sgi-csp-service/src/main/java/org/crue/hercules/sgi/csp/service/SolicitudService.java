@@ -3,12 +3,12 @@ package org.crue.hercules.sgi.csp.service;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.time.format.DateTimeFormatter;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
-import org.crue.hercules.sgi.csp.config.RestApiProperties;
 import org.crue.hercules.sgi.csp.config.SgiConfigProperties;
 import org.crue.hercules.sgi.csp.dto.eti.ChecklistOutput;
 import org.crue.hercules.sgi.csp.dto.eti.EquipoTrabajo;
@@ -25,6 +25,7 @@ import org.crue.hercules.sgi.csp.exceptions.SolicitudProyectoNotFoundException;
 import org.crue.hercules.sgi.csp.exceptions.SolicitudProyectoWithoutSocioCoordinadorException;
 import org.crue.hercules.sgi.csp.exceptions.SolicitudWithoutRequeridedDocumentationException;
 import org.crue.hercules.sgi.csp.exceptions.UserNotAuthorizedToAccessSolicitudException;
+import org.crue.hercules.sgi.csp.exceptions.UserNotAuthorizedToChangeEstadoSolicitudException;
 import org.crue.hercules.sgi.csp.exceptions.UserNotAuthorizedToModifySolicitudException;
 import org.crue.hercules.sgi.csp.exceptions.eti.GetPeticionEvaluacionException;
 import org.crue.hercules.sgi.csp.model.ConfiguracionSolicitud;
@@ -32,6 +33,7 @@ import org.crue.hercules.sgi.csp.model.Convocatoria;
 import org.crue.hercules.sgi.csp.model.ConvocatoriaEntidadFinanciadora;
 import org.crue.hercules.sgi.csp.model.DocumentoRequeridoSolicitud;
 import org.crue.hercules.sgi.csp.model.EstadoSolicitud;
+import org.crue.hercules.sgi.csp.model.EstadoSolicitud.Estado;
 import org.crue.hercules.sgi.csp.model.Proyecto;
 import org.crue.hercules.sgi.csp.model.Solicitud;
 import org.crue.hercules.sgi.csp.model.SolicitudDocumento;
@@ -53,14 +55,12 @@ import org.crue.hercules.sgi.csp.repository.SolicitudRepository;
 import org.crue.hercules.sgi.csp.repository.predicate.SolicitudPredicateResolver;
 import org.crue.hercules.sgi.csp.repository.specification.DocumentoRequeridoSolicitudSpecifications;
 import org.crue.hercules.sgi.csp.repository.specification.SolicitudSpecifications;
-import org.crue.hercules.sgi.framework.http.HttpEntityBuilder;
+import org.crue.hercules.sgi.csp.service.sgi.SgiApiEtiService;
 import org.crue.hercules.sgi.framework.rsql.SgiRSQLJPASupport;
 import org.crue.hercules.sgi.framework.security.core.context.SgiSecurityContextHolder;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -68,7 +68,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.client.RestTemplate;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -82,8 +81,7 @@ import lombok.extern.slf4j.Slf4j;
 public class SolicitudService {
 
   private final SgiConfigProperties sgiConfigProperties;
-  private final RestApiProperties restApiProperties;
-  private final RestTemplate restTemplate;
+  private final SgiApiEtiService sgiApiEtiService;
   private final SolicitudRepository repository;
   private final EstadoSolicitudRepository estadoSolicitudRepository;
   private final ConfiguracionSolicitudRepository configuracionSolicitudRepository;
@@ -97,8 +95,9 @@ public class SolicitudService {
   private final ConvocatoriaRepository convocatoriaRepository;
   private final ConvocatoriaEntidadFinanciadoraRepository convocatoriaEntidadFinanciadoraRepository;
 
-  public SolicitudService(SgiConfigProperties sgiConfigProperties, RestApiProperties restApiProperties,
-      RestTemplate restTemplate, SolicitudRepository repository, EstadoSolicitudRepository estadoSolicitudRepository,
+  public SolicitudService(SgiConfigProperties sgiConfigProperties,
+      SgiApiEtiService sgiApiEtiService, SolicitudRepository repository,
+      EstadoSolicitudRepository estadoSolicitudRepository,
       ConfiguracionSolicitudRepository configuracionSolicitudRepository, ProyectoRepository proyectoRepository,
       SolicitudProyectoRepository solicitudProyectoRepository,
       DocumentoRequeridoSolicitudRepository documentoRequeridoSolicitudRepository,
@@ -109,8 +108,7 @@ public class SolicitudService {
       ConvocatoriaRepository convocatoriaRepository,
       ConvocatoriaEntidadFinanciadoraRepository convocatoriaEntidadFinanciadoraRepository) {
     this.sgiConfigProperties = sgiConfigProperties;
-    this.restApiProperties = restApiProperties;
-    this.restTemplate = restTemplate;
+    this.sgiApiEtiService = sgiApiEtiService;
     this.repository = repository;
     this.estadoSolicitudRepository = estadoSolicitudRepository;
     this.configuracionSolicitudRepository = configuracionSolicitudRepository;
@@ -206,11 +204,11 @@ public class SolicitudService {
     // comprobar si la solicitud es modificable
     Assert.isTrue(modificable(solicitud.getId()), "No se puede modificar la Solicitud");
 
-    return repository.findById(solicitud.getId()).map((data) -> {
+    return repository.findById(solicitud.getId()).map(data -> {
 
       Assert.isTrue(solicitud.getActivo(), "Solicitud tiene que estar activo para actualizarse");
 
-      Assert.isTrue(this.hasPermisosEdicion(solicitud.getUnidadGestionRef()),
+      Assert.isTrue(this.hasPermisosEdicion(solicitud),
           "La Convocatoria pertenece a una Unidad de Gestión no gestionable por el usuario");
 
       data.setSolicitanteRef(solicitud.getSolicitanteRef());
@@ -249,7 +247,7 @@ public class SolicitudService {
       Assert.isTrue(SgiSecurityContextHolder.hasAuthorityForUO("CSP-SOL-R", solicitud.getUnidadGestionRef()),
           "La Convocatoria pertenece a una Unidad de Gestión no gestionable por el usuario");
 
-      if (solicitud.getActivo()) {
+      if (Boolean.TRUE.equals(solicitud.getActivo())) {
         // Si esta activo no se hace nada
         return solicitud;
       }
@@ -290,7 +288,7 @@ public class SolicitudService {
             "La Convocatoria pertenece a una Unidad de Gestión no gestionable por el usuario");
       }
 
-      if (!solicitud.getActivo()) {
+      if (Boolean.FALSE.equals(solicitud.getActivo())) {
         // Si no esta activo no se hace nada
         return solicitud;
       }
@@ -313,16 +311,14 @@ public class SolicitudService {
     log.debug("findById(Long id) - start");
     final Solicitud returnValue = repository.findById(id).orElseThrow(() -> new SolicitudNotFoundException(id));
 
-    if (!(hasAuthorityViewInvestigador(returnValue) || hasAuthorityViewUnidadGestion(returnValue))) {
-      throw new UserNotAuthorizedToAccessSolicitudException();
-    }
+    checkUserHasAuthorityViewSolicitud(returnValue);
 
     String authorityVisualizar = "CSP-SOL-V";
 
     Assert
         .isTrue(
             SgiSecurityContextHolder.hasAuthority("CSP-SOL-INV-C")
-                || hasPermisosEdicion(returnValue.getUnidadGestionRef())
+                || hasPermisosEdicion(returnValue)
                 || (SgiSecurityContextHolder.hasAuthority(authorityVisualizar) || SgiSecurityContextHolder
                     .hasAuthorityForUO(authorityVisualizar, returnValue.getUnidadGestionRef())),
             "La Convocatoria pertenece a una Unidad de Gestión no gestionable por el usuario");
@@ -434,7 +430,7 @@ public class SolicitudService {
     // VALIDACIONES
 
     // Permisos
-    if (!hasPermisosEdicion(solicitud.getUnidadGestionRef())) {
+    if (!hasPermisosEdicion(solicitud)) {
       throw new UserNotAuthorizedToModifySolicitudException();
     }
 
@@ -448,6 +444,10 @@ public class SolicitudService {
     if ((!estadoSolicitud.getEstado().equals(EstadoSolicitud.Estado.DESISTIDA)
         && !estadoSolicitud.getEstado().equals(EstadoSolicitud.Estado.RENUNCIADA))) {
       validateCambioNoDesistidaRenunciada(solicitud);
+    }
+
+    if (isUserInvestigador()) {
+      validateCambioEstadoInvestigador(solicitud.getEstado().getEstado(), estadoSolicitud.getEstado());
     }
 
     // Se cambia el estado de la solicitud
@@ -468,11 +468,7 @@ public class SolicitudService {
           // Y "peticionEvaluacionRef" tenga valor null (no se ha creado todavía la
           // petición de evaluación en ética)
           if (peticionEvaluacionRef == null) {
-            final ResponseEntity<ChecklistOutput> responseChecklistOutput = restTemplate.exchange(
-                restApiProperties.getEtiUrl() + "/checklists/{id}", HttpMethod.GET,
-                new HttpEntityBuilder<>().withCurrentUserAuthorization().build(), ChecklistOutput.class, idChecklist);
-
-            ChecklistOutput checklistOutput = responseChecklistOutput.getBody();
+            ChecklistOutput checklistOutput = sgiApiEtiService.getCheckList(idChecklist);
             // En el caso que que en la Pestaña de Autoevaluación ética exista una respuesta
             // afirmativa a una sola de las preguntas del formulario
             if (checklistOutput != null && checklistOutput.getRespuesta() != null
@@ -500,13 +496,9 @@ public class SolicitudService {
                   .resumen(solicitudProyecto.getResultadosPrevistos()).objetivos(solicitudProyecto.getObjetivos())
                   .build();
 
-              ResponseEntity<PeticionEvaluacion> responsePeticionEvaluacion = restTemplate.exchange(
-                  restApiProperties.getEtiUrl() + "/peticionevaluaciones", HttpMethod.POST,
-                  new HttpEntityBuilder<>(peticionEvaluacionRequest).withCurrentUserAuthorization().build(),
-                  PeticionEvaluacion.class);
-
               // Guardar el PeticionEvaluacion.id
-              PeticionEvaluacion peticionEvaluacion = responsePeticionEvaluacion.getBody();
+              PeticionEvaluacion peticionEvaluacion = sgiApiEtiService.newPeticionEvaluacion(
+                  peticionEvaluacionRequest);
               if (peticionEvaluacion != null) {
                 solicitudProyecto.setPeticionEvaluacionRef(String.valueOf(peticionEvaluacion.getId()));
                 solicitudProyecto = solicitudProyectoRepository.save(solicitudProyecto);
@@ -528,19 +520,13 @@ public class SolicitudService {
               case DENEGADA:
                 // Se debe recuperar la petición de ética y cambiar el valor del
                 // campo "estadoFinanciacion" a "Denegado"
-                ResponseEntity<PeticionEvaluacion> responsePeticionEvaluacionDenegada = restTemplate.exchange(
-                    restApiProperties.getEtiUrl() + "/peticionevaluaciones/{id}", HttpMethod.GET,
-                    new HttpEntityBuilder<>().withCurrentUserAuthorization().build(), PeticionEvaluacion.class,
-                    peticionEvaluacionRef);
-
-                PeticionEvaluacion peticionEvaluacionDenegada = responsePeticionEvaluacionDenegada.getBody();
+                PeticionEvaluacion peticionEvaluacionDenegada = sgiApiEtiService
+                    .getPeticionEvaluacion(peticionEvaluacionRef);
                 if (peticionEvaluacionDenegada != null) {
                   peticionEvaluacionDenegada.setEstadoFinanciacion(EstadoFinanciacion.DENEGADO);
 
-                  responsePeticionEvaluacionDenegada = restTemplate.exchange(
-                      restApiProperties.getEtiUrl() + "/peticionevaluaciones/{id}", HttpMethod.PUT,
-                      new HttpEntityBuilder<>(peticionEvaluacionDenegada).withCurrentUserAuthorization().build(),
-                      PeticionEvaluacion.class, peticionEvaluacionRef);
+                  sgiApiEtiService
+                      .updatePeticionEvaluacion(peticionEvaluacionRef, peticionEvaluacionDenegada);
                 } else {
                   // throw exception
                   throw new GetPeticionEvaluacionException();
@@ -552,19 +538,13 @@ public class SolicitudService {
               case CONCEDIDA:
                 // Se debe recuperar la petición de ética y cambiar el valor del
                 // campo "estadoFinanciacion" a "Concedido"
-                ResponseEntity<PeticionEvaluacion> responsePeticionEvaluacionConcedida = restTemplate.exchange(
-                    restApiProperties.getEtiUrl() + "/peticionevaluaciones/{id}", HttpMethod.GET,
-                    new HttpEntityBuilder<>().withCurrentUserAuthorization().build(), PeticionEvaluacion.class,
-                    peticionEvaluacionRef);
-
-                PeticionEvaluacion peticionEvaluacionConcedida = responsePeticionEvaluacionConcedida.getBody();
+                PeticionEvaluacion peticionEvaluacionConcedida = sgiApiEtiService
+                    .getPeticionEvaluacion(peticionEvaluacionRef);
                 if (peticionEvaluacionConcedida != null) {
                   peticionEvaluacionConcedida.setEstadoFinanciacion(EstadoFinanciacion.CONCEDIDO);
 
-                  responsePeticionEvaluacionConcedida = restTemplate.exchange(
-                      restApiProperties.getEtiUrl() + "/peticionevaluaciones/{id}", HttpMethod.PUT,
-                      new HttpEntityBuilder<>(peticionEvaluacionConcedida).withCurrentUserAuthorization().build(),
-                      PeticionEvaluacion.class, peticionEvaluacionRef);
+                  sgiApiEtiService
+                      .updatePeticionEvaluacion(peticionEvaluacionRef, peticionEvaluacionConcedida);
                 } else {
                   // throw exception
                   throw new GetPeticionEvaluacionException();
@@ -585,7 +565,21 @@ public class SolicitudService {
   }
 
   /**
-   * Copia todos los miembros del equipo de una {@link Solicitud} a un Equipo de
+   * Obtiene el código de registro interno de la {@link Solicitud} por id.
+   * 
+   * @param id Identificador de la entidad {@link Solicitud}.
+   * @return Código de registro interno de la entidad {@link Solicitud}.
+   */
+  public String getCodigoRegistroInterno(Long id) {
+    log.debug("getCodigoRegistroInterno(Long id) - start");
+    final String returnValue = repository.findById(id).map(sol -> sol.getCodigoRegistroInterno())
+        .orElseThrow(() -> new SolicitudNotFoundException(id));
+    log.debug("getCodigoRegistroInterno(Long id) - end");
+    return returnValue;
+  }
+
+  /**
+   * Copia todos los miembros del equipo de una {@link Solicitud} a un Equipo d
    * Trabajo de una Petición de Evaluación Ética
    *
    * @param proyecto entidad {@link Proyecto}
@@ -597,22 +591,14 @@ public class SolicitudService {
         "copyMiembrosEquipoSolicitudToPeticionEvaluacion(PeticionEvaluacion peticionEvaluacion, Long solicitudProyectoId) - start");
 
     solicitudProyectoEquipoRepository.findAllBySolicitudProyectoId(solicitudProyectoId).stream()
-        .map((solicitudProyectoEquipo) -> {
+        .map(solicitudProyectoEquipo -> {
           log.debug("Copy SolicitudProyectoEquipo with id: {}", solicitudProyectoEquipo.getId());
           EquipoTrabajo.EquipoTrabajoBuilder equipoTrabajo = EquipoTrabajo.builder();
           equipoTrabajo.peticionEvaluacion(peticionEvaluacion);
           equipoTrabajo.personaRef(solicitudProyectoEquipo.getPersonaRef());
           return equipoTrabajo.build();
-        }).distinct().forEach((equipoTrabajo) -> {
-          ResponseEntity<EquipoTrabajo> responseEquipoTrabajo = restTemplate.exchange(
-              restApiProperties.getEtiUrl() + "/peticionevaluaciones/" + peticionEvaluacion.getId()
-                  + "/equipos-trabajo",
-              HttpMethod.POST, new HttpEntityBuilder<>(equipoTrabajo).withCurrentUserAuthorization().build(),
-              EquipoTrabajo.class);
-          if (responseEquipoTrabajo == null) {
-            // throw exception
-            throw new GetPeticionEvaluacionException();
-          }
+        }).distinct().forEach(equipoTrabajo -> {
+          sgiApiEtiService.newEquipoTrabajo(peticionEvaluacion.getId(), equipoTrabajo);
         });
     log.debug(
         "copyMiembrosEquipoSolicitudToPeticionEvaluacion(PeticionEvaluacion peticionEvaluacion, Long solicitudProyectoId) - end");
@@ -738,11 +724,7 @@ public class SolicitudService {
     }
 
     // Si no hay datos del proyecto en la solicitud, no se podrá crear el proyecto
-    if (!solicitudProyectoRepository.existsById(solicitud.getId())) {
-      return false;
-    }
-
-    return true;
+    return solicitudProyectoRepository.existsById(solicitud.getId());
   }
 
   /**
@@ -755,36 +737,102 @@ public class SolicitudService {
    * @return true si puede ser modificada / false si no puede ser modificada
    */
   public boolean modificable(Long id) {
-    log.debug("modificable(Long id) - start");
-
     Solicitud solicitud = repository.findById(id).orElseThrow(() -> new SolicitudNotFoundException(id));
-    boolean existsProyecto = proyectoRepository.existsBySolicitudId(id);
 
-    // Administrador y gestor:
-    // solicitud no activa
-    // no tiene el usuario permisos de edición para la UO de la solicitud
-    // tiene proyecto asociado
-    // NO se permite modificar
-    if (!solicitud.getActivo() || !this.hasPermisosEdicion(solicitud.getUnidadGestionRef()) || existsProyecto) {
+    if (!this.hasPermisosEdicion(solicitud)) {
       return false;
     }
 
-    log.debug("modificable(Long id) - end");
-    return true;
+    if (isUserInvestigador()) {
+      return modificableByInvestigador(solicitud);
+    } else {
+      return modificableByUnidadGestion(solicitud);
+    }
   }
 
   /**
-   * Comprueba si el usuario logueado tiene los permisos globales de edición o el
-   * de la unidad de gestión de la solicitud.
-   * 
-   * @param unidadGestionRef Unidad de gestión de la solicitud
-   * @return <code>true</code> si tiene el permiso de edición; <code>false</code>
-   *         caso contrario.
+   * Hace las comprobaciones necesarias para determinar si la {@link Solicitud}
+   * puede ser modificada para cambiar el estado y añadir
+   * nuevos documentos.
+   *
+   * @param id Id del {@link Solicitud}.
+   * @return true si puede ser modificada / false si no puede ser modificada
    */
-  private boolean hasPermisosEdicion(String unidadGestionRef) {
-    String authority = "CSP-SOL-E";
-    return SgiSecurityContextHolder.hasAuthority(authority) || SgiSecurityContextHolder
-        .hasAnyAuthorityForUO(new String[] { "CSP-SOL-E", "CSP-SOL-INV-ER" }, unidadGestionRef);
+  public boolean modificableEstadoAndDocumentos(Long id) {
+    Solicitud solicitud = repository.findById(id).orElseThrow(() -> new SolicitudNotFoundException(id));
+
+    if (!this.hasPermisosEdicion(solicitud)) {
+      return false;
+    }
+
+    if (isUserInvestigador()) {
+      return modificableEstadoAndDocumentosByInvestigador(solicitud);
+    } else {
+      return modificableByUnidadGestion(solicitud);
+    }
+  }
+
+  /**
+   * Hace las comprobaciones necesarias para determinar si la {@link Solicitud}
+   * puede ser modificada para cambiar el estado y añadir
+   * nuevos documentos.
+   *
+   * @param id Id del {@link Solicitud}.
+   * @return true si puede ser modificada / false si no puede ser modificada
+   */
+  public boolean modificableEstadoAndDocumentosByInvestigador(Long id) {
+    return modificableEstadoAndDocumentosByInvestigador(
+        repository.findById(id).orElseThrow(() -> new SolicitudNotFoundException(id)));
+  }
+
+  /**
+   * Hace las comprobaciones necesarias para determinar si la {@link Solicitud}
+   * puede ser modificada para cambiar el estado y añadir
+   * nuevos documentos.
+   *
+   * @param solicitud La {@link Solicitud}.
+   * @return true si puede ser modificada / false si no puede ser modificada
+   */
+  private boolean modificableEstadoAndDocumentosByInvestigador(Solicitud solicitud) {
+    if (!this.hasPermisosEdicion(solicitud)) {
+      return false;
+    }
+
+    return Arrays.asList(
+        Estado.BORRADOR,
+        Estado.SUBSANACION,
+        Estado.EXCLUIDA_PROVISIONAL,
+        Estado.EXCLUIDA_DEFINITIVA,
+        Estado.DENEGADA_PROVISIONAL,
+        Estado.DENEGADA).contains(solicitud.getEstado().getEstado());
+  }
+
+  /**
+   * Hace las comprobaciones necesarias para determinar si la {@link Solicitud}
+   * puede ser modificada por un usuario investigador.
+   * No es modificable cuando el estado de la {@link Solicitud} es distinto de
+   * {@link EstadoSolicitud.Estado#BORRADOR}
+   *
+   * @param solicitud Id del {@link Solicitud}.
+   * @return true si puede ser modificada / false si no puede ser modificada
+   */
+  private boolean modificableByInvestigador(Solicitud solicitud) {
+    return solicitud.getEstado().getEstado().equals(EstadoSolicitud.Estado.BORRADOR);
+  }
+
+  /**
+   * Hace las comprobaciones necesarias para determinar si la {@link Solicitud}
+   * puede ser modificada por un usuario de la unidad de gestion.
+   * No es modificable cuando no esta activa ni cuando tiene
+   * {@link Proyecto} asociados.
+   *
+   * @param solicitud Id del {@link Solicitud}.
+   * @return true si puede ser modificada / false si no puede ser modificada
+   */
+  private boolean modificableByUnidadGestion(Solicitud solicitud) {
+    boolean hasProyectosAsociados = proyectoRepository.existsBySolicitudId(solicitud.getId());
+
+    return Boolean.TRUE.equals(solicitud.getActivo()) && !hasProyectosAsociados;
   }
 
   /**
@@ -801,7 +849,6 @@ public class SolicitudService {
 
     if (solicitud.getConvocatoriaId() != null
         && !hasDocumentacionRequerida(solicitud.getId(), solicitud.getConvocatoriaId())) {
-      log.debug("validateCambioNoDesistidaRenunciada(Solicitud solicitud) - end");
       throw new SolicitudWithoutRequeridedDocumentationException();
     }
 
@@ -810,12 +857,10 @@ public class SolicitudService {
 
       SolicitudProyecto solicitudProyecto = solicitudProyectoRepository.findById(solicitud.getId()).orElse(null);
       if (solicitudProyecto == null) {
-        log.debug("validateCambioNoDesistidaRenunciada(Solicitud solicitud) - end");
         throw new SolicitudProyectoNotFoundException(solicitud.getId());
       }
 
       if (!isSolicitanteMiembroEquipo(solicitudProyecto.getId(), solicitud.getSolicitanteRef())) {
-        log.debug("validateCambioNoDesistidaRenunciada(Solicitud solicitud) - end");
         throw new MissingInvestigadorPrincipalInSolicitudProyectoEquipoException();
       }
 
@@ -823,7 +868,6 @@ public class SolicitudService {
         // En caso de sea colaborativo y no tenga coordinador externo
         if (Boolean.TRUE.equals(solicitudProyecto.getColaborativo())
             && solicitudProyecto.getCoordinadorExterno() == null) {
-          log.debug("validateCambioNoDesistidaRenunciada(Solicitud solicitud) - end");
           throw new ColaborativoWithoutCoordinadorExternoException();
         }
 
@@ -832,7 +876,6 @@ public class SolicitudService {
               .findAllBySolicitudProyectoIdAndRolSocioCoordinadorTrue(solicitudProyecto.getId());
 
           if (CollectionUtils.isEmpty(solicitudProyectoSocios)) {
-            log.debug("validateCambioNoDesistidaRenunciada(Solicitud solicitud) - end");
             throw new SolicitudProyectoWithoutSocioCoordinadorException();
           }
         }
@@ -842,8 +885,65 @@ public class SolicitudService {
     log.debug("validateCambioNoDesistidaRenunciada(Solicitud solicitud) - end");
   }
 
+  /**
+   * Comprueba si el cambio de estado esta entre los permitidos para el
+   * investigador
+   * 
+   * @param estadoActual Estado actual de la {@link Solicitud}
+   * @param nuevoEstado  Nuevo estado al que se quiere cambiar la
+   *                     {@link Solicitud}
+   * 
+   * @throws {@link UserNotAuthorizedToChangeEstadoSolicitudException} si el
+   *                cambio de estado no esta permitido
+   */
+  private void validateCambioEstadoInvestigador(Estado estadoActual, Estado nuevoEstado) {
+    boolean isCambioEstadoValido;
+    switch (estadoActual) {
+      case BORRADOR:
+        isCambioEstadoValido = nuevoEstado.equals(Estado.SOLICITADA) || nuevoEstado.equals(Estado.DESISTIDA);
+        break;
+      case SUBSANACION:
+        isCambioEstadoValido = nuevoEstado.equals(Estado.PRESENTADA_SUBSANACION)
+            || nuevoEstado.equals(Estado.DESISTIDA);
+        break;
+      case EXCLUIDA_PROVISIONAL:
+        isCambioEstadoValido = nuevoEstado.equals(Estado.ALEGACION_FASE_ADMISION)
+            || nuevoEstado.equals(Estado.DESISTIDA);
+        break;
+      case EXCLUIDA_DEFINITIVA:
+        isCambioEstadoValido = nuevoEstado.equals(Estado.RECURSO_FASE_ADMISION) || nuevoEstado.equals(Estado.DESISTIDA);
+        break;
+      case DENEGADA_PROVISIONAL:
+        isCambioEstadoValido = nuevoEstado.equals(Estado.ALEGACION_FASE_PROVISIONAL)
+            || nuevoEstado.equals(Estado.DESISTIDA);
+        break;
+      case DENEGADA:
+        isCambioEstadoValido = nuevoEstado.equals(Estado.RECURSO_FASE_CONCESION)
+            || nuevoEstado.equals(Estado.DESISTIDA);
+        break;
+      default:
+        isCambioEstadoValido = false;
+    }
+
+    if (!isCambioEstadoValido) {
+      throw new UserNotAuthorizedToChangeEstadoSolicitudException(estadoActual, nuevoEstado);
+    }
+  }
+
+  private boolean hasAuthorityCreateInvestigador() {
+    return SgiSecurityContextHolder.hasAuthorityForAnyUO("CSP-SOL-INV-C");
+  }
+
+  private boolean hasAuthorityDeleteInvestigador() {
+    return SgiSecurityContextHolder.hasAuthorityForAnyUO("CSP-SOL-INV-BR");
+  }
+
   private boolean hasAuthorityEditInvestigador() {
     return SgiSecurityContextHolder.hasAuthorityForAnyUO("CSP-SOL-INV-ER");
+  }
+
+  private boolean hasAuthorityEditUnidadGestion(String unidadGestion) {
+    return SgiSecurityContextHolder.hasAuthorityForUO("CSP-SOL-E", unidadGestion);
   }
 
   private boolean hasAuthorityViewInvestigador(Solicitud solicitud) {
@@ -851,13 +951,45 @@ public class SolicitudService {
         && solicitud.getSolicitanteRef().equals(getAuthenticationPersonaRef());
   }
 
+  private boolean hasAuthorityViewUnidadGestion(Solicitud solicitud) {
+    return SgiSecurityContextHolder.hasAuthorityForUO("CSP-SOL-E", solicitud.getUnidadGestionRef())
+        || SgiSecurityContextHolder.hasAuthorityForUO("CSP-SOL-V", solicitud.getUnidadGestionRef());
+  }
+
   private String getAuthenticationPersonaRef() {
     return SecurityContextHolder.getContext().getAuthentication().getName();
   }
 
-  private boolean hasAuthorityViewUnidadGestion(Solicitud solicitud) {
-    return SgiSecurityContextHolder.hasAuthorityForUO("CSP-SOL-E", solicitud.getUnidadGestionRef())
-        || SgiSecurityContextHolder.hasAuthorityForUO("CSP-SOL-V", solicitud.getUnidadGestionRef());
+  private boolean isUserInvestigador() {
+    return hasAuthorityCreateInvestigador() || hasAuthorityDeleteInvestigador() || hasAuthorityEditInvestigador();
+  }
+
+  /**
+   * Comprueba si el usuario logueado tiene permiso para ver la {@link Solicitud}
+   * 
+   * @param solicitud la {@link Solicitud}
+   * 
+   * @throws {@link UserNotAuthorizedToAccessSolicitudException}
+   */
+  private void checkUserHasAuthorityViewSolicitud(Solicitud solicitud) {
+    if (!(hasAuthorityViewInvestigador(solicitud) || hasAuthorityViewUnidadGestion(solicitud))) {
+      throw new UserNotAuthorizedToAccessSolicitudException();
+    }
+  }
+
+  /**
+   * Comprueba si el usuario logueado tiene los permisos globales de edición, el
+   * de la unidad de gestión de la solicitud o si es tiene el permiso de
+   * investigador y es el creador de la solicitud.
+   * 
+   * @param solicitud La solicitud
+   * @return <code>true</code> si tiene el permiso de edición; <code>false</code>
+   *         caso contrario.
+   */
+  private boolean hasPermisosEdicion(Solicitud solicitud) {
+    return hasAuthorityEditUnidadGestion(solicitud.getUnidadGestionRef())
+        || (hasAuthorityEditInvestigador() && solicitud.getCreadorRef().equals(
+            getAuthenticationPersonaRef()));
   }
 
   private boolean isEntidadFinanciadora(Solicitud solicitud) {

@@ -11,7 +11,7 @@ import org.crue.hercules.sgi.rep.dto.eti.EvaluacionDto;
 import org.crue.hercules.sgi.rep.dto.eti.ReportInformeFavorableMemoria;
 import org.crue.hercules.sgi.rep.dto.eti.TareaDto;
 import org.crue.hercules.sgi.rep.exceptions.GetDataReportException;
-import org.crue.hercules.sgi.rep.service.sgp.PersonaService;
+import org.crue.hercules.sgi.rep.service.sgi.SgiApiSgpService;
 import org.pentaho.reporting.engine.classic.core.Band;
 import org.pentaho.reporting.engine.classic.core.MasterReport;
 import org.pentaho.reporting.engine.classic.core.SubReport;
@@ -31,7 +31,7 @@ public class InformeFavorableMemoriaReportService extends InformeEvaluacionBaseR
   private final EvaluacionService evaluacionService;
   private final PeticionEvaluacionService peticionEvaluacionService;
 
-  public InformeFavorableMemoriaReportService(SgiConfigProperties sgiConfigProperties, PersonaService personaService,
+  public InformeFavorableMemoriaReportService(SgiConfigProperties sgiConfigProperties, SgiApiSgpService personaService,
       EvaluacionService evaluacionService, PeticionEvaluacionService peticionEvaluacionService) {
 
     super(sgiConfigProperties, personaService, evaluacionService);

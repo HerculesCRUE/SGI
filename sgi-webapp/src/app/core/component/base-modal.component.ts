@@ -2,10 +2,8 @@ import { Directive, Inject, OnDestroy, OnInit } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
-import { FxFlexProperties } from '@core/models/shared/flexLayout/fx-flex-properties';
 import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-properties';
 import { SnackBarService } from '@core/services/snack-bar.service';
-import { FormGroupUtil } from '@core/utils/form-group-util';
 import { Subscription } from 'rxjs';
 
 const MSG_ERROR_FORM_GROUP = marker('error.form-group');
@@ -35,7 +33,8 @@ export abstract class BaseModalComponent<T, U> implements OnInit, OnDestroy {
    * Checks the formGroup, returns the entered data and closes the modal
    */
   saveOrUpdate(): void {
-    if (FormGroupUtil.valid(this.formGroup)) {
+    this.formGroup.markAllAsTouched();
+    if (this.formGroup.valid || this.formGroup.disabled) {
       this.matDialogRef.close(this.getDatosForm());
     } else {
       this.snackBarService.showError(MSG_ERROR_FORM_GROUP);

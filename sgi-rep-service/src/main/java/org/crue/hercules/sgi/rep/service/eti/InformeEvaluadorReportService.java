@@ -21,7 +21,7 @@ import org.crue.hercules.sgi.rep.dto.eti.EvaluacionDto;
 import org.crue.hercules.sgi.rep.dto.eti.InformeEvaluacionEvaluadorReportOutput;
 import org.crue.hercules.sgi.rep.dto.sgp.PersonaDto;
 import org.crue.hercules.sgi.rep.exceptions.GetDataReportException;
-import org.crue.hercules.sgi.rep.service.sgp.PersonaService;
+import org.crue.hercules.sgi.rep.service.sgi.SgiApiSgpService;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
@@ -37,12 +37,12 @@ import lombok.extern.slf4j.Slf4j;
 @Validated
 public class InformeEvaluadorReportService extends BaseEvaluadorEvaluacionReportService {
 
-  private final PersonaService personaService;
+  private final SgiApiSgpService personaService;
   private final EvaluacionService evaluacionService;
 
   private static final Long TIPO_COMENTARIO_EVALUADOR = 2L;
 
-  public InformeEvaluadorReportService(SgiConfigProperties sgiConfigProperties, PersonaService personaService,
+  public InformeEvaluadorReportService(SgiConfigProperties sgiConfigProperties, SgiApiSgpService personaService,
       BloqueService bloqueService, ApartadoService apartadoService, SgiFormlyService sgiFormlyService,
       RespuestaService respuestaService, EvaluacionService evaluacionService) {
 

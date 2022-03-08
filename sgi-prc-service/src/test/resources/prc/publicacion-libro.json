@@ -1,0 +1,172 @@
+{
+  "idRef": "PUB_LIBRO_1",
+  "epigrafeCVN": "060.010.010.000",
+  "campos": [
+    {
+      "codigoCVN": "060.010.010.030",
+      "valores": [
+        ""
+      ]
+    },
+    {
+      "codigoCVN": "060.010.010.140",
+      "valores": [
+        "2020-02-10"
+      ]
+    },
+    {
+      "codigoCVN": "060.010.010.010",
+      "valores": [
+        "032"
+      ]
+    },
+    {
+      "codigoCVN": "060.010.010.070",
+      "valores": [
+        "032"
+      ]
+    },
+    {
+      "codigoCVN": "060.010.010.210",
+      "valores": [
+        "Aquitania"
+      ]
+    },
+    {
+      "codigoCVN": "060.010.010.160",
+      "valores": [
+        "978-84-0823-551-4"
+      ]
+    },
+    {
+      "codigoCVN": "060.010.010.100",
+      "valores": [
+        "Planeta"
+      ]
+    },
+    {
+      "codigoCVN": "060.010.010.080",
+      "valores": [
+        "25"
+      ]
+    },
+    {
+      "codigoCVN": "060.010.010.090",
+      "valores": [
+        "1-416"
+      ]
+    },
+    {
+      "codigoCVN": "060.010.010.390",
+      "valores": [
+        "22932567"
+      ]
+    },
+    {
+      "codigoCVN": "060.010.010.400",
+      "valores": [
+        "https://doi.org/10.1038/nphys1170"
+      ]
+    },
+    {
+      "codigoCVN": "060.010.010.410",
+      "valores": [
+        "040"
+      ]
+    },
+    {
+      "codigoCVN": "INDICE_NORMALIZADO",
+      "valores": [
+        "0.5"
+      ]
+    },
+    {
+      "codigoCVN": "060.010.010.300",
+      "valores": [
+        "true"
+      ]
+    },
+    {
+      "codigoCVN": "TIPO_OPEN_ACCESS",
+      "valores": [
+        "ALL"
+      ]
+    },
+    {
+      "codigoCVN": "PUBLICACION_MUY_RELEVANTE",
+      "valores": [
+        "false"
+      ]
+    },
+    {
+      "codigoCVN": "INTERNACIONAL",
+      "valores": [
+        "true"
+      ]
+    },
+    {
+      "codigoCVN": "INTERDISCIPLINAR",
+      "valores": [
+        "true"
+      ]
+    }
+  ],
+  "autores": [
+    {
+      "personaRef": "22932567",
+      "firma": "francisco.jose",
+      "nombre": "",
+      "apellidos": "",
+      "orden": 1,
+      "orcidID": "",
+      "ip": true
+    },
+    {
+      "personaRef": "",
+      "firma": "pepe.alvarez",
+      "nombre": "",
+      "apellidos": "",
+      "orden": 2,
+      "orcidID": "",
+      "ip": false
+    },
+    {
+      "personaRef": "48517010",
+      "firma": "",
+      "nombre": "angela",
+      "apellidos": "almela",
+      "orden": 3,
+      "orcidID": "",
+      "ip": false
+    }
+  ],
+  "indicesImpacto": [
+    {
+      "fuenteImpacto": "BCI",
+      "indice": 2.5,
+      "anio": "2020",
+      "otraFuenteImpacto": "",
+      "posicionPublicacion": 30,
+      "numeroRevista": 100,
+      "revista25": ""
+    },
+    {
+      "fuenteImpacto": "ICEE",
+      "indice": 2.6,
+      "anio": "",
+      "otraFuenteImpacto": "",
+      "posicionPublicacion": 3,
+      "numeroRevista": 100,
+      "revista25": false
+    }
+  ],
+  "proyectos": [
+    1
+  ],
+  "acreditaciones": [
+    {
+      "url": "www.paginamipublicacion.es",
+      "documentoRef": ""
+    }
+  ]
+}

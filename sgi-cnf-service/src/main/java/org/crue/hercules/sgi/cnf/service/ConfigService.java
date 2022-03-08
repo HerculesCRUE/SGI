@@ -32,6 +32,7 @@ public class ConfigService {
   private static final String PROBLEM_MESSAGE_NOTNULL = "notNull";
   private static final String MESSAGE_KEY_NAME = "name";
   private static final String MESSAGE_KEY_VALUE = "value";
+  private static final String MESSAGE_KEY_ID = "id";
 
   private final ConfigRepository repository;
 
@@ -102,7 +103,7 @@ public class ConfigService {
     Config config = repository.findById(name)
         .orElseThrow(() -> new NotFoundException(ProblemMessage.builder().key(NotFoundException.class)
             .parameter(PROBLEM_MESSAGE_PARAMETER_ENTITY, ApplicationContextSupport.getMessage(Config.class))
-            .parameter(MESSAGE_KEY_NAME, name).build()));
+            .parameter(MESSAGE_KEY_ID, name).build()));
     config.setValue(value);
     Config returnValue = repository.saveAndFlush(config);
     log.debug("updateValue(String name, String value) - end");
@@ -141,7 +142,7 @@ public class ConfigService {
     Config returnValue = repository.findById(name)
         .orElseThrow(() -> new NotFoundException(ProblemMessage.builder().key(NotFoundException.class)
             .parameter(PROBLEM_MESSAGE_PARAMETER_ENTITY, ApplicationContextSupport.getMessage(Config.class))
-            .parameter(MESSAGE_KEY_NAME, name).build()));
+            .parameter(MESSAGE_KEY_ID, name).build()));
     log.debug("get(String name) - end");
     return returnValue;
   }
@@ -149,7 +150,7 @@ public class ConfigService {
   /**
    * Find {@link Config}
    *
-   * @param pageable pagging info
+   * @param pageable paging info
    * @param query    RSQL expression with the restrictions to apply in the search
    * @return {@link Config} pagged and filtered
    */

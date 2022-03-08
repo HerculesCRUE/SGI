@@ -71,8 +71,8 @@
         [fxFlex.gt-md]="fxFlexProperties33.gtMd" [fxFlexOrder]="fxFlexProperties33.order">
         <mat-form-field fxFill>
           <mat-label>{{'pii.invencion.tipo-proteccion' | translate}}</mat-label>
-          <sgi-select-entity formControlName="tipoProteccion" [options]=" tiposProteccion$ | async" required>
-          </sgi-select-entity>
+          <sgi-select-tipo-proteccion #tipoProteccion formControlName="tipoProteccion" required>
+          </sgi-select-tipo-proteccion>
           <mat-error *ngIf="formGroup.controls.tipoProteccion.errors?.required">
             {{'error.required.entity' | translate:msgParamTipoProteccionEntity}}
           </mat-error>
@@ -80,17 +80,16 @@
       </div>
 
       <!-- Subtipo de Protección -->
-      <ng-container *ngIf="subtiposProteccion$ | async as subtiposProteccion">
-        <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties33.md"
-          [fxFlex.gt-md]="fxFlexProperties33.gtMd" [fxFlexOrder]="fxFlexProperties33.order"
-          *ngIf="subtiposProteccion?.length">
-          <mat-form-field fxFill>
-            <mat-label>{{'pii.invencion.subtipo-proteccion' | translate}}</mat-label>
-            <sgi-select-entity formControlName="subtipoProteccion" [options]=" subtiposProteccion">
-            </sgi-select-entity>
-          </mat-form-field>
-        </div>
-      </ng-container>
+      <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties33.md"
+        [fxFlex.gt-md]="fxFlexProperties33.gtMd" [fxFlexOrder]="fxFlexProperties33.order">
+        <mat-form-field fxFill>
+          <mat-label>{{'pii.invencion.subtipo-proteccion' | translate}}</mat-label>
+          <sgi-select-subtipo-proteccion formControlName="subtipoProteccion"
+            [tipoProteccionId]="formGroup.controls.tipoProteccion.value?.id"
+            [resetOnChange]="tipoProteccion.selectionChange">
+          </sgi-select-subtipo-proteccion>
+        </mat-form-field>
+      </div>
 
       <!-- Proyecto -->
       <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties33.md"

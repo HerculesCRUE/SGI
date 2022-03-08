@@ -45,7 +45,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { SgiAuthService } from '@sgi/framework/auth';
 import { NGXLogger } from 'ngx-logger';
 import { BehaviorSubject, Observable, of, Subject, throwError } from 'rxjs';
-import { switchMap, tap } from 'rxjs/operators';
+import { map, switchMap, tap } from 'rxjs/operators';
 import { CSP_ROUTE_NAMES } from '../csp-route-names';
 import { PROYECTO_ROUTE_NAMES } from '../proyecto/proyecto-route-names';
 import { CONVOCATORIA_ID_KEY } from './solicitud-crear/solicitud-crear.guard';
@@ -73,6 +73,7 @@ export const SOLICITUD_ACTION_LINK_KEY = 'solicitud';
 
 export interface ISolicitudData {
   readonly: boolean;
+  estadoAndDocumentosReadonly: boolean;
   solicitud: ISolicitud;
   hasSolicitudProyecto: boolean;
   hasPopulatedPeriodosSocios: boolean;
@@ -158,7 +159,7 @@ export class SolicitudActionService extends ActionService {
   }
 
   get solicitudProyecto(): ISolicitudProyecto {
-    return this.proyectoDatos.getValue();
+    return this.isFormularioSolicitudProyecto() ? this.proyectoDatos.getValue() : undefined;
   }
 
   get isSolicitanteInSolicitudEquipo(): boolean {
@@ -175,6 +176,10 @@ export class SolicitudActionService extends ActionService {
 
   get readonly(): boolean {
     return this.data?.readonly ?? false;
+  }
+
+  get estadoAndDocumentosReadonly(): boolean {
+    return this.data?.estadoAndDocumentosReadonly ?? false;
   }
 
   constructor(
@@ -225,7 +230,7 @@ export class SolicitudActionService extends ActionService {
 
     this.addProyectoLink();
 
-    this.isInvestigador = authService.hasAuthority('CSP-SOL-INV-C');
+    this.isInvestigador = authService.hasAnyAuthority(['CSP-SOL-INV-BR', 'CSP-SOL-INV-C', 'CSP-SOL-INV-ER']);
     const idConvocatoria = history.state[CONVOCATORIA_ID_KEY];
 
     this.datosGenerales = new SolicitudDatosGeneralesFragment(
@@ -247,7 +252,7 @@ export class SolicitudActionService extends ActionService {
     }
 
     this.documentos = new SolicitudDocumentosFragment(logger, this.data?.solicitud?.id, this.data?.solicitud?.convocatoriaId,
-      configuracionSolicitudService, solicitudService, solicitudDocumentoService, this.readonly);
+      configuracionSolicitudService, solicitudService, solicitudDocumentoService, this.readonly, this.estadoAndDocumentosReadonly);
     this.areaConocimiento = new SolicitudProyectoAreaConocimientoFragment(this.data?.solicitud?.id,
       solicitudProyectoAreaConocimiento, solicitudService, areaConocimientoService, this.readonly);
     this.hitos = new SolicitudHitosFragment(this.data?.solicitud?.id, solicitudHitoService, solicitudService, this.readonly);
@@ -438,16 +443,23 @@ export class SolicitudActionService extends ActionService {
         return this.equipoProyecto.validateRequisitosConvocatoriaSolicitante(this.solicitante, this.convocatoriaId).pipe(
           switchMap((response) => {
             if (response) {
-              return this.translate.get(VALIDACION_REQUISITOS_EQUIPO_IP_MAP.get(response)).pipe(
-                switchMap((value) => {
-                  return this.translate.get(
-                    MSG_SAVE_REQUISITOS_INVESTIGADOR,
-                    { mask: value }
-                  );
-                }),
-                switchMap((value) => {
-                  return this.dialogService.showConfirmation(value);
-                }),
+              const errorValidacion = this.translate.instant(VALIDACION_REQUISITOS_EQUIPO_IP_MAP.get(response));
+              const msgErrorValidacion = this.translate.instant(MSG_SAVE_REQUISITOS_INVESTIGADOR, { mask: errorValidacion });
+              return of(msgErrorValidacion);
+            }
+            return this.equipoProyecto.validateRequisitosConvocatoriaGlobales(this.convocatoriaId).pipe(
+              map(errorValidacion => {
+                if (errorValidacion) {
+                  return this.translate.instant(VALIDACION_REQUISITOS_EQUIPO_IP_MAP.get(errorValidacion));
+                }
+
+                return null;
+              })
+            );
+          }),
+          switchMap((msgErrorValidacion: string) => {
+            if (msgErrorValidacion) {
+              return this.dialogService.showConfirmation(msgErrorValidacion).pipe(
                 switchMap((aceptado) => {
                   if (aceptado) {
                     return this.saveOrUpdateSolicitud();

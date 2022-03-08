@@ -13,8 +13,8 @@
       <mat-form-field>
         <mat-label>{{'pii.sector-aplicacion' | translate:MSG_PARAMS.CARDINALIRY.SINGULAR}}
         </mat-label>
-        <sgi-select-entity formControlName="sectorAplicacion" [options]="sectoresAplicacion$ | async" required>
-        </sgi-select-entity>
+        <sgi-select-sector-aplicacion formControlName="sectorAplicacion" [excluded]="data.selectedEntidades" required>
+        </sgi-select-sector-aplicacion>
       </mat-form-field>
     </div>
   </form>

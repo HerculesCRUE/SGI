@@ -133,13 +133,13 @@ export class ProyectoClasificacionListadoExportService extends AbstractTableExpo
     const columns: ISgiColumnReport[] = [];
 
     const maxNumClasificaciones = Math.max(...proyectos.map(p => p.clasificaciones?.length));
-    const titleClasificacion = this.translate.instant(CLASIFICACION_KEY, MSG_PARAMS.CARDINALIRY.PLURAL);
+    const titleClasificacion = this.translate.instant(CLASIFICACION_KEY, MSG_PARAMS.CARDINALIRY.SINGULAR);
 
     for (let i = 0; i < maxNumClasificaciones; i++) {
       const idClasificacion: string = String(i + 1);
       const columnClasificacion: ISgiColumnReport = {
         name: CLASIFICACION_FIELD + idClasificacion,
-        title: titleClasificacion + idClasificacion + ': ' + this.translate.instant(CLASIFICACION_KEY, MSG_PARAMS.CARDINALIRY.SINGULAR),
+        title: titleClasificacion + idClasificacion,
         type: ColumnType.STRING,
       };
       columns.push(columnClasificacion);
@@ -172,9 +172,9 @@ export class ProyectoClasificacionListadoExportService extends AbstractTableExpo
       const clasificacionElementsRow: any[] = [];
 
       let clasificacionContent = proyectoClasificacion?.clasificacion?.nombre ?? '';
-      clasificacionContent += '\n';
+      clasificacionContent += ' - ';
       clasificacionContent += proyectoClasificacion?.nivelesTexto ?? '';
-      clasificacionContent += '\n';
+      clasificacionContent += ' - ';
       clasificacionContent += proyectoClasificacion?.nivelSeleccionado?.nombre ?? '';
 
       clasificacionElementsRow.push(clasificacionContent);

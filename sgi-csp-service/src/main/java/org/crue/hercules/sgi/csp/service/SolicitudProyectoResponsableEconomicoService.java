@@ -82,16 +82,16 @@ public class SolicitudProyectoResponsableEconomicoService {
 
     // SolicitudProyectoResponsableEconomico NO encontrados
     responsablesEconomicos.stream().forEach(responsableEconomico -> {
-      if (responsableEconomico.getId() != null && !responsablesEconimicosBD.stream()
-          .map(SolicitudProyectoResponsableEconomico::getId).anyMatch(id -> id == responsableEconomico.getId())) {
+      if (responsableEconomico.getId() != null && responsablesEconimicosBD.stream()
+          .map(SolicitudProyectoResponsableEconomico::getId).noneMatch(id -> id.equals(responsableEconomico.getId()))) {
         throw new SolicitudProyectoResponsableEconomicoNotFoundException(responsableEconomico.getId());
       }
     });
 
     // SolicitudProyectoResponsableEconomico eliminados
     List<SolicitudProyectoResponsableEconomico> responsablesEconomicosEliminar = responsablesEconimicosBD.stream()
-        .filter(responsableEconomico -> !responsablesEconomicos.stream()
-            .map(SolicitudProyectoResponsableEconomico::getId).anyMatch(id -> id == responsableEconomico.getId()))
+        .filter(responsableEconomico -> responsablesEconomicos.stream()
+            .map(SolicitudProyectoResponsableEconomico::getId).noneMatch(id -> id.equals(responsableEconomico.getId())))
         .collect(Collectors.toList());
 
     if (!responsablesEconomicosEliminar.isEmpty()) {

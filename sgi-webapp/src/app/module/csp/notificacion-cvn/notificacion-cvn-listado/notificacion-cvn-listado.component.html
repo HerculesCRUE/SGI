@@ -14,7 +14,7 @@
           </mat-form-field>
         </div>
 
-        <!-- Titúlo -->
+        <!-- Título -->
         <div class="col" fxFlex="49%" fxFlex.sm="99%">
           <mat-form-field>
             <mat-label>{{'csp.notificacion-cvn.titulo' | translate}}</mat-label>
@@ -73,7 +73,7 @@
         <div class="col" fxFlex="49%" fxFlex.sm="99%">
           <mat-form-field class="input-form">
             <mat-label>{{'csp.notificacion-cvn.entidad-participacion' | translate}}</mat-label>
-            <sgi-select-empresa placeholder="{{'csp.notificacion-cvn.entidad-participacion'}}"
+            <sgi-select-empresa placeholder="{{'csp.notificacion-cvn.entidad-participacion' | translate}}"
               formControlName="entidadParticipacion">
             </sgi-select-empresa>
           </mat-form-field>
@@ -94,7 +94,7 @@
     </form>
 
 
-    <table mat-table [dataSource]="notificaciones$ | async" matSort matSortActive="id" matSortDirection="asc"
+    <table mat-table [dataSource]="notificaciones$ | async" matSort matSortActive="fechaInicio" matSortDirection="desc"
       matSortDisableClear>
 
       <!-- Investigador -->
@@ -137,6 +137,55 @@
       <ng-container matColumnDef="acciones">
         <th mat-header-cell *matHeaderCellDef> {{'label.actions' | translate}} </th>
         <td mat-cell *matCellDef="let notificacion">
+          <ng-container>
+            <a mat-icon-button color="primary" matTooltip="{{'btn.view' | translate}}" [routerLink]="[notificacion.id]">
+              <mat-icon>visibility</mat-icon>
+            </a>
+          </ng-container>
+          <ng-container *ngIf="!notificacion.autorizacion?.id">
+            <button *sgiHasAuthorityForAnyUO="'CSP-CVPR-E'" mat-icon-button color="primary"
+              matTooltip="{{'msg.asociar.entity' | translate:msgParamAutorizacionEntity}}"
+              (click)="openModalAsociarAutorizacion(notificacion)">
+              <mat-icon>add_alert</mat-icon>
+            </button>
+          </ng-container>
+          <ng-container *ngIf="notificacion.autorizacion?.id">
+            <button *sgiHasAuthorityForAnyUO="'CSP-CVPR-E'" mat-icon-button color="primary"
+              matTooltip="{{'msg.desasociar.entity' | translate:msgParamAutorizacionEntity}}"
+              (click)="desasociarAutorizacion(notificacion)">
+              <mat-icon>notifications_off</mat-icon>
+            </button>
+          </ng-container>
+          <ng-container *ngIf="notificacion.proyecto?.id">
+            <button *sgiHasAuthorityForAnyUO="'CSP-CVPR-E'" mat-icon-button color="primary"
+              matTooltip="{{'msg.desasociar.entity' | translate:msgParamProyectoEntity}}"
+              (click)="desasociarProyecto(notificacion)">
+              <mat-icon>work_off</mat-icon>
+            </button>
+          </ng-container>
+          <ng-container *ngIf="!notificacion.proyecto?.id">
+            <button *sgiHasAuthorityForAnyUO="'CSP-CVPR-E'" mat-icon-button color="primary"
+              matTooltip="{{'msg.asociar.entity' | translate:msgParamProyectoEntity}}"
+              (click)="openModalAsociarProyecto(notificacion)">
+              <mat-icon>next_week</mat-icon>
+            </button>
+          </ng-container>
+
+          <ng-container *sgiHasAnyAuthorityForAnyUO="['CSP-PRO-V', 'CSP-PRO-E']">
+            <button *ngIf="notificacion.proyecto?.id" mat-icon-button color="primary"
+              matTooltip="{{'btn.view.entity' | translate:msgParamProyectoEntity}}"
+              [routerLink]="['../..', CSP_ROUTE_NAMES.PROYECTO, notificacion.proyecto?.id?.toString()]">
+              <mat-icon>work</mat-icon>
+            </button>
+          </ng-container>
+
+          <ng-container *sgiHasAnyAuthorityForAnyUO="['CSP-AUT-V','CSP-AUT-E']">
+            <button *ngIf="notificacion.autorizacion.id" mat-icon-button color="primary"
+              matTooltip="{{'btn.view.entity' | translate:msgParamAutorizacionEntity}}"
+              [routerLink]="['../..', CSP_ROUTE_NAMES.AUTORIZACION, notificacion.autorizacion?.id?.toString()]">
+              <mat-icon>verified_user</mat-icon>
+            </button>
+          </ng-container>
         </td>
       </ng-container>
       <tr mat-header-row *matHeaderRowDef="columnas"></tr>

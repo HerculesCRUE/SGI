@@ -8,8 +8,6 @@ import { SolicitudProteccionProcedimientoDocumentoService } from '@core/services
 import { SolicitudProteccionProcedimientoService } from '@core/services/pii/solicitud-proteccion/solicitud-proteccion-procedimiento/solicitud-proteccion-procedimiento.service';
 import { SolicitudProteccionService } from '@core/services/pii/solicitud-proteccion/solicitud-proteccion.service';
 import { TipoCaducidadService } from '@core/services/pii/tipo-caducidad/tipo-caducidad.service';
-import { TipoProcedimientoService } from '@core/services/pii/tipo-procedimiento/tipo-procedimiento.service';
-import { ViaProteccionService } from '@core/services/pii/via-proteccion/via-proteccion.service';
 import { DocumentoService } from '@core/services/sgdoc/documento.service';
 import { EmpresaService } from '@core/services/sgemp/empresa.service';
 import { PaisService } from '@core/services/sgo/pais/pais.service';
@@ -42,14 +40,12 @@ export class SolicitudProteccionActionService extends ActionService {
     private logger: NGXLogger,
     private route: ActivatedRoute,
     private solicitudProteccionService: SolicitudProteccionService,
-    private viaProteccionService: ViaProteccionService,
     private paisService: PaisService,
     private empresaService: EmpresaService,
     private tipoCaducidadService: TipoCaducidadService,
     private paisValidadoService: PaisValidadoService,
     private solicitudProteccionProcedimientoService: SolicitudProteccionProcedimientoService,
     private procedimientoDocumentoService: SolicitudProteccionProcedimientoDocumentoService,
-    private tipoProcedimientoService: TipoProcedimientoService,
     private documentoService: DocumentoService
   ) {
     super();
@@ -68,7 +64,6 @@ export class SolicitudProteccionActionService extends ActionService {
       this.data.invencion.titulo,
       this.solicitudProteccionService,
       this.data.readonly,
-      this.viaProteccionService,
       this.paisService,
       this.empresaService,
       this.tipoCaducidadService,
@@ -78,7 +73,7 @@ export class SolicitudProteccionActionService extends ActionService {
 
     this.procedimientos = new SolicitudProteccionProcedimientosFragment(
       id, this.solicitudProteccionService, this.solicitudProteccionProcedimientoService,
-      this.procedimientoDocumentoService, this.tipoProcedimientoService, this.documentoService
+      this.procedimientoDocumentoService, this.documentoService
     );
 
     this.addFragment(this.FRAGMENT.DATOS_GENERALES, this.datosGenerales);

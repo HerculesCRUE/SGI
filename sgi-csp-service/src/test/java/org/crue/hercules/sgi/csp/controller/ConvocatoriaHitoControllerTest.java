@@ -1,9 +1,14 @@
 package org.crue.hercules.sgi.csp.controller;
 
 import java.time.Instant;
+import java.util.ArrayList;
 
+import org.crue.hercules.sgi.csp.dto.ConvocatoriaHitoAvisoInput;
+import org.crue.hercules.sgi.csp.dto.ConvocatoriaHitoAvisoInput.Destinatario;
+import org.crue.hercules.sgi.csp.dto.ConvocatoriaHitoInput;
 import org.crue.hercules.sgi.csp.exceptions.ConvocatoriaHitoNotFoundException;
 import org.crue.hercules.sgi.csp.model.ConvocatoriaHito;
+import org.crue.hercules.sgi.csp.model.ConvocatoriaHitoAviso;
 import org.crue.hercules.sgi.csp.model.TipoHito;
 import org.crue.hercules.sgi.csp.service.ConvocatoriaHitoService;
 import org.crue.hercules.sgi.csp.service.TipoHitoService;
@@ -13,7 +18,6 @@ import org.mockito.ArgumentMatchers;
 import org.mockito.BDDMockito;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
-import org.springframework.beans.BeanUtils;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
@@ -42,50 +46,31 @@ public class ConvocatoriaHitoControllerTest extends BaseControllerTest {
   public void create_ReturnsConvocatoriaHito() throws Exception {
     // given: new ConvocatoriaHito
 
-    ConvocatoriaHito convocatoriaHito = generarMockConvocatoriaHito(null);
-    convocatoriaHito.getTipoHito().setId(1L);
-    convocatoriaHito.setConvocatoriaId(1L);
+    ConvocatoriaHitoInput convocatoriaHitoInput = generarMockConvocatoriaHitoInput();
 
-    BDDMockito.given(service.create(ArgumentMatchers.<ConvocatoriaHito>any()))
+    BDDMockito.given(service.create(ArgumentMatchers.<ConvocatoriaHitoInput>any()))
         .willAnswer((InvocationOnMock invocation) -> {
-          ConvocatoriaHito newConvocatoriaHito = new ConvocatoriaHito();
-          BeanUtils.copyProperties(invocation.getArgument(0), newConvocatoriaHito);
-          newConvocatoriaHito.setId(1L);
-          return newConvocatoriaHito;
+          return generarMockConvocatoriaHito(1L);
         });
 
     // when: create ConvocatoriaHito
     mockMvc
         .perform(MockMvcRequestBuilders.post(CONTROLLER_BASE_PATH).with(SecurityMockMvcRequestPostProcessors.csrf())
             .contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON)
-            .content(mapper.writeValueAsString(convocatoriaHito)))
+            .content(mapper.writeValueAsString(
+                convocatoriaHitoInput)))
         .andDo(SgiMockMvcResultHandlers.printOnError())
         // then: new ConvocatoriaHito is created
         .andExpect(MockMvcResultMatchers.status().isCreated())
         .andExpect(MockMvcResultMatchers.jsonPath("id").isNotEmpty())
-        .andExpect(MockMvcResultMatchers.jsonPath("convocatoriaId").value(convocatoriaHito.getConvocatoriaId()))
+        .andExpect(MockMvcResultMatchers.jsonPath("convocatoriaId").value(1L))
         .andExpect(MockMvcResultMatchers.jsonPath("fecha").value("2020-10-19T00:00:00Z"))
-        .andExpect(MockMvcResultMatchers.jsonPath("comentario").value("comentario" + convocatoriaHito.getId()))
-        .andExpect(MockMvcResultMatchers.jsonPath("tipoHito.id").value(convocatoriaHito.getTipoHito().getId()));
-  }
-
-  @Test
-  @WithMockUser(username = "user", authorities = { "CSP-CON-C" })
-  public void create_WithId_Returns400() throws Exception {
-    // given: a ConvocatoriaHito with id filled
-    ConvocatoriaHito convocatoriaHito = generarMockConvocatoriaHito(1L);
-
-    BDDMockito.given(service.create(ArgumentMatchers.<ConvocatoriaHito>any()))
-        .willThrow(new IllegalArgumentException());
-
-    // when: create ConvocatoriaHito
-    mockMvc
-        .perform(MockMvcRequestBuilders.post(CONTROLLER_BASE_PATH).with(SecurityMockMvcRequestPostProcessors.csrf())
-            .contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON)
-            .content(mapper.writeValueAsString(convocatoriaHito)))
-        .andDo(SgiMockMvcResultHandlers.printOnError())
-        // then: 400 error
-        .andExpect(MockMvcResultMatchers.status().isBadRequest());
+        .andExpect(MockMvcResultMatchers.jsonPath("comentario").value("comentario"))
+        .andExpect(MockMvcResultMatchers.jsonPath("tipoHito.id").value(1L))
+        .andExpect(MockMvcResultMatchers.jsonPath("aviso.tareaProgramadaRef").value("1"))
+        .andExpect(MockMvcResultMatchers.jsonPath("aviso.comunicadoRef").value("1"))
+        .andExpect(MockMvcResultMatchers.jsonPath("aviso.incluirIpsSolicitud").value(false))
+        .andExpect(MockMvcResultMatchers.jsonPath("aviso.incluirIpsProyecto").value(false));
   }
 
   @Test
@@ -93,10 +78,11 @@ public class ConvocatoriaHitoControllerTest extends BaseControllerTest {
   public void update_ReturnsConvocatoriaHito() throws Exception {
     // given: Existing ConvocatoriaHito to be updated
     ConvocatoriaHito convocatoriaHitoExistente = generarMockConvocatoriaHito(1L);
-    ConvocatoriaHito convocatoriaHito = generarMockConvocatoriaHito(1L);
+    ConvocatoriaHitoInput convocatoriaHito = generarMockConvocatoriaHitoInput();
 
-    BDDMockito.given(service.update(ArgumentMatchers.<ConvocatoriaHito>any()))
-        .willAnswer((InvocationOnMock invocation) -> invocation.getArgument(0));
+    BDDMockito.given(service.update(
+        ArgumentMatchers.<Long>any(), ArgumentMatchers.<ConvocatoriaHitoInput>any()))
+        .willAnswer((InvocationOnMock invocation) -> convocatoriaHitoExistente);
 
     // when: update ConvocatoriaHito
     mockMvc
@@ -109,9 +95,15 @@ public class ConvocatoriaHitoControllerTest extends BaseControllerTest {
         .andExpect(MockMvcResultMatchers.jsonPath("id").value(convocatoriaHitoExistente.getId()))
         .andExpect(
             MockMvcResultMatchers.jsonPath("convocatoriaId").value(convocatoriaHitoExistente.getConvocatoriaId()))
-        .andExpect(MockMvcResultMatchers.jsonPath("fecha").value("2020-10-19T00:00:00Z"))
-        .andExpect(MockMvcResultMatchers.jsonPath("comentario").value("comentario1"))
-        .andExpect(MockMvcResultMatchers.jsonPath("tipoHito.id").value(convocatoriaHito.getTipoHito().getId()));
+        .andExpect(MockMvcResultMatchers.jsonPath("fecha").value(convocatoriaHito.getFecha().toString()))
+        .andExpect(MockMvcResultMatchers.jsonPath("comentario").value(convocatoriaHito.getComentario()))
+        .andExpect(MockMvcResultMatchers.jsonPath("tipoHito.id").value(convocatoriaHito.getTipoHitoId()))
+        .andExpect(MockMvcResultMatchers.jsonPath("aviso.tareaProgramadaRef").value("1"))
+        .andExpect(MockMvcResultMatchers.jsonPath("aviso.comunicadoRef").value("1"))
+        .andExpect(MockMvcResultMatchers.jsonPath("aviso.incluirIpsSolicitud").value(
+            convocatoriaHito.getAviso().getIncluirIpsSolicitud()))
+        .andExpect(MockMvcResultMatchers.jsonPath("aviso.incluirIpsProyecto")
+            .value(convocatoriaHito.getAviso().getIncluirIpsProyecto()));
   }
 
   @Test
@@ -119,10 +111,10 @@ public class ConvocatoriaHitoControllerTest extends BaseControllerTest {
   public void update_WithNoExistingId_Returns404() throws Exception {
     // given: No existing Id
     Long id = 1L;
-    ConvocatoriaHito convocatoriaHito = generarMockConvocatoriaHito(1L);
+    ConvocatoriaHitoInput convocatoriaHito = generarMockConvocatoriaHitoInput();
 
     BDDMockito.willThrow(new ConvocatoriaHitoNotFoundException(id)).given(service)
-        .update(ArgumentMatchers.<ConvocatoriaHito>any());
+        .update(ArgumentMatchers.<Long>any(), ArgumentMatchers.<ConvocatoriaHitoInput>any());
 
     // when: update ConvocatoriaHito
     mockMvc
@@ -189,7 +181,12 @@ public class ConvocatoriaHitoControllerTest extends BaseControllerTest {
         .andExpect(MockMvcResultMatchers.jsonPath("id").value(1L))
         .andExpect(MockMvcResultMatchers.jsonPath("convocatoriaId").value(1L))
         .andExpect(MockMvcResultMatchers.jsonPath("fecha").value("2020-10-19T00:00:00Z"))
-        .andExpect(MockMvcResultMatchers.jsonPath("comentario").value("comentario1"));
+        .andExpect(MockMvcResultMatchers.jsonPath("comentario").value("comentario"))
+        .andExpect(MockMvcResultMatchers.jsonPath("tipoHito.id").value(1L))
+        .andExpect(MockMvcResultMatchers.jsonPath("aviso.tareaProgramadaRef").value("1"))
+        .andExpect(MockMvcResultMatchers.jsonPath("aviso.comunicadoRef").value("1"))
+        .andExpect(MockMvcResultMatchers.jsonPath("aviso.incluirIpsSolicitud").value(false))
+        .andExpect(MockMvcResultMatchers.jsonPath("aviso.incluirIpsProyecto").value(false));
 
   }
 
@@ -210,12 +207,6 @@ public class ConvocatoriaHitoControllerTest extends BaseControllerTest {
         andExpect(MockMvcResultMatchers.status().isNotFound());
   }
 
-  /**
-   * Función que devuelve un objeto ConvocatoriaHito
-   * 
-   * @param id id del ConvocatoriaHito
-   * @return el objeto ConvocatoriaHito
-   */
   private ConvocatoriaHito generarMockConvocatoriaHito(Long id) {
     TipoHito tipoHito = new TipoHito();
     tipoHito.setId(id == null ? 1 : id);
@@ -225,9 +216,37 @@ public class ConvocatoriaHitoControllerTest extends BaseControllerTest {
     convocatoriaHito.setId(id);
     convocatoriaHito.setConvocatoriaId(id == null ? 1 : id);
     convocatoriaHito.setFecha(Instant.parse("2020-10-19T00:00:00Z"));
-    convocatoriaHito.setComentario("comentario" + id);
-    convocatoriaHito.setGeneraAviso(true);
+    convocatoriaHito.setComentario("comentario");
+    convocatoriaHito.setConvocatoriaHitoAviso(new ConvocatoriaHitoAviso(
+        id == null ? 1 : id, id == null ? "1" : id.toString(), id == null ? "1" : id.toString(), false, false));
     convocatoriaHito.setTipoHito(tipoHito);
+
+    return convocatoriaHito;
+  }
+
+  /**
+   * Función que devuelve un objeto ConvocatoriaHito
+   * 
+   * @param id id del ConvocatoriaHito
+   * @return el objeto ConvocatoriaHito
+   */
+  private ConvocatoriaHitoInput generarMockConvocatoriaHitoInput() {
+
+    ConvocatoriaHitoAvisoInput aviso = new ConvocatoriaHitoAvisoInput();
+    aviso.setFechaEnvio(Instant.parse("2020-10-19T00:00:00Z"));
+    aviso.setAsunto("Asunto");
+    aviso.setContenido("Contenido");
+    aviso.setDestinatarios(new ArrayList<>());
+    aviso.getDestinatarios().add(new Destinatario("test", "test@test.com"));
+    aviso.setIncluirIpsProyecto(false);
+    aviso.setIncluirIpsSolicitud(false);
+
+    ConvocatoriaHitoInput convocatoriaHito = new ConvocatoriaHitoInput();
+    convocatoriaHito.setConvocatoriaId(1L);
+    convocatoriaHito.setTipoHitoId(1L);
+    convocatoriaHito.setFecha(Instant.parse("2020-10-19T00:00:00Z"));
+    convocatoriaHito.setComentario("comentario");
+    convocatoriaHito.setAviso(aviso);
 
     return convocatoriaHito;
   }

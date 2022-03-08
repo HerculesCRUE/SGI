@@ -8,16 +8,20 @@
       [title]="'label.historico-estados' | translate"
       [fragment]="actionService.getFragment(actionService.FRAGMENT.HISTORICO_ESTADOS)">
     </sgi-action-fragment-menu-item>
+    <sgi-action-fragment-menu-item *sgiHasAnyAuthorityForAnyUO="['CSP-AUT-E','CSP-AUT-V']"
+      [route]="[AUTORIZACION_ROUTE_NAMES.CERTIFICADOS]" [title]="'label.certificados' | translate"
+      [fragment]="actionService.getFragment(actionService.FRAGMENT.CERTIFICADOS)">
+    </sgi-action-fragment-menu-item>
+  </ng-container>
 
-    <ng-container footer>
-      <sgi-action-footer [texto]="textoEditar" [actionService]="actionService">
-        <sgi-action-footer-button *sgiHasAuthorityForAnyUO="'CSP-AUT-INV-ER'" color="primary" [text]="textoPresentar"
-          [disabled]="disablePresentar$ | async" icon="move_to_inbox" (buttonClick)="presentar()">
-        </sgi-action-footer-button>
-        <sgi-action-footer-button *sgiHasAuthorityForAnyUO="'CSP-AUT-E'" color="primary" [text]="textoCambioEstado"
-          icon="move_to_inbox" (buttonClick)="openCambioEstado()" [disabled]="disableCambioEstado">
-        </sgi-action-footer-button>
-      </sgi-action-footer>
-    </ng-container>
+  <ng-container footer>
+    <sgi-action-footer [texto]="textoEditar" [actionService]="actionService">
+      <sgi-action-footer-button *sgiHasAuthorityForAnyUO="'CSP-AUT-INV-ER'" action="presentar" color="primary"
+        [text]="textoPresentar" [disabled]="disablePresentar$ | async" icon="move_to_inbox">
+      </sgi-action-footer-button>
+      <sgi-action-footer-button *sgiHasAuthorityForAnyUO="'CSP-AUT-E'" color="primary" [text]="textoCambioEstado"
+        icon="move_to_inbox" action="cambiar-estado" [disabled]="disableCambioEstado">
+      </sgi-action-footer-button>
+    </sgi-action-footer>
   </ng-container>
 </sgi-action>

@@ -5,7 +5,8 @@ import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { ActionComponent } from '@core/component/action.component';
 import { HttpProblem } from '@core/errors/http-problem';
 import { MSG_PARAMS } from '@core/i18n';
-import { IEstadoAutorizacion } from '@core/models/csp/estado-autorizacion';
+import { ActionStatus } from '@core/services/action-service';
+import { EstadoAutorizacionService } from '@core/services/csp/estado-autorizacion/estado-autorizacion.service';
 import { DialogService } from '@core/services/dialog.service';
 import { SnackBarService } from '@core/services/snack-bar.service';
 import { TranslateService } from '@ngx-translate/core';
@@ -14,17 +15,16 @@ import { BehaviorSubject, Subject } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { AUTORIZACION_ROUTE_NAMES } from '../autorizacion-route-names';
 import { AutorizacionActionService } from '../autorizacion.action.service';
-import { AutorizacionCambioEstadoModalComponentData, CambioEstadoModalComponent } from '../cambio-estado-modal/cambio-estado-modal.component';
 
 const AUTORIZACION_KEY = marker('csp.autorizacion');
+const AUTORIZACION_SOLICITUD_KEY = marker('csp.autorizacion-solicitud');
 const MSG_BUTTON_SAVE = marker('btn.save.entity');
 const MSG_SUCCESS = marker('msg.update.entity.success');
 const MSG_ERROR = marker('error.update.entity');
 const MSG_SUCCESS_PRESENTAR = marker('msg.csp.autorizacion.presentar.success');
 const MSG_ERROR_PRESENTAR = marker('error.csp.autorizacion.presentar');
-const MSG_BUTTON_PRESENTAR = marker('csp.autorizacion.presentar');
-const MSG_CAMBIO_ESTADO_SUCCESS = marker('msg.csp.cambio-estado.success');
-const MSG_BUTTON_CAMBIO_ESTADO = marker('csp.solicitud.cambio-estado');
+const MSG_BUTTON_PRESENTAR = marker('btn.presentar.entity');
+const MSG_BUTTON_CAMBIO_ESTADO = marker('btn.cambiar-estado');
 
 @Component({
   selector: 'sgi-autorizacion-editar',
@@ -40,10 +40,11 @@ export class AutorizacionEditarComponent extends ActionComponent implements OnIn
   textoEditar: string;
   textoEditarSuccess: string;
   textoEditarError: string;
-  textoPresentar = MSG_BUTTON_PRESENTAR;
+  textoPresentar: string;
   textoCambioEstado = MSG_BUTTON_CAMBIO_ESTADO;
   disablePresentar$: Subject<boolean> = new BehaviorSubject<boolean>(true);
   disableCambioEstado = false;
+  status: ActionStatus;
 
   constructor(
     protected readonly logger: NGXLogger,
@@ -52,6 +53,7 @@ export class AutorizacionEditarComponent extends ActionComponent implements OnIn
     route: ActivatedRoute,
     public actionService: AutorizacionActionService,
     private matDialog: MatDialog,
+    private estadoAutorizacionService: EstadoAutorizacionService,
     dialogService: DialogService,
     private readonly translate: TranslateService
   ) {
@@ -59,12 +61,22 @@ export class AutorizacionEditarComponent extends ActionComponent implements OnIn
 
     this.disablePresentar$.next(!this.actionService.presentable);
 
-    this.subscriptions.push(this.actionService.status$.subscribe(
-      status => {
-        this.disableCambioEstado = status.changes || status.errors;
-        this.disablePresentar$.next(!this.actionService.presentable || status.changes || status.errors);
-      }
-    ));
+    this.subscriptions.push(
+      this.actionService.status$.subscribe(
+        status => {
+          this.status = status;
+          this.disableCambioEstado = (this.actionService.disableCambioEstado$.value || status.changes || status.errors);
+          this.disablePresentar$.next(!this.actionService.presentable || status.changes || status.errors);
+        }
+      )
+    );
+    this.subscriptions.push(
+      this.actionService.disableCambioEstado$.subscribe(
+        disableCambioDeEstado => {
+          this.disableCambioEstado = (disableCambioDeEstado || this.status.changes || this.status.errors);
+        }
+      )
+    );
   }
 
   ngOnInit(): void {
@@ -74,7 +86,7 @@ export class AutorizacionEditarComponent extends ActionComponent implements OnIn
 
   setupI18N() {
     this.translate.get(
-      AUTORIZACION_KEY,
+      AUTORIZACION_SOLICITUD_KEY,
       MSG_PARAMS.CARDINALIRY.SINGULAR
     ).pipe(
       switchMap((value) => {
@@ -84,6 +96,18 @@ export class AutorizacionEditarComponent extends ActionComponent implements OnIn
         );
       })
     ).subscribe((value) => this.textoEditar = value);
+
+    this.translate.get(
+      AUTORIZACION_SOLICITUD_KEY,
+      MSG_PARAMS.CARDINALIRY.SINGULAR
+    ).pipe(
+      switchMap((value) => {
+        return this.translate.get(
+          MSG_BUTTON_PRESENTAR,
+          { entity: value, ...MSG_PARAMS.GENDER.FEMALE }
+        );
+      })
+    ).subscribe((value) => this.textoPresentar = value);
 
     this.translate.get(
       AUTORIZACION_KEY,
@@ -110,31 +134,37 @@ export class AutorizacionEditarComponent extends ActionComponent implements OnIn
     ).subscribe((value) => this.textoEditarError = value);
   }
 
-  saveOrUpdate(): void {
-    this.actionService.saveOrUpdate().subscribe(
-      () => {
-        // This is intentional
-      },
-      (error) => {
-        this.logger.error(error);
-        if (error instanceof HttpProblem) {
-          if (!!!error.managed) {
-            this.snackBarService.showError(error);
+  saveOrUpdate(action: 'save' | 'presentar' | 'cambiar-estado'): void {
+    if (action === 'presentar') {
+      this.presentar();
+    }
+    else if (action === 'cambiar-estado') {
+      this.actionService.openCambioEstado();
+    }
+    else {
+      this.actionService.saveOrUpdate().subscribe(
+        () => {
+          // This is intentional
+        },
+        (error) => {
+          this.logger.error(error);
+          if (error instanceof HttpProblem) {
+            if (!!!error.managed) {
+              this.snackBarService.showError(error);
+            }
           }
+          else {
+            this.snackBarService.showError(this.textoEditarError);
+          }
+        },
+        () => {
+          this.snackBarService.showSuccess(this.textoEditarSuccess);
         }
-        else {
-          this.snackBarService.showError(this.textoEditarError);
-        }
-      },
-      () => {
-        this.snackBarService.showSuccess(this.textoEditarSuccess);
-        const autorizacionId = this.actionService.getFragment(this.actionService.FRAGMENT.DATOS_GENERALES).getKey();
-        this.router.navigate([`../${autorizacionId}`], { relativeTo: this.activatedRoute });
-      }
-    );
+      );
+    }
   }
 
-  presentar(): void {
+  private presentar(): void {
     this.actionService.presentar().subscribe(
       () => {
         // This is intentional
@@ -151,29 +181,6 @@ export class AutorizacionEditarComponent extends ActionComponent implements OnIn
       () => {
         this.snackBarService.showSuccess(MSG_SUCCESS_PRESENTAR);
         this.router.navigate(['../'], { relativeTo: this.activatedRoute });
-      }
-    );
-  }
-
-  /**
-   * Apertura de modal cambio de estado para insertar comentario
-   */
-  openCambioEstado(): void {
-    const data: AutorizacionCambioEstadoModalComponentData = {
-      estadoActual: this.actionService.estado,
-      autorizacion: this.actionService.autorizacion,
-    };
-    const config = {
-      panelClass: 'sgi-dialog-container',
-      data
-    };
-    const dialogRef = this.matDialog.open(CambioEstadoModalComponent, config);
-    dialogRef.afterClosed().subscribe(
-      (modalData: IEstadoAutorizacion) => {
-        if (modalData) {
-          this.snackBarService.showSuccess(MSG_CAMBIO_ESTADO_SUCCESS);
-          this.router.navigate(['../'], { relativeTo: this.activatedRoute });
-        }
       }
     );
   }

@@ -35,7 +35,7 @@ import org.crue.hercules.sgi.rep.dto.eti.PeticionEvaluacionDto;
 import org.crue.hercules.sgi.rep.dto.sgp.PersonaDto;
 import org.crue.hercules.sgi.rep.dto.sgp.EmailDto;
 import org.crue.hercules.sgi.rep.exceptions.GetDataReportException;
-import org.crue.hercules.sgi.rep.service.sgp.PersonaService;
+import org.crue.hercules.sgi.rep.service.sgi.SgiApiSgpService;
 import org.pentaho.reporting.engine.classic.core.MasterReport;
 import org.pentaho.reporting.engine.classic.core.SubReport;
 import org.pentaho.reporting.engine.classic.core.TableDataFactory;
@@ -58,7 +58,7 @@ public class MXXReportService extends BaseApartadosRespuestasReportService {
 
   private final MemoriaService memoriaService;
   private final PeticionEvaluacionService peticionEvaluacionService;
-  private final PersonaService personaService;
+  private final SgiApiSgpService personaService;
 
   private static final String NO_REF_CEID = "NoRefCEID: ";
   private static final String DATOS_SOLICITANTE_TYPE = "datosSolicitanteType";
@@ -66,7 +66,7 @@ public class MXXReportService extends BaseApartadosRespuestasReportService {
 
   @Autowired
   public MXXReportService(SgiConfigProperties sgiConfigProperties, MemoriaService memoriaService,
-      PeticionEvaluacionService peticionEvaluacionService, PersonaService personaService, BloqueService bloqueService,
+      PeticionEvaluacionService peticionEvaluacionService, SgiApiSgpService personaService, BloqueService bloqueService,
       ApartadoService apartadoService, SgiFormlyService sgiFormlyService, RespuestaService respuestaService) {
 
     super(sgiConfigProperties, bloqueService, apartadoService, sgiFormlyService, respuestaService);

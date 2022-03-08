@@ -5,6 +5,7 @@ import { FormsModule } from '@angular/forms';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import TestUtils from '@core/utils/test-utils';
 import { MaterialDesignModule } from '@material/material-design.module';
+import { SharedModule } from '@shared/shared.module';
 import { LoggerTestingModule } from 'ngx-logger/testing';
 import { DetalleEconomicoComponent } from './detalle-economico.component';
 
@@ -25,7 +26,8 @@ describe('DetalleEconomicoComponent', () => {
         HttpClientTestingModule,
         FlexModule,
         FormsModule,
-        FlexLayoutModule
+        FlexLayoutModule,
+        SharedModule
       ]
     })
       .compileComponents();

@@ -8,10 +8,12 @@ import { IAutorizacion } from '@core/models/csp/autorizacion';
 import { Estado, ESTADO_MAP, IEstadoAutorizacion } from '@core/models/csp/estado-autorizacion';
 import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-properties';
 import { AutorizacionService } from '@core/services/csp/autorizacion/autorizacion.service';
+import { EstadoAutorizacionService } from '@core/services/csp/estado-autorizacion/estado-autorizacion.service';
 import { SnackBarService } from '@core/services/snack-bar.service';
 import { TranslateService } from '@ngx-translate/core';
 import { DateTime } from 'luxon';
 import { Observable } from 'rxjs';
+import { switchMap } from 'rxjs/operators';
 
 const AUTORIZACION_CAMBIO_ESTADO_COMENTARIO = marker('csp.autorizacion.estado-autorizacion.comentario');
 const AUTORIZACION_CAMBIO_ESTADO_NUEVO_ESTADO = marker('csp.autorizacion.cambio-estado.nuevo');
@@ -46,7 +48,8 @@ export class CambioEstadoModalComponent
     @Inject(MAT_DIALOG_DATA) public data: AutorizacionCambioEstadoModalComponentData,
     protected snackBarService: SnackBarService,
     private autorizacionService: AutorizacionService,
-    private readonly translate: TranslateService) {
+    private readonly translate: TranslateService,
+    private estadoAutorizacionService: EstadoAutorizacionService) {
     super(matDialogRef, true);
 
     this.fxLayoutProperties = new FxLayoutProperties();
@@ -106,7 +109,9 @@ export class CambioEstadoModalComponent
   protected saveOrUpdate(): Observable<IEstadoAutorizacion> {
     const estadoNew = this.getValue();
 
-    return this.autorizacionService.cambiarEstado(this.data.autorizacion.id, estadoNew);
+    return this.autorizacionService.cambiarEstado(this.data.autorizacion.id, estadoNew).pipe(
+      switchMap(autorizacion => this.estadoAutorizacionService.findById(autorizacion.estado.id))
+    );
   }
 
 

@@ -215,7 +215,6 @@ export class PartidaPresupuestariaModalComponent
       const tipoValue = tipoControl.value;
 
       const duplicated = this.data.partidasPresupuestarias
-        .filter(partidaPresupuestaria => partidaPresupuestaria?.id !== this.data.partidaPresupuestaria?.id)
         .some(partidaPresupuestaria => partidaPresupuestaria?.codigo === codigoValue && partidaPresupuestaria?.tipoPartida === tipoValue);
 
       if (duplicated) {

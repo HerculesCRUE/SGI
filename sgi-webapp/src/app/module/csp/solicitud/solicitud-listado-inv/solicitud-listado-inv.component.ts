@@ -17,7 +17,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { SgiAuthService } from '@sgi/framework/auth';
 import { RSQLSgiRestFilter, SgiRestFilter, SgiRestFilterOperator, SgiRestListResult } from '@sgi/framework/http';
 import { NGXLogger } from 'ngx-logger';
-import { merge, Observable, of } from 'rxjs';
+import { forkJoin, merge, Observable, of } from 'rxjs';
 import { map, switchMap, tap } from 'rxjs/operators';
 
 const MSG_ERROR = marker('error.load');
@@ -120,12 +120,17 @@ export class SolicitudListadoInvComponent extends AbstractTablePaginationCompone
       switchMap((response) => {
         const requestsModificable: Observable<SolicitudListado>[] = [];
         response.items.forEach(solicitud => {
-          requestsModificable.push(this.solicitudService.modificable(solicitud.id).pipe(
-            map(isModificable => {
-              solicitud.modificable = isModificable;
-              return solicitud;
-            })
-          ));
+          requestsModificable.push(
+            forkJoin({
+              modificable: this.solicitudService.modificable(solicitud.id),
+              estadoAndDocumentosReadonly: this.solicitudService.modificableEstadoAndDocumentosByInvestigador(solicitud.id)
+            }).pipe(
+              map(({ modificable, estadoAndDocumentosReadonly }) => {
+                solicitud.modificable = modificable || estadoAndDocumentosReadonly;
+                return solicitud;
+              })
+            )
+          );
         });
         return of(response).pipe(
           tap(() => merge(...requestsModificable).subscribe())

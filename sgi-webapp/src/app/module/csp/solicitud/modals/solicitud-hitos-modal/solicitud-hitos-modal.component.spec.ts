@@ -14,7 +14,7 @@ import { SgiAuthModule, SgiAuthService } from '@sgi/framework/auth';
 import { SharedModule } from '@shared/shared.module';
 import { LoggerTestingModule } from 'ngx-logger/testing';
 import { CspSharedModule } from '../../../shared/csp-shared.module';
-import { SolicitiudHitosModalComponent } from './solicitud-hitos-modal.component';
+import { SolicitiudHitosModalComponent, SolicitudHitosModalComponentData } from './solicitud-hitos-modal.component';
 
 
 
@@ -27,7 +27,9 @@ describe('SolicitiudHitosModalComponent', () => {
       close: jasmine.createSpy('close'),
     };
     // Mock MAT_DIALOG
-    const matDialogData = {} as ISolicitudHito;
+    const matDialogData = {
+      hitos: []
+    } as SolicitudHitosModalComponentData;
 
     TestBed.configureTestingModule({
       declarations: [

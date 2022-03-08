@@ -111,7 +111,7 @@ export class SolicitudHitosComponent extends FragmentComponent implements OnInit
    */
   openModal(wrapper?: StatusWrapper<ISolicitudHito>): void {
     const data: SolicitudHitosModalComponentData = {
-      hitos: this.dataSource.data.map(hito => hito.value),
+      hitos: this.dataSource.data.filter(existing => existing !== wrapper).map(hito => hito.value),
       hito: wrapper ? wrapper.value : {} as ISolicitudHito,
       idModeloEjecucion: this.actionService.modeloEjecucionId,
       readonly: this.formPart.readonly

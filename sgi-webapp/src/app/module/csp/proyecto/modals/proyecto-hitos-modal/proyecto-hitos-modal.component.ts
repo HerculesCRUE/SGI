@@ -135,14 +135,13 @@ export class ProyectoHitosModalComponent extends
    */
   private createValidatorDate(tipoHito: ITipoHito): void {
     let fechas: DateTime[] = [];
-    if (tipoHito && typeof tipoHito !== 'string') {
-      const proyectoHitos = this.data.hitos.filter(hito =>
-        hito.tipoHito.id === (tipoHito as ITipoHito).id &&
-        (!hito.fecha.equals(this.data.hito.fecha)));
-      fechas = proyectoHitos.map(hito => hito.fecha);
-    }
+
+    const proyectoHitos = this.data.hitos.filter(hito =>
+      hito.tipoHito.id === tipoHito?.id);
+    fechas = proyectoHitos.map(hito => hito.fecha);
+
     this.formGroup.setValidators([
-      TipoHitoValidator.notInDate('fecha', fechas, this.data?.hitos?.map(hito => hito.tipoHito))
+      TipoHitoValidator.notInDate('fecha', fechas)
     ]);
   }
 

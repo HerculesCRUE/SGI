@@ -14,7 +14,8 @@ import { StatusWrapper } from '@core/utils/status-wrapper';
 import { TranslateService } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
-import { SearchProyectoEconomicoModalData, SearchProyectosEconomicosModalComponent } from '../../../shared/search-proyectos-economicos-modal/search-proyectos-economicos-modal.component';
+import { SearchProyectoEconomicoModalComponent, SearchProyectoEconomicoModalData } from 'src/app/esb/sge/shared/search-proyecto-economico-modal/search-proyecto-economico-modal.component';
+
 import { ProyectoActionService } from '../../proyecto.action.service';
 import { ProyectoProyectosSgeFragment } from './proyecto-proyectos-sge.fragment';
 
@@ -99,20 +100,20 @@ export class ProyectoProyectosSgeComponent extends FragmentComponent implements 
     ).subscribe((value) => this.textoDelete = value);
   }
 
-  /**
-   * Apertura de modal de clasificaciones
-   */
   openModal(): void {
     const data: SearchProyectoEconomicoModalData = {
+      searchTerm: null,
+      extended: true,
       selectedProyectos: this.dataSource.data.map((proyectoProyectoSge) => proyectoProyectoSge.value.proyectoSge),
-      proyectoSgiId: this.formPart.getKey() as number
+      proyectoSgiId: this.formPart.getKey() as number,
+      selectAndNotify: true
     };
 
     const config = {
       panelClass: 'sgi-dialog-container',
       data
     };
-    const dialogRef = this.matDialog.open(SearchProyectosEconomicosModalComponent, config);
+    const dialogRef = this.matDialog.open(SearchProyectoEconomicoModalComponent, config);
     dialogRef.afterClosed().subscribe(
       (proyectoSge) => {
         if (proyectoSge) {
@@ -122,11 +123,6 @@ export class ProyectoProyectosSgeComponent extends FragmentComponent implements 
     );
   }
 
-  /**
-   * Elimina la clasificacion
-   *
-   * @param wrapper la clasificacion
-   */
   deleteProyectoSge(wrapper: StatusWrapper<IProyectoProyectoSge>): void {
     this.subscriptions.push(
       this.dialogService.showConfirmation(this.textoDelete).subscribe(

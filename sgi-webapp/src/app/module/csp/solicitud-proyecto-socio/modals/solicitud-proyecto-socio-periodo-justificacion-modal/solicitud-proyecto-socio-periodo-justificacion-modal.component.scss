@@ -1,15 +1,1 @@
-:host {
-  mat-form-field.ng-invalid.ng-touched {
-    animation: example;
-    animation-duration: 0.3s;
-    margin-bottom: 25px;
-  }
-  @keyframes example {
-    from {
-      margin-bottom: 0;
-    }
-    to {
-      margin-bottom: 25px;
-    }
-  }
-}
+

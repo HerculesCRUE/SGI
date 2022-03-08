@@ -20,7 +20,7 @@ import org.crue.hercules.sgi.rep.service.eti.MemoriaService;
 import org.crue.hercules.sgi.rep.service.eti.PeticionEvaluacionService;
 import org.crue.hercules.sgi.rep.service.eti.RespuestaService;
 import org.crue.hercules.sgi.rep.service.eti.SgiFormlyService;
-import org.crue.hercules.sgi.rep.service.sgp.PersonaService;
+import org.crue.hercules.sgi.rep.service.sgi.SgiApiSgpService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.BDDMockito;
@@ -45,7 +45,7 @@ class MXXReportServiceTest extends BaseReportServiceTest {
   private PeticionEvaluacionService peticionEvaluacionService;
 
   @Mock
-  private PersonaService personaService;
+  private SgiApiSgpService personaService;
 
   @Mock
   private BloqueService bloqueService;

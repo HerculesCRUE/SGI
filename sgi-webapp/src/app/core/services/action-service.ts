@@ -13,7 +13,7 @@ export interface IActionService {
   /**
    * Save or update the all parts of the form
    */
-  saveOrUpdate(): Observable<void>;
+  saveOrUpdate(action?: any): Observable<void>;
   /**
    * Returns true if any fragment have errors
    */
@@ -224,7 +224,7 @@ export interface IFragment {
   /**
    * Perform the persist of the value represented by the fragment. Can return an identity key related to the fragment
    */
-  saveOrUpdate(): Observable<void | string | number>;
+  saveOrUpdate(action?: any): Observable<void | string | number>;
   /**
    * Return the identity key related to the fragment
    */
@@ -397,7 +397,7 @@ export abstract class Fragment implements IFragment {
     }
   }
 
-  abstract saveOrUpdate(): Observable<string | number | void>;
+  abstract saveOrUpdate(action?: any): Observable<string | number | void>;
 
   getKey(): string | number {
     return this.key;
@@ -516,7 +516,7 @@ export abstract class FormFragment<T> implements IFormFragment<T> {
 
   abstract getValue(): T;
 
-  abstract saveOrUpdate(): Observable<void | string | number>;
+  abstract saveOrUpdate(action?: any): Observable<void | string | number>;
 
   private mergeStatus(): void {
     const current: FragmentStatus = this.status$.value;
@@ -885,7 +885,7 @@ export abstract class ActionService implements IActionService, OnDestroy {
 
   status$: BehaviorSubject<ActionStatus> = new BehaviorSubject<ActionStatus>({ changes: false, complete: false, errors: false, problems: false, edit: false });
 
-  saveOrUpdate(): Observable<void> {
+  saveOrUpdate(action?: any): Observable<void> {
     this.performChecks(true);
     if (this.hasErrors()) {
       return throwError('Errores');
@@ -894,7 +894,7 @@ export abstract class ActionService implements IActionService, OnDestroy {
       return from(this.fragments.values()).pipe(
         filter((part) => part.hasChanges()),
         tap((part) => part.clearProblems()),
-        mergeMap((part) => part.saveOrUpdate().pipe(
+        mergeMap((part) => part.saveOrUpdate(action).pipe(
           catchError(error => {
             if (error instanceof HttpProblem) {
               part.pushProblems(error);
@@ -914,7 +914,7 @@ export abstract class ActionService implements IActionService, OnDestroy {
     else {
       const part = this.fragments.get(this.masterFragmentName);
       part.clearProblems();
-      return part.saveOrUpdate().pipe(
+      return part.saveOrUpdate(action).pipe(
         catchError(error => {
           if (error instanceof HttpProblem) {
             part.pushProblems(error);
@@ -927,7 +927,7 @@ export abstract class ActionService implements IActionService, OnDestroy {
           if (typeof key === 'string' || typeof key === 'number') {
             this.onKeyChange(key);
           }
-          return this.saveOrUpdate();
+          return this.saveOrUpdate(action);
         }),
         takeLast(1)
       );

@@ -86,6 +86,27 @@ mat-form-field {
   width: 100%;
 }
 
+// Allow responsive reserved space for errors in fields
+.mat-form-field-appearance-legacy .mat-form-field-wrapper {
+    display: flex;
+    flex-direction: column;
+    padding-bottom: 0;
+    .mat-form-field-flex {
+        order: 1;
+    }
+    .mat-form-field-underline {
+        position: relative;
+        order: 2;
+        bottom: 0 !important;
+    }
+    .mat-form-field-subscript-wrapper {
+        position: relative;
+        order: 3;
+        min-height: 1.33em; // Default line-height for inputs in $custom-typography
+        margin-bottom: -0.083em; // Difference between default padding and the min-height. (1.25 - 1.333)
+    }
+}
+
 // Icono de requerido de mat-form-field (por defecto es accent)
 .mat-focused .mat-form-field-required-marker {
   color: map-get($palette-primary, $primary-color);

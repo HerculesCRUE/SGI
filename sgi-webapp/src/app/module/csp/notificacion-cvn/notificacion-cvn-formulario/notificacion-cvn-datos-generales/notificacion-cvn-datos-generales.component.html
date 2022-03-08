@@ -1,0 +1,154 @@
+<sgi-fragment title="{{'label.datos-generales' | translate}}">
+  <form [formGroup]="formGroup" fxLayout="column">
+
+    <div fxFlex fxLayout="row" fxLayoutGap="10px">
+      <!--Investigador-->
+      <mat-form-field fxFlex="67%">
+        <mat-label>{{'csp.notificacion-cvn.investigador' | translate}}</mat-label>
+        <sgi-select-persona placeholder="{{'csp.notificacion-cvn.investigador' | translate}}"
+          formControlName="investigador">
+        </sgi-select-persona>
+      </mat-form-field>
+      <!--Acreditación-->
+      <mat-form-field fxFlex="33%">
+        <mat-label>{{'csp.notificacion-cvn.acreditacion' | translate}}</mat-label>
+        <input matInput formControlName="acreditacion" id="acreditacion"
+          placeholder="{{'csp.notificacion-cvn.acreditacion' | translate}}" readonly>
+        <!--Descargar fichero-->
+        <button
+          *ngIf="this.formPart.notificacion?.documento?.documentoRef && this.formGroup.controls.acreditacion.value"
+          mat-icon-button color="primary" matTooltip="{{'csp.notificacion-cvn.navegar-acreditacion' | translate}}"
+          id="btnDownload" (click)="this.formPart.descargarDocumento()">
+          <mat-icon>arrow_downward</mat-icon>
+        </button>
+        <!--Ver Url-->
+        <a mat-icon-button color="primary" matTooltip="{{'csp.notificacion-cvn.navegar-acreditacion' | translate}}"
+          id="btnNavigate"
+          *ngIf="!this.formPart.notificacion?.documento?.documentoRef && this.formGroup.controls.acreditacion.value"
+          [href]="this.formPart.notificacion?.urlDocumentoAcreditacion" target="_blank">
+          <mat-icon>arrow_forward</mat-icon>
+        </a>
+      </mat-form-field>
+    </div>
+    <div fxFlex fxLayout="row" fxLayoutGap="10px">
+      <!-- Titulo -->
+      <mat-form-field class="input-form" fxFlex="67%">
+        <mat-label>{{'csp.notificacion-cvn.titulo-proyecto' | translate}}</mat-label>
+        <input matInput formControlName="tituloProyecto" type="text" id="tituloProyecto"
+          placeholder="{{'csp.notificacion-cvn.titulo-proyecto' | translate}}">
+      </mat-form-field>
+      <!--Referencia entidad Convocante, Codigo Externo-->
+      <mat-form-field class="input-form" fxFlex="33%">
+        <mat-label>{{'csp.notificacion-cvn.codigo-externo' | translate}}</mat-label>
+        <input matInput formControlName="codigoExterno" type="text" id="codigoExterno"
+          placeholder="{{'csp.notificacion-cvn.codigo-externo' | translate}}">
+      </mat-form-field>
+    </div>
+    <div fxFlex fxLayout="row" fxLayoutGap="10px">
+      <!-- Fecha inicio -->
+      <mat-form-field color="primary" fxFlex="33%">
+        <mat-label>{{'csp.notificacion-cvn.fecha-inicio'| translate}}</mat-label>
+        <input matInput [matDatepicker]="pickerFechaInicio" formControlName="fechaInicio" required>
+        <mat-datepicker-toggle class="fechaIcon" matSuffix [for]="pickerFechaInicio"></mat-datepicker-toggle>
+        <mat-datepicker #pickerFechaInicio>
+        </mat-datepicker>
+      </mat-form-field>
+
+      <!-- Fecha Fin -->
+      <mat-form-field color="primary" fxFlex="33%">
+        <mat-label>{{'csp.notificacion-cvn.fecha-fin'| translate}}</mat-label>
+        <input matInput [matDatepicker]="pickerFechaFin" formControlName="fechaFin" required>
+        <mat-datepicker-toggle class="fechaIcon" matSuffix [for]="pickerFechaFin"></mat-datepicker-toggle>
+        <mat-datepicker #pickerFechaFin>
+        </mat-datepicker>
+      </mat-form-field>
+    </div>
+
+    <div fxFlex fxLayout="row" fxLayoutGap="10px">
+      <!-- Ámbito geográfico -->
+      <mat-form-field class="input-form" fxFlex="33%">
+        <mat-label>{{'csp.notificacion-cvn.ambito-geografico' | translate}}</mat-label>
+        <input matInput formControlName="ambitoGeografico" type="text" id="ambitoGeografico"
+          placeholder="{{'csp.notificacion-cvn.ambito-geografico' | translate}}">
+      </mat-form-field>
+      <!-- Grado contribucion -->
+      <mat-form-field class="input-form" fxFlex="33%">
+        <mat-label>{{'csp.notificacion-cvn.grado-contribucion' | translate}}</mat-label>
+        <input matInput formControlName="gradoContribucion" type="text" id="gradoContribucion"
+          placeholder="{{'csp.notificacion-cvn.grado-contribucion' | translate}}">
+      </mat-form-field>
+    </div>
+    <div fxFlex fxLayout="row" fxLayoutGap="10px">
+      <!--Responsable-->
+      <mat-form-field fxFlex="67%" *ngIf="this.formPart.notificacion?.responsable?.id">
+        <mat-label>{{'csp.notificacion-cvn.responsable' | translate}}</mat-label>
+        <sgi-select-persona placeholder="{{'csp.notificacion-cvn.responsable' | translate}}"
+          formControlName="responsable">
+        </sgi-select-persona>
+      </mat-form-field>
+      <!--Datos Responsable-->
+      <mat-form-field fxFlex="67%" class="input-form" *ngIf="!this.formPart.notificacion?.responsable?.id">
+        <mat-label>{{'csp.notificacion-cvn.responsable' | translate}}</mat-label>
+        <input matInput formControlName="responsable" type="text" id="responsable"
+          placeholder="{{'csp.notificacion-cvn.responsable' | translate}}">
+      </mat-form-field>
+    </div>
+    <div fxFlex fxLayout="row" fxLayoutGap="10px">
+      <!--Entidad Participacion-->
+      <mat-form-field fxFlex="67%" class="input-form" *ngIf="this.formPart.notificacion?.entidadParticipacion?.id">
+        <mat-label>{{'csp.notificacion-cvn.entidad-participacion' | translate}}</mat-label>
+        <sgi-select-empresa placeholder="{{'csp.notificacion-cvn.entidad-participacion' | translate}}"
+          formControlName="entidadParticipacion">
+        </sgi-select-empresa>
+      </mat-form-field>
+      <!--Datos Entidad Participacion-->
+      <mat-form-field fxFlex="67%" class="input-form" *ngIf="!this.formPart.notificacion?.entidadParticipacion?.id">
+        <mat-label>{{'csp.notificacion-cvn.entidad-participacion' | translate}}</mat-label>
+        <input matInput formControlName="entidadParticipacion" type="text" id="entidadParticipacion"
+          placeholder="{{'csp.notificacion-cvn.entidad-participacion' | translate}}">
+      </mat-form-field>
+    </div>
+    <!--Entidades Financiadoras-->
+    <div fxFlex fxLayout="row" fxLayoutGap="10px">
+      <table mat-table fxFlex="67%" [dataSource]="this.notificacionCVNEntidadFinanciadoras$" matSort matSortActive="id"
+        matSortDirection="asc" matSortDisableClear>
+        <!-- Nombre -->
+        <ng-container matColumnDef="nombre">
+          <th mat-header-cell *matHeaderCellDef> {{'csp.notificacion-cvn.entidades-financiadoras' |
+            translate}}
+          </th>
+          <td mat-cell *matCellDef="let entidad">{{entidad.entidadFinanciadora.id ?
+            entidad.entidadFinanciadora.nombre: entidad.datosEntidadFinanciadora}}</td>
+        </ng-container>
+        <tr mat-header-row *matHeaderRowDef="columnas"></tr>
+        <tr mat-row *matRowDef="let row; columns: columnas;"></tr>
+      </table>
+    </div>
+    <br>
+    <div fxFlex fxLayout="row" fxLayoutGap="10px">
+      <!--Nombre del Programa-->
+      <mat-form-field fxFlex="67%" class="input-form">
+        <mat-label>{{'csp.notificacion-cvn.nombre-programa' | translate}}</mat-label>
+        <input matInput formControlName="nombrePrograma" type="text" id="nombrePrograma"
+          placeholder="{{'csp.notificacion-cvn.nombre-programa' | translate}}">
+      </mat-form-field>
+    </div>
+
+    <div fxFlex fxLayout="row" fxLayoutGap="10px">
+      <!--Importe Total-->
+      <mat-form-field fxFlex="33%" class="input-form">
+        <mat-label>{{'csp.notificacion-cvn.importe-total' | translate}}</mat-label>
+        <input matInput formControlName="importeTotal" type="number" id="importeTotal"
+          placeholder="{{'csp.notificacion-cvn.importe-total' | translate}}">
+      </mat-form-field>
+
+      <!--Porcentaje Subvencionado-->
+      <mat-form-field fxFlex="33%" class="input-form">
+        <mat-label>{{'csp.notificacion-cvn.porcentaje' | translate}}</mat-label>
+        <input matInput formControlName="porcentaje" type="number" id="porcentaje"
+          placeholder="{{'csp.notificacion-cvn.porcentaje' | translate}}">
+      </mat-form-field>
+    </div>
+
+  </form>
+</sgi-fragment>

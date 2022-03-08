@@ -1,0 +1,22 @@
+:host{
+  .mat-table{
+    .mat-cell{
+        color: #9e9e9e
+    }
+  }
+  #acreditacion{
+    width: 90%;
+  }
+  .mat-icon-button {
+    height: 1.5em;
+    width: 1.5em;
+    font: inherit;
+    vertical-align: baseline;
+    align-self:center;
+    .mat-icon {
+      font-size: 1.4em;
+      width: 1em;
+      height: 1em;
+    }
+  }
+}

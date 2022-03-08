@@ -6,7 +6,15 @@ import { IPersona } from '@core/models/sgp/persona';
 })
 export class PersonaNombreCompletoPipe implements PipeTransform {
 
-  transform(persona: IPersona): string {
+  transform(personas: IPersona | IPersona[]): string {
+    if (Array.isArray(personas)) {
+      return personas.map(persona => this.getNombreCompleto(persona)).join(', ');
+    } else {
+      return this.getNombreCompleto(personas);
+    }
+  }
+
+  private getNombreCompleto(persona: IPersona): string {
     let nombreCompleto = '';
     if (persona?.nombre) {
       nombreCompleto = persona.nombre;

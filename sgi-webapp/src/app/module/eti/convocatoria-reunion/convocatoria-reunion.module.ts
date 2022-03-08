@@ -5,6 +5,7 @@ import { MaterialDesignModule } from '@material/material-design.module';
 import { TranslateModule } from '@ngx-translate/core';
 import { SgiAuthModule } from '@sgi/framework/auth';
 import { SharedModule } from '@shared/shared.module';
+import { EtiSharedModule } from '../shared/eti-shared.module';
 import { ConvocatoriaReunionCrearComponent } from './convocatoria-reunion-crear/convocatoria-reunion-crear.component';
 import { ConvocatoriaReunionDataResolver } from './convocatoria-reunion-data.resolver';
 import { ConvocatoriaReunionEditarComponent } from './convocatoria-reunion-editar/convocatoria-reunion-editar.component';
@@ -32,7 +33,8 @@ import { ConvocatoriaReunionRoutingModule } from './convocatoria-reunion-routing
     MaterialDesignModule,
     SgiAuthModule,
     FormsModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    EtiSharedModule
   ],
   providers: [
     ConvocatoriaReunionDataResolver

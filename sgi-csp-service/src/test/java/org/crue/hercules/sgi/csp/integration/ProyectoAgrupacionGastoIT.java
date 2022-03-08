@@ -2,6 +2,7 @@ package org.crue.hercules.sgi.csp.integration;
 
 import org.assertj.core.api.Assertions;
 import org.crue.hercules.sgi.csp.controller.ProyectoAgrupacionGastoController;
+import org.crue.hercules.sgi.csp.dto.AgrupacionGastoConceptoOutput;
 import org.crue.hercules.sgi.csp.dto.ProyectoAgrupacionGastoInput;
 import org.crue.hercules.sgi.csp.dto.ProyectoAgrupacionGastoOutput;
 import org.junit.jupiter.api.Test;
@@ -25,6 +26,7 @@ class ProyectoAgrupacionGastoIT extends BaseIT {
 
   private static final String PATH_PARAMETER_ID = "/{id}";
   private static final String CONTROLLER_BASE_PATH = ProyectoAgrupacionGastoController.REQUEST_MAPPING;
+  private static final String PATH_AGRUPACION_GASTO_CONCEPTO = "/agrupaciongastoconceptos";
 
   private HttpEntity<ProyectoAgrupacionGastoInput> buildRequest(HttpHeaders headers,
       ProyectoAgrupacionGastoInput entity)
@@ -48,6 +50,8 @@ class ProyectoAgrupacionGastoIT extends BaseIT {
       "classpath:scripts/modelo_unidad.sql",
       "classpath:scripts/tipo_finalidad.sql",
       "classpath:scripts/tipo_ambito_geografico.sql",
+      "classpath:scripts/tipo_regimen_concurrencia.sql",
+      "classpath:scripts/convocatoria.sql",
       "classpath:scripts/proyecto.sql",
       "classpath:scripts/estado_proyecto.sql" })
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
@@ -76,6 +80,8 @@ class ProyectoAgrupacionGastoIT extends BaseIT {
       "classpath:scripts/modelo_unidad.sql",
       "classpath:scripts/tipo_finalidad.sql",
       "classpath:scripts/tipo_ambito_geografico.sql",
+      "classpath:scripts/tipo_regimen_concurrencia.sql",
+      "classpath:scripts/convocatoria.sql",
       "classpath:scripts/proyecto.sql",
       "classpath:scripts/estado_proyecto.sql",
       "classpath:scripts/proyecto_agrupacion_gasto.sql" })
@@ -109,6 +115,8 @@ class ProyectoAgrupacionGastoIT extends BaseIT {
       "classpath:scripts/modelo_unidad.sql",
       "classpath:scripts/tipo_finalidad.sql",
       "classpath:scripts/tipo_ambito_geografico.sql",
+      "classpath:scripts/tipo_regimen_concurrencia.sql",
+      "classpath:scripts/convocatoria.sql",
       "classpath:scripts/proyecto.sql",
       "classpath:scripts/estado_proyecto.sql",
       "classpath:scripts/proyecto_agrupacion_gasto.sql" })
@@ -129,6 +137,8 @@ class ProyectoAgrupacionGastoIT extends BaseIT {
       "classpath:scripts/modelo_unidad.sql",
       "classpath:scripts/tipo_finalidad.sql",
       "classpath:scripts/tipo_ambito_geografico.sql",
+      "classpath:scripts/tipo_regimen_concurrencia.sql",
+      "classpath:scripts/convocatoria.sql",
       "classpath:scripts/proyecto.sql",
       "classpath:scripts/estado_proyecto.sql",
       "classpath:scripts/proyecto_agrupacion_gasto.sql" })
@@ -157,6 +167,8 @@ class ProyectoAgrupacionGastoIT extends BaseIT {
       "classpath:scripts/modelo_unidad.sql",
       "classpath:scripts/tipo_finalidad.sql",
       "classpath:scripts/tipo_ambito_geografico.sql",
+      "classpath:scripts/tipo_regimen_concurrencia.sql",
+      "classpath:scripts/convocatoria.sql",
       "classpath:scripts/proyecto.sql",
       "classpath:scripts/estado_proyecto.sql",
       "classpath:scripts/proyecto_agrupacion_gasto.sql" })
@@ -177,6 +189,8 @@ class ProyectoAgrupacionGastoIT extends BaseIT {
       "classpath:scripts/modelo_unidad.sql",
       "classpath:scripts/tipo_finalidad.sql",
       "classpath:scripts/tipo_ambito_geografico.sql",
+      "classpath:scripts/tipo_regimen_concurrencia.sql",
+      "classpath:scripts/convocatoria.sql",
       "classpath:scripts/proyecto.sql",
       "classpath:scripts/estado_proyecto.sql",
       "classpath:scripts/proyecto_agrupacion_gasto.sql" })
@@ -220,6 +234,58 @@ class ProyectoAgrupacionGastoIT extends BaseIT {
         .isEqualTo(2);
     Assertions.assertThat(responseData.get(1).getNombre()).as("get(1).getNombre())")
         .isEqualTo("Personal");
+  }
+
+  @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = {
+      "classpath:scripts/modelo_ejecucion.sql",
+      "classpath:scripts/modelo_unidad.sql",
+      "classpath:scripts/tipo_finalidad.sql",
+      "classpath:scripts/tipo_ambito_geografico.sql",
+      "classpath:scripts/tipo_regimen_concurrencia.sql",
+      "classpath:scripts/convocatoria.sql",
+      "classpath:scripts/proyecto.sql",
+      "classpath:scripts/estado_proyecto.sql",
+      "classpath:scripts/concepto_gasto.sql",
+      "classpath:scripts/proyecto_agrupacion_gasto.sql",
+      "classpath:scripts/agrupacion_gasto_concepto.sql", })
+  @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
+  @Test
+  void findAllById_WithPagingSortingAndFilter_ReturnsAgrupacionGastoConceptoOutputSubList() throws Exception {
+    HttpHeaders headers = new HttpHeaders();
+    headers.add("X-Page", "0");
+    headers.add("X-Page-Size", "2");
+    String sort = "id,asc";
+    String filter = "id>=1;id<=2";
+
+    Long ProyectoAgrupacionGastoId = 1L;
+
+    URI uri = UriComponentsBuilder
+        .fromUriString(CONTROLLER_BASE_PATH + PATH_PARAMETER_ID + PATH_AGRUPACION_GASTO_CONCEPTO).queryParam("s", sort)
+        .queryParam("q", filter)
+        .buildAndExpand(ProyectoAgrupacionGastoId).toUri();
+
+    final ResponseEntity<List<AgrupacionGastoConceptoOutput>> response = restTemplate.exchange(uri,
+        HttpMethod.GET,
+        buildRequest(headers, null),
+        new ParameterizedTypeReference<List<AgrupacionGastoConceptoOutput>>() {
+        });
+
+    Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+
+    HttpHeaders responseHeaders = response.getHeaders();
+    Assertions.assertThat(responseHeaders.getFirst("X-Page")).as("X-Page").isEqualTo("0");
+    Assertions.assertThat(responseHeaders.getFirst("X-Page-Size")).as("X-Page-Size").isEqualTo("2");
+    Assertions.assertThat(responseHeaders.getFirst("X-Total-Count")).as("X-Total-Count").isEqualTo("2");
+
+    List<AgrupacionGastoConceptoOutput> responseData = response.getBody();
+    Assertions.assertThat(responseData).isNotNull();
+    Assertions.assertThat(responseData.size()).isEqualTo(2);
+
+    Assertions.assertThat(responseData.get(0)).isNotNull();
+    Assertions.assertThat(responseData.get(1)).isNotNull();
+
+    Assertions.assertThat(responseData.get(0).getId()).isEqualTo(1);
+    Assertions.assertThat(responseData.get(1).getId()).isEqualTo(2);
   }
 
   private ProyectoAgrupacionGastoInput buildMockProyectoAgrupacionGastoInput() {

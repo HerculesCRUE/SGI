@@ -9,7 +9,8 @@ import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 
 import lombok.extern.slf4j.Slf4j;
 
-@SpringBootApplication
+@SpringBootApplication(exclude = {
+    org.springframework.boot.autoconfigure.freemarker.FreeMarkerAutoConfiguration.class })
 @ConfigurationPropertiesScan("org.crue.hercules.sgi.com.config")
 @Slf4j
 public class ComApplication {

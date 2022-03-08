@@ -4,4 +4,8 @@ export interface IVinculacionBackend {
   id: string;
   categoriaProfesional: ICategoriaProfesional;
   fechaObtencionCategoria: string;
+  departamento: {
+    id: string;
+    nombre: string;
+  }
 }

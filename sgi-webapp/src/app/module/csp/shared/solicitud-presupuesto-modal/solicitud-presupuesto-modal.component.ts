@@ -1,5 +1,5 @@
 import { Component, Inject } from '@angular/core';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatTableDataSource } from '@angular/material/table';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { ISolicitudProyectoPresupuesto } from '@core/models/csp/solicitud-proyecto-presupuesto';
@@ -9,6 +9,7 @@ import { EmpresaService } from '@core/services/sgemp/empresa.service';
 import { RSQLSgiRestFilter, SgiRestFilterOperator, SgiRestFindOptions } from '@sgi/framework/http';
 import { of } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
+import { ISolicitudProyectoPresupuetoModalData, SolicitudProyectoPresupuestoListadoExportModalComponent } from '../../solicitud/modals/solicitud-proyecto-presupuesto-listado-export-modal/solicitud-proyecto-presupuesto-listado-export-modal.component';
 
 const TITLE_PRESUPUESTO_COMPLETO = marker('title.csp.presupuesto-completo');
 const TITLE_PRESUPUESTO_ENTIDAD = marker('title.csp.presupuesto-entidad');
@@ -93,7 +94,8 @@ export class SolicitiudPresupuestoModalComponent {
     @Inject(MAT_DIALOG_DATA) public readonly data: SolicitudPresupuestoModalData,
     solicitudService: SolicitudService,
     private readonly solicitudProyectoEntidadService: SolicitudProyectoEntidadService,
-    private readonly empresaService: EmpresaService
+    private readonly empresaService: EmpresaService,
+    private matDialog: MatDialog,
   ) {
     this.title = this.data.entidadId ? TITLE_PRESUPUESTO_ENTIDAD : TITLE_PRESUPUESTO_COMPLETO;
     this.columnas = this.data.global ? this.columnasGlobal : this.columnasEntidad;
@@ -239,8 +241,19 @@ export class SolicitiudPresupuestoModalComponent {
   private sortRows(rows: ISolicitudProyectoPresupuesto[]): void {
     rows.sort((a, b) => {
       return b.anualidad.toLocaleString().localeCompare(a.anualidad.toLocaleString())
-            || a.conceptoGasto?.nombre.localeCompare(b.conceptoGasto?.nombre);
+        || a.conceptoGasto?.nombre.localeCompare(b.conceptoGasto?.nombre);
     });
+  }
+
+  openExportModal(): void {
+    const data: ISolicitudProyectoPresupuetoModalData = {
+      solicitudId: this.data.idSolicitudProyecto
+    };
+
+    const config = {
+      data
+    };
+    this.matDialog.open(SolicitudProyectoPresupuestoListadoExportModalComponent, config);
   }
 
 }

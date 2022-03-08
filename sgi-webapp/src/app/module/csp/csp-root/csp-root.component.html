@@ -1,6 +1,6 @@
 <sgi-root>
   <sgi-menu-item *sgiHasAnyAuthorityForAnyUO="['CSP-CON-V', 'CSP-CON-C', 'CSP-CON-E','CSP-CON-B','CSP-CON-R']"
-    [route]="[CSP_ROUTE_NAMES.CONVOCATORIA]" icon="assignment_ind"
+    [route]="[CSP_ROUTE_NAMES.CONVOCATORIA]" icon="announcement"
     title="{{'csp.convocatoria' | translate:MSG_PARAMS.CARDINALIRY.PLURAL}}">
   </sgi-menu-item>
   <sgi-menu-item
@@ -13,7 +13,7 @@
     title="{{'csp.proyecto' | translate:MSG_PARAMS.CARDINALIRY.PLURAL}}">
   </sgi-menu-item>
   <sgi-menu-group *sgiHasAnyAuthority="['CSP-CVPR-V', 'CSP-CVPR-E', 'CSP-AUT-E', 'CSP-AUT-V','CSP-AUT-B']"
-    title="{{'menu.csp.participacion-proyectos-externos' | translate:MSG_PARAMS.CARDINALIRY.PLURAL}}" icon="list_alt">
+    title="{{'menu.csp.participacion-proyectos-externos' | translate:MSG_PARAMS.CARDINALIRY.PLURAL}}" icon="share">
     <sgi-menu-subitem *sgiHasAnyAuthority="['CSP-AUT-E', 'CSP-AUT-V','CSP-AUT-B']"
       [route]="[CSP_ROUTE_NAMES.AUTORIZACION]" title="{{'csp.autorizacion' |
               translate:MSG_PARAMS.CARDINALIRY.PLURAL}}">
@@ -23,12 +23,15 @@
         translate:MSG_PARAMS.CARDINALIRY.PLURAL}}">
     </sgi-menu-subitem>
   </sgi-menu-group>
+  <sgi-menu-item *sgiHasAnyAuthorityForAnyUO="['CSP-GIN-V', 'CSP-GIN-C', 'CSP-GIN-E', 'CSP-GIN-B', 'CSP-GIN-R']"
+    [route]="[CSP_ROUTE_NAMES.GRUPO]" icon="group" title="{{'csp.grupo' | translate:MSG_PARAMS.CARDINALIRY.PLURAL}}">
+  </sgi-menu-item>
   <sgi-menu-item *sgiHasAnyAuthorityForAnyUO="['CSP-EJEC-V', 'CSP-EJEC-E']"
-    [route]="[CSP_ROUTE_NAMES.EJECUCION_ECONOMICA]" icon="attach_money"
+    [route]="[CSP_ROUTE_NAMES.EJECUCION_ECONOMICA]" icon="functions"
     title="{{'menu.csp.ejecucion-economica' | translate}}">
   </sgi-menu-item>
   <sgi-menu-item *sgiHasAnyAuthorityForAnyUO="['CSP-EJEC-E']" [route]="[CSP_ROUTE_NAMES.NOTIFICACION_PRESUPUESTO_SGE]"
-    icon="attach_money" title="{{'menu.csp.notificacion-presupuesto-sge' | translate}}">
+    icon="swap_horiz" title="{{'menu.csp.notificacion-presupuesto-sge' | translate}}">
   </sgi-menu-item>
   <sgi-menu-item *sgiHasAnyAuthorityForAnyUO="['AUTH']" icon="insert_invitation"
     title="{{'menu.csp.timesheet' | translate}}">
@@ -43,7 +46,7 @@
        'CSP-ME-B', 'CSP-ME-R', 'CSP-PRG-V', 'CSP-PRG-C', 'CSP-PRG-E', 'CSP-PRG-B', 'CSP-PRG-R', 'CSP-AREA-V', 'CSP-AREA-C', 'CSP-AREA-E', 'CSP-AREA-B',
        'CSP-AREA-R', 'CSP-FNT-V', 'CSP-FNT-C', 'CSP-FNT-E', 'CSP-FNT-B', 'CSP-FNT-R', 'CSP-TFNA-V', 'CSP-TFNA-C', 'CSP-TFNA-E', 'CSP-TFNA-B', 'CSP-TFNA-R',
        'CSP-TGTO-V', 'CSP-TGTO-C', 'CSP-TGTO-E', 'CSP-TGTO-B', 'CSP-TGTO-R']"
-    title="{{'menu.csp.configuraciones' | translate}}" icon="list_alt">
+    title="{{'menu.csp.configuraciones' | translate}}" icon="settings">
 
     <sgi-menu-subitem *sgiHasAnyAuthority="['CSP-TFASE-V', 'CSP-TFASE-C', 'CSP-TFASE-E','CSP-TFASE-B','CSP-TFASE-R']"
       [route]="[CSP_ROUTE_NAMES.TIPO_FASE]" title="{{'csp.tipo-fase' |

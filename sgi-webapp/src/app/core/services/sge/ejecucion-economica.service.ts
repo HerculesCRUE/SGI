@@ -1,7 +1,9 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { DATO_ECONOMICO_DETALLE_CONVERTER } from '@core/converters/sge/dato-economico-detalle.converter';
 import { DATO_ECONOMICO_CONVERTER } from '@core/converters/sge/dato-economico.converter';
 import { IDatoEconomicoBackend } from '@core/models/sge/backend/dato-economico-backend';
+import { IDatoEconomicoDetalleBackend } from '@core/models/sge/backend/dato-economico-detalle-backend';
 import { IColumna } from '@core/models/sge/columna';
 import { IDatoEconomico } from '@core/models/sge/dato-economico';
 import { IDatoEconomicoDetalle } from '@core/models/sge/dato-economico-detalle';
@@ -228,7 +230,9 @@ export class EjecucionEconomicaService extends SgiRestBaseService {
   }
 
   private getDatoEconomicoDetalle(id: string, tipoOperacion: TipoOperacion): Observable<IDatoEconomicoDetalle> {
-    return this.http.get<IDatoEconomicoDetalle>(`${this.endpointUrl}/${id}`, { params: { tipoOperacion } });
+    return this.http.get<IDatoEconomicoDetalleBackend>(`${this.endpointUrl}/${id}`, { params: { tipoOperacion } }).pipe(
+      map(response => DATO_ECONOMICO_DETALLE_CONVERTER.toTarget(response))
+    );
   }
 
   getFacturaGasto(id: string): Observable<IDatoEconomicoDetalle> {

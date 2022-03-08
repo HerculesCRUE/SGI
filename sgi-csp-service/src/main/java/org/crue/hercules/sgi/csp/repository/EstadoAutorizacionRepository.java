@@ -1,5 +1,7 @@
 package org.crue.hercules.sgi.csp.repository;
 
+import java.util.List;
+
 import org.crue.hercules.sgi.csp.model.Autorizacion;
 import org.crue.hercules.sgi.csp.model.EstadoAutorizacion;
 import org.springframework.data.domain.Page;
@@ -20,5 +22,15 @@ public interface EstadoAutorizacionRepository
    *         paginadas.
    */
   Page<EstadoAutorizacion> findAllByAutorizacionId(Long autorizacionId, Pageable paging);
+
+  /**
+   * Obtiene el primer estado de la Autorizaicon
+   * 
+   * @param autorizacionId id de la Autorizacion
+   * @return El primer estado de la autorizacion
+   */
+  List<EstadoAutorizacion> findFirstByAutorizacionIdOrderByIdAsc(Long autorizacionId);
+
+  void deleteByAutorizacionId(Long autorizacionId);
 
 }

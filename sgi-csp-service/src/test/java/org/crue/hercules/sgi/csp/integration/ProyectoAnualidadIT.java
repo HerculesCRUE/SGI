@@ -7,6 +7,8 @@ import java.util.List;
 
 import org.assertj.core.api.Assertions;
 import org.crue.hercules.sgi.csp.controller.ProyectoAnualidadController;
+import org.crue.hercules.sgi.csp.dto.AnualidadGastoOutput;
+import org.crue.hercules.sgi.csp.dto.AnualidadIngresoOutput;
 import org.crue.hercules.sgi.csp.dto.AnualidadResumen;
 import org.crue.hercules.sgi.csp.dto.ProyectoAnualidadInput;
 import org.crue.hercules.sgi.csp.dto.ProyectoAnualidadNotificacionSge;
@@ -32,6 +34,8 @@ class ProyectoAnualidadIT extends BaseIT {
   private static final String PATH_PARTIDAS_RESUMEN = "/partidas-resumen";
   private static final String PATH_NOTIFICACIONES_SGE = "/notificaciones-sge";
   private static final String PATH_NOTIFICA_SGE = "/notificarsge";
+  private static final String PATH_ANUALIDAD_GASTOS = "/anualidadgastos";
+  private static final String PATH_ANUALIDAD_INGRESOS = "/anualidadingresos";
 
   private HttpEntity<ProyectoAnualidadInput> buildRequest(HttpHeaders headers,
       ProyectoAnualidadInput entity, String... roles) throws Exception {
@@ -51,6 +55,8 @@ class ProyectoAnualidadIT extends BaseIT {
     "classpath:scripts/modelo_unidad.sql",
     "classpath:scripts/tipo_finalidad.sql",
     "classpath:scripts/tipo_ambito_geografico.sql",
+    "classpath:scripts/tipo_regimen_concurrencia.sql",
+    "classpath:scripts/convocatoria.sql",
     "classpath:scripts/proyecto.sql"
     // @formatter:on
   })
@@ -81,6 +87,8 @@ class ProyectoAnualidadIT extends BaseIT {
     "classpath:scripts/modelo_unidad.sql",
     "classpath:scripts/tipo_finalidad.sql",
     "classpath:scripts/tipo_ambito_geografico.sql",
+    "classpath:scripts/tipo_regimen_concurrencia.sql",
+    "classpath:scripts/convocatoria.sql",
     "classpath:scripts/proyecto.sql",
     "classpath:scripts/proyecto_anualidad.sql"
     // @formatter:on   
@@ -103,6 +111,157 @@ class ProyectoAnualidadIT extends BaseIT {
     "classpath:scripts/modelo_unidad.sql",
     "classpath:scripts/tipo_finalidad.sql",
     "classpath:scripts/tipo_ambito_geografico.sql",
+    "classpath:scripts/tipo_regimen_concurrencia.sql",
+    "classpath:scripts/convocatoria.sql",
+    "classpath:scripts/proyecto.sql",
+    "classpath:scripts/proyecto_anualidad.sql",
+    "classpath:scripts/concepto_gasto.sql",
+    "classpath:scripts/proyecto_partida.sql",
+    "classpath:scripts/anualidad_gasto.sql"
+    // @formatter:on   
+  })
+  @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
+  @Test
+  void findAllAnualidadGasto_WithPagingSortingAndFiltering_ReturnsAnualidadGastoOutputSubList() throws Exception {
+    HttpHeaders headers = new HttpHeaders();
+    headers.add("X-Page", "0");
+    headers.add("X-Page-Size", "3");
+    String sort = "id,asc";
+    String filter = "";
+
+    Long proyectoAnualidadId = 1L;
+
+    // when: find ProyectoAgrupacionGastoOutput
+    URI uri = UriComponentsBuilder.fromUriString(CONTROLLER_BASE_PATH + PATH_PARAMETER_ID + PATH_ANUALIDAD_GASTOS)
+        .queryParam("s", sort)
+        .queryParam("q", filter)
+        .buildAndExpand(proyectoAnualidadId).toUri();
+
+    final ResponseEntity<List<AnualidadGastoOutput>> response = restTemplate.exchange(uri,
+        HttpMethod.GET,
+        buildRequest(headers, null, "CSP-PRO-E"),
+        new ParameterizedTypeReference<List<AnualidadGastoOutput>>() {
+        });
+
+    // given: ProyectoAnualidadOutput data filtered and sorted
+    Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+
+    HttpHeaders responseHeaders = response.getHeaders();
+    Assertions.assertThat(responseHeaders.getFirst("X-Page")).as("X-Page").isEqualTo("0");
+    Assertions.assertThat(responseHeaders.getFirst("X-Page-Size")).as("X-Page-Size").isEqualTo("3");
+    Assertions.assertThat(responseHeaders.getFirst("X-Total-Count")).as("X-Total-Count").isEqualTo("2");
+
+    final List<AnualidadGastoOutput> responseData = response.getBody();
+    Assertions.assertThat(responseData.size()).isEqualTo(2);
+
+    Assertions.assertThat(responseData.get(0)).isNotNull();
+    Assertions.assertThat(responseData.get(1)).isNotNull();
+
+    Assertions.assertThat(responseData.get(0).getId()).isEqualTo(1);
+    Assertions.assertThat(responseData.get(1).getId()).isEqualTo(2);
+
+    Assertions.assertThat(responseData.get(0).getCodigoEconomicoRef()).isEqualTo("AL");
+    Assertions.assertThat(responseData.get(1).getCodigoEconomicoRef()).isEqualTo("LO");
+
+    Assertions.assertThat(responseData.get(0).getImporteConcedido().intValue())
+        .isEqualTo(12000);
+    Assertions.assertThat(responseData.get(1).getImporteConcedido().intValue()).isEqualTo(6000);
+
+    Assertions.assertThat(responseData.get(0).getImportePresupuesto().intValue()).isEqualTo(15000);
+    Assertions.assertThat(responseData.get(1).getImportePresupuesto().intValue()).isEqualTo(6000);
+
+    Assertions.assertThat(responseData.get(0).getProyectoAnualidadId()).isEqualTo(proyectoAnualidadId);
+    Assertions.assertThat(responseData.get(1).getProyectoAnualidadId()).isEqualTo(proyectoAnualidadId);
+
+    Assertions.assertThat(responseData.get(0).getProyectoSgeRef()).isEqualTo("33939");
+    Assertions.assertThat(responseData.get(1).getProyectoSgeRef()).isEqualTo("33939");
+
+    Assertions.assertThat(responseData.get(0).getConceptoGasto().getId()).isEqualTo(11L);
+    Assertions.assertThat(responseData.get(1).getConceptoGasto().getId()).isEqualTo(3L);
+
+    Assertions.assertThat(responseData.get(0).getProyectoPartida().getId()).isEqualTo(1L);
+    Assertions.assertThat(responseData.get(1).getProyectoPartida().getId()).isEqualTo(1L);
+
+  }
+
+  @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = {
+    // @formatter:off    
+    "classpath:scripts/modelo_ejecucion.sql",
+    "classpath:scripts/modelo_unidad.sql",
+    "classpath:scripts/tipo_finalidad.sql",
+    "classpath:scripts/tipo_ambito_geografico.sql",
+    "classpath:scripts/tipo_regimen_concurrencia.sql",
+    "classpath:scripts/convocatoria.sql",
+    "classpath:scripts/proyecto.sql",
+    "classpath:scripts/proyecto_anualidad.sql",
+    "classpath:scripts/concepto_gasto.sql",
+    "classpath:scripts/proyecto_partida.sql",
+    "classpath:scripts/anualidad_ingreso.sql"
+    // @formatter:on   
+  })
+  @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
+  @Test
+  void findAllAnualidadIngreso_WithPagingSortingAndFiltering_ReturnsAnualidadIngresoOutputSubList() throws Exception {
+    HttpHeaders headers = new HttpHeaders();
+    headers.add("X-Page", "0");
+    headers.add("X-Page-Size", "3");
+    String sort = "id,asc";
+    String filter = "";
+
+    Long proyectoAnualidadId = 1L;
+
+    URI uri = UriComponentsBuilder.fromUriString(CONTROLLER_BASE_PATH + PATH_PARAMETER_ID + PATH_ANUALIDAD_INGRESOS)
+        .queryParam("s", sort)
+        .queryParam("q", filter)
+        .buildAndExpand(proyectoAnualidadId).toUri();
+
+    final ResponseEntity<List<AnualidadIngresoOutput>> response = restTemplate.exchange(uri,
+        HttpMethod.GET,
+        buildRequest(headers, null, "CSP-PRO-E"),
+        new ParameterizedTypeReference<List<AnualidadIngresoOutput>>() {
+        });
+
+    Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+
+    HttpHeaders responseHeaders = response.getHeaders();
+    Assertions.assertThat(responseHeaders.getFirst("X-Page")).as("X-Page").isEqualTo("0");
+    Assertions.assertThat(responseHeaders.getFirst("X-Page-Size")).as("X-Page-Size").isEqualTo("3");
+    Assertions.assertThat(responseHeaders.getFirst("X-Total-Count")).as("X-Total-Count").isEqualTo("2");
+
+    final List<AnualidadIngresoOutput> responseData = response.getBody();
+    Assertions.assertThat(responseData.size()).isEqualTo(2);
+
+    Assertions.assertThat(responseData.get(0)).isNotNull();
+    Assertions.assertThat(responseData.get(1)).isNotNull();
+
+    Assertions.assertThat(responseData.get(0).getId()).isEqualTo(1);
+    Assertions.assertThat(responseData.get(1).getId()).isEqualTo(2);
+
+    Assertions.assertThat(responseData.get(0).getCodigoEconomicoRef()).isEqualTo("AA.AAAA.AAAA.AAAAB");
+    Assertions.assertThat(responseData.get(1).getCodigoEconomicoRef()).isEqualTo("AA.AAAA.AAAB.AAAAB");
+
+    Assertions.assertThat(responseData.get(0).getImporteConcedido().intValue())
+        .isEqualTo(11333);
+    Assertions.assertThat(responseData.get(1).getImporteConcedido().intValue()).isEqualTo(11666);
+
+    Assertions.assertThat(responseData.get(0).getProyectoAnualidadId()).isEqualTo(proyectoAnualidadId);
+    Assertions.assertThat(responseData.get(1).getProyectoAnualidadId()).isEqualTo(proyectoAnualidadId);
+
+    Assertions.assertThat(responseData.get(0).getProyectoSgeRef()).isEqualTo("33333");
+    Assertions.assertThat(responseData.get(1).getProyectoSgeRef()).isEqualTo("33333");
+
+    Assertions.assertThat(responseData.get(0).getProyectoPartida().getId()).isEqualTo(1L);
+    Assertions.assertThat(responseData.get(1).getProyectoPartida().getId()).isEqualTo(1L);
+  }
+
+  @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = {
+    // @formatter:off    
+    "classpath:scripts/modelo_ejecucion.sql",
+    "classpath:scripts/modelo_unidad.sql",
+    "classpath:scripts/tipo_finalidad.sql",
+    "classpath:scripts/tipo_ambito_geografico.sql",
+    "classpath:scripts/tipo_regimen_concurrencia.sql",
+    "classpath:scripts/convocatoria.sql",
     "classpath:scripts/proyecto.sql",
     "classpath:scripts/proyecto_anualidad.sql" 
     // @formatter:on  
@@ -155,6 +314,8 @@ class ProyectoAnualidadIT extends BaseIT {
     "classpath:scripts/modelo_unidad.sql",
     "classpath:scripts/tipo_finalidad.sql",
     "classpath:scripts/tipo_ambito_geografico.sql",
+    "classpath:scripts/tipo_regimen_concurrencia.sql",
+    "classpath:scripts/convocatoria.sql",
     "classpath:scripts/proyecto.sql",
     "classpath:scripts/proyecto_anualidad.sql"
     // @formatter:on  
@@ -190,6 +351,8 @@ class ProyectoAnualidadIT extends BaseIT {
       "classpath:scripts/modelo_unidad.sql",
       "classpath:scripts/tipo_finalidad.sql",
       "classpath:scripts/tipo_ambito_geografico.sql",
+      "classpath:scripts/tipo_regimen_concurrencia.sql",
+      "classpath:scripts/convocatoria.sql",
       "classpath:scripts/proyecto.sql",
       "classpath:scripts/concepto_gasto.sql",
       "classpath:scripts/proyecto_anualidad.sql",
@@ -222,6 +385,8 @@ class ProyectoAnualidadIT extends BaseIT {
       "classpath:scripts/modelo_unidad.sql",
       "classpath:scripts/tipo_finalidad.sql",
       "classpath:scripts/tipo_ambito_geografico.sql",
+      "classpath:scripts/tipo_regimen_concurrencia.sql",
+      "classpath:scripts/convocatoria.sql",
       "classpath:scripts/proyecto.sql",
       "classpath:scripts/concepto_gasto.sql",
       "classpath:scripts/proyecto_anualidad.sql",
@@ -251,6 +416,8 @@ class ProyectoAnualidadIT extends BaseIT {
     "classpath:scripts/modelo_unidad.sql",
     "classpath:scripts/tipo_finalidad.sql",
     "classpath:scripts/tipo_ambito_geografico.sql",
+    "classpath:scripts/tipo_regimen_concurrencia.sql",
+    "classpath:scripts/convocatoria.sql",
     "classpath:scripts/proyecto.sql",
     "classpath:scripts/concepto_gasto.sql",
     "classpath:scripts/proyecto_anualidad.sql"

@@ -9,6 +9,7 @@ import org.crue.hercules.sgi.csp.repository.ProyectoProyectoSgeRepository;
 import org.crue.hercules.sgi.csp.repository.predicate.ProyectoProyectoSgePredicateResolver;
 import org.crue.hercules.sgi.csp.repository.specification.ProyectoProyectoSgeSpecifications;
 import org.crue.hercules.sgi.csp.service.ProyectoProyectoSgeService;
+import org.crue.hercules.sgi.csp.util.ProyectoHelper;
 import org.crue.hercules.sgi.framework.rsql.SgiRSQLJPASupport;
 import org.crue.hercules.sgi.framework.security.core.context.SgiSecurityContextHolder;
 import org.springframework.data.domain.Page;
@@ -30,9 +31,12 @@ import lombok.extern.slf4j.Slf4j;
 public class ProyectoProyectoSgeServiceImpl implements ProyectoProyectoSgeService {
 
   private final ProyectoProyectoSgeRepository repository;
+  private final ProyectoHelper proyectoHelper;
 
-  public ProyectoProyectoSgeServiceImpl(ProyectoProyectoSgeRepository proyectoProrrogaRepository) {
+  public ProyectoProyectoSgeServiceImpl(ProyectoProyectoSgeRepository proyectoProrrogaRepository,
+      ProyectoHelper proyectoHelper) {
     this.repository = proyectoProrrogaRepository;
+    this.proyectoHelper = proyectoHelper;
   }
 
   /**
@@ -130,6 +134,7 @@ public class ProyectoProyectoSgeServiceImpl implements ProyectoProyectoSgeServic
         .and(ProyectoProyectoSgeSpecifications.byProyectoId(proyectoId));
 
     Page<ProyectoProyectoSge> returnValue = repository.findAll(specs, pageable);
+    proyectoHelper.checkCanAccessProyecto(proyectoId);
     log.debug("findAllByProyecto(Long proyectoId, String query, Pageable pageable) - end");
     return returnValue;
   }

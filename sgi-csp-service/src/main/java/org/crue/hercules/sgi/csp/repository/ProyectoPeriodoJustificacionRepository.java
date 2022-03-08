@@ -1,5 +1,6 @@
 package org.crue.hercules.sgi.csp.repository;
 
+import java.time.Instant;
 import java.util.List;
 
 import org.crue.hercules.sgi.csp.model.ProyectoPeriodoJustificacion;
@@ -11,4 +12,6 @@ public interface ProyectoPeriodoJustificacionRepository
 
   List<ProyectoPeriodoJustificacion> findByProyectoId(Long proyectoId);
 
+  List<ProyectoPeriodoJustificacion> findByFechaInicioPresentacionBetween(Instant firtDay,
+      Instant lastDay);
 }

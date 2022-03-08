@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+import { CommonModule, DecimalPipe } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { FormlyFormsModule } from '@formly-forms/formly-forms.module';
@@ -14,13 +14,15 @@ import { CambioEstadoModalComponent } from './modals/cambio-estado-modal/cambio-
 import { SolicitudAreaTematicaModalComponent } from './modals/solicitud-area-tematica-modal/solicitud-area-tematica-modal.component';
 import { SolicitudCrearProyectoModalComponent } from './modals/solicitud-crear-proyecto-modal/solicitud-crear-proyecto-modal.component';
 import { SolicitiudHitosModalComponent } from './modals/solicitud-hitos-modal/solicitud-hitos-modal.component';
-import { SolicitudListadoModalComponent } from './modals/solicitud-listado-modal/solicitud-listado-modal.component';
+import { SolicitudListadoExportModalComponent } from './modals/solicitud-listado-export-modal/solicitud-listado-export-modal.component';
 import { SolicitudModalidadEntidadConvocanteModalComponent } from './modals/solicitud-modalidad-entidad-convocante-modal/solicitud-modalidad-entidad-convocante-modal.component';
+import { SolicitudProyectoPresupuestoListadoExportModalComponent } from './modals/solicitud-proyecto-presupuesto-listado-export-modal/solicitud-proyecto-presupuesto-listado-export-modal.component';
 import { SolicitudProyectoResponsableEconomicoModalComponent } from './modals/solicitud-proyecto-responsable-economico-modal/solicitud-proyecto-responsable-economico-modal.component';
 import { SolicitudCrearComponent } from './solicitud-crear/solicitud-crear.component';
 import { SolicitudCrearGuard } from './solicitud-crear/solicitud-crear.guard';
 import { SolicitudDataResolver } from './solicitud-data.resolver';
 import { SolicitudEditarComponent } from './solicitud-editar/solicitud-editar.component';
+import { SolicitudEntidadConvocanteListadoExportService } from './solicitud-entidad-convocante-listado-export.service';
 import { SolicitudAutoevaluacionComponent } from './solicitud-formulario/solicitud-autoevaluacion/solicitud-autoevaluacion.component';
 import { SolicitudDatosGeneralesComponent } from './solicitud-formulario/solicitud-datos-generales/solicitud-datos-generales.component';
 import { SolicitudDocumentosComponent } from './solicitud-formulario/solicitud-documentos/solicitud-documentos.component';
@@ -35,8 +37,17 @@ import { SolicitudProyectoPresupuestoEntidadesComponent } from './solicitud-form
 import { SolicitudProyectoPresupuestoGlobalComponent } from './solicitud-formulario/solicitud-proyecto-presupuesto-global/solicitud-proyecto-presupuesto-global.component';
 import { SolicitudProyectoResponsableEconomicoComponent } from './solicitud-formulario/solicitud-proyecto-responsable-economico/solicitud-proyecto-responsable-economico.component';
 import { SolicitudProyectoSocioComponent } from './solicitud-formulario/solicitud-proyecto-socio/solicitud-proyecto-socio.component';
-import { SolicitudListadoService } from './solicitud-listado.service';
+import { SolicitudGeneralListadoExportService } from './solicitud-general-listado-export.service';
+import { SolicitudListadoExportService } from './solicitud-listado-export.service';
 import { SolicitudListadoComponent } from './solicitud-listado/solicitud-listado.component';
+import { SolicitudProyectoAreaConocimientoListadoExportService } from './solicitud-proyecto-area-conocimiento-listado-export.service';
+import { SolicitudProyectoClasificacionListadoExportService } from './solicitud-proyecto-clasificacion-listado-export.service';
+import { SolicitudProyectoEntidadFinanciadoraListadoExportService } from './solicitud-proyecto-entidad-financiadora-listado-export.service';
+import { SolicitudProyectoEquipoListadoExportService } from './solicitud-proyecto-equipo-listado-export.service';
+import { SolicitudProyectoFichaGeneralListadoExportService } from './solicitud-proyecto-ficha-general-listado-export.service';
+import { SolicitudProyectoPresupuestoListadoExportService } from './solicitud-proyecto-presupuesto-listado-export.service';
+import { SolicitudProyectoResponsableEconomicoListadoExportService } from './solicitud-proyecto-responsable-economico-listado-export.service';
+import { SolicitudProyectoSocioListadoExportService } from './solicitud-proyecto-socio-listado-export.service';
 import { SolicitudRoutingModule } from './solicitud-routing.module';
 
 @NgModule({
@@ -44,7 +55,7 @@ import { SolicitudRoutingModule } from './solicitud-routing.module';
     SolicitudCrearComponent,
     SolicitudEditarComponent,
     SolicitudListadoComponent,
-    SolicitudListadoModalComponent,
+    SolicitudListadoExportModalComponent,
     SolicitudDatosGeneralesComponent,
     SolicitudModalidadEntidadConvocanteModalComponent,
     SolicitudHistoricoEstadosComponent,
@@ -64,7 +75,8 @@ import { SolicitudRoutingModule } from './solicitud-routing.module';
     SolicitudProyectoAreaConocimientoComponent,
     SolicitudProyectoResponsableEconomicoComponent,
     SolicitudProyectoResponsableEconomicoModalComponent,
-    SolicitudAutoevaluacionComponent
+    SolicitudAutoevaluacionComponent,
+    SolicitudProyectoPresupuestoListadoExportModalComponent
   ],
   imports: [
     CommonModule,
@@ -84,7 +96,18 @@ import { SolicitudRoutingModule } from './solicitud-routing.module';
   providers: [
     SolicitudDataResolver,
     SolicitudCrearGuard,
-    SolicitudListadoService
+    DecimalPipe,
+    SolicitudListadoExportService,
+    SolicitudGeneralListadoExportService,
+    SolicitudEntidadConvocanteListadoExportService,
+    SolicitudProyectoFichaGeneralListadoExportService,
+    SolicitudProyectoAreaConocimientoListadoExportService,
+    SolicitudProyectoClasificacionListadoExportService,
+    SolicitudProyectoEquipoListadoExportService,
+    SolicitudProyectoResponsableEconomicoListadoExportService,
+    SolicitudProyectoSocioListadoExportService,
+    SolicitudProyectoEntidadFinanciadoraListadoExportService,
+    SolicitudProyectoPresupuestoListadoExportService
   ]
 })
 export class SolicitudModule { }

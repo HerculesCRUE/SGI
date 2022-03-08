@@ -16,7 +16,7 @@ INSERT INTO test.certificado_autorizacion
 (id, autorizacion_id, documento_ref, nombre, visible)
 VALUES
 (1, 1, '', 'cert_001', true),
-(2, 1, '', 'cert_002', true),
-(3, 1, '', 'cert_003', true),
+(2, 1, '', 'cert_002', false),
+(3, 1, '', 'cert_003', false),
 (4, 2, '', 'cert_001', true),
 (5, 3, '', 'cert_001', true);

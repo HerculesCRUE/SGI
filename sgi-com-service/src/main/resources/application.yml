@@ -6,6 +6,16 @@ server:
       enabled: false
 sgi:
   time-zone: "Europe/Madrid"
+  rest:
+    api:
+      csp-url: "http://sgi-csp-service:4281"
+      eti-url: "http://sgi-eti-service:4280"
+      pii-url: "http://sgi-pii-service:4283"
+      rel-url: "http://sgi-rel-service:4284"
+      rep-url: "http://sgi-rep-service:4287"
+      sgdoc-url: "http://sgi-esb:8080/sgdoc"
+      tp-url: "http://sgi-tp-service:4286"
+      usr-url: "http://sgi-usr-service:4282"
 spring:
   profiles:
     # Set spring-profile using maven
@@ -64,7 +74,7 @@ spring:
           startttls:
             enabled: true
         from:
-          email: noreply@treelogic.info
+          email: noreply@hercules.org
           name: Hércules Email
           copy: false
   mvc:
@@ -85,9 +95,17 @@ spring:
             provider: keycloak
             redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
             scope: "openid,profile"
+          com-service:
+            authorization-grant-type: client_credentials
+            client-id: com-service
+            client-name: SGI (service login)
+            client-secret: e2247ddf-8197-4583-87d8-c4a7d0c5d076
+            provider: keycloak
+            scope: sgi-cnf,sgi-csp,sgi-eti,sgi-pii,sgi-rel,sgi-rep,sgi-sgdoc,sgi-tp
         provider:
           keycloak:
             issuer-uri: http://sgi-auth:8080/auth/realms/sgi
+            token-uri: ${spring.security.oauth2.client.provider.keycloak.issuer-uri}/protocol/openid-connect/token
             user-name-attribute: user_ref_id
       resourceserver:
         jwt:
@@ -95,6 +113,11 @@ spring:
           jwk-set-uri: ${spring.security.oauth2.client.provider.keycloak.issuer-uri}/protocol/openid-connect/certs
           user-name-claim: user_ref_id
 ---
+sgi:
+  # If set all emails are sent to this instead of real recipient list
+  fake-email-recipients: "sgi@hercules.org"
+  # If set to true no email is sent
+  disable-email-send: true
 spring:
   profiles: dev
   liquibase:
@@ -135,6 +158,11 @@ logging:
             JdbcTemplate: DEBUG
             StatementCreatorUtils: TRACE
 ---
+sgi:
+  # If set all emails are sent to this instead of real recipient list
+  fake-email-recipients: "sgi@hercules.org"
+  # If set to true no email is sent
+  disable-email-send: true
 spring:
   profiles: dev-oracle
   datasource:
@@ -175,6 +203,17 @@ logging:
             JdbcTemplate: DEBUG
             StatementCreatorUtils: TRACE
 ---
+sgi:
+  rest:
+    api:
+      csp-url: "http://sgi-csp-service:8080"
+      eti-url: "http://sgi-eti-service:8080"
+      pii-url: "http://sgi-pii-service:8080"
+      rel-url: "http://sgi-rel-service:8080"
+      rep-url: "http://sgi-rep-service:8080"
+      sgdoc-url: "http://sgi-esb:8080/sgdoc"
+      tp-url: "http://sgi-tp-service:8080"
+      usr-url: "http://sgi-eti-service:8080"
 spring:
   profiles: prod
   datasource:

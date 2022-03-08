@@ -45,7 +45,7 @@ public class AreaTematicaController {
    * @return {@link AreaTematica} correspondiente al id.
    */
   @GetMapping("/{id}")
-  @PreAuthorize("hasAuthority('CSP-AREA-E')")
+  @PreAuthorize("hasAnyAuthority('CSP-AREA-E', 'CSP-PRO-V')")
   public AreaTematica findById(@PathVariable Long id) {
     log.debug("findById(Long id) - start");
     AreaTematica returnValue = service.findById(id);

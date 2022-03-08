@@ -9,16 +9,17 @@ import org.crue.hercules.sgi.csp.model.Proyecto;
 import org.crue.hercules.sgi.csp.model.ProyectoSocio;
 import org.crue.hercules.sgi.csp.model.ProyectoSocioEquipo;
 import org.crue.hercules.sgi.csp.model.ProyectoSocioPeriodoJustificacion;
-import org.crue.hercules.sgi.csp.model.ProyectoSocioPeriodoPago;
 import org.crue.hercules.sgi.csp.model.ProyectoSocioPeriodoJustificacionDocumento;
+import org.crue.hercules.sgi.csp.model.ProyectoSocioPeriodoPago;
 import org.crue.hercules.sgi.csp.repository.ProyectoRepository;
 import org.crue.hercules.sgi.csp.repository.ProyectoSocioEquipoRepository;
+import org.crue.hercules.sgi.csp.repository.ProyectoSocioPeriodoJustificacionDocumentoRepository;
 import org.crue.hercules.sgi.csp.repository.ProyectoSocioPeriodoJustificacionRepository;
 import org.crue.hercules.sgi.csp.repository.ProyectoSocioPeriodoPagoRepository;
 import org.crue.hercules.sgi.csp.repository.ProyectoSocioRepository;
-import org.crue.hercules.sgi.csp.repository.ProyectoSocioPeriodoJustificacionDocumentoRepository;
 import org.crue.hercules.sgi.csp.repository.specification.ProyectoSocioSpecifications;
 import org.crue.hercules.sgi.csp.service.ProyectoSocioService;
+import org.crue.hercules.sgi.csp.util.ProyectoHelper;
 import org.crue.hercules.sgi.framework.rsql.SgiRSQLJPASupport;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -43,18 +44,21 @@ public class ProyectoSocioServiceImpl implements ProyectoSocioService {
   private final ProyectoSocioPeriodoJustificacionDocumentoRepository documentoRepository;
   private final ProyectoSocioPeriodoJustificacionRepository periodoJustificacionRepository;
   private final ProyectoRepository proyectoRepository;
+  private final ProyectoHelper proyectoHelper;
 
   public ProyectoSocioServiceImpl(ProyectoSocioRepository repository, ProyectoSocioEquipoRepository equipoRepository,
       ProyectoSocioPeriodoPagoRepository periodoPagoRepository,
       ProyectoSocioPeriodoJustificacionDocumentoRepository documentoRepository,
       ProyectoSocioPeriodoJustificacionRepository periodoJustificacionRepository,
-      ProyectoRepository proyectoRepository) {
+      ProyectoRepository proyectoRepository,
+      ProyectoHelper proyectoHelper) {
     this.repository = repository;
     this.equipoRepository = equipoRepository;
     this.periodoPagoRepository = periodoPagoRepository;
     this.documentoRepository = documentoRepository;
     this.periodoJustificacionRepository = periodoJustificacionRepository;
     this.proyectoRepository = proyectoRepository;
+    this.proyectoHelper = proyectoHelper;
   }
 
   /**
@@ -277,19 +281,19 @@ public class ProyectoSocioServiceImpl implements ProyectoSocioService {
 
   @Override
   public boolean hasAnyProyectoSocioWithRolCoordinador(Long proyectoId) {
-
+    proyectoHelper.checkCanAccessProyecto(proyectoId);
     return repository.existsByProyectoIdAndRolSocioCoordinador(proyectoId, true);
   }
 
   @Override
   public boolean hasAnyProyectoSocioWithProyectoId(Long proyectoId) {
-
+    proyectoHelper.checkCanAccessProyecto(proyectoId);
     return repository.existsByProyectoId(proyectoId);
   }
 
   @Override
   public boolean existsProyectoSocioPeriodoPagoByProyectoSocioId(Long proyectoId) {
-
+    proyectoHelper.checkCanAccessProyecto(proyectoId);
     return !this.repository.findByProyectoId(proyectoId).stream()
         .filter(proyectoSocio -> this.periodoPagoRepository.existsByProyectoSocioId(proyectoSocio.getId()))
         .collect(Collectors.toList()).isEmpty();
@@ -297,7 +301,7 @@ public class ProyectoSocioServiceImpl implements ProyectoSocioService {
 
   @Override
   public boolean existsProyectoSocioPeriodoJustificacionByProyectoSocioId(Long proyectoId) {
-
+    proyectoHelper.checkCanAccessProyecto(proyectoId);
     return !this.repository.findByProyectoId(proyectoId).stream()
         .filter(proyectoSocio -> this.periodoJustificacionRepository.existsByProyectoSocioId(proyectoSocio.getId()))
         .collect(Collectors.toList()).isEmpty();

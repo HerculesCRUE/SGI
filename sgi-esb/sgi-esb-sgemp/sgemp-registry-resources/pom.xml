@@ -4,12 +4,12 @@
   <parent>
     <groupId>org.crue.hercules.sgi.esb.sgemp</groupId>
     <artifactId>sgi-esb-sgemp</artifactId>
-    <version>0.0.6</version>
+    <version>0.0.7</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
   <groupId>org.crue.hercules.sgi.esb.sgemp</groupId>
   <artifactId>sgemp-registry-resources</artifactId>
-  <version>0.0.6</version>
+  <version>0.0.7</version>
   <packaging>pom</packaging>
   <name>sgemp-registry-resources</name>
   <description>sgemp-registry-resources</description>

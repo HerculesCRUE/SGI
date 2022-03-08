@@ -1,20 +1,20 @@
 import { DateTime } from 'luxon';
+import { IDocumento } from '../sgdoc/documento';
 import { IEmpresa } from '../sgemp/empresa';
 import { IPersona } from '../sgp/persona';
 import { IAutorizacion } from './autorizacion';
 import { IProyecto } from './proyecto';
-import { ITipoAmbitoGeografico } from './tipo-ambito-geografico';
 
 export interface INotificacionProyectoExternoCVN {
   id: number;
   titulo: string;
   autorizacion: IAutorizacion;
   proyecto: IProyecto;
-  ambitoGeografico: ITipoAmbitoGeografico;
+  ambitoGeografico: string;
   codExterno: string;
   datosEntidadParticipacion: string;
   datosResponsable: string;
-  documentoRef: string;
+  documento: IDocumento;
   entidadParticipacion: IEmpresa;
   fechaInicio: DateTime;
   fechaFin: DateTime;

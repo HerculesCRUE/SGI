@@ -8,7 +8,13 @@ sgi:
   time-zone: "Europe/Madrid"
   rest:
     api:
+      cnf-url: "http://sgi-cnf-service:4288"
+      com-url: "http://sgi-com-service:4286"
       eti-url: "http://sgi-eti-service:4280"
+      rep-url: "http://sgi-rep-service:4287"
+      sgdoc-url: "http://sgi-esb:8080/sgdoc" 
+      sgp-url: "http://sgi-esb:8080/sgp"
+      tp-url: "http://sgi-tp-service:4285"
 spring:
   profiles:
     # Set spring-profile using maven
@@ -72,6 +78,13 @@ spring:
             provider: keycloak
             redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
             scope: "openid,profile"
+          csp-service:
+            authorization-grant-type: client_credentials
+            client-id: csp-service
+            client-name: SGI (service login)
+            client-secret: cf693c2b-bdaf-4f98-87db-e7996b917b0a
+            provider: keycloak
+            scope: sgi-cnf,sgi-com,sgi-eti,sgi-sgp,sgi-tp
         provider:
           keycloak:
             issuer-uri: http://sgi-auth:8080/auth/realms/sgi
@@ -165,7 +178,13 @@ logging:
 sgi:
   rest:
     api:
-      eti-url: "http://sgi-eti:8080"
+      cnf-url: "http://sgi-cnf-service:8080"
+      com-url: "http://sgi-com-service:8080"
+      eti-url: "http://sgi-eti-service:8080"
+      rep-url: "http://sgi-rep-service:8080"
+      sgdoc-url: "http://sgi-esb:8080/sgdoc" 
+      sgp-url: "http://sgi-esb:8080/sgp"
+      tp-url: "http://sgi-tp-service:8080"
 spring:
   profiles: prod
   datasource:

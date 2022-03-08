@@ -40,10 +40,11 @@ export class AutorizacionDataResolver extends SgiResolverResolver<IAutorizacionD
           map(presentable => {
             return {
               presentable,
-              isInvestigador: this.authService.hasAnyAuthority(['CSP-AUT-INV-C', 'CSP-AUT-INV-ER', 'CSP-AUT-INV-BR'])
-            } as IAutorizacionData
+              isInvestigador: this.authService.hasAnyAuthority(['CSP-AUT-INV-C', 'CSP-AUT-INV-ER', 'CSP-AUT-INV-BR']),
+              autorizacion: value,
+            } as IAutorizacionData;
           })
-        )
+        );
       }),
     );
   }

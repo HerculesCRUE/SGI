@@ -23,7 +23,7 @@ class AutorizacionResponseConverter
       datosResponsable: value.datosResponsable,
       datosEntidad: value.datosEntidad,
       datosConvocatoria: value.datosConvocatoria,
-      convocatoria: value.convocatoriaId ? { id: value.convocatoriaId } as IConvocatoria : undefined,
+      convocatoria: value.convocatoriaId ? { id: value.convocatoriaId } as IConvocatoria : null,
       estado: { id: value.estadoId } as IEstadoAutorizacion,
     };
   }
@@ -43,7 +43,7 @@ class AutorizacionResponseConverter
       datosResponsable: value.datosResponsable,
       datosEntidad: value.datosEntidad,
       datosConvocatoria: value.datosConvocatoria,
-      convocatoriaId: value.convocatoria?.id,
+      convocatoriaId: value.convocatoria?.id ?? null,
       estadoId: value.estado.id
     };
   }

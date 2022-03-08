@@ -7,12 +7,17 @@ import java.util.Collections;
 import java.util.List;
 
 import org.assertj.core.api.Assertions;
+import org.crue.hercules.sgi.csp.dto.RequisitoEquipoNivelAcademicoOutput;
+import org.crue.hercules.sgi.csp.dto.RequisitoIPCategoriaProfesionalOutput;
+import org.crue.hercules.sgi.csp.dto.RequisitoIPNivelAcademicoOutput;
 import org.crue.hercules.sgi.csp.dto.SolicitudPalabraClaveInput;
 import org.crue.hercules.sgi.csp.dto.SolicitudPalabraClaveOutput;
 import org.crue.hercules.sgi.csp.dto.SolicitudProyectoPresupuestoTotalConceptoGasto;
 import org.crue.hercules.sgi.csp.dto.SolicitudProyectoPresupuestoTotales;
 import org.crue.hercules.sgi.csp.dto.SolicitudProyectoResponsableEconomicoOutput;
 import org.crue.hercules.sgi.csp.enums.FormularioSolicitud;
+import org.crue.hercules.sgi.csp.model.Convocatoria;
+import org.crue.hercules.sgi.csp.model.ConvocatoriaEntidadConvocante;
 import org.crue.hercules.sgi.csp.model.ConvocatoriaEntidadFinanciadora;
 import org.crue.hercules.sgi.csp.model.EstadoSolicitud;
 import org.crue.hercules.sgi.csp.model.EstadoSolicitud.Estado;
@@ -41,12 +46,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.Sql.ExecutionPhase;
 import org.springframework.web.util.UriComponentsBuilder;
+import org.springframework.boot.configurationprocessor.json.JSONObject;
 
 /**
  * Test de integracion de Solicitud.
  */
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class SolicitudIT extends BaseIT {
+class SolicitudIT extends BaseIT {
 
   private static final String PATH_PARAMETER_ID = "/{id}";
   private static final String PATH_PARAMETER_DESACTIVAR = "/desactivar";
@@ -79,9 +85,16 @@ public class SolicitudIT extends BaseIT {
   private static final String PATH_TIPO_PRESUPUESTO_POR_ENTIDAD = "/tipopresupuestoporentidad";
   private static final String PATH_PROYECTOS_IDS = "/proyectosids";
   private static final String PATH_PALABRAS_CLAVE = "/palabrasclave";
+  private static final String PATH_ENTIDAD_AJENA = "/entidadajena";
+  private static final String PATH_CONVOCATORIA = "/convocatoria";
+  private static final String PATH_CONVOCATORIA_ENTIDAD_CONVOCANTES = "/convocatoriaentidadconvocantes";
+  private static final String PATH_CATEGORIAS_PROFESIONALES_REQUISITOS_IP = "/categoriasprofesionalesrequisitosip";
+  private static final String PATH_NIVELES_REQUISITOS_IP = "/nivelesrequisitosip";
+  private static final String PATH_NIVELES_REQUISITOS_EQUIPO = "/nivelesrequisitosequipo";
+  private static final String PATH_MODIFICABLE_ESTADO_AND_DOCUMENTOS_BY_INVESTIGADOR = "/modificableestadoanddocumentosbyinvestigador";
 
   private static final String[] DEFAULT_ROLES = { "AUTH", "CSP-SOL-C", "CSP-SOL-E", "CSP-SOL-V", "CSP-SOL-B",
-      "CSP-SOL-R" };
+      "CSP-SOL-R", "CSP-SOL-ETI-V" };
 
   private HttpEntity<Object> buildRequest(HttpHeaders headers, Object entity, String... roles) throws Exception {
     headers = (headers != null ? headers : new HttpHeaders());
@@ -176,7 +189,7 @@ public class SolicitudIT extends BaseIT {
 
     Solicitud solicitud = response.getBody();
     Assertions.assertThat(solicitud.getId()).as("getId()").isEqualTo(idSolicitud);
-    Assertions.assertThat(solicitud.getActivo()).as("getActivo()").isEqualTo(false);
+    Assertions.assertThat(solicitud.getActivo()).as("getActivo()").isFalse();
   }
 
   @Sql
@@ -194,7 +207,7 @@ public class SolicitudIT extends BaseIT {
 
     Solicitud solicitud = response.getBody();
     Assertions.assertThat(solicitud.getId()).as("getId()").isEqualTo(idSolicitud);
-    Assertions.assertThat(solicitud.getActivo()).as("getActivo()").isEqualTo(true);
+    Assertions.assertThat(solicitud.getActivo()).as("getActivo()").isTrue();
   }
 
   @Sql
@@ -217,7 +230,7 @@ public class SolicitudIT extends BaseIT {
     Assertions.assertThat(solicitud.getCreadorRef()).as("getCreadorRef()").isEqualTo("usr-001");
     Assertions.assertThat(solicitud.getSolicitanteRef()).as("getSolicitanteRef()").isEqualTo("usr-002");
     Assertions.assertThat(solicitud.getObservaciones()).as("getObservaciones()").isEqualTo("observaciones 1");
-    Assertions.assertThat(solicitud.getConvocatoriaExterna()).as("getConvocatoriaExterna()").isEqualTo(null);
+    Assertions.assertThat(solicitud.getConvocatoriaExterna()).as("getConvocatoriaExterna()").isNull();
     Assertions.assertThat(solicitud.getUnidadGestionRef()).as("getUnidadGestionRef()").isEqualTo("2");
   }
 
@@ -606,6 +619,7 @@ public class SolicitudIT extends BaseIT {
     "classpath:scripts/tipo_financiacion.sql",
     "classpath:scripts/convocatoria_entidad_financiadora.sql",
     "classpath:scripts/convocatoria_entidad_gestora.sql",
+    "classpath:scripts/solicitud_proyecto_entidad_financiadora_ajena.sql",
     "classpath:scripts/solicitud_proyecto_entidad.sql",
     "classpath:scripts/solicitud_proyecto_presupuesto.sql"
     // @formatter:on
@@ -664,6 +678,7 @@ public class SolicitudIT extends BaseIT {
     "classpath:scripts/tipo_financiacion.sql",
     "classpath:scripts/convocatoria_entidad_financiadora.sql",
     "classpath:scripts/convocatoria_entidad_gestora.sql",
+    "classpath:scripts/solicitud_proyecto_entidad_financiadora_ajena.sql",
     "classpath:scripts/solicitud_proyecto_entidad.sql",
     "classpath:scripts/solicitud_proyecto_presupuesto.sql"
     // @formatter:on
@@ -839,6 +854,7 @@ public class SolicitudIT extends BaseIT {
     "classpath:scripts/tipo_financiacion.sql",
     "classpath:scripts/convocatoria_entidad_financiadora.sql",
     "classpath:scripts/convocatoria_entidad_gestora.sql",
+    "classpath:scripts/solicitud_proyecto_entidad_financiadora_ajena.sql",
     "classpath:scripts/solicitud_proyecto_entidad.sql",
     "classpath:scripts/solicitud_proyecto_presupuesto.sql"
     // @formatter:on
@@ -887,6 +903,7 @@ public class SolicitudIT extends BaseIT {
     "classpath:scripts/tipo_financiacion.sql",
     "classpath:scripts/convocatoria_entidad_financiadora.sql",
     "classpath:scripts/convocatoria_entidad_gestora.sql",
+    "classpath:scripts/solicitud_proyecto_entidad_financiadora_ajena.sql",
     "classpath:scripts/solicitud_proyecto_entidad.sql",
     "classpath:scripts/solicitud_proyecto_presupuesto.sql"
     // @formatter:on
@@ -1014,7 +1031,7 @@ public class SolicitudIT extends BaseIT {
   @Test
   void cambiarEstado_ReturnsSolicitud() throws Exception {
     Long solicitudId = 1L;
-    EstadoSolicitud estado = buildMockEstadoSolicitud(Estado.CONCEDIDA);
+    EstadoSolicitud estado = buildMockEstadoSolicitud(Estado.DESISTIDA);
 
     final ResponseEntity<Solicitud> response = restTemplate.exchange(
         CONTROLLER_BASE_PATH + PATH_PARAMETER_ID + PATH_CAMBIAR_ESTADO,
@@ -1025,7 +1042,7 @@ public class SolicitudIT extends BaseIT {
     Solicitud solicitudActualizado = response.getBody();
     Assertions.assertThat(solicitudActualizado.getId()).as("getId()").isEqualTo(solicitudId);
     Assertions.assertThat(solicitudActualizado.getEstado().getEstado()).as("getEstado().getEstado()")
-        .isEqualTo(Estado.CONCEDIDA);
+        .isEqualTo(Estado.DESISTIDA);
 
   }
 
@@ -1209,6 +1226,7 @@ public class SolicitudIT extends BaseIT {
     "classpath:scripts/tipo_financiacion.sql",
     "classpath:scripts/convocatoria_entidad_financiadora.sql",
     "classpath:scripts/convocatoria_entidad_gestora.sql",
+    "classpath:scripts/solicitud_proyecto_entidad_financiadora_ajena.sql",
     "classpath:scripts/solicitud_proyecto_entidad.sql",
     "classpath:scripts/solicitud_proyecto_presupuesto.sql"
     // @formatter:on
@@ -1272,6 +1290,7 @@ public class SolicitudIT extends BaseIT {
     "classpath:scripts/tipo_financiacion.sql",
     "classpath:scripts/convocatoria_entidad_financiadora.sql",
     "classpath:scripts/convocatoria_entidad_gestora.sql",
+    "classpath:scripts/solicitud_proyecto_entidad_financiadora_ajena.sql",
     "classpath:scripts/solicitud_proyecto_entidad.sql"
     // @formatter:on
   })
@@ -1320,6 +1339,7 @@ public class SolicitudIT extends BaseIT {
     "classpath:scripts/tipo_financiacion.sql",
     "classpath:scripts/convocatoria_entidad_financiadora.sql",
     "classpath:scripts/convocatoria_entidad_gestora.sql",
+    "classpath:scripts/solicitud_proyecto_entidad_financiadora_ajena.sql",
     "classpath:scripts/solicitud_proyecto_entidad.sql"
     // @formatter:on
   })
@@ -1368,6 +1388,7 @@ public class SolicitudIT extends BaseIT {
     "classpath:scripts/tipo_financiacion.sql",
     "classpath:scripts/convocatoria_entidad_financiadora.sql",
     "classpath:scripts/convocatoria_entidad_gestora.sql",
+    "classpath:scripts/solicitud_proyecto_entidad_financiadora_ajena.sql",
     "classpath:scripts/solicitud_proyecto_entidad.sql"
     // @formatter:on
   })
@@ -1410,6 +1431,7 @@ public class SolicitudIT extends BaseIT {
     "classpath:scripts/tipo_financiacion.sql",
     "classpath:scripts/convocatoria_entidad_financiadora.sql",
     "classpath:scripts/convocatoria_entidad_gestora.sql",
+    "classpath:scripts/solicitud_proyecto_entidad_financiadora_ajena.sql",
     "classpath:scripts/solicitud_proyecto_entidad.sql"
     // @formatter:on
   })
@@ -1458,6 +1480,7 @@ public class SolicitudIT extends BaseIT {
     "classpath:scripts/tipo_financiacion.sql",
     "classpath:scripts/convocatoria_entidad_financiadora.sql",
     "classpath:scripts/convocatoria_entidad_gestora.sql",
+    "classpath:scripts/solicitud_proyecto_entidad_financiadora_ajena.sql",
     "classpath:scripts/solicitud_proyecto_entidad.sql"
     // @formatter:on
   })
@@ -1638,11 +1661,260 @@ public class SolicitudIT extends BaseIT {
     Assertions.assertThat(updated.get(2).getPalabraClaveRef()).isEqualTo("palabra-ref-uptd-3");
   }
 
+  @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = {
+    // @formatter:off
+    "classpath:scripts/modelo_ejecucion.sql",
+    "classpath:scripts/tipo_finalidad.sql",
+    "classpath:scripts/tipo_regimen_concurrencia.sql",
+    "classpath:scripts/tipo_ambito_geografico.sql",
+    "classpath:scripts/convocatoria.sql",
+    "classpath:scripts/solicitud.sql",
+    "classpath:scripts/estado_solicitud.sql",
+    "classpath:scripts/solicitud_proyecto.sql",
+    "classpath:scripts/concepto_gasto.sql",
+    "classpath:scripts/tipo_origen_fuente_financiacion.sql",
+    "classpath:scripts/fuente_financiacion.sql",
+    "classpath:scripts/tipo_financiacion.sql",
+    "classpath:scripts/convocatoria_entidad_financiadora.sql",
+    "classpath:scripts/convocatoria_entidad_gestora.sql",
+    "classpath:scripts/solicitud_proyecto_entidad_financiadora_ajena.sql"
+    // @formatter:on
+  })
+  @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
+  @Test
+  void existSolicitudProyectoPresupuestoEntidadAjena_ReturnsHttpStatusCode204() throws Exception {
+    Long solicitudId = 1L;
+    String entidadRef = "00001";
+    String roles = "CSP-SOL-E";
+
+    URI uri = UriComponentsBuilder
+        .fromUriString(CONTROLLER_BASE_PATH + PATH_PARAMETER_ID + PATH_SOLICITUD_PROYECTO_PRESUPUESTO
+            + PATH_ENTIDAD_AJENA + PATH_PARAMETER_ENTIDAD_REF)
+        .buildAndExpand(solicitudId, entidadRef).toUri();
+
+    final ResponseEntity<Void> response = restTemplate.exchange(uri, HttpMethod.HEAD, buildRequest(null, null, roles),
+        Void.class);
+
+    Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
+  }
+
   private SolicitudPalabraClaveInput buildMockSolicitudPalabraClaveInput(Long solicitudId, String palabraRef) {
     return SolicitudPalabraClaveInput.builder()
         .solicitudId(solicitudId)
         .palabraClaveRef(palabraRef)
         .build();
+  }
+
+  @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = {
+    // @formatter:off
+    "classpath:scripts/modelo_ejecucion.sql",
+    "classpath:scripts/tipo_finalidad.sql",
+    "classpath:scripts/tipo_regimen_concurrencia.sql",
+    "classpath:scripts/tipo_ambito_geografico.sql",
+    "classpath:scripts/convocatoria.sql",
+    "classpath:scripts/solicitud.sql"
+    // @formatter:on
+  })
+  @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
+  @Test
+  void findConvocatoriaBySolicitudId_ReturnsConvocatoria() throws Exception {
+    String roles = "CSP-SOL-INV-ER";
+    Long solicitudId = 1L;
+
+    URI uri = UriComponentsBuilder.fromUriString(CONTROLLER_BASE_PATH + PATH_PARAMETER_ID + PATH_CONVOCATORIA)
+        .buildAndExpand(solicitudId).toUri();
+
+    final ResponseEntity<Convocatoria> response = restTemplate.exchange(uri, HttpMethod.GET,
+        buildRequest(null, null, roles), Convocatoria.class);
+
+    Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+    Assertions.assertThat(response.getBody()).isNotNull();
+    Assertions.assertThat(response.getBody().getId()).isEqualTo(1L);
+  }
+
+  @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = {
+    // @formatter:off
+    "classpath:scripts/modelo_ejecucion.sql",
+    "classpath:scripts/tipo_finalidad.sql",
+    "classpath:scripts/tipo_regimen_concurrencia.sql",
+    "classpath:scripts/tipo_ambito_geografico.sql",
+    "classpath:scripts/convocatoria.sql",
+    "classpath:scripts/solicitud.sql",
+    "classpath:scripts/programa.sql",
+    "classpath:scripts/convocatoria_entidad_convocante.sql"
+    // @formatter:on
+  })
+  @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
+  @Test
+  void findAllConvocatoriaEntidadConvocantes_WithPagingAndSorting_ReturnsConvocatoriaEntidadConvocanteSubList()
+      throws Exception {
+    HttpHeaders headers = new HttpHeaders();
+    headers.set("Authorization", String.format("bearer %s", tokenBuilder.buildToken("user", "CSP-CON-V")));
+    headers.add("X-Page", "0");
+    headers.add("X-Page-Size", "10");
+    String sort = "id,asc";
+    Long solicitudId = 1L;
+
+    URI uri = UriComponentsBuilder
+        .fromUriString(CONTROLLER_BASE_PATH + PATH_PARAMETER_ID + PATH_CONVOCATORIA_ENTIDAD_CONVOCANTES)
+        .queryParam("s", sort).buildAndExpand(solicitudId).toUri();
+
+    final ResponseEntity<List<ConvocatoriaEntidadConvocante>> response = restTemplate.exchange(uri, HttpMethod.GET,
+        buildRequest(headers, null, "CSP-SOL-INV-ER"),
+        new ParameterizedTypeReference<List<ConvocatoriaEntidadConvocante>>() {
+        });
+
+    Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+  }
+
+  @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = {
+    // @formatter:off
+    "classpath:scripts/modelo_ejecucion.sql",
+    "classpath:scripts/tipo_finalidad.sql",
+    "classpath:scripts/tipo_regimen_concurrencia.sql",
+    "classpath:scripts/tipo_ambito_geografico.sql",
+    "classpath:scripts/convocatoria.sql",
+    "classpath:scripts/solicitud.sql",
+    "classpath:scripts/requisito_ip.sql",
+    "classpath:scripts/requisitoip_categoriaprofesional.sql"
+    // @formatter:on
+  })
+  @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
+  @Test
+  void findRequisitosIpCategoriasProfesionales_ReturnsRequisitoIPCategoriaProfesionalOutputList() throws Exception {
+    Long solicitudId = 1L;
+    String roles = "CSP-SOL-INV-ER";
+
+    URI uri = UriComponentsBuilder
+        .fromUriString(CONTROLLER_BASE_PATH + PATH_PARAMETER_ID + PATH_CATEGORIAS_PROFESIONALES_REQUISITOS_IP)
+        .buildAndExpand(solicitudId).toUri();
+
+    final ResponseEntity<List<RequisitoIPCategoriaProfesionalOutput>> response = restTemplate.exchange(uri,
+        HttpMethod.GET, buildRequest(null, null, roles),
+        new ParameterizedTypeReference<List<RequisitoIPCategoriaProfesionalOutput>>() {
+        });
+
+    Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+    Assertions.assertThat(response.getBody()).isNotNull();
+    Assertions.assertThat(response.getBody().size()).isEqualTo(3);
+  }
+
+  @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = {
+    // @formatter:off
+    "classpath:scripts/modelo_ejecucion.sql",
+    "classpath:scripts/tipo_finalidad.sql",
+    "classpath:scripts/tipo_regimen_concurrencia.sql",
+    "classpath:scripts/tipo_ambito_geografico.sql",
+    "classpath:scripts/convocatoria.sql",
+    "classpath:scripts/solicitud.sql",
+    "classpath:scripts/requisito_ip.sql",
+    "classpath:scripts/requisitoip_nivelacademico.sql"
+    // @formatter:on
+  })
+  @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
+  @Test
+  void findRequisitoIPNivelesAcademicos_ReturnsRequisitoIPNivelAcademicoOutputList() throws Exception {
+    Long solicitudId = 1L;
+    String roles = "CSP-SOL-INV-ER";
+
+    URI uri = UriComponentsBuilder
+        .fromUriString(CONTROLLER_BASE_PATH + PATH_PARAMETER_ID + PATH_NIVELES_REQUISITOS_IP)
+        .buildAndExpand(solicitudId).toUri();
+
+    final ResponseEntity<List<RequisitoIPNivelAcademicoOutput>> response = restTemplate.exchange(uri,
+        HttpMethod.GET, buildRequest(null, null, roles),
+        new ParameterizedTypeReference<List<RequisitoIPNivelAcademicoOutput>>() {
+        });
+
+    Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+    Assertions.assertThat(response.getBody()).isNotNull();
+    Assertions.assertThat(response.getBody().size()).isEqualTo(3);
+  }
+
+  @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = {
+    // @formatter:off
+    "classpath:scripts/modelo_ejecucion.sql",
+    "classpath:scripts/tipo_finalidad.sql",
+    "classpath:scripts/tipo_regimen_concurrencia.sql",
+    "classpath:scripts/tipo_ambito_geografico.sql",
+    "classpath:scripts/convocatoria.sql",
+    "classpath:scripts/solicitud.sql",
+    "classpath:scripts/requisito_equipo.sql",
+    "classpath:scripts/requisitoequipo_nivelacademico.sql"
+    // @formatter:on
+  })
+  @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
+  @Test
+  void findRequisitoEquipoNivelesAcademicos_ReturnsRequisitoEquipoNivelAcademicoOutputList() throws Exception {
+    Long solicitudId = 1L;
+    String roles = "CSP-SOL-INV-ER";
+
+    URI uri = UriComponentsBuilder
+        .fromUriString(CONTROLLER_BASE_PATH + PATH_PARAMETER_ID + PATH_NIVELES_REQUISITOS_EQUIPO)
+        .buildAndExpand(solicitudId).toUri();
+
+    final ResponseEntity<List<RequisitoEquipoNivelAcademicoOutput>> response = restTemplate.exchange(uri,
+        HttpMethod.GET, buildRequest(null, null, roles),
+        new ParameterizedTypeReference<List<RequisitoEquipoNivelAcademicoOutput>>() {
+        });
+
+    Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+    Assertions.assertThat(response.getBody()).isNotNull();
+    Assertions.assertThat(response.getBody().size()).isEqualTo(3);
+  }
+
+  @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = {
+    // @formatter:off
+    "classpath:scripts/modelo_ejecucion.sql",
+    "classpath:scripts/tipo_finalidad.sql",
+    "classpath:scripts/tipo_regimen_concurrencia.sql",
+    "classpath:scripts/tipo_ambito_geografico.sql",
+    "classpath:scripts/convocatoria.sql",
+    "classpath:scripts/solicitud.sql",
+    "classpath:scripts/estado_solicitud.sql"
+    // @formatter:on
+  })
+  @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
+  @Test
+  void modificableEstadoAndDocumentosByInvestigador_ReturnsHttpStatusCode200() throws Exception {
+    Long solicitudId = 1L;
+    String roles = "CSP-SOL-INV-ER";
+
+    URI uri = UriComponentsBuilder
+        .fromUriString(
+            CONTROLLER_BASE_PATH + PATH_PARAMETER_ID + PATH_MODIFICABLE_ESTADO_AND_DOCUMENTOS_BY_INVESTIGADOR)
+        .buildAndExpand(solicitudId).toUri();
+
+    final ResponseEntity<Void> response = restTemplate.exchange(uri,
+        HttpMethod.HEAD, buildRequest(null, null, roles),
+        Void.class);
+
+    Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+  }
+
+  @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = {
+    // @formatter:off
+    "classpath:scripts/modelo_ejecucion.sql",
+    "classpath:scripts/tipo_finalidad.sql",
+    "classpath:scripts/tipo_regimen_concurrencia.sql",
+    "classpath:scripts/tipo_ambito_geografico.sql",
+    "classpath:scripts/convocatoria.sql",
+    "classpath:scripts/solicitud.sql",
+    "classpath:scripts/estado_solicitud.sql"
+    // @formatter:on
+  })
+  @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
+  @Test
+  public void getCodigoRegistroInterno_ReturnsCodigoRegistroInterno() throws Exception {
+    Long idSolicitud = 1L;
+
+    final ResponseEntity<String> response = restTemplate.exchange(
+        CONTROLLER_BASE_PATH + PATH_PARAMETER_ID + "/codigo-registro-interno",
+        HttpMethod.GET, buildRequest(null, null, DEFAULT_ROLES), String.class, idSolicitud);
+
+    Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+    String codigoRegistroInterno = response.getBody();
+    Assertions.assertThat(codigoRegistroInterno).isEqualTo(JSONObject.quote("SGI_SLC1202011061027"));
   }
 
   /**

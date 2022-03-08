@@ -3,7 +3,7 @@ package org.crue.hercules.sgi.rep.service;
 import org.assertj.core.api.Assertions;
 import org.crue.hercules.sgi.rep.config.RestApiProperties;
 import org.crue.hercules.sgi.rep.exceptions.GetDataReportException;
-import org.crue.hercules.sgi.rep.service.sgp.PersonaService;
+import org.crue.hercules.sgi.rep.service.sgi.SgiApiSgpService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -14,7 +14,7 @@ import org.springframework.web.client.RestTemplate;
  */
 class PersonaServiceTest extends BaseReportServiceTest {
 
-  private PersonaService personaService;
+  private SgiApiSgpService personaService;
 
   @Mock
   private RestApiProperties restApiProperties;
@@ -24,7 +24,7 @@ class PersonaServiceTest extends BaseReportServiceTest {
 
   @BeforeEach
   public void setUp() throws Exception {
-    personaService = new PersonaService(restApiProperties, restTemplate);
+    personaService = new SgiApiSgpService(restApiProperties, restTemplate);
   }
 
   @Test

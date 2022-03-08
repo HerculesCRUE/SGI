@@ -26,7 +26,6 @@ describe('CambioEstadoModalComponent', () => {
     isInvestigador: undefined,
     solicitudProyecto: undefined,
     hasRequiredDocumentos: true,
-    isAutoevaluacionEticaFullFilled: true,
     isSolicitanteInSolicitudEquipo: true,
     solicitud: undefined
   };

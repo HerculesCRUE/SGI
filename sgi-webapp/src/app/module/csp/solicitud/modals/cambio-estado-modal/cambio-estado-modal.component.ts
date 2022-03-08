@@ -25,7 +25,6 @@ const MSG_DOCUMENTOS_CONVOCATORIA_REQUIRED = marker('msg.csp.solicitud.documento
 const SOLICITUD_PROYECTO_COORDINADO = marker('csp.solicitud-datos-proyecto-ficha-general.proyecto-coordinado');
 const SOLICITUD_PROYECTO_COORDINADOR_EXTERNO = marker('csp.solicitud-datos-proyecto-ficha-general.coordinador-externo');
 const MSG_SOLICITUD_EQUIPO_SOLICITANTE_REQUIRED = marker('msg.csp.solicitud.solicitante-miembro-equipo');
-const MSG_SOLICITUD_AUTOEVALUACION_ETICA_REQUIRED = marker('msg.csp.solicitud.autoevaluacion-etica-completada');
 
 export interface SolicitudCambioEstadoModalComponentData {
   estadoActual: Estado;
@@ -37,7 +36,6 @@ export interface SolicitudCambioEstadoModalComponentData {
   solicitud: ISolicitud;
   solicitudProyecto: ISolicitudProyecto;
   isSolicitanteInSolicitudEquipo: boolean;
-  isAutoevaluacionEticaFullFilled: boolean;
 }
 
 export const ESTADO_MAP_INVESTIGADOR: Map<Estado, Map<Estado, string>> = new Map();
@@ -81,7 +79,7 @@ export class CambioEstadoModalComponent
   msgSolicitudProyectoCoordinadoRequired: string;
   msgSolicitudProyectoCoordinadorExternoRequired: string;
   msgSolicitudEquipoSolicitanteRequired: string;
-  msgAutoevaluacionEticaeRequired: string;
+
   readonly estadosNuevos: Map<string, string>;
   confirmDialogService: any;
 
@@ -140,7 +138,6 @@ export class CambioEstadoModalComponent
     this.msgSolicitudProyectoCoordinadoRequired = this.translate.instant(MSG_FIELD_REQUIRED, { field: this.translate.instant(SOLICITUD_PROYECTO_COORDINADO) });
     this.msgSolicitudProyectoCoordinadorExternoRequired = this.translate.instant(MSG_FIELD_REQUIRED, { field: this.translate.instant(SOLICITUD_PROYECTO_COORDINADOR_EXTERNO) });
     this.msgSolicitudEquipoSolicitanteRequired = this.translate.instant(MSG_SOLICITUD_EQUIPO_SOLICITANTE_REQUIRED);
-    this.msgAutoevaluacionEticaeRequired = this.translate.instant(MSG_SOLICITUD_AUTOEVALUACION_ETICA_REQUIRED);
   }
 
   protected getValue(): IEstadoSolicitud {
@@ -197,23 +194,53 @@ export class CambioEstadoModalComponent
   }
 
   private validateSolicitudProyecto(): Problem[] {
+    if (this.data.isInvestigador) {
+      return this.validateSolicitudProyectoInvestigador();
+    } else {
+      return this.validateSolicitudProyectoUnidadGestion();
+    }
+  }
+
+  private validateSolicitudProyectoUnidadGestion(): Problem[] {
+    return [
+      ...this.validateCoordinadoFilled(),
+      ...this.validateCoordinadorExternoFilled(),
+      ...this.validateSolicitanteInSolicitudEquipo()
+    ];
+  }
+
+  private validateSolicitudProyectoInvestigador(): Problem[] {
+    return [
+      ...this.validateSolicitanteInSolicitudEquipo()
+    ];
+  }
+
+  private validateCoordinadoFilled(): Problem[] {
     const problems: Problem[] = [];
 
     if (this.data.solicitudProyecto.coordinado === undefined || this.data.solicitudProyecto.coordinado === null) {
       problems.push(this.buildValidationProblem(this.msgSolicitudProyectoCoordinadoRequired));
     }
 
+    return problems;
+  }
+
+  private validateCoordinadorExternoFilled(): Problem[] {
+    const problems: Problem[] = [];
+
     if (!!this.data.solicitudProyecto.coordinado
       && (this.data.solicitudProyecto.coordinadorExterno === undefined || this.data.solicitudProyecto.coordinadorExterno === null)) {
       problems.push(this.buildValidationProblem(this.msgSolicitudProyectoCoordinadorExternoRequired));
     }
 
+    return problems;
+  }
+
+  private validateSolicitanteInSolicitudEquipo(): Problem[] {
+    const problems: Problem[] = [];
+
     if (!this.data.isSolicitanteInSolicitudEquipo) {
       problems.push(this.buildValidationProblem(this.msgSolicitudEquipoSolicitanteRequired));
-    }
-
-    if (!this.data.isAutoevaluacionEticaFullFilled) {
-      problems.push(this.buildValidationProblem(this.msgAutoevaluacionEticaeRequired));
     }
 
     return problems;

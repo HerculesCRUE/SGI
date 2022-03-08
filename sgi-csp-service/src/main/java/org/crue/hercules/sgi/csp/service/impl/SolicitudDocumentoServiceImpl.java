@@ -62,6 +62,10 @@ public class SolicitudDocumentoServiceImpl implements SolicitudDocumentoService 
     Assert.notNull(solicitudDocumento.getDocumentoRef(),
         "La referencia del documento no puede ser null para crear la SolicitudDocumento");
 
+    // comprobar si la solicitud es modificable
+    Assert.isTrue(solicitudService.modificableEstadoAndDocumentos(solicitudDocumento.getSolicitudId()),
+        "No se puede modificar SolicitudDocumento");
+
     SolicitudDocumento returnValue = repository.save(solicitudDocumento);
 
     log.debug("create(SolicitudDocumento solicitudDocumento) - end");

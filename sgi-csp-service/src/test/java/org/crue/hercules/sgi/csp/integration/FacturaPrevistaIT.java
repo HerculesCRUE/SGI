@@ -20,7 +20,7 @@ import org.springframework.test.context.jdbc.Sql;
 import org.springframework.web.util.UriComponentsBuilder;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-class FacturaPrevistaIT extends BaseIT{
+class FacturaPrevistaIT extends BaseIT {
 
   private static final String CONTROLLER_BASE_PATH = FacturaPrevistaController.MAPPING;
 
@@ -42,6 +42,8 @@ class FacturaPrevistaIT extends BaseIT{
       "classpath:scripts/modelo_unidad.sql",
       "classpath:scripts/tipo_finalidad.sql",
       "classpath:scripts/tipo_ambito_geografico.sql",
+      "classpath:scripts/tipo_regimen_concurrencia.sql",
+      "classpath:scripts/convocatoria.sql",
       "classpath:scripts/proyecto.sql",
       "classpath:scripts/tipo_facturacion.sql",
       "classpath:scripts/proyecto_facturacion.sql",
@@ -61,7 +63,7 @@ class FacturaPrevistaIT extends BaseIT{
 
     URI uri = UriComponentsBuilder.fromUriString(CONTROLLER_BASE_PATH).queryParam("s", sort).queryParam("q", filter)
         .build(false).toUri();
-        
+
     final ResponseEntity<List<FacturaEmitidaOutput>> response = restTemplate.exchange(uri, HttpMethod.GET,
         buildRequest(headers, null, "CSP-PRO-V"), new ParameterizedTypeReference<List<FacturaEmitidaOutput>>() {
         });
@@ -81,6 +83,8 @@ class FacturaPrevistaIT extends BaseIT{
       "classpath:scripts/modelo_unidad.sql",
       "classpath:scripts/tipo_finalidad.sql",
       "classpath:scripts/tipo_ambito_geografico.sql",
+      "classpath:scripts/tipo_regimen_concurrencia.sql",
+      "classpath:scripts/convocatoria.sql",
       "classpath:scripts/proyecto.sql",
       "classpath:scripts/tipo_facturacion.sql",
       "classpath:scripts/proyecto_facturacion.sql",
@@ -100,7 +104,7 @@ class FacturaPrevistaIT extends BaseIT{
 
     URI uri = UriComponentsBuilder.fromUriString(CONTROLLER_BASE_PATH).queryParam("s", sort).queryParam("q", filter)
         .build(false).toUri();
-        
+
     final ResponseEntity<List<FacturaEmitidaOutput>> response = restTemplate.exchange(uri, HttpMethod.GET,
         buildRequest(headers, null, "CSP-PRO-V"), new ParameterizedTypeReference<List<FacturaEmitidaOutput>>() {
         });

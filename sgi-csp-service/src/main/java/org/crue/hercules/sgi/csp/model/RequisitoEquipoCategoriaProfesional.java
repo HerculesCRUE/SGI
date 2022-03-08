@@ -1,5 +1,7 @@
 package org.crue.hercules.sgi.csp.model;
 
+import java.io.Serializable;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.ForeignKey;
@@ -25,7 +27,7 @@ import lombok.experimental.SuperBuilder;
 @EqualsAndHashCode(callSuper = false)
 @NoArgsConstructor
 @SuperBuilder
-public class RequisitoEquipoCategoriaProfesional {
+public class RequisitoEquipoCategoriaProfesional implements Serializable {
   /** Id */
   @Id
   @Column(name = "id", nullable = false)

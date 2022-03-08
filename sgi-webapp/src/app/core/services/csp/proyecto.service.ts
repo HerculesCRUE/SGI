@@ -39,6 +39,7 @@ import { IProyectoPlazoBackend } from '@core/models/csp/backend/proyecto-plazo-b
 import { IProyectoProrrogaBackend } from '@core/models/csp/backend/proyecto-prorroga-backend';
 import { IProyectoProyectoSgeBackend } from '@core/models/csp/backend/proyecto-proyecto-sge-backend';
 import { IProyectoSocioBackend } from '@core/models/csp/backend/proyecto-socio-backend';
+import { IConvocatoria } from '@core/models/csp/convocatoria';
 import { IEstadoProyecto } from '@core/models/csp/estado-proyecto';
 import { IPrograma } from '@core/models/csp/programa';
 import { IProyecto } from '@core/models/csp/proyecto';
@@ -82,6 +83,8 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { IAnualidadGastoResponse } from './anualidad-gasto/anualidad-gasto-response';
 import { ANUALIDAD_GASTO_RESPONSE_CONVERTER } from './anualidad-gasto/anualidad-gasto-response.converter';
+import { IConvocatoriaTituloResponse } from './convocatoria/convocatoria-titulo-response';
+import { CONVOCATORIA_TITULO_RESPONSE_CONVERTER } from './convocatoria/convocatoria-titulo-response.converter';
 import { IProyectoAgrupacionGastoResponse } from './proyecto-agrupacion-gasto/proyecto-agrupacion-gasto-response';
 import { PROYECTO_AGRUPACION_GASTO_RESPONSE_CONVERTER } from './proyecto-agrupacion-gasto/proyecto-agrupacion-gasto-response.converter';
 import { IProyectoAnualidadResponse } from './proyecto-anualidad/proyecto-anualidad-response';
@@ -122,6 +125,15 @@ export class ProyectoService extends SgiMutableRestService<number, IProyectoBack
    */
   findTodos(options?: SgiRestFindOptions): Observable<SgiRestListResult<IProyecto>> {
     return this.find<IProyectoBackend, IProyecto>(`${this.endpointUrl}/todos`, options, PROYECTO_CONVERTER);
+  }
+
+  /**
+   * Devuelve una lista paginada y filtrada de todos los proyectos activos, que no estén en estado borrador 
+   * y en los que participe dentro del equipo el usuario logueado que se encuentren dentro de la unidad de gestión 
+   * @param options opciones de búsqueda.
+   */
+  findAllInvestigador(options?: SgiRestFindOptions): Observable<SgiRestListResult<IProyecto>> {
+    return this.find<IProyectoBackend, IProyecto>(`${this.endpointUrl}/investigador`, options, PROYECTO_CONVERTER);
   }
 
   /**
@@ -752,6 +764,19 @@ export class ProyectoService extends SgiMutableRestService<number, IProyectoBack
       PROYECTO_PALABRACLAVE_REQUEST_CONVERTER.fromTargetArray(palabrasClave)
     ).pipe(
       map((response => PROYECTO_PALABRACLAVE_RESPONSE_CONVERTER.toTargetArray(response)))
+    );
+  }
+
+  /**
+  * Devuelve los datos de la convocatoria asociada a un proyecto
+  * para usuarios con perfil investigador
+  * @param id Id del proyecto 
+  */
+  findConvocatoria(id: number): Observable<IConvocatoria> {
+    return this.http.get<IConvocatoriaTituloResponse>(
+      `${this.endpointUrl}/${id}/convocatoria`
+    ).pipe(
+      map(response => CONVOCATORIA_TITULO_RESPONSE_CONVERTER.toTarget(response))
     );
   }
 }

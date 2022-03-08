@@ -1,5 +1,4 @@
 import { FormGroup, ValidationErrors, ValidatorFn } from '@angular/forms';
-import { ITipoHito } from '@core/models/csp/tipos-configuracion';
 import { DateTime } from 'luxon';
 
 /**
@@ -9,7 +8,7 @@ import { DateTime } from 'luxon';
  * @param fechas Lista de fechas con las que se quiere comprobar.
  */
 export class TipoHitoValidator {
-  static notInDate(dateFieldName: string, fechas: DateTime[], tipoHito: ITipoHito[]): ValidatorFn {
+  static notInDate(dateFieldName: string, fechas: DateTime[]): ValidatorFn {
     return (formGroup: FormGroup): ValidationErrors | null => {
 
       const fechaControl = formGroup.controls[dateFieldName];
@@ -18,8 +17,7 @@ export class TipoHitoValidator {
         return;
       }
 
-      if (fechas.some(fecha => fecha.equals(fechaControl.value) &&
-        tipoHito.some(hito => formGroup.controls.tipoHito.value.id === hito.id))) {
+      if (fechas.some(fecha => fecha.toMillis() === fechaControl.value?.toMillis())) {
         fechaControl.setErrors({ notIn: true });
         fechaControl.markAsTouched({ onlySelf: true });
       } else {

@@ -65,7 +65,8 @@ public class UnidadServiceImpl implements UnidadService {
   public Page<Unidad> findAllRestringidos(String query, Pageable pageable) {
     log.debug("findAllTodosRestringidos(String query, Object credentials, Pageable pageable) - start");
 
-    Specification<Unidad> specs = SgiRSQLJPASupport.toSpecification(query);
+    Specification<Unidad> specs = Specification.where(UnidadSpecifications.activos()).and(
+        SgiRSQLJPASupport.toSpecification(query));
 
     List<String> unidadesGestion = SgiSecurityContextHolder
         .getUOsForAnyAuthority(new String[] { "CSP-CON-V", "CSP-CON-C", "CSP-CON-E", "CSP-SOL-C", "CSP-SOL-E",

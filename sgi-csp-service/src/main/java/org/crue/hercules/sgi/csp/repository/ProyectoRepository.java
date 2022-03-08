@@ -53,4 +53,12 @@ public interface ProyectoRepository
    */
   boolean existsByConvocatoriaId(Long convocatoriaId);
 
+  /**
+   * Devuelve la lista de {@link Proyecto}s cuyo identificador est&aacute; en la
+   * lista dada.
+   * 
+   * @param ids identificadores de los {@link Proyecto}s a recuperar
+   * @return la lista de {@link Proyecto}s
+   */
+  List<Proyecto> findByIdIn(List<Long> ids);
 }

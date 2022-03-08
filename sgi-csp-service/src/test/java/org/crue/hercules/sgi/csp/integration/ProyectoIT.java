@@ -4,25 +4,39 @@ import java.net.URI;
 import java.time.Instant;
 import java.time.Period;
 import java.time.ZoneOffset;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.assertj.core.api.Assertions;
+import org.crue.hercules.sgi.csp.dto.NotificacionProyectoExternoCVNOutput;
+import org.crue.hercules.sgi.csp.dto.ProyectoAgrupacionGastoOutput;
 import org.crue.hercules.sgi.csp.dto.ProyectoAnualidadResumen;
+import org.crue.hercules.sgi.csp.dto.ProyectoFacturacionOutput;
+import org.crue.hercules.sgi.csp.dto.ProyectoPalabraClaveInput;
+import org.crue.hercules.sgi.csp.dto.ProyectoPalabraClaveOutput;
+import org.crue.hercules.sgi.csp.dto.ProyectoPresupuestoTotales;
 import org.crue.hercules.sgi.csp.dto.ProyectoResponsableEconomicoOutput;
+import org.crue.hercules.sgi.csp.model.AnualidadGasto;
 import org.crue.hercules.sgi.csp.model.EstadoProyecto;
 import org.crue.hercules.sgi.csp.model.ModeloEjecucion;
 import org.crue.hercules.sgi.csp.model.Proyecto;
+import org.crue.hercules.sgi.csp.model.ProyectoAnualidad;
 import org.crue.hercules.sgi.csp.model.ProyectoAreaConocimiento;
 import org.crue.hercules.sgi.csp.model.ProyectoClasificacion;
+import org.crue.hercules.sgi.csp.model.ProyectoConceptoGasto;
 import org.crue.hercules.sgi.csp.model.ProyectoDocumento;
 import org.crue.hercules.sgi.csp.model.ProyectoEntidadFinanciadora;
 import org.crue.hercules.sgi.csp.model.ProyectoEntidadGestora;
 import org.crue.hercules.sgi.csp.model.ProyectoEquipo;
+import org.crue.hercules.sgi.csp.model.ProyectoFacturacion;
 import org.crue.hercules.sgi.csp.model.ProyectoFase;
 import org.crue.hercules.sgi.csp.model.ProyectoHito;
 import org.crue.hercules.sgi.csp.model.ProyectoPaqueteTrabajo;
 import org.crue.hercules.sgi.csp.model.ProyectoPartida;
+import org.crue.hercules.sgi.csp.model.ProyectoPeriodoJustificacion;
 import org.crue.hercules.sgi.csp.model.ProyectoPeriodoSeguimiento;
 import org.crue.hercules.sgi.csp.model.ProyectoProrroga;
 import org.crue.hercules.sgi.csp.model.ProyectoProyectoSge;
@@ -45,7 +59,7 @@ import org.springframework.web.util.UriComponentsBuilder;
  * Test de integracion de Proyecto.
  */
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class ProyectoIT extends BaseIT {
+class ProyectoIT extends BaseIT {
 
   private static final String PATH_PARAMETER_ID = "/{id}";
   private static final String PATH_PARAMETER_DESACTIVAR = "/desactivar";
@@ -70,15 +84,30 @@ public class ProyectoIT extends BaseIT {
   private static final String PATH_PRORROGA = "/proyecto-prorrogas";
   private static final String PATH_RESPONSABLE_ECONOMICO = "/proyectoresponsableseconomicos";
   private static final String PATH_MODIFICADOS_IDS = "/modificados-ids";
+  private static final String PATH_ANUALIDADES_GASTO = "/anualidadesgasto";
+  private static final String PATH_PROYECTO_CONCEPTOS_GASTO = "/proyectoconceptosgasto";
+  private static final String PATH_PERMITIDOS = "/permitidos";
+  private static final String PATH_NO_PERMITIDOS = "/nopermitidos";
+  private static final String PATH_CAMBIAR_ESTADO = "/cambiar-estado";
+  private static final String PATH_PRESUPUESTO_TOTALES = "/presupuesto-totales";
+  private static final String PATH_PROYECTO_AGRUPACION_GASTO = "/proyectoagrupaciongasto";
+  private static final String PATH_PROYECTO_PERIODO_JUSTIFICACION = "/proyectoperiodojustificacion";
+  private static final String PATH_MODIFICABLE = "/modificable";
+  private static final String PATH_PROYECTO_ANUALIDADES = "/proyectoanualidades";
+  private static final String PATH_ANUALIDADES_GASTOS = "/anualidadesgastos";
+  private static final String PATH_PROYECTOS_FACTURACION = "/proyectosfacturacion";
+  private static final String PATH_PARAMETER_PROYECTO_ID = "/{proyectoId}";
+  private static final String PATH_PALABRAS_CLAVE = "/palabrasclave";
+  private static final String PATH_NOTIFICACIONES_PROYECTO = "/notificacionesproyectos";
 
-  private HttpEntity<Proyecto> buildRequest(HttpHeaders headers, Proyecto entity, String... roles) throws Exception {
+  private HttpEntity<Object> buildRequest(HttpHeaders headers, Object entity, String... roles) throws Exception {
     headers = (headers != null ? headers : new HttpHeaders());
     headers.setContentType(MediaType.APPLICATION_JSON);
     headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
     headers.set("Authorization", String.format("bearer %s",
         tokenBuilder.buildToken("user", roles)));
 
-    HttpEntity<Proyecto> request = new HttpEntity<>(entity, headers);
+    HttpEntity<Object> request = new HttpEntity<>(entity, headers);
     return request;
 
   }
@@ -93,7 +122,7 @@ public class ProyectoIT extends BaseIT {
   })
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void create_ReturnsProyecto() throws Exception {
+  void create_ReturnsProyecto() throws Exception {
     String roles = "CSP-PRO-C";
     Proyecto proyecto = generarMockProyecto(null);
 
@@ -122,7 +151,7 @@ public class ProyectoIT extends BaseIT {
   })
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void create_ReturnsProyectoBySolicitud() throws Exception {
+  void create_ReturnsProyectoBySolicitud() throws Exception {
     String roles = "CSP-PRO-C";
     Proyecto proyecto = generarMockProyecto(null);
 
@@ -146,7 +175,9 @@ public class ProyectoIT extends BaseIT {
       "classpath:scripts/modelo_ejecucion.sql",
       "classpath:scripts/modelo_unidad.sql", 
       "classpath:scripts/tipo_finalidad.sql",
-      "classpath:scripts/tipo_ambito_geografico.sql", 
+      "classpath:scripts/tipo_ambito_geografico.sql",
+      "classpath:scripts/tipo_regimen_concurrencia.sql",
+      "classpath:scripts/convocatoria.sql", 
       "classpath:scripts/proyecto.sql",
       "classpath:scripts/estado_proyecto.sql" 
       // @formatter:on
@@ -180,7 +211,9 @@ public class ProyectoIT extends BaseIT {
       "classpath:scripts/modelo_ejecucion.sql",
       "classpath:scripts/modelo_unidad.sql", 
       "classpath:scripts/tipo_finalidad.sql",
-      "classpath:scripts/tipo_ambito_geografico.sql", 
+      "classpath:scripts/tipo_ambito_geografico.sql",
+      "classpath:scripts/tipo_regimen_concurrencia.sql",
+      "classpath:scripts/convocatoria.sql", 
       "classpath:scripts/proyecto.sql",
       "classpath:scripts/estado_proyecto.sql",
       // @formatter:on
@@ -207,7 +240,9 @@ public class ProyectoIT extends BaseIT {
       "classpath:scripts/modelo_ejecucion.sql",
       "classpath:scripts/modelo_unidad.sql", 
       "classpath:scripts/tipo_finalidad.sql",
-      "classpath:scripts/tipo_ambito_geografico.sql", 
+      "classpath:scripts/tipo_ambito_geografico.sql",
+      "classpath:scripts/tipo_regimen_concurrencia.sql",
+      "classpath:scripts/convocatoria.sql", 
       "classpath:scripts/proyecto.sql",
       "classpath:scripts/estado_proyecto.sql"
       // @formatter:on
@@ -234,7 +269,9 @@ public class ProyectoIT extends BaseIT {
       "classpath:scripts/modelo_ejecucion.sql",
       "classpath:scripts/modelo_unidad.sql", 
       "classpath:scripts/tipo_finalidad.sql",
-      "classpath:scripts/tipo_ambito_geografico.sql", 
+      "classpath:scripts/tipo_ambito_geografico.sql",
+      "classpath:scripts/tipo_regimen_concurrencia.sql",
+      "classpath:scripts/convocatoria.sql", 
       "classpath:scripts/proyecto.sql",
       "classpath:scripts/estado_proyecto.sql"
       // @formatter:on
@@ -257,7 +294,9 @@ public class ProyectoIT extends BaseIT {
       "classpath:scripts/modelo_ejecucion.sql",
       "classpath:scripts/modelo_unidad.sql", 
       "classpath:scripts/tipo_finalidad.sql",
-      "classpath:scripts/tipo_ambito_geografico.sql", 
+      "classpath:scripts/tipo_ambito_geografico.sql",
+      "classpath:scripts/tipo_regimen_concurrencia.sql",
+      "classpath:scripts/convocatoria.sql", 
       "classpath:scripts/proyecto.sql",
       "classpath:scripts/estado_proyecto.sql",
     // @formatter:on
@@ -284,7 +323,9 @@ public class ProyectoIT extends BaseIT {
       "classpath:scripts/modelo_ejecucion.sql",
       "classpath:scripts/modelo_unidad.sql", 
       "classpath:scripts/tipo_finalidad.sql",
-      "classpath:scripts/tipo_ambito_geografico.sql", 
+      "classpath:scripts/tipo_ambito_geografico.sql",
+      "classpath:scripts/tipo_regimen_concurrencia.sql",
+      "classpath:scripts/convocatoria.sql", 
       "classpath:scripts/proyecto.sql",
       "classpath:scripts/estado_proyecto.sql",
     // @formatter:off
@@ -329,7 +370,9 @@ public class ProyectoIT extends BaseIT {
       "classpath:scripts/modelo_ejecucion.sql",
       "classpath:scripts/modelo_unidad.sql", 
       "classpath:scripts/tipo_finalidad.sql",
-      "classpath:scripts/tipo_ambito_geografico.sql", 
+      "classpath:scripts/tipo_ambito_geografico.sql",
+      "classpath:scripts/tipo_regimen_concurrencia.sql",
+      "classpath:scripts/convocatoria.sql", 
       "classpath:scripts/proyecto.sql",
       "classpath:scripts/estado_proyecto.sql" 
     // @formatter:on
@@ -380,6 +423,8 @@ public class ProyectoIT extends BaseIT {
       "classpath:scripts/modelo_unidad.sql",
       "classpath:scripts/tipo_finalidad.sql", 
       "classpath:scripts/tipo_ambito_geografico.sql",
+      "classpath:scripts/tipo_regimen_concurrencia.sql",
+      "classpath:scripts/convocatoria.sql",
       "classpath:scripts/proyecto.sql", 
       "classpath:scripts/estado_proyecto.sql",
       "classpath:scripts/modelo_tipo_hito.sql", 
@@ -428,7 +473,9 @@ public class ProyectoIT extends BaseIT {
     "classpath:scripts/modelo_ejecucion.sql",
     "classpath:scripts/modelo_unidad.sql",
     "classpath:scripts/tipo_finalidad.sql",
-    "classpath:scripts/tipo_ambito_geografico.sql", 
+    "classpath:scripts/tipo_ambito_geografico.sql",
+    "classpath:scripts/tipo_regimen_concurrencia.sql",
+    "classpath:scripts/convocatoria.sql", 
     "classpath:scripts/proyecto.sql", 
     "classpath:scripts/tipo_hito.sql",
     "classpath:scripts/proyecto_hito.sql",
@@ -457,7 +504,9 @@ public class ProyectoIT extends BaseIT {
     "classpath:scripts/modelo_ejecucion.sql",
     "classpath:scripts/modelo_unidad.sql",
     "classpath:scripts/tipo_finalidad.sql",
-    "classpath:scripts/tipo_ambito_geografico.sql", 
+    "classpath:scripts/tipo_ambito_geografico.sql",
+    "classpath:scripts/tipo_regimen_concurrencia.sql",
+    "classpath:scripts/convocatoria.sql", 
     "classpath:scripts/proyecto.sql", 
     "classpath:scripts/tipo_hito.sql",
     "classpath:scripts/proyecto_hito.sql",
@@ -491,6 +540,8 @@ public class ProyectoIT extends BaseIT {
       "classpath:scripts/modelo_unidad.sql",
       "classpath:scripts/tipo_finalidad.sql", 
       "classpath:scripts/tipo_ambito_geografico.sql",
+      "classpath:scripts/tipo_regimen_concurrencia.sql",
+      "classpath:scripts/convocatoria.sql",
       "classpath:scripts/proyecto.sql", 
       "classpath:scripts/estado_proyecto.sql",
       "classpath:scripts/modelo_tipo_fase.sql", 
@@ -539,7 +590,9 @@ public class ProyectoIT extends BaseIT {
     "classpath:scripts/modelo_ejecucion.sql",
     "classpath:scripts/modelo_unidad.sql",
     "classpath:scripts/tipo_finalidad.sql",
-    "classpath:scripts/tipo_ambito_geografico.sql", 
+    "classpath:scripts/tipo_ambito_geografico.sql",
+    "classpath:scripts/tipo_regimen_concurrencia.sql",
+    "classpath:scripts/convocatoria.sql", 
     "classpath:scripts/proyecto.sql", 
     "classpath:scripts/modelo_tipo_fase.sql",
     "classpath:scripts/proyecto_fase.sql"
@@ -568,7 +621,9 @@ public class ProyectoIT extends BaseIT {
     "classpath:scripts/modelo_ejecucion.sql",
     "classpath:scripts/modelo_unidad.sql",
     "classpath:scripts/tipo_finalidad.sql",
-    "classpath:scripts/tipo_ambito_geografico.sql", 
+    "classpath:scripts/tipo_ambito_geografico.sql",
+    "classpath:scripts/tipo_regimen_concurrencia.sql",
+    "classpath:scripts/convocatoria.sql", 
     "classpath:scripts/proyecto.sql", 
     "classpath:scripts/modelo_tipo_fase.sql",
     "classpath:scripts/proyecto_fase.sql"
@@ -601,7 +656,9 @@ public class ProyectoIT extends BaseIT {
       "classpath:scripts/modelo_ejecucion.sql",
       "classpath:scripts/modelo_unidad.sql", 
       "classpath:scripts/tipo_finalidad.sql",
-      "classpath:scripts/tipo_ambito_geografico.sql", 
+      "classpath:scripts/tipo_ambito_geografico.sql",
+      "classpath:scripts/tipo_regimen_concurrencia.sql",
+      "classpath:scripts/convocatoria.sql", 
       "classpath:scripts/proyecto.sql",
       "classpath:scripts/estado_proyecto.sql", 
       "classpath:scripts/proyecto_paquete_trabajo.sql"
@@ -692,6 +749,8 @@ public class ProyectoIT extends BaseIT {
     "classpath:scripts/modelo_unidad.sql",
     "classpath:scripts/tipo_finalidad.sql",
     "classpath:scripts/tipo_ambito_geografico.sql",
+    "classpath:scripts/tipo_regimen_concurrencia.sql",
+    "classpath:scripts/convocatoria.sql",
     "classpath:scripts/proyecto.sql", 
     "classpath:scripts/rol_socio.sql",
     "classpath:scripts/proyecto_socio.sql",  
@@ -720,6 +779,8 @@ public class ProyectoIT extends BaseIT {
     "classpath:scripts/modelo_unidad.sql",
     "classpath:scripts/tipo_finalidad.sql",
     "classpath:scripts/tipo_ambito_geografico.sql",
+    "classpath:scripts/tipo_regimen_concurrencia.sql",
+    "classpath:scripts/convocatoria.sql",
     "classpath:scripts/proyecto.sql", 
     "classpath:scripts/rol_socio.sql",
     "classpath:scripts/proyecto_socio.sql",  
@@ -748,6 +809,8 @@ public class ProyectoIT extends BaseIT {
     "classpath:scripts/modelo_unidad.sql",
     "classpath:scripts/tipo_finalidad.sql",
     "classpath:scripts/tipo_ambito_geografico.sql",
+    "classpath:scripts/tipo_regimen_concurrencia.sql",
+    "classpath:scripts/convocatoria.sql",
     "classpath:scripts/proyecto.sql", 
     "classpath:scripts/rol_socio.sql",
     "classpath:scripts/proyecto_socio.sql",  
@@ -777,6 +840,8 @@ public class ProyectoIT extends BaseIT {
     "classpath:scripts/modelo_unidad.sql",
     "classpath:scripts/tipo_finalidad.sql",
     "classpath:scripts/tipo_ambito_geografico.sql",
+    "classpath:scripts/tipo_regimen_concurrencia.sql",
+    "classpath:scripts/convocatoria.sql",
     "classpath:scripts/proyecto.sql", 
     "classpath:scripts/rol_socio.sql",
     "classpath:scripts/proyecto_socio.sql",  
@@ -806,6 +871,8 @@ public class ProyectoIT extends BaseIT {
     "classpath:scripts/modelo_unidad.sql",
     "classpath:scripts/tipo_finalidad.sql",
     "classpath:scripts/tipo_ambito_geografico.sql",
+    "classpath:scripts/tipo_regimen_concurrencia.sql",
+    "classpath:scripts/convocatoria.sql",
     "classpath:scripts/proyecto.sql", 
     "classpath:scripts/rol_socio.sql",
     "classpath:scripts/proyecto_socio.sql",
@@ -836,6 +903,8 @@ public class ProyectoIT extends BaseIT {
     "classpath:scripts/modelo_unidad.sql",
     "classpath:scripts/tipo_finalidad.sql",
     "classpath:scripts/tipo_ambito_geografico.sql",
+    "classpath:scripts/tipo_regimen_concurrencia.sql",
+    "classpath:scripts/convocatoria.sql",
     "classpath:scripts/proyecto.sql", 
     "classpath:scripts/rol_socio.sql",
     "classpath:scripts/proyecto_socio.sql",
@@ -866,6 +935,8 @@ public class ProyectoIT extends BaseIT {
     "classpath:scripts/modelo_unidad.sql",
     "classpath:scripts/tipo_finalidad.sql",
     "classpath:scripts/tipo_ambito_geografico.sql",
+    "classpath:scripts/tipo_regimen_concurrencia.sql",
+    "classpath:scripts/convocatoria.sql",
     "classpath:scripts/proyecto.sql", 
     "classpath:scripts/rol_socio.sql",
     "classpath:scripts/proyecto_socio.sql",
@@ -896,6 +967,8 @@ public class ProyectoIT extends BaseIT {
     "classpath:scripts/modelo_unidad.sql",
     "classpath:scripts/tipo_finalidad.sql",
     "classpath:scripts/tipo_ambito_geografico.sql",
+    "classpath:scripts/tipo_regimen_concurrencia.sql",
+    "classpath:scripts/convocatoria.sql",
     "classpath:scripts/proyecto.sql", 
     "classpath:scripts/rol_socio.sql",
     "classpath:scripts/proyecto_socio.sql",
@@ -931,6 +1004,8 @@ public class ProyectoIT extends BaseIT {
       "classpath:scripts/modelo_unidad.sql",
       "classpath:scripts/tipo_finalidad.sql",
       "classpath:scripts/tipo_ambito_geografico.sql",
+      "classpath:scripts/tipo_regimen_concurrencia.sql",
+      "classpath:scripts/convocatoria.sql",
       "classpath:scripts/proyecto.sql",
       "classpath:scripts/estado_proyecto.sql", 
       "classpath:scripts/proyecto_entidad_gestora.sql"
@@ -979,6 +1054,8 @@ public class ProyectoIT extends BaseIT {
       "classpath:scripts/modelo_unidad.sql",
       "classpath:scripts/tipo_finalidad.sql",
       "classpath:scripts/tipo_ambito_geografico.sql",
+      "classpath:scripts/tipo_regimen_concurrencia.sql",
+      "classpath:scripts/convocatoria.sql",
       "classpath:scripts/proyecto.sql",
       "classpath:scripts/estado_proyecto.sql", 
       "classpath:scripts/proyecto_entidad_gestora.sql"
@@ -1013,7 +1090,9 @@ public class ProyectoIT extends BaseIT {
       "classpath:scripts/modelo_ejecucion.sql",
       "classpath:scripts/modelo_unidad.sql", 
       "classpath:scripts/tipo_finalidad.sql",
-      "classpath:scripts/tipo_ambito_geografico.sql", 
+      "classpath:scripts/tipo_ambito_geografico.sql",
+      "classpath:scripts/tipo_regimen_concurrencia.sql",
+      "classpath:scripts/convocatoria.sql", 
       "classpath:scripts/proyecto.sql",
       "classpath:scripts/estado_proyecto.sql", 
       "classpath:scripts/rol_proyecto.sql",
@@ -1059,7 +1138,9 @@ public class ProyectoIT extends BaseIT {
       "classpath:scripts/modelo_ejecucion.sql",
       "classpath:scripts/modelo_unidad.sql", 
       "classpath:scripts/tipo_finalidad.sql",
-      "classpath:scripts/tipo_ambito_geografico.sql", 
+      "classpath:scripts/tipo_ambito_geografico.sql",
+      "classpath:scripts/tipo_regimen_concurrencia.sql",
+      "classpath:scripts/convocatoria.sql", 
       "classpath:scripts/proyecto.sql",
       "classpath:scripts/estado_proyecto.sql", 
       "classpath:scripts/rol_proyecto.sql",
@@ -1093,7 +1174,9 @@ public class ProyectoIT extends BaseIT {
       "classpath:scripts/modelo_ejecucion.sql",
       "classpath:scripts/modelo_unidad.sql", 
       "classpath:scripts/tipo_finalidad.sql",
-      "classpath:scripts/tipo_ambito_geografico.sql", 
+      "classpath:scripts/tipo_ambito_geografico.sql",
+      "classpath:scripts/tipo_regimen_concurrencia.sql",
+      "classpath:scripts/convocatoria.sql", 
       "classpath:scripts/proyecto.sql",
       "classpath:scripts/estado_proyecto.sql", 
       "classpath:scripts/proyecto_prorroga.sql"
@@ -1140,7 +1223,9 @@ public class ProyectoIT extends BaseIT {
       "classpath:scripts/modelo_ejecucion.sql",
       "classpath:scripts/modelo_unidad.sql", 
       "classpath:scripts/tipo_finalidad.sql",
-      "classpath:scripts/tipo_ambito_geografico.sql", 
+      "classpath:scripts/tipo_ambito_geografico.sql",
+      "classpath:scripts/tipo_regimen_concurrencia.sql",
+      "classpath:scripts/convocatoria.sql", 
       "classpath:scripts/proyecto.sql",
       "classpath:scripts/estado_proyecto.sql", 
       "classpath:scripts/proyecto_prorroga.sql"
@@ -1169,6 +1254,8 @@ public class ProyectoIT extends BaseIT {
       "classpath:scripts/modelo_unidad.sql", 
       "classpath:scripts/tipo_finalidad.sql",
       "classpath:scripts/tipo_ambito_geografico.sql", 
+      "classpath:scripts/tipo_regimen_concurrencia.sql",
+      "classpath:scripts/convocatoria.sql",
       "classpath:scripts/proyecto.sql",
       "classpath:scripts/proyecto_prorroga.sql"
     // @formatter:on
@@ -1196,6 +1283,8 @@ public class ProyectoIT extends BaseIT {
       "classpath:scripts/modelo_unidad.sql", 
       "classpath:scripts/tipo_finalidad.sql",
       "classpath:scripts/tipo_ambito_geografico.sql", 
+      "classpath:scripts/tipo_regimen_concurrencia.sql",
+      "classpath:scripts/convocatoria.sql",
       "classpath:scripts/proyecto.sql",
       "classpath:scripts/proyecto_prorroga.sql"
     // @formatter:on
@@ -1229,7 +1318,8 @@ public class ProyectoIT extends BaseIT {
     "classpath:scripts/tipo_finalidad.sql",
     "classpath:scripts/modelo_tipo_finalidad.sql", 
     "classpath:scripts/tipo_regimen_concurrencia.sql",
-    "classpath:scripts/tipo_ambito_geografico.sql", 
+    "classpath:scripts/tipo_ambito_geografico.sql",
+    "classpath:scripts/convocatoria.sql", 
     "classpath:scripts/proyecto.sql",
     "classpath:scripts/estado_proyecto.sql",
     // @formatter:on
@@ -1277,8 +1367,9 @@ public class ProyectoIT extends BaseIT {
     "classpath:scripts/modelo_unidad.sql", 
     "classpath:scripts/tipo_finalidad.sql",
     "classpath:scripts/modelo_tipo_finalidad.sql", 
-    "classpath:scripts/tipo_regimen_concurrencia.sql",
     "classpath:scripts/tipo_ambito_geografico.sql", 
+    "classpath:scripts/tipo_regimen_concurrencia.sql",
+    "classpath:scripts/convocatoria.sql",
     "classpath:scripts/proyecto.sql",
     "classpath:scripts/estado_proyecto.sql",
     // @formatter:on
@@ -1313,8 +1404,9 @@ public class ProyectoIT extends BaseIT {
     "classpath:scripts/modelo_unidad.sql", 
     "classpath:scripts/tipo_finalidad.sql",
     "classpath:scripts/modelo_tipo_finalidad.sql", 
-    "classpath:scripts/tipo_regimen_concurrencia.sql",
     "classpath:scripts/tipo_ambito_geografico.sql", 
+    "classpath:scripts/tipo_regimen_concurrencia.sql",
+    "classpath:scripts/convocatoria.sql",
     "classpath:scripts/proyecto.sql",
     "classpath:scripts/estado_proyecto.sql", 
     "classpath:scripts/tipo_origen_fuente_financiacion.sql",
@@ -1367,8 +1459,9 @@ public class ProyectoIT extends BaseIT {
     "classpath:scripts/modelo_unidad.sql", 
     "classpath:scripts/tipo_finalidad.sql",
     "classpath:scripts/modelo_tipo_finalidad.sql", 
-    "classpath:scripts/tipo_regimen_concurrencia.sql",
     "classpath:scripts/tipo_ambito_geografico.sql", 
+    "classpath:scripts/tipo_regimen_concurrencia.sql",
+    "classpath:scripts/convocatoria.sql",
     "classpath:scripts/proyecto.sql",
     "classpath:scripts/estado_proyecto.sql", 
     "classpath:scripts/tipo_origen_fuente_financiacion.sql",
@@ -1410,6 +1503,8 @@ public class ProyectoIT extends BaseIT {
     "classpath:scripts/modelo_unidad.sql",
     "classpath:scripts/tipo_finalidad.sql",
     "classpath:scripts/tipo_ambito_geografico.sql",
+    "classpath:scripts/tipo_regimen_concurrencia.sql",
+    "classpath:scripts/convocatoria.sql",
     "classpath:scripts/proyecto.sql",
     "classpath:scripts/proyecto_documento.sql"
     // @formatter:on
@@ -1459,6 +1554,8 @@ public class ProyectoIT extends BaseIT {
     "classpath:scripts/modelo_unidad.sql",
     "classpath:scripts/tipo_finalidad.sql",
     "classpath:scripts/tipo_ambito_geografico.sql",
+    "classpath:scripts/tipo_regimen_concurrencia.sql",
+    "classpath:scripts/convocatoria.sql",
     "classpath:scripts/proyecto.sql",
     "classpath:scripts/proyecto_documento.sql"
     // @formatter:on
@@ -1487,6 +1584,8 @@ public class ProyectoIT extends BaseIT {
       "classpath:scripts/modelo_unidad.sql", 
       "classpath:scripts/tipo_finalidad.sql",
       "classpath:scripts/tipo_ambito_geografico.sql", 
+      "classpath:scripts/tipo_regimen_concurrencia.sql",
+      "classpath:scripts/convocatoria.sql",
       "classpath:scripts/proyecto.sql",
       "classpath:scripts/tipo_documento.sql",
       "classpath:scripts/tipo_fase.sql",
@@ -1526,6 +1625,8 @@ public class ProyectoIT extends BaseIT {
     "classpath:scripts/modelo_unidad.sql",
     "classpath:scripts/tipo_finalidad.sql",
     "classpath:scripts/tipo_ambito_geografico.sql",
+    "classpath:scripts/tipo_regimen_concurrencia.sql",
+    "classpath:scripts/convocatoria.sql",
     "classpath:scripts/proyecto.sql",
     "classpath:scripts/proyecto_periodo_seguimiento.sql"
     // @formatter:on
@@ -1577,6 +1678,8 @@ public class ProyectoIT extends BaseIT {
     "classpath:scripts/modelo_unidad.sql",
     "classpath:scripts/tipo_finalidad.sql",
     "classpath:scripts/tipo_ambito_geografico.sql",
+    "classpath:scripts/tipo_regimen_concurrencia.sql",
+    "classpath:scripts/convocatoria.sql",
     "classpath:scripts/proyecto.sql",
     "classpath:scripts/proyecto_periodo_seguimiento.sql"
     // @formatter:on
@@ -1609,7 +1712,9 @@ public class ProyectoIT extends BaseIT {
     "classpath:scripts/modelo_ejecucion.sql",
     "classpath:scripts/modelo_unidad.sql",
     "classpath:scripts/tipo_finalidad.sql",
-    "classpath:scripts/tipo_ambito_geografico.sql",  
+    "classpath:scripts/tipo_ambito_geografico.sql",
+    "classpath:scripts/tipo_regimen_concurrencia.sql",
+    "classpath:scripts/convocatoria.sql",  
     "classpath:scripts/proyecto.sql", 
     "classpath:scripts/proyecto_clasificacion.sql", 
     // @formatter:on
@@ -1657,6 +1762,8 @@ public class ProyectoIT extends BaseIT {
     "classpath:scripts/modelo_unidad.sql",
     "classpath:scripts/tipo_finalidad.sql",
     "classpath:scripts/tipo_ambito_geografico.sql",  
+    "classpath:scripts/tipo_regimen_concurrencia.sql",
+    "classpath:scripts/convocatoria.sql",
     "classpath:scripts/proyecto.sql", 
     "classpath:scripts/proyecto_clasificacion.sql", 
     // @formatter:on
@@ -1689,6 +1796,8 @@ public class ProyectoIT extends BaseIT {
     "classpath:scripts/modelo_unidad.sql",
     "classpath:scripts/tipo_finalidad.sql",
     "classpath:scripts/tipo_ambito_geografico.sql",  
+    "classpath:scripts/tipo_regimen_concurrencia.sql",
+    "classpath:scripts/convocatoria.sql",
     "classpath:scripts/proyecto.sql", 
     "classpath:scripts/proyecto_area.sql", 
     // @formatter:on
@@ -1739,6 +1848,8 @@ public class ProyectoIT extends BaseIT {
     "classpath:scripts/modelo_unidad.sql",
     "classpath:scripts/tipo_finalidad.sql",
     "classpath:scripts/tipo_ambito_geografico.sql",  
+    "classpath:scripts/tipo_regimen_concurrencia.sql",
+    "classpath:scripts/convocatoria.sql",
     "classpath:scripts/proyecto.sql", 
     "classpath:scripts/proyecto_area.sql", 
     // @formatter:on
@@ -1772,6 +1883,8 @@ public class ProyectoIT extends BaseIT {
     "classpath:scripts/modelo_unidad.sql",
     "classpath:scripts/tipo_finalidad.sql",
     "classpath:scripts/tipo_ambito_geografico.sql",
+    "classpath:scripts/tipo_regimen_concurrencia.sql",
+    "classpath:scripts/convocatoria.sql",
     "classpath:scripts/proyecto.sql", 
     "classpath:scripts/proyecto_proyecto_sge.sql",
     // @formatter:on
@@ -1818,6 +1931,8 @@ public class ProyectoIT extends BaseIT {
     "classpath:scripts/modelo_unidad.sql",
     "classpath:scripts/tipo_finalidad.sql",
     "classpath:scripts/tipo_ambito_geografico.sql",
+    "classpath:scripts/tipo_regimen_concurrencia.sql",
+    "classpath:scripts/convocatoria.sql",
     "classpath:scripts/proyecto.sql", 
     "classpath:scripts/proyecto_proyecto_sge.sql",
     // @formatter:on
@@ -1847,6 +1962,8 @@ public class ProyectoIT extends BaseIT {
     "classpath:scripts/modelo_unidad.sql",
     "classpath:scripts/tipo_finalidad.sql",
     "classpath:scripts/tipo_ambito_geografico.sql",
+    "classpath:scripts/tipo_regimen_concurrencia.sql",
+    "classpath:scripts/convocatoria.sql",
     "classpath:scripts/proyecto.sql", 
     "classpath:scripts/proyecto_proyecto_sge.sql",
     // @formatter:on
@@ -1874,6 +1991,8 @@ public class ProyectoIT extends BaseIT {
     "classpath:scripts/modelo_unidad.sql",
     "classpath:scripts/tipo_finalidad.sql",
     "classpath:scripts/tipo_ambito_geografico.sql",
+    "classpath:scripts/tipo_regimen_concurrencia.sql",
+    "classpath:scripts/convocatoria.sql",
     "classpath:scripts/proyecto.sql", 
     "classpath:scripts/proyecto_proyecto_sge.sql",
     // @formatter:on
@@ -1906,6 +2025,8 @@ public class ProyectoIT extends BaseIT {
       "classpath:scripts/modelo_unidad.sql",
       "classpath:scripts/tipo_finalidad.sql",
       "classpath:scripts/tipo_ambito_geografico.sql",
+      "classpath:scripts/tipo_regimen_concurrencia.sql",
+    "classpath:scripts/convocatoria.sql",
       "classpath:scripts/proyecto.sql",
       "classpath:scripts/proyecto_anualidad.sql",
     // @formatter:on
@@ -1949,6 +2070,8 @@ public class ProyectoIT extends BaseIT {
       "classpath:scripts/modelo_unidad.sql",
       "classpath:scripts/tipo_finalidad.sql",
       "classpath:scripts/tipo_ambito_geografico.sql",
+      "classpath:scripts/tipo_regimen_concurrencia.sql",
+      "classpath:scripts/convocatoria.sql",
       "classpath:scripts/proyecto.sql",
       "classpath:scripts/proyecto_anualidad.sql",
     // @formatter:on
@@ -1983,9 +2106,9 @@ public class ProyectoIT extends BaseIT {
        "classpath:scripts/modelo_unidad.sql",
        "classpath:scripts/tipo_finalidad.sql",
        "classpath:scripts/tipo_ambito_geografico.sql",
-       "classpath:scripts/proyecto.sql",
        "classpath:scripts/tipo_regimen_concurrencia.sql",
        "classpath:scripts/convocatoria.sql",
+       "classpath:scripts/proyecto.sql",
        "classpath:scripts/convocatoria_partida.sql",
        "classpath:scripts/proyecto_partida.sql",
     // @formatter:on
@@ -2035,14 +2158,13 @@ public class ProyectoIT extends BaseIT {
        "classpath:scripts/modelo_unidad.sql",
        "classpath:scripts/tipo_finalidad.sql",
        "classpath:scripts/tipo_ambito_geografico.sql",
-       "classpath:scripts/proyecto.sql",
        "classpath:scripts/tipo_regimen_concurrencia.sql",
        "classpath:scripts/convocatoria.sql",
+       "classpath:scripts/proyecto.sql",
        "classpath:scripts/convocatoria_partida.sql",
        "classpath:scripts/proyecto_partida.sql",
     // @formatter:on
   })
-
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
   void findAllProyectoPartida_WithPagingSortingAndFiltering_ReturnsEmptyList()
@@ -2078,6 +2200,8 @@ public class ProyectoIT extends BaseIT {
     "classpath:scripts/modelo_unidad.sql",
     "classpath:scripts/tipo_finalidad.sql",
     "classpath:scripts/tipo_ambito_geografico.sql",
+    "classpath:scripts/tipo_regimen_concurrencia.sql",
+    "classpath:scripts/convocatoria.sql",
     "classpath:scripts/proyecto.sql", 
     "classpath:scripts/proyecto_responsable_economico.sql", 
     // @formatter:on
@@ -2130,6 +2254,8 @@ public class ProyectoIT extends BaseIT {
     "classpath:scripts/modelo_unidad.sql",
     "classpath:scripts/tipo_finalidad.sql",
     "classpath:scripts/tipo_ambito_geografico.sql",
+    "classpath:scripts/tipo_regimen_concurrencia.sql",
+    "classpath:scripts/convocatoria.sql",
     "classpath:scripts/proyecto.sql", 
     "classpath:scripts/proyecto_responsable_economico.sql", 
     // @formatter:on
@@ -2157,6 +2283,715 @@ public class ProyectoIT extends BaseIT {
 
     Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
 
+  }
+
+  @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = {
+      "classpath:scripts/modelo_ejecucion.sql",
+      "classpath:scripts/modelo_unidad.sql",
+      "classpath:scripts/tipo_finalidad.sql",
+      "classpath:scripts/tipo_ambito_geografico.sql",
+      "classpath:scripts/tipo_regimen_concurrencia.sql",
+      "classpath:scripts/convocatoria.sql",
+      "classpath:scripts/proyecto.sql",
+      "classpath:scripts/concepto_gasto.sql",
+      "classpath:scripts/proyecto_anualidad.sql",
+      "classpath:scripts/proyecto_partida.sql",
+      "classpath:scripts/anualidad_gasto.sql"
+  })
+  @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
+  @Test
+  void findAllProyectoAnualidadGasto_WithPagingAndSorting_ReturnsAnualidadGastoSubList() throws Exception {
+
+    String[] roles = { "CSP-PRO-V" };
+    HttpHeaders headers = new HttpHeaders();
+    headers.add("X-Page", "0");
+    headers.add("X-Page-Size", "10");
+    String sort = "id,asc";
+
+    Long proyectoId = 1L;
+
+    URI uri = UriComponentsBuilder.fromUriString(CONTROLLER_BASE_PATH + PATH_PARAMETER_ID + PATH_ANUALIDADES_GASTO)
+        .queryParam("s", sort)
+        .buildAndExpand(proyectoId).toUri();
+
+    final ResponseEntity<List<AnualidadGasto>> response = restTemplate.exchange(uri, HttpMethod.GET,
+        buildRequest(null, null, roles), new ParameterizedTypeReference<List<AnualidadGasto>>() {
+        });
+
+    Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+
+    HttpHeaders responseHeaders = response.getHeaders();
+    Assertions.assertThat(responseHeaders.getFirst("X-Page")).as("X-Page").isEqualTo("0");
+    Assertions.assertThat(responseHeaders.getFirst("X-Page-Size")).as("X-Page-Size").isEqualTo("3");
+    Assertions.assertThat(responseHeaders.getFirst("X-Total-Count")).as("X-Total-Count").isEqualTo("3");
+
+    List<AnualidadGasto> responseData = response.getBody();
+    Assertions.assertThat(responseData).isNotNull();
+    Assertions.assertThat(responseData.size()).isEqualTo(3);
+
+    Assertions.assertThat(responseData.get(0)).isNotNull();
+    Assertions.assertThat(responseData.get(1)).isNotNull();
+    Assertions.assertThat(responseData.get(2)).isNotNull();
+
+    Assertions.assertThat(responseData.get(0).getId()).isEqualTo(1L);
+    Assertions.assertThat(responseData.get(1).getId()).isEqualTo(2L);
+    Assertions.assertThat(responseData.get(2).getId()).isEqualTo(3L);
+  }
+
+  @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = {
+      // @formatter: off
+      "classpath:scripts/tipo_fase.sql",
+      "classpath:scripts/tipo_documento.sql",
+      "classpath:scripts/modelo_ejecucion.sql",
+      "classpath:scripts/modelo_tipo_fase.sql",
+      "classpath:scripts/modelo_tipo_documento.sql",
+      "classpath:scripts/modelo_unidad.sql",
+      "classpath:scripts/tipo_finalidad.sql",
+      "classpath:scripts/tipo_ambito_geografico.sql",
+      "classpath:scripts/tipo_regimen_concurrencia.sql",
+      "classpath:scripts/convocatoria.sql",
+      "classpath:scripts/proyecto.sql",
+      "classpath:scripts/concepto_gasto.sql",
+      "classpath:scripts/proyecto_concepto_gasto.sql"
+      // @formatter: on
+  })
+  @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
+  @Test
+  void findAllProyectoGastosPermitidos_WithPagingAndSorting_ReturnsProyectoConceptoGastoSubList() throws Exception {
+
+    String[] roles = { "CSP-PRO-V" };
+    HttpHeaders headers = new HttpHeaders();
+    headers.add("X-Page", "0");
+    headers.add("X-Page-Size", "10");
+    String sort = "id,asc";
+
+    Long proyectoId = 1L;
+
+    URI uri = UriComponentsBuilder
+        .fromUriString(CONTROLLER_BASE_PATH + PATH_PARAMETER_ID + PATH_PROYECTO_CONCEPTOS_GASTO + PATH_PERMITIDOS)
+        .queryParam("s", sort)
+        .buildAndExpand(proyectoId).toUri();
+
+    final ResponseEntity<List<ProyectoConceptoGasto>> response = restTemplate.exchange(uri, HttpMethod.GET,
+        buildRequest(null, null, roles), new ParameterizedTypeReference<List<ProyectoConceptoGasto>>() {
+        });
+
+    Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+
+    HttpHeaders responseHeaders = response.getHeaders();
+    Assertions.assertThat(responseHeaders.getFirst("X-Page")).as("X-Page").isEqualTo("0");
+    Assertions.assertThat(responseHeaders.getFirst("X-Page-Size")).as("X-Page-Size").isEqualTo("2");
+    Assertions.assertThat(responseHeaders.getFirst("X-Total-Count")).as("X-Total-Count").isEqualTo("2");
+
+    List<ProyectoConceptoGasto> responseData = response.getBody();
+    Assertions.assertThat(responseData).isNotNull();
+    Assertions.assertThat(responseData.size()).isEqualTo(2);
+
+    Assertions.assertThat(responseData.get(0)).isNotNull();
+    Assertions.assertThat(responseData.get(1)).isNotNull();
+
+    Assertions.assertThat(responseData.get(0).getId()).isEqualTo(1L);
+    Assertions.assertThat(responseData.get(1).getId()).isEqualTo(2L);
+  }
+
+  @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = {
+      // @formatter: off
+      "classpath:scripts/tipo_fase.sql",
+      "classpath:scripts/tipo_documento.sql",
+      "classpath:scripts/modelo_ejecucion.sql",
+      "classpath:scripts/modelo_tipo_fase.sql",
+      "classpath:scripts/modelo_tipo_documento.sql",
+      "classpath:scripts/modelo_unidad.sql",
+      "classpath:scripts/tipo_finalidad.sql",
+      "classpath:scripts/tipo_ambito_geografico.sql",
+      "classpath:scripts/tipo_regimen_concurrencia.sql",
+      "classpath:scripts/convocatoria.sql",
+      "classpath:scripts/proyecto.sql",
+      "classpath:scripts/concepto_gasto.sql",
+      "classpath:scripts/proyecto_concepto_gasto.sql"
+      // @formatter: on
+  })
+  @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
+  @Test
+  void findAllProyectoGastosNoPermitidos_WithPagingAndSorting_ReturnsProyectoConceptoGastoSubList() throws Exception {
+
+    String[] roles = { "CSP-PRO-V" };
+    HttpHeaders headers = new HttpHeaders();
+    headers.add("X-Page", "0");
+    headers.add("X-Page-Size", "10");
+    String sort = "id,asc";
+
+    Long proyectoId = 1L;
+
+    URI uri = UriComponentsBuilder
+        .fromUriString(CONTROLLER_BASE_PATH + PATH_PARAMETER_ID + PATH_PROYECTO_CONCEPTOS_GASTO + PATH_NO_PERMITIDOS)
+        .queryParam("s", sort)
+        .buildAndExpand(proyectoId).toUri();
+
+    final ResponseEntity<List<ProyectoConceptoGasto>> response = restTemplate.exchange(uri, HttpMethod.GET,
+        buildRequest(null, null, roles), new ParameterizedTypeReference<List<ProyectoConceptoGasto>>() {
+        });
+
+    Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+
+    HttpHeaders responseHeaders = response.getHeaders();
+    Assertions.assertThat(responseHeaders.getFirst("X-Page")).as("X-Page").isEqualTo("0");
+    Assertions.assertThat(responseHeaders.getFirst("X-Page-Size")).as("X-Page-Size").isEqualTo("2");
+    Assertions.assertThat(responseHeaders.getFirst("X-Total-Count")).as("X-Total-Count").isEqualTo("2");
+
+    List<ProyectoConceptoGasto> responseData = response.getBody();
+    Assertions.assertThat(responseData).isNotNull();
+    Assertions.assertThat(responseData.size()).isEqualTo(2);
+
+    Assertions.assertThat(responseData.get(0)).isNotNull();
+    Assertions.assertThat(responseData.get(1)).isNotNull();
+
+    Assertions.assertThat(responseData.get(0).getId()).isEqualTo(4L);
+    Assertions.assertThat(responseData.get(1).getId()).isEqualTo(5L);
+  }
+
+  @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = {
+    // @formatter:off
+    "classpath:scripts/tipo_fase.sql",
+    "classpath:scripts/tipo_documento.sql",
+    "classpath:scripts/modelo_ejecucion.sql",
+    "classpath:scripts/modelo_tipo_fase.sql",
+    "classpath:scripts/modelo_tipo_documento.sql",
+    "classpath:scripts/modelo_unidad.sql",
+    "classpath:scripts/tipo_finalidad.sql",
+    "classpath:scripts/tipo_ambito_geografico.sql",
+    "classpath:scripts/tipo_regimen_concurrencia.sql",
+    "classpath:scripts/convocatoria.sql",
+    "classpath:scripts/proyecto.sql",
+    "classpath:scripts/estado_proyecto.sql"
+    // @formatter:on
+  })
+  @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
+  @Test
+  void cambiarEstado_ReturnsProyecto() throws Exception {
+    Long proyectoId = 1L;
+    EstadoProyecto newEstado = generarMockEstadoProyecto(null);
+    newEstado.setEstado(EstadoProyecto.Estado.RENUNCIADO);
+    String roles = "CSP-PRO-E";
+
+    URI uri = UriComponentsBuilder.fromUriString(CONTROLLER_BASE_PATH + PATH_PARAMETER_ID + PATH_CAMBIAR_ESTADO)
+        .buildAndExpand(proyectoId).toUri();
+
+    final ResponseEntity<Proyecto> response = restTemplate.exchange(uri, HttpMethod.PATCH,
+        buildRequest(null, newEstado, roles), Proyecto.class);
+
+    Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+    Assertions.assertThat(response.getBody()).isNotNull();
+    Assertions.assertThat(response.getBody().getEstado()).isNotNull();
+    Assertions.assertThat(response.getBody().getEstado().getEstado()).isEqualTo(EstadoProyecto.Estado.RENUNCIADO);
+  }
+
+  @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = {
+    // @formatter:off
+    "classpath:scripts/tipo_fase.sql",
+    "classpath:scripts/tipo_documento.sql",
+    "classpath:scripts/modelo_ejecucion.sql",
+    "classpath:scripts/modelo_tipo_fase.sql",
+    "classpath:scripts/modelo_tipo_documento.sql",
+    "classpath:scripts/modelo_unidad.sql",
+    "classpath:scripts/tipo_finalidad.sql",
+    "classpath:scripts/tipo_ambito_geografico.sql",
+    "classpath:scripts/tipo_regimen_concurrencia.sql",
+    "classpath:scripts/convocatoria.sql",
+    "classpath:scripts/proyecto.sql",
+    "classpath:scripts/concepto_gasto.sql",
+    "classpath:scripts/proyecto_anualidad.sql",
+    "classpath:scripts/proyecto_partida.sql",
+    "classpath:scripts/anualidad_gasto.sql"
+    // @formatter:on
+  })
+  @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
+  @Test
+  void getProyectoPresupuestoTotales_ReturnsProyectoPresupuestoTotales() throws Exception {
+    String roles = "CSP-SOL-E";
+    Long proyectoId = 1L;
+
+    URI uri = UriComponentsBuilder.fromUriString(CONTROLLER_BASE_PATH + PATH_PARAMETER_ID + PATH_PRESUPUESTO_TOTALES)
+        .buildAndExpand(proyectoId).toUri();
+
+    final ResponseEntity<ProyectoPresupuestoTotales> response = restTemplate.exchange(uri, HttpMethod.GET,
+        buildRequest(null, null, roles),
+        ProyectoPresupuestoTotales.class);
+
+    Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+    Assertions.assertThat(response.getBody()).isNotNull();
+    Assertions.assertThat(response.getBody().getImporteTotalPresupuestoUniversidadSinCosteIndirecto().doubleValue())
+        .isEqualTo(71000d);
+    Assertions.assertThat(response.getBody().getImporteTotalPresupuestoSocios().doubleValue()).isEqualTo(0d);
+    Assertions.assertThat(response.getBody().getImporteTotalConcedidoUniversidadSinCosteIndirecto().doubleValue())
+        .isEqualTo(63000d);
+    Assertions.assertThat(response.getBody().getImporteTotalConcedidoSocios().doubleValue()).isEqualTo(0d);
+    Assertions.assertThat(response.getBody().getImporteTotalPresupuesto().doubleValue()).isEqualTo(71000d);
+    Assertions.assertThat(response.getBody().getImporteTotalConcedido().doubleValue()).isEqualTo(63000d);
+    Assertions.assertThat(response.getBody().getImporteTotalPresupuestoUniversidadCostesIndirectos().doubleValue())
+        .isEqualTo(0d);
+    Assertions.assertThat(response.getBody().getImporteTotalConcedidoUniversidadCostesIndirectos().doubleValue())
+        .isEqualTo(0d);
+
+  }
+
+  @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = {
+    // @formatter:off
+    "classpath:scripts/tipo_fase.sql",
+    "classpath:scripts/tipo_documento.sql",
+    "classpath:scripts/modelo_ejecucion.sql",
+    "classpath:scripts/modelo_tipo_fase.sql",
+    "classpath:scripts/modelo_tipo_documento.sql",
+    "classpath:scripts/modelo_unidad.sql",
+    "classpath:scripts/tipo_finalidad.sql",
+    "classpath:scripts/tipo_ambito_geografico.sql",
+    "classpath:scripts/tipo_regimen_concurrencia.sql",
+    "classpath:scripts/convocatoria.sql",
+    "classpath:scripts/proyecto.sql",
+    "classpath:scripts/estado_proyecto.sql",
+    "classpath:scripts/proyecto_agrupacion_gasto.sql"
+    // @formatter:on
+  })
+  @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
+  @Test
+  void findAllProyectoAgrupacionGastoByProyectoId_WithPagingSortingAndFiltering_ReturnsProyectoAgrupacionGastoOutputSubList()
+      throws Exception {
+    String[] roles = { "CSP-PRO-V", "CSP-PRO-E" };
+    HttpHeaders headers = new HttpHeaders();
+    headers.add("X-Page", "0");
+    headers.add("X-Page-Size", "10");
+    String sort = "id,asc";
+    String filter = "";
+
+    Long proyectoId = 1L;
+
+    URI uri = UriComponentsBuilder
+        .fromUriString(CONTROLLER_BASE_PATH + PATH_PARAMETER_ID + PATH_PROYECTO_AGRUPACION_GASTO)
+        .queryParam("s", sort).queryParam("q", filter).buildAndExpand(proyectoId).toUri();
+
+    final ResponseEntity<List<ProyectoAgrupacionGastoOutput>> response = restTemplate.exchange(uri, HttpMethod.GET,
+        buildRequest(headers, null, roles), new ParameterizedTypeReference<List<ProyectoAgrupacionGastoOutput>>() {
+        });
+
+    Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+
+    HttpHeaders responseHeaders = response.getHeaders();
+    Assertions.assertThat(responseHeaders.getFirst("X-Page")).as("X-Page").isEqualTo("0");
+    Assertions.assertThat(responseHeaders.getFirst("X-Page-Size")).as("X-Page-Size").isEqualTo("10");
+    Assertions.assertThat(responseHeaders.getFirst("X-Total-Count")).as("X-Total-Count").isEqualTo("1");
+
+    final List<ProyectoAgrupacionGastoOutput> responseData = response.getBody();
+    Assertions.assertThat(responseData.size()).isEqualTo(1);
+    Assertions.assertThat(responseData.get(0)).isNotNull();
+    Assertions.assertThat(responseData.get(0).getId()).isEqualTo(1);
+  }
+
+  @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = {
+    // @formatter:off
+    "classpath:scripts/modelo_ejecucion.sql",
+    "classpath:scripts/modelo_unidad.sql",
+    "classpath:scripts/tipo_finalidad.sql",
+    "classpath:scripts/tipo_regimen_concurrencia.sql",
+    "classpath:scripts/tipo_ambito_geografico.sql",
+    "classpath:scripts/convocatoria.sql",
+    "classpath:scripts/proyecto.sql",
+    "classpath:scripts/contexto_proyecto.sql",
+    "classpath:scripts/estado_proyecto.sql",
+    "classpath:scripts/proyecto_periodo_justificacion.sql"
+    // @formatter:on
+  })
+  @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
+  @Test
+  void findAllPeriodoJustificacionByProyectoId_WithPagingSortingAndFiltering_ReturnsProyectoPeriodoJustificacionSubList()
+      throws Exception {
+    String[] roles = { "CSP-PRO-V", "CSP-PRO-E" };
+    HttpHeaders headers = new HttpHeaders();
+    headers.add("X-Page", "0");
+    headers.add("X-Page-Size", "10");
+    String sort = "id,asc";
+    String filter = "";
+
+    Long proyectoId = 1L;
+
+    URI uri = UriComponentsBuilder
+        .fromUriString(CONTROLLER_BASE_PATH + PATH_PARAMETER_ID + PATH_PROYECTO_PERIODO_JUSTIFICACION)
+        .queryParam("s", sort).queryParam("q", filter).buildAndExpand(proyectoId).toUri();
+
+    final ResponseEntity<List<ProyectoPeriodoJustificacion>> response = restTemplate.exchange(uri, HttpMethod.GET,
+        buildRequest(headers, null, roles), new ParameterizedTypeReference<List<ProyectoPeriodoJustificacion>>() {
+        });
+
+    final String expectedSize = "3";
+    Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+
+    HttpHeaders responseHeaders = response.getHeaders();
+    Assertions.assertThat(responseHeaders.getFirst("X-Page")).as("X-Page").isEqualTo("0");
+    Assertions.assertThat(responseHeaders.getFirst("X-Page-Size")).as("X-Page-Size").isEqualTo("10");
+    Assertions.assertThat(responseHeaders.getFirst("X-Total-Count")).as("X-Total-Count").isEqualTo(expectedSize);
+
+    final List<ProyectoPeriodoJustificacion> responseData = response.getBody();
+    Assertions.assertThat(responseData.size()).isEqualTo(Integer.valueOf(expectedSize));
+    Assertions.assertThat(responseData.get(0)).isNotNull();
+    Assertions.assertThat(responseData.get(0).getId()).isEqualTo(1);
+  }
+
+  @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = {
+    // @formatter:off
+    "classpath:scripts/modelo_ejecucion.sql",
+    "classpath:scripts/modelo_unidad.sql",
+    "classpath:scripts/tipo_finalidad.sql",
+    "classpath:scripts/tipo_regimen_concurrencia.sql",
+    "classpath:scripts/tipo_ambito_geografico.sql",
+    "classpath:scripts/convocatoria.sql",
+    "classpath:scripts/proyecto.sql",
+    "classpath:scripts/contexto_proyecto.sql",
+    "classpath:scripts/estado_proyecto.sql"
+    // @formatter:on
+  })
+  @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
+  @Test
+  void modificable_ReturnsStatusCode200() throws Exception {
+    Long proyectoId = 1L;
+
+    URI uri = UriComponentsBuilder
+        .fromUriString(CONTROLLER_BASE_PATH + PATH_PARAMETER_ID + PATH_MODIFICABLE)
+        .buildAndExpand(proyectoId).toUri();
+
+    final ResponseEntity<Void> response = restTemplate.exchange(uri, HttpMethod.HEAD,
+        buildRequest(null, null, "CSP-PRO-E"), Void.class);
+
+    Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+  }
+
+  @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = {
+      // @formatter:off
+      "classpath:scripts/modelo_ejecucion.sql",
+      "classpath:scripts/modelo_unidad.sql",
+      "classpath:scripts/tipo_finalidad.sql",
+      "classpath:scripts/tipo_ambito_geografico.sql",
+      "classpath:scripts/tipo_regimen_concurrencia.sql",
+    "classpath:scripts/convocatoria.sql",
+      "classpath:scripts/proyecto.sql",
+      "classpath:scripts/proyecto_anualidad.sql",
+    // @formatter:on
+  })
+  @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
+  @Test
+  void findAllProyectoAnualidad_ReturnsProyectoAnualidadList() throws Exception {
+    Long proyectoId = 2L;
+
+    URI uri = UriComponentsBuilder
+        .fromUriString(CONTROLLER_BASE_PATH + PATH_PARAMETER_ID + PATH_PROYECTO_ANUALIDADES)
+        .buildAndExpand(proyectoId).toUri();
+
+    final ResponseEntity<List<ProyectoAnualidad>> response = restTemplate.exchange(uri, HttpMethod.GET,
+        buildRequest(null, null, "CSP-PRO-V"), new ParameterizedTypeReference<List<ProyectoAnualidad>>() {
+        });
+
+    Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+    Assertions.assertThat(response.getBody()).isNotNull();
+    Assertions.assertThat(response.getBody().size()).isEqualTo(3);
+
+    List<ProyectoAnualidad> responseData = response.getBody().stream().sorted(new Comparator<ProyectoAnualidad>() {
+
+      @Override
+      public int compare(ProyectoAnualidad o1, ProyectoAnualidad o2) {
+
+        return o1.getId().compareTo(o2.getId());
+      }
+
+    }).collect(Collectors.toList());
+
+    Assertions.assertThat(responseData.get(0)).isNotNull();
+    Assertions.assertThat(responseData.get(1)).isNotNull();
+    Assertions.assertThat(responseData.get(2)).isNotNull();
+
+    Assertions.assertThat(responseData.get(0).getId()).isEqualTo(3);
+    Assertions.assertThat(responseData.get(1).getId()).isEqualTo(4);
+    Assertions.assertThat(responseData.get(2).getId()).isEqualTo(5);
+  }
+
+  @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = {
+      // @formatter:off
+      "classpath:scripts/modelo_ejecucion.sql",
+      "classpath:scripts/modelo_unidad.sql",
+      "classpath:scripts/tipo_finalidad.sql",
+      "classpath:scripts/tipo_ambito_geografico.sql",
+      "classpath:scripts/tipo_regimen_concurrencia.sql",
+      "classpath:scripts/convocatoria.sql",
+      "classpath:scripts/proyecto.sql",
+      "classpath:scripts/concepto_gasto.sql",
+      "classpath:scripts/proyecto_anualidad.sql",
+      "classpath:scripts/proyecto_partida.sql",
+      "classpath:scripts/anualidad_gasto.sql"
+    // @formatter:on
+  })
+  @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
+  @Test
+  void findProyectoAnualidadesGasto_ReturnsAnualidadGastoOutputList() throws Exception {
+    Long proyectoId = 2L;
+
+    URI uri = UriComponentsBuilder
+        .fromUriString(CONTROLLER_BASE_PATH + PATH_PARAMETER_ID + PATH_ANUALIDADES_GASTOS)
+        .buildAndExpand(proyectoId).toUri();
+
+    final ResponseEntity<List<ProyectoAnualidad>> response = restTemplate.exchange(uri, HttpMethod.GET,
+        buildRequest(null, null, "CSP-PRO-V"), new ParameterizedTypeReference<List<ProyectoAnualidad>>() {
+        });
+
+    Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+    Assertions.assertThat(response.getBody()).isNotNull();
+    Assertions.assertThat(response.getBody().size()).isEqualTo(4);
+
+    List<ProyectoAnualidad> responseData = response.getBody().stream().sorted(new Comparator<ProyectoAnualidad>() {
+
+      @Override
+      public int compare(ProyectoAnualidad o1, ProyectoAnualidad o2) {
+
+        return o1.getId().compareTo(o2.getId());
+      }
+
+    }).collect(Collectors.toList());
+
+    Assertions.assertThat(responseData.get(0)).isNotNull();
+    Assertions.assertThat(responseData.get(1)).isNotNull();
+    Assertions.assertThat(responseData.get(2)).isNotNull();
+    Assertions.assertThat(responseData.get(3)).isNotNull();
+
+    Assertions.assertThat(responseData.get(0).getId()).isEqualTo(4);
+    Assertions.assertThat(responseData.get(1).getId()).isEqualTo(5);
+    Assertions.assertThat(responseData.get(2).getId()).isEqualTo(6);
+    Assertions.assertThat(responseData.get(3).getId()).isEqualTo(7);
+  }
+
+  @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = {
+      // @formatter:off
+      "classpath:scripts/modelo_ejecucion.sql",
+      "classpath:scripts/modelo_unidad.sql",
+      "classpath:scripts/tipo_finalidad.sql",
+      "classpath:scripts/tipo_ambito_geografico.sql",
+      "classpath:scripts/tipo_regimen_concurrencia.sql",
+      "classpath:scripts/convocatoria.sql",
+      "classpath:scripts/proyecto.sql",
+      "classpath:scripts/tipo_facturacion.sql",
+      "classpath:scripts/proyecto_facturacion.sql"
+    // @formatter:on
+  })
+  @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
+  @Test
+  void findAllProyectoFacturacion_WithPagingSortingAndFiltering_ReturnsProyectoFacturacionOutputSubList()
+      throws Exception {
+    String[] roles = { "CSP-PRO-V", "CSP-PRO-E" };
+    HttpHeaders headers = new HttpHeaders();
+    headers.add("X-Page", "0");
+    headers.add("X-Page-Size", "10");
+    String sort = "id,asc";
+    String filter = "id>=1;id<=3";
+
+    Long proyectoId = 1L;
+
+    URI uri = UriComponentsBuilder
+        .fromUriString(CONTROLLER_BASE_PATH + PATH_PARAMETER_ID + PATH_PROYECTOS_FACTURACION)
+        .queryParam("s", sort).queryParam("q", filter).buildAndExpand(proyectoId).toUri();
+
+    final ResponseEntity<List<ProyectoFacturacionOutput>> response = restTemplate.exchange(uri, HttpMethod.GET,
+        buildRequest(headers, null, roles), new ParameterizedTypeReference<List<ProyectoFacturacionOutput>>() {
+        });
+
+    final String expectedSize = "3";
+    Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+
+    HttpHeaders responseHeaders = response.getHeaders();
+    Assertions.assertThat(responseHeaders.getFirst("X-Page")).as("X-Page").isEqualTo("0");
+    Assertions.assertThat(responseHeaders.getFirst("X-Page-Size")).as("X-Page-Size").isEqualTo("10");
+    Assertions.assertThat(responseHeaders.getFirst("X-Total-Count")).as("X-Total-Count").isEqualTo(expectedSize);
+
+    Assertions.assertThat(response.getBody()).isNotNull();
+
+    final List<ProyectoFacturacionOutput> responseData = response.getBody().stream()
+        .sorted(new Comparator<ProyectoFacturacionOutput>() {
+          @Override
+          public int compare(ProyectoFacturacionOutput o1, ProyectoFacturacionOutput o2) {
+
+            return o1.getId().compareTo(o2.getId());
+          }
+        })
+        .collect(Collectors.toList());
+    Assertions.assertThat(responseData.size()).isEqualTo(Integer.valueOf(expectedSize));
+
+    Assertions.assertThat(responseData.get(0)).isNotNull();
+    Assertions.assertThat(responseData.get(1)).isNotNull();
+    Assertions.assertThat(responseData.get(2)).isNotNull();
+
+    Assertions.assertThat(responseData.get(0).getId()).isEqualTo(1);
+    Assertions.assertThat(responseData.get(1).getId()).isEqualTo(2);
+    Assertions.assertThat(responseData.get(2).getId()).isEqualTo(3);
+  }
+
+  @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = {
+      // @formatter:off
+      "classpath:scripts/modelo_ejecucion.sql",
+      "classpath:scripts/modelo_unidad.sql",
+      "classpath:scripts/tipo_finalidad.sql",
+      "classpath:scripts/tipo_ambito_geografico.sql",
+      "classpath:scripts/tipo_regimen_concurrencia.sql",
+      "classpath:scripts/convocatoria.sql",
+      "classpath:scripts/proyecto.sql",
+      "classpath:scripts/proyecto_palabra_clave.sql"
+    // @formatter:on
+  })
+  @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
+  @Test
+  void findPalabraClave_WithPagingSortingAndFiltering_ReturnsProyectoPalabraClaveOutputSubList()
+      throws Exception {
+    String[] roles = { "CSP-PRO-V", "CSP-PRO-E" };
+    HttpHeaders headers = new HttpHeaders();
+    headers.add("X-Page", "0");
+    headers.add("X-Page-Size", "10");
+    String sort = "id,asc";
+    String filter = "id>=1;id<=3";
+
+    Long proyectoId = 1L;
+
+    URI uri = UriComponentsBuilder
+        .fromUriString(CONTROLLER_BASE_PATH + PATH_PARAMETER_PROYECTO_ID + PATH_PALABRAS_CLAVE)
+        .queryParam("s", sort).queryParam("q", filter).buildAndExpand(proyectoId).toUri();
+
+    final ResponseEntity<List<ProyectoPalabraClaveOutput>> response = restTemplate.exchange(uri, HttpMethod.GET,
+        buildRequest(headers, null, roles), new ParameterizedTypeReference<List<ProyectoPalabraClaveOutput>>() {
+        });
+
+    final String expectedSize = "3";
+    Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+
+    HttpHeaders responseHeaders = response.getHeaders();
+    Assertions.assertThat(responseHeaders.getFirst("X-Page")).as("X-Page").isEqualTo("0");
+    Assertions.assertThat(responseHeaders.getFirst("X-Page-Size")).as("X-Page-Size").isEqualTo("10");
+    Assertions.assertThat(responseHeaders.getFirst("X-Total-Count")).as("X-Total-Count").isEqualTo(expectedSize);
+
+    Assertions.assertThat(response.getBody()).isNotNull();
+
+    final List<ProyectoPalabraClaveOutput> responseData = response.getBody().stream()
+        .sorted(new Comparator<ProyectoPalabraClaveOutput>() {
+          @Override
+          public int compare(ProyectoPalabraClaveOutput o1, ProyectoPalabraClaveOutput o2) {
+
+            return o1.getId().compareTo(o2.getId());
+          }
+        })
+        .collect(Collectors.toList());
+    Assertions.assertThat(responseData.size()).isEqualTo(Integer.valueOf(expectedSize));
+
+    Assertions.assertThat(responseData.get(0)).isNotNull();
+    Assertions.assertThat(responseData.get(1)).isNotNull();
+    Assertions.assertThat(responseData.get(2)).isNotNull();
+
+    Assertions.assertThat(responseData.get(0).getId()).isEqualTo(1);
+    Assertions.assertThat(responseData.get(1).getId()).isEqualTo(2);
+    Assertions.assertThat(responseData.get(2).getId()).isEqualTo(3);
+  }
+
+  @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = {
+      // @formatter:off
+      "classpath:scripts/modelo_ejecucion.sql",
+      "classpath:scripts/modelo_unidad.sql",
+      "classpath:scripts/tipo_finalidad.sql",
+      "classpath:scripts/tipo_ambito_geografico.sql",
+      "classpath:scripts/tipo_regimen_concurrencia.sql",
+      "classpath:scripts/convocatoria.sql",
+      "classpath:scripts/proyecto.sql",
+      "classpath:scripts/proyecto_palabra_clave.sql"
+    // @formatter:on
+  })
+  @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
+  @Test
+  void updatePalabrasClave_ReturnsProyectoPalabraClaveOutputList() throws Exception {
+    String[] roles = { "CSP-PRO-V", "CSP-PRO-E" };
+
+    Long proyectoId = 1L;
+    List<ProyectoPalabraClaveInput> toUpdate = Arrays.asList(
+        buildMockProyectoPalabraClaveInput(1L, "updated-01", proyectoId),
+        buildMockProyectoPalabraClaveInput(2L, "updated-02", proyectoId));
+
+    URI uri = UriComponentsBuilder
+        .fromUriString(CONTROLLER_BASE_PATH + PATH_PARAMETER_PROYECTO_ID + PATH_PALABRAS_CLAVE)
+        .buildAndExpand(proyectoId).toUri();
+
+    final ResponseEntity<List<ProyectoPalabraClaveOutput>> response = restTemplate.exchange(uri, HttpMethod.PATCH,
+        buildRequest(null, toUpdate, roles), new ParameterizedTypeReference<List<ProyectoPalabraClaveOutput>>() {
+        });
+
+    Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+    Assertions.assertThat(response.getBody()).isNotNull();
+
+    final List<ProyectoPalabraClaveOutput> responseData = response.getBody().stream()
+        .sorted(new Comparator<ProyectoPalabraClaveOutput>() {
+          @Override
+          public int compare(ProyectoPalabraClaveOutput o1, ProyectoPalabraClaveOutput o2) {
+
+            return o1.getId().compareTo(o2.getId());
+          }
+        })
+        .collect(Collectors.toList());
+    Assertions.assertThat(responseData.size()).isEqualTo(Integer.valueOf(2));
+
+    Assertions.assertThat(responseData.get(0)).isNotNull();
+    Assertions.assertThat(responseData.get(1)).isNotNull();
+
+    Assertions.assertThat(responseData.get(0).getId()).isEqualTo(1);
+    Assertions.assertThat(responseData.get(1).getId()).isEqualTo(2);
+
+    Assertions.assertThat(responseData.get(0).getPalabraClaveRef()).isEqualTo("updated-01");
+    Assertions.assertThat(responseData.get(1).getPalabraClaveRef()).isEqualTo("updated-02");
+  }
+
+  @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = {
+      // @formatter:off
+      "classpath:scripts/modelo_ejecucion.sql",
+      "classpath:scripts/modelo_unidad.sql",
+      "classpath:scripts/tipo_finalidad.sql",
+      "classpath:scripts/tipo_ambito_geografico.sql",
+      "classpath:scripts/tipo_regimen_concurrencia.sql",
+      "classpath:scripts/convocatoria.sql",
+      "classpath:scripts/proyecto.sql",
+      "classpath:scripts/autorizacion.sql",
+      "classpath:scripts/notificacion_proyecto_externo_cvn.sql"
+    // @formatter:on
+  })
+  @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
+  @Test
+  void findAllNotificacionProyectoExternoCVN_ReturnsNotificacionProyectoExternoCVNOutputList() throws Exception {
+    String[] roles = { "CSP-PRO-V", "CSP-PRO-E" };
+    Long proyectoId = 1L;
+
+    URI uri = UriComponentsBuilder
+        .fromUriString(CONTROLLER_BASE_PATH + PATH_PARAMETER_ID + PATH_NOTIFICACIONES_PROYECTO)
+        .buildAndExpand(proyectoId).toUri();
+
+    final ResponseEntity<List<NotificacionProyectoExternoCVNOutput>> response = restTemplate.exchange(uri,
+        HttpMethod.GET,
+        buildRequest(null, null, roles), new ParameterizedTypeReference<List<NotificacionProyectoExternoCVNOutput>>() {
+        });
+
+    Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+    Assertions.assertThat(response.getBody()).isNotNull();
+    Assertions.assertThat(response.getBody().size()).isEqualTo(3);
+
+    List<NotificacionProyectoExternoCVNOutput> responseData = response.getBody().stream()
+        .sorted(new Comparator<NotificacionProyectoExternoCVNOutput>() {
+          @Override
+          public int compare(NotificacionProyectoExternoCVNOutput o1, NotificacionProyectoExternoCVNOutput o2) {
+            return o1.getId().compareTo(o2.getId());
+          }
+        }).collect(Collectors.toList());
+
+    Assertions.assertThat(responseData.get(0)).isNotNull();
+    Assertions.assertThat(responseData.get(1)).isNotNull();
+    Assertions.assertThat(responseData.get(2)).isNotNull();
+
+    Assertions.assertThat(responseData.get(0).getId()).isEqualTo(1);
+    Assertions.assertThat(responseData.get(1).getId()).isEqualTo(2);
+    Assertions.assertThat(responseData.get(2).getId()).isEqualTo(3);
   }
 
   /**
@@ -2213,6 +3048,14 @@ public class ProyectoIT extends BaseIT {
     estadoProyecto.setProyectoId(1L);
 
     return estadoProyecto;
+  }
+
+  private ProyectoPalabraClaveInput buildMockProyectoPalabraClaveInput(Long id, String palabraClaveRef,
+      Long proyectoId) {
+    return ProyectoPalabraClaveInput.builder()
+        .palabraClaveRef(palabraClaveRef)
+        .proyectoId(proyectoId)
+        .build();
   }
 
 }

@@ -10,12 +10,17 @@ import org.assertj.core.api.Assertions;
 import org.crue.hercules.sgi.csp.controller.ConvocatoriaController;
 import org.crue.hercules.sgi.csp.dto.ConvocatoriaPalabraClaveInput;
 import org.crue.hercules.sgi.csp.dto.ConvocatoriaPalabraClaveOutput;
+import org.crue.hercules.sgi.csp.dto.RequisitoEquipoCategoriaProfesionalOutput;
+import org.crue.hercules.sgi.csp.dto.RequisitoEquipoNivelAcademicoOutput;
+import org.crue.hercules.sgi.csp.dto.RequisitoIPCategoriaProfesionalOutput;
+import org.crue.hercules.sgi.csp.dto.RequisitoIPNivelAcademicoOutput;
 import org.crue.hercules.sgi.csp.enums.ClasificacionCVN;
 import org.crue.hercules.sgi.csp.enums.FormularioSolicitud;
 import org.crue.hercules.sgi.csp.enums.TipoSeguimiento;
 import org.crue.hercules.sgi.csp.model.Convocatoria;
 import org.crue.hercules.sgi.csp.model.ConvocatoriaAreaTematica;
 import org.crue.hercules.sgi.csp.model.ConvocatoriaConceptoGasto;
+import org.crue.hercules.sgi.csp.model.ConvocatoriaConceptoGastoCodigoEc;
 import org.crue.hercules.sgi.csp.model.ConvocatoriaDocumento;
 import org.crue.hercules.sgi.csp.model.ConvocatoriaEnlace;
 import org.crue.hercules.sgi.csp.model.ConvocatoriaEntidadConvocante;
@@ -23,6 +28,7 @@ import org.crue.hercules.sgi.csp.model.ConvocatoriaEntidadFinanciadora;
 import org.crue.hercules.sgi.csp.model.ConvocatoriaEntidadGestora;
 import org.crue.hercules.sgi.csp.model.ConvocatoriaFase;
 import org.crue.hercules.sgi.csp.model.ConvocatoriaHito;
+import org.crue.hercules.sgi.csp.model.ConvocatoriaPartida;
 import org.crue.hercules.sgi.csp.model.ConvocatoriaPeriodoJustificacion;
 import org.crue.hercules.sgi.csp.model.ConvocatoriaPeriodoSeguimientoCientifico;
 import org.crue.hercules.sgi.csp.model.ModeloEjecucion;
@@ -46,7 +52,7 @@ import org.springframework.web.util.UriComponentsBuilder;
  * Test de integracion de Convocatoria.
  */
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class ConvocatoriaIT extends BaseIT {
+class ConvocatoriaIT extends BaseIT {
 
   private static final String PATH_PARAMETER_ID = "/{id}";
   private static final String PATH_PARAMETER_DESACTIVAR = "/desactivar";
@@ -70,6 +76,20 @@ public class ConvocatoriaIT extends BaseIT {
   private static final String PATH_ENTIDAD_CONCEPTO_GASTOS_NO_PERMITIDOS = "/convocatoriagastos/nopermitidos";
   private static final String PATH_PARAMETER_RESTRINGIDOS = "/restringidos";
   private static final String PATH_PALABRAS_CLAVE = ConvocatoriaController.PATH_PALABRAS_CLAVE;
+  private static final String PATH_INVESTIGADOR = "/investigador";
+  private static final String PATH_CONVOCATORIA_HITOS = "/convocatoriahitos";
+  private static final String PATH_CONVOCATORIA_PARTIDAS_PRESUPUESTARIAS = "/convocatoria-partidas-presupuestarias";
+  private static final String PATH_CONVOCATORIA_FASES = "/convocatoriafases";
+  private static final String PATH_CONVOCATORIA_DOCUMENTOS = "/convocatoriadocumentos";
+  private static final String PATH_CONVOCATORIA_ENLACES = "/convocatoriaenlaces";
+  private static final String PATH_CONVOCATORIA_GASTO_CODIGO_EC = "/convocatoriagastocodigoec";
+  private static final String PATH_PERMITIDOS = "/permitidos";
+  private static final String PATH_NO_PERMITIDOS = "/nopermitidos";
+  private static final String PATH_TRAMITABLE = "/tramitable";
+  private static final String PATH_SOLICITUDES_REFERENCED = "/solicitudesreferenced";
+  private static final String PATH_PROYECTOS_REFERENCED = "/proyectosreferenced";
+  private static final String PATH_CLONE = "/clone";
+  private static final String PATH_FORMULARIO_SOLICITUD = "/formulariosolicitud";
 
   private HttpEntity<Convocatoria> buildRequest(HttpHeaders headers, Convocatoria entity) throws Exception {
     headers = (headers != null ? headers : new HttpHeaders());
@@ -1046,7 +1066,7 @@ public class ConvocatoriaIT extends BaseIT {
         .isEqualTo("obs-" + String.format("%03d", 4));
   }
 
-  @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = { 
+  @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = {
     // @formatter:off
     "classpath:scripts/modelo_ejecucion.sql",
     "classpath:scripts/tipo_finalidad.sql",
@@ -1064,7 +1084,7 @@ public class ConvocatoriaIT extends BaseIT {
     headers.add("X-Page-Size", "10");
     String sort = "id,desc";
     String filter = "";
-    
+
     Long convocatoriaId = 1L;
     List<ConvocatoriaPalabraClaveInput> toUpdate = Arrays.asList(
         buildMockConvocatoriaPalabraClaveInput(convocatoriaId, "palabra-ref-uptd-1"),
@@ -1072,14 +1092,15 @@ public class ConvocatoriaIT extends BaseIT {
         buildMockConvocatoriaPalabraClaveInput(convocatoriaId, "palabra-ref-uptd-3"));
 
     URI uri = UriComponentsBuilder.fromUriString(CONTROLLER_BASE_PATH + PATH_PALABRAS_CLAVE)
-    .queryParam("s", sort).queryParam("q", filter).buildAndExpand(convocatoriaId).toUri();
+        .queryParam("s", sort).queryParam("q", filter).buildAndExpand(convocatoriaId).toUri();
 
     final ResponseEntity<List<ConvocatoriaPalabraClaveOutput>> response = restTemplate.exchange(uri, HttpMethod.PATCH,
-        buildGenericRequest(null, toUpdate, "CSP-CON-E"), new ParameterizedTypeReference<List<ConvocatoriaPalabraClaveOutput>>() {
+        buildGenericRequest(null, toUpdate, "CSP-CON-E"),
+        new ParameterizedTypeReference<List<ConvocatoriaPalabraClaveOutput>>() {
         });
 
     Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-    
+
     List<ConvocatoriaPalabraClaveOutput> updated = response.getBody();
     Assertions.assertThat(updated.size()).isEqualTo(3);
 
@@ -1092,11 +1113,612 @@ public class ConvocatoriaIT extends BaseIT {
     Assertions.assertThat(updated.get(2).getPalabraClaveRef()).isEqualTo("palabra-ref-uptd-3");
   }
 
+  @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = {
+    // @formatter:off
+    "classpath:scripts/modelo_ejecucion.sql",
+    "classpath:scripts/tipo_finalidad.sql",
+    "classpath:scripts/tipo_regimen_concurrencia.sql",
+    "classpath:scripts/tipo_ambito_geografico.sql",
+    "classpath:scripts/convocatoria.sql",
+    "classpath:scripts/tipo_fase.sql",
+    "classpath:scripts/convocatoria_fase.sql",
+    "classpath:scripts/configuracion_solicitud.sql"
+    // @formatter:on
+  })
+  @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
+  @Test
+  void findAllInvestigador_WithPagingSortingAndFilter_ReturnsConvocatoriaSubList() throws Exception {
+    HttpHeaders headers = new HttpHeaders();
+    headers.set("Authorization", String.format("bearer %s", tokenBuilder.buildToken("user", "CSP-CGAS-V")));
+    headers.add("X-Page", "0");
+    headers.add("X-Page-Size", "10");
+    String sort = "id,desc";
+    String filter = "id==1";
+
+    URI uri = UriComponentsBuilder.fromUriString(CONTROLLER_BASE_PATH + PATH_INVESTIGADOR)
+        .queryParam("s", sort).queryParam("q", filter).build(false).toUri();
+
+    final ResponseEntity<List<Convocatoria>> response = restTemplate.exchange(uri, HttpMethod.GET,
+        buildGenericRequest(null, null, "CSP-CON-INV-V"), new ParameterizedTypeReference<List<Convocatoria>>() {
+        });
+
+    Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+
+    List<Convocatoria> responseData = response.getBody();
+    Assertions.assertThat(responseData.size()).isEqualTo(1);
+
+    Assertions.assertThat(responseData.get(0)).isNotNull();
+    Assertions.assertThat(responseData.get(0).getId()).isEqualTo(1);
+
+  }
+
+  @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = {
+    // @formatter:off
+    "classpath:scripts/modelo_ejecucion.sql",
+    "classpath:scripts/tipo_finalidad.sql",
+    "classpath:scripts/tipo_regimen_concurrencia.sql",
+    "classpath:scripts/tipo_ambito_geografico.sql",
+    "classpath:scripts/convocatoria.sql",
+    "classpath:scripts/tipo_hito.sql",
+    "classpath:scripts/convocatoria_hito.sql"
+    // @formatter:on
+  })
+  @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
+  @Test
+  void hasConvocatoriaHitos_ReturnsStatusCode200() throws Exception {
+    String roles = "CSP-CON-V";
+    Long convocatoriaId = 1L;
+
+    URI uri = UriComponentsBuilder.fromUriString(CONTROLLER_BASE_PATH + PATH_PARAMETER_ID + PATH_CONVOCATORIA_HITOS)
+        .buildAndExpand(convocatoriaId).toUri();
+
+    final ResponseEntity<Void> response = restTemplate.exchange(uri, HttpMethod.HEAD,
+        buildGenericRequest(null, null, roles),
+        Void.class);
+
+    Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+  }
+
+  @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = {
+    // @formatter:off
+    "classpath:scripts/modelo_ejecucion.sql",
+    "classpath:scripts/tipo_finalidad.sql",
+    "classpath:scripts/tipo_regimen_concurrencia.sql",
+    "classpath:scripts/tipo_ambito_geografico.sql",
+    "classpath:scripts/convocatoria.sql",
+    "classpath:scripts/tipo_fase.sql",
+    "classpath:scripts/convocatoria_fase.sql",
+    "classpath:scripts/configuracion_solicitud.sql",
+    "classpath:scripts/convocatoria_partida.sql"
+    // @formatter:on
+  })
+  @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
+  @Test
+  void findAllConvocatoriaPartida_WithPagingSortingAndFiltering_ReturnConvocatoriaPartidaSubList() throws Exception {
+
+    HttpHeaders headers = new HttpHeaders();
+    headers.set("Authorization", String.format("bearer %s", tokenBuilder.buildToken("user", "CSP-CGAS-V")));
+    headers.add("X-Page", "0");
+    headers.add("X-Page-Size", "10");
+    String sort = "id,asc";
+    String filter = "tipoPartida==INGRESO";
+
+    Long convocatoriaId = 1L;
+
+    URI uri = UriComponentsBuilder
+        .fromUriString(CONTROLLER_BASE_PATH + PATH_PARAMETER_ID + PATH_CONVOCATORIA_PARTIDAS_PRESUPUESTARIAS)
+        .queryParam("s", sort).queryParam("q", filter).buildAndExpand(convocatoriaId).toUri();
+
+    final ResponseEntity<List<ConvocatoriaPartida>> response = restTemplate.exchange(uri, HttpMethod.GET,
+        buildRequest(headers, null), new ParameterizedTypeReference<List<ConvocatoriaPartida>>() {
+        });
+
+    Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+
+    HttpHeaders responseHeaders = response.getHeaders();
+    Assertions.assertThat(responseHeaders.getFirst("X-Page")).as("X-Page").isEqualTo("0");
+    Assertions.assertThat(responseHeaders.getFirst("X-Page-Size")).as("X-Page-Size").isEqualTo("10");
+    Assertions.assertThat(responseHeaders.getFirst("X-Total-Count")).as("X-Total-Count").isEqualTo("3");
+
+    final List<ConvocatoriaPartida> convocatoriaConceptoGastos = response.getBody();
+    Assertions.assertThat(convocatoriaConceptoGastos.size()).isEqualTo(3);
+  }
+
+  @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = {
+    // @formatter:off
+    "classpath:scripts/modelo_ejecucion.sql",
+    "classpath:scripts/tipo_finalidad.sql",
+    "classpath:scripts/tipo_regimen_concurrencia.sql",
+    "classpath:scripts/tipo_ambito_geografico.sql",
+    "classpath:scripts/convocatoria.sql",
+    "classpath:scripts/tipo_fase.sql",
+    "classpath:scripts/convocatoria_fase.sql"
+    // @formatter:on
+  })
+  @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
+  @Test
+  void hasConvocatoriaFases_ReturnsStatusCode200() throws Exception {
+    Long convocatoriaId = 1L;
+
+    URI uri = UriComponentsBuilder.fromUriString(CONTROLLER_BASE_PATH + PATH_PARAMETER_ID + PATH_CONVOCATORIA_FASES)
+        .buildAndExpand(convocatoriaId).toUri();
+
+    final ResponseEntity<Void> response = restTemplate.exchange(uri, HttpMethod.HEAD, buildRequest(null, null),
+        Void.class);
+
+    Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+  }
+
+  @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = {
+    // @formatter:off
+    "classpath:scripts/modelo_ejecucion.sql",
+    "classpath:scripts/tipo_finalidad.sql",
+    "classpath:scripts/tipo_regimen_concurrencia.sql",
+    "classpath:scripts/tipo_ambito_geografico.sql",
+    "classpath:scripts/convocatoria.sql",
+    "classpath:scripts/tipo_fase.sql",
+    "classpath:scripts/convocatoria_fase.sql",
+    "classpath:scripts/tipo_documento.sql",
+    "classpath:scripts/convocatoria_documento.sql",
+    // @formatter:on
+  })
+  @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
+  @Test
+  void hasConvocatoriaDocumentos_ReturnsStatusCode200() throws Exception {
+    Long convocatoriaId = 1L;
+
+    URI uri = UriComponentsBuilder
+        .fromUriString(CONTROLLER_BASE_PATH + PATH_PARAMETER_ID + PATH_CONVOCATORIA_DOCUMENTOS)
+        .buildAndExpand(convocatoriaId).toUri();
+
+    final ResponseEntity<Void> response = restTemplate.exchange(uri, HttpMethod.HEAD, buildRequest(null, null),
+        Void.class);
+
+    Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+  }
+
+  @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = {
+    // @formatter:off
+    "classpath:scripts/modelo_ejecucion.sql",
+    "classpath:scripts/tipo_finalidad.sql",
+    "classpath:scripts/tipo_regimen_concurrencia.sql",
+    "classpath:scripts/tipo_ambito_geografico.sql",
+    "classpath:scripts/convocatoria.sql",
+    "classpath:scripts/tipo_enlace.sql",
+    "classpath:scripts/convocatoria_enlace.sql",
+    // @formatter:on
+  })
+  @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
+  @Test
+  void hasConvocatoriaEnlaces_ReturnsStatusCode200() throws Exception {
+    Long convocatoriaId = 1L;
+
+    URI uri = UriComponentsBuilder
+        .fromUriString(CONTROLLER_BASE_PATH + PATH_PARAMETER_ID + PATH_CONVOCATORIA_ENLACES)
+        .buildAndExpand(convocatoriaId).toUri();
+
+    final ResponseEntity<Void> response = restTemplate.exchange(uri, HttpMethod.HEAD, buildRequest(null, null),
+        Void.class);
+
+    Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+  }
+
+  @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = {
+    // @formatter:off
+    "classpath:scripts/tipo_fase.sql",
+    "classpath:scripts/tipo_documento.sql",
+    "classpath:scripts/modelo_ejecucion.sql",
+    "classpath:scripts/modelo_tipo_fase.sql",
+    "classpath:scripts/modelo_tipo_documento.sql",
+    "classpath:scripts/modelo_unidad.sql",
+    "classpath:scripts/tipo_finalidad.sql",
+    "classpath:scripts/tipo_ambito_geografico.sql",
+    "classpath:scripts/tipo_regimen_concurrencia.sql",
+    "classpath:scripts/convocatoria.sql",
+    "classpath:scripts/proyecto.sql",
+    "classpath:scripts/concepto_gasto.sql",
+    "classpath:scripts/proyecto_concepto_gasto.sql",
+    "classpath:scripts/convocatoria_concepto_gasto.sql",
+    "classpath:scripts/convocatoria_concepto_gasto_codigo_ec.sql"
+    // @formatter:on
+  })
+  @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
+  @Test
+  void findAllConvocatoriaGastosCodigoEcPermitidos_WithPagingSortingAndFiltering_ReturnsConvocatoriaConceptoGastoCodigoEcSubList()
+      throws Exception {
+    HttpHeaders headers = new HttpHeaders();
+    headers.set("Authorization", String.format("bearer %s", tokenBuilder.buildToken("user", "CSP-CGAS-V")));
+    headers.add("X-Page", "0");
+    headers.add("X-Page-Size", "10");
+    String sort = "id,asc";
+    String filter = "";
+
+    Long convocatoriaId = 1L;
+
+    URI uri = UriComponentsBuilder
+        .fromUriString(CONTROLLER_BASE_PATH + PATH_PARAMETER_ID + PATH_CONVOCATORIA_GASTO_CODIGO_EC + PATH_PERMITIDOS)
+        .queryParam("s", sort).queryParam("q", filter).buildAndExpand(convocatoriaId).toUri();
+
+    final ResponseEntity<List<ConvocatoriaConceptoGastoCodigoEc>> response = restTemplate.exchange(uri, HttpMethod.GET,
+        buildGenericRequest(headers, null, "CSP-SOL-V"),
+        new ParameterizedTypeReference<List<ConvocatoriaConceptoGastoCodigoEc>>() {
+        });
+
+    Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+
+    HttpHeaders responseHeaders = response.getHeaders();
+    Assertions.assertThat(responseHeaders.getFirst("X-Page")).as("X-Page").isEqualTo("0");
+    Assertions.assertThat(responseHeaders.getFirst("X-Page-Size")).as("X-Page-Size").isEqualTo("10");
+    Assertions.assertThat(responseHeaders.getFirst("X-Total-Count")).as("X-Total-Count").isEqualTo("2");
+
+    final List<ConvocatoriaConceptoGastoCodigoEc> convocatoriaConceptoGastos = response.getBody();
+    Assertions.assertThat(convocatoriaConceptoGastos.size()).isEqualTo(2);
+  }
+
+  @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = {
+    // @formatter:off
+    "classpath:scripts/tipo_fase.sql",
+    "classpath:scripts/tipo_documento.sql",
+    "classpath:scripts/modelo_ejecucion.sql",
+    "classpath:scripts/modelo_tipo_fase.sql",
+    "classpath:scripts/modelo_tipo_documento.sql",
+    "classpath:scripts/modelo_unidad.sql",
+    "classpath:scripts/tipo_finalidad.sql",
+    "classpath:scripts/tipo_ambito_geografico.sql",
+    "classpath:scripts/tipo_regimen_concurrencia.sql",
+    "classpath:scripts/convocatoria.sql",
+    "classpath:scripts/proyecto.sql",
+    "classpath:scripts/concepto_gasto.sql",
+    "classpath:scripts/proyecto_concepto_gasto.sql",
+    "classpath:scripts/convocatoria_concepto_gasto.sql",
+    "classpath:scripts/convocatoria_concepto_gasto_codigo_ec.sql"
+    // @formatter:on
+  })
+  @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
+  @Test
+  void findAllConvocatoriaGastosCodigoEcNoPermitidos_WithPagingSortingAndFiltering_ReturnsConvocatoriaConceptoGastoCodigoEcSubList()
+      throws Exception {
+    HttpHeaders headers = new HttpHeaders();
+    headers.set("Authorization", String.format("bearer %s", tokenBuilder.buildToken("user", "CSP-CGAS-V")));
+    headers.add("X-Page", "0");
+    headers.add("X-Page-Size", "10");
+    String sort = "id,asc";
+    String filter = "";
+
+    Long convocatoriaId = 2L;
+
+    URI uri = UriComponentsBuilder
+        .fromUriString(
+            CONTROLLER_BASE_PATH + PATH_PARAMETER_ID + PATH_CONVOCATORIA_GASTO_CODIGO_EC + PATH_NO_PERMITIDOS)
+        .queryParam("s", sort).queryParam("q", filter).buildAndExpand(convocatoriaId).toUri();
+
+    final ResponseEntity<List<ConvocatoriaConceptoGastoCodigoEc>> response = restTemplate.exchange(uri, HttpMethod.GET,
+        buildGenericRequest(headers, null, "CSP-SOL-V"),
+        new ParameterizedTypeReference<List<ConvocatoriaConceptoGastoCodigoEc>>() {
+        });
+
+    Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+
+    HttpHeaders responseHeaders = response.getHeaders();
+    Assertions.assertThat(responseHeaders.getFirst("X-Page")).as("X-Page").isEqualTo("0");
+    Assertions.assertThat(responseHeaders.getFirst("X-Page-Size")).as("X-Page-Size").isEqualTo("10");
+    Assertions.assertThat(responseHeaders.getFirst("X-Total-Count")).as("X-Total-Count").isEqualTo("1");
+
+    final List<ConvocatoriaConceptoGastoCodigoEc> convocatoriaConceptoGastos = response.getBody();
+    Assertions.assertThat(convocatoriaConceptoGastos.size()).isEqualTo(1);
+  }
+
+  @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = {
+    // @formatter:off
+    "classpath:scripts/modelo_ejecucion.sql",
+    "classpath:scripts/tipo_finalidad.sql",
+    "classpath:scripts/tipo_regimen_concurrencia.sql",
+    "classpath:scripts/tipo_ambito_geografico.sql",
+    "classpath:scripts/convocatoria.sql",
+    "classpath:scripts/tipo_fase.sql",
+    "classpath:scripts/convocatoria_fase.sql",
+    "classpath:scripts/configuracion_solicitud.sql"
+    // @formatter:on
+  })
+  @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
+  @Test
+  void tramitable_ReturnsStatusCode204() throws Exception {
+    Long convocatoriaId = 1L;
+
+    URI uri = UriComponentsBuilder
+        .fromUriString(
+            CONTROLLER_BASE_PATH + PATH_PARAMETER_ID + PATH_TRAMITABLE)
+        .buildAndExpand(convocatoriaId).toUri();
+
+    final ResponseEntity<Void> response = restTemplate.exchange(uri, HttpMethod.HEAD,
+        buildGenericRequest(null, null, "CSP-SOL-INV-C"), Void.class);
+    /*
+     * NO SE PUEDE HACER EL TEST DEL STATUS CODE 200 PORQUE LA FECHA INICIO Y FECHA
+     * FIN ESTABLECIDAS EN LA TABLA
+     * CONFIGURACION SOLICITUD, SE COMPARAN CON LA FECHA ACTUAL, POR TANTO HABRÁ UN
+     * MOMENTO EN EL QUE EL TEST FALLE
+     * PARA CURARSE EN SALUD, QUE ENTRE POR EL STATUS CODE NO CONTENT(204)
+     */
+    Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
+  }
+
+  @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = {
+    // @formatter:off
+    "classpath:scripts/modelo_ejecucion.sql",
+    "classpath:scripts/tipo_finalidad.sql",
+    "classpath:scripts/tipo_regimen_concurrencia.sql",
+    "classpath:scripts/tipo_ambito_geografico.sql",
+    "classpath:scripts/convocatoria.sql",
+    "classpath:scripts/solicitud.sql"
+    // @formatter:on
+  })
+  @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
+  @Test
+  void hasSolicitudesReferenced_ReturnsStatusCode200() throws Exception {
+    Long convocatoriaId = 1L;
+
+    URI uri = UriComponentsBuilder
+        .fromUriString(
+            CONTROLLER_BASE_PATH + PATH_PARAMETER_ID + PATH_SOLICITUDES_REFERENCED)
+        .buildAndExpand(convocatoriaId).toUri();
+
+    final ResponseEntity<Void> response = restTemplate.exchange(uri, HttpMethod.HEAD,
+        buildGenericRequest(null, null, "CSP-CON-E"), Void.class);
+
+    Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+  }
+
+  @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = {
+  // @formatter:off
+       "classpath:scripts/modelo_ejecucion.sql",
+       "classpath:scripts/modelo_unidad.sql",
+       "classpath:scripts/tipo_finalidad.sql",
+       "classpath:scripts/tipo_ambito_geografico.sql",
+       "classpath:scripts/tipo_regimen_concurrencia.sql",
+       "classpath:scripts/convocatoria.sql",
+       "classpath:scripts/proyecto.sql"
+    // @formatter:on
+  })
+
+  @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
+  @Test
+  void hasProyectosReferenced_ReturnsStatusCode200() throws Exception {
+    Long convocatoriaId = 1L;
+
+    URI uri = UriComponentsBuilder
+        .fromUriString(
+            CONTROLLER_BASE_PATH + PATH_PARAMETER_ID + PATH_PROYECTOS_REFERENCED)
+        .buildAndExpand(convocatoriaId).toUri();
+
+    final ResponseEntity<Void> response = restTemplate.exchange(uri, HttpMethod.HEAD,
+        buildGenericRequest(null, null, "CSP-CON-E"), Void.class);
+
+    Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+  }
+
+  @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = {
+  // @formatter:off
+    "classpath:scripts/modelo_ejecucion.sql",
+    "classpath:scripts/tipo_finalidad.sql",
+    "classpath:scripts/tipo_regimen_concurrencia.sql",
+    "classpath:scripts/tipo_ambito_geografico.sql",
+    "classpath:scripts/convocatoria.sql",
+    "classpath:scripts/requisito_ip.sql",
+    "classpath:scripts/requisitoip_nivelacademico.sql",
+    // @formatter:on
+  })
+
+  @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
+  @Test
+  void findRequisitoIPNivelesAcademicos_ReturnsRequisitoIPNivelAcademicoOutputList() throws Exception {
+    Long convocatoriaId = 1L;
+
+    URI uri = UriComponentsBuilder
+        .fromUriString(
+            CONTROLLER_BASE_PATH + ConvocatoriaController.PATH_NIVELES_REQUISITOS_IP)
+        .buildAndExpand(convocatoriaId).toUri();
+
+    final ResponseEntity<List<RequisitoIPNivelAcademicoOutput>> response = restTemplate.exchange(uri, HttpMethod.GET,
+        buildGenericRequest(null, null, "CSP-SOL-INV-C"),
+        new ParameterizedTypeReference<List<RequisitoIPNivelAcademicoOutput>>() {
+        });
+
+    Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+    Assertions.assertThat(response.getBody().size()).isEqualTo(3);
+  }
+
+  @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = {
+  // @formatter:off
+    "classpath:scripts/modelo_ejecucion.sql",
+    "classpath:scripts/tipo_finalidad.sql",
+    "classpath:scripts/tipo_regimen_concurrencia.sql",
+    "classpath:scripts/tipo_ambito_geografico.sql",
+    "classpath:scripts/convocatoria.sql",
+    "classpath:scripts/requisito_equipo.sql",
+    "classpath:scripts/requisitoequipo_nivelacademico.sql"
+    // @formatter:on
+  })
+
+  @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
+  @Test
+  void findRequisitoEquipoNivelesAcademicos_ReturnsRequisitoEquipoNivelAcademicoOutputList() throws Exception {
+    Long convocatoriaId = 1L;
+
+    URI uri = UriComponentsBuilder
+        .fromUriString(
+            CONTROLLER_BASE_PATH + ConvocatoriaController.PATH_NIVELES_REQUISITOS_EQUIPO)
+        .buildAndExpand(convocatoriaId).toUri();
+
+    final ResponseEntity<List<RequisitoEquipoNivelAcademicoOutput>> response = restTemplate.exchange(uri,
+        HttpMethod.GET,
+        buildGenericRequest(null, null, "CSP-SOL-INV-C"),
+        new ParameterizedTypeReference<List<RequisitoEquipoNivelAcademicoOutput>>() {
+        });
+
+    Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+    Assertions.assertThat(response.getBody().size()).isEqualTo(3);
+  }
+
+  @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = {
+  // @formatter:off
+        "classpath:scripts/modelo_ejecucion.sql",
+    "classpath:scripts/tipo_finalidad.sql",
+    "classpath:scripts/tipo_regimen_concurrencia.sql",
+    "classpath:scripts/tipo_ambito_geografico.sql",
+    "classpath:scripts/convocatoria.sql",
+    "classpath:scripts/requisito_ip.sql",
+    "classpath:scripts/requisitoip_categoriaprofesional.sql"
+    // @formatter:on
+  })
+
+  @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
+  @Test
+  void findRequisitosIpCategoriasProfesionales_ReturnsRequisitoIPCategoriaProfesionalOutputList() throws Exception {
+    Long convocatoriaId = 1L;
+
+    URI uri = UriComponentsBuilder
+        .fromUriString(
+            CONTROLLER_BASE_PATH + ConvocatoriaController.PATH_CATEGORIAS_PROFESIONALES_REQUISITOS_IP)
+        .buildAndExpand(convocatoriaId).toUri();
+
+    final ResponseEntity<List<RequisitoIPCategoriaProfesionalOutput>> response = restTemplate.exchange(uri,
+        HttpMethod.GET,
+        buildGenericRequest(null, null, "CSP-SOL-INV-C"),
+        new ParameterizedTypeReference<List<RequisitoIPCategoriaProfesionalOutput>>() {
+        });
+
+    Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+    Assertions.assertThat(response.getBody().size()).isEqualTo(3);
+  }
+
+  @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = {
+  // @formatter:off
+        "classpath:scripts/modelo_ejecucion.sql",
+    "classpath:scripts/tipo_finalidad.sql",
+    "classpath:scripts/tipo_regimen_concurrencia.sql",
+    "classpath:scripts/tipo_ambito_geografico.sql",
+    "classpath:scripts/convocatoria.sql",
+    "classpath:scripts/requisito_equipo.sql",
+    "classpath:scripts/requisitoequipo_categoriaprofesional.sql"
+    // @formatter:on
+  })
+
+  @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
+  @Test
+  void findCategoriasProfesionalesEquipo_ReturnsRequisitoEquipoCategoriaProfesionalOutputList() throws Exception {
+    Long convocatoriaId = 1L;
+
+    URI uri = UriComponentsBuilder
+        .fromUriString(
+            CONTROLLER_BASE_PATH + ConvocatoriaController.PATH_CATEGORIAS_PROFESIONALES_REQUISITOS_EQUIPO)
+        .buildAndExpand(convocatoriaId).toUri();
+
+    final ResponseEntity<List<RequisitoEquipoCategoriaProfesionalOutput>> response = restTemplate.exchange(uri,
+        HttpMethod.GET,
+        buildGenericRequest(null, null, "CSP-CON-INV-V"),
+        new ParameterizedTypeReference<List<RequisitoEquipoCategoriaProfesionalOutput>>() {
+        });
+
+    Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+    Assertions.assertThat(response.getBody().size()).isEqualTo(3);
+  }
+
+  @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = {
+  // @formatter:off
+        "classpath:scripts/modelo_ejecucion.sql",
+    "classpath:scripts/tipo_finalidad.sql",
+    "classpath:scripts/tipo_regimen_concurrencia.sql",
+    "classpath:scripts/tipo_ambito_geografico.sql",
+    "classpath:scripts/convocatoria.sql"
+    // @formatter:on
+  })
+
+  @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
+  @Test
+  void clone_ReturnsLong() throws Exception {
+    Long convocatoriaId = 1L;
+
+    URI uri = UriComponentsBuilder
+        .fromUriString(
+            CONTROLLER_BASE_PATH + PATH_PARAMETER_ID + PATH_CLONE)
+        .buildAndExpand(convocatoriaId).toUri();
+
+    final ResponseEntity<Long> response = restTemplate.exchange(uri,
+        HttpMethod.POST,
+        buildGenericRequest(null, null, "CSP-CON-C"), Long.class);
+
+    Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
+    Assertions.assertThat(response.getBody()).isNotNull();
+  }
+
+  @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = {
+    // @formatter:off
+    "classpath:scripts/modelo_ejecucion.sql",
+    "classpath:scripts/tipo_finalidad.sql",
+    "classpath:scripts/tipo_regimen_concurrencia.sql",
+    "classpath:scripts/tipo_ambito_geografico.sql",
+    "classpath:scripts/convocatoria.sql",
+    "classpath:scripts/convocatoria_palabra_clave.sql"
+    // @formatter:on
+  })
+  @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
+  @Test
+  void findPalabrasClave_WithPagingSortingAndFiltering_ReturnsConvocatoriaPalabraClaveOutputSubList() throws Exception {
+
+    HttpHeaders headers = new HttpHeaders();
+    headers.set("Authorization", String.format("bearer %s", tokenBuilder.buildToken("user", "CSP-CGAS-V")));
+    headers.add("X-Page", "0");
+    headers.add("X-Page-Size", "10");
+    String sort = "id,asc";
+    String filter = "";
+    Long convocatoriaId = 1L;
+
+    URI uri = UriComponentsBuilder
+        .fromUriString(
+            CONTROLLER_BASE_PATH + ConvocatoriaController.PATH_PALABRAS_CLAVE)
+        .queryParam("q", filter).queryParam("s", sort).buildAndExpand(convocatoriaId).toUri();
+
+    final ResponseEntity<List<ConvocatoriaPalabraClaveOutput>> response = restTemplate.exchange(uri,
+        HttpMethod.GET,
+        buildGenericRequest(null, null, "CSP-CON-E"),
+        new ParameterizedTypeReference<List<ConvocatoriaPalabraClaveOutput>>() {
+        });
+
+    Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+    Assertions.assertThat(response.getBody()).isNotNull();
+  }
+
+  @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = {
+    // @formatter:off
+    "classpath:scripts/modelo_ejecucion.sql",
+    "classpath:scripts/tipo_finalidad.sql",
+    "classpath:scripts/tipo_regimen_concurrencia.sql",
+    "classpath:scripts/tipo_ambito_geografico.sql",
+    "classpath:scripts/convocatoria.sql"
+    // @formatter:on
+  })
+  @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
+  @Test
+  void findFormularioSolicitudByConvocatoriaId_ReturnsFormularioSolicitud() throws Exception {
+    Long convocatoriaId = 1L;
+
+    URI uri = UriComponentsBuilder.fromUriString(CONTROLLER_BASE_PATH + PATH_PARAMETER_ID + PATH_FORMULARIO_SOLICITUD)
+        .buildAndExpand(convocatoriaId).toUri();
+
+    final ResponseEntity<FormularioSolicitud> response = restTemplate.exchange(uri,
+        HttpMethod.GET,
+        buildGenericRequest(null, null, "CSP-SOL-E"), FormularioSolicitud.class);
+
+    Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+    Assertions.assertThat(response.getBody()).isNotNull();
+    Assertions.assertThat(response.getBody()).isEqualTo(FormularioSolicitud.PROYECTO);
+  }
+
   private ConvocatoriaPalabraClaveInput buildMockConvocatoriaPalabraClaveInput(Long solicitudId, String palabraRef) {
     return ConvocatoriaPalabraClaveInput.builder()
-    .convocatoriaId(solicitudId)
-    .palabraClaveRef(palabraRef)
-    .build();
+        .convocatoriaId(solicitudId)
+        .palabraClaveRef(palabraRef)
+        .build();
   }
 
   /**

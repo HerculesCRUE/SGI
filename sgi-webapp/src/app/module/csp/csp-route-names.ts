@@ -16,5 +16,6 @@ export const CSP_ROUTE_NAMES = {
   EJECUCION_ECONOMICA: 'ejecucion-economica',
   NOTIFICACION_PRESUPUESTO_SGE: 'notificacion-presupuesto-sge',
   AUTORIZACION: 'autorizaciones',
-  NOTIFICACION_CVN: 'notificaciones-cnv'
+  NOTIFICACION_CVN: 'notificaciones-cvn',
+  GRUPO: 'grupos-investigacion'
 };

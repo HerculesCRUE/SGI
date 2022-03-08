@@ -18,3 +18,5 @@ VALUES
 (1, '0001', 1),
 (2, '0002', 1),
 (3, '0003', 1);
+
+ALTER SEQUENCE test.solicitud_proyecto_area_conocimiento_seq RESTART WITH 4;

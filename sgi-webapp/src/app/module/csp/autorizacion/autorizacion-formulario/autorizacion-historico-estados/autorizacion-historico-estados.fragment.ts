@@ -37,4 +37,7 @@ export class AutorizacionHistoricoEstadosFragment extends Fragment {
     return of(void 0);
   }
 
+  reload(): void {
+    this.onInitialize();
+  }
 }

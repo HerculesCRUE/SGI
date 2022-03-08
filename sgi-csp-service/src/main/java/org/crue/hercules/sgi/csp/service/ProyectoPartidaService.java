@@ -1,14 +1,17 @@
 package org.crue.hercules.sgi.csp.service;
 
+import javax.validation.Valid;
+
 import org.crue.hercules.sgi.csp.model.Proyecto;
 import org.crue.hercules.sgi.csp.model.ProyectoPartida;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.validation.annotation.Validated;
 
 /**
  * Service Interface para gestionar {@link ProyectoPartida}.
  */
-
+@Validated
 public interface ProyectoPartidaService {
 
   /**
@@ -17,7 +20,7 @@ public interface ProyectoPartidaService {
    * @param proyectoPartida la entidad {@link ProyectoPartida} a guardar.
    * @return la entidad {@link ProyectoPartida} persistida.
    */
-  ProyectoPartida create(ProyectoPartida proyectoPartida);
+  ProyectoPartida create(@Valid ProyectoPartida proyectoPartida);
 
   /**
    * Actualiza la entidad {@link ProyectoPartida}.
@@ -26,7 +29,7 @@ public interface ProyectoPartidaService {
    *                                  guardar.
    * @return la entidad {@link ProyectoPartida} persistida.
    */
-  ProyectoPartida update(ProyectoPartida proyectoPartidaActualizar);
+  ProyectoPartida update(@Valid ProyectoPartida proyectoPartidaActualizar);
 
   /**
    * Elimina la {@link ProyectoPartida}.

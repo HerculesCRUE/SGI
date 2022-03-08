@@ -1,33 +1,34 @@
 package org.crue.hercules.sgi.csp.service;
 
-import java.math.BigDecimal;
 import java.time.Instant;
-import java.time.Period;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 import org.assertj.core.api.Assertions;
+import org.crue.hercules.sgi.csp.dto.ConvocatoriaHitoInput;
 import org.crue.hercules.sgi.csp.enums.ClasificacionCVN;
 import org.crue.hercules.sgi.csp.exceptions.ConvocatoriaHitoNotFoundException;
 import org.crue.hercules.sgi.csp.exceptions.ConvocatoriaNotFoundException;
-import org.crue.hercules.sgi.csp.model.ConfiguracionSolicitud;
 import org.crue.hercules.sgi.csp.model.Convocatoria;
-import org.crue.hercules.sgi.csp.model.ConvocatoriaFase;
 import org.crue.hercules.sgi.csp.model.ConvocatoriaHito;
 import org.crue.hercules.sgi.csp.model.ModeloEjecucion;
 import org.crue.hercules.sgi.csp.model.ModeloTipoFinalidad;
 import org.crue.hercules.sgi.csp.model.ModeloTipoHito;
 import org.crue.hercules.sgi.csp.model.TipoAmbitoGeografico;
-import org.crue.hercules.sgi.csp.model.TipoFase;
 import org.crue.hercules.sgi.csp.model.TipoFinalidad;
 import org.crue.hercules.sgi.csp.model.TipoHito;
 import org.crue.hercules.sgi.csp.model.TipoRegimenConcurrencia;
 import org.crue.hercules.sgi.csp.repository.ConfiguracionSolicitudRepository;
+import org.crue.hercules.sgi.csp.repository.ConvocatoriaHitoAvisoRepository;
 import org.crue.hercules.sgi.csp.repository.ConvocatoriaHitoRepository;
 import org.crue.hercules.sgi.csp.repository.ConvocatoriaRepository;
 import org.crue.hercules.sgi.csp.repository.ModeloTipoHitoRepository;
-import org.crue.hercules.sgi.csp.service.impl.ConvocatoriaHitoServiceImpl;
+import org.crue.hercules.sgi.csp.repository.ProyectoEquipoRepository;
+import org.crue.hercules.sgi.csp.repository.SolicitudRepository;
+import org.crue.hercules.sgi.csp.service.sgi.SgiApiSgpService;
+import org.crue.hercules.sgi.csp.service.sgi.SgiApiTpService;
+import org.crue.hercules.sgi.csp.service.sgi.SgiApiComService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
@@ -59,12 +60,31 @@ public class ConvocatoriaHitoServiceTest extends BaseServiceTest {
   @Mock
   ConfiguracionSolicitudRepository configuracionSolicitudRepository;
 
+  @Mock
+  ConvocatoriaHitoAvisoRepository convocatoriaHitoAvisoRepository;
+
+  @Mock
+  SolicitudRepository solicitudRepository;
+
+  @Mock
+  ProyectoEquipoRepository proyectoEquipoRepository;
+
+  @Mock
+  SgiApiComService emailService;
+
+  @Mock
+  SgiApiTpService sgiApiTaskService;
+
+  @Mock
+  SgiApiSgpService personaService;
+
   private ConvocatoriaHitoService service;
 
   @BeforeEach
   public void setUp() throws Exception {
-    service = new ConvocatoriaHitoServiceImpl(repository, convocatoriaRepository, modeloTipoHitoRepository,
-        configuracionSolicitudRepository);
+    service = new ConvocatoriaHitoService(repository, convocatoriaRepository, modeloTipoHitoRepository,
+        configuracionSolicitudRepository, convocatoriaHitoAvisoRepository, solicitudRepository,
+        proyectoEquipoRepository, emailService, sgiApiTaskService, personaService);
   }
 
   @Test
@@ -73,6 +93,7 @@ public class ConvocatoriaHitoServiceTest extends BaseServiceTest {
     Long convocatoriaId = 1L;
     Convocatoria convocatoria = generarMockConvocatoria(convocatoriaId, 1L, 1L, 1L, 1L, 1L, Boolean.TRUE);
     ConvocatoriaHito convocatoriaHito = generarMockConvocatoriaHito(null, convocatoriaId);
+    ConvocatoriaHitoInput convocatoriaHitoInput = generarMockConvocatoriaHitoInput(convocatoriaId);
 
     BDDMockito.given(convocatoriaRepository.findById(ArgumentMatchers.anyLong())).willReturn(Optional.of(convocatoria));
     BDDMockito
@@ -87,7 +108,7 @@ public class ConvocatoriaHitoServiceTest extends BaseServiceTest {
     });
 
     // when: Creamos el ConvocatoriaHito
-    ConvocatoriaHito convocatoriaHitoCreado = service.create(convocatoriaHito);
+    ConvocatoriaHito convocatoriaHitoCreado = service.create(convocatoriaHitoInput);
 
     // then: El ConvocatoriaHito se crea correctamente
     Assertions.assertThat(convocatoriaHitoCreado).as("isNotNull()").isNotNull();
@@ -100,70 +121,8 @@ public class ConvocatoriaHitoServiceTest extends BaseServiceTest {
         .isEqualTo(convocatoriaHito.getComentario());
     Assertions.assertThat(convocatoriaHitoCreado.getTipoHito().getId()).as("getTipoHito().getId()")
         .isEqualTo(convocatoriaHito.getTipoHito().getId());
-    Assertions.assertThat(convocatoriaHitoCreado.getGeneraAviso()).as("getGeneraAviso()")
-        .isEqualTo(convocatoriaHito.getGeneraAviso());
-  }
-
-  @Test
-  public void create_WithFechaAnterior_SaveGeneraAvisoFalse() {
-    // given: Un nuevo ConvocatoriaHito con fecha pasada
-    Long convocatoriaId = 1L;
-    Convocatoria convocatoria = generarMockConvocatoria(convocatoriaId, 1L, 1L, 1L, 1L, 1L, Boolean.TRUE);
-    ConvocatoriaHito convocatoriaHito = generarMockConvocatoriaHito(null, convocatoriaId);
-    convocatoriaHito.setFecha(Instant.now().minus(Period.ofDays(2)));
-    BDDMockito.given(convocatoriaRepository.findById(ArgumentMatchers.anyLong())).willReturn(Optional.of(convocatoria));
-    BDDMockito
-        .given(modeloTipoHitoRepository.findByModeloEjecucionIdAndTipoHitoId(ArgumentMatchers.anyLong(),
-            ArgumentMatchers.anyLong()))
-        .willReturn(Optional.of(generarMockModeloTipoHito(1L, convocatoria, convocatoriaHito, Boolean.TRUE)));
-
-    BDDMockito.given(repository.save(convocatoriaHito)).will((InvocationOnMock invocation) -> {
-      ConvocatoriaHito convocatoriaHitoCreado = invocation.getArgument(0);
-      convocatoriaHitoCreado.setId(1L);
-      return convocatoriaHitoCreado;
-    });
-
-    // when: Creamos el ConvocatoriaHito
-    ConvocatoriaHito convocatoriaHitoCreado = service.create(convocatoriaHito);
-
-    // then: El ConvocatoriaHito se crea correctamente con GenerarAviso como FALSE
-    Assertions.assertThat(convocatoriaHitoCreado).as("isNotNull()").isNotNull();
-    Assertions.assertThat(convocatoriaHitoCreado.getId()).as("getId()").isNotNull();
-    Assertions.assertThat(convocatoriaHitoCreado.getConvocatoriaId()).as("getConvocatoriaId()")
-        .isEqualTo(convocatoriaHito.getConvocatoriaId());
-    Assertions.assertThat(convocatoriaHitoCreado.getFecha()).as("getFechaInicio()")
-        .isEqualTo(convocatoriaHito.getFecha());
-    Assertions.assertThat(convocatoriaHitoCreado.getComentario()).as("getComentario()")
-        .isEqualTo(convocatoriaHito.getComentario());
-    Assertions.assertThat(convocatoriaHitoCreado.getTipoHito().getId()).as("getTipoHito().getId()")
-        .isEqualTo(convocatoriaHito.getTipoHito().getId());
-    Assertions.assertThat(convocatoriaHitoCreado.getGeneraAviso()).as("getGeneraAviso()")
-        .isEqualTo(convocatoriaHito.getGeneraAviso());
-    Assertions.assertThat(convocatoriaHitoCreado.getGeneraAviso()).as("getGeneraAviso()").isEqualTo(Boolean.FALSE);
-  }
-
-  @Test
-  public void create_WithId_ThrowsIllegalArgumentException() {
-    // given: Un nuevo ConvocatoriaHito que ya tiene id
-    Long convocatoriaId = 1L;
-    ConvocatoriaHito convocatoriaHito = generarMockConvocatoriaHito(1L, convocatoriaId);
-    // when: Creamos el ConvocatoriaHito
-    // then: Lanza una excepcion porque el ConvocatoriaHito ya tiene id
-    Assertions.assertThatThrownBy(() -> service.create(convocatoriaHito)).isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("ConvocatoriaHito id tiene que ser null para crear un nuevo ConvocatoriaHito");
-  }
-
-  @Test
-  public void create_WithoutConvocatoriaId_ThrowsIllegalArgumentException() {
-    // given: a ConvocatoriaHito without ConvocatoriaId
-    ConvocatoriaHito convocatoriaHito = generarMockConvocatoriaHito(null, null);
-
-    Assertions.assertThatThrownBy(
-        // when: create ConvocatoriaHito
-        () -> service.create(convocatoriaHito))
-        // then: throw exception as ConvocatoriaId is null
-        .isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("Id Convocatoria no puede ser null para crear ConvocatoriaHito");
+    Assertions.assertThat(convocatoriaHitoCreado.getConvocatoriaHitoAviso()).as("getConvocatoriaHitoAviso()")
+        .isNull();
   }
 
   @Test
@@ -172,6 +131,7 @@ public class ConvocatoriaHitoServiceTest extends BaseServiceTest {
     Long convocatoriaId = 1L;
     Convocatoria convocatoria = generarMockConvocatoria(convocatoriaId, 1L, 1L, 1L, 1L, 1L, Boolean.TRUE);
     ConvocatoriaHito convocatoriaHito = generarMockConvocatoriaHito(null, convocatoriaId);
+    ConvocatoriaHitoInput convocatoriaHitoInput = generarMockConvocatoriaHitoInput(convocatoriaId);
 
     BDDMockito.given(convocatoriaRepository.findById(ArgumentMatchers.anyLong())).willReturn(Optional.of(convocatoria));
 
@@ -185,7 +145,8 @@ public class ConvocatoriaHitoServiceTest extends BaseServiceTest {
 
     Assertions.assertThatThrownBy(
         // when: create ConvocatoriaHito
-        () -> service.create(convocatoriaHito))
+        () -> service.create(
+            convocatoriaHitoInput))
         // then: throw exception as fecha is null
         .isInstanceOf(IllegalArgumentException.class).hasMessage("Ya existe un Hito con el mismo tipo en esa fecha");
   }
@@ -194,7 +155,7 @@ public class ConvocatoriaHitoServiceTest extends BaseServiceTest {
   public void create_WithNoExistingConvocatoria_ThrowsConvocatoriaNotFoundException() {
     // given: a ConvocatoriaHito with non existing Convocatoria
     Long convocatoriaId = 1L;
-    ConvocatoriaHito convocatoriaHito = generarMockConvocatoriaHito(null, convocatoriaId);
+    ConvocatoriaHitoInput convocatoriaHito = generarMockConvocatoriaHitoInput(convocatoriaId);
 
     BDDMockito.given(convocatoriaRepository.findById(ArgumentMatchers.anyLong())).willReturn(Optional.empty());
 
@@ -206,26 +167,11 @@ public class ConvocatoriaHitoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_WithoutTipoHitoId_ThrowsIllegalArgumentException() {
-    // given: a ConvocatoriaHito without tipoHitoId
-    Long convocatoriaId = 1L;
-    ConvocatoriaHito convocatoriaHito = generarMockConvocatoriaHito(null, convocatoriaId);
-    convocatoriaHito.getTipoHito().setId(null);
-
-    Assertions.assertThatThrownBy(
-        // when: create ConvocatoriaHito
-        () -> service.create(convocatoriaHito))
-        // then: throw exception as tipoHitoId is null
-        .isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("Id Hito no puede ser null para crear ConvocatoriaHito");
-  }
-
-  @Test
   public void create_WithoutModeloEjecucion_ThrowsIllegalArgumentException() {
     // given: ConvocatoriaHito con Convocatoria sin Modelo de Ejecucion
     Long convocatoriaId = 1L;
     Convocatoria convocatoria = generarMockConvocatoria(convocatoriaId, 1L, 1L, 1L, 1L, 1L, Boolean.TRUE);
-    ConvocatoriaHito convocatoriaHito = generarMockConvocatoriaHito(null, convocatoriaId);
+    ConvocatoriaHitoInput convocatoriaHito = generarMockConvocatoriaHitoInput(convocatoriaId);
     convocatoria.setEstado(Convocatoria.Estado.BORRADOR);
     convocatoria.setModeloEjecucion(null);
 
@@ -236,8 +182,8 @@ public class ConvocatoriaHitoServiceTest extends BaseServiceTest {
         () -> service.create(convocatoriaHito))
         // then: throw exception as ModeloEjecucion not found
         .isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("TipoHito '%s' no disponible para el ModeloEjecucion '%s'",
-            convocatoriaHito.getTipoHito().getNombre(), "Convocatoria sin modelo asignado");
+        .hasMessage("ID TipoHito '%s' no disponible para el ModeloEjecucion '%s'",
+            convocatoriaHito.getTipoHitoId(), "Convocatoria sin modelo asignado");
   }
 
   @Test
@@ -246,7 +192,7 @@ public class ConvocatoriaHitoServiceTest extends BaseServiceTest {
     // convocatoria
     Long convocatoriaId = 1L;
     Convocatoria convocatoria = generarMockConvocatoria(convocatoriaId, 1L, 1L, 1L, 1L, 1L, Boolean.TRUE);
-    ConvocatoriaHito convocatoriaHito = generarMockConvocatoriaHito(null, convocatoriaId);
+    ConvocatoriaHitoInput convocatoriaHito = generarMockConvocatoriaHitoInput(convocatoriaId);
 
     BDDMockito.given(convocatoriaRepository.findById(ArgumentMatchers.anyLong())).willReturn(Optional.of(convocatoria));
     BDDMockito.given(modeloTipoHitoRepository.findByModeloEjecucionIdAndTipoHitoId(ArgumentMatchers.anyLong(),
@@ -257,8 +203,8 @@ public class ConvocatoriaHitoServiceTest extends BaseServiceTest {
         () -> service.create(convocatoriaHito))
         // then: throw exception as ModeloTipoHito not found
         .isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("TipoHito '%s' no disponible para el ModeloEjecucion '%s'",
-            convocatoriaHito.getTipoHito().getNombre(), convocatoria.getModeloEjecucion().getNombre());
+        .hasMessage("ID TipoHito '%s' no disponible para el ModeloEjecucion '%s'",
+            convocatoriaHito.getTipoHitoId(), convocatoria.getModeloEjecucion().getNombre());
   }
 
   @Test
@@ -268,6 +214,7 @@ public class ConvocatoriaHitoServiceTest extends BaseServiceTest {
     Long convocatoriaId = 1L;
     Convocatoria convocatoria = generarMockConvocatoria(convocatoriaId, 1L, 1L, 1L, 1L, 1L, Boolean.TRUE);
     ConvocatoriaHito convocatoriaHito = generarMockConvocatoriaHito(null, convocatoriaId);
+    ConvocatoriaHitoInput convocatoriaHitoInput = generarMockConvocatoriaHitoInput(convocatoriaId);
 
     BDDMockito.given(convocatoriaRepository.findById(ArgumentMatchers.anyLong())).willReturn(Optional.of(convocatoria));
     BDDMockito
@@ -277,7 +224,8 @@ public class ConvocatoriaHitoServiceTest extends BaseServiceTest {
 
     Assertions.assertThatThrownBy(
         // when: create ConvocatoriaHito
-        () -> service.create(convocatoriaHito))
+        () -> service.create(
+            convocatoriaHitoInput))
         // then: throw exception as ModeloTipoHito is disabled
         .isInstanceOf(IllegalArgumentException.class)
         .hasMessage("ModeloTipoHito '%s' no está activo para el ModeloEjecucion '%s'",
@@ -291,6 +239,7 @@ public class ConvocatoriaHitoServiceTest extends BaseServiceTest {
     Convocatoria convocatoria = generarMockConvocatoria(convocatoriaId, 1L, 1L, 1L, 1L, 1L, Boolean.TRUE);
     ConvocatoriaHito convocatoriaHito = generarMockConvocatoriaHito(null, convocatoriaId);
     convocatoriaHito.getTipoHito().setActivo(Boolean.FALSE);
+    ConvocatoriaHitoInput convocatoriaHitoInput = generarMockConvocatoriaHitoInput(convocatoriaId);
 
     BDDMockito.given(convocatoriaRepository.findById(ArgumentMatchers.anyLong())).willReturn(Optional.of(convocatoria));
     BDDMockito
@@ -300,7 +249,8 @@ public class ConvocatoriaHitoServiceTest extends BaseServiceTest {
 
     Assertions.assertThatThrownBy(
         // when: create ConvocatoriaHito
-        () -> service.create(convocatoriaHito))
+        () -> service.create(
+            convocatoriaHitoInput))
         // then: throw exception as TipoHito is disabled
         .isInstanceOf(IllegalArgumentException.class)
         .hasMessage("TipoHito '%s' no está activo", convocatoriaHito.getTipoHito().getNombre());
@@ -314,6 +264,8 @@ public class ConvocatoriaHitoServiceTest extends BaseServiceTest {
     ConvocatoriaHito convocatoriaHito = generarMockConvocatoriaHito(1L, convocatoriaId);
     ConvocatoriaHito convocatoriaHitoActualizado = generarMockConvocatoriaHito(1L, convocatoriaId);
     convocatoriaHitoActualizado.setTipoHito(generarMockTipoHito(2L, Boolean.TRUE));
+    ConvocatoriaHitoInput convocatoriaHitoActualizadoInput = generarMockConvocatoriaHitoInput(convocatoriaId);
+    convocatoriaHitoActualizadoInput.setTipoHitoId(2L);
 
     BDDMockito.given(convocatoriaRepository.findById(ArgumentMatchers.<Long>any()))
         .willReturn(Optional.of(convocatoria));
@@ -325,7 +277,7 @@ public class ConvocatoriaHitoServiceTest extends BaseServiceTest {
         .will((InvocationOnMock invocation) -> invocation.getArgument(0));
 
     // when: Actualizamos el ConvocatoriaHito
-    ConvocatoriaHito updated = service.update(convocatoriaHitoActualizado);
+    ConvocatoriaHito updated = service.update(1L, convocatoriaHitoActualizadoInput);
 
     // then: El ConvocatoriaHito se actualiza correctamente.
     Assertions.assertThat(updated).as("isNotNull()").isNotNull();
@@ -337,42 +289,8 @@ public class ConvocatoriaHitoServiceTest extends BaseServiceTest {
     Assertions.assertThat(updated.getTipoHito().getId()).as("getTipoHito().getId()")
         .isEqualTo(convocatoriaHitoActualizado.getTipoHito().getId());
     Assertions.assertThat(updated.getFecha()).as("getFecha()").isEqualTo(convocatoriaHitoActualizado.getFecha());
-    Assertions.assertThat(updated.getGeneraAviso()).as("getGeneraAviso()")
-        .isEqualTo(convocatoriaHitoActualizado.getGeneraAviso());
-  }
-
-  @Test
-  public void update_WithFechaAnterior_SaveGeneraAvisoFalse() {
-    // given: Un nuevo ConvocatoriaHito con el la fecha anterior
-    Long convocatoriaId = 1L;
-    Convocatoria convocatoria = generarMockConvocatoria(convocatoriaId, 1L, 1L, 1L, 1L, 1L, Boolean.TRUE);
-    ConvocatoriaHito convocatoriaHito = generarMockConvocatoriaHito(1L, convocatoriaId);
-    ConvocatoriaHito convocatoriaHitoActualizado = generarMockConvocatoriaHito(1L, convocatoriaId);
-    convocatoriaHitoActualizado.setTipoHito(generarMockTipoHito(2L, Boolean.TRUE));
-    convocatoriaHitoActualizado.setFecha(Instant.now().minus(Period.ofDays(2)));
-
-    BDDMockito.given(convocatoriaRepository.findById(ArgumentMatchers.<Long>any()))
-        .willReturn(Optional.of(convocatoria));
-    BDDMockito.given(repository.findById(ArgumentMatchers.<Long>any())).willReturn(Optional.of(convocatoriaHito));
-    BDDMockito.given(modeloTipoHitoRepository.findByModeloEjecucionIdAndTipoHitoId(ArgumentMatchers.anyLong(),
-        ArgumentMatchers.anyLong())).willReturn(
-            Optional.of(generarMockModeloTipoHito(1L, convocatoria, convocatoriaHitoActualizado, Boolean.TRUE)));
-    BDDMockito.given(repository.save(ArgumentMatchers.<ConvocatoriaHito>any()))
-        .will((InvocationOnMock invocation) -> invocation.getArgument(0));
-
-    // when: Actualizamos el ConvocatoriaHito
-    ConvocatoriaHito updated = service.update(convocatoriaHitoActualizado);
-
-    // then: El ConvocatoriaHito se actualiza correctamente.
-    Assertions.assertThat(updated).as("isNotNull()").isNotNull();
-    Assertions.assertThat(updated.getId()).as("getId()").isEqualTo(convocatoriaHito.getId());
-    Assertions.assertThat(updated.getConvocatoriaId()).as("getConvocatoriaId()")
-        .isEqualTo(convocatoriaHito.getConvocatoriaId());
-    Assertions.assertThat(updated.getComentario()).as("getComentario()").isEqualTo(convocatoriaHito.getComentario());
-    Assertions.assertThat(updated.getTipoHito().getId()).as("getTipoHito().getId()")
-        .isEqualTo(convocatoriaHito.getTipoHito().getId());
-    Assertions.assertThat(updated.getFecha()).as("getFecha()").isEqualTo(convocatoriaHitoActualizado.getFecha());
-    Assertions.assertThat(updated.getGeneraAviso()).as("getGeneraAviso()").isEqualTo(Boolean.FALSE);
+    Assertions.assertThat(updated.getConvocatoriaHitoAviso()).as("getConvocatoriaHitoAviso()")
+        .isNull();
   }
 
   @Test
@@ -382,6 +300,7 @@ public class ConvocatoriaHitoServiceTest extends BaseServiceTest {
     Convocatoria convocatoria = generarMockConvocatoria(convocatoriaId, 1L, 1L, 1L, 1L, 1L, Boolean.TRUE);
     ConvocatoriaHito convocatoriaHito = generarMockConvocatoriaHito(1L, convocatoriaId);
     ConvocatoriaHito convocatoriaHitoActualizado = generarMockConvocatoriaHito(1L, convocatoriaId);
+    ConvocatoriaHitoInput convocatoriaHitoActualizadoInput = generarMockConvocatoriaHitoInput(convocatoriaId);
 
     BDDMockito.given(convocatoriaRepository.findById(ArgumentMatchers.<Long>any()))
         .willReturn(Optional.of(convocatoria));
@@ -395,7 +314,7 @@ public class ConvocatoriaHitoServiceTest extends BaseServiceTest {
 
     // when: Actualizamos el ConvocatoriaHito
     // then: Lanza una excepcion porque la fecha no existe
-    Assertions.assertThatThrownBy(() -> service.update(convocatoriaHitoActualizado))
+    Assertions.assertThatThrownBy(() -> service.update(1L, convocatoriaHitoActualizadoInput))
         .isInstanceOf(IllegalArgumentException.class).hasMessage("Ya existe un Hito con el mismo tipo en esa fecha");
   }
 
@@ -403,13 +322,13 @@ public class ConvocatoriaHitoServiceTest extends BaseServiceTest {
   public void update_WithIdNotExist_ThrowsConvocatoriaHitoNotFoundException() {
     // given: Un ConvocatoriaHito a actualizar con un id que no existe
     Long convocatoriaId = 1L;
-    ConvocatoriaHito convocatoriaHito = generarMockConvocatoriaHito(1L, convocatoriaId);
+    ConvocatoriaHitoInput convocatoriaHito = generarMockConvocatoriaHitoInput(convocatoriaId);
 
     BDDMockito.given(repository.findById(ArgumentMatchers.<Long>any())).willReturn(Optional.empty());
 
     // when: Actualizamos el ConvocatoriaHito
     // then: Lanza una excepcion porque el ConvocatoriaHito no existe
-    Assertions.assertThatThrownBy(() -> service.update(convocatoriaHito))
+    Assertions.assertThatThrownBy(() -> service.update(1L, convocatoriaHito))
         .isInstanceOf(ConvocatoriaHitoNotFoundException.class);
   }
 
@@ -419,8 +338,8 @@ public class ConvocatoriaHitoServiceTest extends BaseServiceTest {
     Long convocatoriaId = 1L;
     Convocatoria convocatoria = generarMockConvocatoria(convocatoriaId, 1L, 1L, 1L, 1L, 1L, Boolean.TRUE);
     ConvocatoriaHito convocatoriaHito = generarMockConvocatoriaHito(1L, convocatoriaId);
-    ConvocatoriaHito convocatoriaHitoActualizado = generarMockConvocatoriaHito(1L, convocatoriaId);
-    convocatoriaHitoActualizado.setTipoHito(generarMockTipoHito(2L, Boolean.TRUE));
+    ConvocatoriaHitoInput convocatoriaHitoActualizado = generarMockConvocatoriaHitoInput(convocatoriaId);
+    convocatoriaHitoActualizado.setTipoHitoId(2L);
     convocatoria.setEstado(Convocatoria.Estado.BORRADOR);
     convocatoria.setModeloEjecucion(null);
 
@@ -430,11 +349,11 @@ public class ConvocatoriaHitoServiceTest extends BaseServiceTest {
 
     Assertions.assertThatThrownBy(
         // when: update ConvocatoriaHito
-        () -> service.update(convocatoriaHitoActualizado))
+        () -> service.update(1L, convocatoriaHitoActualizado))
         // then: throw exception as ModeloTipoHito not found
         .isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("TipoHito '%s' no disponible para el ModeloEjecucion '%s'",
-            convocatoriaHitoActualizado.getTipoHito().getNombre(), "Convocatoria sin modelo asignado");
+        .hasMessage("ID TipoHito '%s' no disponible para el ModeloEjecucion '%s'",
+            convocatoriaHitoActualizado.getTipoHitoId(), "Convocatoria sin modelo asignado");
   }
 
   @Test
@@ -444,8 +363,8 @@ public class ConvocatoriaHitoServiceTest extends BaseServiceTest {
     Long convocatoriaId = 1L;
     Convocatoria convocatoria = generarMockConvocatoria(convocatoriaId, 1L, 1L, 1L, 1L, 1L, Boolean.TRUE);
     ConvocatoriaHito convocatoriaHito = generarMockConvocatoriaHito(1L, convocatoriaId);
-    ConvocatoriaHito convocatoriaHitoActualizado = generarMockConvocatoriaHito(1L, convocatoriaId);
-    convocatoriaHitoActualizado.setTipoHito(generarMockTipoHito(2L, Boolean.TRUE));
+    ConvocatoriaHitoInput convocatoriaHitoActualizado = generarMockConvocatoriaHitoInput(convocatoriaId);
+    convocatoriaHitoActualizado.setTipoHitoId(2L);
 
     BDDMockito.given(convocatoriaRepository.findById(ArgumentMatchers.<Long>any()))
         .willReturn(Optional.of(convocatoria));
@@ -455,11 +374,11 @@ public class ConvocatoriaHitoServiceTest extends BaseServiceTest {
 
     Assertions.assertThatThrownBy(
         // when: update ConvocatoriaHito
-        () -> service.update(convocatoriaHitoActualizado))
+        () -> service.update(1L, convocatoriaHitoActualizado))
         // then: throw exception as ModeloTipoHito not found
         .isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("TipoHito '%s' no disponible para el ModeloEjecucion '%s'",
-            convocatoriaHitoActualizado.getTipoHito().getNombre(), convocatoria.getModeloEjecucion().getNombre());
+        .hasMessage("ID TipoHito '%s' no disponible para el ModeloEjecucion '%s'",
+            convocatoriaHitoActualizado.getTipoHitoId(), convocatoria.getModeloEjecucion().getNombre());
   }
 
   @Test
@@ -472,6 +391,9 @@ public class ConvocatoriaHitoServiceTest extends BaseServiceTest {
     ConvocatoriaHito convocatoriaHitoActualizado = generarMockConvocatoriaHito(1L, convocatoriaId);
     convocatoriaHitoActualizado.setTipoHito(generarMockTipoHito(2L, Boolean.TRUE));
 
+    ConvocatoriaHitoInput convocatoriaHitoActualizadoInput = generarMockConvocatoriaHitoInput(convocatoriaId);
+    convocatoriaHitoActualizadoInput.setTipoHitoId(2L);
+
     BDDMockito.given(convocatoriaRepository.findById(ArgumentMatchers.<Long>any()))
         .willReturn(Optional.of(convocatoria));
     BDDMockito.given(repository.findById(ArgumentMatchers.<Long>any())).willReturn(Optional.of(convocatoriaHito));
@@ -481,7 +403,7 @@ public class ConvocatoriaHitoServiceTest extends BaseServiceTest {
 
     Assertions.assertThatThrownBy(
         // when: update ConvocatoriaHito
-        () -> service.update(convocatoriaHitoActualizado))
+        () -> service.update(1L, convocatoriaHitoActualizadoInput))
         // then: throw exception as ModeloTipoHito is disabled
         .isInstanceOf(IllegalArgumentException.class)
         .hasMessage("ModeloTipoHito '%s' no está activo para el ModeloEjecucion '%s'",
@@ -496,6 +418,8 @@ public class ConvocatoriaHitoServiceTest extends BaseServiceTest {
     ConvocatoriaHito convocatoriaHito = generarMockConvocatoriaHito(1L, convocatoriaId);
     ConvocatoriaHito convocatoriaHitoActualizado = generarMockConvocatoriaHito(1L, convocatoriaId);
     convocatoriaHitoActualizado.setTipoHito(generarMockTipoHito(2L, Boolean.FALSE));
+    ConvocatoriaHitoInput convocatoriaHitoActualizadoInput = generarMockConvocatoriaHitoInput(convocatoriaId);
+    convocatoriaHitoActualizadoInput.setTipoHitoId(2L);
 
     BDDMockito.given(convocatoriaRepository.findById(ArgumentMatchers.<Long>any()))
         .willReturn(Optional.of(convocatoria));
@@ -506,7 +430,7 @@ public class ConvocatoriaHitoServiceTest extends BaseServiceTest {
 
     Assertions.assertThatThrownBy(
         // when: update ConvocatoriaHito
-        () -> service.update(convocatoriaHitoActualizado))
+        () -> service.update(1L, convocatoriaHitoActualizadoInput))
         // then: throw exception as TipoHito is disabled
         .isInstanceOf(IllegalArgumentException.class)
         .hasMessage("TipoHito '%s' no está activo", convocatoriaHitoActualizado.getTipoHito().getNombre());
@@ -741,9 +665,22 @@ public class ConvocatoriaHitoServiceTest extends BaseServiceTest {
         .id(id)
         .convocatoriaId(convocatoriaId)
         .fecha(Instant.parse("2020-10-19T00:00:00Z"))
-        .comentario("comentario" + id)
-        .generaAviso(Boolean.TRUE)
+        .comentario("comentario")
         .tipoHito(generarMockTipoHito(1L, Boolean.TRUE))
+        .convocatoriaHitoAviso(null)
+        .build();
+    // @formatter:on
+  }
+
+  private ConvocatoriaHitoInput generarMockConvocatoriaHitoInput(Long convocatoriaId) {
+
+    // @formatter:off
+    return ConvocatoriaHitoInput.builder()
+        .convocatoriaId(convocatoriaId)
+        .fecha(Instant.parse("2020-10-19T00:00:00Z"))
+        .comentario("comentario")
+        .tipoHitoId(1L)
+        .aviso(null)
         .build();
     // @formatter:on
   }

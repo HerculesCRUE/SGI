@@ -10,7 +10,7 @@ import org.crue.hercules.sgi.rep.dto.eti.InformeEvaluacionReportInput;
 import org.crue.hercules.sgi.rep.dto.eti.ReportInformeEvaluacionRetrospectiva;
 import org.crue.hercules.sgi.rep.service.eti.EvaluacionService;
 import org.crue.hercules.sgi.rep.service.eti.InformeEvaluacionRetrospectivaReportService;
-import org.crue.hercules.sgi.rep.service.sgp.PersonaService;
+import org.crue.hercules.sgi.rep.service.sgi.SgiApiSgpService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.BDDMockito;
@@ -32,7 +32,7 @@ class InformeEvaluacionRetrospectivaReportServiceTest extends BaseReportServiceT
   private EvaluacionService evaluacionService;
 
   @Mock
-  private PersonaService personaService;
+  private SgiApiSgpService personaService;
 
   @BeforeEach
   public void setUp() throws Exception {

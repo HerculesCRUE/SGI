@@ -23,23 +23,29 @@ import { IProyectoReportData, IProyectoReportOptions } from './proyecto-listado-
 const ELEGIBILIDAD_KEY = marker('csp.proyecto-elegibilidad');
 const CONCEPTO_GASTO_CODIGO_ECONOMICO_KEY = marker('csp.convocatoria-elegibilidad.codigo-economico');
 const CONCEPTO_GASTO_CODIGO_ECONOMICO_FIELD = 'conceptoGastoCodigoEconomico';
+const CONCEPTO_GASTO_NO_PERMITIDO_CODIGO_ECONOMICO_FIELD = 'conceptoGastoCodigoEconomicoNoPermitido';
 const CONCEPTO_GASTO_KEY = marker('csp.convocatoria-elegibilidad.concepto-gasto.concepto-gasto');
 const CONCEPTO_GASTO_FIELD = 'conceptoGasto';
+const CONCEPTO_GASTO_NO_PERMITIDO_FIELD = 'conceptoGastoNoPermitido';
 
 const CONCEPTO_GASTO_PERMITIDO_KEY = marker('csp.convocatoria-concepto-gasto-permitido');
-const CONCEPTO_GASTO_PERMITIDO_FIELD = 'conceptoGastoPermitido';
+const CONCEPTO_GASTO_NO_PERMITIDO_KEY = marker('csp.convocatoria-concepto-gasto-no-permitido');
 
 const CONCEPTO_GASTO_NOMBRE_KEY = marker('csp.concepto-gasto.nombre');
 const CONCEPTO_GASTO_NOMBRE_FIELD = 'nombreConceptoGasto';
+const CONCEPTO_GASTO_NO_PERMITIDO_NOMBRE_FIELD = 'nombreConceptoGastoNoPermitido';
 
 const CONCEPTO_GASTO_IMPORTE_KEY = marker('csp.convocatoria-concepto-gasto.importe-maximo');
 const CONCEPTO_GASTO_IMPORTE_FIELD = 'importeConceptoGasto';
+const CONCEPTO_GASTO_NO_PERMITIDO_IMPORTE_FIELD = 'importeConceptoGastoNoPermitido';
 
 const CONCEPTO_GASTO_FECHA_INICIO_KEY = marker('csp.proyecto-concepto-gasto.fecha-inicio');
 const CONCEPTO_GASTO_FECHA_INICIO_FIELD = 'fechaInicioConceptoGasto';
+const CONCEPTO_GASTO_NO_PERMITIDO_FECHA_INICIO_FIELD = 'fechaInicioConceptoGastoNoPermitido';
 
 const CONCEPTO_GASTO_FECHA_FIN_KEY = marker('csp.proyecto-concepto-gasto.fecha-fin');
 const CONCEPTO_GASTO_FECHA_FIN_FIELD = 'fechaFinConceptoGasto';
+const CONCEPTO_GASTO_NO_PERMITIDO_FECHA_FIN_FIELD = 'fechaFinConceptoGastoNoPermitido';
 
 
 export interface IProyectoConceptoGastoListadoExport extends IProyectoConceptoGasto {
@@ -104,20 +110,28 @@ export class ProyectoConceptoGastoListadoExportService extends AbstractTableExpo
 
   private getCodigosEconomicos(proyectoConceptoGasto: IProyectoConceptoGastoListadoExport):
     Observable<IProyectoConceptoGastoListadoExport> {
-    return this.proyectoConceptoGastoService.findAllProyectoConceptoGastoCodigosEc(proyectoConceptoGasto.id).pipe(
-      switchMap(responseCodigoEconomico => {
-        return from(responseCodigoEconomico.items).pipe(
-          mergeMap(proyectoCodigoEconomico => {
-            return this.getCodigoEconomico(proyectoCodigoEconomico);
-          }),
-          map(() => responseCodigoEconomico)
-        );
-      }),
-      map(responseCodigoEconomico => {
-        proyectoConceptoGasto.codigosEconomicos = responseCodigoEconomico.items;
-        return proyectoConceptoGasto;
-      }),
-      takeLast(1)
+    return this.proyectoConceptoGastoService.hasCodigosEconomicos(proyectoConceptoGasto.id).pipe(
+      switchMap(res => {
+        if (res) {
+          return this.proyectoConceptoGastoService.findAllProyectoConceptoGastoCodigosEc(proyectoConceptoGasto.id).pipe(
+            switchMap(responseCodigoEconomico => {
+              return from(responseCodigoEconomico.items).pipe(
+                mergeMap(proyectoCodigoEconomico => {
+                  return this.getCodigoEconomico(proyectoCodigoEconomico);
+                }),
+                map(() => responseCodigoEconomico)
+              );
+            }),
+            map(responseCodigoEconomico => {
+              proyectoConceptoGasto.codigosEconomicos = responseCodigoEconomico.items;
+              return proyectoConceptoGasto;
+            }),
+            takeLast(1)
+          );
+        } else {
+          return of(proyectoConceptoGasto);
+        }
+      })
     );
   }
 
@@ -157,8 +171,8 @@ export class ProyectoConceptoGastoListadoExportService extends AbstractTableExpo
       ' - ' + this.translate.instant(CONCEPTO_GASTO_IMPORTE_KEY) +
       ' - ' + this.translate.instant(CONCEPTO_GASTO_FECHA_INICIO_KEY) +
       ' - ' + this.translate.instant(CONCEPTO_GASTO_FECHA_FIN_KEY) +
-      ' - ' + this.translate.instant(CONCEPTO_GASTO_PERMITIDO_KEY, MSG_PARAMS.CARDINALIRY.SINGULAR) +
       ' - ' + this.translate.instant(CONCEPTO_GASTO_CODIGO_ECONOMICO_KEY) +
+      ' - ' + this.translate.instant(CONCEPTO_GASTO_PERMITIDO_KEY, MSG_PARAMS.CARDINALIRY.SINGULAR) +
       ')';
     const columnEntidad: ISgiColumnReport = {
       name: CONCEPTO_GASTO_FIELD,
@@ -173,56 +187,95 @@ export class ProyectoConceptoGastoListadoExportService extends AbstractTableExpo
   private getColumnsConceptoGastoExcel(proyectos: IProyectoReportData[]): ISgiColumnReport[] {
     const columns: ISgiColumnReport[] = [];
 
-    const maxNumConceptosGastos = Math.max(...proyectos.map(p => p.conceptosGastos?.length));
+    const maxNumConceptosGastosPermitidos = Math.max(...proyectos.map(p => p.conceptosGastos?.filter(g => g.permitido).length));
+    const maxNumConceptosGastosNoPermitidos = Math.max(...proyectos.map(p => p.conceptosGastos?.filter(g => !g.permitido).length));
 
-    const titleConceptoGasto = this.translate.instant(CONCEPTO_GASTO_KEY);
     const titleConceptoGastoPermitido = this.translate.instant(CONCEPTO_GASTO_PERMITIDO_KEY, MSG_PARAMS.CARDINALIRY.SINGULAR);
+    const titleConceptoGastoNoPermitido = this.translate.instant(CONCEPTO_GASTO_NO_PERMITIDO_KEY, MSG_PARAMS.CARDINALIRY.SINGULAR);
 
-    for (let i = 0; i < maxNumConceptosGastos; i++) {
+    for (let i = 0; i < maxNumConceptosGastosPermitidos; i++) {
       const idConceptoGasto: string = String(i + 1);
       const columnConceptoGasto: ISgiColumnReport = {
         name: CONCEPTO_GASTO_NOMBRE_FIELD + idConceptoGasto,
-        title: titleConceptoGasto + idConceptoGasto + ': ' + this.translate.instant(CONCEPTO_GASTO_NOMBRE_KEY),
+        title: titleConceptoGastoPermitido + idConceptoGasto + ': ' + this.translate.instant(CONCEPTO_GASTO_NOMBRE_KEY),
         type: ColumnType.STRING,
       };
       columns.push(columnConceptoGasto);
 
       const columnImporteConceptoGasto: ISgiColumnReport = {
         name: CONCEPTO_GASTO_IMPORTE_FIELD + idConceptoGasto,
-        title: titleConceptoGasto + idConceptoGasto + ': ' + this.translate.instant(CONCEPTO_GASTO_IMPORTE_KEY),
+        title: titleConceptoGastoPermitido + idConceptoGasto + ': ' + this.translate.instant(CONCEPTO_GASTO_IMPORTE_KEY),
         type: ColumnType.NUMBER,
       };
       columns.push(columnImporteConceptoGasto);
 
       const columnFechaInicioConceptoGasto: ISgiColumnReport = {
         name: CONCEPTO_GASTO_FECHA_INICIO_FIELD + idConceptoGasto,
-        title: titleConceptoGasto + idConceptoGasto + ': ' + this.translate.instant(CONCEPTO_GASTO_FECHA_INICIO_KEY),
+        title: titleConceptoGastoPermitido + idConceptoGasto + ': ' + this.translate.instant(CONCEPTO_GASTO_FECHA_INICIO_KEY),
         type: ColumnType.DATE,
       };
       columns.push(columnFechaInicioConceptoGasto);
 
       const columnFechaFinConceptoGasto: ISgiColumnReport = {
         name: CONCEPTO_GASTO_FECHA_FIN_FIELD + idConceptoGasto,
-        title: titleConceptoGasto + idConceptoGasto + ': ' + this.translate.instant(CONCEPTO_GASTO_FECHA_FIN_KEY),
+        title: titleConceptoGastoPermitido + idConceptoGasto + ': ' + this.translate.instant(CONCEPTO_GASTO_FECHA_FIN_KEY),
         type: ColumnType.DATE,
       };
       columns.push(columnFechaFinConceptoGasto);
 
-      const columnPermitidoConceptoGasto: ISgiColumnReport = {
-        name: CONCEPTO_GASTO_PERMITIDO_FIELD + idConceptoGasto,
-        title: titleConceptoGasto + idConceptoGasto + ': ' + titleConceptoGastoPermitido,
-        type: ColumnType.STRING,
-      };
-      columns.push(columnPermitidoConceptoGasto);
-
-      const maxNumCodigosConceptosGastos = Math.max(...proyectos.map(
-        p => Math.max(p.conceptosGastos[i] ? p.conceptosGastos[i]?.codigosEconomicos?.length : 0))
+      const maxNumCodigosConceptosGastosPermitidos = Math.max(...proyectos.map(
+        p => Math.max(p.conceptosGastos.filter(g => g.permitido)[i] ? (p.conceptosGastos.filter(g => g.permitido)[i]?.codigosEconomicos ? p.conceptosGastos.filter(g => g.permitido)[i]?.codigosEconomicos?.length : 0) : 0))
       );
-      for (let j = 0; j < maxNumCodigosConceptosGastos; j++) {
+      for (let j = 0; j < maxNumCodigosConceptosGastosPermitidos; j++) {
         const idCodigoConceptoGasto: string = String(j + 1);
         const columnCodigoEconomicoConceptoGasto: ISgiColumnReport = {
           name: CONCEPTO_GASTO_CODIGO_ECONOMICO_FIELD + idConceptoGasto + '_' + idCodigoConceptoGasto,
-          title: titleConceptoGasto + idConceptoGasto + ': '
+          title: titleConceptoGastoPermitido + idConceptoGasto + ': '
+            + this.translate.instant(CONCEPTO_GASTO_CODIGO_ECONOMICO_KEY) + idCodigoConceptoGasto,
+          type: ColumnType.STRING,
+        };
+        columns.push(columnCodigoEconomicoConceptoGasto);
+      }
+    }
+
+    for (let i = 0; i < maxNumConceptosGastosNoPermitidos; i++) {
+      const idConceptoGasto: string = String(i + 1);
+      const columnConceptoGasto: ISgiColumnReport = {
+        name: CONCEPTO_GASTO_NO_PERMITIDO_NOMBRE_FIELD + idConceptoGasto,
+        title: titleConceptoGastoNoPermitido + idConceptoGasto + ': ' + this.translate.instant(CONCEPTO_GASTO_NOMBRE_KEY),
+        type: ColumnType.STRING,
+      };
+      columns.push(columnConceptoGasto);
+
+      const columnImporteConceptoGasto: ISgiColumnReport = {
+        name: CONCEPTO_GASTO_NO_PERMITIDO_IMPORTE_FIELD + idConceptoGasto,
+        title: titleConceptoGastoNoPermitido + idConceptoGasto + ': ' + this.translate.instant(CONCEPTO_GASTO_IMPORTE_KEY),
+        type: ColumnType.NUMBER,
+      };
+      columns.push(columnImporteConceptoGasto);
+
+      const columnFechaInicioConceptoGasto: ISgiColumnReport = {
+        name: CONCEPTO_GASTO_NO_PERMITIDO_FECHA_INICIO_FIELD + idConceptoGasto,
+        title: titleConceptoGastoNoPermitido + idConceptoGasto + ': ' + this.translate.instant(CONCEPTO_GASTO_FECHA_INICIO_KEY),
+        type: ColumnType.DATE,
+      };
+      columns.push(columnFechaInicioConceptoGasto);
+
+      const columnFechaFinConceptoGasto: ISgiColumnReport = {
+        name: CONCEPTO_GASTO_NO_PERMITIDO_FECHA_FIN_FIELD + idConceptoGasto,
+        title: titleConceptoGastoNoPermitido + idConceptoGasto + ': ' + this.translate.instant(CONCEPTO_GASTO_FECHA_FIN_KEY),
+        type: ColumnType.DATE,
+      };
+      columns.push(columnFechaFinConceptoGasto);
+
+      const maxNumCodigosConceptosGastosNoPermitidos = Math.max(...proyectos.map(
+        p => Math.max(p.conceptosGastos.filter(g => !g.permitido)[i] ? (p.conceptosGastos.filter(g => !g.permitido)[i]?.codigosEconomicos ? p.conceptosGastos.filter(g => !g.permitido)[i]?.codigosEconomicos?.length : 0) : 0))
+      );
+      for (let j = 0; j < maxNumCodigosConceptosGastosNoPermitidos; j++) {
+        const idCodigoConceptoGasto: string = String(j + 1);
+        const columnCodigoEconomicoConceptoGasto: ISgiColumnReport = {
+          name: CONCEPTO_GASTO_NO_PERMITIDO_CODIGO_ECONOMICO_FIELD + idConceptoGasto + '_' + idCodigoConceptoGasto,
+          title: titleConceptoGastoNoPermitido + idConceptoGasto + ': '
             + this.translate.instant(CONCEPTO_GASTO_CODIGO_ECONOMICO_KEY) + idCodigoConceptoGasto,
           type: ColumnType.STRING,
         };
@@ -241,14 +294,24 @@ export class ProyectoConceptoGastoListadoExportService extends AbstractTableExpo
       this.fillRowsConceptoGastoNotExcel(proyecto, elementsRow);
     } else {
 
-      const maxNumConceptosGastos = Math.max(...proyectos.map(p => p.conceptosGastos?.length));
+      const maxNumConceptosGastosPermitidos = Math.max(...proyectos.map(p => p.conceptosGastos.filter(g => g.permitido)?.length));
 
-      for (let i = 0; i < maxNumConceptosGastos; i++) {
-        const conceptoGasto = proyecto.conceptosGastos[i] ?? null;
-        const maxNumCodigosConceptosGastos = Math.max(...proyectos.map(
-          p => Math.max(p.conceptosGastos[i] ? p.conceptosGastos[i]?.codigosEconomicos?.length : 0))
+      for (let i = 0; i < maxNumConceptosGastosPermitidos; i++) {
+        const conceptoGasto = proyecto.conceptosGastos.filter(g => g.permitido)[i] ?? null;
+        const maxNumCodigosConceptosGastosPermitidos = Math.max(...proyectos.map(
+          p => Math.max(p.conceptosGastos.filter(g => g.permitido)[i] ? (p.conceptosGastos.filter(g => g.permitido)[i]?.codigosEconomicos ? p.conceptosGastos.filter(g => g.permitido)[i]?.codigosEconomicos?.length : 0) : 0))
         );
-        this.fillRowsConceptoGastoExcel(elementsRow, conceptoGasto, maxNumCodigosConceptosGastos);
+        this.fillRowsConceptoGastoExcel(elementsRow, conceptoGasto, maxNumCodigosConceptosGastosPermitidos);
+      }
+
+      const maxNumConceptosGastosNoPermitidos = Math.max(...proyectos.map(p => p.conceptosGastos.filter(g => !g.permitido)?.length));
+
+      for (let i = 0; i < maxNumConceptosGastosNoPermitidos; i++) {
+        const conceptoGasto = proyecto.conceptosGastos.filter(g => !g.permitido)[i] ?? null;
+        const maxNumCodigosConceptosGastosNoPermitidos = Math.max(...proyectos.map(
+          p => Math.max(p.conceptosGastos.filter(g => !g.permitido)[i] ? (p.conceptosGastos.filter(g => !g.permitido)[i]?.codigosEconomicos ? p.conceptosGastos.filter(g => !g.permitido)[i]?.codigosEconomicos?.length : 0) : 0))
+        );
+        this.fillRowsConceptoGastoExcel(elementsRow, conceptoGasto, maxNumCodigosConceptosGastosNoPermitidos);
       }
     }
     return elementsRow;
@@ -257,7 +320,15 @@ export class ProyectoConceptoGastoListadoExportService extends AbstractTableExpo
   private fillRowsConceptoGastoNotExcel(proyecto: IProyectoReportData, elementsRow: any[]) {
     const rowsReport: ISgiRowReport[] = [];
 
-    proyecto.conceptosGastos?.forEach(proyectoConceptoGasto => {
+    proyecto.conceptosGastos?.sort((a, b) => {
+      if (a.permitido && !b.permitido) {
+        return -1;
+      }
+      if (!a.permitido && b.permitido) {
+        return 1;
+      }
+      return 0;
+    }).forEach(proyectoConceptoGasto => {
       const conceptoGastoElementsRow: any[] = [];
 
       let content = proyectoConceptoGasto.conceptoGasto?.nombre ?? '';
@@ -268,9 +339,9 @@ export class ProyectoConceptoGastoListadoExportService extends AbstractTableExpo
       content += '\n';
       content += this.luxonDatePipe.transform(LuxonUtils.toBackend(proyectoConceptoGasto?.fechaFin, true), 'shortDate') ?? '';
       content += '\n';
-      content += this.getI18nBooleanYesNo(proyectoConceptoGasto.permitido);
-      content += '\n';
       content += this.getStringCodigosEconomicos(proyectoConceptoGasto.codigosEconomicos);
+      content += '\n';
+      content += this.notIsNullAndNotUndefined(proyectoConceptoGasto.permitido) ? this.getI18nBooleanYesNo(proyectoConceptoGasto.permitido) : '';
 
       conceptoGastoElementsRow.push(content);
 
@@ -302,18 +373,18 @@ export class ProyectoConceptoGastoListadoExportService extends AbstractTableExpo
       elementsRow.push(proyectoConceptoGasto.importeMaximo ?? '');
       elementsRow.push(LuxonUtils.toBackend(proyectoConceptoGasto?.fechaInicio) ?? '');
       elementsRow.push(LuxonUtils.toBackend(proyectoConceptoGasto?.fechaFin) ?? '');
-      elementsRow.push(this.getI18nBooleanYesNo(proyectoConceptoGasto.permitido));
 
       for (let i = 0; i < maxNumCodigosConceptosGastos; i++) {
-        const codigoEconomicoConceptoGasto = proyectoConceptoGasto.codigosEconomicos[i] ?? null;
+        const codigoEconomicoConceptoGasto = proyectoConceptoGasto.codigosEconomicos
+          ? proyectoConceptoGasto.codigosEconomicos[i] ?? null : null;
         if (codigoEconomicoConceptoGasto) {
           elementsRow.push(codigoEconomicoConceptoGasto.codigoEconomico?.id + '-' + codigoEconomicoConceptoGasto.codigoEconomico?.nombre);
         } else {
           elementsRow.push('');
         }
       }
+
     } else {
-      elementsRow.push('');
       elementsRow.push('');
       elementsRow.push('');
       elementsRow.push('');
@@ -322,5 +393,9 @@ export class ProyectoConceptoGastoListadoExportService extends AbstractTableExpo
         elementsRow.push('');
       }
     }
+  }
+
+  private notIsNullAndNotUndefined(value): boolean {
+    return value !== null && value !== undefined;
   }
 }

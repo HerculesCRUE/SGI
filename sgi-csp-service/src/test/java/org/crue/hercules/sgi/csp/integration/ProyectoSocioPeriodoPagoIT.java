@@ -25,7 +25,7 @@ import org.springframework.web.util.UriComponentsBuilder;
  * Test de integracion de ProyectoSocioPeriodoPago.
  */
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class ProyectoSocioPeriodoPagoIT extends BaseIT {
+class ProyectoSocioPeriodoPagoIT extends BaseIT {
 
   private static final String PATH_PARAMETER_ID = "/{id}";
   private static final String CONTROLLER_BASE_PATH = "/proyectosocioperiodopagos";
@@ -55,12 +55,15 @@ public class ProyectoSocioPeriodoPagoIT extends BaseIT {
 
   @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = { "classpath:scripts/modelo_ejecucion.sql",
       "classpath:scripts/modelo_unidad.sql", "classpath:scripts/tipo_finalidad.sql",
-      "classpath:scripts/tipo_ambito_geografico.sql", "classpath:scripts/proyecto.sql",
+      "classpath:scripts/tipo_ambito_geografico.sql",
+      "classpath:scripts/tipo_regimen_concurrencia.sql",
+      "classpath:scripts/convocatoria.sql",
+      "classpath:scripts/proyecto.sql",
       "classpath:scripts/estado_proyecto.sql", "classpath:scripts/rol_socio.sql",
       "classpath:scripts/proyecto_socio.sql", "classpath:scripts/proyecto_socio_periodo_pago.sql" })
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void update_ReturnsProyectoSocioPeriodoPago() throws Exception {
+  void update_ReturnsProyectoSocioPeriodoPago() throws Exception {
     // given: una lista con uno de los ProyectoSocioPeriodoPago actualizado,
     // otro nuevo y sin los otros 3 periodos existentes
     Long solicitudProyectoSocioId = 1L;
@@ -106,12 +109,15 @@ public class ProyectoSocioPeriodoPagoIT extends BaseIT {
 
   @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = { "classpath:scripts/modelo_ejecucion.sql",
       "classpath:scripts/modelo_unidad.sql", "classpath:scripts/tipo_finalidad.sql",
-      "classpath:scripts/tipo_ambito_geografico.sql", "classpath:scripts/proyecto.sql",
+      "classpath:scripts/tipo_ambito_geografico.sql",
+      "classpath:scripts/tipo_regimen_concurrencia.sql",
+      "classpath:scripts/convocatoria.sql",
+      "classpath:scripts/proyecto.sql",
       "classpath:scripts/estado_proyecto.sql", "classpath:scripts/rol_socio.sql",
       "classpath:scripts/proyecto_socio.sql", "classpath:scripts/proyecto_socio_periodo_pago.sql" })
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void findById_ReturnsProyectoSocioPeriodoPago() throws Exception {
+  void findById_ReturnsProyectoSocioPeriodoPago() throws Exception {
     Long idProyectoSocioPeriodoPago = 1L;
 
     final ResponseEntity<ProyectoSocioPeriodoPago> response = restTemplate.exchange(

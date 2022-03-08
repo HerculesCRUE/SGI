@@ -42,10 +42,12 @@ class ProyectoFacturacionIT extends BaseIT {
       "classpath:scripts/modelo_unidad.sql",
       "classpath:scripts/tipo_finalidad.sql",
       "classpath:scripts/tipo_ambito_geografico.sql",
+      "classpath:scripts/tipo_regimen_concurrencia.sql",
+      "classpath:scripts/convocatoria.sql",
       "classpath:scripts/proyecto.sql",
       "classpath:scripts/tipo_facturacion.sql"
     // @formatter:on  
-    })
+  })
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
   void create_ReturnsProyectoFacturacionOutput() throws Exception {
@@ -54,7 +56,7 @@ class ProyectoFacturacionIT extends BaseIT {
     final ResponseEntity<ProyectoFacturacionOutput> response = restTemplate.exchange(
         CONTROLLER_BASE_PATH,
         HttpMethod.POST, buildRequest(null, toCreate, "CSP-PRO-E"),
-      ProyectoFacturacionOutput.class);
+        ProyectoFacturacionOutput.class);
 
     Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
 
@@ -80,14 +82,18 @@ class ProyectoFacturacionIT extends BaseIT {
   }
 
   @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = {
-    // @formatter:off    
+  // @formatter:off    
       "classpath:scripts/modelo_ejecucion.sql",
       "classpath:scripts/modelo_unidad.sql",
       "classpath:scripts/tipo_finalidad.sql",
       "classpath:scripts/tipo_ambito_geografico.sql",
+      "classpath:scripts/tipo_regimen_concurrencia.sql",
+      "classpath:scripts/convocatoria.sql",
       "classpath:scripts/proyecto.sql",
       "classpath:scripts/tipo_facturacion.sql",
-      "classpath:scripts/proyecto_facturacion.sql"
+      "classpath:scripts/proyecto_facturacion.sql",
+      "classpath:scripts/estado_validacion_ip.sql",
+      "classpath:scripts/proyecto_facturacion_update_estado_validacion_ip.sql"
     // @formatter:on  
   })
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
@@ -97,16 +103,19 @@ class ProyectoFacturacionIT extends BaseIT {
     ProyectoFacturacionInput toUpdate = buildMockProyectoFacturacionInput(proyectoFacturacionId);
     toUpdate.setComentario("updated");
     toUpdate.setEstadoValidacionIP(ProyectoFacturacionInput.EstadoValidacionIP.builder()
-    .estado(ProyectoFacturacionInput.TipoEstadoValidacion.NOTIFICADA)
-    .build());
+        .estado(ProyectoFacturacionInput.TipoEstadoValidacion.VALIDADA)
+        .comentario("estado validado")
+        .build());
 
-    final ResponseEntity<ProyectoFacturacionOutput> response = restTemplate.exchange(CONTROLLER_BASE_PATH + PATH_PARAMETER_ID,
-    HttpMethod.PUT, buildRequest(null, toUpdate, "CSP-PRO-E"), ProyectoFacturacionOutput.class, proyectoFacturacionId);
+    final ResponseEntity<ProyectoFacturacionOutput> response = restTemplate.exchange(
+        CONTROLLER_BASE_PATH + PATH_PARAMETER_ID,
+        HttpMethod.PUT, buildRequest(null, toUpdate, "CSP-PRO-E"), ProyectoFacturacionOutput.class,
+        proyectoFacturacionId);
 
     Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
 
     ProyectoFacturacionOutput updated = response.getBody();
-    
+
     Assertions.assertThat(updated.getId()).as("getId()")
         .isEqualTo(toUpdate.getId());
     Assertions.assertThat(updated.getComentario()).as("getComentario()")
@@ -134,6 +143,8 @@ class ProyectoFacturacionIT extends BaseIT {
       "classpath:scripts/modelo_unidad.sql",
       "classpath:scripts/tipo_finalidad.sql",
       "classpath:scripts/tipo_ambito_geografico.sql",
+      "classpath:scripts/tipo_regimen_concurrencia.sql",
+      "classpath:scripts/convocatoria.sql",
       "classpath:scripts/proyecto.sql",
       "classpath:scripts/tipo_facturacion.sql",
       "classpath:scripts/proyecto_facturacion.sql"
@@ -153,15 +164,15 @@ class ProyectoFacturacionIT extends BaseIT {
 
   private ProyectoFacturacionInput buildMockProyectoFacturacionInput(Long id) {
     return ProyectoFacturacionInput.builder()
-      .comentario("testing create")
-      .id(id)
-      .proyectoId(1L)
-      .fechaConformidad(Instant.now())
-      .fechaEmision(Instant.now())
-      .importeBase(new BigDecimal(200000))
-      .porcentajeIVA(21)
-      .tipoFacturacionId(1L)
-      .numeroPrevision(1)
-      .build();
+        .comentario("testing create")
+        .id(id)
+        .proyectoId(1L)
+        .fechaConformidad(Instant.now())
+        .fechaEmision(Instant.now())
+        .importeBase(new BigDecimal(200000))
+        .porcentajeIVA(21)
+        .tipoFacturacionId(1L)
+        .numeroPrevision(1)
+        .build();
   }
 }

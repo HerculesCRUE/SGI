@@ -9,7 +9,6 @@ import { CONVOCATORIA_ENTIDAD_CONVOCANTE_CONVERTER } from '@core/converters/csp/
 import { CONVOCATORIA_ENTIDAD_FINANCIADORA_CONVERTER } from '@core/converters/csp/convocatoria-entidad-financiadora.converter';
 import { CONVOCATORIA_ENTIDAD_GESTORA_CONVERTER } from '@core/converters/csp/convocatoria-entidad-gestora.converter';
 import { CONVOCATORIA_FASE_CONVERTER } from '@core/converters/csp/convocatoria-fase.converter';
-import { CONVOCATORIA_HITO_CONVERTER } from '@core/converters/csp/convocatoria-hito.converter';
 import { CONVOCATORIA_PARTIDA_PRESUPUESTARIA_CONVERTER } from '@core/converters/csp/convocatoria-partida.converter';
 import { CONVOCATORIA_PERIODO_JUSTIFICACION_CONVERTER } from '@core/converters/csp/convocatoria-periodo-justificacion.converter';
 import { CONVOCATORIA_PERIODO_SEGUIMIENTO_CIENTIFICO_CONVERTER } from '@core/converters/csp/convocatoria-periodo-seguimiento-cientifico.converter';
@@ -25,7 +24,6 @@ import { IConvocatoriaEntidadConvocanteBackend } from '@core/models/csp/backend/
 import { IConvocatoriaEntidadFinanciadoraBackend } from '@core/models/csp/backend/convocatoria-entidad-financiadora-backend';
 import { IConvocatoriaEntidadGestoraBackend } from '@core/models/csp/backend/convocatoria-entidad-gestora-backend';
 import { IConvocatoriaFaseBackend } from '@core/models/csp/backend/convocatoria-fase-backend';
-import { IConvocatoriaHitoBackend } from '@core/models/csp/backend/convocatoria-hito-backend';
 import { IConvocatoriaPartidaPresupuestariaBackend } from '@core/models/csp/backend/convocatoria-partida-backend';
 import { IConvocatoriaPeriodoJustificacionBackend } from '@core/models/csp/backend/convocatoria-periodo-justificacion-backend';
 import { IConvocatoriaPeriodoSeguimientoCientificoBackend } from '@core/models/csp/backend/convocatoria-periodo-seguimiento-cientifico-backend';
@@ -53,6 +51,8 @@ import { environment } from '@env';
 import { SgiMutableRestService, SgiRestFindOptions, SgiRestListResult } from '@sgi/framework/http/';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { IConvocatoriaHitoResponse } from './convocatoria-hito/convocatoria-hito-response';
+import { CONVOCATORIA_HITO_RESPONSE_CONVERTER } from './convocatoria-hito/convocatoria-hito-response.converter';
 import { CONVOCATORIA_PALABRACLAVE_REQUEST_CONVERTER } from './convocatoria-palabra-clave/convocatoria-palabra-clave-request.converter';
 import { IConvocatoriaPalabraClaveResponse } from './convocatoria-palabra-clave/convocatoria-palabra-clave-response';
 import { CONVOCATORIA_PALABRACLAVE_RESPONSE_CONVERTER } from './convocatoria-palabra-clave/convocatoria-palabra-clave-response.converter';
@@ -176,10 +176,10 @@ export class ConvocatoriaService extends SgiMutableRestService<number, IConvocat
    * @returns Listado de hitos.
    */
   findHitosConvocatoria(idConvocatoria: number, options?: SgiRestFindOptions): Observable<SgiRestListResult<IConvocatoriaHito>> {
-    return this.find<IConvocatoriaHitoBackend, IConvocatoriaHito>(
+    return this.find<IConvocatoriaHitoResponse, IConvocatoriaHito>(
       `${this.endpointUrl}/${idConvocatoria}/convocatoriahitos`,
       options,
-      CONVOCATORIA_HITO_CONVERTER
+      CONVOCATORIA_HITO_RESPONSE_CONVERTER
     );
   }
 

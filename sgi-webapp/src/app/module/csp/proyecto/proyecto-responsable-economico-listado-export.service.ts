@@ -20,6 +20,7 @@ import { IProyectoReportData, IProyectoReportOptions } from './proyecto-listado-
 
 const RESPONSABLE_ECONOMICO_KEY = marker('csp.proyecto-responsable-economico');
 const INVESTIGADOR_KEY = marker('csp.proyecto-responsable-economico');
+const INVESTIGADOR_SHORT_KEY = marker('csp.proyecto-resp-economico');
 const INVESTIGADOR_NOMBRE_KEY = marker('csp.solicitud-proyecto-responsable-economico.nombre');
 const INVESTIGADOR_APELLIDOS_KEY = marker('csp.solicitud-proyecto-responsable-economico.apellidos');
 const INVESTIGADOR_EMAIL_KEY = marker('csp.solicitud-proyecto-responsable-economico.email');
@@ -97,7 +98,7 @@ export class ProyectoResponsableEconomicoListadoExportService
     const columns: ISgiColumnReport[] = [];
     columns.push({
       name: RESPONSABLE_ECONOMICO_FIELD,
-      title: this.translate.instant(INVESTIGADOR_KEY),
+      title: this.translate.instant(INVESTIGADOR_SHORT_KEY),
       type: ColumnType.STRING
     });
     const titleI18n = this.translate.instant(RESPONSABLE_ECONOMICO_KEY) +
@@ -180,12 +181,12 @@ export class ProyectoResponsableEconomicoListadoExportService
       const responsableEconomicoElementsRow: any[] = [];
 
       let responsableEconomicoTable = responsableEconomico?.persona?.nombre + ' ' + responsableEconomico?.persona?.apellidos;
-      responsableEconomicoTable += '\n';
+      responsableEconomicoTable += ' - ';
       responsableEconomicoTable += this.getEmailPrincipal(responsableEconomico?.persona) ?? '';
-      responsableEconomicoTable += '\n';
+      responsableEconomicoTable += ' - ';
       responsableEconomicoTable +=
         this.luxonDatePipe.transform(LuxonUtils.toBackend(responsableEconomico?.fechaInicio, true), 'shortDate') ?? '';
-      responsableEconomicoTable += '\n';
+      responsableEconomicoTable += ' - ';
       responsableEconomicoTable += this.luxonDatePipe.transform(LuxonUtils.toBackend(responsableEconomico?.fechaFin, true), 'shortDate') ?? '';
 
       responsableEconomicoElementsRow.push(responsableEconomicoTable);

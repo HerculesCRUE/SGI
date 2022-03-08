@@ -10,7 +10,7 @@ import org.crue.hercules.sgi.rep.config.SgiConfigProperties;
 import org.crue.hercules.sgi.rep.dto.eti.ConvocatoriaReunionDto;
 import org.crue.hercules.sgi.rep.dto.eti.EvaluacionDto;
 import org.crue.hercules.sgi.rep.dto.eti.ReportInformeFavorableModificacion;
-import org.crue.hercules.sgi.rep.service.sgp.PersonaService;
+import org.crue.hercules.sgi.rep.service.sgi.SgiApiSgpService;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
@@ -25,7 +25,7 @@ public class InformeFavorableModificacionReportService extends InformeEvaluacion
   private final ConvocatoriaReunionService convocatoriaReunionService;
 
   public InformeFavorableModificacionReportService(SgiConfigProperties sgiConfigProperties,
-      PersonaService personaService, EvaluacionService evaluacionService,
+      SgiApiSgpService personaService, EvaluacionService evaluacionService,
       ConvocatoriaReunionService convocatoriaReunionService) {
 
     super(sgiConfigProperties, personaService, evaluacionService);

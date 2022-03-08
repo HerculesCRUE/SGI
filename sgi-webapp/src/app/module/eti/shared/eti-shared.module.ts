@@ -5,10 +5,12 @@ import { MaterialDesignModule } from '@material/material-design.module';
 import { TranslateModule } from '@ngx-translate/core';
 import { SharedModule } from '@shared/shared.module';
 import { SelectComiteComponent } from './select-comite/select-comite.component';
+import { SelectEvaluadorComponent } from './select-evaluador/select-evaluador.component';
 
 @NgModule({
   declarations: [
-    SelectComiteComponent
+    SelectComiteComponent,
+    SelectEvaluadorComponent
   ],
   imports: [
     SharedModule,
@@ -19,7 +21,8 @@ import { SelectComiteComponent } from './select-comite/select-comite.component';
     ReactiveFormsModule,
   ],
   exports: [
-    SelectComiteComponent
+    SelectComiteComponent,
+    SelectEvaluadorComponent
   ]
 })
 export class EtiSharedModule { }

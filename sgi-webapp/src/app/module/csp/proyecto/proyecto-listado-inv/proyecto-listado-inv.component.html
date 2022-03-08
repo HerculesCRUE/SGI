@@ -1,0 +1,145 @@
+<!-- Proyecto listado investigador -->
+<sgi-menu-content>
+  <!-- Buscador de proyectos Investigador-->
+  <div>
+    <form [ngClass]="'formulario'" [formGroup]="formGroup" [fxLayout.xs]="fxLayoutProperties.xs"
+      [fxLayout]="fxLayoutProperties.layout" fxLayoutGap="fxLayoutProperties.gap">
+
+      <div fxFlex="73%" fxFlex.sm="50%" fxFlex.md="53%" [fxLayout.xs]="fxLayoutProperties.xs"
+        [fxLayout]="fxLayoutProperties.layout" fxLayoutGap="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
+
+        <!-- Aplicar Filtro -->
+        <div class="col">
+          <div class="checkbox">
+            <mat-checkbox color="primary" formControlName="aplicarFiltro" id="aplicarFiltro">
+              {{'inv.proyecto.filtrado.participacion-actual' | translate}}</mat-checkbox>
+          </div>
+        </div>
+      </div>
+
+      <div class="buttons-final">
+        <div class="col filter-button">
+          <button color="primary" aria-label="Center Align" mat-raised-button (click)="onSearch()">
+            <mat-icon>search</mat-icon> {{'btn.search'| translate}}
+          </button>
+          <button color="warn" aria-label="Center Align" (click)="onClearFilters()" mat-button>{{'btn.clean'|
+            translate}}
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
+  <!-- FIN Buscador de proyectos Investigador-->
+
+  <!-- Listado de proyectos Investigador-->
+  <div class="mat-elevation-z4">
+    <table mat-table [dataSource]="proyecto$ | async" matSort matSortActive="id" matSortDirection="desc"
+      matSortDisableClear aria-hidden="true">
+      <!-- ID -->
+      <ng-container matColumnDef="id">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header scope="header"> {{'csp.proyecto.id' | translate}}
+        </th>
+        <td mat-cell *matCellDef="let proyecto">{{proyecto.id}}</td>
+      </ng-container>
+
+      <!-- Código SGE -->
+      <ng-container matColumnDef="codigoSGE">
+        <th mat-header-cell *matHeaderCellDef scope="header"> {{'csp.proyecto.codigo-sge' | translate}}
+        </th>
+        <td mat-cell *matCellDef="let proyecto">{{proyecto.proyectosSGE}}</td>
+      </ng-container>
+
+      <!-- Titulo -->
+      <ng-container matColumnDef="titulo">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header scope="header"> {{'csp.proyecto.titulo' | translate}}
+        </th>
+        <td mat-cell *matCellDef="let proyecto">{{proyecto.titulo}}</td>
+      </ng-container>
+
+      <!-- Acronimo -->
+      <ng-container matColumnDef="acronimo">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header scope="header"> {{'csp.proyecto.acronimo' | translate}}
+        </th>
+        <td mat-cell *matCellDef="let proyecto">{{proyecto.acronimo}}</td>
+      </ng-container>
+
+      <!-- Referencia en entidad convocante -->
+      <ng-container matColumnDef="codigoExterno">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header scope="header"> {{'csp.proyecto.ref-codigo-externo' |
+          translate}}
+        </th>
+        <td mat-cell *matCellDef="let proyecto">{{proyecto.codigoExterno}}</td>
+      </ng-container>
+
+      <!-- Fecha inicio -->
+      <ng-container matColumnDef="fechaInicio">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header scope="header">
+          {{'csp.proyecto.fecha-inicio' | translate}} </th>
+        <td mat-cell *matCellDef="let proyecto">
+          {{proyecto.fechaInicio | luxon:'shortDate'}}
+        </td>
+      </ng-container>
+
+      <!-- Fecha fin -->
+      <ng-container matColumnDef="fechaFin">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header scope="header">
+          {{'csp.proyecto.fecha-fin' | translate}} </th>
+        <td mat-cell *matCellDef="let proyecto">
+          {{proyecto.fechaFin | luxon:'shortDate'}}
+        </td>
+      </ng-container>
+
+      <!-- Fecha fin definitiva -->
+      <ng-container matColumnDef="fechaFinDefinitiva">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header scope="header">
+          {{'csp.proyecto.fecha-fin-definitiva' | translate}} </th>
+        <td mat-cell *matCellDef="let proyecto">
+          {{proyecto.fechaFinDefinitiva | luxon:'shortDate'}}
+        </td>
+      </ng-container>
+
+      <!-- Finalizado -->
+      <ng-container matColumnDef="finalizado">
+        <th mat-header-cell *matHeaderCellDef scope="row">
+          {{'csp.proyecto.finalizado' | translate}} </th>
+        <td mat-cell *matCellDef="let proyecto">
+          {{(proyecto.fechaFinDefinitiva ? proyecto.fechaFinDefinitiva < this.fechaActual ? 'label.si' : 'label.no' :
+            proyecto.fechaFin < this.fechaActual ? 'label.si' : 'label.no' ) | translate}} </td>
+      </ng-container>
+
+      <!-- Prorrogado -->
+      <ng-container matColumnDef="prorrogado">
+        <th mat-header-cell *matHeaderCellDef>
+          {{'csp.proyecto.prorrogado' | translate}} </th>
+        <td mat-cell *matCellDef="let proyecto">
+          {{(proyecto.prorrogado ? 'label.si' : 'label.no') | translate}}
+        </td>
+      </ng-container>
+
+      <!-- Estado proyecto -->
+      <ng-container matColumnDef="estado">
+        <th mat-header-cell *matHeaderCellDef> {{'csp.proyecto.estado' | translate}} </th>
+        <td mat-cell *matCellDef="let proyecto">
+          {{ESTADO_MAP.get(proyecto.estado.estado) | translate}}
+        </td>
+      </ng-container>
+
+      <!-- Acciones -->
+      <ng-container matColumnDef="acciones">
+        <th mat-header-cell *matHeaderCellDef> {{'label.actions' | translate}} </th>
+        <td mat-cell *matCellDef="let proyecto">
+          <ng-container *sgiHasAnyAuthority="['CSP-PRO-INV-VR','CSP-PRO-V', 'CSP-PRO-V_' + proyecto.unidadGestion.id ]">
+            <a mat-button matTooltip="{{'btn.view' | translate}}" [routerLink]="[proyecto.id]">
+              <mat-icon color="primary">visibility</mat-icon>
+            </a>
+          </ng-container>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="columnas"></tr>
+      <tr mat-row *matRowDef="let row; columns: columnas;"></tr>
+    </table>
+    <mat-paginator [pageSizeOptions]="elementosPagina" [length]="totalElementos" showFirstLastButtons>
+    </mat-paginator>
+  </div>
+</sgi-menu-content>

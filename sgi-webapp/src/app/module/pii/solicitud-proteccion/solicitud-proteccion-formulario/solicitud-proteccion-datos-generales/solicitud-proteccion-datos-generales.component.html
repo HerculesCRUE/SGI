@@ -21,8 +21,9 @@
         <div fxFlex>
           <mat-form-field>
             <mat-label>{{'pii.solicitud-proteccion.via-proteccion' | translate}}</mat-label>
-            <sgi-select-entity formControlName="viaProteccion" [options]="formPart.viasProteccion$ | async" required>
-            </sgi-select-entity>
+            <sgi-select-via-proteccion formControlName="viaProteccion" [tipoPropiedad]="formPart.tipoPropiedad"
+              required>
+            </sgi-select-via-proteccion>
             <mat-error *ngIf="formGroup.controls.viaProteccion.errors?.required">
               {{'error.required.entity' | translate:msgParamViaProteccionEntity}}
             </mat-error>

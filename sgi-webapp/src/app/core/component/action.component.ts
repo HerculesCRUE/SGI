@@ -1,12 +1,12 @@
-import { marker } from '@biesbjerg/ngx-translate-extract-marker';
-import { IActionService } from '@core/services/action-service';
-import { Observable, of, Subscription } from 'rxjs';
-import { DialogService } from '@core/services/dialog.service';
-import { map } from 'rxjs/operators';
-import { OnDestroy, OnInit, ViewChild, Directive } from '@angular/core';
-import { ActionFooterComponent } from '@shared/action-footer/action-footer.component';
+import { Directive, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { DIALOG_BUTTON_STYLE } from '@block/dialog/dialog.component';
+import { IActionService } from '@core/services/action-service';
+import { DialogService } from '@core/services/dialog.service';
+import { Observable, of, Subscription } from 'rxjs';
+import { map } from 'rxjs/operators';
+import { FooterComponent } from './footer.component';
 
 const MSG_FORM_UNSAVED = marker('msg.unsaved');
 const MSG_FORM_UNSAVED_CANCEL = marker('btn.cancel');
@@ -19,7 +19,7 @@ export interface SgiAllowNavigation {
 @Directive()
 // tslint:disable-next-line: directive-class-suffix
 export abstract class ActionComponent implements SgiAllowNavigation, OnInit, OnDestroy {
-  @ViewChild(ActionFooterComponent, { static: true }) footer: ActionFooterComponent;
+  @ViewChild(FooterComponent, { static: true }) private footer: FooterComponent;
   // tslint:disable-next-line: variable-name
   private _service: IActionService;
   protected router: Router;
@@ -35,12 +35,12 @@ export abstract class ActionComponent implements SgiAllowNavigation, OnInit, OnD
 
   ngOnInit(): void {
     if (this.footer) {
-      this.subscriptions.push(this.footer.event$.subscribe((value: boolean) => {
-        if (value) {
-          this.saveOrUpdate();
+      this.subscriptions.push(this.footer.event$.subscribe((value) => {
+        if (value === 'cancel') {
+          this.cancel();
         }
         else {
-          this.cancel();
+          this.saveOrUpdate(value);
         }
       }));
     }
@@ -68,7 +68,7 @@ export abstract class ActionComponent implements SgiAllowNavigation, OnInit, OnD
     this.router.navigate(['../'], { relativeTo: this.activatedRoute });
   }
 
-  abstract saveOrUpdate(): void;
+  abstract saveOrUpdate(action?: any): void;
 
 
 }

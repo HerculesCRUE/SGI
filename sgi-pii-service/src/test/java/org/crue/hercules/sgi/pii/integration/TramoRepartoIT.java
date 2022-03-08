@@ -167,9 +167,6 @@ public class TramoRepartoIT extends BaseIT {
 
     String[] roles = { "PII-TRE-B" };
     Long tramoRepartoId = 2L;
-    TramoRepartoInput nuevoTramoRepartoInput = generaMockTramoRepartoInput();
-    nuevoTramoRepartoInput.setDesde(501);
-    nuevoTramoRepartoInput.setHasta(999);
 
     final ResponseEntity<TramoRepartoOutput> response = restTemplate.exchange(CONTROLLER_BASE_PATH + PATH_PARAMETER_ID,
         HttpMethod.DELETE,
@@ -190,9 +187,6 @@ public class TramoRepartoIT extends BaseIT {
 
     String[] roles = { "PII-TRE-V", "PII-TRE-C", "PII-TRE-E" };
     Long tramoRepartoId = 2L;
-    TramoRepartoInput nuevoTramoRepartoInput = generaMockTramoRepartoInput();
-    nuevoTramoRepartoInput.setDesde(501);
-    nuevoTramoRepartoInput.setHasta(999);
 
     final ResponseEntity<Void> response = restTemplate.exchange(
         CONTROLLER_BASE_PATH + PATH_PARAMETER_ID + PATH_MODIFICABLE,
@@ -203,6 +197,11 @@ public class TramoRepartoIT extends BaseIT {
 
   }
 
+  /**
+   * Función que devuelve un objeto TramoRepartoInput
+   * 
+   * @return el objeto TramoRepartoInput
+   */
   private TramoRepartoInput generaMockTramoRepartoInput() {
     TramoRepartoInput tramoRepartoInput = new TramoRepartoInput();
     tramoRepartoInput.setDesde(1001);

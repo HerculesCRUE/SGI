@@ -50,15 +50,17 @@
   </changeSet>
 
   <changeSet context="dev" author="master" id="0000000000004-proyecto_equipo">
+    <validCheckSum>8:cab9a534a35cf8179550f812316c6fa0</validCheckSum>
+    <validCheckSum>8:731066bb92d490b58c622552556e76da</validCheckSum>
     <update tableName="proyecto_equipo">
-      <column name="fecha_fin" value="2021-09-01T21:59:59" />
+      <column name="fecha_fin" valueDate="2021-09-01T21:59:59" />
       <where>:name=:value</where>
       <whereParams>
         <param name="id" valueNumeric="1" />
       </whereParams>
     </update>
     <update tableName="proyecto_equipo">
-      <column name="fecha_inicio" value="2021-09-01T22:00:00" />
+      <column name="fecha_inicio" valueDate="2021-09-01T22:00:00" />
       <where>:name=:value</where>
       <whereParams>
         <param name="id" valueNumeric="7" />

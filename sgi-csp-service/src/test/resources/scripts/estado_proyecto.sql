@@ -33,3 +33,6 @@ UPDATE test.proyecto SET estado_proyecto_id = 2 WHERE id = 2;
 UPDATE test.proyecto SET estado_proyecto_id = 3 WHERE id = 3;
 UPDATE test.proyecto SET estado_proyecto_id = 4 WHERE id = 4;
 UPDATE test.proyecto SET estado_proyecto_id = 5 WHERE id = 5;
+
+ALTER SEQUENCE test.estado_proyecto_seq RESTART WITH 6;
+

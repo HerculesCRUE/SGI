@@ -23,7 +23,7 @@
             {{'error.before.fecha-inicio' | translate}}
           </mat-error>
           <mat-error *ngIf="formGroup.controls.fechaInicio.errors?.overlapped">
-            {{'error.overlapping.record.entity' | translate}}
+            {{'error.overlapping.record.entity' | translate:msgParamFechaInicioEntity}}
           </mat-error>
         </mat-form-field>
       </div>
@@ -42,7 +42,7 @@
             {{'error.after.fecha-fin' | translate}}
           </mat-error>
           <mat-error *ngIf="formGroup.controls.fechaFin.errors?.overlapped">
-            {{'error.overlapping.record.entity' | translate}}
+            {{'error.overlapping.record.entity' | translate:msgParamFechaFinEntity}}
           </mat-error>
         </mat-form-field>
       </div>

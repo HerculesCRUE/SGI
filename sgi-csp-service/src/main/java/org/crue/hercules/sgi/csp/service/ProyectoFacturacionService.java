@@ -2,15 +2,21 @@ package org.crue.hercules.sgi.csp.service;
 
 import org.apache.commons.lang3.StringUtils;
 import org.crue.hercules.sgi.csp.exceptions.ProyectoFacturacionNotFoundException;
+import org.crue.hercules.sgi.csp.exceptions.UserNotAuthorizedToAccessProyectoException;
 import org.crue.hercules.sgi.csp.model.EstadoValidacionIP;
 import org.crue.hercules.sgi.csp.model.EstadoValidacionIP.TipoEstadoValidacion;
 import org.crue.hercules.sgi.csp.model.Proyecto;
 import org.crue.hercules.sgi.csp.model.ProyectoFacturacion;
 import org.crue.hercules.sgi.csp.repository.EstadoValidacionIPRepository;
+import org.crue.hercules.sgi.csp.repository.ProyectoEquipoRepository;
 import org.crue.hercules.sgi.csp.repository.ProyectoFacturacionRepository;
 import org.crue.hercules.sgi.csp.repository.ProyectoRepository;
+import org.crue.hercules.sgi.csp.repository.ProyectoResponsableEconomicoRepository;
 import org.crue.hercules.sgi.csp.repository.predicate.ProyectoFacturacionPredicateResolver;
+import org.crue.hercules.sgi.csp.repository.specification.ProyectoEquipoSpecifications;
 import org.crue.hercules.sgi.csp.repository.specification.ProyectoFacturacionSpecifications;
+import org.crue.hercules.sgi.csp.repository.specification.ProyectoResponsableEconomicoSpecifications;
+import org.crue.hercules.sgi.csp.util.ProyectoHelper;
 import org.crue.hercules.sgi.framework.rsql.SgiRSQLJPASupport;
 import org.crue.hercules.sgi.framework.security.core.context.SgiSecurityContextHolder;
 import org.springframework.data.domain.Page;
@@ -33,6 +39,7 @@ public class ProyectoFacturacionService {
   private final ProyectoFacturacionRepository proyectoFacturacionRepository;
   private final EstadoValidacionIPRepository estadoValidacionIPRepository;
   private final ProyectoRepository proyectoRepository;
+  private final ProyectoHelper proyectoHelper;
 
   /**
    * Busca todos los objetos de tipo {@link ProyectoFacturacion} cuyo proyectoId
@@ -43,7 +50,7 @@ public class ProyectoFacturacionService {
    * @return pagina de {@link ProyectoFacturacion}
    */
   public Page<ProyectoFacturacion> findByProyectoId(Long proyectoId, Pageable paging) {
-
+    proyectoHelper.checkCanAccessProyecto(proyectoId);
     return this.proyectoFacturacionRepository.findByProyectoId(proyectoId, paging);
   }
 
@@ -81,9 +88,17 @@ public class ProyectoFacturacionService {
   @Transactional
   public ProyectoFacturacion update(ProyectoFacturacion toUpdate) {
 
-    Assert.isTrue(
-        SgiSecurityContextHolder.hasAuthorityForUO(ALLOWED_ROLE, getUnidadGestionRef(toUpdate.getProyectoId())),
-        USER_NOT_ALLOWED_MESSAGE);
+    if (proyectoHelper.hasUserAuthorityInvestigador()
+        && !proyectoHelper.checkUserPresentInEquipos(toUpdate.getProyectoId())
+        && !proyectoHelper.checkUserIsResponsableEconomico(toUpdate.getProyectoId())) {
+      throw new UserNotAuthorizedToAccessProyectoException();
+    } else if (!proyectoHelper.hasUserAuthorityInvestigador()) {
+      Assert.isTrue(
+          SgiSecurityContextHolder.hasAuthorityForUO(
+              ALLOWED_ROLE,
+              getUnidadGestionRef(toUpdate.getProyectoId())),
+          USER_NOT_ALLOWED_MESSAGE);
+    }
 
     ProyectoFacturacion beforeUpdate = this.proyectoFacturacionRepository.findById(toUpdate.getId())
         .orElseThrow(() -> new ProyectoFacturacionNotFoundException(toUpdate.getId()));
@@ -95,7 +110,7 @@ public class ProyectoFacturacionService {
     beforeUpdate.setFechaEmision(toUpdate.getFechaEmision());
     beforeUpdate.setFechaConformidad(toUpdate.getFechaConformidad());
 
-    if (toUpdate.getEstadoValidacionIP().getId() == null) {
+    if (toUpdate.getEstadoValidacionIP().getEstado() != beforeUpdate.getEstadoValidacionIP().getEstado()) {
       beforeUpdate.setEstadoValidacionIP(persistEstadoValidacionIP(toUpdate.getEstadoValidacionIP(), toUpdate.getId()));
     }
 

@@ -105,17 +105,11 @@ export class ProyectoHitosComponent extends FragmentComponent implements OnInit,
    */
   openModal(wrapper?: StatusWrapper<IProyectoHito>): void {
     const data: ProyectoHitosModalComponentData = {
-      hitos: this.dataSource.data.map(hito => hito.value),
+      hitos: this.dataSource.data.filter(existing => existing !== wrapper).map(hito => hito.value),
       hito: wrapper ? wrapper.value : {} as IProyectoHito,
       idModeloEjecucion: this.actionService.modeloEjecucionId,
       readonly: this.actionService.readonly
     };
-
-    if (wrapper) {
-      data.hitos = this.dataSource.data.filter(element =>
-        element.value.tipoHito !== data.hito.tipoHito
-      ).map(element => element.value);
-    }
 
     const config = {
       panelClass: 'sgi-dialog-container',

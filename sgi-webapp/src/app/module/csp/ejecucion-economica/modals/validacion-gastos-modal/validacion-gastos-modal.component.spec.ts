@@ -8,6 +8,7 @@ import { IDatoEconomicoDetalle } from '@core/models/sge/dato-economico-detalle';
 import { SnackBarService } from '@core/services/snack-bar.service';
 import TestUtils from '@core/utils/test-utils';
 import { MaterialDesignModule } from '@material/material-design.module';
+import { SharedModule } from '@shared/shared.module';
 import { LoggerTestingModule } from 'ngx-logger/testing';
 import { ValidacionGastosModalComponent } from './validacion-gastos-modal.component';
 
@@ -30,7 +31,8 @@ describe('ValidacionGastosModalComponent', () => {
         TestUtils.getIdiomas(),
         RouterTestingModule,
         FormsModule,
-        ReactiveFormsModule
+        ReactiveFormsModule,
+        SharedModule
       ],
       providers: [
         { provide: SnackBarService, useValue: TestUtils.getSnackBarServiceSpy() },

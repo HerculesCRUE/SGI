@@ -20,6 +20,7 @@ import org.crue.hercules.sgi.csp.repository.ProyectoProrrogaRepository;
 import org.crue.hercules.sgi.csp.repository.ProyectoRepository;
 import org.crue.hercules.sgi.csp.repository.specification.ProyectoProrrogaSpecifications;
 import org.crue.hercules.sgi.csp.service.ProyectoProrrogaService;
+import org.crue.hercules.sgi.csp.util.ProyectoHelper;
 import org.crue.hercules.sgi.framework.rsql.SgiRSQLJPASupport;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -42,14 +43,17 @@ public class ProyectoProrrogaServiceImpl implements ProyectoProrrogaService {
   private final ProyectoRepository proyectoRepository;
   private final ProrrogaDocumentoRepository prorrogaDocumentoRepository;
   private final ProyectoEquipoRepository proyectoEquipoRepository;
+  private final ProyectoHelper proyectoHelper;
 
   public ProyectoProrrogaServiceImpl(ProyectoProrrogaRepository proyectoProrrogaRepository,
       ProyectoRepository proyectoRepository, ProrrogaDocumentoRepository prorrogaDocumentoRepository,
-      ProyectoEquipoRepository proyectoEquipoRepository) {
+      ProyectoEquipoRepository proyectoEquipoRepository,
+      ProyectoHelper proyectoHelper) {
     this.repository = proyectoProrrogaRepository;
     this.proyectoRepository = proyectoRepository;
     this.prorrogaDocumentoRepository = prorrogaDocumentoRepository;
     this.proyectoEquipoRepository = proyectoEquipoRepository;
+    this.proyectoHelper = proyectoHelper;
   }
 
   /**
@@ -212,6 +216,9 @@ public class ProyectoProrrogaServiceImpl implements ProyectoProrrogaService {
   @Override
   public Page<ProyectoProrroga> findAllByProyecto(Long proyectoId, String query, Pageable pageable) {
     log.debug("findAllByProyecto(Long proyectoId, String query, Pageable pageable) - start");
+
+    proyectoHelper.checkCanAccessProyecto(proyectoId);
+
     Specification<ProyectoProrroga> specs = ProyectoProrrogaSpecifications.byProyectoId(proyectoId)
         .and(SgiRSQLJPASupport.toSpecification(query));
 
@@ -416,7 +423,11 @@ public class ProyectoProrrogaServiceImpl implements ProyectoProrrogaService {
   public boolean existsByProyecto(Long proyectoId) {
     log.debug("existsByProyecto(Long proyectoId) - start");
     boolean returnValue = repository.existsByProyectoId(proyectoId);
+
+    proyectoHelper.checkCanAccessProyecto(proyectoId);
+
     log.debug("existsByProyecto(Long proyectoId) - end");
     return returnValue;
   }
+
 }

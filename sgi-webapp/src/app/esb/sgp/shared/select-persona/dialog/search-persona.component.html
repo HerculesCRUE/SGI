@@ -70,17 +70,19 @@
         </th>
         <td mat-cell *matCellDef="let persona">
           <ng-container>
-            <button mat-button matTooltip="{{'btn.select' | translate}}" (click)="closeModal(persona)">
-              <mat-icon color="primary">done_outline</mat-icon>
+            <button mat-icon-button matTooltip="{{'btn.select' | translate}}" (click)="closeModal(persona)"
+              [disabled]="selectionDisableWith(persona)" color="primary">
+              <mat-icon>done_outline</mat-icon>
             </button>
             <ng-container *sgiHasAuthority="'ESB-PER-V'">
-              <button mat-button matTooltip="{{'btn.view' | translate}}" (click)="openPersonaViewModal(persona)">
-                <mat-icon color="primary">visibility</mat-icon>
+              <button mat-icon-button matTooltip="{{'btn.view' | translate}}" (click)="openPersonaViewModal(persona)">
+                <mat-icon>visibility</mat-icon>
               </button>
             </ng-container>
             <ng-container *sgiHasAuthority="'ESB-PER-E'">
-              <button mat-button matTooltip="{{'btn.edit' | translate}}" (click)="openPersonaEditModal(persona)">
-                <mat-icon color="primary">border_color</mat-icon>
+              <button mat-icon-button color="primary" matTooltip="{{'btn.edit' | translate}}"
+                (click)="openPersonaEditModal(persona)">
+                <mat-icon>border_color</mat-icon>
               </button>
             </ng-container>
           </ng-container>

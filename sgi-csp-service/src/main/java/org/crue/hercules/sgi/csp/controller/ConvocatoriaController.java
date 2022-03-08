@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
+import org.crue.hercules.sgi.csp.dto.ConvocatoriaHitoOutput;
 import org.crue.hercules.sgi.csp.dto.ConvocatoriaPalabraClaveInput;
 import org.crue.hercules.sgi.csp.dto.ConvocatoriaPalabraClaveOutput;
 import org.crue.hercules.sgi.csp.dto.RequisitoEquipoCategoriaProfesionalOutput;
@@ -354,7 +355,7 @@ public class ConvocatoriaController {
    * @return Convocatoria {@link Convocatoria} correspondiente al id
    */
   @GetMapping("/{id}")
-  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-CON-V', 'CSP-CON-E', 'CSP-CON-INV-V', 'CSP-SOL-C', 'CSP-SOL-E', 'CSP-SOL-V', 'CSP-SOL-B', 'CSP-SOL-R', 'CSP-PRO-V', 'CSP-PRO-C', 'CSP-PRO-E')")
+  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-CON-V', 'CSP-CON-E', 'CSP-CON-INV-V', 'CSP-SOL-C', 'CSP-SOL-E', 'CSP-SOL-V', 'CSP-SOL-B', 'CSP-SOL-R', 'CSP-PRO-V', 'CSP-PRO-C', 'CSP-PRO-E', 'CSP-PRO-INV-VR')")
   public Convocatoria findById(@PathVariable Long id) {
     log.debug("Convocatoria findById(Long id) - start");
     Convocatoria returnValue = service.findById(id);
@@ -473,10 +474,10 @@ public class ConvocatoriaController {
    */
   @GetMapping("/{id}/convocatoriahitos")
   @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-CON-E', 'CSP-CON-V', 'CSP-CON-INV-V')")
-  public ResponseEntity<Page<ConvocatoriaHito>> findAllConvocatoriaHito(@PathVariable Long id,
+  public ResponseEntity<Page<ConvocatoriaHitoOutput>> findAllConvocatoriaHito(@PathVariable Long id,
       @RequestParam(name = "q", required = false) String query, @RequestPageable(sort = "s") Pageable paging) {
     log.debug("findAllConvocatoriaHito(Long id, String query, Pageable paging) - start");
-    Page<ConvocatoriaHito> page = convocatoriaHitoService.findAllByConvocatoria(id, query, paging);
+    Page<ConvocatoriaHitoOutput> page = this.convert(convocatoriaHitoService.findAllByConvocatoria(id, query, paging));
 
     if (page.isEmpty()) {
       log.debug("findAllConvocatoriaHito(Long id, String query, Pageable paging) - end");
@@ -496,7 +497,7 @@ public class ConvocatoriaController {
    */
   @RequestMapping(path = "/{id}/convocatoriahitos", method = RequestMethod.HEAD)
   @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-CON-V', 'CSP-CON-E')")
-  public ResponseEntity<?> hasConvocatoriaHitos(@PathVariable Long id) {
+  public ResponseEntity<Void> hasConvocatoriaHitos(@PathVariable Long id) {
     log.debug("Convocatoria hasConvocatoriaHitos(Long id) - start");
     if (convocatoriaHitoService.existsByConvocatoriaId(id)) {
       log.debug("Convocatoria hasConvocatoriaHitos(Long id) - end");
@@ -646,7 +647,7 @@ public class ConvocatoriaController {
    */
   @RequestMapping(path = "/{id}/convocatoriafases", method = RequestMethod.HEAD)
   @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-CON-V', 'CSP-CON-E')")
-  public ResponseEntity<?> hasConvocatoriaFases(@PathVariable Long id) {
+  public ResponseEntity<Void> hasConvocatoriaFases(@PathVariable Long id) {
     log.debug("Convocatoria hasConvocatoriaFases(Long id) - start");
     if (convocatoriaFaseService.existsByConvocatoriaId(id)) {
       log.debug("Convocatoria hasConvocatoriaFases(Long id) - end");
@@ -1018,7 +1019,7 @@ public class ConvocatoriaController {
    */
   @RequestMapping(path = "/{id}/tramitable", method = RequestMethod.HEAD)
   @PreAuthorize("hasAuthority('CSP-SOL-INV-C')")
-  public ResponseEntity<Convocatoria> tramitable(@PathVariable Long id) {
+  public ResponseEntity<Void> tramitable(@PathVariable Long id) {
     log.debug("registrable(Long id) - start");
     boolean returnValue = service.tramitable(id);
     log.debug("registrable(Long id) - end");
@@ -1047,7 +1048,7 @@ public class ConvocatoriaController {
    */
   @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-CON-E','CSP-CON-V')")
   @RequestMapping(path = "/{id}/proyectosreferenced", method = RequestMethod.HEAD)
-  public ResponseEntity<Object> hasProyectosReferenced(@PathVariable Long id) {
+  public ResponseEntity<Void> hasProyectosReferenced(@PathVariable Long id) {
 
     return this.service.hasAnyProyectoReferenced(id) ? ResponseEntity.ok().build() : ResponseEntity.noContent().build();
   }
@@ -1264,8 +1265,8 @@ public class ConvocatoriaController {
     return modelMapper.map(convocatoriaPalabraClave, ConvocatoriaPalabraClaveOutput.class);
   }
 
-
-  private List<ConvocatoriaPalabraClave> convertConvocatoriaPalabraClaveInputs(List<ConvocatoriaPalabraClaveInput> inputs) {
+  private List<ConvocatoriaPalabraClave> convertConvocatoriaPalabraClaveInputs(
+      List<ConvocatoriaPalabraClaveInput> inputs) {
     return inputs.stream().map(input -> convert(null, input)).collect(Collectors.toList());
   }
 
@@ -1273,5 +1274,16 @@ public class ConvocatoriaController {
     ConvocatoriaPalabraClave entity = modelMapper.map(input, ConvocatoriaPalabraClave.class);
     entity.setId(id);
     return entity;
+  }
+
+  private ConvocatoriaHitoOutput convert(ConvocatoriaHito convocatoriaHito) {
+    return modelMapper.map(convocatoriaHito, ConvocatoriaHitoOutput.class);
+  }
+
+  private Page<ConvocatoriaHitoOutput> convert(Page<ConvocatoriaHito> page) {
+    List<ConvocatoriaHitoOutput> content = page.getContent().stream()
+        .map(this::convert).collect(Collectors.toList());
+
+    return new PageImpl<>(content, page.getPageable(), page.getTotalElements());
   }
 }

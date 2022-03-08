@@ -1,0 +1,104 @@
+{
+  "idRef": "OBRA_ARTISITICA_6",
+  "epigrafeCVN": "050.020.030.000",
+  "campos": [
+    {
+      "codigoCVN": "050.020.030.010",
+      "valores": [
+        "Obra que representa las cuarto estaciones del año"
+      ]
+    },
+    {
+      "codigoCVN": "050.020.030.120",
+      "valores": [
+        "2019-07-10"
+      ]
+    },
+    {
+      "codigoCVN": "050.020.030.020",
+      "valores": [
+        "Las 4 estaciones"
+      ]
+    },
+    {
+      "codigoCVN": "050.020.030.040",
+      "valores": [
+        "724"
+      ]
+    },
+    {
+      "codigoCVN": "050.020.030.050",
+      "valores": [
+        "ES12"
+      ]
+    },
+    {
+      "codigoCVN": "050.020.030.090",
+      "valores": [
+        "true"
+      ]
+    },
+    {
+      "codigoCVN": "050.020.030.100",
+      "valores": [
+        "false"
+      ]
+    },
+    {
+      "codigoCVN": "050.020.030.110",
+      "valores": [
+        "true"
+      ]
+    },
+    {
+      "codigoCVN": "TIPO_OBRA",
+      "valores": [
+        "EXPOSICION"
+      ]
+    },
+    {
+      "codigoCVN": "COLECTIVA",
+      "valores": [
+        "false"
+      ]
+    }
+  ],
+  "autores": [
+    {
+      "personaRef": "52364567",
+      "firma": "simon.apellido",
+      "nombre": "",
+      "apellidos": "",
+      "orden": 1,
+      "orcidID": "",
+      "ip": true
+    },
+    {
+      "personaRef": "02221287",
+      "firma": "enrique.apellido",
+      "nombre": "",
+      "apellidos": "",
+      "orden": 2,
+      "orcidID": "",
+      "ip": false
+    },
+    {
+      "personaRef": "",
+      "firma": "",
+      "nombre": "María",
+      "apellidos": "García Fernández",
+      "orden": 3,
+      "orcidID": "",
+      "ip": false
+    }
+  ],
+  "proyectos": [
+    1
+  ],
+  "acreditaciones": [
+    {
+      "url": "www.paginamipublicacion.es",
+      "documentoRef": ""
+    }
+  ]
+}

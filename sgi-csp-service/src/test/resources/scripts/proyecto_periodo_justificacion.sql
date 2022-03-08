@@ -1,6 +1,6 @@
 -- DEPENDENCIAS
 /*
-  scripts = { 
+scripts = {
     // @formatter:off
     "classpath:scripts/modelo_ejecucion.sql",
     "classpath:scripts/modelo_unidad.sql",
@@ -8,9 +8,9 @@
     "classpath:scripts/tipo_regimen_concurrencia.sql",
     "classpath:scripts/tipo_ambito_geografico.sql",
     "classpath:scripts/convocatoria.sql",
-    "classpath:scripts/estado_proyecto.sql",
+    "classpath:scripts/proyecto.sql",
     "classpath:scripts/contexto_proyecto.sql",
-    "classpath:scripts/proyecto.sql"
+    "classpath:scripts/estado_proyecto.sql"
     // @formatter:on
   }
 */

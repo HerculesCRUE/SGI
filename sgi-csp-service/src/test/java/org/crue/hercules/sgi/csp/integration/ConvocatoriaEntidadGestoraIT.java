@@ -19,7 +19,7 @@ import org.springframework.test.context.jdbc.Sql.ExecutionPhase;
  * Test de integracion de ConvocatoriaEntidadGestora.
  */
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class ConvocatoriaEntidadGestoraIT extends BaseIT {
+class ConvocatoriaEntidadGestoraIT extends BaseIT {
 
   private static final String PATH_PARAMETER_ID = "/{id}";
   private static final String CONTROLLER_BASE_PATH = "/convocatoriaentidadgestoras";
@@ -85,11 +85,11 @@ public class ConvocatoriaEntidadGestoraIT extends BaseIT {
     "classpath:scripts/modelo_unidad.sql",
     "classpath:scripts/tipo_finalidad.sql",
     "classpath:scripts/tipo_ambito_geografico.sql",
+    "classpath:scripts/tipo_regimen_concurrencia.sql",
+    "classpath:scripts/convocatoria.sql",
     "classpath:scripts/proyecto.sql",
     "classpath:scripts/concepto_gasto.sql",
     "classpath:scripts/proyecto_concepto_gasto.sql",
-    "classpath:scripts/tipo_regimen_concurrencia.sql",
-    "classpath:scripts/convocatoria.sql",
     "classpath:scripts/convocatoria_entidad_gestora.sql"
     // @formatter:on
   })
@@ -114,6 +114,7 @@ public class ConvocatoriaEntidadGestoraIT extends BaseIT {
 
     Assertions.assertThat(updated).isNotNull();
     Assertions.assertThat(updated.getEntidadRef()).as("getEntidadRef()").isEqualTo(toUpdate.getEntidadRef());
-    Assertions.assertThat(updated.getConvocatoriaId()).as("getConvocatoriaId()").isEqualTo(toUpdate.getConvocatoriaId());
+    Assertions.assertThat(updated.getConvocatoriaId()).as("getConvocatoriaId()")
+        .isEqualTo(toUpdate.getConvocatoriaId());
   }
 }

@@ -28,8 +28,8 @@
         <div fxFlex="40">
           <mat-form-field>
             <mat-label>{{'pii.tipo-procedimiento' | translate:MSG_PARAMS.CARDINALIRY.SINGULAR }}</mat-label>
-            <sgi-select-entity formControlName="tipoProcedimiento" [options]=" entity.tiposProcedimiento" required>
-            </sgi-select-entity>
+            <sgi-select-tipo-procedimiento formControlName="tipoProcedimiento" required>
+            </sgi-select-tipo-procedimiento>
             <mat-error *ngIf="formGroup.controls.tipoProcedimiento.errors?.required">
               {{'error.required.entity' | translate:msgParamTipoProcedimientoEntity}}
             </mat-error>

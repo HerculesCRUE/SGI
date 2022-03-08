@@ -195,10 +195,8 @@ public class ProyectoConceptoGastoServiceImpl implements ProyectoConceptoGastoSe
 
     Assert.notNull(id, "ProyectoConceptoGasto id no puede ser null para eliminar un ProyectoConceptoGasto");
 
-    repository.findById(id).map(proyectoProyectoConceptoGasto -> {
-
-      return proyectoProyectoConceptoGasto;
-    }).orElseThrow(() -> new ProyectoConceptoGastoNotFoundException(id));
+    repository.findById(id).map(proyectoProyectoConceptoGasto -> proyectoProyectoConceptoGasto)
+        .orElseThrow(() -> new ProyectoConceptoGastoNotFoundException(id));
 
     List<ProyectoConceptoGastoCodigoEc> codigosEconomicos = proyectoConceptoGastoCodigoEcRepository
         .findAllByProyectoConceptoGastoId(id);

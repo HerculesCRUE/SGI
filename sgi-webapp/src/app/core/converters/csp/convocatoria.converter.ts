@@ -29,7 +29,8 @@ class ConvocatoriaConverter extends SgiBaseConverter<IConvocatoriaBackend, IConv
       abiertoPlazoPresentacionSolicitud: value.abiertoPlazoPresentacionSolicitud,
       ambitoGeografico: value.ambitoGeografico,
       clasificacionCVN: value.clasificacionCVN,
-      activo: value.activo
+      activo: value.activo,
+      excelencia: value.excelencia
     };
   }
 
@@ -56,7 +57,8 @@ class ConvocatoriaConverter extends SgiBaseConverter<IConvocatoriaBackend, IConv
       abiertoPlazoPresentacionSolicitud: value.abiertoPlazoPresentacionSolicitud,
       ambitoGeografico: value.ambitoGeografico,
       clasificacionCVN: value.clasificacionCVN,
-      activo: value.activo
+      activo: value.activo,
+      excelencia: value.excelencia
     };
   }
 }

@@ -298,6 +298,7 @@
                 "templateOptions": {
                   "label": "Tipo de documento",
                   "placeholder": "Introduce tipo de documento",
+                  "required": true,
                   "valueProp": "id",
                   "labelProp": "nombre"
                 }
@@ -308,7 +309,8 @@
                 "className": "flex-1",
                 "templateOptions": {
                   "label": "Número de documento",
-                  "placeholder": "Introduce número de documento"
+                  "placeholder": "Introduce número de documento",
+                  "required": true
                 }
               }
             ]
@@ -320,6 +322,7 @@
             "templateOptions": {
               "label": "Sexo",
               "placeholder": "Introduce sexo",
+              "required": true,
               "valueProp": "id",
               "labelProp": "nombre"
             }
@@ -812,7 +815,7 @@
             "wrappers": [
               "subtitle-div"
             ],
-            "template": "<p>Datos en entidad propia/PDI</p>"
+            "template": "Datos de entidad propia/PDI"
           },
           {
             "fieldGroupClassName": "row-formly",
@@ -908,7 +911,7 @@
             "wrappers": [
               "subtitle-div"
             ],
-            "template": "<p>Datos en entidad propia/PAS</p>"
+            "template": "Datos de entidad propia/PAS"
           },
           {
             "fieldGroupClassName": "row-formly",
@@ -1457,7 +1460,7 @@
             "wrappers": [
               "subtitle-div"
             ],
-            "template": "<p>Datos en entidad propia/PDI</p>"
+            "template": "Datos de entidad propia/PDI"
           },
           {
             "fieldGroupClassName": "row-formly",
@@ -1553,7 +1556,7 @@
             "wrappers": [
               "subtitle-div"
             ],
-            "template": "<p>Datos en entidad propia/PAS</p>"
+            "template": "Datos de entidad propia/PAS"
           },
           {
             "fieldGroupClassName": "row-formly",

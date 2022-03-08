@@ -5,7 +5,6 @@ import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { BaseModalComponent } from '@core/component/base-modal.component';
 import { MSG_PARAMS } from '@core/i18n';
 import { IProcedimiento } from '@core/models/pii/procedimiento';
-import { ITipoProcedimiento } from '@core/models/pii/tipo-procedimiento';
 import { SnackBarService } from '@core/services/snack-bar.service';
 import { StatusWrapper } from '@core/utils/status-wrapper';
 import { TranslateService } from '@ngx-translate/core';
@@ -21,7 +20,6 @@ const MSG_ADD = marker('btn.add');
 
 export interface ISolicitudProteccionProcedimientoModalData {
   procedimiento: StatusWrapper<IProcedimiento>;
-  tiposProcedimiento: ITipoProcedimiento[];
 }
 
 @Component({
@@ -69,7 +67,7 @@ export class SolicitudProteccionProcedimientoModalComponent
       }
     }
     const result: ISolicitudProteccionProcedimientoModalData = {
-      procedimiento: this.entity.procedimiento, tiposProcedimiento: this.entity.tiposProcedimiento
+      procedimiento: this.entity.procedimiento
     };
 
     return result;

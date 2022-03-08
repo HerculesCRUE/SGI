@@ -16,6 +16,8 @@ import { AutorizacionHistoricoEstadosComponent } from './autorizacion-formulario
 import { AutorizacionListadoComponent } from './autorizacion-listado/autorizacion-listado.component';
 import { AutorizacionRoutingModule } from './autorizacion-routing.module';
 import { CambioEstadoModalComponent } from './cambio-estado-modal/cambio-estado-modal.component';
+import { AutorizacionCertificadosComponent } from './autorizacion-formulario/autorizacion-certificados/autorizacion-certificados.component';
+import { AutorizacionCertificadoModalComponent } from './autorizacion-formulario/autorizacion-certificado-modal/autorizacion-certificado-modal.component';
 
 @NgModule({
   declarations: [
@@ -24,7 +26,9 @@ import { CambioEstadoModalComponent } from './cambio-estado-modal/cambio-estado-
     AutorizacionDatosGeneralesComponent,
     AutorizacionEditarComponent,
     CambioEstadoModalComponent,
-    AutorizacionHistoricoEstadosComponent],
+    AutorizacionHistoricoEstadosComponent,
+    AutorizacionCertificadosComponent,
+    AutorizacionCertificadoModalComponent],
   imports: [
     CommonModule,
     SharedModule,

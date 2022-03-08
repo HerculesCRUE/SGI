@@ -32,9 +32,9 @@ public class ConfigController {
   }
 
   /**
-   * Devuelve el identificador de {@link TimeZone} configurado en la aplicación.
+   * Gets the application {@link TimeZone} identifier.
    * 
-   * @return {@link String} con el identificador de {@link TimeZone} configurado.
+   * @return {@link String} with {@link TimeZone} identifier.
    */
   @GetMapping(value = "/time-zone", produces = MediaType.TEXT_PLAIN_VALUE)
   @PreAuthorize("isAuthenticated()")

@@ -18,6 +18,8 @@ import org.crue.hercules.sgi.eti.exceptions.EstadoRetrospectivaNotFoundException
 import org.crue.hercules.sgi.eti.exceptions.EvaluacionNotFoundException;
 import org.crue.hercules.sgi.eti.exceptions.MemoriaNotFoundException;
 import org.crue.hercules.sgi.eti.exceptions.PeticionEvaluacionNotFoundException;
+import org.crue.hercules.sgi.eti.model.Apartado;
+import org.crue.hercules.sgi.eti.model.Bloque;
 import org.crue.hercules.sgi.eti.model.Comite;
 import org.crue.hercules.sgi.eti.model.Configuracion;
 import org.crue.hercules.sgi.eti.model.ConvocatoriaReunion;
@@ -33,6 +35,8 @@ import org.crue.hercules.sgi.eti.model.Tarea;
 import org.crue.hercules.sgi.eti.model.TipoEstadoMemoria;
 import org.crue.hercules.sgi.eti.model.TipoEvaluacion;
 import org.crue.hercules.sgi.eti.model.TipoMemoria;
+import org.crue.hercules.sgi.eti.repository.ApartadoRepository;
+import org.crue.hercules.sgi.eti.repository.BloqueRepository;
 import org.crue.hercules.sgi.eti.repository.ComentarioRepository;
 import org.crue.hercules.sgi.eti.repository.ComiteRepository;
 import org.crue.hercules.sgi.eti.repository.DocumentacionMemoriaRepository;
@@ -47,8 +51,8 @@ import org.crue.hercules.sgi.eti.repository.specification.MemoriaSpecifications;
 import org.crue.hercules.sgi.eti.service.ConfiguracionService;
 import org.crue.hercules.sgi.eti.service.InformeService;
 import org.crue.hercules.sgi.eti.service.MemoriaService;
-import org.crue.hercules.sgi.eti.service.ReportService;
 import org.crue.hercules.sgi.eti.service.SgdocService;
+import org.crue.hercules.sgi.eti.service.sgi.SgiApiRepService;
 import org.crue.hercules.sgi.eti.util.Constantes;
 import org.crue.hercules.sgi.framework.rsql.SgiRSQLJPASupport;
 import org.springframework.beans.BeanUtils;
@@ -110,7 +114,7 @@ public class MemoriaServiceImpl implements MemoriaService {
   /** Informe service */
   private final InformeService informeService;
 
-  private final ReportService reportService;
+  private final SgiApiRepService reportService;
   private final SgdocService sgdocService;
 
   /** Tarea repository */
@@ -119,13 +123,20 @@ public class MemoriaServiceImpl implements MemoriaService {
   /** Configuracion service */
   private final ConfiguracionService configuracionService;
 
+  /** Bloque repository */
+  private final BloqueRepository bloqueRepository;
+
+  /** Apartado repository */
+  private final ApartadoRepository apartadoRepository;
+
   public MemoriaServiceImpl(SgiConfigProperties sgiConfigProperties, MemoriaRepository memoriaRepository,
       EstadoMemoriaRepository estadoMemoriaRepository, EstadoRetrospectivaRepository estadoRetrospectivaRepository,
       EvaluacionRepository evaluacionRepository, ComentarioRepository comentarioRepository,
       InformeService informeService, PeticionEvaluacionRepository peticionEvaluacionRepository,
       ComiteRepository comiteRepository, DocumentacionMemoriaRepository documentacionMemoriaRepository,
       RespuestaRepository respuestaRepository, TareaRepository tareaRepository,
-      ConfiguracionService configuracionService, ReportService reportService, SgdocService sgdocService) {
+      ConfiguracionService configuracionService, SgiApiRepService reportService, SgdocService sgdocService,
+      BloqueRepository bloqueRepository, ApartadoRepository apartadoRepository) {
     this.sgiConfigProperties = sgiConfigProperties;
     this.memoriaRepository = memoriaRepository;
     this.estadoMemoriaRepository = estadoMemoriaRepository;
@@ -141,6 +152,8 @@ public class MemoriaServiceImpl implements MemoriaService {
     this.configuracionService = configuracionService;
     this.reportService = reportService;
     this.sgdocService = sgdocService;
+    this.bloqueRepository = bloqueRepository;
+    this.apartadoRepository = apartadoRepository;
   }
 
   /**
@@ -217,12 +230,26 @@ public class MemoriaServiceImpl implements MemoriaService {
 
     documentacionMemoriaRepository.saveAll(documentacionesMemoriaList);
 
-    Page<Respuesta> respuestasPage = respuestaRepository.findByMemoriaIdAndMemoriaActivoTrue(memoria.getId(), null);
+    // Guardamos los ids de los apartados del formulario de retrospectiva
+    List<Long> idsApartadosRetrospectiva = new ArrayList<Long>();
+    Page<Bloque> bloques = bloqueRepository.findByFormularioId(Constantes.FORMULARIO_RETROSPECTIVA, null);
+    bloques.getContent().stream().forEach(bloque -> {
+      Page<Apartado> apartados = apartadoRepository.findByBloqueIdAndPadreIsNull(bloque.getId(), null);
+      apartados.getContent().stream().forEach(apartado -> {
+        idsApartadosRetrospectiva.add(apartado.getId());
+      });
+    });
 
-    List<Respuesta> respuestaList = respuestasPage.getContent().stream().map(respuesta -> {
-      return new Respuesta(null, memoriaCreada, respuesta.getApartado(), respuesta.getTipoDocumento(),
-          respuesta.getValor());
-    }).collect(Collectors.toList());
+    Page<Respuesta> respuestasPage = respuestaRepository.findByMemoriaIdAndMemoriaActivoTrue(memoria.getId(), null);
+    /**
+     * Filtramos por los ids de los apartados del formulario de retrospectiva para
+     * no guardar las respuestas en caso de que exista
+     */
+    List<Respuesta> respuestaList = respuestasPage.getContent().stream()
+        .filter(r -> idsApartadosRetrospectiva.indexOf(r.getApartado().getId()) == -1).map(respuesta -> {
+          return new Respuesta(null, memoriaCreada, respuesta.getApartado(), respuesta.getTipoDocumento(),
+              respuesta.getValor());
+        }).collect(Collectors.toList());
 
     respuestaRepository.saveAll(respuestaList);
 
@@ -774,21 +801,21 @@ public class MemoriaServiceImpl implements MemoriaService {
     Long idFormulario = null;
     String tituloInforme = TITULO_INFORME_MXX;
     switch (tipoEvaluacion.intValue()) {
-    case Constantes.TIPO_EVALUACION_MEMORIA_INT:
-      idFormulario = memoria.getComite().getFormulario().getId();
-      break;
-    case Constantes.TIPO_EVALUACION_SEGUIMIENTO_ANUAL_INT:
-      idFormulario = Constantes.FORMULARIO_ANUAL;
-      tituloInforme = TITULO_INFORME_SA;
-      break;
-    case Constantes.TIPO_EVALUACION_SEGUIMIENTO_FINAL_INT:
-      idFormulario = Constantes.FORMULARIO_FINAL;
-      tituloInforme = TITULO_INFORME_SF;
-      break;
-    case Constantes.TIPO_EVALUACION_RETROSPECTIVA_INT:
-      idFormulario = Constantes.FORMULARIO_RETROSPECTIVA;
-      tituloInforme = TITULO_INFORME_RETROSPECTIVA;
-      break;
+      case Constantes.TIPO_EVALUACION_MEMORIA_INT:
+        idFormulario = memoria.getComite().getFormulario().getId();
+        break;
+      case Constantes.TIPO_EVALUACION_SEGUIMIENTO_ANUAL_INT:
+        idFormulario = Constantes.FORMULARIO_ANUAL;
+        tituloInforme = TITULO_INFORME_SA;
+        break;
+      case Constantes.TIPO_EVALUACION_SEGUIMIENTO_FINAL_INT:
+        idFormulario = Constantes.FORMULARIO_FINAL;
+        tituloInforme = TITULO_INFORME_SF;
+        break;
+      case Constantes.TIPO_EVALUACION_RETROSPECTIVA_INT:
+        idFormulario = Constantes.FORMULARIO_RETROSPECTIVA;
+        tituloInforme = TITULO_INFORME_RETROSPECTIVA;
+        break;
     }
 
     // Se obtiene el informe en formato pdf creado mediante el servicio de reporting
@@ -905,66 +932,66 @@ public class MemoriaServiceImpl implements MemoriaService {
     String numMemoria = "001";
 
     switch (idTipoMemoria.intValue()) {
-    case 1: {
-      // NUEVA
-      // Se recupera la última memoria para el comité seleccionado
-      Memoria ultimaMemoriaComite = memoriaRepository
-          .findFirstByNumReferenciaContainingAndTipoMemoriaIdIsNotAndComiteIdOrderByNumReferenciaDesc(
-              String.valueOf(anioActual), 2L, comite.getId());
+      case 1: {
+        // NUEVA
+        // Se recupera la última memoria para el comité seleccionado
+        Memoria ultimaMemoriaComite = memoriaRepository
+            .findFirstByNumReferenciaContainingAndTipoMemoriaIdIsNotAndComiteIdOrderByNumReferenciaDesc(
+                String.valueOf(anioActual), 2L, comite.getId());
 
-      // Se incrementa el número de la memoria para el comité
-      if (ultimaMemoriaComite != null) {
-        Long numeroUltimaMemoria = Long.valueOf(ultimaMemoriaComite.getNumReferencia().split("/")[2].split("R")[0]);
-        numeroUltimaMemoria++;
-        numMemoria = String.format("%03d", numeroUltimaMemoria);
+        // Se incrementa el número de la memoria para el comité
+        if (ultimaMemoriaComite != null) {
+          Long numeroUltimaMemoria = Long.valueOf(ultimaMemoriaComite.getNumReferencia().split("/")[2].split("R")[0]);
+          numeroUltimaMemoria++;
+          numMemoria = String.format("%03d", numeroUltimaMemoria);
+        }
+
+        break;
       }
+      case 2: {
+        // MODIFICACIÓN
 
-      break;
-    }
-    case 2: {
-      // MODIFICACIÓN
+        // Se recupera la última memoria modificada de la memoria de la que se realiza
+        // la copia y del comité de la memoria.
+        Memoria ultimaMemoriaComite = memoriaRepository
+            .findFirstByNumReferenciaContainingAndComiteIdOrderByNumReferenciaDesc(numReferencia, comite.getId());
 
-      // Se recupera la última memoria modificada de la memoria de la que se realiza
-      // la copia y del comité de la memoria.
-      Memoria ultimaMemoriaComite = memoriaRepository
-          .findFirstByNumReferenciaContainingAndComiteIdOrderByNumReferenciaDesc(numReferencia, comite.getId());
+        StringBuffer sbReferencia = new StringBuffer();
+        sbReferencia.append(ultimaMemoriaComite.getNumReferencia().split("MR")[0].split("/")[2].split("R")[0])
+            .append("MR");
+        if (ultimaMemoriaComite != null && ultimaMemoriaComite.getNumReferencia().contains("MR")) {
+          Long numeroUltimaMemoria = Long.valueOf(ultimaMemoriaComite.getNumReferencia().split("MR")[1]);
+          numeroUltimaMemoria++;
+          sbReferencia.append(numeroUltimaMemoria);
 
-      StringBuffer sbReferencia = new StringBuffer();
-      sbReferencia.append(ultimaMemoriaComite.getNumReferencia().split("MR")[0].split("/")[2].split("R")[0])
-          .append("MR");
-      if (ultimaMemoriaComite != null && ultimaMemoriaComite.getNumReferencia().contains("MR")) {
-        Long numeroUltimaMemoria = Long.valueOf(ultimaMemoriaComite.getNumReferencia().split("MR")[1]);
-        numeroUltimaMemoria++;
-        sbReferencia.append(numeroUltimaMemoria);
+        } else {
+          sbReferencia.append("1");
+        }
 
-      } else {
-        sbReferencia.append("1");
+        numMemoria = sbReferencia.toString();
+
+        break;
       }
+      case 3: {
+        // RATIFICACIÓN
+        // Se recupera la última memoria para el comité seleccionado
+        Memoria ultimaMemoriaComite = memoriaRepository
+            .findFirstByNumReferenciaContainingAndTipoMemoriaIdIsNotAndComiteIdOrderByNumReferenciaDesc(
+                String.valueOf(anioActual), 2L, comite.getId());
 
-      numMemoria = sbReferencia.toString();
+        // Se incrementa el número de la memoria para el comité
+        Long numeroUltimaMemoria = 1L;
+        if (ultimaMemoriaComite != null) {
+          numeroUltimaMemoria = Long.valueOf(ultimaMemoriaComite.getNumReferencia().split("/")[2].split("R")[0]);
+          numeroUltimaMemoria++;
+        }
 
-      break;
-    }
-    case 3: {
-      // RATIFICACIÓN
-      // Se recupera la última memoria para el comité seleccionado
-      Memoria ultimaMemoriaComite = memoriaRepository
-          .findFirstByNumReferenciaContainingAndTipoMemoriaIdIsNotAndComiteIdOrderByNumReferenciaDesc(
-              String.valueOf(anioActual), 2L, comite.getId());
+        StringBuffer sbReferencia = new StringBuffer();
+        sbReferencia.append(String.format("%03d", numeroUltimaMemoria)).append("R");
+        numMemoria = sbReferencia.toString();
 
-      // Se incrementa el número de la memoria para el comité
-      Long numeroUltimaMemoria = 1L;
-      if (ultimaMemoriaComite != null) {
-        numeroUltimaMemoria = Long.valueOf(ultimaMemoriaComite.getNumReferencia().split("/")[2].split("R")[0]);
-        numeroUltimaMemoria++;
+        break;
       }
-
-      StringBuffer sbReferencia = new StringBuffer();
-      sbReferencia.append(String.format("%03d", numeroUltimaMemoria)).append("R");
-      numMemoria = sbReferencia.toString();
-
-      break;
-    }
     }
     ;
 

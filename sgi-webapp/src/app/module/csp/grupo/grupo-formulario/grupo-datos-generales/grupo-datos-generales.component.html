@@ -1,0 +1,206 @@
+<sgi-fragment title="{{'label.datos-generales' | translate}}">
+
+  <!-- Formulario editar -->
+  <ng-container *ngIf="formPart.isEdit(); else formCreate">
+    <form [formGroup]="formGroup" fxLayout="column">
+
+      <div fxFlex fxLayout="row" fxLayoutGap="10px">
+        <!-- Nombre -->
+        <mat-form-field>
+          <mat-label>{{'csp.grupo.nombre' | translate}}</mat-label>
+          <input matInput type="text" placeholder="{{'csp.grupo.nombre' | translate}}" formControlName="nombre"
+            required>
+          <mat-error *ngIf="formGroup.controls.nombre.errors?.required">
+            {{ 'error.required.entity' | translate:msgParamNombreEntity }}
+          </mat-error>
+        </mat-form-field>
+      </div>
+
+      <div fxFlex fxLayout="row" fxLayoutGap="10px">
+
+        <!-- Codigo -->
+        <mat-form-field>
+          <mat-label>{{'csp.grupo.codigo' | translate}}</mat-label>
+          <input matInput type="text" placeholder="{{'csp.grupo.nombre' | translate}}" formControlName="codigo"
+            required>
+          <mat-error *ngIf="formGroup.controls.codigo.errors?.required">
+            {{ 'error.required.entity' | translate:msgParamCodigoEntity }}
+          </mat-error>
+          <mat-error *ngIf="formGroup.controls.codigo.errors?.duplicated">
+            {{ 'error.csp.grupo.codigo.duplicated' | translate }}
+          </mat-error>
+        </mat-form-field>
+      </div>
+
+      <div fxFlex fxLayout="row" fxLayoutGap="10px">
+        <!-- Codigo identificacion SGE -->
+        <mat-form-field>
+          <mat-label>{{'csp.grupo.codigo-sge' | translate}}</mat-label>
+          <sgi-select-proyecto-economico formControlName="proyectoSge">
+          </sgi-select-proyecto-economico>
+        </mat-form-field>
+
+        <!-- Fecha inicio -->
+        <mat-form-field>
+          <mat-label>{{'label.fecha-inicio' | translate}}</mat-label>
+          <input matInput formControlName="fechaInicio" [matDatepicker]="pickerInicio" required />
+          <mat-datepicker-toggle matSuffix [for]="pickerInicio"></mat-datepicker-toggle>
+          <mat-datepicker #pickerInicio></mat-datepicker>
+          <mat-error *ngIf="formGroup.controls.fechaInicio.errors?.required">
+            {{ 'error.required.entity' | translate:msgParamFechaInicioEntity }}
+          </mat-error>
+        </mat-form-field>
+
+        <!-- Fecha fin -->
+        <mat-form-field>
+          <mat-label>{{'label.fecha-fin' | translate}}</mat-label>
+          <input matInput formControlName="fechaFin" [matDatepicker]="pickerFin" />
+          <mat-datepicker-toggle matSuffix [for]="pickerFin"></mat-datepicker-toggle>
+          <mat-datepicker #pickerFin></mat-datepicker>
+          <mat-error *ngIf="formGroup.controls.fechaFin.errors?.after">
+            {{'error.after.fecha-fin' | translate}}
+          </mat-error>
+        </mat-form-field>
+      </div>
+
+      <div fxFlex fxLayout="row" fxLayoutGap="10px">
+        <!-- Palabras Clave -->
+        <mat-form-field>
+          <mat-label>{{'csp.grupo.palabras-clave' | translate}}</mat-label>
+          <sgi-palabra-clave formControlName="palabrasClave" id="palabrasClave"
+            placeholder="{{'csp.grupo.palabras-clave' | translate}}"></sgi-palabra-clave>
+        </mat-form-field>
+      </div>
+
+      <div fxFlex fxLayout="row" fxLayoutGap="10px">
+        <!-- Tipo -->
+        <mat-form-field fxFlex="0 1 calc((100% - (10px * 2)) / 3)">
+          <mat-label>{{'csp.grupo.tipo' | translate}}</mat-label>
+          <sgi-select-enum formControlName="tipo" [enumMap]="TIPO_MAP">
+          </sgi-select-enum>
+        </mat-form-field>
+
+        <!-- Grupo especial investigacion -->
+        <mat-form-field fxFlex="0 1 calc((100% - (10px * 2)) / 3)">
+          <mat-label>{{'csp.grupo.especial-investigacion' | translate}}</mat-label>
+          <sgi-select-boolean formControlName="especialInvestigacion">
+          </sgi-select-boolean>
+        </mat-form-field>
+
+      </div>
+
+    </form>
+  </ng-container>
+
+  <!-- Formulario crear -->
+  <ng-template #formCreate>
+    <form [formGroup]="formGroup" fxLayout="column">
+
+      <div fxFlex fxLayout="row" fxLayoutGap="10px">
+        <!-- Nombre -->
+        <mat-form-field>
+          <mat-label>{{'csp.grupo.nombre' | translate}}</mat-label>
+          <input matInput type="text" placeholder="{{'csp.grupo.nombre' | translate}}" formControlName="nombre"
+            required>
+          <mat-error *ngIf="formGroup.controls.nombre.errors?.required">
+            {{ 'error.required.entity' | translate:msgParamNombreEntity }}
+          </mat-error>
+        </mat-form-field>
+      </div>
+
+      <div fxFlex fxLayout="row" fxLayoutGap="10px">
+        <!-- Investigador/a principal -->
+        <mat-form-field>
+          <mat-label>{{'csp.grupo.investigador-principal' | translate}}</mat-label>
+          <sgi-select-persona formControlName="investigadorPrincipal" [colectivos]="colectivosBusqueda" required>
+          </sgi-select-persona>
+          <mat-error *ngIf="formGroup.controls.investigadorPrincipal.errors?.required">
+            {{ 'error.required.entity' | translate:msgParamInvestigadorPrincipalEntity }}
+          </mat-error>
+        </mat-form-field>
+
+        <!-- Departamento -->
+        <mat-form-field>
+          <mat-label>{{'csp.grupo.departamento' | translate}}</mat-label>
+          <input matInput type="text" placeholder="{{'csp.grupo.departamento' | translate}}"
+            formControlName="departamento">
+        </mat-form-field>
+
+        <!-- Codigo -->
+        <mat-form-field>
+          <mat-label>{{'csp.grupo.codigo' | translate}}</mat-label>
+          <input matInput type="text" placeholder="{{'csp.grupo.nombre' | translate}}" formControlName="codigo"
+            required>
+          <mat-error *ngIf="formGroup.controls.codigo.errors?.required">
+            {{ 'error.required.entity' | translate:msgParamCodigoEntity }}
+          </mat-error>
+          <mat-error *ngIf="formGroup.controls.codigo.errors?.duplicated">
+            {{ 'error.csp.grupo.codigo.duplicated' | translate }}
+          </mat-error>
+        </mat-form-field>
+      </div>
+
+      <div fxFlex fxLayout="row" fxLayoutGap="10px">
+        <!-- Codigo identificacion SGE -->
+        <mat-form-field>
+          <mat-label>{{'csp.grupo.codigo-sge' | translate}}</mat-label>
+          <sgi-select-proyecto-economico formControlName="proyectoSge">
+          </sgi-select-proyecto-economico>
+        </mat-form-field>
+
+        <!-- Fecha inicio -->
+        <mat-form-field>
+          <mat-label>{{'label.fecha-inicio' | translate}}</mat-label>
+          <input matInput formControlName="fechaInicio" [matDatepicker]="pickerInicio" required />
+          <mat-datepicker-toggle matSuffix [for]="pickerInicio"></mat-datepicker-toggle>
+          <mat-datepicker #pickerInicio></mat-datepicker>
+          <mat-error *ngIf="formGroup.controls.fechaInicio.errors?.required">
+            {{ 'error.required.entity' | translate:msgParamFechaInicioEntity }}
+          </mat-error>
+        </mat-form-field>
+
+        <!-- Fecha fin -->
+        <mat-form-field>
+          <mat-label>{{'label.fecha-fin' | translate}}</mat-label>
+          <input matInput formControlName="fechaFin" [matDatepicker]="pickerFin" />
+          <mat-datepicker-toggle matSuffix [for]="pickerFin"></mat-datepicker-toggle>
+          <mat-datepicker #pickerFin></mat-datepicker>
+          <mat-error *ngIf="formGroup.controls.fechaFin.errors?.after">
+            {{'error.after.fecha-fin' | translate}}
+          </mat-error>
+        </mat-form-field>
+      </div>
+
+      <div fxFlex fxLayout="row" fxLayoutGap="10px">
+        <!-- Palabras Clave -->
+        <mat-form-field>
+          <mat-label>{{'csp.grupo.palabras-clave' | translate}}</mat-label>
+          <sgi-palabra-clave formControlName="palabrasClave" id="palabrasClave"
+            placeholder="{{'csp.grupo.palabras-clave' | translate}}"></sgi-palabra-clave>
+        </mat-form-field>
+      </div>
+
+      <div fxFlex fxLayout="row" fxLayoutGap="10px">
+        <!-- Tipo -->
+        <mat-form-field fxFlex="0 1 calc((100% - (10px * 2)) / 3)">
+          <mat-label>{{'csp.grupo.tipo' | translate}}</mat-label>
+          <sgi-select-enum formControlName="tipo" [enumMap]="TIPO_MAP">
+          </sgi-select-enum>
+        </mat-form-field>
+
+        <!-- Grupo especial investigacion -->
+        <mat-form-field fxFlex="0 1 calc((100% - (10px * 2)) / 3)">
+          <mat-label>{{'csp.grupo.especial-investigacion' | translate}}</mat-label>
+          <sgi-select-boolean formControlName="especialInvestigacion" required>
+          </sgi-select-boolean>
+          <mat-error *ngIf="formGroup.controls.especialInvestigacion.errors?.required">
+            {{ 'error.required.entity' | translate:msgParamEspecialInvestigacionEntity }}
+          </mat-error>
+        </mat-form-field>
+
+      </div>
+
+    </form>
+  </ng-template>
+
+</sgi-fragment>

@@ -35,8 +35,11 @@ public class ProyectoFacturacionController {
 
   /**
    * persiste un objeto de tipo {@link ProyectoFacturacion} en la base de datos
-   * @param input objeto de tipo {@link ProyectoFacturacionInput} con la información del objeto que se va a crear
-   * @return objeto de tipo {@link ProyectoFacturacionOutput} con la información del objeto creado
+   * 
+   * @param input objeto de tipo {@link ProyectoFacturacionInput} con la
+   *              información del objeto que se va a crear
+   * @return objeto de tipo {@link ProyectoFacturacionOutput} con la información
+   *         del objeto creado
    */
   @PreAuthorize("hasAuthorityForAnyUO('CSP-PRO-E')")
   @PostMapping
@@ -47,11 +50,14 @@ public class ProyectoFacturacionController {
 
   /**
    * Actualiza un objeto de tipo {@link ProyectoFacturacion}
-   * @param id {@link Long} id del objeto a actualizar
-   * @param toUpdate objeto de tipo {@link ProyectoFacturacionInput} con la información a actualizar
-   * @return objeto de tipo {@link ProyectoFacturacionOutput} con la copia del objeto que se ha actualizado
+   * 
+   * @param id       {@link Long} id del objeto a actualizar
+   * @param toUpdate objeto de tipo {@link ProyectoFacturacionInput} con la
+   *                 información a actualizar
+   * @return objeto de tipo {@link ProyectoFacturacionOutput} con la copia del
+   *         objeto que se ha actualizado
    */
-  @PreAuthorize("hasAuthorityForAnyUO('CSP-PRO-E')")
+  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-PRO-E','CSP-PRO-INV-VR')")
   @PutMapping("/{id}")
   public ResponseEntity<ProyectoFacturacionOutput> update(@PathVariable(required = true) Long id,
       @Valid @RequestBody ProyectoFacturacionInput toUpdate) {
@@ -61,6 +67,7 @@ public class ProyectoFacturacionController {
 
   /**
    * Elimina un objeto de tipo {@link ProyectoFacturacion} de la base de datos
+   * 
    * @param id {@link Long} id del objeto a eliminar
    */
   @DeleteMapping("/{id}")

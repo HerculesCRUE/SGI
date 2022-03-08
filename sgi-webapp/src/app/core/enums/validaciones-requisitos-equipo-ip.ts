@@ -12,7 +12,9 @@ export enum ValidacionRequisitosEquipoIp {
   FECHA_OBTENCION_CATEGORIA_PROFESIONAL_DESCONOCIDA = 'FECHA_OBTENCION_CATEGORIA_PROFESIONAL_DESCONOCIDA',
   EDAD_DESCONOCIDA = 'EDAD_DESCONOCIDA',
   EDAD_MAX = 'EDAD_MAX',
-  SEXO = 'SEXO'
+  SEXO = 'SEXO',
+  RATIO_SEXO = 'RATIO_SEXO',
+  NUM_MAX_IP = 'NUM_MAX_IP'
 }
 
 export const VALIDACION_REQUISITOS_EQUIPO_IP_MAP: Map<ValidacionRequisitosEquipoIp, string> = new Map([
@@ -27,5 +29,7 @@ export const VALIDACION_REQUISITOS_EQUIPO_IP_MAP: Map<ValidacionRequisitosEquipo
   [ValidacionRequisitosEquipoIp.FECHA_OBTENCION_CATEGORIA_PROFESIONAL_DESCONOCIDA, marker('csp.validacion-requisitos-equipo-ip.FECHA_OBTENCION_CATEGORIA_PROFESIONAL_DESCONOCIDA')],
   [ValidacionRequisitosEquipoIp.EDAD_DESCONOCIDA, marker('csp.validacion-requisitos-equipo-ip.EDAD_DESCONOCIDA')],
   [ValidacionRequisitosEquipoIp.EDAD_MAX, marker('csp.validacion-requisitos-equipo-ip.EDAD_MAX')],
-  [ValidacionRequisitosEquipoIp.SEXO, marker('csp.validacion-requisitos-equipo-ip.SEXO')]
+  [ValidacionRequisitosEquipoIp.SEXO, marker('csp.validacion-requisitos-equipo-ip.SEXO')],
+  [ValidacionRequisitosEquipoIp.RATIO_SEXO, marker('csp.validacion-requisitos-equipo-ip.RATIO_SEXO')],
+  [ValidacionRequisitosEquipoIp.NUM_MAX_IP, marker('csp.validacion-requisitos-equipo-ip.NUM_MAX_IP')]
 ]);

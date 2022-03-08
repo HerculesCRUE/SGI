@@ -1,0 +1,822 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:pro="http://www.liquibase.org/xml/ns/pro" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-3.8.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+  <changeSet context="dev" author="master" id="0000000000000-produccion_cientifica">
+    <insert tableName="produccion_cientifica">
+      <column name="id" valueSequenceNext="produccion_cientifica_seq" />
+      <column name="produccion_cientifica_ref" value="produccion-cientifica-ref-001" />
+      <column name="epigrafe_cvn" value="060.010.010.000" />
+    </insert>
+    <insert tableName="produccion_cientifica">
+      <column name="id" valueSequenceNext="produccion_cientifica_seq" />
+      <column name="produccion_cientifica_ref" value="produccion-cientifica-ref-002" />
+      <column name="epigrafe_cvn" value="060.010.010.000" />
+    </insert>
+    <insert tableName="produccion_cientifica">
+      <column name="id" valueSequenceNext="produccion_cientifica_seq" />
+      <column name="produccion_cientifica_ref" value="produccion-cientifica-ref-003" />
+      <column name="epigrafe_cvn" value="060.010.010.000" />
+    </insert>
+  </changeSet>
+  <changeSet context="dev" author="master" id="0000000000000-estado_produccion_cientifica">
+    <insert tableName="estado_produccion_cientifica">
+      <column name="id" valueSequenceNext="estado_produccion_cientifica_seq" />
+      <column name="comentario" value="Comentario" />
+      <column name="fecha" valueDate="2021-12-22T23:00:00" />
+      <column name="produccion_cientifica_id" valueNumeric="1" />
+      <column name="estado" value="VALIDADO" />
+    </insert>
+    <insert tableName="estado_produccion_cientifica">
+      <column name="id" valueSequenceNext="estado_produccion_cientifica_seq" />
+      <column name="comentario" value="Comentario" />
+      <column name="fecha" valueDate="2022-01-12T23:00:00" />
+      <column name="produccion_cientifica_id" valueNumeric="2" />
+      <column name="estado" value="PENDIENTE" />
+    </insert>
+    <insert tableName="estado_produccion_cientifica">
+      <column name="id" valueSequenceNext="estado_produccion_cientifica_seq" />
+      <column name="comentario" value="Comentario" />
+      <column name="fecha" valueDate="2022-01-24T23:00:00" />
+      <column name="produccion_cientifica_id" valueNumeric="3" />
+      <column name="estado" value="PENDIENTE" />
+    </insert>
+    <update tableName="produccion_cientifica">
+      <column name="estado_produccion_cientifica_id" valueNumeric="1" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="produccion_cientifica_ref" value="produccion-cientifica-ref-001" />
+      </whereParams>
+    </update>
+    <update tableName="produccion_cientifica">
+      <column name="estado_produccion_cientifica_id" valueNumeric="2" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="produccion_cientifica_ref" value="produccion-cientifica-ref-002" />
+      </whereParams>
+    </update>
+    <update tableName="produccion_cientifica">
+      <column name="estado_produccion_cientifica_id" valueNumeric="3" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="produccion_cientifica_ref" value="produccion-cientifica-ref-003" />
+      </whereParams>
+    </update>
+  </changeSet>
+  <changeSet context="dev" author="master" id="0000000000000-campo_produccion_cientifica">
+    <!-- Publicación 1 -->
+    <!-- ISBN - ISSN publicación  -->
+    <insert tableName="campo_produccion_cientifica">
+      <column name="id" valueSequenceNext="campo_produccion_cientifica_seq" />
+      <column name="produccion_cientifica_id" valueNumeric="1" />
+      <column name="codigo_cvn" value="060.010.010.160" />
+    </insert>
+    <!-- Tipo de producción -->
+    <insert tableName="campo_produccion_cientifica">
+      <column name="id" valueSequenceNext="campo_produccion_cientifica_seq" />
+      <column name="produccion_cientifica_id" valueNumeric="1" />
+      <column name="codigo_cvn" value="060.010.010.010" />
+    </insert>
+    <!-- Título de la publicación  -->
+    <insert tableName="campo_produccion_cientifica">
+      <column name="id" valueSequenceNext="campo_produccion_cientifica_seq" />
+      <column name="produccion_cientifica_id" valueNumeric="1" />
+      <column name="codigo_cvn" value="060.010.010.030" />
+    </insert>
+    <!-- Fecha de la publicación  -->
+    <insert tableName="campo_produccion_cientifica">
+      <column name="id" valueSequenceNext="campo_produccion_cientifica_seq" />
+      <column name="produccion_cientifica_id" valueNumeric="1" />
+      <column name="codigo_cvn" value="060.010.010.140" />
+    </insert>
+    <!-- Tipo de soporte  -->
+    <insert tableName="campo_produccion_cientifica">
+      <column name="id" valueSequenceNext="campo_produccion_cientifica_seq" />
+      <column name="produccion_cientifica_id" valueNumeric="1" />
+      <column name="codigo_cvn" value="060.010.010.070" />
+    </insert>
+    <!-- Nombre de la publicación  -->
+    <insert tableName="campo_produccion_cientifica">
+      <column name="id" valueSequenceNext="campo_produccion_cientifica_seq" />
+      <column name="produccion_cientifica_id" valueNumeric="1" />
+      <column name="codigo_cvn" value="060.010.010.210" />
+    </insert>
+    <!-- Editorial  -->
+    <insert tableName="campo_produccion_cientifica">
+      <column name="id" valueSequenceNext="campo_produccion_cientifica_seq" />
+      <column name="produccion_cientifica_id" valueNumeric="1" />
+      <column name="codigo_cvn" value="060.010.010.100" />
+    </insert>
+    <!-- Volumen - Número  -->
+    <insert tableName="campo_produccion_cientifica">
+      <column name="id" valueSequenceNext="campo_produccion_cientifica_seq" />
+      <column name="produccion_cientifica_id" valueNumeric="1" />
+      <column name="codigo_cvn" value="060.010.010.080" />
+    </insert>
+    <!-- Página inicial - final  -->
+    <insert tableName="campo_produccion_cientifica">
+      <column name="id" valueSequenceNext="campo_produccion_cientifica_seq" />
+      <column name="produccion_cientifica_id" valueNumeric="1" />
+      <column name="codigo_cvn" value="060.010.010.090" />
+    </insert>
+    <!-- Identificadores digitales  -->
+    <insert tableName="campo_produccion_cientifica">
+      <column name="id" valueSequenceNext="campo_produccion_cientifica_seq" />
+      <column name="produccion_cientifica_id" valueNumeric="1" />
+      <column name="codigo_cvn" value="060.010.010.400" />
+    </insert>
+    <!-- Tipo identificadores digitales  -->
+    <insert tableName="campo_produccion_cientifica">
+      <column name="id" valueSequenceNext="campo_produccion_cientifica_seq" />
+      <column name="produccion_cientifica_id" valueNumeric="1" />
+      <column name="codigo_cvn" value="060.010.010.410" />
+    </insert>
+    <!-- Autor/a de correspondencia  -->
+    <insert tableName="campo_produccion_cientifica">
+      <column name="id" valueSequenceNext="campo_produccion_cientifica_seq" />
+      <column name="produccion_cientifica_id" valueNumeric="1" />
+      <column name="codigo_cvn" value="060.010.010.390" />
+    </insert>
+    <!-- Tipo Open Access  -->
+    <insert tableName="campo_produccion_cientifica">
+      <column name="id" valueSequenceNext="campo_produccion_cientifica_seq" />
+      <column name="produccion_cientifica_id" valueNumeric="1" />
+      <column name="codigo_cvn" value="TIPO_OPEN_ACCESS" />
+    </insert>
+    <!-- Indice normalizado  -->
+    <insert tableName="campo_produccion_cientifica">
+      <column name="id" valueSequenceNext="campo_produccion_cientifica_seq" />
+      <column name="produccion_cientifica_id" valueNumeric="1" />
+      <column name="codigo_cvn" value="INDICE_NORMALIZADO" />
+    </insert>
+    <!-- Publicación relevante  -->
+    <insert tableName="campo_produccion_cientifica">
+      <column name="id" valueSequenceNext="campo_produccion_cientifica_seq" />
+      <column name="produccion_cientifica_id" valueNumeric="1" />
+      <column name="codigo_cvn" value="060.010.010.300" />
+    </insert>
+    <!-- Publicación muy televante  -->
+    <insert tableName="campo_produccion_cientifica">
+      <column name="id" valueSequenceNext="campo_produccion_cientifica_seq" />
+      <column name="produccion_cientifica_id" valueNumeric="1" />
+      <column name="codigo_cvn" value="PUBLICACION_MUY_RELEVANTE" />
+    </insert>
+    <!-- Internacional  -->
+    <insert tableName="campo_produccion_cientifica">
+      <column name="id" valueSequenceNext="campo_produccion_cientifica_seq" />
+      <column name="produccion_cientifica_id" valueNumeric="1" />
+      <column name="codigo_cvn" value="INTERNACIONAL" />
+    </insert>
+    <!-- Interdisciplinar  -->
+    <insert tableName="campo_produccion_cientifica">
+      <column name="id" valueSequenceNext="campo_produccion_cientifica_seq" />
+      <column name="produccion_cientifica_id" valueNumeric="1" />
+      <column name="codigo_cvn" value="INTERDISCIPLINAR" />
+    </insert>
+
+
+    <!-- Publicación 2 -->
+    <!-- ISBN - ISSN publicación  -->
+    <insert tableName="campo_produccion_cientifica">
+      <column name="id" valueSequenceNext="campo_produccion_cientifica_seq" />
+      <column name="produccion_cientifica_id" valueNumeric="2" />
+      <column name="codigo_cvn" value="060.010.010.160" />
+    </insert>
+    <!-- Tipo de producción -->
+    <insert tableName="campo_produccion_cientifica">
+      <column name="id" valueSequenceNext="campo_produccion_cientifica_seq" />
+      <column name="produccion_cientifica_id" valueNumeric="2" />
+      <column name="codigo_cvn" value="060.010.010.010" />
+    </insert>
+    <!-- Título de la publicación  -->
+    <insert tableName="campo_produccion_cientifica">
+      <column name="id" valueSequenceNext="campo_produccion_cientifica_seq" />
+      <column name="produccion_cientifica_id" valueNumeric="2" />
+      <column name="codigo_cvn" value="060.010.010.030" />
+    </insert>
+    <!-- Fecha de la publicación  -->
+    <insert tableName="campo_produccion_cientifica">
+      <column name="id" valueSequenceNext="campo_produccion_cientifica_seq" />
+      <column name="produccion_cientifica_id" valueNumeric="2" />
+      <column name="codigo_cvn" value="060.010.010.140" />
+    </insert>
+    <!-- Tipo de soporte  -->
+    <insert tableName="campo_produccion_cientifica">
+      <column name="id" valueSequenceNext="campo_produccion_cientifica_seq" />
+      <column name="produccion_cientifica_id" valueNumeric="2" />
+      <column name="codigo_cvn" value="060.010.010.070" />
+    </insert>
+    <!-- Nombre de la publicación  -->
+    <insert tableName="campo_produccion_cientifica">
+      <column name="id" valueSequenceNext="campo_produccion_cientifica_seq" />
+      <column name="produccion_cientifica_id" valueNumeric="2" />
+      <column name="codigo_cvn" value="060.010.010.210" />
+    </insert>
+    <!-- Editorial  -->
+    <insert tableName="campo_produccion_cientifica">
+      <column name="id" valueSequenceNext="campo_produccion_cientifica_seq" />
+      <column name="produccion_cientifica_id" valueNumeric="2" />
+      <column name="codigo_cvn" value="060.010.010.100" />
+    </insert>
+    <!-- Volumen - Número  -->
+    <insert tableName="campo_produccion_cientifica">
+      <column name="id" valueSequenceNext="campo_produccion_cientifica_seq" />
+      <column name="produccion_cientifica_id" valueNumeric="2" />
+      <column name="codigo_cvn" value="060.010.010.080" />
+    </insert>
+    <!-- Página inicial - final  -->
+    <insert tableName="campo_produccion_cientifica">
+      <column name="id" valueSequenceNext="campo_produccion_cientifica_seq" />
+      <column name="produccion_cientifica_id" valueNumeric="2" />
+      <column name="codigo_cvn" value="060.010.010.090" />
+    </insert>
+    <!-- Identificadores digitales  -->
+    <insert tableName="campo_produccion_cientifica">
+      <column name="id" valueSequenceNext="campo_produccion_cientifica_seq" />
+      <column name="produccion_cientifica_id" valueNumeric="2" />
+      <column name="codigo_cvn" value="060.010.010.400" />
+    </insert>
+    <!-- Tipo identificadores digitales  -->
+    <insert tableName="campo_produccion_cientifica">
+      <column name="id" valueSequenceNext="campo_produccion_cientifica_seq" />
+      <column name="produccion_cientifica_id" valueNumeric="2" />
+      <column name="codigo_cvn" value="060.010.010.410" />
+    </insert>
+    <!-- Autor/a de correspondencia  -->
+    <insert tableName="campo_produccion_cientifica">
+      <column name="id" valueSequenceNext="campo_produccion_cientifica_seq" />
+      <column name="produccion_cientifica_id" valueNumeric="2" />
+      <column name="codigo_cvn" value="060.010.010.390" />
+    </insert>
+    <!-- Tipo Open Access  -->
+    <insert tableName="campo_produccion_cientifica">
+      <column name="id" valueSequenceNext="campo_produccion_cientifica_seq" />
+      <column name="produccion_cientifica_id" valueNumeric="2" />
+      <column name="codigo_cvn" value="TIPO_OPEN_ACCESS" />
+    </insert>
+    <!-- Indice normalizado  -->
+    <insert tableName="campo_produccion_cientifica">
+      <column name="id" valueSequenceNext="campo_produccion_cientifica_seq" />
+      <column name="produccion_cientifica_id" valueNumeric="2" />
+      <column name="codigo_cvn" value="INDICE_NORMALIZADO" />
+    </insert>
+    <!-- Publicación relevante  -->
+    <insert tableName="campo_produccion_cientifica">
+      <column name="id" valueSequenceNext="campo_produccion_cientifica_seq" />
+      <column name="produccion_cientifica_id" valueNumeric="2" />
+      <column name="codigo_cvn" value="060.010.010.300" />
+    </insert>
+    <!-- Publicación muy televante  -->
+    <insert tableName="campo_produccion_cientifica">
+      <column name="id" valueSequenceNext="campo_produccion_cientifica_seq" />
+      <column name="produccion_cientifica_id" valueNumeric="2" />
+      <column name="codigo_cvn" value="PUBLICACION_MUY_RELEVANTE" />
+    </insert>
+    <!-- Internacional  -->
+    <insert tableName="campo_produccion_cientifica">
+      <column name="id" valueSequenceNext="campo_produccion_cientifica_seq" />
+      <column name="produccion_cientifica_id" valueNumeric="2" />
+      <column name="codigo_cvn" value="INTERNACIONAL" />
+    </insert>
+    <!-- Interdisciplinar  -->
+    <insert tableName="campo_produccion_cientifica">
+      <column name="id" valueSequenceNext="campo_produccion_cientifica_seq" />
+      <column name="produccion_cientifica_id" valueNumeric="2" />
+      <column name="codigo_cvn" value="INTERDISCIPLINAR" />
+    </insert>
+
+
+    <!-- Publicación 3 -->
+    <!-- ISBN - ISSN publicación  -->
+    <insert tableName="campo_produccion_cientifica">
+      <column name="id" valueSequenceNext="campo_produccion_cientifica_seq" />
+      <column name="produccion_cientifica_id" valueNumeric="3" />
+      <column name="codigo_cvn" value="060.010.010.160" />
+    </insert>
+    <!-- Tipo de producción -->
+    <insert tableName="campo_produccion_cientifica">
+      <column name="id" valueSequenceNext="campo_produccion_cientifica_seq" />
+      <column name="produccion_cientifica_id" valueNumeric="3" />
+      <column name="codigo_cvn" value="060.010.010.010" />
+    </insert>
+    <!-- Título de la publicación  -->
+    <insert tableName="campo_produccion_cientifica">
+      <column name="id" valueSequenceNext="campo_produccion_cientifica_seq" />
+      <column name="produccion_cientifica_id" valueNumeric="3" />
+      <column name="codigo_cvn" value="060.010.010.030" />
+    </insert>
+    <!-- Fecha de la publicación  -->
+    <insert tableName="campo_produccion_cientifica">
+      <column name="id" valueSequenceNext="campo_produccion_cientifica_seq" />
+      <column name="produccion_cientifica_id" valueNumeric="3" />
+      <column name="codigo_cvn" value="060.010.010.140" />
+    </insert>
+  </changeSet>
+  <changeSet context="dev" author="master" id="0000000000000-valor_campo">
+    <!-- Publicación 1 -->
+    <!-- ISBN - ISSN publicación  -->
+    <insert tableName="valor_campo">
+      <column name="id" valueSequenceNext="valor_campo_seq" />
+      <column name="campo_produccion_cientifica_id" valueNumeric="1" />
+      <column name="orden" valueNumeric="1" />
+      <column name="valor" value="1000" />
+    </insert>
+    <!-- Tipo de producción -->
+    <insert tableName="valor_campo">
+      <column name="id" valueSequenceNext="valor_campo_seq" />
+      <column name="campo_produccion_cientifica_id" valueNumeric="2" />
+      <column name="orden" valueNumeric="1" />
+      <column name="valor" value="004" />
+    </insert>
+    <!-- Título de la publicación  -->
+    <insert tableName="valor_campo">
+      <column name="id" valueSequenceNext="valor_campo_seq" />
+      <column name="campo_produccion_cientifica_id" valueNumeric="3" />
+      <column name="orden" valueNumeric="1" />
+      <column name="valor" value="Título de la publicación 1" />
+    </insert>
+    <!-- Fecha de la publicación  -->
+    <insert tableName="valor_campo">
+      <column name="id" valueSequenceNext="valor_campo_seq" />
+      <column name="campo_produccion_cientifica_id" valueNumeric="4" />
+      <column name="orden" valueNumeric="1" />
+      <column name="valor" value="2021-12-03T23:00:00Z" />
+    </insert>
+    <!-- Tipo de soporte  -->
+    <insert tableName="valor_campo">
+      <column name="id" valueSequenceNext="valor_campo_seq" />
+      <column name="campo_produccion_cientifica_id" valueNumeric="5" />
+      <column name="orden" valueNumeric="1" />
+      <column name="valor" value="006" />
+    </insert>
+    <!-- Nombre de la publicación  -->
+    <insert tableName="valor_campo">
+      <column name="id" valueSequenceNext="valor_campo_seq" />
+      <column name="campo_produccion_cientifica_id" valueNumeric="6" />
+      <column name="orden" valueNumeric="1" />
+      <column name="valor" value="Publicacion 1" />
+    </insert>
+    <!-- Editorial  -->
+    <insert tableName="valor_campo">
+      <column name="id" valueSequenceNext="valor_campo_seq" />
+      <column name="campo_produccion_cientifica_id" valueNumeric="7" />
+      <column name="orden" valueNumeric="1" />
+      <column name="valor" value="Editorial 1" />
+    </insert>
+    <!-- Volumen - Número  -->
+    <insert tableName="valor_campo">
+      <column name="id" valueSequenceNext="valor_campo_seq" />
+      <column name="campo_produccion_cientifica_id" valueNumeric="8" />
+      <column name="orden" valueNumeric="1" />
+      <column name="valor" value="Volumen 1" />
+    </insert>
+    <!-- Volumen - Número  -->
+    <insert tableName="valor_campo">
+      <column name="id" valueSequenceNext="valor_campo_seq" />
+      <column name="campo_produccion_cientifica_id" valueNumeric="8" />
+      <column name="orden" valueNumeric="2" />
+      <column name="valor" value="Volumen 2" />
+    </insert>
+    <!-- Página inicial - final  -->
+    <insert tableName="valor_campo">
+      <column name="id" valueSequenceNext="valor_campo_seq" />
+      <column name="campo_produccion_cientifica_id" valueNumeric="9" />
+      <column name="orden" valueNumeric="1" />
+      <column name="valor" value="Página 1" />
+    </insert>
+    <!-- Página inicial - final  -->
+    <insert tableName="valor_campo">
+      <column name="id" valueSequenceNext="valor_campo_seq" />
+      <column name="campo_produccion_cientifica_id" valueNumeric="9" />
+      <column name="orden" valueNumeric="2" />
+      <column name="valor" value="Página 100" />
+    </insert>
+    <!-- Identificadores digitales  -->
+    <insert tableName="valor_campo">
+      <column name="id" valueSequenceNext="valor_campo_seq" />
+      <column name="campo_produccion_cientifica_id" valueNumeric="10" />
+      <column name="orden" valueNumeric="1" />
+      <column name="valor" value="Identificador digital 1" />
+    </insert>
+    <!-- Tipo identificadores digitales  -->
+    <insert tableName="valor_campo">
+      <column name="id" valueSequenceNext="valor_campo_seq" />
+      <column name="campo_produccion_cientifica_id" valueNumeric="11" />
+      <column name="orden" valueNumeric="1" />
+      <column name="valor" value="040" />
+    </insert>
+    <!-- Autor/a de correspondencia  -->
+    <insert tableName="valor_campo">
+      <column name="id" valueSequenceNext="valor_campo_seq" />
+      <column name="campo_produccion_cientifica_id" valueNumeric="12" />
+      <column name="orden" valueNumeric="1" />
+      <column name="valor" value="Fulanita Díaz" />
+    </insert>
+    <!-- Tipo Open Access  -->
+    <insert tableName="valor_campo">
+      <column name="id" valueSequenceNext="valor_campo_seq" />
+      <column name="campo_produccion_cientifica_id" valueNumeric="13" />
+      <column name="orden" valueNumeric="1" />
+      <column name="valor" value="ALL" />
+    </insert>
+    <!-- Indice normalizado  -->
+    <insert tableName="valor_campo">
+      <column name="id" valueSequenceNext="valor_campo_seq" />
+      <column name="campo_produccion_cientifica_id" valueNumeric="14" />
+      <column name="orden" valueNumeric="2" />
+      <column name="valor" value="1" />
+    </insert>
+    <!-- Indice normalizado  -->
+    <insert tableName="valor_campo">
+      <column name="id" valueSequenceNext="valor_campo_seq" />
+      <column name="campo_produccion_cientifica_id" valueNumeric="14" />
+      <column name="orden" valueNumeric="1" />
+      <column name="valor" value="100" />
+    </insert>
+    <!-- Publicación relevante  -->
+    <insert tableName="valor_campo">
+      <column name="id" valueSequenceNext="valor_campo_seq" />
+      <column name="campo_produccion_cientifica_id" valueNumeric="15" />
+      <column name="orden" valueNumeric="1" />
+      <column name="valor" value="true" />
+    </insert>
+    <!-- Publicación muy televante  -->
+    <insert tableName="valor_campo">
+      <column name="id" valueSequenceNext="valor_campo_seq" />
+      <column name="campo_produccion_cientifica_id" valueNumeric="16" />
+      <column name="orden" valueNumeric="1" />
+      <column name="valor" value="false" />
+    </insert>
+    <!-- Internacional  -->
+    <insert tableName="valor_campo">
+      <column name="id" valueSequenceNext="valor_campo_seq" />
+      <column name="campo_produccion_cientifica_id" valueNumeric="17" />
+      <column name="orden" valueNumeric="1" />
+      <column name="valor" value="false" />
+    </insert>
+    <!-- Interdisciplinar  -->
+    <insert tableName="valor_campo">
+      <column name="id" valueSequenceNext="valor_campo_seq" />
+      <column name="campo_produccion_cientifica_id" valueNumeric="18" />
+      <column name="orden" valueNumeric="1" />
+      <column name="valor" value="false" />
+    </insert>
+
+
+    <!-- Publicación 2 -->
+    <!-- ISBN - ISSN publicación  -->
+    <insert tableName="valor_campo">
+      <column name="id" valueSequenceNext="valor_campo_seq" />
+      <column name="campo_produccion_cientifica_id" valueNumeric="19" />
+      <column name="orden" valueNumeric="1" />
+      <column name="valor" value="1001" />
+    </insert>
+    <!-- Tipo de producción -->
+    <insert tableName="valor_campo">
+      <column name="id" valueSequenceNext="valor_campo_seq" />
+      <column name="campo_produccion_cientifica_id" valueNumeric="20" />
+      <column name="orden" valueNumeric="1" />
+      <column name="valor" value="202" />
+    </insert>
+    <!-- Título de la publicación  -->
+    <insert tableName="valor_campo">
+      <column name="id" valueSequenceNext="valor_campo_seq" />
+      <column name="campo_produccion_cientifica_id" valueNumeric="21" />
+      <column name="orden" valueNumeric="1" />
+      <column name="valor" value="Título de la publicación 2" />
+    </insert>
+    <!-- Fecha de la publicación  -->
+    <insert tableName="valor_campo">
+      <column name="id" valueSequenceNext="valor_campo_seq" />
+      <column name="campo_produccion_cientifica_id" valueNumeric="22" />
+      <column name="orden" valueNumeric="1" />
+      <column name="valor" value="2022-01-15T23:00:00Z" />
+    </insert>
+    <!-- Tipo de soporte  -->
+    <insert tableName="valor_campo">
+      <column name="id" valueSequenceNext="valor_campo_seq" />
+      <column name="campo_produccion_cientifica_id" valueNumeric="23" />
+      <column name="orden" valueNumeric="1" />
+      <column name="valor" value="018" />
+    </insert>
+    <!-- Nombre de la publicación  -->
+    <insert tableName="valor_campo">
+      <column name="id" valueSequenceNext="valor_campo_seq" />
+      <column name="campo_produccion_cientifica_id" valueNumeric="24" />
+      <column name="orden" valueNumeric="1" />
+      <column name="valor" value="Publicacion 2" />
+    </insert>
+    <!-- Editorial  -->
+    <insert tableName="valor_campo">
+      <column name="id" valueSequenceNext="valor_campo_seq" />
+      <column name="campo_produccion_cientifica_id" valueNumeric="25" />
+      <column name="orden" valueNumeric="1" />
+      <column name="valor" value="Editorial 2" />
+    </insert>
+    <!-- Volumen - Número  -->
+    <insert tableName="valor_campo">
+      <column name="id" valueSequenceNext="valor_campo_seq" />
+      <column name="campo_produccion_cientifica_id" valueNumeric="26" />
+      <column name="orden" valueNumeric="1" />
+      <column name="valor" value="Volumen 2" />
+    </insert>
+    <!-- Página inicial - final  -->
+    <insert tableName="valor_campo">
+      <column name="id" valueSequenceNext="valor_campo_seq" />
+      <column name="campo_produccion_cientifica_id" valueNumeric="27" />
+      <column name="orden" valueNumeric="1" />
+      <column name="valor" value="Página 2" />
+    </insert>
+    <!-- Identificadores digitales  -->
+    <insert tableName="valor_campo">
+      <column name="id" valueSequenceNext="valor_campo_seq" />
+      <column name="campo_produccion_cientifica_id" valueNumeric="28" />
+      <column name="orden" valueNumeric="1" />
+      <column name="valor" value="Identificador digital 2" />
+    </insert>
+    <!-- Tipo identificadores digitales  -->
+    <insert tableName="valor_campo">
+      <column name="id" valueSequenceNext="valor_campo_seq" />
+      <column name="campo_produccion_cientifica_id" valueNumeric="29" />
+      <column name="orden" valueNumeric="1" />
+      <column name="valor" value="120" />
+    </insert>
+    <!-- Autor/a de correspondencia  -->
+    <insert tableName="valor_campo">
+      <column name="id" valueSequenceNext="valor_campo_seq" />
+      <column name="campo_produccion_cientifica_id" valueNumeric="30" />
+      <column name="orden" valueNumeric="1" />
+      <column name="valor" value="Lolo Lomo Ferrer" />
+    </insert>
+    <!-- Tipo Open Access  -->
+    <insert tableName="valor_campo">
+      <column name="id" valueSequenceNext="valor_campo_seq" />
+      <column name="campo_produccion_cientifica_id" valueNumeric="31" />
+      <column name="orden" valueNumeric="1" />
+      <column name="valor" value="GOLD" />
+    </insert>
+    <!-- Indice normalizado  -->
+    <insert tableName="valor_campo">
+      <column name="id" valueSequenceNext="valor_campo_seq" />
+      <column name="campo_produccion_cientifica_id" valueNumeric="32" />
+      <column name="orden" valueNumeric="1" />
+      <column name="valor" value="2" />
+    </insert>
+    <!-- Publicación relevante  -->
+    <insert tableName="valor_campo">
+      <column name="id" valueSequenceNext="valor_campo_seq" />
+      <column name="campo_produccion_cientifica_id" valueNumeric="33" />
+      <column name="orden" valueNumeric="1" />
+      <column name="valor" value="false" />
+    </insert>
+    <!-- Publicación muy televante  -->
+    <insert tableName="valor_campo">
+      <column name="id" valueSequenceNext="valor_campo_seq" />
+      <column name="campo_produccion_cientifica_id" valueNumeric="34" />
+      <column name="orden" valueNumeric="1" />
+      <column name="valor" value="true" />
+    </insert>
+    <!-- Internacional  -->
+    <insert tableName="valor_campo">
+      <column name="id" valueSequenceNext="valor_campo_seq" />
+      <column name="campo_produccion_cientifica_id" valueNumeric="35" />
+      <column name="orden" valueNumeric="1" />
+      <column name="valor" value="true" />
+    </insert>
+    <!-- Interdisciplinar  -->
+    <insert tableName="valor_campo">
+      <column name="id" valueSequenceNext="valor_campo_seq" />
+      <column name="campo_produccion_cientifica_id" valueNumeric="36" />
+      <column name="orden" valueNumeric="1" />
+      <column name="valor" value="true" />
+    </insert>
+
+
+    <!-- Publicación 3 -->
+    <!-- ISBN - ISSN publicación  -->
+    <insert tableName="valor_campo">
+      <column name="id" valueSequenceNext="valor_campo_seq" />
+      <column name="campo_produccion_cientifica_id" valueNumeric="37" />
+      <column name="orden" valueNumeric="1" />
+      <column name="valor" value="1002" />
+    </insert>
+    <!-- Tipo de producción -->
+    <insert tableName="valor_campo">
+      <column name="id" valueSequenceNext="valor_campo_seq" />
+      <column name="campo_produccion_cientifica_id" valueNumeric="38" />
+      <column name="orden" valueNumeric="1" />
+      <column name="valor" value="207" />
+    </insert>
+    <!-- Título de la publicación  -->
+    <insert tableName="valor_campo">
+      <column name="id" valueSequenceNext="valor_campo_seq" />
+      <column name="campo_produccion_cientifica_id" valueNumeric="39" />
+      <column name="orden" valueNumeric="1" />
+      <column name="valor" value="Título de la publicación 3" />
+    </insert>
+    <!-- Fecha de la publicación  -->
+    <insert tableName="valor_campo">
+      <column name="id" valueSequenceNext="valor_campo_seq" />
+      <column name="campo_produccion_cientifica_id" valueNumeric="40" />
+      <column name="orden" valueNumeric="1" />
+      <column name="valor" value="2022-02-01T23:00:00Z" />
+    </insert>
+  </changeSet>
+
+  <changeSet context="dev" author="master" id="0000000000000-autor">
+    <insert tableName="autor">
+      <!-- 1 -->
+      <column name="id" valueSequenceNext="autor_seq" />
+      <column name="apellidos" value="null" />
+      <column name="fecha_fin" valueDate="null" />
+      <column name="fecha_inicio" valueDate="null" />
+      <column name="firma" value="firma1" />
+      <column name="ip" valueBoolean="false" />
+      <column name="nombre" value="null" />
+      <column name="orcid_id" value="orcid_id1" />
+      <column name="orden" valueNumeric="1" />
+      <column name="persona_ref" value="null" />
+      <column name="produccion_cientifica_id" valueNumeric="1" />
+    </insert>
+    <insert tableName="autor">
+      <!-- 2 -->
+      <column name="id" valueSequenceNext="autor_seq" />
+      <column name="apellidos" value="null" />
+      <column name="fecha_fin" valueDate="null" />
+      <column name="fecha_inicio" valueDate="null" />
+      <column name="firma" value="null" />
+      <column name="ip" valueBoolean="false" />
+      <column name="nombre" value="null" />
+      <column name="orcid_id" value="orcid_id2" />
+      <column name="orden" valueNumeric="2" />
+      <column name="persona_ref" value="persona_ref1" />
+      <column name="produccion_cientifica_id" valueNumeric="1" />
+    </insert>
+    <insert tableName="autor">
+      <!-- 3 -->
+      <column name="id" valueSequenceNext="autor_seq" />
+      <column name="apellidos" value="apellidos1" />
+      <column name="fecha_fin" valueDate="null" />
+      <column name="fecha_inicio" valueDate="null" />
+      <column name="firma" value="null" />
+      <column name="ip" valueBoolean="false" />
+      <column name="nombre" value="nombre1" />
+      <column name="orcid_id" value="orcid_id3" />
+      <column name="orden" valueNumeric="3" />
+      <column name="persona_ref" value="null" />
+      <column name="produccion_cientifica_id" valueNumeric="1" />
+    </insert>
+    <insert tableName="autor">
+      <!-- 4 -->
+      <column name="id" valueSequenceNext="autor_seq" />
+      <column name="apellidos" value="null" />
+      <column name="fecha_fin" valueDate="null" />
+      <column name="fecha_inicio" valueDate="null" />
+      <column name="firma" value="null" />
+      <column name="ip" valueBoolean="false" />
+      <column name="nombre" value="null" />
+      <column name="orcid_id" value="orcid_id2_1" />
+      <column name="orden" valueNumeric="1" />
+      <column name="persona_ref" value="persona_ref2_1" />
+      <column name="produccion_cientifica_id" valueNumeric="2" />
+    </insert>
+    <insert tableName="autor">
+      <!-- 5 -->
+      <column name="id" valueSequenceNext="autor_seq" />
+      <column name="apellidos" value="null" />
+      <column name="fecha_fin" valueDate="null" />
+      <column name="fecha_inicio" valueDate="null" />
+      <column name="firma" value="null" />
+      <column name="ip" valueBoolean="false" />
+      <column name="nombre" value="null" />
+      <column name="orcid_id" value="orcid_id2_2" />
+      <column name="orden" valueNumeric="2" />
+      <column name="persona_ref" value="persona_ref2_2" />
+      <column name="produccion_cientifica_id" valueNumeric="2" />
+    </insert>
+    <insert tableName="autor">
+      <!-- 6 -->
+      <column name="id" valueSequenceNext="autor_seq" />
+      <column name="apellidos" value="null" />
+      <column name="fecha_fin" valueDate="null" />
+      <column name="fecha_inicio" valueDate="null" />
+      <column name="firma" value="null" />
+      <column name="ip" valueBoolean="false" />
+      <column name="nombre" value="null" />
+      <column name="orcid_id" value="orcid_id2_3" />
+      <column name="orden" valueNumeric="3" />
+      <column name="persona_ref" value="persona_ref2_3" />
+      <column name="produccion_cientifica_id" valueNumeric="2" />
+    </insert>
+    <insert tableName="autor">
+      <!-- 7 -->
+      <column name="id" valueSequenceNext="autor_seq" />
+      <column name="apellidos" value="null" />
+      <column name="fecha_fin" valueDate="null" />
+      <column name="fecha_inicio" valueDate="null" />
+      <column name="firma" value="null" />
+      <column name="ip" valueBoolean="false" />
+      <column name="nombre" value="null" />
+      <column name="orcid_id" value="orcid_id3_1" />
+      <column name="orden" valueNumeric="1" />
+      <column name="persona_ref" value="persona_ref3_1" />
+      <column name="produccion_cientifica_id" valueNumeric="3" />
+    </insert>
+    <insert tableName="autor">
+      <!-- 8 -->
+      <column name="id" valueSequenceNext="autor_seq" />
+      <column name="apellidos" value="null" />
+      <column name="fecha_fin" valueDate="null" />
+      <column name="fecha_inicio" valueDate="null" />
+      <column name="firma" value="null" />
+      <column name="ip" valueBoolean="false" />
+      <column name="nombre" value="null" />
+      <column name="orcid_id" value="orcid_id3_2" />
+      <column name="orden" valueNumeric="2" />
+      <column name="persona_ref" value="persona_ref3_2" />
+      <column name="produccion_cientifica_id" valueNumeric="3" />
+    </insert>
+    <insert tableName="autor">
+      <!-- 9 -->
+      <column name="id" valueSequenceNext="autor_seq" />
+      <column name="apellidos" value="null" />
+      <column name="fecha_fin" valueDate="null" />
+      <column name="fecha_inicio" valueDate="null" />
+      <column name="firma" value="null" />
+      <column name="ip" valueBoolean="false" />
+      <column name="nombre" value="null" />
+      <column name="orcid_id" value="orcid_id3_3" />
+      <column name="orden" valueNumeric="3" />
+      <column name="persona_ref" value="persona_ref3_3" />
+      <column name="produccion_cientifica_id" valueNumeric="3" />
+    </insert>
+  </changeSet>
+
+  <changeSet context="dev" author="master" id="0000000000000-indice_impacto">
+    <insert tableName="indice_impacto">
+      <column name="id" valueSequenceNext="indice_impacto_seq" />
+      <column name="tipo_fuente_impacto" value="GII-GRIN-SCIE" />
+      <column name="tipo_ranking" value="CLASE1" />
+      <column name="anio" valueNumeric="2018" />
+      <column name="indice" valueNumeric="1.85" />
+      <column name="otra_fuente_impacto" value="" />
+      <column name="posicion_publicacion" valueNumeric="100" />
+      <column name="numero_revistas" valueNumeric="20" />
+      <column name="revista_25" valueBoolean="false" />
+      <column name="produccion_cientifica_id" valueNumeric="1" />
+    </insert>
+    <insert tableName="indice_impacto">
+      <column name="id" valueSequenceNext="indice_impacto_seq" />
+      <column name="tipo_fuente_impacto" value="OTHERS" />
+      <column name="tipo_ranking" value="CLASE2" />
+      <column name="anio" valueNumeric="2020" />
+      <column name="indice" valueNumeric="1.95" />
+      <column name="otra_fuente_impacto" value="Otra fuente de impacto 1" />
+      <column name="posicion_publicacion" valueNumeric="200" />
+      <column name="numero_revistas" valueNumeric="500" />
+      <column name="revista_25" valueBoolean="true" />
+      <column name="produccion_cientifica_id" valueNumeric="1" />
+    </insert>
+  </changeSet>
+
+  <changeSet context="dev" author="master" id="0000000000000-proyecto">
+    <insert tableName="proyecto">
+      <column name="id" valueSequenceNext="proyecto_seq" />
+      <column name="proyecto_ref" value="1" />
+      <column name="produccion_cientifica_id" valueNumeric="1" />
+    </insert>
+    <insert tableName="proyecto">
+      <column name="id" valueSequenceNext="proyecto_seq" />
+      <column name="proyecto_ref" value="2" />
+      <column name="produccion_cientifica_id" valueNumeric="1" />
+    </insert>
+  </changeSet>
+
+  <changeSet context="dev" author="master" id="0000000000000-acreditacion">
+    <insert tableName="acreditacion">
+      <column name="id" valueSequenceNext="acreditacion_seq" />
+      <column name="documento_ref" value="sample-txt" />
+      <column name="url" value="http://www.google.es/con_documento" />
+      <column name="produccion_cientifica_id" valueNumeric="1" />
+    </insert>
+    <insert tableName="acreditacion">
+      <column name="id" valueSequenceNext="acreditacion_seq" />
+      <column name="url" value="http://www.google.es/sin_documento" />
+      <column name="produccion_cientifica_id" valueNumeric="1" />
+    </insert>
+  </changeSet>
+
+  <changeSet context="dev" author="master" id="0000000000000-autor_grupo">
+    <insert tableName="autor_grupo">
+      <column name="id" valueSequenceNext="autor_grupo_seq" />
+      <column name="estado" value="VALIDADO" />
+      <column name="grupo_ref" value="1" />
+      <column name="autor_id" valueNumeric="1" />
+    </insert>
+    <insert tableName="autor_grupo">
+      <column name="id" valueSequenceNext="autor_grupo_seq" />
+      <column name="estado" value="PENDIENTE" />
+      <column name="grupo_ref" value="2" />
+      <column name="autor_id" valueNumeric="1" />
+    </insert>
+  </changeSet>
+
+</databaseChangeLog>

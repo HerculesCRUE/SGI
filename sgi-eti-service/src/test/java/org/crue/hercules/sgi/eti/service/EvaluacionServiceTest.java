@@ -38,6 +38,7 @@ import org.crue.hercules.sgi.eti.repository.EvaluacionRepository;
 import org.crue.hercules.sgi.eti.repository.MemoriaRepository;
 import org.crue.hercules.sgi.eti.repository.RetrospectivaRepository;
 import org.crue.hercules.sgi.eti.service.impl.EvaluacionServiceImpl;
+import org.crue.hercules.sgi.eti.service.sgi.SgiApiRepService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
@@ -79,7 +80,7 @@ public class EvaluacionServiceTest extends BaseServiceTest {
   private EvaluacionConverter evaluacionConverter;
 
   @Mock
-  private ReportService reportService;
+  private SgiApiRepService reportService;
 
   @Mock
   private SgdocService sgdocService;

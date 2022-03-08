@@ -3,6 +3,7 @@ import { IChecklist } from '@core/models/eti/checklist';
 import { IPeticionEvaluacion, TipoValorSocial } from '@core/models/eti/peticion-evaluacion';
 import { IPersona } from '@core/models/sgp/persona';
 import { FormFragment } from '@core/services/action-service';
+import { SolicitudService } from '@core/services/csp/solicitud.service';
 import { ChecklistService } from '@core/services/eti/checklist/checklist.service';
 import { PeticionEvaluacionService } from '@core/services/eti/peticion-evaluacion.service';
 import { SgiAuthService } from '@sgi/framework/auth/public-api';
@@ -26,6 +27,7 @@ export class PeticionEvaluacionDatosGeneralesFragment extends FormFragment<IPeti
     private service: PeticionEvaluacionService,
     sgiAuthService: SgiAuthService,
     private checklistService: ChecklistService,
+    private readonly solicitudService: SolicitudService,
     checklist: IChecklist,
     readonly: boolean,
   ) {
@@ -78,6 +80,16 @@ export class PeticionEvaluacionDatosGeneralesFragment extends FormFragment<IPeti
         this.isTipoInvestigacionTutelada$.next(this.peticionEvaluacion.tipoInvestigacionTutelada ? true : false);
         this.solicitantePeticionEvaluacion$.next(value.solicitante);
         return of(value);
+      }),
+      switchMap((value) => {
+        if (value.solicitudConvocatoriaRef) {
+          return this.solicitudService.getCodigoRegistroInterno(Number(value.solicitudConvocatoriaRef)).pipe(map(codigoRegistroInterno => {
+            value.solicitudConvocatoriaRef = codigoRegistroInterno;
+            return value;
+          }));
+        } else {
+          return of(value);
+        }
       }),
       catchError(() => {
         return EMPTY;

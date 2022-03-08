@@ -25,7 +25,12 @@ const CALENDARIO_JUSTIFICACION_FECHA_INICIO_PRESENTACION_KEY = marker('csp.proye
 const CALENDARIO_JUSTIFICACION_FECHA_FIN_PRESENTACION_KEY = marker('csp.proyecto-periodo-justificacion.fecha-fin-presentacion');
 
 const CALENDARIO_JUSTIFICACION_FIELD = 'calendarioJustificacion';
+const CALENDARIO_NUM_PERIODO_JUSTIFICACION_FIELD = 'numPeriodoJustificacion';
 const CALENDARIO_JUSTIFICACION_TIPO_FIELD = 'tipoCalendarioJustificacion';
+const CALENDARIO_JUSTIFICACION_FECHA_INICIO_FIELD = 'fechaInicioJustificacion';
+const CALENDARIO_JUSTIFICACION_FECHA_FIN_FIELD = 'fechaFinJustificacion';
+const CALENDARIO_JUSTIFICACION_FECHA_INICIO_PRESENTACION_FIELD = 'fechaInicioPresentacionJustificacion';
+const CALENDARIO_JUSTIFICACION_FECHA_FIN_PRESENTACION_FIELD = 'fechaFinPresentacionJustificacion';
 
 @Injectable()
 export class ProyectoCalendarioJustificacionListadoExportService
@@ -96,12 +101,47 @@ export class ProyectoCalendarioJustificacionListadoExportService
 
     for (let i = 0; i < maxNumCalendarioJustificaciones; i++) {
       const idCalendarioJustificacion: string = String(i + 1);
-      const columnCalendarioJustificacion: ISgiColumnReport = {
+      const columnNumPeriodoCalendarioJustificacion: ISgiColumnReport = {
+        name: CALENDARIO_NUM_PERIODO_JUSTIFICACION_FIELD + idCalendarioJustificacion,
+        title: titleCalendarioJustificacion + idCalendarioJustificacion + ': ' + this.translate.instant(CALENDARIO_JUSTIFICACION_NUM_PERIODO_KEY),
+        type: ColumnType.STRING,
+      };
+      columns.push(columnNumPeriodoCalendarioJustificacion);
+
+      const columnTipoCalendarioJustificacion: ISgiColumnReport = {
         name: CALENDARIO_JUSTIFICACION_TIPO_FIELD + idCalendarioJustificacion,
         title: titleCalendarioJustificacion + idCalendarioJustificacion + ': ' + this.translate.instant(CALENDARIO_JUSTIFICACION_TIPO_KEY),
         type: ColumnType.STRING,
       };
-      columns.push(columnCalendarioJustificacion);
+      columns.push(columnTipoCalendarioJustificacion);
+
+      const columnFechaInicioCalendarioJustificacion: ISgiColumnReport = {
+        name: CALENDARIO_JUSTIFICACION_FECHA_INICIO_FIELD + idCalendarioJustificacion,
+        title: titleCalendarioJustificacion + idCalendarioJustificacion + ': ' + this.translate.instant(CALENDARIO_JUSTIFICACION_FECHA_INICIO_KEY),
+        type: ColumnType.DATE,
+      };
+      columns.push(columnFechaInicioCalendarioJustificacion);
+
+      const columnFechaFinCalendarioJustificacion: ISgiColumnReport = {
+        name: CALENDARIO_JUSTIFICACION_FECHA_FIN_FIELD + idCalendarioJustificacion,
+        title: titleCalendarioJustificacion + idCalendarioJustificacion + ': ' + this.translate.instant(CALENDARIO_JUSTIFICACION_FECHA_FIN_KEY),
+        type: ColumnType.DATE,
+      };
+      columns.push(columnFechaFinCalendarioJustificacion);
+
+      const columnFechaInicioPresentacionCalendarioJustificacion: ISgiColumnReport = {
+        name: CALENDARIO_JUSTIFICACION_FECHA_INICIO_PRESENTACION_FIELD + idCalendarioJustificacion,
+        title: titleCalendarioJustificacion + idCalendarioJustificacion + ': ' + this.translate.instant(CALENDARIO_JUSTIFICACION_FECHA_INICIO_PRESENTACION_KEY),
+        type: ColumnType.STRING,
+      };
+      columns.push(columnFechaInicioPresentacionCalendarioJustificacion);
+
+      const columnFechaFinPresentacionCalendarioJustificacion: ISgiColumnReport = {
+        name: CALENDARIO_JUSTIFICACION_FECHA_FIN_PRESENTACION_FIELD + idCalendarioJustificacion,
+        title: titleCalendarioJustificacion + idCalendarioJustificacion + ': ' + this.translate.instant(CALENDARIO_JUSTIFICACION_FECHA_FIN_PRESENTACION_KEY),
+        type: ColumnType.STRING,
+      };
+      columns.push(columnFechaFinPresentacionCalendarioJustificacion);
     }
 
     return columns;
@@ -140,10 +180,10 @@ export class ProyectoCalendarioJustificacionListadoExportService
       calendarioJustificacionContent += this.luxonDatePipe.transform(LuxonUtils.toBackend(proyectoCalendarioJustificacion?.fechaFin, true), 'shortDate') ?? '';
       calendarioJustificacionContent += '\n';
       calendarioJustificacionContent += this.luxonDatePipe.transform(
-        LuxonUtils.toBackend(proyectoCalendarioJustificacion?.fechaInicioPresentacion, true), 'shortDate') ?? '';
+        LuxonUtils.toBackend(proyectoCalendarioJustificacion?.fechaInicioPresentacion, false), 'short') ?? '';
       calendarioJustificacionContent += '\n';
       calendarioJustificacionContent += this.luxonDatePipe.transform(
-        LuxonUtils.toBackend(proyectoCalendarioJustificacion?.fechaFinPresentacion, true), 'shortDate') ?? '';
+        LuxonUtils.toBackend(proyectoCalendarioJustificacion?.fechaFinPresentacion, false), 'short') ?? '';
       calendarioJustificacionContent += '\n';
 
       calendarioJustificacionElementsRow.push(calendarioJustificacionContent);
@@ -161,21 +201,20 @@ export class ProyectoCalendarioJustificacionListadoExportService
 
   private fillRowsEntidadExcel(elementsRow: any[], proyectoCalendarioJustificacion: IProyectoPeriodoJustificacion) {
     if (proyectoCalendarioJustificacion) {
-      let calendarioJustificacionContent = proyectoCalendarioJustificacion.numPeriodo ?? '';
-      calendarioJustificacionContent += '\n';
-      calendarioJustificacionContent += proyectoCalendarioJustificacion.tipoJustificacion ?? '';
-      calendarioJustificacionContent += '\n';
-      calendarioJustificacionContent += LuxonUtils.toBackend(proyectoCalendarioJustificacion?.fechaInicio) ?? '';
-      calendarioJustificacionContent += '\n';
-      calendarioJustificacionContent += LuxonUtils.toBackend(proyectoCalendarioJustificacion?.fechaFin) ?? '';
-      calendarioJustificacionContent += '\n';
-      calendarioJustificacionContent += LuxonUtils.toBackend(proyectoCalendarioJustificacion?.fechaInicioPresentacion) ?? '';
-      calendarioJustificacionContent += '\n';
-      calendarioJustificacionContent += LuxonUtils.toBackend(proyectoCalendarioJustificacion?.fechaFinPresentacion) ?? '';
-      calendarioJustificacionContent += '\n';
-
-      elementsRow.push(calendarioJustificacionContent);
+      elementsRow.push(proyectoCalendarioJustificacion.numPeriodo ?? '');
+      elementsRow.push(proyectoCalendarioJustificacion.tipoJustificacion ?? '');
+      elementsRow.push(LuxonUtils.toBackend(proyectoCalendarioJustificacion?.fechaInicio) ?? '');
+      elementsRow.push(LuxonUtils.toBackend(proyectoCalendarioJustificacion?.fechaFin) ?? '');
+      elementsRow.push(this.luxonDatePipe.transform(
+        LuxonUtils.toBackend(proyectoCalendarioJustificacion?.fechaInicioPresentacion, false), 'short') ?? '');
+      elementsRow.push(this.luxonDatePipe.transform(
+        LuxonUtils.toBackend(proyectoCalendarioJustificacion?.fechaFinPresentacion, false), 'short') ?? '');
     } else {
+      elementsRow.push('');
+      elementsRow.push('');
+      elementsRow.push('');
+      elementsRow.push('');
+      elementsRow.push('');
       elementsRow.push('');
     }
   }

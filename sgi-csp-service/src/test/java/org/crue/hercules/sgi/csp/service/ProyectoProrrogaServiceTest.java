@@ -16,7 +16,9 @@ import org.crue.hercules.sgi.csp.repository.ProrrogaDocumentoRepository;
 import org.crue.hercules.sgi.csp.repository.ProyectoEquipoRepository;
 import org.crue.hercules.sgi.csp.repository.ProyectoProrrogaRepository;
 import org.crue.hercules.sgi.csp.repository.ProyectoRepository;
+import org.crue.hercules.sgi.csp.repository.ProyectoResponsableEconomicoRepository;
 import org.crue.hercules.sgi.csp.service.impl.ProyectoProrrogaServiceImpl;
+import org.crue.hercules.sgi.csp.util.ProyectoHelper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
@@ -28,6 +30,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.security.test.context.support.WithMockUser;
 
 /**
  * ProyectoProrrogaServiceTest
@@ -43,13 +46,17 @@ public class ProyectoProrrogaServiceTest extends BaseServiceTest {
   private ProrrogaDocumentoRepository prorrogaDocumentoRepository;
   @Mock
   private ProyectoEquipoRepository proyectoEquipoRepository;
+  @Mock
+  private ProyectoResponsableEconomicoRepository proyectoResponsableEconomicoRepository;
+  @Mock
+  private ProyectoHelper proyectoHelper;
 
   private ProyectoProrrogaService service;
 
   @BeforeEach
   public void setUp() throws Exception {
     service = new ProyectoProrrogaServiceImpl(repository, proyectoRepository, prorrogaDocumentoRepository,
-        proyectoEquipoRepository);
+        proyectoEquipoRepository, proyectoHelper);
   }
 
   @Test
@@ -591,6 +598,7 @@ public class ProyectoProrrogaServiceTest extends BaseServiceTest {
   }
 
   @Test
+  @WithMockUser(username = "user", authorities = { "CSP-PRO-E" })
   public void findAllByProyecto_ReturnsPage() {
     // given: Una lista con 37 ProyectoProrroga para la Proyecto
     Long proyectoId = 1L;

@@ -1,0 +1,95 @@
+{
+  "idRef": "7",
+  "epigrafeCVN": "030.040.000.000",
+  "campos": [
+    {
+      "codigoCVN": "030.040.000.030",
+      "valores": [
+        "Programa de ejercicio mediante realidad virtual no inmersiva intradiálisis"
+      ]
+    },
+    {
+      "codigoCVN": "030.040.000.140",
+      "valores": [
+        "2021-02-17"
+      ]
+    },
+    {
+      "codigoCVN": "030.040.000.120",
+      "valores": [
+        "Jroge Martínez Olmos"
+      ]
+    },
+    {
+      "codigoCVN": "030.040.000.170",
+      "valores": [
+        "true"
+      ]
+    },
+    {
+      "codigoCVN": "030.040.000.200",
+      "valores": [
+        "2021-05-06"
+      ]
+    },
+    {
+      "codigoCVN": "030.040.000.190",
+      "valores": [
+        "false"
+      ]
+    },
+    {
+      "codigoCVN": "030.040.000.160",
+      "valores": [
+        ""
+      ]
+    },
+    {
+      "codigoCVN": "030.040.000.010",
+      "valores": [
+        "067"
+      ]
+    },
+    {
+      "codigoCVN": "MENCION_INDUSTRIAL",
+      "valores": [
+        "true"
+      ]
+    },
+    {
+      "codigoCVN": "MENCION_INTERNACIONAL",
+      "valores": [
+        "false"
+      ]
+    }
+  ],
+  "autores": [
+    {
+      "personaRef": "02221287",
+      "firma": "enrique.apellido",
+      "nombre": "",
+      "apellidos": "",
+      "orden": 1,
+      "orcidID": "",
+      "ip": true
+    },
+    {
+      "personaRef": "52364567",
+      "firma": "simon.apellido",
+      "nombre": "",
+      "apellidos": "",
+      "orden": 2,
+      "orcidID": "",
+      "ip": true
+    }
+  ],
+  "proyectos": [
+    1
+  ],
+  "acreditaciones": [
+    {
+      "url": "www.paginamipublicacion.es",
+      "documentoRef": ""
+    }
+  ]
+}

@@ -1,0 +1,57 @@
+<!-- Autorizacion Certificados-->
+<sgi-fragment title="{{'csp.certificado-autorizacion' | translate}}">
+  <div class="mat-elevation-z4">
+    <table mat-table [dataSource]="dataSource" matSort matSortActive="id" matSortDirection="asc" matSortDisableClear>
+
+      <!-- Nombre -->
+      <ng-container matColumnDef="nombre">
+        <th mat-header-cell *matHeaderCellDef> {{'csp.certificado-autorizacion.nombre' | translate}} </th>
+        <td mat-cell *matCellDef="let element"> {{element.value.certificado.nombre}}</td>
+      </ng-container>
+
+      <!-- Público -->
+      <ng-container matColumnDef="publico">
+        <th mat-header-cell *matHeaderCellDef> {{'csp.certificado-autorizacion.publico' | translate}} </th>
+        <td mat-cell *matCellDef="let element"> {{(element.value.certificado.visible ? 'label.si' : 'label.no') |
+          translate}}</td>
+      </ng-container>
+
+      <!-- Acciones Column -->
+      <ng-container matColumnDef="acciones">
+        <th mat-header-cell *matHeaderCellDef> {{'label.actions' | translate}} </th>
+        <td mat-cell *matCellDef="let element">
+          <ng-container *sgiHasAuthorityForAnyUO="'CSP-AUT-E'">
+            <button mat-button matTooltip="{{'btn.edit' | translate}}" (click)="openModal(element)">
+              <mat-icon color="primary">border_color</mat-icon>
+            </button>
+          </ng-container>
+          <ng-container *sgiHasAuthorityForAnyUO="'CSP-AUT-B'">
+            <button mat-button matTooltip="{{'btn.delete' | translate}}" (click)="deleteCertificado(element)">
+              <mat-icon color="warn">highlight_off</mat-icon>
+            </button>
+          </ng-container>
+          <ng-container *sgiHasAuthorityForAnyUO="'CSP-AUT-E'">
+            <button mat-button color="primary" matTooltip="{{'btn.csp.certificado-autorizacion.descargar' | translate}}"
+              (click)="downloadFile(element.value?.certificado)">
+              <mat-icon color="primary">arrow_downward</mat-icon>
+            </button>
+          </ng-container>
+
+      </ng-container>
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+    </table>
+    <div class="paginator-export">
+      <mat-paginator [pageSizeOptions]="elementosPagina" [length]="elementosPagina" showFirstLastButtons>
+      </mat-paginator>
+    </div>
+  </div>
+  <div class="separation-button" *sgiHasAuthorityForAnyUO="'CSP-AUT-E'">
+    <!-- Botón añadir Certificados -->
+    <button color="three" mat-button mat-raised-button (click)="openModal()"
+      *ngIf="actionService.estado == Estado.AUTORIZADA">
+      <mat-icon color="accent">add_circle</mat-icon>
+      {{ 'btn.add.entity' | translate:msgParamEntity }}
+    </button>
+  </div>
+</sgi-fragment>

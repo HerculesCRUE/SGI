@@ -67,6 +67,19 @@ public class PersonaDto extends BaseRestDto {
     private String fechaObtencionCategoria;
     private AreaConocimientoDto areaConocimiento;
     private DepartamentoDto departamento;
+    private CentroDto centro;
+  }
+
+  @Data
+  @EqualsAndHashCode(callSuper = false)
+  @NoArgsConstructor
+  @AllArgsConstructor
+  @Builder
+  public static class CentroDto implements Serializable {
+    private static final long serialVersionUID = 1L;
+
+    private String id;
+    private String nombre;
   }
 
   @Data

@@ -1,8 +1,11 @@
 package org.crue.hercules.sgi.csp.service.impl;
 
+import javax.validation.Valid;
+
 import org.crue.hercules.sgi.csp.exceptions.ProyectoPartidaNotFoundException;
 import org.crue.hercules.sgi.csp.model.AnualidadGasto;
 import org.crue.hercules.sgi.csp.model.AnualidadIngreso;
+import org.crue.hercules.sgi.csp.model.BaseEntity;
 import org.crue.hercules.sgi.csp.model.Proyecto;
 import org.crue.hercules.sgi.csp.model.ProyectoPartida;
 import org.crue.hercules.sgi.csp.repository.AnualidadGastoRepository;
@@ -19,6 +22,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
+import org.springframework.validation.annotation.Validated;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -28,6 +32,7 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 @Slf4j
 @Transactional(readOnly = true)
+@Validated
 public class ProyectoPartidaServiceImpl implements ProyectoPartidaService {
 
   private final ProyectoPartidaRepository repository;
@@ -52,7 +57,8 @@ public class ProyectoPartidaServiceImpl implements ProyectoPartidaService {
    */
   @Override
   @Transactional
-  public ProyectoPartida create(ProyectoPartida proyectoPartida) {
+  @Validated({ BaseEntity.Create.class })
+  public ProyectoPartida create(@Valid ProyectoPartida proyectoPartida) {
     log.debug("create(ProyectoPartida proyectoPartida) - start");
 
     Assert.isNull(proyectoPartida.getId(), "ProyectoPartida id tiene que ser null para crear un nuevo ProyectoPartida");
@@ -73,7 +79,8 @@ public class ProyectoPartidaServiceImpl implements ProyectoPartidaService {
    */
   @Override
   @Transactional
-  public ProyectoPartida update(ProyectoPartida proyectoPartidaActualizar) {
+  @Validated({ BaseEntity.Update.class })
+  public ProyectoPartida update(@Valid ProyectoPartida proyectoPartidaActualizar) {
     log.debug("update(ProyectoPartida proyectoPartidaActualizar) - start");
 
     Assert.notNull(proyectoPartidaActualizar.getId(),

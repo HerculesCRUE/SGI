@@ -1,15 +1,19 @@
 package org.crue.hercules.sgi.csp.controller;
 
-import javax.validation.Valid;
-import javax.validation.groups.Default;
+import java.util.List;
 
-import org.crue.hercules.sgi.csp.model.BaseEntity.Update;
+import javax.validation.Valid;
+
+import org.crue.hercules.sgi.csp.dto.ConvocatoriaHitoInput;
+import org.crue.hercules.sgi.csp.dto.ConvocatoriaHitoOutput;
+import org.crue.hercules.sgi.csp.dto.com.Recipient;
 import org.crue.hercules.sgi.csp.model.ConvocatoriaHito;
+import org.crue.hercules.sgi.csp.model.ConvocatoriaHitoAviso;
 import org.crue.hercules.sgi.csp.service.ConvocatoriaHitoService;
+import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -32,14 +36,18 @@ public class ConvocatoriaHitoController {
 
   /** ConvocatoriaHito service */
   private final ConvocatoriaHitoService service;
+  /** Model mapper */
+  private ModelMapper modelMapper;
 
   /**
    * Instancia un nuevo ConvocatoriaHitoController.
    * 
-   * @param service {@link ConvocatoriaHitoService}
+   * @param service     {@link ConvocatoriaHitoService}
+   * @param modelMapper {@link ModelMapper}
    */
-  public ConvocatoriaHitoController(ConvocatoriaHitoService service) {
+  public ConvocatoriaHitoController(ConvocatoriaHitoService service, ModelMapper modelMapper) {
     this.service = service;
+    this.modelMapper = modelMapper;
   }
 
   /**
@@ -50,9 +58,9 @@ public class ConvocatoriaHitoController {
    */
   @GetMapping("/{id}")
   @PreAuthorize("hasAuthorityForAnyUO('AUTH')")
-  public ConvocatoriaHito findById(@PathVariable Long id) {
+  public ConvocatoriaHitoOutput findById(@PathVariable Long id) {
     log.debug("findById(Long id) - start");
-    ConvocatoriaHito returnValue = service.findById(id);
+    ConvocatoriaHitoOutput returnValue = this.convert(service.findById(id));
     log.debug("findById(Long id) - end");
     return returnValue;
   }
@@ -65,9 +73,9 @@ public class ConvocatoriaHitoController {
    */
   @PostMapping
   @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-CON-C', 'CSP-CON-E')")
-  public ResponseEntity<ConvocatoriaHito> create(@Valid @RequestBody ConvocatoriaHito convocatoriaHito) {
+  public ResponseEntity<ConvocatoriaHitoOutput> create(@Valid @RequestBody ConvocatoriaHitoInput convocatoriaHito) {
     log.debug("create(ConvocatoriaHito convocatoriaHito) - start");
-    ConvocatoriaHito returnValue = service.create(convocatoriaHito);
+    ConvocatoriaHitoOutput returnValue = convert(service.create(convocatoriaHito));
     log.debug("create(ConvocatoriaHito convocatoriaHito) - end");
     return new ResponseEntity<>(returnValue, HttpStatus.CREATED);
   }
@@ -81,12 +89,12 @@ public class ConvocatoriaHitoController {
    */
   @PutMapping("/{id}")
   @PreAuthorize("hasAuthorityForAnyUO('CSP-CON-E')")
-  public ConvocatoriaHito update(
-      @Validated({ Update.class, Default.class }) @RequestBody ConvocatoriaHito convocatoriaHito,
-      @PathVariable Long id) {
+  public ConvocatoriaHitoOutput update(
+      @PathVariable Long id,
+      @Valid @RequestBody ConvocatoriaHitoInput convocatoriaHito) {
     log.debug("update(ConvocatoriaHito convocatoriaHito, Long id) - start");
-    convocatoriaHito.setId(id);
-    ConvocatoriaHito returnValue = service.update(convocatoriaHito);
+
+    ConvocatoriaHitoOutput returnValue = convert(service.update(id, convocatoriaHito));
     log.debug("update(ConvocatoriaHito convocatoriaHito, Long id) - end");
     return returnValue;
   }
@@ -105,4 +113,24 @@ public class ConvocatoriaHitoController {
     log.debug("deleteById(Long id) - end");
   }
 
+  /**
+   * Retorna el listado de destinatarios para incluir en el envio de email de una
+   * {@link ConvocatoriaHito}, en base a los flags de
+   * {@link ConvocatoriaHitoAviso}
+   * 
+   * @param id identificador de {@link ConvocatoriaHito}
+   * @return Listado de {@link Recipient}
+   */
+  @GetMapping("/{id}/deferrable-recipients")
+  @PreAuthorize("isClient() and hasAuthority('SCOPE_sgi-csp')")
+  public List<Recipient> resolveDeferrableRecipients(@PathVariable Long id) {
+    log.debug("resolveDeferrableRecipients(Long id) - start");
+    List<Recipient> recipients = service.getDeferredRecipients(id);
+    log.debug("resolveDeferrableRecipients(Long id) - end");
+    return recipients;
+  }
+
+  private ConvocatoriaHitoOutput convert(ConvocatoriaHito convocatoriaHito) {
+    return modelMapper.map(convocatoriaHito, ConvocatoriaHitoOutput.class);
+  }
 }

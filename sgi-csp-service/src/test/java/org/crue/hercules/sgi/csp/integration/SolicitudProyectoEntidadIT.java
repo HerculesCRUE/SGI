@@ -55,6 +55,7 @@ class SolicitudProyectoEntidadIT extends BaseIT {
     "classpath:scripts/tipo_financiacion.sql",
     "classpath:scripts/convocatoria_entidad_financiadora.sql",
     "classpath:scripts/convocatoria_entidad_gestora.sql",
+    "classpath:scripts/solicitud_proyecto_entidad_financiadora_ajena.sql",
     "classpath:scripts/solicitud_proyecto_entidad.sql"
     // @formatter:on
   })
@@ -78,7 +79,7 @@ class SolicitudProyectoEntidadIT extends BaseIT {
         .as("getConvocatoriaEntidadFinanciadora().getId()").isEqualTo(1);
     Assertions.assertThat(solicitudProyectoEntidad.getConvocatoriaEntidadGestora().getId())
         .as("getConvocatoriaEntidadGestora().getId()").isEqualTo(1);
-    Assertions.assertThat(solicitudProyectoEntidad.getSolicitudProyectoEntidadFinanciadoraAjena()).isNull();
+    Assertions.assertThat(solicitudProyectoEntidad.getSolicitudProyectoEntidadFinanciadoraAjena()).isNotNull();
   }
 
   @Sql(executionPhase = ExecutionPhase.BEFORE_TEST_METHOD, scripts = {
@@ -96,6 +97,7 @@ class SolicitudProyectoEntidadIT extends BaseIT {
     "classpath:scripts/tipo_financiacion.sql",
     "classpath:scripts/convocatoria_entidad_financiadora.sql",
     "classpath:scripts/convocatoria_entidad_gestora.sql",
+    "classpath:scripts/solicitud_proyecto_entidad_financiadora_ajena.sql",
     "classpath:scripts/solicitud_proyecto_entidad.sql",
     "classpath:scripts/concepto_gasto.sql",
     "classpath:scripts/solicitud_proyecto_presupuesto.sql"

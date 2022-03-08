@@ -23,9 +23,11 @@ import lombok.extern.slf4j.Slf4j;
  * SolicitudProyectoAreaConocimientoController
  */
 @RestController
-@RequestMapping("/solicitud-proyecto-areas-conocimiento")
+@RequestMapping(SolicitudProyectoAreaConocimientoController.REQUEST_MAPPING)
 @Slf4j
 public class SolicitudProyectoAreaConocimientoController {
+
+  public static final String REQUEST_MAPPING = "/solicitud-proyecto-areas-conocimiento";
 
   /** SolicitudProyectoAreasConocimientoService service */
   private final SolicitudProyectoAreaConocimientoService service;

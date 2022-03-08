@@ -191,6 +191,15 @@ public interface ConvocatoriaService {
   Convocatoria findByAutorizacionIdAndUserIsSolicitante(Long autorizacionId);
 
   /**
+   * Devuelve {@link Convocatoria} asociada a {@link Proyecto} con el id
+   * indicado si el usuario está logado con perfil investigador.
+   * 
+   * @param proyectoId Identificador de {@link Proyecto}.
+   * @return {@link Convocatoria} correspondiente a la {@link Proyecto}.
+   */
+  Convocatoria findConvocatoriaByProyectoIdAndUserIsInvestigador(Long proyectoId);
+
+  /**
    * Devuelve el {@link FormularioSolicitud} de la {@link Convocatoria}
    * 
    * @param id Identificador de {@link Convocatoria}.

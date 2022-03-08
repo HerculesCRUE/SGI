@@ -6,6 +6,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { SgiAuthModule } from '@sgi/framework/auth';
 import { LuxonDatePipe } from '@shared/luxon-date-pipe';
 import { SharedModule } from '@shared/shared.module';
+import { SgeSharedModule } from 'src/app/esb/sge/shared/sge-shared.module';
 import { SgempSharedModule } from 'src/app/esb/sgemp/shared/sgemp-shared.module';
 import { SgoSharedModule } from 'src/app/esb/sgo/shared/sgo-shared.module';
 import { SgpSharedModule } from 'src/app/esb/sgp/shared/sgp-shared.module';
@@ -141,7 +142,8 @@ import { ProyectoSolicitudListadoExportService } from './proyecto-solicitud-list
     SgoSharedModule,
     SgpSharedModule,
     SgempSharedModule,
-    PiiSharedModule
+    PiiSharedModule,
+    SgeSharedModule
   ],
   providers: [
     ProyectoDataResolver,

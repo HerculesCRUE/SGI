@@ -21,7 +21,7 @@ import org.springframework.test.context.jdbc.Sql;
  * Test de integracion de ProyectoEntidadFinanciadora.
  */
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class ProyectoEntidadFinanciadoraIT extends BaseIT {
+class ProyectoEntidadFinanciadoraIT extends BaseIT {
 
   private static final String PATH_PARAMETER_ID = "/{id}";
   private static final String CONTROLLER_BASE_PATH = "/proyectoentidadfinanciadoras";
@@ -43,7 +43,8 @@ public class ProyectoEntidadFinanciadoraIT extends BaseIT {
     "classpath:scripts/tipo_finalidad.sql",
     "classpath:scripts/modelo_tipo_finalidad.sql", 
     "classpath:scripts/tipo_regimen_concurrencia.sql",
-    "classpath:scripts/tipo_ambito_geografico.sql", 
+    "classpath:scripts/tipo_ambito_geografico.sql",
+    "classpath:scripts/convocatoria.sql", 
     "classpath:scripts/proyecto.sql",
     "classpath:scripts/estado_proyecto.sql", 
     "classpath:scripts/tipo_origen_fuente_financiacion.sql",
@@ -53,7 +54,7 @@ public class ProyectoEntidadFinanciadoraIT extends BaseIT {
   })
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void create_ReturnsProyectoEntidadFinanciadora() throws Exception {
+  void create_ReturnsProyectoEntidadFinanciadora() throws Exception {
 
     // given: new ProyectoEntidadFinanciadora
     ProyectoEntidadFinanciadora newProyectoEntidadFinanciadora = generarMockProyectoEntidadFinanciadora(null);
@@ -88,7 +89,8 @@ public class ProyectoEntidadFinanciadoraIT extends BaseIT {
     "classpath:scripts/tipo_finalidad.sql",
     "classpath:scripts/modelo_tipo_finalidad.sql", 
     "classpath:scripts/tipo_regimen_concurrencia.sql",
-    "classpath:scripts/tipo_ambito_geografico.sql", 
+    "classpath:scripts/tipo_ambito_geografico.sql",
+    "classpath:scripts/convocatoria.sql", 
     "classpath:scripts/proyecto.sql",
     "classpath:scripts/estado_proyecto.sql", 
     "classpath:scripts/tipo_origen_fuente_financiacion.sql",
@@ -99,7 +101,7 @@ public class ProyectoEntidadFinanciadoraIT extends BaseIT {
   })
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void update_ReturnsProyectoEntidadFinanciadora() throws Exception {
+  void update_ReturnsProyectoEntidadFinanciadora() throws Exception {
     Long idProyectoEntidadFinanciadora = 1L;
     ProyectoEntidadFinanciadora proyectoEntidadFinanciadora = generarMockProyectoEntidadFinanciadora(
         idProyectoEntidadFinanciadora);
@@ -134,7 +136,8 @@ public class ProyectoEntidadFinanciadoraIT extends BaseIT {
     "classpath:scripts/tipo_finalidad.sql",
     "classpath:scripts/modelo_tipo_finalidad.sql", 
     "classpath:scripts/tipo_regimen_concurrencia.sql",
-    "classpath:scripts/tipo_ambito_geografico.sql", 
+    "classpath:scripts/tipo_ambito_geografico.sql",
+    "classpath:scripts/convocatoria.sql", 
     "classpath:scripts/proyecto.sql",
     "classpath:scripts/estado_proyecto.sql", 
     "classpath:scripts/tipo_origen_fuente_financiacion.sql",
@@ -145,7 +148,7 @@ public class ProyectoEntidadFinanciadoraIT extends BaseIT {
   })
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void delete_Return204() throws Exception {
+  void delete_Return204() throws Exception {
     // given: existing ProyectoEntidadFinanciadora to be deleted
     Long id = 1L;
 
@@ -167,6 +170,7 @@ public class ProyectoEntidadFinanciadoraIT extends BaseIT {
     "classpath:scripts/modelo_tipo_finalidad.sql", 
     "classpath:scripts/tipo_regimen_concurrencia.sql",
     "classpath:scripts/tipo_ambito_geografico.sql", 
+    "classpath:scripts/convocatoria.sql",
     "classpath:scripts/proyecto.sql",
     "classpath:scripts/estado_proyecto.sql", 
     "classpath:scripts/tipo_origen_fuente_financiacion.sql",
@@ -177,7 +181,7 @@ public class ProyectoEntidadFinanciadoraIT extends BaseIT {
   })
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void findById_ReturnsProyectoEntidadFinanciadora() throws Exception {
+  void findById_ReturnsProyectoEntidadFinanciadora() throws Exception {
     Long idProyectoEntidadFinanciadora = 1L;
 
     final ResponseEntity<ProyectoEntidadFinanciadora> response = restTemplate.exchange(

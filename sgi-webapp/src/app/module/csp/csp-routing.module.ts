@@ -26,6 +26,7 @@ const MSG_NOTIFICACION_PRESUPUESTO_SGE_TITLE = marker('menu.csp.notificacion-pre
 const PROYECTO_KEY = marker('csp.proyectos');
 const AUTORIZACION_KEY = marker('csp.autorizacion');
 const NOTIFICACION_CVN_KEY = marker('csp.notificacion-cvn');
+const MSG_GRUPO_TITLE = marker('csp.grupo');
 
 const routes: SgiRoutes = [
   {
@@ -132,7 +133,6 @@ const routes: SgiRoutes = [
           titleParams: MSG_PARAMS.CARDINALIRY.PLURAL,
           hasAnyAuthority: ['CSP-TENL-V', 'CSP-TENL-C', 'CSP-TENL-E', 'CSP-TENL-B', 'CSP-TENL-R']
         }
-
       },
       {
         path: CSP_ROUTE_NAMES.TIPO_HITO,
@@ -270,6 +270,19 @@ const routes: SgiRoutes = [
           title: NOTIFICACION_CVN_KEY,
           titleParams: MSG_PARAMS.CARDINALIRY.PLURAL,
           hasAnyAuthorityForAnyUO: ['CSP-CVPR-V', 'CSP-CVPR-E']
+        }
+      },
+      {
+        path: CSP_ROUTE_NAMES.GRUPO,
+        loadChildren: () =>
+          import('./grupo/grupo.module').then(
+            (m) => m.GrupoModule
+          ),
+        canActivate: [SgiAuthGuard],
+        data: {
+          title: MSG_GRUPO_TITLE,
+          titleParams: MSG_PARAMS.CARDINALIRY.PLURAL,
+          hasAnyAuthorityForAnyUO: ['CSP-GIN-V', 'CSP-GIN-E', 'CSP-GIN-C', 'CSP-GIN-B', 'CSP-GIN-R']
         }
       },
       { path: '**', component: null }

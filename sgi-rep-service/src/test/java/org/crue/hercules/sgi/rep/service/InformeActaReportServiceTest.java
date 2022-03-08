@@ -14,7 +14,7 @@ import org.crue.hercules.sgi.rep.dto.eti.ReportInformeActa;
 import org.crue.hercules.sgi.rep.service.eti.ActaService;
 import org.crue.hercules.sgi.rep.service.eti.ConvocatoriaReunionService;
 import org.crue.hercules.sgi.rep.service.eti.InformeActaReportService;
-import org.crue.hercules.sgi.rep.service.sgp.PersonaService;
+import org.crue.hercules.sgi.rep.service.sgi.SgiApiSgpService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.BDDMockito;
@@ -33,7 +33,7 @@ class InformeActaReportServiceTest extends BaseReportServiceTest {
   private SgiConfigProperties sgiConfigProperties;
 
   @Mock
-  private PersonaService personaService;
+  private SgiApiSgpService personaService;
 
   @Mock
   private ConvocatoriaReunionService convocatoriaReunionService;

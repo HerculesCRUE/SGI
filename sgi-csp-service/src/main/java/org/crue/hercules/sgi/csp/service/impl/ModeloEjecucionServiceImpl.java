@@ -83,6 +83,8 @@ public class ModeloEjecucionServiceImpl implements ModeloEjecucionService {
     return modeloEjecucionRepository.findById(modeloEjecucionActualizar.getId()).map(modeloEjecucion -> {
       modeloEjecucion.setNombre(modeloEjecucionActualizar.getNombre());
       modeloEjecucion.setDescripcion(modeloEjecucionActualizar.getDescripcion());
+      modeloEjecucion.setExterno(modeloEjecucionActualizar.getExterno());
+      modeloEjecucion.setContrato(modeloEjecucionActualizar.getContrato());
 
       ModeloEjecucion returnValue = modeloEjecucionRepository.save(modeloEjecucion);
       log.debug("update(ModeloEjecucion modeloEjecucionActualizar) - end");

@@ -35,7 +35,7 @@ const MODELO_EJECUCION_KEY = marker('csp.modelo-ejecucion');
 })
 export class ModeloEjecucionListadoComponent extends AbstractTablePaginationComponent<IModeloEjecucion> implements OnInit {
   ROUTE_NAMES = ROUTE_NAMES;
-  msgParamEntity = {};
+  textoCrear: string;
 
   textoDesactivar: string;
   textoReactivar: string;
@@ -90,7 +90,7 @@ export class ModeloEjecucionListadoComponent extends AbstractTablePaginationComp
           { entity: value }
         );
       })
-    ).subscribe((value) => this.msgParamEntity = { entity: value });
+    ).subscribe((value) => this.textoCrear = value);
 
     this.translate.get(
       MODELO_EJECUCION_KEY,
@@ -178,9 +178,9 @@ export class ModeloEjecucionListadoComponent extends AbstractTablePaginationComp
 
   protected initColumns(): void {
     if (this.authService.hasAuthority('CSP-ME-R')) {
-      this.columnas = ['nombre', 'descripcion', 'activo', 'acciones'];
+      this.columnas = ['nombre', 'descripcion', 'externo', 'contrato', 'activo', 'acciones'];
     } else {
-      this.columnas = ['nombre', 'descripcion', 'acciones'];
+      this.columnas = ['nombre', 'descripcion', 'externo', 'contrato', 'acciones'];
     }
 
   }

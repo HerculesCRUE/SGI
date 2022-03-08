@@ -1,0 +1,172 @@
+{
+  "idRef": "PUB_ART_2",
+  "epigrafeCVN": "060.010.010.000",
+  "campos": [
+    {
+      "codigoCVN": "060.010.010.030",
+      "valores": [
+        "Groenlandia ya perdió una vez casi todo su hielo"
+      ]
+    },
+    {
+      "codigoCVN": "060.010.010.140",
+      "valores": [
+        "2019-12-12"
+      ]
+    },
+    {
+      "codigoCVN": "060.010.010.010",
+      "valores": [
+        "020"
+      ]
+    },
+    {
+      "codigoCVN": "060.010.010.070",
+      "valores": [
+        "057"
+      ]
+    },
+    {
+      "codigoCVN": "060.010.010.210",
+      "valores": [
+        "Revista Nature"
+      ]
+    },
+    {
+      "codigoCVN": "060.010.010.160",
+      "valores": [
+        "1476-4687"
+      ]
+    },
+    {
+      "codigoCVN": "060.010.010.100",
+      "valores": [
+        "Grupo Editorial Holtzbrinck"
+      ]
+    },
+    {
+      "codigoCVN": "060.010.010.080",
+      "valores": [
+        "2"
+      ]
+    },
+    {
+      "codigoCVN": "060.010.010.090",
+      "valores": [
+        "2-5"
+      ]
+    },
+    {
+      "codigoCVN": "060.010.010.390",
+      "valores": [
+        ""
+      ]
+    },
+    {
+      "codigoCVN": "060.010.010.400",
+      "valores": [
+        "10.17993"
+      ]
+    },
+    {
+      "codigoCVN": "060.010.010.410",
+      "valores": [
+        "040"
+      ]
+    },
+    {
+      "codigoCVN": "INDICE_NORMALIZADO",
+      "valores": [
+        "1.5"
+      ]
+    },
+    {
+      "codigoCVN": "060.010.010.300",
+      "valores": [
+        "true"
+      ]
+    },
+    {
+      "codigoCVN": "TIPO_OPEN_ACCESS",
+      "valores": [
+        "ALL"
+      ]
+    },
+    {
+      "codigoCVN": "PUBLICACION_MUY_RELEVANTE",
+      "valores": [
+        "true"
+      ]
+    },
+    {
+      "codigoCVN": "INTERNACIONAL",
+      "valores": [
+        "true"
+      ]
+    },
+    {
+      "codigoCVN": "INTERDISCIPLINAR",
+      "valores": [
+        "false"
+      ]
+    }
+  ],
+  "autores": [
+    {
+      "personaRef": "52364567",
+      "firma": "simon.apellido",
+      "nombre": "",
+      "apellidos": "",
+      "orden": 1,
+      "orcidID": "",
+      "ip": true
+    },
+    {
+      "personaRef": "02221287",
+      "firma": "enrique.apellido",
+      "nombre": "",
+      "apellidos": "",
+      "orden": 2,
+      "orcidID": "",
+      "ip": false
+    },
+    {
+      "personaRef": "",
+      "firma": "",
+      "nombre": "María",
+      "apellidos": "García Fernández",
+      "orden": 3,
+      "orcidID": "",
+      "ip": false
+    }
+  ],
+  "indicesImpacto": [
+    {
+      "fuenteImpacto": "010",
+      "indice": 1.5,
+      "anio": "2020",
+      "otraFuenteImpacto": "",
+      "posicionPublicacion": 1,
+      "numeroRevista": 100,
+      "revista25": true
+    },
+    {
+      "fuenteImpacto": "010",
+      "indice": 1.6,
+      "anio": "2019",
+      "otraFuenteImpacto": "",
+      "posicionPublicacion": 45,
+      "numeroRevista": 100,
+      "revista25": false
+    }
+  ],
+  "proyectos": [
+    2
+  ],
+  "acreditaciones": [
+    {
+      "url": "www.paginamipublicacion.es",
+      "documentoRef": ""
+    }
+  ]
+}

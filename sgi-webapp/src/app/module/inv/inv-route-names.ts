@@ -12,5 +12,6 @@ export const INV_ROUTE_NAMES = {
   ACTAS: ACTAS_ROUTE,
   CONVOCATORIAS: 'convocatorias',
   SOLICITUDES: 'solicitudes',
+  PROYECTOS: 'proyectos',
   AUTORIZACIONES: 'autorizaciones'
 };

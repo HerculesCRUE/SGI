@@ -5,7 +5,7 @@
   <parent>
     <groupId>org.crue.hercules.sgi</groupId>
     <artifactId>sgi-starter-parent</artifactId>
-    <version>0.0.6</version>
+    <version>0.0.7</version>
   </parent>
 
   <groupId>org.crue.hercules.sgi</groupId>
@@ -103,6 +103,14 @@
     <dependency>
       <groupId>org.apache.commons</groupId>
       <artifactId>commons-lang3</artifactId>
+    </dependency>
+    <!-- 
+      FreeMarker - Template engine
+      https://freemarker.apache.org/
+    -->
+    <dependency>
+      <groupId>org.freemarker</groupId>
+      <artifactId>freemarker</artifactId>
     </dependency>
     <!-- 
         GreenMail - An easy-to-use test suite of email servers for testing purposes

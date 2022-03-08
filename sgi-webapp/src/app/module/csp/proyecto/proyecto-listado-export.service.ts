@@ -234,6 +234,7 @@ export class ProyectoListadoExportService extends AbstractTableExportService<IPr
 
   private getDataReportInner(proyectoData: IProyectoReportData, reportOptions: IProyectoReportOptions): Observable<IProyectoReportData> {
     return merge(
+      this.getDataReportListadoGeneral(proyectoData),
       this.getDataReportAreasConocimiento(proyectoData, reportOptions),
       this.getDataReportClasificaciones(proyectoData, reportOptions),
       this.getDataReportRelaciones(proyectoData, reportOptions),
@@ -258,6 +259,13 @@ export class ProyectoListadoExportService extends AbstractTableExportService<IPr
         this.logger.error(err);
         throw err;
       }));
+  }
+
+  private getDataReportListadoGeneral(
+    proyectoData: IProyectoReportData
+  ): Observable<IProyectoReportData> {
+    return this.proyectoGeneralListadoExportService.getData(proyectoData)
+      .pipe(tap({ error: (err) => this.logger.error(err) }));
   }
 
   private getDataReportAreasConocimiento(

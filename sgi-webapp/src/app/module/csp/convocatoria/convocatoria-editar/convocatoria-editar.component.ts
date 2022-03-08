@@ -121,35 +121,40 @@ export class ConvocatoriaEditarComponent extends ActionComponent implements OnIn
     ).subscribe((value) => this.textoEditarError = value);
   }
 
-  saveOrUpdate(): void {
-    this.actionService.saveOrUpdate().pipe(
-      switchMap(() => {
-        return this.convocatoriaService.registrable(this.actionService.id).pipe(
-          tap(registrable => {
-            this.registrable = registrable;
-            this.disableRegistrar$.next(!registrable);
-          })
-        );
-      })
-    ).subscribe(() => { },
-      (error) => {
-        this.logger.error(error);
-        if (error instanceof HttpProblem) {
-          if (!!!error.managed) {
-            this.snackBarService.showError(error);
+  saveOrUpdate(action: 'save' | 'registrar'): void {
+    if (action === 'registrar') {
+      this.registrar();
+    }
+    else {
+      this.actionService.saveOrUpdate().pipe(
+        switchMap(() => {
+          return this.convocatoriaService.registrable(this.actionService.id).pipe(
+            tap(registrable => {
+              this.registrable = registrable;
+              this.disableRegistrar$.next(!registrable);
+            })
+          );
+        })
+      ).subscribe(() => { },
+        (error) => {
+          this.logger.error(error);
+          if (error instanceof HttpProblem) {
+            if (!!!error.managed) {
+              this.snackBarService.showError(error);
+            }
           }
+          else {
+            this.snackBarService.showError(this.textoEditarError);
+          }
+        },
+        () => {
+          this.snackBarService.showSuccess(this.textoEditarSuccess);
         }
-        else {
-          this.snackBarService.showError(this.textoEditarError);
-        }
-      },
-      () => {
-        this.snackBarService.showSuccess(this.textoEditarSuccess);
-      }
-    );
+      );
+    }
   }
 
-  registrar(): void {
+  private registrar(): void {
     this.actionService.registrar().subscribe(
       () => { },
       (error) => {

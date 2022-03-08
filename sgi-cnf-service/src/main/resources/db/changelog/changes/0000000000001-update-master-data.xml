@@ -1,0 +1,41 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:pro="http://www.liquibase.org/xml/ns/pro" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-3.8.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+  <property name="schemaPrefix" value="" />
+
+  <changeSet context="!test" author="master" id="0000000000001-config">
+    <!-- Destinatarios defecto CSP Convocatorias Hitos OTRI -->
+    <insert tableName="config">
+      <column name="name" value="csp-conv-hitos-destinatarios-1" />
+      <column name="description" value="Destinatarios defecto CSP Convocatoria Hito - OTRI" />
+      <column name="value" value="[&quot;convocatoria.hitos.otri@sgi.es&quot;]" />
+    </insert>
+    <!-- Destinatarios defecto CSP Convocatorias Hitos OPE -->
+    <insert tableName="config">
+      <column name="name" value="csp-conv-hitos-destinatarios-2" />
+      <column name="description" value="Destinatarios defecto CSP Convocatoria Hito - OPE" />
+      <column name="value" value="[&quot;convocatoria.hitos.ope@sgi.es&quot;]" />
+    </insert>
+    <!-- Destinatarios defecto CSP Convocatorias Hitos UGI -->
+    <insert tableName="config">
+      <column name="name" value="csp-conv-hitos-destinatarios-3" />
+      <column name="description" value="Destinatarios defecto CSP Convocatoria Hito - UGI" />
+      <column name="value" value="[&quot;convocatoria.hitos.ugi@sgi.es&quot;]" />
+    </insert>
+
+    <insert tableName="config">
+      <column name="name" value="csp-com-inicio-presentacion-gasto-destinatarios-1" />
+      <column name="description" value="Destinatarios de comunicado de inicio de presentacion de justificacion de gastos - OTRI" />
+      <column name="value" value="[&quot;sample@sample.es&quot;]" />
+    </insert>
+    <insert tableName="config">
+      <column name="name" value="csp-com-inicio-presentacion-gasto-destinatarios-2" />
+      <column name="description" value="Destinatarios de comunicado de inicio de presentacion de justificacion de gastos - OPE" />
+      <column name="value" value="[&quot;sample@sample.es&quot;]" />
+    </insert>
+    <insert tableName="config">
+      <column name="name" value="csp-com-inicio-presentacion-gasto-destinatarios-3" />
+      <column name="description" value="Destinatarios de comunicado de inicio de presentacion de justificacion de gastos - UGI" />
+      <column name="value" value="[&quot;sample@sample.es&quot;]" />
+    </insert>
+  </changeSet>
+</databaseChangeLog>

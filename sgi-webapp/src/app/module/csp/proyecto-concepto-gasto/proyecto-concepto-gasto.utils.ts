@@ -78,11 +78,8 @@ export function getFechaFinConceptoGasto(
   mesFinalConceptoGasto: number, fechaInicioConceptoGasto: DateTime): DateTime {
 
   let fechaFinConvocatoriaConceptoGasto = fechaInicioProyecto
-    .plus({ months: mesFinalConceptoGasto - 1 })
-    .set({ hour: 23, minute: 59, second: 59 });
-
-  fechaFinConvocatoriaConceptoGasto = fechaFinConvocatoriaConceptoGasto
-    .set({ day: fechaFinConvocatoriaConceptoGasto.daysInMonth });
+    .plus({ months: mesFinalConceptoGasto })
+    .minus({ seconds: 1 });
 
   if ((!fechaInicioConceptoGasto || fechaInicioConceptoGasto < fechaFinProyecto) && fechaFinProyecto < fechaFinConvocatoriaConceptoGasto) {
     fechaFinConvocatoriaConceptoGasto = fechaFinProyecto;

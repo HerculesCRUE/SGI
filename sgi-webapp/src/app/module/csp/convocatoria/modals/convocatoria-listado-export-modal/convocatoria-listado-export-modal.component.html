@@ -1,0 +1,70 @@
+<sgi-export-dialog [title]="title">
+  <form [formGroup]="formGroup">
+    <!-- Title -->
+    <mat-form-field>
+      <mat-label>{{'csp.convocatoria.titulo' | translate}}</mat-label>
+      <input matInput placeholder="{{'csp.convocatoria.titulo' | translate}}" formControlName="reportTitle">
+    </mat-form-field>
+
+    <!-- OutputReportType -->
+    <mat-form-field>
+      <mat-label>{{'export.type' | translate}}</mat-label>
+      <sgi-select-enum formControlName="outputType" required [enumMap]="OUTPUT_REPORT_TYPE_MAP">
+      </sgi-select-enum>
+    </mat-form-field>
+
+    <!-- Columns visibility -->
+    <mat-label>{{'export.columns' | translate}}</mat-label>
+
+    <div class="row-visibility">
+      <div class="columns-visibility">
+
+        <mat-checkbox color="primary" class="checkbox" formControlName="showAreasTematicas">
+          {{'csp.area-tematica' | translate:MSG_PARAMS.CARDINALIRY.PLURAL}}
+        </mat-checkbox>
+        <mat-checkbox color="primary" class="checkbox" formControlName="showEntidadesConvocantes">
+          {{'csp.convocatoria-entidad-convocante' | translate:MSG_PARAMS.CARDINALIRY.PLURAL}}
+        </mat-checkbox>
+        <mat-checkbox color="primary" class="checkbox" formControlName="showEntidadesFinanciadoras">
+          {{'csp.convocatoria-entidad-financiadora' | translate:MSG_PARAMS.CARDINALIRY.PLURAL}}
+        </mat-checkbox>
+        <mat-checkbox color="primary" class="checkbox" formControlName="showEnlaces">
+          {{'csp.convocatoria-enlace' | translate:MSG_PARAMS.CARDINALIRY.PLURAL}}
+        </mat-checkbox>
+      </div>
+      <div class="columns-visibility">
+        <mat-checkbox color="primary" class="checkbox" formControlName="showFases">
+          {{'csp.convocatoria-fase' | translate:MSG_PARAMS.CARDINALIRY.PLURAL}}
+        </mat-checkbox>
+        <mat-checkbox color="primary" class="checkbox" formControlName="showCalendarioJustificacion">
+          {{'menu.csp.proyectos.periodos-justificacion' | translate}}
+        </mat-checkbox>
+        <mat-checkbox color="primary" class="checkbox" formControlName="showPeriodosSeguimientoCientifico">
+          {{'csp.proyecto-periodo-seguimiento-cientifico' | translate:MSG_PARAMS.CARDINALIRY.PLURAL}}
+        </mat-checkbox>
+        <mat-checkbox color="primary" class="checkbox" formControlName="showHitos">
+          {{'csp.hito' | translate:MSG_PARAMS.CARDINALIRY.PLURAL}}
+        </mat-checkbox>
+      </div>
+      <div class="columns-visibility">
+        <mat-checkbox color="primary" class="checkbox" formControlName="showRequisitosIP">
+          {{'csp.convocatoria-requisito-ip' | translate}}
+        </mat-checkbox>
+        <mat-checkbox color="primary" class="checkbox" formControlName="showRequisitosEquipo">
+          {{'csp.convocatoria-requisito-equipo' | translate}}
+        </mat-checkbox>
+        <mat-checkbox color="primary" class="checkbox" formControlName="showElegibilidad">
+          {{'csp.convocatoria-elegibilidad' | translate}}
+        </mat-checkbox>
+        <mat-checkbox color="primary" class="checkbox" formControlName="showPartidasPresupuestarias">
+          {{'csp.convocatoria-partida-presupuestaria' | translate:MSG_PARAMS.CARDINALIRY.PLURAL}}
+        </mat-checkbox>
+      </div>
+      <div class="columns-visibility">
+        <mat-checkbox color="primary" class="checkbox" formControlName="showConfiguracionSolicitudes">
+          {{'csp.convocatoria-configuracion-solicitud' | translate}}
+        </mat-checkbox>
+      </div>
+    </div>
+  </form>
+</sgi-export-dialog>

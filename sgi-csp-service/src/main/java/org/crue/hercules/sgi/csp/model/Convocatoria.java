@@ -122,7 +122,6 @@ public class Convocatoria extends BaseEntity {
   /** Estado */
   @Column(name = "estado", length = 50, nullable = false)
   @Enumerated(EnumType.STRING)
-  @NotNull
   private Estado estado;
 
   /** Duracion */
@@ -145,6 +144,10 @@ public class Convocatoria extends BaseEntity {
   /** Activo */
   @Column(name = "activo", columnDefinition = "boolean default true", nullable = false)
   private Boolean activo;
+
+  /** Excelencia */
+  @Column(name = "excelencia", nullable = true)
+  private Boolean excelencia;
 
   /** Tipo Formulario Solicitud */
   @Column(name = "formulario_solicitud", length = 50, nullable = true)

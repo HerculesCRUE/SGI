@@ -1,4 +1,3 @@
-import { getFechaFinPeriodoSeguimiento } from 'src/app/module/csp/proyecto-periodo-seguimiento/proyecto-periodo-seguimiento.utils';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { TipoPropiedad } from '@core/enums/tipo-propiedad';
 import { IInvencion } from '@core/models/pii/invencion';
@@ -11,12 +10,10 @@ import { FormFragment } from '@core/services/action-service';
 import { PaisValidadoService } from '@core/services/pii/solicitud-proteccion/pais-validado/pais-validado.service';
 import { SolicitudProteccionService } from '@core/services/pii/solicitud-proteccion/solicitud-proteccion.service';
 import { TipoCaducidadService } from '@core/services/pii/tipo-caducidad/tipo-caducidad.service';
-import { ViaProteccionService } from '@core/services/pii/via-proteccion/via-proteccion.service';
 import { EmpresaService } from '@core/services/sgemp/empresa.service';
 import { PaisService } from '@core/services/sgo/pais/pais.service';
 import { StatusWrapper } from '@core/utils/status-wrapper';
 import { DateValidator } from '@core/validators/date-validator';
-import { RSQLSgiRestFilter, SgiRestFilterOperator, SgiRestFindOptions } from '@sgi/framework/http';
 import { DateTime } from 'luxon';
 import { NGXLogger } from 'ngx-logger';
 import { BehaviorSubject, concat, forkJoin, from, Observable, of, Subscription } from 'rxjs';
@@ -34,7 +31,6 @@ export class SolicitudProteccionDatosGeneralesFragment extends FormFragment<ISol
   private isExtensionInternacional$ = new BehaviorSubject<boolean>(false);
   private isViaEuropea = new BehaviorSubject<boolean>(false);
 
-  public viasProteccion$ = new BehaviorSubject<IViaProteccion[]>([]);
   public paises$ = new BehaviorSubject<IPais[]>([]);
   public tiposCaducidad$ = new BehaviorSubject<ITipoCaducidad[]>([]);
 
@@ -62,7 +58,6 @@ export class SolicitudProteccionDatosGeneralesFragment extends FormFragment<ISol
     private invencionTitulo: string,
     private solicitudProteccionService: SolicitudProteccionService,
     public readonly: boolean,
-    private viaProteccionService: ViaProteccionService,
     private paisService: PaisService,
     private empresaService: EmpresaService,
     private tipoCaducidadService: TipoCaducidadService,
@@ -84,9 +79,6 @@ export class SolicitudProteccionDatosGeneralesFragment extends FormFragment<ISol
       );
     this.firstSolicitudProteccionWithPrioridad.next(firstSolicitudProteccion ?? null);
     if (!key) {
-      this.loadViasProteccion$().subscribe(viasProteccion => {
-        this.viasProteccion$.next(viasProteccion);
-      });
       this.loadPaises$().subscribe(paises => {
         this.paises$.next(paises);
       });
@@ -169,14 +161,10 @@ export class SolicitudProteccionDatosGeneralesFragment extends FormFragment<ISol
 
     return forkJoin({
       solicitudProteccion: this.solicitudProteccionService.findById(key),
-      viasProteccion: this.loadViasProteccion$(),
       paises: this.loadPaises$(),
       tiposCaducidad: this.loadTiposCaducidad$()
     })
       .pipe(
-        tap(({ viasProteccion }) => {
-          this.viasProteccion$.next(viasProteccion);
-        }),
         tap(({ paises }) => {
           this.paises$.next(paises);
         }),
@@ -276,22 +264,6 @@ export class SolicitudProteccionDatosGeneralesFragment extends FormFragment<ISol
   private get defaultTitle(): string {
 
     return this.solicitudProteccion.titulo || this.invencionTitulo;
-  }
-
-  private loadViasProteccion$(): Observable<IViaProteccion[]> {
-
-    const options: SgiRestFindOptions = {
-      filter: new RSQLSgiRestFilter('tipoPropiedad', SgiRestFilterOperator.EQUALS, this.tipoPropiedad)
-        .and('activo', SgiRestFilterOperator.EQUALS, 'true')
-    };
-
-    return this.viaProteccionService.findTodos(options).pipe(
-      map(response => response.items),
-      catchError(error => {
-        this.logger.error(error);
-        return of([]);
-      }),
-    );
   }
 
   private loadPaises$(): Observable<IPais[]> {

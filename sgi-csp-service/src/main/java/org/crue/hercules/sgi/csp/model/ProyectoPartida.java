@@ -17,6 +17,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.crue.hercules.sgi.csp.enums.TipoPartida;
+import org.crue.hercules.sgi.csp.validation.UniqueCodigoTipoProyectoPartida;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -35,6 +36,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@UniqueCodigoTipoProyectoPartida(groups = { BaseEntity.Create.class, BaseEntity.Update.class })
 public class ProyectoPartida extends BaseEntity {
 
   /**
@@ -81,4 +83,5 @@ public class ProyectoPartida extends BaseEntity {
   @Getter(AccessLevel.NONE)
   @Setter(AccessLevel.NONE)
   private final Proyecto proyecto = null;
+
 }

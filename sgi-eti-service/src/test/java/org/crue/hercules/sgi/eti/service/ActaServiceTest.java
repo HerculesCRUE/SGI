@@ -24,6 +24,7 @@ import org.crue.hercules.sgi.eti.repository.RetrospectivaRepository;
 import org.crue.hercules.sgi.eti.repository.TipoEstadoActaRepository;
 import org.crue.hercules.sgi.eti.repository.custom.CustomActaRepository;
 import org.crue.hercules.sgi.eti.service.impl.ActaServiceImpl;
+import org.crue.hercules.sgi.eti.service.sgi.SgiApiRepService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
@@ -61,7 +62,7 @@ public class ActaServiceTest extends BaseServiceTest {
   @Mock
   private RetrospectivaService retrospectivaService;
   @Mock
-  private ReportService reportService;
+  private SgiApiRepService reportService;
   @Mock
   private SgdocService sgdocService;
 

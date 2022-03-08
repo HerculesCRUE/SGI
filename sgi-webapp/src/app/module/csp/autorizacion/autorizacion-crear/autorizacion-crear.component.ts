@@ -13,6 +13,7 @@ import { AUTORIZACION_ROUTE_NAMES } from '../autorizacion-route-names';
 import { AutorizacionActionService } from '../autorizacion.action.service';
 
 const AUTORIZACION_KEY = marker('csp.autorizacion');
+const AUTORIZACION_SOLICITUD_KEY = marker('csp.autorizacion-solicitud');
 const MSG_BUTTON_SAVE = marker('btn.save.entity');
 const MSG_SUCCESS = marker('msg.save.entity.success');
 const MSG_ERROR = marker('error.save.entity');
@@ -50,7 +51,7 @@ export class AutorizacionCrearComponent extends ActionComponent implements OnIni
 
   setupI18N() {
     this.translate.get(
-      AUTORIZACION_KEY,
+      AUTORIZACION_SOLICITUD_KEY,
       MSG_PARAMS.CARDINALIRY.SINGULAR
     ).pipe(
       switchMap((value) => {

@@ -4,11 +4,13 @@ import java.util.List;
 
 import org.crue.hercules.sgi.csp.model.RolProyecto;
 import org.crue.hercules.sgi.csp.model.RolProyectoColectivo;
+import org.crue.hercules.sgi.csp.repository.custom.CustomRolProyectoColectivoRepository;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
 public interface RolProyectoColectivoRepository
-    extends JpaRepository<RolProyectoColectivo, Long>, JpaSpecificationExecutor<RolProyectoColectivo> {
+    extends JpaRepository<RolProyectoColectivo, Long>, JpaSpecificationExecutor<RolProyectoColectivo>,
+    CustomRolProyectoColectivoRepository {
 
   /**
    * Obtiene el listado de entidades {@link RolProyectoColectivo} asociadas al

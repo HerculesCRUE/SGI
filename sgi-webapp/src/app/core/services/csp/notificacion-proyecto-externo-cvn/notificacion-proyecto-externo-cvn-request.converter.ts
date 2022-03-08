@@ -1,7 +1,7 @@
 import { IAutorizacion } from '@core/models/csp/autorizacion';
 import { INotificacionProyectoExternoCVN } from '@core/models/csp/notificacion-proyecto-externo-cvn';
 import { IProyecto } from '@core/models/csp/proyecto';
-import { ITipoAmbitoGeografico } from '@core/models/csp/tipo-ambito-geografico';
+import { IDocumento } from '@core/models/sgdoc/documento';
 import { IEmpresa } from '@core/models/sgemp/empresa';
 import { IPersona } from '@core/models/sgp/persona';
 import { LuxonUtils } from '@core/utils/luxon-utils';
@@ -19,11 +19,11 @@ class INotificacionProyectoExternoCVNRequestConverter
       titulo: value.titulo,
       autorizacion: { id: value.autorizacionId } as IAutorizacion,
       proyecto: { id: value.proyectoId } as IProyecto,
-      ambitoGeografico: { id: value.ambitoGeograficoId } as ITipoAmbitoGeografico,
+      ambitoGeografico: value.ambitoGeografico,
       codExterno: value.codExterno,
       datosEntidadParticipacion: value.datosEntidadParticipacion,
       datosResponsable: value.datosResponsable,
-      documentoRef: value.documentoRef,
+      documento: { documentoRef: value.documentoRef } as IDocumento,
       entidadParticipacion: { id: value.entidadParticipacionRef } as IEmpresa,
       fechaInicio: LuxonUtils.fromBackend(value.fechaInicio),
       fechaFin: LuxonUtils.fromBackend(value.fechaFin),
@@ -33,7 +33,7 @@ class INotificacionProyectoExternoCVNRequestConverter
       porcentajeSubvencion: value.porcentajeSubvencion,
       proyectoCVNId: value.proyectoCVNId,
       responsable: { id: value.responsableRef } as IPersona,
-      urlDocumentoAcreditacion: value.responsableRef,
+      urlDocumentoAcreditacion: value.urlDocumentoAcreditacion,
       solicitante: { id: value.solicitanteRef } as IPersona,
     };
   }
@@ -46,11 +46,11 @@ class INotificacionProyectoExternoCVNRequestConverter
       titulo: value.titulo,
       autorizacionId: value.autorizacion?.id,
       proyectoId: value.proyecto?.id,
-      ambitoGeograficoId: value.ambitoGeografico?.id,
+      ambitoGeografico: value.ambitoGeografico,
       codExterno: value.codExterno,
       datosEntidadParticipacion: value.datosEntidadParticipacion,
       datosResponsable: value.datosResponsable,
-      documentoRef: value.documentoRef,
+      documentoRef: value.documento.documentoRef,
       entidadParticipacionRef: value.entidadParticipacion?.id,
       fechaInicio: LuxonUtils.toBackend(value.fechaInicio),
       fechaFin: LuxonUtils.toBackend(value.fechaFin),
@@ -61,7 +61,7 @@ class INotificacionProyectoExternoCVNRequestConverter
       proyectoCVNId: value.proyectoCVNId,
       responsableRef: value.responsable?.id,
       urlDocumentoAcreditacion: value.urlDocumentoAcreditacion,
-      solicitanteRef: value.solicitante?.id
+      solicitanteRef: value.solicitante?.id,
     };
   }
 }

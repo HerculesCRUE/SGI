@@ -2,6 +2,7 @@ package org.crue.hercules.sgi.csp.service.impl;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -116,6 +117,8 @@ import org.crue.hercules.sgi.framework.security.core.context.SgiSecurityContextH
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
@@ -186,6 +189,7 @@ public class ProyectoServiceImpl implements ProyectoService {
   private final ProyectoPeriodoJustificacionRepository proyectoPeriodoJustificacionRepository;
   private final EstadoProyectoPeriodoJustificacionRepository estadoProyectoPeriodoJustificacionRepository;
   private final ProyectoFacturacionService proyectoFacturacionService;
+  private final ProyectoHelper proyectoHelper;
 
   public ProyectoServiceImpl(SgiConfigProperties sgiConfigProperties, ProyectoRepository repository,
       EstadoProyectoRepository estadoProyectoRepository, ModeloUnidadRepository modeloUnidadRepository,
@@ -228,7 +232,8 @@ public class ProyectoServiceImpl implements ProyectoService {
       ConvocatoriaPeriodoJustificacionRepository convocatoriaPeriodoJustificacionRepository,
       ProyectoPeriodoJustificacionRepository proyectoPeriodoJustificacionRepository,
       EstadoProyectoPeriodoJustificacionRepository estadoProyectoPeriodoJustificacionRepository,
-      ProyectoFacturacionService proyectoFacturacionService) {
+      ProyectoFacturacionService proyectoFacturacionService,
+      ProyectoHelper proyectoHelper) {
 
     this.sgiConfigProperties = sgiConfigProperties;
     this.repository = repository;
@@ -280,6 +285,7 @@ public class ProyectoServiceImpl implements ProyectoService {
     this.proyectoPeriodoJustificacionRepository = proyectoPeriodoJustificacionRepository;
     this.estadoProyectoPeriodoJustificacionRepository = estadoProyectoPeriodoJustificacionRepository;
     this.proyectoFacturacionService = proyectoFacturacionService;
+    this.proyectoHelper = proyectoHelper;
   }
 
   /**
@@ -343,10 +349,10 @@ public class ProyectoServiceImpl implements ProyectoService {
 
     this.validarDatos(proyectoActualizar);
 
-    return repository.findById(proyectoActualizar.getId()).map((data) -> {
-      ProyectoHelper.checkCanRead(data);
+    return repository.findById(proyectoActualizar.getId()).map(data -> {
+      proyectoHelper.checkCanRead(data);
       Assert.isTrue(
-          proyectoActualizar.getEstado().getId() == data.getEstado().getId()
+          proyectoActualizar.getEstado().getId().equals(data.getEstado().getId())
               && ((proyectoActualizar.getConvocatoriaId() == null && data.getConvocatoriaId() == null)
                   || (proyectoActualizar.getConvocatoriaId() != null && data.getConvocatoriaId() != null
                       && proyectoActualizar.getConvocatoriaId().equals(data.getConvocatoriaId())))
@@ -377,7 +383,7 @@ public class ProyectoServiceImpl implements ProyectoService {
 
       if ((proyectoActualizar.getIva() != null && data.getIva() == null)
           || (proyectoActualizar.getIva() != null && data.getIva() != null)
-              && (proyectoActualizar.getIva().getIva() != data.getIva().getIva())) {
+              && (!Objects.equals(proyectoActualizar.getIva().getIva(), data.getIva().getIva()))) {
         ProyectoIVA proyectoIVA = updateProyectoIVA(data, proyectoActualizar);
         data.setIva(proyectoIVA);
       }
@@ -482,7 +488,7 @@ public class ProyectoServiceImpl implements ProyectoService {
       Assert.isTrue(SgiSecurityContextHolder.hasAuthorityForUO("CSP-PRO-R", proyecto.getUnidadGestionRef()),
           "El proyecto pertenece a una Unidad de Gestión no gestionable por el usuario");
 
-      if (proyecto.getActivo()) {
+      if (proyecto.getActivo().booleanValue()) {
         // Si esta activo no se hace nada
         return proyecto;
       }
@@ -512,7 +518,7 @@ public class ProyectoServiceImpl implements ProyectoService {
       Assert.isTrue(SgiSecurityContextHolder.hasAuthorityForUO("CSP-PRO-B", proyecto.getUnidadGestionRef()),
           "El proyecto pertenece a una Unidad de Gestión no gestionable por el usuario");
 
-      if (!proyecto.getActivo()) {
+      if (!proyecto.getActivo().booleanValue()) {
         // Si no esta activo no se hace nada
         return proyecto;
       }
@@ -535,7 +541,23 @@ public class ProyectoServiceImpl implements ProyectoService {
   public Proyecto findById(Long id) {
     log.debug("findById(Long id) - start");
     final Proyecto returnValue = repository.findById(id).orElseThrow(() -> new ProyectoNotFoundException(id));
-    ProyectoHelper.checkCanRead(returnValue);
+    proyectoHelper.checkCanRead(returnValue);
+    proyectoHelper.checkCanAccessProyecto(id);
+    log.debug("findById(Long id) - end");
+    return returnValue;
+  }
+
+  /**
+   * Obtiene una entidad {@link Proyecto} por id.
+   * Sin hacer comprobaciones de la Unidad de Gestión.
+   *
+   * @param id Identificador de la entidad {@link Proyecto}.
+   * @return Proyecto la entidad {@link Proyecto}.
+   */
+  @Override
+  public Proyecto findProyectoResumenById(Long id) {
+    log.debug("findById(Long id) - start");
+    final Proyecto returnValue = repository.findById(id).orElseThrow(() -> new ProyectoNotFoundException(id));
     log.debug("findById(Long id) - end");
     return returnValue;
   }
@@ -553,7 +575,7 @@ public class ProyectoServiceImpl implements ProyectoService {
     log.debug("findAll(String query, Pageable paging) - start");
 
     Specification<Proyecto> specs = ProyectoSpecifications.activos().and(SgiRSQLJPASupport.toSpecification(query,
-        ProyectoPredicateResolver.getInstance(programaRepository, proyectoProrrogaRepository)));
+        ProyectoPredicateResolver.getInstance(programaRepository, proyectoProrrogaRepository, sgiConfigProperties)));
 
     // No tiene acceso a todos los UO
     List<String> unidadesGestion = SgiSecurityContextHolder
@@ -570,6 +592,35 @@ public class ProyectoServiceImpl implements ProyectoService {
   }
 
   /**
+   * Obtiene todas las entidades {@link Proyecto} activas, que no estén en estado
+   * borrador, en las que el usuario logueado está dentro del equipo,
+   * paginadas y filtradas
+   *
+   * @param query  información del filtro.
+   * @param paging información de paginación.
+   * @return el listado de entidades {@link Proyecto} activas paginadas y
+   *         filtradas.
+   */
+  @Override
+  public Page<Proyecto> findAllActivosInvestigador(String query, Pageable paging) {
+    log.debug("findAllActivosInvestigador(String query, Pageable paging) - start");
+
+    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+    Specification<Proyecto> specs = ProyectoSpecifications.distinct().and(ProyectoSpecifications.activos()
+        .and((ProyectoSpecifications.byInvestigadorId(authentication.getName()))
+            .or(ProyectoSpecifications.byResponsableEconomicoId(authentication.getName())))
+        .and(ProyectoSpecifications.byEstadoNotBorrador())
+        .and(SgiRSQLJPASupport.toSpecification(query,
+            ProyectoPredicateResolver.getInstance(programaRepository, proyectoProrrogaRepository,
+                sgiConfigProperties))));
+
+    Page<Proyecto> returnValue = repository.findAll(specs, paging);
+    log.debug("findAllActivosInvestigador(String query, Pageable paging) - end");
+    return returnValue;
+  }
+
+  /**
    * Obtiene todas las entidades {@link Proyecto} paginadas y filtradas.
    *
    * @param query  información del filtro.
@@ -582,7 +633,8 @@ public class ProyectoServiceImpl implements ProyectoService {
 
     Specification<Proyecto> specs = ProyectoSpecifications.distinct()
         .and(SgiRSQLJPASupport.toSpecification(query,
-            ProyectoPredicateResolver.getInstance(programaRepository, proyectoProrrogaRepository)));
+            ProyectoPredicateResolver.getInstance(programaRepository, proyectoProrrogaRepository,
+                sgiConfigProperties)));
 
     List<String> unidadesGestion = SgiSecurityContextHolder
         .getUOsForAnyAuthority(new String[] { "CSP-PRO-V", "CSP-PRO-C", "CSP-PRO-E", "CSP-PRO-B", "CSP-PRO-R" });
@@ -690,7 +742,7 @@ public class ProyectoServiceImpl implements ProyectoService {
     // porcentaje de IVA sea mayor que cero
     if (newProyectoIVA.getIva() != null && newProyectoIVA.getIva().equals(0)) {
       Boolean hasProyectosSgeVinculados = proyectoProyectoSGERepository.existsByProyectoId(proyectoGuardado.getId());
-      if (hasProyectosSgeVinculados) {
+      if (hasProyectosSgeVinculados.booleanValue()) {
         throw new ProyectoIVAException();
       }
     }
@@ -700,7 +752,7 @@ public class ProyectoServiceImpl implements ProyectoService {
     if (oldProyectoIVA != null && oldProyectoIVA.getIva() != null) {
       oldProyectoIVA.setFechaFin(Instant.now().atZone(sgiConfigProperties.getTimeZone().toZoneId()).withHour(23)
           .withMinute(59).withSecond(59).toInstant());
-      oldProyectoIVA = proyectoIVARepository.save(oldProyectoIVA);
+      proyectoIVARepository.save(oldProyectoIVA);
     }
 
     log.debug("updateProyectoIVA(Proyecto data, Proyecto proyectoActualizado) - end");
@@ -763,12 +815,10 @@ public class ProyectoServiceImpl implements ProyectoService {
       Assert.isTrue(proyecto.getConfidencial() != null,
           "El campo confidencial debe ser obligatorio para el proyecto en estado 'CONCEDIDO'");
 
-      Assert.isTrue(proyecto.getColaborativo() != null,
-          "El campo colaborativo debe ser obligatorio para el proyecto en estado 'CONCEDIDO'");
-
-      Assert.isTrue(proyecto.getCoordinadorExterno() != null,
-          "El campo coordinadorExterno debe ser obligatorio para el proyecto en estado 'CONCEDIDO'");
-
+      if (proyecto.getCoordinado() != null && proyecto.getCoordinado().booleanValue()) {
+        Assert.isTrue(proyecto.getCoordinadorExterno() != null,
+            "El campo coordinadorExterno debe ser obligatorio para el proyecto en estado 'CONCEDIDO'");
+      }
       Assert.isTrue(
           proyecto.getEstado().getEstado() == EstadoProyecto.Estado.CONCEDIDO && proyecto.getTimesheet() != null,
           "El campo timesheet debe ser obligatorio para el proyecto en estado 'CONCEDIDO'");
@@ -1595,8 +1645,8 @@ public class ProyectoServiceImpl implements ProyectoService {
       List<ProyectoEquipo> equiposActualizados = getEquiposUpdateFechaFinProyectoEquipo(proyecto.getId(),
           fechaFinPrevious, fechaFinNew);
 
-      proyectoEquipoService.update(proyecto.getId(), equiposActualizados);
       proyecto.setFechaFinDefinitiva(fechaFinNew);
+      proyectoEquipoService.update(proyecto.getId(), equiposActualizados);
     }
 
     // Se cambia el estado del proyecto
@@ -1702,7 +1752,7 @@ public class ProyectoServiceImpl implements ProyectoService {
     log.debug("findIds(String query) - start");
 
     List<Long> returnValue = repository.findIds(SgiRSQLJPASupport.toSpecification(query,
-        ProyectoPredicateResolver.getInstance(programaRepository, proyectoProrrogaRepository)));
+        ProyectoPredicateResolver.getInstance(programaRepository, proyectoProrrogaRepository, sgiConfigProperties)));
 
     log.debug("findIds(String query) - end");
 
@@ -1779,4 +1829,5 @@ public class ProyectoServiceImpl implements ProyectoService {
   public List<Long> findIdsBySolicitudId(Long solicitudId) {
     return this.repository.findIds(ProyectoSpecifications.bySolicitudId(solicitudId));
   }
+
 }

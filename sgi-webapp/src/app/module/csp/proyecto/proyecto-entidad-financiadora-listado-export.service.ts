@@ -23,7 +23,7 @@ const ENTIDAD_FINANCIADORA_CIF_KEY = marker('csp.proyecto-entidad-financiadora.c
 const ENTIDAD_FINANCIADORA_CIF_FIELD = 'cifEntidadFinanciadora';
 const ENTIDAD_FINANCIADORA_FUENTE_FINANCIACION_KEY = marker('csp.proyecto-entidad-financiadora.fuente-financiacion');
 const ENTIDAD_FINANCIADORA_FUENTE_FINANCIACION_FIELD = 'fuenteFinanciacionEntidadFinanciadora';
-const ENTIDAD_FINANCIADORA_AMBITO_KEY = marker('csp.proyecto-entidad-financiadora.ambito');
+const ENTIDAD_FINANCIADORA_AMBITO_KEY = marker('csp.fuente-financiacion.ambito-geografico');
 const ENTIDAD_FINANCIADORA_AMBITO_FIELD = 'ambitoEntidadFinanciadora';
 const ENTIDAD_FINANCIADORA_TIPO_FINANCIACION_KEY = marker('csp.proyecto-entidad-financiadora.tipo-financiacion');
 const ENTIDAD_FINANCIADORA_TIPO_FINANCIACION_FIELD = 'tipoFinanciacionEntidadFinanciadora';
@@ -32,6 +32,7 @@ const ENTIDAD_FINANCIADORA_PORCENTAJE_FINANCIACION_FIELD = 'porcentajeFinanciaci
 const ENTIDAD_FINANCIADORA_IMPORTE_FINANCIACION_KEY = marker('csp.proyecto-entidad-financiadora.importe-financiacion');
 const ENTIDAD_FINANCIADORA_IMPORTE_FINANCIACION_FIELD = 'importeFinanciacionEntidadFinanciadora';
 const ENTIDAD_FINANCIADORA_AJENA_KEY = marker('csp.proyecto-entidad-financiadora-ajena');
+const ENTIDAD_FINANCIADORA_AJENA_CONVOCATORIA_KEY = marker('csp.proyecto-entidad-financiadora-ajenas-convocatoria');
 const ENTIDAD_FINANCIADORA_AJENA_FIELD = 'ajenaEntidadFinanciadora';
 
 @Injectable()
@@ -193,7 +194,7 @@ export class ProyectoEntidadFinanciadoraListadoExportService
 
       const columnAjenaEntidadFinanciadora: ISgiColumnReport = {
         name: ENTIDAD_FINANCIADORA_AJENA_FIELD + idEntidadFinanciadora,
-        title: titleEntidadFinanciadora + idEntidadFinanciadora + ': ' + this.translate.instant(ENTIDAD_FINANCIADORA_AJENA_KEY),
+        title: titleEntidadFinanciadora + idEntidadFinanciadora + ': ' + this.translate.instant(ENTIDAD_FINANCIADORA_AJENA_CONVOCATORIA_KEY),
         type: ColumnType.STRING,
       };
       columns.push(columnAjenaEntidadFinanciadora);
@@ -238,7 +239,7 @@ export class ProyectoEntidadFinanciadoraListadoExportService
       entidadTable += '\n';
       entidadTable += this.decimalPipe.transform(entidadFinanciadora.porcentajeFinanciacion, '2.2-2') ?? '';
       entidadTable += '\n';
-      entidadTable += this.getI18nBooleanYesNo(entidadFinanciadora.ajena);
+      entidadTable += this.notIsNullAndNotUndefined(entidadFinanciadora.ajena) ? this.getI18nBooleanYesNo(entidadFinanciadora.ajena) : '';
 
       entidadFinanciadoraElementsRow.push(entidadTable);
 
@@ -262,7 +263,7 @@ export class ProyectoEntidadFinanciadoraListadoExportService
       elementsRow.push(entidadFinanciadora.tipoFinanciacion?.nombre ?? '');
       elementsRow.push(entidadFinanciadora.importeFinanciacion ?? '');
       elementsRow.push(entidadFinanciadora.porcentajeFinanciacion ?? '');
-      elementsRow.push(this.getI18nBooleanYesNo(entidadFinanciadora.ajena));
+      elementsRow.push(this.notIsNullAndNotUndefined(entidadFinanciadora.ajena) ? this.getI18nBooleanYesNo(entidadFinanciadora.ajena) : '');
     } else {
       elementsRow.push('');
       elementsRow.push('');
@@ -273,5 +274,9 @@ export class ProyectoEntidadFinanciadoraListadoExportService
       elementsRow.push('');
       elementsRow.push('');
     }
+  }
+
+  private notIsNullAndNotUndefined(value): boolean {
+    return value !== null && value !== undefined;
   }
 }

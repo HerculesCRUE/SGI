@@ -22,7 +22,7 @@ import org.springframework.test.context.jdbc.Sql;
  * Test de integracion de SolicitudProyectoPresupuesto.
  */
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class SolicitudProyectoPresupuestoIT extends BaseIT {
+class SolicitudProyectoPresupuestoIT extends BaseIT {
 
   private static final String PATH_PARAMETER_ID = "/{id}";
   private static final String CONTROLLER_BASE_PATH = "/solicitudproyectopresupuestos";
@@ -98,6 +98,7 @@ public class SolicitudProyectoPresupuestoIT extends BaseIT {
     "classpath:scripts/tipo_financiacion.sql",
     "classpath:scripts/convocatoria_entidad_financiadora.sql",
     "classpath:scripts/convocatoria_entidad_gestora.sql",
+    "classpath:scripts/solicitud_proyecto_entidad_financiadora_ajena.sql",
     "classpath:scripts/solicitud_proyecto_entidad.sql",
     "classpath:scripts/solicitud_proyecto_presupuesto.sql"
     // @formatter:on
@@ -147,6 +148,7 @@ public class SolicitudProyectoPresupuestoIT extends BaseIT {
     "classpath:scripts/tipo_financiacion.sql",
     "classpath:scripts/convocatoria_entidad_financiadora.sql",
     "classpath:scripts/convocatoria_entidad_gestora.sql",
+    "classpath:scripts/solicitud_proyecto_entidad_financiadora_ajena.sql",
     "classpath:scripts/solicitud_proyecto_entidad.sql",
     "classpath:scripts/solicitud_proyecto_presupuesto.sql"
     // @formatter:on
@@ -179,6 +181,7 @@ public class SolicitudProyectoPresupuestoIT extends BaseIT {
     "classpath:scripts/tipo_financiacion.sql",
     "classpath:scripts/convocatoria_entidad_financiadora.sql",
     "classpath:scripts/convocatoria_entidad_gestora.sql",
+    "classpath:scripts/solicitud_proyecto_entidad_financiadora_ajena.sql",
     "classpath:scripts/solicitud_proyecto_entidad.sql",
     "classpath:scripts/solicitud_proyecto_presupuesto.sql"
     // @formatter:on
@@ -211,6 +214,7 @@ public class SolicitudProyectoPresupuestoIT extends BaseIT {
     "classpath:scripts/tipo_financiacion.sql",
     "classpath:scripts/convocatoria_entidad_financiadora.sql",
     "classpath:scripts/convocatoria_entidad_gestora.sql",
+    "classpath:scripts/solicitud_proyecto_entidad_financiadora_ajena.sql",
     "classpath:scripts/solicitud_proyecto_entidad.sql",
     "classpath:scripts/solicitud_proyecto_presupuesto.sql"
     // @formatter:on

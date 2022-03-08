@@ -54,10 +54,14 @@ public class NotificacionCVNEntidadFinanciadora extends BaseEntity {
   @Column(name = "entidad_financiadora_ref", nullable = true)
   private String entidadFinanciadoraRef;
 
+  @Column(name = "notificacion_proyecto_externo_cvn_id", nullable = false)
+  private Long notificacionProyectoExternoCvnId;
+
   // Relation mappings for JPA metamodel generation only
   @ManyToOne
-  @JoinColumn(name = "autorizacion_id", insertable = false, updatable = false, foreignKey = @ForeignKey(name = "FK_ESTADOAUTORIZACION_NOTIFICACIONPROYECTOEXTERNOCVN"))
+  @JoinColumn(name = "notificacion_proyecto_externo_cvn_id", insertable = false, updatable = false, foreignKey = @ForeignKey(name = "FK_NOTIFICACIONCVNENTIDADFINANCIADORA_NOTIFICACIONPROYECTOEXTERNOCVN"))
   @Getter(AccessLevel.NONE)
   @Setter(AccessLevel.NONE)
-  private static final NotificacionProyectoExternoCVN notificacionProyecto = null;
+  private final NotificacionProyectoExternoCVN notificacionProyecto = null;
+
 }

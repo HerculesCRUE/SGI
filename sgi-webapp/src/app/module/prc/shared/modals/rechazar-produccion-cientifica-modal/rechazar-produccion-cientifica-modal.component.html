@@ -1,0 +1,35 @@
+<div class="sgi-dialog-header" fxLayout="row" fxLayoutGap="20px">
+  <span fxFlexAlign="center" mat-mat-dialog-title role="heading" aria-level="3" fxFlex>
+    {{'prc.produccion-cientifica.rechazar' | translate}}
+  </span>
+  <button fxFlex="nogrow" mat-icon-button mat-dialog-close>
+    <mat-icon class="close-icon">close</mat-icon>
+  </button>
+</div>
+<mat-dialog-content>
+  <form class="form-inline" [formGroup]="formGroup">
+    <!-- Motivo Rechazo -->
+    <div>
+      <mat-form-field>
+        <mat-label>{{'prc.produccion-cientifica.introduzca-motivo-rechazo' | translate}}
+        </mat-label>
+        <textarea matInput formControlName="comentario" type="text" required
+          placeholder="{{'prc.produccion-cientifica.motivo-rechazo' | translate}}">
+        </textarea>
+        <mat-error *ngIf="formGroup.controls.comentario.errors?.required">
+          {{'error.required.entity' | translate:msgParamComentarioEntity}}
+        </mat-error>
+      </mat-form-field>
+    </div>
+  </form>
+
+</mat-dialog-content>
+<mat-dialog-actions>
+  <button color="accent" (click)="saveOrUpdate()" mat-raised-button type="submit">
+    <mat-icon class="save-icon">save</mat-icon>
+    {{'btn.ok' | translate}}
+  </button>
+  <button class="link-cancelar" mat-button type="button" mat-dialog-close>
+    {{'btn.cancel' | translate}}
+  </button>
+</mat-dialog-actions>

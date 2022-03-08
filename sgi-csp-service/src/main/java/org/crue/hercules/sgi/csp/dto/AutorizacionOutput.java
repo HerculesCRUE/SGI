@@ -1,18 +1,17 @@
 package org.crue.hercules.sgi.csp.dto;
 
 import java.io.Serializable;
-
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
 @Data
 @EqualsAndHashCode(callSuper = false)
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
+@SuperBuilder
 public class AutorizacionOutput implements Serializable {
   private Long id;
   private String observaciones;

@@ -50,7 +50,7 @@ export class SolicitudProyectoFichaGeneralFragment extends FormFragment<ISolicit
     this.setComplete(true);
     this.solicitudProyecto = {} as ISolicitudProyecto;
 
-    this.userCanEdit = !this.isInvestigador || (this.isInvestigador && (!!!key || this.estado.estado === Estado.BORRADOR));
+    this.userCanEdit = !readonly;
 
     // Hack edit mode
     this.initialized$.pipe(

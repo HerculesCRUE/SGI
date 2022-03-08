@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <artifacts>
-  <artifact name="sge-add-x-api-key-sequence" groupId="org.crue.hercules.sgi.esb.sge.sequence" version="0.0.6" type="synapse/sequence" serverRole="EnterpriseServiceBus">
+  <artifact name="sge-add-x-api-key-sequence" groupId="org.crue.hercules.sgi.esb.sge.sequence" version="0.0.7" type="synapse/sequence" serverRole="EnterpriseServiceBus">
     <file>src/main/synapse-config/sequences/sge-add-x-api-key-sequence.xml</file>
   </artifact>
-  <artifact name="sge-endpoint" groupId="org.crue.hercules.sgi.esb.sge.endpoint" version="0.0.6" type="synapse/endpoint" serverRole="EnterpriseServiceBus">
+  <artifact name="sge-endpoint" groupId="org.crue.hercules.sgi.esb.sge.endpoint" version="0.0.7" type="synapse/endpoint" serverRole="EnterpriseServiceBus">
     <file>src/main/synapse-config/endpoints/sge-endpoint.xml</file>
   </artifact>
-  <artifact name="sgicsp-endpoint" groupId="org.crue.hercules.sgi.esb.sge.endpoint" version="0.0.6" type="synapse/endpoint" serverRole="EnterpriseServiceBus">
+  <artifact name="sgicsp-endpoint" groupId="org.crue.hercules.sgi.esb.sge.endpoint" version="0.0.7" type="synapse/endpoint" serverRole="EnterpriseServiceBus">
     <file>src/main/synapse-config/endpoints/sgicsp-endpoint.xml</file>
   </artifact>
-  <artifact name="sge-api" groupId="org.crue.hercules.sgi.esb.sge.api" version="0.0.6" type="synapse/api" serverRole="EnterpriseServiceBus">
+  <artifact name="sge-api" groupId="org.crue.hercules.sgi.esb.sge.api" version="0.0.7" type="synapse/api" serverRole="EnterpriseServiceBus">
     <file>src/main/synapse-config/api/sge-api.xml</file>
   </artifact>
 </artifacts>

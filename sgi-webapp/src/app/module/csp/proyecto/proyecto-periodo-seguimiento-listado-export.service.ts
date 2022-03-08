@@ -18,19 +18,23 @@ import { IProyectoReportData, IProyectoReportOptions } from './proyecto-listado-
 
 const PERIODO_SEGUIMIENTO_KEY = marker('menu.csp.proyectos.seguimientos-cientificos');
 const PERIODO_SEGUIMIENTO_FIELD = 'periodoSeguimiento';
-const PERIODO_SEGUIMIENTO_NUMERO_KEY = marker('csp.proyecto-periodo-seguimiento-cientifico.numero-periodo');
+const PERIODO_SEGUIMIENTO_NUMERO_PERIODO_KEY = marker('csp.proyecto-periodo-seguimiento-cientifico.numero-periodo');
+const PERIODO_SEGUIMIENTO_NUMERO_KEY = marker('csp.proyecto-periodo-seguimiento-cientifico.numero');
 const PERIODO_SEGUIMIENTO_NUMERO_FIELD = 'numeroPeriodoSeguimiento';
 const PERIODO_SEGUIMIENTO_TIPO_KEY = marker('csp.proyecto-periodo-seguimiento-cientifico.tipo-seguimiento');
 const PERIODO_SEGUIMIENTO_TIPO_FIELD = 'tipoSeguimiento';
 const PERIODO_SEGUIMIENTO_FECHA_INICIO_KEY = marker('csp.proyecto-periodo-seguimiento-cientifico.fecha-inicio');
+const PERIODO_SEGUIMIENTO_FECHA_INICIO_EJECUCION_KEY = marker('csp.proyecto-periodo-seguimiento-cientifico.fecha-inicio-ejecucion');
 const PERIODO_SEGUIMIENTO_FECHA_INICIO_FIELD = 'fechaInicioSeguimiento';
 const PERIODO_SEGUIMIENTO_FECHA_FIN_KEY = marker('csp.proyecto-periodo-seguimiento-cientifico.fecha-fin');
+const PERIODO_SEGUIMIENTO_FECHA_FIN_EJECUCION_KEY = marker('csp.proyecto-periodo-seguimiento-cientifico.fecha-fin-ejecucion');
 const PERIODO_SEGUIMIENTO_FECHA_FIN_FIELD = 'fechaFinSeguimiento';
 const PERIODO_SEGUIMIENTO_FECHA_INICIO_PRESENTACION_KEY = marker('csp.proyecto-periodo-seguimiento-cientifico.fecha-inicio-presentacion');
 const PERIODO_SEGUIMIENTO_FECHA_INICIO_PRESENTACION_FIELD = 'fechaInicioPresentacion';
 const PERIODO_SEGUIMIENTO_FECHA_FIN_PRESENTACION_KEY = marker('csp.proyecto-periodo-seguimiento-cientifico.fecha-fin-presentacion');
 const PERIODO_SEGUIMIENTO_FECHA_FIN_PRESENTACION_FIELD = 'fechaFinPresentacion';
 const PERIODO_SEGUIMIENTO_PERIODO_KEY = marker('csp.proyecto-periodo-justificacion.periodo');
+const PERIODO_SEG_CIENTIFICO_KEY = marker('csp.proyecto-periodo-seguimiento-cientifico.informe-title');
 
 @Injectable()
 export class ProyectoPeriodoSeguimientoListadoExportService
@@ -74,7 +78,7 @@ export class ProyectoPeriodoSeguimientoListadoExportService
       type: ColumnType.STRING
     });
     const titleI18n = this.translate.instant(PERIODO_SEGUIMIENTO_KEY) +
-      ' (' + this.translate.instant(PERIODO_SEGUIMIENTO_NUMERO_KEY) +
+      ' (' + this.translate.instant(PERIODO_SEGUIMIENTO_NUMERO_PERIODO_KEY) +
       ' - ' + this.translate.instant(PERIODO_SEGUIMIENTO_TIPO_KEY) +
       ' - ' + this.translate.instant(PERIODO_SEGUIMIENTO_FECHA_INICIO_KEY) +
       ' - ' + this.translate.instant(PERIODO_SEGUIMIENTO_FECHA_FIN_KEY) +
@@ -94,7 +98,7 @@ export class ProyectoPeriodoSeguimientoListadoExportService
     const columns: ISgiColumnReport[] = [];
 
     const maxNumPeriodosSeguimiento = Math.max(...proyectos.map(p => p.periodosSeguimientos?.length));
-    const titlePeriodoSeguimiento = this.translate.instant(PERIODO_SEGUIMIENTO_KEY) +
+    const titlePeriodoSeguimiento = this.translate.instant(PERIODO_SEG_CIENTIFICO_KEY) +
       ' ' +
       this.translate.instant(PERIODO_SEGUIMIENTO_PERIODO_KEY);
 
@@ -117,14 +121,14 @@ export class ProyectoPeriodoSeguimientoListadoExportService
 
       const columnFechaInicioPeriodoSeguimiento: ISgiColumnReport = {
         name: PERIODO_SEGUIMIENTO_FECHA_INICIO_FIELD + idPeriodoSeguimiento,
-        title: titleColumn + this.translate.instant(PERIODO_SEGUIMIENTO_FECHA_INICIO_KEY),
+        title: titleColumn + this.translate.instant(PERIODO_SEGUIMIENTO_FECHA_INICIO_EJECUCION_KEY),
         type: ColumnType.DATE,
       };
       columns.push(columnFechaInicioPeriodoSeguimiento);
 
       const columnFechaFinPeriodoSeguimiento: ISgiColumnReport = {
         name: PERIODO_SEGUIMIENTO_FECHA_FIN_FIELD + idPeriodoSeguimiento,
-        title: titleColumn + this.translate.instant(PERIODO_SEGUIMIENTO_FECHA_FIN_KEY),
+        title: titleColumn + this.translate.instant(PERIODO_SEGUIMIENTO_FECHA_FIN_EJECUCION_KEY),
         type: ColumnType.DATE,
       };
       columns.push(columnFechaFinPeriodoSeguimiento);

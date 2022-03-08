@@ -226,6 +226,10 @@ export abstract class SelectCommonComponent<T>
   @Output()
   readonly selectionChange: EventEmitter<T> = new EventEmitter<T>();
 
+  /** Emitter for select values change */
+  @Output()
+  readonly selectValuesChange: EventEmitter<SelectValue<T>[]> = new EventEmitter<SelectValue<T>[]>();
+
   /**
    * Function to compare the option values with the selected values. The first argument
    * is a value from an option. The second is a value from the selection. A boolean
@@ -462,6 +466,7 @@ export abstract class SelectCommonComponent<T>
         this.matSelect.setDisabledState(this.disabled);
       }
       this.stateChanges.next();
+      this.selectValuesChange.next(options);
     });
   }
 

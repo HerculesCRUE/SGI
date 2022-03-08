@@ -4,12 +4,10 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { BaseModalComponent } from '@core/component/base-modal.component';
 import { MSG_PARAMS } from '@core/i18n';
-import { ISectorAplicacion } from '@core/models/pii/sector-aplicacion';
 import { ISectorLicenciado } from '@core/models/pii/sector-licenciado';
 import { IPais } from '@core/models/sgo/pais';
 import { FxFlexProperties } from '@core/models/shared/flexLayout/fx-flex-properties';
 import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-properties';
-import { SectorAplicacionService } from '@core/services/pii/sector-aplicacion/sector-aplicacion.service';
 import { PaisService } from '@core/services/sgo/pais/pais.service';
 import { SnackBarService } from '@core/services/snack-bar.service';
 import { DateValidator } from '@core/validators/date-validator';
@@ -56,7 +54,6 @@ export class SectorLicenciadoModalComponent
   errorSectorLicenciado: string;
 
   paises$: Observable<IPais[]>;
-  sectoresAplicacion$: Observable<ISectorAplicacion[]>;
 
   constructor(
     public matDialogRef: MatDialogRef<SectorLicenciadoModalComponent>,
@@ -64,11 +61,9 @@ export class SectorLicenciadoModalComponent
     @Inject(MAT_DIALOG_DATA) public data: ISectorLicenciadoModalData,
     private readonly translate: TranslateService,
     paisService: PaisService,
-    sectorAplicacionService: SectorAplicacionService,
   ) {
     super(snackBarService, matDialogRef, data.sectorLicenciado);
     this.paises$ = paisService.findAll().pipe(map(({ items }) => items));
-    this.sectoresAplicacion$ = sectorAplicacionService.findAll().pipe(map(({ items }) => items));
   }
 
   ngOnInit(): void {

@@ -93,7 +93,8 @@ public class CustomPeticionEvaluacionRepositoryImpl implements CustomPeticionEva
     }
 
     cq.multiselect(root.alias("peticionEvaluacion"),
-        isNotEliminable(root, cb, cq, personaRefConsulta).isNull().alias("eliminable"));
+        cb.selectCase().when(cb.isNull(isNotEliminable(root, cb, cq, personaRefConsulta)), true).otherwise(false)
+            .alias("eliminable"));
 
     cq.where(predicates.toArray(new Predicate[] {}));
     countQuery.where(predicatesCount.toArray(new Predicate[] {}));

@@ -26,6 +26,7 @@ const TIPO_PERSONA_KEY = marker('sgp.persona');
 export interface SearchPersonaModalData extends SearchModalData {
   tipoColectivo: string;
   colectivos: string[];
+  selectionDisableWith?: (persona: IPersona) => boolean;
 }
 
 @Component({
@@ -47,6 +48,12 @@ export class SearchPersonaModalComponent implements OnInit, AfterViewInit {
   isInvestigador: boolean;
   msgParamEntity: {};
 
+  get selectionDisableWith() {
+    return this._selectionDisableWith;
+  }
+  // tslint:disable-next-line: variable-name
+  private _selectionDisableWith: (persona: IPersona) => boolean = () => false;
+
   constructor(
     private readonly logger: NGXLogger,
     public dialogRef: MatDialogRef<SearchPersonaModalComponent>,
@@ -57,7 +64,11 @@ export class SearchPersonaModalComponent implements OnInit, AfterViewInit {
     private readonly translate: TranslateService,
     private readonly authService: SgiAuthService,
     private personaCreateMatDialog: MatDialog
-  ) { }
+  ) {
+    if (!!data.selectionDisableWith) {
+      this._selectionDisableWith = data.selectionDisableWith;
+    }
+  }
 
   ngOnInit(): void {
     this.formGroup = new FormGroup({

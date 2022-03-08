@@ -22,7 +22,7 @@ import org.crue.hercules.sgi.rep.dto.eti.InformeEvaluacionEvaluadorReportOutput;
 import org.crue.hercules.sgi.rep.dto.sgp.PersonaDto;
 import org.crue.hercules.sgi.rep.dto.sgp.EmailDto;
 import org.crue.hercules.sgi.rep.exceptions.GetDataReportException;
-import org.crue.hercules.sgi.rep.service.sgp.PersonaService;
+import org.crue.hercules.sgi.rep.service.sgi.SgiApiSgpService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
@@ -38,7 +38,7 @@ import lombok.extern.slf4j.Slf4j;
 @Validated
 public class InformeEvaluacionReportService extends BaseEvaluadorEvaluacionReportService {
 
-  private final PersonaService personaService;
+  private final SgiApiSgpService personaService;
   private final EvaluacionService evaluacionService;
   private final ConfiguracionService configuracionService;
 
@@ -47,7 +47,7 @@ public class InformeEvaluacionReportService extends BaseEvaluadorEvaluacionRepor
   private static final Long DICTAMEN_NO_PROCEDE_EVALUAR = 4L;
 
   @Autowired
-  public InformeEvaluacionReportService(SgiConfigProperties sgiConfigProperties, PersonaService personaService,
+  public InformeEvaluacionReportService(SgiConfigProperties sgiConfigProperties, SgiApiSgpService personaService,
       BloqueService bloqueService, ApartadoService apartadoService, SgiFormlyService sgiFormlyService,
       RespuestaService respuestaService, EvaluacionService evaluacionService,
       ConfiguracionService configuracionService) {

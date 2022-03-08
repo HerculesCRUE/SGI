@@ -8,7 +8,7 @@ import { FacturaPrevistaEmitidaService } from '@core/services/sge/factura-previs
 import { StatusWrapper } from '@core/utils/status-wrapper';
 import { RSQLSgiRestFilter, SgiRestFilterOperator } from '@sgi/framework/http';
 import { BehaviorSubject, concat, from, Observable, of, Subscription } from 'rxjs';
-import { map, mergeMap, takeLast, tap } from 'rxjs/operators';
+import { map, mergeMap, switchMap, takeLast, tap, toArray } from 'rxjs/operators';
 
 export interface IProyectoFacturacionData extends IProyectoFacturacion {
   numeroFacturaEmitida: string;
@@ -43,26 +43,30 @@ export class ProyectoCalendarioFacturacionFragment extends Fragment {
   private loadProyectosFacturacionByProyectoId(): void {
     this.loadProyectosFacturacionByProyectoIdSubscription =
       this.proyectoService.findProyectosFacturacionByProyectoId(this.getKey() as number).pipe(
-        map(response => response.items.map(item => {
-          const data = item as IProyectoFacturacionData;
-
-          if (data.fechaConformidad && data.numeroPrevision) {
-            const filter = new RSQLSgiRestFilter('proyectoIdSGI', SgiRestFilterOperator.EQUALS, item.proyectoId?.toString())
-              .and('numeroPrevision', SgiRestFilterOperator.EQUALS, data.numeroPrevision.toString());
-
-            return this.facturaPrevistaEmitidaService.findAll({ filter }).pipe(
-              map(facturasEmitidas => {
-                if (facturasEmitidas.items.length === 1) {
-                  data.numeroFacturaEmitida = facturasEmitidas.items[0]?.numeroFactura;
-                }
-                return new StatusWrapper(data);
-              })
-            );
-          } else {
-            return new StatusWrapper(data);
-          }
-        }))
-      ).subscribe((data: StatusWrapper<IProyectoFacturacionData>[]) => this.proyectosFacturacion$.next(data));
+        map(response => response.items.map(item => new StatusWrapper(item as IProyectoFacturacionData))),
+        switchMap(response =>
+          from(response).pipe(
+            mergeMap(data => {
+              if (data.value.fechaConformidad && data.value.numeroPrevision) {
+                const filter = new RSQLSgiRestFilter('proyectoIdSGI', SgiRestFilterOperator.EQUALS, data.value.proyectoId?.toString())
+                  .and('numeroPrevision', SgiRestFilterOperator.EQUALS, data.value.numeroPrevision.toString());
+                return this.facturaPrevistaEmitidaService.findAll({ filter }).pipe(
+                  map(facturasEmitidas => {
+                    if (facturasEmitidas.items.length === 1) {
+                      data.value.numeroFacturaEmitida = facturasEmitidas.items[0]?.numeroFactura;
+                    }
+                    return data;
+                  })
+                );
+              } else {
+                return of(data);
+              }
+            }), toArray(),
+            map(() => {
+              return response;
+            })
+          ))
+      ).subscribe((data) => this.proyectosFacturacion$.next(data));
 
     this.subscriptions.push(this.loadProyectosFacturacionByProyectoIdSubscription);
   }

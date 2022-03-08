@@ -29,6 +29,7 @@ import { CSP_ROUTE_NAMES } from '../../csp-route-names';
 export class SelectModeloEjecucionComponent extends SelectServiceExtendedComponent<IModeloEjecucion> {
 
   private requestByUnidadGestion = false;
+  private requestByExterno = false;
 
   /** Restrict values to an Id of UnidadGestion. Default: No restriction */
   @Input()
@@ -44,8 +45,25 @@ export class SelectModeloEjecucionComponent extends SelectServiceExtendedCompone
     }
     this.stateChanges.next();
   }
+
+  @Input()
+  get externo(): boolean {
+    return this._externo;
+  }
+
+  set externo(value: boolean) {
+    this.requestByExterno = true;
+    const changes = this._externo !== value;
+    this._externo = value;
+    if (this.ready && changes) {
+      this.loadData();
+    }
+    this.stateChanges.next();
+  }
+
   // tslint:disable-next-line: variable-name
   private _unidadGestionRef: string;
+  private _externo: boolean;
 
   constructor(
     defaultErrorStateMatcher: ErrorStateMatcher,
@@ -69,6 +87,9 @@ export class SelectModeloEjecucionComponent extends SelectServiceExtendedCompone
         filter: new RSQLSgiRestFilter('unidadGestionRef', SgiRestFilterOperator.EQUALS, this.unidadGestionRef?.toString()),
         sort: new RSQLSgiRestSort('modeloEjecucion.nombre', SgiRestSortDirection.ASC)
       };
+      if (this.requestByExterno) {
+        findOptions.filter.and(new RSQLSgiRestFilter('modeloEjecucion.externo', SgiRestFilterOperator.EQUALS, this.externo.toString()));
+      }
       return this.unidadModeloService.findAll(findOptions).pipe(
         map(response => response.items.map(item => item.modeloEjecucion))
       );
@@ -77,6 +98,9 @@ export class SelectModeloEjecucionComponent extends SelectServiceExtendedCompone
       const findOptions: SgiRestFindOptions = {
         sort: new RSQLSgiRestSort('nombre', SgiRestSortDirection.ASC)
       };
+      if (this.requestByExterno) {
+        findOptions.filter = (new RSQLSgiRestFilter('modeloEjecucion.externo', SgiRestFilterOperator.EQUALS, this.externo.toString()));
+      }
       return this.service.findAll(findOptions).pipe(map(response => response.items));
     }
   }

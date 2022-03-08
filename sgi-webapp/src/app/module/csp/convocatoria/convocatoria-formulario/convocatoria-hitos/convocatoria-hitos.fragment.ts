@@ -1,6 +1,6 @@
 import { IConvocatoriaHito } from '@core/models/csp/convocatoria-hito';
 import { Fragment } from '@core/services/action-service';
-import { ConvocatoriaHitoService } from '@core/services/csp/convocatoria-hito.service';
+import { ConvocatoriaHitoService } from '@core/services/csp/convocatoria-hito/convocatoria-hito.service';
 import { ConvocatoriaService } from '@core/services/csp/convocatoria.service';
 import { StatusWrapper } from '@core/utils/status-wrapper';
 import { BehaviorSubject, from, merge, Observable, of } from 'rxjs';
@@ -123,6 +123,7 @@ export class ConvocatoriaHitosFragment extends Fragment {
           map((updatedHitos) => {
             const index = this.hitos$.value.findIndex((currenthitos) => currenthitos === wrappedHitos);
             this.hitos$.value[index] = new StatusWrapper<IConvocatoriaHito>(updatedHitos);
+            this.hitos$.next(this.hitos$.value);
           })
         );
       })

@@ -139,14 +139,13 @@ export class SolicitiudHitosModalComponent implements OnInit, OnDestroy {
    */
   private createValidatorDate(tipoHito: ITipoHito): void {
     let fechas: DateTime[] = [];
-    if (tipoHito && typeof tipoHito !== 'string') {
-      const convocatoriasHitos = this.data.hitos.filter(hito =>
-        hito.tipoHito.id === (tipoHito as ITipoHito).id &&
-        (!hito.fecha.equals(this.data.hito.fecha)));
-      fechas = convocatoriasHitos.map(hito => hito.fecha);
-    }
+
+    const convocatoriasHitos = this.data.hitos.filter(hito =>
+      hito.tipoHito.id === tipoHito?.id);
+    fechas = convocatoriasHitos.map(hito => hito.fecha);
+
     this.formGroup.setValidators([
-      TipoHitoValidator.notInDate('fechaInicio', fechas, this.data?.hitos?.map(hito => hito.tipoHito))
+      TipoHitoValidator.notInDate('fechaInicio', fechas)
     ]);
   }
 

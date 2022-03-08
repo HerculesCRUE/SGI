@@ -1,0 +1,17 @@
+<article class="field">
+  <span class="title">{{ campoCVN | cvnField | translate}}:</span>
+  <ng-container *ngIf="valoresCampo$ | async as valoresCampo">
+    <ng-container [ngSwitch]="campoConConfiguracion?.configuracionCampo?.tipoFormato">
+      <span *ngSwitchCase="TIPO_FORMATO.BOOLEANO">{{ valoresCampo | cvnBooleanValue | translate }}</span>
+      <ng-container *ngIf="aliasEnumerados$ |async as aliasEnumerados">
+        <span *ngSwitchCase="TIPO_FORMATO.ENUMERADO">
+          {{ valoresCampo | cvnEnumValue: aliasEnumerados | translate }}
+        </span>
+      </ng-container>
+      <span *ngSwitchCase="TIPO_FORMATO.FECHA">{{ valoresCampo | cvnDateValue | luxon:'shortDate' }}</span>
+      <span *ngSwitchCase="TIPO_FORMATO.NUMERO">{{ valoresCampo | cvnNumberValue }}</span>
+      <span *ngSwitchCase="TIPO_FORMATO.TEXTO">{{ valoresCampo | cvnTextValue }}</span>
+      <span *ngSwitchDefault></span>
+    </ng-container>
+  </ng-container>
+</article>

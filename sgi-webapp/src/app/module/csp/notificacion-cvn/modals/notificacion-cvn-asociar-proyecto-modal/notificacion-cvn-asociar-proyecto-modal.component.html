@@ -1,0 +1,111 @@
+<sgi-action-dialog title="{{'csp.notificacion-cvn.asociar.entity' | translate:msgParamProyectoEntity}}">
+  <form [formGroup]="formGroup" fxLayout="column">
+    <!-- Nuevo proyecto o vincular existente -->
+    <div fxFlex fxLayout="row" fxLayoutGap="10px">
+      <span>
+        {{'msg.csp.notificacion-cvn.asociar-proyecto' | translate:MSG_PARAMS.CARDINALIRY.SINGULAR}}
+      </span>
+    </div>
+    <div fxFlex fxLayout="row" fxLayoutGap="10px" class="margin-bottom">
+      <mat-radio-group class="radio-inline" formControlName="crearProyecto" required>
+        <mat-radio-button color="primary" class="radio" [value]="true">
+          {{'csp.notificacion-cvn.asociar-proyecto.crear' | translate}}
+        </mat-radio-button>
+        <mat-radio-button color="primary" class="radio" [value]="false">
+          {{'csp.notificacion-cvn.asociar-proyecto.vincular' | translate}}
+        </mat-radio-button>
+      </mat-radio-group>
+    </div>
+
+    <!-- Proyecto a Asociar -->
+    <ng-container *ngIf="formGroup.controls.crearProyecto.value !== null && !formGroup.controls.crearProyecto.value">
+      <div fxFlex fxLayout="row" fxLayoutGap="10px">
+        <mat-form-field fxFlex>
+          <mat-label>{{'csp.notificacion-cvn.asociar-proyecto.seleccionar' | translate}}</mat-label>
+          <sgi-select-proyecto formControlName="proyecto">
+          </sgi-select-proyecto>
+          <mat-error *ngIf="formGroup.controls.proyecto.errors?.required">
+            {{'error.required.entity' | translate:msgParamProyectoEntity}}
+          </mat-error>
+        </mat-form-field>
+      </div>
+    </ng-container>
+
+    <!-- Proyecto Crear -->
+    <ng-container *ngIf="formGroup.controls.crearProyecto.value !== null && formGroup.controls.crearProyecto.value">
+      <div fxFlex fxLayout="row" fxLayoutGap="10px">
+        <!-- Título -->
+        <mat-form-field fxFlex>
+          <mat-label>{{'csp.solicitud-proyecto.titulo' | translate}}</mat-label>
+          <input matInput type="text" formControlName="titulo" required>
+          <mat-error *ngIf="formGroup.controls.titulo.errors?.required">
+            {{'error.required.entity' | translate:msgParamTituloEntity}}
+          </mat-error>
+          <mat-error *ngIf="formGroup.controls.titulo.errors?.maxlength">
+            {{'error.maxlength.entity' | translate:msgParamTituloEntity}}
+          </mat-error>
+        </mat-form-field>
+      </div>
+
+      <div fxFlex fxLayout="row" fxLayoutGap="10px">
+        <!-- Fecha inicio proyecto -->
+        <mat-form-field fxFlex>
+          <mat-label>{{'csp.solicitud-proyecto.fecha-inicio'| translate}}</mat-label>
+          <input matInput [matDatepicker]="pickerFechaInicio" formControlName="fechaInicio" required>
+          <mat-datepicker-toggle class="fechaIcon" matSuffix [for]="pickerFechaInicio"></mat-datepicker-toggle>
+          <mat-datepicker #pickerFechaInicio>
+          </mat-datepicker>
+          <mat-error *ngIf="formGroup.controls.fechaInicio.errors?.required">
+            {{'error.required.entity' | translate:msgParamFechaInicioEntity}}
+          </mat-error>
+          <mat-error *ngIf="formGroup.controls.fechaInicio.errors?.before">
+            {{'error.before.fecha-inicio' | translate}}
+          </mat-error>
+        </mat-form-field>
+
+        <!-- Fecha fin proyecto -->
+        <mat-form-field sgiEndDate fxFlex>
+          <mat-label>{{'csp.solicitud-proyecto.fecha-fin'| translate}}</mat-label>
+          <input matInput [matDatepicker]="pickerFechaFin" formControlName="fechaFin" required>
+          <mat-datepicker-toggle class="fechaIcon" matSuffix [for]="pickerFechaFin"></mat-datepicker-toggle>
+          <mat-datepicker #pickerFechaFin>
+          </mat-datepicker>
+          <mat-error *ngIf="formGroup.controls.fechaFin.errors?.required">
+            {{'error.required.entity' | translate:msgParamFechaFinEntity}}
+          </mat-error>
+          <mat-error *ngIf="formGroup.controls.fechaFin.errors?.after">
+            {{'error.after.fecha-fin' | translate}}
+          </mat-error>
+        </mat-form-field>
+      </div>
+
+      <div fxFlex fxLayout="row" fxLayoutGap="10px">
+        <!-- Unidad de gestión -->
+        <mat-form-field class="input-form" fxFlex>
+          <mat-label>{{'csp.convocatoria.unidad-gestion' | translate}}</mat-label>
+          <sgi-select-unidad-gestion #unidadGestionSel formControlName="unidadGestion"
+            (selectValuesChange)="selectFirstUnidadGEstionIfOnlyOneOption($event)" required>
+          </sgi-select-unidad-gestion>
+          <mat-error *ngIf="formGroup.controls.unidadGestion.errors?.required">
+            {{ 'error.required.entity' | translate:msgParamUnidadGestionEntity }}
+          </mat-error>
+        </mat-form-field>
+
+        <!-- Modelo de ejecución -->
+        <mat-form-field class="input-form" fxFlex>
+          <mat-label>{{'csp.solicitud-proyecto.modelo-ejecucion' | translate}}</mat-label>
+          <sgi-select-modelo-ejecucion #modeloEjecucion formControlName="modeloEjecucion"
+            [unidadGestionRef]="formGroup.controls.unidadGestion.value?.id" [externo]="true"
+            [resetOnChange]="unidadGestionSel.selectionChange">
+          </sgi-select-modelo-ejecucion>
+          <mat-error *ngIf="formGroup.controls.modeloEjecucion.errors?.required">
+            {{'error.required.entity' | translate:msgParamModeloEjecucionEntity}}
+          </mat-error>
+          <mat-error *ngIf="formGroup.controls.modeloEjecucion.errors?.invalid">
+            {{'error.invalid.entity' | translate:msgParamModeloEjecucionEntity}}
+          </mat-error>
+        </mat-form-field>
+      </div>
+    </ng-container>
+  </form>
+</sgi-action-dialog>

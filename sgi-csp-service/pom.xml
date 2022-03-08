@@ -5,7 +5,7 @@
   <parent>
     <groupId>org.crue.hercules.sgi</groupId>
     <artifactId>sgi-starter-parent</artifactId>
-    <version>0.0.6</version>
+    <version>0.0.7</version>
   </parent>
 
   <groupId>org.crue.hercules.sgi</groupId>
@@ -80,6 +80,14 @@
   </dependencyManagement>
 
   <dependencies>
+    <!-- 
+      Apache Commons Collections - Powerful data structures that accelerate development of most significant Java applications
+      https://commons.apache.org/proper/commons-collections/index.html
+    -->
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-collections4</artifactId>
+    </dependency>
     <!--
       Commons Lang - Provides a host of helper utilities for the java.lang API, notably String manipulation methods, basic numerical methods, object reflection, concurrency, creation and serialization and System properties.
       https://commons.apache.org/proper/commons-lang/

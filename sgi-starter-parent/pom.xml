@@ -10,7 +10,7 @@
 
   <groupId>org.crue.hercules.sgi</groupId>
   <artifactId>sgi-starter-parent</artifactId>
-  <version>0.0.6</version>
+  <version>0.0.7</version>
   <packaging>pom</packaging>
   <name>sgi-starter-parent</name>
   <description>Parent pom providing dependency and plugin management for applications built with Maven</description>
@@ -47,16 +47,19 @@
     <commons-collections4.version>4.4</commons-collections4.version>
     <commons-email.version>1.5</commons-email.version>
     <greenmail.version>1.6.5</greenmail.version>
+    <httpclient5.version>5.1.3</httpclient5.version>
     <jakarta.validation-api.version>2.0.2</jakarta.validation-api.version>
     <jslt.version>0.1.11</jslt.version>
     <json-path.version>2.6.0</json-path.version>
+    <liquibase-hibernate5.version>3.8</liquibase-hibernate5.version>
+    <liquibase.version>3.8.9</liquibase.version>
     <lombok.version>1.18.20</lombok.version> <!-- Update Lombok to be JDK 16 compatible -->
-    <modelmapper.version>2.3.5</modelmapper.version>
+    <modelmapper.version>2.3.9</modelmapper.version>
     <rsql-jpa-spring-boot-starter.version>5.0.9</rsql-jpa-spring-boot-starter.version>
     <spel-scriptengine.version>1.0.0</spel-scriptengine.version>
     <wiremock-jre8.version>2.31.0</wiremock-jre8.version>
     <!-- Plugin versions (not defined in parent pom) -->
-    <liquibase-maven-plugin.version>4.5.0</liquibase-maven-plugin.version>
+    <liquibase-maven-plugin.version>3.8.9</liquibase-maven-plugin.version>
     <sonar-maven-plugin.version>3.7.0.1746</sonar-maven-plugin.version>
     <jacoco-maven-plugin.version>0.8.7</jacoco-maven-plugin.version>
     <!-- Test execution modifiers -->
@@ -314,7 +317,7 @@
             <dependency>
               <groupId>org.liquibase.ext</groupId>
               <artifactId>liquibase-hibernate5</artifactId>
-              <version>${liquibase-maven-plugin.version}</version>
+              <version>${liquibase-hibernate5.version}</version>
               <exclusions>
                 <exclusion>
                   <groupId>org.hibernate</groupId>
@@ -446,6 +449,19 @@
             <sourceFileExcludes>
               <sourceFileExclude>**/*_.java</sourceFileExclude>
             </sourceFileExcludes>
+          </configuration>
+        </plugin>
+        <!--
+          Maven Resources Plugin - handles the copying of project resources to the output directory.
+          https://maven.apache.org/plugins/maven-resources-plugin/
+        -->
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-resources-plugin</artifactId>
+          <configuration>
+            <nonFilteredFileExtensions>
+              <nonFilteredFileExtension>pdf</nonFilteredFileExtension>
+            </nonFilteredFileExtensions>
           </configuration>
         </plugin>
         <!--

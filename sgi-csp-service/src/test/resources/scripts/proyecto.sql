@@ -23,8 +23,8 @@ INSERT INTO test.proyecto
  VALUES (3, 'PRO3', 'cod-externo-003', '2020-01-01T00:00:00Z', '2020-12-31T23:59:59Z', '2', 1, 1, 1, false, 'observaciones-proyecto-003', null, true, true);
 
 INSERT INTO test.proyecto
-(id, titulo, codigo_externo, fecha_inicio, fecha_fin, unidad_gestion_ref, modelo_ejecucion_id, tipo_finalidad_id, tipo_ambito_geografico_id, confidencial, observaciones, estado_proyecto_id, paquetes_trabajo, activo)
- VALUES (4, 'PRO4', 'cod-externo-004', '2020-01-01T00:00:00Z', '2021-12-31T23:59:59Z', '1', 1, 1, 1, false, 'observaciones-proyecto-004', null, true, true);
+(id, titulo, codigo_externo, fecha_inicio, fecha_fin, unidad_gestion_ref, modelo_ejecucion_id, tipo_finalidad_id, tipo_ambito_geografico_id, confidencial, observaciones, estado_proyecto_id, paquetes_trabajo, activo, convocatoria_id)
+ VALUES (4, 'PRO4', 'cod-externo-004', '2020-01-01T00:00:00Z', '2021-12-31T23:59:59Z', '1', 1, 1, 1, false, 'observaciones-proyecto-004', null, true, true, 1);
 
 INSERT INTO test.proyecto
 (id, titulo, codigo_externo, fecha_inicio, fecha_fin, unidad_gestion_ref, modelo_ejecucion_id, tipo_finalidad_id, tipo_ambito_geografico_id, confidencial, observaciones, estado_proyecto_id, paquetes_trabajo, activo)

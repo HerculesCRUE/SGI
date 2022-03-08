@@ -35,13 +35,15 @@ class EstadoValidacionIPIT extends BaseIT {
 
     return request;
   }
-  
+
   @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = {
     // @formatter:off    
       "classpath:scripts/modelo_ejecucion.sql",
       "classpath:scripts/modelo_unidad.sql",
       "classpath:scripts/tipo_finalidad.sql",
       "classpath:scripts/tipo_ambito_geografico.sql",
+      "classpath:scripts/tipo_regimen_concurrencia.sql",
+      "classpath:scripts/convocatoria.sql",
       "classpath:scripts/proyecto.sql",
       "classpath:scripts/tipo_facturacion.sql",
       "classpath:scripts/proyecto_facturacion.sql",
@@ -61,7 +63,7 @@ class EstadoValidacionIPIT extends BaseIT {
 
     URI uri = UriComponentsBuilder.fromUriString(CONTROLLER_BASE_PATH).queryParam("s", sort).queryParam("q", filter)
         .build(false).toUri();
-        
+
     final ResponseEntity<List<EstadoValidacionIPOutput>> response = restTemplate.exchange(uri, HttpMethod.GET,
         buildRequest(headers, null, "CSP-PRO-V"), new ParameterizedTypeReference<List<EstadoValidacionIPOutput>>() {
         });
@@ -81,6 +83,8 @@ class EstadoValidacionIPIT extends BaseIT {
       "classpath:scripts/modelo_unidad.sql",
       "classpath:scripts/tipo_finalidad.sql",
       "classpath:scripts/tipo_ambito_geografico.sql",
+      "classpath:scripts/tipo_regimen_concurrencia.sql",
+      "classpath:scripts/convocatoria.sql",
       "classpath:scripts/proyecto.sql",
       "classpath:scripts/tipo_facturacion.sql",
       "classpath:scripts/proyecto_facturacion.sql",
@@ -100,7 +104,7 @@ class EstadoValidacionIPIT extends BaseIT {
 
     URI uri = UriComponentsBuilder.fromUriString(CONTROLLER_BASE_PATH).queryParam("s", sort).queryParam("q", filter)
         .build(false).toUri();
-        
+
     final ResponseEntity<List<EstadoValidacionIPOutput>> response = restTemplate.exchange(uri, HttpMethod.GET,
         buildRequest(headers, null, "CSP-PRO-V"), new ParameterizedTypeReference<List<EstadoValidacionIPOutput>>() {
         });

@@ -2,10 +2,13 @@ package org.crue.hercules.sgi.csp.repository.specification;
 
 import java.time.Instant;
 
+import org.crue.hercules.sgi.csp.model.Convocatoria;
 import org.crue.hercules.sgi.csp.model.Proyecto;
 import org.crue.hercules.sgi.csp.model.ProyectoEquipo;
 import org.crue.hercules.sgi.csp.model.ProyectoEquipo_;
 import org.crue.hercules.sgi.csp.model.Proyecto_;
+import org.crue.hercules.sgi.csp.model.RolProyecto;
+import org.crue.hercules.sgi.csp.model.RolProyecto_;
 import org.springframework.data.jpa.domain.Specification;
 
 public class ProyectoEquipoSpecifications {
@@ -73,4 +76,42 @@ public class ProyectoEquipoSpecifications {
     };
 
   }
+
+  /**
+   * {@link ProyectoEquipo} de un {@link Proyecto} activo relacionado con una
+   * {@link Convocatoria} que son IPs activos
+   * 
+   * @param convocatoriaId Id de la {@link Convocatoria}
+   * @return specification
+   */
+  public static Specification<ProyectoEquipo> byProyectoActivoAndProyectoConvocatoriaIdWithIpsActivos(
+      Long convocatoriaId) {
+    return (root, query, cb) -> {
+      Instant now = Instant.now();
+      return cb.and(
+          cb.equal(root.get(ProyectoEquipo_.proyecto).get(Proyecto_.convocatoriaId), convocatoriaId),
+          cb.isTrue(root.get(ProyectoEquipo_.proyecto).get(Proyecto_.activo)),
+          cb.isTrue(root.get(ProyectoEquipo_.rolProyecto).get(RolProyecto_.rolPrincipal)),
+          cb.or(
+              cb.isNull(root.get(ProyectoEquipo_.fechaFin)),
+              cb.and(
+                  cb.greaterThanOrEqualTo(root.get(ProyectoEquipo_.fechaInicio), now),
+                  cb.lessThanOrEqualTo(root.get(ProyectoEquipo_.fechaFin), now))));
+    };
+  }
+
+  /**
+   * {@link ProyectoEquipo} con {@link RolProyecto} con valor de rolPrincipal
+   * pasado por parámetro.
+   * 
+   * @param rolPrincipal valor de rolPrincipal de la {@link RolProyecto}.
+   * @return specification para obtener los {@link ProyectoEquipo} con
+   *         {@link RolProyecto} con el rolPrincipal indicado.
+   */
+  public static Specification<ProyectoEquipo> byRolPrincipal(Boolean rolPrincipal) {
+    return (root, query, cb) -> {
+      return cb.equal(root.get(ProyectoEquipo_.rolProyecto).get(RolProyecto_.rolPrincipal), rolPrincipal);
+    };
+  }
+
 }

@@ -33,6 +33,7 @@ export class SolicitudDataResolver extends SgiResolverResolver<ISolicitudData> {
   }
 
   protected resolveEntity(route: ActivatedRouteSnapshot): Observable<ISolicitudData> {
+    const isInvestigador = this.authService.hasAnyAuthority(['CSP-SOL-INV-BR', 'CSP-SOL-INV-C', 'CSP-SOL-INV-ER']);
 
     return this.service.findById(Number(route.paramMap.get(SOLICITUD_ROUTE_PARAMS.ID))).pipe(
       map(solicitud => {
@@ -52,6 +53,19 @@ export class SolicitudDataResolver extends SgiResolverResolver<ISolicitudData> {
         return this.service.modificable(data.solicitud.id).pipe(
           map(value => {
             data.readonly = !value;
+            return data;
+          })
+        );
+      }),
+      switchMap(data => {
+        if (!isInvestigador) {
+          data.estadoAndDocumentosReadonly = data.readonly;
+          return of(data);
+        }
+
+        return this.service.modificableEstadoAndDocumentosByInvestigador(data.solicitud.id).pipe(
+          map(value => {
+            data.estadoAndDocumentosReadonly = !value;
             return data;
           })
         );

@@ -20,4 +20,11 @@ public interface RolProyectoColectivoService {
    */
   List<String> findAllColectivos(final Long rolProyectoId);
 
+  /**
+   * Obtiene un listado de colectivos ref vinculados a {@link RolProyecto} activos
+   *
+   * @return listado colectivos ref
+   */
+  List<String> findColectivosActivos();
+
 }

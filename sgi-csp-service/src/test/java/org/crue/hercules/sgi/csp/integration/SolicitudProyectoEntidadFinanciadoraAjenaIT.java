@@ -1,10 +1,12 @@
 package org.crue.hercules.sgi.csp.integration;
 
 import java.math.BigDecimal;
+import java.net.URI;
 import java.util.Collections;
 
 import org.assertj.core.api.Assertions;
 import org.crue.hercules.sgi.csp.model.FuenteFinanciacion;
+import org.crue.hercules.sgi.csp.model.SolicitudProyectoEntidad;
 import org.crue.hercules.sgi.csp.model.SolicitudProyectoEntidadFinanciadoraAjena;
 import org.crue.hercules.sgi.csp.model.TipoFinanciacion;
 import org.junit.jupiter.api.Test;
@@ -16,6 +18,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.jdbc.Sql;
+import org.springframework.web.util.UriComponentsBuilder;
 
 /**
  * Test de integracion de SolicitudProyectoEntidadFinanciadoraAjena.
@@ -25,6 +28,8 @@ public class SolicitudProyectoEntidadFinanciadoraAjenaIT extends BaseIT {
 
   private static final String PATH_PARAMETER_ID = "/{id}";
   private static final String CONTROLLER_BASE_PATH = "/solicitudproyectoentidadfinanciadoraajenas";
+  private static final String PATH_SOLICITUD_PROYECTO_PRESUPUESTOS = "/solicitudproyectopresupuestos";
+  private static final String PATH_SOLICITUD_PROYECTO_ENTIDAD = "/solicitudproyectoentidad";
 
   private HttpEntity<SolicitudProyectoEntidadFinanciadoraAjena> buildRequest(HttpHeaders headers,
       SolicitudProyectoEntidadFinanciadoraAjena entity) throws Exception {
@@ -142,6 +147,78 @@ public class SolicitudProyectoEntidadFinanciadoraAjenaIT extends BaseIT {
         .as("getTipoFinanciacion().getId()").isEqualTo(1L);
     Assertions.assertThat(solicitudProyectoEntidadFinanciadoraAjena.getPorcentajeFinanciacion().floatValue())
         .as("getPorcentajeFinanciacion()").isEqualTo(20F);
+  }
+
+  @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = {
+    // @formatter:off
+    "classpath:scripts/modelo_ejecucion.sql",
+    "classpath:scripts/tipo_finalidad.sql",
+    "classpath:scripts/tipo_regimen_concurrencia.sql",
+    "classpath:scripts/tipo_ambito_geografico.sql",
+    "classpath:scripts/convocatoria.sql",
+    "classpath:scripts/solicitud.sql",
+    "classpath:scripts/estado_solicitud.sql",
+    "classpath:scripts/solicitud_proyecto.sql",
+    "classpath:scripts/concepto_gasto.sql",
+    "classpath:scripts/tipo_origen_fuente_financiacion.sql",
+    "classpath:scripts/fuente_financiacion.sql",
+    "classpath:scripts/tipo_financiacion.sql",
+    "classpath:scripts/convocatoria_entidad_financiadora.sql",
+    "classpath:scripts/convocatoria_entidad_gestora.sql",
+    "classpath:scripts/solicitud_proyecto_entidad_financiadora_ajena.sql",
+    "classpath:scripts/solicitud_proyecto_entidad.sql",
+    "classpath:scripts/solicitud_proyecto_presupuesto.sql"
+    // @formatter:on
+  })
+  @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
+  @Test
+  void hasSolicitudProyectoPresupuestoEntidad_ReturnsHttpStatusCode200() throws Exception {
+    Long solicitudProyectoEntidadFinanciadoraAjenaId = 1L;
+    URI uri = UriComponentsBuilder
+        .fromUriString(CONTROLLER_BASE_PATH + PATH_PARAMETER_ID + PATH_SOLICITUD_PROYECTO_PRESUPUESTOS)
+        .buildAndExpand(solicitudProyectoEntidadFinanciadoraAjenaId).toUri();
+
+    final ResponseEntity<Void> response = restTemplate.exchange(uri, HttpMethod.HEAD, buildRequest(null, null),
+        Void.class);
+
+    Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+  }
+
+  @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = {
+    // @formatter:off
+    "classpath:scripts/modelo_ejecucion.sql",
+    "classpath:scripts/tipo_finalidad.sql",
+    "classpath:scripts/tipo_regimen_concurrencia.sql",
+    "classpath:scripts/tipo_ambito_geografico.sql",
+    "classpath:scripts/convocatoria.sql",
+    "classpath:scripts/solicitud.sql",
+    "classpath:scripts/estado_solicitud.sql",
+    "classpath:scripts/solicitud_proyecto.sql",
+    "classpath:scripts/concepto_gasto.sql",
+    "classpath:scripts/tipo_origen_fuente_financiacion.sql",
+    "classpath:scripts/fuente_financiacion.sql",
+    "classpath:scripts/tipo_financiacion.sql",
+    "classpath:scripts/convocatoria_entidad_financiadora.sql",
+    "classpath:scripts/convocatoria_entidad_gestora.sql",
+    "classpath:scripts/solicitud_proyecto_entidad_financiadora_ajena.sql",
+    "classpath:scripts/solicitud_proyecto_entidad.sql"
+    // @formatter:on
+  })
+  @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
+  @Test
+  void findBySolicitudProyectoEntidadFinanciadoraAjena_ReturnsSolicitudProyectoEntidad() throws Exception {
+    Long solicitudProyectoEntidadFinanciadoraAjenaId = 1L;
+    URI uri = UriComponentsBuilder
+        .fromUriString(CONTROLLER_BASE_PATH + PATH_PARAMETER_ID + PATH_SOLICITUD_PROYECTO_ENTIDAD)
+        .buildAndExpand(solicitudProyectoEntidadFinanciadoraAjenaId).toUri();
+
+    final ResponseEntity<SolicitudProyectoEntidad> response = restTemplate.exchange(uri, HttpMethod.GET,
+        buildRequest(null, null),
+        SolicitudProyectoEntidad.class);
+
+    Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+    Assertions.assertThat(response.getBody()).isNotNull();
+    Assertions.assertThat(response.getBody().getId()).isEqualTo(1L);
   }
 
   /**

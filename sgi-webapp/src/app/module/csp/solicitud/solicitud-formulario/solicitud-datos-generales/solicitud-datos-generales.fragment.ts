@@ -178,17 +178,18 @@ export class SolicitudDatosGeneralesFragment extends FormFragment<ISolicitud> {
       form.disable();
     }
     return form;
-
   }
+
   buildPatch(solicitud: SolicitudDatosGenerales): { [key: string]: any } {
     this.solicitud = solicitud;
-    if (solicitud?.estado?.estado === Estado.BORRADOR) {
+
+    if (!this.readonly && solicitud?.estado?.estado === Estado.BORRADOR) {
       this.getFormGroup().controls.titulo.enable();
-      this.getFormGroup().controls.convocatoria.enable();
       this.getFormGroup().controls.codigoExterno.enable();
       this.getFormGroup().controls.observaciones.enable();
       this.getFormGroup().controls.comentariosEstado.enable();
     }
+
     if (this.isInvestigador) {
       return {
         estado: solicitud?.estado?.estado,
@@ -642,6 +643,5 @@ export class SolicitudDatosGeneralesFragment extends FormFragment<ISolicitud> {
     this.convocatoriaRequired = !convocatoriaExternaSolicitud;
     this.convocatoriaExternaRequired = !convocatoriaSolicitud;
   }
+
 }
-
-

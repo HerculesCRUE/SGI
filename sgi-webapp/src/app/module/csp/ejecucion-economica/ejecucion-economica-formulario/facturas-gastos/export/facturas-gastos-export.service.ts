@@ -47,14 +47,13 @@ export class FacturasGastosExportService
       row.elements.push(item.anualidad);
       row.elements.push(item.proyecto?.titulo ?? 'Sin clasificar');
       row.elements.push(item.conceptoGasto?.nombre ?? 'Sin clasificar');
-      row.elements.push(item.clasificacionSGE.nombre ?? 'Sin clasificar');
+      row.elements.push(item.clasificacionSGE?.nombre ?? 'Sin clasificar');
       row.elements.push(item.partidaPresupuestaria);
-      const codigoEconomico = item.codigoEconomico?.id + (item.codigoEconomico?.nombre ? ' - ' + item.codigoEconomico.nombre : '');
+
+      const codigoEconomico = (item.codigoEconomico?.id ?? '') + (item.codigoEconomico?.nombre ? ' - ' + item.codigoEconomico.nombre : '');
       row.elements.push(codigoEconomico);
-      const fechaDevengo = this.isExcelOrCsv(reportConfig.outputType)
-        ? LuxonUtils.toBackend(item.fechaDevengo) ?? ''
-        : (this.luxonDatePipe.transform(item.fechaDevengo, 'shortDate') ?? '');
-      row.elements.push(fechaDevengo);
+
+      row.elements.push(LuxonUtils.toBackend(item.fechaDevengo));
 
       reportConfig.reportOptions.columns.forEach((column, index) => {
         const value = item.columnas[column.id] ?? 0;

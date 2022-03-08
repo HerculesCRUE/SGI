@@ -29,10 +29,12 @@ import org.crue.hercules.sgi.csp.model.TipoFase;
 import org.crue.hercules.sgi.csp.model.TipoFinalidad;
 import org.crue.hercules.sgi.csp.model.TipoHito;
 import org.crue.hercules.sgi.csp.service.AnualidadGastoService;
+import org.crue.hercules.sgi.csp.service.ConvocatoriaService;
 import org.crue.hercules.sgi.csp.service.EstadoProyectoService;
+import org.crue.hercules.sgi.csp.service.NotificacionProyectoExternoCVNService;
 import org.crue.hercules.sgi.csp.service.ProrrogaDocumentoService;
-import org.crue.hercules.sgi.csp.service.ProyectoAnualidadService;
 import org.crue.hercules.sgi.csp.service.ProyectoAgrupacionGastoService;
+import org.crue.hercules.sgi.csp.service.ProyectoAnualidadService;
 import org.crue.hercules.sgi.csp.service.ProyectoAreaConocimientoService;
 import org.crue.hercules.sgi.csp.service.ProyectoClasificacionService;
 import org.crue.hercules.sgi.csp.service.ProyectoConceptoGastoService;
@@ -148,6 +150,12 @@ public class ProyectoControllerTest extends BaseControllerTest {
 
   @MockBean
   private ProyectoPalabraClaveService proyectoPalabraClaveService;
+
+  @MockBean
+  private NotificacionProyectoExternoCVNService notificacionProyectoExternoCVNService;
+
+  @MockBean
+  private ConvocatoriaService convocatoriaService;
 
   private static final String PATH_PARAMETER_ID = "/{id}";
   private static final String PATH_PARAMETER_DESACTIVAR = "/desactivar";

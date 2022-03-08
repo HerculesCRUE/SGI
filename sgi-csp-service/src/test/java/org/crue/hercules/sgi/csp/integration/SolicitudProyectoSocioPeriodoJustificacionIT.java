@@ -24,7 +24,7 @@ import org.springframework.web.util.UriComponentsBuilder;
  * Test de integracion de SolicitudProyectoSocioPeriodoJustificacion.
  */
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class SolicitudProyectoSocioPeriodoJustificacionIT extends BaseIT {
+class SolicitudProyectoSocioPeriodoJustificacionIT extends BaseIT {
 
   private static final String PATH_PARAMETER_ID = "/{id}";
   private static final String CONTROLLER_BASE_PATH = "/solicitudproyectosocioperiodojustificaciones";
@@ -55,7 +55,7 @@ public class SolicitudProyectoSocioPeriodoJustificacionIT extends BaseIT {
   @Sql
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void updateSolicitudProyectoSocioPeriodoJustificacionesSolicitudProyectoSocio_ReturnsSolicitudProyectoSocioPeriodoJustificacionList()
+  void updateSolicitudProyectoSocioPeriodoJustificacionesSolicitudProyectoSocio_ReturnsSolicitudProyectoSocioPeriodoJustificacionList()
       throws Exception {
 
     // given: una lista con uno de los SolicitudProyectoSocioPeriodoJustificacion
@@ -144,7 +144,7 @@ public class SolicitudProyectoSocioPeriodoJustificacionIT extends BaseIT {
   @Sql
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void findById_ReturnsSolicitudProyectoSocioPeriodoJustificacion() throws Exception {
+  void findById_ReturnsSolicitudProyectoSocioPeriodoJustificacion() throws Exception {
     Long idSolicitudProyectoSocioPeriodoJustificacion = 1L;
 
     final ResponseEntity<SolicitudProyectoSocioPeriodoJustificacion> response = restTemplate.exchange(

@@ -21,4 +21,17 @@ public class ProyectoResponsableEconomicoSpecifications {
     };
   }
 
+  /**
+   * {@link ProyectoResponsableEconomico} cuya persona Ref sea la recibida.
+   * 
+   * @param personaRef persona ref de {@link ProyectoResponsableEconomico}
+   * @return specification para obtener los {@link ProyectoResponsableEconomico}
+   *         cuya persona Ref sea la recibida.
+   */
+  public static Specification<ProyectoResponsableEconomico> byPersonaRef(String personaRef) {
+    return (root, query, cb) -> {
+      return cb.equal(root.get(ProyectoResponsableEconomico_.personaRef), personaRef);
+    };
+  }
+
 }

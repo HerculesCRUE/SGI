@@ -8,6 +8,7 @@ import org.crue.hercules.sgi.csp.model.Proyecto;
 import org.crue.hercules.sgi.csp.model.ProyectoPalabraClave;
 import org.crue.hercules.sgi.csp.repository.ProyectoPalabraClaveRepository;
 import org.crue.hercules.sgi.csp.repository.specification.ProyectoPalabraClaveSpecifications;
+import org.crue.hercules.sgi.csp.util.ProyectoHelper;
 import org.crue.hercules.sgi.framework.problem.message.ProblemMessage;
 import org.crue.hercules.sgi.framework.rsql.SgiRSQLJPASupport;
 import org.crue.hercules.sgi.framework.spring.context.support.ApplicationContextSupport;
@@ -29,9 +30,12 @@ import lombok.extern.slf4j.Slf4j;
 public class ProyectoPalabraClaveService {
 
   private final ProyectoPalabraClaveRepository repository;
+  private final ProyectoHelper proyectoHelper;
 
-  public ProyectoPalabraClaveService(ProyectoPalabraClaveRepository proyectoPalabraClaveRepository) {
+  public ProyectoPalabraClaveService(ProyectoPalabraClaveRepository proyectoPalabraClaveRepository,
+      ProyectoHelper proyectoHelper) {
     this.repository = proyectoPalabraClaveRepository;
+    this.proyectoHelper = proyectoHelper;
   }
 
   /**
@@ -47,6 +51,7 @@ public class ProyectoPalabraClaveService {
   public Page<ProyectoPalabraClave> findByProyectoId(Long proyectoId, String query, Pageable pageable) {
     log.debug("findByProyectoId(Long proyectoId, String query, Pageable pageable) - start");
 
+    proyectoHelper.checkCanAccessProyecto(proyectoId);
     Specification<ProyectoPalabraClave> specs = ProyectoPalabraClaveSpecifications.byProyectoId(proyectoId)
         .and(SgiRSQLJPASupport.toSpecification(query));
 
@@ -83,7 +88,7 @@ public class ProyectoPalabraClaveService {
     repository.deleteInBulkByProyectoId(proyectoId);
 
     List<ProyectoPalabraClave> returnValue = new ArrayList<>();
-    if (palabrasClave != null && !palabrasClave.isEmpty()) {
+    if (!palabrasClave.isEmpty()) {
       // Eliminamos duplicados de la nueva lista
       List<ProyectoPalabraClave> uniquePalabrasClave = palabrasClave.stream().distinct()
           .collect(Collectors.toList());
@@ -94,4 +99,5 @@ public class ProyectoPalabraClaveService {
     log.debug("updatePalabrasClave(Long proyectoId, List<ProyectoPalabraClave> palabrasClave) - end");
     return returnValue;
   }
+
 }

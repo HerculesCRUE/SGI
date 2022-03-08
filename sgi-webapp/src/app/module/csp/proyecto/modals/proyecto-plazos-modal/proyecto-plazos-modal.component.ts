@@ -143,23 +143,21 @@ export class ProyectoPlazosModalComponent extends
    * un tipo de fase en el modal
    * @param tipoFase proyecto tipoFase
    */
-  private createValidatorDate(tipoFase: ITipoFase | string): void {
+  private createValidatorDate(tipoFase: ITipoFase): void {
     let rangoFechas: IRange[] = [];
-    if (tipoFase && typeof tipoFase !== 'string') {
-      const proyectoFases = this.data.plazos.filter(plazo =>
-        plazo.tipoFase.id === (tipoFase as ITipoFase).id &&
-        (plazo.fechaInicio.toMillis() !== this.data.plazo.fechaInicio.toMillis()
-          && plazo.fechaFin.toMillis() !== this.data.plazo.fechaFin.toMillis()));
-      rangoFechas = proyectoFases.map(
-        fase => {
-          const rango: IRange = {
-            inicio: fase.fechaInicio,
-            fin: fase.fechaFin
-          };
-          return rango;
-        }
-      );
-    }
+
+    const proyectoFases = this.data.plazos.filter(plazo =>
+      plazo.tipoFase.id === tipoFase?.id);
+    rangoFechas = proyectoFases.map(
+      fase => {
+        const rango: IRange = {
+          inicio: fase.fechaInicio,
+          fin: fase.fechaFin
+        };
+        return rango;
+      }
+    );
+
     this.formGroup.setValidators([
       DateValidator.isAfter('fechaInicio', 'fechaFin'),
       DateValidator.isBefore('fechaFin', 'fechaInicio'),

@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.crue.hercules.sgi.framework.spring.context.support.ApplicationContextSupport;
 import org.crue.hercules.sgi.framework.web.config.OAuth2ClientConfiguration;
+import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.data.util.Optionals;
 import org.springframework.http.HttpEntity;
@@ -162,7 +163,7 @@ public class HttpEntityBuilder<T> {
             log.warn("Can't get client Authorization.");
           }
         }, () -> log.warn(
-            "Can't get client Authorization. No AuthorizedClientServiceOAuth2AuthorizedClientManager bean found."));
+            "Can't get client Authorization."));
   }
 
   private static Optional<HttpServletRequest> getCurrentHttpRequest() {
@@ -172,7 +173,13 @@ public class HttpEntityBuilder<T> {
   }
 
   private static Optional<AuthorizedClientServiceOAuth2AuthorizedClientManager> getAuthorizedClientServiceOAuth2AuthorizedClientManager() {
-    return Optional.ofNullable(ApplicationContextSupport.getApplicationContext()
-        .getBean(AuthorizedClientServiceOAuth2AuthorizedClientManager.class));
+    AuthorizedClientServiceOAuth2AuthorizedClientManager authorizedClientServiceOAuth2AuthorizedClientManager = null;
+    try {
+      authorizedClientServiceOAuth2AuthorizedClientManager = ApplicationContextSupport.getApplicationContext()
+          .getBean(AuthorizedClientServiceOAuth2AuthorizedClientManager.class);
+    } catch (NoSuchBeanDefinitionException e) {
+      log.warn("No AuthorizedClientServiceOAuth2AuthorizedClientManager bean found.", e);
+    }
+    return Optional.ofNullable(authorizedClientServiceOAuth2AuthorizedClientManager);
   }
 }

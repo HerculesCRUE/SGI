@@ -31,6 +31,15 @@
           </mat-form-field>
         </div>
 
+        <!-- Solicitante -->
+        <div class="col" *ngIf="!this.isInvestigador">
+          <mat-form-field>
+            <mat-label>{{'csp.autorizacion.solicitante' | translate}}</mat-label>
+            <sgi-select-persona placeholder="{{'csp.autorizacion.solicitante' | translate}}"
+              formControlName="solicitante"></sgi-select-persona>
+          </mat-form-field>
+        </div>
+
         <!-- Estado -->
         <div class="col">
           <mat-form-field>
@@ -53,13 +62,21 @@
       </div>
     </form>
 
-    <table mat-table [dataSource]="autorizaciones$ | async" matSort matSortActive="id" matSortDirection="asc"
-      matSortDisableClear>
+    <table mat-table [dataSource]="autorizaciones$ | async" matSort matSortActive="fechaFirstEstado"
+      matSortDirection="desc" matSortDisableClear>
 
       <!-- Fecha Solicitud -->
-      <ng-container matColumnDef="fechaSolicitud">
+      <ng-container matColumnDef="fechaFirstEstado">
         <th mat-header-cell *matHeaderCellDef> {{'csp.autorizacion.fecha-solicitud' | translate}} </th>
-        <td mat-cell *matCellDef="let element"> {{element.estadoAutorizacion?.fecha | luxon:'shortDate'}}</td>
+        <td mat-cell *matCellDef="let element"> {{element.autorizacion.fechaFirstEstado | luxon:'shortDate'}}
+        </td>
+      </ng-container>
+
+      <!-- Solicitante Column -->
+      <ng-container matColumnDef="solicitante" *ngIf="!this.isInvestigador">
+        <th mat-header-cell *matHeaderCellDef> {{'csp.autorizacion.solicitante' | translate}} </th>
+        <td mat-cell *matCellDef="let element"> {{element.autorizacion?.solicitante.nombre}}
+          {{element.autorizacion?.solicitante.apellidos}}</td>
       </ng-container>
 
       <!-- Titulo Column -->
@@ -77,13 +94,13 @@
       <!-- Estado Column -->
       <ng-container matColumnDef="estado">
         <th mat-header-cell *matHeaderCellDef> {{'csp.autorizacion.estado' | translate}} </th>
-        <td mat-cell *matCellDef="let element"> {{element.estadoAutorizacion?.estado}}</td>
+        <td mat-cell *matCellDef="let element"> {{ESTADO_MAP.get(element.estadoAutorizacion?.estado) | translate}} </td>
       </ng-container>
 
       <!-- fechaEstado Column -->
       <ng-container matColumnDef="fechaEstado">
         <th mat-header-cell *matHeaderCellDef> {{'csp.autorizacion.fecha-estado' | translate}} </th>
-        <td mat-cell *matCellDef="let element">{{element.fechaEstadoBorrador | luxon:'shortDate'}}</td>
+        <td mat-cell *matCellDef="let element">{{element.fechaEstado | luxon:'shortDate'}}</td>
       </ng-container>
 
       <!-- Acciones Column -->
@@ -91,47 +108,57 @@
         <th mat-header-cell *matHeaderCellDef> {{'label.actions' | translate}} </th>
         <td mat-cell *matCellDef="let element">
           <ng-container
-            *ngIf="(this.isInvestigador && element.estadoAutorizacion.estado !== 'BORRADOR') || (!this.isInvestigador && element.estadoAutorizacion.estado === 'AUTORIZADA')">
+            *ngIf="(this.isInvestigador && element.estadoAutorizacion.estado !== 'BORRADOR') || (!this.isInvestigador && element.estadoAutorizacion.estado === 'AUTORIZADA') || this.isVisor">
             <a mat-button matTooltip="{{'btn.view' | translate}}" [routerLink]="[element.autorizacion.id]">
               <mat-icon color="primary">visibility</mat-icon>
             </a>
           </ng-container>
           <ng-container
-            *ngIf="(this.isInvestigador && element.estadoAutorizacion.estado === 'BORRADOR') || (!this.isInvestigador && element.estadoAutorizacion.estado !== 'AUTORIZADA')">
+            *ngIf="(this.isInvestigador && element.estadoAutorizacion.estado === 'BORRADOR' && !this.isVisor) || (!this.isInvestigador && element.estadoAutorizacion.estado !== 'AUTORIZADA' && !this.isVisor)">
             <a mat-button matTooltip="{{'btn.edit' | translate}}" [routerLink]="[element.autorizacion.id]">
               <mat-icon color="primary">border_color</mat-icon>
             </a>
           </ng-container>
           <ng-container>
             <button
-              *ngIf="(this.isInvestigador && element.estadoAutorizacion.estado === 'BORRADOR') || (!this.isInvestigador && !mapCanBeDeleted.get(element.autorizacion.id))"
+              *ngIf="(this.isInvestigador && element.estadoAutorizacion.estado === 'BORRADOR' && !this.isVisor) || (!this.isInvestigador && !mapCanBeDeleted.get(element.autorizacion.id) && !this.isVisor)"
               mat-button matTooltip="{{'btn.delete' | translate}}"
               (click)="deleteAutorizacion(element.autorizacion.id)">
               <mat-icon color="warn">highlight_off</mat-icon>
             </button>
           </ng-container>
 
-          <ng-container *sgiHasAuthorityForAnyUO="'CSP-AUT-INV-C'">
-            <button *ngIf="(element.hasCertificadoVisible)" mat-button color="primary"
-              matTooltip="{{'btn.autorizacion.descargar-certificado' | translate}}">
-              <mat-icon color="primary">arrow_downward</mat-icon>
+          <ng-container *sgiHasAuthorityForAnyUO="'CSP-AUT-INV-ER'">
+            <button *ngIf="(element.certificadoVisible)" mat-button color="primary"
+              matTooltip="{{'btn.autorizacion.descargar-certificado' | translate}}" (click)="downloadFile(element)">
+              <mat-icon>arrow_downward</mat-icon>
             </button>
           </ng-container>
 
-          <ng-container *sgiHasAuthorityForAnyUO="'CSP-PRO-V'">
-            <button mat-button matTooltip="{{'btn.autorizacion.ver-proyecto' | translate}}">
-              <mat-icon color="primary">work</mat-icon>
+          <ng-container *sgiHasAnyAuthorityForAnyUO="['CSP-PRO-V', 'CSP-CVPR-E']">
+            <button *ngIf="element.proyectoId" mat-button color="primary"
+              matTooltip="{{'btn.view.entity' | translate:msgParamProyectoEntity}}"
+              [routerLink]="['../..', CSP_ROUTE_NAMES.PROYECTO, element.proyectoId?.toString()]">
+              <mat-icon>work</mat-icon>
             </button>
           </ng-container>
-          <ng-container *sgiHasAuthorityForAnyUO="'CSP-CVPR-V'">
-            <button mat-button matTooltip="{{'btn.autorizacion.ver-notificacion' | translate}}">
-              <mat-icon color="primary">notifications</mat-icon>
+          <ng-container *sgiHasAnyAuthorityForAnyUO="['CSP-CVPR-V', 'CSP-CVPR-E']">
+            <button *ngIf="element.notificacionId" mat-button color="primary"
+              matTooltip="{{'btn.view.entity' | translate:msgParamNotificacionEntity}}"
+              [routerLink]="['../..', CSP_ROUTE_NAMES.NOTIFICACION_CVN, element.notificacionId?.toString()]">
+              <mat-icon>notifications</mat-icon>
             </button>
           </ng-container>
 
       </ng-container>
-      <tr mat-header-row *matHeaderRowDef="columnas"></tr>
-      <tr mat-row *matRowDef="let row; columns: columnas;"></tr>
+      <ng-container *ngIf="this.isInvestigador">
+        <tr mat-header-row *matHeaderRowDef="columnas"></tr>
+        <tr mat-row *matRowDef="let row; columns: columnas;"></tr>
+      </ng-container>
+      <ng-container *ngIf="!this.isInvestigador">
+        <tr mat-header-row *matHeaderRowDef="columnasGestor"></tr>
+        <tr mat-row *matRowDef="let row; columns: columnasGestor;"></tr>
+      </ng-container>
     </table>
     <div class="paginator-export">
       <mat-paginator [pageSizeOptions]="elementosPagina" [length]="totalElementos" showFirstLastButtons>

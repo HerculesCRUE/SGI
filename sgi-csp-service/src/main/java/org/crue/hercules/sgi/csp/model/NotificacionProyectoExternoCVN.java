@@ -1,17 +1,21 @@
 package org.crue.hercules.sgi.csp.model;
 
 import java.time.Instant;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import lombok.AccessLevel;
@@ -49,8 +53,9 @@ public class NotificacionProyectoExternoCVN extends BaseEntity {
   private Long id;
 
   /** Titulo */
-  @Column(name = "titulo", length = NotificacionProyectoExternoCVN.MAX_LENGTH, nullable = true)
+  @Column(name = "titulo", length = NotificacionProyectoExternoCVN.MAX_LENGTH, nullable = false)
   @Size(max = NotificacionProyectoExternoCVN.MAX_LENGTH)
+  @NotNull
   private String titulo;
 
   /** Autorizacion */
@@ -91,10 +96,12 @@ public class NotificacionProyectoExternoCVN extends BaseEntity {
 
   /** Fecha Inicio */
   @Column(name = "fecha_inicio")
+  @NotNull
   private Instant fechaInicio;
 
   /** Fecha Fin */
   @Column(name = "fecha_fin")
+  @NotNull
   private Instant fechaFin;
 
   /** Grado Contribucion */
@@ -116,15 +123,17 @@ public class NotificacionProyectoExternoCVN extends BaseEntity {
   private Integer porcentajeSubvencion;
 
   /** Proyecto CVN id */
-  @Column(name = "proyecto_cvn_id", nullable = true)
-  private String proeyctoCVNId;
+  @Column(name = "proyecto_cvn_id", nullable = false)
+  @NotNull
+  private String proyectoCVNId;
 
   /** Responsable Ref */
   @Column(name = "responsable_ref", nullable = true)
   private String responsableRef;
 
   /** Solicitante Ref */
-  @Column(name = "solicitante_ref", nullable = true)
+  @NotNull
+  @Column(name = "solicitante_ref", nullable = false)
   private String solicitanteRef;
 
   /** Url Documento acreditacion */
@@ -133,16 +142,21 @@ public class NotificacionProyectoExternoCVN extends BaseEntity {
   private String urlDocumentoAcreditacion;
 
   // Relation mappings for JPA metamodel generation only
-  @ManyToOne
+  @OneToOne
   @JoinColumn(name = "autorizacion_id", insertable = false, updatable = false, foreignKey = @ForeignKey(name = "FK_NOTIFICACIONPROYECTOEXTERNOCVN_AUTORIZACION"))
   @Getter(AccessLevel.NONE)
   @Setter(AccessLevel.NONE)
   private final Autorizacion autorizacion = null;
 
-  @ManyToOne
+  @OneToOne
   @JoinColumn(name = "proyecto_id", insertable = false, updatable = false, foreignKey = @ForeignKey(name = "FK_NOTIFICACIONPROYECTOEXTERNOCVN_PROYECTO"))
   @Getter(AccessLevel.NONE)
   @Setter(AccessLevel.NONE)
   private final Proyecto proyecto = null;
+
+  @OneToMany(fetch = FetchType.LAZY, mappedBy = "notificacionProyecto")
+  @Getter(AccessLevel.NONE)
+  @Setter(AccessLevel.NONE)
+  private final List<NotificacionCVNEntidadFinanciadora> notificaciones = null;
 
 }

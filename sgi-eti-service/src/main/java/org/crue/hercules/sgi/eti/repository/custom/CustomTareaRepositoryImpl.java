@@ -74,7 +74,8 @@ public class CustomTareaRepositoryImpl implements CustomTareaRepository {
         joinFormacionEspecifica.get(FormacionEspecifica_.nombre),
         joinFormacionEspecifica.get(FormacionEspecifica_.activo), joinTipoTarea.get(TipoTarea_.id),
         joinTipoTarea.get(TipoTarea_.nombre), joinTipoTarea.get(TipoTarea_.activo), root.get(Tarea_.organismo),
-        root.get(Tarea_.anio), isNotEliminable(root, cb, cq).isNull().alias("eliminable"));
+        root.get(Tarea_.anio), cb.selectCase().when(cb.isNull(isNotEliminable(root, cb, cq)), true).otherwise(false)
+            .alias("eliminable"));
 
     // Where
     cq.where(cb.equal(root.get(Tarea_.equipoTrabajo).get(EquipoTrabajo_.peticionEvaluacion).get(PeticionEvaluacion_.id),

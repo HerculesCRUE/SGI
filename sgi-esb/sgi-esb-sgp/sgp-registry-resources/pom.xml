@@ -4,12 +4,12 @@
   <parent>
     <groupId>org.crue.hercules.sgi.esb.sgp</groupId>
     <artifactId>sgi-esb-sgp</artifactId>
-    <version>0.0.6</version>
+    <version>0.0.7</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
   <groupId>org.crue.hercules.sgi.esb.sgp</groupId>
   <artifactId>sgp-registry-resources</artifactId>
-  <version>0.0.6</version>
+  <version>0.0.7</version>
   <packaging>pom</packaging>
   <name>sgp-registry-resources</name>
   <description>sgp-registry-resources</description>

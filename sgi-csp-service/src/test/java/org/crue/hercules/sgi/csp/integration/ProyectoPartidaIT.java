@@ -22,6 +22,8 @@ class ProyectoPartidaIT extends BaseIT {
 
   private static final String PATH_PARAMETER_ID = "/{id}";
   private static final String CONTROLLER_BASE_PATH = ProyectoPartidaController.REQUEST_MAPPING;
+  private static final String PATH_MODIFICABLE = "/modificable";
+  private static final String PATH_ANUALIDADES = "/anualidades";
 
   private HttpEntity<ProyectoPartida> buildRequest(HttpHeaders headers,
       ProyectoPartida entity, String... roles) throws Exception {
@@ -41,9 +43,9 @@ class ProyectoPartidaIT extends BaseIT {
     "classpath:scripts/modelo_unidad.sql",
     "classpath:scripts/tipo_finalidad.sql",
     "classpath:scripts/tipo_ambito_geografico.sql",
-    "classpath:scripts/proyecto.sql",
     "classpath:scripts/tipo_regimen_concurrencia.sql",
     "classpath:scripts/convocatoria.sql",
+    "classpath:scripts/proyecto.sql",
     "classpath:scripts/convocatoria_partida.sql"
     // @formatter:on  
   })
@@ -81,9 +83,9 @@ class ProyectoPartidaIT extends BaseIT {
     "classpath:scripts/modelo_unidad.sql",
     "classpath:scripts/tipo_finalidad.sql",
     "classpath:scripts/tipo_ambito_geografico.sql",
-    "classpath:scripts/proyecto.sql",
     "classpath:scripts/tipo_regimen_concurrencia.sql",
     "classpath:scripts/convocatoria.sql",
+    "classpath:scripts/proyecto.sql",
     "classpath:scripts/convocatoria_partida.sql",
     "classpath:scripts/proyecto_partida.sql"
     // @formatter:on  
@@ -123,9 +125,9 @@ class ProyectoPartidaIT extends BaseIT {
     "classpath:scripts/modelo_unidad.sql",
     "classpath:scripts/tipo_finalidad.sql",
     "classpath:scripts/tipo_ambito_geografico.sql",
-    "classpath:scripts/proyecto.sql",
     "classpath:scripts/tipo_regimen_concurrencia.sql",
     "classpath:scripts/convocatoria.sql",
+    "classpath:scripts/proyecto.sql",
     "classpath:scripts/convocatoria_partida.sql",
     "classpath:scripts/proyecto_partida.sql"
     // @formatter:on  
@@ -148,9 +150,9 @@ class ProyectoPartidaIT extends BaseIT {
     "classpath:scripts/modelo_unidad.sql",
     "classpath:scripts/tipo_finalidad.sql",
     "classpath:scripts/tipo_ambito_geografico.sql",
-    "classpath:scripts/proyecto.sql",
     "classpath:scripts/tipo_regimen_concurrencia.sql",
     "classpath:scripts/convocatoria.sql",
+    "classpath:scripts/proyecto.sql",
     "classpath:scripts/convocatoria_partida.sql",
     "classpath:scripts/proyecto_partida.sql"
     // @formatter:on  
@@ -173,9 +175,9 @@ class ProyectoPartidaIT extends BaseIT {
     "classpath:scripts/modelo_unidad.sql",
     "classpath:scripts/tipo_finalidad.sql",
     "classpath:scripts/tipo_ambito_geografico.sql",
-    "classpath:scripts/proyecto.sql",
     "classpath:scripts/tipo_regimen_concurrencia.sql",
     "classpath:scripts/convocatoria.sql",
+    "classpath:scripts/proyecto.sql",
     "classpath:scripts/convocatoria_partida.sql",
     "classpath:scripts/proyecto_partida.sql"
     // @formatter:on  
@@ -198,6 +200,64 @@ class ProyectoPartidaIT extends BaseIT {
     Assertions.assertThat(proyectoPartida).isNotNull();
     Assertions.assertThat(proyectoPartida.getId()).as("getId()")
         .isEqualTo(proyectoPartidaId);
+  }
+
+  @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = {
+  // @formatter:off    
+    "classpath:scripts/modelo_ejecucion.sql",
+    "classpath:scripts/modelo_unidad.sql",
+    "classpath:scripts/tipo_finalidad.sql",
+    "classpath:scripts/tipo_ambito_geografico.sql",
+    "classpath:scripts/tipo_regimen_concurrencia.sql",
+    "classpath:scripts/convocatoria.sql",
+    "classpath:scripts/proyecto.sql",
+    "classpath:scripts/convocatoria_partida.sql",
+    "classpath:scripts/proyecto_partida.sql"
+    // @formatter:on  
+  })
+  @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
+  @Test
+  void modificable_ReturnsHttpStatus200() throws Exception {
+    Long proyectoPartidaId = 1L;
+
+    final ResponseEntity<Void> response = restTemplate.exchange(
+        CONTROLLER_BASE_PATH + PATH_PARAMETER_ID + PATH_MODIFICABLE,
+        HttpMethod.HEAD, buildRequest(null, null, "CSP-PRO-E"),
+        Void.class,
+        proyectoPartidaId);
+
+    Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+  }
+
+  @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = {
+  // @formatter:off    
+    "classpath:scripts/modelo_ejecucion.sql",
+    "classpath:scripts/modelo_unidad.sql",
+    "classpath:scripts/tipo_finalidad.sql",
+    "classpath:scripts/tipo_ambito_geografico.sql",
+    "classpath:scripts/tipo_regimen_concurrencia.sql",
+    "classpath:scripts/convocatoria.sql",
+    "classpath:scripts/proyecto.sql",
+    "classpath:scripts/concepto_gasto.sql",
+    "classpath:scripts/convocatoria_partida.sql",
+    "classpath:scripts/proyecto_partida.sql",
+    "classpath:scripts/proyecto_anualidad.sql",
+    "classpath:scripts/anualidad_gasto.sql",
+    "classpath:scripts/anualidad_ingreso.sql"
+    // @formatter:on  
+  })
+  @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
+  @Test
+  void existsAnyAnualidad_ReturnsHttpStatus200() throws Exception {
+    Long proyectoPartidaId = 1L;
+
+    final ResponseEntity<Void> response = restTemplate.exchange(
+        CONTROLLER_BASE_PATH + PATH_PARAMETER_ID + PATH_ANUALIDADES,
+        HttpMethod.HEAD, buildRequest(null, null, "CSP-PRO-E"),
+        Void.class,
+        proyectoPartidaId);
+
+    Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
   }
 
   private ProyectoPartida buildMockProyectoPartida(Long proyectoPartidaId) {

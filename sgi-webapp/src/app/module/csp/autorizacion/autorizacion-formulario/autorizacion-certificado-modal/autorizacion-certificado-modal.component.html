@@ -1,0 +1,85 @@
+<div class="sgi-dialog-header" fxLayout="row" fxLayoutGap="20px">
+  <span fxFlexAlign="center" mat-mat-dialog-title role="heading" aria-level="3" fxFlex>{{title | translate}}</span>
+  <button fxFlex="nogrow" mat-icon-button mat-dialog-close>
+    <mat-icon class="close-icon">close</mat-icon>
+  </button>
+</div>
+<mat-dialog-content>
+  <form [formGroup]="formGroup">
+    <!-- Generado automatico -->
+    <div [fxLayout]="fxLayoutProperties.layout" [fxLayoutAlign]="fxLayoutProperties.layoutAlign"
+      *ngIf="!this.data?.certificado?.id">
+      <mat-radio-group class="radio-inline" name="generado_automatico" formControlName="generadoAutomatico" required>
+        <mat-radio-button color="primary" class="radio" [value]="true" name="generadoAutomaticoSi">
+          {{'csp.certificado-autorizacion.generadoAutomatico' | translate}}
+        </mat-radio-button>
+        <mat-radio-button color="primary" class="radio" [value]="false" name="generadoAutomaticoNo">
+          {{'csp.certificado-autorizacion.generadoManual' | translate}}
+        </mat-radio-button>
+      </mat-radio-group>
+    </div>
+    <!-- Nombre -->
+    <div [fxLayout]="fxLayoutProperties.layout" [fxLayoutAlign]="fxLayoutProperties.layoutAlign">
+      <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
+        [fxFlexOrder]="fxFlexProperties.order">
+        <mat-form-field fxFill>
+          <mat-label>{{'csp.certificado-autorizacion.nombre' | translate}}</mat-label>
+          <input matInput formControlName="nombre" id="nombre"
+            placeholder="{{'csp.certificado-autorizacion.nombre' | translate}}">
+        </mat-form-field>
+      </div>
+    </div>
+    <!-- Documento-->
+    <div [fxLayout]="fxLayoutProperties.layout" [fxLayoutAlign]="fxLayoutProperties.layoutAlign">
+      <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
+        [fxFlexOrder]="fxFlexProperties.order">
+        <mat-form-field class="input-form" *ngIf="!formGroup.controls.generadoAutomatico.value">
+          <mat-label>{{'csp.certificado-autorizacion.documento' | translate}}</mat-label>
+          <sgi-file-upload #uploader placeholder="{{'csp.certificado-autorizacion.documento' | translate}}"
+            formControlName="documento" required autoUpload="false" (uploadEventChange)="onUploadProgress($event)">
+          </sgi-file-upload>
+          <mat-error *ngIf="formGroup.controls.documento.errors?.required">
+            {{ 'error.required.entity' | translate:msgParamDocumentoEntity}}
+          </mat-error>
+        </mat-form-field>
+        <mat-form-field class="input-form" *ngIf="formGroup.controls.generadoAutomatico.value">
+          <mat-label>{{'csp.certificado-autorizacion.documento' | translate}}</mat-label>
+          <input matInput formControlName="documentoAuto" id="documentoAuto"
+            placeholder="{{'csp.certificado-autorizacion.documento' | translate}}" required readonly>
+          <button *ngIf="formGroup.controls.generadoAutomatico.value" mat-button color="primary"
+            matTooltip="{{'btn.autorizacion.descargar-certificado' | translate}}" id="btnDownload"
+            (click)="visualizarInforme()">
+            <mat-icon color="primary">arrow_downward</mat-icon>
+          </button>
+          <mat-error *ngIf="formGroup.controls.documentoAuto.errors?.required">
+            {{ 'error.required.entity' | translate:msgParamDocumentoEntity}}
+          </mat-error>
+        </mat-form-field>
+      </div>
+    </div>
+    <!--Publico-->
+    <div [fxLayout]="fxLayoutProperties.layout" [fxLayoutAlign]="fxLayoutProperties.layoutAlign">
+      <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
+        [fxFlexOrder]="fxFlexProperties.order">
+        <mat-form-field>
+          <mat-label>{{'csp.certificado-autorizacion.publico' | translate}}
+          </mat-label>
+          <sgi-select-boolean formControlName="publico" required></sgi-select-boolean>
+          <mat-error *ngIf="formGroup.controls.publico.errors?.hasCertificadoPublico">
+            {{ 'error.csp.certificado-autorizacion.hasAlreadyCertificadoPublico' | translate}}
+          </mat-error>
+          <mat-error *ngIf="formGroup.controls.publico.errors?.required">
+            {{ 'error.required.field' | translate:msgParamPublicoEntity}}
+          </mat-error>
+        </mat-form-field>
+      </div>
+    </div>
+  </form>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <button color="accent" (click)="saveOrUpdate()" mat-raised-button type="submit">
+    <mat-icon class="save-icon">save</mat-icon>{{textSaveOrUpdate | translate}}
+  </button>
+  <button class="link-cancelar" mat-button type="button" mat-dialog-close>{{'btn.cancel' |
+    translate}}</button>
+</mat-dialog-actions>

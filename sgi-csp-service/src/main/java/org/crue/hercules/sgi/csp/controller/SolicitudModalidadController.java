@@ -46,7 +46,7 @@ public class SolicitudModalidadController {
    * @return Nuevo {@link SolicitudModalidad} creado.
    */
   @PostMapping
-  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-SOL-INV-C', 'CSP-SOL-E')")
+  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-SOL-INV-C', 'CSP-SOL-INV-ER', 'CSP-SOL-E')")
   public ResponseEntity<SolicitudModalidad> create(@Valid @RequestBody SolicitudModalidad solicitudModalidad) {
     log.debug("create(SolicitudModalidad solicitudModalidad) - start");
     SolicitudModalidad returnValue = service.create(solicitudModalidad);
@@ -63,7 +63,7 @@ public class SolicitudModalidadController {
    * @return SolicitudModalidad {@link SolicitudModalidad} actualizado
    */
   @PutMapping("/{id}")
-  @PreAuthorize("hasAuthorityForAnyUO('CSP-SOL-E')")
+  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-SOL-E', 'CSP-SOL-INV-ER')")
   public SolicitudModalidad update(@Valid @RequestBody SolicitudModalidad solicitudModalidad, @PathVariable Long id) {
     log.debug("update(SolicitudModalidad solicitudModalidad, Long id) - start");
     solicitudModalidad.setId(id);
@@ -73,12 +73,12 @@ public class SolicitudModalidadController {
   }
 
   /**
-   * Desactiva {@link SolicitudModalidad} con id indicado.
+   * Elimina {@link SolicitudModalidad} con id indicado.
    * 
    * @param id Identificador de {@link SolicitudModalidad}.
    */
   @DeleteMapping("/{id}")
-  @PreAuthorize("hasAuthorityForAnyUO('CSP-SOL-E')")
+  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-SOL-E', 'CSP-SOL-INV-ER')")
   @ResponseStatus(value = HttpStatus.NO_CONTENT)
   public void deleteById(@PathVariable Long id) {
     log.debug("deleteById(Long id) - start");

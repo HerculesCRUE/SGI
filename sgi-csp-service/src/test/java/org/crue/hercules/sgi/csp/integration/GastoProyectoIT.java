@@ -49,6 +49,8 @@ class GastoProyectoIT extends BaseIT {
       "classpath:scripts/modelo_unidad.sql",
       "classpath:scripts/tipo_finalidad.sql",
       "classpath:scripts/tipo_ambito_geografico.sql",
+      "classpath:scripts/tipo_regimen_concurrencia.sql",
+      "classpath:scripts/convocatoria.sql",
       "classpath:scripts/proyecto.sql",
       "classpath:scripts/concepto_gasto.sql",
       "classpath:scripts/gasto_proyecto.sql",
@@ -68,9 +70,9 @@ class GastoProyectoIT extends BaseIT {
 
     URI uri = UriComponentsBuilder.fromUriString(CONTROLLER_BASE_PATH).queryParam("s", sort).queryParam("q", filter)
         .build(false).toUri();
-    
-    String[] roles = {"CSP-EJEC-E", "CSP-EJEC-V", "CSP-EJEC-INV-VR"};
-        
+
+    String[] roles = { "CSP-EJEC-E", "CSP-EJEC-V", "CSP-EJEC-INV-VR" };
+
     final ResponseEntity<List<GastoProyectoOutput>> response = restTemplate.exchange(uri, HttpMethod.GET,
         buildRequest(headers, null, roles), new ParameterizedTypeReference<List<GastoProyectoOutput>>() {
         });
@@ -90,6 +92,8 @@ class GastoProyectoIT extends BaseIT {
       "classpath:scripts/modelo_unidad.sql",
       "classpath:scripts/tipo_finalidad.sql",
       "classpath:scripts/tipo_ambito_geografico.sql",
+      "classpath:scripts/tipo_regimen_concurrencia.sql",
+      "classpath:scripts/convocatoria.sql",
       "classpath:scripts/proyecto.sql",
       "classpath:scripts/concepto_gasto.sql"
     // @formatter:on  
@@ -128,6 +132,8 @@ class GastoProyectoIT extends BaseIT {
       "classpath:scripts/modelo_unidad.sql",
       "classpath:scripts/tipo_finalidad.sql",
       "classpath:scripts/tipo_ambito_geografico.sql",
+      "classpath:scripts/tipo_regimen_concurrencia.sql",
+      "classpath:scripts/convocatoria.sql",
       "classpath:scripts/proyecto.sql",
       "classpath:scripts/concepto_gasto.sql",
       "classpath:scripts/gasto_proyecto.sql",
@@ -138,7 +144,7 @@ class GastoProyectoIT extends BaseIT {
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
   void findAllEstadoGastoProyecto_WithPagingSorting_ReturnsGastoProyectoOutputList() throws Exception {
-    
+
     HttpHeaders headers = new HttpHeaders();
     headers.set("Authorization", String.format("bearer %s", tokenBuilder.buildToken("user", "CSP-EJEC-V")));
     headers.add("X-Page", "0");
@@ -159,7 +165,7 @@ class GastoProyectoIT extends BaseIT {
     final List<EstadoGastoProyecto> estadosGastoProyecto = response.getBody();
 
     Assertions.assertThat(estadosGastoProyecto.size()).isEqualTo(1);
-    
+
     HttpHeaders responseHeaders = response.getHeaders();
     Assertions.assertThat(responseHeaders.getFirst("X-Page")).as("X-Page").isEqualTo("0");
     Assertions.assertThat(responseHeaders.getFirst("X-Page-Size")).as("X-Page-Size").isEqualTo("10");
@@ -172,6 +178,8 @@ class GastoProyectoIT extends BaseIT {
       "classpath:scripts/modelo_unidad.sql",
       "classpath:scripts/tipo_finalidad.sql",
       "classpath:scripts/tipo_ambito_geografico.sql",
+      "classpath:scripts/tipo_regimen_concurrencia.sql",
+      "classpath:scripts/convocatoria.sql",
       "classpath:scripts/proyecto.sql",
       "classpath:scripts/concepto_gasto.sql",
       "classpath:scripts/gasto_proyecto.sql",
@@ -189,31 +197,30 @@ class GastoProyectoIT extends BaseIT {
     toUpdate.setObservaciones("ha sido actualizado");
 
     final ResponseEntity<GastoProyectoOutput> response = restTemplate.exchange(CONTROLLER_BASE_PATH + PATH_PARAMETER_ID,
-    HttpMethod.PUT, buildRequest(null, toUpdate, "CSP-EJEC-E"), GastoProyectoOutput.class, gastoProyectoId);
+        HttpMethod.PUT, buildRequest(null, toUpdate, "CSP-EJEC-E"), GastoProyectoOutput.class, gastoProyectoId);
 
     Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
 
     GastoProyectoOutput updated = response.getBody();
-    
+
     Assertions.assertThat(updated).isNotNull();
     Assertions.assertThat(updated.getObservaciones()).as("getObservaciones()").isEqualTo(updated.getObservaciones());
 
   }
 
-
   private GastoProyectoInput buildMockGastoProyectoInput(Long gastoProyectoId) {
     return GastoProyectoInput.builder()
-            .conceptoGastoId(1L)
-            .fechaCongreso(Instant.now())
-            .gastoRef("00001")
-            .proyectoId(1L)
-            .observaciones("Testing create")
-            .importeInscripcion(new BigDecimal(1111))
-            .estado(EstadoGastoProyecto.builder()
-              .estado(TipoEstadoGasto.VALIDADO)
-              .comentario("Testing creating new GastoProyecto")
-              .fechaEstado(Instant.now())
-              .build())
-            .build();
+        .conceptoGastoId(1L)
+        .fechaCongreso(Instant.now())
+        .gastoRef("00001")
+        .proyectoId(1L)
+        .observaciones("Testing create")
+        .importeInscripcion(new BigDecimal(1111))
+        .estado(EstadoGastoProyecto.builder()
+            .estado(TipoEstadoGasto.VALIDADO)
+            .comentario("Testing creating new GastoProyecto")
+            .fechaEstado(Instant.now())
+            .build())
+        .build();
   }
 }

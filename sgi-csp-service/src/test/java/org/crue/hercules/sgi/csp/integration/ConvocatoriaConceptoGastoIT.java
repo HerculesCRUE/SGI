@@ -27,6 +27,7 @@ public class ConvocatoriaConceptoGastoIT extends BaseIT {
 
   private static final String PATH_PARAMETER_ID = "/{id}";
   private static final String CONTROLLER_BASE_PATH = "/convocatoriaconceptogastos";
+  private static final String PATH_CONVOCATORIA_GASTO_CODIGO_EC = "/convocatoriagastocodigoec";
 
   private HttpEntity<ConvocatoriaConceptoGasto> buildRequest(HttpHeaders headers, ConvocatoriaConceptoGasto entity)
       throws Exception {
@@ -150,6 +151,72 @@ public class ConvocatoriaConceptoGastoIT extends BaseIT {
     Assertions.assertThat(responseData.get(0).getId()).as("get(0).getId())").isEqualTo(6);
     Assertions.assertThat(responseData.get(1).getId()).as("get(1).getId())").isEqualTo(4);
     Assertions.assertThat(responseData.get(2).getId()).as("get(2).getId())").isEqualTo(2);
+  }
+
+  @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = {
+    // @formatter:off
+    "classpath:scripts/tipo_fase.sql",
+    "classpath:scripts/tipo_documento.sql",
+    "classpath:scripts/modelo_ejecucion.sql",
+    "classpath:scripts/modelo_tipo_fase.sql",
+    "classpath:scripts/modelo_tipo_documento.sql",
+    "classpath:scripts/modelo_unidad.sql",
+    "classpath:scripts/tipo_finalidad.sql",
+    "classpath:scripts/tipo_ambito_geografico.sql",
+    "classpath:scripts/tipo_regimen_concurrencia.sql",
+    "classpath:scripts/convocatoria.sql",
+    "classpath:scripts/proyecto.sql",
+    "classpath:scripts/concepto_gasto.sql",
+    "classpath:scripts/proyecto_concepto_gasto.sql",
+    "classpath:scripts/convocatoria_concepto_gasto.sql"
+    // @formatter:on
+  })
+  @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
+  @Test
+  void exists_ReturnsStatusCode200() throws Exception {
+    Long convocatoriaConceptoGastoId = 1L;
+
+    URI uri = UriComponentsBuilder.fromUriString(CONTROLLER_BASE_PATH + PATH_PARAMETER_ID)
+        .buildAndExpand(convocatoriaConceptoGastoId).toUri();
+
+    final ResponseEntity<Void> response = restTemplate.exchange(uri, HttpMethod.HEAD, buildRequest(null, null),
+        Void.class);
+
+    Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+  }
+
+  @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = {
+    // @formatter:off
+    "classpath:scripts/tipo_fase.sql",
+    "classpath:scripts/tipo_documento.sql",
+    "classpath:scripts/modelo_ejecucion.sql",
+    "classpath:scripts/modelo_tipo_fase.sql",
+    "classpath:scripts/modelo_tipo_documento.sql",
+    "classpath:scripts/modelo_unidad.sql",
+    "classpath:scripts/tipo_finalidad.sql",
+    "classpath:scripts/tipo_ambito_geografico.sql",
+    "classpath:scripts/tipo_regimen_concurrencia.sql",
+    "classpath:scripts/convocatoria.sql",
+    "classpath:scripts/proyecto.sql",
+    "classpath:scripts/concepto_gasto.sql",
+    "classpath:scripts/proyecto_concepto_gasto.sql",
+    "classpath:scripts/convocatoria_concepto_gasto.sql",
+    "classpath:scripts/convocatoria_concepto_gasto_codigo_ec.sql"
+    // @formatter:on
+  })
+  @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
+  @Test
+  void existsCodigosEconomicos_ReturnsStatusCode200() throws Exception {
+    Long convocatoriaConceptoGastoId = 1L;
+
+    URI uri = UriComponentsBuilder
+        .fromUriString(CONTROLLER_BASE_PATH + PATH_PARAMETER_ID + PATH_CONVOCATORIA_GASTO_CODIGO_EC)
+        .buildAndExpand(convocatoriaConceptoGastoId).toUri();
+
+    final ResponseEntity<Void> response = restTemplate.exchange(uri, HttpMethod.HEAD, buildRequest(null, null),
+        Void.class);
+
+    Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
   }
 
   /**

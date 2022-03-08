@@ -111,14 +111,14 @@
                 <mat-icon color="primary">add_alert</mat-icon>
               </button>
             </ng-container>
-            <ng-container *sgiHasAuthorityForAnyUO="'CSP-PRO-E'">
+            <ng-container *sgiHasAnyAuthorityForAnyUO="['CSP-PRO-E', 'CSP-PRO-INV-VR']">
               <button *ngIf="canShowValidarIP(element.value.estadoValidacionIP?.estado)" mat-icon-button
                 matTooltip="{{'csp.proyecto-calendario-facturacion.validar-ip' | translate}}"
                 (click)="openModal(DIALOG_ACTION.VALIDAR_IP, element.value,i)">
                 <mat-icon color="accent">check_circle</mat-icon>
               </button>
             </ng-container>
-            <ng-container *sgiHasAuthorityForAnyUO="'CSP-PRO-E'">
+            <ng-container *sgiHasAnyAuthorityForAnyUO="['CSP-PRO-E', 'CSP-PRO-INV-VR']">
               <button mat-icon-button matTooltip="{{'csp.proyecto-calendario-facturacion.historico-ip' | translate}}"
                 (click)="openHistoricoEstadoValidacionIP(element.value?.id)">
                 <mat-icon color="primary">history</mat-icon>

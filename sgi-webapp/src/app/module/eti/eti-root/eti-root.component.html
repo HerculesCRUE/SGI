@@ -3,37 +3,45 @@
     icon="content_paste" title="{{'eti.peticion-evaluacion' | translate:MSG_PARAMS.CARDINALIRY.PLURAL}}">
   </sgi-menu-item>
   <sgi-menu-item *sgiHasAnyAuthorityForAnyUO="['ETI-MEM-V', 'ETI-MEM-CEST']" [route]="[ETI_ROUTE_NAMES.MEMORIAS]"
-    icon="file_copy" title="{{'eti.memoria' | translate:MSG_PARAMS.CARDINALIRY.PLURAL}}">
+    icon="menu_book" title="{{'eti.memoria' | translate:MSG_PARAMS.CARDINALIRY.PLURAL}}">
   </sgi-menu-item>
   <sgi-menu-item *sgiHasAnyAuthorityForAnyUO="['ETI-CNV-V', 'ETI-CNV-C', 'ETI-CNV-E', 'ETI-CNV-B', 'ETI-CNV-ENV']"
-    [route]="[ETI_ROUTE_NAMES.SOLICITUDES_CONVOCATORIA]" icon="equalizer"
+    [route]="[ETI_ROUTE_NAMES.SOLICITUDES_CONVOCATORIA]" icon="event"
     title="{{'eti.convocatoria-reunion' | translate:MSG_PARAMS.CARDINALIRY.PLURAL}}">
   </sgi-menu-item>
   <sgi-menu-item *sgiHasAnyAuthorityForAnyUO="['ETI-EVC-V', 'ETI-EVC-EVAL']" [route]="[ETI_ROUTE_NAMES.EVALUACIONES]"
-    icon="list_alt" title="{{'eti.evaluacion' | translate:MSG_PARAMS.CARDINALIRY.PLURAL}}">
+    icon="question_answer" title="{{'eti.evaluacion' | translate:MSG_PARAMS.CARDINALIRY.PLURAL}}">
   </sgi-menu-item>
   <sgi-menu-item *sgiHasAnyAuthorityForAnyUO="['ETI-EVC-V', 'ETI-EVC-EVAL']"
-    [route]="[ETI_ROUTE_NAMES.GESTION_SEGUIMIENTO]" icon="supervised_user_circle"
+    [route]="[ETI_ROUTE_NAMES.GESTION_SEGUIMIENTO]" icon="cached"
     title="{{'eti.seguimiento' | translate:MSG_PARAMS.CARDINALIRY.PLURAL}}">
   </sgi-menu-item>
   <sgi-menu-item
     *sgiHasAnyAuthorityForAnyUO="['ETI-ACT-V', 'ETI-ACT-C', 'ETI-ACT-E', 'ETI-ACT-ER', 'ETI-ACT-DES', 'ETI-ACT-DESR', 'ETI-ACT-FIN']"
-    [route]="[ETI_ROUTE_NAMES.ACTAS]" icon="assignment"
+    [route]="[ETI_ROUTE_NAMES.ACTAS]" icon="assignment_turned_in"
     title="{{'eti.acta' | translate:MSG_PARAMS.CARDINALIRY.PLURAL}}">
   </sgi-menu-item>
   <sgi-menu-item *sgiHasAnyAuthorityForAnyUO="['ETI-EVR-V', 'ETI-EVR-C', 'ETI-EVR-E', 'ETI-EVR-B']"
-    [route]="[ETI_ROUTE_NAMES.EVALUADORES]" icon="supervised_user_circle"
+    [route]="[ETI_ROUTE_NAMES.EVALUADORES]" icon="group_add"
     title="{{'eti.evaluador' | translate:MSG_PARAMS.CARDINALIRY.PLURAL}}">
   </sgi-menu-item>
-  <sgi-menu-item *sgiHasAnyAuthorityForAnyUO="['ETI-EVC-V', 'ETI-EVC-VR', 'ETI-EVC-EVAL', 'ETI-EVC-EVALR']"
-    [route]="[ETI_ROUTE_NAMES.EVALUACIONES_EVALUADOR]" icon="list_alt"
-    title="{{'menu.eti.evaluacion-evaluador' | translate}}">
-  </sgi-menu-item>
-  <sgi-menu-item *sgiHasAnyAuthorityForAnyUO="['ETI-EVC-V', 'ETI-EVC-VR', 'ETI-EVC-EVAL', 'ETI-EVC-EVALR']"
-    [route]="[ETI_ROUTE_NAMES.SEGUIMIENTOS]" icon="verified_user"
-    title="{{'menu.eti.seguimiento-evaluador' | translate:MSG_PARAMS.CARDINALIRY.PLURAL}}">
-  </sgi-menu-item>
+  <ng-container *sgiHasAnyAuthorityForAnyUO="['ETI-EVC-V', 'ETI-EVC-EVAL']">
+    <sgi-menu-item [route]="[ETI_ROUTE_NAMES.EVALUACIONES_EVALUADOR]" icon="assignment_ind"
+      title="{{'menu.eti.evaluacion-evaluador' | translate}}">
+    </sgi-menu-item>
+    <sgi-menu-item [route]="[ETI_ROUTE_NAMES.SEGUIMIENTOS]" icon="rate_review"
+      title="{{'menu.eti.seguimiento-evaluador' | translate:MSG_PARAMS.CARDINALIRY.PLURAL}}">
+    </sgi-menu-item>
+  </ng-container>
+  <ng-container *sgiHasAnyAuthorityForAnyUO="['ETI-EVC-VR', 'ETI-EVC-EVALR']">
+    <sgi-menu-item [route]="[ETI_ROUTE_NAMES.EVALUACIONES_EVALUADOR]" icon="assignment_ind"
+      title="{{'menu.eti.evaluacion' | translate:MSG_PARAMS.CARDINALIRY.PLURAL}}">
+    </sgi-menu-item>
+    <sgi-menu-item [route]="[ETI_ROUTE_NAMES.SEGUIMIENTOS]" icon="rate_review"
+      title="{{'menu.eti.seguimiento' | translate:MSG_PARAMS.CARDINALIRY.PLURAL}}">
+    </sgi-menu-item>
+  </ng-container>
   <sgi-menu-item *sgiHasAuthorityForAnyUO="'ETI-CNF-E'" [route]="[ETI_ROUTE_NAMES.CONFIGURACIONES]" icon="settings"
-    title="{{'eti.configuracion' | translate:MSG_PARAMS.CARDINALIRY.PLURAL}}">
+    title="{{'eti.configuracion' | translate:MSG_PARAMS.CARDINALIRY.SINGULAR}}">
   </sgi-menu-item>
 </sgi-root>

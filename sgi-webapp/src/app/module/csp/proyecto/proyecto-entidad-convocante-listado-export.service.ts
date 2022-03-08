@@ -20,9 +20,8 @@ const ENTIDAD_CONVOCANTE_KEY = 'csp.proyecto-entidad-convocante.programa';
 const ENTIDAD_CONVOCANTE_NOMBRE_KEY = 'csp.convocatoria-entidad-convocante.nombre';
 const ENTIDAD_CONVOCANTE_CIF_KEY = marker('csp.convocatoria-entidad-convocante.cif');
 const ENTIDAD_CONVOCANTE_PLAN_KEY = marker('csp.proyecto-entidad-convocante.programa.plan');
-const ENTIDAD_CONVOCANTE_PROGRAMA_KEY = marker('csp.convocatoria-entidad-convocante.programa');
 const ENTIDAD_CONVOCANTE_PROGRAMA_CONVOCATORIA_KEY = marker('csp.proyecto-entidad-convocante.programa.programa-convocatoria');
-const ENTIDAD_CONVOCANTE_MODALIDAD_KEY = marker('csp.proyecto-entidad-convocante.programa.programa');
+const ENTIDAD_CONVOCANTE_MODALIDAD_PROYECTO_KEY = marker('csp.proyecto-entidad-convocante.modalidad-proyecto');
 const ENTIDAD_CONVOCANTE_FIELD = 'entidadConvocante';
 const ENTIDAD_CONVOCANTE_CIF_FIELD = 'cifEntidadConvocante';
 const ENTIDAD_CONVOCANTE_PROGRAMA_FIELD = 'programaEntidadConvocante';
@@ -98,8 +97,8 @@ export class ProyectoEntidadConvocanteListadoExportService
       ' (' + this.translate.instant(ENTIDAD_CONVOCANTE_NOMBRE_KEY) +
       ' - ' + this.translate.instant(ENTIDAD_CONVOCANTE_CIF_KEY) +
       ' - ' + this.translate.instant(ENTIDAD_CONVOCANTE_PLAN_KEY) +
-      ' - ' + this.translate.instant(ENTIDAD_CONVOCANTE_PROGRAMA_KEY) +
-      ' - ' + this.translate.instant(ENTIDAD_CONVOCANTE_MODALIDAD_KEY) +
+      ' - ' + this.translate.instant(ENTIDAD_CONVOCANTE_PROGRAMA_CONVOCATORIA_KEY) +
+      ' - ' + this.translate.instant(ENTIDAD_CONVOCANTE_MODALIDAD_PROYECTO_KEY) +
       ')';
     const columnEntidad: ISgiColumnReport = {
       name: ENTIDAD_CONVOCANTE_FIELD,
@@ -154,7 +153,7 @@ export class ProyectoEntidadConvocanteListadoExportService
 
       const columnModalidadEntidadConvocante: ISgiColumnReport = {
         name: ENTIDAD_CONVOCANTE_MODALIDAD_FIELD + idEntidadConvocante,
-        title: titlePlanPlusEntidadConvocante + this.translate.instant(ENTIDAD_CONVOCANTE_MODALIDAD_KEY),
+        title: titlePlanPlusEntidadConvocante + this.translate.instant(ENTIDAD_CONVOCANTE_MODALIDAD_PROYECTO_KEY),
         type: ColumnType.STRING,
       };
       columns.push(columnModalidadEntidadConvocante);

@@ -1,0 +1,11 @@
+  :host {
+    .row-visibility{
+      display: flex;
+      justify-content: space-between;
+      
+      .columns-visibility {
+        display: flex;
+        flex-direction: column;
+      }
+    }
+  }

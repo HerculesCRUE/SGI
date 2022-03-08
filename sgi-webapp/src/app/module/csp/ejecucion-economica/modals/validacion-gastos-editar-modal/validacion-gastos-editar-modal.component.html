@@ -13,7 +13,7 @@
       {{data?.codigoEconomico?.nombre ? ' - ' + data?.codigoEconomico.nombre : '' }}
     </p>
     <p>{{'sge.gasto.anualidad' | translate}}: {{data?.anualidad}}</p>
-    <p>{{'sge.dato-economico.fecha-devengo' | translate}}: {{data?.fechaDevengo}}</p>
+    <p>{{'sge.dato-economico.fecha-devengo' | translate}}: {{data?.fechaDevengo | luxon:'shortDate'}}</p>
     <p *ngFor="let campo of data?.campos">{{campo?.nombre}}: {{campo?.valor}}</p>
   </div>
   <div>

@@ -18,7 +18,7 @@ import org.crue.hercules.sgi.rep.dto.eti.ReportInformeActa;
 import org.crue.hercules.sgi.rep.dto.sgp.PersonaDto;
 import org.crue.hercules.sgi.rep.exceptions.GetDataReportException;
 import org.crue.hercules.sgi.rep.service.SgiReportService;
-import org.crue.hercules.sgi.rep.service.sgp.PersonaService;
+import org.crue.hercules.sgi.rep.service.sgi.SgiApiSgpService;
 import org.pentaho.reporting.engine.classic.core.Band;
 import org.pentaho.reporting.engine.classic.core.MasterReport;
 import org.pentaho.reporting.engine.classic.core.SubReport;
@@ -36,11 +36,11 @@ import lombok.extern.slf4j.Slf4j;
 @Validated
 public class InformeActaReportService extends SgiReportService {
 
-  private final PersonaService personaService;
+  private final SgiApiSgpService personaService;
   private final ConvocatoriaReunionService convocatoriaReunionService;
   private final ActaService actaService;
 
-  public InformeActaReportService(SgiConfigProperties sgiConfigProperties, PersonaService personaService,
+  public InformeActaReportService(SgiConfigProperties sgiConfigProperties, SgiApiSgpService personaService,
       ConvocatoriaReunionService convocatoriaReunionService, ActaService actaService) {
 
     super(sgiConfigProperties);

@@ -24,7 +24,7 @@ import {
   RSQLSgiRestFilter, RSQLSgiRestSort, SgiRestFilter, SgiRestFilterOperator, SgiRestFindOptions, SgiRestListResult, SgiRestSortDirection
 } from '@sgi/framework/http';
 import { NGXLogger } from 'ngx-logger';
-import { from, merge, Observable, of } from 'rxjs';
+import { EMPTY, from, merge, Observable, of } from 'rxjs';
 import { catchError, map, mergeAll, switchMap, tap } from 'rxjs/operators';
 import { CSP_ROUTE_NAMES } from '../../../csp-route-names';
 
@@ -165,6 +165,10 @@ export class SearchConvocatoriaModalComponent implements OnInit, AfterViewInit {
                         convocatoriaListado.entidadFinanciadoraEmpresa = empresa;
                         return convocatoriaListado;
                       }),
+                      catchError((error) => {
+                        this.logger.error(error);
+                        return EMPTY;
+                      })
                     );
                   }
                   return of(convocatoriaListado);
@@ -194,6 +198,10 @@ export class SearchConvocatoriaModalComponent implements OnInit, AfterViewInit {
                             convocatoriaListado.entidadConvocanteEmpresa = empresa;
                             return convocatoriaListado;
                           }),
+                          catchError((error) => {
+                            this.logger.error(error);
+                            return EMPTY;
+                          })
                         );
                       }
                       return of(convocatoriaListado);
@@ -224,9 +232,14 @@ export class SearchConvocatoriaModalComponent implements OnInit, AfterViewInit {
     const controls = this.formGroup.controls;
     const filter = new RSQLSgiRestFilter('titulo', SgiRestFilterOperator.LIKE_ICASE, controls.titulo.value)
       .and('codigo', SgiRestFilterOperator.LIKE_ICASE, controls.codigo.value)
-      .and('fechaPublicacion', SgiRestFilterOperator.GREATHER_OR_EQUAL, LuxonUtils.toBackend(controls.fechaPublicacionDesde.value))
-      .and('fechaPublicacion', SgiRestFilterOperator.LOWER_OR_EQUAL, LuxonUtils.toBackend(controls.fechaPublicacionHasta.value))
       .and('abiertoPlazoPresentacionSolicitud', SgiRestFilterOperator.EQUALS, controls.abiertoPlazoPresentacionSolicitud.value?.toString());
+
+    if (controls.fechaPublicacionDesde.value) {
+      filter.and('fechaPublicacion', SgiRestFilterOperator.GREATHER_OR_EQUAL, LuxonUtils.toBackend(controls.fechaPublicacionDesde.value))
+    }
+    if (controls.fechaPublicacionHasta.value) {
+      filter.and('fechaPublicacion', SgiRestFilterOperator.LOWER_OR_EQUAL, LuxonUtils.toBackend(controls.fechaPublicacionHasta.value))
+    }
     if (this.data.unidadesGestion?.length) {
       filter.and('unidadGestionRef', SgiRestFilterOperator.IN, this.data.unidadesGestion);
     }
@@ -242,6 +255,7 @@ export class SearchConvocatoriaModalComponent implements OnInit, AfterViewInit {
    */
   onClearFilters(): void {
     FormGroupUtil.clean(this.formGroup);
+    this.buscarConvocatorias(true);
   }
 
   openCreate(): void {

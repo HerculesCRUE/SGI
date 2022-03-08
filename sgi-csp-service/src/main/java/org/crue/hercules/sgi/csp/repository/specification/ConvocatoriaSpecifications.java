@@ -11,6 +11,8 @@ import org.crue.hercules.sgi.csp.model.ConfiguracionSolicitud;
 import org.crue.hercules.sgi.csp.model.ConfiguracionSolicitud_;
 import org.crue.hercules.sgi.csp.model.Convocatoria;
 import org.crue.hercules.sgi.csp.model.Convocatoria_;
+import org.crue.hercules.sgi.csp.model.Proyecto;
+import org.crue.hercules.sgi.csp.model.Proyecto_;
 import org.crue.hercules.sgi.csp.model.Solicitud;
 import org.crue.hercules.sgi.csp.model.Solicitud_;
 import org.springframework.data.jpa.domain.Specification;
@@ -116,6 +118,24 @@ public class ConvocatoriaSpecifications {
       queryAutorizacion.select(queryAutorizacionRoot.get(Autorizacion_.convocatoria).get(Convocatoria_.id))
           .where(cb.equal(queryAutorizacionRoot.get(Autorizacion_.id), autorizacionId));
       return root.get(Convocatoria_.id).in(queryAutorizacion);
+    };
+  }
+
+  /**
+   * {@link Convocatoria} del {@link Proyecto} con el id
+   * indicado.
+   * 
+   * @param proyectoId identificador de el {@link Proyecto}.
+   * @return specification para obtener las {@link Convocatoria} de
+   *         el {@link Proyecto} con el id indicado.
+   */
+  public static Specification<Convocatoria> byProyectoId(Long proyectoId) {
+    return (root, query, cb) -> {
+      Subquery<Long> queryProyecto = query.subquery(Long.class);
+      Root<Proyecto> queryProyectoRoot = queryProyecto.from(Proyecto.class);
+      queryProyecto.select(queryProyectoRoot.get(Proyecto_.convocatoria).get(Convocatoria_.id))
+          .where(cb.equal(queryProyectoRoot.get(Proyecto_.id), proyectoId));
+      return root.get(Convocatoria_.id).in(queryProyecto);
     };
   }
 

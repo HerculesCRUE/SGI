@@ -137,7 +137,7 @@ public class ProyectoPartidaController {
    */
   @RequestMapping(path = "/{id}/modificable", method = RequestMethod.HEAD)
   @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-PRO-E', 'CSP-PRO-V')")
-  public ResponseEntity<ProyectoPartida> modificable(@PathVariable Long id) {
+  public ResponseEntity<Void> modificable(@PathVariable Long id) {
     log.debug("modificable(Long id) - start");
     boolean returnValue = service.modificable(id, "CSP-PRO-E");
     log.debug("modificable(Long id) - end");
@@ -153,7 +153,7 @@ public class ProyectoPartidaController {
    */
   @RequestMapping(path = "/{id}/anualidades", method = RequestMethod.HEAD)
   @PreAuthorize("hasAuthorityForAnyUO('CSP-PRO-E')")
-  public ResponseEntity<Object> existsAnyAnualidad(@PathVariable Long id) {
+  public ResponseEntity<Void> existsAnyAnualidad(@PathVariable Long id) {
 
     if (service.existsAnyAnualidad(id)) {
       return new ResponseEntity<>(HttpStatus.OK);

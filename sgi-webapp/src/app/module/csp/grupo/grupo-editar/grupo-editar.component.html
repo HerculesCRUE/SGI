@@ -1,0 +1,12 @@
+<sgi-action [actionService]="actionService">
+  <ng-container menu>
+    <sgi-action-fragment-menu-item *sgiHasAnyAuthorityForAnyUO="['CSP-GIN-V', 'CSP-GIN-E']"
+      [route]="[GRUPO_ROUTE_NAMES.DATOS_GENERALES]" [title]="'label.datos-generales' | translate"
+      [fragment]="actionService.getFragment(actionService.FRAGMENT.DATOS_GENERALES)">
+    </sgi-action-fragment-menu-item>
+  </ng-container>
+  <ng-container footer>
+    <sgi-action-footer [texto]="textoEditar" [actionService]="actionService">
+    </sgi-action-footer>
+  </ng-container>
+</sgi-action>

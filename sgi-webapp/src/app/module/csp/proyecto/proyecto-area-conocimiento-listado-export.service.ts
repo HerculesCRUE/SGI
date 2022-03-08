@@ -100,7 +100,7 @@ export class ProyectoAreaConocimientoListadoExportService
       const idAreaConocimiento: string = String(i + 1);
       const columnAreaConocimiento: ISgiColumnReport = {
         name: AREA_CONOCIMIENTO_FIELD + idAreaConocimiento,
-        title: titleAreaConocimiento + idAreaConocimiento + ': ' + this.translate.instant(AREA_CONOCIMIENTO_KEY),
+        title: titleAreaConocimiento + idAreaConocimiento,
         type: ColumnType.STRING,
       };
       columns.push(columnAreaConocimiento);

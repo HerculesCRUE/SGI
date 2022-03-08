@@ -2,7 +2,8 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { ICertificadoAutorizacion } from '@core/models/csp/certificado-autorizacion';
 import { environment } from '@env';
-import { CreateCtor, FindAllCtor, FindByIdCtor, mixinCreate, mixinFindAll, mixinFindById, mixinUpdate, SgiRestBaseService, UpdateCtor } from '@sgi/framework/http';
+import { CreateCtor, FindAllCtor, FindByIdCtor, mixinCreate, mixinFindAll, mixinFindById, mixinUpdate, SgiRestBaseService, SgiRestFindOptions, SgiRestListResult, UpdateCtor } from '@sgi/framework/http';
+import { Observable } from 'rxjs';
 import { ICertificadoAutorizacionRequest } from './certificado-autorizacion-request';
 import { CERTIFICADO_AUTORIZACION_REQUEST_CONVERTER } from './certificado-autorizacion-request.converter';
 import { ICertificadoAutorizacionResponse } from './certificado-autorizacion-response';
@@ -42,6 +43,9 @@ export class CertificadoAutorizacionService extends _CertificadoAutorizacionMixi
       `${environment.serviceServers.csp}${CertificadoAutorizacionService.MAPPING}`,
       http,
     );
+  }
+  public deleteById(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.endpointUrl}/${id}`);
   }
 
 }

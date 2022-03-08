@@ -1,11 +1,21 @@
 <sgi-fragment title="{{'label.datos-generales' | translate}}">
-  <form [formGroup]="formGroup" [fxLayout.xs]="fxLayoutProperties.xs" [fxLayout]="fxLayoutProperties.layout"
-    [fxLayoutGap]="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
+  <form [formGroup]="formGroup" fxLayout="column">
 
-    <!-- Titulo -->
-    <div [fxFlex.sm]="fxFlexProperties2.gtMd" [fxFlex.md]="fxFlexProperties2.gtMd"
-      [fxFlex.gt-md]="fxFlexProperties2.gtMd" [fxFlexOrder]="fxFlexProperties.order">
-      <mat-form-field class="input-form">
+    <div fxFlex fxLayout="row" fxLayoutGap="10px" *ngIf="formPart.isEdit()">
+      <!-- Estado actual nuevo -->
+      <mat-form-field fxFlex="25%">
+        <mat-label>{{'csp.proyecto.estado' | translate}}</mat-label>
+        <mat-select formControlName="estado" placeholder="{{'csp.solicitud.cambio-estado.actual' | translate}}">
+          <mat-option *ngFor="let estado of ESTADO_MAP | keyvalue" [value]="estado.key">
+            {{ estado.value | translate}}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+
+    <div fxFlex fxLayout="row" fxLayoutGap="10px">
+      <!-- Titulo -->
+      <mat-form-field fxFlex="60%">
         <mat-label>{{'csp.convocatoria.titulo' | translate}}</mat-label>
         <input matInput formControlName="titulo" type="text" id="titulo"
           placeholder="{{'csp.convocatoria.titulo' | translate}}" required>
@@ -16,12 +26,9 @@
           {{ 'error.maxlength.entity' | translate:msgParamTituloEntity }}
         </mat-error>
       </mat-form-field>
-    </div>
 
-    <!-- Tipo forumlario-->
-    <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
-      [fxFlexOrder]="fxFlexProperties.order">
-      <mat-form-field class="input-form" fxFill>
+      <!-- Tipo forumlario-->
+      <mat-form-field fxFlex="40%">
         <mat-label>{{'csp.convocatoria.tipo-formulario' | translate}}</mat-label>
         <mat-select matNativeControl formControlName="formularioSolicitud" required>
           <mat-option *ngFor="let formularioSolicitud of FORMULARIO_SOLICITUD_MAP | keyvalue"
@@ -36,24 +43,11 @@
           {{ 'error.required.entity' | translate:msgParamFormularioSolicitud }}
         </mat-error>
       </mat-form-field>
-
     </div>
 
-    <!-- Estado -->
-    <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
-      [fxFlexOrder]="fxFlexProperties.order" *ngIf="formPart.isEdit()">
-      <mat-form-field class="input-form">
-        <mat-label>{{'csp.convocatoria.estado' | translate}}
-        </mat-label>
-        <sgi-select-enum formControlName="estado" [enumMap]="ESTADO_MAP">
-        </sgi-select-enum>
-      </mat-form-field>
-    </div>
-
-    <!-- Unidad de gestión -->
-    <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
-      [fxFlexOrder]="fxFlexProperties.order">
-      <mat-form-field class="input-form">
+    <div fxFlex fxLayout="row" fxLayoutGap="10px">
+      <!-- Unidad de gestión -->
+      <mat-form-field fxFlex="33%">
         <mat-label>{{'csp.convocatoria.unidad-gestion' | translate}}
         </mat-label>
         <sgi-select-unidad-gestion #unidadGestion formControlName="unidadGestion" required>
@@ -66,12 +60,9 @@
           {{ 'error.required.entity' | translate:msgParamUnidadGestionEntity }}
         </mat-error>
       </mat-form-field>
-    </div>
 
-    <!-- Modelo de ejecución -->
-    <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
-      [fxFlexOrder]="fxFlexProperties.order">
-      <mat-form-field class="input-form">
+      <!-- Modelo de ejecución -->
+      <mat-form-field fxFlex="33%">
         <mat-label>{{'csp.convocatoria.modelo-ejecucion' | translate}}</mat-label>
         <sgi-select-modelo-ejecucion #modeloEjecucion formControlName="modeloEjecucion"
           [required]="formPart.isEstadoRegistrada()" [unidadGestionRef]="formGroup.controls.unidadGestion.value?.id"
@@ -85,12 +76,9 @@
           message="{{'msg.csp.convocatoria.modelo-ejecucion.vinculaciones' | translate}}">
         </sgi-field-info>
       </mat-form-field>
-    </div>
 
-    <!-- Finalidades -->
-    <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
-      [fxFlexOrder]="fxFlexProperties.order">
-      <mat-form-field class="input-form">
+      <!-- Finalidades -->
+      <mat-form-field fxFlex="33%">
         <mat-label>{{'csp.convocatoria.finalidad' | translate}}</mat-label>
         <sgi-select-tipo-finalidad formControlName="finalidad" [required]="formPart.isEstadoRegistrada()"
           [modeloEjecucionId]="formGroup.controls.modeloEjecucion.value?.id"
@@ -102,10 +90,9 @@
       </mat-form-field>
     </div>
 
-    <!-- Código de referencia -->
-    <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
-      [fxFlexOrder]="fxFlexProperties.order">
-      <mat-form-field class="input-form">
+    <div fxFlex fxLayout="row" fxLayoutGap="10px">
+      <!-- Código de referencia -->
+      <mat-form-field fxFlex="60%">
         <mat-label>{{'csp.convocatoria.codigo-referencia' | translate}}</mat-label>
         <input matInput formControlName="codigo" type="text" id="codigo"
           placeholder="{{'csp.convocatoria.codigo-referencia' | translate}}">
@@ -113,12 +100,9 @@
           {{ 'error.maxlength.entity' | translate:msgParamCodigoReferenciaEntity }}
         </mat-error>
       </mat-form-field>
-    </div>
 
-    <!-- Entidad gestora -->
-    <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
-      [fxFlexOrder]="fxFlexProperties.order">
-      <mat-form-field class="input-form">
+      <!-- Entidad gestora -->
+      <mat-form-field fxFlex="40%">
         <mat-label>{{'csp.convocatoria.entidad-gestora' | translate}}</mat-label>
         <sgi-select-empresa placeholder="{{'csp.convocatoria.entidad-gestora' | translate}}"
           formControlName="entidadGestora">
@@ -129,34 +113,30 @@
       </mat-form-field>
     </div>
 
-    <!-- Fecha Publicación -->
-    <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
-      [fxFlexOrder]="fxFlexProperties.order">
-      <mat-form-field color="primary">
+    <div fxFlex fxLayout="row" fxLayoutGap="10px">
+      <!-- Fecha Publicación -->
+      <mat-form-field color="primary" fxFlex="33%">
         <mat-label>{{'csp.convocatoria.fecha-publicacion'| translate}}</mat-label>
         <input matInput [matDatepicker]="pickerFechaPublicacion" formControlName="fechaPublicacion">
         <mat-datepicker-toggle class="fechaIcon" matSuffix [for]="pickerFechaPublicacion"></mat-datepicker-toggle>
         <mat-datepicker #pickerFechaPublicacion>
         </mat-datepicker>
       </mat-form-field>
-    </div>
 
-    <!-- Fecha Provisional -->
-    <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
-      [fxFlexOrder]="fxFlexProperties.order">
-      <mat-form-field color="primary">
+
+      <!-- Fecha Provisional -->
+
+      <mat-form-field color="primary" fxFlex="33%">
         <mat-label>{{'csp.convocatoria.fecha-provisional'| translate}}</mat-label>
         <input matInput [matDatepicker]="pickerFechaProvisional" formControlName="fechaProvisional">
         <mat-datepicker-toggle class="fechaIcon" matSuffix [for]="pickerFechaProvisional"></mat-datepicker-toggle>
         <mat-datepicker #pickerFechaProvisional>
         </mat-datepicker>
       </mat-form-field>
-    </div>
 
-    <!-- Fecha Concesión -->
-    <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
-      [fxFlexOrder]="fxFlexProperties.order">
-      <mat-form-field color="primary">
+      <!-- Fecha Concesión -->
+
+      <mat-form-field color="primary" fxFlex="33%">
         <mat-label>{{'csp.convocatoria.fecha-concesion'| translate}}</mat-label>
         <input matInput [matDatepicker]="pickerFechaConcesion" formControlName="fechaConcesion">
         <mat-datepicker-toggle class="fechaIcon" matSuffix [for]="pickerFechaConcesion"></mat-datepicker-toggle>
@@ -165,10 +145,9 @@
       </mat-form-field>
     </div>
 
-    <!-- Duración meses -->
-    <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
-      [fxFlexOrder]="fxFlexProperties.order">
-      <mat-form-field class="input-form">
+    <div fxFlex fxLayout="row" fxLayoutGap="10px">
+      <!-- Duración meses -->
+      <mat-form-field fxFlex="50%">
         <mat-label>{{'csp.convocatoria.duracion' | translate}}</mat-label>
         <input matInput formControlName="duracion" type="number" id="duracion" step="1" min="1"
           placeholder="{{'csp.convocatoria.duracion' | translate}}">
@@ -182,12 +161,18 @@
           {{ 'error.max.entity' | translate:msgParamDuracionEntity }}
         </mat-error>
       </mat-form-field>
+
+      <!-- Convocatoria de Excelencia -->
+      <mat-form-field fxFlex="50%">
+        <mat-label>{{'csp.convocatoria.excelencia' | translate}}</mat-label>
+        <sgi-select-boolean formControlName="excelencia"></sgi-select-boolean>
+      </mat-form-field>
     </div>
 
-    <!-- Tipo de ámbito geográfico -->
-    <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
-      [fxFlexOrder]="fxFlexProperties.order">
-      <mat-form-field class="input-form">
+    <div fxFlex fxLayout="row" fxLayoutGap="10px">
+
+      <!-- Tipo de ámbito geográfico -->
+      <mat-form-field fxFlex="33%">
         <mat-label>{{'csp.convocatoria.ambito-geografico' | translate}}</mat-label>
         <sgi-select-tipo-ambito-geografico formControlName="ambitoGeografico"
           [required]="formPart.isEstadoRegistrada()">
@@ -196,12 +181,10 @@
           {{ 'error.required.entity' | translate:msgParamAmbitoGeograficoEntity }}
         </mat-error>
       </mat-form-field>
-    </div>
 
-    <!-- Tipo de régimen de concurrencia-->
-    <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
-      [fxFlexOrder]="fxFlexProperties.order">
-      <mat-form-field class="input-form">
+
+      <!-- Tipo de régimen de concurrencia-->
+      <mat-form-field fxFlex="33%">
         <mat-label>{{'csp.convocatoria.regimen-concurrencia' | translate}}</mat-label>
         <sgi-select-entity formControlName="regimenConcurrencia" [options]="regimenesConcurrencia$ | async">
         </sgi-select-entity>
@@ -210,12 +193,9 @@
           message="{{'csp.convocatoria.regimen-concurrencia.vinculada' | translate}}">
         </sgi-field-info>
       </mat-form-field>
-    </div>
 
-    <!-- Clasificación producción -->
-    <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
-      [fxFlexOrder]="fxFlexProperties.order">
-      <mat-form-field class="input-form">
+      <!-- Clasificación producción -->
+      <mat-form-field fxFlex="33%">
         <mat-label>{{'csp.convocatoria.clasificacion-produccion-cientifica' | translate}}
         </mat-label>
         <sgi-select-enum formControlName="clasificacionCVN" [enumMap]="CLASIFICACION_CVN_MAP">
@@ -227,21 +207,18 @@
       </mat-form-field>
     </div>
 
-    <!-- Palabras Clave -->
-    <div [fxFlex.sm]="fxFlexPropertiesInline.sm" [fxFlex.md]="fxFlexPropertiesInline.md"
-      [fxFlex.gt-md]="fxFlexPropertiesInline.gtMd" [fxFlexOrder]="fxFlexPropertiesInline.order">
-      <mat-form-field fxFill>
+    <div fxFlex fxLayout="row" fxLayoutGap="10px">
+      <!-- Palabras Clave -->
+      <mat-form-field fxFlex="100%">
         <mat-label>{{'csp.convocatoria.palabras-clave' | translate}}</mat-label>
         <sgi-palabra-clave formControlName="palabrasClave" id="palabrasClave"
           placeholder="{{'csp.convocatoria.palabras-clave' | translate}}"></sgi-palabra-clave>
       </mat-form-field>
     </div>
 
-
-    <!-- Objeto -->
-    <div [fxFlex.sm]="fxFlexPropertiesInline.sm" [fxFlex.md]="fxFlexProperties.md"
-      [fxFlex.gt-md]="fxFlexPropertiesInline.gtMd" [fxFlexOrder]="fxFlexPropertiesInline.order">
-      <mat-form-field fxFill>
+    <div fxFlex fxLayout="row" fxLayoutGap="10px">
+      <!-- Objeto -->
+      <mat-form-field fxFlex="100%">
         <mat-label>{{'csp.convocatoria.descripcion' | translate}}</mat-label>
         <textarea matInput formControlName="objeto" type="text" id="objeto"
           placeholder="{{'csp.convocatoria.descripcion' | translate}}">
@@ -252,10 +229,9 @@
       </mat-form-field>
     </div>
 
-    <!-- Observaciones -->
-    <div [fxFlex.sm]="fxFlexPropertiesInline.sm" [fxFlex.md]="fxFlexProperties.md"
-      [fxFlex.gt-md]="fxFlexPropertiesInline.gtMd" [fxFlexOrder]="fxFlexPropertiesInline.order">
-      <mat-form-field fxFill>
+    <div fxFlex fxLayout="row" fxLayoutGap="10px">
+      <!-- Observaciones -->
+      <mat-form-field fxFlex="100%">
         <mat-label>{{'csp.convocatoria.observaciones' | translate}}</mat-label>
         <textarea matInput formControlName="observaciones" type="text" id="observaciones"
           placeholder="{{'csp.convocatoria.observaciones' | translate}}">

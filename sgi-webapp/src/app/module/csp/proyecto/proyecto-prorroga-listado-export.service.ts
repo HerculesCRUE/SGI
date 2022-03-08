@@ -165,13 +165,13 @@ export class ProyectoProrrogaListadoExportService extends AbstractTableExportFil
       const prorrogaElementsRow: any[] = [];
 
       let prorrogaTable = String(prorroga?.numProrroga);
-      prorrogaTable += '\n';
+      prorrogaTable += ' - ';
       prorrogaTable += prorroga?.tipo ? this.translate.instant(TIPO_MAP.get(prorroga?.tipo)) : '';
-      prorrogaTable += '\n';
+      prorrogaTable += ' - ';
       prorrogaTable += this.luxonDatePipe.transform(LuxonUtils.toBackend(prorroga?.fechaConcesion, true), 'shortDate') ?? '';
-      prorrogaTable += '\n';
+      prorrogaTable += ' - ';
       prorrogaTable += this.luxonDatePipe.transform(LuxonUtils.toBackend(prorroga?.fechaFin, true), 'shortDate') ?? '';
-      prorrogaTable += '\n';
+      prorrogaTable += ' - ';
       prorrogaTable += prorroga?.importe ?? '';
       prorrogaElementsRow.push(prorrogaTable);
 

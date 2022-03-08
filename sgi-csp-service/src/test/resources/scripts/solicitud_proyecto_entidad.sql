@@ -10,9 +10,10 @@
     "classpath:scripts/solicitud.sql",
     "classpath:scripts/estado_solicitud.sql",
     "classpath:scripts/solicitud_proyecto.sql",
+    "classpath:scripts/tipo_origen_fuente_financiacion.sql",
     "classpath:scripts/fuente_financiacion.sql",
     "classpath:scripts/tipo_financiacion.sql",
-    "classpath:scripts/convocatoria_entidad_financiera.sql",
+    "classpath:scripts/convocatoria_entidad_financiadora.sql",
     "classpath:scripts/convocatoria_entidad_gestora.sql"
     // @formatter:on
   }
@@ -21,4 +22,4 @@
 INSERT INTO test.solicitud_proyecto_entidad
 (id, solicitud_proyecto_id, convocatoria_entidad_financiadora_id, convocatoria_entidad_gestora_id, solicitud_proyecto_entidad_financiadora_ajena_id)
 VALUES
-(1, 1, 1, 1, NULL);
+(1, 1, 1, 1, 1);

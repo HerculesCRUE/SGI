@@ -13,6 +13,10 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import org.crue.hercules.sgi.csp.model.CertificadoAutorizacion.OnActualizar;
+import org.crue.hercules.sgi.csp.model.CertificadoAutorizacion.OnCrear;
+import org.crue.hercules.sgi.csp.validation.UniqueCertificadoAutorizacionVisible;
+
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -29,6 +33,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@UniqueCertificadoAutorizacionVisible(groups = { OnActualizar.class, OnCrear.class })
 public class CertificadoAutorizacion extends BaseEntity {
 
   protected static final String TABLE_NAME = "certificado_autorizacion";
@@ -72,6 +77,18 @@ public class CertificadoAutorizacion extends BaseEntity {
   @JoinColumn(name = "autorizacion_id", insertable = false, updatable = false, foreignKey = @ForeignKey(name = "FK_CERTIFICADOAUTORIZACION_AUTORIZACION"))
   @Getter(AccessLevel.NONE)
   @Setter(AccessLevel.NONE)
-  private static final Autorizacion autorizacion = null;
+  private final Autorizacion autorizacion = null;
+
+  /**
+   * Interfaz para marcar validaciones en la creación de la entidad.
+   */
+  public interface OnCrear {
+  }
+
+  /**
+   * Interfaz para marcar validaciones en la actualizacion de la entidad.
+   */
+  public interface OnActualizar {
+  }
 
 }

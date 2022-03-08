@@ -23,11 +23,10 @@ import org.apache.synapse.core.axis2.Axis2MessageContext;
 import org.apache.synapse.core.axis2.Axis2Sender;
 import org.apache.synapse.mediators.AbstractMediator;
 import org.apache.synapse.transport.passthru.PassThroughConstants;
-import org.crue.hercules.sgi.esb.keycloak.HasAnyAuthorityCheck;
+import org.crue.hercules.sgi.esb.keycloak.HasAnyAuthorityOrScopeCheck;
 import org.crue.hercules.sgi.esb.keycloak.SgiJWKPublicKeyLocator;
 import org.crue.hercules.sgi.esb.response.ErrorResponse;
 import org.keycloak.TokenVerifier;
-import org.keycloak.TokenVerifier.RealmUrlCheck;
 import org.keycloak.TokenVerifier.TokenTypeCheck;
 import org.keycloak.common.VerificationException;
 import org.keycloak.representations.AccessToken;
@@ -150,6 +149,9 @@ public class SgiAuthorizationMediator extends AbstractMediator implements Manage
     // Get required authorities
     List<String> requiredAuthorities = getAsList((String) context.getProperty("requiredAuthorities"));
     log.info("checkAuth(MessageContext context) - requiredAuthorities: " + requiredAuthorities);
+    // Get required scopes
+    List<String> requiredScopes = getAsList((String) context.getProperty("requiredScopes"));
+    log.info("checkAuth(MessageContext context) - requiredScopes: " + requiredScopes);
 
     // Get auhorization token
     Map<String, String> headers = (Map<String, String>) axis2MessageContext
@@ -176,11 +178,9 @@ public class SgiAuthorizationMediator extends AbstractMediator implements Manage
       tokenVerifier.publicKey(publicKey)
           .withChecks(// @formatter:off
             TokenVerifier.IS_ACTIVE, 
-            // Elimina validacion del token issuer porque la url varia en funcion del punto de acceso
-            // new RealmUrlCheck(getRealmUrl()), 
             new TokenTypeCheck(TokenUtil.TOKEN_TYPE_BEARER),
             TokenVerifier.SUBJECT_EXISTS_CHECK,
-            new HasAnyAuthorityCheck(requiredAuthorities)
+            new HasAnyAuthorityOrScopeCheck(requiredAuthorities, requiredScopes)
           )// @formatter:on
           .verify();
     } catch (VerificationException e) {
@@ -192,15 +192,6 @@ public class SgiAuthorizationMediator extends AbstractMediator implements Manage
     }
 
     log.info("checkAuth(MessageContext context) - end");
-  }
-
-  /**
-   * Get realm url
-   * 
-   * @return the realm url
-   */
-  private String getRealmUrl() {
-    return getAuthServerUrl() + "/realms/" + getRealmId();
   }
 
   /**

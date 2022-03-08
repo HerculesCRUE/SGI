@@ -42,6 +42,7 @@ import org.crue.hercules.sgi.csp.repository.specification.ConvocatoriaSpecificat
 import org.crue.hercules.sgi.csp.repository.specification.SolicitudSpecifications;
 import org.crue.hercules.sgi.csp.service.ConvocatoriaClonerService;
 import org.crue.hercules.sgi.csp.service.ConvocatoriaService;
+import org.crue.hercules.sgi.csp.util.ProyectoHelper;
 import org.crue.hercules.sgi.framework.rsql.SgiRSQLJPASupport;
 import org.crue.hercules.sgi.framework.security.core.context.SgiSecurityContextHolder;
 import org.springframework.data.domain.Page;
@@ -75,6 +76,7 @@ public class ConvocatoriaServiceImpl implements ConvocatoriaService {
   private final ProyectoRepository proyectoRepository;
   private final ConvocatoriaClonerService convocatoriaClonerService;
   private final AutorizacionRepository autorizacionRepository;
+  private final ProyectoHelper proyectoHelper;
 
   public ConvocatoriaServiceImpl(ConvocatoriaRepository repository,
       ConvocatoriaPeriodoJustificacionRepository convocatoriaPeriodoJustificacionRepository,
@@ -84,7 +86,8 @@ public class ConvocatoriaServiceImpl implements ConvocatoriaService {
       ConvocatoriaPeriodoSeguimientoCientificoRepository convocatoriaPeriodoSeguimientoCientificoRepository,
       ConfiguracionSolicitudRepository configuracionSolicitudRepository, final SolicitudRepository solicitudRepository,
       final ProyectoRepository proyectoRepository, final ConvocatoriaClonerService convocatoriaClonerService,
-      AutorizacionRepository autorizacionRepository) {
+      AutorizacionRepository autorizacionRepository,
+      ProyectoHelper proyectoHelper) {
     this.repository = repository;
     this.convocatoriaPeriodoJustificacionRepository = convocatoriaPeriodoJustificacionRepository;
     this.modeloUnidadRepository = modeloUnidadRepository;
@@ -97,6 +100,7 @@ public class ConvocatoriaServiceImpl implements ConvocatoriaService {
     this.proyectoRepository = proyectoRepository;
     this.convocatoriaClonerService = convocatoriaClonerService;
     this.autorizacionRepository = autorizacionRepository;
+    this.proyectoHelper = proyectoHelper;
   }
 
   /**
@@ -553,6 +557,26 @@ public class ConvocatoriaServiceImpl implements ConvocatoriaService {
   }
 
   /**
+   * Devuelve la {@link Convocatoria} asociada al {@link Proyecto} con el id
+   * indicado si el usuario está logado con perfil investigador.
+   * 
+   * @param proyectoId Identificador de {@link Convocatoria}.
+   * @return {@link Convocatoria}
+   */
+  @Override
+  public Convocatoria findConvocatoriaByProyectoIdAndUserIsInvestigador(Long proyectoId) {
+    log.debug("findByConvocatoriaIdAndUserIsInvestigador(Long convocatoriaId) - start");
+
+    proyectoHelper.checkCanAccessProyecto(proyectoId);
+
+    final Convocatoria returnValue = repository.findOne(ConvocatoriaSpecifications.byProyectoId(proyectoId))
+        .orElseThrow(() -> new ConvocatoriaNotFoundException(proyectoId));
+
+    log.debug("findByConvocatoriaIdAndUserIsInvestigador(Long proyectoId) - end");
+    return returnValue;
+  }
+
+  /**
    * Devuelve el {@link FormularioSolicitud} de la {@link Convocatoria}
    * 
    * @param id Identificador de {@link Convocatoria}.
@@ -879,4 +903,5 @@ public class ConvocatoriaServiceImpl implements ConvocatoriaService {
   private boolean hasAuthorityViewInvestigador() {
     return SgiSecurityContextHolder.hasAuthorityForAnyUO("CSP-CON-INV-V");
   }
+
 }

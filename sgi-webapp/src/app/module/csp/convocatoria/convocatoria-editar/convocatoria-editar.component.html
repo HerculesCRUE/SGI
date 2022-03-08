@@ -59,8 +59,8 @@
   </ng-container>
   <ng-container footer>
     <sgi-action-footer [texto]="textoCrear" [actionService]="actionService">
-      <sgi-action-footer-button color="primary" [text]="textoRegistrar" [disabled]="disableRegistrar$ | async"
-        icon="move_to_inbox" (buttonClick)="registrar()">
+      <sgi-action-footer-button color="primary" action="registrar" [text]="textoRegistrar"
+        [disabled]="disableRegistrar$ | async" icon="move_to_inbox">
       </sgi-action-footer-button>
     </sgi-action-footer>
   </ng-container>

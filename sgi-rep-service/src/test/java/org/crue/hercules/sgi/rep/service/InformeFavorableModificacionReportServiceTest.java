@@ -8,7 +8,7 @@ import org.crue.hercules.sgi.rep.dto.eti.ReportInformeFavorableModificacion;
 import org.crue.hercules.sgi.rep.service.eti.ConvocatoriaReunionService;
 import org.crue.hercules.sgi.rep.service.eti.EvaluacionService;
 import org.crue.hercules.sgi.rep.service.eti.InformeFavorableModificacionReportService;
-import org.crue.hercules.sgi.rep.service.sgp.PersonaService;
+import org.crue.hercules.sgi.rep.service.sgi.SgiApiSgpService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.BDDMockito;
@@ -30,7 +30,7 @@ class InformeFavorableModificacionReportServiceTest extends BaseReportServiceTes
   private EvaluacionService evaluacionService;
 
   @Mock
-  private PersonaService personaService;
+  private SgiApiSgpService personaService;
 
   @Mock
   private ConvocatoriaReunionService convocatoriaReunionService;

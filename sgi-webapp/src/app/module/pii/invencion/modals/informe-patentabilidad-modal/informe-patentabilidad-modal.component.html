@@ -65,9 +65,8 @@
         [fxFlex.gt-md]="fxFlexProperties50.gtMd" [fxFlexOrder]="fxFlexProperties50.order">
         <mat-form-field fxFill>
           <mat-label>{{'pii.invencion-informe-patentabilidad.resultado' | translate}}</mat-label>
-          <sgi-select-entity formControlName="resultadoInformePatentabilidad" [options]=" resultadosInforme$ | async"
-            required>
-          </sgi-select-entity>
+          <sgi-select-resultado-informe-patentabilidad formControlName="resultadoInformePatentabilidad" required>
+          </sgi-select-resultado-informe-patentabilidad>
           <mat-error *ngIf="formGroup.controls.resultadoInformePatentabilidad.errors?.required">
             {{'error.required.entity' | translate:msgParamResultadoEntity}}
           </mat-error>

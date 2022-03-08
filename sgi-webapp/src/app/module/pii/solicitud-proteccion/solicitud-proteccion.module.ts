@@ -7,6 +7,7 @@ import { SgiAuthModule } from '@sgi/framework/auth';
 import { SharedModule } from '@shared/shared.module';
 import { SgempSharedModule } from 'src/app/esb/sgemp/shared/sgemp-shared.module';
 import { SgpSharedModule } from 'src/app/esb/sgp/shared/sgp-shared.module';
+import { PiiSharedModule } from '../shared/pii-shared.module';
 import { PaisValidadoModalComponent } from './modals/pais-validado-modal/pais-validado-modal.component';
 import { SolicitudProteccionProcedimientoDocumentoModalComponent } from './modals/solicitud-proteccion-procedimiento-documento-modal/solicitud-proteccion-procedimiento-documento-modal.component';
 import { SolicitudProteccionProcedimientoModalComponent } from './modals/solicitud-proteccion-procedimiento-modal/solicitud-proteccion-procedimiento-modal.component';
@@ -43,7 +44,8 @@ import { SolicitudProteccionRoutingModule } from './solicitud-proteccion-routing
     ReactiveFormsModule,
     SgempSharedModule,
     SgpSharedModule,
-    SolicitudProteccionRoutingModule
+    SolicitudProteccionRoutingModule,
+    PiiSharedModule
   ],
   providers: [
     SolicitudProteccionDataResolver,

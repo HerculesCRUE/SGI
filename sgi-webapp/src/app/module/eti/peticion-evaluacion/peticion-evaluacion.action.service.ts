@@ -5,6 +5,7 @@ import { IChecklist } from '@core/models/eti/checklist';
 import { IEquipoTrabajo } from '@core/models/eti/equipo-trabajo';
 import { IPeticionEvaluacion } from '@core/models/eti/peticion-evaluacion';
 import { ActionService, IFragment } from '@core/services/action-service';
+import { SolicitudService } from '@core/services/csp/solicitud.service';
 import { ChecklistService } from '@core/services/eti/checklist/checklist.service';
 import { EquipoTrabajoService } from '@core/services/eti/equipo-trabajo.service';
 import { MemoriaService } from '@core/services/eti/memoria.service';
@@ -55,7 +56,8 @@ export class PeticionEvaluacionActionService extends ActionService {
     protected readonly memoriaService: MemoriaService,
     protected readonly datosAcademicosService: DatosAcademicosService,
     protected readonly vinculacionService: VinculacionService,
-    protected readonly checklistService: ChecklistService
+    protected readonly checklistService: ChecklistService,
+    protected readonly solicitudService: SolicitudService
   ) {
     super();
 
@@ -76,7 +78,7 @@ export class PeticionEvaluacionActionService extends ActionService {
 
     this.datosGenerales =
       new PeticionEvaluacionDatosGeneralesFragment(
-        fb, this.peticionEvaluacion?.id, peticionEvaluacionService, sgiAuthService, checklistService, this.checklist, this.readonly);
+        fb, this.peticionEvaluacion?.id, peticionEvaluacionService, sgiAuthService, checklistService, solicitudService, this.checklist, this.readonly);
     this.equipoInvestigadorListado = new EquipoInvestigadorListadoFragment(
       this.peticionEvaluacion?.id, personaService, peticionEvaluacionService, sgiAuthService, datosAcademicosService, vinculacionService);
     this.memoriasListado = new MemoriasListadoFragment(this.peticionEvaluacion?.id, peticionEvaluacionService, memoriaService);

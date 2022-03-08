@@ -7,7 +7,7 @@ import javax.swing.table.DefaultTableModel;
 import org.crue.hercules.sgi.rep.config.SgiConfigProperties;
 import org.crue.hercules.sgi.rep.dto.eti.EvaluacionDto;
 import org.crue.hercules.sgi.rep.dto.eti.ReportInformeFavorableRatificacion;
-import org.crue.hercules.sgi.rep.service.sgp.PersonaService;
+import org.crue.hercules.sgi.rep.service.sgi.SgiApiSgpService;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
@@ -19,7 +19,7 @@ import org.springframework.validation.annotation.Validated;
 public class InformeFavorableRatificacionReportService extends InformeEvaluacionBaseReportService {
 
   public InformeFavorableRatificacionReportService(SgiConfigProperties sgiConfigProperties,
-      PersonaService personaService, EvaluacionService evaluacionService) {
+      SgiApiSgpService personaService, EvaluacionService evaluacionService) {
 
     super(sgiConfigProperties, personaService, evaluacionService);
   }

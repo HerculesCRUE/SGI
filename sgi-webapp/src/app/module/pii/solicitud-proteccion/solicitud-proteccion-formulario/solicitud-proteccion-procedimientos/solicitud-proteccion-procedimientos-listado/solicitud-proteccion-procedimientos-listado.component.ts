@@ -1,5 +1,5 @@
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
+import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
@@ -116,12 +116,12 @@ export class SolicitudProteccionProcedimientosListadoComponent extends FragmentC
     }
     const procedimientoModalData: ISolicitudProteccionProcedimientoModalData = {
       procedimiento: procedimiento ?? this.formPart.createEmptyProcedimiento(),
-      tiposProcedimiento: this.formPart.tiposProcedimiento
     };
 
-    const config = {
+    const config: MatDialogConfig = {
       panelClass: 'sgi-dialog-container',
       data: procedimientoModalData,
+      minWidth: '500px',
     };
     const dialogRef = this.matDialog.open(SolicitudProteccionProcedimientoModalComponent, config);
     dialogRef.afterClosed().subscribe(

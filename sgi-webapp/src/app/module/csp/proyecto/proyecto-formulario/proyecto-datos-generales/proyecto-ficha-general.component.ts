@@ -190,33 +190,34 @@ export class ProyectoFichaGeneralComponent extends FormFragmentComponent<IProyec
       tap(() => this.validarTimesheet())
     ).subscribe());
 
-    this.subscriptions.push(
-      this.formPart.finalidadConvocatoria$.subscribe(
-        (value) => {
-          if (value) {
-            this.setTextoInfoFinalidadConvocatoria();
+    if (!this.formPart?.isInvestigador) {
+      this.subscriptions.push(
+        this.formPart.finalidadConvocatoria$.subscribe(
+          (value) => {
+            if (value) {
+              this.setTextoInfoFinalidadConvocatoria();
+            }
           }
-        }
-      ));
+        ));
 
-    this.subscriptions.push(
-      this.formPart.ambitoGeograficoConvocatoria$.subscribe(
-        (value) => {
-          if (value) {
-            this.setTextoInfoAmbitoGeograficoConvocatoria();
+      this.subscriptions.push(
+        this.formPart.ambitoGeograficoConvocatoria$.subscribe(
+          (value) => {
+            if (value) {
+              this.setTextoInfoAmbitoGeograficoConvocatoria();
+            }
           }
-        }
-      ));
+        ));
 
-    this.subscriptions.push(
-      this.formPart.unidadGestionConvocatoria$.subscribe(
-        (value) => {
-          if (value && this.formPart.unidadGestionConvocatoria?.nombre) {
-            this.setTextoInfoUnidadGestionConvocatoria();
+      this.subscriptions.push(
+        this.formPart.unidadGestionConvocatoria$.subscribe(
+          (value) => {
+            if (value && this.formPart.unidadGestionConvocatoria?.nombre) {
+              this.setTextoInfoUnidadGestionConvocatoria();
+            }
           }
-        }
-      ));
-
+        ));
+    }
     this.subscriptions.push(
       this.formPart.modeloEjecucionConvocatoria$.subscribe(
         (value) => {

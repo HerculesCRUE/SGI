@@ -78,7 +78,8 @@
     <sgi-action-footer [texto]="textoCrear" [actionService]="actionService">
       <ng-container *sgiHasAnyAuthorityForAnyUO="['CSP-SOL-E', 'CSP-SOL-INV-ER']">
         <!-- Cambio estado-->
-        <sgi-action-footer-button color="primary" [text]="textoCambioEstado" (buttonClick)="openCambioEstado()"
+        <sgi-action-footer-button color="primary" [text]="textoCambioEstado" action="cambiar-estado"
+          matTooltip="{{'msg.estado-actual' | translate}} {{ESTADO_MAP.get(estadoActual) | translate}}"
           [disabled]="disableCambioEstado">
         </sgi-action-footer-button>
       </ng-container>

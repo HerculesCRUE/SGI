@@ -16,7 +16,7 @@ import { ConvocatoriaEntidadConvocanteService } from '@core/services/csp/convoca
 import { ConvocatoriaEntidadFinanciadoraService } from '@core/services/csp/convocatoria-entidad-financiadora.service';
 import { ConvocatoriaEntidadGestoraService } from '@core/services/csp/convocatoria-entidad-gestora.service';
 import { ConvocatoriaFaseService } from '@core/services/csp/convocatoria-fase.service';
-import { ConvocatoriaHitoService } from '@core/services/csp/convocatoria-hito.service';
+import { ConvocatoriaHitoService } from '@core/services/csp/convocatoria-hito/convocatoria-hito.service';
 import { ConvocatoriaPartidaPresupuestariaService } from '@core/services/csp/convocatoria-partidas-presupuestarias.service';
 import { ConvocatoriaPeriodoJustificacionService } from '@core/services/csp/convocatoria-periodo-justificacion.service';
 import { ConvocatoriaRequisitoEquipoService } from '@core/services/csp/convocatoria-requisito-equipo.service';
@@ -127,6 +127,14 @@ export class ConvocatoriaActionService extends ActionService implements OnDestro
 
   get canEdit(): boolean {
     return this.data?.canEdit ?? true;
+  }
+
+  get unidadGestionId(): number {
+    return this.datosGenerales.getValue().unidadGestion?.id;
+  }
+
+  get titulo(): string {
+    return this.datosGenerales.getValue().titulo;
   }
 
   constructor(
@@ -317,8 +325,8 @@ export class ConvocatoriaActionService extends ActionService implements OnDestro
     }
 
     return !(convocatoriaFaseEliminada.tipoFase.id === fasePresentacionSolicitudes?.tipoFase?.id
-      && convocatoriaFaseEliminada.fechaInicio.equals(fasePresentacionSolicitudes?.fechaInicio)
-      && convocatoriaFaseEliminada.fechaFin.equals(fasePresentacionSolicitudes?.fechaFin)
+      && convocatoriaFaseEliminada.fechaInicio.toMillis === fasePresentacionSolicitudes?.fechaInicio?.toMillis
+      && convocatoriaFaseEliminada.fechaFin.toMillis === fasePresentacionSolicitudes?.fechaFin?.toMillis
       && convocatoriaFaseEliminada.observaciones === fasePresentacionSolicitudes?.observaciones);
   }
 

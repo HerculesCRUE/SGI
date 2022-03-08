@@ -32,6 +32,14 @@ const CALENDARIO_FACTURACION_NUM_FACTURA_EMITIDA_KEY = marker('csp.proyecto-cale
 
 const CALENDARIO_FACTURACION_FIELD = 'calendarioFacturacion';
 const CALENDARIO_FACTURACION_TIPO_FIELD = 'tipoCalendarioFacturacion';
+const CALENDARIO_FACTURACION_NUM_PREVISION_FIELD = 'numPrevisionFacturacion';
+const CALENDARIO_FACTURACION_FECHA_EMISION_FIELD = 'fechaEmisionFacturacion';
+const CALENDARIO_FACTURACION_IMPORTE_BASE_FIELD = 'importeBaseFacturacion';
+const CALENDARIO_FACTURACION_IVA_FIELD = 'ivaFacturacion';
+const CALENDARIO_FACTURACION_IMPORTE_TOTAL_FIELD = 'importeTotalFacturacion';
+const CALENDARIO_FACTURACION_ESTADO_VALIDACION_FIELD = 'estadoValidacionFacturacion';
+const CALENDARIO_FACTURACION_FECHA_CONFORMIDAD_FIELD = 'fechaConformidadFacturacion';
+const CALENDARIO_FACTURACION_NUM_FACTURA_EMITIDA_FIELD = 'numFacturaEmitidaFacturacion';
 
 @Injectable()
 export class ProyectoCalendarioFacturacionListadoExportService
@@ -140,12 +148,68 @@ export class ProyectoCalendarioFacturacionListadoExportService
 
     for (let i = 0; i < maxNumCalendarioFacturaciones; i++) {
       const idCalendarioFacturacion: string = String(i + 1);
-      const columnCalendarioFacturacion: ISgiColumnReport = {
+      const columnNumPrevisionCalendarioFacturacion: ISgiColumnReport = {
+        name: CALENDARIO_FACTURACION_NUM_PREVISION_FIELD + idCalendarioFacturacion,
+        title: titleCalendarioFacturacion + idCalendarioFacturacion + ': ' + this.translate.instant(CALENDARIO_FACTURACION_NUM_PREVISION_KEY),
+        type: ColumnType.STRING,
+      };
+      columns.push(columnNumPrevisionCalendarioFacturacion);
+
+      const columnFechaEmisionCalendarioFacturacion: ISgiColumnReport = {
+        name: CALENDARIO_FACTURACION_FECHA_EMISION_FIELD + idCalendarioFacturacion,
+        title: titleCalendarioFacturacion + idCalendarioFacturacion + ': ' + this.translate.instant(CALENDARIO_FACTURACION_FECHA_EMISION_KEY),
+        type: ColumnType.DATE,
+      };
+      columns.push(columnFechaEmisionCalendarioFacturacion);
+
+      const columnImporteBaseCalendarioFacturacion: ISgiColumnReport = {
+        name: CALENDARIO_FACTURACION_IMPORTE_BASE_FIELD + idCalendarioFacturacion,
+        title: titleCalendarioFacturacion + idCalendarioFacturacion + ': ' + this.translate.instant(CALENDARIO_FACTURACION_IMPORTE_BASE_KEY),
+        type: ColumnType.STRING,
+      };
+      columns.push(columnImporteBaseCalendarioFacturacion);
+
+      const columnIvaCalendarioFacturacion: ISgiColumnReport = {
+        name: CALENDARIO_FACTURACION_IVA_FIELD + idCalendarioFacturacion,
+        title: titleCalendarioFacturacion + idCalendarioFacturacion + ': ' + this.translate.instant(CALENDARIO_FACTURACION_IVA_KEY),
+        type: ColumnType.STRING,
+      };
+      columns.push(columnIvaCalendarioFacturacion);
+
+      const columnImporteTotalCalendarioFacturacion: ISgiColumnReport = {
+        name: CALENDARIO_FACTURACION_IMPORTE_TOTAL_FIELD + idCalendarioFacturacion,
+        title: titleCalendarioFacturacion + idCalendarioFacturacion + ': ' + this.translate.instant(CALENDARIO_FACTURACION_IMPORTE_TOTAL_KEY),
+        type: ColumnType.STRING,
+      };
+      columns.push(columnImporteTotalCalendarioFacturacion);
+
+      const columnTipoCalendarioFacturacion: ISgiColumnReport = {
         name: CALENDARIO_FACTURACION_TIPO_FIELD + idCalendarioFacturacion,
         title: titleCalendarioFacturacion + idCalendarioFacturacion + ': ' + this.translate.instant(CALENDARIO_FACTURACION_TIPO_KEY),
         type: ColumnType.STRING,
       };
-      columns.push(columnCalendarioFacturacion);
+      columns.push(columnTipoCalendarioFacturacion);
+
+      const columnEstadoValidacionCalendarioFacturacion: ISgiColumnReport = {
+        name: CALENDARIO_FACTURACION_ESTADO_VALIDACION_FIELD + idCalendarioFacturacion,
+        title: titleCalendarioFacturacion + idCalendarioFacturacion + ': ' + this.translate.instant(CALENDARIO_FACTURACION_ESTADO_VALIDACION_KEY),
+        type: ColumnType.STRING,
+      };
+      columns.push(columnEstadoValidacionCalendarioFacturacion);
+
+      const columnFechaConformidadCalendarioFacturacion: ISgiColumnReport = {
+        name: CALENDARIO_FACTURACION_FECHA_CONFORMIDAD_FIELD + idCalendarioFacturacion,
+        title: titleCalendarioFacturacion + idCalendarioFacturacion + ': ' + this.translate.instant(CALENDARIO_FACTURACION_FECHA_CONFORMIDAD_KEY),
+        type: ColumnType.DATE,
+      };
+      columns.push(columnFechaConformidadCalendarioFacturacion);
+
+      const columnNumFacturaEmitidaCalendarioFacturacion: ISgiColumnReport = {
+        name: CALENDARIO_FACTURACION_NUM_FACTURA_EMITIDA_FIELD + idCalendarioFacturacion,
+        title: titleCalendarioFacturacion + idCalendarioFacturacion + ': ' + this.translate.instant(CALENDARIO_FACTURACION_NUM_FACTURA_EMITIDA_KEY),
+        type: ColumnType.STRING,
+      };
+      columns.push(columnNumFacturaEmitidaCalendarioFacturacion);
     }
 
     return columns;
@@ -171,7 +235,15 @@ export class ProyectoCalendarioFacturacionListadoExportService
   private fillRowsCalendarioFacturacionNotExcel(proyecto: IProyectoReportData, elementsRow: any[]) {
     const rowsReport: ISgiRowReport[] = [];
 
-    proyecto.calendarioFacturacion?.forEach(proyectoCalendarioFacturacion => {
+    proyecto.calendarioFacturacion?.sort((a, b) => {
+      if (a.numeroPrevision < b.numeroPrevision) {
+        return -1;
+      }
+      if (a.numeroPrevision > b.numeroPrevision) {
+        return 1;
+      }
+      return 0;
+    }).forEach(proyectoCalendarioFacturacion => {
       const calendarioFacturacionElementsRow: any[] = [];
 
       let calendarioFacturacionContent = proyectoCalendarioFacturacion?.numeroPrevision ?? '';
@@ -211,28 +283,27 @@ export class ProyectoCalendarioFacturacionListadoExportService
 
   private fillRowsEntidadExcel(elementsRow: any[], proyectoCalendarioFacturacion: IProyectoFacturacionData) {
     if (proyectoCalendarioFacturacion) {
-      let calendarioFacturacionContent = proyectoCalendarioFacturacion.numeroPrevision ?? '';
-      calendarioFacturacionContent += '\n';
-      calendarioFacturacionContent += LuxonUtils.toBackend(proyectoCalendarioFacturacion?.fechaEmision) ?? '';
-      calendarioFacturacionContent += '\n';
-      calendarioFacturacionContent += proyectoCalendarioFacturacion.importeBase.toString() ?? '';
-      calendarioFacturacionContent += '\n';
-      calendarioFacturacionContent += proyectoCalendarioFacturacion.porcentajeIVA ? proyectoCalendarioFacturacion.porcentajeIVA.toString() + '%' : '';
-      calendarioFacturacionContent += '\n';
-      calendarioFacturacionContent += this.getImporteTotal(
+      elementsRow.push(proyectoCalendarioFacturacion.numeroPrevision ?? '');
+      elementsRow.push(LuxonUtils.toBackend(proyectoCalendarioFacturacion?.fechaEmision) ?? '');
+      elementsRow.push(proyectoCalendarioFacturacion.importeBase.toString() ?? '');
+      elementsRow.push(proyectoCalendarioFacturacion.porcentajeIVA ?
+        this.percentPipe.transform(proyectoCalendarioFacturacion.porcentajeIVA / 100) : '');
+      elementsRow.push(this.getImporteTotal(
         proyectoCalendarioFacturacion.importeBase, proyectoCalendarioFacturacion.porcentajeIVA
-      ).toString() ?? '';
-      calendarioFacturacionContent += '\n';
-      calendarioFacturacionContent += proyectoCalendarioFacturacion.tipoFacturacion?.nombre ?? '';
-      calendarioFacturacionContent += '\n';
-      calendarioFacturacionContent += proyectoCalendarioFacturacion.estadoValidacionIP?.estado ?? '';
-      calendarioFacturacionContent += '\n';
-      calendarioFacturacionContent += LuxonUtils.toBackend(proyectoCalendarioFacturacion?.fechaConformidad) ?? '';
-      calendarioFacturacionContent += '\n';
-      calendarioFacturacionContent += proyectoCalendarioFacturacion.numeroFacturaEmitida ?? '';
-
-      elementsRow.push(calendarioFacturacionContent);
+      ).toString() ?? '');
+      elementsRow.push(proyectoCalendarioFacturacion.tipoFacturacion?.nombre ?? '');
+      elementsRow.push(proyectoCalendarioFacturacion.estadoValidacionIP?.estado ?? '');
+      elementsRow.push(LuxonUtils.toBackend(proyectoCalendarioFacturacion?.fechaConformidad) ?? '');
+      elementsRow.push(proyectoCalendarioFacturacion.numeroFacturaEmitida ?? '');
     } else {
+      elementsRow.push('');
+      elementsRow.push('');
+      elementsRow.push('');
+      elementsRow.push('');
+      elementsRow.push('');
+      elementsRow.push('');
+      elementsRow.push('');
+      elementsRow.push('');
       elementsRow.push('');
     }
   }

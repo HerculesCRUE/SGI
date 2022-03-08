@@ -14,7 +14,7 @@ import { SgiAuthModule, SgiAuthService } from '@sgi/framework/auth';
 import { SharedModule } from '@shared/shared.module';
 import { LoggerTestingModule } from 'ngx-logger/testing';
 import { CspSharedModule } from '../../../shared/csp-shared.module';
-import { ProyectoPlazosModalComponent } from './proyecto-plazos-modal.component';
+import { ProyectoPlazosModalComponent, ProyectoPlazosModalComponentData } from './proyecto-plazos-modal.component';
 
 describe('ProyectoPlazosModalComponent', () => {
   let component: ProyectoPlazosModalComponent;
@@ -27,7 +27,9 @@ describe('ProyectoPlazosModalComponent', () => {
     };
 
     // Mock MAT_DIALOG
-    const matDialogData = {} as IProyectoPlazos;
+    const matDialogData = {
+      plazos: []
+    } as ProyectoPlazosModalComponentData;
 
     TestBed.configureTestingModule({
       declarations: [

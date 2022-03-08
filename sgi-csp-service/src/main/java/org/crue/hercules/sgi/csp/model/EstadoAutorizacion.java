@@ -89,5 +89,5 @@ public class EstadoAutorizacion extends BaseEntity {
   @JoinColumn(name = "autorizacion_id", insertable = false, updatable = false, foreignKey = @ForeignKey(name = "FK_ESTADOAUTORIZACION_AUTORIZACION"))
   @Getter(AccessLevel.NONE)
   @Setter(AccessLevel.NONE)
-  private static final Autorizacion autorizacion = null;
+  private final Autorizacion autorizacion = null;
 }

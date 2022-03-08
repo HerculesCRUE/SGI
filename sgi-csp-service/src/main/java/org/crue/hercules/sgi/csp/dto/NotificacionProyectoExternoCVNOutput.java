@@ -31,7 +31,7 @@ public class NotificacionProyectoExternoCVNOutput implements Serializable {
   private Integer importeTotal;
   private String nombrePrograma;
   private Integer porcentajeSubvencion;
-  private String proeyctoCVNId;
+  private String proyectoCVNId;
   private String responsableRef;
   private String solicitanteRef;
   private String urlDocumentoAcreditacion;

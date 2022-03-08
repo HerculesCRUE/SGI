@@ -22,7 +22,7 @@ class ProyectoAreaConocimientoIT extends BaseIT {
   private static final String CONTROLLER_BASE_PATH = ProyectoAreaConocimientoController.MAPPING;
 
   private HttpEntity<ProyectoAreaConocimiento> buildRequest(HttpHeaders headers,
-    ProyectoAreaConocimiento entity, String... roles) throws Exception {
+      ProyectoAreaConocimiento entity, String... roles) throws Exception {
     headers = (headers != null ? headers : new HttpHeaders());
     headers.setContentType(MediaType.APPLICATION_JSON);
     headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
@@ -39,6 +39,8 @@ class ProyectoAreaConocimientoIT extends BaseIT {
       "classpath:scripts/modelo_unidad.sql",
       "classpath:scripts/tipo_finalidad.sql",
       "classpath:scripts/tipo_ambito_geografico.sql",
+      "classpath:scripts/tipo_regimen_concurrencia.sql",
+      "classpath:scripts/convocatoria.sql",
       "classpath:scripts/proyecto.sql",
       "classpath:scripts/tipo_facturacion.sql"
     // @formatter:on  
@@ -70,6 +72,8 @@ class ProyectoAreaConocimientoIT extends BaseIT {
       "classpath:scripts/modelo_unidad.sql",
       "classpath:scripts/tipo_finalidad.sql",
       "classpath:scripts/tipo_ambito_geografico.sql",
+      "classpath:scripts/tipo_regimen_concurrencia.sql",
+      "classpath:scripts/convocatoria.sql",
       "classpath:scripts/proyecto.sql",
       "classpath:scripts/proyecto_area.sql"
     // @formatter:on  
@@ -88,9 +92,9 @@ class ProyectoAreaConocimientoIT extends BaseIT {
 
   private ProyectoAreaConocimiento buildMockProyectoAreaConocimiento(Long proyectoAreaConocimientoId) {
     return ProyectoAreaConocimiento.builder()
-            .areaConocimientoRef("00001")
-            .id(proyectoAreaConocimientoId)
-            .proyectoId(1L)
-            .build();
+        .areaConocimientoRef("00001")
+        .id(proyectoAreaConocimientoId)
+        .proyectoId(1L)
+        .build();
   }
 }

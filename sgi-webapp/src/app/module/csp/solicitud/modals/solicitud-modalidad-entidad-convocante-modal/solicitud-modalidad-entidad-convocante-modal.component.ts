@@ -18,7 +18,6 @@ import { TranslateService } from '@ngx-translate/core';
 import { from, Observable, of } from 'rxjs';
 import { map, mergeMap, switchMap, takeLast, tap } from 'rxjs/operators';
 
-const TITLE_NEW_ENTITY = marker('title.new.entity');
 const SOLICITUD_MODALIDAD_KEY = marker('csp.solicitud-modalidad');
 export interface SolicitudModalidadEntidadConvocanteModalData {
   entidad: IEmpresa;
@@ -128,24 +127,10 @@ export class SolicitudModalidadEntidadConvocanteModalComponent
   }
 
   private setupI18N(): void {
-    if (this.isEdit) {
-      this.translate.get(
-        SOLICITUD_MODALIDAD_KEY,
-        MSG_PARAMS.CARDINALIRY.SINGULAR
-      ).subscribe((value) => this.title = value);
-    } else {
-      this.translate.get(
-        SOLICITUD_MODALIDAD_KEY,
-        MSG_PARAMS.CARDINALIRY.SINGULAR
-      ).pipe(
-        switchMap((value) => {
-          return this.translate.get(
-            TITLE_NEW_ENTITY,
-            { entity: value, ...MSG_PARAMS.GENDER.FEMALE }
-          );
-        })
-      ).subscribe((value) => this.title = value);
-    }
+    this.translate.get(
+      SOLICITUD_MODALIDAD_KEY,
+      MSG_PARAMS.CARDINALIRY.SINGULAR
+    ).subscribe((value) => this.title = value);
   }
 
 

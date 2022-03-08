@@ -257,39 +257,6 @@ export class ProyectoEquipoFragment extends Fragment {
     return !hasTouched;
   }
 
-  private getTooltipMessage(input: ErrorResponse): string {
-    switch (input.msgError) {
-      case ErroresRequisitos.FECHA_OBTENCION:
-        return this.msgToolTipFechaObtencion;
-      case ErroresRequisitos.FECHA_MAYOR:
-        return this.msgToolTipFechaMax;
-      case ErroresRequisitos.FECHA_MENOR:
-        return this.msgToolTipFechaMin;
-      case ErroresRequisitos.NIVEL_ACADEMICO:
-        return this.msgToolTipNivelAcademico;
-      case ErroresRequisitos.SEXO:
-        return this.msgToolTipSexo;
-      case ErroresRequisitos.DATOS_ACADEMICOS:
-        return this.msgToolTipDatosAcademicos;
-      case ErroresRequisitos.EDAD:
-        return this.msgToolTipEdadMax;
-      case ErroresRequisitos.NO_FECHAS_VINCUALCION:
-        return this.msgToolTipNoFechas;
-      case ErroresRequisitos.FECHA_VINCULACION_MAYOR:
-        return this.msgToolTipFechaVinculacionMayorMax;
-      case ErroresRequisitos.FECHA_VINCULACION_MENOR:
-        return this.msgToolTipFechaVinculacionMenorMin;
-      case ErroresRequisitos.VINCULACION:
-        return this.msgToolTipVinculacion;
-      case ErroresRequisitos.NO_VINCULACION:
-        return this.msgToolTipNoVinculacion;
-      case ErroresRequisitos.CATEGORIAS_PROFESIONALES:
-        return this.msgToolTipCategoriasProfesionales;
-      default:
-        return null;
-    }
-  }
-
   private validateRequisitosConvocatoria(
     proyectoEquipo: IProyectoEquipo,
     convocatoriaId: number
@@ -351,6 +318,24 @@ export class ProyectoEquipoFragment extends Fragment {
         return of(response);
       })
     );
+  }
+
+  public validateRequisitosConvocatoriaGlobales(
+    convocatoriaId: number
+  ): Observable<ValidacionRequisitosEquipoIp> {
+
+    return this.getRequisitosConvocatoria(convocatoriaId).pipe(
+      switchMap(() => {
+        return this.validateRequisitosEquipoGlobales(this.requisitosConvocatoria);
+      }),
+      switchMap(response => {
+        if (!response) {
+          return this.validateRequisitosIpGlobales(this.requisitosConvocatoria);
+        }
+
+        return of(response);
+      })
+    )
   }
 
   private getRequisitosConvocatoria(convocatoriaId: number): Observable<RequisitosConvocatoria> {
@@ -507,7 +492,9 @@ export class ProyectoEquipoFragment extends Fragment {
               return ValidacionRequisitosEquipoIp.NO_CATEGORIA_PROFESIONAL;
             }
 
-          } else if (requisitosConvocatoria.requisitosIp && !requisitosConvocatoria.requisitosIp.vinculacionUniversidad) {
+          } else if (requisitosConvocatoria.requisitosIp
+            && typeof requisitosConvocatoria.requisitosIp.vinculacionUniversidad === 'boolean'
+            && !requisitosConvocatoria.requisitosIp.vinculacionUniversidad) {
             if (vinculaciones?.categoriaProfesional) {
               return ValidacionRequisitosEquipoIp.VINCULACION_UNIVERSIDAD;
             }
@@ -521,16 +508,29 @@ export class ProyectoEquipoFragment extends Fragment {
     }
   }
 
+  private validateRequisitosIpGlobales(
+    requisitosConvocatoria: RequisitosConvocatoria
+  ): Observable<ValidacionRequisitosEquipoIp> {
+
+    const miembrosEquipoPrincipales = this.equipos$.value
+      .filter(miembro => miembro.value.proyectoEquipo.rolProyecto.rolPrincipal)
+      .map(miembroWraper => miembroWraper.value.proyectoEquipo);
+
+    if (requisitosConvocatoria.requisitosIp?.numMaximoIP) {
+      const numIps = miembrosEquipoPrincipales.length;
+
+      if (numIps < requisitosConvocatoria.requisitosIp?.numMaximoIP) {
+        return of(ValidacionRequisitosEquipoIp.NUM_MAX_IP);
+      }
+    }
+
+    return of(null);
+  }
+
   private validateRequisitosEquipoDatosPersonales(
     proyectoEquipo: IProyectoEquipo,
     requisitosConvocatoria: RequisitosConvocatoria
   ): Observable<ValidacionRequisitosEquipoIp> {
-
-    if (requisitosConvocatoria.requisitosEquipo?.sexo?.id) {
-      if (proyectoEquipo.persona.sexo?.id !== requisitosConvocatoria.requisitosEquipo.sexo.id) {
-        return of(ValidacionRequisitosEquipoIp.SEXO);
-      }
-    }
 
     if (requisitosConvocatoria.requisitosEquipo?.edadMaxima) {
       return this.datosPersonalesService.findByPersonaId(proyectoEquipo.persona.id).pipe(
@@ -622,7 +622,9 @@ export class ProyectoEquipoFragment extends Fragment {
               return ValidacionRequisitosEquipoIp.NO_CATEGORIA_PROFESIONAL;
             }
 
-          } else if (requisitosConvocatoria.requisitosEquipo && !requisitosConvocatoria.requisitosEquipo.vinculacionUniversidad) {
+          } else if (requisitosConvocatoria.requisitosEquipo
+            && typeof requisitosConvocatoria.requisitosEquipo.vinculacionUniversidad === 'boolean'
+            && !requisitosConvocatoria.requisitosEquipo.vinculacionUniversidad) {
             if (vinculaciones?.categoriaProfesional) {
               return ValidacionRequisitosEquipoIp.VINCULACION_UNIVERSIDAD;
             }
@@ -634,6 +636,28 @@ export class ProyectoEquipoFragment extends Fragment {
     } else {
       return of(null);
     }
+  }
+
+  private validateRequisitosEquipoGlobales(
+    requisitosConvocatoria: RequisitosConvocatoria
+  ): Observable<ValidacionRequisitosEquipoIp> {
+
+    const miembrosEquipoNoPrincipales = this.equipos$.value
+      .filter(miembro => !miembro.value.proyectoEquipo.rolProyecto.rolPrincipal)
+      .map(miembroWraper => miembroWraper.value.proyectoEquipo);
+
+    if (requisitosConvocatoria.requisitosEquipo?.sexo?.id && requisitosConvocatoria.requisitosEquipo?.ratioSexo) {
+      const numMiembrosSexo = miembrosEquipoNoPrincipales.filter(miembroEquipo =>
+        miembroEquipo.persona.sexo?.id === requisitosConvocatoria.requisitosEquipo.sexo.id
+      ).length;
+
+      const ratioSexo = numMiembrosSexo / miembrosEquipoNoPrincipales.length * 100
+      if (ratioSexo < requisitosConvocatoria.requisitosEquipo.ratioSexo) {
+        return of(ValidacionRequisitosEquipoIp.RATIO_SEXO);
+      }
+    }
+
+    return of(null);
   }
 
   private buildHelpIconIfNeeded(response: ValidacionRequisitosEquipoIp, wrapper: StatusWrapper<IProyectoEquipoListado>) {

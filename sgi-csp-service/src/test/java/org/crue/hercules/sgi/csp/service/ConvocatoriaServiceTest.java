@@ -36,6 +36,7 @@ import org.crue.hercules.sgi.csp.repository.SolicitudRepository;
 import org.crue.hercules.sgi.csp.repository.TipoAmbitoGeograficoRepository;
 import org.crue.hercules.sgi.csp.repository.TipoRegimenConcurrenciaRepository;
 import org.crue.hercules.sgi.csp.service.impl.ConvocatoriaServiceImpl;
+import org.crue.hercules.sgi.csp.util.ProyectoHelper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
@@ -77,6 +78,8 @@ public class ConvocatoriaServiceTest extends BaseServiceTest {
   private ConvocatoriaClonerService convocatoriaClonerService;
   @Mock
   private AutorizacionRepository autorizacionRepository;
+  @Mock
+  private ProyectoHelper proyectoHelper;
 
   private ConvocatoriaService service;
 
@@ -85,7 +88,8 @@ public class ConvocatoriaServiceTest extends BaseServiceTest {
     service = new ConvocatoriaServiceImpl(repository, convocatoriaPeriodoJustificacionRepository,
         modeloUnidadRepository, modeloTipoFinalidadRepository, tipoRegimenConcurrenciaRepository,
         tipoAmbitoGeograficoRepository, convocatoriaPeriodoSeguimientoCientificoRepository,
-        configuracionSolicitudRepository, this.solicitudReposiotry, this.proyectoReposiotry, convocatoriaClonerService, autorizacionRepository);
+        configuracionSolicitudRepository, this.solicitudReposiotry, this.proyectoReposiotry, convocatoriaClonerService,
+        autorizacionRepository, proyectoHelper);
   }
 
   @Test

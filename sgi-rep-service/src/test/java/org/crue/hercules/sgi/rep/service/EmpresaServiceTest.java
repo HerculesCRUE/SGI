@@ -3,7 +3,7 @@ package org.crue.hercules.sgi.rep.service;
 import org.assertj.core.api.Assertions;
 import org.crue.hercules.sgi.rep.config.RestApiProperties;
 import org.crue.hercules.sgi.rep.exceptions.GetDataReportException;
-import org.crue.hercules.sgi.rep.service.sgemp.EmpresaService;
+import org.crue.hercules.sgi.rep.service.sgi.SgiApiSgempService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -14,7 +14,7 @@ import org.springframework.web.client.RestTemplate;
  */
 class EmpresaServiceTest extends BaseReportServiceTest {
 
-  private EmpresaService empresaService;
+  private SgiApiSgempService empresaService;
 
   @Mock
   private RestApiProperties restApiProperties;
@@ -24,7 +24,7 @@ class EmpresaServiceTest extends BaseReportServiceTest {
 
   @BeforeEach
   public void setUp() throws Exception {
-    empresaService = new EmpresaService(restApiProperties, restTemplate);
+    empresaService = new SgiApiSgempService(restApiProperties, restTemplate);
   }
 
   @Test

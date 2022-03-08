@@ -1,12 +1,10 @@
 import { IProcedimiento } from '@core/models/pii/procedimiento';
 import { IProcedimientoDocumento } from '@core/models/pii/procedimiento-documento';
 import { ISolicitudProteccion } from '@core/models/pii/solicitud-proteccion';
-import { ITipoProcedimiento } from '@core/models/pii/tipo-procedimiento';
 import { Fragment } from '@core/services/action-service';
 import { SolicitudProteccionProcedimientoDocumentoService } from '@core/services/pii/solicitud-proteccion/solicitud-proteccion-procedimiento-documento/solicitud-proteccion-procedimiento-documento.service';
 import { SolicitudProteccionProcedimientoService } from '@core/services/pii/solicitud-proteccion/solicitud-proteccion-procedimiento/solicitud-proteccion-procedimiento.service';
 import { SolicitudProteccionService } from '@core/services/pii/solicitud-proteccion/solicitud-proteccion.service';
-import { TipoProcedimientoService } from '@core/services/pii/tipo-procedimiento/tipo-procedimiento.service';
 import { DocumentoService } from '@core/services/sgdoc/documento.service';
 import { StatusWrapper } from '@core/utils/status-wrapper';
 import { BehaviorSubject, forkJoin, from, merge, Observable, of } from 'rxjs';
@@ -14,7 +12,6 @@ import { catchError, map, mergeMap, shareReplay, switchMap, takeLast, tap } from
 
 export class SolicitudProteccionProcedimientosFragment extends Fragment {
 
-  private tiposProcedimiento$ = new BehaviorSubject<ITipoProcedimiento[]>([]);
   private procedimientoDocumentos = new BehaviorSubject<StatusWrapper<IProcedimientoDocumento>[]>([]);
   private procedimientoDocumentosShared = this.procedimientoDocumentos.pipe(shareReplay(1));
   private procedimientoDocumentosToDelete: StatusWrapper<IProcedimientoDocumento>[] = [];
@@ -32,10 +29,6 @@ export class SolicitudProteccionProcedimientosFragment extends Fragment {
     return this.procedimientoSelected.asObservable();
   }
 
-  get tiposProcedimiento(): ITipoProcedimiento[] {
-    return this.tiposProcedimiento$.value;
-  }
-
   get procedimientoDocumentos$(): Observable<StatusWrapper<IProcedimientoDocumento>[]> {
     return this.procedimientoDocumentosShared;
   }
@@ -45,7 +38,6 @@ export class SolicitudProteccionProcedimientosFragment extends Fragment {
     private solicitudProteccionService: SolicitudProteccionService,
     private solicitudProteccionProcedimientoService: SolicitudProteccionProcedimientoService,
     private procedimientoDocumentoService: SolicitudProteccionProcedimientoDocumentoService,
-    private tipoProcedimientoService: TipoProcedimientoService,
     private documentoService: DocumentoService,
   ) {
     super(key);
@@ -100,13 +92,6 @@ export class SolicitudProteccionProcedimientosFragment extends Fragment {
         procedimientos => this.procedimientos.next(procedimientos.items.map(elem => new StatusWrapper(elem)))
       )
     );
-
-    this.subscriptions.push(
-      this.tipoProcedimientoService.findAll().subscribe(
-        tiposProcedimiento => this.tiposProcedimiento$.next(tiposProcedimiento.items.map(elem => elem))
-      )
-    );
-
   }
 
   saveOrUpdate(): Observable<string | number | void> {

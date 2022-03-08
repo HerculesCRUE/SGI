@@ -15,6 +15,7 @@ import org.crue.hercules.sgi.eti.exceptions.ComiteNotFoundException;
 import org.crue.hercules.sgi.eti.exceptions.MemoriaNotFoundException;
 import org.crue.hercules.sgi.eti.exceptions.PeticionEvaluacionNotFoundException;
 import org.crue.hercules.sgi.eti.model.Comite;
+import org.crue.hercules.sgi.eti.model.Comite.Genero;
 import org.crue.hercules.sgi.eti.model.Configuracion;
 import org.crue.hercules.sgi.eti.model.ConvocatoriaReunion;
 import org.crue.hercules.sgi.eti.model.Dictamen;
@@ -32,7 +33,8 @@ import org.crue.hercules.sgi.eti.model.TipoConvocatoriaReunion;
 import org.crue.hercules.sgi.eti.model.TipoEstadoMemoria;
 import org.crue.hercules.sgi.eti.model.TipoEvaluacion;
 import org.crue.hercules.sgi.eti.model.TipoMemoria;
-import org.crue.hercules.sgi.eti.model.Comite.Genero;
+import org.crue.hercules.sgi.eti.repository.ApartadoRepository;
+import org.crue.hercules.sgi.eti.repository.BloqueRepository;
 import org.crue.hercules.sgi.eti.repository.ComentarioRepository;
 import org.crue.hercules.sgi.eti.repository.ComiteRepository;
 import org.crue.hercules.sgi.eti.repository.DocumentacionMemoriaRepository;
@@ -44,6 +46,7 @@ import org.crue.hercules.sgi.eti.repository.PeticionEvaluacionRepository;
 import org.crue.hercules.sgi.eti.repository.RespuestaRepository;
 import org.crue.hercules.sgi.eti.repository.TareaRepository;
 import org.crue.hercules.sgi.eti.service.impl.MemoriaServiceImpl;
+import org.crue.hercules.sgi.eti.service.sgi.SgiApiRepService;
 import org.crue.hercules.sgi.eti.util.Constantes;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -104,13 +107,19 @@ public class MemoriaServiceTest extends BaseServiceTest {
   private InformeService informeService;
 
   @Mock
-  private ReportService reportService;
+  private SgiApiRepService reportService;
 
   @Mock
   private SgdocService sgdocService;
 
   @Mock
   private ConfiguracionService configuracionService;
+
+  @Mock
+  private BloqueRepository bloqueRepository;
+
+  @Mock
+  private ApartadoRepository apartadoRepository;
 
   @Autowired
   private SgiConfigProperties sgiConfigProperties;
@@ -120,7 +129,7 @@ public class MemoriaServiceTest extends BaseServiceTest {
     memoriaService = new MemoriaServiceImpl(sgiConfigProperties, memoriaRepository, estadoMemoriaRepository,
         estadoRetrospectivaRepository, evaluacionRepository, comentarioRepository, informeService,
         peticionEvaluacionRepository, comiteRepository, documentacionMemoriaRepository, respuestaRepository,
-        tareaRepository, configuracionService, reportService, sgdocService);
+        tareaRepository, configuracionService, reportService, sgdocService, bloqueRepository, apartadoRepository);
   }
 
   @Test
@@ -391,6 +400,9 @@ public class MemoriaServiceTest extends BaseServiceTest {
         .willReturn((memoriaOld));
 
     BDDMockito.given(documentacionMemoriaRepository.findByMemoriaIdAndMemoriaActivoTrue(memoriaOld.getId(), null))
+        .willReturn(new PageImpl<>(Collections.emptyList()));
+
+    BDDMockito.given(bloqueRepository.findByFormularioId(Constantes.FORMULARIO_RETROSPECTIVA, null))
         .willReturn(new PageImpl<>(Collections.emptyList()));
 
     BDDMockito.given(respuestaRepository.findByMemoriaIdAndMemoriaActivoTrue(memoriaOld.getId(), null))

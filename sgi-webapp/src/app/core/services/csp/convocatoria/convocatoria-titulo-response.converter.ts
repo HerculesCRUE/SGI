@@ -18,6 +18,7 @@ class ConvocatoriaTituloResponseConverter
       codigo: undefined,
       duracion: undefined,
       estado: undefined,
+      excelencia: undefined,
       fechaConcesion: undefined,
       fechaProvisional: undefined,
       fechaPublicacion: undefined,

@@ -60,6 +60,7 @@ import org.crue.hercules.sgi.csp.service.SolicitudProyectoSocioService;
 import org.crue.hercules.sgi.csp.service.SolicitudService;
 import org.crue.hercules.sgi.framework.web.bind.annotation.RequestPageable;
 import org.modelmapper.ModelMapper;
+import org.springframework.boot.configurationprocessor.json.JSONObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -1165,6 +1166,42 @@ public class SolicitudController {
     return returnValue;
   }
 
+  /**
+   * Hace las comprobaciones necesarias para determinar si el estado y los
+   * {@link SolicitudDocumento} de la {@link Solicitud}
+   * pueden ser modificados por un investigador.
+   * 
+   * @param id Id del {@link Solicitud}.
+   * @return HTTP-200 Si se permite modificación / HTTP-204 Si no se permite
+   *         modificación
+   */
+  @RequestMapping(path = "/{id}/modificableestadoanddocumentosbyinvestigador", method = RequestMethod.HEAD)
+  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-SOL-INV-ER' , 'CSP-SOL-INV-BR')")
+  public ResponseEntity<Void> modificableEstadoAndDocumentosByInvestigador(@PathVariable Long id) {
+    log.debug("modificableEstadoAndDocumentosByInvestigador(Long id) - start");
+    Boolean returnValue = service.modificableEstadoAndDocumentosByInvestigador(id);
+    log.debug("modificableEstadoAndDocumentosByInvestigador(Long id) - end");
+    return returnValue.booleanValue() ? new ResponseEntity<>(HttpStatus.OK)
+        : new ResponseEntity<>(HttpStatus.NO_CONTENT);
+  }
+
+  /**
+   * Devuelve el código de registro interno de la {@link Solicitud} con el id
+   * indicado.
+   * 
+   * @param id Identificador de {@link Solicitud}.
+   * @return Código registro interno de la {@link Solicitud} correspondiente al id
+   */
+  @GetMapping("/{id}/codigo-registro-interno")
+  @PreAuthorize("hasAuthorityForAnyUO('CSP-SOL-ETI-V')")
+  public String getCodigoRegistroInterno(@PathVariable Long id) {
+    log.debug("Solicitud getCodigoRegistroInterno(Long id) - start");
+    String codigoRegistroInterno = service.getCodigoRegistroInterno(id);
+    log.debug("Solicitud getCodigoRegistroInterno(Long id) - end");
+
+    return JSONObject.quote(codigoRegistroInterno);
+  }
+
   private Page<SolicitudPalabraClaveOutput> convertSolicitudPalabraClave(Page<SolicitudPalabraClave> page) {
     List<SolicitudPalabraClaveOutput> content = page.getContent().stream()
         .map(this::convert)
@@ -1185,8 +1222,8 @@ public class SolicitudController {
 
   private List<SolicitudPalabraClave> convertSolicitudPalabraClaveInputs(
       List<SolicitudPalabraClaveInput> inputs) {
-    
-        return inputs.stream().map(input -> convert(null, input)).collect(Collectors.toList());
+
+    return inputs.stream().map(input -> convert(null, input)).collect(Collectors.toList());
   }
 
   private SolicitudPalabraClave convert(Long id, SolicitudPalabraClaveInput input) {

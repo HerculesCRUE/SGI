@@ -94,7 +94,7 @@ export class ProyectoPlazosComponent extends FragmentComponent implements OnInit
    */
   openModalPlazos(plazo?: StatusWrapper<IProyectoPlazos>): void {
     const datosPlazosFases: ProyectoPlazosModalComponentData = {
-      plazos: this.dataSource.data.map(plazos => plazos.value),
+      plazos: this.dataSource.data.filter(existing => existing !== plazo).map(wrapper => wrapper.value),
       plazo: plazo ? plazo.value : {} as IProyectoPlazos,
       idModeloEjecucion: this.actionService.modeloEjecucionId,
       readonly: this.actionService.readonly

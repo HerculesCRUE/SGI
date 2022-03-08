@@ -8,18 +8,16 @@ import { MSG_PARAMS } from '@core/i18n';
 import { IInvencion } from '@core/models/pii/invencion';
 import { IInvencionDocumento } from '@core/models/pii/invencion-documento';
 import { IInvencionSectorAplicacion } from '@core/models/pii/invencion-sector-aplicacion';
-import { ITipoProteccion } from '@core/models/pii/tipo-proteccion';
 import { FxFlexProperties } from '@core/models/shared/flexLayout/fx-flex-properties';
 import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-properties';
 import { DialogService } from '@core/services/dialog.service';
-import { TipoProteccionService } from '@core/services/pii/tipo-proteccion/tipo-proteccion.service';
 import { DocumentoService } from '@core/services/sgdoc/documento.service';
 import { SnackBarService } from '@core/services/snack-bar.service';
 import { StatusWrapper } from '@core/utils/status-wrapper';
 import { TranslateService } from '@ngx-translate/core';
 import { DateTime } from 'luxon';
-import { Observable, Subscription } from 'rxjs';
-import { filter, map, mergeMap, switchMap, tap } from 'rxjs/operators';
+import { Subscription } from 'rxjs';
+import { filter, mergeMap, tap } from 'rxjs/operators';
 import { AreaConocimientoDataModal, AreaConocimientoModalComponent } from 'src/app/esb/sgo/shared/area-conocimiento-modal/area-conocimiento-modal.component';
 import { InvencionActionService } from '../../invencion.action.service';
 import { InvencionDocumentoModalComponent } from '../../modals/invencion-documento-modal/invencion-documento-modal.component';
@@ -79,9 +77,6 @@ export class InvencionDatosGeneralesComponent extends FormFragmentComponent<IInv
   displayedColumnsDocumento = ['fechaAnadido', 'nombre', 'fichero', 'acciones'];
   @ViewChild('sortDocumento', { static: true }) sortDocumento: MatSort;
 
-  readonly tiposProteccion$: Observable<ITipoProteccion[]>;
-  subtiposProteccion$: Observable<ITipoProteccion[]>;
-
   get isEdit() {
     return this.formPart.isEdit();
   }
@@ -93,7 +88,6 @@ export class InvencionDatosGeneralesComponent extends FormFragmentComponent<IInv
   constructor(
     readonly actionService: InvencionActionService,
     private readonly translate: TranslateService,
-    private readonly tipoProteccionService: TipoProteccionService,
     private matDialog: MatDialog,
     private dialogService: DialogService,
     private readonly documentoService: DocumentoService,
@@ -102,7 +96,6 @@ export class InvencionDatosGeneralesComponent extends FormFragmentComponent<IInv
     super(actionService.FRAGMENT.DATOS_GENERALES, actionService);
     this.formPart = this.fragment as InvencionDatosGeneralesFragment;
     this.initFlexProperties();
-    this.tiposProteccion$ = this.tipoProteccionService.findAll().pipe(map(({ items }) => items));
   }
 
   ngOnInit(): void {
@@ -114,12 +107,6 @@ export class InvencionDatosGeneralesComponent extends FormFragmentComponent<IInv
     this.subscribeToSectoresAplicacion();
     this.subscribeToAreasConocimiento();
     this.subscribeToDocumentos();
-    this.subtiposProteccion$ = this.formGroup.controls.tipoProteccion.valueChanges.pipe(
-      tap(_ => this.resetSubtipoProteccionControl()),
-      switchMap(
-        ({ id }) => this.tipoProteccionService.findSubtipos(id).pipe(
-          map(({ items }) => items)
-        )));
   }
 
   ngOnDestroy(): void {

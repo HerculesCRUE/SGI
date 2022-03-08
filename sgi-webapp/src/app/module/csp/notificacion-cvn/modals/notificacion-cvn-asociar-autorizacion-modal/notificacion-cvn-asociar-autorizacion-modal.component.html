@@ -1,0 +1,22 @@
+<sgi-action-dialog title="{{'csp.notificacion-cvn.asociar.entity' | translate:msgParamAutorizacionEntity}}">
+  <form [formGroup]="formGroup" fxLayout="column">
+    <div fxFlex fxLayout="row" fxLayoutGap="10px" fxflex class="margin-bottom">
+      <span>
+        {{'msg.csp.notificacion-cvn.asociar-autorizacion' | translate:MSG_PARAMS.CARDINALIRY.SINGULAR}}
+      </span>
+    </div>
+
+    <div fxFlex fxLayout="row" fxLayoutGap="10px">
+      <!-- Autorizacion a Asociar -->
+      <mat-form-field fxFlex>
+        <mat-label>{{'csp.notificacion-cvn.asociar-autorizacion.seleccionar' | translate}}</mat-label>
+        <sgi-select formControlName="autorizacion" required [options]="autorizaciones$ | async"
+          [displayWith]="displayerAutorizacion">
+        </sgi-select>
+        <mat-error *ngIf="formGroup.controls.autorizacion.errors?.required">
+          {{'error.required.entity' | translate:msgParamAutorizacionEntity}}
+        </mat-error>
+      </mat-form-field>
+    </div>
+  </form>
+</sgi-action-dialog>

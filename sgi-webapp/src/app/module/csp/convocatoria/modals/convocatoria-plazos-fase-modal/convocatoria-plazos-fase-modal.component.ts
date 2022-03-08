@@ -125,22 +125,21 @@ export class ConvocatoriaPlazosFaseModalComponent extends
    * un tipo de fase en el modal
    * @param tipoFase convocatoria tipoFase
    */
-  private createValidatorDate(tipoFase: ITipoFase | string): void {
+  private createValidatorDate(tipoFase: ITipoFase): void {
     let rangoFechas: IRange[] = [];
-    if (tipoFase && typeof tipoFase !== 'string') {
-      const convocatoriasFases = this.data.plazos.filter(plazo =>
-        plazo.tipoFase.id === (tipoFase as ITipoFase).id &&
-        (plazo.fechaInicio !== this.data.plazo.fechaInicio && plazo.fechaFin !== this.data.plazo.fechaFin));
-      rangoFechas = convocatoriasFases.map(
-        fase => {
-          const rango: IRange = {
-            inicio: fase.fechaInicio,
-            fin: fase.fechaFin
-          };
-          return rango;
-        }
-      );
-    }
+
+    const convocatoriasFases = this.data.plazos.filter(plazo =>
+      plazo.tipoFase.id === tipoFase?.id);
+    rangoFechas = convocatoriasFases.map(
+      fase => {
+        const rango: IRange = {
+          inicio: fase.fechaInicio,
+          fin: fase.fechaFin
+        };
+        return rango;
+      }
+    );
+
     this.formGroup.setValidators([
       DateValidator.isAfter('fechaInicio', 'fechaFin'),
       DateValidator.isBefore('fechaFin', 'fechaInicio'),

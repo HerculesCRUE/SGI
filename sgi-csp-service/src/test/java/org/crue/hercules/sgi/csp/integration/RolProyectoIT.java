@@ -22,7 +22,7 @@ import org.springframework.web.util.UriComponentsBuilder;
  * Test de integracion de RolProyecto.
  */
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class RolProyectoIT extends BaseIT {
+class RolProyectoIT extends BaseIT {
 
   private static final String PATH_PARAMETER_ID = "/{id}";
   private static final String CONTROLLER_BASE_PATH = "/rolproyectos";
@@ -44,7 +44,7 @@ public class RolProyectoIT extends BaseIT {
   @Sql
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void findById_ReturnsRolProyecto() throws Exception {
+  void findById_ReturnsRolProyecto() throws Exception {
     Long id = 1L;
 
     final ResponseEntity<RolProyecto> response = restTemplate.exchange(CONTROLLER_BASE_PATH + PATH_PARAMETER_ID,
@@ -65,7 +65,7 @@ public class RolProyectoIT extends BaseIT {
   @Sql
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void findAll_WithPagingSortingAndFiltering_ReturnsRolProyectoSubList() throws Exception {
+  void findAll_WithPagingSortingAndFiltering_ReturnsRolProyectoSubList() throws Exception {
 
     // given: data for RolProyecto
 

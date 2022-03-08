@@ -42,4 +42,17 @@ public class RolProyectoColectivoServiceImpl implements RolProyectoColectivoServ
     return returnValue;
   }
 
+  /**
+   * Obtiene un listado de colectivos ref vinculados a {@link RolProyecto} activos
+   *
+   * @return listado colectivos ref
+   */
+  @Override
+  public List<String> findColectivosActivos() {
+    log.debug("findColectivosActivos() - start");
+    List<String> returnValue = repository.findColectivosActivos();
+    log.debug("findColectivosActivos() - end");
+    return returnValue;
+  }
+
 }

@@ -25,13 +25,20 @@ databaseChangeLog:
       file: classpath*:db/changelog/changes/0000000000002-update-data.xml
   # HERCULES_0.0.5
   - include:
-     file: classpath*:db/changelog/changes/0000000000003-update-initial-database.xml
+      file: classpath*:db/changelog/changes/0000000000003-update-initial-database.xml
   # HERCULES_0.0.6
   - include:
-     file: classpath*:db/changelog/changes/0000000000004-update-initial-database.xml
+      file: classpath*:db/changelog/changes/0000000000004-update-initial-database.xml
   - include:
       file: classpath*:db/changelog/changes/0000000000004-update-initial-master-data.xml
   - include:
-     file: classpath*:db/changelog/changes/0000000000004-update-sample-data.xml
+      file: classpath*:db/changelog/changes/0000000000004-update-sample-data.xml
   - include:
       file: classpath*:db/changelog/changes/0000000000004-fixup-initial-database.xml
+  # HERCULES_0.0.7
+  - include:
+      file: classpath*:db/changelog/changes/0000000000005-update-initial-database.xml
+  - include:
+      file: classpath*:db/changelog/changes/0000000000005-update-sample-data.xml
+  - include:
+      file: classpath*:db/changelog/changes/0000000000005-fixup-initial-database.xml

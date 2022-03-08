@@ -76,8 +76,8 @@
         [fxFlexOrder]="fxFlexProperties.order">
         <mat-form-field fxFill>
           <mat-label>{{'pii.sector-licenciado.sector' | translate}}</mat-label>
-          <sgi-select-entity formControlName="sector" [options]=" sectoresAplicacion$ | async" required>
-          </sgi-select-entity>
+          <sgi-select-sector-aplicacion formControlName="sector" required>
+          </sgi-select-sector-aplicacion>
           <mat-error *ngIf="formGroup.controls.sector.errors?.required">
             {{'error.required.entity' | translate:msgParamSectorEntity}}
           </mat-error>

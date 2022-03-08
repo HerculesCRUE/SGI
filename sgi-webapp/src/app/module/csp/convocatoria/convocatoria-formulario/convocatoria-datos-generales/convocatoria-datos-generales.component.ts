@@ -10,8 +10,6 @@ import { FORMULARIO_SOLICITUD_MAP } from '@core/enums/formulario-solicitud';
 import { MSG_PARAMS } from '@core/i18n';
 import { ESTADO_MAP, IConvocatoria } from '@core/models/csp/convocatoria';
 import { ITipoRegimenConcurrencia } from '@core/models/csp/tipo-regimen-concurrencia';
-import { FxFlexProperties } from '@core/models/shared/flexLayout/fx-flex-properties';
-import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-properties';
 import { TipoRegimenConcurrenciaService } from '@core/services/csp/tipo-regimen-concurrencia.service';
 import { DialogService } from '@core/services/dialog.service';
 import { TranslateService } from '@ngx-translate/core';
@@ -19,7 +17,7 @@ import { Observable, Subscription } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 import { ConvocatoriaActionService } from '../../convocatoria.action.service';
 import { AreaTematicaModalData, ConvocatoriaAreaTematicaModalComponent } from '../../modals/convocatoria-area-tematica-modal/convocatoria-area-tematica-modal.component';
-import { AreaTematicaData, ConvocatoriaDatosGeneralesFragment } from './convocatoria-datos-generales.fragment';
+import { ConvocatoriaDatosGeneralesFragment } from './convocatoria-datos-generales.fragment';
 
 const MSG_DELETE_AREA_TEMATICA = marker('msg.delete.entity');
 const AREA_KEY = marker('csp.area');
@@ -52,13 +50,6 @@ export class ConvocatoriaDatosGeneralesComponent extends FormFragmentComponent<I
   formPart: ConvocatoriaDatosGeneralesFragment;
 
   regimenesConcurrencia$: Observable<ITipoRegimenConcurrencia[]>;
-
-  fxFlexProperties: FxFlexProperties;
-  fxFlexProperties2: FxFlexProperties;
-  fxFlexPropertiesOne: FxFlexProperties;
-  fxLayoutProperties: FxLayoutProperties;
-  fxFlexPropertiesInline: FxFlexProperties;
-  fxFlexPropertiesEntidad: FxFlexProperties;
 
   private subscriptions = [] as Subscription[];
 
@@ -106,35 +97,6 @@ export class ConvocatoriaDatosGeneralesComponent extends FormFragmentComponent<I
   ) {
     super(actionService.FRAGMENT.DATOS_GENERALES, actionService);
     this.formPart = this.fragment as ConvocatoriaDatosGeneralesFragment;
-
-    this.fxFlexProperties2 = new FxFlexProperties();
-    this.fxFlexProperties2.sm = '0 1 calc(72%)';
-    this.fxFlexProperties2.md = '0 1 calc(66%)';
-    this.fxFlexProperties2.gtMd = '0 1 calc(64%)';
-    this.fxFlexProperties2.order = '2';
-
-    this.fxFlexPropertiesEntidad = new FxFlexProperties();
-    this.fxFlexPropertiesEntidad.sm = '0 1 calc(36%-10px)';
-    this.fxFlexPropertiesEntidad.md = '0 1 calc(36%-10px)';
-    this.fxFlexPropertiesEntidad.gtMd = '0 1 calc(36%-10px)';
-    this.fxFlexPropertiesEntidad.order = '3';
-
-    this.fxFlexProperties = new FxFlexProperties();
-    this.fxFlexProperties.sm = '0 1 calc(36%-10px)';
-    this.fxFlexProperties.md = '0 1 calc(33%-10px)';
-    this.fxFlexProperties.gtMd = '0 1 calc(32%-10px)';
-    this.fxFlexProperties.order = '2';
-
-    this.fxFlexPropertiesInline = new FxFlexProperties();
-    this.fxFlexPropertiesInline.sm = '0 1 calc(100%-10px)';
-    this.fxFlexPropertiesInline.md = '0 1 calc(100%-10px)';
-    this.fxFlexPropertiesInline.gtMd = '0 1 calc(100%-10px)';
-    this.fxFlexPropertiesInline.order = '4';
-
-    this.fxLayoutProperties = new FxLayoutProperties();
-    this.fxLayoutProperties.gap = '20px';
-    this.fxLayoutProperties.layout = 'row wrap';
-    this.fxLayoutProperties.xs = 'column';
 
     this.regimenesConcurrencia$ = tipoRegimenConcurrenciaService.findAll().pipe(
       map(response => response.items)

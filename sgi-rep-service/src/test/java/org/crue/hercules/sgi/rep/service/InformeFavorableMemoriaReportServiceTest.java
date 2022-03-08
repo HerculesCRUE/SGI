@@ -15,7 +15,7 @@ import org.crue.hercules.sgi.rep.dto.eti.TareaDto.EquipoTrabajoDto;
 import org.crue.hercules.sgi.rep.service.eti.EvaluacionService;
 import org.crue.hercules.sgi.rep.service.eti.InformeFavorableMemoriaReportService;
 import org.crue.hercules.sgi.rep.service.eti.PeticionEvaluacionService;
-import org.crue.hercules.sgi.rep.service.sgp.PersonaService;
+import org.crue.hercules.sgi.rep.service.sgi.SgiApiSgpService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.BDDMockito;
@@ -39,7 +39,7 @@ class InformeFavorableMemoriaReportServiceTest extends BaseReportServiceTest {
   private EvaluacionService evaluacionService;
 
   @Mock
-  private PersonaService personaService;
+  private SgiApiSgpService personaService;
 
   @Mock
   private PeticionEvaluacionService peticionEvaluacionService;

@@ -1,0 +1,56 @@
+{
+  "idRef": "8",
+  "epigrafeCVN": "060.020.030.000",
+  "campos": [
+    {
+      "codigoCVN": "060.020.030.010",
+      "valores": [
+        "Organización del Comité de Asesoramiento Científico del Mar Menor"
+      ]
+    },
+    {
+      "codigoCVN": "060.020.030.160",
+      "valores": [
+        "2021-03-15"
+      ]
+    },
+    {
+      "codigoCVN": "060.020.030.020",
+      "valores": [
+        "Asesoramiento científico y ejecución de acciones dirigidas a la mejora del estado ecológico del Mar Menor"
+      ]
+    },
+    {
+      "codigoCVN": "060.020.030.030",
+      "valores": [
+        "724"
+      ]
+    },
+    {
+      "codigoCVN": "060.020.030.110",
+      "valores": [
+        "ORGANIZATIVO_COMITE"
+      ]
+    }
+  ],
+  "autores": [
+    {
+      "personaRef": "02221287",
+      "firma": "enrique.apellido",
+      "nombre": "",
+      "apellidos": "",
+      "orden": 1,
+      "orcidID": "",
+      "ip": true
+    }
+  ],
+  "proyectos": [
+    1
+  ],
+  "acreditaciones": [
+    {
+      "url": "www.paginamipublicacion.es",
+      "documentoRef": ""
+    }
+  ]
+}

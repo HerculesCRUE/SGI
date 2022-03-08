@@ -34,7 +34,8 @@ export class ProyectoDataResolver extends SgiResolverResolver<IProyectoData> {
           proyecto,
           disableCoordinadorExterno: false,
           hasAnyProyectoSocioCoordinador: false,
-          isVisor: this.authService.hasAuthorityForAnyUO('CSP-PRO-V')
+          isVisor: this.authService.hasAuthorityForAnyUO('CSP-PRO-V'),
+          isInvestigador: this.authService.hasAuthorityForAnyUO('CSP-PRO-INV-VR')
         } as IProyectoData;
       }),
       switchMap(data => {

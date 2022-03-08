@@ -31,7 +31,7 @@ import { catchError, map, switchMap, tap } from 'rxjs/operators';
 import { TipoColectivo } from 'src/app/esb/sgp/shared/select-persona/select-persona.component';
 import { CONVOCATORIA_ACTION_LINK_KEY } from '../../convocatoria/convocatoria.action.service';
 import { ISolicitudCrearProyectoModalData, SolicitudCrearProyectoModalComponent } from '../modals/solicitud-crear-proyecto-modal/solicitud-crear-proyecto-modal.component';
-import { ISolicitudListadoModalData, SolicitudListadoModalComponent } from '../modals/solicitud-listado-modal/solicitud-listado-modal.component';
+import { ISolicitudListadoDataExportModalData, SolicitudListadoExportModalComponent } from '../modals/solicitud-listado-export-modal/solicitud-listado-export-modal.component';
 
 const MSG_BUTTON_NEW = marker('btn.add.entity');
 const MSG_ERROR = marker('error.load');
@@ -45,7 +45,7 @@ const MSG_SUCCESS_CREAR_PROYECTO = marker('msg.csp.solicitud.crear.proyecto');
 const MSG_ERROR_CREAR_PROYECTO = marker('error.csp.solicitud.crear.proyecto');
 const SOLICITUD_KEY = marker('csp.solicitud');
 
-export interface ISolicitudListado extends ISolicitud {
+export interface ISolicitudListadoData extends ISolicitud {
   convocatoria: IConvocatoria;
 }
 
@@ -54,12 +54,12 @@ export interface ISolicitudListado extends ISolicitud {
   templateUrl: './solicitud-listado.component.html',
   styleUrls: ['./solicitud-listado.component.scss']
 })
-export class SolicitudListadoComponent extends AbstractTablePaginationComponent<ISolicitudListado> implements OnInit {
+export class SolicitudListadoComponent extends AbstractTablePaginationComponent<ISolicitudListadoData> implements OnInit {
   ROUTE_NAMES = ROUTE_NAMES;
 
   fxFlexProperties: FxFlexProperties;
   fxLayoutProperties: FxLayoutProperties;
-  solicitudes$: Observable<ISolicitudListado[]>;
+  solicitudes$: Observable<ISolicitudListadoData[]>;
   textoCrear: string;
   textoDesactivar: string;
   textoReactivar: string;
@@ -261,14 +261,14 @@ export class SolicitudListadoComponent extends AbstractTablePaginationComponent<
     ).subscribe((value) => this.textoErrorReactivar = value);
   }
 
-  protected createObservable(reset?: boolean): Observable<SgiRestListResult<ISolicitudListado>> {
+  protected createObservable(reset?: boolean): Observable<SgiRestListResult<ISolicitudListadoData>> {
 
     return this.solicitudService.findAllTodos(this.getFindOptions(reset)).pipe(
       map(response => {
-        return response as SgiRestListResult<ISolicitudListado>;
+        return response as SgiRestListResult<ISolicitudListadoData>;
       }),
       switchMap(response => {
-        const requestsConvocatoria: Observable<ISolicitudListado>[] = [];
+        const requestsConvocatoria: Observable<ISolicitudListadoData>[] = [];
         response.items.forEach(solicitud => {
           if (solicitud.convocatoriaId) {
             requestsConvocatoria.push(this.convocatoriaService.findById(solicitud.convocatoriaId).pipe(
@@ -546,14 +546,14 @@ export class SolicitudListadoComponent extends AbstractTablePaginationComponent<
   }
 
   openExportModal(): void {
-    const data: ISolicitudListadoModalData = {
+    const data: ISolicitudListadoDataExportModalData = {
       findOptions: this.findOptions
     };
 
     const config = {
       data
     };
-    this.matDialog.open(SolicitudListadoModalComponent, config);
+    this.matDialog.open(SolicitudListadoExportModalComponent, config);
   }
 
 }

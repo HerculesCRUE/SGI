@@ -100,7 +100,7 @@ public class ConfigController {
    * Get paged and filtered {@link Config} data.
    * 
    * @param query  query filter
-   * @param paging pagging info
+   * @param paging paging info
    * @return the requested data
    */
   @GetMapping()

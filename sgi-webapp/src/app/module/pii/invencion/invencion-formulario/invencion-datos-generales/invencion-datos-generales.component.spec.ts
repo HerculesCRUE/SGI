@@ -12,6 +12,7 @@ import { SharedModule } from '@shared/shared.module';
 import { LoggerTestingModule } from 'ngx-logger/testing';
 import { SgoSharedModule } from 'src/app/esb/sgo/shared/sgo-shared.module';
 import { CspSharedModule } from 'src/app/module/csp/shared/csp-shared.module';
+import { PiiSharedModule } from '../../../shared/pii-shared.module';
 import { InvencionActionService } from '../../invencion.action.service';
 
 import { InvencionDatosGeneralesComponent } from './invencion-datos-generales.component';
@@ -38,7 +39,8 @@ describe('InvencionDatosGeneralesComponent', () => {
         LoggerTestingModule,
         SharedModule,
         CspSharedModule,
-        SgoSharedModule
+        SgoSharedModule,
+        PiiSharedModule
       ],
       providers: [
         { provide: SnackBarService, useValue: TestUtils.getSnackBarServiceSpy() },

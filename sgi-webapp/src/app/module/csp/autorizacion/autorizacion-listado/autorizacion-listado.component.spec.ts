@@ -10,6 +10,7 @@ import { SgiAuthService } from '@sgi/framework/auth';
 import { FooterCrearComponent } from '@shared/footers/footer-crear/footer-crear.component';
 import { SharedModule } from '@shared/shared.module';
 import { LoggerTestingModule } from 'ngx-logger/testing';
+import { SgpSharedModule } from 'src/app/esb/sgp/shared/sgp-shared.module';
 import { SolicitudActionService } from '../../solicitud/solicitud.action.service';
 import { AutorizacionListadoComponent } from './autorizacion-listado.component';
 
@@ -33,6 +34,7 @@ describe('AutorizacionListadoComponent', () => {
         FormsModule,
         ReactiveFormsModule,
         RouterTestingModule,
+        SgpSharedModule,
         SharedModule,
 
       ],

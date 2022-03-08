@@ -1,7 +1,5 @@
 package org.crue.hercules.sgi.csp.model;
 
-import java.io.Serializable;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -25,7 +23,7 @@ import lombok.experimental.SuperBuilder;
 @EqualsAndHashCode(callSuper = false)
 @NoArgsConstructor
 @SuperBuilder
-public class TipoAmbitoGeografico extends BaseActivableEntity implements Serializable {
+public class TipoAmbitoGeografico extends BaseActivableEntity {
 
   /**
    * Serial version

@@ -173,19 +173,22 @@ export class SearchProyectoModalComponent implements OnInit, AfterViewInit, OnDe
     const controls = this.formGroup.controls;
     const filter = new RSQLSgiRestFilter('titulo', SgiRestFilterOperator.LIKE_ICASE, controls.titulo.value)
       .and('acronimo', SgiRestFilterOperator.LIKE_ICASE, controls.acronimo.value)
-      .and('codigoExterno', SgiRestFilterOperator.LIKE_ICASE, controls.codigoExterno.value)
-      .and('fechaInicio', SgiRestFilterOperator.GREATHER_OR_EQUAL, LuxonUtils.toBackend(controls.fechaInicioDesde.value))
-      .and(
-        'fechaInicio',
-        SgiRestFilterOperator.LOWER_OR_EQUAL,
-        LuxonUtils.toBackend(controls.fechaInicioHasta.value?.plus({ hours: 23, minutes: 59, seconds: 59 }))
-      )
-      .and('fechaFin', SgiRestFilterOperator.GREATHER_OR_EQUAL, LuxonUtils.toBackend(controls.fechaFinDesde.value))
-      .and(
-        'fechaFin',
-        SgiRestFilterOperator.LOWER_OR_EQUAL,
-        LuxonUtils.toBackend(controls.fechaFinHasta.value?.plus({ hours: 23, minutes: 59, seconds: 59 }))
-      );
+      .and('codigoExterno', SgiRestFilterOperator.LIKE_ICASE, controls.codigoExterno.value);
+
+    if (controls.fechaInicioDesde.value) {
+      filter.and('fechaInicio', SgiRestFilterOperator.GREATHER_OR_EQUAL, LuxonUtils.toBackend(controls.fechaInicioDesde.value));
+    }
+    if (controls.fechaInicioHasta.value) {
+      const fechaFilter = LuxonUtils.toBackend(controls.fechaInicioHasta.value?.plus({ hours: 23, minutes: 59, seconds: 59 }));
+      filter.and('fechaInicio', SgiRestFilterOperator.LOWER_OR_EQUAL, fechaFilter);
+    }
+    if (controls.fechaFinDesde.value) {
+      filter.and('fechaFin', SgiRestFilterOperator.GREATHER_OR_EQUAL, LuxonUtils.toBackend(controls.fechaFinDesde.value));
+    }
+    if (controls.fechaFinHasta.value) {
+      const fechaFilter = LuxonUtils.toBackend(controls.fechaFinHasta.value?.plus({ hours: 23, minutes: 59, seconds: 59 }));
+      filter.and('fechaFin', SgiRestFilterOperator.LOWER_OR_EQUAL, fechaFilter);
+    }
     if (controls.responsableProyecto.value) {
       filter.and('equipo.personaRef', SgiRestFilterOperator.EQUALS, controls.responsableProyecto.value.id)
         .and('equipo.rolProyecto.rolPrincipal', SgiRestFilterOperator.EQUALS, 'true');
@@ -195,8 +198,8 @@ export class SearchProyectoModalComponent implements OnInit, AfterViewInit, OnDe
       .and('entidadesFinanciadoras.id', SgiRestFilterOperator.EQUALS, controls.entidadFinanciadora.value?.id?.toString())
       .and('id', SgiRestFilterOperator.EQUALS, controls.identificadorInterno.value?.toString())
       .and('identificadoresSge.proyectoSgeRef', SgiRestFilterOperator.EQUALS, controls.codigoIdentificacionSGE.value?.toString())
-      .and('finalidad.id', SgiRestFilterOperator.EQUALS, controls.tipoFinalidad.value?.id.toString())
-      .and('equipo.personaRef', SgiRestFilterOperator.EQUALS, controls.miembroEquipo.value?.id.toString());
+      .and('finalidad.id', SgiRestFilterOperator.EQUALS, controls.tipoFinalidad.value?.id?.toString())
+      .and('equipo.personaRef', SgiRestFilterOperator.EQUALS, controls.miembroEquipo.value?.id?.toString());
 
     if (controls.miembrosParticipantes.value) {
       filter.and('equipo.personaRef', SgiRestFilterOperator.IN, this.data.personas.map(persona => persona.id));
@@ -213,6 +216,7 @@ export class SearchProyectoModalComponent implements OnInit, AfterViewInit, OnDe
    */
   onClearFilters(): void {
     FormGroupUtil.clean(this.formGroup);
+    this.search(true);
   }
 
   openCreate(): void {

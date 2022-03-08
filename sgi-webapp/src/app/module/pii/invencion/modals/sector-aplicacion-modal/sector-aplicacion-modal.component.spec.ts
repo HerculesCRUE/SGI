@@ -7,9 +7,10 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { HeaderComponent } from '@block/header/header.component';
 import TestUtils from '@core/utils/test-utils';
 import { MaterialDesignModule } from '@material/material-design.module';
-import { SgiAuthModule } from '@sgi/framework/auth';
+import { SgiAuthModule, SgiAuthService } from '@sgi/framework/auth';
 import { SharedModule } from '@shared/shared.module';
 import { LoggerTestingModule } from 'ngx-logger/testing';
+import { PiiSharedModule } from '../../../shared/pii-shared.module';
 
 import { SectorAplicacionModalComponent, SectorAplicacionModalData } from './sector-aplicacion-modal.component';
 
@@ -35,11 +36,13 @@ describe('SectorAplicacionModalComponent', () => {
         TestUtils.getIdiomas(),
         FormsModule,
         ReactiveFormsModule,
-        SgiAuthModule
+        SgiAuthModule,
+        PiiSharedModule
       ],
       providers: [
         { provide: MatDialogRef, useValue: data },
         { provide: MAT_DIALOG_DATA, useValue: data },
+        SgiAuthService
       ],
       declarations: [SectorAplicacionModalComponent, HeaderComponent],
     }).compileComponents();

@@ -255,7 +255,7 @@ public class BeanMethodTaskService {
   /**
    * Find {@link BeanMethodTask}
    *
-   * @param pageable pagging info
+   * @param pageable paging info
    * @param query    RSQL expression with the restrictions to apply in the search
    * @return {@link BeanMethodTask} pagged and filtered
    */
@@ -272,7 +272,7 @@ public class BeanMethodTaskService {
   /**
    * Find {@link BeanMethodCronTask}
    *
-   * @param pageable pagging info
+   * @param pageable paging info
    * @param query    RSQL expression with the restrictions to apply in the search
    * @return {@link BeanMethodCronTask} pagged and filtered
    */
@@ -293,7 +293,7 @@ public class BeanMethodTaskService {
   /**
    * Find {@link BeanMethodInstantTask}
    *
-   * @param pageable pagging info
+   * @param pageable paging info
    * @param query    RSQL expression with the restrictions to apply in the search
    * @return {@link BeanMethodInstantTask} pagged and filtered
    */
@@ -314,7 +314,7 @@ public class BeanMethodTaskService {
   /**
    * Find the enabled {@link BeanMethodTask}
    *
-   * @param pageable pagging info
+   * @param pageable paging info
    * @param query    RSQL expression with the restrictions to apply in the search
    * @return {@link BeanMethodTask} pagged and filtered
    */
@@ -332,7 +332,7 @@ public class BeanMethodTaskService {
   /**
    * Find the enabled {@link BeanMethodCronTask}
    *
-   * @param pageable pagging info
+   * @param pageable paging info
    * @param query    RSQL expression with the restrictions to apply in the search
    * @return {@link BeanMethodTask} pagged and filtered
    */
@@ -354,7 +354,7 @@ public class BeanMethodTaskService {
   /**
    * Find the enabled {@link BeanMethodInstantTask}
    *
-   * @param pageable pagging info
+   * @param pageable paging info
    * @param query    RSQL expression with the restrictions to apply in the search
    * @return {@link BeanMethodInstantTask} pagged and filtered
    */
@@ -377,7 +377,7 @@ public class BeanMethodTaskService {
    * Find the enabled {@link BeanMethodTask} including only the
    * {@link BeanMethodInstantTask} whose instant is after to current date-time.
    *
-   * @param pageable pagging info
+   * @param pageable paging info
    * @param query    RSQL expression with the restrictions to apply in the search
    * @return {@link BeanMethodTask} pagged and filtered
    */

@@ -10,9 +10,10 @@ import { StatusWrapper } from '@core/utils/status-wrapper';
 import TestUtils from '@core/utils/test-utils';
 import { MaterialDesignModule } from '@material/material-design.module';
 import { TranslateModule } from '@ngx-translate/core';
-import { SgiAuthModule } from '@sgi/framework/auth';
+import { SgiAuthModule, SgiAuthService } from '@sgi/framework/auth';
 import { SharedModule } from '@shared/shared.module';
 import { LoggerTestingModule } from 'ngx-logger/testing';
+import { PiiSharedModule } from '../../../shared/pii-shared.module';
 import { ISolicitudProteccionProcedimientoModalData, SolicitudProteccionProcedimientoModalComponent } from './solicitud-proteccion-procedimiento-modal.component';
 
 
@@ -40,11 +41,13 @@ describe('SolicitudProteccionProcedimientoModalComponent', () => {
         SharedModule,
         TranslateModule,
         SgiAuthModule,
+        PiiSharedModule
       ],
       providers: [
         { provide: SnackBarService, useValue: TestUtils.getSnackBarServiceSpy() },
         { provide: MatDialogRef, useValue: data },
         { provide: MAT_DIALOG_DATA, useValue: data },
+        SgiAuthService
       ]
     })
       .compileComponents();

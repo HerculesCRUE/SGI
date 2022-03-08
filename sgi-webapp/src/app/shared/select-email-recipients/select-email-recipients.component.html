@@ -1,0 +1,28 @@
+<div fxLayout="row">
+  <mat-chip-list fxFlex #chipList [placeholder]="placeholder" selectable="false">
+    <mat-chip *ngFor="let recipient of value" selectable="false" removable="true" [disabled]="disabled"
+      (removed)="_remove(recipient)">
+      {{recipient.name === recipient.address ? recipient.address : recipient.name + '(' + recipient.address + ')'}}
+      <mat-icon matChipRemove *ngIf="!disabled">cancel</mat-icon>
+    </mat-chip>
+
+    <input #emailInput [formControl]="emailInputCtrl" [matAutocomplete]="auto" [matChipInputFor]="chipList"
+      (matChipInputTokenEnd)="_add($event)" placeholder="{{'label.select-email-recipients.add' | translate}}">
+  </mat-chip-list>
+  <div class="icon-wrapper" [class.disabled]="disabled" fxLayoutAlign="center end">
+    <button #dialogButton mat-icon-button type="button" [disabled]="disabled" (click)="showDialog()"
+      [attr.tabindex]="disabled ? -1 : null">
+      <mat-icon>search</mat-icon>
+    </button>
+  </div>
+</div>
+
+<mat-autocomplete #auto="matAutocomplete" (optionSelected)="_selected($event)" autoActiveFirstOption="true"
+  class="sgi-results">
+  <div class="page" fxFlex="1 1" fxFlexAlign="center" fxLayoutAlign="center">
+    <span *ngIf="tooManyResults">{{'label.search.too-many-results' | translate}}</span>
+  </div>
+  <mat-option *ngFor="let result of searchResult$ | async" [value]="result" [disabled]="!!!result.address">
+    {{result.name}} ({{result.address}})
+  </mat-option>
+</mat-autocomplete>

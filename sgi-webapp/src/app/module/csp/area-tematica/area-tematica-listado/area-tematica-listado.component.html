@@ -99,12 +99,7 @@
     <mat-paginator [pageSizeOptions]="elementosPagina" [length]="totalElementos" showFirstLastButtons>
     </mat-paginator>
   </div>
-  <ng-container *sgiHasAuthority="'CSP-AREA-C'">
-    <div class="separation-button">
-      <button color="three" aria-label="Center Align" mat-raised-button [routerLink]="ROUTE_NAMES.NEW">
-        <mat-icon color="accent">add_circle</mat-icon>
-        {{ 'btn.add.entity' | translate:msgParamEntity }}
-      </button>
-    </div>
-  </ng-container>
+  <sgi-menu-content-footer *sgiHasAuthority="'CSP-AREA-C'">
+    <sgi-footer-crear [texto]="textoCrear" [route]="ROUTE_NAMES.NEW"></sgi-footer-crear>
+  </sgi-menu-content-footer>
 </sgi-menu-content>

@@ -1,7 +1,7 @@
 package org.crue.hercules.sgi.csp.repository.specification;
 
 import org.crue.hercules.sgi.csp.model.TipoOrigenFuenteFinanciacion;
-import org.crue.hercules.sgi.csp.model.TipoOrigenFuenteFinanciacion_;
+import org.crue.hercules.sgi.framework.data.jpa.domain.Activable_;
 import org.springframework.data.jpa.domain.Specification;
 
 public class TipoOrigenFuenteFinanciacionSpecification {
@@ -14,7 +14,7 @@ public class TipoOrigenFuenteFinanciacionSpecification {
    */
   public static Specification<TipoOrigenFuenteFinanciacion> activos() {
     return (root, query, cb) -> {
-      return cb.equal(root.get(TipoOrigenFuenteFinanciacion_.activo), Boolean.TRUE);
+      return cb.equal(root.get(Activable_.activo), Boolean.TRUE);
     };
   }
 

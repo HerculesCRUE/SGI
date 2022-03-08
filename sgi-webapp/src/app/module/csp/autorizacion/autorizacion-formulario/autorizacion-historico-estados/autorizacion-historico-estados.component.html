@@ -1,7 +1,8 @@
 <!-- Historico datos -->
 <sgi-fragment title="{{'menu.csp.autorizaciones.historicos-estados' | translate}}">
   <div class="mat-elevation-z4">
-    <table mat-table [dataSource]="dataSource" matSort matSortActive="id" matSortDirection="asc" matSortDisableClear>
+    <table mat-table [dataSource]="dataSource" matSort matSortActive="fechaEstado" matSortDirection="asc"
+      matSortDisableClear>
 
       <!-- Estado Column -->
       <ng-container matColumnDef="estado">

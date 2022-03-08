@@ -1,0 +1,53 @@
+@import "colors.scss";
+@import "~@angular/material/theming";
+
+:host {
+  .caja-busqueda-avanzada {
+    padding: 10px 20px 10px 20px;
+    .col {
+      padding-right: 15px;
+      .checkbox {
+        padding-top: 15px;
+      }
+    }
+    .buttons-final {
+      padding: 10px 0px 10px 0px;
+      .filter-button {
+        button {
+          margin-right: 15px;
+        }
+      }
+    }
+    .input-right {
+      float: left;
+      width: 65%;
+    }
+    .boton-left {
+      float: right;
+    }
+  }
+  .formulario {
+    @include mat-elevation(8, map-get($sgi-custom-colors, black), 0.8);
+    padding: 10px 20px 30px 20px;
+    .col {
+      padding-right: 15px;
+      .checkbox {
+        padding-top: 15px;
+      }
+    }
+    .buttons-final {
+      padding: 10px 0px 10px 0px;
+      .filter-button {
+        button {
+          margin-right: 15px;
+        }
+      }
+    }
+  }
+
+  .paginator-export {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+}

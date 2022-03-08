@@ -62,7 +62,9 @@ public class CustomEquipoTrabajoRepositoryImpl implements CustomEquipoTrabajoRep
     Root<EquipoTrabajo> root = cq.from(EquipoTrabajo.class);
 
     cq.multiselect(root.get(EquipoTrabajo_.id), root.get(EquipoTrabajo_.personaRef),
-        root.get(EquipoTrabajo_.peticionEvaluacion), isNotEliminable(root, cb, cq).isNull().alias("eliminable"));
+        root.get(EquipoTrabajo_.peticionEvaluacion),
+        cb.selectCase().when(cb.isNull(isNotEliminable(root, cb, cq)), true).otherwise(false)
+            .alias("eliminable"));
 
     // Where
     cq.where(cb.equal(root.get(EquipoTrabajo_.peticionEvaluacion).get(PeticionEvaluacion_.id), idPeticionEvaluacion));

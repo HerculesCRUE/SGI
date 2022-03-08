@@ -27,6 +27,7 @@ export interface IConvocatoria {
   ambitoGeografico: ITipoAmbitoGeografico;
   clasificacionCVN: ClasificacionCVN;
   activo: boolean;
+  excelencia: boolean;
 }
 
 export enum Estado {

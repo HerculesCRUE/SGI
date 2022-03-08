@@ -1,9 +1,14 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { DOCUMENTO_CONVERTER } from '@core/converters/sgdoc/documento.converter';
 import { IAutorizacion } from '@core/models/csp/autorizacion';
+import { IAutorizacionWithFirstEstado } from '@core/models/csp/autorizacion-with-first-estado';
 import { ICertificadoAutorizacion } from '@core/models/csp/certificado-autorizacion';
 import { IConvocatoria } from '@core/models/csp/convocatoria';
 import { IEstadoAutorizacion } from '@core/models/csp/estado-autorizacion';
+import { INotificacionProyectoExternoCVN } from '@core/models/csp/notificacion-proyecto-externo-cvn';
+import { IDocumentoBackend } from '@core/models/sgdoc/backend/documento-backend';
+import { IDocumento } from '@core/models/sgdoc/documento';
 import { environment } from '@env';
 import { CreateCtor, FindAllCtor, FindByIdCtor, mixinCreate, mixinFindAll, mixinFindById, mixinUpdate, SgiRestBaseService, SgiRestFindOptions, SgiRestListResult, UpdateCtor } from '@sgi/framework/http';
 import { Observable } from 'rxjs';
@@ -14,28 +19,29 @@ import { IConvocatoriaTituloResponse } from '../convocatoria/convocatoria-titulo
 import { CONVOCATORIA_TITULO_RESPONSE_CONVERTER } from '../convocatoria/convocatoria-titulo-response.converter';
 import { IEstadoAutorizacionResponse } from '../estado-autorizacion/estado-autorizacion-response';
 import { ESTADO_AUTORIZACION_RESPONSE_CONVERTER } from '../estado-autorizacion/estado-autorizacion-response.converter';
+import { INotificacionProyectoExternoCVNResponse } from '../notificacion-proyecto-externo-cvn/notificacion-proyecto-externo-cvn-response';
+import { NOTIFICACION_PROYECTO_EXTERNO_CVN_RESPONSE_CONVERTER } from '../notificacion-proyecto-externo-cvn/notificacion-proyecto-externo-cvn-response.converter';
 import { IAutorizacionRequest } from './autorizacion-request';
 import { AUTORIZACION_REQUEST_CONVERTER } from './autorizacion-request.converter';
 import { IAutorizacionResponse } from './autorizacion-response';
 import { AUTORIZACION_RESPONSE_CONVERTER } from './autorizacion-response.converter';
+import { AUTORIZACION_WITH_FIRST_ESTADO_RESPONSE_CONVERTER } from './autorizacion-with-first-estado-response.converter';
+import { IAutorizacionWithFirstEstadoResponse } from './autorizacionWithFirstEstadoResponse';
 
 // tslint:disable-next-line: variable-name
 const _AutorizacionMixinBase:
   CreateCtor<IAutorizacion, IAutorizacion, IAutorizacionRequest, IAutorizacionResponse> &
   UpdateCtor<number, IAutorizacion, IAutorizacion, IAutorizacionRequest, IAutorizacionResponse> &
   FindByIdCtor<number, IAutorizacion, IAutorizacionResponse> &
-  FindAllCtor<IAutorizacion, IAutorizacionResponse> &
-  typeof SgiRestBaseService = mixinFindAll(
-    mixinFindById(
-      mixinUpdate(
-        mixinCreate(
-          SgiRestBaseService,
-          AUTORIZACION_REQUEST_CONVERTER,
-          AUTORIZACION_RESPONSE_CONVERTER
-        ),
+  typeof SgiRestBaseService =
+  mixinFindById(
+    mixinUpdate(
+      mixinCreate(
+        SgiRestBaseService,
         AUTORIZACION_REQUEST_CONVERTER,
         AUTORIZACION_RESPONSE_CONVERTER
       ),
+      AUTORIZACION_REQUEST_CONVERTER,
       AUTORIZACION_RESPONSE_CONVERTER
     ),
     AUTORIZACION_RESPONSE_CONVERTER
@@ -82,11 +88,11 @@ export class AutorizacionService extends _AutorizacionMixinBase {
    * @param id identificador de la autorizacion.
    * @param estadoAutorizacion Nuevo estado de la autorizacion.
    */
-  cambiarEstado(id: number, estadoAutorizacion: IEstadoAutorizacion): Observable<IEstadoAutorizacion> {
-    return this.http.patch<IEstadoAutorizacionResponse>(`${this.endpointUrl}/${id}/cambiar-estado`,
+  cambiarEstado(id: number, estadoAutorizacion: IEstadoAutorizacion): Observable<IAutorizacion> {
+    return this.http.patch<IAutorizacionResponse>(`${this.endpointUrl}/${id}/cambiar-estado`,
       ESTADO_AUTORIZACION_RESPONSE_CONVERTER.fromTarget(estadoAutorizacion)
     ).pipe(
-      map((response => ESTADO_AUTORIZACION_RESPONSE_CONVERTER.toTarget(response)))
+      map((response => AUTORIZACION_RESPONSE_CONVERTER.toTarget(response)))
     );
   }
 
@@ -116,7 +122,7 @@ export class AutorizacionService extends _AutorizacionMixinBase {
   }
 
   /**
-   * Recupera listado de historico estado
+   * Recupera listado de certificados de autorizacion
    * @param id autorizacion
    * @param options opciones de búsqueda.
    */
@@ -147,11 +153,23 @@ export class AutorizacionService extends _AutorizacionMixinBase {
    *
    * @param options opciones de búsqueda.
    */
-  findAllInvestigador(options?: SgiRestFindOptions): Observable<SgiRestListResult<IAutorizacion>> {
-    return this.find<IAutorizacionResponse, IAutorizacion>(
+  findAllInvestigador(options?: SgiRestFindOptions): Observable<SgiRestListResult<IAutorizacionWithFirstEstado>> {
+    return this.find<IAutorizacionWithFirstEstadoResponse, IAutorizacionWithFirstEstado>(
       `${this.endpointUrl}/investigador`,
       options,
-      AUTORIZACION_RESPONSE_CONVERTER);
+      AUTORIZACION_WITH_FIRST_ESTADO_RESPONSE_CONVERTER);
+  }
+
+  /**
+   * Devuelve el listado de autorizaciones que puede ver un investigador
+   *
+   * @param options opciones de búsqueda.
+   */
+  findAll(options?: SgiRestFindOptions): Observable<SgiRestListResult<IAutorizacionWithFirstEstado>> {
+    return this.find<IAutorizacionWithFirstEstadoResponse, IAutorizacionWithFirstEstado>(
+      `${this.endpointUrl}`,
+      options,
+      AUTORIZACION_WITH_FIRST_ESTADO_RESPONSE_CONVERTER);
   }
 
   /**
@@ -165,6 +183,53 @@ export class AutorizacionService extends _AutorizacionMixinBase {
     ).pipe(
       map(response => CONVOCATORIA_TITULO_RESPONSE_CONVERTER.toTarget(response))
     );
+  }
+
+  findCertificadoAutorizacionVisible(id: number, options?: SgiRestFindOptions):
+    Observable<ICertificadoAutorizacion> {
+    return this.http.get<ICertificadoAutorizacionResponse>(`${this.endpointUrl}/${id}/certificadoautorizacionvisible`).pipe(
+      map(response => CERTIFICADO_AUTORIZACION_RESPONSE_CONVERTER.toTarget(response))
+    );
+  }
+
+  findNotificacionProyectoExterno(id: number, options?: SgiRestFindOptions):
+    Observable<INotificacionProyectoExternoCVN> {
+    return this.http.get<INotificacionProyectoExternoCVNResponse>(`${this.endpointUrl}/${id}/notificacionproyecto`).pipe(
+      map(response => NOTIFICACION_PROYECTO_EXTERNO_CVN_RESPONSE_CONVERTER.toTarget(response))
+    );
+  }
+
+  findFirstEstado(id: number): Observable<IEstadoAutorizacion> {
+    return this.http.get<IEstadoAutorizacionResponse>(
+      `${this.endpointUrl}/${id}/firstestado`
+    ).pipe(
+      map(response => ESTADO_AUTORIZACION_RESPONSE_CONVERTER.toTarget(response))
+    );
+  }
+
+  /**
+   * Obtiene el documento de autorización
+   * @param idAutorizacion identificador de la autorización
+   */
+  getInformeAutorizacion(idAutorizacion: number): Observable<IDocumento> {
+    return this.http.get<IDocumentoBackend>(
+      `${this.endpointUrl}/${idAutorizacion}/documento`
+    ).pipe(
+      map(response => DOCUMENTO_CONVERTER.toTarget(response))
+    );
+  }
+
+  /**
+   * Devuelve el listado de autorizaciones con el solicitante dado
+   *
+   * @param solicitanteRef referencia del solicitante
+   * @param options opciones de búsqueda.
+   */
+  findAllAutorizadasWithoutNotificacionBySolicitanteRef(solicitanteRef: string, options?: SgiRestFindOptions): Observable<SgiRestListResult<IAutorizacion>> {
+    return this.find<IAutorizacionResponse, IAutorizacion>(
+      `${this.endpointUrl}/solicitante/${solicitanteRef}`,
+      options,
+      AUTORIZACION_RESPONSE_CONVERTER);
   }
 
 }

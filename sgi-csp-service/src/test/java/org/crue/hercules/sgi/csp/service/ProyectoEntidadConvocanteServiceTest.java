@@ -13,6 +13,7 @@ import org.crue.hercules.sgi.csp.repository.ProgramaRepository;
 import org.crue.hercules.sgi.csp.repository.ProyectoEntidadConvocanteRepository;
 import org.crue.hercules.sgi.csp.repository.ProyectoRepository;
 import org.crue.hercules.sgi.csp.service.impl.ProyectoEntidadConvocanteServiceImpl;
+import org.crue.hercules.sgi.csp.util.ProyectoHelper;
 import org.crue.hercules.sgi.framework.exception.NotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -36,12 +37,15 @@ public class ProyectoEntidadConvocanteServiceTest extends BaseServiceTest {
   private ProyectoRepository proyectoRepository;
   @Mock
   private ProgramaRepository programaRepository;
+  @Mock
+  private ProyectoHelper proyectoHelper;
 
   private ProyectoEntidadConvocanteService service;
 
   @BeforeEach
   public void setUp() throws Exception {
-    service = new ProyectoEntidadConvocanteServiceImpl(repository, proyectoRepository, programaRepository);
+    service = new ProyectoEntidadConvocanteServiceImpl(repository, proyectoRepository, programaRepository,
+        proyectoHelper);
   }
 
   @Test

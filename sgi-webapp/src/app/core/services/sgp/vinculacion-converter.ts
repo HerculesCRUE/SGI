@@ -11,7 +11,8 @@ class VinculacionConverter extends SgiBaseConverter<IVinculacionBackend, IVincul
     return {
       id: value.id,
       categoriaProfesional: value.categoriaProfesional,
-      fechaObtencionCategoria: LuxonUtils.fromBackend(value.fechaObtencionCategoria)
+      fechaObtencionCategoria: LuxonUtils.fromBackend(value.fechaObtencionCategoria),
+      departamento: value.departamento
     };
   }
 
@@ -22,7 +23,8 @@ class VinculacionConverter extends SgiBaseConverter<IVinculacionBackend, IVincul
     return {
       id: value.id,
       categoriaProfesional: value.categoriaProfesional,
-      fechaObtencionCategoria: LuxonUtils.toBackend(value.fechaObtencionCategoria)
+      fechaObtencionCategoria: LuxonUtils.toBackend(value.fechaObtencionCategoria),
+      departamento: value.departamento
     };
   }
 }

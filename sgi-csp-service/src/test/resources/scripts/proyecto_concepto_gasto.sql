@@ -10,6 +10,8 @@
     "classpath:scripts/modelo_unidad.sql",
     "classpath:scripts/tipo_finalidad.sql",
     "classpath:scripts/tipo_ambito_geografico.sql",
+    "classpath:scripts/tipo_regimen_concurrencia.sql",
+    "classpath:scripts/convocatoria.sql",
     "classpath:scripts/proyecto.sql",
     "classpath:scripts/concepto_gasto.sql"
     // @formatter:on
@@ -20,4 +22,7 @@ INSERT INTO test.proyecto_concepto_gasto
 VALUES
 (1, NULL, '2022-01-30T00:00:00Z', '2021-12-01T00:00:00Z', 1000, 'testing 1', true, 1, 1),
 (2, NULL, '2022-02-20T00:00:00Z', '2022-01-01T00:00:00Z', 2000, 'testing 2', true, 1, 2),
-(3, NULL, '2022-03-30T00:00:00Z', '2022-02-01T00:00:00Z', 3000, 'testing 3', true, 1, 3);
+(3, NULL, '2022-03-30T00:00:00Z', '2022-02-01T00:00:00Z', 3000, 'testing 3', true, 1, 3),
+(4, NULL, '2022-01-30T00:00:00Z', '2021-12-01T00:00:00Z', 1000, 'testing 4', false, 1, 1),
+(5, NULL, '2022-02-20T00:00:00Z', '2022-01-01T00:00:00Z', 2000, 'testing 5', false, 1, 2),
+(6, NULL, '2022-03-30T00:00:00Z', '2022-02-01T00:00:00Z', 3000, 'testing 6', false, 1, 3);

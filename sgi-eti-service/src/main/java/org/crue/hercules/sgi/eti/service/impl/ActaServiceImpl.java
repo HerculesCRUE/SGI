@@ -24,9 +24,9 @@ import org.crue.hercules.sgi.eti.repository.TipoEstadoActaRepository;
 import org.crue.hercules.sgi.eti.repository.specification.ActaSpecifications;
 import org.crue.hercules.sgi.eti.service.ActaService;
 import org.crue.hercules.sgi.eti.service.MemoriaService;
-import org.crue.hercules.sgi.eti.service.ReportService;
 import org.crue.hercules.sgi.eti.service.RetrospectivaService;
 import org.crue.hercules.sgi.eti.service.SgdocService;
+import org.crue.hercules.sgi.eti.service.sgi.SgiApiRepService;
 import org.crue.hercules.sgi.eti.util.Constantes;
 import org.crue.hercules.sgi.framework.rsql.SgiRSQLJPASupport;
 import org.crue.hercules.sgi.framework.security.core.context.SgiSecurityContextHolder;
@@ -71,7 +71,7 @@ public class ActaServiceImpl implements ActaService {
   private final RetrospectivaService retrospectivaService;
 
   /** Report service */
-  private final ReportService reportService;
+  private final SgiApiRepService reportService;
 
   /** SGDOC service */
   private final SgdocService sgdocService;
@@ -86,7 +86,7 @@ public class ActaServiceImpl implements ActaService {
    * @param retrospectivaRepository  {@link RetrospectivaRepository}
    * @param memoriaService           {@link MemoriaService}
    * @param retrospectivaService     {@link RetrospectivaService}
-   * @param reportService            {@link ReportService}
+   * @param reportService            {@link SgiApiRepService}
    * @param sgdocService             {@link SgdocService}
    * 
    */
@@ -94,7 +94,7 @@ public class ActaServiceImpl implements ActaService {
   public ActaServiceImpl(ActaRepository actaRepository, EstadoActaRepository estadoActaRepository,
       TipoEstadoActaRepository tipoEstadoActaRepository, EvaluacionRepository evaluacionRepository,
       RetrospectivaRepository retrospectivaRepository, MemoriaService memoriaService,
-      RetrospectivaService retrospectivaService, ReportService reportService, SgdocService sgdocService) {
+      RetrospectivaService retrospectivaService, SgiApiRepService reportService, SgdocService sgdocService) {
     this.actaRepository = actaRepository;
     this.estadoActaRepository = estadoActaRepository;
     this.tipoEstadoActaRepository = tipoEstadoActaRepository;
@@ -280,40 +280,40 @@ public class ActaServiceImpl implements ActaService {
     listEvaluacionesMemoria.forEach(evaluacion -> {
 
       switch (evaluacion.getDictamen().getId().intValue()) {
-      case Constantes.DICTAMEN_FAVORABLE: {
-        // Dictamen "Favorable"-
-        // Se actualiza memoria a estado 9: "Fin evaluación"
-        memoriaService.updateEstadoMemoria(evaluacion.getMemoria(), Constantes.ESTADO_MEMORIA_FIN_EVALUACION);
-        break;
-      }
-      case Constantes.DICTAMEN_FAVORABLE_PENDIENTE_REVISION_MINIMA: {
-        // Dictamen "Favorable pendiente de revisión mínima"-
-        // Se actualiza memoria a estado 6: "Favorable Pendiente de Modificaciones
-        // Mínimas"
-        memoriaService.updateEstadoMemoria(evaluacion.getMemoria(),
-            Constantes.ESTADO_MEMORIA_FAVORABLE_PENDIENTE_MOD_MINIMAS);
-        break;
-      }
-      case Constantes.DICTAMEN_PENDIENTE_CORRECCIONES: {
-        // Dictamen "Pendiente de correcciones"
-        // Se actualiza memoria a estado 7: "Pendiente de correcciones"
-        memoriaService.updateEstadoMemoria(evaluacion.getMemoria(), Constantes.ESTADO_MEMORIA_PENDIENTE_CORRECCIONES);
-        break;
-      }
-      case Constantes.DICTAMEN_NO_PROCEDE_EVALUAR: {
-        // Dictamen "No procede evaluar"
-        // Se actualiza memoria a estado 8: "No procede evaluar"
-        memoriaService.updateEstadoMemoria(evaluacion.getMemoria(), Constantes.ESTADO_MEMORIA_NO_PROCEDE_EVALUAR);
-        break;
-      }
-      case Constantes.DICTAMEN_SOLICITUD_MODIFICACIONES: {
-        // Dictamen "Solicitud modificaciones"
-        // Se actualiza memoria a estado 15: "Solicitud modificacion"
-        memoriaService.updateEstadoMemoria(evaluacion.getMemoria(), Constantes.ESTADO_MEMORIA_SOLICITUD_MODIFICACION);
-        break;
-      }
-      default:
-        break;
+        case Constantes.DICTAMEN_FAVORABLE: {
+          // Dictamen "Favorable"-
+          // Se actualiza memoria a estado 9: "Fin evaluación"
+          memoriaService.updateEstadoMemoria(evaluacion.getMemoria(), Constantes.ESTADO_MEMORIA_FIN_EVALUACION);
+          break;
+        }
+        case Constantes.DICTAMEN_FAVORABLE_PENDIENTE_REVISION_MINIMA: {
+          // Dictamen "Favorable pendiente de revisión mínima"-
+          // Se actualiza memoria a estado 6: "Favorable Pendiente de Modificaciones
+          // Mínimas"
+          memoriaService.updateEstadoMemoria(evaluacion.getMemoria(),
+              Constantes.ESTADO_MEMORIA_FAVORABLE_PENDIENTE_MOD_MINIMAS);
+          break;
+        }
+        case Constantes.DICTAMEN_PENDIENTE_CORRECCIONES: {
+          // Dictamen "Pendiente de correcciones"
+          // Se actualiza memoria a estado 7: "Pendiente de correcciones"
+          memoriaService.updateEstadoMemoria(evaluacion.getMemoria(), Constantes.ESTADO_MEMORIA_PENDIENTE_CORRECCIONES);
+          break;
+        }
+        case Constantes.DICTAMEN_NO_PROCEDE_EVALUAR: {
+          // Dictamen "No procede evaluar"
+          // Se actualiza memoria a estado 8: "No procede evaluar"
+          memoriaService.updateEstadoMemoria(evaluacion.getMemoria(), Constantes.ESTADO_MEMORIA_NO_PROCEDE_EVALUAR);
+          break;
+        }
+        case Constantes.DICTAMEN_SOLICITUD_MODIFICACIONES: {
+          // Dictamen "Solicitud modificaciones"
+          // Se actualiza memoria a estado 15: "Solicitud modificacion"
+          memoriaService.updateEstadoMemoria(evaluacion.getMemoria(), Constantes.ESTADO_MEMORIA_SOLICITUD_MODIFICACION);
+          break;
+        }
+        default:
+          break;
       }
     });
 
@@ -325,15 +325,15 @@ public class ActaServiceImpl implements ActaService {
     listEvaluacionesRetrospectiva.forEach(evaluacion -> {
 
       switch (evaluacion.getDictamen().getId().intValue()) {
-      case Constantes.DICTAMEN_DESFAVORABLE_RETROSPECTIVA:
-      case Constantes.DICTAMEN_FAVORABLE_RETROSPECTIVA:
-      default: {
-        // Dictamen "Favorable y desfavorable retrospectiva"
-        // Se actualiza memoria a estado 5: "Fin evaluación retrospectiva"
-        retrospectivaService.updateEstadoRetrospectiva(evaluacion.getMemoria().getRetrospectiva(),
-            Constantes.ESTADO_RETROSPECTIVA_FIN_EVALUACION);
-        break;
-      }
+        case Constantes.DICTAMEN_DESFAVORABLE_RETROSPECTIVA:
+        case Constantes.DICTAMEN_FAVORABLE_RETROSPECTIVA:
+        default: {
+          // Dictamen "Favorable y desfavorable retrospectiva"
+          // Se actualiza memoria a estado 5: "Fin evaluación retrospectiva"
+          retrospectivaService.updateEstadoRetrospectiva(evaluacion.getMemoria().getRetrospectiva(),
+              Constantes.ESTADO_RETROSPECTIVA_FIN_EVALUACION);
+          break;
+        }
       }
 
     });
@@ -346,22 +346,22 @@ public class ActaServiceImpl implements ActaService {
     listEvaluacionesSegFinal.forEach(evaluacion -> {
 
       switch (evaluacion.getDictamen().getId().intValue()) {
-      case Constantes.DICTAMEN_FAVORABLE_SEGUIMIENTO_FINAL: {
-        // Dictamen "Favorable - seguimiento anual"-
-        // Se actualiza memoria a estado 9: "Fin evaluación"
-        memoriaService.updateEstadoMemoria(evaluacion.getMemoria(),
-            Constantes.ESTADO_MEMORIA_FIN_EVALUACION_SEGUIMIENTO_FINAL);
-        break;
-      }
-      case Constantes.DICTAMEN_SOLICITUD_ACLARACIONES_SEGUIMIENTO_FINAL: {
-        // Dictamen "Solicitud aclaraciones seguimiento final"
-        // Se actualiza memoria a estado 21: "En aclaración seguimiento final"
-        memoriaService.updateEstadoMemoria(evaluacion.getMemoria(),
-            Constantes.TIPO_ESTADO_MEMORIA_EN_ACLARACION_SEGUIMIENTO_FINAL);
-        break;
-      }
-      default:
-        break;
+        case Constantes.DICTAMEN_FAVORABLE_SEGUIMIENTO_FINAL: {
+          // Dictamen "Favorable - seguimiento anual"-
+          // Se actualiza memoria a estado 9: "Fin evaluación"
+          memoriaService.updateEstadoMemoria(evaluacion.getMemoria(),
+              Constantes.ESTADO_MEMORIA_FIN_EVALUACION_SEGUIMIENTO_FINAL);
+          break;
+        }
+        case Constantes.DICTAMEN_SOLICITUD_ACLARACIONES_SEGUIMIENTO_FINAL: {
+          // Dictamen "Solicitud aclaraciones seguimiento final"
+          // Se actualiza memoria a estado 21: "En aclaración seguimiento final"
+          memoriaService.updateEstadoMemoria(evaluacion.getMemoria(),
+              Constantes.TIPO_ESTADO_MEMORIA_EN_ACLARACION_SEGUIMIENTO_FINAL);
+          break;
+        }
+        default:
+          break;
       }
 
     });
@@ -374,21 +374,21 @@ public class ActaServiceImpl implements ActaService {
     listEvaluacionesSegAnual.forEach(evaluacion -> {
 
       switch (evaluacion.getDictamen().getId().intValue()) {
-      case Constantes.DICTAMEN_FAVORABLE_SEGUIMIENTO_ANUAL: {
-        // Dictamen "Favorable - seguimiento anual"-
-        // Se actualiza memoria a estado 9: "Fin evaluación"
-        memoriaService.updateEstadoMemoria(evaluacion.getMemoria(),
-            Constantes.ESTADO_MEMORIA_FIN_EVALUACION_SEGUIMIENTO_ANUAL);
-        break;
-      }
-      case Constantes.DICTAMEN_SOLICITUD_MODIFICACIONES: {
-        // Dictamen "Solicitud modificaciones"
-        // Se actualiza memoria a estado 15: "Solicitud modificacion"
-        memoriaService.updateEstadoMemoria(evaluacion.getMemoria(), Constantes.ESTADO_MEMORIA_SOLICITUD_MODIFICACION);
-        break;
-      }
-      default:
-        break;
+        case Constantes.DICTAMEN_FAVORABLE_SEGUIMIENTO_ANUAL: {
+          // Dictamen "Favorable - seguimiento anual"-
+          // Se actualiza memoria a estado 9: "Fin evaluación"
+          memoriaService.updateEstadoMemoria(evaluacion.getMemoria(),
+              Constantes.ESTADO_MEMORIA_FIN_EVALUACION_SEGUIMIENTO_ANUAL);
+          break;
+        }
+        case Constantes.DICTAMEN_SOLICITUD_MODIFICACIONES: {
+          // Dictamen "Solicitud modificaciones"
+          // Se actualiza memoria a estado 15: "Solicitud modificacion"
+          memoriaService.updateEstadoMemoria(evaluacion.getMemoria(), Constantes.ESTADO_MEMORIA_SOLICITUD_MODIFICACION);
+          break;
+        }
+        default:
+          break;
       }
 
     });

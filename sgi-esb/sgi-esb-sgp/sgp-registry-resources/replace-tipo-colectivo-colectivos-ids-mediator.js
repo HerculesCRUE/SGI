@@ -45,6 +45,15 @@ function mediate(mc) {
       case 'RESPONSABLE_PROYECTO_EXTERNO':
         colectivosId = '4';
         break;
+      case 'AUTOR_PRC':
+        colectivosId = '1,2,3,4';
+        break;
+      case 'DESTINATARIO_COMUNICADO':
+        colectivosId = '1,2,3,4';
+        break;
+      case 'PERSONA_AUTORIZADA_GRUPO':
+        colectivosId = '1,2,3,4';
+        break;
       default:
         colectivosId = '0';
         break;

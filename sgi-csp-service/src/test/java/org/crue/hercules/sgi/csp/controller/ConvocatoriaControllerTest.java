@@ -26,6 +26,7 @@ import org.crue.hercules.sgi.csp.model.ConvocatoriaEntidadFinanciadora;
 import org.crue.hercules.sgi.csp.model.ConvocatoriaEntidadGestora;
 import org.crue.hercules.sgi.csp.model.ConvocatoriaFase;
 import org.crue.hercules.sgi.csp.model.ConvocatoriaHito;
+import org.crue.hercules.sgi.csp.model.ConvocatoriaHitoAviso;
 import org.crue.hercules.sgi.csp.model.ConvocatoriaPeriodoJustificacion;
 import org.crue.hercules.sgi.csp.model.ConvocatoriaPeriodoSeguimientoCientifico;
 import org.crue.hercules.sgi.csp.model.FuenteFinanciacion;
@@ -2066,7 +2067,8 @@ public class ConvocatoriaControllerTest extends BaseControllerTest {
     convocatoriaHito.setConvocatoriaId(id == null ? 1 : id);
     convocatoriaHito.setFecha(Instant.parse("2020-10-19T00:00:00Z"));
     convocatoriaHito.setComentario("comentario-" + id);
-    convocatoriaHito.setGeneraAviso(true);
+    convocatoriaHito.setConvocatoriaHitoAviso(new ConvocatoriaHitoAviso(
+        id == null ? 1 : id, id == null ? "1" : id.toString(), id == null ? "1" : id.toString(), false, false));
     convocatoriaHito.setTipoHito(tipoHito);
 
     return convocatoriaHito;

@@ -17,8 +17,9 @@ import { Observable, of } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 import { IProyectoReportData, IProyectoReportOptions } from './proyecto-listado-export.service';
 
-const PARTIDA_PRESUPUESTARIA_KEY = 'csp.proyecto-partida-presupuestaria';
-const PARTIDA_PRESUPUESTARIA_CODIGO_KEY = 'csp.proyecto-partida-presupuestaria.codigo';
+const PARTIDA_PRESUPUESTARIA_KEY = marker('csp.proyecto-partida-presupuestaria');
+const PARTIDA_PRESUPUESTARIA_CODIGO_KEY = marker('csp.proyecto-partida-presupuestaria.codigo');
+const PARTIDA_KEY = marker('csp.proyecto-partida-presupuestaria.partida');
 const PARTIDA_PRESUPUESTARIA_FIELD = 'partidaPresupuestaria';
 const PARTIDA_PRESUPUESTARIA_TIPO_KEY = marker('csp.proyecto-partida-presupuestaria.tipo-partida');
 const PARTIDA_PRESUPUESTARIA_TIPO_FIELD = 'tipoPartidaPresupuestaria';
@@ -93,19 +94,19 @@ export class ProyectoPartidaPresupuestariaListadoExportService
     const columns: ISgiColumnReport[] = [];
 
     const maxNumPartidaPresupuestarias = Math.max(...proyectos.map(p => p.partidasPresupuestarias?.length));
-    const titlePartidaPresupuestaria = this.translate.instant(PARTIDA_PRESUPUESTARIA_KEY, MSG_PARAMS.CARDINALIRY.SINGULAR);
+    const titlePartidaPresupuestaria = this.translate.instant(PARTIDA_PRESUPUESTARIA_KEY, MSG_PARAMS.CARDINALIRY.PLURAL);
     for (let i = 0; i < maxNumPartidaPresupuestarias; i++) {
       const idPartidaPresupuestaria: string = String(i + 1);
       const columnNombrePartidaPresupuestaria: ISgiColumnReport = {
         name: PARTIDA_PRESUPUESTARIA_FIELD + idPartidaPresupuestaria,
-        title: titlePartidaPresupuestaria + idPartidaPresupuestaria + ': ' + this.translate.instant(PARTIDA_PRESUPUESTARIA_CODIGO_KEY),
+        title: titlePartidaPresupuestaria + ': ' + this.translate.instant(PARTIDA_KEY) + idPartidaPresupuestaria,
         type: ColumnType.STRING,
       };
       columns.push(columnNombrePartidaPresupuestaria);
 
       const columnTipoPartidaPresupuestaria: ISgiColumnReport = {
         name: PARTIDA_PRESUPUESTARIA_TIPO_FIELD + idPartidaPresupuestaria,
-        title: titlePartidaPresupuestaria + idPartidaPresupuestaria + ': ' + this.translate.instant(PARTIDA_PRESUPUESTARIA_TIPO_KEY),
+        title: titlePartidaPresupuestaria + ': ' + this.translate.instant(PARTIDA_PRESUPUESTARIA_TIPO_KEY) + ' ' + this.translate.instant(PARTIDA_KEY) + idPartidaPresupuestaria,
         type: ColumnType.STRING,
       };
       columns.push(columnTipoPartidaPresupuestaria);

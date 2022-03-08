@@ -25,4 +25,5 @@ export interface IConvocatoriaBackend {
   ambitoGeografico: ITipoAmbitoGeografico;
   clasificacionCVN: ClasificacionCVN;
   activo: boolean;
+  excelencia: boolean;
 }

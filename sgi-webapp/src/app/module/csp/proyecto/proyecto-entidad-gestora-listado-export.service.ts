@@ -121,9 +121,7 @@ export class ProyectoEntidadGestoraListadoExportService extends AbstractTableExp
       const entidadGestora = proyecto.entidadGestora;
       const entidadGestoraElementsRow: any[] = [];
 
-      let entidadTable = entidadGestora.empresa?.nombre ?? '';
-      entidadTable += '\n';
-      entidadTable += entidadGestora.empresa?.numeroIdentificacion ?? '';
+      const entidadTable = (entidadGestora.empresa?.nombre ?? '') + ' - ' + (entidadGestora.empresa?.numeroIdentificacion ?? '');
 
       entidadGestoraElementsRow.push(entidadTable);
 

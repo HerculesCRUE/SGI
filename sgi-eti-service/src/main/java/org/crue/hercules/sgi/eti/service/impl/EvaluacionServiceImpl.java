@@ -30,8 +30,8 @@ import org.crue.hercules.sgi.eti.repository.RetrospectivaRepository;
 import org.crue.hercules.sgi.eti.repository.specification.EvaluacionSpecifications;
 import org.crue.hercules.sgi.eti.service.EvaluacionService;
 import org.crue.hercules.sgi.eti.service.MemoriaService;
-import org.crue.hercules.sgi.eti.service.ReportService;
 import org.crue.hercules.sgi.eti.service.SgdocService;
+import org.crue.hercules.sgi.eti.service.sgi.SgiApiRepService;
 import org.crue.hercules.sgi.eti.util.Constantes;
 import org.crue.hercules.sgi.framework.rsql.SgiRSQLJPASupport;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -84,7 +84,7 @@ public class EvaluacionServiceImpl implements EvaluacionService {
   private final EvaluacionConverter evaluacionConverter;
 
   /** Report service */
-  private final ReportService reportService;
+  private final SgiApiRepService reportService;
 
   /** SGDOC service */
   private final SgdocService sgdocService;
@@ -102,7 +102,7 @@ public class EvaluacionServiceImpl implements EvaluacionService {
    *                                      {@link ConvocatoriaReunion}
    * @param evaluacionConverter           converter para {@link Evaluacion}
    * @param reportService                 servicio para informes
-   *                                      {@link ReportService}
+   *                                      {@link SgiApiRepService}
    * @param sgdocService                  servicio gestor documental
    *                                      {@link SgdocService}
    */
@@ -111,7 +111,7 @@ public class EvaluacionServiceImpl implements EvaluacionService {
       EstadoMemoriaRepository estadoMemoriaRepository, RetrospectivaRepository retrospectivaRepository,
       MemoriaService memoriaService, ComentarioRepository comentarioRepository,
       ConvocatoriaReunionRepository convocatoriaReunionRepository, MemoriaRepository memoriaRepository,
-      EvaluacionConverter evaluacionConverter, ReportService reportService, SgdocService sgdocService) {
+      EvaluacionConverter evaluacionConverter, SgiApiRepService reportService, SgdocService sgdocService) {
 
     this.evaluacionRepository = evaluacionRepository;
     this.estadoMemoriaRepository = estadoMemoriaRepository;
@@ -511,29 +511,29 @@ public class EvaluacionServiceImpl implements EvaluacionService {
     Evaluacion evaluacion = this.findById(idEvaluacion);
     DocumentoOutput documento = null;
     switch (evaluacion.getTipoEvaluacion().getId().intValue()) {
-    case Constantes.TIPO_EVALUACION_MEMORIA_INT:
-      documento = getDocumentoByTipoEvaluacionMemoria(evaluacion, documento);
-      break;
-    case Constantes.TIPO_EVALUACION_SEGUIMIENTO_ANUAL_INT:
-      if (evaluacion.getDictamen() != null
-          && (evaluacion.getDictamen().getId().intValue() == Constantes.DICTAMEN_SOLICITUD_MODIFICACIONES)) {
-        documento = this.generarDocumento(evaluacion, false);
-      }
-      break;
-    case Constantes.TIPO_EVALUACION_SEGUIMIENTO_FINAL_INT:
-      if (evaluacion.getDictamen() != null && (evaluacion.getDictamen().getId()
-          .intValue() == Constantes.DICTAMEN_SOLICITUD_ACLARACIONES_SEGUIMIENTO_FINAL)) {
-        documento = this.generarDocumento(evaluacion, false);
-      }
-      break;
-    case Constantes.TIPO_EVALUACION_RETROSPECTIVA_INT:
-    default:
-      if (evaluacion.getDictamen() != null
-          && (evaluacion.getDictamen().getId().intValue() == Constantes.DICTAMEN_FAVORABLE
-              || evaluacion.getDictamen().getId().intValue() == Constantes.DICTAMEN_FAVORABLE_RETROSPECTIVA)) {
-        documento = this.generarDocumento(evaluacion, true);
-      }
-      break;
+      case Constantes.TIPO_EVALUACION_MEMORIA_INT:
+        documento = getDocumentoByTipoEvaluacionMemoria(evaluacion, documento);
+        break;
+      case Constantes.TIPO_EVALUACION_SEGUIMIENTO_ANUAL_INT:
+        if (evaluacion.getDictamen() != null
+            && (evaluacion.getDictamen().getId().intValue() == Constantes.DICTAMEN_SOLICITUD_MODIFICACIONES)) {
+          documento = this.generarDocumento(evaluacion, false);
+        }
+        break;
+      case Constantes.TIPO_EVALUACION_SEGUIMIENTO_FINAL_INT:
+        if (evaluacion.getDictamen() != null && (evaluacion.getDictamen().getId()
+            .intValue() == Constantes.DICTAMEN_SOLICITUD_ACLARACIONES_SEGUIMIENTO_FINAL)) {
+          documento = this.generarDocumento(evaluacion, false);
+        }
+        break;
+      case Constantes.TIPO_EVALUACION_RETROSPECTIVA_INT:
+      default:
+        if (evaluacion.getDictamen() != null
+            && (evaluacion.getDictamen().getId().intValue() == Constantes.DICTAMEN_FAVORABLE
+                || evaluacion.getDictamen().getId().intValue() == Constantes.DICTAMEN_FAVORABLE_RETROSPECTIVA)) {
+          documento = this.generarDocumento(evaluacion, true);
+        }
+        break;
     }
     return documento;
   }
@@ -565,17 +565,17 @@ public class EvaluacionServiceImpl implements EvaluacionService {
         tituloInforme = TITULO_INFORME_EVALUACION_RETROSPECTIVA;
       } else {
         switch (evaluacion.getMemoria().getTipoMemoria().getId().intValue()) {
-        case Constantes.TIPO_MEMORIA_NUEVA:
-          informePdf = reportService.getInformeFavorableMemoria(evaluacion.getId());
-          break;
-        case Constantes.TIPO_MEMORIA_MODIFICACION:
-          informePdf = reportService.getInformeFavorableModificacion(evaluacion.getId());
-          break;
-        case Constantes.TIPO_MEMORIA_RATIFICACION:
-          informePdf = reportService.getInformeFavorableRatificacion(evaluacion.getId());
-          break;
-        default:
-          break;
+          case Constantes.TIPO_MEMORIA_NUEVA:
+            informePdf = reportService.getInformeFavorableMemoria(evaluacion.getId());
+            break;
+          case Constantes.TIPO_MEMORIA_MODIFICACION:
+            informePdf = reportService.getInformeFavorableModificacion(evaluacion.getId());
+            break;
+          case Constantes.TIPO_MEMORIA_RATIFICACION:
+            informePdf = reportService.getInformeFavorableRatificacion(evaluacion.getId());
+            break;
+          default:
+            break;
         }
         tituloInforme = TITULO_INFORME_FAVORABLE;
       }
