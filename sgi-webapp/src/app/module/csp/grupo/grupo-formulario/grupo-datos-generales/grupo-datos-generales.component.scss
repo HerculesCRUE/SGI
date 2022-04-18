@@ -1,0 +1,9 @@
+.tablas-grupo {
+   .mat-cell.mat-column-nombre {
+      max-width: 30vw;
+      overflow: hidden;
+      padding-right: 10px;
+      text-overflow: ellipsis; 
+      white-space: nowrap; 
+    }
+}

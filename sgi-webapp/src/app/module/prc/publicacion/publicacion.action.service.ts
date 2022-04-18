@@ -2,17 +2,13 @@ import { Injectable } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { IProduccionCientifica } from '@core/models/prc/produccion-cientifica';
 import { ActionService } from '@core/services/action-service';
-import { ProyectoResumenService } from '@core/services/csp/proyecto-resumen/proyecto-resumen.service';
-import { AutorService } from '@core/services/prc/autor/autor.service';
-import { CampoProduccionCientificaService } from '@core/services/prc/campo-produccion-cientifica/campo-produccion-cientifica.service';
-import { ConfiguracionCampoService } from '@core/services/prc/configuracion-campo/configuracion-campo.service';
 import { IEstadoProduccionCientificaRequest } from '@core/services/prc/estado-produccion-cientifica/estado-produccion-cientifica-input';
 import { ProduccionCientificaService } from '@core/services/prc/produccion-cientifica/produccion-cientifica.service';
-import { DocumentoService } from '@core/services/sgdoc/documento.service';
 import { PersonaService } from '@core/services/sgp/persona.service';
 import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { CvnValorCampoService } from '../shared/cvn/services/cvn-valor-campo.service';
+import { ProduccionCientificaInitializerService } from '../shared/produccion-cientifica-initializer.service';
 import { PRODUCCION_CIENTIFICA_ROUTE_PARAMS } from '../shared/produccion-cientifica-route-params';
 import { IProduccionCientificaData, PRODUCCION_CIENTIFICA_DATA_KEY } from '../shared/produccion-cientifica.resolver';
 import { PublicacionDatosGeneralesFragment } from './publicacion-formulario/publicacion-datos-generales/publicacion-datos-generales.fragment';
@@ -33,14 +29,10 @@ export class PublicacionActionService extends ActionService {
 
   constructor(
     route: ActivatedRoute,
-    campoProduccionCientificaService: CampoProduccionCientificaService,
-    configuracionCampo: ConfiguracionCampoService,
     private produccionCientificaService: ProduccionCientificaService,
+    initializerService: ProduccionCientificaInitializerService,
     cvnValorCampoService: CvnValorCampoService,
     personaService: PersonaService,
-    proyectoResumenService: ProyectoResumenService,
-    documentoService: DocumentoService,
-    autorService: AutorService,
   ) {
     super();
 
@@ -51,14 +43,9 @@ export class PublicacionActionService extends ActionService {
 
       this.datosGenerales = new PublicacionDatosGeneralesFragment(
         this.data?.produccionCientifica,
-        campoProduccionCientificaService,
-        configuracionCampo,
+        initializerService,
         cvnValorCampoService,
-        produccionCientificaService,
-        personaService,
-        proyectoResumenService,
-        documentoService,
-        autorService);
+        personaService);
       this.addFragment(this.FRAGMENT.DATOS_GENERALES, this.datosGenerales);
     }
   }

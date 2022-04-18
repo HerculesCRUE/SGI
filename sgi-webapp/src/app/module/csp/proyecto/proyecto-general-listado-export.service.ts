@@ -253,8 +253,4 @@ export class ProyectoGeneralListadoExportService extends AbstractTableExportFill
     elementsRow.push(proyecto.contextoProyecto?.areaTematica?.nombre);
     return elementsRow;
   }
-
-  private notIsNullAndNotUndefined(value): boolean {
-    return value !== null && value !== undefined;
-  }
 }

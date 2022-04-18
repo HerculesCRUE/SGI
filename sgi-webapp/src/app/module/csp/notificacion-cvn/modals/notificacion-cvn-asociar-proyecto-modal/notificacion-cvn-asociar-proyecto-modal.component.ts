@@ -28,7 +28,7 @@ const NOTIFICACION_CVN_PROYECTO_UNIDAD_GESTION_KEY = marker('csp.convocatoria.un
   templateUrl: './notificacion-cvn-asociar-proyecto-modal.component.html',
   styleUrls: ['./notificacion-cvn-asociar-proyecto-modal.component.scss']
 })
-export class NotificacionCvnAsociarProyectoModalComponent extends DialogActionComponent<INotificacionProyectoExternoCVN, INotificacionProyectoExternoCVN> {
+export class NotificacionCvnAsociarProyectoModalComponent extends DialogActionComponent<INotificacionProyectoExternoCVN> {
 
   proyectos$: Observable<IProyecto[]>;
 

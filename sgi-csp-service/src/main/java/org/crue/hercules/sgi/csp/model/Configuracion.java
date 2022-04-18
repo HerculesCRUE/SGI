@@ -51,4 +51,8 @@ public class Configuracion extends BaseEntity {
   /** Validacion gastos */
   @Column(name = "validacion_gastos", columnDefinition = "boolean default false", nullable = true)
   private Boolean validacionGastos;
+
+  /** Código Universidad. */
+  @Column(name = "cod_universidad", nullable = true)
+  private String codigoUniversidad;
 }

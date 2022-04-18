@@ -5,11 +5,10 @@
   </button>
 </div>
 <mat-dialog-content>
-  <form [formGroup]="formGroup">
+  <form [formGroup]="formGroup" fxLayout="column">
     <!-- Tipo de hito -->
-    <div [fxLayout.xs]="fxLayoutProperties.xs" [fxLayout]="fxLayoutProperties.layout"
-      [fxLayoutGap]="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
-      <mat-form-field>
+    <div fxFlex>
+      <mat-form-field fxFlex="50">
         <mat-label>{{'csp.solicitud-hito.tipo' | translate}}</mat-label>
         <sgi-select-tipo-hito formControlName="tipoHito" required [modeloEjecucionId]="data.idModeloEjecucion"
           relation="solicitud">
@@ -17,15 +16,11 @@
         <mat-error *ngIf="formGroup.controls.tipoHito.errors?.required">
           {{'error.required.entity' | translate:msgParamTipoEntity}}
         </mat-error>
-        <mat-error *ngIf="formGroup.controls.tipoHito.errors?.invalid">
-          {{'error.invalid.entity' | translate:msgParamTipoEntity}}
-        </mat-error>
       </mat-form-field>
     </div>
     <!-- Fecha inicio -->
-    <div [fxLayout.xs]="fxLayoutProperties.xs" [fxLayout]="fxLayoutProperties.layout"
-      [fxLayoutGap]="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
-      <mat-form-field>
+    <div fxFlex>
+      <mat-form-field fxFlex="20">
         <mat-label>{{'csp.solicitud-hito.fecha'| translate}}</mat-label>
         <input matInput [ngxMatDatetimePicker]="pickerFechaInicio" formControlName="fechaInicio" required>
         <mat-datepicker-toggle class="fechaIcon" matSuffix [for]="pickerFechaInicio"></mat-datepicker-toggle>
@@ -40,9 +35,8 @@
       </mat-form-field>
     </div>
     <!-- Comentario -->
-    <div [fxLayout.xs]="fxLayoutProperties.xs" [fxLayout]="fxLayoutProperties.layout"
-      [fxLayoutGap]="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
-      <mat-form-field>
+    <div fxFlex>
+      <mat-form-field fxFlex>
         <mat-label>{{'csp.solicitud-hito.comentario' | translate}}</mat-label>
         <textarea matInput formControlName="comentario" type="text"
           placeholder="{{'csp.solicitud-hito.comentario' | translate}}">
@@ -53,10 +47,66 @@
       </mat-form-field>
     </div>
     <!-- Aviso -->
-    <div [fxLayout]="fxLayoutProperties.layout" class="checkbox">
-      <mat-checkbox color="primary" formControlName="aviso" id="aviso">
-        {{'csp.solicitud-hito.genera-aviso' | translate}}</mat-checkbox>
+    <div fxFlex>
+      <div fxFlex>
+        <mat-checkbox color="primary" formControlName="generaAviso" id="aviso">
+          {{'csp.solicitud-hito.genera-aviso' | translate}}</mat-checkbox>
+      </div>
     </div>
+    <mat-card formGroupName="aviso" *ngIf="formGroup.get('generaAviso').value" fxFlex fxLayout="column">
+
+      <div fxFlex>
+        <mat-form-field color="primary" fxFlex="20">
+          <mat-label>{{'label.aviso.fecha-envio' | translate: MSG_PARAMS.CARDINALIRY.SINGULAR}}</mat-label>
+          <input matInput [ngxMatDatetimePicker]="pickerFechaEnvio" formControlName="fechaEnvio" required [min]="now">
+          <mat-datepicker-toggle class="fechaIcon" matSuffix [for]="pickerFechaEnvio"></mat-datepicker-toggle>
+          <ngx-mat-datetime-picker #pickerFechaEnvio showSeconds="true" [defaultTime]="[0,0,0]">
+          </ngx-mat-datetime-picker>
+          <mat-error *ngIf="formGroup.hasError('required','aviso.fechaEnvio')">
+            {{'error.required.entity' | translate:msgParamFechaEnvioEntity}}
+          </mat-error>
+          <mat-error *ngIf="formGroup.hasError('matDatetimePickerMin','aviso.fechaEnvio')">
+            {{'error.min.date' | translate: {
+            entity:'label.aviso.fecha-envio' | translate: MSG_PARAMS.CARDINALIRY.SINGULAR,
+            date: formGroup.getError('matDatetimePickerMin','aviso.fechaEnvio').min | luxon: 'short'
+            } }}
+          </mat-error>
+        </mat-form-field>
+      </div>
+      <div fxFlex>
+        <mat-form-field fxFlex>
+          <mat-label>{{'label.aviso.asunto' | translate: MSG_PARAMS.CARDINALIRY.SINGULAR}}</mat-label>
+          <input matInput formControlName="asunto" type="text" required />
+          <mat-error *ngIf="formGroup.hasError('required','aviso.asunto')">
+            {{'error.required.entity' | translate:msgParamAsuntoEntity}}
+          </mat-error>
+        </mat-form-field>
+      </div>
+      <div fxFlex>
+        <mat-form-field fxFlex>
+          <mat-label>{{'label.aviso.contenido' | translate: MSG_PARAMS.CARDINALIRY.SINGULAR}}</mat-label>
+          <textarea matInput formControlName="contenido" type="text" rows="5" required>
+              </textarea>
+          <mat-error *ngIf="formGroup.hasError('required','aviso.contenido')">
+            {{'error.required.entity' | translate:msgParamContenidoEntity}}
+          </mat-error>
+        </mat-form-field>
+      </div>
+      <div fxFlex>
+        <mat-form-field fxFlex>
+          <mat-label>{{'label.aviso.destinatarios' | translate: MSG_PARAMS.CARDINALIRY.PLURAL}}</mat-label>
+          <sgi-select-email-recipients formControlName="destinatarios" required>
+          </sgi-select-email-recipients>
+          <mat-error *ngIf="formGroup.hasError('required','aviso.destinatarios')">
+            {{'error.required.entity' | translate:msgParamDestinatariosEntity}}
+          </mat-error>
+        </mat-form-field>
+      </div>
+      <div fxFlex fxLayoutGap="10px">
+        <mat-checkbox color="primary" formControlName="incluirIpsSolicitud">
+          {{'label.aviso.incluir-ips-solicitud' | translate: MSG_PARAMS.CARDINALIRY.SINGULAR}}</mat-checkbox>
+      </div>
+    </mat-card>
   </form>
 </mat-dialog-content>
 <mat-dialog-actions>

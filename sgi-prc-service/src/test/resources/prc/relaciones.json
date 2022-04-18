@@ -1,0 +1,26 @@
+[
+  {
+    "id": 9,
+    "tipoEntidadOrigen": "PROYECTO",
+    "tipoEntidadDestino": "INVENCION",
+    "entidadOrigenRef": "1",
+    "entidadDestinoRef": "111",
+    "observaciones": "Proyecto 1 con Invencion 111"
+  },
+  {
+    "id": 10,
+    "tipoEntidadOrigen": "PROYECTO",
+    "tipoEntidadDestino": "INVENCION",
+    "entidadOrigenRef": "2",
+    "entidadDestinoRef": "111",
+    "observaciones": "Proyecto 2 con Invencion 111"
+  },
+  {
+    "id": 11,
+    "tipoEntidadOrigen": "PROYECTO",
+    "tipoEntidadDestino": "INVENCION",
+    "entidadOrigenRef": "3",
+    "entidadDestinoRef": "111",
+    "observaciones": "Proyecto 3 con Invencion 111"
+  }
+]

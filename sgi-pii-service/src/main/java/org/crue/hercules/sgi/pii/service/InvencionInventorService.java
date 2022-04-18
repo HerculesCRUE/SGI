@@ -283,4 +283,8 @@ public class InvencionInventorService {
             .parameter("entity", ApplicationContextSupport.getMessage(InvencionInventor.class)).build());
   }
 
+  public List<InvencionInventor> findByInvencionId(Long invencionId) {
+    return repository.findByInvencionId(invencionId);
+  }
+
 }

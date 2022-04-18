@@ -2,9 +2,9 @@ package org.crue.hercules.sgi.csp.repository;
 
 import java.util.List;
 
+import org.crue.hercules.sgi.csp.model.Solicitud;
 import org.crue.hercules.sgi.csp.model.SolicitudProyecto;
 import org.crue.hercules.sgi.csp.model.SolicitudProyectoEquipo;
-import org.crue.hercules.sgi.csp.model.Solicitud;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
@@ -28,6 +28,16 @@ public interface SolicitudProyectoEquipoRepository
    * @return Listado de solicitudes modalidad
    */
   List<SolicitudProyectoEquipo> findAllBySolicitudProyectoId(Long solicitudProyectoId);
+
+  /**
+   * Obtiene las {@link SolicitudProyectoEquipo} con RolProyecto con rol principal
+   * asociadas a una
+   * {@link Solicitud}
+   * 
+   * @param solicitudProyectoId Identificador de la {@link Solicitud}
+   * @return Listado de solicitudes modalidad
+   */
+  List<SolicitudProyectoEquipo> findAllBySolicitudProyectoIdAndRolProyectoRolPrincipalTrue(Long solicitudProyectoId);
 
   /**
    * Compruba si existe una {@link SolicitudProyectoEquipo} con el

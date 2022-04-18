@@ -41,4 +41,15 @@
       }
     }
   }
+
+  .ejecucion-economica {
+    .mat-cell.mat-column-responsable {
+      max-width: 30vw;
+      overflow: hidden;
+      padding-right: 10px;
+      text-overflow: ellipsis; 
+      white-space: nowrap; 
+    }
+  }
+  
 }

@@ -4,7 +4,6 @@ import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { MatSelect } from '@angular/material/select';
 import { MatTableDataSource } from '@angular/material/table';
 import { FragmentComponent } from '@core/component/fragment.component';
-import { HttpProblem } from '@core/errors/http-problem';
 import { MSG_PARAMS } from '@core/i18n';
 import { IDatoEconomicoDetalle } from '@core/models/sge/dato-economico-detalle';
 import { FxFlexProperties } from '@core/models/shared/flexLayout/fx-flex-properties';
@@ -82,12 +81,8 @@ export class PersonalContratadoComponent extends FragmentComponent implements On
         };
         this.matDialog.open(PersonalContratadoExportModalComponent, config);
       },
-      (error) => {
-        if (error instanceof HttpProblem) {
-          this.formPart.pushProblems(error);
-        }
-      })
-    );
+      this.formPart.processError
+    ));
   }
 
   public clearDesglose(): void {

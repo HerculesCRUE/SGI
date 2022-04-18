@@ -4,12 +4,11 @@ import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dial
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
+import { DialogCommonComponent } from '@core/component/dialog-common.component';
 import { SearchModalData } from '@core/component/select-dialog/select-dialog.component';
-import { HttpProblem } from '@core/errors/http-problem';
 import { MSG_PARAMS } from '@core/i18n';
 import { IProyectoSge } from '@core/models/sge/proyecto-sge';
 import { ProyectoSgeService } from '@core/services/sge/proyecto-sge.service';
-import { SnackBarService } from '@core/services/snack-bar.service';
 import { LuxonUtils } from '@core/utils/luxon-utils';
 import { TranslateService } from '@ngx-translate/core';
 import { RSQLSgiRestFilter, RSQLSgiRestSort, SgiRestFilter, SgiRestFilterOperator, SgiRestSortDirection } from '@sgi/framework/http';
@@ -18,7 +17,6 @@ import { merge, Observable, of } from 'rxjs';
 import { catchError, map, tap } from 'rxjs/operators';
 import { ACTION_MODAL_MODE, IProyectoEconomicoFormlyData, ProyectoEconomicoFormlyModalComponent } from 'src/app/esb/sge/formly-forms/proyecto-economico-formly-modal/proyecto-economico-formly-modal.component';
 
-const MSG_LISTADO_ERROR = marker('error.load');
 const TIPO_PROYECTO_KEY = marker('sge.proyecto');
 
 export interface SearchProyectoEconomicoModalData extends SearchModalData {
@@ -36,7 +34,7 @@ interface ProyectoListado {
   templateUrl: './search-proyecto-economico-modal.component.html',
   styleUrls: ['./search-proyecto-economico-modal.component.scss']
 })
-export class SearchProyectoEconomicoModalComponent implements OnInit, AfterViewInit {
+export class SearchProyectoEconomicoModalComponent extends DialogCommonComponent implements OnInit, AfterViewInit {
   formGroup: FormGroup;
 
   proyectos$: Observable<ProyectoListado[]>;
@@ -55,13 +53,14 @@ export class SearchProyectoEconomicoModalComponent implements OnInit, AfterViewI
     public dialogRef: MatDialogRef<SearchProyectoEconomicoModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data: SearchProyectoEconomicoModalData,
     private proyectoService: ProyectoSgeService,
-    protected snackBarService: SnackBarService,
     private readonly translate: TranslateService,
     private proyectoCreateMatDialog: MatDialog
   ) {
+    super(dialogRef);
   }
 
   ngOnInit(): void {
+    super.ngOnInit();
     this.formGroup = new FormGroup({
       datosProyecto: new FormControl(this.data.searchTerm),
       fechaInicioDesde: new FormControl(null),
@@ -83,6 +82,7 @@ export class SearchProyectoEconomicoModalComponent implements OnInit, AfterViewI
   }
 
   ngAfterViewInit(): void {
+    super.ngAfterViewInit();
     merge(
       this.paginator.page,
       this.sort.sortChange
@@ -133,12 +133,7 @@ export class SearchProyectoEconomicoModalComponent implements OnInit, AfterViewI
           // On error reset pagination values
           this.paginator.firstPage();
           this.totalElementos = 0;
-          if (error instanceof HttpProblem) {
-            this.snackBarService.showError(error);
-          }
-          else {
-            this.snackBarService.showError(MSG_LISTADO_ERROR);
-          }
+          this.processError(error);
           return of([]);
         })
       );

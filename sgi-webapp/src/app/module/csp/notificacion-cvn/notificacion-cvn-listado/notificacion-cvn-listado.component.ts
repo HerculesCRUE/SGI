@@ -3,7 +3,7 @@ import { FormControl, FormGroup } from '@angular/forms';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { AbstractTablePaginationComponent } from '@core/component/abstract-table-pagination.component';
-import { HttpProblem } from '@core/errors/http-problem';
+import { SgiError } from '@core/errors/sgi-error';
 import { MSG_PARAMS } from '@core/i18n';
 import { INotificacionProyectoExternoCVN } from '@core/models/csp/notificacion-proyecto-externo-cvn';
 import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-properties';
@@ -327,7 +327,7 @@ export class NotificacionCvnListadoComponent extends AbstractTablePaginationComp
         },
         (error) => {
           this.logger.error(error);
-          if (error instanceof HttpProblem) {
+          if (error instanceof SgiError) {
             this.snackBarService.showError(error);
           }
           else {
@@ -351,7 +351,7 @@ export class NotificacionCvnListadoComponent extends AbstractTablePaginationComp
         },
         (error) => {
           this.logger.error(error);
-          if (error instanceof HttpProblem) {
+          if (error instanceof SgiError) {
             this.snackBarService.showError(error);
           }
           else {

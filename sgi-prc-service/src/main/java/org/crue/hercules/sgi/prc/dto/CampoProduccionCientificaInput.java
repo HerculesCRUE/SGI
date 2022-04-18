@@ -8,8 +8,8 @@ import javax.validation.constraints.Size;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import org.crue.hercules.sgi.prc.enums.CodigoCVN;
 import org.crue.hercules.sgi.prc.model.BaseEntity;
-import org.crue.hercules.sgi.prc.model.CampoProduccionCientifica.CodigoCVN;
 import org.springframework.util.StringUtils;
 
 import lombok.Data;
@@ -34,13 +34,13 @@ public class CampoProduccionCientificaInput implements Serializable {
   public void setCodigo(String codigo) {
     this.codigo = codigo;
     if (StringUtils.hasText(codigo)) {
-      this.codigoCVN = CodigoCVN.getByInternValue(codigo);
+      this.codigoCVN = CodigoCVN.getByCode(codigo);
     }
   }
 
   public void setCodigoCVN(CodigoCVN codigoCVN) {
     if (null != codigoCVN) {
-      this.codigo = codigoCVN.getInternValue();
+      this.codigo = codigoCVN.getCode();
     }
   }
 

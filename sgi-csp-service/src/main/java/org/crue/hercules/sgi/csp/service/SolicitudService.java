@@ -14,9 +14,11 @@ import org.crue.hercules.sgi.csp.dto.eti.ChecklistOutput;
 import org.crue.hercules.sgi.csp.dto.eti.EquipoTrabajo;
 import org.crue.hercules.sgi.csp.dto.eti.PeticionEvaluacion;
 import org.crue.hercules.sgi.csp.dto.eti.PeticionEvaluacion.EstadoFinanciacion;
+import org.crue.hercules.sgi.csp.dto.sgp.PersonaOutput;
 import org.crue.hercules.sgi.csp.enums.FormularioSolicitud;
 import org.crue.hercules.sgi.csp.exceptions.ColaborativoWithoutCoordinadorExternoException;
 import org.crue.hercules.sgi.csp.exceptions.ConfiguracionSolicitudNotFoundException;
+import org.crue.hercules.sgi.csp.exceptions.ConvocatoriaEnlaceNotFoundException;
 import org.crue.hercules.sgi.csp.exceptions.ConvocatoriaNotFoundException;
 import org.crue.hercules.sgi.csp.exceptions.EstadoSolicitudNotUpdatedException;
 import org.crue.hercules.sgi.csp.exceptions.MissingInvestigadorPrincipalInSolicitudProyectoEquipoException;
@@ -24,12 +26,12 @@ import org.crue.hercules.sgi.csp.exceptions.SolicitudNotFoundException;
 import org.crue.hercules.sgi.csp.exceptions.SolicitudProyectoNotFoundException;
 import org.crue.hercules.sgi.csp.exceptions.SolicitudProyectoWithoutSocioCoordinadorException;
 import org.crue.hercules.sgi.csp.exceptions.SolicitudWithoutRequeridedDocumentationException;
-import org.crue.hercules.sgi.csp.exceptions.UserNotAuthorizedToAccessSolicitudException;
 import org.crue.hercules.sgi.csp.exceptions.UserNotAuthorizedToChangeEstadoSolicitudException;
 import org.crue.hercules.sgi.csp.exceptions.UserNotAuthorizedToModifySolicitudException;
 import org.crue.hercules.sgi.csp.exceptions.eti.GetPeticionEvaluacionException;
 import org.crue.hercules.sgi.csp.model.ConfiguracionSolicitud;
 import org.crue.hercules.sgi.csp.model.Convocatoria;
+import org.crue.hercules.sgi.csp.model.ConvocatoriaEnlace;
 import org.crue.hercules.sgi.csp.model.ConvocatoriaEntidadFinanciadora;
 import org.crue.hercules.sgi.csp.model.DocumentoRequeridoSolicitud;
 import org.crue.hercules.sgi.csp.model.EstadoSolicitud;
@@ -41,6 +43,7 @@ import org.crue.hercules.sgi.csp.model.SolicitudProyecto;
 import org.crue.hercules.sgi.csp.model.SolicitudProyectoEquipo;
 import org.crue.hercules.sgi.csp.model.SolicitudProyectoSocio;
 import org.crue.hercules.sgi.csp.repository.ConfiguracionSolicitudRepository;
+import org.crue.hercules.sgi.csp.repository.ConvocatoriaEnlaceRepository;
 import org.crue.hercules.sgi.csp.repository.ConvocatoriaEntidadFinanciadoraRepository;
 import org.crue.hercules.sgi.csp.repository.ConvocatoriaRepository;
 import org.crue.hercules.sgi.csp.repository.DocumentoRequeridoSolicitudRepository;
@@ -56,6 +59,8 @@ import org.crue.hercules.sgi.csp.repository.predicate.SolicitudPredicateResolver
 import org.crue.hercules.sgi.csp.repository.specification.DocumentoRequeridoSolicitudSpecifications;
 import org.crue.hercules.sgi.csp.repository.specification.SolicitudSpecifications;
 import org.crue.hercules.sgi.csp.service.sgi.SgiApiEtiService;
+import org.crue.hercules.sgi.csp.service.sgi.SgiApiSgpService;
+import org.crue.hercules.sgi.csp.util.SolicitudAuthorityHelper;
 import org.crue.hercules.sgi.framework.rsql.SgiRSQLJPASupport;
 import org.crue.hercules.sgi.framework.security.core.context.SgiSecurityContextHolder;
 import org.springframework.data.domain.Page;
@@ -94,6 +99,10 @@ public class SolicitudService {
   private final SolicitudProyectoPresupuestoRepository solicitudProyectoPresupuestoRepository;
   private final ConvocatoriaRepository convocatoriaRepository;
   private final ConvocatoriaEntidadFinanciadoraRepository convocatoriaEntidadFinanciadoraRepository;
+  private final ConvocatoriaEnlaceRepository convocatoriaEnlaceRepository;
+  private final ComunicadosService comunicadosService;
+  private final SgiApiSgpService personasService;
+  private final SolicitudAuthorityHelper solicitudAuthorityHelper;
 
   public SolicitudService(SgiConfigProperties sgiConfigProperties,
       SgiApiEtiService sgiApiEtiService, SolicitudRepository repository,
@@ -106,7 +115,11 @@ public class SolicitudService {
       SolicitudProyectoSocioRepository solicitudProyectoSocioRepository,
       SolicitudProyectoPresupuestoRepository solicitudProyectoPresupuestoRepository,
       ConvocatoriaRepository convocatoriaRepository,
-      ConvocatoriaEntidadFinanciadoraRepository convocatoriaEntidadFinanciadoraRepository) {
+      ConvocatoriaEntidadFinanciadoraRepository convocatoriaEntidadFinanciadoraRepository,
+      ConvocatoriaEnlaceRepository convocatoriaEnlaceRepository,
+      ComunicadosService comunicadosService,
+      SgiApiSgpService personasService,
+      SolicitudAuthorityHelper solicitudAuthorityHelper) {
     this.sgiConfigProperties = sgiConfigProperties;
     this.sgiApiEtiService = sgiApiEtiService;
     this.repository = repository;
@@ -121,6 +134,10 @@ public class SolicitudService {
     this.solicitudProyectoPresupuestoRepository = solicitudProyectoPresupuestoRepository;
     this.convocatoriaRepository = convocatoriaRepository;
     this.convocatoriaEntidadFinanciadoraRepository = convocatoriaEntidadFinanciadoraRepository;
+    this.convocatoriaEnlaceRepository = convocatoriaEnlaceRepository;
+    this.comunicadosService = comunicadosService;
+    this.personasService = personasService;
+    this.solicitudAuthorityHelper = solicitudAuthorityHelper;
   }
 
   /**
@@ -192,8 +209,6 @@ public class SolicitudService {
 
     Assert.notNull(solicitud.getId(), "Id no puede ser null para actualizar Solicitud");
 
-    Assert.notNull(solicitud.getTitulo(), "Titulo no puede ser null para actualizar Solicitud");
-
     Assert.notNull(solicitud.getSolicitanteRef(), "El solicitante no puede ser null para actualizar Solicitud");
 
     Assert.isTrue(
@@ -208,7 +223,7 @@ public class SolicitudService {
 
       Assert.isTrue(solicitud.getActivo(), "Solicitud tiene que estar activo para actualizarse");
 
-      Assert.isTrue(this.hasPermisosEdicion(solicitud),
+      Assert.isTrue(solicitudAuthorityHelper.hasPermisosEdicion(solicitud),
           "La Convocatoria pertenece a una Unidad de Gestión no gestionable por el usuario");
 
       data.setSolicitanteRef(solicitud.getSolicitanteRef());
@@ -311,14 +326,14 @@ public class SolicitudService {
     log.debug("findById(Long id) - start");
     final Solicitud returnValue = repository.findById(id).orElseThrow(() -> new SolicitudNotFoundException(id));
 
-    checkUserHasAuthorityViewSolicitud(returnValue);
+    solicitudAuthorityHelper.checkUserHasAuthorityViewSolicitud(returnValue);
 
     String authorityVisualizar = "CSP-SOL-V";
 
     Assert
         .isTrue(
             SgiSecurityContextHolder.hasAuthority("CSP-SOL-INV-C")
-                || hasPermisosEdicion(returnValue)
+                || solicitudAuthorityHelper.hasPermisosEdicion(returnValue)
                 || (SgiSecurityContextHolder.hasAuthority(authorityVisualizar) || SgiSecurityContextHolder
                     .hasAuthorityForUO(authorityVisualizar, returnValue.getUnidadGestionRef())),
             "La Convocatoria pertenece a una Unidad de Gestión no gestionable por el usuario");
@@ -336,13 +351,13 @@ public class SolicitudService {
    *         filtradas.
    */
   public Page<Solicitud> findAllRestringidos(String query, Pageable paging) {
-    log.debug("findAll(String query, Pageable paging) - start");
+    log.debug("findAllRestringidos(String query, Pageable paging) - start");
 
     Specification<Solicitud> specs = SolicitudSpecifications.distinct().and(SolicitudSpecifications.activos()
         .and(SgiRSQLJPASupport.toSpecification(query, SolicitudPredicateResolver.getInstance())));
 
     Page<Solicitud> returnValue = repository.findAll(specs, paging);
-    log.debug("findAll(String query, Pageable paging) - end");
+    log.debug("findAllRestringidos(String query, Pageable paging) - end");
     return returnValue;
   }
 
@@ -430,7 +445,7 @@ public class SolicitudService {
     // VALIDACIONES
 
     // Permisos
-    if (!hasPermisosEdicion(solicitud)) {
+    if (!solicitudAuthorityHelper.hasPermisosEdicion(solicitud)) {
       throw new UserNotAuthorizedToModifySolicitudException();
     }
 
@@ -446,7 +461,7 @@ public class SolicitudService {
       validateCambioNoDesistidaRenunciada(solicitud);
     }
 
-    if (isUserInvestigador()) {
+    if (solicitudAuthorityHelper.isUserInvestigador()) {
       validateCambioEstadoInvestigador(solicitud.getEstado().getEstado(), estadoSolicitud.getEstado());
     }
 
@@ -506,7 +521,23 @@ public class SolicitudService {
                 // Copiamos el equipo de trabajo de una solicitud (personaRef
                 // SolicitudProyectoEquipo)
                 // a una petición de evalaución (personaRef EquipoTrabajo)
-                copyMiembrosEquipoSolicitudToPeticionEvaluacion(peticionEvaluacion, solicitudProyecto.getId());
+                copyMiembrosEquipoSolicitudToPeticionEvaluacion(peticionEvaluacion,
+                    solicitudProyecto.getId());
+
+                try {
+                  // Enviamos el comunicado de alta de solicitud de petición evaluación de ética
+                  this.comunicadosService.enviarComunicadoSolicitudAltaPeticionEvaluacionEti(
+                      peticionEvaluacion.getCodigo(), solicitud.getCodigoRegistroInterno(),
+                      solicitud.getSolicitanteRef());
+                } catch (Exception e) {
+                  log.debug(
+                      "Error enviarComunicadoSolicitudAltaPeticionEvaluacionEti(String codigoPeticionEvaluacion, String codigoSolicitud, String solicitanteRef) -  codigoPeticionEvaluacion: "
+                          + peticionEvaluacion
+                              .getCodigo()
+                          + ", codigoSolicitud: " + solicitud.getCodigoRegistroInterno() + ", solicitanteRef: "
+                          + solicitud.getSolicitanteRef(),
+                      e);
+                }
               } else {
                 // throw exception
                 throw new GetPeticionEvaluacionException();
@@ -559,7 +590,7 @@ public class SolicitudService {
       }
     }
     Solicitud returnValue = repository.save(solicitud);
-
+    enviarComunicadosCambioEstado(solicitud, estadoSolicitud);
     log.debug("cambiarEstado(Long id, EstadoSolicitud estadoSolicitud) - end");
     return returnValue;
   }
@@ -572,7 +603,7 @@ public class SolicitudService {
    */
   public String getCodigoRegistroInterno(Long id) {
     log.debug("getCodigoRegistroInterno(Long id) - start");
-    final String returnValue = repository.findById(id).map(sol -> sol.getCodigoRegistroInterno())
+    final String returnValue = repository.findById(id).map(Solicitud::getCodigoRegistroInterno)
         .orElseThrow(() -> new SolicitudNotFoundException(id));
     log.debug("getCodigoRegistroInterno(Long id) - end");
     return returnValue;
@@ -597,9 +628,9 @@ public class SolicitudService {
           equipoTrabajo.peticionEvaluacion(peticionEvaluacion);
           equipoTrabajo.personaRef(solicitudProyectoEquipo.getPersonaRef());
           return equipoTrabajo.build();
-        }).distinct().forEach(equipoTrabajo -> {
-          sgiApiEtiService.newEquipoTrabajo(peticionEvaluacion.getId(), equipoTrabajo);
-        });
+        })
+        .distinct()
+        .forEach(equipoTrabajo -> sgiApiEtiService.newEquipoTrabajo(peticionEvaluacion.getId(), equipoTrabajo));
     log.debug(
         "copyMiembrosEquipoSolicitudToPeticionEvaluacion(PeticionEvaluacion peticionEvaluacion, Long solicitudProyectoId) - end");
   }
@@ -739,11 +770,11 @@ public class SolicitudService {
   public boolean modificable(Long id) {
     Solicitud solicitud = repository.findById(id).orElseThrow(() -> new SolicitudNotFoundException(id));
 
-    if (!this.hasPermisosEdicion(solicitud)) {
+    if (!solicitudAuthorityHelper.hasPermisosEdicion(solicitud)) {
       return false;
     }
 
-    if (isUserInvestigador()) {
+    if (solicitudAuthorityHelper.isUserInvestigador()) {
       return modificableByInvestigador(solicitud);
     } else {
       return modificableByUnidadGestion(solicitud);
@@ -761,11 +792,11 @@ public class SolicitudService {
   public boolean modificableEstadoAndDocumentos(Long id) {
     Solicitud solicitud = repository.findById(id).orElseThrow(() -> new SolicitudNotFoundException(id));
 
-    if (!this.hasPermisosEdicion(solicitud)) {
+    if (!solicitudAuthorityHelper.hasPermisosEdicion(solicitud)) {
       return false;
     }
 
-    if (isUserInvestigador()) {
+    if (solicitudAuthorityHelper.isUserInvestigador()) {
       return modificableEstadoAndDocumentosByInvestigador(solicitud);
     } else {
       return modificableByUnidadGestion(solicitud);
@@ -794,7 +825,7 @@ public class SolicitudService {
    * @return true si puede ser modificada / false si no puede ser modificada
    */
   private boolean modificableEstadoAndDocumentosByInvestigador(Solicitud solicitud) {
-    if (!this.hasPermisosEdicion(solicitud)) {
+    if (!solicitudAuthorityHelper.hasPermisosEdicion(solicitud)) {
       return false;
     }
 
@@ -864,7 +895,7 @@ public class SolicitudService {
         throw new MissingInvestigadorPrincipalInSolicitudProyectoEquipoException();
       }
 
-      if (!hasAuthorityEditInvestigador()) {
+      if (!solicitudAuthorityHelper.hasAuthorityEditInvestigador()) {
         // En caso de sea colaborativo y no tenga coordinador externo
         if (Boolean.TRUE.equals(solicitudProyecto.getColaborativo())
             && solicitudProyecto.getCoordinadorExterno() == null) {
@@ -930,68 +961,6 @@ public class SolicitudService {
     }
   }
 
-  private boolean hasAuthorityCreateInvestigador() {
-    return SgiSecurityContextHolder.hasAuthorityForAnyUO("CSP-SOL-INV-C");
-  }
-
-  private boolean hasAuthorityDeleteInvestigador() {
-    return SgiSecurityContextHolder.hasAuthorityForAnyUO("CSP-SOL-INV-BR");
-  }
-
-  private boolean hasAuthorityEditInvestigador() {
-    return SgiSecurityContextHolder.hasAuthorityForAnyUO("CSP-SOL-INV-ER");
-  }
-
-  private boolean hasAuthorityEditUnidadGestion(String unidadGestion) {
-    return SgiSecurityContextHolder.hasAuthorityForUO("CSP-SOL-E", unidadGestion);
-  }
-
-  private boolean hasAuthorityViewInvestigador(Solicitud solicitud) {
-    return SgiSecurityContextHolder.hasAuthorityForAnyUO("CSP-SOL-INV-ER")
-        && solicitud.getSolicitanteRef().equals(getAuthenticationPersonaRef());
-  }
-
-  private boolean hasAuthorityViewUnidadGestion(Solicitud solicitud) {
-    return SgiSecurityContextHolder.hasAuthorityForUO("CSP-SOL-E", solicitud.getUnidadGestionRef())
-        || SgiSecurityContextHolder.hasAuthorityForUO("CSP-SOL-V", solicitud.getUnidadGestionRef());
-  }
-
-  private String getAuthenticationPersonaRef() {
-    return SecurityContextHolder.getContext().getAuthentication().getName();
-  }
-
-  private boolean isUserInvestigador() {
-    return hasAuthorityCreateInvestigador() || hasAuthorityDeleteInvestigador() || hasAuthorityEditInvestigador();
-  }
-
-  /**
-   * Comprueba si el usuario logueado tiene permiso para ver la {@link Solicitud}
-   * 
-   * @param solicitud la {@link Solicitud}
-   * 
-   * @throws {@link UserNotAuthorizedToAccessSolicitudException}
-   */
-  private void checkUserHasAuthorityViewSolicitud(Solicitud solicitud) {
-    if (!(hasAuthorityViewInvestigador(solicitud) || hasAuthorityViewUnidadGestion(solicitud))) {
-      throw new UserNotAuthorizedToAccessSolicitudException();
-    }
-  }
-
-  /**
-   * Comprueba si el usuario logueado tiene los permisos globales de edición, el
-   * de la unidad de gestión de la solicitud o si es tiene el permiso de
-   * investigador y es el creador de la solicitud.
-   * 
-   * @param solicitud La solicitud
-   * @return <code>true</code> si tiene el permiso de edición; <code>false</code>
-   *         caso contrario.
-   */
-  private boolean hasPermisosEdicion(Solicitud solicitud) {
-    return hasAuthorityEditUnidadGestion(solicitud.getUnidadGestionRef())
-        || (hasAuthorityEditInvestigador() && solicitud.getCreadorRef().equals(
-            getAuthenticationPersonaRef()));
-  }
-
   private boolean isEntidadFinanciadora(Solicitud solicitud) {
     // Si hay entidades financiadoras (registros en la tabla "Convocatoria
     // Entidad Financiadora" de la convocatoria asociada a la solicitud) valor "Sí",
@@ -1031,4 +1000,186 @@ public class SolicitudService {
         .sumImporteSolicitadoBySolicitudIdAndFinanciacionAjenaIsFalse(solicitud.getId());
   }
 
+  private void enviarComunicadosCambioEstado(Solicitud solicitud, EstadoSolicitud estadoSolicitud) {
+    log.debug("enviarComunicadosCambioEstado(Solicitud solicitud, EstadoSolicitud estadoSolicitud) - start");
+    try {
+      switch (estadoSolicitud.getEstado()) {
+        case SOLICITADA:
+          /*
+           * Enviamos el comunicado de Cambio al estado SOLICITADA en solicitudes de
+           * CONVOCATORIAS PROPIAS registradas por el propio por solicitante
+           */
+          if (checkConvocatoriaPropia(solicitud.getSolicitanteRef())
+              && checkConvocatoriaTramitable(solicitud.getConvocatoriaId())) {
+            Convocatoria convocatoria = convocatoriaRepository.findById(solicitud.getConvocatoriaId())
+                .orElseThrow(() -> new ConvocatoriaNotFoundException(solicitud.getConvocatoriaId()));
+            this.comunicadosService.enviarComunicadoSolicitudCambioEstadoSolicitada(
+                getNombreApellidosByPersonaRef(solicitud.getSolicitanteRef()),
+                solicitud.getUnidadGestionRef(), convocatoria.getTitulo(), convocatoria.getFechaPublicacion(),
+                solicitud.getEstado().getFechaEstado());
+          }
+          break;
+        case PRESENTADA_SUBSANACION:
+        case ALEGACION_FASE_ADMISION:
+        case RECURSO_FASE_ADMISION:
+        case ALEGACION_FASE_PROVISIONAL:
+        case RECURSO_FASE_CONCESION:
+          /*
+           * Enviamos el comunicado de Cambio de estado a PRESENTACIÓN DE ALEGACIONES en
+           * solicitudes de CONVOCATORIAS PROPIAS registradas por el propio por
+           * solicitante
+           */
+          if (checkConvocatoriaPropia(solicitud.getSolicitanteRef())
+              && checkConvocatoriaTramitable(solicitud.getConvocatoriaId())) {
+            Convocatoria convocatoria = convocatoriaRepository.findById(solicitud.getConvocatoriaId())
+                .orElseThrow(() -> new ConvocatoriaNotFoundException(solicitud.getConvocatoriaId()));
+            this.comunicadosService.enviarComunicadoSolicitudCambioEstadoAlegaciones(
+                getNombreApellidosByPersonaRef(solicitud.getSolicitanteRef()),
+                solicitud.getUnidadGestionRef(), convocatoria.getTitulo(), solicitud.getCodigoRegistroInterno(),
+                solicitud.getEstado().getFechaEstado(), convocatoria.getFechaProvisional());
+          }
+          break;
+        case EXCLUIDA_PROVISIONAL:
+          /*
+           * Enviamos el comunicado de Cambio al estado EXCLUIDA PROVISIONAL en
+           * solicitudes de
+           * CONVOCATORIAS PROPIAS registradas por el propio por solicitante
+           */
+          if (checkConvocatoriaTramitable(solicitud.getConvocatoriaId())) {
+            Convocatoria convocatoria = convocatoriaRepository.findById(solicitud.getConvocatoriaId())
+                .orElseThrow(() -> new ConvocatoriaNotFoundException(solicitud.getConvocatoriaId()));
+            List<ConvocatoriaEnlace> enlaces = convocatoriaEnlaceRepository
+                .findByConvocatoriaId(solicitud.getConvocatoriaId())
+                .orElseThrow(() -> new ConvocatoriaEnlaceNotFoundException(solicitud.getConvocatoriaId()));
+            this.comunicadosService.enviarComunicadoSolicitudCambioEstadoExclProv(solicitud.getSolicitanteRef(),
+                convocatoria.getTitulo(),
+                convocatoria.getFechaProvisional(),
+                enlaces);
+          }
+          break;
+        case EXCLUIDA_DEFINITIVA:
+          /*
+           * Enviamos el comunicado de Cambio al estado EXCLUIDA DEFINITIVA en
+           * solicitudes de
+           * CONVOCATORIAS PROPIAS registradas por el propio por solicitante
+           */
+          if (checkConvocatoriaTramitable(solicitud.getConvocatoriaId())) {
+            Convocatoria convocatoria = convocatoriaRepository.findById(solicitud.getConvocatoriaId())
+                .orElseThrow(() -> new ConvocatoriaNotFoundException(solicitud.getConvocatoriaId()));
+            List<ConvocatoriaEnlace> enlaces = convocatoriaEnlaceRepository
+                .findByConvocatoriaId(solicitud.getConvocatoriaId())
+                .orElseThrow(() -> new ConvocatoriaEnlaceNotFoundException(solicitud.getConvocatoriaId()));
+            this.comunicadosService.enviarComunicadoSolicitudCambioEstadoExclDef(solicitud.getSolicitanteRef(),
+                convocatoria.getTitulo(),
+                convocatoria.getFechaConcesion(),
+                enlaces);
+          }
+          break;
+        case CONCEDIDA_PROVISIONAL:
+          /*
+           * Enviamos el comunicado de Cambio al estado CONCEDIDA PROVISIONAL en
+           * solicitudes de
+           * CONVOCATORIAS PROPIAS registradas por el propio por solicitante
+           */
+
+          if (checkConvocatoriaTramitable(solicitud.getConvocatoriaId())) {
+            Convocatoria convocatoria = convocatoriaRepository.findById(solicitud.getConvocatoriaId())
+                .orElseThrow(() -> new ConvocatoriaNotFoundException(solicitud.getConvocatoriaId()));
+
+            List<ConvocatoriaEnlace> enlaces = convocatoriaEnlaceRepository
+                .findByConvocatoriaId(solicitud.getConvocatoriaId())
+                .orElseThrow(() -> new ConvocatoriaEnlaceNotFoundException(solicitud.getConvocatoriaId()));
+            this.comunicadosService.enviarComunicadoSolicitudCambioEstadoConcProv(
+                solicitud.getSolicitanteRef(),
+                convocatoria.getTitulo(),
+                convocatoria.getFechaProvisional(),
+                enlaces);
+          }
+          break;
+        case DENEGADA_PROVISIONAL:
+          /*
+           * Enviamos el comunicado de Cambio al estado DENEGADA PROVISIONAL en
+           * solicitudes de CONVOCATORIAS PROPIAS registradas por el propio por
+           * solicitante
+           */
+          if (checkConvocatoriaTramitable(solicitud.getConvocatoriaId())) {
+            Convocatoria convocatoria = convocatoriaRepository.findById(solicitud.getConvocatoriaId())
+                .orElseThrow(() -> new ConvocatoriaNotFoundException(solicitud.getConvocatoriaId()));
+
+            List<ConvocatoriaEnlace> enlaces = convocatoriaEnlaceRepository
+                .findByConvocatoriaId(solicitud.getConvocatoriaId())
+                .orElseThrow(() -> new ConvocatoriaEnlaceNotFoundException(solicitud.getConvocatoriaId()));
+            this.comunicadosService.enviarComunicadoSolicitudCambioEstadoDenProv(
+                solicitud.getSolicitanteRef(),
+                convocatoria.getTitulo(),
+                convocatoria.getFechaProvisional(),
+                enlaces);
+          }
+          break;
+        case CONCEDIDA:
+          /*
+           * Enviamos el comunicado de Cambio al estado CONCEDIDA en
+           * solicitudes de
+           * CONVOCATORIAS PROPIAS registradas por el propio por solicitante
+           */
+          if (checkConvocatoriaTramitable(solicitud.getConvocatoriaId())) {
+            Convocatoria convocatoria = convocatoriaRepository.findById(solicitud.getConvocatoriaId())
+                .orElseThrow(() -> new ConvocatoriaNotFoundException(solicitud.getConvocatoriaId()));
+            List<ConvocatoriaEnlace> enlaces = convocatoriaEnlaceRepository
+                .findByConvocatoriaId(solicitud.getConvocatoriaId())
+                .orElseThrow(() -> new ConvocatoriaEnlaceNotFoundException(solicitud.getConvocatoriaId()));
+            this.comunicadosService.enviarComunicadoSolicitudCambioEstadoConc(solicitud.getSolicitanteRef(),
+                convocatoria.getTitulo(),
+                convocatoria.getFechaConcesion(),
+                enlaces);
+          }
+          break;
+        case DENEGADA:
+          /*
+           * Enviamos el comunicado de Cambio al estado DENEGADA en
+           * solicitudes de
+           * CONVOCATORIAS PROPIAS registradas por el propio por solicitante
+           */
+          if (checkConvocatoriaTramitable(solicitud.getConvocatoriaId())) {
+            Convocatoria convocatoria = convocatoriaRepository.findById(solicitud.getConvocatoriaId())
+                .orElseThrow(() -> new ConvocatoriaNotFoundException(solicitud.getConvocatoriaId()));
+            List<ConvocatoriaEnlace> enlaces = convocatoriaEnlaceRepository
+                .findByConvocatoriaId(solicitud.getConvocatoriaId())
+                .orElseThrow(() -> new ConvocatoriaEnlaceNotFoundException(solicitud.getConvocatoriaId()));
+            this.comunicadosService.enviarComunicadoSolicitudCambioEstadoDen(solicitud.getSolicitanteRef(),
+                convocatoria.getTitulo(),
+                convocatoria.getFechaConcesion(),
+                enlaces);
+          }
+          break;
+        default:
+          log.debug(
+              "enviarComunicadosCambioEstado(Solicitud solicitud, EstadoSolicitud estadoSolicitud) - El estado {} no tiene comunicado",
+              estadoSolicitud.getEstado());
+          break;
+      }
+      log.debug("enviarComunicadosCambioEstado(Solicitud solicitud, EstadoSolicitud estadoSolicitud) - end");
+    } catch (Exception e) {
+      log.debug(
+          "Error enviarComunicadoSolicitudCambioEstadoAlegaciones(Solicitud solicitud, EstadoSolicitud estadoSolicitud",
+          e);
+    }
+  }
+
+  private boolean checkConvocatoriaTramitable(Long convocatoriaId) {
+    ConfiguracionSolicitud datosConfiguracionSolicitud = configuracionSolicitudRepository
+        .findByConvocatoriaId(convocatoriaId)
+        .orElseThrow(() -> new ConfiguracionSolicitudNotFoundException(convocatoriaId));
+    return datosConfiguracionSolicitud.getTramitacionSGI();
+  }
+
+  private boolean checkConvocatoriaPropia(String solicitanteRef) {
+    String personaRef = SecurityContextHolder.getContext().getAuthentication().getName();
+    return personaRef.equals(solicitanteRef);
+  }
+
+  private String getNombreApellidosByPersonaRef(String personaRef) {
+    PersonaOutput persona = personasService.findById(personaRef);
+    return persona.getNombre() + " " + persona.getApellidos();
+  }
 }

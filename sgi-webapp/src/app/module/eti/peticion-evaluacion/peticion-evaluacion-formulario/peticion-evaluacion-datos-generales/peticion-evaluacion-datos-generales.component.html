@@ -59,7 +59,7 @@
         {{'error.required.entity' | translate:msgParamExisteFinanciacionEntity}}
       </mat-error>
     </mat-form-field>
-    <ng-container *ngIf="peticionEvaluacionFragment.mostrarCamposFinanciacion$.getValue()">
+    <ng-container *ngIf="peticionEvaluacionFragment.mostrarCamposFinanciacion$ | async">
       <!-- Órgano financiador-->
       <mat-form-field>
         <mat-label>{{'eti.peticion-evaluacion.organo-financiador' | translate}}</mat-label>

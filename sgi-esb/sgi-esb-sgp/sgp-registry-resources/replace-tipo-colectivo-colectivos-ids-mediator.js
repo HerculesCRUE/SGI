@@ -31,7 +31,7 @@ function mediate(mc) {
         colectivosId = '2,3,4';
         break;
       case 'EQUIPO_TRABAJO_ETICA':
-        colectivosId = '2,3,4';
+        colectivosId = '1,2,3,4';
         break;
       case 'SOLICITANTE_CSP':
         colectivosId = '1,2,3,4';

@@ -2,7 +2,9 @@ package org.crue.hercules.sgi.csp.service;
 
 import java.util.List;
 
+import org.crue.hercules.sgi.csp.dto.ProyectoDto;
 import org.crue.hercules.sgi.csp.dto.ProyectoPresupuestoTotales;
+import org.crue.hercules.sgi.csp.dto.RelacionEjecucionEconomica;
 import org.crue.hercules.sgi.csp.model.EstadoProyecto;
 import org.crue.hercules.sgi.csp.model.Proyecto;
 import org.crue.hercules.sgi.csp.model.ProyectoFacturacion;
@@ -135,13 +137,14 @@ public interface ProyectoService {
   boolean modificable(Long proyectoId, String[] authorities);
 
   /**
-   * Obtiene todos los ids de {@link Proyecto} que cumplan las condiciones
-   * indicadas en la query.
+   * Obtiene los ids de {@link Proyecto} modificados que esten
+   * activos y con {@link Proyecto#confidencial} a <code>false</code> que cumplan
+   * las condiciones indicadas en el filtro de búsqueda
    *
    * @param query información del filtro.
    * @return el listado de ids de {@link Proyecto}.
    */
-  List<Long> findIds(String query);
+  List<Long> findIdsProyectosModificados(String query);
 
   /**
    * Busca todos los objetos de tipo {@link ProyectoFacturacion} cuyo proyectoId
@@ -164,4 +167,28 @@ public interface ProyectoService {
    * @return lista de ids de los {@link Proyecto}
    */
   List<Long> findIdsBySolicitudId(Long solicitudId);
+
+  /**
+   * Devuelve una lista de {@link ProyectoDto} que se incorporarán a la baremación
+   * de producción científica
+   * 
+   * @param anioInicio año inicio de baremación
+   * @param anioFin    año fin de baremación
+   * 
+   * @return Lista de {@link ProyectoDto}
+   */
+  List<ProyectoDto> findProyectosProduccionCientifica(Integer anioInicio, Integer anioFin);
+
+  /**
+   * Devuelve una lista paginada y filtrada {@link RelacionEjecucionEconomica} que
+   * se
+   * encuentren dentro de la unidad de gestión del usuario logueado
+   * 
+   * @param query    filtro de búsqueda.
+   * @param pageable {@link Pageable}.
+   * @return el listado de entidades {@link RelacionEjecucionEconomica} activas
+   *         paginadas y filtradas.
+   */
+  Page<RelacionEjecucionEconomica> findRelacionesEjecucionEconomicaProyectos(String query, Pageable pageable);
+
 }

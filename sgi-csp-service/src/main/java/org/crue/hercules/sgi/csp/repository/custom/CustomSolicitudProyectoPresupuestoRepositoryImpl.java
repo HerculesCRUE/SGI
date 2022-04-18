@@ -207,7 +207,7 @@ public class CustomSolicitudProyectoPresupuestoRepositoryImpl implements CustomS
     // Define SELECT
     cq.select(
         // sumImporteSolicitado
-        cb.sum(root.<BigDecimal>get(SolicitudProyectoPresupuesto_.importeSolicitado)));
+        cb.coalesce(cb.sum(root.<BigDecimal>get(SolicitudProyectoPresupuesto_.importeSolicitado)), new BigDecimal(0)));
 
     // Define WHERE
     cq.where(cb.and(

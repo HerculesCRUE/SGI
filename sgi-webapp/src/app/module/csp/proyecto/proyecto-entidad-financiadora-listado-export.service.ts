@@ -276,7 +276,4 @@ export class ProyectoEntidadFinanciadoraListadoExportService
     }
   }
 
-  private notIsNullAndNotUndefined(value): boolean {
-    return value !== null && value !== undefined;
-  }
 }

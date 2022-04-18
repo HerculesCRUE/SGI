@@ -1,0 +1,32 @@
+[
+  {
+    "id": "1",
+    "nombre": "Fecha",
+    "acumulable": false,
+    "importeReparto": false
+  },
+  {
+    "id": "2",
+    "nombre": "Referencia",
+    "acumulable": false,
+    "importeReparto": false
+  },
+  {
+    "id": "3",
+    "nombre": "Importe",
+    "acumulable": true,
+    "importeReparto": true
+  },
+  {
+    "id": "4",
+    "nombre": "Nº interno de contrato",
+    "acumulable": false,
+    "importeReparto": false
+  },
+  {
+    "id": "5",
+    "nombre": "Entidad pagadora",
+    "acumulable": false,
+    "importeReparto": false
+  }
+]

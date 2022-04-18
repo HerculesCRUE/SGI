@@ -1,5 +1,4 @@
 import { IConfiguracion } from '@core/models/csp/configuracion';
-import { IProyecto } from '@core/models/csp/proyecto';
 import { IDatoEconomico } from '@core/models/sge/dato-economico';
 import { IProyectoSge } from '@core/models/sge/proyecto-sge';
 import { GastoProyectoService } from '@core/services/csp/gasto-proyecto/gasto-proyecto-service';
@@ -8,9 +7,9 @@ import { ProyectoConceptoGastoCodigoEcService } from '@core/services/csp/proyect
 import { ProyectoConceptoGastoService } from '@core/services/csp/proyecto-concepto-gasto.service';
 import { ProyectoService } from '@core/services/csp/proyecto.service';
 import { EjecucionEconomicaService } from '@core/services/sge/ejecucion-economica.service';
-import { PersonaService } from '@core/services/sgp/persona.service';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { IRelacionEjecucionEconomicaWithResponsables } from '../../ejecucion-economica.action.service';
 import { IColumnDefinition, RowTreeDesglose } from '../desglose-economico.fragment';
 import { FacturasJustificantesFragment, IDesglose } from '../facturas-justificantes.fragment';
 
@@ -19,9 +18,8 @@ export class PersonalContratadoFragment extends FacturasJustificantesFragment {
   constructor(
     key: number,
     proyectoSge: IProyectoSge,
-    proyectosRelacionados: IProyecto[],
+    relaciones: IRelacionEjecucionEconomicaWithResponsables[],
     proyectoService: ProyectoService,
-    personaService: PersonaService,
     proyectoAnualidadService: ProyectoAnualidadService,
     gastoProyectoService: GastoProyectoService,
     private ejecucionEconomicaService: EjecucionEconomicaService,
@@ -32,9 +30,8 @@ export class PersonalContratadoFragment extends FacturasJustificantesFragment {
     super(
       key,
       proyectoSge,
-      proyectosRelacionados,
+      relaciones,
       proyectoService,
-      personaService,
       proyectoAnualidadService,
       gastoProyectoService,
       proyectoConceptoGastoCodigoEcService,

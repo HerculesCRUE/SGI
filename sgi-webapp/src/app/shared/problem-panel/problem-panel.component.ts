@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { Problem } from '@core/errors/http-problem';
+import { SgiProblem } from '@core/errors/sgi-error';
 
 @Component({
   selector: 'sgi-problem-panel',
@@ -9,7 +9,7 @@ import { Problem } from '@core/errors/http-problem';
 export class ProblemPanelComponent {
 
   @Input()
-  problems: Problem[];
+  problems: SgiProblem[];
 
   constructor() { }
 

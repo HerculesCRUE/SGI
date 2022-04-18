@@ -1,0 +1,15 @@
+<sgi-action-dialog [title]="title">
+  <form [formGroup]="formGroup">
+    <!-- Nombre -->
+    <div fxLayout="row">
+      <mat-form-field>
+        <mat-label>{{'csp.linea-investigacion.nombre' | translate}}</mat-label>
+        <input matInput formControlName="nombre" type="text"
+          placeholder="{{'csp.linea-investigacion.nombre' | translate}}" required>
+        <mat-error *ngIf="formGroup.controls.nombre.errors?.required">
+          {{'error.required.entity' | translate:msgParamNombreEntity}}
+        </mat-error>
+      </mat-form-field>
+    </div>
+  </form>
+</sgi-action-dialog>

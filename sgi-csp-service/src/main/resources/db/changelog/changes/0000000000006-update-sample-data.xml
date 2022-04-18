@@ -1,0 +1,132 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:pro="http://www.liquibase.org/xml/ns/pro" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-3.8.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+  <property name="schemaPrefix" value="" />
+  <changeSet context="dev" author="master" id="0000000000006-grupo">
+    <insert tableName="grupo">
+      <column name="id" valueSequenceNext="grupo_seq" />
+      <column name="nombre" value="Grupo investigación 3" />
+      <column name="fecha_inicio" valueDate="2022-03-22T23:00:00" />
+      <column name="fecha_fin" valueDate="2023-12-01T22:59:59" />
+      <column name="proyecto_sge_ref" value="33939" />
+      <column name="codigo" value="E0B9-2" />
+      <column name="solicitud_id" valueComputed="(select id from ${schemaPrefix}solicitud where titulo='Solicitud 2')" />
+      <column name="departamento_origen_ref" value="E0B9" />
+      <column name="activo" valueBoolean="true" />
+    </insert>
+  </changeSet>
+
+  <changeSet context="dev" author="master" id="0000000000006-linea_investigacion">
+    <insert tableName="linea_investigacion">
+      <column name="id" valueSequenceNext="linea_investigacion_seq" />
+      <column name="nombre" value="Psicología Laboral u Organizacional" />
+      <column name="activo" valueBoolean="true" />
+    </insert>
+    <insert tableName="linea_investigacion">
+      <column name="id" valueSequenceNext="linea_investigacion_seq" />
+      <column name="nombre" value="Psicología Clínica de la Salud" />
+      <column name="activo" valueBoolean="true" />
+    </insert>
+  </changeSet>
+
+  <changeSet context="dev" author="master" id="0000000000006-grupo_especial_investigacion">
+    <insert tableName="grupo_especial_investigacion">
+      <column name="id" valueSequenceNext="grupo_especial_investigacion_seq" />
+      <column name="especial_investigacion" valueBoolean="false" />
+      <column name="fecha_inicio" valueDate="2021-10-07T23:00:00" />
+      <column name="grupo_id" valueComputed="(select id from ${schemaPrefix}grupo where nombre='Grupo investigación 3')" />
+    </insert>
+    <insert tableName="grupo_especial_investigacion">
+      <column name="id" valueSequenceNext="grupo_especial_investigacion_seq" />
+      <column name="especial_investigacion" valueBoolean="false" />
+      <column name="fecha_inicio" valueDate="2022-01-02T23:00:00" />
+      <column name="grupo_id" valueComputed="(select id from ${schemaPrefix}grupo where nombre='Grupo investigación 1')" />
+    </insert>
+  </changeSet>
+
+  <changeSet context="dev" author="master" id="0000000000006-grupo_update">
+    <update tableName="grupo">
+      <column name="grupo_especial_investigacion_id" valueComputed="(select id from ${schemaPrefix}grupo_especial_investigacion where grupo_id=(select id from ${schemaPrefix}grupo where nombre='Grupo investigación 3') order by fecha_inicio desc FETCH FIRST 1 ROW only)" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueComputed="(select id from ${schemaPrefix}grupo where nombre='Grupo investigación 3')" />
+      </whereParams>
+    </update>
+    <update tableName="grupo">
+      <column name="grupo_especial_investigacion_id" valueComputed="(select id from ${schemaPrefix}grupo_especial_investigacion where grupo_id=(select id from ${schemaPrefix}grupo where nombre='Grupo investigación 1') order by fecha_inicio desc FETCH FIRST 1 ROW only)" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueComputed="(select id from ${schemaPrefix}grupo where nombre='Grupo investigación 1')" />
+      </whereParams>
+    </update>
+  </changeSet>
+
+  <!-- fix grupo_equipo_seq changeSet id="0000000000005-grupo-equipo" -->
+  <changeSet author="user (generated)" id="0000000000006-grupo-equipo-seq">
+    <dropSequence sequenceName="grupo_equipo_seq" />
+    <customChange class="org.crue.hercules.sgi.framework.liquibase.change.custom.ComputedValueCreateSequenceChange">
+      <param name="incrementBy" value="1" />
+      <param name="sequenceName" value="grupo_equipo_seq" />
+      <param name="computedStartValue" value="SELECT COALESCE(MAX(id)+1, 1) FROM ${schemaPrefix}grupo_equipo" />
+    </customChange>
+  </changeSet>
+
+  <changeSet context="dev" author="master" id="0000000000006-grupo-equipo">
+    <insert tableName="grupo_equipo">
+      <column name="id" valueSequenceNext="grupo_equipo_seq" />
+      <column name="grupo_id" valueComputed="(select id from ${schemaPrefix}grupo where nombre='Grupo investigación 3')" />
+      <column name="persona_ref" value="02591317" />
+      <column name="rol_proyecto_id" valueComputed="(select id from ${schemaPrefix}rol_proyecto where abreviatura='IP')" />
+      <column name="fecha_inicio" valueDate="2022-03-22T23:00:00" />
+      <column name="dedicacion" value="COMPLETA" />
+      <column name="participacion" valueNumeric="100" />
+    </insert>
+  </changeSet>
+
+  <changeSet context="dev" author="master" id="0000000000006-grupo-persona-autorizada">
+    <insert tableName="grupo_persona_autorizada">
+      <column name="id" valueSequenceNext="grupo_persona_autorizada_seq" />
+      <column name="grupo_id" valueComputed="(select id from ${schemaPrefix}grupo where nombre='Grupo investigación 3')" />
+      <column name="persona_ref" value="22932567" />
+      <column name="fecha_inicio" valueDate="2022-03-22T23:00:00" />
+    </insert>
+  </changeSet>
+
+  <changeSet context="dev" author="master" id="0000000000006-grupo-linea-investigacion">
+    <insert tableName="grupo_linea_investigacion">
+      <column name="id" valueSequenceNext="grupo_linea_investigacion_seq" />
+      <column name="grupo_id" valueComputed="(select id from ${schemaPrefix}grupo where nombre='Grupo investigación 1')" />
+      <column name="fecha_inicio" valueDate="2021-11-07T23:00:00" />
+      <column name="fecha_fin" valueDate="2021-12-30T22:59:59" />
+      <column name="linea_investigacion_id" valueComputed="(select id from ${schemaPrefix}linea_investigacion where nombre='Psicología Laboral u Organizacional')" />
+    </insert>
+
+    <insert tableName="grupo_linea_investigacion">
+      <column name="id" valueSequenceNext="grupo_linea_investigacion_seq" />
+      <column name="grupo_id" valueComputed="(select id from ${schemaPrefix}grupo where nombre='Grupo investigación 2')" />
+      <column name="fecha_inicio" valueDate="2022-03-01T23:00:00" />
+      <column name="fecha_fin" valueDate="2022-10-01T22:59:59" />
+      <column name="linea_investigacion_id" valueComputed="(select id from ${schemaPrefix}linea_investigacion where nombre='Psicología Clínica de la Salud')" />
+    </insert>
+  </changeSet>
+
+  <changeSet context="dev" author="master" id="0000000000006-grupo_tipo">
+    <insert tableName="grupo_tipo">
+      <column name="id" valueSequenceNext="grupo_tipo_seq" />
+      <column name="tipo" value="EMERGENTE" />
+      <column name="fecha_inicio" valueDate="2021-10-07T23:00:00" />
+      <column name="fecha_fin" valueDate="2022-01-01T22:59:59" />
+      <column name="grupo_id" valueComputed="(select id from ${schemaPrefix}grupo where nombre='Grupo investigación 2')" />
+    </insert>
+  </changeSet>
+
+  <changeSet context="dev" author="master" id="0000000000006-grupo-linea-investigador">
+    <insert tableName="grupo_linea_investigador">
+      <column name="id" valueSequenceNext="grupo_linea_investigador_seq" />
+      <column name="grupo_linea_investigacion_id" valueComputed="(select id from ${schemaPrefix}grupo_linea_investigacion where grupo_id =(select id from ${schemaPrefix}grupo where nombre='Grupo investigación 1') and linea_investigacion_id=(select id from ${schemaPrefix}linea_investigacion where nombre='Psicología Laboral u Organizacional'))" />
+      <column name="fecha_inicio" valueDate="2021-11-07T23:00:00" />
+      <column name="fecha_fin" valueDate="2021-12-30T22:59:59" />
+      <column name="persona_ref" value="22932567" />
+    </insert>
+  </changeSet>
+
+</databaseChangeLog>

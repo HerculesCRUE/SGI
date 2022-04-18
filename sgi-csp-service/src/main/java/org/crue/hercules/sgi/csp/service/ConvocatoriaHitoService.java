@@ -225,7 +225,7 @@ public class ConvocatoriaHitoService {
         SgiApiInstantTaskOutput task = sgiApiTaskService
             .findInstantTaskById(Long.parseLong(convocatoriaHito.getConvocatoriaHitoAviso().getTareaProgramadaRef()));
 
-        Assert.isTrue(task.getInstant().isBefore(Instant.now()), "El aviso ya se ha enviado.");
+        Assert.isTrue(task.getInstant().isAfter(Instant.now()), "El aviso ya se ha enviado.");
 
         sgiApiTaskService
             .deleteTask(Long.parseLong(convocatoriaHito.getConvocatoriaHitoAviso().getTareaProgramadaRef()));
@@ -267,7 +267,7 @@ public class ConvocatoriaHitoService {
   }
 
   private ConvocatoriaHitoAviso createAviso(Long convocatoriaHitoId, ConvocatoriaHitoAvisoInput avisoInput) {
-    Instant now = Instant.now().plus(Duration.ofMinutes(15));
+    Instant now = Instant.now();
     Assert.isTrue(avisoInput.getFechaEnvio().isAfter(now),
         "La fecha de envio debe ser anterior a " + now.toString());
 

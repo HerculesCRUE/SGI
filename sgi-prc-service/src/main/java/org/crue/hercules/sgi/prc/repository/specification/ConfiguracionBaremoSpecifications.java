@@ -2,13 +2,16 @@ package org.crue.hercules.sgi.prc.repository.specification;
 
 import java.util.List;
 
+import org.crue.hercules.sgi.prc.enums.EpigrafeCVN;
 import org.crue.hercules.sgi.prc.model.ConfiguracionBaremo;
 import org.crue.hercules.sgi.prc.model.ConfiguracionBaremo.TipoFuente;
 import org.crue.hercules.sgi.prc.model.ConfiguracionBaremo_;
-import org.crue.hercules.sgi.prc.model.ProduccionCientifica.EpigrafeCVN;
 import org.springframework.data.jpa.domain.Specification;
 
 public class ConfiguracionBaremoSpecifications {
+
+  private ConfiguracionBaremoSpecifications() {
+  }
 
   /**
    * {@link ConfiguracionBaremo} con el {@link EpigrafeCVN} indicado.
@@ -18,9 +21,7 @@ public class ConfiguracionBaremoSpecifications {
    *         {@link EpigrafeCVN} indicado.
    */
   public static Specification<ConfiguracionBaremo> byEpigrafeCVN(EpigrafeCVN epigrafeCVN) {
-    return (root, query, cb) -> {
-      return cb.equal(root.get(ConfiguracionBaremo_.epigrafeCVN), epigrafeCVN);
-    };
+    return (root, query, cb) -> cb.equal(root.get(ConfiguracionBaremo_.epigrafeCVN), epigrafeCVN);
   }
 
   /**
@@ -31,8 +32,6 @@ public class ConfiguracionBaremoSpecifications {
    *         {@link TipoFuente} indicados.
    */
   public static Specification<ConfiguracionBaremo> tipoFuenteIn(List<TipoFuente> tiposFuente) {
-    return (root, query, cb) -> {
-      return root.get(ConfiguracionBaremo_.tipoFuente).in(tiposFuente);
-    };
+    return (root, query, cb) -> root.get(ConfiguracionBaremo_.tipoFuente).in(tiposFuente);
   }
 }

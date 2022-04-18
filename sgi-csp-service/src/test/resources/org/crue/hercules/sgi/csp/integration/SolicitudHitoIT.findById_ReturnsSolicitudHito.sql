@@ -56,5 +56,5 @@ UPDATE test.solicitud SET estado_solicitud_id = 1 WHERE id = 1;
 INSERT INTO test.tipo_Hito (id, nombre, descripcion, activo) VALUES (1, 'nombre-001', 'descripcion-001', true);
 
 -- SOLICITUD HITO
-INSERT INTO test.solicitud_hito (id, solicitud_id, tipo_hito_id, fecha, comentario, genera_aviso ) 
-VALUES (1, 1, 1, '2020-12-02T00:00:00Z', 'comentario-001', true);
+INSERT INTO test.solicitud_hito (id, solicitud_id, tipo_hito_id, fecha, comentario ) 
+VALUES (1, 1, 1, '2020-12-02T00:00:00Z', 'comentario-001');

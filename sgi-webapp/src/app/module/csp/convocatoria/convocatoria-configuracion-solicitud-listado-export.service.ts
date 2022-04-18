@@ -221,8 +221,4 @@ export class ConvocatoriaConfiguracionSolicitudListadoExportService extends Abst
       elementsRow.push('');
     }
   }
-
-  private notIsNullAndNotUndefined(value): boolean {
-    return value !== null && value !== undefined;
-  }
 }

@@ -2,19 +2,19 @@ package org.crue.hercules.sgi.prc.repository;
 
 import org.assertj.core.api.Assertions;
 import org.crue.hercules.sgi.prc.model.ProduccionCientifica;
-import org.crue.hercules.sgi.prc.model.ProduccionCientifica.EpigrafeCVN;
+import org.crue.hercules.sgi.prc.enums.EpigrafeCVN;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 @DataJpaTest
-public class ProduccionCientificaRepositoryTest extends BaseRepositoryTest {
+class ProduccionCientificaRepositoryTest extends BaseRepositoryTest {
 
   @Autowired
   private ProduccionCientificaRepository repository;
 
   @Test
-  public void findByProduccionCientificaRef_ReturnsProduccionCientifica() throws Exception {
+  void findByProduccionCientificaRef_ReturnsProduccionCientifica() throws Exception {
     String idRefSearch = "id-ref-1";
     EpigrafeCVN epigrafeCVNSearch = EpigrafeCVN.E060_010_010_000;
 

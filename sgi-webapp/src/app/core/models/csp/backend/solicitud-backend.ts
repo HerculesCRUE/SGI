@@ -1,4 +1,5 @@
 import { FormularioSolicitud } from '@core/enums/formulario-solicitud';
+import { TipoSolicitudGrupo } from '../solicitud';
 import { IEstadoSolicitudBackend } from './estado-solicitud-backend';
 
 export interface ISolicitudBackend {
@@ -24,6 +25,8 @@ export interface ISolicitudBackend {
   solicitanteRef: string;
   /** Tipo formulario solicitud */
   formularioSolicitud: FormularioSolicitud;
+  /** Tipo solicitud grupo */
+  tipoSolicitudGrupo: TipoSolicitudGrupo;
   /** Unidad gestion */
   unidadGestionRef: string;
   /** Observaciones */

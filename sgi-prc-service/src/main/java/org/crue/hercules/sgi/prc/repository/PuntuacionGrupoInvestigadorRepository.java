@@ -1,6 +1,7 @@
 package org.crue.hercules.sgi.prc.repository;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.crue.hercules.sgi.prc.model.PuntuacionGrupoInvestigador;
 import org.crue.hercules.sgi.prc.repository.custom.CustomPuntuacionGrupoInvestigadorRepository;
@@ -17,6 +18,10 @@ public interface PuntuacionGrupoInvestigadorRepository
     extends JpaRepository<PuntuacionGrupoInvestigador, Long>, JpaSpecificationExecutor<PuntuacionGrupoInvestigador>,
     CustomPuntuacionGrupoInvestigadorRepository {
 
+  Optional<PuntuacionGrupoInvestigador> findAllByPuntuacionGrupoIdAndPuntuacionItemInvestigadorId(
+      Long puntuacionGrupoId, Long puntuacionItemInvestigadorId);
+
   List<PuntuacionGrupoInvestigador> findAllByPuntuacionGrupoId(Long puntuacionGrupoId);
 
+  List<PuntuacionGrupoInvestigador> findAllByPuntuacionGrupoConvocatoriaBaremacionId(Long convocatoriaBaremacionId);
 }

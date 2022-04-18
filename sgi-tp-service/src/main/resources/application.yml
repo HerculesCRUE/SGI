@@ -14,6 +14,7 @@ sgi:
       csp-url: "http://sgi-csp-service:4281"
       eti-url: "http://sgi-eti-service:4280"
       pii-url: "http://sgi-pii-service:4283"
+      prc-url: "http://sgi-prc-service:4289"
       rel-url: "http://sgi-rel-service:4284"
       rep-url: "http://sgi-rep-service:4287"
       usr-url: "http://sgi-usr-service:4282"
@@ -86,7 +87,7 @@ spring:
             client-name: SGI (service login)
             client-secret: a397c654-5899-469d-8ab4-ccbb4898a104
             provider: keycloak
-            scope: sgi-cnf,sgi-com,sgi-csp,sgi-eti,sgi-pii,sgi-rel,sgi-rep,sgi-usr
+            scope: sgi-cnf,sgi-com,sgi-csp,sgi-eti,sgi-pii,sgi-prc,sgi-rel,sgi-rep,sgi-usr
         provider:
           keycloak:
             issuer-uri: http://sgi-auth:8080/auth/realms/sgi
@@ -185,6 +186,7 @@ sgi:
       csp-url: "http://sgi-csp-service:8080"
       eti-url: "http://sgi-eti-service:8080"
       pii-url: "http://sgi-pii-service:8080"
+      prc-url: "http://sgi-prc-service:8080"
       rel-url: "http://sgi-rel-service:8080"
       rep-url: "http://sgi-rep-service:8080"
       usr-url: "http://sgi-eti-service:8080"

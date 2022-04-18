@@ -1,6 +1,7 @@
 {
   "idRef": "CONGRESO_4",
   "epigrafeCVN": "060.010.020.000",
+  "estado": "VALIDADO",
   "campos": [
     {
       "codigoCVN": "060.010.020.030",
@@ -11,13 +12,13 @@
     {
       "codigoCVN": "060.010.020.190",
       "valores": [
-        "2020-11-15T00:00:00Z"
+        "2021-11-15T23:00:00Z"
       ]
     },
     {
       "codigoCVN": "060.010.020.380",
       "valores": [
-        "2020-11-16T00:00:00Z"
+        "2021-11-16T23:00:00Z"
       ]
     },
     {
@@ -71,12 +72,12 @@
   ],
   "autores": [
     {
-      "personaRef": "52364567",
-      "firma": "simon.apellido",
+      "personaRef": "22932567",
+      "firma": "francisco.jose",
       "nombre": "",
       "apellidos": "",
       "orden": 1,
-      "orcidID": "PRUEBA",
+      "orcidID": "",
       "ip": true
     },
     {
@@ -100,9 +101,9 @@
   ],
   "indicesImpacto": [
     {
-      "fuenteImpacto": "GII-GRIN-SCIE",
+      "fuenteImpacto": "GII_GRIN_SCIE",
       "ranking": "CLASE1",
-      "anio": "2020"
+      "anio": "2021"
     },
     {
       "fuenteImpacto": "CORE",

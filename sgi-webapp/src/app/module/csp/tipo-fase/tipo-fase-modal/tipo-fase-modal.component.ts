@@ -19,7 +19,7 @@ const TITLE_NEW_ENTITY = marker('title.new.entity');
   templateUrl: './tipo-fase-modal.component.html',
   styleUrls: ['./tipo-fase-modal.component.scss']
 })
-export class TipoFaseModalComponent extends DialogActionComponent<ITipoFase, ITipoFase> implements OnInit, OnDestroy {
+export class TipoFaseModalComponent extends DialogActionComponent<ITipoFase> implements OnInit, OnDestroy {
 
   private readonly tipoFase: ITipoFase;
   title: string;

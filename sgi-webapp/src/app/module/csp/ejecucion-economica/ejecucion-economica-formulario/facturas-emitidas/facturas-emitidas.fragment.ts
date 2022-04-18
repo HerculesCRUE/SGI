@@ -1,14 +1,13 @@
 import { FormControl, FormGroup } from '@angular/forms';
-import { IProyecto } from '@core/models/csp/proyecto';
 import { IDatoEconomico } from '@core/models/sge/dato-economico';
 import { IProyectoSge } from '@core/models/sge/proyecto-sge';
 import { ProyectoAnualidadService } from '@core/services/csp/proyecto-anualidad/proyecto-anualidad.service';
 import { ProyectoService } from '@core/services/csp/proyecto.service';
 import { CalendarioFacturacionService } from '@core/services/sge/calendario-facturacion.service';
-import { PersonaService } from '@core/services/sgp/persona.service';
 import { LuxonUtils } from '@core/utils/luxon-utils';
 import { Observable, of } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
+import { IRelacionEjecucionEconomicaWithResponsables } from '../../ejecucion-economica.action.service';
 import { DesgloseEconomicoFragment, IColumnDefinition, RowTreeDesglose } from '../desglose-economico.fragment';
 
 export class FacturasEmitidasFragment extends DesgloseEconomicoFragment<IDatoEconomico> {
@@ -21,13 +20,12 @@ export class FacturasEmitidasFragment extends DesgloseEconomicoFragment<IDatoEco
   constructor(
     key: number,
     proyectoSge: IProyectoSge,
-    proyectosRelacionados: IProyecto[],
+    relaciones: IRelacionEjecucionEconomicaWithResponsables[],
     proyectoService: ProyectoService,
-    personaService: PersonaService,
     proyectoAnualidadService: ProyectoAnualidadService,
     private calendarioFacturacionService: CalendarioFacturacionService
   ) {
-    super(key, proyectoSge, proyectosRelacionados, proyectoService, personaService, proyectoAnualidadService);
+    super(key, proyectoSge, relaciones, proyectoService, proyectoAnualidadService);
   }
 
   protected onInitialize(): void {

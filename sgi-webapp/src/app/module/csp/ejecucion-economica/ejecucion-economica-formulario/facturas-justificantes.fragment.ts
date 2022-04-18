@@ -4,6 +4,7 @@ import { IConfiguracion } from '@core/models/csp/configuracion';
 import { IProyecto } from '@core/models/csp/proyecto';
 import { IProyectoAgrupacionGasto } from '@core/models/csp/proyecto-agrupacion-gasto';
 import { IProyectoConceptoGasto } from '@core/models/csp/proyecto-concepto-gasto';
+import { TipoEntidad } from '@core/models/csp/relacion-ejecucion-economica';
 import { IDatoEconomico } from '@core/models/sge/dato-economico';
 import { IProyectoSge } from '@core/models/sge/proyecto-sge';
 import { GastoProyectoService } from '@core/services/csp/gasto-proyecto/gasto-proyecto-service';
@@ -11,11 +12,11 @@ import { ProyectoAnualidadService } from '@core/services/csp/proyecto-anualidad/
 import { ProyectoConceptoGastoCodigoEcService } from '@core/services/csp/proyecto-concepto-gasto-codigo-ec.service';
 import { ProyectoConceptoGastoService } from '@core/services/csp/proyecto-concepto-gasto.service';
 import { ProyectoService } from '@core/services/csp/proyecto.service';
-import { PersonaService } from '@core/services/sgp/persona.service';
 import { LuxonUtils } from '@core/utils/luxon-utils';
 import { RSQLSgiRestFilter, SgiRestFilterOperator, SgiRestFindOptions } from '@sgi/framework/http';
 import { from, Observable, of } from 'rxjs';
-import { combineAll, concatMap, map, mergeMap, switchMap } from 'rxjs/operators';
+import { combineAll, concatMap, filter, map, mergeMap, switchMap, tap, toArray } from 'rxjs/operators';
+import { IRelacionEjecucionEconomicaWithResponsables } from '../ejecucion-economica.action.service';
 import { DesgloseEconomicoFragment, IColumnDefinition, IDesgloseEconomicoExportData, RowTreeDesglose } from './desglose-economico.fragment';
 
 export interface IDesglose extends IDatoEconomico {
@@ -41,20 +42,16 @@ export abstract class FacturasJustificantesFragment extends DesgloseEconomicoFra
   constructor(
     key: number,
     protected proyectoSge: IProyectoSge,
-    protected proyectosRelacionados: IProyecto[],
+    protected relaciones: IRelacionEjecucionEconomicaWithResponsables[],
     protected proyectoService: ProyectoService,
-    personaService: PersonaService,
     proyectoAnualidadService: ProyectoAnualidadService,
     protected gastoProyectoService: GastoProyectoService,
     private proyectoConceptoGastoCodigoEcService: ProyectoConceptoGastoCodigoEcService,
     private proyectoConceptoGastoService: ProyectoConceptoGastoService,
     private configuracion: IConfiguracion,
   ) {
-    super(key, proyectoSge, proyectosRelacionados, proyectoService, personaService, proyectoAnualidadService);
+    super(key, proyectoSge, relaciones, proyectoService, proyectoAnualidadService);
     this.setComplete(true);
-    proyectosRelacionados.forEach(proyecto => {
-      this.proyectosMap.set(proyecto.id.toString(), proyecto);
-    });
   }
 
   protected onInitialize(): void {
@@ -145,74 +142,20 @@ export abstract class FacturasJustificantesFragment extends DesgloseEconomicoFra
   }
 
   protected fillDatosEconomicos(datosEconomicos: IDatoEconomico[]): Observable<IDesglose[]> {
-    return from(datosEconomicos).pipe(
-      concatMap((datoEconomico: IDesglose) => {
-        if (this.configuracion?.validacionGastos) {
-          const options: SgiRestFindOptions = {
-            filter: new RSQLSgiRestFilter('gastoRef', SgiRestFilterOperator.EQUALS, datoEconomico.id)
-          };
-          return this.gastoProyectoService.findAll(options).pipe(
-            map(response => {
-              if (response.items.length) {
-                datoEconomico.proyecto = this.proyectosMap.get(response.items[0].proyectoId.toString());
-                datoEconomico.conceptoGasto = response.items[0].conceptoGasto;
-              }
-              else {
-                datoEconomico.proyecto = { titulo: 'Sin clasificar' } as IProyecto;
-                datoEconomico.conceptoGasto = { nombre: 'Sin clasificar' } as IConceptoGasto;
-              }
-              return datoEconomico;
-            }),
-          );
-        } else {
-          const options: SgiRestFindOptions = {
-            filter: new RSQLSgiRestFilter('codigoEconomicoRef', SgiRestFilterOperator.EQUALS, datoEconomico.codigoEconomico.id)
-              .and(
-                new RSQLSgiRestFilter(
-                  new RSQLSgiRestFilter(
-                    'fechaInicio', SgiRestFilterOperator.LOWER_OR_EQUAL, LuxonUtils.toBackend(datoEconomico.fechaDevengo)
-                  ).and('fechaFin', SgiRestFilterOperator.GREATHER_OR_EQUAL, LuxonUtils.toBackend(datoEconomico.fechaDevengo))
-                ).or(
-                  new RSQLSgiRestFilter(
-                    'fechaInicio', SgiRestFilterOperator.LOWER_OR_EQUAL, LuxonUtils.toBackend(datoEconomico.fechaDevengo)
-                  )
-                    .and('fechaFin', SgiRestFilterOperator.IS_NULL, '')
-                ).or(
-                  new RSQLSgiRestFilter('fechaInicio', SgiRestFilterOperator.IS_NULL, '')
-                    .and('fechaFin', SgiRestFilterOperator.IS_NULL, '')
-                )
-              )
-              .and('proyectoConceptoGasto.proyectoId', SgiRestFilterOperator.IN, this.proyectosRelacionados.map(({ id }) => id.toString()))
-          };
-          return this.proyectoConceptoGastoCodigoEcService.findAll(options).pipe(
-            mergeMap(({ items }) => {
-              if (items.length === 1) {
-                const proyectoConceptoGasto = this.proyectoConceptoGastosMap.get(items[0].proyectoConceptoGasto.id.toString());
-                if (!proyectoConceptoGasto) {
-                  return this.proyectoConceptoGastoService.findById(items[0].proyectoConceptoGasto.id).pipe(
-                    map(proyectoConceptoGastoFetched => {
-                      this.proyectoConceptoGastosMap.set(proyectoConceptoGastoFetched.id.toString(), proyectoConceptoGastoFetched);
-                      datoEconomico.proyecto = this.proyectosMap.get(proyectoConceptoGastoFetched.proyectoId.toString());
-                      datoEconomico.conceptoGasto = proyectoConceptoGastoFetched.conceptoGasto;
-                      return datoEconomico;
-                    })
-                  );
-                }
-                datoEconomico.proyecto = this.proyectosMap.get(proyectoConceptoGasto.proyectoId.toString());
-                datoEconomico.conceptoGasto = proyectoConceptoGasto.conceptoGasto;
-                return of(datoEconomico);
-              } else {
-                datoEconomico.proyecto = { titulo: 'Sin clasificar' } as IProyecto;
-                datoEconomico.conceptoGasto = { nombre: 'Sin clasificar' } as IConceptoGasto;
-                return of(datoEconomico);
-              }
-            })
-          );
-        }
-      }),
-      map(final => of(final))
-    ).pipe(
-      combineAll()
+    return this.fillProyectosMap().pipe(
+      switchMap(() =>
+        from(datosEconomicos).pipe(
+          concatMap((datoEconomico: IDesglose) => {
+            if (this.configuracion?.validacionGastos) {
+              return this.fillDatoEconomicoWhenValidacionGastosTrue(datoEconomico);
+            } else {
+              return this.fillDatoEconomicoWhenValidacionGastosFalse(datoEconomico);
+            }
+          }),
+          map(final => of(final))
+        ).pipe(
+          combineAll()
+        ))
     );
   }
 
@@ -398,4 +341,94 @@ export abstract class FacturasJustificantesFragment extends DesgloseEconomicoFra
     const codigoEconomicoItemB = itemB?.codigoEconomico?.id ?? '';
     return codigoEconomicoItemA.localeCompare(codigoEconomicoItemB);
   }
+
+  private fillProyectosMap(): Observable<Map<string, IProyecto>> {
+    return from(this.relaciones).pipe(
+      filter(relacion => relacion.tipoEntidad === TipoEntidad.PROYECTO),
+      concatMap(relacion => {
+        const proyectoInMap = this.proyectosMap.get(relacion.id.toString());
+        if (!proyectoInMap) {
+          return this.proyectoService.findById(relacion.id).pipe(
+            tap(proyecto => this.proyectosMap.set(proyecto.id.toString(), proyecto))
+          )
+        }
+
+        return of(proyectoInMap);
+      }),
+      toArray(),
+      map(() => this.proyectosMap)
+    );
+  }
+
+  private fillDatoEconomicoWhenValidacionGastosTrue(datoEconomico: IDesglose): Observable<IDesglose> {
+    const options: SgiRestFindOptions = {
+      filter: new RSQLSgiRestFilter('gastoRef', SgiRestFilterOperator.EQUALS, datoEconomico.id)
+    };
+
+    return this.gastoProyectoService.findAll(options).pipe(
+      map(response => {
+        if (response.items.length) {
+          datoEconomico.proyecto = this.proyectosMap.get(response.items[0].proyectoId.toString());
+          datoEconomico.conceptoGasto = response.items[0].conceptoGasto;
+        }
+        else {
+          datoEconomico.proyecto = { titulo: 'Sin clasificar' } as IProyecto;
+          datoEconomico.conceptoGasto = { nombre: 'Sin clasificar' } as IConceptoGasto;
+        }
+        return datoEconomico;
+      }),
+    );
+  }
+
+  private fillDatoEconomicoWhenValidacionGastosFalse(datoEconomico: IDesglose): Observable<IDesglose> {
+    const options: SgiRestFindOptions = {
+      filter: new RSQLSgiRestFilter('codigoEconomicoRef', SgiRestFilterOperator.EQUALS, datoEconomico.codigoEconomico.id)
+        .and(
+          new RSQLSgiRestFilter(
+            new RSQLSgiRestFilter(
+              'fechaInicio', SgiRestFilterOperator.LOWER_OR_EQUAL, LuxonUtils.toBackend(datoEconomico.fechaDevengo)
+            ).and('fechaFin', SgiRestFilterOperator.GREATHER_OR_EQUAL, LuxonUtils.toBackend(datoEconomico.fechaDevengo))
+          ).or(
+            new RSQLSgiRestFilter(
+              'fechaInicio', SgiRestFilterOperator.LOWER_OR_EQUAL, LuxonUtils.toBackend(datoEconomico.fechaDevengo)
+            )
+              .and('fechaFin', SgiRestFilterOperator.IS_NULL, '')
+          ).or(
+            new RSQLSgiRestFilter('fechaInicio', SgiRestFilterOperator.IS_NULL, '')
+              .and('fechaFin', SgiRestFilterOperator.IS_NULL, '')
+          )
+        )
+        .and(
+          'proyectoConceptoGasto.proyectoId',
+          SgiRestFilterOperator.IN,
+          this.relaciones
+            .filter(relacion => relacion.tipoEntidad === TipoEntidad.PROYECTO)
+            .map(proyecto => proyecto.id.toString()))
+    };
+    return this.proyectoConceptoGastoCodigoEcService.findAll(options).pipe(
+      mergeMap(({ items }) => {
+        if (items.length === 1) {
+          const proyectoConceptoGasto = this.proyectoConceptoGastosMap.get(items[0].proyectoConceptoGasto.id.toString());
+          if (!proyectoConceptoGasto) {
+            return this.proyectoConceptoGastoService.findById(items[0].proyectoConceptoGasto.id).pipe(
+              map(proyectoConceptoGastoFetched => {
+                this.proyectoConceptoGastosMap.set(proyectoConceptoGastoFetched.id.toString(), proyectoConceptoGastoFetched);
+                datoEconomico.proyecto = this.proyectosMap.get(proyectoConceptoGastoFetched.proyectoId.toString());
+                datoEconomico.conceptoGasto = proyectoConceptoGastoFetched.conceptoGasto;
+                return datoEconomico;
+              })
+            );
+          }
+          datoEconomico.proyecto = this.proyectosMap.get(proyectoConceptoGasto.proyectoId.toString());
+          datoEconomico.conceptoGasto = proyectoConceptoGasto.conceptoGasto;
+          return of(datoEconomico);
+        } else {
+          datoEconomico.proyecto = { titulo: 'Sin clasificar' } as IProyecto;
+          datoEconomico.conceptoGasto = { nombre: 'Sin clasificar' } as IConceptoGasto;
+          return of(datoEconomico);
+        }
+      })
+    );
+  }
+
 }

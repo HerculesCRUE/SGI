@@ -19,7 +19,7 @@ const TITLE_NEW_ENTITY = marker('title.new.entity');
   templateUrl: './tipo-hito-modal.component.html',
   styleUrls: ['./tipo-hito-modal.component.scss']
 })
-export class TipoHitoModalComponent extends DialogActionComponent<ITipoHito, ITipoHito> implements OnInit, OnDestroy {
+export class TipoHitoModalComponent extends DialogActionComponent<ITipoHito> implements OnInit, OnDestroy {
 
   private readonly tipoHito: ITipoHito;
   title: string;

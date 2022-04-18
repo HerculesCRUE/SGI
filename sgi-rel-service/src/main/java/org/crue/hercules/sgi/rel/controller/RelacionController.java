@@ -62,7 +62,7 @@ public class RelacionController {
    * @return la lista de entidades {@link Relacion} paginadas y/o filtradas.
    */
   @GetMapping()
-  @PreAuthorize("hasAnyAuthority('REL-V', 'REL-E', 'REL-C', 'REL-B')")
+  @PreAuthorize("(isClient() and hasAuthority('SCOPE_sgi-rel')) or hasAnyAuthority('REL-V', 'REL-E', 'REL-C', 'REL-B')")
   ResponseEntity<Page<RelacionOutput>> findAll(@RequestParam(name = "q", required = false) String query,
       @RequestPageable(sort = "s") Pageable paging) {
     log.debug("findAll(String query, Pageable paging) - start");

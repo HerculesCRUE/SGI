@@ -4,19 +4,23 @@
   <parent>
     <groupId>org.crue.hercules.sgi.esb.sgp</groupId>
     <artifactId>sgi-esb-sgp</artifactId>
-    <version>0.0.7</version>
+    <version>0.0.8</version>
   </parent>
   <artifactId>sgp-composite-application</artifactId>
-  <version>0.0.7</version>
+  <version>0.0.8</version>
   <packaging>carbon/application</packaging>
   <name>sgp-composite-application</name>
   <description>sgp-composite-application</description>
   <properties>
+    <org.crue.hercules.sgi.esb.sgp.endpoint_._cvn-endpoint>capp/EnterpriseServiceBus</org.crue.hercules.sgi.esb.sgp.endpoint_._cvn-endpoint>
     <org.crue.hercules.sgi.esb.sgp.endpoint_._sgp-endpoint>capp/EnterpriseServiceBus</org.crue.hercules.sgi.esb.sgp.endpoint_._sgp-endpoint>
     <org.crue.hercules.sgi.esb.sgp.sequence_._sgp-add-x-api-key-sequence>capp/EnterpriseServiceBus</org.crue.hercules.sgi.esb.sgp.sequence_._sgp-add-x-api-key-sequence>
     <org.crue.hercules.sgi.esb.sgp.resource_._datos-contacto-response-converter-mediator>capp/EnterpriseIntegrator</org.crue.hercules.sgi.esb.sgp.resource_._datos-contacto-response-converter-mediator>
     <org.crue.hercules.sgi.esb.sgp.resource_._replace-tipo-colectivo-colectivos-ids-mediator>capp/EnterpriseIntegrator</org.crue.hercules.sgi.esb.sgp.resource_._replace-tipo-colectivo-colectivos-ids-mediator>
     <org.crue.hercules.sgi.esb.sgp.resource_._vinculacion-response-converter-mediator>capp/EnterpriseIntegrator</org.crue.hercules.sgi.esb.sgp.resource_._vinculacion-response-converter-mediator>
+    <org.crue.hercules.sgi.esb.sgp.resource_._vinculacion-categoria-profesional-response-converter-mediator>
+      capp/EnterpriseIntegrator
+    </org.crue.hercules.sgi.esb.sgp.resource_._vinculacion-categoria-profesional-response-converter-mediator>
     <org.crue.hercules.sgi.esb.sgp.api_._sgp-api>capp/EnterpriseServiceBus</org.crue.hercules.sgi.esb.sgp.api_._sgp-api>
     <org.crue.hercules.sgi.esb.sgp.endpoint_._sgo-endpoint>capp/EnterpriseServiceBus</org.crue.hercules.sgi.esb.sgp.endpoint_._sgo-endpoint>
     <artifact.types>jaggery/app=zip,synapse/priority-executor=xml,synapse/inbound-endpoint=xml,service/rule=aar,synapse/message-store=xml,event/stream=json,service/meta=xml,datasource/datasource=xml,synapse/proxy-service=xml,bpel/workflow=zip,synapse/sequence=xml,synapse/endpointTemplate=xml,carbon/application=car,wso2/gadget=dar,synapse/api=xml,synapse/event-source=xml,synapse/message-processors=xml,event/receiver=xml,lib/dataservice/validator=jar,synapse/template=xml,synapse/endpoint=xml,lib/carbon/ui=jar,lib/synapse/mediator=jar,event/publisher=xml,synapse/local-entry=xml,synapse/task=xml,webapp/jaxws=war,registry/resource=zip,synapse/configuration=xml,service/axis2=aar,synapse/lib=zip,synapse/sequenceTemplate=xml,event/execution-plan=siddhiql,service/dataservice=dbs,web/application=war,lib/library/bundle=jar</artifact.types>
@@ -25,45 +29,57 @@
   </properties>
   <dependencies>
     <dependency>
+      <groupId>org.crue.hercules.sgi.esb.sgp.endpoint</groupId>
+      <artifactId>cvn-endpoint</artifactId>
+      <version>0.0.8</version>
+      <type>xml</type>
+    </dependency>
+    <dependency>
       <groupId>org.crue.hercules.sgi.esb.sgp.api</groupId>
       <artifactId>sgp-api</artifactId>
-      <version>0.0.7</version>
+      <version>0.0.8</version>
       <type>xml</type>
     </dependency>
     <dependency>
       <groupId>org.crue.hercules.sgi.esb.sgp.endpoint</groupId>
       <artifactId>sgp-endpoint</artifactId>
-      <version>0.0.7</version>
+      <version>0.0.8</version>
       <type>xml</type>
     </dependency>
     <dependency>
       <groupId>org.crue.hercules.sgi.esb.sgp.sequence</groupId>
       <artifactId>sgp-add-x-api-key-sequence</artifactId>
-      <version>0.0.7</version>
+      <version>0.0.8</version>
       <type>xml</type>
     </dependency>
     <dependency>
       <groupId>org.crue.hercules.sgi.esb.sgp.resource</groupId>
       <artifactId>datos-contacto-response-converter-mediator</artifactId>
-      <version>0.0.7</version>
+      <version>0.0.8</version>
       <type>zip</type>
     </dependency>
     <dependency>
       <groupId>org.crue.hercules.sgi.esb.sgp.resource</groupId>
       <artifactId>replace-tipo-colectivo-colectivos-ids-mediator</artifactId>
-      <version>0.0.7</version>
+      <version>0.0.8</version>
       <type>zip</type>
     </dependency>
     <dependency>
       <groupId>org.crue.hercules.sgi.esb.sgp.resource</groupId>
       <artifactId>vinculacion-response-converter-mediator</artifactId>
-      <version>0.0.7</version>
+      <version>0.0.8</version>
+      <type>zip</type>
+    </dependency>
+    <dependency>
+      <groupId>org.crue.hercules.sgi.esb.sgp.resource</groupId>
+      <artifactId>vinculacion-categoria-profesional-response-converter-mediator</artifactId>
+      <version>0.0.8</version>
       <type>zip</type>
     </dependency>
     <dependency>
       <groupId>org.crue.hercules.sgi.esb.sgp.endpoint</groupId>
       <artifactId>sgo-endpoint</artifactId>
-      <version>0.0.7</version>
+      <version>0.0.8</version>
       <type>xml</type>
     </dependency>
 

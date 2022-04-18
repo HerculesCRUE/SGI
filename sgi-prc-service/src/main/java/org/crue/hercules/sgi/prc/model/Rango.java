@@ -63,7 +63,7 @@ public class Rango extends BaseEntity {
 
   @Column(name = "tipo_temporalidad", length = TIPO_TEMPORALIDAD_LENGTH, nullable = false)
   @Enumerated(EnumType.STRING)
-  private TipoRango tipoTemporalidad;
+  private TipoTemporalidad tipoTemporalidad;
 
   @Column(name = "desde", nullable = false)
   private BigDecimal desde;

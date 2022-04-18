@@ -3,18 +3,27 @@ package org.crue.hercules.sgi.prc.service;
 import java.math.BigDecimal;
 import java.util.function.LongPredicate;
 
+import org.crue.hercules.sgi.prc.config.SgiConfigProperties;
 import org.crue.hercules.sgi.prc.dto.BaremacionInput;
 import org.crue.hercules.sgi.prc.enums.TablaMaestraCVN;
-import org.crue.hercules.sgi.prc.model.CampoProduccionCientifica.CodigoCVN;
+import org.crue.hercules.sgi.prc.enums.CodigoCVN;
 import org.crue.hercules.sgi.prc.model.ConfiguracionBaremo.TipoBaremo;
+import org.crue.hercules.sgi.prc.model.PuntuacionItemInvestigador.TipoPuntuacion;
+import org.crue.hercules.sgi.prc.repository.AliasEnumeradoRepository;
+import org.crue.hercules.sgi.prc.repository.AutorGrupoRepository;
+import org.crue.hercules.sgi.prc.repository.AutorRepository;
 import org.crue.hercules.sgi.prc.repository.BaremoRepository;
 import org.crue.hercules.sgi.prc.repository.CampoProduccionCientificaRepository;
+import org.crue.hercules.sgi.prc.repository.IndiceExperimentalidadRepository;
 import org.crue.hercules.sgi.prc.repository.IndiceImpactoRepository;
 import org.crue.hercules.sgi.prc.repository.ProduccionCientificaRepository;
 import org.crue.hercules.sgi.prc.repository.PuntuacionBaremoItemRepository;
-import org.crue.hercules.sgi.prc.repository.TipoFuenteImpactoCuartilRepository;
+import org.crue.hercules.sgi.prc.repository.PuntuacionItemInvestigadorRepository;
 import org.crue.hercules.sgi.prc.repository.ValorCampoRepository;
+import org.crue.hercules.sgi.prc.service.sgi.SgiApiCspService;
+import org.crue.hercules.sgi.prc.service.sgi.SgiApiSgpService;
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
@@ -30,22 +39,47 @@ import lombok.extern.slf4j.Slf4j;
 @Validated
 public class BaremacionObraArtisticaService extends BaremacionCommonService {
 
+  @Autowired
   public BaremacionObraArtisticaService(
+      AliasEnumeradoRepository aliasEnumeradoRepository,
       ProduccionCientificaRepository produccionCientificaRepository,
       PuntuacionBaremoItemRepository puntuacionBaremoItemRepository,
+      PuntuacionItemInvestigadorRepository puntuacionItemInvestigadorRepository,
+      IndiceExperimentalidadRepository indiceExperimentalidadRepository,
       BaremoRepository baremoRepository,
+      AutorRepository autorRepository,
+      AutorGrupoRepository autorGrupoRepository,
       CampoProduccionCientificaRepository campoProduccionCientificaRepository,
       ValorCampoRepository valorCampoRepository,
       IndiceImpactoRepository indiceImpactoRepository,
-      TipoFuenteImpactoCuartilRepository tipoFuenteImpactoCuartilRepository,
-      ProduccionCientificaCloneService produccionCientificaCloneService,
-      ModelMapper modelMapper) {
-    super(produccionCientificaRepository, puntuacionBaremoItemRepository, baremoRepository,
-        campoProduccionCientificaRepository, valorCampoRepository, indiceImpactoRepository,
-        tipoFuenteImpactoCuartilRepository, produccionCientificaCloneService,
-        modelMapper);
+      ProduccionCientificaBuilderService produccionCientificaBuilderService,
+      SgiApiSgpService sgiApiSgpService,
+      SgiApiCspService sgiApiCspService,
+      ConvocatoriaBaremacionLogService convocatoriaBaremacionLogService,
+      ModelMapper modelMapper,
+      SgiConfigProperties sgiConfigProperties) {
+    super(aliasEnumeradoRepository,
+        produccionCientificaRepository,
+        puntuacionBaremoItemRepository,
+        puntuacionItemInvestigadorRepository,
+        indiceExperimentalidadRepository,
+        baremoRepository,
+        autorRepository, autorGrupoRepository,
+        campoProduccionCientificaRepository,
+        valorCampoRepository,
+        indiceImpactoRepository,
+        produccionCientificaBuilderService,
+        sgiApiSgpService,
+        sgiApiCspService,
+        convocatoriaBaremacionLogService,
+        modelMapper,
+        sgiConfigProperties);
 
     loadPredicates();
+  }
+
+  protected TipoPuntuacion getTipoPuntuacion() {
+    return TipoPuntuacion.OBRAS_ARTISTICAS;
   }
 
   protected void loadPredicates() {
@@ -60,7 +94,7 @@ public class BaremacionObraArtisticaService extends BaremacionCommonService {
     LongPredicate isNotComisarioExposicion = isComisarioExposicion.negate();
     LongPredicate isCatalogoOrComisarioExposicion = isCatalogo.or(isComisarioExposicion);
     LongPredicate isColectiva = getPredicateIsColectiva();
-    LongPredicate isNotColectiva = isColectiva.negate();
+    LongPredicate isNotColectiva = getPredicateIsNotColectiva();
 
     // OBRA_ARTISTICA_EXP_GRUPO1_INDIVIDUAL
     getHmTipoBaremoPredicates().put(TipoBaremo.OBRA_ARTISTICA_EXP_GRUPO1_INDIVIDUAL,
@@ -137,17 +171,22 @@ public class BaremacionObraArtisticaService extends BaremacionCommonService {
   }
 
   private LongPredicate getPredicateIsPaisEspania() {
-    return produccionCientificaId -> isValorEqualsStringValue(
-        CodigoCVN.E050_020_030_040, TablaMaestraCVN.PAIS_724.getInternValue(), produccionCientificaId);
+    return produccionCientificaId -> isValorEqualsTablaMaestraCVN(
+        CodigoCVN.E050_020_030_040, TablaMaestraCVN.PAIS_724, produccionCientificaId);
   }
 
   private LongPredicate getPredicateIsComunidadMurcia() {
-    return produccionCientificaId -> isValorEqualsStringValue(
-        CodigoCVN.E050_020_030_050, TablaMaestraCVN.COMUNIDAD_ES62.getInternValue(), produccionCientificaId);
+    return produccionCientificaId -> isValorEqualsTablaMaestraCVN(
+        CodigoCVN.E050_020_030_050, TablaMaestraCVN.COMUNIDAD_ES62, produccionCientificaId);
   }
 
   private LongPredicate getPredicateIsColectiva() {
     return produccionCientificaId -> isValorEqualsStringValue(CodigoCVN.COLECTIVA, "true",
+        produccionCientificaId);
+  }
+
+  private LongPredicate getPredicateIsNotColectiva() {
+    return produccionCientificaId -> isValorEqualsStringValue(CodigoCVN.COLECTIVA, "false",
         produccionCientificaId);
   }
 

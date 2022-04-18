@@ -99,13 +99,13 @@ export default class TestUtils {
     return routeMock;
   }
 
-  static buildDialogActionMatDialogRef(): MatDialogRef<DialogActionComponent<any, any>, any> {
+  static buildDialogActionMatDialogRef(): MatDialogRef<DialogActionComponent<any>, any> {
     return {
       close: jasmine.createSpy('close'),
       addPanelClass: jasmine.createSpy('addPanelClass'),
       componentInstance: {
         problems$: new Subject<any>()
-      } as DialogActionComponent<any, any>
-    } as unknown as MatDialogRef<DialogActionComponent<any, any>, any>;
+      } as DialogActionComponent<any>
+    } as unknown as MatDialogRef<DialogActionComponent<any>, any>;
   }
 }

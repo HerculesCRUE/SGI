@@ -34,13 +34,13 @@ public class IndiceImpactoOutput implements Serializable {
   public void setTipoFuenteImpacto(String tipoFuenteImpacto) {
     this.tipoFuenteImpacto = tipoFuenteImpacto;
     if (StringUtils.hasText(tipoFuenteImpacto)) {
-      this.fuenteImpacto = TipoFuenteImpacto.getByInternValue(tipoFuenteImpacto);
+      this.fuenteImpacto = TipoFuenteImpacto.getByCode(tipoFuenteImpacto);
     }
   }
 
   public void setFuenteImpacto(TipoFuenteImpacto fuenteImpacto) {
     if (null != fuenteImpacto) {
-      this.tipoFuenteImpacto = fuenteImpacto.getInternValue();
+      this.tipoFuenteImpacto = fuenteImpacto.getCode();
     }
   }
 }

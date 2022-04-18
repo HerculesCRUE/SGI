@@ -341,7 +341,7 @@ export class ProyectoActionService extends ActionService {
         this.historicoEstados = new ProyectoHistoricoEstadosFragment(id, proyectoService);
         this.documentos = new ProyectoDocumentosFragment(
           id, convocatoriaService, solicitudService, proyectoService, proyectoPeriodoSeguimientoService, proyectoSocioService,
-          proyectoSocioPeriodoJustificacionService, proyectoProrrogaService, proyectoDocumentoService, empresaService, translate);
+          proyectoSocioPeriodoJustificacionService, proyectoProrrogaService, proyectoDocumentoService, empresaService, translate, this.data?.isVisor);
         this.clasificaciones = new ProyectoClasificacionesFragment(id, proyectoClasificacionService, proyectoService,
           clasificacionService, this.readonly, this.data?.isVisor);
         this.proyectosSge = new ProyectoProyectosSgeFragment(id, proyectoProyectoSgeService, proyectoService,

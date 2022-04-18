@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.crue.hercules.sgi.csp.model.Proyecto;
 import org.crue.hercules.sgi.csp.model.ProyectoEquipo;
+import org.crue.hercules.sgi.csp.model.RolProyecto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -72,5 +73,19 @@ public interface ProyectoEquipoService {
    * 
    */
   List<ProyectoEquipo> findAllByProyectoId(Long proyectoId);
+
+  /**
+   * Devuelve una lista filtrada de investigadores principales del
+   * {@link Proyecto} en el momento actual.
+   *
+   * Son investiador principales los {@link ProyectoEquipo} que a fecha actual
+   * tiene el {@link RolProyecto} con el flag {@link RolProyecto#rolPrincipal} a
+   * <code>true</code>.
+   * 
+   * @param proyectoId Identificador del {@link Proyecto}.
+   * @return la lista de personaRef de los investigadores principales del
+   *         {@link Proyecto} en el momento actual.
+   */
+  public List<String> findPersonaRefInvestigadoresPrincipales(Long proyectoId);
 
 }

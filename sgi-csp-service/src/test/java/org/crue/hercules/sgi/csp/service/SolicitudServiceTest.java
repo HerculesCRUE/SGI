@@ -38,6 +38,7 @@ import org.crue.hercules.sgi.csp.model.SolicitudProyecto.TipoPresupuesto;
 import org.crue.hercules.sgi.csp.model.SolicitudProyectoEquipo;
 import org.crue.hercules.sgi.csp.model.TipoDocumento;
 import org.crue.hercules.sgi.csp.repository.ConfiguracionSolicitudRepository;
+import org.crue.hercules.sgi.csp.repository.ConvocatoriaEnlaceRepository;
 import org.crue.hercules.sgi.csp.repository.ConvocatoriaEntidadFinanciadoraRepository;
 import org.crue.hercules.sgi.csp.repository.ConvocatoriaRepository;
 import org.crue.hercules.sgi.csp.repository.DocumentoRequeridoSolicitudRepository;
@@ -50,6 +51,8 @@ import org.crue.hercules.sgi.csp.repository.SolicitudProyectoRepository;
 import org.crue.hercules.sgi.csp.repository.SolicitudProyectoSocioRepository;
 import org.crue.hercules.sgi.csp.repository.SolicitudRepository;
 import org.crue.hercules.sgi.csp.service.sgi.SgiApiEtiService;
+import org.crue.hercules.sgi.csp.service.sgi.SgiApiSgpService;
+import org.crue.hercules.sgi.csp.util.SolicitudAuthorityHelper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
@@ -107,7 +110,18 @@ class SolicitudServiceTest extends BaseServiceTest {
   ConvocatoriaEntidadFinanciadoraRepository convocatoriaEntidadFinanciadoraRepository;
 
   @Mock
+  ConvocatoriaEnlaceRepository convocatoriaEnlaceRepository;
+
+  @Mock
   private SgiApiEtiService sgiApiEtiService;
+
+  @Mock
+  private ComunicadosService comunicadosService;
+
+  @Mock
+  private SgiApiSgpService personasService;
+
+  private SolicitudAuthorityHelper solicitudAuthorityHelper;
 
   @Autowired
   private SgiConfigProperties sgiConfigProperties;
@@ -116,12 +130,14 @@ class SolicitudServiceTest extends BaseServiceTest {
 
   @BeforeEach
   public void setUp() throws Exception {
+    solicitudAuthorityHelper = new SolicitudAuthorityHelper(repository);
     service = new SolicitudService(sgiConfigProperties,
         sgiApiEtiService, repository,
         estadoSolicitudRepository, configuracionSolicitudRepository, proyectoRepository, solicitudProyectoRepository,
         documentoRequeridoSolicitudRepository, solicitudDocumentoRepository, solicitudProyectoEquipoRepository,
         solicitudProyectoSocioRepository, solicitudProyectoPresupuestoRepository, convocatoriaRepository,
-        convocatoriaEntidadFinanciadoraRepository);
+        convocatoriaEntidadFinanciadoraRepository, convocatoriaEnlaceRepository, comunicadosService, personasService,
+        solicitudAuthorityHelper);
   }
 
   @Test

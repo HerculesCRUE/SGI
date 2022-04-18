@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { AbstractTablePaginationComponent } from '@core/component/abstract-table-pagination.component';
 import { TIPO_PROPIEDAD_MAP } from '@core/enums/tipo-propiedad';
-import { HttpProblem } from '@core/errors/http-problem';
+import { SgiError } from '@core/errors/sgi-error';
 import { MSG_PARAMS } from '@core/i18n';
 import { ITipoProteccion } from '@core/models/pii/tipo-proteccion';
 import { ROUTE_NAMES } from '@core/route.names';
@@ -223,7 +223,7 @@ export class TipoProteccionListadoComponent extends AbstractTablePaginationCompo
   }
 
   protected createFilter(): SgiRestFilter {
-    throw new Error('Method not implemented.');
+    return undefined;
   }
 
   /**
@@ -245,7 +245,7 @@ export class TipoProteccionListadoComponent extends AbstractTablePaginationCompo
         },
         (error) => {
           this.logger.error(error);
-          if (error instanceof HttpProblem) {
+          if (error instanceof SgiError) {
             this.snackBarService.showError(error);
           }
           else {
@@ -275,7 +275,7 @@ export class TipoProteccionListadoComponent extends AbstractTablePaginationCompo
         },
         (error) => {
           this.logger.error(error);
-          if (error instanceof HttpProblem) {
+          if (error instanceof SgiError) {
             this.snackBarService.showError(error);
           }
           else {

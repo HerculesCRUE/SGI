@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { AbstractTablePaginationComponent } from '@core/component/abstract-table-pagination.component';
-import { HttpProblem } from '@core/errors/http-problem';
+import { SgiError } from '@core/errors/sgi-error';
 import { MSG_PARAMS } from '@core/i18n';
 import { ITramoReparto, Tipo } from '@core/models/pii/tramo-reparto';
 import { DialogService } from '@core/services/dialog.service';
@@ -75,7 +75,7 @@ export class TramoRepartoListadoComponent extends AbstractTablePaginationCompone
   }
 
   protected createFilter(): SgiRestFilter {
-    throw new Error('Method not implemented.');
+    return undefined;
   }
 
   /**
@@ -152,7 +152,7 @@ export class TramoRepartoListadoComponent extends AbstractTablePaginationCompone
         },
         (error) => {
           this.logger.error(error);
-          if (error instanceof HttpProblem) {
+          if (error instanceof SgiError) {
             this.snackBarService.showError(error);
           }
           else {

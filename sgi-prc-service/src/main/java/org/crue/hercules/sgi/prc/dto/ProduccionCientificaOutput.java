@@ -5,8 +5,8 @@ import java.time.Instant;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import org.crue.hercules.sgi.prc.enums.EpigrafeCVN;
 import org.crue.hercules.sgi.prc.model.EstadoProduccionCientifica.TipoEstadoProduccion;
-import org.crue.hercules.sgi.prc.model.ProduccionCientifica.EpigrafeCVN;
 import org.springframework.util.StringUtils;
 
 import lombok.AllArgsConstructor;
@@ -30,13 +30,13 @@ public class ProduccionCientificaOutput implements Serializable {
   public void setEpigrafe(String epigrafe) {
     this.epigrafe = epigrafe;
     if (StringUtils.hasText(epigrafe)) {
-      this.epigrafeCVN = EpigrafeCVN.getByInternValue(epigrafe);
+      this.epigrafeCVN = EpigrafeCVN.getByCode(epigrafe);
     }
   }
 
   public void setEpigrafeCVN(EpigrafeCVN epigrafeCVN) {
     if (null != epigrafeCVN) {
-      this.epigrafe = epigrafeCVN.getInternValue();
+      this.epigrafe = epigrafeCVN.getCode();
     }
   }
 

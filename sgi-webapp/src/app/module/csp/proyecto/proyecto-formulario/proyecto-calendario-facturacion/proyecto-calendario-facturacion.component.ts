@@ -233,10 +233,14 @@ export class ProyectoCalendarioFacturacionComponent extends FragmentComponent im
   }
 
   public notificarIP(item: StatusWrapper<IProyectoFacturacionData>, rowIndex: number): void {
+    // Necesario para sincronizar los cambios de orden de registros dependiendo de la ordenación y paginación
+    this.dataSource.sortData(this.dataSource.filteredData, this.dataSource.sort);
+    const row = (this.paginator.pageSize * this.paginator.pageIndex) + rowIndex;
+
     item.value.estadoValidacionIP = {
       estado: TipoEstadoValidacion.NOTIFICADA,
-    } as IEstadoValidacionIP
-    this.formPart.updateProyectoFacturacion(item, rowIndex);
+    } as IEstadoValidacionIP;
+    this.formPart.updateProyectoFacturacion(item, row);
   }
 
 }

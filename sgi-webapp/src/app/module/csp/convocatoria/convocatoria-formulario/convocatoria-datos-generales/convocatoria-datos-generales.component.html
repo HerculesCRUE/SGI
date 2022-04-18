@@ -36,7 +36,7 @@
             {{ formularioSolicitud.value | translate}}
           </mat-option>
         </mat-select>
-        <sgi-field-info matSuffix [visible]="this.formPart.isConvocatoriaVinculada"
+        <sgi-field-info matSuffix [visible]="this.formPart.isConvocatoriaVinculada && this.formPart.hasEditPerm"
           message="{{'csp.convocatoria.campo.vinculada' | translate:msgTooltip}}">
         </sgi-field-info>
         <mat-error *ngIf="formGroup.controls.formularioSolicitud.errors?.required">
@@ -53,7 +53,7 @@
         <sgi-select-unidad-gestion #unidadGestion formControlName="unidadGestion" required>
         </sgi-select-unidad-gestion>
         <sgi-field-info matSuffix
-          [visible]="!formPart.isConvocatoriaVinculada && (formPart.vinculacionesModeloEjecucion$ | async)"
+          [visible]="!formPart.isConvocatoriaVinculada && (formPart.vinculacionesModeloEjecucion$ | async) && this.formPart.hasEditPerm"
           message="{{'msg.csp.convocatoria.modelo-ejecucion.vinculaciones' | translate}}">
         </sgi-field-info>
         <mat-error *ngIf="formGroup.controls.unidadGestion.errors?.required">
@@ -72,7 +72,7 @@
           {{ 'error.required.entity' | translate:msgParamModeloEjecucionEntity }}
         </mat-error>
         <sgi-field-info matSuffix
-          [visible]="!formPart.isConvocatoriaVinculada && (formPart.vinculacionesModeloEjecucion$ | async)"
+          [visible]="!formPart.isConvocatoriaVinculada && (formPart.vinculacionesModeloEjecucion$ | async) && this.formPart.hasEditPerm"
           message="{{'msg.csp.convocatoria.modelo-ejecucion.vinculaciones' | translate}}">
         </sgi-field-info>
       </mat-form-field>
@@ -123,9 +123,7 @@
         </mat-datepicker>
       </mat-form-field>
 
-
       <!-- Fecha Provisional -->
-
       <mat-form-field color="primary" fxFlex="33%">
         <mat-label>{{'csp.convocatoria.fecha-provisional'| translate}}</mat-label>
         <input matInput [matDatepicker]="pickerFechaProvisional" formControlName="fechaProvisional">
@@ -135,7 +133,6 @@
       </mat-form-field>
 
       <!-- Fecha Concesión -->
-
       <mat-form-field color="primary" fxFlex="33%">
         <mat-label>{{'csp.convocatoria.fecha-concesion'| translate}}</mat-label>
         <input matInput [matDatepicker]="pickerFechaConcesion" formControlName="fechaConcesion">
@@ -277,7 +274,7 @@
               </button>
             </ng-container>
             <ng-container *sgiHasAnyAuthorityForAnyUO="['CSP-CON-E', 'CSP-CON-C']">
-              <sgi-field-info matSuffix [visible]="formPart.isConvocatoriaVinculada"
+              <sgi-field-info matSuffix [visible]="formPart.isConvocatoriaVinculada && this.formPart.hasEditPerm"
                 message="{{'csp.convocatoria.area-tematica.vinculada' | translate}}">
               </sgi-field-info>
             </ng-container>

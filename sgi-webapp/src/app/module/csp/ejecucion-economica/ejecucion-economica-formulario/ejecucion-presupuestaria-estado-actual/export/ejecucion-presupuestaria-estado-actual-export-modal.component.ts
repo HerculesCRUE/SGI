@@ -4,7 +4,6 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { BaseExportModalComponent } from '@core/component/base-export/base-export-modal.component';
 import { IReportConfig } from '@core/services/rep/abstract-table-export.service';
-import { SnackBarService } from '@core/services/snack-bar.service';
 import { TranslateService } from '@ngx-translate/core';
 import { IEjecucionPresupuestariaReportOptions } from '../../../common/ejecucion-presupuestaria-report-options';
 import { IDesgloseEconomicoExportData } from '../../desglose-economico.fragment';
@@ -12,7 +11,6 @@ import { EjecucionPresupuestariaEstadoActualExportService } from './ejecucion-pr
 
 const EJECUCION_PRESUPUESTARIA = marker('menu.csp.ejecucion-economica.ejecucion-presupuestaria');
 const EJECUCION_PRESUPUESTARIA_ESTADO_ACTUAL = marker('menu.csp.ejecucion-economica.ejecucion-presupuestaria.estado-actual');
-
 
 @Component({
   templateUrl: './ejecucion-presupuestaria-estado-actual-export-modal.component.html',
@@ -23,12 +21,11 @@ export class EjecucionPresupuestariaEstadoActualExportModalComponent
 
   constructor(
     matDialogRef: MatDialogRef<EjecucionPresupuestariaEstadoActualExportModalComponent>,
-    snackBarService: SnackBarService,
     translate: TranslateService,
     ejecucionPresupuestariaEstadoActualExportService: EjecucionPresupuestariaEstadoActualExportService,
     @Inject(MAT_DIALOG_DATA) private modalData: IDesgloseEconomicoExportData
   ) {
-    super(ejecucionPresupuestariaEstadoActualExportService, snackBarService, translate, matDialogRef);
+    super(ejecucionPresupuestariaEstadoActualExportService, translate, matDialogRef);
   }
 
   ngOnInit(): void {

@@ -32,7 +32,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
  * AutorControllerTest
  */
 @WebMvcTest(AutorController.class)
-public class AutorControllerTest extends BaseControllerTest {
+class AutorControllerTest extends BaseControllerTest {
 
   @MockBean
   private AutorGrupoService autorGrupoService;
@@ -48,7 +48,7 @@ public class AutorControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "PRC-VAL-V" })
-  public void findAcreditaciones_ReturnsPage() throws Exception {
+  void findAcreditaciones_ReturnsPage() throws Exception {
     // given: Una lista con 37 AutorGrupo para el Autor
     Long autorId = 1L;
 
@@ -101,13 +101,13 @@ public class AutorControllerTest extends BaseControllerTest {
     for (int i = 31; i <= 37; i++) {
       AutorGrupoOutput autorGrupo = autorGrupoResponse.get(i - (page * pageSize) - 1);
       Assertions.assertThat(autorGrupo.getGrupoRef())
-          .isEqualTo("Grupo-" + String.format("%03d", i));
+          .isEqualTo(i);
     }
   }
 
   @Test
   @WithMockUser(username = "user", authorities = { "PRC-VAL-V" })
-  public void findAcreditaciones_EmptyList_Returns204() throws Exception {
+  void findAcreditaciones_EmptyList_Returns204() throws Exception {
     // given: Una lista vacia de AutorGrupo para el Autor
     Long autorId = 1L;
     List<AutorGrupo> indicesImpacto = new ArrayList<>();
@@ -140,8 +140,7 @@ public class AutorControllerTest extends BaseControllerTest {
     AutorGrupo autor = new AutorGrupo();
     autor.setId(id);
     autor.setAutorId(idRef);
-    autor.setGrupoRef("Grupo-" + String.format("%03d", id));
-
+    autor.setGrupoRef(id);
     return autor;
   }
 }

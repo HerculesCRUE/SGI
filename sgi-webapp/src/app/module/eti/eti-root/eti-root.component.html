@@ -1,6 +1,6 @@
 <sgi-root>
   <sgi-menu-item *sgiHasAuthorityForAnyUO="'ETI-PEV-V'" [route]="[ETI_ROUTE_NAMES.PETICIONES_EVALUACION]"
-    icon="content_paste" title="{{'eti.peticion-evaluacion' | translate:MSG_PARAMS.CARDINALIRY.PLURAL}}">
+    icon="pending_actions" title="{{'eti.peticion-evaluacion' | translate:MSG_PARAMS.CARDINALIRY.PLURAL}}">
   </sgi-menu-item>
   <sgi-menu-item *sgiHasAnyAuthorityForAnyUO="['ETI-MEM-V', 'ETI-MEM-CEST']" [route]="[ETI_ROUTE_NAMES.MEMORIAS]"
     icon="menu_book" title="{{'eti.memoria' | translate:MSG_PARAMS.CARDINALIRY.PLURAL}}">
@@ -26,7 +26,7 @@
     title="{{'eti.evaluador' | translate:MSG_PARAMS.CARDINALIRY.PLURAL}}">
   </sgi-menu-item>
   <ng-container *sgiHasAnyAuthorityForAnyUO="['ETI-EVC-V', 'ETI-EVC-EVAL']">
-    <sgi-menu-item [route]="[ETI_ROUTE_NAMES.EVALUACIONES_EVALUADOR]" icon="assignment_ind"
+    <sgi-menu-item [route]="[ETI_ROUTE_NAMES.EVALUACIONES_EVALUADOR]" icon="preview"
       title="{{'menu.eti.evaluacion-evaluador' | translate}}">
     </sgi-menu-item>
     <sgi-menu-item [route]="[ETI_ROUTE_NAMES.SEGUIMIENTOS]" icon="rate_review"

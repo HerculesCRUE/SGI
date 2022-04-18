@@ -394,8 +394,4 @@ export class ProyectoConceptoGastoListadoExportService extends AbstractTableExpo
       }
     }
   }
-
-  private notIsNullAndNotUndefined(value): boolean {
-    return value !== null && value !== undefined;
-  }
 }

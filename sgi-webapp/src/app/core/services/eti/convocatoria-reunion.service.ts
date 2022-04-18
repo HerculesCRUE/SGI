@@ -129,4 +129,15 @@ export class ConvocatoriaReunionService extends SgiMutableRestService<number, IC
       })
     );
   }
+
+  /**
+   * Permite enviar el comunicado de la convocatoria de reunión
+   * @param idConvocatoria id convocatoria
+   */
+  enviarComunicado(idConvocatoria: number): Observable<boolean> {
+    const url = `${this.endpointUrl}/${idConvocatoria}/comunicado`;
+    return this.http.head(url, { observe: 'response' }).pipe(
+      map(response => response.status === 200)
+    );
+  }
 }

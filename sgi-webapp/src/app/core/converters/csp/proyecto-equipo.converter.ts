@@ -17,7 +17,6 @@ class ProyectoEquipoConverter extends SgiBaseConverter<IProyectoEquipoBackend, I
       persona: { id: value.personaRef } as IPersona,
       rolProyecto: value.rolProyecto,
       proyectoId: value.proyectoId,
-      horasDedicacion: value.horasDedicacion
     };
   }
 
@@ -32,7 +31,6 @@ class ProyectoEquipoConverter extends SgiBaseConverter<IProyectoEquipoBackend, I
       personaRef: value.persona.id,
       rolProyecto: value.rolProyecto,
       proyectoId: value.proyectoId,
-      horasDedicacion: value.horasDedicacion
     };
   }
 }

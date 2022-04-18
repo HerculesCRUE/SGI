@@ -1,10 +1,9 @@
-import { IProyecto } from '@core/models/csp/proyecto';
 import { IDatoEconomico } from '@core/models/sge/dato-economico';
 import { IProyectoSge } from '@core/models/sge/proyecto-sge';
 import { ProyectoAnualidadService } from '@core/services/csp/proyecto-anualidad/proyecto-anualidad.service';
 import { ProyectoService } from '@core/services/csp/proyecto.service';
-import { PersonaService } from '@core/services/sgp/persona.service';
 import { Observable, of } from 'rxjs';
+import { IRelacionEjecucionEconomicaWithResponsables } from '../ejecucion-economica.action.service';
 import { DesgloseEconomicoFragment, IColumnDefinition, RowTreeDesglose } from './desglose-economico.fragment';
 
 export abstract class EjecucionPresupuestariaFragment extends DesgloseEconomicoFragment<IDatoEconomico> {
@@ -12,12 +11,11 @@ export abstract class EjecucionPresupuestariaFragment extends DesgloseEconomicoF
   constructor(
     key: number,
     protected proyectoSge: IProyectoSge,
-    protected proyectosRelacionados: IProyecto[],
+    protected relaciones: IRelacionEjecucionEconomicaWithResponsables[],
     proyectoService: ProyectoService,
-    personaService: PersonaService,
     proyectoAnualidadService: ProyectoAnualidadService
   ) {
-    super(key, proyectoSge, proyectosRelacionados, proyectoService, personaService, proyectoAnualidadService);
+    super(key, proyectoSge, relaciones, proyectoService, proyectoAnualidadService);
     this.setComplete(true);
   }
 

@@ -78,20 +78,13 @@ public class ProyectoEquipoControllerTest extends BaseControllerTest {
         .andExpect(MockMvcResultMatchers.jsonPath("$[0].personaRef").value(proyectoEquipos.get(0).getPersonaRef()))
         .andExpect(MockMvcResultMatchers.jsonPath("$[0].rolProyecto.id")
             .value(proyectoEquipos.get(0).getRolProyecto().getId()))
-        .andExpect(
-            MockMvcResultMatchers.jsonPath("$[0].horasDedicacion").value(proyectoEquipos.get(0).getHorasDedicacion()))
-        .andExpect(MockMvcResultMatchers.jsonPath("$[0].fechaInicio").value("2020-04-02T00:00:00Z"))
-        .andExpect(MockMvcResultMatchers.jsonPath("$[0].fechaFin").value("2020-04-15T23:59:59Z"))
 
         .andExpect(MockMvcResultMatchers.jsonPath("$[1].id").value(5))
         .andExpect(MockMvcResultMatchers.jsonPath("$[1].proyectoId").value(proyectoId))
         .andExpect(MockMvcResultMatchers.jsonPath("$[1].personaRef").value(proyectoEquipos.get(0).getPersonaRef()))
         .andExpect(MockMvcResultMatchers.jsonPath("$[1].rolProyecto.id")
-            .value(proyectoEquipos.get(0).getRolProyecto().getId()))
-        .andExpect(
-            MockMvcResultMatchers.jsonPath("$[1].horasDedicacion").value(proyectoEquipos.get(0).getHorasDedicacion()))
-        .andExpect(MockMvcResultMatchers.jsonPath("$[1].fechaInicio").value("2020-12-16T00:00:00Z"))
-        .andExpect(MockMvcResultMatchers.jsonPath("$[1].fechaFin").value("2020-12-18T23:59:59Z"));
+            .value(proyectoEquipos.get(0).getRolProyecto().getId()));
+
   }
 
   @Test
@@ -173,7 +166,7 @@ public class ProyectoEquipoControllerTest extends BaseControllerTest {
 
     ProyectoEquipo proyectoEquipo = ProyectoEquipo.builder().id(id).proyectoId(proyectoId)
         .rolProyecto(RolProyecto.builder().id(1L).build()).fechaInicio(fechaInicio).fechaFin(fechaFin).personaRef("001")
-        .horasDedicacion(new Double(2)).build();
+        .build();
 
     return proyectoEquipo;
 

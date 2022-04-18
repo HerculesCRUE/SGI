@@ -50,13 +50,19 @@ public class PuntuacionGrupo extends BaseEntity {
   private Long id;
 
   /** grupoRef */
-  @Column(name = "grupo_ref", length = GRUPO_REF_LENGTH, nullable = false)
-  private String grupoRef;
+  @Column(name = "grupo_ref", nullable = false)
+  private Long grupoRef;
 
-  @Column(name = "puntos", nullable = false)
-  private BigDecimal puntos;
+  @Column(name = "puntos_produccion", nullable = false)
+  private BigDecimal puntosProduccion;
 
-  @Column(name = "convocatoria_baremacion_id", nullable = true)
+  @Column(name = "puntos_sexenios", nullable = false)
+  private BigDecimal puntosSexenios;
+
+  @Column(name = "puntos_costes_indirectos", nullable = false)
+  private BigDecimal puntosCostesIndirectos;
+
+  @Column(name = "convocatoria_baremacion_id", nullable = false)
   private Long convocatoriaBaremacionId;
 
   // Relation mappings for JPA metamodel generation only
@@ -71,4 +77,10 @@ public class PuntuacionGrupo extends BaseEntity {
   @Setter(AccessLevel.NONE)
   private final List<PuntuacionGrupoInvestigador> puntuacionesGrupoInvestigador = null;
 
+  @Override
+  public String toString() {
+    return "PuntuacionGrupo [convocatoriaBaremacionId=" + convocatoriaBaremacionId + ", grupoRef=" + grupoRef + ", id="
+        + id + ", puntosCostesIndirectos=" + puntosCostesIndirectos + ", puntosProduccion=" + puntosProduccion
+        + ", puntosSexenios=" + puntosSexenios + "]";
+  }
 }

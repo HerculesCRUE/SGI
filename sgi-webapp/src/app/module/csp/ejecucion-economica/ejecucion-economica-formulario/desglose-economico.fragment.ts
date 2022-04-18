@@ -1,20 +1,15 @@
-import { S } from '@angular/cdk/keycodes';
-import { expressionType } from '@angular/compiler/src/output/output_ast';
 import { FormControl } from '@angular/forms';
-import { HttpProblem } from '@core/errors/http-problem';
-import { IProyecto } from '@core/models/csp/proyecto';
+import { TipoEntidad } from '@core/models/csp/relacion-ejecucion-economica';
 import { IColumna } from '@core/models/sge/columna';
 import { IDatoEconomico } from '@core/models/sge/dato-economico';
 import { IProyectoSge } from '@core/models/sge/proyecto-sge';
-import { IPersona } from '@core/models/sgp/persona';
 import { Fragment } from '@core/services/action-service';
 import { ProyectoAnualidadService } from '@core/services/csp/proyecto-anualidad/proyecto-anualidad.service';
 import { ProyectoService } from '@core/services/csp/proyecto.service';
-import { PersonaService } from '@core/services/sgp/persona.service';
 import { RSQLSgiRestFilter, SgiRestFilterOperator, SgiRestFindOptions } from '@sgi/framework/http';
-import { DateTime } from 'luxon';
 import { BehaviorSubject, from, Observable, of, Subject } from 'rxjs';
 import { map, mergeMap, switchMap } from 'rxjs/operators';
+import { IRelacionEjecucionEconomicaWithResponsables } from '../ejecucion-economica.action.service';
 
 export interface IColumnDefinition {
   id: string;
@@ -79,10 +74,8 @@ export class RowTreeDesglose<T extends IDatoEconomico> extends RowTree<T> {
   }
 }
 
-export interface IProyectoRelacion {
-  proyectoSge: IProyectoSge;
-  proyecto: IProyecto;
-  ip: IPersona;
+export interface IRelacionEjecucionEconomicaWithCodigoExterno extends IRelacionEjecucionEconomicaWithResponsables {
+  codigoExterno: string;
 }
 
 export interface IDesgloseEconomicoExportData {
@@ -91,7 +84,7 @@ export interface IDesgloseEconomicoExportData {
 }
 
 export abstract class DesgloseEconomicoFragment<T extends IDatoEconomico> extends Fragment {
-  readonly relaciones$ = new BehaviorSubject<IProyectoRelacion[]>([]);
+  readonly relaciones$ = new BehaviorSubject<IRelacionEjecucionEconomicaWithCodigoExterno[]>([]);
   readonly anualidades$ = new BehaviorSubject<string[]>([]);
 
   displayColumns: string[] = [];
@@ -102,9 +95,8 @@ export abstract class DesgloseEconomicoFragment<T extends IDatoEconomico> extend
   constructor(
     key: number,
     protected proyectoSge: IProyectoSge,
-    protected proyectosRelacionados: IProyecto[],
+    protected relaciones: IRelacionEjecucionEconomicaWithResponsables[],
     protected proyectoService: ProyectoService,
-    private personaService: PersonaService,
     private proyectoAnualidadService: ProyectoAnualidadService
   ) {
     super(key);
@@ -112,16 +104,20 @@ export abstract class DesgloseEconomicoFragment<T extends IDatoEconomico> extend
   }
 
   protected onInitialize(): void {
-    const relaciones = this.proyectosRelacionados.map(proyecto => {
-      return {
-        proyecto,
-        proyectoSge: this.proyectoSge
-      } as IProyectoRelacion;
-    });
+
     this.subscriptions.push(
-      from(relaciones).pipe(
+      from(this.relaciones as IRelacionEjecucionEconomicaWithCodigoExterno[]).pipe(
         mergeMap(relacion => {
-          return this.fillInvestigadorPrincipal(relacion);
+          if (relacion.tipoEntidad === TipoEntidad.PROYECTO) {
+            return this.proyectoService.findById(relacion.id).pipe(
+              map(proyecto => {
+                relacion.codigoExterno = proyecto.codigoExterno;
+                return relacion;
+              })
+            )
+          }
+
+          return of(relacion);
         })
       ).subscribe(
         (relacion) => {
@@ -137,43 +133,6 @@ export abstract class DesgloseEconomicoFragment<T extends IDatoEconomico> extend
     ));
   }
 
-  private fillInvestigadorPrincipal(relacion: IProyectoRelacion): Observable<IProyectoRelacion> {
-    const findOptions: SgiRestFindOptions = {
-      filter: new RSQLSgiRestFilter('rolProyecto.rolPrincipal', SgiRestFilterOperator.EQUALS, 'true')
-    };
-    return this.proyectoService.findAllProyectoEquipo(relacion.proyecto.id, findOptions).pipe(
-      map(ips => {
-        const ip = ips.items.filter(i => {
-          if (!!!i.fechaInicio) {
-            return true;
-          }
-          if (i.fechaInicio <= DateTime.now() && !!!i.fechaFin) {
-            return true;
-          }
-          if (i.fechaInicio <= DateTime.now() && !!i.fechaFin && DateTime.now() >= i.fechaFin) {
-            return true;
-          }
-          return false;
-        });
-        if (ip.length) {
-          return ip[0].persona.id;
-        }
-        return null;
-      }),
-      switchMap(ipRef => {
-        if (!!!ipRef) {
-          return of(relacion);
-        }
-        return this.personaService.findById(ipRef).pipe(
-          map(persona => {
-            relacion.ip = persona;
-            return relacion;
-          })
-        );
-      })
-    );
-  }
-
   protected abstract getColumns(reducida?: boolean): Observable<IColumnDefinition[]>;
 
   protected toColumnDefinition(columnas: IColumna[]): IColumnDefinition[] {
@@ -187,11 +146,19 @@ export abstract class DesgloseEconomicoFragment<T extends IDatoEconomico> extend
   }
 
   private getAnualidades(): Observable<string[]> {
+    const proyectoIds = this.relaciones
+      .filter(relacion => relacion.tipoEntidad === TipoEntidad.PROYECTO)
+      .map(relacion => relacion.id.toString());
+
+    if (proyectoIds.length === 0) {
+      return of([] as string[]);
+    }
+
     const options: SgiRestFindOptions = {
       filter: new RSQLSgiRestFilter(
         'proyectoId',
         SgiRestFilterOperator.IN,
-        this.proyectosRelacionados.map(proyecto => proyecto.id.toString())
+        proyectoIds
       )
     };
     return this.proyectoAnualidadService.findAll(options).pipe(
@@ -253,11 +220,7 @@ export abstract class DesgloseEconomicoFragment<T extends IDatoEconomico> extend
           });
           this.desglose$.next(regs);
         },
-        (error) => {
-          if (error instanceof HttpProblem) {
-            this.pushProblems(error);
-          }
-        }
+        this.processError
       );
   }
 

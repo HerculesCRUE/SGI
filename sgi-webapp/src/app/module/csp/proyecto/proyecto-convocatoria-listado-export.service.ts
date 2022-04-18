@@ -65,25 +65,17 @@ export class ProyectoConvocatoriaListadoExportService extends AbstractTableExpor
     if (!this.isExcelOrCsv(reportConfig.outputType)) {
       return this.getColumnsConvocatoriaNotExcel();
     } else {
-      return this.getColumnsConvocatoriaExcel(proyectos);
+      const prefixTitleConvocatoria = this.translate.instant(CONVOCATORIA_KEY, MSG_PARAMS.CARDINALIRY.SINGULAR) + ': ';
+
+      return this.getColumnsConvocatoria(prefixTitleConvocatoria, false);
     }
   }
 
   private getColumnsConvocatoriaNotExcel(): ISgiColumnReport[] {
-    const columns: ISgiColumnReport[] = [];
-    columns.push({
-      name: CONVOCATORIA_FIELD,
-      title: this.translate.instant(CONVOCATORIA_KEY, MSG_PARAMS.CARDINALIRY.SINGULAR),
-      type: ColumnType.STRING
-    });
-    const titleI18n = this.translate.instant(CONVOCATORIA_KEY, MSG_PARAMS.CARDINALIRY.SINGULAR) +
-      ' (' + this.translate.instant(CONVOCATORIA_TITULO_KEY) +
-      ' - ' + this.translate.instant(CONVOCATORIA_IDENTIFICACION_KEY) +
-      ' - ' + this.translate.instant(CONVOCATORIA_FECHA_PUBLICACION_KEY) +
-      ' - ' + this.translate.instant(CONVOCATORIA_FECHA_PROVISIONAL_KEY) +
-      ' - ' + this.translate.instant(CONVOCATORIA_FECHA_CONCESION_KEY) +
-      ' - ' + this.translate.instant(CONVOCATORIA_REGIMEN_KEY) +
-      ')';
+    const columns: ISgiColumnReport[] = this.getColumnsConvocatoria('', true);
+
+    const titleI18n = this.translate.instant(CONVOCATORIA_KEY, MSG_PARAMS.CARDINALIRY.SINGULAR);
+
     const columnConvocatoria: ISgiColumnReport = {
       name: CONVOCATORIA_FIELD,
       title: titleI18n,
@@ -94,48 +86,47 @@ export class ProyectoConvocatoriaListadoExportService extends AbstractTableExpor
     return [columnConvocatoria];
   }
 
-  private getColumnsConvocatoriaExcel(proyectos: IProyectoReportData[]): ISgiColumnReport[] {
+  private getColumnsConvocatoria(prefix: string, allString: boolean): ISgiColumnReport[] {
     const columns: ISgiColumnReport[] = [];
 
-    const titleConvocatoria = this.translate.instant(CONVOCATORIA_KEY, MSG_PARAMS.CARDINALIRY.SINGULAR);
     const columnNombreConvocatoria: ISgiColumnReport = {
       name: CONVOCATORIA_FIELD,
-      title: titleConvocatoria + ': ' + this.translate.instant(CONVOCATORIA_TITULO_KEY),
+      title: prefix + this.translate.instant(CONVOCATORIA_TITULO_KEY),
       type: ColumnType.STRING,
     };
     columns.push(columnNombreConvocatoria);
 
     const columnIdentificacionConvocatoria: ISgiColumnReport = {
       name: CONVOCATORIA_IDENTIFICACION_FIELD,
-      title: titleConvocatoria + ': ' + this.translate.instant(CONVOCATORIA_IDENTIFICACION_KEY),
+      title: prefix + this.translate.instant(CONVOCATORIA_IDENTIFICACION_KEY),
       type: ColumnType.STRING,
     };
     columns.push(columnIdentificacionConvocatoria);
 
     const columnFechaPublicacionConvocatoria: ISgiColumnReport = {
       name: CONVOCATORIA_FECHA_PUBLICACION_FIELD,
-      title: titleConvocatoria + ': ' + this.translate.instant(CONVOCATORIA_FECHA_PUBLICACION_KEY),
-      type: ColumnType.DATE,
+      title: prefix + this.translate.instant(CONVOCATORIA_FECHA_PUBLICACION_KEY),
+      type: allString ? ColumnType.STRING : ColumnType.DATE,
     };
     columns.push(columnFechaPublicacionConvocatoria);
 
     const columnFechaProvisionalConvocatoria: ISgiColumnReport = {
       name: CONVOCATORIA_FECHA_PROVISIONAL_FIELD,
-      title: titleConvocatoria + ': ' + this.translate.instant(CONVOCATORIA_FECHA_PROVISIONAL_KEY),
-      type: ColumnType.DATE,
+      title: prefix + this.translate.instant(CONVOCATORIA_FECHA_PROVISIONAL_KEY),
+      type: allString ? ColumnType.STRING : ColumnType.DATE,
     };
     columns.push(columnFechaProvisionalConvocatoria);
 
     const columnFechaConcesionConvocatoria: ISgiColumnReport = {
       name: CONVOCATORIA_FECHA_CONCESION_FIELD,
-      title: titleConvocatoria + ': ' + this.translate.instant(CONVOCATORIA_FECHA_CONCESION_KEY),
-      type: ColumnType.DATE,
+      title: prefix + this.translate.instant(CONVOCATORIA_FECHA_CONCESION_KEY),
+      type: allString ? ColumnType.STRING : ColumnType.DATE,
     };
     columns.push(columnFechaConcesionConvocatoria);
 
     const columnRegimenConvocatoria: ISgiColumnReport = {
       name: CONVOCATORIA_REGIMEN_FIELD,
-      title: titleConvocatoria + ': ' + this.translate.instant(CONVOCATORIA_REGIMEN_KEY),
+      title: prefix + this.translate.instant(CONVOCATORIA_REGIMEN_KEY),
       type: ColumnType.STRING,
     };
     columns.push(columnRegimenConvocatoria);
@@ -161,19 +152,12 @@ export class ProyectoConvocatoriaListadoExportService extends AbstractTableExpor
       const convocatoria = proyecto.convocatoria;
       const convocatoriaElementsRow: any[] = [];
 
-      let convocatoriaTable = convocatoria?.titulo;
-      convocatoriaTable += '\n';
-      convocatoriaTable += convocatoria?.codigo ?? '';
-      convocatoriaTable += '\n';
-      convocatoriaTable += this.luxonDatePipe.transform(LuxonUtils.toBackend(convocatoria?.fechaPublicacion, true), 'shortDate') ?? '';
-      convocatoriaTable += '\n';
-      convocatoriaTable += this.luxonDatePipe.transform(LuxonUtils.toBackend(convocatoria?.fechaProvisional, true), 'shortDate') ?? '';
-      convocatoriaTable += '\n';
-      convocatoriaTable += this.luxonDatePipe.transform(LuxonUtils.toBackend(convocatoria?.fechaConcesion, true), 'shortDate') ?? '';
-      convocatoriaTable += '\n';
-      convocatoriaTable += convocatoria?.regimenConcurrencia?.nombre ?? '';
-
-      convocatoriaElementsRow.push(convocatoriaTable);
+      convocatoriaElementsRow.push(convocatoria?.titulo);
+      convocatoriaElementsRow.push(convocatoria?.codigo ?? '');
+      convocatoriaElementsRow.push(this.luxonDatePipe.transform(LuxonUtils.toBackend(convocatoria?.fechaPublicacion, true), 'shortDate') ?? '');
+      convocatoriaElementsRow.push(this.luxonDatePipe.transform(LuxonUtils.toBackend(convocatoria?.fechaProvisional, true), 'shortDate') ?? '');
+      convocatoriaElementsRow.push(this.luxonDatePipe.transform(LuxonUtils.toBackend(convocatoria?.fechaConcesion, true), 'shortDate') ?? '');
+      convocatoriaElementsRow.push(convocatoria?.regimenConcurrencia?.nombre ?? '');
 
       const rowReport: ISgiRowReport = {
         elements: convocatoriaElementsRow

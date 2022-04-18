@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { AbstractTablePaginationComponent } from '@core/component/abstract-table-pagination.component';
-import { HttpProblem } from '@core/errors/http-problem';
+import { SgiError } from '@core/errors/sgi-error';
 import { MSG_PARAMS } from '@core/i18n';
 import { ITipoProcedimiento } from '@core/models/pii/tipo-procedimiento';
 import { ROUTE_NAMES } from '@core/route.names';
@@ -189,7 +189,7 @@ export class TipoProcedimientoListadoComponent extends AbstractTablePaginationCo
     this.tipoProcedimiento$ = this.getObservableLoadTable(reset);
   }
   protected createFilter(): SgiRestFilter {
-    throw new Error('Method not implemented.');
+    return undefined;
   }
 
   ngOnInit(): void {
@@ -209,7 +209,7 @@ export class TipoProcedimientoListadoComponent extends AbstractTablePaginationCo
           this.loadTable();
         }, (error) => {
           this.logger.error(error);
-          if (error instanceof HttpProblem) {
+          if (error instanceof SgiError) {
             this.snackBarService.showError(error);
           } else {
             this.snackBarService.showError(this.textoErrorDesactivar);
@@ -233,7 +233,7 @@ export class TipoProcedimientoListadoComponent extends AbstractTablePaginationCo
         this.loadTable();
       }, (error) => {
         this.logger.error(error);
-        if (error instanceof HttpProblem) {
+        if (error instanceof SgiError) {
           this.snackBarService.showError(error);
         } else {
           this.snackBarService.showError(this.textoErrorReactivar);

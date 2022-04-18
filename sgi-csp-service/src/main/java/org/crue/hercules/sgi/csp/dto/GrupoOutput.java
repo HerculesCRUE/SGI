@@ -26,7 +26,7 @@ public class GrupoOutput implements Serializable {
   private Long solicitudId;
   private String codigo;
   private Tipo tipo;
-  private boolean especialInvestigacion;
+  private Boolean especialInvestigacion;
   private boolean activo;
 
 }

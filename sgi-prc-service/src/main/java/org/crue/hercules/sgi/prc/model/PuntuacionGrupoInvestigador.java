@@ -26,8 +26,8 @@ import lombok.Setter;
 @Entity
 @Table(name = PuntuacionGrupoInvestigador.TABLE_NAME, uniqueConstraints = {
     @UniqueConstraint(columnNames = {
-        "persona_ref",
-        "puntuacion_grupo_id" }, name = "UK_PUNTUACIONGRUPOINVESTIGADOR_PERSONAREF_PUNTUACIONGRUPOID") })
+        "puntuacion_grupo_id",
+        "puntuacion_item_investigador_id" }, name = "UK_PUNTUACIONGRUPOINVESTIGADOR_PUNTGRUPOID_PUNTITEMINVID") })
 @Data
 @EqualsAndHashCode(callSuper = false)
 @NoArgsConstructor
@@ -50,16 +50,12 @@ public class PuntuacionGrupoInvestigador extends BaseEntity {
   @SequenceGenerator(name = SEQUENCE_NAME, sequenceName = SEQUENCE_NAME, allocationSize = 1)
   private Long id;
 
-  /** personaRef */
-  @Column(name = "persona_ref", nullable = false)
-  private Long personaRef;
+  @Column(name = "puntos", nullable = false)
+  private BigDecimal puntos;
 
   /** PuntuacionGrupo Id */
   @Column(name = "puntuacion_grupo_id", nullable = false)
   private Long puntuacionGrupoId;
-
-  @Column(name = "puntos", nullable = false)
-  private BigDecimal puntos;
 
   // Relation mappings for JPA metamodel generation only
   @ManyToOne
@@ -67,5 +63,22 @@ public class PuntuacionGrupoInvestigador extends BaseEntity {
   @Getter(AccessLevel.NONE)
   @Setter(AccessLevel.NONE)
   private final PuntuacionGrupo puntuacionGrupo = null;
+
+  /** PuntuacionItemInvestigador Id */
+  @Column(name = "puntuacion_item_investigador_id", nullable = true)
+  private Long puntuacionItemInvestigadorId;
+
+  // Relation mappings for JPA metamodel generation only
+  @ManyToOne
+  @JoinColumn(name = "puntuacion_item_investigador_id", insertable = false, updatable = false, foreignKey = @ForeignKey(name = "FK_PUNTUACIONGRUPOINVESTIGADOR_PUNTUACIONITEMINVESTIGADOR"))
+  @Getter(AccessLevel.NONE)
+  @Setter(AccessLevel.NONE)
+  private final PuntuacionItemInvestigador puntuacionItemInvestigador = null;
+
+  @Override
+  public String toString() {
+    return "PuntuacionGrupoInvestigador [id=" + id + ", puntos=" + puntos + ", puntuacionGrupoId=" + puntuacionGrupoId
+        + ", puntuacionItemInvestigadorId=" + puntuacionItemInvestigadorId + "]";
+  }
 
 }

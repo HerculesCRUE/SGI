@@ -33,7 +33,7 @@ export interface ITramoRepartoModalData {
   templateUrl: './tramo-reparto-modal.component.html',
   styleUrls: ['./tramo-reparto-modal.component.scss']
 })
-export class TramoRepartoModalComponent extends DialogActionComponent<ITramoRepartoModalData, ITramoReparto> implements OnInit, OnDestroy {
+export class TramoRepartoModalComponent extends DialogActionComponent<ITramoReparto> implements OnInit, OnDestroy {
 
   private readonly tramoReparto: ITramoReparto;
   msgParamTipoEntity = {};

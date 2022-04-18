@@ -1,6 +1,7 @@
 {
   "idRef": "COMITE_EDITORIAL_5",
   "epigrafeCVN": "060.030.030.000",
+  "estado": "VALIDADO",
   "campos": [
     {
       "codigoCVN": "060.030.030.010",
@@ -11,7 +12,7 @@
     {
       "codigoCVN": "060.030.030.140",
       "valores": [
-        "2020-07-15"
+        "2021-07-15"
       ]
     },
     {
@@ -29,8 +30,8 @@
   ],
   "autores": [
     {
-      "personaRef": "52364567",
-      "firma": "simon.apellido",
+      "personaRef": "22932567",
+      "firma": "francisco.jose",
       "nombre": "",
       "apellidos": "",
       "orden": 1,
@@ -60,7 +61,7 @@
     {
       "fuenteImpacto": "000",
       "indice": 1.5,
-      "anio": "2020",
+      "anio": "2021",
       "otraFuenteImpacto": "",
       "posicionPublicacion": 1,
       "numeroRevista": 100,
@@ -69,7 +70,7 @@
     {
       "fuenteImpacto": "010",
       "indice": 1.6,
-      "anio": "2019",
+      "anio": "2020",
       "otraFuenteImpacto": "",
       "posicionPublicacion": 45,
       "numeroRevista": 100,

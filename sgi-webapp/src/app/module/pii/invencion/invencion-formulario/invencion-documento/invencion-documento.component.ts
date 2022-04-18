@@ -5,7 +5,7 @@ import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { FragmentComponent } from '@core/component/fragment.component';
-import { HttpProblem } from '@core/errors/http-problem';
+import { SgiError } from '@core/errors/sgi-error';
 import { MSG_PARAMS } from '@core/i18n';
 import { IInvencionDocumento } from '@core/models/pii/invencion-documento';
 import { FxFlexProperties } from '@core/models/shared/flexLayout/fx-flex-properties';
@@ -197,7 +197,7 @@ export class InvencionDocumentoComponent extends FragmentComponent implements On
             this.formPart.deleteInvencionDocumento(wrapper, row);
           }
         }, (error) => {
-          if (error instanceof HttpProblem) {
+          if (error instanceof SgiError) {
             this.snackBarService.showError(error);
           } else {
             this.snackBarService.showError(MSG_ERROR);

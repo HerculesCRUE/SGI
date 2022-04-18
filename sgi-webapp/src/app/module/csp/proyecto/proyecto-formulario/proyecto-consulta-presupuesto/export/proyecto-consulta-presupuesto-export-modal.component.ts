@@ -4,7 +4,6 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { BaseExportModalComponent } from '@core/component/base-export/base-export-modal.component';
 import { IReportConfig } from '@core/services/rep/abstract-table-export.service';
-import { SnackBarService } from '@core/services/snack-bar.service';
 import { TranslateService } from '@ngx-translate/core';
 import { IConsultaPresupuestoExportData, IConsultaPresupuestoReportOptions, ProyectoConsultaPresupuestoExportService } from './proyecto-consulta-presupuesto-export.service';
 
@@ -19,12 +18,11 @@ export class ProyectoConsultaPresupuestoExportModalComponent
 
   constructor(
     matDialogRef: MatDialogRef<ProyectoConsultaPresupuestoExportModalComponent>,
-    snackBarService: SnackBarService,
     translate: TranslateService,
     proyectoConsultaPresupuestoExportService: ProyectoConsultaPresupuestoExportService,
     @Inject(MAT_DIALOG_DATA) private modalData: IConsultaPresupuestoExportData
   ) {
-    super(proyectoConsultaPresupuestoExportService, snackBarService, translate, matDialogRef);
+    super(proyectoConsultaPresupuestoExportService, translate, matDialogRef);
   }
 
   ngOnInit(): void {

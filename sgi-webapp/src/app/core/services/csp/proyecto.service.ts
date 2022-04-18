@@ -779,4 +779,20 @@ export class ProyectoService extends SgiMutableRestService<number, IProyectoBack
       map(response => CONVOCATORIA_TITULO_RESPONSE_CONVERTER.toTarget(response))
     );
   }
+
+  /**
+   * ProyectoEquipo que son investigador o investigadores principales del
+   * proyecto con el id indicado.
+   * Se considera investiador principal a la ProyectoEquipo que a fecha actual
+   * tiene el rol Proyecto con el flag "principal" a
+   * true. En caso de que varios coincidan se devuelven todos los que coincidan.
+   *
+   * @param id identificador del proyecto.
+   * @return la lista de personaRef de los investigadores principales del
+   *         proyecto en el momento actual.
+   */
+  findPersonaRefInvestigadoresPrincipales(id: number): Observable<string[]> {
+    return this.http.get<string[]>(`${this.endpointUrl}/${id}/investigadoresprincipales`);
+  }
+
 }

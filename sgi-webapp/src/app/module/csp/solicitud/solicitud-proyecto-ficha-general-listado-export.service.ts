@@ -154,7 +154,7 @@ export class SolicitudProyectoFichaGeneralListadoExportService extends
       proyectoTable += '\n';
       proyectoTable += proyecto?.acronimo ?? '';
       proyectoTable += '\n';
-      proyectoTable += proyecto?.duracion.toString() ?? '';
+      proyectoTable += proyecto?.duracion ? proyecto?.duracion.toString() : '';
       proyectoTable += '\n';
       proyectoTable += this.notIsNullAndNotUndefined(proyecto?.coordinado) ?
         this.getI18nBooleanYesNo(proyecto?.coordinado) : '';
@@ -182,9 +182,9 @@ export class SolicitudProyectoFichaGeneralListadoExportService extends
 
   private fillRowsProyectoExcel(elementsRow: any[], proyecto: ISolicitudProyecto) {
     if (proyecto) {
-      elementsRow.push(proyecto?.codExterno);
-      elementsRow.push(proyecto?.acronimo);
-      elementsRow.push(proyecto?.duracion);
+      elementsRow.push(proyecto?.codExterno ?? '');
+      elementsRow.push(proyecto?.acronimo ?? '');
+      elementsRow.push(proyecto?.duracion ? proyecto?.duracion.toString() : '');
       elementsRow.push(this.notIsNullAndNotUndefined(proyecto?.coordinado) ?
         this.getI18nBooleanYesNo(proyecto?.coordinado) : '');
       elementsRow.push(this.notIsNullAndNotUndefined(proyecto?.coordinadorExterno) ?
@@ -202,10 +202,6 @@ export class SolicitudProyectoFichaGeneralListadoExportService extends
       elementsRow.push('');
     }
     return elementsRow;
-  }
-
-  private notIsNullAndNotUndefined(value): boolean {
-    return value !== null && value !== undefined;
   }
 
 }

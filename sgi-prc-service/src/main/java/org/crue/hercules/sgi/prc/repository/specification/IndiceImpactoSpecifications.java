@@ -21,9 +21,7 @@ public class IndiceImpactoSpecifications {
    *         la {@link ProduccionCientifica} con el id indicado.
    */
   public static Specification<IndiceImpacto> byProduccionCientificaId(Long id) {
-    return (root, query, cb) -> {
-      return cb.equal(root.get(IndiceImpacto_.produccionCientificaId), id);
-    };
+    return (root, query, cb) -> cb.equal(root.get(IndiceImpacto_.produccionCientificaId), id);
   }
 
   /**
@@ -34,9 +32,7 @@ public class IndiceImpactoSpecifications {
    *         indicado.
    */
   public static Specification<IndiceImpacto> byAnio(Integer anio) {
-    return (root, query, cb) -> {
-      return cb.equal(root.get(IndiceImpacto_.anio), anio);
-    };
+    return (root, query, cb) -> cb.equal(root.get(IndiceImpacto_.anio), anio);
   }
 
   /**
@@ -46,9 +42,7 @@ public class IndiceImpactoSpecifications {
    *         indicado.
    */
   public static Specification<IndiceImpacto> byAnioIsNull() {
-    return (root, query, cb) -> {
-      return cb.isNull(root.get(IndiceImpacto_.anio));
-    };
+    return (root, query, cb) -> cb.isNull(root.get(IndiceImpacto_.anio));
   }
 
   /**
@@ -59,9 +53,7 @@ public class IndiceImpactoSpecifications {
    *         {@link TipoFuenteImpacto} indicados.
    */
   public static Specification<IndiceImpacto> tipoFuenteImpactoIn(List<TipoFuenteImpacto> tiposFuenteImpacto) {
-    return (root, query, cb) -> {
-      return root.get(IndiceImpacto_.fuenteImpacto).in(tiposFuenteImpacto);
-    };
+    return (root, query, cb) -> root.get(IndiceImpacto_.fuenteImpacto).in(tiposFuenteImpacto);
   }
 
   /**
@@ -73,9 +65,7 @@ public class IndiceImpactoSpecifications {
    *         los {@link TipoFuenteImpacto} indicados.
    */
   public static Specification<IndiceImpacto> tipoFuenteImpactoNotIn(List<TipoFuenteImpacto> tiposFuenteImpacto) {
-    return (root, query, cb) -> {
-      return cb.not(root.get(IndiceImpacto_.fuenteImpacto).in(tiposFuenteImpacto));
-    };
+    return (root, query, cb) -> cb.not(root.get(IndiceImpacto_.fuenteImpacto).in(tiposFuenteImpacto));
   }
 
 }

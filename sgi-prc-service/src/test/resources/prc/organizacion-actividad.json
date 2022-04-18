@@ -1,6 +1,7 @@
 {
   "idRef": "8",
   "epigrafeCVN": "060.020.030.000",
+  "estado": "VALIDADO",
   "campos": [
     {
       "codigoCVN": "060.020.030.010",
@@ -35,8 +36,8 @@
   ],
   "autores": [
     {
-      "personaRef": "02221287",
-      "firma": "enrique.apellido",
+      "personaRef": "22932567",
+      "firma": "francisco.jose",
       "nombre": "",
       "apellidos": "",
       "orden": 1,

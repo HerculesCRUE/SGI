@@ -21,7 +21,7 @@ const TITLE_NEW_ENTITY = marker('title.new.entity');
   styleUrls: ['./sector-aplicacion-modal.component.scss']
 })
 export class SectorAplicacionModalComponent
-  extends DialogActionComponent<ISectorAplicacion, ISectorAplicacion> implements OnInit, OnDestroy {
+  extends DialogActionComponent<ISectorAplicacion> implements OnInit, OnDestroy {
 
   private readonly sectorAplicacion: ISectorAplicacion;
   msgParamNombreEntity = {};

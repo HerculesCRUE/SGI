@@ -8,14 +8,17 @@ sgi:
   time-zone: "Europe/Madrid"
   rest:
     api:
-      eti-url: "http://sgi-eti-service:4280"
+      cnf-url: "http://sgi-cnf-service:4288"
+      com-url: "http://sgi-com-service:4286"
       csp-url: "http://sgi-csp-service:4281"
-      usr-url: "http://sgi-usr-service:4282"
       pii-url: "http://sgi-pii-service:4283"
       rel-url: "http://sgi-rel-service:4284"
-      tp-url:  "http://sgi-tp-service:4285"
-      com-url: "http://sgi-com-service:4286"
+      rep-url: "http://sgi-rep-service:4287"
+      sgo-url: "http:/sgi-esb:8080/sgo"
+      sgepii-url: "http://sgi-esb:8080/sgepii"
       sgp-url: "http://sgi-esb:8080/sgp"
+      tp-url:  "http://sgi-tp-service:4285"
+
 spring:
   profiles:
     # Set spring-profile using maven
@@ -79,6 +82,13 @@ spring:
             provider: keycloak
             redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
             scope: "openid,profile"
+          prc-service:
+            authorization-grant-type: client_credentials
+            client-id: prc-service
+            client-name: SGI (service login)
+            client-secret: a57a856d-5136-42d9-8baa-6e2bdb962a2e
+            provider: keycloak
+            scope: sgi-cnf,sgi-com,sgi-csp,sgi-pii,sgi-rel,sgi-rep,sgi-sgepii,sgi-sgo,sgi-sgp,sgi-sgp,sgi-tp          
         provider:
           keycloak:
             issuer-uri: http://sgi-auth:8080/auth/realms/sgi
@@ -172,14 +182,17 @@ logging:
 sgi:
   rest:
     api:
+      cnf-url: "http://sgi-cnf-service:8080"
       com-url: "http://sgi-com-service:8080"
       csp-url: "http://sgi-csp-service:8080"
-      eti-url: "http://sgi-eti-service:8080"
       pii-url: "http://sgi-pii-service:8080"
       rel-url: "http://sgi-rel-service:8080"
+      rep-url: "http://sgi-rep-service:8080"
+      sgo-url: "http://sgi-esb:8080/sgo"
+      sgepii-url: "http://sgi-esb:8080/sgepii"
       sgp-url: "http://sgi-esb:8080/sgp"
       tp-url:  "http://sgi-tp-service:8080"
-      usr-url: "http://sgi-usr-service:8080"
+
 spring:
   profiles: prod
   datasource:

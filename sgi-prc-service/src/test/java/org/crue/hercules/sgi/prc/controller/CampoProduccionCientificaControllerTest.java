@@ -33,7 +33,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
  * CampoProduccionCientificaControllerTest
  */
 @WebMvcTest(CampoProduccionCientificaController.class)
-public class CampoProduccionCientificaControllerTest extends BaseControllerTest {
+class CampoProduccionCientificaControllerTest extends BaseControllerTest {
 
   @MockBean
   private CampoProduccionCientificaService service;
@@ -51,7 +51,7 @@ public class CampoProduccionCientificaControllerTest extends BaseControllerTest 
 
   @Test
   @WithMockUser(username = "user", authorities = { "PRC-VAL-V" })
-  public void findValores_ReturnsPage() throws Exception {
+  void findValores_ReturnsPage() throws Exception {
     // given: Una lista con 37 ValorCampo para el CampoProduccionCientifica
     Long campoProduccionCientificaId = 1L;
 
@@ -110,7 +110,7 @@ public class CampoProduccionCientificaControllerTest extends BaseControllerTest 
 
   @Test
   @WithMockUser(username = "user", authorities = { "PRC-VAL-V" })
-  public void findValores_EmptyList_Returns204() throws Exception {
+  void findValores_EmptyList_Returns204() throws Exception {
     // given: Una lista vacia de ValorCampo para el CampoProduccionCientifica
     Long produccionCientificaId = 1L;
     List<ValorCampo> indicesImpacto = new ArrayList<>();

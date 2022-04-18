@@ -4,12 +4,11 @@ import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dial
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
+import { DialogCommonComponent } from '@core/component/dialog-common.component';
 import { SearchModalData } from '@core/component/select-dialog/select-dialog.component';
-import { HttpProblem } from '@core/errors/http-problem';
 import { MSG_PARAMS } from '@core/i18n';
 import { IEmpresa } from '@core/models/sgemp/empresa';
 import { EmpresaService } from '@core/services/sgemp/empresa.service';
-import { SnackBarService } from '@core/services/snack-bar.service';
 import { FormGroupUtil } from '@core/utils/form-group-util';
 import { TranslateService } from '@ngx-translate/core';
 import { RSQLSgiRestFilter, RSQLSgiRestSort, SgiRestFilter, SgiRestFilterOperator, SgiRestFindOptions, SgiRestSortDirection } from '@sgi/framework/http';
@@ -19,7 +18,6 @@ import { catchError, map, tap } from 'rxjs/operators';
 import { ACTION_MODAL_MODE } from 'src/app/esb/shared/formly-forms/core/base-formly-modal.component';
 import { EmpresaFormlyModalComponent, IEmpresaFormlyData } from '../../../formly-forms/empresa-formly-modal/empresa-formly-modal.component';
 
-const MSG_LISTADO_ERROR = marker('error.load');
 const TIPO_EMPRESA_KEY = marker('sgemp.empresa');
 
 export interface SearchEmpresaModalData extends SearchModalData {
@@ -35,7 +33,7 @@ interface EmpresaListado {
   templateUrl: './search-empresa.component.html',
   styleUrls: ['./search-empresa.component.scss']
 })
-export class SearchEmpresaModalComponent implements OnInit, AfterViewInit {
+export class SearchEmpresaModalComponent extends DialogCommonComponent implements OnInit, AfterViewInit {
 
   formGroup: FormGroup;
 
@@ -55,13 +53,14 @@ export class SearchEmpresaModalComponent implements OnInit, AfterViewInit {
     public dialogRef: MatDialogRef<SearchEmpresaModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data: SearchEmpresaModalData,
     private empresaService: EmpresaService,
-    private snackBarService: SnackBarService,
     private readonly translate: TranslateService,
     private empresaCreateMatDialog: MatDialog,
   ) {
+    super(dialogRef);
   }
 
   ngOnInit(): void {
+    super.ngOnInit();
     this.formGroup = new FormGroup({
       datosEmpresa: new FormControl(this.data.searchTerm)
     });
@@ -77,6 +76,7 @@ export class SearchEmpresaModalComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit(): void {
+    super.ngAfterViewInit();
     merge(
       this.paginator.page,
       this.sort.sortChange
@@ -94,6 +94,7 @@ export class SearchEmpresaModalComponent implements OnInit, AfterViewInit {
   }
 
   search(reset?: boolean): void {
+    this.clearProblems();
     const options: SgiRestFindOptions = {
       page: {
         index: reset ? 0 : this.paginator.pageIndex,
@@ -125,12 +126,7 @@ export class SearchEmpresaModalComponent implements OnInit, AfterViewInit {
           // On error reset pagination values
           this.paginator.firstPage();
           this.totalElementos = 0;
-          if (error instanceof HttpProblem) {
-            this.snackBarService.showError(error);
-          }
-          else {
-            this.snackBarService.showError(MSG_LISTADO_ERROR);
-          }
+          this.processError(error);
           return of([]);
         })
       );

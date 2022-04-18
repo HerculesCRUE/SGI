@@ -10,6 +10,8 @@ sgi:
     api:
       rep-url: "http://sgi-rep-service:4287"
       sgdoc-url: "http://sgi-esb:8080/api/sgdoc"
+      sgp-url: "http://sgi-esb:8080/api/sgp"
+      com-url: "http://sgi-com-service:4286"
 spring:
   profiles:
     # Set spring-profile using maven
@@ -73,6 +75,13 @@ spring:
             provider: keycloak
             redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
             scope: "openid,profile"
+          eti-service:
+            authorization-grant-type: client_credentials
+            client-id: eti-service
+            client-name: SGI (service login)
+            client-secret: d5990ca6-c02d-41e2-bf77-b96a41a6d070
+            provider: keycloak
+            scope: sgi-com,sgi-sgp
         provider:
           keycloak:
             issuer-uri: http://sgi-auth:8080/auth/realms/sgi
@@ -200,8 +209,10 @@ logging:
 sgi:
   rest:
     api:
-      rep-url: "http://sgi-rep:8080"
-      sgdoc-url: "http://sgi-esb:8080"
+      rep-url: "http://sgi-rep-service:8080"
+      sgdoc-url: "http://sgi-esb:8080/sgdoc"
+      sgp-url: "http://sgi-esb:8080/sgp"
+      com-url: "http://sgi-com-service:8080"
 spring:
   profiles: prod
   datasource:

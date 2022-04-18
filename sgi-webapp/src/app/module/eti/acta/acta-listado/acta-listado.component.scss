@@ -20,4 +20,10 @@
     padding-top: 30px;
     padding-bottom: 10px;
   }
+
+  .paginator-export {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
 }

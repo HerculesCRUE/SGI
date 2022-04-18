@@ -12,15 +12,19 @@ import { GrupoCrearComponent } from './grupo-crear/grupo-crear.component';
 import { GrupoDataResolver } from './grupo-data.resolver';
 import { GrupoEditarComponent } from './grupo-editar/grupo-editar.component';
 import { GrupoDatosGeneralesComponent } from './grupo-formulario/grupo-datos-generales/grupo-datos-generales.component';
+import { GrupoEquipoInvestigacionComponent } from './grupo-formulario/grupo-equipo-investigacion/grupo-equipo-investigacion.component';
 import { GrupoListadoComponent } from './grupo-listado/grupo-listado.component';
 import { GrupoRoutingModule } from './grupo-routing.module';
+import { GrupoEquipoModalComponent } from './modals/grupo-equipo-modal/grupo-equipo-modal.component';
 
 @NgModule({
   declarations: [
     GrupoCrearComponent,
     GrupoEditarComponent,
     GrupoListadoComponent,
-    GrupoDatosGeneralesComponent
+    GrupoDatosGeneralesComponent,
+    GrupoEquipoInvestigacionComponent,
+    GrupoEquipoModalComponent
   ],
   imports: [
     CommonModule,

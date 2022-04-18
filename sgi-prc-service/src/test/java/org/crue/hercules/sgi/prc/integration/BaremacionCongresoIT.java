@@ -1,20 +1,28 @@
 package org.crue.hercules.sgi.prc.integration;
 
-import org.crue.hercules.sgi.prc.enums.TablaMaestraCVN;
+import java.math.BigDecimal;
+import java.util.List;
+
+import org.assertj.core.api.Assertions;
+import org.crue.hercules.sgi.prc.enums.CodigoCVN;
 import org.crue.hercules.sgi.prc.enums.TipoFuenteImpacto;
-import org.crue.hercules.sgi.prc.model.CampoProduccionCientifica.CodigoCVN;
 import org.crue.hercules.sgi.prc.model.EstadoProduccionCientifica.TipoEstadoProduccion;
 import org.crue.hercules.sgi.prc.model.IndiceImpacto.TipoRanking;
+import org.crue.hercules.sgi.prc.model.ProduccionCientifica;
+import org.crue.hercules.sgi.prc.model.PuntuacionBaremoItem;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ValueSource;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.jdbc.Sql;
 
 /**
  * Test de integracion de Baremacion de congresos
  */
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class BaremacionCongresoIT extends BaremacionBaseIT {
+class BaremacionCongresoIT extends BaremacionBaseIT {
 
   @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = {
       // @formatter:off 
@@ -25,6 +33,7 @@ public class BaremacionCongresoIT extends BaremacionBaseIT {
       "classpath:scripts/indice_impacto.sql",
       "classpath:scripts/configuracion_baremo.sql",
       "classpath:scripts/configuracion_campo.sql",
+      "classpath:scripts/alias_enumerado.sql",
       "classpath:scripts/convocatoria_baremacion.sql",
       "classpath:scripts/baremo.sql",
       "classpath:scripts/modulador.sql",
@@ -32,27 +41,28 @@ public class BaremacionCongresoIT extends BaremacionBaseIT {
       // @formatter:on  
   })
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
-  @ValueSource(strings = { "CONGRESO_GRUPO1_O_CORE_A_POR#GII_GRIN_SCIE#CLASE2#301",
-      "CONGRESO_GRUPO1_O_CORE_A_POR#CORE#CLASE1#301",
-      "CONGRESO_GRUPO1_O_CORE_A_POR#BCI#CLASE1#301",
-      "CONGRESO_GRUPO1_O_CORE_A_POR#ICEE#A_POR#301",
+  @CsvSource({ "'GII_GRIN_SCIE','CLASE2',301", // CONGRESO_GRUPO1_O_CORE_A_POR
+      "'CORE','CLASE1',301", // CONGRESO_GRUPO1_O_CORE_A_POR
+      "'BCI','CLASE1',301", // CONGRESO_GRUPO1_O_CORE_A_POR
+      "'ICEE','A_POR',301", // CONGRESO_GRUPO1_O_CORE_A_POR
   })
   @ParameterizedTest
-  public void baremacion_congreso_grupo1_core_a_por_ko_fuente_impacto_and_ranking(String parameters) throws Exception {
+  void baremacion_congreso_grupo1_core_a_por_ko_fuente_impacto_and_ranking(String fuenteImpacto, String tipoRanking,
+      Long baremoId) throws Exception {
     Long idBaremacion = 1L;
     Long produccionCientificaId = 400L;
 
-    String[] arrParams = parameters.split("#");
-
-    updateEstadoProduccionCientifica(produccionCientificaId, TipoEstadoProduccion.VALIDADO);
+    ProduccionCientifica produccionCientifica = updateEstadoProduccionCientifica(produccionCientificaId,
+        TipoEstadoProduccion.VALIDADO);
+    Assertions.assertThat(produccionCientifica).as("produccionCientifica").isNotNull();
 
     updateValorCampoByCodigoCVNAndProduccionCientificaId(produccionCientificaId, CodigoCVN.E060_010_020_010, "008");
     updateValorCampoByCodigoCVNAndProduccionCientificaId(produccionCientificaId, CodigoCVN.E060_010_020_080, "XXX");
     updateValorCampoByCodigoCVNAndProduccionCientificaId(produccionCientificaId, CodigoCVN.E060_010_020_050, "XXX");
 
     getIndiceImpactoRepository().findAllByProduccionCientificaId(produccionCientificaId).stream().forEach(entity -> {
-      entity.setFuenteImpacto(TipoFuenteImpacto.valueOf(arrParams[1]));
-      entity.setRanking(TipoRanking.valueOf(arrParams[2]));
+      entity.setFuenteImpacto(TipoFuenteImpacto.valueOf(fuenteImpacto));
+      entity.setRanking(TipoRanking.valueOf(tipoRanking));
       getIndiceImpactoRepository().save(entity);
     });
 
@@ -68,6 +78,7 @@ public class BaremacionCongresoIT extends BaremacionBaseIT {
       "classpath:scripts/indice_impacto.sql",
       "classpath:scripts/configuracion_baremo.sql",
       "classpath:scripts/configuracion_campo.sql",
+      "classpath:scripts/alias_enumerado.sql",
       "classpath:scripts/convocatoria_baremacion.sql",
       "classpath:scripts/baremo.sql",
       "classpath:scripts/modulador.sql",
@@ -75,27 +86,28 @@ public class BaremacionCongresoIT extends BaremacionBaseIT {
       // @formatter:on  
   })
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
-  @ValueSource(strings = { "CONGRESO_GRUPO1_O_CORE_A_POR#GII_GRIN_SCIE#CLASE2#301",
-      "CONGRESO_GRUPO1_O_CORE_A_POR#CORE#CLASE1#301",
-      "CONGRESO_GRUPO1_O_CORE_A_POR#BCI#CLASE1#301",
-      "CONGRESO_GRUPO1_O_CORE_A_POR#ICEE#A_POR#301",
+  @CsvSource({ "'GII_GRIN_SCIE','CLASE2',301", // CONGRESO_GRUPO1_O_CORE_A_POR
+      "'CORE','CLASE1',301", // CONGRESO_GRUPO1_O_CORE_A_POR
+      "'BCI','CLASE1',301", // CONGRESO_GRUPO1_O_CORE_A_POR
+      "'ICEE','A_POR',301", // CONGRESO_GRUPO1_O_CORE_A_POR
   })
   @ParameterizedTest
-  public void baremacion_congreso_grupo1_core_a_por_ko_tipo(String parameters) throws Exception {
+  void baremacion_congreso_grupo1_core_a_por_ko_tipo(String fuenteImpacto, String tipoRanking, Long baremoId)
+      throws Exception {
     Long idBaremacion = 1L;
     Long produccionCientificaId = 400L;
 
-    String[] arrParams = parameters.split("#");
-
-    updateEstadoProduccionCientifica(produccionCientificaId, TipoEstadoProduccion.VALIDADO);
+    ProduccionCientifica produccionCientifica = updateEstadoProduccionCientifica(produccionCientificaId,
+        TipoEstadoProduccion.VALIDADO);
+    Assertions.assertThat(produccionCientifica).as("produccionCientifica").isNotNull();
 
     updateValorCampoByCodigoCVNAndProduccionCientificaId(produccionCientificaId, CodigoCVN.E060_010_020_010, "XXX");
     updateValorCampoByCodigoCVNAndProduccionCientificaId(produccionCientificaId, CodigoCVN.E060_010_020_080, "XXX");
     updateValorCampoByCodigoCVNAndProduccionCientificaId(produccionCientificaId, CodigoCVN.E060_010_020_050, "XXX");
 
     getIndiceImpactoRepository().findAllByProduccionCientificaId(produccionCientificaId).stream().forEach(entity -> {
-      entity.setFuenteImpacto(TipoFuenteImpacto.valueOf(arrParams[1]));
-      entity.setRanking(TipoRanking.valueOf(arrParams[2]));
+      entity.setFuenteImpacto(TipoFuenteImpacto.valueOf(fuenteImpacto));
+      entity.setRanking(TipoRanking.valueOf(tipoRanking));
       getIndiceImpactoRepository().save(entity);
     });
 
@@ -111,6 +123,7 @@ public class BaremacionCongresoIT extends BaremacionBaseIT {
       "classpath:scripts/indice_impacto.sql",
       "classpath:scripts/configuracion_baremo.sql",
       "classpath:scripts/configuracion_campo.sql",
+      "classpath:scripts/alias_enumerado.sql",
       "classpath:scripts/convocatoria_baremacion.sql",
       "classpath:scripts/baremo.sql",
       "classpath:scripts/modulador.sql",
@@ -118,29 +131,57 @@ public class BaremacionCongresoIT extends BaremacionBaseIT {
       // @formatter:on  
   })
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
-  @ValueSource(strings = { "CONGRESO_GRUPO1_O_CORE_A_POR#GII_GRIN_SCIE#CLASE1#301",
-      "CONGRESO_GRUPO1_O_CORE_A_POR#CORE#A_POR#301",
+  @CsvSource({ "'GII_GRIN_SCIE','CLASE1',301,'301.00'", // CONGRESO_GRUPO1_O_CORE_A_POR
+      "'CORE','A_POR',301,'301.00'", // CONGRESO_GRUPO1_O_CORE_A_POR
   })
   @ParameterizedTest
-  public void baremacion_congreso_grupo1_core_a_by_fuente_impacto(String parameters) throws Exception {
+  void baremacion_congreso_grupo1_core_a_by_fuente_impacto_and_extra(String fuenteImpacto, String tipoRanking,
+      Long baremoId,
+      String puntos) throws Exception {
     Long idBaremacion = 1L;
     Long produccionCientificaId = 400L;
 
-    String[] arrParams = parameters.split("#");
-
-    updateEstadoProduccionCientifica(produccionCientificaId, TipoEstadoProduccion.VALIDADO);
+    ProduccionCientifica produccionCientifica = updateEstadoProduccionCientifica(produccionCientificaId,
+        TipoEstadoProduccion.VALIDADO);
+    Assertions.assertThat(produccionCientifica).as("produccionCientifica").isNotNull();
 
     updateValorCampoByCodigoCVNAndProduccionCientificaId(produccionCientificaId, CodigoCVN.E060_010_020_010, "008");
     updateValorCampoByCodigoCVNAndProduccionCientificaId(produccionCientificaId, CodigoCVN.E060_010_020_080, "XXX");
     updateValorCampoByCodigoCVNAndProduccionCientificaId(produccionCientificaId, CodigoCVN.E060_010_020_050, "XXX");
+    // Baremacion extra
+    updateValorCampoByCodigoCVNAndProduccionCientificaId(produccionCientificaId, CodigoCVN.RESUMEN_REVISTA, "true");
 
     getIndiceImpactoRepository().findAllByProduccionCientificaId(produccionCientificaId).stream().forEach(entity -> {
-      entity.setFuenteImpacto(TipoFuenteImpacto.valueOf(arrParams[1]));
-      entity.setRanking(TipoRanking.valueOf(arrParams[2]));
+      entity.setFuenteImpacto(TipoFuenteImpacto.valueOf(fuenteImpacto));
+      entity.setRanking(TipoRanking.valueOf(tipoRanking));
       getIndiceImpactoRepository().save(entity);
     });
 
-    baremacionWithOnePuntuacion(idBaremacion, arrParams[3], arrParams[3] + ".00");
+    final ResponseEntity<Void> response = restTemplate.exchange(
+        CONTROLLER_BASE_PATH + PATH_PARAMETER_ID, HttpMethod.POST, buildRequestBaremacion(null, null),
+        Void.class, idBaremacion);
+
+    Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.ACCEPTED);
+
+    List<PuntuacionBaremoItem> puntuacionBaremoItems = getPuntuacionBaremoItemRepository().findAll();
+
+    int numPuntuaciones = puntuacionBaremoItems.size();
+    Assertions.assertThat(numPuntuaciones).as("numPuntuaciones").isEqualTo(3);
+
+    Assertions.assertThat(puntuacionBaremoItems.get(0).getBaremoId()).as("BaremoId").isEqualTo(baremoId);
+    Assertions.assertThat(puntuacionBaremoItems.get(0).getPuntos()).as("Puntos")
+        .isEqualTo(new BigDecimal(puntos));
+
+    // Baremación extra RESUMEN_REVISTA
+    Assertions.assertThat(puntuacionBaremoItems.get(1).getBaremoId()).as("BaremoId").isEqualTo(309L);
+    Assertions.assertThat(puntuacionBaremoItems.get(1).getPuntos()).as("Puntos")
+        .isEqualTo(new BigDecimal("309.00"));
+
+    // Baremación extra nacional
+    Assertions.assertThat(puntuacionBaremoItems.get(2).getBaremoId()).as("BaremoId").isEqualTo(311L);
+    Assertions.assertThat(puntuacionBaremoItems.get(2).getPuntos()).as("Puntos")
+        .isEqualTo(new BigDecimal("311.00"));
+
   }
 
   @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = {
@@ -152,6 +193,7 @@ public class BaremacionCongresoIT extends BaremacionBaseIT {
       "classpath:scripts/indice_impacto.sql",
       "classpath:scripts/configuracion_baremo.sql",
       "classpath:scripts/configuracion_campo.sql",
+      "classpath:scripts/alias_enumerado.sql",
       "classpath:scripts/convocatoria_baremacion.sql",
       "classpath:scripts/baremo.sql",
       "classpath:scripts/modulador.sql",
@@ -159,45 +201,63 @@ public class BaremacionCongresoIT extends BaremacionBaseIT {
       // @formatter:on  
   })
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
-  @ValueSource(strings = { "CONGRESO_INTERNACIONAL_POSTER_O_CARTEL#AMBITO_020#970#303",
-      "CONGRESO_INTERNACIONAL_POSTER_O_CARTEL#AMBITO_030#970#303",
-      "CONGRESO_NACIONAL_POSTER_O_CARTEL#AMBITO_000#970#306",
-      "CONGRESO_NACIONAL_POSTER_O_CARTEL#AMBITO_010#970#306",
-      "CONGRESO_INTERNACIONAL_PONENCIA_ORAL_O_ESCRITA#AMBITO_020#960#304",
-      "CONGRESO_INTERNACIONAL_PONENCIA_ORAL_O_ESCRITA#AMBITO_030#960#304",
-      "CONGRESO_NACIONAL_PONENCIA_ORAL_O_ESCRITA#AMBITO_000#960#307",
-      "CONGRESO_NACIONAL_PONENCIA_ORAL_O_ESCRITA#AMBITO_010#960#307",
-      "CONGRESO_INTERNACIONAL_PONENCIA_ORAL_O_ESCRITA#AMBITO_020#080#305",
-      "CONGRESO_INTERNACIONAL_PONENCIA_ORAL_O_ESCRITA#AMBITO_020#730#305",
-      "CONGRESO_INTERNACIONAL_PONENCIA_ORAL_O_ESCRITA#AMBITO_030#080#305",
-      "CONGRESO_INTERNACIONAL_PONENCIA_ORAL_O_ESCRITA#AMBITO_030#730#305",
-      "CONGRESO_NACIONAL_PONENCIA_ORAL_O_ESCRITA#AMBITO_000#080#308",
-      "CONGRESO_NACIONAL_PONENCIA_ORAL_O_ESCRITA#AMBITO_000#730#308",
-      "CONGRESO_NACIONAL_PONENCIA_ORAL_O_ESCRITA#AMBITO_010#080#308",
-      "CONGRESO_NACIONAL_PONENCIA_ORAL_O_ESCRITA#AMBITO_010#730#308",
+  @CsvSource({ "'020','970',303,'303.00'", // CONGRESO_INTERNACIONAL_POSTER_O_CARTEL
+      "'030','970',303,'303.00'", // CONGRESO_INTERNACIONAL_POSTER_O_CARTEL
+      "'000','970',306,'306.00'", // CONGRESO_NACIONAL_POSTER_O_CARTEL
+      "'010','970',306,'306.00'", // CONGRESO_NACIONAL_POSTER_O_CARTEL
+      "'020','960',304,'304.00'", // CONGRESO_INTERNACIONAL_PONENCIA_ORAL_O_ESCRITA
+      "'030','960',304,'304.00'", // CONGRESO_INTERNACIONAL_PONENCIA_ORAL_O_ESCRITA
+      "'000','960',307,'307.00'", // CONGRESO_NACIONAL_PONENCIA_ORAL_O_ESCRITA
+      "'010','960',307,'307.00'", // CONGRESO_NACIONAL_PONENCIA_ORAL_O_ESCRITA
+      "'020','080',305,'305.00'", // CONGRESO_INTERNACIONAL_PONENCIA_ORAL_O_ESCRITA
+      "'020','730',305,'305.00'", // CONGRESO_INTERNACIONAL_PONENCIA_ORAL_O_ESCRITA
+      "'030','080',305,'305.00'", // CONGRESO_INTERNACIONAL_PONENCIA_ORAL_O_ESCRITA
+      "'030','730',305,'305.00'", // CONGRESO_INTERNACIONAL_PONENCIA_ORAL_O_ESCRITA
+      "'000','080',308,'308.00'", // CONGRESO_NACIONAL_PONENCIA_ORAL_O_ESCRITA
+      "'000','730',308,'308.00'", // CONGRESO_NACIONAL_PONENCIA_ORAL_O_ESCRITA
+      "'010','080',308,'308.00'", // CONGRESO_NACIONAL_PONENCIA_ORAL_O_ESCRITA
+      "'010','730',308,'308.00'", // CONGRESO_NACIONAL_PONENCIA_ORAL_O_ESCRITA
   })
   @ParameterizedTest
-  public void baremacion_congreso_internacional_nacional_by_ambito_and_tipo_participacion(String parameters)
-      throws Exception {
+  void baremacion_congreso_internacional_nacional_by_ambito_and_tipo_participacion(String fuenteImpacto,
+      String tipoRanking, Long baremoId, String puntos) throws Exception {
     Long idBaremacion = 1L;
     Long produccionCientificaId = 400L;
 
-    String[] arrParams = parameters.split("#");
-
-    updateEstadoProduccionCientifica(produccionCientificaId, TipoEstadoProduccion.VALIDADO);
+    ProduccionCientifica produccionCientifica = updateEstadoProduccionCientifica(produccionCientificaId,
+        TipoEstadoProduccion.VALIDADO);
+    Assertions.assertThat(produccionCientifica).as("produccionCientifica").isNotNull();
 
     updateValorCampoByCodigoCVNAndProduccionCientificaId(produccionCientificaId, CodigoCVN.E060_010_020_010, "008");
     updateValorCampoByCodigoCVNAndProduccionCientificaId(produccionCientificaId, CodigoCVN.E060_010_020_080,
-        TablaMaestraCVN.valueOf(arrParams[1]).getInternValue());
+        fuenteImpacto);
     updateValorCampoByCodigoCVNAndProduccionCientificaId(produccionCientificaId, CodigoCVN.E060_010_020_050,
-        arrParams[2]);
+        tipoRanking);
 
     getIndiceImpactoRepository().findAllByProduccionCientificaId(produccionCientificaId).stream().forEach(entity -> {
       entity.setFuenteImpacto(TipoFuenteImpacto.OTHERS);
       getIndiceImpactoRepository().save(entity);
     });
 
-    baremacionWithOnePuntuacion(idBaremacion, arrParams[3], arrParams[3] + ".00");
+    final ResponseEntity<Void> response = restTemplate.exchange(
+        CONTROLLER_BASE_PATH + PATH_PARAMETER_ID, HttpMethod.POST, buildRequestBaremacion(null, null),
+        Void.class, idBaremacion);
+
+    Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.ACCEPTED);
+
+    List<PuntuacionBaremoItem> puntuacionBaremoItems = getPuntuacionBaremoItemRepository().findAll();
+
+    int numPuntuaciones = puntuacionBaremoItems.size();
+    Assertions.assertThat(numPuntuaciones).as("numPuntuaciones").isEqualTo(2);
+
+    Assertions.assertThat(puntuacionBaremoItems.get(0).getBaremoId()).as("BaremoId").isEqualTo(baremoId);
+    Assertions.assertThat(puntuacionBaremoItems.get(0).getPuntos()).as("Puntos")
+        .isEqualTo(new BigDecimal(puntos));
+
+    // Baremación extra nacional
+    Assertions.assertThat(puntuacionBaremoItems.get(1).getBaremoId()).as("BaremoId").isEqualTo(311L);
+    Assertions.assertThat(puntuacionBaremoItems.get(1).getPuntos()).as("Puntos")
+        .isEqualTo(new BigDecimal("311.00"));
   }
 
 }

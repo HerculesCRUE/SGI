@@ -153,7 +153,7 @@ public class ProyectoProrrogaController {
    *         paginados y filtrados.
    */
   @GetMapping("/{id}/prorrogadocumentos")
-  @PreAuthorize("hasAuthorityForAnyUO('CSP-PRO-E')")
+  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-PRO-E', 'CSP-PRO-V')")
   public ResponseEntity<Page<ProrrogaDocumento>> findAllProrrogaDocumento(@PathVariable Long id,
       @RequestParam(name = "q", required = false) String query, @RequestPageable(sort = "s") Pageable paging) {
     log.debug("findAllProrrogaDocumento(Long id, String query, Pageable paging) - start");

@@ -36,21 +36,6 @@
         </mat-error>
       </mat-form-field>
     </div>
-    <!-- Horas dedicacion -->
-    <ng-container *ngIf="data.showHorasDedicacion">
-      <div [fxLayout]="fxLayoutProperties.layout" [fxLayoutAlign]="fxLayoutProperties.layoutAlign">
-        <mat-form-field>
-          <mat-label>
-            {{'csp.miembro-equipo-proyecto.horas' | translate}}
-          </mat-label>
-          <input matInput formControlName="horasDedicacion" type="number" id="horasDedicacion"
-            placeholder="{{'csp.miembro-equipo-proyecto.horas' | translate}}">
-          <mat-error *ngIf="formGroup.controls.horasDedicacion.errors?.max">
-            {{'error.max.entity' | translate:msgParamHoraEntity}}
-          </mat-error>
-        </mat-form-field>
-      </div>
-    </ng-container>
     <!-- Periodo participacion -->
     <div class="fieldset-form">
       {{'title.csp.miembro-equipo-proyecto.periodo-participacion' | translate}}

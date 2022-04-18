@@ -27,7 +27,7 @@
           </button>
           <button *ngIf="!documentacionMemoria.fichaEvaluador && !documentacionMemoria.informe" mat-button
             matTooltip="{{'btn.show.file' | translate}}"
-            (click)="visualizarInforme(documentacionMemoria.informe?.documentoRef)">
+            (click)="visualizarInforme(documentacionMemoria.documento?.documentoRef)">
             <mat-icon color="primary">picture_as_pdf</mat-icon>
           </button>
         </td>

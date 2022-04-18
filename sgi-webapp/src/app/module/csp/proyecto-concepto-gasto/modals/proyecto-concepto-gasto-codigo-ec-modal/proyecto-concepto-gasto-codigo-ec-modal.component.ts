@@ -8,7 +8,6 @@ import { MSG_PARAMS } from '@core/i18n';
 import { IConvocatoriaConceptoGastoCodigoEc } from '@core/models/csp/convocatoria-concepto-gasto-codigo-ec';
 import { IProyectoConceptoGastoCodigoEc } from '@core/models/csp/proyecto-concepto-gasto-codigo-ec';
 import { ICodigoEconomicoGasto } from '@core/models/sge/codigo-economico-gasto';
-import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-properties';
 import { CodigoEconomicoGastoService } from '@core/services/sge/codigo-economico-gasto.service';
 import { SnackBarService } from '@core/services/snack-bar.service';
 import { DateValidator } from '@core/validators/date-validator';
@@ -43,8 +42,6 @@ export class ProyectoConceptoGastoCodigoEcModalComponent
   extends BaseModalComponent<ProyectoConceptoGastoCodigoEcDataModal, ProyectoConceptoGastoCodigoEcModalComponent>
   implements OnInit, OnDestroy {
 
-  fxLayoutProperties: FxLayoutProperties;
-
   codigosEconomicos$: Observable<ICodigoEconomicoGasto[]>;
   private codigosEconomicos: ICodigoEconomicoGasto[];
   textSaveOrUpdate: string;
@@ -65,17 +62,15 @@ export class ProyectoConceptoGastoCodigoEcModalComponent
     private readonly translate: TranslateService
   ) {
     super(snackBarService, matDialogRef, data);
-    this.fxLayoutProperties = new FxLayoutProperties();
-    this.fxLayoutProperties.layout = 'row';
-    this.fxLayoutProperties.layoutAlign = 'row';
-    this.fxLayoutProperties.gap = '20px';
-    this.fxLayoutProperties.xs = 'column';
 
     this.codigosEconomicos$ = codigoEconomicoGastoService.findAll().pipe(
       map(response => response.items),
       tap(response => {
         this.codigosEconomicos = response;
-        this.disabledSave = false;
+
+        if (!this.formGroup.disabled) {
+          this.disabledSave = false;
+        }
       })
     );
   }
@@ -308,6 +303,7 @@ export class ProyectoConceptoGastoCodigoEcModalComponent
   }
 
   private enableEditableControls(): void {
+    this.disabledSave = false;
     this.formGroup.controls.fechaInicio.enable();
     this.formGroup.controls.fechaFin.enable();
     this.formGroup.controls.observaciones.enable();

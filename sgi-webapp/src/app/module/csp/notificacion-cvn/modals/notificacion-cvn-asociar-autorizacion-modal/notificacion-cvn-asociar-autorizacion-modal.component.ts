@@ -24,7 +24,7 @@ const AUTORIZACION_KEY = marker('csp.autorizacion');
   templateUrl: './notificacion-cvn-asociar-autorizacion-modal.component.html',
   styleUrls: ['./notificacion-cvn-asociar-autorizacion-modal.component.scss']
 })
-export class NotificacionCvnAsociarAutorizacionModalComponent extends DialogActionComponent<INotificacionProyectoExternoCVN, INotificacionProyectoExternoCVN> {
+export class NotificacionCvnAsociarAutorizacionModalComponent extends DialogActionComponent<INotificacionProyectoExternoCVN> {
 
   autorizaciones$: Observable<IAutorizacion[]>;
   empresa: IEmpresa;

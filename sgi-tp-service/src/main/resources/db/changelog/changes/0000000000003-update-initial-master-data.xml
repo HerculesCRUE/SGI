@@ -1,0 +1,133 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:pro="http://www.liquibase.org/xml/ns/pro" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-3.8.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+  <property name="schemaPrefix" value="" />
+
+  <changeSet context="!test" author="master" id="0000000000003-bean_method_tasks">
+    <insert tableName="bean_method_tasks">
+      <column name="id" valueSequenceNext="bean_method_tasks_seq" />
+      <column name="schedule_type" value="CRON" />
+      <column name="description" value="Comunicado de inicio de período de presentación de justificación de seguimiento científico" />
+      <column name="bean" value="sgiApiCallerTask" />
+      <column name="method" value="call" />
+    </insert>
+    <insert tableName="bean_method_tasks">
+      <column name="id" valueSequenceNext="bean_method_tasks_seq" />
+      <column name="schedule_type" value="CRON" />
+      <column name="description" value="Comunicado de inicio/vencimiento de período de presentación de justificación de seguimiento científico" />
+      <column name="bean" value="sgiApiCallerTask" />
+      <column name="method" value="call" />
+    </insert>
+    <insert tableName="bean_method_tasks">
+      <column name="id" valueSequenceNext="bean_method_tasks_seq" />
+      <column name="schedule_type" value="CRON" />
+      <column name="description" value="Comunicado de aviso de vencimiento del período de pago al socio colaborador" />
+      <column name="bean" value="sgiApiCallerTask" />
+      <column name="method" value="call" />
+    </insert>
+    <insert tableName="bean_method_tasks">
+      <column name="id" valueSequenceNext="bean_method_tasks_seq" />
+      <column name="schedule_type" value="CRON" />
+      <column name="description" value="Comunicado de aviso de inicio fin del período de justificación al socio colaborador" />
+      <column name="bean" value="sgiApiCallerTask" />
+      <column name="method" value="call" />
+    </insert>
+    <insert tableName="bean_method_tasks">
+      <column name="id" valueSequenceNext="bean_method_tasks_seq" />
+      <column name="schedule_type" value="CRON" />
+      <column name="description" value="Tarea de comprobación de convocatorias de baremación que han sobrepasado el tiempo límite de cálculo de baremación" />
+      <column name="bean" value="sgiApiCallerTask" />
+      <column name="method" value="call" />
+    </insert>
+  </changeSet>
+
+  <changeSet context="!test" author="master" id="0000000000003-bean_method_task_params">
+    <insert tableName="bean_method_task_params">
+      <column name="bean_method_tasks_id" valueComputed="(select id from ${schemaPrefix}bean_method_tasks where description='Comunicado de inicio de período de presentación de justificación de seguimiento científico')" />
+      <column name="param" value="CSP" />
+    </insert>
+    <insert tableName="bean_method_task_params">
+      <column name="bean_method_tasks_id" valueComputed="(select id from ${schemaPrefix}bean_method_tasks where description='Comunicado de inicio de período de presentación de justificación de seguimiento científico')" />
+      <column name="param" value="/comunicados/inicio-justificacion-seguimiento-cientifico" />
+    </insert>
+    <insert tableName="bean_method_task_params">
+      <column name="bean_method_tasks_id" valueComputed="(select id from ${schemaPrefix}bean_method_tasks where description='Comunicado de inicio de período de presentación de justificación de seguimiento científico')" />
+      <column name="param" value="GET" />
+    </insert>
+    <insert tableName="bean_method_task_params">
+      <column name="bean_method_tasks_id" valueComputed="(select id from ${schemaPrefix}bean_method_tasks where description='Comunicado de inicio/vencimiento de período de presentación de justificación de seguimiento científico')" />
+      <column name="param" value="CSP" />
+    </insert>
+    <insert tableName="bean_method_task_params">
+      <column name="bean_method_tasks_id" valueComputed="(select id from ${schemaPrefix}bean_method_tasks where description='Comunicado de inicio/vencimiento de período de presentación de justificación de seguimiento científico')" />
+      <column name="param" value="/comunicados/justificacion-seguimiento-cientifico-ips" />
+    </insert>
+    <insert tableName="bean_method_task_params">
+      <column name="bean_method_tasks_id" valueComputed="(select id from ${schemaPrefix}bean_method_tasks where description='Comunicado de inicio/vencimiento de período de presentación de justificación de seguimiento científico')" />
+      <column name="param" value="GET" />
+    </insert>
+    <insert tableName="bean_method_task_params">
+      <column name="bean_method_tasks_id" valueComputed="(select id from ${schemaPrefix}bean_method_tasks where description='Comunicado de aviso de vencimiento del período de pago al socio colaborador')" />
+      <column name="param" value="CSP" />
+    </insert>
+    <insert tableName="bean_method_task_params">
+      <column name="bean_method_tasks_id" valueComputed="(select id from ${schemaPrefix}bean_method_tasks where description='Comunicado de aviso de vencimiento del período de pago al socio colaborador')" />
+      <column name="param" value="/comunicados/vencimiento-periodo-pago-socio" />
+    </insert>
+    <insert tableName="bean_method_task_params">
+      <column name="bean_method_tasks_id" valueComputed="(select id from ${schemaPrefix}bean_method_tasks where description='Comunicado de aviso de vencimiento del período de pago al socio colaborador')" />
+      <column name="param" value="GET" />
+    </insert>
+    <insert tableName="bean_method_task_params">
+      <column name="bean_method_tasks_id" valueComputed="(select id from ${schemaPrefix}bean_method_tasks where description='Comunicado de aviso de inicio fin del período de justificación al socio colaborador')" />
+      <column name="param" value="CSP" />
+    </insert>
+    <insert tableName="bean_method_task_params">
+      <column name="bean_method_tasks_id" valueComputed="(select id from ${schemaPrefix}bean_method_tasks where description='Comunicado de aviso de inicio fin del período de justificación al socio colaborador')" />
+      <column name="param" value="/comunicados/periodo-justificacion-socio" />
+    </insert>
+    <insert tableName="bean_method_task_params">
+      <column name="bean_method_tasks_id" valueComputed="(select id from ${schemaPrefix}bean_method_tasks where description='Comunicado de aviso de inicio fin del período de justificación al socio colaborador')" />
+      <column name="param" value="GET" />
+    </insert>
+    <insert tableName="bean_method_task_params">
+      <column name="bean_method_tasks_id" valueComputed="(select id from ${schemaPrefix}bean_method_tasks where description='Tarea de comprobación de convocatorias de baremación que han sobrepasado el tiempo límite de cálculo de baremación')" />
+      <column name="param" value="PRC" />
+    </insert>
+    <insert tableName="bean_method_task_params">
+      <column name="bean_method_tasks_id" valueComputed="(select id from ${schemaPrefix}bean_method_tasks where description='Tarea de comprobación de convocatorias de baremación que han sobrepasado el tiempo límite de cálculo de baremación')" />
+      <column name="param" value="/baremacion/reset" />
+    </insert>
+    <insert tableName="bean_method_task_params">
+      <column name="bean_method_tasks_id" valueComputed="(select id from ${schemaPrefix}bean_method_tasks where description='Tarea de comprobación de convocatorias de baremación que han sobrepasado el tiempo límite de cálculo de baremación')" />
+      <column name="param" value="POST" />
+    </insert>
+  </changeSet>
+
+  <changeSet context="!test" author="master" id="0000000000003-bean_method_cron_tasks">
+    <insert tableName="bean_method_cron_tasks">
+      <column name="id" valueComputed="(select id from ${schemaPrefix}bean_method_tasks where description='Comunicado de inicio de período de presentación de justificación de seguimiento científico')" />
+      <!-- Every first day of month at 05:00:00 (second, minute, hour, day, month, weekday) -->
+      <column name="cron_expression" value="0 0 5 1 * ?" />
+    </insert>
+    <insert tableName="bean_method_cron_tasks">
+      <column name="id" valueComputed="(select id from ${schemaPrefix}bean_method_tasks where description='Comunicado de inicio/vencimiento de período de presentación de justificación de seguimiento científico')" />
+      <!-- Every day at 00:00:00 (second, minute, hour, day, month, weekday) -->
+      <column name="cron_expression" value="0 0 0 * * ?" />
+    </insert>
+    <insert tableName="bean_method_cron_tasks">
+      <column name="id" valueComputed="(select id from ${schemaPrefix}bean_method_tasks where description='Comunicado de aviso de vencimiento del período de pago al socio colaborador')" />
+      <!-- Every day at 00:00:00 (second, minute, hour, day, month, weekday) -->
+      <column name="cron_expression" value="0 0 0 * * ?" />
+    </insert>
+    <insert tableName="bean_method_cron_tasks">
+      <column name="id" valueComputed="(select id from ${schemaPrefix}bean_method_tasks where description='Comunicado de aviso de inicio fin del período de justificación al socio colaborador')" />
+      <!-- Every day at 00:00:00 (second, minute, hour, day, month, weekday) -->
+      <column name="cron_expression" value="0 0 0 * * ?" />
+    </insert>
+    <insert tableName="bean_method_cron_tasks">
+      <column name="id" valueComputed="(select id from ${schemaPrefix}bean_method_tasks where description='Tarea de comprobación de convocatorias de baremación que han sobrepasado el tiempo límite de cálculo de baremación')" />
+      <!-- Every 3 hour (second, minute, hour, day, month, weekday) -->
+      <column name="cron_expression" value="* * 0/3 * * ?" />
+    </insert>
+  </changeSet>
+</databaseChangeLog>

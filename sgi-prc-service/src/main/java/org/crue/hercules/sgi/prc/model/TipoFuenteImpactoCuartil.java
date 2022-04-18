@@ -1,6 +1,7 @@
 package org.crue.hercules.sgi.prc.model;
 
 import javax.persistence.Column;
+import javax.persistence.Convert;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -12,6 +13,7 @@ import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
 import org.crue.hercules.sgi.prc.enums.TipoFuenteImpacto;
+import org.crue.hercules.sgi.prc.model.converter.TipoFuenteImpactoConverter;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -52,6 +54,7 @@ public class TipoFuenteImpactoCuartil extends BaseEntity {
   private Long id;
 
   @Column(name = "tipo_fuente_impacto", length = TIPO_FUENTE_IMPACTO_LENGTH, nullable = false)
+  @Convert(converter = TipoFuenteImpactoConverter.class)
   private TipoFuenteImpacto fuenteImpacto;
 
   @Column(name = "cuartil", length = CUARTIL_LENGTH, nullable = true)

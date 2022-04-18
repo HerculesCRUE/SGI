@@ -61,7 +61,7 @@ public class EditorialPrestigio extends BaseEntity {
 
   // Relation mappings for JPA metamodel generation only
   @ManyToOne
-  @JoinColumn(name = "tabla_indice_id", insertable = false, updatable = false, foreignKey = @ForeignKey(name = "FK_EDITORIALPRESTIGIO_TABLAEDITORIAL"))
+  @JoinColumn(name = "tabla_editorial_id", insertable = false, updatable = false, foreignKey = @ForeignKey(name = "FK_EDITORIALPRESTIGIO_TABLAEDITORIAL"))
   @Getter(AccessLevel.NONE)
   @Setter(AccessLevel.NONE)
   private final TablaEditorial tablaEditorial = null;

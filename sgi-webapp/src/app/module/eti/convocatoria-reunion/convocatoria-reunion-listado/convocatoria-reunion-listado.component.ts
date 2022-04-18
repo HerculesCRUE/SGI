@@ -28,6 +28,8 @@ const MSG_ERROR = marker('error.load');
 const MSG_CONFIRMATION_DELETE = marker('msg.delete.entity');
 const MSG_SUCCESS_DELETE = marker('msg.delete.entity.success');
 const CONVOCATORIA_REUNION_KEY = marker('eti.convocatoria-reunion');
+const MSG_SUCCESS_ENVIADO = marker('msg.envio-comunicado.entity.success');
+const MSG_ERROR_ENVIADO = marker('msg.envio-comunicado.entity.error');
 
 @Component({
   selector: 'sgi-convocatoria-reunion-listado',
@@ -49,6 +51,8 @@ export class ConvocatoriaReunionListadoComponent
   textoCrear: string;
   textoDelete: string;
   textoDeleteSuccess: string;
+  textoEnviadoSuccess: string;
+  textoEnviadoError: string;
 
   @ViewChild(MatSort, { static: true }) sort: MatSort;
   @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
@@ -185,6 +189,30 @@ export class ConvocatoriaReunionListadoComponent
         );
       })
     ).subscribe((value) => this.textoDeleteSuccess = value);
+
+    this.translate.get(
+      CONVOCATORIA_REUNION_KEY,
+      MSG_PARAMS.CARDINALIRY.SINGULAR
+    ).pipe(
+      switchMap((value) => {
+        return this.translate.get(
+          MSG_SUCCESS_ENVIADO,
+          { entity: value, ...MSG_PARAMS.GENDER.FEMALE }
+        );
+      })
+    ).subscribe((value) => this.textoEnviadoSuccess = value);
+
+    this.translate.get(
+      CONVOCATORIA_REUNION_KEY,
+      MSG_PARAMS.CARDINALIRY.SINGULAR
+    ).pipe(
+      switchMap((value) => {
+        return this.translate.get(
+          MSG_ERROR_ENVIADO,
+          { entity: value, ...MSG_PARAMS.GENDER.FEMALE }
+        );
+      })
+    ).subscribe((value) => this.textoEnviadoError = value);
   }
 
   ngOnDestroy(): void {
@@ -327,5 +355,18 @@ export class ConvocatoriaReunionListadoComponent
    * @param event evento lanzado.
    */
   enviar(convocatoriaReunionId: number, $event: Event): void {
+    this.convocatoriaReunionService.enviarComunicado(convocatoriaReunionId).subscribe(
+      (response) => {
+        if (response) {
+          this.snackBarService.showSuccess(this.textoEnviadoSuccess);
+          this.loadTable();
+        } else {
+          this.snackBarService.showError(this.textoEnviadoError);
+        }
+      },
+      (error) => {
+        this.snackBarService.showError(this.textoEnviadoError);
+      }
+    );
   }
 }

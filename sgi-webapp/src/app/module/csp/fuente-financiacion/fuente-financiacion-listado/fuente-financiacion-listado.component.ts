@@ -3,7 +3,7 @@ import { FormControl, FormGroup } from '@angular/forms';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { AbstractTablePaginationComponent } from '@core/component/abstract-table-pagination.component';
-import { HttpProblem } from '@core/errors/http-problem';
+import { SgiError } from '@core/errors/sgi-error';
 import { MSG_PARAMS } from '@core/i18n';
 import { IFuenteFinanciacion } from '@core/models/csp/fuente-financiacion';
 import { ITipoAmbitoGeografico } from '@core/models/csp/tipo-ambito-geografico';
@@ -332,7 +332,7 @@ export class FuenteFinanciacionListadoComponent extends AbstractTablePaginationC
         },
         (error) => {
           this.logger.error(error);
-          if (error instanceof HttpProblem) {
+          if (error instanceof SgiError) {
             this.snackBarService.showError(error);
           }
           else {
@@ -362,7 +362,7 @@ export class FuenteFinanciacionListadoComponent extends AbstractTablePaginationC
         },
         (error) => {
           this.logger.error(error);
-          if (error instanceof HttpProblem) {
+          if (error instanceof SgiError) {
             this.snackBarService.showError(error);
           }
           else {

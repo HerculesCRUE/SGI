@@ -18,6 +18,8 @@ import { IProyectoReportData, IProyectoReportOptions } from './proyecto-listado-
 
 const CLASIFICACION_KEY = marker('csp.solicitud-proyecto-clasificacion');
 const CLASIFICACION_FIELD = 'clasificacion';
+const CODIGO_KEY = marker('csp.solicitud-proyecto-clasificacion.codigo');
+const CODIGO_FIELD = 'codigo';
 
 @Injectable()
 export class ProyectoClasificacionListadoExportService extends AbstractTableExportFillService<IProyectoReportData, IProyectoReportOptions>{
@@ -132,8 +134,9 @@ export class ProyectoClasificacionListadoExportService extends AbstractTableExpo
   private getColumnsClasificacionExcel(proyectos: IProyectoReportData[]): ISgiColumnReport[] {
     const columns: ISgiColumnReport[] = [];
 
-    const maxNumClasificaciones = Math.max(...proyectos.map(p => p.clasificaciones?.length));
+    const maxNumClasificaciones = Math.max(...proyectos.map(p => p.clasificaciones ? p.clasificaciones?.length : 0));
     const titleClasificacion = this.translate.instant(CLASIFICACION_KEY, MSG_PARAMS.CARDINALIRY.SINGULAR);
+    const titleCodigo = this.translate.instant(CODIGO_KEY);
 
     for (let i = 0; i < maxNumClasificaciones; i++) {
       const idClasificacion: string = String(i + 1);
@@ -143,8 +146,19 @@ export class ProyectoClasificacionListadoExportService extends AbstractTableExpo
         type: ColumnType.STRING,
       };
       columns.push(columnClasificacion);
-    }
 
+      const maxNumNiveles = Math.max(...proyectos.map(p => p.clasificaciones && p.clasificaciones.length > 0 ? (p.clasificaciones[i] && p.clasificaciones[i].niveles ? p.clasificaciones[i].niveles?.length : 0) : 0));
+      for (let n = 0; n < maxNumNiveles - 1; n++) {
+        const idNivel: string = String(n + 1);
+        const columnCodigo: ISgiColumnReport = {
+          name: CODIGO_FIELD + idNivel + '_' + idClasificacion,
+          title: titleClasificacion + idClasificacion + ': ' + titleCodigo + idNivel,
+          type: ColumnType.STRING,
+        };
+        columns.push(columnCodigo);
+      }
+
+    }
     return columns;
   }
 
@@ -156,10 +170,11 @@ export class ProyectoClasificacionListadoExportService extends AbstractTableExpo
     if (!this.isExcelOrCsv(reportConfig.outputType)) {
       this.fillRowsClasificacionNotExcel(proyecto, elementsRow);
     } else {
-      const maxNumClasificaciones = Math.max(...proyectos.map(p => p.clasificaciones?.length));
+      const maxNumClasificaciones = Math.max(...proyectos.map(p => p.clasificaciones ? p.clasificaciones?.length : 0));
       for (let i = 0; i < maxNumClasificaciones; i++) {
         const clasificacion = proyecto.clasificaciones[i] ?? null;
-        this.fillRowsEntidadExcel(elementsRow, clasificacion);
+        const maxNumNiveles = Math.max(...proyectos.map(p => p.clasificaciones && p.clasificaciones.length > 0 ? (p.clasificaciones[i] && p.clasificaciones[i].niveles ? p.clasificaciones[i].niveles.length : 0) : 0));
+        this.fillRowsEntidadExcel(elementsRow, clasificacion, maxNumNiveles);
       }
     }
     return elementsRow;
@@ -190,16 +205,25 @@ export class ProyectoClasificacionListadoExportService extends AbstractTableExpo
     });
   }
 
-  private fillRowsEntidadExcel(elementsRow: any[], proyectoClasificacion: ProyectoClasificacionListado) {
+  private fillRowsEntidadExcel(elementsRow: any[], proyectoClasificacion: ProyectoClasificacionListado, maxNumNiveles: number) {
     if (proyectoClasificacion) {
-      let clasificacionContent = proyectoClasificacion.clasificacion?.nombre ?? '';
-      clasificacionContent += '\n';
-      clasificacionContent += proyectoClasificacion.nivelesTexto ?? '';
-      clasificacionContent += '\n';
-      clasificacionContent += proyectoClasificacion.nivelSeleccionado?.nombre ?? '';
-      elementsRow.push(clasificacionContent);
+      elementsRow.push(proyectoClasificacion.clasificacion?.nombre ?? '');
+
+      for (let i = 0; i < maxNumNiveles; i++) {
+        const codigo = proyectoClasificacion.niveles
+          ? proyectoClasificacion.niveles[i] ?? null : null;
+        if (codigo && codigo.padreId !== null) {
+          elementsRow.push(codigo.nombre ?? '');
+        } else if (!codigo) {
+          elementsRow.push('');
+        }
+      }
+
     } else {
       elementsRow.push('');
+      for (let i = 0; i < maxNumNiveles - 1; i++) {
+        elementsRow.push('');
+      }
     }
   }
 }

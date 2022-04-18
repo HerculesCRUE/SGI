@@ -1,39 +1,63 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <api context="/sgicsp" name="sgicsp-api" publishSwagger="/_system/governance/swagger_files/sgicsp-swagger.yaml" xmlns="http://ws.apache.org/ns/synapse">
 
-    <!-- Proyectos -->
+  <!-- Proyectos -->
   <resource methods="GET" uri-template="/proyectos/{id}">
     <inSequence>
       <send>
-        <endpoint key="sgicsp-endpoint"/>
+        <endpoint key="sgicsp-endpoint" />
       </send>
     </inSequence>
     <outSequence>
-      <respond/>
+      <respond />
     </outSequence>
     <faultSequence>
-      <sequence key="error-handling-sequence"/>
+      <sequence key="error-handling-sequence" />
     </faultSequence>
   </resource>
 
   <resource methods="GET" uri-template="/proyectos/{id}/anualidades">
     <inSequence>
       <send>
-        <endpoint key="sgicsp-endpoint"/>
+        <endpoint key="sgicsp-endpoint" />
       </send>
     </inSequence>
     <outSequence>
-      <respond/>
+      <respond />
     </outSequence>
     <faultSequence>
-      <sequence key="error-handling-sequence"/>
+      <sequence key="error-handling-sequence" />
+    </faultSequence>
+  </resource>
+
+  <resource methods="GET" uri-template="/proyectos/{id}/areasconocimento">
+    <inSequence>
+      <!-- Get URL from HTTP transport properties-->
+      <property name="url" expression="get-property('axis2','REST_URL_POSTFIX')" />
+      <!-- Rewrite get URL property as input and modify the same input property as output -->
+      <rewrite inProperty="url" outProperty="url">
+        <rewriterule>
+          <action type="replace" regex="areasconocimento" value="proyecto-areas-conocimiento" fragment="path" />
+        </rewriterule>
+      </rewrite>
+      <!-- Set URL HTTP transport properties by rewrited value -->
+      <property name="REST_URL_POSTFIX" scope="axis2" expression="get-property('url')" />
+      <send>
+        <endpoint key="sgicsp-endpoint" />
+      </send>
+    </inSequence>
+    <outSequence>
+      <respond />
+    </outSequence>
+    <faultSequence>
+      <sequence key="error-handling-sequence" />
     </faultSequence>
   </resource>
 
   <resource methods="GET" uri-template="/proyectos/{id}/contexto">
     <inSequence>
       <!-- Get URL from HTTP transport properties-->
-      <property name="url" expression="get-property('axis2','REST_URL_POSTFIX')"/>
+      <property name="url" expression="get-property('axis2','REST_URL_POSTFIX')" />
       <!-- Rewrite get URL property as input and modify the same input property as output -->
       <rewrite inProperty="url" outProperty="url">
         <rewriterule>
@@ -42,93 +66,93 @@
         </rewriterule>
       </rewrite>
       <!-- Set URL HTTP transport properties by rewrited value -->
-      <property name="REST_URL_POSTFIX" scope="axis2" expression="get-property('url')"/>
+      <property name="REST_URL_POSTFIX" scope="axis2" expression="get-property('url')" />
       <send>
-        <endpoint key="sgicsp-endpoint"/>
+        <endpoint key="sgicsp-endpoint" />
       </send>
     </inSequence>
     <outSequence>
-      <respond/>
+      <respond />
     </outSequence>
     <faultSequence>
-      <sequence key="error-handling-sequence"/>
+      <sequence key="error-handling-sequence" />
     </faultSequence>
   </resource>
 
   <resource methods="GET" uri-template="/proyectos/{id}/equipos">
     <inSequence>
-      <property name="url" expression="get-property('axis2','REST_URL_POSTFIX')"/>
+      <property name="url" expression="get-property('axis2','REST_URL_POSTFIX')" />
       <rewrite inProperty="url" outProperty="url">
         <rewriterule>
           <action type="replace" regex="equipos" value="proyectoequipos" fragment="path" />
         </rewriterule>
       </rewrite>
-      <property name="REST_URL_POSTFIX" scope="axis2" expression="get-property('url')"/>
+      <property name="REST_URL_POSTFIX" scope="axis2" expression="get-property('url')" />
       <send>
-        <endpoint key="sgicsp-endpoint"/>
+        <endpoint key="sgicsp-endpoint" />
       </send>
     </inSequence>
     <outSequence>
-      <respond/>
+      <respond />
     </outSequence>
     <faultSequence>
-      <sequence key="error-handling-sequence"/>
+      <sequence key="error-handling-sequence" />
     </faultSequence>
   </resource>
 
   <resource methods="GET" uri-template="/proyectos/{id}/entidadgestoras">
     <inSequence>
-      <property name="url" expression="get-property('axis2','REST_URL_POSTFIX')"/>
-      <rewrite inProperty="url" outProperty="url">        
+      <property name="url" expression="get-property('axis2','REST_URL_POSTFIX')" />
+      <rewrite inProperty="url" outProperty="url">
         <rewriterule>
           <action type="replace" regex="entidadgestoras" value="proyectoentidadgestoras" fragment="path" />
         </rewriterule>
       </rewrite>
-      <property name="REST_URL_POSTFIX" scope="axis2" expression="get-property('url')"/>
+      <property name="REST_URL_POSTFIX" scope="axis2" expression="get-property('url')" />
       <send>
-        <endpoint key="sgicsp-endpoint"/>
+        <endpoint key="sgicsp-endpoint" />
       </send>
     </inSequence>
     <outSequence>
-      <respond/>
+      <respond />
     </outSequence>
     <faultSequence>
-      <sequence key="error-handling-sequence"/>
+      <sequence key="error-handling-sequence" />
     </faultSequence>
   </resource>
 
   <resource methods="GET" uri-template="/proyectos/{id}/entidadconvocantes">
     <inSequence>
       <send>
-        <endpoint key="sgicsp-endpoint"/>
+        <endpoint key="sgicsp-endpoint" />
       </send>
     </inSequence>
     <outSequence>
-      <respond/>
+      <respond />
     </outSequence>
     <faultSequence>
-      <sequence key="error-handling-sequence"/>
+      <sequence key="error-handling-sequence" />
     </faultSequence>
   </resource>
 
   <resource methods="GET" uri-template="/proyectos/{id}/entidadfinanciadoras">
     <inSequence>
-      <property name="url" expression="get-property('axis2','REST_URL_POSTFIX')"/>
-      <rewrite inProperty="url" outProperty="url">    
+      <property name="url" expression="get-property('axis2','REST_URL_POSTFIX')" />
+      <rewrite inProperty="url" outProperty="url">
         <rewriterule>
           <action type="replace" regex="entidadfinanciadoras" value="proyectoentidadfinanciadoras" fragment="path" />
         </rewriterule>
       </rewrite>
-      <property name="REST_URL_POSTFIX" scope="axis2" expression="get-property('url')"/>
+      <property name="REST_URL_POSTFIX" scope="axis2" expression="get-property('url')" />
       <send>
-        <endpoint key="sgicsp-endpoint"/>
+        <endpoint key="sgicsp-endpoint" />
       </send>
     </inSequence>
     <outSequence>
-      <respond/>
+      <respond />
     </outSequence>
     <faultSequence>
-      <sequence key="error-handling-sequence"/>
+      <sequence key="error-handling-sequence" />
     </faultSequence>
   </resource>
 
@@ -170,14 +194,14 @@
   <resource methods="GET" url-mapping="/proyectos/modificados-ids">
     <inSequence>
       <send>
-        <endpoint key="sgicsp-endpoint"/>
+        <endpoint key="sgicsp-endpoint" />
       </send>
     </inSequence>
     <outSequence>
-      <respond/>
+      <respond />
     </outSequence>
     <faultSequence>
-      <sequence key="error-handling-sequence"/>
+      <sequence key="error-handling-sequence" />
     </faultSequence>
   </resource>
 
@@ -185,33 +209,54 @@
   <resource methods="GET" uri-template="/autorizaciones/{id}">
     <inSequence>
       <send>
-        <endpoint key="sgicsp-endpoint"/>
+        <endpoint key="sgicsp-endpoint" />
       </send>
     </inSequence>
     <outSequence>
-      <respond/>
+      <respond />
     </outSequence>
     <faultSequence>
-      <sequence key="error-handling-sequence"/>
+      <sequence key="error-handling-sequence" />
     </faultSequence>
   </resource>
 
   <resource methods="GET" url-mapping="/autorizaciones/modificadas-ids">
     <inSequence>
       <send>
-        <endpoint key="sgicsp-endpoint"/>
+        <endpoint key="sgicsp-endpoint" />
       </send>
     </inSequence>
     <outSequence>
-      <respond/>
+      <respond />
     </outSequence>
     <faultSequence>
-      <sequence key="error-handling-sequence"/>
+      <sequence key="error-handling-sequence" />
     </faultSequence>
   </resource>
 
   <resource methods="POST" url-mapping="/notificaciones-proyectos">
     <inSequence>
+      <send>
+        <endpoint key="sgicsp-endpoint" />
+      </send>
+    </inSequence>
+    <outSequence>
+      <respond />
+    </outSequence>
+    <faultSequence>
+      <sequence key="error-handling-sequence" />
+    </faultSequence>
+  </resource>
+
+  <!-- All CSP -->
+  <resource methods="HEAD DELETE POST GET OPTIONS PUT PATCH">
+    <inSequence>
+      <log level="custom">
+        <property name="path" expression="get-property('axis2','REST_URL_POSTFIX')" />
+      </log>
+      <call-template target="sgi-auth-sequence-template">
+        <with-param name="requiredAuthorities" value="" />
+      </call-template>
       <send>
         <endpoint key="sgicsp-endpoint" />
       </send>

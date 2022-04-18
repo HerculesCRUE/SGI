@@ -1,5 +1,7 @@
 package org.crue.hercules.sgi.pii.service;
 
+import java.time.Instant;
+import java.util.List;
 import java.util.Set;
 
 import javax.validation.ConstraintViolation;
@@ -10,12 +12,15 @@ import javax.validation.Validator;
 import org.crue.hercules.sgi.framework.problem.message.ProblemMessage;
 import org.crue.hercules.sgi.framework.rsql.SgiRSQLJPASupport;
 import org.crue.hercules.sgi.framework.spring.context.support.ApplicationContextSupport;
+import org.crue.hercules.sgi.pii.config.SgiConfigProperties;
+import org.crue.hercules.sgi.pii.dto.InvencionDto;
 import org.crue.hercules.sgi.pii.exceptions.InvencionNotFoundException;
 import org.crue.hercules.sgi.pii.model.Invencion;
 import org.crue.hercules.sgi.pii.model.TipoProteccion;
 import org.crue.hercules.sgi.pii.repository.InvencionRepository;
 import org.crue.hercules.sgi.pii.repository.predicate.InvencionPredicateResolver;
 import org.crue.hercules.sgi.pii.repository.specification.InvencionSpecifications;
+import org.crue.hercules.sgi.pii.util.PeriodDateUtil;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -24,6 +29,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 import org.springframework.validation.annotation.Validated;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -33,16 +39,17 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Transactional(readOnly = true)
 @Validated
+@RequiredArgsConstructor
 public class InvencionService {
 
+  private static final String ID = "id";
+  private static final String IS_NULL = "isNull";
+  private static final String NOT_NULL = "notNull";
+  private static final String ENTITY = "entity";
+  private static final String FIELD = "field";
   private final Validator validator;
-
+  private final SgiConfigProperties sgiConfigProperties;
   private final InvencionRepository repository;
-
-  public InvencionService(Validator validator, InvencionRepository invencionRepository) {
-    this.validator = validator;
-    this.repository = invencionRepository;
-  }
 
   /**
    * Obtener todas las entidades {@link Invencion} activos paginadas y/o
@@ -106,19 +113,19 @@ public class InvencionService {
 
     Assert.isNull(invencion.getId(),
         // Defer message resolution untill is needed
-        () -> ProblemMessage.builder().key(Assert.class, "isNull")
-            .parameter("field", ApplicationContextSupport.getMessage("id"))
-            .parameter("entity", ApplicationContextSupport.getMessage(Invencion.class)).build());
+        () -> ProblemMessage.builder().key(Assert.class, IS_NULL)
+            .parameter(FIELD, ApplicationContextSupport.getMessage(ID))
+            .parameter(ENTITY, ApplicationContextSupport.getMessage(Invencion.class)).build());
     Assert.notNull(invencion.getTipoProteccion(),
         // Defer message resolution untill is needed
-        () -> ProblemMessage.builder().key(Assert.class, "notNull")
-            .parameter("field", ApplicationContextSupport.getMessage(TipoProteccion.class))
-            .parameter("entity", ApplicationContextSupport.getMessage(Invencion.class)).build());
+        () -> ProblemMessage.builder().key(Assert.class, NOT_NULL)
+            .parameter(FIELD, ApplicationContextSupport.getMessage(TipoProteccion.class))
+            .parameter(ENTITY, ApplicationContextSupport.getMessage(Invencion.class)).build());
     Assert.notNull(invencion.getTipoProteccion().getId(),
         // Defer message resolution untill is needed
-        () -> ProblemMessage.builder().key(Assert.class, "notNull")
-            .parameter("field", ApplicationContextSupport.getMessage("id"))
-            .parameter("entity", ApplicationContextSupport.getMessage(TipoProteccion.class)).build());
+        () -> ProblemMessage.builder().key(Assert.class, NOT_NULL)
+            .parameter(FIELD, ApplicationContextSupport.getMessage(ID))
+            .parameter(ENTITY, ApplicationContextSupport.getMessage(TipoProteccion.class)).build());
 
     invencion.setActivo(true);
     Invencion returnValue = repository.save(invencion);
@@ -140,19 +147,19 @@ public class InvencionService {
 
     Assert.notNull(invencion.getId(),
         // Defer message resolution untill is needed
-        () -> ProblemMessage.builder().key(Assert.class, "notNull")
-            .parameter("field", ApplicationContextSupport.getMessage("id"))
-            .parameter("entity", ApplicationContextSupport.getMessage(Invencion.class)).build());
+        () -> ProblemMessage.builder().key(Assert.class, NOT_NULL)
+            .parameter(FIELD, ApplicationContextSupport.getMessage(ID))
+            .parameter(ENTITY, ApplicationContextSupport.getMessage(Invencion.class)).build());
     Assert.notNull(invencion.getTipoProteccion(),
         // Defer message resolution untill is needed
-        () -> ProblemMessage.builder().key(Assert.class, "notNull")
-            .parameter("field", ApplicationContextSupport.getMessage(TipoProteccion.class))
-            .parameter("entity", ApplicationContextSupport.getMessage(Invencion.class)).build());
+        () -> ProblemMessage.builder().key(Assert.class, NOT_NULL)
+            .parameter(FIELD, ApplicationContextSupport.getMessage(TipoProteccion.class))
+            .parameter(ENTITY, ApplicationContextSupport.getMessage(Invencion.class)).build());
     Assert.notNull(invencion.getTipoProteccion().getId(),
         // Defer message resolution untill is needed
-        () -> ProblemMessage.builder().key(Assert.class, "notNull")
-            .parameter("field", ApplicationContextSupport.getMessage("id"))
-            .parameter("entity", ApplicationContextSupport.getMessage(TipoProteccion.class)).build());
+        () -> ProblemMessage.builder().key(Assert.class, NOT_NULL)
+            .parameter(FIELD, ApplicationContextSupport.getMessage(ID))
+            .parameter(ENTITY, ApplicationContextSupport.getMessage(TipoProteccion.class)).build());
 
     return repository.findById(invencion.getId()).map(invencionExistente -> {
 
@@ -193,12 +200,12 @@ public class InvencionService {
 
     Assert.notNull(id,
         // Defer message resolution untill is needed
-        () -> ProblemMessage.builder().key(Assert.class, "notNull")
-            .parameter("field", ApplicationContextSupport.getMessage("id"))
-            .parameter("entity", ApplicationContextSupport.getMessage(Invencion.class)).build());
+        () -> ProblemMessage.builder().key(Assert.class, NOT_NULL)
+            .parameter(FIELD, ApplicationContextSupport.getMessage(ID))
+            .parameter(ENTITY, ApplicationContextSupport.getMessage(Invencion.class)).build());
 
     return repository.findById(id).map(invencion -> {
-      if (invencion.getActivo()) {
+      if (Boolean.TRUE.equals(invencion.getActivo())) {
         // Si esta activo no se hace nada
         return invencion;
       }
@@ -223,12 +230,12 @@ public class InvencionService {
 
     Assert.notNull(id,
         // Defer message resolution untill is needed
-        () -> ProblemMessage.builder().key(Assert.class, "notNull")
-            .parameter("field", ApplicationContextSupport.getMessage("id"))
-            .parameter("entity", ApplicationContextSupport.getMessage(Invencion.class)).build());
+        () -> ProblemMessage.builder().key(Assert.class, NOT_NULL)
+            .parameter(FIELD, ApplicationContextSupport.getMessage(ID))
+            .parameter(ENTITY, ApplicationContextSupport.getMessage(Invencion.class)).build());
 
     return repository.findById(id).map(invencion -> {
-      if (!invencion.getActivo()) {
+      if (Boolean.FALSE.equals(invencion.getActivo())) {
         // Si no esta activo no se hace nada
         return invencion;
       }
@@ -252,5 +259,17 @@ public class InvencionService {
     final boolean existe = repository.existsById(id);
     log.debug("existsById(final Long id)  - end", id);
     return existe;
+  }
+
+  public List<InvencionDto> findInvencionesProduccionCientifica(Integer anioInicio, Integer anioFin,
+      String universidadId) {
+
+    Instant fechaInicioBaremacion = PeriodDateUtil.calculateFechaInicioBaremacionByAnio(
+        anioInicio, sgiConfigProperties.getTimeZone());
+
+    Instant fechaFinBaremacion = PeriodDateUtil.calculateFechaFinBaremacionByAnio(
+        anioFin, sgiConfigProperties.getTimeZone());
+
+    return repository.findInvencionesProduccionCientifica(fechaInicioBaremacion, fechaFinBaremacion, universidadId);
   }
 }

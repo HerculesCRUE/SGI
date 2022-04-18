@@ -4,7 +4,7 @@ import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { FragmentComponent } from '@core/component/fragment.component';
-import { HttpProblem } from '@core/errors/http-problem';
+import { SgiError } from '@core/errors/sgi-error';
 import { MSG_PARAMS } from '@core/i18n';
 import { COMITE } from '@core/models/eti/comite';
 import { ESTADO_RETROSPECTIVA } from '@core/models/eti/estado-retrospectiva';
@@ -213,7 +213,7 @@ export class MemoriasListadoComponent extends FragmentComponent implements OnIni
               },
               (error) => {
                 this.logger.error(error);
-                if (error instanceof HttpProblem) {
+                if (error instanceof SgiError) {
                   this.snackBarService.showError(error);
                 }
                 else {
@@ -234,7 +234,7 @@ export class MemoriasListadoComponent extends FragmentComponent implements OnIni
               },
               (error) => {
                 this.logger.error(error);
-                if (error instanceof HttpProblem) {
+                if (error instanceof SgiError) {
                   this.snackBarService.showError(error);
                 }
                 else {
@@ -268,7 +268,7 @@ export class MemoriasListadoComponent extends FragmentComponent implements OnIni
         },
         (error) => {
           this.logger.error(error);
-          if (error instanceof HttpProblem) {
+          if (error instanceof SgiError) {
             this.snackBarService.showError(error);
           }
           else {

@@ -7,7 +7,6 @@ import { TIPO_PARTIDA_MAP } from '@core/enums/tipo-partida';
 import { MSG_PARAMS } from '@core/i18n';
 import { IConvocatoriaPartidaPresupuestaria } from '@core/models/csp/convocatoria-partida-presupuestaria';
 import { IPartidaPresupuestaria } from '@core/models/csp/partida-presupuestaria';
-import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-properties';
 import { ConfiguracionService } from '@core/services/csp/configuracion.service';
 import { SnackBarService } from '@core/services/snack-bar.service';
 import { TranslateService } from '@ngx-translate/core';
@@ -53,6 +52,7 @@ export class PartidaPresupuestariaModalComponent
 
   showDatosPartidaPresupuestaria = false;
   disabledCopy = false;
+  disabledSave = false;
 
   constructor(
     public matDialogRef: MatDialogRef<PartidaPresupuestariaModalComponent>,
@@ -61,11 +61,6 @@ export class PartidaPresupuestariaModalComponent
     private configuracionService: ConfiguracionService,
     private readonly translate: TranslateService) {
     super(snackBarService, matDialogRef, data.partidaPresupuestaria);
-
-    this.fxLayoutProperties = new FxLayoutProperties();
-    this.fxLayoutProperties.gap = '20px';
-    this.fxLayoutProperties.layout = 'row wrap';
-    this.fxLayoutProperties.xs = 'column';
   }
 
   ngOnInit(): void {
@@ -188,6 +183,7 @@ export class PartidaPresupuestariaModalComponent
       if (this.data.partidaPresupuestaria) {
         this.disabledCopy = !comparePartidaPresupuestaria(this.data.convocatoriaPartidaPresupuestaria, this.data.partidaPresupuestaria);
       } else {
+        this.disabledSave = true;
         formGroup.controls.descripcion.disable();
       }
     }
@@ -240,6 +236,7 @@ export class PartidaPresupuestariaModalComponent
   }
 
   private enableEditableControls(): void {
+    this.disabledSave = false;
     this.formGroup.controls.descripcion.enable();
   }
 

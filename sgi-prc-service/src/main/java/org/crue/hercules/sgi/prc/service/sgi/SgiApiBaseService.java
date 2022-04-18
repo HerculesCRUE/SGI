@@ -28,11 +28,14 @@ public abstract class SgiApiBaseService {
     log.debug("buildUrl(ServiceType serviceType, String relativeUrl) - start");
     String serviceURL = null;
     switch (serviceType) {
+      case CNF:
+        serviceURL = restApiProperties.getCnfUrl();
+        break;
+      case COM:
+        serviceURL = restApiProperties.getComUrl();
+        break;
       case CSP:
         serviceURL = restApiProperties.getCspUrl();
-        break;
-      case ETI:
-        serviceURL = restApiProperties.getEtiUrl();
         break;
       case PII:
         serviceURL = restApiProperties.getPiiUrl();
@@ -40,14 +43,20 @@ public abstract class SgiApiBaseService {
       case REL:
         serviceURL = restApiProperties.getRelUrl();
         break;
+      case REP:
+        serviceURL = restApiProperties.getRepUrl();
+        break;
+      case SGEPII:
+        serviceURL = restApiProperties.getSgepiiUrl();
+        break;
+      case SGO:
+        serviceURL = restApiProperties.getSgoUrl();
+        break;
       case SGP:
         serviceURL = restApiProperties.getSgpUrl();
         break;
       case TP:
         serviceURL = restApiProperties.getTpUrl();
-        break;
-      case USR:
-        serviceURL = restApiProperties.getUsrUrl();
         break;
       default:
         throw new UnknownServiceTypeException(serviceType.name());

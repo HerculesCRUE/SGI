@@ -163,7 +163,7 @@
               <mat-icon>highlight_off</mat-icon>
             </button>
           </span>
-          <ng-container *sgiHasAuthorityForAnyUO="'ETI-CNV-ENV'">
+          <ng-container>
             <button color="accent" *ngIf="!convocatoriaReunion.fechaEnvio" mat-button
               matTooltip="{{'btn.send' | translate}}" (click)="enviar(convocatoriaReunion.id, $event)">
               <mat-icon>send</mat-icon>

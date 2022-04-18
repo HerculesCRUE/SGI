@@ -18,6 +18,7 @@ const MSG_TIPO_DOCUMENTO_TITLE = marker('csp.tipo-documento');
 const MSG_MODELO_EJECUCION_TITLE = marker('menu.csp.configuraciones.modelos-ejecucion');
 const MSG_PLAN_INVESTIGACION_TITLE = marker('menu.csp.configuraciones.planes-investigacion');
 const MSG_GESTION_CONCEPTO_GASTO_TITLE = marker('menu.csp.configuraciones.conceptos-gasto');
+const MSG_GESTION_LINEA_INVESTIGACION_TITLE = marker('menu.csp.configuraciones.lineas-investigacion');
 const MSG_TIPO_FINANCIACION_TITLE = marker('menu.csp.configuraciones.tipos-financiacion');
 const MSG_FUENTE_FINANCIACION_TITLE = marker('menu.csp.configuraciones.fuentes-financiacion');
 const MSG_AREA_TEMATICA_TITLE = marker('menu.csp.configuraciones.areas-tematicas');
@@ -182,6 +183,18 @@ const routes: SgiRoutes = [
         data: {
           title: MSG_GESTION_CONCEPTO_GASTO_TITLE,
           hasAnyAuthority: ['CSP-TGTO-V', 'CSP-TGTO-C', 'CSP-TGTO-E', 'CSP-TGTO-B', 'CSP-TGTO-R']
+        }
+      },
+      {
+        path: CSP_ROUTE_NAMES.LINEA_INVESTIGACION,
+        loadChildren: () =>
+          import('./linea-investigacion/linea-investigacion.module').then(
+            (m) => m.LineaInvestigacionModule
+          ),
+        canActivate: [SgiAuthGuard],
+        data: {
+          title: MSG_GESTION_LINEA_INVESTIGACION_TITLE,
+          hasAnyAuthority: ['CSP-LIN-C', 'CSP-LIN-E', 'CSP-LIN-B', 'CSP-LIN-R']
         }
       },
       {

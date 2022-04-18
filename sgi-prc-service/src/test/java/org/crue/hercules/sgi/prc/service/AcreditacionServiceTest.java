@@ -24,7 +24,7 @@ import org.springframework.context.annotation.Import;
  * AcreditacionServiceTest
  */
 @Import({ AcreditacionService.class, ApplicationContextSupport.class })
-public class AcreditacionServiceTest extends BaseServiceTest {
+class AcreditacionServiceTest extends BaseServiceTest {
 
   private static final String DEFAULT_DATA_DOCUMENTO_REF = "Documento-ref-default";
   private static final Long DEFAULT_DATA_PRODUCCION_CIENTIFICA_ID = 1L;
@@ -53,7 +53,7 @@ public class AcreditacionServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_ReturnsAcreditacion() {
+  void create_ReturnsAcreditacion() {
     // given: Un nuevo Acreditacion
     Acreditacion acreditacion = generarMockAcreditacion(null);
 
@@ -78,7 +78,7 @@ public class AcreditacionServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_WithId_ThrowsIllegalArgumentException() {
+  void create_WithId_ThrowsIllegalArgumentException() {
     // given: Acreditacion que ya tiene id
     Acreditacion acreditacion = generarMockAcreditacion(1L);
 
@@ -89,7 +89,7 @@ public class AcreditacionServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_ReturnsAcreditacion() {
+  void update_ReturnsAcreditacion() {
     // given: Un nuevo Acreditacion
     Acreditacion acreditacion = generarMockAcreditacion(1L);
 
@@ -113,7 +113,7 @@ public class AcreditacionServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_WithoutId_ThrowsIllegalArgumentException() {
+  void update_WithoutId_ThrowsIllegalArgumentException() {
     // given: Acreditacion sin id
     Acreditacion acreditacion = generarMockAcreditacion(null);
 
@@ -124,7 +124,7 @@ public class AcreditacionServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_WithNotExistingAcreditacion_ThrowsAcreditacionNotFoundException() {
+  void update_WithNotExistingAcreditacion_ThrowsAcreditacionNotFoundException() {
     // given: Acreditacion sin id
     Acreditacion acreditacion = generarMockAcreditacion(33L);
 
@@ -137,7 +137,7 @@ public class AcreditacionServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void findById_ReturnsFuenteFinanciacion() {
+  void findById_ReturnsFuenteFinanciacion() {
     // given: Acreditacion con el id buscado
     Long idBuscado = 1L;
     BDDMockito.given(repository.findById(idBuscado)).willReturn(Optional.of(generarMockAcreditacion(idBuscado)));
@@ -157,7 +157,7 @@ public class AcreditacionServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void findById_WithIdNotExist_ThrowsAcreditacionNotFoundException() {
+  void findById_WithIdNotExist_ThrowsAcreditacionNotFoundException() {
     // given: Ningun Acreditacion con el id buscado
     Long idBuscado = 33L;
     BDDMockito.given(repository.findById(ArgumentMatchers.<Long>any())).willReturn(Optional.empty());
@@ -169,17 +169,19 @@ public class AcreditacionServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void delete_ReturnsVoid() {
+  void delete_ReturnsVoid() {
     // given: id null
     Long idToDelete = 1L;
 
     // when: Eliminamos Acreditacion con el id indicado
     // then: Elimina Acreditacion
     service.delete(idToDelete);
+
+    Assertions.assertThat(idToDelete).as("idToDelete").isEqualTo(1L);
   }
 
   @Test
-  public void delete_WithoutId_ThrowsIllegalArgumentException() {
+  void delete_WithoutId_ThrowsIllegalArgumentException() {
     // given: id null
     Long idToDelete = null;
 
@@ -190,7 +192,7 @@ public class AcreditacionServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void deleteInBulkByProduccionCientificaId_ReturnsInt() {
+  void deleteInBulkByProduccionCientificaId_ReturnsInt() {
     // give: produccionCientificaId
     Long produccionCientificaId = 1L;
 

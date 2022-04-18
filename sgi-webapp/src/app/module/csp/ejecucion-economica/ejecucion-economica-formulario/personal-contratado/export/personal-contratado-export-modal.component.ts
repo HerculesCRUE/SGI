@@ -4,7 +4,6 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { BaseExportModalComponent } from '@core/component/base-export/base-export-modal.component';
 import { IReportConfig } from '@core/services/rep/abstract-table-export.service';
-import { SnackBarService } from '@core/services/snack-bar.service';
 import { TranslateService } from '@ngx-translate/core';
 import { IEjecucionPresupuestariaReportOptions } from '../../../common/ejecucion-presupuestaria-report-options';
 import { IDesgloseEconomicoExportData } from '../../desglose-economico.fragment';
@@ -22,12 +21,11 @@ export class PersonalContratadoExportModalComponent
 
   constructor(
     matDialogRef: MatDialogRef<PersonalContratadoExportModalComponent>,
-    snackBarService: SnackBarService,
     translate: TranslateService,
     viajesDietasExportService: PersonalContratadoExportService,
     @Inject(MAT_DIALOG_DATA) private modalData: IDesgloseEconomicoExportData
   ) {
-    super(viajesDietasExportService, snackBarService, translate, matDialogRef);
+    super(viajesDietasExportService, translate, matDialogRef);
   }
 
   ngOnInit(): void {

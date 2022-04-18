@@ -1575,7 +1575,7 @@
   </changeSet>
 
   <changeSet context="dev" author="master" id="0000000000000-configuracion_baremo">
-
+    <validCheckSum>8:d789684c96bb9a30e09e6a97d178af2e</validCheckSum>
     <insert tableName="configuracion_baremo">
       <!-- 1 -->
       <column name="id" valueSequenceNext="configuracion_baremo_seq" />
@@ -1592,7 +1592,7 @@
       <!-- 2-->
       <column name="id" valueSequenceNext="configuracion_baremo_seq" />
       <column name="activo" valueBoolean="true" />
-      <column name="epigrafe_cvn" value="" />
+      <column name="epigrafe_cvn" value=" " />
       <column name="nombre" value="Costes Indirectos" />
       <column name="prioridad" valueNumeric="1" />
       <column name="tipo_baremo" value="COSTE_INDIRECTO" />
@@ -1604,7 +1604,7 @@
       <!-- 3-->
       <column name="id" valueSequenceNext="configuracion_baremo_seq" />
       <column name="activo" valueBoolean="true" />
-      <column name="epigrafe_cvn" value="" />
+      <column name="epigrafe_cvn" value=" " />
       <column name="nombre" value="Producción científica" />
       <column name="prioridad" valueNumeric="null" />
       <column name="tipo_baremo" value="AGRUPADOR" />
@@ -1616,7 +1616,7 @@
       <!-- 4-->
       <column name="id" valueSequenceNext="configuracion_baremo_seq" />
       <column name="activo" valueBoolean="true" />
-      <column name="epigrafe_cvn" value="" />
+      <column name="epigrafe_cvn" value=" " />
       <column name="nombre" value="Libros" />
       <column name="prioridad" valueNumeric="null" />
       <column name="tipo_baremo" value="AGRUPADOR" />
@@ -1940,7 +1940,7 @@
       <!-- 31-->
       <column name="id" valueSequenceNext="configuracion_baremo_seq" />
       <column name="activo" valueBoolean="true" />
-      <column name="epigrafe_cvn" value="" />
+      <column name="epigrafe_cvn" value=" " />
       <column name="nombre" value="Artículos" />
       <column name="prioridad" valueNumeric="null" />
       <column name="tipo_baremo" value="AGRUPADOR" />
@@ -2504,7 +2504,7 @@
       <!-- 78-->
       <column name="id" valueSequenceNext="configuracion_baremo_seq" />
       <column name="activo" valueBoolean="true" />
-      <column name="epigrafe_cvn" value="" />
+      <column name="epigrafe_cvn" value=" " />
       <column name="nombre" value="Cómite editorial" />
       <column name="prioridad" valueNumeric="null" />
       <column name="tipo_baremo" value="AGRUPADOR" />
@@ -2912,7 +2912,7 @@
       <!-- 112-->
       <column name="id" valueSequenceNext="configuracion_baremo_seq" />
       <column name="activo" valueBoolean="true" />
-      <column name="epigrafe_cvn" value="" />
+      <column name="epigrafe_cvn" value=" " />
       <column name="nombre" value="Congreso" />
       <column name="prioridad" valueNumeric="null" />
       <column name="tipo_baremo" value="AGRUPADOR" />
@@ -3056,7 +3056,7 @@
       <!-- 124-->
       <column name="id" valueSequenceNext="configuracion_baremo_seq" />
       <column name="activo" valueBoolean="true" />
-      <column name="epigrafe_cvn" value="" />
+      <column name="epigrafe_cvn" value=" " />
       <column name="nombre" value="Dirección tesis" />
       <column name="prioridad" valueNumeric="null" />
       <column name="tipo_baremo" value="AGRUPADOR" />
@@ -3116,7 +3116,7 @@
       <!-- 129-->
       <column name="id" valueSequenceNext="configuracion_baremo_seq" />
       <column name="activo" valueBoolean="true" />
-      <column name="epigrafe_cvn" value="" />
+      <column name="epigrafe_cvn" value=" " />
       <column name="nombre" value="Obras artísticas" />
       <column name="prioridad" valueNumeric="null" />
       <column name="tipo_baremo" value="AGRUPADOR" />
@@ -3236,7 +3236,7 @@
       <!-- 139-->
       <column name="id" valueSequenceNext="configuracion_baremo_seq" />
       <column name="activo" valueBoolean="true" />
-      <column name="epigrafe_cvn" value="" />
+      <column name="epigrafe_cvn" value=" " />
       <column name="nombre" value="Organización de actividades de I+D+i" />
       <column name="prioridad" valueNumeric="null" />
       <column name="tipo_baremo" value="AGRUPADOR" />

@@ -10,11 +10,11 @@ import javax.persistence.PersistenceUnitUtil;
 
 import org.assertj.core.api.Assertions;
 import org.crue.hercules.sgi.framework.spring.context.support.ApplicationContextSupport;
+import org.crue.hercules.sgi.prc.enums.CodigoCVN;
+import org.crue.hercules.sgi.prc.enums.EpigrafeCVN;
 import org.crue.hercules.sgi.prc.exceptions.ConfiguracionCampoNotFoundException;
-import org.crue.hercules.sgi.prc.model.CampoProduccionCientifica.CodigoCVN;
 import org.crue.hercules.sgi.prc.model.ConfiguracionCampo;
 import org.crue.hercules.sgi.prc.model.ConfiguracionCampo.TipoFormato;
-import org.crue.hercules.sgi.prc.model.ProduccionCientifica.EpigrafeCVN;
 import org.crue.hercules.sgi.prc.repository.ConfiguracionCampoRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

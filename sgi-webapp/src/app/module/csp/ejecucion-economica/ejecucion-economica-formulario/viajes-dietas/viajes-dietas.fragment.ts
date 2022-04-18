@@ -1,6 +1,5 @@
 import { IConfiguracion } from '@core/models/csp/configuracion';
 import { IGastoProyecto } from '@core/models/csp/gasto-proyecto';
-import { IProyecto } from '@core/models/csp/proyecto';
 import { IDatoEconomico } from '@core/models/sge/dato-economico';
 import { IProyectoSge } from '@core/models/sge/proyecto-sge';
 import { GastoProyectoService } from '@core/services/csp/gasto-proyecto/gasto-proyecto-service';
@@ -9,9 +8,9 @@ import { ProyectoConceptoGastoCodigoEcService } from '@core/services/csp/proyect
 import { ProyectoConceptoGastoService } from '@core/services/csp/proyecto-concepto-gasto.service';
 import { ProyectoService } from '@core/services/csp/proyecto.service';
 import { EjecucionEconomicaService } from '@core/services/sge/ejecucion-economica.service';
-import { PersonaService } from '@core/services/sgp/persona.service';
 import { from, Observable, of } from 'rxjs';
 import { map, mergeMap, takeLast, tap } from 'rxjs/operators';
+import { IRelacionEjecucionEconomicaWithResponsables } from '../../ejecucion-economica.action.service';
 import { IColumnDefinition, RowTreeDesglose } from '../desglose-economico.fragment';
 import { FacturasJustificantesFragment, IDesglose } from '../facturas-justificantes.fragment';
 
@@ -22,9 +21,8 @@ export class ViajesDietasFragment extends FacturasJustificantesFragment {
   constructor(
     key: number,
     proyectoSge: IProyectoSge,
-    proyectosRelacionados: IProyecto[],
+    relaciones: IRelacionEjecucionEconomicaWithResponsables[],
     proyectoService: ProyectoService,
-    personaService: PersonaService,
     proyectoAnualidadService: ProyectoAnualidadService,
     gastoProyectoService: GastoProyectoService,
     private ejecucionEconomicaService: EjecucionEconomicaService,
@@ -32,7 +30,7 @@ export class ViajesDietasFragment extends FacturasJustificantesFragment {
     proyectoConceptoGastoService: ProyectoConceptoGastoService,
     configuracion: IConfiguracion,
   ) {
-    super(key, proyectoSge, proyectosRelacionados, proyectoService, personaService, proyectoAnualidadService,
+    super(key, proyectoSge, relaciones, proyectoService, proyectoAnualidadService,
       gastoProyectoService, proyectoConceptoGastoCodigoEcService, proyectoConceptoGastoService, configuracion);
   }
 

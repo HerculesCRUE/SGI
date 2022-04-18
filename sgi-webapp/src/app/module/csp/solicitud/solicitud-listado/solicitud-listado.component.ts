@@ -4,13 +4,14 @@ import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute } from '@angular/router';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { AbstractTablePaginationComponent } from '@core/component/abstract-table-pagination.component';
-import { HttpProblem } from '@core/errors/http-problem';
+import { SgiError } from '@core/errors/sgi-error';
 import { MSG_PARAMS } from '@core/i18n';
 import { IConvocatoria } from '@core/models/csp/convocatoria';
 import { Estado, ESTADO_MAP } from '@core/models/csp/estado-solicitud';
 import { IPrograma } from '@core/models/csp/programa';
 import { IProyecto } from '@core/models/csp/proyecto';
-import { ISolicitud } from '@core/models/csp/solicitud';
+import { ISolicitud, TipoSolicitudGrupo } from '@core/models/csp/solicitud';
+import { ISolicitudGrupo } from '@core/models/csp/solicitud-grupo';
 import { FxFlexProperties } from '@core/models/shared/flexLayout/fx-flex-properties';
 import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-properties';
 import { ROUTE_NAMES } from '@core/route.names';
@@ -27,10 +28,11 @@ import { SgiAuthService } from '@sgi/framework/auth';
 import { RSQLSgiRestFilter, SgiRestFilter, SgiRestFilterOperator, SgiRestListResult } from '@sgi/framework/http';
 import { NGXLogger } from 'ngx-logger';
 import { BehaviorSubject, merge, Observable, of } from 'rxjs';
-import { catchError, map, switchMap, tap } from 'rxjs/operators';
+import { catchError, filter, map, switchMap, tap } from 'rxjs/operators';
 import { TipoColectivo } from 'src/app/esb/sgp/shared/select-persona/select-persona.component';
 import { CONVOCATORIA_ACTION_LINK_KEY } from '../../convocatoria/convocatoria.action.service';
 import { ISolicitudCrearProyectoModalData, SolicitudCrearProyectoModalComponent } from '../modals/solicitud-crear-proyecto-modal/solicitud-crear-proyecto-modal.component';
+import { SolicitudGrupoModalComponent } from '../modals/solicitud-grupo-modal/solicitud-grupo-modal.component';
 import { ISolicitudListadoDataExportModalData, SolicitudListadoExportModalComponent } from '../modals/solicitud-listado-export-modal/solicitud-listado-export-modal.component';
 
 const MSG_BUTTON_NEW = marker('btn.add.entity');
@@ -43,10 +45,14 @@ const MSG_SUCCESS_REACTIVE = marker('msg.reactivate.entity.success');
 const MSG_ERROR_REACTIVE = marker('error.reactivate.entity');
 const MSG_SUCCESS_CREAR_PROYECTO = marker('msg.csp.solicitud.crear.proyecto');
 const MSG_ERROR_CREAR_PROYECTO = marker('error.csp.solicitud.crear.proyecto');
+const MSG_SUCCESS_CREAR_GRUPO = marker('msg.csp.solicitud.crear.grupo');
+const MSG_ERROR_CREAR_GRUPO = marker('error.csp.solicitud.crear.grupo');
 const SOLICITUD_KEY = marker('csp.solicitud');
+const GRUPO_KEY = marker('csp.grupo');
 
 export interface ISolicitudListadoData extends ISolicitud {
   convocatoria: IConvocatoria;
+  showCreateGrupo: boolean;
 }
 
 @Component({
@@ -78,11 +84,16 @@ export class SolicitudListadoComponent extends AbstractTablePaginationComponent<
   msgParamCodigoExternoEntity = {};
   msgParamObservacionesEntity = {};
   msgParamUnidadGestionEntity = {};
+  msgParamGrupoEntity = {};
 
   private convocatoriaId: number;
 
   get tipoColectivoSolicitante() {
     return TipoColectivo.SOLICITANTE_CSP;
+  }
+
+  get tipoSolicitudGrupo() {
+    return TipoSolicitudGrupo;
   }
 
   get ESTADO_MAP() {
@@ -131,7 +142,6 @@ export class SolicitudListadoComponent extends AbstractTablePaginationComponent<
   ngOnInit(): void {
     super.ngOnInit();
     this.setupI18N();
-
     this.loadForm();
 
     if (this.convocatoriaId) {
@@ -259,6 +269,11 @@ export class SolicitudListadoComponent extends AbstractTablePaginationComponent<
         );
       })
     ).subscribe((value) => this.textoErrorReactivar = value);
+
+    this.translate.get(
+      GRUPO_KEY,
+      MSG_PARAMS.CARDINALIRY.SINGULAR
+    ).subscribe((value) => this.msgParamGrupoEntity = { entity: value, ...MSG_PARAMS.GENDER.MALE, ...MSG_PARAMS.CARDINALIRY.SINGULAR });
   }
 
   protected createObservable(reset?: boolean): Observable<SgiRestListResult<ISolicitudListadoData>> {
@@ -270,6 +285,14 @@ export class SolicitudListadoComponent extends AbstractTablePaginationComponent<
       switchMap(response => {
         const requestsConvocatoria: Observable<ISolicitudListadoData>[] = [];
         response.items.forEach(solicitud => {
+          if (solicitud.estado.estado === Estado.CONCEDIDA
+            || solicitud.estado.estado === Estado.CONCEDIDA_PROVISIONAL
+            || solicitud.estado.estado === Estado.CONCEDIDA_PROVISIONAL_ALEGADA
+            || solicitud.estado.estado === Estado.CONCEDIDA_PROVISIONAL_NO_ALEGADA) {
+            solicitud.showCreateGrupo = true;
+          } else {
+            solicitud.showCreateGrupo = false;
+          }
           if (solicitud.convocatoriaId) {
             requestsConvocatoria.push(this.convocatoriaService.findById(solicitud.convocatoriaId).pipe(
               map(convocatoria => {
@@ -328,10 +351,10 @@ export class SolicitudListadoComponent extends AbstractTablePaginationComponent<
       this.columnas = [
         'codigoRegistroInterno',
         'codigoExterno',
-        'referencia',
         'solicitante',
-        'estado.estado',
         'titulo',
+        'referencia',
+        'estado.estado',
         'estado.fechaEstado',
         'activo',
         'acciones'
@@ -340,10 +363,10 @@ export class SolicitudListadoComponent extends AbstractTablePaginationComponent<
       this.columnas = [
         'codigoRegistroInterno',
         'codigoExterno',
-        'referencia',
         'solicitante',
-        'estado.estado',
         'titulo',
+        'referencia',
+        'estado.estado',
         'estado.fechaEstado',
         'acciones'
       ];
@@ -425,7 +448,7 @@ export class SolicitudListadoComponent extends AbstractTablePaginationComponent<
       },
       (error) => {
         this.logger.error(error);
-        if (error instanceof HttpProblem) {
+        if (error instanceof SgiError) {
           this.snackBarService.showError(error);
         }
         else {
@@ -456,7 +479,7 @@ export class SolicitudListadoComponent extends AbstractTablePaginationComponent<
       },
       (error) => {
         this.logger.error(error);
-        if (error instanceof HttpProblem) {
+        if (error instanceof SgiError) {
           this.snackBarService.showError(error);
         }
         else {
@@ -529,7 +552,7 @@ export class SolicitudListadoComponent extends AbstractTablePaginationComponent<
                 },
                 (error) => {
                   this.logger.error(error);
-                  if (error instanceof HttpProblem) {
+                  if (error instanceof SgiError) {
                     this.snackBarService.showError(error);
                   }
                   else {
@@ -554,6 +577,38 @@ export class SolicitudListadoComponent extends AbstractTablePaginationComponent<
       data
     };
     this.matDialog.open(SolicitudListadoExportModalComponent, config);
+  }
+
+  /**
+   * Apertura de modal de creación de Grupos
+   */
+  crearGrupoModal(solicitud: ISolicitud): void {
+    const data = {
+      solicitud
+    } as ISolicitudGrupo;
+
+    const config = {
+      panelClass: 'sgi-dialog-container',
+      data
+    };
+
+    this.matDialog.open(SolicitudGrupoModalComponent, config).afterClosed()
+      .pipe(
+        filter(solicitudGrupo => solicitudGrupo)
+      ).subscribe(
+        () => {
+          this.snackBarService.showSuccess(MSG_SUCCESS_CREAR_GRUPO);
+          this.loadTable();
+        },
+        (error) => {
+          this.logger.error(error);
+          if (error instanceof SgiError) {
+            this.snackBarService.showError(error);
+          } else {
+            this.snackBarService.showError(MSG_ERROR_CREAR_GRUPO);
+          }
+        }
+      );
   }
 
 }

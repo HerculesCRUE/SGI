@@ -4,7 +4,6 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { BaseExportModalComponent } from '@core/component/base-export/base-export-modal.component';
 import { IReportConfig } from '@core/services/rep/abstract-table-export.service';
-import { SnackBarService } from '@core/services/snack-bar.service';
 import { TranslateService } from '@ngx-translate/core';
 import { IEjecucionPresupuestariaReportOptions } from '../../../common/ejecucion-presupuestaria-report-options';
 import { IDesgloseEconomicoExportData } from '../../desglose-economico.fragment';
@@ -12,7 +11,6 @@ import { DetalleOperacionesModificacionesExportService } from './detalle-operaci
 
 const DETALLE_OPERACIONES = marker('menu.csp.ejecucion-economica.detalle-operaciones');
 const DETALLE_OPERACIONES_MODIFICACIONES = marker('menu.csp.ejecucion-economica.detalle-operaciones.modificaciones');
-
 
 @Component({
   templateUrl: './detalle-operaciones-modificaciones-export-modal.component.html',
@@ -23,12 +21,11 @@ export class DetalleOperacionesModificacionesExportModalComponent
 
   constructor(
     matDialogRef: MatDialogRef<DetalleOperacionesModificacionesExportModalComponent>,
-    snackBarService: SnackBarService,
     translate: TranslateService,
     detalleOperacionesModificacionesExportService: DetalleOperacionesModificacionesExportService,
     @Inject(MAT_DIALOG_DATA) private modalData: IDesgloseEconomicoExportData
   ) {
-    super(detalleOperacionesModificacionesExportService, snackBarService, translate, matDialogRef);
+    super(detalleOperacionesModificacionesExportService, translate, matDialogRef);
   }
 
   ngOnInit(): void {

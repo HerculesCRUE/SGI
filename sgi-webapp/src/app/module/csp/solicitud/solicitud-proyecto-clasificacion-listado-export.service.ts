@@ -19,6 +19,8 @@ import { ISolicitudReportData, ISolicitudReportOptions } from './solicitud-lista
 const CLASIFICACION_KEY = marker('csp.solicitud-proyecto-clasificacion');
 const CLASIFICACION_FIELD = 'clasificacion';
 const PROYECTO_KEY = marker('menu.csp.solicitudes.datos-proyecto');
+const CODIGO_KEY = marker('csp.solicitud-proyecto-clasificacion.codigo');
+const CODIGO_FIELD = 'codigo';
 
 @Injectable()
 export class SolicitudProyectoClasificacionListadoExportService extends AbstractTableExportFillService<ISolicitudReportData, ISolicitudReportOptions>{
@@ -135,6 +137,7 @@ export class SolicitudProyectoClasificacionListadoExportService extends Abstract
 
     const maxNumClasificaciones = Math.max(...solicitudes.map(s => s.clasificaciones ? s.clasificaciones?.length : 0));
     const titleClasificacion = this.translate.instant(PROYECTO_KEY) + ': ' + this.translate.instant(CLASIFICACION_KEY, MSG_PARAMS.CARDINALIRY.SINGULAR);
+    const titleCodigo = this.translate.instant(CODIGO_KEY);
 
     for (let i = 0; i < maxNumClasificaciones; i++) {
       const idClasificacion: string = String(i + 1);
@@ -144,6 +147,17 @@ export class SolicitudProyectoClasificacionListadoExportService extends Abstract
         type: ColumnType.STRING,
       };
       columns.push(columnClasificacion);
+
+      const maxNumNiveles = Math.max(...solicitudes.map(s => s.clasificaciones && s.clasificaciones.length > 0 ? (s.clasificaciones[i] && s.clasificaciones[i].niveles ? s.clasificaciones[i].niveles?.length : 0) : 0));
+      for (let n = 0; n < maxNumNiveles - 1; n++) {
+        const idNivel: string = String(n + 1);
+        const columnCodigo: ISgiColumnReport = {
+          name: CODIGO_FIELD + idNivel + '_' + idClasificacion,
+          title: titleClasificacion + idClasificacion + ': ' + titleCodigo + idNivel,
+          type: ColumnType.STRING,
+        };
+        columns.push(columnCodigo);
+      }
     }
 
     return columns;
@@ -160,7 +174,8 @@ export class SolicitudProyectoClasificacionListadoExportService extends Abstract
       const maxNumClasificaciones = Math.max(...solicitudes.map(s => s.clasificaciones ? s.clasificaciones?.length : 0));
       for (let i = 0; i < maxNumClasificaciones; i++) {
         const clasificacion = solicitud.clasificaciones && solicitud.clasificaciones.length > 0 ? solicitud.clasificaciones[i] : null;
-        this.fillRowsEntidadExcel(elementsRow, clasificacion);
+        const maxNumNiveles = Math.max(...solicitudes.map(s => s.clasificaciones && s.clasificaciones.length > 0 ? (s.clasificaciones[i] && s.clasificaciones[i].niveles ? s.clasificaciones[i].niveles.length : 0) : 0));
+        this.fillRowsEntidadExcel(elementsRow, clasificacion, maxNumNiveles);
       }
     }
     return elementsRow;
@@ -191,14 +206,19 @@ export class SolicitudProyectoClasificacionListadoExportService extends Abstract
     });
   }
 
-  private fillRowsEntidadExcel(elementsRow: any[], solicitudProyectoClasificacion: SolicitudProyectoClasificacionListado) {
+  private fillRowsEntidadExcel(elementsRow: any[], solicitudProyectoClasificacion: SolicitudProyectoClasificacionListado, maxNumNiveles: number) {
     if (solicitudProyectoClasificacion) {
-      let clasificacionContent = solicitudProyectoClasificacion.clasificacion?.nombre ?? '';
-      clasificacionContent += '\n';
-      clasificacionContent += solicitudProyectoClasificacion.nivelesTexto ?? '';
-      clasificacionContent += '\n';
-      clasificacionContent += solicitudProyectoClasificacion.nivelSeleccionado?.nombre ?? '';
-      elementsRow.push(clasificacionContent);
+      elementsRow.push(solicitudProyectoClasificacion.clasificacion?.nombre ?? '');
+
+      for (let i = 0; i < maxNumNiveles; i++) {
+        const codigo = solicitudProyectoClasificacion.niveles
+          ? solicitudProyectoClasificacion.niveles[i] ?? null : null;
+        if (codigo && codigo.padreId !== null) {
+          elementsRow.push(codigo.nombre ?? '');
+        } else if (!codigo) {
+          elementsRow.push('');
+        }
+      }
     } else {
       elementsRow.push('');
     }

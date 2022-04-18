@@ -5,11 +5,11 @@
   </button>
 </div>
 <mat-dialog-content>
-  <form [formGroup]="formGroup">
-    <div fxFlex>
+  <form [formGroup]="formGroup" fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="none start">
+    <div fxFlex fxLayout="column" fxLayoutGap="10px">
       <h3 *ngIf="showDatosConvocatoriaCodigoEconomico">&nbsp;</h3>
       <!-- Código Económico -->
-      <div [fxLayout]="fxLayoutProperties.layout" [fxLayoutAlign]="fxLayoutProperties.layoutAlign">
+      <div fxFlex fxLayout="row" fxLayoutGap="10px">
         <mat-form-field>
           <mat-label>
             {{'csp.proyecto-concepto-gasto-codigo-economico.codigo-concepto-sge' | translate}}
@@ -23,55 +23,51 @@
         </mat-form-field>
       </div>
 
-      <h5>{{'label.csp.proyecto-concepto-gasto-codigo-economico.vigencia' | translate}}</h5>
-      <mat-divider></mat-divider>
-
-      <!-- Fecha inicio -->
-      <div [fxLayout.xs]="fxLayoutProperties.xs" [fxLayout]="fxLayoutProperties.layout"
-        [fxLayoutGap]="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
-        <div>
-          <mat-form-field>
-            <mat-label>
-              {{'csp.proyecto-concepto-gasto-codigo-economico.fecha-inicio'| translate}}
-            </mat-label>
-            <input matInput [matDatepicker]="pickerFechaInicio" formControlName="fechaInicio">
-            <mat-datepicker-toggle class="fechaIcon" matSuffix [for]="pickerFechaInicio">
-            </mat-datepicker-toggle>
-            <mat-datepicker #pickerFechaInicio>
-            </mat-datepicker>
-            <mat-error *ngIf="formGroup.controls.fechaInicio.errors?.before">
-              {{'error.before.fecha-inicio' | translate}}
-            </mat-error>
-            <mat-error *ngIf="formGroup.controls.fechaInicio.errors?.overlapped">
-              {{'error.overlapping.record.entity' | translate:msgParamEntity}}
-            </mat-error>
-          </mat-form-field>
-        </div>
-        <!-- Fecha fin -->
-        <div>
-          <mat-form-field sgiEndDate>
-            <input matInput [matDatepicker]="pickerFechaFin" formControlName="fechaFin">
-            <mat-label>
-              {{'csp.proyecto-concepto-gasto-codigo-economico.fecha-fin'| translate}}
-            </mat-label>
-            <mat-datepicker-toggle class="fechaIcon" matSuffix [for]="pickerFechaFin">
-            </mat-datepicker-toggle>
-            <mat-datepicker #pickerFechaFin>
-            </mat-datepicker>
-            <mat-error *ngIf="formGroup.controls.fechaFin.errors?.after">
-              {{'error.after.fecha-fin' | translate}}
-            </mat-error>
-            <mat-error *ngIf="formGroup.controls.fechaFin.errors?.overlapped">
-              {{'error.overlapping.record.entity' | translate:msgParamEntity}}
-            </mat-error>
-          </mat-form-field>
-        </div>
+      <div fxFlex fxLayout="row" fxLayoutGap="10px" class="fieldset-form">
+        {{'label.csp.proyecto-concepto-gasto-codigo-economico.vigencia' | translate}}
       </div>
 
-      <mat-divider></mat-divider>
 
-      <!-- Observaciones -->
-      <div [fxLayout]="fxLayoutProperties.layout" [fxLayoutAlign]="fxLayoutProperties.layoutAlign">
+      <div fxFlex fxLayout="row" fxLayoutGap="10px">
+        <!-- Fecha inicio -->
+        <mat-form-field>
+          <mat-label>
+            {{'csp.proyecto-concepto-gasto-codigo-economico.fecha-inicio'| translate}}
+          </mat-label>
+          <input matInput [matDatepicker]="pickerFechaInicio" formControlName="fechaInicio">
+          <mat-datepicker-toggle class="fechaIcon" matSuffix [for]="pickerFechaInicio">
+          </mat-datepicker-toggle>
+          <mat-datepicker #pickerFechaInicio>
+          </mat-datepicker>
+          <mat-error *ngIf="formGroup.controls.fechaInicio.errors?.before">
+            {{'error.before.fecha-inicio' | translate}}
+          </mat-error>
+          <mat-error *ngIf="formGroup.controls.fechaInicio.errors?.overlapped">
+            {{'error.overlapping.record.entity' | translate:msgParamEntity}}
+          </mat-error>
+        </mat-form-field>
+
+        <!-- Fecha fin -->
+        <mat-form-field sgiEndDate>
+          <input matInput [matDatepicker]="pickerFechaFin" formControlName="fechaFin">
+          <mat-label>
+            {{'csp.proyecto-concepto-gasto-codigo-economico.fecha-fin'| translate}}
+          </mat-label>
+          <mat-datepicker-toggle class="fechaIcon" matSuffix [for]="pickerFechaFin">
+          </mat-datepicker-toggle>
+          <mat-datepicker #pickerFechaFin>
+          </mat-datepicker>
+          <mat-error *ngIf="formGroup.controls.fechaFin.errors?.after">
+            {{'error.after.fecha-fin' | translate}}
+          </mat-error>
+          <mat-error *ngIf="formGroup.controls.fechaFin.errors?.overlapped">
+            {{'error.overlapping.record.entity' | translate:msgParamEntity}}
+          </mat-error>
+        </mat-form-field>
+      </div>
+
+      <div fxFlex fxLayout="row" fxLayoutGap="10px">
+        <!-- Observaciones -->
         <mat-form-field>
           <mat-label>
             {{'csp.proyecto-concepto-gasto-codigo-economico.observaciones' | translate}}
@@ -86,11 +82,11 @@
     </div>
 
     <!-- Datos de la convocatoria -->
-    <div fxFlex="50" *ngIf="showDatosConvocatoriaCodigoEconomico">
+    <div fxFlex="50" fxLayout="column" fxLayoutGap="10px" *ngIf="showDatosConvocatoriaCodigoEconomico">
       <h3>{{'info.csp.datos-convocatoria' | translate}}</h3>
 
       <!-- Código Económico Convocatoria -->
-      <div [fxLayout]="fxLayoutProperties.layout" [fxLayoutAlign]="fxLayoutProperties.layoutAlign">
+      <div fxFlex fxLayout="row" fxLayoutGap="10px">
         <mat-form-field>
           <mat-label>
             {{'csp.proyecto-concepto-gasto-codigo-economico.codigo-concepto-sge' | translate}}
@@ -101,44 +97,41 @@
         </mat-form-field>
       </div>
 
-      <h5>{{'label.csp.proyecto-concepto-gasto-codigo-economico.vigencia' | translate}}</h5>
-      <mat-divider></mat-divider>
-
-      <!-- Fecha inicio Convocatoria -->
-      <div [fxLayout.xs]="fxLayoutProperties.xs" [fxLayout]="fxLayoutProperties.layout"
-        [fxLayoutGap]="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
-        <div>
-          <mat-form-field>
-            <mat-label>
-              {{'csp.proyecto-concepto-gasto-codigo-economico.fecha-inicio'| translate}}
-            </mat-label>
-            <input matInput [ngxMatDatetimePicker]="pickerFechaInicioConvocatoria"
-              formControlName="fechaInicioConvocatoria">
-            <mat-datepicker-toggle class="fechaIcon" matSuffix [for]="pickerFechaInicioConvocatoria">
-            </mat-datepicker-toggle>
-            <ngx-mat-datetime-picker #pickerFechaInicioConvocatoria showSeconds="true" [defaultTime]="[0,0,0]">
-            </ngx-mat-datetime-picker>
-          </mat-form-field>
-        </div>
-        <!-- Fecha fin Convocatoria -->
-        <div>
-          <mat-form-field>
-            <input matInput [ngxMatDatetimePicker]="pickerFechaFinConvocatoria" formControlName="fechaFinConvocatoria">
-            <mat-label>
-              {{'csp.proyecto-concepto-gasto-codigo-economico.fecha-fin'| translate}}
-            </mat-label>
-            <mat-datepicker-toggle class="fechaIcon" matSuffix [for]="pickerFechaFinConvocatoria">
-            </mat-datepicker-toggle>
-            <ngx-mat-datetime-picker #pickerFechaFinConvocatoria showSeconds="true" [defaultTime]="[23,59,59]">
-            </ngx-mat-datetime-picker>
-          </mat-form-field>
-        </div>
+      <div fxFlex fxLayout="row" fxLayoutGap="10px" class="fieldset-form">
+        {{'label.csp.proyecto-concepto-gasto-codigo-economico.vigencia' | translate}}
       </div>
 
-      <mat-divider></mat-divider>
+
+      <div fxFlex fxLayout="row" fxLayoutGap="10px">
+        <!-- Fecha inicio Convocatoria -->
+        <mat-form-field>
+          <mat-label>
+            {{'csp.proyecto-concepto-gasto-codigo-economico.fecha-inicio'| translate}}
+          </mat-label>
+          <input matInput [ngxMatDatetimePicker]="pickerFechaInicioConvocatoria"
+            formControlName="fechaInicioConvocatoria">
+          <mat-datepicker-toggle class="fechaIcon" matSuffix [for]="pickerFechaInicioConvocatoria">
+          </mat-datepicker-toggle>
+          <ngx-mat-datetime-picker #pickerFechaInicioConvocatoria showSeconds="true" [defaultTime]="[0,0,0]">
+          </ngx-mat-datetime-picker>
+        </mat-form-field>
+
+        <!-- Fecha fin Convocatoria -->
+        <mat-form-field>
+          <input matInput [ngxMatDatetimePicker]="pickerFechaFinConvocatoria" formControlName="fechaFinConvocatoria">
+          <mat-label>
+            {{'csp.proyecto-concepto-gasto-codigo-economico.fecha-fin'| translate}}
+          </mat-label>
+          <mat-datepicker-toggle class="fechaIcon" matSuffix [for]="pickerFechaFinConvocatoria">
+          </mat-datepicker-toggle>
+          <ngx-mat-datetime-picker #pickerFechaFinConvocatoria showSeconds="true" [defaultTime]="[23,59,59]">
+          </ngx-mat-datetime-picker>
+        </mat-form-field>
+      </div>
+
 
       <!-- Observaciones Convocatoria -->
-      <div [fxLayout]="fxLayoutProperties.layout" [fxLayoutAlign]="fxLayoutProperties.layoutAlign">
+      <div fxFlex fxLayout="row" fxLayoutGap="10px">
         <mat-form-field>
           <mat-label>
             {{'csp.proyecto-concepto-gasto-codigo-economico.observaciones' | translate}}
@@ -151,7 +144,7 @@
         </mat-form-field>
       </div>
 
-      <div class="separation-button">
+      <div fxFlex fxLayout="row" fxLayoutGap="10px" class="separation-button">
         <button color="primary" aria-label="Center Align" mat-raised-button (click)="copyToProyecto()"
           [disabled]="disabledCopy">
           {{'btn.csp.aplicar-proyecto'| translate}}

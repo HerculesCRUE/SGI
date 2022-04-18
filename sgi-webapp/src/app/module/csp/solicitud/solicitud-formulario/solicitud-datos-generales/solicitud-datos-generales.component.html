@@ -1,12 +1,10 @@
 <sgi-fragment title="{{'label.datos-generales' | translate}}">
 
-  <form [formGroup]="formGroup" [fxLayout.xs]="fxLayoutProperties.xs" [fxLayout]="fxLayoutProperties.layout"
-    [fxLayoutGap]="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
+  <form [formGroup]="formGroup" fxLayout="column">
 
     <!-- Estado de la solicitud -->
-    <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
-      [fxFlexOrder]="fxFlexProperties.order">
-      <mat-form-field class="input-form">
+    <div fxFlex fxLayout="row" fxLayoutGap="10px">
+      <mat-form-field fxFlex="0 1 calc((100% - (10px * 3)) / 4)">
         <mat-label>{{'csp.solicitud.estado-solicitud' | translate}}</mat-label>
         <mat-select formControlName="estado" placeholder="{{'csp.solicitud.cambio-estado.actual' | translate}}">
           <mat-option *ngFor="let estado of ESTADO_MAP | keyvalue" [value]="estado.key">
@@ -14,23 +12,20 @@
           </mat-option>
         </mat-select>
       </mat-form-field>
-    </div>
 
-    <!-- Comentarios del estado -->
-    <div *ngIf="(formPart.showComentariosEstado$ | async)" [fxFlex.sm]="fxFlexProperties.sm"
-      [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd" [fxFlexOrder]="fxFlexProperties.order">
-      <mat-form-field fxFill>
+      <!-- Comentarios del estado -->
+      <mat-form-field *ngIf="(formPart.showComentariosEstado$ | async)"
+        fxFlex="0 1 calc((100% - (10px * 3)) / 4*3 + 20px)">
         <mat-label>{{'csp.solicitud.estado-solicitud.comentario' | translate}}</mat-label>
         <textarea matInput formControlName="comentariosEstado" type="text" id="comentariosEstado"
-          placeholder="{{'csp.solicitud.estado-solicitud.comentario' | translate}}">
-            </textarea>
+          placeholder="{{'csp.solicitud.estado-solicitud.comentario' | translate}}" cdkTextareaAutosize
+          #autosize="cdkTextareaAutosize" cdkAutosizeMinRows="1" cdkAutosizeMaxRows="3"></textarea>
       </mat-form-field>
     </div>
 
     <!-- Solicitante -->
-    <div *ngIf="!this.formPart.isInvestigador" [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md"
-      [fxFlex.gt-md]="fxFlexProperties.gtMd" [fxFlexOrder]="fxFlexProperties.order">
-      <mat-form-field fxFill>
+    <div fxFlex fxLayout="row" fxLayoutGap="10px" *ngIf="!this.formPart.isInvestigador">
+      <mat-form-field fxFlex="0 1 calc((100% - (10px * 3)) / 2 + 10px)">
         <mat-label>{{'csp.solicitud.solicitante' | translate}}</mat-label>
         <sgi-select-persona placeholder="{{'csp.solicitud.solicitante' | translate}}" formControlName="solicitante"
           [tipoColectivo]="tipoColectivoSolicitante" required>
@@ -42,9 +37,8 @@
     </div>
 
     <!-- Convocatoria -->
-    <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
-      [fxFlexOrder]="fxFlexProperties.order">
-      <mat-form-field fxFill>
+    <div fxFlex fxLayout="row" fxLayoutGap="10px">
+      <mat-form-field fxFlex="0 1 calc((100% - (10px * 3)) / 2 + 10px)">
         <mat-label>{{'csp.solicitud.convocatoria' | translate}}</mat-label>
         <sgi-select-convocatoria authorities="CSP-SOL-C" placeholder="{{'csp.solicitud.convocatoria' | translate}}"
           formControlName="convocatoria" [required]="formPart.convocatoriaRequired">
@@ -54,12 +48,10 @@
           {{'error.required.entity' | translate:msgParamConvocatoriaEntity}}
         </mat-error>
       </mat-form-field>
-    </div>
 
-    <!-- Referencia externa convocatoria // Identificación convocatoria -->
-    <div *ngIf="!this.formPart.isInvestigador" [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md"
-      [fxFlex.gt-md]="fxFlexProperties.gtMd" [fxFlexOrder]="fxFlexProperties.order">
-      <mat-form-field class="input-form">
+
+      <!-- Referencia externa convocatoria // Identificación convocatoria -->
+      <mat-form-field *ngIf="!this.formPart.isInvestigador" fxFlex="0 1 calc((100% - (10px * 3)) / 2 + 10px)">
         <mat-label>{{'csp.solicitud.convocatoria-externa' | translate}}</mat-label>
         <input matInput formControlName="convocatoriaExterna" type="text" id="convocatoriaExterna"
           placeholder="{{'csp.solicitud.convocatoria-externa' | translate}}"
@@ -74,10 +66,9 @@
       </mat-form-field>
     </div>
 
-    <!-- Tipo forumlario-->
-    <div *ngIf="!this.formPart.isInvestigador" [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md"
-      [fxFlex.gt-md]="fxFlexProperties.gtMd" [fxFlexOrder]="fxFlexProperties.order">
-      <mat-form-field class="input-form" fxFill>
+    <div fxFlex fxLayout="row" fxLayoutGap="10px">
+      <!-- Tipo forumlario-->
+      <mat-form-field *ngIf="!this.formPart.isInvestigador" fxFlex="0 1 calc((100% - (10px * 3)) / 4)">
         <mat-label>{{'csp.solicitud.tipo-formulario' | translate}}</mat-label>
         <mat-select matNativeControl formControlName="formularioSolicitud"
           [required]="formPart.convocatoriaExternaRequired">
@@ -91,12 +82,31 @@
         </mat-error>
       </mat-form-field>
 
-    </div>
+      <!--Tipo solicitud grupo-->
+      <mat-form-field *ngIf="this.formPart.tipoFormularioSolicitud === FormularioSolicitud.GRUPO"
+        fxFlex="0 1 calc((100% - (10px * 3)) / 4)">
+        <mat-label>{{'csp.solicitud.tipo-solicitud-grupo' | translate}}</mat-label>
+        <sgi-select-enum formControlName="tipoSolicitudGrupo" required [enumMap]="TIPO_SOLICITUD_GRUPO_MAP">
+        </sgi-select-enum>
+        <mat-error *ngIf="formGroup.controls.tipoSolicitudGrupo.errors?.required">
+          {{'error.required.entity' | translate:msgParamFormularioSolicitudEntity}}
+        </mat-error>
+      </mat-form-field>
 
-    <!-- Unidad de gestión -->
-    <div *ngIf="!this.formPart.isInvestigador" [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md"
-      [fxFlex.gt-md]="fxFlexProperties.gtMd" [fxFlexOrder]="fxFlexProperties.order">
-      <mat-form-field>
+      <!-- Grupo-->
+      <mat-form-field
+        *ngIf="this.formPart.getFormGroup().controls.tipoSolicitudGrupo.value === TipoSolicitudGrupo.MODIFICACION"
+        fxFlex="0 1 calc((100% - (10px * 3)) / 4)">
+        <mat-label>{{'csp.solicitud.grupo' | translate}}</mat-label>
+        <sgi-select-grupo #grupo [personaRef]="this.formPart.solicitanteRef" formControlName="grupo" required>
+        </sgi-select-grupo>
+        <mat-error *ngIf="formGroup.controls.grupo.errors?.required">
+          {{'error.required.entity' | translate:msgParamGrupoEntity}}
+        </mat-error>
+      </mat-form-field>
+
+      <!-- Unidad de gestión -->
+      <mat-form-field *ngIf="!this.formPart.isInvestigador" fxFlex="0 1 calc((100% - (10px * 3)) / 4)">
         <mat-label>{{'csp.proyecto.unidad-gestion' | translate}}</mat-label>
         <sgi-select-unidad-gestion #unidadGestion formControlName="unidadGestion" required>
         </sgi-select-unidad-gestion>
@@ -109,24 +119,19 @@
       </mat-form-field>
     </div>
 
-    <!-- Codigo de registro -->
-    <div *ngIf="fragment.isEdit() && !this.formPart.isInvestigador" [fxFlex.sm]="fxFlexProperties.sm"
-      [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd" [fxFlexOrder]="fxFlexProperties.order">
-      <mat-form-field class="input-form">
+    <div fxFlex fxLayout="row" fxLayoutGap="10px">
+      <!-- Codigo de registro -->
+      <mat-form-field *ngIf="fragment.isEdit()" fxFlex="0 1 calc((100% - (10px * 3)) / 4)">
         <mat-label>{{'csp.solicitud.codigo-registro' | translate}}</mat-label>
         <input matInput formControlName="codigoRegistro" type="text" id="codigoRegistro"
           placeholder="{{'csp.solicitud.codigo-registro' | translate}}">
       </mat-form-field>
-    </div>
 
-    <!-- Codigo de registro en entidad convocante -->
-    <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
-      [fxFlexOrder]="fxFlexProperties.order">
-      <mat-form-field class="input-form">
+      <!-- Codigo de registro en entidad convocante -->
+      <mat-form-field fxFlex="0 1 calc((100% - (10px * 3)) / 4)">
         <mat-label>{{'csp.solicitud.codigo-externo' | translate}}</mat-label>
         <input matInput formControlName="codigoExterno" type="text" id="codigoExterno"
           placeholder="{{'csp.solicitud.codigo-externo' | translate}}">
-
         <mat-error *ngIf="formGroup.controls.codigoExterno.errors?.maxlength">
           {{'error.maxlength.entity' | translate:msgParamCodigoExternoEntity}}
         </mat-error>
@@ -134,9 +139,8 @@
     </div>
 
     <!-- Título -->
-    <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
-      [fxFlexOrder]="fxFlexProperties.order">
-      <mat-form-field class="input-form">
+    <div fxFlex fxLayout="row" fxLayoutGap="10px">
+      <mat-form-field fxFlex="100%">
         <mat-label>{{'csp.solicitud.titulo' | translate}}</mat-label>
         <input matInput formControlName="titulo" type="text" id="titulo"
           placeholder="{{'csp.solicitud.titulo' | translate}}">
@@ -147,10 +151,10 @@
     </div>
 
     <!-- Tabla entidades convocantes de la convocatoria -->
-    <div [fxFlex.sm]="100" [fxFlex.md]="100" [fxFlex.gt-md]="100" [fxFlexOrder]="fxFlexProperties.order">
-      <ng-container>
-        <h3>{{'list.entity' | translate:msgParamEntidadConvocanteEntity}}</h3>
-        <div class="mat-elevation-z4">
+    <ng-container>
+      <div fxFlex fxLayout="column" fxLayoutGap="10px" class="margin-bottom">
+        <h3 fxFlex="100%">{{'list.entity' | translate:msgParamEntidadConvocanteEntity}}</h3>
+        <div class="mat-elevation-z4" fxFlex="100%">
           <table mat-table [dataSource]="dataSourceEntidadesConvocantes" matSort>
 
             <!-- Entidad convocante -->
@@ -212,22 +216,20 @@
 
           </table>
 
-
           <mat-paginator [pageSizeOptions]="elementosPagina" showFirstLastButtons>
           </mat-paginator>
         </div>
-      </ng-container>
-    </div>
+      </div>
+    </ng-container>
 
     <!-- Observaciones -->
-    <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
-      [fxFlexOrder]="fxFlexProperties.order">
-      <mat-form-field fxFill>
+    <div fxFlex fxLayout="row" fxLayoutGap="10px">
+      <mat-form-field fxFlex="100%">
         <mat-label>{{'csp.solicitud.observaciones' | translate}}</mat-label>
         <textarea matInput formControlName="observaciones" type="text" id="observaciones"
-          placeholder="{{'csp.solicitud.observaciones' | translate}}">
+          placeholder="{{'csp.solicitud.observaciones' | translate}}" cdkTextareaAutosize
+          #autosize="cdkTextareaAutosize" cdkAutosizeMinRows="1" cdkAutosizeMaxRows="5">
         </textarea>
-
         <mat-error *ngIf="formGroup.controls.observaciones.errors?.maxlength">
           {{'error.maxlength.entity' | translate:msgParamObservacionesEntity}}
         </mat-error>

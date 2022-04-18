@@ -61,4 +61,6 @@ public interface ProyectoRepository
    * @return la lista de {@link Proyecto}s
    */
   List<Proyecto> findByIdIn(List<Long> ids);
+
+  List<Proyecto> findByIdInAndActivoTrue(List<Long> ids);
 }

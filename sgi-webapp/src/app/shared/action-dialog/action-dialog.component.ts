@@ -12,7 +12,7 @@ export class ActionDialogComponent {
   @Input()
   title: string;
 
-  get modal(): DialogActionComponent<any, any> {
+  get modal(): DialogActionComponent<any> {
     return this.dialogRef.componentInstance;
   }
 

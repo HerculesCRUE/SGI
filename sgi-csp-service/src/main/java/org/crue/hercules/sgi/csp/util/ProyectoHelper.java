@@ -72,4 +72,9 @@ public class ProyectoHelper {
                 .and(ProyectoEquipoSpecifications.byRolPrincipal(true))));
     return numeroProyectoEquipo > 0;
   }
+
+  public boolean checkIfUserIsInvestigadorPrincipal(Long proyectoId) {
+    return this.proyectoEquipoRepository.existsByProyectoIdAndPersonaRefAndRolProyectoRolPrincipalTrue(proyectoId,
+        getUserPersonaRef());
+  }
 }

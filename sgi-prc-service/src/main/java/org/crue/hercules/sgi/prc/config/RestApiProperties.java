@@ -11,9 +11,14 @@ import lombok.Data;
 @Data
 public class RestApiProperties {
   /**
-   * URL base de los end-points del módulo de ETICA.
+   * URL base de los end-points del módulo de CNF.
    */
-  private String etiUrl;
+  private String cnfUrl;
+
+  /**
+   * URL base de los end-points del módulo de COM.
+   */
+  private String comUrl;
 
   /**
    * URL base de los end-points del módulo de CSP.
@@ -26,28 +31,33 @@ public class RestApiProperties {
   private String piiUrl;
 
   /**
-   * URL base de los end-points del módulo de TP.
-   */
-  private String tpUrl;
-
-  /**
    * URL base de los end-points del módulo de REL.
    */
   private String relUrl;
 
   /**
-   * URL base de los end-points del módulo de COM.
+   * URL base de los end-points del módulo de REP.
    */
-  private String comUrl;
+  private String repUrl;
 
   /**
-   * URL base de los end-points del módulo de USR.
+   * URL base de los end-points de SGEPII.
    */
-  private String usrUrl;
+  private String sgepiiUrl;
+
+  /**
+   * URL base de los end-points de SGO.
+   */
+  private String sgoUrl;
 
   /**
    * URL base de los end-points de SGP.
    */
   private String sgpUrl;
+
+  /**
+   * URL base de los end-points del módulo de TP.
+   */
+  private String tpUrl;
 
 }

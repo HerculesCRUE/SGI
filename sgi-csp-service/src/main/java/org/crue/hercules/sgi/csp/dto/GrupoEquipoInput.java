@@ -25,6 +25,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 public class GrupoEquipoInput implements Serializable {
+  private Long id;
 
   @Size(max = GrupoEquipo.PERSONA_REF_LENGTH)
   @NotBlank

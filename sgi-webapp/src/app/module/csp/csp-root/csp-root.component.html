@@ -1,6 +1,6 @@
 <sgi-root>
   <sgi-menu-item *sgiHasAnyAuthorityForAnyUO="['CSP-CON-V', 'CSP-CON-C', 'CSP-CON-E','CSP-CON-B','CSP-CON-R']"
-    [route]="[CSP_ROUTE_NAMES.CONVOCATORIA]" icon="announcement"
+    [route]="[CSP_ROUTE_NAMES.CONVOCATORIA]" icon="campaign"
     title="{{'csp.convocatoria' | translate:MSG_PARAMS.CARDINALIRY.PLURAL}}">
   </sgi-menu-item>
   <sgi-menu-item
@@ -90,6 +90,10 @@
     <sgi-menu-subitem
       *sgiHasAnyAuthorityForAnyUO="['CSP-TGTO-V', 'CSP-TGTO-C', 'CSP-TGTO-E', 'CSP-TGTO-B', 'CSP-TGTO-R']"
       [route]="[CSP_ROUTE_NAMES.CONCEPTO_GASTO]" title="{{'menu.csp.configuraciones.conceptos-gasto' | translate}}">
+    </sgi-menu-subitem>
+    <sgi-menu-subitem *sgiHasAnyAuthorityForAnyUO="['CSP-LIN-C', 'CSP-LIN-E', 'CSP-LIN-B', 'CSP-LIN-R']"
+      [route]="[CSP_ROUTE_NAMES.LINEA_INVESTIGACION]"
+      title="{{'menu.csp.configuraciones.lineas-investigacion' | translate}}">
     </sgi-menu-subitem>
   </sgi-menu-group>
 </sgi-root>

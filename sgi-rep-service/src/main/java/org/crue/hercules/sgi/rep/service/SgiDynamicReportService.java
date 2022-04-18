@@ -594,16 +594,17 @@ public class SgiDynamicReportService extends SgiReportService {
       try {
 
         Vector<Object> rowsSubReport = (Vector<Object>) tableModel.getValueAt(0, indexColumnSubReport);
-
+        int nuRowsSubReport = rowsSubReport.size();
         for (int rowIndex = 0; rowIndex < rowsSubReport.size(); rowIndex++) {
           Vector<Object> row = (Vector<Object>) rowsSubReport.get(rowIndex);
           Vector<Vector<Object>> rowsData = new Vector<>();
           for (int columnIndex = 0; columnIndex < columnSubReport.getColumns().size(); columnIndex++) {
             Vector<Object> elementsRow = new Vector<>();
+            String suffixElementIndex = nuRowsSubReport > 1 ? " " + (rowIndex + 1) + ":" : "";
             String title = StringUtils.hasText(columnSubReport.getColumns().get(columnIndex).getTitle())
                 ? columnSubReport.getColumns().get(columnIndex).getTitle()
                 : columnSubReport.getColumns().get(columnIndex).getName();
-            elementsRow.add(title + " " + (rowIndex + 1) + ":");
+            elementsRow.add(title + suffixElementIndex);
             elementsRow.add(row.get(columnIndex));
             rowsData.add(elementsRow);
           }

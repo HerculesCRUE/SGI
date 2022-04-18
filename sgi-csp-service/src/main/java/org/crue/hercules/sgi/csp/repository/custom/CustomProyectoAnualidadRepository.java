@@ -1,5 +1,6 @@
 package org.crue.hercules.sgi.csp.repository.custom;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import org.crue.hercules.sgi.csp.dto.AnualidadResumen;
@@ -50,4 +51,23 @@ public interface CustomProyectoAnualidadRepository {
    */
   List<ProyectoAnualidadNotificacionSge> findAllNotificacionSge(String query, List<String> unidadesGestion);
 
+  /**
+   * Obtiene la suma de importe concedido de cada {@link AnualidadGasto}
+   * asociados a un {@link Proyecto}
+   * cuyo id coincide con el indicado.
+   * 
+   * @param proyectoId el identificador del {@link Proyecto}
+   * @return suma de puntos del campo importeConcedido
+   */
+  BigDecimal getTotalImporteConcedidoAnualidadGasto(Long proyectoId);
+
+  /**
+   * Obtiene la suma de importe concedido de cada {@link AnualidadGasto} de costes
+   * indirectos
+   * asociados a un {@link Proyecto} cuyo id coincide con el indicado.
+   * 
+   * @param proyectoId el identificador del {@link Proyecto}
+   * @return suma de puntos del campo importeConcedido
+   */
+  BigDecimal getTotalImporteConcedidoAnualidadGastoCostesIndirectos(Long proyectoId);
 }

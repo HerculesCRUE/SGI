@@ -4,9 +4,9 @@ import java.io.Serializable;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import org.crue.hercules.sgi.prc.model.CampoProduccionCientifica.CodigoCVN;
+import org.crue.hercules.sgi.prc.enums.CodigoCVN;
+import org.crue.hercules.sgi.prc.enums.EpigrafeCVN;
 import org.crue.hercules.sgi.prc.model.ConfiguracionCampo.TipoFormato;
-import org.crue.hercules.sgi.prc.model.ProduccionCientifica.EpigrafeCVN;
 import org.springframework.util.StringUtils;
 
 import lombok.Data;
@@ -33,26 +33,26 @@ public class ConfiguracionCampoOutput implements Serializable {
   public void setEpigrafe(String epigrafe) {
     this.epigrafe = epigrafe;
     if (StringUtils.hasText(epigrafe)) {
-      this.epigrafeCVN = EpigrafeCVN.getByInternValue(epigrafe);
+      this.epigrafeCVN = EpigrafeCVN.getByCode(epigrafe);
     }
   }
 
   public void setEpigrafeCVN(EpigrafeCVN epigrafeCVN) {
     if (null != epigrafeCVN) {
-      this.epigrafe = epigrafeCVN.getInternValue();
+      this.epigrafe = epigrafeCVN.getCode();
     }
   }
 
   public void setCodigo(String codigo) {
     this.codigo = codigo;
     if (StringUtils.hasText(codigo)) {
-      this.codigoCVN = CodigoCVN.getByInternValue(codigo);
+      this.codigoCVN = CodigoCVN.getByCode(codigo);
     }
   }
 
   public void setCodigoCVN(CodigoCVN codigoCVN) {
     if (null != codigoCVN) {
-      this.codigo = codigoCVN.getInternValue();
+      this.codigo = codigoCVN.getCode();
     }
   }
 }

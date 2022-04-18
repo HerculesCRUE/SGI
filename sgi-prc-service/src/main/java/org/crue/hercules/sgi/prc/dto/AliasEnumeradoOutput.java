@@ -2,9 +2,12 @@ package org.crue.hercules.sgi.prc.dto;
 
 import java.io.Serializable;
 
+import javax.persistence.Convert;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import org.crue.hercules.sgi.prc.model.CampoProduccionCientifica.CodigoCVN;
+import org.crue.hercules.sgi.prc.enums.CodigoCVN;
+import org.crue.hercules.sgi.prc.model.converter.CodigoCVNConverter;
 import org.springframework.util.StringUtils;
 
 import lombok.Data;
@@ -20,18 +23,19 @@ public class AliasEnumeradoOutput implements Serializable {
   private String prefijoEnumerado;
 
   @JsonIgnore
+  @Convert(converter = CodigoCVNConverter.class)
   private CodigoCVN codigoCVN;
 
   public void setCodigo(String codigo) {
     this.codigo = codigo;
     if (StringUtils.hasText(codigo)) {
-      this.codigoCVN = CodigoCVN.getByInternValue(codigo);
+      this.codigoCVN = CodigoCVN.getByCode(codigo);
     }
   }
 
   public void setCodigoCVN(CodigoCVN codigoCVN) {
     if (null != codigoCVN) {
-      this.codigo = codigoCVN.getInternValue();
+      this.codigo = codigoCVN.getCode();
     }
   }
 }

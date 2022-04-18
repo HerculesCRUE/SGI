@@ -94,8 +94,6 @@ public class ProyectoEquipoIT extends BaseIT {
         .isEqualTo(updatedProyectoEquipo.getFechaInicio());
     Assertions.assertThat(responseData.get(0).getFechaFin()).as("get(0).getFechaFin()")
         .isEqualTo(updatedProyectoEquipo.getFechaFin());
-    Assertions.assertThat(responseData.get(0).getHorasDedicacion()).as("get(0).getHorasDedicacion()")
-        .isEqualTo(updatedProyectoEquipo.getHorasDedicacion());
     Assertions.assertThat(responseData.get(0).getPersonaRef()).as("get(0).getPersonaRef()")
         .isEqualTo(updatedProyectoEquipo.getPersonaRef());
     Assertions.assertThat(responseData.get(0).getRolProyecto().getId()).as("get(0).getRolProyecto().getId()")
@@ -106,8 +104,6 @@ public class ProyectoEquipoIT extends BaseIT {
         .isEqualTo(newProyectoEquipo.getFechaInicio());
     Assertions.assertThat(responseData.get(1).getFechaFin()).as("get(1).getFechaFin()")
         .isEqualTo(newProyectoEquipo.getFechaFin());
-    Assertions.assertThat(responseData.get(1).getHorasDedicacion()).as("get(1).getHorasDedicacion()")
-        .isEqualTo(newProyectoEquipo.getHorasDedicacion());
     Assertions.assertThat(responseData.get(1).getPersonaRef()).as("get(1).getPersonaRef()")
         .isEqualTo(newProyectoEquipo.getPersonaRef());
     Assertions.assertThat(responseData.get(1).getRolProyecto().getId()).as("get(1).getRolProyecto().getId()")
@@ -157,7 +153,6 @@ public class ProyectoEquipoIT extends BaseIT {
     Assertions.assertThat(responseData.getId()).as("getId()").isEqualTo(id);
     Assertions.assertThat(responseData.getProyectoId()).as("getProyectoId()").isEqualTo(1);
     Assertions.assertThat(responseData.getPersonaRef()).as("getPersonaRef()").isEqualTo("ref-001");
-    Assertions.assertThat(responseData.getHorasDedicacion()).as("getHorasDedicacion()").isEqualTo(1);
     Assertions.assertThat(responseData.getRolProyecto().getId()).as("getRolProyecto().getId()").isEqualTo(1);
     Assertions.assertThat(responseData.getFechaInicio()).as("getFechaInicio()").isEqualTo("2020-01-01T00:00:00Z");
     Assertions.assertThat(responseData.getFechaFin()).as("getFechaFin()").isEqualTo("2020-01-15T23:59:59Z");
@@ -176,7 +171,7 @@ public class ProyectoEquipoIT extends BaseIT {
 
     ProyectoEquipo proyectoEquipo = ProyectoEquipo.builder().id(id).proyectoId(proyectoId)
         .rolProyecto(RolProyecto.builder().id(1L).build()).fechaInicio(fechaInicio).fechaFin(fechaFin).personaRef("001")
-        .horasDedicacion(new Double(2)).build();
+        .build();
 
     return proyectoEquipo;
 

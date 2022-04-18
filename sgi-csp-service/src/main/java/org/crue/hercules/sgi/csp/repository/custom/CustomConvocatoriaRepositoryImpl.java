@@ -114,7 +114,7 @@ public class CustomConvocatoriaRepositoryImpl implements CustomConvocatoriaRepos
    *         datos vinculados.
    */
   @Override
-  public Boolean isRegistradaConSolicitudesOProyectos(Long id) {
+  public boolean isRegistradaConSolicitudesOProyectos(Long id) {
     log.debug("isRegistradaConSolicitudesOProyectos(Long id) - start");
 
     CriteriaBuilder cb = entityManager.getCriteriaBuilder();

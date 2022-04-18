@@ -1,5 +1,6 @@
 package org.crue.hercules.sgi.eti.service.impl;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -240,6 +241,29 @@ public class EvaluadorServiceImpl implements EvaluadorService {
       log.debug("update(Evaluador evaluadorActualizar) - end");
       return returnValue;
     }).orElseThrow(() -> new EvaluadorNotFoundException(evaluadorActualizar.getId()));
+  }
+
+  /**
+   * Devuelve los evaluadores activos del comité indicado
+   * 
+   * @param comite nombre del {@link Comite}
+   * @return lista de evaluadores
+   */
+  @Override
+  public List<Evaluador> findAllByComite(String comite) {
+    log.debug("findAllByComite(String comite) - start");
+    Instant fechaActual = Instant.now();
+    Specification<Evaluador> specActivos = EvaluadorSpecifications.activos();
+    Specification<Evaluador> specInFechas = EvaluadorSpecifications.inFechas(fechaActual, fechaActual);
+    Specification<Evaluador> specFechaBajaNull = EvaluadorSpecifications.byFechaBajaNull();
+    Specification<Evaluador> specComite = EvaluadorSpecifications.byComite(comite);
+
+    Specification<Evaluador> specs = Specification.where(specActivos).and(
+        specComite).and((specInFechas).or(specFechaBajaNull));
+
+    List<Evaluador> returnValue = evaluadorRepository.findAll(specs);
+    log.debug("findAllByComite(String comite) - end");
+    return returnValue;
   }
 
 }

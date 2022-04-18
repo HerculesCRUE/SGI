@@ -11,8 +11,9 @@ import { PublicacionDatosGeneralesComponent } from './publicacion-formulario/pub
 import { FragmentGuard } from '@core/guards/detail-form.guard';
 import { PRODUCCION_CIENTIFICA_ROUTE_PARAMS } from '../shared/produccion-cientifica-route-params';
 import { ProduccionCientificaResolver, PRODUCCION_CIENTIFICA_DATA_KEY } from '../shared/produccion-cientifica.resolver';
+import { MSG_PARAMS } from '@core/i18n';
 
-const MSG_LISTADO_TITLE = marker('prc.publicacion');
+const MSG_LISTADO_TITLE = marker('prc.publicacion-documento-cientifico');
 const PUBLICACION_KEY = marker('prc.publicacion-documento-cientifico');
 
 const routes: SgiRoutes = [
@@ -32,6 +33,9 @@ const routes: SgiRoutes = [
     canDeactivate: [ActionGuard],
     data: {
       title: PUBLICACION_KEY,
+      titleParams: {
+        ...MSG_PARAMS.CARDINALIRY.SINGULAR
+      },
       hasAnyAuthority: ['PRC-VAL-V', 'PRC-VAL-E']
     },
     resolve: {

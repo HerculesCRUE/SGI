@@ -9,7 +9,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import org.assertj.core.api.Assertions;
 import org.crue.hercules.sgi.framework.test.web.servlet.result.SgiMockMvcResultHandlers;
 import org.crue.hercules.sgi.prc.dto.ConfiguracionCampoOutput;
-import org.crue.hercules.sgi.prc.model.CampoProduccionCientifica.CodigoCVN;
+import org.crue.hercules.sgi.prc.enums.CodigoCVN;
 import org.crue.hercules.sgi.prc.model.ConfiguracionCampo;
 import org.crue.hercules.sgi.prc.service.ConfiguracionCampoService;
 import org.hamcrest.Matchers;
@@ -34,7 +34,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
  * ConfiguracionCampoControllerTest
  */
 @WebMvcTest(ConfiguracionCampoController.class)
-public class ConfiguracionCampoControllerTest extends BaseControllerTest {
+class ConfiguracionCampoControllerTest extends BaseControllerTest {
 
   @MockBean
   private ConfiguracionCampoService service;
@@ -43,7 +43,7 @@ public class ConfiguracionCampoControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "PRC-VAL-V", "PRC-VAL-E" })
-  public void findAll_ReturnsPage() throws Exception {
+  void findAll_ReturnsPage() throws Exception {
     // given: Una lista con 37 ConfiguracionCampo
     List<ConfiguracionCampo> configuracionesCampo = new ArrayList<>();
     for (long i = 1; i <= 37; i++) {
@@ -99,7 +99,7 @@ public class ConfiguracionCampoControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "PRC-VAL-V" })
-  public void findAll_EmptyList_Returns204() throws Exception {
+  void findAll_EmptyList_Returns204() throws Exception {
     // given: no data ConfiguracionCampo
     BDDMockito.given(service.findAll(ArgumentMatchers.<String>any(), ArgumentMatchers.<Pageable>any()))
         .willAnswer(new Answer<Page<ConfiguracionCampo>>() {

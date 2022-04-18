@@ -8,11 +8,14 @@ import java.util.List;
 import org.assertj.core.api.Assertions;
 import org.crue.hercules.sgi.pii.dto.InformePatentabilidadOutput;
 import org.crue.hercules.sgi.pii.dto.InvencionAreaConocimientoOutput;
+import org.crue.hercules.sgi.pii.dto.InvencionDto;
 import org.crue.hercules.sgi.pii.dto.InvencionInput;
 import org.crue.hercules.sgi.pii.dto.InvencionInventorOutput;
 import org.crue.hercules.sgi.pii.dto.InvencionOutput;
 import org.crue.hercules.sgi.pii.dto.InvencionSectorAplicacionOutput;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
@@ -40,6 +43,7 @@ public class InvencionIT extends BaseIT {
   public static final String PATH_SECTORES = "/{id}/sectoresaplicacion";
   public static final String PATH_INFORMESPATENTABILIDAD = "/{id}/informespatentabilidad";
   public static final String PATH_INVENCION_INVENTOR = "/{invencionId}/invencion-inventores";
+  public static final String PATH_PRC = "/produccioncientifica/{anioInicio}/{anioFin}/{universidadId}";
   public static final String PATH_INVENCION_GASTO = "/{invencionId}/gastos";
 
   private HttpEntity<InvencionInput> buildRequest(HttpHeaders headers,
@@ -404,6 +408,46 @@ public class InvencionIT extends BaseIT {
     Assertions.assertThat(invencionInventorOutput.get(0).getId()).as("id").isEqualTo(3);
     Assertions.assertThat(invencionInventorOutput.get(1).getId()).as("id").isEqualTo(2);
     Assertions.assertThat(invencionInventorOutput.get(2).getId()).as("id").isEqualTo(1);
+
+  }
+
+  @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = {
+  // @formatter:off
+  "classpath:scripts/tipo_proteccion.sql",
+  "classpath:scripts/tipo_caducidad.sql",
+  "classpath:scripts/via_proteccion.sql",
+  "classpath:scripts/invencion.sql",
+  "classpath:scripts/invencion_inventor.sql",
+  "classpath:scripts/periodo_titularidad.sql",
+  "classpath:scripts/periodo_titularidad_titular.sql",
+  "classpath:scripts/solicitud_proteccion.sql",
+// @formatter:on
+  })
+  @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
+  @ParameterizedTest
+  @CsvSource({ "2020, 2021, 'Q3018001'" })
+  public void findInvencionesProduccionCientifica(Integer anioInicio, Integer anioFin, String universidadId)
+      throws Exception {
+
+    String roles = "CSP-PRO-PRC-V";
+
+    final ResponseEntity<List<InvencionDto>> response = restTemplate.exchange(
+        CONTROLLER_BASE_PATH + PATH_PRC,
+        HttpMethod.GET,
+        buildRequest(null, null, roles),
+        new ParameterizedTypeReference<List<InvencionDto>>() {
+        }, anioInicio, anioFin, universidadId);
+    Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+
+    int numInvenciones = response.getBody().size();
+    Assertions.assertThat(numInvenciones).isEqualTo(3);
+
+    int numParticipaciones = response.getBody().get(0).getParticipaciones().size();
+    int numSolicitudes = response.getBody().get(0).getSolicitudesProteccion().size();
+    int numInventores = response.getBody().get(0).getInventores().size();
+    Assertions.assertThat(numParticipaciones).isEqualTo(1);
+    Assertions.assertThat(numSolicitudes).isEqualTo(1);
+    Assertions.assertThat(numInventores).isEqualTo(3);
 
   }
 

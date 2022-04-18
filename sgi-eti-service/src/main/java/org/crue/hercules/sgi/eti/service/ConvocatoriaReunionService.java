@@ -131,4 +131,12 @@ public interface ConvocatoriaReunionService {
    * @return ConvocatoriaReunion
    */
   ConvocatoriaReunion findConvocatoriaUltimaEvaluacionTipoMemoria(Long idEvaluacion, Long idDictamen);
+
+  /**
+   * Permite enviar el comunicado de {@link ConvocatoriaReunion}
+   *
+   * @param id Id del {@link ConvocatoriaReunion}.
+   * @return true si puede ser enviado / false si no puede ser enviado
+   */
+  Boolean enviarComunicado(Long id);
 }

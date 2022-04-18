@@ -4,6 +4,8 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
 
 import org.crue.hercules.sgi.prc.model.BaseEntity;
+import org.crue.hercules.sgi.prc.model.EstadoProduccionCientifica.TipoEstadoProduccion;
+import org.crue.hercules.sgi.prc.validation.EpigrafeCVNValueValid;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -18,19 +20,15 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder
 public class ProduccionCientificaApiCreateInput extends ProduccionCientificaApiInput {
 
-  public enum TipoEstadoProduccionCientifica {
-    VALIDADO,
-    PENDIENTE;
-  }
-
   @NotEmpty
   @Size(max = BaseEntity.ID_REF_LENGTH)
   private String idRef;
 
+  @EpigrafeCVNValueValid
   @NotEmpty
   @Size(max = BaseEntity.EPIGRAFE_LENGTH)
   private String epigrafeCVN;
 
-  private TipoEstadoProduccionCientifica estado;
+  private TipoEstadoProduccion estado;
 
 }

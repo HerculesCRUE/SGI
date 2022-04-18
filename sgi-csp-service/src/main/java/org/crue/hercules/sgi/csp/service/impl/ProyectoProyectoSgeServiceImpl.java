@@ -2,6 +2,7 @@ package org.crue.hercules.sgi.csp.service.impl;
 
 import java.util.List;
 
+import org.crue.hercules.sgi.csp.config.SgiConfigProperties;
 import org.crue.hercules.sgi.csp.exceptions.ProyectoProyectoSgeNotFoundException;
 import org.crue.hercules.sgi.csp.model.Proyecto;
 import org.crue.hercules.sgi.csp.model.ProyectoProyectoSge;
@@ -32,11 +33,13 @@ public class ProyectoProyectoSgeServiceImpl implements ProyectoProyectoSgeServic
 
   private final ProyectoProyectoSgeRepository repository;
   private final ProyectoHelper proyectoHelper;
+  private final SgiConfigProperties sgiConfigProperties;
 
   public ProyectoProyectoSgeServiceImpl(ProyectoProyectoSgeRepository proyectoProrrogaRepository,
-      ProyectoHelper proyectoHelper) {
+      ProyectoHelper proyectoHelper, SgiConfigProperties sgiConfigProperties) {
     this.repository = proyectoProrrogaRepository;
     this.proyectoHelper = proyectoHelper;
+    this.sgiConfigProperties = sgiConfigProperties;
   }
 
   /**
@@ -130,7 +133,7 @@ public class ProyectoProyectoSgeServiceImpl implements ProyectoProyectoSgeServic
   public Page<ProyectoProyectoSge> findAllByProyecto(Long proyectoId, String query, Pageable pageable) {
     log.debug("findAllByProyecto(Long proyectoId, String query, Pageable pageable) - start");
     Specification<ProyectoProyectoSge> specs = SgiRSQLJPASupport
-        .toSpecification(query, ProyectoProyectoSgePredicateResolver.getInstance())
+        .toSpecification(query, ProyectoProyectoSgePredicateResolver.getInstance(sgiConfigProperties))
         .and(ProyectoProyectoSgeSpecifications.byProyectoId(proyectoId));
 
     Page<ProyectoProyectoSge> returnValue = repository.findAll(specs, pageable);
@@ -150,7 +153,7 @@ public class ProyectoProyectoSgeServiceImpl implements ProyectoProyectoSgeServic
   public Page<ProyectoProyectoSge> findAll(String query, Pageable pageable) {
     log.debug("findAll(String query, Pageable pageable) - start");
     Specification<ProyectoProyectoSge> specs = SgiRSQLJPASupport.toSpecification(query,
-        ProyectoProyectoSgePredicateResolver.getInstance());
+        ProyectoProyectoSgePredicateResolver.getInstance(sgiConfigProperties));
 
     // No tiene acceso a todos los UO
     List<String> unidadesGestion = SgiSecurityContextHolder

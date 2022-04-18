@@ -1,0 +1,2563 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:pro="http://www.liquibase.org/xml/ns/pro" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-3.8.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+  <changeSet context="!test" author="master" id="0000000000001-configuracion_campo">
+    <insert tableName="configuracion_campo">
+      <column name="id" valueSequenceNext="configuracion_campo_seq" />
+      <column name="codigo_cvn" value="060.030.030.100" />
+      <column name="epigrafe_cvn" value="060.030.030.000" />
+      <column name="fecha_referencia_fin" valueBoolean="false" />
+      <column name="fecha_referencia_inicio" valueBoolean="false" />
+      <column name="tipo_formato" value="ENUMERADO" />
+      <column name="validacion_adicional" valueBoolean="false" />
+    </insert>
+    <insert tableName="configuracion_campo">
+      <column name="id" valueSequenceNext="configuracion_campo_seq" />
+      <column name="codigo_cvn" value="ANIO_SEXENIOS" />
+      <column name="epigrafe_cvn" value="060.030.070.000" />
+      <column name="fecha_referencia_fin" valueBoolean="false" />
+      <column name="fecha_referencia_inicio" valueBoolean="true" />
+      <column name="tipo_formato" value="FECHA" />
+      <column name="validacion_adicional" valueBoolean="false" />
+    </insert>
+  </changeSet>
+
+  <changeSet context="!test" author="master" id="0000000000001-configuracion_baremos">
+    <delete tableName="configuracion_baremo"></delete>
+
+    <dropSequence sequenceName="configuracion_baremo_seq" />
+    <createSequence incrementBy="1" sequenceName="configuracion_baremo_seq" startValue="1" />
+
+    <insert tableName="configuracion_baremo">
+      <column name="id" valueSequenceNext="configuracion_baremo_seq" />
+      <column name="activo" valueBoolean="true" />
+      <column name="epigrafe_cvn" value="060.030.070.000" />
+      <column name="nombre" value="Sexenios" />
+      <column name="prioridad" valueNumeric="1" />
+      <column name="tipo_baremo" value="SEXENIO" />
+      <column name="tipo_fuente" value="OTRO_SISTEMA" />
+      <column name="tipo_puntos" value="PRINCIPAL" />
+      <column name="configuracion_baremo_padre_id" valueNumeric="null" />
+      <column name="mostrar_puntos" valueBoolean="true" />
+    </insert>
+    <insert tableName="configuracion_baremo">
+      <column name="id" valueSequenceNext="configuracion_baremo_seq" />
+      <column name="activo" valueBoolean="true" />
+      <column name="epigrafe_cvn" value="null" />
+      <column name="nombre" value="Aportación costes Indirectos" />
+      <column name="prioridad" valueNumeric="1" />
+      <column name="tipo_baremo" value="COSTE_INDIRECTO" />
+      <column name="tipo_fuente" value="SGI" />
+      <column name="tipo_puntos" value="PRINCIPAL" />
+      <column name="configuracion_baremo_padre_id" valueNumeric="null" />
+      <column name="mostrar_puntos" valueBoolean="true" />
+    </insert>
+    <insert tableName="configuracion_baremo">
+      <column name="id" valueSequenceNext="configuracion_baremo_seq" />
+      <column name="activo" valueBoolean="true" />
+      <column name="epigrafe_cvn" value="null" />
+      <column name="nombre" value="Producción científica" />
+      <column name="prioridad" valueNumeric="null" />
+      <column name="tipo_baremo" value="PRODUCCION_CIENTIFICA" />
+      <column name="tipo_fuente" value="null" />
+      <column name="tipo_puntos" value="null" />
+      <column name="configuracion_baremo_padre_id" valueNumeric="null" />
+      <column name="mostrar_puntos" valueBoolean="true" />
+    </insert>
+    <insert tableName="configuracion_baremo">
+      <column name="id" valueSequenceNext="configuracion_baremo_seq" />
+      <column name="activo" valueBoolean="true" />
+      <column name="epigrafe_cvn" value="null" />
+      <column name="nombre" value="Libros" />
+      <column name="prioridad" valueNumeric="null" />
+      <column name="tipo_baremo" value="LIBROS" />
+      <column name="tipo_fuente" value="null" />
+      <column name="tipo_puntos" value="null" />
+      <column name="configuracion_baremo_padre_id" valueComputed="(select id from ${schemaPrefix}configuracion_baremo where nombre='Producción científica')" />
+      <column name="mostrar_puntos" valueBoolean="true" />
+    </insert>
+    <insert tableName="configuracion_baremo">
+      <column name="id" valueSequenceNext="configuracion_baremo_seq" />
+      <column name="activo" valueBoolean="true" />
+      <column name="epigrafe_cvn" value="060.010.010.000" />
+      <column name="nombre" value="Autoría - BCI - Editorial extranjera" />
+      <column name="prioridad" valueNumeric="1" />
+      <column name="tipo_baremo" value="AUTORIA_BCI_EDITORIAL_EXTRANJERA" />
+      <column name="tipo_fuente" value="CVN" />
+      <column name="tipo_puntos" value="PRINCIPAL" />
+      <column name="configuracion_baremo_padre_id" valueComputed="(select id from ${schemaPrefix}configuracion_baremo where nombre='Libros')" />
+      <column name="mostrar_puntos" valueBoolean="true" />
+    </insert>
+    <insert tableName="configuracion_baremo">
+      <column name="id" valueSequenceNext="configuracion_baremo_seq" />
+      <column name="activo" valueBoolean="true" />
+      <column name="epigrafe_cvn" value="060.010.010.000" />
+      <column name="nombre" value="Autoría - BCI - Editorial nacional" />
+      <column name="prioridad" valueNumeric="2" />
+      <column name="tipo_baremo" value="AUTORIA_BCI_EDITORIAL_NACIONAL" />
+      <column name="tipo_fuente" value="CVN" />
+      <column name="tipo_puntos" value="PRINCIPAL" />
+      <column name="configuracion_baremo_padre_id" valueComputed="(select id from ${schemaPrefix}configuracion_baremo where nombre='Libros')" />
+      <column name="mostrar_puntos" valueBoolean="true" />
+    </insert>
+    <insert tableName="configuracion_baremo">
+      <column name="id" valueSequenceNext="configuracion_baremo_seq" />
+      <column name="activo" valueBoolean="true" />
+      <column name="epigrafe_cvn" value="060.010.010.000" />
+      <column name="nombre" value="Autoría - ICEE - Q1" />
+      <column name="prioridad" valueNumeric="3" />
+      <column name="tipo_baremo" value="AUTORIA_ICEE_Q1" />
+      <column name="tipo_fuente" value="CVN" />
+      <column name="tipo_puntos" value="PRINCIPAL" />
+      <column name="configuracion_baremo_padre_id" valueComputed="(select id from ${schemaPrefix}configuracion_baremo where nombre='Libros')" />
+      <column name="mostrar_puntos" valueBoolean="true" />
+    </insert>
+    <insert tableName="configuracion_baremo">
+      <column name="id" valueSequenceNext="configuracion_baremo_seq" />
+      <column name="activo" valueBoolean="true" />
+      <column name="epigrafe_cvn" value="060.010.010.000" />
+      <column name="nombre" value="Autoría -  ICEE - Resto cuartiles" />
+      <column name="prioridad" valueNumeric="4" />
+      <column name="tipo_baremo" value="AUTORIA_ICEE_RESTO_CUARTILES" />
+      <column name="tipo_fuente" value="CVN" />
+      <column name="tipo_puntos" value="PRINCIPAL" />
+      <column name="configuracion_baremo_padre_id" valueComputed="(select id from ${schemaPrefix}configuracion_baremo where nombre='Libros')" />
+      <column name="mostrar_puntos" valueBoolean="true" />
+    </insert>
+    <insert tableName="configuracion_baremo">
+      <column name="id" valueSequenceNext="configuracion_baremo_seq" />
+      <column name="activo" valueBoolean="true" />
+      <column name="epigrafe_cvn" value="060.010.010.000" />
+      <column name="nombre" value="Autoría - DIALNET" />
+      <column name="prioridad" valueNumeric="5" />
+      <column name="tipo_baremo" value="AUTORIA_DIALNET" />
+      <column name="tipo_fuente" value="CVN" />
+      <column name="tipo_puntos" value="PRINCIPAL" />
+      <column name="configuracion_baremo_padre_id" valueComputed="(select id from ${schemaPrefix}configuracion_baremo where nombre='Libros')" />
+      <column name="mostrar_puntos" valueBoolean="true" />
+    </insert>
+    <insert tableName="configuracion_baremo">
+      <column name="id" valueSequenceNext="configuracion_baremo_seq" />
+      <column name="activo" valueBoolean="true" />
+      <column name="epigrafe_cvn" value="060.010.010.000" />
+      <column name="nombre" value="Autoría - Otras contribuciones" />
+      <column name="prioridad" valueNumeric="6" />
+      <column name="tipo_baremo" value="AUTORIA_OTRAS" />
+      <column name="tipo_fuente" value="CVN" />
+      <column name="tipo_puntos" value="PRINCIPAL" />
+      <column name="configuracion_baremo_padre_id" valueComputed="(select id from ${schemaPrefix}configuracion_baremo where nombre='Libros')" />
+      <column name="mostrar_puntos" valueBoolean="true" />
+    </insert>
+    <insert tableName="configuracion_baremo">
+      <column name="id" valueSequenceNext="configuracion_baremo_seq" />
+      <column name="activo" valueBoolean="true" />
+      <column name="epigrafe_cvn" value="060.010.010.000" />
+      <column name="nombre" value="Capítulo de libro - BCI - Editorial extranjera" />
+      <column name="prioridad" valueNumeric="7" />
+      <column name="tipo_baremo" value="CAP_LIBRO_BCI_EDITORIAL_EXTRANJERA" />
+      <column name="tipo_fuente" value="CVN" />
+      <column name="tipo_puntos" value="PRINCIPAL" />
+      <column name="configuracion_baremo_padre_id" valueComputed="(select id from ${schemaPrefix}configuracion_baremo where nombre='Libros')" />
+      <column name="mostrar_puntos" valueBoolean="true" />
+    </insert>
+    <insert tableName="configuracion_baremo">
+      <column name="id" valueSequenceNext="configuracion_baremo_seq" />
+      <column name="activo" valueBoolean="true" />
+      <column name="epigrafe_cvn" value="060.010.010.000" />
+      <column name="nombre" value="Capítulo de libro - BCI - Editorial nacional" />
+      <column name="prioridad" valueNumeric="8" />
+      <column name="tipo_baremo" value="CAP_LIBRO_BCI_EDITORIAL_NACIONAL" />
+      <column name="tipo_fuente" value="CVN" />
+      <column name="tipo_puntos" value="PRINCIPAL" />
+      <column name="configuracion_baremo_padre_id" valueComputed="(select id from ${schemaPrefix}configuracion_baremo where nombre='Libros')" />
+      <column name="mostrar_puntos" valueBoolean="true" />
+    </insert>
+    <insert tableName="configuracion_baremo">
+      <column name="id" valueSequenceNext="configuracion_baremo_seq" />
+      <column name="activo" valueBoolean="true" />
+      <column name="epigrafe_cvn" value="060.010.010.000" />
+      <column name="nombre" value="Capítulo de libro - ICEE - Q1" />
+      <column name="prioridad" valueNumeric="9" />
+      <column name="tipo_baremo" value="CAP_LIBRO_ICEE_Q1" />
+      <column name="tipo_fuente" value="CVN" />
+      <column name="tipo_puntos" value="PRINCIPAL" />
+      <column name="configuracion_baremo_padre_id" valueComputed="(select id from ${schemaPrefix}configuracion_baremo where nombre='Libros')" />
+      <column name="mostrar_puntos" valueBoolean="true" />
+    </insert>
+    <insert tableName="configuracion_baremo">
+      <column name="id" valueSequenceNext="configuracion_baremo_seq" />
+      <column name="activo" valueBoolean="true" />
+      <column name="epigrafe_cvn" value="060.010.010.000" />
+      <column name="nombre" value="Capítulo de libro -  ICEE - Resto cuartiles" />
+      <column name="prioridad" valueNumeric="10" />
+      <column name="tipo_baremo" value="CAP_LIBRO_ICEE_RESTO_CUARTILES" />
+      <column name="tipo_fuente" value="CVN" />
+      <column name="tipo_puntos" value="PRINCIPAL" />
+      <column name="configuracion_baremo_padre_id" valueComputed="(select id from ${schemaPrefix}configuracion_baremo where nombre='Libros')" />
+      <column name="mostrar_puntos" valueBoolean="true" />
+    </insert>
+    <insert tableName="configuracion_baremo">
+      <column name="id" valueSequenceNext="configuracion_baremo_seq" />
+      <column name="activo" valueBoolean="true" />
+      <column name="epigrafe_cvn" value="060.010.010.000" />
+      <column name="nombre" value="Capítulo de libro - DIALNET" />
+      <column name="prioridad" valueNumeric="11" />
+      <column name="tipo_baremo" value="CAP_LIBRO_DIALNET" />
+      <column name="tipo_fuente" value="CVN" />
+      <column name="tipo_puntos" value="PRINCIPAL" />
+      <column name="configuracion_baremo_padre_id" valueComputed="(select id from ${schemaPrefix}configuracion_baremo where nombre='Libros')" />
+      <column name="mostrar_puntos" valueBoolean="true" />
+    </insert>
+    <insert tableName="configuracion_baremo">
+      <column name="id" valueSequenceNext="configuracion_baremo_seq" />
+      <column name="activo" valueBoolean="true" />
+      <column name="epigrafe_cvn" value="060.010.010.000" />
+      <column name="nombre" value="Capítulo de libro - Otras contribuciones" />
+      <column name="prioridad" valueNumeric="12" />
+      <column name="tipo_baremo" value="CAP_LIBRO_OTRAS" />
+      <column name="tipo_fuente" value="CVN" />
+      <column name="tipo_puntos" value="PRINCIPAL" />
+      <column name="configuracion_baremo_padre_id" valueComputed="(select id from ${schemaPrefix}configuracion_baremo where nombre='Libros')" />
+      <column name="mostrar_puntos" valueBoolean="true" />
+    </insert>
+    <insert tableName="configuracion_baremo">
+      <column name="id" valueSequenceNext="configuracion_baremo_seq" />
+      <column name="activo" valueBoolean="true" />
+      <column name="epigrafe_cvn" value="060.010.010.000" />
+      <column name="nombre" value="Edición - BCI - Editorial extranjera" />
+      <column name="prioridad" valueNumeric="13" />
+      <column name="tipo_baremo" value="EDICION_BCI_EDITORIAL_EXTRANJERA" />
+      <column name="tipo_fuente" value="CVN" />
+      <column name="tipo_puntos" value="PRINCIPAL" />
+      <column name="configuracion_baremo_padre_id" valueComputed="(select id from ${schemaPrefix}configuracion_baremo where nombre='Libros')" />
+      <column name="mostrar_puntos" valueBoolean="true" />
+    </insert>
+    <insert tableName="configuracion_baremo">
+      <column name="id" valueSequenceNext="configuracion_baremo_seq" />
+      <column name="activo" valueBoolean="true" />
+      <column name="epigrafe_cvn" value="060.010.010.000" />
+      <column name="nombre" value="Edición - BCI - Editorial nacional" />
+      <column name="prioridad" valueNumeric="14" />
+      <column name="tipo_baremo" value="EDICION_BCI_EDITORIAL_NACIONAL" />
+      <column name="tipo_fuente" value="CVN" />
+      <column name="tipo_puntos" value="PRINCIPAL" />
+      <column name="configuracion_baremo_padre_id" valueComputed="(select id from ${schemaPrefix}configuracion_baremo where nombre='Libros')" />
+      <column name="mostrar_puntos" valueBoolean="true" />
+    </insert>
+    <insert tableName="configuracion_baremo">
+      <column name="id" valueSequenceNext="configuracion_baremo_seq" />
+      <column name="activo" valueBoolean="true" />
+      <column name="epigrafe_cvn" value="060.010.010.000" />
+      <column name="nombre" value="Edición - ICEE - Q1" />
+      <column name="prioridad" valueNumeric="15" />
+      <column name="tipo_baremo" value="EDICION_ICEE_Q1" />
+      <column name="tipo_fuente" value="CVN" />
+      <column name="tipo_puntos" value="PRINCIPAL" />
+      <column name="configuracion_baremo_padre_id" valueComputed="(select id from ${schemaPrefix}configuracion_baremo where nombre='Libros')" />
+      <column name="mostrar_puntos" valueBoolean="true" />
+    </insert>
+    <insert tableName="configuracion_baremo">
+      <column name="id" valueSequenceNext="configuracion_baremo_seq" />
+      <column name="activo" valueBoolean="true" />
+      <column name="epigrafe_cvn" value="060.010.010.000" />
+      <column name="nombre" value="Edición - ICEE - Resto cuartiles" />
+      <column name="prioridad" valueNumeric="16" />
+      <column name="tipo_baremo" value="EDICION_ICEE_RESTO_CUARTILES" />
+      <column name="tipo_fuente" value="CVN" />
+      <column name="tipo_puntos" value="PRINCIPAL" />
+      <column name="configuracion_baremo_padre_id" valueComputed="(select id from ${schemaPrefix}configuracion_baremo where nombre='Libros')" />
+      <column name="mostrar_puntos" valueBoolean="true" />
+    </insert>
+    <insert tableName="configuracion_baremo">
+      <column name="id" valueSequenceNext="configuracion_baremo_seq" />
+      <column name="activo" valueBoolean="true" />
+      <column name="epigrafe_cvn" value="060.010.010.000" />
+      <column name="nombre" value="Edición - DIALNET" />
+      <column name="prioridad" valueNumeric="17" />
+      <column name="tipo_baremo" value="EDICION_DIALNET" />
+      <column name="tipo_fuente" value="CVN" />
+      <column name="tipo_puntos" value="PRINCIPAL" />
+      <column name="configuracion_baremo_padre_id" valueComputed="(select id from ${schemaPrefix}configuracion_baremo where nombre='Libros')" />
+      <column name="mostrar_puntos" valueBoolean="true" />
+    </insert>
+    <insert tableName="configuracion_baremo">
+      <column name="id" valueSequenceNext="configuracion_baremo_seq" />
+      <column name="activo" valueBoolean="true" />
+      <column name="epigrafe_cvn" value="060.010.010.000" />
+      <column name="nombre" value="Edición - Otras contribuciones" />
+      <column name="prioridad" valueNumeric="18" />
+      <column name="tipo_baremo" value="EDICION_OTRAS" />
+      <column name="tipo_fuente" value="CVN" />
+      <column name="tipo_puntos" value="PRINCIPAL" />
+      <column name="configuracion_baremo_padre_id" valueComputed="(select id from ${schemaPrefix}configuracion_baremo where nombre='Libros')" />
+      <column name="mostrar_puntos" valueBoolean="true" />
+    </insert>
+    <insert tableName="configuracion_baremo">
+      <column name="id" valueSequenceNext="configuracion_baremo_seq" />
+      <column name="activo" valueBoolean="false" />
+      <column name="epigrafe_cvn" value="060.010.010.000" />
+      <column name="nombre" value="Comentario sistemático a normas - BCI - Editorial extranjera" />
+      <column name="prioridad" valueNumeric="19" />
+      <column name="tipo_baremo" value="COMENTARIO_BCI_EDITORIAL_EXTRANJERA" />
+      <column name="tipo_fuente" value="CVN" />
+      <column name="tipo_puntos" value="PRINCIPAL" />
+      <column name="configuracion_baremo_padre_id" valueComputed="(select id from ${schemaPrefix}configuracion_baremo where nombre='Libros')" />
+      <column name="mostrar_puntos" valueBoolean="true" />
+    </insert>
+    <insert tableName="configuracion_baremo">
+      <column name="id" valueSequenceNext="configuracion_baremo_seq" />
+      <column name="activo" valueBoolean="false" />
+      <column name="epigrafe_cvn" value="060.010.010.000" />
+      <column name="nombre" value="Comentario sistemático a normas - BCI - Editorial nacional" />
+      <column name="prioridad" valueNumeric="20" />
+      <column name="tipo_baremo" value="COMENTARIO_BCI_EDITORIAL_NACIONAL" />
+      <column name="tipo_fuente" value="CVN" />
+      <column name="tipo_puntos" value="PRINCIPAL" />
+      <column name="configuracion_baremo_padre_id" valueComputed="(select id from ${schemaPrefix}configuracion_baremo where nombre='Libros')" />
+      <column name="mostrar_puntos" valueBoolean="true" />
+    </insert>
+    <insert tableName="configuracion_baremo">
+      <column name="id" valueSequenceNext="configuracion_baremo_seq" />
+      <column name="activo" valueBoolean="true" />
+      <column name="epigrafe_cvn" value="060.010.010.000" />
+      <column name="nombre" value="Comentario sistemático a normas - ICEE - Q1" />
+      <column name="prioridad" valueNumeric="21" />
+      <column name="tipo_baremo" value="COMENTARIO_ICEE_Q1" />
+      <column name="tipo_fuente" value="CVN" />
+      <column name="tipo_puntos" value="PRINCIPAL" />
+      <column name="configuracion_baremo_padre_id" valueComputed="(select id from ${schemaPrefix}configuracion_baremo where nombre='Libros')" />
+      <column name="mostrar_puntos" valueBoolean="true" />
+    </insert>
+    <insert tableName="configuracion_baremo">
+      <column name="id" valueSequenceNext="configuracion_baremo_seq" />
+      <column name="activo" valueBoolean="true" />
+      <column name="epigrafe_cvn" value="060.010.010.000" />
+      <column name="nombre" value="Comentario sistemático a normas -  ICEE - Resto cuartiles" />
+      <column name="prioridad" valueNumeric="22" />
+      <column name="tipo_baremo" value="COMENTARIO_ICEE_RESTO_CUARTILES" />
+      <column name="tipo_fuente" value="CVN" />
+      <column name="tipo_puntos" value="PRINCIPAL" />
+      <column name="configuracion_baremo_padre_id" valueComputed="(select id from ${schemaPrefix}configuracion_baremo where nombre='Libros')" />
+      <column name="mostrar_puntos" valueBoolean="true" />
+    </insert>
+    <insert tableName="configuracion_baremo">
+      <column name="id" valueSequenceNext="configuracion_baremo_seq" />
+      <column name="activo" valueBoolean="false" />
+      <column name="epigrafe_cvn" value="060.010.010.000" />
+      <column name="nombre" value="Comentario sistemático a normas - DIALNET" />
+      <column name="prioridad" valueNumeric="23" />
+      <column name="tipo_baremo" value="COMENTARIO_DIALNET" />
+      <column name="tipo_fuente" value="CVN" />
+      <column name="tipo_puntos" value="PRINCIPAL" />
+      <column name="configuracion_baremo_padre_id" valueComputed="(select id from ${schemaPrefix}configuracion_baremo where nombre='Libros')" />
+      <column name="mostrar_puntos" valueBoolean="true" />
+    </insert>
+    <insert tableName="configuracion_baremo">
+      <column name="id" valueSequenceNext="configuracion_baremo_seq" />
+      <column name="activo" valueBoolean="false" />
+      <column name="epigrafe_cvn" value="060.010.010.000" />
+      <column name="nombre" value="Comentario sistemático a normas - Otras contribuciones" />
+      <column name="prioridad" valueNumeric="24" />
+      <column name="tipo_baremo" value="COMENTARIO_OTRAS" />
+      <column name="tipo_fuente" value="CVN" />
+      <column name="tipo_puntos" value="PRINCIPAL" />
+      <column name="configuracion_baremo_padre_id" valueComputed="(select id from ${schemaPrefix}configuracion_baremo where nombre='Libros')" />
+      <column name="mostrar_puntos" valueBoolean="true" />
+    </insert>
+    <insert tableName="configuracion_baremo">
+      <column name="id" valueSequenceNext="configuracion_baremo_seq" />
+      <column name="activo" valueBoolean="true" />
+      <column name="epigrafe_cvn" value="060.010.010.000" />
+      <column name="nombre" value="Número de autores" />
+      <column name="prioridad" valueNumeric="25" />
+      <column name="tipo_baremo" value="LIBRO_NUMERO_AUTORES" />
+      <column name="tipo_fuente" value="CVN" />
+      <column name="tipo_puntos" value="MODULADOR" />
+      <column name="configuracion_baremo_padre_id" valueComputed="(select id from ${schemaPrefix}configuracion_baremo where nombre='Libros')" />
+      <column name="mostrar_puntos" valueBoolean="true" />
+    </insert>
+    <insert tableName="configuracion_baremo">
+      <column name="id" valueSequenceNext="configuracion_baremo_seq" />
+      <column name="activo" valueBoolean="true" />
+      <column name="epigrafe_cvn" value="060.010.010.000" />
+      <column name="nombre" value="Editorial de reconocido prestigio" />
+      <column name="prioridad" valueNumeric="26" />
+      <column name="tipo_baremo" value="LIBRO_EDITORIAL_PRESTIGIO" />
+      <column name="tipo_fuente" value="CVN" />
+      <column name="tipo_puntos" value="EXTRA" />
+      <column name="configuracion_baremo_padre_id" valueComputed="(select id from ${schemaPrefix}configuracion_baremo where nombre='Libros')" />
+      <column name="mostrar_puntos" valueBoolean="true" />
+    </insert>
+    <insert tableName="configuracion_baremo">
+      <column name="id" valueSequenceNext="configuracion_baremo_seq" />
+      <column name="activo" valueBoolean="true" />
+      <column name="epigrafe_cvn" value="null" />
+      <column name="nombre" value="Artículos" />
+      <column name="prioridad" valueNumeric="null" />
+      <column name="tipo_baremo" value="ARTICULOS" />
+      <column name="tipo_fuente" value="null" />
+      <column name="tipo_puntos" value="null" />
+      <column name="configuracion_baremo_padre_id" valueComputed="(select id from ${schemaPrefix}configuracion_baremo where nombre='Producción científica')" />
+      <column name="mostrar_puntos" valueBoolean="true" />
+    </insert>
+    <insert tableName="configuracion_baremo">
+      <column name="id" valueSequenceNext="configuracion_baremo_seq" />
+      <column name="activo" valueBoolean="true" />
+      <column name="epigrafe_cvn" value="060.010.010.000" />
+      <column name="nombre" value="JCR - Q1" />
+      <column name="prioridad" valueNumeric="101" />
+      <column name="tipo_baremo" value="ARTICULO_JCR_Q1" />
+      <column name="tipo_fuente" value="CVN" />
+      <column name="tipo_puntos" value="PRINCIPAL" />
+      <column name="configuracion_baremo_padre_id" valueComputed="(select id from ${schemaPrefix}configuracion_baremo where nombre='Artículos')" />
+      <column name="mostrar_puntos" valueBoolean="true" />
+    </insert>
+    <insert tableName="configuracion_baremo">
+      <column name="id" valueSequenceNext="configuracion_baremo_seq" />
+      <column name="activo" valueBoolean="true" />
+      <column name="epigrafe_cvn" value="060.010.010.000" />
+      <column name="nombre" value="JCR - Q2" />
+      <column name="prioridad" valueNumeric="102" />
+      <column name="tipo_baremo" value="ARTICULO_JCR_Q2" />
+      <column name="tipo_fuente" value="CVN" />
+      <column name="tipo_puntos" value="PRINCIPAL" />
+      <column name="configuracion_baremo_padre_id" valueComputed="(select id from ${schemaPrefix}configuracion_baremo where nombre='Artículos')" />
+      <column name="mostrar_puntos" valueBoolean="true" />
+    </insert>
+    <insert tableName="configuracion_baremo">
+      <column name="id" valueSequenceNext="configuracion_baremo_seq" />
+      <column name="activo" valueBoolean="true" />
+      <column name="epigrafe_cvn" value="060.010.010.000" />
+      <column name="nombre" value="JCR - Q3" />
+      <column name="prioridad" valueNumeric="103" />
+      <column name="tipo_baremo" value="ARTICULO_JCR_Q3" />
+      <column name="tipo_fuente" value="CVN" />
+      <column name="tipo_puntos" value="PRINCIPAL" />
+      <column name="configuracion_baremo_padre_id" valueComputed="(select id from ${schemaPrefix}configuracion_baremo where nombre='Artículos')" />
+      <column name="mostrar_puntos" valueBoolean="true" />
+    </insert>
+    <insert tableName="configuracion_baremo">
+      <column name="id" valueSequenceNext="configuracion_baremo_seq" />
+      <column name="activo" valueBoolean="true" />
+      <column name="epigrafe_cvn" value="060.010.010.000" />
+      <column name="nombre" value="JCR - Q4" />
+      <column name="prioridad" valueNumeric="104" />
+      <column name="tipo_baremo" value="ARTICULO_JCR_Q4" />
+      <column name="tipo_fuente" value="CVN" />
+      <column name="tipo_puntos" value="PRINCIPAL" />
+      <column name="configuracion_baremo_padre_id" valueComputed="(select id from ${schemaPrefix}configuracion_baremo where nombre='Artículos')" />
+      <column name="mostrar_puntos" valueBoolean="true" />
+    </insert>
+    <insert tableName="configuracion_baremo">
+      <column name="id" valueSequenceNext="configuracion_baremo_seq" />
+      <column name="activo" valueBoolean="true" />
+      <column name="epigrafe_cvn" value="060.010.010.000" />
+      <column name="nombre" value="CitEC - Q1" />
+      <column name="prioridad" valueNumeric="105" />
+      <column name="tipo_baremo" value="ARTICULO_CITEC_Q1" />
+      <column name="tipo_fuente" value="CVN" />
+      <column name="tipo_puntos" value="PRINCIPAL" />
+      <column name="configuracion_baremo_padre_id" valueComputed="(select id from ${schemaPrefix}configuracion_baremo where nombre='Artículos')" />
+      <column name="mostrar_puntos" valueBoolean="true" />
+    </insert>
+    <insert tableName="configuracion_baremo">
+      <column name="id" valueSequenceNext="configuracion_baremo_seq" />
+      <column name="activo" valueBoolean="true" />
+      <column name="epigrafe_cvn" value="060.010.010.000" />
+      <column name="nombre" value="CitEC - Q2" />
+      <column name="prioridad" valueNumeric="106" />
+      <column name="tipo_baremo" value="ARTICULO_CITEC_Q2" />
+      <column name="tipo_fuente" value="CVN" />
+      <column name="tipo_puntos" value="PRINCIPAL" />
+      <column name="configuracion_baremo_padre_id" valueComputed="(select id from ${schemaPrefix}configuracion_baremo where nombre='Artículos')" />
+      <column name="mostrar_puntos" valueBoolean="true" />
+    </insert>
+    <insert tableName="configuracion_baremo">
+      <column name="id" valueSequenceNext="configuracion_baremo_seq" />
+      <column name="activo" valueBoolean="true" />
+      <column name="epigrafe_cvn" value="060.010.010.000" />
+      <column name="nombre" value="CitEC - Q3" />
+      <column name="prioridad" valueNumeric="107" />
+      <column name="tipo_baremo" value="ARTICULO_CITEC_Q3" />
+      <column name="tipo_fuente" value="CVN" />
+      <column name="tipo_puntos" value="PRINCIPAL" />
+      <column name="configuracion_baremo_padre_id" valueComputed="(select id from ${schemaPrefix}configuracion_baremo where nombre='Artículos')" />
+      <column name="mostrar_puntos" valueBoolean="true" />
+    </insert>
+    <insert tableName="configuracion_baremo">
+      <column name="id" valueSequenceNext="configuracion_baremo_seq" />
+      <column name="activo" valueBoolean="true" />
+      <column name="epigrafe_cvn" value="060.010.010.000" />
+      <column name="nombre" value="CitEC - Q4" />
+      <column name="prioridad" valueNumeric="108" />
+      <column name="tipo_baremo" value="ARTICULO_CITEC_Q4" />
+      <column name="tipo_fuente" value="CVN" />
+      <column name="tipo_puntos" value="PRINCIPAL" />
+      <column name="configuracion_baremo_padre_id" valueComputed="(select id from ${schemaPrefix}configuracion_baremo where nombre='Artículos')" />
+      <column name="mostrar_puntos" valueBoolean="true" />
+    </insert>
+    <insert tableName="configuracion_baremo">
+      <column name="id" valueSequenceNext="configuracion_baremo_seq" />
+      <column name="activo" valueBoolean="true" />
+      <column name="epigrafe_cvn" value="060.010.010.000" />
+      <column name="nombre" value="SCOPUS - Q1" />
+      <column name="prioridad" valueNumeric="109" />
+      <column name="tipo_baremo" value="ARTICULO_SCOPUS_Q1" />
+      <column name="tipo_fuente" value="CVN" />
+      <column name="tipo_puntos" value="PRINCIPAL" />
+      <column name="configuracion_baremo_padre_id" valueComputed="(select id from ${schemaPrefix}configuracion_baremo where nombre='Artículos')" />
+      <column name="mostrar_puntos" valueBoolean="true" />
+    </insert>
+    <insert tableName="configuracion_baremo">
+      <column name="id" valueSequenceNext="configuracion_baremo_seq" />
+      <column name="activo" valueBoolean="true" />
+      <column name="epigrafe_cvn" value="060.010.010.000" />
+      <column name="nombre" value="SCOPUS - Q2" />
+      <column name="prioridad" valueNumeric="110" />
+      <column name="tipo_baremo" value="ARTICULO_SCOPUS_Q2" />
+      <column name="tipo_fuente" value="CVN" />
+      <column name="tipo_puntos" value="PRINCIPAL" />
+      <column name="configuracion_baremo_padre_id" valueComputed="(select id from ${schemaPrefix}configuracion_baremo where nombre='Artículos')" />
+      <column name="mostrar_puntos" valueBoolean="true" />
+    </insert>
+    <insert tableName="configuracion_baremo">
+      <column name="id" valueSequenceNext="configuracion_baremo_seq" />
+      <column name="activo" valueBoolean="true" />
+      <column name="epigrafe_cvn" value="060.010.010.000" />
+      <column name="nombre" value="SCOPUS - Q3" />
+      <column name="prioridad" valueNumeric="111" />
+      <column name="tipo_baremo" value="ARTICULO_SCOPUS_Q3" />
+      <column name="tipo_fuente" value="CVN" />
+      <column name="tipo_puntos" value="PRINCIPAL" />
+      <column name="configuracion_baremo_padre_id" valueComputed="(select id from ${schemaPrefix}configuracion_baremo where nombre='Artículos')" />
+      <column name="mostrar_puntos" valueBoolean="true" />
+    </insert>
+    <insert tableName="configuracion_baremo">
+      <column name="id" valueSequenceNext="configuracion_baremo_seq" />
+      <column name="activo" valueBoolean="true" />
+      <column name="epigrafe_cvn" value="060.010.010.000" />
+      <column name="nombre" value="SCOPUS - Q4" />
+      <column name="prioridad" valueNumeric="112" />
+      <column name="tipo_baremo" value="ARTICULO_SCOPUS_Q4" />
+      <column name="tipo_fuente" value="CVN" />
+      <column name="tipo_puntos" value="PRINCIPAL" />
+      <column name="configuracion_baremo_padre_id" valueComputed="(select id from ${schemaPrefix}configuracion_baremo where nombre='Artículos')" />
+      <column name="mostrar_puntos" valueBoolean="true" />
+    </insert>
+    <insert tableName="configuracion_baremo">
+      <column name="id" valueSequenceNext="configuracion_baremo_seq" />
+      <column name="activo" valueBoolean="true" />
+      <column name="epigrafe_cvn" value="060.010.010.000" />
+      <column name="nombre" value="SCIMAGO - Q1" />
+      <column name="prioridad" valueNumeric="113" />
+      <column name="tipo_baremo" value="ARTICULO_SCIMAGO_Q1" />
+      <column name="tipo_fuente" value="CVN" />
+      <column name="tipo_puntos" value="PRINCIPAL" />
+      <column name="configuracion_baremo_padre_id" valueComputed="(select id from ${schemaPrefix}configuracion_baremo where nombre='Artículos')" />
+      <column name="mostrar_puntos" valueBoolean="true" />
+    </insert>
+    <insert tableName="configuracion_baremo">
+      <column name="id" valueSequenceNext="configuracion_baremo_seq" />
+      <column name="activo" valueBoolean="true" />
+      <column name="epigrafe_cvn" value="060.010.010.000" />
+      <column name="nombre" value="SCIMAGO - Q2" />
+      <column name="prioridad" valueNumeric="114" />
+      <column name="tipo_baremo" value="ARTICULO_SCIMAGO_Q2" />
+      <column name="tipo_fuente" value="CVN" />
+      <column name="tipo_puntos" value="PRINCIPAL" />
+      <column name="configuracion_baremo_padre_id" valueComputed="(select id from ${schemaPrefix}configuracion_baremo where nombre='Artículos')" />
+      <column name="mostrar_puntos" valueBoolean="true" />
+    </insert>
+    <insert tableName="configuracion_baremo">
+      <column name="id" valueSequenceNext="configuracion_baremo_seq" />
+      <column name="activo" valueBoolean="true" />
+      <column name="epigrafe_cvn" value="060.010.010.000" />
+      <column name="nombre" value="SCIMAGO - Q3" />
+      <column name="prioridad" valueNumeric="115" />
+      <column name="tipo_baremo" value="ARTICULO_SCIMAGO_Q3" />
+      <column name="tipo_fuente" value="CVN" />
+      <column name="tipo_puntos" value="PRINCIPAL" />
+      <column name="configuracion_baremo_padre_id" valueComputed="(select id from ${schemaPrefix}configuracion_baremo where nombre='Artículos')" />
+      <column name="mostrar_puntos" valueBoolean="true" />
+    </insert>
+    <insert tableName="configuracion_baremo">
+      <column name="id" valueSequenceNext="configuracion_baremo_seq" />
+      <column name="activo" valueBoolean="true" />
+      <column name="epigrafe_cvn" value="060.010.010.000" />
+      <column name="nombre" value="SCIMAGO - Q4" />
+      <column name="prioridad" valueNumeric="116" />
+      <column name="tipo_baremo" value="ARTICULO_SCIMAGO_Q4" />
+      <column name="tipo_fuente" value="CVN" />
+      <column name="tipo_puntos" value="PRINCIPAL" />
+      <column name="configuracion_baremo_padre_id" valueComputed="(select id from ${schemaPrefix}configuracion_baremo where nombre='Artículos')" />
+      <column name="mostrar_puntos" valueBoolean="true" />
+    </insert>
+    <insert tableName="configuracion_baremo">
+      <column name="id" valueSequenceNext="configuracion_baremo_seq" />
+      <column name="activo" valueBoolean="true" />
+      <column name="epigrafe_cvn" value="060.010.010.000" />
+      <column name="nombre" value="ERIH - Q1" />
+      <column name="prioridad" valueNumeric="117" />
+      <column name="tipo_baremo" value="ARTICULO_ERIH_Q1" />
+      <column name="tipo_fuente" value="CVN" />
+      <column name="tipo_puntos" value="PRINCIPAL" />
+      <column name="configuracion_baremo_padre_id" valueComputed="(select id from ${schemaPrefix}configuracion_baremo where nombre='Artículos')" />
+      <column name="mostrar_puntos" valueBoolean="true" />
+    </insert>
+    <insert tableName="configuracion_baremo">
+      <column name="id" valueSequenceNext="configuracion_baremo_seq" />
+      <column name="activo" valueBoolean="true" />
+      <column name="epigrafe_cvn" value="060.010.010.000" />
+      <column name="nombre" value="ERIH - Q2" />
+      <column name="prioridad" valueNumeric="118" />
+      <column name="tipo_baremo" value="ARTICULO_ERIH_Q2" />
+      <column name="tipo_fuente" value="CVN" />
+      <column name="tipo_puntos" value="PRINCIPAL" />
+      <column name="configuracion_baremo_padre_id" valueComputed="(select id from ${schemaPrefix}configuracion_baremo where nombre='Artículos')" />
+      <column name="mostrar_puntos" valueBoolean="true" />
+    </insert>
+    <insert tableName="configuracion_baremo">
+      <column name="id" valueSequenceNext="configuracion_baremo_seq" />
+      <column name="activo" valueBoolean="true" />
+      <column name="epigrafe_cvn" value="060.010.010.000" />
+      <column name="nombre" value="ERIH - Q3" />
+      <column name="prioridad" valueNumeric="119" />
+      <column name="tipo_baremo" value="ARTICULO_ERIH_Q3" />
+      <column name="tipo_fuente" value="CVN" />
+      <column name="tipo_puntos" value="PRINCIPAL" />
+      <column name="configuracion_baremo_padre_id" valueComputed="(select id from ${schemaPrefix}configuracion_baremo where nombre='Artículos')" />
+      <column name="mostrar_puntos" valueBoolean="true" />
+    </insert>
+    <insert tableName="configuracion_baremo">
+      <column name="id" valueSequenceNext="configuracion_baremo_seq" />
+      <column name="activo" valueBoolean="true" />
+      <column name="epigrafe_cvn" value="060.010.010.000" />
+      <column name="nombre" value="ERIH - Q4" />
+      <column name="prioridad" valueNumeric="120" />
+      <column name="tipo_baremo" value="ARTICULO_ERIH_Q4" />
+      <column name="tipo_fuente" value="CVN" />
+      <column name="tipo_puntos" value="PRINCIPAL" />
+      <column name="configuracion_baremo_padre_id" valueComputed="(select id from ${schemaPrefix}configuracion_baremo where nombre='Artículos')" />
+      <column name="mostrar_puntos" valueBoolean="true" />
+    </insert>
+    <insert tableName="configuracion_baremo">
+      <column name="id" valueSequenceNext="configuracion_baremo_seq" />
+      <column name="activo" valueBoolean="true" />
+      <column name="epigrafe_cvn" value="060.010.010.000" />
+      <column name="nombre" value="DIALNET - Q1" />
+      <column name="prioridad" valueNumeric="121" />
+      <column name="tipo_baremo" value="ARTICULO_DIALNET_Q1" />
+      <column name="tipo_fuente" value="CVN" />
+      <column name="tipo_puntos" value="PRINCIPAL" />
+      <column name="configuracion_baremo_padre_id" valueComputed="(select id from ${schemaPrefix}configuracion_baremo where nombre='Artículos')" />
+      <column name="mostrar_puntos" valueBoolean="true" />
+    </insert>
+    <insert tableName="configuracion_baremo">
+      <column name="id" valueSequenceNext="configuracion_baremo_seq" />
+      <column name="activo" valueBoolean="true" />
+      <column name="epigrafe_cvn" value="060.010.010.000" />
+      <column name="nombre" value="DIALNET - Q2" />
+      <column name="prioridad" valueNumeric="122" />
+      <column name="tipo_baremo" value="ARTICULO_DIALNET_Q2" />
+      <column name="tipo_fuente" value="CVN" />
+      <column name="tipo_puntos" value="PRINCIPAL" />
+      <column name="configuracion_baremo_padre_id" valueComputed="(select id from ${schemaPrefix}configuracion_baremo where nombre='Artículos')" />
+      <column name="mostrar_puntos" valueBoolean="true" />
+    </insert>
+    <insert tableName="configuracion_baremo">
+      <column name="id" valueSequenceNext="configuracion_baremo_seq" />
+      <column name="activo" valueBoolean="true" />
+      <column name="epigrafe_cvn" value="060.010.010.000" />
+      <column name="nombre" value="DIALNET - Q3" />
+      <column name="prioridad" valueNumeric="123" />
+      <column name="tipo_baremo" value="ARTICULO_DIALNET_Q3" />
+      <column name="tipo_fuente" value="CVN" />
+      <column name="tipo_puntos" value="PRINCIPAL" />
+      <column name="configuracion_baremo_padre_id" valueComputed="(select id from ${schemaPrefix}configuracion_baremo where nombre='Artículos')" />
+      <column name="mostrar_puntos" valueBoolean="true" />
+    </insert>
+    <insert tableName="configuracion_baremo">
+      <column name="id" valueSequenceNext="configuracion_baremo_seq" />
+      <column name="activo" valueBoolean="true" />
+      <column name="epigrafe_cvn" value="060.010.010.000" />
+      <column name="nombre" value="DIALNET - Q4" />
+      <column name="prioridad" valueNumeric="124" />
+      <column name="tipo_baremo" value="ARTICULO_DIALNET_Q4" />
+      <column name="tipo_fuente" value="CVN" />
+      <column name="tipo_puntos" value="PRINCIPAL" />
+      <column name="configuracion_baremo_padre_id" valueComputed="(select id from ${schemaPrefix}configuracion_baremo where nombre='Artículos')" />
+      <column name="mostrar_puntos" valueBoolean="true" />
+    </insert>
+    <insert tableName="configuracion_baremo">
+      <column name="id" valueSequenceNext="configuracion_baremo_seq" />
+      <column name="activo" valueBoolean="true" />
+      <column name="epigrafe_cvn" value="060.010.010.000" />
+      <column name="nombre" value="MIAR - Q1" />
+      <column name="prioridad" valueNumeric="125" />
+      <column name="tipo_baremo" value="ARTICULO_MIAR_Q1" />
+      <column name="tipo_fuente" value="CVN" />
+      <column name="tipo_puntos" value="PRINCIPAL" />
+      <column name="configuracion_baremo_padre_id" valueComputed="(select id from ${schemaPrefix}configuracion_baremo where nombre='Artículos')" />
+      <column name="mostrar_puntos" valueBoolean="true" />
+    </insert>
+    <insert tableName="configuracion_baremo">
+      <column name="id" valueSequenceNext="configuracion_baremo_seq" />
+      <column name="activo" valueBoolean="true" />
+      <column name="epigrafe_cvn" value="060.010.010.000" />
+      <column name="nombre" value="MIAR - Q2" />
+      <column name="prioridad" valueNumeric="126" />
+      <column name="tipo_baremo" value="ARTICULO_MIAR_Q2" />
+      <column name="tipo_fuente" value="CVN" />
+      <column name="tipo_puntos" value="PRINCIPAL" />
+      <column name="configuracion_baremo_padre_id" valueComputed="(select id from ${schemaPrefix}configuracion_baremo where nombre='Artículos')" />
+      <column name="mostrar_puntos" valueBoolean="true" />
+    </insert>
+    <insert tableName="configuracion_baremo">
+      <column name="id" valueSequenceNext="configuracion_baremo_seq" />
+      <column name="activo" valueBoolean="true" />
+      <column name="epigrafe_cvn" value="060.010.010.000" />
+      <column name="nombre" value="MIAR - Q3" />
+      <column name="prioridad" valueNumeric="127" />
+      <column name="tipo_baremo" value="ARTICULO_MIAR_Q3" />
+      <column name="tipo_fuente" value="CVN" />
+      <column name="tipo_puntos" value="PRINCIPAL" />
+      <column name="configuracion_baremo_padre_id" valueComputed="(select id from ${schemaPrefix}configuracion_baremo where nombre='Artículos')" />
+      <column name="mostrar_puntos" valueBoolean="true" />
+    </insert>
+    <insert tableName="configuracion_baremo">
+      <column name="id" valueSequenceNext="configuracion_baremo_seq" />
+      <column name="activo" valueBoolean="true" />
+      <column name="epigrafe_cvn" value="060.010.010.000" />
+      <column name="nombre" value="MIAR - Q4" />
+      <column name="prioridad" valueNumeric="128" />
+      <column name="tipo_baremo" value="ARTICULO_MIAR_Q4" />
+      <column name="tipo_fuente" value="CVN" />
+      <column name="tipo_puntos" value="PRINCIPAL" />
+      <column name="configuracion_baremo_padre_id" valueComputed="(select id from ${schemaPrefix}configuracion_baremo where nombre='Artículos')" />
+      <column name="mostrar_puntos" valueBoolean="true" />
+    </insert>
+    <insert tableName="configuracion_baremo">
+      <column name="id" valueSequenceNext="configuracion_baremo_seq" />
+      <column name="activo" valueBoolean="true" />
+      <column name="epigrafe_cvn" value="060.010.010.000" />
+      <column name="nombre" value="FECYT - Q1" />
+      <column name="prioridad" valueNumeric="129" />
+      <column name="tipo_baremo" value="ARTICULO_FECYT_Q1" />
+      <column name="tipo_fuente" value="CVN" />
+      <column name="tipo_puntos" value="PRINCIPAL" />
+      <column name="configuracion_baremo_padre_id" valueComputed="(select id from ${schemaPrefix}configuracion_baremo where nombre='Artículos')" />
+      <column name="mostrar_puntos" valueBoolean="true" />
+    </insert>
+    <insert tableName="configuracion_baremo">
+      <column name="id" valueSequenceNext="configuracion_baremo_seq" />
+      <column name="activo" valueBoolean="true" />
+      <column name="epigrafe_cvn" value="060.010.010.000" />
+      <column name="nombre" value="FECYT - Q2" />
+      <column name="prioridad" valueNumeric="130" />
+      <column name="tipo_baremo" value="ARTICULO_FECYT_Q2" />
+      <column name="tipo_fuente" value="CVN" />
+      <column name="tipo_puntos" value="PRINCIPAL" />
+      <column name="configuracion_baremo_padre_id" valueComputed="(select id from ${schemaPrefix}configuracion_baremo where nombre='Artículos')" />
+      <column name="mostrar_puntos" valueBoolean="true" />
+    </insert>
+    <insert tableName="configuracion_baremo">
+      <column name="id" valueSequenceNext="configuracion_baremo_seq" />
+      <column name="activo" valueBoolean="true" />
+      <column name="epigrafe_cvn" value="060.010.010.000" />
+      <column name="nombre" value="FECYT - Q3" />
+      <column name="prioridad" valueNumeric="131" />
+      <column name="tipo_baremo" value="ARTICULO_FECYT_Q3" />
+      <column name="tipo_fuente" value="CVN" />
+      <column name="tipo_puntos" value="PRINCIPAL" />
+      <column name="configuracion_baremo_padre_id" valueComputed="(select id from ${schemaPrefix}configuracion_baremo where nombre='Artículos')" />
+      <column name="mostrar_puntos" valueBoolean="true" />
+    </insert>
+    <insert tableName="configuracion_baremo">
+      <column name="id" valueSequenceNext="configuracion_baremo_seq" />
+      <column name="activo" valueBoolean="true" />
+      <column name="epigrafe_cvn" value="060.010.010.000" />
+      <column name="nombre" value="FECYT - Q4" />
+      <column name="prioridad" valueNumeric="132" />
+      <column name="tipo_baremo" value="ARTICULO_FECYT_Q4" />
+      <column name="tipo_fuente" value="CVN" />
+      <column name="tipo_puntos" value="PRINCIPAL" />
+      <column name="configuracion_baremo_padre_id" valueComputed="(select id from ${schemaPrefix}configuracion_baremo where nombre='Artículos')" />
+      <column name="mostrar_puntos" valueBoolean="true" />
+    </insert>
+    <insert tableName="configuracion_baremo">
+      <column name="id" valueSequenceNext="configuracion_baremo_seq" />
+      <column name="activo" valueBoolean="true" />
+      <column name="epigrafe_cvn" value="060.010.010.000" />
+      <column name="nombre" value="Artículo" />
+      <column name="prioridad" valueNumeric="133" />
+      <column name="tipo_baremo" value="ARTICULO" />
+      <column name="tipo_fuente" value="CVN" />
+      <column name="tipo_puntos" value="PRINCIPAL" />
+      <column name="configuracion_baremo_padre_id" valueComputed="(select id from ${schemaPrefix}configuracion_baremo where nombre='Artículos')" />
+      <column name="mostrar_puntos" valueBoolean="true" />
+    </insert>
+    <insert tableName="configuracion_baremo">
+      <column name="id" valueSequenceNext="configuracion_baremo_seq" />
+      <column name="activo" valueBoolean="true" />
+      <column name="epigrafe_cvn" value="060.010.010.000" />
+      <column name="nombre" value="Número de autores" />
+      <column name="prioridad" valueNumeric="134" />
+      <column name="tipo_baremo" value="ARTICULO_NUMERO_AUTORES" />
+      <column name="tipo_fuente" value="CVN" />
+      <column name="tipo_puntos" value="MODULADOR" />
+      <column name="configuracion_baremo_padre_id" valueComputed="(select id from ${schemaPrefix}configuracion_baremo where nombre='Artículos')" />
+      <column name="mostrar_puntos" valueBoolean="true" />
+    </insert>
+    <insert tableName="configuracion_baremo">
+      <column name="id" valueSequenceNext="configuracion_baremo_seq" />
+      <column name="activo" valueBoolean="true" />
+      <column name="epigrafe_cvn" value="060.010.010.000" />
+      <column name="nombre" value="Áreas" />
+      <column name="prioridad" valueNumeric="135" />
+      <column name="tipo_baremo" value="ARTICULO_AREAS" />
+      <column name="tipo_fuente" value="CVN" />
+      <column name="tipo_puntos" value="MODULADOR" />
+      <column name="configuracion_baremo_padre_id" valueComputed="(select id from ${schemaPrefix}configuracion_baremo where nombre='Artículos')" />
+      <column name="mostrar_puntos" valueBoolean="true" />
+    </insert>
+    <insert tableName="configuracion_baremo">
+      <column name="id" valueSequenceNext="configuracion_baremo_seq" />
+      <column name="activo" valueBoolean="true" />
+      <column name="epigrafe_cvn" value="060.010.010.000" />
+      <column name="nombre" value="Nature o Science" />
+      <column name="prioridad" valueNumeric="136" />
+      <column name="tipo_baremo" value="ARTICULO_NATURE_O_SCIENCE" />
+      <column name="tipo_fuente" value="CVN" />
+      <column name="tipo_puntos" value="EXTRA" />
+      <column name="configuracion_baremo_padre_id" valueComputed="(select id from ${schemaPrefix}configuracion_baremo where nombre='Artículos')" />
+      <column name="mostrar_puntos" valueBoolean="true" />
+    </insert>
+    <insert tableName="configuracion_baremo">
+      <column name="id" valueSequenceNext="configuracion_baremo_seq" />
+      <column name="activo" valueBoolean="true" />
+      <column name="epigrafe_cvn" value="060.010.010.000" />
+      <column name="nombre" value="Índice normalizado" />
+      <column name="prioridad" valueNumeric="137" />
+      <column name="tipo_baremo" value="ARTICULO_INDICE_NORMALIZADO" />
+      <column name="tipo_fuente" value="CVN" />
+      <column name="tipo_puntos" value="EXTRA" />
+      <column name="configuracion_baremo_padre_id" valueComputed="(select id from ${schemaPrefix}configuracion_baremo where nombre='Artículos')" />
+      <column name="mostrar_puntos" valueBoolean="true" />
+    </insert>
+    <insert tableName="configuracion_baremo">
+      <column name="id" valueSequenceNext="configuracion_baremo_seq" />
+      <column name="activo" valueBoolean="true" />
+      <column name="epigrafe_cvn" value="060.010.010.000" />
+      <column name="nombre" value="Liderazgo" />
+      <column name="prioridad" valueNumeric="138" />
+      <column name="tipo_baremo" value="ARTICULO_LIDERAZGO" />
+      <column name="tipo_fuente" value="CVN" />
+      <column name="tipo_puntos" value="EXTRA" />
+      <column name="configuracion_baremo_padre_id" valueComputed="(select id from ${schemaPrefix}configuracion_baremo where nombre='Artículos')" />
+      <column name="mostrar_puntos" valueBoolean="true" />
+    </insert>
+    <insert tableName="configuracion_baremo">
+      <column name="id" valueSequenceNext="configuracion_baremo_seq" />
+      <column name="activo" valueBoolean="true" />
+      <column name="epigrafe_cvn" value="060.010.010.000" />
+      <column name="nombre" value="Excelencia" />
+      <column name="prioridad" valueNumeric="139" />
+      <column name="tipo_baremo" value="ARTICULO_EXCELENCIA" />
+      <column name="tipo_fuente" value="CVN" />
+      <column name="tipo_puntos" value="EXTRA" />
+      <column name="configuracion_baremo_padre_id" valueComputed="(select id from ${schemaPrefix}configuracion_baremo where nombre='Artículos')" />
+      <column name="mostrar_puntos" valueBoolean="true" />
+    </insert>
+    <insert tableName="configuracion_baremo">
+      <column name="id" valueSequenceNext="configuracion_baremo_seq" />
+      <column name="activo" valueBoolean="true" />
+      <column name="epigrafe_cvn" value="060.010.010.000" />
+      <column name="nombre" value="Open Access all" />
+      <column name="prioridad" valueNumeric="140" />
+      <column name="tipo_baremo" value="ARTICULO_OPEN_ACCESS_ALL" />
+      <column name="tipo_fuente" value="CVN" />
+      <column name="tipo_puntos" value="EXTRA" />
+      <column name="configuracion_baremo_padre_id" valueComputed="(select id from ${schemaPrefix}configuracion_baremo where nombre='Artículos')" />
+      <column name="mostrar_puntos" valueBoolean="true" />
+    </insert>
+    <insert tableName="configuracion_baremo">
+      <column name="id" valueSequenceNext="configuracion_baremo_seq" />
+      <column name="activo" valueBoolean="true" />
+      <column name="epigrafe_cvn" value="060.010.010.000" />
+      <column name="nombre" value="Open Access gold" />
+      <column name="prioridad" valueNumeric="141" />
+      <column name="tipo_baremo" value="ARTICULO_OPEN_ACCESS_GOLD" />
+      <column name="tipo_fuente" value="CVN" />
+      <column name="tipo_puntos" value="EXTRA" />
+      <column name="configuracion_baremo_padre_id" valueComputed="(select id from ${schemaPrefix}configuracion_baremo where nombre='Artículos')" />
+      <column name="mostrar_puntos" valueBoolean="true" />
+    </insert>
+    <insert tableName="configuracion_baremo">
+      <column name="id" valueSequenceNext="configuracion_baremo_seq" />
+      <column name="activo" valueBoolean="true" />
+      <column name="epigrafe_cvn" value="060.010.010.000" />
+      <column name="nombre" value="Open Access Hybrid gold" />
+      <column name="prioridad" valueNumeric="142" />
+      <column name="tipo_baremo" value="ARTICULO_OPEN_ACCESS_HYBRID_GOLD" />
+      <column name="tipo_fuente" value="CVN" />
+      <column name="tipo_puntos" value="EXTRA" />
+      <column name="configuracion_baremo_padre_id" valueComputed="(select id from ${schemaPrefix}configuracion_baremo where nombre='Artículos')" />
+      <column name="mostrar_puntos" valueBoolean="true" />
+    </insert>
+    <insert tableName="configuracion_baremo">
+      <column name="id" valueSequenceNext="configuracion_baremo_seq" />
+      <column name="activo" valueBoolean="true" />
+      <column name="epigrafe_cvn" value="060.010.010.000" />
+      <column name="nombre" value="Open Access bronze" />
+      <column name="prioridad" valueNumeric="143" />
+      <column name="tipo_baremo" value="ARTICULO_OPEN_ACCESS_BRONZE" />
+      <column name="tipo_fuente" value="CVN" />
+      <column name="tipo_puntos" value="EXTRA" />
+      <column name="configuracion_baremo_padre_id" valueComputed="(select id from ${schemaPrefix}configuracion_baremo where nombre='Artículos')" />
+      <column name="mostrar_puntos" valueBoolean="true" />
+    </insert>
+    <insert tableName="configuracion_baremo">
+      <column name="id" valueSequenceNext="configuracion_baremo_seq" />
+      <column name="activo" valueBoolean="true" />
+      <column name="epigrafe_cvn" value="060.010.010.000" />
+      <column name="nombre" value="Open Access green" />
+      <column name="prioridad" valueNumeric="144" />
+      <column name="tipo_baremo" value="ARTICULO_OPEN_ACCESS_GREEN" />
+      <column name="tipo_fuente" value="CVN" />
+      <column name="tipo_puntos" value="EXTRA" />
+      <column name="configuracion_baremo_padre_id" valueComputed="(select id from ${schemaPrefix}configuracion_baremo where nombre='Artículos')" />
+      <column name="mostrar_puntos" valueBoolean="true" />
+    </insert>
+    <insert tableName="configuracion_baremo">
+      <column name="id" valueSequenceNext="configuracion_baremo_seq" />
+      <column name="activo" valueBoolean="true" />
+      <column name="epigrafe_cvn" value="060.010.010.000" />
+      <column name="nombre" value="Internacionalización" />
+      <column name="prioridad" valueNumeric="145" />
+      <column name="tipo_baremo" value="ARTICULO_INTERNACIONALIZACION" />
+      <column name="tipo_fuente" value="CVN" />
+      <column name="tipo_puntos" value="EXTRA" />
+      <column name="configuracion_baremo_padre_id" valueComputed="(select id from ${schemaPrefix}configuracion_baremo where nombre='Artículos')" />
+      <column name="mostrar_puntos" valueBoolean="true" />
+    </insert>
+    <insert tableName="configuracion_baremo">
+      <column name="id" valueSequenceNext="configuracion_baremo_seq" />
+      <column name="activo" valueBoolean="true" />
+      <column name="epigrafe_cvn" value="060.010.010.000" />
+      <column name="nombre" value="Multidisciplinariedad/Interdisciplinariedad" />
+      <column name="prioridad" valueNumeric="146" />
+      <column name="tipo_baremo" value="ARTICULO_INTERDISCIPLINARIEDAD" />
+      <column name="tipo_fuente" value="CVN" />
+      <column name="tipo_puntos" value="EXTRA" />
+      <column name="configuracion_baremo_padre_id" valueComputed="(select id from ${schemaPrefix}configuracion_baremo where nombre='Artículos')" />
+      <column name="mostrar_puntos" valueBoolean="true" />
+    </insert>
+    <insert tableName="configuracion_baremo">
+      <column name="id" valueSequenceNext="configuracion_baremo_seq" />
+      <column name="activo" valueBoolean="true" />
+      <column name="epigrafe_cvn" value="060.010.010.000" />
+      <column name="nombre" value="JCR - Q1 - Decil1" />
+      <column name="prioridad" valueNumeric="147" />
+      <column name="tipo_baremo" value="ARTICULO_JCR_Q1_DECIL1" />
+      <column name="tipo_fuente" value="CVN" />
+      <column name="tipo_puntos" value="EXTRA" />
+      <column name="configuracion_baremo_padre_id" valueComputed="(select id from ${schemaPrefix}configuracion_baremo where nombre='Artículos')" />
+      <column name="mostrar_puntos" valueBoolean="true" />
+    </insert>
+    <insert tableName="configuracion_baremo">
+      <column name="id" valueSequenceNext="configuracion_baremo_seq" />
+      <column name="activo" valueBoolean="true" />
+      <column name="epigrafe_cvn" value="null" />
+      <column name="nombre" value="Cómites editoriales" />
+      <column name="prioridad" valueNumeric="null" />
+      <column name="tipo_baremo" value="COMITES_EDITORIALES" />
+      <column name="tipo_fuente" value="null" />
+      <column name="tipo_puntos" value="null" />
+      <column name="configuracion_baremo_padre_id" valueComputed="(select id from ${schemaPrefix}configuracion_baremo where nombre='Producción científica')" />
+      <column name="mostrar_puntos" valueBoolean="true" />
+    </insert>
+    <insert tableName="configuracion_baremo">
+      <column name="id" valueSequenceNext="configuracion_baremo_seq" />
+      <column name="activo" valueBoolean="true" />
+      <column name="epigrafe_cvn" value="060.030.030.000" />
+      <column name="nombre" value="JCR - Q1" />
+      <column name="prioridad" valueNumeric="1" />
+      <column name="tipo_baremo" value="COMITE_EDITORIAL_JCR_Q1" />
+      <column name="tipo_fuente" value="CVN" />
+      <column name="tipo_puntos" value="PRINCIPAL" />
+      <column name="configuracion_baremo_padre_id" valueComputed="(select id from ${schemaPrefix}configuracion_baremo where nombre='Cómites editoriales')" />
+      <column name="mostrar_puntos" valueBoolean="true" />
+    </insert>
+    <insert tableName="configuracion_baremo">
+      <column name="id" valueSequenceNext="configuracion_baremo_seq" />
+      <column name="activo" valueBoolean="true" />
+      <column name="epigrafe_cvn" value="060.030.030.000" />
+      <column name="nombre" value="JCR - Q2" />
+      <column name="prioridad" valueNumeric="2" />
+      <column name="tipo_baremo" value="COMITE_EDITORIAL_JCR_Q2" />
+      <column name="tipo_fuente" value="CVN" />
+      <column name="tipo_puntos" value="PRINCIPAL" />
+      <column name="configuracion_baremo_padre_id" valueComputed="(select id from ${schemaPrefix}configuracion_baremo where nombre='Cómites editoriales')" />
+      <column name="mostrar_puntos" valueBoolean="true" />
+    </insert>
+    <insert tableName="configuracion_baremo">
+      <column name="id" valueSequenceNext="configuracion_baremo_seq" />
+      <column name="activo" valueBoolean="true" />
+      <column name="epigrafe_cvn" value="060.030.030.000" />
+      <column name="nombre" value="JCR - Q3" />
+      <column name="prioridad" valueNumeric="3" />
+      <column name="tipo_baremo" value="COMITE_EDITORIAL_JCR_Q3" />
+      <column name="tipo_fuente" value="CVN" />
+      <column name="tipo_puntos" value="PRINCIPAL" />
+      <column name="configuracion_baremo_padre_id" valueComputed="(select id from ${schemaPrefix}configuracion_baremo where nombre='Cómites editoriales')" />
+      <column name="mostrar_puntos" valueBoolean="true" />
+    </insert>
+    <insert tableName="configuracion_baremo">
+      <column name="id" valueSequenceNext="configuracion_baremo_seq" />
+      <column name="activo" valueBoolean="true" />
+      <column name="epigrafe_cvn" value="060.030.030.000" />
+      <column name="nombre" value="JCR - Q4" />
+      <column name="prioridad" valueNumeric="4" />
+      <column name="tipo_baremo" value="COMITE_EDITORIAL_JCR_Q4" />
+      <column name="tipo_fuente" value="CVN" />
+      <column name="tipo_puntos" value="PRINCIPAL" />
+      <column name="configuracion_baremo_padre_id" valueComputed="(select id from ${schemaPrefix}configuracion_baremo where nombre='Cómites editoriales')" />
+      <column name="mostrar_puntos" valueBoolean="true" />
+    </insert>
+    <insert tableName="configuracion_baremo">
+      <column name="id" valueSequenceNext="configuracion_baremo_seq" />
+      <column name="activo" valueBoolean="true" />
+      <column name="epigrafe_cvn" value="060.030.030.000" />
+      <column name="nombre" value="CitEC - Q1" />
+      <column name="prioridad" valueNumeric="5" />
+      <column name="tipo_baremo" value="COMITE_EDITORIAL_CITEC_Q1" />
+      <column name="tipo_fuente" value="CVN" />
+      <column name="tipo_puntos" value="PRINCIPAL" />
+      <column name="configuracion_baremo_padre_id" valueComputed="(select id from ${schemaPrefix}configuracion_baremo where nombre='Cómites editoriales')" />
+      <column name="mostrar_puntos" valueBoolean="true" />
+    </insert>
+    <insert tableName="configuracion_baremo">
+      <column name="id" valueSequenceNext="configuracion_baremo_seq" />
+      <column name="activo" valueBoolean="true" />
+      <column name="epigrafe_cvn" value="060.030.030.000" />
+      <column name="nombre" value="CitEC - Q2" />
+      <column name="prioridad" valueNumeric="6" />
+      <column name="tipo_baremo" value="COMITE_EDITORIAL_CITEC_Q2" />
+      <column name="tipo_fuente" value="CVN" />
+      <column name="tipo_puntos" value="PRINCIPAL" />
+      <column name="configuracion_baremo_padre_id" valueComputed="(select id from ${schemaPrefix}configuracion_baremo where nombre='Cómites editoriales')" />
+      <column name="mostrar_puntos" valueBoolean="true" />
+    </insert>
+    <insert tableName="configuracion_baremo">
+      <column name="id" valueSequenceNext="configuracion_baremo_seq" />
+      <column name="activo" valueBoolean="true" />
+      <column name="epigrafe_cvn" value="060.030.030.000" />
+      <column name="nombre" value="CitEC - Q3" />
+      <column name="prioridad" valueNumeric="7" />
+      <column name="tipo_baremo" value="COMITE_EDITORIAL_CITEC_Q3" />
+      <column name="tipo_fuente" value="CVN" />
+      <column name="tipo_puntos" value="PRINCIPAL" />
+      <column name="configuracion_baremo_padre_id" valueComputed="(select id from ${schemaPrefix}configuracion_baremo where nombre='Cómites editoriales')" />
+      <column name="mostrar_puntos" valueBoolean="true" />
+    </insert>
+    <insert tableName="configuracion_baremo">
+      <column name="id" valueSequenceNext="configuracion_baremo_seq" />
+      <column name="activo" valueBoolean="true" />
+      <column name="epigrafe_cvn" value="060.030.030.000" />
+      <column name="nombre" value="CitEC - Q4" />
+      <column name="prioridad" valueNumeric="8" />
+      <column name="tipo_baremo" value="COMITE_EDITORIAL_CITEC_Q4" />
+      <column name="tipo_fuente" value="CVN" />
+      <column name="tipo_puntos" value="PRINCIPAL" />
+      <column name="configuracion_baremo_padre_id" valueComputed="(select id from ${schemaPrefix}configuracion_baremo where nombre='Cómites editoriales')" />
+      <column name="mostrar_puntos" valueBoolean="true" />
+    </insert>
+    <insert tableName="configuracion_baremo">
+      <column name="id" valueSequenceNext="configuracion_baremo_seq" />
+      <column name="activo" valueBoolean="true" />
+      <column name="epigrafe_cvn" value="060.030.030.000" />
+      <column name="nombre" value="SCOPUS - Q1" />
+      <column name="prioridad" valueNumeric="9" />
+      <column name="tipo_baremo" value="COMITE_EDITORIAL_SCOPUS_Q1" />
+      <column name="tipo_fuente" value="CVN" />
+      <column name="tipo_puntos" value="PRINCIPAL" />
+      <column name="configuracion_baremo_padre_id" valueComputed="(select id from ${schemaPrefix}configuracion_baremo where nombre='Cómites editoriales')" />
+      <column name="mostrar_puntos" valueBoolean="true" />
+    </insert>
+    <insert tableName="configuracion_baremo">
+      <column name="id" valueSequenceNext="configuracion_baremo_seq" />
+      <column name="activo" valueBoolean="true" />
+      <column name="epigrafe_cvn" value="060.030.030.000" />
+      <column name="nombre" value="SCOPUS - Q2" />
+      <column name="prioridad" valueNumeric="10" />
+      <column name="tipo_baremo" value="COMITE_EDITORIAL_SCOPUS_Q2" />
+      <column name="tipo_fuente" value="CVN" />
+      <column name="tipo_puntos" value="PRINCIPAL" />
+      <column name="configuracion_baremo_padre_id" valueComputed="(select id from ${schemaPrefix}configuracion_baremo where nombre='Cómites editoriales')" />
+      <column name="mostrar_puntos" valueBoolean="true" />
+    </insert>
+    <insert tableName="configuracion_baremo">
+      <column name="id" valueSequenceNext="configuracion_baremo_seq" />
+      <column name="activo" valueBoolean="true" />
+      <column name="epigrafe_cvn" value="060.030.030.000" />
+      <column name="nombre" value="SCOPUS - Q3" />
+      <column name="prioridad" valueNumeric="11" />
+      <column name="tipo_baremo" value="COMITE_EDITORIAL_SCOPUS_Q3" />
+      <column name="tipo_fuente" value="CVN" />
+      <column name="tipo_puntos" value="PRINCIPAL" />
+      <column name="configuracion_baremo_padre_id" valueComputed="(select id from ${schemaPrefix}configuracion_baremo where nombre='Cómites editoriales')" />
+      <column name="mostrar_puntos" valueBoolean="true" />
+    </insert>
+    <insert tableName="configuracion_baremo">
+      <column name="id" valueSequenceNext="configuracion_baremo_seq" />
+      <column name="activo" valueBoolean="true" />
+      <column name="epigrafe_cvn" value="060.030.030.000" />
+      <column name="nombre" value="SCOPUS - Q4" />
+      <column name="prioridad" valueNumeric="12" />
+      <column name="tipo_baremo" value="COMITE_EDITORIAL_SCOPUS_Q4" />
+      <column name="tipo_fuente" value="CVN" />
+      <column name="tipo_puntos" value="PRINCIPAL" />
+      <column name="configuracion_baremo_padre_id" valueComputed="(select id from ${schemaPrefix}configuracion_baremo where nombre='Cómites editoriales')" />
+      <column name="mostrar_puntos" valueBoolean="true" />
+    </insert>
+    <insert tableName="configuracion_baremo">
+      <column name="id" valueSequenceNext="configuracion_baremo_seq" />
+      <column name="activo" valueBoolean="true" />
+      <column name="epigrafe_cvn" value="060.030.030.000" />
+      <column name="nombre" value="SCIMAGO - Q1" />
+      <column name="prioridad" valueNumeric="13" />
+      <column name="tipo_baremo" value="COMITE_EDITORIAL_SCIMAGO_Q1" />
+      <column name="tipo_fuente" value="CVN" />
+      <column name="tipo_puntos" value="PRINCIPAL" />
+      <column name="configuracion_baremo_padre_id" valueComputed="(select id from ${schemaPrefix}configuracion_baremo where nombre='Cómites editoriales')" />
+      <column name="mostrar_puntos" valueBoolean="true" />
+    </insert>
+    <insert tableName="configuracion_baremo">
+      <column name="id" valueSequenceNext="configuracion_baremo_seq" />
+      <column name="activo" valueBoolean="true" />
+      <column name="epigrafe_cvn" value="060.030.030.000" />
+      <column name="nombre" value="SCIMAGO - Q2" />
+      <column name="prioridad" valueNumeric="14" />
+      <column name="tipo_baremo" value="COMITE_EDITORIAL_SCIMAGO_Q2" />
+      <column name="tipo_fuente" value="CVN" />
+      <column name="tipo_puntos" value="PRINCIPAL" />
+      <column name="configuracion_baremo_padre_id" valueComputed="(select id from ${schemaPrefix}configuracion_baremo where nombre='Cómites editoriales')" />
+      <column name="mostrar_puntos" valueBoolean="true" />
+    </insert>
+    <insert tableName="configuracion_baremo">
+      <column name="id" valueSequenceNext="configuracion_baremo_seq" />
+      <column name="activo" valueBoolean="true" />
+      <column name="epigrafe_cvn" value="060.030.030.000" />
+      <column name="nombre" value="SCIMAGO - Q3" />
+      <column name="prioridad" valueNumeric="15" />
+      <column name="tipo_baremo" value="COMITE_EDITORIAL_SCIMAGO_Q3" />
+      <column name="tipo_fuente" value="CVN" />
+      <column name="tipo_puntos" value="PRINCIPAL" />
+      <column name="configuracion_baremo_padre_id" valueComputed="(select id from ${schemaPrefix}configuracion_baremo where nombre='Cómites editoriales')" />
+      <column name="mostrar_puntos" valueBoolean="true" />
+    </insert>
+    <insert tableName="configuracion_baremo">
+      <column name="id" valueSequenceNext="configuracion_baremo_seq" />
+      <column name="activo" valueBoolean="true" />
+      <column name="epigrafe_cvn" value="060.030.030.000" />
+      <column name="nombre" value="SCIMAGO - Q4" />
+      <column name="prioridad" valueNumeric="16" />
+      <column name="tipo_baremo" value="COMITE_EDITORIAL_SCIMAGO_Q4" />
+      <column name="tipo_fuente" value="CVN" />
+      <column name="tipo_puntos" value="PRINCIPAL" />
+      <column name="configuracion_baremo_padre_id" valueComputed="(select id from ${schemaPrefix}configuracion_baremo where nombre='Cómites editoriales')" />
+      <column name="mostrar_puntos" valueBoolean="true" />
+    </insert>
+    <insert tableName="configuracion_baremo">
+      <column name="id" valueSequenceNext="configuracion_baremo_seq" />
+      <column name="activo" valueBoolean="true" />
+      <column name="epigrafe_cvn" value="060.030.030.000" />
+      <column name="nombre" value="ERIH - Q1" />
+      <column name="prioridad" valueNumeric="17" />
+      <column name="tipo_baremo" value="COMITE_EDITORIAL_ERIH_Q1" />
+      <column name="tipo_fuente" value="CVN" />
+      <column name="tipo_puntos" value="PRINCIPAL" />
+      <column name="configuracion_baremo_padre_id" valueComputed="(select id from ${schemaPrefix}configuracion_baremo where nombre='Cómites editoriales')" />
+      <column name="mostrar_puntos" valueBoolean="true" />
+    </insert>
+    <insert tableName="configuracion_baremo">
+      <column name="id" valueSequenceNext="configuracion_baremo_seq" />
+      <column name="activo" valueBoolean="true" />
+      <column name="epigrafe_cvn" value="060.030.030.000" />
+      <column name="nombre" value="ERIH - Q2" />
+      <column name="prioridad" valueNumeric="18" />
+      <column name="tipo_baremo" value="COMITE_EDITORIAL_ERIH_Q2" />
+      <column name="tipo_fuente" value="CVN" />
+      <column name="tipo_puntos" value="PRINCIPAL" />
+      <column name="configuracion_baremo_padre_id" valueComputed="(select id from ${schemaPrefix}configuracion_baremo where nombre='Cómites editoriales')" />
+      <column name="mostrar_puntos" valueBoolean="true" />
+    </insert>
+    <insert tableName="configuracion_baremo">
+      <column name="id" valueSequenceNext="configuracion_baremo_seq" />
+      <column name="activo" valueBoolean="true" />
+      <column name="epigrafe_cvn" value="060.030.030.000" />
+      <column name="nombre" value="ERIH - Q3" />
+      <column name="prioridad" valueNumeric="19" />
+      <column name="tipo_baremo" value="COMITE_EDITORIAL_ERIH_Q3" />
+      <column name="tipo_fuente" value="CVN" />
+      <column name="tipo_puntos" value="PRINCIPAL" />
+      <column name="configuracion_baremo_padre_id" valueComputed="(select id from ${schemaPrefix}configuracion_baremo where nombre='Cómites editoriales')" />
+      <column name="mostrar_puntos" valueBoolean="true" />
+    </insert>
+    <insert tableName="configuracion_baremo">
+      <column name="id" valueSequenceNext="configuracion_baremo_seq" />
+      <column name="activo" valueBoolean="true" />
+      <column name="epigrafe_cvn" value="060.030.030.000" />
+      <column name="nombre" value="ERIH - Q4" />
+      <column name="prioridad" valueNumeric="20" />
+      <column name="tipo_baremo" value="COMITE_EDITORIAL_ERIH_Q4" />
+      <column name="tipo_fuente" value="CVN" />
+      <column name="tipo_puntos" value="PRINCIPAL" />
+      <column name="configuracion_baremo_padre_id" valueComputed="(select id from ${schemaPrefix}configuracion_baremo where nombre='Cómites editoriales')" />
+      <column name="mostrar_puntos" valueBoolean="true" />
+    </insert>
+    <insert tableName="configuracion_baremo">
+      <column name="id" valueSequenceNext="configuracion_baremo_seq" />
+      <column name="activo" valueBoolean="true" />
+      <column name="epigrafe_cvn" value="060.030.030.000" />
+      <column name="nombre" value="DIALNET - Q1" />
+      <column name="prioridad" valueNumeric="21" />
+      <column name="tipo_baremo" value="COMITE_EDITORIAL_DIALNET_Q1" />
+      <column name="tipo_fuente" value="CVN" />
+      <column name="tipo_puntos" value="PRINCIPAL" />
+      <column name="configuracion_baremo_padre_id" valueComputed="(select id from ${schemaPrefix}configuracion_baremo where nombre='Cómites editoriales')" />
+      <column name="mostrar_puntos" valueBoolean="true" />
+    </insert>
+    <insert tableName="configuracion_baremo">
+      <column name="id" valueSequenceNext="configuracion_baremo_seq" />
+      <column name="activo" valueBoolean="true" />
+      <column name="epigrafe_cvn" value="060.030.030.000" />
+      <column name="nombre" value="DIALNET - Q2" />
+      <column name="prioridad" valueNumeric="22" />
+      <column name="tipo_baremo" value="COMITE_EDITORIAL_DIALNET_Q2" />
+      <column name="tipo_fuente" value="CVN" />
+      <column name="tipo_puntos" value="PRINCIPAL" />
+      <column name="configuracion_baremo_padre_id" valueComputed="(select id from ${schemaPrefix}configuracion_baremo where nombre='Cómites editoriales')" />
+      <column name="mostrar_puntos" valueBoolean="true" />
+    </insert>
+    <insert tableName="configuracion_baremo">
+      <column name="id" valueSequenceNext="configuracion_baremo_seq" />
+      <column name="activo" valueBoolean="true" />
+      <column name="epigrafe_cvn" value="060.030.030.000" />
+      <column name="nombre" value="DIALNET - Q3" />
+      <column name="prioridad" valueNumeric="23" />
+      <column name="tipo_baremo" value="COMITE_EDITORIAL_DIALNET_Q3" />
+      <column name="tipo_fuente" value="CVN" />
+      <column name="tipo_puntos" value="PRINCIPAL" />
+      <column name="configuracion_baremo_padre_id" valueComputed="(select id from ${schemaPrefix}configuracion_baremo where nombre='Cómites editoriales')" />
+      <column name="mostrar_puntos" valueBoolean="true" />
+    </insert>
+    <insert tableName="configuracion_baremo">
+      <column name="id" valueSequenceNext="configuracion_baremo_seq" />
+      <column name="activo" valueBoolean="true" />
+      <column name="epigrafe_cvn" value="060.030.030.000" />
+      <column name="nombre" value="DIALNET - Q4" />
+      <column name="prioridad" valueNumeric="24" />
+      <column name="tipo_baremo" value="COMITE_EDITORIAL_DIALNET_Q4" />
+      <column name="tipo_fuente" value="CVN" />
+      <column name="tipo_puntos" value="PRINCIPAL" />
+      <column name="configuracion_baremo_padre_id" valueComputed="(select id from ${schemaPrefix}configuracion_baremo where nombre='Cómites editoriales')" />
+      <column name="mostrar_puntos" valueBoolean="true" />
+    </insert>
+    <insert tableName="configuracion_baremo">
+      <column name="id" valueSequenceNext="configuracion_baremo_seq" />
+      <column name="activo" valueBoolean="true" />
+      <column name="epigrafe_cvn" value="060.030.030.000" />
+      <column name="nombre" value="MIAR - Q1" />
+      <column name="prioridad" valueNumeric="25" />
+      <column name="tipo_baremo" value="COMITE_EDITORIAL_MIAR_Q1" />
+      <column name="tipo_fuente" value="CVN" />
+      <column name="tipo_puntos" value="PRINCIPAL" />
+      <column name="configuracion_baremo_padre_id" valueComputed="(select id from ${schemaPrefix}configuracion_baremo where nombre='Cómites editoriales')" />
+      <column name="mostrar_puntos" valueBoolean="true" />
+    </insert>
+    <insert tableName="configuracion_baremo">
+      <column name="id" valueSequenceNext="configuracion_baremo_seq" />
+      <column name="activo" valueBoolean="true" />
+      <column name="epigrafe_cvn" value="060.030.030.000" />
+      <column name="nombre" value="MIAR - Q2" />
+      <column name="prioridad" valueNumeric="26" />
+      <column name="tipo_baremo" value="COMITE_EDITORIAL_MIAR_Q2" />
+      <column name="tipo_fuente" value="CVN" />
+      <column name="tipo_puntos" value="PRINCIPAL" />
+      <column name="configuracion_baremo_padre_id" valueComputed="(select id from ${schemaPrefix}configuracion_baremo where nombre='Cómites editoriales')" />
+      <column name="mostrar_puntos" valueBoolean="true" />
+    </insert>
+    <insert tableName="configuracion_baremo">
+      <column name="id" valueSequenceNext="configuracion_baremo_seq" />
+      <column name="activo" valueBoolean="true" />
+      <column name="epigrafe_cvn" value="060.030.030.000" />
+      <column name="nombre" value="MIAR - Q3" />
+      <column name="prioridad" valueNumeric="27" />
+      <column name="tipo_baremo" value="COMITE_EDITORIAL_MIAR_Q3" />
+      <column name="tipo_fuente" value="CVN" />
+      <column name="tipo_puntos" value="PRINCIPAL" />
+      <column name="configuracion_baremo_padre_id" valueComputed="(select id from ${schemaPrefix}configuracion_baremo where nombre='Cómites editoriales')" />
+      <column name="mostrar_puntos" valueBoolean="true" />
+    </insert>
+    <insert tableName="configuracion_baremo">
+      <column name="id" valueSequenceNext="configuracion_baremo_seq" />
+      <column name="activo" valueBoolean="true" />
+      <column name="epigrafe_cvn" value="060.030.030.000" />
+      <column name="nombre" value="MIAR - Q4" />
+      <column name="prioridad" valueNumeric="28" />
+      <column name="tipo_baremo" value="COMITE_EDITORIAL_MIAR_Q4" />
+      <column name="tipo_fuente" value="CVN" />
+      <column name="tipo_puntos" value="PRINCIPAL" />
+      <column name="configuracion_baremo_padre_id" valueComputed="(select id from ${schemaPrefix}configuracion_baremo where nombre='Cómites editoriales')" />
+      <column name="mostrar_puntos" valueBoolean="true" />
+    </insert>
+    <insert tableName="configuracion_baremo">
+      <column name="id" valueSequenceNext="configuracion_baremo_seq" />
+      <column name="activo" valueBoolean="true" />
+      <column name="epigrafe_cvn" value="060.030.030.000" />
+      <column name="nombre" value="FECYT - Q1" />
+      <column name="prioridad" valueNumeric="29" />
+      <column name="tipo_baremo" value="COMITE_EDITORIAL_FECYT_Q1" />
+      <column name="tipo_fuente" value="CVN" />
+      <column name="tipo_puntos" value="PRINCIPAL" />
+      <column name="configuracion_baremo_padre_id" valueComputed="(select id from ${schemaPrefix}configuracion_baremo where nombre='Cómites editoriales')" />
+      <column name="mostrar_puntos" valueBoolean="true" />
+    </insert>
+    <insert tableName="configuracion_baremo">
+      <column name="id" valueSequenceNext="configuracion_baremo_seq" />
+      <column name="activo" valueBoolean="true" />
+      <column name="epigrafe_cvn" value="060.030.030.000" />
+      <column name="nombre" value="FECYT - Q2" />
+      <column name="prioridad" valueNumeric="30" />
+      <column name="tipo_baremo" value="COMITE_EDITORIAL_FECYT_Q2" />
+      <column name="tipo_fuente" value="CVN" />
+      <column name="tipo_puntos" value="PRINCIPAL" />
+      <column name="configuracion_baremo_padre_id" valueComputed="(select id from ${schemaPrefix}configuracion_baremo where nombre='Cómites editoriales')" />
+      <column name="mostrar_puntos" valueBoolean="true" />
+    </insert>
+    <insert tableName="configuracion_baremo">
+      <column name="id" valueSequenceNext="configuracion_baremo_seq" />
+      <column name="activo" valueBoolean="true" />
+      <column name="epigrafe_cvn" value="060.030.030.000" />
+      <column name="nombre" value="FECYT - Q3" />
+      <column name="prioridad" valueNumeric="31" />
+      <column name="tipo_baremo" value="COMITE_EDITORIAL_FECYT_Q3" />
+      <column name="tipo_fuente" value="CVN" />
+      <column name="tipo_puntos" value="PRINCIPAL" />
+      <column name="configuracion_baremo_padre_id" valueComputed="(select id from ${schemaPrefix}configuracion_baremo where nombre='Cómites editoriales')" />
+      <column name="mostrar_puntos" valueBoolean="true" />
+    </insert>
+    <insert tableName="configuracion_baremo">
+      <column name="id" valueSequenceNext="configuracion_baremo_seq" />
+      <column name="activo" valueBoolean="true" />
+      <column name="epigrafe_cvn" value="060.030.030.000" />
+      <column name="nombre" value="FECYT - Q4" />
+      <column name="prioridad" valueNumeric="32" />
+      <column name="tipo_baremo" value="COMITE_EDITORIAL_FECYT_Q4" />
+      <column name="tipo_fuente" value="CVN" />
+      <column name="tipo_puntos" value="PRINCIPAL" />
+      <column name="configuracion_baremo_padre_id" valueComputed="(select id from ${schemaPrefix}configuracion_baremo where nombre='Cómites editoriales')" />
+      <column name="mostrar_puntos" valueBoolean="true" />
+    </insert>
+    <insert tableName="configuracion_baremo">
+      <column name="id" valueSequenceNext="configuracion_baremo_seq" />
+      <column name="activo" valueBoolean="true" />
+      <column name="epigrafe_cvn" value="060.030.030.000" />
+      <column name="nombre" value="JCR - Q1 - EDITOR" />
+      <column name="prioridad" valueNumeric="1" />
+      <column name="tipo_baremo" value="COMITE_EDITORIAL_JCR_Q1_EDITOR" />
+      <column name="tipo_fuente" value="CVN" />
+      <column name="tipo_puntos" value="EXTRA" />
+      <column name="configuracion_baremo_padre_id" valueComputed="(select id from ${schemaPrefix}configuracion_baremo where nombre='Cómites editoriales')" />
+      <column name="mostrar_puntos" valueBoolean="true" />
+    </insert>
+    <insert tableName="configuracion_baremo">
+      <column name="id" valueSequenceNext="configuracion_baremo_seq" />
+      <column name="activo" valueBoolean="true" />
+      <column name="epigrafe_cvn" value="060.030.030.000" />
+      <column name="nombre" value="JCR - Q2 - EDITOR" />
+      <column name="prioridad" valueNumeric="2" />
+      <column name="tipo_baremo" value="COMITE_EDITORIAL_JCR_Q2_EDITOR" />
+      <column name="tipo_fuente" value="CVN" />
+      <column name="tipo_puntos" value="EXTRA" />
+      <column name="configuracion_baremo_padre_id" valueComputed="(select id from ${schemaPrefix}configuracion_baremo where nombre='Cómites editoriales')" />
+      <column name="mostrar_puntos" valueBoolean="true" />
+    </insert>
+    <insert tableName="configuracion_baremo">
+      <column name="id" valueSequenceNext="configuracion_baremo_seq" />
+      <column name="activo" valueBoolean="true" />
+      <column name="epigrafe_cvn" value="060.030.030.000" />
+      <column name="nombre" value="JCR - Q3 - EDITOR" />
+      <column name="prioridad" valueNumeric="3" />
+      <column name="tipo_baremo" value="COMITE_EDITORIAL_JCR_Q3_EDITOR" />
+      <column name="tipo_fuente" value="CVN" />
+      <column name="tipo_puntos" value="EXTRA" />
+      <column name="configuracion_baremo_padre_id" valueComputed="(select id from ${schemaPrefix}configuracion_baremo where nombre='Cómites editoriales')" />
+      <column name="mostrar_puntos" valueBoolean="true" />
+    </insert>
+    <insert tableName="configuracion_baremo">
+      <column name="id" valueSequenceNext="configuracion_baremo_seq" />
+      <column name="activo" valueBoolean="true" />
+      <column name="epigrafe_cvn" value="060.030.030.000" />
+      <column name="nombre" value="JCR - Q4 - EDITOR" />
+      <column name="prioridad" valueNumeric="4" />
+      <column name="tipo_baremo" value="COMITE_EDITORIAL_JCR_Q4_EDITOR" />
+      <column name="tipo_fuente" value="CVN" />
+      <column name="tipo_puntos" value="EXTRA" />
+      <column name="configuracion_baremo_padre_id" valueComputed="(select id from ${schemaPrefix}configuracion_baremo where nombre='Cómites editoriales')" />
+      <column name="mostrar_puntos" valueBoolean="true" />
+    </insert>
+    <insert tableName="configuracion_baremo">
+      <column name="id" valueSequenceNext="configuracion_baremo_seq" />
+      <column name="activo" valueBoolean="true" />
+      <column name="epigrafe_cvn" value="060.030.030.000" />
+      <column name="nombre" value="CitEC - Q1 - EDITOR" />
+      <column name="prioridad" valueNumeric="5" />
+      <column name="tipo_baremo" value="COMITE_EDITORIAL_CITEC_Q1_EDITOR" />
+      <column name="tipo_fuente" value="CVN" />
+      <column name="tipo_puntos" value="EXTRA" />
+      <column name="configuracion_baremo_padre_id" valueComputed="(select id from ${schemaPrefix}configuracion_baremo where nombre='Cómites editoriales')" />
+      <column name="mostrar_puntos" valueBoolean="true" />
+    </insert>
+    <insert tableName="configuracion_baremo">
+      <column name="id" valueSequenceNext="configuracion_baremo_seq" />
+      <column name="activo" valueBoolean="true" />
+      <column name="epigrafe_cvn" value="060.030.030.000" />
+      <column name="nombre" value="CitEC - Q2 - EDITOR" />
+      <column name="prioridad" valueNumeric="6" />
+      <column name="tipo_baremo" value="COMITE_EDITORIAL_CITEC_Q2_EDITOR" />
+      <column name="tipo_fuente" value="CVN" />
+      <column name="tipo_puntos" value="EXTRA" />
+      <column name="configuracion_baremo_padre_id" valueComputed="(select id from ${schemaPrefix}configuracion_baremo where nombre='Cómites editoriales')" />
+      <column name="mostrar_puntos" valueBoolean="true" />
+    </insert>
+    <insert tableName="configuracion_baremo">
+      <column name="id" valueSequenceNext="configuracion_baremo_seq" />
+      <column name="activo" valueBoolean="true" />
+      <column name="epigrafe_cvn" value="060.030.030.000" />
+      <column name="nombre" value="CitEC - Q3 - EDITOR" />
+      <column name="prioridad" valueNumeric="7" />
+      <column name="tipo_baremo" value="COMITE_EDITORIAL_CITEC_Q3_EDITOR" />
+      <column name="tipo_fuente" value="CVN" />
+      <column name="tipo_puntos" value="EXTRA" />
+      <column name="configuracion_baremo_padre_id" valueComputed="(select id from ${schemaPrefix}configuracion_baremo where nombre='Cómites editoriales')" />
+      <column name="mostrar_puntos" valueBoolean="true" />
+    </insert>
+    <insert tableName="configuracion_baremo">
+      <column name="id" valueSequenceNext="configuracion_baremo_seq" />
+      <column name="activo" valueBoolean="true" />
+      <column name="epigrafe_cvn" value="060.030.030.000" />
+      <column name="nombre" value="CitEC - Q4 - EDITOR" />
+      <column name="prioridad" valueNumeric="8" />
+      <column name="tipo_baremo" value="COMITE_EDITORIAL_CITEC_Q4_EDITOR" />
+      <column name="tipo_fuente" value="CVN" />
+      <column name="tipo_puntos" value="EXTRA" />
+      <column name="configuracion_baremo_padre_id" valueComputed="(select id from ${schemaPrefix}configuracion_baremo where nombre='Cómites editoriales')" />
+      <column name="mostrar_puntos" valueBoolean="true" />
+    </insert>
+    <insert tableName="configuracion_baremo">
+      <column name="id" valueSequenceNext="configuracion_baremo_seq" />
+      <column name="activo" valueBoolean="true" />
+      <column name="epigrafe_cvn" value="060.030.030.000" />
+      <column name="nombre" value="SCOPUS - Q1 - EDITOR" />
+      <column name="prioridad" valueNumeric="9" />
+      <column name="tipo_baremo" value="COMITE_EDITORIAL_SCOPUS_Q1_EDITOR" />
+      <column name="tipo_fuente" value="CVN" />
+      <column name="tipo_puntos" value="EXTRA" />
+      <column name="configuracion_baremo_padre_id" valueComputed="(select id from ${schemaPrefix}configuracion_baremo where nombre='Cómites editoriales')" />
+      <column name="mostrar_puntos" valueBoolean="true" />
+    </insert>
+    <insert tableName="configuracion_baremo">
+      <column name="id" valueSequenceNext="configuracion_baremo_seq" />
+      <column name="activo" valueBoolean="true" />
+      <column name="epigrafe_cvn" value="060.030.030.000" />
+      <column name="nombre" value="SCOPUS - Q2 - EDITOR" />
+      <column name="prioridad" valueNumeric="10" />
+      <column name="tipo_baremo" value="COMITE_EDITORIAL_SCOPUS_Q2_EDITOR" />
+      <column name="tipo_fuente" value="CVN" />
+      <column name="tipo_puntos" value="EXTRA" />
+      <column name="configuracion_baremo_padre_id" valueComputed="(select id from ${schemaPrefix}configuracion_baremo where nombre='Cómites editoriales')" />
+      <column name="mostrar_puntos" valueBoolean="true" />
+    </insert>
+    <insert tableName="configuracion_baremo">
+      <column name="id" valueSequenceNext="configuracion_baremo_seq" />
+      <column name="activo" valueBoolean="true" />
+      <column name="epigrafe_cvn" value="060.030.030.000" />
+      <column name="nombre" value="SCOPUS - Q3 - EDITOR" />
+      <column name="prioridad" valueNumeric="11" />
+      <column name="tipo_baremo" value="COMITE_EDITORIAL_SCOPUS_Q3_EDITOR" />
+      <column name="tipo_fuente" value="CVN" />
+      <column name="tipo_puntos" value="EXTRA" />
+      <column name="configuracion_baremo_padre_id" valueComputed="(select id from ${schemaPrefix}configuracion_baremo where nombre='Cómites editoriales')" />
+      <column name="mostrar_puntos" valueBoolean="true" />
+    </insert>
+    <insert tableName="configuracion_baremo">
+      <column name="id" valueSequenceNext="configuracion_baremo_seq" />
+      <column name="activo" valueBoolean="true" />
+      <column name="epigrafe_cvn" value="060.030.030.000" />
+      <column name="nombre" value="SCOPUS - Q4 - EDITOR" />
+      <column name="prioridad" valueNumeric="12" />
+      <column name="tipo_baremo" value="COMITE_EDITORIAL_SCOPUS_Q4_EDITOR" />
+      <column name="tipo_fuente" value="CVN" />
+      <column name="tipo_puntos" value="EXTRA" />
+      <column name="configuracion_baremo_padre_id" valueComputed="(select id from ${schemaPrefix}configuracion_baremo where nombre='Cómites editoriales')" />
+      <column name="mostrar_puntos" valueBoolean="true" />
+    </insert>
+    <insert tableName="configuracion_baremo">
+      <column name="id" valueSequenceNext="configuracion_baremo_seq" />
+      <column name="activo" valueBoolean="true" />
+      <column name="epigrafe_cvn" value="060.030.030.000" />
+      <column name="nombre" value="SCIMAGO - Q1 - EDITOR" />
+      <column name="prioridad" valueNumeric="13" />
+      <column name="tipo_baremo" value="COMITE_EDITORIAL_SCIMAGO_Q1_EDITOR" />
+      <column name="tipo_fuente" value="CVN" />
+      <column name="tipo_puntos" value="EXTRA" />
+      <column name="configuracion_baremo_padre_id" valueComputed="(select id from ${schemaPrefix}configuracion_baremo where nombre='Cómites editoriales')" />
+      <column name="mostrar_puntos" valueBoolean="true" />
+    </insert>
+    <insert tableName="configuracion_baremo">
+      <column name="id" valueSequenceNext="configuracion_baremo_seq" />
+      <column name="activo" valueBoolean="true" />
+      <column name="epigrafe_cvn" value="060.030.030.000" />
+      <column name="nombre" value="SCIMAGO - Q2 - EDITOR" />
+      <column name="prioridad" valueNumeric="14" />
+      <column name="tipo_baremo" value="COMITE_EDITORIAL_SCIMAGO_Q2_EDITOR" />
+      <column name="tipo_fuente" value="CVN" />
+      <column name="tipo_puntos" value="EXTRA" />
+      <column name="configuracion_baremo_padre_id" valueComputed="(select id from ${schemaPrefix}configuracion_baremo where nombre='Cómites editoriales')" />
+      <column name="mostrar_puntos" valueBoolean="true" />
+    </insert>
+    <insert tableName="configuracion_baremo">
+      <column name="id" valueSequenceNext="configuracion_baremo_seq" />
+      <column name="activo" valueBoolean="true" />
+      <column name="epigrafe_cvn" value="060.030.030.000" />
+      <column name="nombre" value="SCIMAGO - Q3 - EDITOR" />
+      <column name="prioridad" valueNumeric="15" />
+      <column name="tipo_baremo" value="COMITE_EDITORIAL_SCIMAGO_Q3_EDITOR" />
+      <column name="tipo_fuente" value="CVN" />
+      <column name="tipo_puntos" value="EXTRA" />
+      <column name="configuracion_baremo_padre_id" valueComputed="(select id from ${schemaPrefix}configuracion_baremo where nombre='Cómites editoriales')" />
+      <column name="mostrar_puntos" valueBoolean="true" />
+    </insert>
+    <insert tableName="configuracion_baremo">
+      <column name="id" valueSequenceNext="configuracion_baremo_seq" />
+      <column name="activo" valueBoolean="true" />
+      <column name="epigrafe_cvn" value="060.030.030.000" />
+      <column name="nombre" value="SCIMAGO - Q4 - EDITOR" />
+      <column name="prioridad" valueNumeric="16" />
+      <column name="tipo_baremo" value="COMITE_EDITORIAL_SCIMAGO_Q4_EDITOR" />
+      <column name="tipo_fuente" value="CVN" />
+      <column name="tipo_puntos" value="EXTRA" />
+      <column name="configuracion_baremo_padre_id" valueComputed="(select id from ${schemaPrefix}configuracion_baremo where nombre='Cómites editoriales')" />
+      <column name="mostrar_puntos" valueBoolean="true" />
+    </insert>
+    <insert tableName="configuracion_baremo">
+      <column name="id" valueSequenceNext="configuracion_baremo_seq" />
+      <column name="activo" valueBoolean="true" />
+      <column name="epigrafe_cvn" value="060.030.030.000" />
+      <column name="nombre" value="ERIH - Q1 - EDITOR" />
+      <column name="prioridad" valueNumeric="17" />
+      <column name="tipo_baremo" value="COMITE_EDITORIAL_ERIH_Q1_EDITOR" />
+      <column name="tipo_fuente" value="CVN" />
+      <column name="tipo_puntos" value="EXTRA" />
+      <column name="configuracion_baremo_padre_id" valueComputed="(select id from ${schemaPrefix}configuracion_baremo where nombre='Cómites editoriales')" />
+      <column name="mostrar_puntos" valueBoolean="true" />
+    </insert>
+    <insert tableName="configuracion_baremo">
+      <column name="id" valueSequenceNext="configuracion_baremo_seq" />
+      <column name="activo" valueBoolean="true" />
+      <column name="epigrafe_cvn" value="060.030.030.000" />
+      <column name="nombre" value="ERIH - Q2 - EDITOR" />
+      <column name="prioridad" valueNumeric="18" />
+      <column name="tipo_baremo" value="COMITE_EDITORIAL_ERIH_Q2_EDITOR" />
+      <column name="tipo_fuente" value="CVN" />
+      <column name="tipo_puntos" value="EXTRA" />
+      <column name="configuracion_baremo_padre_id" valueComputed="(select id from ${schemaPrefix}configuracion_baremo where nombre='Cómites editoriales')" />
+      <column name="mostrar_puntos" valueBoolean="true" />
+    </insert>
+    <insert tableName="configuracion_baremo">
+      <column name="id" valueSequenceNext="configuracion_baremo_seq" />
+      <column name="activo" valueBoolean="true" />
+      <column name="epigrafe_cvn" value="060.030.030.000" />
+      <column name="nombre" value="ERIH - Q3 - EDITOR" />
+      <column name="prioridad" valueNumeric="19" />
+      <column name="tipo_baremo" value="COMITE_EDITORIAL_ERIH_Q3_EDITOR" />
+      <column name="tipo_fuente" value="CVN" />
+      <column name="tipo_puntos" value="EXTRA" />
+      <column name="configuracion_baremo_padre_id" valueComputed="(select id from ${schemaPrefix}configuracion_baremo where nombre='Cómites editoriales')" />
+      <column name="mostrar_puntos" valueBoolean="true" />
+    </insert>
+    <insert tableName="configuracion_baremo">
+      <column name="id" valueSequenceNext="configuracion_baremo_seq" />
+      <column name="activo" valueBoolean="true" />
+      <column name="epigrafe_cvn" value="060.030.030.000" />
+      <column name="nombre" value="ERIH - Q4 - EDITOR" />
+      <column name="prioridad" valueNumeric="20" />
+      <column name="tipo_baremo" value="COMITE_EDITORIAL_ERIH_Q4_EDITOR" />
+      <column name="tipo_fuente" value="CVN" />
+      <column name="tipo_puntos" value="EXTRA" />
+      <column name="configuracion_baremo_padre_id" valueComputed="(select id from ${schemaPrefix}configuracion_baremo where nombre='Cómites editoriales')" />
+      <column name="mostrar_puntos" valueBoolean="true" />
+    </insert>
+    <insert tableName="configuracion_baremo">
+      <column name="id" valueSequenceNext="configuracion_baremo_seq" />
+      <column name="activo" valueBoolean="true" />
+      <column name="epigrafe_cvn" value="060.030.030.000" />
+      <column name="nombre" value="DIALNET - Q1 - EDITOR" />
+      <column name="prioridad" valueNumeric="21" />
+      <column name="tipo_baremo" value="COMITE_EDITORIAL_DIALNET_Q1_EDITOR" />
+      <column name="tipo_fuente" value="CVN" />
+      <column name="tipo_puntos" value="EXTRA" />
+      <column name="configuracion_baremo_padre_id" valueComputed="(select id from ${schemaPrefix}configuracion_baremo where nombre='Cómites editoriales')" />
+      <column name="mostrar_puntos" valueBoolean="true" />
+    </insert>
+    <insert tableName="configuracion_baremo">
+      <column name="id" valueSequenceNext="configuracion_baremo_seq" />
+      <column name="activo" valueBoolean="true" />
+      <column name="epigrafe_cvn" value="060.030.030.000" />
+      <column name="nombre" value="DIALNET - Q2 - EDITOR" />
+      <column name="prioridad" valueNumeric="22" />
+      <column name="tipo_baremo" value="COMITE_EDITORIAL_DIALNET_Q2_EDITOR" />
+      <column name="tipo_fuente" value="CVN" />
+      <column name="tipo_puntos" value="EXTRA" />
+      <column name="configuracion_baremo_padre_id" valueComputed="(select id from ${schemaPrefix}configuracion_baremo where nombre='Cómites editoriales')" />
+      <column name="mostrar_puntos" valueBoolean="true" />
+    </insert>
+    <insert tableName="configuracion_baremo">
+      <column name="id" valueSequenceNext="configuracion_baremo_seq" />
+      <column name="activo" valueBoolean="true" />
+      <column name="epigrafe_cvn" value="060.030.030.000" />
+      <column name="nombre" value="DIALNET - Q3 - EDITOR" />
+      <column name="prioridad" valueNumeric="23" />
+      <column name="tipo_baremo" value="COMITE_EDITORIAL_DIALNET_Q3_EDITOR" />
+      <column name="tipo_fuente" value="CVN" />
+      <column name="tipo_puntos" value="EXTRA" />
+      <column name="configuracion_baremo_padre_id" valueComputed="(select id from ${schemaPrefix}configuracion_baremo where nombre='Cómites editoriales')" />
+      <column name="mostrar_puntos" valueBoolean="true" />
+    </insert>
+    <insert tableName="configuracion_baremo">
+      <column name="id" valueSequenceNext="configuracion_baremo_seq" />
+      <column name="activo" valueBoolean="true" />
+      <column name="epigrafe_cvn" value="060.030.030.000" />
+      <column name="nombre" value="DIALNET - Q4 - EDITOR" />
+      <column name="prioridad" valueNumeric="24" />
+      <column name="tipo_baremo" value="COMITE_EDITORIAL_DIALNET_Q4_EDITOR" />
+      <column name="tipo_fuente" value="CVN" />
+      <column name="tipo_puntos" value="EXTRA" />
+      <column name="configuracion_baremo_padre_id" valueComputed="(select id from ${schemaPrefix}configuracion_baremo where nombre='Cómites editoriales')" />
+      <column name="mostrar_puntos" valueBoolean="true" />
+    </insert>
+    <insert tableName="configuracion_baremo">
+      <column name="id" valueSequenceNext="configuracion_baremo_seq" />
+      <column name="activo" valueBoolean="true" />
+      <column name="epigrafe_cvn" value="060.030.030.000" />
+      <column name="nombre" value="MIAR - Q1 - EDITOR" />
+      <column name="prioridad" valueNumeric="25" />
+      <column name="tipo_baremo" value="COMITE_EDITORIAL_MIAR_Q1_EDITOR" />
+      <column name="tipo_fuente" value="CVN" />
+      <column name="tipo_puntos" value="EXTRA" />
+      <column name="configuracion_baremo_padre_id" valueComputed="(select id from ${schemaPrefix}configuracion_baremo where nombre='Cómites editoriales')" />
+      <column name="mostrar_puntos" valueBoolean="true" />
+    </insert>
+    <insert tableName="configuracion_baremo">
+      <column name="id" valueSequenceNext="configuracion_baremo_seq" />
+      <column name="activo" valueBoolean="true" />
+      <column name="epigrafe_cvn" value="060.030.030.000" />
+      <column name="nombre" value="MIAR - Q2 - EDITOR" />
+      <column name="prioridad" valueNumeric="26" />
+      <column name="tipo_baremo" value="COMITE_EDITORIAL_MIAR_Q2_EDITOR" />
+      <column name="tipo_fuente" value="CVN" />
+      <column name="tipo_puntos" value="EXTRA" />
+      <column name="configuracion_baremo_padre_id" valueComputed="(select id from ${schemaPrefix}configuracion_baremo where nombre='Cómites editoriales')" />
+      <column name="mostrar_puntos" valueBoolean="true" />
+    </insert>
+    <insert tableName="configuracion_baremo">
+      <column name="id" valueSequenceNext="configuracion_baremo_seq" />
+      <column name="activo" valueBoolean="true" />
+      <column name="epigrafe_cvn" value="060.030.030.000" />
+      <column name="nombre" value="MIAR - Q3 - EDITOR" />
+      <column name="prioridad" valueNumeric="27" />
+      <column name="tipo_baremo" value="COMITE_EDITORIAL_MIAR_Q3_EDITOR" />
+      <column name="tipo_fuente" value="CVN" />
+      <column name="tipo_puntos" value="EXTRA" />
+      <column name="configuracion_baremo_padre_id" valueComputed="(select id from ${schemaPrefix}configuracion_baremo where nombre='Cómites editoriales')" />
+      <column name="mostrar_puntos" valueBoolean="true" />
+    </insert>
+    <insert tableName="configuracion_baremo">
+      <column name="id" valueSequenceNext="configuracion_baremo_seq" />
+      <column name="activo" valueBoolean="true" />
+      <column name="epigrafe_cvn" value="060.030.030.000" />
+      <column name="nombre" value="MIAR - Q4 - EDITOR" />
+      <column name="prioridad" valueNumeric="28" />
+      <column name="tipo_baremo" value="COMITE_EDITORIAL_MIAR_Q4_EDITOR" />
+      <column name="tipo_fuente" value="CVN" />
+      <column name="tipo_puntos" value="EXTRA" />
+      <column name="configuracion_baremo_padre_id" valueComputed="(select id from ${schemaPrefix}configuracion_baremo where nombre='Cómites editoriales')" />
+      <column name="mostrar_puntos" valueBoolean="true" />
+    </insert>
+    <insert tableName="configuracion_baremo">
+      <column name="id" valueSequenceNext="configuracion_baremo_seq" />
+      <column name="activo" valueBoolean="true" />
+      <column name="epigrafe_cvn" value="060.030.030.000" />
+      <column name="nombre" value="FECYT - Q1 - EDITOR" />
+      <column name="prioridad" valueNumeric="29" />
+      <column name="tipo_baremo" value="COMITE_EDITORIAL_FECYT_Q1_EDITOR" />
+      <column name="tipo_fuente" value="CVN" />
+      <column name="tipo_puntos" value="EXTRA" />
+      <column name="configuracion_baremo_padre_id" valueComputed="(select id from ${schemaPrefix}configuracion_baremo where nombre='Cómites editoriales')" />
+      <column name="mostrar_puntos" valueBoolean="true" />
+    </insert>
+    <insert tableName="configuracion_baremo">
+      <column name="id" valueSequenceNext="configuracion_baremo_seq" />
+      <column name="activo" valueBoolean="true" />
+      <column name="epigrafe_cvn" value="060.030.030.000" />
+      <column name="nombre" value="FECYT - Q2 - EDITOR" />
+      <column name="prioridad" valueNumeric="30" />
+      <column name="tipo_baremo" value="COMITE_EDITORIAL_FECYT_Q2_EDITOR" />
+      <column name="tipo_fuente" value="CVN" />
+      <column name="tipo_puntos" value="EXTRA" />
+      <column name="configuracion_baremo_padre_id" valueComputed="(select id from ${schemaPrefix}configuracion_baremo where nombre='Cómites editoriales')" />
+      <column name="mostrar_puntos" valueBoolean="true" />
+    </insert>
+    <insert tableName="configuracion_baremo">
+      <column name="id" valueSequenceNext="configuracion_baremo_seq" />
+      <column name="activo" valueBoolean="true" />
+      <column name="epigrafe_cvn" value="060.030.030.000" />
+      <column name="nombre" value="FECYT - Q3 - EDITOR" />
+      <column name="prioridad" valueNumeric="31" />
+      <column name="tipo_baremo" value="COMITE_EDITORIAL_FECYT_Q3_EDITOR" />
+      <column name="tipo_fuente" value="CVN" />
+      <column name="tipo_puntos" value="EXTRA" />
+      <column name="configuracion_baremo_padre_id" valueComputed="(select id from ${schemaPrefix}configuracion_baremo where nombre='Cómites editoriales')" />
+      <column name="mostrar_puntos" valueBoolean="true" />
+    </insert>
+    <insert tableName="configuracion_baremo">
+      <column name="id" valueSequenceNext="configuracion_baremo_seq" />
+      <column name="activo" valueBoolean="true" />
+      <column name="epigrafe_cvn" value="060.030.030.000" />
+      <column name="nombre" value="FECYT - Q4 - EDITOR" />
+      <column name="prioridad" valueNumeric="32" />
+      <column name="tipo_baremo" value="COMITE_EDITORIAL_FECYT_Q4_EDITOR" />
+      <column name="tipo_fuente" value="CVN" />
+      <column name="tipo_puntos" value="EXTRA" />
+      <column name="configuracion_baremo_padre_id" valueComputed="(select id from ${schemaPrefix}configuracion_baremo where nombre='Cómites editoriales')" />
+      <column name="mostrar_puntos" valueBoolean="true" />
+    </insert>
+    <insert tableName="configuracion_baremo">
+      <column name="id" valueSequenceNext="configuracion_baremo_seq" />
+      <column name="activo" valueBoolean="true" />
+      <column name="epigrafe_cvn" value="060.030.030.000" />
+      <column name="nombre" value="Comité editorial" />
+      <column name="prioridad" valueNumeric="33" />
+      <column name="tipo_baremo" value="COMITE_EDITORIAL" />
+      <column name="tipo_fuente" value="CVN" />
+      <column name="tipo_puntos" value="PRINCIPAL" />
+      <column name="configuracion_baremo_padre_id" valueComputed="(select id from ${schemaPrefix}configuracion_baremo where nombre='Cómites editoriales')" />
+      <column name="mostrar_puntos" valueBoolean="true" />
+    </insert>
+    <insert tableName="configuracion_baremo">
+      <column name="id" valueSequenceNext="configuracion_baremo_seq" />
+      <column name="activo" valueBoolean="true" />
+      <column name="epigrafe_cvn" value="null" />
+      <column name="nombre" value="Trabajos presentados en congresos" />
+      <column name="prioridad" valueNumeric="null" />
+      <column name="tipo_baremo" value="CONGRESOS" />
+      <column name="tipo_fuente" value="null" />
+      <column name="tipo_puntos" value="null" />
+      <column name="configuracion_baremo_padre_id" valueComputed="(select id from ${schemaPrefix}configuracion_baremo where nombre='Producción científica')" />
+      <column name="mostrar_puntos" valueBoolean="true" />
+    </insert>
+    <insert tableName="configuracion_baremo">
+      <column name="id" valueSequenceNext="configuracion_baremo_seq" />
+      <column name="activo" valueBoolean="true" />
+      <column name="epigrafe_cvn" value="060.010.020.000" />
+      <column name="nombre" value="Grupo 1 o CORE A *" />
+      <column name="prioridad" valueNumeric="1" />
+      <column name="tipo_baremo" value="CONGRESO_GRUPO1_O_CORE_A_POR" />
+      <column name="tipo_fuente" value="CVN" />
+      <column name="tipo_puntos" value="PRINCIPAL" />
+      <column name="configuracion_baremo_padre_id" valueComputed="(select id from ${schemaPrefix}configuracion_baremo where nombre='Trabajos presentados en congresos')" />
+      <column name="mostrar_puntos" valueBoolean="true" />
+    </insert>
+    <insert tableName="configuracion_baremo">
+      <column name="id" valueSequenceNext="configuracion_baremo_seq" />
+      <column name="activo" valueBoolean="true" />
+      <column name="epigrafe_cvn" value="060.010.020.000" />
+      <column name="nombre" value="Grupo 1 o CORE A" />
+      <column name="prioridad" valueNumeric="2" />
+      <column name="tipo_baremo" value="CONGRESO_GRUPO1_O_CORE_A" />
+      <column name="tipo_fuente" value="CVN" />
+      <column name="tipo_puntos" value="PRINCIPAL" />
+      <column name="configuracion_baremo_padre_id" valueComputed="(select id from ${schemaPrefix}configuracion_baremo where nombre='Trabajos presentados en congresos')" />
+      <column name="mostrar_puntos" valueBoolean="true" />
+    </insert>
+    <insert tableName="configuracion_baremo">
+      <column name="id" valueSequenceNext="configuracion_baremo_seq" />
+      <column name="activo" valueBoolean="true" />
+      <column name="epigrafe_cvn" value="060.010.020.000" />
+      <column name="nombre" value="Internacional - Póster o cartel" />
+      <column name="prioridad" valueNumeric="3" />
+      <column name="tipo_baremo" value="CONGRESO_INTERNACIONAL_POSTER_O_CARTEL" />
+      <column name="tipo_fuente" value="CVN" />
+      <column name="tipo_puntos" value="PRINCIPAL" />
+      <column name="configuracion_baremo_padre_id" valueComputed="(select id from ${schemaPrefix}configuracion_baremo where nombre='Trabajos presentados en congresos')" />
+      <column name="mostrar_puntos" valueBoolean="true" />
+    </insert>
+    <insert tableName="configuracion_baremo">
+      <column name="id" valueSequenceNext="configuracion_baremo_seq" />
+      <column name="activo" valueBoolean="true" />
+      <column name="epigrafe_cvn" value="060.010.020.000" />
+      <column name="nombre" value="Internacional - Ponencia oral o escrita" />
+      <column name="prioridad" valueNumeric="4" />
+      <column name="tipo_baremo" value="CONGRESO_INTERNACIONAL_PONENCIA_ORAL_O_ESCRITA" />
+      <column name="tipo_fuente" value="CVN" />
+      <column name="tipo_puntos" value="PRINCIPAL" />
+      <column name="configuracion_baremo_padre_id" valueComputed="(select id from ${schemaPrefix}configuracion_baremo where nombre='Trabajos presentados en congresos')" />
+      <column name="mostrar_puntos" valueBoolean="true" />
+    </insert>
+    <insert tableName="configuracion_baremo">
+      <column name="id" valueSequenceNext="configuracion_baremo_seq" />
+      <column name="activo" valueBoolean="true" />
+      <column name="epigrafe_cvn" value="060.010.020.000" />
+      <column name="nombre" value="Internacional - Plenaria/ponencia invitada o keynote" />
+      <column name="prioridad" valueNumeric="5" />
+      <column name="tipo_baremo" value="CONGRESO_INTERNACIONAL_PLENARIA_O_KEYNOTE" />
+      <column name="tipo_fuente" value="CVN" />
+      <column name="tipo_puntos" value="PRINCIPAL" />
+      <column name="configuracion_baremo_padre_id" valueComputed="(select id from ${schemaPrefix}configuracion_baremo where nombre='Trabajos presentados en congresos')" />
+      <column name="mostrar_puntos" valueBoolean="true" />
+    </insert>
+    <insert tableName="configuracion_baremo">
+      <column name="id" valueSequenceNext="configuracion_baremo_seq" />
+      <column name="activo" valueBoolean="true" />
+      <column name="epigrafe_cvn" value="060.010.020.000" />
+      <column name="nombre" value="Nacional - Póster o cartel" />
+      <column name="prioridad" valueNumeric="6" />
+      <column name="tipo_baremo" value="CONGRESO_NACIONAL_POSTER_O_CARTEL" />
+      <column name="tipo_fuente" value="CVN" />
+      <column name="tipo_puntos" value="PRINCIPAL" />
+      <column name="configuracion_baremo_padre_id" valueComputed="(select id from ${schemaPrefix}configuracion_baremo where nombre='Trabajos presentados en congresos')" />
+      <column name="mostrar_puntos" valueBoolean="true" />
+    </insert>
+    <insert tableName="configuracion_baremo">
+      <column name="id" valueSequenceNext="configuracion_baremo_seq" />
+      <column name="activo" valueBoolean="true" />
+      <column name="epigrafe_cvn" value="060.010.020.000" />
+      <column name="nombre" value="Nacional - Ponencia oral o escrita" />
+      <column name="prioridad" valueNumeric="7" />
+      <column name="tipo_baremo" value="CONGRESO_NACIONAL_PONENCIA_ORAL_O_ESCRITA" />
+      <column name="tipo_fuente" value="CVN" />
+      <column name="tipo_puntos" value="PRINCIPAL" />
+      <column name="configuracion_baremo_padre_id" valueComputed="(select id from ${schemaPrefix}configuracion_baremo where nombre='Trabajos presentados en congresos')" />
+      <column name="mostrar_puntos" valueBoolean="true" />
+    </insert>
+    <insert tableName="configuracion_baremo">
+      <column name="id" valueSequenceNext="configuracion_baremo_seq" />
+      <column name="activo" valueBoolean="true" />
+      <column name="epigrafe_cvn" value="060.010.020.000" />
+      <column name="nombre" value="Nacional - Plenaria/ponencia invitada o keynote" />
+      <column name="prioridad" valueNumeric="8" />
+      <column name="tipo_baremo" value="CONGRESO_NACIONAL_PLENARIA_O_KEYNOTE" />
+      <column name="tipo_fuente" value="CVN" />
+      <column name="tipo_puntos" value="PRINCIPAL" />
+      <column name="configuracion_baremo_padre_id" valueComputed="(select id from ${schemaPrefix}configuracion_baremo where nombre='Trabajos presentados en congresos')" />
+      <column name="mostrar_puntos" valueBoolean="true" />
+    </insert>
+    <insert tableName="configuracion_baremo">
+      <column name="id" valueSequenceNext="configuracion_baremo_seq" />
+      <column name="activo" valueBoolean="true" />
+      <column name="epigrafe_cvn" value="060.010.020.000" />
+      <column name="nombre" value="Resumen o abstract en una revista" />
+      <column name="prioridad" valueNumeric="9" />
+      <column name="tipo_baremo" value="CONGRESO_RESUMEN_O_ABSTRACT" />
+      <column name="tipo_fuente" value="CVN" />
+      <column name="tipo_puntos" value="EXTRA" />
+      <column name="configuracion_baremo_padre_id" valueComputed="(select id from ${schemaPrefix}configuracion_baremo where nombre='Trabajos presentados en congresos')" />
+      <column name="mostrar_puntos" valueBoolean="true" />
+    </insert>
+    <insert tableName="configuracion_baremo">
+      <column name="id" valueSequenceNext="configuracion_baremo_seq" />
+      <column name="activo" valueBoolean="true" />
+      <column name="epigrafe_cvn" value="060.010.020.000" />
+      <column name="nombre" value="Internacional - obra colectiva" />
+      <column name="prioridad" valueNumeric="10" />
+      <column name="tipo_baremo" value="CONGRESO_INTERNACIONAL_OBRA_COLECTIVA" />
+      <column name="tipo_fuente" value="CVN" />
+      <column name="tipo_puntos" value="EXTRA" />
+      <column name="configuracion_baremo_padre_id" valueComputed="(select id from ${schemaPrefix}configuracion_baremo where nombre='Trabajos presentados en congresos')" />
+      <column name="mostrar_puntos" valueBoolean="true" />
+    </insert>
+    <insert tableName="configuracion_baremo">
+      <column name="id" valueSequenceNext="configuracion_baremo_seq" />
+      <column name="activo" valueBoolean="true" />
+      <column name="epigrafe_cvn" value="060.010.020.000" />
+      <column name="nombre" value="Nacional - obra colectiva" />
+      <column name="prioridad" valueNumeric="11" />
+      <column name="tipo_baremo" value="CONGRESO_NACIONAL_OBRA_COLECTIVA" />
+      <column name="tipo_fuente" value="CVN" />
+      <column name="tipo_puntos" value="EXTRA" />
+      <column name="configuracion_baremo_padre_id" valueComputed="(select id from ${schemaPrefix}configuracion_baremo where nombre='Trabajos presentados en congresos')" />
+      <column name="mostrar_puntos" valueBoolean="true" />
+    </insert>
+    <insert tableName="configuracion_baremo">
+      <column name="id" valueSequenceNext="configuracion_baremo_seq" />
+      <column name="activo" valueBoolean="true" />
+      <column name="epigrafe_cvn" value="null" />
+      <column name="nombre" value="Dirección de tesis/TFM/TFG" />
+      <column name="prioridad" valueNumeric="null" />
+      <column name="tipo_baremo" value="DIRECCION_TESIS" />
+      <column name="tipo_fuente" value="null" />
+      <column name="tipo_puntos" value="null" />
+      <column name="configuracion_baremo_padre_id" valueComputed="(select id from ${schemaPrefix}configuracion_baremo where nombre='Producción científica')" />
+      <column name="mostrar_puntos" valueBoolean="true" />
+    </insert>
+    <insert tableName="configuracion_baremo">
+      <column name="id" valueSequenceNext="configuracion_baremo_seq" />
+      <column name="activo" valueBoolean="true" />
+      <column name="epigrafe_cvn" value="030.040.000.000" />
+      <column name="nombre" value="Tesis doctoral" />
+      <column name="prioridad" valueNumeric="1" />
+      <column name="tipo_baremo" value="DIRECCION_TESIS_TESIS" />
+      <column name="tipo_fuente" value="CVN_OTRO_SISTEMA" />
+      <column name="tipo_puntos" value="PRINCIPAL" />
+      <column name="configuracion_baremo_padre_id" valueComputed="(select id from ${schemaPrefix}configuracion_baremo where nombre='Dirección de trabajos de investigación')" />
+      <column name="mostrar_puntos" valueBoolean="true" />
+    </insert>
+    <insert tableName="configuracion_baremo">
+      <column name="id" valueSequenceNext="configuracion_baremo_seq" />
+      <column name="activo" valueBoolean="true" />
+      <column name="epigrafe_cvn" value="030.040.000.000" />
+      <column name="nombre" value="Tesina, DEA, TFM" />
+      <column name="prioridad" valueNumeric="2" />
+      <column name="tipo_baremo" value="DIRECCION_TESIS_TESINA_O_DEA_O_TFM" />
+      <column name="tipo_fuente" value="CVN_OTRO_SISTEMA" />
+      <column name="tipo_puntos" value="PRINCIPAL" />
+      <column name="configuracion_baremo_padre_id" valueComputed="(select id from ${schemaPrefix}configuracion_baremo where nombre='Dirección de trabajos de investigación')" />
+      <column name="mostrar_puntos" valueBoolean="true" />
+    </insert>
+    <insert tableName="configuracion_baremo">
+      <column name="id" valueSequenceNext="configuracion_baremo_seq" />
+      <column name="activo" valueBoolean="true" />
+      <column name="epigrafe_cvn" value="030.040.000.000" />
+      <column name="nombre" value="Mención industrial" />
+      <column name="prioridad" valueNumeric="3" />
+      <column name="tipo_baremo" value="DIRECCION_TESIS_MENCION_INDUSTRIAL" />
+      <column name="tipo_fuente" value="CVN_OTRO_SISTEMA" />
+      <column name="tipo_puntos" value="EXTRA" />
+      <column name="configuracion_baremo_padre_id" valueComputed="(select id from ${schemaPrefix}configuracion_baremo where nombre='Dirección de trabajos de investigación')" />
+      <column name="mostrar_puntos" valueBoolean="true" />
+    </insert>
+    <insert tableName="configuracion_baremo">
+      <column name="id" valueSequenceNext="configuracion_baremo_seq" />
+      <column name="activo" valueBoolean="true" />
+      <column name="epigrafe_cvn" value="030.040.000.000" />
+      <column name="nombre" value="Mención internacional" />
+      <column name="prioridad" valueNumeric="4" />
+      <column name="tipo_baremo" value="DIRECCION_TESIS_MENCION_INTERNACIONAL" />
+      <column name="tipo_fuente" value="CVN_OTRO_SISTEMA" />
+      <column name="tipo_puntos" value="EXTRA" />
+      <column name="configuracion_baremo_padre_id" valueComputed="(select id from ${schemaPrefix}configuracion_baremo where nombre='Dirección de trabajos de investigación')" />
+      <column name="mostrar_puntos" valueBoolean="true" />
+    </insert>
+    <insert tableName="configuracion_baremo">
+      <column name="id" valueSequenceNext="configuracion_baremo_seq" />
+      <column name="activo" valueBoolean="true" />
+      <column name="epigrafe_cvn" value="null" />
+      <column name="nombre" value="Proyectos de investigación" />
+      <column name="prioridad" valueNumeric="null" />
+      <column name="tipo_baremo" value="PROYECTOS_INVESTIGACION" />
+      <column name="tipo_fuente" value="null" />
+      <column name="tipo_puntos" value="null" />
+      <column name="configuracion_baremo_padre_id" valueComputed="(select id from ${schemaPrefix}configuracion_baremo where nombre='Producción científica')" />
+
+      <column name="mostrar_puntos" valueBoolean="true" />
+    </insert>
+    <insert tableName="configuracion_baremo">
+      <column name="id" valueSequenceNext="configuracion_baremo_seq" />
+      <column name="activo" valueBoolean="true" />
+      <column name="epigrafe_cvn" value="050.020.010.000" />
+      <column name="nombre" value="Regional/Autonómico" />
+      <column name="prioridad" valueNumeric="1" />
+      <column name="tipo_baremo" value="PROYECTO_INVESTIGACION_REGIONAL" />
+      <column name="tipo_fuente" value="SGI" />
+      <column name="tipo_puntos" value="PRINCIPAL" />
+      <column name="configuracion_baremo_padre_id" valueComputed="(select id from ${schemaPrefix}configuracion_baremo where nombre='Proyectos de investigación')" />
+
+      <column name="mostrar_puntos" valueBoolean="true" />
+    </insert>
+    <insert tableName="configuracion_baremo">
+      <column name="id" valueSequenceNext="configuracion_baremo_seq" />
+      <column name="activo" valueBoolean="true" />
+      <column name="epigrafe_cvn" value="050.020.010.000" />
+      <column name="nombre" value="Nacional" />
+      <column name="prioridad" valueNumeric="2" />
+      <column name="tipo_baremo" value="PROYECTO_INVESTIGACION_NACIONAL" />
+      <column name="tipo_fuente" value="SGI" />
+      <column name="tipo_puntos" value="PRINCIPAL" />
+      <column name="configuracion_baremo_padre_id" valueComputed="(select id from ${schemaPrefix}configuracion_baremo where nombre='Proyectos de investigación')" />
+
+      <column name="mostrar_puntos" valueBoolean="true" />
+    </insert>
+    <insert tableName="configuracion_baremo">
+      <column name="id" valueSequenceNext="configuracion_baremo_seq" />
+      <column name="activo" valueBoolean="true" />
+      <column name="epigrafe_cvn" value="050.020.010.000" />
+      <column name="nombre" value="Europeo/Internacional" />
+      <column name="prioridad" valueNumeric="3" />
+      <column name="tipo_baremo" value="PROYECTO_INVESTIGACION_EUROPEO" />
+      <column name="tipo_fuente" value="SGI" />
+      <column name="tipo_puntos" value="PRINCIPAL" />
+      <column name="configuracion_baremo_padre_id" valueComputed="(select id from ${schemaPrefix}configuracion_baremo where nombre='Proyectos de investigación')" />
+
+      <column name="mostrar_puntos" valueBoolean="true" />
+    </insert>
+    <insert tableName="configuracion_baremo">
+      <column name="id" valueSequenceNext="configuracion_baremo_seq" />
+      <column name="activo" valueBoolean="true" />
+      <column name="epigrafe_cvn" value="050.020.010.000" />
+      <column name="nombre" value="Resto" />
+      <column name="prioridad" valueNumeric="4" />
+      <column name="tipo_baremo" value="PROYECTO_INVESTIGACION_RESTO" />
+      <column name="tipo_fuente" value="SGI" />
+      <column name="tipo_puntos" value="PRINCIPAL" />
+      <column name="configuracion_baremo_padre_id" valueComputed="(select id from ${schemaPrefix}configuracion_baremo where nombre='Proyectos de investigación')" />
+
+      <column name="mostrar_puntos" valueBoolean="true" />
+    </insert>
+    <insert tableName="configuracion_baremo">
+      <column name="id" valueSequenceNext="configuracion_baremo_seq" />
+      <column name="activo" valueBoolean="true" />
+      <column name="epigrafe_cvn" value="050.020.010.000" />
+      <column name="nombre" value="Regional/Autonómico - Convocatoria de excelencia" />
+      <column name="prioridad" valueNumeric="5" />
+      <column name="tipo_baremo" value="PROYECTO_INVESTIGACION_REGIONAL_EXCELENCIA" />
+      <column name="tipo_fuente" value="SGI" />
+      <column name="tipo_puntos" value="EXTRA" />
+      <column name="configuracion_baremo_padre_id" valueComputed="(select id from ${schemaPrefix}configuracion_baremo where nombre='Proyectos de investigación')" />
+      <column name="mostrar_puntos" valueBoolean="true" />
+    </insert>
+    <insert tableName="configuracion_baremo">
+      <column name="id" valueSequenceNext="configuracion_baremo_seq" />
+      <column name="activo" valueBoolean="true" />
+      <column name="epigrafe_cvn" value="050.020.010.000" />
+      <column name="nombre" value="Nacional - Convocatoria de excelencia" />
+      <column name="prioridad" valueNumeric="6" />
+      <column name="tipo_baremo" value="PROYECTO_INVESTIGACION_NACIONAL_EXCELENCIA" />
+      <column name="tipo_fuente" value="SGI" />
+      <column name="tipo_puntos" value="EXTRA" />
+      <column name="configuracion_baremo_padre_id" valueComputed="(select id from ${schemaPrefix}configuracion_baremo where nombre='Proyectos de investigación')" />
+      <column name="mostrar_puntos" valueBoolean="true" />
+    </insert>
+    <insert tableName="configuracion_baremo">
+      <column name="id" valueSequenceNext="configuracion_baremo_seq" />
+      <column name="activo" valueBoolean="true" />
+      <column name="epigrafe_cvn" value="050.020.010.000" />
+      <column name="nombre" value="Regional/Autonómico - IP" />
+      <column name="prioridad" valueNumeric="7" />
+      <column name="tipo_baremo" value="PROYECTO_INVESTIGACION_REGIONAL_IP" />
+      <column name="tipo_fuente" value="SGI" />
+      <column name="tipo_puntos" value="EXTRA" />
+      <column name="configuracion_baremo_padre_id" valueComputed="(select id from ${schemaPrefix}configuracion_baremo where nombre='Proyectos de investigación')" />
+      <column name="mostrar_puntos" valueBoolean="true" />
+    </insert>
+    <insert tableName="configuracion_baremo">
+      <column name="id" valueSequenceNext="configuracion_baremo_seq" />
+      <column name="activo" valueBoolean="true" />
+      <column name="epigrafe_cvn" value="050.020.010.000" />
+      <column name="nombre" value="Nacional - IP" />
+      <column name="prioridad" valueNumeric="8" />
+      <column name="tipo_baremo" value="PROYECTO_INVESTIGACION_NACIONAL_IP" />
+      <column name="tipo_fuente" value="SGI" />
+      <column name="tipo_puntos" value="EXTRA" />
+      <column name="configuracion_baremo_padre_id" valueComputed="(select id from ${schemaPrefix}configuracion_baremo where nombre='Proyectos de investigación')" />
+      <column name="mostrar_puntos" valueBoolean="true" />
+    </insert>
+    <insert tableName="configuracion_baremo">
+      <column name="id" valueSequenceNext="configuracion_baremo_seq" />
+      <column name="activo" valueBoolean="true" />
+      <column name="epigrafe_cvn" value="050.020.010.000" />
+      <column name="nombre" value="Europeo/Internacional - IP" />
+      <column name="prioridad" valueNumeric="9" />
+      <column name="tipo_baremo" value="PROYECTO_INVESTIGACION_EUROPEO_IP" />
+      <column name="tipo_fuente" value="SGI" />
+      <column name="tipo_puntos" value="EXTRA" />
+      <column name="configuracion_baremo_padre_id" valueComputed="(select id from ${schemaPrefix}configuracion_baremo where nombre='Proyectos de investigación')" />
+      <column name="mostrar_puntos" valueBoolean="true" />
+    </insert>
+    <insert tableName="configuracion_baremo">
+      <column name="id" valueSequenceNext="configuracion_baremo_seq" />
+      <column name="activo" valueBoolean="true" />
+      <column name="epigrafe_cvn" value="050.020.010.000" />
+      <column name="nombre" value="Resto - IP" />
+      <column name="prioridad" valueNumeric="10" />
+      <column name="tipo_baremo" value="PROYECTO_INVESTIGACION_RESTO_IP" />
+      <column name="tipo_fuente" value="SGI" />
+      <column name="tipo_puntos" value="EXTRA" />
+      <column name="configuracion_baremo_padre_id" valueComputed="(select id from ${schemaPrefix}configuracion_baremo where nombre='Proyectos de investigación')" />
+      <column name="mostrar_puntos" valueBoolean="true" />
+    </insert>
+    <insert tableName="configuracion_baremo">
+      <column name="id" valueSequenceNext="configuracion_baremo_seq" />
+      <column name="activo" valueBoolean="true" />
+      <column name="epigrafe_cvn" value="null" />
+      <column name="nombre" value="Contratos" />
+      <column name="prioridad" valueNumeric="null" />
+      <column name="tipo_baremo" value="CONTRATOS" />
+      <column name="tipo_fuente" value="null" />
+      <column name="tipo_puntos" value="null" />
+      <column name="configuracion_baremo_padre_id" valueComputed="(select id from ${schemaPrefix}configuracion_baremo where nombre='Producción científica')" />
+      <column name="mostrar_puntos" valueBoolean="true" />
+    </insert>
+    <insert tableName="configuracion_baremo">
+      <column name="id" valueSequenceNext="configuracion_baremo_seq" />
+      <column name="activo" valueBoolean="true" />
+      <column name="epigrafe_cvn" value="050.020.020.000" />
+      <column name="nombre" value="Cuantía" />
+      <column name="prioridad" valueNumeric="1" />
+      <column name="tipo_baremo" value="CONTRATO_CUANTIA" />
+      <column name="tipo_fuente" value="SGI" />
+      <column name="tipo_puntos" value="PRINCIPAL" />
+      <column name="configuracion_baremo_padre_id" valueComputed="(select id from ${schemaPrefix}configuracion_baremo where nombre='Contratos')" />
+
+      <column name="mostrar_puntos" valueBoolean="true" />
+    </insert>
+    <insert tableName="configuracion_baremo">
+      <column name="id" valueSequenceNext="configuracion_baremo_seq" />
+      <column name="activo" valueBoolean="true" />
+      <column name="epigrafe_cvn" value="null" />
+      <column name="nombre" value="Obras artísticas dirigidas" />
+      <column name="prioridad" valueNumeric="null" />
+      <column name="tipo_baremo" value="OBRAS_ARTISTICAS" />
+      <column name="tipo_fuente" value="null" />
+      <column name="tipo_puntos" value="null" />
+      <column name="configuracion_baremo_padre_id" valueComputed="(select id from ${schemaPrefix}configuracion_baremo where nombre='Producción científica')" />
+
+      <column name="mostrar_puntos" valueBoolean="true" />
+    </insert>
+    <insert tableName="configuracion_baremo">
+      <column name="id" valueSequenceNext="configuracion_baremo_seq" />
+      <column name="activo" valueBoolean="true" />
+      <column name="epigrafe_cvn" value="050.020.030.000" />
+      <column name="nombre" value="Exp. Grupo 1 individual" />
+      <column name="prioridad" valueNumeric="1" />
+      <column name="tipo_baremo" value="OBRA_ARTISTICA_EXP_GRUPO1_INDIVIDUAL" />
+      <column name="tipo_fuente" value="CVN" />
+      <column name="tipo_puntos" value="PRINCIPAL" />
+      <column name="configuracion_baremo_padre_id" valueComputed="(select id from ${schemaPrefix}configuracion_baremo where nombre='Obras artísticas dirigidas')" />
+      <column name="mostrar_puntos" valueBoolean="true" />
+    </insert>
+    <insert tableName="configuracion_baremo">
+      <column name="id" valueSequenceNext="configuracion_baremo_seq" />
+      <column name="activo" valueBoolean="true" />
+      <column name="epigrafe_cvn" value="050.020.030.000" />
+      <column name="nombre" value="Exp. Grupo 1 colectiva" />
+      <column name="prioridad" valueNumeric="2" />
+      <column name="tipo_baremo" value="OBRA_ARTISTICA_EXP_GRUPO1_COLECTIVA" />
+      <column name="tipo_fuente" value="CVN" />
+      <column name="tipo_puntos" value="PRINCIPAL" />
+      <column name="configuracion_baremo_padre_id" valueComputed="(select id from ${schemaPrefix}configuracion_baremo where nombre='Obras artísticas dirigidas')" />
+      <column name="mostrar_puntos" valueBoolean="true" />
+    </insert>
+    <insert tableName="configuracion_baremo">
+      <column name="id" valueSequenceNext="configuracion_baremo_seq" />
+      <column name="activo" valueBoolean="true" />
+      <column name="epigrafe_cvn" value="050.020.030.000" />
+      <column name="nombre" value="Exp. Grupo 2 individual" />
+      <column name="prioridad" valueNumeric="3" />
+      <column name="tipo_baremo" value="OBRA_ARTISTICA_EXP_GRUPO2_INDIVIDUAL" />
+      <column name="tipo_fuente" value="CVN" />
+      <column name="tipo_puntos" value="PRINCIPAL" />
+      <column name="configuracion_baremo_padre_id" valueComputed="(select id from ${schemaPrefix}configuracion_baremo where nombre='Obras artísticas dirigidas')" />
+      <column name="mostrar_puntos" valueBoolean="true" />
+    </insert>
+    <insert tableName="configuracion_baremo">
+      <column name="id" valueSequenceNext="configuracion_baremo_seq" />
+      <column name="activo" valueBoolean="true" />
+      <column name="epigrafe_cvn" value="050.020.030.000" />
+      <column name="nombre" value="Exp. Grupo 2 colectiva" />
+      <column name="prioridad" valueNumeric="4" />
+      <column name="tipo_baremo" value="OBRA_ARTISTICA_EXP_GRUPO2_COLECTIVA" />
+      <column name="tipo_fuente" value="CVN" />
+      <column name="tipo_puntos" value="PRINCIPAL" />
+      <column name="configuracion_baremo_padre_id" valueComputed="(select id from ${schemaPrefix}configuracion_baremo where nombre='Obras artísticas dirigidas')" />
+      <column name="mostrar_puntos" valueBoolean="true" />
+    </insert>
+    <insert tableName="configuracion_baremo">
+      <column name="id" valueSequenceNext="configuracion_baremo_seq" />
+      <column name="activo" valueBoolean="true" />
+      <column name="epigrafe_cvn" value="050.020.030.000" />
+      <column name="nombre" value="Exp. Grupo 3" />
+      <column name="prioridad" valueNumeric="5" />
+      <column name="tipo_baremo" value="OBRA_ARTISTICA_EXP_GRUPO3" />
+      <column name="tipo_fuente" value="CVN" />
+      <column name="tipo_puntos" value="PRINCIPAL" />
+      <column name="configuracion_baremo_padre_id" valueComputed="(select id from ${schemaPrefix}configuracion_baremo where nombre='Obras artísticas dirigidas')" />
+      <column name="mostrar_puntos" valueBoolean="true" />
+    </insert>
+    <insert tableName="configuracion_baremo">
+      <column name="id" valueSequenceNext="configuracion_baremo_seq" />
+      <column name="activo" valueBoolean="true" />
+      <column name="epigrafe_cvn" value="050.020.030.000" />
+      <column name="nombre" value="Exp. Grupo 4" />
+      <column name="prioridad" valueNumeric="6" />
+      <column name="tipo_baremo" value="OBRA_ARTISTICA_EXP_GRUPO4" />
+      <column name="tipo_fuente" value="CVN" />
+      <column name="tipo_puntos" value="PRINCIPAL" />
+      <column name="configuracion_baremo_padre_id" valueComputed="(select id from ${schemaPrefix}configuracion_baremo where nombre='Obras artísticas dirigidas')" />
+      <column name="mostrar_puntos" valueBoolean="true" />
+    </insert>
+    <insert tableName="configuracion_baremo">
+      <column name="id" valueSequenceNext="configuracion_baremo_seq" />
+      <column name="activo" valueBoolean="true" />
+      <column name="epigrafe_cvn" value="050.020.030.000" />
+      <column name="nombre" value="Diseño Grupo 1" />
+      <column name="prioridad" valueNumeric="7" />
+      <column name="tipo_baremo" value="OBRA_ARTISTICA_DISENIO_GRUPO1" />
+      <column name="tipo_fuente" value="CVN" />
+      <column name="tipo_puntos" value="PRINCIPAL" />
+      <column name="configuracion_baremo_padre_id" valueComputed="(select id from ${schemaPrefix}configuracion_baremo where nombre='Obras artísticas dirigidas')" />
+      <column name="mostrar_puntos" valueBoolean="true" />
+    </insert>
+    <insert tableName="configuracion_baremo">
+      <column name="id" valueSequenceNext="configuracion_baremo_seq" />
+      <column name="activo" valueBoolean="true" />
+      <column name="epigrafe_cvn" value="050.020.030.000" />
+      <column name="nombre" value="Diseño Grupo 2" />
+      <column name="prioridad" valueNumeric="8" />
+      <column name="tipo_baremo" value="OBRA_ARTISTICA_DISENIO_GRUPO2" />
+      <column name="tipo_fuente" value="CVN" />
+      <column name="tipo_puntos" value="PRINCIPAL" />
+      <column name="configuracion_baremo_padre_id" valueComputed="(select id from ${schemaPrefix}configuracion_baremo where nombre='Obras artísticas dirigidas')" />
+      <column name="mostrar_puntos" valueBoolean="true" />
+    </insert>
+    <insert tableName="configuracion_baremo">
+      <column name="id" valueSequenceNext="configuracion_baremo_seq" />
+      <column name="activo" valueBoolean="true" />
+      <column name="epigrafe_cvn" value="050.020.030.000" />
+      <column name="nombre" value="Diseño Grupo 3" />
+      <column name="prioridad" valueNumeric="9" />
+      <column name="tipo_baremo" value="OBRA_ARTISTICA_DISENIO_GRUPO3" />
+      <column name="tipo_fuente" value="CVN" />
+      <column name="tipo_puntos" value="PRINCIPAL" />
+      <column name="configuracion_baremo_padre_id" valueComputed="(select id from ${schemaPrefix}configuracion_baremo where nombre='Obras artísticas dirigidas')" />
+      <column name="mostrar_puntos" valueBoolean="true" />
+    </insert>
+    <insert tableName="configuracion_baremo">
+      <column name="id" valueSequenceNext="configuracion_baremo_seq" />
+      <column name="activo" valueBoolean="true" />
+      <column name="epigrafe_cvn" value="null" />
+      <column name="nombre" value="Organización de actividades de I+D+i" />
+      <column name="prioridad" valueNumeric="null" />
+      <column name="tipo_baremo" value="ORGANIZACION_ACTIVIDADES" />
+      <column name="tipo_fuente" value="null" />
+      <column name="tipo_puntos" value="null" />
+      <column name="configuracion_baremo_padre_id" valueComputed="(select id from ${schemaPrefix}configuracion_baremo where nombre='Producción científica')" />
+      <column name="mostrar_puntos" valueBoolean="true" />
+    </insert>
+    <insert tableName="configuracion_baremo">
+      <column name="id" valueSequenceNext="configuracion_baremo_seq" />
+      <column name="activo" valueBoolean="true" />
+      <column name="epigrafe_cvn" value="060.020.030.000" />
+      <column name="nombre" value="Comité científico y/o organizador nacional" />
+      <column name="prioridad" valueNumeric="1" />
+      <column name="tipo_baremo" value="ORG_ACT_COMITE_CIENTIFICO_ORGANIZ_NACIONAL" />
+      <column name="tipo_fuente" value="CVN" />
+      <column name="tipo_puntos" value="PRINCIPAL" />
+      <column name="configuracion_baremo_padre_id" valueComputed="(select id from ${schemaPrefix}configuracion_baremo where nombre='Organización de actividades de I+D+i')" />
+      <column name="mostrar_puntos" valueBoolean="true" />
+    </insert>
+    <insert tableName="configuracion_baremo">
+      <column name="id" valueSequenceNext="configuracion_baremo_seq" />
+      <column name="activo" valueBoolean="true" />
+      <column name="epigrafe_cvn" value="060.020.030.000" />
+      <column name="nombre" value="Comité científico y/o organizador internacional" />
+      <column name="prioridad" valueNumeric="2" />
+      <column name="tipo_baremo" value="ORG_ACT_COMITE_CIENTIFICO_ORGANIZ_INTERNACIONAL" />
+      <column name="tipo_fuente" value="CVN" />
+      <column name="tipo_puntos" value="PRINCIPAL" />
+      <column name="configuracion_baremo_padre_id" valueComputed="(select id from ${schemaPrefix}configuracion_baremo where nombre='Organización de actividades de I+D+i')" />
+      <column name="mostrar_puntos" valueBoolean="true" />
+    </insert>
+    <insert tableName="configuracion_baremo">
+      <column name="id" valueSequenceNext="configuracion_baremo_seq" />
+      <column name="activo" valueBoolean="true" />
+      <column name="epigrafe_cvn" value="060.020.030.000" />
+      <column name="nombre" value="Comité científico y/o organizador nacional - Presidente" />
+      <column name="prioridad" valueNumeric="3" />
+      <column name="tipo_baremo" value="ORG_ACT_COMITE_CIENTIFICO_ORGANIZ_NACIONAL_PRESIDENTE" />
+      <column name="tipo_fuente" value="CVN" />
+      <column name="tipo_puntos" value="PRINCIPAL" />
+      <column name="configuracion_baremo_padre_id" valueComputed="(select id from ${schemaPrefix}configuracion_baremo where nombre='Organización de actividades de I+D+i')" />
+      <column name="mostrar_puntos" valueBoolean="true" />
+    </insert>
+    <insert tableName="configuracion_baremo">
+      <column name="id" valueSequenceNext="configuracion_baremo_seq" />
+      <column name="activo" valueBoolean="true" />
+      <column name="epigrafe_cvn" value="060.020.030.000" />
+      <column name="nombre" value="Comité científico y/o organizador internacional - Presidente" />
+      <column name="prioridad" valueNumeric="4" />
+      <column name="tipo_baremo" value="ORG_ACT_COMITE_CIENTIFICO_ORGANIZ_INTERNACIONAL_PRESIDENTE" />
+      <column name="tipo_fuente" value="CVN" />
+      <column name="tipo_puntos" value="PRINCIPAL" />
+      <column name="configuracion_baremo_padre_id" valueComputed="(select id from ${schemaPrefix}configuracion_baremo where nombre='Organización de actividades de I+D+i')" />
+      <column name="mostrar_puntos" valueBoolean="true" />
+    </insert>
+    <insert tableName="configuracion_baremo">
+      <column name="id" valueSequenceNext="configuracion_baremo_seq" />
+      <column name="activo" valueBoolean="true" />
+      <column name="epigrafe_cvn" value="null" />
+      <column name="nombre" value="Invenciones" />
+      <column name="prioridad" valueNumeric="null" />
+      <column name="tipo_baremo" value="INVENCIONES" />
+      <column name="tipo_fuente" value="null" />
+      <column name="tipo_puntos" value="null" />
+      <column name="configuracion_baremo_padre_id" valueComputed="(select id from ${schemaPrefix}configuracion_baremo where nombre='Producción científica')" />
+      <column name="mostrar_puntos" valueBoolean="true" />
+    </insert>
+    <insert tableName="configuracion_baremo">
+      <column name="id" valueSequenceNext="configuracion_baremo_seq" />
+      <column name="activo" valueBoolean="true" />
+      <column name="epigrafe_cvn" value="050.030.010.000" />
+      <column name="nombre" value="Patente - Nacional" />
+      <column name="prioridad" valueNumeric="1" />
+      <column name="tipo_baremo" value="INVENCION_PATENTE_NACIONAL" />
+      <column name="tipo_fuente" value="SGI" />
+      <column name="tipo_puntos" value="PRINCIPAL" />
+      <column name="configuracion_baremo_padre_id" valueComputed="(select id from ${schemaPrefix}configuracion_baremo where nombre='Invenciones')" />
+      <column name="mostrar_puntos" valueBoolean="true" />
+    </insert>
+    <insert tableName="configuracion_baremo">
+      <column name="id" valueSequenceNext="configuracion_baremo_seq" />
+      <column name="activo" valueBoolean="true" />
+      <column name="epigrafe_cvn" value="050.030.010.000" />
+      <column name="nombre" value="Patente - Internacional" />
+      <column name="prioridad" valueNumeric="1" />
+      <column name="tipo_baremo" value="INVENCION_PATENTE_INTERNACIONAL" />
+      <column name="tipo_fuente" value="SGI" />
+      <column name="tipo_puntos" value="PRINCIPAL" />
+      <column name="configuracion_baremo_padre_id" valueComputed="(select id from ${schemaPrefix}configuracion_baremo where nombre='Invenciones')" />
+      <column name="mostrar_puntos" valueBoolean="true" />
+    </insert>
+    <insert tableName="configuracion_baremo">
+      <column name="id" valueSequenceNext="configuracion_baremo_seq" />
+      <column name="activo" valueBoolean="true" />
+      <column name="epigrafe_cvn" value="050.030.010.000" />
+      <column name="nombre" value="Otro registro de la propiedad - Nacional" />
+      <column name="prioridad" valueNumeric="1" />
+      <column name="tipo_baremo" value="INVENCION_OTRO_NACIONAL" />
+      <column name="tipo_fuente" value="SGI" />
+      <column name="tipo_puntos" value="PRINCIPAL" />
+      <column name="configuracion_baremo_padre_id" valueComputed="(select id from ${schemaPrefix}configuracion_baremo where nombre='Invenciones')" />
+      <column name="mostrar_puntos" valueBoolean="true" />
+    </insert>
+    <insert tableName="configuracion_baremo">
+      <column name="id" valueSequenceNext="configuracion_baremo_seq" />
+      <column name="activo" valueBoolean="true" />
+      <column name="epigrafe_cvn" value="050.030.010.000" />
+      <column name="nombre" value="Otro registro de la propiedad - Internacional" />
+      <column name="prioridad" valueNumeric="1" />
+      <column name="tipo_baremo" value="INVENCION_OTRO_INTERNACIONAL" />
+      <column name="tipo_fuente" value="SGI" />
+      <column name="tipo_puntos" value="PRINCIPAL" />
+      <column name="configuracion_baremo_padre_id" valueComputed="(select id from ${schemaPrefix}configuracion_baremo where nombre='Invenciones')" />
+      <column name="mostrar_puntos" valueBoolean="true" />
+    </insert>
+    <insert tableName="configuracion_baremo">
+      <column name="id" valueSequenceNext="configuracion_baremo_seq" />
+      <column name="activo" valueBoolean="true" />
+      <column name="epigrafe_cvn" value="050.030.010.000" />
+      <column name="nombre" value="Licencia explotación" />
+      <column name="prioridad" valueNumeric="1" />
+      <column name="tipo_baremo" value="INVENCION_LICENCIA_EXPLOTACION" />
+      <column name="tipo_fuente" value="SGI" />
+      <column name="tipo_puntos" value="EXTRA" />
+      <column name="configuracion_baremo_padre_id" valueComputed="(select id from ${schemaPrefix}configuracion_baremo where nombre='Invenciones')" />
+      <column name="mostrar_puntos" valueBoolean="true" />
+    </insert>
+  </changeSet>
+
+  <changeSet context="!test" author="master" id="0000000000001-mapeo_tipos">
+    <insert tableName="mapeo_tipos">
+      <column name="id" valueSequenceNext="mapeo_tipos_seq" />
+      <column name="codigo_cvn" value="050.020.010.040" />
+      <column name="id_tipo_ref" valueNumeric="1" />
+      <column name="valor" value="OTHERS" />
+    </insert>
+    <insert tableName="mapeo_tipos">
+      <column name="id" valueSequenceNext="mapeo_tipos_seq" />
+      <column name="codigo_cvn" value="050.020.010.040" />
+      <column name="id_tipo_ref" valueNumeric="2" />
+      <column name="valor" value="OTHERS" />
+    </insert>
+    <insert tableName="mapeo_tipos">
+      <column name="id" valueSequenceNext="mapeo_tipos_seq" />
+      <column name="codigo_cvn" value="050.020.010.040" />
+      <column name="id_tipo_ref" valueNumeric="3" />
+      <column name="valor" value="000" />
+    </insert>
+    <insert tableName="mapeo_tipos">
+      <column name="id" valueSequenceNext="mapeo_tipos_seq" />
+      <column name="codigo_cvn" value="050.020.010.040" />
+      <column name="id_tipo_ref" valueNumeric="4" />
+      <column name="valor" value="010" />
+    </insert>
+    <insert tableName="mapeo_tipos">
+      <column name="id" valueSequenceNext="mapeo_tipos_seq" />
+      <column name="codigo_cvn" value="050.020.010.040" />
+      <column name="id_tipo_ref" valueNumeric="5" />
+      <column name="valor" value="020" />
+    </insert>
+    <insert tableName="mapeo_tipos">
+      <column name="id" valueSequenceNext="mapeo_tipos_seq" />
+      <column name="codigo_cvn" value="050.020.010.040" />
+      <column name="id_tipo_ref" valueNumeric="6" />
+      <column name="valor" value="030" />
+    </insert>
+    <insert tableName="mapeo_tipos">
+      <column name="id" valueSequenceNext="mapeo_tipos_seq" />
+      <column name="codigo_cvn" value="050.030.010.030" />
+      <column name="id_tipo_ref" valueNumeric="1" />
+      <column name="valor" value="141" />
+    </insert>
+    <insert tableName="mapeo_tipos">
+      <column name="id" valueSequenceNext="mapeo_tipos_seq" />
+      <column name="codigo_cvn" value="050.030.010.030" />
+      <column name="id_tipo_ref" valueNumeric="2" />
+      <column name="valor" value="126" />
+    </insert>
+    <insert tableName="mapeo_tipos">
+      <column name="id" valueSequenceNext="mapeo_tipos_seq" />
+      <column name="codigo_cvn" value="050.030.010.030" />
+      <column name="id_tipo_ref" valueNumeric="3" />
+      <column name="valor" value="109" />
+    </insert>
+    <insert tableName="mapeo_tipos">
+      <column name="id" valueSequenceNext="mapeo_tipos_seq" />
+      <column name="codigo_cvn" value="050.030.010.030" />
+      <column name="id_tipo_ref" valueNumeric="4" />
+      <column name="valor" value="122" />
+    </insert>
+    <insert tableName="mapeo_tipos">
+      <column name="id" valueSequenceNext="mapeo_tipos_seq" />
+      <column name="codigo_cvn" value="050.030.010.030" />
+      <column name="id_tipo_ref" valueNumeric="5" />
+      <column name="valor" value="122" />
+    </insert>
+    <insert tableName="mapeo_tipos">
+      <column name="id" valueSequenceNext="mapeo_tipos_seq" />
+      <column name="codigo_cvn" value="050.030.010.030" />
+      <column name="id_tipo_ref" valueNumeric="6" />
+      <column name="valor" value="122" />
+    </insert>
+    <insert tableName="mapeo_tipos">
+      <column name="id" valueSequenceNext="mapeo_tipos_seq" />
+      <column name="codigo_cvn" value="050.030.010.030" />
+      <column name="id_tipo_ref" valueNumeric="7" />
+      <column name="valor" value="OTHERS" />
+    </insert>
+    <insert tableName="mapeo_tipos">
+      <column name="id" valueSequenceNext="mapeo_tipos_seq" />
+      <column name="codigo_cvn" value="050.030.010.030" />
+      <column name="id_tipo_ref" valueNumeric="8" />
+      <column name="valor" value="OTHERS" />
+    </insert>
+    <insert tableName="mapeo_tipos">
+      <column name="id" valueSequenceNext="mapeo_tipos_seq" />
+      <column name="codigo_cvn" value="050.030.010.030" />
+      <column name="id_tipo_ref" valueNumeric="9" />
+      <column name="valor" value="OTHERS" />
+    </insert>
+    <insert tableName="mapeo_tipos">
+      <column name="id" valueSequenceNext="mapeo_tipos_seq" />
+      <column name="codigo_cvn" value="050.030.010.160" />
+      <column name="id_tipo_ref" valueNumeric="1" />
+      <column name="valor" value="true" />
+    </insert>
+    <insert tableName="mapeo_tipos">
+      <column name="id" valueSequenceNext="mapeo_tipos_seq" />
+      <column name="codigo_cvn" value="050.030.010.160" />
+      <column name="id_tipo_ref" valueNumeric="2" />
+      <column name="valor" value="false" />
+    </insert>
+    <insert tableName="mapeo_tipos">
+      <column name="id" valueSequenceNext="mapeo_tipos_seq" />
+      <column name="codigo_cvn" value="050.030.010.160" />
+      <column name="id_tipo_ref" valueNumeric="3" />
+      <column name="valor" value="false" />
+    </insert>
+    <insert tableName="mapeo_tipos">
+      <column name="id" valueSequenceNext="mapeo_tipos_seq" />
+      <column name="codigo_cvn" value="050.030.010.160" />
+      <column name="id_tipo_ref" valueNumeric="4" />
+      <column name="valor" value="false" />
+    </insert>
+    <insert tableName="mapeo_tipos">
+      <column name="id" valueSequenceNext="mapeo_tipos_seq" />
+      <column name="codigo_cvn" value="050.030.010.160" />
+      <column name="id_tipo_ref" valueNumeric="5" />
+      <column name="valor" value="false" />
+    </insert>
+    <insert tableName="mapeo_tipos">
+      <column name="id" valueSequenceNext="mapeo_tipos_seq" />
+      <column name="codigo_cvn" value="050.030.010.160" />
+      <column name="id_tipo_ref" valueNumeric="6" />
+      <column name="valor" value="false" />
+    </insert>
+    <insert tableName="mapeo_tipos">
+      <column name="id" valueSequenceNext="mapeo_tipos_seq" />
+      <column name="codigo_cvn" value="050.030.010.160" />
+      <column name="id_tipo_ref" valueNumeric="7" />
+      <column name="valor" value="false" />
+    </insert>
+    <insert tableName="mapeo_tipos">
+      <column name="id" valueSequenceNext="mapeo_tipos_seq" />
+      <column name="codigo_cvn" value="050.030.010.170" />
+      <column name="id_tipo_ref" valueNumeric="1" />
+      <column name="valor" value="false" />
+    </insert>
+    <insert tableName="mapeo_tipos">
+      <column name="id" valueSequenceNext="mapeo_tipos_seq" />
+      <column name="codigo_cvn" value="050.030.010.170" />
+      <column name="id_tipo_ref" valueNumeric="2" />
+      <column name="valor" value="false" />
+    </insert>
+    <insert tableName="mapeo_tipos">
+      <column name="id" valueSequenceNext="mapeo_tipos_seq" />
+      <column name="codigo_cvn" value="050.030.010.170" />
+      <column name="id_tipo_ref" valueNumeric="3" />
+      <column name="valor" value="true" />
+    </insert>
+    <insert tableName="mapeo_tipos">
+      <column name="id" valueSequenceNext="mapeo_tipos_seq" />
+      <column name="codigo_cvn" value="050.030.010.170" />
+      <column name="id_tipo_ref" valueNumeric="4" />
+      <column name="valor" value="false" />
+    </insert>
+    <insert tableName="mapeo_tipos">
+      <column name="id" valueSequenceNext="mapeo_tipos_seq" />
+      <column name="codigo_cvn" value="050.030.010.170" />
+      <column name="id_tipo_ref" valueNumeric="5" />
+      <column name="valor" value="false" />
+    </insert>
+    <insert tableName="mapeo_tipos">
+      <column name="id" valueSequenceNext="mapeo_tipos_seq" />
+      <column name="codigo_cvn" value="050.030.010.170" />
+      <column name="id_tipo_ref" valueNumeric="6" />
+      <column name="valor" value="false" />
+    </insert>
+    <insert tableName="mapeo_tipos">
+      <column name="id" valueSequenceNext="mapeo_tipos_seq" />
+      <column name="codigo_cvn" value="050.030.010.170" />
+      <column name="id_tipo_ref" valueNumeric="7" />
+      <column name="valor" value="false" />
+    </insert>
+  </changeSet>
+
+  <changeSet context="!test" author="master" id="0000000000001-configuracion">
+    <insert tableName="configuracion">
+      <column name="id" valueSequenceNext="configuracion_campo_seq" />
+      <column name="horas_proceso_baremacion" valueNumeric="5" />
+    </insert>
+  </changeSet>
+
+</databaseChangeLog>

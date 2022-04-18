@@ -1,12 +1,11 @@
-import { IProyecto } from '@core/models/csp/proyecto';
 import { IDatoEconomico } from '@core/models/sge/dato-economico';
 import { IProyectoSge } from '@core/models/sge/proyecto-sge';
 import { ProyectoAnualidadService } from '@core/services/csp/proyecto-anualidad/proyecto-anualidad.service';
 import { ProyectoService } from '@core/services/csp/proyecto.service';
 import { EjecucionEconomicaService } from '@core/services/sge/ejecucion-economica.service';
-import { PersonaService } from '@core/services/sgp/persona.service';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { IRelacionEjecucionEconomicaWithResponsables } from '../../ejecucion-economica.action.service';
 import { IColumnDefinition } from '../desglose-economico.fragment';
 import { EjecucionPresupuestariaFragment } from '../ejecucion-presupuestaria.fragment';
 
@@ -15,13 +14,12 @@ export class EjecucionPresupuestariaEstadoActualFragment extends EjecucionPresup
   constructor(
     key: number,
     proyectoSge: IProyectoSge,
-    proyectosRelacionados: IProyecto[],
+    relaciones: IRelacionEjecucionEconomicaWithResponsables[],
     proyectoService: ProyectoService,
-    personaService: PersonaService,
     proyectoAnualidadService: ProyectoAnualidadService,
     private ejecucionEconomicaService: EjecucionEconomicaService
   ) {
-    super(key, proyectoSge, proyectosRelacionados, proyectoService, personaService, proyectoAnualidadService);
+    super(key, proyectoSge, relaciones, proyectoService, proyectoAnualidadService);
   }
 
   protected onInitialize(): void {

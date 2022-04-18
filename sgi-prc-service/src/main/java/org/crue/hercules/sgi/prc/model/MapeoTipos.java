@@ -1,14 +1,17 @@
 package org.crue.hercules.sgi.prc.model;
 
 import javax.persistence.Column;
+import javax.persistence.Convert;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 
-import org.crue.hercules.sgi.prc.model.CampoProduccionCientifica.CodigoCVN;
+import org.crue.hercules.sgi.prc.enums.CodigoCVN;
+import org.crue.hercules.sgi.prc.model.converter.CodigoCVNConverter;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -17,7 +20,10 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = MapeoTipos.TABLE_NAME)
+@Table(name = MapeoTipos.TABLE_NAME, uniqueConstraints = {
+    @UniqueConstraint(columnNames = {
+        "id_tipo_ref",
+        "codigo_cvn" }, name = "UK_MAPEOTIPOS_IDTIPOREF_CODIGOCVN") })
 @Data
 @EqualsAndHashCode(callSuper = false)
 @NoArgsConstructor
@@ -40,11 +46,12 @@ public class MapeoTipos extends BaseEntity {
   @Column(name = "id_tipo_ref", nullable = false)
   private Long idTipoRef;
 
-  @Column(name = "valor", length = VALOR_MAPEO_TIPOS, nullable = false)
+  @Column(name = "valor", length = VALOR_MAPEO_TIPOS_LENGTH, nullable = false)
   private String valor;
 
   /** CampoCVN */
   @Column(name = "codigo_cvn", length = CAMPO_CVN_LENGTH, nullable = false)
+  @Convert(converter = CodigoCVNConverter.class)
   private CodigoCVN codigoCVN;
 
 }

@@ -13,7 +13,8 @@ import { CspSharedModule } from '../shared/csp-shared.module';
 import { CambioEstadoModalComponent } from './modals/cambio-estado-modal/cambio-estado-modal.component';
 import { SolicitudAreaTematicaModalComponent } from './modals/solicitud-area-tematica-modal/solicitud-area-tematica-modal.component';
 import { SolicitudCrearProyectoModalComponent } from './modals/solicitud-crear-proyecto-modal/solicitud-crear-proyecto-modal.component';
-import { SolicitiudHitosModalComponent } from './modals/solicitud-hitos-modal/solicitud-hitos-modal.component';
+import { SolicitudGrupoModalComponent } from './modals/solicitud-grupo-modal/solicitud-grupo-modal.component';
+import { SolicitudHitosModalComponent } from './modals/solicitud-hitos-modal/solicitud-hitos-modal.component';
 import { SolicitudListadoExportModalComponent } from './modals/solicitud-listado-export-modal/solicitud-listado-export-modal.component';
 import { SolicitudModalidadEntidadConvocanteModalComponent } from './modals/solicitud-modalidad-entidad-convocante-modal/solicitud-modalidad-entidad-convocante-modal.component';
 import { SolicitudProyectoPresupuestoListadoExportModalComponent } from './modals/solicitud-proyecto-presupuesto-listado-export-modal/solicitud-proyecto-presupuesto-listado-export-modal.component';
@@ -60,7 +61,7 @@ import { SolicitudRoutingModule } from './solicitud-routing.module';
     SolicitudModalidadEntidadConvocanteModalComponent,
     SolicitudHistoricoEstadosComponent,
     SolicitudDocumentosComponent,
-    SolicitiudHitosModalComponent,
+    SolicitudHitosModalComponent,
     SolicitudHitosComponent,
     SolicitudProyectoFichaGeneralComponent,
     SolicitudAreaTematicaModalComponent,
@@ -76,7 +77,8 @@ import { SolicitudRoutingModule } from './solicitud-routing.module';
     SolicitudProyectoResponsableEconomicoComponent,
     SolicitudProyectoResponsableEconomicoModalComponent,
     SolicitudAutoevaluacionComponent,
-    SolicitudProyectoPresupuestoListadoExportModalComponent
+    SolicitudProyectoPresupuestoListadoExportModalComponent,
+    SolicitudGrupoModalComponent,
   ],
   imports: [
     CommonModule,

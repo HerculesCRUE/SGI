@@ -131,9 +131,10 @@ export class ProyectoEntidadConvocanteModalComponent extends
   ngOnInit() {
     super.ngOnInit();
     this.setupI18N();
-    const subcription = this.programaService.findAllPlan().subscribe(
-      list => this.planes$.next(list.items)
-    );
+    const subcription = this.programaService.findAllPlan().pipe(
+      tap((response) => this.planes$.next(response.items)),
+      tap(() => this.loadTreePrograma())
+    ).subscribe();
     this.subscriptions.push(subcription);
   }
 
@@ -150,7 +151,7 @@ export class ProyectoEntidadConvocanteModalComponent extends
 
     this.translate.get(
       PROYECTO_ENTIDAD_CONVOCANTE_PROGRAMA_KEY
-    ).subscribe((value) => this.msgParamProgramaEntity = { entity: value, ...MSG_PARAMS.GENDER.MALE });
+    ).subscribe((value) => this.msgParamProgramaEntity = { entity: value, ...MSG_PARAMS.GENDER.FEMALE });
 
     if (!this.create) {
       this.translate.get(
@@ -177,6 +178,9 @@ export class ProyectoEntidadConvocanteModalComponent extends
   }
 
   private loadTreePrograma() {
+    this.updateProgramas([]);
+    this.nodeMap.clear();
+
     if (this.data.proyectoEntidadConvocante.programaConvocatoria) {
       const node = new NodePrograma(this.data.proyectoEntidadConvocante.programaConvocatoria);
       this.nodeMap.set(node.programa.id, node);

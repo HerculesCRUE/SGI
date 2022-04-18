@@ -36,7 +36,7 @@ import org.springframework.data.jpa.domain.Specification;
  * IndiceImpactoServiceTest
  */
 @Import({ IndiceImpactoService.class, ApplicationContextSupport.class })
-public class IndiceImpactoServiceTest extends BaseServiceTest {
+class IndiceImpactoServiceTest extends BaseServiceTest {
 
   private static final String OTRA_FUENTE_IMPACTO_PREFIX = "Otra-fuente-impacto-";
   private static final TipoFuenteImpacto DEFAULT_DATA_FUENTE_IMPACTO = TipoFuenteImpacto.OTHERS;
@@ -72,7 +72,7 @@ public class IndiceImpactoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void findAll_ReturnsPage() {
+  void findAll_ReturnsPage() {
     // given: Una lista con 37 IndiceImpacto
     List<IndiceImpacto> indicesImpacto = new ArrayList<>();
     for (long i = 1; i <= 37; i++) {
@@ -114,7 +114,7 @@ public class IndiceImpactoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void findById_ReturnsIndiceImpacto() {
+  void findById_ReturnsIndiceImpacto() {
     // given: IndiceImpacto con el id buscado
     Long idBuscado = 1L;
     BDDMockito.given(repository.findById(idBuscado)).willReturn(Optional.of(generarMockIndiceImpacto(idBuscado)));
@@ -136,7 +136,7 @@ public class IndiceImpactoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void findById_WithIdNotExist_ThrowsIndiceImpactoNotFoundException() {
+  void findById_WithIdNotExist_ThrowsIndiceImpactoNotFoundException() {
     // given: Ningun IndiceImpacto con el id buscado
     Long idBuscado = 33L;
     BDDMockito.given(repository.findById(ArgumentMatchers.<Long>any())).willReturn(Optional.empty());
@@ -148,7 +148,7 @@ public class IndiceImpactoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void findAllByProduccionCientificaId_ReturnsList() {
+  void findAllByProduccionCientificaId_ReturnsList() {
     // given: Una lista con 7 IndiceImpacto y un produccionCientificaId
     Long produccionCientificaId = 1L;
     List<IndiceImpacto> indicesImpacto = new ArrayList<>();

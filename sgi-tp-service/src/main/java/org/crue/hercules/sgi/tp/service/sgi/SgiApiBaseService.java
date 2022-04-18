@@ -40,6 +40,9 @@ public abstract class SgiApiBaseService {
       case PII:
         serviceURL = restApiProperties.getPiiUrl();
         break;
+      case PRC:
+        serviceURL = restApiProperties.getPrcUrl();
+        break;
       case REL:
         serviceURL = restApiProperties.getRelUrl();
         break;

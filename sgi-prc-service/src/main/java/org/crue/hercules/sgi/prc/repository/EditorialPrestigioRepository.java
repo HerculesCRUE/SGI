@@ -1,6 +1,7 @@
 package org.crue.hercules.sgi.prc.repository;
 
 import org.crue.hercules.sgi.prc.model.EditorialPrestigio;
+import org.crue.hercules.sgi.prc.repository.custom.CustomEditorialPrestigioRepository;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Repository;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface EditorialPrestigioRepository
-    extends JpaRepository<EditorialPrestigio, Long>, JpaSpecificationExecutor<EditorialPrestigio> {
+    extends JpaRepository<EditorialPrestigio, Long>, JpaSpecificationExecutor<EditorialPrestigio>,
+    CustomEditorialPrestigioRepository {
 
 }

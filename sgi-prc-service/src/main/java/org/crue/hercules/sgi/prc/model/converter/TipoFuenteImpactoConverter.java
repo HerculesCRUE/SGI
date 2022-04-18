@@ -7,7 +7,7 @@ import javax.persistence.Converter;
 
 import org.crue.hercules.sgi.prc.enums.TipoFuenteImpacto;
 
-@Converter(autoApply = true)
+@Converter
 public class TipoFuenteImpactoConverter implements AttributeConverter<TipoFuenteImpacto, String> {
 
   @Override
@@ -15,7 +15,7 @@ public class TipoFuenteImpactoConverter implements AttributeConverter<TipoFuente
     if (enumType == null) {
       return null;
     }
-    return enumType.getInternValue();
+    return enumType.getCode();
   }
 
   @Override
@@ -25,7 +25,7 @@ public class TipoFuenteImpactoConverter implements AttributeConverter<TipoFuente
     }
 
     return Stream.of(TipoFuenteImpacto.values())
-        .filter(c -> c.getInternValue().equals(code))
+        .filter(c -> c.getCode().equals(code))
         .findFirst()
         .orElseThrow(IllegalArgumentException::new);
   }

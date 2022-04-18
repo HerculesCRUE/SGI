@@ -10,15 +10,16 @@ import { IDatoEconomicoDetalle } from '@core/models/sge/dato-economico-detalle';
 import { FxFlexProperties } from '@core/models/shared/flexLayout/fx-flex-properties';
 import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-properties';
 import { ProyectoService } from '@core/services/csp/proyecto.service';
-import { PersonaService } from '@core/services/sgp/persona.service';
 import { SnackBarService } from '@core/services/snack-bar.service';
 import { TranslateService } from '@ngx-translate/core';
+import { from, Observable, of } from 'rxjs';
+import { mergeMap, toArray } from 'rxjs/operators';
 
 const IMPORTE_INSCRIPCION_KEY = marker('csp.ejecucion-economica.facturas-justificantes.importe-inscripcion');
 const PROYECTO_KEY = marker('csp.ejecucion-economica.facturas-justificantes.proyecto-sgi');
 
 export interface DatoEconomicoDetalleModalData extends IDatoEconomicoDetalle {
-  proyectosSgi: IProyecto[];
+  proyectosSgiIds: number[];
   proyecto: IProyecto;
   gastoProyecto: IGastoProyecto;
   vinculacion: string;
@@ -38,11 +39,12 @@ export class ViajesDietasModalComponent
   msgParamImporteInscripcion = {};
   msgParamProyecto = {};
 
+  proyectos$: Observable<IProyecto[]>;
+
   constructor(
     protected snackBarService: SnackBarService,
     public matDialogRef: MatDialogRef<ViajesDietasModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data: DatoEconomicoDetalleModalData,
-    private personaService: PersonaService,
     private proyectoService: ProyectoService,
     private readonly translate: TranslateService
   ) {
@@ -69,12 +71,13 @@ export class ViajesDietasModalComponent
   ngOnInit(): void {
     super.ngOnInit();
     this.setupI18N();
+    this.initProyectos();
   }
 
   protected getFormGroup(): FormGroup {
     const proyecto = this.data.gastoProyecto?.proyectoId ? { id: this.data.gastoProyecto?.proyectoId } as IProyecto : undefined;
 
-    const formGroup = new FormGroup(
+    return new FormGroup(
       {
         proyecto: new FormControl({ value: proyecto, disabled: !!this.data.gastoProyecto?.id }),
         fechaCongreso: new FormControl(this.data.gastoProyecto?.fechaCongreso),
@@ -89,8 +92,6 @@ export class ViajesDietasModalComponent
           ])
       }
     );
-
-    return formGroup;
   }
 
   protected getDatosForm(): DatoEconomicoDetalleModalData {
@@ -109,6 +110,18 @@ export class ViajesDietasModalComponent
 
   displayerProyecto(proyecto: IProyecto): string {
     return proyecto?.titulo;
+  }
+
+  private initProyectos(): void {
+    if (this.data.proyectosSgiIds) {
+      this.proyectos$ = from(this.data.proyectosSgiIds).pipe(
+        mergeMap(proyectoId => this.proyectoService.findById(proyectoId)),
+        toArray()
+      )
+    } else {
+      this.proyectos$ = of([]);
+    }
+
   }
 
   private setupI18N(): void {

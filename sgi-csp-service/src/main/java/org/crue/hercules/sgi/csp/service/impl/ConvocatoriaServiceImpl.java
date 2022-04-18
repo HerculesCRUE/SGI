@@ -170,6 +170,7 @@ public class ConvocatoriaServiceImpl implements ConvocatoriaService {
       data.setAmbitoGeografico(validConvocatoria.getAmbitoGeografico());
       data.setClasificacionCVN(validConvocatoria.getClasificacionCVN());
       data.setActivo(validConvocatoria.getActivo());
+      data.setExcelencia(validConvocatoria.getExcelencia());
 
       Convocatoria returnValue = repository.save(validConvocatoria);
 

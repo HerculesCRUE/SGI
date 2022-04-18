@@ -15,7 +15,7 @@ import { StatusWrapper } from '@core/utils/status-wrapper';
 import { TranslateService } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
-import { SolicitiudHitosModalComponent, SolicitudHitosModalComponentData } from '../../modals/solicitud-hitos-modal/solicitud-hitos-modal.component';
+import { SolicitudHitosModalComponent, SolicitudHitosModalComponentData } from '../../modals/solicitud-hitos-modal/solicitud-hitos-modal.component';
 import { SolicitudActionService } from '../../solicitud.action.service';
 import { SolicitudHitosFragment } from './solicitud-hitos.fragment';
 
@@ -114,23 +114,27 @@ export class SolicitudHitosComponent extends FragmentComponent implements OnInit
       hitos: this.dataSource.data.filter(existing => existing !== wrapper).map(hito => hito.value),
       hito: wrapper ? wrapper.value : {} as ISolicitudHito,
       idModeloEjecucion: this.actionService.modeloEjecucionId,
-      readonly: this.formPart.readonly
+      readonly: this.formPart.readonly,
+      unidadGestionId: this.actionService.solicitud?.unidadGestion?.id,
+      tituloSolicitud: this.actionService.solicitud?.titulo,
+      tituloConvocatoria: this.actionService.convocatoriaTitulo
     };
     const config = {
       panelClass: 'sgi-dialog-container',
+      minWidth: '60vw',
       data
     };
-    const dialogRef = this.matDialog.open(SolicitiudHitosModalComponent, config);
+    const dialogRef = this.matDialog.open(SolicitudHitosModalComponent, config);
     dialogRef.afterClosed().subscribe(
-      (convocatoriaHito) => {
-        if (convocatoriaHito) {
+      (modalData: SolicitudHitosModalComponentData) => {
+        if (modalData) {
           if (wrapper) {
             if (!wrapper.created) {
               wrapper.setEdited();
             }
             this.formPart.setChanges(true);
           } else {
-            this.formPart.addHito(convocatoriaHito);
+            this.formPart.addHito(modalData.hito);
           }
         }
       }

@@ -1,6 +1,7 @@
 package org.crue.hercules.sgi.prc.model;
 
 import javax.persistence.Column;
+import javax.persistence.Convert;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -11,8 +12,10 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
-import org.crue.hercules.sgi.prc.model.CampoProduccionCientifica.CodigoCVN;
-import org.crue.hercules.sgi.prc.model.ProduccionCientifica.EpigrafeCVN;
+import org.crue.hercules.sgi.prc.enums.CodigoCVN;
+import org.crue.hercules.sgi.prc.enums.EpigrafeCVN;
+import org.crue.hercules.sgi.prc.model.converter.CodigoCVNConverter;
+import org.crue.hercules.sgi.prc.model.converter.EpigrafeCVNConverter;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -56,6 +59,7 @@ public class ConfiguracionCampo extends BaseEntity {
 
   /** CampoCVN */
   @Column(name = "codigo_cvn", length = CAMPO_CVN_LENGTH, nullable = false)
+  @Convert(converter = CodigoCVNConverter.class)
   private CodigoCVN codigoCVN;
 
   /** TipoFormato */
@@ -73,6 +77,7 @@ public class ConfiguracionCampo extends BaseEntity {
 
   /** EpigrafeCVN */
   @Column(name = "epigrafe_cvn", length = EPIGRAFE_LENGTH, nullable = false)
+  @Convert(converter = EpigrafeCVNConverter.class)
   private EpigrafeCVN epigrafeCVN;
 
   /** validacionAdicional */

@@ -1,15 +1,17 @@
 package org.crue.hercules.sgi.csp.repository;
 
-import java.time.Instant;
-import java.util.List;
-
 import org.crue.hercules.sgi.csp.model.Proyecto;
 import org.crue.hercules.sgi.csp.model.ProyectoEquipo;
+import org.crue.hercules.sgi.csp.repository.custom.CustomProyectoEquipoRepository;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
+import java.time.Instant;
+import java.util.List;
+
 public interface ProyectoEquipoRepository
-    extends JpaRepository<ProyectoEquipo, Long>, JpaSpecificationExecutor<ProyectoEquipo> {
+    extends JpaRepository<ProyectoEquipo, Long>, JpaSpecificationExecutor<ProyectoEquipo>,
+    CustomProyectoEquipoRepository {
 
   /**
    * Devuelve un listado de {@link ProyectoEquipo} asociados a un
@@ -40,4 +42,7 @@ public interface ProyectoEquipoRepository
    */
   List<ProyectoEquipo> findAllByProyectoIdAndFechaFinGreaterThan(Long proyectoId, Instant fechaFin);
 
+  List<ProyectoEquipo> findByProyectoIdAndRolProyectoRolPrincipalTrue(Long proyectoId);
+
+  boolean existsByProyectoIdAndPersonaRefAndRolProyectoRolPrincipalTrue(Long proyectoId, String personaRef);
 }

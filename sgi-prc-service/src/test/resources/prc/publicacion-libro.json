@@ -1,17 +1,18 @@
 {
   "idRef": "PUB_LIBRO_1",
   "epigrafeCVN": "060.010.010.000",
+  "estado": "VALIDADO",
   "campos": [
     {
       "codigoCVN": "060.010.010.030",
       "valores": [
-        ""
+        "XXXXX"
       ]
     },
     {
       "codigoCVN": "060.010.010.140",
       "valores": [
-        "2020-02-10"
+        "2021-02-10"
       ]
     },
     {
@@ -144,7 +145,7 @@
     {
       "fuenteImpacto": "BCI",
       "indice": 2.5,
-      "anio": "2020",
+      "anio": "2021",
       "otraFuenteImpacto": "",
       "posicionPublicacion": 30,
       "numeroRevista": 100,

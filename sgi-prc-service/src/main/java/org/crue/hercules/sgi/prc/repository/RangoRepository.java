@@ -16,6 +16,6 @@ import org.springframework.stereotype.Repository;
 public interface RangoRepository
     extends JpaRepository<Rango, Long>, JpaSpecificationExecutor<Rango>, CustomRangoRepository {
 
-  List<Rango> findAllByConvocatoriaBaremacionId(Long convocatoriaBaremacionId);
+  List<Rango> findByConvocatoriaBaremacionId(Long convocatoriaBaremacionId);
 
 }

@@ -64,7 +64,6 @@ public class ProyectoEquipoRepositoryTest extends BaseRepositoryTest {
           .fechaInicio(Instant.now())
           .fechaFin(Instant.now())
           .personaRef("001")
-          .horasDedicacion(new Double(2))
           .build());
 
     entityManager.persistAndFlush(ProyectoEquipo.builder()
@@ -73,7 +72,6 @@ public class ProyectoEquipoRepositoryTest extends BaseRepositoryTest {
       .fechaInicio(Instant.now())
       .fechaFin(Instant.now())
       .personaRef("002")
-      .horasDedicacion(new Double(44))
       .build());
 
     entityManager.persistAndFlush(ProyectoEquipo.builder()
@@ -82,7 +80,6 @@ public class ProyectoEquipoRepositoryTest extends BaseRepositoryTest {
       .fechaInicio(Instant.now())
       .fechaFin(Instant.now())
       .personaRef("002")
-      .horasDedicacion(new Double(56))
       .build());
     // @formatter:on
 

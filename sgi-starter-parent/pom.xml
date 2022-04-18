@@ -10,7 +10,7 @@
 
   <groupId>org.crue.hercules.sgi</groupId>
   <artifactId>sgi-starter-parent</artifactId>
-  <version>0.0.7</version>
+  <version>0.0.8</version>
   <packaging>pom</packaging>
   <name>sgi-starter-parent</name>
   <description>Parent pom providing dependency and plugin management for applications built with Maven</description>
@@ -43,7 +43,7 @@
     <!-- spring-boot-starter-parent version to allow reconfiguration of spring boot dependencies defined there  -->
     <spring-boot-starter-parent.version>2.3.9.RELEASE</spring-boot-starter-parent.version>
     <!-- Dependencies versions (not defined in parent pom) -->
-    <classic-core.version>8.3.0.24-1314</classic-core.version>
+    <classic-core.version>8.3.0.24-1375</classic-core.version>
     <commons-collections4.version>4.4</commons-collections4.version>
     <commons-email.version>1.5</commons-email.version>
     <greenmail.version>1.6.5</greenmail.version>

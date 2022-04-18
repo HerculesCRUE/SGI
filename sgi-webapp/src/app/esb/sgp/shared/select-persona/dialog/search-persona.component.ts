@@ -4,13 +4,12 @@ import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dial
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
+import { DialogCommonComponent } from '@core/component/dialog-common.component';
 import { SearchModalData } from '@core/component/select-dialog/select-dialog.component';
-import { HttpProblem } from '@core/errors/http-problem';
 import { MSG_PARAMS } from '@core/i18n';
 import { IPersona } from '@core/models/sgp/persona';
 import { EmpresaService } from '@core/services/sgemp/empresa.service';
 import { PersonaService } from '@core/services/sgp/persona.service';
-import { SnackBarService } from '@core/services/snack-bar.service';
 import { TranslateService } from '@ngx-translate/core';
 import { SgiAuthService } from '@sgi/framework/auth';
 import { RSQLSgiRestFilter, RSQLSgiRestSort, SgiRestFilter, SgiRestFilterOperator, SgiRestSortDirection } from '@sgi/framework/http';
@@ -20,7 +19,6 @@ import { catchError, map, mergeMap, switchMap, tap, toArray } from 'rxjs/operato
 import { ACTION_MODAL_MODE } from 'src/app/esb/shared/formly-forms/core/base-formly-modal.component';
 import { IPersonaFormlyData, PersonaFormlyModalComponent } from '../../../formly-forms/persona-formly-modal/persona-formly-modal.component';
 
-const MSG_LISTADO_ERROR = marker('error.load');
 const TIPO_PERSONA_KEY = marker('sgp.persona');
 
 export interface SearchPersonaModalData extends SearchModalData {
@@ -33,7 +31,7 @@ export interface SearchPersonaModalData extends SearchModalData {
   templateUrl: './search-persona.component.html',
   styleUrls: ['./search-persona.component.scss']
 })
-export class SearchPersonaModalComponent implements OnInit, AfterViewInit {
+export class SearchPersonaModalComponent extends DialogCommonComponent implements OnInit, AfterViewInit {
 
   formGroup: FormGroup;
 
@@ -60,17 +58,18 @@ export class SearchPersonaModalComponent implements OnInit, AfterViewInit {
     @Inject(MAT_DIALOG_DATA) public data: SearchPersonaModalData,
     private personaService: PersonaService,
     private empresaService: EmpresaService,
-    private snackBarService: SnackBarService,
     private readonly translate: TranslateService,
     private readonly authService: SgiAuthService,
     private personaCreateMatDialog: MatDialog
   ) {
+    super(dialogRef);
     if (!!data.selectionDisableWith) {
       this._selectionDisableWith = data.selectionDisableWith;
     }
   }
 
   ngOnInit(): void {
+    super.ngOnInit();
     this.formGroup = new FormGroup({
       datosPersona: new FormControl(this.data.searchTerm)
     });
@@ -86,6 +85,7 @@ export class SearchPersonaModalComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit(): void {
+    super.ngAfterViewInit();
     merge(
       this.paginator.page,
       this.sort.sortChange
@@ -103,6 +103,7 @@ export class SearchPersonaModalComponent implements OnInit, AfterViewInit {
   }
 
   search(reset?: boolean) {
+    this.clearProblems();
     this.personas$ = this.personaService
       .findAll(
         {
@@ -160,12 +161,7 @@ export class SearchPersonaModalComponent implements OnInit, AfterViewInit {
           // On error reset pagination values
           this.paginator.firstPage();
           this.totalElementos = 0;
-          if (error instanceof HttpProblem) {
-            this.snackBarService.showError(error);
-          }
-          else {
-            this.snackBarService.showError(MSG_LISTADO_ERROR);
-          }
+          this.processError(error);
           return of([]);
         })
       );
@@ -192,8 +188,7 @@ export class SearchPersonaModalComponent implements OnInit, AfterViewInit {
     const controls = this.formGroup.controls;
 
     const rsqlFilter = new RSQLSgiRestFilter(
-      new RSQLSgiRestFilter('nombre', SgiRestFilterOperator.LIKE_ICASE, controls.datosPersona.value)
-        .or('apellidos', SgiRestFilterOperator.LIKE_ICASE, controls.datosPersona.value)
+      new RSQLSgiRestFilter('nombreApellidos', SgiRestFilterOperator.LIKE_ICASE, controls.datosPersona.value)
         .or('email', SgiRestFilterOperator.LIKE_ICASE, controls.datosPersona.value)
     );
 

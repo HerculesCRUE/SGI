@@ -2,23 +2,22 @@ package org.crue.hercules.sgi.prc.service;
 
 import javax.validation.Valid;
 
-import org.crue.hercules.sgi.framework.problem.message.ProblemMessage;
 import org.crue.hercules.sgi.framework.rsql.SgiRSQLJPASupport;
-import org.crue.hercules.sgi.framework.spring.context.support.ApplicationContextSupport;
 import org.crue.hercules.sgi.prc.exceptions.AcreditacionNotFoundException;
 import org.crue.hercules.sgi.prc.model.Acreditacion;
 import org.crue.hercules.sgi.prc.model.BaseEntity;
 import org.crue.hercules.sgi.prc.model.ProduccionCientifica;
 import org.crue.hercules.sgi.prc.repository.AcreditacionRepository;
 import org.crue.hercules.sgi.prc.repository.specification.AcreditacionSpecifications;
+import org.crue.hercules.sgi.prc.util.AssertHelper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.Assert;
 import org.springframework.validation.annotation.Validated;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -28,20 +27,10 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Transactional(readOnly = true)
 @Validated
+@RequiredArgsConstructor
 public class AcreditacionService {
 
-  private static final String PROBLEM_MESSAGE_PARAMETER_FIELD = "field";
-  private static final String PROBLEM_MESSAGE_PARAMETER_ENTITY = "entity";
-  private static final String PROBLEM_MESSAGE_NOTNULL = "notNull";
-  private static final String PROBLEM_MESSAGE_ISNULL = "isNull";
-  private static final String MESSAGE_KEY_NAME = "name";
-
   private final AcreditacionRepository repository;
-
-  public AcreditacionService(
-      AcreditacionRepository acreditacionRepository) {
-    this.repository = acreditacionRepository;
-  }
 
   /**
    * Guardar un nuevo {@link Acreditacion}.
@@ -56,13 +45,7 @@ public class AcreditacionService {
 
     log.debug("create(Acreditacion acreditacion) - start");
 
-    Assert.isNull(acreditacion.getId(),
-        // Defer message resolution untill is needed
-        () -> ProblemMessage.builder().key(Assert.class, PROBLEM_MESSAGE_ISNULL)
-            .parameter(PROBLEM_MESSAGE_PARAMETER_FIELD, ApplicationContextSupport.getMessage("id"))
-            .parameter(PROBLEM_MESSAGE_PARAMETER_ENTITY,
-                ApplicationContextSupport.getMessage(Acreditacion.class))
-            .build());
+    AssertHelper.idIsNull(acreditacion.getId(), Acreditacion.class);
 
     Acreditacion returnValue = repository.save(acreditacion);
 
@@ -82,13 +65,7 @@ public class AcreditacionService {
   public Acreditacion update(@Valid Acreditacion acreditacion) {
     log.debug("update(Acreditacion acreditacion) - start");
 
-    Assert.notNull(acreditacion.getId(),
-        // Defer message resolution untill is needed
-        () -> ProblemMessage.builder().key(Assert.class, PROBLEM_MESSAGE_NOTNULL)
-            .parameter(PROBLEM_MESSAGE_PARAMETER_FIELD, ApplicationContextSupport.getMessage("id"))
-            .parameter(PROBLEM_MESSAGE_PARAMETER_ENTITY,
-                ApplicationContextSupport.getMessage(Acreditacion.class))
-            .build());
+    AssertHelper.idNotNull(acreditacion.getId(), Acreditacion.class);
 
     return repository.findById(acreditacion.getId())
         .map(acreditacionExistente -> {
@@ -166,12 +143,8 @@ public class AcreditacionService {
   @Transactional
   public void delete(Long id) {
     log.debug("delete(Long id) - start");
-    Assert.notNull(id,
-        () -> ProblemMessage.builder().key(Assert.class, PROBLEM_MESSAGE_NOTNULL)
-            .parameter(PROBLEM_MESSAGE_PARAMETER_FIELD, ApplicationContextSupport.getMessage(MESSAGE_KEY_NAME))
-            .parameter(PROBLEM_MESSAGE_PARAMETER_ENTITY,
-                ApplicationContextSupport.getMessage(Acreditacion.class))
-            .build());
+    AssertHelper.idNotNull(id, Acreditacion.class);
+
     repository.deleteById(id);
     log.debug("delete(Long id) - end");
 

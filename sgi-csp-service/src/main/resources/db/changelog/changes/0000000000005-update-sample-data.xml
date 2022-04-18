@@ -91,6 +91,7 @@
   </changeSet>
 
   <changeSet context="dev" author="master" id="0000000000005-grupo">
+    <validCheckSum>8:a839611516e7310eb11d984bea3bdd9f</validCheckSum>
     <insert tableName="grupo">
       <column name="id" valueSequenceNext="grupo_seq" />
       <column name="nombre" value="Grupo investigación 1" />
@@ -99,7 +100,7 @@
       <column name="proyecto_sge_ref" value="34123" />
       <column name="codigo" value="U006-1" />
       <column name="departamento_origen_ref" value="U006" />
-      <column name="activo" value="true" />
+      <column name="activo" valueBoolean="true" />
     </insert>
     <insert tableName="grupo">
       <column name="id" valueSequenceNext="grupo_seq" />
@@ -109,7 +110,7 @@
       <column name="proyecto_sge_ref" value="33939" />
       <column name="codigo" value="E0B9-1" />
       <column name="departamento_origen_ref" value="E0B9" />
-      <column name="activo" value="true" />
+      <column name="activo" valueBoolean="true" />
     </insert>
   </changeSet>
 

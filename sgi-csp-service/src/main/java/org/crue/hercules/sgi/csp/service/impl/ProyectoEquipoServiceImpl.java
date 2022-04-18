@@ -7,14 +7,17 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import org.crue.hercules.sgi.csp.config.SgiConfigProperties;
 import org.crue.hercules.sgi.csp.exceptions.ProyectoEquipoNotFoundException;
 import org.crue.hercules.sgi.csp.exceptions.ProyectoNotFoundException;
 import org.crue.hercules.sgi.csp.model.Proyecto;
 import org.crue.hercules.sgi.csp.model.ProyectoEquipo;
+import org.crue.hercules.sgi.csp.model.RolProyecto;
 import org.crue.hercules.sgi.csp.repository.ProyectoEquipoRepository;
 import org.crue.hercules.sgi.csp.repository.ProyectoRepository;
 import org.crue.hercules.sgi.csp.repository.specification.ProyectoEquipoSpecifications;
 import org.crue.hercules.sgi.csp.service.ProyectoEquipoService;
+import org.crue.hercules.sgi.csp.util.AssertHelper;
 import org.crue.hercules.sgi.csp.util.ProyectoHelper;
 import org.crue.hercules.sgi.framework.rsql.SgiRSQLJPASupport;
 import org.springframework.data.domain.Page;
@@ -37,12 +40,14 @@ public class ProyectoEquipoServiceImpl implements ProyectoEquipoService {
   private final ProyectoEquipoRepository repository;
   private final ProyectoRepository proyectoRepository;
   private final ProyectoHelper proyectoHelper;
+  private final SgiConfigProperties sgiConfigProperties;
 
   public ProyectoEquipoServiceImpl(ProyectoEquipoRepository repository, ProyectoRepository proyectoRepository,
-      ProyectoHelper proyectoHelper) {
+      ProyectoHelper proyectoHelper, SgiConfigProperties sgiConfigProperties) {
     this.repository = repository;
     this.proyectoRepository = proyectoRepository;
     this.proyectoHelper = proyectoHelper;
+    this.sgiConfigProperties = sgiConfigProperties;
   }
 
   /**
@@ -243,6 +248,29 @@ public class ProyectoEquipoServiceImpl implements ProyectoEquipoService {
     log.debug("findAllByProyectoId(Long proyectoId) - start");
     List<ProyectoEquipo> returnValue = repository.findAllByProyectoId(proyectoId);
     log.debug("findAllByProyectoId(Long proyectoId) - end");
+    return returnValue;
+  }
+
+  /**
+   * Devuelve una lista filtrada de investigadores principales del
+   * {@link Proyecto} en el momento actual.
+   *
+   * Son investiador principales los {@link ProyectoEquipo} que a fecha actual
+   * tiene el {@link RolProyecto} con el flag {@link RolProyecto#rolPrincipal} a
+   * <code>true</code>.
+   * 
+   * @param proyectoId Identificador del {@link Proyecto}.
+   * @return la lista de personaRef de los investigadores principales del
+   *         {@link Proyecto} en el momento actual.
+   */
+  public List<String> findPersonaRefInvestigadoresPrincipales(Long proyectoId) {
+    log.debug("findPersonaRefInvestigadoresPrincipales(Long proyectoId) - start");
+
+    AssertHelper.idNotNull(proyectoId, Proyecto.class);
+    Instant fechaActual = Instant.now().atZone(sgiConfigProperties.getTimeZone().toZoneId()).toInstant();
+    List<String> returnValue = repository.findPersonaRefInvestigadoresPrincipales(proyectoId, fechaActual);
+
+    log.debug("findPersonaRefInvestigadoresPrincipales(Long proyectoId) - end");
     return returnValue;
   }
 

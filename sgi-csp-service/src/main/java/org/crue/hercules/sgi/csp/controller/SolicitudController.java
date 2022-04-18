@@ -5,9 +5,15 @@ import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
+import org.crue.hercules.sgi.csp.converter.GrupoConverter;
+import org.crue.hercules.sgi.csp.converter.SolicitudGrupoConverter;
+import org.crue.hercules.sgi.csp.dto.GrupoInput;
+import org.crue.hercules.sgi.csp.dto.GrupoOutput;
 import org.crue.hercules.sgi.csp.dto.RequisitoEquipoNivelAcademicoOutput;
 import org.crue.hercules.sgi.csp.dto.RequisitoIPCategoriaProfesionalOutput;
 import org.crue.hercules.sgi.csp.dto.RequisitoIPNivelAcademicoOutput;
+import org.crue.hercules.sgi.csp.dto.SolicitudHitoOutput;
+import org.crue.hercules.sgi.csp.dto.SolicitudGrupoOutput;
 import org.crue.hercules.sgi.csp.dto.SolicitudPalabraClaveInput;
 import org.crue.hercules.sgi.csp.dto.SolicitudPalabraClaveOutput;
 import org.crue.hercules.sgi.csp.dto.SolicitudProyectoPresupuestoTotalConceptoGasto;
@@ -18,6 +24,7 @@ import org.crue.hercules.sgi.csp.model.Convocatoria;
 import org.crue.hercules.sgi.csp.model.ConvocatoriaEntidadConvocante;
 import org.crue.hercules.sgi.csp.model.ConvocatoriaEntidadFinanciadora;
 import org.crue.hercules.sgi.csp.model.EstadoSolicitud;
+import org.crue.hercules.sgi.csp.model.Grupo;
 import org.crue.hercules.sgi.csp.model.Proyecto;
 import org.crue.hercules.sgi.csp.model.RequisitoEquipoNivelAcademico;
 import org.crue.hercules.sgi.csp.model.RequisitoIP;
@@ -25,6 +32,7 @@ import org.crue.hercules.sgi.csp.model.RequisitoIPCategoriaProfesional;
 import org.crue.hercules.sgi.csp.model.RequisitoIPNivelAcademico;
 import org.crue.hercules.sgi.csp.model.Solicitud;
 import org.crue.hercules.sgi.csp.model.SolicitudDocumento;
+import org.crue.hercules.sgi.csp.model.SolicitudGrupo;
 import org.crue.hercules.sgi.csp.model.SolicitudHito;
 import org.crue.hercules.sgi.csp.model.SolicitudModalidad;
 import org.crue.hercules.sgi.csp.model.SolicitudPalabraClave;
@@ -40,11 +48,13 @@ import org.crue.hercules.sgi.csp.model.SolicitudProyectoSocio;
 import org.crue.hercules.sgi.csp.service.ConvocatoriaEntidadConvocanteService;
 import org.crue.hercules.sgi.csp.service.ConvocatoriaService;
 import org.crue.hercules.sgi.csp.service.EstadoSolicitudService;
+import org.crue.hercules.sgi.csp.service.GrupoService;
 import org.crue.hercules.sgi.csp.service.ProyectoService;
 import org.crue.hercules.sgi.csp.service.RequisitoEquipoNivelAcademicoService;
 import org.crue.hercules.sgi.csp.service.RequisitoIPCategoriaProfesionalService;
 import org.crue.hercules.sgi.csp.service.RequisitoIPNivelAcademicoService;
 import org.crue.hercules.sgi.csp.service.SolicitudDocumentoService;
+import org.crue.hercules.sgi.csp.service.SolicitudGrupoService;
 import org.crue.hercules.sgi.csp.service.SolicitudHitoService;
 import org.crue.hercules.sgi.csp.service.SolicitudModalidadService;
 import org.crue.hercules.sgi.csp.service.SolicitudPalabraClaveService;
@@ -154,6 +164,18 @@ public class SolicitudController {
   /** RequisitoIPNivelAcademicoService */
   private final RequisitoIPNivelAcademicoService requisitoIPNivelAcademicoService;
 
+  /** SolicitudGrupoService */
+  private final SolicitudGrupoService solicitudGrupoService;
+
+  /** Solicitud Grupo Converter */
+  private final SolicitudGrupoConverter solicitudGrupoConverter;
+
+  /** GrupoService grupoService */
+  private final GrupoService grupoService;
+
+  /** GrupoConverter */
+  private final GrupoConverter grupoConverter;
+
   /**
    * Instancia un nuevo SolicitudController.
    * 
@@ -179,6 +201,10 @@ public class SolicitudController {
    * @param requisitoIPCategoriaProfesionalService           {@link RequisitoIPCategoriaProfesionalService}.
    * @param requisitoIPNivelAcademicoService                 {@link RequisitoIPNivelAcademicoService}.
    * @param requisitoEquipoNivelAcademicoService             {@link RequisitoEquipoNivelAcademicoService}.
+   * @param solicitudGrupoService                            {@link SolicitudGrupoService}.
+   * @param grupoConverter                                   {@link GrupoConverter}.
+   * @param grupoService                                     {@link GrupoService}.
+   * @param solicitudGrupoConverter                          {@link SolicitudGrupoConverter}.
    */
   public SolicitudController(ModelMapper modelMapper, SolicitudService solicitudService,
       SolicitudModalidadService solicitudModalidadService, EstadoSolicitudService estadoSolicitudService,
@@ -196,7 +222,11 @@ public class SolicitudController {
       ConvocatoriaEntidadConvocanteService convocatoriaEntidadConvocanteService,
       RequisitoIPCategoriaProfesionalService requisitoIPCategoriaProfesionalService,
       RequisitoIPNivelAcademicoService requisitoIPNivelAcademicoService,
-      RequisitoEquipoNivelAcademicoService requisitoEquipoNivelAcademicoService) {
+      RequisitoEquipoNivelAcademicoService requisitoEquipoNivelAcademicoService,
+      SolicitudGrupoService solicitudGrupoService,
+      SolicitudGrupoConverter solicitudGrupoConverter,
+      GrupoService grupoService,
+      GrupoConverter grupoConverter) {
     this.modelMapper = modelMapper;
     this.service = solicitudService;
     this.solicitudModalidadService = solicitudModalidadService;
@@ -219,6 +249,10 @@ public class SolicitudController {
     this.requisitoIPCategoriaProfesionalService = requisitoIPCategoriaProfesionalService;
     this.requisitoIPNivelAcademicoService = requisitoIPNivelAcademicoService;
     this.requisitoEquipoNivelAcademicoService = requisitoEquipoNivelAcademicoService;
+    this.solicitudGrupoService = solicitudGrupoService;
+    this.solicitudGrupoConverter = solicitudGrupoConverter;
+    this.grupoService = grupoService;
+    this.grupoConverter = grupoConverter;
   }
 
   /**
@@ -418,10 +452,11 @@ public class SolicitudController {
    */
   @GetMapping("/{id}/solicitudhitos")
   @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-SOL-E', 'CSP-SOL-V')")
-  public ResponseEntity<Page<SolicitudHito>> findAllSolicitudHito(@PathVariable Long id,
+  public ResponseEntity<Page<SolicitudHitoOutput>> findAllSolicitudHito(@PathVariable Long id,
       @RequestParam(name = "q", required = false) String query, @RequestPageable(sort = "s") Pageable paging) {
     log.debug("findAllSolicitudHito(Long id, String query, Pageable paging) - start");
-    Page<SolicitudHito> page = solicitudHitoService.findAllBySolicitud(id, query, paging);
+    Page<SolicitudHitoOutput> page = this
+        .convertSolicitudHitos(solicitudHitoService.findAllBySolicitud(id, query, paging));
 
     if (page.isEmpty()) {
       log.debug("findAllSolicitudHito(Long id, String query, Pageable paging) - end");
@@ -1195,11 +1230,37 @@ public class SolicitudController {
   @GetMapping("/{id}/codigo-registro-interno")
   @PreAuthorize("hasAuthorityForAnyUO('CSP-SOL-ETI-V')")
   public String getCodigoRegistroInterno(@PathVariable Long id) {
-    log.debug("Solicitud getCodigoRegistroInterno(Long id) - start");
+    log.debug("getCodigoRegistroInterno(Long id) - start");
     String codigoRegistroInterno = service.getCodigoRegistroInterno(id);
-    log.debug("Solicitud getCodigoRegistroInterno(Long id) - end");
+    log.debug("getCodigoRegistroInterno(Long id) - end");
 
     return JSONObject.quote(codigoRegistroInterno);
+  }
+
+  @GetMapping("/{id}/solcitudgrupo")
+  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-SOL-C', 'CSP-SOL-E', 'CSP-SOL-V', 'CSP-SOL-INV-ER')")
+  public SolicitudGrupoOutput getSolicitudGrupo(@PathVariable Long id) {
+    log.debug("getSolicitudGrupo(Long id) - start");
+    SolicitudGrupo solicitudGrupo = solicitudGrupoService.findBySolicitudId(id);
+    log.debug("getSolicitudGrupo(Long id) - end");
+    return solicitudGrupoConverter.convert(solicitudGrupo);
+  }
+
+  /**
+   * Crea nuevo {@link Grupo} a partir de los datos de una {@link Solicitud}
+   * 
+   * @param id    identificador de la {@link Solicitud}
+   * @param grupo {@link GrupoInput} a crear
+   * @return Nuevo {@link GrupoOutput} creado.
+   */
+  @PostMapping("/{id}/grupo")
+  @PreAuthorize("hasAuthorityForAnyUO('CSP-GIN-C')")
+  public ResponseEntity<GrupoOutput> createGrupoBySolicitud(@PathVariable Long id, @RequestBody GrupoInput grupo) {
+    log.debug("createGrupoBySolicitud(@PathVariable Long id) - start");
+    GrupoOutput returnValue = grupoConverter
+        .convert(grupoService.createGrupoBySolicitud(id, grupoConverter.convert(grupo)));
+    log.debug("createGrupoBySolicitud(@PathVariable Long id) - end");
+    return new ResponseEntity<>(returnValue, HttpStatus.CREATED);
   }
 
   private Page<SolicitudPalabraClaveOutput> convertSolicitudPalabraClave(Page<SolicitudPalabraClave> page) {
@@ -1259,4 +1320,14 @@ public class SolicitudController {
     return entities.stream().map(this::convert).collect(Collectors.toList());
   }
 
+  private SolicitudHitoOutput convert(SolicitudHito convocatoriaHito) {
+    return modelMapper.map(convocatoriaHito, SolicitudHitoOutput.class);
+  }
+
+  private Page<SolicitudHitoOutput> convertSolicitudHitos(Page<SolicitudHito> page) {
+    List<SolicitudHitoOutput> content = page.getContent().stream()
+        .map(this::convert).collect(Collectors.toList());
+
+    return new PageImpl<>(content, page.getPageable(), page.getTotalElements());
+  }
 }

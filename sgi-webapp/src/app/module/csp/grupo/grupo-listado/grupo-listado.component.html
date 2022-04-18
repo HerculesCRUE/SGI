@@ -1,8 +1,7 @@
 <!-- Grupo Listado-->
 <sgi-menu-content>
-  <div class="mat-elevation-z4">
-    <form [formGroup]="formGroup" fxLayout="column" class="busqueda">
-
+  <div [ngClass]="busquedaAvanzada ? 'mat-elevation-z4 caja-busqueda-avanzada' : 'mat-elevation-z4'">
+    <form [ngClass]="busquedaAvanzada ? '' : 'formulario'" [formGroup]="formGroup" fxLayout="column">
       <div fxFlex fxLayout="row" fxLayoutGap="10px">
         <!-- Nombre -->
         <mat-form-field>
@@ -31,16 +30,94 @@
         </mat-form-field>
       </div>
 
-      <div fxFlex fxLayout="row" fxLayoutGap="10px" class="buttons-final">
-        <button color="primary" mat-raised-button (click)="onSearch()">
-          <mat-icon>search</mat-icon> {{'btn.search'| translate}}
-        </button>
-        <button color="warn" (click)="onClearFilters()" mat-button>
-          {{'btn.clean'| translate}}
-        </button>
+      <!-- Acciones -->
+      <div class="buttons-final" *ngIf="!busquedaAvanzada">
+        <div class="col filter-button">
+          <button color="primary" mat-raised-button (click)="onSearch()">
+            <mat-icon>search</mat-icon> {{'btn.search'| translate}}
+          </button>
+          <button class="link-busqueda underline" mat-button (click)="toggleBusquedaAvanzada()">
+            {{'btn.search.advanced'| translate}}
+          </button>
+          <button color="warn" (click)="onClearFilters()" mat-button>{{'btn.clean'|
+            translate}}
+          </button>
+        </div>
       </div>
     </form>
 
+    <form *ngIf="busquedaAvanzada" [ngClass]="busquedaAvanzada ? 'busqueda-avanzada' : ''" [formGroup]="formGroup"
+      fxLayout="column">
+      <div fxFlex fxLayout="row" fxLayoutGap="10px">
+        <!-- fechaInicioDesde -->
+        <mat-form-field class=" input-form" fxFlex="40%">
+          <mat-label>{{'csp.grupo.fecha-inicio-desde' | translate}}</mat-label>
+          <input matInput formControlName="fechaInicioDesde" [matDatepicker]="fechaInicioDesde">
+          <mat-datepicker-toggle matSuffix [for]="fechaInicioDesde"></mat-datepicker-toggle>
+          <mat-datepicker #fechaInicioDesde>
+          </mat-datepicker>
+        </mat-form-field>
+
+        <!-- fechaInicioHasta -->
+        <mat-form-field class=" input-form" fxFlex="40%" sgiEndDate>
+          <mat-label>{{'csp.grupo.fecha-inicio-hasta' | translate}}</mat-label>
+          <input matInput formControlName="fechaInicioHasta" [matDatepicker]="fechaInicioHasta">
+          <mat-datepicker-toggle matSuffix [for]="fechaInicioHasta"></mat-datepicker-toggle>
+          <mat-datepicker #fechaInicioHasta>
+          </mat-datepicker>
+        </mat-form-field>
+
+        <!-- activo -->
+        <mat-form-field fxFlex="20%">
+          <mat-label>{{'label.activo' | translate}}</mat-label>
+          <mat-select matNativeControl formControlName="activo">
+            <mat-option value="todos">{{'label.todos' | translate}}</mat-option>
+            <mat-option value="true">{{'label.si' | translate}}</mat-option>
+            <mat-option value="false">{{'label.no' | translate}}</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+
+      <div fxFlex fxLayout="row" fxLayoutGap="10px">
+        <!-- Palabras clave -->
+        <mat-form-field fxFlex="60%">
+          <mat-label>{{'csp.grupo.palabras-clave' | translate}}</mat-label>
+          <sgi-palabra-clave formControlName="palabrasClave" id="palabrasClave"
+            placeholder="{{'csp.grupo.palabras-clave' | translate}}"></sgi-palabra-clave>
+        </mat-form-field>
+
+        <!-- Lineas investigación -->
+        <mat-form-field fxFlex="40%">
+          <mat-label>{{'csp.grupo.linea-investigacion' | translate}}</mat-label>
+          <input type="text" [placeholder]="'csp.grupo.linea-investigacion' | translate" arial-label="Number" matInput
+            formControlName="lineaInvestigacion" [matAutocomplete]="autocompleteLineasInvestigacion">
+          <mat-autocomplete #autocompleteLineasInvestigacion="matAutocomplete" [displayWith]="getLineaInvestigacion">
+            <mat-option *ngFor="let lineaInvestigacion of filteredLineasInvestigacion | async"
+              [value]="lineaInvestigacion">
+              {{lineaInvestigacion.nombre}}
+            </mat-option>
+          </mat-autocomplete>
+        </mat-form-field>
+      </div>
+
+      <div class="buttons-final">
+        <div class="col filter-button">
+          <button color="primary" mat-raised-button (click)="onSearch()">
+            <mat-icon>search</mat-icon> {{'btn.search'| translate}}
+          </button>
+          <button class="link-busqueda underline" mat-button (click)="toggleBusquedaAvanzada()">
+            {{'btn.search.simple'| translate}}
+          </button>
+          <button color="warn" (click)="onClearFilters()" mat-button>{{'btn.clean'|
+            translate}}
+          </button>
+        </div>
+      </div>
+
+    </form>
+  </div>
+
+  <div class="mat-elevation-z4">
     <table mat-table [dataSource]="grupos$ | async" matSort matSortActive="id" matSortDirection="desc"
       matSortDisableClear>
 
@@ -127,7 +204,8 @@
             </a>
           </ng-container>
           <ng-container *sgiHasAuthorityForAnyUO="'CSP-GIN-E'">
-            <a mat-icon-button matTooltip="{{'btn.edit' | translate}}" [routerLink]="[element.id]" color="primary">
+            <a *ngIf="element.activo === true" mat-icon-button matTooltip="{{'btn.edit' | translate}}"
+              [routerLink]="[element.id]" color="primary">
               <mat-icon>border_color</mat-icon>
             </a>
           </ng-container>
@@ -156,7 +234,6 @@
       </mat-paginator>
     </div>
   </div>
-
   <sgi-menu-content-footer>
     <sgi-footer-crear *sgiHasAuthorityForAnyUO="'CSP-GIN-C'" [texto]="textoCrear" [route]="ROUTE_NAMES.NEW">
     </sgi-footer-crear>

@@ -5,9 +5,9 @@ import java.util.stream.Stream;
 import javax.persistence.AttributeConverter;
 import javax.persistence.Converter;
 
-import org.crue.hercules.sgi.prc.model.CampoProduccionCientifica.CodigoCVN;
+import org.crue.hercules.sgi.prc.enums.CodigoCVN;
 
-@Converter(autoApply = true)
+@Converter
 public class CodigoCVNConverter implements AttributeConverter<CodigoCVN, String> {
 
   @Override
@@ -15,17 +15,17 @@ public class CodigoCVNConverter implements AttributeConverter<CodigoCVN, String>
     if (enumType == null) {
       return null;
     }
-    return enumType.getInternValue();
+    return enumType.getCode();
   }
 
   @Override
-  public CodigoCVN convertToEntityAttribute(String internValue) {
-    if (internValue == null) {
+  public CodigoCVN convertToEntityAttribute(String code) {
+    if (code == null) {
       return null;
     }
 
     return Stream.of(CodigoCVN.values())
-        .filter(c -> c.getInternValue().equals(internValue))
+        .filter(c -> c.getCode().equals(code))
         .findFirst()
         .orElseThrow(IllegalArgumentException::new);
   }

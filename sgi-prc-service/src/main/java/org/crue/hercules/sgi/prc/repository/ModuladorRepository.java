@@ -18,7 +18,7 @@ import org.springframework.stereotype.Repository;
 public interface ModuladorRepository
     extends JpaRepository<Modulador, Long>, JpaSpecificationExecutor<Modulador>, CustomModuladorRepository {
 
-  List<Modulador> findAllByConvocatoriaBaremacionId(Long convocatoriaBaremacionId);
+  List<Modulador> findByConvocatoriaBaremacionId(Long convocatoriaBaremacionId);
 
   Optional<Modulador> findByConvocatoriaBaremacionIdAndAreaRefAndTipo(Long convocatoriaBaremacionId,
       String areaRef, TipoModulador tipo);

@@ -13,7 +13,7 @@ import { DialogService } from '@core/services/dialog.service';
 import { ViaProteccionService } from '@core/services/pii/via-proteccion/via-proteccion.service';
 import { SnackBarService } from '@core/services/snack-bar.service';
 import { TranslateService } from '@ngx-translate/core';
-import { HttpProblem } from '@core/errors/http-problem';
+import { SgiError } from '@core/errors/sgi-error';
 import { ViaProteccionModalComponent } from '../via-proteccion-modal/via-proteccion-modal.component';
 
 const MSG_ERROR = marker('error.load');
@@ -73,7 +73,7 @@ export class ViaProteccionListadoComponent extends AbstractTablePaginationCompon
   }
 
   protected createFilter(): SgiRestFilter {
-    throw new Error('Method not implemented.');
+    return undefined;
   }
 
   ngOnInit(): void {
@@ -210,7 +210,7 @@ export class ViaProteccionListadoComponent extends AbstractTablePaginationCompon
           this.loadTable();
         }, (error) => {
           this.logger.error(error);
-          if (error instanceof HttpProblem) {
+          if (error instanceof SgiError) {
             this.snackBarService.showError(error);
           } else {
             this.snackBarService.showError(this.textErrorDesactivar);
@@ -234,7 +234,7 @@ export class ViaProteccionListadoComponent extends AbstractTablePaginationCompon
         this.loadTable();
       }, (error) => {
         this.logger.error(error);
-        if (error instanceof HttpProblem) {
+        if (error instanceof SgiError) {
           this.snackBarService.showError(error);
         } else {
           this.snackBarService.showError(this.textErrorReactivar);

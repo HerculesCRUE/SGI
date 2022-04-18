@@ -24,7 +24,7 @@ import org.springframework.web.util.UriComponentsBuilder;
  * Test de integracion de AliasEnumerado.
  */
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class AliasEnumeradoIT extends BaseIT {
+class AliasEnumeradoIT extends BaseIT {
 
   private static final String CONTROLLER_BASE_PATH = AliasEnumeradoController.MAPPING;
 

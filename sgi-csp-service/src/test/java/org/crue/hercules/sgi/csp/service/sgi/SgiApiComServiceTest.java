@@ -1,6 +1,5 @@
 package org.crue.hercules.sgi.csp.service.sgi;
 
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
@@ -19,9 +18,11 @@ import org.crue.hercules.sgi.csp.dto.com.EmailOutput;
 import org.crue.hercules.sgi.csp.dto.com.Recipient;
 import org.crue.hercules.sgi.csp.service.BaseServiceTest;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
 import org.mockito.BDDMockito;
 import org.mockito.Mock;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
@@ -44,7 +45,7 @@ class SgiApiComServiceTest extends BaseServiceTest {
     this.emailService = new SgiApiComService(this.restApiProperties, this.restTemplate, this.objectMapper);
   }
 
-  // @Test
+  @Test
   void createGenericEmailText_ReturnsEmailOutput() {
     String subject = "Asunto";
     String content = "Mensaje email test";
@@ -52,11 +53,13 @@ class SgiApiComServiceTest extends BaseServiceTest {
     Deferrable deferrableRecipients = Deferrable.builder().build();
     EmailOutput emailOutput = this.buildMockEmailOutput(1L);
 
-    BDDMockito.given(this.restTemplate.exchange(
-
-        anyString(), ArgumentMatchers.<HttpMethod>any(),
-        ArgumentMatchers.<HttpEntity<Object>>any(),
-        ArgumentMatchers.<Class<EmailOutput>>any())).willReturn(ResponseEntity.ok(emailOutput));
+    BDDMockito
+        .given(this.restTemplate.exchange(ArgumentMatchers
+            .<String>any(), ArgumentMatchers.<HttpMethod>any(),
+            ArgumentMatchers.<HttpEntity<Object>>any(),
+            ArgumentMatchers.<ParameterizedTypeReference<EmailOutput>>any(),
+            ArgumentMatchers.<Object>any()))
+        .willReturn(ResponseEntity.ok(emailOutput));
 
     EmailOutput response = this.emailService.createGenericEmailText(subject, content, recipients,
         deferrableRecipients);
@@ -64,7 +67,7 @@ class SgiApiComServiceTest extends BaseServiceTest {
     Assertions.assertThat(response).isNotNull();
   }
 
-  // @Test
+  @Test
   void updateGenericEmailText_ReturnsEmailOutput() {
     String subject = "Asunto test";
     String content = "Mensaje email test";
@@ -72,10 +75,13 @@ class SgiApiComServiceTest extends BaseServiceTest {
     Deferrable deferrableRecipients = Deferrable.builder().build();
     EmailOutput emailOutput = this.buildMockEmailOutput(1L);
 
-    BDDMockito.given(this.restTemplate.exchange(
-        anyString(), ArgumentMatchers.<HttpMethod>any(),
-        ArgumentMatchers.<HttpEntity<Object>>any(),
-        ArgumentMatchers.<Class<EmailOutput>>any())).willReturn(ResponseEntity.ok(emailOutput));
+    BDDMockito
+        .given(this.restTemplate.exchange(ArgumentMatchers
+            .<String>any(), ArgumentMatchers.<HttpMethod>any(),
+            ArgumentMatchers.<HttpEntity<Object>>any(),
+            ArgumentMatchers.<ParameterizedTypeReference<EmailOutput>>any(),
+            ArgumentMatchers.<Object>any()))
+        .willReturn(ResponseEntity.ok(emailOutput));
 
     EmailOutput response = this.emailService.updateGenericEmailText(emailOutput.getId(), subject, content, recipients,
         deferrableRecipients);
@@ -83,17 +89,19 @@ class SgiApiComServiceTest extends BaseServiceTest {
     Assertions.assertThat(response).isNotNull();
   }
 
-  // @Test
+  @Test
   void deleteEmail_VerifyCallDeleteApiService() {
 
     this.emailService.deleteEmail(1L);
 
-    verify(this.restTemplate, times(1)).exchange(anyString(), ArgumentMatchers.<HttpMethod>any(),
+    verify(this.restTemplate, times(1)).exchange(ArgumentMatchers
+        .<String>any(), ArgumentMatchers.<HttpMethod>any(),
         ArgumentMatchers.<HttpEntity<Object>>any(),
-        ArgumentMatchers.<Class<Void>>any());
+        ArgumentMatchers.<ParameterizedTypeReference<Void>>any(),
+        ArgumentMatchers.<Object>any());
   }
 
-  // @Test
+  @Test
   void createConvocatoriaHitoEmail_ReturnsLong() {
     String subject = "Asunto test";
     String content = "Mensaje email test";
@@ -101,37 +109,44 @@ class SgiApiComServiceTest extends BaseServiceTest {
 
     EmailOutput emailOutput = this.buildMockEmailOutput(1L);
 
-    BDDMockito.given(this.restTemplate.exchange(
-        anyString(), ArgumentMatchers.<HttpMethod>any(),
-        ArgumentMatchers.<HttpEntity<Object>>any(),
-        ArgumentMatchers.<Class<EmailOutput>>any())).willReturn(ResponseEntity.ok(emailOutput));
+    BDDMockito
+        .given(this.restTemplate.exchange(ArgumentMatchers
+            .<String>any(), ArgumentMatchers.<HttpMethod>any(),
+            ArgumentMatchers.<HttpEntity<Object>>any(),
+            ArgumentMatchers.<ParameterizedTypeReference<EmailOutput>>any(),
+            ArgumentMatchers.<Object>any()))
+        .willReturn(ResponseEntity.ok(emailOutput));
 
     Long response = this.emailService.createConvocatoriaHitoEmail(1L, subject, content, recipients);
 
     Assertions.assertThat(response).isEqualTo(1L);
   }
 
-  // @Test
+  @Test
   void updateConvocatoriaHitoEmail_VerifyCallApiRestUpdate() {
     String subject = "Asunto test";
     String content = "Mensaje email test";
     List<Recipient> recipients = this.buildMockRecipients();
     EmailOutput emailOutput = this.buildMockEmailOutput(1L);
 
-    BDDMockito.given(this.restTemplate.exchange(
-        anyString(), ArgumentMatchers.<HttpMethod>any(),
-        ArgumentMatchers.<HttpEntity<Object>>any(),
-        ArgumentMatchers.<Class<EmailOutput>>any())).willReturn(ResponseEntity.ok(emailOutput));
+    BDDMockito
+        .given(this.restTemplate.exchange(ArgumentMatchers
+            .<String>any(), ArgumentMatchers.<HttpMethod>any(),
+            ArgumentMatchers.<HttpEntity<Object>>any(),
+            ArgumentMatchers.<ParameterizedTypeReference<EmailOutput>>any(),
+            ArgumentMatchers.<Object>any()))
+        .willReturn(ResponseEntity.ok(emailOutput));
 
     this.emailService.updateConvocatoriaHitoEmail(1L, 1L, subject, content, recipients);
 
-    verify(this.restTemplate, times(1)).exchange(anyString(),
-        ArgumentMatchers.<HttpMethod>any(),
+    verify(this.restTemplate, times(1)).exchange(ArgumentMatchers
+        .<String>any(), ArgumentMatchers.<HttpMethod>any(),
         ArgumentMatchers.<HttpEntity<Object>>any(),
-        ArgumentMatchers.<Class<EmailOutput>>any());
+        ArgumentMatchers.<ParameterizedTypeReference<EmailOutput>>any(),
+        ArgumentMatchers.<Object>any());
   }
 
-  // @Test
+  @Test
   void createComunicadoInicioPresentacionJustificacionGastosEmail_ReturnsEmailOutput() throws JsonProcessingException {
     CspComInicioPresentacionGastoData data = CspComInicioPresentacionGastoData.builder()
         .fecha(LocalDate.now())
@@ -141,10 +156,13 @@ class SgiApiComServiceTest extends BaseServiceTest {
 
     BDDMockito.given(this.objectMapper.writeValueAsString(data)).willReturn("/test");
 
-    BDDMockito.given(this.restTemplate.exchange(
-        anyString(), ArgumentMatchers.<HttpMethod>any(),
-        ArgumentMatchers.<HttpEntity<Object>>any(),
-        ArgumentMatchers.<Class<EmailOutput>>any())).willReturn(ResponseEntity.ok(emailOutput));
+    BDDMockito
+        .given(this.restTemplate.exchange(ArgumentMatchers
+            .<String>any(), ArgumentMatchers.<HttpMethod>any(),
+            ArgumentMatchers.<HttpEntity<Object>>any(),
+            ArgumentMatchers.<ParameterizedTypeReference<EmailOutput>>any(),
+            ArgumentMatchers.<Object>any()))
+        .willReturn(ResponseEntity.ok(emailOutput));
 
     EmailOutput response = this.emailService.createComunicadoInicioPresentacionJustificacionGastosEmail(data,
         recipients);

@@ -5,7 +5,6 @@ import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { BaseExportModalComponent } from '@core/component/base-export/base-export-modal.component';
 import { MSG_PARAMS } from '@core/i18n';
 import { IReportConfig, IReportOptions } from '@core/services/rep/abstract-table-export.service';
-import { SnackBarService } from '@core/services/snack-bar.service';
 import { TranslateService } from '@ngx-translate/core';
 import { SgiRestFindOptions } from '@sgi/framework/http';
 import { ISolicitudReportOptions, SolicitudListadoExportService } from '../../solicitud-listado-export.service';
@@ -30,12 +29,11 @@ export class SolicitudListadoExportModalComponent extends BaseExportModalCompone
 
   constructor(
     matDialogRef: MatDialogRef<SolicitudListadoExportModalComponent>,
-    snackBarService: SnackBarService,
     translate: TranslateService,
     solicitudListadoExportService: SolicitudListadoExportService,
     @Inject(MAT_DIALOG_DATA) private modalData: ISolicitudListadoDataExportModalData
   ) {
-    super(solicitudListadoExportService, snackBarService, translate, matDialogRef);
+    super(solicitudListadoExportService, translate, matDialogRef);
   }
 
   ngOnInit(): void {

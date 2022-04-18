@@ -1,22 +1,24 @@
-import { Component, Inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { MatAutocompleteTrigger } from '@angular/material/autocomplete';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
+import { BaseModalComponent } from '@core/component/base-modal.component';
 import { MSG_PARAMS } from '@core/i18n';
+import { DEFAULT_PREFIX_RECIPIENTS_CSP_SOL_HITOS } from '@core/models/cnf/config-keys';
+import { IGenericEmailText } from '@core/models/com/generic-email-text';
 import { ISolicitudHito } from '@core/models/csp/solicitud-hito';
 import { ITipoHito } from '@core/models/csp/tipos-configuracion';
-import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-properties';
+import { ISendEmailTask } from '@core/models/tp/send-email-task';
+import { ConfigService } from '@core/services/cnf/config.service';
+import { EmailTplService } from '@core/services/com/email-tpl/email-tpl.service';
+import { EmailService } from '@core/services/com/email/email.service';
 import { SnackBarService } from '@core/services/snack-bar.service';
-import { FormGroupUtil } from '@core/utils/form-group-util';
-import { IsEntityValidator } from '@core/validators/is-entity-validador';
+import { SgiApiTaskService } from '@core/services/tp/sgiapitask/sgi-api-task.service';
 import { TipoHitoValidator } from '@core/validators/tipo-hito-validator';
 import { TranslateService } from '@ngx-translate/core';
 import { DateTime } from 'luxon';
-import { Subscription } from 'rxjs';
-import { switchMap } from 'rxjs/operators';
+import { pairwise, startWith, switchMap } from 'rxjs/operators';
 
-const MSG_ERROR_FORM_GROUP = marker('error.form-group');
 const MSG_ANADIR = marker('btn.add');
 const MSG_ACEPTAR = marker('btn.ok');
 const SOLICITUD_HITO_KEY = marker('csp.solicitud-hito');
@@ -24,75 +26,182 @@ const SOLICITUD_HITO_COMENTARIO_KEY = marker('csp.solicitud-hito.comentario');
 const SOLICITUD_HITO_FECHA_INICIO_KEY = marker('csp.solicitud-hito.fecha');
 const SOLICITUD_HITO_TIPO_KEY = marker('csp.solicitud-hito.tipo');
 const TITLE_NEW_ENTITY = marker('title.new.entity');
+const AVISO_FECHA_ENVIO_KEY = marker('label.aviso.fecha-envio.short');
+const AVISO_ASUNTO_KEY = marker('label.aviso.asunto');
+const AVISO_CONTENIDO_KEY = marker('label.aviso.contenido.short');
+const AVISO_DESTINATARIOS_KEY = marker('label.aviso.destinatarios');
 
 export interface SolicitudHitosModalComponentData {
   hitos: ISolicitudHito[];
   hito: ISolicitudHito;
   idModeloEjecucion: number;
   readonly: boolean;
+  unidadGestionId: number;
+  tituloConvocatoria: string;
+  tituloSolicitud: string;
 }
 
 @Component({
   templateUrl: './solicitud-hitos-modal.component.html',
   styleUrls: ['./solicitud-hitos-modal.component.scss']
 })
-export class SolicitiudHitosModalComponent implements OnInit, OnDestroy {
-
-  @ViewChild(MatAutocompleteTrigger) autocomplete: MatAutocompleteTrigger;
-  formGroup: FormGroup;
-  fxLayoutProperties: FxLayoutProperties;
+export class SolicitudHitosModalComponent extends
+  BaseModalComponent<SolicitudHitosModalComponentData, SolicitudHitosModalComponent> implements OnInit, OnDestroy {
 
   textSaveOrUpdate: string;
   title: string;
 
-  private suscripciones: Subscription[] = [];
-
   msgParamTipoEntity = {};
   msgParamFechaInicioEntity = {};
   msgParamComentarioEntity = {};
+  msgParamFechaEnvioEntity = {};
+  msgParamAsuntoEntity = {};
+  msgParamContenidoEntity = {};
+  msgParamDestinatariosEntity = {};
+
+  get now(): DateTime {
+    return DateTime.now().plus({ minute: 15 });
+  }
+
+  get MSG_PARAMS() {
+    return MSG_PARAMS;
+  }
 
   constructor(
-    public matDialogRef: MatDialogRef<SolicitiudHitosModalComponent>,
+    public matDialogRef: MatDialogRef<SolicitudHitosModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data: SolicitudHitosModalComponentData,
-    private snackBarService: SnackBarService,
-    private readonly translate: TranslateService
+    protected snackBarService: SnackBarService,
+    private readonly translate: TranslateService,
+    private configService: ConfigService,
+    private emailTplService: EmailTplService,
+    private emailSErvice: EmailService,
+    private sgiApiTaskService: SgiApiTaskService
   ) {
-    this.fxLayoutProperties = new FxLayoutProperties();
-    this.fxLayoutProperties.gap = '20px';
-    this.fxLayoutProperties.layout = 'row wrap';
-    this.fxLayoutProperties.xs = 'column';
+    super(snackBarService, matDialogRef, data);
   }
 
   ngOnInit(): void {
+    super.ngOnInit();
     this.setupI18N();
-
-    this.formGroup = new FormGroup({
-      tipoHito: new FormControl(this.data?.hito?.tipoHito, [Validators.required, IsEntityValidator.isValid()]),
-      fechaInicio: new FormControl(this.data?.hito?.fecha, [Validators.required]),
-      comentario: new FormControl(this.data?.hito?.comentario, [Validators.maxLength(250)]),
-      aviso: new FormControl(this.data?.hito?.generaAviso)
-    });
-
-    if (this.data?.readonly) {
-      this.formGroup.disable();
-    }
-
-    if (this.data?.hito?.fecha) {
-      this.validarFecha(this.data.hito.fecha);
-    }
-
     this.createValidatorDate(this.data?.hito?.tipoHito);
 
-    const suscription = this.formGroup.controls.tipoHito.valueChanges.subscribe((value) => this.createValidatorDate(value));
-    this.suscripciones.push(suscription);
+    const suscription = this.formGroup.get('tipoHito').valueChanges.subscribe((value) => this.createValidatorDate(value));
+    this.subscriptions.push(suscription);
 
-    const suscriptionFecha = this.formGroup.controls.fechaInicio.valueChanges.subscribe(() =>
-      this.createValidatorDate(this.formGroup.controls.tipoHito.value));
-    this.suscripciones.push(suscriptionFecha);
+    this.subscriptions.push(this.formGroup.get('fechaInicio').valueChanges.subscribe(
+      (value: DateTime) => {
+        this.validarFecha(value);
+        this.createValidatorDate(this.formGroup.get('tipoHito').value);
+      }));
 
-    this.textSaveOrUpdate = this.data?.hito?.tipoHito ? MSG_ACEPTAR : MSG_ANADIR;
-    this.suscripciones.push(this.formGroup.get('fechaInicio').valueChanges.subscribe(
-      (value) => this.validarFecha(value)));
+    this.textSaveOrUpdate = this.data.hito?.id ? MSG_ACEPTAR : MSG_ANADIR;
+
+    if (!!!this.data.hito?.aviso) {
+      this.validarFecha(this.data.hito?.fecha);
+    }
+
+    this.formGroup.get('generaAviso').valueChanges.pipe(startWith(!!this.data.hito?.aviso), pairwise()).subscribe(
+      ([oldValue, newValue]: [boolean, boolean]) => {
+        if (!!oldValue && !!!newValue) {
+          if (this.formGroup.get('aviso').enabled) {
+            this.formGroup.get('aviso').disable();
+          }
+          this.clearAviso();
+        }
+        else if (!!!oldValue && !!newValue) {
+          if (this.formGroup.get('aviso').disabled) {
+            this.formGroup.get('aviso').enable();
+          }
+          this.fillDefaultAviso();
+        }
+      }
+    );
+
+    if (this.data.hito?.aviso && this.isLoadEmailRequired(this.data.hito.aviso?.email)) {
+      this.emailSErvice.findGenericEmailtTextById(this.data.hito.aviso?.email?.id).subscribe(
+        (comunicado) => {
+          this.data.hito.aviso.email = comunicado;
+          this.formGroup.get('aviso.destinatarios').setValue(comunicado.recipients);
+          this.formGroup.get('aviso.asunto').setValue(comunicado.subject);
+          this.formGroup.get('aviso.contenido').setValue(comunicado.content);
+        }
+      );
+    }
+
+    if (this.data.hito?.aviso && this.isLoadTareaProgramadaRequired(this.data.hito.aviso?.task)) {
+      this.sgiApiTaskService.findSendEmailTaskById(this.data.hito.aviso?.task?.id).subscribe(
+        (tareaProgramada) => {
+          this.data.hito.aviso.task = tareaProgramada;
+          this.formGroup.get('aviso.fechaEnvio').setValue(tareaProgramada.instant);
+          this.lockAviso(tareaProgramada.instant);
+        }
+      );
+    }
+    else {
+      this.lockAviso(this.data.hito?.aviso?.task?.instant);
+    }
+  }
+
+  private lockAviso(dateRef: DateTime): void {
+    // Si no hay fecha de referencia no hacemos nada
+    if (!!!dateRef) {
+      return;
+    }
+    if (!!this.data.hito?.id && DateTime.now() >= dateRef) {
+      if (this.formGroup.get('generaAviso').enabled) {
+        this.formGroup.get('generaAviso').disable();
+      }
+      if (this.formGroup.get('aviso').enabled) {
+        this.formGroup.get('aviso').disable();
+      }
+    }
+  }
+
+  private fillDefaultAviso(): void {
+    this.formGroup.get('aviso.fechaEnvio').setValue(this.formGroup.get('fechaInicio').value);
+    this.configService.getEmailRecipients(DEFAULT_PREFIX_RECIPIENTS_CSP_SOL_HITOS + this.data.unidadGestionId).subscribe(
+      (destinatarios) => {
+        this.formGroup.get('aviso.destinatarios').setValue(destinatarios);
+      }
+    );
+    this.emailTplService.processSolicitudHitoTemplate(
+      this.data.tituloSolicitud,
+      this.data.tituloConvocatoria,
+      this.formGroup.get('fechaInicio').value ?? DateTime.now(),
+      this.formGroup.get('tipoHito').value?.nombre ?? '',
+      this.formGroup.get('comentario').value ?? ''
+    ).subscribe(
+      (template) => {
+        this.formGroup.get('aviso.asunto').setValue(template.subject);
+        this.formGroup.get('aviso.contenido').setValue(template.contentText);
+      }
+    );
+  }
+
+  private isLoadEmailRequired(comunicado: IGenericEmailText): boolean {
+    if (!!!comunicado?.id) {
+      return false;
+    }
+    if (!!!comunicado.content && !!!comunicado.subject && !!!comunicado.recipients?.length) {
+      return true;
+    }
+  }
+
+  private isLoadTareaProgramadaRequired(tareaProgramada: ISendEmailTask): boolean {
+    if (!!!tareaProgramada?.id) {
+      return false;
+    }
+    if (!!!tareaProgramada.instant) {
+      return true;
+    }
+  }
+
+  private clearAviso(): void {
+    this.formGroup.get('aviso.fechaEnvio').setValue(null);
+    this.formGroup.get('aviso.destinatarios').setValue(null);
+    this.formGroup.get('aviso.asunto').setValue(null);
+    this.formGroup.get('aviso.contenido').setValue(null);
+    this.formGroup.get('aviso.incluirIpsSolicitud').setValue(false);
   }
 
   private setupI18N(): void {
@@ -128,14 +237,46 @@ export class SolicitiudHitosModalComponent implements OnInit, OnDestroy {
           );
         })
       ).subscribe((value) => this.title = value);
-
     }
+
+    this.translate.get(
+      AVISO_FECHA_ENVIO_KEY,
+      MSG_PARAMS.CARDINALIRY.SINGULAR
+    ).subscribe((value) => this.msgParamFechaEnvioEntity = {
+      entity: value,
+      ...MSG_PARAMS.GENDER.FEMALE,
+      ...MSG_PARAMS.CARDINALIRY.SINGULAR
+    });
+    this.translate.get(
+      AVISO_ASUNTO_KEY,
+      MSG_PARAMS.CARDINALIRY.SINGULAR
+    ).subscribe((value) => this.msgParamAsuntoEntity = {
+      entity: value,
+      ...MSG_PARAMS.GENDER.MALE,
+      ...MSG_PARAMS.CARDINALIRY.SINGULAR
+    });
+    this.translate.get(
+      AVISO_CONTENIDO_KEY,
+      MSG_PARAMS.CARDINALIRY.SINGULAR
+    ).subscribe((value) => this.msgParamContenidoEntity = {
+      entity: value,
+      ...MSG_PARAMS.GENDER.MALE,
+      ...MSG_PARAMS.CARDINALIRY.SINGULAR
+    });
+    this.translate.get(
+      AVISO_DESTINATARIOS_KEY,
+      MSG_PARAMS.CARDINALIRY.PLURAL
+    ).subscribe((value) => this.msgParamDestinatariosEntity = {
+      entity: value,
+      ...MSG_PARAMS.GENDER.MALE,
+      ...MSG_PARAMS.CARDINALIRY.PLURAL
+    });
   }
 
   /**
    * Validacion de fechas a la hora de seleccionar
    * un tipo de hito en el modal
-   * @param tipoHito solicitud tipoHito
+   * @param tipoHito convocatoria tipoHito
    */
   private createValidatorDate(tipoHito: ITipoHito): void {
     let fechas: DateTime[] = [];
@@ -154,37 +295,76 @@ export class SolicitiudHitosModalComponent implements OnInit, OnDestroy {
    * Si la fecha actual es superior - Checkbox enable
    */
   private validarFecha(date: DateTime) {
-    if (date <= DateTime.now()) {
-      this.formGroup.get('aviso').disable();
-      this.formGroup.get('aviso').setValue(false);
+    const control = this.formGroup.get('generaAviso');
+    if (!!date && date <= DateTime.now()) {
+      if (control.enabled) {
+        control.setValue(false);
+        control.disable();
+      }
     } else {
-      this.formGroup.get('aviso').enable();
+      if (control.disabled &&
+        (!!!this.data.hito?.aviso?.task?.instant ||
+          (!!this.data.hito?.aviso?.task?.instant && DateTime.now() <= this.data.hito.aviso.task.instant))
+      ) {
+        control.enable();
+      }
     }
   }
 
-  saveOrUpdate(): void {
-    if (FormGroupUtil.valid(this.formGroup)) {
-      this.loadDatosForm();
-      this.matDialogRef.close(this.data.hito);
-    } else {
-      this.snackBarService.showError(MSG_ERROR_FORM_GROUP);
-    }
-  }
-
-  /**
-   * Método para actualizar la entidad con los datos de un formGroup
-   *
-   * @returns Comentario con los datos del formulario
-   */
-  private loadDatosForm(): void {
+  protected getDatosForm(): SolicitudHitosModalComponentData {
     this.data.hito.comentario = this.formGroup.get('comentario').value;
     this.data.hito.fecha = this.formGroup.get('fechaInicio').value;
     this.data.hito.tipoHito = this.formGroup.get('tipoHito').value;
-    this.data.hito.generaAviso = this.formGroup.get('aviso').value ? this.formGroup.get('aviso').value : false;
+
+    if (!!!this.data.hito.aviso && this.formGroup.get('generaAviso').value) {
+      this.data.hito.aviso = {
+        email: {} as IGenericEmailText,
+        task: {} as ISendEmailTask,
+        incluirIpsSolicitud: false,
+      };
+    }
+
+    const fgAviso = this.formGroup.get('aviso');
+    if (this.formGroup.get('generaAviso').value) {
+      this.data.hito.aviso.email.content = fgAviso.get('contenido').value;
+      this.data.hito.aviso.email.subject = fgAviso.get('asunto').value;
+      this.data.hito.aviso.email.recipients = fgAviso.get('destinatarios').value;
+      this.data.hito.aviso.incluirIpsSolicitud = fgAviso.get('incluirIpsSolicitud').value;
+      this.data.hito.aviso.task.instant = fgAviso.get('fechaEnvio').value;
+    }
+    else {
+      this.data.hito.aviso = null;
+    }
+
+    return this.data;
+  }
+
+  protected getFormGroup(): FormGroup {
+    const formGroup = new FormGroup({
+      tipoHito: new FormControl(this.data?.hito?.tipoHito, Validators.required),
+      fechaInicio: new FormControl(this.data?.hito?.fecha, Validators.required),
+      comentario: new FormControl(this.data?.hito?.comentario, Validators.maxLength(250)),
+      generaAviso: new FormControl(!!this.data?.hito?.aviso),
+      aviso: new FormGroup({
+        fechaEnvio: new FormControl(this.data?.hito?.aviso?.task?.instant, Validators.required),
+        asunto: new FormControl(this.data?.hito?.aviso?.email?.subject, Validators.required),
+        contenido: new FormControl(this.data?.hito?.aviso?.email?.content, Validators.required),
+        incluirIpsSolicitud: new FormControl(this.data?.hito?.aviso?.incluirIpsSolicitud ?? false),
+        destinatarios: new FormControl(this.data?.hito?.aviso?.email?.recipients, Validators.required)
+      })
+    });
+
+    if (!!!this.data?.hito?.aviso) {
+      formGroup.get('aviso').disable();
+    }
+    if (this.data.readonly) {
+      formGroup.disable();
+    }
+    return formGroup;
   }
 
   ngOnDestroy(): void {
-    this.suscripciones.forEach(subscription => subscription.unsubscribe());
+    super.ngOnDestroy();
   }
 
 }

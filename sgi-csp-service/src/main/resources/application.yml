@@ -15,6 +15,7 @@ sgi:
       sgdoc-url: "http://sgi-esb:8080/sgdoc" 
       sgp-url: "http://sgi-esb:8080/sgp"
       tp-url: "http://sgi-tp-service:4285"
+      sgemp-url: "http://sgi-esb:8080/sgemp"
 spring:
   profiles:
     # Set spring-profile using maven
@@ -185,6 +186,7 @@ sgi:
       sgdoc-url: "http://sgi-esb:8080/sgdoc" 
       sgp-url: "http://sgi-esb:8080/sgp"
       tp-url: "http://sgi-tp-service:8080"
+      sgemp-url: "http://sgi-esb:8080/sgemp"
 spring:
   profiles: prod
   datasource:

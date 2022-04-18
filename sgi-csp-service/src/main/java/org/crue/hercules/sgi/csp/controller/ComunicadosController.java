@@ -30,4 +30,28 @@ public class ComunicadosController {
     service.enviarComunicadoInicioPresentacionJustificacionGastos();
     log.debug("enviarComunicadoInicioPresentacionJustificacionGastos() - end");
   }
+
+  @PreAuthorize("(isClient() and hasAuthority('SCOPE_sgi-csp'))")
+  @GetMapping("/inicio-justificacion-seguimiento-cientifico")
+  public void enviarComunicadoInicioJustificacionSeguimientoCientificoCommunicationUG() throws JsonProcessingException {
+    this.service.enviarComunicadoInicioJustificacionSeguimientoCientificoCommunication();
+  }
+
+  @PreAuthorize("(isClient() and hasAuthority('SCOPE_sgi-csp'))")
+  @GetMapping("/justificacion-seguimiento-cientifico-ips")
+  public void enviarComunicadoJustificacionSeguimientoCientificoIps() throws JsonProcessingException {
+    this.service.enviarComunicadoJustificacionSeguimientoCientificoIps();
+  }
+
+  @PreAuthorize("(isClient() and hasAuthority('SCOPE_sgi-csp'))")
+  @GetMapping("/vencimiento-periodo-pago-socio")
+  public void enviarComunicadoVencimientoPeriodoPagoSocio() throws JsonProcessingException {
+    this.service.enviarComunicadoVencimientoPeriodoPagoSocio();
+  }
+
+  @PreAuthorize("(isClient() and hasAuthority('SCOPE_sgi-csp'))")
+  @GetMapping("/periodo-justificacion-socio")
+  public void enviarComunicadosPeriodoJustificacionSocio() {
+    this.service.enviarComunicadosPeriodoJustificacionSocio();
+  }
 }

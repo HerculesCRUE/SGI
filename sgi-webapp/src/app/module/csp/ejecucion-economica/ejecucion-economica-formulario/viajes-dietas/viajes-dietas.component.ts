@@ -5,7 +5,6 @@ import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { MatSelect } from '@angular/material/select';
 import { MatTableDataSource } from '@angular/material/table';
 import { FragmentComponent } from '@core/component/fragment.component';
-import { HttpProblem } from '@core/errors/http-problem';
 import { MSG_PARAMS } from '@core/i18n';
 import { FxFlexProperties } from '@core/models/shared/flexLayout/fx-flex-properties';
 import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-properties';
@@ -69,7 +68,7 @@ export class ViajesDietasComponent extends FragmentComponent implements OnInit, 
     this.subscriptions.push(this.ejecucionEconomicaService.getViajeDieta(element.id).pipe(
       map(detalle => {
         const datoEconomicoDetalle = detalle as DatoEconomicoDetalleModalData;
-        datoEconomicoDetalle.proyectosSgi = this.formPart.relaciones$.value.map(relacion => relacion.proyecto);
+        datoEconomicoDetalle.proyectosSgiIds = this.formPart.relaciones$.value.map(relacion => relacion.id);
         datoEconomicoDetalle.proyecto = element.proyecto;
         return datoEconomicoDetalle;
       }),
@@ -111,12 +110,8 @@ export class ViajesDietasComponent extends FragmentComponent implements OnInit, 
         };
         this.matDialog.open(ViajesDietasExportModalComponent, config);
       },
-      (error) => {
-        if (error instanceof HttpProblem) {
-          this.formPart.pushProblems(error);
-        }
-      })
-    );
+      this.formPart.processError
+    ));
   }
 
   public clearDesglose(): void {

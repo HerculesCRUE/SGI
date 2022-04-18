@@ -33,7 +33,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
  * AliasEnumeradoControllerTest
  */
 @WebMvcTest(AliasEnumeradoController.class)
-public class AliasEnumeradoControllerTest extends BaseControllerTest {
+class AliasEnumeradoControllerTest extends BaseControllerTest {
 
   @MockBean
   private AliasEnumeradoService service;
@@ -42,7 +42,7 @@ public class AliasEnumeradoControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "PRC-VAL-V", "PRC-VAL-E" })
-  public void findAll_ReturnsPage() throws Exception {
+  void findAll_ReturnsPage() throws Exception {
     // given: Una lista con 37 AliasEnumerado
     List<AliasEnumerado> aliasEnumerados = new ArrayList<>();
     for (long i = 1; i <= 37; i++) {
@@ -100,7 +100,7 @@ public class AliasEnumeradoControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "PRC-VAL-V" })
-  public void findAll_EmptyList_Returns204() throws Exception {
+  void findAll_EmptyList_Returns204() throws Exception {
     // given: no data AliasEnumerado
     BDDMockito.given(service.findAll(ArgumentMatchers.<String>any(), ArgumentMatchers.<Pageable>any()))
         .willAnswer(new Answer<Page<AliasEnumerado>>() {

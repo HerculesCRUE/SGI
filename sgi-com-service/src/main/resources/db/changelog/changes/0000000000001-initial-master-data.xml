@@ -1,0 +1,1939 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:pro="http://www.liquibase.org/xml/ns/pro" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-3.8.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+  <property name="schemaPrefix" value="" />
+
+  <changeSet context="!test" author="master" id="0000000000001-param">
+    <!-- CSP Seguimiento Cientifico -->
+    <insert tableName="param">
+      <column name="id" valueSequenceNext="param_seq" />
+      <column name="name" value="CSP_COM_INICIO_PRESENTACION_SEGUIMIENTO_CIENTIFICO_DATA" />
+      <column name="description" value="JSON con formato: {&quot;fecha&quot;:&quot;2022-01-01&quot;,&quot;proyectos&quot;:[{&quot;titulo&quot;:&quot;Proyecto1&quot;,&quot;fechaInicio&quot;:&quot;2022-01-01T00:00:00Z&quot;,&quot;fechaFin&quot;:&quot;2022-01-31T23:59:59Z&quot;},{&quot;titulo&quot;:&quot;Proyecto2&quot;,&quot;fechaInicio&quot;:&quot;2022-01-01T00:00:00Z&quot;,&quot;fechaFin&quot;:&quot;2022-01-31T23:59:59Z&quot;}]}" />
+      <column name="type" value="JSON" />
+      <column name="created_by" value="master" />
+      <column name="creation_date" valueDate="current_timestamp()" />
+      <column name="last_modified_by" value="master" />
+      <column name="last_modified_date" valueDate="current_timestamp()" />
+    </insert>
+    <insert tableName="param">
+      <column name="id" valueSequenceNext="param_seq" />
+      <column name="name" value="CSP_COM_INICIO_PRESENTACION_SEGUIMIENTO_CIENTIFICO_IP_DATA" />
+      <column name="description" value="JSON con formato: {&quot;titulo&quot;&quot;proyecto 1&quot;,&quot;fechaInicio&quot;:&quot;2022-01-01T00:00:00Z&quot;,&quot;fechaFin&quot;:&quot;2022-01-31T00:00:00Z&quot;,&quot;numPeriodo&quot;: 2}" />
+      <column name="type" value="JSON" />
+      <column name="created_by" value="master" />
+      <column name="creation_date" valueDate="current_timestamp()" />
+      <column name="last_modified_by" value="master" />
+      <column name="last_modified_date" valueDate="current_timestamp()" />
+    </insert>
+    <insert tableName="param">
+      <column name="id" valueSequenceNext="param_seq" />
+      <column name="name" value="CSP_COM_FIN_PRESENTACION_SEGUIMIENTO_CIENTIFICO_IP_DATA" />
+      <column name="description" value="JSON con formato: {&quot;titulo&quot;&quot;proyecto 1&quot;,&quot;fechaInicio&quot;:&quot;2022-01-01T00:00:00Z&quot;,&quot;fechaFin&quot;:&quot;2022-01-31T00:00:00Z&quot;,&quot;numPeriodo&quot;: 2}" />
+      <column name="type" value="JSON" />
+      <column name="created_by" value="master" />
+      <column name="creation_date" valueDate="current_timestamp()" />
+      <column name="last_modified_by" value="master" />
+      <column name="last_modified_date" valueDate="current_timestamp()" />
+    </insert>
+    <!-- CSP Solicitud Peticion Evaluacion -->
+    <insert tableName="param">
+      <column name="id" valueSequenceNext="param_seq" />
+      <column name="name" value="ETI_PETICION_EVALUACION_CODIGO" />
+      <column name="description" value="Código de la solicitud de evaluación de ética" />
+      <column name="type" value="STRING" />
+    </insert>
+    <insert tableName="param">
+      <column name="id" valueSequenceNext="param_seq" />
+      <column name="name" value="CSP_SOLICITUD_CODIGO" />
+      <column name="description" value="Código de la solicitud de csp" />
+      <column name="type" value="STRING" />
+    </insert>
+    <!-- CSP Solicitud Hito -->
+    <insert tableName="param">
+      <column name="id" valueSequenceNext="param_seq" />
+      <column name="name" value="CSP_HITO_OBSERVACIONES" />
+      <column name="description" value="Observaciones del Hito" />
+      <column name="type" value="STRING" />
+    </insert>
+    <!-- ETI Convocatoria Reunión -->
+    <insert tableName="param">
+      <column name="id" valueSequenceNext="param_seq" />
+      <column name="name" value="ETI_COMITE_NOMBRE_INVESTIGACION" />
+      <column name="description" value="Nombre de investigación del comité" />
+      <column name="type" value="STRING" />
+    </insert>
+    <insert tableName="param">
+      <column name="id" valueSequenceNext="param_seq" />
+      <column name="name" value="CSP_SOLICITUD_TITULO" />
+      <column name="description" value="Titulo de la Solicitud" />
+      <column name="type" value="STRING" />
+    </insert>
+    <insert tableName="param">
+      <column name="id" valueSequenceNext="param_seq" />
+      <column name="name" value="ETI_COMITE" />
+      <column name="description" value="Nombre del comité" />
+      <column name="type" value="STRING" />
+    </insert>
+    <insert tableName="param">
+      <column name="id" valueSequenceNext="param_seq" />
+      <column name="name" value="ETI_CONVOCATORIA_REUNION_FECHA_EVALUACION" />
+      <column name="description" value="Día de la semana de la fecha de evaluación" />
+      <column name="type" value="STRING" />
+    </insert>
+    <insert tableName="param">
+      <column name="id" valueSequenceNext="param_seq" />
+      <column name="name" value="ETI_CONVOCATORIA_REUNION_HORA_INICIO" />
+      <column name="description" value="La hora de inicio de la primera convocatoria" />
+      <column name="type" value="STRING" />
+    </insert>
+    <insert tableName="param">
+      <column name="id" valueSequenceNext="param_seq" />
+      <column name="name" value="ETI_CONVOCATORIA_REUNION_MINUTO_INICIO" />
+      <column name="description" value="EL minuto de inicio de la primera convocatoria" />
+      <column name="type" value="STRING" />
+    </insert>
+    <insert tableName="param">
+      <column name="id" valueSequenceNext="param_seq" />
+      <column name="name" value="ETI_CONVOCATORIA_REUNION_HORA_INICIO_SEGUNDA" />
+      <column name="description" value="La hora de inicio de la segunda convocatoria" />
+      <column name="type" value="STRING" />
+    </insert>
+    <insert tableName="param">
+      <column name="id" valueSequenceNext="param_seq" />
+      <column name="name" value="ETI_CONVOCATORIA_REUNION_MINUTO_INICIO_SEGUNDA" />
+      <column name="description" value="EL minuto de inicio de la segunda convocatoria" />
+      <column name="type" value="STRING" />
+    </insert>
+    <insert tableName="param">
+      <column name="id" valueSequenceNext="param_seq" />
+      <column name="name" value="ETI_CONVOCATORIA_REUNION_ORDEN_DEL_DIA" />
+      <column name="description" value="Orden del día de la convocatoria de reunión" />
+      <column name="type" value="STRING" />
+    </insert>
+    <!-- CSP Solicitud Cambio Estado Solicitada -->
+    <insert tableName="param">
+      <column name="id" valueSequenceNext="param_seq" />
+      <column name="name" value="CSP_COM_SOL_CAMB_EST_SOLICITADA_DATA" />
+      <column name="description" value="JSON con formato: {&quot;titulo de convocatoria&quot;&quot;nombre y apellidos del solicitante&quot;,&quot;fecha de cambio de estado solicitud&quot;:&quot;2022-01-01T00:00:00Z&quot;,&quot;fecha de publicación de la convocatoria&quot;:&quot;2022-01-31T00:00:00Z&quot;}" />
+      <column name="type" value="JSON" />
+      <column name="created_by" value="master" />
+      <column name="creation_date" valueDate="current_timestamp()" />
+      <column name="last_modified_by" value="master" />
+      <column name="last_modified_date" valueDate="current_timestamp()" />
+    </insert>
+    <!-- CSP Solicitud Cambio Estado Alegaciones -->
+    <insert tableName="param">
+      <column name="id" valueSequenceNext="param_seq" />
+      <column name="name" value="CSP_COM_SOL_CAMB_EST_ALEGACIONES_DATA" />
+      <column name="description" value="JSON con formato: {&quot;titulo de convocatoria&quot;&quot;,nombre y apellidos del solicitante&quot;,&quot;código de registro interno&quot;&quot;,&quot;fecha de cambio de estado solicitud&quot;:&quot;2022-01-01T00:00:00Z&quot;,&quot;fecha concesión de la convocatoria&quot;:&quot;2022-01-31T00:00:00Z&quot;}" />
+      <column name="type" value="JSON" />
+      <column name="created_by" value="master" />
+      <column name="creation_date" valueDate="current_timestamp()" />
+      <column name="last_modified_by" value="master" />
+      <column name="last_modified_date" valueDate="current_timestamp()" />
+    </insert>
+    <!-- CSP Solicitud Cambio Estado Excluida definitiva -->
+    <insert tableName="param">
+      <column name="id" valueSequenceNext="param_seq" />
+      <column name="name" value="CSP_COM_SOL_CAMB_EST_EXCL_DEF_DATA" />
+      <column name="description" value="JSON con formato: {&quot;titulo de convocatoria&quot;&quot;,fecha definitiva de convocatoria&quot;,&quot;código de registro interno&quot;&quot;,&quot;Listado de enlaces de la convocatoria&quot;" />
+      <column name="type" value="JSON" />
+      <column name="created_by" value="master" />
+      <column name="creation_date" valueDate="current_timestamp()" />
+      <column name="last_modified_by" value="master" />
+      <column name="last_modified_date" valueDate="current_timestamp()" />
+    </insert>
+    <!-- CSP Solicitud Cambio Estado Excluida provisional -->
+    <insert tableName="param">
+      <column name="id" valueSequenceNext="param_seq" />
+      <column name="name" value="CSP_COM_SOL_CAMB_EST_EXCL_PROV_DATA" />
+      <column name="description" value="JSON con formato: {&quot;titulo de convocatoria&quot;&quot;,fecha provisional de convocatoria&quot;,&quot;código de registro interno&quot;&quot;,&quot;Listado de enlaces de la convocatoria&quot;" />
+      <column name="type" value="JSON" />
+      <column name="created_by" value="master" />
+      <column name="creation_date" valueDate="current_timestamp()" />
+      <column name="last_modified_by" value="master" />
+      <column name="last_modified_date" valueDate="current_timestamp()" />
+    </insert>
+    <!-- CSP Solicitud Cambio Estado Concedida provisional -->
+    <insert tableName="param">
+      <column name="id" valueSequenceNext="param_seq" />
+      <column name="name" value="CSP_COM_SOL_CAMB_EST_CONC_PROV_DATA" />
+      <column name="description" value="JSON con formato: {&quot;titulo de convocatoria&quot;&quot;,fecha provisional de convocatoria&quot;&quot;Listado de enlaces de la convocatoria&quot;" />
+      <column name="type" value="JSON" />
+      <column name="created_by" value="master" />
+      <column name="creation_date" valueDate="current_timestamp()" />
+      <column name="last_modified_by" value="master" />
+      <column name="last_modified_date" valueDate="current_timestamp()" />
+    </insert>
+    <!-- CSP Solicitud Cambio Estado Concedida -->
+    <insert tableName="param">
+      <column name="id" valueSequenceNext="param_seq" />
+      <column name="name" value="CSP_COM_SOL_CAMB_EST_CONC_DATA" />
+      <column name="description" value="JSON con formato: {&quot;titulo de convocatoria&quot;&quot;,fecha concesión de convocatoria&quot;,&quot;código de registro interno&quot;&quot;,&quot;Listado de enlaces de la convocatoria&quot;" />
+      <column name="type" value="JSON" />
+      <column name="created_by" value="master" />
+      <column name="creation_date" valueDate="current_timestamp()" />
+      <column name="last_modified_by" value="master" />
+      <column name="last_modified_date" valueDate="current_timestamp()" />
+    </insert>
+    <!-- CSP Solicitud Cambio Estado Denegada provisional -->
+    <insert tableName="param">
+      <column name="id" valueSequenceNext="param_seq" />
+      <column name="name" value="CSP_COM_SOL_CAMB_EST_DEN_PROV_DATA" />
+      <column name="description" value="JSON con formato: {&quot;titulo de convocatoria&quot;&quot;,fecha provisional de convocatoria&quot;&quot;Listado de enlaces de la convocatoria&quot;" />
+      <column name="type" value="JSON" />
+      <column name="created_by" value="master" />
+      <column name="creation_date" valueDate="current_timestamp()" />
+      <column name="last_modified_by" value="master" />
+      <column name="last_modified_date" valueDate="current_timestamp()" />
+    </insert>
+    <!-- CSP Solicitud Cambio Estado Denegada -->
+    <insert tableName="param">
+      <column name="id" valueSequenceNext="param_seq" />
+      <column name="name" value="CSP_COM_SOL_CAMB_EST_DEN_DATA" />
+      <column name="description" value="JSON con formato: {&quot;titulo de convocatoria&quot;&quot;,fecha concesion de convocatoria&quot;&quot;Listado de enlaces de la convocatoria&quot;" />
+      <column name="type" value="JSON" />
+      <column name="created_by" value="master" />
+      <column name="creation_date" valueDate="current_timestamp()" />
+      <column name="last_modified_by" value="master" />
+      <column name="last_modified_date" valueDate="current_timestamp()" />
+    </insert>
+    <!-- CSP Calendario Facturacion Validar IP - Validada -->
+    <insert tableName="param">
+      <column name="id" valueSequenceNext="param_seq" />
+      <column name="name" value="CSP_COM_CALENDARIO_FACTURACION_VALIDAR_IP_VALIDADA_DATA" />
+      <column name="description" value="JSON con formato: {&quot;nombreApellidosValidador&quot;:&quot;Manolo Sanchez Esturión&quot;,&quot;tituloProyecto&quot;:&quot;proyecto 1&quot;,&quot;codigosSge&quot;:[&quot;202200Z&quot;],&quot;numPrevision&quot;: 2,&quot;motivoRechazo&quot;:&quot;Motivo Rechazo&quot;}" />
+      <column name="type" value="JSON" />
+      <column name="created_by" value="master" />
+      <column name="creation_date" valueDate="current_timestamp()" />
+      <column name="last_modified_by" value="master" />
+      <column name="last_modified_date" valueDate="current_timestamp()" />
+    </insert>
+    <!-- CSP Proyecto Periodo Pago Socio -->
+    <insert tableName="param">
+      <column name="id" valueSequenceNext="param_seq" />
+      <column name="name" value="CSP_COM_VENCIMIENTO_PERIODO_PAGO_SOCIO_DATA" />
+      <column name="description" value="JSON con formato: {&quot;titulo&quot;&quot;proyecto 1&quot;,&quot;fechaPrevistaPago&quot;:&quot;2022-01-01T00:00:00Z&quot;,&quot;nombreEntidadColaboradora&quot;:&quot;entidad&quot;}" />
+      <column name="type" value="JSON" />
+      <column name="created_by" value="master" />
+      <column name="creation_date" valueDate="current_timestamp()" />
+      <column name="last_modified_by" value="master" />
+      <column name="last_modified_date" valueDate="current_timestamp()" />
+    </insert>
+    <!-- CSP Periodo Justificacion Socio -->
+    <insert tableName="param">
+      <column name="id" valueSequenceNext="param_seq" />
+      <column name="name" value="CSP_COM_INICIO_PERIODO_JUSTIFICACION_SOCIO_DATA" />
+      <column name="description" value="JSON con formato: {&quot;titulo&quot;:&quot;proyecto 1&quot;,&quot;fechaInicio&quot;:&quot;2022-01-01T00:00:00Z&quot;,&quot;fechaFin&quot;:&quot;2022-01-01T00:00:00Z&quot;,&quot;nombreEntidad&quot;:&quot;entidad&quot;,&quot;numPeriodo&quot;:&quot;1&quot;}" />
+      <column name="type" value="JSON" />
+      <column name="created_by" value="master" />
+      <column name="creation_date" valueDate="current_timestamp()" />
+      <column name="last_modified_by" value="master" />
+      <column name="last_modified_date" valueDate="current_timestamp()" />
+    </insert>
+    <insert tableName="param">
+      <column name="id" valueSequenceNext="param_seq" />
+      <column name="name" value="CSP_COM_FIN_PERIODO_JUSTIFICACION_SOCIO_DATA" />
+      <column name="description" value="JSON con formato: {&quot;titulo&quot;:&quot;proyecto 1&quot;,&quot;fechaInicio&quot;:&quot;2022-01-01T00:00:00Z&quot;,&quot;fechaFin&quot;:&quot;2022-01-01T00:00:00Z&quot;,&quot;nombreEntidad&quot;:&quot;entidad&quot;,&quot;numPeriodo&quot;:&quot;1&quot;}" />
+      <column name="type" value="JSON" />
+      <column name="created_by" value="master" />
+      <column name="creation_date" valueDate="current_timestamp()" />
+      <column name="last_modified_by" value="master" />
+      <column name="last_modified_date" valueDate="current_timestamp()" />
+    </insert>
+    <!-- CSP Calendario Facturacion Validar IP - Rechazada -->
+    <insert tableName="param">
+      <column name="id" valueSequenceNext="param_seq" />
+      <column name="name" value="CSP_COM_CALENDARIO_FACTURACION_VALIDAR_IP_RECHAZADA_DATA" />
+      <column name="description" value="JSON con formato: {&quot;nombreApellidosValidador&quot;:&quot;Manolo Sanchez Esturión&quot;,&quot;tituloProyecto&quot;:&quot;proyecto 1&quot;,&quot;codigosSge&quot;:[&quot;202200Z&quot;],&quot;numPrevision&quot;: 2,&quot;motivoRechazo&quot;:&quot;Motivo Rechazo&quot;}" />
+      <column name="type" value="JSON" />
+      <column name="created_by" value="master" />
+      <column name="creation_date" valueDate="current_timestamp()" />
+      <column name="last_modified_by" value="master" />
+      <column name="last_modified_date" valueDate="current_timestamp()" />
+    </insert>
+    <!-- CSP Calendario Facturacion Notificar UNICA_NOT_IN_PRORROGA -->
+    <insert tableName="param">
+      <column name="id" valueSequenceNext="param_seq" />
+      <column name="name" value="CSP_COM_CALENDARIO_FACTURACION_NOTIFICAR_FACTURA_UNICA_NOT_IN_PRORROGA_DATA" />
+      <column name="description" value="JSON con formato: {&quot;nombreApellidosValidador&quot;:&quot;Manolo Sanchez Esturión&quot;,&quot;tituloProyecto&quot;:&quot;proyecto 1&quot;,&quot;codigosSge&quot;:[&quot;202200Z&quot;],&quot;numPrevision&quot;: 2,&quot;apellidosDestinatario&quot;:&quot;Garcia Gutierrez&quot;,&quot;tipoFacturacion&quot;:&quot;SIN REQUISITOS&quot;,&quot;entidadesFinancieras&quot;:&quot;[&quot;entidad1&quot;]}" />
+      <column name="type" value="JSON" />
+      <column name="created_by" value="master" />
+      <column name="creation_date" valueDate="current_timestamp()" />
+      <column name="last_modified_by" value="master" />
+      <column name="last_modified_date" valueDate="current_timestamp()" />
+    </insert>
+    <!-- CSP Calendario Facturacion Notificar UNICA_NOT_IN_PRORROGA_NO_REQUISITO -->
+    <insert tableName="param">
+      <column name="id" valueSequenceNext="param_seq" />
+      <column name="name" value="CSP_COM_CALENDARIO_FACTURACION_NOTIFICAR_FACTURA_UNICA_NOT_IN_PRORROGA_NO_REQUISITO_DATA" />
+      <column name="description" value="JSON con formato: {&quot;nombreApellidosValidador&quot;:&quot;Manolo Sanchez Esturión&quot;,&quot;tituloProyecto&quot;:&quot;proyecto 1&quot;,&quot;codigosSge&quot;:[&quot;202200Z&quot;],&quot;numPrevision&quot;: 2,&quot;apellidosDestinatario&quot;:&quot;Garcia Gutierrez&quot;,&quot;tipoFacturacion&quot;:&quot;SIN REQUISITOS&quot;,&quot;entidadesFinancieras&quot;:&quot;[&quot;entidad1&quot;]}" />
+      <column name="type" value="JSON" />
+      <column name="created_by" value="master" />
+      <column name="creation_date" valueDate="current_timestamp()" />
+      <column name="last_modified_by" value="master" />
+      <column name="last_modified_date" valueDate="current_timestamp()" />
+    </insert>
+    <!-- CSP Calendario Facturacion Notificar FACTURA_FIRST_NO_PRORROGA_NO_LAST -->
+    <insert tableName="param">
+      <column name="id" valueSequenceNext="param_seq" />
+      <column name="name" value="CSP_COM_CALENDARIO_FACTURACION_NOTIFICAR_FACTURA_FIRST_NO_PRORROGA_NO_LAST_DATA" />
+      <column name="description" value="JSON con formato: {&quot;nombreApellidosValidador&quot;:&quot;Manolo Sanchez Esturión&quot;,&quot;tituloProyecto&quot;:&quot;proyecto 1&quot;,&quot;codigosSge&quot;:[&quot;202200Z&quot;],&quot;numPrevision&quot;: 2,&quot;apellidosDestinatario&quot;:&quot;Garcia Gutierrez&quot;,&quot;tipoFacturacion&quot;:&quot;SIN REQUISITOS&quot;,&quot;entidadesFinancieras&quot;:&quot;[&quot;entidad1&quot;]}" />
+      <column name="type" value="JSON" />
+      <column name="created_by" value="master" />
+      <column name="creation_date" valueDate="current_timestamp()" />
+      <column name="last_modified_by" value="master" />
+      <column name="last_modified_date" valueDate="current_timestamp()" />
+    </insert>
+    <!-- CSP Calendario Facturacion Notificar FACTURA_NOT_FIRST_OR_IN_PRORROGA_AND_IS_NOT_LAST_NO_REQUISITO -->
+    <insert tableName="param">
+      <column name="id" valueSequenceNext="param_seq" />
+      <column name="name" value="CSP_COM_CALENDARIO_FACTURACION_NOTIFICAR_FACTURA_NOT_FIRST_OR_IN_PRORROGA_AND_IS_NOT_LAST_NO_REQUISITO_DATA" />
+      <column name="description" value="JSON con formato: {&quot;nombreApellidosValidador&quot;:&quot;Manolo Sanchez Esturión&quot;,&quot;tituloProyecto&quot;:&quot;proyecto 1&quot;,&quot;codigosSge&quot;:[&quot;202200Z&quot;],&quot;numPrevision&quot;: 2,&quot;apellidosDestinatario&quot;:&quot;Garcia Gutierrez&quot;,&quot;tipoFacturacion&quot;:&quot;SIN REQUISITOS&quot;,&quot;entidadesFinancieras&quot;:&quot;[&quot;entidad1&quot;]}" />
+      <column name="type" value="JSON" />
+      <column name="created_by" value="master" />
+      <column name="creation_date" valueDate="current_timestamp()" />
+      <column name="last_modified_by" value="master" />
+      <column name="last_modified_date" valueDate="current_timestamp()" />
+    </insert>
+    <!-- CSP Calendario Facturacion Notificar FACTURA_NOT_FIRST_OR_IN_PRORROGA_AND_IS_NOT_LAST -->
+    <insert tableName="param">
+      <column name="id" valueSequenceNext="param_seq" />
+      <column name="name" value="CSP_COM_CALENDARIO_FACTURACION_NOTIFICAR_FACTURA_NOT_FIRST_OR_IN_PRORROGA_AND_IS_NOT_LAST_DATA" />
+      <column name="description" value="JSON con formato: {&quot;nombreApellidosValidador&quot;:&quot;Manolo Sanchez Esturión&quot;,&quot;tituloProyecto&quot;:&quot;proyecto 1&quot;,&quot;codigosSge&quot;:[&quot;202200Z&quot;],&quot;numPrevision&quot;: 2,&quot;apellidosDestinatario&quot;:&quot;Garcia Gutierrez&quot;,&quot;tipoFacturacion&quot;:&quot;SIN REQUISITOS&quot;,&quot;entidadesFinancieras&quot;:&quot;[&quot;entidad1&quot;]}" />
+      <column name="type" value="JSON" />
+      <column name="created_by" value="master" />
+      <column name="creation_date" valueDate="current_timestamp()" />
+      <column name="last_modified_by" value="master" />
+      <column name="last_modified_date" valueDate="current_timestamp()" />
+    </insert>
+    <!-- CSP Calendario Facturacion Notificar FACTURA_NOT_FIRST_OR_IN_PRORROGA_AND_IS_LAST_NO_REQUISITO -->
+    <insert tableName="param">
+      <column name="id" valueSequenceNext="param_seq" />
+      <column name="name" value="CSP_COM_CALENDARIO_FACTURACION_NOTIFICAR_FACTURA_NOT_FIRST_OR_IN_PRORROGA_AND_IS_LAST_NO_REQUISITO_DATA" />
+      <column name="description" value="JSON con formato: {&quot;nombreApellidosValidador&quot;:&quot;Manolo Sanchez Esturión&quot;,&quot;tituloProyecto&quot;:&quot;proyecto 1&quot;,&quot;codigosSge&quot;:[&quot;202200Z&quot;],&quot;numPrevision&quot;: 2,&quot;apellidosDestinatario&quot;:&quot;Garcia Gutierrez&quot;,&quot;tipoFacturacion&quot;:&quot;SIN REQUISITOS&quot;,&quot;entidadesFinancieras&quot;:&quot;[&quot;entidad1&quot;]}" />
+      <column name="type" value="JSON" />
+      <column name="created_by" value="master" />
+      <column name="creation_date" valueDate="current_timestamp()" />
+      <column name="last_modified_by" value="master" />
+      <column name="last_modified_date" valueDate="current_timestamp()" />
+    </insert>
+    <!-- CSP Calendario Facturacion Notificar FACTURA_NOT_FIRST_OR_IN_PRORROGA_AND_IS_LAST -->
+    <insert tableName="param">
+      <column name="id" valueSequenceNext="param_seq" />
+      <column name="name" value="CSP_COM_CALENDARIO_FACTURACION_NOTIFICAR_FACTURA_NOT_FIRST_OR_IN_PRORROGA_AND_IS_LAST_DATA" />
+      <column name="description" value="JSON con formato: {&quot;nombreApellidosValidador&quot;:&quot;Manolo Sanchez Esturión&quot;,&quot;tituloProyecto&quot;:&quot;proyecto 1&quot;,&quot;codigosSge&quot;:[&quot;202200Z&quot;],&quot;numPrevision&quot;: 2,&quot;apellidosDestinatario&quot;:&quot;Garcia Gutierrez&quot;,&quot;tipoFacturacion&quot;:&quot;SIN REQUISITOS&quot;,&quot;entidadesFinancieras&quot;:&quot;[&quot;entidad1&quot;]}" />
+      <column name="type" value="JSON" />
+      <column name="created_by" value="master" />
+      <column name="creation_date" valueDate="current_timestamp()" />
+      <column name="last_modified_by" value="master" />
+      <column name="last_modified_date" valueDate="current_timestamp()" />
+    </insert>
+  </changeSet>
+
+  <changeSet context="!test" author="master" id="0000000000001-subject_tpl">
+    <!-- CSP Seguimiento Cientifico -->
+    <insert tableName="subject_tpl">
+      <column name="id" valueSequenceNext="subject_tpl_seq" />
+      <column name="name" value="CSP_COM_INICIO_PRESENTACION_SEGUIMIENTO_CIENTIFICO_SUBJECT" />
+      <column name="description" value="Asunto del aviso de inicio del período de presentación de justificación de seguimiento científico" />
+      <column name="tpl" value=" " />
+      <column name="created_by" value="master" />
+      <column name="creation_date" valueDate="current_timestamp()" />
+      <column name="last_modified_by" value="master" />
+      <column name="last_modified_date" valueDate="current_timestamp()" />
+    </insert>
+    <update tableName="subject_tpl">
+      <column name="tpl" valueClobFile="clob/0000000000001/csp-com-inicio-seguimiento-cientifico/ug/CSP_COM_INICIO_PRESENTACION_SEGUIMIENTO_CIENTIFICO_SUBJECT.ftl" />
+      <where>name='CSP_COM_INICIO_PRESENTACION_SEGUIMIENTO_CIENTIFICO_SUBJECT'</where>
+    </update>
+    <insert tableName="subject_tpl">
+      <column name="id" valueSequenceNext="subject_tpl_seq" />
+      <column name="name" value="CSP_COM_INICIO_PRESENTACION_SEGUIMIENTO_CIENTIFICO_IP_SUBJECT" />
+      <column name="description" value="Asunto del aviso de inicio del período de presentación de justificación de seguimiento científico IP" />
+      <column name="tpl" value=" " />
+      <column name="created_by" value="master" />
+      <column name="creation_date" valueDate="current_timestamp()" />
+      <column name="last_modified_by" value="master" />
+      <column name="last_modified_date" valueDate="current_timestamp()" />
+    </insert>
+    <update tableName="subject_tpl">
+      <column name="tpl" valueClobFile="clob/0000000000001/csp-com-inicio-seguimiento-cientifico/ips/CSP_COM_INICIO_PRESENTACION_SEGUIMIENTO_CIENTIFICO_IP_SUBJECT.ftl" />
+      <where>name='CSP_COM_INICIO_PRESENTACION_SEGUIMIENTO_CIENTIFICO_IP_SUBJECT'</where>
+    </update>
+    <insert tableName="subject_tpl">
+      <column name="id" valueSequenceNext="subject_tpl_seq" />
+      <column name="name" value="CSP_COM_FIN_PRESENTACION_SEGUIMIENTO_CIENTIFICO_IP_SUBJECT" />
+      <column name="description" value="Asunto del aviso de inicio del período de presentación de justificación de seguimiento científico IP" />
+      <column name="tpl" value=" " />
+      <column name="created_by" value="master" />
+      <column name="creation_date" valueDate="current_timestamp()" />
+      <column name="last_modified_by" value="master" />
+      <column name="last_modified_date" valueDate="current_timestamp()" />
+    </insert>
+    <update tableName="subject_tpl">
+      <column name="tpl" valueClobFile="clob/0000000000001/csp-com-fin-seguimiento-cientifico/CSP_COM_FIN_PRESENTACION_SEGUIMIENTO_CIENTIFICO_IP_SUBJECT.ftl" />
+      <where>name='CSP_COM_FIN_PRESENTACION_SEGUIMIENTO_CIENTIFICO_IP_SUBJECT'</where>
+    </update>
+    <!-- CSP Solicitud Peticion Evaluacion -->
+    <insert tableName="subject_tpl">
+      <column name="id" valueSequenceNext="subject_tpl_seq" />
+      <column name="name" value="CSP_COM_SOLICITUD_PETICION_EVALUACION_SUBJECT" />
+      <column name="description" value="Plantilla de asunto para el alta de solicitud de petición evaluación de ética" />
+      <column name="tpl" value=" " />
+    </insert>
+    <update tableName="subject_tpl">
+      <column name="tpl" valueClobFile="clob/0000000000001/csp-com-solicitud-peticion-evaluacion/CSP_COM_SOLICITUD_PETICION_EVALUACION_SUBJECT.ftl" />
+      <where>name='CSP_COM_SOLICITUD_PETICION_EVALUACION_SUBJECT'</where>
+    </update>
+    <!-- CSP Solicitud Cambio Estado Solicitada -->
+    <insert tableName="subject_tpl">
+      <column name="id" valueSequenceNext="subject_tpl_seq" />
+      <column name="name" value="CSP_COM_SOL_CAMB_EST_SOLICITADA_SUBJECT" />
+      <column name="description" value="Plantilla de asunto para el cambio de estado de solicitud a solicitada" />
+      <column name="tpl" value=" " />
+    </insert>
+    <update tableName="subject_tpl">
+      <column name="tpl" valueClobFile="clob/0000000000001/csp-com-solicitud-cambio-estado/solicitada/CSP_COM_SOL_CAMB_EST_SOLICITADA_SUBJECT.ftl" />
+      <where>name='CSP_COM_SOL_CAMB_EST_SOLICITADA_SUBJECT'</where>
+    </update>
+    <!-- CSP Solicitud Cambio Estado Alegaciones -->
+    <insert tableName="subject_tpl">
+      <column name="id" valueSequenceNext="subject_tpl_seq" />
+      <column name="name" value="CSP_COM_SOL_CAMB_EST_ALEGACIONES_SUBJECT" />
+      <column name="description" value="Plantilla de asunto para el cambio de estado de solicitud a alegaciones" />
+      <column name="tpl" value=" " />
+    </insert>
+    <update tableName="subject_tpl">
+      <column name="tpl" valueClobFile="clob/0000000000001/csp-com-solicitud-cambio-estado/alegaciones/CSP_COM_SOL_CAMB_EST_ALEGACIONES_SUBJECT.ftl" />
+      <where>name='CSP_COM_SOL_CAMB_EST_ALEGACIONES_SUBJECT'</where>
+    </update>
+    <!-- CSP Solicitud Cambio Estado Excluida provisional -->
+    <insert tableName="subject_tpl">
+      <column name="id" valueSequenceNext="subject_tpl_seq" />
+      <column name="name" value="CSP_COM_SOL_CAMB_EST_EXCL_PROV_SUBJECT" />
+      <column name="description" value="Plantilla de asunto para el cambio de estado de solicitud a excluida provisional" />
+      <column name="tpl" value=" " />
+    </insert>
+    <update tableName="subject_tpl">
+      <column name="tpl" valueClobFile="clob/0000000000001/csp-com-solicitud-cambio-estado/excluidas/CSP_COM_SOL_CAMB_EST_EXCL_PROV_SUBJECT.ftl" />
+      <where>name='CSP_COM_SOL_CAMB_EST_EXCL_PROV_SUBJECT'</where>
+    </update>
+    <!-- CSP Solicitud Cambio Estado Excluida definitiva -->
+    <insert tableName="subject_tpl">
+      <column name="id" valueSequenceNext="subject_tpl_seq" />
+      <column name="name" value="CSP_COM_SOL_CAMB_EST_EXCL_DEF_SUBJECT" />
+      <column name="description" value="Plantilla de asunto para el cambio de estado de solicitud excluida definitiva" />
+      <column name="tpl" value=" " />
+    </insert>
+    <update tableName="subject_tpl">
+      <column name="tpl" valueClobFile="clob/0000000000001/csp-com-solicitud-cambio-estado/excluidas/CSP_COM_SOL_CAMB_EST_EXCL_DEF_SUBJECT.ftl" />
+      <where>name='CSP_COM_SOL_CAMB_EST_EXCL_DEF_SUBJECT'</where>
+    </update>
+    <!-- CSP Solicitud Cambio Estado Concedida Provisional -->
+    <insert tableName="subject_tpl">
+      <column name="id" valueSequenceNext="subject_tpl_seq" />
+      <column name="name" value="CSP_COM_SOL_CAMB_EST_CONC_PROV_SUBJECT" />
+      <column name="description" value="Plantilla de asunto para el cambio de estado de solicitud concedida provisional" />
+      <column name="tpl" value=" " />
+    </insert>
+    <update tableName="subject_tpl">
+      <column name="tpl" valueClobFile="clob/0000000000001/csp-com-solicitud-cambio-estado/concedidas/CSP_COM_SOL_CAMB_EST_CONC_PROV_SUBJECT.ftl" />
+      <where>name='CSP_COM_SOL_CAMB_EST_CONC_PROV_SUBJECT'</where>
+    </update>
+    <!-- CSP Solicitud Cambio Estado Concedida -->
+    <insert tableName="subject_tpl">
+      <column name="id" valueSequenceNext="subject_tpl_seq" />
+      <column name="name" value="CSP_COM_SOL_CAMB_EST_CONC_SUBJECT" />
+      <column name="description" value="Plantilla de asunto para el cambio de estado de solicitud a concedida" />
+      <column name="tpl" value=" " />
+    </insert>
+    <update tableName="subject_tpl">
+      <column name="tpl" valueClobFile="clob/0000000000001/csp-com-solicitud-cambio-estado/concedidas/CSP_COM_SOL_CAMB_EST_CONC_SUBJECT.ftl" />
+      <where>name='CSP_COM_SOL_CAMB_EST_CONC_SUBJECT'</where>
+    </update>
+    <!-- CSP Solicitud Cambio Estado Denegada Provisional -->
+    <insert tableName="subject_tpl">
+      <column name="id" valueSequenceNext="subject_tpl_seq" />
+      <column name="name" value="CSP_COM_SOL_CAMB_EST_DEN_PROV_SUBJECT" />
+      <column name="description" value="Plantilla de asunto para el cambio de estado de solicitud denegada provisional" />
+      <column name="tpl" value=" " />
+    </insert>
+    <update tableName="subject_tpl">
+      <column name="tpl" valueClobFile="clob/0000000000001/csp-com-solicitud-cambio-estado/denegadas/CSP_COM_SOL_CAMB_EST_DEN_PROV_SUBJECT.ftl" />
+      <where>name='CSP_COM_SOL_CAMB_EST_DEN_PROV_SUBJECT'</where>
+    </update>
+    <!-- CSP Solicitud Cambio Estado Denegada -->
+    <insert tableName="subject_tpl">
+      <column name="id" valueSequenceNext="subject_tpl_seq" />
+      <column name="name" value="CSP_COM_SOL_CAMB_EST_DEN_SUBJECT" />
+      <column name="description" value="Plantilla de asunto para el cambio de estado de solicitud denegada" />
+      <column name="tpl" value=" " />
+    </insert>
+    <update tableName="subject_tpl">
+      <column name="tpl" valueClobFile="clob/0000000000001/csp-com-solicitud-cambio-estado/denegadas/CSP_COM_SOL_CAMB_EST_DEN_SUBJECT.ftl" />
+      <where>name='CSP_COM_SOL_CAMB_EST_DEN_SUBJECT'</where>
+    </update>
+    <!-- CSP Solicitud Hito -->
+    <insert tableName="subject_tpl">
+      <column name="id" valueSequenceNext="subject_tpl_seq" />
+      <column name="name" value="CSP_SOLICITUD_HITO_SUBJECT" />
+      <column name="description" value="Plantilla de asunto para Solicitudes-Hitos" />
+      <column name="tpl" value=" " />
+    </insert>
+    <update tableName="subject_tpl">
+      <column name="tpl" valueClobFile="clob/CSP_SOLICITUD_HITO_SUBJECT.ftl" />
+      <where>name='CSP_SOLICITUD_HITO_SUBJECT'</where>
+    </update>
+    <!-- ETI Convocatoria de reunión -->
+    <insert tableName="subject_tpl">
+      <column name="id" valueSequenceNext="subject_tpl_seq" />
+      <column name="name" value="ETI_COM_CONVOCATORIA_REUNION_SUBJECT" />
+      <column name="description" value="Plantilla de asunto para el envío de la convocatoria de reunión de ética" />
+      <column name="tpl" value=" " />
+    </insert>
+    <update tableName="subject_tpl">
+      <column name="tpl" valueClobFile="clob/0000000000001/eti-com-convocatoria-reunion/ETI_COM_CONVOCATORIA_REUNION_SUBJECT.ftl" />
+      <where>name='ETI_COM_CONVOCATORIA_REUNION_SUBJECT'</where>
+    </update>
+    <!-- CSP Proyecto Periodo Pago Socio -->
+    <insert tableName="subject_tpl">
+      <column name="id" valueSequenceNext="subject_tpl_seq" />
+      <column name="name" value="CSP_COM_VENCIMIENTO_PERIODO_PAGO_SOCIO_SUBJECT" />
+      <column name="description" value="Asunto del aviso del vencimiento del período de pago al socio" />
+      <column name="tpl" value=" " />
+      <column name="created_by" value="master" />
+      <column name="creation_date" valueDate="current_timestamp()" />
+      <column name="last_modified_by" value="master" />
+      <column name="last_modified_date" valueDate="current_timestamp()" />
+    </insert>
+    <update tableName="subject_tpl">
+      <column name="tpl" valueClobFile="clob/0000000000001/csp-com-proyecto-periodo-pago-socio/CSP_COM_VENCIMIENTO_PERIODO_PAGO_SOCIO_SUBJECT.ftl" />
+      <where>name='CSP_COM_VENCIMIENTO_PERIODO_PAGO_SOCIO_SUBJECT'</where>
+    </update>
+    <!-- CSP Inicio Periodo Justificación Socio -->
+    <insert tableName="subject_tpl">
+      <column name="id" valueSequenceNext="subject_tpl_seq" />
+      <column name="name" value="CSP_COM_INICIO_PERIODO_JUSTIFICACION_SOCIO_SUBJECT" />
+      <column name="description" value="Comunicado de inicio del periodo para entregar la documentación de justificación" />
+      <column name="tpl" value=" " />
+      <column name="created_by" value="master" />
+      <column name="creation_date" valueDate="current_timestamp()" />
+      <column name="last_modified_by" value="master" />
+      <column name="last_modified_date" valueDate="current_timestamp()" />
+    </insert>
+    <update tableName="subject_tpl">
+      <column name="tpl" valueClobFile="clob/0000000000001/csp-com-inicio-periodo-justificacion-socio/CSP_COM_INICIO_PERIODO_JUSTIFICACION_SOCIO_SUBJECT.ftl" />
+      <where>name='CSP_COM_INICIO_PERIODO_JUSTIFICACION_SOCIO_SUBJECT'</where>
+    </update>
+    <!-- CSP Fin Periodo Justificación Socio -->
+    <insert tableName="subject_tpl">
+      <column name="id" valueSequenceNext="subject_tpl_seq" />
+      <column name="name" value="CSP_COM_FIN_PERIODO_JUSTIFICACION_SOCIO_SUBJECT" />
+      <column name="description" value="Aviso de finalización del periodo para entregar la documentación de justificación" />
+      <column name="tpl" value=" " />
+      <column name="created_by" value="master" />
+      <column name="creation_date" valueDate="current_timestamp()" />
+      <column name="last_modified_by" value="master" />
+      <column name="last_modified_date" valueDate="current_timestamp()" />
+    </insert>
+    <update tableName="subject_tpl">
+      <column name="tpl" valueClobFile="clob/0000000000001/csp-com-fin-periodo-justificacion-socio/CSP_COM_FIN_PERIODO_JUSTIFICACION_SOCIO_SUBJECT.ftl" />
+      <where>name='CSP_COM_FIN_PERIODO_JUSTIFICACION_SOCIO_SUBJECT'</where>
+    </update>
+    <!-- CSP Calendario Facturacion Validar IP - Validada -->
+    <insert tableName="subject_tpl">
+      <column name="id" valueSequenceNext="subject_tpl_seq" />
+      <column name="name" value="CSP_COM_CALENDARIO_FACTURACION_VALIDAR_IP_VALIDADA_SUBJECT" />
+      <column name="description" value="Plantilla de asunto para el envío de la validación de una factura con estado validada" />
+      <column name="tpl" value=" " />
+    </insert>
+    <update tableName="subject_tpl">
+      <column name="tpl" valueClobFile="clob/0000000000001/csp-com-calendario-facturacion/validar-ip/CSP_COM_CALENDARIO_FACTURACION_VALIDAR_IP_VALIDADA_SUBJECT.ftl" />
+      <where>name='CSP_COM_CALENDARIO_FACTURACION_VALIDAR_IP_VALIDADA_SUBJECT'</where>
+    </update>
+    <!-- CSP Calendario Facturacion Validar IP - Rechazada -->
+    <insert tableName="subject_tpl">
+      <column name="id" valueSequenceNext="subject_tpl_seq" />
+      <column name="name" value="CSP_COM_CALENDARIO_FACTURACION_VALIDAR_IP_RECHAZADA_SUBJECT" />
+      <column name="description" value="Plantilla de asunto para el envío de la validación de una factura con estado rechazada" />
+      <column name="tpl" value=" " />
+    </insert>
+    <update tableName="subject_tpl">
+      <column name="tpl" valueClobFile="clob/0000000000001/csp-com-calendario-facturacion/validar-ip/CSP_COM_CALENDARIO_FACTURACION_VALIDAR_IP_RECHAZADA_SUBJECT.ftl" />
+      <where>name='CSP_COM_CALENDARIO_FACTURACION_VALIDAR_IP_RECHAZADA_SUBJECT'</where>
+    </update>
+
+    <!-- CSP Calendario Facturacion Notificar FACTURA_UNICA_NOT_IN_PRORROGA_NO_REQUISITO -->
+    <insert tableName="subject_tpl">
+      <column name="id" valueSequenceNext="subject_tpl_seq" />
+      <column name="name" value="CSP_COM_CALENDARIO_FACTURACION_NOTIFICAR_FACTURA_UNICA_NOT_IN_PRORROGA_NO_REQUISITO_SUBJECT" />
+      <column name="description" value="Plantilla de asunto para el envío de la notificación de una factura" />
+      <column name="tpl" value=" " />
+    </insert>
+    <update tableName="subject_tpl">
+      <column name="tpl" valueClobFile="clob/0000000000001/csp-com-calendario-facturacion/notificar/CSP_COM_CALENDARIO_FACTURACION_NOTIFICAR_FACTURA_UNICA_NOT_IN_PRORROGA_NO_REQUISITO_SUBJECT.ftl" />
+      <where>name='CSP_COM_CALENDARIO_FACTURACION_NOTIFICAR_FACTURA_UNICA_NOT_IN_PRORROGA_NO_REQUISITO_SUBJECT'</where>
+    </update>
+    <!-- CSP Calendario Facturacion Notificar FACTURA_UNICA_NOT_IN_PRORROGA -->
+    <insert tableName="subject_tpl">
+      <column name="id" valueSequenceNext="subject_tpl_seq" />
+      <column name="name" value="CSP_COM_CALENDARIO_FACTURACION_NOTIFICAR_FACTURA_UNICA_NOT_IN_PRORROGA_SUBJECT" />
+      <column name="description" value="Plantilla de asunto para el envío de la notificación de una factura" />
+      <column name="tpl" value=" " />
+    </insert>
+    <update tableName="subject_tpl">
+      <column name="tpl" valueClobFile="clob/0000000000001/csp-com-calendario-facturacion/notificar/CSP_COM_CALENDARIO_FACTURACION_NOTIFICAR_FACTURA_UNICA_NOT_IN_PRORROGA_SUBJECT.ftl" />
+      <where>name='CSP_COM_CALENDARIO_FACTURACION_NOTIFICAR_FACTURA_UNICA_NOT_IN_PRORROGA_SUBJECT'</where>
+    </update>
+    <!-- CSP Calendario Facturacion Notificar FACTURA_FIRST_NO_IN_PRORROGA_NO_LAST -->
+    <insert tableName="subject_tpl">
+      <column name="id" valueSequenceNext="subject_tpl_seq" />
+      <column name="name" value="CSP_COM_CALENDARIO_FACTURACION_NOTIFICAR_FACTURA_FIRST_NO_PRORROGA_NO_LAST_SUBJECT" />
+      <column name="description" value="Plantilla de asunto para el envío de la notificación de una factura" />
+      <column name="tpl" value=" " />
+    </insert>
+    <update tableName="subject_tpl">
+      <column name="tpl" valueClobFile="clob/0000000000001/csp-com-calendario-facturacion/notificar/CSP_COM_CALENDARIO_FACTURACION_NOTIFICAR_FACTURA_FIRST_NO_PRORROGA_NO_LAST_SUBJECT.ftl" />
+      <where>name='CSP_COM_CALENDARIO_FACTURACION_NOTIFICAR_FACTURA_FIRST_NO_PRORROGA_NO_LAST_SUBJECT'</where>
+    </update>
+    <!-- CSP Calendario Facturacion Notificar FACTURA_NOT_FIRST_OR_IN_PRORROGA_AND_IS_NOT_LAST_NO_REQUISITO -->
+    <insert tableName="subject_tpl">
+      <column name="id" valueSequenceNext="subject_tpl_seq" />
+      <column name="name" value="CSP_COM_CALENDARIO_FACTURACION_NOTIFICAR_FACTURA_NOT_FIRST_OR_IN_PRORROGA_AND_IS_NOT_LAST_NO_REQUISITO_SUBJECT" />
+      <column name="description" value="Plantilla de asunto para el envío de la notificación de una factura" />
+      <column name="tpl" value=" " />
+    </insert>
+    <update tableName="subject_tpl">
+      <column name="tpl" valueClobFile="clob/0000000000001/csp-com-calendario-facturacion/notificar/CSP_COM_CALENDARIO_FACTURACION_NOTIFICAR_FACTURA_NOT_FIRST_OR_IN_PRORROGA_AND_IS_NOT_LAST_NO_REQUISITO_SUBJECT.ftl" />
+      <where>name='CSP_COM_CALENDARIO_FACTURACION_NOTIFICAR_FACTURA_NOT_FIRST_OR_IN_PRORROGA_AND_IS_NOT_LAST_NO_REQUISITO_SUBJECT'</where>
+    </update>
+    <!-- CSP Calendario Facturacion Notificar FACTURA_NOT_FIRST_OR_IN_PRORROGA_AND_IS_NOT_LAST -->
+    <insert tableName="subject_tpl">
+      <column name="id" valueSequenceNext="subject_tpl_seq" />
+      <column name="name" value="CSP_COM_CALENDARIO_FACTURACION_NOTIFICAR_FACTURA_NOT_FIRST_OR_IN_PRORROGA_AND_IS_NOT_LAST_SUBJECT" />
+      <column name="description" value="Plantilla de asunto para el envío de la notificación de una factura" />
+      <column name="tpl" value=" " />
+    </insert>
+    <update tableName="subject_tpl">
+      <column name="tpl" valueClobFile="clob/0000000000001/csp-com-calendario-facturacion/notificar/CSP_COM_CALENDARIO_FACTURACION_NOTIFICAR_FACTURA_NOT_FIRST_OR_IN_PRORROGA_AND_IS_NOT_LAST_SUBJECT.ftl" />
+      <where>name='CSP_COM_CALENDARIO_FACTURACION_NOTIFICAR_FACTURA_NOT_FIRST_OR_IN_PRORROGA_AND_IS_NOT_LAST_SUBJECT'</where>
+    </update>
+    <!-- CSP Calendario Facturacion Notificar FACTURA_NOT_FIRST_OR_IN_PRORROGA_AND_IS_LAST_NO_REQUISITO -->
+    <insert tableName="subject_tpl">
+      <column name="id" valueSequenceNext="subject_tpl_seq" />
+      <column name="name" value="CSP_COM_CALENDARIO_FACTURACION_NOTIFICAR_FACTURA_NOT_FIRST_OR_IN_PRORROGA_AND_IS_LAST_NO_REQUISITO_SUBJECT" />
+      <column name="description" value="Plantilla de asunto para el envío de la notificación de una factura" />
+      <column name="tpl" value=" " />
+    </insert>
+    <update tableName="subject_tpl">
+      <column name="tpl" valueClobFile="clob/0000000000001/csp-com-calendario-facturacion/notificar/CSP_COM_CALENDARIO_FACTURACION_NOTIFICAR_FACTURA_NOT_FIRST_OR_IN_PRORROGA_AND_IS_LAST_NO_REQUISITO_SUBJECT.ftl" />
+      <where>name='CSP_COM_CALENDARIO_FACTURACION_NOTIFICAR_FACTURA_NOT_FIRST_OR_IN_PRORROGA_AND_IS_LAST_NO_REQUISITO_SUBJECT'</where>
+    </update>
+    <!-- CSP Calendario Facturacion Notificar FACTURA_NOT_FIRST_OR_IN_PRORROGA_AND_IS_LAST -->
+    <insert tableName="subject_tpl">
+      <column name="id" valueSequenceNext="subject_tpl_seq" />
+      <column name="name" value="CSP_COM_CALENDARIO_FACTURACION_NOTIFICAR_FACTURA_NOT_FIRST_OR_IN_PRORROGA_AND_IS_LAST_SUBJECT" />
+      <column name="description" value="Plantilla de asunto para el envío de la notificación de una factura" />
+      <column name="tpl" value=" " />
+    </insert>
+    <update tableName="subject_tpl">
+      <column name="tpl" valueClobFile="clob/0000000000001/csp-com-calendario-facturacion/notificar/CSP_COM_CALENDARIO_FACTURACION_NOTIFICAR_FACTURA_NOT_FIRST_OR_IN_PRORROGA_AND_IS_LAST_SUBJECT.ftl" />
+      <where>name='CSP_COM_CALENDARIO_FACTURACION_NOTIFICAR_FACTURA_NOT_FIRST_OR_IN_PRORROGA_AND_IS_LAST_SUBJECT'</where>
+    </update>
+
+  </changeSet>
+
+  <changeSet context="!test" author="master" id="0000000000001-subjecttpl_param">
+    <!-- CSP Seguimiento Cientifico -->
+    <insert tableName="subjecttpl_param">
+      <column name="subjecttpl_id" valueComputed="(select id from ${schemaPrefix}subject_tpl where name='CSP_COM_INICIO_PRESENTACION_SEGUIMIENTO_CIENTIFICO_SUBJECT')" />
+      <column name="param_id" valueComputed="(select id from ${schemaPrefix}param where name='CSP_COM_INICIO_PRESENTACION_SEGUIMIENTO_CIENTIFICO_DATA')" />
+    </insert>
+    <insert tableName="subjecttpl_param">
+      <column name="subjecttpl_id" valueComputed="(select id from ${schemaPrefix}subject_tpl where name='CSP_COM_INICIO_PRESENTACION_SEGUIMIENTO_CIENTIFICO_IP_SUBJECT')" />
+      <column name="param_id" valueComputed="(select id from ${schemaPrefix}param where name='CSP_COM_INICIO_PRESENTACION_SEGUIMIENTO_CIENTIFICO_IP_DATA')" />
+    </insert>
+    <insert tableName="subjecttpl_param">
+      <column name="subjecttpl_id" valueComputed="(select id from ${schemaPrefix}subject_tpl where name='CSP_COM_FIN_PRESENTACION_SEGUIMIENTO_CIENTIFICO_IP_SUBJECT')" />
+      <column name="param_id" valueComputed="(select id from ${schemaPrefix}param where name='CSP_COM_FIN_PRESENTACION_SEGUIMIENTO_CIENTIFICO_IP_DATA')" />
+    </insert>
+    <!-- CSP Solicitud Peticion Evaluacion -->
+    <insert tableName="subjecttpl_param">
+      <column name="subjecttpl_id" valueComputed="(select id from ${schemaPrefix}subject_tpl where name='CSP_COM_SOLICITUD_PETICION_EVALUACION_SUBJECT')" />
+      <column name="param_id" valueComputed="(select id from ${schemaPrefix}param where name='ETI_PETICION_EVALUACION_CODIGO')" />
+    </insert>
+    <!-- CSP Solicitud Cambio Estado Solicitada -->
+    <insert tableName="subjecttpl_param">
+      <column name="subjecttpl_id" valueComputed="(select id from ${schemaPrefix}subject_tpl where name='CSP_COM_SOL_CAMB_EST_SOLICITADA_SUBJECT')" />
+      <column name="param_id" valueComputed="(select id from ${schemaPrefix}param where name='CSP_COM_SOL_CAMB_EST_SOLICITADA_DATA')" />
+    </insert>
+    <!-- CSP Solicitud Cambio Estado Alegaciones -->
+    <insert tableName="subjecttpl_param">
+      <column name="subjecttpl_id" valueComputed="(select id from ${schemaPrefix}subject_tpl where name='CSP_COM_SOL_CAMB_EST_ALEGACIONES_SUBJECT')" />
+      <column name="param_id" valueComputed="(select id from ${schemaPrefix}param where name='CSP_COM_SOL_CAMB_EST_ALEGACIONES_DATA')" />
+    </insert>
+    <!-- CSP Solicitud Cambio Estado Excluida provisional -->
+    <insert tableName="subjecttpl_param">
+      <column name="subjecttpl_id" valueComputed="(select id from ${schemaPrefix}subject_tpl where name='CSP_COM_SOL_CAMB_EST_EXCL_PROV_SUBJECT')" />
+      <column name="param_id" valueComputed="(select id from ${schemaPrefix}param where name='CSP_COM_SOL_CAMB_EST_EXCL_PROV_DATA')" />
+    </insert>
+    <!-- CSP Solicitud Cambio Estado Excluida definitiva -->
+    <insert tableName="subjecttpl_param">
+      <column name="subjecttpl_id" valueComputed="(select id from ${schemaPrefix}subject_tpl where name='CSP_COM_SOL_CAMB_EST_EXCL_DEF_SUBJECT')" />
+      <column name="param_id" valueComputed="(select id from ${schemaPrefix}param where name='CSP_COM_SOL_CAMB_EST_EXCL_DEF_DATA')" />
+    </insert>
+    <!-- CSP Solicitud Cambio Concedida provisional -->
+    <insert tableName="subjecttpl_param">
+      <column name="subjecttpl_id" valueComputed="(select id from ${schemaPrefix}subject_tpl where name='CSP_COM_SOL_CAMB_EST_CONC_PROV_SUBJECT')" />
+      <column name="param_id" valueComputed="(select id from ${schemaPrefix}param where name='CSP_COM_SOL_CAMB_EST_CONC_PROV_DATA')" />
+    </insert>
+    <!-- CSP Solicitud Cambio Estado Concedida -->
+    <insert tableName="subjecttpl_param">
+      <column name="subjecttpl_id" valueComputed="(select id from ${schemaPrefix}subject_tpl where name='CSP_COM_SOL_CAMB_EST_CONC_SUBJECT')" />
+      <column name="param_id" valueComputed="(select id from ${schemaPrefix}param where name='CSP_COM_SOL_CAMB_EST_CONC_DATA')" />
+    </insert>
+    <!-- CSP Solicitud Cambio Denegada provisional -->
+    <insert tableName="subjecttpl_param">
+      <column name="subjecttpl_id" valueComputed="(select id from ${schemaPrefix}subject_tpl where name='CSP_COM_SOL_CAMB_EST_DEN_PROV_SUBJECT')" />
+      <column name="param_id" valueComputed="(select id from ${schemaPrefix}param where name='CSP_COM_SOL_CAMB_EST_DEN_PROV_DATA')" />
+    </insert>
+    <!-- CSP Solicitud Cambio Denegada -->
+    <insert tableName="subjecttpl_param">
+      <column name="subjecttpl_id" valueComputed="(select id from ${schemaPrefix}subject_tpl where name='CSP_COM_SOL_CAMB_EST_DEN_SUBJECT')" />
+      <column name="param_id" valueComputed="(select id from ${schemaPrefix}param where name='CSP_COM_SOL_CAMB_EST_DEN_DATA')" />
+    </insert>
+    <!-- CSP Solicitud Hito -->
+    <insert tableName="subjecttpl_param">
+      <column name="subjecttpl_id" valueComputed="(select id from ${schemaPrefix}subject_tpl where name='CSP_SOLICITUD_HITO_SUBJECT')" />
+      <column name="param_id" valueComputed="(select id from ${schemaPrefix}param where name='CSP_HITO_TIPO')" />
+    </insert>
+    <insert tableName="subjecttpl_param">
+      <column name="subjecttpl_id" valueComputed="(select id from ${schemaPrefix}subject_tpl where name='CSP_SOLICITUD_HITO_SUBJECT')" />
+      <column name="param_id" valueComputed="(select id from ${schemaPrefix}param where name='CSP_CONVOCATORIA_TITULO')" />
+    </insert>
+    <insert tableName="subjecttpl_param">
+      <column name="subjecttpl_id" valueComputed="(select id from ${schemaPrefix}subject_tpl where name='CSP_SOLICITUD_HITO_SUBJECT')" />
+      <column name="param_id" valueComputed="(select id from ${schemaPrefix}param where name='CSP_SOLICITUD_TITULO')" />
+    </insert>
+    <!-- ETI Convocatoria de Reunión -->
+    <insert tableName="subjecttpl_param">
+      <column name="subjecttpl_id" valueComputed="(select id from ${schemaPrefix}subject_tpl where name='ETI_COM_CONVOCATORIA_REUNION_SUBJECT')" />
+      <column name="param_id" valueComputed="(select id from ${schemaPrefix}param where name='ETI_COMITE_NOMBRE_INVESTIGACION')" />
+    </insert>
+    <!-- CSP Proyecto Periodo Pago Socio -->
+    <insert tableName="subjecttpl_param">
+      <column name="subjecttpl_id" valueComputed="(select id from ${schemaPrefix}subject_tpl where name='CSP_COM_VENCIMIENTO_PERIODO_PAGO_SOCIO_SUBJECT')" />
+      <column name="param_id" valueComputed="(select id from ${schemaPrefix}param where name='CSP_COM_VENCIMIENTO_PERIODO_PAGO_SOCIO_DATA')" />
+    </insert>
+    <!-- CSP Inicio Periodo Justificación Socio -->
+    <insert tableName="subjecttpl_param">
+      <column name="subjecttpl_id" valueComputed="(select id from ${schemaPrefix}subject_tpl where name='CSP_COM_INICIO_PERIODO_JUSTIFICACION_SOCIO_SUBJECT')" />
+      <column name="param_id" valueComputed="(select id from ${schemaPrefix}param where name='CSP_COM_INICIO_PERIODO_JUSTIFICACION_SOCIO_DATA')" />
+    </insert>
+    <!-- CSP Fin Periodo Justificación Socio -->
+    <insert tableName="subjecttpl_param">
+      <column name="subjecttpl_id" valueComputed="(select id from ${schemaPrefix}subject_tpl where name='CSP_COM_FIN_PERIODO_JUSTIFICACION_SOCIO_SUBJECT')" />
+      <column name="param_id" valueComputed="(select id from ${schemaPrefix}param where name='CSP_COM_FIN_PERIODO_JUSTIFICACION_SOCIO_DATA')" />
+    </insert>
+    <!-- CSP Calendario Facturacion Validar IP - Validada -->
+    <insert tableName="subjecttpl_param">
+      <column name="subjecttpl_id" valueComputed="(select id from ${schemaPrefix}subject_tpl where name='CSP_COM_CALENDARIO_FACTURACION_VALIDAR_IP_VALIDADA_SUBJECT')" />
+      <column name="param_id" valueComputed="(select id from ${schemaPrefix}param where name='CSP_COM_CALENDARIO_FACTURACION_VALIDAR_IP_VALIDADA_DATA')" />
+    </insert>
+    <!-- CSP Calendario Facturacion Validar IP - Rechazada -->
+    <insert tableName="subjecttpl_param">
+      <column name="subjecttpl_id" valueComputed="(select id from ${schemaPrefix}subject_tpl where name='CSP_COM_CALENDARIO_FACTURACION_VALIDAR_IP_RECHAZADA_SUBJECT')" />
+      <column name="param_id" valueComputed="(select id from ${schemaPrefix}param where name='CSP_COM_CALENDARIO_FACTURACION_VALIDAR_IP_RECHAZADA_DATA')" />
+    </insert>
+
+    <!-- CSP Calendario Facturacion Notificar FACTURA_UNICA_NOT_IN_PRORROGA_NO_REQUISITO -->
+    <insert tableName="subjecttpl_param">
+      <column name="subjecttpl_id" valueComputed="(select id from ${schemaPrefix}subject_tpl where name='CSP_COM_CALENDARIO_FACTURACION_NOTIFICAR_FACTURA_UNICA_NOT_IN_PRORROGA_NO_REQUISITO_SUBJECT')" />
+      <column name="param_id" valueComputed="(select id from ${schemaPrefix}param where name='CSP_COM_CALENDARIO_FACTURACION_NOTIFICAR_FACTURA_UNICA_NOT_IN_PRORROGA_NO_REQUISITO_DATA')" />
+    </insert>
+    <!-- CSP Calendario Facturacion Notificar FACTURA_UNICA_NOT_IN_PRORROGA -->
+    <insert tableName="subjecttpl_param">
+      <column name="subjecttpl_id" valueComputed="(select id from ${schemaPrefix}subject_tpl where name='CSP_COM_CALENDARIO_FACTURACION_NOTIFICAR_FACTURA_UNICA_NOT_IN_PRORROGA_SUBJECT')" />
+      <column name="param_id" valueComputed="(select id from ${schemaPrefix}param where name='CSP_COM_CALENDARIO_FACTURACION_NOTIFICAR_FACTURA_UNICA_NOT_IN_PRORROGA_DATA')" />
+    </insert>
+    <!-- CSP Calendario Facturacion Notificar FACTURA_FIRST_NO_IN_PRORROGA_NO_LAST -->
+    <insert tableName="subjecttpl_param">
+      <column name="subjecttpl_id" valueComputed="(select id from ${schemaPrefix}subject_tpl where name='CSP_COM_CALENDARIO_FACTURACION_NOTIFICAR_FACTURA_FIRST_NO_PRORROGA_NO_LAST_SUBJECT')" />
+      <column name="param_id" valueComputed="(select id from ${schemaPrefix}param where name='CSP_COM_CALENDARIO_FACTURACION_NOTIFICAR_FACTURA_FIRST_NO_PRORROGA_NO_LAST_DATA')" />
+    </insert>
+    <!-- CSP Calendario Facturacion Notificar FACTURACION_NOTIFICAR_FACTURA_NOT_FIRST_OR_IN_PRORROGA_AND_IS_NOT_LAST -->
+    <insert tableName="subjecttpl_param">
+      <column name="subjecttpl_id" valueComputed="(select id from ${schemaPrefix}subject_tpl where name='CSP_COM_CALENDARIO_FACTURACION_NOTIFICAR_FACTURA_NOT_FIRST_OR_IN_PRORROGA_AND_IS_NOT_LAST_SUBJECT')" />
+      <column name="param_id" valueComputed="(select id from ${schemaPrefix}param where name='CSP_COM_CALENDARIO_FACTURACION_NOTIFICAR_FACTURA_NOT_FIRST_OR_IN_PRORROGA_AND_IS_NOT_LAST_DATA')" />
+    </insert>
+    <!-- CSP Calendario Facturacion Notificar FACTURACION_NOTIFICAR_FACTURA_NOT_FIRST_OR_IN_PRORROGA_AND_IS_NOT_LAST_NO-REQUISITOS -->
+    <insert tableName="subjecttpl_param">
+      <column name="subjecttpl_id" valueComputed="(select id from ${schemaPrefix}subject_tpl where name='CSP_COM_CALENDARIO_FACTURACION_NOTIFICAR_FACTURA_NOT_FIRST_OR_IN_PRORROGA_AND_IS_NOT_LAST_NO_REQUISITO_SUBJECT')" />
+      <column name="param_id" valueComputed="(select id from ${schemaPrefix}param where name='CSP_COM_CALENDARIO_FACTURACION_NOTIFICAR_FACTURA_NOT_FIRST_OR_IN_PRORROGA_AND_IS_NOT_LAST_NO_REQUISITO_DATA')" />
+    </insert>
+    <!-- CSP Calendario Facturacion Notificar FACTURACION_NOTIFICAR_FACTURA_NOT_FIRST_OR_IN_PRORROGA_AND_IS_LAST -->
+    <insert tableName="subjecttpl_param">
+      <column name="subjecttpl_id" valueComputed="(select id from ${schemaPrefix}subject_tpl where name='CSP_COM_CALENDARIO_FACTURACION_NOTIFICAR_FACTURA_NOT_FIRST_OR_IN_PRORROGA_AND_IS_LAST_SUBJECT')" />
+      <column name="param_id" valueComputed="(select id from ${schemaPrefix}param where name='CSP_COM_CALENDARIO_FACTURACION_NOTIFICAR_FACTURA_NOT_FIRST_OR_IN_PRORROGA_AND_IS_LAST_DATA')" />
+    </insert>
+    <!-- CSP Calendario Facturacion Notificar FACTURACION_NOTIFICAR_FACTURA_NOT_FIRST_OR_IN_PRORROGA_AND_IS_LAST_NO-REQUISITOS -->
+    <insert tableName="subjecttpl_param">
+      <column name="subjecttpl_id" valueComputed="(select id from ${schemaPrefix}subject_tpl where name='CSP_COM_CALENDARIO_FACTURACION_NOTIFICAR_FACTURA_NOT_FIRST_OR_IN_PRORROGA_AND_IS_LAST_NO_REQUISITO_SUBJECT')" />
+      <column name="param_id" valueComputed="(select id from ${schemaPrefix}param where name='CSP_COM_CALENDARIO_FACTURACION_NOTIFICAR_FACTURA_NOT_FIRST_OR_IN_PRORROGA_AND_IS_LAST_NO_REQUISITO_DATA')" />
+    </insert>
+  </changeSet>
+
+  <changeSet context="!test" author="master" id="0000000000001-content_tpl">
+    <!-- CSP Seguimiento Cientifico -->
+    <insert tableName="content_tpl">
+      <column name="id" valueSequenceNext="content_tpl_seq" />
+      <column name="name" value="CSP_COM_INICIO_PRESENTACION_SEGUIMIENTO_CIENTIFICO_CONTENT" />
+      <column name="description" value="Contenido del aviso de inicio del período de presentación de justificación de gastos (texto + HTML)" />
+      <column name="tpl_text" value=" " />
+      <column name="tpl_html" value="" />
+      <column name="created_by" value="master" />
+      <column name="creation_date" valueDate="current_timestamp()" />
+      <column name="last_modified_by" value="master" />
+      <column name="last_modified_date" valueDate="current_timestamp()" />
+    </insert>
+    <update tableName="content_tpl">
+      <column name="tpl_text" valueClobFile="clob/0000000000001/csp-com-inicio-seguimiento-cientifico/ug/CSP_COM_INICIO_PRESENTACION_SEGUIMIENTO_CIENTIFICO_CONTENT_text.ftl" />
+      <where>name='CSP_COM_INICIO_PRESENTACION_SEGUIMIENTO_CIENTIFICO_CONTENT'</where>
+    </update>
+    <update tableName="content_tpl">
+      <column name="tpl_html" valueClobFile="clob/0000000000001/csp-com-inicio-seguimiento-cientifico/ug/CSP_COM_INICIO_PRESENTACION_SEGUIMIENTO_CIENTIFICO_CONTENT_html.ftl" />
+      <where>name='CSP_COM_INICIO_PRESENTACION_SEGUIMIENTO_CIENTIFICO_CONTENT'</where>
+    </update>
+    <insert tableName="content_tpl">
+      <column name="id" valueSequenceNext="content_tpl_seq" />
+      <column name="name" value="CSP_COM_INICIO_PRESENTACION_SEGUIMIENTO_CIENTIFICO_IP_CONTENT" />
+      <column name="description" value="Contenido del aviso de inicio del período de presentación de justificación de gastos (texto + HTML) para IPs" />
+      <column name="tpl_text" value=" " />
+      <column name="tpl_html" value="" />
+      <column name="created_by" value="master" />
+      <column name="creation_date" valueDate="current_timestamp()" />
+      <column name="last_modified_by" value="master" />
+      <column name="last_modified_date" valueDate="current_timestamp()" />
+    </insert>
+    <update tableName="content_tpl">
+      <column name="tpl_text" valueClobFile="clob/0000000000001/csp-com-inicio-seguimiento-cientifico/ips/CSP_COM_INICIO_PRESENTACION_SEGUIMIENTO_CIENTIFICO_IP_CONTENT_text.ftl" />
+      <where>name='CSP_COM_INICIO_PRESENTACION_SEGUIMIENTO_CIENTIFICO_IP_CONTENT'</where>
+    </update>
+    <update tableName="content_tpl">
+      <column name="tpl_html" valueClobFile="clob/0000000000001/csp-com-inicio-seguimiento-cientifico/ips/CSP_COM_INICIO_PRESENTACION_SEGUIMIENTO_CIENTIFICO_IP_CONTENT_html.ftl" />
+      <where>name='CSP_COM_INICIO_PRESENTACION_SEGUIMIENTO_CIENTIFICO_IP_CONTENT'</where>
+    </update>
+    <insert tableName="content_tpl">
+      <column name="id" valueSequenceNext="content_tpl_seq" />
+      <column name="name" value="CSP_COM_FIN_PRESENTACION_SEGUIMIENTO_CIENTIFICO_IP_CONTENT" />
+      <column name="description" value="Contenido del aviso de finalización del período de presentación de justificación de gastos (texto + HTML) para ips" />
+      <column name="tpl_text" value=" " />
+      <column name="tpl_html" value="" />
+      <column name="created_by" value="master" />
+      <column name="creation_date" valueDate="current_timestamp()" />
+      <column name="last_modified_by" value="master" />
+      <column name="last_modified_date" valueDate="current_timestamp()" />
+    </insert>
+    <update tableName="content_tpl">
+      <column name="tpl_text" valueClobFile="clob/0000000000001/csp-com-fin-seguimiento-cientifico/CSP_COM_FIN_PRESENTACION_SEGUIMIENTO_CIENTIFICO_IP_CONTENT_text.ftl" />
+      <where>name='CSP_COM_FIN_PRESENTACION_SEGUIMIENTO_CIENTIFICO_IP_CONTENT'</where>
+    </update>
+    <update tableName="content_tpl">
+      <column name="tpl_html" valueClobFile="clob/0000000000001/csp-com-fin-seguimiento-cientifico/CSP_COM_FIN_PRESENTACION_SEGUIMIENTO_CIENTIFICO_IP_CONTENT_html.ftl" />
+      <where>name='CSP_COM_FIN_PRESENTACION_SEGUIMIENTO_CIENTIFICO_IP_CONTENT'</where>
+    </update>
+    <!-- CSP Solicitud Peticion Evaluacion -->
+    <insert tableName="content_tpl">
+      <column name="id" valueSequenceNext="content_tpl_seq" />
+      <column name="name" value="CSP_COM_SOLICITUD_PETICION_EVALUACION_CONTENT" />
+      <column name="description" value="Plantilla de contenido para el alta de solicitud de petición de evaluación de ética" />
+      <column name="tpl_text" value=" " />
+      <column name="tpl_html" value="" />
+    </insert>
+    <update tableName="content_tpl">
+      <column name="tpl_text" valueClobFile="clob/0000000000001/csp-com-solicitud-peticion-evaluacion/CSP_COM_SOLICITUD_PETICION_EVALUACION_CONTENT_text.ftl" />
+      <where>name='CSP_COM_SOLICITUD_PETICION_EVALUACION_CONTENT'</where>
+    </update>
+    <update tableName="content_tpl">
+      <column name="tpl_html" valueClobFile="clob/0000000000001/csp-com-solicitud-peticion-evaluacion/CSP_COM_SOLICITUD_PETICION_EVALUACION_CONTENT_html.ftl" />
+      <where>name='CSP_COM_SOLICITUD_PETICION_EVALUACION_CONTENT'</where>
+    </update>
+    <!-- CSP Solicitud Cambio Estado Solicitada -->
+    <insert tableName="content_tpl">
+      <column name="id" valueSequenceNext="content_tpl_seq" />
+      <column name="name" value="CSP_COM_SOL_CAMB_EST_SOLICITADA_CONTENT" />
+      <column name="description" value="Plantilla de contenido para el cambio de estado de solicitud a solicitada" />
+      <column name="tpl_text" value=" " />
+      <column name="tpl_html" value="" />
+    </insert>
+    <update tableName="content_tpl">
+      <column name="tpl_text" valueClobFile="clob/0000000000001/csp-com-solicitud-cambio-estado/solicitada/CSP_COM_SOL_CAMB_EST_SOLICITADA_CONTENT_text.ftl" />
+      <where>name='CSP_COM_SOL_CAMB_EST_SOLICITADA_CONTENT'</where>
+    </update>
+    <update tableName="content_tpl">
+      <column name="tpl_html" valueClobFile="clob/0000000000001/csp-com-solicitud-cambio-estado/solicitada/CSP_COM_SOL_CAMB_EST_SOLICITADA_CONTENT_html.ftl" />
+      <where>name='CSP_COM_SOL_CAMB_EST_SOLICITADA_CONTENT'</where>
+    </update>
+    <!-- CSP Solicitud Cambio Estado Alegaciones -->
+    <insert tableName="content_tpl">
+      <column name="id" valueSequenceNext="content_tpl_seq" />
+      <column name="name" value="CSP_COM_SOL_CAMB_EST_ALEGACIONES_CONTENT" />
+      <column name="description" value="Plantilla de contenido para el cambio de estado de solicitud a alegaciones" />
+      <column name="tpl_text" value=" " />
+      <column name="tpl_html" value="" />
+    </insert>
+    <update tableName="content_tpl">
+      <column name="tpl_text" valueClobFile="clob/0000000000001/csp-com-solicitud-cambio-estado/alegaciones/CSP_COM_SOL_CAMB_EST_ALEGACIONES_CONTENT_text.ftl" />
+      <where>name='CSP_COM_SOL_CAMB_EST_ALEGACIONES_CONTENT'</where>
+    </update>
+    <update tableName="content_tpl">
+      <column name="tpl_html" valueClobFile="clob/0000000000001/csp-com-solicitud-cambio-estado/alegaciones/CSP_COM_SOL_CAMB_EST_ALEGACIONES_CONTENT_html.ftl" />
+      <where>name='CSP_COM_SOL_CAMB_EST_ALEGACIONES_CONTENT'</where>
+    </update>
+    <!-- CSP Solicitud Cambio Estado Excluida Provisional -->
+    <insert tableName="content_tpl">
+      <column name="id" valueSequenceNext="content_tpl_seq" />
+      <column name="name" value="CSP_COM_SOL_CAMB_EST_EXCL_PROV_CONTENT" />
+      <column name="description" value="Plantilla de contenido para el cambio de estado de solicitud a excluida provisional" />
+      <column name="tpl_text" value=" " />
+      <column name="tpl_html" value=" " />
+    </insert>
+    <update tableName="content_tpl">
+      <column name="tpl_text" valueClobFile="clob/0000000000001/csp-com-solicitud-cambio-estado/excluidas/CSP_COM_SOL_CAMB_EST_EXCL_PROV_CONTENT_text.ftl" />
+      <where>name='CSP_COM_SOL_CAMB_EST_EXCL_PROV_CONTENT'</where>
+    </update>
+    <update tableName="content_tpl">
+      <column name="tpl_html" valueClobFile="clob/0000000000001/csp-com-solicitud-cambio-estado/excluidas/CSP_COM_SOL_CAMB_EST_EXCL_PROV_CONTENT_html.ftl" />
+      <where>name='CSP_COM_SOL_CAMB_EST_EXCL_PROV_CONTENT'</where>
+    </update>
+    <!-- CSP Solicitud Cambio Estado Excluida definitiva -->
+    <insert tableName="content_tpl">
+      <column name="id" valueSequenceNext="content_tpl_seq" />
+      <column name="name" value="CSP_COM_SOL_CAMB_EST_EXCL_DEF_CONTENT" />
+      <column name="description" value="Plantilla de contenido para el cambio de estado de solicitud a excluida definitiva" />
+      <column name="tpl_text" value=" " />
+      <column name="tpl_html" value=" " />
+    </insert>
+    <update tableName="content_tpl">
+      <column name="tpl_text" valueClobFile="clob/0000000000001/csp-com-solicitud-cambio-estado/excluidas/CSP_COM_SOL_CAMB_EST_EXCL_DEF_CONTENT_text.ftl" />
+      <where>name='CSP_COM_SOL_CAMB_EST_EXCL_DEF_CONTENT'</where>
+    </update>
+    <update tableName="content_tpl">
+      <column name="tpl_html" valueClobFile="clob/0000000000001/csp-com-solicitud-cambio-estado/excluidas/CSP_COM_SOL_CAMB_EST_EXCL_DEF_CONTENT_html.ftl" />
+      <where>name='CSP_COM_SOL_CAMB_EST_EXCL_DEF_CONTENT'</where>
+    </update>
+    <!-- CSP Solicitud Cambio Estado Denegada provisional -->
+    <insert tableName="content_tpl">
+      <column name="id" valueSequenceNext="content_tpl_seq" />
+      <column name="name" value="CSP_COM_SOL_CAMB_EST_DEN_PROV_CONTENT" />
+      <column name="description" value="Plantilla de contenido para el cambio de estado de solicitud a denegada provisional" />
+      <column name="tpl_text" value=" " />
+      <column name="tpl_html" value=" " />
+    </insert>
+    <update tableName="content_tpl">
+      <column name="tpl_text" valueClobFile="clob/0000000000001/csp-com-solicitud-cambio-estado/denegadas/CSP_COM_SOL_CAMB_EST_DEN_PROV_CONTENT_text.ftl" />
+      <where>name='CSP_COM_SOL_CAMB_EST_DEN_PROV_CONTENT'</where>
+    </update>
+    <update tableName="content_tpl">
+      <column name="tpl_html" valueClobFile="clob/0000000000001/csp-com-solicitud-cambio-estado/denegadas/CSP_COM_SOL_CAMB_EST_DEN_PROV_CONTENT_html.ftl" />
+      <where>name='CSP_COM_SOL_CAMB_EST_DEN_PROV_CONTENT'</where>
+    </update>
+    <!-- CSP Solicitud Cambio Estado Denegada -->
+    <insert tableName="content_tpl">
+      <column name="id" valueSequenceNext="content_tpl_seq" />
+      <column name="name" value="CSP_COM_SOL_CAMB_EST_DEN_CONTENT" />
+      <column name="description" value="Plantilla de contenido para el cambio de estado de solicitud a denegada" />
+      <column name="tpl_text" value=" " />
+      <column name="tpl_html" value=" " />
+    </insert>
+    <update tableName="content_tpl">
+      <column name="tpl_text" valueClobFile="clob/0000000000001/csp-com-solicitud-cambio-estado/denegadas/CSP_COM_SOL_CAMB_EST_DEN_CONTENT_text.ftl" />
+      <where>name='CSP_COM_SOL_CAMB_EST_DEN_CONTENT'</where>
+    </update>
+    <update tableName="content_tpl">
+      <column name="tpl_html" valueClobFile="clob/0000000000001/csp-com-solicitud-cambio-estado/denegadas/CSP_COM_SOL_CAMB_EST_DEN_CONTENT_html.ftl" />
+      <where>name='CSP_COM_SOL_CAMB_EST_DEN_CONTENT'</where>
+    </update>
+    <!-- CSP Solicitud Cambio Estado Concedida provisional -->
+    <insert tableName="content_tpl">
+      <column name="id" valueSequenceNext="content_tpl_seq" />
+      <column name="name" value="CSP_COM_SOL_CAMB_EST_CONC_PROV_CONTENT" />
+      <column name="description" value="Plantilla de contenido para el cambio de estado de solicitud a concedida provisional" />
+      <column name="tpl_text" value=" " />
+      <column name="tpl_html" value=" " />
+    </insert>
+    <update tableName="content_tpl">
+      <column name="tpl_text" valueClobFile="clob/0000000000001/csp-com-solicitud-cambio-estado/concedidas/CSP_COM_SOL_CAMB_EST_CONC_PROV_CONTENT_text.ftl" />
+      <where>name='CSP_COM_SOL_CAMB_EST_CONC_PROV_CONTENT'</where>
+    </update>
+    <update tableName="content_tpl">
+      <column name="tpl_html" valueClobFile="clob/0000000000001/csp-com-solicitud-cambio-estado/concedidas/CSP_COM_SOL_CAMB_EST_CONC_PROV_CONTENT_html.ftl" />
+      <where>name='CSP_COM_SOL_CAMB_EST_CONC_PROV_CONTENT'</where>
+    </update>
+    <!-- CSP Solicitud Cambio Estado Concedida -->
+    <insert tableName="content_tpl">
+      <column name="id" valueSequenceNext="content_tpl_seq" />
+      <column name="name" value="CSP_COM_SOL_CAMB_EST_CONC_CONTENT" />
+      <column name="description" value="Plantilla de contenido para el cambio de estado de solicitud a concedida" />
+      <column name="tpl_text" value=" " />
+      <column name="tpl_html" value=" " />
+    </insert>
+    <update tableName="content_tpl">
+      <column name="tpl_text" valueClobFile="clob/0000000000001/csp-com-solicitud-cambio-estado/concedidas/CSP_COM_SOL_CAMB_EST_CONC_CONTENT_text.ftl" />
+      <where>name='CSP_COM_SOL_CAMB_EST_CONC_CONTENT'</where>
+    </update>
+    <update tableName="content_tpl">
+      <column name="tpl_html" valueClobFile="clob/0000000000001/csp-com-solicitud-cambio-estado/concedidas/CSP_COM_SOL_CAMB_EST_CONC_CONTENT_html.ftl" />
+      <where>name='CSP_COM_SOL_CAMB_EST_CONC_CONTENT'</where>
+    </update>
+    <!-- CSP Solicitud Hito -->
+    <insert tableName="content_tpl">
+      <column name="id" valueSequenceNext="content_tpl_seq" />
+      <column name="name" value="CSP_SOLICITUD_HITO_CONTENT" />
+      <column name="description" value="Plantilla de contenido para Solicitudes-Hitos" />
+      <column name="tpl_text" value=" " />
+      <column name="tpl_html" value="" />
+    </insert>
+    <update tableName="content_tpl">
+      <column name="tpl_text" valueClobFile="clob/CSP_SOLICITUD_HITO_CONTENT_text.ftl" />
+      <where>name='CSP_SOLICITUD_HITO_CONTENT'</where>
+    </update>
+    <update tableName="content_tpl">
+      <column name="tpl_html" valueClobFile="clob/CSP_SOLICITUD_HITO_CONTENT_html.ftl" />
+      <where>name='CSP_SOLICITUD_HITO_CONTENT'</where>
+    </update>
+    <!-- ETI Convocatoria de Reunión -->
+    <insert tableName="content_tpl">
+      <column name="id" valueSequenceNext="content_tpl_seq" />
+      <column name="name" value="ETI_COM_CONVOCATORIA_REUNION_CONTENT" />
+      <column name="description" value="Plantilla de contenido para el envío de una convocatoria de reunión de ética" />
+      <column name="tpl_text" value=" " />
+      <column name="tpl_html" value="" />
+    </insert>
+    <update tableName="content_tpl">
+      <column name="tpl_text" valueClobFile="clob/0000000000001/eti-com-convocatoria-reunion/ETI_COM_CONVOCATORIA_REUNION_CONTENT_text.ftl" />
+      <where>name='ETI_COM_CONVOCATORIA_REUNION_CONTENT'</where>
+    </update>
+    <update tableName="content_tpl">
+      <column name="tpl_html" valueClobFile="clob/0000000000001/eti-com-convocatoria-reunion/ETI_COM_CONVOCATORIA_REUNION_CONTENT_html.ftl" />
+      <where>name='ETI_COM_CONVOCATORIA_REUNION_CONTENT'</where>
+    </update>
+    <!-- CSP Convocatoria Hito -->
+    <update tableName="content_tpl">
+      <column name="tpl_text" valueClobFile="clob/0000000000001/CSP_CONVOCATORIA_HITO_CONTENT_text.ftl" />
+      <where>name='CSP_CONVOCATORIA_HITO_CONTENT'</where>
+    </update>
+    <update tableName="content_tpl">
+      <column name="tpl_html" valueClobFile="clob/0000000000001/CSP_CONVOCATORIA_HITO_CONTENT_html.ftl" />
+      <where>name='CSP_CONVOCATORIA_HITO_CONTENT'</where>
+    </update>
+    <!-- CSP Proyecto Periodo Pago Socio -->
+    <insert tableName="content_tpl">
+      <column name="id" valueSequenceNext="content_tpl_seq" />
+      <column name="name" value="CSP_COM_VENCIMIENTO_PERIODO_PAGO_SOCIO_CONTENT" />
+      <column name="description" value="Contenido del aviso del vencimiento del período de pago al socio colaborador (texto + HTML)" />
+      <column name="tpl_text" value=" " />
+      <column name="tpl_html" value="" />
+      <column name="created_by" value="master" />
+      <column name="creation_date" valueDate="current_timestamp()" />
+      <column name="last_modified_by" value="master" />
+      <column name="last_modified_date" valueDate="current_timestamp()" />
+    </insert>
+    <update tableName="content_tpl">
+      <column name="tpl_text" valueClobFile="clob/0000000000001/csp-com-proyecto-periodo-pago-socio/CSP_COM_VENCIMIENTO_PERIODO_PAGO_SOCIO_CONTENT_text.ftl" />
+      <where>name='CSP_COM_VENCIMIENTO_PERIODO_PAGO_SOCIO_CONTENT'</where>
+    </update>
+    <update tableName="content_tpl">
+      <column name="tpl_html" valueClobFile="clob/0000000000001/csp-com-proyecto-periodo-pago-socio/CSP_COM_VENCIMIENTO_PERIODO_PAGO_SOCIO_CONTENT_html.ftl" />
+      <where>name='CSP_COM_VENCIMIENTO_PERIODO_PAGO_SOCIO_CONTENT'</where>
+    </update>
+    <!-- CSP Inicio Periodo Justificación Socio -->
+    <insert tableName="content_tpl">
+      <column name="id" valueSequenceNext="content_tpl_seq" />
+      <column name="name" value="CSP_COM_INICIO_PERIODO_JUSTIFICACION_SOCIO_CONTENT" />
+      <column name="description" value="Contenido del aviso del inicio del período de entrega de justificación al socio colaborador (texto + HTML)" />
+      <column name="tpl_text" value=" " />
+      <column name="tpl_html" value=" " />
+      <column name="created_by" value="master" />
+      <column name="creation_date" valueDate="current_timestamp()" />
+      <column name="last_modified_by" value="master" />
+      <column name="last_modified_date" valueDate="current_timestamp()" />
+    </insert>
+    <update tableName="content_tpl">
+      <column name="tpl_text" valueClobFile="clob/0000000000001/csp-com-inicio-periodo-justificacion-socio/CSP_COM_INICIO_PERIODO_JUSTIFICACION_SOCIO_CONTENT_text.ftl" />
+      <where>name='CSP_COM_INICIO_PERIODO_JUSTIFICACION_SOCIO_CONTENT'</where>
+    </update>
+    <update tableName="content_tpl">
+      <column name="tpl_html" valueClobFile="clob/0000000000001/csp-com-inicio-periodo-justificacion-socio/CSP_COM_INICIO_PERIODO_JUSTIFICACION_SOCIO_CONTENT_html.ftl" />
+      <where>name='CSP_COM_INICIO_PERIODO_JUSTIFICACION_SOCIO_CONTENT'</where>
+    </update>
+    <!-- CSP Fin Periodo Justificación Socio -->
+    <insert tableName="content_tpl">
+      <column name="id" valueSequenceNext="content_tpl_seq" />
+      <column name="name" value="CSP_COM_FIN_PERIODO_JUSTIFICACION_SOCIO_CONTENT" />
+      <column name="description" value="Contenido del aviso del vencimiento del período de entrega de justificación al socio colaborador (texto + HTML)" />
+      <column name="tpl_text" value=" " />
+      <column name="tpl_html" value=" " />
+      <column name="created_by" value="master" />
+      <column name="creation_date" valueDate="current_timestamp()" />
+      <column name="last_modified_by" value="master" />
+      <column name="last_modified_date" valueDate="current_timestamp()" />
+    </insert>
+    <update tableName="content_tpl">
+      <column name="tpl_text" valueClobFile="clob/0000000000001/csp-com-fin-periodo-justificacion-socio/CSP_COM_FIN_PERIODO_JUSTIFICACION_SOCIO_CONTENT_text.ftl" />
+      <where>name='CSP_COM_FIN_PERIODO_JUSTIFICACION_SOCIO_CONTENT'</where>
+    </update>
+    <update tableName="content_tpl">
+      <column name="tpl_html" valueClobFile="clob/0000000000001/csp-com-fin-periodo-justificacion-socio/CSP_COM_FIN_PERIODO_JUSTIFICACION_SOCIO_CONTENT_html.ftl" />
+      <where>name='CSP_COM_FIN_PERIODO_JUSTIFICACION_SOCIO_CONTENT'</where>
+    </update>
+    <!-- CSP Calendario Facturacion Validar IP - Validada -->
+    <insert tableName="content_tpl">
+      <column name="id" valueSequenceNext="content_tpl_seq" />
+      <column name="name" value="CSP_COM_CALENDARIO_FACTURACION_VALIDAR_IP_VALIDADA_CONTENT" />
+      <column name="description" value="Plantilla de contenido para el envío de la validación de una factura con estado validada" />
+      <column name="tpl_text" value=" " />
+      <column name="tpl_html" value="" />
+    </insert>
+    <update tableName="content_tpl">
+      <column name="tpl_text" valueClobFile="clob/0000000000001/csp-com-calendario-facturacion/validar-ip/CSP_COM_CALENDARIO_FACTURACION_VALIDAR_IP_VALIDADA_CONTENT_text.ftl" />
+      <where>name='CSP_COM_CALENDARIO_FACTURACION_VALIDAR_IP_VALIDADA_CONTENT'</where>
+    </update>
+    <update tableName="content_tpl">
+      <column name="tpl_html" valueClobFile="clob/0000000000001/csp-com-calendario-facturacion/validar-ip/CSP_COM_CALENDARIO_FACTURACION_VALIDAR_IP_VALIDADA_CONTENT_html.ftl" />
+      <where>name='CSP_COM_CALENDARIO_FACTURACION_VALIDAR_IP_VALIDADA_CONTENT'</where>
+    </update>
+    <!-- CSP Calendario Facturacion Validar IP - Rechazada -->
+    <insert tableName="content_tpl">
+      <column name="id" valueSequenceNext="content_tpl_seq" />
+      <column name="name" value="CSP_COM_CALENDARIO_FACTURACION_VALIDAR_IP_RECHAZADA_CONTENT" />
+      <column name="description" value="Plantilla de contenido para el envío de la validación de una factura con estado rechazada" />
+      <column name="tpl_text" value=" " />
+      <column name="tpl_html" value="" />
+    </insert>
+    <update tableName="content_tpl">
+      <column name="tpl_text" valueClobFile="clob/0000000000001/csp-com-calendario-facturacion/validar-ip/CSP_COM_CALENDARIO_FACTURACION_VALIDAR_IP_RECHAZADA_CONTENT_text.ftl" />
+      <where>name='CSP_COM_CALENDARIO_FACTURACION_VALIDAR_IP_RECHAZADA_CONTENT'</where>
+    </update>
+    <update tableName="content_tpl">
+      <column name="tpl_html" valueClobFile="clob/0000000000001/csp-com-calendario-facturacion/validar-ip/CSP_COM_CALENDARIO_FACTURACION_VALIDAR_IP_RECHAZADA_CONTENT_html.ftl" />
+      <where>name='CSP_COM_CALENDARIO_FACTURACION_VALIDAR_IP_RECHAZADA_CONTENT'</where>
+    </update>
+
+    <!-- CSP Calendario Facturacion Notificar FACTURA_UNICA_NOT_IN_PRORROGA_NO_REQUISITO -->
+    <insert tableName="content_tpl">
+      <column name="id" valueSequenceNext="content_tpl_seq" />
+      <column name="name" value="CSP_COM_CALENDARIO_FACTURACION_NOTIFICAR_FACTURA_UNICA_NOT_IN_PRORROGA_NO_REQUISITO_CONTENT" />
+      <column name="description" value="Plantilla de contenido para el envío de notificación de una factura sin requisitos" />
+      <column name="tpl_text" value=" " />
+      <column name="tpl_html" value="" />
+    </insert>
+    <update tableName="content_tpl">
+      <column name="tpl_text" valueClobFile="clob/0000000000001/csp-com-calendario-facturacion/notificar/CSP_COM_CALENDARIO_FACTURACION_NOTIFICAR_FACTURA_UNICA_NOT_IN_PRORROGA_NO_REQUISITO_CONTENT_text.ftl" />
+      <where>name='CSP_COM_CALENDARIO_FACTURACION_NOTIFICAR_FACTURA_UNICA_NOT_IN_PRORROGA_NO_REQUISITO_CONTENT'</where>
+    </update>
+    <update tableName="content_tpl">
+      <column name="tpl_html" valueClobFile="clob/0000000000001/csp-com-calendario-facturacion/notificar/CSP_COM_CALENDARIO_FACTURACION_NOTIFICAR_FACTURA_UNICA_NOT_IN_PRORROGA_NO_REQUISITO_CONTENT_html.ftl" />
+      <where>name='CSP_COM_CALENDARIO_FACTURACION_NOTIFICAR_FACTURA_UNICA_NOT_IN_PRORROGA_NO_REQUISITO_CONTENT'</where>
+    </update>
+    <!-- CSP Calendario Facturacion Notificar FACTURA_UNICA_NOT_IN_PRORROGA -->
+    <insert tableName="content_tpl">
+      <column name="id" valueSequenceNext="content_tpl_seq" />
+      <column name="name" value="CSP_COM_CALENDARIO_FACTURACION_NOTIFICAR_FACTURA_UNICA_NOT_IN_PRORROGA_CONTENT" />
+      <column name="description" value="Plantilla de contenido para el envío de notificación de una factura" />
+      <column name="tpl_text" value=" " />
+      <column name="tpl_html" value="" />
+    </insert>
+    <update tableName="content_tpl">
+      <column name="tpl_text" valueClobFile="clob/0000000000001/csp-com-calendario-facturacion/notificar/CSP_COM_CALENDARIO_FACTURACION_NOTIFICAR_FACTURA_UNICA_NOT_IN_PRORROGA_CONTENT_text.ftl" />
+      <where>name='CSP_COM_CALENDARIO_FACTURACION_NOTIFICAR_FACTURA_UNICA_NOT_IN_PRORROGA_CONTENT'</where>
+    </update>
+    <update tableName="content_tpl">
+      <column name="tpl_html" valueClobFile="clob/0000000000001/csp-com-calendario-facturacion/notificar/CSP_COM_CALENDARIO_FACTURACION_NOTIFICAR_FACTURA_UNICA_NOT_IN_PRORROGA_CONTENT_html.ftl" />
+      <where>name='CSP_COM_CALENDARIO_FACTURACION_NOTIFICAR_FACTURA_UNICA_NOT_IN_PRORROGA_CONTENT'</where>
+    </update>
+    <!-- CSP Calendario Facturacion Notificar FACTURA_FIRST_NO_IN_PRORROGA_NO_LAST -->
+    <insert tableName="content_tpl">
+      <column name="id" valueSequenceNext="content_tpl_seq" />
+      <column name="name" value="CSP_COM_CALENDARIO_FACTURACION_NOTIFICAR_FACTURA_FIRST_NO_PRORROGA_NO_LAST_CONTENT" />
+      <column name="description" value="Plantilla de contenido para el envío de notificación de una factura" />
+      <column name="tpl_text" value=" " />
+      <column name="tpl_html" value="" />
+    </insert>
+    <update tableName="content_tpl">
+      <column name="tpl_text" valueClobFile="clob/0000000000001/csp-com-calendario-facturacion/notificar/CSP_COM_CALENDARIO_FACTURACION_NOTIFICAR_FACTURA_FIRST_NO_PRORROGA_NO_LAST_CONTENT_text.ftl" />
+      <where>name='CSP_COM_CALENDARIO_FACTURACION_NOTIFICAR_FACTURA_FIRST_NO_PRORROGA_NO_LAST_CONTENT'</where>
+    </update>
+    <update tableName="content_tpl">
+      <column name="tpl_html" valueClobFile="clob/0000000000001/csp-com-calendario-facturacion/notificar/CSP_COM_CALENDARIO_FACTURACION_NOTIFICAR_FACTURA_FIRST_NO_PRORROGA_NO_LAST_CONTENT_html.ftl" />
+      <where>name='CSP_COM_CALENDARIO_FACTURACION_NOTIFICAR_FACTURA_FIRST_NO_PRORROGA_NO_LAST_CONTENT'</where>
+    </update>
+    <!-- CSP Calendario Facturacion Notificar FACTURA_NOT_FIRST_OR_IN_PRORROGA_AND_IS_NOT_LAST_NO_REQUISITO -->
+    <insert tableName="content_tpl">
+      <column name="id" valueSequenceNext="content_tpl_seq" />
+      <column name="name" value="CSP_COM_CALENDARIO_FACTURACION_NOTIFICAR_FACTURA_NOT_FIRST_OR_IN_PRORROGA_AND_IS_NOT_LAST_NO_REQUISITO_CONTENT" />
+      <column name="description" value="Plantilla de contenido para el envío de notificación de una factura" />
+      <column name="tpl_text" value=" " />
+      <column name="tpl_html" value="" />
+    </insert>
+    <update tableName="content_tpl">
+      <column name="tpl_text" valueClobFile="clob/0000000000001/csp-com-calendario-facturacion/notificar/CSP_COM_CALENDARIO_FACTURACION_NOTIFICAR_FACTURA_NOT_FIRST_OR_IN_PRORROGA_AND_IS_NOT_LAST_NO_REQUISITO_CONTENT_text.ftl" />
+      <where>name='CSP_COM_CALENDARIO_FACTURACION_NOTIFICAR_FACTURA_NOT_FIRST_OR_IN_PRORROGA_AND_IS_NOT_LAST_NO_REQUISITO_CONTENT'</where>
+    </update>
+    <update tableName="content_tpl">
+      <column name="tpl_html" valueClobFile="clob/0000000000001/csp-com-calendario-facturacion/notificar/CSP_COM_CALENDARIO_FACTURACION_NOTIFICAR_FACTURA_NOT_FIRST_OR_IN_PRORROGA_AND_IS_NOT_LAST_NO_REQUISITO_CONTENT_html.ftl" />
+      <where>name='CSP_COM_CALENDARIO_FACTURACION_NOTIFICAR_FACTURA_NOT_FIRST_OR_IN_PRORROGA_AND_IS_NOT_LAST_NO_REQUISITO_CONTENT'</where>
+    </update>
+    <!-- CSP Calendario Facturacion Notificar FACTURA_NOT_FIRST_OR_IN_PRORROGA_AND_IS_NOT_LAST -->
+    <insert tableName="content_tpl">
+      <column name="id" valueSequenceNext="content_tpl_seq" />
+      <column name="name" value="CSP_COM_CALENDARIO_FACTURACION_NOTIFICAR_FACTURA_NOT_FIRST_OR_IN_PRORROGA_AND_IS_NOT_LAST_CONTENT" />
+      <column name="description" value="Plantilla de contenido para el envío de notificación de una factura" />
+      <column name="tpl_text" value=" " />
+      <column name="tpl_html" value="" />
+    </insert>
+    <update tableName="content_tpl">
+      <column name="tpl_text" valueClobFile="clob/0000000000001/csp-com-calendario-facturacion/notificar/CSP_COM_CALENDARIO_FACTURACION_NOTIFICAR_FACTURA_NOT_FIRST_OR_IN_PRORROGA_AND_IS_NOT_LAST_CONTENT_text.ftl" />
+      <where>name='CSP_COM_CALENDARIO_FACTURACION_NOTIFICAR_FACTURA_NOT_FIRST_OR_IN_PRORROGA_AND_IS_NOT_LAST_CONTENT'</where>
+    </update>
+    <update tableName="content_tpl">
+      <column name="tpl_html" valueClobFile="clob/0000000000001/csp-com-calendario-facturacion/notificar/CSP_COM_CALENDARIO_FACTURACION_NOTIFICAR_FACTURA_NOT_FIRST_OR_IN_PRORROGA_AND_IS_NOT_LAST_CONTENT_html.ftl" />
+      <where>name='CSP_COM_CALENDARIO_FACTURACION_NOTIFICAR_FACTURA_NOT_FIRST_OR_IN_PRORROGA_AND_IS_NOT_LAST_CONTENT'</where>
+    </update>
+    <!-- CSP Calendario Facturacion Notificar FACTURA_NOT_FIRST_OR_IN_PRORROGA_AND_IS_LAST_NO_REQUISITO -->
+    <insert tableName="content_tpl">
+      <column name="id" valueSequenceNext="content_tpl_seq" />
+      <column name="name" value="CSP_COM_CALENDARIO_FACTURACION_NOTIFICAR_FACTURA_NOT_FIRST_OR_IN_PRORROGA_AND_IS_LAST_NO_REQUISITO_CONTENT" />
+      <column name="description" value="Plantilla de contenido para el envío de notificación de una factura" />
+      <column name="tpl_text" value=" " />
+      <column name="tpl_html" value="" />
+    </insert>
+    <update tableName="content_tpl">
+      <column name="tpl_text" valueClobFile="clob/0000000000001/csp-com-calendario-facturacion/notificar/CSP_COM_CALENDARIO_FACTURACION_NOTIFICAR_FACTURA_NOT_FIRST_OR_IN_PRORROGA_AND_IS_LAST_NO_REQUISITO_CONTENT_text.ftl" />
+      <where>name='CSP_COM_CALENDARIO_FACTURACION_NOTIFICAR_FACTURA_NOT_FIRST_OR_IN_PRORROGA_AND_IS_LAST_NO_REQUISITO_CONTENT'</where>
+    </update>
+    <update tableName="content_tpl">
+      <column name="tpl_html" valueClobFile="clob/0000000000001/csp-com-calendario-facturacion/notificar/CSP_COM_CALENDARIO_FACTURACION_NOTIFICAR_FACTURA_NOT_FIRST_OR_IN_PRORROGA_AND_IS_LAST_NO_REQUISITO_CONTENT_html.ftl" />
+      <where>name='CSP_COM_CALENDARIO_FACTURACION_NOTIFICAR_FACTURA_NOT_FIRST_OR_IN_PRORROGA_AND_IS_LAST_NO_REQUISITO_CONTENT'</where>
+    </update>
+    <!-- CSP Calendario Facturacion Notificar FACTURA_NOT_FIRST_OR_IN_PRORROGA_AND_IS_LAST -->
+    <insert tableName="content_tpl">
+      <column name="id" valueSequenceNext="content_tpl_seq" />
+      <column name="name" value="CSP_COM_CALENDARIO_FACTURACION_NOTIFICAR_FACTURA_NOT_FIRST_OR_IN_PRORROGA_AND_IS_LAST_CONTENT" />
+      <column name="description" value="Plantilla de contenido para el envío de notificación de una factura" />
+      <column name="tpl_text" value=" " />
+      <column name="tpl_html" value="" />
+    </insert>
+    <update tableName="content_tpl">
+      <column name="tpl_text" valueClobFile="clob/0000000000001/csp-com-calendario-facturacion/notificar/CSP_COM_CALENDARIO_FACTURACION_NOTIFICAR_FACTURA_NOT_FIRST_OR_IN_PRORROGA_AND_IS_LAST_CONTENT_text.ftl" />
+      <where>name='CSP_COM_CALENDARIO_FACTURACION_NOTIFICAR_FACTURA_NOT_FIRST_OR_IN_PRORROGA_AND_IS_LAST_CONTENT'</where>
+    </update>
+    <update tableName="content_tpl">
+      <column name="tpl_html" valueClobFile="clob/0000000000001/csp-com-calendario-facturacion/notificar/CSP_COM_CALENDARIO_FACTURACION_NOTIFICAR_FACTURA_NOT_FIRST_OR_IN_PRORROGA_AND_IS_LAST_CONTENT_html.ftl" />
+      <where>name='CSP_COM_CALENDARIO_FACTURACION_NOTIFICAR_FACTURA_NOT_FIRST_OR_IN_PRORROGA_AND_IS_LAST_CONTENT'</where>
+    </update>
+  </changeSet>
+
+  <changeSet context="!test" author="master" id="0000000000001-contenttpl_param">
+    <!-- CSP Seguimiento Cientifico -->
+    <insert tableName="contenttpl_param">
+      <column name="contenttpl_id" valueComputed="(select id from ${schemaPrefix}content_tpl where name='CSP_COM_INICIO_PRESENTACION_SEGUIMIENTO_CIENTIFICO_CONTENT')" />
+      <column name="param_id" valueComputed="(select id from ${schemaPrefix}param where name='CSP_COM_INICIO_PRESENTACION_SEGUIMIENTO_CIENTIFICO_DATA')" />
+    </insert>
+    <insert tableName="contenttpl_param">
+      <column name="contenttpl_id" valueComputed="(select id from ${schemaPrefix}content_tpl where name='CSP_COM_INICIO_PRESENTACION_SEGUIMIENTO_CIENTIFICO_IP_CONTENT')" />
+      <column name="param_id" valueComputed="(select id from ${schemaPrefix}param where name='CSP_COM_INICIO_PRESENTACION_SEGUIMIENTO_CIENTIFICO_IP_DATA')" />
+    </insert>
+    <insert tableName="contenttpl_param">
+      <column name="contenttpl_id" valueComputed="(select id from ${schemaPrefix}content_tpl where name='CSP_COM_FIN_PRESENTACION_SEGUIMIENTO_CIENTIFICO_IP_CONTENT')" />
+      <column name="param_id" valueComputed="(select id from ${schemaPrefix}param where name='CSP_COM_FIN_PRESENTACION_SEGUIMIENTO_CIENTIFICO_IP_DATA')" />
+    </insert>
+    <!-- CSP Solicitud Peticion Evaluacion -->
+    <insert tableName="contenttpl_param">
+      <column name="contenttpl_id" valueComputed="(select id from ${schemaPrefix}content_tpl where name='CSP_COM_SOLICITUD_PETICION_EVALUACION_CONTENT')" />
+      <column name="param_id" valueComputed="(select id from ${schemaPrefix}param where name='ETI_PETICION_EVALUACION_CODIGO')" />
+    </insert>
+    <insert tableName="contenttpl_param">
+      <column name="contenttpl_id" valueComputed="(select id from ${schemaPrefix}content_tpl where name='CSP_COM_SOLICITUD_PETICION_EVALUACION_CONTENT')" />
+      <column name="param_id" valueComputed="(select id from ${schemaPrefix}param where name='CSP_SOLICITUD_CODIGO')" />
+    </insert>
+    <!-- CSP Solicitud Cambio Estado Solicitada -->
+    <insert tableName="contenttpl_param">
+      <column name="contenttpl_id" valueComputed="(select id from ${schemaPrefix}content_tpl where name='CSP_COM_SOL_CAMB_EST_SOLICITADA_CONTENT')" />
+      <column name="param_id" valueComputed="(select id from ${schemaPrefix}param where name='CSP_COM_SOL_CAMB_EST_SOLICITADA_DATA')" />
+    </insert>
+    <!-- CSP Solicitud Cambio Estado Alegaciones -->
+    <insert tableName="contenttpl_param">
+      <column name="contenttpl_id" valueComputed="(select id from ${schemaPrefix}content_tpl where name='CSP_COM_SOL_CAMB_EST_ALEGACIONES_CONTENT')" />
+      <column name="param_id" valueComputed="(select id from ${schemaPrefix}param where name='CSP_COM_SOL_CAMB_EST_ALEGACIONES_DATA')" />
+    </insert>
+    <!-- CSP Solicitud Cambio Estado Excluida Provisional -->
+    <insert tableName="contenttpl_param">
+      <column name="contenttpl_id" valueComputed="(select id from ${schemaPrefix}content_tpl where name='CSP_COM_SOL_CAMB_EST_EXCL_PROV_CONTENT')" />
+      <column name="param_id" valueComputed="(select id from ${schemaPrefix}param where name='CSP_COM_SOL_CAMB_EST_EXCL_PROV_DATA')" />
+    </insert>
+    <!-- CSP Solicitud Cambio Estado Excluida definitiva -->
+    <insert tableName="contenttpl_param">
+      <column name="contenttpl_id" valueComputed="(select id from ${schemaPrefix}content_tpl where name='CSP_COM_SOL_CAMB_EST_EXCL_DEF_CONTENT')" />
+      <column name="param_id" valueComputed="(select id from ${schemaPrefix}param where name='CSP_COM_SOL_CAMB_EST_EXCL_DEF_DATA')" />
+    </insert>
+    <!-- CSP Solicitud Cambio Estado Concedida provisional -->
+    <insert tableName="contenttpl_param">
+      <column name="contenttpl_id" valueComputed="(select id from ${schemaPrefix}content_tpl where name='CSP_COM_SOL_CAMB_EST_CONC_PROV_CONTENT')" />
+      <column name="param_id" valueComputed="(select id from ${schemaPrefix}param where name='CSP_COM_SOL_CAMB_EST_CONC_PROV_DATA')" />
+    </insert>
+    <!-- CSP Solicitud Cambio Estado Concedida -->
+    <insert tableName="contenttpl_param">
+      <column name="contenttpl_id" valueComputed="(select id from ${schemaPrefix}content_tpl where name='CSP_COM_SOL_CAMB_EST_CONC_CONTENT')" />
+      <column name="param_id" valueComputed="(select id from ${schemaPrefix}param where name='CSP_COM_SOL_CAMB_EST_CONC_DATA')" />
+    </insert>
+    <!-- CSP Solicitud Cambio Estado Denegada provisional -->
+    <insert tableName="contenttpl_param">
+      <column name="contenttpl_id" valueComputed="(select id from ${schemaPrefix}content_tpl where name='CSP_COM_SOL_CAMB_EST_DEN_PROV_CONTENT')" />
+      <column name="param_id" valueComputed="(select id from ${schemaPrefix}param where name='CSP_COM_SOL_CAMB_EST_DEN_PROV_DATA')" />
+    </insert>
+    <!-- CSP Solicitud Cambio Estado Denegada -->
+    <insert tableName="contenttpl_param">
+      <column name="contenttpl_id" valueComputed="(select id from ${schemaPrefix}content_tpl where name='CSP_COM_SOL_CAMB_EST_DEN_CONTENT')" />
+      <column name="param_id" valueComputed="(select id from ${schemaPrefix}param where name='CSP_COM_SOL_CAMB_EST_DEN_DATA')" />
+    </insert>
+    <!-- CSP Solicitud Hito -->
+    <insert tableName="contenttpl_param">
+      <column name="contenttpl_id" valueComputed="(select id from ${schemaPrefix}content_tpl where name='CSP_SOLICITUD_HITO_CONTENT')" />
+      <column name="param_id" valueComputed="(select id from ${schemaPrefix}param where name='CSP_HITO_FECHA')" />
+    </insert>
+    <insert tableName="contenttpl_param">
+      <column name="contenttpl_id" valueComputed="(select id from ${schemaPrefix}content_tpl where name='CSP_SOLICITUD_HITO_CONTENT')" />
+      <column name="param_id" valueComputed="(select id from ${schemaPrefix}param where name='CSP_HITO_TIPO')" />
+    </insert>
+    <insert tableName="contenttpl_param">
+      <column name="contenttpl_id" valueComputed="(select id from ${schemaPrefix}content_tpl where name='CSP_SOLICITUD_HITO_CONTENT')" />
+      <column name="param_id" valueComputed="(select id from ${schemaPrefix}param where name='CSP_CONVOCATORIA_TITULO')" />
+    </insert>
+    <insert tableName="contenttpl_param">
+      <column name="contenttpl_id" valueComputed="(select id from ${schemaPrefix}content_tpl where name='CSP_SOLICITUD_HITO_CONTENT')" />
+      <column name="param_id" valueComputed="(select id from ${schemaPrefix}param where name='CSP_HITO_OBSERVACIONES')" />
+    </insert>
+    <insert tableName="contenttpl_param">
+      <column name="contenttpl_id" valueComputed="(select id from ${schemaPrefix}content_tpl where name='CSP_SOLICITUD_HITO_CONTENT')" />
+      <column name="param_id" valueComputed="(select id from ${schemaPrefix}param where name='CSP_SOLICITUD_TITULO')" />
+    </insert>
+    <!-- ETI Convocatoria de Reunión -->
+    <insert tableName="contenttpl_param">
+      <column name="contenttpl_id" valueComputed="(select id from ${schemaPrefix}content_tpl where name='ETI_COM_CONVOCATORIA_REUNION_CONTENT')" />
+      <column name="param_id" valueComputed="(select id from ${schemaPrefix}param where name='ETI_COMITE_NOMBRE_INVESTIGACION')" />
+    </insert>
+    <insert tableName="contenttpl_param">
+      <column name="contenttpl_id" valueComputed="(select id from ${schemaPrefix}content_tpl where name='ETI_COM_CONVOCATORIA_REUNION_CONTENT')" />
+      <column name="param_id" valueComputed="(select id from ${schemaPrefix}param where name='ETI_COMITE')" />
+    </insert>
+    <insert tableName="contenttpl_param">
+      <column name="contenttpl_id" valueComputed="(select id from ${schemaPrefix}content_tpl where name='ETI_COM_CONVOCATORIA_REUNION_CONTENT')" />
+      <column name="param_id" valueComputed="(select id from ${schemaPrefix}param where name='ETI_CONVOCATORIA_REUNION_FECHA_EVALUACION')" />
+    </insert>
+    <insert tableName="contenttpl_param">
+      <column name="contenttpl_id" valueComputed="(select id from ${schemaPrefix}content_tpl where name='ETI_COM_CONVOCATORIA_REUNION_CONTENT')" />
+      <column name="param_id" valueComputed="(select id from ${schemaPrefix}param where name='ETI_CONVOCATORIA_REUNION_HORA_INICIO')" />
+    </insert>
+    <insert tableName="contenttpl_param">
+      <column name="contenttpl_id" valueComputed="(select id from ${schemaPrefix}content_tpl where name='ETI_COM_CONVOCATORIA_REUNION_CONTENT')" />
+      <column name="param_id" valueComputed="(select id from ${schemaPrefix}param where name='ETI_CONVOCATORIA_REUNION_MINUTO_INICIO')" />
+    </insert>
+    <insert tableName="contenttpl_param">
+      <column name="contenttpl_id" valueComputed="(select id from ${schemaPrefix}content_tpl where name='ETI_COM_CONVOCATORIA_REUNION_CONTENT')" />
+      <column name="param_id" valueComputed="(select id from ${schemaPrefix}param where name='ETI_CONVOCATORIA_REUNION_HORA_INICIO_SEGUNDA')" />
+    </insert>
+    <insert tableName="contenttpl_param">
+      <column name="contenttpl_id" valueComputed="(select id from ${schemaPrefix}content_tpl where name='ETI_COM_CONVOCATORIA_REUNION_CONTENT')" />
+      <column name="param_id" valueComputed="(select id from ${schemaPrefix}param where name='ETI_CONVOCATORIA_REUNION_MINUTO_INICIO_SEGUNDA')" />
+    </insert>
+    <insert tableName="contenttpl_param">
+      <column name="contenttpl_id" valueComputed="(select id from ${schemaPrefix}content_tpl where name='ETI_COM_CONVOCATORIA_REUNION_CONTENT')" />
+      <column name="param_id" valueComputed="(select id from ${schemaPrefix}param where name='ETI_CONVOCATORIA_REUNION_ORDEN_DEL_DIA')" />
+    </insert>
+    <!-- CSP Convocatoria Hito -->
+    <insert tableName="contenttpl_param">
+      <column name="contenttpl_id" valueComputed="(select id from ${schemaPrefix}content_tpl where name='CSP_CONVOCATORIA_HITO_CONTENT')" />
+      <column name="param_id" valueComputed="(select id from ${schemaPrefix}param where name='CSP_HITO_OBSERVACIONES')" />
+    </insert>
+    <!-- CSP Proyecto Periodo Pago Socio -->
+    <insert tableName="contenttpl_param">
+      <column name="contenttpl_id" valueComputed="(select id from ${schemaPrefix}content_tpl where name='CSP_COM_VENCIMIENTO_PERIODO_PAGO_SOCIO_CONTENT')" />
+      <column name="param_id" valueComputed="(select id from ${schemaPrefix}param where name='CSP_COM_VENCIMIENTO_PERIODO_PAGO_SOCIO_DATA')" />
+    </insert>
+    <!-- CSP Inicio Periodo Justificación Socio -->
+    <insert tableName="contenttpl_param">
+      <column name="contenttpl_id" valueComputed="(select id from ${schemaPrefix}content_tpl where name='CSP_COM_INICIO_PERIODO_JUSTIFICACION_SOCIO_CONTENT')" />
+      <column name="param_id" valueComputed="(select id from ${schemaPrefix}param where name='CSP_COM_INICIO_PERIODO_JUSTIFICACION_SOCIO_DATA')" />
+    </insert>
+    <!-- CSP Fin Periodo Justificación Socio -->
+    <insert tableName="contenttpl_param">
+      <column name="contenttpl_id" valueComputed="(select id from ${schemaPrefix}content_tpl where name='CSP_COM_FIN_PERIODO_JUSTIFICACION_SOCIO_CONTENT')" />
+      <column name="param_id" valueComputed="(select id from ${schemaPrefix}param where name='CSP_COM_FIN_PERIODO_JUSTIFICACION_SOCIO_DATA')" />
+    </insert>
+    <!-- CSP Calendario Facturacion Validar IP - Validada -->
+    <insert tableName="contenttpl_param">
+      <column name="contenttpl_id" valueComputed="(select id from ${schemaPrefix}content_tpl where name='CSP_COM_CALENDARIO_FACTURACION_VALIDAR_IP_VALIDADA_CONTENT')" />
+      <column name="param_id" valueComputed="(select id from ${schemaPrefix}param where name='CSP_COM_CALENDARIO_FACTURACION_VALIDAR_IP_VALIDADA_DATA')" />
+    </insert>
+    <!-- CSP Calendario Facturacion Validar IP - Rechazada -->
+    <insert tableName="contenttpl_param">
+      <column name="contenttpl_id" valueComputed="(select id from ${schemaPrefix}content_tpl where name='CSP_COM_CALENDARIO_FACTURACION_VALIDAR_IP_RECHAZADA_CONTENT')" />
+      <column name="param_id" valueComputed="(select id from ${schemaPrefix}param where name='CSP_COM_CALENDARIO_FACTURACION_VALIDAR_IP_RECHAZADA_DATA')" />
+    </insert>
+
+    <!-- CSP Calendario Facturacion Notificar FACTURA_UNICA_NOT_IN_PRORROGA_NO_REQUISITO -->
+    <insert tableName="contenttpl_param">
+      <column name="contenttpl_id" valueComputed="(select id from ${schemaPrefix}content_tpl where name='CSP_COM_CALENDARIO_FACTURACION_NOTIFICAR_FACTURA_UNICA_NOT_IN_PRORROGA_NO_REQUISITO_CONTENT')" />
+      <column name="param_id" valueComputed="(select id from ${schemaPrefix}param where name='CSP_COM_CALENDARIO_FACTURACION_NOTIFICAR_FACTURA_UNICA_NOT_IN_PRORROGA_NO_REQUISITO_DATA')" />
+    </insert>
+    <!-- CSP Calendario Facturacion Notificar FACTURA_UNICA_NOT_IN_PRORROGA -->
+    <insert tableName="contenttpl_param">
+      <column name="contenttpl_id" valueComputed="(select id from ${schemaPrefix}content_tpl where name='CSP_COM_CALENDARIO_FACTURACION_NOTIFICAR_FACTURA_UNICA_NOT_IN_PRORROGA_CONTENT')" />
+      <column name="param_id" valueComputed="(select id from ${schemaPrefix}param where name='CSP_COM_CALENDARIO_FACTURACION_NOTIFICAR_FACTURA_UNICA_NOT_IN_PRORROGA_DATA')" />
+    </insert>
+    <!-- CSP Calendario Facturacion Notificar FACTURA_FIRST_NO_IN_PRORROGA_NO_LAST_NO_REQUISITO -->
+    <insert tableName="contenttpl_param">
+      <column name="contenttpl_id" valueComputed="(select id from ${schemaPrefix}content_tpl where name='CSP_COM_CALENDARIO_FACTURACION_NOTIFICAR_FACTURA_FIRST_NO_PRORROGA_NO_LAST_CONTENT')" />
+      <column name="param_id" valueComputed="(select id from ${schemaPrefix}param where name='CSP_COM_CALENDARIO_FACTURACION_NOTIFICAR_FACTURA_FIRST_NO_PRORROGA_NO_LAST_DATA')" />
+    </insert>
+    <!-- CSP Calendario Facturacion Notificar FACTURA_NOT_FIRST_OR_IN_PRORROGA_AND_IS_NOT_LAST_NO_REQUISITO -->
+    <insert tableName="contenttpl_param">
+      <column name="contenttpl_id" valueComputed="(select id from ${schemaPrefix}content_tpl where name='CSP_COM_CALENDARIO_FACTURACION_NOTIFICAR_FACTURA_NOT_FIRST_OR_IN_PRORROGA_AND_IS_NOT_LAST_NO_REQUISITO_CONTENT')" />
+      <column name="param_id" valueComputed="(select id from ${schemaPrefix}param where name='CSP_COM_CALENDARIO_FACTURACION_NOTIFICAR_FACTURA_NOT_FIRST_OR_IN_PRORROGA_AND_IS_NOT_LAST_NO_REQUISITO_DATA')" />
+    </insert>
+    <!-- CSP Calendario Facturacion Notificar FACTURA_NOT_FIRST_OR_IN_PRORROGA_AND_IS_NOT_LAST -->
+    <insert tableName="contenttpl_param">
+      <column name="contenttpl_id" valueComputed="(select id from ${schemaPrefix}content_tpl where name='CSP_COM_CALENDARIO_FACTURACION_NOTIFICAR_FACTURA_NOT_FIRST_OR_IN_PRORROGA_AND_IS_NOT_LAST_CONTENT')" />
+      <column name="param_id" valueComputed="(select id from ${schemaPrefix}param where name='CSP_COM_CALENDARIO_FACTURACION_NOTIFICAR_FACTURA_NOT_FIRST_OR_IN_PRORROGA_AND_IS_NOT_LAST_DATA')" />
+    </insert>
+    <!-- CSP Calendario Facturacion Notificar FACTURA_NOT_FIRST_OR_IN_PRORROGA_AND_IS_LAST_NO_REQUISITO -->
+    <insert tableName="contenttpl_param">
+      <column name="contenttpl_id" valueComputed="(select id from ${schemaPrefix}content_tpl where name='CSP_COM_CALENDARIO_FACTURACION_NOTIFICAR_FACTURA_NOT_FIRST_OR_IN_PRORROGA_AND_IS_LAST_NO_REQUISITO_CONTENT')" />
+      <column name="param_id" valueComputed="(select id from ${schemaPrefix}param where name='CSP_COM_CALENDARIO_FACTURACION_NOTIFICAR_FACTURA_NOT_FIRST_OR_IN_PRORROGA_AND_IS_LAST_NO_REQUISITO_DATA')" />
+    </insert>
+    <!-- CSP Calendario Facturacion Notificar FACTURA_NOT_FIRST_OR_IN_PRORROGA_AND_IS_LAST -->
+    <insert tableName="contenttpl_param">
+      <column name="contenttpl_id" valueComputed="(select id from ${schemaPrefix}content_tpl where name='CSP_COM_CALENDARIO_FACTURACION_NOTIFICAR_FACTURA_NOT_FIRST_OR_IN_PRORROGA_AND_IS_LAST_CONTENT')" />
+      <column name="param_id" valueComputed="(select id from ${schemaPrefix}param where name='CSP_COM_CALENDARIO_FACTURACION_NOTIFICAR_FACTURA_NOT_FIRST_OR_IN_PRORROGA_AND_IS_LAST_DATA')" />
+    </insert>
+  </changeSet>
+
+  <changeSet context="!test" author="master" id="0000000000001-email_tpl">
+    <!-- CSP Seguimiento Cientifico -->
+    <insert tableName="email_tpl">
+      <column name="id" valueSequenceNext="email_tpl_seq" />
+      <column name="name" value="CSP_COM_INICIO_PRESENTACION_SEGUIMIENTO_CIENTIFICO" />
+      <column name="description" value="Aviso de inicio del período de presentación de justificación de seguimiento científico (texto + HTML)" />
+      <column name="created_by" value="master" />
+      <column name="creation_date" valueDate="current_timestamp()" />
+      <column name="last_modified_by" value="master" />
+      <column name="last_modified_date" valueDate="current_timestamp()" />
+    </insert>
+    <insert tableName="email_tpl">
+      <column name="id" valueSequenceNext="email_tpl_seq" />
+      <column name="name" value="CSP_COM_INICIO_PRESENTACION_SEGUIMIENTO_CIENTIFICO_IP" />
+      <column name="description" value="Aviso de inicio del período de presentación de justificación de seguimiento científico (texto + HTML) IP" />
+      <column name="created_by" value="master" />
+      <column name="creation_date" valueDate="current_timestamp()" />
+      <column name="last_modified_by" value="master" />
+      <column name="last_modified_date" valueDate="current_timestamp()" />
+    </insert>
+    <insert tableName="email_tpl">
+      <column name="id" valueSequenceNext="email_tpl_seq" />
+      <column name="name" value="CSP_COM_FIN_PRESENTACION_SEGUIMIENTO_CIENTIFICO_IP" />
+      <column name="description" value="Aviso de fin del período de presentación de justificación de seguimiento científico (texto + HTML) IP" />
+      <column name="created_by" value="master" />
+      <column name="creation_date" valueDate="current_timestamp()" />
+      <column name="last_modified_by" value="master" />
+      <column name="last_modified_date" valueDate="current_timestamp()" />
+    </insert>
+    <!-- CSP Solicitud Petición Evaluación -->
+    <insert tableName="email_tpl">
+      <column name="id" valueSequenceNext="email_tpl_seq" />
+      <column name="name" value="CSP_COM_SOLICITUD_PETICION_EVALUACION" />
+      <column name="description" value="Aviso de alta de solicitud de petición de evaluación de ética (texto + HTML)" />
+      <column name="created_by" value="master" />
+      <column name="creation_date" valueDate="current_timestamp()" />
+      <column name="last_modified_by" value="master" />
+      <column name="last_modified_date" valueDate="current_timestamp()" />
+    </insert>
+    <!-- CSP Solicitud Cambio Estado Solicitada -->
+    <insert tableName="email_tpl">
+      <column name="id" valueSequenceNext="email_tpl_seq" />
+      <column name="name" value="CSP_COM_SOL_CAMB_EST_SOLICITADA" />
+      <column name="description" value="Aviso de cambio de estado de solicitud a solicitada (texto + HTML)" />
+      <column name="created_by" value="master" />
+      <column name="creation_date" valueDate="current_timestamp()" />
+      <column name="last_modified_by" value="master" />
+      <column name="last_modified_date" valueDate="current_timestamp()" />
+    </insert>
+    <!-- CSP Solicitud Cambio Estado Alegaciones -->
+    <insert tableName="email_tpl">
+      <column name="id" valueSequenceNext="email_tpl_seq" />
+      <column name="name" value="CSP_COM_SOL_CAMB_EST_ALEGACIONES" />
+      <column name="description" value="Aviso de cambio de estado de solicitud a alegaciones (texto + HTML)" />
+      <column name="created_by" value="master" />
+      <column name="creation_date" valueDate="current_timestamp()" />
+      <column name="last_modified_by" value="master" />
+      <column name="last_modified_date" valueDate="current_timestamp()" />
+    </insert>
+    <!-- CSP Solicitud Cambio Estado Excluida Provisional -->
+    <insert tableName="email_tpl">
+      <column name="id" valueSequenceNext="email_tpl_seq" />
+      <column name="name" value="CSP_COM_SOL_CAMB_EST_EXCL_PROV" />
+      <column name="description" value="Aviso de cambio de estado de solicitud a excluida provisional (texto + HTML)" />
+      <column name="created_by" value="master" />
+      <column name="creation_date" valueDate="current_timestamp()" />
+      <column name="last_modified_by" value="master" />
+      <column name="last_modified_date" valueDate="current_timestamp()" />
+    </insert>
+    <!-- CSP Solicitud Cambio Estado Excluida definitiva -->
+    <insert tableName="email_tpl">
+      <column name="id" valueSequenceNext="email_tpl_seq" />
+      <column name="name" value="CSP_COM_SOL_CAMB_EST_EXCL_DEF" />
+      <column name="description" value="Aviso de cambio de estado de solicitud a excluida definitiva (texto + HTML)" />
+      <column name="created_by" value="master" />
+      <column name="creation_date" valueDate="current_timestamp()" />
+      <column name="last_modified_by" value="master" />
+      <column name="last_modified_date" valueDate="current_timestamp()" />
+    </insert>
+    <!-- CSP Solicitud Cambio Estado Concedida provisional -->
+    <insert tableName="email_tpl">
+      <column name="id" valueSequenceNext="email_tpl_seq" />
+      <column name="name" value="CSP_COM_SOL_CAMB_EST_CONC_PROV" />
+      <column name="description" value="Aviso de cambio de estado de solicitud a concedida provisional (texto + HTML)" />
+      <column name="created_by" value="master" />
+      <column name="creation_date" valueDate="current_timestamp()" />
+      <column name="last_modified_by" value="master" />
+      <column name="last_modified_date" valueDate="current_timestamp()" />
+    </insert>
+    <!-- CSP Solicitud Cambio Estado Concedida -->
+    <insert tableName="email_tpl">
+      <column name="id" valueSequenceNext="email_tpl_seq" />
+      <column name="name" value="CSP_COM_SOL_CAMB_EST_CONC" />
+      <column name="description" value="Aviso de cambio de estado de solicitud a concedida (texto + HTML)" />
+      <column name="created_by" value="master" />
+      <column name="creation_date" valueDate="current_timestamp()" />
+      <column name="last_modified_by" value="master" />
+      <column name="last_modified_date" valueDate="current_timestamp()" />
+    </insert>
+    <!-- CSP Solicitud Cambio Estado Denegada provisional -->
+    <insert tableName="email_tpl">
+      <column name="id" valueSequenceNext="email_tpl_seq" />
+      <column name="name" value="CSP_COM_SOL_CAMB_EST_DEN_PROV" />
+      <column name="description" value="Aviso de cambio de estado de solicitud a denegada provisional (texto + HTML)" />
+      <column name="created_by" value="master" />
+      <column name="creation_date" valueDate="current_timestamp()" />
+      <column name="last_modified_by" value="master" />
+      <column name="last_modified_date" valueDate="current_timestamp()" />
+    </insert>
+    <!-- CSP Solicitud Cambio Estado Denegada -->
+    <insert tableName="email_tpl">
+      <column name="id" valueSequenceNext="email_tpl_seq" />
+      <column name="name" value="CSP_COM_SOL_CAMB_EST_DEN" />
+      <column name="description" value="Aviso de cambio de estado de solicitud a denegada (texto + HTML)" />
+      <column name="created_by" value="master" />
+      <column name="creation_date" valueDate="current_timestamp()" />
+      <column name="last_modified_by" value="master" />
+      <column name="last_modified_date" valueDate="current_timestamp()" />
+    </insert>
+    <!-- CSP Solicitud Hito -->
+    <insert tableName="email_tpl">
+      <column name="id" valueSequenceNext="email_tpl_seq" />
+      <column name="name" value="CSP_SOLICITUD_HITO" />
+      <column name="description" value="Email de Solicitud-Hito" />
+    </insert>
+    <!-- ETI Convocatoria de Reunión -->
+    <insert tableName="email_tpl">
+      <column name="id" valueSequenceNext="email_tpl_seq" />
+      <column name="name" value="ETI_COM_CONVOCATORIA_REUNION" />
+      <column name="description" value="Aviso de envío de una convocatoria de reunión de ética (texto + HTML)" />
+    </insert>
+    <!-- CSP Proyecto Periodo Pago Socio -->
+    <insert tableName="email_tpl">
+      <column name="id" valueSequenceNext="email_tpl_seq" />
+      <column name="name" value="CSP_COM_VENCIMIENTO_PERIODO_PAGO_SOCIO" />
+      <column name="description" value="Aviso de vencimiento del período de pago al socio colaborador (texto + HTML)" />
+      <column name="created_by" value="master" />
+      <column name="creation_date" valueDate="current_timestamp()" />
+      <column name="last_modified_by" value="master" />
+      <column name="last_modified_date" valueDate="current_timestamp()" />
+    </insert>
+    <!-- CSP Inicio Periodo Justificación Socio -->
+    <insert tableName="email_tpl">
+      <column name="id" valueSequenceNext="email_tpl_seq" />
+      <column name="name" value="CSP_COM_INICIO_PERIODO_JUSTIFICACION_SOCIO" />
+      <column name="description" value="Aviso de inicio del período de justificación al socio colaborador (texto + HTML)" />
+      <column name="created_by" value="master" />
+      <column name="creation_date" valueDate="current_timestamp()" />
+      <column name="last_modified_by" value="master" />
+      <column name="last_modified_date" valueDate="current_timestamp()" />
+    </insert>
+    <!-- CSP Fin Periodo Justificación Socio -->
+    <insert tableName="email_tpl">
+      <column name="id" valueSequenceNext="email_tpl_seq" />
+      <column name="name" value="CSP_COM_FIN_PERIODO_JUSTIFICACION_SOCIO" />
+      <column name="description" value="Aviso de inicio del período de justificación al socio colaborador (texto + HTML)" />
+      <column name="created_by" value="master" />
+      <column name="creation_date" valueDate="current_timestamp()" />
+      <column name="last_modified_by" value="master" />
+      <column name="last_modified_date" valueDate="current_timestamp()" />
+    </insert>
+    <!-- CSP Calendario Facturacion Validar IP - Validada -->
+    <insert tableName="email_tpl">
+      <column name="id" valueSequenceNext="email_tpl_seq" />
+      <column name="name" value="CSP_COM_CALENDARIO_FACTURACION_VALIDAR_IP_VALIDADA" />
+      <column name="description" value="Notificación al validar una factura y pasarla a estado validada (texto + HTML)" />
+      <column name="created_by" value="master" />
+      <column name="creation_date" valueDate="current_timestamp()" />
+      <column name="last_modified_by" value="master" />
+      <column name="last_modified_date" valueDate="current_timestamp()" />
+    </insert>
+    <!-- CSP Calendario Facturacion Validar IP - Rechazada -->
+    <insert tableName="email_tpl">
+      <column name="id" valueSequenceNext="email_tpl_seq" />
+      <column name="name" value="CSP_COM_CALENDARIO_FACTURACION_VALIDAR_IP_RECHAZADA" />
+      <column name="description" value="Notificación al validar una factura y pasarla a estado rechazada (texto + HTML)" />
+      <column name="created_by" value="master" />
+      <column name="creation_date" valueDate="current_timestamp()" />
+      <column name="last_modified_by" value="master" />
+      <column name="last_modified_date" valueDate="current_timestamp()" />
+    </insert>
+
+    <!-- CSP Calendario Facturacion Notificar FACTURA_UNICA_NOT_IN_PRORROGA_NO_REQUISITO -->
+    <insert tableName="email_tpl">
+      <column name="id" valueSequenceNext="email_tpl_seq" />
+      <column name="name" value="CSP_COM_CALENDARIO_FACTURACION_NOTIFICAR_FACTURA_UNICA_NOT_IN_PRORROGA_NO_REQUISITO" />
+      <column name="description" value="Comunicado al notificar una factura (texto + HTML)" />
+      <column name="created_by" value="master" />
+      <column name="creation_date" valueDate="current_timestamp()" />
+      <column name="last_modified_by" value="master" />
+      <column name="last_modified_date" valueDate="current_timestamp()" />
+    </insert>
+    <!-- CSP Calendario Facturacion Notificar FACTURA_UNICA_NOT_IN_PRORROGA -->
+    <insert tableName="email_tpl">
+      <column name="id" valueSequenceNext="email_tpl_seq" />
+      <column name="name" value="CSP_COM_CALENDARIO_FACTURACION_NOTIFICAR_FACTURA_UNICA_NOT_IN_PRORROGA" />
+      <column name="description" value="Comunicado al notificar una factura (texto + HTML)" />
+      <column name="created_by" value="master" />
+      <column name="creation_date" valueDate="current_timestamp()" />
+      <column name="last_modified_by" value="master" />
+      <column name="last_modified_date" valueDate="current_timestamp()" />
+    </insert>
+    <!-- CSP Calendario Facturacion Notificar FACTURA_FIRST_NO_IN_PRORROGA_NO_LAST -->
+    <insert tableName="email_tpl">
+      <column name="id" valueSequenceNext="email_tpl_seq" />
+      <column name="name" value="CSP_COM_CALENDARIO_FACTURACION_NOTIFICAR_FACTURA_FIRST_NO_PRORROGA_NO_LAST" />
+      <column name="description" value="Comunicado al notificar una factura (texto + HTML)" />
+      <column name="created_by" value="master" />
+      <column name="creation_date" valueDate="current_timestamp()" />
+      <column name="last_modified_by" value="master" />
+      <column name="last_modified_date" valueDate="current_timestamp()" />
+    </insert>
+    <!-- CSP Calendario Facturacion Notificar FACTURA_NOT_FIRST_OR_IN_PRORROGA_AND_IS_NOT_LAST_NO_REQUISITO -->
+    <insert tableName="email_tpl">
+      <column name="id" valueSequenceNext="email_tpl_seq" />
+      <column name="name" value="CSP_COM_CALENDARIO_FACTURACION_NOTIFICAR_FACTURA_NOT_FIRST_OR_IN_PRORROGA_AND_IS_NOT_LAST_NO_REQUISITO" />
+      <column name="description" value="Comunicado al notificar una factura (texto + HTML)" />
+      <column name="created_by" value="master" />
+      <column name="creation_date" valueDate="current_timestamp()" />
+      <column name="last_modified_by" value="master" />
+      <column name="last_modified_date" valueDate="current_timestamp()" />
+    </insert>
+    <!-- CSP Calendario Facturacion Notificar FACTURA_NOT_FIRST_OR_IN_PRORROGA_AND_IS_NOT_LAST -->
+    <insert tableName="email_tpl">
+      <column name="id" valueSequenceNext="email_tpl_seq" />
+      <column name="name" value="CSP_COM_CALENDARIO_FACTURACION_NOTIFICAR_FACTURA_NOT_FIRST_OR_IN_PRORROGA_AND_IS_NOT_LAST" />
+      <column name="description" value="Comunicado al notificar una factura (texto + HTML)" />
+      <column name="created_by" value="master" />
+      <column name="creation_date" valueDate="current_timestamp()" />
+      <column name="last_modified_by" value="master" />
+      <column name="last_modified_date" valueDate="current_timestamp()" />
+    </insert>
+    <!-- CSP Calendario Facturacion Notificar FACTURA_NOT_FIRST_OR_IN_PRORROGA_AND_IS_LAST_NO_REQUISITO -->
+    <insert tableName="email_tpl">
+      <column name="id" valueSequenceNext="email_tpl_seq" />
+      <column name="name" value="CSP_COM_CALENDARIO_FACTURACION_NOTIFICAR_FACTURA_NOT_FIRST_OR_IN_PRORROGA_AND_IS_LAST_NO_REQUISITO" />
+      <column name="description" value="Comunicado al notificar una factura (texto + HTML)" />
+      <column name="created_by" value="master" />
+      <column name="creation_date" valueDate="current_timestamp()" />
+      <column name="last_modified_by" value="master" />
+      <column name="last_modified_date" valueDate="current_timestamp()" />
+    </insert>
+    <!-- CSP Calendario Facturacion Notificar FACTURA_NOT_FIRST_OR_IN_PRORROGA_AND_IS_LAST -->
+    <insert tableName="email_tpl">
+      <column name="id" valueSequenceNext="email_tpl_seq" />
+      <column name="name" value="CSP_COM_CALENDARIO_FACTURACION_NOTIFICAR_FACTURA_NOT_FIRST_OR_IN_PRORROGA_AND_IS_LAST" />
+      <column name="description" value="Comunicado al notificar una factura (texto + HTML)" />
+      <column name="created_by" value="master" />
+      <column name="creation_date" valueDate="current_timestamp()" />
+      <column name="last_modified_by" value="master" />
+      <column name="last_modified_date" valueDate="current_timestamp()" />
+    </insert>
+  </changeSet>
+
+  <changeSet context="!test" author="master" id="0000000000001-emailtpl_subjecttpl">
+    <!-- CSP Seguimiento Cientifico -->
+    <insert tableName="emailtpl_subjecttpl">
+      <column name="emailtpl_id" valueComputed="(select id from ${schemaPrefix}email_tpl where name='CSP_COM_INICIO_PRESENTACION_SEGUIMIENTO_CIENTIFICO')" />
+      <column name="subjecttpl_id" valueComputed="(select id from ${schemaPrefix}subject_tpl where name='CSP_COM_INICIO_PRESENTACION_SEGUIMIENTO_CIENTIFICO_SUBJECT')" />
+    </insert>
+    <insert tableName="emailtpl_subjecttpl">
+      <column name="emailtpl_id" valueComputed="(select id from ${schemaPrefix}email_tpl where name='CSP_COM_INICIO_PRESENTACION_SEGUIMIENTO_CIENTIFICO_IP')" />
+      <column name="subjecttpl_id" valueComputed="(select id from ${schemaPrefix}subject_tpl where name='CSP_COM_INICIO_PRESENTACION_SEGUIMIENTO_CIENTIFICO_IP_SUBJECT')" />
+    </insert>
+    <insert tableName="emailtpl_subjecttpl">
+      <column name="emailtpl_id" valueComputed="(select id from ${schemaPrefix}email_tpl where name='CSP_COM_FIN_PRESENTACION_SEGUIMIENTO_CIENTIFICO_IP')" />
+      <column name="subjecttpl_id" valueComputed="(select id from ${schemaPrefix}subject_tpl where name='CSP_COM_FIN_PRESENTACION_SEGUIMIENTO_CIENTIFICO_IP_SUBJECT')" />
+    </insert>
+    <!-- CSP Solicitud Petición Evaluación -->
+    <insert tableName="emailtpl_subjecttpl">
+      <column name="emailtpl_id" valueComputed="(select id from ${schemaPrefix}email_tpl where name='CSP_COM_SOLICITUD_PETICION_EVALUACION')" />
+      <column name="subjecttpl_id" valueComputed="(select id from ${schemaPrefix}subject_tpl where name='CSP_COM_SOLICITUD_PETICION_EVALUACION_SUBJECT')" />
+    </insert>
+    <!-- CSP Solicitud Cambio Estado Solicitada -->
+    <insert tableName="emailtpl_subjecttpl">
+      <column name="emailtpl_id" valueComputed="(select id from ${schemaPrefix}email_tpl where name='CSP_COM_SOL_CAMB_EST_SOLICITADA')" />
+      <column name="subjecttpl_id" valueComputed="(select id from ${schemaPrefix}subject_tpl where name='CSP_COM_SOL_CAMB_EST_SOLICITADA_SUBJECT')" />
+    </insert>
+    <!-- CSP Solicitud Cambio Estado Alegaciones -->
+    <insert tableName="emailtpl_subjecttpl">
+      <column name="emailtpl_id" valueComputed="(select id from ${schemaPrefix}email_tpl where name='CSP_COM_SOL_CAMB_EST_ALEGACIONES')" />
+      <column name="subjecttpl_id" valueComputed="(select id from ${schemaPrefix}subject_tpl where name='CSP_COM_SOL_CAMB_EST_ALEGACIONES_SUBJECT')" />
+    </insert>
+    <!-- CSP Solicitud Cambio Estado Excluida provisional -->
+    <insert tableName="emailtpl_subjecttpl">
+      <column name="emailtpl_id" valueComputed="(select id from ${schemaPrefix}email_tpl where name='CSP_COM_SOL_CAMB_EST_EXCL_PROV')" />
+      <column name="subjecttpl_id" valueComputed="(select id from ${schemaPrefix}subject_tpl where name='CSP_COM_SOL_CAMB_EST_EXCL_PROV_SUBJECT')" />
+    </insert>
+    <!-- CSP Solicitud Cambio Estado Excluida definitiva -->
+    <insert tableName="emailtpl_subjecttpl">
+      <column name="emailtpl_id" valueComputed="(select id from ${schemaPrefix}email_tpl where name='CSP_COM_SOL_CAMB_EST_EXCL_DEF')" />
+      <column name="subjecttpl_id" valueComputed="(select id from ${schemaPrefix}subject_tpl where name='CSP_COM_SOL_CAMB_EST_EXCL_DEF_SUBJECT')" />
+    </insert>
+    <!-- CSP Solicitud Cambio Estado Concedida provisional -->
+    <insert tableName="emailtpl_subjecttpl">
+      <column name="emailtpl_id" valueComputed="(select id from ${schemaPrefix}email_tpl where name='CSP_COM_SOL_CAMB_EST_CONC_PROV')" />
+      <column name="subjecttpl_id" valueComputed="(select id from ${schemaPrefix}subject_tpl where name='CSP_COM_SOL_CAMB_EST_CONC_PROV_SUBJECT')" />
+    </insert>
+    <!-- CSP Solicitud Cambio Estado Concedida -->
+    <insert tableName="emailtpl_subjecttpl">
+      <column name="emailtpl_id" valueComputed="(select id from ${schemaPrefix}email_tpl where name='CSP_COM_SOL_CAMB_EST_CONC')" />
+      <column name="subjecttpl_id" valueComputed="(select id from ${schemaPrefix}subject_tpl where name='CSP_COM_SOL_CAMB_EST_CONC_SUBJECT')" />
+    </insert>
+    <!-- CSP Solicitud Cambio Estado Denegada provisional -->
+    <insert tableName="emailtpl_subjecttpl">
+      <column name="emailtpl_id" valueComputed="(select id from ${schemaPrefix}email_tpl where name='CSP_COM_SOL_CAMB_EST_DEN_PROV')" />
+      <column name="subjecttpl_id" valueComputed="(select id from ${schemaPrefix}subject_tpl where name='CSP_COM_SOL_CAMB_EST_DEN_PROV_SUBJECT')" />
+    </insert>
+    <!-- CSP Solicitud Cambio Estado Denegada -->
+    <insert tableName="emailtpl_subjecttpl">
+      <column name="emailtpl_id" valueComputed="(select id from ${schemaPrefix}email_tpl where name='CSP_COM_SOL_CAMB_EST_DEN')" />
+      <column name="subjecttpl_id" valueComputed="(select id from ${schemaPrefix}subject_tpl where name='CSP_COM_SOL_CAMB_EST_DEN_SUBJECT')" />
+    </insert>
+    <!-- CSP Solicitud Hito -->
+    <insert tableName="emailtpl_subjecttpl">
+      <column name="emailtpl_id" valueComputed="(select id from ${schemaPrefix}email_tpl where name='CSP_SOLICITUD_HITO')" />
+      <column name="subjecttpl_id" valueComputed="(select id from ${schemaPrefix}subject_tpl where name='CSP_SOLICITUD_HITO_SUBJECT')" />
+    </insert>
+    <!-- ETI Convocatoria de Reunión -->
+    <insert tableName="emailtpl_subjecttpl">
+      <column name="emailtpl_id" valueComputed="(select id from ${schemaPrefix}email_tpl where name='ETI_COM_CONVOCATORIA_REUNION')" />
+      <column name="subjecttpl_id" valueComputed="(select id from ${schemaPrefix}subject_tpl where name='ETI_COM_CONVOCATORIA_REUNION_SUBJECT')" />
+    </insert>
+    <!-- CSP Proyecto Periodo Pago Socio -->
+    <insert tableName="emailtpl_subjecttpl">
+      <column name="emailtpl_id" valueComputed="(select id from ${schemaPrefix}email_tpl where name='CSP_COM_VENCIMIENTO_PERIODO_PAGO_SOCIO')" />
+      <column name="subjecttpl_id" valueComputed="(select id from ${schemaPrefix}subject_tpl where name='CSP_COM_VENCIMIENTO_PERIODO_PAGO_SOCIO_SUBJECT')" />
+    </insert>
+    <!-- CSP Inicio Periodo Justificación Socio -->
+    <insert tableName="emailtpl_subjecttpl">
+      <column name="emailtpl_id" valueComputed="(select id from ${schemaPrefix}email_tpl where name='CSP_COM_INICIO_PERIODO_JUSTIFICACION_SOCIO')" />
+      <column name="subjecttpl_id" valueComputed="(select id from ${schemaPrefix}subject_tpl where name='CSP_COM_INICIO_PERIODO_JUSTIFICACION_SOCIO_SUBJECT')" />
+    </insert>
+    <!-- CSP Fin Periodo Justificación Socio -->
+    <insert tableName="emailtpl_subjecttpl">
+      <column name="emailtpl_id" valueComputed="(select id from ${schemaPrefix}email_tpl where name='CSP_COM_FIN_PERIODO_JUSTIFICACION_SOCIO')" />
+      <column name="subjecttpl_id" valueComputed="(select id from ${schemaPrefix}subject_tpl where name='CSP_COM_FIN_PERIODO_JUSTIFICACION_SOCIO_SUBJECT')" />
+    </insert>
+    <!-- CSP Calendario Facturacion Validar IP - Validada -->
+    <insert tableName="emailtpl_subjecttpl">
+      <column name="emailtpl_id" valueComputed="(select id from ${schemaPrefix}email_tpl where name='CSP_COM_CALENDARIO_FACTURACION_VALIDAR_IP_VALIDADA')" />
+      <column name="subjecttpl_id" valueComputed="(select id from ${schemaPrefix}subject_tpl where name='CSP_COM_CALENDARIO_FACTURACION_VALIDAR_IP_VALIDADA_SUBJECT')" />
+    </insert>
+    <!-- CSP Calendario Facturacion Validar IP - Rechazada -->
+    <insert tableName="emailtpl_subjecttpl">
+      <column name="emailtpl_id" valueComputed="(select id from ${schemaPrefix}email_tpl where name='CSP_COM_CALENDARIO_FACTURACION_VALIDAR_IP_RECHAZADA')" />
+      <column name="subjecttpl_id" valueComputed="(select id from ${schemaPrefix}subject_tpl where name='CSP_COM_CALENDARIO_FACTURACION_VALIDAR_IP_RECHAZADA_SUBJECT')" />
+    </insert>
+
+    <!-- CSP Calendario Facturacion Notificar FACTURA_UNICA_NOT_IN_PRORROGA_NO_REQUISITO -->
+    <insert tableName="emailtpl_subjecttpl">
+      <column name="emailtpl_id" valueComputed="(select id from ${schemaPrefix}email_tpl where name='CSP_COM_CALENDARIO_FACTURACION_NOTIFICAR_FACTURA_UNICA_NOT_IN_PRORROGA_NO_REQUISITO')" />
+      <column name="subjecttpl_id" valueComputed="(select id from ${schemaPrefix}subject_tpl where name='CSP_COM_CALENDARIO_FACTURACION_NOTIFICAR_FACTURA_UNICA_NOT_IN_PRORROGA_NO_REQUISITO_SUBJECT')" />
+    </insert>
+    <!-- CSP Calendario Facturacion Notificar FACTURA_UNICA_NOT_IN_PRORROGA -->
+    <insert tableName="emailtpl_subjecttpl">
+      <column name="emailtpl_id" valueComputed="(select id from ${schemaPrefix}email_tpl where name='CSP_COM_CALENDARIO_FACTURACION_NOTIFICAR_FACTURA_UNICA_NOT_IN_PRORROGA')" />
+      <column name="subjecttpl_id" valueComputed="(select id from ${schemaPrefix}subject_tpl where name='CSP_COM_CALENDARIO_FACTURACION_NOTIFICAR_FACTURA_UNICA_NOT_IN_PRORROGA_SUBJECT')" />
+    </insert>
+    <!-- CSP Calendario Facturacion Notificar FACTURA_FIRST_NO_IN_PRORROGA_NO_LAST -->
+    <insert tableName="emailtpl_subjecttpl">
+      <column name="emailtpl_id" valueComputed="(select id from ${schemaPrefix}email_tpl where name='CSP_COM_CALENDARIO_FACTURACION_NOTIFICAR_FACTURA_FIRST_NO_PRORROGA_NO_LAST')" />
+      <column name="subjecttpl_id" valueComputed="(select id from ${schemaPrefix}subject_tpl where name='CSP_COM_CALENDARIO_FACTURACION_NOTIFICAR_FACTURA_FIRST_NO_PRORROGA_NO_LAST_SUBJECT')" />
+    </insert>
+    <!-- CSP Calendario Facturacion Notificar FACTURA_NOT_FIRST_OR_IN_PRORROGA_AND_IS_NOT_LAST -->
+    <insert tableName="emailtpl_subjecttpl">
+      <column name="emailtpl_id" valueComputed="(select id from ${schemaPrefix}email_tpl where name='CSP_COM_CALENDARIO_FACTURACION_NOTIFICAR_FACTURA_NOT_FIRST_OR_IN_PRORROGA_AND_IS_NOT_LAST')" />
+      <column name="subjecttpl_id" valueComputed="(select id from ${schemaPrefix}subject_tpl where name='CSP_COM_CALENDARIO_FACTURACION_NOTIFICAR_FACTURA_NOT_FIRST_OR_IN_PRORROGA_AND_IS_NOT_LAST_SUBJECT')" />
+    </insert>
+    <!-- CSP Calendario Facturacion Notificar FACTURA_NOT_FIRST_OR_IN_PRORROGA_AND_IS_NOT_LAST_NO_REQUISITO -->
+    <insert tableName="emailtpl_subjecttpl">
+      <column name="emailtpl_id" valueComputed="(select id from ${schemaPrefix}email_tpl where name='CSP_COM_CALENDARIO_FACTURACION_NOTIFICAR_FACTURA_NOT_FIRST_OR_IN_PRORROGA_AND_IS_NOT_LAST_NO_REQUISITO')" />
+      <column name="subjecttpl_id" valueComputed="(select id from ${schemaPrefix}subject_tpl where name='CSP_COM_CALENDARIO_FACTURACION_NOTIFICAR_FACTURA_NOT_FIRST_OR_IN_PRORROGA_AND_IS_NOT_LAST_NO_REQUISITO_SUBJECT')" />
+    </insert>
+    <!-- CSP Calendario Facturacion Notificar FACTURA_NOT_FIRST_OR_IN_PRORROGA_AND_IS_LAST -->
+    <insert tableName="emailtpl_subjecttpl">
+      <column name="emailtpl_id" valueComputed="(select id from ${schemaPrefix}email_tpl where name='CSP_COM_CALENDARIO_FACTURACION_NOTIFICAR_FACTURA_NOT_FIRST_OR_IN_PRORROGA_AND_IS_LAST')" />
+      <column name="subjecttpl_id" valueComputed="(select id from ${schemaPrefix}subject_tpl where name='CSP_COM_CALENDARIO_FACTURACION_NOTIFICAR_FACTURA_NOT_FIRST_OR_IN_PRORROGA_AND_IS_LAST_SUBJECT')" />
+    </insert>
+    <!-- CSP Calendario Facturacion Notificar FACTURA_NOT_FIRST_OR_IN_PRORROGA_AND_IS_LAST_NO_REQUISITO -->
+    <insert tableName="emailtpl_subjecttpl">
+      <column name="emailtpl_id" valueComputed="(select id from ${schemaPrefix}email_tpl where name='CSP_COM_CALENDARIO_FACTURACION_NOTIFICAR_FACTURA_NOT_FIRST_OR_IN_PRORROGA_AND_IS_LAST_NO_REQUISITO')" />
+      <column name="subjecttpl_id" valueComputed="(select id from ${schemaPrefix}subject_tpl where name='CSP_COM_CALENDARIO_FACTURACION_NOTIFICAR_FACTURA_NOT_FIRST_OR_IN_PRORROGA_AND_IS_LAST_NO_REQUISITO_SUBJECT')" />
+    </insert>
+  </changeSet>
+
+  <changeSet context="!test" author="master" id="0000000000001-emailtpl_contenttpl">
+    <!-- CSP Seguimiento Cientifico -->
+    <insert tableName="emailtpl_contenttpl">
+      <column name="emailtpl_id" valueComputed="(select id from ${schemaPrefix}email_tpl where name='CSP_COM_INICIO_PRESENTACION_SEGUIMIENTO_CIENTIFICO')" />
+      <column name="contenttpl_id" valueComputed="(select id from ${schemaPrefix}content_tpl where name='CSP_COM_INICIO_PRESENTACION_SEGUIMIENTO_CIENTIFICO_CONTENT')" />
+    </insert>
+    <insert tableName="emailtpl_contenttpl">
+      <column name="emailtpl_id" valueComputed="(select id from ${schemaPrefix}email_tpl where name='CSP_COM_INICIO_PRESENTACION_SEGUIMIENTO_CIENTIFICO_IP')" />
+      <column name="contenttpl_id" valueComputed="(select id from ${schemaPrefix}content_tpl where name='CSP_COM_INICIO_PRESENTACION_SEGUIMIENTO_CIENTIFICO_IP_CONTENT')" />
+    </insert>
+    <insert tableName="emailtpl_contenttpl">
+      <column name="emailtpl_id" valueComputed="(select id from ${schemaPrefix}email_tpl where name='CSP_COM_FIN_PRESENTACION_SEGUIMIENTO_CIENTIFICO_IP')" />
+      <column name="contenttpl_id" valueComputed="(select id from ${schemaPrefix}content_tpl where name='CSP_COM_FIN_PRESENTACION_SEGUIMIENTO_CIENTIFICO_IP_CONTENT')" />
+    </insert>
+    <!-- CSP Solicitud Peticion Evaluacion -->
+    <insert tableName="emailtpl_contenttpl">
+      <column name="emailtpl_id" valueComputed="(select id from ${schemaPrefix}email_tpl where name='CSP_COM_SOLICITUD_PETICION_EVALUACION')" />
+      <column name="contenttpl_id" valueComputed="(select id from ${schemaPrefix}content_tpl where name='CSP_COM_SOLICITUD_PETICION_EVALUACION_CONTENT')" />
+    </insert>
+    <!-- CSP Solicitud Cambio Estado Solicitada -->
+    <insert tableName="emailtpl_contenttpl">
+      <column name="emailtpl_id" valueComputed="(select id from ${schemaPrefix}email_tpl where name='CSP_COM_SOL_CAMB_EST_SOLICITADA')" />
+      <column name="contenttpl_id" valueComputed="(select id from ${schemaPrefix}content_tpl where name='CSP_COM_SOL_CAMB_EST_SOLICITADA_CONTENT')" />
+    </insert>
+    <!-- CSP Solicitud Cambio Estado Alegaciones -->
+    <insert tableName="emailtpl_contenttpl">
+      <column name="emailtpl_id" valueComputed="(select id from ${schemaPrefix}email_tpl where name='CSP_COM_SOL_CAMB_EST_ALEGACIONES')" />
+      <column name="contenttpl_id" valueComputed="(select id from ${schemaPrefix}content_tpl where name='CSP_COM_SOL_CAMB_EST_ALEGACIONES_CONTENT')" />
+    </insert>
+    <!-- CSP Solicitud Cambio Estado Excluida provisional -->
+    <insert tableName="emailtpl_contenttpl">
+      <column name="emailtpl_id" valueComputed="(select id from ${schemaPrefix}email_tpl where name='CSP_COM_SOL_CAMB_EST_EXCL_PROV')" />
+      <column name="contenttpl_id" valueComputed="(select id from ${schemaPrefix}content_tpl where name='CSP_COM_SOL_CAMB_EST_EXCL_PROV_CONTENT')" />
+    </insert>
+    <!-- CSP Solicitud Cambio Estado Excluida definitiva -->
+    <insert tableName="emailtpl_contenttpl">
+      <column name="emailtpl_id" valueComputed="(select id from ${schemaPrefix}email_tpl where name='CSP_COM_SOL_CAMB_EST_EXCL_DEF')" />
+      <column name="contenttpl_id" valueComputed="(select id from ${schemaPrefix}content_tpl where name='CSP_COM_SOL_CAMB_EST_EXCL_DEF_CONTENT')" />
+    </insert>
+    <!-- CSP Solicitud Cambio Estado Concedida provisional -->
+    <insert tableName="emailtpl_contenttpl">
+      <column name="emailtpl_id" valueComputed="(select id from ${schemaPrefix}email_tpl where name='CSP_COM_SOL_CAMB_EST_CONC_PROV')" />
+      <column name="contenttpl_id" valueComputed="(select id from ${schemaPrefix}content_tpl where name='CSP_COM_SOL_CAMB_EST_CONC_PROV_CONTENT')" />
+    </insert>
+    <!-- CSP Solicitud Cambio Estado Concedida -->
+    <insert tableName="emailtpl_contenttpl">
+      <column name="emailtpl_id" valueComputed="(select id from ${schemaPrefix}email_tpl where name='CSP_COM_SOL_CAMB_EST_CONC')" />
+      <column name="contenttpl_id" valueComputed="(select id from ${schemaPrefix}content_tpl where name='CSP_COM_SOL_CAMB_EST_CONC_CONTENT')" />
+    </insert>
+    <!-- CSP Solicitud Cambio Estado Denegada provisional -->
+    <insert tableName="emailtpl_contenttpl">
+      <column name="emailtpl_id" valueComputed="(select id from ${schemaPrefix}email_tpl where name='CSP_COM_SOL_CAMB_EST_DEN_PROV')" />
+      <column name="contenttpl_id" valueComputed="(select id from ${schemaPrefix}content_tpl where name='CSP_COM_SOL_CAMB_EST_DEN_PROV_CONTENT')" />
+    </insert>
+    <!-- CSP Solicitud Cambio Estado Denegada -->
+    <insert tableName="emailtpl_contenttpl">
+      <column name="emailtpl_id" valueComputed="(select id from ${schemaPrefix}email_tpl where name='CSP_COM_SOL_CAMB_EST_DEN')" />
+      <column name="contenttpl_id" valueComputed="(select id from ${schemaPrefix}content_tpl where name='CSP_COM_SOL_CAMB_EST_DEN_CONTENT')" />
+    </insert>
+    <!-- CSP Solicitud Hito -->
+    <insert tableName="emailtpl_contenttpl">
+      <column name="emailtpl_id" valueComputed="(select id from ${schemaPrefix}email_tpl where name='CSP_SOLICITUD_HITO')" />
+      <column name="contenttpl_id" valueComputed="(select id from ${schemaPrefix}content_tpl where name='CSP_SOLICITUD_HITO_CONTENT')" />
+    </insert>
+    <!-- ETI Convocatoria de Reunión -->
+    <insert tableName="emailtpl_contenttpl">
+      <column name="emailtpl_id" valueComputed="(select id from ${schemaPrefix}email_tpl where name='ETI_COM_CONVOCATORIA_REUNION')" />
+      <column name="contenttpl_id" valueComputed="(select id from ${schemaPrefix}content_tpl where name='ETI_COM_CONVOCATORIA_REUNION_CONTENT')" />
+    </insert>
+    <!-- CSP Proyecto Periodo Pago Socio -->
+    <insert tableName="emailtpl_contenttpl">
+      <column name="emailtpl_id" valueComputed="(select id from ${schemaPrefix}email_tpl where name='CSP_COM_VENCIMIENTO_PERIODO_PAGO_SOCIO')" />
+      <column name="contenttpl_id" valueComputed="(select id from ${schemaPrefix}content_tpl where name='CSP_COM_VENCIMIENTO_PERIODO_PAGO_SOCIO_CONTENT')" />
+    </insert>
+    <!-- CSP Inicio Periodo Justificación Socio -->
+    <insert tableName="emailtpl_contenttpl">
+      <column name="emailtpl_id" valueComputed="(select id from ${schemaPrefix}email_tpl where name='CSP_COM_INICIO_PERIODO_JUSTIFICACION_SOCIO')" />
+      <column name="contenttpl_id" valueComputed="(select id from ${schemaPrefix}content_tpl where name='CSP_COM_INICIO_PERIODO_JUSTIFICACION_SOCIO_CONTENT')" />
+    </insert>
+    <!-- CSP Fin Periodo Justificación Socio -->
+    <insert tableName="emailtpl_contenttpl">
+      <column name="emailtpl_id" valueComputed="(select id from ${schemaPrefix}email_tpl where name='CSP_COM_FIN_PERIODO_JUSTIFICACION_SOCIO')" />
+      <column name="contenttpl_id" valueComputed="(select id from ${schemaPrefix}content_tpl where name='CSP_COM_FIN_PERIODO_JUSTIFICACION_SOCIO_CONTENT')" />
+    </insert>
+    <!-- CSP Calendario Facturacion Validar IP - Validada -->
+    <insert tableName="emailtpl_contenttpl">
+      <column name="emailtpl_id" valueComputed="(select id from ${schemaPrefix}email_tpl where name='CSP_COM_CALENDARIO_FACTURACION_VALIDAR_IP_VALIDADA')" />
+      <column name="contenttpl_id" valueComputed="(select id from ${schemaPrefix}content_tpl where name='CSP_COM_CALENDARIO_FACTURACION_VALIDAR_IP_VALIDADA_CONTENT')" />
+    </insert>
+    <!-- CSP Calendario Facturacion Validar IP - Rechazada -->
+    <insert tableName="emailtpl_contenttpl">
+      <column name="emailtpl_id" valueComputed="(select id from ${schemaPrefix}email_tpl where name='CSP_COM_CALENDARIO_FACTURACION_VALIDAR_IP_RECHAZADA')" />
+      <column name="contenttpl_id" valueComputed="(select id from ${schemaPrefix}content_tpl where name='CSP_COM_CALENDARIO_FACTURACION_VALIDAR_IP_RECHAZADA_CONTENT')" />
+    </insert>
+
+    <!-- CSP Calendario Facturacion Notificar FACTURA_UNICA_NOT_IN_PRORROGA_NO_REQUISITO -->
+    <insert tableName="emailtpl_contenttpl">
+      <column name="emailtpl_id" valueComputed="(select id from ${schemaPrefix}email_tpl where name='CSP_COM_CALENDARIO_FACTURACION_NOTIFICAR_FACTURA_UNICA_NOT_IN_PRORROGA_NO_REQUISITO')" />
+      <column name="contenttpl_id" valueComputed="(select id from ${schemaPrefix}content_tpl where name='CSP_COM_CALENDARIO_FACTURACION_NOTIFICAR_FACTURA_UNICA_NOT_IN_PRORROGA_NO_REQUISITO_CONTENT')" />
+    </insert>
+    <!-- CSP Calendario Facturacion Notificar FACTURA_UNICA_NOT_IN_PRORROGA -->
+    <insert tableName="emailtpl_contenttpl">
+      <column name="emailtpl_id" valueComputed="(select id from ${schemaPrefix}email_tpl where name='CSP_COM_CALENDARIO_FACTURACION_NOTIFICAR_FACTURA_UNICA_NOT_IN_PRORROGA')" />
+      <column name="contenttpl_id" valueComputed="(select id from ${schemaPrefix}content_tpl where name='CSP_COM_CALENDARIO_FACTURACION_NOTIFICAR_FACTURA_UNICA_NOT_IN_PRORROGA_CONTENT')" />
+    </insert>
+    <!-- CSP Calendario Facturacion Notificar FACTURA_FIRST_NO_IN_PRORROGA_NO_LAST -->
+    <insert tableName="emailtpl_contenttpl">
+      <column name="emailtpl_id" valueComputed="(select id from ${schemaPrefix}email_tpl where name='CSP_COM_CALENDARIO_FACTURACION_NOTIFICAR_FACTURA_FIRST_NO_PRORROGA_NO_LAST')" />
+      <column name="contenttpl_id" valueComputed="(select id from ${schemaPrefix}content_tpl where name='CSP_COM_CALENDARIO_FACTURACION_NOTIFICAR_FACTURA_FIRST_NO_PRORROGA_NO_LAST_CONTENT')" />
+    </insert>
+    <!-- CSP Calendario Facturacion Notificar FACTURA_NOT_FIRST_OR_IN_PRORROGA_AND_IS_NOT_LAST_NO_REQUISITO -->
+    <insert tableName="emailtpl_contenttpl">
+      <column name="emailtpl_id" valueComputed="(select id from ${schemaPrefix}email_tpl where name='CSP_COM_CALENDARIO_FACTURACION_NOTIFICAR_FACTURA_NOT_FIRST_OR_IN_PRORROGA_AND_IS_NOT_LAST_NO_REQUISITO')" />
+      <column name="contenttpl_id" valueComputed="(select id from ${schemaPrefix}content_tpl where name='CSP_COM_CALENDARIO_FACTURACION_NOTIFICAR_FACTURA_NOT_FIRST_OR_IN_PRORROGA_AND_IS_NOT_LAST_NO_REQUISITO_CONTENT')" />
+    </insert>
+    <!-- CSP Calendario Facturacion Notificar FACTURA_NOT_FIRST_OR_IN_PRORROGA_AND_IS_NOT_LAST -->
+    <insert tableName="emailtpl_contenttpl">
+      <column name="emailtpl_id" valueComputed="(select id from ${schemaPrefix}email_tpl where name='CSP_COM_CALENDARIO_FACTURACION_NOTIFICAR_FACTURA_NOT_FIRST_OR_IN_PRORROGA_AND_IS_NOT_LAST')" />
+      <column name="contenttpl_id" valueComputed="(select id from ${schemaPrefix}content_tpl where name='CSP_COM_CALENDARIO_FACTURACION_NOTIFICAR_FACTURA_NOT_FIRST_OR_IN_PRORROGA_AND_IS_NOT_LAST_CONTENT')" />
+    </insert>
+    <!-- CSP Calendario Facturacion Notificar FACTURA_NOT_FIRST_OR_IN_PRORROGA_AND_IS_LAST_NO_REQUISITO -->
+    <insert tableName="emailtpl_contenttpl">
+      <column name="emailtpl_id" valueComputed="(select id from ${schemaPrefix}email_tpl where name='CSP_COM_CALENDARIO_FACTURACION_NOTIFICAR_FACTURA_NOT_FIRST_OR_IN_PRORROGA_AND_IS_LAST_NO_REQUISITO')" />
+      <column name="contenttpl_id" valueComputed="(select id from ${schemaPrefix}content_tpl where name='CSP_COM_CALENDARIO_FACTURACION_NOTIFICAR_FACTURA_NOT_FIRST_OR_IN_PRORROGA_AND_IS_LAST_NO_REQUISITO_CONTENT')" />
+    </insert>
+    <!-- CSP Calendario Facturacion Notificar FACTURA_NOT_FIRST_OR_IN_PRORROGA_AND_IS_LAST -->
+    <insert tableName="emailtpl_contenttpl">
+      <column name="emailtpl_id" valueComputed="(select id from ${schemaPrefix}email_tpl where name='CSP_COM_CALENDARIO_FACTURACION_NOTIFICAR_FACTURA_NOT_FIRST_OR_IN_PRORROGA_AND_IS_LAST')" />
+      <column name="contenttpl_id" valueComputed="(select id from ${schemaPrefix}content_tpl where name='CSP_COM_CALENDARIO_FACTURACION_NOTIFICAR_FACTURA_NOT_FIRST_OR_IN_PRORROGA_AND_IS_LAST_CONTENT')" />
+    </insert>
+  </changeSet>
+</databaseChangeLog>

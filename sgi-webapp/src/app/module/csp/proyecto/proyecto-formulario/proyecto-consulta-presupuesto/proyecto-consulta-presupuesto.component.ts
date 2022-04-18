@@ -4,7 +4,6 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatTableDataSource } from '@angular/material/table';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { FragmentComponent } from '@core/component/fragment.component';
-import { HttpProblem } from '@core/errors/http-problem';
 import { IAnualidadGasto } from '@core/models/csp/anualidad-gasto';
 import { IProyectoAnualidad } from '@core/models/csp/proyecto-anualidad';
 import { IProyectoPartida } from '@core/models/csp/proyecto-partida';
@@ -342,11 +341,7 @@ export class ProyectoConsultaPresupuestoComponent extends FragmentComponent impl
           };
           this.matDialog.open(ProyectoConsultaPresupuestoExportModalComponent, config);
         },
-        (error) => {
-          if (error instanceof HttpProblem) {
-            this.formPart.pushProblems(error);
-          }
-        })
-    );
+        this.formPart.processError
+      ));
   }
 }

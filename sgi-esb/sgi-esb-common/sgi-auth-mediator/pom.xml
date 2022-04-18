@@ -4,7 +4,7 @@
   <parent>
     <groupId>org.crue.hercules.sgi.esb</groupId>
     <artifactId>sgi-esb-common</artifactId>
-    <version>0.0.7</version>
+    <version>0.0.8</version>
   </parent>
   <groupId>org.crue.hercules.sgi.esb</groupId>
   <artifactId>sgi-auth-mediator</artifactId>

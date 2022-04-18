@@ -1,0 +1,9 @@
+:host {
+  .mat-cell.mat-column-responsables {
+    max-width: 15vw;
+    overflow: hidden;
+    padding-right: 10px;
+    text-overflow: ellipsis; 
+    white-space: nowrap; 
+  }
+}

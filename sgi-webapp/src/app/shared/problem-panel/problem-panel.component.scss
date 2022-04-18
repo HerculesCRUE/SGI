@@ -1,15 +1,25 @@
+@import "colors.scss";
+
 :host {
   display: block;
-  div.alert {
+  div.problem {
     padding-left: 15px;
     padding-right: 15px;
     padding-top: 5px;
     padding-bottom: 5px;
     margin-top: 10px;
     margin-bottom: 10px;
-
     border-radius: 4px;
-    background-color: #e35138;
-    color: #fff;
+
+    &.error {
+      background-color: #e35138;
+      color: #fff;
+    }
+    &.warning {
+      background-color: rgba(map-get($sgi-custom-colors, warning), 0.1);
+    }
+    &.info {
+      background-color: map-get($sgi-custom-colors, bg);
+    }
   }
 }

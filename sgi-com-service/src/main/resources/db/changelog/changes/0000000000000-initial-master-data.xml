@@ -65,11 +65,12 @@
   </changeSet>
 
   <changeSet context="!test" author="master" id="0000000000000-subject_tpl">
+    <validCheckSum>8:595c30ef4e75d66155419c56a62c571b</validCheckSum>
     <insert tableName="subject_tpl">
       <column name="id" valueSequenceNext="subject_tpl_seq" />
       <column name="name" value="GENERIC_SUBJECT" />
       <column name="description" value="Plantilla de asunto genérico" />
-      <column name="tpl" value="" />
+      <column name="tpl" value=" " />
       <column name="created_by" value="master" />
       <column name="creation_date" valueDate="current_timestamp()" />
       <column name="last_modified_by" value="master" />
@@ -84,7 +85,7 @@
       <column name="id" valueSequenceNext="subject_tpl_seq" />
       <column name="name" value="CSP_CONVOCATORIA_HITO_SUBJECT" />
       <column name="description" value="Plantilla de asunto para Convocatorias-Hitos" />
-      <column name="tpl" value="" />
+      <column name="tpl" value=" " />
     </insert>
     <update tableName="subject_tpl">
       <column name="tpl" valueClobFile="clob/CSP_CONVOCATORIA_HITO_SUBJECT.ftl" />
@@ -95,7 +96,7 @@
       <column name="id" valueSequenceNext="subject_tpl_seq" />
       <column name="name" value="CSP_COM_INICIO_PRESENTACION_GASTO_SUBJECT" />
       <column name="description" value="Asunto del aviso de inicio del período de presentación de justificación de gastos" />
-      <column name="tpl" value="" />
+      <column name="tpl" value=" " />
       <column name="created_by" value="master" />
       <column name="creation_date" valueDate="current_timestamp()" />
       <column name="last_modified_by" value="master" />
@@ -110,7 +111,7 @@
       <column name="id" valueSequenceNext="subject_tpl_seq" />
       <column name="name" value="CSP_COM_INICIO_PRESENTACION_GASTO_SUBJECT_en" />
       <column name="description" value="Subject of the notification of the start of the period for submitting justification of expenses" />
-      <column name="tpl" value="" />
+      <column name="tpl" value=" " />
       <column name="created_by" value="master" />
       <column name="creation_date" valueDate="current_timestamp()" />
       <column name="last_modified_by" value="master" />
@@ -149,11 +150,12 @@
   </changeSet>
 
   <changeSet context="!test" author="master" id="0000000000000-content_tpl">
+    <validCheckSum>8:3c6e24f77eb7ca77656e4b1885387cde</validCheckSum>
     <insert tableName="content_tpl">
       <column name="id" valueSequenceNext="content_tpl_seq" />
       <column name="name" value="GENERIC_CONTENT" />
       <column name="description" value="Plantilla de contenido genérico (texto + HTML)" />
-      <column name="tpl_text" value="" />
+      <column name="tpl_text" value=" " />
       <column name="tpl_html" value="" />
       <column name="created_by" value="master" />
       <column name="creation_date" valueDate="current_timestamp()" />
@@ -173,7 +175,7 @@
       <column name="id" valueSequenceNext="content_tpl_seq" />
       <column name="name" value="GENERIC_CONTENT_TEXT" />
       <column name="description" value="Plantilla de contenido genérico (solo texto)" />
-      <column name="tpl_text" value="" />
+      <column name="tpl_text" value=" " />
       <column name="created_by" value="master" />
       <column name="creation_date" valueDate="current_timestamp()" />
       <column name="last_modified_by" value="master" />
@@ -188,7 +190,7 @@
       <column name="id" valueSequenceNext="content_tpl_seq" />
       <column name="name" value="CSP_CONVOCATORIA_HITO_CONTENT" />
       <column name="description" value="Plantilla de contenido para Convocatorias-Hitos" />
-      <column name="tpl_text" value="" />
+      <column name="tpl_text" value=" " />
       <column name="tpl_html" value="" />
     </insert>
     <update tableName="content_tpl">
@@ -204,7 +206,7 @@
       <column name="id" valueSequenceNext="content_tpl_seq" />
       <column name="name" value="CSP_COM_INICIO_PRESENTACION_GASTO_CONTENT" />
       <column name="description" value="Contenido del aviso de inicio del período de presentación de justificación de gastos (texto + HTML)" />
-      <column name="tpl_text" value="" />
+      <column name="tpl_text" value=" " />
       <column name="tpl_html" value="" />
       <column name="created_by" value="master" />
       <column name="creation_date" valueDate="current_timestamp()" />
@@ -224,7 +226,7 @@
       <column name="id" valueSequenceNext="content_tpl_seq" />
       <column name="name" value="CSP_COM_INICIO_PRESENTACION_GASTO_CONTENT_en" />
       <column name="description" value="Content of the notice of the start of the period for submitting justification of expenses (text + HTML) " />
-      <column name="tpl_text" value="" />
+      <column name="tpl_text" value=" " />
       <column name="tpl_html" value="" />
       <column name="created_by" value="master" />
       <column name="creation_date" valueDate="current_timestamp()" />

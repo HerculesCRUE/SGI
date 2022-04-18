@@ -5,7 +5,7 @@
     {{'error.csp.solicitud-equipo-proyecto.solicitante' | translate}}
   </div>
   <!--Mensaje de advertencia Investigador -->
-  <div *ngIf="this.formPart.isInvestigador" class="info-message tooltip-inv">
+  <div *ngIf="!this.formPart.isInvestigador" class="info-message tooltip-inv">
     <mat-icon class="info-icon">info</mat-icon>
     {{'msg.csp.solicitud-equipo.tooltip-investigador' |translate}}
   </div>

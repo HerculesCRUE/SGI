@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
-import { HttpProblem } from '@core/errors/http-problem';
+import { SgiError } from '@core/errors/sgi-error';
 import { MSG_PARAMS } from '@core/i18n';
 import { DialogService } from '@core/services/dialog.service';
 import { SnackBarService } from '@core/services/snack-bar.service';
@@ -93,8 +93,8 @@ export class SolicitudProteccionEditarComponent extends ActionComponent implemen
       () => { },
       (error) => {
         this.logger.error(error);
-        if (error instanceof HttpProblem) {
-          if(!error.managed){
+        if (error instanceof SgiError) {
+          if (!error.managed) {
             this.snackBarService.showError(error);
           }
         } else {

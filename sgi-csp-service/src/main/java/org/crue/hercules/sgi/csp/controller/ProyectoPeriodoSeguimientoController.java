@@ -153,7 +153,7 @@ public class ProyectoPeriodoSeguimientoController {
    *         paginadas y filtradas.
    */
   @GetMapping("/{id}/proyectoperiodoseguimientodocumentos")
-  @PreAuthorize("hasAuthorityForAnyUO('CSP-PRO-E')")
+  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-PRO-E','CSP-PRO-V')")
   public ResponseEntity<Page<ProyectoPeriodoSeguimientoDocumento>> findAllProyectoPeriodoSeguimientoDocumentos(
       @PathVariable Long id, @RequestParam(name = "q", required = false) String query,
       @RequestPageable(sort = "s") Pageable paging) {

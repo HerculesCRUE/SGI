@@ -4,7 +4,6 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { BaseExportModalComponent } from '@core/component/base-export/base-export-modal.component';
 import { IReportConfig } from '@core/services/rep/abstract-table-export.service';
-import { SnackBarService } from '@core/services/snack-bar.service';
 import { TranslateService } from '@ngx-translate/core';
 import { IEjecucionPresupuestariaReportOptions } from '../../../common/ejecucion-presupuestaria-report-options';
 import { IDesgloseEconomicoExportData } from '../../desglose-economico.fragment';
@@ -12,7 +11,6 @@ import { EjecucionPresupuestariaGastosExportService } from './ejecucion-presupue
 
 const EJECUCION_PRESUPUESTARIA = marker('menu.csp.ejecucion-economica.ejecucion-presupuestaria');
 const EJECUCION_PRESUPUESTARIA_GASTOS = marker('menu.csp.ejecucion-economica.ejecucion-presupuestaria.gastos');
-
 
 @Component({
   templateUrl: './ejecucion-presupuestaria-gastos-export-modal.component.html',
@@ -23,12 +21,11 @@ export class EjecucionPresupuestariaGastosExportModalComponent
 
   constructor(
     matDialogRef: MatDialogRef<EjecucionPresupuestariaGastosExportModalComponent>,
-    snackBarService: SnackBarService,
     translate: TranslateService,
     ejecucionPresupuestariaGastosExportService: EjecucionPresupuestariaGastosExportService,
     @Inject(MAT_DIALOG_DATA) private modalData: IDesgloseEconomicoExportData
   ) {
-    super(ejecucionPresupuestariaGastosExportService, snackBarService, translate, matDialogRef);
+    super(ejecucionPresupuestariaGastosExportService, translate, matDialogRef);
   }
 
   ngOnInit(): void {

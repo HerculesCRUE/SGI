@@ -71,11 +71,6 @@ public class ProyectoEquipo extends BaseEntity {
   @Column(name = "fecha_fin", nullable = true)
   private Instant fechaFin;
 
-  /** Horas dedicación. */
-  @Column(name = "horas_dedicacion", nullable = true)
-  @Min(0)
-  private Double horasDedicacion;
-
   // Relation mappings for JPA metamodel generation only
   @ManyToOne
   @JoinColumn(name = "proyecto_id", insertable = false, updatable = false, foreignKey = @ForeignKey(name = "FK_PROYECTOEQUIPO_PROYECTO"))

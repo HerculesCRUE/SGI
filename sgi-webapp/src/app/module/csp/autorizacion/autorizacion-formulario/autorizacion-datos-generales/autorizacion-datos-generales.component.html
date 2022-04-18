@@ -46,8 +46,7 @@
     <!-- Formulario para Investigador-->
     <ng-container *ngIf="this.formPart.isInvestigador">
       <div fxFlex fxLayout="row" fxLayoutGap="10px">
-        <div fxFlex="100%"
-          *ngIf="!formGroup.controls.convocatoria.value && (formGroup.controls.estado.value == 'BORRADOR' || !this.formPart.isEdit())"
+        <div fxFlex="100%" *ngIf="!formGroup.controls.convocatoria.value && (!this.formPart.isEdit())"
           class="info-message">
           <mat-icon class="info-icon">info</mat-icon>
           {{'csp.autorizacion.info-datos-convocatoria' | translate}}
@@ -75,8 +74,7 @@
       </div>
 
       <div fxFlex fxLayout="row" fxLayoutGap="10px">
-        <div fxFlex="100%"
-          *ngIf="!formGroup.controls.entidadParticipa.value && (formGroup.controls.estado.value == 'BORRADOR' || !this.formPart.isEdit())"
+        <div fxFlex="100%" *ngIf="!formGroup.controls.entidadParticipa.value && (!this.formPart.isEdit())"
           class="info-message">
           <mat-icon class="info-icon">info</mat-icon>
           {{'csp.autorizacion.info-datos-entidad' | translate}}
@@ -111,8 +109,7 @@
         </mat-form-field>
       </div>
       <div fxFlex fxLayout="row" fxLayoutGap="10px">
-        <div fxFlex="100%"
-          *ngIf="!formGroup.controls.investigadorPrincipalProyecto.value && (formGroup.controls.estado.value == 'BORRADOR' || !this.formPart.isEdit())"
+        <div fxFlex="100%" *ngIf="!formGroup.controls.investigadorPrincipalProyecto.value && (!this.formPart.isEdit())"
           class="info-message">
           <mat-icon class="info-icon">info</mat-icon>
           {{'csp.autorizacion.info-datos-investigador'|translate}}
@@ -146,8 +143,7 @@
       </div>
 
       <div fxFlex fxLayout="row" fxLayoutGap="10px">
-        <div fxFlex="100%" *ngIf="(formGroup.controls.estado.value == 'BORRADOR' || !this.formPart.isEdit())"
-          class="info-message">
+        <div fxFlex="100%" *ngIf="(!this.formPart.isEdit())" class="info-message">
           <mat-icon class="info-icon">info</mat-icon>
           {{'csp.autorizacion.info-horas-dedicacion' | translate}}
         </div>

@@ -48,7 +48,7 @@ export class ProyectoEquipoComponent extends FragmentComponent implements OnInit
   formPart: ProyectoEquipoFragment;
 
   elementosPagina = [5, 10, 25, 100];
-  displayedColumns = ['helpIcon', 'persona', 'nombre', 'apellidos', 'rolEquipo', 'fechaInicio', 'fechaFin', 'horas', 'acciones'];
+  displayedColumns = ['helpIcon', 'persona', 'nombre', 'apellidos', 'rolEquipo', 'fechaInicio', 'fechaFin', 'acciones'];
 
   modalTitleEntity: string;
   msgParamEntity = {};
@@ -92,8 +92,6 @@ export class ProyectoEquipoComponent extends FragmentComponent implements OnInit
             return wrapper.value.proyectoEquipo.fechaInicio;
           case 'fechaFin':
             return wrapper.value.proyectoEquipo.fechaFin;
-          case 'horas':
-            return wrapper.value.proyectoEquipo.horasDedicacion;
           default:
             return wrapper[property];
         }
@@ -215,7 +213,6 @@ export class ProyectoEquipoComponent extends FragmentComponent implements OnInit
       selectedEntidades: this.dataSource.data.map(element => element.value.proyectoEquipo),
       fechaInicioMin: this.actionService.proyecto.fechaInicio,
       fechaFinMax: this.actionService.proyecto.fechaFinDefinitiva ?? this.actionService.proyecto.fechaFin,
-      showHorasDedicacion: true,
       isEdit: Boolean(wrapper),
       readonly: this.actionService.readonly
     };

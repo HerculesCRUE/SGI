@@ -29,7 +29,7 @@ public class SgiApiEtiService extends SgiApiBaseService {
 
     final ChecklistOutput response = super.<ChecklistOutput>callEndpoint(mergedURL, httpMethod,
         new ParameterizedTypeReference<ChecklistOutput>() {
-        }, checklistRef).getBody();
+        }, Long.parseLong(checklistRef)).getBody();
 
     log.debug("getCheckList(String checklistRef) - end");
     return response;

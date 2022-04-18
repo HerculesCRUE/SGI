@@ -8,8 +8,6 @@ import { MSG_PARAMS } from '@core/i18n';
 import { IConvocatoriaPeriodoJustificacion } from '@core/models/csp/convocatoria-periodo-justificacion';
 import { IProyecto } from '@core/models/csp/proyecto';
 import { IProyectoPeriodoJustificacion } from '@core/models/csp/proyecto-periodo-justificacion';
-import { FxFlexProperties } from '@core/models/shared/flexLayout/fx-flex-properties';
-import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-properties';
 import { SnackBarService } from '@core/services/snack-bar.service';
 import { FormGroupUtil } from '@core/utils/form-group-util';
 import { DateValidator } from '@core/validators/date-validator';
@@ -45,9 +43,6 @@ const TITLE_NEW_ENTITY = marker('title.new.entity');
 export class ProyectoPeriodoJustificacionModalComponent
   extends BaseModalComponent<IProyectoPeriodoJustificacionModalData, ProyectoPeriodoJustificacionModalComponent> implements OnInit {
 
-  fxFlexProperties2: FxFlexProperties;
-  fxLayoutProperties: FxLayoutProperties;
-
   FormGroupUtil = FormGroupUtil;
 
   textSaveOrUpdate: string;
@@ -55,6 +50,7 @@ export class ProyectoPeriodoJustificacionModalComponent
 
   showDatosConvocatoriaPeriodoJustificacion: boolean;
   disabledCopy = false;
+  disabledSave = false;
 
   msgParamFechaInicioPresentacionEntity = {};
   msgParamFechaFinPresentacionEntity = {};
@@ -76,16 +72,6 @@ export class ProyectoPeriodoJustificacionModalComponent
   ) {
     super(snackBarService, matDialogRef, data);
 
-    this.fxFlexProperties2 = new FxFlexProperties();
-    this.fxFlexProperties2.sm = '0 1 calc(100%-10px)';
-    this.fxFlexProperties2.md = '0 1 calc(100%-10px)';
-    this.fxFlexProperties2.gtMd = '0 1 calc(100%-10px)';
-    this.fxFlexProperties2.order = '3';
-
-    this.fxLayoutProperties = new FxLayoutProperties();
-    this.fxLayoutProperties.gap = '20px';
-    this.fxLayoutProperties.layout = 'row wrap';
-    this.fxLayoutProperties.xs = 'column';
   }
 
   ngOnInit(): void {
@@ -226,6 +212,7 @@ export class ProyectoPeriodoJustificacionModalComponent
         this.disabledCopy = !comparePeriodoJustificacion(this.data.convocatoriaPeriodoJustificacion,
           this.data.proyectoPeriodoJustificacion, this.data.proyecto.fechaInicio, this.data.proyecto.fechaFin);
       } else {
+        this.disabledSave = true;
         formGroup.controls.tipoJustificacion.disable();
         formGroup.controls.fechaInicio.disable();
         formGroup.controls.fechaFin.disable();
@@ -378,6 +365,7 @@ export class ProyectoPeriodoJustificacionModalComponent
   }
 
   private enableEditableControls(): void {
+    this.disabledSave = false;
     this.formGroup.controls.tipoJustificacion.enable();
     this.formGroup.controls.fechaInicio.enable();
     this.formGroup.controls.fechaFin.enable();

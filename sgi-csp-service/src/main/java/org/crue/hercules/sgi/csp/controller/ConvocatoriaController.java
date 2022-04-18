@@ -1062,7 +1062,7 @@ public class ConvocatoriaController {
    *         {@link Convocatoria}
    */
   @GetMapping(PATH_NIVELES_REQUISITOS_IP)
-  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-SOL-C', 'CSP-SOL-INV-C')")
+  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-SOL-C', 'CSP-SOL-INV-C', 'CSP-PRO-V')")
   public List<RequisitoIPNivelAcademicoOutput> findRequisitoIPNivelesAcademicos(@PathVariable Long id) {
     log.debug("findRequisitoIPNivelesAcademicos(Long id) - start");
     List<RequisitoIPNivelAcademicoOutput> returnValue = convertRequisitoIPNivelesAcademicos(
@@ -1080,7 +1080,7 @@ public class ConvocatoriaController {
    *         {@link Convocatoria}
    */
   @GetMapping(PATH_NIVELES_REQUISITOS_EQUIPO)
-  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-SOL-C', 'CSP-SOL-INV-C')")
+  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-SOL-C', 'CSP-SOL-INV-C', 'CSP-PRO-V')")
   public List<RequisitoEquipoNivelAcademicoOutput> findRequisitosEquipoNivelesAcademicos(@PathVariable Long id) {
     log.debug("findRequisitosEquipoNivelesAcademicos(Long id) - start");
     List<RequisitoEquipoNivelAcademicoOutput> returnValue = convertRequisitosEquipoNivelesAcademicos(
@@ -1098,7 +1098,7 @@ public class ConvocatoriaController {
    *         id
    */
   @GetMapping(PATH_CATEGORIAS_PROFESIONALES_REQUISITOS_IP)
-  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-SOL-C', 'CSP-SOL-INV-C')")
+  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-SOL-C', 'CSP-SOL-INV-C', 'CSP-PRO-V')")
   public List<RequisitoIPCategoriaProfesionalOutput> findRequisitosIpCategoriasProfesionales(@PathVariable Long id) {
     log.debug("findRequisitosIpCategoriasProfesionales(@PathVariable Long id) - start");
     List<RequisitoIPCategoriaProfesionalOutput> returnValue = convertRequisitoIPCategoriasProfesionales(
@@ -1116,7 +1116,7 @@ public class ConvocatoriaController {
    *         {@link RequisitoEquipoCategoriaProfesional} correspondiente al id
    */
   @GetMapping(PATH_CATEGORIAS_PROFESIONALES_REQUISITOS_EQUIPO)
-  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-CON-E', 'CSP-CON-V', 'CSP-CON-INV-V')")
+  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-CON-E', 'CSP-CON-V', 'CSP-CON-INV-V', 'CSP-PRO-V')")
   public List<RequisitoEquipoCategoriaProfesionalOutput> findCategoriasProfesionalesEquipo(@PathVariable Long id) {
     log.debug("findCategoriasProfesionalesEquipo(@PathVariable Long id) - start");
     List<RequisitoEquipoCategoriaProfesionalOutput> returnValue = convertRequisitoEquipoCategoriaProfesionales(

@@ -18,8 +18,9 @@ import { SelectConceptoGastoComponent } from './select-concepto-gasto/select-con
 import { SearchConvocatoriaModalComponent } from './select-convocatoria/dialog/search-convocatoria.component';
 import { SelectConvocatoriaComponent } from './select-convocatoria/select-convocatoria.component';
 import { SelectFuenteFinanciacionComponent } from './select-fuente-financiacion/select-fuente-financiacion.component';
-import { SearchGrupoModalComponent } from './select-grupo/dialog/search-grupo.component';
-import { SelectGrupoComponent } from './select-grupo/select-grupo.component';
+import { SearchGrupoModalComponent } from './select-dialog-grupo/dialog/search-grupo.component';
+import { SelectDialogGrupoComponent } from './select-dialog-grupo/select-dialog-grupo.component';
+import { SelectGrupoComponent } from './select-grupo/select-grupo-component';
 import { SelectModeloEjecucionComponent } from './select-modelo-ejecucion/select-modelo-ejecucion.component';
 import { SelectProgramaComponent } from './select-programa/select-programa.component';
 import { SearchProyectoModalComponent } from './select-proyecto/dialog/search-proyecto.component';
@@ -59,6 +60,7 @@ import { SolicitiudPresupuestoModalComponent } from './solicitud-presupuesto-mod
     SelectTipoHitoComponent,
     SelectConceptoGastoComponent,
     SelectTipoFinanciacionComponent,
+    SelectDialogGrupoComponent,
     SelectGrupoComponent,
     SearchGrupoModalComponent
   ],
@@ -95,6 +97,7 @@ import { SolicitiudPresupuestoModalComponent } from './solicitud-presupuesto-mod
     SelectTipoHitoComponent,
     SelectConceptoGastoComponent,
     SelectTipoFinanciacionComponent,
+    SelectDialogGrupoComponent,
     SelectGrupoComponent
   ]
 })

@@ -2,8 +2,6 @@ package org.crue.hercules.sgi.prc.enums;
 
 import java.util.stream.Stream;
 
-import org.crue.hercules.sgi.prc.exceptions.TipoFuenteImpactoNotFoundException;
-
 /** TipoFuenteImpacto */
 public enum TipoFuenteImpacto {
   /** WOS (JCR) */
@@ -29,31 +27,26 @@ public enum TipoFuenteImpacto {
   /** FECYT */
   FECYT("FECYT"),
   /** GII-GRIN-SCIE */
-  GII_GRIN_SCIE("GII-GRIN-SCIE"),
+  GII_GRIN_SCIE("GII_GRIN_SCIE"),
   /** CORE */
   CORE("CORE"),
   /** Otros */
   OTHERS("OTHERS");
 
-  private String internValue;
+  private String code;
 
-  private TipoFuenteImpacto(String internValue) {
-    this.internValue = internValue;
+  private TipoFuenteImpacto(String code) {
+    this.code = code;
   }
 
-  public String getInternValue() {
-    return internValue;
+  public String getCode() {
+    return code;
   }
 
-  public static TipoFuenteImpacto getByInternValue(String internValue) {
-    try {
-      return Stream.of(TipoFuenteImpacto.values())
-          .filter(internValueValue -> internValueValue.getInternValue().equalsIgnoreCase(internValue))
-          .findFirst()
-          .orElseThrow(() -> new TipoFuenteImpactoNotFoundException(internValue));
-
-    } catch (Exception e) {
-      throw new TipoFuenteImpactoNotFoundException(internValue);
-    }
+  public static TipoFuenteImpacto getByCode(String code) {
+    return Stream.of(TipoFuenteImpacto.values())
+        .filter(codeValue -> codeValue.getCode().equalsIgnoreCase(code))
+        .findFirst()
+        .orElse(null);
   }
 }

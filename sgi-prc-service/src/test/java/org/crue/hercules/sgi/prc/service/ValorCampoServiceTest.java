@@ -93,7 +93,8 @@ public class ValorCampoServiceTest extends BaseServiceTest {
     Page<ValorCampo> page = service.findAll(null, paging);
 
     // then: Devuelve la pagina 3 con los ValorCampo del 31 al 37
-    Assertions.assertThat(page.getContent().size()).as("getContent().size()").isEqualTo(7);
+    int numElements = page.getContent().size();
+    Assertions.assertThat(numElements).as("getContent().size()").isEqualTo(7);
     Assertions.assertThat(page.getNumber()).as("getNumber()").isEqualTo(3);
     Assertions.assertThat(page.getSize()).as("getSize()").isEqualTo(10);
     Assertions.assertThat(page.getTotalElements()).as("getTotalElements()").isEqualTo(37);
@@ -160,7 +161,8 @@ public class ValorCampoServiceTest extends BaseServiceTest {
         });
     List<ValorCampo> valoresBuscados = service.findAllByCampoProduccionCientificaId(campoProduccionCientificaId);
     // then: Cada ValorCampo tiene produccionCientificaId buscado
-    Assertions.assertThat(valoresBuscados.size()).as("size()").isEqualTo(3);
+    int numElements = valoresBuscados.size();
+    Assertions.assertThat(numElements).as("valoresBuscados.size()").isEqualTo(3);
     valoresBuscados.stream().forEach(valorBuscado -> {
       Assertions.assertThat(valorBuscado.getCampoProduccionCientificaId()).as("getProduccionCientificaId")
           .isEqualTo(campoProduccionCientificaId);

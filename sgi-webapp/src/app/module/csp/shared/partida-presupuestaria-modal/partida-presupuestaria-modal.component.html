@@ -5,13 +5,12 @@
   </button>
 </div>
 <mat-dialog-content>
-  <form [formGroup]="formGroup">
-    <div fxFlex>
+  <form [formGroup]="formGroup" fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="none start">
+    <div fxFlex fxLayout="column" fxLayoutGap="10px">
       <h3 *ngIf="showDatosPartidaPresupuestaria">&nbsp;</h3>
-      <!-- Codigo -->
-      <div [fxLayout.xs]="fxLayoutProperties.xs" [fxLayout]="fxLayoutProperties.layout"
-        [fxLayoutGap]="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
 
+      <!-- Codigo -->
+      <div fxFlex fxLayout="row" fxLayoutGap="10px">
         <mat-form-field>
           <mat-label>{{'csp.proyecto-partida-presupuestaria.codigo' | translate}}
           </mat-label>
@@ -36,9 +35,7 @@
       </div>
 
       <!-- Tipo -->
-      <div [fxLayout.xs]="fxLayoutProperties.xs" [fxLayout]="fxLayoutProperties.layout"
-        [fxLayoutGap]="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
-
+      <div fxFlex fxLayout="row" fxLayoutGap="10px">
         <mat-form-field>
           <mat-label>{{'csp.proyecto-partida-presupuestaria.tipo-partida' | translate}}</mat-label>
           <sgi-select-enum formControlName="tipo" [enumMap]="TIPO_PARTIDA_MAP" required></sgi-select-enum>
@@ -49,8 +46,7 @@
       </div>
 
       <!-- Descripcion -->
-      <div [fxLayout.xs]="fxLayoutProperties.xs" [fxLayout]="fxLayoutProperties.layout"
-        [fxLayoutGap]="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
+      <div fxFlex fxLayout="row" fxLayoutGap="10px">
         <mat-form-field>
           <mat-label>{{'csp.proyecto-partida-presupuestaria.descripcion' | translate}}</mat-label>
           <textarea matInput formControlName="descripcion" type="text"
@@ -64,13 +60,11 @@
     </div>
 
     <!-- Datos de la convocatoria -->
-    <div fxFlex="50" *ngIf="showDatosPartidaPresupuestaria">
-      <h4>{{'info.csp.datos-convocatoria' | translate}}</h4>
+    <div fxFlex="50" fxLayout="column" fxLayoutGap="10px" *ngIf="showDatosPartidaPresupuestaria">
+      <h3>{{'info.csp.datos-convocatoria' | translate}}</h3>
 
       <!-- Codigo convocatoria-->
-      <div [fxLayout.xs]="fxLayoutProperties.xs" [fxLayout]="fxLayoutProperties.layout"
-        [fxLayoutGap]="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
-
+      <div fxFlex fxLayout="row" fxLayoutGap="10px">
         <mat-form-field>
           <mat-label>{{'csp.proyecto-partida-presupuestaria.codigo' | translate}}
           </mat-label>
@@ -80,9 +74,7 @@
       </div>
 
       <!-- Tipo convocatoria-->
-      <div [fxLayout.xs]="fxLayoutProperties.xs" [fxLayout]="fxLayoutProperties.layout"
-        [fxLayoutGap]="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
-
+      <div fxFlex fxLayout="row" fxLayoutGap="10px">
         <mat-form-field>
           <mat-label>{{'csp.proyecto-partida-presupuestaria.tipo-partida' | translate}}</mat-label>
           <sgi-select-enum formControlName="tipoConvocatoria" [enumMap]="TIPO_PARTIDA_MAP" required></sgi-select-enum>
@@ -90,8 +82,7 @@
       </div>
 
       <!-- Descripcion convocatoria-->
-      <div [fxLayout.xs]="fxLayoutProperties.xs" [fxLayout]="fxLayoutProperties.layout"
-        [fxLayoutGap]="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
+      <div fxFlex fxLayout="row" fxLayoutGap="10px">
         <mat-form-field>
           <mat-label>{{'csp.proyecto-partida-presupuestaria.descripcion' | translate}}</mat-label>
           <textarea matInput formControlName="descripcionConvocatoria" type="text"
@@ -99,7 +90,7 @@
                       </textarea>
         </mat-form-field>
       </div>
-      <div class="separation-button">
+      <div fxFlex fxLayout="row" fxLayoutGap="10px" class="separation-button">
         <button color="primary" aria-label="Center Align" mat-raised-button (click)="copyToProyecto()"
           [disabled]="disabledCopy">
           {{'btn.csp.aplicar-proyecto'| translate}}
@@ -109,7 +100,8 @@
   </form>
 </mat-dialog-content>
 <mat-dialog-actions>
-  <button color="accent" (click)="saveOrUpdate()" mat-raised-button type="submit" *ngIf="data.canEdit">
+  <button color="accent" (click)="saveOrUpdate()" mat-raised-button type="submit" *ngIf="data.canEdit"
+    [disabled]="disabledSave">
     <mat-icon class="save-icon">save</mat-icon>
     {{textSaveOrUpdate | translate}}
   </button>

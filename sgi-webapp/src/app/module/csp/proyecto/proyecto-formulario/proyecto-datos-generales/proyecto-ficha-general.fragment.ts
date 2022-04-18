@@ -237,20 +237,18 @@ export class ProyectoFichaGeneralFragment extends FormFragment<IProyecto> {
       finalidad: new FormControl(null),
       ambitoGeografico: new FormControl(null),
       confidencial: new FormControl(null),
+      excelencia: new FormControl(null),
       clasificacionCVN: new FormControl(null),
       coordinado: new FormControl(null),
       colaborativo: new FormControl(null),
       coordinadorExterno: new FormControl(null),
-      timesheet: new FormControl(null),
       permitePaquetesTrabajo: new FormControl(null),
-      costeHora: new FormControl(null),
       iva: new FormControl(null, [
         Validators.min(0),
         Validators.max(100),
         Validators.pattern('^[0-9]*$'),
         this.buildValidatorIva()
       ]),
-      tipoHorasAnuales: new FormControl(''),
       causaExencion: new FormControl(null),
       observaciones: new FormControl(''),
       comentario: new FormControl({
@@ -477,16 +475,14 @@ export class ProyectoFichaGeneralFragment extends FormFragment<IProyecto> {
       finalidad: proyecto.finalidad,
       ambitoGeografico: proyecto.ambitoGeografico,
       confidencial: proyecto.confidencial,
+      excelencia: proyecto.excelencia,
       clasificacionCVN: proyecto.clasificacionCVN,
       coordinado: proyecto.coordinado,
       colaborativo: proyecto.colaborativo,
       coordinadorExterno: proyecto.coordinadorExterno,
-      timesheet: proyecto.timesheet,
       permitePaquetesTrabajo: proyecto.permitePaquetesTrabajo,
-      costeHora: proyecto.costeHora,
       iva: proyecto.iva?.iva ?? null,
       causaExencion: proyecto.causaExencion,
-      tipoHorasAnuales: proyecto.tipoHorasAnuales,
       observaciones: proyecto.observaciones,
       comentario: proyecto.estado?.comentario,
       solicitudProyecto: this.solicitud?.titulo ?? null,
@@ -541,19 +537,13 @@ export class ProyectoFichaGeneralFragment extends FormFragment<IProyecto> {
     this.proyecto.finalidad = form.finalidad.value;
     this.proyecto.ambitoGeografico = form.ambitoGeografico.value;
     this.proyecto.confidencial = form.confidencial.value;
+    this.proyecto.excelencia = form.excelencia.value;
     this.proyecto.clasificacionCVN = form.clasificacionCVN.value;
     this.proyecto.colaborativo = form.colaborativo.value;
     this.proyecto.coordinado = form.coordinado.value;
-    this.proyecto.timesheet = form.timesheet.value;
     this.proyecto.permitePaquetesTrabajo = form.permitePaquetesTrabajo.value;
-    this.proyecto.costeHora = form.costeHora.value;
     this.proyecto.iva = {} as IProyectoIVA;
     this.proyecto.iva.iva = form.iva.value;
-    if (form.tipoHorasAnuales.value?.length > 0) {
-      this.proyecto.tipoHorasAnuales = form.tipoHorasAnuales.value;
-    } else {
-      this.proyecto.tipoHorasAnuales = undefined;
-    }
 
     if (form.causaExencion.value?.length > 0) {
       this.proyecto.causaExencion = form.causaExencion?.value;
@@ -664,11 +654,7 @@ export class ProyectoFichaGeneralFragment extends FormFragment<IProyecto> {
         Validators.required]);
       formgroup.get('coordinadorExterno').setValidators([
         Validators.required]);
-      formgroup.get('timesheet').setValidators([
-        Validators.required]);
       formgroup.get('permitePaquetesTrabajo').setValidators([
-        Validators.required]);
-      formgroup.get('costeHora').setValidators([
         Validators.required]);
       this.abiertoRequired = true;
       this.comentarioEstadoCancelado = false;

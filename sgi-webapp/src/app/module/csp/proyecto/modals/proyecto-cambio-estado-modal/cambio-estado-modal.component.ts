@@ -3,7 +3,8 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { DialogActionComponent } from '@core/component/dialog-action.component';
-import { Problem, ValidationHttpProblem } from '@core/errors/http-problem';
+import { SgiHttpProblem, ValidationHttpError } from '@core/errors/http-problem';
+import { SgiProblem } from '@core/errors/sgi-error';
 import { MSG_PARAMS } from '@core/i18n';
 import { Estado, ESTADO_MAP, IEstadoProyecto } from '@core/models/csp/estado-proyecto';
 import { IProyecto } from '@core/models/csp/proyecto';
@@ -25,9 +26,7 @@ const PROYECTO_AMBITO_GEOGRAFICO = marker('csp.proyecto.ambito-geografico');
 const PROYECTO_CONFIDENCIAL = marker('csp.proyecto.confidencial');
 const PROYECTO_COORDINADO = marker('csp.proyecto.proyecto-coordinado');
 const PROYECTO_COORDINADOR_EXTERNO = marker('csp.proyecto.coordinador-externo');
-const PROYECTO_TIMESHEET = marker('csp.proyecto.timesheet');
 const PROYECTO_PAQUETES_TRABAJO = marker('csp.proyecto.permite-paquetes-trabajo');
-const PROYECTO_COSTE_HORA = marker('csp.proyecto.calculo-coste-personal');
 const MSG_PROYECTO_EQUIPO_MIEMBROS = marker('msg.csp.proyecto.equipo-miembros-obligatorio');
 
 export interface ProyectoCambioEstadoModalComponentData {
@@ -44,7 +43,7 @@ export interface ProyectoCambioEstadoModalComponentData {
   styleUrls: ['./cambio-estado-modal.component.scss']
 })
 export class CambioEstadoModalComponent
-  extends DialogActionComponent<ProyectoCambioEstadoModalComponentData, IEstadoProyecto> {
+  extends DialogActionComponent<IEstadoProyecto> {
 
   fxLayoutProperties: FxLayoutProperties;
 
@@ -55,9 +54,7 @@ export class CambioEstadoModalComponent
   msgProyectoConfidencialRequired: string;
   msgProyectoCoordinadoRequired: string;
   msgProyectoCoordinadorExternoRequired: string;
-  msgProyectoTimesheetRequired: string;
   msgProyectoPaquetesTrabajoRequired: string;
-  msgProyectoCosteHoraRequired: string;
   msgProyectoMiembrosEquipoRequired: string;
 
   readonly estadosNuevos: Map<string, string>;
@@ -116,9 +113,7 @@ export class CambioEstadoModalComponent
     this.msgProyectoConfidencialRequired = this.translate.instant(MSG_FIELD_REQUIRED, { field: this.translate.instant(PROYECTO_CONFIDENCIAL) });
     this.msgProyectoCoordinadoRequired = this.translate.instant(MSG_FIELD_REQUIRED, { field: this.translate.instant(PROYECTO_COORDINADO) });
     this.msgProyectoCoordinadorExternoRequired = this.translate.instant(MSG_FIELD_REQUIRED, { field: this.translate.instant(PROYECTO_COORDINADOR_EXTERNO) });
-    this.msgProyectoTimesheetRequired = this.translate.instant(MSG_FIELD_REQUIRED, { field: this.translate.instant(PROYECTO_TIMESHEET) });
     this.msgProyectoPaquetesTrabajoRequired = this.translate.instant(MSG_FIELD_REQUIRED, { field: this.translate.instant(PROYECTO_PAQUETES_TRABAJO) });
-    this.msgProyectoCosteHoraRequired = this.translate.instant(MSG_FIELD_REQUIRED, { field: this.translate.instant(PROYECTO_COSTE_HORA) });
     this.msgProyectoMiembrosEquipoRequired = this.translate.instant(MSG_PROYECTO_EQUIPO_MIEMBROS);
   }
 
@@ -152,7 +147,7 @@ export class CambioEstadoModalComponent
   }
 
   private validateCambioEstado(estado: Estado): Observable<never | void> {
-    const problems: Problem[] = [];
+    const problems: SgiProblem[] = [];
 
     if (estado === Estado.CONCEDIDO) {
       problems.push(...this.validateRequiredFields(), ...this.validateProyectoHasMiembrosEquipo());
@@ -165,8 +160,8 @@ export class CambioEstadoModalComponent
     return of(void 0);
   }
 
-  private validateRequiredFields(): Problem[] {
-    const problems: Problem[] = [];
+  private validateRequiredFields(): SgiProblem[] {
+    const problems: SgiProblem[] = [];
 
     if (!this.data.proyecto.finalidad) {
       problems.push(this.buildValidationProblem(this.msgProyectoFinalidadRequired));
@@ -188,23 +183,15 @@ export class CambioEstadoModalComponent
       problems.push(this.buildValidationProblem(this.msgProyectoCoordinadorExternoRequired));
     }
 
-    if (this.data.proyecto.timesheet === undefined || this.data.proyecto.timesheet === null) {
-      problems.push(this.buildValidationProblem(this.msgProyectoTimesheetRequired));
-    }
-
     if (this.data.proyecto.permitePaquetesTrabajo === undefined || this.data.proyecto.permitePaquetesTrabajo === null) {
       problems.push(this.buildValidationProblem(this.msgProyectoPaquetesTrabajoRequired));
-    }
-
-    if (this.data.proyecto.costeHora === undefined || this.data.proyecto.costeHora === null) {
-      problems.push(this.buildValidationProblem(this.msgProyectoCosteHoraRequired));
     }
 
     return problems;
   }
 
-  private validateProyectoHasMiembrosEquipo(): Problem[] {
-    const problems: Problem[] = [];
+  private validateProyectoHasMiembrosEquipo(): SgiProblem[] {
+    const problems: SgiProblem[] = [];
 
     if (!this.data.proyectoHasMiembrosEquipo) {
       problems.push(this.buildValidationProblem(this.msgProyectoMiembrosEquipoRequired));
@@ -213,8 +200,8 @@ export class CambioEstadoModalComponent
     return problems;
   }
 
-  private buildValidationProblem(msgError: string): ValidationHttpProblem {
-    return new ValidationHttpProblem({ title: msgError } as Problem);
+  private buildValidationProblem(msgError: string): ValidationHttpError {
+    return new ValidationHttpError({ title: msgError } as SgiHttpProblem);
   }
 
 }

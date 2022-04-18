@@ -4,7 +4,6 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatSelect } from '@angular/material/select';
 import { MatTableDataSource } from '@angular/material/table';
 import { FragmentComponent } from '@core/component/fragment.component';
-import { HttpProblem } from '@core/errors/http-problem';
 import { MSG_PARAMS } from '@core/i18n';
 import { IDatoEconomico } from '@core/models/sge/dato-economico';
 import { FxFlexProperties } from '@core/models/shared/flexLayout/fx-flex-properties';
@@ -68,12 +67,8 @@ export class DetalleOperacionesIngresosComponent extends FragmentComponent imple
         };
         this.matDialog.open(DetalleOperacionesIngresosExportModalComponent, config);
       },
-      (error) => {
-        if (error instanceof HttpProblem) {
-          this.formPart.pushProblems(error);
-        }
-      })
-    );
+      this.formPart.processError
+    ));
   }
 
   ngOnDestroy(): void {

@@ -99,12 +99,12 @@
         <button *ngIf="viewMode === VIEW_MODE.NEW || viewMode === VIEW_MODE.EDIT" class="link-cancelar" mat-button><span
             class="underline" (click)="cancelDetail()">{{'btn.cancel' | translate}}</span></button>
         <button *ngIf="viewMode === VIEW_MODE.VIEW" color="accent" class="rounded" mat-button mat-raised-button
-          (click)="switchToEdit()" [disabled]="docReadonly || actionService.readonly">
+          (click)="switchToEdit()" [disabled]="docReadonly || actionService.readonly || this.formPart.isVisor">
           <mat-icon>edit</mat-icon>
           {{'btn.edit.entity'| translate:msgParamEntity}}
         </button>
         <button *ngIf="viewMode === VIEW_MODE.VIEW" color="warn" class="rounded" mat-button mat-raised-button
-          [disabled]="docReadonly || actionService.readonly" (click)="deleteDetail()">
+          [disabled]="docReadonly || actionService.readonly || this.formPart.isVisor" (click)="deleteDetail()">
           <mat-icon>close</mat-icon>
           {{'btn.delete.entity' | translate:msgParamEntity}}
         </button>

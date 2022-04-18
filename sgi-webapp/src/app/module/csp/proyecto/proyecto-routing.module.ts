@@ -129,7 +129,7 @@ const routes: SgiAuthRoutes = [
         canDeactivate: [FragmentGuard],
         canActivate: [SgiAuthGuard],
         data: {
-          hasAuthorityForAnyUO: 'CSP-PRO-E'
+          hasAnyAuthorityForAnyUO: ['CSP-PRO-V', 'CSP-PRO-E']
         },
       },
       {

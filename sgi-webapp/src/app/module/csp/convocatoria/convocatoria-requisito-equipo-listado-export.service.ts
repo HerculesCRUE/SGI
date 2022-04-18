@@ -1,6 +1,7 @@
 import { DecimalPipe } from '@angular/common';
 import { Injectable } from '@angular/core';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
+import { MSG_PARAMS } from '@core/i18n';
 import { IConvocatoriaRequisitoEquipo } from '@core/models/csp/convocatoria-requisito-equipo';
 import { IRequisitoEquipoCategoriaProfesional } from '@core/models/csp/requisito-equipo-categoria-profesional';
 import { IRequisitoEquipoNivelAcademico } from '@core/models/csp/requisito-equipo-nivel-academico';
@@ -144,38 +145,18 @@ export class ConvocatoriaRequisitoEquipoListadoExportService extends AbstractTab
     reportConfig: IReportConfig<IConvocatoriaReportOptions>
   ): ISgiColumnReport[] {
     if (!this.isExcelOrCsv(reportConfig.outputType)) {
-      return this.getColumnsRequisitoEquipoNotExcel();
+      return this.getColumnsRequisitoEquipoNotExcel(convocatorias);
     } else {
-      return this.getColumnsRequisitoEquipoExcel(convocatorias);
+      const requisitosEquipoTitlePrefix = this.translate.instant(REQUISITO_EQUIPO_KEY, MSG_PARAMS.CARDINALIRY.SINGULAR) + ': ';
+      return this.getColumnsRequisitoEquipo(requisitosEquipoTitlePrefix, false, convocatorias);
     }
   }
 
-  private getColumnsRequisitoEquipoNotExcel(): ISgiColumnReport[] {
-    const columns: ISgiColumnReport[] = [];
-    columns.push({
-      name: REQUISITO_EQUIPO_FIELD,
-      title: this.translate.instant(REQUISITO_EQUIPO_KEY),
-      type: ColumnType.STRING
-    });
-    const titleI18n = this.translate.instant(REQUISITO_EQUIPO_KEY) +
-      ' (' + this.translate.instant(REQUISITO_EQUIPO_EDAD_MAXIMA_KEY) +
-      ' - ' + this.translate.instant(REQUISITO_EQUIPO_SEXO_KEY) +
-      ' - ' + this.translate.instant(REQUISITO_EQUIPO_SEXO_RATIO_KEY) +
-      ')' + '\n' +
-      ' (' + this.translate.instant(REQUISITO_EQUIPO_NIVEL_ACADEMICO_KEY) + ' ' + this.translate.instant(NOMBRE_KEY) +
-      ' - ' + this.translate.instant(REQUISITO_EQUIPO_NIVEL_ACADEMICO_KEY) + ' ' + this.translate.instant(REQUISITO_EQUIPO_FECHA_POSTERIOR_KEY) +
-      ' - ' + this.translate.instant(REQUISITO_EQUIPO_NIVEL_ACADEMICO_KEY) + ' ' + this.translate.instant(REQUISITO_EQUIPO_FECHA_ANTERIOR_KEY) +
-      ' - ' + this.translate.instant(REQUISITO_EQUIPO_NIVEL_ACADEMICO_KEY) + ' ' + this.translate.instant(REQUISITO_EQUIPO_NIVEL_ACADEMICO_VINCULACION_UNIVERSIDAD_KEY) +
-      ')' + '\n' +
-      ' (' + this.translate.instant(REQUISITO_EQUIPO_CATEGORIA_PROFESIONAL_KEY) + ' ' + this.translate.instant(NOMBRE_KEY) +
-      ' - ' + this.translate.instant(REQUISITO_EQUIPO_CATEGORIA_PROFESIONAL_KEY) + ' ' + this.translate.instant(REQUISITO_EQUIPO_FECHA_POSTERIOR_KEY) +
-      ' - ' + this.translate.instant(REQUISITO_EQUIPO_CATEGORIA_PROFESIONAL_KEY) + ' ' + this.translate.instant(REQUISITO_EQUIPO_FECHA_ANTERIOR_KEY) +
-      ')' + '\n' +
-      ' (' + this.translate.instant(REQUISITO_EQUIPO_NUM_MINIMO_COMPETITIVO_KEY) +
-      ' - ' + this.translate.instant(REQUISITO_EQUIPO_NUM_MINIMO_NO_COMPETITIVO_KEY) +
-      ' - ' + this.translate.instant(REQUISITO_EQUIPO_NUM_MAXIMO_COMPETITIVO_KEY) +
-      ' - ' + this.translate.instant(REQUISITO_EQUIPO_NUM_MAXIMO_NO_COMPETITIVO_KEY) +
-      ')';
+  private getColumnsRequisitoEquipoNotExcel(convocatorias: IConvocatoriaReportData[]): ISgiColumnReport[] {
+    const columns: ISgiColumnReport[] = this.getColumnsRequisitoEquipo('', true, convocatorias);
+
+    const titleI18n = this.translate.instant(REQUISITO_EQUIPO_KEY);
+
     const columnEntidad: ISgiColumnReport = {
       name: REQUISITO_EQUIPO_FIELD,
       title: titleI18n,
@@ -186,33 +167,33 @@ export class ConvocatoriaRequisitoEquipoListadoExportService extends AbstractTab
     return [columnEntidad];
   }
 
-  private getColumnsRequisitoEquipoExcel(convocatorias: IConvocatoriaReportData[]): ISgiColumnReport[] {
+  private getColumnsRequisitoEquipo(prefix: string, allString: boolean, convocatorias: IConvocatoriaReportData[]): ISgiColumnReport[] {
     const columns: ISgiColumnReport[] = [];
 
     const maxNumNivelesAcademicosEquipo = Math.max(...convocatorias.map(c => c.nivelesAcademicosEquipo ? c.nivelesAcademicosEquipo?.length : 0));
     const maxNumCategoriasProfesionalesEquipo = Math.max(...convocatorias.map(c => c.categoriasProfesionalesEquipo ? c.categoriasProfesionalesEquipo?.length : 0));
-    const titleRequisitoEquipo = this.translate.instant(REQ_EQ_KEY);
+
     const titleNivelAcademico = this.translate.instant(REQUISITO_EQUIPO_NIVEL_ACADEMICO_KEY);
     const titleCategoriaProfesional = this.translate.instant(REQUISITO_EQUIPO_CATEGORIA_PROFESIONAL_KEY);
 
     const columnEdadMaxima: ISgiColumnReport = {
       name: REQUISITO_EQUIPO_EDAD_MAXIMA_FIELD,
-      title: titleRequisitoEquipo + ': ' + this.translate.instant(REQUISITO_EQUIPO_EDAD_MAXIMA_KEY),
+      title: prefix + this.translate.instant(REQUISITO_EQUIPO_EDAD_MAXIMA_KEY),
       type: ColumnType.STRING,
     };
     columns.push(columnEdadMaxima);
 
     const columnSexo: ISgiColumnReport = {
       name: REQUISITO_EQUIPO_SEXO_FIELD,
-      title: titleRequisitoEquipo + ': ' + this.translate.instant(REQUISITO_EQUIPO_SEXO_KEY),
+      title: prefix + this.translate.instant(REQUISITO_EQUIPO_SEXO_KEY),
       type: ColumnType.STRING,
     };
     columns.push(columnSexo);
 
     const columnSexoRatio: ISgiColumnReport = {
       name: REQUISITO_EQUIPO_SEXO_RATIO_FIELD,
-      title: titleRequisitoEquipo + ': ' + this.translate.instant(REQUISITO_EQUIPO_SEXO_RATIO_KEY),
-      type: ColumnType.NUMBER,
+      title: prefix + this.translate.instant(REQUISITO_EQUIPO_SEXO_RATIO_KEY),
+      type: allString ? ColumnType.STRING : ColumnType.NUMBER,
     };
     columns.push(columnSexoRatio);
 
@@ -220,7 +201,7 @@ export class ConvocatoriaRequisitoEquipoListadoExportService extends AbstractTab
       const idNivelesAcademicos: string = String(i + 1);
       const columnNivelAcademicoIP: ISgiColumnReport = {
         name: REQUISITO_EQUIPO_NIVEL_ACADEMICO_FIELD + idNivelesAcademicos,
-        title: titleRequisitoEquipo + ': ' + titleNivelAcademico + idNivelesAcademicos,
+        title: prefix + titleNivelAcademico + idNivelesAcademicos,
         type: ColumnType.STRING,
       };
       columns.push(columnNivelAcademicoIP);
@@ -228,21 +209,21 @@ export class ConvocatoriaRequisitoEquipoListadoExportService extends AbstractTab
 
     const columnPosteriorA: ISgiColumnReport = {
       name: REQUISITO_EQUIPO_NIVEL_ACADEMICO_FECHA_POSTERIOR_FIELD,
-      title: titleRequisitoEquipo + ': ' + titleNivelAcademico + ' ' + this.translate.instant(REQUISITO_EQUIPO_FECHA_POSTERIOR_KEY),
-      type: ColumnType.DATE,
+      title: prefix + titleNivelAcademico + ' ' + this.translate.instant(REQUISITO_EQUIPO_FECHA_POSTERIOR_KEY),
+      type: allString ? ColumnType.STRING : ColumnType.DATE,
     };
     columns.push(columnPosteriorA);
 
     const columnAnteriorA: ISgiColumnReport = {
       name: REQUISITO_EQUIPO_NIVEL_ACADEMICO_FECHA_ANTERIOR_FIELD,
-      title: titleRequisitoEquipo + ': ' + titleNivelAcademico + ' ' + this.translate.instant(REQUISITO_EQUIPO_FECHA_ANTERIOR_KEY),
-      type: ColumnType.DATE,
+      title: prefix + titleNivelAcademico + ' ' + this.translate.instant(REQUISITO_EQUIPO_FECHA_ANTERIOR_KEY),
+      type: allString ? ColumnType.STRING : ColumnType.DATE,
     };
     columns.push(columnAnteriorA);
 
     const columnVinculacion: ISgiColumnReport = {
       name: REQUISITO_EQUIPO_NIVEL_ACADEMICO_VINCULACION_UNIVERSIDAD_FIELD,
-      title: titleRequisitoEquipo + ': ' + titleNivelAcademico + ' ' + this.translate.instant(REQUISITO_EQUIPO_NIVEL_ACADEMICO_VINCULACION_UNIVERSIDAD_KEY),
+      title: prefix + titleNivelAcademico + ' ' + this.translate.instant(REQUISITO_EQUIPO_NIVEL_ACADEMICO_VINCULACION_UNIVERSIDAD_KEY),
       type: ColumnType.STRING,
     };
     columns.push(columnVinculacion);
@@ -251,7 +232,7 @@ export class ConvocatoriaRequisitoEquipoListadoExportService extends AbstractTab
       const idCategoriaProfesional: string = String(i + 1);
       const columnNivelAcademicoIP: ISgiColumnReport = {
         name: REQUISITO_EQUIPO_CATEGORIA_PROFESIONAL_FIELD + idCategoriaProfesional,
-        title: titleRequisitoEquipo + ': ' + titleCategoriaProfesional + idCategoriaProfesional,
+        title: prefix + titleCategoriaProfesional + idCategoriaProfesional,
         type: ColumnType.STRING,
       };
       columns.push(columnNivelAcademicoIP);
@@ -259,43 +240,43 @@ export class ConvocatoriaRequisitoEquipoListadoExportService extends AbstractTab
 
     const columnCatPosteriorA: ISgiColumnReport = {
       name: REQUISITO_EQUIPO_CATEGORIA_PROFESIONAL_FECHA_POSTERIOR_FIELD,
-      title: titleRequisitoEquipo + ': ' + titleCategoriaProfesional + ' ' + this.translate.instant(REQUISITO_EQUIPO_FECHA_POSTERIOR_KEY),
-      type: ColumnType.DATE,
+      title: prefix + titleCategoriaProfesional + ' ' + this.translate.instant(REQUISITO_EQUIPO_FECHA_POSTERIOR_KEY),
+      type: allString ? ColumnType.STRING : ColumnType.DATE,
     };
     columns.push(columnCatPosteriorA);
 
     const columnCatAnteriorA: ISgiColumnReport = {
       name: REQUISITO_EQUIPO_CATEGORIA_PROFESIONAL_FECHA_ANTERIOR_FIELD,
-      title: titleRequisitoEquipo + ': ' + titleCategoriaProfesional + ' ' + this.translate.instant(REQUISITO_EQUIPO_FECHA_ANTERIOR_KEY),
-      type: ColumnType.DATE,
+      title: prefix + titleCategoriaProfesional + ' ' + this.translate.instant(REQUISITO_EQUIPO_FECHA_ANTERIOR_KEY),
+      type: allString ? ColumnType.STRING : ColumnType.DATE,
     };
     columns.push(columnCatAnteriorA);
 
     const columnNumMinCompetitivos: ISgiColumnReport = {
       name: REQUISITO_EQUIPO_NUM_MINIMO_COMPETITIVO_FIELD,
-      title: titleRequisitoEquipo + ': ' + this.translate.instant(REQUISITO_EQUIPO_NUM_MINIMO_COMPETITIVO_KEY),
-      type: ColumnType.NUMBER,
+      title: prefix + this.translate.instant(REQUISITO_EQUIPO_NUM_MINIMO_COMPETITIVO_KEY),
+      type: allString ? ColumnType.STRING : ColumnType.NUMBER,
     };
     columns.push(columnNumMinCompetitivos);
 
     const columnNumMinNoCompetitivos: ISgiColumnReport = {
       name: REQUISITO_EQUIPO_NUM_MINIMO_NO_COMPETITIVO_FIELD,
-      title: titleRequisitoEquipo + ': ' + this.translate.instant(REQUISITO_EQUIPO_NUM_MINIMO_NO_COMPETITIVO_KEY),
-      type: ColumnType.NUMBER,
+      title: prefix + this.translate.instant(REQUISITO_EQUIPO_NUM_MINIMO_NO_COMPETITIVO_KEY),
+      type: allString ? ColumnType.STRING : ColumnType.NUMBER,
     };
     columns.push(columnNumMinNoCompetitivos);
 
     const columnNumMaxCompetitivos: ISgiColumnReport = {
       name: REQUISITO_EQUIPO_NUM_MAXIMO_COMPETITIVO_FIELD,
-      title: titleRequisitoEquipo + ': ' + this.translate.instant(REQUISITO_EQUIPO_NUM_MAXIMO_COMPETITIVO_KEY),
-      type: ColumnType.NUMBER,
+      title: prefix + this.translate.instant(REQUISITO_EQUIPO_NUM_MAXIMO_COMPETITIVO_KEY),
+      type: allString ? ColumnType.STRING : ColumnType.NUMBER,
     };
     columns.push(columnNumMaxCompetitivos);
 
     const columnNumMaxNoCompetitivos: ISgiColumnReport = {
       name: REQUISITO_EQUIPO_NUM_MAXIMO_NO_COMPETITIVO_FIELD,
-      title: titleRequisitoEquipo + ': ' + this.translate.instant(REQUISITO_EQUIPO_NUM_MAXIMO_NO_COMPETITIVO_KEY),
-      type: ColumnType.NUMBER,
+      title: prefix + this.translate.instant(REQUISITO_EQUIPO_NUM_MAXIMO_NO_COMPETITIVO_KEY),
+      type: allString ? ColumnType.STRING : ColumnType.NUMBER,
     };
     columns.push(columnNumMaxNoCompetitivos);
 
@@ -331,53 +312,48 @@ export class ConvocatoriaRequisitoEquipoListadoExportService extends AbstractTab
     const rowsReport: ISgiRowReport[] = [];
     if (convocatoria.requisitoEquipo) {
       const requisitoEquipoElementsRow: any[] = [];
-      let requisitoEquipoContent = convocatoria?.requisitoEquipo.edadMaxima ? convocatoria.requisitoEquipo?.edadMaxima.toString() ?? '' : '';
-      requisitoEquipoContent += '\n';
-      requisitoEquipoContent += convocatoria?.requisitoEquipo.sexo ? convocatoria.requisitoEquipo?.sexo.id ?? '' : '';
-      requisitoEquipoContent += '\n';
-      requisitoEquipoContent += convocatoria?.requisitoEquipo.ratioSexo ? this.decimalPipe.transform(convocatoria?.requisitoEquipo.ratioSexo, '2.2-2') ?? '' : '';
+      requisitoEquipoElementsRow.push(convocatoria?.requisitoEquipo.edadMaxima ? convocatoria.requisitoEquipo?.edadMaxima.toString() ?? '' : '');
+      requisitoEquipoElementsRow.push(convocatoria?.requisitoEquipo.sexo ? convocatoria.requisitoEquipo?.sexo.id ?? '' : '');
+      requisitoEquipoElementsRow.push(convocatoria?.requisitoEquipo.ratioSexo ? this.decimalPipe.transform(convocatoria?.requisitoEquipo.ratioSexo, '2.2-2') ?? '' : '');
 
       convocatoria.nivelesAcademicosEquipo?.filter(n => n.requisitoEquipo.id === convocatoria.requisitoEquipo.id).forEach((nivelAcademicoEquipo, index) => {
-        requisitoEquipoContent += '\n';
-        requisitoEquipoContent += (this.translate.instant(REQUISITO_EQUIPO_NIVEL_ACADEMICO_KEY) + (index + 1) + ': ') + (nivelAcademicoEquipo.nivelAcademico ? nivelAcademicoEquipo.nivelAcademico.nombre ?? '' : '');
+        requisitoEquipoElementsRow.push((this.translate.instant(REQUISITO_EQUIPO_NIVEL_ACADEMICO_KEY) + (index + 1) + ': ') + (nivelAcademicoEquipo.nivelAcademico ? nivelAcademicoEquipo.nivelAcademico.nombre ?? '' : ''));
       });
 
-      requisitoEquipoContent += '\n';
-      requisitoEquipoContent += convocatoria.requisitoEquipo.fechaMinimaNivelAcademico
-        ? this.luxonDatePipe.transform(LuxonUtils.toBackend(convocatoria.requisitoEquipo.fechaMinimaNivelAcademico, true), 'shortDate') ?? '' : '';
-      requisitoEquipoContent += '\n';
-      requisitoEquipoContent += convocatoria.requisitoEquipo.fechaMaximaNivelAcademico
-        ? this.luxonDatePipe.transform(LuxonUtils.toBackend(convocatoria.requisitoEquipo.fechaMaximaNivelAcademico, true), 'shortDate') ?? '' : '';
-      requisitoEquipoContent += '\n';
-      requisitoEquipoContent += this.notIsNullAndNotUndefined(convocatoria.requisitoEquipo.vinculacionUniversidad)
-        ? this.getI18nBooleanYesNo(convocatoria.requisitoEquipo.vinculacionUniversidad) ?? '' : '';
+
+      requisitoEquipoElementsRow.push(convocatoria.requisitoEquipo.fechaMinimaNivelAcademico
+        ? this.luxonDatePipe.transform(LuxonUtils.toBackend(convocatoria.requisitoEquipo.fechaMinimaNivelAcademico, true), 'shortDate') ?? '' : '');
+
+      requisitoEquipoElementsRow.push(convocatoria.requisitoEquipo.fechaMaximaNivelAcademico
+        ? this.luxonDatePipe.transform(LuxonUtils.toBackend(convocatoria.requisitoEquipo.fechaMaximaNivelAcademico, true), 'shortDate') ?? '' : '');
+
+      requisitoEquipoElementsRow.push(this.notIsNullAndNotUndefined(convocatoria.requisitoEquipo.vinculacionUniversidad)
+        ? this.getI18nBooleanYesNo(convocatoria.requisitoEquipo.vinculacionUniversidad) ?? '' : '');
 
       convocatoria.categoriasProfesionalesEquipo?.filter(c => c.requisitoEquipo.id === convocatoria.requisitoEquipo.id).forEach((categoriaProfesionalEquipo, index) => {
-        requisitoEquipoContent += '\n';
-        requisitoEquipoContent += (this.translate.instant(REQUISITO_EQUIPO_CATEGORIA_PROFESIONAL_KEY) + (index + 1) + ': ') + (categoriaProfesionalEquipo.categoriaProfesional ? categoriaProfesionalEquipo.categoriaProfesional.nombre ?? '' : '');
+
+        requisitoEquipoElementsRow.push((this.translate.instant(REQUISITO_EQUIPO_CATEGORIA_PROFESIONAL_KEY) + (index + 1) + ': ') + (categoriaProfesionalEquipo.categoriaProfesional ? categoriaProfesionalEquipo.categoriaProfesional.nombre ?? '' : ''));
       });
 
-      requisitoEquipoContent += '\n';
-      requisitoEquipoContent += convocatoria.requisitoEquipo.fechaMinimaCategoriaProfesional
-        ? this.luxonDatePipe.transform(LuxonUtils.toBackend(convocatoria.requisitoEquipo.fechaMinimaCategoriaProfesional, true), 'shortDate') ?? '' : '';
-      requisitoEquipoContent += '\n';
-      requisitoEquipoContent += convocatoria.requisitoEquipo.fechaMaximaCategoriaProfesional
-        ? this.luxonDatePipe.transform(LuxonUtils.toBackend(convocatoria.requisitoEquipo.fechaMaximaCategoriaProfesional, true), 'shortDate') ?? '' : '';
 
-      requisitoEquipoContent += '\n';
-      requisitoEquipoContent += convocatoria?.requisitoEquipo && convocatoria.requisitoEquipo?.numMinimoCompetitivos
-        ? convocatoria.requisitoEquipo?.numMinimoCompetitivos.toString() ?? '' : '';
-      requisitoEquipoContent += '\n';
-      requisitoEquipoContent += convocatoria?.requisitoEquipo && convocatoria.requisitoEquipo?.numMinimoNoCompetitivos
-        ? convocatoria.requisitoEquipo?.numMinimoNoCompetitivos.toString() ?? '' : '';
-      requisitoEquipoContent += '\n';
-      requisitoEquipoContent += convocatoria?.requisitoEquipo && convocatoria.requisitoEquipo?.numMaximoCompetitivosActivos
-        ? convocatoria.requisitoEquipo?.numMaximoCompetitivosActivos.toString() ?? '' : '';
-      requisitoEquipoContent += '\n';
-      requisitoEquipoContent += convocatoria?.requisitoEquipo && convocatoria.requisitoEquipo?.numMaximoNoCompetitivosActivos
-        ? convocatoria.requisitoEquipo?.numMaximoNoCompetitivosActivos.toString() ?? '' : '';
+      requisitoEquipoElementsRow.push(convocatoria.requisitoEquipo.fechaMinimaCategoriaProfesional
+        ? this.luxonDatePipe.transform(LuxonUtils.toBackend(convocatoria.requisitoEquipo.fechaMinimaCategoriaProfesional, true), 'shortDate') ?? '' : '');
 
-      requisitoEquipoElementsRow.push(requisitoEquipoContent);
+      requisitoEquipoElementsRow.push(convocatoria.requisitoEquipo.fechaMaximaCategoriaProfesional
+        ? this.luxonDatePipe.transform(LuxonUtils.toBackend(convocatoria.requisitoEquipo.fechaMaximaCategoriaProfesional, true), 'shortDate') ?? '' : '');
+
+
+      requisitoEquipoElementsRow.push(convocatoria?.requisitoEquipo && convocatoria.requisitoEquipo?.numMinimoCompetitivos
+        ? convocatoria.requisitoEquipo?.numMinimoCompetitivos.toString() ?? '' : '');
+
+      requisitoEquipoElementsRow.push(convocatoria?.requisitoEquipo && convocatoria.requisitoEquipo?.numMinimoNoCompetitivos
+        ? convocatoria.requisitoEquipo?.numMinimoNoCompetitivos.toString() ?? '' : '');
+
+      requisitoEquipoElementsRow.push(convocatoria?.requisitoEquipo && convocatoria.requisitoEquipo?.numMaximoCompetitivosActivos
+        ? convocatoria.requisitoEquipo?.numMaximoCompetitivosActivos.toString() ?? '' : '');
+
+      requisitoEquipoElementsRow.push(convocatoria?.requisitoEquipo && convocatoria.requisitoEquipo?.numMaximoNoCompetitivosActivos
+        ? convocatoria.requisitoEquipo?.numMaximoNoCompetitivosActivos.toString() ?? '' : '');
 
       const rowReport: ISgiRowReport = {
         elements: requisitoEquipoElementsRow
@@ -456,9 +432,5 @@ export class ConvocatoriaRequisitoEquipoListadoExportService extends AbstractTab
       elementsRow.push('');
       elementsRow.push('');
     }
-  }
-
-  private notIsNullAndNotUndefined(value): boolean {
-    return value !== null && value !== undefined;
   }
 }

@@ -1,4 +1,4 @@
-import { Component, Inject } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
@@ -9,7 +9,6 @@ import { Estado, ESTADO_MAP, IEstadoAutorizacion } from '@core/models/csp/estado
 import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-properties';
 import { AutorizacionService } from '@core/services/csp/autorizacion/autorizacion.service';
 import { EstadoAutorizacionService } from '@core/services/csp/estado-autorizacion/estado-autorizacion.service';
-import { SnackBarService } from '@core/services/snack-bar.service';
 import { TranslateService } from '@ngx-translate/core';
 import { DateTime } from 'luxon';
 import { Observable } from 'rxjs';
@@ -30,7 +29,7 @@ export interface AutorizacionCambioEstadoModalComponentData {
   styleUrls: ['./cambio-estado-modal.component.scss']
 })
 export class CambioEstadoModalComponent
-  extends DialogActionComponent<AutorizacionCambioEstadoModalComponentData, IEstadoAutorizacion> {
+  extends DialogActionComponent<IEstadoAutorizacion> implements OnInit {
 
   fxLayoutProperties: FxLayoutProperties;
 
@@ -46,7 +45,6 @@ export class CambioEstadoModalComponent
   constructor(
     matDialogRef: MatDialogRef<CambioEstadoModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data: AutorizacionCambioEstadoModalComponentData,
-    protected snackBarService: SnackBarService,
     private autorizacionService: AutorizacionService,
     private readonly translate: TranslateService,
     private estadoAutorizacionService: EstadoAutorizacionService) {

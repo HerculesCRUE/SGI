@@ -8,16 +8,11 @@ import { IProyectoPrc } from '@core/models/prc/proyecto-prc';
 import { IValorCampo } from '@core/models/prc/valor-campo';
 import { IPersona } from '@core/models/sgp/persona';
 import { Fragment } from '@core/services/action-service';
-import { ProyectoResumenService } from '@core/services/csp/proyecto-resumen/proyecto-resumen.service';
-import { AutorService } from '@core/services/prc/autor/autor.service';
-import { CampoProduccionCientificaService } from '@core/services/prc/campo-produccion-cientifica/campo-produccion-cientifica.service';
-import { ConfiguracionCampoService } from '@core/services/prc/configuracion-campo/configuracion-campo.service';
-import { ProduccionCientificaService } from '@core/services/prc/produccion-cientifica/produccion-cientifica.service';
-import { DocumentoService } from '@core/services/sgdoc/documento.service';
 import { PersonaService } from '@core/services/sgp/persona.service';
 import { BehaviorSubject, forkJoin, from, Observable, of } from 'rxjs';
-import { catchError, concatMap, map, mergeMap, switchMap, tap, toArray } from 'rxjs/operators';
+import { catchError, concatMap, map, switchMap, tap, toArray } from 'rxjs/operators';
 import { CvnValorCampoService } from '../../../shared/cvn/services/cvn-valor-campo.service';
+import { ProduccionCientificaInitializerService } from '../../../shared/produccion-cientifica-initializer.service';
 
 export class PublicacionDatosGeneralesFragment extends Fragment {
   private camposProduccionCientificaWithConfiguracionMap$ =
@@ -39,28 +34,22 @@ export class PublicacionDatosGeneralesFragment extends Fragment {
 
   constructor(
     produccionCientifica: IProduccionCientifica,
-    private campoProduccionCientificaService: CampoProduccionCientificaService,
-    private configuracionCampo: ConfiguracionCampoService,
+    private initializerService: ProduccionCientificaInitializerService,
     private cvnValorCampoService: CvnValorCampoService,
-    private produccionCientificaService: ProduccionCientificaService,
     private personaService: PersonaService,
-    private proyectoResumenService: ProyectoResumenService,
-    private documentoService: DocumentoService,
-    private autorService: AutorService,
   ) {
     super(produccionCientifica?.id);
     this.produccionCientifica$ = new BehaviorSubject(produccionCientifica);
-    this.emitProduccionCientifica(produccionCientifica);
     this.setComplete(true);
   }
 
   protected onInitialize(): void | Observable<any> {
     return forkJoin({
-      camposProduccionCientificaMap: this.initializeCamposProduccionCientifica(),
-      indicesImpacto: this.initializeIndicesImpacto(),
-      autores: this.initializeAutores(),
-      proyectos: this.initializeProyectos(),
-      acreditaciones: this.initializeAcreditaciones()
+      camposProduccionCientificaMap: this.initializerService.initializeCamposProduccionCientifica$(this.produccionCientifica),
+      indicesImpacto: this.initializerService.initializeIndicesImpacto$(this.produccionCientifica),
+      autores: this.initializerService.initializeAutores$(this.produccionCientifica),
+      proyectos: this.initializerService.initializeProyectos$(this.produccionCientifica),
+      acreditaciones: this.initializerService.initializeAcreditaciones$(this.produccionCientifica)
     }).pipe(
       tap(({ camposProduccionCientificaMap }) => this.camposProduccionCientificaWithConfiguracionMap$.next(camposProduccionCientificaMap)),
       tap(({ indicesImpacto }) => this.indicesImpacto$.next(indicesImpacto)),
@@ -68,143 +57,6 @@ export class PublicacionDatosGeneralesFragment extends Fragment {
       tap(({ proyectos }) => this.proyectos$.next(proyectos)),
       tap(({ acreditaciones }) => this.acreditaciones$.next(acreditaciones)),
     );
-  }
-
-  private initializeCamposProduccionCientifica(): Observable<Map<string, ICampoProduccionCientificaWithConfiguracion>> {
-    return this.campoProduccionCientificaService
-      .findAllCamposProduccionCientifca(this.produccionCientifica)
-      .pipe(
-        map(camposProduccionCientifica =>
-          camposProduccionCientifica.map(
-            campo => {
-              campo.produccionCientifica = this.produccionCientifica;
-              return campo;
-            })),
-        mergeMap(camposProduccionCientifica =>
-          from(camposProduccionCientifica).pipe(
-            mergeMap(campo =>
-              this.configuracionCampo.findConfiguracionCampo(campo)
-                .pipe(
-                  map(configuracion => (
-                    {
-                      campoProduccionCientifica: campo,
-                      configuracionCampo: configuracion
-                    } as ICampoProduccionCientificaWithConfiguracion)
-                  )
-                )
-            ),
-            toArray()
-          )
-        ),
-        map(camposProduccionCientifica =>
-          new Map(camposProduccionCientifica.map(campo => [campo.campoProduccionCientifica.codigo, campo]))
-        )
-      );
-  }
-
-  private initializeIndicesImpacto(): Observable<IIndiceImpacto[]> {
-    return this.produccionCientificaService.findIndicesImpacto(this.produccionCientifica.id)
-      .pipe(
-        map(({ items }) => items.map(indiceImpacto => {
-          indiceImpacto.produccionCientifica = this.produccionCientifica;
-          return indiceImpacto;
-        })),
-        catchError(() => of([]))
-      );
-  }
-
-  private initializeAutores(): Observable<IAutorWithGrupos[]> {
-    return this.produccionCientificaService.findAutores(this.produccionCientifica.id)
-      .pipe(
-        map(({ items }) => items.map(autor => {
-          autor.produccionCientifica = this.produccionCientifica;
-          return autor;
-        })),
-        concatMap(autores => from(autores)
-          .pipe(
-            mergeMap(autor => {
-              if (autor.persona?.id) {
-                return this.personaService.findById(autor.persona.id)
-                  .pipe(
-                    map(persona => {
-                      autor.persona = persona;
-                      return autor;
-                    }),
-                    catchError(() => of(autor))
-                  );
-              } else {
-                return of(autor);
-              }
-            }),
-            mergeMap(autor => this.autorService.findGrupos(autor.id)
-              .pipe(
-                map(({ items }) => ({
-                  autor,
-                  grupos: items
-                } as IAutorWithGrupos)),
-                catchError(() => of({ autor, grupos: [] }))
-              )
-            ),
-            toArray()
-          )
-        ),
-        catchError(() => of([]))
-      );
-  }
-
-  private initializeProyectos(): Observable<IProyectoPrc[]> {
-    return this.produccionCientificaService.findProyectos(this.produccionCientifica.id)
-      .pipe(
-        map(({ items }) => items.map(proyectoPrc => {
-          proyectoPrc.produccionCientifica = this.produccionCientifica;
-          return proyectoPrc;
-        })),
-        concatMap(proyectosPrc => from(proyectosPrc)
-          .pipe(
-            mergeMap(proyectoPrc => this.proyectoResumenService.findById(proyectoPrc?.proyecto?.id)
-              .pipe(
-                map(proyectoResumen => {
-                  proyectoPrc.proyecto = proyectoResumen;
-                  return proyectoPrc;
-                }),
-                catchError(() => of(proyectoPrc)),
-              )
-            ),
-            toArray()
-          )
-        ),
-        catchError(() => of([]))
-      );
-  }
-
-  private initializeAcreditaciones(): Observable<IAcreditacion[]> {
-    return this.produccionCientificaService.findAcreditaciones(this.produccionCientifica.id)
-      .pipe(
-        map(({ items }) => items.map(acreditacion => {
-          acreditacion.produccionCientifica = this.produccionCientifica;
-          return acreditacion;
-        })),
-        concatMap(acreditaciones => from(acreditaciones)
-          .pipe(
-            mergeMap(acreditacion => {
-              if (acreditacion.documento?.documentoRef) {
-                return this.documentoService.getInfoFichero(acreditacion.documento.documentoRef)
-                  .pipe(
-                    map(documento => {
-                      acreditacion.documento = documento;
-                      return acreditacion;
-                    }),
-                    catchError(() => of(acreditacion))
-                  );
-              } else {
-                return of(acreditacion);
-              }
-            }),
-            toArray()
-          )
-        ),
-        catchError(() => of([]))
-      );
   }
 
   saveOrUpdate(action?: any): Observable<string | number | void> {

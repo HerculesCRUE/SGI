@@ -1,5 +1,6 @@
 package org.crue.hercules.sgi.csp.repository;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 
@@ -53,5 +54,8 @@ public interface ProyectoProrrogaRepository extends JpaRepository<ProyectoProrro
    * @return si existe la entidad {@link ProyectoProrroga}
    */
   boolean existsByProyectoId(Long proyectoId);
+
+  boolean existsByProyectoIdAndFechaConcesionLessThanEqualAndFechaFinGreaterThanEqual(Long proyectoId,
+      Instant dateGtFechaConcesion, Instant dateLsFechaFin);
 
 }

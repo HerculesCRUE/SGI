@@ -1,11 +1,12 @@
 package org.crue.hercules.sgi.csp.repository;
 
-import java.util.List;
-
 import org.crue.hercules.sgi.csp.model.ProyectoSocio;
 import org.crue.hercules.sgi.csp.model.ProyectoSocioPeriodoJustificacion;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+
+import java.time.Instant;
+import java.util.List;
 
 public interface ProyectoSocioPeriodoJustificacionRepository
     extends JpaRepository<ProyectoSocioPeriodoJustificacion, Long>,
@@ -29,4 +30,8 @@ public interface ProyectoSocioPeriodoJustificacionRepository
   void deleteByProyectoSocioId(Long id);
 
   boolean existsByProyectoSocioId(Long proyectoSocioId);
+
+  List<ProyectoSocioPeriodoJustificacion> findByFechaInicioPresentacionBetweenAndProyectoSocioProyectoActivoTrue(Instant dateFrom, Instant dateTo);
+
+  List<ProyectoSocioPeriodoJustificacion> findByFechaFinPresentacionBetweenAndProyectoSocioProyectoActivoTrueAndDocumentacionRecibidaFalse(Instant dateFrom, Instant dateTo);
 }

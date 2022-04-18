@@ -1,9 +1,13 @@
 import { Directive, OnDestroy } from '@angular/core';
 import { AbstractControl, FormArray, FormControl, FormGroup } from '@angular/forms';
-import { HttpProblem, Problem } from '@core/errors/http-problem';
+import { marker } from '@biesbjerg/ngx-translate-extract-marker';
+import { SgiError, SgiProblem } from '@core/errors/sgi-error';
 import { DateTime } from 'luxon';
 import { BehaviorSubject, from, Observable, of, Subject, Subscription, throwError } from 'rxjs';
 import { catchError, defaultIfEmpty, filter, mergeMap, switchMap, takeLast, tap } from 'rxjs/operators';
+
+const MSG_GENERIC_ERROR_TITLE = marker('error.generic.title');
+const MSG_GENERIC_ERROR_CONTENT = marker('error.generic.message');
 
 export interface IActionService {
   /**
@@ -160,7 +164,7 @@ export interface IFragment {
   /**
    * Problems of the fragment
    */
-  problems$: Subject<Problem[]>;
+  problems$: Subject<SgiProblem[]>;
   /**
    * Returns true if the fragment is in edition mode
    */
@@ -180,7 +184,7 @@ export interface IFragment {
   /**
    * Push a related problem or problems
    */
-  pushProblems(problem: Problem | Problem[]): void;
+  pushProblems(problem: SgiProblem | SgiProblem[]): void;
   /**
    * Clear problems
    */
@@ -274,12 +278,27 @@ export interface ActionLink {
 
 export abstract class Fragment implements IFragment {
   readonly status$: BehaviorSubject<FragmentStatus>;
-  readonly problems$: BehaviorSubject<Problem[]>;
+  readonly problems$: BehaviorSubject<SgiProblem[]>;
   private key: number | string;
   private edit: boolean;
   readonly initialized$: BehaviorSubject<boolean>;
   private initialing = false;
   protected subscriptions: Subscription[] = [];
+
+  public readonly processError: (error: Error) => void = (error: Error) => {
+    if (error instanceof SgiError) {
+      if (!error.managed) {
+        error.managed = true;
+        this.pushProblems(error);
+      }
+    }
+    else {
+      // Error incontrolado
+      const sgiError = new SgiError(MSG_GENERIC_ERROR_TITLE, MSG_GENERIC_ERROR_CONTENT);
+      sgiError.managed = true;
+      this.pushProblems(sgiError);
+    }
+  }
 
   /**
    * Default constructor
@@ -289,7 +308,7 @@ export abstract class Fragment implements IFragment {
     this.key = key;
     this.edit = key ? true : false;
     this.status$ = new BehaviorSubject<FragmentStatus>({ errors: false, changes: false, complete: false, edit: this.edit, problems: false });
-    this.problems$ = new BehaviorSubject<Problem[]>([]);
+    this.problems$ = new BehaviorSubject<SgiProblem[]>([]);
     this.initialized$ = new BehaviorSubject<boolean>(false);
   }
 
@@ -323,7 +342,7 @@ export abstract class Fragment implements IFragment {
     return this.status$.value.problems;
   }
 
-  pushProblems(problem: Problem | Problem[]): void {
+  pushProblems(problem: SgiProblem | SgiProblem[]): void {
     const current = this.problems$.value;
     if (Array.isArray(problem)) {
       this.problems$.next([...current, ...problem]);
@@ -416,7 +435,7 @@ export abstract class Fragment implements IFragment {
 
 export abstract class FormFragment<T> implements IFormFragment<T> {
   readonly status$: BehaviorSubject<FragmentStatus>;
-  readonly problems$: BehaviorSubject<Problem[]>;
+  readonly problems$: BehaviorSubject<SgiProblem[]>;
   private formStatus: GroupStatus;
   private complementStatus: FragmentStatus;
   private auxiliarStatus: boolean;
@@ -442,7 +461,7 @@ export abstract class FormFragment<T> implements IFormFragment<T> {
     this.edit = key ? true : false;
     this.auxiliarStatus = enableComplementaryStatus;
     this.status$ = new BehaviorSubject<FragmentStatus>({ errors: false, changes: false, complete: false, edit: this.edit, problems: false });
-    this.problems$ = new BehaviorSubject<Problem[]>([]);
+    this.problems$ = new BehaviorSubject<SgiProblem[]>([]);
     this.formStatus = { changes: false, errors: false, complete: false };
     this.complementStatus = { errors: false, changes: false, complete: !this.edit && !enableComplementaryStatus, edit: this.edit, problems: false };
     this.initialized$ = new BehaviorSubject<boolean>(false);
@@ -559,7 +578,7 @@ export abstract class FormFragment<T> implements IFormFragment<T> {
     return this.status$.value.problems;
   }
 
-  pushProblems(problem: Problem | Problem[]): void {
+  pushProblems(problem: SgiProblem | SgiProblem[]): void {
     const current = this.problems$.value;
     if (Array.isArray(problem)) {
       this.problems$.next([...current, ...problem]);
@@ -896,7 +915,7 @@ export abstract class ActionService implements IActionService, OnDestroy {
         tap((part) => part.clearProblems()),
         mergeMap((part) => part.saveOrUpdate(action).pipe(
           catchError(error => {
-            if (error instanceof HttpProblem) {
+            if (error instanceof SgiError) {
               part.pushProblems(error);
               error.managed = true;
             }
@@ -916,7 +935,7 @@ export abstract class ActionService implements IActionService, OnDestroy {
       part.clearProblems();
       return part.saveOrUpdate(action).pipe(
         catchError(error => {
-          if (error instanceof HttpProblem) {
+          if (error instanceof SgiError) {
             part.pushProblems(error);
             error.managed = true;
           }

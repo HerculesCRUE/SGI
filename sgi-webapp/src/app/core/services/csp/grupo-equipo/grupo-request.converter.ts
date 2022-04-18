@@ -29,6 +29,7 @@ class GrupoEquipoRequestConverter
       return value as unknown as IGrupoEquipoRequest;
     }
     return {
+      id: value.id,
       personaRef: value.persona.id,
       grupoId: value.grupo.id,
       fechaInicio: LuxonUtils.toBackend(value.fechaInicio),

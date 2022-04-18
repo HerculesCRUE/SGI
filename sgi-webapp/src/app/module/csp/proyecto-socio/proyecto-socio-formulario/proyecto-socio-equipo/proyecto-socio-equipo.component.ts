@@ -123,7 +123,6 @@ export class ProyectoSocioEquipoComponent extends FragmentComponent implements O
       selectedEntidades: this.dataSource.data.map(element => element.value),
       fechaInicioMin: this.actionService.proyectoSocio?.fechaInicio,
       fechaFinMax: this.actionService.proyectoSocio?.fechaFin,
-      showHorasDedicacion: false,
       isEdit: Boolean(wrapper),
       readonly: this.actionService.readonly
     };

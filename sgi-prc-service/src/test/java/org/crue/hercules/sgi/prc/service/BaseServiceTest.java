@@ -23,6 +23,6 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 @EnableConfigurationProperties(value = SgiConfigProperties.class)
 @TestPropertySource(locations = { "classpath:application.yml" })
 @ContextConfiguration(initializers = { ConfigFileApplicationContextInitializer.class })
-abstract class BaseServiceTest {
+public abstract class BaseServiceTest {
 
 }

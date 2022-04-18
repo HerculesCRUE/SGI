@@ -4,11 +4,15 @@ package org.crue.hercules.sgi.prc.enums;
  * SGI service types
  */
 public enum ServiceType {
+  COM,
+  CNF,
   CSP,
-  ETI,
   PII,
+  PRC,
   REL,
+  REP,
+  SGEPII,
   SGP,
-  TP,
-  USR
+  SGO,
+  TP
 }

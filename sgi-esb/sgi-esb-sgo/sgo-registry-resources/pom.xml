@@ -4,11 +4,11 @@
   <parent>
     <groupId>org.crue.hercules.sgi.esb.sgo</groupId>
     <artifactId>sgi-esb-sgo</artifactId>
-    <version>0.0.7</version>
+    <version>0.0.8</version>
   </parent>
   <groupId>org.crue.hercules.sgi.esb.sgo</groupId>
   <artifactId>sgo-registry-resources</artifactId>
-  <version>0.0.7</version>
+  <version>0.0.8</version>
   <packaging>pom</packaging>
   <name>sgo-registry-resources</name>
   <description>sgo-registry-resources</description>

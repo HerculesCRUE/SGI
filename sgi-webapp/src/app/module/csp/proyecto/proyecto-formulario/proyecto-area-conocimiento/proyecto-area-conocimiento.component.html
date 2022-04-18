@@ -27,8 +27,8 @@
         <th mat-header-cell *matHeaderCellDef> {{'label.actions' | translate}} </th>
         <td mat-cell *matCellDef="let area">
           <ng-container>
-            <button *ngIf="!this.formPart.readonly" mat-button matTooltip="{{'btn.delete' | translate}}"
-              (click)="deleteArea(area)">
+            <button *ngIf="!this.formPart.readonly && !this.formPart.isVisor" mat-button
+              matTooltip="{{'btn.delete' | translate}}" (click)="deleteArea(area)">
               <mat-icon color="warn">highlight_off</mat-icon>
             </button>
           </ng-container>

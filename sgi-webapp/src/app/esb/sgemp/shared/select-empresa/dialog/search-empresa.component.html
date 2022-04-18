@@ -1,11 +1,5 @@
-<div class="sgi-dialog-header" fxLayout="row" fxLayoutGap="20px">
-  <span fxFlexAlign="center" mat-mat-dialog-title role="heading" aria-level="3" fxFlex>{{'sgemp.empresa' |
-    translate:MSG_PARAMS.CARDINALIRY.PLURAL}}</span>
-  <button fxFlex="nogrow" mat-icon-button mat-dialog-close>
-    <mat-icon class="close-icon">close</mat-icon>
-  </button>
-</div>
-<mat-dialog-content>
+<sgi-dialog-header title="{{'sgemp.empresa' | translate:MSG_PARAMS.CARDINALIRY.PLURAL}}"></sgi-dialog-header>
+<sgi-dialog-content>
   <!-- Buscador -->
   <form [formGroup]="formGroup">
     <mat-form-field>
@@ -97,7 +91,7 @@
       </button>
     </div>
   </ng-container>
-</mat-dialog-content>
+</sgi-dialog-content>
 <mat-dialog-actions>
   <button class="link-cancelar" mat-button type="button" mat-dialog-close>{{'btn.cancel' |
     translate}}</button>

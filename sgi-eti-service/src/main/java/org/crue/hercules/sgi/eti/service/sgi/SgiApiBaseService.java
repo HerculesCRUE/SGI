@@ -34,6 +34,12 @@ public abstract class SgiApiBaseService {
       case SGDOC:
         serviceURL = restApiProperties.getSgdocUrl();
         break;
+      case SGP:
+        serviceURL = restApiProperties.getSgpUrl();
+        break;
+      case COM:
+        serviceURL = restApiProperties.getComUrl();
+        break;
       default:
         throw new UnknownServiceTypeException(serviceType.name());
     }

@@ -12,3 +12,6 @@ databaseChangeLog:
   # HERCULES_0.0.7
   - include:
       file: classpath*:db/changelog/changes/0000000000002-update-initial-master-data.xml
+  # HERCULES_0.0.8
+  - include:
+      file: classpath*:db/changelog/changes/0000000000003-update-initial-master-data.xml

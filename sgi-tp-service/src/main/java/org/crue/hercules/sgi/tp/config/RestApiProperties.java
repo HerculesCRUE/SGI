@@ -26,6 +26,11 @@ public class RestApiProperties {
   private String piiUrl;
 
   /**
+   * URL base de los end-points del módulo de PRC.
+   */
+  private String prcUrl;
+
+  /**
    * URL base de los end-points del módulo de REL.
    */
   private String relUrl;

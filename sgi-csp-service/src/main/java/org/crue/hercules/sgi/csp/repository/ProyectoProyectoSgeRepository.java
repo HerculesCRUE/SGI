@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import org.crue.hercules.sgi.csp.model.Proyecto;
 import org.crue.hercules.sgi.csp.model.ProyectoProyectoSge;
+import org.crue.hercules.sgi.csp.repository.custom.CustomProyectoProyectoSgeRepository;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Repository;
@@ -14,7 +15,8 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 public interface ProyectoProyectoSgeRepository
-    extends JpaRepository<ProyectoProyectoSge, Long>, JpaSpecificationExecutor<ProyectoProyectoSge> {
+    extends JpaRepository<ProyectoProyectoSge, Long>, JpaSpecificationExecutor<ProyectoProyectoSge>,
+    CustomProyectoProyectoSgeRepository {
 
   /**
    * Indica si existen {@link ProyectoProyectoSge} de un {@link Proyecto}
@@ -25,5 +27,7 @@ public interface ProyectoProyectoSgeRepository
   boolean existsByProyectoId(Long proyectoId);
 
   Optional<ProyectoProyectoSge> findByIdAndProyectoUnidadGestionRefIn(Long id, List<String> unidadGestionRefs);
+  
+  List<ProyectoProyectoSge> findByProyectoId(Long proyectoId);
 
 }

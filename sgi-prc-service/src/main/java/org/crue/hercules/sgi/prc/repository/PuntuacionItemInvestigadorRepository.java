@@ -20,4 +20,6 @@ public interface PuntuacionItemInvestigadorRepository
   List<PuntuacionItemInvestigador> findAllByProduccionCientificaIdAndPersonaRef(Long produccionCientificaId,
       String personaRef);
 
+  List<PuntuacionItemInvestigador> findAllByProduccionCientificaConvocatoriaBaremacionId(Long convocatoriaBaremacionId);
+
 }

@@ -20,7 +20,7 @@ const TITLE_NEW_ENTITY = marker('title.new.entity');
   styleUrls: ['./tipo-financiacion-modal.component.scss']
 })
 export class TipoFinanciacionModalComponent
-  extends DialogActionComponent<ITipoFinanciacion, ITipoFinanciacion> implements OnInit, OnDestroy {
+  extends DialogActionComponent<ITipoFinanciacion> implements OnInit, OnDestroy {
 
   private readonly tipoFinanciacion: ITipoFinanciacion;
   msgParamNombreEntity = {};

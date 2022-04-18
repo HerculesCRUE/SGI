@@ -2,8 +2,8 @@ package org.crue.hercules.sgi.prc.dto;
 
 import java.io.Serializable;
 
+import org.crue.hercules.sgi.prc.enums.EpigrafeCVN;
 import org.crue.hercules.sgi.prc.model.EstadoProduccionCientifica.TipoEstadoProduccion;
-import org.crue.hercules.sgi.prc.model.ProduccionCientifica.EpigrafeCVN;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;

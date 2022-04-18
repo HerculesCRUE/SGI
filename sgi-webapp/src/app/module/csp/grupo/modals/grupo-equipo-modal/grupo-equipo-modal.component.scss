@@ -1,0 +1,22 @@
+@import "typography.scss";
+
+.miembro-equipo-proyecto-modal {
+  .wrapper {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    flex-wrap: wrap;
+  }
+
+  .fields-wrapper {
+    display: inline-flex;
+    flex-wrap: wrap;
+    padding-right: 15px;
+  }
+
+  .fieldset-form {
+    padding-bottom: 10px;
+    padding-top: 10px;
+    font-size: map-get($sgi-typography-size, form-fieldset);
+  }
+}

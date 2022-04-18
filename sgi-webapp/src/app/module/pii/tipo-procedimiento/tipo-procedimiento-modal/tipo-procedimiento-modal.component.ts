@@ -21,7 +21,7 @@ const TITLE_NEW_ENTITY = marker('title.new.entity');
   styleUrls: ['./tipo-procedimiento-modal.component.scss']
 })
 export class TipoProcedimientoModalComponent
-  extends DialogActionComponent<ITipoProcedimiento, ITipoProcedimiento> implements OnInit, OnDestroy {
+  extends DialogActionComponent<ITipoProcedimiento> implements OnInit, OnDestroy {
 
   private readonly tipoProcedimiento: ITipoProcedimiento;
   public msgParamNombreEntity = {};

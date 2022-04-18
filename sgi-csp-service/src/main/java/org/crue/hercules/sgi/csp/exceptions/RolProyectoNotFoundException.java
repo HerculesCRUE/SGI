@@ -10,4 +10,8 @@ public class RolProyectoNotFoundException extends CspNotFoundException {
   public RolProyectoNotFoundException(Long rolProyectoId) {
     super("RolProyecto " + rolProyectoId + " does not exist.");
   }
+
+  public RolProyectoNotFoundException() {
+    super("RolProyecto principal does not exist.");
+  }
 }

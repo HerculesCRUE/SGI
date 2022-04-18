@@ -1,0 +1,154 @@
+<sgi-menu-content>
+  <form [formGroup]="formGroup" class="busqueda" [fxLayout.xs]="fxLayoutProperties.xs"
+    [fxLayout]="fxLayoutProperties.layout" fxLayoutGap="fxLayoutProperties.gap">
+    <div [fxLayout.xs]="fxLayoutProperties.xs" [fxLayout]="fxLayoutProperties.layout"
+      [fxLayoutGap]="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
+
+      <!-- Autor -->
+      <div class="col" fxFlex="49%" fxFlex.sm="99%">
+        <mat-form-field class="input-form">
+          <mat-label>{{'prc.congreso.autor' | translate}}</mat-label>
+          <sgi-select-persona placeholder="{{'prc.congreso.autor' | translate}}"
+            [tipoColectivo]="TIPO_COLECTIVO.AUTOR_PRC" formControlName="investigador"></sgi-select-persona>
+        </mat-form-field>
+      </div>
+
+      <!-- Grupo investigación -->
+      <div class="col" fxFlex="49%" fxFlex.sm="99%">
+        <mat-form-field>
+          <mat-label>{{'prc.congreso.grupo-investigacion' | translate}}</mat-label>
+          <sgi-select-dialog-grupo placeholder="{{'prc.congreso.grupo-investigacion' | translate}}"
+            formControlName="grupoInvestigacion">
+          </sgi-select-dialog-grupo>
+        </mat-form-field>
+      </div>
+
+      <!-- Título del trabajo -->
+      <div class="col" fxFlex="49%" fxFlex.sm="99%">
+        <mat-form-field>
+          <mat-label>{{'prc.congreso.titulo-trabajo' | translate}}</mat-label>
+          <input matInput placeholder="{{'prc.congreso.titulo-trabajo' | translate}}" formControlName="tituloTrabajo">
+        </mat-form-field>
+      </div>
+
+      <!-- Tipo evento -->
+      <div class="col" fxFlex="49%" fxFlex.sm="99%">
+        <mat-form-field>
+          <mat-label>{{'prc.congreso.tipo-evento' | translate}}</mat-label>
+          <sgi-select-enum formControlName="tipoEvento" [enumMap]="TIPO_EVENTO_MAP">
+          </sgi-select-enum>
+        </mat-form-field>
+      </div>
+
+      <!-- Nombre congreso -->
+      <div class="col" fxFlex="49%" fxFlex.sm="99%">
+        <mat-form-field>
+          <mat-label>{{'prc.congreso.nombre-congreso' | translate}}</mat-label>
+          <input matInput placeholder="{{'prc.congreso.nombre-congreso' | translate}}" formControlName="nombreCongreso">
+        </mat-form-field>
+      </div>
+
+      <!-- Fecha celebración desde-->
+      <div class="col" fxFlex="24%" fxFlex.sm="49%">
+        <mat-form-field>
+          <mat-label>{{'prc.congreso.fecha-celebracion-desde' | translate}}</mat-label>
+          <input matInput formControlName="fechaCelebracionDesde" [matDatepicker]="pickerFechaCelebracionDesde"
+            [placeholder]="'prc.congreso.fecha-celebracion-desde' | translate">
+          <mat-datepicker-toggle matSuffix [for]="pickerFechaCelebracionDesde"></mat-datepicker-toggle>
+          <mat-datepicker #pickerFechaCelebracionDesde>
+          </mat-datepicker>
+        </mat-form-field>
+      </div>
+
+      <!-- Fecha celebración hasta-->
+      <div class="col" fxFlex="24%" fxFlex.sm="49%">
+        <mat-form-field sgiEndDate>
+          <mat-label>{{'prc.congreso.fecha-celebracion-hasta' | translate}}</mat-label>
+          <input matInput formControlName="fechaCelebracionHasta" [matDatepicker]="pickerFechaCelebracionHasta"
+            [placeholder]="'prc.congreso.fecha-celebracion-hasta' | translate">
+          <mat-datepicker-toggle matSuffix [for]="pickerFechaCelebracionHasta"></mat-datepicker-toggle>
+          <mat-datepicker #pickerFechaCelebracionHasta>
+          </mat-datepicker>
+        </mat-form-field>
+      </div>
+
+      <!-- Estado -->
+      <div class="col" fxFlex="49%" fxFlex.sm="99%">
+        <mat-form-field>
+          <mat-label>{{'prc.congreso.estado' | translate}}</mat-label>
+          <mat-select matNativeControl formControlName="estado" multiple>
+            <mat-option *ngFor="let tipoEstadoProduccion of TIPO_ESTADO_PRODUCCION_LIST" [value]="tipoEstadoProduccion">
+              {{ TIPO_ESTADO_PRODUCCION_MAP.get(tipoEstadoProduccion) | translate }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+
+    </div>
+    <div class="buttons-final">
+      <div class="col filter-button">
+        <button color="primary" aria-label="Center Align" mat-raised-button (click)="onSearch()">
+          <mat-icon>search</mat-icon> {{'btn.search'| translate}}
+        </button>
+        <button color="warn" aria-label="Center Align" (click)="onClearFilters()" mat-button>{{'btn.clean'|
+          translate}}
+        </button>
+      </div>
+    </div>
+  </form>
+
+  <!-- Listado de congresos -->
+  <div class="mat-elevation-z4">
+    <table mat-table [dataSource]="congresos$ | async" matSort matSortActive="fechaCelebracion" matSortDirection="desc"
+      matSortDisableClear>
+      <!-- Fecha celebración -->
+      <ng-container matColumnDef="fechaCelebracion">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'prc.congreso.fecha-celebracion' | translate}}
+        </th>
+        <td mat-cell *matCellDef="let congreso">{{congreso.fechaCelebracion | luxon:'shortDate' }}</td>
+      </ng-container>
+
+      <!-- Título trabajo -->
+      <ng-container matColumnDef="tituloTrabajo">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'prc.congreso.titulo-trabajo' | translate}}
+        </th>
+        <td mat-cell *matCellDef="let congreso">{{congreso.tituloTrabajo }}</td>
+      </ng-container>
+
+      <!--Tipo evento-->
+      <ng-container matColumnDef="tipoEvento">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>
+          {{'prc.congreso.tipo-evento' | translate}}
+        </th>
+        <td mat-cell *matCellDef="let congreso">
+          {{TIPO_EVENTO_MAP.get(congreso.tipoEvento) | translate }}</td>
+      </ng-container>
+
+      <!--Estado-->
+      <ng-container matColumnDef="estado">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>
+          {{'prc.congreso.estado' | translate}}
+        </th>
+        <td mat-cell *matCellDef="let congreso">
+          {{ TIPO_ESTADO_PRODUCCION_MAP.get(congreso.estado.estado) | translate }}</td>
+      </ng-container>
+
+      <!-- Acciones -->
+      <ng-container matColumnDef="acciones">
+        <th mat-header-cell *matHeaderCellDef> {{'label.actions' | translate}} </th>
+        <td mat-cell *matCellDef="let congreso">
+          <ng-container *sgiHasAnyAuthority="['PRC-VAL-E', 'PRC-VAL-V']">
+            <a mat-button matTooltip="{{'btn.view' | translate}}" [routerLink]="[congreso.id]">
+              <mat-icon color="primary">visibility</mat-icon>
+            </a>
+          </ng-container>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="columnas"></tr>
+      <tr mat-row *matRowDef="let row; columns: columnas;"></tr>
+    </table>
+    <mat-paginator [pageSizeOptions]="elementosPagina" [length]="totalElementos" showFirstLastButtons>
+    </mat-paginator>
+  </div>
+</sgi-menu-content>

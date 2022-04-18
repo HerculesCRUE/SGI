@@ -4,7 +4,8 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { DialogActionComponent } from '@core/component/dialog-action.component';
 import { FormularioSolicitud } from '@core/enums/formulario-solicitud';
-import { Problem, ValidationHttpProblem } from '@core/errors/http-problem';
+import { SgiHttpProblem, ValidationHttpError } from '@core/errors/http-problem';
+import { SgiProblem } from '@core/errors/sgi-error';
 import { MSG_PARAMS } from '@core/i18n';
 import { Estado, ESTADO_MAP, IEstadoSolicitud } from '@core/models/csp/estado-solicitud';
 import { ISolicitud } from '@core/models/csp/solicitud';
@@ -69,7 +70,7 @@ ESTADO_MAP_INVESTIGADOR.set(Estado.DENEGADA, new Map([
   styleUrls: ['./cambio-estado-modal.component.scss']
 })
 export class CambioEstadoModalComponent
-  extends DialogActionComponent<SolicitudCambioEstadoModalComponentData, IEstadoSolicitud> {
+  extends DialogActionComponent<IEstadoSolicitud> {
 
   fxLayoutProperties: FxLayoutProperties;
 
@@ -135,8 +136,14 @@ export class CambioEstadoModalComponent
     });
 
     this.msgDocumentosConvocatoriaRequired = this.translate.instant(MSG_DOCUMENTOS_CONVOCATORIA_REQUIRED);
-    this.msgSolicitudProyectoCoordinadoRequired = this.translate.instant(MSG_FIELD_REQUIRED, { field: this.translate.instant(SOLICITUD_PROYECTO_COORDINADO) });
-    this.msgSolicitudProyectoCoordinadorExternoRequired = this.translate.instant(MSG_FIELD_REQUIRED, { field: this.translate.instant(SOLICITUD_PROYECTO_COORDINADOR_EXTERNO) });
+    this.msgSolicitudProyectoCoordinadoRequired = this.translate.instant(
+      MSG_FIELD_REQUIRED,
+      { field: this.translate.instant(SOLICITUD_PROYECTO_COORDINADO) }
+    );
+    this.msgSolicitudProyectoCoordinadorExternoRequired = this.translate.instant(
+      MSG_FIELD_REQUIRED,
+      { field: this.translate.instant(SOLICITUD_PROYECTO_COORDINADOR_EXTERNO) }
+    );
     this.msgSolicitudEquipoSolicitanteRequired = this.translate.instant(MSG_SOLICITUD_EQUIPO_SOLICITANTE_REQUIRED);
   }
 
@@ -153,7 +160,7 @@ export class CambioEstadoModalComponent
   protected buildFormGroup(): FormGroup {
     return new FormGroup({
       estadoActual: new FormControl({ value: this.data.estadoActual, disabled: true }),
-      estadoNuevo: new FormControl(this.data.estadoNuevo),
+      estadoNuevo: new FormControl(this.data.estadoNuevo, Validators.required),
       fechaEstado: new FormControl({ value: DateTime.now(), disabled: this.data.isInvestigador }, Validators.required),
       comentario: new FormControl('', [Validators.maxLength(2000)])
     });
@@ -169,7 +176,7 @@ export class CambioEstadoModalComponent
   }
 
   private validateCambioEstado(estado: Estado): Observable<never | void> {
-    const problems: Problem[] = [];
+    const problems: SgiProblem[] = [];
 
     if (![Estado.DESISTIDA, Estado.RENUNCIADA].includes(estado)) {
       problems.push(...this.validateRequiredDocumentos());
@@ -185,15 +192,15 @@ export class CambioEstadoModalComponent
     return of(void 0);
   }
 
-  private validateRequiredDocumentos(): Problem[] {
-    const problems: Problem[] = [];
+  private validateRequiredDocumentos(): SgiProblem[] {
+    const problems: SgiProblem[] = [];
     if (!this.data.hasRequiredDocumentos) {
       problems.push(this.buildValidationProblem(this.msgDocumentosConvocatoriaRequired));
     }
     return problems;
   }
 
-  private validateSolicitudProyecto(): Problem[] {
+  private validateSolicitudProyecto(): SgiProblem[] {
     if (this.data.isInvestigador) {
       return this.validateSolicitudProyectoInvestigador();
     } else {
@@ -201,7 +208,7 @@ export class CambioEstadoModalComponent
     }
   }
 
-  private validateSolicitudProyectoUnidadGestion(): Problem[] {
+  private validateSolicitudProyectoUnidadGestion(): SgiProblem[] {
     return [
       ...this.validateCoordinadoFilled(),
       ...this.validateCoordinadorExternoFilled(),
@@ -209,15 +216,14 @@ export class CambioEstadoModalComponent
     ];
   }
 
-  private validateSolicitudProyectoInvestigador(): Problem[] {
+  private validateSolicitudProyectoInvestigador(): SgiProblem[] {
     return [
       ...this.validateSolicitanteInSolicitudEquipo()
     ];
   }
 
-  private validateCoordinadoFilled(): Problem[] {
-    const problems: Problem[] = [];
-
+  private validateCoordinadoFilled(): SgiProblem[] {
+    const problems: SgiProblem[] = [];
     if (this.data.solicitudProyecto.coordinado === undefined || this.data.solicitudProyecto.coordinado === null) {
       problems.push(this.buildValidationProblem(this.msgSolicitudProyectoCoordinadoRequired));
     }
@@ -225,8 +231,8 @@ export class CambioEstadoModalComponent
     return problems;
   }
 
-  private validateCoordinadorExternoFilled(): Problem[] {
-    const problems: Problem[] = [];
+  private validateCoordinadorExternoFilled(): SgiProblem[] {
+    const problems: SgiProblem[] = [];
 
     if (!!this.data.solicitudProyecto.coordinado
       && (this.data.solicitudProyecto.coordinadorExterno === undefined || this.data.solicitudProyecto.coordinadorExterno === null)) {
@@ -236,8 +242,8 @@ export class CambioEstadoModalComponent
     return problems;
   }
 
-  private validateSolicitanteInSolicitudEquipo(): Problem[] {
-    const problems: Problem[] = [];
+  private validateSolicitanteInSolicitudEquipo(): SgiProblem[] {
+    const problems: SgiProblem[] = [];
 
     if (!this.data.isSolicitanteInSolicitudEquipo) {
       problems.push(this.buildValidationProblem(this.msgSolicitudEquipoSolicitanteRequired));
@@ -246,8 +252,8 @@ export class CambioEstadoModalComponent
     return problems;
   }
 
-  private buildValidationProblem(msgError: string): ValidationHttpProblem {
-    return new ValidationHttpProblem({ title: msgError } as Problem);
+  private buildValidationProblem(msgError: string): ValidationHttpError {
+    return new ValidationHttpError({ title: msgError } as SgiHttpProblem);
   }
 
 }

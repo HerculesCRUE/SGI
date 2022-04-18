@@ -62,7 +62,7 @@ export abstract class AbstractTablePaginationComponent<T> implements OnInit, OnD
       })
     ).subscribe();
     // First load
-    this.loadTable();
+    this.onSearch();
   }
 
   /**

@@ -24,7 +24,7 @@ const TITLE_NEW_ENTITY = marker('title.new.entity');
   styleUrls: ['./fuente-financiacion-modal.component.scss']
 })
 export class FuenteFinanciacionModalComponent
-  extends DialogActionComponent<IFuenteFinanciacion, IFuenteFinanciacion> implements OnInit, OnDestroy {
+  extends DialogActionComponent<IFuenteFinanciacion> implements OnInit, OnDestroy {
 
   private readonly fuenteFinanciacion: IFuenteFinanciacion;
   public readonly origenes: Observable<ITipoOrigenFuenteFinanciacion[]>;

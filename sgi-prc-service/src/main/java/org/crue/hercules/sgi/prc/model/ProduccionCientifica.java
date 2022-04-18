@@ -1,9 +1,9 @@
 package org.crue.hercules.sgi.prc.model;
 
 import java.util.List;
-import java.util.stream.Stream;
 
 import javax.persistence.Column;
+import javax.persistence.Convert;
 import javax.persistence.Entity;
 import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
@@ -15,9 +15,10 @@ import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
-import org.crue.hercules.sgi.prc.exceptions.EpigrafeCVNNotFoundException;
+import org.crue.hercules.sgi.prc.enums.EpigrafeCVN;
 import org.crue.hercules.sgi.prc.model.BaseEntity.Create;
 import org.crue.hercules.sgi.prc.model.BaseEntity.Update;
+import org.crue.hercules.sgi.prc.model.converter.EpigrafeCVNConverter;
 import org.crue.hercules.sgi.prc.validation.UniqueFieldsValues;
 
 import lombok.AccessLevel;
@@ -49,52 +50,6 @@ public class ProduccionCientifica extends BaseEntity {
    */
   private static final long serialVersionUID = 1L;
 
-  /** EpigrafeCVN */
-  public enum EpigrafeCVN {
-    /** Publicaciones, documentos científicos y técnicos */
-    E060_010_010_000("060.010.010.000"),
-    /** Trabajos presentados en congresos nacionales o internacionales */
-    E060_010_020_000("060.010.020.000"),
-    /** Obras artísticas dirigidas */
-    E050_020_030_000("050.020.030.000"),
-    /** Consejos/comités editoriales */
-    E060_030_030_000("060.030.030.000"),
-    /** Invenciones */
-    E050_030_010_000("050.030.010.000"),
-    /** Contratos */
-    E050_020_020_000("050.020.020.000"),
-    /** Proyecto de investigación */
-    E050_020_010_000("050.020.010.000"),
-    /** Organización actividades I+D+i */
-    E060_020_030_000("060.020.030.000"),
-    /** Dirección de tesis */
-    E030_040_000_000("030.040.000.000"),
-    /** Sexenios (Periodos de actividad investigadora) */
-    E060_030_070_000("060.030.070.000");
-
-    private String internValue;
-
-    private EpigrafeCVN(String internValue) {
-      this.internValue = internValue;
-    }
-
-    public String getInternValue() {
-      return internValue;
-    }
-
-    public static EpigrafeCVN getByInternValue(String internValue) {
-      try {
-        return Stream.of(EpigrafeCVN.values())
-            .filter(epigrafeValue -> epigrafeValue.getInternValue().equalsIgnoreCase(internValue))
-            .findFirst()
-            .orElseThrow(() -> new EpigrafeCVNNotFoundException(internValue));
-
-      } catch (Exception e) {
-        throw new EpigrafeCVNNotFoundException(internValue);
-      }
-    }
-  }
-
   /** Id */
   @Id
   @Column(name = "id", nullable = false)
@@ -107,6 +62,7 @@ public class ProduccionCientifica extends BaseEntity {
   private String produccionCientificaRef;
 
   @Column(name = "epigrafe_cvn", length = EPIGRAFE_LENGTH, nullable = false)
+  @Convert(converter = EpigrafeCVNConverter.class)
   private EpigrafeCVN epigrafeCVN;
 
   /** EstadoProduccionCientifica */

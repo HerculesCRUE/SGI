@@ -1,7 +1,5 @@
 package org.crue.hercules.sgi.csp.service.sgi;
 
-import static org.mockito.ArgumentMatchers.anyString;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.assertj.core.api.Assertions;
@@ -9,9 +7,11 @@ import org.crue.hercules.sgi.csp.config.RestApiProperties;
 import org.crue.hercules.sgi.csp.dto.cnf.ConfigOutput;
 import org.crue.hercules.sgi.csp.service.BaseServiceTest;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
 import org.mockito.BDDMockito;
 import org.mockito.Mock;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
@@ -34,14 +34,17 @@ class SgiApiCnfServiceTest extends BaseServiceTest {
     this.configService = new SgiApiCnfService(this.restApiProperties, this.restTemplate, this.mapper);
   }
 
-  // @Test
+  @Test
   void findByName() {
     ConfigOutput configOutput = this.buildMockConfigOutput("test-path", "testing", "testing");
 
-    BDDMockito.given(restTemplate.exchange(
-        anyString(), ArgumentMatchers.<HttpMethod>any(),
-        ArgumentMatchers.<HttpEntity<Object>>any(),
-        ArgumentMatchers.<Class<ConfigOutput>>any())).willReturn(ResponseEntity.ok(configOutput));
+    BDDMockito
+        .given(this.restTemplate.exchange(ArgumentMatchers
+            .<String>any(), ArgumentMatchers.<HttpMethod>any(),
+            ArgumentMatchers.<HttpEntity<Object>>any(),
+            ArgumentMatchers.<ParameterizedTypeReference<ConfigOutput>>any(),
+            ArgumentMatchers.<Object>any()))
+        .willReturn(ResponseEntity.ok(configOutput));
 
     String result = this.configService.findByName("testing");
 

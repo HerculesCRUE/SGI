@@ -96,7 +96,6 @@ export class ConvocatoriaDatosGeneralesFragment extends FormFragment<IConvocator
       form.controls.entidadGestora.disable();
       form.controls.duracion.disable();
       form.controls.formularioSolicitud.disable();
-      form.controls.excelencia.disable();
     }
 
     this.subscriptions.push(

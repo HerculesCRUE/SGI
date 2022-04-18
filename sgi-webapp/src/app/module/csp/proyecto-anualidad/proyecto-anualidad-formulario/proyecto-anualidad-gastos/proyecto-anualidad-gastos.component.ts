@@ -97,7 +97,7 @@ export class ProyectoAnualidadGastosComponent extends FragmentComponent implemen
       proyectoId: this.formPart.proyectoId,
       fechaInicioAnualidad: this.formPart.fechaInicioAnualidad,
       fechaFinAnualidad: this.formPart.fechaFinAnualidad,
-      isEdit: false,
+      isEdit: !!anualidadGasto,
       readonly: this.actionService.readonly
     };
     const config = {

@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { AbstractTablePaginationComponent } from '@core/component/abstract-table-pagination.component';
-import { HttpProblem } from '@core/errors/http-problem';
+import { SgiError } from '@core/errors/sgi-error';
 import { MSG_PARAMS } from '@core/i18n';
 import { IAreaTematica } from '@core/models/csp/area-tematica';
 import { FxFlexProperties } from '@core/models/shared/flexLayout/fx-flex-properties';
@@ -221,7 +221,7 @@ export class AreaTematicaListadoComponent extends AbstractTablePaginationCompone
         },
         (error) => {
           this.logger.error(error);
-          if (error instanceof HttpProblem) {
+          if (error instanceof SgiError) {
             this.snackBarService.showError(error);
           }
           else {
@@ -253,7 +253,7 @@ export class AreaTematicaListadoComponent extends AbstractTablePaginationCompone
         (error) => {
           this.logger.error(error);
           areaTematica.activo = false;
-          if (error instanceof HttpProblem) {
+          if (error instanceof SgiError) {
             this.snackBarService.showError(error);
           }
           else {

@@ -1,9 +1,14 @@
 package org.crue.hercules.sgi.csp.controller;
 
 import java.time.Instant;
+import java.util.ArrayList;
 
+import org.crue.hercules.sgi.csp.dto.SolicitudHitoAvisoInput;
+import org.crue.hercules.sgi.csp.dto.SolicitudHitoAvisoInput.Destinatario;
+import org.crue.hercules.sgi.csp.dto.SolicitudHitoInput;
 import org.crue.hercules.sgi.csp.exceptions.SolicitudHitoNotFoundException;
 import org.crue.hercules.sgi.csp.model.SolicitudHito;
+import org.crue.hercules.sgi.csp.model.SolicitudHitoAviso;
 import org.crue.hercules.sgi.csp.model.TipoHito;
 import org.crue.hercules.sgi.csp.service.SolicitudHitoService;
 import org.crue.hercules.sgi.framework.test.web.servlet.result.SgiMockMvcResultHandlers;
@@ -11,8 +16,6 @@ import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
 import org.mockito.BDDMockito;
 import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
-import org.springframework.beans.BeanUtils;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
@@ -37,47 +40,45 @@ public class SolicitudHitoControllerTest extends BaseControllerTest {
   @WithMockUser(username = "user", authorities = { "CSP-SOL-E" })
   public void create_ReturnsSolicitudHito() throws Exception {
     // given: new SolicitudHito
-    SolicitudHito solicitudHito = generarSolicitudHito(null, 1L, 1L);
+    SolicitudHitoInput solicitudHitoInput = generarSolicitudHitoInput();
 
-    BDDMockito.given(service.create(ArgumentMatchers.<SolicitudHito>any())).willAnswer(new Answer<SolicitudHito>() {
-      @Override
-      public SolicitudHito answer(InvocationOnMock invocation) throws Throwable {
-        SolicitudHito givenData = invocation.getArgument(0, SolicitudHito.class);
-        SolicitudHito newData = new SolicitudHito();
-        BeanUtils.copyProperties(givenData, newData);
-        newData.setId(1L);
-        return newData;
-      }
-    });
+    BDDMockito.given(service.create(ArgumentMatchers.<SolicitudHitoInput>any()))
+        .willAnswer((InvocationOnMock invocation) -> {
+          return generarSolicitudHito(1L);
+        });
 
     // when: create SolicitudHito
     mockMvc
         .perform(MockMvcRequestBuilders.post(CONTROLLER_BASE_PATH).with(SecurityMockMvcRequestPostProcessors.csrf())
             .contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON)
-            .content(mapper.writeValueAsString(solicitudHito)))
+            .content(mapper.writeValueAsString(solicitudHitoInput)))
         .andDo(SgiMockMvcResultHandlers.printOnError())
         // then: new SolicitudHito is created
         .andExpect(MockMvcResultMatchers.status().isCreated())
         .andExpect(MockMvcResultMatchers.jsonPath("id").isNotEmpty())
-        .andExpect(MockMvcResultMatchers.jsonPath("solicitudId").value(solicitudHito.getSolicitudId()))
-        .andExpect(MockMvcResultMatchers.jsonPath("tipoHito.id").value(solicitudHito.getTipoHito().getId()))
-        .andExpect(MockMvcResultMatchers.jsonPath("comentario").value(solicitudHito.getComentario()))
-        .andExpect(MockMvcResultMatchers.jsonPath("generaAviso").value(solicitudHito.getGeneraAviso()));
+        .andExpect(MockMvcResultMatchers.jsonPath("solicitudId").value(1L))
+        .andExpect(MockMvcResultMatchers.jsonPath("fecha").value("2020-10-19T00:00:00Z"))
+        .andExpect(MockMvcResultMatchers.jsonPath("comentario").value("comentario"))
+        .andExpect(MockMvcResultMatchers.jsonPath("tipoHito.id").value(1L))
+        .andExpect(MockMvcResultMatchers.jsonPath("aviso.tareaProgramadaRef").value("1"))
+        .andExpect(MockMvcResultMatchers.jsonPath("aviso.comunicadoRef").value("1"))
+        .andExpect(MockMvcResultMatchers.jsonPath("aviso.incluirIpsSolicitud").value(false));
   }
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-SOL-E" })
   public void create_WithId_Returns400() throws Exception {
     // given: a SolicitudHito with id filled
-    SolicitudHito solicitudHito = generarSolicitudHito(1L, 1L, 1L);
+    SolicitudHitoInput solicitudHitoInput = generarSolicitudHitoInput();
 
-    BDDMockito.given(service.create(ArgumentMatchers.<SolicitudHito>any())).willThrow(new IllegalArgumentException());
+    BDDMockito.given(service.create(ArgumentMatchers.<SolicitudHitoInput>any()))
+        .willThrow(new IllegalArgumentException());
 
     // when: create SolicitudHito
     mockMvc
         .perform(MockMvcRequestBuilders.post(CONTROLLER_BASE_PATH).with(SecurityMockMvcRequestPostProcessors.csrf())
             .contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON)
-            .content(mapper.writeValueAsString(solicitudHito)))
+            .content(mapper.writeValueAsString(solicitudHitoInput)))
         .andDo(SgiMockMvcResultHandlers.printOnError())
         // then: 400 error
         .andExpect(MockMvcResultMatchers.status().isBadRequest());
@@ -87,47 +88,48 @@ public class SolicitudHitoControllerTest extends BaseControllerTest {
   @WithMockUser(username = "user", authorities = { "CSP-SOL-E" })
   public void update_WithExistingId_ReturnsSolicitudHito() throws Exception {
     // given: existing SolicitudHito
-    SolicitudHito updatedSolicitudHito = generarSolicitudHito(1L, 1L, 1L);
-    updatedSolicitudHito.setComentario("comentario-modificado");
+    SolicitudHito solicitudHito = generarSolicitudHito(1L);
+    SolicitudHitoInput updatedSolicitudHito = generarSolicitudHitoInput();
 
-    BDDMockito.given(service.update(ArgumentMatchers.<SolicitudHito>any(), ArgumentMatchers.anyBoolean()))
-        .willAnswer(new Answer<SolicitudHito>() {
-          @Override
-          public SolicitudHito answer(InvocationOnMock invocation) throws Throwable {
-            SolicitudHito givenData = invocation.getArgument(0, SolicitudHito.class);
-            return givenData;
-          }
-        });
+    BDDMockito.given(service.update(
+        ArgumentMatchers.<Long>any(), ArgumentMatchers.<SolicitudHitoInput>any()))
+        .willAnswer((InvocationOnMock invocation) -> solicitudHito);
 
     // when: update SolicitudHito
     mockMvc
-        .perform(MockMvcRequestBuilders.put(CONTROLLER_BASE_PATH + PATH_PARAMETER_ID, updatedSolicitudHito.getId())
+        .perform(MockMvcRequestBuilders.put(CONTROLLER_BASE_PATH + PATH_PARAMETER_ID, solicitudHito.getId())
             .with(SecurityMockMvcRequestPostProcessors.csrf()).contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON).content(mapper.writeValueAsString(updatedSolicitudHito)))
         .andDo(SgiMockMvcResultHandlers.printOnError())
         // then: SolicitudHito is updated
         .andExpect(MockMvcResultMatchers.status().isOk())
-        .andExpect(MockMvcResultMatchers.jsonPath("id").value(updatedSolicitudHito.getId()))
-        .andExpect(MockMvcResultMatchers.jsonPath("solicitudId").value(updatedSolicitudHito.getSolicitudId()))
-        .andExpect(MockMvcResultMatchers.jsonPath("tipoHito.id").value(updatedSolicitudHito.getTipoHito().getId()))
+        .andExpect(MockMvcResultMatchers.jsonPath("id").value(solicitudHito.getId()))
+        .andExpect(
+            MockMvcResultMatchers.jsonPath("solicitudId").value(solicitudHito.getSolicitudId()))
+        .andExpect(MockMvcResultMatchers.jsonPath("fecha").value(updatedSolicitudHito.getFecha().toString()))
         .andExpect(MockMvcResultMatchers.jsonPath("comentario").value(updatedSolicitudHito.getComentario()))
-        .andExpect(MockMvcResultMatchers.jsonPath("generaAviso").value(updatedSolicitudHito.getGeneraAviso()));
+        .andExpect(MockMvcResultMatchers.jsonPath("tipoHito.id").value(updatedSolicitudHito.getTipoHitoId()))
+        .andExpect(MockMvcResultMatchers.jsonPath("aviso.tareaProgramadaRef").value("1"))
+        .andExpect(MockMvcResultMatchers.jsonPath("aviso.comunicadoRef").value("1"))
+        .andExpect(MockMvcResultMatchers.jsonPath("aviso.incluirIpsSolicitud").value(
+            updatedSolicitudHito.getAviso().getIncluirIpsSolicitud()));
   }
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-SOL-E" })
   public void update_WithNoExistingId_Returns404() throws Exception {
     // given: a SolicitudHito with non existing id
-    SolicitudHito updatedSolicitudHito = generarSolicitudHito(1L, 1L, 1L);
+    Long id = 1L;
+    SolicitudHitoInput updatedSolicitudHito = generarSolicitudHitoInput();
 
-    BDDMockito.willThrow(new SolicitudHitoNotFoundException(updatedSolicitudHito.getId())).given(service)
+    BDDMockito.willThrow(new SolicitudHitoNotFoundException(id)).given(service)
         .findById(ArgumentMatchers.<Long>any());
-    BDDMockito.given(service.update(ArgumentMatchers.<SolicitudHito>any(), ArgumentMatchers.anyBoolean()))
-        .willThrow(new SolicitudHitoNotFoundException(updatedSolicitudHito.getId()));
+    BDDMockito.given(service.update(ArgumentMatchers.<Long>any(), ArgumentMatchers.<SolicitudHitoInput>any()))
+        .willThrow(new SolicitudHitoNotFoundException(id));
 
     // when: update SolicitudHito
     mockMvc
-        .perform(MockMvcRequestBuilders.put(CONTROLLER_BASE_PATH + PATH_PARAMETER_ID, updatedSolicitudHito.getId())
+        .perform(MockMvcRequestBuilders.put(CONTROLLER_BASE_PATH + PATH_PARAMETER_ID, id)
             .with(SecurityMockMvcRequestPostProcessors.csrf()).contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON).content(mapper.writeValueAsString(updatedSolicitudHito)))
         .andDo(SgiMockMvcResultHandlers.printOnError())
@@ -173,12 +175,8 @@ public class SolicitudHitoControllerTest extends BaseControllerTest {
   public void findById_WithExistingId_ReturnsSolicitudHito() throws Exception {
     // given: existing id
     Long id = 1L;
-    BDDMockito.given(service.findById(ArgumentMatchers.anyLong())).willAnswer(new Answer<SolicitudHito>() {
-      @Override
-      public SolicitudHito answer(InvocationOnMock invocation) throws Throwable {
-        Long id = invocation.getArgument(0, Long.class);
-        return generarSolicitudHito(id, 1L, 1L);
-      }
+    BDDMockito.given(service.findById(ArgumentMatchers.anyLong())).willAnswer((InvocationOnMock invocation) -> {
+      return generarSolicitudHito(id);
     });
 
     // when: find by existing id
@@ -189,7 +187,14 @@ public class SolicitudHitoControllerTest extends BaseControllerTest {
         // then: response is OK
         .andExpect(MockMvcResultMatchers.status().isOk())
         // and the requested SolicitudHito is resturned as JSON object
-        .andExpect(MockMvcResultMatchers.jsonPath("id").value(id));
+        .andExpect(MockMvcResultMatchers.jsonPath("id").value(1L))
+        .andExpect(MockMvcResultMatchers.jsonPath("solicitudId").value(1L))
+        .andExpect(MockMvcResultMatchers.jsonPath("fecha").value("2020-10-19T00:00:00Z"))
+        .andExpect(MockMvcResultMatchers.jsonPath("comentario").value("comentario"))
+        .andExpect(MockMvcResultMatchers.jsonPath("tipoHito.id").value(1L))
+        .andExpect(MockMvcResultMatchers.jsonPath("aviso.tareaProgramadaRef").value("1"))
+        .andExpect(MockMvcResultMatchers.jsonPath("aviso.comunicadoRef").value("1"))
+        .andExpect(MockMvcResultMatchers.jsonPath("aviso.incluirIpsSolicitud").value(false));
   }
 
   @Test
@@ -218,13 +223,41 @@ public class SolicitudHitoControllerTest extends BaseControllerTest {
    * @param tipoDocumentoId
    * @return el objeto SolicitudHito
    */
-  private SolicitudHito generarSolicitudHito(Long solicitudHitoId, Long solicitudId, Long tipoDocumentoId) {
+  private SolicitudHito generarSolicitudHito(Long id) {
 
-    SolicitudHito solicitudHito = SolicitudHito.builder().id(solicitudHitoId).solicitudId(solicitudId)
-        .comentario("comentario-" + solicitudHitoId).fecha(Instant.now()).generaAviso(Boolean.TRUE)
-        .tipoHito(TipoHito.builder().id(tipoDocumentoId).build()).build();
+    TipoHito tipoHito = new TipoHito();
+    tipoHito.setId(id == null ? 1 : id);
+    tipoHito.setActivo(true);
+
+    SolicitudHito solicitudHito = new SolicitudHito();
+    solicitudHito.setId(id);
+    solicitudHito.setSolicitudId(id == null ? 1 : id);
+    solicitudHito.setFecha(Instant.parse("2020-10-19T00:00:00Z"));
+    solicitudHito.setComentario("comentario");
+    solicitudHito.setSolicitudHitoAviso(new SolicitudHitoAviso(
+        id == null ? 1 : id, id == null ? "1" : id.toString(), id == null ? "1" : id.toString(), false));
+    solicitudHito.setTipoHito(tipoHito);
 
     return solicitudHito;
   }
 
+  private SolicitudHitoInput generarSolicitudHitoInput() {
+
+    SolicitudHitoAvisoInput aviso = new SolicitudHitoAvisoInput();
+    aviso.setFechaEnvio(Instant.parse("2020-10-19T00:00:00Z"));
+    aviso.setAsunto("Asunto");
+    aviso.setContenido("Contenido");
+    aviso.setDestinatarios(new ArrayList<>());
+    aviso.getDestinatarios().add(new Destinatario("test", "test@test.com"));
+    aviso.setIncluirIpsSolicitud(false);
+
+    SolicitudHitoInput convocatoriaHito = new SolicitudHitoInput();
+    convocatoriaHito.setSolicitudId(1L);
+    convocatoriaHito.setTipoHitoId(1L);
+    convocatoriaHito.setFecha(Instant.parse("2020-10-19T00:00:00Z"));
+    convocatoriaHito.setComentario("comentario");
+    convocatoriaHito.setAviso(aviso);
+
+    return convocatoriaHito;
+  }
 }

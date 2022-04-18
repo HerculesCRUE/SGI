@@ -1,6 +1,7 @@
 {
-  "idRef": "7",
+  "idRef": "DIRECCION_TESIS_7",
   "epigrafeCVN": "030.040.000.000",
+  "estado": "VALIDADO",
   "campos": [
     {
       "codigoCVN": "030.040.000.030",
@@ -17,7 +18,7 @@
     {
       "codigoCVN": "030.040.000.120",
       "valores": [
-        "Jroge Martínez Olmos"
+        "Jorge Martínez Olmos"
       ]
     },
     {
@@ -36,12 +37,6 @@
       "codigoCVN": "030.040.000.190",
       "valores": [
         "false"
-      ]
-    },
-    {
-      "codigoCVN": "030.040.000.160",
-      "valores": [
-        ""
       ]
     },
     {
@@ -65,8 +60,8 @@
   ],
   "autores": [
     {
-      "personaRef": "02221287",
-      "firma": "enrique.apellido",
+      "personaRef": "22932567",
+      "firma": "francisco.jose",
       "nombre": "",
       "apellidos": "",
       "orden": 1,

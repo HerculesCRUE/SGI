@@ -11,4 +11,7 @@ import lombok.experimental.SuperBuilder;
 @NoArgsConstructor
 @SuperBuilder
 public abstract class BaseActivableEntity extends Activable implements Identifiable {
+
+  public static final int NOMBRE_CONVOCATORIA_LENGTH = 100;
+  public static final int PARTIDA_PRESUPUESTARIA_LENGTH = 50;
 }

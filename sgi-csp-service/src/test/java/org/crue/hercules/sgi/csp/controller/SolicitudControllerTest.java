@@ -9,6 +9,8 @@ import java.util.List;
 import com.fasterxml.jackson.core.type.TypeReference;
 
 import org.assertj.core.api.Assertions;
+import org.crue.hercules.sgi.csp.converter.GrupoConverter;
+import org.crue.hercules.sgi.csp.converter.SolicitudGrupoConverter;
 import org.crue.hercules.sgi.csp.enums.FormularioSolicitud;
 import org.crue.hercules.sgi.csp.exceptions.SolicitudNotFoundException;
 import org.crue.hercules.sgi.csp.model.ConceptoGasto;
@@ -31,11 +33,13 @@ import org.crue.hercules.sgi.csp.model.TipoHito;
 import org.crue.hercules.sgi.csp.service.ConvocatoriaEntidadConvocanteService;
 import org.crue.hercules.sgi.csp.service.ConvocatoriaService;
 import org.crue.hercules.sgi.csp.service.EstadoSolicitudService;
+import org.crue.hercules.sgi.csp.service.GrupoService;
 import org.crue.hercules.sgi.csp.service.ProyectoService;
 import org.crue.hercules.sgi.csp.service.RequisitoEquipoNivelAcademicoService;
 import org.crue.hercules.sgi.csp.service.RequisitoIPCategoriaProfesionalService;
 import org.crue.hercules.sgi.csp.service.RequisitoIPNivelAcademicoService;
 import org.crue.hercules.sgi.csp.service.SolicitudDocumentoService;
+import org.crue.hercules.sgi.csp.service.SolicitudGrupoService;
 import org.crue.hercules.sgi.csp.service.SolicitudHitoService;
 import org.crue.hercules.sgi.csp.service.SolicitudModalidadService;
 import org.crue.hercules.sgi.csp.service.SolicitudPalabraClaveService;
@@ -137,6 +141,18 @@ public class SolicitudControllerTest extends BaseControllerTest {
 
   @MockBean
   private RequisitoIPNivelAcademicoService requisitoIPNivelAcademicoService;
+
+  @MockBean
+  private SolicitudGrupoService solicitudGrupoService;
+
+  @MockBean
+  private SolicitudGrupoConverter solicitudGrupoConverter;
+
+  @MockBean
+  private GrupoConverter grupoConverter;
+
+  @MockBean
+  private GrupoService grupoService;
 
   private static final String PATH_PARAMETER_ID = "/{id}";
   private static final String PATH_PARAMETER_DESACTIVAR = "/desactivar";
@@ -1329,7 +1345,7 @@ public class SolicitudControllerTest extends BaseControllerTest {
   private SolicitudHito generarSolicitudHito(Long solicitudHitoId, Long solicitudId, Long tipoDocumentoId) {
 
     SolicitudHito solicitudHito = SolicitudHito.builder().id(solicitudHitoId).solicitudId(solicitudId)
-        .comentario("comentario-" + solicitudHitoId).fecha(Instant.now()).generaAviso(Boolean.TRUE)
+        .comentario("comentario-" + solicitudHitoId).fecha(Instant.now())
         .tipoHito(TipoHito.builder().id(tipoDocumentoId).build()).build();
 
     return solicitudHito;

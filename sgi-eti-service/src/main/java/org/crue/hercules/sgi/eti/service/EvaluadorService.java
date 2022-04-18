@@ -64,4 +64,12 @@ public interface EvaluadorService {
    */
   void delete(Long id) throws EvaluadorNotFoundException;
 
+  /**
+   * Devuelve los evaluadores activos del comité indicado
+   * 
+   * @param comite Nombre del {@link Comite}
+   * @return lista de evaluadores
+   */
+  List<Evaluador> findAllByComite(String comite);
+
 }

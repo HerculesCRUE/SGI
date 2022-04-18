@@ -189,12 +189,12 @@ public class AutorService {
   public Page<Autor> findAllByProduccionCientificaId(Long produccionCientificaId, String query,
       Pageable pageable) {
     log.debug(
-        "findAllByProduccionCientificaId(Long prodduccionCientificaId, String query, Pageable pageable) - start");
+        "findAllByProduccionCientificaId(Long produccionCientificaId, String query, Pageable pageable) - start");
     Specification<Autor> specs = AutorSpecifications.byProduccionCientificaId(
         produccionCientificaId)
         .and(SgiRSQLJPASupport.toSpecification(query));
     final Page<Autor> returnValue = repository.findAll(specs, pageable);
-    log.debug("findAllByProduccionCientificaId(Long prodduccionCientificaId, String query, Pageable pageable) - end");
+    log.debug("findAllByProduccionCientificaId(Long produccionCientificaId, String query, Pageable pageable) - end");
     return returnValue;
   }
 

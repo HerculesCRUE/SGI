@@ -14,7 +14,9 @@ import org.crue.hercules.sgi.prc.model.Autor_;
 import org.crue.hercules.sgi.prc.model.BaseEntity;
 import org.crue.hercules.sgi.prc.model.CampoProduccionCientifica_;
 import org.crue.hercules.sgi.prc.model.IndiceImpacto.TipoRanking;
+import org.crue.hercules.sgi.prc.validation.CodigoCVNValueValid;
 import org.crue.hercules.sgi.prc.validation.FirmaOrPersonaRefOrNombreAndApellidosAutor;
+import org.crue.hercules.sgi.prc.validation.TipoFuenteImpactoValueValid;
 import org.crue.hercules.sgi.prc.validation.UniqueElementsByFields;
 import org.crue.hercules.sgi.prc.validation.UrlOrDocumentoRefAcreditacion;
 import org.crue.hercules.sgi.prc.validation.ValorFormat;
@@ -67,13 +69,14 @@ public class ProduccionCientificaApiInput implements Serializable {
   public static class CampoProduccionCientificaInput implements Serializable {
     private static final long serialVersionUID = 1L;
 
+    @CodigoCVNValueValid
     @NotEmpty
     @Size(max = BaseEntity.CAMPO_CVN_LENGTH)
     private String codigoCVN;
 
     @NotEmpty
     @UniqueElements
-    private List<@NotNull String> valores;
+    private List<@NotEmpty String> valores;
   }
 
   @Data
@@ -114,6 +117,7 @@ public class ProduccionCientificaApiInput implements Serializable {
   public static class IndiceImpactoInput implements Serializable {
     private static final long serialVersionUID = 1L;
 
+    @TipoFuenteImpactoValueValid
     @NotEmpty
     @Size(max = BaseEntity.TIPO_FUENTE_IMPACTO_LENGTH)
     private String fuenteImpacto;

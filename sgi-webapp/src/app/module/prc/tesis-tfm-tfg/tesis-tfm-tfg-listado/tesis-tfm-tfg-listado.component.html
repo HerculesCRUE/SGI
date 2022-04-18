@@ -1,0 +1,138 @@
+<sgi-menu-content>
+  <form [formGroup]="formGroup" class="busqueda" [fxLayout.xs]="fxLayoutProperties.xs"
+    [fxLayout]="fxLayoutProperties.layout" fxLayoutGap="fxLayoutProperties.gap">
+    <div [fxLayout.xs]="fxLayoutProperties.xs" [fxLayout]="fxLayoutProperties.layout"
+      [fxLayoutGap]="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
+
+      <!-- Director/a -->
+      <div class="col" fxFlex="49%" fxFlex.sm="99%">
+        <mat-form-field class="input-form">
+          <mat-label>{{'prc.tesis-tfm-tfg.director' | translate}}</mat-label>
+          <sgi-select-persona placeholder="{{'prc.tesis-tfm-tfg.director' | translate}}"
+            [tipoColectivo]="TIPO_COLECTIVO.AUTOR_PRC" formControlName="investigador"></sgi-select-persona>
+        </mat-form-field>
+      </div>
+
+      <!-- Grupo investigación -->
+      <div class="col" fxFlex="49%" fxFlex.sm="99%">
+        <mat-form-field>
+          <mat-label>{{'prc.tesis-tfm-tfg.grupo-investigacion' | translate}}</mat-label>
+          <sgi-select-dialog-grupo placeholder="{{'prc.tesis-tfm-tfg.grupo-investigacion' | translate}}"
+            formControlName="grupoInvestigacion">
+          </sgi-select-dialog-grupo>
+        </mat-form-field>
+      </div>
+
+      <!-- Título del trabajo -->
+      <div class="col" fxFlex="49%" fxFlex.sm="99%">
+        <mat-form-field>
+          <mat-label>{{'prc.tesis-tfm-tfg.titulo-trabajo' | translate}}</mat-label>
+          <input matInput placeholder="{{'prc.tesis-tfm-tfg.titulo-trabajo' | translate}}"
+            formControlName="tituloTrabajo">
+        </mat-form-field>
+      </div>
+
+      <!-- Tipo de proyecto -->
+      <div class="col" fxFlex="49%" fxFlex.sm="99%">
+        <mat-form-field>
+          <mat-label>{{'prc.tesis-tfm-tfg.tipo-proyecto' | translate}}</mat-label>
+          <sgi-select-enum formControlName="tipoProyecto" [enumMap]="TIPO_PROYECTO_MAP">
+          </sgi-select-enum>
+        </mat-form-field>
+      </div>
+
+      <!-- Fecha defensa desde-->
+      <div class="col" fxFlex="24%" fxFlex.sm="49%">
+        <mat-form-field>
+          <mat-label>{{'prc.tesis-tfm-tfg.fecha-defensa-desde' | translate}}</mat-label>
+          <input matInput formControlName="fechaDefensaDesde" [matDatepicker]="pickerFechaDefensaDesde"
+            [placeholder]="'prc.tesis-tfm-tfg.fecha-defensa-desde' | translate">
+          <mat-datepicker-toggle matSuffix [for]="pickerFechaDefensaDesde"></mat-datepicker-toggle>
+          <mat-datepicker #pickerFechaDefensaDesde>
+          </mat-datepicker>
+        </mat-form-field>
+      </div>
+
+      <!-- Fecha defensa hasta-->
+      <div class="col" fxFlex="24%" fxFlex.sm="49%">
+        <mat-form-field sgiEndDate>
+          <mat-label>{{'prc.tesis-tfm-tfg.fecha-defensa-hasta' | translate}}</mat-label>
+          <input matInput formControlName="fechaDefensaHasta" [matDatepicker]="pickerFechaDefensaHasta"
+            [placeholder]="'prc.tesis-tfm-tfg.fecha-defensa-hasta' | translate">
+          <mat-datepicker-toggle matSuffix [for]="pickerFechaDefensaHasta"></mat-datepicker-toggle>
+          <mat-datepicker #pickerFechaDefensaHasta>
+          </mat-datepicker>
+        </mat-form-field>
+      </div>
+
+      <!-- Estado -->
+      <div class="col" fxFlex="49%" fxFlex.sm="99%">
+        <mat-form-field>
+          <mat-label>{{'prc.tesis-tfm-tfg.estado' | translate}}</mat-label>
+          <mat-select matNativeControl formControlName="estado" multiple>
+            <mat-option *ngFor="let tipoEstadoProduccion of TIPO_ESTADO_PRODUCCION_LIST" [value]="tipoEstadoProduccion">
+              {{ TIPO_ESTADO_PRODUCCION_MAP.get(tipoEstadoProduccion) | translate }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+
+    </div>
+    <div class="buttons-final">
+      <div class="col filter-button">
+        <button color="primary" aria-label="Center Align" mat-raised-button (click)="onSearch()">
+          <mat-icon>search</mat-icon> {{'btn.search'| translate}}
+        </button>
+        <button color="warn" aria-label="Center Align" (click)="onClearFilters()" mat-button>{{'btn.clean'|
+          translate}}
+        </button>
+      </div>
+    </div>
+  </form>
+
+  <!-- Listado de direcciones de tesis -->
+  <div class="mat-elevation-z4">
+    <table mat-table [dataSource]="direccionesTesis$ | async" matSort matSortActive="fechaDefensa"
+      matSortDirection="desc" matSortDisableClear>
+      <!-- Fecha defensa -->
+      <ng-container matColumnDef="fechaDefensa">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'prc.tesis-tfm-tfg.fecha-defensa' | translate}}
+        </th>
+        <td mat-cell *matCellDef="let direccionTesis">{{direccionTesis.fechaDefensa | luxon:'shortDate' }}</td>
+      </ng-container>
+
+      <!-- Título del trabajo -->
+      <ng-container matColumnDef="tituloTrabajo">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'prc.tesis-tfm-tfg.titulo-trabajo' | translate}}
+        </th>
+        <td mat-cell *matCellDef="let direccionTesis">{{direccionTesis.tituloTrabajo }}</td>
+      </ng-container>
+
+      <!--Estado-->
+      <ng-container matColumnDef="estado">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>
+          {{'prc.tesis-tfm-tfg.estado' | translate}}
+        </th>
+        <td mat-cell *matCellDef="let direccionTesis">
+          {{ TIPO_ESTADO_PRODUCCION_MAP.get(direccionTesis.estado.estado) | translate }}</td>
+      </ng-container>
+
+      <!-- Acciones -->
+      <ng-container matColumnDef="acciones">
+        <th mat-header-cell *matHeaderCellDef> {{'label.actions' | translate}} </th>
+        <td mat-cell *matCellDef="let direccionTesis">
+          <ng-container *sgiHasAnyAuthority="['PRC-VAL-E', 'PRC-VAL-V']">
+            <a mat-button matTooltip="{{'btn.view' | translate}}" [routerLink]="[direccionTesis.id]">
+              <mat-icon color="primary">visibility</mat-icon>
+            </a>
+          </ng-container>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="columnas"></tr>
+      <tr mat-row *matRowDef="let row; columns: columnas;"></tr>
+    </table>
+    <mat-paginator [pageSizeOptions]="elementosPagina" [length]="totalElementos" showFirstLastButtons>
+    </mat-paginator>
+  </div>
+</sgi-menu-content>

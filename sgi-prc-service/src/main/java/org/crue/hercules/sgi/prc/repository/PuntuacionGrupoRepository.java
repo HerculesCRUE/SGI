@@ -1,6 +1,7 @@
 package org.crue.hercules.sgi.prc.repository;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.crue.hercules.sgi.prc.model.PuntuacionGrupo;
 import org.crue.hercules.sgi.prc.repository.custom.CustomPuntuacionGrupoRepository;
@@ -17,6 +18,8 @@ public interface PuntuacionGrupoRepository
     extends JpaRepository<PuntuacionGrupo, Long>, JpaSpecificationExecutor<PuntuacionGrupo>,
     CustomPuntuacionGrupoRepository {
 
-  List<PuntuacionGrupo> findAllByConvocatoriaBaremacionId(Long convocatoriaBaremacionId);
+  List<PuntuacionGrupo> findByConvocatoriaBaremacionId(Long convocatoriaBaremacionId);
+
+  Optional<PuntuacionGrupo> findByConvocatoriaBaremacionIdAndGrupoRef(Long convocatoriaBaremacionId, Long grupoRef);
 
 }

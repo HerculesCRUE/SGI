@@ -47,9 +47,9 @@ enum CodigoCVN {
   E060_010_020_080 = '060.010.020.080',
   /** Nombre del congreso */
   E060_010_020_100 = '060.010.020.100',
-  /** Nombre de la publicación */
+  /** Nombre de la publicación (congreso) */
   E060_010_020_370 = '060.010.020.370',
-  /** ISBN - ISSN publicación */
+  /** ISBN - ISSN congreso */
   E060_010_020_320 = '060.010.020.320',
   /** Tipo de participación */
   E060_010_020_050 = '060.010.020.050',
@@ -71,14 +71,16 @@ enum CodigoCVN {
   E050_020_030_090 = '050.020.030.090',
   /* Catálogo */
   E050_020_030_100 = '050.020.030.100',
-  /* Comisario de exposición */
+  /* Comisario */
   E050_020_030_110 = '050.020.030.110',
   /* Colectiva */
   COLECTIVA = 'COLECTIVA',
   /* Tipo */
   TIPO_OBRA = 'TIPO_OBRA',
-  /* Nombre del Consejo editorial */
+  /* Nombre del comité editorial */
   E060_030_030_010 = '060.030.030.010',
+  /* Categoría profesional */
+  E060_030_030_100 = '060.030.030.100',
   /* País de radicación */
   E060_030_030_020 = '060.030.030.020',
   /* Fecha de inicio */
@@ -147,10 +149,15 @@ enum CodigoCVN {
   E050_030_010_160 = '050.030.010.160',
   /* Ámbito geográfico, patente europea */
   E050_030_010_170 = '050.030.010.170',
+  /*
+   * Cuantía de las suma de las licencias de explotación, suma de los ingresos de
+   * los contratos relacionados con la invención
+   */
+  CUANTIA_LICENCIAS = 'CUANTIA_LICENCIAS',
   /* Número de tramos de investigación reconocidos */
   E060_030_070_010 = '060.030.070.010',
-  /* Categoría profesional */
-  E060_030_030_100 = '060.030.030.100'
+  CUANTIA_COSTES_INDIRECTOS_PROYECTO = 'CUANTIA_COSTES_INDIRECTOS_PROYECTO',
+  CUANTIA_COSTES_INDIRECTOS_CONTRATO = 'CUANTIA_COSTES_INDIRECTOS_CONTRATO'
 }
 
 export const CODIGO_CVN_MAP = new Map(Object.entries(CodigoCVN).map(([key, value]) => [value.toString(), key]));

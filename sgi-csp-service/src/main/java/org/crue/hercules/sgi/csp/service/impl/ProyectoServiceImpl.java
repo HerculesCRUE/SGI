@@ -12,7 +12,9 @@ import javax.validation.ConstraintViolationException;
 import javax.validation.Validator;
 
 import org.crue.hercules.sgi.csp.config.SgiConfigProperties;
+import org.crue.hercules.sgi.csp.dto.ProyectoDto;
 import org.crue.hercules.sgi.csp.dto.ProyectoPresupuestoTotales;
+import org.crue.hercules.sgi.csp.dto.RelacionEjecucionEconomica;
 import org.crue.hercules.sgi.csp.enums.FormularioSolicitud;
 import org.crue.hercules.sgi.csp.exceptions.ConvocatoriaNotFoundException;
 import org.crue.hercules.sgi.csp.exceptions.ProyectoIVAException;
@@ -46,6 +48,7 @@ import org.crue.hercules.sgi.csp.model.ProyectoPartida;
 import org.crue.hercules.sgi.csp.model.ProyectoPeriodoJustificacion;
 import org.crue.hercules.sgi.csp.model.ProyectoPeriodoSeguimiento;
 import org.crue.hercules.sgi.csp.model.ProyectoProrroga;
+import org.crue.hercules.sgi.csp.model.ProyectoProyectoSge;
 import org.crue.hercules.sgi.csp.model.ProyectoResponsableEconomico;
 import org.crue.hercules.sgi.csp.model.ProyectoSocio;
 import org.crue.hercules.sgi.csp.model.ProyectoSocioEquipo;
@@ -58,7 +61,6 @@ import org.crue.hercules.sgi.csp.model.SolicitudProyectoAreaConocimiento;
 import org.crue.hercules.sgi.csp.model.SolicitudProyectoClasificacion;
 import org.crue.hercules.sgi.csp.model.SolicitudProyectoEntidadFinanciadoraAjena;
 import org.crue.hercules.sgi.csp.model.SolicitudProyectoSocio;
-import org.crue.hercules.sgi.csp.repository.ConvocatoriaAreaTematicaRepository;
 import org.crue.hercules.sgi.csp.repository.ConvocatoriaConceptoGastoCodigoEcRepository;
 import org.crue.hercules.sgi.csp.repository.ConvocatoriaConceptoGastoRepository;
 import org.crue.hercules.sgi.csp.repository.ConvocatoriaEntidadConvocanteRepository;
@@ -91,7 +93,9 @@ import org.crue.hercules.sgi.csp.repository.SolicitudProyectoSocioPeriodoPagoRep
 import org.crue.hercules.sgi.csp.repository.SolicitudProyectoSocioRepository;
 import org.crue.hercules.sgi.csp.repository.SolicitudRepository;
 import org.crue.hercules.sgi.csp.repository.predicate.ProyectoPredicateResolver;
+import org.crue.hercules.sgi.csp.repository.predicate.ProyectoProyectoSgePredicateResolver;
 import org.crue.hercules.sgi.csp.repository.specification.ConvocatoriaEntidadConvocanteSpecifications;
+import org.crue.hercules.sgi.csp.repository.specification.ProyectoProyectoSgeSpecifications;
 import org.crue.hercules.sgi.csp.repository.specification.ProyectoSpecifications;
 import org.crue.hercules.sgi.csp.service.ContextoProyectoService;
 import org.crue.hercules.sgi.csp.service.ConvocatoriaPartidaService;
@@ -150,7 +154,6 @@ public class ProyectoServiceImpl implements ProyectoService {
   private final ProyectoEntidadConvocanteService proyectoEntidadConvocanteService;
   private final ConvocatoriaEntidadGestoraRepository convocatoriaEntidadGestoraRepository;
   private final ProyectoEntidadGestoraService proyectoEntidadGestoraService;
-  private final ConvocatoriaAreaTematicaRepository convocatoriaAreaTematicaRepository;
   private final ContextoProyectoService contextoProyectoService;
   private final ConvocatoriaPeriodoSeguimientoCientificoRepository convocatoriaPeriodoSeguimientoCientificoRepository;
   private final ProyectoPeriodoSeguimientoService proyectoPeriodoSeguimientoService;
@@ -200,7 +203,6 @@ public class ProyectoServiceImpl implements ProyectoService {
       ProyectoEntidadConvocanteService proyectoEntidadConvocanteService,
       ConvocatoriaEntidadGestoraRepository convocatoriaEntidadGestoraRepository,
       ProyectoEntidadGestoraService proyectoEntidadGestoraService,
-      ConvocatoriaAreaTematicaRepository convocatoriaAreaTematicaRepository,
       ContextoProyectoService contextoProyectoService,
       ConvocatoriaPeriodoSeguimientoCientificoRepository convocatoriaPeriodoSeguimientoCientificoRepository,
       ProyectoPeriodoSeguimientoService proyectoPeriodoSeguimientoService, SolicitudRepository solicitudRepository,
@@ -244,7 +246,6 @@ public class ProyectoServiceImpl implements ProyectoService {
     this.proyectoEntidadFinanciadoraService = proyectoEntidadFinanciadoraService;
     this.convocatoriaEntidadConvocanteRepository = convocatoriaEntidadConvocanteRepository;
     this.proyectoEntidadConvocanteService = proyectoEntidadConvocanteService;
-    this.convocatoriaAreaTematicaRepository = convocatoriaAreaTematicaRepository;
     this.contextoProyectoService = contextoProyectoService;
     this.convocatoriaPeriodoSeguimientoCientificoRepository = convocatoriaPeriodoSeguimientoCientificoRepository;
     this.proyectoPeriodoSeguimientoService = proyectoPeriodoSeguimientoService;
@@ -371,7 +372,6 @@ public class ProyectoServiceImpl implements ProyectoService {
       data.setConfidencial(proyectoActualizar.getConfidencial());
       data.setConvocatoriaExterna(proyectoActualizar.getConvocatoriaExterna());
       data.setCoordinadorExterno(proyectoActualizar.getCoordinadorExterno());
-      data.setCosteHora(proyectoActualizar.getCosteHora());
       data.setFechaFin(proyectoActualizar.getFechaFin());
       data.setFechaInicio(proyectoActualizar.getFechaInicio());
       data.setFinalidad(proyectoActualizar.getFinalidad());
@@ -398,8 +398,7 @@ public class ProyectoServiceImpl implements ProyectoService {
       data.setModeloEjecucion(proyectoActualizar.getModeloEjecucion());
       data.setObservaciones(proyectoActualizar.getObservaciones());
       data.setPermitePaquetesTrabajo(proyectoActualizar.getPermitePaquetesTrabajo());
-      data.setTimesheet(proyectoActualizar.getTimesheet());
-      data.setTipoHorasAnuales(proyectoActualizar.getTipoHorasAnuales());
+      data.setExcelencia(proyectoActualizar.getExcelencia());
       data.setTitulo(proyectoActualizar.getTitulo());
       data.setUnidadGestionRef(proyectoActualizar.getUnidadGestionRef());
       data.setImportePresupuesto(proyectoActualizar.getImportePresupuesto());
@@ -783,12 +782,6 @@ public class ProyectoServiceImpl implements ProyectoService {
     Assert.isTrue(modeloUnidad.isPresent(), "ModeloEjecucion '" + proyecto.getModeloEjecucion().getNombre()
         + "' no disponible para la UnidadGestion " + proyecto.getUnidadGestionRef());
 
-    if (proyecto.getCosteHora() != null && proyecto.getCosteHora()) {
-      Assert.isTrue(proyecto.getTimesheet() != null && proyecto.getTimesheet(), "El proyecto requiere timesheet");
-      Assert.isTrue(proyecto.getTipoHorasAnuales() != null,
-          "El campo tipoHorasAnuales debe ser obligatorio para el proyecto");
-    }
-
     // FechasFin after than última prórroga
     Optional<ProyectoProrroga> prorroga = proyectoProrrogaRepository
         .findFirstByProyectoIdOrderByFechaConcesionDesc(proyecto.getId());
@@ -819,15 +812,9 @@ public class ProyectoServiceImpl implements ProyectoService {
         Assert.isTrue(proyecto.getCoordinadorExterno() != null,
             "El campo coordinadorExterno debe ser obligatorio para el proyecto en estado 'CONCEDIDO'");
       }
-      Assert.isTrue(
-          proyecto.getEstado().getEstado() == EstadoProyecto.Estado.CONCEDIDO && proyecto.getTimesheet() != null,
-          "El campo timesheet debe ser obligatorio para el proyecto en estado 'CONCEDIDO'");
 
       Assert.isTrue(proyecto.getPermitePaquetesTrabajo() != null,
           "El campo permitePaquetesTrabajo debe ser obligatorio para el proyecto en estado 'CONCEDIDO'");
-
-      Assert.isTrue(proyecto.getCosteHora() != null,
-          "El campo costeHora debe ser obligatorio para el proyecto en estado 'Abierto'");
     }
 
     // Validación de datos IVA
@@ -914,7 +901,7 @@ public class ProyectoServiceImpl implements ProyectoService {
     log.debug("copyEntidadesFinanciadoras(Long proyectoId, Long convocatoriaId) - start");
     List<ConvocatoriaEntidadFinanciadora> entidadesConvocatoria = convocatoriaEntidadFinanciadoraRepository
         .findByConvocatoriaId(convocatoriaId);
-    entidadesConvocatoria.stream().forEach((entidadConvocatoria) -> {
+    entidadesConvocatoria.stream().forEach(entidadConvocatoria -> {
       log.debug("Copy ConvocatoriaEntidadFinanciadora with id: {}", entidadConvocatoria.getId());
       ProyectoEntidadFinanciadora entidadProyecto = new ProyectoEntidadFinanciadora();
       entidadProyecto.setProyectoId(proyectoId);
@@ -940,7 +927,7 @@ public class ProyectoServiceImpl implements ProyectoService {
     log.debug("copyPeriodoSeguimiento(Proyecto proyecto) - start");
 
     convocatoriaPeriodoSeguimientoCientificoRepository
-        .findAllByConvocatoriaIdOrderByMesInicial(proyecto.getConvocatoriaId()).forEach((convocatoriaSeguimiento) -> {
+        .findAllByConvocatoriaIdOrderByMesInicial(proyecto.getConvocatoriaId()).forEach(convocatoriaSeguimiento -> {
 
           log.debug("Copy ConvocatoriaPeriodoSeguimientoCientifico with id: {}", convocatoriaSeguimiento.getId());
 
@@ -1015,6 +1002,7 @@ public class ProyectoServiceImpl implements ProyectoService {
       proyecto.setFinalidad(convocatoria.getFinalidad());
       proyecto.setAmbitoGeografico(convocatoria.getAmbitoGeografico());
       proyecto.setClasificacionCVN(convocatoria.getClasificacionCVN());
+      proyecto.setExcelencia(convocatoria.getExcelencia());
     } else {
       proyecto.setConvocatoriaExterna(solicitud.getConvocatoriaExterna());
     }
@@ -1670,13 +1658,6 @@ public class ProyectoServiceImpl implements ProyectoService {
   public ProyectoPresupuestoTotales getTotales(Long proyectoId) {
     log.debug("getTotales(Long proyectoId) - start");
     final ProyectoPresupuestoTotales returnValue = repository.getTotales(proyectoId);
-
-    returnValue.setImporteTotalPresupuesto(
-        returnValue.getImporteTotalPresupuestoUniversidadSinCosteIndirecto()
-            .add(returnValue.getImporteTotalPresupuestoSocios()));
-    returnValue.setImporteTotalConcedido(
-        returnValue.getImporteTotalConcedidoUniversidadSinCosteIndirecto()
-            .add(returnValue.getImporteTotalConcedidoSocios()));
     log.debug("getTotales(Long proyectoId) - end");
     return returnValue;
   }
@@ -1703,14 +1684,8 @@ public class ProyectoServiceImpl implements ProyectoService {
             "El campo coordinadorExterno debe ser obligatorio para el proyecto en estado 'CONCEDIDO'");
       }
 
-      Assert.isTrue(proyecto.getTimesheet() != null,
-          "El campo timesheet debe ser obligatorio para el proyecto en estado 'CONCEDIDO'");
-
       Assert.isTrue(proyecto.getPermitePaquetesTrabajo() != null,
           "El campo permitePaquetesTrabajo debe ser obligatorio para el proyecto en estado 'CONCEDIDO'");
-
-      Assert.isTrue(proyecto.getCosteHora() != null,
-          "El campo costeHora debe ser obligatorio para el proyecto en estado 'CONCEDIDO'");
 
       List<ProyectoEquipo> equipos = proyectoEquipoService.findAllByProyectoId(proyecto.getId());
 
@@ -1741,20 +1716,25 @@ public class ProyectoServiceImpl implements ProyectoService {
   }
 
   /**
-   * Obtiene todos los ids de {@link Proyecto} que cumplan las condiciones
-   * indicadas en la query.
+   * Obtiene los ids de {@link Proyecto} modificados que esten
+   * activos y con {@link Proyecto#confidencial} a <code>false</code> que cumplan
+   * las condiciones indicadas en el filtro de búsqueda
    *
    * @param query información del filtro.
    * @return el listado de ids de {@link Proyecto}.
    */
   @Override
-  public List<Long> findIds(String query) {
-    log.debug("findIds(String query) - start");
+  public List<Long> findIdsProyectosModificados(String query) {
+    log.debug("findIdsProyectosModificados(String query) - start");
 
-    List<Long> returnValue = repository.findIds(SgiRSQLJPASupport.toSpecification(query,
-        ProyectoPredicateResolver.getInstance(programaRepository, proyectoProrrogaRepository, sgiConfigProperties)));
+    Specification<Proyecto> specs = ProyectoSpecifications.activos().and(ProyectoSpecifications.confidencial(false))
+        .and(SgiRSQLJPASupport.toSpecification(query,
+            ProyectoPredicateResolver.getInstance(programaRepository, proyectoProrrogaRepository,
+                sgiConfigProperties)));
 
-    log.debug("findIds(String query) - end");
+    List<Long> returnValue = repository.findIds(specs);
+
+    log.debug("findIdsProyectosModificados(String query) - end");
 
     return returnValue;
   }
@@ -1828,6 +1808,60 @@ public class ProyectoServiceImpl implements ProyectoService {
   @Override
   public List<Long> findIdsBySolicitudId(Long solicitudId) {
     return this.repository.findIds(ProyectoSpecifications.bySolicitudId(solicitudId));
+  }
+
+  /**
+   * Devuelve una lista de {@link ProyectoDto} que se incorporarán a la baremación
+   * de producción científica
+   * 
+   * @param anioInicio año inicio de baremación
+   * @param anioFin    año fin de baremación
+   * 
+   * @return Lista de {@link ProyectoDto}
+   */
+  @Override
+  public List<ProyectoDto> findProyectosProduccionCientifica(Integer anioInicio, Integer anioFin){
+
+    Instant fechaInicioBaremacion = PeriodDateUtil.calculateFechaInicioBaremacionByAnio(
+        anioInicio, sgiConfigProperties.getTimeZone());
+
+    Instant fechaFinBaremacion = PeriodDateUtil.calculateFechaFinBaremacionByAnio(
+        anioFin, sgiConfigProperties.getTimeZone());
+
+    return repository.findProyectosProduccionCientifica(fechaInicioBaremacion, fechaFinBaremacion);
+  }
+    
+  /**  
+   * Devuelve una lista paginada y filtrada {@link RelacionEjecucionEconomica} que se
+   * encuentren dentro de la unidad de gestión del usuario logueado
+   * 
+   * @param query    filtro de búsqueda.
+   * @param pageable {@link Pageable}.
+   * @return el listado de entidades {@link RelacionEjecucionEconomica} activas paginadas
+   *         y filtradas.
+   */
+  @Override
+  public Page<RelacionEjecucionEconomica> findRelacionesEjecucionEconomicaProyectos(String query, Pageable pageable) {
+    log.debug("findRelacionesEjecucionEconomicaProyectos(String query, Pageable pageable) - start");
+
+    Specification<ProyectoProyectoSge> specs = ProyectoProyectoSgeSpecifications.activos();
+    if (query != null) {
+      specs = specs.and(SgiRSQLJPASupport.toSpecification(query,  ProyectoProyectoSgePredicateResolver.getInstance(sgiConfigProperties)));
+    }
+
+    // No tiene acceso a todos los UO
+    List<String> unidadesGestion = SgiSecurityContextHolder
+        .getUOsForAnyAuthority(new String[] { "CSP-EJEC-V", "CSP-EJEC-E" });
+
+    if (!CollectionUtils.isEmpty(unidadesGestion)) {
+      Specification<ProyectoProyectoSge> specByUnidadGestionRefIn = ProyectoProyectoSgeSpecifications
+          .unidadGestionRefIn(unidadesGestion);
+      specs = specs.and(specByUnidadGestionRefIn);
+    }
+
+    Page<RelacionEjecucionEconomica> returnValue = proyectoProyectoSGERepository.findRelacionesEjecucionEconomica(specs, pageable);
+    log.debug("findRelacionesEjecucionEconomicaProyectos(String query, Pageable pageable) - end");
+    return returnValue;
   }
 
 }

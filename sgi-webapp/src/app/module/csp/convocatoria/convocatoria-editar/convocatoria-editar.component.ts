@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { ActionComponent } from '@core/component/action.component';
-import { HttpProblem } from '@core/errors/http-problem';
+import { SgiError } from '@core/errors/sgi-error';
 import { MSG_PARAMS } from '@core/i18n';
 import { ConvocatoriaService } from '@core/services/csp/convocatoria.service';
 import { DialogService } from '@core/services/dialog.service';
@@ -60,7 +60,7 @@ export class ConvocatoriaEditarComponent extends ActionComponent implements OnIn
   ) {
     super(router, route, actionService, dialogService);
     this.disableRegistrar$.next(true);
-    this.canEdit = this.authService.hasAuthority('CSP-CON-E');
+    this.canEdit = this.authService.hasAuthorityForAnyUO('CSP-CON-E');
     if (this.canEdit) {
       this.subscriptions.push(
         this.convocatoriaService.registrable(this.actionService.id).subscribe(
@@ -138,7 +138,7 @@ export class ConvocatoriaEditarComponent extends ActionComponent implements OnIn
       ).subscribe(() => { },
         (error) => {
           this.logger.error(error);
-          if (error instanceof HttpProblem) {
+          if (error instanceof SgiError) {
             if (!!!error.managed) {
               this.snackBarService.showError(error);
             }
@@ -159,7 +159,7 @@ export class ConvocatoriaEditarComponent extends ActionComponent implements OnIn
       () => { },
       (error) => {
         this.logger.error(error);
-        if (error instanceof HttpProblem) {
+        if (error instanceof SgiError) {
           this.snackBarService.showError(error);
         }
         else {

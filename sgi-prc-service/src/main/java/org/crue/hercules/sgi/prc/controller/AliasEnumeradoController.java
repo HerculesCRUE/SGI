@@ -72,7 +72,7 @@ public class AliasEnumeradoController {
 
   private Page<AliasEnumeradoOutput> convert(Page<AliasEnumerado> page) {
     List<AliasEnumeradoOutput> content = page.getContent().stream()
-        .map(aliasEnumerado -> convert(aliasEnumerado)).collect(Collectors.toList());
+        .map(this::convert).collect(Collectors.toList());
 
     return new PageImpl<>(content, page.getPageable(), page.getTotalElements());
   }

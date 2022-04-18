@@ -32,4 +32,8 @@ export abstract class AbstractTableExportFillService<T, R extends IReportOptions
   protected getI18nBooleanYesNo(field: boolean): string {
     return field ? this.translate.instant(MSG_TRUE) : this.translate.instant(MSG_FALSE);
   }
+
+  protected notIsNullAndNotUndefined(value: any): boolean {
+    return value !== null && value !== undefined;
+  }
 }

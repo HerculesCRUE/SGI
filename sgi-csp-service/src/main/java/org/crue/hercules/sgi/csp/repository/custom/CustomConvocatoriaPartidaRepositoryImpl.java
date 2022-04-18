@@ -45,7 +45,7 @@ public class CustomConvocatoriaPartidaRepositoryImpl implements CustomConvocator
    *         datos vinculados.
    */
   @Override
-  public Boolean isPosibleEditar(Long id) {
+  public boolean isPosibleEditar(Long id) {
     log.debug("isPosibleEditar(Long id) - start");
 
     CriteriaBuilder cb = entityManager.getCriteriaBuilder();
@@ -90,7 +90,7 @@ public class CustomConvocatoriaPartidaRepositoryImpl implements CustomConvocator
     Predicate predicateFinal = cb.and(cb.or(convocatoriaPartidaGastoRegistrada, convocatoriaPartidaIngresoRegistrada));
     cq.select(root.get(ConvocatoriaPartida_.id)).where(predicateFinal);
 
-    Boolean returnValue = entityManager.createQuery(cq).getResultList().size() == 0;
+    boolean returnValue = entityManager.createQuery(cq).getResultList().isEmpty();
 
     log.debug("isPosibleEditar(Long id) - end");
     return returnValue;

@@ -5,7 +5,6 @@ import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { BaseExportModalComponent } from '@core/component/base-export/base-export-modal.component';
 import { MSG_PARAMS } from '@core/i18n';
 import { IReportConfig } from '@core/services/rep/abstract-table-export.service';
-import { SnackBarService } from '@core/services/snack-bar.service';
 import { TranslateService } from '@ngx-translate/core';
 import { SgiRestFindOptions } from '@sgi/framework/http';
 import { IProyectoReportOptions, ProyectoListadoExportService } from '../../proyecto-listado-export.service';
@@ -30,12 +29,11 @@ export class ProyectoListadoExportModalComponent extends BaseExportModalComponen
 
   constructor(
     matDialogRef: MatDialogRef<ProyectoListadoExportModalComponent>,
-    snackBarService: SnackBarService,
     translate: TranslateService,
     proyectoListadoExportService: ProyectoListadoExportService,
     @Inject(MAT_DIALOG_DATA) private modalData: IProyectoListadoModalData
   ) {
-    super(proyectoListadoExportService, snackBarService, translate, matDialogRef);
+    super(proyectoListadoExportService, translate, matDialogRef);
   }
 
   ngOnInit(): void {

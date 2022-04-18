@@ -1,5 +1,6 @@
 package org.crue.hercules.sgi.csp.integration;
 
+import java.math.BigDecimal;
 import java.net.URI;
 import java.time.Instant;
 import java.time.Period;
@@ -14,6 +15,8 @@ import org.assertj.core.api.Assertions;
 import org.crue.hercules.sgi.csp.dto.NotificacionProyectoExternoCVNOutput;
 import org.crue.hercules.sgi.csp.dto.ProyectoAgrupacionGastoOutput;
 import org.crue.hercules.sgi.csp.dto.ProyectoAnualidadResumen;
+import org.crue.hercules.sgi.csp.dto.ProyectoDto;
+import org.crue.hercules.sgi.csp.dto.ProyectoEquipoDto;
 import org.crue.hercules.sgi.csp.dto.ProyectoFacturacionOutput;
 import org.crue.hercules.sgi.csp.dto.ProyectoPalabraClaveInput;
 import org.crue.hercules.sgi.csp.dto.ProyectoPalabraClaveOutput;
@@ -31,7 +34,6 @@ import org.crue.hercules.sgi.csp.model.ProyectoDocumento;
 import org.crue.hercules.sgi.csp.model.ProyectoEntidadFinanciadora;
 import org.crue.hercules.sgi.csp.model.ProyectoEntidadGestora;
 import org.crue.hercules.sgi.csp.model.ProyectoEquipo;
-import org.crue.hercules.sgi.csp.model.ProyectoFacturacion;
 import org.crue.hercules.sgi.csp.model.ProyectoFase;
 import org.crue.hercules.sgi.csp.model.ProyectoHito;
 import org.crue.hercules.sgi.csp.model.ProyectoPaqueteTrabajo;
@@ -44,6 +46,8 @@ import org.crue.hercules.sgi.csp.model.ProyectoSocio;
 import org.crue.hercules.sgi.csp.model.TipoAmbitoGeografico;
 import org.crue.hercules.sgi.csp.model.TipoFinalidad;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
@@ -99,6 +103,10 @@ class ProyectoIT extends BaseIT {
   private static final String PATH_PARAMETER_PROYECTO_ID = "/{proyectoId}";
   private static final String PATH_PALABRAS_CLAVE = "/palabrasclave";
   private static final String PATH_NOTIFICACIONES_PROYECTO = "/notificacionesproyectos";
+  private static final String PATH_PRC_ANIO = "/produccioncientifica/{anioInicio}/{anioFin}";
+  private static final String PATH_PRC_TOTAL_IMPORTE_CONCEDIDO = "/produccioncientifica/totalimporteconcedido/{proyectoId}";
+  private static final String PATH_PRC_TOTAL_IMPORTE_CONCEDIDO_COSTES_INDIRECTOS = "/produccioncientifica/totalimporteconcedidocostesindirectos/{proyectoId}";
+  private static final String PATH_PRC_PROYECTO_EQUIPO = "/produccioncientifica/equipo/{proyectoId}";
 
   private HttpEntity<Object> buildRequest(HttpHeaders headers, Object entity, String... roles) throws Exception {
     headers = (headers != null ? headers : new HttpHeaders());
@@ -232,7 +240,7 @@ class ProyectoIT extends BaseIT {
 
     Proyecto proyecto = response.getBody();
     Assertions.assertThat(proyecto.getId()).as("getId()").isEqualTo(idProyecto);
-    Assertions.assertThat(proyecto.getActivo()).as("getActivo()").isEqualTo(false);
+    Assertions.assertThat(proyecto.getActivo()).as("getActivo()").isFalse();
   }
 
   @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = {
@@ -261,7 +269,7 @@ class ProyectoIT extends BaseIT {
 
     Proyecto proyecto = response.getBody();
     Assertions.assertThat(proyecto.getId()).as("getId()").isEqualTo(idProyecto);
-    Assertions.assertThat(proyecto.getActivo()).as("getActivo()").isEqualTo(true);
+    Assertions.assertThat(proyecto.getActivo()).as("getActivo()").isTrue();
   }
 
   @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = {
@@ -2521,17 +2529,17 @@ class ProyectoIT extends BaseIT {
     Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     Assertions.assertThat(response.getBody()).isNotNull();
     Assertions.assertThat(response.getBody().getImporteTotalPresupuestoUniversidadSinCosteIndirecto().doubleValue())
-        .isEqualTo(71000d);
+        .isEqualTo(6000d);
     Assertions.assertThat(response.getBody().getImporteTotalPresupuestoSocios().doubleValue()).isEqualTo(0d);
     Assertions.assertThat(response.getBody().getImporteTotalConcedidoUniversidadSinCosteIndirecto().doubleValue())
-        .isEqualTo(63000d);
+        .isEqualTo(6000d);
     Assertions.assertThat(response.getBody().getImporteTotalConcedidoSocios().doubleValue()).isEqualTo(0d);
     Assertions.assertThat(response.getBody().getImporteTotalPresupuesto().doubleValue()).isEqualTo(71000d);
     Assertions.assertThat(response.getBody().getImporteTotalConcedido().doubleValue()).isEqualTo(63000d);
     Assertions.assertThat(response.getBody().getImporteTotalPresupuestoUniversidadCostesIndirectos().doubleValue())
-        .isEqualTo(0d);
+        .isEqualTo(65000d);
     Assertions.assertThat(response.getBody().getImporteTotalConcedidoUniversidadCostesIndirectos().doubleValue())
-        .isEqualTo(0d);
+        .isEqualTo(57000d);
 
   }
 
@@ -3056,6 +3064,142 @@ class ProyectoIT extends BaseIT {
         .palabraClaveRef(palabraClaveRef)
         .proyectoId(proyectoId)
         .build();
+  }
+
+  @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = {
+      // @formatter:off
+      "classpath:scripts/modelo_ejecucion.sql",
+      "classpath:scripts/modelo_unidad.sql",
+      "classpath:scripts/tipo_finalidad.sql",
+      "classpath:scripts/tipo_ambito_geografico.sql",
+      "classpath:scripts/tipo_regimen_concurrencia.sql",
+      "classpath:scripts/convocatoria.sql",
+      "classpath:scripts/proyecto.sql",
+      "classpath:scripts/estado_proyecto.sql",
+      "classpath:scripts/autorizacion.sql",
+      "classpath:scripts/notificacion_proyecto_externo_cvn.sql"
+    // @formatter:on
+  })
+  @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
+  @ParameterizedTest
+  @CsvSource({ "2020, 2021" })
+  public void findProyectosProduccionCientifica_ok(Integer anioInicio, Integer anioFin)
+      throws Exception {
+    String roles = "CSP-PRO-PRC-V";
+
+    final ResponseEntity<List<ProyectoDto>> response = restTemplate.exchange(
+        CONTROLLER_BASE_PATH + PATH_PRC_ANIO,
+        HttpMethod.GET,
+        buildRequest(null, null, roles),
+        new ParameterizedTypeReference<List<ProyectoDto>>() {
+        }, anioInicio, anioFin);
+
+    Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
+  }
+
+  @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = {
+      // @formatter:off
+      "classpath:scripts/modelo_ejecucion.sql",
+      "classpath:scripts/modelo_unidad.sql",
+      "classpath:scripts/tipo_finalidad.sql",
+      "classpath:scripts/tipo_ambito_geografico.sql",
+      "classpath:scripts/tipo_regimen_concurrencia.sql",
+      "classpath:scripts/convocatoria.sql",
+      "classpath:scripts/proyecto.sql",
+      "classpath:scripts/estado_proyecto.sql",
+      "classpath:scripts/concepto_gasto.sql",
+      "classpath:scripts/proyecto_anualidad.sql",
+      "classpath:scripts/proyecto_partida.sql",
+      "classpath:scripts/anualidad_gasto.sql"
+    // @formatter:on
+  })
+  @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
+  @ParameterizedTest
+  @CsvSource({ "1, '63000.00'", "2, '30100.00'" })
+  public void getTotalImporteConcedidoAnualidadGasto_ok(Long proyectoId, String total)
+      throws Exception {
+    String roles = "CSP-PRO-PRC-V";
+
+    final ResponseEntity<BigDecimal> response = restTemplate.exchange(
+        CONTROLLER_BASE_PATH + PATH_PRC_TOTAL_IMPORTE_CONCEDIDO,
+        HttpMethod.GET,
+        buildRequest(null, null, roles),
+        new ParameterizedTypeReference<BigDecimal>() {
+        }, proyectoId);
+
+    Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+    BigDecimal totalImporteConcedido = response.getBody();
+    Assertions.assertThat(totalImporteConcedido).isEqualTo(new BigDecimal(total));
+
+  }
+
+  @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = {
+      // @formatter:off
+      "classpath:scripts/modelo_ejecucion.sql",
+      "classpath:scripts/modelo_unidad.sql",
+      "classpath:scripts/tipo_finalidad.sql",
+      "classpath:scripts/tipo_ambito_geografico.sql",
+      "classpath:scripts/tipo_regimen_concurrencia.sql",
+      "classpath:scripts/convocatoria.sql",
+      "classpath:scripts/proyecto.sql",
+      "classpath:scripts/estado_proyecto.sql",
+      "classpath:scripts/concepto_gasto.sql",
+      "classpath:scripts/proyecto_anualidad.sql",
+      "classpath:scripts/proyecto_partida.sql",
+      "classpath:scripts/anualidad_gasto.sql"
+    // @formatter:on
+  })
+  @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
+  @ParameterizedTest
+  @CsvSource({ "1, '57000.00'", "2, '30100.00'" })
+  public void getTotalImporteConcedidoAnualidadGastoCostesIndirectos_ok(Long proyectoId, String total)
+      throws Exception {
+    String roles = "CSP-PRO-PRC-V";
+
+    final ResponseEntity<BigDecimal> response = restTemplate.exchange(
+        CONTROLLER_BASE_PATH + PATH_PRC_TOTAL_IMPORTE_CONCEDIDO_COSTES_INDIRECTOS,
+        HttpMethod.GET,
+        buildRequest(null, null, roles),
+        new ParameterizedTypeReference<BigDecimal>() {
+        }, proyectoId);
+
+    Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+    BigDecimal totalImporteConcedido = response.getBody();
+    Assertions.assertThat(totalImporteConcedido).isEqualTo(new BigDecimal(total));
+
+  }
+
+  @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = {
+      // @formatter:off
+      "classpath:scripts/modelo_ejecucion.sql",
+      "classpath:scripts/modelo_unidad.sql",
+      "classpath:scripts/tipo_finalidad.sql",
+      "classpath:scripts/tipo_ambito_geografico.sql",
+      "classpath:scripts/tipo_regimen_concurrencia.sql",
+      "classpath:scripts/convocatoria.sql",
+      "classpath:scripts/proyecto.sql",
+      "classpath:scripts/estado_proyecto.sql",
+      "classpath:scripts/rol_proyecto.sql",
+      "classpath:scripts/proyecto_equipo.sql"
+    // @formatter:on
+  })
+  @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
+  @ParameterizedTest
+  @CsvSource({ "1" })
+  public void findByProyectoIdAndAnio_ok(Long proyectoId) throws Exception {
+    String roles = "CSP-PRO-PRC-V";
+
+    final ResponseEntity<List<ProyectoEquipoDto>> response = restTemplate.exchange(
+        CONTROLLER_BASE_PATH + PATH_PRC_PROYECTO_EQUIPO,
+        HttpMethod.GET,
+        buildRequest(null, null, roles),
+        new ParameterizedTypeReference<List<ProyectoEquipoDto>>() {
+        }, proyectoId);
+
+    Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+    List<ProyectoEquipoDto> equipo = response.getBody();
+    Integer numPersonasEquipo = equipo.size();
+    Assertions.assertThat(numPersonasEquipo).isEqualTo(5);
   }
 
 }

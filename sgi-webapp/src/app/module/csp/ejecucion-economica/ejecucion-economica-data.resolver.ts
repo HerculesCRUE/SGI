@@ -1,16 +1,19 @@
 import { Injectable } from '@angular/core';
 import { ActivatedRouteSnapshot, Router } from '@angular/router';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
+import { TipoEntidad } from '@core/models/csp/relacion-ejecucion-economica';
+import { IProyectoSge } from '@core/models/sge/proyecto-sge';
 import { SgiResolverResolver } from '@core/resolver/sgi-resolver';
 import { ConfiguracionService } from '@core/services/csp/configuracion.service';
-import { ProyectoProyectoSgeService } from '@core/services/csp/proyecto-proyecto-sge.service';
+import { RelacionEjecucionEconomicaService } from '@core/services/csp/relacion-ejecucion-economica/relacion-ejecucion-economica.service';
+import { GrupoService } from '@core/services/csp/grupo/grupo.service';
 import { ProyectoService } from '@core/services/csp/proyecto.service';
 import { ProyectoSgeService } from '@core/services/sge/proyecto-sge.service';
+import { PersonaService } from '@core/services/sgp/persona.service';
 import { SnackBarService } from '@core/services/snack-bar.service';
-import { RSQLSgiRestFilter, SgiRestFilterOperator, SgiRestFindOptions } from '@sgi/framework/http';
 import { NGXLogger } from 'ngx-logger';
-import { from, Observable } from 'rxjs';
-import { map, mergeMap, switchMap, takeLast } from 'rxjs/operators';
+import { EMPTY, from, Observable } from 'rxjs';
+import { catchError, filter, map, mergeMap, switchMap, toArray } from 'rxjs/operators';
 import { EJECUCION_ECONOMICA_ROUTE_PARAMS } from './ejecucion-economica-route-params';
 import { IEjecucionEconomicaData } from './ejecucion-economica.action.service';
 
@@ -25,7 +28,9 @@ export class EjecucionEconomicaDataResolver extends SgiResolverResolver<IEjecuci
     logger: NGXLogger,
     router: Router,
     snackBar: SnackBarService,
-    private service: ProyectoProyectoSgeService,
+    private relacionEjecucionEconomicaService: RelacionEjecucionEconomicaService,
+    private grupoService: GrupoService,
+    private personaService: PersonaService,
     private proyectoService: ProyectoService,
     private proyectoSgeService: ProyectoSgeService,
     private configuracionService: ConfiguracionService,
@@ -35,12 +40,12 @@ export class EjecucionEconomicaDataResolver extends SgiResolverResolver<IEjecuci
 
   protected resolveEntity(route: ActivatedRouteSnapshot): Observable<IEjecucionEconomicaData> {
 
-    return this.service.findById(Number(route.paramMap.get(EJECUCION_ECONOMICA_ROUTE_PARAMS.ID))).pipe(
-      map(proyectoProyectoSge => {
+    return this.relacionEjecucionEconomicaService.findRelacionesProyectoSgeRef(route.paramMap.get(EJECUCION_ECONOMICA_ROUTE_PARAMS.ID)).pipe(
+      map(relaciones => {
         return {
-          proyectoSge: proyectoProyectoSge.proyectoSge,
+          proyectoSge: { id: route.paramMap.get(EJECUCION_ECONOMICA_ROUTE_PARAMS.ID) } as IProyectoSge,
           readonly: false,
-          proyectosRelacionados: []
+          relaciones
         } as IEjecucionEconomicaData;
       }),
       switchMap(data => {
@@ -51,24 +56,42 @@ export class EjecucionEconomicaDataResolver extends SgiResolverResolver<IEjecuci
           })
         );
       }),
-      switchMap(data => {
-        const options: SgiRestFindOptions = {
-          filter: new RSQLSgiRestFilter('proyectoSgeRef', SgiRestFilterOperator.EQUALS, data.proyectoSge.id)
-        };
-        return this.service.findAll(options).pipe(
-          map(response => response.items.map(item => item.proyecto.id)),
-          switchMap(idsProyecto => from(idsProyecto)),
-          mergeMap(id => {
-            return this.proyectoService.findById(id).pipe(
-              map(proyecto => {
-                data.proyectosRelacionados.push(proyecto);
-                return data;
+      switchMap(response =>
+        from(response.relaciones).pipe(
+          mergeMap(relacion => {
+            let serviceGetResponsables: GrupoService | ProyectoService;
+
+            switch (relacion.tipoEntidad) {
+              case TipoEntidad.GRUPO:
+                serviceGetResponsables = this.grupoService;
+                break;
+              case TipoEntidad.PROYECTO:
+                serviceGetResponsables = this.proyectoService;
+                break;
+              default:
+                throw Error(`Invalid tipoEntidad "${relacion.tipoEntidad}"`);
+            }
+
+            return serviceGetResponsables.findPersonaRefInvestigadoresPrincipales(relacion.id).pipe(
+              filter(personaRefs => !!personaRefs),
+              switchMap(personaRefs => this.personaService.findAllByIdIn(personaRefs).pipe(
+                catchError((error) => {
+                  this.logger.error(error);
+                  return EMPTY;
+                })
+              )),
+              map(responsables => {
+                relacion.responsables = responsables.items;
+                return relacion;
               })
             );
           }),
-          takeLast(1)
-        );
-      }),
+          toArray(),
+          map(() => {
+            return response;
+          })
+        )
+      ),
       switchMap(data =>
         this.configuracionService.getConfiguracion().pipe(
           map(configuracion => {
@@ -79,4 +102,5 @@ export class EjecucionEconomicaDataResolver extends SgiResolverResolver<IEjecuci
       )
     );
   }
+
 }

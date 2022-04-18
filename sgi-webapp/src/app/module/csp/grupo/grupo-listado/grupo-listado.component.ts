@@ -2,23 +2,26 @@ import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { AbstractTablePaginationComponent } from '@core/component/abstract-table-pagination.component';
-import { HttpProblem } from '@core/errors/http-problem';
+import { SgiError } from '@core/errors/sgi-error';
 import { MSG_PARAMS } from '@core/i18n';
 import { IGrupo } from '@core/models/csp/grupo';
 import { TIPO_MAP } from '@core/models/csp/grupo-tipo';
+import { ILineaInvestigacion } from '@core/models/csp/linea-investigacion';
 import { IPersona } from '@core/models/sgp/persona';
 import { ROUTE_NAMES } from '@core/route.names';
 import { GrupoService } from '@core/services/csp/grupo/grupo.service';
+import { LineaInvestigacionService } from '@core/services/csp/linea-investigacion/linea-investigacion.service';
 import { RolProyectoColectivoService } from '@core/services/csp/rol-proyecto-colectivo/rol-proyecto-colectivo.service';
 import { DialogService } from '@core/services/dialog.service';
 import { PersonaService } from '@core/services/sgp/persona.service';
 import { SnackBarService } from '@core/services/snack-bar.service';
+import { LuxonUtils } from '@core/utils/luxon-utils';
 import { TranslateService } from '@ngx-translate/core';
 import { SgiAuthService } from '@sgi/framework/auth';
 import { RSQLSgiRestFilter, SgiRestFilter, SgiRestFilterOperator, SgiRestListResult } from '@sgi/framework/http';
 import { NGXLogger } from 'ngx-logger';
 import { EMPTY, from, Observable } from 'rxjs';
-import { catchError, filter, map, mergeMap, switchMap, toArray } from 'rxjs/operators';
+import { catchError, filter, map, mergeMap, startWith, switchMap, toArray } from 'rxjs/operators';
 import { CSP_ROUTE_NAMES } from '../../csp-route-names';
 
 const MSG_BUTTON_ADD = marker('btn.add.entity');
@@ -59,6 +62,10 @@ export class GrupoListadoComponent extends AbstractTablePaginationComponent<IGru
   textoSuccessReactivar: string;
   textoErrorReactivar: string;
 
+  busquedaAvanzada = false;
+  lineasInvestigacionListado: ILineaInvestigacion[];
+  filteredLineasInvestigacion: Observable<ILineaInvestigacion[]>;
+
   get TIPO_MAP() {
     return TIPO_MAP;
   }
@@ -72,6 +79,7 @@ export class GrupoListadoComponent extends AbstractTablePaginationComponent<IGru
     public authService: SgiAuthService,
     private rolProyectoColectivoService: RolProyectoColectivoService,
     private readonly translate: TranslateService,
+    private lineaInvestigacionService: LineaInvestigacionService
   ) {
     super(snackBarService, MSG_ERROR_LOAD);
   }
@@ -81,6 +89,7 @@ export class GrupoListadoComponent extends AbstractTablePaginationComponent<IGru
     this.setupI18N();
     this.buildFormGroup();
     this.loadColectivosBusqueda();
+    this.getLineasInvestigacion();
     this.filter = this.createFilter();
     this.isInvestigador = this.authService.hasAnyAuthority(['CSP-AUT-INV-VR']);
     this.isVisor = this.authService.hasAnyAuthority(['CSP-GIN-V']);
@@ -127,10 +136,35 @@ export class GrupoListadoComponent extends AbstractTablePaginationComponent<IGru
 
   protected createFilter(): SgiRestFilter {
     const controls = this.formGroup.controls;
-    return new RSQLSgiRestFilter('nombre', SgiRestFilterOperator.LIKE_ICASE, controls.nombre.value)
+    const filter = new RSQLSgiRestFilter('nombre', SgiRestFilterOperator.LIKE_ICASE, controls.nombre.value)
       .and('codigo', SgiRestFilterOperator.LIKE_ICASE, controls.codigo.value)
       .and('miembrosEquipo.personaRef', SgiRestFilterOperator.EQUALS, controls.miembroEquipo.value?.id)
-      .and('proyectoSgeRef', SgiRestFilterOperator.EQUALS, controls.proyectoSgeRef.value);
+      .and('proyectoSgeRef', SgiRestFilterOperator.EQUALS, controls.proyectoSgeRef.value)
+      .and('lineasInvestigacion.id', SgiRestFilterOperator.EQUALS, controls.lineaInvestigacion.value?.id ? controls.lineaInvestigacion.value?.id.toString() : null);
+    if (controls.activo.value !== 'todos') {
+      filter.and('activo', SgiRestFilterOperator.EQUALS, controls.activo.value);
+    }
+    filter.and('fechaInicio', SgiRestFilterOperator.GREATHER_OR_EQUAL, LuxonUtils.toBackend(controls.fechaInicioDesde.value))
+      .and('fechaInicio', SgiRestFilterOperator.LOWER_OR_EQUAL, LuxonUtils.toBackend(controls.fechaInicioHasta.value));
+
+    const palabrasClave = controls.palabrasClave.value as string[];
+    if (Array.isArray(palabrasClave) && palabrasClave.length > 0) {
+      filter.and(this.createPalabrasClaveFilter(palabrasClave));
+    }
+
+    return filter;
+  }
+
+  private createPalabrasClaveFilter(palabrasClave: string[]): SgiRestFilter {
+    let palabrasClaveFilter: SgiRestFilter;
+    palabrasClave.forEach(palabraClave => {
+      if (palabrasClaveFilter) {
+        palabrasClaveFilter.or('palabrasClave.palabraClaveRef', SgiRestFilterOperator.LIKE_ICASE, palabraClave);
+      } else {
+        palabrasClaveFilter = new RSQLSgiRestFilter('palabrasClave.palabraClaveRef', SgiRestFilterOperator.LIKE_ICASE, palabraClave);
+      }
+    });
+    return palabrasClaveFilter;
   }
 
   activate(grupo: IGrupoListado): void {
@@ -144,7 +178,7 @@ export class GrupoListadoComponent extends AbstractTablePaginationComponent<IGru
       },
       (error) => {
         this.logger.error(error);
-        if (error instanceof HttpProblem) {
+        if (error instanceof SgiError) {
           this.snackBarService.showError(error);
         } else {
           this.snackBarService.showError(this.textoErrorReactivar);
@@ -165,7 +199,7 @@ export class GrupoListadoComponent extends AbstractTablePaginationComponent<IGru
       },
       (error) => {
         this.logger.error(error);
-        if (error instanceof HttpProblem) {
+        if (error instanceof SgiError) {
           this.snackBarService.showError(error);
         } else {
           this.snackBarService.showError(this.textoErrorDesactivar);
@@ -177,6 +211,7 @@ export class GrupoListadoComponent extends AbstractTablePaginationComponent<IGru
 
   onClearFilters() {
     super.onClearFilters();
+    this.buildFormGroup();
     this.onSearch();
   }
 
@@ -186,11 +221,16 @@ export class GrupoListadoComponent extends AbstractTablePaginationComponent<IGru
       codigo: new FormControl(null),
       miembroEquipo: new FormControl(null),
       proyectoSgeRef: new FormControl(null),
+      activo: new FormControl('true'),
+      fechaInicioDesde: new FormControl(),
+      fechaInicioHasta: new FormControl(),
+      palabrasClave: new FormControl(null),
+      lineaInvestigacion: new FormControl(null)
     });
   }
 
   private fillInvestigadorPrincipal(grupo: IGrupoListado): Observable<IGrupoListado> {
-    return this.grupoService.findPersonaRefInvestigadoresPrincipales(grupo.id).pipe(
+    return this.grupoService.findPersonaRefInvestigadoresPrincipalesWithMaxParticipacion(grupo.id).pipe(
       filter(investigadoresPrincipales => !!investigadoresPrincipales),
       switchMap(investigadoresPrincipales => this.personaService.findAllByIdIn(investigadoresPrincipales)),
       map(investigadoresPrincipales => {
@@ -310,6 +350,54 @@ export class GrupoListadoComponent extends AbstractTablePaginationComponent<IGru
       })
     ).subscribe((value) => this.textoSuccessReactivar = value);
 
+  }
+
+  /**
+   * Mostrar busqueda avanzada
+   */
+  toggleBusquedaAvanzada(): void {
+    this.busquedaAvanzada = !this.busquedaAvanzada;
+  }
+
+  /**
+   * Devuelve el nombre de la Línea de Investigación.
+   * @param lineaInvestigacion LineaInvestigacion
+   * returns nombre LineaInvestigacion
+   */
+  getLineaInvestigacion(lineaInvestigacion: ILineaInvestigacion): string {
+    return lineaInvestigacion?.nombre;
+  }
+
+  getLineasInvestigacion() {
+    const lineasInvestigacionSubscription = this.lineaInvestigacionService.findTodos().subscribe(
+      (response) => {
+        this.lineasInvestigacionListado = response.items;
+
+        this.filteredLineasInvestigacion = this.formGroup.controls.lineaInvestigacion.valueChanges
+          .pipe(
+            startWith(''),
+            map(value => this._filterLineaInvestigacion(value))
+          );
+      });
+
+    this.suscripciones.push(lineasInvestigacionSubscription);
+  }
+
+  /**
+   * Filtro de campo autocompletable LineaInvestigacion.
+   * @param value value a filtrar (string o nombre LineaInvestigacion).
+   * @returns lista de líneas de investigación filtradas.
+   */
+  private _filterLineaInvestigacion(value: string | ILineaInvestigacion): ILineaInvestigacion[] {
+    let filterValue: string;
+    if (typeof value === 'string') {
+      filterValue = value.toLowerCase();
+    } else {
+      filterValue = value.nombre.toLowerCase();
+    }
+
+    return this.lineasInvestigacionListado.filter
+      (lineaInvestigacion => lineaInvestigacion.nombre.toLowerCase().includes(filterValue));
   }
 
 }

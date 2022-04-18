@@ -12,6 +12,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 
 import org.crue.hercules.sgi.prc.model.EstadoProduccionCientifica.TipoEstadoProduccion;
 
@@ -25,7 +26,9 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(name = AutorGrupo.TABLE_NAME)
+@Table(name = AutorGrupo.TABLE_NAME, uniqueConstraints = {
+    @UniqueConstraint(columnNames = {
+        "grupo_ref", "autor_id" }, name = "UK_AUTORGRUPO_GRUPOREF_AUTORID") })
 @Data
 @EqualsAndHashCode(callSuper = false)
 @NoArgsConstructor
@@ -49,13 +52,13 @@ public class AutorGrupo extends BaseEntity {
   private Long id;
 
   /** TipoEstadoProduccion */
-  @Column(name = "estado", nullable = false)
+  @Column(name = "estado", length = TIPO_ESTADO_LENGTH, nullable = false)
   @Enumerated(EnumType.STRING)
   private TipoEstadoProduccion estado;
 
   /** grupoRef */
-  @Column(name = "grupo_ref", length = GRUPO_REF_LENGTH, nullable = true)
-  private String grupoRef;
+  @Column(name = "grupo_ref", nullable = false)
+  private Long grupoRef;
 
   /** Autor Id */
   @Column(name = "autor_id", nullable = false)

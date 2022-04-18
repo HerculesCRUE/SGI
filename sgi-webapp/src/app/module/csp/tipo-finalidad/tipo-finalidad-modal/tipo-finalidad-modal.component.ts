@@ -18,7 +18,7 @@ const TITLE_NEW_ENTITY = marker('title.new.entity');
   templateUrl: './tipo-finalidad-modal.component.html',
   styleUrls: ['./tipo-finalidad-modal.component.scss']
 })
-export class TipoFinalidadModalComponent extends DialogActionComponent<ITipoFinalidad, ITipoFinalidad> implements OnInit, OnDestroy {
+export class TipoFinalidadModalComponent extends DialogActionComponent<ITipoFinalidad> implements OnInit, OnDestroy {
 
   private readonly tipoFinalidad: ITipoFinalidad;
   title: string;

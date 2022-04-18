@@ -19,8 +19,6 @@ public class ValorCampoSpecifications {
    *         la {@link CampoProduccionCientifica} con el id indicado.
    */
   public static Specification<ValorCampo> byCampoProduccionCientificaId(Long id) {
-    return (root, query, cb) -> {
-      return cb.equal(root.get(ValorCampo_.campoProduccionCientificaId), id);
-    };
+    return (root, query, cb) -> cb.equal(root.get(ValorCampo_.campoProduccionCientificaId), id);
   }
 }

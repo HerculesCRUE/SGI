@@ -3,21 +3,22 @@ import { Injectable } from '@angular/core';
 import { from, Observable, throwError } from 'rxjs';
 import { catchError, map, switchMap } from 'rxjs/operators';
 import {
-  AccessDeniedHttpProblem,
-  AuthenticationHttpProblem,
-  BadRequestHttpProblem,
-  HttpProblem,
-  IllegalArgumentHttpProblem,
-  MethodNotAllowedHttpProblem,
-  MissingMainResearcherHttpProblem,
-  MissingPathVariableHttpProblem,
-  NotAcceptableHttpProblem,
-  NotFoundHttpProblem,
-  PercentageIvaZeroHttpProblem,
-  ProblemType,
-  TeamMemberOverlapHttpProblem,
-  TypeMismatchHttpProblem,
-  ValidationHttpProblem
+  AccessDeniedHttpError,
+  AuthenticationHttpError,
+  BadRequestHttpError,
+  HttpProblemType,
+  IllegalArgumentHttpError,
+  MethodNotAllowedHttpError,
+  MissingMainResearcherHttpError,
+  MissingPathVariableHttpError,
+  NotAcceptableHttpError,
+  NotFoundHttpError,
+  PercentageIvaZeroHttpError,
+  SgiHttpError,
+  TeamMemberOverlapHttpError,
+  TooManyResultsHttpError,
+  TypeMismatchHttpError,
+  ValidationHttpError
 } from './errors/http-problem';
 
 @Injectable()
@@ -42,39 +43,41 @@ export class SgiErrorHttpInterceptor implements HttpInterceptor {
     );
   }
 
-  private resolveHttpProblem(error: HttpErrorResponse): HttpProblem {
-    const type: ProblemType = error.error.type;
+  private resolveHttpProblem(error: HttpErrorResponse): SgiHttpError {
+    const type: HttpProblemType = error.error.type;
     switch (type) {
-      case ProblemType.ACCESS_DENIED:
-        return new AccessDeniedHttpProblem(error.error);
-      case ProblemType.AUTHENTICACION:
-        return new AuthenticationHttpProblem(error.error);
-      case ProblemType.BAD_REQUEST:
-        return new BadRequestHttpProblem(error.error);
-      case ProblemType.ILLEGAL_ARGUMENT:
-        return new IllegalArgumentHttpProblem(error.error);
-      case ProblemType.METHOD_NOT_ALLOWED:
-        return new MethodNotAllowedHttpProblem(error.error);
-      case ProblemType.MISSING_MAIN_RESEARCHER:
-        return new MissingMainResearcherHttpProblem(error.error);
-      case ProblemType.MISSING_PATH_VARIABLE:
-        return new MissingPathVariableHttpProblem(error.error);
-      case ProblemType.NOT_ACCEPTABLE:
-        return new NotAcceptableHttpProblem(error.error);
-      case ProblemType.NOT_FOUND:
-        return new NotFoundHttpProblem(error.error);
-      case ProblemType.PERCENTAGE_IVA_ZERO:
-        return new PercentageIvaZeroHttpProblem(error.error);
-      case ProblemType.TEAM_MEMBER_OVERLAP:
-        return new TeamMemberOverlapHttpProblem(error.error);
-      case ProblemType.TYPE_MISMATCH:
-        return new TypeMismatchHttpProblem(error.error);
-      case ProblemType.UNKNOWN:
-        return new TypeMismatchHttpProblem(error.error);
-      case ProblemType.VALIDATION:
-        return new ValidationHttpProblem(error.error);
+      case HttpProblemType.ACCESS_DENIED:
+        return new AccessDeniedHttpError(error.error);
+      case HttpProblemType.AUTHENTICACION:
+        return new AuthenticationHttpError(error.error);
+      case HttpProblemType.BAD_REQUEST:
+        return new BadRequestHttpError(error.error);
+      case HttpProblemType.ILLEGAL_ARGUMENT:
+        return new IllegalArgumentHttpError(error.error);
+      case HttpProblemType.METHOD_NOT_ALLOWED:
+        return new MethodNotAllowedHttpError(error.error);
+      case HttpProblemType.MISSING_MAIN_RESEARCHER:
+        return new MissingMainResearcherHttpError(error.error);
+      case HttpProblemType.MISSING_PATH_VARIABLE:
+        return new MissingPathVariableHttpError(error.error);
+      case HttpProblemType.NOT_ACCEPTABLE:
+        return new NotAcceptableHttpError(error.error);
+      case HttpProblemType.NOT_FOUND:
+        return new NotFoundHttpError(error.error);
+      case HttpProblemType.PERCENTAGE_IVA_ZERO:
+        return new PercentageIvaZeroHttpError(error.error);
+      case HttpProblemType.TEAM_MEMBER_OVERLAP:
+        return new TeamMemberOverlapHttpError(error.error);
+      case HttpProblemType.TOO_MANY_RESULTS:
+        return new TooManyResultsHttpError(error.error);
+      case HttpProblemType.TYPE_MISMATCH:
+        return new TypeMismatchHttpError(error.error);
+      case HttpProblemType.UNKNOWN:
+        return new TypeMismatchHttpError(error.error);
+      case HttpProblemType.VALIDATION:
+        return new ValidationHttpError(error.error);
       default:
-        return new HttpProblem(error.error);
+        return new SgiHttpError(error.error);
     }
   }
 

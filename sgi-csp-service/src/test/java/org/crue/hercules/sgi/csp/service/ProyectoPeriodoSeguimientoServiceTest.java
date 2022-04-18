@@ -628,9 +628,6 @@ public class ProyectoPeriodoSeguimientoServiceTest extends BaseServiceTest {
     proyecto.setFinalidad(tipoFinalidad);
     proyecto.setAmbitoGeografico(tipoAmbitoGeografico);
     proyecto.setConfidencial(Boolean.FALSE);
-    proyecto.setCosteHora(true);
-    proyecto.setTimesheet(true);
-    proyecto.setTipoHorasAnuales(Proyecto.TipoHorasAnuales.REAL);
     proyecto.setActivo(true);
     proyecto.setEstado(estadoProyecto);
 

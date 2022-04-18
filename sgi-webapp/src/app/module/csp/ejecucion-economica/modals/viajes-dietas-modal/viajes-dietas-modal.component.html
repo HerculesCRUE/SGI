@@ -28,7 +28,7 @@
             [fxFlex.gt-md]="fxFlexProperties.gtMd" [fxFlexOrder]="fxFlexProperties.order">
             <mat-form-field fxFill>
               <mat-label>{{'csp.ejecucion-economica.facturas-justificantes.proyecto-sgi' | translate}}</mat-label>
-              <sgi-select-entity formControlName="proyecto" [options]="data.proyectosSgi"
+              <sgi-select-entity formControlName="proyecto" [options]="proyectos$ | async"
                 [displayWith]="displayerProyecto" required>
               </sgi-select-entity>
               <mat-error *ngIf="formGroup.controls.proyecto.errors?.required">

@@ -9,6 +9,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.assertj.core.api.Assertions;
+import org.crue.hercules.sgi.csp.config.SgiConfigProperties;
 import org.crue.hercules.sgi.csp.exceptions.ProyectoEquipoNotFoundException;
 import org.crue.hercules.sgi.csp.exceptions.ProyectoNotFoundException;
 import org.crue.hercules.sgi.csp.model.Proyecto;
@@ -44,13 +45,15 @@ public class ProyectoEquipoServiceTest extends BaseServiceTest {
   private ProyectoResponsableEconomicoRepository proyectoResponsableEconomicoRepository;
   @Mock
   private ProyectoHelper proyectoHelper;
+  @Mock
+  private SgiConfigProperties sgiConfigProperties;
 
   private ProyectoEquipoService service;
 
   @BeforeEach
   public void setUp() throws Exception {
     service = new ProyectoEquipoServiceImpl(repository, proyectoRepository,
-        proyectoHelper);
+        proyectoHelper, sgiConfigProperties);
   }
 
   @Test
@@ -108,8 +111,6 @@ public class ProyectoEquipoServiceTest extends BaseServiceTest {
         .isEqualTo(updatedProyectoEquipo.getFechaInicio());
     Assertions.assertThat(proyectoEquipoActualizados.get(0).getFechaFin()).as("get(0).getFechaFin()")
         .isEqualTo(updatedProyectoEquipo.getFechaFin());
-    Assertions.assertThat(proyectoEquipoActualizados.get(0).getHorasDedicacion()).as("get(0).getHorasDedicacion()")
-        .isEqualTo(updatedProyectoEquipo.getHorasDedicacion());
     Assertions.assertThat(proyectoEquipoActualizados.get(0).getPersonaRef()).as("get(0).getPersonaRef()")
         .isEqualTo(updatedProyectoEquipo.getPersonaRef());
     Assertions.assertThat(proyectoEquipoActualizados.get(0).getRolProyecto().getId())
@@ -122,8 +123,6 @@ public class ProyectoEquipoServiceTest extends BaseServiceTest {
         .isEqualTo(newProyectoEquipo.getFechaInicio());
     Assertions.assertThat(proyectoEquipoActualizados.get(1).getFechaFin()).as("get(1).getFechaFin()")
         .isEqualTo(newProyectoEquipo.getFechaFin());
-    Assertions.assertThat(proyectoEquipoActualizados.get(1).getHorasDedicacion()).as("get(1).getHorasDedicacion()")
-        .isEqualTo(newProyectoEquipo.getHorasDedicacion());
     Assertions.assertThat(proyectoEquipoActualizados.get(1).getPersonaRef()).as("get(1).getPersonaRef()")
         .isEqualTo(newProyectoEquipo.getPersonaRef());
     Assertions.assertThat(proyectoEquipoActualizados.get(1).getRolProyecto().getId())
@@ -253,7 +252,6 @@ public class ProyectoEquipoServiceTest extends BaseServiceTest {
     Assertions.assertThat(data.getFechaInicio()).isEqualTo(proyectoEquipo.getFechaInicio());
     Assertions.assertThat(data.getFechaFin()).isEqualTo(proyectoEquipo.getFechaFin());
     Assertions.assertThat(data.getPersonaRef()).isEqualTo(proyectoEquipo.getPersonaRef());
-    Assertions.assertThat(data.getHorasDedicacion()).isEqualTo(proyectoEquipo.getHorasDedicacion());
 
   }
 
@@ -352,7 +350,7 @@ public class ProyectoEquipoServiceTest extends BaseServiceTest {
     // @formatter:on
 
     ProyectoEquipo proyectoEquipo = ProyectoEquipo.builder().id(id).proyectoId(proyectoId).rolProyecto(rolProyecto)
-        .fechaInicio(fechaInicio).fechaFin(fechaFin).personaRef("001").horasDedicacion(new Double(2)).build();
+        .fechaInicio(fechaInicio).fechaFin(fechaFin).personaRef("001").build();
 
     return proyectoEquipo;
   }

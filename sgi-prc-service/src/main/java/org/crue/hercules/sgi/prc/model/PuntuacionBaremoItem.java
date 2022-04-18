@@ -27,7 +27,8 @@ import lombok.Setter;
 @Table(name = PuntuacionBaremoItem.TABLE_NAME, uniqueConstraints = {
     @UniqueConstraint(columnNames = {
         "baremo_id",
-        "produccion_cientifica_id" }, name = "UK_PUNTUACIONBAREMOITEM_BAREMOID_PRODUCCIONCIENTIFICAID") })
+        "anio",
+        "produccion_cientifica_id" }, name = "UK_PUNTUACIONBAREMOITEM_BAREMOID_ANIO_PRODUCCIONCIENTIFICAID") })
 @Data
 @EqualsAndHashCode(callSuper = false)
 @NoArgsConstructor
@@ -60,6 +61,9 @@ public class PuntuacionBaremoItem extends BaseEntity {
   /** Baremo Id */
   @Column(name = "baremo_id", nullable = false)
   private Long baremoId;
+
+  @Column(name = "anio", nullable = false)
+  private Integer anio;
 
   // Relation mappings for JPA metamodel generation only
   @ManyToOne

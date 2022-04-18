@@ -91,10 +91,14 @@ public class CustomActaRepositoryImpl implements CustomActaRepository {
           cb.or(cb.isNull(subqRootEvaluadores.get(Evaluador_.fechaBaja)),
               cb.greaterThan(subqRootEvaluadores.get(Evaluador_.fechaBaja), Instant.now())));
 
-      listPredicates.add(cb.and(cb.equal(root.get(Acta_.activo), Boolean.TRUE), cb.in(queryComites)
-          .value(root.get(Acta_.convocatoriaReunion).get(ConvocatoriaReunion_.comite).get(Comite_.id))));
-      listPredicatesCount.add(cb.and(cb.equal(rootCount.get(Acta_.activo), Boolean.TRUE), cb.in(queryComites)
-          .value(rootCount.get(Acta_.convocatoriaReunion).get(ConvocatoriaReunion_.comite).get(Comite_.id))));
+      listPredicates.add(cb.and(cb.equal(root.get(Acta_.activo), Boolean.TRUE), cb.in(
+          root.get(Acta_.convocatoriaReunion).get(ConvocatoriaReunion_.comite).get(
+              Comite_.id))
+          .value(queryComites)));
+      listPredicatesCount.add(cb.and(cb.equal(rootCount.get(Acta_.activo), Boolean.TRUE), cb.in(
+          rootCount.get(Acta_.convocatoriaReunion).get(ConvocatoriaReunion_.comite).get(
+              Comite_.id))
+          .value(queryComites)));
     } else {
       listPredicates.add(cb.and(cb.equal(root.get(Acta_.activo), Boolean.TRUE)));
       listPredicatesCount.add(cb.and(cb.equal(rootCount.get(Acta_.activo), Boolean.TRUE)));
@@ -161,15 +165,12 @@ public class CustomActaRepositoryImpl implements CustomActaRepository {
     log.debug(
         "getNumEvaluaciones(Root<Acta> root, CriteriaBuilder cb, CriteriaQuery<ActaWithNumEvaluaciones> cq, boolean iniciales) - start");
 
-    Long tipoEvaluacionMemoria = 2L;
-
     Subquery<Long> queryNumEvaluaciones = cq.subquery(Long.class);
     Root<Evaluacion> subqRoot = queryNumEvaluaciones.from(Evaluacion.class);
     queryNumEvaluaciones.select(cb.countDistinct(subqRoot.get(Evaluacion_.id)))
         .where(cb.and(
             cb.equal(subqRoot.get(Evaluacion_.convocatoriaReunion).get(ConvocatoriaReunion_.id),
                 root.get(Acta_.convocatoriaReunion).get(ConvocatoriaReunion_.id)),
-            cb.equal(subqRoot.get(Evaluacion_.tipoEvaluacion), tipoEvaluacionMemoria),
             (iniciales) ? cb.equal(subqRoot.get(Evaluacion_.version), 1)
                 : cb.greaterThan(subqRoot.get(Evaluacion_.version), 1),
             cb.equal(subqRoot.get(Evaluacion_.esRevMinima), false)));

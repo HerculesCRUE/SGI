@@ -83,29 +83,17 @@ export class ProyectoPresupuestoListadoExportService extends AbstractTableExport
     if (!this.isExcelOrCsv(reportConfig.outputType)) {
       return this.getColumnsPresupuestoNotExcel();
     } else {
-      return this.getColumnsPresupuestoExcel();
+      const prefixTitlePresupuesto = this.translate.instant(PRESUPUESTO_KEY) + ': ';
+
+      return this.getColumnsPresupuesto(prefixTitlePresupuesto, false);
     }
   }
 
   private getColumnsPresupuestoNotExcel(): ISgiColumnReport[] {
-    const columns: ISgiColumnReport[] = [];
-    columns.push({
-      name: PRESUPUESTO_FIELD,
-      title: this.translate.instant(PRESUPUESTO_KEY, MSG_PARAMS.CARDINALIRY.SINGULAR),
-      type: ColumnType.STRING
-    });
-    const titleI18n = this.translate.instant(PRESUPUESTO_KEY, MSG_PARAMS.CARDINALIRY.PLURAL) +
-      ' (' + this.translate.instant(IMPORTE_PRESUPUESTO_UNIVERSIDAD_KEY) +
-      ' - ' + this.translate.instant(IMPORTE_PRESUPUESTO_UNIVERSIDAD_COSTES_INDIRECTOS_KEY) +
-      ' - ' + this.translate.instant(TOTAL_IMPORTE_PRESUPUESTO_UNIVERSIDAD_KEY) +
-      ' - ' + this.translate.instant(IMPORTE_CONCEDIDO_UNIVERSIDAD_KEY) +
-      ' - ' + this.translate.instant(IMPORTE_CONCEDIDO_UNIVERSIDAD_COSTES_INDIRECTOS_KEY) +
-      ' - ' + this.translate.instant(TOTAL_IMPORTE_CONCEDIDO_UNIVERSIDAD_KEY) +
-      ' - ' + this.translate.instant(IMPORTE_PRESUPUESTO_SOCIOS_KEY) +
-      ' - ' + this.translate.instant(IMPORTE_CONCEDIDO_SOCIOS_KEY) +
-      ' - ' + this.translate.instant(TOTAL_IMPORTE_PRESUPUESTO_KEY) +
-      ' - ' + this.translate.instant(TOTAL_IMPORTE_CONCEDIDO_KEY) +
-      ')';
+    const columns: ISgiColumnReport[] = this.getColumnsPresupuesto('', true);
+
+    const titleI18n = this.translate.instant(PRESUPUESTO_KEY);
+
     const columnPresupuesto: ISgiColumnReport = {
       name: PRESUPUESTO_FIELD,
       title: titleI18n,
@@ -116,77 +104,75 @@ export class ProyectoPresupuestoListadoExportService extends AbstractTableExport
     return [columnPresupuesto];
   }
 
-  private getColumnsPresupuestoExcel(): ISgiColumnReport[] {
+  private getColumnsPresupuesto(prefix: string, allString: boolean): ISgiColumnReport[] {
     const columns: ISgiColumnReport[] = [];
-
-    const titlePresupuesto = this.translate.instant(PRESUPUESTO_KEY, MSG_PARAMS.CARDINALIRY.SINGULAR);
 
     const columnImportePresupuestoUniversidad: ISgiColumnReport = {
       name: IMPORTE_PRESUPUESTO_UNIVERSIDAD_FIELD,
-      title: titlePresupuesto + ': ' + this.translate.instant(IMPORTE_PRESUPUESTO_UNIVERSIDAD_KEY),
+      title: prefix + this.translate.instant(IMPORTE_PRESUPUESTO_UNIVERSIDAD_KEY),
       type: ColumnType.STRING,
     };
     columns.push(columnImportePresupuestoUniversidad);
 
     const columnImportePresupuestoUniversidadCostesIndirectos: ISgiColumnReport = {
       name: IMPORTE_PRESUPUESTO_UNIVERSIDAD_COSTES_INDIRECTOS_FIELD,
-      title: titlePresupuesto + ': ' + this.translate.instant(IMPORTE_PRESUPUESTO_UNIVERSIDAD_COSTES_INDIRECTOS_KEY),
+      title: prefix + this.translate.instant(IMPORTE_PRESUPUESTO_UNIVERSIDAD_COSTES_INDIRECTOS_KEY),
       type: ColumnType.STRING,
     };
     columns.push(columnImportePresupuestoUniversidadCostesIndirectos);
 
     const columnTotalImportePresupuestoUniversidad: ISgiColumnReport = {
       name: TOTAL_IMPORTE_PRESUPUESTO_UNIVERSIDAD_FIELD,
-      title: titlePresupuesto + ': ' + this.translate.instant(TOTAL_IMPORTE_PRESUPUESTO_UNIVERSIDAD_KEY),
+      title: prefix + this.translate.instant(TOTAL_IMPORTE_PRESUPUESTO_UNIVERSIDAD_KEY),
       type: ColumnType.STRING,
     };
     columns.push(columnTotalImportePresupuestoUniversidad);
 
     const columnImporteConcedidoUniversidad: ISgiColumnReport = {
       name: IMPORTE_CONCEDIDO_UNIVERSIDAD_FIELD,
-      title: titlePresupuesto + ': ' + this.translate.instant(IMPORTE_CONCEDIDO_UNIVERSIDAD_KEY),
+      title: prefix + this.translate.instant(IMPORTE_CONCEDIDO_UNIVERSIDAD_KEY),
       type: ColumnType.STRING,
     };
     columns.push(columnImporteConcedidoUniversidad);
 
     const columnImporteConcedidoUniversidadCostesIndirectos: ISgiColumnReport = {
       name: IMPORTE_CONCEDIDO_UNIVERSIDAD_COSTES_INDIRECTOS_FIELD,
-      title: titlePresupuesto + ': ' + this.translate.instant(IMPORTE_CONCEDIDO_UNIVERSIDAD_COSTES_INDIRECTOS_KEY),
+      title: prefix + this.translate.instant(IMPORTE_CONCEDIDO_UNIVERSIDAD_COSTES_INDIRECTOS_KEY),
       type: ColumnType.STRING,
     };
     columns.push(columnImporteConcedidoUniversidadCostesIndirectos);
 
     const columnTotalImporteConcedidoUniversidad: ISgiColumnReport = {
       name: TOTAL_IMPORTE_CONCEDIDO_UNIVERSIDAD_FIELD,
-      title: titlePresupuesto + ': ' + this.translate.instant(TOTAL_IMPORTE_CONCEDIDO_UNIVERSIDAD_KEY),
+      title: prefix + this.translate.instant(TOTAL_IMPORTE_CONCEDIDO_UNIVERSIDAD_KEY),
       type: ColumnType.STRING,
     };
     columns.push(columnTotalImporteConcedidoUniversidad);
 
     const columnImportePresupuestoSocios: ISgiColumnReport = {
       name: IMPORTE_PRESUPUESTO_SOCIOS_FIELD,
-      title: titlePresupuesto + ': ' + this.translate.instant(IMPORTE_PRESUPUESTO_SOCIOS_KEY),
+      title: prefix + this.translate.instant(IMPORTE_PRESUPUESTO_SOCIOS_KEY),
       type: ColumnType.STRING,
     };
     columns.push(columnImportePresupuestoSocios);
 
     const columnImporteConcedidoSocios: ISgiColumnReport = {
       name: IMPORTE_CONCEDIDO_SOCIOS_FIELD,
-      title: titlePresupuesto + ': ' + this.translate.instant(IMPORTE_CONCEDIDO_SOCIOS_KEY),
+      title: prefix + this.translate.instant(IMPORTE_CONCEDIDO_SOCIOS_KEY),
       type: ColumnType.STRING,
     };
     columns.push(columnImporteConcedidoSocios);
 
     const columnTotalImportePresupuesto: ISgiColumnReport = {
       name: TOTAL_IMPORTE_PRESUPUESTO_FIELD,
-      title: titlePresupuesto + ': ' + this.translate.instant(TOTAL_IMPORTE_PRESUPUESTO_KEY),
+      title: prefix + this.translate.instant(TOTAL_IMPORTE_PRESUPUESTO_KEY),
       type: ColumnType.STRING,
     };
     columns.push(columnTotalImportePresupuesto);
 
     const columnTotalImporteConcedido: ISgiColumnReport = {
       name: TOTAL_IMPORTE_CONCEDIDO_FIELD,
-      title: titlePresupuesto + ': ' + this.translate.instant(TOTAL_IMPORTE_CONCEDIDO_KEY),
+      title: prefix + this.translate.instant(TOTAL_IMPORTE_CONCEDIDO_KEY),
       type: ColumnType.STRING,
     };
     columns.push(columnTotalImporteConcedido);
@@ -213,29 +199,22 @@ export class ProyectoPresupuestoListadoExportService extends AbstractTableExport
 
       const presupuestoElementsRow: any[] = [];
 
-      let presupuestoTable = this.decimalPipe.transform(presupuesto?.importeTotalPresupuestoUniversidadSinCosteIndirecto, '.2-2') ?? '0';
-      presupuestoTable += '\n';
-      presupuestoTable += this.decimalPipe.transform(presupuesto?.importeTotalPresupuestoUniversidadCostesIndirectos, '.2-2') ?? '0';
-      presupuestoTable += '\n';
-      presupuestoTable += this.decimalPipe.transform((presupuesto?.importeTotalPresupuestoUniversidadSinCosteIndirecto +
-        presupuesto?.importeTotalPresupuestoUniversidadCostesIndirectos), '.2-2') ?? '0';
-      presupuestoTable += '\n';
-      presupuestoTable += this.decimalPipe.transform(presupuesto?.importeTotalConcedidoUniversidadSinCosteIndirecto, '.2-2') ?? '0';
-      presupuestoTable += '\n';
-      presupuestoTable += this.decimalPipe.transform(presupuesto?.importeTotalConcedidoUniversidadCostesIndirectos, '.2-2') ?? '0';
-      presupuestoTable += '\n';
-      presupuestoTable += this.decimalPipe.transform((presupuesto?.importeTotalConcedidoUniversidadSinCosteIndirecto +
-        presupuesto?.importeTotalConcedidoUniversidadCostesIndirectos), '.2-2') ?? '0';
-      presupuestoTable += '\n';
-      presupuestoTable += this.decimalPipe.transform(presupuesto?.importeTotalPresupuestoSocios, '.2-2') ?? '0';
-      presupuestoTable += '\n';
-      presupuestoTable += this.decimalPipe.transform(presupuesto?.importeTotalConcedidoSocios, '.2-2') ?? '0';
-      presupuestoTable += '\n';
-      presupuestoTable += this.decimalPipe.transform(presupuesto?.importeTotalPresupuesto, '.2-2') ?? '0';
-      presupuestoTable += '\n';
-      presupuestoTable += this.decimalPipe.transform(presupuesto?.importeTotalConcedido, '.2-2') ?? '0';
-
-      presupuestoElementsRow.push(presupuestoTable);
+      presupuestoElementsRow.push(this.decimalPipe.transform(presupuesto?.importeTotalPresupuestoUniversidadSinCosteIndirecto,
+        '.2-2') ?? '');
+      presupuestoElementsRow.push(this.decimalPipe.transform(presupuesto?.importeTotalPresupuestoUniversidadCostesIndirectos,
+        '.2-2') ?? '');
+      presupuestoElementsRow.push(this.decimalPipe.transform((presupuesto?.importeTotalPresupuestoUniversidadSinCosteIndirecto +
+        presupuesto?.importeTotalPresupuestoUniversidadCostesIndirectos), '.2-2') ?? '');
+      presupuestoElementsRow.push(this.decimalPipe.transform(presupuesto?.importeTotalConcedidoUniversidadSinCosteIndirecto,
+        '.2-2') ?? '');
+      presupuestoElementsRow.push(this.decimalPipe.transform(presupuesto?.importeTotalConcedidoUniversidadCostesIndirectos,
+        '.2-2') ?? '');
+      presupuestoElementsRow.push(this.decimalPipe.transform((presupuesto?.importeTotalConcedidoUniversidadSinCosteIndirecto +
+        presupuesto?.importeTotalConcedidoUniversidadCostesIndirectos), '.2-2') ?? '');
+      presupuestoElementsRow.push(this.decimalPipe.transform(presupuesto?.importeTotalPresupuestoSocios, '.2-2') ?? '');
+      presupuestoElementsRow.push(this.decimalPipe.transform(presupuesto?.importeTotalConcedidoSocios, '.2-2') ?? '');
+      presupuestoElementsRow.push(this.decimalPipe.transform(presupuesto?.importeTotalPresupuesto, '.2-2') ?? '');
+      presupuestoElementsRow.push(this.decimalPipe.transform(presupuesto?.importeTotalConcedido, '.2-2') ?? '');
 
       const rowReport: ISgiRowReport = {
         elements: presupuestoElementsRow
@@ -250,35 +229,41 @@ export class ProyectoPresupuestoListadoExportService extends AbstractTableExport
   private fillRowsPresupuestoExcel(elementsRow: any[], proyecto: IProyectoReportData) {
     if (proyecto) {
       const presupuesto = proyecto.presupuesto;
-      elementsRow.push(presupuesto?.importeTotalPresupuestoUniversidadSinCosteIndirecto ?
-        presupuesto?.importeTotalPresupuestoUniversidadSinCosteIndirecto.toString() : '0');
-      elementsRow.push(presupuesto?.importeTotalPresupuestoUniversidadCostesIndirectos ?
-        presupuesto?.importeTotalPresupuestoUniversidadCostesIndirectos.toString() : '0');
-      elementsRow.push(presupuesto?.importeTotalPresupuestoUniversidadSinCosteIndirecto &&
-        presupuesto?.importeTotalPresupuestoUniversidadCostesIndirectos ?
-        (presupuesto?.importeTotalPresupuestoUniversidadSinCosteIndirecto + presupuesto?.importeTotalPresupuestoUniversidadCostesIndirectos).toString() : '0');
-      elementsRow.push(presupuesto?.importeTotalConcedidoUniversidadSinCosteIndirecto ?
-        presupuesto?.importeTotalConcedidoUniversidadSinCosteIndirecto.toString() : '0');
-      elementsRow.push(presupuesto?.importeTotalConcedidoUniversidadCostesIndirectos ?
-        presupuesto?.importeTotalConcedidoUniversidadCostesIndirectos.toString() : '0');
-      elementsRow.push(presupuesto?.importeTotalConcedidoUniversidadSinCosteIndirecto &&
-        presupuesto?.importeTotalConcedidoUniversidadCostesIndirectos ?
-        (presupuesto?.importeTotalConcedidoUniversidadSinCosteIndirecto + presupuesto?.importeTotalConcedidoUniversidadCostesIndirectos).toString() : '0');
-      elementsRow.push(presupuesto?.importeTotalPresupuestoSocios ? presupuesto?.importeTotalPresupuestoSocios.toString() : '0');
-      elementsRow.push(presupuesto?.importeTotalConcedidoSocios ? presupuesto?.importeTotalConcedidoSocios.toString() : '0');
-      elementsRow.push(presupuesto?.importeTotalPresupuesto ? presupuesto?.importeTotalPresupuesto.toString() : '0');
-      elementsRow.push(presupuesto?.importeTotalConcedido ? presupuesto?.importeTotalConcedido.toString() : '0');
+      elementsRow.push(this.notIsNullAndNotUndefined(presupuesto?.importeTotalPresupuestoUniversidadSinCosteIndirecto) ?
+        presupuesto?.importeTotalPresupuestoUniversidadSinCosteIndirecto.toString() : '');
+      elementsRow.push(this.notIsNullAndNotUndefined(presupuesto?.importeTotalPresupuestoUniversidadCostesIndirectos) ?
+        presupuesto?.importeTotalPresupuestoUniversidadCostesIndirectos.toString() : '');
+      elementsRow.push(this.notIsNullAndNotUndefined(presupuesto?.importeTotalPresupuestoUniversidadSinCosteIndirecto) &&
+        this.notIsNullAndNotUndefined(presupuesto?.importeTotalPresupuestoUniversidadCostesIndirectos) ?
+        (presupuesto?.importeTotalPresupuestoUniversidadSinCosteIndirecto
+          + presupuesto?.importeTotalPresupuestoUniversidadCostesIndirectos).toString() : '');
+      elementsRow.push(this.notIsNullAndNotUndefined(presupuesto?.importeTotalConcedidoUniversidadSinCosteIndirecto) ?
+        presupuesto?.importeTotalConcedidoUniversidadSinCosteIndirecto.toString() : '');
+      elementsRow.push(this.notIsNullAndNotUndefined(presupuesto?.importeTotalConcedidoUniversidadCostesIndirectos) ?
+        presupuesto?.importeTotalConcedidoUniversidadCostesIndirectos.toString() : '');
+      elementsRow.push(this.notIsNullAndNotUndefined(presupuesto?.importeTotalConcedidoUniversidadSinCosteIndirecto) &&
+        this.notIsNullAndNotUndefined(presupuesto?.importeTotalConcedidoUniversidadCostesIndirectos) ?
+        (presupuesto?.importeTotalConcedidoUniversidadSinCosteIndirecto
+          + presupuesto?.importeTotalConcedidoUniversidadCostesIndirectos).toString() : '');
+      elementsRow.push(this.notIsNullAndNotUndefined(presupuesto?.importeTotalPresupuestoSocios) ?
+        presupuesto?.importeTotalPresupuestoSocios.toString() : '');
+      elementsRow.push(this.notIsNullAndNotUndefined(presupuesto?.importeTotalConcedidoSocios) ?
+        presupuesto?.importeTotalConcedidoSocios.toString() : '');
+      elementsRow.push(this.notIsNullAndNotUndefined(presupuesto?.importeTotalPresupuesto) ?
+        presupuesto?.importeTotalPresupuesto.toString() : '');
+      elementsRow.push(this.notIsNullAndNotUndefined(presupuesto?.importeTotalConcedido) ?
+        presupuesto?.importeTotalConcedido.toString() : '');
     } else {
-      elementsRow.push('0');
-      elementsRow.push('0');
-      elementsRow.push('0');
-      elementsRow.push('0');
-      elementsRow.push('0');
-      elementsRow.push('0');
-      elementsRow.push('0');
-      elementsRow.push('0');
-      elementsRow.push('0');
-      elementsRow.push('0');
+      elementsRow.push('');
+      elementsRow.push('');
+      elementsRow.push('');
+      elementsRow.push('');
+      elementsRow.push('');
+      elementsRow.push('');
+      elementsRow.push('');
+      elementsRow.push('');
+      elementsRow.push('');
+      elementsRow.push('');
     }
   }
 }

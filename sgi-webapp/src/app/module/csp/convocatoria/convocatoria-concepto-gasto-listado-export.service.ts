@@ -393,8 +393,4 @@ export class ConvocatoriaConceptoGastoListadoExportService extends AbstractTable
       }
     }
   }
-
-  private notIsNullAndNotUndefined(value): boolean {
-    return value !== null && value !== undefined;
-  }
 }

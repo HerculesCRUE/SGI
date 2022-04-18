@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
 import { DialogActionComponent } from '@core/component/dialog-action.component';
-import { Problem } from '@core/errors/http-problem';
+import { SgiProblem } from '@core/errors/sgi-error';
 
 @Component({
   selector: 'sgi-dialog-content',
@@ -9,9 +9,9 @@ import { Problem } from '@core/errors/http-problem';
   styleUrls: ['./dialog-content.component.scss']
 })
 export class DialogContentComponent implements OnInit {
-  problems: Problem[] = [];
+  problems: SgiProblem[] = [];
 
-  private get modal(): DialogActionComponent<any, any> {
+  private get modal(): DialogActionComponent<any> {
     return this.dialogRef.componentInstance;
   }
 

@@ -1,40 +1,77 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <api context="/sgp" name="sgp-api" xmlns="http://ws.apache.org/ns/synapse">
 
+  <!-- actividad docente -->
+  <resource methods="GET" url-mapping="/actividad-docente">
+    <inSequence>
+      <call-template target="sgi-auth-sequence-template">
+        <with-param name="requiredAuthorities" value="" />
+      </call-template>
+      <sequence key="sgp-add-x-api-key-sequence" />
+      <send>
+        <endpoint key="cvn-endpoint" />
+      </send>
+    </inSequence>
+    <outSequence>
+      <respond />
+    </outSequence>
+    <faultSequence>
+      <sequence key="error-handling-sequence" />
+    </faultSequence>
+  </resource>
+
+  <resource methods="GET" uri-template="/actividad-docente/{id}">
+    <inSequence>
+      <call-template target="sgi-auth-sequence-template">
+        <with-param name="requiredAuthorities" value="" />
+      </call-template>
+      <sequence key="sgp-add-x-api-key-sequence" />
+      <send>
+        <endpoint key="cvn-endpoint" />
+      </send>
+    </inSequence>
+    <outSequence>
+      <respond />
+    </outSequence>
+    <faultSequence>
+      <sequence key="error-handling-sequence" />
+    </faultSequence>
+  </resource>
+
   <!-- categorias-profesionales -->
   <resource methods="GET" url-mapping="/categorias-profesionales">
     <inSequence>
       <call-template target="sgi-auth-sequence-template">
-        <with-param name="requiredAuthorities" value=""/>
+        <with-param name="requiredAuthorities" value="" />
       </call-template>
-      <sequence key="sgp-add-x-api-key-sequence"/>
+      <sequence key="sgp-add-x-api-key-sequence" />
       <send>
-        <endpoint key="sgp-endpoint"/>
+        <endpoint key="sgp-endpoint" />
       </send>
     </inSequence>
     <outSequence>
-      <respond/>
+      <respond />
     </outSequence>
     <faultSequence>
-      <sequence key="error-handling-sequence"/>
+      <sequence key="error-handling-sequence" />
     </faultSequence>
   </resource>
 
   <resource methods="GET" uri-template="/categorias-profesionales/{id}">
     <inSequence>
       <call-template target="sgi-auth-sequence-template">
-        <with-param name="requiredAuthorities" value=""/>
+        <with-param name="requiredAuthorities" value="" />
       </call-template>
-      <sequence key="sgp-add-x-api-key-sequence"/>
+      <sequence key="sgp-add-x-api-key-sequence" />
       <send>
-        <endpoint key="sgp-endpoint"/>
+        <endpoint key="sgp-endpoint" />
       </send>
     </inSequence>
     <outSequence>
-      <respond/>
+      <respond />
     </outSequence>
     <faultSequence>
-      <sequence key="error-handling-sequence"/>
+      <sequence key="error-handling-sequence" />
     </faultSequence>
   </resource>
 
@@ -42,18 +79,18 @@
   <resource methods="GET" url-mapping="/colectivos">
     <inSequence>
       <call-template target="sgi-auth-sequence-template">
-        <with-param name="requiredAuthorities" value=""/>
+        <with-param name="requiredAuthorities" value="" />
       </call-template>
-      <sequence key="sgp-add-x-api-key-sequence"/>
+      <sequence key="sgp-add-x-api-key-sequence" />
       <send>
-        <endpoint key="sgp-endpoint"/>
+        <endpoint key="sgp-endpoint" />
       </send>
     </inSequence>
     <outSequence>
-      <respond/>
+      <respond />
     </outSequence>
     <faultSequence>
-      <sequence key="error-handling-sequence"/>
+      <sequence key="error-handling-sequence" />
     </faultSequence>
   </resource>
 
@@ -62,39 +99,39 @@
   <resource methods="GET" uri-template="/datos-academicos/persona/{id}">
     <inSequence>
       <call-template target="sgi-auth-sequence-template">
-        <with-param name="requiredAuthorities" value=""/>
+        <with-param name="requiredAuthorities" value="" />
       </call-template>
-      <sequence key="sgp-add-x-api-key-sequence"/>
+      <sequence key="sgp-add-x-api-key-sequence" />
       <send>
-        <endpoint key="sgp-endpoint"/>
+        <endpoint key="sgp-endpoint" />
       </send>
     </inSequence>
     <outSequence>
-      <respond/>
+      <respond />
     </outSequence>
     <faultSequence>
-      <sequence key="error-handling-sequence"/>
+      <sequence key="error-handling-sequence" />
     </faultSequence>
   </resource>
 
-  
+
   <!-- datos-contacto -->
   <resource methods="GET" uri-template="/datos-contacto/persona/{id}">
     <inSequence>
       <call-template target="sgi-auth-sequence-template">
-        <with-param name="requiredAuthorities" value=""/>
+        <with-param name="requiredAuthorities" value="" />
       </call-template>
-      <sequence key="sgp-add-x-api-key-sequence"/>
+      <sequence key="sgp-add-x-api-key-sequence" />
       <send>
-        <endpoint key="sgp-endpoint"/>
+        <endpoint key="sgp-endpoint" />
       </send>
     </inSequence>
     <outSequence>
-      <script key="gov:scripts/sgp/datos-contacto-response-converter-mediator.js" language="js"/>
-      <respond/>
+      <script key="gov:scripts/sgp/datos-contacto-response-converter-mediator.js" language="js" />
+      <respond />
     </outSequence>
     <faultSequence>
-      <sequence key="error-handling-sequence"/>
+      <sequence key="error-handling-sequence" />
     </faultSequence>
   </resource>
 
@@ -103,56 +140,92 @@
   <resource methods="GET" uri-template="/datos-personales/persona/{id}">
     <inSequence>
       <call-template target="sgi-auth-sequence-template">
-        <with-param name="requiredAuthorities" value=""/>
+        <with-param name="requiredAuthorities" value="" />
       </call-template>
-      <sequence key="sgp-add-x-api-key-sequence"/>
+      <sequence key="sgp-add-x-api-key-sequence" />
       <send>
-        <endpoint key="sgp-endpoint"/>
+        <endpoint key="sgp-endpoint" />
       </send>
     </inSequence>
     <outSequence>
-      <respond/>
+      <respond />
     </outSequence>
     <faultSequence>
-      <sequence key="error-handling-sequence"/>
+      <sequence key="error-handling-sequence" />
     </faultSequence>
   </resource>
 
+  <!-- formacion academica -->
+  <resource methods="GET" url-mapping="/formacion">
+    <inSequence>
+      <call-template target="sgi-auth-sequence-template">
+        <with-param name="requiredAuthorities" value="" />
+      </call-template>
+      <sequence key="sgp-add-x-api-key-sequence" />
+      <send>
+        <endpoint key="cvn-endpoint" />
+      </send>
+    </inSequence>
+    <outSequence>
+      <respond />
+    </outSequence>
+    <faultSequence>
+      <sequence key="error-handling-sequence" />
+    </faultSequence>
+  </resource>
+
+  <resource methods="GET" uri-template="/formacion/{id}">
+    <inSequence>
+      <call-template target="sgi-auth-sequence-template">
+        <with-param name="requiredAuthorities" value="" />
+      </call-template>
+      <sequence key="sgp-add-x-api-key-sequence" />
+      <send>
+        <endpoint key="cvn-endpoint" />
+      </send>
+    </inSequence>
+    <outSequence>
+      <respond />
+    </outSequence>
+    <faultSequence>
+      <sequence key="error-handling-sequence" />
+    </faultSequence>
+  </resource>
 
   <!-- niveles-academicos -->
   <resource methods="GET" url-mapping="/niveles-academicos">
     <inSequence>
       <call-template target="sgi-auth-sequence-template">
-        <with-param name="requiredAuthorities" value=""/>
+        <with-param name="requiredAuthorities" value="" />
       </call-template>
-      <sequence key="sgp-add-x-api-key-sequence"/>
+      <sequence key="sgp-add-x-api-key-sequence" />
       <send>
-        <endpoint key="sgp-endpoint"/>
+        <endpoint key="sgp-endpoint" />
       </send>
     </inSequence>
     <outSequence>
-      <respond/>
+      <respond />
     </outSequence>
     <faultSequence>
-      <sequence key="error-handling-sequence"/>
+      <sequence key="error-handling-sequence" />
     </faultSequence>
   </resource>
 
   <resource methods="GET" uri-template="/niveles-academicos/{id}">
     <inSequence>
       <call-template target="sgi-auth-sequence-template">
-        <with-param name="requiredAuthorities" value=""/>
+        <with-param name="requiredAuthorities" value="" />
       </call-template>
-      <sequence key="sgp-add-x-api-key-sequence"/>
+      <sequence key="sgp-add-x-api-key-sequence" />
       <send>
-        <endpoint key="sgp-endpoint"/>
+        <endpoint key="sgp-endpoint" />
       </send>
     </inSequence>
     <outSequence>
-      <respond/>
+      <respond />
     </outSequence>
     <faultSequence>
-      <sequence key="error-handling-sequence"/>
+      <sequence key="error-handling-sequence" />
     </faultSequence>
   </resource>
 
@@ -161,94 +234,94 @@
   <resource methods="GET" url-mapping="/personas">
     <inSequence>
       <call-template target="sgi-auth-sequence-template">
-        <with-param name="requiredAuthorities" value=""/>
+        <with-param name="requiredAuthorities" value="" />
       </call-template>
-      <sequence key="sgp-add-x-api-key-sequence"/>
-      <property name="path" expression="get-property('axis2','REST_URL_POSTFIX')" type="STRING"/>
-      <property name="hasRsqlParams" value="true" type="STRING"/>
-      <script key="gov:scripts/sgp/replace-tipo-colectivo-colectivos-ids-mediator.js" language="js"/>
+      <sequence key="sgp-add-x-api-key-sequence" />
+      <property name="path" expression="get-property('axis2','REST_URL_POSTFIX')" type="STRING" />
+      <property name="hasRsqlParams" value="true" type="STRING" />
+      <script key="gov:scripts/sgp/replace-tipo-colectivo-colectivos-ids-mediator.js" language="js" />
       <property name="REST_URL_POSTFIX" scope="axis2" type="STRING" expression="get-property('pathWithColectivosIds')" />
       <send>
-        <endpoint key="sgp-endpoint"/>
+        <endpoint key="sgp-endpoint" />
       </send>
     </inSequence>
     <outSequence>
-      <respond/>
+      <respond />
     </outSequence>
     <faultSequence>
-      <sequence key="error-handling-sequence"/>
+      <sequence key="error-handling-sequence" />
     </faultSequence>
   </resource>
 
   <resource methods="GET" uri-template="/personas/{id}">
     <inSequence>
       <call-template target="sgi-auth-sequence-template">
-        <with-param name="requiredAuthorities" value=""/>
+        <with-param name="requiredAuthorities" value="" />
       </call-template>
-      <sequence key="sgp-add-x-api-key-sequence"/>
+      <sequence key="sgp-add-x-api-key-sequence" />
       <send>
-        <endpoint key="sgp-endpoint"/>
+        <endpoint key="sgp-endpoint" />
       </send>
     </inSequence>
     <outSequence>
-      <respond/>
+      <respond />
     </outSequence>
     <faultSequence>
-      <sequence key="error-handling-sequence"/>
+      <sequence key="error-handling-sequence" />
     </faultSequence>
   </resource>
 
   <resource methods="POST" url-mapping="/personas/formly">
     <inSequence>
       <call-template target="sgi-auth-sequence-template">
-        <with-param name="requiredAuthorities" value="ESB-PER-C"/>
+        <with-param name="requiredAuthorities" value="ESB-PER-C" />
       </call-template>
-      <sequence key="sgp-add-x-api-key-sequence"/>
+      <sequence key="sgp-add-x-api-key-sequence" />
       <send>
-        <endpoint key="sgp-endpoint"/>
+        <endpoint key="sgp-endpoint" />
       </send>
     </inSequence>
     <outSequence>
-      <respond/>
+      <respond />
     </outSequence>
     <faultSequence>
-      <sequence key="error-handling-sequence"/>
+      <sequence key="error-handling-sequence" />
     </faultSequence>
   </resource>
 
   <resource methods="PUT" uri-template="/personas/formly/{id}">
     <inSequence>
       <call-template target="sgi-auth-sequence-template">
-        <with-param name="requiredAuthorities" value="ESB-PER-E"/>
+        <with-param name="requiredAuthorities" value="ESB-PER-E" />
       </call-template>
-      <sequence key="sgp-add-x-api-key-sequence"/>
+      <sequence key="sgp-add-x-api-key-sequence" />
       <send>
-        <endpoint key="sgp-endpoint"/>
+        <endpoint key="sgp-endpoint" />
       </send>
     </inSequence>
     <outSequence>
-      <respond/>
+      <respond />
     </outSequence>
     <faultSequence>
-      <sequence key="error-handling-sequence"/>
+      <sequence key="error-handling-sequence" />
     </faultSequence>
   </resource>
 
   <resource methods="GET" url-mapping="/personas/formly/create">
     <inSequence>
       <call-template target="sgi-auth-sequence-template">
-        <with-param name="requiredAuthorities" value="ESB-PER-C"/>
+        <with-param name="requiredAuthorities" value="ESB-PER-C" />
       </call-template>
-      <sequence key="sgp-add-x-api-key-sequence"/>
+      <sequence key="sgp-add-x-api-key-sequence" />
 
-       <!-- tipos via -->
-      <property value="/tipos-via" name="REST_URL_POSTFIX" scope="axis2" type="STRING"/>
+      <!-- tipos via -->
+      <property value="/tipos-via" name="REST_URL_POSTFIX" scope="axis2" type="STRING" />
       <call blocking="true">
-        <endpoint key="sgo-endpoint"/>
+        <endpoint key="sgo-endpoint" />
       </call>
       <enrich>
-        <source clone="false" type="body"/>
-        <target type="property" property="tiposVia"/>
+        <source clone="false" type="body" />
+        <target type="property" property="tiposVia" />
       </enrich>
 
       <payloadFactory media-type="json">
@@ -593,34 +666,34 @@
 ]
         </format>
         <args>
-          <arg expression="get-property('tiposVia')" literal="true"/>
+          <arg expression="get-property('tiposVia')" literal="true" />
         </args>
       </payloadFactory>
-      <respond/>
+      <respond />
     </inSequence>
     <outSequence>
-      <respond/>
+      <respond />
     </outSequence>
     <faultSequence>
-      <sequence key="error-handling-sequence"/>
+      <sequence key="error-handling-sequence" />
     </faultSequence>
   </resource>
 
   <resource methods="GET" url-mapping="/personas/formly/update">
     <inSequence>
       <call-template target="sgi-auth-sequence-template">
-        <with-param name="requiredAuthorities" value="ESB-PER-E"/>
+        <with-param name="requiredAuthorities" value="ESB-PER-E" />
       </call-template>
-      <sequence key="sgp-add-x-api-key-sequence"/>
+      <sequence key="sgp-add-x-api-key-sequence" />
 
       <!-- tipos via -->
-      <property value="/tipos-via" name="REST_URL_POSTFIX" scope="axis2" type="STRING"/>
+      <property value="/tipos-via" name="REST_URL_POSTFIX" scope="axis2" type="STRING" />
       <call blocking="true">
-        <endpoint key="sgo-endpoint"/>
+        <endpoint key="sgo-endpoint" />
       </call>
       <enrich>
-        <source clone="false" type="body"/>
-        <target type="property" property="tiposVia"/>
+        <source clone="false" type="body" />
+        <target type="property" property="tiposVia" />
       </enrich>
 
       <payloadFactory media-type="json">
@@ -1238,34 +1311,34 @@
 ]
         </format>
         <args>
-          <arg expression="get-property('tiposVia')" literal="true"/>
+          <arg expression="get-property('tiposVia')" literal="true" />
         </args>
       </payloadFactory>
-      <respond/>
+      <respond />
     </inSequence>
     <outSequence>
-      <respond/>
+      <respond />
     </outSequence>
     <faultSequence>
-      <sequence key="error-handling-sequence"/>
+      <sequence key="error-handling-sequence" />
     </faultSequence>
   </resource>
 
   <resource methods="GET" url-mapping="/personas/formly/view">
     <inSequence>
       <call-template target="sgi-auth-sequence-template">
-        <with-param name="requiredAuthorities" value="ESB-PER-V"/>
+        <with-param name="requiredAuthorities" value="ESB-PER-V" />
       </call-template>
-      <sequence key="sgp-add-x-api-key-sequence"/>
+      <sequence key="sgp-add-x-api-key-sequence" />
 
       <!-- tipos via -->
-      <property value="/tipos-via" name="REST_URL_POSTFIX" scope="axis2" type="STRING"/>
+      <property value="/tipos-via" name="REST_URL_POSTFIX" scope="axis2" type="STRING" />
       <call blocking="true">
-        <endpoint key="sgo-endpoint"/>
+        <endpoint key="sgo-endpoint" />
       </call>
       <enrich>
-        <source clone="false" type="body"/>
-        <target type="property" property="tiposVia"/>
+        <source clone="false" type="body" />
+        <target type="property" property="tiposVia" />
       </enrich>
 
       <payloadFactory media-type="json">
@@ -1883,70 +1956,70 @@
 ]
         </format>
         <args>
-          <arg expression="get-property('tiposVia')" literal="true"/>
+          <arg expression="get-property('tiposVia')" literal="true" />
         </args>
       </payloadFactory>
-      <respond/>
+      <respond />
     </inSequence>
     <outSequence>
-      <respond/>
+      <respond />
     </outSequence>
     <faultSequence>
-      <sequence key="error-handling-sequence"/>
+      <sequence key="error-handling-sequence" />
     </faultSequence>
   </resource>
 
   <resource methods="GET" uri-template="/personas/formly/{id}">
     <inSequence>
       <call-template target="sgi-auth-sequence-template">
-        <with-param name="requiredAuthorities" value="ESB-PER-E,ESB-PER-V"/>
+        <with-param name="requiredAuthorities" value="ESB-PER-E,ESB-PER-V" />
       </call-template>
-      <sequence key="sgp-add-x-api-key-sequence"/>
+      <sequence key="sgp-add-x-api-key-sequence" />
       <send>
-        <endpoint key="sgp-endpoint"/>
+        <endpoint key="sgp-endpoint" />
       </send>
     </inSequence>
     <outSequence>
-      <respond/>
+      <respond />
     </outSequence>
     <faultSequence>
-      <sequence key="error-handling-sequence"/>
+      <sequence key="error-handling-sequence" />
     </faultSequence>
   </resource>
 
   <resource methods="GET" uri-template="/personas/{id}/fotografia">
     <inSequence>
       <call-template target="sgi-auth-sequence-template">
-        <with-param name="requiredAuthorities" value=""/>
+        <with-param name="requiredAuthorities" value="" />
       </call-template>
-      <sequence key="sgp-add-x-api-key-sequence"/>
+      <sequence key="sgp-add-x-api-key-sequence" />
       <send>
-        <endpoint key="sgp-endpoint"/>
+        <endpoint key="sgp-endpoint" />
       </send>
     </inSequence>
     <outSequence>
-      <respond/>
+      <respond />
     </outSequence>
     <faultSequence>
-      <sequence key="error-handling-sequence"/>
+      <sequence key="error-handling-sequence" />
     </faultSequence>
   </resource>
 
   <resource methods="GET" uri-mapping="/personas/modificadas-ids">
     <inSequence>
       <call-template target="sgi-auth-sequence-template">
-        <with-param name="requiredAuthorities" value=""/>
+        <with-param name="requiredAuthorities" value="" />
       </call-template>
-      <sequence key="sgp-add-x-api-key-sequence"/>
+      <sequence key="sgp-add-x-api-key-sequence" />
       <send>
-        <endpoint key="sgp-endpoint"/>
+        <endpoint key="sgp-endpoint" />
       </send>
     </inSequence>
     <outSequence>
-      <respond/>
+      <respond />
     </outSequence>
     <faultSequence>
-      <sequence key="error-handling-sequence"/>
+      <sequence key="error-handling-sequence" />
     </faultSequence>
   </resource>
 
@@ -1954,22 +2027,22 @@
   <resource methods="GET" url-mapping="/personasFast">
     <inSequence>
       <call-template target="sgi-auth-sequence-template">
-        <with-param name="requiredAuthorities" value=""/>
+        <with-param name="requiredAuthorities" value="" />
       </call-template>
-      <sequence key="sgp-add-x-api-key-sequence"/>
-      <property name="path" expression="get-property('axis2','REST_URL_POSTFIX')" type="STRING"/>
-      <property name="hasRsqlParams" value="false" type="STRING"/>
-      <script key="gov:scripts/sgp/replace-tipo-colectivo-colectivos-ids-mediator.js" language="js"/>
+      <sequence key="sgp-add-x-api-key-sequence" />
+      <property name="path" expression="get-property('axis2','REST_URL_POSTFIX')" type="STRING" />
+      <property name="hasRsqlParams" value="false" type="STRING" />
+      <script key="gov:scripts/sgp/replace-tipo-colectivo-colectivos-ids-mediator.js" language="js" />
       <property name="REST_URL_POSTFIX" scope="axis2" type="STRING" expression="get-property('pathWithColectivosIds')" />
       <send>
-        <endpoint key="sgp-endpoint"/>
+        <endpoint key="sgp-endpoint" />
       </send>
     </inSequence>
     <outSequence>
-      <respond/>
+      <respond />
     </outSequence>
     <faultSequence>
-      <sequence key="error-handling-sequence"/>
+      <sequence key="error-handling-sequence" />
     </faultSequence>
   </resource>
 
@@ -1977,18 +2050,18 @@
   <resource methods="GET" uri-template="/sexenios/persona/{id}">
     <inSequence>
       <call-template target="sgi-auth-sequence-template">
-        <with-param name="requiredAuthorities" value=""/>
+        <with-param name="requiredAuthorities" value="" />
       </call-template>
-      <sequence key="sgp-add-x-api-key-sequence"/>
+      <sequence key="sgp-add-x-api-key-sequence" />
       <send>
-        <endpoint key="sgp-endpoint"/>
+        <endpoint key="sgp-endpoint" />
       </send>
     </inSequence>
     <outSequence>
-      <respond/>
+      <respond />
     </outSequence>
     <faultSequence>
-      <sequence key="error-handling-sequence"/>
+      <sequence key="error-handling-sequence" />
     </faultSequence>
   </resource>
 
@@ -1996,18 +2069,18 @@
   <resource methods="GET" url-mapping="/sexos">
     <inSequence>
       <call-template target="sgi-auth-sequence-template">
-        <with-param name="requiredAuthorities" value=""/>
+        <with-param name="requiredAuthorities" value="" />
       </call-template>
-      <sequence key="sgp-add-x-api-key-sequence"/>
+      <sequence key="sgp-add-x-api-key-sequence" />
       <send>
-        <endpoint key="sgp-endpoint"/>
+        <endpoint key="sgp-endpoint" />
       </send>
     </inSequence>
     <outSequence>
-      <respond/>
+      <respond />
     </outSequence>
     <faultSequence>
-      <sequence key="error-handling-sequence"/>
+      <sequence key="error-handling-sequence" />
     </faultSequence>
   </resource>
 
@@ -2016,18 +2089,18 @@
   <resource methods="GET" url-mapping="/tipos-documento">
     <inSequence>
       <call-template target="sgi-auth-sequence-template">
-        <with-param name="requiredAuthorities" value=""/>
+        <with-param name="requiredAuthorities" value="" />
       </call-template>
-      <sequence key="sgp-add-x-api-key-sequence"/>
+      <sequence key="sgp-add-x-api-key-sequence" />
       <send>
-        <endpoint key="sgp-endpoint"/>
+        <endpoint key="sgp-endpoint" />
       </send>
     </inSequence>
     <outSequence>
-      <respond/>
+      <respond />
     </outSequence>
     <faultSequence>
-      <sequence key="error-handling-sequence"/>
+      <sequence key="error-handling-sequence" />
     </faultSequence>
   </resource>
 
@@ -2036,20 +2109,38 @@
   <resource methods="GET" uri-template="/vinculaciones/persona/{id}">
     <inSequence>
       <call-template target="sgi-auth-sequence-template">
-        <with-param name="requiredAuthorities" value=""/>
+        <with-param name="requiredAuthorities" value="" />
       </call-template>
-      <sequence key="sgp-add-x-api-key-sequence"/>
+      <sequence key="sgp-add-x-api-key-sequence" />
       <send>
-        <endpoint key="sgp-endpoint"/>
+        <endpoint key="sgp-endpoint" />
       </send>
     </inSequence>
     <outSequence>
-      <script key="gov:scripts/sgp/vinculacion-response-converter-mediator.js" language="js"/>
-      <respond/>
+      <script key="gov:scripts/sgp/vinculacion-response-converter-mediator.js" language="js" />
+      <respond />
     </outSequence>
     <faultSequence>
-      <sequence key="error-handling-sequence"/>
+      <sequence key="error-handling-sequence" />
     </faultSequence>
   </resource>
 
+  <resource methods="GET" uri-template="/vinculaciones/persona/{id}/vinculaciones-categorias-profesionales">
+    <inSequence>
+      <call-template target="sgi-auth-sequence-template">
+        <with-param name="requiredAuthorities" value="" />
+      </call-template>
+      <sequence key="sgp-add-x-api-key-sequence" />
+      <send>
+        <endpoint key="sgp-endpoint" />
+      </send>
+    </inSequence>
+    <outSequence>
+      <script key="gov:scripts/sgp/vinculacion-categoria-profesional-response-converter-mediator.js" language="js" />
+      <respond />
+    </outSequence>
+    <faultSequence>
+      <sequence key="error-handling-sequence" />
+    </faultSequence>
+  </resource>
 </api>

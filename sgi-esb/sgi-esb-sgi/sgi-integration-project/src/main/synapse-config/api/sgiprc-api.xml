@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<api context="/sgiprc" name="sgiprc-api" publishSwagger="/_system/governance/swagger_files/sgiprc-swagger.yaml" xmlns="http://ws.apache.org/ns/synapse">
+
+  <!-- Producciones Cientificas -->
+  <resource methods="POST" url-mapping="/producciones-cientificas">
+    <inSequence>
+      <!-- Transform ProduccionCientifica payload idRef and create idRefTransformed property -->
+      <script key="gov:scripts/sgi/produccion-cientifica-id-ref-transformer-mediator.js" language="js"/>
+      <!-- Get URL from HTTP transport properties-->
+      <property name="url" expression="get-property('axis2','REST_URL_POSTFIX')"/>
+      <!-- Rewrite get URL property as input and modify the same input property as output -->
+      <rewrite inProperty="url" outProperty="url">
+        <rewriterule>
+          <action type="replace" regex="producciones-cientificas" value="producciones-cientificas-api" fragment="path" />
+        </rewriterule>
+      </rewrite>
+      <!-- Set URL HTTP transport properties by rewrited value -->
+      <property name="REST_URL_POSTFIX" scope="axis2" expression="get-property('url')"/>
+      <send>
+        <endpoint key="sgiprc-endpoint" />
+      </send>
+    </inSequence>
+    <outSequence>
+      <!-- Only converts response if response HTTP status code is 201 -->
+      <filter source="get-property('axis2','HTTP_SC')" regex="201">
+        <then>
+          <script key="gov:scripts/sgi/produccion-cientifica-response-converter-mediator.js" language="js"/>
+        </then>
+      </filter>
+      <respond />
+    </outSequence>
+    <faultSequence>
+      <sequence key="error-handling-sequence" />
+    </faultSequence>
+  </resource>
+
+  <resource methods="PUT" uri-template="/producciones-cientificas/{id}">
+    <inSequence>
+      <!-- Transform ProduccionCientifica payload idRef and create idRefTransformed property -->
+      <script key="gov:scripts/sgi/produccion-cientifica-id-ref-transformer-mediator.js" language="js"/>
+      <!-- Set URL HTTP transport properties by expression value -->
+      <property name="REST_URL_POSTFIX" expression="fn:concat('/producciones-cientificas-api/', get-property('idRefTransformed'))" scope="axis2" type="STRING"/>
+      <send>
+        <endpoint key="sgiprc-endpoint"/>
+      </send>
+    </inSequence>
+    <outSequence>
+      <!-- Only converts response if response HTTP status code is 200 -->
+      <filter source="get-property('axis2','HTTP_SC')" regex="200">
+        <then>
+          <script key="gov:scripts/sgi/produccion-cientifica-response-converter-mediator.js" language="js"/>
+        </then>
+      </filter>      
+      <respond/>
+    </outSequence>
+    <faultSequence>
+      <sequence key="error-handling-sequence"/>
+    </faultSequence>
+  </resource>
+
+  <resource methods="DELETE" uri-template="/producciones-cientificas/{id}">
+    <inSequence>
+      <!-- Set URL HTTP transport properties by expression value -->
+      <property name="REST_URL_POSTFIX" expression="fn:concat('/producciones-cientificas-api/CVN_', get-property('uri.var.id'))" scope="axis2" type="STRING"/>
+      <send>
+        <endpoint key="sgiprc-endpoint"/>
+      </send>
+    </inSequence>
+    <outSequence>
+      <respond/>
+    </outSequence>
+    <faultSequence>
+      <sequence key="error-handling-sequence"/>
+    </faultSequence>
+  </resource>
+
+  <resource methods="GET" uri-template="/producciones-cientificas/estado">
+    <inSequence>
+      <!-- Get URL from HTTP transport properties-->
+      <property name="url" expression="get-property('axis2','REST_URL_POSTFIX')"/>
+      <!-- Rewrite get URL property as input and modify the same input property as output -->
+      <rewrite inProperty="url" outProperty="url">
+        <rewriterule>
+          <action type="replace" regex="producciones-cientificas" value="producciones-cientificas-api" fragment="path" />
+        </rewriterule>
+      </rewrite>
+      <!-- Set URL HTTP transport properties by rewrited value -->
+      <property name="REST_URL_POSTFIX" scope="axis2" expression="get-property('url')"/>
+      <send>
+        <endpoint key="sgiprc-endpoint"/>
+      </send>
+    </inSequence>
+    <outSequence>
+      <!-- Only converts response if response HTTP status code is 200 -->
+      <filter source="get-property('axis2','HTTP_SC')" regex="200">
+        <then>
+          <script key="gov:scripts/sgi/produccion-cientifica-response-converter-mediator.js" language="js"/>
+        </then>
+      </filter> 
+      <respond/>
+    </outSequence>
+    <faultSequence>
+      <sequence key="error-handling-sequence"/>
+    </faultSequence>
+  </resource>
+
+  <resource methods="GET" uri-template="/epigrafes">
+    <inSequence>
+      <!-- Get URL from HTTP transport properties-->
+      <property name="url" expression="get-property('axis2','REST_URL_POSTFIX')"/>
+      <!-- Rewrite get URL property as input and modify the same input property as output -->
+      <rewrite inProperty="url" outProperty="url">
+        <rewriterule>
+          <action type="replace" regex="epigrafes" value="producciones-cientificas-api/epigrafes" fragment="path" />
+        </rewriterule>
+      </rewrite>
+      <!-- Set URL HTTP transport properties by rewrited value -->
+      <property name="REST_URL_POSTFIX" scope="axis2" expression="get-property('url')"/>
+      <send>
+        <endpoint key="sgiprc-endpoint"/>
+      </send>
+    </inSequence>
+    <outSequence>
+      <respond/>
+    </outSequence>
+    <faultSequence>
+      <sequence key="error-handling-sequence"/>
+    </faultSequence>
+  </resource>
+
+</api>

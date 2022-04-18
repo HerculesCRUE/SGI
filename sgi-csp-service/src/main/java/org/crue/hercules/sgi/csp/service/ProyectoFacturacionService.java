@@ -1,5 +1,7 @@
 package org.crue.hercules.sgi.csp.service;
 
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.crue.hercules.sgi.csp.exceptions.ProyectoFacturacionNotFoundException;
 import org.crue.hercules.sgi.csp.exceptions.UserNotAuthorizedToAccessProyectoException;
@@ -8,14 +10,11 @@ import org.crue.hercules.sgi.csp.model.EstadoValidacionIP.TipoEstadoValidacion;
 import org.crue.hercules.sgi.csp.model.Proyecto;
 import org.crue.hercules.sgi.csp.model.ProyectoFacturacion;
 import org.crue.hercules.sgi.csp.repository.EstadoValidacionIPRepository;
-import org.crue.hercules.sgi.csp.repository.ProyectoEquipoRepository;
 import org.crue.hercules.sgi.csp.repository.ProyectoFacturacionRepository;
 import org.crue.hercules.sgi.csp.repository.ProyectoRepository;
-import org.crue.hercules.sgi.csp.repository.ProyectoResponsableEconomicoRepository;
+import org.crue.hercules.sgi.csp.repository.TipoFacturacionRepository;
 import org.crue.hercules.sgi.csp.repository.predicate.ProyectoFacturacionPredicateResolver;
-import org.crue.hercules.sgi.csp.repository.specification.ProyectoEquipoSpecifications;
 import org.crue.hercules.sgi.csp.repository.specification.ProyectoFacturacionSpecifications;
-import org.crue.hercules.sgi.csp.repository.specification.ProyectoResponsableEconomicoSpecifications;
 import org.crue.hercules.sgi.csp.util.ProyectoHelper;
 import org.crue.hercules.sgi.framework.rsql.SgiRSQLJPASupport;
 import org.crue.hercules.sgi.framework.security.core.context.SgiSecurityContextHolder;
@@ -26,8 +25,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
-import lombok.RequiredArgsConstructor;
-
+@Slf4j
 @Transactional(readOnly = true)
 @Service
 @RequiredArgsConstructor
@@ -39,7 +37,9 @@ public class ProyectoFacturacionService {
   private final ProyectoFacturacionRepository proyectoFacturacionRepository;
   private final EstadoValidacionIPRepository estadoValidacionIPRepository;
   private final ProyectoRepository proyectoRepository;
+  private final TipoFacturacionRepository tipoFacturacionRepository;
   private final ProyectoHelper proyectoHelper;
+  private final ProyectoFacturacionComService proyectoFacturacionComService;
 
   /**
    * Busca todos los objetos de tipo {@link ProyectoFacturacion} cuyo proyectoId
@@ -112,9 +112,40 @@ public class ProyectoFacturacionService {
 
     if (toUpdate.getEstadoValidacionIP().getEstado() != beforeUpdate.getEstadoValidacionIP().getEstado()) {
       beforeUpdate.setEstadoValidacionIP(persistEstadoValidacionIP(toUpdate.getEstadoValidacionIP(), toUpdate.getId()));
+      if (this.checkIfCanSendComunicado(beforeUpdate)) {
+        try {
+          beforeUpdate.setTipoFacturacion(beforeUpdate.getTipoFacturacion() == null ? null
+              : this.tipoFacturacionRepository.findById(beforeUpdate.getTipoFacturacion().getId()).orElse(null));
+          this.proyectoFacturacionComService.enviarComunicado(beforeUpdate);
+        } catch (Exception e) {
+          log.error(e.getMessage(), e);
+        }
+      }
     }
 
     return this.proyectoFacturacionRepository.save(beforeUpdate);
+  }
+
+  private boolean checkIfCanSendComunicado(ProyectoFacturacion proyectoFacturacion) {
+    boolean res = false;
+    switch (proyectoFacturacion.getEstadoValidacionIP().getEstado()) {
+      case RECHAZADA:
+      case VALIDADA:
+        res = !((!TipoEstadoValidacion.VALIDADA.equals(proyectoFacturacion.getEstadoValidacionIP().getEstado())
+            && !TipoEstadoValidacion.RECHAZADA
+                .equals(proyectoFacturacion.getEstadoValidacionIP().getEstado()))
+            || ((!proyectoHelper.hasUserAuthorityInvestigador()
+                && !proyectoHelper.checkIfUserIsInvestigadorPrincipal(proyectoFacturacion
+                    .getProyectoId()))
+                && !proyectoHelper.checkUserIsResponsableEconomico(proyectoFacturacion.getProyectoId())));
+        break;
+      case NOTIFICADA:
+        res = true;
+        break;
+      default:
+        break;
+    }
+    return res;
   }
 
   private EstadoValidacionIP persistEstadoValidacionIP(EstadoValidacionIP fromEstado, Long proyectoFacturacionId) {

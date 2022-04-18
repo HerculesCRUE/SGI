@@ -101,7 +101,7 @@ export class SelectConvocatoriaComponent extends SelectDialogComponent<SearchCon
     const unidadesGestion: string[] = [];
     userAuthorities.filter(authority => {
       return this._authorities.some(auth => authority.match(new RegExp('^' + auth + '_.+$')));
-    }).map(authority => {
+    }).forEach(authority => {
       const uo = this.getUnidadGestion(authority);
       if (uo && unidadesGestion.indexOf(uo) < 0) {
         unidadesGestion.push(uo);
@@ -146,7 +146,7 @@ export class SelectConvocatoriaComponent extends SelectDialogComponent<SearchCon
 
   private buildFilter(term: string): SgiRestFilter {
     const filter = new RSQLSgiRestFilter('titulo', SgiRestFilterOperator.LIKE_ICASE, term);
-    if (this.getFilterUnidadesGestion()) {
+    if (this.getFilterUnidadesGestion().length > 0) {
       filter.and('unidadGestionRef', SgiRestFilterOperator.IN, this.getFilterUnidadesGestion());
     }
     return filter;

@@ -53,8 +53,9 @@ public class CampoProduccionCientificaController {
   /**
    * Instancia un nuevo CampoProduccionCientificaController.
    * 
-   * @param modelMapper {@link ModelMapper}
-   * @param service     {@link CampoProduccionCientificaService}
+   * @param modelMapper       {@link ModelMapper}
+   * @param service           {@link CampoProduccionCientificaService}
+   * @param valorCampoService {@link ValorCampoService}
    */
   public CampoProduccionCientificaController(
       ModelMapper modelMapper,
@@ -175,7 +176,7 @@ public class CampoProduccionCientificaController {
 
   private Page<CampoProduccionCientificaOutput> convert(Page<CampoProduccionCientifica> page) {
     List<CampoProduccionCientificaOutput> content = page.getContent().stream()
-        .map(campoProduccionCientifica -> convert(campoProduccionCientifica)).collect(Collectors.toList());
+        .map(this::convert).collect(Collectors.toList());
 
     return new PageImpl<>(content, page.getPageable(), page.getTotalElements());
   }
@@ -205,8 +206,7 @@ public class CampoProduccionCientificaController {
 
   private Page<ValorCampoOutput> convertValorCampo(Page<ValorCampo> page) {
     List<ValorCampoOutput> content = page.getContent().stream()
-        .map((valorCampo) -> convert(valorCampo))
-        .collect(Collectors.toList());
+        .map(this::convert).collect(Collectors.toList());
 
     return new PageImpl<>(content, page.getPageable(), page.getTotalElements());
   }

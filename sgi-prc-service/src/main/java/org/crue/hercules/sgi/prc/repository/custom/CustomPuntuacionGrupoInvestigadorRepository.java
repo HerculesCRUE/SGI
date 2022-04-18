@@ -15,4 +15,7 @@ public interface CustomPuntuacionGrupoInvestigadorRepository {
    */
   @Modifying
   int deleteInBulkByPuntuacionGrupoId(Long puntuacionGrupoId);
+
+  @Modifying
+  int updatePuntuacionItemInvestigadorNull(Long produccionCientificaId);
 }

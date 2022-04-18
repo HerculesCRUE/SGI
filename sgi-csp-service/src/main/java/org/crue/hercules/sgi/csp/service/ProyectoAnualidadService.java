@@ -1,5 +1,6 @@
 package org.crue.hercules.sgi.csp.service;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Set;
 
@@ -232,6 +233,33 @@ public class ProyectoAnualidadService {
       log.debug("notificarSge(Long id) - end");
       return returnValue;
     }).orElseThrow(() -> new ProyectoAnualidadNotFoundException(id));
+  }
+
+  /**
+   * Obtiene la suma de importe concedido de cada {@link AnualidadGasto}
+   * asociados a un {@link Proyecto} cuyo id coincide con el indicado.
+   * 
+   * @param proyectoId el identificador del {@link Proyecto}
+   * @return suma de puntos del campo importeConcedido
+   */
+  public BigDecimal getTotalImporteConcedidoAnualidadGasto(Long proyectoId) {
+    log.debug("getTotalImporteConcedidoAnualidadGasto(Long proyectoId) - start");
+
+    return repository.getTotalImporteConcedidoAnualidadGasto(proyectoId);
+  }
+
+  /**
+   * Obtiene la suma de importe concedido de cada {@link AnualidadGasto} de costes
+   * indirectos
+   * asociados a un {@link Proyecto} cuyo id coincide con el indicado.
+   * 
+   * @param proyectoId el identificador del {@link Proyecto}
+   * @return suma de puntos del campo importeConcedido
+   */
+  public BigDecimal getTotalImporteConcedidoAnualidadGastoCostesIndirectos(Long proyectoId) {
+    log.debug("getTotalImporteConcedidoAnualidadGastoCostesIndirectos(Long proyectoId) - start");
+
+    return repository.getTotalImporteConcedidoAnualidadGastoCostesIndirectos(proyectoId);
   }
 
 }

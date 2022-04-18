@@ -8,7 +8,7 @@ import { ActionComponent } from '@core/component/action.component';
 import { NGXLogger } from 'ngx-logger';
 import { SOLICITUD_PROTECCION_ROUTE_NAMES } from '../solicitud-proteccion-route-names';
 import { SolicitudProteccionActionService } from '../solicitud-proteccion.action.service';
-import { HttpProblem } from '@core/errors/http-problem';
+import { SgiError } from '@core/errors/sgi-error';
 import { MSG_PARAMS } from '@core/i18n';
 import { switchMap } from 'rxjs/operators';
 
@@ -93,8 +93,8 @@ export class SolicitudProteccionCrearComponent extends ActionComponent implement
       () => { },
       (error) => {
         this.logger.error(error);
-        if (error instanceof HttpProblem) {
-          if(!error.managed){
+        if (error instanceof SgiError) {
+          if (!error.managed) {
             this.snackBarService.showError(error);
           }
         }

@@ -5,7 +5,6 @@ import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { BaseExportModalComponent } from '@core/component/base-export/base-export-modal.component';
 import { MSG_PARAMS } from '@core/i18n';
 import { IReportConfig, IReportOptions } from '@core/services/rep/abstract-table-export.service';
-import { SnackBarService } from '@core/services/snack-bar.service';
 import { TranslateService } from '@ngx-translate/core';
 import { SgiRestFindOptions } from '@sgi/framework/http';
 import { ConvocatoriaListadoExportService, IConvocatoriaReportOptions } from '../../convocatoria-listado-export.service';
@@ -26,12 +25,11 @@ export class ConvocatoriaListadoExportModalComponent extends BaseExportModalComp
 
   constructor(
     matDialogRef: MatDialogRef<ConvocatoriaListadoExportModalComponent>,
-    snackBarService: SnackBarService,
     translate: TranslateService,
     convocatoriaListadoExportService: ConvocatoriaListadoExportService,
     @Inject(MAT_DIALOG_DATA) private modalData: IConvocatoriaListadoModalData
   ) {
-    super(convocatoriaListadoExportService, snackBarService, translate, matDialogRef);
+    super(convocatoriaListadoExportService, translate, matDialogRef);
   }
 
   get MSG_PARAMS() {

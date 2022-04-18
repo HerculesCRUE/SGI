@@ -28,6 +28,8 @@ import org.crue.hercules.sgi.csp.model.AnualidadGasto;
 import org.crue.hercules.sgi.csp.model.AnualidadGasto_;
 import org.crue.hercules.sgi.csp.model.AnualidadIngreso;
 import org.crue.hercules.sgi.csp.model.AnualidadIngreso_;
+import org.crue.hercules.sgi.csp.model.ConceptoGasto;
+import org.crue.hercules.sgi.csp.model.ConceptoGasto_;
 import org.crue.hercules.sgi.csp.model.Proyecto;
 import org.crue.hercules.sgi.csp.model.ProyectoAnualidad;
 import org.crue.hercules.sgi.csp.model.ProyectoAnualidad_;
@@ -372,6 +374,75 @@ public class CustomProyectoAnualidadRepositoryImpl implements CustomProyectoAnua
             joinProyecto.get(Proyecto_.estado));
 
     return entityManager.createQuery(selectQuery).getResultList();
+  }
+
+  /**
+   * Obtiene la suma de importe concedido de cada {@link AnualidadGasto}
+   * asociados a un {@link Proyecto} cuyo id coincide con el indicado.
+   * 
+   * @param proyectoId el identificador del {@link Proyecto}
+   * @return suma de puntos del campo importeConcedido
+   */
+  @Override
+  public BigDecimal getTotalImporteConcedidoAnualidadGasto(Long proyectoId) {
+    log.debug("getTotalImporteConcedidoAnualidadGasto(Long proyectoId) - start");
+
+    CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+    CriteriaQuery<BigDecimal> cq = cb.createQuery(BigDecimal.class);
+
+    Root<AnualidadGasto> root = cq.from(AnualidadGasto.class);
+
+    Join<AnualidadGasto, ProyectoAnualidad> joinProyectoAnualidad = root.join(AnualidadGasto_.proyectoAnualidad);
+    Join<ProyectoAnualidad, Proyecto> joinProyecto = joinProyectoAnualidad.join(ProyectoAnualidad_.proyecto);
+
+    cq.select(
+        cb.coalesce(cb.sum(root.get(AnualidadGasto_.importeConcedido)), new BigDecimal(0)).alias("importeConcedido"))
+        .where(cb.equal(joinProyecto.get(Proyecto_.id), proyectoId));
+
+    final TypedQuery<BigDecimal> q = entityManager.createQuery(cq);
+
+    final BigDecimal result = q.getSingleResult();
+
+    log.debug("getTotalImporteConcedidoAnualidadGasto(Long proyectoId) - end");
+
+    return result;
+  }
+
+  /**
+   * Obtiene la suma de importe concedido de cada {@link AnualidadGasto} de costes
+   * indirectos
+   * asociados a un {@link Proyecto} cuyo id coincide con el indicado.
+   * 
+   * @param proyectoId el identificador del {@link Proyecto}
+   * @return suma de puntos del campo importeConcedido
+   */
+  @Override
+  public BigDecimal getTotalImporteConcedidoAnualidadGastoCostesIndirectos(Long proyectoId) {
+    log.debug("getTotalImporteConcedidoAnualidadGastoCostesIndirectos(Long proyectoId) - start");
+
+    CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+    CriteriaQuery<BigDecimal> cq = cb.createQuery(BigDecimal.class);
+
+    Root<AnualidadGasto> root = cq.from(AnualidadGasto.class);
+
+    Join<AnualidadGasto, ConceptoGasto> joinConceptoGasto = root.join(AnualidadGasto_.conceptoGasto);
+    Join<AnualidadGasto, ProyectoAnualidad> joinProyectoAnualidad = root.join(AnualidadGasto_.proyectoAnualidad);
+    Join<ProyectoAnualidad, Proyecto> joinProyecto = joinProyectoAnualidad.join(ProyectoAnualidad_.proyecto);
+
+    Predicate predicateProyectoId = cb.equal(joinProyecto.get(Proyecto_.id), proyectoId);
+    Predicate predicateCosteIndirecto = cb.equal(joinConceptoGasto.get(ConceptoGasto_.costesIndirectos), Boolean.TRUE);
+
+    cq.select(
+        cb.coalesce(cb.sum(root.get(AnualidadGasto_.importeConcedido)), new BigDecimal(0)).alias("importeConcedido"))
+        .where(cb.and(predicateProyectoId, predicateCosteIndirecto));
+
+    final TypedQuery<BigDecimal> q = entityManager.createQuery(cq);
+
+    final BigDecimal result = q.getSingleResult();
+
+    log.debug("getTotalImporteConcedidoAnualidadGastoCostesIndirectos(Long proyectoId) - end");
+
+    return result;
   }
 
 }

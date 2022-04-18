@@ -3,6 +3,7 @@ package org.crue.hercules.sgi.prc.model;
 import java.math.BigDecimal;
 
 import javax.persistence.Column;
+import javax.persistence.Convert;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -16,6 +17,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import org.crue.hercules.sgi.prc.enums.TipoFuenteImpacto;
+import org.crue.hercules.sgi.prc.model.converter.TipoFuenteImpactoConverter;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -66,6 +68,7 @@ public class IndiceImpacto extends BaseEntity {
 
   /** TipoFuenteImpacto */
   @Column(name = "tipo_fuente_impacto", length = TIPO_FUENTE_IMPACTO_LENGTH, nullable = false)
+  @Convert(converter = TipoFuenteImpactoConverter.class)
   private TipoFuenteImpacto fuenteImpacto;
 
   /** indice */

@@ -1,5 +1,7 @@
 package org.crue.hercules.sgi.pii.service;
 
+import java.time.Instant;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
@@ -10,15 +12,19 @@ import javax.validation.Validator;
 
 import org.crue.hercules.sgi.framework.problem.message.ProblemMessage;
 import org.crue.hercules.sgi.framework.spring.context.support.ApplicationContextSupport;
+import org.crue.hercules.sgi.pii.config.SgiConfigProperties;
+import org.crue.hercules.sgi.pii.dto.InvencionDto.SolicitudProteccionDto;
 import org.crue.hercules.sgi.pii.enums.TipoPropiedad;
 import org.crue.hercules.sgi.pii.exceptions.SolicitudProteccionNotFoundException;
 import org.crue.hercules.sgi.pii.exceptions.ViaProteccionNotFoundException;
+import org.crue.hercules.sgi.pii.model.Invencion;
 import org.crue.hercules.sgi.pii.model.SolicitudProteccion;
 import org.crue.hercules.sgi.pii.model.SolicitudProteccion.EstadoSolicitudProteccion;
 import org.crue.hercules.sgi.pii.model.SolicitudProteccion.OnActivar;
 import org.crue.hercules.sgi.pii.model.ViaProteccion;
 import org.crue.hercules.sgi.pii.repository.SolicitudProteccionRepository;
 import org.crue.hercules.sgi.pii.repository.ViaProteccionRepository;
+import org.crue.hercules.sgi.pii.util.PeriodDateUtil;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -38,6 +44,7 @@ public class SolicitudProteccionService {
   private final SolicitudProteccionRepository solicitudProteccionRepository;
   private final ViaProteccionRepository viaProteccionRepository;
   private final Validator validator;
+  private final SgiConfigProperties sgiConfigProperties;
 
   /**
    * Obtiene una {@link SolicitudProteccion} por su id.
@@ -238,5 +245,28 @@ public class SolicitudProteccionService {
    */
   public Page<SolicitudProteccion> findByInvencionId(Long invencionId, Pageable paging) {
     return this.solicitudProteccionRepository.findByInvencionId(invencionId, paging);
+  }
+
+  /**
+   * Devuelve una lista de {@link SolicitudProteccionDto} que están en el rango de
+   * baremación
+   * 
+   * @param invencionId id de {@link Invencion}
+   * @param anioInicio  año inicio de baremación
+   * @param anioFin     año fin de baremación
+   * 
+   * @return Lista de {@link SolicitudProteccionDto}
+   */
+  public List<SolicitudProteccionDto> findSolicitudProteccionInRangoBaremacion(Long invencionId,
+      Integer anioInicio, Integer anioFin) {
+
+    Instant fechaInicioBaremacion = PeriodDateUtil.calculateFechaInicioBaremacionByAnio(
+        anioInicio, sgiConfigProperties.getTimeZone());
+
+    Instant fechaFinBaremacion = PeriodDateUtil.calculateFechaFinBaremacionByAnio(
+        anioFin, sgiConfigProperties.getTimeZone());
+
+    return solicitudProteccionRepository.findSolicitudProteccionInRangoBaremacion(invencionId, fechaInicioBaremacion,
+        fechaFinBaremacion);
   }
 }

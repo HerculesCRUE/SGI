@@ -7,7 +7,7 @@ import { SnackBarService } from '@core/services/snack-bar.service';
 import { SgiAuthService } from '@sgi/framework/auth';
 import { NGXLogger } from 'ngx-logger';
 import { Observable, of, throwError } from 'rxjs';
-import { switchMap } from 'rxjs/operators';
+import { map, switchMap } from 'rxjs/operators';
 import { GRUPO_ROUTE_PARAMS } from './autorizacion-route-params';
 import { IGrupoData } from './grupo.action.service';
 
@@ -41,8 +41,24 @@ export class GrupoDataResolver extends SgiResolverResolver<IGrupoData> {
             isInvestigador: this.authService.hasAnyAuthority(['CSP-GIN-INV-V'])
           } as IGrupoData
         );
-      })
+      }),
+      switchMap(data => this.isReadonly(data, grupoId))
     );
+  }
+
+  private isReadonly(data: IGrupoData, grupoId: number): Observable<IGrupoData> {
+    if (grupoId) {
+      return this.service.modificable(grupoId)
+        .pipe(
+          map((value: boolean) => {
+            data.readonly = !value;
+            return data;
+          })
+        );
+    } else {
+      data.readonly = false;
+      return of(data);
+    }
   }
 
 

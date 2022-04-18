@@ -22,6 +22,6 @@ public interface CustomConvocatoriaPartidaRepository {
    * @return true registrada y con datos vinculados/false no registrada o sin
    *         datos vinculados.
    */
-  Boolean isPosibleEditar(Long id);
+  boolean isPosibleEditar(Long id);
 
 }

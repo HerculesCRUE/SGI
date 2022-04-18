@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { AbstractTablePaginationComponent } from '@core/component/abstract-table-pagination.component';
-import { HttpProblem } from '@core/errors/http-problem';
+import { SgiError } from '@core/errors/sgi-error';
 import { MSG_PARAMS } from '@core/i18n';
 import { IConvocatoria } from '@core/models/csp/convocatoria';
 import { Estado, ESTADO_MAP } from '@core/models/csp/estado-solicitud';
@@ -150,9 +150,9 @@ export class SolicitudListadoInvComponent extends AbstractTablePaginationCompone
     this.columnas = [
       'codigoRegistroInterno',
       'codigoExterno',
+      'titulo',
       'referencia',
       'estado.estado',
-      'titulo',
       'estado.fechaEstado',
       'acciones'
     ];
@@ -190,7 +190,7 @@ export class SolicitudListadoInvComponent extends AbstractTablePaginationCompone
       },
       (error) => {
         this.logger.error(error);
-        if (error instanceof HttpProblem) {
+        if (error instanceof SgiError) {
           this.snackBarService.showError(error);
         }
         else {

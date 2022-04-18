@@ -76,8 +76,7 @@ public class AutorController {
 
   private Page<AutorGrupoOutput> convertGrupo(Page<AutorGrupo> page) {
     List<AutorGrupoOutput> content = page.getContent().stream()
-        .map((grupo) -> convert(grupo))
-        .collect(Collectors.toList());
+        .map(this::convert).collect(Collectors.toList());
 
     return new PageImpl<>(content, page.getPageable(), page.getTotalElements());
   }

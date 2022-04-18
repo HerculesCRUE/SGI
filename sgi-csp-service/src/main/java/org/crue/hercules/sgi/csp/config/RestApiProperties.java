@@ -38,4 +38,8 @@ public class RestApiProperties {
    * URL base de los end-points del módulo de CNF.
    */
   private String cnfUrl;
+  /**
+   * URL base de los end-points del módule de SGEMP
+   */
+  private String sgempUrl;
 }

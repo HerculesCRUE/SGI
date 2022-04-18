@@ -3,21 +3,18 @@ package org.crue.hercules.sgi.prc.dto.sgp;
 import java.io.Serializable;
 import java.util.List;
 
-import org.crue.hercules.sgi.prc.dto.BaseIdentifiableRestDto;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import lombok.experimental.SuperBuilder;
 
 @Data
 @EqualsAndHashCode(callSuper = false)
 @NoArgsConstructor
 @AllArgsConstructor
-@SuperBuilder
-public class PersonaDto extends BaseIdentifiableRestDto {
+@Builder
+public class PersonaDto implements Serializable {
   private String nombre;
   private String numeroDocumento;
   private String apellidos;
@@ -58,7 +55,6 @@ public class PersonaDto extends BaseIdentifiableRestDto {
   @AllArgsConstructor
   @Builder
   public static class VinculacionDto implements Serializable {
-    private static final long serialVersionUID = 1L;
 
     private String id;
     private CategoriaProfesionalDto categoriaProfesional;
@@ -134,7 +130,6 @@ public class PersonaDto extends BaseIdentifiableRestDto {
   @AllArgsConstructor
   @Builder
   public static class AreaConocimientoDto implements Serializable {
-    private static final long serialVersionUID = 1L;
 
     private String id;
     private String nombre;

@@ -18,7 +18,7 @@ const TITLE_NEW_ENTITY = marker('title.new.entity');
   templateUrl: './tipo-documento-modal.component.html',
   styleUrls: ['./tipo-documento-modal.component.scss']
 })
-export class TipoDocumentoModalComponent extends DialogActionComponent<ITipoDocumento, ITipoDocumento> implements OnInit, OnDestroy {
+export class TipoDocumentoModalComponent extends DialogActionComponent<ITipoDocumento> implements OnInit, OnDestroy {
 
   private readonly tipoDocumento: ITipoDocumento;
   title: string;

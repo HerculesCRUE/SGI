@@ -1,6 +1,6 @@
 import { ISolicitudHito } from '@core/models/csp/solicitud-hito';
 import { Fragment } from '@core/services/action-service';
-import { SolicitudHitoService } from '@core/services/csp/solicitud-hito.service';
+import { SolicitudHitoService } from '@core/services/csp/solicitud-hito/solicitud-hito.service';
 import { SolicitudService } from '@core/services/csp/solicitud.service';
 import { StatusWrapper } from '@core/utils/status-wrapper';
 import { BehaviorSubject, from, merge, Observable, of } from 'rxjs';
@@ -97,6 +97,7 @@ export class SolicitudHitosFragment extends Fragment {
           map((updateHito) => {
             const index = this.hitos$.value.findIndex((currenthitos) => currenthitos === wrappedHitos);
             this.hitos$.value[index] = new StatusWrapper<ISolicitudHito>(updateHito);
+            this.hitos$.next(this.hitos$.value);
           })
         );
       })
@@ -117,6 +118,7 @@ export class SolicitudHitosFragment extends Fragment {
           map((createHito) => {
             const index = this.hitos$.value.findIndex((currenthitos) => currenthitos === wrappedHitos);
             this.hitos$.value[index] = new StatusWrapper<ISolicitudHito>(createHito);
+            this.hitos$.next(this.hitos$.value);
           })
         );
       })

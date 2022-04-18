@@ -21,15 +21,16 @@ import org.springframework.data.jpa.domain.Specification;
 
 public class ProyectoSpecifications {
 
+  private ProyectoSpecifications() {
+  }
+
   /**
    * {@link Proyecto} con Activo a True
    * 
    * @return specification para obtener las {@link Proyecto} activas
    */
   public static Specification<Proyecto> activos() {
-    return (root, query, cb) -> {
-      return cb.equal(root.get(Proyecto_.activo), Boolean.TRUE);
-    };
+    return (root, query, cb) -> cb.equal(root.get(Proyecto_.activo), Boolean.TRUE);
   }
 
   /**
@@ -137,6 +138,17 @@ public class ProyectoSpecifications {
           .where(cb.equal(subqRoot.get(ProyectoResponsableEconomico_.personaRef), investigadorId));
       return root.get(Proyecto_.id).in(queryResponsableEconomico);
     };
+  }
+
+  /**
+   * {@link Proyecto} con {@link Proyecto#confidencial} con el valor indicado
+   * 
+   * @param confidencial flag confidencial
+   * @return specification para obtener los {@link Proyecto} con
+   *         {@link Proyecto#confidencial} con el valor indicado
+   */
+  public static Specification<Proyecto> confidencial(boolean confidencial) {
+    return (root, query, cb) -> cb.equal(root.get(Proyecto_.confidencial), confidencial);
   }
 
 }

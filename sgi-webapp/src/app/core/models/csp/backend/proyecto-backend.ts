@@ -1,6 +1,6 @@
 import { ClasificacionCVN } from '@core/enums/clasificacion-cvn';
 import { TipoSeguimiento } from '@core/enums/tipo-seguimiento';
-import { CausaExencion, TipoHorasAnuales } from '../proyecto';
+import { CausaExencion } from '../proyecto';
 import { ITipoAmbitoGeografico } from '../tipo-ambito-geografico';
 import { IModeloEjecucion, ITipoFinalidad } from '../tipos-configuracion';
 import { IEstadoProyectoBackend } from './estado-proyecto-backend';
@@ -43,16 +43,12 @@ export interface IProyectoBackend {
   coordinado: boolean;
   /** colaborativo */
   colaborativo: boolean;
+  /** excelencia */
+  excelencia: boolean;
   /** coordinadorExterno */
   coordinadorExterno: boolean;
-  /** timesheet */
-  timesheet: boolean;
   /** permitePaquetesTrabajo */
   permitePaquetesTrabajo: boolean;
-  /** costeHora */
-  costeHora: boolean;
-  /** tipoHorasAnuales */
-  tipoHorasAnuales: TipoHorasAnuales;
   /** iva */
   iva: IProyectoIVABackend;
   /** causaExencion */

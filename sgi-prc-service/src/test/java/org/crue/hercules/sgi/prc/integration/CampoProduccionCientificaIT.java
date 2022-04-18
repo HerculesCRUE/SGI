@@ -9,7 +9,7 @@ import org.crue.hercules.sgi.prc.controller.CampoProduccionCientificaController;
 import org.crue.hercules.sgi.prc.dto.CampoProduccionCientificaInput;
 import org.crue.hercules.sgi.prc.dto.CampoProduccionCientificaOutput;
 import org.crue.hercules.sgi.prc.dto.ValorCampoOutput;
-import org.crue.hercules.sgi.prc.model.CampoProduccionCientifica.CodigoCVN;
+import org.crue.hercules.sgi.prc.enums.CodigoCVN;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.ParameterizedTypeReference;
@@ -26,7 +26,7 @@ import org.springframework.web.util.UriComponentsBuilder;
  * Test de integracion de CampoProduccionCientifica.
  */
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class CampoProduccionCientificaIT extends BaseIT {
+class CampoProduccionCientificaIT extends BaseIT {
 
   private static final String PATH_PARAMETER_ID = "/{id}";
   private static final String CONTROLLER_BASE_PATH = CampoProduccionCientificaController.MAPPING;
@@ -65,7 +65,7 @@ public class CampoProduccionCientificaIT extends BaseIT {
     CampoProduccionCientificaOutput campoProduccionCientificaCreado = response.getBody();
     Assertions.assertThat(campoProduccionCientificaCreado.getId()).as("getId()").isNotNull();
     Assertions.assertThat(campoProduccionCientifica.getCodigo()).as("getCodigo()")
-        .isEqualTo(CodigoCVN.E060_010_010_010.getInternValue());
+        .isEqualTo(CodigoCVN.E060_010_010_010.getCode());
   }
 
   @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = {
@@ -100,7 +100,7 @@ public class CampoProduccionCientificaIT extends BaseIT {
   void update_ReturnsCampoProduccionCientifica() throws Exception {
     CampoProduccionCientificaInput campoProduccionCientifica = generarMockCampoProduccionCientificaInput();
     campoProduccionCientifica.setProduccionCientificaId(1L);
-    campoProduccionCientifica.setCodigo(CodigoCVN.E060_010_010_070.getInternValue());
+    campoProduccionCientifica.setCodigo(CodigoCVN.E060_010_010_070.getCode());
 
     final ResponseEntity<CampoProduccionCientificaOutput> response = restTemplate.exchange(
         CONTROLLER_BASE_PATH + PATH_PARAMETER_ID, HttpMethod.PUT,
@@ -112,7 +112,7 @@ public class CampoProduccionCientificaIT extends BaseIT {
     CampoProduccionCientificaOutput campoProduccionCientificaActualizado = response.getBody();
     Assertions.assertThat(campoProduccionCientificaActualizado.getId()).as("getId()").isNotNull();
     Assertions.assertThat(campoProduccionCientificaActualizado.getCodigo()).as("getCodigo()")
-        .isEqualTo(CodigoCVN.E060_010_010_070.getInternValue());
+        .isEqualTo(CodigoCVN.E060_010_010_070.getCode());
 
   }
 
@@ -153,7 +153,7 @@ public class CampoProduccionCientificaIT extends BaseIT {
     CampoProduccionCientificaOutput campoProduccionCientifica = response.getBody();
     Assertions.assertThat(campoProduccionCientifica.getId()).as("getId()").isNotNull();
     Assertions.assertThat(campoProduccionCientifica.getCodigo()).as("getCodigo()")
-        .isEqualTo(CodigoCVN.E060_010_010_030.getInternValue());
+        .isEqualTo(CodigoCVN.E060_010_010_030.getCode());
   }
 
   @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = {
@@ -184,7 +184,9 @@ public class CampoProduccionCientificaIT extends BaseIT {
 
     Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     final List<CampoProduccionCientificaOutput> campoProduccionesCientificas = response.getBody();
-    Assertions.assertThat(campoProduccionesCientificas).hasSize(10);
+    int numElements = campoProduccionesCientificas.size();
+    Assertions.assertThat(numElements).as("campoProduccionesCientificas").isEqualTo(10);
+
     HttpHeaders responseHeaders = response.getHeaders();
     Assertions.assertThat(responseHeaders.getFirst("X-Page")).as("X-Page").isEqualTo("0");
     Assertions.assertThat(responseHeaders.getFirst("X-Page-Size")).as("X-Page-Size").isEqualTo("10");
@@ -199,7 +201,7 @@ public class CampoProduccionCientificaIT extends BaseIT {
 
   private CampoProduccionCientificaInput generarMockCampoProduccionCientificaInput() {
     CampoProduccionCientificaInput campoProduccionCientifica = new CampoProduccionCientificaInput();
-    campoProduccionCientifica.setCodigo(CodigoCVN.E060_010_010_010.getInternValue());
+    campoProduccionCientifica.setCodigo(CodigoCVN.E060_010_010_010.getCode());
     campoProduccionCientifica.setProduccionCientificaId(1L);
     return campoProduccionCientifica;
   }

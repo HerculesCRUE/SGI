@@ -15,28 +15,29 @@ function mediate(mc) {
     if (vinculacion.empresaRef) {
       vinculacionResponse.empresaRef = vinculacion.empresaRef;
     }
+    if (vinculacion.personalPropio) {
+      vinculacionResponse.personalPropio = vinculacion.personalPropio;
+    }
+    if (vinculacion.entidadPropiaRef) {
+      vinculacionResponse.entidadPropiaRef = vinculacion.entidadPropiaRef;
+    }
 
-    if (vinculacion.categoriaProfesionalPDI) {
-      if (vinculacion.categoriaProfesionalPDI) {
-        vinculacionResponse.categoriaProfesional = vinculacion.categoriaProfesionalPDI;
-      }
-      if (vinculacion.fechaObtencionCategoriaPDI) {
-        vinculacionResponse.fechaObtencionCategoria = vinculacion.fechaObtencionCategoriaPDI;
-      }
-      if (vinculacion.departamentoPDI) {
-        vinculacionResponse.departamento = vinculacion.departamentoPDI;
-        vinculacionResponse.departamento.nombre = vinculacionResponse.departamento.nombre.replace(/"/g, '\\\"');
-      }
-    } else if (vinculacion.categoriaProfesionalPAS) {
-      if (vinculacion.categoriaProfesionalPAS) {
-        vinculacionResponse.categoriaProfesional = vinculacion.categoriaProfesionalPAS;
-      }
-      if (vinculacion.fechaObtencionCategoriaPAS) {
-        vinculacionResponse.fechaObtencionCategoria = vinculacion.fechaObtencionCategoriaPAS;
-      }
-      if (vinculacion.departamentoPAS) {
-        vinculacionResponse.departamento = vinculacion.departamentoPAS;
-        vinculacionResponse.departamento.nombre = vinculacionResponse.departamento.nombre.replace(/"/g, '\\\"');
+    var sgiVinculacionCategoriaProfesional = getSGIVinculacionCategoriaProfesional(vinculacion.vinculacionesCategoriasProfesionales);
+
+    if (sgiVinculacionCategoriaProfesional.categoriaProfesional) {
+      vinculacionResponse.categoriaProfesional = sgiVinculacionCategoriaProfesional.categoriaProfesional;
+    }
+    if (sgiVinculacionCategoriaProfesional.fechaObtencion) {
+      vinculacionResponse.fechaObtencionCategoria = sgiVinculacionCategoriaProfesional.fechaObtencion;
+    }
+
+    if (sgiVinculacionCategoriaProfesional.tipoPersonal) {
+      var sgiDepartamento = getSGIDepartmento(
+        vinculacion.vinculacionesDepartamentos,
+        sgiVinculacionCategoriaProfesional.tipoPersonal
+      );
+      if (sgiDepartamento) {
+        vinculacionResponse.departamento = sgiDepartamento;
       }
     }
 
@@ -44,4 +45,41 @@ function mediate(mc) {
   }
 
   log.info("vinculacion-response-converter-mediator.mediate() - end");
+}
+
+function getSGIVinculacionCategoriaProfesional(vinculacionesCategoriasProfesionales) {
+  var sgiVinculacionCategoriaProfesional;
+  if (Array.isArray(vinculacionesCategoriasProfesionales)) {
+    vinculacionesCategoriasProfesionales.forEach(
+      function (vinculacionCategoriaProfesional) {
+        if (vinculacionCategoriaProfesional.tipoPersonal === 'PDI') {
+          sgiVinculacionCategoriaProfesional = vinculacionCategoriaProfesional;
+        } else if (
+          !sgiVinculacionCategoriaProfesional
+          && vinculacionCategoriaProfesional.tipoPersonal === 'PAS'
+        ) {
+          sgiVinculacionCategoriaProfesional = vinculacionCategoriaProfesional;
+        }
+      }
+    );
+  }
+
+  return sgiVinculacionCategoriaProfesional ? sgiVinculacionCategoriaProfesional : {};
+}
+
+function getSGIDepartmento(vinculacionesDepartamentos, tipoPersonal) {
+  var sgiDepartamento;
+  if (Array.isArray(vinculacionesDepartamentos)) {
+    vinculacionesDepartamentos.forEach(
+      function (vinculacionDepartamento) {
+        if (vinculacionDepartamento.tipoPersonal === tipoPersonal) {
+          sgiDepartamento = vinculacionDepartamento.departamento;
+          if (sgiDepartamento.nombre) {
+            sgiDepartamento.nombre = sgiDepartamento.nombre.replace(/"/g, '\\\"');
+          }
+        }
+      }
+    );
+  }
+  return sgiDepartamento;
 }

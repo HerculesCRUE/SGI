@@ -13,10 +13,9 @@ import org.crue.hercules.sgi.prc.dto.ProduccionCientificaApiInput;
 import org.crue.hercules.sgi.prc.dto.ProduccionCientificaApiInput.AcreditacionInput;
 import org.crue.hercules.sgi.prc.dto.ProduccionCientificaApiInput.CampoProduccionCientificaInput;
 import org.crue.hercules.sgi.prc.dto.ProduccionCientificaApiInput.IndiceImpactoInput;
-import org.crue.hercules.sgi.prc.enums.TablaMaestraCVN;
+import org.crue.hercules.sgi.prc.enums.CodigoCVN;
 import org.crue.hercules.sgi.prc.enums.TipoFuenteImpacto;
 import org.crue.hercules.sgi.prc.model.CampoProduccionCientifica;
-import org.crue.hercules.sgi.prc.model.CampoProduccionCientifica.CodigoCVN;
 import org.crue.hercules.sgi.prc.model.EstadoProduccionCientifica.TipoEstadoProduccion;
 import org.crue.hercules.sgi.prc.model.ProduccionCientifica;
 import org.junit.jupiter.api.Test;
@@ -33,7 +32,7 @@ import org.springframework.test.context.jdbc.Sql;
  * Test de integracion de ProduccionCientifica.
  */
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class ProduccionCientificaApiUpdateIT extends ProduccionCientificaBaseIT {
+class ProduccionCientificaApiUpdateIT extends ProduccionCientificaBaseIT {
 
   private HttpEntity<ProduccionCientificaApiInput> buildRequest(HttpHeaders headers,
       ProduccionCientificaApiInput entity)
@@ -376,7 +375,7 @@ public class ProduccionCientificaApiUpdateIT extends ProduccionCientificaBaseIT 
 
     List<CampoProduccionCientifica> campos = getCampoProduccionCientificaRepository()
         .findAllByProduccionCientificaId(produccionCientificaId);
-    Assertions.assertThat(campos).as("number of campos created").hasSize(6);
+    Assertions.assertThat(campos).as("number of campos created").hasSize(7);
 
     checkValueByCodigoCVN(produccionCientificaId, CodigoCVN.E060_010_010_030, "Título de la publicación1");
     checkValueByCodigoCVN(produccionCientificaId, CodigoCVN.E060_010_010_140, "2021-01-20T00:00:00Z");
@@ -435,7 +434,7 @@ public class ProduccionCientificaApiUpdateIT extends ProduccionCientificaBaseIT 
 
     List<CampoProduccionCientifica> campos = getCampoProduccionCientificaRepository()
         .findAllByProduccionCientificaId(produccionCientificaId);
-    Assertions.assertThat(campos).as("number of campos created").hasSize(6);
+    Assertions.assertThat(campos).as("number of campos created").hasSize(7);
 
     checkValueByCodigoCVN(produccionCientificaId, CodigoCVN.E060_010_010_030, newValor);
     checkValueByCodigoCVN(produccionCientificaId, CodigoCVN.E060_010_010_140, "2021-01-10T00:00:00Z");
@@ -498,7 +497,7 @@ public class ProduccionCientificaApiUpdateIT extends ProduccionCientificaBaseIT 
 
     List<CampoProduccionCientifica> campos = getCampoProduccionCientificaRepository()
         .findAllByProduccionCientificaId(produccionCientificaId);
-    Assertions.assertThat(campos).as("number of campos created").hasSize(6);
+    Assertions.assertThat(campos).as("number of campos created").hasSize(7);
 
     checkValueByCodigoCVN(produccionCientificaId, CodigoCVN.E060_010_010_030, newValor);
     checkValueByCodigoCVN(produccionCientificaId, CodigoCVN.E060_010_010_140, "2021-01-20T00:00:00Z");
@@ -554,7 +553,7 @@ public class ProduccionCientificaApiUpdateIT extends ProduccionCientificaBaseIT 
 
     List<CampoProduccionCientifica> campos = getCampoProduccionCientificaRepository()
         .findAllByProduccionCientificaId(produccionCientificaId);
-    Assertions.assertThat(campos).as("number of campos created").hasSize(6);
+    Assertions.assertThat(campos).as("number of campos created").hasSize(7);
 
     checkValueByCodigoCVN(produccionCientificaId, CodigoCVN.E060_010_010_030, "Título de la publicación1");
     checkValueByCodigoCVN(produccionCientificaId, CodigoCVN.E060_010_010_140, "2021-01-20T00:00:00Z");
@@ -600,7 +599,7 @@ public class ProduccionCientificaApiUpdateIT extends ProduccionCientificaBaseIT 
     produccionCientificaApiInput.setCampos(findCamposWithoutCampo(produccionCientificaApiInput, codigoCVN));
 
     CampoProduccionCientificaInput newCampo = CampoProduccionCientificaInput.builder()
-        .codigoCVN(CodigoCVN.E060_010_020_080.getInternValue())
+        .codigoCVN(CodigoCVN.E060_010_020_080.getCode())
         .valores(Arrays.asList("020"))
         .build();
     produccionCientificaApiInput.getCampos().add(newCampo);
@@ -616,10 +615,9 @@ public class ProduccionCientificaApiUpdateIT extends ProduccionCientificaBaseIT 
 
     List<CampoProduccionCientifica> campos = getCampoProduccionCientificaRepository()
         .findAllByProduccionCientificaId(produccionCientificaId);
-    Assertions.assertThat(campos).as("number of campos created").hasSize(7);
+    Assertions.assertThat(campos).as("number of campos created").hasSize(8);
 
-    checkValueByCodigoCVN(produccionCientificaId, CodigoCVN.E060_010_020_080,
-        TablaMaestraCVN.AMBITO_020.getInternValue());
+    checkValueByCodigoCVN(produccionCientificaId, CodigoCVN.E060_010_020_080, "020");
     checkValueByCodigoCVN(produccionCientificaId, CodigoCVN.E060_010_010_030, "Título de la publicación1");
     checkValueByCodigoCVN(produccionCientificaId, CodigoCVN.E060_010_010_140, "2021-01-20T00:00:00Z");
     checkValueByCodigoCVN(produccionCientificaId, CodigoCVN.E060_010_010_210, "Nombre de la publicación1");
@@ -636,8 +634,6 @@ public class ProduccionCientificaApiUpdateIT extends ProduccionCientificaBaseIT 
     Assertions.assertThat(getProyectoRepository().findAllByProduccionCientificaId(produccionCientificaId))
         .as("number of proyectos created").hasSize(2);
   }
-
-  // TODO probar bien autores cuando este grupos de investigacion
 
   @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = {
       // @formatter:off 
@@ -665,7 +661,7 @@ public class ProduccionCientificaApiUpdateIT extends ProduccionCientificaBaseIT 
 
     IndiceImpactoInput indiceImpacto = IndiceImpactoInput.builder()
         .anio(2022)
-        .fuenteImpacto(TipoFuenteImpacto.OTHERS.getInternValue())
+        .fuenteImpacto(TipoFuenteImpacto.OTHERS.getCode())
         .build();
     produccionCientificaApiInput.getIndicesImpacto().add(indiceImpacto);
 
@@ -680,7 +676,7 @@ public class ProduccionCientificaApiUpdateIT extends ProduccionCientificaBaseIT 
 
     List<CampoProduccionCientifica> campos = getCampoProduccionCientificaRepository()
         .findAllByProduccionCientificaId(produccionCientificaId);
-    Assertions.assertThat(campos).as("number of campos created").hasSize(6);
+    Assertions.assertThat(campos).as("number of campos created").hasSize(7);
 
     checkValueByCodigoCVN(produccionCientificaId, CodigoCVN.E060_010_010_030, "Título de la publicación1");
     checkValueByCodigoCVN(produccionCientificaId, CodigoCVN.E060_010_010_140, "2021-01-20T00:00:00Z");
@@ -739,7 +735,7 @@ public class ProduccionCientificaApiUpdateIT extends ProduccionCientificaBaseIT 
 
     List<CampoProduccionCientifica> campos = getCampoProduccionCientificaRepository()
         .findAllByProduccionCientificaId(produccionCientificaId);
-    Assertions.assertThat(campos).as("number of campos created").hasSize(6);
+    Assertions.assertThat(campos).as("number of campos created").hasSize(7);
 
     checkValueByCodigoCVN(produccionCientificaId, CodigoCVN.E060_010_010_030, "Título de la publicación1");
     checkValueByCodigoCVN(produccionCientificaId, CodigoCVN.E060_010_010_140, "2021-01-20T00:00:00Z");
@@ -795,7 +791,7 @@ public class ProduccionCientificaApiUpdateIT extends ProduccionCientificaBaseIT 
 
     List<CampoProduccionCientifica> campos = getCampoProduccionCientificaRepository()
         .findAllByProduccionCientificaId(produccionCientificaId);
-    Assertions.assertThat(campos).as("number of campos created").hasSize(6);
+    Assertions.assertThat(campos).as("number of campos created").hasSize(7);
 
     checkValueByCodigoCVN(produccionCientificaId, CodigoCVN.E060_010_010_030, "Título de la publicación1");
     checkValueByCodigoCVN(produccionCientificaId, CodigoCVN.E060_010_010_140, "2021-01-20T00:00:00Z");
@@ -817,7 +813,7 @@ public class ProduccionCientificaApiUpdateIT extends ProduccionCientificaBaseIT 
   private void changeValorCampo(ProduccionCientificaApiInput produccionCientificaApiInput, CodigoCVN codigoCVN,
       final String newValor) {
     produccionCientificaApiInput.getCampos().stream()
-        .filter(campo -> campo.getCodigoCVN().equals(codigoCVN.getInternValue()))
+        .filter(campo -> campo.getCodigoCVN().equals(codigoCVN.getCode()))
         .forEach(campo -> {
           campo.getValores().clear();
           campo.getValores().addAll(Arrays.asList(newValor));
@@ -828,7 +824,7 @@ public class ProduccionCientificaApiUpdateIT extends ProduccionCientificaBaseIT 
       ProduccionCientificaApiInput produccionCientificaApiInput,
       CodigoCVN codigoCVN) {
     return produccionCientificaApiInput.getCampos().stream()
-        .filter(campo -> !campo.getCodigoCVN().equals(codigoCVN.getInternValue()))
+        .filter(campo -> !campo.getCodigoCVN().equals(codigoCVN.getCode()))
         .map(campo -> campo)
         .collect(Collectors.toList());
   }
@@ -837,7 +833,7 @@ public class ProduccionCientificaApiUpdateIT extends ProduccionCientificaBaseIT 
       ProduccionCientificaApiInput produccionCientificaApiInput,
       CodigoCVN codigoCVN) {
     return produccionCientificaApiInput.getCampos().stream()
-        .filter(campo -> campo.getCodigoCVN().equals(codigoCVN.getInternValue()))
+        .filter(campo -> campo.getCodigoCVN().equals(codigoCVN.getCode()))
         .findFirst().orElse(null);
   }
 

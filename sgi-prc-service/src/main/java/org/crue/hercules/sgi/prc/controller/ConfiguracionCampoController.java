@@ -72,7 +72,7 @@ public class ConfiguracionCampoController {
 
   private Page<ConfiguracionCampoOutput> convert(Page<ConfiguracionCampo> page) {
     List<ConfiguracionCampoOutput> content = page.getContent().stream()
-        .map(configuracionCampo -> convert(configuracionCampo)).collect(Collectors.toList());
+        .map(this::convert).collect(Collectors.toList());
 
     return new PageImpl<>(content, page.getPageable(), page.getTotalElements());
   }

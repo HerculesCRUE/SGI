@@ -17,7 +17,7 @@
       <div>
         <mat-form-field>
           <mat-label>{{'csp.solicitud.cambio-estado.nuevo' | translate}}</mat-label>
-          <sgi-select-enum formControlName="estadoNuevo" [enumMap]="estadosNuevos">
+          <sgi-select-enum formControlName="estadoNuevo" [enumMap]="estadosNuevos" required>
           </sgi-select-enum>
         </mat-form-field>
       </div>

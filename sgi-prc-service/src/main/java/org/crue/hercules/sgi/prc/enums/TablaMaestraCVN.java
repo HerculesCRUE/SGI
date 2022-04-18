@@ -2,8 +2,6 @@ package org.crue.hercules.sgi.prc.enums;
 
 import java.util.stream.Stream;
 
-import org.crue.hercules.sgi.prc.exceptions.CampoCVNNotFoundException;
-
 public enum TablaMaestraCVN {
   /* Capítulo de libro */
   E060_010_010_010_004("060.010.010.010.004"),
@@ -1132,27 +1130,29 @@ public enum TablaMaestraCVN {
   /* Organizativo - Presidente comité */
   E060_020_030_110_ORGANIZATIVO_PRESIDENTE_COMITE("060.020.030.110.ORGANIZATIVO_PRESIDENTE_COMITE"),
   /* Organizativo - Otros */
-  E060_020_030_110_ORGANIZATIVO_OTROS("060.020.030.110.ORGANIZATIVO_OTROS");
+  E060_020_030_110_ORGANIZATIVO_OTROS("060.020.030.110.ORGANIZATIVO_OTROS"),
 
-  private String internValue;
+  /** Miembro del comité editorial/editor asociado */
+  E060_030_030_100_EDITOR("060.030.030.100.EDITOR"),
+  /** Presidente del comité editorial/Editor jefe/Director */
+  E060_030_030_100_DIRECTOR("060.030.030.100.DIRECTOR"),
+  /** Otros */
+  E060_030_030_100_OTHERS("060.030.030.100.OTHERS");
 
-  private TablaMaestraCVN(String internValue) {
-    this.internValue = internValue;
+  private String code;
+
+  private TablaMaestraCVN(String code) {
+    this.code = code;
   }
 
-  public String getInternValue() {
-    return internValue;
+  public String getCode() {
+    return code;
   }
 
-  public static TablaMaestraCVN getByInternValue(String internValue) {
-    try {
-      return Stream.of(TablaMaestraCVN.values())
-          .filter(campoValue -> campoValue.getInternValue().equalsIgnoreCase(internValue))
-          .findFirst()
-          .orElseThrow(() -> new CampoCVNNotFoundException(internValue));
-
-    } catch (Exception e) {
-      throw new CampoCVNNotFoundException(internValue);
-    }
+  public static TablaMaestraCVN getByCode(String code) {
+    return Stream.of(TablaMaestraCVN.values())
+        .filter(campoValue -> campoValue.getCode().equalsIgnoreCase(code))
+        .findFirst()
+        .orElse(null);
   }
 }

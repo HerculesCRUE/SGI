@@ -1,6 +1,7 @@
 {
   "idRef": "OBRA_ARTISITICA_6",
   "epigrafeCVN": "050.020.030.000",
+  "estado": "VALIDADO",
   "campos": [
     {
       "codigoCVN": "050.020.030.010",
@@ -11,7 +12,7 @@
     {
       "codigoCVN": "050.020.030.120",
       "valores": [
-        "2019-07-10"
+        "2021-07-10"
       ]
     },
     {
@@ -65,8 +66,8 @@
   ],
   "autores": [
     {
-      "personaRef": "52364567",
-      "firma": "simon.apellido",
+      "personaRef": "22932567",
+      "firma": "francisco.jose",
       "nombre": "",
       "apellidos": "",
       "orden": 1,

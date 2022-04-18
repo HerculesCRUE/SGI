@@ -43,6 +43,8 @@ public class ConvocatoriaReunionServiceTest extends BaseServiceTest {
   private ActaRepository actaRepository;
   @Mock
   private EvaluacionRepository evaluacionRepository;
+  @Mock
+  private ComunicadosService comunicadosService;
 
   @Autowired
   private SgiConfigProperties sgiConfigProperties;
@@ -51,7 +53,8 @@ public class ConvocatoriaReunionServiceTest extends BaseServiceTest {
 
   @BeforeEach
   public void setUp() throws Exception {
-    service = new ConvocatoriaReunionServiceImpl(sgiConfigProperties, repository, actaRepository, evaluacionRepository);
+    service = new ConvocatoriaReunionServiceImpl(sgiConfigProperties, repository, actaRepository, evaluacionRepository,
+        comunicadosService);
   }
 
   @Test

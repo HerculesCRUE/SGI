@@ -11,5 +11,6 @@ public enum ServiceType {
   REP,
   SGDOC,
   SGP,
-  TP
+  TP,
+  SGEMP
 }

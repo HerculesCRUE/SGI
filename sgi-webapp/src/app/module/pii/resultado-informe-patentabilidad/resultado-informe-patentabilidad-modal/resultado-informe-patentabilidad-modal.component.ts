@@ -21,7 +21,7 @@ const TITLE_NEW_ENTITY = marker('title.new.entity');
   styleUrls: ['./resultado-informe-patentabilidad-modal.component.scss']
 })
 export class ResultadoInformePatentabilidadModalComponent
-  extends DialogActionComponent<IResultadoInformePatentibilidad, IResultadoInformePatentibilidad> implements OnInit, OnDestroy {
+  extends DialogActionComponent<IResultadoInformePatentibilidad> implements OnInit, OnDestroy {
 
   private readonly resultadoInformePatentibilidad: IResultadoInformePatentibilidad;
   msgParamNombreEntity = {};

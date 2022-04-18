@@ -2,19 +2,26 @@ package org.crue.hercules.sgi.prc.service;
 
 import java.math.BigDecimal;
 import java.util.function.LongPredicate;
-import java.util.stream.LongStream;
 
+import org.crue.hercules.sgi.prc.config.SgiConfigProperties;
 import org.crue.hercules.sgi.prc.dto.BaremacionInput;
 import org.crue.hercules.sgi.prc.enums.TablaMaestraCVN;
-import org.crue.hercules.sgi.prc.model.CampoProduccionCientifica.CodigoCVN;
+import org.crue.hercules.sgi.prc.enums.CodigoCVN;
 import org.crue.hercules.sgi.prc.model.ConfiguracionBaremo.TipoBaremo;
+import org.crue.hercules.sgi.prc.model.PuntuacionItemInvestigador.TipoPuntuacion;
+import org.crue.hercules.sgi.prc.repository.AliasEnumeradoRepository;
+import org.crue.hercules.sgi.prc.repository.AutorGrupoRepository;
+import org.crue.hercules.sgi.prc.repository.AutorRepository;
 import org.crue.hercules.sgi.prc.repository.BaremoRepository;
 import org.crue.hercules.sgi.prc.repository.CampoProduccionCientificaRepository;
+import org.crue.hercules.sgi.prc.repository.IndiceExperimentalidadRepository;
 import org.crue.hercules.sgi.prc.repository.IndiceImpactoRepository;
 import org.crue.hercules.sgi.prc.repository.ProduccionCientificaRepository;
 import org.crue.hercules.sgi.prc.repository.PuntuacionBaremoItemRepository;
-import org.crue.hercules.sgi.prc.repository.TipoFuenteImpactoCuartilRepository;
+import org.crue.hercules.sgi.prc.repository.PuntuacionItemInvestigadorRepository;
 import org.crue.hercules.sgi.prc.repository.ValorCampoRepository;
+import org.crue.hercules.sgi.prc.service.sgi.SgiApiCspService;
+import org.crue.hercules.sgi.prc.service.sgi.SgiApiSgpService;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -32,20 +39,44 @@ import lombok.extern.slf4j.Slf4j;
 public class BaremacionDireccionTesisService extends BaremacionCommonService {
 
   public BaremacionDireccionTesisService(
+      AliasEnumeradoRepository aliasEnumeradoRepository,
       ProduccionCientificaRepository produccionCientificaRepository,
       PuntuacionBaremoItemRepository puntuacionBaremoItemRepository,
+      PuntuacionItemInvestigadorRepository puntuacionItemInvestigadorRepository,
+      IndiceExperimentalidadRepository indiceExperimentalidadRepository,
       BaremoRepository baremoRepository,
+      AutorRepository autorRepository,
+      AutorGrupoRepository autorGrupoRepository,
       CampoProduccionCientificaRepository campoProduccionCientificaRepository,
       ValorCampoRepository valorCampoRepository,
       IndiceImpactoRepository indiceImpactoRepository,
-      TipoFuenteImpactoCuartilRepository tipoFuenteImpactoCuartilRepository,
-      ProduccionCientificaCloneService produccionCientificaCloneService,
-      ModelMapper modelMapper) {
-    super(produccionCientificaRepository, puntuacionBaremoItemRepository, baremoRepository,
-        campoProduccionCientificaRepository, valorCampoRepository, indiceImpactoRepository,
-        tipoFuenteImpactoCuartilRepository, produccionCientificaCloneService,
-        modelMapper);
+      ProduccionCientificaBuilderService produccionCientificaBuilderService,
+      SgiApiSgpService sgiApiSgpService,
+      SgiApiCspService sgiApiCspService,
+      ConvocatoriaBaremacionLogService convocatoriaBaremacionLogService,
+      ModelMapper modelMapper,
+      SgiConfigProperties sgiConfigProperties) {
+    super(aliasEnumeradoRepository,
+        produccionCientificaRepository,
+        puntuacionBaremoItemRepository,
+        puntuacionItemInvestigadorRepository,
+        indiceExperimentalidadRepository,
+        baremoRepository,
+        autorRepository, autorGrupoRepository,
+        campoProduccionCientificaRepository,
+        valorCampoRepository,
+        indiceImpactoRepository,
+        produccionCientificaBuilderService,
+        sgiApiSgpService,
+        sgiApiCspService,
+        convocatoriaBaremacionLogService,
+        modelMapper,
+        sgiConfigProperties);
     loadPredicates();
+  }
+
+  protected TipoPuntuacion getTipoPuntuacion() {
+    return TipoPuntuacion.DIRECCION_TESIS;
   }
 
   protected void loadPredicates() {
@@ -120,8 +151,7 @@ public class BaremacionDireccionTesisService extends BaremacionCommonService {
 
     TipoBaremo tipoBaremo = baremacionInput.getBaremo().getConfiguracionBaremo().getTipoBaremo();
 
-    if (LongStream.of(baremacionInput.getProduccionCientificaId())
-        .allMatch(getHmTipoBaremoPredicates().get(tipoBaremo))) {
+    if (evaluateProduccionCientificaByTipoBaremo(baremacionInput, tipoBaremo)) {
       puntos = baremacionInput.getBaremo().getPuntos();
     }
 

@@ -1,9 +1,9 @@
-<div class="mat-elevation-z4 alert">
-  <ng-container *ngFor="let problem of problems">
+<ng-container *ngFor="let problem of problems">
+  <div class="mat-elevation-z4 problem" [ngClass]="[problem.level ? problem.level : 'error']">
     <div fxLayout="row" fxLayoutGap="10px">
       <div fxFlex style="text-align: left;">
-        <span>{{problem.title}}{{problem.detail ? ': ' :
-          ''}}{{problem.detail}}</span>
+        <span>{{problem.title | translate}}{{problem.detail ? ': ' :
+          ''}}{{problem.detail | translate}}</span>
       </div>
     </div>
 
@@ -12,5 +12,5 @@
         <li *ngFor="let error of problem.errors">{{error.field}}: {{error.error}}</li>
       </ul>
     </ng-container>
-  </ng-container>
-</div>
+  </div>
+</ng-container>

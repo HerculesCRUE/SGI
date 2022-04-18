@@ -1,5 +1,4 @@
 import { FormControl, FormGroup } from '@angular/forms';
-import { TipoHorasAnuales } from '@core/models/csp/proyecto';
 import { IModeloEjecucion } from '@core/models/csp/tipos-configuracion';
 import { FormFragment } from '@core/services/action-service';
 import { ModeloEjecucionService } from '@core/services/csp/modelo-ejecucion.service';

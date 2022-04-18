@@ -18,7 +18,7 @@ const TITLE_NEW_ENTITY = marker('title.new.entity');
   templateUrl: './tipo-enlace-modal.component.html',
   styleUrls: ['./tipo-enlace-modal.component.scss']
 })
-export class TipoEnlaceModalComponent extends DialogActionComponent<ITipoEnlace, ITipoEnlace> implements OnInit, OnDestroy {
+export class TipoEnlaceModalComponent extends DialogActionComponent<ITipoEnlace> implements OnInit, OnDestroy {
 
   private readonly tipoEnlace: ITipoEnlace;
   title: string;

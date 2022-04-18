@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { IConfiguracion } from '@core/models/csp/configuracion';
-import { IProyecto } from '@core/models/csp/proyecto';
+import { IRelacionEjecucionEconomica } from '@core/models/csp/relacion-ejecucion-economica';
 import { IProyectoSge } from '@core/models/sge/proyecto-sge';
+import { IPersona } from '@core/models/sgp/persona';
 import { ActionService } from '@core/services/action-service';
 import { GastoProyectoService } from '@core/services/csp/gasto-proyecto/gasto-proyecto-service';
 import { ProyectoAnualidadService } from '@core/services/csp/proyecto-anualidad/proyecto-anualidad.service';
@@ -12,7 +13,6 @@ import { ProyectoService } from '@core/services/csp/proyecto.service';
 import { CalendarioFacturacionService } from '@core/services/sge/calendario-facturacion.service';
 import { EjecucionEconomicaService } from '@core/services/sge/ejecucion-economica.service';
 import { GastoService } from '@core/services/sge/gasto/gasto.service';
-import { PersonaService } from '@core/services/sgp/persona.service';
 import { EJECUCION_ECONOMICA_DATA_KEY } from './ejecucion-economica-data.resolver';
 import { DetalleOperacionesGastosFragment } from './ejecucion-economica-formulario/detalle-operaciones-gastos/detalle-operaciones-gastos.fragment';
 import { DetalleOperacionesIngresosFragment } from './ejecucion-economica-formulario/detalle-operaciones-ingresos/detalle-operaciones-ingresos.fragment';
@@ -31,8 +31,12 @@ import { EJECUCION_ECONOMICA_ROUTE_PARAMS } from './ejecucion-economica-route-pa
 export interface IEjecucionEconomicaData {
   readonly: boolean;
   proyectoSge: IProyectoSge;
-  proyectosRelacionados: IProyecto[];
+  relaciones: IRelacionEjecucionEconomicaWithResponsables[];
   configuracion: IConfiguracion;
+}
+
+export interface IRelacionEjecucionEconomicaWithResponsables extends IRelacionEjecucionEconomica {
+  responsables: IPersona[];
 }
 
 @Injectable()
@@ -71,7 +75,6 @@ export class EjecucionEconomicaActionService extends ActionService {
   constructor(
     route: ActivatedRoute,
     proyectoService: ProyectoService,
-    personaService: PersonaService,
     proyectoAnualidadService: ProyectoAnualidadService,
     ejecucionEconomicaService: EjecucionEconomicaService,
     gastoProyectoService: GastoProyectoService,
@@ -85,47 +88,47 @@ export class EjecucionEconomicaActionService extends ActionService {
     this.data = route.snapshot.data[EJECUCION_ECONOMICA_DATA_KEY];
     const id = Number(route.snapshot.paramMap.get(EJECUCION_ECONOMICA_ROUTE_PARAMS.ID));
 
-    this.proyectos = new ProyectosFragment(id, this.data.proyectoSge, this.data.proyectosRelacionados);
+    this.proyectos = new ProyectosFragment(id, this.data.proyectoSge, this.data.relaciones, proyectoService);
 
     this.ejecucionPresupuestariaEstadoActual = new EjecucionPresupuestariaEstadoActualFragment(
-      id, this.data.proyectoSge, this.data.proyectosRelacionados,
-      proyectoService, personaService, proyectoAnualidadService, ejecucionEconomicaService);
+      id, this.data.proyectoSge, this.data.relaciones,
+      proyectoService, proyectoAnualidadService, ejecucionEconomicaService);
 
     this.ejecucionPresupuestariaGastos = new EjecucionPresupuestariaGastosFragment(
-      id, this.data.proyectoSge, this.data.proyectosRelacionados,
-      proyectoService, personaService, proyectoAnualidadService, ejecucionEconomicaService);
+      id, this.data.proyectoSge, this.data.relaciones,
+      proyectoService, proyectoAnualidadService, ejecucionEconomicaService);
 
     this.ejecucionPresupuestariaIngresos = new EjecucionPresupuestariaIngresosFragment(
-      id, this.data.proyectoSge, this.data.proyectosRelacionados,
-      proyectoService, personaService, proyectoAnualidadService, ejecucionEconomicaService);
+      id, this.data.proyectoSge, this.data.relaciones,
+      proyectoService, proyectoAnualidadService, ejecucionEconomicaService);
 
     this.detalleOperacionesGastos = new DetalleOperacionesGastosFragment(
-      id, this.data.proyectoSge, this.data.proyectosRelacionados,
-      proyectoService, personaService, proyectoAnualidadService, ejecucionEconomicaService);
+      id, this.data.proyectoSge, this.data.relaciones,
+      proyectoService, proyectoAnualidadService, ejecucionEconomicaService);
 
     this.detalleOperacionesIngresos = new DetalleOperacionesIngresosFragment(
-      id, this.data.proyectoSge, this.data.proyectosRelacionados,
-      proyectoService, personaService, proyectoAnualidadService, ejecucionEconomicaService);
+      id, this.data.proyectoSge, this.data.relaciones,
+      proyectoService, proyectoAnualidadService, ejecucionEconomicaService);
 
     this.detalleOperacionesModificaciones = new DetalleOperacionesModificacionesFragment(
-      id, this.data.proyectoSge, this.data.proyectosRelacionados,
-      proyectoService, personaService, proyectoAnualidadService, ejecucionEconomicaService);
+      id, this.data.proyectoSge, this.data.relaciones,
+      proyectoService, proyectoAnualidadService, ejecucionEconomicaService);
 
     this.facturasGastos = new FacturasGastosFragment(
-      id, this.data.proyectoSge, this.data.proyectosRelacionados,
-      proyectoService, personaService, proyectoAnualidadService,
+      id, this.data.proyectoSge, this.data.relaciones,
+      proyectoService, proyectoAnualidadService,
       gastoProyectoService, ejecucionEconomicaService, proyectoConceptoGastoCodigoEcService,
       proyectoConceptoGastoService, this.data.configuracion);
 
     this.viajesDietas = new ViajesDietasFragment(
-      id, this.data.proyectoSge, this.data.proyectosRelacionados,
-      proyectoService, personaService, proyectoAnualidadService,
+      id, this.data.proyectoSge, this.data.relaciones,
+      proyectoService, proyectoAnualidadService,
       gastoProyectoService, ejecucionEconomicaService, proyectoConceptoGastoCodigoEcService,
       proyectoConceptoGastoService, this.data.configuracion);
 
     this.personalContratado = new PersonalContratadoFragment(
-      id, this.data.proyectoSge, this.data.proyectosRelacionados,
-      proyectoService, personaService, proyectoAnualidadService,
+      id, this.data.proyectoSge, this.data.relaciones,
+      proyectoService, proyectoAnualidadService,
       gastoProyectoService, ejecucionEconomicaService, proyectoConceptoGastoCodigoEcService,
       proyectoConceptoGastoService, this.data.configuracion);
 
@@ -133,8 +136,8 @@ export class EjecucionEconomicaActionService extends ActionService {
       id, this.data.proyectoSge, gastoService, proyectoService, gastoProyectoService);
 
     this.facturasEmitidas = new FacturasEmitidasFragment(
-      id, this.data.proyectoSge, this.data.proyectosRelacionados,
-      proyectoService, personaService, proyectoAnualidadService, calendarioFacturacionService);
+      id, this.data.proyectoSge, this.data.relaciones,
+      proyectoService, proyectoAnualidadService, calendarioFacturacionService);
 
     this.addFragment(this.FRAGMENT.PROYECTOS, this.proyectos);
     this.addFragment(this.FRAGMENT.EJECUCION_PRESUPUESTARIA_ESTADO_ACTUAL, this.ejecucionPresupuestariaEstadoActual);

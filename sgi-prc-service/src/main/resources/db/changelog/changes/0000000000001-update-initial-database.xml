@@ -1,0 +1,154 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:pro="http://www.liquibase.org/xml/ns/pro" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-3.8.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+  <!-- convocatoria_baremacion_log -->
+  <changeSet author="user (generated)" id="0000000000001-1">
+    <createSequence incrementBy="1" sequenceName="convocatoria_baremacion_log_seq" startValue="1" />
+    <createTable tableName="convocatoria_baremacion_log">
+      <column name="id" type="BIGINT">
+        <constraints nullable="false" primaryKey="true" primaryKeyName="convocatoria_baremacion_logPK" />
+      </column>
+      <column name="created_by" type="VARCHAR(255)" />
+      <column name="creation_date" type="TIMESTAMP" />
+      <column name="last_modified_by" type="VARCHAR(255)" />
+      <column name="last_modified_date" type="TIMESTAMP" />
+      <column name="convocatoria_baremacion_id" type="BIGINT" />
+      <column name="trace" type="CLOB">
+        <constraints nullable="false" />
+      </column>
+    </createTable>
+    <addForeignKeyConstraint baseColumnNames="convocatoria_baremacion_id" baseTableName="convocatoria_baremacion_log" constraintName="FK_CONVOCATORIABAREMACIONLOG_CONVOCATORIABAREMACION" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableName="convocatoria_baremacion" validate="true" />
+  </changeSet>
+
+  <!-- puntuacion_baremo_item -->
+  <changeSet author="user (generated)" id="0000000000001-2">
+    <addColumn tableName="puntuacion_baremo_item">
+      <column name="anio" type="integer">
+        <constraints nullable="false" />
+      </column>
+    </addColumn>
+    <dropUniqueConstraint constraintName="UK_PUNTUACIONBAREMOITEM_BAREMOID_PRODUCCIONCIENTIFICAID" tableName="PUNTUACION_BAREMO_ITEM" />
+    <addUniqueConstraint columnNames="baremo_id, anio, produccion_cientifica_id" constraintName="UK_PUNTUACIONBAREMOITEM_BAREMOID_ANIO_PRODUCCIONCIENTIFICAID" tableName="puntuacion_baremo_item" />
+  </changeSet>
+
+  <!-- puntuacion_item_investigador -->
+  <changeSet author="user (generated)" id="0000000000001-3">
+    <dropUniqueConstraint constraintName="UK_PUNTUACIONITEMINVESTIGADOR_PERSONAREF_PRODUCCIONCIENTIFICAID" tableName="PUNTUACION_ITEM_INVESTIGADOR" />
+    <dropColumn columnName="ANYO" tableName="PUNTUACION_ITEM_INVESTIGADOR" />
+    <dropColumn columnName="PERSONA_REF" tableName="PUNTUACION_ITEM_INVESTIGADOR" />
+    <addColumn tableName="puntuacion_item_investigador">
+      <column name="persona_ref" type="varchar(50)">
+        <constraints nullable="false" />
+      </column>
+    </addColumn>
+    <addColumn tableName="puntuacion_item_investigador">
+      <column name="anio" type="integer">
+        <constraints nullable="false" />
+      </column>
+    </addColumn>
+    <addColumn tableName="puntuacion_item_investigador">
+      <column name="tipo_puntuacion" type="varchar(50)">
+        <constraints nullable="false" />
+      </column>
+    </addColumn>
+    <addUniqueConstraint columnNames="persona_ref, produccion_cientifica_id, anio, tipo_puntuacion" constraintName="UK_PUNTUACIONITEMINVESTIGADOR_PERSONA_PRCID_ANIO_TIPO_PUNT" tableName="puntuacion_item_investigador" />
+  </changeSet>
+
+  <!-- convocatoria_baremacion -->
+  <changeSet author="user (generated)" id="0000000000001-4">
+    <dropColumn columnName="FECHA_EJECUCION" tableName="CONVOCATORIA_BAREMACION" />
+    <addColumn tableName="convocatoria_baremacion">
+      <column name="fecha_fin_ejecucion" type="timestamp" />
+    </addColumn>
+    <addColumn tableName="convocatoria_baremacion">
+      <column name="fecha_inicio_ejecucion" type="timestamp" />
+    </addColumn>
+  </changeSet>
+
+  <!-- configuracion_baremo -->
+  <changeSet author="user (generated)" id="0000000000001-5">
+    <dropNotNullConstraint columnDataType="varchar(50)" columnName="epigrafe_cvn" tableName="configuracion_baremo" />
+    <addColumn tableName="configuracion_baremo">
+      <column defaultValueBoolean="false" name="mostrar_puntos" type="boolean" />
+    </addColumn>
+  </changeSet>
+
+  <!-- puntuacion_grupo -->
+  <changeSet author="user (generated)" id="0000000000001-6">
+    <dropColumn columnName="PUNTOS" tableName="PUNTUACION_GRUPO" />
+    <addColumn tableName="puntuacion_grupo">
+      <column name="puntos_costes_indirectos" type="decimal(19, 2)">
+        <constraints nullable="false" />
+      </column>
+    </addColumn>
+    <addColumn tableName="puntuacion_grupo">
+      <column name="puntos_produccion" type="decimal(19, 2)">
+        <constraints nullable="false" />
+      </column>
+    </addColumn>
+    <addColumn tableName="puntuacion_grupo">
+      <column name="puntos_sexenios" type="decimal(19, 2)">
+        <constraints nullable="false" />
+      </column>
+    </addColumn>
+    <modifyDataType tableName="puntuacion_grupo" columnName="grupo_ref" newDataType="BIGINT" />
+    <addNotNullConstraint columnDataType="bigint" columnName="convocatoria_baremacion_id" tableName="puntuacion_grupo" validate="true" />
+  </changeSet>
+
+  <!-- puntuacion_grupo_investigador -->
+  <changeSet author="user (generated)" id="0000000000001-7">
+    <dropUniqueConstraint constraintName="UK_PUNTUACIONGRUPOINVESTIGADOR_PERSONAREF_PUNTUACIONGRUPOID" tableName="PUNTUACION_GRUPO_INVESTIGADOR" />
+    <dropColumn columnName="PERSONA_REF" tableName="PUNTUACION_GRUPO_INVESTIGADOR" />
+    <addColumn tableName="puntuacion_grupo_investigador">
+      <column name="puntuacion_item_investigador_id" type="bigint" />
+    </addColumn>
+    <addUniqueConstraint columnNames="puntuacion_grupo_id, puntuacion_item_investigador_id" constraintName="UK_PUNTUACIONGRUPOINVESTIGADOR_PUNTGRUPOID_PUNTITEMINVID" tableName="puntuacion_grupo_investigador" />
+    <addForeignKeyConstraint baseColumnNames="puntuacion_item_investigador_id" baseTableName="puntuacion_grupo_investigador" constraintName="FK_PUNTUACIONGRUPOINVESTIGADOR_PUNTUACIONITEMINVESTIGADOR" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableName="puntuacion_item_investigador" validate="true" />
+  </changeSet>
+
+  <!-- autor_grupo -->
+  <changeSet author="user (generated)" id="0000000000001-8">
+    <delete tableName="autor_grupo"></delete>
+
+    <dropColumn columnName="grupo_ref" tableName="autor_grupo" />
+    <addColumn tableName="autor_grupo">
+      <column name="grupo_ref" type="bigint" />
+    </addColumn>
+    <addNotNullConstraint columnDataType="bigint" columnName="grupo_ref" tableName="autor_grupo" validate="true" />
+    <addUniqueConstraint columnNames="grupo_ref, autor_id" constraintName="UK_AUTORGRUPO_GRUPOREF_AUTORID" tableName="autor_grupo" />
+  </changeSet>
+
+  <!-- mapeo_tipos -->
+  <changeSet author="user (generated)" id="0000000000001-9">
+    <addUniqueConstraint columnNames="id_tipo_ref, codigo_cvn" constraintName="UK_MAPEOTIPOS_IDTIPOREF_CODIGOCVN" tableName="mapeo_tipos" />
+  </changeSet>
+
+  <!-- editorial_prestigio -->
+  <changeSet author="user (generated)" id="0000000000001-10">
+    <dropColumn columnName="TABLA_INDICE_ID" tableName="EDITORIAL_PRESTIGIO" />
+    <addForeignKeyConstraint baseColumnNames="tabla_editorial_id" baseTableName="editorial_prestigio" constraintName="FK_EDITORIALPRESTIGIO_TABLAEDITORIAL" referencedColumnNames="id" referencedTableName="tabla_editorial" />
+  </changeSet>
+
+  <!-- convocatoria_baremacion -->
+  <changeSet author="user (generated)" id="0000000000001-11">
+    <addColumn tableName="convocatoria_baremacion">
+      <column defaultValueBoolean="true" name="activo" type="boolean">
+        <constraints nullable="false" />
+      </column>
+    </addColumn>
+  </changeSet>
+
+  <!-- configuracion -->
+  <changeSet author="user (generated)" id="0000000000001-12">
+    <createSequence incrementBy="1" sequenceName="configuracion_seq" startValue="1" />
+    <createTable tableName="configuracion">
+      <column name="id" type="BIGINT">
+        <constraints nullable="false" primaryKey="true" primaryKeyName="configuracionPK" />
+      </column>
+      <column name="horas_proceso_baremacion" type="INT" />
+      <column name="created_by" type="VARCHAR(255)" />
+      <column name="creation_date" type="TIMESTAMP" />
+      <column name="last_modified_by" type="VARCHAR(255)" />
+      <column name="last_modified_date" type="TIMESTAMP" />
+    </createTable>
+  </changeSet>
+</databaseChangeLog>

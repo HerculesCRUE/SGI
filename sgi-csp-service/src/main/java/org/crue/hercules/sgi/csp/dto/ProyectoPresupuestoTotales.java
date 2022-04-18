@@ -21,14 +21,17 @@ public class ProyectoPresupuestoTotales implements Serializable {
    */
   private static final long serialVersionUID = 1L;
 
-  private BigDecimal importeTotalPresupuestoUniversidadSinCosteIndirecto;
-  private BigDecimal importeTotalPresupuestoSocios;
-  private BigDecimal importeTotalConcedidoUniversidadSinCosteIndirecto;
   private BigDecimal importeTotalConcedidoSocios;
-  private BigDecimal importeTotalPresupuesto;
-  private BigDecimal importeTotalConcedido;
-  private BigDecimal importeTotalPresupuestoUniversidadCostesIndirectos;
   private BigDecimal importeTotalConcedidoUniversidadCostesIndirectos;
+  private BigDecimal importeTotalConcedidoUniversidadSinCosteIndirecto;
+  private BigDecimal importeTotalConcedidoUniversidad;
+  private BigDecimal importeTotalConcedido;
+
+  private BigDecimal importeTotalPresupuestoSocios;
+  private BigDecimal importeTotalPresupuestoUniversidadCostesIndirectos;
+  private BigDecimal importeTotalPresupuestoUniversidadSinCosteIndirecto;
+  private BigDecimal importeTotalPresupuestoUniversidad;
+  private BigDecimal importeTotalPresupuesto;
 
   public ProyectoPresupuestoTotales(BigDecimal importeTotalPresupuestoUniversidadSinCosteIndirecto,
       BigDecimal importeTotalPresupuestoUniversidadCostesIndirectos, BigDecimal importeTotalPresupuestoSocios,
@@ -40,5 +43,13 @@ public class ProyectoPresupuestoTotales implements Serializable {
     this.importeTotalConcedidoSocios = importeTotalConcedidoSocios;
     this.importeTotalPresupuestoUniversidadCostesIndirectos = importeTotalPresupuestoUniversidadCostesIndirectos;
     this.importeTotalConcedidoUniversidadCostesIndirectos = importeTotalConcedidoUniversidadCostesIndirectos;
+
+    this.importeTotalConcedidoUniversidad = importeTotalConcedidoUniversidadSinCosteIndirecto
+        .add(importeTotalConcedidoUniversidadCostesIndirectos);
+    this.importeTotalPresupuestoUniversidad = importeTotalPresupuestoUniversidadSinCosteIndirecto
+        .add(importeTotalPresupuestoUniversidadCostesIndirectos);
+
+    this.importeTotalConcedido = importeTotalConcedidoUniversidad.add(importeTotalConcedidoSocios);
+    this.importeTotalPresupuesto = importeTotalPresupuestoUniversidad.add(importeTotalPresupuestoSocios);
   }
 }

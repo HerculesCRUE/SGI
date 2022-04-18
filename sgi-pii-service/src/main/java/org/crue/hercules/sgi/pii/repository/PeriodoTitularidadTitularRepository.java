@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.crue.hercules.sgi.pii.model.PeriodoTitularidad;
 import org.crue.hercules.sgi.pii.model.PeriodoTitularidadTitular;
+import org.crue.hercules.sgi.pii.repository.custom.CustomPeriodoTitularidadTitularRepository;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Repository;
@@ -13,7 +14,8 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 public interface PeriodoTitularidadTitularRepository
-    extends JpaRepository<PeriodoTitularidadTitular, Long>, JpaSpecificationExecutor<PeriodoTitularidadTitular> {
+    extends JpaRepository<PeriodoTitularidadTitular, Long>, JpaSpecificationExecutor<PeriodoTitularidadTitular>,
+    CustomPeriodoTitularidadTitularRepository {
 
   /**
    * Obtiene las entidades {@link PeriodoTitularidadTitular} asociadas al

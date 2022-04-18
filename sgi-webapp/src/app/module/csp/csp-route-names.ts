@@ -10,6 +10,7 @@ export const CSP_ROUTE_NAMES = {
   MODELO_EJECUCION: 'modelo-ejecuciones',
   PLANES_INVESTIGACION: 'planes-investigacion',
   CONCEPTO_GASTO: 'concepto-gasto',
+  LINEA_INVESTIGACION: 'linea-investigacion',
   TIPO_FINANCIACION: 'tipo-financiaciones',
   AREA_TEMATICA: 'area-tematica',
   PROYECTO: 'proyectos',

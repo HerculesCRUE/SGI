@@ -1,8 +1,6 @@
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { MSG_PARAMS } from '@core/i18n';
-import { IConvocatoriaDocumento } from '@core/models/csp/convocatoria-documento';
 import { IProyectoDocumento } from '@core/models/csp/proyecto-documento';
-import { ISolicitudDocumento } from '@core/models/csp/solicitud-documento';
 import { ITipoDocumento, ITipoFase } from '@core/models/csp/tipos-configuracion';
 import { IDocumento } from '@core/models/sgdoc/documento';
 import { Fragment } from '@core/services/action-service';
@@ -13,8 +11,8 @@ import { ProyectoProrrogaService } from '@core/services/csp/proyecto-prorroga.se
 import { ProyectoSocioPeriodoJustificacionService } from '@core/services/csp/proyecto-socio-periodo-justificacion.service';
 import { ProyectoSocioService } from '@core/services/csp/proyecto-socio.service';
 import { ProyectoService } from '@core/services/csp/proyecto.service';
-import { EmpresaService } from '@core/services/sgemp/empresa.service';
 import { SolicitudService } from '@core/services/csp/solicitud.service';
+import { EmpresaService } from '@core/services/sgemp/empresa.service';
 import { StatusWrapper } from '@core/utils/status-wrapper';
 import { TranslateService } from '@ngx-translate/core';
 import { BehaviorSubject, from, merge, Observable, of } from 'rxjs';
@@ -179,6 +177,7 @@ export class ProyectoDocumentosFragment extends Fragment {
     private proyectoDocumentoService: ProyectoDocumentoService,
     private empresaService: EmpresaService,
     private readonly translate: TranslateService,
+    public isVisor: boolean
   ) {
     super(proyectoId);
     this.setComplete(true);

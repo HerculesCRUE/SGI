@@ -12,6 +12,6 @@ public interface ProyectoPeriodoJustificacionRepository
 
   List<ProyectoPeriodoJustificacion> findByProyectoId(Long proyectoId);
 
-  List<ProyectoPeriodoJustificacion> findByFechaInicioPresentacionBetween(Instant firtDay,
-      Instant lastDay);
+  List<ProyectoPeriodoJustificacion> findByFechaInicioPresentacionBetweenAndProyectoActivoTrue(Instant dateFrom,
+      Instant dateTo);
 }

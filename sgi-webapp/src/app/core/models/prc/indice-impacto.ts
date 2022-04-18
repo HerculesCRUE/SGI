@@ -27,6 +27,14 @@ export enum TipoRanking {
   A = 'A'
 }
 
+export const TIPO_RANKING_MAP: Map<TipoRanking, string> = new Map([
+  [TipoRanking.CLASE1, marker('prc.indice-impacto.tipo-ranking.CLASE1')],
+  [TipoRanking.CLASE2, marker('prc.indice-impacto.tipo-ranking.CLASE2')],
+  [TipoRanking.CLASE3, marker('prc.indice-impacto.tipo-ranking.CLASE3')],
+  [TipoRanking.A_POR, marker('prc.indice-impacto.tipo-ranking.A_POR')],
+  [TipoRanking.A, marker('prc.indice-impacto.tipo-ranking.A')],
+]);
+
 export enum Cuartil {
   Q1 = 'Q1',
   Q2 = 'Q2',

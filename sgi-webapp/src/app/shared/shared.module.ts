@@ -125,7 +125,9 @@ import { SelectComponent } from './select/select.component';
     PalabraClaveComponent,
     FormAutocompleteOffDirective,
     ActionEmptyFooterComponent,
-    SelectEmailRecipientsComponent
+    SelectEmailRecipientsComponent,
+    DialogContentComponent,
+    DialogHeaderComponent
   ]
 })
 export class SharedModule { }

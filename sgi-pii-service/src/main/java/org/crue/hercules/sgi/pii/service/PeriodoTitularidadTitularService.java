@@ -1,5 +1,6 @@
 package org.crue.hercules.sgi.pii.service;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -7,16 +8,20 @@ import java.util.stream.Collectors;
 
 import org.crue.hercules.sgi.framework.problem.message.ProblemMessage;
 import org.crue.hercules.sgi.framework.spring.context.support.ApplicationContextSupport;
+import org.crue.hercules.sgi.pii.config.SgiConfigProperties;
 import org.crue.hercules.sgi.pii.exceptions.PeriodoTitularidadNotFoundException;
+import org.crue.hercules.sgi.pii.model.Invencion;
 import org.crue.hercules.sgi.pii.model.PeriodoTitularidad;
 import org.crue.hercules.sgi.pii.model.PeriodoTitularidadTitular;
 import org.crue.hercules.sgi.pii.repository.PeriodoTitularidadRepository;
 import org.crue.hercules.sgi.pii.repository.PeriodoTitularidadTitularRepository;
+import org.crue.hercules.sgi.pii.util.PeriodDateUtil;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 import org.springframework.validation.annotation.Validated;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -26,16 +31,12 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Transactional(readOnly = true)
 @Validated
+@RequiredArgsConstructor
 public class PeriodoTitularidadTitularService {
 
   private final PeriodoTitularidadTitularRepository repository;
   private final PeriodoTitularidadRepository periodoTitularidadrepository;
-
-  public PeriodoTitularidadTitularService(PeriodoTitularidadTitularRepository periodoTitularidadTitularRepository,
-      PeriodoTitularidadRepository periodoTitularidadrepository) {
-    this.repository = periodoTitularidadTitularRepository;
-    this.periodoTitularidadrepository = periodoTitularidadrepository;
-  }
+  private final SgiConfigProperties sgiConfigProperties;
 
   /**
    * Primero elimina y luego guarda los {@link PeriodoTitularidadTitular} pasados
@@ -126,6 +127,22 @@ public class PeriodoTitularidadTitularService {
         .orElseThrow(() -> new PeriodoTitularidadNotFoundException(periodoTitularidadId));
 
     return this.repository.findAllByPeriodoTitularidadId(periodoTitularidadId);
+  }
+
+  /**
+   * Devuelve una lista de {@link PeriodoTitularidadTitular} que pertenecen a la
+   * universidad en un determinado año y una determinada {@link Invencion}
+   * 
+   * @param invencionId   id de {@link Invencion}
+   * @param anio          año de baremación
+   * @param universidadId id universidad
+   * 
+   * @return Lista de {@link PeriodoTitularidadTitular}
+   */
+  public PeriodoTitularidadTitular findPeriodoTitularidadTitularesInFechaBaremacion(Long invencionId,
+      Integer anio, String universidadId) {
+    Instant fechaBaremacion = PeriodDateUtil.calculateFechaFinBaremacionByAnio(anio, sgiConfigProperties.getTimeZone());
+    return repository.findPeriodoTitularidadTitularesInFechaBaremacion(invencionId, fechaBaremacion, universidadId);
   }
 
 }

@@ -8,9 +8,9 @@ import javax.persistence.PersistenceUnitUtil;
 
 import org.assertj.core.api.Assertions;
 import org.crue.hercules.sgi.framework.spring.context.support.ApplicationContextSupport;
+import org.crue.hercules.sgi.prc.enums.CodigoCVN;
 import org.crue.hercules.sgi.prc.exceptions.AliasEnumeradoNotFoundException;
 import org.crue.hercules.sgi.prc.model.AliasEnumerado;
-import org.crue.hercules.sgi.prc.model.CampoProduccionCientifica.CodigoCVN;
 import org.crue.hercules.sgi.prc.repository.AliasEnumeradoRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -25,7 +25,7 @@ import org.springframework.context.annotation.Import;
  * AliasEnumeradoServiceTest
  */
 @Import({ AliasEnumeradoService.class, ApplicationContextSupport.class })
-public class AliasEnumeradoServiceTest extends BaseServiceTest {
+class AliasEnumeradoServiceTest extends BaseServiceTest {
 
   private static final CodigoCVN DEFAULT_DATA_CVN_CODE = CodigoCVN.COLECTIVA;
   private static final String DEFAULT_DATA_PREFIJO_ENUMERADO = "Colectiva";
@@ -53,7 +53,7 @@ public class AliasEnumeradoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_ReturnsAliasEnumerado() {
+  void create_ReturnsAliasEnumerado() {
     // given: Un nuevo AliasEnumerado
     AliasEnumerado aliasEnumerado = generarMockAliasEnumerado(null);
 
@@ -76,7 +76,7 @@ public class AliasEnumeradoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_WithId_ThrowsIllegalArgumentException() {
+  void create_WithId_ThrowsIllegalArgumentException() {
     // given: AliasEnumerado que ya tiene id
     AliasEnumerado aliasEnumerado = generarMockAliasEnumerado(1L);
 
@@ -87,7 +87,7 @@ public class AliasEnumeradoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_ReturnsAliasEnumerado() {
+  void update_ReturnsAliasEnumerado() {
     // given: Un nuevo AliasEnumerado
     AliasEnumerado aliasEnumerado = generarMockAliasEnumerado(1L);
 
@@ -109,7 +109,7 @@ public class AliasEnumeradoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_WithoutId_ThrowsIllegalArgumentException() {
+  void update_WithoutId_ThrowsIllegalArgumentException() {
     // given: AliasEnumerado sin id
     AliasEnumerado aliasEnumerado = generarMockAliasEnumerado(null);
 
@@ -120,7 +120,7 @@ public class AliasEnumeradoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_WithNotExistingAliasEnumerado_ThrowsAliasEnumeradoNotFoundException() {
+  void update_WithNotExistingAliasEnumerado_ThrowsAliasEnumeradoNotFoundException() {
     // given: AliasEnumerado sin id
     AliasEnumerado aliasEnumerado = generarMockAliasEnumerado(33L);
 
@@ -133,7 +133,7 @@ public class AliasEnumeradoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void findById_ReturnsAliasEnumerado() {
+  void findById_ReturnsAliasEnumerado() {
     // given: AliasEnumerado con el id buscado
     Long idBuscado = 1L;
     BDDMockito.given(repository.findById(idBuscado)).willReturn(Optional.of(generarMockAliasEnumerado(idBuscado)));
@@ -151,7 +151,7 @@ public class AliasEnumeradoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void findById_WithIdNotExist_ThrowsAliasEnumeradoNotFoundException() {
+  void findById_WithIdNotExist_ThrowsAliasEnumeradoNotFoundException() {
     // given: Ningun AliasEnumerado con el id buscado
     Long idBuscado = 33L;
     BDDMockito.given(repository.findById(ArgumentMatchers.<Long>any())).willReturn(Optional.empty());
@@ -163,17 +163,19 @@ public class AliasEnumeradoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void delete_ReturnsVoid() {
+  void delete_ReturnsVoid() {
     // given: id null
     Long idToDelete = 1L;
 
     // when: Eliminamos AliasEnumerado con el id indicado
     // then: Elimina AliasEnumerado
     service.delete(idToDelete);
+
+    Assertions.assertThat(idToDelete).as("idToDelete").isEqualTo(1L);
   }
 
   @Test
-  public void delete_WithoutId_ThrowsIllegalArgumentException() {
+  void delete_WithoutId_ThrowsIllegalArgumentException() {
     // given: id null
     Long idToDelete = null;
 

@@ -18,8 +18,6 @@ public class AutorGrupoSpecifications {
    *         {@link Autor} con el id indicado.
    */
   public static Specification<AutorGrupo> byAutorId(Long id) {
-    return (root, query, cb) -> {
-      return cb.equal(root.get(AutorGrupo_.autorId), id);
-    };
+    return (root, query, cb) -> cb.equal(root.get(AutorGrupo_.autorId), id);
   }
 }

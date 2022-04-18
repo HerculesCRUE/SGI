@@ -24,7 +24,6 @@ describe('MiembroEquipoProyectoModalComponent', () => {
     entidad: {} as IMiembroEquipoProyecto,
     fechaFinMax: undefined,
     fechaInicioMin: undefined,
-    showHorasDedicacion: true,
     readonly: false
   };
 

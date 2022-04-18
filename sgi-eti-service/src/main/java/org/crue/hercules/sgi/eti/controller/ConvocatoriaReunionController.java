@@ -375,4 +375,21 @@ public class ConvocatoriaReunionController {
     log.debug("findConvocatoriaUltimaEvaluacionTipoMemoria(Long idEvaluacion, idDictamen) - end");
     return new ResponseEntity<>(returnValue, HttpStatus.OK);
   }
+
+  /**
+   * Permite enviar el comunicado de
+   * {@link ConvocatoriaReunion}
+   * 
+   * @param id Id del {@link ConvocatoriaReunion}.
+   * @return HTTP-200 Si se puede enviar / HTTP-204 Si no se puede enviar
+   */
+  @RequestMapping(path = "/{id}/comunicado", method = RequestMethod.HEAD)
+  @PreAuthorize("hasAnyAuthorityForAnyUO('ETI-ACT-C', 'ETI-CNV-V')")
+  public ResponseEntity<ConvocatoriaReunion> enviarComunicado(@PathVariable Long id) {
+    log.debug("enviarComunicado(Long id) - start");
+    Boolean returnValue = convocatoriaReunionService.enviarComunicado(id);
+    log.debug("enviarComunicado(Long id) - end");
+    return Boolean.TRUE.equals(returnValue) ? new ResponseEntity<>(HttpStatus.OK)
+        : new ResponseEntity<>(HttpStatus.NO_CONTENT);
+  }
 }

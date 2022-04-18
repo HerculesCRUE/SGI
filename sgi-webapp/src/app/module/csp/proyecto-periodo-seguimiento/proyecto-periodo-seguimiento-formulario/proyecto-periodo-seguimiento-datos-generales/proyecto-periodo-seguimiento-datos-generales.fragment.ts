@@ -38,17 +38,17 @@ export class ProyectoPeriodoSeguimientoDatosGeneralesFragment extends FormFragme
           disabled: true
         }),
         fechaInicio: new FormControl(null, [
-          Validators.required
+          Validators.required,
+          DateValidator.minDate(this.proyecto?.fechaInicio)
         ]),
         fechaFin: new FormControl(null, [
-          Validators.required
+          Validators.required,
+          DateValidator.maxDate(this.proyecto?.fechaFin)
         ]),
         fechaInicioPresentacion: new FormControl(null),
         fechaFinPresentacion: new FormControl(null),
         observaciones: new FormControl('', [Validators.maxLength(250)]),
-        fechaInicioProyecto: new FormControl(this.proyecto?.fechaInicio),
         tipoSeguimiento: new FormControl('', [Validators.required]),
-        fechaFinProyecto: new FormControl(this.proyecto?.fechaFin),
         fechaInicioConvocatoria: new FormControl({ value: null, disabled: true }),
         fechaFinConvocatoria: new FormControl({ value: null, disabled: true }),
         observacionesConvocatoria: new FormControl({ value: null, disabled: true }),
@@ -60,9 +60,7 @@ export class ProyectoPeriodoSeguimientoDatosGeneralesFragment extends FormFragme
       {
         validators: [
           DateValidator.isAfter('fechaInicio', 'fechaFin'),
-          DateValidator.isAfter('fechaInicioPresentacion', 'fechaFinPresentacion'),
-          DateValidator.isAfterOrEqual('fechaInicioProyecto', 'fechaInicio'),
-          DateValidator.isBeforeOrEqual('fechaFinProyecto', 'fechaFin')
+          DateValidator.isAfter('fechaInicioPresentacion', 'fechaFinPresentacion')
         ]
       }
     );
@@ -107,7 +105,7 @@ export class ProyectoPeriodoSeguimientoDatosGeneralesFragment extends FormFragme
 
   protected buildPatch(proyectoPeriodoSeguimiento: IProyectoPeriodoSeguimiento): { [key: string]: any; } {
     this.proyectoPeriodoSeguimiento = proyectoPeriodoSeguimiento;
-    const result = {
+    return {
       numPeriodo: proyectoPeriodoSeguimiento.numPeriodo,
       fechaInicio: proyectoPeriodoSeguimiento.fechaInicio,
       fechaFin: proyectoPeriodoSeguimiento.fechaFin,
@@ -116,7 +114,6 @@ export class ProyectoPeriodoSeguimientoDatosGeneralesFragment extends FormFragme
       tipoSeguimiento: proyectoPeriodoSeguimiento.tipoSeguimiento,
       observaciones: proyectoPeriodoSeguimiento.observaciones
     };
-    return result;
   }
 
   protected initializer(key: number): Observable<IProyectoPeriodoSeguimiento> {

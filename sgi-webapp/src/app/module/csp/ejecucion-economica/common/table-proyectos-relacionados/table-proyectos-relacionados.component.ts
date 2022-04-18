@@ -2,7 +2,7 @@ import { Component, Input, OnInit, ViewChild } from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
-import { IProyectoRelacion } from '../../ejecucion-economica-formulario/desglose-economico.fragment';
+import { IRelacionEjecucionEconomicaWithCodigoExterno } from '../../ejecucion-economica-formulario/desglose-economico.fragment';
 
 @Component({
   selector: 'sgi-ejecucion-economica-table-proyectos-relacionados',
@@ -13,20 +13,21 @@ export class TableProyectosRelacionadosComponent implements OnInit {
 
   elementosPagina = [5, 10, 25, 100];
   displayedColumns = [
-    'proyectoSgeRef',
-    'proyectoAnualidad.proyecto.codigoExterno',
-    'proyectoAnualidad.proyecto.titulo',
-    'proyectoAnualidad.proyecto.fechaInicio',
-    'proyectoAnualidad.proyecto.fechaFin',
-    'nombreIP'
+    'id',
+    'proyectoSge.id',
+    'codigoExterno',
+    'nombre',
+    'responsables',
+    'fechaInicio',
+    'fechaFin'
   ];
 
-  readonly dataSource = new MatTableDataSource<IProyectoRelacion>();
+  readonly dataSource = new MatTableDataSource<IRelacionEjecucionEconomicaWithCodigoExterno>();
   @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
   @ViewChild(MatSort, { static: true }) sort: MatSort;
 
   @Input()
-  set data(value: IProyectoRelacion[]) {
+  set data(value: IRelacionEjecucionEconomicaWithCodigoExterno[]) {
     this.dataSource.data = value;
   }
 

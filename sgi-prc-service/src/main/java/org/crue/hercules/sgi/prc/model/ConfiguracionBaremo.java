@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.List;
 
 import javax.persistence.Column;
+import javax.persistence.Convert;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -17,7 +18,8 @@ import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
-import org.crue.hercules.sgi.prc.model.ProduccionCientifica.EpigrafeCVN;
+import org.crue.hercules.sgi.prc.enums.EpigrafeCVN;
+import org.crue.hercules.sgi.prc.model.converter.EpigrafeCVNConverter;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -41,10 +43,11 @@ public class ConfiguracionBaremo extends BaseActivableEntity implements Serializ
   private static final String SEQUENCE_NAME = TABLE_NAME + "_seq";
 
   public enum TipoBaremo {
-    AGRUPADOR,
+    PRODUCCION_CIENTIFICA,
     SEXENIO,
     COSTE_INDIRECTO,
     // LIBROS
+    LIBROS,
     AUTORIA_BCI_EDITORIAL_EXTRANJERA,
     CAP_LIBRO_BCI_EDITORIAL_EXTRANJERA,
     EDICION_BCI_EDITORIAL_EXTRANJERA,
@@ -72,6 +75,7 @@ public class ConfiguracionBaremo extends BaseActivableEntity implements Serializ
     LIBRO_NUMERO_AUTORES,
     LIBRO_EDITORIAL_PRESTIGIO,
     // ARTICULOS
+    ARTICULOS,
     ARTICULO_JCR_Q1,
     ARTICULO_JCR_Q2,
     ARTICULO_JCR_Q3,
@@ -115,11 +119,12 @@ public class ConfiguracionBaremo extends BaseActivableEntity implements Serializ
     ARTICULO_OPEN_ACCESS_BRONZE,
     ARTICULO_OPEN_ACCESS_GREEN,
     ARTICULO_INTERNACIONALIZACION,
-    ARTICULO_MULTIDISCIPLINARIEDAD,
     ARTICULO_INTERDISCIPLINARIEDAD,
+    ARTICULO_JCR_Q1_DECIL1,
     ARTICULO_NUMERO_AUTORES,
     ARTICULO_AREAS,
     // Comites editoriales
+    COMITES_EDITORIALES,
     COMITE_EDITORIAL_JCR_Q1,
     COMITE_EDITORIAL_JCR_Q2,
     COMITE_EDITORIAL_JCR_Q3,
@@ -152,9 +157,43 @@ public class ConfiguracionBaremo extends BaseActivableEntity implements Serializ
     COMITE_EDITORIAL_FECYT_Q2,
     COMITE_EDITORIAL_FECYT_Q3,
     COMITE_EDITORIAL_FECYT_Q4,
+    // Comites editoriales EDITOR
+    COMITE_EDITORIAL_JCR_Q1_EDITOR,
+    COMITE_EDITORIAL_JCR_Q2_EDITOR,
+    COMITE_EDITORIAL_JCR_Q3_EDITOR,
+    COMITE_EDITORIAL_JCR_Q4_EDITOR,
+    COMITE_EDITORIAL_CITEC_Q1_EDITOR,
+    COMITE_EDITORIAL_CITEC_Q2_EDITOR,
+    COMITE_EDITORIAL_CITEC_Q3_EDITOR,
+    COMITE_EDITORIAL_CITEC_Q4_EDITOR,
+    COMITE_EDITORIAL_SCOPUS_Q1_EDITOR,
+    COMITE_EDITORIAL_SCOPUS_Q2_EDITOR,
+    COMITE_EDITORIAL_SCOPUS_Q3_EDITOR,
+    COMITE_EDITORIAL_SCOPUS_Q4_EDITOR,
+    COMITE_EDITORIAL_SCIMAGO_Q1_EDITOR,
+    COMITE_EDITORIAL_SCIMAGO_Q2_EDITOR,
+    COMITE_EDITORIAL_SCIMAGO_Q3_EDITOR,
+    COMITE_EDITORIAL_SCIMAGO_Q4_EDITOR,
+    COMITE_EDITORIAL_ERIH_Q1_EDITOR,
+    COMITE_EDITORIAL_ERIH_Q2_EDITOR,
+    COMITE_EDITORIAL_ERIH_Q3_EDITOR,
+    COMITE_EDITORIAL_ERIH_Q4_EDITOR,
+    COMITE_EDITORIAL_DIALNET_Q1_EDITOR,
+    COMITE_EDITORIAL_DIALNET_Q2_EDITOR,
+    COMITE_EDITORIAL_DIALNET_Q3_EDITOR,
+    COMITE_EDITORIAL_DIALNET_Q4_EDITOR,
+    COMITE_EDITORIAL_MIAR_Q1_EDITOR,
+    COMITE_EDITORIAL_MIAR_Q2_EDITOR,
+    COMITE_EDITORIAL_MIAR_Q3_EDITOR,
+    COMITE_EDITORIAL_MIAR_Q4_EDITOR,
+    COMITE_EDITORIAL_FECYT_Q1_EDITOR,
+    COMITE_EDITORIAL_FECYT_Q2_EDITOR,
+    COMITE_EDITORIAL_FECYT_Q3_EDITOR,
+    COMITE_EDITORIAL_FECYT_Q4_EDITOR,
     COMITE_EDITORIAL,
 
     // Congresos
+    CONGRESOS,
     CONGRESO_GRUPO1_O_CORE_A_POR,
     CONGRESO_GRUPO1_O_CORE_A,
     CONGRESO_INTERNACIONAL_POSTER_O_CARTEL,
@@ -168,12 +207,14 @@ public class ConfiguracionBaremo extends BaseActivableEntity implements Serializ
     CONGRESO_NACIONAL_OBRA_COLECTIVA,
 
     // Direccion tesis
+    DIRECCION_TESIS,
     DIRECCION_TESIS_TESIS,
     DIRECCION_TESIS_TESINA_O_DEA_O_TFM,
     DIRECCION_TESIS_MENCION_INDUSTRIAL,
     DIRECCION_TESIS_MENCION_INTERNACIONAL,
 
     // Obra artística
+    OBRAS_ARTISTICAS,
     OBRA_ARTISTICA_EXP_GRUPO1_INDIVIDUAL,
     OBRA_ARTISTICA_EXP_GRUPO1_COLECTIVA,
     OBRA_ARTISTICA_EXP_GRUPO2_INDIVIDUAL,
@@ -185,10 +226,37 @@ public class ConfiguracionBaremo extends BaseActivableEntity implements Serializ
     OBRA_ARTISTICA_DISENIO_GRUPO3,
 
     // Organización de actividades I+D+i
+    ORGANIZACION_ACTIVIDADES,
     ORG_ACT_COMITE_CIENTIFICO_ORGANIZ_NACIONAL,
     ORG_ACT_COMITE_CIENTIFICO_ORGANIZ_INTERNACIONAL,
     ORG_ACT_COMITE_CIENTIFICO_ORGANIZ_NACIONAL_PRESIDENTE,
-    ORG_ACT_COMITE_CIENTIFICO_ORGANIZ_INTERNACIONAL_PRESIDENTE;
+    ORG_ACT_COMITE_CIENTIFICO_ORGANIZ_INTERNACIONAL_PRESIDENTE,
+
+    // CONTRATOS
+    CONTRATOS,
+    CONTRATO_CUANTIA,
+
+    // PROYECTOS_INVESTIGACION
+    PROYECTOS_INVESTIGACION,
+    PROYECTO_INVESTIGACION_REGIONAL,
+    PROYECTO_INVESTIGACION_NACIONAL,
+    PROYECTO_INVESTIGACION_EUROPEO,
+    PROYECTO_INVESTIGACION_RESTO,
+    PROYECTO_INVESTIGACION_REGIONAL_EXCELENCIA,
+    PROYECTO_INVESTIGACION_NACIONAL_EXCELENCIA,
+    PROYECTO_INVESTIGACION_REGIONAL_IP,
+    PROYECTO_INVESTIGACION_NACIONAL_IP,
+    PROYECTO_INVESTIGACION_EUROPEO_IP,
+    PROYECTO_INVESTIGACION_RESTO_IP,
+
+    // INVENCIONES
+    INVENCIONES,
+    INVENCION_PATENTE_NACIONAL,
+    INVENCION_PATENTE_INTERNACIONAL,
+    INVENCION_OTRO_NACIONAL,
+    INVENCION_OTRO_INTERNACIONAL,
+    INVENCION_LICENCIA_EXPLOTACION;
+
   }
 
   public enum TipoFuente {
@@ -231,8 +299,13 @@ public class ConfiguracionBaremo extends BaseActivableEntity implements Serializ
   @Enumerated(EnumType.STRING)
   private TipoPuntos tipoPuntos;
 
+  /** mostrarPuntos */
+  @Column(name = "mostrar_puntos", columnDefinition = "boolean default false", nullable = true)
+  private Boolean mostrarPuntos;
+
   /** EpigrafeCVN */
-  @Column(name = "epigrafe_cvn", length = BaseEntity.EPIGRAFE_LENGTH, nullable = false)
+  @Column(name = "epigrafe_cvn", length = BaseEntity.EPIGRAFE_LENGTH, nullable = true)
+  @Convert(converter = EpigrafeCVNConverter.class)
   private EpigrafeCVN epigrafeCVN;
 
   /** ConfiguracionBaremo padre. */

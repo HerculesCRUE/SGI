@@ -1,7 +1,10 @@
 package org.crue.hercules.sgi.pii.controller;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import javax.validation.Valid;
 
@@ -10,6 +13,7 @@ import org.crue.hercules.sgi.pii.dto.InformePatentabilidadOutput;
 import org.crue.hercules.sgi.pii.dto.InvencionAreaConocimientoInput;
 import org.crue.hercules.sgi.pii.dto.InvencionAreaConocimientoOutput;
 import org.crue.hercules.sgi.pii.dto.InvencionDocumentoOutput;
+import org.crue.hercules.sgi.pii.dto.InvencionDto;
 import org.crue.hercules.sgi.pii.dto.InvencionGastoOutput;
 import org.crue.hercules.sgi.pii.dto.InvencionIngresoOutput;
 import org.crue.hercules.sgi.pii.dto.InvencionInput;
@@ -35,6 +39,7 @@ import org.crue.hercules.sgi.pii.model.InvencionInventor;
 import org.crue.hercules.sgi.pii.model.InvencionPalabraClave;
 import org.crue.hercules.sgi.pii.model.InvencionSectorAplicacion;
 import org.crue.hercules.sgi.pii.model.PeriodoTitularidad;
+import org.crue.hercules.sgi.pii.model.PeriodoTitularidadTitular;
 import org.crue.hercules.sgi.pii.model.Reparto;
 import org.crue.hercules.sgi.pii.model.SolicitudProteccion;
 import org.crue.hercules.sgi.pii.service.InformePatentabilidadService;
@@ -47,6 +52,7 @@ import org.crue.hercules.sgi.pii.service.InvencionPalabraClaveService;
 import org.crue.hercules.sgi.pii.service.InvencionSectorAplicacionService;
 import org.crue.hercules.sgi.pii.service.InvencionService;
 import org.crue.hercules.sgi.pii.service.PeriodoTitularidadService;
+import org.crue.hercules.sgi.pii.service.PeriodoTitularidadTitularService;
 import org.crue.hercules.sgi.pii.service.RepartoService;
 import org.crue.hercules.sgi.pii.service.SolicitudProteccionService;
 import org.modelmapper.ModelMapper;
@@ -67,6 +73,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -75,21 +82,24 @@ import lombok.extern.slf4j.Slf4j;
  */
 @RestController
 @RequestMapping(InvencionController.MAPPING)
+@RequiredArgsConstructor
 @Slf4j
 public class InvencionController {
-  public static final String MAPPING = "/invenciones";
-  public static final String PATH_SECTORES = "/{id}/sectoresaplicacion";
-  public static final String PATH_AREAS = "/{id}/areasconocimiento";
-  public static final String PATH_INFORMESPATENTABILIDAD = "/{id}/informespatentabilidad";
-  public static final String PATH_INVENCION_INVENTOR = "/{invencionId}/invencion-inventores";
-  public static final String PATH_INVENCION_GASTO = "/{invencionId}/gastos";
-  public static final String PATH_INVENCION_INGRESO = "/{invencionId}/ingresos";
-  public static final String PATH_PERIODOSTITULARIDAD = "/{invencionId}/periodostitularidad";
-  public static final String PATH_PERIODOTITULARIDAD_TITULAR = PATH_PERIODOSTITULARIDAD + "/{periodotitularidadId}";
-  public static final String PATH_REPARTO = "/{invencionId}/repartos";
-  public static final String PATH_PALABRAS_CLAVE = "/{invencionId}/palabrasclave";
+  public static final String PATH_SEPARATOR = "/";
+  public static final String MAPPING = PATH_SEPARATOR + "invenciones";
+  public static final String PATH_SECTORES = PATH_SEPARATOR + "{id}/sectoresaplicacion";
+  public static final String PATH_AREAS = PATH_SEPARATOR + "{id}/areasconocimiento";
+  public static final String PATH_INFORMESPATENTABILIDAD = PATH_SEPARATOR + "{id}/informespatentabilidad";
+  public static final String PATH_INVENCION_INVENTOR = PATH_SEPARATOR + "{invencionId}/invencion-inventores";
+  public static final String PATH_INVENCION_GASTO = PATH_SEPARATOR + "{invencionId}/gastos";
+  public static final String PATH_INVENCION_INGRESO = PATH_SEPARATOR + "{invencionId}/ingresos";
+  public static final String PATH_PERIODOSTITULARIDAD = PATH_SEPARATOR + "{invencionId}/periodostitularidad";
+  public static final String PATH_PERIODOTITULARIDAD_TITULAR = PATH_PERIODOSTITULARIDAD + "{periodotitularidadId}";
+  public static final String PATH_REPARTO = PATH_SEPARATOR + "{invencionId}/repartos";
+  public static final String PATH_PALABRAS_CLAVE = PATH_SEPARATOR + "{invencionId}/palabrasclave";
+  public static final String PATH_PRC = PATH_SEPARATOR + "produccioncientifica/{anioInicio}/{anioFin}/{universidadId}";
 
-  private ModelMapper modelMapper;
+  private final ModelMapper modelMapper;
 
   /** Invencion service */
   private final InvencionService service;
@@ -120,29 +130,7 @@ public class InvencionController {
   /** InvencionPalabraClave service */
   private final InvencionPalabraClaveService invencionPalabraClaveService;
 
-  public InvencionController(ModelMapper modelMapper, InvencionService invencionService,
-      InvencionSectorAplicacionService invencionSectorAplicacionService,
-      InvencionDocumentoService invencionDocumentoService,
-      InvencionAreaConocimientoService invencionAreaConocimientoService,
-      InformePatentabilidadService informePatentabilidadService,
-      final SolicitudProteccionService solicitudProteccionService, InvencionInventorService invencionInventorService,
-      InvencionGastoService invencionGastoService, InvencionIngresoService invencionIngresoService,
-      final PeriodoTitularidadService periodoTitularidadService, RepartoService repartoService,
-      InvencionPalabraClaveService invencionPalabraClaveService) {
-    this.modelMapper = modelMapper;
-    this.service = invencionService;
-    this.invencionInventorService = invencionInventorService;
-    this.invencionSectorAplicacionService = invencionSectorAplicacionService;
-    this.invencionDocumentoService = invencionDocumentoService;
-    this.invencionAreaConocimientoService = invencionAreaConocimientoService;
-    this.informePatentabilidadService = informePatentabilidadService;
-    this.solicitudProteccionService = solicitudProteccionService;
-    this.invencionGastoService = invencionGastoService;
-    this.invencionIngresoService = invencionIngresoService;
-    this.periodoTitularidadService = periodoTitularidadService;
-    this.repartoService = repartoService;
-    this.invencionPalabraClaveService = invencionPalabraClaveService;
-  }
+  private final PeriodoTitularidadTitularService periodoTitularidadTitularService;
 
   /**
    * Devuelve una lista paginada y filtrada {@link Invencion} activos.
@@ -159,7 +147,7 @@ public class InvencionController {
     Page<Invencion> page = service.findActivos(query, paging);
 
     if (page.isEmpty()) {
-      log.debug("findAll(String query, Pageable paging) - end");
+      log.debug("findAll(String query, Pageable paging) - NO_CONTENT - end");
       return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
@@ -273,7 +261,7 @@ public class InvencionController {
    */
   @RequestMapping(path = "/{id}", method = RequestMethod.HEAD)
   @PreAuthorize("hasAnyAuthority('PII-INV-V', 'PII-INV-E')")
-  public ResponseEntity<?> exists(@PathVariable Long id) {
+  public ResponseEntity<Void> exists(@PathVariable Long id) {
     log.debug("Invencion exists(Long id) - start");
     if (service.existsById(id)) {
       log.debug("Invencion exists(Long id) - end");
@@ -625,9 +613,59 @@ public class InvencionController {
     return new ResponseEntity<>(returnValue, HttpStatus.OK);
   }
 
+  /**
+   * Devuelve una lista de {@link InvencionDto} que se incorporarán a la
+   * baremación
+   * de producción científica
+   *
+   * @param anioInicio    año inicio de baremación
+   * @param anioFin       año fin de baremación
+   * @param universidadId id de la universidad
+   * @return lista de {@link InvencionDto}
+   */
+  @GetMapping(PATH_PRC)
+  @PreAuthorize("(isClient() and hasAuthority('SCOPE_sgi-pii')) or hasAuthority('CSP-PRO-PRC-V')")
+  public ResponseEntity<List<InvencionDto>> findInvencionesProduccionCientifica(@PathVariable Integer anioInicio,
+      @PathVariable Integer anioFin, @PathVariable String universidadId) {
+    log.debug("findInvencionesProduccionCientifica(anioInicio, anioFin, universidadId) - start");
+    List<InvencionDto> invenciones = service.findInvencionesProduccionCientifica(anioInicio, anioFin, universidadId)
+        .stream().map(invencion -> {
+          Long invencionId = invencion.getId();
+          invencion.setParticipaciones(new ArrayList<>());
+          IntStream.range(anioInicio, anioFin).forEach(anio -> invencion.getParticipaciones()
+              .add(getParticipacionTitularByAnio(invencionId, anio, universidadId)));
+
+          invencion.setSolicitudesProteccion(
+              solicitudProteccionService.findSolicitudProteccionInRangoBaremacion(invencionId, anioInicio, anioFin));
+
+          invencion.setInventores(invencionInventorService.findByInvencionId(invencionId).stream()
+              .map(InvencionInventor::getInventorRef).collect(Collectors.toList()));
+
+          return invencion;
+        }).collect(Collectors.toList());
+
+    if (invenciones.isEmpty()) {
+      log.debug("findInvencionesProduccionCientifica(anioInicio, anioFin, universidadId) - end");
+      return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    log.debug("findInvencionesProduccionCientifica(anioInicio, anioFin, universidadId) - end");
+    return new ResponseEntity<>(invenciones, HttpStatus.OK);
+  }
+
+  private BigDecimal getParticipacionTitularByAnio(Long invencionId, Integer anio, String universidadId) {
+    PeriodoTitularidadTitular periodoTitularidadTitular = periodoTitularidadTitularService
+        .findPeriodoTitularidadTitularesInFechaBaremacion(invencionId, anio, universidadId);
+    if (null != periodoTitularidadTitular) {
+      return periodoTitularidadTitular.getParticipacion();
+    } else {
+      return BigDecimal.ZERO;
+    }
+  }
+
   private Page<PeriodoTitularidadOutput> convertToPeriodoTitularidadPage(Page<PeriodoTitularidad> page) {
     List<PeriodoTitularidadOutput> content = page.getContent().stream()
-        .map((periodoTitularidad) -> convert(periodoTitularidad)).collect(Collectors.toList());
+        .map(this::convert).collect(Collectors.toList());
 
     return new PageImpl<>(content, page.getPageable(), page.getTotalElements());
   }
@@ -665,7 +703,7 @@ public class InvencionController {
   }
 
   private Page<InvencionOutput> convert(Page<Invencion> page) {
-    List<InvencionOutput> content = page.getContent().stream().map((invencion) -> convert(invencion))
+    List<InvencionOutput> content = page.getContent().stream().map(this::convert)
         .collect(Collectors.toList());
 
     return new PageImpl<>(content, page.getPageable(), page.getTotalElements());
@@ -687,12 +725,12 @@ public class InvencionController {
 
   private List<InvencionSectorAplicacionOutput> convertInvencionSectoresAplicacion(
       List<InvencionSectorAplicacion> entities) {
-    return entities.stream().map((entity) -> convert(entity)).collect(Collectors.toList());
+    return entities.stream().map(this::convert).collect(Collectors.toList());
   }
 
   private List<InvencionSectorAplicacion> convertInvencionSectorAplicacionInputs(
       List<InvencionSectorAplicacionInput> inputs) {
-    return inputs.stream().map((input) -> convert(input)).collect(Collectors.toList());
+    return inputs.stream().map(this::convert).collect(Collectors.toList());
   }
 
   private InvencionDocumentoOutput convert(InvencionDocumento invencionDocumento) {
@@ -701,7 +739,7 @@ public class InvencionController {
 
   private Page<InvencionDocumentoOutput> convertToPage(Page<InvencionDocumento> page) {
     List<InvencionDocumentoOutput> content = page.getContent().stream()
-        .map((invencionDocumento) -> convert(invencionDocumento)).collect(Collectors.toList());
+        .map(this::convert).collect(Collectors.toList());
 
     return new PageImpl<>(content, page.getPageable(), page.getTotalElements());
   }
@@ -722,16 +760,16 @@ public class InvencionController {
 
   private List<InvencionAreaConocimientoOutput> convertInvencionAreasConocimiento(
       List<InvencionAreaConocimiento> entities) {
-    return entities.stream().map((entity) -> convert(entity)).collect(Collectors.toList());
+    return entities.stream().map(this::convert).collect(Collectors.toList());
   }
 
   private List<InvencionAreaConocimiento> convertInvencionAreaConocimientoInputs(
       List<InvencionAreaConocimientoInput> inputs) {
-    return inputs.stream().map((input) -> convert(input)).collect(Collectors.toList());
+    return inputs.stream().map(this::convert).collect(Collectors.toList());
   }
 
   private List<InformePatentabilidadOutput> convertInformesPatentabilidad(List<InformePatentabilidad> entities) {
-    return entities.stream().map((entity) -> convert(entity)).collect(Collectors.toList());
+    return entities.stream().map(this::convert).collect(Collectors.toList());
   }
 
   private InformePatentabilidadOutput convert(InformePatentabilidad entity) {
@@ -744,13 +782,13 @@ public class InvencionController {
 
   private Page<SolicitudProteccionOutput> convertToPageSolicitudProteccion(Page<SolicitudProteccion> page) {
     List<SolicitudProteccionOutput> content = page.getContent().stream()
-        .map((solicitudProteccion) -> convert(solicitudProteccion)).collect(Collectors.toList());
+        .map(this::convert).collect(Collectors.toList());
 
     return new PageImpl<>(content, page.getPageable(), page.getTotalElements());
   }
 
   private Page<InvencionInventorOutput> convertInventorInvencion(Page<InvencionInventor> page) {
-    List<InvencionInventorOutput> content = page.getContent().stream().map((invencion) -> convert(invencion))
+    List<InvencionInventorOutput> content = page.getContent().stream().map(this::convert)
         .collect(Collectors.toList());
 
     return new PageImpl<>(content, page.getPageable(), page.getTotalElements());
@@ -763,11 +801,11 @@ public class InvencionController {
   }
 
   private List<InvencionInventor> convertInvencionInventoresInput(Long id, List<InvencionInventorInput> inputs) {
-    return inputs.stream().map((input) -> convert(id, input)).collect(Collectors.toList());
+    return inputs.stream().map(input -> convert(id, input)).collect(Collectors.toList());
   }
 
   private List<InvencionGastoOutput> convertInvencionGasto(List<InvencionGasto> entities) {
-    return entities.stream().map((entity) -> convert(entity)).collect(Collectors.toList());
+    return entities.stream().map(this::convert).collect(Collectors.toList());
   }
 
   private InvencionGastoOutput convert(InvencionGasto entity) {
@@ -775,7 +813,7 @@ public class InvencionController {
   }
 
   private List<InvencionIngresoOutput> convertInvencionIngreso(List<InvencionIngreso> entities) {
-    return entities.stream().map((entity) -> convert(entity)).collect(Collectors.toList());
+    return entities.stream().map(this::convert).collect(Collectors.toList());
   }
 
   private InvencionIngresoOutput convert(InvencionIngreso entity) {
@@ -783,7 +821,7 @@ public class InvencionController {
   }
 
   private Page<RepartoOutput> convertReparto(Page<Reparto> page) {
-    List<RepartoOutput> content = page.getContent().stream().map((reparto) -> convert(reparto))
+    List<RepartoOutput> content = page.getContent().stream().map(this::convert)
         .collect(Collectors.toList());
 
     return new PageImpl<>(content, page.getPageable(), page.getTotalElements());
@@ -795,7 +833,7 @@ public class InvencionController {
 
   private Page<InvencionPalabraClaveOutput> convertInvencionPalabraClave(Page<InvencionPalabraClave> page) {
     List<InvencionPalabraClaveOutput> content = page.getContent().stream()
-        .map((invencionPalabraClave) -> convert(invencionPalabraClave))
+        .map(this::convert)
         .collect(Collectors.toList());
 
     return new PageImpl<>(content, page.getPageable(), page.getTotalElements());
@@ -803,7 +841,7 @@ public class InvencionController {
 
   private List<InvencionPalabraClaveOutput> convertInvencionPalabraClave(List<InvencionPalabraClave> list) {
     return list.stream()
-        .map((invencionPalabraClave) -> convert(invencionPalabraClave))
+        .map(this::convert)
         .collect(Collectors.toList());
   }
 
@@ -813,7 +851,7 @@ public class InvencionController {
 
   private List<InvencionPalabraClave> convertInvencionPalabraClaveInputs(Long invencionId,
       List<InvencionPalabraClaveInput> inputs) {
-    return inputs.stream().map((input) -> convert(invencionId, input)).collect(Collectors.toList());
+    return inputs.stream().map(input -> convert(invencionId, input)).collect(Collectors.toList());
   }
 
   private InvencionPalabraClave convert(Long invencionId, InvencionPalabraClaveInput input) {

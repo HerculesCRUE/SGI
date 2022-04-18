@@ -22,7 +22,7 @@ import org.springframework.test.context.jdbc.Sql.ExecutionPhase;
 import org.springframework.web.util.UriComponentsBuilder;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class AutorIT extends BaseIT {
+class AutorIT extends BaseIT {
 
   private static final String CONTROLLER_BASE_PATH = AutorController.MAPPING;
   private static final String PATH_GRUPOS = AutorController.PATH_GRUPOS;

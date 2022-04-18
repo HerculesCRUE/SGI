@@ -18,8 +18,6 @@ public class ProyectoSpecifications {
    *         la {@link ProduccionCientifica} con el id indicado.
    */
   public static Specification<Proyecto> byProduccionCientificaId(Long id) {
-    return (root, query, cb) -> {
-      return cb.equal(root.get(Proyecto_.produccionCientificaId), id);
-    };
+    return (root, query, cb) -> cb.equal(root.get(Proyecto_.produccionCientificaId), id);
   }
 }

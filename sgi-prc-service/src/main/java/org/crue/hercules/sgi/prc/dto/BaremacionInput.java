@@ -3,11 +3,11 @@ package org.crue.hercules.sgi.prc.dto;
 import java.io.Serializable;
 import java.math.BigDecimal;
 
+import org.crue.hercules.sgi.prc.enums.EpigrafeCVN;
 import org.crue.hercules.sgi.prc.model.Baremo.TipoCuantia;
 import org.crue.hercules.sgi.prc.model.ConfiguracionBaremo.TipoBaremo;
 import org.crue.hercules.sgi.prc.model.ConfiguracionBaremo.TipoFuente;
 import org.crue.hercules.sgi.prc.model.ConfiguracionBaremo.TipoPuntos;
-import org.crue.hercules.sgi.prc.model.ProduccionCientifica.EpigrafeCVN;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

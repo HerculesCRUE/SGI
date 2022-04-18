@@ -3,18 +3,14 @@ import { MatOption } from '@angular/material/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSelect } from '@angular/material/select';
 import { MatTableDataSource } from '@angular/material/table';
-import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { FragmentComponent } from '@core/component/fragment.component';
-import { HttpProblem } from '@core/errors/http-problem';
 import { MSG_PARAMS } from '@core/i18n';
-import { ColumnType, ISgiColumnReport } from '@core/models/rep/sgi-column-report';
 import { IDatoEconomico } from '@core/models/sge/dato-economico';
 import { FxFlexProperties } from '@core/models/shared/flexLayout/fx-flex-properties';
 import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-properties';
-import { TranslateService } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
 import { EjecucionEconomicaActionService } from '../../ejecucion-economica.action.service';
-import { IColumnDefinition, RowTreeDesglose } from '../desglose-economico.fragment';
+import { RowTreeDesglose } from '../desglose-economico.fragment';
 import { EjecucionPresupuestariaGastosFragment } from './ejecucion-presupuestaria-gastos.fragment';
 import { EjecucionPresupuestariaGastosExportModalComponent } from './export/ejecucion-presupuestaria-gastos-export-modal.component';
 
@@ -70,12 +66,8 @@ export class EjecucionPresupuestariaGastosComponent extends FragmentComponent im
         };
         this.matDialog.open(EjecucionPresupuestariaGastosExportModalComponent, config);
       },
-      (error) => {
-        if (error instanceof HttpProblem) {
-          this.formPart.pushProblems(error);
-        }
-      })
-    );
+      this.formPart.processError
+    ));
   }
 
   ngOnDestroy(): void {

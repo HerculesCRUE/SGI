@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { MatSnackBar, MatSnackBarConfig } from '@angular/material/snack-bar';
-import { Problem } from '@core/errors/http-problem';
+import { SgiProblem } from '@core/errors/sgi-error';
 import { SnackBarComponent, SnackBarData } from '../../block/snack-bar/snack-bar.component';
 
 @Injectable({
@@ -12,7 +12,7 @@ export class SnackBarService {
     private snackBar: MatSnackBar,
   ) { }
 
-  private open(msg: string, params: {}, error: Problem, cssClass: string): void {
+  private open(msg: string, params: {}, error: SgiProblem, cssClass: string): void {
     const snackBarConfig = new MatSnackBarConfig();
     snackBarConfig.verticalPosition = 'top';
     if (!!!error) {
@@ -35,7 +35,7 @@ export class SnackBarService {
    *
    * @param mensaje el mensaje o lista de mensajes de error.
    */
-  showError(msg: string | Problem, params: {} = {}): void {
+  showError(msg: string | SgiProblem, params: {} = {}): void {
     if (typeof msg === 'string') {
       this.open(msg, params, undefined, 'error-snack-bar');
     }

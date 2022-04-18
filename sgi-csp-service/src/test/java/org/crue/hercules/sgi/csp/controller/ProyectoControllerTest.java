@@ -1425,7 +1425,7 @@ public class ProyectoControllerTest extends BaseControllerTest {
 
     ProyectoEquipo proyectoEquipo = ProyectoEquipo.builder().id(proyectoEquipoId).proyectoId(1L)
         .rolProyecto(RolProyecto.builder().id(1L).build()).fechaInicio(Instant.now()).fechaFin(Instant.now())
-        .personaRef("001").horasDedicacion(new Double(2)).build();
+        .personaRef("001").build();
 
     return proyectoEquipo;
 

@@ -47,7 +47,7 @@
             <mat-datepicker-toggle class="fechaIcon" matSuffix [for]="pickerFechaInicio"></mat-datepicker-toggle>
             <mat-datepicker #pickerFechaInicio>
             </mat-datepicker>
-            <mat-error *ngIf="formGroup.controls.fechaInicio.errors?.afterOrEqual">
+            <mat-error *ngIf="formGroup.controls.fechaInicio.errors?.minDate">
               {{'error.csp.proyecto-periodo-seguimiento-cientifico.fecha-inicio.after' | translate}}
             </mat-error>
             <mat-error *ngIf="formGroup.controls.fechaInicio.errors?.maxDate">
@@ -68,7 +68,7 @@
             <mat-datepicker-toggle class="fechaIcon" matSuffix [for]="pickerFechaFin"></mat-datepicker-toggle>
             <mat-datepicker #pickerFechaFin>
             </mat-datepicker>
-            <mat-error *ngIf="formGroup.controls.fechaFin.errors?.before">
+            <mat-error *ngIf="formGroup.controls.fechaFin.errors?.maxDate">
               {{'error.csp.proyecto-periodo-seguimiento-cientifico.fecha-fin.before' | translate}}
             </mat-error>
             <mat-error *ngIf="formGroup.controls.fechaFin.errors?.after">

@@ -8,6 +8,10 @@ import org.crue.hercules.sgi.csp.model.ProyectoProyectoSge_;
 import org.crue.hercules.sgi.csp.model.Proyecto_;
 import org.springframework.data.jpa.domain.Specification;
 
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
+
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class ProyectoProyectoSgeSpecifications {
 
   /**
@@ -18,9 +22,8 @@ public class ProyectoProyectoSgeSpecifications {
    *         {@link Proyecto} con el id indicado.
    */
   public static Specification<ProyectoProyectoSge> byProyectoId(Long id) {
-    return (root, query, cb) -> {
-      return cb.equal(root.get(ProyectoProyectoSge_.proyecto).get(Proyecto_.id), id);
-    };
+    return (root, query, cb) -> cb.equal(root.get(ProyectoProyectoSge_.proyecto).get(Proyecto_.id), id);
+
   }
 
   /**
@@ -32,9 +35,19 @@ public class ProyectoProyectoSgeSpecifications {
    *         unidadGestionRef se encuentre entre los recibidos.
    */
   public static Specification<ProyectoProyectoSge> unidadGestionRefIn(List<String> unidadGestionRefs) {
-    return (root, query, cb) -> {
-      return root.get(ProyectoProyectoSge_.proyecto).get(Proyecto_.unidadGestionRef).in(unidadGestionRefs);
-    };
+    return (root, query, cb) -> root.get(ProyectoProyectoSge_.proyecto).get(Proyecto_.unidadGestionRef)
+        .in(unidadGestionRefs);
+  }
+
+  /**
+   * {@link ProyectoProyectoSge} asociados a {@link Proyecto} activos.
+   * 
+   * @return specification para obtener los ProyectoProyectoSge} asociados a
+   * 
+   *         {@link Proyecto} activos
+   */
+  public static Specification<ProyectoProyectoSge> activos() {
+    return (root, query, cb) -> cb.isTrue(root.get(ProyectoProyectoSge_.proyecto).get(Proyecto_.activo));
   }
 
 }

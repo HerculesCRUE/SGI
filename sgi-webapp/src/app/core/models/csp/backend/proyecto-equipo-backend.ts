@@ -5,7 +5,6 @@ export interface IProyectoEquipoBackend {
   proyectoId: number;
   rolProyecto: IRolProyecto;
   personaRef: string;
-  horasDedicacion: number;
   fechaInicio: string;
   fechaFin: string;
 }

@@ -5,7 +5,6 @@ import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { BaseExportModalComponent } from '@core/component/base-export/base-export-modal.component';
 import { MSG_PARAMS } from '@core/i18n';
 import { IReportConfig, IReportOptions } from '@core/services/rep/abstract-table-export.service';
-import { SnackBarService } from '@core/services/snack-bar.service';
 import { TranslateService } from '@ngx-translate/core';
 import { ISolicitudPresupuestoReportOptions, SolicitudProyectoPresupuestoListadoExportService } from '../../solicitud-proyecto-presupuesto-listado-export.service';
 
@@ -29,12 +28,11 @@ export class SolicitudProyectoPresupuestoListadoExportModalComponent extends Bas
 
   constructor(
     matDialogRef: MatDialogRef<SolicitudProyectoPresupuestoListadoExportModalComponent>,
-    snackBarService: SnackBarService,
     translate: TranslateService,
     solicitudProyectoPresupuestoListadoExportService: SolicitudProyectoPresupuestoListadoExportService,
     @Inject(MAT_DIALOG_DATA) private modalData: ISolicitudProyectoPresupuetoModalData
   ) {
-    super(solicitudProyectoPresupuestoListadoExportService, snackBarService, translate, matDialogRef);
+    super(solicitudProyectoPresupuestoListadoExportService, translate, matDialogRef);
   }
 
   ngOnInit(): void {

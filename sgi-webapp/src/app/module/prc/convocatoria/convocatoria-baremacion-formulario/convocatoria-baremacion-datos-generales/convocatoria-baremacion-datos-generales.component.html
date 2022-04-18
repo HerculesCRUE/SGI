@@ -1,0 +1,87 @@
+<sgi-fragment title="{{'label.datos-generales' | translate}}">
+  <form [formGroup]="formGroup">
+    <div [fxLayout.xs]="fxLayoutProperties.xs" [fxLayout]="fxLayoutProperties.layout"
+      [fxLayoutGap]="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
+
+      <!-- Nombre -->
+      <div fxFlex="66%" fxFlex.sm="99%">
+        <mat-form-field>
+          <mat-label>{{'prc.convocatoria.nombre' | translate}}</mat-label>
+          <input matInput placeholder="{{'prc.convocatoria.nombre' | translate}}" formControlName="nombre" required>
+          <mat-error *ngIf="formGroup.controls.nombre.errors?.required">
+            {{'error.required.entity' | translate:msgParamNombreEntity}}
+          </mat-error>
+          <mat-error *ngIf="formGroup.controls.nombre.errors?.maxlength">
+            {{'error.maxlength.entity' | translate:msgParamNombreEntity}}
+          </mat-error>
+        </mat-form-field>
+      </div>
+
+      <!-- Año -->
+      <div fxFlex="33%" fxFlex.sm="99%">
+        <mat-form-field>
+          <mat-label>{{'prc.convocatoria.anio' | translate}}</mat-label>
+          <input matInput placeholder="{{'prc.convocatoria.anio' | translate}}" type="number" formControlName="anio"
+            required>
+          <mat-error *ngIf="formGroup.controls.anio.errors?.required">
+            {{'error.required.entity' | translate:msgParamAnioEntity}}
+          </mat-error>
+        </mat-form-field>
+      </div>
+    </div>
+
+    <div [fxLayout.xs]="fxLayoutProperties.xs" [fxLayout]="fxLayoutProperties.layout"
+      [fxLayoutGap]="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
+      <!-- Años que son baremables -->
+      <div fxFlex="49%" fxFlex.sm="99%">
+        <mat-form-field>
+          <mat-label>{{'prc.convocatoria.anios-baremables' | translate}}</mat-label>
+          <input matInput placeholder="{{'prc.convocatoria.anios-baremables' | translate}}" type="number"
+            formControlName="aniosBaremables" required>
+          <mat-error *ngIf="formGroup.controls.aniosBaremables.errors?.required">
+            {{'error.required.entity' | translate:msgParamAniosBaremablesEntity}}
+          </mat-error>
+        </mat-form-field>
+      </div>
+
+      <!-- Último año a considerar -->
+      <div fxFlex="49%" fxFlex.sm="99%">
+        <mat-form-field>
+          <mat-label>{{'prc.convocatoria.ultimo-anio' | translate}}</mat-label>
+          <input matInput placeholder="{{'prc.convocatoria.ultimo-anio' | translate}}" type="number"
+            formControlName="ultimoAnio" required>
+          <mat-error *ngIf="formGroup.controls.ultimoAnio.errors?.required">
+            {{'error.required.entity' | translate:msgParamUltimoAnioEntity}}
+          </mat-error>
+        </mat-form-field>
+      </div>
+    </div>
+
+    <div [fxLayout.xs]="fxLayoutProperties.xs" [fxLayout]="fxLayoutProperties.layout"
+      [fxLayoutGap]="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
+      <!-- Importe total -->
+      <div fxFlex="49%" fxFlex.sm="99%">
+        <mat-form-field>
+          <mat-label>{{'prc.convocatoria.importe-total' | translate}}</mat-label>
+          <input matInput placeholder="{{'prc.convocatoria.importe-total' | translate}}" type="number"
+            formControlName="importeTotal" required>
+          <mat-error *ngIf="formGroup.controls.importeTotal.errors?.required">
+            {{'error.required.entity' | translate:msgParamImporteTotalEntity}}
+          </mat-error>
+        </mat-form-field>
+      </div>
+
+      <!-- Partida presupuestaria -->
+      <div fxFlex="49%" fxFlex.sm="99%">
+        <mat-form-field>
+          <mat-label>{{'prc.convocatoria.partida-presupuestaria' | translate}}</mat-label>
+          <input matInput placeholder="{{'prc.convocatoria.partida-presupuestaria' | translate}}"
+            formControlName="partidaPresupuestaria">
+          <mat-error *ngIf="formGroup.controls.partidaPresupuestaria.errors?.maxlength">
+            {{'error.maxlength.entity' | translate:msgParamPartidaPresupuestariaEntity}}
+          </mat-error>
+        </mat-form-field>
+      </div>
+    </div>
+  </form>
+</sgi-fragment>

@@ -1,8 +1,10 @@
 package org.crue.hercules.sgi.csp.repository.custom;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 
+import org.crue.hercules.sgi.csp.dto.ProyectoDto;
 import org.crue.hercules.sgi.csp.dto.ProyectoPresupuestoTotales;
 import org.crue.hercules.sgi.csp.model.ModeloEjecucion;
 import org.crue.hercules.sgi.csp.model.Proyecto;
@@ -48,4 +50,16 @@ public interface CustomProyectoRepository {
    * @return lista de ids de {@link Proyecto}.
    */
   List<Long> findIds(Specification<Proyecto> specification);
+
+  /**
+   * Devuelve una lista de {@link ProyectoDto} que se incorporarán a la baremación
+   * de producción científica
+   * 
+   * @param fechaInicioBaremacion fecha inicio de baremación
+   * @param fechaFinBaremacion    fecha fin de baremación
+   * 
+   * @return Lista de {@link ProyectoDto}
+   */
+  List<ProyectoDto> findProyectosProduccionCientifica(Instant fechaInicioBaremacion,
+      Instant fechaFinBaremacion);
 }

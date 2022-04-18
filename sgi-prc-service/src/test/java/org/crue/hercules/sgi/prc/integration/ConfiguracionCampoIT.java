@@ -24,7 +24,7 @@ import org.springframework.web.util.UriComponentsBuilder;
  * Test de integracion de ConfiguracionCampo.
  */
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class ConfiguracionCampoIT extends BaseIT {
+class ConfiguracionCampoIT extends BaseIT {
 
   private static final String CONTROLLER_BASE_PATH = ConfiguracionCampoController.MAPPING;
 

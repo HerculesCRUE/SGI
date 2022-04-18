@@ -4,10 +4,10 @@
   <parent>
     <groupId>org.crue.hercules.sgi.esb</groupId>
     <artifactId>sgi-esb-common</artifactId>
-    <version>0.0.7</version>
+    <version>0.0.8</version>
   </parent>
   <artifactId>esb-composite-application</artifactId>
-  <version>0.0.7</version>
+  <version>0.0.8</version>
   <packaging>carbon/application</packaging>
   <name>esb-composite-application</name>
   <description>esb-composite-application</description>
@@ -23,18 +23,18 @@
     <dependency>
       <groupId>org.crue.hercules.sgi.esb</groupId>
       <artifactId>sgi-auth-mediator</artifactId>
-      <version>0.0.7</version>
+      <version>0.0.8</version>
     </dependency>
     <dependency>
       <groupId>org.crue.hercules.sgi.esb.sequence</groupId>
       <artifactId>error-handling-sequence</artifactId>
-      <version>0.0.7</version>
+      <version>0.0.8</version>
       <type>xml</type>
     </dependency>
     <dependency>
       <groupId>org.crue.hercules.sgi.esb.template</groupId>
       <artifactId>sgi-auth-sequence-template</artifactId>
-      <version>0.0.7</version>
+      <version>0.0.8</version>
       <type>xml</type>
     </dependency>
   </dependencies>

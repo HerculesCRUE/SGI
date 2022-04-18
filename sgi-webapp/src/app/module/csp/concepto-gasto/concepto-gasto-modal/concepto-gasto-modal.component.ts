@@ -20,7 +20,7 @@ const TITLE_NEW_ENTITY = marker('title.new.entity');
   templateUrl: './concepto-gasto-modal.component.html',
   styleUrls: ['./concepto-gasto-modal.component.scss']
 })
-export class ConceptoGastoModalComponent extends DialogActionComponent<IConceptoGasto, IConceptoGasto> implements OnInit, OnDestroy {
+export class ConceptoGastoModalComponent extends DialogActionComponent<IConceptoGasto> implements OnInit, OnDestroy {
 
   private readonly conceptoGasto: IConceptoGasto;
   msgParamNombreEntity = {};

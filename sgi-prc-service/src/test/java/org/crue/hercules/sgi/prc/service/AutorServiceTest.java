@@ -35,7 +35,7 @@ import org.springframework.data.jpa.domain.Specification;
  * AutorServiceTest
  */
 @Import({ AutorService.class, ApplicationContextSupport.class })
-public class AutorServiceTest extends BaseServiceTest {
+class AutorServiceTest extends BaseServiceTest {
 
   private static final String PERSONA_REF_PREFIX = "Persona-ref-";
   private static final String DEFAULT_DATA_FIRMA = "Default-firma";
@@ -72,7 +72,7 @@ public class AutorServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_ReturnsAutor() {
+  void create_ReturnsAutor() {
     // given: Un nuevo Autor
     Autor autor = generarMockAutor(null);
 
@@ -99,7 +99,7 @@ public class AutorServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_WithId_ThrowsIllegalArgumentException() {
+  void create_WithId_ThrowsIllegalArgumentException() {
     // given: Autor que ya tiene id
     Autor autor = generarMockAutor(1L);
 
@@ -110,7 +110,7 @@ public class AutorServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_ReturnsAutor() {
+  void update_ReturnsAutor() {
     // given: Un nuevo Autor
     Autor autor = generarMockAutor(1L);
 
@@ -136,7 +136,7 @@ public class AutorServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_WithoutId_ThrowsIllegalArgumentException() {
+  void update_WithoutId_ThrowsIllegalArgumentException() {
     // given: Autor sin id
     Autor autor = generarMockAutor(null);
 
@@ -147,7 +147,7 @@ public class AutorServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_WithNotExistingAutor_ThrowsAutorNotFoundException() {
+  void update_WithNotExistingAutor_ThrowsAutorNotFoundException() {
     // given: Autor sin id
     Autor autor = generarMockAutor(33L);
 
@@ -160,7 +160,7 @@ public class AutorServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void findAll_ReturnsPage() {
+  void findAll_ReturnsPage() {
     // given: Una lista con 37 Autor
     List<Autor> autores = new ArrayList<>();
     for (long i = 1; i <= 37; i++) {
@@ -190,7 +190,9 @@ public class AutorServiceTest extends BaseServiceTest {
     Page<Autor> page = service.findAll(null, paging);
 
     // then: Devuelve la pagina 3 con los Autor del 31 al 37
-    Assertions.assertThat(page.getContent().size()).as("getContent().size()").isEqualTo(7);
+    int numResultados = page.getContent().size();
+
+    Assertions.assertThat(numResultados).as("getContent().size()").isEqualTo(7);
     Assertions.assertThat(page.getNumber()).as("getNumber()").isEqualTo(3);
     Assertions.assertThat(page.getSize()).as("getSize()").isEqualTo(10);
     Assertions.assertThat(page.getTotalElements()).as("getTotalElements()").isEqualTo(37);
@@ -202,7 +204,7 @@ public class AutorServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void findById_ReturnsAutor() {
+  void findById_ReturnsAutor() {
     // given: Autor con el id buscado
     Long idBuscado = 1L;
     BDDMockito.given(repository.findById(idBuscado)).willReturn(Optional.of(generarMockAutor(idBuscado)));
@@ -224,7 +226,7 @@ public class AutorServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void findById_WithIdNotExist_ThrowsAutorNotFoundException() {
+  void findById_WithIdNotExist_ThrowsAutorNotFoundException() {
     // given: Ningun Autor con el id buscado
     Long idBuscado = 33L;
     BDDMockito.given(repository.findById(ArgumentMatchers.<Long>any())).willReturn(Optional.empty());
@@ -236,17 +238,19 @@ public class AutorServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void delete_ReturnsVoid() {
+  void delete_ReturnsVoid() {
     // given: id null
     Long idToDelete = 1L;
 
     // when: Eliminamos Autor con el id indicado
     // then: Elimina Autor
     service.delete(idToDelete);
+
+    Assertions.assertThat(idToDelete).as("idToDelete").isEqualTo(1L);
   }
 
   @Test
-  public void delete_WithoutId_ThrowsIllegalArgumentException() {
+  void delete_WithoutId_ThrowsIllegalArgumentException() {
     // given: id null
     Long idToDelete = null;
 
@@ -257,7 +261,7 @@ public class AutorServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void findAllByProduccionCientificaId_ReturnsList() {
+  void findAllByProduccionCientificaId_ReturnsList() {
     // given: Una lista con 7 Autor y un produccionCientificaId
     Long produccionCientificaId = 1L;
     List<Autor> autores = new ArrayList<>();
@@ -279,7 +283,8 @@ public class AutorServiceTest extends BaseServiceTest {
         });
     List<Autor> autoresBuscados = service.findAllByProduccionCientificaId(produccionCientificaId);
     // then: Cada Autor tiene produccionCientificaId buscado
-    Assertions.assertThat(autoresBuscados.size()).as("size()").isEqualTo(3);
+    int numResultados = autoresBuscados.size();
+    Assertions.assertThat(numResultados).as("size()").isEqualTo(3);
     autoresBuscados.stream().forEach(autorBuscado -> {
       Assertions.assertThat(autorBuscado.getProduccionCientificaId()).as("getProduccionCientificaId")
           .isEqualTo(produccionCientificaId);
@@ -287,7 +292,7 @@ public class AutorServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void deleteInBulkByProduccionCientificaId_ReturnsInt() {
+  void deleteInBulkByProduccionCientificaId_ReturnsInt() {
     // give: produccionCientificaId
     Long produccionCientificaId = 1L;
 

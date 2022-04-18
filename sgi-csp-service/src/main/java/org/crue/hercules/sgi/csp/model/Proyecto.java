@@ -46,16 +46,6 @@ public class Proyecto extends BaseEntity {
    */
   private static final long serialVersionUID = 1L;
 
-  /** Tipo de horas anuales. */
-  public enum TipoHorasAnuales {
-    /** Valor fijo */
-    FIJO,
-    /** Reales (TS) */
-    REAL,
-    /** Por categoría */
-    CATEGORIA;
-  }
-
   /** Causas de exención. */
   public enum CausaExencion {
     /** Sujeto y Exento */
@@ -166,22 +156,13 @@ public class Proyecto extends BaseEntity {
   @Column(name = "coordinador_externo", nullable = true)
   private Boolean coordinadorExterno;
 
-  /** TimeSheet */
-  @Column(name = "timesheet", nullable = true)
-  private Boolean timesheet;
+  /** Excelencia */
+  @Column(name = "excelencia", nullable = true)
+  private Boolean excelencia;
 
   /** Permite paquetes de trabajo */
   @Column(name = "paquetes_trabajo", nullable = true)
   private Boolean permitePaquetesTrabajo;
-
-  /** Coste hora */
-  @Column(name = "coste_hora", nullable = true)
-  private Boolean costeHora;
-
-  /** Tipo horas anuales */
-  @Column(name = "tipo_horas_anuales", length = 50, nullable = true)
-  @Enumerated(EnumType.STRING)
-  private TipoHorasAnuales tipoHorasAnuales;
 
   /** Iva */
   @ManyToOne

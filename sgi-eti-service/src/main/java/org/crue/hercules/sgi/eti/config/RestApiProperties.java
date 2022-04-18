@@ -14,9 +14,16 @@ public class RestApiProperties {
    * URL base de los end-points del módulo de INFORMES.
    */
   private String repUrl;
-
   /**
    * URL base de los end-points del módulo de SGDOC.
    */
   private String sgdocUrl;
+  /**
+   * URL base de los end-points del módulo de SGP.
+   */
+  private String sgpUrl;
+  /**
+   * URL base de los end-points del módulo de COM.
+   */
+  private String comUrl;
 }

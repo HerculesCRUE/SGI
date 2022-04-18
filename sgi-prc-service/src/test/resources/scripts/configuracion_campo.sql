@@ -223,5 +223,11 @@ VALUES(74, NULL, NULL, NULL, NULL, 'TIPO_OPEN_ACCESS', '060.010.010.000', false,
 INSERT INTO test.configuracion_campo
 (id, created_by, creation_date, last_modified_by, last_modified_date, codigo_cvn, epigrafe_cvn, fecha_referencia_fin, fecha_referencia_inicio, tipo_formato, validacion_adicional)
 VALUES(75, NULL, NULL, NULL, NULL, 'ISSN', '060.030.030.000', false, false, 'TEXTO', false);
+INSERT INTO test.configuracion_campo
+(id, created_by, creation_date, last_modified_by, last_modified_date, codigo_cvn, epigrafe_cvn, fecha_referencia_fin, fecha_referencia_inicio, tipo_formato, validacion_adicional)
+VALUES(76, NULL, NULL, NULL, NULL, '060.030.030.100', '060.030.030.000', false, false, 'ENUMERADO', false);
+INSERT INTO test.configuracion_campo
+(id, created_by, creation_date, last_modified_by, last_modified_date, codigo_cvn, epigrafe_cvn, fecha_referencia_fin, fecha_referencia_inicio, tipo_formato, validacion_adicional)
+VALUES(77, NULL, NULL, NULL, NULL, 'ANIO_SEXENIOS', '060.030.070.000', false, true, 'FECHA', false);
 
 ALTER SEQUENCE test.configuracion_campo_seq RESTART WITH 100;

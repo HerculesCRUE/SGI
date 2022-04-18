@@ -6,20 +6,25 @@ INSERT INTO test.campo_produccion_cientifica (id, produccion_cientifica_id, codi
 INSERT INTO test.campo_produccion_cientifica (id, produccion_cientifica_id, codigo_cvn) VALUES(4, 1, '060.010.010.010');
 INSERT INTO test.campo_produccion_cientifica (id, produccion_cientifica_id, codigo_cvn) VALUES(5, 1, '060.010.010.160');
 INSERT INTO test.campo_produccion_cientifica (id, produccion_cientifica_id, codigo_cvn) VALUES(6, 1, '060.010.010.390');
+INSERT INTO test.campo_produccion_cientifica (id, produccion_cientifica_id, codigo_cvn) VALUES(7, 1, '060.010.010.100');
 
-INSERT INTO test.campo_produccion_cientifica (id, produccion_cientifica_id, codigo_cvn) VALUES(10,  2, '060.010.010.030');
-INSERT INTO test.campo_produccion_cientifica (id, produccion_cientifica_id, codigo_cvn) VALUES(11,  2, '060.010.010.140');
-INSERT INTO test.campo_produccion_cientifica (id, produccion_cientifica_id, codigo_cvn) VALUES(12,  2, '060.010.010.210');
-INSERT INTO test.campo_produccion_cientifica (id, produccion_cientifica_id, codigo_cvn) VALUES(13,  2, '060.010.010.010');
-INSERT INTO test.campo_produccion_cientifica (id, produccion_cientifica_id, codigo_cvn) VALUES(14, 2, 'INTERDISCIPLINAR');
-INSERT INTO test.campo_produccion_cientifica (id, produccion_cientifica_id, codigo_cvn) VALUES(15, 2, 'INDICE_NORMALIZADO');
-INSERT INTO test.campo_produccion_cientifica (id, produccion_cientifica_id, codigo_cvn) VALUES(16, 2, '060.010.010.160');
+INSERT INTO test.campo_produccion_cientifica (id, produccion_cientifica_id, codigo_cvn) VALUES(20, 2, '060.010.010.030');
+INSERT INTO test.campo_produccion_cientifica (id, produccion_cientifica_id, codigo_cvn) VALUES(21, 2, '060.010.010.140');
+INSERT INTO test.campo_produccion_cientifica (id, produccion_cientifica_id, codigo_cvn) VALUES(22, 2, '060.010.010.210');
+INSERT INTO test.campo_produccion_cientifica (id, produccion_cientifica_id, codigo_cvn) VALUES(23, 2, '060.010.010.010');
+INSERT INTO test.campo_produccion_cientifica (id, produccion_cientifica_id, codigo_cvn) VALUES(24, 2, 'INTERDISCIPLINAR');
+INSERT INTO test.campo_produccion_cientifica (id, produccion_cientifica_id, codigo_cvn) VALUES(25, 2, 'INTERNACIONAL');
+INSERT INTO test.campo_produccion_cientifica (id, produccion_cientifica_id, codigo_cvn) VALUES(26, 2, 'TIPO_OPEN_ACCESS');
+INSERT INTO test.campo_produccion_cientifica (id, produccion_cientifica_id, codigo_cvn) VALUES(27, 2, 'PUBLICACION_MUY_RELEVANTE');
+INSERT INTO test.campo_produccion_cientifica (id, produccion_cientifica_id, codigo_cvn) VALUES(28, 2, '060.010.010.300');
+INSERT INTO test.campo_produccion_cientifica (id, produccion_cientifica_id, codigo_cvn) VALUES(29, 2, 'INDICE_NORMALIZADO');
+INSERT INTO test.campo_produccion_cientifica (id, produccion_cientifica_id, codigo_cvn) VALUES(30, 2, '060.010.010.160');
 
-INSERT INTO test.campo_produccion_cientifica (id, produccion_cientifica_id, codigo_cvn) VALUES(20, 3, '060.010.010.030');
-INSERT INTO test.campo_produccion_cientifica (id, produccion_cientifica_id, codigo_cvn) VALUES(21, 3, '060.010.010.140');
-INSERT INTO test.campo_produccion_cientifica (id, produccion_cientifica_id, codigo_cvn) VALUES(22, 3, '060.010.010.210');
-INSERT INTO test.campo_produccion_cientifica (id, produccion_cientifica_id, codigo_cvn) VALUES(23, 3, '060.010.010.010');
-INSERT INTO test.campo_produccion_cientifica (id, produccion_cientifica_id, codigo_cvn) VALUES(24, 3, '060.010.010.160');
+INSERT INTO test.campo_produccion_cientifica (id, produccion_cientifica_id, codigo_cvn) VALUES(40, 3, '060.010.010.030');
+INSERT INTO test.campo_produccion_cientifica (id, produccion_cientifica_id, codigo_cvn) VALUES(41, 3, '060.010.010.140');
+INSERT INTO test.campo_produccion_cientifica (id, produccion_cientifica_id, codigo_cvn) VALUES(42, 3, '060.010.010.210');
+INSERT INTO test.campo_produccion_cientifica (id, produccion_cientifica_id, codigo_cvn) VALUES(43, 3, '060.010.010.010');
+INSERT INTO test.campo_produccion_cientifica (id, produccion_cientifica_id, codigo_cvn) VALUES(44, 3, '060.010.010.160');
 
 -- Comites editoriales (nombre, fecha)
 INSERT INTO test.campo_produccion_cientifica (id, produccion_cientifica_id, codigo_cvn) VALUES(3000, 300, '060.030.030.010');
@@ -42,6 +47,7 @@ INSERT INTO test.campo_produccion_cientifica (id, produccion_cientifica_id, codi
 INSERT INTO test.campo_produccion_cientifica (id, produccion_cientifica_id, codigo_cvn) VALUES(4004, 400, '060.010.020.080');
 INSERT INTO test.campo_produccion_cientifica (id, produccion_cientifica_id, codigo_cvn) VALUES(4005, 400, '060.010.020.050');
 INSERT INTO test.campo_produccion_cientifica (id, produccion_cientifica_id, codigo_cvn) VALUES(4006, 400, '060.010.020.320');
+INSERT INTO test.campo_produccion_cientifica (id, produccion_cientifica_id, codigo_cvn) VALUES(4007, 400, 'RESUMEN_REVISTA');
 
 INSERT INTO test.campo_produccion_cientifica (id, produccion_cientifica_id, codigo_cvn) VALUES(4010, 401, '060.010.020.030');
 INSERT INTO test.campo_produccion_cientifica (id, produccion_cientifica_id, codigo_cvn) VALUES(4011, 401, '060.010.020.190');
@@ -121,6 +127,5 @@ INSERT INTO test.campo_produccion_cientifica (id, produccion_cientifica_id, codi
 INSERT INTO test.campo_produccion_cientifica (id, produccion_cientifica_id, codigo_cvn) VALUES(7021, 702, '060.020.030.160');
 INSERT INTO test.campo_produccion_cientifica (id, produccion_cientifica_id, codigo_cvn) VALUES(7022, 702, '060.020.030.110');
 INSERT INTO test.campo_produccion_cientifica (id, produccion_cientifica_id, codigo_cvn) VALUES(7023, 702, '060.020.030.030');
-
 
 ALTER SEQUENCE test.campo_produccion_cientifica_seq RESTART WITH 100000;

@@ -1,8 +1,19 @@
 <div class="mat-elevation-z4">
   <table mat-table [dataSource]="dataSource" matSort matSortActive="id" matSortDirection="asc" matSortDisableClear>
 
+
+    <!-- Identificador interno SGI -->
+    <ng-container matColumnDef="id">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>
+        {{'csp.ejecucion-economica.identificador-sgi' | translate}}
+      </th>
+      <td mat-cell *matCellDef="let element">
+        {{element.id}}
+      </td>
+    </ng-container>
+
     <!-- Identificador SGE Column -->
-    <ng-container matColumnDef="proyectoSgeRef">
+    <ng-container matColumnDef="proyectoSge.id">
       <th mat-header-cell *matHeaderCellDef mat-sort-header>
         {{'csp.ejecucion-economica.identificador-sge' | translate}}
       </th>
@@ -12,52 +23,52 @@
     </ng-container>
 
     <!-- Codigo externo Column -->
-    <ng-container matColumnDef="proyectoAnualidad.proyecto.codigoExterno">
+    <ng-container matColumnDef="codigoExterno">
       <th mat-header-cell *matHeaderCellDef mat-sort-header>
         {{'csp.ejecucion-economica.codigo-externo' | translate}}
       </th>
       <td mat-cell *matCellDef="let element">
-        {{element.proyecto.codigoExterno}}
+        {{element.codigoExterno}}
       </td>
     </ng-container>
 
-    <!-- Titulo Column -->
-    <ng-container matColumnDef="proyectoAnualidad.proyecto.titulo">
+    <!-- Nombre / Titulo Column -->
+    <ng-container matColumnDef="nombre">
       <th mat-header-cell *matHeaderCellDef mat-sort-header>
-        {{'csp.ejecucion-economica.titulo' | translate}}
+        {{'csp.ejecucion-economica.proyectos-grupos.nombre' | translate}}
       </th>
       <td mat-cell *matCellDef="let element">
-        {{element.proyecto.titulo}}
+        {{element.nombre}}
+      </td>
+    </ng-container>
+
+    <!-- Responsable Column -->
+    <ng-container matColumnDef="responsables">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>
+        {{'csp.ejecucion-economica.responsable' | translate}}
+      </th>
+      <td mat-cell *matCellDef="let element" matTooltip="{{element.responsables | personaNombreCompleto}}">
+        {{element.responsables | personaNombreCompleto}}
       </td>
     </ng-container>
 
     <!-- Fecha inicio Column -->
-    <ng-container matColumnDef="proyectoAnualidad.proyecto.fechaInicio">
+    <ng-container matColumnDef="fechaInicio">
       <th mat-header-cell *matHeaderCellDef mat-sort-header>
         {{'csp.ejecucion-economica.fecha-inicio' | translate}}
       </th>
       <td mat-cell *matCellDef="let element">
-        {{element.proyecto.fechaInicio | luxon:'shortDate'}}
+        {{element.fechaInicio | luxon:'shortDate'}}
       </td>
     </ng-container>
 
     <!-- Fecha fin Column -->
-    <ng-container matColumnDef="proyectoAnualidad.proyecto.fechaFin">
+    <ng-container matColumnDef="fechaFin">
       <th mat-header-cell *matHeaderCellDef mat-sort-header>
         {{'csp.ejecucion-economica.fecha-fin' | translate}}
       </th>
       <td mat-cell *matCellDef="let element">
-        {{element.proyecto.fechaFin | luxon:'shortDate'}}
-      </td>
-    </ng-container>
-
-    <!-- Nombre ip Column -->
-    <ng-container matColumnDef="nombreIP">
-      <th mat-header-cell *matHeaderCellDef>
-        {{'csp.ejecucion-economica.nombre-ip' | translate}}
-      </th>
-      <td mat-cell *matCellDef="let element">
-        {{element.ip?.nombre}} {{element.ip?.apellidos}}
+        {{element.fechaFin | luxon:'shortDate'}}
       </td>
     </ng-container>
 

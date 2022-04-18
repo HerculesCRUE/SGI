@@ -51,6 +51,26 @@ public class GrupoEspecialInvestigacionService {
   }
 
   /**
+   * Actualiza la entidad {@link GrupoEspecialInvestigacion}.
+   * 
+   * @param grupoEspecialInvestigacion la entidad
+   *                                   {@link GrupoEspecialInvestigacion} a
+   *                                   guardar.
+   * @return la entidad {@link GrupoEspecialInvestigacion} persistida.
+   */
+  @Transactional
+  @Validated({ BaseEntity.Update.class })
+  public GrupoEspecialInvestigacion update(GrupoEspecialInvestigacion grupoEspecialInvestigacion) {
+    log.debug("update(GrupoEspecialInvestigacion grupoEspecialInvestigacion) - start");
+
+    AssertHelper.idNotNull(grupoEspecialInvestigacion.getId(), GrupoEspecialInvestigacion.class);
+    GrupoEspecialInvestigacion returnValue = repository.save(grupoEspecialInvestigacion);
+
+    log.debug("update(GrupoEspecialInvestigacion grupoEspecialInvestigacion) - end");
+    return returnValue;
+  }
+
+  /**
    * Obtiene una entidad {@link GrupoEspecialInvestigacion} por id.
    * 
    * @param id Identificador de la entidad {@link GrupoEspecialInvestigacion}.

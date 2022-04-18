@@ -51,7 +51,7 @@ public class ChecklistController {
    * @return ChecklistOutput El Checklist con el id solicitado
    */
   @GetMapping("/{id}")
-  @PreAuthorize("hasAnyAuthority('ETI-CHKLST-MOD-V', 'ETI-CHKLST-MOD-C')")
+  @PreAuthorize("(isClient() and hasAuthority('SCOPE_sgi-eti')) or hasAnyAuthority('ETI-CHKLST-MOD-V', 'ETI-CHKLST-MOD-C')")
   ChecklistOutput getById(@PathVariable Long id) {
     log.debug("getById(@PathVariable Long id) - start");
     Checklist checklist = service.getById(id);

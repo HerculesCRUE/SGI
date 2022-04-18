@@ -2,22 +2,22 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { AbstractTablePaginationComponent } from '@core/component/abstract-table-pagination.component';
-import { Estado, ESTADO_MAP } from '@core/models/csp/estado-proyecto';
-import { IProyectoProyectoSge } from '@core/models/csp/proyecto-proyecto-sge';
+import { IRelacionEjecucionEconomica, TipoEntidad, TIPO_ENTIDAD_MAP } from '@core/models/csp/relacion-ejecucion-economica';
 import { IRolProyecto } from '@core/models/csp/rol-proyecto';
-import { FxFlexProperties } from '@core/models/shared/flexLayout/fx-flex-properties';
-import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-properties';
 import { ROUTE_NAMES } from '@core/route.names';
-import { ProyectoProyectoSgeService } from '@core/services/csp/proyecto-proyecto-sge.service';
+import { RelacionEjecucionEconomicaService } from '@core/services/csp/relacion-ejecucion-economica/relacion-ejecucion-economica.service';
+import { GrupoService } from '@core/services/csp/grupo/grupo.service';
 import { ProyectoService } from '@core/services/csp/proyecto.service';
 import { RolProyectoService } from '@core/services/csp/rol-proyecto.service';
+import { PersonaService } from '@core/services/sgp/persona.service';
 import { SnackBarService } from '@core/services/snack-bar.service';
 import { LuxonUtils } from '@core/utils/luxon-utils';
 import { RSQLSgiRestFilter, SgiRestFilter, SgiRestFilterOperator, SgiRestFindOptions, SgiRestListResult } from '@sgi/framework/http';
 import { NGXLogger } from 'ngx-logger';
-import { merge, Observable, of, Subscription } from 'rxjs';
-import { map, switchMap, tap } from 'rxjs/operators';
+import { EMPTY, from, Observable, Subscription } from 'rxjs';
+import { catchError, filter, map, mergeMap, switchMap, toArray } from 'rxjs/operators';
 import { EJECUCION_ECONOMICA_ROUTE_NAMES } from '../ejecucion-economica-route-names';
+import { IRelacionEjecucionEconomicaWithResponsables } from '../ejecucion-economica.action.service';
 
 const MSG_ERROR = marker('error.load');
 
@@ -26,26 +26,25 @@ const MSG_ERROR = marker('error.load');
   templateUrl: './ejecucion-economica-listado.component.html',
   styleUrls: ['./ejecucion-economica-listado.component.scss']
 })
-export class EjecucionEconomicaListadoComponent extends AbstractTablePaginationComponent<IProyectoProyectoSge>
+export class EjecucionEconomicaListadoComponent extends AbstractTablePaginationComponent<IRelacionEjecucionEconomicaWithResponsables>
   implements OnInit, OnDestroy {
   ROUTE_NAMES = ROUTE_NAMES;
 
-  fxFlexProperties: FxFlexProperties;
-  fxLayoutProperties: FxLayoutProperties;
-  dataSource$: Observable<IProyectoProyectoSge[]>;
+  dataSource$: Observable<IRelacionEjecucionEconomicaWithResponsables[]>;
 
   private subscriptions: Subscription[] = [];
 
   busquedaAvanzada = false;
 
-  colectivosResponsableProyecto: string[];
+  colectivosResponsable: string[];
+  tipoEntidadSelected: TipoEntidad;
 
-  get ESTADO_MAP() {
-    return ESTADO_MAP;
+  get TIPO_ENTIDAD_MAP() {
+    return TIPO_ENTIDAD_MAP;
   }
 
-  get Estado() {
-    return Estado;
+  get TipoEntidad() {
+    return TipoEntidad;
   }
 
   get EJECUCION_ECONOMICA_ROUTE_NAMES() {
@@ -55,71 +54,75 @@ export class EjecucionEconomicaListadoComponent extends AbstractTablePaginationC
   constructor(
     private readonly logger: NGXLogger,
     protected snackBarService: SnackBarService,
-    private proyectoProyectoSgeService: ProyectoProyectoSgeService,
     private rolProyectoService: RolProyectoService,
     private proyectoService: ProyectoService,
+    private personaService: PersonaService,
+    private relacionEjecucionEconomicaService: RelacionEjecucionEconomicaService,
+    private grupoService: GrupoService,
   ) {
     super(snackBarService, MSG_ERROR);
-    this.fxFlexProperties = new FxFlexProperties();
-    this.fxFlexProperties.sm = '0 1 calc(50%-10px)';
-    this.fxFlexProperties.md = '0 1 calc(33%-10px)';
-    this.fxFlexProperties.gtMd = '0 1 calc(17%-10px)';
-    this.fxFlexProperties.order = '2';
-
-    this.fxLayoutProperties = new FxLayoutProperties();
-    this.fxLayoutProperties.gap = '20px';
-    this.fxLayoutProperties.layout = 'row wrap';
-    this.fxLayoutProperties.xs = 'column';
   }
 
   ngOnInit(): void {
     super.ngOnInit();
-
-    this.formGroup = new FormGroup({
-      acronimo: new FormControl(undefined),
-      tituloProyecto: new FormControl(undefined),
-      identificadorSge: new FormControl(undefined),
-      fechaInicioDesde: new FormControl(null),
-      fechaInicioHasta: new FormControl(null),
-      fechaFinDesde: new FormControl(null),
-      fechaFinHasta: new FormControl(null),
-      convocatoria: new FormControl(undefined),
-      responsableProyecto: new FormControl({ value: '', disabled: true }),
-      estadoProyecto: new FormControl(null)
-    });
-
+    this.createFormGroup();
     this.loadColectivos();
   }
 
-  protected createObservable(reset?: boolean): Observable<SgiRestListResult<IProyectoProyectoSge>> {
-    const observable$ = this.proyectoProyectoSgeService.findAll(this.getFindOptions(reset)).pipe(
-      switchMap(response => {
-        const requestsProyecto: Observable<IProyectoProyectoSge>[] = [];
-        response.items.forEach(ejecucionEconomicaListado => {
-          requestsProyecto.push(this.proyectoService.findById(ejecucionEconomicaListado.proyecto.id).pipe(
-            map(proyecto => {
-              ejecucionEconomicaListado.proyecto = proyecto;
-              return ejecucionEconomicaListado;
-            })
-          ));
-        });
-        return of(response).pipe(
-          tap(() => merge(...requestsProyecto).subscribe())
-        );
-      }),
-    );
+  protected createObservable(reset?: boolean): Observable<SgiRestListResult<IRelacionEjecucionEconomicaWithResponsables>> {
+    let relaciones$: Observable<SgiRestListResult<IRelacionEjecucionEconomica>>;
+    let serviceGetResponsables: GrupoService | ProyectoService;
 
-    return observable$;
+    switch (this.tipoEntidadSelected) {
+      case TipoEntidad.GRUPO:
+        relaciones$ = this.relacionEjecucionEconomicaService.findRelacionesGrupos(this.getFindOptions(reset));
+        serviceGetResponsables = this.grupoService;
+        break;
+      case TipoEntidad.PROYECTO:
+        relaciones$ = this.relacionEjecucionEconomicaService.findRelacionesProyectos(this.getFindOptions(reset));
+        serviceGetResponsables = this.proyectoService;
+        break;
+      default:
+        throw Error(`Invalid tipoEntidad "${this.tipoEntidadSelected}"`);
+    }
+
+    return relaciones$.pipe(
+      map(result => result as SgiRestListResult<IRelacionEjecucionEconomicaWithResponsables>),
+      switchMap(response =>
+        from(response.items).pipe(
+          mergeMap(relacion => {
+            return serviceGetResponsables.findPersonaRefInvestigadoresPrincipales(relacion.id).pipe(
+              filter(personaRefs => !!personaRefs),
+              switchMap(personaRefs => this.personaService.findAllByIdIn(personaRefs).pipe(
+                catchError((error) => {
+                  this.logger.error(error);
+                  return EMPTY;
+                })
+              )),
+              map(responsables => {
+                relacion.responsables = responsables.items;
+                return relacion;
+              }),
+            );
+          }),
+          toArray(),
+          map(() => {
+            return response;
+          })
+
+        )
+      )
+    );
   }
 
   protected initColumns(): void {
     this.columnas = [
-      'proyecto.titulo',
-      'proyecto.acronimo',
-      'proyecto.fechaInicio',
-      'proyecto.fechaFin',
-      'proyecto.estado.estado',
+      'id',
       'proyectoSgeRef',
+      'nombre',
+      'responsable',
+      'fechaInicio',
+      'fechaFin',
       'acciones'
     ];
   }
@@ -130,26 +133,31 @@ export class EjecucionEconomicaListadoComponent extends AbstractTablePaginationC
 
   protected createFilter(): SgiRestFilter {
     const controls = this.formGroup.controls;
-    const filter = new RSQLSgiRestFilter('proyecto.titulo', SgiRestFilterOperator.LIKE_ICASE, controls.tituloProyecto.value)
+
+    this.tipoEntidadSelected = this.formGroup.controls.tipoEntidad?.value;
+
+    const restFilter = new RSQLSgiRestFilter('nombre', SgiRestFilterOperator.LIKE_ICASE, controls.nombre.value)
       .and('proyectoSgeRef', SgiRestFilterOperator.EQUALS, controls.identificadorSge.value)
-      .and('proyecto.fechaInicio',
+      .and('fechaInicio',
         SgiRestFilterOperator.GREATHER_OR_EQUAL, LuxonUtils.toBackend(controls.fechaInicioDesde.value))
-      .and('proyecto.fechaInicio',
+      .and('fechaInicio',
         SgiRestFilterOperator.LOWER_OR_EQUAL, LuxonUtils.toBackend(controls.fechaInicioHasta.value))
-      .and('proyecto.fechaFin',
+      .and('fechaFin',
         SgiRestFilterOperator.GREATHER_OR_EQUAL, LuxonUtils.toBackend(controls.fechaFinDesde.value))
-      .and('proyecto.fechaFin',
+      .and('fechaFin',
         SgiRestFilterOperator.LOWER_OR_EQUAL, LuxonUtils.toBackend(controls.fechaFinHasta.value));
 
     if (this.busquedaAvanzada) {
-      filter
-        .and('proyecto.convocatoria.id', SgiRestFilterOperator.EQUALS, controls.convocatoria.value?.id?.toString())
-        .and('responsableProyecto', SgiRestFilterOperator.EQUALS, controls.responsableProyecto.value?.id)
-        .and('proyecto.estado.estado', SgiRestFilterOperator.EQUALS, controls.estadoProyecto.value)
-        .and('proyecto.acronimo', SgiRestFilterOperator.LIKE_ICASE, controls.acronimo.value);
+      if (this.tipoEntidadSelected === TipoEntidad.PROYECTO) {
+        restFilter
+          .and('proyecto.convocatoria.id', SgiRestFilterOperator.EQUALS, controls.convocatoria.value?.id?.toString())
+      }
+
+      restFilter
+        .and('responsable', SgiRestFilterOperator.EQUALS, controls.responsable.value?.id);
     }
 
-    return filter;
+    return restFilter;
   }
 
   toggleBusquedaAvanzada(): void {
@@ -157,15 +165,44 @@ export class EjecucionEconomicaListadoComponent extends AbstractTablePaginationC
   }
 
   onClearFilters(): void {
-    super.onClearFilters();
-    this.formGroup.controls.fechaInicioDesde.setValue(null);
-    this.formGroup.controls.fechaInicioHasta.setValue(null);
-    this.formGroup.controls.fechaFinDesde.setValue(null);
-    this.formGroup.controls.fechaFinHasta.setValue(null);
+    this.initFormGroup(true);
+    this.onSearch();
   }
 
   ngOnDestroy(): void {
     this.subscriptions?.forEach(x => x.unsubscribe());
+  }
+
+  private createFormGroup(): void {
+    this.formGroup = new FormGroup({
+      tipoEntidad: new FormControl(null),
+      nombre: new FormControl(null),
+      identificadorSge: new FormControl(null),
+      fechaInicioDesde: new FormControl(null),
+      fechaInicioHasta: new FormControl(null),
+      fechaFinDesde: new FormControl(null),
+      fechaFinHasta: new FormControl(null),
+      convocatoria: new FormControl(null),
+      responsable: new FormControl({ value: null, disabled: true })
+    });
+
+    this.initFormGroup();
+  }
+
+  private initFormGroup(reset = false): void {
+    if (reset) {
+      this.formGroup.reset();
+    }
+
+    this.formGroup.controls.tipoEntidad.setValue(TipoEntidad.PROYECTO);
+
+    if (!this.colectivosResponsable || this.colectivosResponsable.length === 0) {
+      this.formGroup.controls.responsable.disable();
+    } else {
+      this.formGroup.controls.responsable.enable();
+    }
+
+    this.tipoEntidadSelected = this.formGroup.controls.tipoEntidad?.value;
   }
 
   /**
@@ -180,8 +217,8 @@ export class EjecucionEconomicaListadoComponent extends AbstractTablePaginationC
           response.items.forEach((rolProyecto: IRolProyecto) => {
             this.rolProyectoService.findAllColectivos(rolProyecto.id).subscribe(
               (res) => {
-                this.colectivosResponsableProyecto = res.items;
-                this.formGroup.controls.responsableProyecto.enable();
+                this.colectivosResponsable = res.items;
+                this.formGroup.controls.responsable.enable();
               }
             );
           });

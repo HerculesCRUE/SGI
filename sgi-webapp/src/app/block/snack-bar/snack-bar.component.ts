@@ -1,10 +1,10 @@
 import { Component, Inject, OnInit, ViewEncapsulation } from '@angular/core';
 import { MatSnackBarRef, MAT_SNACK_BAR_DATA } from '@angular/material/snack-bar';
-import { Problem } from '@core/errors/http-problem';
+import { SgiProblem } from '@core/errors/sgi-error';
 
 export interface SnackBarData {
   msg: string;
-  error?: Problem;
+  error?: SgiProblem;
   params: {};
 }
 

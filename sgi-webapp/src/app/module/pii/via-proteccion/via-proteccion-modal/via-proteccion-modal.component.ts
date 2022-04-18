@@ -23,7 +23,7 @@ const TITLE_NEW_ENTITY = marker('title.new.entity');
   templateUrl: './via-proteccion-modal.component.html',
   styleUrls: ['./via-proteccion-modal.component.scss']
 })
-export class ViaProteccionModalComponent extends DialogActionComponent<IViaProteccion, IViaProteccion> implements OnInit, OnDestroy {
+export class ViaProteccionModalComponent extends DialogActionComponent<IViaProteccion> implements OnInit, OnDestroy {
 
   private readonly viaProteccion: IViaProteccion;
   public msgParamNombreEntity = {};

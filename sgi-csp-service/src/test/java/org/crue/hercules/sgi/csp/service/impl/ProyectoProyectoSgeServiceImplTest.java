@@ -8,6 +8,7 @@ import java.util.Optional;
 
 import org.apache.commons.lang3.StringUtils;
 import org.assertj.core.api.Assertions;
+import org.crue.hercules.sgi.csp.config.SgiConfigProperties;
 import org.crue.hercules.sgi.csp.exceptions.ProyectoProyectoSgeNotFoundException;
 import org.crue.hercules.sgi.csp.exceptions.UserNotAuthorizedToAccessProyectoException;
 import org.crue.hercules.sgi.csp.model.ProyectoProyectoSge;
@@ -37,6 +38,8 @@ class ProyectoProyectoSgeServiceImplTest extends BaseServiceTest {
   private ProyectoEquipoRepository proyectoEquipoRepository;
   @Mock
   private ProyectoResponsableEconomicoRepository proyectoResponsableEconomicoRepository;
+  @Mock
+  private SgiConfigProperties sgiConfigProperties;
 
   private ProyectoHelper proyectoHelper;
   private ProyectoProyectoSgeService service;
@@ -44,7 +47,7 @@ class ProyectoProyectoSgeServiceImplTest extends BaseServiceTest {
   @BeforeEach
   public void setup() {
     this.proyectoHelper = new ProyectoHelper(proyectoEquipoRepository, proyectoResponsableEconomicoRepository);
-    this.service = new ProyectoProyectoSgeServiceImpl(repository, this.proyectoHelper);
+    this.service = new ProyectoProyectoSgeServiceImpl(repository, this.proyectoHelper, sgiConfigProperties);
   }
 
   @Test

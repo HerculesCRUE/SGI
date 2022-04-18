@@ -1,9 +1,13 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatSort } from '@angular/material/sort';
+import { MatTableDataSource } from '@angular/material/table';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { FormFragmentComponent } from '@core/component/fragment.component';
 import { MSG_PARAMS } from '@core/i18n';
 import { IGrupo } from '@core/models/csp/grupo';
-import { TIPO_MAP } from '@core/models/csp/grupo-tipo';
+import { IGrupoEspecialInvestigacion } from '@core/models/csp/grupo-especial-investigacion';
+import { IGrupoTipo, TIPO_MAP } from '@core/models/csp/grupo-tipo';
 import { RolProyectoColectivoService } from '@core/services/csp/rol-proyecto-colectivo/rol-proyecto-colectivo.service';
 import { TranslateService } from '@ngx-translate/core';
 import { SgiAuthService } from '@sgi/framework/auth';
@@ -36,6 +40,12 @@ export class GrupoDatosGeneralesComponent extends FormFragmentComponent<IGrupo> 
   msgParamFechaInicioEntity = {};
   msgParamEspecialInvestigacionEntity = {};
 
+  tiposGrupo = new MatTableDataSource<IGrupoTipo>();
+  columnsTipo = ['tipo', 'fechaInicioTipo', 'fechaFinTipo'];
+
+  especialesInvestigacionGrupo = new MatTableDataSource<IGrupoEspecialInvestigacion>();
+  columnsEspecialInvestigacion = ['especialInvestigacion', 'fechaInicio', 'fechaFin'];
+
   get TIPO_MAP() {
     return TIPO_MAP;
   }
@@ -54,6 +64,8 @@ export class GrupoDatosGeneralesComponent extends FormFragmentComponent<IGrupo> 
     super.ngOnInit();
     this.setupI18N();
     this.loadColectivosBusqueda();
+    this.loadHistoricoTipos();
+    this.loadHistoricoEspecialesInvestigacion();
   }
 
   private loadColectivosBusqueda(): void {
@@ -91,5 +103,27 @@ export class GrupoDatosGeneralesComponent extends FormFragmentComponent<IGrupo> 
       MSG_PARAMS.CARDINALIRY.PLURAL
     ).subscribe((value) => this.msgParamEspecialInvestigacionEntity = { entity: value, ...MSG_PARAMS.GENDER.MALE, ...MSG_PARAMS.CARDINALIRY.SINGULAR });
 
+  }
+
+  private loadHistoricoTipos() {
+    this.subscriptions.push(this.formPart.tipos$.subscribe((data) => {
+      if (!data || data.length === 0) {
+        this.tiposGrupo.data = [];
+      } else {
+        this.tiposGrupo.data = data;
+      }
+    }
+    ));
+  }
+
+  private loadHistoricoEspecialesInvestigacion() {
+    this.subscriptions.push(this.formPart.especialesInvestigacion$.subscribe((data) => {
+      if (!data || data.length === 0) {
+        this.especialesInvestigacionGrupo.data = [];
+      } else {
+        this.especialesInvestigacionGrupo.data = data;
+      }
+    }
+    ));
   }
 }

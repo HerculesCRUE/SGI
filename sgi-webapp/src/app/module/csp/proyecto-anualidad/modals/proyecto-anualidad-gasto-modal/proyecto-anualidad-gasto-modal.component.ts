@@ -11,13 +11,11 @@ import { TipoPartida } from '@core/enums/tipo-partida';
 import { MSG_PARAMS } from '@core/i18n';
 import { IAnualidadGasto } from '@core/models/csp/anualidad-gasto';
 import { IConceptoGasto } from '@core/models/csp/concepto-gasto';
-import { IProyectoConceptoGasto } from '@core/models/csp/proyecto-concepto-gasto';
 import { IProyectoConceptoGastoCodigoEc } from '@core/models/csp/proyecto-concepto-gasto-codigo-ec';
 import { IProyectoPartida } from '@core/models/csp/proyecto-partida';
 import { IProyectoProyectoSge } from '@core/models/csp/proyecto-proyecto-sge';
 import { ICodigoEconomicoGasto } from '@core/models/sge/codigo-economico-gasto';
 import { IProyectoSge } from '@core/models/sge/proyecto-sge';
-import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-properties';
 import { ConceptoGastoService } from '@core/services/csp/concepto-gasto.service';
 import { ProyectoConceptoGastoCodigoEcService } from '@core/services/csp/proyecto-concepto-gasto-codigo-ec.service';
 import { ProyectoConceptoGastoService } from '@core/services/csp/proyecto-concepto-gasto.service';
@@ -26,10 +24,10 @@ import { CodigoEconomicoGastoService } from '@core/services/sge/codigo-economico
 import { SnackBarService } from '@core/services/snack-bar.service';
 import { LuxonUtils } from '@core/utils/luxon-utils';
 import { TranslateService } from '@ngx-translate/core';
-import { RSQLSgiRestFilter, SgiRestFilterOperator, SgiRestFindOptions } from '@sgi/framework/http';
+import { RSQLSgiRestFilter, SgiRestFilter, SgiRestFilterOperator, SgiRestFindOptions } from '@sgi/framework/http';
 import { DateTime } from 'luxon';
-import { BehaviorSubject, of, zip } from 'rxjs';
-import { map, switchMap } from 'rxjs/operators';
+import { BehaviorSubject, Observable, of, zip } from 'rxjs';
+import { map, switchMap, tap } from 'rxjs/operators';
 
 const MSG_ANADIR = marker('btn.add');
 const MSG_ACEPTAR = marker('btn.ok');
@@ -61,12 +59,12 @@ export const CONCEPTO_GASTO_TIPO_MAP: Map<ConceptoGastoTipo, string> = new Map([
   [ConceptoGastoTipo.TODOS, marker(`csp.proyecto-anualidad.anualidad-gasto.TODOS`)]
 ]);
 
-export enum CodigoEconomicoTipo {
+enum CodigoEconomicoTipo {
   PERMITIDO = 'PERMITIDO',
   TODOS = 'TODOS'
 }
 
-export const CODIGO_ECONOMICO_TIPO_MAP: Map<CodigoEconomicoTipo, string> = new Map([
+const CODIGO_ECONOMICO_TIPO_MAP: Map<CodigoEconomicoTipo, string> = new Map([
   [CodigoEconomicoTipo.PERMITIDO, marker(`csp.proyecto-anualidad.anualidad-gasto.codigo-economico.PERMITIDO`)],
   [CodigoEconomicoTipo.TODOS, marker(`csp.proyecto-anualidad.anualidad-gasto.codigo-economico.TODOS`)]
 ]);
@@ -90,14 +88,16 @@ export class ProyectoAnualidadGastoModalComponent extends
   msgParamProyectoSgeEntity = {};
   title: string;
 
-  optionsConceptoGasto: string[];
-  optionsCodigoEconomico: string[];
+  readonly optionsConceptoGasto: ConceptoGastoTipo[];
+  readonly optionsCodigoEconomico: CodigoEconomicoTipo[];
 
   proyectosSge$ = new BehaviorSubject<IProyectoProyectoSge[]>([]);
   proyectosPartida$ = new BehaviorSubject<IProyectoPartida[]>([]);
 
-  conceptosGasto$ = new BehaviorSubject<IConceptoGasto[] | IProyectoConceptoGasto[]>([]);
+  conceptosGasto$ = new BehaviorSubject<IConceptoGasto[]>([]);
   codigosEconomicos$ = new BehaviorSubject<ICodigoEconomicoGasto[]>([]);
+  private conceptosGastoTodos: IConceptoGasto[];
+  private codigosEconomicosTodos: ICodigoEconomicoGasto[];
 
   conceptosGastoCodigoEcPermitidos = new MatTableDataSource<IProyectoConceptoGastoCodigoEc>();
   conceptosGastoCodigoEcNoPermitidos = new MatTableDataSource<IProyectoConceptoGastoCodigoEc>();
@@ -113,8 +113,12 @@ export class ProyectoAnualidadGastoModalComponent extends
     return MSG_PARAMS;
   }
 
-  get CONCEPTO_GASTO_PERMITIDO_MAP() {
+  get CONCEPTO_GASTO_TIPO_MAP() {
     return CONCEPTO_GASTO_TIPO_MAP;
+  }
+
+  get CODIGO_ECONOMICO_TIPO_MAP() {
+    return CODIGO_ECONOMICO_TIPO_MAP;
   }
 
   constructor(
@@ -129,10 +133,6 @@ export class ProyectoAnualidadGastoModalComponent extends
     private readonly codigoEconomicoGastoService: CodigoEconomicoGastoService
   ) {
     super(snackBarService, matDialogRef, data);
-    this.fxLayoutProperties = new FxLayoutProperties();
-    this.fxLayoutProperties.gap = '20px';
-    this.fxLayoutProperties.layout = 'row';
-    this.fxLayoutProperties.xs = 'row';
 
     this.textSaveOrUpdate = this.data.isEdit ? MSG_ACEPTAR : MSG_ANADIR;
 
@@ -140,14 +140,8 @@ export class ProyectoAnualidadGastoModalComponent extends
       this.proyectoService.findAllProyectosSgeProyecto(data.proyectoId)
         .subscribe((response) => this.proyectosSge$.next(response.items)));
 
-    let options = [];
-    CONCEPTO_GASTO_TIPO_MAP.forEach((value) => options.push(value));
-    this.optionsConceptoGasto = options;
-
-    options = [];
-    CODIGO_ECONOMICO_TIPO_MAP.forEach((value) => options.push(value));
-    this.optionsCodigoEconomico = options;
-
+    this.optionsConceptoGasto = Object.values(ConceptoGastoTipo);
+    this.optionsCodigoEconomico = Object.values(CodigoEconomicoTipo);
   }
 
   ngOnInit(): void {
@@ -243,23 +237,17 @@ export class ProyectoAnualidadGastoModalComponent extends
       } as IConceptoGasto
       : null;
 
-    let conceptoGastoFiltro: string;
-    if (conceptoGasto) {
-      conceptoGastoFiltro = CONCEPTO_GASTO_TIPO_MAP.get(ConceptoGastoTipo.TODOS);
+    const conceptoGastoFiltro = conceptoGasto ? ConceptoGastoTipo.TODOS : ConceptoGastoTipo.PERMITIDO;
+    const codigoEconomicoFiltro = this.data.anualidadGasto?.codigoEconomico ? CodigoEconomicoTipo.TODOS : CodigoEconomicoTipo.PERMITIDO;
 
-      this.loadCodigosEconomicosInfo(conceptoGasto);
-    } else {
-      conceptoGastoFiltro = CONCEPTO_GASTO_TIPO_MAP.get(ConceptoGastoTipo.PERMITIDO);
-    }
-    this.loadConceptoGasto(conceptoGastoFiltro);
-    const codigoEconomicoFiltro = CODIGO_ECONOMICO_TIPO_MAP.get(CodigoEconomicoTipo.TODOS);
-    this.loadCodigoEconomico(codigoEconomicoFiltro);
+    this.loadConceptoGasto(conceptoGastoFiltro, conceptoGasto);
+    this.loadCodigosEconomicos(conceptoGasto, this.data.anualidadGasto?.codigoEconomico, codigoEconomicoFiltro);
 
     const formGroup = new FormGroup(
       {
         identificadorSge: new FormControl(identificadorSge, Validators.required),
         conceptoGastoFiltro: new FormControl(conceptoGastoFiltro),
-        conceptoGasto: new FormControl(conceptoGasto),
+        conceptoGasto: new FormControl(conceptoGasto, Validators.required),
         codigoEconomicoFiltro: new FormControl(codigoEconomicoFiltro),
         codigoEconomico: new FormControl(this.data.anualidadGasto?.codigoEconomico),
         partidaPresupuestaria: new FormControl(proyectoPartida, Validators.required),
@@ -301,8 +289,12 @@ export class ProyectoAnualidadGastoModalComponent extends
       formGroup.disable();
     }
 
-    formGroup.controls?.conceptoGastoFiltro.valueChanges.subscribe((filtro) => {
-      this.loadConceptoGasto(filtro);
+    formGroup.controls?.conceptoGastoFiltro.valueChanges.subscribe(conceptoGastoTipo => {
+      this.loadConceptoGasto(conceptoGastoTipo, this.formGroup.controls.conceptoGasto.value);
+    });
+
+    formGroup.controls?.codigoEconomicoFiltro.valueChanges.subscribe(codigoEconomicoTipo => {
+      this.loadCodigosEconomicosCombo(codigoEconomicoTipo, this.formGroup.controls.codigoEconomico.value);
     });
 
     this.conceptosGasto$.subscribe(conceptosGasto => {
@@ -342,55 +334,77 @@ export class ProyectoAnualidadGastoModalComponent extends
     return o1 === o2;
   }
 
-  loadConceptoGasto(conceptoGastoTipo: string) {
+  loadConceptoGasto(conceptoGastoTipo: ConceptoGastoTipo, conceptoGastoSeleccionado?: IConceptoGasto): void {
+    let conceptosGasto$: Observable<IConceptoGasto[]>;
 
-    let conceptoGasto: ConceptoGastoTipo;
+    if (conceptoGastoTipo === ConceptoGastoTipo.PERMITIDO) {
+      const queryOptionsConceptoGasto: SgiRestFindOptions = {
+        filter: new RSQLSgiRestFilter('permitido', SgiRestFilterOperator.EQUALS, 'true')
+          .and('fechaInicio', SgiRestFilterOperator.GREATHER_OR_EQUAL, LuxonUtils.toBackend(this.data.fechaInicioAnualidad))
+          .and('fechaFin', SgiRestFilterOperator.LOWER_OR_EQUAL, LuxonUtils.toBackend(this.data.fechaFinAnualidad))
+          .and('proyectoId', SgiRestFilterOperator.EQUALS, this.data.proyectoId.toString())
+      };
 
-    CONCEPTO_GASTO_TIPO_MAP.forEach((value: string, key: ConceptoGastoTipo) => {
-      if (value === conceptoGastoTipo) {
-        conceptoGasto = key;
-      }
-    });
-
-    if (conceptoGasto === ConceptoGastoTipo.PERMITIDO) {
-      const queryOptionsConceptoGasto: SgiRestFindOptions = {};
-      queryOptionsConceptoGasto.filter = new RSQLSgiRestFilter('permitido', SgiRestFilterOperator.EQUALS, 'true');
-      queryOptionsConceptoGasto.filter.and('fechaInicio', SgiRestFilterOperator.GREATHER_OR_EQUAL,
-        LuxonUtils.toBackend(this.data.fechaInicioAnualidad))
-        .and('fechaFin', SgiRestFilterOperator.LOWER_OR_EQUAL,
-          LuxonUtils.toBackend(this.data.fechaFinAnualidad))
-        .and('proyectoId', SgiRestFilterOperator.EQUALS, this.data.proyectoId.toString());
-
-      this.subscriptions.push(this.proyectoConceptoGastoService.findAll(queryOptionsConceptoGasto).subscribe(response =>
-        this.conceptosGasto$.next(response.items)
-      ));
+      conceptosGasto$ = this.proyectoConceptoGastoService.findAll(queryOptionsConceptoGasto).pipe(
+        map(response => response.items.map(proyectoConceptoGasto => proyectoConceptoGasto.conceptoGasto))
+      );
     } else {
-      this.subscriptions.push(this.conceptoGastoService.findAll().subscribe(response =>
-        this.conceptosGasto$.next(response.items)
-      ));
+      if (!this.conceptosGastoTodos) {
+        conceptosGasto$ = this.conceptoGastoService.findAll().pipe(
+          map(response => response.items),
+          tap(conceptosGasto => this.conceptosGastoTodos = conceptosGasto)
+        );
+      } else {
+        conceptosGasto$ = of(this.conceptosGastoTodos);
+      }
     }
 
-    this.loadCodigoEconomico(this.formGroup?.controls.codigoEconomicoFiltro.value
-      ? this.formGroup?.controls.codigoEconomicoFiltro.value : CODIGO_ECONOMICO_TIPO_MAP.get(CodigoEconomicoTipo.TODOS));
+    this.subscriptions.push(
+      conceptosGasto$.subscribe(conceptosGasto => {
+        this.conceptosGasto$.next(conceptosGasto);
+
+        if (!!conceptoGastoSeleccionado && conceptosGasto.some(conceptoGasto => conceptoGasto.id === conceptoGastoSeleccionado.id)) {
+          this.formGroup.controls.conceptoGasto.setValue(conceptoGastoSeleccionado);
+        }
+      })
+    );
   }
 
-  loadCodigosEconomicosInfo(conceptoGastoSeleccionado: IConceptoGasto | IProyectoConceptoGasto) {
-    let conceptoGastoId: number;
-    if ('conceptoGasto' in conceptoGastoSeleccionado) {
-      conceptoGastoId = conceptoGastoSeleccionado.conceptoGasto.id;
-    } else {
-      conceptoGastoId = conceptoGastoSeleccionado.id;
+  /**
+   * Carga las tablas de codigos economicos permitidos y no permitidos y el combo de cosigos economicos
+   * para el concepto de gasto seleccionado.
+   *
+   * @param conceptoGasto El concepto de gasto para el que se cargan los codigos economicos
+   * @param codigoEconomicoSeleccionado El codigo economico seleccionado
+   * @param codigoEconomicoTipo Tipo de codigos economicos que se mostraran en el combo
+   */
+  loadCodigosEconomicos(
+    conceptoGasto: IConceptoGasto,
+    codigoEconomicoSeleccionado?: ICodigoEconomicoGasto,
+    codigoEconomicoTipo?: CodigoEconomicoTipo): void {
+    if (!conceptoGasto) {
+      return;
     }
 
-    const queryOptionsConceptoGastoCodigoEcPermitidos: SgiRestFindOptions = {};
-    queryOptionsConceptoGastoCodigoEcPermitidos.filter =
-      new RSQLSgiRestFilter('proyectoConceptoGasto.permitido', SgiRestFilterOperator.EQUALS, 'true');
-    queryOptionsConceptoGastoCodigoEcPermitidos.filter.and('inRangoProyectoAnualidadInicio', SgiRestFilterOperator.GREATHER_OR_EQUAL,
-      LuxonUtils.toBackend(this.data.fechaInicioAnualidad))
-      .and('inRangoProyectoAnualidadFin', SgiRestFilterOperator.LOWER_OR_EQUAL,
-        LuxonUtils.toBackend(this.data.fechaFinAnualidad))
-      .and('proyectoConceptoGasto.conceptoGasto.id', SgiRestFilterOperator.EQUALS, conceptoGastoId.toString())
-      .and('proyectoConceptoGasto.proyectoId', SgiRestFilterOperator.EQUALS, this.data.proyectoId.toString());
+    this.loadCodigosEconomicosPermitidos(conceptoGasto, codigoEconomicoSeleccionado, codigoEconomicoTipo);
+    this.loadCodigosEconomicosNoPermitidos(conceptoGasto);
+  }
+
+  /**
+   * Carga la tabla de codigos economicos permitidos y el combo de codigos economicos si codigoEconomicoTipo es PERMITIDO
+   *
+   * @param conceptoGasto El concepto de gasto para el que se cargan los codigos economicos
+   * @param codigoEconomicoSeleccionado El codigo economico seleccionado
+   * @param codigoEconomicoTipo Tipo de codigos economicos que se mostraran en el combo
+   */
+  private loadCodigosEconomicosPermitidos(
+    conceptoGasto: IConceptoGasto,
+    codigoEconomicoSeleccionado: ICodigoEconomicoGasto,
+    codigoEconomicoTipo: CodigoEconomicoTipo,
+  ) {
+    const queryOptionsConceptoGastoCodigoEcPermitidos: SgiRestFindOptions = {
+      filter: this.buildFilterCodigosEconomicos(conceptoGasto.id, true)
+    };
 
     this.conceptosGastoCodigoEcPermitidos.paginator = this.paginatorCodigoEcPermitidos;
     this.conceptosGastoCodigoEcPermitidos.sort = this.sortcodigoEcPermitidos;
@@ -423,21 +437,21 @@ export class ProyectoAnualidadGastoModalComponent extends
 
           return zip(...codigosEconomicosObservable);
         })
-      ).subscribe(
-        (codigosEconomicos) =>
-          this.conceptosGastoCodigoEcPermitidos.data = codigosEconomicos
-      )
+      ).subscribe(codigosEconomicos => {
+        this.conceptosGastoCodigoEcPermitidos.data = codigosEconomicos;
+        this.loadCodigosEconomicosCombo(codigoEconomicoTipo, codigoEconomicoSeleccionado);
+      })
     );
+  }
 
-    const queryOptionsConceptoGastoCodigoEcNoPermitidos: SgiRestFindOptions = {};
-    queryOptionsConceptoGastoCodigoEcNoPermitidos.filter =
-      new RSQLSgiRestFilter('proyectoConceptoGasto.permitido', SgiRestFilterOperator.EQUALS, 'false');
-    queryOptionsConceptoGastoCodigoEcNoPermitidos.filter.and('inRangoProyectoAnualidadInicio', SgiRestFilterOperator.GREATHER_OR_EQUAL,
-      LuxonUtils.toBackend(this.data.fechaInicioAnualidad))
-      .and('inRangoProyectoAnualidadFin', SgiRestFilterOperator.LOWER_OR_EQUAL,
-        LuxonUtils.toBackend(this.data.fechaFinAnualidad))
-      .and('proyectoConceptoGasto.conceptoGasto.id', SgiRestFilterOperator.EQUALS, conceptoGastoId.toString())
-      .and('proyectoConceptoGasto.proyectoId', SgiRestFilterOperator.EQUALS, this.data.proyectoId.toString());
+  private loadCodigosEconomicosNoPermitidos(conceptoGasto: IConceptoGasto) {
+    if (!conceptoGasto?.id) {
+      return;
+    }
+
+    const queryOptionsConceptoGastoCodigoEcNoPermitidos: SgiRestFindOptions = {
+      filter: this.buildFilterCodigosEconomicos(conceptoGasto.id, false)
+    };
 
     this.conceptosGastoCodigoEcNoPermitidos.paginator = this.paginatorCodigoEcNoPermitidos;
     this.conceptosGastoCodigoEcNoPermitidos.sort = this.sortcodigoEcNoPermitidos;
@@ -475,29 +489,44 @@ export class ProyectoAnualidadGastoModalComponent extends
       ));
   }
 
-  displayerConceptoGasto(conceptoGasto: IConceptoGasto | IProyectoConceptoGasto): string {
-    return 'conceptoGasto' in conceptoGasto ? conceptoGasto?.conceptoGasto.nombre : conceptoGasto.nombre;
+  private buildFilterCodigosEconomicos(conceptoGastoId: number, permitido: boolean): SgiRestFilter {
+    return new RSQLSgiRestFilter('proyectoConceptoGasto.permitido', SgiRestFilterOperator.EQUALS, permitido.toString())
+      .and('inRangoProyectoAnualidadInicio', SgiRestFilterOperator.GREATHER_OR_EQUAL, LuxonUtils.toBackend(this.data.fechaInicioAnualidad))
+      .and('inRangoProyectoAnualidadFin', SgiRestFilterOperator.LOWER_OR_EQUAL, LuxonUtils.toBackend(this.data.fechaFinAnualidad))
+      .and('proyectoConceptoGasto.conceptoGasto.id', SgiRestFilterOperator.EQUALS, conceptoGastoId.toString())
+      .and('proyectoConceptoGasto.proyectoId', SgiRestFilterOperator.EQUALS, this.data.proyectoId.toString());
   }
 
-  loadCodigoEconomico(codigoEconomicoTipoSeleccionado: string) {
-    let codigoEconomicoTipo: CodigoEconomicoTipo;
+  loadCodigosEconomicosCombo(codigoEconomicoTipo?: CodigoEconomicoTipo, codigoEconomicoSeleccionado?: ICodigoEconomicoGasto) {
+    let codigosEconomicos$: Observable<ICodigoEconomicoGasto[]>;
 
-    CODIGO_ECONOMICO_TIPO_MAP.forEach((value: string, key: CodigoEconomicoTipo) => {
-      if (value === codigoEconomicoTipoSeleccionado) {
-        codigoEconomicoTipo = key;
-      }
-    });
-
-    if (codigoEconomicoTipo === CodigoEconomicoTipo.PERMITIDO) {
-      this.codigosEconomicos$.next(this.conceptosGastoCodigoEcPermitidos.data
+    if ((codigoEconomicoTipo ?? this.formGroup?.controls.codigoEconomicoFiltro.value) === CodigoEconomicoTipo.PERMITIDO) {
+      codigosEconomicos$ = of(this.conceptosGastoCodigoEcPermitidos.data
         .map(proyectoConceptoGastoCodigoEcs =>
           proyectoConceptoGastoCodigoEcs.codigoEconomico
         ));
     } else {
-      this.codigoEconomicoGastoService.findAll().subscribe(response =>
-        this.codigosEconomicos$.next(response.items)
-      );
+      if (!this.codigosEconomicosTodos) {
+        codigosEconomicos$ = this.codigoEconomicoGastoService.findAll().pipe(
+          map(response => response.items),
+          tap(codigosEconomicos => this.codigosEconomicosTodos = codigosEconomicos)
+        );
+      } else {
+        codigosEconomicos$ = of(this.codigosEconomicosTodos);
+      }
     }
+
+    this.subscriptions.push(
+      codigosEconomicos$.subscribe(codigosEconomicos => {
+        this.codigosEconomicos$.next(codigosEconomicos);
+
+        if (!!codigoEconomicoSeleccionado
+          && codigosEconomicos.some(codigoEconomico => codigoEconomico.id === codigoEconomicoSeleccionado.id)) {
+          this.formGroup.controls.codigoEconomico.setValue(codigoEconomicoSeleccionado);
+        }
+      })
+    );
+
   }
 
   displayerCodigoEconomico(codigoEconomico: ICodigoEconomicoGasto): string {

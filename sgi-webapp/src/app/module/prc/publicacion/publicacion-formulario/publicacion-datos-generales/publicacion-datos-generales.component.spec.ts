@@ -13,6 +13,7 @@ import { SharedModule } from '@shared/shared.module';
 import { LoggerTestingModule } from 'ngx-logger/testing';
 import { SgpSharedModule } from 'src/app/esb/sgp/shared/sgp-shared.module';
 import { PrcSharedModule } from '../../../shared/prc-shared.module';
+import { ProduccionCientificaInitializerService } from '../../../shared/produccion-cientifica-initializer.service';
 import { IProduccionCientificaData, PRODUCCION_CIENTIFICA_DATA_KEY } from '../../../shared/produccion-cientifica.resolver';
 import { PublicacionActionService } from '../../publicacion.action.service';
 
@@ -54,6 +55,7 @@ describe('PublicacionDatosGeneralesComponent', () => {
       providers: [
         { provide: SnackBarService, useValue: TestUtils.getSnackBarServiceSpy() },
         PublicacionActionService,
+        ProduccionCientificaInitializerService,
         SgiAuthService,
         { provide: ActivatedRoute, useValue: routeMock }
       ],

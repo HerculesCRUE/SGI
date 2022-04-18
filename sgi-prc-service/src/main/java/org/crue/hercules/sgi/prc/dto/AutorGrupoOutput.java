@@ -14,6 +14,6 @@ import lombok.NoArgsConstructor;
 public class AutorGrupoOutput implements Serializable {
   private Long id;
   private TipoEstadoProduccion estado;
-  private String grupoRef;
+  private Long grupoRef;
   private Long autorId;
 }

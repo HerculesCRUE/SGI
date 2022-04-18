@@ -8,7 +8,7 @@ import javax.validation.ConstraintValidatorContext;
 
 import org.apache.commons.lang3.math.NumberUtils;
 import org.crue.hercules.sgi.prc.dto.ProduccionCientificaApiInput.CampoProduccionCientificaInput;
-import org.crue.hercules.sgi.prc.model.CampoProduccionCientifica.CodigoCVN;
+import org.crue.hercules.sgi.prc.enums.CodigoCVN;
 import org.crue.hercules.sgi.prc.model.ConfiguracionCampo;
 import org.crue.hercules.sgi.prc.model.ConfiguracionCampo.TipoFormato;
 import org.crue.hercules.sgi.prc.repository.ConfiguracionCampoRepository;
@@ -35,7 +35,7 @@ public class ValorFormatValidator implements ConstraintValidator<ValorFormat, Ca
 
     try {
       ConfiguracionCampo configuracionCampo = repository
-          .findByCodigoCVN(CodigoCVN.getByInternValue(value.getCodigoCVN()))
+          .findByCodigoCVN(CodigoCVN.getByCode(value.getCodigoCVN()))
           .orElse(null);
       if (Objects.isNull(configuracionCampo)) {
         return true;

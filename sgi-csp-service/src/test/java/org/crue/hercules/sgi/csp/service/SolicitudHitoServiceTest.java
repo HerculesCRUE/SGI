@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.assertj.core.api.Assertions;
+import org.crue.hercules.sgi.csp.dto.SolicitudHitoInput;
 import org.crue.hercules.sgi.csp.exceptions.SolicitudHitoNotFoundException;
 import org.crue.hercules.sgi.csp.exceptions.SolicitudNotFoundException;
 import org.crue.hercules.sgi.csp.exceptions.TipoHitoNotFoundException;
@@ -13,10 +14,13 @@ import org.crue.hercules.sgi.csp.model.EstadoSolicitud;
 import org.crue.hercules.sgi.csp.model.Solicitud;
 import org.crue.hercules.sgi.csp.model.SolicitudHito;
 import org.crue.hercules.sgi.csp.model.TipoHito;
+import org.crue.hercules.sgi.csp.repository.SolicitudHitoAvisoRepository;
 import org.crue.hercules.sgi.csp.repository.SolicitudHitoRepository;
 import org.crue.hercules.sgi.csp.repository.SolicitudRepository;
 import org.crue.hercules.sgi.csp.repository.TipoHitoRepository;
-import org.crue.hercules.sgi.csp.service.impl.SolicitudHitoServiceImpl;
+import org.crue.hercules.sgi.csp.service.sgi.SgiApiComService;
+import org.crue.hercules.sgi.csp.service.sgi.SgiApiSgpService;
+import org.crue.hercules.sgi.csp.service.sgi.SgiApiTpService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -42,6 +46,9 @@ public class SolicitudHitoServiceTest {
   private SolicitudHitoRepository repository;
 
   @Mock
+  SolicitudHitoAvisoRepository solicitudHitoAvisoRepository;
+
+  @Mock
   private SolicitudRepository solicitudRepository;
 
   @Mock
@@ -50,21 +57,31 @@ public class SolicitudHitoServiceTest {
   @Mock
   private SolicitudService solicitudService;
 
+  @Mock
+  SgiApiComService emailService;
+
+  @Mock
+  SgiApiTpService sgiApiTaskService;
+
+  @Mock
+  SgiApiSgpService personaService;
+
   private SolicitudHitoService service;
 
   @BeforeEach
   public void setUp() throws Exception {
-    service = new SolicitudHitoServiceImpl(repository, solicitudRepository, tipoHitoRepository, solicitudService);
+    service = new SolicitudHitoService(repository, solicitudRepository, tipoHitoRepository, solicitudService,
+        solicitudHitoAvisoRepository, emailService, sgiApiTaskService, personaService);
   }
 
   @Test
   public void create_WithConvocatoria_ReturnsSolicitudHito() {
     // given: Un nuevo SolicitudHito
-    SolicitudHito solicitudHito = generarSolicitudHito(null, 1L, 1L);
+    SolicitudHitoInput solicitudHito = generarSolicitudHitoInput(1L);
     Solicitud solicitud = generarMockSolicitud(1L);
 
     BDDMockito.given(solicitudRepository.findById(ArgumentMatchers.anyLong())).willReturn(Optional.of(solicitud));
-    BDDMockito.given(tipoHitoRepository.findById(1L)).willReturn(Optional.of(solicitudHito.getTipoHito()));
+    BDDMockito.given(tipoHitoRepository.findById(1L)).willReturn(Optional.of(generarTipoHito(1L)));
 
     BDDMockito.given(repository.save(ArgumentMatchers.<SolicitudHito>any())).will((InvocationOnMock invocation) -> {
       SolicitudHito solicitudHitoCreado = invocation.getArgument(0);
@@ -84,26 +101,15 @@ public class SolicitudHitoServiceTest {
     Assertions.assertThat(solicitudHitoCreado.getComentario()).as("getComentario()")
         .isEqualTo(solicitudHito.getComentario());
     Assertions.assertThat(solicitudHitoCreado.getTipoHito().getId()).as("getTipoHito().getId()")
-        .isEqualTo(solicitudHito.getTipoHito().getId());
-    Assertions.assertThat(solicitudHitoCreado.getGeneraAviso()).as("getGeneraAviso()")
-        .isEqualTo(solicitudHito.getGeneraAviso());
-  }
-
-  @Test
-  public void create_WithId_ThrowsIllegalArgumentException() {
-    // given: Un nuevo SolicitudHito que ya tiene id
-    SolicitudHito solicitudHito = generarSolicitudHito(1L, 1L, 1L);
-
-    // when: Creamos el SolicitudHito
-    // then: Lanza una excepcion porque el SolicitudHito ya tiene id
-    Assertions.assertThatThrownBy(() -> service.create(solicitudHito)).isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("Id tiene que ser null para crear la SolicitudHito");
+        .isEqualTo(solicitudHito.getTipoHitoId());
+    Assertions.assertThat(solicitudHitoCreado.getSolicitudHitoAviso()).as("getsolicitudHitoAviso()")
+        .isNull();
   }
 
   @Test
   public void create_WithoutSolicitudId_ThrowsIllegalArgumentException() {
     // given: Un nuevo SolicitudHito que no tiene solicitud
-    SolicitudHito solicitudHito = generarSolicitudHito(null, 1L, 1L);
+    SolicitudHitoInput solicitudHito = generarSolicitudHitoInput(1L);
 
     solicitudHito.setSolicitudId(null);
 
@@ -114,24 +120,11 @@ public class SolicitudHitoServiceTest {
   }
 
   @Test
-  public void create_WithoutGeneraAviso_ThrowsIllegalArgumentException() {
-    // given: Un nuevo SolicitudHito que no tiene genera aviso
-    SolicitudHito solicitudHito = generarSolicitudHito(null, 1L, 1L);
-
-    solicitudHito.setGeneraAviso(null);
-
-    // when: Creamos el SolicitudHito
-    // then: Lanza una excepcion porque no tiene solicitud
-    Assertions.assertThatThrownBy(() -> service.create(solicitudHito)).isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("Generar aviso no puede ser null para crear la SolicitudHito");
-  }
-
-  @Test
-  public void create_WithoutProgramaId_ThrowsIllegalArgumentException() {
+  public void create_WithoutTipoHitoId_ThrowsIllegalArgumentException() {
     // given: Un nuevo SolicitudHito que no tiene programa
-    SolicitudHito solicitudHito = generarSolicitudHito(null, 1L, 1L);
+    SolicitudHitoInput solicitudHito = generarSolicitudHitoInput(1L);
 
-    solicitudHito.setTipoHito(null);
+    solicitudHito.setTipoHitoId(null);
 
     // when: Creamos el SolicitudHito
     // then: Lanza una excepcion porque no tiene programa
@@ -142,7 +135,7 @@ public class SolicitudHitoServiceTest {
   @Test
   public void create_WithNoExistingSolicitud_ThrowsSolicitudNotFoundException() {
     // given: Un nuevo SolicitudHito que tiene una solicitud que no existe
-    SolicitudHito solicitudHito = generarSolicitudHito(null, 1L, 1L);
+    SolicitudHitoInput solicitudHito = generarSolicitudHitoInput(1L);
 
     BDDMockito.given(solicitudRepository.findById(ArgumentMatchers.anyLong())).willReturn(Optional.empty());
 
@@ -154,7 +147,7 @@ public class SolicitudHitoServiceTest {
   @Test
   public void create_WithNoExistingTipoHito_ThrowsTipoHitoNotFoundException() {
     // given: Un nuevo SolicitudHito que tiene un tipo hito que no existe
-    SolicitudHito solicitudHito = generarSolicitudHito(null, 1L, 1L);
+    SolicitudHitoInput solicitudHito = generarSolicitudHitoInput(1L);
     Solicitud solicitud = generarMockSolicitud(1L);
 
     BDDMockito.given(solicitudRepository.findById(ArgumentMatchers.anyLong())).willReturn(Optional.of(solicitud));
@@ -168,9 +161,9 @@ public class SolicitudHitoServiceTest {
   @Test
   public void create_WithFechaYTipoHitoDuplicado_ThrowsIllegalArgumentException() {
     // given: a SolicitudHito fecha duplicada
-    SolicitudHito solicitudHitoExistente = generarSolicitudHito(2L, 1L, 1L);
-    SolicitudHito solicitudHito = generarSolicitudHito(1L, 1L, 1L);
-    solicitudHito.setId(null);
+    SolicitudHito solicitudHitoExistente = generarSolicitudHito(1L);
+    solicitudHitoExistente.setId(2L);
+    SolicitudHitoInput solicitudHito = generarSolicitudHitoInput(1L);
 
     BDDMockito
         .given(repository.findBySolicitudIdAndFechaAndTipoHitoId(ArgumentMatchers.<Long>any(),
@@ -187,10 +180,10 @@ public class SolicitudHitoServiceTest {
   @Test
   public void update_ReturnsSolicitudHito() {
     // given: Un nuevo SolicitudHito con los comentarios actualizados
-    SolicitudHito solicitudHito = generarSolicitudHito(3L, 1L, 1L);
+    SolicitudHito solicitudHito = generarSolicitudHito(1L);
     Solicitud solicitud = generarMockSolicitud(1L);
 
-    SolicitudHito solicitudComentarioActualizado = generarSolicitudHito(3L, 1L, 1L);
+    SolicitudHitoInput solicitudComentarioActualizado = generarSolicitudHitoInput(1L);
 
     solicitudComentarioActualizado.setComentario("comentario-actualizado");
 
@@ -205,7 +198,7 @@ public class SolicitudHitoServiceTest {
     BDDMockito.given(solicitudService.modificable(ArgumentMatchers.anyLong())).willReturn(Boolean.TRUE);
 
     // when: Actualizamos el SolicitudHito
-    SolicitudHito solicitudHitoActualizada = service.update(solicitudComentarioActualizado, Boolean.TRUE);
+    SolicitudHito solicitudHitoActualizada = service.update(1L, solicitudComentarioActualizado);
 
     // then: El SolicitudHito se actualiza correctamente.
     Assertions.assertThat(solicitudHitoActualizada).as("isNotNull()").isNotNull();
@@ -218,20 +211,20 @@ public class SolicitudHitoServiceTest {
   @Test
   public void update_WithSolicitudNotExist_ThrowsSolicitudNotFoundException() {
     // given: Un SolicitudHito actualizado con un programa que no existe
-    SolicitudHito solicitudHito = generarSolicitudHito(1L, 1L, 1L);
+    SolicitudHitoInput solicitudHito = generarSolicitudHitoInput(1L);
 
     BDDMockito.given(solicitudRepository.findById(ArgumentMatchers.anyLong())).willReturn(Optional.empty());
 
     // when: Actualizamos el SolicitudHito
     // then: Lanza una excepcion porque la solicitud asociada no existe
-    Assertions.assertThatThrownBy(() -> service.update(solicitudHito, Boolean.TRUE))
+    Assertions.assertThatThrownBy(() -> service.update(1L, solicitudHito))
         .isInstanceOf(SolicitudNotFoundException.class);
   }
 
   @Test
   public void update_WithTipoHitoNotExist_ThrowsTipoHitoNotFoundException() {
     // given: Un SolicitudHito actualizado con un tipo hito que no existe
-    SolicitudHito solicitudHito = generarSolicitudHito(1L, 1L, 1L);
+    SolicitudHitoInput solicitudHito = generarSolicitudHitoInput(1L);
     Solicitud solicitud = generarMockSolicitud(1L);
 
     BDDMockito.given(solicitudRepository.findById(ArgumentMatchers.anyLong())).willReturn(Optional.of(solicitud));
@@ -239,41 +232,43 @@ public class SolicitudHitoServiceTest {
 
     // when: Actualizamos el SolicitudHito
     // then: Lanza una excepcion porque la solicitud asociada no existe
-    Assertions.assertThatThrownBy(() -> service.update(solicitudHito, Boolean.TRUE))
+    Assertions.assertThatThrownBy(() -> service.update(1L, solicitudHito))
         .isInstanceOf(TipoHitoNotFoundException.class);
   }
 
   @Test
   public void update_WithIdNotExist_ThrowsSolicitudHitoNotFoundException() {
     // given: Un SolicitudHito actualizado con un id que no existe
-    SolicitudHito solicitudHito = generarSolicitudHito(1L, 1L, 1L);
+    SolicitudHitoInput solicitudHito = generarSolicitudHitoInput(1L);
+    TipoHito tipoHito = generarTipoHito(1L);
     Solicitud solicitud = generarMockSolicitud(1L);
 
     BDDMockito.given(solicitudRepository.findById(ArgumentMatchers.anyLong())).willReturn(Optional.of(solicitud));
     BDDMockito.given(tipoHitoRepository.findById(ArgumentMatchers.anyLong()))
-        .willReturn(Optional.of(solicitudHito.getTipoHito()));
+        .willReturn(Optional.of(tipoHito));
 
     BDDMockito.given(repository.findById(ArgumentMatchers.anyLong())).willReturn(Optional.empty());
     BDDMockito.given(solicitudService.modificable(ArgumentMatchers.anyLong())).willReturn(Boolean.TRUE);
 
     // when: Actualizamos el SolicitudHito
     // then: Lanza una excepcion porque el SolicitudHito no existe
-    Assertions.assertThatThrownBy(() -> service.update(solicitudHito, Boolean.TRUE))
+    Assertions.assertThatThrownBy(() -> service.update(1L, solicitudHito))
         .isInstanceOf(SolicitudHitoNotFoundException.class);
   }
 
   @Test
   public void update_WithFechaYTipoHitoDuplicado_ThrowsIllegalArgumentException() {
     // given: Un SolicitudHito a actualizar con fecha duplicada
-    SolicitudHito solicitudHitoExistente = generarSolicitudHito(2L, 1L, 1L);
-    SolicitudHito solicitudHito = generarSolicitudHito(1L, 1L, 1L);
+    SolicitudHito solicitudHitoExistente = generarSolicitudHito(1L);
+    solicitudHitoExistente.setId(2L);
+    SolicitudHitoInput solicitudHito = generarSolicitudHitoInput(1L);
 
     BDDMockito.given(repository.findBySolicitudIdAndFechaAndTipoHitoId(ArgumentMatchers.<Long>any(),
         ArgumentMatchers.any(), ArgumentMatchers.<Long>any())).willReturn(Optional.of(solicitudHitoExistente));
 
     // when: Actualizamos el SolicitudHito
     // then: Lanza una excepcion porque la fecha ya existe para ese tipo
-    Assertions.assertThatThrownBy(() -> service.update(solicitudHito, Boolean.TRUE))
+    Assertions.assertThatThrownBy(() -> service.update(1L, solicitudHito))
         .isInstanceOf(IllegalArgumentException.class).hasMessage("Ya existe un Hito con el mismo tipo en esa fecha");
   }
 
@@ -310,7 +305,7 @@ public class SolicitudHitoServiceTest {
   public void findById_ReturnsSolicitudHito() {
     // given: Un SolicitudHito con el id buscado
     Long idBuscado = 1L;
-    BDDMockito.given(repository.findById(idBuscado)).willReturn(Optional.of(generarSolicitudHito(idBuscado, 1L, 1L)));
+    BDDMockito.given(repository.findById(idBuscado)).willReturn(Optional.of(generarSolicitudHito(idBuscado)));
 
     // when: Buscamos el SolicitudHito por su id
     SolicitudHito solicitudHito = service.findById(idBuscado);
@@ -337,7 +332,7 @@ public class SolicitudHitoServiceTest {
     Long solicitudId = 1L;
     List<SolicitudHito> solicitudHito = new ArrayList<>();
     for (long i = 1; i <= 37; i++) {
-      solicitudHito.add(generarSolicitudHito(i, i, i));
+      solicitudHito.add(generarSolicitudHito(i));
     }
 
     BDDMockito
@@ -380,6 +375,16 @@ public class SolicitudHitoServiceTest {
     return solicitud;
   }
 
+  private TipoHito generarTipoHito(Long id) {
+    // @formatter:off
+    return TipoHito.builder()
+        .id(id)
+        .nombre("TipoHito")
+        .activo(true)
+        .build();
+    // @formatter:on
+  }
+
   /**
    * Función que devuelve un objeto SolicitudHito
    * 
@@ -388,13 +393,25 @@ public class SolicitudHitoServiceTest {
    * @param tipoDocumentoId
    * @return el objeto SolicitudHito
    */
-  private SolicitudHito generarSolicitudHito(Long solicitudHitoId, Long solicitudId, Long tipoDocumentoId) {
-
-    SolicitudHito solicitudHito = SolicitudHito.builder().id(solicitudHitoId).solicitudId(solicitudId)
-        .comentario("comentario-" + solicitudHitoId).fecha(Instant.now()).generaAviso(Boolean.TRUE)
-        .tipoHito(TipoHito.builder().id(tipoDocumentoId).build()).build();
+  private SolicitudHito generarSolicitudHito(Long id) {
+    SolicitudHito solicitudHito = new SolicitudHito();
+    solicitudHito.setId(id);
+    solicitudHito.setSolicitudId(id == null ? 1 : id);
+    solicitudHito.setFecha(Instant.parse("2020-10-19T00:00:00Z"));
+    solicitudHito.setComentario("comentario");
+    solicitudHito.setTipoHito(generarTipoHito(id == null ? 1 : id));
 
     return solicitudHito;
   }
 
+  private SolicitudHitoInput generarSolicitudHitoInput(Long id) {
+
+    SolicitudHitoInput convocatoriaHito = new SolicitudHitoInput();
+    convocatoriaHito.setSolicitudId(id);
+    convocatoriaHito.setTipoHitoId(id);
+    convocatoriaHito.setFecha(Instant.parse("2020-10-19T00:00:00Z"));
+    convocatoriaHito.setComentario("comentario");
+
+    return convocatoriaHito;
+  }
 }

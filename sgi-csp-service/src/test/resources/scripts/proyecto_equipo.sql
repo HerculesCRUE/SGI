@@ -30,3 +30,7 @@ VALUES(103, 1, '2020-04-01T00:00:00Z', '2020-04-15T23:59:59Z', 'ref-004', 4, 1);
 INSERT INTO test.proyecto_equipo
 (id, proyecto_id, fecha_inicio, fecha_fin, persona_ref, horas_dedicacion, rol_proyecto_id)
 VALUES(104, 1, '2020-05-01T00:00:00Z', '2020-05-15T23:59:59Z', 'ref-5', 5, 1);
+
+INSERT INTO test.proyecto_equipo
+(id, proyecto_id, fecha_inicio, fecha_fin, persona_ref, horas_dedicacion, rol_proyecto_id)
+VALUES(105, 1, '2021-05-01T00:00:00Z', '2022-05-15T23:59:59Z', 'ref-6', 6, 1);

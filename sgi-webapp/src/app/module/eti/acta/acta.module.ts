@@ -4,6 +4,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MaterialDesignModule } from '@material/material-design.module';
 import { TranslateModule } from '@ngx-translate/core';
 import { SgiAuthModule } from '@sgi/framework/auth';
+import { LuxonDatePipe } from '@shared/luxon-date-pipe';
 import { SharedModule } from '@shared/shared.module';
 import { SgpSharedModule } from 'src/app/esb/sgp/shared/sgp-shared.module';
 import { ActaCrearComponent } from './acta-crear/acta-crear.component';
@@ -17,9 +18,13 @@ import {
 import { ActaComentariosComponent } from './acta-formulario/acta-comentarios/acta-comentarios.component';
 import { ActaDatosGeneralesComponent } from './acta-formulario/acta-datos-generales/acta-datos-generales.component';
 import { ActaMemoriasComponent } from './acta-formulario/acta-memorias/acta-memorias.component';
+import { ActaGeneralListadoExportService } from './acta-general-listado-export.service';
+import { ActaListadoExportService } from './acta-listado-export.service';
 import { ActaListadoComponent } from './acta-listado/acta-listado.component';
+import { ActaMemoriaListadoExportService } from './acta-memoria-listado-export.service';
 import { ActaRoutingModule } from './acta-routing.module';
 import { ActaResolver } from './acta.resolver';
+import { ActaListadoExportModalComponent } from './modals/acta-listado-export-modal/acta-listado-export-modal.component';
 
 @NgModule({
   declarations: [
@@ -31,6 +36,7 @@ import { ActaResolver } from './acta.resolver';
     ActaEditarComponent,
     ActaAsistentesEditarModalComponent,
     ActaComentariosComponent,
+    ActaListadoExportModalComponent,
   ],
   imports: [
     SharedModule,
@@ -44,7 +50,11 @@ import { ActaResolver } from './acta.resolver';
     SgpSharedModule
   ],
   providers: [
-    ActaResolver
+    ActaResolver,
+    LuxonDatePipe,
+    ActaListadoExportService,
+    ActaGeneralListadoExportService,
+    ActaMemoriaListadoExportService
   ]
 })
 export class ActaModule { }

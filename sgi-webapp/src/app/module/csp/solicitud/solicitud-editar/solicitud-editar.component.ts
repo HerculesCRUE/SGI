@@ -4,7 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { ActionComponent } from '@core/component/action.component';
 import { FormularioSolicitud } from '@core/enums/formulario-solicitud';
-import { HttpProblem } from '@core/errors/http-problem';
+import { SgiError } from '@core/errors/sgi-error';
 import { MSG_PARAMS } from '@core/i18n';
 import { Estado, ESTADO_MAP } from '@core/models/csp/estado-solicitud';
 import { DialogService } from '@core/services/dialog.service';
@@ -140,7 +140,7 @@ export class SolicitudEditarComponent extends ActionComponent implements OnInit 
         () => { },
         (error) => {
           this.logger.error(error);
-          if (error instanceof HttpProblem) {
+          if (error instanceof SgiError) {
             if (!!!error.managed) {
               this.snackBarService.showError(error);
             }

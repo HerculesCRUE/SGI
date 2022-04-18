@@ -1,6 +1,5 @@
 package org.crue.hercules.sgi.csp.service.sgi;
 
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
@@ -12,9 +11,11 @@ import org.crue.hercules.sgi.csp.dto.tp.SgiApiInstantTaskOutput;
 import org.crue.hercules.sgi.csp.enums.ServiceType;
 import org.crue.hercules.sgi.csp.service.BaseServiceTest;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
 import org.mockito.BDDMockito;
 import org.mockito.Mock;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
@@ -35,15 +36,18 @@ class SgiApiTpServiceTest extends BaseServiceTest {
     this.sgiApiTaskService = new SgiApiTpService(restApiProperties, restTemplate);
   }
 
-  // @Test
+  @Test
   void createInstantTask_ReturnsSgiApiInstantTaskOutput() {
 
     SgiApiInstantTaskOutput taskOutput = this.buildMockSgiApiInstantTaskOutput(1L);
 
-    BDDMockito.given(this.restTemplate.exchange(
-        anyString(), ArgumentMatchers.<HttpMethod>any(),
-        ArgumentMatchers.<HttpEntity<Object>>any(),
-        ArgumentMatchers.<Class<SgiApiInstantTaskOutput>>any())).willReturn(ResponseEntity.ok(taskOutput));
+    BDDMockito
+        .given(this.restTemplate.exchange(ArgumentMatchers
+            .<String>any(), ArgumentMatchers.<HttpMethod>any(),
+            ArgumentMatchers.<HttpEntity<Object>>any(),
+            ArgumentMatchers.<ParameterizedTypeReference<SgiApiInstantTaskOutput>>any(),
+            ArgumentMatchers.<Object>any()))
+        .willReturn(ResponseEntity.ok(taskOutput));
 
     SgiApiInstantTaskOutput result = this.sgiApiTaskService.createInstantTask(ServiceType.CSP, HttpMethod.GET, "/path",
         "testing", Instant.now());
@@ -51,16 +55,19 @@ class SgiApiTpServiceTest extends BaseServiceTest {
     Assertions.assertThat(result).isNotNull();
   }
 
-  // @Test
+  @Test
   void updateInstantTask_ReturnsSgiApiInstantTaskOutput() {
     Long taskId = 1L;
 
     SgiApiInstantTaskOutput taskOutput = this.buildMockSgiApiInstantTaskOutput(taskId);
 
-    BDDMockito.given(this.restTemplate.exchange(
-        anyString(), ArgumentMatchers.<HttpMethod>any(),
-        ArgumentMatchers.<HttpEntity<Object>>any(),
-        ArgumentMatchers.<Class<SgiApiInstantTaskOutput>>any())).willReturn(ResponseEntity.ok(taskOutput));
+    BDDMockito
+        .given(this.restTemplate.exchange(ArgumentMatchers
+            .<String>any(), ArgumentMatchers.<HttpMethod>any(),
+            ArgumentMatchers.<HttpEntity<Object>>any(),
+            ArgumentMatchers.<ParameterizedTypeReference<SgiApiInstantTaskOutput>>any(),
+            ArgumentMatchers.<Object>any()))
+        .willReturn(ResponseEntity.ok(taskOutput));
 
     SgiApiInstantTaskOutput result = this.sgiApiTaskService.updateInstantTask(taskId, ServiceType.CSP, HttpMethod.GET,
         "/path",
@@ -69,64 +76,75 @@ class SgiApiTpServiceTest extends BaseServiceTest {
     Assertions.assertThat(result).isNotNull();
   }
 
-  // @Test
+  @Test
   void deleteTask_ReturnsVoid() {
 
     this.sgiApiTaskService.deleteTask(1L);
 
-    verify(this.restTemplate, times(1)).exchange(
-        anyString(), ArgumentMatchers.<HttpMethod>any(),
+    verify(this.restTemplate, times(1)).exchange(ArgumentMatchers
+        .<String>any(), ArgumentMatchers.<HttpMethod>any(),
         ArgumentMatchers.<HttpEntity<Object>>any(),
-        ArgumentMatchers.<Class<Void>>any());
+        ArgumentMatchers.<ParameterizedTypeReference<SgiApiInstantTaskOutput>>any(),
+        ArgumentMatchers.<Object>any());
 
   }
 
-  // @Test
+  @Test
   void findInstantTaskById_ReturnsSgiApiInstantTaskOutput() {
     Long taskId = 1L;
 
     SgiApiInstantTaskOutput taskOutput = this.buildMockSgiApiInstantTaskOutput(taskId);
 
-    BDDMockito.given(this.restTemplate.exchange(
-        anyString(), ArgumentMatchers.<HttpMethod>any(),
-        ArgumentMatchers.<HttpEntity<Object>>any(),
-        ArgumentMatchers.<Class<SgiApiInstantTaskOutput>>any())).willReturn(ResponseEntity.ok(taskOutput));
+    BDDMockito
+        .given(this.restTemplate.exchange(ArgumentMatchers
+            .<String>any(), ArgumentMatchers.<HttpMethod>any(),
+            ArgumentMatchers.<HttpEntity<Object>>any(),
+            ArgumentMatchers.<ParameterizedTypeReference<SgiApiInstantTaskOutput>>any(),
+            ArgumentMatchers.<Object>any()))
+        .willReturn(ResponseEntity.ok(taskOutput));
 
     SgiApiInstantTaskOutput result = this.sgiApiTaskService.findInstantTaskById(taskId);
 
     Assertions.assertThat(result).isNotNull();
   }
 
-  // @Test
+  @Test
   void createSendEmailTask_ReturnsLong() {
     SgiApiInstantTaskOutput taskOutput = this.buildMockSgiApiInstantTaskOutput(1L);
 
-    BDDMockito.given(this.restTemplate.exchange(
-        anyString(), ArgumentMatchers.<HttpMethod>any(),
-        ArgumentMatchers.<HttpEntity<Object>>any(),
-        ArgumentMatchers.<Class<SgiApiInstantTaskOutput>>any())).willReturn(ResponseEntity.ok(taskOutput));
+    BDDMockito
+        .given(this.restTemplate.exchange(ArgumentMatchers
+            .<String>any(), ArgumentMatchers.<HttpMethod>any(),
+            ArgumentMatchers.<HttpEntity<Object>>any(),
+            ArgumentMatchers.<ParameterizedTypeReference<SgiApiInstantTaskOutput>>any(),
+            ArgumentMatchers.<Object>any()))
+        .willReturn(ResponseEntity.ok(taskOutput));
 
     Long id = this.sgiApiTaskService.createSendEmailTask(2L, Instant.now());
 
     Assertions.assertThat(id).isEqualTo(taskOutput.getId());
   }
 
-  // @Test
+  @Test
   void updateSendEmailTask_ShouldUpdateSendEmailTask() {
     Long taskId = 1L;
     SgiApiInstantTaskOutput taskOutput = this.buildMockSgiApiInstantTaskOutput(taskId);
 
-    BDDMockito.given(this.restTemplate.exchange(
-        anyString(), ArgumentMatchers.<HttpMethod>any(),
-        ArgumentMatchers.<HttpEntity<Object>>any(),
-        ArgumentMatchers.<Class<SgiApiInstantTaskOutput>>any())).willReturn(ResponseEntity.ok(taskOutput));
+    BDDMockito
+        .given(this.restTemplate.exchange(ArgumentMatchers
+            .<String>any(), ArgumentMatchers.<HttpMethod>any(),
+            ArgumentMatchers.<HttpEntity<Object>>any(),
+            ArgumentMatchers.<ParameterizedTypeReference<SgiApiInstantTaskOutput>>any(),
+            ArgumentMatchers.<Object>any()))
+        .willReturn(ResponseEntity.ok(taskOutput));
 
     this.sgiApiTaskService.updateSendEmailTask(taskId, 2L, Instant.now());
 
-    verify(this.restTemplate, times(1)).exchange(
-        anyString(), ArgumentMatchers.<HttpMethod>any(),
+    verify(this.restTemplate, times(1)).exchange(ArgumentMatchers
+        .<String>any(), ArgumentMatchers.<HttpMethod>any(),
         ArgumentMatchers.<HttpEntity<Object>>any(),
-        ArgumentMatchers.<Class<SgiApiInstantTaskOutput>>any());
+        ArgumentMatchers.<ParameterizedTypeReference<SgiApiInstantTaskOutput>>any(),
+        ArgumentMatchers.<Object>any());
   }
 
   private SgiApiInstantTaskOutput buildMockSgiApiInstantTaskOutput(Long id) {

@@ -14,13 +14,11 @@ import { SgiAuthModule, SgiAuthService } from '@sgi/framework/auth';
 import { SharedModule } from '@shared/shared.module';
 import { LoggerTestingModule } from 'ngx-logger/testing';
 import { CspSharedModule } from '../../../shared/csp-shared.module';
-import { SolicitiudHitosModalComponent, SolicitudHitosModalComponentData } from './solicitud-hitos-modal.component';
-
-
+import { SolicitudHitosModalComponent, SolicitudHitosModalComponentData } from './solicitud-hitos-modal.component';
 
 describe('SolicitiudHitosModalComponent', () => {
-  let component: SolicitiudHitosModalComponent;
-  let fixture: ComponentFixture<SolicitiudHitosModalComponent>;
+  let component: SolicitudHitosModalComponent;
+  let fixture: ComponentFixture<SolicitudHitosModalComponent>;
 
   beforeEach(waitForAsync(() => {
     const mockDialogRef = {
@@ -33,7 +31,7 @@ describe('SolicitiudHitosModalComponent', () => {
 
     TestBed.configureTestingModule({
       declarations: [
-        SolicitiudHitosModalComponent,
+        SolicitudHitosModalComponent,
         DialogComponent,
         HeaderComponent],
       imports: [
@@ -59,7 +57,7 @@ describe('SolicitiudHitosModalComponent', () => {
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(SolicitiudHitosModalComponent);
+    fixture = TestBed.createComponent(SolicitudHitosModalComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

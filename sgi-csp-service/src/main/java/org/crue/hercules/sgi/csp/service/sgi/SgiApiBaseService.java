@@ -49,6 +49,9 @@ public abstract class SgiApiBaseService {
       case TP:
         serviceURL = restApiProperties.getTpUrl();
         break;
+      case SGEMP:
+        serviceURL = restApiProperties.getSgempUrl();
+        break;
       default:
         throw new UnknownServiceTypeException(serviceType.name());
     }

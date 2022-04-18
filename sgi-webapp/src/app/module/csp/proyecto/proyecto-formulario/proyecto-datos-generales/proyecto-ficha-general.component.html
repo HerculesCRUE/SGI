@@ -1,513 +1,357 @@
 <sgi-fragment title="{{'label.datos-generales' | translate}} - {{'label.ficha-general' | translate}}">
 
-  <form [formGroup]="formGroup">
+  <form [formGroup]="formGroup" fxLayout="column">
 
-    <div [fxLayout.xs]="fxLayoutProperties.xs" [fxLayout]="fxLayoutProperties.layout"
-      [fxLayoutGap]="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
+    <div fxFlex fxLayout="row" fxLayoutGap="10px">
       <!-- Estado actual nuevo -->
-      <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
-        [fxFlexOrder]="fxFlexProperties.order">
-        <mat-form-field>
-          <mat-label>{{'csp.proyecto.estado' | translate}}</mat-label>
-          <mat-select formControlName="estado" placeholder="{{'csp.solicitud.cambio-estado.actual' | translate}}">
-            <mat-option *ngFor="let estado of ESTADO_MAP | keyvalue" [value]="estado.key">
-              {{ estado.value | translate}}
-            </mat-option>
-          </mat-select>
-        </mat-form-field>
-      </div>
+      <mat-form-field fxFlex="25%">
+        <mat-label>{{'csp.proyecto.estado' | translate}}</mat-label>
+        <mat-select formControlName="estado" placeholder="{{'csp.solicitud.cambio-estado.actual' | translate}}">
+          <mat-option *ngFor="let estado of ESTADO_MAP | keyvalue" [value]="estado.key">
+            {{ estado.value | translate}}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
 
-      <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
-        [fxFlexOrder]="fxFlexProperties.order" *ngIf="formPart.comentarioEstadoCancelado">
-        <mat-form-field>
-          <mat-label>{{'csp.proyecto.estado.comentario' | translate}}</mat-label>
-          <textarea matInput formControlName="comentario" id="comentario"
-            placeholder="{{'csp.proyecto.estado.comentario' | translate}}"></textarea>
-        </mat-form-field>
-      </div>
+
+      <mat-form-field fxFlex="25%" *ngIf="formPart.comentarioEstadoCancelado">
+        <mat-label>{{'csp.proyecto.estado.comentario' | translate}}</mat-label>
+        <textarea matInput formControlName="comentario" id="comentario"
+          placeholder="{{'csp.proyecto.estado.comentario' | translate}}"></textarea>
+      </mat-form-field>
     </div>
-    <div [fxLayout.xs]="fxLayoutProperties.xs" [fxLayout]="fxLayoutProperties.layout"
-      [fxLayoutGap]="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
 
+    <div fxFlex fxLayout="row" fxLayoutGap="10px">
       <!-- ID -->
-      <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
-        [fxFlexOrder]="fxFlexProperties.order">
-        <mat-form-field>
-          <mat-label>{{'csp.proyecto.id' | translate}}</mat-label>
-          <input type="text" placeholder="{{'csp.proyecto.id' | translate}}" matInput formControlName="id" required>
-        </mat-form-field>
-      </div>
+      <mat-form-field fxFlex="25%">
+        <mat-label>{{'csp.proyecto.id' | translate}}</mat-label>
+        <input type="text" placeholder="{{'csp.proyecto.id' | translate}}" matInput formControlName="id" required>
+      </mat-form-field>
       <!-- Identificadores Sge -->
-      <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
-        [fxFlexOrder]="fxFlexProperties.order" *ngIf="this.formPart.isEdit()">
-        <mat-form-field>
-          <mat-label>{{'csp.proyecto.codigos-sge' | translate}}</mat-label>
-          <mat-select matNativeControl formControlName="codigosSge" multiple>
-            <mat-option *ngFor="let proyecto of this.proyectosSge" [value]="proyecto">
-              {{proyecto.value.proyectoSge.id}}
-            </mat-option>
-          </mat-select>
-        </mat-form-field>
-      </div>
+
+      <mat-form-field fxFlex="25%" *ngIf="this.formPart.isEdit()">
+        <mat-label>{{'csp.proyecto.codigos-sge' | translate}}</mat-label>
+        <mat-select matNativeControl formControlName="codigosSge" multiple>
+          <mat-option *ngFor="let proyecto of this.proyectosSge" [value]="proyecto">
+            {{proyecto.value.proyectoSge.id}}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+
     </div>
-    <div [fxLayout.xs]="fxLayoutProperties.xs" [fxLayout]="fxLayoutProperties.layout"
-      [fxLayoutGap]="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
+
+    <div fxFlex fxLayout="row" fxLayoutGap="10px">
 
       <!-- Titulo -->
-      <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
-        [fxFlexOrder]="fxFlexProperties.order">
-        <mat-form-field>
-          <mat-label>{{'csp.proyecto.titulo' | translate}}</mat-label>
-          <input type="text" placeholder="{{'csp.proyecto.titulo' | translate}}" matInput formControlName="titulo"
-            required>
-          <mat-error *ngIf="formGroup.controls.titulo.errors?.required">
-            {{'error.required.entity' | translate:msgParamTituloEntity}}
-          </mat-error>
-          <mat-error *ngIf="formGroup.controls.titulo.errors?.maxlength">
-            {{'error.maxlength.entity' | translate:msgParamTituloEntity}}
-          </mat-error>
-        </mat-form-field>
-      </div>
+      <mat-form-field fxFlex="33%">
+        <mat-label>{{'csp.proyecto.titulo' | translate}}</mat-label>
+        <input type="text" placeholder="{{'csp.proyecto.titulo' | translate}}" matInput formControlName="titulo"
+          required>
+        <mat-error *ngIf="formGroup.controls.titulo.errors?.required">
+          {{'error.required.entity' | translate:msgParamTituloEntity}}
+        </mat-error>
+        <mat-error *ngIf="formGroup.controls.titulo.errors?.maxlength">
+          {{'error.maxlength.entity' | translate:msgParamTituloEntity}}
+        </mat-error>
+      </mat-form-field>
 
       <!-- acronimo -->
-      <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
-        [fxFlexOrder]="fxFlexProperties.order">
-        <mat-form-field>
-          <mat-label>{{'csp.proyecto.acronimo' | translate}}</mat-label>
-          <input type="text" placeholder="{{'csp.proyecto.acronimo' | translate}}" matInput formControlName="acronimo">
-          <mat-error *ngIf="formGroup.controls.acronimo.errors?.maxlength">
-            {{'error.maxlength.entity' | translate:msgParamAcronimoEntity}}
-          </mat-error>
-        </mat-form-field>
-      </div>
+      <mat-form-field fxFlex="33%">
+        <mat-label>{{'csp.proyecto.acronimo' | translate}}</mat-label>
+        <input type="text" placeholder="{{'csp.proyecto.acronimo' | translate}}" matInput formControlName="acronimo">
+        <mat-error *ngIf="formGroup.controls.acronimo.errors?.maxlength">
+          {{'error.maxlength.entity' | translate:msgParamAcronimoEntity}}
+        </mat-error>
+      </mat-form-field>
 
       <!-- Tipo de ámbito geográfico -->
-      <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
-        [fxFlexOrder]="fxFlexProperties.order">
-        <mat-form-field>
-          <mat-label>{{'csp.proyecto.ambito-geografico' | translate}}</mat-label>
-          <sgi-select-tipo-ambito-geografico formControlName="ambitoGeografico" [required]="formPart.abiertoRequired">
-          </sgi-select-tipo-ambito-geografico>
-          <sgi-field-info matSuffix
-            [visible]="!formPart.readonly && !formPart.isInvestigador && (formPart.ambitoGeograficoConvocatoria$ | async)"
-            message="{{textoInfoAmbitoGeograficoConvocatoria}}">
-          </sgi-field-info>
-          <mat-error *ngIf="formGroup.controls.ambitoGeografico.errors?.required">
-            {{'error.required.entity' | translate:msgParamAmbitoGeograficoEntity}}
-          </mat-error>
-          <mat-error *ngIf="formGroup.controls.ambitoGeografico.errors?.vacio">
-            {{'error.invalid.entity' | translate:msgParamAmbitoGeograficoEntity}}
-          </mat-error>
-        </mat-form-field>
-      </div>
-
+      <mat-form-field fxFlex="33%">
+        <mat-label>{{'csp.proyecto.ambito-geografico' | translate}}</mat-label>
+        <sgi-select-tipo-ambito-geografico formControlName="ambitoGeografico" [required]="formPart.abiertoRequired">
+        </sgi-select-tipo-ambito-geografico>
+        <sgi-field-info matSuffix
+          [visible]="!formPart.readonly && !formPart.isInvestigador && !formPart.isVisor && (formPart.ambitoGeograficoConvocatoria$ | async)"
+          message="{{textoInfoAmbitoGeograficoConvocatoria}}">
+        </sgi-field-info>
+        <mat-error *ngIf="formGroup.controls.ambitoGeografico.errors?.required">
+          {{'error.required.entity' | translate:msgParamAmbitoGeograficoEntity}}
+        </mat-error>
+        <mat-error *ngIf="formGroup.controls.ambitoGeografico.errors?.vacio">
+          {{'error.invalid.entity' | translate:msgParamAmbitoGeograficoEntity}}
+        </mat-error>
+      </mat-form-field>
     </div>
 
-    <div [fxLayout.xs]="fxLayoutProperties.xs" [fxLayout]="fxLayoutProperties.layout"
-      [fxLayoutGap]="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
-
+    <div fxFlex fxLayout="row" fxLayoutGap="10px">
       <!-- Convocatoria -->
-      <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
-        [fxFlexOrder]="fxFlexProperties.order">
-        <mat-form-field fxFill>
-          <mat-label>{{'csp.proyecto.convocatoria' | translate}}</mat-label>
-          <sgi-select-convocatoria authorities="CSP-PRO-C" placeholder="{{'csp.proyecto.convocatoria' | translate}}"
-            formControlName="convocatoria">
-          </sgi-select-convocatoria>
-        </mat-form-field>
-      </div>
+      <mat-form-field fxFlex="33%">
+        <mat-label>{{'csp.proyecto.convocatoria' | translate}}</mat-label>
+        <sgi-select-convocatoria authorities="CSP-PRO-C" placeholder="{{'csp.proyecto.convocatoria' | translate}}"
+          formControlName="convocatoria">
+        </sgi-select-convocatoria>
+      </mat-form-field>
 
       <!-- Referencia externa convocatoria // Identificación convocatoria -->
-      <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
-        [fxFlexOrder]="fxFlexProperties.order">
-        <mat-form-field>
-          <mat-label>{{'csp.proyecto.convocatoria-externa' | translate}}</mat-label>
-          <input type="text" placeholder="{{'csp.proyecto.convocatoria-externa' | translate}}" matInput
-            formControlName="convocatoriaExterna">
-          <mat-error *ngIf="formGroup.controls.convocatoriaExterna.errors?.maxlength">
-            {{'error.maxlength.entity' | translate:msgParamConvocatoriaExternaEntity}}
-          </mat-error>
-        </mat-form-field>
-      </div>
+      <mat-form-field fxFlex="33%">
+        <mat-label>{{'csp.proyecto.convocatoria-externa' | translate}}</mat-label>
+        <input type="text" placeholder="{{'csp.proyecto.convocatoria-externa' | translate}}" matInput
+          formControlName="convocatoriaExterna">
+        <mat-error *ngIf="formGroup.controls.convocatoriaExterna.errors?.maxlength">
+          {{'error.maxlength.entity' | translate:msgParamConvocatoriaExternaEntity}}
+        </mat-error>
+      </mat-form-field>
 
+      <!-- Convocatoria de Excelencia -->
+      <mat-form-field fxFlex="33%">
+        <mat-label>{{'csp.proyecto.excelencia' | translate}}</mat-label>
+        <sgi-select-boolean formControlName="excelencia"></sgi-select-boolean>
+      </mat-form-field>
     </div>
 
-    <div [fxLayout.xs]="fxLayoutProperties.xs" [fxLayout]="fxLayoutProperties.layout"
-      [fxLayoutGap]="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
-
+    <div fxFlex fxLayout="row" fxLayoutGap="10px">
       <!-- Cod identificacion externo -->
-      <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
-        [fxFlexOrder]="fxFlexProperties.order">
-        <mat-form-field>
-          <mat-label>{{'csp.proyecto.codigo-externo' | translate}}</mat-label>
-          <input type="text" placeholder="{{'csp.proyecto.codigo-externo' | translate}}" matInput
-            formControlName="codigoExterno">
-          <mat-error *ngIf="formGroup.controls.codigoExterno.errors?.maxlength">
-            {{'error.maxlength.entity' | translate:msgParamCodigoExternoEntity}}
-          </mat-error>
-        </mat-form-field>
-      </div>
+      <mat-form-field fxFlex="33%">
+        <mat-label>{{'csp.proyecto.codigo-externo' | translate}}</mat-label>
+        <input type="text" placeholder="{{'csp.proyecto.codigo-externo' | translate}}" matInput
+          formControlName="codigoExterno">
+        <mat-error *ngIf="formGroup.controls.codigoExterno.errors?.maxlength">
+          {{'error.maxlength.entity' | translate:msgParamCodigoExternoEntity}}
+        </mat-error>
+      </mat-form-field>
 
       <!-- Solicitud -->
-      <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
-        [fxFlexOrder]="fxFlexProperties.order" *ngIf="formPart.mostrarSolicitud">
-        <mat-form-field class="input-form">
-          <mat-label>{{'csp.proyecto.solicitud' | translate}}</mat-label>
-          <input type="text" placeholder="{{'csp.proyecto.solicitud' | translate}}" matInput
-            formControlName="solicitudProyecto">
-        </mat-form-field>
-      </div>
+      <mat-form-field fxFlex="33%" *ngIf="formPart.mostrarSolicitud">
+        <mat-label>{{'csp.proyecto.solicitud' | translate}}</mat-label>
+        <input type="text" placeholder="{{'csp.proyecto.solicitud' | translate}}" matInput
+          formControlName="solicitudProyecto">
+      </mat-form-field>
 
       <!-- Proyectos Relacionados -->
-      <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
-        [fxFlexOrder]="fxFlexProperties.order" *ngIf="formPart.isEdit()">
-        <ng-container *sgiHasAnyAuthorityForAnyUO="['REL-V', 'REL-E']">
-          <mat-form-field class="input-form">
-            <mat-label>{{'csp.proyecto.proyectos-relacionados' | translate}}</mat-label>
-            <input type="text" placeholder="{{'csp.proyecto.proyectos-relacionados' | translate}}" matInput
-              formControlName="proyectosRelacionados" readonly>
-          </mat-form-field>
-        </ng-container>
-      </div>
-
+      <ng-container *sgiHasAnyAuthorityForAnyUO="['REL-V', 'REL-E']">
+        <mat-form-field fxFlex="33%" *ngIf="formPart.isEdit()">
+          <mat-label>{{'csp.proyecto.proyectos-relacionados' | translate}}</mat-label>
+          <input type="text" placeholder="{{'csp.proyecto.proyectos-relacionados' | translate}}" matInput
+            formControlName="proyectosRelacionados" readonly>
+        </mat-form-field>
+      </ng-container>
     </div>
 
-    <div [fxLayout.xs]="fxLayoutProperties.xs" [fxLayout]="fxLayoutProperties.layout"
-      [fxLayoutGap]="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
-
+    <div fxFlex fxLayout="row" fxLayoutGap="10px">
       <!-- Unidad de gestion -->
-      <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
-        [fxFlexOrder]="fxFlexProperties.order">
-        <mat-form-field>
-          <mat-label>{{'csp.proyecto.unidad-gestion' | translate}}</mat-label>
-          <sgi-select-unidad-gestion #unidadGestion formControlName="unidadGestion" required>
-          </sgi-select-unidad-gestion>
-          <sgi-field-info matSuffix
-            [visible]="!formPart.readonly && !formPart.isInvestigador && (formPart.vinculacionesModeloEjecucion$ | async)"
-            message="{{'msg.csp.proyecto.modelo-ejecucion.vinculaciones' | translate}}">
-          </sgi-field-info>
-          <sgi-field-info matSuffix
-            [visible]="!formPart.readonly && !formPart.isInvestigador && (formPart.unidadGestionConvocatoria$ | async)"
-            message="{{textoInfoUnidadGestionConvocatoria}}">
-          </sgi-field-info>
-          <mat-error *ngIf="formGroup.controls.unidadGestion.errors?.required">
-            {{'error.required.entity' | translate:msgParamUnidadGestionEntity}}
-          </mat-error>
-        </mat-form-field>
-      </div>
+      <mat-form-field fxFlex="33%">
+        <mat-label>{{'csp.proyecto.unidad-gestion' | translate}}</mat-label>
+        <sgi-select-unidad-gestion #unidadGestion formControlName="unidadGestion" required>
+        </sgi-select-unidad-gestion>
+        <sgi-field-info matSuffix
+          [visible]="!formPart.readonly && !formPart.isInvestigador && !formPart.isVisor &&(formPart.vinculacionesModeloEjecucion$ | async)"
+          message="{{'msg.csp.proyecto.modelo-ejecucion.vinculaciones' | translate}}">
+        </sgi-field-info>
+        <sgi-field-info matSuffix
+          [visible]="!formPart.readonly && !formPart.isInvestigador && !formPart.isVisor && (formPart.unidadGestionConvocatoria$ | async)"
+          message="{{textoInfoUnidadGestionConvocatoria}}">
+        </sgi-field-info>
+        <mat-error *ngIf="formGroup.controls.unidadGestion.errors?.required">
+          {{'error.required.entity' | translate:msgParamUnidadGestionEntity}}
+        </mat-error>
+      </mat-form-field>
 
       <!-- Modelo de ejecución -->
-      <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
-        [fxFlexOrder]="fxFlexProperties.order">
-        <mat-form-field>
-          <mat-label>{{'csp.proyecto.modelo-ejecucion' | translate}}</mat-label>
-          <sgi-select-modelo-ejecucion #modeloEjecucion formControlName="modeloEjecucion" required
-            [unidadGestionRef]="formGroup.controls.unidadGestion.value?.id"
-            [resetOnChange]="unidadGestion.selectionChange">
-          </sgi-select-modelo-ejecucion>
-          <sgi-field-info matSuffix
-            [visible]="!formPart.readonly && !formPart.isInvestigador && (formPart.vinculacionesModeloEjecucion$ | async)"
-            message="{{'msg.csp.proyecto.modelo-ejecucion.vinculaciones' | translate}}">
-          </sgi-field-info>
-          <sgi-field-info matSuffix
-            [visible]="!formPart.readonly && !formPart.isInvestigador && (formPart.modeloEjecucionConvocatoria$ | async)"
-            message="{{textoInfoModeloEjecucionConvocatoria}}">
-          </sgi-field-info>
-          <mat-error *ngIf="formGroup.controls.modeloEjecucion.errors?.required">
-            {{'error.required.entity' | translate:msgParamModeloEjecucionEntity}}
-          </mat-error>
-        </mat-form-field>
-      </div>
+
+      <mat-form-field fxFlex="33%">
+        <mat-label>{{'csp.proyecto.modelo-ejecucion' | translate}}</mat-label>
+        <sgi-select-modelo-ejecucion #modeloEjecucion formControlName="modeloEjecucion" required
+          [unidadGestionRef]="formGroup.controls.unidadGestion.value?.id"
+          [resetOnChange]="unidadGestion.selectionChange">
+        </sgi-select-modelo-ejecucion>
+        <sgi-field-info matSuffix
+          [visible]="!formPart.readonly && !formPart.isInvestigador && !formPart.isVisor && (formPart.vinculacionesModeloEjecucion$ | async)"
+          message="{{'msg.csp.proyecto.modelo-ejecucion.vinculaciones' | translate}}">
+        </sgi-field-info>
+        <sgi-field-info matSuffix
+          [visible]="!formPart.readonly && !formPart.isInvestigador && !formPart.isVisor && (formPart.modeloEjecucionConvocatoria$ | async)"
+          message="{{textoInfoModeloEjecucionConvocatoria}}">
+        </sgi-field-info>
+        <mat-error *ngIf="formGroup.controls.modeloEjecucion.errors?.required">
+          {{'error.required.entity' | translate:msgParamModeloEjecucionEntity}}
+        </mat-error>
+      </mat-form-field>
 
       <!-- Finalidades -->
-      <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
-        [fxFlexOrder]="fxFlexProperties.order">
-        <mat-form-field>
-          <mat-label>{{'csp.proyecto.finalidad' | translate}}</mat-label>
-          <sgi-select-tipo-finalidad formControlName="finalidad" [required]="formPart.abiertoRequired"
-            [modeloEjecucionId]="formGroup.controls.modeloEjecucion.value?.id"
-            [resetOnChange]="modeloEjecucion.selectionChange">
-          </sgi-select-tipo-finalidad>
-          <sgi-field-info matSuffix
-            [visible]="!formPart.readonly && !formPart.isInvestigador && (formPart.finalidadConvocatoria$ | async)"
-            message="{{textoInfoFinalidadConvocatoria}}">
-          </sgi-field-info>
-          <mat-error *ngIf="formGroup.controls.finalidad.errors?.required">
-            {{'error.required.entity' | translate:msgParamFinalidadEntity}}
-          </mat-error>
-        </mat-form-field>
-      </div>
-
+      <mat-form-field fxFlex="33%">
+        <mat-label>{{'csp.proyecto.finalidad' | translate}}</mat-label>
+        <sgi-select-tipo-finalidad formControlName="finalidad" [required]="formPart.abiertoRequired"
+          [modeloEjecucionId]="formGroup.controls.modeloEjecucion.value?.id"
+          [resetOnChange]="modeloEjecucion.selectionChange">
+        </sgi-select-tipo-finalidad>
+        <sgi-field-info matSuffix
+          [visible]="!formPart.readonly && !formPart.isInvestigador && !formPart.isVisor && (formPart.finalidadConvocatoria$ | async)"
+          message="{{textoInfoFinalidadConvocatoria}}">
+        </sgi-field-info>
+        <mat-error *ngIf="formGroup.controls.finalidad.errors?.required">
+          {{'error.required.entity' | translate:msgParamFinalidadEntity}}
+        </mat-error>
+      </mat-form-field>
     </div>
 
-    <div [fxLayout.xs]="fxLayoutProperties.xs" [fxLayout]="fxLayoutProperties.layout"
-      [fxLayoutGap]="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
-
+    <div fxFlex fxLayout="row" fxLayoutGap="10px">
       <!-- Fecha inicio -->
-      <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
-        [fxFlexOrder]="fxFlexProperties.order">
-        <mat-form-field color="primary">
-          <mat-label>{{'csp.proyecto.fecha-inicio'| translate}}</mat-label>
-          <input matInput [matDatepicker]="pickerFechaInicio" formControlName="fechaInicio" required>
-          <mat-datepicker-toggle class="fechaIcon" matSuffix [for]="pickerFechaInicio"></mat-datepicker-toggle>
-          <mat-datepicker #pickerFechaInicio>
-          </mat-datepicker>
-          <mat-error *ngIf="formGroup.controls.fechaInicio.errors?.required">
-            {{'error.required.entity' | translate:msgParamFechaInicioEntity}}
-          </mat-error>
-          <mat-error *ngIf="formGroup.controls.fechaInicio.errors?.range">
-            {{'error.csp.proyecto-ficha-general.fecha-inicio.range' | translate}}
-          </mat-error>
-        </mat-form-field>
-      </div>
+      <mat-form-field color="primary" fxFlex="33%">
+        <mat-label>{{'csp.proyecto.fecha-inicio'| translate}}</mat-label>
+        <input matInput [matDatepicker]="pickerFechaInicio" formControlName="fechaInicio" required>
+        <mat-datepicker-toggle class="fechaIcon" matSuffix [for]="pickerFechaInicio"></mat-datepicker-toggle>
+        <mat-datepicker #pickerFechaInicio>
+        </mat-datepicker>
+        <mat-error *ngIf="formGroup.controls.fechaInicio.errors?.required">
+          {{'error.required.entity' | translate:msgParamFechaInicioEntity}}
+        </mat-error>
+        <mat-error *ngIf="formGroup.controls.fechaInicio.errors?.range">
+          {{'error.csp.proyecto-ficha-general.fecha-inicio.range' | translate}}
+        </mat-error>
+      </mat-form-field>
 
       <!-- Fecha fin -->
-      <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
-        [fxFlexOrder]="fxFlexProperties.order">
-        <mat-form-field color="primary" sgiEndDate>
-          <mat-label>{{'csp.proyecto.fecha-fin'| translate}}</mat-label>
-          <input matInput [matDatepicker]="pickerFechaFin" formControlName="fechaFin" required>
-          <mat-datepicker-toggle class="fechaIcon" matSuffix [for]="pickerFechaFin"></mat-datepicker-toggle>
-          <mat-datepicker #pickerFechaFin>
-          </mat-datepicker>
-          <mat-error *ngIf="formGroup.controls.fechaFin.errors?.required">
-            {{'error.required.entity' | translate:msgParamFechaFinEntity}}
-          </mat-error>
-          <mat-error *ngIf="formGroup.controls.fechaFin.errors?.after">
-            {{'error.after.fecha-fin' | translate}}
-          </mat-error>
-          <mat-error *ngIf="formGroup.controls.fechaFin.errors?.range">
-            {{'error.csp.proyecto-ficha-general.fecha-fin.range' | translate}}
-          </mat-error>
-          <mat-error *ngIf="formGroup.controls.fechaFin.errors?.afterThanProrroga">
-            {{'error.afterThanProrroga.fecha-fin' | translate}}
-          </mat-error>
-        </mat-form-field>
-      </div>
+      <mat-form-field color="primary" sgiEndDate fxFlex="33%">
+        <mat-label>{{'csp.proyecto.fecha-fin'| translate}}</mat-label>
+        <input matInput [matDatepicker]="pickerFechaFin" formControlName="fechaFin" required>
+        <mat-datepicker-toggle class="fechaIcon" matSuffix [for]="pickerFechaFin"></mat-datepicker-toggle>
+        <mat-datepicker #pickerFechaFin>
+        </mat-datepicker>
+        <mat-error *ngIf="formGroup.controls.fechaFin.errors?.required">
+          {{'error.required.entity' | translate:msgParamFechaFinEntity}}
+        </mat-error>
+        <mat-error *ngIf="formGroup.controls.fechaFin.errors?.after">
+          {{'error.after.fecha-fin' | translate}}
+        </mat-error>
+        <mat-error *ngIf="formGroup.controls.fechaFin.errors?.range">
+          {{'error.csp.proyecto-ficha-general.fecha-fin.range' | translate}}
+        </mat-error>
+        <mat-error *ngIf="formGroup.controls.fechaFin.errors?.afterThanProrroga">
+          {{'error.afterThanProrroga.fecha-fin' | translate}}
+        </mat-error>
+      </mat-form-field>
 
       <!-- Fecha fin Definitiva -->
-      <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
-        [fxFlexOrder]="fxFlexProperties.order">
-        <mat-form-field color="primary" sgiEndDate>
-          <mat-label>{{'csp.proyecto.fecha-fin-definitiva'| translate}}</mat-label>
-          <input matInput [matDatepicker]="pickerFechaFinDefinitiva" formControlName="fechaFinDefinitiva">
-          <mat-datepicker-toggle class="fechaIcon" matSuffix [for]="pickerFechaFinDefinitiva"></mat-datepicker-toggle>
-          <mat-datepicker #pickerFechaFinDefinitiva>
-          </mat-datepicker>
-          <mat-error *ngIf="formGroup.controls.fechaFinDefinitiva.errors?.after">
-            {{'error.after.fecha-fin-definitiva' | translate}}
-          </mat-error>
-        </mat-form-field>
-      </div>
-
+      <mat-form-field color="primary" sgiEndDate fxFlex="33%">
+        <mat-label>{{'csp.proyecto.fecha-fin-definitiva'| translate}}</mat-label>
+        <input matInput [matDatepicker]="pickerFechaFinDefinitiva" formControlName="fechaFinDefinitiva">
+        <mat-datepicker-toggle class="fechaIcon" matSuffix [for]="pickerFechaFinDefinitiva"></mat-datepicker-toggle>
+        <mat-datepicker #pickerFechaFinDefinitiva>
+        </mat-datepicker>
+        <mat-error *ngIf="formGroup.controls.fechaFinDefinitiva.errors?.after">
+          {{'error.after.fecha-fin-definitiva' | translate}}
+        </mat-error>
+      </mat-form-field>
     </div>
 
-    <div [fxLayout.xs]="fxLayoutProperties.xs" [fxLayout]="fxLayoutProperties.layout"
-      [fxLayoutGap]="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
-
+    <div fxFlex fxLayout="row" fxLayoutGap="10px">
       <!-- Confidencial -->
-      <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
-        [fxFlexOrder]="fxFlexProperties.order">
-        <mat-form-field>
-          <mat-label>{{'csp.proyecto.confidencial' | translate}}</mat-label>
-          <mat-select matNativeControl formControlName="confidencial" [required]="formPart.abiertoRequired">
-            <mat-option [value]="true">{{'label.si' | translate}}</mat-option>
-            <mat-option [value]="false">{{'label.no' | translate}}</mat-option>
-          </mat-select>
-          <mat-error *ngIf="formGroup.controls.confidencial.errors?.required">
-            {{'error.required.entity' | translate:msgParamConfidencialEntity}}
-          </mat-error>
-        </mat-form-field>
-      </div>
+      <mat-form-field fxFlex="50%">
+        <mat-label>{{'csp.proyecto.confidencial' | translate}}</mat-label>
+        <mat-select matNativeControl formControlName="confidencial" [required]="formPart.abiertoRequired">
+          <mat-option [value]="true">{{'label.si' | translate}}</mat-option>
+          <mat-option [value]="false">{{'label.no' | translate}}</mat-option>
+        </mat-select>
+        <mat-error *ngIf="formGroup.controls.confidencial.errors?.required">
+          {{'error.required.entity' | translate:msgParamConfidencialEntity}}
+        </mat-error>
+      </mat-form-field>
 
       <!-- Clasificacion produccion cientifica -->
-      <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
-        [fxFlexOrder]="fxFlexProperties.order">
-        <mat-form-field>
-          <mat-label>{{'csp.proyecto.clasificacion-produccion' | translate}}</mat-label>
-          <sgi-select-enum formControlName="clasificacionCVN" [enumMap]="CLASIFICACION_CVN_MAP">
-          </sgi-select-enum>
-        </mat-form-field>
-      </div>
-
+      <mat-form-field fxFlex="50%">
+        <mat-label>{{'csp.proyecto.clasificacion-produccion' | translate}}</mat-label>
+        <sgi-select-enum formControlName="clasificacionCVN" [enumMap]="CLASIFICACION_CVN_MAP">
+        </sgi-select-enum>
+      </mat-form-field>
     </div>
 
-    <div [fxLayout.xs]="fxLayoutProperties.xs" [fxLayout]="fxLayoutProperties.layout"
-      [fxLayoutGap]="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
-
+    <div fxFlex fxLayout="row" fxLayoutGap="10px">
       <!-- Proyecto coordinado -->
-      <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
-        [fxFlexOrder]="fxFlexProperties.order">
-        <mat-form-field>
-          <mat-label>{{'csp.proyecto.proyecto-coordinado' | translate}}</mat-label>
-          <sgi-select-boolean formControlName="coordinado" [required]="formPart.abiertoRequired"></sgi-select-boolean>
-          <sgi-field-info matSuffix
-            [visible]="(formPart.hasPopulatedSocios$ | async)  && (formPart.coordinado$ | async)"
-            message="{{'msg.csp.solicitud-proyecto.unmodifiable-due-socios-dependencies.info' | translate}}">
-          </sgi-field-info>
-          <mat-error *ngIf="formGroup.controls.coordinado.errors?.required">
-            {{'error.required.entity' | translate:msgParamProyectoCoordinadoEntity}}
-          </mat-error>
-        </mat-form-field>
-      </div>
+      <mat-form-field fxFlex="33%">
+        <mat-label>{{'csp.proyecto.proyecto-coordinado' | translate}}</mat-label>
+        <sgi-select-boolean formControlName="coordinado" [required]="formPart.abiertoRequired"></sgi-select-boolean>
+        <sgi-field-info matSuffix
+          [visible]="(formPart.hasPopulatedSocios$ | async)  && (formPart.coordinado$ | async) && !formPart.isVisor"
+          message="{{'msg.csp.solicitud-proyecto.unmodifiable-due-socios-dependencies.info' | translate}}">
+        </sgi-field-info>
+        <mat-error *ngIf="formGroup.controls.coordinado.errors?.required">
+          {{'error.required.entity' | translate:msgParamProyectoCoordinadoEntity}}
+        </mat-error>
+      </mat-form-field>
 
       <!-- Coordinador externo -->
-      <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
-        [fxFlexOrder]="fxFlexProperties.order" *ngIf="(formPart.coordinado$ | async)">
-        <mat-form-field>
-          <mat-label>{{'csp.proyecto.coordinador-externo' | translate}}</mat-label>
-          <sgi-select-boolean formControlName="coordinadorExterno" [required]="(formPart.coordinado$ | async)">
-          </sgi-select-boolean>
-          <sgi-field-info matSuffix
-            [visible]="formPart.disableCoordinadorExterno && formGroup.controls?.coordinadorExterno.value === false && !formPart.isInvestigador"
-            message="{{'msg.csp.solicitud-proyecto.unmodifiable-due-periodos-socios-dependencies.info' | translate}}">
-          </sgi-field-info>
-          <sgi-field-info matSuffix
-            [visible]="!(formPart.hasAnyProyectoSocioWithRolCoordinador$ | async) && (formPart.coordinadorExterno$ | async) && !formPart.isInvestigador"
-            message="{{'info.csp.solicitud-proyecto-socio.socio-con-rol-coordinador.no-informado.tooltip' | translate}}">
-          </sgi-field-info>
-          <mat-error *ngIf="formGroup.controls.coordinadorExterno.errors?.required">
-            {{'error.required.entity' | translate:msgParamCoordinadorExternoEntity}}
-          </mat-error>
-        </mat-form-field>
-      </div>
+      <mat-form-field fxFlex="33%" *ngIf="(formPart.coordinado$ | async)">
+        <mat-label>{{'csp.proyecto.coordinador-externo' | translate}}</mat-label>
+        <sgi-select-boolean formControlName="coordinadorExterno" [required]="(formPart.coordinado$ | async)">
+        </sgi-select-boolean>
+        <sgi-field-info matSuffix
+          [visible]="formPart.disableCoordinadorExterno && formGroup.controls?.coordinadorExterno.value === false && !formPart.isInvestigador && !formPart.isVisor"
+          message="{{'msg.csp.solicitud-proyecto.unmodifiable-due-periodos-socios-dependencies.info' | translate}}">
+        </sgi-field-info>
+        <sgi-field-info matSuffix
+          [visible]="!(formPart.hasAnyProyectoSocioWithRolCoordinador$ | async) && (formPart.coordinadorExterno$ | async) && !formPart.isInvestigador && !formPart.isVisor"
+          message="{{'info.csp.solicitud-proyecto-socio.socio-con-rol-coordinador.no-informado.tooltip' | translate}}">
+        </sgi-field-info>
+        <mat-error *ngIf="formGroup.controls.coordinadorExterno.errors?.required">
+          {{'error.required.entity' | translate:msgParamCoordinadorExternoEntity}}
+        </mat-error>
+      </mat-form-field>
 
       <!-- Proyecto colaborativo -->
-      <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
-        [fxFlexOrder]="fxFlexProperties.order" *ngIf="formGroup.controls.coordinado.value">
-        <mat-form-field>
-          <mat-label>{{'csp.proyecto.proyecto-colaborativo' | translate}}</mat-label>
-          <sgi-select-boolean formControlName="colaborativo" [required]="formPart.abiertoRequired"></sgi-select-boolean>
-          <mat-error *ngIf="formGroup.controls.colaborativo.errors?.required">
-            {{'error.required.entity' | translate:msgParamProyectoColaborativoEntity}}
-          </mat-error>
-        </mat-form-field>
-      </div>
-
+      <mat-form-field fxFlex="33%" *ngIf="formGroup.controls.coordinado.value">
+        <mat-label>{{'csp.proyecto.proyecto-colaborativo' | translate}}</mat-label>
+        <sgi-select-boolean formControlName="colaborativo"></sgi-select-boolean>
+      </mat-form-field>
     </div>
 
-    <!-- Palabras Clave -->
-    <div [fxLayout.xs]="fxLayoutProperties.xs" [fxLayout]="fxLayoutProperties.layout"
-      [fxLayoutGap]="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
-      <div [fxFlex.sm]="fxFlexPropertiesInline.sm" [fxFlex.md]="fxFlexPropertiesInline.md"
-        [fxFlex.gt-md]="fxFlexPropertiesInline.gtMd" [fxFlexOrder]="fxFlexPropertiesInline.order">
-        <mat-form-field fxFill>
-          <mat-label>{{'csp.proyecto.palabras-clave' | translate}}</mat-label>
-          <sgi-palabra-clave formControlName="palabrasClave" id="palabrasClave"
-            placeholder="{{'csp.proyecto.palabras-clave' | translate}}"></sgi-palabra-clave>
-        </mat-form-field>
-      </div>
-    </div>
-
-    <div [fxLayout.xs]="fxLayoutProperties.xs" [fxLayout]="fxLayoutProperties.layout"
-      [fxLayoutGap]="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
-
-      <!-- Requiere timesheet -->
-      <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
-        [fxFlexOrder]="fxFlexProperties.order">
-        <mat-form-field>
-          <mat-label>{{'csp.proyecto.timesheet' | translate}}</mat-label>
-          <mat-select matNativeControl formControlName="timesheet" [required]="validacionTimesheet()">
-            <mat-option [value]="true">{{'label.si' | translate}}</mat-option>
-            <mat-option [value]="false">{{'label.no' | translate}}</mat-option>
-          </mat-select>
-          <mat-error *ngIf="formGroup.controls.timesheet.errors?.required">
-            {{'error.required.entity' | translate:msgParamTimesheetEntity}}
-          </mat-error>
-          <mat-error *ngIf="formGroup.controls.timesheet.errors?.invalid">
-            {{'error.invalid.entity' | translate:msgParamTimesheetEntity}}
-          </mat-error>
-        </mat-form-field>
-      </div>
-
+    <div fxFlex fxLayout="row" fxLayoutGap="10px">
       <!-- Paquete de trabajo -->
-      <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
-        [fxFlexOrder]="fxFlexProperties.order">
-        <mat-form-field>
-          <mat-label>{{'csp.proyecto.permite-paquetes-trabajo' | translate:MSG_PARAMS.CARDINALIRY.SINGULAR}}</mat-label>
-          <mat-select matNativeControl formControlName="permitePaquetesTrabajo" [required]="formPart.abiertoRequired">
-            <mat-option [value]="true">{{'label.si' | translate}}</mat-option>
-            <mat-option [value]="false">{{'label.no' | translate}}</mat-option>
-          </mat-select>
-          <mat-error *ngIf="formGroup.controls.permitePaquetesTrabajo.errors?.required">
-            {{'error.required.entity' | translate:msgParamPaqueteTrabajoEntity}}
-          </mat-error>
-        </mat-form-field>
-      </div>
+      <mat-form-field fxFlex="33%">
+        <mat-label>{{'csp.proyecto.permite-paquetes-trabajo' | translate:MSG_PARAMS.CARDINALIRY.SINGULAR}}</mat-label>
+        <mat-select matNativeControl formControlName="permitePaquetesTrabajo" [required]="formPart.abiertoRequired">
+          <mat-option [value]="true">{{'label.si' | translate}}</mat-option>
+          <mat-option [value]="false">{{'label.no' | translate}}</mat-option>
+        </mat-select>
+        <mat-error *ngIf="formGroup.controls.permitePaquetesTrabajo.errors?.required">
+          {{'error.required.entity' | translate:msgParamPaqueteTrabajoEntity}}
+        </mat-error>
+      </mat-form-field>
 
     </div>
 
-
-    <div [fxLayout.xs]="fxLayoutProperties.xs" [fxLayout]="fxLayoutProperties.layout"
-      [fxLayoutGap]="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
-
-      <!-- Calculo coste -->
-      <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
-        [fxFlexOrder]="fxFlexProperties.order">
-        <mat-form-field>
-          <mat-label>{{'csp.proyecto.calculo-coste-personal' | translate}}</mat-label>
-          <mat-select matNativeControl formControlName="costeHora" [required]="formPart.abiertoRequired">
-            <mat-option [value]="true">{{'label.si' | translate}}</mat-option>
-            <mat-option [value]="false">{{'label.no' | translate}}</mat-option>
-          </mat-select>
-          <mat-error *ngIf="formGroup.controls.costeHora.errors?.required">
-            {{'error.required.entity' | translate:msgParamCalculoCosteEntity}}
-          </mat-error>
-        </mat-form-field>
-      </div>
-
-      <!-- Criterio horas anuales -->
-      <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
-        [fxFlexOrder]="fxFlexProperties.order" *ngIf="requiredHoras">
-        <mat-form-field>
-          <mat-label>{{'csp.proyecto.horas-anuales' | translate}}</mat-label>
-          <mat-select matNativeControl formControlName="tipoHorasAnuales" [required]="requiredHoras">
-            <mat-option *ngFor="let tipoHorasAnuales of TIPO_HORAS_ANUALES_MAP | keyvalue"
-              [value]="tipoHorasAnuales.key">
-              {{ tipoHorasAnuales.value | translate}}
-            </mat-option>
-          </mat-select>
-          <mat-error *ngIf="formGroup.controls.tipoHorasAnuales.errors?.required">
-            {{'error.required.entity' | translate:msgParamHorasAnualesEntity}}
-          </mat-error>
-        </mat-form-field>
-      </div>
-
+    <div fxFlex fxLayout="row" fxLayoutGap="10px">
+      <!-- Palabras Clave -->
+      <mat-form-field fxFill fxFlex="100%">
+        <mat-label>{{'csp.proyecto.palabras-clave' | translate}}</mat-label>
+        <sgi-palabra-clave formControlName="palabrasClave" id="palabrasClave"
+          placeholder="{{'csp.proyecto.palabras-clave' | translate}}"></sgi-palabra-clave>
+      </mat-form-field>
     </div>
 
-    <div [fxLayout.xs]="fxLayoutProperties.xs" [fxLayout]="fxLayoutProperties.layout"
-      [fxLayoutGap]="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
-
+    <div fxFlex fxLayout="row" fxLayoutGap="10px">
       <!-- Porcentaje IVA -->
-      <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
-        [fxFlexOrder]="fxFlexProperties.order">
-        <mat-form-field>
-          <mat-label>{{'csp.proyecto.iva' | translate}}</mat-label>
-          <input matInput formControlName="iva" type="number" id="iva" min="0" max="100"
-            placeholder="{{'csp.proyecto.iva' | translate}}">
-          <mat-error *ngIf="formGroup.controls.iva.errors?.min">
-            {{'error.min.entity' | translate:msgParamIvaEntity}}
-          </mat-error>
-          <mat-error *ngIf="formGroup.controls.iva.errors?.max">
-            {{'error.max.entity' | translate:msgParamIvaEntity}}
-          </mat-error>
-          <mat-error *ngIf="formGroup.controls.iva.errors?.ivaProyectosSge">
-            {{'error.csp.proyecto-ficha-general.iva.proyectos-sge' | translate}}
-          </mat-error>
-          <mat-error *ngIf="formGroup.controls.iva.hasError('pattern')">
-            {{'error.number.format.integer.entity' | translate:msgParamIvaEntity}}
-          </mat-error>
-        </mat-form-field>
-      </div>
+      <mat-form-field fxFlex="50%">
+        <mat-label>{{'csp.proyecto.iva' | translate}}</mat-label>
+        <input matInput formControlName="iva" type="number" id="iva" min="0" max="100"
+          placeholder="{{'csp.proyecto.iva' | translate}}">
+        <mat-error *ngIf="formGroup.controls.iva.errors?.min">
+          {{'error.min.entity' | translate:msgParamIvaEntity}}
+        </mat-error>
+        <mat-error *ngIf="formGroup.controls.iva.errors?.max">
+          {{'error.max.entity' | translate:msgParamIvaEntity}}
+        </mat-error>
+        <mat-error *ngIf="formGroup.controls.iva.errors?.ivaProyectosSge">
+          {{'error.csp.proyecto-ficha-general.iva.proyectos-sge' | translate}}
+        </mat-error>
+        <mat-error *ngIf="formGroup.controls.iva.hasError('pattern')">
+          {{'error.number.format.integer.entity' | translate:msgParamIvaEntity}}
+        </mat-error>
+      </mat-form-field>
 
       <!-- Causa Exencion -->
-      <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
-        [fxFlexOrder]="fxFlexProperties.order" *ngIf="formPart.mostrarCausaExencion">
-        <mat-form-field>
-          <mat-label>{{'csp.proyecto.causa-exencion' | translate}}</mat-label>
-          <sgi-select-enum formControlName="causaExencion" [enumMap]="CAUSA_EXENCION_MAP" required></sgi-select-enum>
-        </mat-form-field>
-      </div>
+      <mat-form-field fxFlex="50%" *ngIf="formPart.mostrarCausaExencion">
+        <mat-label>{{'csp.proyecto.causa-exencion' | translate}}</mat-label>
+        <sgi-select-enum formControlName="causaExencion" [enumMap]="CAUSA_EXENCION_MAP" required></sgi-select-enum>
+      </mat-form-field>
     </div>
 
     <!-- Tabla historico IVA -->
@@ -547,18 +391,13 @@
       </div>
     </div>
 
-    <div [fxLayout.xs]="fxLayoutProperties.xs" [fxLayout]="fxLayoutProperties.layout"
-      [fxLayoutGap]="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
-
+    <div fxFlex fxLayout="row" fxLayoutGap="10px">
       <!-- Observaciones -->
-      <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
-        [fxFlexOrder]="fxFlexProperties.order">
-        <mat-form-field fxFill>
-          <mat-label>{{'csp.proyecto.observaciones' | translate}}</mat-label>
-          <textarea matInput formControlName="observaciones" id="observaciones"
-            placeholder="{{'csp.proyecto.observaciones' | translate}}"></textarea>
-        </mat-form-field>
-      </div>
+      <mat-form-field fxFill fxFlex="100%">
+        <mat-label>{{'csp.proyecto.observaciones' | translate}}</mat-label>
+        <textarea matInput formControlName="observaciones" id="observaciones"
+          placeholder="{{'csp.proyecto.observaciones' | translate}}"></textarea>
+      </mat-form-field>
     </div>
   </form>
 </sgi-fragment>

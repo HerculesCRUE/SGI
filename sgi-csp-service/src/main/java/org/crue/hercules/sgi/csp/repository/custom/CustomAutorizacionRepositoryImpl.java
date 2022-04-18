@@ -3,17 +3,12 @@ package org.crue.hercules.sgi.csp.repository.custom;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
-import java.util.stream.IntStream;
-import java.util.stream.Stream;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Expression;
-import javax.persistence.criteria.Order;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import javax.persistence.criteria.Subquery;
@@ -23,12 +18,11 @@ import org.crue.hercules.sgi.csp.model.Autorizacion;
 import org.crue.hercules.sgi.csp.model.Autorizacion_;
 import org.crue.hercules.sgi.csp.model.EstadoAutorizacion;
 import org.crue.hercules.sgi.csp.model.EstadoAutorizacion_;
+import org.crue.hercules.sgi.csp.util.CriteriaQueryUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.data.jpa.repository.query.QueryUtils;
 import org.springframework.stereotype.Component;
 
 import lombok.extern.slf4j.Slf4j;
@@ -47,7 +41,6 @@ public class CustomAutorizacionRepositoryImpl implements CustomAutorizacionRepos
   private EntityManager entityManager;
 
   private static final String FECHA_FIRST_ESTADO = "fechaFirstEstado";
-  private static final String AUTORIZACION = "autorizacion";
 
   @Override
   public List<Long> findIds(Specification<Autorizacion> specification) {
@@ -106,18 +99,12 @@ public class CustomAutorizacionRepositoryImpl implements CustomAutorizacionRepos
 
     String[] selectionNames = new String[] { FECHA_FIRST_ESTADO };
 
-    Optional<Integer> selectionIndex = getIndexOrderBySelectionName(selectionNames, pageable.getSort(), cq);
-
-    if (selectionIndex.isPresent()) {
-      cq.orderBy(toOrdersByPosition(selectionIndex.get() + 1, pageable.getSort(), cb));
-    } else {
-      List<Order> orders = QueryUtils.toOrders(pageable.getSort(), root, cb);
-      cq.orderBy(orders);
-    }
+    // Order
+    cq.orderBy(CriteriaQueryUtils.toOrders(pageable.getSort(), root, cb, cq, selectionNames));
 
     // Número de registros totales para la paginación
     countQuery.where(listPredicatesCount.toArray(new Predicate[] {}));
-    cq.where(listPredicatesCount.toArray(new Predicate[] {}));
+    cq.where(listPredicates.toArray(new Predicate[] {}));
     Long count = entityManager.createQuery(countQuery).getSingleResult();
 
     TypedQuery<AutorizacionWithFirstEstado> query = entityManager.createQuery(cq);
@@ -146,36 +133,4 @@ public class CustomAutorizacionRepositoryImpl implements CustomAutorizacionRepos
     return queryFirstEstado;
   }
 
-  private List<Order> toOrdersByPosition(int position, Sort sort, CriteriaBuilder cb) {
-    List<Order> orders = new ArrayList<>();
-    if (sort.isUnsorted()) {
-      return orders;
-    }
-
-    sort.forEach(order -> {
-      Expression<Integer> orderByLiteral = cb.literal(position);
-      Order orderByPosition = cb.desc(orderByLiteral);
-      if (order.isAscending()) {
-        orderByPosition = cb.asc(orderByLiteral);
-      }
-      orders.add(orderByPosition);
-    });
-
-    return orders;
-  }
-
-  private Optional<Integer> getIndexOrderBySelectionName(String[] selectionNames, Sort sort,
-      CriteriaQuery<AutorizacionWithFirstEstado> cq) {
-    return Stream.of(selectionNames)
-        .filter(
-            selectionName -> !sort.filter(order -> order.getProperty().startsWith(selectionName)).isEmpty())
-        .findFirst()
-        .map(
-            selectionName -> IntStream.range(0, cq.getSelection().getCompoundSelectionItems().size())
-                .filter(
-                    index -> cq.getSelection().getCompoundSelectionItems().get(index).getAlias()
-                        .startsWith(selectionName))
-                .findFirst()
-                .getAsInt());
-  }
 }

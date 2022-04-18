@@ -4,6 +4,8 @@ import java.time.Instant;
 import java.time.temporal.ChronoField;
 import java.util.List;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+
 import org.crue.hercules.sgi.eti.config.SgiConfigProperties;
 import org.crue.hercules.sgi.eti.dto.ConvocatoriaReunionDatosGenerales;
 import org.crue.hercules.sgi.eti.exceptions.ConvocatoriaReunionNotFoundException;
@@ -14,6 +16,7 @@ import org.crue.hercules.sgi.eti.repository.ActaRepository;
 import org.crue.hercules.sgi.eti.repository.ConvocatoriaReunionRepository;
 import org.crue.hercules.sgi.eti.repository.EvaluacionRepository;
 import org.crue.hercules.sgi.eti.repository.specification.ConvocatoriaReunionSpecifications;
+import org.crue.hercules.sgi.eti.service.ComunicadosService;
 import org.crue.hercules.sgi.eti.service.ConvocatoriaReunionService;
 import org.crue.hercules.sgi.eti.util.Constantes;
 import org.crue.hercules.sgi.framework.rsql.SgiRSQLJPASupport;
@@ -38,14 +41,16 @@ public class ConvocatoriaReunionServiceImpl implements ConvocatoriaReunionServic
   private final ConvocatoriaReunionRepository repository;
   private final ActaRepository actaRepository;
   private final EvaluacionRepository evaluacionRepository;
+  private final ComunicadosService comunicadosService;
 
   public ConvocatoriaReunionServiceImpl(SgiConfigProperties sgiConfigProperties,
       ConvocatoriaReunionRepository repository, ActaRepository actaRepository,
-      EvaluacionRepository evaluacionRepository) {
+      EvaluacionRepository evaluacionRepository, ComunicadosService comunicadosService) {
     this.sgiConfigProperties = sgiConfigProperties;
     this.repository = repository;
     this.actaRepository = actaRepository;
     this.evaluacionRepository = evaluacionRepository;
+    this.comunicadosService = comunicadosService;
   }
 
   /**
@@ -275,5 +280,28 @@ public class ConvocatoriaReunionServiceImpl implements ConvocatoriaReunionServic
   public ConvocatoriaReunion findConvocatoriaUltimaEvaluacionTipoMemoria(Long idEvaluacion, Long idDictamen) {
     log.debug("findConvocatoriaUltimaEvaluacionTipoMemoria(Long idEvaluacion, idDictamen) - start - end");
     return repository.findConvocatoriaUltimaEvaluacionTipoMemoria(idEvaluacion, idDictamen);
+  }
+
+  /**
+   * Permite enviar el comunicado de {@link ConvocatoriaReunion}
+   *
+   * @param idConvocatoria Id del {@link ConvocatoriaReunion}.
+   * @return true si puede ser enviado / false si no puede ser enviado
+   */
+  @Override
+  @Transactional
+  public Boolean enviarComunicado(Long idConvocatoria) {
+    log.debug("enviarComunicado(Long idConvocatoria) - start");
+    ConvocatoriaReunion convocatoriaReunion = this.findById(idConvocatoria);
+    convocatoriaReunion.setFechaEnvio(Instant.now());
+    this.update(convocatoriaReunion);
+    try {
+      this.comunicadosService.enviarComunicadoConvocatoriaReunionEti(convocatoriaReunion);
+      log.debug("enviarComunicado(Long idConvocatoria) - end");
+      return true;
+    } catch (JsonProcessingException e) {
+      log.debug("Error - enviarComunicado(Long idConvocatoria)", e);
+      return false;
+    }
   }
 }

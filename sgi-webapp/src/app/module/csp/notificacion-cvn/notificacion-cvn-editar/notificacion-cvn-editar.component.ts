@@ -8,7 +8,6 @@ import { ActionComponent } from '@core/component/action.component';
 import { NGXLogger } from 'ngx-logger';
 import { NOTIFICACION_CVN_ROUTE_NAMES } from '../notificacion-cvn-route-names';
 import { NotificacionCvnActionService } from '../notificacion-cvn.action.service';
-import { HttpProblem } from '@core/errors/http-problem';
 
 @Component({
   selector: 'sgi-notificacion-cvn-editar',

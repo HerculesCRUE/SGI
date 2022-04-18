@@ -1,7 +1,7 @@
 import { AfterViewInit, Component, Input, OnDestroy, Optional } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { FormFragmentComponent, FragmentComponent as BaseFragmentComponent } from '@core/component/fragment.component';
-import { Problem } from '@core/errors/http-problem';
+import { SgiProblem } from '@core/errors/sgi-error';
 import { IFragment } from '@core/services/action-service';
 import { Subscription } from 'rxjs';
 
@@ -15,7 +15,7 @@ export class FragmentComponent implements AfterViewInit, OnDestroy {
   @Input()
   title: string;
 
-  problems: Problem[] = [];
+  problems: SgiProblem[] = [];
 
   private subscription: Subscription;
 

@@ -47,18 +47,14 @@ export interface IProyecto {
   clasificacionCVN: ClasificacionCVN;
   /** coordinado */
   coordinado: boolean;
+  /** excelencia */
+  excelencia: boolean;
   /** colaborativo */
   colaborativo: boolean;
   /** coordinadorExterno */
   coordinadorExterno: boolean;
-  /** timesheet */
-  timesheet: boolean;
   /** permitePaquetesTrabajo */
   permitePaquetesTrabajo: boolean;
-  /** costeHora */
-  costeHora: boolean;
-  /** tipoHorasAnuales */
-  tipoHorasAnuales: TipoHorasAnuales;
   /** iva */
   iva: IProyectoIVA;
   /** causaExencion */
@@ -88,18 +84,6 @@ export interface IProyecto {
   /** total Importe concedido */
   totalImporteConcedido: number;
 }
-
-export enum TipoHorasAnuales {
-  FIJO = 'FIJO',
-  REAL = 'REAL',
-  CATEGORIA = 'CATEGORIA'
-}
-
-export const TIPO_HORAS_ANUALES_MAP: Map<TipoHorasAnuales, string> = new Map([
-  [TipoHorasAnuales.FIJO, marker('csp.proyecto.tipo-horas-anuales.FIJO')],
-  [TipoHorasAnuales.REAL, marker('csp.proyecto.tipo-horas-anuales.REAL')],
-  [TipoHorasAnuales.CATEGORIA, marker('csp.proyecto.tipo-horas-anuales.CATEGORIA')]
-]);
 
 export enum CausaExencion {
   SUJETO_EXENTO = 'SUJETO_EXENTO',

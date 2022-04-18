@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { AbstractTablePaginationComponent } from '@core/component/abstract-table-pagination.component';
-import { HttpProblem } from '@core/errors/http-problem';
+import { SgiError } from '@core/errors/sgi-error';
 import { MSG_PARAMS } from '@core/i18n';
 import { IResultadoInformePatentibilidad } from '@core/models/pii/resultado-informe-patentabilidad';
 import { DialogService } from '@core/services/dialog.service';
@@ -82,7 +82,7 @@ export class ResultadoInformePatentabilidadListadoComponent
         },
         (error) => {
           this.logger.error(error);
-          if (error instanceof HttpProblem) {
+          if (error instanceof SgiError) {
             this.snackBarService.showError(error);
           }
           else {
@@ -112,7 +112,7 @@ export class ResultadoInformePatentabilidadListadoComponent
         },
         (error) => {
           this.logger.error(error);
-          if (error instanceof HttpProblem) {
+          if (error instanceof SgiError) {
             this.snackBarService.showError(error);
           }
           else {
@@ -247,7 +247,7 @@ export class ResultadoInformePatentabilidadListadoComponent
   }
 
   protected createFilter(): SgiRestFilter {
-    throw new Error('Method not implemented.');
+    return undefined;
   }
 
   protected createObservable(reset?: boolean): Observable<SgiRestListResult<IResultadoInformePatentibilidad>> {

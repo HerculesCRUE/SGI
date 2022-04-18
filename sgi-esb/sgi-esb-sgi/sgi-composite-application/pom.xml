@@ -4,16 +4,24 @@
   <parent>
     <groupId>org.crue.hercules.sgi.esb.sgi</groupId>
     <artifactId>sgi-esb-sgi</artifactId>
-    <version>0.0.7</version>
+    <version>0.0.8</version>
   </parent>
   <artifactId>sgi-composite-application</artifactId>
-  <version>0.0.7</version>
+  <version>0.0.8</version>
   <packaging>carbon/application</packaging>
   <name>sgi-esb-sgi-composite-application</name>
   <description>sgi-esb-sgi-composite-application</description>
   <properties>
     <org.crue.hercules.sgi.esb.sgi.endpoint_._sgicsp-endpoint>capp/EnterpriseServiceBus</org.crue.hercules.sgi.esb.sgi.endpoint_._sgicsp-endpoint>
     <org.crue.hercules.sgi.esb.sgi.api_._sgicsp-api>capp/EnterpriseServiceBus</org.crue.hercules.sgi.esb.sgi.api_._sgicsp-api>
+    <org.crue.hercules.sgi.esb.sgi.endpoint_._sgipii-endpoint>capp/EnterpriseServiceBus</org.crue.hercules.sgi.esb.sgi.endpoint_._sgipii-endpoint>
+    <org.crue.hercules.sgi.esb.sgi.api_._sgipii-api>capp/EnterpriseServiceBus</org.crue.hercules.sgi.esb.sgi.api_._sgipii-api>
+    <org.crue.hercules.sgi.esb.sgi.endpoint_._sgiprc-endpoint>capp/EnterpriseServiceBus</org.crue.hercules.sgi.esb.sgi.endpoint_._sgiprc-endpoint>
+    <org.crue.hercules.sgi.esb.sgi.api_._sgiprc-api>capp/EnterpriseServiceBus</org.crue.hercules.sgi.esb.sgi.api_._sgiprc-api>
+    <org.crue.hercules.sgi.esb.sgi.resource_._produccion-cientifica-response-converter-mediator>capp/EnterpriseIntegrator</org.crue.hercules.sgi.esb.sgi.resource_._produccion-cientifica-response-converter-mediator>
+    <org.crue.hercules.sgi.esb.sgi.resource_._produccion-cientifica-id-ref-transformer-mediator>capp/EnterpriseIntegrator</org.crue.hercules.sgi.esb.sgi.resource_._produccion-cientifica-id-ref-transformer-mediator>
+    <org.crue.hercules.sgi.esb.sgi.endpoint_._sgiusr-endpoint>capp/EnterpriseServiceBus</org.crue.hercules.sgi.esb.sgi.endpoint_._sgiusr-endpoint>
+    <org.crue.hercules.sgi.esb.sgi.api_._sgiusr-api>capp/EnterpriseServiceBus</org.crue.hercules.sgi.esb.sgi.api_._sgiusr-api>
     <artifact.types>jaggery/app=zip,synapse/priority-executor=xml,synapse/inbound-endpoint=xml,service/rule=aar,synapse/message-store=xml,event/stream=json,service/meta=xml,datasource/datasource=xml,synapse/proxy-service=xml,bpel/workflow=zip,synapse/sequence=xml,synapse/endpointTemplate=xml,carbon/application=car,wso2/gadget=dar,synapse/api=xml,synapse/event-source=xml,synapse/message-processors=xml,event/receiver=xml,lib/dataservice/validator=jar,synapse/template=xml,synapse/endpoint=xml,lib/carbon/ui=jar,lib/synapse/mediator=jar,event/publisher=xml,synapse/local-entry=xml,synapse/task=xml,webapp/jaxws=war,registry/resource=zip,synapse/configuration=xml,service/axis2=aar,synapse/lib=zip,synapse/sequenceTemplate=xml,event/execution-plan=siddhiql,service/dataservice=dbs,web/application=war,lib/library/bundle=jar</artifact.types>
     <timestamp>${maven.build.timestamp}</timestamp>
     <maven.build.timestamp.format>dd-MM-yyyy HH:mm</maven.build.timestamp.format>
@@ -22,13 +30,61 @@
     <dependency>
       <groupId>org.crue.hercules.sgi.esb.sgi.api</groupId>
       <artifactId>sgicsp-api</artifactId>
-      <version>0.0.7</version>
+      <version>0.0.8</version>
       <type>xml</type>
     </dependency>
     <dependency>
       <groupId>org.crue.hercules.sgi.esb.sgi.endpoint</groupId>
       <artifactId>sgicsp-endpoint</artifactId>
-      <version>0.0.7</version>
+      <version>0.0.8</version>
+      <type>xml</type>
+    </dependency>
+    <dependency>
+      <groupId>org.crue.hercules.sgi.esb.sgi.endpoint</groupId>
+      <artifactId>sgipii-endpoint</artifactId>
+      <version>0.0.8</version>
+      <type>xml</type>
+    </dependency>
+    <dependency>
+      <groupId>org.crue.hercules.sgi.esb.sgi.api</groupId>
+      <artifactId>sgipii-api</artifactId>
+      <version>0.0.8</version>
+      <type>xml</type>
+    </dependency>
+    <dependency>
+      <groupId>org.crue.hercules.sgi.esb.sgi.api</groupId>
+      <artifactId>sgiprc-api</artifactId>
+      <version>0.0.8</version>
+      <type>xml</type>
+    </dependency>
+    <dependency>
+      <groupId>org.crue.hercules.sgi.esb.sgi.endpoint</groupId>
+      <artifactId>sgiprc-endpoint</artifactId>
+      <version>0.0.8</version>
+      <type>xml</type>
+    </dependency>
+    <dependency>
+      <groupId>org.crue.hercules.sgi.esb.sgi.resource</groupId>
+      <artifactId>produccion-cientifica-response-converter-mediator</artifactId>
+      <version>0.0.8</version>
+      <type>zip</type>
+    </dependency>
+    <dependency>
+      <groupId>org.crue.hercules.sgi.esb.sgi.resource</groupId>
+      <artifactId>produccion-cientifica-id-ref-transformer-mediator</artifactId>
+      <version>0.0.8</version>
+      <type>zip</type>
+    </dependency>
+    <dependency>
+      <groupId>org.crue.hercules.sgi.esb.sgi.endpoint</groupId>
+      <artifactId>sgiusr-endpoint</artifactId>
+      <version>0.0.8</version>
+      <type>xml</type>
+    </dependency>
+    <dependency>
+      <groupId>org.crue.hercules.sgi.esb.sgi.api</groupId>
+      <artifactId>sgiusr-api</artifactId>
+      <version>0.0.8</version>
       <type>xml</type>
     </dependency>
   </dependencies>

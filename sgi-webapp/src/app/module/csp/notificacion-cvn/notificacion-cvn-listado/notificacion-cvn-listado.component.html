@@ -142,25 +142,32 @@
               <mat-icon>visibility</mat-icon>
             </a>
           </ng-container>
+          <ng-container *sgiHasAnyAuthorityForAnyUO="['CSP-AUT-V','CSP-AUT-E']">
+            <button *ngIf="notificacion.autorizacion.id" mat-icon-button color="primary"
+              matTooltip="{{'btn.view.entity' | translate:msgParamAutorizacionEntity}}"
+              [routerLink]="['../..', CSP_ROUTE_NAMES.AUTORIZACION, notificacion.autorizacion?.id?.toString()]">
+              <mat-icon>bookmark</mat-icon>
+            </button>
+          </ng-container>
           <ng-container *ngIf="!notificacion.autorizacion?.id">
             <button *sgiHasAuthorityForAnyUO="'CSP-CVPR-E'" mat-icon-button color="primary"
               matTooltip="{{'msg.asociar.entity' | translate:msgParamAutorizacionEntity}}"
               (click)="openModalAsociarAutorizacion(notificacion)">
-              <mat-icon>add_alert</mat-icon>
+              <mat-icon>bookmark_add</mat-icon>
             </button>
           </ng-container>
           <ng-container *ngIf="notificacion.autorizacion?.id">
             <button *sgiHasAuthorityForAnyUO="'CSP-CVPR-E'" mat-icon-button color="primary"
               matTooltip="{{'msg.desasociar.entity' | translate:msgParamAutorizacionEntity}}"
               (click)="desasociarAutorizacion(notificacion)">
-              <mat-icon>notifications_off</mat-icon>
+              <mat-icon>bookmark_remove</mat-icon>
             </button>
           </ng-container>
-          <ng-container *ngIf="notificacion.proyecto?.id">
-            <button *sgiHasAuthorityForAnyUO="'CSP-CVPR-E'" mat-icon-button color="primary"
-              matTooltip="{{'msg.desasociar.entity' | translate:msgParamProyectoEntity}}"
-              (click)="desasociarProyecto(notificacion)">
-              <mat-icon>work_off</mat-icon>
+          <ng-container *sgiHasAnyAuthorityForAnyUO="['CSP-PRO-V', 'CSP-PRO-E']">
+            <button *ngIf="notificacion.proyecto?.id" mat-icon-button color="primary"
+              matTooltip="{{'btn.view.entity' | translate:msgParamProyectoEntity}}"
+              [routerLink]="['../..', CSP_ROUTE_NAMES.PROYECTO, notificacion.proyecto?.id?.toString()]">
+              <mat-icon>work</mat-icon>
             </button>
           </ng-container>
           <ng-container *ngIf="!notificacion.proyecto?.id">
@@ -170,22 +177,17 @@
               <mat-icon>next_week</mat-icon>
             </button>
           </ng-container>
-
-          <ng-container *sgiHasAnyAuthorityForAnyUO="['CSP-PRO-V', 'CSP-PRO-E']">
-            <button *ngIf="notificacion.proyecto?.id" mat-icon-button color="primary"
-              matTooltip="{{'btn.view.entity' | translate:msgParamProyectoEntity}}"
-              [routerLink]="['../..', CSP_ROUTE_NAMES.PROYECTO, notificacion.proyecto?.id?.toString()]">
-              <mat-icon>work</mat-icon>
+          <ng-container *ngIf="notificacion.proyecto?.id">
+            <button *sgiHasAuthorityForAnyUO="'CSP-CVPR-E'" mat-icon-button color="primary"
+              matTooltip="{{'msg.desasociar.entity' | translate:msgParamProyectoEntity}}"
+              (click)="desasociarProyecto(notificacion)">
+              <mat-icon>work_off</mat-icon>
             </button>
           </ng-container>
 
-          <ng-container *sgiHasAnyAuthorityForAnyUO="['CSP-AUT-V','CSP-AUT-E']">
-            <button *ngIf="notificacion.autorizacion.id" mat-icon-button color="primary"
-              matTooltip="{{'btn.view.entity' | translate:msgParamAutorizacionEntity}}"
-              [routerLink]="['../..', CSP_ROUTE_NAMES.AUTORIZACION, notificacion.autorizacion?.id?.toString()]">
-              <mat-icon>verified_user</mat-icon>
-            </button>
-          </ng-container>
+
+
+
         </td>
       </ng-container>
       <tr mat-header-row *matHeaderRowDef="columnas"></tr>

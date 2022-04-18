@@ -1,53 +1,56 @@
 
 package org.crue.hercules.sgi.prc.integration;
 
-import java.util.Collections;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
+import java.net.URI;
 import java.util.List;
+import java.util.stream.IntStream;
 
 import org.assertj.core.api.Assertions;
+import org.crue.hercules.sgi.prc.dto.EpigrafeCVNOutput;
 import org.crue.hercules.sgi.prc.dto.ProduccionCientificaApiCreateInput;
 import org.crue.hercules.sgi.prc.dto.ProduccionCientificaApiFullOutput;
 import org.crue.hercules.sgi.prc.dto.ProduccionCientificaApiInput;
+import org.crue.hercules.sgi.prc.enums.CodigoCVN;
 import org.crue.hercules.sgi.prc.model.CampoProduccionCientifica;
-import org.crue.hercules.sgi.prc.model.CampoProduccionCientifica.CodigoCVN;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.HttpEntity;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.jdbc.Sql;
+import org.springframework.web.util.UriComponentsBuilder;
 
 /**
  * Test de integracion de ProduccionCientifica.
  */
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class ProduccionCientificaApiIT extends ProduccionCientificaBaseIT {
+class ProduccionCientificaApiIT extends ProduccionCientificaBaseIT {
 
-  private HttpEntity<ProduccionCientificaApiInput> buildRequest(HttpHeaders headers,
-      ProduccionCientificaApiInput entity)
-      throws Exception {
-    headers = (headers != null ? headers : new HttpHeaders());
-    headers.setContentType(MediaType.APPLICATION_JSON);
-    headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
-    headers.set("Authorization",
-        String.format("bearer %s",
-            tokenBuilder.buildToken("user", "AUTH")));
-
-    HttpEntity<ProduccionCientificaApiInput> request = new HttpEntity<>(entity, headers);
-    return request;
-
+  // @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts =
+  // "classpath:cleanup.sql")
+  // @Test
+  void create_ReturnsProduccionCientifica_load_test() throws Exception {
+    ProduccionCientificaApiCreateInput produccionCientifica = generarMockProduccionCientificaApiInput();
+    String idRef = produccionCientifica.getIdRef();
+    IntStream.range(0, 40000)
+        .forEach(i -> {
+          produccionCientifica.setIdRef(idRef + "_" + i);
+          try {
+            createProduccionCientifica(produccionCientifica);
+          } catch (Exception e) {
+            e.printStackTrace();
+          }
+        });
   }
 
-  @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
-  @Test
-  void create_ReturnsProduccionCientifica() throws Exception {
-    ProduccionCientificaApiCreateInput produccionCientifica = generarMockProduccionCientificaApiInput();
-
+  private void createProduccionCientifica(ProduccionCientificaApiCreateInput produccionCientifica) throws Exception {
     final ResponseEntity<ProduccionCientificaApiFullOutput> response = restTemplate.exchange(CONTROLLER_BASE_PATH_API,
-        HttpMethod.POST, buildRequest(null, produccionCientifica), ProduccionCientificaApiFullOutput.class);
+        HttpMethod.POST,
+        buildRequestProduccionCientificaApi(null, produccionCientifica), ProduccionCientificaApiFullOutput.class);
 
     Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
 
@@ -60,14 +63,16 @@ public class ProduccionCientificaApiIT extends ProduccionCientificaBaseIT {
         .getId();
     List<CampoProduccionCientifica> campos = getCampoProduccionCientificaRepository()
         .findAllByProduccionCientificaId(produccionCientificaId);
-    Assertions.assertThat(campos).as("number of campos created").hasSize(3);
+    int numCampos = campos.size();
+    Assertions.assertThat(numCampos).as("number of campos created").isEqualTo(3);
 
-    campos.stream()
-        .forEach(
-            campo -> Assertions
-                .assertThat(getValorCampoRepository().findAllByCampoProduccionCientificaId(campo.getId()))
-                .as(String.format("number of valores created of campo [%s]", campo.getCodigoCVN().getInternValue()))
-                .hasSize(2));
+    campos.stream().forEach(campo -> {
+      int numElements = getValorCampoRepository().findAllByCampoProduccionCientificaId(campo.getId()).size();
+      Assertions
+          .assertThat(numElements)
+          .as(String.format("number of valores created of campo [%s]", campo.getCodigoCVN().getCode()))
+          .isEqualTo(2);
+    });
     Assertions.assertThat(getAutorRepository().findAllByProduccionCientificaId(produccionCientificaId))
         .as("number of autores created").hasSize(3);
     Assertions.assertThat(getIndiceImpactoRepository().findAllByProduccionCientificaId(produccionCientificaId))
@@ -76,6 +81,15 @@ public class ProduccionCientificaApiIT extends ProduccionCientificaBaseIT {
         .as("number of acreditaciones created").hasSize(3);
     Assertions.assertThat(getProyectoRepository().findAllByProduccionCientificaId(produccionCientificaId))
         .as("number of proyectos created").hasSize(3);
+  }
+
+  @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
+  @Test
+  void create_ReturnsProduccionCientifica() throws Exception {
+    ProduccionCientificaApiCreateInput produccionCientifica = generarMockProduccionCientificaApiInput();
+
+    createProduccionCientifica(produccionCientifica);
+
   }
 
   @Test
@@ -233,36 +247,17 @@ public class ProduccionCientificaApiIT extends ProduccionCientificaBaseIT {
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
   void create_prc_publicacion_libro_from_json() throws Exception {
-    ProduccionCientificaApiCreateInput produccionCientifica = getProduccionCientificaApiCreateInputFromJson(
-        "prc/publicacion-libro.json");
 
-    final ResponseEntity<ProduccionCientificaApiFullOutput> response = restTemplate.exchange(CONTROLLER_BASE_PATH_API,
-        HttpMethod.POST, buildRequest(null, produccionCientifica), ProduccionCientificaApiFullOutput.class);
+    String produccionCientificaJson = "publicacion-libro.json";
+    Integer numCampos = 18;
+    Integer numAutores = 3;
+    Integer numIndicesImpacto = 2;
 
-    Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
+    Long produccionCientificaId = createProduccionCientificaFromJson(produccionCientificaJson, numCampos, numAutores,
+        numIndicesImpacto);
+    assertNotNull(produccionCientificaId);
 
-    ProduccionCientificaApiFullOutput produccionCientificaCreado = response.getBody();
-    Assertions.assertThat(produccionCientificaCreado.getIdRef()).as("getIdRef()")
-        .isEqualTo(produccionCientifica.getIdRef());
-
-    Long produccionCientificaId = getProduccionCientificaRepository()
-        .findByProduccionCientificaRefAndConvocatoriaBaremacionIdIsNull(produccionCientificaCreado.getIdRef()).get()
-        .getId();
-    List<CampoProduccionCientifica> campos = getCampoProduccionCientificaRepository()
-        .findAllByProduccionCientificaId(produccionCientificaId);
-    Assertions.assertThat(campos).as("number of campos created").hasSize(18);
-
-    // checkValueByCodigoCVN(produccionCientificaId, CodigoCVN.E060_010_010_140,
-    // "2020-02-10T00:00:00Z");
-
-    Assertions.assertThat(getAutorRepository().findAllByProduccionCientificaId(produccionCientificaId))
-        .as("number of autores created").hasSize(3);
-    Assertions.assertThat(getIndiceImpactoRepository().findAllByProduccionCientificaId(produccionCientificaId))
-        .as("number of indicesImpacto created").hasSize(2);
-    Assertions.assertThat(getAcreditacionRepository().findAllByProduccionCientificaId(produccionCientificaId))
-        .as("number of acreditaciones created").hasSize(1);
-    Assertions.assertThat(getProyectoRepository().findAllByProduccionCientificaId(produccionCientificaId))
-        .as("number of proyectos created").hasSize(1);
+    checkNumAcreditacionesAndProyectosCreated(produccionCientificaId, 1, 1);
   }
 
   @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = {
@@ -274,37 +269,18 @@ public class ProduccionCientificaApiIT extends ProduccionCientificaBaseIT {
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
   void create_prc_publicacion_articulo_from_json() throws Exception {
-    ProduccionCientificaApiCreateInput produccionCientifica = getProduccionCientificaApiCreateInputFromJson(
-        "prc/publicacion-articulo.json");
+    String produccionCientificaJson = "publicacion-articulo.json";
+    Integer numCampos = 18;
+    Integer numAutores = 3;
+    Integer numIndicesImpacto = 2;
 
-    final ResponseEntity<ProduccionCientificaApiFullOutput> response = restTemplate.exchange(CONTROLLER_BASE_PATH_API,
-        HttpMethod.POST, buildRequest(null, produccionCientifica), ProduccionCientificaApiFullOutput.class);
+    Long produccionCientificaId = createProduccionCientificaFromJson(produccionCientificaJson, numCampos, numAutores,
+        numIndicesImpacto);
+    assertNotNull(produccionCientificaId);
 
-    Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
-
-    ProduccionCientificaApiFullOutput produccionCientificaCreado = response.getBody();
-    Assertions.assertThat(produccionCientificaCreado.getIdRef()).as("getIdRef()")
-        .isEqualTo(produccionCientifica.getIdRef());
-
-    Long produccionCientificaId = getProduccionCientificaRepository()
-        .findByProduccionCientificaRefAndConvocatoriaBaremacionIdIsNull(produccionCientificaCreado.getIdRef()).get()
-        .getId();
-    List<CampoProduccionCientifica> campos = getCampoProduccionCientificaRepository()
-        .findAllByProduccionCientificaId(produccionCientificaId);
-    Assertions.assertThat(campos).as("number of campos created").hasSize(18);
-
-    // checkValueByCodigoCVN(produccionCientificaId, CodigoCVN.E060_010_010_140,
-    // "2019-12-12T00:00:00Z");
     checkValueByCodigoCVN(produccionCientificaId, CodigoCVN.INDICE_NORMALIZADO, "000000000000001.50");
 
-    Assertions.assertThat(getAutorRepository().findAllByProduccionCientificaId(produccionCientificaId))
-        .as("number of autores created").hasSize(3);
-    Assertions.assertThat(getIndiceImpactoRepository().findAllByProduccionCientificaId(produccionCientificaId))
-        .as("number of indicesImpacto created").hasSize(2);
-    Assertions.assertThat(getAcreditacionRepository().findAllByProduccionCientificaId(produccionCientificaId))
-        .as("number of acreditaciones created").hasSize(1);
-    Assertions.assertThat(getProyectoRepository().findAllByProduccionCientificaId(produccionCientificaId))
-        .as("number of proyectos created").hasSize(1);
+    checkNumAcreditacionesAndProyectosCreated(produccionCientificaId, 1, 1);
   }
 
   @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = {
@@ -316,35 +292,18 @@ public class ProduccionCientificaApiIT extends ProduccionCientificaBaseIT {
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
   void create_prc_congreso_from_json() throws Exception {
-    ProduccionCientificaApiCreateInput produccionCientifica = getProduccionCientificaApiCreateInputFromJson(
-        "prc/congreso.json");
+    String produccionCientificaJson = "congreso.json";
+    Integer numCampos = 11;
+    Integer numAutores = 3;
+    Integer numIndicesImpacto = 2;
 
-    final ResponseEntity<ProduccionCientificaApiFullOutput> response = restTemplate.exchange(CONTROLLER_BASE_PATH_API,
-        HttpMethod.POST, buildRequest(null, produccionCientifica), ProduccionCientificaApiFullOutput.class);
+    Long produccionCientificaId = createProduccionCientificaFromJson(produccionCientificaJson, numCampos, numAutores,
+        numIndicesImpacto);
+    assertNotNull(produccionCientificaId);
 
-    Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
+    checkValueByCodigoCVN(produccionCientificaId, CodigoCVN.E060_010_020_080, "010");
 
-    ProduccionCientificaApiFullOutput produccionCientificaCreado = response.getBody();
-    Assertions.assertThat(produccionCientificaCreado.getIdRef()).as("getIdRef()")
-        .isEqualTo(produccionCientifica.getIdRef());
-
-    Long produccionCientificaId = getProduccionCientificaRepository()
-        .findByProduccionCientificaRefAndConvocatoriaBaremacionIdIsNull(produccionCientificaCreado.getIdRef()).get()
-        .getId();
-    List<CampoProduccionCientifica> campos = getCampoProduccionCientificaRepository()
-        .findAllByProduccionCientificaId(produccionCientificaId);
-    Assertions.assertThat(campos).as("number of campos created").hasSize(11);
-
-    checkValueByCodigoCVN(produccionCientificaId, CodigoCVN.E060_010_020_080, "AMBITO.010");
-
-    Assertions.assertThat(getAutorRepository().findAllByProduccionCientificaId(produccionCientificaId))
-        .as("number of autores created").hasSize(3);
-    Assertions.assertThat(getIndiceImpactoRepository().findAllByProduccionCientificaId(produccionCientificaId))
-        .as("number of indicesImpacto created").hasSize(2);
-    Assertions.assertThat(getAcreditacionRepository().findAllByProduccionCientificaId(produccionCientificaId))
-        .as("number of acreditaciones created").hasSize(1);
-    Assertions.assertThat(getProyectoRepository().findAllByProduccionCientificaId(produccionCientificaId))
-        .as("number of proyectos created").hasSize(1);
+    checkNumAcreditacionesAndProyectosCreated(produccionCientificaId, 1, 1);
   }
 
   @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = {
@@ -356,35 +315,18 @@ public class ProduccionCientificaApiIT extends ProduccionCientificaBaseIT {
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
   void create_prc_comite_editorial_from_json() throws Exception {
-    ProduccionCientificaApiCreateInput produccionCientifica = getProduccionCientificaApiCreateInputFromJson(
-        "prc/comite-editorial.json");
+    String produccionCientificaJson = "comite-editorial.json";
+    Integer numCampos = 4;
+    Integer numAutores = 3;
+    Integer numIndicesImpacto = 2;
 
-    final ResponseEntity<ProduccionCientificaApiFullOutput> response = restTemplate.exchange(CONTROLLER_BASE_PATH_API,
-        HttpMethod.POST, buildRequest(null, produccionCientifica), ProduccionCientificaApiFullOutput.class);
+    Long produccionCientificaId = createProduccionCientificaFromJson(produccionCientificaJson, numCampos, numAutores,
+        numIndicesImpacto);
+    assertNotNull(produccionCientificaId);
 
-    Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
+    checkValueByCodigoCVN(produccionCientificaId, CodigoCVN.E060_030_030_020, "724");
 
-    ProduccionCientificaApiFullOutput produccionCientificaCreado = response.getBody();
-    Assertions.assertThat(produccionCientificaCreado.getIdRef()).as("getIdRef()")
-        .isEqualTo(produccionCientifica.getIdRef());
-
-    Long produccionCientificaId = getProduccionCientificaRepository()
-        .findByProduccionCientificaRefAndConvocatoriaBaremacionIdIsNull(produccionCientificaCreado.getIdRef()).get()
-        .getId();
-    List<CampoProduccionCientifica> campos = getCampoProduccionCientificaRepository()
-        .findAllByProduccionCientificaId(produccionCientificaId);
-    Assertions.assertThat(campos).as("number of campos created").hasSize(4);
-
-    checkValueByCodigoCVN(produccionCientificaId, CodigoCVN.E060_030_030_020, "PAIS.724");
-
-    Assertions.assertThat(getAutorRepository().findAllByProduccionCientificaId(produccionCientificaId))
-        .as("number of autores created").hasSize(3);
-    Assertions.assertThat(getIndiceImpactoRepository().findAllByProduccionCientificaId(produccionCientificaId))
-        .as("number of indicesImpacto created").hasSize(2);
-    Assertions.assertThat(getAcreditacionRepository().findAllByProduccionCientificaId(produccionCientificaId))
-        .as("number of acreditaciones created").hasSize(1);
-    Assertions.assertThat(getProyectoRepository().findAllByProduccionCientificaId(produccionCientificaId))
-        .as("number of proyectos created").hasSize(1);
+    checkNumAcreditacionesAndProyectosCreated(produccionCientificaId, 1, 1);
   }
 
   @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = {
@@ -396,41 +338,22 @@ public class ProduccionCientificaApiIT extends ProduccionCientificaBaseIT {
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
   void create_prc_direccion_tesis_from_json() throws Exception {
-    ProduccionCientificaApiCreateInput produccionCientifica = getProduccionCientificaApiCreateInputFromJson(
-        "prc/direccion-tesis.json");
 
-    final ResponseEntity<ProduccionCientificaApiFullOutput> response = restTemplate.exchange(CONTROLLER_BASE_PATH_API,
-        HttpMethod.POST, buildRequest(null, produccionCientifica), ProduccionCientificaApiFullOutput.class);
+    String produccionCientificaJson = "direccion-tesis.json";
+    Integer numCampos = 9;
+    Integer numAutores = 2;
+    Integer numIndicesImpacto = 0;
 
-    Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
+    Long produccionCientificaId = createProduccionCientificaFromJson(produccionCientificaJson, numCampos, numAutores,
+        numIndicesImpacto);
+    assertNotNull(produccionCientificaId);
 
-    ProduccionCientificaApiFullOutput produccionCientificaCreado = response.getBody();
-    Assertions.assertThat(produccionCientificaCreado.getIdRef()).as("getIdRef()")
-        .isEqualTo(produccionCientifica.getIdRef());
-
-    Long produccionCientificaId = getProduccionCientificaRepository()
-        .findByProduccionCientificaRefAndConvocatoriaBaremacionIdIsNull(produccionCientificaCreado.getIdRef()).get()
-        .getId();
-    List<CampoProduccionCientifica> campos = getCampoProduccionCientificaRepository()
-        .findAllByProduccionCientificaId(produccionCientificaId);
-    Assertions.assertThat(campos).as("number of campos created").hasSize(10);
-
-    // checkValueByCodigoCVN(produccionCientificaId, CodigoCVN.E030_040_000_140,
-    // "2021-02-17T00:00:00Z");
     checkValueByCodigoCVN(produccionCientificaId, CodigoCVN.E030_040_000_170, "true");
     checkValueByCodigoCVN(produccionCientificaId, CodigoCVN.E030_040_000_190, "false");
-    checkValueByCodigoCVN(produccionCientificaId, CodigoCVN.E030_040_000_160, "");
     checkValueByCodigoCVN(produccionCientificaId, CodigoCVN.E030_040_000_010, "067");
     checkValueByCodigoCVN(produccionCientificaId, CodigoCVN.MENCION_INDUSTRIAL, "true");
 
-    Assertions.assertThat(getAutorRepository().findAllByProduccionCientificaId(produccionCientificaId))
-        .as("number of autores created").hasSize(2);
-    Assertions.assertThat(getIndiceImpactoRepository().findAllByProduccionCientificaId(produccionCientificaId))
-        .as("number of indicesImpacto created").isEmpty();
-    Assertions.assertThat(getAcreditacionRepository().findAllByProduccionCientificaId(produccionCientificaId))
-        .as("number of acreditaciones created").hasSize(1);
-    Assertions.assertThat(getProyectoRepository().findAllByProduccionCientificaId(produccionCientificaId))
-        .as("number of proyectos created").hasSize(1);
+    checkNumAcreditacionesAndProyectosCreated(produccionCientificaId, 1, 1);
   }
 
   @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = {
@@ -442,37 +365,21 @@ public class ProduccionCientificaApiIT extends ProduccionCientificaBaseIT {
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
   void create_prc_obra_artistica_from_json() throws Exception {
-    ProduccionCientificaApiCreateInput produccionCientifica = getProduccionCientificaApiCreateInputFromJson(
-        "prc/obra-artistica.json");
 
-    final ResponseEntity<ProduccionCientificaApiFullOutput> response = restTemplate.exchange(CONTROLLER_BASE_PATH_API,
-        HttpMethod.POST, buildRequest(null, produccionCientifica), ProduccionCientificaApiFullOutput.class);
+    String produccionCientificaJson = "obra-artistica.json";
+    Integer numCampos = 10;
+    Integer numAutores = 3;
+    Integer numIndicesImpacto = 0;
 
-    Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
-
-    ProduccionCientificaApiFullOutput produccionCientificaCreado = response.getBody();
-    Assertions.assertThat(produccionCientificaCreado.getIdRef()).as("getIdRef()")
-        .isEqualTo(produccionCientifica.getIdRef());
-
-    Long produccionCientificaId = getProduccionCientificaRepository()
-        .findByProduccionCientificaRefAndConvocatoriaBaremacionIdIsNull(produccionCientificaCreado.getIdRef()).get()
-        .getId();
-    List<CampoProduccionCientifica> campos = getCampoProduccionCientificaRepository()
-        .findAllByProduccionCientificaId(produccionCientificaId);
-    Assertions.assertThat(campos).as("number of campos created").hasSize(10);
+    Long produccionCientificaId = createProduccionCientificaFromJson(produccionCientificaJson, numCampos, numAutores,
+        numIndicesImpacto);
+    assertNotNull(produccionCientificaId);
 
     checkValueByCodigoCVN(produccionCientificaId, CodigoCVN.TIPO_OBRA, "EXPOSICION");
-    checkValueByCodigoCVN(produccionCientificaId, CodigoCVN.E050_020_030_040, "PAIS.724");
-    checkValueByCodigoCVN(produccionCientificaId, CodigoCVN.E050_020_030_050, "COMUNIDAD.ES12");
+    checkValueByCodigoCVN(produccionCientificaId, CodigoCVN.E050_020_030_040, "724");
+    checkValueByCodigoCVN(produccionCientificaId, CodigoCVN.E050_020_030_050, "ES12");
 
-    Assertions.assertThat(getAutorRepository().findAllByProduccionCientificaId(produccionCientificaId))
-        .as("number of autores created").hasSize(3);
-    Assertions.assertThat(getIndiceImpactoRepository().findAllByProduccionCientificaId(produccionCientificaId))
-        .as("number of indicesImpacto created").isEmpty();
-    Assertions.assertThat(getAcreditacionRepository().findAllByProduccionCientificaId(produccionCientificaId))
-        .as("number of acreditaciones created").hasSize(1);
-    Assertions.assertThat(getProyectoRepository().findAllByProduccionCientificaId(produccionCientificaId))
-        .as("number of proyectos created").hasSize(1);
+    checkNumAcreditacionesAndProyectosCreated(produccionCientificaId, 1, 1);
   }
 
   @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = {
@@ -484,43 +391,26 @@ public class ProduccionCientificaApiIT extends ProduccionCientificaBaseIT {
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
   void create_prc_organizacion_actividad_from_json() throws Exception {
-    ProduccionCientificaApiCreateInput produccionCientifica = getProduccionCientificaApiCreateInputFromJson(
-        "prc/organizacion-actividad.json");
+    String produccionCientificaJson = "organizacion-actividad.json";
+    Integer numCampos = 5;
+    Integer numAutores = 1;
+    Integer numIndicesImpacto = 0;
 
-    final ResponseEntity<ProduccionCientificaApiFullOutput> response = restTemplate.exchange(CONTROLLER_BASE_PATH_API,
-        HttpMethod.POST, buildRequest(null, produccionCientifica), ProduccionCientificaApiFullOutput.class);
+    Long produccionCientificaId = createProduccionCientificaFromJson(produccionCientificaJson, numCampos, numAutores,
+        numIndicesImpacto);
+    assertNotNull(produccionCientificaId);
 
-    Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
-
-    ProduccionCientificaApiFullOutput produccionCientificaCreado = response.getBody();
-    Assertions.assertThat(produccionCientificaCreado.getIdRef()).as("getIdRef()")
-        .isEqualTo(produccionCientifica.getIdRef());
-
-    Long produccionCientificaId = getProduccionCientificaRepository()
-        .findByProduccionCientificaRefAndConvocatoriaBaremacionIdIsNull(produccionCientificaCreado.getIdRef()).get()
-        .getId();
-    List<CampoProduccionCientifica> campos = getCampoProduccionCientificaRepository()
-        .findAllByProduccionCientificaId(produccionCientificaId);
-    Assertions.assertThat(campos).as("number of campos created").hasSize(5);
-
-    checkValueByCodigoCVN(produccionCientificaId, CodigoCVN.E060_020_030_030, "PAIS.724");
+    checkValueByCodigoCVN(produccionCientificaId, CodigoCVN.E060_020_030_030, "724");
     checkValueByCodigoCVN(produccionCientificaId, CodigoCVN.E060_020_030_110, "ORGANIZATIVO_COMITE");
 
-    Assertions.assertThat(getAutorRepository().findAllByProduccionCientificaId(produccionCientificaId))
-        .as("number of autores created").hasSize(1);
-    Assertions.assertThat(getIndiceImpactoRepository().findAllByProduccionCientificaId(produccionCientificaId))
-        .as("number of indicesImpacto created").isEmpty();
-    Assertions.assertThat(getAcreditacionRepository().findAllByProduccionCientificaId(produccionCientificaId))
-        .as("number of acreditaciones created").hasSize(1);
-    Assertions.assertThat(getProyectoRepository().findAllByProduccionCientificaId(produccionCientificaId))
-        .as("number of proyectos created").hasSize(1);
+    checkNumAcreditacionesAndProyectosCreated(produccionCientificaId, 1, 1);
   }
 
   private void callCreateAndValidateResponse(ProduccionCientificaApiInput produccionCientifica, HttpStatus httpStatus)
       throws Exception {
     final ResponseEntity<ProduccionCientificaApiFullOutput> response = restTemplate.exchange(
         CONTROLLER_BASE_PATH_API,
-        HttpMethod.POST, buildRequest(null, produccionCientifica),
+        HttpMethod.POST, buildRequestProduccionCientificaApi(null, produccionCientifica),
         ProduccionCientificaApiFullOutput.class);
 
     Assertions.assertThat(response.getStatusCode()).isEqualTo(httpStatus);
@@ -543,7 +433,7 @@ public class ProduccionCientificaApiIT extends ProduccionCientificaBaseIT {
     // when: exists by produccionCientificaRef
     final ResponseEntity<Void> response = restTemplate.exchange(
         CONTROLLER_BASE_PATH_API + PATH_PARAMETER_PRODUCCION_CIENTIFICA_REF,
-        HttpMethod.DELETE, buildRequest(null, null), Void.class, produccionCientificaRef);
+        HttpMethod.DELETE, buildRequestProduccionCientificaApi(null, null), Void.class, produccionCientificaRef);
     // then: 204 NO CONTENT
     Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
   }
@@ -555,8 +445,43 @@ public class ProduccionCientificaApiIT extends ProduccionCientificaBaseIT {
     // when: exists by produccionCientificaRef
     final ResponseEntity<Void> response = restTemplate.exchange(
         CONTROLLER_BASE_PATH_API + PATH_PARAMETER_PRODUCCION_CIENTIFICA_REF,
-        HttpMethod.DELETE, buildRequest(null, null), Void.class, produccionCientificaRef);
+        HttpMethod.DELETE, buildRequestProduccionCientificaApi(null, null), Void.class, produccionCientificaRef);
     // then: 204 NO CONTENT
     Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+  }
+
+  @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = {
+    // @formatter:off
+      "classpath:scripts/produccion_cientifica.sql",
+      "classpath:scripts/configuracion_baremo.sql",
+      "classpath:scripts/configuracion_campo.sql",
+      "classpath:scripts/convocatoria_baremacion.sql",
+      "classpath:scripts/baremo.sql",
+    // @formatter:on
+  })
+  @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
+  @Test
+  void findListadoEpigrafes()
+      throws Exception {
+    final Long produccionCientificaId = 1L;
+    // first page, 3 elements per page sorted
+    HttpHeaders headers = new HttpHeaders();
+
+    // when: find Proyecto
+    URI uri = UriComponentsBuilder
+        .fromUriString(CONTROLLER_BASE_PATH_API + "/epigrafes")
+        .buildAndExpand(produccionCientificaId).toUri();
+
+    final ResponseEntity<List<EpigrafeCVNOutput>> response = restTemplate.exchange(uri,
+        HttpMethod.GET,
+        buildRequestProduccionCientificaApi(headers, null),
+        new ParameterizedTypeReference<List<EpigrafeCVNOutput>>() {
+        });
+
+    // given:
+    Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+
+    final List<EpigrafeCVNOutput> responseData = response.getBody();
+    Assertions.assertThat(responseData).isNotNull();
   }
 }

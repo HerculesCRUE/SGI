@@ -1,4 +1,12 @@
-export enum ProblemType {
+import { Level, SgiError, SgiProblem } from './sgi-error';
+
+export interface SgiHttpProblem extends SgiProblem {
+  readonly type: string;
+  readonly status: number;
+  readonly instance: string;
+}
+
+export enum HttpProblemType {
   ACCESS_DENIED = 'urn:problem-type:access-denied',
   AUTHENTICACION = 'urn:problem-type:authentication',
   BAD_REQUEST = 'urn:problem-type:bad-request',
@@ -11,75 +19,60 @@ export enum ProblemType {
   NOT_FOUND = 'urn:problem-type:not-found',
   PERCENTAGE_IVA_ZERO = 'urn:problem-type:percentage-iva-zero',
   TEAM_MEMBER_OVERLAP = 'urn:problem-type:team-member-overlap',
+  TOO_MANY_RESULTS = 'urn:problem-type:too-many-results',
   TYPE_MISMATCH = 'urn:problem-type:type-mismatch',
   UNKNOWN = 'urn:problem-type:unknown',
   VALIDATION = 'urn:problem-type:validation'
 }
 
-export interface Problem {
+export class SgiHttpError extends SgiError implements SgiHttpProblem {
   readonly type: string;
-  readonly title: string;
   readonly status: number;
-  readonly detail: string;
   readonly instance: string;
-  managed: boolean;
-  [name: string]: any;
-}
 
-export class HttpProblem extends Error implements Problem {
-  readonly type: string;
-  readonly title: string;
-  readonly status: number;
-  readonly detail: string;
-  readonly instance: string;
-  managed = false;
-
-  constructor(responseBody: Problem) {
-    super(responseBody.detail);
-    this.name = responseBody.title;
+  constructor(responseBody: SgiHttpProblem, level: Level = 'error') {
+    super(responseBody.title, responseBody.detail, level);
 
     Object.setPrototypeOf(this, new.target.prototype);
 
     this.type = responseBody.type;
-    this.title = responseBody.title;
     this.status = responseBody.status;
-    this.detail = responseBody.detail;
     this.instance = responseBody.instance;
   }
 }
 
-export class AccessDeniedHttpProblem extends HttpProblem {
-  constructor(responseBody: Problem) {
+export class AccessDeniedHttpError extends SgiHttpError {
+  constructor(responseBody: SgiHttpProblem) {
     super(responseBody);
     Object.setPrototypeOf(this, new.target.prototype);
   }
 }
 
-export class AuthenticationHttpProblem extends HttpProblem {
-  constructor(responseBody: Problem) {
+export class AuthenticationHttpError extends SgiHttpError {
+  constructor(responseBody: SgiHttpProblem) {
     super(responseBody);
     Object.setPrototypeOf(this, new.target.prototype);
   }
 }
 
-export class BadRequestHttpProblem extends HttpProblem {
-  constructor(responseBody: Problem) {
+export class BadRequestHttpError extends SgiHttpError {
+  constructor(responseBody: SgiHttpProblem) {
     super(responseBody);
     Object.setPrototypeOf(this, new.target.prototype);
   }
 }
 
-export class IllegalArgumentHttpProblem extends HttpProblem {
-  constructor(responseBody: Problem) {
+export class IllegalArgumentHttpError extends SgiHttpError {
+  constructor(responseBody: SgiHttpProblem) {
     super(responseBody);
     Object.setPrototypeOf(this, new.target.prototype);
   }
 }
 
-export class MethodNotAllowedHttpProblem extends HttpProblem {
+export class MethodNotAllowedHttpError extends SgiHttpError {
   readonly supported: string[];
 
-  constructor(responseBody: Problem) {
+  constructor(responseBody: SgiHttpProblem) {
     super(responseBody);
     Object.setPrototypeOf(this, new.target.prototype);
 
@@ -87,17 +80,17 @@ export class MethodNotAllowedHttpProblem extends HttpProblem {
   }
 }
 
-export class MissingMainResearcherHttpProblem extends HttpProblem {
-  constructor(responseBody: Problem) {
+export class MissingMainResearcherHttpError extends SgiHttpError {
+  constructor(responseBody: SgiHttpProblem) {
     super(responseBody);
     Object.setPrototypeOf(this, new.target.prototype);
   }
 }
 
-export class MissingPathVariableHttpProblem extends HttpProblem {
+export class MissingPathVariableHttpError extends SgiHttpError {
   readonly variableName: string;
 
-  constructor(responseBody: Problem) {
+  constructor(responseBody: SgiHttpProblem) {
     super(responseBody);
     Object.setPrototypeOf(this, new.target.prototype);
 
@@ -105,11 +98,11 @@ export class MissingPathVariableHttpProblem extends HttpProblem {
   }
 }
 
-export class MissingRequestParameterHttpProblem extends HttpProblem {
+export class MissingRequestParameterHttpError extends SgiHttpError {
   readonly parameterName: string;
   readonly parameterType: string;
 
-  constructor(responseBody: Problem) {
+  constructor(responseBody: SgiHttpProblem) {
     super(responseBody);
     Object.setPrototypeOf(this, new.target.prototype);
 
@@ -118,10 +111,10 @@ export class MissingRequestParameterHttpProblem extends HttpProblem {
   }
 }
 
-export class NotAcceptableHttpProblem extends HttpProblem {
+export class NotAcceptableHttpError extends SgiHttpError {
   readonly supported: string[];
 
-  constructor(responseBody: Problem) {
+  constructor(responseBody: SgiHttpProblem) {
     super(responseBody);
     Object.setPrototypeOf(this, new.target.prototype);
 
@@ -129,18 +122,18 @@ export class NotAcceptableHttpProblem extends HttpProblem {
   }
 }
 
-export class NotFoundHttpProblem extends HttpProblem {
-  constructor(responseBody: Problem) {
+export class NotFoundHttpError extends SgiHttpError {
+  constructor(responseBody: SgiHttpProblem) {
     super(responseBody);
     Object.setPrototypeOf(this, new.target.prototype);
   }
 }
 
-export class PercentageIvaZeroHttpProblem extends HttpProblem {
+export class PercentageIvaZeroHttpError extends SgiHttpError {
   readonly parameter: string;
   readonly parameterType: string;
 
-  constructor(responseBody: Problem) {
+  constructor(responseBody: SgiHttpProblem) {
     super(responseBody);
     Object.setPrototypeOf(this, new.target.prototype);
 
@@ -149,18 +142,25 @@ export class PercentageIvaZeroHttpProblem extends HttpProblem {
   }
 }
 
-export class TeamMemberOverlapHttpProblem extends HttpProblem {
-  constructor(responseBody: Problem) {
+export class TeamMemberOverlapHttpError extends SgiHttpError {
+  constructor(responseBody: SgiHttpProblem) {
     super(responseBody);
     Object.setPrototypeOf(this, new.target.prototype);
   }
 }
 
-export class TypeMismatchHttpProblem extends HttpProblem {
+export class TooManyResultsHttpError extends SgiHttpError {
+  constructor(responseBody: SgiHttpProblem) {
+    super(responseBody, 'warning');
+    Object.setPrototypeOf(this, new.target.prototype);
+  }
+}
+
+export class TypeMismatchHttpError extends SgiHttpError {
   readonly propertyName: string;
   readonly propertyType: string;
 
-  constructor(responseBody: Problem) {
+  constructor(responseBody: SgiHttpProblem) {
     super(responseBody);
     Object.setPrototypeOf(this, new.target.prototype);
 
@@ -169,20 +169,20 @@ export class TypeMismatchHttpProblem extends HttpProblem {
   }
 }
 
-export class UnknownHttpProblem extends HttpProblem {
-  constructor(responseBody: Problem) {
+export class UnknownHttpError extends SgiHttpError {
+  constructor(responseBody: SgiHttpProblem) {
     super(responseBody);
     Object.setPrototypeOf(this, new.target.prototype);
   }
 }
 
-export class ValidationHttpProblem extends HttpProblem {
+export class ValidationHttpError extends SgiHttpError {
   readonly errors: {
     field: string;
     error: string;
   }[];
 
-  constructor(responseBody: Problem) {
+  constructor(responseBody: SgiHttpProblem) {
     super(responseBody);
     Object.setPrototypeOf(this, new.target.prototype);
 
