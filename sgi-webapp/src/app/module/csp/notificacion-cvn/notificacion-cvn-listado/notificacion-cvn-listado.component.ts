@@ -290,7 +290,6 @@ export class NotificacionCvnListadoComponent extends AbstractTablePaginationComp
 
   openModalAsociarAutorizacion(data: INotificacionProyectoExternoCVN): void {
     const config: MatDialogConfig<INotificacionProyectoExternoCVN> = {
-      panelClass: 'sgi-dialog-container',
       data
     };
     const dialogRef = this.matDialog.open(NotificacionCvnAsociarAutorizacionModalComponent, config);
@@ -303,7 +302,6 @@ export class NotificacionCvnListadoComponent extends AbstractTablePaginationComp
 
   openModalAsociarProyecto(data: INotificacionProyectoExternoCVN): void {
     const config: MatDialogConfig<INotificacionProyectoExternoCVN> = {
-      panelClass: 'sgi-dialog-container',
       data
     };
     const dialogRef = this.matDialog.open(NotificacionCvnAsociarProyectoModalComponent, config);

@@ -129,7 +129,6 @@ export class ModeloEjecucionTipoFaseComponent extends FragmentComponent implemen
       tipoFases
     };
     const config = {
-      panelClass: 'sgi-dialog-container',
       data
     };
     const dialogRef = this.matDialog.open(ModeloEjecucionTipoFaseModalComponent, config);

@@ -24,7 +24,6 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.experimental.SuperBuilder;
 
 @Entity
 @Table(name = InvencionInventor.TABLE_NAME)
@@ -32,8 +31,8 @@ import lombok.experimental.SuperBuilder;
 @EqualsAndHashCode(callSuper = false)
 @NoArgsConstructor
 @AllArgsConstructor
-@SuperBuilder
-public class InvencionInventor {
+@Builder
+public class InvencionInventor extends BaseEntity {
 
   public static final String TABLE_NAME = "invencion_inventor";
   public static final String SEQ_SUFFIX = "_seq";

@@ -101,7 +101,6 @@ export class ConvocatoriaPlazosFasesComponent extends FragmentComponent implemen
     };
 
     const config = {
-      panelClass: 'sgi-dialog-container',
       data: datosPlazosFases,
     };
 

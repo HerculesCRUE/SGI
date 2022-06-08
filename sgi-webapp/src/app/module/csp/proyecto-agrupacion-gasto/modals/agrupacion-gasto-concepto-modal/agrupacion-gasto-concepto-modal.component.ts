@@ -1,18 +1,14 @@
 import { Component, Inject, OnInit } from '@angular/core';
-import { AbstractControl, FormControl, FormGroup, Validators } from '@angular/forms';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
-import { BaseModalComponent } from '@core/component/base-modal.component';
+import { DialogFormComponent } from '@core/component/dialog-form.component';
 import { MSG_PARAMS } from '@core/i18n';
 import { IAgrupacionGastoConcepto } from '@core/models/csp/agrupacion-gasto-concepto';
 import { IConceptoGasto } from '@core/models/csp/concepto-gasto';
-import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-properties';
-import { AgrupacionGastoConceptoService } from '@core/services/csp/agrupacio-gasto-concepto/agrupacion-gasto-concepto.service';
 import { ConceptoGastoService } from '@core/services/csp/concepto-gasto.service';
-import { SnackBarService } from '@core/services/snack-bar.service';
 import { IsEntityValidator } from '@core/validators/is-entity-validador';
 import { TranslateService } from '@ngx-translate/core';
-import { RSQLSgiRestFilter, SgiRestFilterOperator, SgiRestFindOptions } from '@sgi/framework/http';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
@@ -37,12 +33,11 @@ export interface AgrupacionGastoConceptoModalData {
   templateUrl: './agrupacion-gasto-concepto-modal.component.html',
   styleUrls: ['./agrupacion-gasto-concepto-modal.component.scss']
 })
-export class AgrupacionGastoConceptoModalComponent extends
-  BaseModalComponent<AgrupacionGastoConceptoModalData, AgrupacionGastoConceptoModalComponent> implements OnInit {
-  fxLayoutProperties: FxLayoutProperties;
+export class AgrupacionGastoConceptoModalComponent extends DialogFormComponent<AgrupacionGastoConceptoModalData> implements OnInit {
+
   textSaveOrUpdate: string;
 
-  saveDisabled = false;
+
   agrupacionGastoConceptos$: Observable<IConceptoGasto[]>;
 
   msgParamAgrupacionGastoConceptoEntity = {};
@@ -50,18 +45,12 @@ export class AgrupacionGastoConceptoModalComponent extends
   title = {};
 
   constructor(
-    protected snackBarService: SnackBarService,
-    public matDialogRef: MatDialogRef<AgrupacionGastoConceptoModalComponent>,
+    matDialogRef: MatDialogRef<AgrupacionGastoConceptoModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data: AgrupacionGastoConceptoModalData,
     private conceptoGastoService: ConceptoGastoService,
-    private agrupacionGastoConceptoService: AgrupacionGastoConceptoService,
     private readonly translate: TranslateService,
   ) {
-    super(snackBarService, matDialogRef, data);
-    this.fxLayoutProperties = new FxLayoutProperties();
-    this.fxLayoutProperties.gap = '20px';
-    this.fxLayoutProperties.layout = 'row';
-    this.fxLayoutProperties.xs = 'row';
+    super(matDialogRef, !!data.entidad?.id);
 
     this.agrupacionGastoConceptos$ = this.conceptoGastoService.findAllAgrupacionesGastoConceptoNotInAgrupacion(data.proyectoId)
       .pipe(
@@ -102,7 +91,7 @@ export class AgrupacionGastoConceptoModalComponent extends
     ).subscribe((value) => this.title = { entity: value });
   }
 
-  protected getFormGroup(): FormGroup {
+  protected buildFormGroup(): FormGroup {
     const formGroup = new FormGroup(
       {
         agrupacionGastoConcepto: new FormControl(
@@ -123,7 +112,7 @@ export class AgrupacionGastoConceptoModalComponent extends
     return formGroup;
   }
 
-  protected getDatosForm(): AgrupacionGastoConceptoModalData {
+  protected getValue(): AgrupacionGastoConceptoModalData {
     this.data.entidad = this.formGroup.get('agrupacionGastoConcepto').value;
     return this.data;
   }

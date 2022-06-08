@@ -1,20 +1,16 @@
 import { FlatTreeControl } from '@angular/cdk/tree';
 import { Component, Inject, OnInit, ViewChild } from '@angular/core';
-import { FormGroup } from '@angular/forms';
 import { MatCheckboxChange } from '@angular/material/checkbox';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatTree, MatTreeFlatDataSource, MatTreeFlattener } from '@angular/material/tree';
-import { marker } from '@biesbjerg/ngx-translate-extract-marker';
-import { BaseModalComponent } from '@core/component/base-modal.component';
+import { DialogCommonComponent } from '@core/component/dialog-common.component';
 import { MSG_PARAMS } from '@core/i18n';
 import { IAreaConocimiento } from '@core/models/sgo/area-conocimiento';
 import { AreaConocimientoService } from '@core/services/sgo/area-conocimiento.service';
 import { SnackBarService } from '@core/services/snack-bar.service';
-import { NGXLogger } from 'ngx-logger';
 import { BehaviorSubject } from 'rxjs';
 import { map } from 'rxjs/operators';
 
-const MSG_ERROR_LOAD = marker('error.load');
 interface AreaConocimientoListado {
   niveles: IAreaConocimiento[];
   nivelesTexto: string;
@@ -97,9 +93,7 @@ function sortByName(nodes: NodeAreaConocimiento[]): NodeAreaConocimiento[] {
   templateUrl: './area-conocimiento-modal.component.html',
   styleUrls: ['./area-conocimiento-modal.component.scss']
 })
-export class AreaConocimientoModalComponent
-  extends BaseModalComponent<AreaConocimientoListado[], AreaConocimientoModalComponent>
-  implements OnInit {
+export class AreaConocimientoModalComponent extends DialogCommonComponent implements OnInit {
 
   areasConocimientoTree$ = new BehaviorSubject<NodeAreaConocimiento[]>([]);
   readonly areasConocimiento$ = new BehaviorSubject<IAreaConocimiento[]>([]);
@@ -118,13 +112,12 @@ export class AreaConocimientoModalComponent
   hasChild = (_: number, node: NodeAreaConocimiento) => node.childs.length > 0;
 
   constructor(
-    private readonly logger: NGXLogger,
     public matDialogRef: MatDialogRef<AreaConocimientoModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data: AreaConocimientoDataModal,
     private areaConocimientoService: AreaConocimientoService,
     protected readonly snackBarService: SnackBarService
   ) {
-    super(snackBarService, matDialogRef, null);
+    super(matDialogRef);
 
     this.treeFlattener = new MatTreeFlattener(this.transformer, this.getLevel, this.isExpandable, this.getChildren);
     this.treeControl = new FlatTreeControl<NodeAreaConocimiento>(this.getLevel, this.isExpandable);
@@ -147,12 +140,7 @@ export class AreaConocimientoModalComponent
     );
   }
 
-  protected getFormGroup(): FormGroup {
-    const formGroup = new FormGroup({});
-    return formGroup;
-  }
-
-  protected getDatosForm(): AreaConocimientoListado[] {
+  private getValue(): AreaConocimientoListado[] {
     const selectedAreasConocimientoListado = this.selectedAreasConocimiento
       .map(areaConocimiento => {
         const areasConocimientoListado: AreaConocimientoListado = {
@@ -163,6 +151,10 @@ export class AreaConocimientoModalComponent
         return this.fillAreaConocimientoListado(areasConocimientoListado);
       });
     return selectedAreasConocimientoListado;
+  }
+
+  saveOrUpdate(): void {
+    this.close(this.getValue());
   }
 
   /**
@@ -195,10 +187,7 @@ export class AreaConocimientoModalComponent
               node.setChildsLoaded();
               this.publishNodes();
             },
-            (error) => {
-              this.logger.error(error);
-              this.snackBarService.showError(MSG_ERROR_LOAD);
-            }
+            this.processError
           );
       }
     }
@@ -218,10 +207,7 @@ export class AreaConocimientoModalComponent
           (nodes) => {
             this.publishNodes(nodes, true);
           },
-          (error) => {
-            this.logger.error(error);
-            this.snackBarService.showError(MSG_ERROR_LOAD);
-          }
+          this.processError
         )
     );
   }

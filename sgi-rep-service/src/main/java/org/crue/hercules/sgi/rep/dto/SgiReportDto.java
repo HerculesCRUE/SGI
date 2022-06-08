@@ -41,6 +41,14 @@ public class SgiReportDto {
   // Disposición de los campos en el informe: horizontal o vertical
   private FieldOrientation fieldOrientation;
 
+  /**
+   * Indica si se mostrarán las cabeceras de los subreport si no contiene
+   * elementos
+   * Tiene relación con el campo SgiColumReportDto.visibleIfSubReportEmpty
+   * Solo aplicable en pdf con disposición vertical;
+   */
+  private Boolean hideBlocksIfNoData;
+
   @JsonIgnore
   private Map<String, TableModel> dataModel;
 

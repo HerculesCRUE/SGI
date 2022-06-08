@@ -106,4 +106,16 @@ public class MemoriaSpecifications {
       return cb.equal(root.get(Memoria_.id), idMemoria);
     };
   }
+
+  public static Specification<Memoria> requiereRetrospectiva() {
+    return (root, query, cb) -> {
+      return cb.equal(root.get(Memoria_.requiereRetrospectiva), Boolean.TRUE);
+    };
+  }
+
+  public static Specification<Memoria> byFechaRetrospectivaBetween(Instant fechaInicio, Instant fechaFin) {
+    return (root, query, cb) -> {
+      return cb.between(root.get(Memoria_.retrospectiva).get(Retrospectiva_.fechaRetrospectiva), fechaInicio, fechaFin);
+    };
+  }
 }

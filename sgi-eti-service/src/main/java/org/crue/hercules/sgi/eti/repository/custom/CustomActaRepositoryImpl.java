@@ -21,8 +21,11 @@ import org.crue.hercules.sgi.eti.dto.MemoriaEvaluada;
 import org.crue.hercules.sgi.eti.model.Acta;
 import org.crue.hercules.sgi.eti.model.Acta_;
 import org.crue.hercules.sgi.eti.model.Comite_;
+import org.crue.hercules.sgi.eti.model.ConflictoInteres;
+import org.crue.hercules.sgi.eti.model.ConflictoInteres_;
 import org.crue.hercules.sgi.eti.model.ConvocatoriaReunion_;
 import org.crue.hercules.sgi.eti.model.Dictamen_;
+import org.crue.hercules.sgi.eti.model.EquipoTrabajo_;
 import org.crue.hercules.sgi.eti.model.Evaluacion;
 import org.crue.hercules.sgi.eti.model.Evaluacion_;
 import org.crue.hercules.sgi.eti.model.Evaluador;
@@ -31,9 +34,10 @@ import org.crue.hercules.sgi.eti.model.Memoria;
 import org.crue.hercules.sgi.eti.model.Memoria_;
 import org.crue.hercules.sgi.eti.model.PeticionEvaluacion;
 import org.crue.hercules.sgi.eti.model.PeticionEvaluacion_;
+import org.crue.hercules.sgi.eti.model.Tarea;
+import org.crue.hercules.sgi.eti.model.Tarea_;
 import org.crue.hercules.sgi.eti.model.TipoConvocatoriaReunion_;
 import org.crue.hercules.sgi.eti.model.TipoEvaluacion_;
-import org.crue.hercules.sgi.framework.rsql.SgiRSQLJPASupport;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -312,5 +316,70 @@ public class CustomActaRepositoryImpl implements CustomActaRepository {
 
     log.debug("findAllMemoriasEvaluadasSinRevMinimaByActaId : {} - end");
     return result;
+  }
+
+  /**
+   * Recupera las evaluaciones del tipo memoria en estado 'En evaluacion' (id = 4)
+   * o 'En secretaria revisión minima'(id = 5), o tipo retrospectiva, memoria que
+   * requiere retrospectiva y el estado de la RETROSPECTIVA es 'En evaluacion' (id
+   * = 4).
+   * 
+   * @param personaRef Identificador del {@link Evaluador}
+   * @return true/false si existen datos
+   */
+  @Override
+  public Boolean hasAssignedActasByEvaluador(String personaRef) {
+    log.debug("hasAssignedActasByEvaluador(String personaRef) - start");
+
+    CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+
+    CriteriaQuery<Long> cq = cb.createQuery(Long.class);
+
+    // Define FROM clause
+    Root<Acta> root = cq.from(Acta.class);
+
+    Root<Evaluacion> rootEvaluacion = cq.from(Evaluacion.class);
+
+    Subquery<String> queryPersonaRefTareas = cq.subquery(String.class);
+    Root<Tarea> subqRootTareas = queryPersonaRefTareas.from(Tarea.class);
+
+    queryPersonaRefTareas.select(subqRootTareas.get(Tarea_.equipoTrabajo).get(EquipoTrabajo_.personaRef)).where(
+        cb.equal(subqRootTareas.get(Tarea_.memoria).get(Memoria_.id),
+            rootEvaluacion.get(Evaluacion_.memoria).get(Memoria_.id)));
+
+    Subquery<Long> queryConflictosInteres = cq.subquery(Long.class);
+    Root<ConflictoInteres> subqRootConflictosInteres = queryConflictosInteres.from(ConflictoInteres.class);
+
+    queryConflictosInteres.select(subqRootConflictosInteres.get(ConflictoInteres_.evaluador).get(Evaluador_.id)).where(
+        cb.in(subqRootConflictosInteres.get(ConflictoInteres_.personaConflictoRef)).value(queryPersonaRefTareas));
+
+    Subquery<String> queryEvaluadoresComite = cq.subquery(String.class);
+    Root<Evaluador> subqRootEvaluadores = queryEvaluadoresComite.from(Evaluador.class);
+
+    Predicate predicateEvaluacion = cb.and(
+        cb.equal(subqRootEvaluadores.get(Evaluador_.comite).get(Comite_.id),
+            rootEvaluacion.get(Evaluacion_.memoria).get(Memoria_.comite).get(Comite_.id)),
+        cb.in(subqRootEvaluadores.get(Evaluador_.personaRef)).value(personaRef),
+        cb.equal(subqRootEvaluadores.get(Evaluador_.activo), Boolean.TRUE),
+        cb.not(subqRootEvaluadores.get(Evaluador_.id).in(queryConflictosInteres)));
+
+    queryEvaluadoresComite.select(subqRootEvaluadores.get(Evaluador_.comite).get(Comite_.comite)).where(
+        predicateEvaluacion,
+        cb.or(cb.isNull(subqRootEvaluadores.get(Evaluador_.fechaBaja)),
+            cb.greaterThan(subqRootEvaluadores.get(Evaluador_.fechaBaja), Instant.now())));
+
+    cq.select(root.get(Acta_.convocatoriaReunion).get(ConvocatoriaReunion_.id))
+        .where(cb.and(cb.equal(root.get(Acta_.activo), Boolean.TRUE),
+            cb.equal(rootEvaluacion.get(Evaluacion_.convocatoriaReunion).get(ConvocatoriaReunion_.id),
+                root.get(Acta_.convocatoriaReunion).get(ConvocatoriaReunion_.id)),
+            cb.in(root.get(Acta_.convocatoriaReunion).get(ConvocatoriaReunion_.comite).get(Comite_.comite))
+                .value(queryEvaluadoresComite)));
+
+    TypedQuery<Long> typedQuery = entityManager.createQuery(cq);
+
+    List<Long> result = typedQuery.getResultList();
+
+    log.debug("hasAssignedActasByEvaluador(String personaRef) - end");
+    return result.size() > 0;
   }
 }

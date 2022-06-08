@@ -8,15 +8,12 @@ import { AbstractTablePaginationComponent } from '@core/component/abstract-table
 import { SgiError } from '@core/errors/sgi-error';
 import { MSG_PARAMS } from '@core/i18n';
 import { IActaWithNumEvaluaciones } from '@core/models/eti/acta-with-num-evaluaciones';
-import { IComite } from '@core/models/eti/comite';
-import { TipoEstadoActa } from '@core/models/eti/tipo-estado-acta';
+import { ESTADO_ACTA_MAP, TipoEstadoActa } from '@core/models/eti/tipo-estado-acta';
 import { IDocumento } from '@core/models/sgdoc/documento';
 import { FxFlexProperties } from '@core/models/shared/flexLayout/fx-flex-properties';
 import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-properties';
 import { ROUTE_NAMES } from '@core/route.names';
 import { ActaService } from '@core/services/eti/acta.service';
-import { ComiteService } from '@core/services/eti/comite.service';
-import { TipoEstadoActaService } from '@core/services/eti/tipo-estado-acta.service';
 import { DocumentoService, triggerDownloadToUser } from '@core/services/sgdoc/documento.service';
 import { SnackBarService } from '@core/services/snack-bar.service';
 import { LuxonUtils } from '@core/utils/luxon-utils';
@@ -24,7 +21,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { RSQLSgiRestFilter, SgiRestFilter, SgiRestFilterOperator, SgiRestListResult } from '@sgi/framework/http';
 import { NGXLogger } from 'ngx-logger';
 import { Observable, of, Subscription } from 'rxjs';
-import { catchError, map, startWith, switchMap } from 'rxjs/operators';
+import { catchError, switchMap } from 'rxjs/operators';
 import { ActaListadoExportModalComponent, IActaListadoModalData } from '../modals/acta-listado-export-modal/acta-listado-export-modal.component';
 
 const MSG_BUTTON_NEW = marker('btn.add.entity');
@@ -52,24 +49,18 @@ export class ActaListadoComponent extends AbstractTablePaginationComponent<IActa
 
   actas$: Observable<IActaWithNumEvaluaciones[]> = of();
 
-  comiteListado: IComite[];
-  comitesSubscription: Subscription;
-  filteredComites: Observable<IComite[]>;
-
-  tipoEstadoActaListado: TipoEstadoActa[];
-  tipoEstadoActaSubscription: Subscription;
-  filteredTipoEstadoActa: Observable<TipoEstadoActa[]>;
-
   finalizarSubscription: Subscription;
 
   textoCrear: string;
+
+  get ESTADO_ACTA_MAP() {
+    return ESTADO_ACTA_MAP;
+  }
 
   constructor(
     private readonly logger: NGXLogger,
     private readonly actasService: ActaService,
     protected readonly snackBarService: SnackBarService,
-    private readonly comiteService: ComiteService,
-    private readonly tipoEstadoActaService: TipoEstadoActaService,
     private readonly translate: TranslateService,
     private readonly documentoService: DocumentoService,
     private readonly matDialog: MatDialog,
@@ -94,16 +85,12 @@ export class ActaListadoComponent extends AbstractTablePaginationComponent<IActa
     this.setupI18N();
 
     this.formGroup = new FormGroup({
-      comite: new FormControl('', []),
+      comite: new FormControl(null),
       fechaEvaluacionInicio: new FormControl(null, []),
       fechaEvaluacionFin: new FormControl(null, []),
       numeroActa: new FormControl('', []),
-      tipoEstadoActa: new FormControl('', [])
+      tipoEstadoActa: new FormControl(null, [])
     });
-
-    this.getComites();
-
-    this.getTipoEstadoActas();
   }
 
   private setupI18N(): void {
@@ -151,7 +138,7 @@ export class ActaListadoComponent extends AbstractTablePaginationComponent<IActa
     ).and(
       'estadoActual.id',
       SgiRestFilterOperator.EQUALS,
-      controls.tipoEstadoActa.value?.id?.toString()
+      controls.tipoEstadoActa.value?.toString()
     );
 
     return filter;
@@ -165,90 +152,6 @@ export class ActaListadoComponent extends AbstractTablePaginationComponent<IActa
 
   protected loadTable(reset?: boolean) {
     this.actas$ = this.getObservableLoadTable(reset);
-  }
-
-  /**
-   * Devuelve el nombre de un comité.
-   * @param comite comité
-   * returns nombre comité
-   */
-  getComite(comite: IComite): string {
-    return comite?.comite;
-  }
-
-  /**
-   * Devuelve el nombre de un tipo estado acta.
-   * @param estado tipo estado acta
-   * returns nombre tipo estado acta
-   */
-  getTipoEstadoActa(estado: TipoEstadoActa): string {
-    return estado?.nombre;
-  }
-
-  /**
-   * Recupera un listado de los comités que hay en el sistema.
-   */
-  getComites(): void {
-    this.comitesSubscription = this.comiteService.findAll().subscribe(
-      (response) => {
-        this.comiteListado = response.items;
-
-        this.filteredComites = this.formGroup.controls.comite.valueChanges
-          .pipe(
-            startWith(''),
-            map(value => this._filterComite(value))
-          );
-      });
-  }
-
-  /**
-   * Recupera un listado de los tipos de estados de acta que hay en el sistema.
-   */
-  getTipoEstadoActas(): void {
-    this.tipoEstadoActaSubscription = this.tipoEstadoActaService.findAll().subscribe(
-      (response) => {
-        this.tipoEstadoActaListado = response.items;
-
-        this.filteredTipoEstadoActa = this.formGroup.controls.tipoEstadoActa.valueChanges
-          .pipe(
-            startWith(''),
-            map(value => this._filterTipoEstado(value))
-          );
-      });
-  }
-
-  /**
-   * Filtro de campo autocompletable comité.
-   * @param value value a filtrar (string o nombre comité).
-   * @returns lista de comités filtrados.
-   */
-  private _filterComite(value: string | IComite): IComite[] {
-    let filterValue: string;
-    if (typeof value === 'string') {
-      filterValue = value.toLowerCase();
-    } else {
-      filterValue = value.comite.toLowerCase();
-    }
-
-    return this.comiteListado.filter
-      (comite => comite.comite.toLowerCase().includes(filterValue));
-  }
-
-  /**
-   * Filtro de campo autocompletable tipo estado acta.
-   * @param value value a filtrar (string o nombre tipo estado acta).
-   * @returns lista de tipos de estados filtrados.
-   */
-  private _filterTipoEstado(value: string | TipoEstadoActa): TipoEstadoActa[] {
-    let filterValue: string;
-    if (typeof value === 'string') {
-      filterValue = value.toLowerCase();
-    } else {
-      filterValue = value.nombre.toLowerCase();
-    }
-
-    return this.tipoEstadoActaListado.filter
-      (tipoEstadoActa => tipoEstadoActa.nombre.toLowerCase().includes(filterValue));
   }
 
   /**

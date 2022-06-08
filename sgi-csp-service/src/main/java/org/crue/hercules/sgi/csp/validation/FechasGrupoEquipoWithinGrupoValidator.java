@@ -35,8 +35,9 @@ public class FechasGrupoEquipoWithinGrupoValidator
         !(value.getFechaInicio().isAfter(grupo.get().getFechaInicio())
             || value.getFechaInicio().equals(grupo.get().getFechaInicio()))) {
       return false;
-    } else if (value.getFechaFin() != null && !(value.getFechaFin().isBefore(grupo.get().getFechaFin())
-        || value.getFechaFin().equals(grupo.get().getFechaFin()))) {
+    } else if (value.getFechaFin() != null && grupo.get().getFechaFin() != null
+        && !(value.getFechaFin().isBefore(grupo.get().getFechaFin())
+            || value.getFechaFin().equals(grupo.get().getFechaFin()))) {
       return false;
     } else {
       return true;

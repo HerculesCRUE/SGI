@@ -1,6 +1,7 @@
 package org.crue.hercules.sgi.pii.model;
 
 import java.time.Instant;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -10,6 +11,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
@@ -59,6 +61,11 @@ public class PeriodoTitularidad extends BaseEntity {
   @Getter(AccessLevel.NONE)
   @Setter(AccessLevel.NONE)
   private final Invencion invencion = null;
+
+  @OneToMany(mappedBy = "periodoTitularidad")
+  @Getter(AccessLevel.NONE)
+  @Setter(AccessLevel.NONE)
+  private final List<PeriodoTitularidadTitular> titulares = null;
 
   /**
    * Interfaz para marcar validaciones en la creación de la entidad.

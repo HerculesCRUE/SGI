@@ -2,12 +2,14 @@ package org.crue.hercules.sgi.csp.service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import org.crue.hercules.sgi.csp.exceptions.ConceptoGastoNotFoundException;
 import org.crue.hercules.sgi.csp.exceptions.ProyectoAnualidadNotFoundException;
 import org.crue.hercules.sgi.csp.exceptions.ProyectoPartidaNotFoundException;
 import org.crue.hercules.sgi.csp.model.AnualidadGasto;
+import org.crue.hercules.sgi.csp.model.Proyecto;
 import org.crue.hercules.sgi.csp.model.ProyectoAnualidad;
 import org.crue.hercules.sgi.csp.repository.AnualidadGastoRepository;
 import org.crue.hercules.sgi.csp.repository.ConceptoGastoRepository;
@@ -82,16 +84,17 @@ public class AnualidadGastoService {
   public List<AnualidadGasto> update(Long proyectoAnualidadId, List<AnualidadGasto> anualidadesGasto) {
     log.debug("update(Long proyectoAnualidadId, List<AnualidadGasto> anualidadesIngreso) - start");
 
-    proyectoAnualidadRepository.findById(proyectoAnualidadId)
-        .orElseThrow(() -> new ProyectoAnualidadNotFoundException(proyectoAnualidadId));
+    if (!proyectoAnualidadRepository.findById(proyectoAnualidadId).isPresent()) {
+      throw new ProyectoAnualidadNotFoundException(proyectoAnualidadId);
+    }
 
     Specification<AnualidadGasto> specs = AnualidadGastoSpecifications.byProyectoAnualidadId(proyectoAnualidadId);
     List<AnualidadGasto> anualidadesGastoBD = repository.findAll(specs);
 
     // Anualidades eliminados
     List<AnualidadGasto> anualidadesGastoEliminar = anualidadesGastoBD.stream()
-        .filter(anualidadGasto -> !anualidadesGasto.stream().map(AnualidadGasto::getId)
-            .anyMatch(id -> id == anualidadGasto.getId()))
+        .filter(anualidadGasto -> anualidadesGasto.stream().map(AnualidadGasto::getId)
+            .noneMatch(id -> Objects.equals(id, anualidadGasto.getId())))
         .collect(Collectors.toList());
 
     if (!anualidadesGastoEliminar.isEmpty()) {
@@ -104,12 +107,15 @@ public class AnualidadGastoService {
 
     for (AnualidadGasto anualidadGasto : anualidadesGasto) {
 
-      proyectoPartidaRepository.findById(anualidadGasto.getProyectoPartida().getId())
-          .orElseThrow(() -> new ProyectoPartidaNotFoundException(anualidadGasto.getProyectoPartida().getId()));
+      if (!proyectoPartidaRepository.findById(anualidadGasto.getProyectoPartida().getId()).isPresent()) {
+        throw new ProyectoPartidaNotFoundException(anualidadGasto.getProyectoPartida().getId());
+      }
+
       anualidadGasto.setProyectoAnualidadId(proyectoAnualidadId);
 
-      conceptoGastoRepository.findById(anualidadGasto.getConceptoGasto().getId())
-          .orElseThrow(() -> new ConceptoGastoNotFoundException(anualidadGasto.getConceptoGasto().getId()));
+      if (!conceptoGastoRepository.findById(anualidadGasto.getConceptoGasto().getId()).isPresent()) {
+        throw new ConceptoGastoNotFoundException(anualidadGasto.getConceptoGasto().getId());
+      }
     }
 
     List<AnualidadGasto> returnValue = repository.saveAll(anualidadesGasto);
@@ -120,6 +126,19 @@ public class AnualidadGastoService {
   public List<AnualidadGasto> findAnualidadesGastosByProyectoId(Long proyectoId) {
 
     return this.repository.findAnualidadGastoByProyectoPartidaProyectoId(proyectoId);
+  }
+
+  /**
+   * Indica si existen {@link AnualidadGasto} de un {@link Proyecto}
+   * 
+   * @param proyectoId identificador de la {@link Proyecto}
+   * @return si existen {@link AnualidadGasto} asociados al {@link Proyecto}
+   */
+  public boolean existsByProyecto(Long proyectoId) {
+    log.debug("existsByProyecto(Long proyectoId) - start");
+    boolean returnValue = repository.existsByProyectoAnualidadProyectoId(proyectoId);
+    log.debug("existsByProyecto(Long proyectoId) - end");
+    return returnValue;
   }
 
 }

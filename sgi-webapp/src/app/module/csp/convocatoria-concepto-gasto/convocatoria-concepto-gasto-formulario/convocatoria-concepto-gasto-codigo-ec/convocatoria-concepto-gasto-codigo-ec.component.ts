@@ -148,7 +148,6 @@ export class ConvocatoriaConceptoGastoCodigoEcComponent extends FragmentComponen
     };
 
     const config = {
-      panelClass: 'sgi-dialog-container',
       data
     };
     const dialogRef = this.matDialog.open(ConvocatoriaConceptoGastoCodigoEcModalComponent, config);
@@ -203,7 +202,6 @@ export class ConvocatoriaConceptoGastoCodigoEcComponent extends FragmentComponen
     };
 
     const config = {
-      panelClass: 'sgi-dialog-container',
       data
     };
     const dialogRef = this.matDialog.open(ConvocatoriaConceptoGastoCodigoEcModalComponent, config);

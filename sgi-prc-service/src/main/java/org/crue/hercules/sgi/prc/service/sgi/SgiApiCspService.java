@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 import org.apache.commons.lang3.ObjectUtils;
 import org.crue.hercules.sgi.prc.config.RestApiProperties;
@@ -30,6 +31,40 @@ public class SgiApiCspService extends SgiApiBaseService {
 
   public SgiApiCspService(RestApiProperties restApiProperties, RestTemplate restTemplate) {
     super(restApiProperties, restTemplate);
+  }
+
+  /**
+   * Obtiene el grupo de investigación por su id
+   *
+   * @param grupoRef grupoRef
+   * @return GrupoDto
+   */
+  public Optional<GrupoDto> findGrupoById(Long grupoRef) {
+    log.debug("findGrupoById({})- start", grupoRef);
+
+    Optional<GrupoDto> grupoDto = Optional.empty();
+    if (Objects.nonNull(grupoRef)) {
+      try {
+
+        ServiceType serviceType = ServiceType.CSP;
+        String relativeUrl = "/grupos/{grupoRef}";
+        HttpMethod httpMethod = HttpMethod.GET;
+        String mergedURL = buildUri(serviceType, relativeUrl);
+
+        final GrupoDto response = super.<GrupoDto>callEndpoint(mergedURL, httpMethod,
+            new ParameterizedTypeReference<GrupoDto>() {
+            }, grupoRef).getBody();
+
+        grupoDto = Optional.of(response);
+
+      } catch (Exception e) {
+        log.error(e.getMessage(), e);
+        throw new MicroserviceCallException();
+      }
+    }
+
+    log.debug("findGrupoById({})- end", grupoRef);
+    return grupoDto;
   }
 
   /**
@@ -164,6 +199,41 @@ public class SgiApiCspService extends SgiApiBaseService {
       throw new MicroserviceCallException();
     }
     log.debug("findByGrupoIdAndAnio(grupoRef, anio)- end");
+
+    return ObjectUtils.defaultIfNull(result, new ArrayList<>());
+  }
+
+  /**
+   * Lista de ids {@link GrupoEquipoDto} cuyo personaRef está dentro de la fecha
+   * de
+   * baremación
+   *
+   * @param personaRef personaRef
+   * @param anio       anio
+   * @return lista de ids {@link GrupoEquipoDto}
+   */
+  public List<Long> findGrupoEquipoByPersonaRefAndFechaBaremacion(String personaRef, Integer anio) {
+    List<Long> result = new ArrayList<>();
+    log.debug("findGrupoEquipoByPersonaRefAndFechaBaremacion({},{})- start", personaRef, anio);
+
+    try {
+
+      ServiceType serviceType = ServiceType.CSP;
+      String relativeUrl = "/gruposequipos/{grupoRef}/{anio}";
+      HttpMethod httpMethod = HttpMethod.GET;
+      String mergedURL = buildUri(serviceType, relativeUrl);
+
+      result = super.<List<Long>>callEndpoint(mergedURL, httpMethod,
+          new ParameterizedTypeReference<List<Long>>() {
+          },
+          personaRef, anio)
+          .getBody();
+
+    } catch (Exception e) {
+      log.error(e.getMessage(), e);
+      throw new MicroserviceCallException();
+    }
+    log.debug("findGrupoEquipoByPersonaRefAndFechaBaremacion({},{})- end", personaRef, anio);
 
     return ObjectUtils.defaultIfNull(result, new ArrayList<>());
   }
@@ -314,4 +384,65 @@ public class SgiApiCspService extends SgiApiBaseService {
 
     return ObjectUtils.defaultIfNull(result, new ArrayList<>());
   }
+
+  /**
+   * Devuelve la lista de investigadores principales de un determinado grupo
+   *
+   * @param grupoRef grupoRef
+   * @return lista de investigadores principales
+   */
+  public List<String> findPersonaRefInvestigadoresPrincipalesWithMaxParticipacion(Long grupoRef) {
+    List<String> result = new ArrayList<>();
+    log.debug("findPersonaRefInvestigadoresPrincipalesWithMaxParticipacion({}) start", grupoRef);
+
+    try {
+      ServiceType serviceType = ServiceType.CSP;
+      String relativeUrl = "/grupos/{grupoRef}/investigadoresprincipalesmaxparticipacion";
+      HttpMethod httpMethod = HttpMethod.GET;
+      String mergedURL = buildUri(serviceType, relativeUrl);
+
+      result = super.<List<String>>callEndpoint(mergedURL, httpMethod,
+          new ParameterizedTypeReference<List<String>>() {
+          }, grupoRef).getBody();
+
+    } catch (Exception e) {
+      log.error(e.getMessage(), e);
+      throw new MicroserviceCallException();
+    }
+    log.debug("findPersonaRefInvestigadoresPrincipalesWithMaxParticipacion({}) end", grupoRef);
+
+    return ObjectUtils.defaultIfNull(result, new ArrayList<>());
+  }
+
+  /**
+   * Devuelve una lista de {@link GrupoDto} donde la personaRef es investigador
+   * principal o persona autorizada para la fecha actual
+   * 
+   * 
+   * @param personaRef identificador externo de la persona.
+   * @return lista de {@link GrupoDto}
+   */
+  public List<GrupoDto> findAllGruposByPersonaRef(String personaRef) {
+    List<GrupoDto> result = new ArrayList<>();
+    log.debug("findAllGruposByPersonaRef(String personaRef)- start");
+
+    try {
+      ServiceType serviceType = ServiceType.CSP;
+      String relativeUrl = "/grupos?q=responsable==" + personaRef + ",personaAutorizada==" + personaRef;
+      HttpMethod httpMethod = HttpMethod.GET;
+      String mergedURL = buildUri(serviceType, relativeUrl);
+
+      result = super.<List<GrupoDto>>callEndpoint(mergedURL, httpMethod,
+          new ParameterizedTypeReference<List<GrupoDto>>() {
+          }).getBody();
+
+    } catch (Exception e) {
+      log.error(e.getMessage(), e);
+      throw new MicroserviceCallException();
+    }
+    log.debug("findAllGruposByPersonaRef(String personaRef)- end");
+
+    return ObjectUtils.defaultIfNull(result, new ArrayList<>());
+  }
+
 }

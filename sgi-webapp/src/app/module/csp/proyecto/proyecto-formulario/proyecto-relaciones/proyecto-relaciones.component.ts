@@ -120,9 +120,7 @@ export class ProyectoRelacionesComponent extends FragmentComponent implements On
     };
 
     const config: MatDialogConfig = {
-      panelClass: 'sgi-dialog-container',
       data,
-      minWidth: '500px',
     };
 
     const dialogRef = this.matDialog.open(ProyectoRelacionModalComponent, config);

@@ -2,25 +2,28 @@ package org.crue.hercules.sgi.csp.service;
 
 import java.util.List;
 
+import javax.validation.Valid;
+
 import org.crue.hercules.sgi.csp.exceptions.NotificacionProyectoExternoCVNNotFoundException;
 import org.crue.hercules.sgi.csp.model.Autorizacion;
+import org.crue.hercules.sgi.csp.model.BaseEntity.Create;
 import org.crue.hercules.sgi.csp.model.NotificacionCVNEntidadFinanciadora;
 import org.crue.hercules.sgi.csp.model.NotificacionProyectoExternoCVN;
+import org.crue.hercules.sgi.csp.model.NotificacionProyectoExternoCVN.AsociarAutorizacion;
+import org.crue.hercules.sgi.csp.model.NotificacionProyectoExternoCVN.AsociarProyecto;
 import org.crue.hercules.sgi.csp.model.Proyecto;
 import org.crue.hercules.sgi.csp.repository.NotificacionCVNEntidadFinanciadoraRepository;
 import org.crue.hercules.sgi.csp.repository.NotificacionProyectoExternoCVNRepository;
 import org.crue.hercules.sgi.csp.util.AssertHelper;
-import org.crue.hercules.sgi.framework.problem.message.ProblemMessage;
 import org.crue.hercules.sgi.framework.rsql.SgiRSQLJPASupport;
-import org.crue.hercules.sgi.framework.spring.context.support.ApplicationContextSupport;
-
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.Assert;
+import org.springframework.validation.annotation.Validated;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -30,21 +33,12 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 @Slf4j
 @Transactional(readOnly = true)
+@RequiredArgsConstructor
+@Validated
 public class NotificacionProyectoExternoCVNService {
-  private static final String PROBLEM_MESSAGE_PARAMETER_FIELD = "field";
-  private static final String PROBLEM_MESSAGE_PARAMETER_ENTITY = "entity";
-  private static final String PROBLEM_MESSAGE_ISNULL = "isNull";
-  private static final String MESSAGE_KEY_ID = "id";
 
   private final NotificacionProyectoExternoCVNRepository repository;
   private final NotificacionCVNEntidadFinanciadoraRepository notificacionCVNEntidadFinanciadoraRepository;
-
-  public NotificacionProyectoExternoCVNService(
-      NotificacionProyectoExternoCVNRepository notificacionProyectoExternoCVNRepository,
-      NotificacionCVNEntidadFinanciadoraRepository notificacionCVNEntidadFinanciadoraRepository) {
-    this.repository = notificacionProyectoExternoCVNRepository;
-    this.notificacionCVNEntidadFinanciadoraRepository = notificacionCVNEntidadFinanciadoraRepository;
-  }
 
   /**
    * Obtiene una entidad {@link NotificacionProyectoExternoCVN} por id.
@@ -93,17 +87,12 @@ public class NotificacionProyectoExternoCVNService {
    *         persistida.
    */
   @Transactional
-  public NotificacionProyectoExternoCVN create(NotificacionProyectoExternoCVN notificacionProyectoExternoCVN,
+  @Validated({ Create.class })
+  public NotificacionProyectoExternoCVN create(@Valid NotificacionProyectoExternoCVN notificacionProyectoExternoCVN,
       List<NotificacionCVNEntidadFinanciadora> notificacionesEntidadFinanciadoras) {
     log.debug("create(NotificacionProyectoExternoCVN notificacionProyectoExternoCVN) - start");
 
-    Assert.isNull(notificacionProyectoExternoCVN.getId(),
-        // Defer message resolution untill is needed
-        () -> ProblemMessage.builder().key(Assert.class, PROBLEM_MESSAGE_ISNULL)
-            .parameter(PROBLEM_MESSAGE_PARAMETER_FIELD, ApplicationContextSupport.getMessage(MESSAGE_KEY_ID))
-            .parameter(PROBLEM_MESSAGE_PARAMETER_ENTITY,
-                ApplicationContextSupport.getMessage(NotificacionProyectoExternoCVN.class))
-            .build());
+    AssertHelper.idIsNull(notificacionProyectoExternoCVN.getId(), NotificacionProyectoExternoCVN.class);
 
     if (notificacionProyectoExternoCVN.getResponsableRef() != null) {
       notificacionProyectoExternoCVN.setDatosResponsable(null);
@@ -180,8 +169,9 @@ public class NotificacionProyectoExternoCVNService {
    * @return la entidad {@link NotificacionProyectoExternoCVN} persistida.
    */
   @Transactional
+  @Validated({ AsociarAutorizacion.class })
   public NotificacionProyectoExternoCVN asociarAutorizacion(
-      NotificacionProyectoExternoCVN notificacionProyectoExternoCVNActualizar) {
+      @Valid NotificacionProyectoExternoCVN notificacionProyectoExternoCVNActualizar) {
     log.debug("asociarAutorizacion(NotificacionProyectoExternoCVN notificacionProyectoExternoCVNActualizar - start");
 
     AssertHelper.idNotNull(notificacionProyectoExternoCVNActualizar.getId(), NotificacionProyectoExternoCVN.class);
@@ -232,8 +222,9 @@ public class NotificacionProyectoExternoCVNService {
    * @return la entidad {@link NotificacionProyectoExternoCVN} persistida.
    */
   @Transactional
+  @Validated({ AsociarProyecto.class })
   public NotificacionProyectoExternoCVN asociarProyecto(
-      NotificacionProyectoExternoCVN notificacionProyectoExternoCVNActualizar) {
+      @Valid NotificacionProyectoExternoCVN notificacionProyectoExternoCVNActualizar) {
     log.debug("asociarProyecto(NotificacionProyectoExternoCVN notificacionProyectoExternoCVNActualizar - start");
 
     AssertHelper.idNotNull(notificacionProyectoExternoCVNActualizar.getId(), NotificacionProyectoExternoCVN.class);

@@ -3,20 +3,25 @@
 :host {
   .formulario {
     padding: 10px 20px 10px 20px;
+
     .col {
       padding-right: 15px;
+
       &.checkbox {
         padding-top: 10px;
       }
     }
+
     .buttons-final {
       padding: 10px 0px 10px 0px;
+
       .filter-button {
         button {
           margin-right: 15px;
         }
       }
     }
+
     .separacion {
       padding-bottom: 20px;
     }
@@ -25,5 +30,11 @@
   .separation-button {
     padding-top: 30px;
     padding-bottom: 10px;
+  }
+
+  .paginator-export {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
   }
 }

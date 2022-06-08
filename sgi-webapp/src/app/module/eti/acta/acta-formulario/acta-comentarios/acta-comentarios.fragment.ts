@@ -1,6 +1,7 @@
 import { IComentario } from '@core/models/eti/comentario';
 import { IDictamen } from '@core/models/eti/dictamen';
 import { IEvaluacion } from '@core/models/eti/evaluacion';
+import { ESTADO_MEMORIA } from '@core/models/eti/tipo-estado-memoria';
 import { Fragment } from '@core/services/action-service';
 import { ConvocatoriaReunionService } from '@core/services/eti/convocatoria-reunion.service';
 import { EvaluacionService } from '@core/services/eti/evaluacion.service';
@@ -8,7 +9,7 @@ import { PersonaService } from '@core/services/sgp/persona.service';
 import { StatusWrapper } from '@core/utils/status-wrapper';
 import { SgiAuthService } from '@sgi/framework/auth';
 import { BehaviorSubject, from, merge, Observable, of } from 'rxjs';
-import { endWith, map, mergeMap, switchMap, takeLast, tap } from 'rxjs/operators';
+import { endWith, map, mergeMap, switchMap, takeLast } from 'rxjs/operators';
 
 export class ActaComentariosFragment extends Fragment {
 
@@ -69,7 +70,7 @@ export class ActaComentariosFragment extends Fragment {
                           comentario.evaluador = persona;
                           this.comentarios$.next([...current]);
                           this.evaluaciones$.next([...evaluacionesComentario]);
-                          this.showAddComentarios = true;
+                          this.showAddComentarios = this.checkAddComentario(evaluacion);
                         });
                       });
                     } else {
@@ -169,7 +170,9 @@ export class ActaComentariosFragment extends Fragment {
         return this.service.createComentarioActa(evaluacion.id, wrappedComentario.value).pipe(
           map((savedComentario) => {
             const index = this.comentarios$.value.findIndex((currentComentario) => currentComentario === wrappedComentario);
-            this.comentarios$[index] = new StatusWrapper<IComentario>(savedComentario);
+            wrappedComentario.value.id = savedComentario.id;
+            this.comentarios$.value[index] = new StatusWrapper<IComentario>(wrappedComentario.value);
+            this.comentarios$.next(this.comentarios$.value);
             this.comentarios$.value.map((currentComentario) => {
               if (currentComentario === wrappedComentario) {
                 currentComentario.setEdited();
@@ -181,6 +184,17 @@ export class ActaComentariosFragment extends Fragment {
       }),
       endWith()
     );
+  }
+
+  private checkAddComentario(evaluacion: IEvaluacion): boolean {
+    if (evaluacion.dictamen?.activo &&
+      ((evaluacion.convocatoriaReunion.tipoConvocatoriaReunion.id === 1 && evaluacion.memoria.estadoActual.id === ESTADO_MEMORIA.EN_EVALUACION) ||
+        evaluacion.convocatoriaReunion.tipoConvocatoriaReunion.id > 1 && (evaluacion.memoria.estadoActual.id === ESTADO_MEMORIA.EN_EVALUACION_SEGUIMIENTO_FINAL ||
+          evaluacion.memoria.estadoActual.id === ESTADO_MEMORIA.EN_EVALUACION_SEGUIMIENTO_ANUAL))) {
+      return true;
+    } else {
+      return false;
+    }
   }
 
 }

@@ -1,25 +1,41 @@
 package org.crue.hercules.sgi.csp.repository.predicate;
 
+import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Join;
 import javax.persistence.criteria.JoinType;
+import javax.persistence.criteria.ListJoin;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
+import org.crue.hercules.sgi.csp.config.SgiConfigProperties;
+import org.crue.hercules.sgi.csp.model.ConfiguracionSolicitud_;
 import org.crue.hercules.sgi.csp.model.Convocatoria;
+import org.crue.hercules.sgi.csp.model.ConvocatoriaEntidadConvocante;
+import org.crue.hercules.sgi.csp.model.ConvocatoriaEntidadConvocante_;
+import org.crue.hercules.sgi.csp.model.ConvocatoriaFase_;
 import org.crue.hercules.sgi.csp.model.Convocatoria_;
+import org.crue.hercules.sgi.csp.model.Programa;
 import org.crue.hercules.sgi.csp.model.Solicitud;
 import org.crue.hercules.sgi.csp.model.Solicitud_;
+import org.crue.hercules.sgi.csp.repository.ProgramaRepository;
+import org.crue.hercules.sgi.csp.util.PredicateResolverUtil;
 import org.crue.hercules.sgi.framework.rsql.SgiRSQLPredicateResolver;
+import org.springframework.util.CollectionUtils;
 
 import cz.jirutka.rsql.parser.ast.ComparisonNode;
-import cz.jirutka.rsql.parser.ast.ComparisonOperator;
 import io.github.perplexhub.rsql.RSQLOperators;
 
 public class SolicitudPredicateResolver implements SgiRSQLPredicateResolver<Solicitud> {
   private enum Property {
-    REFERENCIA_CONVOCATORIA("referenciaConvocatoria");
+    REFERENCIA_CONVOCATORIA("referenciaConvocatoria"),
+    PLAN_INVESTIGACION("planInvestigacion"),
+    ABIERTO_PLAZO_PRESENTACION_SOLICITUD("abiertoPlazoPresentacionSolicitud");
 
     private String code;
 
@@ -38,29 +54,26 @@ public class SolicitudPredicateResolver implements SgiRSQLPredicateResolver<Soli
   }
 
   private static SolicitudPredicateResolver instance;
+  private final ProgramaRepository programaRepository;
+  private final SgiConfigProperties sgiConfigProperties;
 
-  private SolicitudPredicateResolver() {
-    // Do nothing. Hide external instanciation
+  private SolicitudPredicateResolver(ProgramaRepository programaRepository, SgiConfigProperties sgiConfigProperties) {
+    this.programaRepository = programaRepository;
+    this.sgiConfigProperties = sgiConfigProperties;
   }
 
-  public static SolicitudPredicateResolver getInstance() {
+  public static SolicitudPredicateResolver getInstance(ProgramaRepository programaRepository,
+      SgiConfigProperties sgiConfigProperties) {
     if (instance == null) {
-      instance = new SolicitudPredicateResolver();
+      instance = new SolicitudPredicateResolver(programaRepository, sgiConfigProperties);
     }
     return instance;
   }
 
   private static Predicate buildByReferenciaConvocatoria(ComparisonNode node, Root<Solicitud> root,
-      CriteriaQuery<?> query, CriteriaBuilder cb) {
-    ComparisonOperator operator = node.getOperator();
-    if (!operator.equals(RSQLOperators.IGNORE_CASE_LIKE)) {
-      // Unsupported Operator
-      throw new IllegalArgumentException("Unsupported operator: " + operator + " for " + node.getSelector());
-    }
-    if (node.getArguments().size() != 1) {
-      // Bad number of arguments
-      throw new IllegalArgumentException("Bad number of arguments for " + node.getSelector());
-    }
+      CriteriaBuilder cb) {
+    PredicateResolverUtil.validateOperatorIsSupported(node, RSQLOperators.IGNORE_CASE_LIKE);
+    PredicateResolverUtil.validateOperatorArgumentNumber(node, 1);
 
     String referenciaConvocatoria = "%" + node.getArguments().get(0) + "%";
 
@@ -73,6 +86,52 @@ public class SolicitudPredicateResolver implements SgiRSQLPredicateResolver<Soli
             cb.like(root.get(Solicitud_.convocatoriaExterna), referenciaConvocatoria))));
   }
 
+  private Predicate buildByPlanInvestigacion(ComparisonNode node, Root<Solicitud> root, CriteriaBuilder cb) {
+    PredicateResolverUtil.validateOperatorIsSupported(node, RSQLOperators.EQUAL);
+    PredicateResolverUtil.validateOperatorArgumentNumber(node, 1);
+
+    List<Programa> programasQuery = new ArrayList<>();
+    List<Programa> programasHijos = new ArrayList<>();
+    Long idProgramaRaiz = Long.parseLong(node.getArguments().get(0));
+    Optional<Programa> programaRaizOpt = this.programaRepository.findById(idProgramaRaiz);
+    if (programaRaizOpt.isPresent()) {
+      programasQuery.add(programaRaizOpt.get());
+      programasHijos.add(programaRaizOpt.get());
+    }
+    programasHijos = programaRepository.findByPadreIn(programasHijos);
+    while (!CollectionUtils.isEmpty(programasHijos)) {
+      programasQuery.addAll(programasHijos);
+      programasHijos = programaRepository.findByPadreIn(programasHijos);
+    }
+
+    Join<Solicitud, Convocatoria> joinConvocatoria = root.join(Solicitud_.convocatoria, JoinType.LEFT);
+    ListJoin<Convocatoria, ConvocatoriaEntidadConvocante> joinEntidadesConvocantes = joinConvocatoria
+        .join(Convocatoria_.entidadesConvocantes, JoinType.LEFT);
+
+    return cb.or(joinEntidadesConvocantes.get(ConvocatoriaEntidadConvocante_.programa).in(programasQuery),
+        joinEntidadesConvocantes.get(ConvocatoriaEntidadConvocante_.programa).in(programasQuery));
+  }
+
+  private Predicate buildByAbiertoPlazoPresentacionSolicitudes(ComparisonNode node, Root<Solicitud> root,
+      CriteriaBuilder cb) {
+    PredicateResolverUtil.validateOperatorIsSupported(node, RSQLOperators.EQUAL);
+    PredicateResolverUtil.validateOperatorArgumentNumber(node, 1);
+
+    boolean applyFilter = Boolean.parseBoolean(node.getArguments().get(0));
+    if (!applyFilter) {
+      return cb.isTrue(cb.literal(true));
+    }
+
+    Join<Solicitud, Convocatoria> joinConvocatoria = root.join(Solicitud_.convocatoria);
+
+    Instant fechaActual = Instant.now().atZone(sgiConfigProperties.getTimeZone().toZoneId()).toInstant();
+    Predicate plazoInicio = cb.lessThanOrEqualTo(joinConvocatoria.get(Convocatoria_.configuracionSolicitud)
+        .get(ConfiguracionSolicitud_.fasePresentacionSolicitudes).get(ConvocatoriaFase_.fechaInicio), fechaActual);
+    Predicate plazoFin = cb.greaterThanOrEqualTo(joinConvocatoria.get(Convocatoria_.configuracionSolicitud)
+        .get(ConfiguracionSolicitud_.fasePresentacionSolicitudes).get(ConvocatoriaFase_.fechaFin), fechaActual);
+    return cb.and(plazoInicio, plazoFin);
+  }
+
   @Override
   public boolean isManaged(ComparisonNode node) {
     Property property = Property.fromCode(node.getSelector());
@@ -82,9 +141,18 @@ public class SolicitudPredicateResolver implements SgiRSQLPredicateResolver<Soli
   @Override
   public Predicate toPredicate(ComparisonNode node, Root<Solicitud> root, CriteriaQuery<?> query,
       CriteriaBuilder criteriaBuilder) {
-    switch (Property.fromCode(node.getSelector())) {
+    Property property = Property.fromCode(node.getSelector());
+    if (property == null) {
+      return null;
+    }
+
+    switch (property) {
       case REFERENCIA_CONVOCATORIA:
-        return buildByReferenciaConvocatoria(node, root, query, criteriaBuilder);
+        return buildByReferenciaConvocatoria(node, root, criteriaBuilder);
+      case PLAN_INVESTIGACION:
+        return buildByPlanInvestigacion(node, root, criteriaBuilder);
+      case ABIERTO_PLAZO_PRESENTACION_SOLICITUD:
+        return buildByAbiertoPlazoPresentacionSolicitudes(node, root, criteriaBuilder);
       default:
         return null;
     }

@@ -120,8 +120,6 @@ export class SolicitudHitosComponent extends FragmentComponent implements OnInit
       tituloConvocatoria: this.actionService.convocatoriaTitulo
     };
     const config = {
-      panelClass: 'sgi-dialog-container',
-      minWidth: '60vw',
       data
     };
     const dialogRef = this.matDialog.open(SolicitudHitosModalComponent, config);

@@ -49,6 +49,7 @@ export abstract class DialogCommonComponent implements OnInit, OnDestroy, AfterV
     this._problems = false;
     this.problems$ = new BehaviorSubject<SgiProblem[]>([]);
     this.matDialogRef.disableClose = true;
+    this.matDialogRef.addPanelClass('sgi-dialog-container');
   }
 
   ngOnInit(): void {

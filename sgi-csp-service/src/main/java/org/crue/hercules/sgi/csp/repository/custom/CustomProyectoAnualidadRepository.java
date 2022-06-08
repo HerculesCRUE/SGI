@@ -10,6 +10,7 @@ import org.crue.hercules.sgi.csp.model.AnualidadGasto;
 import org.crue.hercules.sgi.csp.model.AnualidadIngreso;
 import org.crue.hercules.sgi.csp.model.Proyecto;
 import org.crue.hercules.sgi.csp.model.ProyectoAnualidad;
+import org.crue.hercules.sgi.csp.model.ProyectoPeriodoAmortizacion;
 import org.crue.hercules.sgi.csp.model.SolicitudProyectoSocio;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -70,4 +71,14 @@ public interface CustomProyectoAnualidadRepository {
    * @return suma de puntos del campo importeConcedido
    */
   BigDecimal getTotalImporteConcedidoAnualidadGastoCostesIndirectos(Long proyectoId);
+
+  /**
+   * Elimina el {@link ProyectoAnualidad} indicado y los {@link AnualidadGasto},
+   * {@link AnualidadIngreso} y {@link ProyectoPeriodoAmortizacion} asociados.
+   * 
+   * @param id Identificador del {@link ProyectoAnualidad}.
+   * @return el número de registros eliminados.
+   */
+  int deleteByIdCascade(Long id);
+
 }

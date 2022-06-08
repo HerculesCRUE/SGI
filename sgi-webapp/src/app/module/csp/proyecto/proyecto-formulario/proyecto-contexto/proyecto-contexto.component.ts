@@ -150,7 +150,6 @@ export class ProyectoContextoComponent extends FormFragmentComponent<IProyectoCo
 
   openModal(data?: AreaTematicaListado): void {
     const config = {
-      panelClass: 'sgi-dialog-container',
       data: {
         padre: data?.padre ?? this.formGroup.controls.padre?.value,
         areasTematicasConvocatoria: this.areasConvocatoria,

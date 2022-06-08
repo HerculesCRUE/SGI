@@ -7,8 +7,6 @@ import org.crue.hercules.sgi.csp.repository.ProyectoResponsableEconomicoReposito
 import org.crue.hercules.sgi.csp.repository.specification.ProyectoEquipoSpecifications;
 import org.crue.hercules.sgi.csp.repository.specification.ProyectoResponsableEconomicoSpecifications;
 import org.crue.hercules.sgi.framework.security.core.context.SgiSecurityContextHolder;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
@@ -16,7 +14,7 @@ import lombok.RequiredArgsConstructor;
 
 @Component
 @RequiredArgsConstructor
-public class ProyectoHelper {
+public class ProyectoHelper extends AuthorityHelper {
 
   private final ProyectoEquipoRepository proyectoEquipoRepository;
   private final ProyectoResponsableEconomicoRepository proyectoResponsableEconomicoRepository;
@@ -48,33 +46,23 @@ public class ProyectoHelper {
     }
   }
 
-  /**
-   * Recupera el personaRef del usuario actual
-   * 
-   * @return el personaRef del usuario actual
-   */
-  public String getUserPersonaRef() {
-    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-    return authentication.getName();
-  }
-
   public boolean checkUserIsResponsableEconomico(Long proyectoId) {
     Long numeroResponsableEconomico = this.proyectoResponsableEconomicoRepository
         .count(ProyectoResponsableEconomicoSpecifications.byProyectoId(proyectoId)
-            .and(ProyectoResponsableEconomicoSpecifications.byPersonaRef(getUserPersonaRef())));
+            .and(ProyectoResponsableEconomicoSpecifications.byPersonaRef(getAuthenticationPersonaRef())));
     return numeroResponsableEconomico > 0;
   }
 
   public boolean checkUserPresentInEquipos(Long proyectoId) {
     Long numeroProyectoEquipo = this.proyectoEquipoRepository
         .count(ProyectoEquipoSpecifications.byProyectoId(proyectoId)
-            .and(ProyectoEquipoSpecifications.byPersonaRef(getUserPersonaRef())
+            .and(ProyectoEquipoSpecifications.byPersonaRef(getAuthenticationPersonaRef())
                 .and(ProyectoEquipoSpecifications.byRolPrincipal(true))));
     return numeroProyectoEquipo > 0;
   }
 
   public boolean checkIfUserIsInvestigadorPrincipal(Long proyectoId) {
     return this.proyectoEquipoRepository.existsByProyectoIdAndPersonaRefAndRolProyectoRolPrincipalTrue(proyectoId,
-        getUserPersonaRef());
+        getAuthenticationPersonaRef());
   }
 }

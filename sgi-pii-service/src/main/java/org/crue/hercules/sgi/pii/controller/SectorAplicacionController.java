@@ -87,7 +87,7 @@ public class SectorAplicacionController {
    *         filtradas.
    */
   @GetMapping("/todos")
-  @PreAuthorize("hasAnyAuthority('PII-SEA-V', 'PII-SEA-C', 'PII-SEA-E', 'PII-SEA-B', 'PII-SEA-R')")
+  @PreAuthorize("hasAnyAuthority('PII-SEA-V', 'PII-SEA-C', 'PII-SEA-E', 'PII-SEA-B', 'PII-SEA-R', 'PII-INV-E')")
   ResponseEntity<Page<SectorAplicacionOutput>> findAll(@RequestParam(name = "q", required = false) String query,
       @RequestPageable(sort = "s") Pageable paging) {
     log.debug("findAllTodos(String query, Pageable paging) - start");

@@ -5,14 +5,13 @@ import org.crue.hercules.sgi.csp.exceptions.UserNotAuthorizedToAccessSolicitudEx
 import org.crue.hercules.sgi.csp.model.Solicitud;
 import org.crue.hercules.sgi.csp.repository.SolicitudRepository;
 import org.crue.hercules.sgi.framework.security.core.context.SgiSecurityContextHolder;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
 import lombok.RequiredArgsConstructor;
 
 @Component
 @RequiredArgsConstructor
-public class SolicitudAuthorityHelper {
+public class SolicitudAuthorityHelper extends AuthorityHelper {
 
   private final SolicitudRepository repository;
 
@@ -89,10 +88,6 @@ public class SolicitudAuthorityHelper {
   public boolean hasAuthorityViewUnidadGestion(Solicitud solicitud) {
     return SgiSecurityContextHolder.hasAuthorityForUO("CSP-SOL-E", solicitud.getUnidadGestionRef())
         || SgiSecurityContextHolder.hasAuthorityForUO("CSP-SOL-V", solicitud.getUnidadGestionRef());
-  }
-
-  private String getAuthenticationPersonaRef() {
-    return SecurityContextHolder.getContext().getAuthentication().getName();
   }
 
 }

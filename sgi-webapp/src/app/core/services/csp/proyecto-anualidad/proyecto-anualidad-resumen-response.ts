@@ -18,4 +18,5 @@ export interface IProyectoAnualidadResumenResponse {
   presupuestar: boolean;
   /** enviadoSge */
   enviadoSge: boolean;
+  hasGastosIngresos: boolean;
 }

@@ -2,15 +2,13 @@ import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
 import { FormControl, FormGroup, ValidationErrors, ValidatorFn } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
-import { BaseModalComponent } from '@core/component/base-modal.component';
+import { DialogFormComponent } from '@core/component/dialog-form.component';
 import { SelectValue } from '@core/component/select-common/select-common.component';
 import { MSG_PARAMS } from '@core/i18n';
 import { IConvocatoriaConceptoGasto } from '@core/models/csp/convocatoria-concepto-gasto';
 import { IConvocatoriaConceptoGastoCodigoEc } from '@core/models/csp/convocatoria-concepto-gasto-codigo-ec';
 import { ICodigoEconomicoGasto } from '@core/models/sge/codigo-economico-gasto';
-import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-properties';
 import { CodigoEconomicoGastoService } from '@core/services/sge/codigo-economico-gasto.service';
-import { SnackBarService } from '@core/services/snack-bar.service';
 import { DateValidator } from '@core/validators/date-validator';
 import { SelectValidator } from '@core/validators/select-validator';
 import { TranslateService } from '@ngx-translate/core';
@@ -37,10 +35,8 @@ export interface IConvocatoriaConceptoGastoCodigoEcModalComponent {
   templateUrl: './convocatoria-concepto-gasto-codigo-ec-modal.component.html',
   styleUrls: ['./convocatoria-concepto-gasto-codigo-ec-modal.component.scss']
 })
-export class ConvocatoriaConceptoGastoCodigoEcModalComponent extends
-  BaseModalComponent<IConvocatoriaConceptoGastoCodigoEcModalComponent, ConvocatoriaConceptoGastoCodigoEcModalComponent> implements
-  OnInit, OnDestroy {
-  fxLayoutProperties: FxLayoutProperties;
+export class ConvocatoriaConceptoGastoCodigoEcModalComponent
+  extends DialogFormComponent<IConvocatoriaConceptoGastoCodigoEcModalComponent> implements OnInit, OnDestroy {
 
   convocatoriaConceptoGastosFiltered: IConvocatoriaConceptoGasto[];
   convocatoriaConceptoGastos$: Observable<IConvocatoriaConceptoGasto[]>;
@@ -53,18 +49,12 @@ export class ConvocatoriaConceptoGastoCodigoEcModalComponent extends
   title: string;
 
   constructor(
-    protected snackBarService: SnackBarService,
-    public matDialogRef: MatDialogRef<ConvocatoriaConceptoGastoCodigoEcModalComponent>,
+    matDialogRef: MatDialogRef<ConvocatoriaConceptoGastoCodigoEcModalComponent>,
     codigoEconomicoGastoService: CodigoEconomicoGastoService,
     @Inject(MAT_DIALOG_DATA) public data: IConvocatoriaConceptoGastoCodigoEcModalComponent,
     private readonly translate: TranslateService
   ) {
-    super(snackBarService, matDialogRef, data);
-    this.fxLayoutProperties = new FxLayoutProperties();
-    this.fxLayoutProperties.layout = 'row';
-    this.fxLayoutProperties.layoutAlign = 'row';
-    this.fxLayoutProperties.gap = '20px';
-    this.fxLayoutProperties.xs = 'column';
+    super(matDialogRef, !!data.convocatoriaConceptoGastoCodigoEc.codigoEconomico);
 
     this.codigosEconomicos$ = codigoEconomicoGastoService.findAll().pipe(
       map(response => response.items)
@@ -158,7 +148,7 @@ export class ConvocatoriaConceptoGastoCodigoEcModalComponent extends
     return o1?.displayText.localeCompare(o2?.displayText);
   }
 
-  protected getDatosForm(): IConvocatoriaConceptoGastoCodigoEcModalComponent {
+  protected getValue(): IConvocatoriaConceptoGastoCodigoEcModalComponent {
     this.data.convocatoriaConceptoGastoCodigoEc.codigoEconomico = this.formGroup.controls.codigoEconomico.value;
     this.data.convocatoriaConceptoGastoCodigoEc.observaciones = this.formGroup.controls.observaciones.value;
     this.data.convocatoriaConceptoGastoCodigoEc.fechaInicio = this.formGroup.controls.fechaInicio.value;
@@ -166,7 +156,7 @@ export class ConvocatoriaConceptoGastoCodigoEcModalComponent extends
     return this.data;
   }
 
-  protected getFormGroup(): FormGroup {
+  protected buildFormGroup(): FormGroup {
     const codigoEconomico = this.data.convocatoriaConceptoGastoCodigoEc?.codigoEconomico ?? null;
     const formGroup = new FormGroup(
       {
@@ -192,10 +182,6 @@ export class ConvocatoriaConceptoGastoCodigoEcModalComponent extends
     }
 
     return formGroup;
-  }
-
-  ngOnDestroy(): void {
-    super.ngOnDestroy();
   }
 
   /**

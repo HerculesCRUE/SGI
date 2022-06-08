@@ -49,8 +49,9 @@ public class SolicitudProteccionOutput implements Serializable {
   @AllArgsConstructor
   @Builder
   public static class Invencion {
-    Long id;
-    Invencion.TipoProteccion tipoProteccion;
+    private Long id;
+    private Invencion.TipoProteccion tipoProteccion;
+    private String titulo;
 
     @Data
     @EqualsAndHashCode(callSuper = false)
@@ -58,8 +59,9 @@ public class SolicitudProteccionOutput implements Serializable {
     @AllArgsConstructor
     @Builder
     public static class TipoProteccion {
-      Long id;
-      TipoPropiedad tipoPropiedad;
+      private Long id;
+      private TipoPropiedad tipoPropiedad;
+      private String nombre;
     }
   }
 
@@ -69,14 +71,14 @@ public class SolicitudProteccionOutput implements Serializable {
   @AllArgsConstructor
   @Builder
   public static class ViaProteccion {
-    Long id;
-    String nombre;
-    String descripcion;
-    TipoPropiedad tipoPropiedad;
-    Boolean paisEspecifico;
-    Integer mesesPrioridad;
-    Boolean extensionInternacional;
-    Boolean variosPaises;
+    private Long id;
+    private String nombre;
+    private String descripcion;
+    private TipoPropiedad tipoPropiedad;
+    private Boolean paisEspecifico;
+    private Integer mesesPrioridad;
+    private Boolean extensionInternacional;
+    private Boolean variosPaises;
   }
 
   @Data
@@ -85,7 +87,7 @@ public class SolicitudProteccionOutput implements Serializable {
   @AllArgsConstructor
   @Builder
   public static class TipoCaducidad {
-    Long id;
-    String descripcion;
+    private Long id;
+    private String descripcion;
   }
 }

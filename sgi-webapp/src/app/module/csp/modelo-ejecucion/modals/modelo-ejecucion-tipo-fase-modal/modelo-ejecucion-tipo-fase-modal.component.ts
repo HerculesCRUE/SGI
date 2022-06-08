@@ -2,12 +2,11 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
-import { BaseModalComponent } from '@core/component/base-modal.component';
+import { DialogFormComponent } from '@core/component/dialog-form.component';
 import { MSG_PARAMS } from '@core/i18n';
 import { IModeloTipoFase } from '@core/models/csp/modelo-tipo-fase';
 import { ITipoFase } from '@core/models/csp/tipos-configuracion';
 import { DialogService } from '@core/services/dialog.service';
-import { SnackBarService } from '@core/services/snack-bar.service';
 import { requiredChecked } from '@core/validators/checkbox-validator';
 import { TranslateService } from '@ngx-translate/core';
 import { switchMap } from 'rxjs/operators';
@@ -28,8 +27,7 @@ export interface ModeloEjecucionTipoFaseModalData {
   templateUrl: './modelo-ejecucion-tipo-fase-modal.component.html',
   styleUrls: ['./modelo-ejecucion-tipo-fase-modal.component.scss']
 })
-export class ModeloEjecucionTipoFaseModalComponent extends
-  BaseModalComponent<IModeloTipoFase, ModeloEjecucionTipoFaseModalComponent> implements OnInit {
+export class ModeloEjecucionTipoFaseModalComponent extends DialogFormComponent<IModeloTipoFase> implements OnInit {
 
   textSaveOrUpdate: string;
   title: string;
@@ -37,13 +35,12 @@ export class ModeloEjecucionTipoFaseModalComponent extends
   msgParamProyectoEntiy = {};
 
   constructor(
-    protected snackBarService: SnackBarService,
-    public matDialogRef: MatDialogRef<ModeloEjecucionTipoFaseModalComponent>,
+    matDialogRef: MatDialogRef<ModeloEjecucionTipoFaseModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data: ModeloEjecucionTipoFaseModalData,
     protected dialogService: DialogService,
     private readonly translate: TranslateService
   ) {
-    super(snackBarService, matDialogRef, data.modeloTipoFase);
+    super(matDialogRef, !!data.modeloTipoFase.tipoFase);
   }
 
   ngOnInit(): void {
@@ -87,7 +84,7 @@ export class ModeloEjecucionTipoFaseModalComponent extends
     ).subscribe((value) => this.msgParamTipoEntiy = { entity: value, ...MSG_PARAMS.GENDER.MALE, ...MSG_PARAMS.CARDINALIRY.SINGULAR });
   }
 
-  protected getDatosForm(): IModeloTipoFase {
+  protected getValue(): IModeloTipoFase {
     const modeloTipoFase = this.data.modeloTipoFase;
     const disponible = this.formGroup.controls.disponible as FormGroup;
     modeloTipoFase.tipoFase = this.formGroup.get('tipoFase').value;
@@ -97,7 +94,7 @@ export class ModeloEjecucionTipoFaseModalComponent extends
     return modeloTipoFase;
   }
 
-  protected getFormGroup(): FormGroup {
+  protected buildFormGroup(): FormGroup {
     const formGroup = new FormGroup({
       tipoFase: new FormControl({
         value: this.data.modeloTipoFase?.tipoFase,

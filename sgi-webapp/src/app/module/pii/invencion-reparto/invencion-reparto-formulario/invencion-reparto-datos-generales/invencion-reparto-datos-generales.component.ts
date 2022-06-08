@@ -120,7 +120,6 @@ export class InvencionRepartoDatosGeneralesComponent extends FragmentComponent i
 
   openModalGasto(wrapper: StatusWrapper<IRepartoGasto>): void {
     const config: MatDialogConfig<IRepartoGasto> = {
-      panelClass: 'sgi-dialog-container',
       data: wrapper.value
     };
     const dialogRef = this.matDialog.open(RepartoGastoModalComponent, config);
@@ -162,7 +161,6 @@ export class InvencionRepartoDatosGeneralesComponent extends FragmentComponent i
 
   openModalIngreso(wrapper: StatusWrapper<IRepartoIngreso>): void {
     const config: MatDialogConfig<IRepartoIngreso> = {
-      panelClass: 'sgi-dialog-container',
       data: wrapper.value
     };
     const dialogRef = this.matDialog.open(RepartoIngresoModalComponent, config);

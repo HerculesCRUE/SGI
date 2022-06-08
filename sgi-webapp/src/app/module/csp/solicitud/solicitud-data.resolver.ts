@@ -26,7 +26,11 @@ const ALLOWED_PROYECTO_LINK_ESTADOS = [
 @Injectable()
 export class SolicitudDataResolver extends SgiResolverResolver<ISolicitudData> {
 
-  constructor(logger: NGXLogger, router: Router, snackBar: SnackBarService, private service: SolicitudService,
+  constructor(
+    logger: NGXLogger,
+    router: Router,
+    snackBar: SnackBarService,
+    private service: SolicitudService,
     private authService: SgiAuthService,
     private solicitudProyectoService: SolicitudProyectoService) {
     super(logger, router, snackBar, MSG_NOT_FOUND);
@@ -94,7 +98,7 @@ export class SolicitudDataResolver extends SgiResolverResolver<ISolicitudData> {
             map(response => {
               return {
                 ...data,
-                proyectos: response
+                proyectosIds: response
               };
             })
           );

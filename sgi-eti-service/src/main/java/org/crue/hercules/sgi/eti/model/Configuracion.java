@@ -53,4 +53,9 @@ public class Configuracion extends BaseEntity {
   @NotNull
   private Integer diasLimiteEvaluador;
 
+  /** diasAvisoRetrospectiva. */
+  @Column(name = "dias_aviso_retrospectiva", nullable = false, unique = true)
+  @NotNull
+  private Integer diasAvisoRetrospectiva;
+
 }

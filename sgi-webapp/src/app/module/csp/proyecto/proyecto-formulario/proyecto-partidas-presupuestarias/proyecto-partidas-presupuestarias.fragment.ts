@@ -109,9 +109,10 @@ export class ProyectoPartidasPresupuestariasFragment extends Fragment {
               partidasPresupuestarias.forEach(partida => {
                 if (!this.readonly) {
                   if (partida.partidaPresupuestaria) {
-                    this.subscriptions.push(this.proyectoPartidaService.modificable(partida.partidaPresupuestaria.value.id).subscribe((value) => {
-                      this.mapModificable.set(partida.partidaPresupuestaria.value.id, value);
-                    }));
+                    this.subscriptions.push(
+                      this.proyectoPartidaService.modificable(partida.partidaPresupuestaria.value.id).subscribe((value) => {
+                        this.mapModificable.set(partida.partidaPresupuestaria.value.id, value);
+                      }));
                   }
                 } else {
                   this.mapModificable.set(partida.partidaPresupuestaria?.value.id, false);
@@ -135,21 +136,26 @@ export class ProyectoPartidasPresupuestariasFragment extends Fragment {
     wrapped.setCreated();
     const current = this.partidasPresupuestarias$.value;
     partidaPresupuestaria.convocatoriaPartidaId = convocatoriaPartida?.id;
-    const partidaPresupuestariaListado = {
+    const partidaPresupuestariaListado: IPartidaPresupuestariaListado = {
       partidaPresupuestaria: wrapped,
+      convocatoriaPartidaPresupuestaria: convocatoriaPartida,
       codigo: partidaPresupuestaria.codigo,
       descripcion: partidaPresupuestaria.descripcion,
       tipoPartida: partidaPresupuestaria.tipoPartida,
-      canEdit: true
-    } as IPartidaPresupuestariaListado;
+      canEdit: true,
+      help: null
+    };
 
     if (convocatoriaPartida) {
       const index = current.findIndex(value => value.convocatoriaPartidaPresupuestaria?.id === convocatoriaPartida.id);
+      this.fillListadoFields(partidaPresupuestariaListado);
       current[index] = partidaPresupuestariaListado;
     } else {
-      partidaPresupuestariaListado.help = {
-        class: HelpIconClass.WARNING,
-        tooltip: PARTIDA_PRESUPUESTARIA_NO_CONVOCATORIA_KEY
+      if (this.proyecto.convocatoriaId) {
+        partidaPresupuestariaListado.help = {
+          class: HelpIconClass.WARNING,
+          tooltip: PARTIDA_PRESUPUESTARIA_NO_CONVOCATORIA_KEY
+        };
       }
       current.push(partidaPresupuestariaListado);
     }
@@ -185,7 +191,7 @@ export class ProyectoPartidasPresupuestariasFragment extends Fragment {
         } else {
           partidaPresupuestariaListado.help = null;
         }
-      } else {
+      } else if (this.proyecto.convocatoriaId) {
         partidaPresupuestariaListado.help = {
           class: HelpIconClass.WARNING,
           tooltip: PARTIDA_PRESUPUESTARIA_NO_CONVOCATORIA_KEY
@@ -267,17 +273,16 @@ export class ProyectoPartidasPresupuestariasFragment extends Fragment {
                 === partidaPresupuestariaListado.partidaPresupuestaria.value.id);
             const partidasPresupuestariaListado = partidaPresupuestariaListado.partidaPresupuestaria.value;
             partidasPresupuestariaListado.id = createdPartidaPresupuestaria.id;
+
             this.partidasPresupuestarias$.value[index] = {
               partidaPresupuestaria: new StatusWrapper<IProyectoPartida>(partidasPresupuestariaListado),
+              convocatoriaPartidaPresupuestaria: partidaPresupuestariaListado.convocatoriaPartidaPresupuestaria,
               codigo: createdPartidaPresupuestaria.codigo,
               descripcion: createdPartidaPresupuestaria.descripcion,
               tipoPartida: createdPartidaPresupuestaria.tipoPartida,
               canEdit: true,
-              help: {
-                class: HelpIconClass.WARNING,
-                tooltip: PARTIDA_PRESUPUESTARIA_NO_CONVOCATORIA_KEY
-              }
-            } as IPartidaPresupuestariaListado;
+              help: partidaPresupuestariaListado.help
+            };
             this.mapModificable.set(createdPartidaPresupuestaria.id, true);
             this.partidasPresupuestarias$.next(this.partidasPresupuestarias$.value);
           })
@@ -336,7 +341,7 @@ export class ProyectoPartidasPresupuestariasFragment extends Fragment {
           };
 
         }
-      } else {
+      } else if (this.proyecto.convocatoriaId) {
         partidasPresupuestaria.help = {
           class: HelpIconClass.WARNING,
           tooltip: PARTIDA_PRESUPUESTARIA_NO_CONVOCATORIA_KEY

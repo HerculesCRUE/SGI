@@ -14,10 +14,6 @@ describe('SelectDialogGrupoComponent', () => {
   let fixture: ComponentFixture<SelectDialogGrupoComponent>;
 
   beforeEach(waitForAsync(() => {
-    const mockDialogRef = {
-      close: jasmine.createSpy('close'),
-    };
-
     TestBed.configureTestingModule({
       imports: [
         BrowserAnimationsModule,
@@ -33,7 +29,7 @@ describe('SelectDialogGrupoComponent', () => {
       providers: [
         {
           provide: MatDialogRef,
-          useValue: mockDialogRef,
+          useValue: TestUtils.buildDialogCommonMatDialogRef(),
         }
       ],
       declarations: [SelectDialogGrupoComponent],

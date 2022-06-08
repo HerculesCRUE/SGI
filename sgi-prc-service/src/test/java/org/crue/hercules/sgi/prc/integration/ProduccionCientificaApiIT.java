@@ -117,6 +117,14 @@ class ProduccionCientificaApiIT extends ProduccionCientificaBaseIT {
   }
 
   @Test
+  void create_ReturnsValidationExceptionCampoRequired() throws Exception {
+    ProduccionCientificaApiCreateInput produccionCientifica = generarMockProduccionCientificaApiInput();
+    produccionCientifica.getCampos().get(0).setCodigoCVN(CodigoCVN.E060_010_010_300.getCode());
+
+    callCreateAndValidateResponse(produccionCientifica, HttpStatus.BAD_REQUEST);
+  }
+
+  @Test
   void create_ReturnsValidationExceptionValorCampoEmpty() throws Exception {
     ProduccionCientificaApiCreateInput produccionCientifica = generarMockProduccionCientificaApiInput();
     produccionCientifica.getCampos().forEach(campo -> campo.setValores(null));
@@ -467,7 +475,7 @@ class ProduccionCientificaApiIT extends ProduccionCientificaBaseIT {
     // first page, 3 elements per page sorted
     HttpHeaders headers = new HttpHeaders();
 
-    // when: find Proyecto
+    // when: find epigrafes
     URI uri = UriComponentsBuilder
         .fromUriString(CONTROLLER_BASE_PATH_API + "/epigrafes")
         .buildAndExpand(produccionCientificaId).toUri();

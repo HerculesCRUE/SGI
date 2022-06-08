@@ -6,10 +6,7 @@ import org.crue.hercules.sgi.rep.service.BaseRestTemplateService;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import lombok.extern.slf4j.Slf4j;
-
 @Service
-@Slf4j
 public class AutorizacionProyectoExternoService extends BaseRestTemplateService<AutorizacionDto> {
   private static final String URL_API = "/autorizaciones";
 

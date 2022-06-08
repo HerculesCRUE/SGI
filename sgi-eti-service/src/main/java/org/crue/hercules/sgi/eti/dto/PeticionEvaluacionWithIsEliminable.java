@@ -1,6 +1,7 @@
 package org.crue.hercules.sgi.eti.dto;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.time.Instant;
 
 import org.crue.hercules.sgi.eti.model.PeticionEvaluacion;
@@ -76,6 +77,9 @@ public class PeticionEvaluacionWithIsEliminable implements Serializable {
   /** Is eliminable */
   private Boolean eliminable;
 
+  /** Importe Financiación */
+  private BigDecimal importeFinanciacion;
+
   public PeticionEvaluacionWithIsEliminable(PeticionEvaluacion peticionEvaluacion, Boolean eliminable) {
     this.id = peticionEvaluacion.getId();
     this.activo = peticionEvaluacion.getActivo();
@@ -95,5 +99,6 @@ public class PeticionEvaluacionWithIsEliminable implements Serializable {
     this.tipoInvestigacionTutelada = peticionEvaluacion.getTipoInvestigacionTutelada();
     this.titulo = peticionEvaluacion.getTitulo();
     this.valorSocial = peticionEvaluacion.getValorSocial();
+    this.importeFinanciacion = peticionEvaluacion.getImporteFinanciacion();
   }
 }

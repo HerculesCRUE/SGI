@@ -1,13 +1,8 @@
-<div class="sgi-dialog-header" fxLayout="row" fxLayoutGap="20px">
-  <span fxFlexAlign="center" mat-mat-dialog-title role="heading" aria-level="3" fxFlex>{{title}}</span>
-  <button fxFlex="nogrow" mat-icon-button mat-dialog-close>
-    <mat-icon class="close-icon">close</mat-icon>
-  </button>
-</div>
-<mat-dialog-content>
+<sgi-dialog-header [title]="title"></sgi-dialog-header>
+<sgi-dialog-content>
   <form [formGroup]="formGroup">
     <!-- Tipo de Hito -->
-    <div [fxLayout]="fxLayoutProperties.layout" [fxLayoutAlign]="fxLayoutProperties.layoutAlign">
+    <div fxLayout="row">
       <mat-form-field>
         <mat-label>{{'csp.modelo-ejecucion-tipo-hito.tipo' | translate}}</mat-label>
         <sgi-select-tipo-hito formControlName="tipoHito" required [excluded]="data.tipoHitos">
@@ -18,11 +13,11 @@
       </mat-form-field>
     </div>
     <!-- Disponibilidad -->
-    <div [fxLayout]="fxLayoutProperties.layout" [fxLayoutAlign]="fxLayoutProperties.layoutAlign">
+    <div fxLayout="row">
       <label>{{'csp.modelo-ejecucion-tipo-hito.disponible' | translate}}</label>
     </div>
-    <div [fxLayout]="fxLayoutProperties.layout" [fxLayoutAlign]="fxLayoutProperties.layoutAlign">
-      <div class="checkbox-inline" formGroupName="disponible">
+    <div fxLayout="row">
+      <div class="checkbox-inline" formGroupName="disponible" fxFlex>
         <!-- Convocatoria-->
         <mat-checkbox color="primary" class="checkbox" formControlName="convocatoria">
           {{'csp.modelo-ejecucion-tipo-hito.convocatorias' | translate}}
@@ -39,9 +34,9 @@
       </div>
     </div>
   </form>
-</mat-dialog-content>
+</sgi-dialog-content>
 <mat-dialog-actions>
-  <button color="accent" (click)="saveOrUpdate()" mat-raised-button type="submit">
+  <button color="accent" (click)="doAction()" [disabled]="this.actionDisabled" mat-raised-button type="submit">
     <mat-icon class="save-icon">save</mat-icon>{{textSaveOrUpdate | translate}}
   </button>
   <button class="link-cancelar" mat-button type="button" mat-dialog-close>{{'btn.cancel' |

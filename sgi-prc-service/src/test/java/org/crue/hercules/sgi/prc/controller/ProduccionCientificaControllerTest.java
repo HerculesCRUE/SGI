@@ -12,6 +12,7 @@ import org.crue.hercules.sgi.prc.dto.AcreditacionOutput;
 import org.crue.hercules.sgi.prc.dto.ActividadOutput;
 import org.crue.hercules.sgi.prc.dto.ActividadResumen;
 import org.crue.hercules.sgi.prc.dto.AutorOutput;
+import org.crue.hercules.sgi.prc.dto.CampoProduccionCientificaOutput;
 import org.crue.hercules.sgi.prc.dto.ComiteEditorialOutput;
 import org.crue.hercules.sgi.prc.dto.ComiteEditorialResumen;
 import org.crue.hercules.sgi.prc.dto.CongresoOutput;
@@ -25,21 +26,26 @@ import org.crue.hercules.sgi.prc.dto.ObraArtisticaResumen;
 import org.crue.hercules.sgi.prc.dto.ProyectoOutput;
 import org.crue.hercules.sgi.prc.dto.PublicacionOutput;
 import org.crue.hercules.sgi.prc.dto.PublicacionResumen;
+import org.crue.hercules.sgi.prc.dto.ValorCampoOutput;
 import org.crue.hercules.sgi.prc.enums.EpigrafeCVN;
 import org.crue.hercules.sgi.prc.enums.TipoFuenteImpacto;
 import org.crue.hercules.sgi.prc.exceptions.ProduccionCientificaNotFoundException;
 import org.crue.hercules.sgi.prc.model.Acreditacion;
 import org.crue.hercules.sgi.prc.model.Autor;
+import org.crue.hercules.sgi.prc.model.CampoProduccionCientifica;
 import org.crue.hercules.sgi.prc.model.EstadoProduccionCientifica;
 import org.crue.hercules.sgi.prc.model.EstadoProduccionCientifica.TipoEstadoProduccion;
 import org.crue.hercules.sgi.prc.model.IndiceImpacto;
 import org.crue.hercules.sgi.prc.model.ProduccionCientifica;
 import org.crue.hercules.sgi.prc.model.Proyecto;
+import org.crue.hercules.sgi.prc.model.ValorCampo;
 import org.crue.hercules.sgi.prc.service.AcreditacionService;
 import org.crue.hercules.sgi.prc.service.AutorService;
+import org.crue.hercules.sgi.prc.service.CampoProduccionCientificaService;
 import org.crue.hercules.sgi.prc.service.IndiceImpactoService;
 import org.crue.hercules.sgi.prc.service.ProduccionCientificaService;
 import org.crue.hercules.sgi.prc.service.ProyectoService;
+import org.crue.hercules.sgi.prc.service.ValorCampoService;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
@@ -63,7 +69,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
  * ProduccionCientificaControllerTest
  */
 @WebMvcTest(ProduccionCientificaController.class)
-public class ProduccionCientificaControllerTest extends BaseControllerTest {
+class ProduccionCientificaControllerTest extends BaseControllerTest {
 
   @MockBean
   private ProduccionCientificaService service;
@@ -75,6 +81,10 @@ public class ProduccionCientificaControllerTest extends BaseControllerTest {
   private ProyectoService proyectoService;
   @MockBean
   private AcreditacionService acreditacionService;
+  @MockBean
+  private CampoProduccionCientificaService campoProduccionCientificaService;
+  @MockBean
+  private ValorCampoService valorCampoService;
 
   private static final String CONTROLLER_BASE_PATH = ProduccionCientificaController.MAPPING;
   private static final String PATH_PARAMETER_ID = "/{id}";
@@ -86,10 +96,13 @@ public class ProduccionCientificaControllerTest extends BaseControllerTest {
   private static final String PATH_DIRECCIONES_TESIS = ProduccionCientificaController.PATH_DIRECCIONES_TESIS;
   private static final String PATH_PARAMETER_VALIDAR = "/validar";
   private static final String PATH_PARAMETER_RECHAZAR = "/rechazar";
+  private static final String PATH_PARAMETER_MODIFICABLE = "/modificable";
   private static final String PATH_INDICES_IMPACTO = ProduccionCientificaController.PATH_INDICES_IMPACTO;
   private static final String PATH_PROYECTOS = ProduccionCientificaController.PATH_PROYECTOS;
   private static final String PATH_ACREDITACIONES = ProduccionCientificaController.PATH_ACREDITACIONES;
   private static final String PATH_AUTORES = ProduccionCientificaController.PATH_AUTORES;
+  public static final String PATH_CAMPOS = ProduccionCientificaController.PATH_CAMPOS;
+  public static final String PATH_VALORES = ProduccionCientificaController.PATH_VALORES;
   private static Long estadoProduccionCientificaId = 0L;
 
   @Test
@@ -754,6 +767,57 @@ public class ProduccionCientificaControllerTest extends BaseControllerTest {
         .andExpect(MockMvcResultMatchers.status().isNotFound());
   }
 
+  @Test
+  @WithMockUser(username = "user", authorities = { "PRC-VAL-INV-ER" })
+  void accesibleByInvestigador_ResturnsOK() throws Exception {
+    // given: editable id
+    Long id = 1L;
+    BDDMockito.given(service.accesibleByInvestigador(id)).willReturn(Boolean.TRUE);
+
+    // when: check is editable
+    mockMvc
+        .perform(MockMvcRequestBuilders.head(CONTROLLER_BASE_PATH + PATH_PARAMETER_ID, id)
+            .with(SecurityMockMvcRequestPostProcessors.csrf()).contentType(MediaType.APPLICATION_JSON)
+            .accept(MediaType.APPLICATION_JSON))
+        .andDo(SgiMockMvcResultHandlers.printOnError())
+        // then: 200 OK
+        .andExpect(MockMvcResultMatchers.status().isOk());
+  }
+
+  @Test
+  @WithMockUser(username = "user", authorities = { "PRC-VAL-INV-ER" })
+  void editableByInvestigador_ResturnsOK() throws Exception {
+    // given: editable id
+    Long id = 1L;
+    BDDMockito.given(service.editableByInvestigador(id)).willReturn(Boolean.TRUE);
+
+    // when: check is editable
+    mockMvc
+        .perform(MockMvcRequestBuilders.head(CONTROLLER_BASE_PATH + PATH_PARAMETER_ID + PATH_PARAMETER_MODIFICABLE, id)
+            .with(SecurityMockMvcRequestPostProcessors.csrf()).contentType(MediaType.APPLICATION_JSON)
+            .accept(MediaType.APPLICATION_JSON))
+        .andDo(SgiMockMvcResultHandlers.printOnError())
+        // then: 200 OK
+        .andExpect(MockMvcResultMatchers.status().isOk());
+  }
+
+  @Test
+  @WithMockUser(username = "user", authorities = { "PRC-VAL-INV-ER" })
+  void editableByInvestigador_ResturnsNoContent() throws Exception {
+    // given: editable id
+    Long id = 1L;
+    BDDMockito.given(service.accesibleByInvestigador(id)).willReturn(Boolean.FALSE);
+
+    // when: check is editable
+    mockMvc
+        .perform(MockMvcRequestBuilders.head(CONTROLLER_BASE_PATH + PATH_PARAMETER_ID + PATH_PARAMETER_MODIFICABLE, id)
+            .with(SecurityMockMvcRequestPostProcessors.csrf()).contentType(MediaType.APPLICATION_JSON)
+            .accept(MediaType.APPLICATION_JSON))
+        .andDo(SgiMockMvcResultHandlers.printOnError())
+        // then: 204 OK
+        .andExpect(MockMvcResultMatchers.status().isNoContent());
+  }
+
   /**
    * 
    * INDICE IMPACTO
@@ -1138,6 +1202,235 @@ public class ProduccionCientificaControllerTest extends BaseControllerTest {
         .andExpect(MockMvcResultMatchers.status().isNoContent());
   }
 
+  /**
+   * 
+   * CAMPOS
+   * 
+   */
+
+  @Test
+  @WithMockUser(username = "user", authorities = { "PRC-VAL-V" })
+  void findCampos_ReturnsPage() throws Exception {
+    // given: Una lista con 37 CampoProduccionCientifica para la
+    // ProduccionCientifica
+    Long produccionCientificaId = 1L;
+
+    List<CampoProduccionCientifica> campos = new ArrayList<>();
+    for (long i = 1; i <= 37; i++) {
+      campos.add(generarMockCampoProduccionCientifica(i, produccionCientificaId));
+    }
+
+    Integer page = 3;
+    Integer pageSize = 10;
+
+    BDDMockito.given(campoProduccionCientificaService
+        .findAllByProduccionCientificaId(ArgumentMatchers.<Long>any(),
+            ArgumentMatchers.<String>any(), ArgumentMatchers.<Pageable>any()))
+        .willAnswer(new Answer<Page<CampoProduccionCientifica>>() {
+          @Override
+          public Page<CampoProduccionCientifica> answer(InvocationOnMock invocation) throws Throwable {
+            Pageable pageable = invocation.getArgument(2, Pageable.class);
+            int size = pageable.getPageSize();
+            int index = pageable.getPageNumber();
+            int fromIndex = size * index;
+            int toIndex = fromIndex + size;
+            toIndex = toIndex > campos.size() ? campos.size() : toIndex;
+            List<CampoProduccionCientifica> content = campos.subList(fromIndex, toIndex);
+            Page<CampoProduccionCientifica> page = new PageImpl<>(content, pageable, campos.size());
+            return page;
+          }
+        });
+
+    // when: Get page=3 with pagesize=10
+    MvcResult requestResult = mockMvc
+        .perform(MockMvcRequestBuilders
+            .get(CONTROLLER_BASE_PATH + PATH_CAMPOS, produccionCientificaId)
+            .with(SecurityMockMvcRequestPostProcessors.csrf()).header("X-Page", page).header("X-Page-Size", pageSize)
+            .accept(MediaType.APPLICATION_JSON))
+        .andDo(SgiMockMvcResultHandlers.printOnError())
+        // then: Devuelve la pagina 3 con las CampoProduccionCientifica del 31 al 37
+        .andExpect(MockMvcResultMatchers.status().isOk())
+        .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
+        .andExpect(MockMvcResultMatchers.header().string("X-Page", "3"))
+        .andExpect(MockMvcResultMatchers.header().string("X-Page-Total-Count", "7"))
+        .andExpect(MockMvcResultMatchers.header().string("X-Page-Size", "10"))
+        .andExpect(MockMvcResultMatchers.header().string("X-Total-Count", "37"))
+        .andExpect(MockMvcResultMatchers.jsonPath("$", Matchers.hasSize(7))).andReturn();
+
+    List<CampoProduccionCientificaOutput> campoResponse = mapper
+        .readValue(requestResult.getResponse().getContentAsString(),
+            new TypeReference<List<CampoProduccionCientificaOutput>>() {
+            });
+
+    for (int i = 31; i <= 37; i++) {
+      CampoProduccionCientificaOutput campo = campoResponse.get(i - (page * pageSize) - 1);
+      Assertions.assertThat(campo.getId())
+          .isEqualTo(i);
+    }
+  }
+
+  @Test
+  @WithMockUser(username = "user", authorities = { "PRC-VAL-V" })
+  void findCampos_EmptyList_Returns204() throws Exception {
+    // given: Una lista vacia de CampoProduccionCientifica para la
+    // ProduccionCientifica
+    Long produccionCientificaId = 1L;
+    List<CampoProduccionCientifica> campos = new ArrayList<>();
+
+    Integer page = 0;
+    Integer pageSize = 10;
+
+    BDDMockito.given(campoProduccionCientificaService.findAllByProduccionCientificaId(ArgumentMatchers.<Long>any(),
+        ArgumentMatchers.<String>any(), ArgumentMatchers.<Pageable>any()))
+        .willAnswer(new Answer<Page<CampoProduccionCientifica>>() {
+          @Override
+          public Page<CampoProduccionCientifica> answer(InvocationOnMock invocation) throws Throwable {
+            Pageable pageable = invocation.getArgument(2, Pageable.class);
+            Page<CampoProduccionCientifica> page = new PageImpl<>(campos, pageable, 0);
+            return page;
+          }
+        });
+
+    // when: Get page=0 with pagesize=10
+    mockMvc
+        .perform(MockMvcRequestBuilders.get(CONTROLLER_BASE_PATH + PATH_CAMPOS, produccionCientificaId)
+            .with(SecurityMockMvcRequestPostProcessors.csrf()).header("X-Page", page).header("X-Page-Size", pageSize)
+            .accept(MediaType.APPLICATION_JSON))
+        .andDo(SgiMockMvcResultHandlers.printOnError())
+        // then: Devuelve un 204
+        .andExpect(MockMvcResultMatchers.status().isNoContent());
+  }
+
+  /**
+   * 
+   * VALORES
+   * 
+   */
+
+  @Test
+  @WithMockUser(username = "user", authorities = { "PRC-VAL-V" })
+  void findValores_ReturnsPage() throws Exception {
+    // given: Una lista con 37 ValorCampo para el CampoProduccionCientifica
+    Long produccionCientificaId = 1L;
+    Long campoId = 2L;
+
+    List<ValorCampo> valoresCampo = new ArrayList<>();
+    for (long i = 1; i <= 37; i++) {
+      valoresCampo.add(generarMockValorCampo(i, campoId));
+    }
+
+    Integer page = 3;
+    Integer pageSize = 10;
+
+    BDDMockito.given(campoProduccionCientificaService.findById(ArgumentMatchers.anyLong()))
+        .willReturn(generarMockCampoProduccionCientifica(campoId, produccionCientificaId));
+
+    BDDMockito.given(valorCampoService
+        .findAllByCampoProduccionCientificaId(ArgumentMatchers.<Long>any(),
+            ArgumentMatchers.<String>any(), ArgumentMatchers.<Pageable>any()))
+        .willAnswer(new Answer<Page<ValorCampo>>() {
+          @Override
+          public Page<ValorCampo> answer(InvocationOnMock invocation) throws Throwable {
+            Pageable pageable = invocation.getArgument(2, Pageable.class);
+            int size = pageable.getPageSize();
+            int index = pageable.getPageNumber();
+            int fromIndex = size * index;
+            int toIndex = fromIndex + size;
+            toIndex = toIndex > valoresCampo.size() ? valoresCampo.size() : toIndex;
+            List<ValorCampo> content = valoresCampo.subList(fromIndex, toIndex);
+            Page<ValorCampo> page = new PageImpl<>(content, pageable, valoresCampo.size());
+            return page;
+          }
+        });
+
+    // when: Get page=3 with pagesize=10
+    MvcResult requestResult = mockMvc
+        .perform(MockMvcRequestBuilders
+            .get(CONTROLLER_BASE_PATH + PATH_VALORES, produccionCientificaId, campoId)
+            .with(SecurityMockMvcRequestPostProcessors.csrf()).header("X-Page", page).header("X-Page-Size", pageSize)
+            .accept(MediaType.APPLICATION_JSON))
+        .andDo(SgiMockMvcResultHandlers.printOnError())
+        // then: Devuelve la pagina 3 con los ValorCampo del 31 al 37
+        .andExpect(MockMvcResultMatchers.status().isOk())
+        .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
+        .andExpect(MockMvcResultMatchers.header().string("X-Page", "3"))
+        .andExpect(MockMvcResultMatchers.header().string("X-Page-Total-Count", "7"))
+        .andExpect(MockMvcResultMatchers.header().string("X-Page-Size", "10"))
+        .andExpect(MockMvcResultMatchers.header().string("X-Total-Count", "37"))
+        .andExpect(MockMvcResultMatchers.jsonPath("$", Matchers.hasSize(7))).andReturn();
+
+    List<ValorCampoOutput> indiceImpactoResponse = mapper
+        .readValue(requestResult.getResponse().getContentAsString(), new TypeReference<List<ValorCampoOutput>>() {
+        });
+
+    for (int i = 31; i <= 37; i++) {
+      ValorCampoOutput valorCampo = indiceImpactoResponse.get(i - (page * pageSize) - 1);
+      Assertions.assertThat(valorCampo.getCampoProduccionCientificaId()).isEqualTo(campoId);
+      Assertions.assertThat(valorCampo.getValor())
+          .isEqualTo("Valor-" + String.format("%03d", i));
+    }
+  }
+
+  @Test
+  @WithMockUser(username = "user", authorities = { "PRC-VAL-V" })
+  void findValores_EmptyList_Returns204() throws Exception {
+    // given: Una lista vacia de ValorCampo
+    Long produccionCientificaId = 1L;
+    Long campoId = 2L;
+    List<ValorCampo> indicesImpacto = new ArrayList<>();
+
+    Integer page = 0;
+    Integer pageSize = 10;
+
+    BDDMockito.given(campoProduccionCientificaService.findById(ArgumentMatchers.anyLong()))
+        .willReturn(generarMockCampoProduccionCientifica(campoId, produccionCientificaId));
+
+    BDDMockito.given(valorCampoService.findAllByCampoProduccionCientificaId(ArgumentMatchers.<Long>any(),
+        ArgumentMatchers.<String>any(), ArgumentMatchers.<Pageable>any()))
+        .willAnswer(new Answer<Page<ValorCampo>>() {
+          @Override
+          public Page<ValorCampo> answer(InvocationOnMock invocation) throws Throwable {
+            Pageable pageable = invocation.getArgument(2, Pageable.class);
+            Page<ValorCampo> page = new PageImpl<>(indicesImpacto, pageable, 0);
+            return page;
+          }
+        });
+
+    // when: Get page=0 with pagesize=10
+    mockMvc
+        .perform(MockMvcRequestBuilders.get(CONTROLLER_BASE_PATH + PATH_VALORES, produccionCientificaId, campoId)
+            .with(SecurityMockMvcRequestPostProcessors.csrf()).header("X-Page", page).header("X-Page-Size", pageSize)
+            .accept(MediaType.APPLICATION_JSON))
+        .andDo(SgiMockMvcResultHandlers.printOnError())
+        // then: Devuelve un 204
+        .andExpect(MockMvcResultMatchers.status().isNoContent());
+  }
+
+  @Test
+  @WithMockUser(username = "user", authorities = { "PRC-VAL-V" })
+  void findValores_Returns400() throws Exception {
+    // given: Un expectedProduccionCientificaId diferente del
+    // actualProduccionCientificaId
+    Long expectedProduccionCientificaId = 1L;
+    Long actualProduccionCientificaId = 2L;
+    Long campoId = 2L;
+    Integer page = 0;
+    Integer pageSize = 10;
+
+    BDDMockito.given(campoProduccionCientificaService.findById(ArgumentMatchers.anyLong()))
+        .willReturn(generarMockCampoProduccionCientifica(campoId, actualProduccionCientificaId));
+
+    // when: Get page=0 with pagesize=10
+    mockMvc
+        .perform(MockMvcRequestBuilders
+            .get(CONTROLLER_BASE_PATH + PATH_VALORES, expectedProduccionCientificaId, campoId)
+            .with(SecurityMockMvcRequestPostProcessors.csrf()).header("X-Page", page).header("X-Page-Size", pageSize)
+            .accept(MediaType.APPLICATION_JSON))
+        .andDo(SgiMockMvcResultHandlers.printOnError())
+        // then: Devuelve un 200
+        .andExpect(MockMvcResultMatchers.status().isBadRequest());
+  }
+
   private ProduccionCientifica generarMockProduccionCientifica(Long id, String idRef) {
     ProduccionCientifica produccionCientifica = new ProduccionCientifica();
     produccionCientifica.setId(id);
@@ -1263,5 +1556,23 @@ public class ProduccionCientificaControllerTest extends BaseControllerTest {
     acreditacion.setUrl("url-" + String.format("%03d", id));
 
     return acreditacion;
+  }
+
+  private CampoProduccionCientifica generarMockCampoProduccionCientifica(Long id, Long produccionCientificaId) {
+    CampoProduccionCientifica campoProduccionCientifica = new CampoProduccionCientifica();
+    campoProduccionCientifica.setId(id);
+    campoProduccionCientifica.setProduccionCientificaId(produccionCientificaId);
+
+    return campoProduccionCientifica;
+  }
+
+  private ValorCampo generarMockValorCampo(Long id, Long campoProduccionCientificaId) {
+    ValorCampo valorCampo = new ValorCampo();
+    valorCampo.setId(id);
+    valorCampo.setCampoProduccionCientificaId(campoProduccionCientificaId);
+    valorCampo.setOrden(1);
+    valorCampo.setValor("Valor-" + String.format("%03d", id));
+
+    return valorCampo;
   }
 }

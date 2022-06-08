@@ -10,6 +10,7 @@ import { MaterialDesignModule } from '@material/material-design.module';
 import { SharedModule } from '@shared/shared.module';
 import { LoggerTestingModule } from 'ngx-logger/testing';
 import { SgpSharedModule } from 'src/app/esb/sgp/shared/sgp-shared.module';
+import { EtiSharedModule } from '../../shared/eti-shared.module';
 
 import { EvaluacionListadoComponent } from './evaluacion-listado.component';
 
@@ -31,7 +32,8 @@ describe('EvaluacionListadoComponent', () => {
         FormsModule,
         ReactiveFormsModule,
         SharedModule,
-        SgpSharedModule
+        SgpSharedModule,
+        EtiSharedModule,
       ],
       providers: [
         { provide: SnackBarService, useValue: TestUtils.getSnackBarServiceSpy() }

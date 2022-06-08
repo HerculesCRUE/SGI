@@ -133,7 +133,7 @@ public class CongresoPredicateResolver extends ProduccionCientificaPredicateReso
       throw new IllegalArgumentException(BAD_NUMBER_OF_ARGUMENTS_FOR + node.getSelector());
     }
 
-    String investigador = "%" + node.getArguments().get(0) + "%";
+    String investigador = "%" + node.getArguments().get(0).toLowerCase() + "%";
 
     Subquery<Long> queryInvestigador = getSubqueryAutor(cb, query, root.get(ProduccionCientifica_.id), investigador);
     return cb.and(cb.exists(queryInvestigador));
@@ -151,7 +151,7 @@ public class CongresoPredicateResolver extends ProduccionCientificaPredicateReso
       throw new IllegalArgumentException(BAD_NUMBER_OF_ARGUMENTS_FOR + node.getSelector());
     }
 
-    String nombreCongreso = "%" + node.getArguments().get(0) + "%";
+    String nombreCongreso = "%" + node.getArguments().get(0).toLowerCase() + "%";
 
     Subquery<String> queryNombreCongreso = buildSubqueryValorCampoProduccionCientifica(cb, query,
         root.get(ProduccionCientifica_.id), CodigoCVN.E060_010_020_100, operator, nombreCongreso);
@@ -171,7 +171,7 @@ public class CongresoPredicateResolver extends ProduccionCientificaPredicateReso
       throw new IllegalArgumentException(BAD_NUMBER_OF_ARGUMENTS_FOR + node.getSelector());
     }
 
-    String tipoEvento = "%" + node.getArguments().get(0) + "%";
+    String tipoEvento = "%" + node.getArguments().get(0).toLowerCase() + "%";
 
     Subquery<String> queryTipoEvento = buildSubqueryValorCampoProduccionCientifica(cb,
         query, root.get(ProduccionCientifica_.id), CodigoCVN.E060_010_020_010, operator, tipoEvento);
@@ -191,7 +191,7 @@ public class CongresoPredicateResolver extends ProduccionCientificaPredicateReso
       throw new IllegalArgumentException(BAD_NUMBER_OF_ARGUMENTS_FOR + node.getSelector());
     }
 
-    String tituloTrabajo = "%" + node.getArguments().get(0) + "%";
+    String tituloTrabajo = "%" + node.getArguments().get(0).toLowerCase() + "%";
 
     Subquery<String> queryTituloTrabajo = buildSubqueryValorCampoProduccionCientifica(cb,
         query, root.get(ProduccionCientifica_.id), CodigoCVN.E060_010_020_030, operator, tituloTrabajo);

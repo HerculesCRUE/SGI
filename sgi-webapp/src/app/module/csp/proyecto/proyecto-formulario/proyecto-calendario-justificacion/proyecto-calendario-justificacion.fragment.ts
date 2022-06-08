@@ -243,7 +243,7 @@ export class ProyectoCalendarioJustificacionFragment extends Fragment {
         } else {
           periodoJustificacionListado.help = undefined;
         }
-      } else {
+      } else if (this.proyecto.convocatoriaId) {
         periodoJustificacionListado.help = {
           class: HelpIconClass.WARNING,
           tooltip: PROYECTO_PERIODO_JUSTIFICACION_NO_CONVOCATORIA_KEY

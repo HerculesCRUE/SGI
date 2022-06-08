@@ -2,10 +2,9 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
-import { BaseModalComponent } from '@core/component/base-modal.component';
+import { DialogFormComponent } from '@core/component/dialog-form.component';
 import { MSG_PARAMS } from '@core/i18n';
 import { IEntidadFinanciadora } from '@core/models/csp/entidad-financiadora';
-import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-properties';
 import { SnackBarService } from '@core/services/snack-bar.service';
 import { NumberValidator } from '@core/validators/number-validator';
 import { TranslateService } from '@ngx-translate/core';
@@ -26,8 +25,7 @@ const ENTIDAD_FINANCIADORA_IMPORTE_FINANCIACION_KEY = marker('csp.entidad-financ
   templateUrl: './entidad-financiadora-modal.component.html',
   styleUrls: ['./entidad-financiadora-modal.component.scss']
 })
-export class EntidadFinanciadoraModalComponent extends
-  BaseModalComponent<IEntidadFinanciadora, EntidadFinanciadoraModalComponent> implements OnInit {
+export class EntidadFinanciadoraModalComponent extends DialogFormComponent<IEntidadFinanciadora> implements OnInit {
 
   textSaveOrUpdate: string;
   title: string;
@@ -42,10 +40,7 @@ export class EntidadFinanciadoraModalComponent extends
     @Inject(MAT_DIALOG_DATA) public data: EntidadFinanciadoraDataModal,
     private readonly translate: TranslateService
   ) {
-    super(snackBarService, matDialogRef, data.entidad);
-    this.fxLayoutProperties = new FxLayoutProperties();
-    this.fxLayoutProperties.layout = 'row';
-    this.fxLayoutProperties.layoutAlign = 'row';
+    super(matDialogRef, !data.entidad?.empresa);
   }
 
   ngOnInit(): void {
@@ -72,7 +67,7 @@ export class EntidadFinanciadoraModalComponent extends
     ).subscribe((value) => this.msgParamImporteFinanciacionEntity = { entity: value, ...MSG_PARAMS.GENDER.MALE });
   }
 
-  protected getDatosForm(): IEntidadFinanciadora {
+  protected getValue(): IEntidadFinanciadora {
     const entidad = this.data.entidad;
     entidad.empresa = this.formGroup.get('empresa').value;
     entidad.fuenteFinanciacion = this.formGroup.get('fuenteFinanciacion').value;
@@ -82,7 +77,7 @@ export class EntidadFinanciadoraModalComponent extends
     return entidad;
   }
 
-  protected getFormGroup(): FormGroup {
+  protected buildFormGroup(): FormGroup {
     const formGroup = new FormGroup({
       empresa: new FormControl(
         {

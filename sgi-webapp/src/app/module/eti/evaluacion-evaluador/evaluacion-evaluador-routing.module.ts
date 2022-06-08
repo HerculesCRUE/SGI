@@ -13,7 +13,7 @@ import { EvaluacionEvaluadorListadoComponent } from './evaluacion-evaluador-list
 import { EVALUACION_EVALUADOR_ROUTE_NAMES } from './evaluacion-evaluador-route-names';
 import { EvaluacionEvaluadorResolver } from './evaluacion-evaluador.resolver';
 
-const MSG_EVALUACION_TITLE = marker('eti.evaluacion');
+const MSG_EVALUACION_TITLE = marker('menu.eti.evaluacion-evaluador');
 
 const routes: SgiAuthRoutes = [
   {

@@ -27,16 +27,18 @@ import org.springframework.test.context.jdbc.Sql;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class BaremacionIT extends BaremacionBaseIT {
 
-  private static final String PATH_PARAMETER_ID = "/{id}";
-  private static final String CONTROLLER_BASE_PATH = BaremacionController.MAPPING;
+  protected static final String PATH_PARAMETER_ID = "/{id}";
+  protected static final String PATH_CREATE_TASK = "/createTask";
+  protected static final String CONTROLLER_BASE_PATH = BaremacionController.MAPPING;
 
   @Test
   void baremacion_without_baremacion() throws Exception {
     Long idBaremacion = 1L;
 
-    final ResponseEntity<Void> response = restTemplate.exchange(
-        CONTROLLER_BASE_PATH + PATH_PARAMETER_ID, HttpMethod.POST, buildRequestBaremacion(null, null),
-        Void.class, idBaremacion);
+    final ResponseEntity<ConvocatoriaBaremacion> response = restTemplate.exchange(
+        CONTROLLER_BASE_PATH + PATH_CREATE_TASK + PATH_PARAMETER_ID, HttpMethod.POST,
+        buildRequestBaremacion(null, null),
+        ConvocatoriaBaremacion.class, idBaremacion);
 
     Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
 
@@ -83,9 +85,10 @@ class BaremacionIT extends BaremacionBaseIT {
 
     updateConvocatoriaBaremacionFechaInicioEjecucion(idBaremacion, Instant.now());
 
-    final ResponseEntity<Void> response = restTemplate.exchange(
-        CONTROLLER_BASE_PATH + PATH_PARAMETER_ID, HttpMethod.POST, buildRequestBaremacion(null, null),
-        Void.class, idBaremacion);
+    final ResponseEntity<ConvocatoriaBaremacion> response = restTemplate.exchange(
+        CONTROLLER_BASE_PATH + PATH_CREATE_TASK + PATH_PARAMETER_ID, HttpMethod.POST,
+        buildRequestBaremacion(null, null),
+        ConvocatoriaBaremacion.class, idBaremacion);
 
     Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
 
@@ -108,27 +111,9 @@ class BaremacionIT extends BaremacionBaseIT {
   @Test
   void baremacion_libro_from_json() throws Exception {
 
-    String produccionCientificaJson = "publicacion-libro.json";
-    Integer numCampos = 18;
-    Integer numAutores = 3;
-    Integer numIndicesImpacto = 2;
-
-    createProduccionCientificaFromJson(produccionCientificaJson, numCampos, numAutores, numIndicesImpacto);
-
-    Long idBaremacion = 1L;
-
     String personaRef = "22932567";
-    String areaRef = "165";
-    String areaRefRaiz = "J";
-    mockPersonaAndAreaConocimientoAndGrupoInvestigacion(personaRef, areaRef, areaRefRaiz);
-
-    final ResponseEntity<Void> response = restTemplate.exchange(
-        CONTROLLER_BASE_PATH + PATH_PARAMETER_ID, HttpMethod.POST, buildRequestBaremacion(null, null),
-        Void.class, idBaremacion);
-
-    Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.ACCEPTED);
-
-    checkPuntuacionLibro(idBaremacion, personaRef);
+    HttpStatus statusCode = baremacionLibroFromJson(personaRef);
+    Assertions.assertThat(statusCode).isEqualTo(HttpStatus.ACCEPTED);
   }
 
   @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = {
@@ -227,65 +212,6 @@ class BaremacionIT extends BaremacionBaseIT {
     checkPuntuacionLibro(idBaremacion, personaRef);
   }
 
-  private void checkPuntuacionLibro(Long idBaremacion, String personaRef) {
-    List<PuntuacionBaremoItem> puntuacionBaremoItems = getPuntuacionBaremoItemRepository().findAll();
-
-    int numPuntuaciones = puntuacionBaremoItems.size();
-    Assertions.assertThat(numPuntuaciones).as("numPuntuaciones").isEqualTo(2);
-
-    Assertions.assertThat(puntuacionBaremoItems.get(0).getBaremoId()).as("BaremoId").isEqualTo(6L);
-    Assertions.assertThat(puntuacionBaremoItems.get(0).getPuntos()).as("Puntos").isEqualTo(new BigDecimal("6.00"));
-
-    Assertions.assertThat(puntuacionBaremoItems.get(1).getBaremoId()).as("BaremoId").isEqualTo(29L);
-    Assertions.assertThat(puntuacionBaremoItems.get(1).getPuntos()).as("Puntos").isEqualTo(new BigDecimal("1.30"));
-
-    List<PuntuacionItemInvestigador> puntuacionItemsInvestigador = getPuntuacionItemInvestigadorRepository()
-        .findAll();
-
-    int numPuntuacionesItemsInvestigador = puntuacionItemsInvestigador.size();
-    Assertions.assertThat(numPuntuacionesItemsInvestigador).as("numPuntuacionesItemsInvestigador").isEqualTo(1);
-
-    Assertions.assertThat(puntuacionItemsInvestigador.get(0).getPersonaRef()).as("PersonaRef")
-        .isEqualTo(personaRef);
-    Assertions.assertThat(puntuacionItemsInvestigador.get(0).getPuntos()).as("Puntos")
-        .isEqualTo(new BigDecimal("7.80"));
-
-    List<PuntuacionGrupoInvestigador> puntuacionGrupoInvestigador = getPuntuacionGrupoInvestigadorRepository()
-        .findAll();
-
-    int numPuntuacionesGrupoInvestigador = puntuacionGrupoInvestigador.size();
-    Assertions.assertThat(numPuntuacionesGrupoInvestigador).as("numPuntuacionesGrupoInvestigador").isEqualTo(1);
-
-    Assertions.assertThat(puntuacionGrupoInvestigador.get(0).getPuntos()).as("PuntosGrupoInvestigador")
-        .isEqualTo(new BigDecimal("4.68"));
-
-    List<PuntuacionGrupo> puntuacionGrupo = getPuntuacionGrupoRepository().findAll();
-
-    int numPuntuacionesGrupo = puntuacionGrupo.size();
-    Assertions.assertThat(numPuntuacionesGrupo).as("numPuntuacionesGrupo").isEqualTo(1);
-
-    Assertions.assertThat(puntuacionGrupo.get(0).getPuntosCostesIndirectos()).as("PuntosGrupoCostesIndirectos")
-        .isEqualTo(new BigDecimal("0.00"));
-
-    Assertions.assertThat(puntuacionGrupo.get(0).getPuntosSexenios()).as("PuntosGrupoSexenios")
-        .isEqualTo(new BigDecimal("0.00"));
-
-    Assertions.assertThat(puntuacionGrupo.get(0).getPuntosProduccion()).as("PuntosGrupoProduccion")
-        .isEqualTo(new BigDecimal("4.68"));
-
-    ConvocatoriaBaremacion convocatoriaBaremacion = getConvocatoriaBaremacionRepository().findById(idBaremacion).get();
-
-    Assertions.assertThat(convocatoriaBaremacion.getPuntoCostesIndirectos())
-        .as("PuntosBaremacionCostesIndirectos")
-        .isEqualTo(new BigDecimal("0.00"));
-
-    Assertions.assertThat(convocatoriaBaremacion.getPuntoSexenio()).as("PuntosBaremacionSexenios")
-        .isEqualTo(new BigDecimal("0.00"));
-
-    Assertions.assertThat(convocatoriaBaremacion.getPuntoProduccion()).as("PuntosBaremacionProduccion")
-        .isEqualTo(new BigDecimal("24038.46"));
-  }
-
   @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = {
       // @formatter:off 
       "classpath:scripts/configuracion_baremo.sql",
@@ -336,7 +262,7 @@ class BaremacionIT extends BaremacionBaseIT {
     Assertions.assertThat(puntuacionBaremoItems.get(0).getPuntos()).as("Puntos").isEqualTo(new BigDecimal("109.00"));
 
     Assertions.assertThat(puntuacionBaremoItems.get(1).getBaremoId()).as("BaremoId").isEqualTo(134L);
-    Assertions.assertThat(puntuacionBaremoItems.get(1).getPuntos()).as("Puntos").isEqualTo(new BigDecimal("1.30"));
+    Assertions.assertThat(puntuacionBaremoItems.get(1).getPuntos()).as("Puntos").isEqualTo(new BigDecimal("2.30"));
 
     Assertions.assertThat(puntuacionBaremoItems.get(2).getBaremoId()).as("BaremoId").isEqualTo(135L);
     Assertions.assertThat(puntuacionBaremoItems.get(2).getPuntos()).as("Puntos").isEqualTo(new BigDecimal("1.30"));
@@ -368,7 +294,7 @@ class BaremacionIT extends BaremacionBaseIT {
     Assertions.assertThat(puntuacionItemsInvestigador.get(0).getPersonaRef()).as("PersonaRef")
         .isEqualTo(personaRef);
     Assertions.assertThat(puntuacionItemsInvestigador.get(0).getPuntos()).as("Puntos")
-        .isEqualTo(new BigDecimal("1019.21"));
+        .isEqualTo(new BigDecimal("580.46"));
 
     List<PuntuacionGrupoInvestigador> puntuacionGrupoInvestigador = getPuntuacionGrupoInvestigadorRepository()
         .findAll();
@@ -377,7 +303,7 @@ class BaremacionIT extends BaremacionBaseIT {
     Assertions.assertThat(numPuntuacionesGrupoInvestigador).as("numPuntuacionesGrupoInvestigador").isEqualTo(1);
 
     Assertions.assertThat(puntuacionGrupoInvestigador.get(0).getPuntos()).as("PuntosGrupoInvestigador")
-        .isEqualTo(new BigDecimal("611.53"));
+        .isEqualTo(new BigDecimal("348.28"));
 
     List<PuntuacionGrupo> puntuacionGrupo = getPuntuacionGrupoRepository().findAll();
 
@@ -391,7 +317,7 @@ class BaremacionIT extends BaremacionBaseIT {
         .isEqualTo(new BigDecimal("0.00"));
 
     Assertions.assertThat(puntuacionGrupo.get(0).getPuntosProduccion()).as("PuntosGrupoProduccion")
-        .isEqualTo(new BigDecimal("611.53"));
+        .isEqualTo(new BigDecimal("348.28"));
 
     ConvocatoriaBaremacion convocatoriaBaremacion = getConvocatoriaBaremacionRepository().findById(idBaremacion).get();
 
@@ -403,7 +329,7 @@ class BaremacionIT extends BaremacionBaseIT {
         .isEqualTo(new BigDecimal("0.00"));
 
     Assertions.assertThat(convocatoriaBaremacion.getPuntoProduccion()).as("PuntosBaremacionProduccion")
-        .isEqualTo(new BigDecimal("183.96"));
+        .isEqualTo(new BigDecimal("323.02"));
   }
 
   @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = {
@@ -512,17 +438,9 @@ class BaremacionIT extends BaremacionBaseIT {
     int numPuntuaciones = puntuacionBaremoItems.size();
     Assertions.assertThat(numPuntuaciones).as("numPuntuaciones").isEqualTo(4);
 
-    // Assertions.assertThat(puntuacionBaremoItems.get(0).getPuntos()).as("Puntos").isEqualTo(new
-    // BigDecimal("6.00"));
-
-    // Assertions.assertThat(puntuacionBaremoItems.get(1).getPuntos()).as("Puntos").isEqualTo(new
-    // BigDecimal("1.30"));
-
-    // Assertions.assertThat(puntuacionBaremoItems.get(2).getPuntos()).as("Puntos").isEqualTo(new
-    // BigDecimal("6.00"));
-
-    // Assertions.assertThat(puntuacionBaremoItems.get(3).getPuntos()).as("Puntos").isEqualTo(new
-    // BigDecimal("1.30"));
+    // checkPuntuacionBaremoItem(puntuacionBaremoItems, 6L, new BigDecimal("6.00"));
+    // checkPuntuacionBaremoItem(puntuacionBaremoItems, 29L, new
+    // BigDecimal("2.30"));
 
     List<PuntuacionItemInvestigador> puntuacionItemsInvestigador = getPuntuacionItemInvestigadorRepository()
         .findAllByProduccionCientificaConvocatoriaBaremacionId(idBaremacion);
@@ -533,13 +451,13 @@ class BaremacionIT extends BaremacionBaseIT {
     Assertions.assertThat(puntuacionItemsInvestigador.get(0).getPersonaRef()).as("PersonaRef")
         .isEqualTo(personaRef);
     Assertions.assertThat(puntuacionItemsInvestigador.get(0).getPuntos()).as("Puntos")
-        .isEqualTo(new BigDecimal("7.80"));
+        .isEqualTo(new BigDecimal("6.90"));
     Assertions.assertThat(puntuacionItemsInvestigador.get(0).getAnio()).as("Anio").isEqualTo(2020);
 
     Assertions.assertThat(puntuacionItemsInvestigador.get(1).getPersonaRef()).as("PersonaRef")
         .isEqualTo(personaRef);
     Assertions.assertThat(puntuacionItemsInvestigador.get(1).getPuntos()).as("Puntos")
-        .isEqualTo(new BigDecimal("7.80"));
+        .isEqualTo(new BigDecimal("6.90"));
     Assertions.assertThat(puntuacionItemsInvestigador.get(1).getAnio()).as("Anio").isEqualTo(2021);
 
     List<PuntuacionGrupoInvestigador> puntuacionGrupoInvestigador = getPuntuacionGrupoInvestigadorRepository()
@@ -549,9 +467,9 @@ class BaremacionIT extends BaremacionBaseIT {
     Assertions.assertThat(numPuntuacionesGrupoInvestigador).as("numPuntuacionesGrupoInvestigador").isEqualTo(2);
 
     Assertions.assertThat(puntuacionGrupoInvestigador.get(0).getPuntos()).as("PuntosGrupoInvestigador")
-        .isEqualTo(new BigDecimal("4.68"));
+        .isEqualTo(new BigDecimal("4.14"));
     Assertions.assertThat(puntuacionGrupoInvestigador.get(1).getPuntos()).as("PuntosGrupoInvestigador")
-        .isEqualTo(new BigDecimal("4.68"));
+        .isEqualTo(new BigDecimal("4.14"));
 
     List<PuntuacionGrupo> puntuacionGrupo = getPuntuacionGrupoRepository().findByConvocatoriaBaremacionId(idBaremacion);
 
@@ -565,7 +483,7 @@ class BaremacionIT extends BaremacionBaseIT {
         .isEqualTo(new BigDecimal("0.00"));
 
     Assertions.assertThat(puntuacionGrupo.get(0).getPuntosProduccion()).as("PuntosGrupoProduccion")
-        .isEqualTo(new BigDecimal("9.36"));
+        .isEqualTo(new BigDecimal("8.28"));
 
     ConvocatoriaBaremacion convocatoriaBaremacion = getConvocatoriaBaremacionRepository().findById(idBaremacion).get();
 
@@ -577,7 +495,7 @@ class BaremacionIT extends BaremacionBaseIT {
         .isEqualTo(new BigDecimal("0.00"));
 
     Assertions.assertThat(convocatoriaBaremacion.getPuntoProduccion()).as("PuntosBaremacionProduccion")
-        .isEqualTo(new BigDecimal("12019.23"));
+        .isEqualTo(new BigDecimal("13586.96"));
   }
 
   @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = {
@@ -620,8 +538,6 @@ class BaremacionIT extends BaremacionBaseIT {
         Void.class, idBaremacion);
 
     Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.ACCEPTED);
-
-    checkPuntuacionLibroAndArticulo(idBaremacion, personaRef);
   }
 
   @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = {
@@ -798,49 +714,18 @@ class BaremacionIT extends BaremacionBaseIT {
 
     int numPuntuaciones = puntuacionBaremoItems.size();
     Assertions.assertThat(numPuntuaciones).as("numPuntuaciones").isEqualTo(11);
-    int i = 0;
-    Assertions.assertThat(puntuacionBaremoItems.get(i).getBaremoId()).as("BaremoId").isEqualTo(6L);
-    Assertions.assertThat(puntuacionBaremoItems.get(i).getPuntos()).as("Puntos").isEqualTo(new BigDecimal("6.00"));
 
-    i++;
-    Assertions.assertThat(puntuacionBaremoItems.get(i).getBaremoId()).as("BaremoId").isEqualTo(29L);
-    Assertions.assertThat(puntuacionBaremoItems.get(i).getPuntos()).as("Puntos").isEqualTo(new BigDecimal("1.30"));
-
-    i++;
-    Assertions.assertThat(puntuacionBaremoItems.get(i).getBaremoId()).as("BaremoId").isEqualTo(109L);
-    Assertions.assertThat(puntuacionBaremoItems.get(i).getPuntos()).as("Puntos").isEqualTo(new BigDecimal("109.00"));
-
-    i++;
-    Assertions.assertThat(puntuacionBaremoItems.get(i).getBaremoId()).as("BaremoId").isEqualTo(134L);
-    Assertions.assertThat(puntuacionBaremoItems.get(i).getPuntos()).as("Puntos").isEqualTo(new BigDecimal("2.30"));
-
-    i++;
-    Assertions.assertThat(puntuacionBaremoItems.get(i).getBaremoId()).as("BaremoId").isEqualTo(135L);
-    Assertions.assertThat(puntuacionBaremoItems.get(i).getPuntos()).as("Puntos").isEqualTo(new BigDecimal("2.30"));
-
-    i++;
-    Assertions.assertThat(puntuacionBaremoItems.get(i).getBaremoId()).as("BaremoId").isEqualTo(136L);
-    Assertions.assertThat(puntuacionBaremoItems.get(i).getPuntos()).as("Puntos").isEqualTo(new BigDecimal("136.00"));
-
-    i++;
-    Assertions.assertThat(puntuacionBaremoItems.get(i).getBaremoId()).as("BaremoId").isEqualTo(137L);
-    Assertions.assertThat(puntuacionBaremoItems.get(i).getPuntos()).as("Puntos").isEqualTo(new BigDecimal("137.00"));
-
-    i++;
-    Assertions.assertThat(puntuacionBaremoItems.get(i).getBaremoId()).as("BaremoId").isEqualTo(138L);
-    Assertions.assertThat(puntuacionBaremoItems.get(i).getPuntos()).as("Puntos").isEqualTo(new BigDecimal("138.00"));
-
-    i++;
-    Assertions.assertThat(puntuacionBaremoItems.get(i).getBaremoId()).as("BaremoId").isEqualTo(139L);
-    Assertions.assertThat(puntuacionBaremoItems.get(i).getPuntos()).as("Puntos").isEqualTo(new BigDecimal("139.00"));
-
-    i++;
-    Assertions.assertThat(puntuacionBaremoItems.get(i).getBaremoId()).as("BaremoId").isEqualTo(140L);
-    Assertions.assertThat(puntuacionBaremoItems.get(i).getPuntos()).as("Puntos").isEqualTo(new BigDecimal("140.00"));
-
-    i++;
-    Assertions.assertThat(puntuacionBaremoItems.get(i).getBaremoId()).as("BaremoId").isEqualTo(145L);
-    Assertions.assertThat(puntuacionBaremoItems.get(i).getPuntos()).as("Puntos").isEqualTo(new BigDecimal("145.00"));
+    checkPuntuacionBaremoItem(puntuacionBaremoItems, 6L, new BigDecimal("6.00"));
+    checkPuntuacionBaremoItem(puntuacionBaremoItems, 29L, new BigDecimal("2.30"));
+    checkPuntuacionBaremoItem(puntuacionBaremoItems, 109L, new BigDecimal("109.00"));
+    checkPuntuacionBaremoItem(puntuacionBaremoItems, 134L, new BigDecimal("2.30"));
+    checkPuntuacionBaremoItem(puntuacionBaremoItems, 135L, new BigDecimal("1.30"));
+    checkPuntuacionBaremoItem(puntuacionBaremoItems, 136L, new BigDecimal("136.00"));
+    checkPuntuacionBaremoItem(puntuacionBaremoItems, 137L, new BigDecimal("137.00"));
+    checkPuntuacionBaremoItem(puntuacionBaremoItems, 138L, new BigDecimal("138.00"));
+    checkPuntuacionBaremoItem(puntuacionBaremoItems, 139L, new BigDecimal("139.00"));
+    checkPuntuacionBaremoItem(puntuacionBaremoItems, 140L, new BigDecimal("140.00"));
+    checkPuntuacionBaremoItem(puntuacionBaremoItems, 145L, new BigDecimal("145.00"));
 
     List<PuntuacionItemInvestigador> puntuacionItemsInvestigador = getPuntuacionItemInvestigadorRepository()
         .findAllByProduccionCientificaConvocatoriaBaremacionId(idBaremacion);
@@ -848,20 +733,9 @@ class BaremacionIT extends BaremacionBaseIT {
     int numPuntuacionesItemsInvestigador = puntuacionItemsInvestigador.size();
     Assertions.assertThat(numPuntuacionesItemsInvestigador).as("numPuntuacionesItemsInvestigador").isEqualTo(3);
 
-    // Assertions.assertThat(puntuacionItemsInvestigador.get(0).getPersonaRef()).as("PersonaRef")
-    // .isEqualTo(personaRef1);
-    Assertions.assertThat(puntuacionItemsInvestigador.get(0).getPuntos()).as("Puntos")
-        .isEqualTo(new BigDecimal("7.80"));
-
-    // Assertions.assertThat(puntuacionItemsInvestigador.get(1).getPersonaRef()).as("PersonaRef")
-    // .isEqualTo(personaRef1);
-    Assertions.assertThat(puntuacionItemsInvestigador.get(1).getPuntos()).as("Puntos")
-        .isEqualTo(new BigDecimal("705.81"));
-
-    // Assertions.assertThat(puntuacionItemsInvestigador.get(2).getPersonaRef()).as("PersonaRef")
-    // .isEqualTo(personaRef2);
-    Assertions.assertThat(puntuacionItemsInvestigador.get(2).getPuntos()).as("Puntos")
-        .isEqualTo(new BigDecimal("705.81"));
+    checkPuntuacionItemInvestigador(puntuacionItemsInvestigador, personaRef1, new BigDecimal("6.90"));
+    checkPuntuacionItemInvestigador(puntuacionItemsInvestigador, personaRef1, new BigDecimal("386.97"));
+    checkPuntuacionItemInvestigador(puntuacionItemsInvestigador, personaRef2, new BigDecimal("386.97"));
 
     List<PuntuacionGrupoInvestigador> puntuacionGrupoInvestigador = getPuntuacionGrupoInvestigadorRepository()
         .findAll();
@@ -870,7 +744,7 @@ class BaremacionIT extends BaremacionBaseIT {
     Assertions.assertThat(numPuntuacionesGrupoInvestigador).as("numPuntuacionesGrupoInvestigador").isEqualTo(1);
 
     Assertions.assertThat(puntuacionGrupoInvestigador.get(0).getPuntos()).as("PuntosGrupoInvestigador")
-        .isEqualTo(new BigDecimal("423.49"));
+        .isEqualTo(new BigDecimal("232.18"));
 
     List<PuntuacionGrupo> puntuacionGrupo = getPuntuacionGrupoRepository().findAll();
 
@@ -884,7 +758,7 @@ class BaremacionIT extends BaremacionBaseIT {
         .isEqualTo(new BigDecimal("0.00"));
 
     Assertions.assertThat(puntuacionGrupo.get(0).getPuntosProduccion()).as("PuntosGrupoProduccion")
-        .isEqualTo(new BigDecimal("423.49"));
+        .isEqualTo(new BigDecimal("232.18"));
 
     ConvocatoriaBaremacion convocatoriaBaremacion = getConvocatoriaBaremacionRepository().findById(idBaremacion).get();
 
@@ -896,7 +770,7 @@ class BaremacionIT extends BaremacionBaseIT {
         .isEqualTo(new BigDecimal("0.00"));
 
     Assertions.assertThat(convocatoriaBaremacion.getPuntoProduccion()).as("PuntosBaremacionProduccion")
-        .isEqualTo(new BigDecimal("265.65"));
+        .isEqualTo(new BigDecimal("484.54"));
   }
 
   private void checkPuntuacionLibroAndArticulo(Long idBaremacion, String personaRef) {
@@ -910,7 +784,7 @@ class BaremacionIT extends BaremacionBaseIT {
 
     i++;
     Assertions.assertThat(puntuacionBaremoItems.get(i).getBaremoId()).as("BaremoId").isEqualTo(29L);
-    Assertions.assertThat(puntuacionBaremoItems.get(i).getPuntos()).as("Puntos").isEqualTo(new BigDecimal("1.30"));
+    Assertions.assertThat(puntuacionBaremoItems.get(i).getPuntos()).as("Puntos").isEqualTo(new BigDecimal("2.30"));
 
     i++;
     Assertions.assertThat(puntuacionBaremoItems.get(i).getBaremoId()).as("BaremoId").isEqualTo(109L);
@@ -918,7 +792,7 @@ class BaremacionIT extends BaremacionBaseIT {
 
     i++;
     Assertions.assertThat(puntuacionBaremoItems.get(i).getBaremoId()).as("BaremoId").isEqualTo(134L);
-    Assertions.assertThat(puntuacionBaremoItems.get(i).getPuntos()).as("Puntos").isEqualTo(new BigDecimal("1.30"));
+    Assertions.assertThat(puntuacionBaremoItems.get(i).getPuntos()).as("Puntos").isEqualTo(new BigDecimal("2.30"));
 
     i++;
     Assertions.assertThat(puntuacionBaremoItems.get(i).getBaremoId()).as("BaremoId").isEqualTo(135L);
@@ -957,12 +831,12 @@ class BaremacionIT extends BaremacionBaseIT {
     Assertions.assertThat(puntuacionItemsInvestigador.get(0).getPersonaRef()).as("PersonaRef")
         .isEqualTo(personaRef);
     Assertions.assertThat(puntuacionItemsInvestigador.get(0).getPuntos()).as("Puntos")
-        .isEqualTo(new BigDecimal("7.80"));
+        .isEqualTo(new BigDecimal("6.90"));
 
     Assertions.assertThat(puntuacionItemsInvestigador.get(1).getPersonaRef()).as("PersonaRef")
         .isEqualTo(personaRef);
     Assertions.assertThat(puntuacionItemsInvestigador.get(1).getPuntos()).as("Puntos")
-        .isEqualTo(new BigDecimal("1019.21"));
+        .isEqualTo(new BigDecimal("580.46"));
 
     List<PuntuacionGrupoInvestigador> puntuacionGrupoInvestigador = getPuntuacionGrupoInvestigadorRepository()
         .findAll();
@@ -971,10 +845,10 @@ class BaremacionIT extends BaremacionBaseIT {
     Assertions.assertThat(numPuntuacionesGrupoInvestigador).as("numPuntuacionesGrupoInvestigador").isEqualTo(2);
 
     Assertions.assertThat(puntuacionGrupoInvestigador.get(0).getPuntos()).as("PuntosGrupoInvestigador")
-        .isEqualTo(new BigDecimal("4.68"));
+        .isEqualTo(new BigDecimal("4.14"));
 
     Assertions.assertThat(puntuacionGrupoInvestigador.get(1).getPuntos()).as("PuntosGrupoInvestigador")
-        .isEqualTo(new BigDecimal("611.53"));
+        .isEqualTo(new BigDecimal("348.28"));
 
     List<PuntuacionGrupo> puntuacionGrupo = getPuntuacionGrupoRepository().findAll();
 
@@ -988,7 +862,7 @@ class BaremacionIT extends BaremacionBaseIT {
         .isEqualTo(new BigDecimal("0.00"));
 
     Assertions.assertThat(puntuacionGrupo.get(0).getPuntosProduccion()).as("PuntosGrupoProduccion")
-        .isEqualTo(new BigDecimal("616.21"));
+        .isEqualTo(new BigDecimal("352.42"));
 
     ConvocatoriaBaremacion convocatoriaBaremacion = getConvocatoriaBaremacionRepository().findById(idBaremacion).get();
 
@@ -1000,7 +874,7 @@ class BaremacionIT extends BaremacionBaseIT {
         .isEqualTo(new BigDecimal("0.00"));
 
     Assertions.assertThat(convocatoriaBaremacion.getPuntoProduccion()).as("PuntosBaremacionProduccion")
-        .isEqualTo(new BigDecimal("182.57"));
+        .isEqualTo(new BigDecimal("319.22"));
   }
 
   @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = {
@@ -1067,7 +941,7 @@ class BaremacionIT extends BaremacionBaseIT {
     Assertions.assertThat(puntuacionItemsInvestigador.get(0).getPersonaRef()).as("PersonaRef")
         .isEqualTo(personaRef);
     Assertions.assertThat(puntuacionItemsInvestigador.get(0).getPuntos()).as("Puntos")
-        .isEqualTo(new BigDecimal("921.00"));
+        .isEqualTo(new BigDecimal("460.50"));
 
     List<PuntuacionGrupoInvestigador> puntuacionGrupoInvestigador = getPuntuacionGrupoInvestigadorRepository()
         .findAll();
@@ -1076,7 +950,7 @@ class BaremacionIT extends BaremacionBaseIT {
     Assertions.assertThat(numPuntuacionesGrupoInvestigador).as("numPuntuacionesGrupoInvestigador").isEqualTo(1);
 
     Assertions.assertThat(puntuacionGrupoInvestigador.get(0).getPuntos()).as("PuntosGrupoInvestigador")
-        .isEqualTo(new BigDecimal("552.60"));
+        .isEqualTo(new BigDecimal("276.30"));
 
     List<PuntuacionGrupo> puntuacionGrupo = getPuntuacionGrupoRepository().findAll();
 
@@ -1090,7 +964,7 @@ class BaremacionIT extends BaremacionBaseIT {
         .isEqualTo(new BigDecimal("0.00"));
 
     Assertions.assertThat(puntuacionGrupo.get(0).getPuntosProduccion()).as("PuntosGrupoProduccion")
-        .isEqualTo(new BigDecimal("552.60"));
+        .isEqualTo(new BigDecimal("276.30"));
 
     ConvocatoriaBaremacion convocatoriaBaremacion = getConvocatoriaBaremacionRepository().findById(idBaremacion).get();
 
@@ -1102,7 +976,7 @@ class BaremacionIT extends BaremacionBaseIT {
         .isEqualTo(new BigDecimal("0.00"));
 
     Assertions.assertThat(convocatoriaBaremacion.getPuntoProduccion()).as("PuntosBaremacionProduccion")
-        .isEqualTo(new BigDecimal("203.58"));
+        .isEqualTo(new BigDecimal("407.17"));
   }
 
   @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = {
@@ -1163,7 +1037,7 @@ class BaremacionIT extends BaremacionBaseIT {
     Assertions.assertThat(puntuacionItemsInvestigador.get(0).getPersonaRef()).as("PersonaRef")
         .isEqualTo(personaRef);
     Assertions.assertThat(puntuacionItemsInvestigador.get(0).getPuntos()).as("Puntos")
-        .isEqualTo(new BigDecimal("201.00"));
+        .isEqualTo(new BigDecimal("67.00"));
 
     List<PuntuacionGrupoInvestigador> puntuacionGrupoInvestigador = getPuntuacionGrupoInvestigadorRepository()
         .findAll();
@@ -1172,7 +1046,7 @@ class BaremacionIT extends BaremacionBaseIT {
     Assertions.assertThat(numPuntuacionesGrupoInvestigador).as("numPuntuacionesGrupoInvestigador").isEqualTo(1);
 
     Assertions.assertThat(puntuacionGrupoInvestigador.get(0).getPuntos()).as("PuntosGrupoInvestigador")
-        .isEqualTo(new BigDecimal("120.60"));
+        .isEqualTo(new BigDecimal("40.20"));
 
     List<PuntuacionGrupo> puntuacionGrupo = getPuntuacionGrupoRepository().findAll();
 
@@ -1186,7 +1060,7 @@ class BaremacionIT extends BaremacionBaseIT {
         .isEqualTo(new BigDecimal("0.00"));
 
     Assertions.assertThat(puntuacionGrupo.get(0).getPuntosProduccion()).as("PuntosGrupoProduccion")
-        .isEqualTo(new BigDecimal("120.60"));
+        .isEqualTo(new BigDecimal("40.20"));
 
     ConvocatoriaBaremacion convocatoriaBaremacion = getConvocatoriaBaremacionRepository().findById(idBaremacion).get();
 
@@ -1198,7 +1072,7 @@ class BaremacionIT extends BaremacionBaseIT {
         .isEqualTo(new BigDecimal("0.00"));
 
     Assertions.assertThat(convocatoriaBaremacion.getPuntoProduccion()).as("PuntosBaremacionProduccion")
-        .isEqualTo(new BigDecimal("932.84"));
+        .isEqualTo(new BigDecimal("2798.51"));
   }
 
   @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = {
@@ -1262,7 +1136,7 @@ class BaremacionIT extends BaremacionBaseIT {
     Assertions.assertThat(puntuacionItemsInvestigador.get(0).getPersonaRef()).as("PersonaRef")
         .isEqualTo(personaRef);
     Assertions.assertThat(puntuacionItemsInvestigador.get(0).getPuntos()).as("Puntos")
-        .isEqualTo(new BigDecimal("804.00"));
+        .isEqualTo(new BigDecimal("402.00"));
 
     List<PuntuacionGrupoInvestigador> puntuacionGrupoInvestigador = getPuntuacionGrupoInvestigadorRepository()
         .findAll();
@@ -1271,7 +1145,7 @@ class BaremacionIT extends BaremacionBaseIT {
     Assertions.assertThat(numPuntuacionesGrupoInvestigador).as("numPuntuacionesGrupoInvestigador").isEqualTo(1);
 
     Assertions.assertThat(puntuacionGrupoInvestigador.get(0).getPuntos()).as("PuntosGrupoInvestigador")
-        .isEqualTo(new BigDecimal("482.40"));
+        .isEqualTo(new BigDecimal("241.20"));
 
     List<PuntuacionGrupo> puntuacionGrupo = getPuntuacionGrupoRepository().findAll();
 
@@ -1285,7 +1159,7 @@ class BaremacionIT extends BaremacionBaseIT {
         .isEqualTo(new BigDecimal("0.00"));
 
     Assertions.assertThat(puntuacionGrupo.get(0).getPuntosProduccion()).as("PuntosGrupoProduccion")
-        .isEqualTo(new BigDecimal("482.40"));
+        .isEqualTo(new BigDecimal("241.20"));
 
     ConvocatoriaBaremacion convocatoriaBaremacion = getConvocatoriaBaremacionRepository().findById(idBaremacion).get();
 
@@ -1297,7 +1171,7 @@ class BaremacionIT extends BaremacionBaseIT {
         .isEqualTo(new BigDecimal("0.00"));
 
     Assertions.assertThat(convocatoriaBaremacion.getPuntoProduccion()).as("PuntosBaremacionProduccion")
-        .isEqualTo(new BigDecimal("233.21"));
+        .isEqualTo(new BigDecimal("466.42"));
   }
 
   @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = {
@@ -1358,7 +1232,7 @@ class BaremacionIT extends BaremacionBaseIT {
     Assertions.assertThat(puntuacionItemsInvestigador.get(0).getPersonaRef()).as("PersonaRef")
         .isEqualTo(personaRef);
     Assertions.assertThat(puntuacionItemsInvestigador.get(0).getPuntos()).as("Puntos")
-        .isEqualTo(new BigDecimal("503.00"));
+        .isEqualTo(new BigDecimal("251.50"));
 
     List<PuntuacionGrupoInvestigador> puntuacionGrupoInvestigador = getPuntuacionGrupoInvestigadorRepository()
         .findAll();
@@ -1367,7 +1241,7 @@ class BaremacionIT extends BaremacionBaseIT {
     Assertions.assertThat(numPuntuacionesGrupoInvestigador).as("numPuntuacionesGrupoInvestigador").isEqualTo(1);
 
     Assertions.assertThat(puntuacionGrupoInvestigador.get(0).getPuntos()).as("PuntosGrupoInvestigador")
-        .isEqualTo(new BigDecimal("301.80"));
+        .isEqualTo(new BigDecimal("150.90"));
 
     List<PuntuacionGrupo> puntuacionGrupo = getPuntuacionGrupoRepository().findAll();
 
@@ -1381,7 +1255,7 @@ class BaremacionIT extends BaremacionBaseIT {
         .isEqualTo(new BigDecimal("0.00"));
 
     Assertions.assertThat(puntuacionGrupo.get(0).getPuntosProduccion()).as("PuntosGrupoProduccion")
-        .isEqualTo(new BigDecimal("301.80"));
+        .isEqualTo(new BigDecimal("150.90"));
 
     ConvocatoriaBaremacion convocatoriaBaremacion = getConvocatoriaBaremacionRepository().findById(idBaremacion).get();
 
@@ -1393,7 +1267,7 @@ class BaremacionIT extends BaremacionBaseIT {
         .isEqualTo(new BigDecimal("0.00"));
 
     Assertions.assertThat(convocatoriaBaremacion.getPuntoProduccion()).as("PuntosBaremacionProduccion")
-        .isEqualTo(new BigDecimal("372.76"));
+        .isEqualTo(new BigDecimal("745.53"));
   }
 
   @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = {

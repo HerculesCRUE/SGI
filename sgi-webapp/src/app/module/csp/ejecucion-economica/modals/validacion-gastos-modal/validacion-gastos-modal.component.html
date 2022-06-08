@@ -1,10 +1,5 @@
-<div class="sgi-dialog-header" fxLayout="row" fxLayoutGap="20px">
-  <span fxFlexAlign="center" mat-mat-dialog-title role="heading" aria-level="3" fxFlex>Detalle de gasto</span>
-  <button fxFlex="nogrow" mat-icon-button mat-dialog-close>
-    <mat-icon class="close-icon">close</mat-icon>
-  </button>
-</div>
-<mat-dialog-content>
+<sgi-dialog-header title="Detalle de gasto"></sgi-dialog-header>
+<sgi-dialog-content>
   <div>
     <p>{{'sge.gasto.estado' | translate}}: {{data?.estado | translate}}</p>
     <p>{{'sge.dato-economico.clasificacion-sge' | translate}}: {{data?.clasificacionSGE?.nombre}}</p>
@@ -45,7 +40,7 @@
 
     </table>
   </div>
-</mat-dialog-content>
+</sgi-dialog-content>
 <mat-dialog-actions>
   <button class="link-cancelar" mat-button type="button" mat-dialog-close>
     {{'btn.cancel' | translate}}

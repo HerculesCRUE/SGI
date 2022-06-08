@@ -91,7 +91,6 @@ export class ConvocatoriaEntidadesConvocantesComponent extends FragmentComponent
     };
 
     const config = {
-      panelClass: 'sgi-dialog-container',
       data
     };
     const dialogRef = this.matDialog.open(ConvocatoriaEntidadConvocanteModalComponent, config);

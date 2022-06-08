@@ -1,11 +1,6 @@
-<div class="sgi-dialog-header" fxLayout="row" fxLayoutGap="20px">
-  <span fxFlexAlign="center" mat-mat-dialog-title role="heading" aria-level="3"
-    fxFlex>{{'title.ejecucion-economica.validacion-gastos.factura-emitida' | translate}}</span>
-  <button fxFlex="nogrow" mat-icon-button mat-dialog-close>
-    <mat-icon class="close-icon">close</mat-icon>
-  </button>
-</div>
-<mat-dialog-content>
+<sgi-dialog-header title="{{'title.ejecucion-economica.validacion-gastos.factura-emitida' | translate}}">
+</sgi-dialog-header>
+<sgi-dialog-content>
 
   <div>
     <p>{{'sge.dato-economico.anualidad' | translate}}: {{data?.anualidad| translate}}</p>
@@ -42,7 +37,7 @@
 
     </table>
   </div>
-</mat-dialog-content>
+</sgi-dialog-content>
 <mat-dialog-actions>
   <button class="link-cancelar" mat-button type="button" mat-dialog-close>{{'btn.cancel' |
     translate}}</button>

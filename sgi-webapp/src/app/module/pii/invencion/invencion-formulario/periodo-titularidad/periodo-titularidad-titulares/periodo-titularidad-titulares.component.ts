@@ -8,7 +8,7 @@ import { FragmentComponent } from '@core/component/fragment.component';
 import { MSG_PARAMS } from '@core/i18n';
 import { IPeriodoTitularidadTitular } from '@core/models/pii/periodo-titularidad-titular';
 import { DialogService } from '@core/services/dialog.service';
-import { Status, StatusWrapper } from '@core/utils/status-wrapper';
+import { StatusWrapper } from '@core/utils/status-wrapper';
 import { TranslateService } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
 import { filter, switchMap } from 'rxjs/operators';
@@ -82,7 +82,6 @@ export class PeriodoTitularidadTitularesComponent extends FragmentComponent impl
       titularesNotAllowed: this.formPart.empresasTitularesPeriodo
     };
     const config = {
-      panelClass: 'sgi-dialog-container',
       data: periodoTitularidadTitularModalData
     };
     const dialogRef = this.matDialog.open(PeriodoTitularidadTitularModalComponent, config);

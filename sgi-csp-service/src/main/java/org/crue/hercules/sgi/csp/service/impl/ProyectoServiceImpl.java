@@ -14,7 +14,9 @@ import javax.validation.Validator;
 import org.crue.hercules.sgi.csp.config.SgiConfigProperties;
 import org.crue.hercules.sgi.csp.dto.ProyectoDto;
 import org.crue.hercules.sgi.csp.dto.ProyectoPresupuestoTotales;
+import org.crue.hercules.sgi.csp.dto.ProyectosCompetitivosPersonas;
 import org.crue.hercules.sgi.csp.dto.RelacionEjecucionEconomica;
+import org.crue.hercules.sgi.csp.enums.ClasificacionCVN;
 import org.crue.hercules.sgi.csp.enums.FormularioSolicitud;
 import org.crue.hercules.sgi.csp.exceptions.ConvocatoriaNotFoundException;
 import org.crue.hercules.sgi.csp.exceptions.ProyectoIVAException;
@@ -786,13 +788,11 @@ public class ProyectoServiceImpl implements ProyectoService {
     Optional<ProyectoProrroga> prorroga = proyectoProrrogaRepository
         .findFirstByProyectoIdOrderByFechaConcesionDesc(proyecto.getId());
 
-    if (prorroga.isPresent()) {
-      if (proyecto.getFechaFinDefinitiva() != null) {
-        Assert.isTrue(
-            proyecto.getFechaFinDefinitiva().isAfter(prorroga.get().getFechaFin())
-                || proyecto.getFechaFinDefinitiva().equals(prorroga.get().getFechaFin()),
-            "La fecha de fin definitiva debe ser posterior a la fecha de fin de la última prórroga");
-      }
+    if (prorroga.isPresent() && proyecto.getFechaFinDefinitiva() != null) {
+      Assert.isTrue(
+          proyecto.getFechaFinDefinitiva().isAfter(prorroga.get().getFechaFin())
+              || proyecto.getFechaFinDefinitiva().equals(prorroga.get().getFechaFin()),
+          "La fecha de fin definitiva debe ser posterior a la fecha de fin de la última prórroga");
     }
 
     // Validación de campos obligatorios según estados. Solo aplicaría en el
@@ -881,7 +881,7 @@ public class ProyectoServiceImpl implements ProyectoService {
    */
   private void copyAreaTematica(Proyecto proyecto) {
 
-    if (!contextoProyectoService.existsByProyecto(proyecto.getId())) {
+    if (Boolean.FALSE.equals(contextoProyectoService.existsByProyecto(proyecto.getId()))) {
       ContextoProyecto contextoProyectoNew = new ContextoProyecto();
       contextoProyectoNew.setProyectoId(proyecto.getId());
       contextoProyectoService.create(contextoProyectoNew);
@@ -971,7 +971,7 @@ public class ProyectoServiceImpl implements ProyectoService {
     log.debug("copyEntidadesGestoras(Long proyectoId, Long convocatoriaId) - start");
     List<ConvocatoriaEntidadGestora> entidadesConvocatoria = convocatoriaEntidadGestoraRepository
         .findAllByConvocatoriaId(proyecto.getConvocatoriaId());
-    entidadesConvocatoria.stream().forEach((entidadConvocatoria) -> {
+    entidadesConvocatoria.stream().forEach(entidadConvocatoria -> {
       log.debug("Copy copyEntidadesGestoras with id: {}", entidadConvocatoria.getId());
       ProyectoEntidadGestora entidadProyecto = new ProyectoEntidadGestora();
       entidadProyecto.setProyectoId(proyecto.getId());
@@ -1070,7 +1070,7 @@ public class ProyectoServiceImpl implements ProyectoService {
     log.debug("ccopyAreasConocimiento(Proyecto proyecto, Long solicitudProyectoId) - start");
     List<SolicitudProyectoAreaConocimiento> areasConocimineto = solicitudProyectoAreaConocimientoRepository
         .findAllBySolicitudProyectoId(solicitudProyectoId);
-    areasConocimineto.stream().forEach((areaConocimentoSolicitud) -> {
+    areasConocimineto.stream().forEach(areaConocimentoSolicitud -> {
       log.debug("Copy SolicitudProyectoAreaConocimiento with id: {}", areaConocimentoSolicitud.getId());
       ProyectoAreaConocimiento areaConocimientoProyecto = new ProyectoAreaConocimiento();
       areaConocimientoProyecto.setProyectoId(proyecto.getId());
@@ -1091,7 +1091,7 @@ public class ProyectoServiceImpl implements ProyectoService {
     log.debug("copyClasificaciones(Proyecto proyecto, Long solicitudProyectoId) - start");
     List<SolicitudProyectoClasificacion> clasificaciones = solicitudProyectoClasificacionRepository
         .findAllBySolicitudProyectoId(solicitudProyectoId);
-    clasificaciones.stream().forEach((clasificacionSolicitud) -> {
+    clasificaciones.stream().forEach(clasificacionSolicitud -> {
       log.debug("Copy SolicitudProyectoClasificacion with id: {}", clasificacionSolicitud.getId());
       ProyectoClasificacion clasificacionProyecto = new ProyectoClasificacion();
       clasificacionProyecto.setProyectoId(proyecto.getId());
@@ -1103,27 +1103,27 @@ public class ProyectoServiceImpl implements ProyectoService {
   }
 
   private void copyCodigosUNESCO(Proyecto proyecto) {
-    log.debug("copyAreasConocimiento(Proyecto proyecto) - start");
+    log.debug("copyCodigosUNESCO(Proyecto proyecto) - start");
     // TODO Se copian de los códigos UNESCO definidos en la solicitud, por cada
     // registro en la tabla "SolicitudProyectoUnesco" se creará un registro en
     // la tabla "ProyectoUnesco" con él código indicado en la solicitud.
-    log.debug("copyAreasConocimiento(Proyecto proyecto) - end");
+    log.debug("copyCodigosUNESCO(Proyecto proyecto) - end");
   }
 
   private void copyCodigosNABS(Proyecto proyecto) {
-    log.debug("copyAreasConocimiento(Proyecto proyecto) - start");
+    log.debug("copyCodigosNABS(Proyecto proyecto) - start");
     // TODO Se copian de los códigos NABS definidos en la solicitud, por cada
     // registro en la tabla "SolicitudProyectoNabs" se creará un registro en la
     // tabla "ProyectoNabs" con él código indicado en la solicitud.
-    log.debug("copyAreasConocimiento(Proyecto proyecto) - end");
+    log.debug("copyCodigosNABS(Proyecto proyecto) - end");
   }
 
   private void copyCodigosCNAE(Proyecto proyecto) {
-    log.debug("copyAreasConocimiento(Proyecto proyecto) - start");
+    log.debug("copyCodigosCNAE(Proyecto proyecto) - start");
     // TODO Se copian de los códigos CNAE definidos en la solicitud, por cada
     // registro en la tabla "SolicitudProyectoCnae" se creará un registro en la
     // tabla "ProyectoCnae" con él código indicado en la solicitud.
-    log.debug("copyAreasConocimiento(Proyecto proyecto) - end");
+    log.debug("copyCodigosCNAE(Proyecto proyecto) - end");
   }
 
   /**
@@ -1136,7 +1136,7 @@ public class ProyectoServiceImpl implements ProyectoService {
     log.debug("copyEntidadesConvocantesDeSolicitud(Proyecto proyecto) - start");
     List<SolicitudModalidad> entidadesSolicitud = solicitudModalidadRepository
         .findAllBySolicitudId(proyecto.getSolicitudId());
-    entidadesSolicitud.stream().forEach((entidadSolicitud) -> {
+    entidadesSolicitud.stream().forEach(entidadSolicitud -> {
       log.debug("Copy SolicitudModalidad with id: {}", entidadSolicitud.getId());
       ProyectoEntidadConvocante entidadProyecto = new ProyectoEntidadConvocante();
       entidadProyecto.setProyectoId(proyecto.getId());
@@ -1158,7 +1158,7 @@ public class ProyectoServiceImpl implements ProyectoService {
     log.debug("copyEntidadesFinanciadorasDeSolicitud(Proyecto proyecto, Long solicitudProyectoId) - start");
     List<SolicitudProyectoEntidadFinanciadoraAjena> entidadesSolicitud = solicitudProyectoEntidadFinanciadoraAjenaRepository
         .findAllBySolicitudProyectoId(solicitudProyectoId);
-    entidadesSolicitud.stream().forEach((entidadSolicitud) -> {
+    entidadesSolicitud.stream().forEach(entidadSolicitud -> {
       log.debug("Copy SolicitudProyectoEntidadFinanciadoraAjena with id: {}", entidadSolicitud.getId());
       ProyectoEntidadFinanciadora entidadProyecto = new ProyectoEntidadFinanciadora();
       entidadProyecto.setProyectoId(proyecto.getId());
@@ -1185,7 +1185,7 @@ public class ProyectoServiceImpl implements ProyectoService {
     log.debug("copyMiembrosEquipo(Proyecto proyecto) - start");
 
     List<ProyectoEquipo> proyectoEquipos = solicitudEquipoRepository.findAllBySolicitudProyectoId(solicitudProyectoId)
-        .stream().map((solicitudProyectoEquipo) -> {
+        .stream().map(solicitudProyectoEquipo -> {
 
           log.debug("Copy SolicitudProyectoEquipo with id: {}", solicitudProyectoEquipo.getId());
 
@@ -1266,7 +1266,7 @@ public class ProyectoServiceImpl implements ProyectoService {
 
     log.debug("copySocios(Proyecto proyecto) - start");
 
-    solicitudSocioRepository.findAllBySolicitudProyectoId(solicitudProyectoId).stream().forEach((entidadSolicitud) -> {
+    solicitudSocioRepository.findAllBySolicitudProyectoId(solicitudProyectoId).stream().forEach(entidadSolicitud -> {
 
       log.debug("Copy SolicitudProyectoSocio with id: {}", entidadSolicitud.getId());
 
@@ -1307,7 +1307,7 @@ public class ProyectoServiceImpl implements ProyectoService {
       ProyectoSocio proyectoSocioCreado) {
 
     solicitudPeriodoJustificacionRepository.findAllBySolicitudProyectoSocioId(entidadSolicitud.getId()).stream()
-        .forEach((entidadPeriodoJustificacionSolicitud) -> {
+        .forEach(entidadPeriodoJustificacionSolicitud -> {
 
           log.debug("Copy ProyectoSocioPeriodoJustificacion with id: {}",
               entidadPeriodoJustificacionSolicitud.getId());
@@ -1339,7 +1339,7 @@ public class ProyectoServiceImpl implements ProyectoService {
 
     List<ProyectoSocioPeriodoPago> proyectoSocioPeriodoPagos = solicitudPeriodoPagoRepository
         .findAllBySolicitudProyectoSocioId(entidadSolicitud.getId()).stream()
-        .map((entidadPeriodoPagoSolicitud) -> ProyectoSocioPeriodoPago.builder()
+        .map(entidadPeriodoPagoSolicitud -> ProyectoSocioPeriodoPago.builder()
             .fechaPrevistaPago(PeriodDateUtil.calculateFechaInicioPeriodo(proyecto.getFechaInicio(),
                 entidadPeriodoPagoSolicitud.getMes(), sgiConfigProperties.getTimeZone()))
             .importe(entidadPeriodoPagoSolicitud.getImporte()).numPeriodo(entidadPeriodoPagoSolicitud.getNumPeriodo())
@@ -1358,7 +1358,7 @@ public class ProyectoServiceImpl implements ProyectoService {
       ProyectoSocio proyectoSocio) {
 
     List<ProyectoSocioEquipo> proyectoSocioEquipos = solicitudEquipoSocioRepository
-        .findAllBySolicitudProyectoSocioId(entidadSolicitud.getId()).stream().map((entidadEquipoSolicitud) -> {
+        .findAllBySolicitudProyectoSocioId(entidadSolicitud.getId()).stream().map(entidadEquipoSolicitud -> {
           log.debug("Copy SolicitudProyectoSocioEquipo with id: {}", entidadEquipoSolicitud.getId());
           return ProyectoSocioEquipo.builder()
               .fechaInicio(PeriodDateUtil.calculateFechaInicioPeriodo(proyecto.getFechaInicio(),
@@ -1405,7 +1405,7 @@ public class ProyectoServiceImpl implements ProyectoService {
     List<ConvocatoriaConceptoGasto> conceptosGastoConvocatoria = convocatoriaConceptoGastoRepository
         .findAllByConvocatoriaIdAndConceptoGastoActivoTrue(proyecto.getConvocatoriaId());
 
-    conceptosGastoConvocatoria.stream().forEach((conceptoGastoConvocatoria) -> {
+    conceptosGastoConvocatoria.stream().forEach(conceptoGastoConvocatoria -> {
       log.debug("Copy ConvocatoriaConceptoGasto with id: {}", conceptoGastoConvocatoria.getId());
       ProyectoConceptoGasto conceptoGastoProyecto = new ProyectoConceptoGasto();
       conceptoGastoProyecto.setProyectoId(proyecto.getId());
@@ -1455,7 +1455,7 @@ public class ProyectoServiceImpl implements ProyectoService {
         .findAllByConvocatoriaConceptoGastoId(convocatoriaConceptoGastoId);
 
     List<ProyectoConceptoGastoCodigoEc> proyectoConceptoGastoCodigoEcs = codigosEconomicosConceptosGastoConvocatoria
-        .stream().map((codigoEconomicoConvocatoria) -> {
+        .stream().map(codigoEconomicoConvocatoria -> {
           log.debug("Copy ConvocatoriaConceptoGastoCodigoEc with id: {}", codigoEconomicoConvocatoria.getId());
           ProyectoConceptoGastoCodigoEc codigoEconomicoProyecto = new ProyectoConceptoGastoCodigoEc();
           codigoEconomicoProyecto.setProyectoConceptoGastoId(proyectoConceptoGastoId);
@@ -1463,11 +1463,10 @@ public class ProyectoServiceImpl implements ProyectoService {
           codigoEconomicoProyecto.setFechaInicio(codigoEconomicoConvocatoria.getFechaInicio());
           Instant fechaFin = codigoEconomicoConvocatoria.getFechaFin();
           Instant fechaFinProyecto = proyecto.getFechaFin();
-          if (fechaFin != null && fechaFinProyecto != null) {
-            // La fechaFin nunca puede ser posterior a la fechaFin del proyecto
-            if (fechaFin.isAfter(fechaFinProyecto)) {
-              fechaFin = fechaFinProyecto;
-            }
+
+          // La fechaFin nunca puede ser posterior a la fechaFin del proyecto
+          if (fechaFin != null && fechaFinProyecto != null && fechaFin.isAfter(fechaFinProyecto)) {
+            fechaFin = fechaFinProyecto;
           }
           codigoEconomicoProyecto.setFechaFin(fechaFin);
           codigoEconomicoProyecto.setObservaciones(codigoEconomicoConvocatoria.getObservaciones());
@@ -1499,7 +1498,7 @@ public class ProyectoServiceImpl implements ProyectoService {
         null, Pageable.unpaged());
 
     if (partidasConvocatoria != null && partidasConvocatoria.hasContent()) {
-      partidasConvocatoria.getContent().stream().forEach((partidaConvocatoria) -> {
+      partidasConvocatoria.getContent().stream().forEach(partidaConvocatoria -> {
         log.debug("Copy copyPartidasPresupuestarias with id: {}", partidaConvocatoria.getId());
         ProyectoPartida partidaProyecto = new ProyectoPartida();
         partidaProyecto.setProyectoId(proyectoId);
@@ -1557,7 +1556,7 @@ public class ProyectoServiceImpl implements ProyectoService {
     SolicitudProyecto solicitudProyecto = solicitudProyectoRepository.findById(solicitudId)
         .orElseThrow(() -> new SolicitudNotFoundException(solicitudId));
 
-    proyecto = this.copyDatosGeneralesSolicitudToProyecto(proyecto, solicitud, solicitudProyecto);
+    this.copyDatosGeneralesSolicitudToProyecto(proyecto, solicitud, solicitudProyecto);
 
     Assert.isTrue(SgiSecurityContextHolder.hasAuthorityForUO("CSP-PRO-C", proyecto.getUnidadGestionRef()),
         "La Unidad de Gestión no es gestionable por el usuario");
@@ -1679,7 +1678,7 @@ public class ProyectoServiceImpl implements ProyectoService {
       Assert.isTrue(proyecto.getCoordinado() != null,
           "El campo Proyecto coordinado debe ser obligatorio para el proyecto en estado 'CONCEDIDO'");
 
-      if (proyecto.getCoordinado() != null && proyecto.getCoordinado() == true) {
+      if (proyecto.getCoordinado() != null && proyecto.getCoordinado()) {
         Assert.isTrue(proyecto.getCoordinadorExterno() != null,
             "El campo coordinadorExterno debe ser obligatorio para el proyecto en estado 'CONCEDIDO'");
       }
@@ -1862,6 +1861,35 @@ public class ProyectoServiceImpl implements ProyectoService {
     Page<RelacionEjecucionEconomica> returnValue = proyectoProyectoSGERepository.findRelacionesEjecucionEconomica(specs, pageable);
     log.debug("findRelacionesEjecucionEconomicaProyectos(String query, Pageable pageable) - end");
     return returnValue;
+  }
+
+  /**
+   * Obtiene los datos de proyectos competitivos de las personas.
+   *
+   * @param personasRef Lista de id de las personas.
+   * @param onlyAsRolPrincipal Indica si solo se comprueba la participacion con un rol principal
+   * @param exludedProyectoId Excluye el {@link Proyecto} de la consulta
+   * @return el {@link ProyectosCompetitivosPersonas}.
+   */
+  @Override
+  public ProyectosCompetitivosPersonas getProyectosCompetitivosPersonas(List<String> personasRef, Boolean onlyAsRolPrincipal, Long exludedProyectoId) {
+    log.debug("getProyectosCompetitivosPersonas(List<String> personasRef, Boolean onlyAsRolPrincipal, Long exludedProyectoId) - start");
+
+    Instant fechaActual = Instant.now().atZone(sgiConfigProperties.getTimeZone().toZoneId()).toInstant();
+
+    ProyectosCompetitivosPersonas proyectosCompetitivosPersona = ProyectosCompetitivosPersonas.builder()
+        .numProyectosCompetitivos(
+            repository.countProyectosClasificacionCvnPersonas(personasRef, ClasificacionCVN.COMPETITIVOS, onlyAsRolPrincipal, exludedProyectoId))
+        .numProyectosCompetitivosActuales(
+            repository.countProyectosClasificacionCvnPersonas(personasRef, ClasificacionCVN.COMPETITIVOS, onlyAsRolPrincipal, exludedProyectoId, fechaActual))
+        .numProyectosNoCompetitivos(
+            repository.countProyectosClasificacionCvnPersonas(personasRef, ClasificacionCVN.NO_COMPETITIVOS, onlyAsRolPrincipal, exludedProyectoId))
+        .numProyectosNoCompetitivosActuales(
+            repository.countProyectosClasificacionCvnPersonas(personasRef, ClasificacionCVN.NO_COMPETITIVOS, onlyAsRolPrincipal, exludedProyectoId, fechaActual))
+        .build();
+
+    log.debug("getProyectosCompetitivosPersonas(List<String> personasRef, Boolean onlyAsRolPrincipal, Long exludedProyectoId) - end");
+    return proyectosCompetitivosPersona;
   }
 
 }

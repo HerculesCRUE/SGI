@@ -33,6 +33,7 @@ import { ProyectoPresupuestoFragment } from './proyecto-presupuesto.fragment';
 const ANUALIDADES_KEY = marker('csp.proyecto-presupuesto.anualidad');
 const ANUALIDADES_GENERICA_KEY = marker('csp.proyecto-presupuesto.anualidad-generica');
 const MSG_DELETE = marker('msg.delete.entity');
+const MSG_DELETE_WITH_AVISO_RELACIONES = marker('msg.csp.proyecto-presupuesto.delete');
 const ENVIO_SGE_KEY = marker('msg.csp.proyecto-presupuesto.enviar-sge');
 
 @Component({
@@ -55,6 +56,7 @@ export class ProyectoPresupuestoComponent extends FormFragmentComponent<IProyect
   msgParaAnualidad = {};
   msgParaAnualidades = {};
   textoDelete: string;
+  textoDeleteWithAviso: string;
   textoEnvio: string;
 
   proyectoAnualidadEnvio: IProyectoAnualidadNotificacionSge[] = [];
@@ -147,6 +149,14 @@ export class ProyectoPresupuestoComponent extends FormFragmentComponent<IProyect
         this.valoresCalculadosData = response;
       }));
 
+    this.subscriptions.push(
+      this.formPart.anualidadesWithPeriodoAmortizacion$.subscribe(anualidadesWithPeriodoAmortizacion => {
+        this.anualidades.data.forEach(anualidad => {
+          anualidad.value.hasPeriodosAmortizacion = anualidadesWithPeriodoAmortizacion.includes(anualidad.value.id);
+        });
+      })
+    );
+
   }
 
   private setupI18N(): void {
@@ -172,6 +182,10 @@ export class ProyectoPresupuestoComponent extends FormFragmentComponent<IProyect
     this.translate.get(
       ENVIO_SGE_KEY
     ).subscribe((value) => this.textoEnvio = value);
+
+    this.translate.get(
+      MSG_DELETE_WITH_AVISO_RELACIONES
+    ).subscribe((value) => this.textoDeleteWithAviso = value);
   }
 
   setTextoAniadirAnualidad() {
@@ -190,8 +204,9 @@ export class ProyectoPresupuestoComponent extends FormFragmentComponent<IProyect
   }
 
   deleteAnualidad(anualidad: StatusWrapper<IProyectoAnualidadResumen>) {
+    const msg = anualidad.value.hasGastosIngresos || anualidad.value.hasPeriodosAmortizacion ? this.textoDeleteWithAviso : this.textoDelete;
     this.subscriptions.push(
-      this.dialogService.showConfirmation(this.textoDelete).subscribe(
+      this.dialogService.showConfirmation(msg).subscribe(
         (aceptado) => {
           if (aceptado) {
             this.formPart.deleteAnualidad(anualidad);

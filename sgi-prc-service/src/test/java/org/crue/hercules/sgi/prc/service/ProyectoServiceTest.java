@@ -33,7 +33,7 @@ import org.springframework.data.jpa.domain.Specification;
  * ProyectoServiceTest
  */
 @Import({ ProyectoService.class, ApplicationContextSupport.class })
-public class ProyectoServiceTest extends BaseServiceTest {
+class ProyectoServiceTest extends BaseServiceTest {
 
   private static final Long DEFAULT_DATA_PRODUCCION_CIENTIFICA_ID = 1L;
   private static final Long DEFAULT_DATA_PROYECTO_REF = 1L;
@@ -61,7 +61,7 @@ public class ProyectoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void findAll_ReturnsPage() {
+  void findAll_ReturnsPage() {
     // given: Una lista con 37 Proyecto
     List<Proyecto> proyectos = new ArrayList<>();
     for (long i = 1; i <= 37; i++) {
@@ -103,7 +103,7 @@ public class ProyectoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void findById_ReturnsProyecto() {
+  void findById_ReturnsProyecto() {
     // given: Proyecto con el id buscado
     Long idBuscado = 1L;
     BDDMockito.given(repository.findById(idBuscado)).willReturn(Optional.of(generarMockProyecto(idBuscado)));
@@ -121,7 +121,7 @@ public class ProyectoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void findById_WithIdNotExist_ThrowsProyectoNotFoundException() {
+  void findById_WithIdNotExist_ThrowsProyectoNotFoundException() {
     // given: Ningun Proyecto con el id buscado
     Long idBuscado = 33L;
     BDDMockito.given(repository.findById(ArgumentMatchers.<Long>any())).willReturn(Optional.empty());
@@ -133,7 +133,7 @@ public class ProyectoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void findAllByProduccionCientificaId_ReturnsList() {
+  void findAllByProduccionCientificaId_ReturnsList() {
     // given: Una lista con 7 Proyecto y un produccionCientificaId
     Long produccionCientificaId = 1L;
     List<Proyecto> proyectos = new ArrayList<>();

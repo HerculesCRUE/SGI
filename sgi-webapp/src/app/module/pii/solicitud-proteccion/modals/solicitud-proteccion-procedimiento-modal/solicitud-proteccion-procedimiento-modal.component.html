@@ -1,88 +1,69 @@
-<div class="sgi-dialog-header" fxLayout="row" fxLayoutGap="20px">
-  <span fxFlexAlign="center" mat-mat-dialog-title role="heading" aria-level="3" fxFlex>
-    <div>{{textModalTitle | translate:MSG_PARAMS.CARDINALIRY.SINGULAR}}</div>
-  </span>
-  <button fxFlex="nogrow" mat-icon-button mat-dialog-close>
-    <mat-icon class="close-icon">close</mat-icon>
-  </button>
-</div>
-<mat-dialog-content>
-  <section class="procedimiento-datos-generales">
-    <form [formGroup]="formGroup" fxLayout="column" fxLayoutGap="10px">
-      <section class="procedimiento-datos-generales-1" fxLayout="row" fxLayoutGap="10px">
-        <!-- Fecha-->
-        <div fxFlex="60">
-          <mat-form-field>
-            <mat-label>{{'pii.solicitud-proteccion.procedimiento.fecha' | translate:MSG_PARAMS.CARDINALIRY.SINGULAR}}
-            </mat-label>
-            <input matInput formControlName="fecha" [matDatepicker]="fecha" required>
-            <mat-datepicker-toggle matSuffix [for]="fecha"></mat-datepicker-toggle>
-            <mat-datepicker #fecha></mat-datepicker>
-            <mat-error *ngIf="formGroup.controls.fecha.errors?.required">
-              {{'error.required.entity' | translate:msgParamFechaEntity}}
-            </mat-error>
-          </mat-form-field>
-        </div>
+<sgi-dialog-header title="{{textModalTitle | translate:MSG_PARAMS.CARDINALIRY.SINGULAR}}"></sgi-dialog-header>
+<sgi-dialog-content>
+  <form [formGroup]="formGroup" fxLayout="column">
+    <!-- Fecha-->
+    <div fxLayout="row" fxLayoutGap="10px">
+      <mat-form-field fxFlex="60">
+        <mat-label>{{'pii.solicitud-proteccion.procedimiento.fecha' | translate:MSG_PARAMS.CARDINALIRY.SINGULAR}}
+        </mat-label>
+        <input matInput formControlName="fecha" [matDatepicker]="fecha" required>
+        <mat-datepicker-toggle matSuffix [for]="fecha"></mat-datepicker-toggle>
+        <mat-datepicker #fecha></mat-datepicker>
+        <mat-error *ngIf="formGroup.controls.fecha.errors?.required">
+          {{'error.required.entity' | translate:msgParamFechaEntity}}
+        </mat-error>
+      </mat-form-field>
 
-        <!-- Resultado-->
-        <div fxFlex="40">
-          <mat-form-field>
-            <mat-label>{{'pii.tipo-procedimiento' | translate:MSG_PARAMS.CARDINALIRY.SINGULAR }}</mat-label>
-            <sgi-select-tipo-procedimiento formControlName="tipoProcedimiento" required>
-            </sgi-select-tipo-procedimiento>
-            <mat-error *ngIf="formGroup.controls.tipoProcedimiento.errors?.required">
-              {{'error.required.entity' | translate:msgParamTipoProcedimientoEntity}}
-            </mat-error>
-          </mat-form-field>
-        </div>
-      </section>
-      <section class="procedimiento-datos-generales-2" fxLayout="row" fxLayoutGap="10px">
-        <!--Acciones a Tomar -->
-        <div fxFlex="65">
-          <mat-form-field>
-            <mat-label>{{'pii.solicitud-proteccion.procedimiento.accion' | translate:MSG_PARAMS.CARDINALIRY.PLURAL }}
-            </mat-label>
-            <input matInput formControlName="accionATomar" id="accionATomar"
-              placeholder="{{'pii.solicitud-proteccion.procedimiento.accion' | translate:MSG_PARAMS.CARDINALIRY.PLURAL }}">
-            <mat-error *ngIf="formGroup.controls.accionATomar.errors?.maxlength">
-              {{'error.maxlength.entity' | translate:msgParamAccionATomarEntity }}
-            </mat-error>
-          </mat-form-field>
-        </div>
-        <!-- Fecha Limite Accion-->
-        <div fxFlex="35">
-          <mat-form-field>
-            <mat-label>{{'pii.solicitud-proteccion.procedimiento.fecha-limite' |
-              translate:MSG_PARAMS.CARDINALIRY.SINGULAR}}
-            </mat-label>
-            <input matInput formControlName="fechaLimiteAccion" [matDatepicker]="fechaLimiteAccion">
-            <mat-datepicker-toggle matSuffix [for]="fechaLimiteAccion"></mat-datepicker-toggle>
-            <mat-datepicker #fechaLimiteAccion></mat-datepicker>
-          </mat-form-field>
-        </div>
-      </section>
-      <section class="procedimiento-datos-generales-3" fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="end center">
-        <mat-checkbox color="primary" formControlName="generarAviso" id="generarAviso">
-          {{'pii.solicitud-proteccion.procedimiento.generar-aviso' | translate}}</mat-checkbox>
-      </section>
-      <section class="procedimiento-datos-generales-2" fxLayout="row" fxLayoutGap="10px">
-        <mat-form-field>
-          <mat-label>{{'pii.solicitud-proteccion.procedimiento.comentarios' | translate}}</mat-label>
-          <textarea matInput formControlName="comentarios" id="comentarios"
-            placeholder="{{'pii.solicitud-proteccion.procedimiento.comentarios' | translate}}"></textarea>
-          <mat-error *ngIf="formGroup.controls.comentarios.errors?.maxlength">
-            {{'error.maxlength.entity' | translate:msgParamComentariosEntity}}
-          </mat-error>
-        </mat-form-field>
-      </section>
+      <!-- Resultado-->
+      <mat-form-field fxFlex="40">
+        <mat-label>{{'pii.tipo-procedimiento' | translate:MSG_PARAMS.CARDINALIRY.SINGULAR }}</mat-label>
+        <sgi-select-tipo-procedimiento formControlName="tipoProcedimiento" required>
+        </sgi-select-tipo-procedimiento>
+        <mat-error *ngIf="formGroup.controls.tipoProcedimiento.errors?.required">
+          {{'error.required.entity' | translate:msgParamTipoProcedimientoEntity}}
+        </mat-error>
+      </mat-form-field>
+    </div>
 
+    <!--Acciones a Tomar -->
+    <div fxLayout="row" fxLayoutGap="10px">
+      <mat-form-field fxFlex="65">
+        <mat-label>{{'pii.solicitud-proteccion.procedimiento.accion' | translate:MSG_PARAMS.CARDINALIRY.PLURAL }}
+        </mat-label>
+        <input matInput formControlName="accionATomar" id="accionATomar"
+          placeholder="{{'pii.solicitud-proteccion.procedimiento.accion' | translate:MSG_PARAMS.CARDINALIRY.PLURAL }}">
+        <mat-error *ngIf="formGroup.controls.accionATomar.errors?.maxlength">
+          {{'error.maxlength.entity' | translate:msgParamAccionATomarEntity }}
+        </mat-error>
+      </mat-form-field>
+      <!-- Fecha Limite Accion-->
+      <mat-form-field fxFlex="35">
+        <mat-label>{{'pii.solicitud-proteccion.procedimiento.fecha-limite' |
+          translate:MSG_PARAMS.CARDINALIRY.SINGULAR}}
+        </mat-label>
+        <input matInput formControlName="fechaLimiteAccion" [matDatepicker]="fechaLimiteAccion">
+        <mat-datepicker-toggle matSuffix [for]="fechaLimiteAccion"></mat-datepicker-toggle>
+        <mat-datepicker #fechaLimiteAccion></mat-datepicker>
+      </mat-form-field>
+    </div>
 
+    <div fxLayout="row" fxLayoutAlign="end center">
+      <mat-checkbox color="primary" formControlName="generarAviso" id="generarAviso">
+        {{'pii.solicitud-proteccion.procedimiento.generar-aviso' | translate}}</mat-checkbox>
+    </div>
 
-    </form>
-  </section>
-</mat-dialog-content>
+    <mat-form-field fxFlex>
+      <mat-label>{{'pii.solicitud-proteccion.procedimiento.comentarios' | translate}}</mat-label>
+      <textarea matInput formControlName="comentarios" id="comentarios"
+        placeholder="{{'pii.solicitud-proteccion.procedimiento.comentarios' | translate}}"></textarea>
+      <mat-error *ngIf="formGroup.controls.comentarios.errors?.maxlength">
+        {{'error.maxlength.entity' | translate:msgParamComentariosEntity}}
+      </mat-error>
+    </mat-form-field>
+  </form>
+</sgi-dialog-content>
 <mat-dialog-actions>
-  <button color="accent" (click)="saveOrUpdate()" mat-raised-button type="submit" [disabled]="!formGroup.valid">
+  <button color="accent" (click)="doAction()" [disabled]="this.actionDisabled" mat-raised-button type="submit">
     <mat-icon class="save-icon">save</mat-icon>{{textSaveOrUpdate | translate}}
   </button>
   <button class="link-cancelar" mat-button type="button" mat-dialog-close>{{'btn.cancel' |

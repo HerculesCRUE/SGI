@@ -15,6 +15,7 @@ import { ConfiguracionSolicitudService } from '@core/services/csp/configuracion-
 import { ConvocatoriaRequisitoEquipoService } from '@core/services/csp/convocatoria-requisito-equipo.service';
 import { ConvocatoriaRequisitoIPService } from '@core/services/csp/convocatoria-requisito-ip.service';
 import { ConvocatoriaService } from '@core/services/csp/convocatoria.service';
+import { ProyectoService } from '@core/services/csp/proyecto.service';
 import { RolProyectoService } from '@core/services/csp/rol-proyecto.service';
 import { SolicitudDocumentoService } from '@core/services/csp/solicitud-documento.service';
 import { SolicitudGrupoService } from '@core/services/csp/solicitud-grupo/solicitud-grupo.service';
@@ -222,7 +223,8 @@ export class SolicitudActionService extends ActionService {
     private translate: TranslateService,
     datosPersonalesService: DatosPersonalesService,
     palabraClaveService: PalabraClaveService,
-    solicitudGrupoService: SolicitudGrupoService
+    solicitudGrupoService: SolicitudGrupoService,
+    proyectoService: ProyectoService
   ) {
     super();
 
@@ -272,7 +274,7 @@ export class SolicitudActionService extends ActionService {
     this.equipoProyecto = new SolicitudEquipoProyectoFragment(this.data?.solicitud?.id, this.data?.solicitud?.convocatoriaId,
       solicitudService, solicitudProyectoEquipoService, this, rolProyectoService,
       convocatoriaService, datosAcademicosService, convocatoriaRequisitoIpService, vinculacionService,
-      convocatoriaRequisitoEquipoService, datosPersonalesService, this.isInvestigador, this.readonly);
+      convocatoriaRequisitoEquipoService, datosPersonalesService, proyectoService, this.isInvestigador, this.readonly);
     this.socio = new SolicitudProyectoSocioFragment(this.data?.solicitud?.id, solicitudService,
       solicitudProyectoSocioService, empresaService, this.readonly);
     this.entidadesFinanciadoras = new SolicitudProyectoEntidadesFinanciadorasFragment(this.data?.solicitud?.id, solicitudService,

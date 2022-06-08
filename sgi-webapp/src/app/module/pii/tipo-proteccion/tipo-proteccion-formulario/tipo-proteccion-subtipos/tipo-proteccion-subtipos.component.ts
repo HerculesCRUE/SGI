@@ -235,7 +235,6 @@ export class TipoProteccionSubtiposComponent extends FragmentComponent implement
       subtipoProteccion : this.formPart.createEmptySubtipoProteccion();
 
     const config = {
-      panelClass: 'sgi-dialog-container',
       data: subtipoProteccionToModify
     };
     const dialogRef = this.matDialog.open(TipoProteccionSubtipoModalComponent, config);

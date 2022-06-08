@@ -35,7 +35,7 @@ export class SeguimientoEvaluacionFragment extends FormFragment<IMemoria> {
       referenciaMemoria: [{ value: '', disabled: true }],
       solicitante: [{ value: '', disabled: true }],
       version: [{ value: '', disabled: true }],
-      dictamen: ['', [Validators.required, new NullIdValidador().isValid()]]
+      dictamen: [null, [Validators.required, new NullIdValidador().isValid()]]
     });
   }
 

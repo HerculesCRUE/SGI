@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Vector;
-import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import javax.swing.table.DefaultTableModel;
@@ -77,7 +77,7 @@ public class SgiDynamicReportService extends SgiReportService {
 
       setReportConfiguration(sgiReport);
 
-      final MasterReport report = getReportDefinition(sgiReport.getPath());
+      MasterReport report = getReportDefinition(sgiReport.getPath());
 
       setTableModelGeneral(sgiReport, report);
 
@@ -147,7 +147,7 @@ public class SgiDynamicReportService extends SgiReportService {
       DefaultTableModel tableModelDetailInner = new DefaultTableModel(rowsData, columnsData);
       hmTableModel.put(tableModelName, tableModelDetailInner);
       sgiReport.setDataModel(hmTableModel);
-      SubReport subReportTableCrud = getDynamicSubReportTableCrud(sgiReport, queryDetails, tableModelName);
+      SubReport subReportTableCrud = getDynamicSubReportTableCrud(sgiReport, queryDetails, tableModelName, rowIndex);
 
       report.getItemBand().addSubReport(subReportTableCrud);
     }
@@ -160,18 +160,19 @@ public class SgiDynamicReportService extends SgiReportService {
     Map<String, TableModel> hmTableModel = new HashMap<>();
     hmTableModel.put(NAME_GENERAL_TABLE_MODEL, tableModelDetails);
     sgiReport.setDataModel(hmTableModel);
-    SubReport subReportTableCrud = getDynamicSubReportTableCrud(sgiReport, queryDetails, NAME_GENERAL_TABLE_MODEL);
+    SubReport subReportTableCrud = getDynamicSubReportTableCrud(sgiReport, queryDetails, NAME_GENERAL_TABLE_MODEL, 0);
 
     report.getItemBand().addSubReport(subReportTableCrud);
   }
 
   private SubReport getDynamicSubReportTableCrud(SgiDynamicReportDto sgiReport, String queryDetails,
-      String tableModelName) {
-    SubReport subReportTableCrud = getSubreportTableCrud(sgiReport);
+      String tableModelName, Integer rowIndex) {
+    SubReport subReportTableCrud = getSubreportTableCrud(sgiReport, rowIndex);
     setDataFactoryToSubReport(subReportTableCrud, sgiReport.getDataModel().get(tableModelName), queryDetails);
 
-    if (null != sgiReport.getGroupBy() && StringUtils.hasText(sgiReport.getGroupBy().getName())
-        && sgiReport.getFieldOrientation().equals(FieldOrientation.VERTICAL)) {
+    if (null != sgiReport.getGroupBy()
+        && sgiReport.getFieldOrientation().equals(FieldOrientation.VERTICAL)
+        && StringUtils.hasText(sgiReport.getGroupBy().getName())) {
       addGroup((RelationalGroup) subReportTableCrud.getGroup(0), sgiReport);
     }
     return subReportTableCrud;
@@ -179,28 +180,65 @@ public class SgiDynamicReportService extends SgiReportService {
 
   protected void addGroup(RelationalGroup group, SgiDynamicReportDto sgiReport) {
     SgiGroupReportDto groupReportDto = sgiReport.getGroupBy();
-    group.setFields(Arrays.asList(groupReportDto.getName()));
-    group.setName(NAME_GROUP + groupReportDto.getName());
 
-    if (groupReportDto.getVisible().equals(Boolean.TRUE)) {
-      TextFieldElementFactory textFactoryProduct = new TextFieldElementFactory();
-      textFactoryProduct.setFieldname(groupReportDto.getName());
-      textFactoryProduct.setX(0f);
-      textFactoryProduct.setY(0f);
-      textFactoryProduct.setMinimumWidth(sgiReport.getCustomWidth());
-      textFactoryProduct.setMinimumHeight(DYNAMIC_HEIGHT);
-      textFactoryProduct.setVerticalAlignment(ElementAlignment.MIDDLE);
-      textFactoryProduct.setPaddingLeft(4f);
-      textFactoryProduct.setPaddingRight(4f);
-      textFactoryProduct.setPaddingTop(4f);
-      textFactoryProduct.setPaddingBottom(4f);
-      textFactoryProduct.setDynamicHeight(Boolean.TRUE);
-      textFactoryProduct.setWrapText(Boolean.TRUE);
-      textFactoryProduct.setNullString("");
-      textFactoryProduct.setBold(Boolean.TRUE);
-      textFactoryProduct.setBackgroundColor(Color.GRAY);
-      group.getHeader().addElement(textFactoryProduct.createElement());
+    Integer numColumns = 1;
+    if (!CollectionUtils.isEmpty(sgiReport.getGroupBy().getAdditionalGroupNames())) {
+      numColumns += sgiReport.getGroupBy().getAdditionalGroupNames().size();
     }
+
+    group.setFields(Arrays.asList(sgiReport.getGroupBy().getName()));
+    group.setName(NAME_GROUP + sgiReport.getGroupBy().getName());
+    if (null != groupReportDto.getVisible() && groupReportDto.getVisible().equals(Boolean.TRUE)) {
+      float minimumWidth = sgiReport.getCustomWidth() / numColumns;
+      String fieldGroupName = sgiReport.getGroupBy().getName();
+      TextFieldElementFactory textFieldGroupName = getTextFieldGroupColumn(minimumWidth, fieldGroupName);
+
+      textFieldGroupName.setX(0f);
+
+      group.getHeader().addElement(textFieldGroupName.createElement());
+      addAdditionalGroupNames(group, sgiReport, minimumWidth);
+    }
+  }
+
+  private void addAdditionalGroupNames(RelationalGroup group, SgiDynamicReportDto sgiReport, float minimumWidth) {
+    if (!CollectionUtils.isEmpty(sgiReport.getGroupBy().getAdditionalGroupNames())) {
+      int numAdditionalsGroupsName = sgiReport.getGroupBy().getAdditionalGroupNames().size();
+      IntStream.range(0, numAdditionalsGroupsName).forEach(indexGroupName -> {
+        String additionalGroupName = sgiReport.getGroupBy().getAdditionalGroupNames().get(indexGroupName);
+
+        TextFieldElementFactory textFieldAdditionalGroupName = getTextFieldGroupColumn(minimumWidth,
+            additionalGroupName);
+
+        float posXAdditionalGroup = (indexGroupName + 1) * minimumWidth;
+        textFieldAdditionalGroupName.setX(posXAdditionalGroup);
+        if (indexGroupName == numAdditionalsGroupsName - 1) {
+          textFieldAdditionalGroupName.setHorizontalAlignment(ElementAlignment.RIGHT);
+        } else {
+          textFieldAdditionalGroupName.setHorizontalAlignment(ElementAlignment.LEFT);
+        }
+        group.getHeader().addElement(textFieldAdditionalGroupName.createElement());
+      });
+    }
+  }
+
+  private TextFieldElementFactory getTextFieldGroupColumn(float minimumWidth, String fieldGroupName) {
+    TextFieldElementFactory textFactoryProduct = new TextFieldElementFactory();
+    textFactoryProduct.setFieldname(fieldGroupName);
+
+    textFactoryProduct.setMinimumWidth(minimumWidth);
+    textFactoryProduct.setMinimumHeight(DYNAMIC_HEIGHT);
+    textFactoryProduct.setVerticalAlignment(ElementAlignment.MIDDLE);
+    textFactoryProduct.setPaddingLeft(4f);
+    textFactoryProduct.setPaddingRight(4f);
+    textFactoryProduct.setPaddingTop(4f);
+    textFactoryProduct.setPaddingBottom(4f);
+    textFactoryProduct.setDynamicHeight(Boolean.TRUE);
+    textFactoryProduct.setWrapText(Boolean.TRUE);
+    textFactoryProduct.setNullString("");
+    textFactoryProduct.setBold(Boolean.TRUE);
+    textFactoryProduct.setBackgroundColor(Color.GRAY);
+    textFactoryProduct.setY(0f);
+    return textFactoryProduct;
   }
 
   protected void setTableModelFilters(SgiDynamicReportDto sgiReport, final MasterReport report) {
@@ -391,9 +429,10 @@ public class SgiDynamicReportService extends SgiReportService {
    * Obtiene un subreport de tipo table-crud a partir de un tableModel
    * 
    * @param reportDto SgiReportDto
+   * @param rowIndex  index of de row evaluated
    * @return SubReport
    */
-  protected SubReport getSubreportTableCrud(SgiDynamicReportDto reportDto) {
+  protected SubReport getSubreportTableCrud(SgiDynamicReportDto reportDto, Integer rowIndex) {
     Integer numColumns = reportDto.getDataModel().get(NAME_GENERAL_TABLE_MODEL).getColumnCount();
     setCustomWidthSubReport(reportDto, numColumns);
 
@@ -404,7 +443,7 @@ public class SgiDynamicReportService extends SgiReportService {
       getHorizontalElements(reportDto, subreport, tableModel);
     } else {
       getVerticalElementsInnerSubReport(reportDto, subreport);
-      getVerticalElementsSubReporTypeInnerSubReport(reportDto, subreport);
+      getVerticalElementsSubReporTypeInnerSubReport(reportDto, subreport, rowIndex);
     }
 
     return subreport;
@@ -417,45 +456,39 @@ public class SgiDynamicReportService extends SgiReportService {
     float minimumWidth = reportDto.getColumnMinWidth();
 
     for (int columnIndex = 0; columnIndex < tableModel.getColumnCount(); columnIndex++) {
-      LabelElementFactory labelFactory = new LabelElementFactory();
       String fieldName = tableModel.getColumnName(columnIndex);
       SgiColumReportDto columnReportDto = reportDto.getColumns().stream().filter(c -> c.getName().equals(fieldName))
           .findFirst().orElseThrow(GetDataReportException::new);
-      String title = StringUtils.hasText(columnReportDto.getTitle()) ? columnReportDto.getTitle()
-          : columnReportDto.getName();
-      labelFactory.setText(title);
-      labelFactory.setX(posX);
-      labelFactory.setY(posY);
-      labelFactory.setMinimumWidth(minimumWidth);
-      labelFactory.setMinimumHeight(DYNAMIC_HEIGHT);
-      labelFactory.setBorderTopStyle(BorderStyle.SOLID);
-      labelFactory.setBorderWidth(0.5f);
-      labelFactory.setVerticalAlignment(ElementAlignment.MIDDLE);
-      labelFactory.setPaddingLeft(4f);
-      labelFactory.setPaddingRight(4f);
-      labelFactory.setPaddingTop(4f);
-      labelFactory.setPaddingBottom(4f);
-      labelFactory.setWrapText(Boolean.TRUE);
-      labelFactory.setDynamicHeight(Boolean.FALSE);
-      labelFactory.setBold(Boolean.TRUE);
 
-      subreport.getReportHeader().addElement(labelFactory.createElement());
+      if (null == columnReportDto.getVisible() || Boolean.TRUE.equals(columnReportDto.getVisible())) {
+        Float columnWidth = getColumnWidth(minimumWidth, reportDto.getCustomWidth(), columnReportDto);
 
-      FieldElementGeneratorDto fieldElementGeneratorDto = FieldElementGeneratorDto.builder().posX(posX)
-          .minimumWidth(minimumWidth).fieldName(fieldName).build();
+        LabelElementFactory labelFactory = getLabelElementColumn(columnReportDto, columnWidth);
+        labelFactory.setX(posX);
+        labelFactory.setY(posY);
 
-      if (CollectionUtils.isEmpty(reportDto.getColumns()) || (!reportDto.getOutputType().equals(OutputType.XLS)
-          && !reportDto.getOutputType().equals(OutputType.XLSX))) {
-        TextFieldElementFactory textFieldElementFactory = new TextFieldElementFactory();
-        initTextFieldHorizontalElement(textFieldElementFactory, fieldElementGeneratorDto);
-        subreport.getItemBand().addElement(textFieldElementFactory.createElement());
-      } else {
-        SgiColumReportDto sgiColumReportDto = reportDto.getColumns().get(columnIndex);
-        fieldElementGeneratorDto.setColumnReportDto(sgiColumReportDto);
-        getElementByTypeForExcel(subreport, fieldElementGeneratorDto);
+        subreport.getReportHeader().addElement(labelFactory.createElement());
+
+        FieldElementGeneratorDto fieldElementGeneratorDto = FieldElementGeneratorDto.builder()
+            .posX(posX)
+            .minimumWidth(columnWidth)
+            .fieldName(fieldName)
+            .columnReportDto(columnReportDto)
+            .build();
+
+        if (CollectionUtils.isEmpty(reportDto.getColumns()) || (!reportDto.getOutputType().equals(OutputType.XLS)
+            && !reportDto.getOutputType().equals(OutputType.XLSX))) {
+          TextFieldElementFactory textFieldElementFactory = new TextFieldElementFactory();
+          initTextFieldHorizontalElement(textFieldElementFactory, fieldElementGeneratorDto);
+          subreport.getItemBand().addElement(textFieldElementFactory.createElement());
+        } else {
+          SgiColumReportDto sgiColumReportDto = reportDto.getColumns().get(columnIndex);
+          fieldElementGeneratorDto.setColumnReportDto(sgiColumReportDto);
+          getElementByTypeForExcel(subreport, fieldElementGeneratorDto);
+        }
+
+        posX += columnWidth;
       }
-
-      posX += minimumWidth;
     }
 
     String queryInner = QUERY_TYPE + SEPARATOR_KEY + NAME_QUERY_INNER + RandomStringUtils.randomAlphabetic(3);
@@ -465,6 +498,44 @@ public class SgiDynamicReportService extends SgiReportService {
     subreport.setDataFactory(dataFactorySubReportInner);
 
     subreport.setQuery(queryInner);
+  }
+
+  private LabelElementFactory getLabelElementColumn(SgiColumReportDto columnReportDto, Float columnWidth) {
+    LabelElementFactory labelFactory = initLabelHeader();
+    String title = StringUtils.hasText(columnReportDto.getTitle()) ? columnReportDto.getTitle()
+        : columnReportDto.getName();
+    labelFactory.setText(title);
+    labelFactory.setMinimumWidth(columnWidth);
+    labelFactory.setHorizontalAlignment(getElementAlignment(columnReportDto));
+
+    return labelFactory;
+  }
+
+  private LabelElementFactory initLabelHeader() {
+    LabelElementFactory labelFactory = new LabelElementFactory();
+
+    labelFactory.setMinimumHeight(DYNAMIC_HEIGHT);
+    labelFactory.setBorderTopStyle(BorderStyle.SOLID);
+    labelFactory.setBorderWidth(0.5f);
+    labelFactory.setVerticalAlignment(ElementAlignment.MIDDLE);
+    labelFactory.setPaddingLeft(4f);
+    labelFactory.setPaddingRight(4f);
+    labelFactory.setPaddingTop(4f);
+    labelFactory.setPaddingBottom(4f);
+    labelFactory.setWrapText(Boolean.TRUE);
+    labelFactory.setDynamicHeight(Boolean.FALSE);
+    labelFactory.setBold(Boolean.TRUE);
+
+    return labelFactory;
+  }
+
+  private Float getColumnWidth(Float minimumWidth, Float reportWidth, SgiColumReportDto columnReportDto) {
+    Float columnWidth = minimumWidth;
+    if (null != columnReportDto.getHorizontalOptions()
+        && null != columnReportDto.getHorizontalOptions().getCustomWidth()) {
+      columnWidth = reportWidth * columnReportDto.getHorizontalOptions().getCustomWidth() / 100;
+    }
+    return columnWidth;
   }
 
   private void getElementByTypeForExcel(final SubReport subreport, FieldElementGeneratorDto fieldElementGeneratorDto) {
@@ -524,6 +595,9 @@ public class SgiDynamicReportService extends SgiReportService {
     textFactoryProduct.setBorderTopStyle(BorderStyle.SOLID);
     textFactoryProduct.setBorderWidth(0.5f);
     textFactoryProduct.setVerticalAlignment(ElementAlignment.MIDDLE);
+    if (null != fieldElementGeneratorDto.getColumnReportDto()) {
+      textFactoryProduct.setHorizontalAlignment(getElementAlignment(fieldElementGeneratorDto.getColumnReportDto()));
+    }
     textFactoryProduct.setPaddingLeft(4f);
     textFactoryProduct.setPaddingRight(4f);
     textFactoryProduct.setPaddingTop(4f);
@@ -533,13 +607,39 @@ public class SgiDynamicReportService extends SgiReportService {
     textFactoryProduct.setNullString("");
   }
 
+  private ElementAlignment getElementAlignment(SgiColumReportDto columReportDto) {
+    if (null != columReportDto.getHorizontalOptions()
+        && null != columReportDto.getHorizontalOptions().getElementAlignmentType()) {
+      switch (columReportDto.getHorizontalOptions().getElementAlignmentType()) {
+        case RIGHT:
+          return ElementAlignment.RIGHT;
+        case CENTER:
+          return ElementAlignment.CENTER;
+        case TOP:
+          return ElementAlignment.TOP;
+        case MIDDLE:
+          return ElementAlignment.MIDDLE;
+        case BOTTOM:
+          return ElementAlignment.BOTTOM;
+        case JUSTIFY:
+          return ElementAlignment.JUSTIFY;
+        case LEFT:
+        default:
+          return ElementAlignment.LEFT;
+      }
+    }
+    return ElementAlignment.LEFT;
+  }
+
   protected DefaultTableModel getTableModelInner(TableModel tableModel, List<SgiColumReportDto> columns) {
     Vector<Object> columnsData = getColumsTableModelInnerSubReport();
 
     Vector<Vector<Object>> rowsData = new Vector<>();
     for (int rowIndex = 0; rowIndex < tableModel.getRowCount(); rowIndex++) {
       for (int columnIndex = 0; columnIndex < tableModel.getColumnCount(); columnIndex++) {
-        if (!columns.get(columnIndex).getType().equals(ColumnType.SUBREPORT)) {
+        SgiColumReportDto columReportDto = columns.get(columnIndex);
+        if (!columReportDto.getType().equals(ColumnType.SUBREPORT)
+            && (null == columReportDto.getVisible() || Boolean.TRUE.equals(columReportDto.getVisible()))) {
           Vector<Object> elementsRow = new Vector<>();
           String title = StringUtils.hasText(columns.get(columnIndex).getTitle()) ? columns.get(columnIndex).getTitle()
               : columns.get(columnIndex).getName();
@@ -556,17 +656,17 @@ public class SgiDynamicReportService extends SgiReportService {
   }
 
   @SuppressWarnings("unchecked")
-  protected TableModel getHorizontalTableModelInnerSubReportType(SgiColumReportDto columnSubReport,
+  protected TableModel getHorizontalTableModelInnerSubReportType(SgiColumReportDto subReportColumn,
       TableModel tableModel) {
 
     DefaultTableModel tableModelInner = null;
     Vector<Object> columnsData = new Vector<>();
-    columnSubReport.getColumns().forEach(column -> columnsData.add(column.getName()));
+    subReportColumn.getColumns().forEach(column -> columnsData.add(column.getName()));
 
-    int indexColumnSubReport = getIndexColumnSubReport(columnSubReport, tableModel);
+    int columnIndexSubReport = getcolumnIndexSubReport(subReportColumn, tableModel);
 
-    if (indexColumnSubReport != 1) {
-      Vector<Object> rowsSubReport = (Vector<Object>) tableModel.getValueAt(0, indexColumnSubReport);
+    if (columnIndexSubReport != 1) {
+      Vector<Object> rowsSubReport = (Vector<Object>) tableModel.getValueAt(0, columnIndexSubReport);
       Vector<Vector<Object>> rowsData = new Vector<>();
 
       for (int rowIndex = 0; rowIndex < rowsSubReport.size(); rowIndex++) {
@@ -581,33 +681,20 @@ public class SgiDynamicReportService extends SgiReportService {
   }
 
   @SuppressWarnings("unchecked")
-  protected List<TableModel> getVerticalTableModelsInnerSubReportType(SgiColumReportDto columnSubReport,
+  protected List<TableModel> getVerticalTableModelsInnerSubReportType(SgiColumReportDto subReportColumn,
       TableModel tableModel) {
 
     List<TableModel> tablesModelInner = new ArrayList<>();
     Vector<Object> columnsData = getColumsTableModelInnerSubReport();
 
-    int indexColumnSubReport = getIndexColumnSubReport(columnSubReport, tableModel);
+    int columnIndexSubReport = getcolumnIndexSubReport(subReportColumn, tableModel);
 
-    if (indexColumnSubReport != 1) {
-
+    if (columnIndexSubReport != 1) {
       try {
-
-        Vector<Object> rowsSubReport = (Vector<Object>) tableModel.getValueAt(0, indexColumnSubReport);
-        int nuRowsSubReport = rowsSubReport.size();
+        Vector<Object> rowsSubReport = (Vector<Object>) tableModel.getValueAt(0, columnIndexSubReport);
         for (int rowIndex = 0; rowIndex < rowsSubReport.size(); rowIndex++) {
-          Vector<Object> row = (Vector<Object>) rowsSubReport.get(rowIndex);
-          Vector<Vector<Object>> rowsData = new Vector<>();
-          for (int columnIndex = 0; columnIndex < columnSubReport.getColumns().size(); columnIndex++) {
-            Vector<Object> elementsRow = new Vector<>();
-            String suffixElementIndex = nuRowsSubReport > 1 ? " " + (rowIndex + 1) + ":" : "";
-            String title = StringUtils.hasText(columnSubReport.getColumns().get(columnIndex).getTitle())
-                ? columnSubReport.getColumns().get(columnIndex).getTitle()
-                : columnSubReport.getColumns().get(columnIndex).getName();
-            elementsRow.add(title + suffixElementIndex);
-            elementsRow.add(row.get(columnIndex));
-            rowsData.add(elementsRow);
-          }
+          Vector<Vector<Object>> rowsData = getDataVerticalTableModelsInnerSubReportType(subReportColumn, rowsSubReport,
+              rowIndex);
           DefaultTableModel tableModelInner = new DefaultTableModel();
           tableModelInner.setDataVector(rowsData, columnsData);
           tablesModelInner.add(tableModelInner);
@@ -620,15 +707,34 @@ public class SgiDynamicReportService extends SgiReportService {
     return tablesModelInner;
   }
 
-  private int getIndexColumnSubReport(SgiColumReportDto columnSubReport, TableModel tableModel) {
-    int indexColumnSubReport = -1;
+  @SuppressWarnings("unchecked")
+  private Vector<Vector<Object>> getDataVerticalTableModelsInnerSubReportType(SgiColumReportDto subReportColumn,
+      Vector<Object> rowsSubReport, int rowIndex) {
+    Vector<Vector<Object>> rowsData = new Vector<>();
+
+    Vector<Object> row = (Vector<Object>) rowsSubReport.get(rowIndex);
+    for (int columnIndex = 0; columnIndex < subReportColumn.getColumns().size(); columnIndex++) {
+      Vector<Object> elementsRow = new Vector<>();
+      String suffixElementIndex = rowsSubReport.size() > 1 ? " " + (rowIndex + 1) + ":" : "";
+      String title = StringUtils.hasText(subReportColumn.getColumns().get(columnIndex).getTitle())
+          ? subReportColumn.getColumns().get(columnIndex).getTitle()
+          : subReportColumn.getColumns().get(columnIndex).getName();
+      elementsRow.add(title + suffixElementIndex);
+      elementsRow.add(row.get(columnIndex));
+      rowsData.add(elementsRow);
+    }
+    return rowsData;
+  }
+
+  private int getcolumnIndexSubReport(SgiColumReportDto subReportColumn, TableModel tableModel) {
+    int columnIndexSubReport = -1;
     for (int columnIndex = 0; columnIndex < tableModel.getColumnCount(); columnIndex++) {
-      if (tableModel.getColumnName(columnIndex).equals(columnSubReport.getName())) {
-        indexColumnSubReport = columnIndex;
+      if (tableModel.getColumnName(columnIndex).equals(subReportColumn.getName())) {
+        columnIndexSubReport = columnIndex;
         break;
       }
     }
-    return indexColumnSubReport;
+    return columnIndexSubReport;
   }
 
   private Vector<Object> getColumsTableModelInnerSubReport() {
@@ -650,31 +756,47 @@ public class SgiDynamicReportService extends SgiReportService {
   }
 
   private SubReport getHeaderInnerSubReportFromTableModel(SgiDynamicReportDto reportDto,
-      SgiColumReportDto columnSubReport) {
-    float minimumWidth = reportDto.getCustomWidth();
+      SgiColumReportDto subReportColumn) {
+    int numColumns = 1;
+    if (!CollectionUtils.isEmpty(subReportColumn.getAdditionalTitle())) {
+      numColumns += subReportColumn.getAdditionalTitle().size();
+    }
+    float minimumWidth = reportDto.getCustomWidth() / numColumns;
 
     final SubReport subreportInner = new SubReport();
-    TextFieldElementFactory labelElement = new TextFieldElementFactory();
-    labelElement.setFieldname(TITLE_FIELD);
+    LabelElementFactory labelElement = initLabelHeader();
+    String title = StringUtils.hasText(subReportColumn.getTitle()) ? subReportColumn.getTitle()
+        : subReportColumn.getName();
+    labelElement.setText(title);
     labelElement.setX(0f);
     labelElement.setY(0f);
     labelElement.setMinimumWidth(minimumWidth);
-    labelElement.setMinimumHeight(DYNAMIC_HEIGHT);
-    labelElement.setBorderTopStyle(BorderStyle.SOLID);
-    labelElement.setBorderWidth(0.5f);
-    labelElement.setVerticalAlignment(ElementAlignment.MIDDLE);
-    labelElement.setPaddingLeft(4f);
-    labelElement.setPaddingRight(4f);
-    labelElement.setPaddingTop(4f);
-    labelElement.setPaddingBottom(4f);
-    labelElement.setWrapText(Boolean.TRUE);
-    labelElement.setBold(Boolean.TRUE);
-    labelElement.setNullString("");
     labelElement.setBackgroundColor(Color.LIGHT_GRAY);
-
     subreportInner.getItemBand().addElement(labelElement.createElement());
 
-    DefaultTableModel tableModelHeaderInner = getTableModelForLabel(columnSubReport.getTitle());
+    if (!CollectionUtils.isEmpty(subReportColumn.getAdditionalTitle())) {
+      int numAdditionalsGroupsName = subReportColumn.getAdditionalTitle().size();
+      IntStream.range(0, numAdditionalsGroupsName).forEach(indexAdditionalTitle -> {
+        String additionalTitle = subReportColumn.getAdditionalTitle().get(indexAdditionalTitle);
+        LabelElementFactory labelAdditionalElement = initLabelHeader();
+        labelAdditionalElement.setText(additionalTitle);
+        labelAdditionalElement.setY(0f);
+        labelAdditionalElement.setMinimumWidth(minimumWidth);
+        labelAdditionalElement.setBackgroundColor(Color.LIGHT_GRAY);
+
+        float posXAdditionalTitle = (indexAdditionalTitle + 1) * minimumWidth;
+        labelAdditionalElement.setX(posXAdditionalTitle);
+        if (indexAdditionalTitle == numAdditionalsGroupsName - 1) {
+          labelAdditionalElement.setHorizontalAlignment(ElementAlignment.RIGHT);
+        } else {
+          labelAdditionalElement.setHorizontalAlignment(ElementAlignment.LEFT);
+        }
+        subreportInner.getItemBand().addElement(labelAdditionalElement.createElement());
+      });
+
+    }
+
+    DefaultTableModel tableModelHeaderInner = getTableModelForLabel(subReportColumn.getTitle());
 
     String queryInner = QUERY_TYPE + SEPARATOR_KEY + NAME_QUERY_INNER;
 
@@ -734,46 +856,77 @@ public class SgiDynamicReportService extends SgiReportService {
   }
 
   protected void getVerticalElementsSubReporTypeInnerSubReport(SgiDynamicReportDto reportDto,
-      final SubReport subreport) {
+      final SubReport subreport, Integer rowIndex) {
     TableModel tableModel = reportDto.getDataModel().get(NAME_GENERAL_TABLE_MODEL);
 
-    List<SgiColumReportDto> columnsSubReport = reportDto.getColumns().stream()
-        .filter(column -> column.getType().equals(ColumnType.SUBREPORT)).collect(Collectors.toList());
+    if (!CollectionUtils.isEmpty(reportDto.getColumns())) {
 
-    if (!CollectionUtils.isEmpty(columnsSubReport)) {
+      IntStream.range(0, reportDto.getColumns().size()).forEach(columnIndex -> {
 
-      columnsSubReport.forEach(columnSubReport -> {
-        final SubReport subreportHeaderInner = getHeaderInnerSubReportFromTableModel(reportDto, columnSubReport);
-        subreport.getItemBand().addSubReport(subreportHeaderInner);
+        SgiColumReportDto subReportColumn = reportDto.getColumns().get(columnIndex);
 
-        if (null != columnSubReport.getFieldOrientation()
-            && columnSubReport.getFieldOrientation().equals(FieldOrientation.HORIZONTAL)
-            && !reportDto.getOutputType().equals(OutputType.XLS)
-            && !reportDto.getOutputType().equals(OutputType.XLSX)) {
-          final SubReport subreportInner = new SubReport();
-          TableModel horizontalTableModelInner = getHorizontalTableModelInnerSubReportType(columnSubReport, tableModel);
+        if (subReportColumn.getType().equals(ColumnType.SUBREPORT) &&
+            isSubReportVisible(reportDto, rowIndex, columnIndex)) {
 
-          SgiDynamicReportDto horizontalReportDto = SgiDynamicReportDto.builder()
-              .customWidth(reportDto.getCustomWidth()).fieldOrientation(columnSubReport.getFieldOrientation())
-              .outputType(reportDto.getOutputType())
-              .columns(columnSubReport.getColumns()).build();
+          final SubReport subreportHeaderInner = getHeaderInnerSubReportFromTableModel(reportDto, subReportColumn);
+          subreport.getItemBand().addSubReport(subreportHeaderInner);
 
-          Integer numColumns = columnSubReport.getColumns().size();
-          setCustomWidthSubReport(horizontalReportDto, numColumns);
+          if (isHorizontalAndNotExcel(reportDto, subReportColumn)) {
+            final SubReport subreportInner = new SubReport();
+            TableModel horizontalTableModelInner = getHorizontalTableModelInnerSubReportType(subReportColumn,
+                tableModel);
 
-          getHorizontalElements(horizontalReportDto, subreportInner, horizontalTableModelInner);
-          subreport.getItemBand().addSubReport(subreportInner);
-        } else {
+            SgiDynamicReportDto horizontalReportDto = SgiDynamicReportDto.builder()
+                .customWidth(reportDto.getCustomWidth()).fieldOrientation(subReportColumn.getFieldOrientation())
+                .outputType(reportDto.getOutputType())
+                .columns(subReportColumn.getColumns()).build();
 
-          List<TableModel> verticalTablesModelInner = getVerticalTableModelsInnerSubReportType(columnSubReport,
-              tableModel);
-          verticalTablesModelInner.forEach(tbInner -> {
-            final SubReport subreportInner = getInnerSubReportFromTableModel(reportDto, tbInner);
+            Integer numColumns = subReportColumn.getColumns().stream()
+                .filter(column -> column.getVisible() == null || Boolean.TRUE.equals(column.getVisible()))
+                .mapToInt(e -> 1).sum();
+
+            setCustomWidthSubReport(horizontalReportDto, numColumns);
+
+            getHorizontalElements(horizontalReportDto, subreportInner, horizontalTableModelInner);
             subreport.getItemBand().addSubReport(subreportInner);
-          });
+          } else {
+
+            List<TableModel> verticalTablesModelInner = getVerticalTableModelsInnerSubReportType(subReportColumn,
+                tableModel);
+            verticalTablesModelInner.forEach(tbInner -> {
+              final SubReport subreportInner = getInnerSubReportFromTableModel(reportDto, tbInner);
+              subreport.getItemBand().addSubReport(subreportInner);
+            });
+          }
         }
       });
     }
+  }
+
+  private boolean isHorizontalAndNotExcel(SgiDynamicReportDto reportDto, SgiColumReportDto subReportColumn) {
+    return null != subReportColumn.getFieldOrientation()
+        && subReportColumn.getFieldOrientation().equals(FieldOrientation.HORIZONTAL)
+        && !reportDto.getOutputType().equals(OutputType.XLS)
+        && !reportDto.getOutputType().equals(OutputType.XLSX);
+  }
+
+  @SuppressWarnings("unchecked")
+  private boolean isSubReportVisible(SgiDynamicReportDto reportDto, Integer rowIndex, Integer columnIndex) {
+    SgiColumReportDto subReportColumn = reportDto.getColumns().get(columnIndex);
+
+    boolean isVisible = (null == subReportColumn.getVisibleIfSubReportEmpty()
+        || Boolean.TRUE.equals(subReportColumn.getVisibleIfSubReportEmpty()))
+        && (null == reportDto.getHideBlocksIfNoData()
+            || Boolean.FALSE.equals(reportDto.getHideBlocksIfNoData()));
+
+    if (!isVisible) {
+      LinkedHashMap<String, List<Object>> elementsSubreport = (LinkedHashMap<String, List<Object>>) reportDto
+          .getRows()
+          .get(rowIndex).getElements().get(columnIndex);
+      isVisible = !CollectionUtils.isEmpty(elementsSubreport.get("rows"));
+    }
+
+    return isVisible;
   }
 
   @Data

@@ -16,11 +16,6 @@ describe('SearchPersonaModalComponent', () => {
   let fixture: ComponentFixture<SearchPersonaModalComponent>;
 
   beforeEach(waitForAsync(() => {
-    const mockDialogRef = {
-      componentInstance: jasmine.createSpy('componentInstance'),
-      close: jasmine.createSpy('close'),
-    };
-
     // Mock MAT_DIALOG
     const matDialogData = {};
 
@@ -41,7 +36,7 @@ describe('SearchPersonaModalComponent', () => {
         SgiAuthService,
         {
           provide: MatDialogRef,
-          useValue: mockDialogRef,
+          useValue: TestUtils.buildDialogCommonMatDialogRef(),
         },
         { provide: MAT_DIALOG_DATA, useValue: matDialogData },
       ],

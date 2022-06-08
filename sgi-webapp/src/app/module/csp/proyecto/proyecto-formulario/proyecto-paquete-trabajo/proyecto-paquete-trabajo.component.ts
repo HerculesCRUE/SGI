@@ -122,7 +122,6 @@ export class ProyectoPaqueteTrabajoComponent extends FragmentComponent implement
     }
 
     const config = {
-      panelClass: 'sgi-dialog-container',
       data: dataModal,
     };
     const dialogRef = this.matDialog.open(ProyectoPaquetesTrabajoModalComponent, config);

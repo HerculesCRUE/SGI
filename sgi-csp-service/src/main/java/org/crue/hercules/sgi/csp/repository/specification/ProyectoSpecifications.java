@@ -41,9 +41,7 @@ public class ProyectoSpecifications {
    *         unidadGestionRef se encuentre entre los recibidos.
    */
   public static Specification<Proyecto> unidadGestionRefIn(List<String> unidadGestionRefs) {
-    return (root, query, cb) -> {
-      return root.get(Proyecto_.unidadGestionRef).in(unidadGestionRefs);
-    };
+    return (root, query, cb) -> root.get(Proyecto_.unidadGestionRef).in(unidadGestionRefs);
   }
 
   /**
@@ -53,9 +51,7 @@ public class ProyectoSpecifications {
    * @return el {@link Proyecto}
    */
   public static Specification<Proyecto> byProyectoId(Long id) {
-    return (root, query, cb) -> {
-      return cb.equal(root.get(Proyecto_.id), id);
-    };
+    return (root, query, cb) -> cb.equal(root.get(Proyecto_.id), id);
   }
 
   /**
@@ -65,9 +61,7 @@ public class ProyectoSpecifications {
    * @return lista de {@link Proyecto}
    */
   public static Specification<Proyecto> bySolicitudId(Long solicitudId) {
-    return (root, query, cb) -> {
-      return cb.equal(root.get(Proyecto_.solicitudId), solicitudId);
-    };
+    return (root, query, cb) -> cb.equal(root.get(Proyecto_.solicitudId), solicitudId);
   }
 
   /**
@@ -90,9 +84,8 @@ public class ProyectoSpecifications {
    * @return lista de {@link Proyecto}
    */
   public static Specification<Proyecto> byModeloEjecucionId(Long modeloEjecucionId) {
-    return (root, query, cb) -> {
-      return cb.equal(root.get(Proyecto_.modeloEjecucion).get(ModeloEjecucion_.id), modeloEjecucionId);
-    };
+    return (root, query, cb) -> cb.equal(root.get(Proyecto_.modeloEjecucion).get(ModeloEjecucion_.id),
+        modeloEjecucionId);
   }
 
   /**
@@ -102,9 +95,8 @@ public class ProyectoSpecifications {
    *         de borrador.
    */
   public static Specification<Proyecto> byEstadoNotBorrador() {
-    return (root, query, cb) -> {
-      return cb.equal(root.get(Proyecto_.estado).get(EstadoProyecto_.ESTADO), EstadoProyecto.Estado.BORRADOR).not();
-    };
+    return (root, query, cb) -> cb
+        .equal(root.get(Proyecto_.estado).get(EstadoProyecto_.ESTADO), EstadoProyecto.Estado.BORRADOR).not();
   }
 
   /**

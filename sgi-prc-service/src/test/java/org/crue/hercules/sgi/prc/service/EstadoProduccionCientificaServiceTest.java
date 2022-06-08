@@ -34,7 +34,7 @@ import org.springframework.data.jpa.domain.Specification;
  * EstadoProduccionCientificaServiceTest
  */
 @Import({ EstadoProduccionCientificaService.class, ApplicationContextSupport.class })
-public class EstadoProduccionCientificaServiceTest extends BaseServiceTest {
+class EstadoProduccionCientificaServiceTest extends BaseServiceTest {
 
   private static final String COMENTARIO_PREFIX = "Persona-ref-";
   private static final String DEFAULT_DATA_COMENTARIO = COMENTARIO_PREFIX + "default";
@@ -65,7 +65,7 @@ public class EstadoProduccionCientificaServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void findAll_ReturnsPage() {
+  void findAll_ReturnsPage() {
     // given: Una lista con 37 EstadoProduccionCientifica
     List<EstadoProduccionCientifica> estadosProduccionCientifica = new ArrayList<>();
     for (long i = 1; i <= 37; i++) {
@@ -109,7 +109,7 @@ public class EstadoProduccionCientificaServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void findById_ReturnsEstadoProduccionCientifica() {
+  void findById_ReturnsEstadoProduccionCientifica() {
     // given: EstadoProduccionCientifica con el id buscado
     Long idBuscado = 1L;
     BDDMockito.given(repository.findById(idBuscado))
@@ -132,7 +132,7 @@ public class EstadoProduccionCientificaServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void findById_WithIdNotExist_ThrowsEstadoProduccionCientificaNotFoundException() {
+  void findById_WithIdNotExist_ThrowsEstadoProduccionCientificaNotFoundException() {
     // given: Ningun EstadoProduccionCientifica con el id buscado
     Long idBuscado = 33L;
     BDDMockito.given(repository.findById(ArgumentMatchers.<Long>any())).willReturn(Optional.empty());

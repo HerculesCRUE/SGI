@@ -5,7 +5,6 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RouterTestingModule } from '@angular/router/testing';
 import { IConvocatoriaEnlace } from '@core/models/csp/convocatoria-enlace';
-import { SnackBarService } from '@core/services/snack-bar.service';
 import TestUtils from '@core/utils/test-utils';
 import { MaterialDesignModule } from '@material/material-design.module';
 import { SgiAuthModule, SgiAuthService } from '@sgi/framework/auth';
@@ -54,8 +53,7 @@ describe('ConvocatoriaEnlaceModalComponent', () => {
         SgiAuthModule
       ],
       providers: [
-        { provide: SnackBarService, useValue: TestUtils.getSnackBarServiceSpy() },
-        { provide: MatDialogRef, useValue: {} },
+        { provide: MatDialogRef, useValue: TestUtils.buildDialogCommonMatDialogRef() },
         { provide: MAT_DIALOG_DATA, useValue: data },
         SgiAuthService
       ]

@@ -5,6 +5,7 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { Router } from '@angular/router';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
+import { DialogCommonComponent } from '@core/component/dialog-common.component';
 import { SearchModalData } from '@core/component/select-dialog/select-dialog.component';
 import { MSG_PARAMS } from '@core/i18n';
 import { IProyecto } from '@core/models/csp/proyecto';
@@ -25,7 +26,7 @@ import {
   SgiRestListResult,
   SgiRestSortDirection
 } from '@sgi/framework/http';
-import { merge, of, Subject, Subscription } from 'rxjs';
+import { merge, of, Subject } from 'rxjs';
 import { map, switchMap, tap } from 'rxjs/operators';
 import { CSP_ROUTE_NAMES } from '../../../csp-route-names';
 
@@ -43,7 +44,7 @@ interface IProyectoListado extends IProyecto {
   templateUrl: './search-proyecto.component.html',
   styleUrls: ['./search-proyecto.component.scss']
 })
-export class SearchProyectoModalComponent implements OnInit, AfterViewInit, OnDestroy {
+export class SearchProyectoModalComponent extends DialogCommonComponent implements OnInit, AfterViewInit, OnDestroy {
   formGroup: FormGroup;
   displayedColumns = ['id', 'codigoSGE', 'titulo', 'acronimo', 'codigoExterno', 'fechaInicio',
     'fechaFin', 'fechaFinDefinitiva', 'modeloEjecucion', 'acciones'];
@@ -52,7 +53,6 @@ export class SearchProyectoModalComponent implements OnInit, AfterViewInit, OnDe
   @ViewChild(MatSort, { static: true }) private sort: MatSort;
   @ViewChild(MatPaginator, { static: false }) private paginator: MatPaginator;
 
-  private subscriptions: Subscription[] = [];
   readonly proyectos$ = new Subject<IProyectoListado[]>();
   public msgMiembrosEquipoFullName: string;
 
@@ -63,14 +63,17 @@ export class SearchProyectoModalComponent implements OnInit, AfterViewInit, OnDe
   }
 
   constructor(
-    private readonly dialogRef: MatDialogRef<SearchProyectoModalComponent, IProyecto>,
+    dialogRef: MatDialogRef<SearchProyectoModalComponent, IProyecto>,
     private readonly proyectoService: ProyectoService,
     @Inject(MAT_DIALOG_DATA) public data: SearchProyectoModalData,
     private readonly translate: TranslateService,
     private readonly router: Router
-  ) { }
+  ) {
+    super(dialogRef);
+  }
 
   ngOnInit(): void {
+    super.ngOnInit();
     this.formGroup = new FormGroup({
       titulo: new FormControl(this.data.searchTerm),
       acronimo: new FormControl(),
@@ -110,6 +113,7 @@ export class SearchProyectoModalComponent implements OnInit, AfterViewInit, OnDe
   }
 
   ngAfterViewInit(): void {
+    super.ngAfterViewInit();
     this.search();
 
     this.subscriptions.push(
@@ -208,7 +212,7 @@ export class SearchProyectoModalComponent implements OnInit, AfterViewInit, OnDe
   }
 
   closeModal(proyecto?: IProyecto): void {
-    this.dialogRef.close(proyecto);
+    this.close(proyecto);
   }
 
   /**

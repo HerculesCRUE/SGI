@@ -2,7 +2,7 @@
 <api context="/sgp" name="sgp-api" xmlns="http://ws.apache.org/ns/synapse">
 
   <!-- actividad docente -->
-  <resource methods="GET" url-mapping="/actividad-docente">
+  <resource methods="GET" url-mapping="/actividad-docente/modificados-ids">
     <inSequence>
       <call-template target="sgi-auth-sequence-template">
         <with-param name="requiredAuthorities" value="" />
@@ -155,8 +155,27 @@
     </faultSequence>
   </resource>
 
+  <!-- direccion tesis -->
+  <resource methods="GET" url-mapping="/direccion-tesis">
+    <inSequence>
+      <call-template target="sgi-auth-sequence-template">
+        <with-param name="requiredAuthorities" value="" />
+      </call-template>
+      <sequence key="sgp-add-x-api-key-sequence" />
+      <send>
+        <endpoint key="sgp-endpoint" />
+      </send>
+    </inSequence>
+    <outSequence>
+      <respond />
+    </outSequence>
+    <faultSequence>
+      <sequence key="error-handling-sequence" />
+    </faultSequence>
+  </resource>
+
   <!-- formacion academica -->
-  <resource methods="GET" url-mapping="/formacion">
+  <resource methods="GET" url-mapping="/formacion/modificados-ids">
     <inSequence>
       <call-template target="sgi-auth-sequence-template">
         <with-param name="requiredAuthorities" value="" />
@@ -526,6 +545,7 @@
                 "templateOptions": {
                   "label": "Tipo de vía",
                   "placeholder": "Introduce tipo de vía",
+                  "required": true,
                   "valueProp": "id",
                   "labelProp": "nombre",
                   "options": $1
@@ -542,7 +562,8 @@
                 "className": "flex-2",
                 "templateOptions": {
                   "label": "Nombre de vía",
-                  "placeholder": "Introduce nombre de vía"
+                  "placeholder": "Introduce nombre de vía",
+                  "required": true
                 }
               },
               {
@@ -2005,7 +2026,7 @@
     </faultSequence>
   </resource>
 
-  <resource methods="GET" uri-mapping="/personas/modificadas-ids">
+  <resource methods="GET" url-mapping="/personas/modificadas-ids">
     <inSequence>
       <call-template target="sgi-auth-sequence-template">
         <with-param name="requiredAuthorities" value="" />
@@ -2047,6 +2068,24 @@
   </resource>
 
   <!-- sexenios -->
+  <resource methods="GET" url-mapping="/sexenios">
+    <inSequence>
+      <call-template target="sgi-auth-sequence-template">
+        <with-param name="requiredAuthorities" value="" />
+      </call-template>
+      <sequence key="sgp-add-x-api-key-sequence" />
+      <send>
+        <endpoint key="sgp-endpoint" />
+      </send>
+    </inSequence>
+    <outSequence>
+      <respond />
+    </outSequence>
+    <faultSequence>
+      <sequence key="error-handling-sequence" />
+    </faultSequence>
+  </resource>
+
   <resource methods="GET" uri-template="/sexenios/persona/{id}">
     <inSequence>
       <call-template target="sgi-auth-sequence-template">

@@ -9,7 +9,6 @@ import org.apache.commons.lang3.ObjectUtils;
 import org.assertj.core.api.Assertions;
 import org.crue.hercules.sgi.prc.controller.BaremacionController;
 import org.crue.hercules.sgi.prc.dto.csp.ProyectoDto;
-import org.crue.hercules.sgi.prc.dto.csp.ProyectoDto.ClasificacionCVN;
 import org.crue.hercules.sgi.prc.dto.csp.ProyectoEquipoDto;
 import org.crue.hercules.sgi.prc.enums.CodigoCVN;
 import org.crue.hercules.sgi.prc.model.Autor;
@@ -76,7 +75,7 @@ class BaremacionProyectoIT extends BaremacionBaseIT {
     Integer anio = 2021;
 
     BigDecimal totalImporteConcedido = null;
-    BigDecimal importeConcedido = null;
+    BigDecimal importeConcedidoCostesIndirectos = null;
 
     ProyectoDto proyecto = ProyectoDto.builder()
         .id(proyectoId)
@@ -84,9 +83,9 @@ class BaremacionProyectoIT extends BaremacionBaseIT {
         .fechaInicio(Instant.parse(anio + "-01-15T00:00:00Z"))
         .fechaFin(Instant.parse(anio + "-12-31T00:00:00Z"))
         .fechaFinDefinitiva(Instant.parse(anio + "-12-31T00:00:00Z"))
-        .clasificacionCVN(ClasificacionCVN.COMPETITIVOS)
+        .contrato(Boolean.FALSE)
         .totalImporteConcedido(totalImporteConcedido)
-        .importeConcedido(importeConcedido)
+        .importeConcedidoCostesIndirectos(importeConcedidoCostesIndirectos)
         .ambitoGeograficoId(1L)
         .convocatoriaExcelencia(Boolean.TRUE)
         .build();
@@ -105,7 +104,8 @@ class BaremacionProyectoIT extends BaremacionBaseIT {
 
     Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.ACCEPTED);
 
-    checkCopyProyectoAutor(proyecto, Arrays.asList(proyectoEquipo), totalImporteConcedido, importeConcedido, null);
+    checkCopyProyectoAutor(proyecto, Arrays.asList(proyectoEquipo), totalImporteConcedido,
+        importeConcedidoCostesIndirectos, null);
 
     checkPuntuacionLibroWithoutProyecto(idBaremacion, personaRef);
   }
@@ -145,7 +145,7 @@ class BaremacionProyectoIT extends BaremacionBaseIT {
     Integer anio = 2021;
 
     BigDecimal totalImporteConcedido = new BigDecimal("100.00");
-    BigDecimal importeConcedido = new BigDecimal("50.00");
+    BigDecimal importeConcedidoCostesIndirectos = new BigDecimal("50.00");
 
     ProyectoDto proyecto = ProyectoDto.builder()
         .id(proyectoId)
@@ -153,9 +153,10 @@ class BaremacionProyectoIT extends BaremacionBaseIT {
         .fechaInicio(Instant.parse(anio + "-01-15T00:00:00Z"))
         .fechaFin(Instant.parse(anio + "-12-31T00:00:00Z"))
         .fechaFinDefinitiva(Instant.parse(anio + "-12-31T00:00:00Z"))
-        .clasificacionCVN(ClasificacionCVN.NO_COMPETITIVOS)
+        .contrato(Boolean.TRUE)
+
         .totalImporteConcedido(totalImporteConcedido)
-        .importeConcedido(importeConcedido)
+        .importeConcedidoCostesIndirectos(importeConcedidoCostesIndirectos)
         .ambitoGeograficoId(1L)
         .convocatoriaExcelencia(Boolean.TRUE)
         .build();
@@ -174,7 +175,8 @@ class BaremacionProyectoIT extends BaremacionBaseIT {
 
     Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.ACCEPTED);
 
-    checkCopyProyectoAutor(proyecto, Arrays.asList(proyectoEquipo), totalImporteConcedido, importeConcedido, null);
+    checkCopyProyectoAutor(proyecto, Arrays.asList(proyectoEquipo), totalImporteConcedido,
+        importeConcedidoCostesIndirectos, null);
 
     checkPuntuacionLibroContratoWithoutProyecto(idBaremacion, personaRef);
   }
@@ -215,7 +217,7 @@ class BaremacionProyectoIT extends BaremacionBaseIT {
     Integer anio = 2021;
 
     BigDecimal totalImporteConcedido = new BigDecimal("100.00");
-    BigDecimal importeConcedido = new BigDecimal("50.00");
+    BigDecimal importeConcedidoCostesIndirectos = new BigDecimal("50.00");
 
     ProyectoDto proyecto = ProyectoDto.builder()
         .id(proyectoId)
@@ -223,9 +225,9 @@ class BaremacionProyectoIT extends BaremacionBaseIT {
         .fechaInicio(Instant.parse(anio + "-01-15T00:00:00Z"))
         .fechaFin(Instant.parse(anio + "-12-31T00:00:00Z"))
         .fechaFinDefinitiva(Instant.parse(anio + "-12-31T00:00:00Z"))
-        .clasificacionCVN(ClasificacionCVN.COMPETITIVOS)
+        .contrato(Boolean.FALSE)
         .totalImporteConcedido(totalImporteConcedido)
-        .importeConcedido(importeConcedido)
+        .importeConcedidoCostesIndirectos(importeConcedidoCostesIndirectos)
         .ambitoGeograficoId(1L)
         .convocatoriaExcelencia(Boolean.TRUE)
         .build();
@@ -237,7 +239,7 @@ class BaremacionProyectoIT extends BaremacionBaseIT {
         .build();
 
     BigDecimal totalImporteConcedido2 = new BigDecimal("110.00");
-    BigDecimal importeConcedido2 = new BigDecimal("51.00");
+    BigDecimal importeConcedidoCostesIndirectos2 = new BigDecimal("51.00");
     proyectoId = 2L;
     ProyectoDto proyecto2 = ProyectoDto.builder()
         .id(proyectoId)
@@ -245,9 +247,9 @@ class BaremacionProyectoIT extends BaremacionBaseIT {
         .fechaInicio(Instant.parse(anio + "-01-15T00:00:00Z"))
         .fechaFin(Instant.parse(anio + "-12-31T00:00:00Z"))
         .fechaFinDefinitiva(Instant.parse(anio + "-12-31T00:00:00Z"))
-        .clasificacionCVN(ClasificacionCVN.COMPETITIVOS)
+        .contrato(Boolean.FALSE)
         .totalImporteConcedido(totalImporteConcedido2)
-        .importeConcedido(importeConcedido2)
+        .importeConcedidoCostesIndirectos(importeConcedidoCostesIndirectos2)
         .ambitoGeograficoId(1L)
         .convocatoriaExcelencia(Boolean.TRUE)
         .build();
@@ -260,8 +262,10 @@ class BaremacionProyectoIT extends BaremacionBaseIT {
 
     Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.ACCEPTED);
 
-    checkCopyProyectoAutor(proyecto, Arrays.asList(proyectoEquipo), totalImporteConcedido, importeConcedido, "OTHERS");
-    checkCopyProyectoAutor(proyecto2, Arrays.asList(proyectoEquipo), totalImporteConcedido2, importeConcedido2,
+    checkCopyProyectoAutor(proyecto, Arrays.asList(proyectoEquipo), totalImporteConcedido,
+        importeConcedidoCostesIndirectos, "OTHERS");
+    checkCopyProyectoAutor(proyecto2, Arrays.asList(proyectoEquipo), totalImporteConcedido2,
+        importeConcedidoCostesIndirectos2,
         "OTHERS");
 
     checkPuntuacionLibroProyecto2(idBaremacion, personaRef);
@@ -302,7 +306,7 @@ class BaremacionProyectoIT extends BaremacionBaseIT {
     Integer anio = 2021;
 
     BigDecimal totalImporteConcedido = new BigDecimal("100.00");
-    BigDecimal importeConcedido = new BigDecimal("50.00");
+    BigDecimal importeConcedidoCostesIndirectos = new BigDecimal("50.00");
 
     ProyectoDto proyecto = ProyectoDto.builder()
         .id(proyectoId)
@@ -310,9 +314,10 @@ class BaremacionProyectoIT extends BaremacionBaseIT {
         .fechaInicio(Instant.parse(anio + "-01-15T00:00:00Z"))
         .fechaFin(Instant.parse(anio + "-12-31T00:00:00Z"))
         .fechaFinDefinitiva(Instant.parse(anio + "-12-31T00:00:00Z"))
-        .clasificacionCVN(ClasificacionCVN.NO_COMPETITIVOS)
+        .contrato(Boolean.TRUE)
+
         .totalImporteConcedido(totalImporteConcedido)
-        .importeConcedido(importeConcedido)
+        .importeConcedidoCostesIndirectos(importeConcedidoCostesIndirectos)
         .ambitoGeograficoId(1L)
         .convocatoriaExcelencia(Boolean.TRUE)
         .build();
@@ -324,7 +329,7 @@ class BaremacionProyectoIT extends BaremacionBaseIT {
         .build();
 
     BigDecimal totalImporteConcedido2 = new BigDecimal("110000.00");
-    BigDecimal importeConcedido2 = new BigDecimal("51.00");
+    BigDecimal importeConcedidoCostesIndirectos2 = new BigDecimal("51.00");
     proyectoId = 2L;
     ProyectoDto proyecto2 = ProyectoDto.builder()
         .id(proyectoId)
@@ -332,9 +337,10 @@ class BaremacionProyectoIT extends BaremacionBaseIT {
         .fechaInicio(Instant.parse(anio + "-01-15T00:00:00Z"))
         .fechaFin(Instant.parse(anio + "-12-31T00:00:00Z"))
         .fechaFinDefinitiva(Instant.parse(anio + "-12-31T00:00:00Z"))
-        .clasificacionCVN(ClasificacionCVN.NO_COMPETITIVOS)
+        .contrato(Boolean.TRUE)
+
         .totalImporteConcedido(totalImporteConcedido2)
-        .importeConcedido(importeConcedido2)
+        .importeConcedidoCostesIndirectos(importeConcedidoCostesIndirectos2)
         .ambitoGeograficoId(1L)
         .convocatoriaExcelencia(Boolean.TRUE)
         .build();
@@ -347,8 +353,10 @@ class BaremacionProyectoIT extends BaremacionBaseIT {
 
     Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.ACCEPTED);
 
-    checkCopyProyectoAutor(proyecto, Arrays.asList(proyectoEquipo), totalImporteConcedido, importeConcedido, null);
-    checkCopyProyectoAutor(proyecto2, Arrays.asList(proyectoEquipo), totalImporteConcedido2, importeConcedido2, null);
+    checkCopyProyectoAutor(proyecto, Arrays.asList(proyectoEquipo), totalImporteConcedido,
+        importeConcedidoCostesIndirectos, null);
+    checkCopyProyectoAutor(proyecto2, Arrays.asList(proyectoEquipo), totalImporteConcedido2,
+        importeConcedidoCostesIndirectos2, null);
 
     checkPuntuacionLibroContrato2(idBaremacion, personaRef);
   }
@@ -389,7 +397,7 @@ class BaremacionProyectoIT extends BaremacionBaseIT {
     Integer anio = 2020;
 
     BigDecimal totalImporteConcedido = new BigDecimal("100.00");
-    BigDecimal importeConcedido = new BigDecimal("50.00");
+    BigDecimal importeConcedidoCostesIndirectos = new BigDecimal("50.00");
 
     ProyectoDto proyecto = ProyectoDto.builder()
         .id(proyectoId)
@@ -397,9 +405,9 @@ class BaremacionProyectoIT extends BaremacionBaseIT {
         .fechaInicio(Instant.parse(anio + "-01-15T00:00:00Z"))
         .fechaFin(Instant.parse(anio + "-12-31T00:00:00Z"))
         .fechaFinDefinitiva(Instant.parse(anio + "-12-31T00:00:00Z"))
-        .clasificacionCVN(ClasificacionCVN.COMPETITIVOS)
+        .contrato(Boolean.FALSE)
         .totalImporteConcedido(totalImporteConcedido)
-        .importeConcedido(importeConcedido)
+        .importeConcedidoCostesIndirectos(importeConcedidoCostesIndirectos)
         .ambitoGeograficoId(1L)
         .convocatoriaExcelencia(Boolean.TRUE)
         .build();
@@ -412,7 +420,7 @@ class BaremacionProyectoIT extends BaremacionBaseIT {
 
     Integer anio2 = 2021;
     BigDecimal totalImporteConcedido2 = new BigDecimal("110.00");
-    BigDecimal importeConcedido2 = new BigDecimal("51.00");
+    BigDecimal importeConcedidoCostesIndirectos2 = new BigDecimal("51.00");
     proyectoId = 2L;
     ProyectoDto proyecto2 = ProyectoDto.builder()
         .id(proyectoId)
@@ -420,9 +428,9 @@ class BaremacionProyectoIT extends BaremacionBaseIT {
         .fechaInicio(Instant.parse(anio2 + "-01-15T00:00:00Z"))
         .fechaFin(Instant.parse(anio2 + "-12-31T00:00:00Z"))
         .fechaFinDefinitiva(Instant.parse(anio2 + "-12-31T00:00:00Z"))
-        .clasificacionCVN(ClasificacionCVN.COMPETITIVOS)
+        .contrato(Boolean.FALSE)
         .totalImporteConcedido(totalImporteConcedido2)
-        .importeConcedido(importeConcedido2)
+        .importeConcedidoCostesIndirectos(importeConcedidoCostesIndirectos2)
         .ambitoGeograficoId(1L)
         .convocatoriaExcelencia(Boolean.TRUE)
         .build();
@@ -435,8 +443,10 @@ class BaremacionProyectoIT extends BaremacionBaseIT {
 
     Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.ACCEPTED);
 
-    checkCopyProyectoAutor(proyecto, Arrays.asList(proyectoEquipo), totalImporteConcedido, importeConcedido, "OTHERS");
-    checkCopyProyectoAutor(proyecto2, Arrays.asList(proyectoEquipo), totalImporteConcedido2, importeConcedido2,
+    checkCopyProyectoAutor(proyecto, Arrays.asList(proyectoEquipo), totalImporteConcedido,
+        importeConcedidoCostesIndirectos, "OTHERS");
+    checkCopyProyectoAutor(proyecto2, Arrays.asList(proyectoEquipo), totalImporteConcedido2,
+        importeConcedidoCostesIndirectos2,
         "OTHERS");
 
     checkPuntuacionLibroProyecto2(idBaremacion, personaRef);
@@ -478,7 +488,7 @@ class BaremacionProyectoIT extends BaremacionBaseIT {
     Integer anio = 2020;
 
     BigDecimal totalImporteConcedido = new BigDecimal("100.00");
-    BigDecimal importeConcedido = new BigDecimal("50.00");
+    BigDecimal importeConcedidoCostesIndirectos = new BigDecimal("50.00");
 
     ProyectoDto proyecto = ProyectoDto.builder()
         .id(proyectoId)
@@ -486,9 +496,9 @@ class BaremacionProyectoIT extends BaremacionBaseIT {
         .fechaInicio(Instant.parse(anio + "-01-15T00:00:00Z"))
         .fechaFin(Instant.parse(anio + "-12-31T00:00:00Z"))
         .fechaFinDefinitiva(Instant.parse(anio + "-12-31T00:00:00Z"))
-        .clasificacionCVN(ClasificacionCVN.COMPETITIVOS)
+        .contrato(Boolean.FALSE)
         .totalImporteConcedido(totalImporteConcedido)
-        .importeConcedido(importeConcedido)
+        .importeConcedidoCostesIndirectos(importeConcedidoCostesIndirectos)
         .ambitoGeograficoId(1L)
         .convocatoriaExcelencia(Boolean.TRUE)
         .build();
@@ -501,7 +511,7 @@ class BaremacionProyectoIT extends BaremacionBaseIT {
 
     Integer anio2 = 2021;
     BigDecimal totalImporteConcedido2 = new BigDecimal("110.00");
-    BigDecimal importeConcedido2 = new BigDecimal("51.00");
+    BigDecimal importeConcedidoCostesIndirectos2 = new BigDecimal("51.00");
     proyectoId = 2L;
     ProyectoDto proyecto2 = ProyectoDto.builder()
         .id(proyectoId)
@@ -509,9 +519,10 @@ class BaremacionProyectoIT extends BaremacionBaseIT {
         .fechaInicio(Instant.parse(anio2 + "-01-15T00:00:00Z"))
         .fechaFin(Instant.parse(anio2 + "-12-31T00:00:00Z"))
         .fechaFinDefinitiva(Instant.parse(anio2 + "-12-31T00:00:00Z"))
-        .clasificacionCVN(ClasificacionCVN.NO_COMPETITIVOS)
+        .contrato(Boolean.TRUE)
+
         .totalImporteConcedido(totalImporteConcedido2)
-        .importeConcedido(importeConcedido2)
+        .importeConcedidoCostesIndirectos(importeConcedidoCostesIndirectos2)
         .ambitoGeograficoId(1L)
         .convocatoriaExcelencia(Boolean.TRUE)
         .build();
@@ -524,8 +535,10 @@ class BaremacionProyectoIT extends BaremacionBaseIT {
 
     Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.ACCEPTED);
 
-    checkCopyProyectoAutor(proyecto, Arrays.asList(proyectoEquipo), totalImporteConcedido, importeConcedido, "OTHERS");
-    checkCopyProyectoAutor(proyecto2, Arrays.asList(proyectoEquipo), totalImporteConcedido2, importeConcedido2,
+    checkCopyProyectoAutor(proyecto, Arrays.asList(proyectoEquipo), totalImporteConcedido,
+        importeConcedidoCostesIndirectos, "OTHERS");
+    checkCopyProyectoAutor(proyecto2, Arrays.asList(proyectoEquipo), totalImporteConcedido2,
+        importeConcedidoCostesIndirectos2,
         "OTHERS");
 
     checkPuntuacionLibroContratoAndProyecto(idBaremacion, personaRef);
@@ -566,7 +579,7 @@ class BaremacionProyectoIT extends BaremacionBaseIT {
     Integer anio = 2021;
 
     BigDecimal totalImporteConcedido = null;
-    BigDecimal importeConcedido = null;
+    BigDecimal importeConcedidoCostesIndirectos = null;
 
     ProyectoDto proyecto = ProyectoDto.builder()
         .id(proyectoId)
@@ -574,9 +587,9 @@ class BaremacionProyectoIT extends BaremacionBaseIT {
         .fechaInicio(Instant.parse(anio + "-01-15T00:00:00Z"))
         .fechaFin(Instant.parse(anio + "-12-31T00:00:00Z"))
         .fechaFinDefinitiva(null)
-        .clasificacionCVN(ClasificacionCVN.COMPETITIVOS)
+        .contrato(Boolean.FALSE)
         .totalImporteConcedido(totalImporteConcedido)
-        .importeConcedido(importeConcedido)
+        .importeConcedidoCostesIndirectos(importeConcedidoCostesIndirectos)
         .ambitoGeograficoId(1L)
         .convocatoriaExcelencia(Boolean.TRUE)
         .build();
@@ -595,7 +608,8 @@ class BaremacionProyectoIT extends BaremacionBaseIT {
 
     Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.ACCEPTED);
 
-    checkCopyProyectoAutor(proyecto, Arrays.asList(proyectoEquipo), totalImporteConcedido, importeConcedido, null);
+    checkCopyProyectoAutor(proyecto, Arrays.asList(proyectoEquipo), totalImporteConcedido,
+        importeConcedidoCostesIndirectos, null);
 
     checkPuntuacionLibroWithoutProyecto(idBaremacion, personaRef);
   }
@@ -641,9 +655,9 @@ class BaremacionProyectoIT extends BaremacionBaseIT {
         .fechaInicio(Instant.parse(anio + "-01-15T00:00:00Z"))
         .fechaFin(Instant.parse(anio + "-12-31T00:00:00Z"))
         .fechaFinDefinitiva(null)
-        .clasificacionCVN(ClasificacionCVN.COMPETITIVOS)
+        .contrato(Boolean.FALSE)
         .totalImporteConcedido(null)
-        .importeConcedido(null)
+        .importeConcedidoCostesIndirectos(null)
         .ambitoGeograficoId(1L)
         .convocatoriaExcelencia(Boolean.TRUE)
         .build();
@@ -657,12 +671,12 @@ class BaremacionProyectoIT extends BaremacionBaseIT {
     mockProyectosAndEquipo(Arrays.asList(proyecto), Arrays.asList(proyectoEquipo), 2020, 2021);
 
     BigDecimal totalImporteConcedido = new BigDecimal("10.00");
-    BigDecimal importeConcedido = new BigDecimal("5.00");
+    BigDecimal importeConcedidoCostesIndirectos = new BigDecimal("5.00");
     BDDMockito.given(getSgiApiCspService().getTotalImporteConcedidoAnualidadGasto(proyectoId)).willReturn(
         totalImporteConcedido);
     BDDMockito.given(getSgiApiCspService().getTotalImporteConcedidoAnualidadGastoCostesIndirectos(proyectoId))
         .willReturn(
-            importeConcedido);
+            importeConcedidoCostesIndirectos);
 
     final ResponseEntity<Void> response = restTemplate.exchange(
         CONTROLLER_BASE_PATH + PATH_PARAMETER_ID, HttpMethod.POST, buildRequestBaremacion(null, null),
@@ -670,7 +684,8 @@ class BaremacionProyectoIT extends BaremacionBaseIT {
 
     Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.ACCEPTED);
 
-    checkCopyProyectoAutor(proyecto, Arrays.asList(proyectoEquipo), totalImporteConcedido, importeConcedido, "OTHERS");
+    checkCopyProyectoAutor(proyecto, Arrays.asList(proyectoEquipo), totalImporteConcedido,
+        importeConcedidoCostesIndirectos, "OTHERS");
 
     checkPuntuacionLibroOneProyecto(idBaremacion, personaRef);
   }
@@ -688,7 +703,7 @@ class BaremacionProyectoIT extends BaremacionBaseIT {
   }
 
   private void checkCopyProyectoAutor(ProyectoDto proyecto, List<ProyectoEquipoDto> equipo,
-      BigDecimal totalImporteConcedido, BigDecimal importeConcedido, String ambitoMapeoTipos) {
+      BigDecimal totalImporteConcedido, BigDecimal importeConcedidoCostesIndirectos, String ambitoMapeoTipos) {
 
     Long produccionCientificaId = getProduccionCientificaRepository()
         .findByProduccionCientificaRefAndConvocatoriaBaremacionIdIsNull(
@@ -698,21 +713,21 @@ class BaremacionProyectoIT extends BaremacionBaseIT {
     List<CampoProduccionCientifica> campos = getCampoProduccionCientificaRepository()
         .findAllByProduccionCientificaId(produccionCientificaId);
 
-    Integer numCampos = proyecto.getClasificacionCVN().equals(ClasificacionCVN.COMPETITIVOS)
+    Integer numCampos = !isContrato(proyecto)
         ? (StringUtils.hasText(ambitoMapeoTipos) ? 7 : 6)
         : 5;
-    numCampos = null == importeConcedido ? numCampos - 1 : numCampos;
+    numCampos = null == importeConcedidoCostesIndirectos ? numCampos - 1 : numCampos;
     numCampos = null == totalImporteConcedido ? numCampos - 1 : numCampos;
     int numCamposReal = campos.size();
     Assertions.assertThat(numCamposReal).as("number of campos created").isEqualTo(numCampos);
 
-    CodigoCVN codigoCVN = proyecto.getClasificacionCVN().equals(ClasificacionCVN.COMPETITIVOS)
+    CodigoCVN codigoCVN = !isContrato(proyecto)
         ? CodigoCVN.E050_020_010_010
         : CodigoCVN.E050_020_020_010;
     ValorCampo valorCampo = getValorCampoByCodigoCVN(campos, codigoCVN);
     Assertions.assertThat(valorCampo.getValor()).as(codigoCVN.name()).isEqualTo(proyecto.getTitulo());
 
-    codigoCVN = proyecto.getClasificacionCVN().equals(ClasificacionCVN.COMPETITIVOS)
+    codigoCVN = !isContrato(proyecto)
         ? CodigoCVN.E050_020_010_270
         : CodigoCVN.E050_020_020_180;
     valorCampo = getValorCampoByCodigoCVN(campos, codigoCVN);
@@ -720,7 +735,7 @@ class BaremacionProyectoIT extends BaremacionBaseIT {
         proyecto.getFechaInicio().toString());
 
     Instant fechaFin = ObjectUtils.defaultIfNull(proyecto.getFechaFinDefinitiva(), proyecto.getFechaFin());
-    codigoCVN = proyecto.getClasificacionCVN().equals(ClasificacionCVN.COMPETITIVOS)
+    codigoCVN = !isContrato(proyecto)
         ? CodigoCVN.E050_020_010_410
         : CodigoCVN.FECHA_FIN_CONTRATO;
     valorCampo = getValorCampoByCodigoCVN(campos, codigoCVN);
@@ -728,7 +743,7 @@ class BaremacionProyectoIT extends BaremacionBaseIT {
 
     if (null != totalImporteConcedido) {
 
-      codigoCVN = proyecto.getClasificacionCVN().equals(ClasificacionCVN.COMPETITIVOS)
+      codigoCVN = !isContrato(proyecto)
           ? CodigoCVN.E050_020_010_290
           : CodigoCVN.E050_020_020_200;
       valorCampo = getValorCampoByCodigoCVN(campos, codigoCVN);
@@ -739,7 +754,7 @@ class BaremacionProyectoIT extends BaremacionBaseIT {
       Assertions.assertThat(valorCampo.getValor()).as(codigoCVN.name()).isEqualTo(valorTotalImporteConcedido);
     }
 
-    if (proyecto.getClasificacionCVN().equals(ClasificacionCVN.COMPETITIVOS)) {
+    if (!isContrato(proyecto)) {
       String excelencia = Boolean.TRUE
           .equals(ObjectUtils.defaultIfNull(proyecto.getConvocatoriaExcelencia(), Boolean.FALSE)) ? "true" : "false";
       valorCampo = getValorCampoByCodigoCVN(campos, CodigoCVN.CONVOCATORIA_EXCELENCIA);
@@ -751,15 +766,16 @@ class BaremacionProyectoIT extends BaremacionBaseIT {
       }
     }
 
-    if (null != importeConcedido) {
-      codigoCVN = proyecto.getClasificacionCVN().equals(ClasificacionCVN.COMPETITIVOS)
+    if (null != importeConcedidoCostesIndirectos) {
+      codigoCVN = !isContrato(proyecto)
           ? CodigoCVN.CUANTIA_COSTES_INDIRECTOS_PROYECTO
           : CodigoCVN.CUANTIA_COSTES_INDIRECTOS_CONTRATO;
       valorCampo = getValorCampoByCodigoCVN(campos, codigoCVN);
-      importeConcedido = null != proyecto.getImporteConcedido() ? proyecto.getImporteConcedido()
-          : importeConcedido;
+      importeConcedidoCostesIndirectos = null != proyecto.getImporteConcedidoCostesIndirectos()
+          ? proyecto.getImporteConcedidoCostesIndirectos()
+          : importeConcedidoCostesIndirectos;
       String valorImporteConcedido = ProduccionCientificaFieldFormatUtil
-          .formatNumber(importeConcedido.toString());
+          .formatNumber(importeConcedidoCostesIndirectos.toString());
       Assertions.assertThat(valorCampo.getValor()).as(codigoCVN.name()).isEqualTo(valorImporteConcedido);
     }
 
@@ -772,6 +788,10 @@ class BaremacionProyectoIT extends BaremacionBaseIT {
       Assertions.assertThat(personaFound).as("PersonaRefInAutores").isTrue();
     });
 
+  }
+
+  private boolean isContrato(ProyectoDto proyecto) {
+    return null != proyecto.getContrato() && proyecto.getContrato().equals(Boolean.TRUE);
   }
 
   @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = {
@@ -810,7 +830,7 @@ class BaremacionProyectoIT extends BaremacionBaseIT {
     Integer anio = 2021;
 
     BigDecimal totalImporteConcedido = null;
-    BigDecimal importeConcedido = null;
+    BigDecimal importeConcedidoCostesIndirectos = null;
 
     ProyectoDto proyecto = ProyectoDto.builder()
         .id(proyectoId)
@@ -818,9 +838,9 @@ class BaremacionProyectoIT extends BaremacionBaseIT {
         .fechaInicio(Instant.parse(anio + "-01-15T00:00:00Z"))
         .fechaFin(Instant.parse(anio + "-12-31T00:00:00Z"))
         .fechaFinDefinitiva(Instant.parse(anio + "-12-31T00:00:00Z"))
-        .clasificacionCVN(ClasificacionCVN.COMPETITIVOS)
+        .contrato(Boolean.FALSE)
         .totalImporteConcedido(totalImporteConcedido)
-        .importeConcedido(importeConcedido)
+        .importeConcedidoCostesIndirectos(importeConcedidoCostesIndirectos)
         .ambitoGeograficoId(4L)
         .convocatoriaExcelencia(Boolean.TRUE)
         .build();
@@ -839,7 +859,8 @@ class BaremacionProyectoIT extends BaremacionBaseIT {
 
     Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.ACCEPTED);
 
-    checkCopyProyectoAutor(proyecto, Arrays.asList(proyectoEquipo), totalImporteConcedido, importeConcedido, "010");
+    checkCopyProyectoAutor(proyecto, Arrays.asList(proyectoEquipo), totalImporteConcedido,
+        importeConcedidoCostesIndirectos, "010");
 
     checkPuntuacionLibroAndOneProyectoOneAutorWithExtra(idBaremacion, personaRef);
   }
@@ -880,7 +901,7 @@ class BaremacionProyectoIT extends BaremacionBaseIT {
     Integer anio = 2021;
 
     BigDecimal totalImporteConcedido = null;
-    BigDecimal importeConcedido = null;
+    BigDecimal importeConcedidoCostesIndirectos = null;
 
     ProyectoDto proyecto = ProyectoDto.builder()
         .id(proyectoId)
@@ -888,9 +909,9 @@ class BaremacionProyectoIT extends BaremacionBaseIT {
         .fechaInicio(Instant.parse(anio + "-01-15T00:00:00Z"))
         .fechaFin(Instant.parse(anio + "-12-31T00:00:00Z"))
         .fechaFinDefinitiva(Instant.parse(anio + "-12-31T00:00:00Z"))
-        .clasificacionCVN(ClasificacionCVN.COMPETITIVOS)
+        .contrato(Boolean.FALSE)
         .totalImporteConcedido(totalImporteConcedido)
-        .importeConcedido(importeConcedido)
+        .importeConcedidoCostesIndirectos(importeConcedidoCostesIndirectos)
         .ambitoGeograficoId(4L)
         .convocatoriaExcelencia(Boolean.TRUE)
         .build();
@@ -909,7 +930,8 @@ class BaremacionProyectoIT extends BaremacionBaseIT {
 
     Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.ACCEPTED);
 
-    checkCopyProyectoAutor(proyecto, Arrays.asList(proyectoEquipo), totalImporteConcedido, importeConcedido, "010");
+    checkCopyProyectoAutor(proyecto, Arrays.asList(proyectoEquipo), totalImporteConcedido,
+        importeConcedidoCostesIndirectos, "010");
 
     checkPuntuacionLibroAndOneProyectoOneAutorIPWithExtra(idBaremacion, personaRef);
   }
@@ -952,7 +974,7 @@ class BaremacionProyectoIT extends BaremacionBaseIT {
     Integer anio = 2021;
 
     BigDecimal totalImporteConcedido = null;
-    BigDecimal importeConcedido = null;
+    BigDecimal importeConcedidoCostesIndirectos = null;
 
     ProyectoDto proyecto = ProyectoDto.builder()
         .id(proyectoId)
@@ -960,9 +982,9 @@ class BaremacionProyectoIT extends BaremacionBaseIT {
         .fechaInicio(Instant.parse(anio + "-01-15T00:00:00Z"))
         .fechaFin(Instant.parse(anio + "-12-31T00:00:00Z"))
         .fechaFinDefinitiva(Instant.parse(anio + "-12-31T00:00:00Z"))
-        .clasificacionCVN(ClasificacionCVN.COMPETITIVOS)
+        .contrato(Boolean.FALSE)
         .totalImporteConcedido(totalImporteConcedido)
-        .importeConcedido(importeConcedido)
+        .importeConcedidoCostesIndirectos(importeConcedidoCostesIndirectos)
         .ambitoGeograficoId(4L)
         .convocatoriaExcelencia(Boolean.TRUE)
         .build();
@@ -988,7 +1010,7 @@ class BaremacionProyectoIT extends BaremacionBaseIT {
     Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.ACCEPTED);
 
     checkCopyProyectoAutor(proyecto, Arrays.asList(proyectoEquipo, proyectoEquipo2), totalImporteConcedido,
-        importeConcedido, "010");
+        importeConcedidoCostesIndirectos, "010");
 
     checkPuntuacionLibroAndOneProyectoTwoAutorsIPWithExtra(idBaremacion, personaRef, personaRef2);
   }
@@ -1029,7 +1051,7 @@ class BaremacionProyectoIT extends BaremacionBaseIT {
     Integer anio = 2021;
 
     BigDecimal totalImporteConcedido = null;
-    BigDecimal importeConcedido = null;
+    BigDecimal importeConcedidoCostesIndirectos = null;
 
     ProyectoDto proyecto = ProyectoDto.builder()
         .id(proyectoId)
@@ -1037,9 +1059,9 @@ class BaremacionProyectoIT extends BaremacionBaseIT {
         .fechaInicio(Instant.parse(anio + "-01-15T00:00:00Z"))
         .fechaFin(Instant.parse(anio + "-12-31T00:00:00Z"))
         .fechaFinDefinitiva(Instant.parse(anio + "-12-31T00:00:00Z"))
-        .clasificacionCVN(ClasificacionCVN.COMPETITIVOS)
+        .contrato(Boolean.FALSE)
         .totalImporteConcedido(totalImporteConcedido)
-        .importeConcedido(importeConcedido)
+        .importeConcedidoCostesIndirectos(importeConcedidoCostesIndirectos)
         .ambitoGeograficoId(4L)
         .convocatoriaExcelencia(Boolean.TRUE)
         .build();
@@ -1101,7 +1123,7 @@ class BaremacionProyectoIT extends BaremacionBaseIT {
     Integer anio = 2021;
 
     BigDecimal totalImporteConcedido = null;
-    BigDecimal importeConcedido = null;
+    BigDecimal importeConcedidoCostesIndirectos = null;
 
     ProyectoDto proyecto = ProyectoDto.builder()
         .id(proyectoId)
@@ -1109,9 +1131,9 @@ class BaremacionProyectoIT extends BaremacionBaseIT {
         .fechaInicio(Instant.parse(anio + "-01-15T00:00:00Z"))
         .fechaFin(Instant.parse(anio + "-12-31T00:00:00Z"))
         .fechaFinDefinitiva(Instant.parse(anio + "-12-31T00:00:00Z"))
-        .clasificacionCVN(ClasificacionCVN.COMPETITIVOS)
+        .contrato(Boolean.FALSE)
         .totalImporteConcedido(totalImporteConcedido)
-        .importeConcedido(importeConcedido)
+        .importeConcedidoCostesIndirectos(importeConcedidoCostesIndirectos)
         .ambitoGeograficoId(4L)
         .convocatoriaExcelencia(Boolean.TRUE)
         .build();
@@ -1131,7 +1153,8 @@ class BaremacionProyectoIT extends BaremacionBaseIT {
 
     Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.ACCEPTED);
 
-    checkCopyProyectoAutor(proyecto, Arrays.asList(proyectoEquipo), totalImporteConcedido, importeConcedido, "010");
+    checkCopyProyectoAutor(proyecto, Arrays.asList(proyectoEquipo), totalImporteConcedido,
+        importeConcedidoCostesIndirectos, "010");
 
     checkPuntuacionLibroAndOneProyectoWithoutAutorInFechaWithExtra(idBaremacion, personaRef);
   }
@@ -1172,7 +1195,7 @@ class BaremacionProyectoIT extends BaremacionBaseIT {
     Integer anio = 2021;
 
     BigDecimal totalImporteConcedido = null;
-    BigDecimal importeConcedido = null;
+    BigDecimal importeConcedidoCostesIndirectos = null;
 
     ProyectoDto proyecto = ProyectoDto.builder()
         .id(proyectoId)
@@ -1180,9 +1203,9 @@ class BaremacionProyectoIT extends BaremacionBaseIT {
         .fechaInicio(Instant.parse((anio - 1) + "-01-15T00:00:00Z"))
         .fechaFin(Instant.parse(anio + "-12-31T00:00:00Z"))
         .fechaFinDefinitiva(Instant.parse(anio + "-12-31T00:00:00Z"))
-        .clasificacionCVN(ClasificacionCVN.COMPETITIVOS)
+        .contrato(Boolean.FALSE)
         .totalImporteConcedido(totalImporteConcedido)
-        .importeConcedido(importeConcedido)
+        .importeConcedidoCostesIndirectos(importeConcedidoCostesIndirectos)
         .ambitoGeograficoId(1L)
         .convocatoriaExcelencia(Boolean.TRUE)
         .build();
@@ -1201,7 +1224,8 @@ class BaremacionProyectoIT extends BaremacionBaseIT {
 
     Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.ACCEPTED);
 
-    checkCopyProyectoAutor(proyecto, Arrays.asList(proyectoEquipo), totalImporteConcedido, importeConcedido, "OTHERS");
+    checkCopyProyectoAutor(proyecto, Arrays.asList(proyectoEquipo), totalImporteConcedido,
+        importeConcedidoCostesIndirectos, "OTHERS");
 
     checkPuntuacionLibroAndProyecto20202021OneAutor(idBaremacion, personaRef);
   }
@@ -1227,7 +1251,7 @@ class BaremacionProyectoIT extends BaremacionBaseIT {
     Assertions.assertThat(puntuacionBaremoItems.get(2).getPuntos()).as("Puntos").isEqualTo(new BigDecimal("6.00"));
 
     Assertions.assertThat(puntuacionBaremoItems.get(3).getBaremoId()).as("BaremoId").isEqualTo(29L);
-    Assertions.assertThat(puntuacionBaremoItems.get(3).getPuntos()).as("Puntos").isEqualTo(new BigDecimal("1.30"));
+    Assertions.assertThat(puntuacionBaremoItems.get(3).getPuntos()).as("Puntos").isEqualTo(new BigDecimal("2.30"));
 
     List<PuntuacionItemInvestigador> puntuacionItemsInvestigador = getPuntuacionItemInvestigadorRepository()
         .findAll();
@@ -1247,7 +1271,7 @@ class BaremacionProyectoIT extends BaremacionBaseIT {
 
     Assertions.assertThat(puntuacionItemsInvestigador.get(2).getPersonaRef()).as("PersonaRef").isEqualTo(personaRef);
     Assertions.assertThat(puntuacionItemsInvestigador.get(2).getPuntos()).as("Puntos")
-        .isEqualTo(new BigDecimal("7.80"));
+        .isEqualTo(new BigDecimal("6.90"));
     Assertions.assertThat(puntuacionItemsInvestigador.get(2).getAnio()).as("Anio").isEqualTo(2021);
 
     List<PuntuacionGrupoInvestigador> puntuacionGrupoInvestigador = getPuntuacionGrupoInvestigadorRepository()
@@ -1263,7 +1287,7 @@ class BaremacionProyectoIT extends BaremacionBaseIT {
         .isEqualTo(new BigDecimal("254.40"));
 
     Assertions.assertThat(puntuacionGrupoInvestigador.get(2).getPuntos()).as("PuntosGrupoInvestigador")
-        .isEqualTo(new BigDecimal("4.68"));
+        .isEqualTo(new BigDecimal("4.14"));
 
     List<PuntuacionGrupo> puntuacionGrupo = getPuntuacionGrupoRepository().findAll();
 
@@ -1277,7 +1301,7 @@ class BaremacionProyectoIT extends BaremacionBaseIT {
         .isEqualTo(new BigDecimal("0.00"));
 
     Assertions.assertThat(puntuacionGrupo.get(0).getPuntosProduccion()).as("PuntosGrupoProduccion")
-        .isEqualTo(new BigDecimal("513.48"));
+        .isEqualTo(new BigDecimal("512.94"));
 
     ConvocatoriaBaremacion convocatoriaBaremacion = getConvocatoriaBaremacionRepository().findById(idBaremacion).get();
 
@@ -1289,7 +1313,7 @@ class BaremacionProyectoIT extends BaremacionBaseIT {
         .isEqualTo(new BigDecimal("0.00"));
 
     Assertions.assertThat(convocatoriaBaremacion.getPuntoProduccion()).as("PuntosBaremacionProduccion")
-        .isEqualTo(new BigDecimal("219.09"));
+        .isEqualTo(new BigDecimal("219.32"));
   }
 
   private void checkPuntuacionLibroAndOneProyectoOneAutorWithExtra(Long idBaremacion, String personaRef) {
@@ -1313,7 +1337,7 @@ class BaremacionProyectoIT extends BaremacionBaseIT {
     Assertions.assertThat(puntuacionBaremoItems.get(2).getPuntos()).as("Puntos").isEqualTo(new BigDecimal("6.00"));
 
     Assertions.assertThat(puntuacionBaremoItems.get(3).getBaremoId()).as("BaremoId").isEqualTo(29L);
-    Assertions.assertThat(puntuacionBaremoItems.get(3).getPuntos()).as("Puntos").isEqualTo(new BigDecimal("1.30"));
+    Assertions.assertThat(puntuacionBaremoItems.get(3).getPuntos()).as("Puntos").isEqualTo(new BigDecimal("2.30"));
 
     List<PuntuacionItemInvestigador> puntuacionItemsInvestigador = getPuntuacionItemInvestigadorRepository()
         .findAll();
@@ -1327,7 +1351,7 @@ class BaremacionProyectoIT extends BaremacionBaseIT {
 
     Assertions.assertThat(puntuacionItemsInvestigador.get(1).getPersonaRef()).as("PersonaRef").isEqualTo(personaRef);
     Assertions.assertThat(puntuacionItemsInvestigador.get(1).getPuntos()).as("Puntos")
-        .isEqualTo(new BigDecimal("7.80"));
+        .isEqualTo(new BigDecimal("6.90"));
 
     List<PuntuacionGrupoInvestigador> puntuacionGrupoInvestigador = getPuntuacionGrupoInvestigadorRepository()
         .findAll();
@@ -1339,7 +1363,7 @@ class BaremacionProyectoIT extends BaremacionBaseIT {
         .isEqualTo(new BigDecimal("508.80"));
 
     Assertions.assertThat(puntuacionGrupoInvestigador.get(1).getPuntos()).as("PuntosGrupoInvestigador")
-        .isEqualTo(new BigDecimal("4.68"));
+        .isEqualTo(new BigDecimal("4.14"));
 
     List<PuntuacionGrupo> puntuacionGrupo = getPuntuacionGrupoRepository().findAll();
 
@@ -1353,7 +1377,7 @@ class BaremacionProyectoIT extends BaremacionBaseIT {
         .isEqualTo(new BigDecimal("0.00"));
 
     Assertions.assertThat(puntuacionGrupo.get(0).getPuntosProduccion()).as("PuntosGrupoProduccion")
-        .isEqualTo(new BigDecimal("513.48"));
+        .isEqualTo(new BigDecimal("512.94"));
 
     ConvocatoriaBaremacion convocatoriaBaremacion = getConvocatoriaBaremacionRepository().findById(idBaremacion).get();
 
@@ -1365,7 +1389,7 @@ class BaremacionProyectoIT extends BaremacionBaseIT {
         .isEqualTo(new BigDecimal("0.00"));
 
     Assertions.assertThat(convocatoriaBaremacion.getPuntoProduccion()).as("PuntosBaremacionProduccion")
-        .isEqualTo(new BigDecimal("219.09"));
+        .isEqualTo(new BigDecimal("219.32"));
   }
 
   private void checkPuntuacionLibroAndOneProyectoOneAutorIPWithExtra(Long idBaremacion, String personaRef) {
@@ -1392,7 +1416,7 @@ class BaremacionProyectoIT extends BaremacionBaseIT {
     Assertions.assertThat(puntuacionBaremoItems.get(3).getPuntos()).as("Puntos").isEqualTo(new BigDecimal("6.00"));
 
     Assertions.assertThat(puntuacionBaremoItems.get(4).getBaremoId()).as("BaremoId").isEqualTo(29L);
-    Assertions.assertThat(puntuacionBaremoItems.get(4).getPuntos()).as("Puntos").isEqualTo(new BigDecimal("1.30"));
+    Assertions.assertThat(puntuacionBaremoItems.get(4).getPuntos()).as("Puntos").isEqualTo(new BigDecimal("2.30"));
 
     List<PuntuacionItemInvestigador> puntuacionItemsInvestigador = getPuntuacionItemInvestigadorRepository()
         .findAll();
@@ -1406,7 +1430,7 @@ class BaremacionProyectoIT extends BaremacionBaseIT {
 
     Assertions.assertThat(puntuacionItemsInvestigador.get(1).getPersonaRef()).as("PersonaRef").isEqualTo(personaRef);
     Assertions.assertThat(puntuacionItemsInvestigador.get(1).getPuntos()).as("Puntos")
-        .isEqualTo(new BigDecimal("7.80"));
+        .isEqualTo(new BigDecimal("6.90"));
 
     List<PuntuacionGrupoInvestigador> puntuacionGrupoInvestigador = getPuntuacionGrupoInvestigadorRepository()
         .findAll();
@@ -1418,7 +1442,7 @@ class BaremacionProyectoIT extends BaremacionBaseIT {
         .isEqualTo(new BigDecimal("765.60"));
 
     Assertions.assertThat(puntuacionGrupoInvestigador.get(1).getPuntos()).as("PuntosGrupoInvestigador")
-        .isEqualTo(new BigDecimal("4.68"));
+        .isEqualTo(new BigDecimal("4.14"));
 
     List<PuntuacionGrupo> puntuacionGrupo = getPuntuacionGrupoRepository().findAll();
 
@@ -1432,7 +1456,7 @@ class BaremacionProyectoIT extends BaremacionBaseIT {
         .isEqualTo(new BigDecimal("0.00"));
 
     Assertions.assertThat(puntuacionGrupo.get(0).getPuntosProduccion()).as("PuntosGrupoProduccion")
-        .isEqualTo(new BigDecimal("770.28"));
+        .isEqualTo(new BigDecimal("769.74"));
 
     ConvocatoriaBaremacion convocatoriaBaremacion = getConvocatoriaBaremacionRepository().findById(idBaremacion).get();
 
@@ -1444,7 +1468,7 @@ class BaremacionProyectoIT extends BaremacionBaseIT {
         .isEqualTo(new BigDecimal("0.00"));
 
     Assertions.assertThat(convocatoriaBaremacion.getPuntoProduccion()).as("PuntosBaremacionProduccion")
-        .isEqualTo(new BigDecimal("146.05"));
+        .isEqualTo(new BigDecimal("146.15"));
   }
 
   private void checkPuntuacionLibroAndOneProyectoTwoAutorsIPWithExtra(Long idBaremacion, String personaRef,
@@ -1472,7 +1496,7 @@ class BaremacionProyectoIT extends BaremacionBaseIT {
     Assertions.assertThat(puntuacionBaremoItems.get(3).getPuntos()).as("Puntos").isEqualTo(new BigDecimal("6.00"));
 
     Assertions.assertThat(puntuacionBaremoItems.get(4).getBaremoId()).as("BaremoId").isEqualTo(29L);
-    Assertions.assertThat(puntuacionBaremoItems.get(4).getPuntos()).as("Puntos").isEqualTo(new BigDecimal("1.30"));
+    Assertions.assertThat(puntuacionBaremoItems.get(4).getPuntos()).as("Puntos").isEqualTo(new BigDecimal("2.30"));
 
     List<PuntuacionItemInvestigador> puntuacionItemsInvestigador = getPuntuacionItemInvestigadorRepository()
         .findAll();
@@ -1482,14 +1506,14 @@ class BaremacionProyectoIT extends BaremacionBaseIT {
 
     Assertions.assertThat(puntuacionItemsInvestigador.get(0).getPersonaRef()).as("PersonaRef").isEqualTo(personaRef);
     Assertions.assertThat(puntuacionItemsInvestigador.get(0).getPuntos()).as("Puntos")
-        .isEqualTo(new BigDecimal("1276.00"));
+        .isEqualTo(new BigDecimal("852.00"));
     Assertions.assertThat(puntuacionItemsInvestigador.get(1).getPersonaRef()).as("PersonaRef").isEqualTo(personaRef2);
     Assertions.assertThat(puntuacionItemsInvestigador.get(1).getPuntos()).as("Puntos")
-        .isEqualTo(new BigDecimal("1276.00"));
+        .isEqualTo(new BigDecimal("852.00"));
 
     Assertions.assertThat(puntuacionItemsInvestigador.get(2).getPersonaRef()).as("PersonaRef").isEqualTo(personaRef);
     Assertions.assertThat(puntuacionItemsInvestigador.get(2).getPuntos()).as("Puntos")
-        .isEqualTo(new BigDecimal("7.80"));
+        .isEqualTo(new BigDecimal("6.90"));
 
     List<PuntuacionGrupoInvestigador> puntuacionGrupoInvestigador = getPuntuacionGrupoInvestigadorRepository()
         .findAll();
@@ -1498,10 +1522,10 @@ class BaremacionProyectoIT extends BaremacionBaseIT {
     Assertions.assertThat(numPuntuacionesGrupoInvestigador).as("numPuntuacionesGrupoInvestigador").isEqualTo(2);
 
     Assertions.assertThat(puntuacionGrupoInvestigador.get(0).getPuntos()).as("PuntosGrupoInvestigador")
-        .isEqualTo(new BigDecimal("765.60"));
+        .isEqualTo(new BigDecimal("511.20"));
 
     Assertions.assertThat(puntuacionGrupoInvestigador.get(1).getPuntos()).as("PuntosGrupoInvestigador")
-        .isEqualTo(new BigDecimal("4.68"));
+        .isEqualTo(new BigDecimal("4.14"));
 
     List<PuntuacionGrupo> puntuacionGrupo = getPuntuacionGrupoRepository().findAll();
 
@@ -1515,7 +1539,7 @@ class BaremacionProyectoIT extends BaremacionBaseIT {
         .isEqualTo(new BigDecimal("0.00"));
 
     Assertions.assertThat(puntuacionGrupo.get(0).getPuntosProduccion()).as("PuntosGrupoProduccion")
-        .isEqualTo(new BigDecimal("770.28"));
+        .isEqualTo(new BigDecimal("515.34"));
 
     ConvocatoriaBaremacion convocatoriaBaremacion = getConvocatoriaBaremacionRepository().findById(idBaremacion).get();
 
@@ -1527,7 +1551,7 @@ class BaremacionProyectoIT extends BaremacionBaseIT {
         .isEqualTo(new BigDecimal("0.00"));
 
     Assertions.assertThat(convocatoriaBaremacion.getPuntoProduccion()).as("PuntosBaremacionProduccion")
-        .isEqualTo(new BigDecimal("146.05"));
+        .isEqualTo(new BigDecimal("218.30"));
   }
 
   private void checkPuntuacionLibroAndOneProyectoWithoutAutorInFechaWithExtra(Long idBaremacion, String personaRef) {
@@ -1551,7 +1575,7 @@ class BaremacionProyectoIT extends BaremacionBaseIT {
     Assertions.assertThat(puntuacionBaremoItems.get(2).getPuntos()).as("Puntos").isEqualTo(new BigDecimal("6.00"));
 
     Assertions.assertThat(puntuacionBaremoItems.get(3).getBaremoId()).as("BaremoId").isEqualTo(29L);
-    Assertions.assertThat(puntuacionBaremoItems.get(3).getPuntos()).as("Puntos").isEqualTo(new BigDecimal("1.30"));
+    Assertions.assertThat(puntuacionBaremoItems.get(3).getPuntos()).as("Puntos").isEqualTo(new BigDecimal("2.30"));
 
     List<PuntuacionItemInvestigador> puntuacionItemsInvestigador = getPuntuacionItemInvestigadorRepository()
         .findAll();
@@ -1561,7 +1585,7 @@ class BaremacionProyectoIT extends BaremacionBaseIT {
 
     Assertions.assertThat(puntuacionItemsInvestigador.get(0).getPersonaRef()).as("PersonaRef").isEqualTo(personaRef);
     Assertions.assertThat(puntuacionItemsInvestigador.get(0).getPuntos()).as("Puntos")
-        .isEqualTo(new BigDecimal("7.80"));
+        .isEqualTo(new BigDecimal("6.90"));
 
     List<PuntuacionGrupoInvestigador> puntuacionGrupoInvestigador = getPuntuacionGrupoInvestigadorRepository()
         .findAll();
@@ -1570,7 +1594,7 @@ class BaremacionProyectoIT extends BaremacionBaseIT {
     Assertions.assertThat(numPuntuacionesGrupoInvestigador).as("numPuntuacionesGrupoInvestigador").isEqualTo(1);
 
     Assertions.assertThat(puntuacionGrupoInvestigador.get(0).getPuntos()).as("PuntosGrupoInvestigador")
-        .isEqualTo(new BigDecimal("4.68"));
+        .isEqualTo(new BigDecimal("4.14"));
 
     List<PuntuacionGrupo> puntuacionGrupo = getPuntuacionGrupoRepository().findAll();
 
@@ -1584,7 +1608,7 @@ class BaremacionProyectoIT extends BaremacionBaseIT {
         .isEqualTo(new BigDecimal("0.00"));
 
     Assertions.assertThat(puntuacionGrupo.get(0).getPuntosProduccion()).as("PuntosGrupoProduccion")
-        .isEqualTo(new BigDecimal("4.68"));
+        .isEqualTo(new BigDecimal("4.14"));
 
     ConvocatoriaBaremacion convocatoriaBaremacion = getConvocatoriaBaremacionRepository().findById(idBaremacion).get();
 
@@ -1596,7 +1620,7 @@ class BaremacionProyectoIT extends BaremacionBaseIT {
         .isEqualTo(new BigDecimal("0.00"));
 
     Assertions.assertThat(convocatoriaBaremacion.getPuntoProduccion()).as("PuntosBaremacionProduccion")
-        .isEqualTo(new BigDecimal("24038.46"));
+        .isEqualTo(new BigDecimal("27173.91"));
   }
 
   private void checkPuntuacionLibroContratoWithoutProyecto(Long idBaremacion, String personaRef) {
@@ -1608,7 +1632,7 @@ class BaremacionProyectoIT extends BaremacionBaseIT {
     checkPuntuacionBaremoItem(puntuacionBaremoItems, 451L, new BigDecimal("10.00"));
     checkPuntuacionBaremoItem(puntuacionBaremoItems, 2L, new BigDecimal("0.05"));
     checkPuntuacionBaremoItem(puntuacionBaremoItems, 6L, new BigDecimal("6"));
-    checkPuntuacionBaremoItem(puntuacionBaremoItems, 29L, new BigDecimal("1.30"));
+    checkPuntuacionBaremoItem(puntuacionBaremoItems, 29L, new BigDecimal("2.30"));
 
     List<PuntuacionItemInvestigador> puntuacionItemsInvestigador = getPuntuacionItemInvestigadorRepository()
         .findAll();
@@ -1618,7 +1642,7 @@ class BaremacionProyectoIT extends BaremacionBaseIT {
 
     checkPuntuacionItemInvestigador(puntuacionItemsInvestigador, personaRef, new BigDecimal("10.00"));
     checkPuntuacionItemInvestigador(puntuacionItemsInvestigador, personaRef, new BigDecimal("0.05"));
-    checkPuntuacionItemInvestigador(puntuacionItemsInvestigador, personaRef, new BigDecimal("7.80"));
+    checkPuntuacionItemInvestigador(puntuacionItemsInvestigador, personaRef, new BigDecimal("6.90"));
 
     List<PuntuacionGrupoInvestigador> puntuacionGrupoInvestigador = getPuntuacionGrupoInvestigadorRepository()
         .findAll();
@@ -1628,7 +1652,7 @@ class BaremacionProyectoIT extends BaremacionBaseIT {
 
     checkPuntuacionGrupoInvestigador(puntuacionGrupoInvestigador, new BigDecimal("6.00"));
     checkPuntuacionGrupoInvestigador(puntuacionGrupoInvestigador, new BigDecimal("0.03"));
-    checkPuntuacionGrupoInvestigador(puntuacionGrupoInvestigador, new BigDecimal("4.68"));
+    checkPuntuacionGrupoInvestigador(puntuacionGrupoInvestigador, new BigDecimal("4.14"));
 
     List<PuntuacionGrupo> puntuacionGrupo = getPuntuacionGrupoRepository().findAll();
 
@@ -1642,7 +1666,7 @@ class BaremacionProyectoIT extends BaremacionBaseIT {
         .isEqualTo(new BigDecimal("0.00"));
 
     Assertions.assertThat(puntuacionGrupo.get(0).getPuntosProduccion()).as("PuntosGrupoProduccion")
-        .isEqualTo(new BigDecimal("10.68"));
+        .isEqualTo(new BigDecimal("10.14"));
 
     ConvocatoriaBaremacion convocatoriaBaremacion = getConvocatoriaBaremacionRepository().findById(idBaremacion).get();
 
@@ -1654,7 +1678,7 @@ class BaremacionProyectoIT extends BaremacionBaseIT {
         .isEqualTo(new BigDecimal("0.00"));
 
     Assertions.assertThat(convocatoriaBaremacion.getPuntoProduccion()).as("PuntosBaremacionProduccion")
-        .isEqualTo(new BigDecimal("10533.71"));
+        .isEqualTo(new BigDecimal("11094.67"));
   }
 
   private void checkPuntuacionLibroOneProyecto(Long idBaremacion, String personaRef) {
@@ -1666,7 +1690,7 @@ class BaremacionProyectoIT extends BaremacionBaseIT {
     checkPuntuacionBaremoItem(puntuacionBaremoItems, 424L, new BigDecimal("424.00"));
     checkPuntuacionBaremoItem(puntuacionBaremoItems, 2L, new BigDecimal("0.01"));
     checkPuntuacionBaremoItem(puntuacionBaremoItems, 6L, new BigDecimal("6"));
-    checkPuntuacionBaremoItem(puntuacionBaremoItems, 29L, new BigDecimal("1.30"));
+    checkPuntuacionBaremoItem(puntuacionBaremoItems, 29L, new BigDecimal("2.30"));
 
     List<PuntuacionItemInvestigador> puntuacionItemsInvestigador = getPuntuacionItemInvestigadorRepository()
         .findAll();
@@ -1676,7 +1700,7 @@ class BaremacionProyectoIT extends BaremacionBaseIT {
 
     checkPuntuacionItemInvestigador(puntuacionItemsInvestigador, personaRef, new BigDecimal("424.00"));
     checkPuntuacionItemInvestigador(puntuacionItemsInvestigador, personaRef, new BigDecimal("0.01"));
-    checkPuntuacionItemInvestigador(puntuacionItemsInvestigador, personaRef, new BigDecimal("7.80"));
+    checkPuntuacionItemInvestigador(puntuacionItemsInvestigador, personaRef, new BigDecimal("6.90"));
 
     List<PuntuacionGrupoInvestigador> puntuacionGrupoInvestigador = getPuntuacionGrupoInvestigadorRepository()
         .findAll();
@@ -1686,7 +1710,7 @@ class BaremacionProyectoIT extends BaremacionBaseIT {
 
     checkPuntuacionGrupoInvestigador(puntuacionGrupoInvestigador, new BigDecimal("254.40"));
     checkPuntuacionGrupoInvestigador(puntuacionGrupoInvestigador, new BigDecimal("0.01"));
-    checkPuntuacionGrupoInvestigador(puntuacionGrupoInvestigador, new BigDecimal("4.68"));
+    checkPuntuacionGrupoInvestigador(puntuacionGrupoInvestigador, new BigDecimal("4.14"));
 
     List<PuntuacionGrupo> puntuacionGrupo = getPuntuacionGrupoRepository().findAll();
 
@@ -1700,7 +1724,7 @@ class BaremacionProyectoIT extends BaremacionBaseIT {
         .isEqualTo(new BigDecimal("0.00"));
 
     Assertions.assertThat(puntuacionGrupo.get(0).getPuntosProduccion()).as("PuntosGrupoProduccion")
-        .isEqualTo(new BigDecimal("259.08"));
+        .isEqualTo(new BigDecimal("258.54"));
 
     ConvocatoriaBaremacion convocatoriaBaremacion = getConvocatoriaBaremacionRepository().findById(idBaremacion).get();
 
@@ -1711,7 +1735,7 @@ class BaremacionProyectoIT extends BaremacionBaseIT {
         .isEqualTo(new BigDecimal("0.00"));
 
     Assertions.assertThat(convocatoriaBaremacion.getPuntoProduccion()).as("PuntosBaremacionProduccion")
-        .isEqualTo(new BigDecimal("434.23"));
+        .isEqualTo(new BigDecimal("435.14"));
   }
 
   private void checkPuntuacionLibroContratoAndProyecto(Long idBaremacion, String personaRef) {
@@ -1724,7 +1748,7 @@ class BaremacionProyectoIT extends BaremacionBaseIT {
     checkPuntuacionBaremoItem(puntuacionBaremoItems, 424L, new BigDecimal("424.00"));
     checkPuntuacionBaremoItem(puntuacionBaremoItems, 2L, new BigDecimal("0.05"));
     checkPuntuacionBaremoItem(puntuacionBaremoItems, 6L, new BigDecimal("6"));
-    checkPuntuacionBaremoItem(puntuacionBaremoItems, 29L, new BigDecimal("1.30"));
+    checkPuntuacionBaremoItem(puntuacionBaremoItems, 29L, new BigDecimal("2.30"));
 
     List<PuntuacionItemInvestigador> puntuacionItemsInvestigador = getPuntuacionItemInvestigadorRepository()
         .findAll();
@@ -1735,7 +1759,7 @@ class BaremacionProyectoIT extends BaremacionBaseIT {
     checkPuntuacionItemInvestigador(puntuacionItemsInvestigador, personaRef, new BigDecimal("424.00"));
     checkPuntuacionItemInvestigador(puntuacionItemsInvestigador, personaRef, new BigDecimal("10.00"));
     checkPuntuacionItemInvestigador(puntuacionItemsInvestigador, personaRef, new BigDecimal("0.05"));
-    checkPuntuacionItemInvestigador(puntuacionItemsInvestigador, personaRef, new BigDecimal("7.80"));
+    checkPuntuacionItemInvestigador(puntuacionItemsInvestigador, personaRef, new BigDecimal("6.90"));
 
     List<PuntuacionGrupoInvestigador> puntuacionGrupoInvestigador = getPuntuacionGrupoInvestigadorRepository()
         .findAll();
@@ -1746,7 +1770,7 @@ class BaremacionProyectoIT extends BaremacionBaseIT {
     checkPuntuacionGrupoInvestigador(puntuacionGrupoInvestigador, new BigDecimal("254.40"));
     checkPuntuacionGrupoInvestigador(puntuacionGrupoInvestigador, new BigDecimal("6.00"));
     checkPuntuacionGrupoInvestigador(puntuacionGrupoInvestigador, new BigDecimal("0.03"));
-    checkPuntuacionGrupoInvestigador(puntuacionGrupoInvestigador, new BigDecimal("4.68"));
+    checkPuntuacionGrupoInvestigador(puntuacionGrupoInvestigador, new BigDecimal("4.14"));
 
     List<PuntuacionGrupo> puntuacionGrupo = getPuntuacionGrupoRepository().findAll();
 
@@ -1760,7 +1784,7 @@ class BaremacionProyectoIT extends BaremacionBaseIT {
         .isEqualTo(new BigDecimal("0.00"));
 
     Assertions.assertThat(puntuacionGrupo.get(0).getPuntosProduccion()).as("PuntosGrupoProduccion")
-        .isEqualTo(new BigDecimal("265.08"));
+        .isEqualTo(new BigDecimal("264.54"));
 
     ConvocatoriaBaremacion convocatoriaBaremacion = getConvocatoriaBaremacionRepository().findById(idBaremacion).get();
 
@@ -1771,7 +1795,7 @@ class BaremacionProyectoIT extends BaremacionBaseIT {
         .isEqualTo(new BigDecimal("0.00"));
 
     Assertions.assertThat(convocatoriaBaremacion.getPuntoProduccion()).as("PuntosBaremacionProduccion")
-        .isEqualTo(new BigDecimal("424.40"));
+        .isEqualTo(new BigDecimal("425.27"));
   }
 
   private void checkPuntuacionLibroProyecto2(Long idBaremacion, String personaRef) {
@@ -1783,7 +1807,7 @@ class BaremacionProyectoIT extends BaremacionBaseIT {
     checkPuntuacionBaremoItem(puntuacionBaremoItems, 424L, new BigDecimal("424.00"));
     checkPuntuacionBaremoItem(puntuacionBaremoItems, 2L, new BigDecimal("0.05"));
     checkPuntuacionBaremoItem(puntuacionBaremoItems, 6L, new BigDecimal("6"));
-    checkPuntuacionBaremoItem(puntuacionBaremoItems, 29L, new BigDecimal("1.30"));
+    checkPuntuacionBaremoItem(puntuacionBaremoItems, 29L, new BigDecimal("2.30"));
 
     List<PuntuacionItemInvestigador> puntuacionItemsInvestigador = getPuntuacionItemInvestigadorRepository()
         .findAll();
@@ -1793,7 +1817,7 @@ class BaremacionProyectoIT extends BaremacionBaseIT {
 
     checkPuntuacionItemInvestigador(puntuacionItemsInvestigador, personaRef, new BigDecimal("424.00"));
     checkPuntuacionItemInvestigador(puntuacionItemsInvestigador, personaRef, new BigDecimal("0.05"));
-    checkPuntuacionItemInvestigador(puntuacionItemsInvestigador, personaRef, new BigDecimal("7.80"));
+    checkPuntuacionItemInvestigador(puntuacionItemsInvestigador, personaRef, new BigDecimal("6.90"));
 
     List<PuntuacionGrupoInvestigador> puntuacionGrupoInvestigador = getPuntuacionGrupoInvestigadorRepository()
         .findAll();
@@ -1803,7 +1827,7 @@ class BaremacionProyectoIT extends BaremacionBaseIT {
 
     checkPuntuacionGrupoInvestigador(puntuacionGrupoInvestigador, new BigDecimal("254.40"));
     checkPuntuacionGrupoInvestigador(puntuacionGrupoInvestigador, new BigDecimal("0.03"));
-    checkPuntuacionGrupoInvestigador(puntuacionGrupoInvestigador, new BigDecimal("4.68"));
+    checkPuntuacionGrupoInvestigador(puntuacionGrupoInvestigador, new BigDecimal("4.14"));
 
     List<PuntuacionGrupo> puntuacionGrupo = getPuntuacionGrupoRepository().findAll();
 
@@ -1817,7 +1841,7 @@ class BaremacionProyectoIT extends BaremacionBaseIT {
         .isEqualTo(new BigDecimal("0.00"));
 
     Assertions.assertThat(puntuacionGrupo.get(0).getPuntosProduccion()).as("PuntosGrupoProduccion")
-        .isEqualTo(new BigDecimal("513.48"));
+        .isEqualTo(new BigDecimal("512.94"));
 
     ConvocatoriaBaremacion convocatoriaBaremacion = getConvocatoriaBaremacionRepository().findById(idBaremacion).get();
 
@@ -1828,7 +1852,7 @@ class BaremacionProyectoIT extends BaremacionBaseIT {
         .isEqualTo(new BigDecimal("0.00"));
 
     Assertions.assertThat(convocatoriaBaremacion.getPuntoProduccion()).as("PuntosBaremacionProduccion")
-        .isEqualTo(new BigDecimal("219.09"));
+        .isEqualTo(new BigDecimal("219.32"));
   }
 
   private void checkPuntuacionLibroContrato2(Long idBaremacion, String personaRef) {
@@ -1841,7 +1865,7 @@ class BaremacionProyectoIT extends BaremacionBaseIT {
     checkPuntuacionBaremoItem(puntuacionBaremoItems, 451L, new BigDecimal("20.00"));
     checkPuntuacionBaremoItem(puntuacionBaremoItems, 2L, new BigDecimal("0.05"));
     checkPuntuacionBaremoItem(puntuacionBaremoItems, 6L, new BigDecimal("6"));
-    checkPuntuacionBaremoItem(puntuacionBaremoItems, 29L, new BigDecimal("1.30"));
+    checkPuntuacionBaremoItem(puntuacionBaremoItems, 29L, new BigDecimal("2.30"));
 
     List<PuntuacionItemInvestigador> puntuacionItemsInvestigador = getPuntuacionItemInvestigadorRepository()
         .findAll();
@@ -1852,7 +1876,7 @@ class BaremacionProyectoIT extends BaremacionBaseIT {
     checkPuntuacionItemInvestigador(puntuacionItemsInvestigador, personaRef, new BigDecimal("10.00"));
     checkPuntuacionItemInvestigador(puntuacionItemsInvestigador, personaRef, new BigDecimal("20.00"));
     checkPuntuacionItemInvestigador(puntuacionItemsInvestigador, personaRef, new BigDecimal("0.05"));
-    checkPuntuacionItemInvestigador(puntuacionItemsInvestigador, personaRef, new BigDecimal("7.80"));
+    checkPuntuacionItemInvestigador(puntuacionItemsInvestigador, personaRef, new BigDecimal("6.90"));
 
     List<PuntuacionGrupoInvestigador> puntuacionGrupoInvestigador = getPuntuacionGrupoInvestigadorRepository()
         .findAll();
@@ -1863,7 +1887,7 @@ class BaremacionProyectoIT extends BaremacionBaseIT {
     checkPuntuacionGrupoInvestigador(puntuacionGrupoInvestigador, new BigDecimal("6.00"));
     checkPuntuacionGrupoInvestigador(puntuacionGrupoInvestigador, new BigDecimal("12.00"));
     checkPuntuacionGrupoInvestigador(puntuacionGrupoInvestigador, new BigDecimal("0.03"));
-    checkPuntuacionGrupoInvestigador(puntuacionGrupoInvestigador, new BigDecimal("4.68"));
+    checkPuntuacionGrupoInvestigador(puntuacionGrupoInvestigador, new BigDecimal("4.14"));
 
     List<PuntuacionGrupo> puntuacionGrupo = getPuntuacionGrupoRepository().findAll();
 
@@ -1877,7 +1901,7 @@ class BaremacionProyectoIT extends BaremacionBaseIT {
         .isEqualTo(new BigDecimal("0.00"));
 
     Assertions.assertThat(puntuacionGrupo.get(0).getPuntosProduccion()).as("PuntosGrupoProduccion")
-        .isEqualTo(new BigDecimal("22.68"));
+        .isEqualTo(new BigDecimal("22.14"));
 
     ConvocatoriaBaremacion convocatoriaBaremacion = getConvocatoriaBaremacionRepository().findById(idBaremacion).get();
 
@@ -1888,7 +1912,7 @@ class BaremacionProyectoIT extends BaremacionBaseIT {
         .isEqualTo(new BigDecimal("0.00"));
 
     Assertions.assertThat(convocatoriaBaremacion.getPuntoProduccion()).as("PuntosBaremacionProduccion")
-        .isEqualTo(new BigDecimal("4960.32"));
+        .isEqualTo(new BigDecimal("5081.30"));
   }
 
   private void checkPuntuacionLibroWithoutProyecto(Long idBaremacion, String personaRef) {
@@ -1901,7 +1925,7 @@ class BaremacionProyectoIT extends BaremacionBaseIT {
     Assertions.assertThat(puntuacionBaremoItems.get(0).getPuntos()).as("Puntos").isEqualTo(new BigDecimal("6.00"));
 
     Assertions.assertThat(puntuacionBaremoItems.get(1).getBaremoId()).as("BaremoId").isEqualTo(29L);
-    Assertions.assertThat(puntuacionBaremoItems.get(1).getPuntos()).as("Puntos").isEqualTo(new BigDecimal("1.30"));
+    Assertions.assertThat(puntuacionBaremoItems.get(1).getPuntos()).as("Puntos").isEqualTo(new BigDecimal("2.30"));
 
     List<PuntuacionItemInvestigador> puntuacionItemsInvestigador = getPuntuacionItemInvestigadorRepository()
         .findAll();
@@ -1912,7 +1936,7 @@ class BaremacionProyectoIT extends BaremacionBaseIT {
     Assertions.assertThat(puntuacionItemsInvestigador.get(0).getPersonaRef()).as("PersonaRef")
         .isEqualTo(personaRef);
     Assertions.assertThat(puntuacionItemsInvestigador.get(0).getPuntos()).as("Puntos")
-        .isEqualTo(new BigDecimal("7.80"));
+        .isEqualTo(new BigDecimal("6.90"));
 
     List<PuntuacionGrupoInvestigador> puntuacionGrupoInvestigador = getPuntuacionGrupoInvestigadorRepository()
         .findAll();
@@ -1921,7 +1945,7 @@ class BaremacionProyectoIT extends BaremacionBaseIT {
     Assertions.assertThat(numPuntuacionesGrupoInvestigador).as("numPuntuacionesGrupoInvestigador").isEqualTo(1);
 
     Assertions.assertThat(puntuacionGrupoInvestigador.get(0).getPuntos()).as("PuntosGrupoInvestigador")
-        .isEqualTo(new BigDecimal("4.68"));
+        .isEqualTo(new BigDecimal("4.14"));
 
     List<PuntuacionGrupo> puntuacionGrupo = getPuntuacionGrupoRepository().findAll();
 
@@ -1935,7 +1959,7 @@ class BaremacionProyectoIT extends BaremacionBaseIT {
         .isEqualTo(new BigDecimal("0.00"));
 
     Assertions.assertThat(puntuacionGrupo.get(0).getPuntosProduccion()).as("PuntosGrupoProduccion")
-        .isEqualTo(new BigDecimal("4.68"));
+        .isEqualTo(new BigDecimal("4.14"));
 
     ConvocatoriaBaremacion convocatoriaBaremacion = getConvocatoriaBaremacionRepository().findById(idBaremacion).get();
 
@@ -1947,6 +1971,6 @@ class BaremacionProyectoIT extends BaremacionBaseIT {
         .isEqualTo(new BigDecimal("0.00"));
 
     Assertions.assertThat(convocatoriaBaremacion.getPuntoProduccion()).as("PuntosBaremacionProduccion")
-        .isEqualTo(new BigDecimal("24038.46"));
+        .isEqualTo(new BigDecimal("27173.91"));
   }
 }

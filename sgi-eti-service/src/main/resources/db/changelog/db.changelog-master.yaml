@@ -35,4 +35,11 @@ databaseChangeLog:
       file: classpath*:db/changelog/changes/0000000000004-update-sample-data.xml    
   # HERCULES_0.0.7
   - include:
-      file: classpath*:db/changelog/changes/0000000000005-update-sample-data.xml    
+      file: classpath*:db/changelog/changes/0000000000005-update-sample-data.xml
+  # HERCULES_0.0.9
+  - include:
+      file: classpath*:db/changelog/changes/0000000000006-update-initial-database.xml
+  - include:
+      file: classpath*:db/changelog/changes/0000000000006-update-sample-data.xml
+  - include:
+      file: classpath*:db/changelog/changes/0000000000006-fixup-initial-database.xml

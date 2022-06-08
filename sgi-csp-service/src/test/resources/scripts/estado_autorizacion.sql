@@ -21,7 +21,7 @@ VALUES
 (5, 1, 'PRESENTADA', '2022-01-03T00:00:00Z');
 
 UPDATE test.autorizacion SET estado_id = 1 WHERE id = 1;
-UPDATE test.autorizacion SET estado_id = 2 WHERE id = 2;
+UPDATE test.autorizacion SET estado_id = 1 WHERE id = 2;
 UPDATE test.autorizacion SET estado_id = 3 WHERE id = 3;
 
 ALTER SEQUENCE test.estado_autorizacion_seq RESTART WITH 6;

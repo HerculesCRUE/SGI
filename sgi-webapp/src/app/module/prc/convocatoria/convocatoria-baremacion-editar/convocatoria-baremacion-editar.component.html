@@ -4,6 +4,14 @@
       [route]="[CONVOCATORIA_ROUTE_NAMES.DATOS_GENERALES]" [title]="'label.datos-generales' | translate"
       [fragment]="actionService.getFragment(actionService.FRAGMENT.DATOS_GENERALES)">
     </sgi-action-fragment-menu-item>
+    <sgi-action-fragment-menu-item *sgiHasAnyAuthority="['PRC-CON-V','PRC-CON-E']"
+      [route]="[CONVOCATORIA_ROUTE_NAMES.BAREMOS_PUNTUACIONES]" [title]="'prc.baremos-puntuaciones' | translate"
+      [fragment]="actionService.getFragment(actionService.FRAGMENT.BAREMOS_PUNTUACIONES)">
+    </sgi-action-fragment-menu-item>
+    <sgi-action-fragment-menu-item *sgiHasAnyAuthority="['PRC-CON-V','PRC-CON-E']"
+      [route]="[CONVOCATORIA_ROUTE_NAMES.MODULADORES_RANGOS]" [title]="'menu.prc.moduladores-rangos' | translate"
+      [fragment]="actionService.getFragment(actionService.FRAGMENT.MODULADORES_RANGOS)">
+    </sgi-action-fragment-menu-item>
   </ng-container>
   <ng-container footer>
     <sgi-action-footer [texto]="textoCrear" [actionService]="actionService">

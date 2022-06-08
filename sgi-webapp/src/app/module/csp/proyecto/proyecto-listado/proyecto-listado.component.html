@@ -433,26 +433,27 @@
         <th mat-header-cell *matHeaderCellDef> {{'label.actions' | translate}} </th>
         <td mat-cell *matCellDef="let proyecto">
           <ng-container *sgiHasAnyAuthority="['CSP-PRO-V', 'CSP-PRO-V_' + proyecto.unidadGestion.id ]">
-            <a mat-button matTooltip="{{'btn.view' | translate}}" [routerLink]="[proyecto.id]">
-              <mat-icon color="primary">visibility</mat-icon>
+            <a mat-icon-button color="primary" matTooltip="{{'btn.view' | translate}}" [routerLink]="[proyecto.id]">
+              <mat-icon>visibility</mat-icon>
             </a>
           </ng-container>
           <ng-container *sgiHasAnyAuthority="['CSP-PRO-E', 'CSP-PRO-E_' + proyecto.unidadGestion.id ]">
-            <a *ngIf="mapModificable.get(proyecto.id)" mat-button matTooltip="{{'btn.edit' | translate}}"
-              [routerLink]="[proyecto.id]">
-              <mat-icon color="primary">border_color</mat-icon>
+            <a *ngIf="mapModificable.get(proyecto.id) && proyecto.activo === true" mat-icon-button color="primary"
+              matTooltip="{{'btn.edit' | translate}}" [routerLink]="[proyecto.id]">
+              <mat-icon>border_color</mat-icon>
             </a>
           </ng-container>
           <ng-container *sgiHasAnyAuthority="['CSP-PRO-B', 'CSP-PRO-B_' + proyecto.unidadGestion.id ]">
-            <button *ngIf="proyecto.activo ? true : false" mat-button matTooltip="{{'btn.delete' | translate}}"
-              (click)="deactivateProyecto(proyecto)">
-              <mat-icon color="warn">highlight_off</mat-icon>
+            <button *ngIf="proyecto.activo ? true : false" mat-icon-button color="warn"
+              matTooltip="{{'btn.delete' | translate}}" (click)="deactivateProyecto(proyecto)">
+              <mat-icon>highlight_off</mat-icon>
             </button>
           </ng-container>
           <ng-container *sgiHasAnyAuthority="['CSP-PRO-R', 'CSP-PRO-R_' + proyecto.unidadGestion.id ]">
             <button *ngIf="(proyecto.estado.estado === Estado.BORRADOR && proyecto.activo === false)"
-              (click)="activateProyecto(proyecto)" mat-button matTooltip="{{'btn.recover' | translate}}">
-              <mat-icon color="accent">add_circle_outline</mat-icon>
+              (click)="activateProyecto(proyecto)" mat-icon-button color="accent"
+              matTooltip="{{'btn.recover' | translate}}">
+              <mat-icon>add_circle_outline</mat-icon>
             </button>
           </ng-container>
         </td>

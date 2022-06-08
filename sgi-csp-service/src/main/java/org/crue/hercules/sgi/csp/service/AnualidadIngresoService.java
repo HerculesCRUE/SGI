@@ -2,11 +2,13 @@ package org.crue.hercules.sgi.csp.service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import org.crue.hercules.sgi.csp.exceptions.ProyectoAnualidadNotFoundException;
 import org.crue.hercules.sgi.csp.exceptions.ProyectoPartidaNotFoundException;
 import org.crue.hercules.sgi.csp.model.AnualidadIngreso;
+import org.crue.hercules.sgi.csp.model.Proyecto;
 import org.crue.hercules.sgi.csp.model.ProyectoAnualidad;
 import org.crue.hercules.sgi.csp.repository.AnualidadIngresoRepository;
 import org.crue.hercules.sgi.csp.repository.ProyectoAnualidadRepository;
@@ -58,16 +60,17 @@ public class AnualidadIngresoService {
   public List<AnualidadIngreso> update(Long proyectoAnualidadId, List<AnualidadIngreso> anualidadesIngreso) {
     log.debug("update(Long proyectoAnualidadId, List<AnualidadIngreso> anualidadesIngreso) - start");
 
-    proyectoAnualidadRepository.findById(proyectoAnualidadId)
-        .orElseThrow(() -> new ProyectoAnualidadNotFoundException(proyectoAnualidadId));
+    if (!proyectoAnualidadRepository.findById(proyectoAnualidadId).isPresent()) {
+      throw new ProyectoAnualidadNotFoundException(proyectoAnualidadId);
+    }
 
     Specification<AnualidadIngreso> specs = AnualidadIngresoSpecifications.byProyectoAnualidadId(proyectoAnualidadId);
     List<AnualidadIngreso> anualidadesIngresoBD = repository.findAll(specs);
 
     // Anualidades eliminados
     List<AnualidadIngreso> anualidadesIngresoEliminar = anualidadesIngresoBD.stream()
-        .filter(anualidadIngreso -> !anualidadesIngreso.stream().map(AnualidadIngreso::getId)
-            .anyMatch(id -> id == anualidadIngreso.getId()))
+        .filter(anualidadIngreso -> anualidadesIngreso.stream().map(AnualidadIngreso::getId)
+            .noneMatch(id -> Objects.equals(id, anualidadIngreso.getId())))
         .collect(Collectors.toList());
 
     if (!anualidadesIngresoEliminar.isEmpty()) {
@@ -80,8 +83,10 @@ public class AnualidadIngresoService {
 
     for (AnualidadIngreso anualidadIngreso : anualidadesIngreso) {
 
-      proyectoPartidaRepository.findById(anualidadIngreso.getProyectoPartida().getId())
-          .orElseThrow(() -> new ProyectoPartidaNotFoundException(anualidadIngreso.getProyectoPartida().getId()));
+      if (!proyectoPartidaRepository.findById(anualidadIngreso.getProyectoPartida().getId()).isPresent()) {
+        throw new ProyectoPartidaNotFoundException(anualidadIngreso.getProyectoPartida().getId());
+      }
+
       anualidadIngreso.setProyectoAnualidadId(proyectoAnualidadId);
 
     }
@@ -107,6 +112,19 @@ public class AnualidadIngresoService {
 
     Page<AnualidadIngreso> returnValue = repository.findAll(specs, pageable);
     log.debug("findAllByProyectoAnualiadad(Long proyectoAnualidadId, String query, Pageable pageable) - end");
+    return returnValue;
+  }
+
+  /**
+   * Indica si existen {@link AnualidadIngreso} de un {@link Proyecto}
+   * 
+   * @param proyectoId identificador de la {@link Proyecto}
+   * @return si existen {@link AnualidadIngreso} asociados al {@link Proyecto}
+   */
+  public boolean existsByProyecto(Long proyectoId) {
+    log.debug("existsByProyecto(Long proyectoId) - start");
+    boolean returnValue = repository.existsByProyectoAnualidadProyectoId(proyectoId);
+    log.debug("existsByProyecto(Long proyectoId) - end");
     return returnValue;
   }
 

@@ -22,6 +22,7 @@ import javax.persistence.criteria.Root;
 import org.crue.hercules.sgi.framework.rsql.SgiRSQLJPASupport;
 import org.crue.hercules.sgi.prc.dto.DireccionTesisResumen;
 import org.crue.hercules.sgi.prc.enums.CodigoCVN;
+import org.crue.hercules.sgi.prc.enums.EpigrafeCVN;
 import org.crue.hercules.sgi.prc.model.CampoProduccionCientifica;
 import org.crue.hercules.sgi.prc.model.CampoProduccionCientifica_;
 import org.crue.hercules.sgi.prc.model.EstadoProduccionCientifica;
@@ -93,12 +94,16 @@ public class CustomDireccionTesisRepositoryImpl implements CustomDireccionTesisR
     List<Predicate> listPredicatesCount = new ArrayList<>();
 
     listPredicates.add(cb.isNull(root.get(ProduccionCientifica_.convocatoriaBaremacionId)));
+    listPredicates.add(cb.equal(root.get(ProduccionCientifica_.epigrafeCVN), EpigrafeCVN.E030_040_000_000));
+
     listPredicates.add(cb.and(
         cb.equal(joinCamposTituloTrabajo.get(CampoProduccionCientifica_.codigoCVN), CodigoCVN.E030_040_000_030)));
     listPredicates.add(cb.and(
         cb.equal(joinCamposFechaDefensa.get(CampoProduccionCientifica_.codigoCVN), CodigoCVN.E030_040_000_140)));
 
     listPredicatesCount.add(cb.isNull(rootCount.get(ProduccionCientifica_.convocatoriaBaremacionId)));
+    listPredicatesCount.add(cb.equal(rootCount.get(ProduccionCientifica_.epigrafeCVN), EpigrafeCVN.E030_040_000_000));
+
     listPredicatesCount.add(cb.and(
         cb.equal(joinCamposTituloTrabajoCount.get(CampoProduccionCientifica_.codigoCVN),
             CodigoCVN.E030_040_000_030)));

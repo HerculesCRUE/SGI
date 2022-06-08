@@ -1,52 +1,41 @@
-<div class="sgi-dialog-header" fxLayout="row" fxLayoutGap="20px">
-  <span fxFlexAlign="center" mat-mat-dialog-title role="heading" aria-level="3" fxFlex>
-    {{(isEditionMode ?
+<sgi-dialog-header title="{{(isEditionMode ?
     'pii.invencion-titularidad.periodo-titularidad-titular':'pii.invencion-titularidad.periodo-titularidad-titular.nuevo')
-    | translate:msgParamNombreEntity}}
-  </span>
-  <button fxFlex="nogrow" mat-icon-button mat-dialog-close>
-    <mat-icon class="close-icon">close</mat-icon>
-  </button>
-</div>
-<mat-dialog-content>
-  <form class="form-inline" [formGroup]="formGroup">
-    <div fxFlex fxLayout="row" fxLayout.lt-md='column' fxLayoutGap="20px">
-      <!-- Titular -->
-      <div fxFlex="60%" fxFlex.lt-md="100%">
-        <mat-form-field>
-          <mat-label>{{'sgemp.empresa' | translate:MSG_PARAMS.CARDINALIRY.SINGULAR}}
-          </mat-label>
-          <sgi-select-empresa formControlName="titular" [selectedEmpresas]="titularesNotAllowed" required>
-          </sgi-select-empresa>
-          <mat-error *ngIf="formGroup.controls.titular.errors?.required">
-            {{'error.required.entity' | translate:msgParamNombreEntity}}
-          </mat-error>
-        </mat-form-field>
-      </div>
-      <!-- Porcentaje Participacion -->
-      <div fxFlex="30%" fxFlex.lt-md="100%">
-        <mat-form-field>
-          <mat-label>{{'pii.invencion-inventor.participacion' | translate}} %</mat-label>
-          <input matInput formControlName="participacion" type="number"
-            placeholder="{{'pii.invencion-titularidad.periodo-titularidad-titular.participacion' | translate}}"
-            required>
-          <mat-error *ngIf="formGroup.controls.participacion.errors?.required">
-            {{'error.required.entity' | translate:msgParamParticipacionEntity}}
-          </mat-error>
-          <mat-error *ngIf="formGroup.controls.participacion.errors?.min">
-            {{'error.min.entity' | translate:msgParamParticipacionEntity}}
-          </mat-error>
-          <mat-error *ngIf="formGroup.controls.participacion.errors?.max">
-            {{'error.max.entity' | translate:msgParamParticipacionEntity}}
-          </mat-error>
-        </mat-form-field>
-      </div>
+    | translate:msgParamNombreEntity}}"></sgi-dialog-header>
+<sgi-dialog-content>
+  <form [formGroup]="formGroup" fxLayout="column">
+    <!-- Titular -->
+    <div fxFlex>
+      <mat-form-field>
+        <mat-label>{{'sgemp.empresa' | translate:MSG_PARAMS.CARDINALIRY.SINGULAR}}
+        </mat-label>
+        <sgi-select-empresa formControlName="titular" [selectedEmpresas]="titularesNotAllowed" required>
+        </sgi-select-empresa>
+        <mat-error *ngIf="formGroup.controls.titular.errors?.required">
+          {{'error.required.entity' | translate:msgParamNombreEntity}}
+        </mat-error>
+      </mat-form-field>
+    </div>
+    <!-- Porcentaje Participacion -->
+    <div fxFlex>
+      <mat-form-field>
+        <mat-label>{{'pii.invencion-inventor.participacion' | translate}} %</mat-label>
+        <input matInput formControlName="participacion" type="number"
+          placeholder="{{'pii.invencion-titularidad.periodo-titularidad-titular.participacion' | translate}}" required>
+        <mat-error *ngIf="formGroup.controls.participacion.errors?.required">
+          {{'error.required.entity' | translate:msgParamParticipacionEntity}}
+        </mat-error>
+        <mat-error *ngIf="formGroup.controls.participacion.errors?.min">
+          {{'error.min.entity' | translate:msgParamParticipacionEntity}}
+        </mat-error>
+        <mat-error *ngIf="formGroup.controls.participacion.errors?.max">
+          {{'error.max.entity' | translate:msgParamParticipacionEntity}}
+        </mat-error>
+      </mat-form-field>
     </div>
   </form>
-</mat-dialog-content>
+</sgi-dialog-content>
 <mat-dialog-actions>
-  <button color="accent" (click)="saveOrUpdate()" mat-raised-button type="submit"
-    [disabled]="!formGroup.valid || formGroup.pristine">
+  <button color="accent" (click)="doAction()" [disabled]="this.actionDisabled" mat-raised-button type="submit">
     <mat-icon class="save-icon">save</mat-icon>
     {{( isEditionMode ? 'btn.ok': 'btn.add' )| translate}}
   </button>

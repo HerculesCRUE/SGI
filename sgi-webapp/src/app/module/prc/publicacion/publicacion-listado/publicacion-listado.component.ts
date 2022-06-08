@@ -8,6 +8,7 @@ import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-pro
 import { PublicacionService } from '@core/services/prc/publicacion/publicacion.service';
 import { SnackBarService } from '@core/services/snack-bar.service';
 import { LuxonUtils } from '@core/utils/luxon-utils';
+import { IAuthStatus, SgiAuthService } from '@sgi/framework/auth';
 import { SgiRestListResult, SgiRestFilter, RSQLSgiRestFilter, SgiRestFilterOperator } from '@sgi/framework/http';
 import { Observable } from 'rxjs';
 import { TipoColectivo } from 'src/app/esb/sgp/shared/select-persona/select-persona.component';
@@ -36,8 +37,13 @@ export class PublicacionListadoComponent extends AbstractTablePaginationComponen
     return TIPO_PRODUCCION_MAP;
   }
 
+  get authStatus$(): Observable<IAuthStatus> {
+    return this.authService.authStatus$.asObservable();
+  }
+
   constructor(
     protected readonly snackBarService: SnackBarService,
+    private readonly authService: SgiAuthService,
     private readonly publicacionService: PublicacionService
   ) {
     super(snackBarService, MSG_ERROR);

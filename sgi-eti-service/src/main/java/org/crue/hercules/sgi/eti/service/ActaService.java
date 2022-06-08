@@ -8,6 +8,7 @@ import org.crue.hercules.sgi.eti.dto.MemoriaEvaluada;
 import org.crue.hercules.sgi.eti.exceptions.ActaNotFoundException;
 import org.crue.hercules.sgi.eti.model.Acta;
 import org.crue.hercules.sgi.eti.model.ConvocatoriaReunion;
+import org.crue.hercules.sgi.eti.model.Evaluador;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -121,4 +122,12 @@ public interface ActaService {
    * @return las entidades {@link Acta}
    */
   Boolean isMiembroComiteActa(String personaRef, Long idActa);
+
+  /**
+   * Identifica si el usuario es {@link Evaluador} en algun {@link Acta}
+   * 
+   * @param personaRef El usuario de la petición
+   * @return true/false
+   */
+  Boolean hasAssignedActasByEvaluador(String personaRef);
 }

@@ -230,6 +230,10 @@
       </ng-container>
     </table>
     <div class="paginator-export">
+      <button mat-button matTooltip="{{'btn.export' | translate}}" (click)="openExportModal()"
+        [disabled]="totalElementos<=0">
+        <mat-icon color="primary">insert_chart_outlined</mat-icon>
+      </button>
       <mat-paginator [pageSizeOptions]="elementosPagina" [length]="totalElementos" showFirstLastButtons>
       </mat-paginator>
     </div>

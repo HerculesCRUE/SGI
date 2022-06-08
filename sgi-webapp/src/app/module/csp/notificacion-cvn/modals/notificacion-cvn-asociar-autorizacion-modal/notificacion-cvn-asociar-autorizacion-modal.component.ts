@@ -1,4 +1,4 @@
-import { Component, Inject } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
@@ -7,7 +7,6 @@ import { MSG_PARAMS } from '@core/i18n';
 import { IAutorizacion } from '@core/models/csp/autorizacion';
 import { INotificacionProyectoExternoCVN } from '@core/models/csp/notificacion-proyecto-externo-cvn';
 import { IEmpresa } from '@core/models/sgemp/empresa';
-import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-properties';
 import { AutorizacionService } from '@core/services/csp/autorizacion/autorizacion.service';
 import { NotificacionProyectoExternoCvnService } from '@core/services/csp/notificacion-proyecto-externo-cvn/notificacion-proyecto-externo-cvn.service';
 import { EmpresaService } from '@core/services/sgemp/empresa.service';
@@ -24,12 +23,11 @@ const AUTORIZACION_KEY = marker('csp.autorizacion');
   templateUrl: './notificacion-cvn-asociar-autorizacion-modal.component.html',
   styleUrls: ['./notificacion-cvn-asociar-autorizacion-modal.component.scss']
 })
-export class NotificacionCvnAsociarAutorizacionModalComponent extends DialogActionComponent<INotificacionProyectoExternoCVN> {
+export class NotificacionCvnAsociarAutorizacionModalComponent
+  extends DialogActionComponent<INotificacionProyectoExternoCVN> implements OnInit {
 
   autorizaciones$: Observable<IAutorizacion[]>;
   empresa: IEmpresa;
-
-  fxLayoutProperties: FxLayoutProperties;
 
   title: string;
 
@@ -48,14 +46,9 @@ export class NotificacionCvnAsociarAutorizacionModalComponent extends DialogActi
     private autorizacionService: AutorizacionService,
     private notificacionProyectoExternoCvnService: NotificacionProyectoExternoCvnService,
     private empresaService: EmpresaService,
-    private readonly translate: TranslateService) {
+    private readonly translate: TranslateService
+  ) {
     super(matDialogRef, true);
-
-    this.fxLayoutProperties = new FxLayoutProperties();
-    this.fxLayoutProperties.gap = '20px';
-    this.fxLayoutProperties.layout = 'row wrap';
-    this.fxLayoutProperties.xs = 'column';
-
   }
 
   get MSG_PARAMS() {
@@ -64,6 +57,7 @@ export class NotificacionCvnAsociarAutorizacionModalComponent extends DialogActi
 
   ngOnInit(): void {
     super.ngOnInit();
+    this.matDialogRef.updateSize('30vw');
     this.setupI18N();
 
     this.autorizaciones$ = this.autorizacionService.

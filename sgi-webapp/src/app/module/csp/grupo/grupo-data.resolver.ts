@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { ActivatedRouteSnapshot, Router } from '@angular/router';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
+import { IGrupo } from '@core/models/csp/grupo';
 import { SgiResolverResolver } from '@core/resolver/sgi-resolver';
 import { GrupoService } from '@core/services/csp/grupo/grupo.service';
 import { SnackBarService } from '@core/services/snack-bar.service';
@@ -8,7 +9,7 @@ import { SgiAuthService } from '@sgi/framework/auth';
 import { NGXLogger } from 'ngx-logger';
 import { Observable, of, throwError } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
-import { GRUPO_ROUTE_PARAMS } from './autorizacion-route-params';
+import { GRUPO_ROUTE_PARAMS } from './grupo-route-params';
 import { IGrupoData } from './grupo.action.service';
 
 const MSG_NOT_FOUND = marker('error.load');
@@ -38,6 +39,7 @@ export class GrupoDataResolver extends SgiResolverResolver<IGrupoData> {
         }
         return of(
           {
+            grupo: { id: grupoId } as IGrupo,
             isInvestigador: this.authService.hasAnyAuthority(['CSP-GIN-INV-V'])
           } as IGrupoData
         );

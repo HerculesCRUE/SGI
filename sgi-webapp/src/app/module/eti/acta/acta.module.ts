@@ -1,12 +1,14 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { MatFormFieldControl } from '@angular/material/form-field';
 import { MaterialDesignModule } from '@material/material-design.module';
 import { TranslateModule } from '@ngx-translate/core';
 import { SgiAuthModule } from '@sgi/framework/auth';
 import { LuxonDatePipe } from '@shared/luxon-date-pipe';
 import { SharedModule } from '@shared/shared.module';
 import { SgpSharedModule } from 'src/app/esb/sgp/shared/sgp-shared.module';
+import { EtiSharedModule } from '../shared/eti-shared.module';
 import { ActaCrearComponent } from './acta-crear/acta-crear.component';
 import { ActaEditarComponent } from './acta-editar/acta-editar.component';
 import {
@@ -47,7 +49,8 @@ import { ActaListadoExportModalComponent } from './modals/acta-listado-export-mo
     SgiAuthModule,
     FormsModule,
     ReactiveFormsModule,
-    SgpSharedModule
+    SgpSharedModule,
+    EtiSharedModule
   ],
   providers: [
     ActaResolver,

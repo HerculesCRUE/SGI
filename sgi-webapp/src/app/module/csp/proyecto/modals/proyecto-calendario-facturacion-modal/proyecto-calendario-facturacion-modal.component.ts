@@ -1,15 +1,12 @@
-import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
-import { BaseModalComponent } from '@core/component/base-modal.component';
+import { DialogFormComponent } from '@core/component/dialog-form.component';
 import { MSG_PARAMS } from '@core/i18n';
 import { IEstadoValidacionIP, TipoEstadoValidacion, TIPO_ESTADO_VALIDACION_MAP } from '@core/models/csp/estado-validacion-ip';
 import { ITipoFacturacion } from '@core/models/csp/tipo-facturacion';
-import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-properties';
-import { ProyectoFacturacionService } from '@core/services/csp/proyecto-facturacion/proyecto-facturacion.service';
 import { TipoFacturacionService } from '@core/services/csp/tipo-facturacion/tipo-facturacion.service';
-import { SnackBarService } from '@core/services/snack-bar.service';
 import { TranslateService } from '@ngx-translate/core';
 import { NGXLogger } from 'ngx-logger';
 import { BehaviorSubject } from 'rxjs';
@@ -40,16 +37,13 @@ const MSG_ANADIR = marker('btn.add');
 const MSG_ACEPTAR = marker('btn.ok');
 
 const COMENTARIO_MAX_LENGTH = 1024;
+
 @Component({
   selector: 'sgi-proyecto-calendario-facturacion-modal',
   templateUrl: './proyecto-calendario-facturacion-modal.component.html',
   styleUrls: ['./proyecto-calendario-facturacion-modal.component.scss']
 })
-export class ProyectoCalendarioFacturacionModalComponent extends
-  BaseModalComponent<IProyectoCalendarioFacturacionModalData, ProyectoCalendarioFacturacionModalComponent> implements OnInit, OnDestroy {
-
-  fxLayoutProperties: FxLayoutProperties;
-  fxLayoutProperties2: FxLayoutProperties;
+export class ProyectoCalendarioFacturacionModalComponent extends DialogFormComponent<IProyectoCalendarioFacturacionModalData> implements OnInit {
 
   msgParamFechaEmisionEntity = {};
   msgParamComentarioEntity = {};
@@ -82,28 +76,21 @@ export class ProyectoCalendarioFacturacionModalComponent extends
 
   constructor(
     private readonly logger: NGXLogger,
-    protected snackBarService: SnackBarService,
     @Inject(MAT_DIALOG_DATA) public data: IProyectoCalendarioFacturacionModalData,
-    public matDialogRef: MatDialogRef<ProyectoCalendarioFacturacionModalComponent>,
-    private proyectoFacturacionService: ProyectoFacturacionService,
+    matDialogRef: MatDialogRef<ProyectoCalendarioFacturacionModalComponent>,
     private readonly translate: TranslateService,
     private tipoFacturacionService: TipoFacturacionService
   ) {
-    super(snackBarService, matDialogRef, data);
+    super(matDialogRef, !!data?.proyectoFacturacion?.id);
   }
 
   ngOnInit(): void {
     super.ngOnInit();
     this.setupI18n();
-    this.initLayout();
     this.loadTiposFacturacion();
   }
 
-  ngOnDestroy(): void {
-    super.ngOnDestroy();
-  }
-
-  protected getDatosForm(): IProyectoCalendarioFacturacionModalData {
+  protected getValue(): IProyectoCalendarioFacturacionModalData {
 
     if (!this.data.proyectoFacturacion) {
       this.data.proyectoFacturacion = {} as IProyectoFacturacionData;
@@ -133,7 +120,7 @@ export class ProyectoCalendarioFacturacionModalComponent extends
     return this.data;
   }
 
-  protected getFormGroup(): FormGroup {
+  protected buildFormGroup(): FormGroup {
 
     const data = this.data?.proyectoFacturacion;
 
@@ -181,22 +168,8 @@ export class ProyectoCalendarioFacturacionModalComponent extends
     return form;
   }
 
-  private initLayout(): void {
-
-    this.fxLayoutProperties = new FxLayoutProperties();
-    this.fxLayoutProperties.layout = 'row';
-    this.fxLayoutProperties.layoutAlign = 'row';
-    this.fxLayoutProperties.gap = '20px';
-    this.fxLayoutProperties.xs = 'column';
-
-    this.fxLayoutProperties2 = new FxLayoutProperties();
-    this.fxLayoutProperties2.gap = '20px';
-    this.fxLayoutProperties2.layout = 'row';
-    this.fxLayoutProperties2.xs = 'column';
-  }
-
   private setupI18n(): void {
-    switch(this.data.action){
+    switch (this.data.action) {
       case DialogAction.EDIT:
         this.translate.get(
           PROYECTO_CALENDARIO_FACTURACION_KEY,
@@ -208,19 +181,19 @@ export class ProyectoCalendarioFacturacionModalComponent extends
           PROYECTO_CALENDARIO_FACTURACION_KEY,
           MSG_PARAMS.CARDINALIRY.SINGULAR
         ).pipe(
-            switchMap((value) => {
-              return this.translate.get(
-                TITLE_NEW_ENTITY,
-                { entity: value, ...MSG_PARAMS.GENDER.MALE }
-              );
-            })
-          ).subscribe((value) => this.title = value);
-          break;
-        case DialogAction.VALIDAR_IP:
-          this.translate.get(
-            PROYECTO_CALENDARIO_FACTURACION_VALIDACION_IP_KEY,
-            MSG_PARAMS.CARDINALIRY.SINGULAR
-          ).subscribe((value) => this.title = value);
+          switchMap((value) => {
+            return this.translate.get(
+              TITLE_NEW_ENTITY,
+              { entity: value, ...MSG_PARAMS.GENDER.MALE }
+            );
+          })
+        ).subscribe((value) => this.title = value);
+        break;
+      case DialogAction.VALIDAR_IP:
+        this.translate.get(
+          PROYECTO_CALENDARIO_FACTURACION_VALIDACION_IP_KEY,
+          MSG_PARAMS.CARDINALIRY.SINGULAR
+        ).subscribe((value) => this.title = value);
         break;
     }
 
@@ -298,6 +271,6 @@ export class ProyectoCalendarioFacturacionModalComponent extends
             this.logger.error(error);
             return error;
           })
-        ).subscribe( (tipos: ITipoFacturacion[]) => this.tiposFacturacion$.next(tipos)));
+        ).subscribe((tipos: ITipoFacturacion[]) => this.tiposFacturacion$.next(tipos)));
   }
 }

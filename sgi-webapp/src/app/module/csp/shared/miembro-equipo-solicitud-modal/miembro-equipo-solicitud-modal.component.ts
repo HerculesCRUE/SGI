@@ -2,14 +2,12 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { AbstractControl, FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
-import { BaseModalComponent } from '@core/component/base-modal.component';
+import { DialogFormComponent } from '@core/component/dialog-form.component';
 import { MSG_PARAMS } from '@core/i18n';
 import { IMiembroEquipoSolicitud } from '@core/models/csp/miembro-equipo-solicitud';
 import { IRolProyecto } from '@core/models/csp/rol-proyecto';
-import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-properties';
 import { RolProyectoService } from '@core/services/csp/rol-proyecto.service';
 import { PersonaService } from '@core/services/sgp/persona.service';
-import { SnackBarService } from '@core/services/snack-bar.service';
 import { GLOBAL_CONSTANTS } from '@core/utils/global-constants';
 import { NumberValidator } from '@core/validators/number-validator';
 import { IRange } from '@core/validators/range-validator';
@@ -38,12 +36,10 @@ export interface MiembroEquipoSolicitudModalData {
   templateUrl: './miembro-equipo-solicitud-modal.component.html',
   styleUrls: ['./miembro-equipo-solicitud-modal.component.scss']
 })
-export class MiembroEquipoSolicitudModalComponent extends
-  BaseModalComponent<MiembroEquipoSolicitudModalData, MiembroEquipoSolicitudModalComponent> implements OnInit {
-  fxLayoutProperties: FxLayoutProperties;
+export class MiembroEquipoSolicitudModalComponent extends DialogFormComponent<MiembroEquipoSolicitudModalData> implements OnInit {
+
   textSaveOrUpdate: string;
 
-  saveDisabled = false;
   rolesProyecto$: Observable<IRolProyecto[]>;
   colectivosIdRolParticipacion: string[];
 
@@ -53,18 +49,14 @@ export class MiembroEquipoSolicitudModalComponent extends
   title: string;
 
   constructor(
-    protected snackBarService: SnackBarService,
-    public matDialogRef: MatDialogRef<MiembroEquipoSolicitudModalComponent>,
+    matDialogRef: MatDialogRef<MiembroEquipoSolicitudModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data: MiembroEquipoSolicitudModalData,
     private personaService: PersonaService,
     private rolProyectoService: RolProyectoService,
     private readonly translate: TranslateService
   ) {
-    super(snackBarService, matDialogRef, data);
-    this.fxLayoutProperties = new FxLayoutProperties();
-    this.fxLayoutProperties.gap = '20px';
-    this.fxLayoutProperties.layout = 'row';
-    this.fxLayoutProperties.xs = 'row';
+    super(matDialogRef, !!data.entidad?.id);
+
     this.textSaveOrUpdate = this.data.entidad?.id ? MSG_ACEPTAR : MSG_ANADIR;
 
     this.rolesProyecto$ = this.rolProyectoService.findAll().pipe(
@@ -150,7 +142,7 @@ export class MiembroEquipoSolicitudModalComponent extends
     );
   }
 
-  protected getFormGroup(): FormGroup {
+  protected buildFormGroup(): FormGroup {
     const formGroup = new FormGroup(
       {
         rolProyecto: new FormControl(this.data.entidad.rolProyecto, Validators.required),
@@ -181,7 +173,7 @@ export class MiembroEquipoSolicitudModalComponent extends
     return formGroup;
   }
 
-  protected getDatosForm(): MiembroEquipoSolicitudModalData {
+  protected getValue(): MiembroEquipoSolicitudModalData {
     this.data.entidad.rolProyecto = this.formGroup.get('rolProyecto').value;
     this.data.entidad.persona = this.formGroup.get('miembro').value;
     this.data.entidad.mesInicio = this.formGroup.get('mesInicio').value;

@@ -28,12 +28,12 @@ public class CustomRequisitoEquipoCategoriaProfesionalRepositoryImpl
    * Elimina todos las RequisitoEquipoCategoriaProfesional cuyo RequisitoEquipoId
    * coincide con el indicado.
    * 
-   * @param RequisitoEquipoId el identificador del RequisitoEquipo cuyas
+   * @param requisitoEquipoId el identificador del RequisitoEquipo cuyas
    *                          categorías se desean eliminar
    * @return el número de registros eliminados
    */
   @Override
-  public int deleteInBulkByRequisitoEquipoId(long RequisitoEquipoId) {
+  public int deleteInBulkByRequisitoEquipoId(long requisitoEquipoId) {
     log.debug("deleteInBulkByRequisitoEquipoId(long RequisitoEquipoId) - start");
 
     // Crete query
@@ -45,7 +45,7 @@ public class CustomRequisitoEquipoCategoriaProfesionalRepositoryImpl
     Root<RequisitoEquipoCategoriaProfesional> root = query.from(RequisitoEquipoCategoriaProfesional.class);
 
     // Set WHERE restrictions
-    query.where(cb.equal(root.get(RequisitoEquipoCategoriaProfesional_.REQUISITO_EQUIPO_ID), RequisitoEquipoId));
+    query.where(cb.equal(root.get(RequisitoEquipoCategoriaProfesional_.REQUISITO_EQUIPO_ID), requisitoEquipoId));
 
     // Execute query
     int returnValue = entityManager.createQuery(query).executeUpdate();

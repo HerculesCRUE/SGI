@@ -89,6 +89,7 @@ export class PeticionEvaluacionActionService extends ActionService {
     this.addFragment(this.FRAGMENT.EQUIPO_INVESTIGADOR, this.equipoInvestigadorListado);
     this.tareas.setEquiposTrabajo(this.equipoInvestigadorListado.equiposTrabajo$.value.map((equipoTrabajo) => equipoTrabajo.value));
     this.tareas.setMemorias(this.memoriasListado.memorias$.value.map((memoria) => memoria.value));
+    this.equipoInvestigadorListado.setMemorias(this.memoriasListado.memorias$.value.map((memoria) => memoria.value));
     this.addFragment(this.FRAGMENT.TAREAS, this.tareas);
     this.addFragment(this.FRAGMENT.MEMORIAS, this.memoriasListado);
 
@@ -105,6 +106,7 @@ export class PeticionEvaluacionActionService extends ActionService {
 
     this.memoriasListado.memorias$.subscribe(list => {
       this.tareas.setMemorias(list.map((memoria) => memoria.value));
+      this.equipoInvestigadorListado.setMemorias(list.map((memoria) => memoria.value));
     });
 
     this.subscriptions.push(
@@ -115,7 +117,8 @@ export class PeticionEvaluacionActionService extends ActionService {
 
   }
 
-  initializeEquiposInvestigador(): void {
+  initializeMemoriasAndEquiposInvestigador(): void {
+    this.memoriasListado.initialize();
     this.equipoInvestigadorListado.initialize();
   }
 

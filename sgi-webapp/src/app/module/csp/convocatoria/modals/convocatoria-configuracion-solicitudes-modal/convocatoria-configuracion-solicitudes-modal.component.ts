@@ -2,11 +2,9 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
-import { BaseModalComponent } from '@core/component/base-modal.component';
+import { DialogFormComponent } from '@core/component/dialog-form.component';
 import { MSG_PARAMS } from '@core/i18n';
 import { IDocumentoRequeridoSolicitud } from '@core/models/csp/documento-requerido-solicitud';
-import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-properties';
-import { SnackBarService } from '@core/services/snack-bar.service';
 import { TranslateService } from '@ngx-translate/core';
 import { switchMap } from 'rxjs/operators';
 
@@ -28,9 +26,7 @@ export interface ConvocatoriaConfiguracionSolicitudesModalData {
   styleUrls: ['./convocatoria-configuracion-solicitudes-modal.component.scss']
 })
 export class ConvocatoriaConfiguracionSolicitudesModalComponent
-  extends BaseModalComponent<ConvocatoriaConfiguracionSolicitudesModalData, ConvocatoriaConfiguracionSolicitudesModalComponent>
-  implements OnInit {
-  fxLayoutProperties: FxLayoutProperties;
+  extends DialogFormComponent<ConvocatoriaConfiguracionSolicitudesModalData> implements OnInit {
 
   textSaveOrUpdate: string;
   title: string;
@@ -38,15 +34,11 @@ export class ConvocatoriaConfiguracionSolicitudesModalComponent
   msgParamTipoDocumentoEntity = {};
 
   constructor(
-    protected readonly snackBarService: SnackBarService,
-    public readonly matDialogRef: MatDialogRef<ConvocatoriaConfiguracionSolicitudesModalComponent>,
+    matDialogRef: MatDialogRef<ConvocatoriaConfiguracionSolicitudesModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data: ConvocatoriaConfiguracionSolicitudesModalData,
     private readonly translate: TranslateService
   ) {
-    super(snackBarService, matDialogRef, data);
-    this.fxLayoutProperties = new FxLayoutProperties();
-    this.fxLayoutProperties.layout = 'row';
-    this.fxLayoutProperties.layoutAlign = 'row';
+    super(matDialogRef, !!data.documentoRequerido.tipoDocumento);
   }
 
   ngOnInit(): void {
@@ -81,13 +73,13 @@ export class ConvocatoriaConfiguracionSolicitudesModalComponent
     }
   }
 
-  protected getDatosForm(): ConvocatoriaConfiguracionSolicitudesModalData {
+  protected getValue(): ConvocatoriaConfiguracionSolicitudesModalData {
     this.data.documentoRequerido.tipoDocumento = this.formGroup.controls.tipoDocumento.value;
     this.data.documentoRequerido.observaciones = this.formGroup.controls.observaciones.value;
     return this.data;
   }
 
-  protected getFormGroup(): FormGroup {
+  protected buildFormGroup(): FormGroup {
     const formGroup = new FormGroup({
       tipoDocumento: new FormControl(this.data.documentoRequerido.tipoDocumento, Validators.required),
       observaciones: new FormControl(this.data.documentoRequerido.observaciones),

@@ -1,27 +1,25 @@
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormControl } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { AbstractTablePaginationComponent } from '@core/component/abstract-table-pagination.component';
 import { MSG_PARAMS } from '@core/i18n';
-import { IComite } from '@core/models/eti/comite';
 import { IConvocatoriaReunion } from '@core/models/eti/convocatoria-reunion';
-import { TipoConvocatoriaReunion } from '@core/models/eti/tipo-convocatoria-reunion';
 import { FxFlexProperties } from '@core/models/shared/flexLayout/fx-flex-properties';
 import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-properties';
 import { ROUTE_NAMES } from '@core/route.names';
 import { DialogService } from '@core/services/dialog.service';
-import { ComiteService } from '@core/services/eti/comite.service';
 import { ConvocatoriaReunionService } from '@core/services/eti/convocatoria-reunion.service';
-import { TipoConvocatoriaReunionService } from '@core/services/eti/tipo-convocatoria-reunion.service';
 import { SnackBarService } from '@core/services/snack-bar.service';
 import { FormGroupUtil } from '@core/utils/form-group-util';
 import { LuxonUtils } from '@core/utils/luxon-utils';
 import { TranslateService } from '@ngx-translate/core';
 import { RSQLSgiRestFilter, SgiRestFilter, SgiRestFilterOperator, SgiRestListResult } from '@sgi/framework/http';
 import { Observable, of, Subscription } from 'rxjs';
-import { map, startWith, switchMap } from 'rxjs/operators';
+import { map, switchMap } from 'rxjs/operators';
+import { ConvocatoriaReunionListadoExportModalComponent, IConvocatoriaReunionListadoModalData } from '../modals/convocatoria-reunion-listado-export-modal/convocatoria-reunion-listado-export-modal.component';
 
 const MSG_BUTTON_NEW = marker('btn.add.entity');
 const MSG_ERROR = marker('error.load');
@@ -57,17 +55,9 @@ export class ConvocatoriaReunionListadoComponent
   @ViewChild(MatSort, { static: true }) sort: MatSort;
   @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
 
-  comiteListado: IComite[];
-  filteredComites: Observable<IComite[]>;
-
-  tipoConvocatoriaReunionListado: TipoConvocatoriaReunion[];
-  filteredTiposConvocatoriaReunion: Observable<TipoConvocatoriaReunion[]>;
-
   convocatoriaReunion$: Observable<IConvocatoriaReunion[]> = of();
   private dialogSubscription: Subscription;
   private convocatoriaReunionDeleteSubscription: Subscription;
-  private comitesSubscription: Subscription;
-  private tiposConvocatoriaReunionSubscription: Subscription;
 
   mapEliminable: Map<number, boolean> = new Map();
   mapModificable: Map<number, boolean> = new Map();
@@ -76,10 +66,9 @@ export class ConvocatoriaReunionListadoComponent
     private readonly convocatoriaReunionService: ConvocatoriaReunionService,
     private readonly dialogService: DialogService,
     protected readonly snackBarService: SnackBarService,
-    private readonly comiteService: ComiteService,
-    private readonly tipoConvocatoriaReunionService: TipoConvocatoriaReunionService,
     private formBuilder: FormBuilder,
-    private readonly translate: TranslateService
+    private readonly translate: TranslateService,
+    private matDialog: MatDialog
   ) {
 
     super(snackBarService, MSG_ERROR);
@@ -142,15 +131,11 @@ export class ConvocatoriaReunionListadoComponent
 
     // Inicializa el formulario de busqueda
     this.formGroup = this.formBuilder.group({
-      comite: new FormControl('', []),
-      tipoConvocatoriaReunion: new FormControl('', []),
+      comite: new FormControl(null, []),
+      tipoConvocatoriaReunion: new FormControl(null, []),
       fechaEvaluacionDesde: new FormControl(null, []),
       fechaEvaluacionHasta: new FormControl(null, [])
     });
-
-    // Recupera los valores de los combos
-    this.loadComites();
-    this.loadTiposConvocatoriaReunion();
   }
 
   private setupI18N(): void {
@@ -219,103 +204,6 @@ export class ConvocatoriaReunionListadoComponent
     super.ngOnDestroy();
     this.dialogSubscription?.unsubscribe();
     this.convocatoriaReunionDeleteSubscription?.unsubscribe();
-    this.comitesSubscription?.unsubscribe();
-    this.tiposConvocatoriaReunionSubscription?.unsubscribe();
-  }
-
-  /**
-   * Recupera un listado de los comites que hay en el sistema.
-   */
-  private loadComites(): void {
-    this.comitesSubscription = this.comiteService.findAll().subscribe(
-      (response) => {
-        this.comiteListado = response.items;
-
-        this.filteredComites = this.formGroup.controls.comite.valueChanges
-          .pipe(
-            startWith(''),
-            map(value => this._filterComite(value))
-          );
-      });
-  }
-
-  /**
-   * Recupera un listado de los tipos de convocatoria reunion que hay en el sistema.
-   */
-  private loadTiposConvocatoriaReunion(): void {
-    this.tiposConvocatoriaReunionSubscription = this.tipoConvocatoriaReunionService.findAll().subscribe(
-      (response) => {
-        this.tipoConvocatoriaReunionListado = response.items;
-
-        this.filteredTiposConvocatoriaReunion = this.formGroup.controls.tipoConvocatoriaReunion.valueChanges
-          .pipe(
-            startWith(''),
-            map(value => this._filterTipoConvocatoriaReunion(value))
-          );
-      });
-  }
-
-  /**
-   * Devuelve el nombre del comite
-   * @param comite comite
-   *
-   * @returns nombre del comite
-   */
-  getComite(comite: IComite): string {
-    return comite?.comite;
-  }
-
-  /**
-   * Devuelve el nombre del tipo de convocatoria reunion
-   * @param tipoConvocatoriaReunion tipo convocatoria reunion
-   *
-   * @returns nombre del tipo de convocatoria reunion
-   */
-  getTipoConvocatoriaReunion(tipoConvocatoriaReunion: TipoConvocatoriaReunion): string {
-    return tipoConvocatoriaReunion?.nombre;
-  }
-
-
-  /**
-   * Filtro de campo autocompletable comite.
-   * @param value value a filtrar (string o Comite.
-   * @returns lista de comites filtrada.
-   */
-  private _filterComite(value: string | IComite): IComite[] {
-    if (!value) {
-      return this.comiteListado;
-    }
-
-    let filterValue: string;
-    if (typeof value === 'string') {
-      filterValue = value.toLowerCase();
-    } else {
-      filterValue = value.comite.toLowerCase();
-    }
-
-    return this.comiteListado.filter
-      (comite => comite.comite.toLowerCase().includes(filterValue));
-  }
-
-  /**
-   * Filtro de campo autocompletable tipo convocatoria reunion.
-   * @param value value a filtrar (string o TipoConvocatoriaReunion).
-   * @returns lista de tipos de convocatoria reunion filtrada.
-   */
-  private _filterTipoConvocatoriaReunion(value: string | TipoConvocatoriaReunion): TipoConvocatoriaReunion[] {
-    if (!value) {
-      return this.tipoConvocatoriaReunionListado;
-    }
-
-    let filterValue: string;
-    if (typeof value === 'string') {
-      filterValue = value.toLowerCase();
-    } else {
-      filterValue = value.nombre.toLowerCase();
-    }
-
-    return this.tipoConvocatoriaReunionListado.filter
-      (tipoConvocatoriaReunion => tipoConvocatoriaReunion.nombre.toLowerCase().includes(filterValue));
   }
 
   protected loadTable(reset?: boolean) {
@@ -368,5 +256,16 @@ export class ConvocatoriaReunionListadoComponent
         this.snackBarService.showError(this.textoEnviadoError);
       }
     );
+  }
+
+  public openExportModal() {
+    const data: IConvocatoriaReunionListadoModalData = {
+      findOptions: this.findOptions
+    };
+
+    const config = {
+      data
+    };
+    this.matDialog.open(ConvocatoriaReunionListadoExportModalComponent, config);
   }
 }

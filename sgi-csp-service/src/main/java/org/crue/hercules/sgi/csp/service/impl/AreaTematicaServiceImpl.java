@@ -2,12 +2,15 @@ package org.crue.hercules.sgi.csp.service.impl;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 import org.crue.hercules.sgi.csp.exceptions.AreaTematicaNotFoundException;
 import org.crue.hercules.sgi.csp.model.AreaTematica;
 import org.crue.hercules.sgi.csp.repository.AreaTematicaRepository;
+import org.crue.hercules.sgi.csp.repository.predicate.AreaTematicaPredicateResolver;
 import org.crue.hercules.sgi.csp.repository.specification.AreaTematicaSpecifications;
 import org.crue.hercules.sgi.csp.service.AreaTematicaService;
 import org.crue.hercules.sgi.framework.rsql.SgiRSQLJPASupport;
@@ -122,7 +125,7 @@ public class AreaTematicaServiceImpl implements AreaTematicaService {
       } else {
         // nombre(back) ==> abreviatura(front)
         // descripcion(back) ==> nombre(front)
-        if (areaTematica.getPadre().getId() != areaTematicaActualizar.getPadre().getId()) {
+        if (!Objects.equals(areaTematica.getPadre().getId(), areaTematicaActualizar.getPadre().getId())) {
           Assert.isTrue(areaTematicaActualizar.getPadre().getActivo(),
               "AreaTematica padre '" + areaTematicaActualizar.getPadre().getNombre() + "' está desactivada");
         }
@@ -171,7 +174,7 @@ public class AreaTematicaServiceImpl implements AreaTematicaService {
     Assert.notNull(id, "AreaTematica id no puede ser null para reactivar un AreaTematica");
 
     return repository.findById(id).map(areaTematica -> {
-      if (areaTematica.getActivo()) {
+      if (Boolean.TRUE.equals(areaTematica.getActivo())) {
         // Si esta activo no se hace nada
         return areaTematica;
       }
@@ -202,7 +205,7 @@ public class AreaTematicaServiceImpl implements AreaTematicaService {
     Assert.notNull(id, "AreaTematica id no puede ser null para desactivar un AreaTematica");
 
     return repository.findById(id).map(areaTematica -> {
-      if (!areaTematica.getActivo()) {
+      if (Boolean.FALSE.equals(areaTematica.getActivo())) {
         // Si no esta activo no se hace nada
         return areaTematica;
       }
@@ -239,7 +242,7 @@ public class AreaTematicaServiceImpl implements AreaTematicaService {
   public Page<AreaTematica> findAll(String query, Pageable pageable) {
     log.debug("findAll(String query, Pageable pageable) - start");
     Specification<AreaTematica> specs = AreaTematicaSpecifications.activos()
-        .and(SgiRSQLJPASupport.toSpecification(query));
+        .and(SgiRSQLJPASupport.toSpecification(query, AreaTematicaPredicateResolver.getInstance()));
 
     Page<AreaTematica> returnValue = repository.findAll(specs, pageable);
     log.debug("findAll(String query, Pageable pageable) - end");
@@ -344,7 +347,11 @@ public class AreaTematicaServiceImpl implements AreaTematicaService {
         .orElseThrow(() -> new AreaTematicaNotFoundException(areaTematicaId));
 
     while (areaTematicaRaiz.getPadre() != null) {
-      areaTematicaRaiz = repository.findById(areaTematicaRaiz.getPadre().getId()).get();
+      Optional<AreaTematica> areaTematicaPadre = repository.findById(areaTematicaRaiz.getPadre().getId());
+
+      if (areaTematicaPadre.isPresent()) {
+        areaTematicaRaiz = areaTematicaPadre.get();
+      }
     }
 
     // Busca el nombre desde el nodo raiz nivel a nivel
@@ -356,11 +363,11 @@ public class AreaTematicaServiceImpl implements AreaTematicaService {
     if (tipoBusqueda == BUSCAR_NOMBRE) {
       textoEncontrado = areaTematicasHijos.stream()
           .anyMatch(areaTematica -> areaTematica.getNombre().equals(textoBuscar)
-              && areaTematica.getId() != areaTematicaIdExcluir);
+              && !Objects.equals(areaTematica.getId(), areaTematicaIdExcluir));
     } else if (tipoBusqueda == BUSCAR_DESCRIPCION) {
       textoEncontrado = areaTematicasHijos.stream()
           .anyMatch(areaTematica -> areaTematica.getDescripcion().equals(textoBuscar)
-              && areaTematica.getId() != areaTematicaIdExcluir);
+              && !Objects.equals(areaTematica.getId(), areaTematicaIdExcluir));
     }
 
     while (!textoEncontrado && !areaTematicasHijos.isEmpty()) {
@@ -369,11 +376,11 @@ public class AreaTematicaServiceImpl implements AreaTematicaService {
       if (tipoBusqueda == BUSCAR_NOMBRE) {
         textoEncontrado = areaTematicasHijos.stream()
             .anyMatch(areaTematica -> areaTematica.getNombre().equals(textoBuscar)
-                && areaTematica.getId() != areaTematicaIdExcluir);
+                && !Objects.equals(areaTematica.getId(), areaTematicaIdExcluir));
       } else if (tipoBusqueda == BUSCAR_DESCRIPCION) {
         textoEncontrado = areaTematicasHijos.stream()
             .anyMatch(areaTematica -> areaTematica.getDescripcion().equals(textoBuscar)
-                && areaTematica.getId() != areaTematicaIdExcluir);
+                && !Objects.equals(areaTematica.getId(), areaTematicaIdExcluir));
       }
     }
 

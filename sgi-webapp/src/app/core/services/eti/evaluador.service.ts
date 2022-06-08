@@ -106,4 +106,15 @@ export class EvaluadorService extends SgiMutableRestService<number, IEvaluadorBa
     );
   }
 
+  /**
+   * Comprueba si el usuario es evaluador de algun acta
+   *
+   */
+  hasAssignedActas(): Observable<boolean> {
+    const url = `${this.endpointUrl}/actas`;
+    return this.http.head(url, { observe: 'response' }).pipe(
+      map(response => response.status === 200)
+    );
+  }
+
 }

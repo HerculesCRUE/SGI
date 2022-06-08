@@ -88,7 +88,7 @@ spring:
             client-name: SGI (service login)
             client-secret: a57a856d-5136-42d9-8baa-6e2bdb962a2e
             provider: keycloak
-            scope: sgi-cnf,sgi-com,sgi-csp,sgi-pii,sgi-rel,sgi-rep,sgi-sgepii,sgi-sgo,sgi-sgp,sgi-sgp,sgi-tp          
+            scope: sgi-cnf,sgi-com,sgi-csp,sgi-pii,sgi-rel,sgi-rep,sgi-sgepii,sgi-sgo,sgi-sgp,sgi-tp          
         provider:
           keycloak:
             issuer-uri: http://sgi-auth:8080/auth/realms/sgi
@@ -103,7 +103,7 @@ spring:
   profiles: dev
   liquibase:
     # Set Liquibase contexts same as spring profiles
-    contexts: dev
+    contexts: dev  
 #  # H2 console
 #  h2:
 #    console:

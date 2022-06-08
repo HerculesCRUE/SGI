@@ -79,6 +79,21 @@ update test.produccion_cientifica set estado_produccion_cientifica_id = 700 wher
 update test.produccion_cientifica set estado_produccion_cientifica_id = 701 where id=701;
 update test.produccion_cientifica set estado_produccion_cientifica_id = 702 where id=702;
 
+INSERT INTO test.produccion_cientifica (id, epigrafe_cvn, produccion_cientifica_ref, estado_produccion_cientifica_id) VALUES(800, '060.020.030.000', 'organizacion_actividades-ref-004',  NULL);
+INSERT INTO test.estado_produccion_cientifica (id, produccion_cientifica_id, comentario, estado, fecha, last_modified_date) VALUES(800, 800, NULL, 'PENDIENTE', '2022-01-20T21:59:59Z', '2022-01-20T21:59:59Z');
+update test.produccion_cientifica set estado_produccion_cientifica_id = 800 where id=800;
+
+INSERT INTO test.produccion_cientifica (id, epigrafe_cvn, produccion_cientifica_ref, estado_produccion_cientifica_id) VALUES(801, '060.020.030.000', 'organizacion_actividades-ref-005',  NULL);
+INSERT INTO test.estado_produccion_cientifica (id, produccion_cientifica_id, comentario, estado, fecha, last_modified_date) VALUES(801, 801, NULL, 'PENDIENTE', '2022-01-20T21:59:59Z', '2022-01-20T21:59:59Z');
+update test.produccion_cientifica set estado_produccion_cientifica_id = 801 where id=801;
+
+INSERT INTO test.produccion_cientifica (id, epigrafe_cvn, produccion_cientifica_ref, estado_produccion_cientifica_id) VALUES(802, '060.020.030.000', 'organizacion_actividades-ref-006',  NULL);
+INSERT INTO test.estado_produccion_cientifica (id, produccion_cientifica_id, comentario, estado, fecha, last_modified_date) VALUES(802, 802, NULL, 'VALIDADO_PARCIALMENTE', '2022-01-20T21:59:59Z', '2022-01-20T21:59:59Z');
+update test.produccion_cientifica set estado_produccion_cientifica_id = 802 where id=802;
+
+INSERT INTO test.produccion_cientifica (id, epigrafe_cvn, produccion_cientifica_ref, estado_produccion_cientifica_id) VALUES(803, '060.020.030.000', 'organizacion_actividades-ref-007',  NULL);
+INSERT INTO test.estado_produccion_cientifica (id, produccion_cientifica_id, comentario, estado, fecha, last_modified_date) VALUES(803, 803, NULL, 'RECHAZADO', '2022-01-20T21:59:59Z', '2022-01-20T21:59:59Z');
+update test.produccion_cientifica set estado_produccion_cientifica_id = 803 where id=803;
 
 ALTER SEQUENCE test.produccion_cientifica_seq RESTART WITH 10000;
 ALTER SEQUENCE test.estado_produccion_cientifica_seq RESTART WITH 10000;

@@ -1,20 +1,17 @@
-import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
-
-
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { MaterialDesignModule } from '@material/material-design.module';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
-import { LoggerTestingModule } from 'ngx-logger/testing';
-import TestUtils from '@core/utils/test-utils';
-import { RouterTestingModule } from '@angular/router/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { SgiAuthModule, SgiAuthService } from '@sgi/framework/auth';
-import { SnackBarService } from '@core/services/snack-bar.service';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { SolicitudModalidadEntidadConvocanteModalComponent, SolicitudModalidadEntidadConvocanteModalData } from './solicitud-modalidad-entidad-convocante-modal.component';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { RouterTestingModule } from '@angular/router/testing';
 import { IPrograma } from '@core/models/csp/programa';
 import { ISolicitudModalidad } from '@core/models/csp/solicitud-modalidad';
 import { IEmpresa } from '@core/models/sgemp/empresa';
+import TestUtils from '@core/utils/test-utils';
+import { MaterialDesignModule } from '@material/material-design.module';
+import { SgiAuthModule, SgiAuthService } from '@sgi/framework/auth';
+import { LoggerTestingModule } from 'ngx-logger/testing';
+import { SolicitudModalidadEntidadConvocanteModalComponent, SolicitudModalidadEntidadConvocanteModalData } from './solicitud-modalidad-entidad-convocante-modal.component';
 
 describe('SolicitudModalidadEntidadConvocanteComponent', () => {
   let component: SolicitudModalidadEntidadConvocanteModalComponent;
@@ -35,8 +32,7 @@ describe('SolicitudModalidadEntidadConvocanteComponent', () => {
         SgiAuthModule
       ],
       providers: [
-        { provide: SnackBarService, useValue: TestUtils.getSnackBarServiceSpy() },
-        { provide: MatDialogRef, useValue: {} as SolicitudModalidadEntidadConvocanteModalData },
+        { provide: MatDialogRef, useValue: TestUtils.buildDialogCommonMatDialogRef() },
         {
           provide: MAT_DIALOG_DATA, useValue: {
             entidad: {} as IEmpresa,

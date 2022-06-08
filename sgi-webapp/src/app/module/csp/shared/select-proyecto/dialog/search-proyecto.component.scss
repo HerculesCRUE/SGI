@@ -1,10 +1,15 @@
 :host {
-  mat-dialog-content {
+  sgi-dialog-content {
     min-width: 75vw;
-  }
-  .truncate {
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+
+    .separacion {
+      padding: 10px 0px 20px 0px;
+    }
+
+    .truncate {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
   }
 }

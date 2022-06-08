@@ -4,7 +4,7 @@
   <parent>
     <groupId>org.crue.hercules.sgi.esb</groupId>
     <artifactId>sgi-esb-common</artifactId>
-    <version>0.0.8</version>
+    <version>${revision}</version>
   </parent>
   <groupId>org.crue.hercules.sgi.esb</groupId>
   <artifactId>sgi-auth-mediator</artifactId>
@@ -49,6 +49,7 @@
       <plugin>
         <groupId>org.apache.felix</groupId>
         <artifactId>maven-bundle-plugin</artifactId>
+        <version>5.1.1</version>
         <extensions>true</extensions>
         <configuration>
           <instructions>

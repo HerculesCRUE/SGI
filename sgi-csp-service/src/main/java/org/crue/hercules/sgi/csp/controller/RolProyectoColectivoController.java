@@ -38,7 +38,7 @@ public class RolProyectoColectivoController {
    *         activos.
    */
   @GetMapping(PATH_COLECTIVOS_ACTIVOS)
-  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-GIN-B', 'CSP-GIN-E', 'CSP-GIN-R', 'CSP-GIN-V', 'CSP-GIN-PRC-V')")
+  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-GIN-B', 'CSP-GIN-E', 'CSP-GIN-R', 'CSP-GIN-V', 'CSP-GIN-PRC-V', 'CSP-GIN-INV-VR')")
   public ResponseEntity<List<String>> findColectivosActivos() {
     log.debug("findColectivosActivos() - start");
     List<String> colectivos = service.findColectivosActivos();

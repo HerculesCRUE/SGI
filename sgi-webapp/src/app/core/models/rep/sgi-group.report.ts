@@ -6,8 +6,14 @@ export interface ISgiGroupReport {
    */
   name: string;
   /**
-   * Indica si se visualiza o no el campo
+   * Indica si se visualiza o no el campo en la cabecera
    */
   visible: boolean;
+
+  /**
+   * Campos adicionales de agrupacion que se mostrarán en la cabecera 
+   * (solo válido para disposición vertical)
+   */
+  additionalGroupNames?: string[];
 }
 

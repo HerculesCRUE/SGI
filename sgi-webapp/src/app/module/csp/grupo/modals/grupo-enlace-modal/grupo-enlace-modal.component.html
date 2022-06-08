@@ -1,0 +1,25 @@
+<sgi-dialog-header [title]="title"></sgi-dialog-header>
+<sgi-dialog-content>
+  <form [formGroup]="formGroup">
+    <!-- Enlace -->
+    <div fxLayout="row">
+      <mat-form-field>
+        <mat-label>{{'csp.grupo-enlace.enlace' | translate}}</mat-label>
+        <input matInput formControlName="enlace" type="text" required>
+        <mat-error *ngIf="formGroup.controls.enlace.errors?.required">
+          {{'error.required.entity' | translate:msgParamEnlaceEntity}}
+        </mat-error>
+        <mat-error *ngIf="formGroup.controls.enlace.errors?.maxlength">
+          {{'error.maxlength.entity' | translate:msgParamEnlaceEntity}}
+        </mat-error>
+      </mat-form-field>
+    </div>
+  </form>
+</sgi-dialog-content>
+<mat-dialog-actions>
+  <button color="accent" (click)="doAction()" [disabled]="this.actionDisabled" mat-raised-button type="submit">
+    <mat-icon class="save-icon">save</mat-icon>{{textSaveOrUpdate | translate}}
+  </button>
+  <button class="link-cancelar" mat-button type="button" mat-dialog-close>{{'btn.cancel' |
+    translate}}</button>
+</mat-dialog-actions>

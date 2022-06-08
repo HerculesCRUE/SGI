@@ -1,14 +1,8 @@
-<div class="sgi-dialog-header" fxLayout="row" fxLayoutGap="20px">
-  <span fxFlexAlign="center" mat-mat-dialog-title role="heading" aria-level="3" fxFlex>{{title | translate}}</span>
-  <button fxFlex="nogrow" mat-icon-button mat-dialog-close>
-    <mat-icon class="close-icon">close</mat-icon>
-  </button>
-</div>
-<mat-dialog-content>
+<sgi-dialog-header [title]="title"></sgi-dialog-header>
+<sgi-dialog-content>
   <form class="form-inline" [formGroup]="formGroup">
     <!-- Memoria -->
-    <div *ngIf="this.data?.evaluaciones?.length > 1" [fxLayout]="fxLayoutProperties.layout"
-      [fxLayoutAlign]="fxLayoutProperties.layoutAlign">
+    <div *ngIf="this.data?.evaluaciones?.length > 1" fxLayout="row">
       <mat-form-field class="input-form">
         <mat-label>{{'eti.memoria' | translate:MSG_PARAMS.CARDINALIRY.SINGULAR}}</mat-label>
         <sgi-select-entity formControlName="evaluacion" [options]="evaluaciones$ | async"
@@ -20,16 +14,11 @@
       </mat-form-field>
     </div>
     <!-- Bloque -->
-    <div [fxLayout]="fxLayoutProperties.layout" [fxLayoutAlign]="fxLayoutProperties.layoutAlign">
+    <div fxLayout="row">
       <mat-form-field>
         <mat-label>{{'eti.comentario.bloque' | translate}}</mat-label>
-        <input matInput formControlName="bloque" type="text" placeholder="{{'eti.comentario.bloque' | translate}}"
-          required arial-label="Number" [matAutocomplete]="auto">
-        <mat-autocomplete #auto="matAutocomplete" [displayWith]="getNombreBloque">
-          <mat-option *ngFor="let apartado of apartado$ | async" [value]="apartado">
-            {{apartado.nombre}}
-          </mat-option>
-        </mat-autocomplete>
+        <sgi-select-entity formControlName="bloque" [options]="apartado$ | async" required>
+        </sgi-select-entity>
         <mat-error *ngIf="formGroup.controls.bloque.errors?.required">
           {{'error.required.entity' | translate:msgParamBloqueEntity}}
         </mat-error>
@@ -39,9 +28,9 @@
       </mat-form-field>
     </div>
     <!-- Programa -->
-    <div [fxLayout]="fxLayoutProperties.layout" [fxLayoutAlign]="fxLayoutProperties.layoutAlign">
+    <div fxLayout="column" *ngIf="formGroup.controls?.bloque?.value">
       <div class="programa">
-        <div [ngClass]="mostrarError ? 'arbol error' : 'arbol'">
+        <div class="arbol">
           <mat-tree [dataSource]="dataSource" [treeControl]="treeControl" class="arbol-tree">
             <mat-tree-node *matTreeNodeDef="let node" matTreeNodeToggle>
               <li class="mat-tree-node">
@@ -75,7 +64,7 @@
       </div>
     </div>
     <!-- Comentario -->
-    <div [fxLayout]="fxLayoutProperties.layout" [fxLayoutAlign]="fxLayoutProperties.layoutAlign">
+    <div fxLayout="row">
       <mat-form-field>
         <mat-label>{{'eti.comentario' | translate:MSG_PARAMS.CARDINALIRY.SINGULAR}}</mat-label>
         <textarea matInput formControlName="comentario" type="text"
@@ -90,9 +79,9 @@
       </mat-form-field>
     </div>
   </form>
-</mat-dialog-content>
+</sgi-dialog-content>
 <mat-dialog-actions>
-  <button color="accent" (click)="saveOrUpdate()" mat-raised-button type="submit">
+  <button color="accent" (click)="doAction()" [disabled]="this.actionDisabled" mat-raised-button type="submit">
     <mat-icon class="save-icon">save</mat-icon>{{textoAceptar}}
   </button>
   <button class="link-cancelar" mat-button type="button" mat-dialog-close>{{'btn.cancel' |

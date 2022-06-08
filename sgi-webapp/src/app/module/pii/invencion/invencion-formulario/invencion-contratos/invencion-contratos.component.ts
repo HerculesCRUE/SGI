@@ -159,9 +159,7 @@ export class InvencionContratosComponent extends FragmentComponent implements On
     };
 
     const config: MatDialogConfig = {
-      panelClass: 'sgi-dialog-container',
-      data,
-      minWidth: '500px',
+      data
     };
 
     const dialogRef = this.matDialog.open(SectorLicenciadoModalComponent, config);

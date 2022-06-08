@@ -5,6 +5,7 @@ import javax.validation.constraints.Size;
 
 import org.crue.hercules.sgi.prc.model.BaseEntity;
 import org.crue.hercules.sgi.prc.model.EstadoProduccionCientifica.TipoEstadoProduccion;
+import org.crue.hercules.sgi.prc.validation.CamposCVNRequired;
 import org.crue.hercules.sgi.prc.validation.EpigrafeCVNValueValid;
 
 import lombok.AllArgsConstructor;
@@ -18,6 +19,7 @@ import lombok.experimental.SuperBuilder;
 @NoArgsConstructor
 @AllArgsConstructor
 @SuperBuilder
+@CamposCVNRequired
 public class ProduccionCientificaApiCreateInput extends ProduccionCientificaApiInput {
 
   @NotEmpty

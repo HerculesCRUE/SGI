@@ -5,26 +5,23 @@ import { MatCheckboxChange } from '@angular/material/checkbox';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatTreeNestedDataSource } from '@angular/material/tree';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
-import { BaseModalComponent } from '@core/component/base-modal.component';
+import { DialogFormComponent } from '@core/component/dialog-form.component';
 import { MSG_PARAMS } from '@core/i18n';
 import { IPrograma } from '@core/models/csp/programa';
 import { IProyectoEntidadConvocante } from '@core/models/csp/proyecto-entidad-convocante';
 import { IEmpresa } from '@core/models/sgemp/empresa';
-import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-properties';
 import { ProgramaService } from '@core/services/csp/programa.service';
 import { DialogService } from '@core/services/dialog.service';
-import { SnackBarService } from '@core/services/snack-bar.service';
 import { IsEntityValidator } from '@core/validators/is-entity-validador';
 import { TranslateService } from '@ngx-translate/core';
 import { NGXLogger } from 'ngx-logger';
 import { BehaviorSubject, from, Observable, of } from 'rxjs';
-import { map, mergeMap, startWith, switchMap, takeLast, tap } from 'rxjs/operators';
+import { map, mergeMap, switchMap, takeLast, tap } from 'rxjs/operators';
 
 const PROYECTO_ENTIDAD_CONVOCANTE_KEY = marker('csp.proyecto-entidad-convocante');
 const PROYECTO_ENTIDAD_CONVOCANTE_PLAN_KEY = marker('csp.proyecto-entidad-convocante.programa.plan');
 const PROYECTO_ENTIDAD_CONVOCANTE_PROGRAMA_KEY = marker('csp.proyecto-entidad-convocante.programa.programa');
 const MSG_CONTINUE_ENTITY_NOTSET_KEY = marker('msg.continue.entity.not-set');
-const MSG_ERROR_FORM_GROUP = marker('error.form-group');
 const TITLE_NEW_ENTITY = marker('title.new.entity');
 
 export interface ProyectoEntidadConvocanteModalData {
@@ -79,9 +76,7 @@ function sortByName(nodes: NodePrograma[]): NodePrograma[] {
   templateUrl: './proyecto-entidad-convocante-modal.component.html',
   styleUrls: ['./proyecto-entidad-convocante-modal.component.scss']
 })
-export class ProyectoEntidadConvocanteModalComponent extends
-  BaseModalComponent<ProyectoEntidadConvocanteModalData, ProyectoEntidadConvocanteModalComponent> implements OnInit {
-  fxLayoutProperties: FxLayoutProperties;
+export class ProyectoEntidadConvocanteModalComponent extends DialogFormComponent<ProyectoEntidadConvocanteModalData> implements OnInit {
 
   msgParamEntity = {};
   msgParamPlanEntity = {};
@@ -102,16 +97,13 @@ export class ProyectoEntidadConvocanteModalComponent extends
 
   constructor(
     private readonly logger: NGXLogger,
-    public matDialogRef: MatDialogRef<ProyectoEntidadConvocanteModalComponent>,
+    matDialogRef: MatDialogRef<ProyectoEntidadConvocanteModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data: ProyectoEntidadConvocanteModalData,
-    protected snackBarService: SnackBarService,
     private programaService: ProgramaService,
     private dialogService: DialogService,
     private readonly translate: TranslateService,
   ) {
-    super(snackBarService, matDialogRef, data);
-
-    this.setupLayout();
+    super(matDialogRef, !!data.proyectoEntidadConvocante);
 
     if (!data.proyectoEntidadConvocante) {
       data.proyectoEntidadConvocante = {} as IProyectoEntidadConvocante;
@@ -119,13 +111,6 @@ export class ProyectoEntidadConvocanteModalComponent extends
     } else {
       this.create = false;
     }
-  }
-
-  private setupLayout(): void {
-    this.fxLayoutProperties = new FxLayoutProperties();
-    this.fxLayoutProperties.gap = '20px';
-    this.fxLayoutProperties.layout = 'row';
-    this.fxLayoutProperties.xs = 'row';
   }
 
   ngOnInit() {
@@ -279,7 +264,7 @@ export class ProyectoEntidadConvocanteModalComponent extends
     this.updateProgramas(nodes);
   }
 
-  protected getFormGroup(): FormGroup {
+  protected buildFormGroup(): FormGroup {
     const formGroup = new FormGroup({
       entidad: new FormControl({ value: this.data.proyectoEntidadConvocante.entidad, disabled: !this.create }, Validators.required),
       plan: new FormControl(
@@ -304,7 +289,7 @@ export class ProyectoEntidadConvocanteModalComponent extends
     return formGroup;
   }
 
-  protected getDatosForm(): ProyectoEntidadConvocanteModalData {
+  protected getValue(): ProyectoEntidadConvocanteModalData {
     this.data.proyectoEntidadConvocante.entidad = this.formGroup.get('entidad').value;
     if (this.checkedNode) {
       // Se ha seleccionado modalidad
@@ -330,7 +315,8 @@ export class ProyectoEntidadConvocanteModalComponent extends
     this.formGroup.get('programa').setValue(this.checkedNode?.programa?.id);
   }
 
-  saveOrUpdate(): void {
+  doAction(): void {
+    this.formGroup.markAllAsTouched();
     if (this.formGroup.valid) {
       const plan = this.formGroup.get('plan').value;
       const programa = this.checkedNode;
@@ -339,10 +325,8 @@ export class ProyectoEntidadConvocanteModalComponent extends
       } else if (!programa) {
         this.saveIncompleteFormGroup(MSG_CONTINUE_ENTITY_NOTSET_KEY, this.msgParamProgramaEntity);
       } else {
-        this.matDialogRef.close(this.getDatosForm());
+        this.close(this.getValue());
       }
-    } else {
-      this.snackBarService.showError(MSG_ERROR_FORM_GROUP);
     }
   }
 
@@ -351,7 +335,7 @@ export class ProyectoEntidadConvocanteModalComponent extends
       this.dialogService.showConfirmation(message, params).subscribe(
         (aceptado) => {
           if (aceptado) {
-            this.matDialogRef.close(this.getDatosForm());
+            this.close(this.getValue());
           }
         }
       )

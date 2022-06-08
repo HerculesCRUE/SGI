@@ -5,6 +5,7 @@ import java.util.List;
 import org.crue.hercules.sgi.eti.dto.ActaWithNumEvaluaciones;
 import org.crue.hercules.sgi.eti.dto.MemoriaEvaluada;
 import org.crue.hercules.sgi.eti.model.Acta;
+import org.crue.hercules.sgi.eti.model.Evaluador;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -51,4 +52,12 @@ public interface CustomActaRepository {
    * @return lista de memorias evaluadas
    */
   List<MemoriaEvaluada> findAllMemoriasEvaluadasSinRevMinimaByActaId(Long idActa);
+
+  /**
+   * Identifica si el usuario es {@link Evaluador} en algun {@link Acta}
+   * 
+   * @param personaRef El usuario de la petición
+   * @return true/false
+   */
+  Boolean hasAssignedActasByEvaluador(String personaRef);
 }

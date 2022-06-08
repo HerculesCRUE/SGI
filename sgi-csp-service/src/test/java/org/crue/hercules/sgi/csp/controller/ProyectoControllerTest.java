@@ -29,8 +29,10 @@ import org.crue.hercules.sgi.csp.model.TipoFase;
 import org.crue.hercules.sgi.csp.model.TipoFinalidad;
 import org.crue.hercules.sgi.csp.model.TipoHito;
 import org.crue.hercules.sgi.csp.service.AnualidadGastoService;
+import org.crue.hercules.sgi.csp.service.AnualidadIngresoService;
 import org.crue.hercules.sgi.csp.service.ConvocatoriaService;
 import org.crue.hercules.sgi.csp.service.EstadoProyectoService;
+import org.crue.hercules.sgi.csp.service.GastoProyectoService;
 import org.crue.hercules.sgi.csp.service.NotificacionProyectoExternoCVNService;
 import org.crue.hercules.sgi.csp.service.ProrrogaDocumentoService;
 import org.crue.hercules.sgi.csp.service.ProyectoAgrupacionGastoService;
@@ -156,6 +158,12 @@ public class ProyectoControllerTest extends BaseControllerTest {
 
   @MockBean
   private ConvocatoriaService convocatoriaService;
+
+  @MockBean
+  private AnualidadIngresoService anualidadIngresoService;
+
+  @MockBean
+  private GastoProyectoService gastoProyectoService;
 
   private static final String PATH_PARAMETER_ID = "/{id}";
   private static final String PATH_PARAMETER_DESACTIVAR = "/desactivar";

@@ -44,7 +44,7 @@ class PeriodoAmortizacionRequestConverter extends SgiBaseConverter<IPeriodoAmort
     return {
       id: value.id.toString(),
       proyectoId: value.proyectoSGE.id,
-      anualidad: value.proyectoAnualidad?.anio.toString(),
+      anualidad: value.proyectoAnualidad?.anio?.toString() ?? '0',
       empresaRef: value.proyectoEntidadFinanciadora.empresa.id,
       tipoFinanciacion: {
         id: value.proyectoEntidadFinanciadora?.tipoFinanciacion?.id.toString(),

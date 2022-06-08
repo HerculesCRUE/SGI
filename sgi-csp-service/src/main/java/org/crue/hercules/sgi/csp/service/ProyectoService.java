@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.crue.hercules.sgi.csp.dto.ProyectoDto;
 import org.crue.hercules.sgi.csp.dto.ProyectoPresupuestoTotales;
+import org.crue.hercules.sgi.csp.dto.ProyectosCompetitivosPersonas;
 import org.crue.hercules.sgi.csp.dto.RelacionEjecucionEconomica;
 import org.crue.hercules.sgi.csp.model.EstadoProyecto;
 import org.crue.hercules.sgi.csp.model.Proyecto;
@@ -190,5 +191,17 @@ public interface ProyectoService {
    *         paginadas y filtradas.
    */
   Page<RelacionEjecucionEconomica> findRelacionesEjecucionEconomicaProyectos(String query, Pageable pageable);
+
+  /**
+   * Obtiene los datos de proyectos competitivos de las personas.
+   *
+   * @param personasRef        Lista de id de las personas.
+   * @param onlyAsRolPrincipal Indica si solo se comprueba la participacion con un
+   *                           rol principal
+   * @param exludedProyectoId  Excluye el {@link Proyecto} de la consulta
+   * @return el {@link ProyectosCompetitivosPersonas}.
+   */
+  ProyectosCompetitivosPersonas getProyectosCompetitivosPersonas(List<String> personasRef, Boolean onlyAsRolPrincipal,
+      Long exludedProyectoId);
 
 }

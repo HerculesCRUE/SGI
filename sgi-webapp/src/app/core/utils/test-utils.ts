@@ -1,6 +1,7 @@
 import { MatDialogRef } from '@angular/material/dialog';
 import { ActivatedRoute, Data, ParamMap } from '@angular/router';
 import { DialogActionComponent } from '@core/component/dialog-action.component';
+import { DialogCommonComponent } from '@core/component/dialog-common.component';
 import { SnackBarService } from '@core/services/snack-bar.service';
 import { TranslateTestingModule } from 'ngx-translate-testing';
 import { Subject } from 'rxjs';
@@ -101,11 +102,18 @@ export default class TestUtils {
 
   static buildDialogActionMatDialogRef(): MatDialogRef<DialogActionComponent<any>, any> {
     return {
+      ...this.buildDialogCommonMatDialogRef(),
+      updateSize: jasmine.createSpy('updateSize')
+    } as unknown as MatDialogRef<DialogActionComponent<any>, any>;
+  }
+
+  static buildDialogCommonMatDialogRef(): MatDialogRef<any> {
+    return {
       close: jasmine.createSpy('close'),
       addPanelClass: jasmine.createSpy('addPanelClass'),
       componentInstance: {
         problems$: new Subject<any>()
-      } as DialogActionComponent<any>
-    } as unknown as MatDialogRef<DialogActionComponent<any>, any>;
+      } as DialogCommonComponent
+    } as unknown as MatDialogRef<any>;
   }
 }

@@ -20,6 +20,10 @@ import javax.persistence.UniqueConstraint;
 
 import org.crue.hercules.sgi.prc.model.BaseEntity.Create;
 import org.crue.hercules.sgi.prc.model.BaseEntity.Update;
+import org.crue.hercules.sgi.prc.validation.BaremoConfiguracionBaremo;
+import org.crue.hercules.sgi.prc.validation.BaremoCuantia;
+import org.crue.hercules.sgi.prc.validation.BaremoPeso;
+import org.crue.hercules.sgi.prc.validation.BaremoPuntos;
 import org.crue.hercules.sgi.prc.validation.UniqueFieldsValues;
 
 import lombok.AccessLevel;
@@ -41,8 +45,12 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@UniqueFieldsValues(groups = { Create.class, Update.class }, entityClass = Baremo.class, fieldsNames = {
+@UniqueFieldsValues(groups = { Create.class }, entityClass = Baremo.class, fieldsNames = {
     Baremo_.CONFIGURACION_BAREMO_ID, Baremo_.CONVOCATORIA_BAREMACION_ID })
+@BaremoCuantia(groups = { Create.class, Update.class })
+@BaremoPeso(groups = { Create.class, Update.class })
+@BaremoPuntos(groups = { Create.class, Update.class })
+@BaremoConfiguracionBaremo(groups = { Create.class, Update.class })
 public class Baremo extends BaseEntity {
 
   protected static final String TABLE_NAME = "baremo";

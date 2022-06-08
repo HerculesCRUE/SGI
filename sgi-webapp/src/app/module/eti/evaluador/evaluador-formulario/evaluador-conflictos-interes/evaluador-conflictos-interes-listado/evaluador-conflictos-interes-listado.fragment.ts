@@ -124,7 +124,9 @@ export class EvaluadorConflictosInteresFragment extends Fragment {
         return this.conflictoInteresService.create(wrappedConflicto.value).pipe(
           map((savedConflicto) => {
             const index = this.conflictos$.value.findIndex((currentConflicto) => currentConflicto === wrappedConflicto);
-            this.conflictos$[index] = new StatusWrapper<IConflictoInteres>(savedConflicto);
+            wrappedConflicto.value.id = savedConflicto.id;
+            this.conflictos$.value[index] = new StatusWrapper<IConflictoInteres>(wrappedConflicto.value);
+            this.conflictos$.next(this.conflictos$.value);
           })
         );
       }));

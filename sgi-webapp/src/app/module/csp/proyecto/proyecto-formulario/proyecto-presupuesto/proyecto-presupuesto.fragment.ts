@@ -16,6 +16,8 @@ export class ProyectoPresupuestoFragment extends FormFragment<IProyecto>  {
   proyectoAnualidades$ = new BehaviorSubject<StatusWrapper<IProyectoAnualidadResumen>[]>([]);
   private proyectoAnualidadesEliminadas: StatusWrapper<IProyectoAnualidadResumen>[] = [];
 
+  anualidadesWithPeriodoAmortizacion$ = new BehaviorSubject<number[]>([]);
+
   disableAddAnualidad$ = new BehaviorSubject<boolean>(false);
   columnAnualidades$ = new BehaviorSubject<boolean>(false);
   showPresupuestoSolicitud$ = new BehaviorSubject<boolean>(false);

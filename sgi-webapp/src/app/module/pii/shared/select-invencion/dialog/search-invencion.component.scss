@@ -1,3 +1,9 @@
-.separacion {
-  padding: 10px 0px 20px 0px;
+:host {
+  sgi-dialog-content {
+    min-width: 75vw;
+
+    .separacion {
+      padding: 10px 0px 20px 0px;
+    }
+  }
 }

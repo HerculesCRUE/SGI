@@ -116,7 +116,6 @@ export class ConvocatoriaSeguimientoCientificoComponent extends FragmentComponen
     };
 
     const config = {
-      panelClass: 'sgi-dialog-container',
       data: modalData,
     };
     const dialogRef = this.matDialog.open(ConvocatoriaSeguimientoCientificoModalComponent, config);

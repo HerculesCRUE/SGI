@@ -5,7 +5,9 @@ import { IRetrospectivaBackend } from './retrospectiva-backend';
 export interface IMemoriaPeticionEvaluacionBackend {
   /** Id */
   id: number;
-
+  /** Respnsable Ref */
+  responsableRef: string;
+  /** Numero Referencia  */
   numReferencia: string;
   /** Título */
   titulo: string;

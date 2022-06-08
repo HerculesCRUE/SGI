@@ -174,10 +174,14 @@
     </ng-container>
     <!-- Objetivos científicos -->
     <mat-form-field>
-      <mat-label>{{'eti.peticion-evaluacion.objetivo-cientifico' | translate}}</mat-label>
+      <mat-label>{{'eti.peticion-evaluacion.objetivo-cientifico' | translate:msgParamObjetivoCientificoEntity}}
+      </mat-label>
       <textarea matInput formControlName="objetivosCientificos" type="text" required></textarea>
       <mat-error *ngIf="formGroup.controls.objetivosCientificos.errors?.required">
         {{'error.required.entity' | translate:msgParamObjetivoCientificoEntity}}
+      </mat-error>
+      <mat-error *ngIf="formGroup.controls.objetivosCientificos.errors?.maxlength">
+        {{'error.maxlength.entity' | translate:msgParamObjetivoCientificoEntity}}
       </mat-error>
     </mat-form-field>
     <!-- Diseño metodológico -->
@@ -186,6 +190,9 @@
       <textarea matInput formControlName="disenioMetodologico" type="text" required></textarea>
       <mat-error *ngIf="formGroup.controls.disenioMetodologico.errors?.required">
         {{'error.required.entity' | translate:msgParamDisenioMetodologicoEntity}}
+      </mat-error>
+      <mat-error *ngIf="formGroup.controls.disenioMetodologico.errors?.maxlength">
+        {{'error.maxlength.entity' | translate:msgParamDisenioMetodologicoEntity}}
       </mat-error>
     </mat-form-field>
   </form>

@@ -2,14 +2,12 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
-import { BaseModalComponent } from '@core/component/base-modal.component';
+import { DialogFormComponent } from '@core/component/dialog-form.component';
+import { SgiError } from '@core/errors/sgi-error';
 import { MSG_PARAMS } from '@core/i18n';
 import { ISectorLicenciado } from '@core/models/pii/sector-licenciado';
 import { IPais } from '@core/models/sgo/pais';
-import { FxFlexProperties } from '@core/models/shared/flexLayout/fx-flex-properties';
-import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-properties';
 import { PaisService } from '@core/services/sgo/pais/pais.service';
-import { SnackBarService } from '@core/services/snack-bar.service';
 import { DateValidator } from '@core/validators/date-validator';
 import { TranslateService } from '@ngx-translate/core';
 import { Observable } from 'rxjs';
@@ -37,11 +35,7 @@ export interface ISectorLicenciadoModalData {
   templateUrl: './sector-licenciado-modal.component.html',
   styleUrls: ['./sector-licenciado-modal.component.scss']
 })
-export class SectorLicenciadoModalComponent
-  extends BaseModalComponent<ISectorLicenciado, SectorLicenciadoModalComponent> implements OnInit {
-  fxLayoutProperties: FxLayoutProperties;
-  fxFlexProperties: FxFlexProperties;
-  fxFlexProperties50: FxFlexProperties;
+export class SectorLicenciadoModalComponent extends DialogFormComponent<ISectorLicenciado> implements OnInit {
 
   msgParamPaisEntity = {};
   msgParamExclusividadEntity = {};
@@ -56,29 +50,27 @@ export class SectorLicenciadoModalComponent
   paises$: Observable<IPais[]>;
 
   constructor(
-    public matDialogRef: MatDialogRef<SectorLicenciadoModalComponent>,
-    protected readonly snackBarService: SnackBarService,
+    matDialogRef: MatDialogRef<SectorLicenciadoModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data: ISectorLicenciadoModalData,
     private readonly translate: TranslateService,
     paisService: PaisService,
   ) {
-    super(snackBarService, matDialogRef, data.sectorLicenciado);
+    super(matDialogRef, !!data.sectorLicenciado?.pais);
     this.paises$ = paisService.findAll().pipe(map(({ items }) => items));
   }
 
   ngOnInit(): void {
     super.ngOnInit();
-    this.initFlexProperties();
     this.setupI18N();
   }
 
-  protected getFormGroup(): FormGroup {
+  protected buildFormGroup(): FormGroup {
     const formGroup = new FormGroup({
-      pais: new FormControl(this.entity?.pais, Validators.required),
-      exclusividad: new FormControl(this.entity?.exclusividad, Validators.required),
-      fechaInicio: new FormControl(this.entity?.fechaInicioLicencia, Validators.required),
-      fechaFin: new FormControl(this.entity?.fechaFinLicencia, Validators.required),
-      sector: new FormControl(this.entity?.sectorAplicacion, Validators.required),
+      pais: new FormControl(this.data.sectorLicenciado?.pais, Validators.required),
+      exclusividad: new FormControl(this.data.sectorLicenciado?.exclusividad, Validators.required),
+      fechaInicio: new FormControl(this.data.sectorLicenciado?.fechaInicioLicencia, Validators.required),
+      fechaFin: new FormControl(this.data.sectorLicenciado?.fechaFinLicencia, Validators.required),
+      sector: new FormControl(this.data.sectorLicenciado?.sectorAplicacion, Validators.required),
     },
       DateValidator.isAfter('fechaInicio', 'fechaFin'));
 
@@ -89,14 +81,14 @@ export class SectorLicenciadoModalComponent
     return formGroup;
   }
 
-  protected getDatosForm(): ISectorLicenciado {
-    this.entity.pais = this.formGroup.controls.pais.value;
-    this.entity.exclusividad = this.formGroup.controls.exclusividad.value;
-    this.entity.fechaInicioLicencia = this.formGroup.controls.fechaInicio.value;
-    this.entity.fechaFinLicencia = this.formGroup.controls.fechaFin.value;
-    this.entity.sectorAplicacion = this.formGroup.controls.sector.value;
+  protected getValue(): ISectorLicenciado {
+    this.data.sectorLicenciado.pais = this.formGroup.controls.pais.value;
+    this.data.sectorLicenciado.exclusividad = this.formGroup.controls.exclusividad.value;
+    this.data.sectorLicenciado.fechaInicioLicencia = this.formGroup.controls.fechaInicio.value;
+    this.data.sectorLicenciado.fechaFinLicencia = this.formGroup.controls.fechaFin.value;
+    this.data.sectorLicenciado.sectorAplicacion = this.formGroup.controls.sector.value;
 
-    return this.entity;
+    return this.data.sectorLicenciado;
   }
 
   private setupI18N(): void {
@@ -142,7 +134,7 @@ export class SectorLicenciadoModalComponent
       })
     ).subscribe((value) => this.errorSectorLicenciado = value);
 
-    if (this.entity?.pais) {
+    if (this.data.sectorLicenciado?.pais) {
       this.translate.get(
         SECTOR_LICENCIADO_KEY,
         MSG_PARAMS.CARDINALIRY.SINGULAR
@@ -166,25 +158,6 @@ export class SectorLicenciadoModalComponent
     }
   }
 
-  private initFlexProperties(): void {
-    this.fxLayoutProperties = new FxLayoutProperties();
-    this.fxLayoutProperties.gap = '20px';
-    this.fxLayoutProperties.layout = 'row';
-    this.fxLayoutProperties.xs = 'column';
-
-    this.fxFlexProperties = new FxFlexProperties();
-    this.fxFlexProperties.sm = '0 1 calc(100%-10px)';
-    this.fxFlexProperties.md = '0 1 calc(100%-10px)';
-    this.fxFlexProperties.gtMd = '0 1 calc(100%-10px)';
-    this.fxFlexProperties.order = '2';
-
-    this.fxFlexProperties50 = new FxFlexProperties();
-    this.fxFlexProperties50.sm = '0 1 calc(49%-10px)';
-    this.fxFlexProperties50.md = '0 1 calc(49%-10px)';
-    this.fxFlexProperties50.gtMd = '0 1 calc(49%-10px)';
-    this.fxFlexProperties50.order = '2';
-  }
-
   protected getFormStatus(): ISectorLicenciado {
     const sector = {} as ISectorLicenciado;
     sector.pais = this.formGroup.controls.pais.value;
@@ -196,12 +169,15 @@ export class SectorLicenciadoModalComponent
     return sector;
   }
 
-  saveOrUpdate(): void {
-    if (this.isDuplicateSectorLicenciado(this.getFormStatus())) {
-      this.snackBarService.showError(this.errorSectorLicenciado);
-      return;
-    } else {
-      super.saveOrUpdate();
+  doAction(): void {
+    this.formGroup.markAllAsTouched();
+    if (this.formGroup.valid) {
+      this.clearProblems();
+      if (this.isDuplicateSectorLicenciado(this.getFormStatus())) {
+        this.pushProblems(new SgiError(this.errorSectorLicenciado));
+      } else {
+        this.close(this.getValue());
+      }
     }
   }
 

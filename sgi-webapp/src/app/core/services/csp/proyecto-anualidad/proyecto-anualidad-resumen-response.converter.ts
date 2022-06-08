@@ -17,7 +17,9 @@ class ProyectoAnualidadResumenResponseConverter extends SgiBaseConverter<IProyec
       totalGastosPresupuesto: value.totalGastosPresupuesto,
       totalIngresos: value.totalIngresos,
       presupuestar: value.presupuestar,
-      enviadoSge: value.enviadoSge
+      hasGastosIngresos: value.hasGastosIngresos,
+      enviadoSge: value.enviadoSge,
+      hasPeriodosAmortizacion: null
     };
   }
   fromTarget(value: IProyectoAnualidadResumen): IProyectoAnualidadResumenResponse {
@@ -33,6 +35,7 @@ class ProyectoAnualidadResumenResponseConverter extends SgiBaseConverter<IProyec
       totalGastosPresupuesto: value.totalGastosPresupuesto,
       totalIngresos: value.totalIngresos,
       presupuestar: value.presupuestar,
+      hasGastosIngresos: value.hasGastosIngresos,
       enviadoSge: value.enviadoSge
     };
   }

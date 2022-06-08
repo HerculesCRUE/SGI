@@ -139,7 +139,6 @@ export class ActaComentariosComponent extends FragmentComponent implements OnIni
       };
 
       const config = {
-        panelClass: 'sgi-dialog-container',
         data: actaData
       };
       const dialogRef = this.matDialog.open(ComentarioModalComponent, config);
@@ -168,7 +167,6 @@ export class ActaComentariosComponent extends FragmentComponent implements OnIni
       };
 
       const config = {
-        panelClass: 'sgi-dialog-container',
         data: actaData
       };
       const dialogRef = this.matDialog.open(ComentarioModalComponent, config);

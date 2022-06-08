@@ -5,15 +5,9 @@
       [fxFlexOrder]="fxFlexProperties.order">
       <mat-form-field>
         <mat-label>{{'eti.acta.convocatoria-reunion' | translate}}</mat-label>
-        <input type="text" placeholder="{{'eti.acta.convocatoria-reunion' | translate}}" arial-label="Number" matInput
-          formControlName="convocatoriaReunion" [matAutocomplete]="auto" required
-          [readonly]="readonly || fragment.isEdit()">
-        <mat-autocomplete #auto="matAutocomplete" [displayWith]="getConvocatoria"
-          (optionSelected)="selectConvocatoriaReunion($event.option.value)">
-          <mat-option *ngFor="let convocatoria of convocatoriasReunionFitlered | async" [value]="convocatoria">
-            {{convocatoria.codigo}}
-          </mat-option>
-        </mat-autocomplete>
+        <sgi-select-entity formControlName="convocatoriaReunion" [options]="convocatorias$ | async" required
+          [displayWith]="displayerConvocatoriaReunion" [disabled]="readonly || fragment.isEdit()">
+        </sgi-select-entity>
         <mat-error *ngIf="formGroup.controls.convocatoriaReunion.errors?.required">
           {{'error.required.entity' | translate:msgParamConvocatoriaReunionEntity}}
         </mat-error>

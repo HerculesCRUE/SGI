@@ -11,6 +11,7 @@ import javax.validation.Valid;
 import javax.validation.Validator;
 
 import org.crue.hercules.sgi.framework.problem.message.ProblemMessage;
+import org.crue.hercules.sgi.framework.rsql.SgiRSQLJPASupport;
 import org.crue.hercules.sgi.framework.spring.context.support.ApplicationContextSupport;
 import org.crue.hercules.sgi.pii.config.SgiConfigProperties;
 import org.crue.hercules.sgi.pii.dto.InvencionDto.SolicitudProteccionDto;
@@ -24,9 +25,11 @@ import org.crue.hercules.sgi.pii.model.SolicitudProteccion.OnActivar;
 import org.crue.hercules.sgi.pii.model.ViaProteccion;
 import org.crue.hercules.sgi.pii.repository.SolicitudProteccionRepository;
 import org.crue.hercules.sgi.pii.repository.ViaProteccionRepository;
+import org.crue.hercules.sgi.pii.repository.specification.SolicitudProteccionSpecifications;
 import org.crue.hercules.sgi.pii.util.PeriodDateUtil;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
@@ -240,11 +243,14 @@ public class SolicitudProteccionService {
    * 
    * @param invencionId id de la invención asociado a las solicitudes de
    *                    proteccion
+   * @param query       Parámetros de búsqueda
    * @param paging      Información de la paginación.
    * @return Lista de entidades {@link SolicitudProteccion} paginadas
    */
-  public Page<SolicitudProteccion> findByInvencionId(Long invencionId, Pageable paging) {
-    return this.solicitudProteccionRepository.findByInvencionId(invencionId, paging);
+  public Page<SolicitudProteccion> findByInvencionId(Long invencionId, String query, Pageable paging) {
+    Specification<SolicitudProteccion> specs = SolicitudProteccionSpecifications.byInvencionId(invencionId)
+        .and(SgiRSQLJPASupport.toSpecification(query));
+    return this.solicitudProteccionRepository.findAll(specs, paging);
   }
 
   /**
@@ -269,4 +275,5 @@ public class SolicitudProteccionService {
     return solicitudProteccionRepository.findSolicitudProteccionInRangoBaremacion(invencionId, fechaInicioBaremacion,
         fechaFinBaremacion);
   }
+
 }

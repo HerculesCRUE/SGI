@@ -1,14 +1,12 @@
-import { Component, Inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Component, Inject, OnInit, ViewChild } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatAutocompleteTrigger } from '@angular/material/autocomplete';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
-import { BaseModalComponent } from '@core/component/base-modal.component';
+import { DialogFormComponent } from '@core/component/dialog-form.component';
 import { MSG_PARAMS } from '@core/i18n';
 import { IProyectoHito } from '@core/models/csp/proyecto-hito';
 import { ITipoHito } from '@core/models/csp/tipos-configuracion';
-import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-properties';
-import { SnackBarService } from '@core/services/snack-bar.service';
 import { IsEntityValidator } from '@core/validators/is-entity-validador';
 import { TipoHitoValidator } from '@core/validators/tipo-hito-validator';
 import { TranslateService } from '@ngx-translate/core';
@@ -33,12 +31,9 @@ export interface ProyectoHitosModalComponentData {
   templateUrl: './proyecto-hitos-modal.component.html',
   styleUrls: ['./proyecto-hitos-modal.component.scss']
 })
-export class ProyectoHitosModalComponent extends
-  BaseModalComponent<ProyectoHitosModalComponentData, ProyectoHitosModalComponent> implements OnInit, OnDestroy {
+export class ProyectoHitosModalComponent extends DialogFormComponent<ProyectoHitosModalComponentData> implements OnInit {
 
   @ViewChild(MatAutocompleteTrigger) autocomplete: MatAutocompleteTrigger;
-
-  fxLayoutProperties: FxLayoutProperties;
 
   textSaveOrUpdate: string;
 
@@ -48,17 +43,11 @@ export class ProyectoHitosModalComponent extends
   title: string;
 
   constructor(
-    public matDialogRef: MatDialogRef<ProyectoHitosModalComponent>,
+    matDialogRef: MatDialogRef<ProyectoHitosModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data: ProyectoHitosModalComponentData,
-    protected snackBarService: SnackBarService,
     private readonly translate: TranslateService
   ) {
-    super(snackBarService, matDialogRef, data);
-
-    this.fxLayoutProperties = new FxLayoutProperties();
-    this.fxLayoutProperties.gap = '20px';
-    this.fxLayoutProperties.layout = 'row wrap';
-    this.fxLayoutProperties.xs = 'column';
+    super(matDialogRef, !!data?.hito?.tipoHito);
   }
 
   ngOnInit(): void {
@@ -145,7 +134,7 @@ export class ProyectoHitosModalComponent extends
     ]);
   }
 
-  protected getDatosForm(): ProyectoHitosModalComponentData {
+  protected getValue(): ProyectoHitosModalComponentData {
     this.data.hito.comentario = this.formGroup.controls.comentario.value;
     this.data.hito.fecha = this.formGroup.controls.fecha.value;
     this.data.hito.tipoHito = this.formGroup.controls.tipoHito.value;
@@ -153,7 +142,7 @@ export class ProyectoHitosModalComponent extends
     return this.data;
   }
 
-  protected getFormGroup(): FormGroup {
+  protected buildFormGroup(): FormGroup {
     const formGroup = new FormGroup({
       tipoHito: new FormControl(this.data?.hito?.tipoHito, [Validators.required, IsEntityValidator.isValid()]),
       fecha: new FormControl(this.data?.hito?.fecha, [Validators.required]),
@@ -166,10 +155,6 @@ export class ProyectoHitosModalComponent extends
     }
 
     return formGroup;
-  }
-
-  ngOnDestroy(): void {
-    super.ngOnDestroy();
   }
 
 }

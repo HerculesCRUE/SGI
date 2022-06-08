@@ -73,7 +73,7 @@ public class ProduccionCientificaFieldFormatUtil {
     return Instant.now().atZone(timeZone.toZoneId())
         .withYear(anio)
         .with(TemporalAdjusters.lastDayOfYear())
-        .with(LocalTime.MAX).toInstant();
+        .with(LocalTime.NOON).toInstant();
   }
 
   public static Pair<Instant, Instant> calculateFechasInicioFinBaremacionByAnio(Integer anio, TimeZone timeZone) {
@@ -82,10 +82,14 @@ public class ProduccionCientificaFieldFormatUtil {
     return Pair.of(fechaInicioBaremacion, fechaFinBaremacion);
   }
 
-  public static String formatInstantToStringWithTimeZone(Instant fecha, TimeZone timeZone) {
-    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss")
+  public static String formatInstantToStringWithTimeZoneAndPattern(Instant fecha, TimeZone timeZone, String pattern) {
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern(pattern)
         .withZone(timeZone.toZoneId()).withLocale(LocaleContextHolder.getLocale());
     return formatter.format(fecha);
+  }
+
+  public static String formatInstantToStringWithTimeZone(Instant fecha, TimeZone timeZone) {
+    return formatInstantToStringWithTimeZoneAndPattern(fecha, timeZone, "yyyy-MM-dd'T'HH:mm:ss");
   }
 
   public static BaremacionInput createBaremacionInput(int anio, Long convocatoriaBaremacionId, TimeZone timeZone) {

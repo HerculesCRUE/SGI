@@ -10,6 +10,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaDelete;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Join;
 import javax.persistence.criteria.JoinType;
@@ -34,6 +35,8 @@ import org.crue.hercules.sgi.csp.model.Proyecto;
 import org.crue.hercules.sgi.csp.model.ProyectoAnualidad;
 import org.crue.hercules.sgi.csp.model.ProyectoAnualidad_;
 import org.crue.hercules.sgi.csp.model.ProyectoPartida_;
+import org.crue.hercules.sgi.csp.model.ProyectoPeriodoAmortizacion;
+import org.crue.hercules.sgi.csp.model.ProyectoPeriodoAmortizacion_;
 import org.crue.hercules.sgi.csp.model.Proyecto_;
 import org.crue.hercules.sgi.csp.model.SolicitudProyectoSocio;
 import org.crue.hercules.sgi.framework.rsql.SgiRSQLJPASupport;
@@ -53,6 +56,20 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Component
 public class CustomProyectoAnualidadRepositoryImpl implements CustomProyectoAnualidadRepository {
+
+  private static final String ALIAS_CODIGO_PARTIDA_PRESUPUESTARIA = "codigoPartidaPresupuestaria";
+  private static final String ALIAS_ENVIADO_SGE = "enviadoSge";
+  private static final String ALIAS_PROYECTO_ACRONIMO = "proyectoAcronimo";
+  private static final String ALIAS_PROYECTO_ESTADO = "proyectoEstado";
+  private static final String ALIAS_PROYECTO_FECHA_FIN = "proyectoFechaFin";
+  private static final String ALIAS_PROYECTO_FECHA_INICIO = "proyectoFechaInicio";
+  private static final String ALIAS_PROYECTO_ID = "proyectoId";
+  private static final String ALIAS_PROYECTO_TITULO = "proyectoTitulo";
+  private static final String ALIAS_TOTAL_GASTOS = "totalGastos";
+  private static final String ALIAS_TOTAL_GASTOS_CONCEDIDO = "totalGastosConcedido";
+  private static final String ALIAS_TOTAL_GASTOS_PRESUPUESTO = "totalGastosPresupuesto";
+  private static final String ALIAS_TOTAL_INGRESO = "totalIngreso";
+  private static final String ALIAS_TOTAL_INGRESOS = "totalIngresos";
 
   /**
    * The entity manager.
@@ -105,15 +122,32 @@ public class CustomProyectoAnualidadRepositoryImpl implements CustomProyectoAnua
     queryTotalIngreso.select(cb.sum(subqRootIngreso.get(AnualidadIngreso_.importeConcedido)))
         .where(cb.equal(subqRootIngreso.get(AnualidadIngreso_.proyectoAnualidadId), root.get(ProyectoAnualidad_.id)));
 
+    // AnualidadGasto
+    Subquery<Long> queryAnualidadGasto = cq.subquery(Long.class);
+    Root<AnualidadGasto> rootAnualidadGasto = queryAnualidadGasto.from(AnualidadGasto.class);
+    queryAnualidadGasto.select(cb.count(rootAnualidadGasto.get(AnualidadGasto_.id)))
+        .where(cb.equal(rootAnualidadGasto.get(AnualidadGasto_.proyectoAnualidadId), root.get(ProyectoAnualidad_.id)));
+
+    // AnualidadIngreso
+    Subquery<Long> queryAnualidadIngreso = cq.subquery(Long.class);
+    Root<AnualidadIngreso> rootAnualidadIngreso = queryAnualidadIngreso
+        .from(AnualidadIngreso.class);
+    queryAnualidadIngreso.select(cb.count(rootAnualidadIngreso.get(AnualidadIngreso_.id))).where(
+        cb.equal(rootAnualidadIngreso.get(AnualidadIngreso_.proyectoAnualidadId), root.get(ProyectoAnualidad_.id)));
+
+    Predicate relacionesProyectoAnualidad = cb.or(cb.gt(queryAnualidadGasto, 0L), cb.gt(queryAnualidadIngreso, 0L));
+
     // Execute query
-    cq.multiselect(root.get(ProyectoAnualidad_.id).alias("id"), root.get(ProyectoAnualidad_.anio).alias("anio"),
-        root.get(ProyectoAnualidad_.fechaInicio).alias("fechaInicio"),
-        root.get(ProyectoAnualidad_.fechaFin).alias("fechaFin"),
-        cb.coalesce(queryTotalGastoPresupuesto.getSelection(), new BigDecimal(0)).alias("totalGastosPresupuesto"),
-        cb.coalesce(queryTotalGastoConcedido.getSelection(), new BigDecimal(0)).alias("totalGastosConcedido"),
-        cb.coalesce(queryTotalIngreso.getSelection(), new BigDecimal(0)).alias("totalIngresos"),
-        root.get(ProyectoAnualidad_.presupuestar).alias("presupuestar"),
-        root.get(ProyectoAnualidad_.enviadoSge).alias("enviadoSge"));
+    cq.multiselect(root.get(ProyectoAnualidad_.id).alias(ProyectoAnualidad_.ID),
+        root.get(ProyectoAnualidad_.anio).alias(ProyectoAnualidad_.ANIO),
+        root.get(ProyectoAnualidad_.fechaInicio).alias(ProyectoAnualidad_.FECHA_INICIO),
+        root.get(ProyectoAnualidad_.fechaFin).alias(ProyectoAnualidad_.FECHA_FIN),
+        cb.coalesce(queryTotalGastoPresupuesto.getSelection(), new BigDecimal(0)).alias(ALIAS_TOTAL_GASTOS_PRESUPUESTO),
+        cb.coalesce(queryTotalGastoConcedido.getSelection(), new BigDecimal(0)).alias(ALIAS_TOTAL_GASTOS_CONCEDIDO),
+        cb.coalesce(queryTotalIngreso.getSelection(), new BigDecimal(0)).alias(ALIAS_TOTAL_INGRESOS),
+        root.get(ProyectoAnualidad_.presupuestar).alias(ProyectoAnualidad_.PRESUPUESTAR),
+        root.get(ProyectoAnualidad_.enviadoSge).alias(ALIAS_ENVIADO_SGE),
+        cb.selectCase().when(cb.isTrue(relacionesProyectoAnualidad), true).otherwise(false));
 
     List<Order> orders = QueryUtils.toOrders(pageable.getSort(), root, cb);
     cq.orderBy(orders);
@@ -123,7 +157,7 @@ public class CustomProyectoAnualidadRepositoryImpl implements CustomProyectoAnua
     Long count = entityManager.createQuery(countQuery).getSingleResult();
 
     TypedQuery<ProyectoAnualidadResumen> typedQuery = entityManager.createQuery(cq);
-    if (pageable != null && pageable.isPaged()) {
+    if (pageable.isPaged()) {
       typedQuery.setFirstResult(pageable.getPageNumber() * pageable.getPageSize());
       typedQuery.setMaxResults(pageable.getPageSize());
     }
@@ -157,9 +191,9 @@ public class CustomProyectoAnualidadRepositoryImpl implements CustomProyectoAnua
     cqAnualidadGasto
         .multiselect(
             rootGasto.get(AnualidadGasto_.proyectoPartida).get(ProyectoPartida_.codigo)
-                .alias("codigoPartidaPresupuestaria"),
-            cb.sum(rootGasto.get(AnualidadGasto_.importePresupuesto)).alias("importePresupuesto"),
-            cb.sum(rootGasto.get(AnualidadGasto_.importeConcedido)).alias("importeConcedido"))
+                .alias(ALIAS_CODIGO_PARTIDA_PRESUPUESTARIA),
+            cb.sum(rootGasto.get(AnualidadGasto_.importePresupuesto)).alias(AnualidadGasto_.IMPORTE_PRESUPUESTO),
+            cb.sum(rootGasto.get(AnualidadGasto_.importeConcedido)).alias(AnualidadGasto_.IMPORTE_CONCEDIDO))
         .groupBy(rootGasto.get(AnualidadGasto_.proyectoPartida).get(ProyectoPartida_.id),
             rootGasto.get(AnualidadGasto_.proyectoPartida).get(ProyectoPartida_.codigo));
 
@@ -175,24 +209,18 @@ public class CustomProyectoAnualidadRepositoryImpl implements CustomProyectoAnua
     cqAnualidadIngreso
         .multiselect(
             rootIngreso.get(AnualidadIngreso_.proyectoPartida).get(ProyectoPartida_.codigo)
-                .alias("codigoPartidaPresupuestaria"),
-            cb.sum(rootIngreso.get(AnualidadIngreso_.importeConcedido)).alias("importeConcedido"))
+                .alias(ALIAS_CODIGO_PARTIDA_PRESUPUESTARIA),
+            cb.sum(rootIngreso.get(AnualidadIngreso_.importeConcedido)).alias(AnualidadGasto_.IMPORTE_CONCEDIDO))
         .groupBy(rootIngreso.get(AnualidadIngreso_.proyectoPartida).get(ProyectoPartida_.id),
             rootIngreso.get(AnualidadIngreso_.proyectoPartida).get(ProyectoPartida_.codigo));
 
     TypedQuery<AnualidadResumen> typedQueryGastos = entityManager.createQuery(cqAnualidadGasto);
     List<AnualidadResumen> resultGastos = typedQueryGastos.getResultList();
-    resultGastos.stream().map(gasto -> {
-      gasto.setTipo(TipoPartida.GASTO);
-      return gasto;
-    }).collect(Collectors.toList());
+    resultGastos.stream().forEach(gasto -> gasto.setTipo(TipoPartida.GASTO));
 
     TypedQuery<AnualidadResumen> typedQueryIngresos = entityManager.createQuery(cqAnualidadIngreso);
     List<AnualidadResumen> resultIngresos = typedQueryIngresos.getResultList();
-    resultIngresos.stream().map(ingreso -> {
-      ingreso.setTipo(TipoPartida.INGRESO);
-      return ingreso;
-    }).collect(Collectors.toList());
+    resultIngresos.stream().forEach(ingreso -> ingreso.setTipo(TipoPartida.INGRESO));
 
     List<AnualidadResumen> returnValue = Stream.concat(resultGastos.stream(), resultIngresos.stream())
         .collect(Collectors.toList());
@@ -291,21 +319,20 @@ public class CustomProyectoAnualidadRepositoryImpl implements CustomProyectoAnua
 
     // Execute query
     selectQuery
-        .multiselect(joinProyectoAnualidad.get(ProyectoAnualidad_.id).alias("id"),
-            joinProyectoAnualidad.get(ProyectoAnualidad_.anio).alias("anio"),
-            joinProyecto.get(Proyecto_.fechaInicio).alias("proyectoFechaInicio"),
-            joinProyecto.get(Proyecto_.fechaFin).alias("proyectoFechaFin"),
-            cb.coalesce(queryTotalGasto.getSelection(), new BigDecimal(0)).alias("totalGastos"),
-            cb.literal(new BigDecimal(0)).alias("totalIngreso"), joinProyecto.get(Proyecto_.id).alias("proyectoId"),
-            joinProyecto.get(Proyecto_.titulo).alias("proyectoTitulo"),
-            joinProyecto.get(Proyecto_.acronimo).alias("proyectoAcronimo"),
-            joinProyecto.get(Proyecto_.estado).alias("proyectoEstado"),
-            root.get(AnualidadGasto_.proyectoSgeRef).alias("proyectoSgeRef"),
-            joinProyectoAnualidad.get(ProyectoAnualidad_.enviadoSge).alias("enviadoSge"))
-        .groupBy(joinProyectoAnualidad.get(ProyectoAnualidad_.id), root.get(AnualidadGasto_.proyectoSgeRef),
-            joinProyecto.get(Proyecto_.fechaInicio), joinProyecto.get(Proyecto_.fechaFin),
-            joinProyecto.get(Proyecto_.id), joinProyecto.get(Proyecto_.titulo), joinProyecto.get(Proyecto_.acronimo),
-            joinProyecto.get(Proyecto_.estado));
+        .distinct(true)
+        .multiselect(
+            joinProyectoAnualidad.get(ProyectoAnualidad_.id).alias(ProyectoAnualidad_.ID),
+            joinProyectoAnualidad.get(ProyectoAnualidad_.anio).alias(ProyectoAnualidad_.ANIO),
+            joinProyecto.get(Proyecto_.fechaInicio).alias(ALIAS_PROYECTO_FECHA_INICIO),
+            joinProyecto.get(Proyecto_.fechaFin).alias(ALIAS_PROYECTO_FECHA_FIN),
+            cb.coalesce(queryTotalGasto.getSelection(), new BigDecimal(0)).alias(ALIAS_TOTAL_GASTOS),
+            cb.literal(new BigDecimal(0)).alias(ALIAS_TOTAL_INGRESO),
+            joinProyecto.get(Proyecto_.id).alias(ALIAS_PROYECTO_ID),
+            joinProyecto.get(Proyecto_.titulo).alias(ALIAS_PROYECTO_TITULO),
+            joinProyecto.get(Proyecto_.acronimo).alias(ALIAS_PROYECTO_ACRONIMO),
+            joinProyecto.get(Proyecto_.estado).alias(ALIAS_PROYECTO_ESTADO),
+            root.get(AnualidadGasto_.proyectoSgeRef).alias(AnualidadGasto_.PROYECTO_SGE_REF),
+            joinProyectoAnualidad.get(ProyectoAnualidad_.enviadoSge).alias(ALIAS_ENVIADO_SGE));
 
     return entityManager.createQuery(selectQuery).getResultList();
   }
@@ -357,21 +384,21 @@ public class CustomProyectoAnualidadRepositoryImpl implements CustomProyectoAnua
     selectQuery.where(listPredicates.toArray(new Predicate[] {}));
 
     // Execute query
-    selectQuery.multiselect(joinProyectoAnualidad.get(ProyectoAnualidad_.id).alias("id"),
-        joinProyectoAnualidad.get(ProyectoAnualidad_.anio).alias("anio"),
-        joinProyecto.get(Proyecto_.fechaInicio).alias("proyectoFechaInicio"),
-        joinProyecto.get(Proyecto_.fechaFin).alias("proyectoFechaFin"),
-        cb.literal(new BigDecimal(0)).alias("totalGastos"),
-        cb.coalesce(queryTotalIngreso.getSelection(), new BigDecimal(0)).alias("totalIngreso"),
-        joinProyecto.get(Proyecto_.id).alias("proyectoId"), joinProyecto.get(Proyecto_.titulo).alias("proyectoTitulo"),
-        joinProyecto.get(Proyecto_.acronimo).alias("proyectoAcronimo"),
-        joinProyecto.get(Proyecto_.estado).alias("proyectoEstado"),
-        root.get(AnualidadIngreso_.proyectoSgeRef).alias("proyectoSgeRef"),
-        joinProyectoAnualidad.get(ProyectoAnualidad_.enviadoSge).alias("enviadoSge"))
-        .groupBy(joinProyectoAnualidad.get(ProyectoAnualidad_.id), root.get(AnualidadIngreso_.proyectoSgeRef),
-            joinProyecto.get(Proyecto_.fechaInicio), joinProyecto.get(Proyecto_.fechaFin),
-            joinProyecto.get(Proyecto_.id), joinProyecto.get(Proyecto_.titulo), joinProyecto.get(Proyecto_.acronimo),
-            joinProyecto.get(Proyecto_.estado));
+    selectQuery
+        .distinct(true)
+        .multiselect(
+            joinProyectoAnualidad.get(ProyectoAnualidad_.id).alias(ProyectoAnualidad_.ID),
+            joinProyectoAnualidad.get(ProyectoAnualidad_.anio).alias(ProyectoAnualidad_.ANIO),
+            joinProyecto.get(Proyecto_.fechaInicio).alias(ALIAS_PROYECTO_FECHA_INICIO),
+            joinProyecto.get(Proyecto_.fechaFin).alias(ALIAS_PROYECTO_FECHA_FIN),
+            cb.literal(new BigDecimal(0)).alias(ALIAS_TOTAL_GASTOS),
+            cb.coalesce(queryTotalIngreso.getSelection(), new BigDecimal(0)).alias(ALIAS_TOTAL_INGRESO),
+            joinProyecto.get(Proyecto_.id).alias(ALIAS_PROYECTO_ID),
+            joinProyecto.get(Proyecto_.titulo).alias(ALIAS_PROYECTO_TITULO),
+            joinProyecto.get(Proyecto_.acronimo).alias(ALIAS_PROYECTO_ACRONIMO),
+            joinProyecto.get(Proyecto_.estado).alias(ALIAS_PROYECTO_ESTADO),
+            root.get(AnualidadIngreso_.proyectoSgeRef).alias(AnualidadIngreso_.PROYECTO_SGE_REF),
+            joinProyectoAnualidad.get(ProyectoAnualidad_.enviadoSge).alias(ALIAS_ENVIADO_SGE));
 
     return entityManager.createQuery(selectQuery).getResultList();
   }
@@ -396,7 +423,8 @@ public class CustomProyectoAnualidadRepositoryImpl implements CustomProyectoAnua
     Join<ProyectoAnualidad, Proyecto> joinProyecto = joinProyectoAnualidad.join(ProyectoAnualidad_.proyecto);
 
     cq.select(
-        cb.coalesce(cb.sum(root.get(AnualidadGasto_.importeConcedido)), new BigDecimal(0)).alias("importeConcedido"))
+        cb.coalesce(cb.sum(root.get(AnualidadGasto_.importeConcedido)), new BigDecimal(0))
+            .alias(AnualidadGasto_.IMPORTE_CONCEDIDO))
         .where(cb.equal(joinProyecto.get(Proyecto_.id), proyectoId));
 
     final TypedQuery<BigDecimal> q = entityManager.createQuery(cq);
@@ -433,7 +461,8 @@ public class CustomProyectoAnualidadRepositoryImpl implements CustomProyectoAnua
     Predicate predicateCosteIndirecto = cb.equal(joinConceptoGasto.get(ConceptoGasto_.costesIndirectos), Boolean.TRUE);
 
     cq.select(
-        cb.coalesce(cb.sum(root.get(AnualidadGasto_.importeConcedido)), new BigDecimal(0)).alias("importeConcedido"))
+        cb.coalesce(cb.sum(root.get(AnualidadGasto_.importeConcedido)), new BigDecimal(0))
+            .alias(AnualidadGasto_.IMPORTE_CONCEDIDO))
         .where(cb.and(predicateProyectoId, predicateCosteIndirecto));
 
     final TypedQuery<BigDecimal> q = entityManager.createQuery(cq);
@@ -443,6 +472,77 @@ public class CustomProyectoAnualidadRepositoryImpl implements CustomProyectoAnua
     log.debug("getTotalImporteConcedidoAnualidadGastoCostesIndirectos(Long proyectoId) - end");
 
     return result;
+  }
+
+  /**
+   * Elimina el {@link ProyectoAnualidad} indicado y los {@link AnualidadGasto},
+   * {@link AnualidadIngreso} y {@link ProyectoPeriodoAmortizacion} asociados.
+   * 
+   * @param id Identificador del {@link ProyectoAnualidad}.
+   * @return el número de registros eliminados.
+   */
+  @Override
+  public int deleteByIdCascade(Long id) {
+    log.debug("deleteByIdCascade(Long id) - start");
+
+    CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+
+    deleteAnualidadGastoByProyectoAnualidadId(cb, id);
+    deleteAnualidadIngresoByProyectoAnualidadId(cb, id);
+    deletePeriodoAmortizacionByProyectoAnualidadId(cb, id);
+
+    // Crete query
+    CriteriaDelete<ProyectoAnualidad> query = cb.createCriteriaDelete(ProyectoAnualidad.class);
+    Root<ProyectoAnualidad> root = query.from(ProyectoAnualidad.class);
+    query.where(cb.equal(root.get(ProyectoAnualidad_.id), id));
+
+    // Execute query
+    int returnValue = entityManager.createQuery(query).executeUpdate();
+
+    log.debug("deleteByIdCascade(Long id) - end");
+    return returnValue;
+  }
+
+  private int deleteAnualidadGastoByProyectoAnualidadId(CriteriaBuilder cb, Long proyectoAnualidadId) {
+    log.debug("deleteAnualidadGastoByProyectoAnualidadId(CriteriaBuilder cb, Long proyectoAnualidadId) - start");
+
+    CriteriaDelete<AnualidadGasto> queryAnualidadGasto = cb.createCriteriaDelete(AnualidadGasto.class);
+    Root<AnualidadGasto> rootAnualidadGasto = queryAnualidadGasto.from(AnualidadGasto.class);
+    queryAnualidadGasto
+        .where(cb.equal(rootAnualidadGasto.get(AnualidadGasto_.proyectoAnualidadId), proyectoAnualidadId));
+    int returnValue = entityManager.createQuery(queryAnualidadGasto).executeUpdate();
+
+    log.debug("deleteAnualidadGastoByProyectoAnualidadId(CriteriaBuilder cb, Long proyectoAnualidadId) - end");
+    return returnValue;
+  }
+
+  private int deleteAnualidadIngresoByProyectoAnualidadId(CriteriaBuilder cb, long proyectoAnualidadId) {
+    log.debug("deleteAnualidadIngresoByProyectoAnualidadId(CriteriaBuilder cb, Long proyectoAnualidadId) - start");
+
+    CriteriaDelete<AnualidadIngreso> queryAnualidadIngreso = cb.createCriteriaDelete(AnualidadIngreso.class);
+    Root<AnualidadIngreso> rootAnualidadIngreso = queryAnualidadIngreso.from(AnualidadIngreso.class);
+    queryAnualidadIngreso
+        .where(cb.equal(rootAnualidadIngreso.get(AnualidadIngreso_.proyectoAnualidadId), proyectoAnualidadId));
+    int returnValue = entityManager.createQuery(queryAnualidadIngreso).executeUpdate();
+
+    log.debug("deleteAnualidadIngresoByProyectoAnualidadId(CriteriaBuilder cb, Long proyectoAnualidadId) - end");
+    return returnValue;
+  }
+
+  private int deletePeriodoAmortizacionByProyectoAnualidadId(CriteriaBuilder cb, long proyectoAnualidadId) {
+    log.debug("deletePeriodoAmortizacionByProyectoAnualidadId(CriteriaBuilder cb, Long proyectoAnualidadId) - start");
+
+    CriteriaDelete<ProyectoPeriodoAmortizacion> queryPeriodoAmortizacion = cb
+        .createCriteriaDelete(ProyectoPeriodoAmortizacion.class);
+    Root<ProyectoPeriodoAmortizacion> rootPeriodoAmortizacion = queryPeriodoAmortizacion
+        .from(ProyectoPeriodoAmortizacion.class);
+    queryPeriodoAmortizacion
+        .where(cb.equal(rootPeriodoAmortizacion.get(ProyectoPeriodoAmortizacion_.proyectoAnualidadId),
+            proyectoAnualidadId));
+    int returnValue = entityManager.createQuery(queryPeriodoAmortizacion).executeUpdate();
+
+    log.debug("deletePeriodoAmortizacionByProyectoAnualidadId(CriteriaBuilder cb, Long proyectoAnualidadId) - end");
+    return returnValue;
   }
 
 }

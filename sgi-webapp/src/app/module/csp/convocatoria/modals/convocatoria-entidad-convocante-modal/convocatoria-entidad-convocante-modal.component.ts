@@ -5,17 +5,13 @@ import { MatCheckboxChange } from '@angular/material/checkbox';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatTreeNestedDataSource } from '@angular/material/tree';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
-import { BaseModalComponent } from '@core/component/base-modal.component';
+import { DialogFormComponent } from '@core/component/dialog-form.component';
 import { MSG_PARAMS } from '@core/i18n';
 import { IConvocatoriaEntidadConvocante } from '@core/models/csp/convocatoria-entidad-convocante';
 import { IPrograma } from '@core/models/csp/programa';
 import { IEmpresa } from '@core/models/sgemp/empresa';
-import { FxFlexProperties } from '@core/models/shared/flexLayout/fx-flex-properties';
-import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-properties';
 import { ProgramaService } from '@core/services/csp/programa.service';
 import { DialogService } from '@core/services/dialog.service';
-import { SnackBarService } from '@core/services/snack-bar.service';
-import { FormGroupUtil } from '@core/utils/form-group-util';
 import { StatusWrapper } from '@core/utils/status-wrapper';
 import { TranslateService } from '@ngx-translate/core';
 import { NGXLogger } from 'ngx-logger';
@@ -23,7 +19,6 @@ import { BehaviorSubject, from, Observable, of } from 'rxjs';
 import { map, mergeMap, switchMap, takeLast } from 'rxjs/operators';
 import { ConvocatoriaEntidadConvocanteData } from '../../convocatoria-formulario/convocatoria-entidades-convocantes/convocatoria-entidades-convocantes.fragment';
 
-const MSG_ERROR_FORM_GROUP = marker('error.form-group');
 const MSG_FORM_GROUP_WITHOUT_PLAN = marker('msg.csp.convocatoria-entidad-convocante.sin-plan');
 const MSG_FORM_GROUP_WITHOUT_PROGRAMA = marker('msg.csp.convocatoria-entidad-convocante.sin-programa');
 const MSG_ANADIR = marker('btn.add');
@@ -84,10 +79,8 @@ function sortByName(nodes: NodePrograma[]): NodePrograma[] {
   templateUrl: './convocatoria-entidad-convocante-modal.component.html',
   styleUrls: ['./convocatoria-entidad-convocante-modal.component.scss']
 })
-export class ConvocatoriaEntidadConvocanteModalComponent extends
-  BaseModalComponent<ConvocatoriaEntidadConvocanteModalData, ConvocatoriaEntidadConvocanteModalComponent> implements OnInit {
-  fxFlexProperties: FxFlexProperties;
-  fxLayoutProperties: FxLayoutProperties;
+export class ConvocatoriaEntidadConvocanteModalComponent
+  extends DialogFormComponent<ConvocatoriaEntidadConvocanteModalData> implements OnInit {
 
   programaTree$ = new BehaviorSubject<NodePrograma[]>([]);
   treeControl = new NestedTreeControl<NodePrograma>(node => node.childs);
@@ -109,24 +102,13 @@ export class ConvocatoriaEntidadConvocanteModalComponent extends
 
   constructor(
     private readonly logger: NGXLogger,
-    public matDialogRef: MatDialogRef<ConvocatoriaEntidadConvocanteModalComponent>,
+    matDialogRef: MatDialogRef<ConvocatoriaEntidadConvocanteModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data: ConvocatoriaEntidadConvocanteModalData,
-    protected snackBarService: SnackBarService,
     private programaService: ProgramaService,
     private dialogService: DialogService,
     private readonly translate: TranslateService
   ) {
-    super(snackBarService, matDialogRef, data);
-
-    this.fxFlexProperties = new FxFlexProperties();
-    this.fxFlexProperties.sm = '0 1 calc(100%-10px)';
-    this.fxFlexProperties.md = '0 1 calc(100%-10px)';
-    this.fxFlexProperties.gtMd = '0 1 calc(100%-10px)';
-    this.fxFlexProperties.order = '2';
-    this.fxLayoutProperties = new FxLayoutProperties();
-    this.fxLayoutProperties.gap = '20px';
-    this.fxLayoutProperties.layout = 'row';
-    this.fxLayoutProperties.xs = 'row';
+    super(matDialogRef, !!!data.entidadConvocanteData);
 
     if (!data.entidadConvocanteData) {
       data.entidadConvocanteData = {
@@ -276,7 +258,7 @@ export class ConvocatoriaEntidadConvocanteModalComponent extends
     this.programaTree$.next(nodes);
   }
 
-  protected getFormGroup(): FormGroup {
+  protected buildFormGroup(): FormGroup {
     const formGroup = new FormGroup({
       empresa: new FormControl(this.data.entidadConvocanteData.empresa, Validators.required),
       plan: new FormControl(this.data.entidadConvocanteData.plan),
@@ -288,7 +270,7 @@ export class ConvocatoriaEntidadConvocanteModalComponent extends
     return formGroup;
   }
 
-  protected getDatosForm(): ConvocatoriaEntidadConvocanteModalData {
+  protected getValue(): ConvocatoriaEntidadConvocanteModalData {
     const entidadConvocante = this.data.entidadConvocanteData.entidadConvocante;
     entidadConvocante.value.entidad = this.formGroup.get('empresa').value;
     const plan = this.formGroup.get('plan').value;
@@ -307,8 +289,9 @@ export class ConvocatoriaEntidadConvocanteModalComponent extends
     this.formGroup.get('programa').setValue(this.checkedNode?.programa?.value?.id);
   }
 
-  saveOrUpdate(): void {
-    if (FormGroupUtil.valid(this.formGroup)) {
+  doAction(): void {
+    this.formGroup.markAllAsTouched();
+    if (this.formGroup.valid) {
       const plan = this.formGroup.get('plan').value;
       const programa = this.checkedNode;
       if (!plan && !programa) {
@@ -316,10 +299,8 @@ export class ConvocatoriaEntidadConvocanteModalComponent extends
       } else if (!programa) {
         this.saveIncompleteFormGroup(MSG_FORM_GROUP_WITHOUT_PROGRAMA);
       } else {
-        this.matDialogRef.close(this.getDatosForm());
+        this.close(this.getValue());
       }
-    } else {
-      this.snackBarService.showError(MSG_ERROR_FORM_GROUP);
     }
   }
 
@@ -328,7 +309,7 @@ export class ConvocatoriaEntidadConvocanteModalComponent extends
       this.dialogService.showConfirmation(message).subscribe(
         (aceptado) => {
           if (aceptado) {
-            this.matDialogRef.close(this.getDatosForm());
+            this.close(this.getValue());
           }
         }
       )

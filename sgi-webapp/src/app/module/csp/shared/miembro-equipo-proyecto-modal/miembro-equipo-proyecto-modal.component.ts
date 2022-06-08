@@ -3,14 +3,12 @@ import { AbstractControl, FormControl, FormGroup, Validators } from '@angular/fo
 import { MatAutocompleteTrigger } from '@angular/material/autocomplete';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
-import { BaseModalComponent } from '@core/component/base-modal.component';
+import { DialogFormComponent } from '@core/component/dialog-form.component';
 import { MSG_PARAMS } from '@core/i18n';
 import { IMiembroEquipoProyecto } from '@core/models/csp/miembro-equipo-proyecto';
 import { IRolProyecto } from '@core/models/csp/rol-proyecto';
-import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-properties';
 import { RolProyectoService } from '@core/services/csp/rol-proyecto.service';
 import { PersonaService } from '@core/services/sgp/persona.service';
-import { SnackBarService } from '@core/services/snack-bar.service';
 import { DateValidator } from '@core/validators/date-validator';
 import { IRange } from '@core/validators/range-validator';
 import { TranslateService } from '@ngx-translate/core';
@@ -41,15 +39,12 @@ export interface MiembroEquipoProyectoModalData {
   templateUrl: './miembro-equipo-proyecto-modal.component.html',
   styleUrls: ['./miembro-equipo-proyecto-modal.component.scss']
 })
-export class MiembroEquipoProyectoModalComponent extends
-  BaseModalComponent<MiembroEquipoProyectoModalData, MiembroEquipoProyectoModalComponent> implements OnInit {
+export class MiembroEquipoProyectoModalComponent extends DialogFormComponent<MiembroEquipoProyectoModalData> implements OnInit {
 
   @ViewChild(MatAutocompleteTrigger) autocomplete: MatAutocompleteTrigger;
-  fxLayoutProperties: FxLayoutProperties;
 
   textSaveOrUpdate: string;
 
-  saveDisabled = false;
   rolesProyecto$: Observable<IRolProyecto[]>;
   colectivosIdRolParticipacion: string[];
 
@@ -61,17 +56,12 @@ export class MiembroEquipoProyectoModalComponent extends
   title: string;
 
   constructor(
-    protected snackBarService: SnackBarService,
-    public matDialogRef: MatDialogRef<MiembroEquipoProyectoModalComponent>,
+    matDialogRef: MatDialogRef<MiembroEquipoProyectoModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data: MiembroEquipoProyectoModalData,
     private personaService: PersonaService,
     private rolProyectoService: RolProyectoService,
     private readonly translate: TranslateService) {
-    super(snackBarService, matDialogRef, data);
-    this.fxLayoutProperties = new FxLayoutProperties();
-    this.fxLayoutProperties.gap = '20px';
-    this.fxLayoutProperties.layout = 'row';
-    this.fxLayoutProperties.xs = 'row';
+    super(matDialogRef, !!data?.entidad?.rolProyecto);
 
     this.rolesProyecto$ = this.rolProyectoService.findAll().pipe(
       map(result => result.items)
@@ -168,7 +158,7 @@ export class MiembroEquipoProyectoModalComponent extends
     }
   }
 
-  protected getFormGroup(): FormGroup {
+  protected buildFormGroup(): FormGroup {
     const formGroup = new FormGroup(
       {
         rolParticipacion: new FormControl(this.data?.entidad?.rolProyecto, Validators.required),
@@ -199,7 +189,7 @@ export class MiembroEquipoProyectoModalComponent extends
     return formGroup;
   }
 
-  protected getDatosForm(): MiembroEquipoProyectoModalData {
+  protected getValue(): MiembroEquipoProyectoModalData {
     this.data.entidad.rolProyecto = this.formGroup.get('rolParticipacion').value;
     this.data.entidad.persona = this.formGroup.get('miembro').value;
     this.data.entidad.fechaInicio = this.formGroup.get('fechaInicio').value;

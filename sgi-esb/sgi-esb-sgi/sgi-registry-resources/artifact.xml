@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <artifacts>
-  <artifact name="produccion-cientifica-response-converter-mediator" groupId="org.crue.hercules.sgi.esb.sgi.resource" version="0.0.8" type="registry/resource" serverRole="EnterpriseIntegrator">
+  <artifact name="produccion-cientifica-response-converter-mediator" groupId="org.crue.hercules.sgi.esb.sgi.resource" version="${revision}" type="registry/resource" serverRole="EnterpriseIntegrator">
     <item>
       <file>produccion-cientifica-response-converter-mediator.js</file>
       <path>/_system/governance/scripts/sgi</path>
       <mediaType>application/javascript</mediaType>
     </item>
   </artifact>
-  <artifact name="produccion-cientifica-id-ref-transformer-mediator" groupId="org.crue.hercules.sgi.esb.sgi.resource" version="0.0.8" type="registry/resource" serverRole="EnterpriseIntegrator">
+  <artifact name="produccion-cientifica-id-ref-transformer-mediator" groupId="org.crue.hercules.sgi.esb.sgi.resource" version="${revision}" type="registry/resource" serverRole="EnterpriseIntegrator">
     <item>
       <file>produccion-cientifica-id-ref-transformer-mediator.js</file>
       <path>/_system/governance/scripts/sgi</path>

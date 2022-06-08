@@ -23,13 +23,7 @@
       [fxFlexOrder]="fxFlexProperties.order">
       <mat-form-field>
         <mat-label>{{'label.eti.comite' | translate}}</mat-label>
-        <input type="text" [placeholder]="'label.eti.comite' | translate" arial-label="Number" matInput
-          formControlName="comite" [matAutocomplete]="autocompleteComite" required>
-        <mat-autocomplete #autocompleteComite="matAutocomplete" [displayWith]="getComite">
-          <mat-option *ngFor="let c of filteredComites | async" [value]="c">
-            {{c.comite}}
-          </mat-option>
-        </mat-autocomplete>
+        <sgi-select-comite #selectComite formControlName="comite" required></sgi-select-comite>
         <mat-error *ngIf="formGroup.controls.comite.errors?.required">
           {{'error.required.entity' | translate:msgParamComiteEntity}}
         </mat-error>
@@ -73,13 +67,8 @@
       [fxFlexOrder]="fxFlexProperties.order">
       <mat-form-field>
         <mat-label>{{'eti.evaluador.cargo-comite' | translate}}</mat-label>
-        <input type="text" [placeholder]="'eti.evaluador.cargo-comite' | translate" arial-label="Number" matInput
-          formControlName="cargoComite" [matAutocomplete]="autocompleteCargoComite" required>
-        <mat-autocomplete #autocompleteCargoComite="matAutocomplete" [displayWith]="getCargoComite">
-          <mat-option *ngFor="let cargoComite of filteredCargosComite | async" [value]="cargoComite">
-            {{cargoComite.nombre}}
-          </mat-option>
-        </mat-autocomplete>
+        <sgi-select-entity formControlName="cargoComite" [options]="cargosComite$ | async" required>
+        </sgi-select-entity>
         <mat-error *ngIf="formGroup.controls.cargoComite.errors?.required">
           {{'error.required.entity' | translate:msgParamCargoComiteEntity}}
         </mat-error>

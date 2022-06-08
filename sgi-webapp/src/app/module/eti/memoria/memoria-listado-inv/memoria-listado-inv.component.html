@@ -18,13 +18,7 @@
       <div class="col">
         <mat-form-field class="input-form">
           <mat-label>{{'label.eti.comite' | translate}}</mat-label>
-          <input type="text" [placeholder]="'label.eti.comite' | translate" arial-label="Number" matInput
-            formControlName="comite" [matAutocomplete]="autocompleteComite">
-          <mat-autocomplete #autocompleteComite="matAutocomplete" [displayWith]="getComite">
-            <mat-option *ngFor="let comite of filteredComites | async" [value]="comite">
-              {{comite.comite}}
-            </mat-option>
-          </mat-autocomplete>
+          <sgi-select-comite #selectComite formControlName="comite"></sgi-select-comite>
         </mat-form-field>
       </div>
 
@@ -39,15 +33,10 @@
 
       <!-- Estado Memoria -->
       <div class="col">
-        <mat-form-field class="input-form">
+        <mat-form-field>
           <mat-label>{{'eti.memoria.estado' | translate}}</mat-label>
-          <input type="text" [placeholder]="'eti.memoria.estado' | translate" arial-label="Number" matInput
-            formControlName="tipoEstadoMemoria" [matAutocomplete]="autocompleteEstadoMemoria">
-          <mat-autocomplete #autocompleteEstadoMemoria="matAutocomplete" [displayWith]="getEstadoMemoria">
-            <mat-option *ngFor="let tipoEstadoMemoria of filteredEstadosMemoria | async" [value]="tipoEstadoMemoria">
-              {{tipoEstadoMemoria.nombre}}
-            </mat-option>
-          </mat-autocomplete>
+          <sgi-select-enum formControlName="tipoEstadoMemoria" [enumMap]="ESTADO_MEMORIA_MAP">
+          </sgi-select-enum>
         </mat-form-field>
       </div>
     </div>
@@ -121,13 +110,13 @@
                 <mat-icon color="warn">highlight_off</mat-icon>
               </button>
             </ng-container>
-            <ng-container *ngIf="hasPermisoEnviarSecretaria(memoria.estadoActual.id, memoria.solicitanteRef)">
+            <ng-container *ngIf="hasPermisoEnviarSecretaria(memoria.estadoActual.id, memoria.solicitante.id)">
               <button mat-button *sgiHasAuthorityForAnyUO="'ETI-MEM-INV-ESCR'" (click)="enviarSecretaria(memoria)"
                 matTooltip="{{'btn.eti.memoria.enviar' | translate}}">
                 <mat-icon color="primary">send</mat-icon>
               </button>
             </ng-container>
-            <ng-container *ngIf="hasPermisoEnviarSecretariaRetrospectiva(memoria, memoria.solicitanteRef)">
+            <ng-container *ngIf="hasPermisoEnviarSecretariaRetrospectiva(memoria, memoria.solicitante.id)">
               <button mat-button *sgiHasAuthorityForAnyUO="'ETI-MEM-INV-ERTR'"
                 (click)="enviarSecretariaRetrospectiva(memoria)"
                 matTooltip="{{'btn.eti.memoria.enviar-retrospectiva' | translate}}">
@@ -142,8 +131,14 @@
       <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
     </table>
 
-    <mat-paginator [pageSizeOptions]="elementosPagina" [length]="totalElementos" showFirstLastButtons>
-    </mat-paginator>
+    <div class="paginator-export">
+      <button mat-button matTooltip="{{'btn.export' | translate}}" (click)="openExportModal()"
+        [disabled]="totalElementos<=0">
+        <mat-icon color="primary">insert_chart_outlined</mat-icon>
+      </button>
+      <mat-paginator [pageSizeOptions]="elementosPagina" [length]="totalElementos" showFirstLastButtons>
+      </mat-paginator>
+    </div>
   </div>
 
 </sgi-menu-content>

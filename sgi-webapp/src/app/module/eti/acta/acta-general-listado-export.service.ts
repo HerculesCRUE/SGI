@@ -96,7 +96,7 @@ export class ActaGeneralListadoExportService
     const elementsRow: any[] = [];
     elementsRow.push(acta.comite ?? '');
     elementsRow.push(this.luxonDatePipe.transform(
-      LuxonUtils.toBackend(acta.fechaEvaluacion, false), 'short') ?? '');
+      LuxonUtils.toBackend(acta.fechaEvaluacion, true), 'shortDate') ?? '');
     elementsRow.push(acta.numeroActa ? acta.numeroActa.toString() : '');
     elementsRow.push(acta.convocatoria ?? '');
     elementsRow.push(acta.numEvaluaciones ? acta.numEvaluaciones.toString() : '0');

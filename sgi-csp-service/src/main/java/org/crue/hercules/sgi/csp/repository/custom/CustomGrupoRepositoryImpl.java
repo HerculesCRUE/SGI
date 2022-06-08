@@ -187,4 +187,26 @@ public class CustomGrupoRepositoryImpl implements CustomGrupoRepository {
         predicateGrupoEspecialInvestigacionIsFalse,
         predicateGrupoInFechaBaremacion);
   }
+
+  /**
+   * Obtiene los ids de {@link Grupo} que cumplen con la specification recibida.
+   * 
+   * @param specification condiciones que deben cumplir.
+   * @return lista de ids de {@link Grupo}.
+   */
+  @Override
+  public List<Long> findIds(Specification<Grupo> specification) {
+    log.debug("findIds(Specification<Grupo> specification) - start");
+
+    CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+    CriteriaQuery<Long> cq = cb.createQuery(Long.class);
+    Root<Grupo> root = cq.from(Grupo.class);
+
+    cq.select(root.get(Grupo_.id)).distinct(true).where(specification.toPredicate(root, cq, cb));
+
+    log.debug("findIds(Specification<Grupo> specification) - end");
+
+    return entityManager.createQuery(cq).getResultList();
+  }
+
 }

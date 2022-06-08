@@ -110,7 +110,6 @@ export class ProyectoClasificacionesComponent extends FragmentComponent implemen
       selectedClasificaciones: this.formPart.clasificaciones$.value.map(wrapper => wrapper.value.nivelSeleccionado)
     };
     const config = {
-      panelClass: 'sgi-dialog-container',
       data
     };
     const dialogRef = this.matDialog.open(ClasificacionModalComponent, config);

@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.assertj.core.api.Assertions;
+import org.crue.hercules.sgi.eti.config.SgiConfigProperties;
 import org.crue.hercules.sgi.eti.converter.EvaluacionConverter;
 import org.crue.hercules.sgi.eti.dto.EvaluacionWithNumComentario;
 import org.crue.hercules.sgi.eti.exceptions.ConvocatoriaReunionNotFoundException;
@@ -85,11 +86,17 @@ public class EvaluacionServiceTest extends BaseServiceTest {
   @Mock
   private SgdocService sgdocService;
 
+  @Mock
+  private ComunicadosService comunicadosService;
+
+  @Mock
+  private SgiConfigProperties sgiConfigProperties;
+
   @BeforeEach
   public void setUp() throws Exception {
     evaluacionService = new EvaluacionServiceImpl(evaluacionRepository, estadoMemoriaRepository,
         retrospectivaRepository, memoriaService, comentarioRepository, convocatoriaReunionRepository, memoriaRepository,
-        evaluacionConverter, reportService, sgdocService);
+        evaluacionConverter, reportService, sgdocService, comunicadosService, sgiConfigProperties);
   }
 
   @Test

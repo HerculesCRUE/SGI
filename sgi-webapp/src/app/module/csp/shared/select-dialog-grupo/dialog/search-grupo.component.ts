@@ -3,6 +3,7 @@ import { FormControl, FormGroup } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
+import { DialogCommonComponent } from '@core/component/dialog-common.component';
 import { SearchModalData } from '@core/component/select-dialog/select-dialog.component';
 import { MSG_PARAMS } from '@core/i18n';
 import { IGrupo } from '@core/models/csp/grupo';
@@ -32,7 +33,7 @@ interface IGrupoListado extends IGrupo {
   templateUrl: './search-grupo.component.html',
   styleUrls: ['./search-grupo.component.scss']
 })
-export class SearchGrupoModalComponent implements OnInit, AfterViewInit, OnDestroy {
+export class SearchGrupoModalComponent extends DialogCommonComponent implements OnInit, AfterViewInit, OnDestroy {
   formGroup: FormGroup;
   displayedColumns = [
     'nombre',
@@ -48,7 +49,6 @@ export class SearchGrupoModalComponent implements OnInit, AfterViewInit, OnDestr
   @ViewChild(MatSort, { static: true }) private sort: MatSort;
   @ViewChild(MatPaginator, { static: false }) private paginator: MatPaginator;
 
-  private subscriptions: Subscription[] = [];
   readonly grupos$ = new Subject<IGrupoListado[]>();
   colectivosBusqueda: string[];
 
@@ -63,19 +63,23 @@ export class SearchGrupoModalComponent implements OnInit, AfterViewInit, OnDestr
 
   constructor(
     private readonly logger: NGXLogger,
-    private readonly dialogRef: MatDialogRef<SearchGrupoModalComponent, IGrupo>,
+    dialogRef: MatDialogRef<SearchGrupoModalComponent, IGrupo>,
     private readonly grupoService: GrupoService,
     private readonly personaService: PersonaService,
     private readonly rolProyectoColectivoService: RolProyectoColectivoService,
     @Inject(MAT_DIALOG_DATA) public data: SearchModalData
-  ) { }
+  ) {
+    super(dialogRef);
+  }
 
   ngOnInit(): void {
+    super.ngOnInit();
     this.buildFormGroup();
     this.loadColectivosBusqueda();
   }
 
   ngAfterViewInit(): void {
+    super.ngAfterViewInit();
     this.search();
 
     this.subscriptions.push(
@@ -126,7 +130,7 @@ export class SearchGrupoModalComponent implements OnInit, AfterViewInit, OnDestr
   }
 
   closeModal(grupo?: IGrupo): void {
-    this.dialogRef.close(grupo);
+    this.close(grupo);
   }
 
   /**
@@ -179,7 +183,7 @@ export class SearchGrupoModalComponent implements OnInit, AfterViewInit, OnDestr
         this.logger.error(error);
         return EMPTY;
       })
-    )
+    );
   }
 
   private loadColectivosBusqueda(): void {

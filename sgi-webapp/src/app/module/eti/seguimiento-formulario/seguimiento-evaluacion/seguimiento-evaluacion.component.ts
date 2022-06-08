@@ -7,7 +7,8 @@ import { IMemoria } from '@core/models/eti/memoria';
 import { FxFlexProperties } from '@core/models/shared/flexLayout/fx-flex-properties';
 import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-properties';
 import { TipoEvaluacionService } from '@core/services/eti/tipo-evaluacion.service';
-import { Observable, Subscription } from 'rxjs';
+import { Observable, of, Subscription } from 'rxjs';
+import { map, switchMap } from 'rxjs/operators';
 import { SeguimientoFormularioActionService } from '../seguimiento-formulario.action.service';
 import { SeguimientoListadoAnteriorMemoriaComponent } from '../seguimiento-listado-anterior-memoria/seguimiento-listado-anterior-memoria.component';
 import { SeguimientoEvaluacionFragment } from './seguimiento-evaluacion.fragment';
@@ -25,9 +26,10 @@ export class SeguimientoEvaluacionComponent extends FormFragmentComponent<IMemor
 
   @ViewChild('evaluaciones') evaluaciones: SeguimientoListadoAnteriorMemoriaComponent;
 
-  dictamenListado: IDictamen[];
-  filteredDictamenes: Observable<IDictamen[]>;
+  dictamenes$: Observable<IDictamen[]>;
   suscriptions: Subscription[] = [];
+
+  formPart: SeguimientoEvaluacionFragment;
 
   get MSG_PARAMS() {
     return MSG_PARAMS;
@@ -55,6 +57,22 @@ export class SeguimientoEvaluacionComponent extends FormFragmentComponent<IMemor
     this.fxLayoutProperties.layout = 'row wrap';
     this.fxLayoutProperties.xs = 'column';
 
+    this.formPart = this.fragment as SeguimientoEvaluacionFragment;
+
+    this.dictamenes$ = this.formPart.evaluacion$.pipe(
+      switchMap(evaluacion => {
+        if (evaluacion) {
+          return tipoEvaluacionService.findAllDictamenByTipoEvaluacionAndRevisionMinima(
+            evaluacion.tipoEvaluacion.id,
+            evaluacion.esRevMinima
+          ).pipe(
+            map(response => response.items)
+          );
+        }
+        return of([]);
+      })
+    );
+
   }
 
   ngOnInit() {
@@ -62,40 +80,12 @@ export class SeguimientoEvaluacionComponent extends FormFragmentComponent<IMemor
     this.suscriptions.push(this.formGroup.controls.dictamen.valueChanges.subscribe((dictamen) => {
       this.actionService.setDictamen(dictamen);
     }));
-    this.suscriptions.push((this.fragment as SeguimientoEvaluacionFragment).evaluacion$.subscribe((evaluacion) => {
-      if (evaluacion) {
-        this.loadDictamenes(evaluacion);
-      }
-    }));
   }
 
   ngAfterViewInit(): void {
     this.evaluaciones.memoriaId = this.actionService.getEvaluacion()?.memoria?.id;
     this.evaluaciones.evaluacionId = this.actionService.getEvaluacion()?.id;
     this.evaluaciones.ngAfterViewInit();
-  }
-
-  /**
-   * Devuelve el nombre de un dictamen.
-   * @param dictamen dictamen
-   * returns nombre dictamen
-   */
-  getDictamen(dictamen: IDictamen): string {
-    return dictamen?.nombre;
-  }
-
-  /**
-   * Recupera un listado de los dictamenes que hay en el sistema.
-   */
-  loadDictamenes(evaluacion: IEvaluacion): void {
-    /**
-     * Devuelve el listado de dictámenes dependiendo del tipo de Evaluación y si es de Revisión Mínima
-     */
-    this.suscriptions.push(this.tipoEvaluacionService.findAllDictamenByTipoEvaluacionAndRevisionMinima(
-      evaluacion.tipoEvaluacion.id, evaluacion.esRevMinima).subscribe(
-        (response) => {
-          this.dictamenListado = response.items;
-        }));
   }
 
   ngOnDestroy(): void {

@@ -105,11 +105,13 @@ export class ModeloEjecucionTipoHitoFragment extends Fragment {
       } as IModeloEjecucion
     );
     return from(createdModelos).pipe(
-      mergeMap((wrappedTarea) => {
-        return this.modeloTipoHitoService.create(wrappedTarea.value).pipe(
-          map((updatedTarea) => {
-            const index = this.modeloTipoHito$.value.findIndex((currentTarea) => currentTarea === wrappedTarea);
-            this.modeloTipoHito$[index] = new StatusWrapper<IModeloTipoHito>(updatedTarea);
+      mergeMap((wrappedTipoHito) => {
+        return this.modeloTipoHitoService.create(wrappedTipoHito.value).pipe(
+          map((updatedTipoHito) => {
+            const index = this.modeloTipoHito$.value.findIndex((currentTarea) => currentTarea === wrappedTipoHito);
+            wrappedTipoHito.value.id = updatedTipoHito.id;
+            this.modeloTipoHito$.value[index] = new StatusWrapper<IModeloTipoHito>(wrappedTipoHito.value);
+            this.modeloTipoHito$.next(this.modeloTipoHito$.value);
           })
         );
       }));

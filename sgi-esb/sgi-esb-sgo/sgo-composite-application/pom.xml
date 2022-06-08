@@ -4,10 +4,9 @@
   <parent>
     <groupId>org.crue.hercules.sgi.esb.sgo</groupId>
     <artifactId>sgi-esb-sgo</artifactId>
-    <version>0.0.8</version>
+    <version>${revision}</version>
   </parent>
   <artifactId>sgo-composite-application</artifactId>
-  <version>0.0.8</version>
   <packaging>carbon/application</packaging>
   <name>sgo-composite-application</name>
   <description>sgo-composite-application</description>
@@ -27,43 +26,43 @@
     <dependency>
       <groupId>org.crue.hercules.sgi.esb.sgo.api</groupId>
       <artifactId>sgo-api</artifactId>
-      <version>0.0.8</version>
+      <version>${revision}</version>
       <type>xml</type>
     </dependency>
     <dependency>
       <groupId>org.crue.hercules.sgi.esb.sgo.endpoint</groupId>
       <artifactId>sgo-endpoint</artifactId>
-      <version>0.0.8</version>
+      <version>${revision}</version>
       <type>xml</type>
     </dependency>
     <dependency>
       <groupId>org.crue.hercules.sgi.esb.sgo.endpoint</groupId>
       <artifactId>sgo-standalone-endpoint</artifactId>
-      <version>0.0.8</version>
+      <version>${revision}</version>
       <type>xml</type>
     </dependency>
     <dependency>
       <groupId>org.crue.hercules.sgi.esb.sgo.sequence</groupId>
       <artifactId>sgo-add-x-api-key-sequence</artifactId>
-      <version>0.0.8</version>
+      <version>${revision}</version>
       <type>xml</type>
     </dependency>
     <dependency>
       <groupId>org.crue.hercules.sgi.esb.sgo.resource</groupId>
       <artifactId>clasificacion-ids-transformer-mediator</artifactId>
-      <version>0.0.8</version>
+      <version>${revision}</version>
       <type>zip</type>
     </dependency>
     <dependency>
       <groupId>org.crue.hercules.sgi.esb.sgo.resource</groupId>
       <artifactId>get-clasificacion-prefix-query-param-mediator</artifactId>
-      <version>0.0.8</version>
+      <version>${revision}</version>
       <type>zip</type>
     </dependency>
     <dependency>
       <groupId>org.crue.hercules.sgi.esb.sgo.resource</groupId>
       <artifactId>remove-clasificacion-prefix-query-param-mediator</artifactId>
-      <version>0.0.8</version>
+      <version>${revision}</version>
       <type>zip</type>
     </dependency>
   </dependencies>

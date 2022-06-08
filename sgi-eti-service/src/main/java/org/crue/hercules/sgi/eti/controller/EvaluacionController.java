@@ -580,4 +580,21 @@ public class EvaluacionController {
     return new ResponseEntity<>(HttpStatus.NO_CONTENT);
   }
 
+  /**
+   * Permite enviar el comunicado de
+   * {@link Evaluacion}
+   * 
+   * @param id Id del {@link Evaluacion}.
+   * @return HTTP-200 Si se puede enviar / HTTP-204 Si no se puede enviar
+   */
+  @RequestMapping(path = "/{id}/comunicado", method = RequestMethod.HEAD)
+  @PreAuthorize("hasAnyAuthorityForAnyUO('ETI-EVC-EVAL')")
+  public ResponseEntity<Evaluacion> enviarComunicado(@PathVariable Long id) {
+    log.debug("enviarComunicado(Long id) - start");
+    Boolean returnValue = service.enviarComunicado(id);
+    log.debug("enviarComunicado(Long id) - end");
+    return Boolean.TRUE.equals(returnValue) ? new ResponseEntity<>(HttpStatus.OK)
+        : new ResponseEntity<>(HttpStatus.NO_CONTENT);
+  }
+
 }

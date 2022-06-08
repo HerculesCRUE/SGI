@@ -221,6 +221,9 @@ export class SolicitudProyectoClasificacionListadoExportService extends Abstract
       }
     } else {
       elementsRow.push('');
+      for (let i = 0; i < maxNumNiveles - 1; i++) {
+        elementsRow.push('');
+      }
     }
   }
 }

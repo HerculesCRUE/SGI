@@ -1,0 +1,27 @@
+<sgi-action [actionService]="actionService">
+  <ng-container menu>
+    <sgi-action-fragment-menu-item *sgiHasAnyAuthorityForAnyUO="['CSP-GIN-V', 'CSP-GIN-E', 'CSP-GIN-INV-VR']"
+      [route]="[GRUPO_LINEA_INVESTIGACION_ROUTE_NAMES.DATOS_GENERALES]" [title]="'label.datos-generales' | translate"
+      [fragment]="actionService.getFragment(actionService.FRAGMENT.DATOS_GENERALES)">
+    </sgi-action-fragment-menu-item>
+    <sgi-action-fragment-menu-item *sgiHasAnyAuthorityForAnyUO="['CSP-GIN-V', 'CSP-GIN-E', 'CSP-GIN-INV-VR']"
+      [route]="[GRUPO_LINEA_INVESTIGACION_ROUTE_NAMES.LINEA_INVESTIGADOR]"
+      [title]="'csp.grupo-linea-investigador' | translate:MSG_PARAMS.CARDINALIRY.PLURAL"
+      [fragment]="actionService.getFragment(actionService.FRAGMENT.LINEA_INVESTIGADOR)">
+    </sgi-action-fragment-menu-item>
+    <sgi-action-fragment-menu-item *sgiHasAnyAuthorityForAnyUO="['CSP-GIN-V', 'CSP-GIN-E', 'CSP-GIN-INV-VR']"
+      [route]="[GRUPO_LINEA_INVESTIGACION_ROUTE_NAMES.CLASIFICACIONES]"
+      [title]="'csp.grupo-linea-clasificacion' | translate:MSG_PARAMS.CARDINALIRY.PLURAL"
+      [fragment]="actionService.getFragment(actionService.FRAGMENT.CLASIFICACIONES)">
+    </sgi-action-fragment-menu-item>
+    <sgi-action-fragment-menu-item *sgiHasAnyAuthorityForAnyUO="['CSP-GIN-V', 'CSP-GIN-E', 'CSP-GIN-INV-VR']"
+      [route]="[GRUPO_LINEA_INVESTIGACION_ROUTE_NAMES.EQUIPO_INSTRUMENTAL]"
+      [title]="'csp.grupo-linea-equipo-instrumental' | translate:MSG_PARAMS.CARDINALIRY.PLURAL"
+      [fragment]="actionService.getFragment(actionService.FRAGMENT.EQUIPO_INSTRUMENTAL)">
+    </sgi-action-fragment-menu-item>
+  </ng-container>
+  <ng-container footer>
+    <sgi-action-footer [texto]="textoActualizar" [actionService]="actionService">
+    </sgi-action-footer>
+  </ng-container>
+</sgi-action>

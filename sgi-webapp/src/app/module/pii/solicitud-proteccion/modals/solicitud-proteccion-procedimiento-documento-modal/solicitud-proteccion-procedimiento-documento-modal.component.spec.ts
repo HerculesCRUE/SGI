@@ -5,17 +5,14 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RouterTestingModule } from '@angular/router/testing';
 import { IProcedimientoDocumento } from '@core/models/pii/procedimiento-documento';
-import { SnackBarService } from '@core/services/snack-bar.service';
 import { StatusWrapper } from '@core/utils/status-wrapper';
 import TestUtils from '@core/utils/test-utils';
 import { MaterialDesignModule } from '@material/material-design.module';
 import { TranslateModule } from '@ngx-translate/core';
 import { SgiAuthModule } from '@sgi/framework/auth';
 import { SharedModule } from '@shared/shared.module';
-import { LoggerTestingModule } from 'ngx-logger/testing';
 import { SgpSharedModule } from 'src/app/esb/sgp/shared/sgp-shared.module';
 import { SolicitudProteccionProcedimientoDocumentoModalComponent } from './solicitud-proteccion-procedimiento-documento-modal.component';
-
 
 describe('SolicitudProteccionProcedimientoDocumentoModalComponent', () => {
   let component: SolicitudProteccionProcedimientoDocumentoModalComponent;
@@ -28,7 +25,6 @@ describe('SolicitudProteccionProcedimientoDocumentoModalComponent', () => {
         BrowserAnimationsModule,
         MaterialDesignModule,
         HttpClientTestingModule,
-        LoggerTestingModule,
         TestUtils.getIdiomas(),
         RouterTestingModule,
         FormsModule,
@@ -39,8 +35,7 @@ describe('SolicitudProteccionProcedimientoDocumentoModalComponent', () => {
         SgpSharedModule
       ],
       providers: [
-        { provide: SnackBarService, useValue: TestUtils.getSnackBarServiceSpy() },
-        { provide: MatDialogRef, useValue: { value: { documento: {} } } as StatusWrapper<IProcedimientoDocumento> },
+        { provide: MatDialogRef, useValue: TestUtils.buildDialogCommonMatDialogRef() },
         { provide: MAT_DIALOG_DATA, useValue: { value: { documento: {} } } as StatusWrapper<IProcedimientoDocumento> },
       ]
     })

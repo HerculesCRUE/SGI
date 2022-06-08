@@ -1,0 +1,26 @@
+<sgi-export-dialog [title]="'eti.evaluador.report.title' | translate ">
+  <form [formGroup]="formGroup">
+    <!-- OutputReportType -->
+    <mat-form-field>
+      <mat-label>{{'export.type' | translate}}</mat-label>
+      <sgi-select-enum formControlName="outputType" required [enumMap]="OUTPUT_REPORT_TYPE_EXCEL_CSV_MAP">
+      </sgi-select-enum>
+    </mat-form-field>
+
+    <!-- Columns visibility -->
+    <div class="row-visibility-header">
+      <mat-label>{{'export.columns' | translate}}</mat-label>
+      <mat-checkbox color="primary" class="checkbox" checked="true" (change)="selectUnselectAll($event)">
+        <mat-label>{{'label.todos' | translate}}</mat-label>
+      </mat-checkbox>
+    </div>
+
+    <div class="row-visibility">
+      <div class="columns-visibility">
+        <mat-checkbox color="primary" class="checkbox" formControlName="showConflictos">
+          {{'eti.evaluador.conflicto-interes' | translate:{ count:2 } }}
+        </mat-checkbox>
+      </div>
+    </div>
+  </form>
+</sgi-export-dialog>

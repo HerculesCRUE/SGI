@@ -6,8 +6,6 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RouterTestingModule } from '@angular/router/testing';
 import { DialogComponent } from '@block/dialog/dialog.component';
 import { HeaderComponent } from '@block/header/header.component';
-import { ISolicitudHito } from '@core/models/csp/solicitud-hito';
-import { SnackBarService } from '@core/services/snack-bar.service';
 import TestUtils from '@core/utils/test-utils';
 import { MaterialDesignModule } from '@material/material-design.module';
 import { SgiAuthModule, SgiAuthService } from '@sgi/framework/auth';
@@ -21,9 +19,6 @@ describe('SolicitiudHitosModalComponent', () => {
   let fixture: ComponentFixture<SolicitudHitosModalComponent>;
 
   beforeEach(waitForAsync(() => {
-    const mockDialogRef = {
-      close: jasmine.createSpy('close'),
-    };
     // Mock MAT_DIALOG
     const matDialogData = {
       hitos: []
@@ -47,8 +42,7 @@ describe('SolicitiudHitosModalComponent', () => {
         CspSharedModule
       ],
       providers: [
-        { provide: SnackBarService, useValue: TestUtils.getSnackBarServiceSpy() },
-        { provide: MatDialogRef, useValue: mockDialogRef },
+        { provide: MatDialogRef, useValue: TestUtils.buildDialogCommonMatDialogRef() },
         { provide: MAT_DIALOG_DATA, useValue: matDialogData },
         SgiAuthService
       ]

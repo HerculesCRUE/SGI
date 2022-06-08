@@ -1,11 +1,5 @@
-<div class="sgi-dialog-header" fxLayout="row" fxLayoutGap="20px">
-  <span fxFlexAlign="center" mat-mat-dialog-title role="heading" aria-level="3" fxFlex>{{'csp.proyecto' |
-    translate:MSG_PARAMS.CARDINALIRY.PLURAL}}</span>
-  <button fxFlex="nogrow" mat-icon-button mat-dialog-close>
-    <mat-icon class="close-icon">close</mat-icon>
-  </button>
-</div>
-<mat-dialog-content fxLayout="column" fxLayoutGap="10px">
+<sgi-dialog-header title="{{'csp.proyecto' | translate:MSG_PARAMS.CARDINALIRY.PLURAL}}"></sgi-dialog-header>
+<sgi-dialog-content fxLayout="column" fxLayoutGap="10px">
   <form [formGroup]="formGroup" fxLayout="column">
     <div fxFlex fxLayout="row" fxLayoutGap="10px">
       <!-- Identificador interno -->
@@ -114,14 +108,14 @@
     </ng-container>
 
   </form>
-  <div fxFlex fxLayoutAlign="start">
+  <div fxLayout="row" class="separacion" fxLayoutAlign="start">
     <button color="primary" mat-raised-button (click)="search(true)">{{'btn.search' |
       translate}}</button>
     <button color="warn" aria-label="Center Align" (click)="onClearFilters()" mat-button>{{'btn.clean'|
       translate}}
     </button>
   </div>
-  <div class="mat-elevation-z3">
+  <div fxLayout="column" class="mat-elevation-z3">
     <table mat-table [dataSource]="proyectos$ | async" matSort matSortActive="id" matSortDirection="desc"
       matSortDisableClear>
       <ng-container matColumnDef="id">
@@ -221,7 +215,7 @@
       {{ 'btn.add.entity' | translate:msgParamEntity }}
     </button>
   </div>
-</mat-dialog-content>
+</sgi-dialog-content>
 <mat-dialog-actions>
   <button class="link-cancelar" mat-button type="button" mat-dialog-close>{{'btn.cancel' |
     translate}}</button>

@@ -1,14 +1,17 @@
 package org.crue.hercules.sgi.prc.integration;
 
 import java.net.URI;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.assertj.core.api.Assertions;
 import org.crue.hercules.sgi.prc.controller.ProduccionCientificaController;
 import org.crue.hercules.sgi.prc.dto.AcreditacionOutput;
 import org.crue.hercules.sgi.prc.dto.ActividadOutput;
 import org.crue.hercules.sgi.prc.dto.AutorOutput;
+import org.crue.hercules.sgi.prc.dto.CampoProduccionCientificaOutput;
 import org.crue.hercules.sgi.prc.dto.CongresoOutput;
 import org.crue.hercules.sgi.prc.dto.DireccionTesisOutput;
 import org.crue.hercules.sgi.prc.dto.EstadoProduccionCientificaInput;
@@ -17,6 +20,8 @@ import org.crue.hercules.sgi.prc.dto.ObraArtisticaOutput;
 import org.crue.hercules.sgi.prc.dto.ProduccionCientificaOutput;
 import org.crue.hercules.sgi.prc.dto.ProyectoOutput;
 import org.crue.hercules.sgi.prc.dto.PublicacionOutput;
+import org.crue.hercules.sgi.prc.dto.ValorCampoOutput;
+import org.crue.hercules.sgi.prc.dto.csp.GrupoDto;
 import org.crue.hercules.sgi.prc.model.EstadoProduccionCientifica.TipoEstadoProduccion;
 import org.crue.hercules.sgi.prc.service.sgi.SgiApiCspService;
 import org.crue.hercules.sgi.prc.service.sgi.SgiApiPiiService;
@@ -25,6 +30,8 @@ import org.crue.hercules.sgi.prc.service.sgi.SgiApiSgpService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
+import org.mockito.ArgumentMatchers;
+import org.mockito.BDDMockito;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.core.ParameterizedTypeReference;
@@ -57,6 +64,9 @@ class ProduccionCientificaIT extends BaseIT {
   private static final String PATH_ACREDITACIONES = ProduccionCientificaController.PATH_ACREDITACIONES;
   private static final String PATH_RECHAZAR = "/rechazar";
   private static final String PATH_VALIDAR = "/validar";
+  public static final String PATH_CAMPOS = ProduccionCientificaController.PATH_CAMPOS;
+  public static final String PATH_VALORES = ProduccionCientificaController.PATH_VALORES;
+  public static final String PATH_MODIFICABLE = ProduccionCientificaController.PATH_MODIFICABLE;
 
   private static final String PUBLICACION_REF_VALUE = "publicacion-ref-";
   private static final String COMITE_EDITORIAL_REF_VALUE = "comite-ref-";
@@ -113,6 +123,57 @@ class ProduccionCientificaIT extends BaseIT {
     Assertions.assertThat(produccionCientifica.getId()).as("getId()").isNotNull();
     Assertions.assertThat(produccionCientifica.getProduccionCientificaRef()).as("getProduccionCientificaRef()")
         .isEqualTo(PUBLICACION_REF_VALUE + "001");
+  }
+
+  @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = {
+      // @formatter:off 
+      "classpath:scripts/produccion_cientifica.sql",
+      "classpath:scripts/autor.sql",
+      "classpath:scripts/autor_grupo.sql"
+      // @formatter:on  
+  })
+  @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
+  @Test
+  void findById_Investigador_ReturnsProduccionCientifica() throws Exception {
+    Long idProduccionCientifica = 1L;
+    String roles = "PRC-VAL-INV-ER";
+
+    BDDMockito.given(sgiApiCspService.findAllGruposByPersonaRef(ArgumentMatchers.<String>any()))
+        .willReturn(Arrays.asList(generarMockGrupoDto(1L)));
+
+    final ResponseEntity<ProduccionCientificaOutput> response = restTemplate.exchange(
+        CONTROLLER_BASE_PATH + PATH_PARAMETER_ID, HttpMethod.GET, buildRequest(null, null, roles),
+        ProduccionCientificaOutput.class, idProduccionCientifica);
+
+    Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+
+    ProduccionCientificaOutput produccionCientifica = response.getBody();
+    Assertions.assertThat(produccionCientifica.getId()).as("getId()").isNotNull();
+    Assertions.assertThat(produccionCientifica.getProduccionCientificaRef()).as("getProduccionCientificaRef()")
+        .isEqualTo(PUBLICACION_REF_VALUE + "001");
+  }
+
+  @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = {
+      // @formatter:off 
+      "classpath:scripts/produccion_cientifica.sql",
+      "classpath:scripts/autor.sql",
+      "classpath:scripts/autor_grupo.sql"
+      // @formatter:on  
+  })
+  @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
+  @Test
+  void findById_Investigador_Returns403() throws Exception {
+    Long idProduccionCientifica = 2L;
+    String roles = "PRC-VAL-INV-ER";
+
+    BDDMockito.given(sgiApiCspService.findAllGruposByPersonaRef(ArgumentMatchers.<String>any()))
+        .willReturn(Arrays.asList(generarMockGrupoDto(1L)));
+
+    final ResponseEntity<ProduccionCientificaOutput> response = restTemplate.exchange(
+        CONTROLLER_BASE_PATH + PATH_PARAMETER_ID, HttpMethod.GET, buildRequest(null, null, roles),
+        ProduccionCientificaOutput.class, idProduccionCientifica);
+
+    Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
   }
 
   @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = {
@@ -455,7 +516,7 @@ class ProduccionCientificaIT extends BaseIT {
   @ParameterizedTest
   @ValueSource(strings = { "descripcion=ik=1",
       "nombreExposicion=ik=1" })
-  public void findAllObrasArtisticasByFilter_WithPagingSortingAndFiltering_ReturnsProduccionCientificaSubList(
+  void findAllObrasArtisticasByFilter_WithPagingSortingAndFiltering_ReturnsProduccionCientificaSubList(
       String filter)
       throws Exception {
     String roles = "PRC-VAL-V";
@@ -504,7 +565,7 @@ class ProduccionCientificaIT extends BaseIT {
   @ValueSource(strings = {
       "fechaInicioDesde=ge=2021-01-01T00:00:00Z;fechaInicioHasta=le=2021-02-01T00:00:00Z"
   })
-  public void findAllActividadesByFilter_WithPagingSortingAndFiltering_ReturnsProduccionCientificaSubList(
+  void findAllActividadesByFilter_WithPagingSortingAndFiltering_ReturnsProduccionCientificaSubList(
       String filter)
       throws Exception {
     String roles = "PRC-VAL-V";
@@ -553,7 +614,7 @@ class ProduccionCientificaIT extends BaseIT {
   @ValueSource(strings = {
       "fechaDefensaDesde=ge=2021-01-01T00:00:00Z;fechaDefensaHasta=le=2021-02-01T00:00:00Z"
   })
-  public void findAllDireccionesTesisByFilter_WithPagingSortingAndFiltering_ReturnsProduccionCientificaSubList(
+  void findAllDireccionesTesisByFilter_WithPagingSortingAndFiltering_ReturnsProduccionCientificaSubList(
       String filter)
       throws Exception {
     String roles = "PRC-VAL-V";
@@ -596,7 +657,7 @@ class ProduccionCientificaIT extends BaseIT {
   })
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  void validar_ReturnsProduccionCientifica()
+  void validar_Gestor_ReturnsProduccionCientifica()
       throws Exception {
     String roles = "PRC-VAL-E";
     final Long produccionCientificaId = 2L;
@@ -625,11 +686,155 @@ class ProduccionCientificaIT extends BaseIT {
   @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = {
       // @formatter:off 
       "classpath:scripts/produccion_cientifica.sql",
+      "classpath:scripts/autor.sql",
+      "classpath:scripts/autor_grupo.sql"
       // @formatter:on  
   })
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  void rechazar_ReturnsProduccionCientifica()
+  void validarProduccionCientificaPendiente_Investigador_ReturnsProduccionCientificaValidada()
+      throws Exception {
+    String roles = "PRC-VAL-INV-ER";
+    final Long produccionCientificaId = 800L;
+
+    BDDMockito.given(sgiApiCspService.findAllGruposByPersonaRef(ArgumentMatchers.<String>any()))
+        .willReturn(generarMockGrupoDtoList(Arrays.asList(new Long[] { 1L, 2L })));
+
+    URI uri = UriComponentsBuilder.fromUriString(CONTROLLER_BASE_PATH +
+        PATH_PARAMETER_ID + PATH_VALIDAR)
+        .buildAndExpand(produccionCientificaId)
+        .toUri();
+
+    final ResponseEntity<PublicacionOutput> response = restTemplate.exchange(uri,
+        HttpMethod.PATCH,
+        buildRequest(null, null, roles), new ParameterizedTypeReference<PublicacionOutput>() {
+        });
+
+    Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+    final PublicacionOutput produccionCientificaValidada = response.getBody();
+
+    Assertions.assertThat(produccionCientificaValidada.getId())
+        .as(".getId()")
+        .isEqualTo(produccionCientificaId);
+    Assertions.assertThat(produccionCientificaValidada.getEstado().getEstado())
+        .as(".getEstado().getEstado()")
+        .isEqualTo(TipoEstadoProduccion.VALIDADO);
+  }
+
+  @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = {
+      // @formatter:off 
+      "classpath:scripts/produccion_cientifica.sql",
+      "classpath:scripts/autor.sql",
+      "classpath:scripts/autor_grupo.sql"
+      // @formatter:on  
+  })
+  @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
+  @Test
+  void validarProduccionCientificaPendiente_Investigador_ReturnsProduccionCientificaValidadaParcialmente()
+      throws Exception {
+    String roles = "PRC-VAL-INV-ER";
+    final Long produccionCientificaId = 801L;
+
+    BDDMockito.given(sgiApiCspService.findAllGruposByPersonaRef(ArgumentMatchers.<String>any()))
+        .willReturn(generarMockGrupoDtoList(Arrays.asList(new Long[] { 1L, 2L })));
+
+    URI uri = UriComponentsBuilder.fromUriString(CONTROLLER_BASE_PATH +
+        PATH_PARAMETER_ID + PATH_VALIDAR)
+        .buildAndExpand(produccionCientificaId)
+        .toUri();
+
+    final ResponseEntity<PublicacionOutput> response = restTemplate.exchange(uri,
+        HttpMethod.PATCH,
+        buildRequest(null, null, roles), new ParameterizedTypeReference<PublicacionOutput>() {
+        });
+
+    Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+    final PublicacionOutput produccionCientificaValidada = response.getBody();
+
+    Assertions.assertThat(produccionCientificaValidada.getId())
+        .as(".getId()")
+        .isEqualTo(produccionCientificaId);
+    Assertions.assertThat(produccionCientificaValidada.getEstado().getEstado())
+        .as(".getEstado().getEstado()")
+        .isEqualTo(TipoEstadoProduccion.VALIDADO_PARCIALMENTE);
+  }
+
+  @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = {
+      // @formatter:off 
+      "classpath:scripts/produccion_cientifica.sql",
+      "classpath:scripts/autor.sql",
+      "classpath:scripts/autor_grupo.sql"
+      // @formatter:on  
+  })
+  @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
+  @Test
+  void validarProduccionCientificaValidadParcialmente_Investigador_ReturnsProduccionCientificaValidada()
+      throws Exception {
+    String roles = "PRC-VAL-INV-ER";
+    final Long produccionCientificaId = 802L;
+
+    BDDMockito.given(sgiApiCspService.findAllGruposByPersonaRef(ArgumentMatchers.<String>any()))
+        .willReturn(generarMockGrupoDtoList(Arrays.asList(new Long[] { 1L, 2L })));
+
+    URI uri = UriComponentsBuilder.fromUriString(CONTROLLER_BASE_PATH +
+        PATH_PARAMETER_ID + PATH_VALIDAR)
+        .buildAndExpand(produccionCientificaId)
+        .toUri();
+
+    final ResponseEntity<PublicacionOutput> response = restTemplate.exchange(uri,
+        HttpMethod.PATCH,
+        buildRequest(null, null, roles), new ParameterizedTypeReference<PublicacionOutput>() {
+        });
+
+    Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+    final PublicacionOutput produccionCientificaValidada = response.getBody();
+
+    Assertions.assertThat(produccionCientificaValidada.getId())
+        .as(".getId()")
+        .isEqualTo(produccionCientificaId);
+    Assertions.assertThat(produccionCientificaValidada.getEstado().getEstado())
+        .as(".getEstado().getEstado()")
+        .isEqualTo(TipoEstadoProduccion.VALIDADO);
+  }
+
+  @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = {
+      // @formatter:off 
+      "classpath:scripts/produccion_cientifica.sql",
+      "classpath:scripts/autor.sql",
+      "classpath:scripts/autor_grupo.sql"
+      // @formatter:on  
+  })
+  @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
+  @Test
+  void validar_Investigador_Returns403()
+      throws Exception {
+    String roles = "PRC-VAL-INV-ER";
+    final Long produccionCientificaId = 700L;
+
+    BDDMockito.given(sgiApiCspService.findAllGruposByPersonaRef(ArgumentMatchers.<String>any()))
+        .willReturn(generarMockGrupoDtoList(Arrays.asList(new Long[] { 1L, 2L })));
+
+    URI uri = UriComponentsBuilder.fromUriString(CONTROLLER_BASE_PATH +
+        PATH_PARAMETER_ID + PATH_VALIDAR)
+        .buildAndExpand(produccionCientificaId)
+        .toUri();
+
+    final ResponseEntity<PublicacionOutput> response = restTemplate.exchange(uri,
+        HttpMethod.PATCH,
+        buildRequest(null, null, roles), new ParameterizedTypeReference<PublicacionOutput>() {
+        });
+
+    Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
+  }
+
+  @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = {
+      // @formatter:off 
+      "classpath:scripts/produccion_cientifica.sql",
+      // @formatter:on  
+  })
+  @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
+  @Test
+  void rechazar_Gestor_ReturnsProduccionCientifica()
       throws Exception {
     String roles = "PRC-VAL-E";
     final Long produccionCientificaId = 2L;
@@ -661,6 +866,169 @@ class ProduccionCientificaIT extends BaseIT {
     Assertions.assertThat(produccionCientificaValidada.getEstado().getComentario())
         .as(".getEstado().getComentario()")
         .isEqualTo(comentarioRechazo);
+  }
+
+  @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = {
+      // @formatter:off 
+      "classpath:scripts/produccion_cientifica.sql",
+      "classpath:scripts/autor.sql",
+      "classpath:scripts/autor_grupo.sql"
+      // @formatter:on  
+  })
+  @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
+  @Test
+  void rechazar_Investigador_ReturnsProduccionCientificaRechazada()
+      throws Exception {
+    String roles = "PRC-VAL-INV-ER";
+    final Long produccionCientificaId = 801L;
+    final String comentarioRechazo = "rechazado";
+    EstadoProduccionCientificaInput estadoProduccionCientificaInput = EstadoProduccionCientificaInput.builder()
+        .comentario(comentarioRechazo).build();
+
+    BDDMockito.given(sgiApiCspService.findAllGruposByPersonaRef(ArgumentMatchers.<String>any()))
+        .willReturn(generarMockGrupoDtoList(Arrays.asList(new Long[] { 1L, 2L })));
+
+    URI uri = UriComponentsBuilder.fromUriString(CONTROLLER_BASE_PATH +
+        PATH_PARAMETER_ID + PATH_RECHAZAR)
+        .buildAndExpand(produccionCientificaId)
+        .toUri();
+
+    final ResponseEntity<PublicacionOutput> response = restTemplate.exchange(uri,
+        HttpMethod.PATCH,
+        buildRequest(null,
+            estadoProduccionCientificaInput, roles),
+        new ParameterizedTypeReference<PublicacionOutput>() {
+        });
+
+    Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+    final PublicacionOutput produccionCientificaValidada = response.getBody();
+
+    Assertions.assertThat(produccionCientificaValidada.getId())
+        .as(".getId()")
+        .isEqualTo(produccionCientificaId);
+    Assertions.assertThat(produccionCientificaValidada.getEstado().getEstado())
+        .as(".getEstado().getEstado()")
+        .isEqualTo(TipoEstadoProduccion.RECHAZADO);
+  }
+
+  @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = {
+      // @formatter:off 
+      "classpath:scripts/produccion_cientifica.sql",
+      "classpath:scripts/autor.sql",
+      "classpath:scripts/autor_grupo.sql"
+      // @formatter:on  
+  })
+  @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
+  @Test
+  void accesibleByInvestigador_ReturnsOk()
+      throws Exception {
+    String roles = "PRC-VAL-INV-ER";
+    final Long produccionCientificaId = 801L;
+
+    BDDMockito.given(sgiApiCspService.findAllGruposByPersonaRef(ArgumentMatchers.<String>any()))
+        .willReturn(generarMockGrupoDtoList(Arrays.asList(new Long[] { 1L, 2L })));
+
+    URI uri = UriComponentsBuilder.fromUriString(CONTROLLER_BASE_PATH +
+        PATH_PARAMETER_ID)
+        .buildAndExpand(produccionCientificaId)
+        .toUri();
+
+    final ResponseEntity<Void> response = restTemplate.exchange(uri,
+        HttpMethod.HEAD,
+        buildRequest(null, null, roles),
+        Void.class);
+
+    Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+  }
+
+  @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = {
+      // @formatter:off 
+      "classpath:scripts/produccion_cientifica.sql",
+      "classpath:scripts/autor.sql",
+      "classpath:scripts/autor_grupo.sql"
+      // @formatter:on  
+  })
+  @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
+  @Test
+  void accesibleByInvestigador_ReturnsNoContent()
+      throws Exception {
+    String roles = "PRC-VAL-INV-ER";
+    final Long produccionCientificaId = 801L;
+
+    BDDMockito.given(sgiApiCspService.findAllGruposByPersonaRef(ArgumentMatchers.<String>any()))
+        .willReturn(generarMockGrupoDtoList(Arrays.asList(new Long[] { 99L })));
+
+    URI uri = UriComponentsBuilder.fromUriString(CONTROLLER_BASE_PATH +
+        PATH_PARAMETER_ID)
+        .buildAndExpand(produccionCientificaId)
+        .toUri();
+
+    final ResponseEntity<Void> response = restTemplate.exchange(uri,
+        HttpMethod.HEAD,
+        buildRequest(null, null, roles),
+        Void.class);
+
+    Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
+  }
+
+  @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = {
+      // @formatter:off 
+      "classpath:scripts/produccion_cientifica.sql",
+      "classpath:scripts/autor.sql",
+      "classpath:scripts/autor_grupo.sql"
+      // @formatter:on  
+  })
+  @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
+  @Test
+  void editableByInvestigador_ReturnsOk()
+      throws Exception {
+    String roles = "PRC-VAL-INV-ER";
+    final Long produccionCientificaId = 801L;
+
+    BDDMockito.given(sgiApiCspService.findAllGruposByPersonaRef(ArgumentMatchers.<String>any()))
+        .willReturn(generarMockGrupoDtoList(Arrays.asList(new Long[] { 1L, 2L })));
+
+    URI uri = UriComponentsBuilder.fromUriString(CONTROLLER_BASE_PATH +
+        PATH_MODIFICABLE)
+        .buildAndExpand(produccionCientificaId)
+        .toUri();
+
+    final ResponseEntity<Void> response = restTemplate.exchange(uri,
+        HttpMethod.HEAD,
+        buildRequest(null, null, roles),
+        Void.class);
+
+    Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+  }
+
+  @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = {
+      // @formatter:off 
+      "classpath:scripts/produccion_cientifica.sql",
+      "classpath:scripts/autor.sql",
+      "classpath:scripts/autor_grupo.sql"
+      // @formatter:on  
+  })
+  @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
+  @Test
+  void editableByInvestigador_ReturnsNoContent()
+      throws Exception {
+    String roles = "PRC-VAL-INV-ER";
+    final Long produccionCientificaId = 803L;
+
+    BDDMockito.given(sgiApiCspService.findAllGruposByPersonaRef(ArgumentMatchers.<String>any()))
+        .willReturn(generarMockGrupoDtoList(Arrays.asList(new Long[] { 1L, 2L })));
+
+    URI uri = UriComponentsBuilder.fromUriString(CONTROLLER_BASE_PATH +
+        PATH_MODIFICABLE)
+        .buildAndExpand(produccionCientificaId)
+        .toUri();
+
+    final ResponseEntity<Void> response = restTemplate.exchange(uri,
+        HttpMethod.HEAD,
+        buildRequest(null, null, roles),
+        Void.class);
+
+    Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
   }
 
   @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = {
@@ -869,5 +1237,111 @@ class ProduccionCientificaIT extends BaseIT {
     Assertions.assertThat(responseData.get(1).getId())
         .as(".getId()")
         .isEqualTo(2L);
+  }
+
+  @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = {
+    // @formatter:off
+      "classpath:scripts/produccion_cientifica.sql",
+      "classpath:scripts/campo_produccion_cientifica.sql",
+    // @formatter:on
+  })
+  @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
+  @Test
+  void findCampos_WithPagingAndSorting_ReturnsCampoOutputSubList()
+      throws Exception {
+    String[] roles = { "PRC-VAL-V" };
+    final Long produccionCientificaId = 1L;
+    // first page, 3 elements per page sorted
+    HttpHeaders headers = new HttpHeaders();
+    headers.add("X-Page", "0");
+    headers.add("X-Page-Size", "10");
+    String sort = "id,asc";
+
+    // when: find CampoProduccionCientifica
+    URI uri = UriComponentsBuilder
+        .fromUriString(CONTROLLER_BASE_PATH + PATH_CAMPOS)
+        .queryParam("s", sort)
+        .buildAndExpand(produccionCientificaId).toUri();
+
+    final ResponseEntity<List<CampoProduccionCientificaOutput>> response = restTemplate.exchange(uri,
+        HttpMethod.GET,
+        buildRequest(headers, null, roles),
+        new ParameterizedTypeReference<List<CampoProduccionCientificaOutput>>() {
+        });
+
+    // given: CampoProduccionCientifica data filtered and sorted
+    Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+    final List<CampoProduccionCientificaOutput> responseData = response.getBody();
+    Assertions.assertThat(responseData).hasSize(7);
+    HttpHeaders responseHeaders = response.getHeaders();
+    Assertions.assertThat(responseHeaders.getFirst("X-Page")).as("X-Page").isEqualTo("0");
+    Assertions.assertThat(responseHeaders.getFirst("X-Page-Size")).as("X-Page-Size").isEqualTo("10");
+    Assertions.assertThat(responseHeaders.getFirst("X-Total-Count")).as("X-Total-Count").isEqualTo("7");
+
+    Assertions.assertThat(responseData.get(0)).isNotNull();
+
+    Assertions.assertThat(responseData.get(0).getCodigo())
+        .as("get(0).getCodigo()")
+        .isEqualTo("060.010.010.030");
+  }
+
+  @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = {
+    // @formatter:off
+      "classpath:scripts/produccion_cientifica.sql",
+      "classpath:scripts/campo_produccion_cientifica.sql",
+      "classpath:scripts/valor_campo.sql",
+    // @formatter:on
+  })
+  @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
+  @Test
+  void findValores_WithPagingAndSorting_ReturnsValorCampoOutputSubList()
+      throws Exception {
+    String[] roles = { "PRC-VAL-V" };
+    final Long produccionCientificaId = 1L;
+    final Long campoProduccionCientificaId = 1L;
+    // first page, 3 elements per page sorted
+    HttpHeaders headers = new HttpHeaders();
+    headers.add("X-Page", "0");
+    headers.add("X-Page-Size", "3");
+    String sort = "id,asc";
+
+    // when: find ValorCampo
+    URI uri = UriComponentsBuilder
+        .fromUriString(CONTROLLER_BASE_PATH + PATH_VALORES)
+        .queryParam("s", sort)
+        .buildAndExpand(produccionCientificaId, campoProduccionCientificaId).toUri();
+
+    final ResponseEntity<List<ValorCampoOutput>> response = restTemplate.exchange(uri,
+        HttpMethod.GET,
+        buildRequest(headers, null, roles),
+        new ParameterizedTypeReference<List<ValorCampoOutput>>() {
+        });
+
+    // given: ValorCampo data filtered and sorted
+    Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+    final List<ValorCampoOutput> responseData = response.getBody();
+    Assertions.assertThat(responseData).hasSize(1);
+    HttpHeaders responseHeaders = response.getHeaders();
+    Assertions.assertThat(responseHeaders.getFirst("X-Page")).as("X-Page").isEqualTo("0");
+    Assertions.assertThat(responseHeaders.getFirst("X-Page-Size")).as("X-Page-Size").isEqualTo("3");
+    Assertions.assertThat(responseHeaders.getFirst("X-Total-Count")).as("X-Total-Count").isEqualTo("1");
+
+    Assertions.assertThat(responseData.get(0)).isNotNull();
+
+    Assertions.assertThat(responseData.get(0).getValor())
+        .as("get(0).getValor()")
+        .isEqualTo("Título de la publicación1");
+  }
+
+  private GrupoDto generarMockGrupoDto(Long id) {
+    GrupoDto grupoDto = new GrupoDto();
+    grupoDto.setId(id);
+
+    return grupoDto;
+  }
+
+  private List<GrupoDto> generarMockGrupoDtoList(List<Long> ids) {
+    return ids.stream().map(id -> generarMockGrupoDto(id))
+        .collect(Collectors.toList());
   }
 }

@@ -12,8 +12,8 @@
     </div>
 
     <ng-container *ngIf="data.error.errors">
-      <ul style="text-align: left;">
-        <li *ngFor="let error of data.error.errors">{{error.field}}: {{error.error}}</li>
+      <ul style="text-align: left; margin-top:0px; margin-bottom: 0px">
+        <li *ngFor="let error of data.error.errors">{{error.field}}{{error.field ? ':' : ''}} {{error.error}}</li>
       </ul>
     </ng-container>
   </ng-container>

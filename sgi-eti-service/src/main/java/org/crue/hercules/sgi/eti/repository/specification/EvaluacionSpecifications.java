@@ -1,7 +1,10 @@
 package org.crue.hercules.sgi.eti.repository.specification;
 
+import java.time.Instant;
+
 import org.crue.hercules.sgi.eti.model.ConvocatoriaReunion;
 import org.crue.hercules.sgi.eti.model.ConvocatoriaReunion_;
+import org.crue.hercules.sgi.eti.model.Dictamen_;
 import org.crue.hercules.sgi.eti.model.Evaluacion;
 import org.crue.hercules.sgi.eti.model.Evaluacion_;
 import org.crue.hercules.sgi.eti.model.Memoria_;
@@ -64,6 +67,24 @@ public class EvaluacionSpecifications {
   public static Specification<Evaluacion> memoriaId(Long idMemoria) {
     return (root, query, cb) -> {
       return cb.equal(root.get(Evaluacion_.memoria).get(Memoria_.id), idMemoria);
+    };
+  }
+
+  public static Specification<Evaluacion> byFechaDictamenBetween(Instant fechaInicio, Instant fechaFin) {
+    return (root, query, cb) -> {
+      return cb.between(root.get(Evaluacion_.fechaDictamen), fechaInicio, fechaFin);
+    };
+  }
+
+  public static Specification<Evaluacion> byMemoriaEstado(Long tipoEstadoMemoria) {
+    return (root, query, cb) -> {
+      return cb.equal(root.get(Evaluacion_.memoria).get(Memoria_.ESTADO_ACTUAL), tipoEstadoMemoria);
+    };
+  }
+
+  public static Specification<Evaluacion> byDictamenEstado(Long tipoEstadoDictamen) {
+    return (root, query, cb) -> {
+      return cb.equal(root.get(Evaluacion_.dictamen).get(Dictamen_.ID), tipoEstadoDictamen);
     };
   }
 

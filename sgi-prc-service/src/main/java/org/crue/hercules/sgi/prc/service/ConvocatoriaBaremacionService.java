@@ -2,6 +2,7 @@ package org.crue.hercules.sgi.prc.service;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
+import java.util.List;
 import java.util.Set;
 
 import javax.validation.ConstraintViolation;
@@ -9,11 +10,10 @@ import javax.validation.ConstraintViolationException;
 import javax.validation.Valid;
 import javax.validation.Validator;
 
-import org.crue.hercules.sgi.framework.problem.message.ProblemMessage;
 import org.crue.hercules.sgi.framework.rsql.SgiRSQLJPASupport;
-import org.crue.hercules.sgi.framework.spring.context.support.ApplicationContextSupport;
 import org.crue.hercules.sgi.prc.config.SgiConfigProperties;
 import org.crue.hercules.sgi.prc.exceptions.ConvocatoriaBaremacionNotFoundException;
+import org.crue.hercules.sgi.prc.exceptions.ConvocatoriaBaremacionNotUpdatableException;
 import org.crue.hercules.sgi.prc.model.Baremo;
 import org.crue.hercules.sgi.prc.model.ConvocatoriaBaremacion;
 import org.crue.hercules.sgi.prc.model.ConvocatoriaBaremacion.OnActivar;
@@ -29,13 +29,12 @@ import org.crue.hercules.sgi.prc.repository.PuntuacionGrupoInvestigadorRepositor
 import org.crue.hercules.sgi.prc.repository.PuntuacionGrupoRepository;
 import org.crue.hercules.sgi.prc.repository.RangoRepository;
 import org.crue.hercules.sgi.prc.repository.specification.ConvocatoriaBaremacionSpecifications;
+import org.crue.hercules.sgi.prc.util.AssertHelper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.Assert;
 import org.springframework.validation.annotation.Validated;
 
 import lombok.RequiredArgsConstructor;
@@ -51,8 +50,6 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 public class ConvocatoriaBaremacionService {
 
-  private static final String ENTITY = "entity";
-  private static final String FIELD = "field";
   private final ConvocatoriaBaremacionRepository convocatoriaBaremacionRepository;
   private final ModuladorRepository moduladorRepository;
   private final RangoRepository rangoRepository;
@@ -66,14 +63,25 @@ public class ConvocatoriaBaremacionService {
   private final SgiConfigProperties sgiConfigProperties;
   private final Validator validator;
 
-  @Transactional(propagation = Propagation.REQUIRES_NEW)
-  public ConvocatoriaBaremacion updateFechaInicioEjecucion(Long convocatoriaBaremacionId,
-      Instant fechaInicioEjecucion) {
-    log.debug("updateFechaInicioEjecucion(convocatoriaBaremacionId, fechaInicioEjecucion) - start");
+  @Transactional
+  public ConvocatoriaBaremacion initFechasBaremacion(Long convocatoriaBaremacionId) {
+    log.debug("initFechasBaremacion({},{}) - start", convocatoriaBaremacionId);
 
     return convocatoriaBaremacionRepository
         .findById(convocatoriaBaremacionId).map(convocatoria -> {
-          convocatoria.setFechaInicioEjecucion(fechaInicioEjecucion);
+          convocatoria.setFechaInicioEjecucion(Instant.now());
+          convocatoria.setFechaFinEjecucion(null);
+          return convocatoriaBaremacionRepository.save(convocatoria);
+        }).orElse(null);
+  }
+
+  @Transactional
+  public ConvocatoriaBaremacion closeFechaBaremacion(Long convocatoriaBaremacionId) {
+    log.debug("closeFechaBaremacion({}) - start", convocatoriaBaremacionId);
+
+    return convocatoriaBaremacionRepository
+        .findById(convocatoriaBaremacionId).map(convocatoria -> {
+          convocatoria.setFechaFinEjecucion(Instant.now());
           return convocatoriaBaremacionRepository.save(convocatoria);
         }).orElse(null);
   }
@@ -201,14 +209,10 @@ public class ConvocatoriaBaremacionService {
   public ConvocatoriaBaremacion activar(Long id) {
     log.debug("activar(Long id) - start");
 
-    Assert.notNull(id,
-        // Defer message resolution untill is needed
-        () -> ProblemMessage.builder().key(Assert.class, "notNull")
-            .parameter(FIELD, ApplicationContextSupport.getMessage("id"))
-            .parameter(ENTITY, ApplicationContextSupport.getMessage(ConvocatoriaBaremacion.class)).build());
+    AssertHelper.idNotNull(id, ConvocatoriaBaremacion.class);
 
     return convocatoriaBaremacionRepository.findById(id).map(convocatoriaBaremacion -> {
-      if (convocatoriaBaremacion.getActivo()) {
+      if (Boolean.TRUE.equals(convocatoriaBaremacion.getActivo())) {
         log.debug("enable(Long id) - end");
         // Si esta activo no se hace nada
         return convocatoriaBaremacion;
@@ -239,21 +243,13 @@ public class ConvocatoriaBaremacionService {
   public ConvocatoriaBaremacion desactivar(Long id) {
     log.debug("desactivar(Long id) - start");
 
-    Assert.notNull(id,
-        // Defer message resolution untill is needed
-        () -> ProblemMessage.builder().key(Assert.class, "notNull")
-            .parameter(FIELD, ApplicationContextSupport.getMessage("id"))
-            .parameter(ENTITY, ApplicationContextSupport.getMessage(ConvocatoriaBaremacion.class)).build());
+    AssertHelper.idNotNull(id, ConvocatoriaBaremacion.class);
 
     return convocatoriaBaremacionRepository.findById(id).map(convocatoriaBaremacion -> {
       // Una ConvocatoriaBaremacion con baremación ya realizada no se puede desactivar
-      Assert.isNull(convocatoriaBaremacion.getFechaInicioEjecucion(),
-          // Defer message resolution untill is needed
-          () -> ProblemMessage.builder().key(Assert.class, "isNull")
-              .parameter(FIELD, ApplicationContextSupport.getMessage("fechaInicioEjecucion"))
-              .parameter(ENTITY, ApplicationContextSupport.getMessage(ConvocatoriaBaremacion.class)).build());
+      checkConvocatoriaBaremacionUpdatable(convocatoriaBaremacion);
 
-      if (!convocatoriaBaremacion.getActivo()) {
+      if (Boolean.FALSE.equals(convocatoriaBaremacion.getActivo())) {
         log.debug("desactivar(Long id) - end");
         // Si no esta activo no se hace nada
         return convocatoriaBaremacion;
@@ -320,11 +316,7 @@ public class ConvocatoriaBaremacionService {
   public ConvocatoriaBaremacion create(@Valid ConvocatoriaBaremacion convocatoriaBaremacion) {
     log.debug("create(ConvocatoriaBaremacion convocatoriaBaremacion) - start");
 
-    Assert.isNull(convocatoriaBaremacion.getId(),
-        // Defer message resolution untill is needed
-        () -> ProblemMessage.builder().key(Assert.class, "isNull")
-            .parameter("field", ApplicationContextSupport.getMessage("id"))
-            .parameter("entity", ApplicationContextSupport.getMessage(ConvocatoriaBaremacion.class)).build());
+    AssertHelper.idIsNull(convocatoriaBaremacion.getId(), ConvocatoriaBaremacion.class);
 
     convocatoriaBaremacion.setActivo(true);
     ConvocatoriaBaremacion returnValue = convocatoriaBaremacionRepository.save(convocatoriaBaremacion);
@@ -347,6 +339,9 @@ public class ConvocatoriaBaremacionService {
 
     return convocatoriaBaremacionRepository.findById(convocatoriaBaremacion.getId())
         .map(convocatoriaBaremacionExistente -> {
+          // Una ConvocatoriaBaremacion con baremación ya realizada no se puede actualizar
+          checkConvocatoriaBaremacionUpdatable(convocatoriaBaremacionExistente);
+
           // Establecemos los campos actualizables con los recibidos
           convocatoriaBaremacionExistente.setAnio(convocatoriaBaremacion.getAnio());
           convocatoriaBaremacionExistente.setAniosBaremables(convocatoriaBaremacion.getAniosBaremables());
@@ -362,10 +357,41 @@ public class ConvocatoriaBaremacionService {
         }).orElseThrow(() -> new ConvocatoriaBaremacionNotFoundException(convocatoriaBaremacion.getId()));
   }
 
+  /**
+   * Obtiene los años en los que hay alguna {@link ConvocatoriaBaremacion}
+   * 
+   * @return lista de años en los hay alguna {@link ConvocatoriaBaremacion}
+   */
+  public List<Integer> findAniosWithConvocatoriasBaremacion() {
+    log.debug("findAniosWithConvocatoriasBaremacion() - start");
+    List<Integer> anios = convocatoriaBaremacionRepository.findAniosWithConvocatoriasBaremacion();
+    log.debug("findAniosWithConvocatoriasBaremacion() - end");
+    return anios;
+  }
+
   private void deletePuntuacionGrupo(PuntuacionGrupo puntuacionGrupo) {
     Long puntuacionGrupoId = puntuacionGrupo.getId();
     puntuacionGrupoInvestigadorRepository.deleteInBulkByPuntuacionGrupoId(puntuacionGrupoId);
     puntuacionGrupoRepository.deleteById(puntuacionGrupoId);
   }
 
+  /**
+   * Comprueba si la {@link ConvocatoriaBaremacion} es actualizable.
+   * 
+   * @param id de la {@link ConvocatoriaBaremacion}
+   */
+  public void checkConvocatoriaBaremacionUpdatable(Long id) {
+    final ConvocatoriaBaremacion convocatoriaBaremacionToCheck = findById(id);
+    checkConvocatoriaBaremacionUpdatable(convocatoriaBaremacionToCheck);
+  }
+
+  private void checkConvocatoriaBaremacionUpdatable(ConvocatoriaBaremacion convocatoriaBaremacionToCheck) {
+    if (!isConvocatoriaBaremacionUpdatable(convocatoriaBaremacionToCheck)) {
+      throw new ConvocatoriaBaremacionNotUpdatableException();
+    }
+  }
+
+  private boolean isConvocatoriaBaremacionUpdatable(ConvocatoriaBaremacion convocatoriaBaremacion) {
+    return convocatoriaBaremacion.getFechaInicioEjecucion() == null;
+  }
 }

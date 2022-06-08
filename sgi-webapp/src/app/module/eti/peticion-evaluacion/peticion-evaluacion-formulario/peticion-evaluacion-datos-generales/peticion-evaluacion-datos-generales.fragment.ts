@@ -57,8 +57,8 @@ export class PeticionEvaluacionDatosGeneralesFragment extends FormFragment<IPeti
       resumen: [{ value: '', disabled: this.readonly }, Validators.required],
       valorSocial: [{ value: null, disabled: this.readonly }, Validators.required],
       otroValorSocial: [{ value: '', disabled: this.readonly }],
-      objetivosCientificos: [{ value: '', disabled: this.readonly }, Validators.required],
-      disenioMetodologico: [{ value: '', disabled: this.readonly }, Validators.required],
+      objetivosCientificos: [{ value: '', disabled: this.readonly }, [Validators.required, Validators.maxLength(2000)]],
+      disenioMetodologico: [{ value: '', disabled: this.readonly }, [Validators.required, Validators.maxLength(2000)]],
       tieneFondosPropios: [{ value: '', disabled: this.readonly }]
     });
 

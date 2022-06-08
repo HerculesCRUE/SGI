@@ -2,7 +2,7 @@ import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
-import { BaseModalComponent } from '@core/component/base-modal.component';
+import { DialogFormComponent } from '@core/component/dialog-form.component';
 import { MSG_PARAMS } from '@core/i18n';
 import { DEFAULT_PREFIX_RECIPIENTS_CSP_SOL_HITOS } from '@core/models/cnf/config-keys';
 import { IGenericEmailText } from '@core/models/com/generic-email-text';
@@ -12,7 +12,6 @@ import { ISendEmailTask } from '@core/models/tp/send-email-task';
 import { ConfigService } from '@core/services/cnf/config.service';
 import { EmailTplService } from '@core/services/com/email-tpl/email-tpl.service';
 import { EmailService } from '@core/services/com/email/email.service';
-import { SnackBarService } from '@core/services/snack-bar.service';
 import { SgiApiTaskService } from '@core/services/tp/sgiapitask/sgi-api-task.service';
 import { TipoHitoValidator } from '@core/validators/tipo-hito-validator';
 import { TranslateService } from '@ngx-translate/core';
@@ -45,8 +44,7 @@ export interface SolicitudHitosModalComponentData {
   templateUrl: './solicitud-hitos-modal.component.html',
   styleUrls: ['./solicitud-hitos-modal.component.scss']
 })
-export class SolicitudHitosModalComponent extends
-  BaseModalComponent<SolicitudHitosModalComponentData, SolicitudHitosModalComponent> implements OnInit, OnDestroy {
+export class SolicitudHitosModalComponent extends DialogFormComponent<SolicitudHitosModalComponentData> implements OnInit, OnDestroy {
 
   textSaveOrUpdate: string;
   title: string;
@@ -68,16 +66,15 @@ export class SolicitudHitosModalComponent extends
   }
 
   constructor(
-    public matDialogRef: MatDialogRef<SolicitudHitosModalComponent>,
+    matDialogRef: MatDialogRef<SolicitudHitosModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data: SolicitudHitosModalComponentData,
-    protected snackBarService: SnackBarService,
     private readonly translate: TranslateService,
     private configService: ConfigService,
     private emailTplService: EmailTplService,
     private emailSErvice: EmailService,
     private sgiApiTaskService: SgiApiTaskService
   ) {
-    super(snackBarService, matDialogRef, data);
+    super(matDialogRef, !!data.hito?.id);
   }
 
   ngOnInit(): void {
@@ -302,7 +299,7 @@ export class SolicitudHitosModalComponent extends
         control.disable();
       }
     } else {
-      if (control.disabled &&
+      if (control.disabled && !this.data.readonly &&
         (!!!this.data.hito?.aviso?.task?.instant ||
           (!!this.data.hito?.aviso?.task?.instant && DateTime.now() <= this.data.hito.aviso.task.instant))
       ) {
@@ -311,7 +308,7 @@ export class SolicitudHitosModalComponent extends
     }
   }
 
-  protected getDatosForm(): SolicitudHitosModalComponentData {
+  protected getValue(): SolicitudHitosModalComponentData {
     this.data.hito.comentario = this.formGroup.get('comentario').value;
     this.data.hito.fecha = this.formGroup.get('fechaInicio').value;
     this.data.hito.tipoHito = this.formGroup.get('tipoHito').value;
@@ -339,7 +336,7 @@ export class SolicitudHitosModalComponent extends
     return this.data;
   }
 
-  protected getFormGroup(): FormGroup {
+  protected buildFormGroup(): FormGroup {
     const formGroup = new FormGroup({
       tipoHito: new FormControl(this.data?.hito?.tipoHito, Validators.required),
       fechaInicio: new FormControl(this.data?.hito?.fecha, Validators.required),

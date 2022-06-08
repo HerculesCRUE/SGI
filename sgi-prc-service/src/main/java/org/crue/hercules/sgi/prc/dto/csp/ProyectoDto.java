@@ -17,21 +17,14 @@ import lombok.NoArgsConstructor;
 @Builder
 public class ProyectoDto implements Serializable {
 
-  public enum ClasificacionCVN {
-    /** Proyectos competitivos */
-    COMPETITIVOS,
-    /** Contratos, Convenios, Proyectos no competitivos */
-    NO_COMPETITIVOS;
-  }
-
   private Long id;
   private String titulo;
   private Instant fechaInicio;
   private Instant fechaFin;
   private Instant fechaFinDefinitiva;
-  private ClasificacionCVN clasificacionCVN;
+  private Boolean contrato;
   private BigDecimal totalImporteConcedido;
-  private BigDecimal importeConcedido;
+  private BigDecimal importeConcedidoCostesIndirectos;
   private Long ambitoGeograficoId;
   private Boolean convocatoriaExcelencia;
 

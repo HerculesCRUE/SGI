@@ -1,13 +1,8 @@
-<div class="sgi-dialog-header" fxLayout="row" fxLayoutGap="20px">
-  <span fxFlexAlign="center" mat-mat-dialog-title role="heading" aria-level="3" fxFlex>{{title | translate}}</span>
-  <button fxFlex="nogrow" mat-icon-button mat-dialog-close>
-    <mat-icon class="close-icon">close</mat-icon>
-  </button>
-</div>
-<mat-dialog-content>
+<sgi-dialog-header [title]="title"></sgi-dialog-header>
+<sgi-dialog-content>
   <form [formGroup]="formGroup">
     <!-- Tipo de documento -->
-    <div fxFill *ngIf="data.tipoEvaluacion == TIPO_EVALUACION.MEMORIA && data.showTipoDocumentos">
+    <div fxLayout="row" *ngIf="data.tipoEvaluacion == TIPO_EVALUACION.MEMORIA && data.showTipoDocumentos">
       <mat-form-field>
         <mat-label>{{'eti.memoria.documento.tipo' | translate}}</mat-label>
         <sgi-select-entity formControlName="tipoDocumento" required [options]="tiposDocumento$ | async">
@@ -17,7 +12,7 @@
         </mat-error>
       </mat-form-field>
     </div>
-    <div fxFill>
+    <div fxLayout="row">
       <mat-form-field>
         <mat-label>{{'eti.memoria.documento.nombre' | translate}}</mat-label>
         <input matInput type="text" formControlName="nombre" required>
@@ -27,7 +22,7 @@
       </mat-form-field>
     </div>
     <!-- File -->
-    <div fxFill>
+    <div fxLayout="row">
       <mat-form-field>
         <mat-label>{{'eti.memoria.documento.fichero' | translate}}</mat-label>
         <sgi-file-upload #uploader formControlName="fichero" required autoUpload="false"
@@ -40,9 +35,9 @@
     </div>
 
   </form>
-</mat-dialog-content>
+</sgi-dialog-content>
 <mat-dialog-actions>
-  <button color="accent" (click)="saveOrUpdate()" mat-raised-button type="submit">
+  <button color="accent" (click)="doAction()" [disabled]="this.actionDisabled" mat-raised-button type="submit">
     <mat-icon class="save-icon">save</mat-icon>{{'btn.add' |
     translate}}
   </button>

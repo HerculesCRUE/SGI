@@ -107,7 +107,9 @@ export class ModeloEjecucionTipoFinalidadFragment extends Fragment {
         return this.modeloTipoFinalidadService.create(wrapped.value).pipe(
           map((updatedFinalidad) => {
             const index = this.modeloTipoFinalidad$.value.findIndex((currentTarea) => currentTarea === wrapped);
-            this.modeloTipoFinalidad$[index] = new StatusWrapper<IModeloTipoFinalidad>(updatedFinalidad);
+            wrapped.value.id = updatedFinalidad.id;
+            this.modeloTipoFinalidad$.value[index] = new StatusWrapper<IModeloTipoFinalidad>(wrapped.value);
+            this.modeloTipoFinalidad$.next(this.modeloTipoFinalidad$.value);
           })
         );
       }));

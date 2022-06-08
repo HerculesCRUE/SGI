@@ -5,6 +5,7 @@ server:
       # Disble the default error page displayed in browsers in case of a server error
       enabled: false
 sgi:
+  web-url: "http://sgi.crue.com"
   time-zone: "Europe/Madrid"
   rest:
     api:

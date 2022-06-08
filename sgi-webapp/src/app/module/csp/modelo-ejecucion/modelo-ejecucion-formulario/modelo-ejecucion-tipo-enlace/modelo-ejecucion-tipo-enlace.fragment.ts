@@ -101,11 +101,13 @@ export class ModeloEjecucionTipoEnlaceFragment extends Fragment {
       } as IModeloEjecucion
     );
     return from(createdModelos).pipe(
-      mergeMap((wrappedTarea) => {
-        return this.modeloTipoEnlaceService.create(wrappedTarea.value).pipe(
-          map((updatedTarea) => {
-            const index = this.modeloTipoEnlace$.value.findIndex((currentTarea) => currentTarea === wrappedTarea);
-            this.modeloTipoEnlace$[index] = new StatusWrapper<IModeloTipoEnlace>(updatedTarea);
+      mergeMap((wrappedTipoEnlace) => {
+        return this.modeloTipoEnlaceService.create(wrappedTipoEnlace.value).pipe(
+          map((updatedTipoEnlace) => {
+            const index = this.modeloTipoEnlace$.value.findIndex((currentTarea) => currentTarea === wrappedTipoEnlace);
+            wrappedTipoEnlace.value.id = updatedTipoEnlace.id;
+            this.modeloTipoEnlace$.value[index] = new StatusWrapper<IModeloTipoEnlace>(wrappedTipoEnlace.value);
+            this.modeloTipoEnlace$.next(this.modeloTipoEnlace$.value);
           })
         );
       }));

@@ -147,7 +147,9 @@ export class MemoriaDocumentacionFragment extends Fragment {
                 currentDocumentacion.value.id = savedDocumentacion.id;
               }
             });
-            this.documentacionesMemoria$[index] = new StatusWrapper<IDocumentacionMemoria>(savedDocumentacion);
+            wrappedDocumentacion.value.id = savedDocumentacion.id;
+            this.documentacionesMemoria$.value[index] = new StatusWrapper<IDocumentacionMemoria>(wrappedDocumentacion.value);
+            this.documentacionesMemoria$.next(this.documentacionesMemoria$.value);
           })
         );
       }),

@@ -1,5 +1,5 @@
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
+import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
@@ -8,6 +8,7 @@ import { FragmentComponent } from '@core/component/fragment.component';
 import { MSG_PARAMS } from '@core/i18n';
 import { IEquipoTrabajo } from '@core/models/eti/equipo-trabajo';
 import { IEquipoTrabajoWithIsEliminable } from '@core/models/eti/equipo-trabajo-with-is-eliminable';
+import { ESTADO_MEMORIA } from '@core/models/eti/tipo-estado-memoria';
 import { FxFlexProperties } from '@core/models/shared/flexLayout/fx-flex-properties';
 import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-properties';
 import { DialogService } from '@core/services/dialog.service';
@@ -117,12 +118,7 @@ export class EquipoInvestigadorListadoComponent extends FragmentComponent implem
    * Abre la ventana modal para añadir una persona al equipo de trabajo
    */
   openModalAddEquipoTrabajo(): void {
-    const config: MatDialogConfig = {
-      panelClass: 'sgi-dialog-container',
-      minWidth: '700px',
-    };
-
-    const dialogRef = this.matDialog.open(EquipoInvestigadorCrearModalComponent, config);
+    const dialogRef = this.matDialog.open(EquipoInvestigadorCrearModalComponent);
 
     dialogRef.afterClosed().subscribe(
       (equipoTrabajoAniadido: IEquipoTrabajoWithIsEliminable) => {
@@ -162,6 +158,17 @@ export class EquipoInvestigadorListadoComponent extends FragmentComponent implem
 
   ngOnDestroy(): void {
     this.subscriptions?.forEach(x => x.unsubscribe());
+  }
+
+  showDeleteEquipoTrabajo(personaRef: string): boolean {
+    const memorias = this.listadoFragment.memorias.filter(memoria => {
+      return memoria.estadoActual.id === ESTADO_MEMORIA.EN_ELABORACION ||
+        memoria.estadoActual.id === ESTADO_MEMORIA.COMPLETADA ||
+        memoria.estadoActual.id === ESTADO_MEMORIA.FAVORABLE_PENDIENTE_MODIFICACIONES_MINIMAS ||
+        memoria.estadoActual.id === ESTADO_MEMORIA.PENDIENTE_CORRECCIONES ||
+        memoria.estadoActual.id === ESTADO_MEMORIA.NO_PROCEDE_EVALUAR;
+    });
+    return (this.sgiAuthService.authStatus$?.getValue()?.userRefId !== personaRef) && ((memorias.length > 0) || this.listadoFragment.memorias.length === 0);
   }
 
 }

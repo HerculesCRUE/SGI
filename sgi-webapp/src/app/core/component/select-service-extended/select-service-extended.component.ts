@@ -1,7 +1,7 @@
 import { coerceBooleanProperty } from '@angular/cdk/coercion';
 import { ComponentType } from '@angular/cdk/portal';
 import { PlatformLocation } from '@angular/common';
-import { Directive, Input, OnInit, Optional, Self, TemplateRef } from '@angular/core';
+import { Directive, Input, Optional, Self, TemplateRef } from '@angular/core';
 import { NgControl } from '@angular/forms';
 import { ErrorStateMatcher } from '@angular/material/core';
 import { MatDialog } from '@angular/material/dialog';
@@ -70,9 +70,7 @@ export abstract class SelectServiceExtendedComponent<T extends EntityKey> extend
       if (!!this.addTarget && typeof this.addTarget === 'string') {
         window.open(this.addTarget, '_blank');
       } else if (!!this.addTarget && typeof this.addTarget !== 'string' && !!this.dialog) {
-        const dialogRef = this.dialog.open(this.addTarget, {
-          panelClass: 'sgi-dialog-container',
-        });
+        const dialogRef = this.dialog.open(this.addTarget);
 
         dialogRef.afterClosed().subscribe((value) => {
           if (!!value) {

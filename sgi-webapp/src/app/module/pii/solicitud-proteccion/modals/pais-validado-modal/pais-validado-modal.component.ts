@@ -2,14 +2,12 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
-import { BaseModalComponent } from '@core/component/base-modal.component';
+import { DialogFormComponent } from '@core/component/dialog-form.component';
 import { MSG_PARAMS } from '@core/i18n';
 import { IPaisValidado } from '@core/models/pii/pais-validado';
 import { IPais } from '@core/models/sgo/pais';
-import { SnackBarService } from '@core/services/snack-bar.service';
 import { StatusWrapper } from '@core/utils/status-wrapper';
 import { TranslateService } from '@ngx-translate/core';
-import { NGXLogger } from 'ngx-logger';
 
 export interface PaisValidadoModalData {
   paisValidado: StatusWrapper<IPaisValidado>;
@@ -26,8 +24,7 @@ const PAIS_KEY = marker('pii.solicitud-proteccion.pais-validado.pais');
   templateUrl: './pais-validado-modal.component.html',
   styleUrls: ['./pais-validado-modal.component.scss']
 })
-export class PaisValidadoModalComponent
-  extends BaseModalComponent<StatusWrapper<IPaisValidado>, PaisValidadoModalComponent> implements OnInit {
+export class PaisValidadoModalComponent extends DialogFormComponent<StatusWrapper<IPaisValidado>> implements OnInit {
 
   paisValidado: StatusWrapper<IPaisValidado>;
   msgParamTituloEntity = {};
@@ -39,7 +36,7 @@ export class PaisValidadoModalComponent
     return MSG_PARAMS;
   }
 
-  protected getDatosForm(): StatusWrapper<IPaisValidado> {
+  protected getValue(): StatusWrapper<IPaisValidado> {
 
     this.paisValidado.value.codigoInvencion = this.formGroup.controls.codigoInvencion.value;
     this.paisValidado.value.fechaValidacion = this.formGroup.controls.fechaValidacion.value;
@@ -48,7 +45,7 @@ export class PaisValidadoModalComponent
     return this.paisValidado;
   }
 
-  protected getFormGroup(): FormGroup {
+  protected buildFormGroup(): FormGroup {
 
     const formGroup = new FormGroup({
       codigoInvencion: new FormControl(this.paisValidado?.value?.codigoInvencion, Validators.required),
@@ -60,13 +57,11 @@ export class PaisValidadoModalComponent
   }
 
   constructor(
-    private readonly logger: NGXLogger,
-    public matDialogRef: MatDialogRef<PaisValidadoModalComponent>,
-    protected readonly snackBarService: SnackBarService,
+    matDialogRef: MatDialogRef<PaisValidadoModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data: PaisValidadoModalData,
     private readonly translate: TranslateService
   ) {
-    super(snackBarService, matDialogRef, data.paisValidado);
+    super(matDialogRef, false);
     this.paisValidado = data.paisValidado;
   }
 

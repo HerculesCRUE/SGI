@@ -186,7 +186,7 @@ export class ConvocatoriaActionService extends ActionService implements OnDestro
       logger, this.id, convocatoriaService, convocatoriaEntidadConvocanteService,
       empresaService, this.readonly, this.canEdit);
     this.plazosFases = new ConvocatoriaPlazosFasesFragment(
-      this.id, convocatoriaService, convocatoriaFaseService, configuracionSolicitudService, this.readonly, this.canEdit);
+      this.id, convocatoriaService, convocatoriaFaseService, this.readonly, this.canEdit);
     this.hitos = new ConvocatoriaHitosFragment(this.id, convocatoriaService,
       convocatoriaHitoService, this.readonly, this.canEdit);
     this.documentos = new ConvocatoriaDocumentosFragment(logger, this.id, convocatoriaService,
@@ -244,6 +244,10 @@ export class ConvocatoriaActionService extends ActionService implements OnDestro
         this.hasModeloEjecucion$.next(Boolean(modeloEjecucion));
       }
     ));
+
+    this.subscriptions.push(this.configuracionSolicitudes.fasePresentacionSolicitudes$.subscribe(fase => {
+      this.plazosFases.setFasePresentacionSolicitudes(fase);
+    }));
 
     // Sincronización de las vinculaciones sobre modelo de ejecución
     if (this.isEdit() && !this.readonly) {

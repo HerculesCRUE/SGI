@@ -12,8 +12,12 @@ import { ConvocatoriaReunionEditarComponent } from './convocatoria-reunion-edita
 import { ConvocatoriaReunionAsignacionMemoriasListadoComponent } from './convocatoria-reunion-formulario/convocatoria-reunion-asignacion-memorias/convocatoria-reunion-asignacion-memorias-listado/convocatoria-reunion-asignacion-memorias-listado.component';
 import { ConvocatoriaReunionAsignacionMemoriasModalComponent } from './convocatoria-reunion-formulario/convocatoria-reunion-asignacion-memorias/convocatoria-reunion-asignacion-memorias-modal/convocatoria-reunion-asignacion-memorias-modal.component';
 import { ConvocatoriaReunionDatosGeneralesComponent } from './convocatoria-reunion-formulario/convocatoria-reunion-datos-generales/convocatoria-reunion-datos-generales.component';
+import { ConvocatoriaReunionGeneralListadoExportService } from './convocatoria-reunion-general-listado-export.service';
+import { ConvocatoriaReunionListadoExportService } from './convocatoria-reunion-listado-export.service';
 import { ConvocatoriaReunionListadoComponent } from './convocatoria-reunion-listado/convocatoria-reunion-listado.component';
+import { ConvocatoriaReunionMemoriasListadoExportService } from './convocatoria-reunion-memorias-listado-export.service';
 import { ConvocatoriaReunionRoutingModule } from './convocatoria-reunion-routing.module';
+import { ConvocatoriaReunionListadoExportModalComponent } from './modals/convocatoria-reunion-listado-export-modal/convocatoria-reunion-listado-export-modal.component';
 
 
 @NgModule({
@@ -23,7 +27,8 @@ import { ConvocatoriaReunionRoutingModule } from './convocatoria-reunion-routing
     ConvocatoriaReunionDatosGeneralesComponent,
     ConvocatoriaReunionAsignacionMemoriasListadoComponent,
     ConvocatoriaReunionAsignacionMemoriasModalComponent,
-    ConvocatoriaReunionEditarComponent
+    ConvocatoriaReunionEditarComponent,
+    ConvocatoriaReunionListadoExportModalComponent
   ],
   imports: [
     SharedModule,
@@ -37,7 +42,10 @@ import { ConvocatoriaReunionRoutingModule } from './convocatoria-reunion-routing
     EtiSharedModule
   ],
   providers: [
-    ConvocatoriaReunionDataResolver
+    ConvocatoriaReunionDataResolver,
+    ConvocatoriaReunionListadoExportService,
+    ConvocatoriaReunionGeneralListadoExportService,
+    ConvocatoriaReunionMemoriasListadoExportService
   ]
 })
 export class ConvocatoriaReunionModule { }

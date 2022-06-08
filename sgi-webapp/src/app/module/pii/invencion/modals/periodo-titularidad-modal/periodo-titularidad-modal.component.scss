@@ -1,5 +1,6 @@
 :host {
-  mat-dialog-content {
-    min-height: 135px;
+  sgi-dialog-content {
+    min-width: 20vw;
+    max-width: 380px; // Se limita el tamaño máximo para evitar la redimensión con los mensajes de validación.
   }
 }

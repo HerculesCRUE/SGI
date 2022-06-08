@@ -1,8 +1,8 @@
-import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
-import { BaseModalComponent } from '@core/component/base-modal.component';
+import { DialogFormComponent } from '@core/component/dialog-form.component';
 import { MSG_PARAMS } from '@core/i18n';
 import { COMITE } from '@core/models/eti/comite';
 import { IEquipoTrabajo } from '@core/models/eti/equipo-trabajo';
@@ -13,17 +13,13 @@ import { IMemoriaPeticionEvaluacion } from '@core/models/eti/memoria-peticion-ev
 import { ITareaWithIsEliminable } from '@core/models/eti/tarea-with-is-eliminable';
 import { TipoTarea } from '@core/models/eti/tipo-tarea';
 import { IPersona } from '@core/models/sgp/persona';
-import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-properties';
-import { ComiteService } from '@core/services/eti/comite.service';
 import { EquipoTrabajoService } from '@core/services/eti/equipo-trabajo.service';
 import { FormacionEspecificaService } from '@core/services/eti/formacion-especifica.service';
 import { MemoriaService } from '@core/services/eti/memoria.service';
 import { TareaService } from '@core/services/eti/tarea.service';
 import { TipoTareaService } from '@core/services/eti/tipo-tarea.service';
 import { PersonaService } from '@core/services/sgp/persona.service';
-import { SnackBarService } from '@core/services/snack-bar.service';
 import { TranslateService } from '@ngx-translate/core';
-import { NGXLogger } from 'ngx-logger';
 import { BehaviorSubject, Subject, Subscription } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 
@@ -50,10 +46,8 @@ export interface PeticionEvaluacionTareasModalComponentData {
   styleUrls: ['./peticion-evaluacion-tareas-modal.component.scss']
 })
 
-export class PeticionEvaluacionTareasModalComponent extends
-  BaseModalComponent<PeticionEvaluacionTareasModalComponentData, PeticionEvaluacionTareasModalComponent> implements OnInit, OnDestroy {
-
-  fxLayoutProperties: FxLayoutProperties;
+export class PeticionEvaluacionTareasModalComponent
+  extends DialogFormComponent<PeticionEvaluacionTareasModalComponentData> implements OnInit {
 
   formaciones$: Subject<FormacionEspecifica[]> = new BehaviorSubject<FormacionEspecifica[]>([]);
   personas$: Subject<IPersona[]> = new BehaviorSubject<IPersona[]>([]);
@@ -88,10 +82,8 @@ export class PeticionEvaluacionTareasModalComponent extends
   }
 
   constructor(
-    private readonly logger: NGXLogger,
-    public readonly matDialogRef: MatDialogRef<PeticionEvaluacionTareasModalComponent>,
+    matDialogRef: MatDialogRef<PeticionEvaluacionTareasModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data: PeticionEvaluacionTareasModalComponentData,
-    protected readonly snackBarService: SnackBarService,
     protected readonly tareaService: TareaService,
     protected readonly formacionService: FormacionEspecificaService,
     protected readonly memoriaService: MemoriaService,
@@ -100,10 +92,7 @@ export class PeticionEvaluacionTareasModalComponent extends
     protected readonly tipoTareaService: TipoTareaService,
     private readonly translate: TranslateService
   ) {
-    super(snackBarService, matDialogRef, data);
-
-    this.fxLayoutProperties = new FxLayoutProperties();
-    this.fxLayoutProperties.layout = 'column';
+    super(matDialogRef, !!data.tarea?.memoria);
   }
 
   ngOnInit(): void {
@@ -314,7 +303,7 @@ export class PeticionEvaluacionTareasModalComponent extends
     }
   }
 
-  protected getDatosForm(): PeticionEvaluacionTareasModalComponentData {
+  protected getValue(): PeticionEvaluacionTareasModalComponentData {
     if (this.mostrarOrganismoYanio) {
       this.data.tarea.organismo = this.formGroup.controls.organismo.value;
       this.data.tarea.anio = this.formGroup.controls.anio.value;
@@ -344,7 +333,7 @@ export class PeticionEvaluacionTareasModalComponent extends
     return this.data;
   }
 
-  protected getFormGroup(): FormGroup {
+  protected buildFormGroup(): FormGroup {
     const formGroup = new FormGroup({
       tarea: new FormControl(this.data.tarea?.tarea),
       tipoTarea: new FormControl(this.data.tarea?.tipoTarea),
@@ -364,7 +353,4 @@ export class PeticionEvaluacionTareasModalComponent extends
     return formGroup;
   }
 
-  ngOnDestroy(): void {
-    super.ngOnDestroy();
-  }
 }

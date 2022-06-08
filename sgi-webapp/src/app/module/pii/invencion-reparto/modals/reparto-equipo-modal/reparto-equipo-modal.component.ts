@@ -2,9 +2,8 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
-import { BaseModalComponent } from '@core/component/base-modal.component';
+import { DialogFormComponent } from '@core/component/dialog-form.component';
 import { MSG_PARAMS } from '@core/i18n';
-import { SnackBarService } from '@core/services/snack-bar.service';
 import { NumberUtils } from '@core/utils/number.utils';
 import { NumberValidator } from '@core/validators/number-validator';
 import { TranslateService } from '@ngx-translate/core';
@@ -20,8 +19,7 @@ const REPARTO_IMPORTE_OTROS_KEY = marker('pii.reparto.equipo-inventor-modal.impo
   templateUrl: './reparto-equipo-modal.component.html',
   styleUrls: ['./reparto-equipo-modal.component.scss']
 })
-export class RepartoEquipoModalComponent
-  extends BaseModalComponent<IRepartoEquipoInventorTableData, RepartoEquipoModalComponent> implements OnInit {
+export class RepartoEquipoModalComponent extends DialogFormComponent<IRepartoEquipoInventorTableData> implements OnInit {
   title: string;
   msgParamImporteTotalEntity = {};
   msgParamImporteNominaEntity = {};
@@ -30,11 +28,10 @@ export class RepartoEquipoModalComponent
 
   constructor(
     private readonly translate: TranslateService,
-    public matDialogRef: MatDialogRef<RepartoEquipoModalComponent>,
-    protected readonly snackBarService: SnackBarService,
+    matDialogRef: MatDialogRef<RepartoEquipoModalComponent>,
     @Inject(MAT_DIALOG_DATA) readonly data: IRepartoEquipoInventorTableData,
   ) {
-    super(snackBarService, matDialogRef, data);
+    super(matDialogRef, true);
   }
 
   ngOnInit(): void {
@@ -42,40 +39,40 @@ export class RepartoEquipoModalComponent
     this.setupI18N();
   }
 
-  protected getDatosForm(): IRepartoEquipoInventorTableData {
-    this.entity.importeTotalInventor = this.formGroup.controls.importeTotal.value;
-    this.entity.repartoEquipoInventor.importeNomina = this.formGroup.controls.importeNomina.value;
-    this.entity.repartoEquipoInventor.importeProyecto = this.formGroup.controls.importeProyecto.value;
-    this.entity.repartoEquipoInventor.importeOtros = this.formGroup.controls.importeOtros.value;
-    this.entity.repartoEquipoInventor.proyecto = this.formGroup.controls.proyecto.value;
+  protected getValue(): IRepartoEquipoInventorTableData {
+    this.data.importeTotalInventor = this.formGroup.controls.importeTotal.value;
+    this.data.repartoEquipoInventor.importeNomina = this.formGroup.controls.importeNomina.value;
+    this.data.repartoEquipoInventor.importeProyecto = this.formGroup.controls.importeProyecto.value;
+    this.data.repartoEquipoInventor.importeOtros = this.formGroup.controls.importeOtros.value;
+    this.data.repartoEquipoInventor.proyecto = this.formGroup.controls.proyecto.value;
 
-    return this.entity;
+    return this.data;
   }
 
-  protected getFormGroup(): FormGroup {
+  protected buildFormGroup(): FormGroup {
     const formGroup = new FormGroup({
       importeTotal: new FormControl(
-        NumberUtils.roundNumber(this.entity.importeTotalInventor),
+        NumberUtils.roundNumber(this.data.importeTotalInventor),
         [Validators.required, Validators.min(0), NumberValidator.maxDecimalDigits(2)]
       ),
       importeNomina: new FormControl(
-        NumberUtils.roundNumber(this.entity.repartoEquipoInventor?.importeNomina),
+        NumberUtils.roundNumber(this.data.repartoEquipoInventor?.importeNomina),
         [Validators.required, Validators.min(0), NumberValidator.maxDecimalDigits(2)]
       ),
       importeProyecto: new FormControl(
-        NumberUtils.roundNumber(this.entity.repartoEquipoInventor?.importeProyecto),
+        NumberUtils.roundNumber(this.data.repartoEquipoInventor?.importeProyecto),
         [Validators.required, Validators.min(0), NumberValidator.maxDecimalDigits(2)]
       ),
       proyecto: new FormControl(
-        this.entity.repartoEquipoInventor?.proyecto
+        this.data.repartoEquipoInventor?.proyecto
       ),
       importeOtros: new FormControl(
-        NumberUtils.roundNumber(this.entity.repartoEquipoInventor?.importeOtros),
+        NumberUtils.roundNumber(this.data.repartoEquipoInventor?.importeOtros),
         [Validators.required, Validators.min(0), NumberValidator.maxDecimalDigits(2)]
       ),
     },
       NumberValidator.fieldsSumEqualsToValue(
-        NumberUtils.roundNumber(this.entity.importeTotalInventor), 'importeNomina', 'importeProyecto', 'importeOtros'
+        NumberUtils.roundNumber(this.data.importeTotalInventor), 'importeNomina', 'importeProyecto', 'importeOtros'
       )
     );
 

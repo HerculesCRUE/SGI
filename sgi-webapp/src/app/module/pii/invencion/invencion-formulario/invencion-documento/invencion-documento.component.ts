@@ -216,7 +216,6 @@ export class InvencionDocumentoComponent extends FragmentComponent implements On
     const row = this.resolveTableRowIndexMatchingWithDataSource(rowIndex);
 
     const config = {
-      panelClass: 'sgi-dialog-container',
       data: invencionDocumento
     };
     const dialogRef = this.matDialog.open(InvencionDocumentoModalComponent, config);

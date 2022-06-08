@@ -1,0 +1,24 @@
+<form [formGroup]="formGroup" class="form">
+  <h3 class="form-title">{{'prc.baremo.ponderacion' | translate}}</h3>
+  <div fxLayout="column" fxLayout.xs="column" fxLayoutGap="10px">
+    <mat-form-field>
+      <mat-label>{{'prc.baremo' | translate:MSG_PARAMS.CARDINALIRY.SINGULAR}}</mat-label>
+      <input matInput type="text" placeholder="{{'prc.baremo' | translate:MSG_PARAMS.CARDINALIRY.SINGULAR}}"
+        formControlName="nombre">
+    </mat-form-field>
+    <mat-form-field>
+      <mat-label>{{'prc.baremo.puntos' | translate}}</mat-label>
+      <input matInput type="number" placeholder="{{'prc.baremo.puntos' | translate}}" formControlName="puntos" required>
+      <mat-error *ngIf="formGroup.controls.puntos.errors?.required">
+        {{'error.required.entity' | translate:msgParamPuntosEntity}}
+      </mat-error>
+    </mat-form-field>
+  </div>
+  <section class="form-buttons">
+    <button *ngIf="!readonly" color="accent" type="submit" (click)="onAceptar()" mat-raised-button>
+      {{'btn.ok' | translate}}
+    </button>
+    <button class="link-cancelar" mat-button type="button" (click)="onCancelar()">{{'btn.cancel' |
+      translate}}</button>
+  </section>
+</form>

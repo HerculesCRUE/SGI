@@ -45,11 +45,21 @@ public interface AnualidadGastoRepository
 
   /**
    * Recupera todas las {@link AnualidadGasto} del proyecto que formen parte de
-   * una {@link ProyectoAnualidad} asociada al {@link ProyectoPartida} que tiene como {@link Proyecto} el
+   * una {@link ProyectoAnualidad} asociada al {@link ProyectoPartida} que tiene
+   * como {@link Proyecto} el
    * identificado con el proyectoId pasado por parámetro
    *
    * @param proyectoId Id del {@link Proyecto}.
    * @return Listado de {@link AnualidadGasto}
    */
   List<AnualidadGasto> findAnualidadGastoByProyectoPartidaProyectoId(Long proyectoId);
+
+  /**
+   * Indica si existen {@link AnualidadGasto} de un {@link Proyecto}
+   * 
+   * @param proyectoId identificador de la {@link Proyecto}
+   * @return si existen {@link AnualidadGasto} asociados al {@link Proyecto}
+   */
+  boolean existsByProyectoAnualidadProyectoId(Long proyectoId);
+
 }

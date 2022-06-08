@@ -12,6 +12,7 @@ import org.crue.hercules.sgi.prc.model.BaseEntity;
 import org.crue.hercules.sgi.prc.model.CampoProduccionCientifica;
 import org.crue.hercules.sgi.prc.model.ProduccionCientifica;
 import org.crue.hercules.sgi.prc.repository.CampoProduccionCientificaRepository;
+import org.crue.hercules.sgi.prc.repository.specification.CampoProduccionCientificaSpecifications;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -199,6 +200,27 @@ public class CampoProduccionCientificaService {
     log.debug("deleteInBulkByProduccionCientificaId(Long produccionCientificaId)  - start");
     final int returnValue = repository.deleteInBulkByProduccionCientificaId(produccionCientificaId);
     log.debug("deleteInBulkByProduccionCientificaId(Long produccionCientificaId)  - end");
+    return returnValue;
+  }
+
+  /**
+   * Obtiene todos los {@link CampoProduccionCientifica} por su
+   * produccionCientificaId paginadas y/o filtradas.
+   *
+   * @param produccionCientificaId el id de {@link ProduccionCientifica}.
+   * @param query                  la información del filtro.
+   * @param pageable               la información de la paginación.
+   * @return listado de {@link CampoProduccionCientifica} paginadas y/o filtradas.
+   */
+  public Page<CampoProduccionCientifica> findAllByProduccionCientificaId(Long produccionCientificaId, String query,
+      Pageable pageable) {
+    log.debug(
+        "findAllByProduccionCientificaId(Long prodduccionCientificaId, String query, Pageable pageable) - start");
+    Specification<CampoProduccionCientifica> specs = CampoProduccionCientificaSpecifications.byProduccionCientificaId(
+        produccionCientificaId)
+        .and(SgiRSQLJPASupport.toSpecification(query));
+    final Page<CampoProduccionCientifica> returnValue = repository.findAll(specs, pageable);
+    log.debug("findAllByProduccionCientificaId(Long prodduccionCientificaId, String query, Pageable pageable) - end");
     return returnValue;
   }
 }

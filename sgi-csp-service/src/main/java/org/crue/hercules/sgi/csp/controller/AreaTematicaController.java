@@ -124,7 +124,7 @@ public class AreaTematicaController {
    * @return la lista de entidades {@link AreaTematica} paginadas
    */
   @GetMapping()
-  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-CON-INV-V', 'CSP-SOL-INV-C', 'CSP-SOL-INV-ER')")
+  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-CON-INV-V', 'CSP-SOL-INV-C', 'CSP-SOL-INV-ER', 'CSP-AREA-V', 'CSP-AREA-C', 'CSP-AREA-E', 'CSP-AREA-B', 'CSP-AREA-R')")
   public ResponseEntity<Page<AreaTematica>> findAll(@RequestParam(name = "q", required = false) String query,
       @RequestPageable(sort = "s") Pageable paging) {
     log.debug("findAll(String query, Pageable paging) - start");

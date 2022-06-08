@@ -1,10 +1,5 @@
-<div class="sgi-dialog-header" fxLayout="row" fxLayoutGap="20px">
-  <span fxFlexAlign="center" mat-mat-dialog-title role="heading" aria-level="3" fxFlex>{{title | translate}}</span>
-  <button fxFlex="nogrow" mat-icon-button mat-dialog-close>
-    <mat-icon class="close-icon">close</mat-icon>
-  </button>
-</div>
-<mat-dialog-content>
+<sgi-dialog-header [title]="title"></sgi-dialog-header>
+<sgi-dialog-content>
   <form [formGroup]="formGroup" fxLayout="column">
     <!-- Tipo de hito -->
     <div fxFlex>
@@ -108,9 +103,10 @@
       </div>
     </mat-card>
   </form>
-</mat-dialog-content>
+</sgi-dialog-content>
 <mat-dialog-actions>
-  <button color="accent" (click)="saveOrUpdate()" mat-raised-button type="submit" *ngIf="!data.readonly">
+  <button color="accent" (click)="doAction()" [disabled]="this.actionDisabled" mat-raised-button type="submit"
+    *ngIf="!data.readonly">
     <mat-icon class="save-icon">save</mat-icon>{{textSaveOrUpdate |
     translate}}
   </button>

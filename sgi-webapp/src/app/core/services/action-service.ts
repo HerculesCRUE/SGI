@@ -768,7 +768,7 @@ export class Group implements IGroup {
       return form.valid || form.disabled;
     }
     if (form instanceof FormGroup) {
-      if (!form.valid) {
+      if (!form.valid && !form.disabled) {
         return false;
       }
       return Object.keys(form.controls).find((key) => !this.isControlValid(form.get(key))) ? false : true;

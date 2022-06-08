@@ -123,7 +123,6 @@ export class AutorizacionCertificadosComponent extends FragmentComponent impleme
       generadoAutomatico: value?.value.generadoAutomatico,
     } as ICertificadoAutorizacionModalData;
     const config = {
-      panelClass: 'sgi-dialog-container',
       data
     };
     const dialogRef = this.matDialog.open(AutorizacionCertificadoModalComponent, config);

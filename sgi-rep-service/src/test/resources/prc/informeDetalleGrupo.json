@@ -1,0 +1,108 @@
+{
+  "grupo": "Grupo investigación 1",
+  "anio": 2021,
+  "investigadores": [
+    {
+      "investigador": "FRANCISCO JOSE ALONSO ESPINOSA",
+      "puntosProduccion": 4.68,
+      "puntosCostesIndirectos": 0.00
+    }
+  ],
+  "precioPuntoProduccion": 24038.46,
+  "precioPuntoCostesIndirectos": 0.00,
+  "precioPuntoSexenio": 0.00,
+  "sexenios": {
+    "numero": 0,
+    "puntos": 0.00,
+    "importe": 0.0000
+  },
+  "produccionesCientificas": [
+    {
+      "tipo": "LIBROS",
+      "numero": 1,
+      "puntos": 4.68,
+      "importe": 112499.9928
+    },
+    {
+      "tipo": "ARTÍCULOS",
+      "numero": 0,
+      "puntos": 0.00,
+      "importe": 0.0000
+    },
+    {
+      "tipo": "TRABAJOS PRESENTADOS EN CONGRESOS",
+      "numero": 0,
+      "puntos": 0.00,
+      "importe": 0.0000
+    },
+    {
+      "tipo": "DIRECCIÓN DE TESIS Y/O PFC",
+      "numero": 0,
+      "puntos": 0.00,
+      "importe": 0.0000
+    },
+    {
+      "tipo": "OBRAS ARTÍSTICAS",
+      "numero": 0,
+      "puntos": 0.00,
+      "importe": 0.0000
+    },
+    {
+      "tipo": "CÓMITES EDITORIALES",
+      "numero": 0,
+      "puntos": 0.00,
+      "importe": 0.0000
+    },
+    {
+      "tipo": "ORGANIZACIÓN DE ACTIVIDADES I+D+I",
+      "numero": 0,
+      "puntos": 0.00,
+      "importe": 0.0000
+    },
+    {
+      "tipo": "PROYECTOS DE INVESTIGACIÓN",
+      "numero": 0,
+      "puntos": 0.00,
+      "importe": 0.0000
+    },
+    {
+      "tipo": "CONTRATOS",
+      "numero": 0,
+      "puntos": 0.00,
+      "importe": 0.0000
+    },
+    {
+      "tipo": "INVENCIONES",
+      "numero": 0,
+      "puntos": 0.00,
+      "importe": 0.0000
+    }
+  ],
+  "costesIndirectos": {
+    "numero": 0,
+    "puntos": 0.00,
+    "importe": 0.0000
+  },
+  "totales": [
+    {
+      "tipo": "TOTAL PRODUCCIÓN",
+      "importe": 112499.9928
+    },
+    {
+      "tipo": "TOTAL SEXENIOS",
+      "importe": 0.0000
+    },
+    {
+      "tipo": "TOTAL COSTES INDIRECTOS",
+      "importe": 0.0000
+    },
+    {
+      "tipo": "TOTAL COSTES INDIRECTOS",
+      "importe": 0.0000
+    },
+    {
+      "tipo": "TOTAL",
+      "importe": 112499.9928
+    }
+  ]
+}

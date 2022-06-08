@@ -132,20 +132,18 @@ export class ProyectoEntidadGestoraFragment extends FormFragment<IProyectoEntida
   private onEntidadGestoraChange(entidadGestora: IEmpresa): void {
     if (entidadGestora) {
 
-      this.getFormGroup().controls.identificadorFiscal.setValue(entidadGestora.tipoIdentificador.nombre);
+      this.getFormGroup().controls.identificadorFiscal.setValue(entidadGestora.tipoIdentificador?.nombre ?? '');
       this.getFormGroup().controls.nombre.setValue(entidadGestora.nombre);
       this.getFormGroup().controls.razonSocial.setValue(entidadGestora.razonSocial);
       this.getFormGroup().controls.direccionPostal.setValue(''); // TODO: añadir cuando se implemente /datos-contacto/empresa/{id}
       this.getFormGroup().controls.tipoEmpresa.setValue(''); // TODO: añadir cuando se implemente /datos-tipo-empresa/empresa/{id}
 
-      const entidadGestoraPadreRef = undefined; // TODO: cambiar cuando este definido como va
-      if (entidadGestoraPadreRef) {
-
+      if (entidadGestora.padreId) {
         this.getFormGroup().controls.entidad.setValue(2);
         this.getFormGroup().controls.codigoSubentidad.setValue(entidadGestora.numeroIdentificacion);
 
         this.subscriptions.push(
-          this.empresaService.findById(entidadGestoraPadreRef)
+          this.empresaService.findById(entidadGestora.padreId)
             .subscribe(empresa => {
               if (empresa) {
                 this.getFormGroup().controls.numeroIdentificadorFiscal.setValue(empresa.numeroIdentificacion);

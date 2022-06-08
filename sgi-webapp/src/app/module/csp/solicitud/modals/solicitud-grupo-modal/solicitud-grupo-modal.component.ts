@@ -1,4 +1,4 @@
-import { Component, Inject } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Router } from '@angular/router';
@@ -11,7 +11,6 @@ import { Module } from '@core/module';
 import { GrupoService } from '@core/services/csp/grupo/grupo.service';
 import { SolicitudService } from '@core/services/csp/solicitud.service';
 import { VinculacionService } from '@core/services/sgp/vinculacion.service';
-import { SnackBarService } from '@core/services/snack-bar.service';
 import { DateValidator } from '@core/validators/date-validator';
 import { TranslateService } from '@ngx-translate/core';
 import { Observable } from 'rxjs';
@@ -30,7 +29,7 @@ const SGI_DEP = 'SGIDEP';
   templateUrl: './solicitud-grupo-modal.component.html',
   styleUrls: ['./solicitud-grupo-modal.component.scss']
 })
-export class SolicitudGrupoModalComponent extends DialogActionComponent<ISolicitudGrupo> {
+export class SolicitudGrupoModalComponent extends DialogActionComponent<ISolicitudGrupo> implements OnInit {
 
   solicitudGrupo: ISolicitudGrupo;
 
@@ -42,7 +41,6 @@ export class SolicitudGrupoModalComponent extends DialogActionComponent<ISolicit
   msgParamGrupoEntity = {};
 
   constructor(
-    protected snackBarService: SnackBarService,
     matDialogRef: MatDialogRef<SolicitudGrupoModalComponent>,
     @Inject(MAT_DIALOG_DATA) data: ISolicitudGrupo,
     private readonly translate: TranslateService,
@@ -57,6 +55,7 @@ export class SolicitudGrupoModalComponent extends DialogActionComponent<ISolicit
 
   ngOnInit(): void {
     super.ngOnInit();
+    this.matDialogRef.updateSize('30vw');
     this.setupI18N();
   }
 

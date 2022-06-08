@@ -9,9 +9,7 @@ import TestUtils from '@core/utils/test-utils';
 import { MaterialDesignModule } from '@material/material-design.module';
 import { SgiAuthModule } from '@sgi/framework/auth';
 import { SharedModule } from '@shared/shared.module';
-import { LoggerTestingModule } from 'ngx-logger/testing';
 import { IRepartoEquipoInventorTableData } from '../../invencion-reparto-formulario/invencion-reparto-equipo-inventor/invencion-reparto-equipo-inventor.fragment';
-
 import { RepartoEquipoModalComponent } from './reparto-equipo-modal.component';
 
 describe('RepartoEquipoModalComponent', () => {
@@ -29,7 +27,6 @@ describe('RepartoEquipoModalComponent', () => {
         RouterTestingModule,
         MaterialDesignModule,
         HttpClientTestingModule,
-        LoggerTestingModule,
         MatDialogModule,
         TestUtils.getIdiomas(),
         FormsModule,
@@ -37,7 +34,7 @@ describe('RepartoEquipoModalComponent', () => {
         SgiAuthModule
       ],
       providers: [
-        { provide: MatDialogRef, useValue: data },
+        { provide: MatDialogRef, useValue: TestUtils.buildDialogCommonMatDialogRef() },
         { provide: MAT_DIALOG_DATA, useValue: data },
       ],
       declarations: [RepartoEquipoModalComponent, HeaderComponent],

@@ -133,7 +133,6 @@ export class PeticionEvaluacionTareasListadoComponent extends FragmentComponent 
     };
 
     const config = {
-      panelClass: 'sgi-dialog-container',
       data
     };
 
@@ -161,7 +160,6 @@ export class PeticionEvaluacionTareasListadoComponent extends FragmentComponent 
     };
 
     const config = {
-      panelClass: 'sgi-dialog-container',
       data
     };
     const dialogRef = this.matDialog.open(PeticionEvaluacionTareasModalComponent, config);

@@ -26,6 +26,7 @@ import org.crue.hercules.sgi.pii.model.PeriodoTitularidad_;
 import org.crue.hercules.sgi.pii.model.SolicitudProteccion;
 import org.crue.hercules.sgi.pii.model.SolicitudProteccion_;
 import org.crue.hercules.sgi.pii.model.TipoProteccion_;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
 
 import lombok.extern.slf4j.Slf4j;
@@ -123,6 +124,28 @@ public class CustomInvencionRepositoryImpl implements CustomInvencionRepository 
         "findInvencionesProduccionCientifica(fechaInicioBaremacion, fechaFinBaremacion, universidadId) : {} - end");
 
     return result;
+  }
+
+  /**
+   * Obtiene los ids de {@link Invencion} que cumplen con la specification
+   * recibida.
+   * 
+   * @param specification condiciones que deben cumplir.
+   * @return lista de ids de {@link Invencion}.
+   */
+  @Override
+  public List<Long> findIds(Specification<Invencion> specification) {
+    log.debug("findIds(Specification<Invencion> specification) - start");
+
+    CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+    CriteriaQuery<Long> cq = cb.createQuery(Long.class);
+    Root<Invencion> root = cq.from(Invencion.class);
+
+    cq.select(root.get(Invencion_.id)).distinct(true).where(specification.toPredicate(root, cq, cb));
+
+    log.debug("findIds(Specification<Invencion> specification) - end");
+
+    return entityManager.createQuery(cq).getResultList();
   }
 
 }

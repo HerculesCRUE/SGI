@@ -68,12 +68,9 @@ public class PuntuacionGrupoInvestigador extends BaseEntity {
   @Column(name = "puntuacion_item_investigador_id", nullable = true)
   private Long puntuacionItemInvestigadorId;
 
-  // Relation mappings for JPA metamodel generation only
   @ManyToOne
   @JoinColumn(name = "puntuacion_item_investigador_id", insertable = false, updatable = false, foreignKey = @ForeignKey(name = "FK_PUNTUACIONGRUPOINVESTIGADOR_PUNTUACIONITEMINVESTIGADOR"))
-  @Getter(AccessLevel.NONE)
-  @Setter(AccessLevel.NONE)
-  private final PuntuacionItemInvestigador puntuacionItemInvestigador = null;
+  private PuntuacionItemInvestigador puntuacionItemInvestigador;
 
   @Override
   public String toString() {

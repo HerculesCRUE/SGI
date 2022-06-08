@@ -1,6 +1,7 @@
 
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { IConvocatoriaConceptoGastoCodigoEc } from '@core/models/csp/convocatoria-concepto-gasto-codigo-ec';
+import { IProyecto } from '@core/models/csp/proyecto';
 import { IProyectoConceptoGastoCodigoEc } from '@core/models/csp/proyecto-concepto-gasto-codigo-ec';
 import { ICodigoEconomicoGasto } from '@core/models/sge/codigo-economico-gasto';
 import { Fragment } from '@core/services/action-service';
@@ -43,6 +44,7 @@ export class ProyectoConceptoGastoCodigoEcFragment extends Fragment {
 
   constructor(
     key: number,
+    private proyecto: IProyecto,
     private convocatoriaConceptoGastoId: number,
     private proyectoConceptoGastoService: ProyectoConceptoGastoService,
     private proyectoConceptoGastoCodigoEcService: ProyectoConceptoGastoCodigoEcService,
@@ -279,7 +281,7 @@ export class ProyectoConceptoGastoCodigoEcFragment extends Fragment {
         } else {
           codigoEconomico.help = undefined;
         }
-      } else {
+      } else if (this.proyecto.convocatoriaId) {
         codigoEconomico.help = {
           class: HelpIconClass.WARNING,
           tooltip: PROYECTO_CONCEPTO_GASTO_CODIGO_EC_NO_CONVOCATORIA_KEY

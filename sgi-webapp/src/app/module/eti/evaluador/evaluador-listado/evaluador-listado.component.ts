@@ -1,29 +1,29 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { AbstractTablePaginationComponent } from '@core/component/abstract-table-pagination.component';
 import { MSG_PARAMS } from '@core/i18n';
-import { IComite } from '@core/models/eti/comite';
 import { IEvaluador } from '@core/models/eti/evaluador';
 import { IPersona } from '@core/models/sgp/persona';
 import { FxFlexProperties } from '@core/models/shared/flexLayout/fx-flex-properties';
 import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-properties';
 import { ROUTE_NAMES } from '@core/route.names';
 import { DialogService } from '@core/services/dialog.service';
-import { ComiteService } from '@core/services/eti/comite.service';
 import { EvaluadorService } from '@core/services/eti/evaluador.service';
 import { PersonaService } from '@core/services/sgp/persona.service';
 import { SnackBarService } from '@core/services/snack-bar.service';
 import { LuxonUtils } from '@core/utils/luxon-utils';
 import { TranslateService } from '@ngx-translate/core';
 import { RSQLSgiRestFilter, SgiRestFilter, SgiRestFilterOperator, SgiRestListResult } from '@sgi/framework/http';
-import { TipoColectivo } from 'src/app/esb/sgp/shared/select-persona/select-persona.component';
 import { DateTime } from 'luxon';
 import { NGXLogger } from 'ngx-logger';
 import { Observable, of } from 'rxjs';
-import { catchError, map, startWith, switchMap } from 'rxjs/operators';
+import { catchError, map, switchMap } from 'rxjs/operators';
+import { TipoColectivo } from 'src/app/esb/sgp/shared/select-persona/select-persona.component';
+import { EvaluadorListadoExportModalComponent, IEvaluadorListadoModalData } from '../modals/evaluador-listado-export-modal/evaluador-listado-export-modal.component';
 
 const MSG_BUTTON_SAVE = marker('btn.add.entity');
 const MSG_ERROR = marker('error.load');
@@ -51,9 +51,6 @@ export class EvaluadorListadoComponent extends AbstractTablePaginationComponent<
 
   evaluadores$: Observable<IEvaluador[]> = of();
 
-  comiteListado: IComite[];
-  filteredComites: Observable<IComite[]>;
-
   textoCrear: string;
   textoDelete: string;
   textoDeleteSuccess: string;
@@ -70,10 +67,10 @@ export class EvaluadorListadoComponent extends AbstractTablePaginationComponent<
     private readonly logger: NGXLogger,
     private readonly evaluadoresService: EvaluadorService,
     protected readonly snackBarService: SnackBarService,
-    private readonly comiteService: ComiteService,
     private readonly personaService: PersonaService,
     private readonly dialogService: DialogService,
-    private readonly translate: TranslateService
+    private readonly translate: TranslateService,
+    private matDialog: MatDialog
   ) {
     super(snackBarService, MSG_ERROR);
     this.fxFlexProperties = new FxFlexProperties();
@@ -93,12 +90,10 @@ export class EvaluadorListadoComponent extends AbstractTablePaginationComponent<
     super.ngOnInit();
     this.setupI18N();
     this.formGroup = new FormGroup({
-      comite: new FormControl('', []),
+      comite: new FormControl(null, []),
       estado: new FormControl('', []),
       solicitante: new FormControl('', [])
     });
-
-    this.getComites();
   }
 
   private setupI18N(): void {
@@ -196,15 +191,6 @@ export class EvaluadorListadoComponent extends AbstractTablePaginationComponent<
   }
 
   /**
-   * Devuelve el nombre de un comité.
-   * @param comite comités
-   * returns nombre comité
-   */
-  getComite(comite: IComite): string {
-    return comite?.comite;
-  }
-
-  /**
    * Devuelve los datos rellenos de evaluadores
    * @param evaluadores el listado de evaluadores
    * returns los evaluadores con todos sus datos
@@ -260,40 +246,6 @@ export class EvaluadorListadoComponent extends AbstractTablePaginationComponent<
   }
 
   /**
-   * Recupera un listado de los comités que hay en el sistema.
-   */
-  getComites(): void {
-    const comitesSubscription = this.comiteService.findAll().subscribe(
-      (response) => {
-        this.comiteListado = response.items;
-
-        this.filteredComites = this.formGroup.controls.comite.valueChanges
-          .pipe(
-            startWith(''),
-            map(value => this.filterComite(value))
-          );
-      });
-    this.suscripciones.push(comitesSubscription);
-  }
-
-  /**
-   * Filtro de campo autocompletable comité.
-   * @param value value a filtrar (string o nombre comité).
-   * @returns lista de comités filtrados.
-   */
-  private filterComite(value: string | IComite): IComite[] {
-    let filterValue: string;
-    if (typeof value === 'string') {
-      filterValue = value.toLowerCase();
-    } else {
-      filterValue = value.comite.toLowerCase();
-    }
-
-    return this.comiteListado.filter
-      (comite => comite.comite.toLowerCase().includes(filterValue));
-  }
-
-  /**
    * Elimina el evaluador con el id recibido por parametro.
    * @param evaluadorId id evaluador
    * @param event evento lanzado
@@ -319,5 +271,16 @@ export class EvaluadorListadoComponent extends AbstractTablePaginationComponent<
         aceptado = false;
       });
     this.suscripciones.push(dialogServiceSubscriptionGetSubscription);
+  }
+
+  public openExportModal() {
+    const data: IEvaluadorListadoModalData = {
+      findOptions: this.findOptions
+    };
+
+    const config = {
+      data
+    };
+    this.matDialog.open(EvaluadorListadoExportModalComponent, config);
   }
 }

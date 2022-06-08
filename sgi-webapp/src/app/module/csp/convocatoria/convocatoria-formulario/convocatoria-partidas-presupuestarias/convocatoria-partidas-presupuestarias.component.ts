@@ -107,17 +107,29 @@ export class ConvocatoriaPartidaPresupuestariaComponent extends FragmentComponen
    */
   openModalPartidaPresupuestaria(
     partidaPresupuestariaActualizar?: StatusWrapper<IConvocatoriaPartidaPresupuestaria>,
+    rowIndex?: number,
     canEdit?: boolean): void {
+
+    // Necesario para sincronizar los cambios de orden de registros dependiendo de la ordenación y paginación
+    this.dataSource.sortData(this.dataSource.filteredData, this.dataSource.sort);
+
+    const partidaPresupuestariaTabla = this.dataSource.data
+      .map(partidaPresupuestaria => partidaPresupuestaria.value);
+
+    if (!!rowIndex || rowIndex === 0) {
+      const row = (this.paginator.pageSize * this.paginator.pageIndex) + rowIndex;
+      partidaPresupuestariaTabla.splice(row, 1);
+    }
+
     const modalData: PartidaPresupuestariaModalComponentData = {
       partidaPresupuestaria: partidaPresupuestariaActualizar?.value ?? {} as IConvocatoriaPartidaPresupuestaria,
-      partidasPresupuestarias: this.dataSource.data.map(element => element.value),
+      partidasPresupuestarias: partidaPresupuestariaTabla,
       convocatoriaPartidaPresupuestaria: null,
       readonly: this.formPart.readonly,
       canEdit: canEdit ?? true
     };
 
     const config = {
-      panelClass: 'sgi-dialog-container',
       data: modalData,
     };
     const dialogRef = this.matDialog.open(PartidaPresupuestariaModalComponent, config);

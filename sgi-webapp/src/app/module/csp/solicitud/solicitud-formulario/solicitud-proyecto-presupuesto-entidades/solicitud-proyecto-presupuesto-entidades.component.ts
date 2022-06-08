@@ -158,7 +158,6 @@ export class SolicitudProyectoPresupuestoEntidadesComponent
       global: false
     };
     const config = {
-      panelClass: 'sgi-dialog-container',
       data
     };
     this.matDialog.open(SolicitiudPresupuestoModalComponent, config);

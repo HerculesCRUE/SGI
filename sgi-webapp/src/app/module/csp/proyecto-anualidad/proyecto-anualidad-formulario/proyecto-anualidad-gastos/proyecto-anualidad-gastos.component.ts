@@ -101,7 +101,6 @@ export class ProyectoAnualidadGastosComponent extends FragmentComponent implemen
       readonly: this.actionService.readonly
     };
     const config = {
-      panelClass: 'sgi-dialog-container',
       data
     };
     const dialogRef = this.matDialog.open(ProyectoAnualidadGastoModalComponent, config);

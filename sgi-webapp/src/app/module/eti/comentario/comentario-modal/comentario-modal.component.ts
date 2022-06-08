@@ -1,24 +1,21 @@
 import { NestedTreeControl } from '@angular/cdk/tree';
-import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatCheckboxChange } from '@angular/material/checkbox';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatTreeNestedDataSource } from '@angular/material/tree';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
-import { BaseModalComponent } from '@core/component/base-modal.component';
+import { DialogFormComponent } from '@core/component/dialog-form.component';
 import { MSG_PARAMS } from '@core/i18n';
 import { IApartado } from '@core/models/eti/apartado';
 import { IBloque } from '@core/models/eti/bloque';
 import { IComentario } from '@core/models/eti/comentario';
 import { IEvaluacion } from '@core/models/eti/evaluacion';
 import { resolveFormularioByTipoEvaluacionAndComite } from '@core/models/eti/formulario';
-import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-properties';
 import { ActionService } from '@core/services/action-service';
 import { ApartadoService } from '@core/services/eti/apartado.service';
 import { BloqueService } from '@core/services/eti/bloque.service';
 import { FormularioService } from '@core/services/eti/formulario.service';
-import { SnackBarService } from '@core/services/snack-bar.service';
-import { FormGroupUtil } from '@core/utils/form-group-util';
 import { StatusWrapper } from '@core/utils/status-wrapper';
 import { IsEntityValidator } from '@core/validators/is-entity-validador';
 import { TranslateService } from '@ngx-translate/core';
@@ -27,8 +24,6 @@ import { from, Observable, of } from 'rxjs';
 import { catchError, map, mergeMap, switchMap, takeLast } from 'rxjs/operators';
 import { EvaluacionFormularioActionService } from '../../evaluacion-formulario/evaluacion-formulario.action.service';
 
-const MSG_ERROR_APARTADO = marker('error.load');
-const MSG_ERROR_FORM_GROUP = marker('error.form-group');
 const TITLE_NEW_ENTITY = marker('title.new.entity');
 const COMENTARIO_KEY = marker('eti.comentario');
 const COMENTARIO_BLOQUE_KEY = marker('eti.comentario.bloque');
@@ -93,9 +88,7 @@ function sortByOrden(nodes: NodeApartado[]): NodeApartado[] {
     }
   ]
 })
-export class ComentarioModalComponent extends
-  BaseModalComponent<ComentarioModalData, ComentarioModalComponent> implements OnInit, OnDestroy {
-  fxLayoutProperties: FxLayoutProperties;
+export class ComentarioModalComponent extends DialogFormComponent<ComentarioModalData> implements OnInit {
 
   apartado$: Observable<IBloque[]>;
   evaluaciones$: Observable<IEvaluacion[]>;
@@ -103,9 +96,15 @@ export class ComentarioModalComponent extends
   dataSource = new MatTreeNestedDataSource<NodeApartado>();
   private nodeMap = new Map<number, NodeApartado>();
 
-  mostrarError: boolean;
-
-  checkedNode: NodeApartado;
+  // tslint:disable-next-line: variable-name
+  private _checkedNode: NodeApartado;
+  get checkedNode(): NodeApartado {
+    return this._checkedNode;
+  }
+  set checkedNode(value: NodeApartado) {
+    this._checkedNode = value;
+    this.formGroup?.controls.apartado.setValue(value?.apartado?.value);
+  }
   hasChild = (_: number, node: NodeApartado) => node.childs.length > 0;
 
   msgParamBloqueEntity = {};
@@ -123,16 +122,11 @@ export class ComentarioModalComponent extends
     private formularioService: FormularioService,
     private bloqueService: BloqueService,
     private apartadoService: ApartadoService,
-    protected snackBarService: SnackBarService,
-    public matDialogRef: MatDialogRef<ComentarioModalComponent>,
+    matDialogRef: MatDialogRef<ComentarioModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data: ComentarioModalData,
     private translate: TranslateService
   ) {
-    super(snackBarService, matDialogRef, data);
-
-    this.fxLayoutProperties = new FxLayoutProperties();
-    this.fxLayoutProperties.layout = 'column';
-    this.fxLayoutProperties.layoutAlign = 'space-around start';
+    super(matDialogRef, !!data.comentario);
   }
 
   ngOnInit(): void {
@@ -211,10 +205,7 @@ export class ComentarioModalComponent extends
       (evaluacion?.tipoEvaluacion?.id, evaluacion?.memoria?.comite)).pipe(
         map(res => res.items),
         catchError(error => {
-          this.matDialogRef.close(null);
-          this.snackBarService.showError(MSG_ERROR_APARTADO);
-          this.logger.error(ComentarioModalComponent.name,
-            `loadBloques()`, error);
+          this.processError(error);
           return of([]);
         })
       );
@@ -305,7 +296,6 @@ export class ComentarioModalComponent extends
   }
 
   onCheckNode(node: NodeApartado, $event: MatCheckboxChange): void {
-    this.mostrarError = false;
     this.checkedNode = $event.checked ? node : undefined;
   }
 
@@ -313,25 +303,10 @@ export class ComentarioModalComponent extends
     return bloque?.nombre;
   }
 
-  /**
-   * Comprueba el formulario y envia el comentario resultante
-   */
-  saveOrUpdate() {
-    if (this.formGroup.valid) {
-      if (this.checkedNode?.apartado?.value) {
-        this.matDialogRef.close(this.getDatosForm());
-      } else {
-        this.mostrarError = true;
-        this.snackBarService.showError(MSG_ERROR_FORM_GROUP);
-      }
-    } else {
-      this.snackBarService.showError(MSG_ERROR_FORM_GROUP);
-    }
-  }
-
-  protected getFormGroup(): FormGroup {
+  protected buildFormGroup(): FormGroup {
     const formGroup = new FormGroup({
-      bloque: new FormControl(this.data?.comentario?.apartado?.bloque, [Validators.required, IsEntityValidator.isValid()]),
+      bloque: new FormControl(this.data?.comentario?.apartado?.bloque, [Validators.required]),
+      apartado: new FormControl(this.data.comentario?.apartado, [Validators.required]),
       comentario: new FormControl(this.data?.comentario?.texto, [
         Validators.required, Validators.maxLength(2000)]),
       evaluacion: new FormControl(this.data?.evaluaciones?.length === 1 ? this.data?.evaluaciones[0] : this.data?.comentario ? this.data?.evaluaciones.filter(ev => ev.memoria.id === this.data.comentario?.memoria?.id)[0] : null, [Validators.required, IsEntityValidator.isValid()])
@@ -343,14 +318,15 @@ export class ComentarioModalComponent extends
   /**
    * Método para actualizar la entidad con los datos del formgroup + tree
    */
-  protected getDatosForm(): ComentarioModalData {
+  protected getValue(): ComentarioModalData {
     const comentario = {} as IComentario;
     const subapartado: IApartado = this.checkedNode?.apartado?.value;
     if (subapartado) {
       comentario.apartado = subapartado;
     }
-    comentario.texto = FormGroupUtil.getValue(this.formGroup, 'comentario');
-    comentario.memoria = FormGroupUtil.getValue(this.formGroup, 'evaluacion').memoria;
+    comentario.apartado = this.formGroup.get('apartado').value;
+    comentario.texto = this.formGroup.get('comentario').value;
+    comentario.memoria = this.formGroup.get('evaluacion').value?.memoria;
     this.data.comentario = comentario;
     return this.data;
   }
@@ -359,7 +335,4 @@ export class ComentarioModalComponent extends
     return evaluacion.memoria?.numReferencia;
   }
 
-  ngOnDestroy(): void {
-    super.ngOnDestroy();
-  }
 }

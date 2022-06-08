@@ -45,7 +45,7 @@ public class ConfiguracionControllerTest extends BaseControllerTest {
   @WithMockUser(username = "user", authorities = { "ETI-CNF-E" })
   public void replaceConfiguracion_ReturnsConfiguracion() throws Exception {
     // given: Una configuracion a modificar
-    String replaceConfiguracionJson = "{\"id\": 1, \"diasLimiteEvaluador\": 1, \"mesesArchivadaPendienteCorrecciones\": 4, \"diasArchivadaInactivo\":1, \"mesesAvisoProyectoCEEA\":1, \"mesesAvisoProyectoCEI\":1, \"mesesAvisoProyectoCBE\":1}";
+    String replaceConfiguracionJson = "{\"id\": 1, \"diasLimiteEvaluador\": 1, \"mesesArchivadaPendienteCorrecciones\": 4, \"diasArchivadaInactivo\":1, \"mesesAvisoProyectoCEEA\":1, \"mesesAvisoProyectoCEI\":1, \"mesesAvisoProyectoCBE\":1, \"diasAvisoRetrospectiva\":3}";
 
     Configuracion configuracion = generarMockConfiguracion();
 
@@ -66,7 +66,7 @@ public class ConfiguracionControllerTest extends BaseControllerTest {
   @WithMockUser(username = "user", authorities = { "ETI-CNF-E" })
   public void replaceConfiguracion_NotFound() throws Exception {
     // given: Una configuracion a modificar
-    String replaceConfiguracionJson = "{\"id\": 1, \"diasLimiteEvaluador\": 1, \"mesesArchivadaPendienteCorrecciones\": 4, \"diasArchivadaInactivo\":1, \"mesesAvisoProyectoCEEA\":1, \"mesesAvisoProyectoCEI\":1, \"mesesAvisoProyectoCBE\":1}";
+    String replaceConfiguracionJson = "{\"id\": 1, \"diasLimiteEvaluador\": 1, \"mesesArchivadaPendienteCorrecciones\": 4, \"diasArchivadaInactivo\":1, \"mesesAvisoProyectoCEEA\":1, \"mesesAvisoProyectoCEI\":1, \"mesesAvisoProyectoCBE\":1, \"diasAvisoRetrospectiva\":3}";
 
     BDDMockito.given(configuracionService.update(ArgumentMatchers.<Configuracion>any()))
         .will((InvocationOnMock invocation) -> {
@@ -94,6 +94,7 @@ public class ConfiguracionControllerTest extends BaseControllerTest {
     configuracion.setMesesArchivadaPendienteCorrecciones(20);
     configuracion.setDiasLimiteEvaluador(3);
     configuracion.setDiasArchivadaInactivo(2);
+    configuracion.setDiasAvisoRetrospectiva(3);
 
     return configuracion;
   }

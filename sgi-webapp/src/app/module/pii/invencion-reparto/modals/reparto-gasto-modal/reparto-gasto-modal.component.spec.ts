@@ -10,8 +10,6 @@ import TestUtils from '@core/utils/test-utils';
 import { MaterialDesignModule } from '@material/material-design.module';
 import { SgiAuthModule } from '@sgi/framework/auth';
 import { SharedModule } from '@shared/shared.module';
-import { LoggerTestingModule } from 'ngx-logger/testing';
-
 import { RepartoGastoModalComponent } from './reparto-gasto-modal.component';
 
 describe('RepartoGastoModalComponent', () => {
@@ -29,7 +27,6 @@ describe('RepartoGastoModalComponent', () => {
         RouterTestingModule,
         MaterialDesignModule,
         HttpClientTestingModule,
-        LoggerTestingModule,
         MatDialogModule,
         TestUtils.getIdiomas(),
         FormsModule,
@@ -37,7 +34,7 @@ describe('RepartoGastoModalComponent', () => {
         SgiAuthModule
       ],
       providers: [
-        { provide: MatDialogRef, useValue: data },
+        { provide: MatDialogRef, useValue: TestUtils.buildDialogCommonMatDialogRef() },
         { provide: MAT_DIALOG_DATA, useValue: data },
       ],
       declarations: [RepartoGastoModalComponent, HeaderComponent],

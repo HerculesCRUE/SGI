@@ -97,7 +97,7 @@ public class CustomConvocatoriaRepositoryImpl implements CustomConvocatoriaRepos
     Predicate finalPredicate = cb.and(convocatoria, vinculaciones);
     cq.select(root.get(Convocatoria_.id)).where(finalPredicate);
 
-    Boolean returnValue = entityManager.createQuery(cq).getResultList().size() > 0;
+    Boolean returnValue = !entityManager.createQuery(cq).getResultList().isEmpty();
 
     log.debug("tieneVinculaciones(Long id) - end");
     return returnValue;
@@ -145,7 +145,7 @@ public class CustomConvocatoriaRepositoryImpl implements CustomConvocatoriaRepos
     Predicate finalPredicate = cb.and(convocatoriaRegistrada, vinculaciones);
     cq.select(root.get(Convocatoria_.id)).where(finalPredicate);
 
-    Boolean returnValue = entityManager.createQuery(cq).getResultList().size() > 0;
+    Boolean returnValue = !entityManager.createQuery(cq).getResultList().isEmpty();
 
     log.debug("isRegistradaConSolicitudesOProyectos(Long id) - end");
     return returnValue;
@@ -161,8 +161,6 @@ public class CustomConvocatoriaRepositoryImpl implements CustomConvocatoriaRepos
   public Optional<String> getUnidadGestionRef(Long id) {
     log.debug("getUnidadGestionRef(Long id) - start");
 
-    Optional<String> returnValue = Optional.empty();
-
     CriteriaBuilder cb = entityManager.getCriteriaBuilder();
     CriteriaQuery<String> cq = cb.createQuery(String.class);
     Root<Convocatoria> root = cq.from(Convocatoria.class);
@@ -170,7 +168,7 @@ public class CustomConvocatoriaRepositoryImpl implements CustomConvocatoriaRepos
     Predicate finalPredicate = cb.equal(root.get(Convocatoria_.id), id);
     cq.select(root.get(Convocatoria_.unidadGestionRef)).where(finalPredicate);
 
-    returnValue = entityManager.createQuery(cq).getResultList().stream().findFirst();
+    Optional<String> returnValue = entityManager.createQuery(cq).getResultList().stream().findFirst();
 
     log.debug("getUnidadGestionRef(Long id) - end");
     return returnValue;
@@ -185,8 +183,6 @@ public class CustomConvocatoriaRepositoryImpl implements CustomConvocatoriaRepos
   public Optional<ModeloEjecucion> getModeloEjecucion(Long id) {
     log.debug("getModeloEjecucion(Long id) - start");
 
-    Optional<ModeloEjecucion> returnValue = Optional.empty();
-
     CriteriaBuilder cb = entityManager.getCriteriaBuilder();
     CriteriaQuery<ModeloEjecucion> cq = cb.createQuery(ModeloEjecucion.class);
     Root<Convocatoria> root = cq.from(Convocatoria.class);
@@ -194,7 +190,7 @@ public class CustomConvocatoriaRepositoryImpl implements CustomConvocatoriaRepos
     Predicate finalPredicate = cb.equal(root.get(Convocatoria_.id), id);
     cq.select(root.get(Convocatoria_.modeloEjecucion)).where(finalPredicate);
 
-    returnValue = entityManager.createQuery(cq).getResultList().stream().findFirst();
+    Optional<ModeloEjecucion> returnValue = entityManager.createQuery(cq).getResultList().stream().findFirst();
 
     log.debug("getModeloEjecucion(Long id) - end");
     return returnValue;

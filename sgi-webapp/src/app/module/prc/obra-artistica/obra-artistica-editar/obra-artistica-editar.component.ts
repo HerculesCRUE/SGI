@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
+import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { ActionComponent } from '@core/component/action.component';
@@ -115,11 +115,7 @@ export class ObraArtisticaEditarComponent extends ActionComponent implements OnI
     if (action === 'validar') {
       this.validar();
     } else if (action === 'rechazar') {
-      const config: MatDialogConfig = {
-        panelClass: 'sgi-dialog-container',
-        minWidth: '500px',
-      };
-      const dialogRef = this.matDialog.open(RechazarProduccionCientificaModalComponent, config);
+      const dialogRef = this.matDialog.open(RechazarProduccionCientificaModalComponent);
       dialogRef.afterClosed().subscribe(
         (estadoProduccionCientifica: IEstadoProduccionCientificaRequest) => {
           if (estadoProduccionCientifica) {

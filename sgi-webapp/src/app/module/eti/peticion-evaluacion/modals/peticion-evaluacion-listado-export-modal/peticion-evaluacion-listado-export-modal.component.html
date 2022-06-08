@@ -1,0 +1,32 @@
+<sgi-export-dialog [title]="title">
+  <form [formGroup]="formGroup">
+    <!-- OutputReportType -->
+    <mat-form-field>
+      <mat-label>{{'export.type' | translate}}</mat-label>
+      <sgi-select-enum formControlName="outputType" required [enumMap]="OUTPUT_REPORT_TYPE_EXCEL_CSV_MAP">
+      </sgi-select-enum>
+    </mat-form-field>
+
+    <!-- Columns visibility -->
+    <div class="row-visibility-header">
+      <mat-label>{{'export.columns' | translate}}</mat-label>
+      <mat-checkbox color="primary" class="checkbox" checked="true" (change)="selectUnselectAll($event)">
+        <mat-label>{{'label.todos' | translate}}</mat-label>
+      </mat-checkbox>
+    </div>
+
+    <div class="row-visibility">
+      <div class="columns-visibility">
+        <mat-checkbox color="primary" class="checkbox" formControlName="showEquipoInvestigador">
+          {{'eti.peticion-evaluacion.report.modal.equipo-investigador' | translate}}
+        </mat-checkbox>
+        <mat-checkbox color="primary" class="checkbox" formControlName="showAsignacionTareas">
+          {{'eti.peticion-evaluacion.report.modal.asignacion-tareas' | translate}}
+        </mat-checkbox>
+        <mat-checkbox color="primary" class="checkbox" formControlName="showMemorias">
+          {{'eti.peticion-evaluacion.report.modal.memorias' | translate}}
+        </mat-checkbox>
+      </div>
+    </div>
+  </form>
+</sgi-export-dialog>

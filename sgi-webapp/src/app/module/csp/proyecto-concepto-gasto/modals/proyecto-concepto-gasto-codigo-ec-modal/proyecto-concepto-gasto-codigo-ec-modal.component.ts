@@ -1,15 +1,14 @@
-import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { FormControl, FormGroup, ValidationErrors, ValidatorFn } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
-import { BaseModalComponent } from '@core/component/base-modal.component';
+import { DialogFormComponent } from '@core/component/dialog-form.component';
 import { SelectValue } from '@core/component/select-common/select-common.component';
 import { MSG_PARAMS } from '@core/i18n';
 import { IConvocatoriaConceptoGastoCodigoEc } from '@core/models/csp/convocatoria-concepto-gasto-codigo-ec';
 import { IProyectoConceptoGastoCodigoEc } from '@core/models/csp/proyecto-concepto-gasto-codigo-ec';
 import { ICodigoEconomicoGasto } from '@core/models/sge/codigo-economico-gasto';
 import { CodigoEconomicoGastoService } from '@core/services/sge/codigo-economico-gasto.service';
-import { SnackBarService } from '@core/services/snack-bar.service';
 import { DateValidator } from '@core/validators/date-validator';
 import { SelectValidator } from '@core/validators/select-validator';
 import { TranslateService } from '@ngx-translate/core';
@@ -39,8 +38,7 @@ export interface ProyectoConceptoGastoCodigoEcDataModal {
   styleUrls: ['./proyecto-concepto-gasto-codigo-ec-modal.component.scss']
 })
 export class ProyectoConceptoGastoCodigoEcModalComponent
-  extends BaseModalComponent<ProyectoConceptoGastoCodigoEcDataModal, ProyectoConceptoGastoCodigoEcModalComponent>
-  implements OnInit, OnDestroy {
+  extends DialogFormComponent<ProyectoConceptoGastoCodigoEcDataModal> implements OnInit {
 
   codigosEconomicos$: Observable<ICodigoEconomicoGasto[]>;
   private codigosEconomicos: ICodigoEconomicoGasto[];
@@ -55,24 +53,12 @@ export class ProyectoConceptoGastoCodigoEcModalComponent
   title: string;
 
   constructor(
-    protected snackBarService: SnackBarService,
-    public matDialogRef: MatDialogRef<ProyectoConceptoGastoCodigoEcModalComponent>,
-    codigoEconomicoGastoService: CodigoEconomicoGastoService,
+    matDialogRef: MatDialogRef<ProyectoConceptoGastoCodigoEcModalComponent>,
+    private codigoEconomicoGastoService: CodigoEconomicoGastoService,
     @Inject(MAT_DIALOG_DATA) public data: ProyectoConceptoGastoCodigoEcDataModal,
     private readonly translate: TranslateService
   ) {
-    super(snackBarService, matDialogRef, data);
-
-    this.codigosEconomicos$ = codigoEconomicoGastoService.findAll().pipe(
-      map(response => response.items),
-      tap(response => {
-        this.codigosEconomicos = response;
-
-        if (!this.formGroup.disabled) {
-          this.disabledSave = false;
-        }
-      })
-    );
+    super(matDialogRef, !!data.proyectoConceptoGastoCodigoEc?.codigoEconomico);
   }
 
   ngOnInit(): void {
@@ -80,11 +66,20 @@ export class ProyectoConceptoGastoCodigoEcModalComponent
     this.setupI18N();
     this.textSaveOrUpdate = this.data.proyectoConceptoGastoCodigoEc?.codigoEconomico ? MSG_ACEPTAR : MSG_ANADIR;
 
-    this.subscriptions.push(this.codigosEconomicos$.subscribe(
-      (codigosEconomicos) => this.formGroup.controls.codigoEconomico.setValidators(
-        SelectValidator.isSelectOption(codigosEconomicos.map(cod => cod.id), true)
-      )
-    ));
+    this.codigosEconomicos$ = this.codigoEconomicoGastoService.findAll().pipe(
+      map(response => response.items),
+      tap(response => {
+        this.codigosEconomicos = response;
+
+        this.formGroup.controls.codigoEconomico.setValidators(
+          SelectValidator.isSelectOption(this.codigosEconomicos.map(cod => cod.id), true)
+        );
+
+        if (!this.formGroup.disabled) {
+          this.disabledSave = false;
+        }
+      })
+    );
 
     this.subscriptions.push(this.formGroup.controls.codigoEconomico.valueChanges.subscribe(
       (value) => {
@@ -101,7 +96,7 @@ export class ProyectoConceptoGastoCodigoEcModalComponent
     this.subscriptions.push(this.formGroup.valueChanges.subscribe(
       () => {
         this.disabledCopy = !compareConceptoGastoCodigoEc(this.data.convocatoriaConceptoGastoCodigoEc,
-          this.getDatosForm().proyectoConceptoGastoCodigoEc);
+          this.getValue().proyectoConceptoGastoCodigoEc);
       }
     ));
   }
@@ -172,7 +167,7 @@ export class ProyectoConceptoGastoCodigoEcModalComponent
     return o1?.displayText.localeCompare(o2?.displayText);
   }
 
-  protected getDatosForm(): ProyectoConceptoGastoCodigoEcDataModal {
+  protected getValue(): ProyectoConceptoGastoCodigoEcDataModal {
     if (!this.data.proyectoConceptoGastoCodigoEc) {
       this.data.proyectoConceptoGastoCodigoEc = {} as IProyectoConceptoGastoCodigoEc;
     }
@@ -186,7 +181,7 @@ export class ProyectoConceptoGastoCodigoEcModalComponent
     return this.data;
   }
 
-  protected getFormGroup(): FormGroup {
+  protected buildFormGroup(): FormGroup {
     const codigoEconomico = this.data.proyectoConceptoGastoCodigoEc?.codigoEconomico ?? null;
     const formGroup = new FormGroup(
       {
@@ -242,10 +237,6 @@ export class ProyectoConceptoGastoCodigoEcModalComponent
     this.formGroup.controls.fechaInicio.setValue(this.formGroup.controls.fechaInicioConvocatoria.value);
     this.formGroup.controls.fechaFin.setValue(this.formGroup.controls.fechaFinConvocatoria.value);
     this.formGroup.controls.observaciones.setValue(this.formGroup.controls.observacionesConvocatoria.value);
-  }
-
-  ngOnDestroy(): void {
-    super.ngOnDestroy();
   }
 
   /**

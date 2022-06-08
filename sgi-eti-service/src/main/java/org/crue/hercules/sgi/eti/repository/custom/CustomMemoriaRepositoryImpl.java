@@ -216,7 +216,7 @@ public class CustomMemoriaRepositoryImpl implements CustomMemoriaRepository {
 
     Expression<Instant> defaultDate = cb.nullLiteral(Instant.class);
 
-    cq.multiselect(root.get(Memoria_.id), root.get(Memoria_.numReferencia), root.get(Memoria_.titulo),
+    cq.multiselect(root.get(Memoria_.id), root.get(Memoria_.personaRef), root.get(Memoria_.numReferencia), root.get(Memoria_.titulo),
         root.get(Memoria_.comite), root.get(Memoria_.estadoActual), defaultDate, defaultDate,
         cb.selectCase().when(cb.isNotNull(isResponsable(root, cb, cq, personaRefConsulta)), true).otherwise(false)
             .alias("isResponsable"),
@@ -291,7 +291,8 @@ public class CustomMemoriaRepositoryImpl implements CustomMemoriaRepository {
 
     Expression<Instant> defaultDate = cb.nullLiteral(Instant.class);
 
-    cq.multiselect(root.get(Memoria_.id), root.get(Memoria_.numReferencia), root.get(Memoria_.titulo),
+    cq.multiselect(root.get(Memoria_.id), root.get(Memoria_.personaRef), root.get(Memoria_.numReferencia),
+        root.get(Memoria_.titulo),
         root.get(Memoria_.comite), root.get(Memoria_.estadoActual), defaultDate, defaultDate,
         cb.selectCase().when(cb.isNotNull(isResponsable(root, cb, cq, personaRefConsulta)), true).otherwise(false)
             .alias("isResponsable"),

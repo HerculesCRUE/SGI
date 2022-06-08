@@ -150,7 +150,6 @@ export class ProyectoEntidadesFinanciadorasComponent extends FragmentComponent i
       readonly: this.formPart.readonly
     };
     const config = {
-      panelClass: 'sgi-dialog-container',
       data
     };
     const dialogRef = this.matDialog.open(EntidadFinanciadoraModalComponent, config);
@@ -186,7 +185,6 @@ export class ProyectoEntidadesFinanciadorasComponent extends FragmentComponent i
       global: false
     };
     const config = {
-      panelClass: 'sgi-dialog-container',
       data
     };
     this.matDialog.open(SolicitiudPresupuestoModalComponent, config);

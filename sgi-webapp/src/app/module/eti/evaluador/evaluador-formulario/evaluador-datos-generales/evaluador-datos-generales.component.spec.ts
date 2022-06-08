@@ -11,6 +11,7 @@ import { SgiAuthModule, SgiAuthService } from '@sgi/framework/auth';
 import { SharedModule } from '@shared/shared.module';
 import { LoggerTestingModule } from 'ngx-logger/testing';
 import { SgpSharedModule } from 'src/app/esb/sgp/shared/sgp-shared.module';
+import { EtiSharedModule } from '../../../shared/eti-shared.module';
 import { EvaluadorActionService } from '../../evaluador.action.service';
 import { EvaluadorDatosGeneralesComponent } from './evaluador-datos-generales.component';
 
@@ -35,7 +36,8 @@ describe('EvaluadorDatosGenerealesComponent', () => {
         FormsModule,
         ReactiveFormsModule,
         SgiAuthModule,
-        SgpSharedModule
+        SgpSharedModule,
+        EtiSharedModule
       ],
       providers: [
         { provide: SnackBarService, useValue: TestUtils.getSnackBarServiceSpy() },

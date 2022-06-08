@@ -92,7 +92,16 @@
       <ng-container matColumnDef="acciones">
         <th mat-header-cell *matHeaderCellDef> {{'label.actions' | translate}} </th>
         <td mat-cell *matCellDef="let convocatoriaBaremacion">
-
+          <ng-container *ngIf="convocatoriaBaremacion.activo">
+            <ng-container *sgiHasAuthority="'PRC-CON-V'">
+              <ng-container *ngTemplateOutlet="viewButton"></ng-container>
+            </ng-container>
+            <ng-container *sgiHasAuthority="'PRC-CON-E'">
+              <ng-container
+                *ngTemplateOutlet="isConvocatoriaEditable(convocatoriaBaremacion) ? editButton : viewButton">
+              </ng-container>
+            </ng-container>
+          </ng-container>
           <ng-container *sgiHasAuthority="'PRC-CON-B'">
             <button *ngIf="isConvocatoriaEditable(convocatoriaBaremacion)" mat-button
               matTooltip="{{'btn.delete' | translate}}" (click)="deactivate(convocatoriaBaremacion)">
@@ -105,12 +114,17 @@
               <mat-icon color="accent">add_circle_outline</mat-icon>
             </button>
           </ng-container>
-          <ng-container *sgiHasAuthority="'PRC-CON-V'">
-            <ng-container *ngTemplateOutlet="viewButton"></ng-container>
+          <ng-container *sgiHasAuthority="'PRC-CON-C'">
+            <button *ngIf="convocatoriaBaremacion.activo===true" mat-icon-button color="primary"
+              matTooltip="{{'btn.clone' | translate}}" (click)="clone(convocatoriaBaremacion.id)">
+              <mat-icon>control_point_duplicate</mat-icon>
+            </button>
           </ng-container>
-          <ng-container *sgiHasAuthority="'PRC-CON-E'">
-            <ng-container *ngTemplateOutlet="isConvocatoriaEditable(convocatoriaBaremacion) ? editButton : viewButton">
-            </ng-container>
+          <ng-container *sgiHasAuthority="'PRC-CON-BAR'">
+            <button *ngIf="canBaremationCall(convocatoriaBaremacion)" mat-icon-button color="primary"
+              matTooltip="{{'btn.baremation-call' | translate}}" (click)="baremationCall(convocatoriaBaremacion.id)">
+              <mat-icon>multiline_chart</mat-icon>
+            </button>
           </ng-container>
           <ng-template #editButton>
             <a mat-button matTooltip="{{'btn.edit' | translate}}" [routerLink]="[convocatoriaBaremacion.id]">

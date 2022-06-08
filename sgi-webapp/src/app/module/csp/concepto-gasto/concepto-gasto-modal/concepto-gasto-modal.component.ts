@@ -44,6 +44,7 @@ export class ConceptoGastoModalComponent extends DialogActionComponent<IConcepto
 
   ngOnInit(): void {
     super.ngOnInit();
+    this.matDialogRef.updateSize('30vw');
     this.setupI18N();
   }
 

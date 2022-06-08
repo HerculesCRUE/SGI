@@ -76,7 +76,6 @@ export class FacturasEmitidasComponent extends FragmentComponent implements OnIn
     this.subscriptions.push(this.calendarioFacturacionService.getFacturaEmitidaDetalle(element.id).subscribe(
       (detalle) => {
         const config: MatDialogConfig<IDatoEconomicoDetalle> = {
-          panelClass: 'sgi-dialog-container',
           data: detalle
         };
         this.matDialog.open(FacturasEmitidasModalComponent, config);

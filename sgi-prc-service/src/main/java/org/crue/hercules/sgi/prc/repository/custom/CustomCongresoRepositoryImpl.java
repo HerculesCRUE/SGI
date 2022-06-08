@@ -22,6 +22,7 @@ import javax.persistence.criteria.Root;
 import org.crue.hercules.sgi.framework.rsql.SgiRSQLJPASupport;
 import org.crue.hercules.sgi.prc.dto.CongresoResumen;
 import org.crue.hercules.sgi.prc.enums.CodigoCVN;
+import org.crue.hercules.sgi.prc.enums.EpigrafeCVN;
 import org.crue.hercules.sgi.prc.model.CampoProduccionCientifica;
 import org.crue.hercules.sgi.prc.model.CampoProduccionCientifica_;
 import org.crue.hercules.sgi.prc.model.EstadoProduccionCientifica;
@@ -54,8 +55,10 @@ public class CustomCongresoRepositoryImpl implements CustomCongresoRepository {
   private EntityManager entityManager;
 
   @Override
-  public Page<CongresoResumen> findAllCongresos(String query, Pageable pageable) {
-    log.debug("findAllCongresos(String query, Pageable pageable) - start");
+  public Page<CongresoResumen> findAllCongresos(Specification<ProduccionCientifica> specIsInvestigador, String query,
+      Pageable pageable) {
+    log.debug(
+        "findAllCongresos(Specification<ProduccionCientifica> specIsInvestigador, String query, Pageable pageable) - start");
 
     CriteriaBuilder cb = entityManager.getCriteriaBuilder();
     CriteriaQuery<CongresoResumen> cq = cb.createQuery(CongresoResumen.class);
@@ -102,6 +105,8 @@ public class CustomCongresoRepositoryImpl implements CustomCongresoRepository {
     List<Predicate> listPredicatesCount = new ArrayList<>();
 
     listPredicates.add(cb.isNull(root.get(ProduccionCientifica_.convocatoriaBaremacionId)));
+    listPredicates.add(cb.equal(root.get(ProduccionCientifica_.epigrafeCVN), EpigrafeCVN.E060_010_020_000));
+
     listPredicates.add(cb.and(
         cb.equal(joinCamposTipoEvento.get(CampoProduccionCientifica_.codigoCVN), CodigoCVN.E060_010_020_010)));
     listPredicates.add(cb.and(
@@ -110,6 +115,8 @@ public class CustomCongresoRepositoryImpl implements CustomCongresoRepository {
         cb.equal(joinCamposFechaCelebracion.get(CampoProduccionCientifica_.codigoCVN), CodigoCVN.E060_010_020_190)));
 
     listPredicatesCount.add(cb.isNull(rootCount.get(ProduccionCientifica_.convocatoriaBaremacionId)));
+    listPredicatesCount.add(cb.equal(rootCount.get(ProduccionCientifica_.epigrafeCVN), EpigrafeCVN.E060_010_020_000));
+
     listPredicatesCount.add(cb.and(
         cb.equal(joinCamposTipoEventoCount.get(CampoProduccionCientifica_.codigoCVN),
             CodigoCVN.E060_010_020_010)));
@@ -125,6 +132,11 @@ public class CustomCongresoRepositoryImpl implements CustomCongresoRepository {
           CongresoPredicateResolver.getInstance());
       listPredicates.add(spec.toPredicate(root, cq, cb));
       listPredicatesCount.add(spec.toPredicate(rootCount, countQuery, cb));
+    }
+
+    if (specIsInvestigador != null) {
+      listPredicates.add(specIsInvestigador.toPredicate(root, cq, cb));
+      listPredicatesCount.add(specIsInvestigador.toPredicate(rootCount, countQuery, cb));
     }
 
     Path<Long> pathProduccionCientificaId = root.get(ProduccionCientifica_.id);
@@ -166,7 +178,8 @@ public class CustomCongresoRepositoryImpl implements CustomCongresoRepository {
     List<CongresoResumen> result = typedQuery.getResultList();
     Page<CongresoResumen> returnValue = new PageImpl<>(result, pageable, count);
 
-    log.debug("findAllCongresos(String query, Pageable pageable) - end");
+    log.debug(
+        "findAllCongresos(Specification<ProduccionCientifica> specIsInvestigador, String query, Pageable pageable) - end");
 
     return returnValue;
   }

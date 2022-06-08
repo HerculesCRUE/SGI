@@ -2,12 +2,11 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
-import { BaseModalComponent } from '@core/component/base-modal.component';
+import { DialogFormComponent } from '@core/component/dialog-form.component';
 import { MSG_PARAMS } from '@core/i18n';
 import { IModeloTipoDocumento } from '@core/models/csp/modelo-tipo-documento';
 import { IModeloTipoFase } from '@core/models/csp/modelo-tipo-fase';
 import { ITipoDocumento, ITipoFase } from '@core/models/csp/tipos-configuracion';
-import { SnackBarService } from '@core/services/snack-bar.service';
 import { TranslateService } from '@ngx-translate/core';
 import { BehaviorSubject, Subject } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
@@ -32,8 +31,7 @@ export interface ModeloTipoDocumentoModalData {
   templateUrl: './modelo-ejecucion-tipo-documento-modal.component.html',
   styleUrls: ['./modelo-ejecucion-tipo-documento-modal.component.scss']
 })
-export class ModeloEjecucionTipoDocumentoModalComponent extends
-  BaseModalComponent<IModeloTipoDocumento, ModeloEjecucionTipoDocumentoModalComponent> implements OnInit {
+export class ModeloEjecucionTipoDocumentoModalComponent extends DialogFormComponent<IModeloTipoDocumento> implements OnInit {
 
   tipoFases$: Subject<ITipoFase[]> = new BehaviorSubject<ITipoFase[]>([]);
   isFaseRequired = false;
@@ -47,12 +45,11 @@ export class ModeloEjecucionTipoDocumentoModalComponent extends
   disablerTipoDocumento: (option: ITipoDocumento) => boolean;
 
   constructor(
-    protected snackBarService: SnackBarService,
     public matDialogRef: MatDialogRef<ModeloEjecucionTipoDocumentoModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data: ModeloTipoDocumentoModalData,
     private readonly translate: TranslateService
   ) {
-    super(snackBarService, matDialogRef, data.modeloTipoDocumento);
+    super(matDialogRef, !!data.modeloTipoDocumento?.tipoDocumento);
     this.textSaveOrUpdate = this.data.modeloTipoDocumento?.tipoDocumento ? MSG_ACEPTAR : MSG_ANADIR;
 
     this.disablerTipoDocumento = (option: ITipoDocumento): boolean => {
@@ -124,7 +121,7 @@ export class ModeloEjecucionTipoDocumentoModalComponent extends
 
   }
 
-  protected getFormGroup(): FormGroup {
+  protected buildFormGroup(): FormGroup {
     const formGroup = new FormGroup({
       tipoDocumento: new FormControl(this.data.modeloTipoDocumento?.tipoDocumento, Validators.required),
       tipoFase: new FormControl(this.data.modeloTipoDocumento?.modeloTipoFase)
@@ -132,7 +129,7 @@ export class ModeloEjecucionTipoDocumentoModalComponent extends
     return formGroup;
   }
 
-  protected getDatosForm(): IModeloTipoDocumento {
+  protected getValue(): IModeloTipoDocumento {
     const modeloTipoDocumento = this.data.modeloTipoDocumento;
     modeloTipoDocumento.tipoDocumento = this.formGroup.get('tipoDocumento').value;
     modeloTipoDocumento.modeloTipoFase = {

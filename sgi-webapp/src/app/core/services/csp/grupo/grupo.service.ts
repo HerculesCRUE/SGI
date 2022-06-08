@@ -1,10 +1,16 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { IGrupo } from '@core/models/csp/grupo';
+import { IGrupoEnlace } from '@core/models/csp/grupo-enlace';
 import { IGrupoEquipo } from '@core/models/csp/grupo-equipo';
+import { IGrupoEquipoInstrumental } from '@core/models/csp/grupo-equipo-instrumental';
 import { IGrupoEspecialInvestigacion } from '@core/models/csp/grupo-especial-investigacion';
+import { IGrupoLineaInvestigacion } from '@core/models/csp/grupo-linea-investigacion';
 import { IGrupoPalabraClave } from '@core/models/csp/grupo-palabra-clave';
+import { IGrupoPersonaAutorizada } from '@core/models/csp/grupo-persona-autorizada';
+import { IGrupoResponsableEconomico } from '@core/models/csp/grupo-responsable-economico';
 import { IGrupoTipo } from '@core/models/csp/grupo-tipo';
+import { ISolicitud } from '@core/models/csp/solicitud';
 import { environment } from '@env';
 import {
   CreateCtor, FindAllCtor, FindByIdCtor, mixinCreate, mixinFindAll, mixinFindById, mixinUpdate,
@@ -12,15 +18,27 @@ import {
 } from '@sgi/framework/http';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { IGrupoEnlaceResponse } from '../grupo-enlace/grupo-enlace-response';
+import { GRUPO_ENLACE_RESPONSE_CONVERTER } from '../grupo-enlace/grupo-enlace-response.converter';
+import { IGrupoEquipoInstrumentalResponse } from '../grupo-equipo-instrumental/grupo-equipo-instrumental-response';
+import { GRUPO_EQUIPO_INSTRUMENTAL_RESPONSE_CONVERTER } from '../grupo-equipo-instrumental/grupo-equipo-instrumental-response.converter';
 import { IGrupoEquipoResponse } from '../grupo-equipo/grupo-equipo-response';
 import { GRUPO_EQUIPO_RESPONSE_CONVERTER } from '../grupo-equipo/grupo-equipo-response.converter';
 import { IGrupoEspecialInvestigacionResponse } from '../grupo-especial-investigacion/grupo-especial-investigacion-response';
 import { GRUPO_ESPECIAL_INVESTIGACION_RESPONSE_CONVERTER } from '../grupo-especial-investigacion/grupo-especial-investigacion-response.converter';
+import { IGrupoLineaInvestigacionResponse } from '../grupo-linea-investigacion/grupo-linea-investigacion-response';
+import { GRUPO_LINEA_INVESTIGACION_RESPONSE_CONVERTER } from '../grupo-linea-investigacion/grupo-linea-investigacion-response.converter';
 import { GRUPO_PALABRACLAVE_REQUEST_CONVERTER } from '../grupo-palabra-clave/grupo-palabra-clave-request.converter';
 import { IGrupoPalabraClaveResponse } from '../grupo-palabra-clave/grupo-palabra-clave-response';
 import { GRUPO_PALABRACLAVE_RESPONSE_CONVERTER } from '../grupo-palabra-clave/grupo-palabra-clave-response.converter';
+import { IGrupoPersonaAutorizadaResponse } from '../grupo-persona-autorizada/grupo-persona-autorizada-response';
+import { GRUPO_PERSONA_AUTORIZADA_RESPONSE_CONVERTER } from '../grupo-persona-autorizada/grupo-persona-autorizada-response.converter';
+import { IGrupoResponsableEconomicoResponse } from '../grupo-responsable-economico/grupo-responsable-economico-response';
+import { GRUPO_RESPONSABLE_ECONOMICO_RESPONSE_CONVERTER } from '../grupo-responsable-economico/grupo-responsable-economico-response.converter';
 import { IGrupoTipoResponse } from '../grupo-tipo/grupo-tipo-response';
 import { GRUPO_TIPO_RESPONSE_CONVERTER } from '../grupo-tipo/grupo-tipo-response.converter';
+import { ISolicitudResumenResponse } from '../solicitud/solicitud-resumen-response';
+import { SOLICITUD_RESUMEN_RESPONSE_CONVERTER } from '../solicitud/solicitud-resumen-response.converter';
 import { IGrupoRequest } from './grupo-request';
 import { GRUPO_REQUEST_CONVERTER } from './grupo-request.converter';
 import { IGrupoResponse } from './grupo-response';
@@ -69,6 +87,19 @@ export class GrupoService extends _GrupoMixinBase {
   findTodos(options?: SgiRestFindOptions): Observable<SgiRestListResult<IGrupo>> {
     return this.find<IGrupoResponse, IGrupo>(
       `${this.endpointUrl}/todos`,
+      options,
+      GRUPO_RESPONSE_CONVERTER
+    );
+  }
+
+  /**
+   * Muestra los grupos a los que pertenece el investigador actual
+   *
+   * @param options opciones de búsqueda.
+   */
+  findGruposInvestigador(options?: SgiRestFindOptions): Observable<SgiRestListResult<IGrupo>> {
+    return this.find<IGrupoResponse, IGrupo>(
+      `${this.endpointUrl}/investigador`,
       options,
       GRUPO_RESPONSE_CONVERTER
     );
@@ -245,4 +276,84 @@ export class GrupoService extends _GrupoMixinBase {
       map(response => response.status === 200)
     );
   }
+
+  /**
+   * Recupera la lista de equipos instrumentales
+   *
+   * @param id Identificador del grupo
+   * @param options opciones de búsqueda.
+   */
+  findEquiposInstrumentales(id: number, options?: SgiRestFindOptions): Observable<SgiRestListResult<IGrupoEquipoInstrumental>> {
+    return this.find<IGrupoEquipoInstrumentalResponse, IGrupoEquipoInstrumental>(
+      `${this.endpointUrl}/${id}/equipos-instrumentales`,
+      options,
+      GRUPO_EQUIPO_INSTRUMENTAL_RESPONSE_CONVERTER
+    );
+  }
+
+  /**
+   * Recupera la lista de responsables económicos
+   * @param id Identificador del grupo
+   * @param options opciones de búsqueda.
+   */
+  findResponsablesEconomicos(id: number, options?: SgiRestFindOptions): Observable<SgiRestListResult<IGrupoResponsableEconomico>> {
+    return this.find<IGrupoResponsableEconomicoResponse, IGrupoResponsableEconomico>(
+      `${this.endpointUrl}/${id}/responsables-economicos`,
+      options,
+      GRUPO_RESPONSABLE_ECONOMICO_RESPONSE_CONVERTER
+    );
+  }
+
+  /**
+   * Recupera la lista de enlaces
+   * @param id Identificador del grupo
+   * @param options opciones de búsqueda.
+   */
+  findEnlaces(id: number, options?: SgiRestFindOptions): Observable<SgiRestListResult<IGrupoEnlace>> {
+    return this.find<IGrupoEnlaceResponse, IGrupoEnlace>(
+      `${this.endpointUrl}/${id}/enlaces`,
+      options,
+      GRUPO_ENLACE_RESPONSE_CONVERTER
+    );
+  }
+
+  /**
+   * Recupera la lista de personas autorizadas
+   * @param id Identificador del grupo
+   * @param options opciones de búsqueda.
+   */
+  findPersonasAutorizadas(id: number, options?: SgiRestFindOptions): Observable<SgiRestListResult<IGrupoPersonaAutorizada>> {
+    return this.find<IGrupoPersonaAutorizadaResponse, IGrupoPersonaAutorizada>(
+      `${this.endpointUrl}/${id}/personas-autorizadas`,
+      options,
+      GRUPO_PERSONA_AUTORIZADA_RESPONSE_CONVERTER
+    );
+  }
+
+  /**
+   * Recupera la lista de líneas de investigación
+   * @param id Identificador del grupo
+   * @param options opciones de búsqueda.
+   */
+  findLineasInvestigacion(id: number, options?: SgiRestFindOptions): Observable<SgiRestListResult<IGrupoLineaInvestigacion>> {
+    return this.find<IGrupoLineaInvestigacionResponse, IGrupoLineaInvestigacion>(
+      `${this.endpointUrl}/${id}/lineas-investigacion`,
+      options,
+      GRUPO_LINEA_INVESTIGACION_RESPONSE_CONVERTER
+    );
+  }
+
+  /**
+   * Devuelve los datos de la solicitud del grupo
+   *
+   * @param id Id del grupo
+   */
+  findSolicitud(id: number): Observable<ISolicitud> {
+    return this.http.get<ISolicitudResumenResponse>(
+      `${this.endpointUrl}/${id}/solicitud`
+    ).pipe(
+      map(response => SOLICITUD_RESUMEN_RESPONSE_CONVERTER.toTarget(response))
+    );
+  }
+
 }

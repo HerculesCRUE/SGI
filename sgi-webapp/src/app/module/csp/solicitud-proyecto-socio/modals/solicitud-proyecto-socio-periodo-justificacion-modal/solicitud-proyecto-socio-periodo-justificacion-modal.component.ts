@@ -2,12 +2,10 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
-import { BaseModalComponent } from '@core/component/base-modal.component';
+import { DialogFormComponent } from '@core/component/dialog-form.component';
 import { MSG_PARAMS } from '@core/i18n';
 import { ISolicitudProyectoSocioPeriodoJustificacion } from '@core/models/csp/solicitud-proyecto-socio-periodo-justificacion';
 import { IEmpresa } from '@core/models/sgemp/empresa';
-import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-properties';
-import { SnackBarService } from '@core/services/snack-bar.service';
 import { GLOBAL_CONSTANTS } from '@core/utils/global-constants';
 import { NumberValidator } from '@core/validators/number-validator';
 import { IRange, RangeValidator } from '@core/validators/range-validator';
@@ -38,8 +36,8 @@ export interface SolicitudProyectoSocioPeriodoJustificacionModalData {
   styleUrls: ['./solicitud-proyecto-socio-periodo-justificacion-modal.component.scss']
 })
 export class SolicitudProyectoSocioPeriodoJustificacionModalComponent
-  extends BaseModalComponent<SolicitudProyectoSocioPeriodoJustificacionModalData, SolicitudProyectoSocioPeriodoJustificacionModalComponent>
-  implements OnInit {
+  extends DialogFormComponent<SolicitudProyectoSocioPeriodoJustificacionModalData> implements OnInit {
+
   textSaveOrUpdate: string;
 
   msgParamMesFinalEntity = {};
@@ -49,16 +47,11 @@ export class SolicitudProyectoSocioPeriodoJustificacionModalComponent
   title: string;
 
   constructor(
-    protected snackBarService: SnackBarService,
-    public matDialogRef: MatDialogRef<SolicitudProyectoSocioPeriodoJustificacionModalComponent>,
+    matDialogRef: MatDialogRef<SolicitudProyectoSocioPeriodoJustificacionModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data: SolicitudProyectoSocioPeriodoJustificacionModalData,
     private readonly translate: TranslateService
   ) {
-    super(snackBarService, matDialogRef, data);
-    this.fxLayoutProperties = new FxLayoutProperties();
-    this.fxLayoutProperties.gap = '20px';
-    this.fxLayoutProperties.layout = 'row';
-    this.fxLayoutProperties.xs = 'row';
+    super(matDialogRef, data.isEdit);
   }
 
   ngOnInit(): void {
@@ -104,7 +97,7 @@ export class SolicitudProyectoSocioPeriodoJustificacionModalComponent
     }
   }
 
-  protected getFormGroup(): FormGroup {
+  protected buildFormGroup(): FormGroup {
     const rangosPeriodosExistentes = this.data.selectedPeriodoJustificaciones?.map(
       periodoJustificacion => {
         const value: IRange = {
@@ -196,7 +189,7 @@ export class SolicitudProyectoSocioPeriodoJustificacionModalComponent
     return formGroup;
   }
 
-  protected getDatosForm(): SolicitudProyectoSocioPeriodoJustificacionModalData {
+  protected getValue(): SolicitudProyectoSocioPeriodoJustificacionModalData {
     this.data.periodoJustificacion.mesInicial = this.formGroup.get('mesInicial').value;
     this.data.periodoJustificacion.mesFinal = this.formGroup.get('mesFinal').value;
     this.data.periodoJustificacion.fechaInicio = this.formGroup.get('fechaInicio').value;

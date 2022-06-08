@@ -7,22 +7,19 @@ import { IProduccionCientifica } from '@core/models/prc/produccion-cientifica';
 import { IProyectoPrc } from '@core/models/prc/proyecto-prc';
 import { ProyectoResumenService } from '@core/services/csp/proyecto-resumen/proyecto-resumen.service';
 import { AutorService } from '@core/services/prc/autor/autor.service';
-import { CampoProduccionCientificaService } from '@core/services/prc/campo-produccion-cientifica/campo-produccion-cientifica.service';
 import { ConfiguracionCampoService } from '@core/services/prc/configuracion-campo/configuracion-campo.service';
 import { ProduccionCientificaService } from '@core/services/prc/produccion-cientifica/produccion-cientifica.service';
 import { DocumentoService } from '@core/services/sgdoc/documento.service';
 import { PersonaService } from '@core/services/sgp/persona.service';
 import { from, Observable, of } from 'rxjs';
 import { catchError, concatMap, map, mergeMap, toArray } from 'rxjs/operators';
-import { PrcModule } from '../prc.module';
 
 @Injectable({
-  providedIn: PrcModule
+  providedIn: 'root'
 })
 export class ProduccionCientificaInitializerService {
 
   constructor(
-    private campoProduccionCientificaService: CampoProduccionCientificaService,
     private configuracionCampo: ConfiguracionCampoService,
     private produccionCientificaService: ProduccionCientificaService,
     private personaService: PersonaService,
@@ -33,9 +30,10 @@ export class ProduccionCientificaInitializerService {
 
   initializeCamposProduccionCientifica$(produccionCientifica: IProduccionCientifica):
     Observable<Map<string, ICampoProduccionCientificaWithConfiguracion>> {
-    return this.campoProduccionCientificaService
+    return this.produccionCientificaService
       .findAllCamposProduccionCientifca(produccionCientifica)
       .pipe(
+        map(response => response.items),
         map(camposProduccionCientifica =>
           camposProduccionCientifica.map(
             campo => {

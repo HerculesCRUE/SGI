@@ -22,6 +22,7 @@ import javax.persistence.criteria.Root;
 import org.crue.hercules.sgi.framework.rsql.SgiRSQLJPASupport;
 import org.crue.hercules.sgi.prc.dto.ActividadResumen;
 import org.crue.hercules.sgi.prc.enums.CodigoCVN;
+import org.crue.hercules.sgi.prc.enums.EpigrafeCVN;
 import org.crue.hercules.sgi.prc.model.CampoProduccionCientifica;
 import org.crue.hercules.sgi.prc.model.CampoProduccionCientifica_;
 import org.crue.hercules.sgi.prc.model.EstadoProduccionCientifica;
@@ -93,12 +94,16 @@ public class CustomActividadRepositoryImpl implements CustomActividadRepository 
     List<Predicate> listPredicatesCount = new ArrayList<>();
 
     listPredicates.add(cb.isNull(root.get(ProduccionCientifica_.convocatoriaBaremacionId)));
+    listPredicates.add(cb.equal(root.get(ProduccionCientifica_.epigrafeCVN), EpigrafeCVN.E060_020_030_000));
+
     listPredicates.add(cb.and(
         cb.equal(joinCamposTituloActividad.get(CampoProduccionCientifica_.codigoCVN), CodigoCVN.E060_020_030_010)));
     listPredicates.add(cb.and(
         cb.equal(joinCamposFechaInicio.get(CampoProduccionCientifica_.codigoCVN), CodigoCVN.E060_020_030_160)));
 
     listPredicatesCount.add(cb.isNull(rootCount.get(ProduccionCientifica_.convocatoriaBaremacionId)));
+    listPredicates.add(cb.equal(rootCount.get(ProduccionCientifica_.epigrafeCVN), EpigrafeCVN.E060_020_030_000));
+
     listPredicatesCount.add(cb.and(
         cb.equal(joinCamposTituloActividadCount.get(CampoProduccionCientifica_.codigoCVN),
             CodigoCVN.E060_020_030_010)));

@@ -126,7 +126,7 @@ public class LineaInvestigacionController {
    *         filtradas.
    */
   @GetMapping()
-  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-LIN-C', 'CSP-LIN-E', 'CSP-LIN-B')")
+  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-LIN-C', 'CSP-LIN-E', 'CSP-LIN-B', 'CSP-GIN-INV-VR')")
   public ResponseEntity<Page<LineaInvestigacionOutput>> findAll(
       @RequestParam(name = "q", required = false) String query,
       @RequestPageable(sort = "s") Pageable paging) {
@@ -173,7 +173,7 @@ public class LineaInvestigacionController {
    * @return LineaInvestigacion {@link LineaInvestigacion} correspondiente al id
    */
   @GetMapping("/{id}")
-  @PreAuthorize("hasAuthorityForAnyUO('AUTH')")
+  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-LIN-E', 'CSP-GIN-V', 'CSP-GIN-E', 'CSP-GIN-INV-VR')")
   public LineaInvestigacionOutput findById(@PathVariable Long id) {
     log.debug("LineaInvestigacion findById(Long id) - start");
     LineaInvestigacion returnValue = service.findById(id);

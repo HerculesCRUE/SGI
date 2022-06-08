@@ -1,0 +1,30 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:pro="http://www.liquibase.org/xml/ns/pro" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-3.8.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+  <property name="schemaPrefix" value="" />
+
+  <changeSet context="!test" author="master" id="0000000000006-apartado">
+    <!-- FORMULARIO M10 -->
+    <!-- 4.3 Protección de grupos especialmente vulnerables -->
+    <update tableName="apartado">
+      <column name="esquema" valueClobFile="clob/0000000000006/m10_apartado_4_3.json" />
+      <where>:name=:value AND :name=:value AND padre_id IS NULL AND :name=:value</where>
+      <whereParams>
+        <param name="bloque_id" valueComputed="(select id from ${schemaPrefix}bloque where orden = '4' and formulario_id = (select id from ${schemaPrefix}formulario where nombre = 'M10'))" />
+        <param name="nombre" value="Protección de grupos vulnerables" />
+        <param name="orden" valueNumeric="3" />
+      </whereParams>
+    </update>
+
+    <!-- 4.1.4 Aseguramiento del Daño -->
+    <update tableName="apartado">
+      <column name="esquema" valueClobFile="clob/0000000000006/m10_apartado_4_1_4.json" />
+      <where>:name=:value AND :name=:value AND :name=:value AND :name=:value</where>
+      <whereParams>
+        <param name="bloque_id" valueComputed="(select id from ${schemaPrefix}bloque where orden = '4' and formulario_id = (select id from ${schemaPrefix}formulario where nombre = 'M10'))" />
+        <param name="nombre" value="Aseguramiento del daño" />
+        <param name="padre_id" valueComputed="(select id from ${schemaPrefix}apartado where nombre = 'Ponderación de los riesgos o molestias')" />
+        <param name="orden" valueNumeric="4" />
+      </whereParams>
+    </update>
+  </changeSet>
+</databaseChangeLog>

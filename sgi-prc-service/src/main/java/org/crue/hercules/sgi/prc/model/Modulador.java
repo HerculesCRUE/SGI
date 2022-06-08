@@ -17,7 +17,6 @@ import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
 import org.crue.hercules.sgi.prc.model.BaseEntity.Create;
-import org.crue.hercules.sgi.prc.model.BaseEntity.Update;
 import org.crue.hercules.sgi.prc.validation.UniqueFieldsValues;
 
 import lombok.AccessLevel;
@@ -38,8 +37,8 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@UniqueFieldsValues(groups = { Create.class, Update.class }, entityClass = Modulador.class, fieldsNames = {
-    Modulador_.TIPO, Modulador_.CONVOCATORIA_BAREMACION_ID })
+@UniqueFieldsValues(groups = { Create.class }, entityClass = Modulador.class, fieldsNames = {
+    Modulador_.TIPO, Modulador_.CONVOCATORIA_BAREMACION_ID, Modulador_.AREA_REF })
 public class Modulador extends BaseEntity {
 
   protected static final String TABLE_NAME = "modulador";

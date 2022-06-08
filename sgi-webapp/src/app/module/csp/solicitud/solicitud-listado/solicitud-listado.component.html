@@ -309,7 +309,8 @@
             </a>
           </ng-container>
           <ng-container *sgiHasAnyAuthority="['CSP-SOL-E', 'CSP-SOL-E_' + element.unidadGestion.id ]">
-            <a mat-icon-button color="primary" matTooltip="{{'btn.edit' | translate}}" [routerLink]="[element.id]">
+            <a *ngIf="element.activo === true" mat-icon-button color="primary" matTooltip="{{'btn.edit' | translate}}"
+              [routerLink]="[element.id]">
               <mat-icon>border_color</mat-icon>
             </a>
           </ng-container>

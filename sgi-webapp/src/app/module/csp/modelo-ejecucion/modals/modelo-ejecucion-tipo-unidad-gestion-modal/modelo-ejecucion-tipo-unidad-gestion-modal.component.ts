@@ -2,12 +2,11 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
-import { BaseModalComponent } from '@core/component/base-modal.component';
+import { DialogFormComponent } from '@core/component/dialog-form.component';
 import { MSG_PARAMS } from '@core/i18n';
 import { IModeloUnidad } from '@core/models/csp/modelo-unidad';
 import { ITipoUnidadGestion } from '@core/models/csp/tipos-configuracion';
 import { UnidadGestionService } from '@core/services/csp/unidad-gestion.service';
-import { SnackBarService } from '@core/services/snack-bar.service';
 import { TranslateService } from '@ngx-translate/core';
 import { Observable } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
@@ -27,8 +26,7 @@ export interface IModeloEjecucionTipoUnidadModal {
   templateUrl: './modelo-ejecucion-tipo-unidad-gestion-modal.component.html',
   styleUrls: ['./modelo-ejecucion-tipo-unidad-gestion-modal.component.scss']
 })
-export class ModeloEjecucionTipoUnidadGestionModalComponent extends
-  BaseModalComponent<IModeloUnidad, ModeloEjecucionTipoUnidadGestionModalComponent> implements OnInit {
+export class ModeloEjecucionTipoUnidadGestionModalComponent extends DialogFormComponent<IModeloUnidad> implements OnInit {
   tipoUnidad$: Observable<ITipoUnidadGestion[]>;
 
   msgParamUnidadGestionEntiy = {};
@@ -36,13 +34,12 @@ export class ModeloEjecucionTipoUnidadGestionModalComponent extends
   textSaveOrUpdate: string;
 
   constructor(
-    protected readonly snackBarService: SnackBarService,
-    public readonly matDialogRef: MatDialogRef<ModeloEjecucionTipoUnidadGestionModalComponent>,
+    matDialogRef: MatDialogRef<ModeloEjecucionTipoUnidadGestionModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data: IModeloEjecucionTipoUnidadModal,
     unidadGestionService: UnidadGestionService,
     private readonly translate: TranslateService
   ) {
-    super(snackBarService, matDialogRef, data.modeloTipoUnidad);
+    super(matDialogRef, !!data.modeloTipoUnidad?.unidadGestion);
     this.textSaveOrUpdate = this.data.modeloTipoUnidad?.unidadGestion ? MSG_ACEPTAR : MSG_ANADIR;
 
     this.tipoUnidad$ = unidadGestionService.findAll().pipe(
@@ -78,14 +75,14 @@ export class ModeloEjecucionTipoUnidadGestionModalComponent extends
     ).subscribe((value) => this.title = value);
   }
 
-  protected getFormGroup(): FormGroup {
+  protected buildFormGroup(): FormGroup {
     const formGroup = new FormGroup({
       tipoUnidad: new FormControl(this.data.modeloTipoUnidad?.unidadGestion, Validators.required)
     });
     return formGroup;
   }
 
-  protected getDatosForm(): IModeloUnidad {
+  protected getValue(): IModeloUnidad {
     const modeloTipoUnidadGestion = this.data.modeloTipoUnidad;
     modeloTipoUnidadGestion.unidadGestion = this.formGroup.get('tipoUnidad').value;
     return modeloTipoUnidadGestion;

@@ -6,11 +6,15 @@ import { TranslateModule } from '@ngx-translate/core';
 import { SharedModule } from '@shared/shared.module';
 import { SelectComiteComponent } from './select-comite/select-comite.component';
 import { SelectEvaluadorComponent } from './select-evaluador/select-evaluador.component';
+import { SelectTipoConvocatoriaReunionComponent } from './select-tipo-convocatoria-reunion/select-tipo-convocatoria-reunion.component';
+import { SelectTipoEvaluacionComponent } from './select-tipo-evaluacion/select-tipo-evaluacion.component';
 
 @NgModule({
   declarations: [
     SelectComiteComponent,
-    SelectEvaluadorComponent
+    SelectEvaluadorComponent,
+    SelectTipoConvocatoriaReunionComponent,
+    SelectTipoEvaluacionComponent
   ],
   imports: [
     SharedModule,
@@ -22,7 +26,9 @@ import { SelectEvaluadorComponent } from './select-evaluador/select-evaluador.co
   ],
   exports: [
     SelectComiteComponent,
-    SelectEvaluadorComponent
+    SelectEvaluadorComponent,
+    SelectTipoConvocatoriaReunionComponent,
+    SelectTipoEvaluacionComponent
   ]
 })
 export class EtiSharedModule { }

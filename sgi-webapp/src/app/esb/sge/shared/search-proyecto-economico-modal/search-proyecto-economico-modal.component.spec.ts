@@ -16,11 +16,6 @@ describe('SearchProyectoEconomicoModalComponent', () => {
   let fixture: ComponentFixture<SearchProyectoEconomicoModalComponent>;
 
   beforeEach(waitForAsync(() => {
-    const mockDialogRef = {
-      componentInstance: jasmine.createSpy('componentInstance'),
-      close: jasmine.createSpy('close'),
-    };
-
     // Mock MAT_DIALOG
     const matDialogData = {};
 
@@ -39,7 +34,7 @@ describe('SearchProyectoEconomicoModalComponent', () => {
       providers: [
         {
           provide: MatDialogRef,
-          useValue: mockDialogRef,
+          useValue: TestUtils.buildDialogCommonMatDialogRef(),
         },
         { provide: MAT_DIALOG_DATA, useValue: matDialogData },
       ],

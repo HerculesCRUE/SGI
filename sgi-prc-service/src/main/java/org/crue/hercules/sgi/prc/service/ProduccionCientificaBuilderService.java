@@ -127,7 +127,7 @@ public class ProduccionCientificaBuilderService {
     return campoProduccionCientificaCreate;
   }
 
-  public Long addProduccionCientifaAndEstado(ProduccionCientifica produccionCientifica,
+  public Long addProduccionCientificaAndEstado(ProduccionCientifica produccionCientifica,
       TipoEstadoProduccion tipoEstadoProduccion) {
     ProduccionCientifica produccionCientificaCreate = produccionCientificaRepository.save(produccionCientifica);
 

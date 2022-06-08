@@ -8,10 +8,12 @@ sgi:
   time-zone: "Europe/Madrid"
   rest:
     api:
+      cnf-url: "http://sgi-cnf-service:4288"
       com-url: "http://sgi-com-service:4286"
       csp-url: "http://sgi-csp-service:4281"
       eti-url: "http://sgi-eti-service:4280"
       pii-url: "http://sgi-pii-service:4283"
+      prc-url: "http://sgi-prc-service:4289"
       rel-url: "http://sgi-rel-service:4284"
       sgemp-url: "http://sgi-esb:8080/api/sgemp"
       sgp-url: "http://sgi-esb:8080/api/sgp"
@@ -80,6 +82,13 @@ spring:
             provider: keycloak
             redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
             scope: "openid,profile"
+          rep-service:
+            authorization-grant-type: client_credentials
+            client-id: rep-service
+            client-name: SGI (service login)
+            client-secret: 875010ad-320f-41ce-bd72-14fa05330ec9
+            provider: keycloak
+            scope: sgi-csp,sgi-eti,sgi-prc,sgi-sgemp,sgi-sgp     
         provider:
           keycloak:
             issuer-uri: http://sgi-auth:8080/auth/realms/sgi
@@ -173,15 +182,17 @@ logging:
 sgi:
   rest:
     api:
-      com-url: "http://sgi-com:8080"
-      csp-url: "http://sgi-csp:8080"
-      eti-url: "http://sgi-eti:8080"
-      pii-url: "http://sgi-pii:8080"
-      rel-url: "http://sgi-rel:8080"
-      sgemp-url: "http://sgi-esb:8080"         
-      sgp-url: "http://sgi-esb:8080"         
-      tp-url: "http://sgi-tp:8080"
-      usr-url: "http://sgi-eti:8080"
+      cnf-url: "http://sgi-cnf-service:8080"
+      com-url: "http://sgi-com-service:8080"
+      csp-url: "http://sgi-csp-service:8080"
+      eti-url: "http://sgi-eti-service:8080"
+      pii-url: "http://sgi-pii-service:8080"
+      prc-url: "http://sgi-prc-service:8080"
+      rel-url: "http://sgi-rel-service:8080"
+      sgemp-url: "http://sgi-esb:8080/api/sgemp"
+      sgp-url: "http://sgi-esb:8080/api/sgp"
+      tp-url: "http://sgi-tp-service:8080"
+      usr-url: "http://sgi-usr-service:8080"
 spring:
   profiles: prod
   datasource:

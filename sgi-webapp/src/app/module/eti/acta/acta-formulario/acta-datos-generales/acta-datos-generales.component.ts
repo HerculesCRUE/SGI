@@ -9,13 +9,11 @@ import { IConvocatoriaReunion } from '@core/models/eti/convocatoria-reunion';
 import { FxFlexProperties } from '@core/models/shared/flexLayout/fx-flex-properties';
 import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-properties';
 import { ConvocatoriaReunionService } from '@core/services/eti/convocatoria-reunion.service';
-import { SnackBarService } from '@core/services/snack-bar.service';
 import { TranslateService } from '@ngx-translate/core';
-import { SgiRestListResult } from '@sgi/framework/http/types';
-import { NGXLogger } from 'ngx-logger';
 import { Observable, Subscription } from 'rxjs';
-import { map, startWith } from 'rxjs/operators';
+import { map } from 'rxjs/operators';
 import { ActaActionService } from '../../acta.action.service';
+import { ActaDatosGeneralesFragment } from './acta-datos-generales.fragment';
 
 const MSG_ERROR_INIT = marker('error.load');
 const ACTA_CONVOCATORIA_REUNION_KEY = marker('eti.acta.convocatoria-reunion');
@@ -35,8 +33,7 @@ export class ActaDatosGeneralesComponent extends FormFragmentComponent<IActa> im
   fxLayoutProperties: FxLayoutProperties;
   fxFlexPropertiesInline: FxFlexProperties;
 
-  convocatoriasReunionFitlered: Observable<IConvocatoriaReunion[]>;
-  convocatoriasReunion: IConvocatoriaReunion[];
+  convocatorias$: Observable<IConvocatoriaReunion[]>;
 
   suscripciones: Subscription[] = [];
 
@@ -47,10 +44,10 @@ export class ActaDatosGeneralesComponent extends FormFragmentComponent<IActa> im
   msgParamHoraFinEntity = {};
   msgParamResumenEntity = {};
 
+  private formPart: ActaDatosGeneralesFragment;
+
   constructor(
-    private readonly logger: NGXLogger,
     private readonly convocatoriaReunionService: ConvocatoriaReunionService,
-    private readonly snackBarService: SnackBarService,
     private actionService: ActaActionService,
     public router: Router,
     private readonly translate: TranslateService
@@ -72,6 +69,8 @@ export class ActaDatosGeneralesComponent extends FormFragmentComponent<IActa> im
     this.fxLayoutProperties.gap = '20px';
     this.fxLayoutProperties.layout = 'row wrap';
     this.fxLayoutProperties.xs = 'column';
+
+    this.formPart = this.fragment as ActaDatosGeneralesFragment;
   }
 
   ngOnInit() {
@@ -80,22 +79,13 @@ export class ActaDatosGeneralesComponent extends FormFragmentComponent<IActa> im
 
     this.readonly = this.actionService.readonly;
 
-    this.suscripciones.push(
-      this.convocatoriaReunionService.findConvocatoriasSinActa().subscribe(
-        (res: SgiRestListResult<IConvocatoriaReunion>) => {
-          this.convocatoriasReunion = res.items;
-          this.convocatoriasReunionFitlered = this.formGroup.controls.convocatoriaReunion.valueChanges
-            .pipe(
-              startWith(''),
-              map(value => this.filtro(value))
-            );
-        },
-        (error) => {
-          this.logger.error(error);
-          this.snackBarService.showError(MSG_ERROR_INIT);
-        }
-      )
+    this.convocatorias$ = this.convocatoriaReunionService.findConvocatoriasSinActa().pipe(
+      map(response => response.items)
     );
+
+    this.formPart.getFormGroup().controls.convocatoriaReunion.valueChanges.subscribe(convocatoria => {
+      this.selectConvocatoriaReunion(convocatoria);
+    });
   }
 
   private setupI18N(): void {
@@ -121,37 +111,15 @@ export class ActaDatosGeneralesComponent extends FormFragmentComponent<IActa> im
   }
 
   /**
-   * Filtra la lista devuelta por el servicio
-   *
-   * @param value del input para autocompletar
-   */
-  filtro(value: string | IConvocatoriaReunion): IConvocatoriaReunion[] {
-    let filterValue: string;
-    if (typeof value === 'string') {
-      filterValue = value.toLowerCase();
-    } else {
-      filterValue = value.codigo.toLowerCase();
-    }
-
-    return this.convocatoriasReunion.filter
-      (convocatoriaReunion => convocatoriaReunion.codigo.toLowerCase().includes(filterValue));
-  }
-
-  /**
-   * Devuelve el código de una convocatoria reunión
-   * @param convocatoria convocatoria
-   * @returns código de una convocatoria reunión
-   */
-  getConvocatoria(convocatoriaReunion?: IConvocatoriaReunion): string | undefined {
-    return typeof convocatoriaReunion === 'string' ? convocatoriaReunion : convocatoriaReunion?.codigo;
-  }
-
-  /**
    * Registra el evento de modificación de convocatoria reunión.
    * @param convocatoriaReunion  convocatoria reunión seleccionada
    */
-  selectConvocatoriaReunion(convocatoriaReunion: IConvocatoriaReunion | string) {
+  private selectConvocatoriaReunion(convocatoriaReunion: IConvocatoriaReunion | string) {
     this.actionService.setIdConvocatoria(convocatoriaReunion ? (convocatoriaReunion as IConvocatoriaReunion).id : null);
+  }
+
+  displayerConvocatoriaReunion(convocatoriaReunion: IConvocatoriaReunion): string {
+    return convocatoriaReunion?.codigo ?? '';
   }
 
 }

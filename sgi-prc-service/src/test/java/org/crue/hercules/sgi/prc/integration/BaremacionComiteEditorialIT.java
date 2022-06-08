@@ -59,7 +59,7 @@ class BaremacionComiteEditorialIT extends BaremacionBaseIT {
     getIndiceImpactoRepository().findAllByProduccionCientificaId(produccionCientificaId).stream().forEach(entity -> {
       entity.setFuenteImpacto(TipoFuenteImpacto.valueOf(value));
       entity.setPosicionPublicacion(new BigDecimal(50));
-      entity.setNumeroRevistas(new BigDecimal("2"));
+      entity.setNumeroRevistas(new BigDecimal("200"));
       getIndiceImpactoRepository().save(entity);
     });
 
@@ -102,7 +102,7 @@ class BaremacionComiteEditorialIT extends BaremacionBaseIT {
     getIndiceImpactoRepository().findAllByProduccionCientificaId(produccionCientificaId).stream().forEach(entity -> {
       entity.setFuenteImpacto(TipoFuenteImpacto.valueOf(value));
       entity.setPosicionPublicacion(new BigDecimal(100));
-      entity.setNumeroRevistas(new BigDecimal("2"));
+      entity.setNumeroRevistas(new BigDecimal("200"));
       getIndiceImpactoRepository().save(entity);
     });
 
@@ -145,7 +145,7 @@ class BaremacionComiteEditorialIT extends BaremacionBaseIT {
     getIndiceImpactoRepository().findAllByProduccionCientificaId(produccionCientificaId).stream().forEach(entity -> {
       entity.setFuenteImpacto(TipoFuenteImpacto.valueOf(value));
       entity.setPosicionPublicacion(new BigDecimal(150));
-      entity.setNumeroRevistas(new BigDecimal("2"));
+      entity.setNumeroRevistas(new BigDecimal("200"));
       getIndiceImpactoRepository().save(entity);
     });
 
@@ -188,7 +188,7 @@ class BaremacionComiteEditorialIT extends BaremacionBaseIT {
     getIndiceImpactoRepository().findAllByProduccionCientificaId(produccionCientificaId).stream().forEach(entity -> {
       entity.setFuenteImpacto(TipoFuenteImpacto.valueOf(value));
       entity.setPosicionPublicacion(new BigDecimal(200));
-      entity.setNumeroRevistas(new BigDecimal("2"));
+      entity.setNumeroRevistas(new BigDecimal("200"));
       getIndiceImpactoRepository().save(entity);
     });
 

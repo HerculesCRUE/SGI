@@ -1,0 +1,147 @@
+<sgi-fragment title="{{'prc.baremo' | translate:MSG_PARAMS.CARDINALIRY.PLURAL}}">
+
+  <div class="programa" fxLayout="row" fxLayout.xs="column" fxLayoutGap="10px">
+    <div class="arbol" fxFlex>
+      <fieldset [disabled]="treeDisabled">
+        <legend>{{'prc.baremo' | translate: MSG_PARAMS.CARDINALIRY.PLURAL}}</legend>
+        <mat-error *ngIf="formPart.hasErrorNoneSelectedNode">
+          {{'error.prc.baremo.none-selected-node' | translate}}
+        </mat-error>
+        <mat-tree [dataSource]="dataSource" [treeControl]="treeControl" [trackBy]="trackBy" class="arbol-tree">
+          <mat-tree-node *matTreeNodeDef="let node" matTreeNodeToggle matTreeNodePadding>
+          </mat-tree-node>
+          <mat-tree-node *matTreeNodeDef="let node; when: isPesoPuntosNode" matTreeNodePadding>
+            <button mat-icon-button disabled></button>
+            <mat-checkbox [disabled]="isCheckboxDisabled(node)" [checked]="checklistSelection.isSelected(node)"
+              [color]="checklistSelection.isSelected(node) && node.hasError? 'warn' : 'primary'"
+              [ngClass]="{'node-error': checklistSelection.isSelected(node) && node.hasError}"
+              (change)="rootNodeSelectionToggle(node)">
+              {{node.configuracionBaremo?.nombre}}
+            </mat-checkbox>
+            <mat-icon *ngIf=" checklistSelection.isSelected(node) && node.hasError" color="warn"
+              [matTooltip]="getErrorMsg(node)">
+              error
+            </mat-icon>
+            <ng-container *ngIf="formPart.isEditPerm; else nodePesoPuntosViewButton">
+              <button mat-icon-button (click)="addPesoPuntosNode(node)" *ngIf="!node.baremo">
+                <mat-icon color="primary">add_box</mat-icon>
+              </button>
+              <button mat-icon-button (click)="openPesoPuntosNode(node)"
+                *ngIf="checklistSelection.isSelected(node) && node.baremo">
+                <mat-icon color="primary">edit</mat-icon>
+              </button>
+            </ng-container>
+            <ng-template #nodePesoPuntosViewButton>
+              <button mat-icon-button (click)="openPesoPuntosNode(node)" *ngIf="node.baremo">
+                <mat-icon color="primary">visibility</mat-icon>
+              </button>
+            </ng-template>
+          </mat-tree-node>
+          <mat-tree-node *matTreeNodeDef="let node; when: isPesoCuantiaNode" matTreeNodePadding>
+            <button mat-icon-button disabled></button>
+            <mat-checkbox [disabled]="isCheckboxDisabled(node)" [checked]="checklistSelection.isSelected(node)"
+              [color]="checklistSelection.isSelected(node) && node.hasError? 'warn' : 'primary'"
+              [ngClass]="{'node-error': checklistSelection.isSelected(node) && node.hasError}"
+              (change)="rootNodeSelectionToggle(node)">
+              {{node.configuracionBaremo?.nombre}}
+            </mat-checkbox>
+            <mat-icon *ngIf=" checklistSelection.isSelected(node) && node.hasError" color="warn"
+              [matTooltip]="getErrorMsg(node)">
+              error
+            </mat-icon>
+            <ng-container *ngIf="formPart.isEditPerm; else nodePesoCuantiaViewButton">
+              <button mat-icon-button (click)="addPesoCuantiaNode(node)" *ngIf="!node.baremo">
+                <mat-icon color="primary">add_box</mat-icon>
+              </button>
+              <button mat-icon-button (click)="openPesoCuantiaNode(node)"
+                *ngIf="checklistSelection.isSelected(node) && node.baremo">
+                <mat-icon color="primary">edit</mat-icon>
+              </button>
+            </ng-container>
+            <ng-template #nodePesoCuantiaViewButton>
+              <button mat-icon-button (click)="openPesoCuantiaNode(node)" *ngIf="node.baremo">
+                <mat-icon color="primary">visibility</mat-icon>
+              </button>
+            </ng-template>
+          </mat-tree-node>
+          <mat-tree-node *matTreeNodeDef="let node; when: isPesoNode" matTreeNodePadding>
+            <button mat-icon-button matTreeNodeToggle [attr.aria-label]="'Toggle ' + node.item">
+              <mat-icon color="primary" class="mat-icon-rtl-mirror">
+                {{treeControl.isExpanded(node) ? 'expand_more' : 'chevron_right'}}
+              </mat-icon>
+            </button>
+            <mat-checkbox [disabled]="isCheckboxDisabled(node)" [checked]="checklistSelection.isSelected(node)"
+              [color]="checklistSelection.isSelected(node) && node.hasError? 'warn' : 'primary'"
+              [ngClass]="{'node-error': checklistSelection.isSelected(node) && node.hasError}"
+              (change)="rootNodeSelectionToggle(node)">
+              {{node.configuracionBaremo?.nombre}}
+            </mat-checkbox>
+            <mat-icon *ngIf=" checklistSelection.isSelected(node) && node.hasError" color="warn"
+              [matTooltip]="getErrorMsg(node)">
+              error
+            </mat-icon>
+            <ng-container *ngIf="formPart.isEditPerm; else nodePesoViewButton">
+              <button mat-icon-button (click)="addPesoNode(node)" *ngIf="!node.baremo">
+                <mat-icon color="primary">add_box</mat-icon>
+              </button>
+              <button mat-icon-button (click)="openPesoNode(node)"
+                *ngIf="checklistSelection.isSelected(node) && node.baremo">
+                <mat-icon color="primary">edit</mat-icon>
+              </button>
+            </ng-container>
+            <ng-template #nodePesoViewButton>
+              <button mat-icon-button (click)="openPesoNode(node)" *ngIf="node.baremo">
+                <mat-icon color="primary">visibility</mat-icon>
+              </button>
+            </ng-template>
+          </mat-tree-node>
+          <mat-tree-node *matTreeNodeDef="let node; when: isNoBaremableNode" matTreeNodePadding>
+            <button mat-icon-button matTreeNodeToggle [attr.aria-label]="'Toggle ' + node.item">
+              <mat-icon color="primary" class="mat-icon-rtl-mirror">
+                {{treeControl.isExpanded(node) ? 'expand_more' : 'chevron_right'}}
+              </mat-icon>
+            </button>
+            <mat-checkbox [disabled]="isNodeNoBaremableCheckboxDisabled(node)" [checked]="descendantsAllSelected(node)"
+              [indeterminate]="descendantsPartiallySelected(node)" (change)="groupNodeSelectionToggle(node)">
+              {{node.configuracionBaremo?.nombre}}</mat-checkbox>
+          </mat-tree-node>
+          <mat-tree-node *matTreeNodeDef="let node; when: isPuntosNode" matTreeNodePadding>
+            <button mat-icon-button disabled></button>
+            <mat-checkbox [disabled]="isCheckboxDisabled(node)" [checked]="checklistSelection.isSelected(node)"
+              (change)="leafNodeSelectionToggle(node)">{{node.configuracionBaremo?.nombre}}</mat-checkbox>
+            <ng-container *ngIf="formPart.isEditPerm && isRootNodeEnabled(node); else nodePuntosViewButton">
+              <button mat-icon-button (click)="addPuntosNode(node)" *ngIf="!node.baremo">
+                <mat-icon color="primary">add_box</mat-icon>
+              </button>
+              <button mat-icon-button (click)="openPuntosNode(node)"
+                *ngIf="checklistSelection.isSelected(node) && node.baremo">
+                <mat-icon color="primary">edit</mat-icon>
+              </button>
+            </ng-container>
+            <ng-template #nodePuntosViewButton>
+              <button mat-icon-button (click)="openPuntosNode(node)" *ngIf="node.baremo">
+                <mat-icon color="primary">visibility</mat-icon>
+              </button>
+            </ng-template>
+          </mat-tree-node>
+          <mat-tree-node *matTreeNodeDef="let node; when: isSinPuntosNode" matTreeNodePadding>
+            <button mat-icon-button disabled></button>
+            <mat-checkbox [disabled]="isCheckboxDisabled(node)" [checked]="checklistSelection.isSelected(node)"
+              (change)="leafNodeSelectionToggle(node)">{{node.configuracionBaremo?.nombre}}</mat-checkbox>
+            <ng-container *ngIf="formPart.isEditPerm && isRootNodeEnabled(node)">
+              <button mat-icon-button (click)="addSinPuntosNode(node)" *ngIf="!node.baremo">
+                <mat-icon color="primary">add_box</mat-icon>
+              </button>
+            </ng-container>
+          </mat-tree-node>
+        </mat-tree>
+      </fieldset>
+    </div>
+
+    <!-- Visualizacion crear/editar/detalle -->
+    <div class="visualizacion" fxFlex="50">
+      <ng-template sgiBaremoHost></ng-template>
+    </div>
+    <!-- FIN Visualizacion crear/editar/detalle -->
+  </div>
+</sgi-fragment>

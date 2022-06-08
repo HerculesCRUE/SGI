@@ -8,11 +8,8 @@ import javax.validation.Valid;
 import org.crue.hercules.sgi.framework.web.bind.annotation.RequestPageable;
 import org.crue.hercules.sgi.prc.dto.CampoProduccionCientificaInput;
 import org.crue.hercules.sgi.prc.dto.CampoProduccionCientificaOutput;
-import org.crue.hercules.sgi.prc.dto.ValorCampoOutput;
 import org.crue.hercules.sgi.prc.model.CampoProduccionCientifica;
-import org.crue.hercules.sgi.prc.model.ValorCampo;
 import org.crue.hercules.sgi.prc.service.CampoProduccionCientificaService;
-import org.crue.hercules.sgi.prc.service.ValorCampoService;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -40,30 +37,26 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping(CampoProduccionCientificaController.MAPPING)
 @Slf4j
 public class CampoProduccionCientificaController {
-  public static final String MAPPING = "/campos-producciones-cientificas";
-  public static final String PATH_VALORES = "/{id}/valores";
+  public static final String PATH_DELIMITER = "/";
+  public static final String MAPPING = PATH_DELIMITER + "campos-producciones-cientificas";
+  public static final String PATH_VALORES = PATH_DELIMITER + "{id}/valores";
 
   private ModelMapper modelMapper;
 
   /** CampoProduccionCientifica service */
   private final CampoProduccionCientificaService service;
-  /** ValorCampo service */
-  private final ValorCampoService valorCampoService;
 
   /**
    * Instancia un nuevo CampoProduccionCientificaController.
    * 
-   * @param modelMapper       {@link ModelMapper}
-   * @param service           {@link CampoProduccionCientificaService}
-   * @param valorCampoService {@link ValorCampoService}
+   * @param modelMapper {@link ModelMapper}
+   * @param service     {@link CampoProduccionCientificaService}
    */
   public CampoProduccionCientificaController(
       ModelMapper modelMapper,
-      CampoProduccionCientificaService service,
-      ValorCampoService valorCampoService) {
+      CampoProduccionCientificaService service) {
     this.modelMapper = modelMapper;
     this.service = service;
-    this.valorCampoService = valorCampoService;
   }
 
   /**
@@ -179,39 +172,5 @@ public class CampoProduccionCientificaController {
         .map(this::convert).collect(Collectors.toList());
 
     return new PageImpl<>(content, page.getPageable(), page.getTotalElements());
-  }
-
-  /**
-   * Obtiene todos los {@link ValorCampo} del {@link CampoProduccionCientifica}
-   * con el id indicado paginadas y/o filtradas.
-   *
-   * @param id     el id de {@link CampoProduccionCientifica}.
-   * @param query  la información del filtro.
-   * @param paging la información de la paginación.
-   * @return listado de {@link ValorCampo} paginadas y/o filtradas.
-   */
-  @GetMapping(PATH_VALORES)
-  @PreAuthorize("hasAnyAuthority('PRC-VAL-V', 'PRC-VAL-E')")
-  public ResponseEntity<Page<ValorCampoOutput>> findValores(@PathVariable Long id,
-      @RequestParam(name = "q", required = false) String query, @RequestPageable(sort = "s") Pageable paging) {
-    log.debug("findValores(Long id, String query, Pageable paging) - start");
-    Page<ValorCampo> page = valorCampoService.findAllByCampoProduccionCientificaId(id, query, paging);
-    if (page.isEmpty()) {
-      log.debug("findValores(Long id, String query, Pageable paging) - end");
-      return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-    }
-    log.debug("findValores(Long id, String query, Pageable paging) - end");
-    return new ResponseEntity<>(convertValorCampo(page), HttpStatus.OK);
-  }
-
-  private Page<ValorCampoOutput> convertValorCampo(Page<ValorCampo> page) {
-    List<ValorCampoOutput> content = page.getContent().stream()
-        .map(this::convert).collect(Collectors.toList());
-
-    return new PageImpl<>(content, page.getPageable(), page.getTotalElements());
-  }
-
-  private ValorCampoOutput convert(ValorCampo valorCampo) {
-    return modelMapper.map(valorCampo, ValorCampoOutput.class);
   }
 }

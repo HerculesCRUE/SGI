@@ -2,9 +2,11 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { IAcreditacion } from '@core/models/prc/acreditacion';
 import { IAutor } from '@core/models/prc/autor';
+import { ICampoProduccionCientifica } from '@core/models/prc/campo-produccion-cientifica';
 import { IIndiceImpacto } from '@core/models/prc/indice-impacto';
 import { IProduccionCientifica } from '@core/models/prc/produccion-cientifica';
 import { IProyectoPrc } from '@core/models/prc/proyecto-prc';
+import { IValorCampo } from '@core/models/prc/valor-campo';
 import { environment } from '@env';
 import {
   FindByIdCtor, mixinFindById, SgiRestBaseService,
@@ -16,11 +18,15 @@ import { IAcreditacionResponse } from '../acreditacion/acreditacion-response';
 import { ACREDITACION_RESPONSE_CONVERTER } from '../acreditacion/acreditacion-response.converter';
 import { IAutorResponse } from '../autor/autor-response';
 import { AUTOR_RESPONSE_CONVERTER } from '../autor/autor-response.converter';
+import { ICampoProduccionCientificaResponse } from '../campo-produccion-cientifica/campo-produccion-cientifica-response';
+import { CAMPO_PRODUCCION_CIENTIFICA_RESPONSE_CONVERTER } from '../campo-produccion-cientifica/campo-produccion-cientifica-response.converter';
 import { IEstadoProduccionCientificaRequest } from '../estado-produccion-cientifica/estado-produccion-cientifica-input';
 import { IIndiceImpactoResponse } from '../indice-impacto/indice-impacto-response';
 import { INDICE_IMPACTO_RESPONSE_CONVERTER } from '../indice-impacto/indice-impacto-response.converter';
 import { IProyectoPrcResponse } from '../proyecto/proyecto-prc-response';
 import { PROYECTO_PRC_RESPONSE_CONVERTER } from '../proyecto/proyecto-prc-response.converter';
+import { IValorCampoResponse } from '../valor-campo/valor-campo-response';
+import { VALOR_CAMPO_RESPONSE_CONVERTER } from '../valor-campo/valor-campo-response.converter';
 import { IProduccionCientificaResponse } from './produccion-cientifica-response';
 import { PRODUCCION_CIENTIFICA_RESPONSE_CONVERTER } from './produccion-cientifica-response.converter';
 
@@ -118,5 +124,59 @@ export class ProduccionCientificaService extends _ProduccionCientificaServiceMix
       .pipe(
         map(response => PRODUCCION_CIENTIFICA_RESPONSE_CONVERTER.toTarget(response))
       );
+  }
+
+  /**
+   * Comprueba si Producción Científica es accesible por el investigador.
+   * @param id id de la Producción Científica.
+   */
+  isAccesibleByInvestigador(id: number): Observable<boolean> {
+    return this.http.head<boolean>(`${this.endpointUrl}/${id}`, { observe: 'response' })
+      .pipe(
+        map(response => response.status === 200)
+      );
+  }
+
+  /**
+   * Comprueba si Producción Científica es modificable por el investigador.
+   * @param id id de la Producción Científica.
+   */
+  isEditableByInvestigador(id: number): Observable<boolean> {
+    return this.http.head<boolean>(`${this.endpointUrl}/${id}/modificable`, { observe: 'response' })
+      .pipe(
+        map(response => response.status === 200)
+      );
+  }
+
+  /**
+   * Obtiene todos los Campos de producción científica de una Producción científica
+   * @param campoProduccionCientifica campo de producción científica
+   * @param options opciones de busqueda
+   * @returns Valores de un Campo de producción científica
+   */
+  findAllCamposProduccionCientifca(
+    produccionCientifica: IProduccionCientifica, options?: SgiRestFindOptions
+  ): Observable<SgiRestListResult<ICampoProduccionCientifica>> {
+    return this.find<ICampoProduccionCientificaResponse, ICampoProduccionCientifica>(
+      `${this.endpointUrl}/${produccionCientifica?.id}/campos`,
+      options,
+      CAMPO_PRODUCCION_CIENTIFICA_RESPONSE_CONVERTER
+    );
+  }
+
+  /**
+   * Obtiene todos los Valores de un Campo de producción científica
+   * @param campoProduccionCientifica campo de producción científica
+   * @param options opciones de busqueda
+   * @returns Valores de un Campo de producción científica
+   */
+  findValores(
+    campoProduccionCientifica: ICampoProduccionCientifica, options?: SgiRestFindOptions
+  ): Observable<SgiRestListResult<IValorCampo>> {
+    return this.find<IValorCampoResponse, IValorCampo>(
+      `${this.endpointUrl}/${campoProduccionCientifica?.produccionCientifica?.id}/campos/${campoProduccionCientifica.id}/valores`,
+      options,
+      VALOR_CAMPO_RESPONSE_CONVERTER
+    );
   }
 }

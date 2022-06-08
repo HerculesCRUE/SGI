@@ -13,12 +13,26 @@
       </sgi-select-enum>
     </mat-form-field>
 
+    <!-- hideBlocksIfNoData -->
+    <mat-form-field>
+      <mat-label>{{'label.report.headers.visible' | translate}}</mat-label>
+      <mat-select matNativeControl formControlName="hideBlocksIfNoData">
+        <mat-option [value]="true">{{'label.si' | translate}}</mat-option>
+        <mat-option [value]="false">{{'label.no' | translate}}</mat-option>
+      </mat-select>
+    </mat-form-field>
+
     <!-- Columns visibility -->
-    <mat-label>{{'export.columns' | translate}}</mat-label>
+    <div class="row-visibility-header">
+      <mat-label>{{'export.columns' | translate}}</mat-label>
+      <mat-checkbox color="primary" class="checkbox" checked="true" (change)="selectUnselectAll($event)">
+        <mat-label>{{'label.todos' | translate}}</mat-label>
+      </mat-checkbox>
+    </div>
 
     <div class="row-visibility">
-      <div class="columns-visibility">
 
+      <div class="columns-visibility">
         <mat-checkbox color="primary" class="checkbox" formControlName="showAreasConocimiento">
           {{'label.areas-conocimiento' | translate}}
         </mat-checkbox>

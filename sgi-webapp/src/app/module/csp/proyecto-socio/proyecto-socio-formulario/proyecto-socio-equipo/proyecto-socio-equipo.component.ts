@@ -134,7 +134,6 @@ export class ProyectoSocioEquipoComponent extends FragmentComponent implements O
     }
 
     const config = {
-      panelClass: 'sgi-dialog-container',
       data
     };
     const dialogRef = this.matDialog.open(MiembroEquipoProyectoModalComponent, config);

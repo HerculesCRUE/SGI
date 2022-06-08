@@ -130,7 +130,9 @@ export class ConvocatoriaEntidadesFinanciadorasFragment extends Fragment {
         return this.convocatoriaEntidadFinanciadoraService.create(wrapped.value).pipe(
           map((createdEntidad) => {
             const index = this.convocatoriaEntidadesFinanciadoras$.value.findIndex((currentEntidad) => currentEntidad === wrapped);
-            this.convocatoriaEntidadesFinanciadoras$[index] = new StatusWrapper<IConvocatoriaEntidadFinanciadora>(createdEntidad);
+            wrapped.value.id = createdEntidad.id;
+            this.convocatoriaEntidadesFinanciadoras$.value[index] = new StatusWrapper<IConvocatoriaEntidadFinanciadora>(wrapped.value);
+            this.convocatoriaEntidadesFinanciadoras$.next(this.convocatoriaEntidadesFinanciadoras$.value);
           })
         );
       }));

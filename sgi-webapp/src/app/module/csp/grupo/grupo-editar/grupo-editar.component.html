@@ -1,13 +1,37 @@
 <sgi-action [actionService]="actionService">
   <ng-container menu>
-    <sgi-action-fragment-menu-item *sgiHasAnyAuthorityForAnyUO="['CSP-GIN-V', 'CSP-GIN-E']"
+    <sgi-action-fragment-menu-item *sgiHasAnyAuthorityForAnyUO="['CSP-GIN-V', 'CSP-GIN-E', 'CSP-GIN-INV-VR']"
       [route]="[GRUPO_ROUTE_NAMES.DATOS_GENERALES]" [title]="'label.datos-generales' | translate"
       [fragment]="actionService.getFragment(actionService.FRAGMENT.DATOS_GENERALES)">
     </sgi-action-fragment-menu-item>
-    <sgi-action-fragment-menu-item *sgiHasAnyAuthorityForAnyUO="['CSP-GIN-V', 'CSP-GIN-E']"
+    <sgi-action-fragment-menu-item *sgiHasAnyAuthorityForAnyUO="['CSP-GIN-V', 'CSP-GIN-E', 'CSP-GIN-INV-VR']"
       [route]="[GRUPO_ROUTE_NAMES.EQUIPO_INVESTIGACION]"
-      [title]="'csp.grupo-equipo.equipo-investigacion' | translate:MSG_PARAMS.CARDINALIRY.PLURAL"
+      [title]="'csp.grupo-equipo.equipo-investigacion' | translate:MSG_PARAMS.CARDINALIRY.SINGULAR"
       [fragment]="actionService.getFragment(actionService.FRAGMENT.EQUIPO_INVESTIGACION)">
+    </sgi-action-fragment-menu-item>
+    <sgi-action-fragment-menu-item *sgiHasAnyAuthorityForAnyUO="['CSP-GIN-V', 'CSP-GIN-E', 'CSP-GIN-INV-VR']"
+      [route]="[GRUPO_ROUTE_NAMES.RESPONSABLE_ECONOMICO]"
+      [title]="'csp.grupo-responsable-economico' | translate:MSG_PARAMS.CARDINALIRY.SINGULAR"
+      [fragment]="actionService.getFragment(actionService.FRAGMENT.RESPONSABLE_ECONOMICO)">
+    </sgi-action-fragment-menu-item>
+    <sgi-action-fragment-menu-item *sgiHasAnyAuthorityForAnyUO="['CSP-GIN-V', 'CSP-GIN-E', 'CSP-GIN-INV-VR']"
+      [route]="[GRUPO_ROUTE_NAMES.PERSONA_AUTORIZADA]"
+      [title]="'csp.grupo-persona-autorizada' | translate:MSG_PARAMS.CARDINALIRY.SINGULAR"
+      [fragment]="actionService.getFragment(actionService.FRAGMENT.PERSONA_AUTORIZADA)">
+    </sgi-action-fragment-menu-item>
+    <sgi-action-fragment-menu-item *sgiHasAnyAuthorityForAnyUO="['CSP-GIN-V', 'CSP-GIN-E', 'CSP-GIN-INV-VR']"
+      [route]="[GRUPO_ROUTE_NAMES.EQUIPO_INSTRUMENTAL]"
+      [title]="'csp.grupo-equipo.equipo-instrumental' | translate:MSG_PARAMS.CARDINALIRY.PLURAL"
+      [fragment]="actionService.getFragment(actionService.FRAGMENT.EQUIPO_INSTRUMENTAL)">
+    </sgi-action-fragment-menu-item>
+    <sgi-action-fragment-menu-item *sgiHasAnyAuthorityForAnyUO="['CSP-GIN-V', 'CSP-GIN-E', 'CSP-GIN-INV-VR']"
+      [route]="[GRUPO_ROUTE_NAMES.ENLACE]" [title]="'csp.grupo-enlace' | translate:MSG_PARAMS.CARDINALIRY.PLURAL"
+      [fragment]="actionService.getFragment(actionService.FRAGMENT.ENLACE)">
+    </sgi-action-fragment-menu-item>
+    <sgi-action-fragment-menu-item *sgiHasAnyAuthorityForAnyUO="['CSP-GIN-V', 'CSP-GIN-E', 'CSP-GIN-INV-VR']"
+      [route]="[GRUPO_ROUTE_NAMES.LINEA_INVESTIGACION]"
+      [title]="'csp.grupo-linea-investigacion' | translate:MSG_PARAMS.CARDINALIRY.PLURAL"
+      [fragment]="actionService.getFragment(actionService.FRAGMENT.LINEA_INVESTIGACION)">
     </sgi-action-fragment-menu-item>
   </ng-container>
   <ng-container footer>

@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.crue.hercules.sgi.esb.sgp</groupId>
   <artifactId>sgi-esb-sgp</artifactId>
-  <version>0.0.8</version>
+  <version>${revision}</version>
   <packaging>pom</packaging>
   <name>sgi-esb-sgp</name>
   <description>sgi-esb-sgp</description>
@@ -40,6 +40,7 @@
     <java.version>1.8</java.version>
     <maven.compiler.source>1.8</maven.compiler.source>
     <maven.compiler.target>1.8</maven.compiler.target>
+    <revision>0.0.9</revision>
   </properties>
 
   <build>

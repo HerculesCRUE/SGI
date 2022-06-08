@@ -15,6 +15,7 @@ import org.crue.hercules.sgi.eti.model.Acta;
 import org.crue.hercules.sgi.eti.model.ConvocatoriaReunion;
 import org.crue.hercules.sgi.eti.model.EstadoActa;
 import org.crue.hercules.sgi.eti.model.Evaluacion;
+import org.crue.hercules.sgi.eti.model.Evaluador;
 import org.crue.hercules.sgi.eti.model.TipoEstadoActa;
 import org.crue.hercules.sgi.eti.repository.ActaRepository;
 import org.crue.hercules.sgi.eti.repository.EstadoActaRepository;
@@ -23,6 +24,7 @@ import org.crue.hercules.sgi.eti.repository.RetrospectivaRepository;
 import org.crue.hercules.sgi.eti.repository.TipoEstadoActaRepository;
 import org.crue.hercules.sgi.eti.repository.specification.ActaSpecifications;
 import org.crue.hercules.sgi.eti.service.ActaService;
+import org.crue.hercules.sgi.eti.service.ComunicadosService;
 import org.crue.hercules.sgi.eti.service.MemoriaService;
 import org.crue.hercules.sgi.eti.service.RetrospectivaService;
 import org.crue.hercules.sgi.eti.service.SgdocService;
@@ -76,6 +78,11 @@ public class ActaServiceImpl implements ActaService {
   /** SGDOC service */
   private final SgdocService sgdocService;
 
+  /** Comunicado service */
+  private final ComunicadosService comunicadosService;
+
+  private static final String TIPO_ACTIVIDAD_INVESTIGACION_TUTELADA = "Investigación tutelada";
+
   /**
    * Instancia un nuevo ActaServiceImpl.
    * 
@@ -88,13 +95,14 @@ public class ActaServiceImpl implements ActaService {
    * @param retrospectivaService     {@link RetrospectivaService}
    * @param reportService            {@link SgiApiRepService}
    * @param sgdocService             {@link SgdocService}
-   * 
+   * @param comunicadosService       {@link ComunicadosService}
    */
   @Autowired
   public ActaServiceImpl(ActaRepository actaRepository, EstadoActaRepository estadoActaRepository,
       TipoEstadoActaRepository tipoEstadoActaRepository, EvaluacionRepository evaluacionRepository,
       RetrospectivaRepository retrospectivaRepository, MemoriaService memoriaService,
-      RetrospectivaService retrospectivaService, SgiApiRepService reportService, SgdocService sgdocService) {
+      RetrospectivaService retrospectivaService, SgiApiRepService reportService, SgdocService sgdocService,
+      ComunicadosService comunicadosService) {
     this.actaRepository = actaRepository;
     this.estadoActaRepository = estadoActaRepository;
     this.tipoEstadoActaRepository = tipoEstadoActaRepository;
@@ -103,6 +111,7 @@ public class ActaServiceImpl implements ActaService {
     this.retrospectivaService = retrospectivaService;
     this.reportService = reportService;
     this.sgdocService = sgdocService;
+    this.comunicadosService = comunicadosService;
   }
 
   /**
@@ -277,8 +286,8 @@ public class ActaServiceImpl implements ActaService {
         .findByActivoTrueAndTipoEvaluacionIdAndEsRevMinimaAndConvocatoriaReunionId(Constantes.TIPO_EVALUACION_MEMORIA,
             Boolean.FALSE, acta.getConvocatoriaReunion().getId());
 
-    listEvaluacionesMemoria.forEach(evaluacion -> {
-
+    for (Evaluacion evaluacion : listEvaluacionesMemoria) {
+      boolean evaluacionMinima = false;
       switch (evaluacion.getDictamen().getId().intValue()) {
         case Constantes.DICTAMEN_FAVORABLE: {
           // Dictamen "Favorable"-
@@ -290,6 +299,7 @@ public class ActaServiceImpl implements ActaService {
           // Dictamen "Favorable pendiente de revisión mínima"-
           // Se actualiza memoria a estado 6: "Favorable Pendiente de Modificaciones
           // Mínimas"
+          evaluacionMinima = true;
           memoriaService.updateEstadoMemoria(evaluacion.getMemoria(),
               Constantes.ESTADO_MEMORIA_FAVORABLE_PENDIENTE_MOD_MINIMAS);
           break;
@@ -315,7 +325,13 @@ public class ActaServiceImpl implements ActaService {
         default:
           break;
       }
-    });
+
+      // Enviar comunicado de cada evaluación al finalizar un acta
+      if (!evaluacionMinima) {
+        sendComunicadoActaFinalizada(evaluacion);
+      }
+
+    }
 
     // Tipo evaluación retrospectiva
     List<Evaluacion> listEvaluacionesRetrospectiva = evaluacionRepository
@@ -363,6 +379,8 @@ public class ActaServiceImpl implements ActaService {
         default:
           break;
       }
+      // Enviar comunicado de cada evaluación al finalizar un acta
+      sendComunicadoActaFinalizada(evaluacion);
 
     });
 
@@ -391,6 +409,8 @@ public class ActaServiceImpl implements ActaService {
           break;
       }
 
+      // Enviar comunicado de cada evaluación al finalizar un acta
+      sendComunicadoActaFinalizada(evaluacion);
     });
 
     // Se crea el nuevo estado acta 2:"Finalizado"
@@ -465,5 +485,38 @@ public class ActaServiceImpl implements ActaService {
     // Se sube el informe a sgdoc
     String fileName = TITULO_INFORME_ACTA + "_" + idActa + LocalDate.now() + ".pdf";
     return sgdocService.uploadInforme(fileName, informePdf);
+  }
+
+  /**
+   * Identifica si el usuario es {@link Evaluador} en algun {@link Acta}
+   * 
+   * @param personaRef El usuario de la petición
+   * @return true/false
+   */
+  @Override
+  public Boolean hasAssignedActasByEvaluador(String personaRef) {
+    log.debug("hasAssignedActasByEvaluador(String personaRef) - end");
+    return actaRepository.hasAssignedActasByEvaluador(personaRef);
+  }
+
+  private void sendComunicadoActaFinalizada(Evaluacion evaluacion) {
+    log.debug("sendComunicadoActaFinalizada(Evaluacion evaluacion) - Start");
+    try {
+      String tipoActividad;
+      if (!evaluacion.getMemoria().getPeticionEvaluacion().getTipoActividad().getNombre()
+          .equals(TIPO_ACTIVIDAD_INVESTIGACION_TUTELADA)) {
+        tipoActividad = evaluacion.getMemoria().getPeticionEvaluacion().getTipoActividad().getNombre();
+      } else {
+        tipoActividad = evaluacion.getMemoria().getPeticionEvaluacion().getTipoInvestigacionTutelada().getNombre();
+      }
+      this.comunicadosService.enviarComunicadoActaEvaluacionFinalizada(
+          evaluacion.getMemoria().getComite().getNombreInvestigacion(),
+          evaluacion.getMemoria().getComite().getGenero().toString(), evaluacion.getMemoria().getNumReferencia(),
+          tipoActividad,
+          evaluacion.getMemoria().getPeticionEvaluacion().getTitulo(), evaluacion.getMemoria().getPersonaRef());
+      log.debug("sendComunicadoActaFinalizada(Evaluacion evaluacion) - End");
+    } catch (Exception e) {
+      log.debug("sendComunicadoActaFinalizada(Evaluacion evaluacion) - Error al enviar el comunicado", e);
+    }
   }
 }

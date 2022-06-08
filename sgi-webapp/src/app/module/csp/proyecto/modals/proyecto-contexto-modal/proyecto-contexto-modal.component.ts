@@ -5,13 +5,10 @@ import { MatCheckboxChange } from '@angular/material/checkbox';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatTreeNestedDataSource } from '@angular/material/tree';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
-import { BaseModalComponent } from '@core/component/base-modal.component';
+import { DialogFormComponent } from '@core/component/dialog-form.component';
 import { MSG_PARAMS } from '@core/i18n';
 import { IAreaTematica } from '@core/models/csp/area-tematica';
-import { FxFlexProperties } from '@core/models/shared/flexLayout/fx-flex-properties';
-import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-properties';
 import { AreaTematicaService } from '@core/services/csp/area-tematica.service';
-import { SnackBarService } from '@core/services/snack-bar.service';
 import { StatusWrapper } from '@core/utils/status-wrapper';
 import { TranslateService } from '@ngx-translate/core';
 import { NGXLogger } from 'ngx-logger';
@@ -69,10 +66,7 @@ const MSG_ACEPTAR = marker('btn.ok');
   templateUrl: './proyecto-contexto-modal.component.html',
   styleUrls: ['./proyecto-contexto-modal.component.scss']
 })
-export class ProyectoContextoModalComponent extends
-  BaseModalComponent<ProyectoContextoModalData, ProyectoContextoModalComponent> implements OnInit {
-  fxFlexProperties: FxFlexProperties;
-  fxLayoutProperties: FxLayoutProperties;
+export class ProyectoContextoModalComponent extends DialogFormComponent<ProyectoContextoModalData> implements OnInit {
 
   areaTematicaTree$ = new BehaviorSubject<NodeAreaTematica[]>([]);
   areasTematicas$: BehaviorSubject<IAreaTematica[]> = new BehaviorSubject<IAreaTematica[]>([]);
@@ -92,22 +86,13 @@ export class ProyectoContextoModalComponent extends
 
   constructor(
     private readonly logger: NGXLogger,
-    protected snackBarService: SnackBarService,
-    public matDialogRef: MatDialogRef<ProyectoContextoModalComponent>,
+    matDialogRef: MatDialogRef<ProyectoContextoModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data: ProyectoContextoModalData,
     private areaTematicaService: AreaTematicaService,
     private readonly translate: TranslateService
   ) {
-    super(snackBarService, matDialogRef, data);
-    this.fxFlexProperties = new FxFlexProperties();
-    this.fxFlexProperties.sm = '0 1 calc(100%-10px)';
-    this.fxFlexProperties.md = '0 1 calc(100%-10px)';
-    this.fxFlexProperties.gtMd = '0 1 calc(100%-10px)';
-    this.fxFlexProperties.order = '2';
-    this.fxLayoutProperties = new FxLayoutProperties();
-    this.fxLayoutProperties.gap = '20px';
-    this.fxLayoutProperties.layout = 'row';
-    this.fxLayoutProperties.xs = 'row';
+    super(matDialogRef, !!data?.areaTematicaProyecto);
+
     this.textSaveOrUpdate = this.data?.areaTematicaProyecto != null ? MSG_ACEPTAR : MSG_ANADIR;
   }
 
@@ -167,14 +152,15 @@ export class ProyectoContextoModalComponent extends
     }
   }
 
-  protected getFormGroup(): FormGroup {
+  protected buildFormGroup(): FormGroup {
     const formGroup = new FormGroup({
       padre: new FormControl(null, [Validators.required]),
+      area: new FormControl(this.data?.areaTematicaProyecto, Validators.required)
     });
     return formGroup;
   }
 
-  protected getDatosForm(): ProyectoContextoModalData {
+  protected getValue(): ProyectoContextoModalData {
     const padre = this.formGroup.controls.padre.value;
     const areasTematicasConvocatoria = this.data.areasTematicasConvocatoria;
     if (this.checkedNode) {
@@ -193,8 +179,7 @@ export class ProyectoContextoModalComponent extends
       this.areaTematicaService.findAllGrupo().pipe(
         map(res => this.areasTematicas$.next(res.items)),
         catchError(error => {
-          this.logger.error(error);
-          this.snackBarService.showError(MSG_ERROR_AREA_TEMATICA);
+          this.processError(error);
           return of([]);
         })
       ).subscribe());
@@ -312,6 +297,7 @@ export class ProyectoContextoModalComponent extends
 
   onCheckNode(node: NodeAreaTematica, $event: MatCheckboxChange): void {
     this.checkedNode = $event.checked ? node : undefined;
+    this.formGroup.get('area').setValue(this.checkedNode?.areaTematica?.value);
   }
 }
 

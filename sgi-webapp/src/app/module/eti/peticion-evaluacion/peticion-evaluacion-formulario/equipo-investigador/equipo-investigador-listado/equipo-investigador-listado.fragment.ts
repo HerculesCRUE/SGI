@@ -1,4 +1,5 @@
 import { IEquipoTrabajoWithIsEliminable } from '@core/models/eti/equipo-trabajo-with-is-eliminable';
+import { IMemoriaPeticionEvaluacion } from '@core/models/eti/memoria-peticion-evaluacion';
 import { Fragment } from '@core/services/action-service';
 import { PeticionEvaluacionService } from '@core/services/eti/peticion-evaluacion.service';
 import { DatosAcademicosService } from '@core/services/sgp/datos-academicos.service';
@@ -17,6 +18,8 @@ export class EquipoInvestigadorListadoFragment extends Fragment {
 
   private selectedIdPeticionEvaluacion: number;
 
+  memorias: IMemoriaPeticionEvaluacion[] = [];
+
   constructor(
     key: number,
     private personaService: PersonaService,
@@ -32,6 +35,10 @@ export class EquipoInvestigadorListadoFragment extends Fragment {
 
   onInitialize(): void {
     this.loadEquiposTrabajo(this.getKey() as number);
+  }
+
+  setMemorias(memorias: IMemoriaPeticionEvaluacion[]) {
+    this.memorias = memorias;
   }
 
   loadEquiposTrabajo(idPeticionEvaluacion: number): void {
@@ -216,7 +223,9 @@ export class EquipoInvestigadorListadoFragment extends Fragment {
           // TODO: Eliminar el casteo. Realmente existe la casuistica de que el backend no indica si el eliminable o no.
           map((savedEquipoTrabajo: IEquipoTrabajoWithIsEliminable) => {
             const index = this.equiposTrabajo$.value.findIndex((currentEquipoTrabajo) => currentEquipoTrabajo === wrappedEquipoTrabajo);
-            this.equiposTrabajo$[index] = new StatusWrapper<IEquipoTrabajoWithIsEliminable>(savedEquipoTrabajo);
+            wrappedEquipoTrabajo.value.id = savedEquipoTrabajo.id;
+            this.equiposTrabajo$.value[index] = new StatusWrapper<IEquipoTrabajoWithIsEliminable>(wrappedEquipoTrabajo.value);
+            this.equiposTrabajo$.next(this.equiposTrabajo$.value);
           })
         );
       }));

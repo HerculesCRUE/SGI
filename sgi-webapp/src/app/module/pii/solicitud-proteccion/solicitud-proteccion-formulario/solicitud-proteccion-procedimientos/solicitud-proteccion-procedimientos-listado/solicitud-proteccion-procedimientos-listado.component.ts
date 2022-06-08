@@ -119,9 +119,8 @@ export class SolicitudProteccionProcedimientosListadoComponent extends FragmentC
     };
 
     const config: MatDialogConfig = {
-      panelClass: 'sgi-dialog-container',
       data: procedimientoModalData,
-      minWidth: '500px',
+
     };
     const dialogRef = this.matDialog.open(SolicitudProteccionProcedimientoModalComponent, config);
     dialogRef.afterClosed().subscribe(

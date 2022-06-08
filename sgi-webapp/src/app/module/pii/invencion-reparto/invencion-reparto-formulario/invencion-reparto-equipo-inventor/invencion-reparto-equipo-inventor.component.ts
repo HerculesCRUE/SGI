@@ -306,7 +306,6 @@ export class InvencionRepartoEquipoInventorComponent extends FragmentComponent i
 
   openModalRepartoEquipoInventor(wrapper: StatusWrapper<IRepartoEquipoInventorTableData>): void {
     const config: MatDialogConfig<IRepartoEquipoInventorTableData> = {
-      panelClass: 'sgi-dialog-container',
       data: wrapper.value
     };
     const dialogRef = this.matDialog.open(RepartoEquipoModalComponent, config);

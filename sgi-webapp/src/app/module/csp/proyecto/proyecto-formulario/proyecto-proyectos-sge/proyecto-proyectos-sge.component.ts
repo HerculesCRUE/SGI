@@ -9,13 +9,13 @@ import { MSG_PARAMS } from '@core/i18n';
 import { IProyectoProyectoSge } from '@core/models/csp/proyecto-proyecto-sge';
 import { FxFlexProperties } from '@core/models/shared/flexLayout/fx-flex-properties';
 import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-properties';
+import { ProyectoService } from '@core/services/csp/proyecto.service';
 import { DialogService } from '@core/services/dialog.service';
 import { StatusWrapper } from '@core/utils/status-wrapper';
 import { TranslateService } from '@ngx-translate/core';
-import { Subscription } from 'rxjs';
-import { switchMap } from 'rxjs/operators';
+import { forkJoin, Subscription } from 'rxjs';
+import { map, switchMap } from 'rxjs/operators';
 import { SearchProyectoEconomicoModalComponent, SearchProyectoEconomicoModalData } from 'src/app/esb/sge/shared/search-proyecto-economico-modal/search-proyecto-economico-modal.component';
-
 import { ProyectoActionService } from '../../proyecto.action.service';
 import { ProyectoProyectosSgeFragment } from './proyecto-proyectos-sge.fragment';
 
@@ -44,6 +44,8 @@ export class ProyectoProyectosSgeComponent extends FragmentComponent implements 
   @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
   @ViewChild(MatSort, { static: true }) sort: MatSort;
 
+  canDeleteProyectosSge: boolean;
+
   get MSG_PARAMS() {
     return MSG_PARAMS;
   }
@@ -52,7 +54,8 @@ export class ProyectoProyectosSgeComponent extends FragmentComponent implements 
     private actionService: ProyectoActionService,
     private matDialog: MatDialog,
     private dialogService: DialogService,
-    private readonly translate: TranslateService
+    private readonly translate: TranslateService,
+    private proyectoService: ProyectoService
   ) {
     super(actionService.FRAGMENT.PROYECTOS_SGE, actionService);
 
@@ -79,6 +82,8 @@ export class ProyectoProyectosSgeComponent extends FragmentComponent implements 
     this.subscriptions.push(this.formPart.proyectosSge$.subscribe(elements => {
       this.dataSource.data = elements;
     }));
+
+    this.loadCanDeleteProyectosSge();
   }
 
   private setupI18N(): void {
@@ -110,7 +115,6 @@ export class ProyectoProyectosSgeComponent extends FragmentComponent implements 
     };
 
     const config = {
-      panelClass: 'sgi-dialog-container',
       data
     };
     const dialogRef = this.matDialog.open(SearchProyectoEconomicoModalComponent, config);
@@ -137,6 +141,16 @@ export class ProyectoProyectosSgeComponent extends FragmentComponent implements 
 
   ngOnDestroy(): void {
     this.subscriptions.forEach(subscription => subscription.unsubscribe());
+  }
+
+  private loadCanDeleteProyectosSge(): void {
+    forkJoin({
+      anualidadGastos: this.proyectoService.hasAnualidadGastos(this.formPart.getKey() as number),
+      anualidadIngresos: this.proyectoService.hasAnualidadIngresos(this.formPart.getKey() as number),
+      gastosProyecto: this.proyectoService.hasGastosProyecto(this.formPart.getKey() as number)
+    }).pipe(
+      map(({ anualidadGastos, anualidadIngresos, gastosProyecto }) => !anualidadGastos && !anualidadIngresos && !gastosProyecto)
+    ).subscribe(canDelete => this.canDeleteProyectosSge = canDelete);
   }
 
 }

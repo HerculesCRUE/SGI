@@ -106,7 +106,6 @@ export class SolicitudProyectoSocioPeriodoPagoComponent extends FragmentComponen
       }
     }
     const config = {
-      panelClass: 'sgi-dialog-container',
       data
     };
     const dialogRef = this.matDialog.open(SolicitudProyectoSocioPeriodoPagoModalComponent, config);

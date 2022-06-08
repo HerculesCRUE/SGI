@@ -5,6 +5,8 @@ import java.math.BigDecimal;
 import java.time.Instant;
 
 import org.crue.hercules.sgi.csp.model.GrupoEquipo.Dedicacion;
+import org.crue.hercules.sgi.csp.model.RolProyecto.Equipo;
+import org.crue.hercules.sgi.csp.model.RolProyecto.Orden;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -34,7 +36,12 @@ public class GrupoEquipoOutput implements Serializable {
   @Builder
   public static class Rol implements Serializable {
     private Long id;
+    private String abreviatura;
     private String nombre;
+    private Boolean rolPrincipal;
+    private Orden orden;
+    private Equipo equipo;
+    private Boolean activo;
   }
 
 }

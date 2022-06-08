@@ -93,7 +93,7 @@ public class CustomProyectoSocioRepositoryImpl implements CustomProyectoSocioRep
     Predicate finalPredicate = cb.and(proyectoSocio, vinculaciones);
     cq.select(root.get(ProyectoSocio_.id)).where(finalPredicate);
 
-    Boolean returnValue = entityManager.createQuery(cq).getResultList().size() > 0;
+    Boolean returnValue = !entityManager.createQuery(cq).getResultList().isEmpty();
 
     log.debug("vinculaciones(Long id) - start");
     return returnValue;

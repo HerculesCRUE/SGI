@@ -5,6 +5,7 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { Router } from '@angular/router';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
+import { DialogCommonComponent } from '@core/component/dialog-common.component';
 import { SearchModalData } from '@core/component/select-dialog/select-dialog.component';
 import { MSG_PARAMS } from '@core/i18n';
 import { IConvocatoria } from '@core/models/csp/convocatoria';
@@ -16,7 +17,6 @@ import { Module } from '@core/module';
 import { ROUTE_NAMES } from '@core/route.names';
 import { ConvocatoriaService } from '@core/services/csp/convocatoria.service';
 import { EmpresaService } from '@core/services/sgemp/empresa.service';
-import { SnackBarService } from '@core/services/snack-bar.service';
 import { FormGroupUtil } from '@core/utils/form-group-util';
 import { LuxonUtils } from '@core/utils/luxon-utils';
 import { TranslateService } from '@ngx-translate/core';
@@ -28,7 +28,6 @@ import { EMPTY, from, merge, Observable, of } from 'rxjs';
 import { catchError, map, mergeAll, switchMap, tap } from 'rxjs/operators';
 import { CSP_ROUTE_NAMES } from '../../../csp-route-names';
 
-const MSG_LISTADO_ERROR = marker('error.load');
 const ENTITY_KEY = marker('csp.convocatoria');
 
 export interface SearchConvocatoriaModalData extends SearchModalData {
@@ -49,7 +48,7 @@ interface IConvocatoriaListado {
   templateUrl: './search-convocatoria.component.html',
   styleUrls: ['./search-convocatoria.component.scss']
 })
-export class SearchConvocatoriaModalComponent implements OnInit, AfterViewInit {
+export class SearchConvocatoriaModalComponent extends DialogCommonComponent implements OnInit, AfterViewInit {
   formGroup: FormGroup;
 
   displayedColumns = ['codigo', 'titulo', 'fechaInicioSolicitud', 'fechaFinSolicitud',
@@ -71,16 +70,18 @@ export class SearchConvocatoriaModalComponent implements OnInit, AfterViewInit {
 
   constructor(
     private readonly logger: NGXLogger,
-    public dialogRef: MatDialogRef<SearchConvocatoriaModalComponent>,
+    dialogRef: MatDialogRef<SearchConvocatoriaModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data: SearchConvocatoriaModalData,
     private readonly convocatoriaService: ConvocatoriaService,
     private empresaService: EmpresaService,
-    private readonly snackBarService: SnackBarService,
     private readonly translate: TranslateService,
     private readonly router: Router
-  ) { }
+  ) {
+    super(dialogRef);
+  }
 
   ngOnInit(): void {
+    super.ngOnInit();
     this.formGroup = new FormGroup({
       codigo: new FormControl(''),
       titulo: new FormControl(this.data.searchTerm),
@@ -100,6 +101,7 @@ export class SearchConvocatoriaModalComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit(): void {
+    super.ngAfterViewInit();
     this.buscarConvocatorias();
 
     merge(
@@ -222,7 +224,7 @@ export class SearchConvocatoriaModalComponent implements OnInit, AfterViewInit {
           // On error reset pagination values
           this.paginator.firstPage();
           this.totalElementos = 0;
-          this.snackBarService.showError(MSG_LISTADO_ERROR);
+          this.processError(error);
           return of([]);
         })
       );
@@ -247,7 +249,7 @@ export class SearchConvocatoriaModalComponent implements OnInit, AfterViewInit {
   }
 
   closeModal(convocatoria?: IConvocatoria): void {
-    this.dialogRef.close(convocatoria);
+    this.close(convocatoria);
   }
 
   /**

@@ -151,7 +151,6 @@ export class ConvocatoriaReunionAsignacionMemoriasListadoComponent extends Fragm
       readonly: this.actionService.readonly
     };
     const config = {
-      panelClass: 'sgi-dialog-container',
       data
     };
 
@@ -198,7 +197,6 @@ export class ConvocatoriaReunionAsignacionMemoriasListadoComponent extends Fragm
       readonly: this.actionService.readonly
     };
     const config = {
-      panelClass: 'sgi-dialog-container',
       data
     };
 

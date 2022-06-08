@@ -23,6 +23,7 @@ import org.crue.hercules.sgi.csp.model.GrupoEspecialInvestigacion_;
 import org.crue.hercules.sgi.csp.model.Grupo_;
 import org.crue.hercules.sgi.csp.model.RolProyecto;
 import org.crue.hercules.sgi.csp.model.RolProyecto_;
+import org.crue.hercules.sgi.csp.repository.specification.GrupoEquipoSpecifications;
 import org.crue.hercules.sgi.framework.data.jpa.domain.Activable_;
 import org.springframework.stereotype.Component;
 
@@ -172,6 +173,44 @@ public class CustomGrupoEquipoRepositoryImpl implements CustomGrupoEquipoReposit
   }
 
   /**
+   * Lista de ids de {@link GrupoEquipo} cuyo personaRef está dentro de la fecha
+   * de baremación
+   *
+   * @param personaRef            personaRef
+   * @param fechaInicioBaremacion fecha inicio de baremación
+   * @param fechaFinBaremacion    fecha fin de baremación
+   * @return Lista de ids de {@link GrupoEquipo}
+   */
+  @Override
+  public List<Long> findGrupoEquipoByPersonaRefAndFechaBaremacion(String personaRef, Instant fechaInicioBaremacion,
+      Instant fechaFinBaremacion) {
+    log.debug("findGrupoEquipoByPersonaRefAndFechaBaremacion({}, {}, {}) - start", personaRef, fechaInicioBaremacion,
+        fechaFinBaremacion);
+
+    CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+    CriteriaQuery<Long> cq = cb.createQuery(Long.class);
+    Root<GrupoEquipo> root = cq.from(GrupoEquipo.class);
+
+    Predicate predicateGrupoEquipoInFechaBaremacion = cb.and(
+        cb.lessThanOrEqualTo(root.get(GrupoEquipo_.fechaInicio), fechaFinBaremacion),
+        cb.and(cb.or(cb.isNull(root.get(GrupoEquipo_.fechaFin)),
+            cb.greaterThanOrEqualTo(root.get(GrupoEquipo_.fechaFin), fechaInicioBaremacion))));
+
+    Predicate predicateIsPersonaRef = cb.equal(root.get(GrupoEquipo_.personaRef), personaRef);
+
+    Predicate predicateFinal = cb.and(
+        predicateIsPersonaRef,
+        predicateGrupoEquipoInFechaBaremacion);
+
+    cq.select(root.get(GrupoEquipo_.grupoId)).where(predicateFinal);
+
+    log.debug("findGrupoEquipoByPersonaRefAndFechaBaremacion({}, {}, {}) - end", personaRef, fechaInicioBaremacion,
+        fechaFinBaremacion);
+
+    return entityManager.createQuery(cq).getResultList();
+  }
+
+  /**
    * Devuelve una lista de {@link GrupoEquipo} pertenecientes a un determinado
    * grupo y que estén a 31 de diciembre del año de baremación
    *
@@ -252,4 +291,32 @@ public class CustomGrupoEquipoRepositoryImpl implements CustomGrupoEquipoReposit
         predicateGrupoInFechaBaremacion,
         predicateGrupoEspecialInvestigacionInFechaBaremacion);
   }
+
+  /**
+   * Devuelve una lista de personaRef de los {@link GrupoEquipo} que cumplan la
+   * specification.
+   *
+   * @param personaRef persona ref de {@link GrupoEquipo}
+   * @param fecha      fecha para la que se hace la comprobracion
+   * @return la lista de personaRefs
+   */
+  @Override
+  public List<String> findMiembrosEquipoUsuario(String personaRef, Instant fecha) {
+    log.debug("findMiembrosEquipoUsuario(String personaRef, Instant fecha) - start");
+
+    CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+    CriteriaQuery<String> cq = cb.createQuery(String.class);
+    Root<GrupoEquipo> root = cq.from(GrupoEquipo.class);
+
+    cq.select(root.get(GrupoEquipo_.personaRef)).where(
+        GrupoEquipoSpecifications.byPersonaRefOrInvestigadorPrincipal(
+            personaRef, fecha).toPredicate(root, cq, cb))
+        .distinct(true);
+
+    List<String> returnValue = entityManager.createQuery(cq).getResultList();
+
+    log.debug("findMiembrosEquipoUsuario(String personaRef, Instant fecha) - end");
+    return returnValue;
+  }
+
 }

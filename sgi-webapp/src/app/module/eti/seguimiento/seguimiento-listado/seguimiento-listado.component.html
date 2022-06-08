@@ -10,27 +10,15 @@
       <div class="col">
         <mat-form-field class="input-form">
           <mat-label>{{'label.eti.comite' | translate}}</mat-label>
-          <input type="text" [placeholder]="'label.eti.comite' | translate" arial-label="Number" matInput
-            formControlName="comite" [matAutocomplete]="autocompleteComite">
-          <mat-autocomplete #autocompleteComite="matAutocomplete" [displayWith]="getNombreComite">
-            <mat-option *ngFor="let comite of comitesFiltrados | async" [value]="comite">
-              {{comite.comite}}
-            </mat-option>
-          </mat-autocomplete>
+          <sgi-select-comite #selectComite formControlName="comite"></sgi-select-comite>
         </mat-form-field>
       </div>
 
       <!-- Tipo Evaluación -->
       <div class="col">
-        <mat-form-field class="input-form">
+        <mat-form-field>
           <mat-label>{{'eti.seguimiento.tipo-evaluacion' | translate}}</mat-label>
-          <input type="text" [placeholder]="'eti.seguimiento.tipo-evaluacion' | translate" arial-label="Number" matInput
-            formControlName="tipoEvaluacion" [matAutocomplete]="autocompleteTipoEvaluacion">
-          <mat-autocomplete #autocompleteTipoEvaluacion="matAutocomplete" [displayWith]="getNombreTipoEvaluacion">
-            <mat-option *ngFor="let tipoEvaluacion of tipoEvaluacionFiltrados | async" [value]="tipoEvaluacion">
-              {{tipoEvaluacion.nombre}}
-            </mat-option>
-          </mat-autocomplete>
+          <sgi-select-tipo-evaluacion formControlName="tipoEvaluacion"></sgi-select-tipo-evaluacion>
         </mat-form-field>
       </div>
 
@@ -148,8 +136,14 @@
       <tr mat-header-row *matHeaderRowDef="columnas"></tr>
       <tr mat-row *matRowDef="let row; columns: columnas;"></tr>
     </table>
-    <mat-paginator [pageSizeOptions]="elementosPagina" [length]="totalElementos" showFirstLastButtons>
-    </mat-paginator>
+    <div class="paginator-export">
+      <button mat-button matTooltip="{{'btn.export' | translate}}" (click)="openExportModal()"
+        [disabled]="totalElementos<=0">
+        <mat-icon color="primary">insert_chart_outlined</mat-icon>
+      </button>
+      <mat-paginator [pageSizeOptions]="elementosPagina" [length]="totalElementos" showFirstLastButtons>
+      </mat-paginator>
+    </div>
   </div>
 </sgi-menu-content>
 <!-- FIN listado de seguimientos -->

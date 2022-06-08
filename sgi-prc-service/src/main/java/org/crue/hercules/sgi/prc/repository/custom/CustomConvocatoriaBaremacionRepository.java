@@ -1,5 +1,7 @@
 package org.crue.hercules.sgi.prc.repository.custom;
 
+import java.util.List;
+
 import org.crue.hercules.sgi.prc.model.ConvocatoriaBaremacion;
 
 public interface CustomConvocatoriaBaremacionRepository {
@@ -19,4 +21,12 @@ public interface CustomConvocatoriaBaremacionRepository {
    * @return Id de {@link ConvocatoriaBaremacion}
    */
   Long findIdByMaxAnio();
+
+  /**
+   * Obtiene los años en los que hay alguna {@link ConvocatoriaBaremacion}
+   * 
+   * @return lista de años en los hay alguna {@link ConvocatoriaBaremacion}
+   */
+  List<Integer> findAniosWithConvocatoriasBaremacion();
+
 }

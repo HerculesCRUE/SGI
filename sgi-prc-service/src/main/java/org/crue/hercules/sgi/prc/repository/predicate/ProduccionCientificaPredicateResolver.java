@@ -119,7 +119,7 @@ public abstract class ProduccionCientificaPredicateResolver implements SgiRSQLPr
 
     switch (operatorAllow) {
       case IGNORE_CASE_LIKE:
-        predicatesSubquery.add(cb.and(cb.like(subqRoot.get(ValorCampo_.valor), valor)));
+        predicatesSubquery.add(cb.and(cb.like(cb.lower(subqRoot.get(ValorCampo_.valor)), valor)));
         break;
       case GREATER_THAN_OR_EQUAL:
         predicatesSubquery.add(cb.and(cb.greaterThanOrEqualTo(subqRoot.get(ValorCampo_.valor), valor)));

@@ -14,6 +14,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -65,16 +66,18 @@ public class Rango extends BaseEntity {
   @Enumerated(EnumType.STRING)
   private TipoTemporalidad tipoTemporalidad;
 
-  @Column(name = "desde", nullable = false)
+  @Column(name = "desde", nullable = true)
   private BigDecimal desde;
 
   @Column(name = "hasta", nullable = true)
   private BigDecimal hasta;
 
   @Column(name = "puntos", nullable = false)
+  @NotNull
   private BigDecimal puntos;
 
   @Column(name = "convocatoria_baremacion_id", nullable = false)
+  @NotNull
   private Long convocatoriaBaremacionId;
 
   // Relation mappings for JPA metamodel generation only

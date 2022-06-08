@@ -28,6 +28,12 @@ public abstract class SgiApiBaseService {
     log.debug("buildUrl(ServiceType serviceType, String relativeUrl) - start");
     String serviceURL = null;
     switch (serviceType) {
+      case CNF:
+        serviceURL = restApiProperties.getCnfUrl();
+        break;
+      case COM:
+        serviceURL = restApiProperties.getComUrl();
+        break;
       case CSP:
         serviceURL = restApiProperties.getCspUrl();
         break;
@@ -36,6 +42,9 @@ public abstract class SgiApiBaseService {
         break;
       case PII:
         serviceURL = restApiProperties.getPiiUrl();
+        break;
+      case PRC:
+        serviceURL = restApiProperties.getPrcUrl();
         break;
       case REL:
         serviceURL = restApiProperties.getRelUrl();

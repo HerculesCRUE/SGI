@@ -4,17 +4,12 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatCheckboxChange } from '@angular/material/checkbox';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatTree, MatTreeFlatDataSource, MatTreeFlattener } from '@angular/material/tree';
-import { marker } from '@biesbjerg/ngx-translate-extract-marker';
-import { BaseModalComponent } from '@core/component/base-modal.component';
+import { DialogFormComponent } from '@core/component/dialog-form.component';
 import { MSG_PARAMS } from '@core/i18n';
 import { IClasificacion } from '@core/models/sgo/clasificacion';
 import { ClasificacionService } from '@core/services/sgo/clasificacion.service';
-import { SnackBarService } from '@core/services/snack-bar.service';
-import { NGXLogger } from 'ngx-logger';
 import { BehaviorSubject } from 'rxjs';
 import { map } from 'rxjs/operators';
-
-const MSG_ERROR_LOAD = marker('error.load');
 
 export enum TipoClasificacion {
   SECTORES_INDUSTRIALES = 'SECTORES_INDUSTRIALES',
@@ -103,9 +98,7 @@ function sortByName(nodes: NodeClasificacion[]): NodeClasificacion[] {
   templateUrl: './clasificacion-modal.component.html',
   styleUrls: ['./clasificacion-modal.component.scss']
 })
-export class ClasificacionModalComponent
-  extends BaseModalComponent<ClasificacionListado[], ClasificacionModalComponent>
-  implements OnInit {
+export class ClasificacionModalComponent extends DialogFormComponent<ClasificacionListado[]> implements OnInit {
 
   arbolesClasificaciones: Map<string, NodeClasificacion[]> = new Map();
   readonly clasificaciones$ = new BehaviorSubject<IClasificacion[]>([]);
@@ -125,13 +118,11 @@ export class ClasificacionModalComponent
   hasChild = (_: number, node: NodeClasificacion) => node.childs.length > 0;
 
   constructor(
-    private readonly logger: NGXLogger,
-    public matDialogRef: MatDialogRef<ClasificacionModalComponent>,
+    matDialogRef: MatDialogRef<ClasificacionModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data: ClasificacionDataModal,
-    private clasificacionService: ClasificacionService,
-    protected readonly snackBarService: SnackBarService
+    private clasificacionService: ClasificacionService
   ) {
-    super(snackBarService, matDialogRef, null);
+    super(matDialogRef, false);
 
     this.treeFlattener = new MatTreeFlattener(this.transformer, this.getLevel, this.isExpandable, this.getChildren);
     this.treeControl = new FlatTreeControl<NodeClasificacion>(this.getLevel, this.isExpandable);
@@ -163,14 +154,14 @@ export class ClasificacionModalComponent
     );
   }
 
-  protected getFormGroup(): FormGroup {
+  protected buildFormGroup(): FormGroup {
     const formGroup = new FormGroup({
       clasificacion: new FormControl(null, Validators.required)
     });
     return formGroup;
   }
 
-  protected getDatosForm(): ClasificacionListado[] {
+  protected getValue(): ClasificacionListado[] {
     const selectedClasificacionesListado = this.selectedClasificaciones.map(clasificacion => {
       const clasificacionListado: ClasificacionListado = {
         clasificacion: undefined,
@@ -213,10 +204,7 @@ export class ClasificacionModalComponent
               node.setChildsLoaded();
               this.publishNodes();
             },
-            (error) => {
-              this.logger.error(error);
-              this.snackBarService.showError(MSG_ERROR_LOAD);
-            }
+            this.processError
           );
       }
     }
@@ -244,10 +232,7 @@ export class ClasificacionModalComponent
                 this.publishNodes(nodes, true);
                 this.arbolesClasificaciones.set(clasificacionId, nodes);
               },
-              (error) => {
-                this.logger.error(error);
-                this.snackBarService.showError(MSG_ERROR_LOAD);
-              }
+              this.processError
             )
         );
       }

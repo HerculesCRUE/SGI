@@ -4,16 +4,14 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RouterTestingModule } from '@angular/router/testing';
-import { SnackBarService } from '@core/services/snack-bar.service';
+import { IModeloUnidad } from '@core/models/csp/modelo-unidad';
+import { IUnidadGestion } from '@core/models/usr/unidad-gestion';
 import TestUtils from '@core/utils/test-utils';
 import { MaterialDesignModule } from '@material/material-design.module';
-import { ModeloEjecucionTipoUnidadGestionComponent } from '../../modelo-ejecucion-formulario/modelo-ejecucion-tipo-unidad-gestion/modelo-ejecucion-tipo-unidad-gestion.component';
-import { IModeloUnidad } from '@core/models/csp/modelo-unidad';
 import { LoggerTestingModule } from 'ngx-logger/testing';
-import { IUnidadGestion } from '@core/models/usr/unidad-gestion';
-import { IModeloEjecucionTipoUnidadModal } from './modelo-ejecucion-tipo-unidad-gestion-modal.component';
+import { ModeloEjecucionTipoUnidadGestionComponent } from '../../modelo-ejecucion-formulario/modelo-ejecucion-tipo-unidad-gestion/modelo-ejecucion-tipo-unidad-gestion.component';
 import { ModeloEjecucionActionService } from '../../modelo-ejecucion.action.service';
-
+import { IModeloEjecucionTipoUnidadModal } from './modelo-ejecucion-tipo-unidad-gestion-modal.component';
 
 describe('ModeloEjecucionTipoUnidadGestionModalComponent', () => {
   let component: ModeloEjecucionTipoUnidadGestionComponent;
@@ -51,9 +49,7 @@ describe('ModeloEjecucionTipoUnidadGestionModalComponent', () => {
         LoggerTestingModule
       ],
       providers: [
-
-        { provide: SnackBarService, useValue: TestUtils.getSnackBarServiceSpy() },
-        { provide: MatDialogRef, useValue: dataModal },
+        { provide: MatDialogRef, useValue: TestUtils.buildDialogCommonMatDialogRef() },
         { provide: MAT_DIALOG_DATA, useValue: dataModal },
         ModeloEjecucionActionService
       ],

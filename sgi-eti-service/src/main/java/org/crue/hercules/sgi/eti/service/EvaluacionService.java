@@ -79,17 +79,6 @@ public interface EvaluacionService {
       Long idTipoComentario, Pageable pageable);
 
   /**
-   * Devuelve una lista paginada y filtrada {@link Evaluacion} según su
-   * {@link Evaluador}.
-   * 
-   * @param personaRef Identificador del {@link Evaluacion}
-   * @param query      filtro de búsqueda.
-   * @param pageable   pageable
-   * @return la lista de entidades {@link Evaluacion} paginadas.
-   */
-  Page<Evaluacion> findByEvaluadorPersonaRef(String personaRef, String query, Pageable pageable);
-
-  /**
    * Obtiene todas las entidades {@link Evaluacion}, en estado "En evaluación
    * seguimiento anual" (id = 11), "En evaluación seguimiento final" (id = 12) o
    * "En secretaría seguimiento final aclaraciones" (id = 13), paginadas asociadas
@@ -232,4 +221,20 @@ public interface EvaluacionService {
    * @return El documento del informe de la ficha del Evaluador
    */
   public DocumentoOutput generarDocumentoEvaluador(Long idEvaluacion);
+
+  /**
+   * Permite enviar el comunicado de {@link Evaluacion}
+   *
+   * @param id Id del {@link Evaluacion}.
+   * @return true si puede ser enviado / false si no puede ser enviado
+   */
+  Boolean enviarComunicado(Long id);
+
+  /**
+   * 
+   * Envia comunicados de aviso para informes con seguimiento anual
+   * pendiente
+   * 
+   */
+  void sendComunicadoInformeSeguimientoAnualPendiente();
 }

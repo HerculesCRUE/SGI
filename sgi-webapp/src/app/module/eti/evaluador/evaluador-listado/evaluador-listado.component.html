@@ -10,8 +10,8 @@
       <!--Persona-->
       <div class="col">
         <mat-form-field fxFill>
-          <mat-label>{{'title.eti.search.solicitante' | translate}}</mat-label>
-          <sgi-select-persona placeholder="{{'title.eti.search.solicitante' | translate}}" formControlName="solicitante"
+          <mat-label>{{'title.eti.search.evaluador' | translate}}</mat-label>
+          <sgi-select-persona placeholder="{{'title.eti.search.evaluador' | translate}}" formControlName="solicitante"
             [tipoColectivo]="tipoColectivoEvaluador">
           </sgi-select-persona>
         </mat-form-field>
@@ -19,15 +19,9 @@
 
       <!-- Comité -->
       <div class="col">
-        <mat-form-field class="input-form">
+        <mat-form-field fxFill>
           <mat-label>{{'label.eti.comite' | translate}}</mat-label>
-          <input type="text" [placeholder]="'label.eti.comite' | translate" arial-label="Number" matInput
-            formControlName="comite" [matAutocomplete]="autocompleteComite">
-          <mat-autocomplete #autocompleteComite="matAutocomplete" [displayWith]="getComite">
-            <mat-option *ngFor="let comite of filteredComites | async" [value]="comite">
-              {{comite.comite}}
-            </mat-option>
-          </mat-autocomplete>
+          <sgi-select-comite #selectComite formControlName="comite"></sgi-select-comite>
         </mat-form-field>
       </div>
 
@@ -102,8 +96,7 @@
         <th mat-header-cell *matHeaderCellDef> {{'eti.evaluador.estado' | translate}}
         </th>
         <td mat-cell *matCellDef="let evaluador">
-          {{evaluador.activo === true ? ('label.activo' | translate) :
-          ('eti.evaluador.estado.inactivo' | translate)}}
+          {{ evaluador.fechaBaja | estadoEvaluador }}
         </td>
       </ng-container>
 
@@ -127,8 +120,14 @@
       <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
     </table>
 
-    <mat-paginator [pageSizeOptions]="elementosPagina" [length]="totalElementos" showFirstLastButtons>
-    </mat-paginator>
+    <div class="paginator-export">
+      <button mat-button matTooltip="{{'btn.export' | translate}}" (click)="openExportModal()"
+        [disabled]="totalElementos<=0">
+        <mat-icon color="primary">insert_chart_outlined</mat-icon>
+      </button>
+      <mat-paginator [pageSizeOptions]="elementosPagina" [length]="totalElementos" showFirstLastButtons>
+      </mat-paginator>
+    </div>
   </div>
   <sgi-menu-content-footer *sgiHasAuthorityForAnyUO="'ETI-EVR-C'">
     <sgi-footer-crear [texto]="textoCrear" [route]="ROUTE_NAMES.NEW">

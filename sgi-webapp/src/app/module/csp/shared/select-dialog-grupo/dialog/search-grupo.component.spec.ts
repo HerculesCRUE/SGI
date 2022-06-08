@@ -17,9 +17,6 @@ describe('SearchGrupoModalComponent', () => {
   let fixture: ComponentFixture<SearchGrupoModalComponent>;
 
   beforeEach(waitForAsync(() => {
-    const mockDialogRef = {
-      close: jasmine.createSpy('close'),
-    };
     // Mock MAT_DIALOG
     const matDialogData = {} as SearchModalData;
 
@@ -38,7 +35,7 @@ describe('SearchGrupoModalComponent', () => {
         CspSharedModule
       ],
       providers: [
-        { provide: MatDialogRef, useValue: mockDialogRef },
+        { provide: MatDialogRef, useValue: TestUtils.buildDialogCommonMatDialogRef() },
         { provide: MAT_DIALOG_DATA, useValue: matDialogData },
         SgiAuthService
       ],

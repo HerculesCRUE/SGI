@@ -161,7 +161,6 @@ export class AutorizacionActionService extends
       autorizacion: this.autorizacionData,
     };
     const config = {
-      panelClass: 'sgi-dialog-container',
       data
     };
     const dialogRef = this.matDialog.open(CambioEstadoModalComponent, config);

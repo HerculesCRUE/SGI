@@ -30,8 +30,9 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping(AutorController.MAPPING)
 @Slf4j
 public class AutorController {
-  public static final String MAPPING = "/autores";
-  public static final String PATH_GRUPOS = "/{id}/grupos";
+  public static final String PATH_DELIMITER = "/";
+  public static final String MAPPING = PATH_DELIMITER + "autores";
+  public static final String PATH_GRUPOS = PATH_DELIMITER + "{id}/grupos";
 
   private ModelMapper modelMapper;
 
@@ -61,7 +62,7 @@ public class AutorController {
    * @return listado de {@link AutorGrupo} paginadas y/o filtradas.
    */
   @GetMapping(PATH_GRUPOS)
-  @PreAuthorize("hasAnyAuthority('PRC-VAL-V', 'PRC-VAL-E')")
+  @PreAuthorize("hasAnyAuthority('PRC-VAL-V', 'PRC-VAL-E', 'PRC-VAL-INV-ER')")
   public ResponseEntity<Page<AutorGrupoOutput>> findGrupos(@PathVariable Long id,
       @RequestParam(name = "q", required = false) String query, @RequestPageable(sort = "s") Pageable paging) {
     log.debug("findGrupos(Long id, String query, Pageable paging) - start");

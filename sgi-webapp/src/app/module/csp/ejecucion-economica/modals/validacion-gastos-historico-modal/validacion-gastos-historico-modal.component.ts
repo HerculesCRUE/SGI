@@ -4,9 +4,9 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
+import { DialogCommonComponent } from '@core/component/dialog-common.component';
 import { MSG_PARAMS } from '@core/i18n';
 import { ESTADO_MAP, IEstadoGastoProyecto } from '@core/models/csp/estado-gasto-proyecto';
-import { IGastoProyecto } from '@core/models/csp/gasto-proyecto';
 import { GastoProyectoService } from '@core/services/csp/gasto-proyecto/gasto-proyecto-service';
 import { TranslateService } from '@ngx-translate/core';
 import { BehaviorSubject, Subscription } from 'rxjs';
@@ -18,8 +18,7 @@ const VALIDACION_GASTO_HISTORICO_ESTADO_KEY = marker('title.ejecucion-economica.
   templateUrl: './validacion-gastos-historico-modal.component.html',
   styleUrls: ['./validacion-gastos-historico-modal.component.scss']
 })
-export class ValidacionGastosHistoricoModalComponent
-  implements OnInit {
+export class ValidacionGastosHistoricoModalComponent extends DialogCommonComponent implements OnInit {
 
   displayedColumns = ['estado', 'fechaEstado', 'comentario'];
   elementosPagina = [5, 10, 25, 100];
@@ -38,14 +37,16 @@ export class ValidacionGastosHistoricoModalComponent
   historicoEstado$ = new BehaviorSubject<IEstadoGastoProyecto[]>([]);
 
   constructor(
-    public matDialogRef: MatDialogRef<ValidacionGastosHistoricoModalComponent>,
+    matDialogRef: MatDialogRef<ValidacionGastosHistoricoModalComponent>,
     private gastoProyectoService: GastoProyectoService,
     private readonly translate: TranslateService,
     @Inject(MAT_DIALOG_DATA) public data: number
-  ) { }
+  ) {
+    super(matDialogRef);
+  }
 
   ngOnInit(): void {
-
+    super.ngOnInit();
     this.setupI18N();
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
@@ -68,10 +69,6 @@ export class ValidacionGastosHistoricoModalComponent
       VALIDACION_GASTO_HISTORICO_ESTADO_KEY,
       MSG_PARAMS.CARDINALIRY.PLURAL
     ).subscribe((value) => this.msgParamEntities = { entity: value });
-  }
-
-  ngOnDestroy(): void {
-    this.subscriptions.forEach(subscription => subscription.unsubscribe());
   }
 
 }

@@ -65,6 +65,8 @@ public class ActaServiceTest extends BaseServiceTest {
   private SgiApiRepService reportService;
   @Mock
   private SgdocService sgdocService;
+  @Mock
+  private ComunicadosService comunicadosService;
 
   private ActaService actaService;
   private MemoriaService memoriaService;
@@ -73,7 +75,7 @@ public class ActaServiceTest extends BaseServiceTest {
   public void setUp() throws Exception {
     actaService = new ActaServiceImpl(actaRepository, estadoActaRepository, tipoEstadoActaRepository,
         evaluacionRepository, retrospectivaRepository, memoriaService, retrospectivaService, reportService,
-        sgdocService);
+        sgdocService, comunicadosService);
   }
 
   @Test

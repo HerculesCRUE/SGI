@@ -10,6 +10,7 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import javax.persistence.criteria.Subquery;
 
+import org.crue.hercules.sgi.framework.data.jpa.domain.Activable_;
 import org.crue.hercules.sgi.framework.data.jpa.domain.Auditable_;
 import org.crue.hercules.sgi.prc.enums.CodigoCVN;
 import org.crue.hercules.sgi.prc.model.ConfiguracionBaremo;
@@ -107,7 +108,7 @@ public class PublicacionPredicateResolver extends ProduccionCientificaPredicateR
       throw new IllegalArgumentException(BAD_NUMBER_OF_ARGUMENTS_FOR + node.getSelector());
     }
 
-    String tituloPublicacion = "%" + node.getArguments().get(0) + "%";
+    String tituloPublicacion = "%" + node.getArguments().get(0).toLowerCase() + "%";
 
     Subquery<String> queryTituloPublicacion = buildSubqueryValorCampoProduccionCientifica(
         cb, query, root.get(ProduccionCientifica_.id), CodigoCVN.E060_010_010_030, operator, tituloPublicacion);
@@ -127,7 +128,7 @@ public class PublicacionPredicateResolver extends ProduccionCientificaPredicateR
       throw new IllegalArgumentException(BAD_NUMBER_OF_ARGUMENTS_FOR + node.getSelector());
     }
 
-    String isbn = "%" + node.getArguments().get(0) + "%";
+    String isbn = "%" + node.getArguments().get(0).toLowerCase() + "%";
 
     Subquery<String> queryISBN = buildSubqueryValorCampoProduccionCientifica(cb, query,
         root.get(ProduccionCientifica_.id), CodigoCVN.E060_010_010_160, operator, isbn);
@@ -186,7 +187,7 @@ public class PublicacionPredicateResolver extends ProduccionCientificaPredicateR
       throw new IllegalArgumentException(BAD_NUMBER_OF_ARGUMENTS_FOR + node.getSelector());
     }
 
-    String investigador = "%" + node.getArguments().get(0) + "%";
+    String investigador = "%" + node.getArguments().get(0).toLowerCase() + "%";
 
     Subquery<Long> queryInvestigador = getSubqueryAutor(cb, query, root.get(ProduccionCientifica_.id), investigador);
     return cb.and(cb.exists(queryInvestigador));
@@ -215,6 +216,7 @@ public class PublicacionPredicateResolver extends ProduccionCientificaPredicateR
         cb.greaterThanOrEqualTo(joinEstado.get(Auditable_.lastModifiedDate), fechaModificacion),
         cb.equal(rootConfiguracionBaremo.get(ConfiguracionBaremo_.epigrafeCVN),
             root.get(ProduccionCientifica_.epigrafeCVN)),
+        cb.isTrue(rootConfiguracionBaremo.get(Activable_.activo)),
         cb.or(cb.equal(rootConfiguracionBaremo.get(ConfiguracionBaremo_.tipoFuente), TipoFuente.CVN),
             cb.equal(rootConfiguracionBaremo.get(ConfiguracionBaremo_.tipoFuente), TipoFuente.CVN_OTRO_SISTEMA)),
         cb.or(

@@ -224,8 +224,6 @@ export class ProyectoEquipoComponent extends FragmentComponent implements OnInit
     }
 
     const config: MatDialogConfig = {
-      panelClass: 'sgi-dialog-container',
-      minWidth: '700px',
       data
     };
     const dialogRef = this.matDialog.open(MiembroEquipoProyectoModalComponent, config);

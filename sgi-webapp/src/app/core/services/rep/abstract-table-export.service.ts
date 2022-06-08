@@ -9,7 +9,7 @@ import { ReportService } from '@core/services/rep/report.service';
 import { triggerDownloadToUser } from '@core/services/sgdoc/documento.service';
 import { SgiRestFindOptions } from '@sgi/framework/http';
 import { Observable } from 'rxjs';
-import { catchError, map, switchMap } from 'rxjs/operators';
+import { map, switchMap } from 'rxjs/operators';
 
 
 const REPORT_NAME = 'report';
@@ -18,7 +18,7 @@ export interface IReportConfig<T> {
   /**
    * Título del informe
    */
-  title: string;
+  title?: string;
 
   /**
    * Tipo de exportación: PDF, EXCEL, HTML, CSV, etc
@@ -29,6 +29,12 @@ export interface IReportConfig<T> {
    * Disposición de las filas en horizontal o vertical
    */
   fieldOrientation?: FieldOrientation;
+
+  /**
+   * Indica si se mostrarán las cabeceras de los subreport si no contiene elementos
+   * Solo aplicable en pdf con disposición vertical;
+   */
+  hideBlocksIfNoData?: boolean;
 
   /**
    * Opciones de configuración del informe
@@ -68,6 +74,7 @@ export abstract class AbstractTableExportService<T, R extends IReportOptions> im
       outputType: reportConfig.outputType,
       fieldOrientation: this.getFieldOrientationByExportType(reportConfig),
       columnMinWidth: reportConfig.reportOptions?.columnMinWidth,
+      hideBlocksIfNoData: reportConfig.hideBlocksIfNoData,
       title: reportConfig.title,
       filters: [],
       groupBy: this.getGroupBy(),
@@ -92,7 +99,7 @@ export abstract class AbstractTableExportService<T, R extends IReportOptions> im
           })
         );
       }),
-      switchMap((reportFill) => {
+      switchMap(() => {
         return this.reportService.downloadDynamicReport(report);
       }),
       map((data: Blob) => {

@@ -6,7 +6,6 @@ import { DialogActionComponent } from '@core/component/dialog-action.component';
 import { MSG_PARAMS } from '@core/i18n';
 import { IAutorizacion } from '@core/models/csp/autorizacion';
 import { Estado, ESTADO_MAP, IEstadoAutorizacion } from '@core/models/csp/estado-autorizacion';
-import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-properties';
 import { AutorizacionService } from '@core/services/csp/autorizacion/autorizacion.service';
 import { EstadoAutorizacionService } from '@core/services/csp/estado-autorizacion/estado-autorizacion.service';
 import { TranslateService } from '@ngx-translate/core';
@@ -28,10 +27,7 @@ export interface AutorizacionCambioEstadoModalComponentData {
   templateUrl: './cambio-estado-modal.component.html',
   styleUrls: ['./cambio-estado-modal.component.scss']
 })
-export class CambioEstadoModalComponent
-  extends DialogActionComponent<IEstadoAutorizacion> implements OnInit {
-
-  fxLayoutProperties: FxLayoutProperties;
+export class CambioEstadoModalComponent extends DialogActionComponent<IEstadoAutorizacion> implements OnInit {
 
   msgParamComentarioEntity = {};
   msgParamFechaEstadoEntity = {};
@@ -47,18 +43,14 @@ export class CambioEstadoModalComponent
     @Inject(MAT_DIALOG_DATA) public data: AutorizacionCambioEstadoModalComponentData,
     private autorizacionService: AutorizacionService,
     private readonly translate: TranslateService,
-    private estadoAutorizacionService: EstadoAutorizacionService) {
+    private estadoAutorizacionService: EstadoAutorizacionService
+  ) {
     super(matDialogRef, true);
-
-    this.fxLayoutProperties = new FxLayoutProperties();
-    this.fxLayoutProperties.gap = '20px';
-    this.fxLayoutProperties.layout = 'row wrap';
-    this.fxLayoutProperties.xs = 'column';
-
   }
 
   ngOnInit(): void {
     super.ngOnInit();
+    this.matDialogRef.updateSize('20vw');
     this.setupI18N();
   }
 

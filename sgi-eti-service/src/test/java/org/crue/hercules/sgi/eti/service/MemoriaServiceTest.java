@@ -121,6 +121,9 @@ public class MemoriaServiceTest extends BaseServiceTest {
   @Mock
   private ApartadoRepository apartadoRepository;
 
+  @Mock
+  private ComunicadosService comunicadosService;
+
   @Autowired
   private SgiConfigProperties sgiConfigProperties;
 
@@ -129,7 +132,8 @@ public class MemoriaServiceTest extends BaseServiceTest {
     memoriaService = new MemoriaServiceImpl(sgiConfigProperties, memoriaRepository, estadoMemoriaRepository,
         estadoRetrospectivaRepository, evaluacionRepository, comentarioRepository, informeService,
         peticionEvaluacionRepository, comiteRepository, documentacionMemoriaRepository, respuestaRepository,
-        tareaRepository, configuracionService, reportService, sgdocService, bloqueRepository, apartadoRepository);
+        tareaRepository, configuracionService, reportService, sgdocService, bloqueRepository, apartadoRepository,
+        comunicadosService);
   }
 
   @Test

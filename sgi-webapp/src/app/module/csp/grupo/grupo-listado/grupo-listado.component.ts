@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { AbstractTablePaginationComponent } from '@core/component/abstract-table-pagination.component';
 import { SgiError } from '@core/errors/sgi-error';
@@ -23,6 +24,7 @@ import { NGXLogger } from 'ngx-logger';
 import { EMPTY, from, Observable } from 'rxjs';
 import { catchError, filter, map, mergeMap, startWith, switchMap, toArray } from 'rxjs/operators';
 import { CSP_ROUTE_NAMES } from '../../csp-route-names';
+import { GrupoListadoExportModalComponent, IGrupoListadoModalData } from '../modals/grupo-listado-export-modal/grupo-listado-export-modal.component';
 
 const MSG_BUTTON_ADD = marker('btn.add.entity');
 const MSG_ERROR_LOAD = marker('error.load');
@@ -36,7 +38,7 @@ const MSG_ERROR_REACTIVE = marker('error.reactivate.entity');
 const GRUPO_KEY = marker('csp.grupo');
 
 interface IGrupoListado extends IGrupo {
-  investigadoresPrincipales: IPersona[]
+  investigadoresPrincipales: IPersona[];
 }
 
 @Component({
@@ -79,7 +81,8 @@ export class GrupoListadoComponent extends AbstractTablePaginationComponent<IGru
     public authService: SgiAuthService,
     private rolProyectoColectivoService: RolProyectoColectivoService,
     private readonly translate: TranslateService,
-    private lineaInvestigacionService: LineaInvestigacionService
+    private lineaInvestigacionService: LineaInvestigacionService,
+    private matDialog: MatDialog,
   ) {
     super(snackBarService, MSG_ERROR_LOAD);
   }
@@ -136,23 +139,27 @@ export class GrupoListadoComponent extends AbstractTablePaginationComponent<IGru
 
   protected createFilter(): SgiRestFilter {
     const controls = this.formGroup.controls;
-    const filter = new RSQLSgiRestFilter('nombre', SgiRestFilterOperator.LIKE_ICASE, controls.nombre.value)
+    const rsqlFilter = new RSQLSgiRestFilter('nombre', SgiRestFilterOperator.LIKE_ICASE, controls.nombre.value)
       .and('codigo', SgiRestFilterOperator.LIKE_ICASE, controls.codigo.value)
       .and('miembrosEquipo.personaRef', SgiRestFilterOperator.EQUALS, controls.miembroEquipo.value?.id)
       .and('proyectoSgeRef', SgiRestFilterOperator.EQUALS, controls.proyectoSgeRef.value)
-      .and('lineasInvestigacion.id', SgiRestFilterOperator.EQUALS, controls.lineaInvestigacion.value?.id ? controls.lineaInvestigacion.value?.id.toString() : null);
+      .and(
+        'lineasInvestigacion.id',
+        SgiRestFilterOperator.EQUALS,
+        controls.lineaInvestigacion.value?.id ? controls.lineaInvestigacion.value?.id.toString() : null
+      );
     if (controls.activo.value !== 'todos') {
-      filter.and('activo', SgiRestFilterOperator.EQUALS, controls.activo.value);
+      rsqlFilter.and('activo', SgiRestFilterOperator.EQUALS, controls.activo.value);
     }
-    filter.and('fechaInicio', SgiRestFilterOperator.GREATHER_OR_EQUAL, LuxonUtils.toBackend(controls.fechaInicioDesde.value))
+    rsqlFilter.and('fechaInicio', SgiRestFilterOperator.GREATHER_OR_EQUAL, LuxonUtils.toBackend(controls.fechaInicioDesde.value))
       .and('fechaInicio', SgiRestFilterOperator.LOWER_OR_EQUAL, LuxonUtils.toBackend(controls.fechaInicioHasta.value));
 
     const palabrasClave = controls.palabrasClave.value as string[];
     if (Array.isArray(palabrasClave) && palabrasClave.length > 0) {
-      filter.and(this.createPalabrasClaveFilter(palabrasClave));
+      rsqlFilter.and(this.createPalabrasClaveFilter(palabrasClave));
     }
 
-    return filter;
+    return rsqlFilter;
   }
 
   private createPalabrasClaveFilter(palabrasClave: string[]): SgiRestFilter {
@@ -241,13 +248,13 @@ export class GrupoListadoComponent extends AbstractTablePaginationComponent<IGru
         this.logger.error(error);
         return EMPTY;
       })
-    )
+    );
   }
 
   private loadColectivosBusqueda(): void {
     this.suscripciones.push(
       this.rolProyectoColectivoService.findColectivosActivos().subscribe(colectivos => {
-        this.colectivosBusqueda = colectivos
+        this.colectivosBusqueda = colectivos;
       })
     );
   }
@@ -398,6 +405,17 @@ export class GrupoListadoComponent extends AbstractTablePaginationComponent<IGru
 
     return this.lineasInvestigacionListado.filter
       (lineaInvestigacion => lineaInvestigacion.nombre.toLowerCase().includes(filterValue));
+  }
+
+  openExportModal(): void {
+    const data: IGrupoListadoModalData = {
+      findOptions: this.findOptions
+    };
+
+    const config = {
+      data
+    };
+    this.matDialog.open(GrupoListadoExportModalComponent, config);
   }
 
 }

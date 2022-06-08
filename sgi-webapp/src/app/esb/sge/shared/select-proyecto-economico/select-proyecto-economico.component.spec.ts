@@ -17,10 +17,6 @@ describe('SelectProyectoEconomicoComponent', () => {
   let fixture: ComponentFixture<SelectProyectoEconomicoComponent>;
 
   beforeEach(waitForAsync(() => {
-    const mockDialogRef = {
-      close: jasmine.createSpy('close'),
-    };
-
     // Mock MAT_DIALOG
     const matDialogData = {};
 
@@ -40,7 +36,7 @@ describe('SelectProyectoEconomicoComponent', () => {
       providers: [
         {
           provide: MatDialogRef,
-          useValue: mockDialogRef,
+          useValue: TestUtils.buildDialogCommonMatDialogRef(),
         },
         { provide: MAT_DIALOG_DATA, useValue: matDialogData },
         SgiAuthService

@@ -16,6 +16,9 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import org.crue.hercules.sgi.csp.validation.FechasGrupoPersonaAutorizadaWithinGrupo;
+import org.hibernate.validator.constraints.ScriptAssert;
+
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -32,6 +35,9 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+// Validacion de fechas
+@ScriptAssert(lang = "spel", alias = "_this", script = "#_this.getFechaInicio() == null || #_this.getFechaFin() == null || #_this.getFechaFin().compareTo(#_this.getFechaInicio()) >= 0", reportOn = "fechaFin", message = "{org.crue.hercules.sgi.csp.validation.FechaInicialMayorFechaFinal.message}")
+@FechasGrupoPersonaAutorizadaWithinGrupo(groups = { BaseEntity.Create.class, BaseEntity.Update.class })
 public class GrupoPersonaAutorizada extends BaseEntity {
 
   protected static final String TABLE_NAME = "grupo_persona_autorizada";
@@ -53,8 +59,7 @@ public class GrupoPersonaAutorizada extends BaseEntity {
   private String personaRef;
 
   /** Fecha inicio */
-  @Column(name = "fecha_inicio", nullable = false)
-  @NotNull
+  @Column(name = "fecha_inicio", nullable = true)
   private Instant fechaInicio;
 
   /** Fecha fin */

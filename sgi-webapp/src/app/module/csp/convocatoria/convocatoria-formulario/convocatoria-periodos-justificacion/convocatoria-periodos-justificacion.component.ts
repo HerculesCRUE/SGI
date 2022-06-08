@@ -103,7 +103,6 @@ export class ConvocatoriaPeriodosJustificacionComponent extends FragmentComponen
     };
 
     const config = {
-      panelClass: 'sgi-dialog-container',
       data,
     };
 

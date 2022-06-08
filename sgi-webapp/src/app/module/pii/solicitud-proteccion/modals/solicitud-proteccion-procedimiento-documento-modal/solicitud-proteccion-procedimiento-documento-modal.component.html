@@ -1,18 +1,14 @@
-<div class="sgi-dialog-header" fxLayout="row" fxLayoutGap="20px">
-  <span fxFlexAlign="center" mat-mat-dialog-title role="heading" aria-level="3" fxFlex>{{title}}</span>
-  <button fxFlex="nogrow" mat-icon-button mat-dialog-close>
-    <mat-icon class="close-icon">close</mat-icon>
-  </button>
-</div>
-<mat-dialog-content>
+<sgi-dialog-header [title]="title"></sgi-dialog-header>
+<sgi-dialog-content>
   <form [formGroup]="formGroup">
     <!-- Nombre -->
-    <div [fxLayout]="fxLayoutProperties.layout" [fxLayoutAlign]="fxLayoutProperties.layoutAlign">
+    <div fxLayout="row">
       <mat-form-field>
-        <mat-label>{{'pii.solicitud-proteccion.procedimiento-documento.nombre' | translate:MSG_PARAMS.CARDINALIRY.SINGULAR}}</mat-label>
+        <mat-label>{{'pii.solicitud-proteccion.procedimiento-documento.nombre' |
+          translate:MSG_PARAMS.CARDINALIRY.SINGULAR}}</mat-label>
         <input matInput formControlName="nombre" type="text" id="nombre"
-          placeholder="{{'pii.solicitud-proteccion.procedimiento-documento.nombre' | translate:MSG_PARAMS.CARDINALIRY.SINGULAR}}" required
-          cdkFocusInitial>
+          placeholder="{{'pii.solicitud-proteccion.procedimiento-documento.nombre' | translate:MSG_PARAMS.CARDINALIRY.SINGULAR}}"
+          required cdkFocusInitial>
         <mat-error *ngIf="formGroup.controls.nombre.errors?.required">
           {{'error.required.entity' | translate:msgParamNombreEntity}}
         </mat-error>
@@ -22,12 +18,14 @@
       </mat-form-field>
     </div>
     <!-- Fichero -->
-    <div [fxLayout]="fxLayoutProperties.layout" [fxLayoutAlign]="fxLayoutProperties.layoutAlign">
+    <div fxLayout="row">
       <mat-form-field>
-        <mat-label>{{'pii.solicitud-proteccion.procedimiento-documento.fichero' | translate:MSG_PARAMS.CARDINALIRY.SINGULAR}}</mat-label>
+        <mat-label>{{'pii.solicitud-proteccion.procedimiento-documento.fichero' |
+          translate:MSG_PARAMS.CARDINALIRY.SINGULAR}}</mat-label>
         <sgi-file-upload #uploader formControlName="fichero" id="fichero" autoUpload="false"
           (uploadEventChange)="onUploadProgress($event)"
-          placeholder="{{'pii.solicitud-proteccion.procedimiento-documento.fichero.placeholder' | translate:MSG_PARAMS.CARDINALIRY.SINGULAR}}" required>
+          placeholder="{{'pii.solicitud-proteccion.procedimiento-documento.fichero.placeholder' | translate:MSG_PARAMS.CARDINALIRY.SINGULAR}}"
+          required>
         </sgi-file-upload>
         <mat-error *ngIf="formGroup.controls.fichero.errors?.required">
           {{'error.required.entity' | translate:msgParamFicheroEntity}}
@@ -38,9 +36,9 @@
       </mat-form-field>
     </div>
   </form>
-</mat-dialog-content>
+</sgi-dialog-content>
 <mat-dialog-actions>
-  <button color="accent" (click)="saveOrUpdate()" mat-raised-button type="submit">
+  <button color="accent" (click)="doAction()" [disabled]="this.actionDisabled" mat-raised-button type="submit">
     <mat-icon class="save-icon">save</mat-icon>{{textSaveOrUpdate | translate}}
   </button>
   <button class="link-cancelar" mat-button type="button" mat-dialog-close>{{'btn.cancel' |

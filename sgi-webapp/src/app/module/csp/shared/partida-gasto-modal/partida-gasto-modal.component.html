@@ -1,13 +1,8 @@
-<div class="sgi-dialog-header" fxLayout="row" fxLayoutGap="20px">
-  <span fxFlexAlign="center" mat-mat-dialog-title role="heading" aria-level="3" fxFlex>{{title | translate}}</span>
-  <button fxFlex="nogrow" mat-icon-button mat-dialog-close>
-    <mat-icon class="close-icon">close</mat-icon>
-  </button>
-</div>
-<mat-dialog-content>
+<sgi-dialog-header [title]="title"></sgi-dialog-header>
+<sgi-dialog-content>
   <form [formGroup]="formGroup">
     <!-- Concepto gasto -->
-    <div [fxLayout]="fxLayoutProperties.layout" [fxLayoutAlign]="fxLayoutProperties.layoutAlign">
+    <div fxLayout="row">
       <mat-form-field>
         <mat-label>{{'csp.solicitud-proyecto-presupuesto.concepto-gasto' | translate}}
         </mat-label>
@@ -18,7 +13,7 @@
         </mat-error>
       </mat-form-field>
     </div>
-    <div *ngIf="showCodigosEconomicosInfo">
+    <div *ngIf="showCodigosEconomicosInfo" fxLayout="column" fxLayoutGap="10px">
       <!-- Codigos Economicos Permitidos -->
       <ng-container *ngIf="dataSourceCodigosEconomicosPermitidos?.data?.length == 0; else codigosEconomicosPermitidos">
       </ng-container>
@@ -29,7 +24,7 @@
       </ng-container>
     </div>
     <!-- Anualidad -->
-    <div [fxLayout]="fxLayoutProperties.layout" [fxLayoutAlign]="fxLayoutProperties.layoutAlign">
+    <div fxLayout="row">
       <mat-form-field>
         <mat-label>{{'csp.solicitud-proyecto-presupuesto.anualidad' | translate}}
         </mat-label>
@@ -43,9 +38,9 @@
         </mat-error>
       </mat-form-field>
     </div>
-    <div [fxLayout]="fxLayoutProperties.layout" [fxLayoutAlign]="fxLayoutProperties.layoutAlign">
+    <div fxLayout="row" fxLayoutGap="10px">
       <!-- Importe presupuestado -->
-      <div>
+      <div fxFlex>
         <mat-form-field>
           <mat-label>{{'csp.solicitud-proyecto-presupuesto.importe-presupuestado' | translate}}
           </mat-label>
@@ -63,7 +58,7 @@
         </mat-form-field>
       </div>
       <!-- Importe solicitado -->
-      <div>
+      <div fxFlex>
         <mat-form-field>
           <mat-label>{{'csp.solicitud-proyecto-presupuesto.importe-solicitado' | translate}}
           </mat-label>
@@ -82,7 +77,7 @@
       </div>
     </div>
     <!-- Observaciones -->
-    <div [fxLayout]="fxLayoutProperties.layout" [fxLayoutAlign]="fxLayoutProperties.layoutAlign">
+    <div fxLayout="row">
       <mat-form-field>
         <mat-label>{{'csp.solicitud-proyecto-presupuesto.observaciones' | translate}}</mat-label>
         <textarea matInput formControlName="observaciones" type="text"
@@ -94,9 +89,10 @@
       </mat-form-field>
     </div>
   </form>
-</mat-dialog-content>
+</sgi-dialog-content>
 <mat-dialog-actions>
-  <button color="accent" (click)="saveOrUpdate()" mat-raised-button type="submit" *ngIf="!data.readonly">
+  <button color="accent" (click)="doAction()" [disabled]="this.actionDisabled" mat-raised-button type="submit"
+    *ngIf="!data.readonly">
     <mat-icon class="save-icon">save</mat-icon>{{textSaveOrUpdate | translate}}
   </button>
   <button class="link-cancelar" mat-button type="button" mat-dialog-close>{{'btn.cancel' |

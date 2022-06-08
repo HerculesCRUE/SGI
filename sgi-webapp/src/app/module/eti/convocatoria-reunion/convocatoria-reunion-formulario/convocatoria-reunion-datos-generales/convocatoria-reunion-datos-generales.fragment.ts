@@ -38,10 +38,10 @@ export class ConvocatoriaReunionDatosGeneralesFragment extends FormFragment<ICon
 
   protected buildFormGroup(): FormGroup {
     const fb = this.fb.group({
-      comite: ['', new NullIdValidador().isValid()],
+      comite: [null, new NullIdValidador().isValid()],
       fechaEvaluacion: [null, Validators.required],
       fechaLimite: [null, Validators.required],
-      tipoConvocatoriaReunion: ['', new NullIdValidador().isValid()],
+      tipoConvocatoriaReunion: [null, new NullIdValidador().isValid()],
       horaInicio: [null, Validators.required],
       horaInicioSegunda: [null],
       lugar: ['', Validators.required],

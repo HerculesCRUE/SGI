@@ -155,7 +155,6 @@ export class ProyectoEditarComponent extends ActionComponent implements OnInit {
       proyectoHasMiembrosEquipo: this.actionService.hasMiembrosEquipo
     };
     const config = {
-      panelClass: 'sgi-dialog-container',
       data
     };
     const dialogRef = this.matDialog.open(CambioEstadoModalComponent, config);

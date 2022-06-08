@@ -5,13 +5,10 @@ import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.LongPredicate;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import org.crue.hercules.sgi.prc.config.SgiConfigProperties;
 import org.crue.hercules.sgi.prc.dto.BaremacionInput;
-import org.crue.hercules.sgi.prc.dto.csp.GrupoDto;
-import org.crue.hercules.sgi.prc.dto.csp.GrupoEquipoDto;
 import org.crue.hercules.sgi.prc.dto.sgp.SexenioDto;
 import org.crue.hercules.sgi.prc.enums.CodigoCVN;
 import org.crue.hercules.sgi.prc.enums.EpigrafeCVN;
@@ -180,35 +177,38 @@ public class BaremacionSexenioService extends BaremacionCommonService {
   public void copySexenios(Integer anioInicio, Integer anioFin) {
     log.debug("copySexenios(anioInicio, anioFin) - start");
 
+    // Delete all sexenios
+    getProduccionCientificaRepository().findByEpigrafeCVNAndConvocatoriaBaremacionIdIsNull(EPIGRAFE_CVN_SEXENIO)
+        .forEach(getProduccionCientificaBuilderService()::deleteProduccionCientifica);
+
     try {
       IntStream.range(anioInicio, anioFin)
-          .forEach(anio -> getSgiApiCspService().findAllGruposByAnio(anio).stream()
-              .forEach(grupo -> getSexeniosByPersonasEquipo(grupo, anio)));
+          .forEach(
+              anio -> {
+                Instant fechaFinBaremacion = ProduccionCientificaFieldFormatUtil.calculateFechaFinBaremacionByAnio(anio,
+                    getSgiConfigProperties().getTimeZone());
+                String strFechaFinBaremacion = ProduccionCientificaFieldFormatUtil
+                    .formatInstantToStringWithTimeZoneAndPattern(
+                        fechaFinBaremacion, getSgiConfigProperties().getTimeZone(), "yyyy-MM-dd'T'HH:mm:ss'Z'");
+                List<SexenioDto> sexeniosAnio = getSgiApiSgpService().findSexeniosByFecha(strFechaFinBaremacion);
+
+                List<String> personasEquipo = getAllPersonasInGruposBaremablesByAnio(anio);
+
+                personasEquipo.forEach(personaRef -> {
+                  Optional<SexenioDto> optSexenio = sexeniosAnio.stream()
+                      .filter(sexenio -> sexenio.getPersonaRef().equals(personaRef))
+                      .findFirst();
+                  if (optSexenio.isPresent()) {
+                    saveSexenio(optSexenio.get(), anio);
+                  }
+                });
+
+              });
     } catch (Exception e) {
       log.error(e.getMessage());
     }
 
     log.debug("copySexenios(anioInicio, anioFin) - end");
-  }
-
-  private void getSexeniosByPersonasEquipo(GrupoDto grupo, Integer anio) {
-
-    List<SexenioDto> sexeniosAnio = getSgiApiSgpService().findSexeniosByAnio(anio);
-
-    List<String> personasEquipo = getSgiApiCspService().findAllGruposEquipoByGrupoIdAndAnio(grupo.getId(), anio)
-        .stream()
-        .map(GrupoEquipoDto::getPersonaRef)
-        .distinct()
-        .collect(Collectors.toList());
-
-    personasEquipo.forEach(personaRef -> {
-      Optional<SexenioDto> optSexenio = sexeniosAnio.stream()
-          .filter(sexenio -> sexenio.getPersonaRef().equals(personaRef))
-          .findFirst();
-      if (optSexenio.isPresent()) {
-        saveSexenio(optSexenio.get(), anio);
-      }
-    });
   }
 
   private void saveSexenio(SexenioDto sexenioDto, Integer anio) {
@@ -230,7 +230,7 @@ public class BaremacionSexenioService extends BaremacionCommonService {
             .produccionCientificaRef(produccionCientificaRef)
             .build();
 
-        Long produccionCientificaId = getProduccionCientificaBuilderService().addProduccionCientifaAndEstado(
+        Long produccionCientificaId = getProduccionCientificaBuilderService().addProduccionCientificaAndEstado(
             produccionCientifica, TipoEstadoProduccion.VALIDADO);
 
         // NUMERO_SEXENIOS
@@ -248,7 +248,7 @@ public class BaremacionSexenioService extends BaremacionCommonService {
             personaRef, Boolean.FALSE);
       }
     } catch (Exception e) {
-      log.debug(e.getMessage());
+      log.error(e.getMessage());
     }
   }
 

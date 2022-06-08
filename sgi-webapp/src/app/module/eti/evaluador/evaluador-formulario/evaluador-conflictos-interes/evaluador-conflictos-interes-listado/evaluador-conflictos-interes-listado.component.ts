@@ -113,8 +113,6 @@ export class EvaluadorConflictosInteresListadoComponent extends FragmentComponen
     const conflictos: IConflictoInteres[] = this.listadoFragment.conflictos$.value.map(conflicto => conflicto.value);
 
     const config: MatDialogConfig = {
-      panelClass: 'sgi-dialog-container',
-      minWidth: '700px',
       data: conflictos
     };
 

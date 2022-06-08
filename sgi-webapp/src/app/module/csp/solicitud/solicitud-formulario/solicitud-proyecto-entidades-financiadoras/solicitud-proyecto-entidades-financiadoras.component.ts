@@ -247,7 +247,6 @@ export class SolicitudProyectoEntidadesFinanciadorasComponent extends FragmentCo
     };
 
     const config = {
-      panelClass: 'sgi-dialog-container',
       data
     };
 

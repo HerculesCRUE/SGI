@@ -16,6 +16,9 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import org.crue.hercules.sgi.csp.validation.FechasGrupoLineaInvestigadorWithinGrupoLineaInvestigacion;
+import org.hibernate.validator.constraints.ScriptAssert;
+
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -32,6 +35,10 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+// Validacion de fechas
+@ScriptAssert(lang = "spel", alias = "_this", script = "#_this.getFechaInicio() == null || #_this.getFechaFin() == null || #_this.getFechaFin().compareTo(#_this.getFechaInicio()) >= 0", reportOn = "fechaFin", message = "{org.crue.hercules.sgi.csp.validation.FechaInicialMayorFechaFinal.message}")
+@FechasGrupoLineaInvestigadorWithinGrupoLineaInvestigacion(groups = { BaseEntity.Create.class,
+    BaseEntity.Update.class })
 public class GrupoLineaInvestigador extends BaseEntity {
 
   protected static final String TABLE_NAME = "grupo_linea_investigador";

@@ -1,0 +1,24 @@
+@import "colors.scss";
+@import "typography.scss";
+
+:host {
+  .busqueda {
+    padding: 10px 20px 10px 20px;
+  }
+
+  .mat-cell.mat-column-investigadorPrincipal {
+    max-width: 15vw;
+    overflow: hidden;
+    padding-right: 10px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .formulario {
+    padding: 10px 20px 10px 20px;
+
+    .buttons-final {
+      padding: 10px 0px 10px 0px;
+    }
+  }
+}

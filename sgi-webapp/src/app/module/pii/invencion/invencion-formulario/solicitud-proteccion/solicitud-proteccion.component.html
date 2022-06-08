@@ -1,5 +1,117 @@
 <sgi-fragment title="{{'menu.pii.invenciones.solicitudes-proteccion' | translate}}">
 
+  <div>
+    <form [formGroup]="formGroup" class="formulario">
+
+      <div fxLayout="col" [fxLayoutGap]="fxLayoutProperties.gap">
+
+        <!-- Número de Solicitud -->
+        <div fxFlex="20">
+          <mat-form-field>
+            <mat-label>{{'pii.solicitud-proteccion.numero-solicitud' | translate}}</mat-label>
+            <input matInput placeholder="{{'pii.solicitud-proteccion.numero-solicitud' | translate}}"
+              formControlName="numeroSolicitud">
+          </mat-form-field>
+        </div>
+
+        <!-- Fecha Solicitud / Prioridad -->
+        <div fxFlex="60" fxLayout="row" [fxLayoutGap]="fxLayoutProperties.gap">
+          <!-- desde -->
+          <mat-form-field fxFlex="50">
+            <mat-label>{{'pii.solicitud-proteccion.fecha-solicitud-desde' | translate}}</mat-label>
+            <input matInput formControlName="fechaSolicitudDesde" [matDatepicker]="pickerFechaSolicitudDesde"
+              [placeholder]="'label.desde' | translate">
+            <mat-datepicker-toggle matSuffix [for]="pickerFechaSolicitudDesde"></mat-datepicker-toggle>
+            <mat-datepicker #pickerFechaSolicitudDesde>
+            </mat-datepicker>
+          </mat-form-field>
+          <!-- hasta -->
+          <mat-form-field sgiEndDate fxFlex="50">
+            <mat-label>{{'pii.solicitud-proteccion.fecha-solicitud-hasta' | translate}}</mat-label>
+            <input matInput formControlName="fechaSolicitudHasta" [matDatepicker]="pickerFechaSolicitudHasta"
+              [placeholder]="'label.hasta' | translate">
+            <mat-datepicker-toggle matSuffix [for]="pickerFechaSolicitudHasta"></mat-datepicker-toggle>
+            <mat-datepicker #pickerFechaSolicitudHasta>
+            </mat-datepicker>
+          </mat-form-field>
+        </div>
+
+        <!-- Titulo -->
+        <div fxFlex="20">
+          <mat-form-field>
+            <mat-label>{{'pii.solicitud-proteccion.titulo' | translate}}</mat-label>
+            <input matInput placeholder="{{'pii.solicitud-proteccion.titulo' | translate}}" formControlName="titulo">
+          </mat-form-field>
+        </div>
+      </div>
+
+      <div fxLayout="col" [fxLayoutGap]="fxLayoutProperties.gap">
+
+        <!-- Vias Protección -->
+        <div fxFlex="20">
+          <mat-form-field>
+            <mat-label>{{'pii.solicitud-proteccion.via-proteccion' | translate}}</mat-label>
+            <sgi-select-via-proteccion formControlName="viaProteccion"
+              [tipoPropiedad]="formPart.invencionTipoPropiedad">
+            </sgi-select-via-proteccion>
+          </mat-form-field>
+        </div>
+
+        <!-- Pais -->
+        <div fxFlex="20" *ngIf="showPaisSelector | async">
+          <mat-form-field>
+            <mat-label>{{'pii.solicitud-proteccion.pais' | translate}}</mat-label>
+            <sgi-select-entity formControlName="pais" [options]="formPart.paises$ | async">
+            </sgi-select-entity>
+          </mat-form-field>
+        </div>
+
+        <!-- Fecha Fin prioridad -->
+        <div fxFlex="60" fxFlexLayout="col" [fxLayoutGap]="fxLayoutProperties.gap">
+          <!-- desde -->
+          <mat-form-field fxFlex="50">
+            <mat-label>{{'pii.solicitud-proteccion.fecha-fin-prioridad-desde' | translate}}</mat-label>
+            <input matInput formControlName="fechaFinPrioridadDesde" [matDatepicker]="pickerFechaFinPrioridadDesde"
+              [placeholder]="'label.desde' | translate">
+            <mat-datepicker-toggle matSuffix [for]="pickerFechaFinPrioridadDesde"></mat-datepicker-toggle>
+            <mat-datepicker #pickerFechaFinPrioridadDesde>
+            </mat-datepicker>
+          </mat-form-field>
+          <!-- hasta -->
+          <mat-form-field sgiEndDate fxFlex="50">
+            <mat-label>{{'pii.solicitud-proteccion.fecha-fin-prioridad-hasta' | translate}}</mat-label>
+            <input matInput formControlName="fechaFinPrioridadHasta" [matDatepicker]="pickerFechaFinPrioridadHasta"
+              [placeholder]="'label.hasta' | translate">
+            <mat-datepicker-toggle matSuffix [for]="pickerFechaFinPrioridadHasta"></mat-datepicker-toggle>
+            <mat-datepicker #pickerFechaFinPrioridadHasta>
+            </mat-datepicker>
+          </mat-form-field>
+        </div>
+        <!-- Estado -->
+        <ng-container>
+          <div fxFlex="20">
+            <mat-form-field>
+              <mat-label>{{'pii.solicitud-proteccion.estado' | translate}}</mat-label>
+              <sgi-select-enum [enumMap]="ESTADO_MAP" formControlName="estado">
+              </sgi-select-enum>
+            </mat-form-field>
+          </div>
+        </ng-container>
+      </div>
+      <div fxLayout="row" class="buttons-final">
+        <div fxFlex="10" class="filter-button">
+          <button color="primary" aria-label="Center Align" mat-raised-button (click)="onSearch()">
+            <mat-icon>search</mat-icon> {{'btn.search'| translate}}
+          </button>
+        </div>
+        <div fxFlex="10" class="clean-button">
+          <button color="warn" aria-label="Center Align" (click)="onClearFilters()" mat-button>{{'btn.clean'|
+            translate}}
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
   <div class="mat-elevation-z4">
     <table mat-table [dataSource]="dataSource" matSort matSortActive="viaProteccion.nombre" matSortDirection="asc"
       matSortDisableClear>
@@ -116,9 +228,14 @@
       </tr>
       <tr mat-row *matRowDef="let row; columns: getSuitableColumnsDef(formPart?.invencionTipoPropiedad);"></tr>
     </table>
-
-    <mat-paginator [pageSizeOptions]="elementosPagina" [length]="totalElementos" showFirstLastButtons>
-    </mat-paginator>
+    <div class="paginator-export">
+      <button mat-button matTooltip="{{'btn.export' | translate}}" (click)="openExportModal()"
+        [disabled]="totalElementos<=0">
+        <mat-icon color="primary">insert_chart_outlined</mat-icon>
+      </button>
+      <mat-paginator [pageSizeOptions]="elementosPagina" [length]="totalElementos" showFirstLastButtons>
+      </mat-paginator>
+    </div>
   </div>
   <ng-container *sgiHasAuthorityForAnyUO="'PII-INV-E'">
     <div class="separation-button">

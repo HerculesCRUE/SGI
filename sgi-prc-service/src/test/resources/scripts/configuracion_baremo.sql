@@ -432,12 +432,15 @@ INSERT INTO test.configuracion_baremo (id, activo, epigrafe_cvn, nombre, priorid
 VALUES(705, true, '050.030.010.000', 'Licencia explotación', 1, 'INVENCION_LICENCIA_EXPLOTACION', 'SGI', 'EXTRA', 700);
 
 INSERT INTO test.configuracion_baremo (id, activo, epigrafe_cvn, nombre, prioridad, tipo_baremo, tipo_fuente, tipo_puntos, configuracion_baremo_padre_id) 
-VALUES(706, true, '050.030.010.000', 'Licencia explotación', 1, 'INVENCION_LICENCIA_EXPLOTACION', 'CVN', 'EXTRA', 700);
+VALUES(706, true, '050.030.010.000', 'Licencia explotación TEST', 1, 'INVENCION_LICENCIA_EXPLOTACION', 'CVN', 'EXTRA', 700);
 
-update test.configuracion_baremo set mostrar_puntos = true;
-
-update test.configuracion_baremo set mostrar_puntos = false where tipo_baremo in ('COSTE_INDIRECTO', 'LIBRO_NUMERO_AUTORES', 'LIBRO_EDITORIAL_PRESTIGIO',
-'CONTRATO_CUANTIA', 'INVENCION_LICENCIA_EXPLOTACION', 'ARTICULO_NUMERO_AUTORES', 'ARTICULO_AREAS');
-
+update test.configuracion_baremo set tipo_nodo = 'PESO_PUNTOS' where tipo_baremo = 'SEXENIO';
+update test.configuracion_baremo set tipo_nodo = 'PESO_CUANTIA' where tipo_baremo = 'COSTE_INDIRECTO';
+update test.configuracion_baremo set tipo_nodo = 'PESO' where tipo_baremo = 'PRODUCCION_CIENTIFICA';
+update test.configuracion_baremo set tipo_nodo = 'NO_BAREMABLE' where tipo_baremo in ('LIBROS', 'ARTICULOS', 'COMITES_EDITORIALES', 'CONGRESOS', 'DIRECCION_TESIS', 'PROYECTOS_INVESTIGACION',
+            'CONTRATOS', 'OBRAS_ARTISTICAS', 'ORGANIZACION_ACTIVIDADES', 'INVENCIONES');
+update test.configuracion_baremo set tipo_nodo = 'SIN_PUNTOS' where tipo_baremo in ('LIBRO_NUMERO_AUTORES', 'LIBRO_EDITORIAL_PRESTIGIO', 'ARTICULO_NUMERO_AUTORES', 
+        'ARTICULO_AREAS', 'CONTRATO_CUANTIA', 'INVENCION_LICENCIA_EXPLOTACION');
+update test.configuracion_baremo set tipo_nodo = 'PUNTOS' where tipo_nodo is null;
 
 ALTER SEQUENCE test.configuracion_baremo_seq RESTART WITH 10000;

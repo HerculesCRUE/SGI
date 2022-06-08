@@ -14,10 +14,6 @@ describe('SelectProyectoComponent', () => {
   let fixture: ComponentFixture<SelectProyectoComponent>;
 
   beforeEach(waitForAsync(() => {
-    const mockDialogRef = {
-      close: jasmine.createSpy('close'),
-    };
-
     TestBed.configureTestingModule({
       imports: [
         BrowserAnimationsModule,
@@ -33,7 +29,7 @@ describe('SelectProyectoComponent', () => {
       providers: [
         {
           provide: MatDialogRef,
-          useValue: mockDialogRef,
+          useValue: TestUtils.buildDialogCommonMatDialogRef(),
         }
       ],
       declarations: [SelectProyectoComponent],

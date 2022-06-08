@@ -137,7 +137,9 @@ export class ConvocatoriaReunionAsignacionMemoriasListadoFragment extends Fragme
           // TODO: Eliminar casteo ya que el back no retorna el atributo eliminable
           map((savedEvaluacion: IEvaluacionWithIsEliminable) => {
             const index = this.evaluaciones$.value.findIndex((wrapped) => wrapped === evaluacion);
-            this.evaluaciones$[index] = new StatusWrapper<IEvaluacionWithIsEliminable>(savedEvaluacion);
+            evaluacion.value.id = savedEvaluacion.id;
+            this.evaluaciones$.value[index] = new StatusWrapper<IEvaluacionWithIsEliminable>(evaluacion.value);
+            this.evaluaciones$.next(this.evaluaciones$.value);
           })
         );
       }),
@@ -157,7 +159,8 @@ export class ConvocatoriaReunionAsignacionMemoriasListadoFragment extends Fragme
           // TODO: Eliminar casteo ya que realmente el back no retorna el atributo eliminable
           map((updatedEvaluacion: IEvaluacionWithIsEliminable) => {
             const index = this.evaluaciones$.value.findIndex((wrapped) => wrapped === evaluacion);
-            this.evaluaciones$[index] = new StatusWrapper<IEvaluacionWithIsEliminable>(updatedEvaluacion);
+            this.evaluaciones$.value[index] = new StatusWrapper<IEvaluacionWithIsEliminable>(evaluacion.value);
+            this.evaluaciones$.next(this.evaluaciones$.value);
           })
         );
       }),

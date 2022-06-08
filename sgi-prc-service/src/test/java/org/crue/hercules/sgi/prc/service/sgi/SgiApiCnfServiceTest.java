@@ -48,8 +48,7 @@ class SgiApiCnfServiceTest extends BaseServiceTest {
 
     String result = this.configService.findByName("testing");
 
-    Assertions.assertThat(result).isNotNull();
-    Assertions.assertThat(result).isEqualTo(configOutput.getValue());
+    Assertions.assertThat(result).isNotNull().isEqualTo(configOutput.getValue());
   }
 
   // @Test

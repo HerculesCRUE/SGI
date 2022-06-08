@@ -108,7 +108,6 @@ export class ConvocatoriaEnlaceComponent extends FragmentComponent implements On
       canEdit: this.formPart.canEdit,
     };
     const config = {
-      panelClass: 'sgi-dialog-container',
       data
     };
     const dialogRef = this.matDialog.open(ConvocatoriaEnlaceModalComponent, config);

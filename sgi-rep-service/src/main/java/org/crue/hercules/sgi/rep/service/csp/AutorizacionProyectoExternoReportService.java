@@ -55,35 +55,7 @@ public class AutorizacionProyectoExternoReportService extends SgiReportService {
     Vector<Vector<Object>> rowsData = new Vector<>();
     Vector<Object> elementsRow = new Vector<>();
 
-    columnsData.add("nombre");
-    columnsData.add("nif");
-    try {
-      PersonaDto persona = personaService.findById(autorizacionProyectoExterno.getSolicitanteRef());
-      elementsRow.add(persona.getNombre() + " " + persona.getApellidos());
-      elementsRow.add(persona.getNumeroDocumento());
-    } catch (Exception e) {
-      elementsRow.add(getErrorMessageToReport(e));
-      elementsRow.add(getErrorMessageToReport(e));
-    }
-
-    columnsData.add("catProfesional");
-    columnsData.add("departamento");
-    columnsData.add("centro");
-    try {
-      VinculacionDto vinculacionPersona = personaService
-          .findVinculacionByPersonaId(autorizacionProyectoExterno.getSolicitanteRef());
-      elementsRow.add(vinculacionPersona.getCategoriaProfesional() != null
-          ? vinculacionPersona.getCategoriaProfesional().getNombre()
-          : '-');
-      elementsRow
-          .add(vinculacionPersona.getDepartamento() != null ? vinculacionPersona.getDepartamento().getNombre() : "-");
-      elementsRow
-          .add(vinculacionPersona.getCentro() != null ? vinculacionPersona.getCentro().getNombre() : "-");
-    } catch (Exception e) {
-      elementsRow.add(getErrorMessageToReport(e));
-      elementsRow.add(getErrorMessageToReport(e));
-      elementsRow.add(getErrorMessageToReport(e));
-    }
+    getDatosSolicitante(autorizacionProyectoExterno, columnsData, elementsRow);
 
     columnsData.add("datosConvocatoria");
     if (autorizacionProyectoExterno.getConvocatoriaId() != null) {
@@ -139,6 +111,39 @@ public class AutorizacionProyectoExternoReportService extends SgiReportService {
     DefaultTableModel tableModel = new DefaultTableModel();
     tableModel.setDataVector(rowsData, columnsData);
     return tableModel;
+  }
+
+  private void getDatosSolicitante(AutorizacionDto autorizacionProyectoExterno, Vector<Object> columnsData,
+      Vector<Object> elementsRow) {
+    columnsData.add("nombre");
+    columnsData.add("nif");
+    try {
+      PersonaDto persona = personaService.findById(autorizacionProyectoExterno.getSolicitanteRef());
+      elementsRow.add(persona.getNombre() + " " + persona.getApellidos());
+      elementsRow.add(persona.getNumeroDocumento());
+    } catch (Exception e) {
+      elementsRow.add(getErrorMessageToReport(e));
+      elementsRow.add(getErrorMessageToReport(e));
+    }
+
+    columnsData.add("catProfesional");
+    columnsData.add("departamento");
+    columnsData.add("centro");
+    try {
+      VinculacionDto vinculacionPersona = personaService
+          .findVinculacionByPersonaId(autorizacionProyectoExterno.getSolicitanteRef());
+      elementsRow.add(vinculacionPersona.getCategoriaProfesional() != null
+          ? vinculacionPersona.getCategoriaProfesional().getNombre()
+          : '-');
+      elementsRow
+          .add(vinculacionPersona.getDepartamento() != null ? vinculacionPersona.getDepartamento().getNombre() : "-");
+      elementsRow
+          .add(vinculacionPersona.getCentro() != null ? vinculacionPersona.getCentro().getNombre() : "-");
+    } catch (Exception e) {
+      elementsRow.add(getErrorMessageToReport(e));
+      elementsRow.add(getErrorMessageToReport(e));
+      elementsRow.add(getErrorMessageToReport(e));
+    }
   }
 
   public byte[] getReportAutorizacionProyectoExterno(AutorizacionReport autorizacionReport, Long idAutorizacion) {

@@ -1,14 +1,9 @@
-<div class="sgi-dialog-header" fxLayout="row" fxLayoutGap="20px">
-  <span fxFlexAlign="center" mat-mat-dialog-title role="heading" aria-level="3" fxFlex>{{title}}</span>
-  <button fxFlex="nogrow" mat-icon-button mat-dialog-close>
-    <mat-icon class="close-icon">close</mat-icon>
-  </button>
-</div>
-<mat-dialog-content>
+<sgi-dialog-header [title]="title"></sgi-dialog-header>
+<sgi-dialog-content>
   <form [formGroup]="formGroup">
     <!-- Entidad -->
-    <div [fxLayout]="fxLayoutProperties.layout" [fxLayoutAlign]="fxLayoutProperties.layoutAlign">
-      <mat-form-field class="input-form">
+    <div fxLayout="row">
+      <mat-form-field fxFlex>
         <mat-label>{{ 'csp.proyecto-entidad-convocante' | translate:MSG_PARAMS.CARDINALIRY.SINGULAR }}</mat-label>
         <sgi-select-empresa formControlName="entidad"
           placeholder="{{ 'csp.proyecto-entidad-convocante' | translate:MSG_PARAMS.CARDINALIRY.SINGULAR }}"
@@ -20,8 +15,8 @@
       </mat-form-field>
     </div>
     <!-- Plan -->
-    <div>
-      <mat-form-field class="input-form">
+    <div fxLayout="row">
+      <mat-form-field fxFlex>
         <mat-label>{{ 'csp.proyecto-entidad-convocante.programa.plan' | translate }}</mat-label>
         <sgi-select-entity formControlName="plan" [options]="planes$ | async"></sgi-select-entity>
         <mat-error *ngIf="formGroup.controls.plan.errors?.invalid">
@@ -30,10 +25,10 @@
       </mat-form-field>
     </div>
     <!-- Programa -->
-    <mat-label>{{ 'csp.proyecto-entidad-convocante.programa.programa' | translate }}</mat-label>
-    <div class="programa" [fxLayout.xs]="fxLayoutProperties.xs" [fxLayout]="fxLayoutProperties.layout"
-      [fxLayoutGap]="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
-      <div class="arbol">
+
+    <div class="programa" fxLayout="column" fxLayoutGap="10px">
+      <mat-label>{{ 'csp.proyecto-entidad-convocante.programa.programa' | translate }}</mat-label>
+      <div class="arbol" fxFlex>
         <mat-tree [dataSource]="dataSource" [treeControl]="treeControl" class="arbol-tree">
           <mat-tree-node *matTreeNodeDef="let node" matTreeNodeToggle>
             <li class="mat-tree-node">
@@ -73,9 +68,10 @@
       </div>
     </div>
   </form>
-</mat-dialog-content>
+</sgi-dialog-content>
 <mat-dialog-actions>
-  <button *ngIf="!this.data.readonly" color="accent" (click)="saveOrUpdate()" mat-raised-button type="submit">
+  <button *ngIf="!this.data.readonly" color="accent" (click)="doAction()" [disabled]="this.actionDisabled"
+    mat-raised-button type="submit">
     <mat-icon class="save-icon">save</mat-icon>{{
     (create ? 'btn.add.entity' :'btn.ok') | translate:msgParamEntity }}
   </button>

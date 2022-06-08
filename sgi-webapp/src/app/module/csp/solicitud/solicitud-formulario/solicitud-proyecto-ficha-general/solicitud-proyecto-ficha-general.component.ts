@@ -176,7 +176,6 @@ export class SolicitudProyectoFichaGeneralComponent extends FormFragmentComponen
 
   openModal(data?: AreaTematicaListado): void {
     const config = {
-      panelClass: 'sgi-dialog-container',
       data: {
         padre: data?.padre ?? this.formGroup.controls.padre?.value,
         areasTematicasConvocatoria: this.areasConvocatoria,

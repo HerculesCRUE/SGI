@@ -1,8 +1,7 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { marker } from '@biesbjerg/ngx-translate-extract-marker';
-import { BaseModalComponent } from '@core/component/base-modal.component';
+import { DialogFormComponent } from '@core/component/dialog-form.component';
 import { MSG_PARAMS } from '@core/i18n';
 import { ESTADO_MAP, IInvencionGasto } from '@core/models/pii/invencion-gasto';
 import { ISolicitudProteccion } from '@core/models/pii/solicitud-proteccion';
@@ -11,14 +10,9 @@ import { IDatoEconomicoDetalle } from '@core/models/sgepii/dato-economico-detall
 import { InvencionService } from '@core/services/pii/invencion/invencion.service';
 import { triggerDownloadToUser } from '@core/services/sgdoc/documento.service';
 import { DocumentoService } from '@core/services/sge/documento.service';
-import { SnackBarService } from '@core/services/snack-bar.service';
-import { NGXLogger } from 'ngx-logger';
 import { Observable } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { IColumnDefinition } from 'src/app/module/csp/ejecucion-economica/ejecucion-economica-formulario/desglose-economico.fragment';
-
-const MSG_ERROR_LOAD = marker('error.load');
-const MSG_DOWNLOAD_ERROR = marker('error.file.download');
 
 export interface InvencionGastoModalData {
   selectedInvencionId: number;
@@ -32,7 +26,7 @@ export interface InvencionGastoModalData {
   templateUrl: './invencion-gasto-modal.component.html',
   styleUrls: ['./invencion-gasto-modal.component.scss']
 })
-export class InvencionGastoModalComponent extends BaseModalComponent<IInvencionGasto, InvencionGastoModalComponent> implements OnInit {
+export class InvencionGastoModalComponent extends DialogFormComponent<IInvencionGasto> {
 
   readonly solicitudesProteccion$: Observable<ISolicitudProteccion[]>;
   readonly displayWith = (option: ISolicitudProteccion) => option?.titulo ?? '';
@@ -47,35 +41,28 @@ export class InvencionGastoModalComponent extends BaseModalComponent<IInvencionG
   }
 
   constructor(
-    private readonly logger: NGXLogger,
-    public matDialogRef: MatDialogRef<InvencionGastoModalComponent>,
-    protected readonly snackBarService: SnackBarService,
+    matDialogRef: MatDialogRef<InvencionGastoModalComponent>,
     private readonly invencionService: InvencionService,
     @Inject(MAT_DIALOG_DATA) public data: InvencionGastoModalData,
     private documentoService: DocumentoService
   ) {
-    super(snackBarService, matDialogRef, null);
+    super(matDialogRef, true);
     this.solicitudesProteccion$ = this.invencionService.findAllSolicitudesProteccion(data.selectedInvencionId).pipe(
       map(response => response.items),
       catchError((error) => {
-        this.logger.error(error);
-        this.snackBarService.showError(MSG_ERROR_LOAD);
+        this.processError(error);
         throw error;
       })
     );
   }
 
-  ngOnInit(): void {
-    super.ngOnInit();
-  }
-
-  protected getDatosForm(): IInvencionGasto {
+  protected getValue(): IInvencionGasto {
     this.data.selectedInvencionGasto.solicitudProteccion = this.formGroup.controls.solicitudProteccion.value as ISolicitudProteccion;
 
     return this.data.selectedInvencionGasto;
   }
 
-  protected getFormGroup(): FormGroup {
+  protected buildFormGroup(): FormGroup {
     const formGroup = new FormGroup({
       solicitudProteccion: new FormControl(this.data.selectedInvencionGasto?.solicitudProteccion)
     });
@@ -88,8 +75,8 @@ export class InvencionGastoModalComponent extends BaseModalComponent<IInvencionG
       (data) => {
         triggerDownloadToUser(data, documento.nombreFichero);
       },
-      () => {
-        this.snackBarService.showError(MSG_DOWNLOAD_ERROR);
+      (error) => {
+        this.processError(error);
       }
     ));
   }

@@ -6,6 +6,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.crue.hercules.sgi.eti.config.RestApiProperties;
 import org.crue.hercules.sgi.eti.config.SgiConfigProperties;
@@ -13,6 +14,12 @@ import org.crue.hercules.sgi.eti.dto.com.EmailInput;
 import org.crue.hercules.sgi.eti.dto.com.EmailInput.Deferrable;
 import org.crue.hercules.sgi.eti.dto.com.EmailOutput;
 import org.crue.hercules.sgi.eti.dto.com.EmailParam;
+import org.crue.hercules.sgi.eti.dto.com.EtiComActaFinalizarActaData;
+import org.crue.hercules.sgi.eti.dto.com.EtiComAvisoRetrospectivaData;
+import org.crue.hercules.sgi.eti.dto.com.EtiComDictamenEvaluacionRevMinData;
+import org.crue.hercules.sgi.eti.dto.com.EtiComDictamenEvaluacionSeguimientoRevMinData;
+import org.crue.hercules.sgi.eti.dto.com.EtiComEvaluacionModificadaData;
+import org.crue.hercules.sgi.eti.dto.com.EtiComInformeSegAnualPendienteData;
 import org.crue.hercules.sgi.eti.dto.com.Recipient;
 import org.crue.hercules.sgi.eti.dto.com.Status;
 import org.crue.hercules.sgi.eti.enums.ServiceType;
@@ -29,6 +36,9 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 @Slf4j
 public class SgiApiComService extends SgiApiBaseService {
+  private static final String DATA = "_DATA";
+  private static final String PATH_EMAILS = "/emails";
+
   private static final String TEMPLATE_GENERIC_EMAIL_TEXT_NAME = "GENERIC_EMAIL_TEXT";
   private static final String TEMPLATE_GENERIC_EMAIL_TEXT_PARAM_CONTENT = "GENERIC_CONTENT_TEXT";
   private static final String TEMPLATE_GENERIC_EMAIL_TEXT_PARAM_SUBJECT = "GENERIC_SUBJECT";
@@ -43,12 +53,38 @@ public class SgiApiComService extends SgiApiBaseService {
   private static final String TEMPLATE_ETI_COM_CONVOCATORIA_REUNION_PARAM_MINUTO_INICIO_SEGUNDA = "ETI_CONVOCATORIA_REUNION_MINUTO_INICIO_SEGUNDA";
   private static final String TEMPLATE_ETI_COM_CONVOCATORIA_REUNION_PARAM_ORDEN_DEL_DIA = "ETI_CONVOCATORIA_REUNION_ORDEN_DEL_DIA";
 
+  private static final String TEMPLATE_ETI_COM_ACTA_SIN_REV_MINIMA = "ETI_COM_ACTA_SIN_REV_MINIMA";
+  private static final String TEMPLATE_ETI_COM_ACTA_SIN_REV_MINIMA_PARAM = TEMPLATE_ETI_COM_ACTA_SIN_REV_MINIMA
+      + DATA;
+
+  private static final String TEMPLATE_ETI_COM_DICT_EVA_REV_MINIMA = "ETI_COM_DICT_EVA_REV_MINIMA";
+  private static final String TEMPLATE_ETI_COM_DICT_EVA_REV_MINIMA_PARAM = TEMPLATE_ETI_COM_DICT_EVA_REV_MINIMA
+      + DATA;
+
+  private static final String TEMPLATE_ETI_COM_INF_RETRO_PENDIENTE = "ETI_COM_INF_RETRO_PENDIENTE";
+  private static final String TEMPLATE_ETI_COM_INF_RETRO_PENDIENTE_PARAM = TEMPLATE_ETI_COM_INF_RETRO_PENDIENTE
+      + DATA;
+
+  private static final String TEMPLATE_ETI_COM_DICT_EVA_SEG_REV_MINIMA = "ETI_COM_DICT_EVA_SEG_REV_MINIMA";
+  private static final String TEMPLATE_ETI_COM_DICT_EVA_SEG_REV_MINIMA_PARAM = TEMPLATE_ETI_COM_DICT_EVA_SEG_REV_MINIMA
+      + DATA;
+
+  private static final String TEMPLATE_ETI_COM_EVA_MODIFICADA = "ETI_COM_EVA_MODIFICADA";
+  private static final String TEMPLATE_ETI_COM_EVA_MODIFICADA_PARAM = TEMPLATE_ETI_COM_EVA_MODIFICADA
+      + DATA;
+
+  private static final String TEMPLATE_ETI_COM_INF_SEG_ANU = "ETI_COM_INF_SEG_ANU";
+  private static final String TEMPLATE_ETI_COM_INF_SEG_ANU_PARAM = TEMPLATE_ETI_COM_INF_SEG_ANU
+      + DATA;
+
   private final SgiConfigProperties sgiConfigProperties;
+  private final ObjectMapper mapper;
 
   public SgiApiComService(RestApiProperties restApiProperties, RestTemplate restTemplate,
-      SgiConfigProperties sgiConfigProperties) {
+      SgiConfigProperties sgiConfigProperties, ObjectMapper mapper) {
     super(restApiProperties, restTemplate);
     this.sgiConfigProperties = sgiConfigProperties;
+    this.mapper = mapper;
   }
 
   /**
@@ -223,6 +259,52 @@ public class SgiApiComService extends SgiApiBaseService {
     return response;
   }
 
+  public EmailOutput createComunicadoActaFinalizada(
+      EtiComActaFinalizarActaData data, List<Recipient> recipients)
+      throws JsonProcessingException {
+    return this.createComunicado(data, recipients,
+        TEMPLATE_ETI_COM_ACTA_SIN_REV_MINIMA,
+        TEMPLATE_ETI_COM_ACTA_SIN_REV_MINIMA_PARAM);
+  }
+
+  public EmailOutput createComunicadoEvaluacionMemoriaRevMin(
+      EtiComDictamenEvaluacionRevMinData data, List<Recipient> recipients)
+      throws JsonProcessingException {
+    return this.createComunicado(data, recipients,
+        TEMPLATE_ETI_COM_DICT_EVA_REV_MINIMA,
+        TEMPLATE_ETI_COM_DICT_EVA_REV_MINIMA_PARAM);
+  }
+
+  public EmailOutput createComunicadoAvisoRetrospectiva(EtiComAvisoRetrospectivaData data,
+      List<Recipient> recipients) throws JsonProcessingException {
+    return this.createComunicado(data, recipients,
+        TEMPLATE_ETI_COM_INF_RETRO_PENDIENTE, TEMPLATE_ETI_COM_INF_RETRO_PENDIENTE_PARAM);
+  }
+
+  public EmailOutput createComunicadoEvaluacionSeguimientoMemoriaRevMin(
+      EtiComDictamenEvaluacionSeguimientoRevMinData data, List<Recipient> recipients)
+      throws JsonProcessingException {
+    return this.createComunicado(data, recipients,
+        TEMPLATE_ETI_COM_DICT_EVA_SEG_REV_MINIMA,
+        TEMPLATE_ETI_COM_DICT_EVA_SEG_REV_MINIMA_PARAM);
+  }
+
+  public EmailOutput createComunicadoCambiosEvaluacion(
+      EtiComEvaluacionModificadaData data, List<Recipient> recipients)
+      throws JsonProcessingException {
+    return this.createComunicado(data, recipients,
+        TEMPLATE_ETI_COM_EVA_MODIFICADA,
+        TEMPLATE_ETI_COM_EVA_MODIFICADA_PARAM);
+  }
+
+  public EmailOutput createComunicadoInformeSeguimientoAnualPendiente(
+      EtiComInformeSegAnualPendienteData data, List<Recipient> recipients)
+      throws JsonProcessingException {
+    return this.createComunicado(data, recipients,
+        TEMPLATE_ETI_COM_INF_SEG_ANU,
+        TEMPLATE_ETI_COM_INF_SEG_ANU_PARAM);
+  }
+
   /**
    * Invoca el env&iacute;o de un email en el modulo COM
    * 
@@ -242,6 +324,20 @@ public class SgiApiComService extends SgiApiBaseService {
 
     log.debug("sendEmail(Long id) - end");
     return response;
+  }
+
+  private <T> EmailOutput createComunicado(T data, List<Recipient> recipients, String template, String templateParam)
+      throws JsonProcessingException {
+    ServiceType serviceType = ServiceType.COM;
+    String relativeUrl = PATH_EMAILS;
+    HttpMethod httpMethod = HttpMethod.POST;
+    String mergedURL = buildUri(serviceType, relativeUrl);
+    EmailInput request = EmailInput.builder().template(template).recipients(recipients).build();
+    request.setParams(Arrays.asList(
+        new EmailParam(templateParam, mapper.writeValueAsString(data))));
+    return super.<EmailInput, EmailOutput>callEndpoint(mergedURL, httpMethod, request,
+        new ParameterizedTypeReference<EmailOutput>() {
+        }).getBody();
   }
 
 }

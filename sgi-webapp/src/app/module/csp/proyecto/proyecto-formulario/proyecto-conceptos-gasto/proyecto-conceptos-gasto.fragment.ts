@@ -331,7 +331,7 @@ export class ProyectoConceptosGastoFragment extends Fragment {
               }
             });
         }
-      } else {
+      } else if (this.proyecto.convocatoriaId) {
         conceptoGasto.help = {
           class: HelpIconClass.WARNING,
           tooltip: PROYECTO_CONCEPTO_GASTO_NO_CONVOCATORIA_KEY

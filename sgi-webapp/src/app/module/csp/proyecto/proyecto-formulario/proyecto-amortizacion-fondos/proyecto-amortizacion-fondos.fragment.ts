@@ -27,6 +27,7 @@ export class ProyectoAmortizacionFondosFragment extends Fragment {
 
   constructor(
     key: number,
+    public readonly anualidades: boolean,
     public readonly solicitudId: number,
     private proyectoPeriodoAmortizacionService: ProyectoPeriodoAmortizacionService,
     private proyectoEntidadFinanciadoraService: ProyectoEntidadFinanciadoraService,
@@ -95,8 +96,8 @@ export class ProyectoAmortizacionFondosFragment extends Fragment {
                 )
               ),
               toArray(),
-              catchError((error) => EMPTY)
-            )
+              catchError(() => EMPTY)
+            );
           }),
         ).subscribe(() => {
           this.recalcularNumPeriodos();
@@ -192,7 +193,9 @@ export class ProyectoAmortizacionFondosFragment extends Fragment {
     );
   }
 
-  private createProyectoPeriodosAmortizacion(target$: BehaviorSubject<StatusWrapper<IProyectoPeriodoAmortizacionListado>[]>): Observable<void> {
+  private createProyectoPeriodosAmortizacion(
+    target$: BehaviorSubject<StatusWrapper<IProyectoPeriodoAmortizacionListado>[]>
+  ): Observable<void> {
     const created = target$.value.filter((value) => value.created);
     if (created.length === 0) {
       return of(void 0);
@@ -224,15 +227,15 @@ export class ProyectoAmortizacionFondosFragment extends Fragment {
   }
 
   /**
- * Recalcula los numeros de los periodos de todos los periodos de amortizacion de la tabla en funcion de su anualidad y entidad.
- */
+   * Recalcula los numeros de los periodos de todos los periodos de amortizacion de la tabla en funcion de su anualidad y entidad.
+   */
   public recalcularNumPeriodos(): void {
     let numPeriodo = 1;
     let nombreActual: string;
     this.periodosAmortizacion$.value
       .sort((a, b) => {
         return a.value.proyectoEntidadFinanciadora.empresa.nombre.localeCompare(b.value.proyectoEntidadFinanciadora.empresa.nombre)
-          || a.value.proyectoAnualidad.anio.toString().localeCompare(b.value.proyectoAnualidad.anio.toString())
+          || a.value.proyectoAnualidad.anio.toString().localeCompare(b.value.proyectoAnualidad.anio.toString());
       });
 
     this.periodosAmortizacion$.value.forEach(c => {

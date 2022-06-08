@@ -319,7 +319,8 @@ export class ProyectoActionService extends ActionService {
     } else {
       if (this.isEdit()) {
         this.entidadesFinanciadoras = new ProyectoEntidadesFinanciadorasFragment(
-          id, this.data.proyecto?.solicitudId, proyectoService, proyectoEntidadFinanciadoraService, empresaService, solicitudService, false);
+          id, this.data.proyecto?.solicitudId, proyectoService, proyectoEntidadFinanciadoraService, empresaService, solicitudService,
+          false);
         this.socios = new ProyectoSociosFragment(id, empresaService, proyectoService, proyectoSocioService,
           this.hasAnyProyectoSocioWithRolCoordinador$, this.hasProyectoCoordinadoAndCoordinadorExterno$);
         this.hitos = new ProyectoHitosFragment(id, proyectoService, proyectoHitoService);
@@ -330,7 +331,8 @@ export class ProyectoActionService extends ActionService {
           this.data?.proyecto?.convocatoriaId, this.readonly, this.data?.isVisor);
         this.seguimientoCientifico = new ProyectoPeriodoSeguimientosFragment(
           id, this.data.proyecto, proyectoService, proyectoPeriodoSeguimientoService, convocatoriaService, documentoService);
-        this.proyectoEquipo = new ProyectoEquipoFragment(logger, id, this.data?.proyecto?.convocatoriaId, proyectoService, proyectoEquipoService, personaService,
+        this.proyectoEquipo = new ProyectoEquipoFragment(logger, id, this.data?.proyecto?.convocatoriaId, proyectoService,
+          proyectoEquipoService, personaService,
           convocatoriaService, datosAcademicosService, convocatoriaRequisitoIPService, viculacionService,
           convocatoriaRequisitoEquipoService, datosPersonalesService);
         this.entidadGestora = new ProyectoEntidadGestoraFragment(
@@ -341,7 +343,8 @@ export class ProyectoActionService extends ActionService {
         this.historicoEstados = new ProyectoHistoricoEstadosFragment(id, proyectoService);
         this.documentos = new ProyectoDocumentosFragment(
           id, convocatoriaService, solicitudService, proyectoService, proyectoPeriodoSeguimientoService, proyectoSocioService,
-          proyectoSocioPeriodoJustificacionService, proyectoProrrogaService, proyectoDocumentoService, empresaService, translate, this.data?.isVisor);
+          proyectoSocioPeriodoJustificacionService, proyectoProrrogaService, proyectoDocumentoService, empresaService, translate,
+          this.data?.isVisor);
         this.clasificaciones = new ProyectoClasificacionesFragment(id, proyectoClasificacionService, proyectoService,
           clasificacionService, this.readonly, this.data?.isVisor);
         this.proyectosSge = new ProyectoProyectosSgeFragment(id, proyectoProyectoSgeService, proyectoService,
@@ -358,8 +361,9 @@ export class ProyectoActionService extends ActionService {
           proyectoAgrupacionGastoService, this.readonly, this.data?.isVisor);
         this.proyectoCalendarioJustificacion = new ProyectoCalendarioJustificacionFragment(this.data?.proyecto?.id, this.data?.proyecto,
           proyectoService, proyectoPeriodoJustificacionService, convocatoriaService);
-        this.amortizacionFondos = new ProyectoAmortizacionFondosFragment(this.data?.proyecto?.id, this.data.proyecto?.solicitudId,
-          proyectoPeriodoAmortizacionService, proyectoEntidadFinanciadoraService, empresaService, proyectoAnualidadService, periodoAmortizacionService);
+        this.amortizacionFondos = new ProyectoAmortizacionFondosFragment(this.data?.proyecto?.id, this.data?.proyecto?.anualidades,
+          this.data.proyecto?.solicitudId, proyectoPeriodoAmortizacionService, proyectoEntidadFinanciadoraService, empresaService,
+          proyectoAnualidadService, periodoAmortizacionService);
         this.consultaPresupuesto = new ProyectoConsultaPresupuestoFragment(this.data?.proyecto?.id, this.proyectoService);
         this.relaciones = new ProyectoRelacionFragment(
           id, this.data.proyecto, this.readonly, relacionService, convocatoriaService, invencionService, proyectoService, sgiAuthService);
@@ -412,7 +416,18 @@ export class ProyectoActionService extends ActionService {
           }
         }));
         this.subscriptions.push(this.entidadesFinanciadoras.entidadesFinanciadorasSincronizadas$.subscribe(entidadesFinanciadoras => {
-          this.amortizacionFondos.entidadesFinanciadoras$.next(entidadesFinanciadoras)
+          this.amortizacionFondos.entidadesFinanciadoras$.next(entidadesFinanciadoras);
+        }));
+
+        // Sincronización periodosAmortizacion
+        this.subscriptions.push(this.presupuesto.initialized$.subscribe(value => {
+          if (value) {
+            this.amortizacionFondos.initialize();
+          }
+        }));
+        this.subscriptions.push(this.amortizacionFondos.periodosAmortizacion$.subscribe(periodosAmortizacion => {
+          this.presupuesto.anualidadesWithPeriodoAmortizacion$
+            .next(periodosAmortizacion.map(periodoAmortizacion => periodoAmortizacion.value.proyectoAnualidad.id));
         }));
 
         // Sincronización de las vinculaciones sobre modelo de ejecución
@@ -502,7 +517,8 @@ export class ProyectoActionService extends ActionService {
   private subscribeToMiembrosProyectoEquipoChangeList(): void {
     if (this.proyectoEquipo) {
       this.subscriptions.push(
-        this.proyectoEquipo.equipos$.subscribe(personas => this.relaciones.miembrosEquipoProyecto = personas.map(personaListado => personaListado.value.proyectoEquipo.persona))
+        this.proyectoEquipo.equipos$.subscribe(personas =>
+          this.relaciones.miembrosEquipoProyecto = personas.map(personaListado => personaListado.value.proyectoEquipo.persona))
       );
     }
   }

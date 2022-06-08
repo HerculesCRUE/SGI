@@ -1,6 +1,8 @@
 package org.crue.hercules.sgi.csp.repository.predicate;
 
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Pattern;
 
 import javax.persistence.criteria.CriteriaBuilder;
@@ -12,20 +14,28 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import javax.persistence.criteria.Subquery;
 
+import org.crue.hercules.sgi.csp.config.SgiConfigProperties;
+import org.crue.hercules.sgi.csp.enums.ClasificacionCVN;
 import org.crue.hercules.sgi.csp.model.ConfiguracionSolicitud_;
 import org.crue.hercules.sgi.csp.model.Convocatoria;
 import org.crue.hercules.sgi.csp.model.ConvocatoriaFase_;
 import org.crue.hercules.sgi.csp.model.Convocatoria_;
+import org.crue.hercules.sgi.csp.model.Proyecto;
+import org.crue.hercules.sgi.csp.model.ProyectoEquipo;
+import org.crue.hercules.sgi.csp.model.ProyectoEquipo_;
+import org.crue.hercules.sgi.csp.model.Proyecto_;
 import org.crue.hercules.sgi.csp.model.RequisitoIP;
 import org.crue.hercules.sgi.csp.model.RequisitoIPCategoriaProfesional;
 import org.crue.hercules.sgi.csp.model.RequisitoIPCategoriaProfesional_;
 import org.crue.hercules.sgi.csp.model.RequisitoIPNivelAcademico;
 import org.crue.hercules.sgi.csp.model.RequisitoIPNivelAcademico_;
 import org.crue.hercules.sgi.csp.model.RequisitoIP_;
+import org.crue.hercules.sgi.csp.model.RolProyecto;
+import org.crue.hercules.sgi.csp.model.RolProyecto_;
+import org.crue.hercules.sgi.csp.util.PredicateResolverUtil;
 import org.crue.hercules.sgi.framework.rsql.SgiRSQLPredicateResolver;
 
 import cz.jirutka.rsql.parser.ast.ComparisonNode;
-import cz.jirutka.rsql.parser.ast.ComparisonOperator;
 import io.github.perplexhub.rsql.RSQLOperators;
 
 public class ConvocatoriaPredicateResolver implements SgiRSQLPredicateResolver<Convocatoria> {
@@ -39,7 +49,8 @@ public class ConvocatoriaPredicateResolver implements SgiRSQLPredicateResolver<C
     REQUISITO_FECHA_NIVEL_ACADEMICO_IP("requisitoFechasNivelAcademicoIp"),
     REQUISITO_VINCULACION_IP("requisitoVinculacionIp"),
     REQUISITO_CATEGORIA_PROFESIONAL_IP("requisitoCategoriaProfesionalIp"),
-    REQUISITO_FECHA_CATEGORIA_PROFESIONAL_IP("requisitoFechasCategoriaProfesionalIp");
+    REQUISITO_FECHA_CATEGORIA_PROFESIONAL_IP("requisitoFechasCategoriaProfesionalIp"),
+    REQUISITO_PROYECTOS_COMPETITIVOS("requisitoProyectosCompetitivos");
 
     private String code;
 
@@ -58,53 +69,42 @@ public class ConvocatoriaPredicateResolver implements SgiRSQLPredicateResolver<C
   }
 
   private static ConvocatoriaPredicateResolver instance;
+  private final SgiConfigProperties sgiConfigProperties;
 
-  private ConvocatoriaPredicateResolver() {
-    // Do nothing. Hide external instanciation
+  private ConvocatoriaPredicateResolver(SgiConfigProperties sgiConfigProperties) {
+    this.sgiConfigProperties = sgiConfigProperties;
   }
 
-  public static ConvocatoriaPredicateResolver getInstance() {
+  public static ConvocatoriaPredicateResolver getInstance(SgiConfigProperties sgiConfigProperties) {
     if (instance == null) {
-      instance = new ConvocatoriaPredicateResolver();
+      instance = new ConvocatoriaPredicateResolver(sgiConfigProperties);
     }
     return instance;
   }
 
   private Predicate buildInPlazoPresentacionSolicitudes(ComparisonNode node, Root<Convocatoria> root,
       CriteriaBuilder cb) {
-    ComparisonOperator operator = node.getOperator();
-    if (!operator.equals(RSQLOperators.EQUAL)) {
-      // Unsupported Operator
-      throw new IllegalArgumentException("Unsupported operator: " + operator + " for " + node.getSelector());
-    }
-    if (node.getArguments().size() != 1) {
-      // Bad number of arguments
-      throw new IllegalArgumentException("Bad number of arguments for " + node.getSelector());
-    }
+    PredicateResolverUtil.validateOperatorIsSupported(node, RSQLOperators.EQUAL);
+    PredicateResolverUtil.validateOperatorArgumentNumber(node, 1);
+
     boolean applyFilter = Boolean.parseBoolean(node.getArguments().get(0));
     if (!applyFilter) {
-      return cb.equal(cb.literal("1"), cb.literal("1"));
+      return cb.isTrue(cb.literal(true));
     }
 
-    Instant now = Instant.now();
+    Instant fechaActual = Instant.now().atZone(sgiConfigProperties.getTimeZone().toZoneId()).toInstant();
     Predicate plazoInicio = cb.lessThanOrEqualTo(root.get(Convocatoria_.configuracionSolicitud)
-        .get(ConfiguracionSolicitud_.fasePresentacionSolicitudes).get(ConvocatoriaFase_.fechaInicio), now);
+        .get(ConfiguracionSolicitud_.fasePresentacionSolicitudes).get(ConvocatoriaFase_.fechaInicio), fechaActual);
     Predicate plazoFin = cb.greaterThanOrEqualTo(root.get(Convocatoria_.configuracionSolicitud)
-        .get(ConfiguracionSolicitud_.fasePresentacionSolicitudes).get(ConvocatoriaFase_.fechaFin), now);
+        .get(ConfiguracionSolicitud_.fasePresentacionSolicitudes).get(ConvocatoriaFase_.fechaFin), fechaActual);
     return cb.and(plazoInicio, plazoFin);
   }
 
   /* Validaciones Requisito Ip */
   private Predicate buildInRequisitoSexoIp(ComparisonNode node, Root<Convocatoria> root, CriteriaBuilder cb) {
-    ComparisonOperator operator = node.getOperator();
-    if (!operator.equals(RSQLOperators.EQUAL)) {
-      // Unsupported Operator
-      throw new IllegalArgumentException("Unsupported operator: " + operator + " for " + node.getSelector());
-    }
-    if (node.getArguments().size() != 1) {
-      // Bad number of arguments
-      throw new IllegalArgumentException("Bad number of arguments for " + node.getSelector());
-    }
+    PredicateResolverUtil.validateOperatorIsSupported(node, RSQLOperators.EQUAL);
+    PredicateResolverUtil.validateOperatorArgumentNumber(node, 1);
+
     String sexoRef = node.getArguments().get(0);
 
     Predicate sexo = cb.equal(root.get(Convocatoria_.requisitoIP).get(RequisitoIP_.sexoRef), sexoRef);
@@ -114,15 +114,9 @@ public class ConvocatoriaPredicateResolver implements SgiRSQLPredicateResolver<C
   }
 
   private Predicate buildInRequisitoEdadIp(ComparisonNode node, Root<Convocatoria> root, CriteriaBuilder cb) {
-    ComparisonOperator operator = node.getOperator();
-    if (!operator.equals(RSQLOperators.GREATER_THAN_OR_EQUAL)) {
-      // Unsupported Operator
-      throw new IllegalArgumentException("Unsupported operator: " + operator + " for " + node.getSelector());
-    }
-    if (node.getArguments().size() != 1) {
-      // Bad number of arguments
-      throw new IllegalArgumentException("Bad number of arguments for " + node.getSelector());
-    }
+    PredicateResolverUtil.validateOperatorIsSupported(node, RSQLOperators.GREATER_THAN_OR_EQUAL);
+    PredicateResolverUtil.validateOperatorArgumentNumber(node, 1);
+
     String edadArgument = node.getArguments().get(0);
     Predicate isNull = cb.isNull(root.get(Convocatoria_.requisitoIP).get(RequisitoIP_.edadMaxima));
     if (isPositiveInteger(edadArgument)) {
@@ -138,15 +132,9 @@ public class ConvocatoriaPredicateResolver implements SgiRSQLPredicateResolver<C
 
   private Predicate buildInRequisitoNivelAcademicoIp(ComparisonNode node, Root<Convocatoria> root,
       CriteriaQuery<?> query, CriteriaBuilder cb) {
-    ComparisonOperator operator = node.getOperator();
-    if (!operator.equals(RSQLOperators.EQUAL)) {
-      // Unsupported Operator
-      throw new IllegalArgumentException("Unsupported operator: " + operator + " for " + node.getSelector());
-    }
-    if (node.getArguments().size() != 1) {
-      // Bad number of arguments
-      throw new IllegalArgumentException("Bad number of arguments for " + node.getSelector());
-    }
+    PredicateResolverUtil.validateOperatorIsSupported(node, RSQLOperators.EQUAL);
+    PredicateResolverUtil.validateOperatorArgumentNumber(node, 1);
+
     String nivelAcademicoArgument = node.getArguments().get(0);
 
     Join<Convocatoria, RequisitoIP> joinRequisitoIp = root.join(Convocatoria_.requisitoIP, JoinType.LEFT);
@@ -167,15 +155,9 @@ public class ConvocatoriaPredicateResolver implements SgiRSQLPredicateResolver<C
 
   private Predicate buildInRequisitoFechasNivelAcademicoIp(ComparisonNode node, Root<Convocatoria> root,
       CriteriaBuilder cb) {
-    ComparisonOperator operator = node.getOperator();
-    if (!operator.equals(RSQLOperators.EQUAL)) {
-      // Unsupported Operator
-      throw new IllegalArgumentException("Unsupported operator: " + operator + " for " + node.getSelector());
-    }
-    if (node.getArguments().size() != 1) {
-      // Bad number of arguments
-      throw new IllegalArgumentException("Bad number of arguments for " + node.getSelector());
-    }
+    PredicateResolverUtil.validateOperatorIsSupported(node, RSQLOperators.EQUAL);
+    PredicateResolverUtil.validateOperatorArgumentNumber(node, 1);
+
     String fechaObtencionNivelAcademicoArgument = node.getArguments().get(0);
     Instant fechaObtencionNivelAcademicoInstant = Instant.parse(fechaObtencionNivelAcademicoArgument);
 
@@ -200,15 +182,9 @@ public class ConvocatoriaPredicateResolver implements SgiRSQLPredicateResolver<C
   }
 
   private Predicate buildInRequisitoVinculacionIp(ComparisonNode node, Root<Convocatoria> root, CriteriaBuilder cb) {
-    ComparisonOperator operator = node.getOperator();
-    if (!operator.equals(RSQLOperators.EQUAL)) {
-      // Unsupported Operator
-      throw new IllegalArgumentException("Unsupported operator: " + operator + "for " + node.getSelector());
-    }
-    if (node.getArguments().size() != 1) {
-      // Bad number of arguments
-      throw new IllegalArgumentException("Bad number of arguments for " + node.getSelector());
-    }
+    PredicateResolverUtil.validateOperatorIsSupported(node, RSQLOperators.EQUAL);
+    PredicateResolverUtil.validateOperatorArgumentNumber(node, 1);
+
     boolean hasVinculacionArgument = Boolean.parseBoolean(node.getArguments().get(0));
 
     Predicate hasVinvulacion = cb.equal(root.get(Convocatoria_.requisitoIP).get(RequisitoIP_.vinculacionUniversidad),
@@ -222,15 +198,9 @@ public class ConvocatoriaPredicateResolver implements SgiRSQLPredicateResolver<C
 
   private Predicate buildInRequisitoCategoriaProfesionalIp(ComparisonNode node, Root<Convocatoria> root,
       CriteriaQuery<?> query, CriteriaBuilder cb) {
-    ComparisonOperator operator = node.getOperator();
-    if (!operator.equals(RSQLOperators.EQUAL)) {
-      // Unsupported Operator
-      throw new IllegalArgumentException("Unsupported operator: " + operator + " for " + node.getSelector());
-    }
-    if (node.getArguments().size() != 1) {
-      // Bad number of arguments
-      throw new IllegalArgumentException("Bad number of arguments for " + node.getSelector());
-    }
+    PredicateResolverUtil.validateOperatorIsSupported(node, RSQLOperators.EQUAL);
+    PredicateResolverUtil.validateOperatorArgumentNumber(node, 1);
+
     String nivelAcademicoArgument = node.getArguments().get(0);
 
     Join<Convocatoria, RequisitoIP> joinRequisitoIPCategoriaProfesional = root.join(Convocatoria_.requisitoIP,
@@ -253,15 +223,9 @@ public class ConvocatoriaPredicateResolver implements SgiRSQLPredicateResolver<C
 
   private Predicate buildInRequisitoFechasCategoriaProfesionalIp(ComparisonNode node, Root<Convocatoria> root,
       CriteriaBuilder cb) {
-    ComparisonOperator operator = node.getOperator();
-    if (!operator.equals(RSQLOperators.EQUAL)) {
-      // Unsupported Operator
-      throw new IllegalArgumentException("Unsupported operator: " + operator + "for " + node.getSelector());
-    }
-    if (node.getArguments().size() != 1) {
-      // Bad number of arguments
-      throw new IllegalArgumentException("Bad number of arguments for " + node.getSelector());
-    }
+    PredicateResolverUtil.validateOperatorIsSupported(node, RSQLOperators.EQUAL);
+    PredicateResolverUtil.validateOperatorArgumentNumber(node, 1);
+
     String fechaObtencionCategoriaProfesionalArgument = node.getArguments().get(0);
     Instant fechaObtencionCategoriaProfesionalInstant = Instant.parse(fechaObtencionCategoriaProfesionalArgument);
 
@@ -285,6 +249,69 @@ public class ConvocatoriaPredicateResolver implements SgiRSQLPredicateResolver<C
         cb.and(isNullFechaMaxima, isNullFechaMinima));
   }
 
+  private Predicate buildInRequisitoProyectosCompetitivos(ComparisonNode node, Root<Convocatoria> root,
+      CriteriaQuery<?> query,
+      CriteriaBuilder cb) {
+    PredicateResolverUtil.validateOperatorIsSupported(node, RSQLOperators.EQUAL);
+    PredicateResolverUtil.validateOperatorArgumentNumber(node, 1);
+
+    String personaRef = node.getArguments().get(0);
+
+    Instant fechaActual = Instant.now().atZone(sgiConfigProperties.getTimeZone().toZoneId()).toInstant();
+
+    Predicate numMaximoCompetitivosActivos = cb.or(cb
+        .isNull(root.get(Convocatoria_.requisitoIP).get(RequisitoIP_.numMaximoCompetitivosActivos)),
+        cb.greaterThanOrEqualTo(root.get(Convocatoria_.requisitoIP).get(RequisitoIP_.numMaximoCompetitivosActivos),
+            countProyectosClasificacionCvnPersona(cb, query, personaRef, ClasificacionCVN.COMPETITIVOS, fechaActual)));
+
+    Predicate numMaximoNoCompetitivosActivos = cb.or(cb
+        .isNull(root.get(Convocatoria_.requisitoIP).get(RequisitoIP_.numMaximoNoCompetitivosActivos)),
+        cb.greaterThanOrEqualTo(root.get(Convocatoria_.requisitoIP).get(RequisitoIP_.numMaximoNoCompetitivosActivos),
+            countProyectosClasificacionCvnPersona(cb, query, personaRef, ClasificacionCVN.COMPETITIVOS,
+                fechaActual)));
+
+    Predicate numMinimoCompetitivos = cb.or(cb
+        .isNull(root.get(Convocatoria_.requisitoIP).get(RequisitoIP_.numMinimoCompetitivos)),
+        cb.lessThanOrEqualTo(root.get(Convocatoria_.requisitoIP).get(RequisitoIP_.numMinimoCompetitivos),
+            countProyectosClasificacionCvnPersona(cb, query, personaRef, ClasificacionCVN.NO_COMPETITIVOS, null)));
+
+    Predicate numMinimoNoCompetitivos = cb.or(cb
+        .isNull(root.get(Convocatoria_.requisitoIP).get(RequisitoIP_.numMinimoNoCompetitivos)),
+        cb.lessThanOrEqualTo(root.get(Convocatoria_.requisitoIP).get(RequisitoIP_.numMinimoNoCompetitivos),
+            countProyectosClasificacionCvnPersona(cb, query, personaRef, ClasificacionCVN.NO_COMPETITIVOS, null)));
+
+    return cb.and(numMaximoCompetitivosActivos,
+        numMaximoNoCompetitivosActivos, numMinimoCompetitivos, numMinimoNoCompetitivos);
+  }
+
+  private Subquery<Integer> countProyectosClasificacionCvnPersona(CriteriaBuilder cb, CriteriaQuery<?> cq,
+      String personaRef, ClasificacionCVN clasificacionCvn, Instant fecha) {
+
+    Subquery<Integer> subquery = cq.subquery(Integer.class);
+    Root<Proyecto> subqueryRoot = subquery.from(Proyecto.class);
+    Join<Proyecto, ProyectoEquipo> joinProyectoEquipo = subqueryRoot.join(Proyecto_.equipo);
+    Join<ProyectoEquipo, RolProyecto> joinRolProyecto = joinProyectoEquipo.join(ProyectoEquipo_.rolProyecto);
+
+    List<Predicate> listPredicates = new ArrayList<>();
+    listPredicates.add(cb.equal(subqueryRoot.get(Proyecto_.clasificacionCVN), clasificacionCvn));
+    listPredicates.add(cb.equal(joinProyectoEquipo.get(ProyectoEquipo_.personaRef), personaRef));
+    listPredicates.add(cb.isTrue(joinRolProyecto.get(RolProyecto_.rolPrincipal)));
+
+    if (fecha != null) {
+      listPredicates.add(
+          cb.and(
+              cb.or(cb.isNull(joinProyectoEquipo.get(ProyectoEquipo_.fechaInicio)),
+                  cb.lessThanOrEqualTo(joinProyectoEquipo.get(ProyectoEquipo_.fechaInicio), fecha)),
+              cb.or(cb.isNull(joinProyectoEquipo.get(ProyectoEquipo_.fechaFin)),
+                  cb.greaterThanOrEqualTo(joinProyectoEquipo.get(ProyectoEquipo_.fechaFin), fecha))));
+    }
+
+    subquery.select(cb.count(subqueryRoot.get(Proyecto_.id)).as(Integer.class));
+    subquery.where(listPredicates.toArray(new Predicate[] {}));
+
+    return subquery;
+  }
+
   @Override
   public boolean isManaged(ComparisonNode node) {
     Property property = Property.fromCode(node.getSelector());
@@ -299,25 +326,27 @@ public class ConvocatoriaPredicateResolver implements SgiRSQLPredicateResolver<C
       return null;
     }
     switch (property) {
-    case PLAZO_PRESENTACION_SOLICITUD:
-      return buildInPlazoPresentacionSolicitudes(node, root, criteriaBuilder);
-    /* REQUISITO IP */
-    case REQUISITO_SEXO_IP:
-      return buildInRequisitoSexoIp(node, root, criteriaBuilder);
-    case REQUISITO_EDAD_IP:
-      return buildInRequisitoEdadIp(node, root, criteriaBuilder);
-    case REQUISITO_NIVEL_ACADEMICO_IP:
-      return buildInRequisitoNivelAcademicoIp(node, root, query, criteriaBuilder);
-    case REQUISITO_FECHA_NIVEL_ACADEMICO_IP:
-      return buildInRequisitoFechasNivelAcademicoIp(node, root, criteriaBuilder);
-    case REQUISITO_VINCULACION_IP:
-      return buildInRequisitoVinculacionIp(node, root, criteriaBuilder);
-    case REQUISITO_CATEGORIA_PROFESIONAL_IP:
-      return buildInRequisitoCategoriaProfesionalIp(node, root, query, criteriaBuilder);
-    case REQUISITO_FECHA_CATEGORIA_PROFESIONAL_IP:
-      return buildInRequisitoFechasCategoriaProfesionalIp(node, root, criteriaBuilder);
-    default:
-      return null;
+      case PLAZO_PRESENTACION_SOLICITUD:
+        return buildInPlazoPresentacionSolicitudes(node, root, criteriaBuilder);
+      /* REQUISITO IP */
+      case REQUISITO_SEXO_IP:
+        return buildInRequisitoSexoIp(node, root, criteriaBuilder);
+      case REQUISITO_EDAD_IP:
+        return buildInRequisitoEdadIp(node, root, criteriaBuilder);
+      case REQUISITO_NIVEL_ACADEMICO_IP:
+        return buildInRequisitoNivelAcademicoIp(node, root, query, criteriaBuilder);
+      case REQUISITO_FECHA_NIVEL_ACADEMICO_IP:
+        return buildInRequisitoFechasNivelAcademicoIp(node, root, criteriaBuilder);
+      case REQUISITO_VINCULACION_IP:
+        return buildInRequisitoVinculacionIp(node, root, criteriaBuilder);
+      case REQUISITO_CATEGORIA_PROFESIONAL_IP:
+        return buildInRequisitoCategoriaProfesionalIp(node, root, query, criteriaBuilder);
+      case REQUISITO_FECHA_CATEGORIA_PROFESIONAL_IP:
+        return buildInRequisitoFechasCategoriaProfesionalIp(node, root, criteriaBuilder);
+      case REQUISITO_PROYECTOS_COMPETITIVOS:
+        return buildInRequisitoProyectosCompetitivos(node, root, query, criteriaBuilder);
+      default:
+        return null;
     }
   }
 

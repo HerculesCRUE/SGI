@@ -1,17 +1,17 @@
-import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
-
-import { PeticionEvaluacionListadoInvComponent } from './peticion-evaluacion-listado-inv.component';
-import { RouterTestingModule } from '@angular/router/testing';
-import { MaterialDesignModule } from '@material/material-design.module';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import TestUtils from '@core/utils/test-utils';
-import { SnackBarService } from '@core/services/snack-bar.service';
-import { SgiAuthModule, SgiAuthService } from '@sgi/framework/auth';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
+import { FlexLayoutModule } from '@angular/flex-layout';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { RouterTestingModule } from '@angular/router/testing';
+import { SnackBarService } from '@core/services/snack-bar.service';
+import TestUtils from '@core/utils/test-utils';
+import { MaterialDesignModule } from '@material/material-design.module';
 import { SharedModule } from '@shared/shared.module';
 import { LoggerTestingModule } from 'ngx-logger/testing';
-import { FlexLayoutModule } from '@angular/flex-layout';
+import { EtiSharedModule } from '../../shared/eti-shared.module';
+import { PeticionEvaluacionListadoInvComponent } from './peticion-evaluacion-listado-inv.component';
+
 
 describe('PeticionEvaluacionListadoInvComponent', () => {
   let component: PeticionEvaluacionListadoInvComponent;
@@ -29,7 +29,8 @@ describe('PeticionEvaluacionListadoInvComponent', () => {
         FlexLayoutModule,
         FormsModule,
         ReactiveFormsModule,
-        SharedModule
+        SharedModule,
+        EtiSharedModule
       ],
       providers: [
         { provide: SnackBarService, useValue: TestUtils.getSnackBarServiceSpy() }

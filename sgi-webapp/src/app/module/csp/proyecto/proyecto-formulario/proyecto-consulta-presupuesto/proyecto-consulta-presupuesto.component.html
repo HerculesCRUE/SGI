@@ -1,47 +1,40 @@
 <sgi-fragment title="{{'menu.csp.proyectos.configuracion-economica' | translate}} - {{'menu.csp.proyectos.configuracion-economica.consulta-presupuesto' |
-    translate}}" *ngIf="fxLayoutProperties">
-  <form [formGroup]="filterForm">
-    <div [fxLayout.xs]="fxLayoutProperties.xs" [fxLayout]="fxLayoutProperties.layout"
-      [fxLayoutGap]="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
+    translate}}">
+  <div fxLayout="column" class="mat-elevation-z4">
+    <form [formGroup]="filterForm" fxLayout="row" fxLayoutGap="10px" class="busqueda">
 
       <!-- Listado de anualidades -->
-      <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
-        [fxFlexOrder]="fxFlexProperties.order">
-        <mat-form-field>
-          <mat-label>{{'csp.proyecto-consulta-presupuesto.label.listado-anualidades' | translate}}</mat-label>
-          <sgi-select-entity formControlName="anualidad" [options]="formPart.anualidades$ | async"
-            [displayWith]="displayerAnualidad"></sgi-select-entity>
-        </mat-form-field>
-      </div>
+      <mat-form-field fxFlex="25%">
+        <mat-label>{{'csp.proyecto-consulta-presupuesto.label.listado-anualidades' | translate}}</mat-label>
+        <sgi-select-entity formControlName="anualidad" [options]="formPart.anualidades$ | async"
+          [displayWith]="displayerAnualidad"></sgi-select-entity>
+      </mat-form-field>
+
       <!-- Listado de aplicaciones presupuestarias -->
-      <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
-        [fxFlexOrder]="fxFlexProperties.order">
-        <mat-form-field>
-          <mat-label>{{'csp.proyecto-consulta-presupuesto.label.listado-aplicaciones-presupuestarias' | translate}}
-          </mat-label>
-          <sgi-select-entity formControlName="aplicacion" [options]="formPart.aplicaciones$ | async"
-            [displayWith]="displayerAplicacion"></sgi-select-entity>
-        </mat-form-field>
-      </div>
+      <mat-form-field fxFlex="25%">
+        <mat-label>{{'csp.proyecto-consulta-presupuesto.label.listado-aplicaciones-presupuestarias' | translate}}
+        </mat-label>
+        <sgi-select-entity formControlName="aplicacion" [options]="formPart.aplicaciones$ | async"
+          [displayWith]="displayerAplicacion"></sgi-select-entity>
+      </mat-form-field>
+
       <!-- Listado de conceptos de gasto -->
-      <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
-        [fxFlexOrder]="fxFlexProperties.order">
-        <mat-form-field>
-          <mat-label>{{'csp.proyecto-consulta-presupuesto.label.listado-concepto-gasto' | translate}}
-          </mat-label>
-          <sgi-select-entity formControlName="concepto" [options]="formPart.conceptos$ | async"
-            [displayWith]="displayerConcepto"></sgi-select-entity>
-        </mat-form-field>
+      <mat-form-field fxFlex="25%">
+        <mat-label>{{'csp.proyecto-consulta-presupuesto.label.listado-concepto-gasto' | translate}}
+        </mat-label>
+        <sgi-select-entity formControlName="concepto" [options]="formPart.conceptos$ | async"
+          [displayWith]="displayerConcepto"></sgi-select-entity>
+      </mat-form-field>
+
+      <div class="buttons-final" fxFlex="25%" fxLayoutAlign="end">
+        <button mat-raised-button color="primary" (click)="filterTable()">
+          <mat-icon>search</mat-icon> {{ 'btn.search' | translate }}
+        </button>
       </div>
-    </div>
-    <div [fxLayout.xs]="fxLayoutProperties.xs" [fxLayout]="fxLayoutProperties.layout"
-      [fxLayoutGap]="fxLayoutProperties.gap" fxLayoutAlign="end center" ngClass.gt-xs="ml-10">
-      <div>
-        <button mat-raised-button color="primary" (click)="filterTable()">{{ 'btn.search' | translate }}</button>
-      </div>
-    </div>
-    <div [fxLayout.xs]="fxLayoutProperties.xs" [fxLayout]="fxLayoutProperties.layout"
-      [fxLayoutGap]="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
+
+    </form>
+
+    <div fxLayout="column">
       <mat-table [dataSource]="dataSource" multiTemplateDataRows>
         <!-- Anualidad -->
         <ng-container matColumnDef="anualidad">
@@ -111,10 +104,10 @@
           [class.expanded-row]="!!row.parent && !!!row.parent?.expanded">
         </mat-row>
       </mat-table>
-      <button mat-button matTooltip="{{'btn.export' | translate}}" (click)="openExportModal()"
+      <button mat-button fxFlexAlign="start" matTooltip="{{'btn.export' | translate}}" (click)="openExportModal()"
         [disabled]="!dataSource.data.length">
         <mat-icon color="primary">insert_chart_outlined</mat-icon>
       </button>
     </div>
-  </form>
+  </div>
 </sgi-fragment>

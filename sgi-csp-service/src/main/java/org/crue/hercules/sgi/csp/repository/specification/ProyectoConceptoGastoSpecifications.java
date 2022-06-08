@@ -11,6 +11,10 @@ import org.crue.hercules.sgi.csp.model.ProyectoConceptoGasto_;
 import org.crue.hercules.sgi.csp.model.Proyecto_;
 import org.springframework.data.jpa.domain.Specification;
 
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
+
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class ProyectoConceptoGastoSpecifications {
 
   /**
@@ -20,9 +24,7 @@ public class ProyectoConceptoGastoSpecifications {
    *         {@link Proyecto} activo.
    */
   public static Specification<ProyectoConceptoGasto> byProyectoActivo() {
-    return (root, query, cb) -> {
-      return cb.equal(root.get(ProyectoConceptoGasto_.proyecto).get(Proyecto_.activo), Boolean.TRUE);
-    };
+    return (root, query, cb) -> cb.equal(root.get(ProyectoConceptoGasto_.proyecto).get(Proyecto_.activo), Boolean.TRUE);
   }
 
   /**
@@ -33,9 +35,7 @@ public class ProyectoConceptoGastoSpecifications {
    *         permitidos o no.
    */
   public static Specification<ProyectoConceptoGasto> byPermitido(Boolean permitido) {
-    return (root, query, cb) -> {
-      return cb.equal(root.get(ProyectoConceptoGasto_.permitido), permitido);
-    };
+    return (root, query, cb) -> cb.equal(root.get(ProyectoConceptoGasto_.permitido), permitido);
   }
 
   /**
@@ -46,9 +46,7 @@ public class ProyectoConceptoGastoSpecifications {
    *         proyecto
    */
   public static Specification<ProyectoConceptoGasto> byProyecto(Long idProyecto) {
-    return (root, query, cb) -> {
-      return cb.equal(root.get(ProyectoConceptoGasto_.proyecto).get(Proyecto_.id), idProyecto);
-    };
+    return (root, query, cb) -> cb.equal(root.get(ProyectoConceptoGasto_.proyecto).get(Proyecto_.id), idProyecto);
   }
 
   /**
@@ -59,11 +57,8 @@ public class ProyectoConceptoGastoSpecifications {
    *         valor en las fechas
    */
   public static Specification<ProyectoConceptoGasto> withFechas() {
-    return (root, query, cb) -> {
-
-      return cb.and(cb.isNotNull(root.get(ProyectoConceptoGasto_.fechaInicio)),
-          cb.isNotNull(root.get(ProyectoConceptoGasto_.fechaFin)));
-    };
+    return (root, query, cb) -> cb.and(cb.isNotNull(root.get(ProyectoConceptoGasto_.fechaInicio)),
+        cb.isNotNull(root.get(ProyectoConceptoGasto_.fechaFin)));
   }
 
   /**
@@ -74,16 +69,14 @@ public class ProyectoConceptoGastoSpecifications {
    * @return specification para obtener los {@link ProyectoConceptoGasto} con
    *         rango de meses solapados
    */
-  public static Specification<ProyectoConceptoGasto> byRangoMesesSolapados(Instant fechaInicio, Instant fechaFin) {
-    return (root, query, cb) -> {
-      return cb.and(
-          cb.or(cb.isNull(root.get(ProyectoConceptoGasto_.fechaInicio)),
-              cb.lessThanOrEqualTo(root.get(ProyectoConceptoGasto_.fechaInicio),
-                  fechaFin != null ? fechaFin : Instant.parse("2500-01-01T23:59:59Z"))),
-          cb.or(cb.isNull(root.get(ProyectoConceptoGasto_.fechaFin)),
-              cb.greaterThanOrEqualTo(root.get(ProyectoConceptoGasto_.fechaFin),
-                  fechaInicio != null ? fechaInicio : Instant.parse("1900-01-01T00:00:00Z"))));
-    };
+  public static Specification<ProyectoConceptoGasto> byRangoFechasSolapados(Instant fechaInicio, Instant fechaFin) {
+    return (root, query, cb) -> cb.and(
+        cb.or(cb.isNull(root.get(ProyectoConceptoGasto_.fechaInicio)),
+            cb.lessThanOrEqualTo(root.get(ProyectoConceptoGasto_.fechaInicio),
+                fechaFin != null ? fechaFin : Instant.parse("2500-01-01T23:59:59Z"))),
+        cb.or(cb.isNull(root.get(ProyectoConceptoGasto_.fechaFin)),
+            cb.greaterThanOrEqualTo(root.get(ProyectoConceptoGasto_.fechaFin),
+                fechaInicio != null ? fechaInicio : Instant.parse("1900-01-01T00:00:00Z"))));
   }
 
   /**
@@ -94,9 +87,7 @@ public class ProyectoConceptoGastoSpecifications {
    *         no se encuentre entre los recibidos.
    */
   public static Specification<ProyectoConceptoGasto> notIn(List<Long> excluidos) {
-    return (root, query, cb) -> {
-      return root.get(ProyectoConceptoGasto_.id).in(excluidos).not();
-    };
+    return (root, query, cb) -> root.get(ProyectoConceptoGasto_.id).in(excluidos).not();
   }
 
   /**
@@ -108,9 +99,8 @@ public class ProyectoConceptoGastoSpecifications {
    *         {@link ConceptoGasto} indicado.
    */
   public static Specification<ProyectoConceptoGasto> byConceptoGasto(ConceptoGasto conceptoGasto) {
-    return (root, query, cb) -> {
-      return cb.equal(root.get(ProyectoConceptoGasto_.conceptoGasto).get(ConceptoGasto_.id), conceptoGasto.getId());
-    };
+    return (root, query, cb) -> cb.equal(root.get(ProyectoConceptoGasto_.conceptoGasto).get(ConceptoGasto_.id),
+        conceptoGasto.getId());
   }
 
   /**
@@ -129,4 +119,5 @@ public class ProyectoConceptoGastoSpecifications {
       return cb.equal(root.get(ProyectoConceptoGasto_.id), id).not();
     };
   }
+
 }

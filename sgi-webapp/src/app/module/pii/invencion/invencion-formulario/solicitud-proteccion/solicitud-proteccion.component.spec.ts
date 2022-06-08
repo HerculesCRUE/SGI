@@ -14,6 +14,7 @@ import { SgiAuthModule, SgiAuthService } from '@sgi/framework/auth';
 import { SharedModule } from '@shared/shared.module';
 import { LoggerTestingModule } from 'ngx-logger/testing';
 import { SgpSharedModule } from 'src/app/esb/sgp/shared/sgp-shared.module';
+import { PiiSharedModule } from '../../../shared/pii-shared.module';
 import { IInvencionData, InvencionActionService } from '../../invencion.action.service';
 import { INVENCION_DATA_KEY } from '../../invencion.resolver';
 import { SolicitudProteccionComponent } from './solicitud-proteccion.component';
@@ -40,6 +41,7 @@ describe('SolicitudProteccionComponent', () => {
         FlexLayoutModule,
         ReactiveFormsModule,
         SharedModule,
+        PiiSharedModule,
         SgpSharedModule,
         SgiAuthModule
       ],

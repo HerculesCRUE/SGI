@@ -2,6 +2,8 @@ package org.crue.hercules.sgi.eti.service.impl;
 
 import java.time.Instant;
 import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.ZonedDateTime;
 import java.time.temporal.ChronoField;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -48,6 +50,7 @@ import org.crue.hercules.sgi.eti.repository.PeticionEvaluacionRepository;
 import org.crue.hercules.sgi.eti.repository.RespuestaRepository;
 import org.crue.hercules.sgi.eti.repository.TareaRepository;
 import org.crue.hercules.sgi.eti.repository.specification.MemoriaSpecifications;
+import org.crue.hercules.sgi.eti.service.ComunicadosService;
 import org.crue.hercules.sgi.eti.service.ConfiguracionService;
 import org.crue.hercules.sgi.eti.service.InformeService;
 import org.crue.hercules.sgi.eti.service.MemoriaService;
@@ -129,6 +132,11 @@ public class MemoriaServiceImpl implements MemoriaService {
   /** Apartado repository */
   private final ApartadoRepository apartadoRepository;
 
+  /** Comunicado service */
+  private final ComunicadosService comunicadosService;
+
+  private static final String TIPO_ACTIVIDAD_INVESTIGACION_TUTELADA = "Investigación tutelada";
+
   public MemoriaServiceImpl(SgiConfigProperties sgiConfigProperties, MemoriaRepository memoriaRepository,
       EstadoMemoriaRepository estadoMemoriaRepository, EstadoRetrospectivaRepository estadoRetrospectivaRepository,
       EvaluacionRepository evaluacionRepository, ComentarioRepository comentarioRepository,
@@ -136,7 +144,7 @@ public class MemoriaServiceImpl implements MemoriaService {
       ComiteRepository comiteRepository, DocumentacionMemoriaRepository documentacionMemoriaRepository,
       RespuestaRepository respuestaRepository, TareaRepository tareaRepository,
       ConfiguracionService configuracionService, SgiApiRepService reportService, SgdocService sgdocService,
-      BloqueRepository bloqueRepository, ApartadoRepository apartadoRepository) {
+      BloqueRepository bloqueRepository, ApartadoRepository apartadoRepository, ComunicadosService comunicadosService) {
     this.sgiConfigProperties = sgiConfigProperties;
     this.memoriaRepository = memoriaRepository;
     this.estadoMemoriaRepository = estadoMemoriaRepository;
@@ -154,6 +162,7 @@ public class MemoriaServiceImpl implements MemoriaService {
     this.sgdocService = sgdocService;
     this.bloqueRepository = bloqueRepository;
     this.apartadoRepository = apartadoRepository;
+    this.comunicadosService = comunicadosService;
   }
 
   /**
@@ -895,6 +904,60 @@ public class MemoriaServiceImpl implements MemoriaService {
 
   }
 
+  /**
+   * Recuperar aquellas memorias que requieren evaluación retrospectiva y cuya
+   * fecha de evaluación retrospectiva se encuentre entre el día actual y el
+   * número de días guardado como parámetro de configuración
+   */
+  public List<Memoria> recuperarMemoriasAvisoFechaRetrospectiva() {
+    log.debug("recuperarMemoriasAvisoFechaRetrospectiva() - start");
+    Configuracion configuracion = configuracionService.findConfiguracion();
+    long diasPreaviso = configuracion.getDiasAvisoRetrospectiva();
+
+    Instant fechaInicio = Instant.now().atZone(this.sgiConfigProperties.getTimeZone().toZoneId())
+        .with(LocalTime.MIN).withNano(0).plusDays(diasPreaviso).toInstant();
+
+    Instant fechaFin = this.getLastInstantOfDay().plusDays(diasPreaviso)
+        .toInstant();
+
+    Specification<Memoria> specsMemoriasByDiasAvisoRetrospectivaAndRequiereRetrospectiva = MemoriaSpecifications
+        .requiereRetrospectiva()
+        .and(MemoriaSpecifications.byFechaRetrospectivaBetween(fechaInicio, fechaFin));
+
+    List<Memoria> memoriasPendientesAviso = memoriaRepository
+        .findAll(specsMemoriasByDiasAvisoRetrospectivaAndRequiereRetrospectiva);
+
+    log.debug("recuperarMemoriasAvisoFechaRetrospectiva() - end");
+    return memoriasPendientesAviso;
+  }
+
+  public void sendComunicadoInformeRetrospectivaCeeaPendiente() {
+    List<Memoria> memorias = recuperarMemoriasAvisoFechaRetrospectiva();
+    if (CollectionUtils.isEmpty(memorias)) {
+      log.info("No existen memorias que requieran generar aviso de evaluación de retrospectiva pendiente");
+    } else {
+      memorias.stream().forEach(memoria -> {
+        String tipoActividad;
+        if (!memoria.getPeticionEvaluacion().getTipoActividad().getNombre()
+            .equals(TIPO_ACTIVIDAD_INVESTIGACION_TUTELADA)) {
+          tipoActividad = memoria.getPeticionEvaluacion().getTipoActividad().getNombre();
+        } else {
+          tipoActividad = memoria.getPeticionEvaluacion().getTipoInvestigacionTutelada().getNombre();
+        }
+        try {
+          this.comunicadosService.enviarComunicadoInformeRetrospectivaCeeaPendiente(
+              memoria.getComite().getNombreInvestigacion(),
+              memoria.getComite().getGenero().toString(), memoria.getNumReferencia(), tipoActividad,
+              memoria.getPeticionEvaluacion().getTitulo(), memoria.getCodOrganoCompetente(),
+              memoria.getPersonaRef());
+        } catch (Exception e) {
+          log.debug("enviarComunicadoInformeRetrospectivaCeeaPendiente() - Error al enviar el comunicado", e);
+
+        }
+      });
+    }
+  }
+
   private void validacionesCreateMemoria(Memoria memoria) {
     log.debug("validacionesCreateMemoria(Memoria memoria) - start");
 
@@ -1097,5 +1160,10 @@ public class MemoriaServiceImpl implements MemoriaService {
     }
     log.debug("archivarInactivos() - end");
     return memoriasArchivadas;
+  }
+
+  private ZonedDateTime getLastInstantOfDay() {
+    return Instant.now().atZone(this.sgiConfigProperties.getTimeZone().toZoneId())
+        .with(LocalTime.MAX).withNano(0);
   }
 }

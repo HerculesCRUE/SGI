@@ -1,13 +1,8 @@
-<div class="sgi-dialog-header" fxLayout="row" fxLayoutGap="20px">
-  <span fxFlexAlign="center" mat-mat-dialog-title role="heading" aria-level="3" fxFlex>{{title}}</span>
-  <button fxFlex="nogrow" mat-icon-button mat-dialog-close>
-    <mat-icon class="close-icon">close</mat-icon>
-  </button>
-</div>
-<mat-dialog-content>
+<sgi-dialog-header [title]="title"></sgi-dialog-header>
+<sgi-dialog-content>
   <form [formGroup]="formGroup">
     <!-- Empresa económica -->
-    <div [fxLayout]="fxLayoutProperties.layout" [fxLayoutAlign]="fxLayoutProperties.layoutAlign">
+    <div fxLayout="row">
       <mat-form-field>
         <mat-label>{{'csp.entidad-financiadora.empresa-economica' | translate}}</mat-label>
         <sgi-select-empresa formControlName="empresa"
@@ -19,14 +14,14 @@
       </mat-form-field>
     </div>
     <!-- Fuente de financiación -->
-    <div [fxLayout]="fxLayoutProperties.layout" [fxLayoutAlign]="fxLayoutProperties.layoutAlign">
+    <div fxLayout="row">
       <mat-form-field>
         <mat-label>{{'csp.entidad-financiadora.fuente-financiacion' | translate}}</mat-label>
         <sgi-select-fuente-financiacion formControlName="fuenteFinanciacion"></sgi-select-fuente-financiacion>
       </mat-form-field>
     </div>
     <!-- Tipo de financiación -->
-    <div [fxLayout]="fxLayoutProperties.layout" [fxLayoutAlign]="fxLayoutProperties.layoutAlign">
+    <div fxLayout="row">
       <mat-form-field>
         <mat-label>{{'csp.entidad-financiadora.tipo-financiacion' | translate}}</mat-label>
         <sgi-select-tipo-financiacion formControlName="tipoFinanciacion">
@@ -34,7 +29,7 @@
       </mat-form-field>
     </div>
     <!-- Porcentaje de financiación -->
-    <div [fxLayout]="fxLayoutProperties.layout" [fxLayoutAlign]="fxLayoutProperties.layoutAlign">
+    <div fxLayout="row">
       <mat-form-field>
         <mat-label>{{'csp.entidad-financiadora.porcentaje-financiacion' | translate}}
         </mat-label>
@@ -52,7 +47,7 @@
       </mat-form-field>
     </div>
     <!-- Importe de financiación -->
-    <div [fxLayout]="fxLayoutProperties.layout" [fxLayoutAlign]="fxLayoutProperties.layoutAlign">
+    <div fxLayout="row">
       <mat-form-field>
         <mat-label>{{'csp.entidad-financiadora.importe-financiacion' | translate}}
         </mat-label>
@@ -67,9 +62,10 @@
       </mat-form-field>
     </div>
   </form>
-</mat-dialog-content>
+</sgi-dialog-content>
 <mat-dialog-actions>
-  <button color="accent" (click)="saveOrUpdate()" mat-raised-button type="submit" *ngIf="!data.readonly">
+  <button color="accent" (click)="doAction()" [disabled]="this.actionDisabled" mat-raised-button type="submit"
+    *ngIf="!data.readonly">
     <mat-icon class="save-icon">save</mat-icon>{{textSaveOrUpdate | translate}}
   </button>
   <button class="link-cancelar" mat-button type="button" mat-dialog-close>{{'btn.cancel' |

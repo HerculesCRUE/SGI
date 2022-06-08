@@ -128,7 +128,6 @@ export class ModeloEjecucionTipoUnidadGestionComponent extends FragmentComponent
     };
 
     const config = {
-      panelClass: 'sgi-dialog-container',
       data: dataModal
     };
     const dialogRef = this.matDialog.open(ModeloEjecucionTipoUnidadGestionModalComponent, config);

@@ -130,7 +130,6 @@ export class SeguimientoComentariosComponent extends FragmentComponent implement
     };
 
     const config = {
-      panelClass: 'sgi-dialog-container',
       data: evaluacionData
     };
     const dialogRef = this.matDialog.open(ComentarioModalComponent, config);
@@ -157,7 +156,6 @@ export class SeguimientoComentariosComponent extends FragmentComponent implement
     };
 
     const config = {
-      panelClass: 'sgi-dialog-container',
       data: evaluacionData
     };
 

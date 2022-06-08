@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.crue.hercules.sgi.csp.model.AnualidadIngreso;
+import org.crue.hercules.sgi.csp.model.Proyecto;
 import org.crue.hercules.sgi.csp.model.ProyectoAnualidad;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
@@ -27,4 +28,13 @@ public interface AnualidadIngresoRepository
   boolean existsByProyectoPartidaIdAndProyectoAnualidadEnviadoSgeIsTrue(Long proyectoPartidaId);
 
   Optional<List<AnualidadIngreso>> findByProyectoPartidaId(Long proyectoPartidaId);
+
+  /**
+   * Indica si existen {@link AnualidadIngreso} de un {@link Proyecto}
+   * 
+   * @param proyectoId identificador de la {@link Proyecto}
+   * @return si existen {@link AnualidadIngreso} asociados al {@link Proyecto}
+   */
+  boolean existsByProyectoAnualidadProyectoId(Long proyectoId);
+
 }

@@ -4,18 +4,15 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
-import { BaseModalComponent } from '@core/component/base-modal.component';
+import { DialogFormComponent } from '@core/component/dialog-form.component';
 import { MSG_PARAMS } from '@core/i18n';
 import { IConvocatoriaConceptoGasto } from '@core/models/csp/convocatoria-concepto-gasto';
 import { IConvocatoriaConceptoGastoCodigoEc } from '@core/models/csp/convocatoria-concepto-gasto-codigo-ec';
 import { IPartidaGasto } from '@core/models/csp/partida-gasto';
 import { ISolicitudProyectoPresupuesto } from '@core/models/csp/solicitud-proyecto-presupuesto';
-import { FxFlexProperties } from '@core/models/shared/flexLayout/fx-flex-properties';
-import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-properties';
 import { ConvocatoriaConceptoGastoService } from '@core/services/csp/convocatoria-concepto-gasto.service';
 import { ConvocatoriaService } from '@core/services/csp/convocatoria.service';
 import { CodigoEconomicoGastoService } from '@core/services/sge/codigo-economico-gasto.service';
-import { SnackBarService } from '@core/services/snack-bar.service';
 import { TranslateService } from '@ngx-translate/core';
 import { RSQLSgiRestFilter, SgiRestFilterOperator, SgiRestFindOptions } from '@sgi/framework/http';
 import { merge, Observable, of } from 'rxjs';
@@ -47,8 +44,7 @@ const TITLE_NEW_ENTITY = marker('title.new.entity');
   templateUrl: './partida-gasto-modal.component.html',
   styleUrls: ['./partida-gasto-modal.component.scss']
 })
-export class PartidaGastoModalComponent extends
-  BaseModalComponent<IPartidaGasto, PartidaGastoDataModal> implements OnInit {
+export class PartidaGastoModalComponent extends DialogFormComponent<IPartidaGasto> implements OnInit {
 
   private conceptosGastoCodigoEcPermitidos: ConvocatoriaConceptoGastoCodigoEc[] = [];
   private conceptosGastoCodigoEcNoPermitidos: ConvocatoriaConceptoGastoCodigoEc[] = [];
@@ -64,9 +60,6 @@ export class PartidaGastoModalComponent extends
 
   showCodigosEconomicosInfo = false;
 
-  fxFlexProperties: FxFlexProperties;
-  fxFlexPropertiesInline: FxFlexProperties;
-  fxFlexPropertiesCodigosEconomicos: FxFlexProperties;
   textSaveOrUpdate: string;
   title: string;
 
@@ -76,38 +69,14 @@ export class PartidaGastoModalComponent extends
   msgParamImportePresupuestadoEntity = {};
 
   constructor(
-    protected snackBarService: SnackBarService,
-    public matDialogRef: MatDialogRef<PartidaGastoDataModal>,
+    matDialogRef: MatDialogRef<PartidaGastoDataModal>,
     @Inject(MAT_DIALOG_DATA) public data: PartidaGastoDataModal,
     private convocatoriaService: ConvocatoriaService,
     private convocatoriaConceptoGastoService: ConvocatoriaConceptoGastoService,
     private codigoEconomicoGastoService: CodigoEconomicoGastoService,
     private readonly translate: TranslateService
   ) {
-    super(snackBarService, matDialogRef, data.partidaGasto);
-
-    this.fxFlexProperties = new FxFlexProperties();
-    this.fxFlexProperties.sm = '0 1 calc(100%-10px)';
-    this.fxFlexProperties.md = '0 1 calc(33%-10px)';
-    this.fxFlexProperties.gtMd = '0 1 calc(15%-10px)';
-    this.fxFlexProperties.order = '2';
-
-    this.fxFlexPropertiesCodigosEconomicos = new FxFlexProperties();
-    this.fxFlexPropertiesCodigosEconomicos.sm = '0 1 calc(50%-10px)';
-    this.fxFlexPropertiesCodigosEconomicos.md = '0 1 calc(50%-10px)';
-    this.fxFlexPropertiesCodigosEconomicos.gtMd = '0 1 calc(50%-10px)';
-    this.fxFlexPropertiesCodigosEconomicos.order = '2';
-
-    this.fxFlexPropertiesInline = new FxFlexProperties();
-    this.fxFlexPropertiesInline.sm = '0 1 calc(100%-10px)';
-    this.fxFlexPropertiesInline.md = '0 1 calc(100%-10px)';
-    this.fxFlexPropertiesInline.gtMd = '0 1 calc(100%-10px)';
-    this.fxFlexPropertiesInline.order = '4';
-
-    this.fxLayoutProperties = new FxLayoutProperties();
-    this.fxLayoutProperties.gap = '20px';
-    this.fxLayoutProperties.layout = 'row wrap';
-    this.fxLayoutProperties.xs = 'column';
+    super(matDialogRef, !!data.partidaGasto?.conceptoGasto);
   }
 
   ngOnInit(): void {
@@ -212,7 +181,7 @@ export class PartidaGastoModalComponent extends
       { entity: value, ...MSG_PARAMS.GENDER.MALE, ...MSG_PARAMS.CARDINALIRY.SINGULAR });
   }
 
-  protected getFormGroup(): FormGroup {
+  protected buildFormGroup(): FormGroup {
     const formGroup = new FormGroup(
       {
         conceptoGasto: new FormControl(
@@ -254,7 +223,7 @@ export class PartidaGastoModalComponent extends
     return formGroup;
   }
 
-  protected getDatosForm(): IPartidaGasto {
+  protected getValue(): IPartidaGasto {
     const entidad = this.data.partidaGasto;
     entidad.conceptoGasto = this.formGroup.controls.conceptoGasto.value;
     entidad.anualidad = this.formGroup.controls.anualidad.value;

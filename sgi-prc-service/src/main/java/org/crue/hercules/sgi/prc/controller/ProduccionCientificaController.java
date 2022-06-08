@@ -10,6 +10,7 @@ import org.crue.hercules.sgi.prc.dto.AcreditacionOutput;
 import org.crue.hercules.sgi.prc.dto.ActividadOutput;
 import org.crue.hercules.sgi.prc.dto.ActividadResumen;
 import org.crue.hercules.sgi.prc.dto.AutorOutput;
+import org.crue.hercules.sgi.prc.dto.CampoProduccionCientificaOutput;
 import org.crue.hercules.sgi.prc.dto.ComiteEditorialOutput;
 import org.crue.hercules.sgi.prc.dto.ComiteEditorialResumen;
 import org.crue.hercules.sgi.prc.dto.CongresoOutput;
@@ -25,17 +26,23 @@ import org.crue.hercules.sgi.prc.dto.ProduccionCientificaOutput.EstadoProduccion
 import org.crue.hercules.sgi.prc.dto.ProyectoOutput;
 import org.crue.hercules.sgi.prc.dto.PublicacionOutput;
 import org.crue.hercules.sgi.prc.dto.PublicacionResumen;
+import org.crue.hercules.sgi.prc.dto.ValorCampoOutput;
+import org.crue.hercules.sgi.prc.exceptions.NoRelatedEntitiesException;
 import org.crue.hercules.sgi.prc.model.Acreditacion;
 import org.crue.hercules.sgi.prc.model.Autor;
+import org.crue.hercules.sgi.prc.model.CampoProduccionCientifica;
 import org.crue.hercules.sgi.prc.model.EstadoProduccionCientifica.TipoEstadoProduccion;
 import org.crue.hercules.sgi.prc.model.IndiceImpacto;
 import org.crue.hercules.sgi.prc.model.ProduccionCientifica;
 import org.crue.hercules.sgi.prc.model.Proyecto;
+import org.crue.hercules.sgi.prc.model.ValorCampo;
 import org.crue.hercules.sgi.prc.service.AcreditacionService;
 import org.crue.hercules.sgi.prc.service.AutorService;
+import org.crue.hercules.sgi.prc.service.CampoProduccionCientificaService;
 import org.crue.hercules.sgi.prc.service.IndiceImpactoService;
 import org.crue.hercules.sgi.prc.service.ProduccionCientificaService;
 import org.crue.hercules.sgi.prc.service.ProyectoService;
+import org.crue.hercules.sgi.prc.service.ValorCampoService;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -48,6 +55,7 @@ import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -62,23 +70,29 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @RequiredArgsConstructor
 public class ProduccionCientificaController {
-  public static final String MAPPING = "/producciones-cientificas";
-  public static final String PATH_PUBLICACIONES = "/publicaciones";
-  public static final String PATH_COMITES_EDITORIALES = "/comites-editoriales";
-  public static final String PATH_CONGRESOS = "/congresos";
-  public static final String PATH_OBRAS_ARTISTICAS = "/obras-artisticas";
-  public static final String PATH_ACTIVIDADES = "/actividades";
-  public static final String PATH_DIRECCIONES_TESIS = "/direcciones-tesis";
-  public static final String PATH_INDICES_IMPACTO = "/{id}/indices-impacto";
-  public static final String PATH_AUTORES = "/{id}/autores";
-  public static final String PATH_PROYECTOS = "/{id}/proyectos";
-  public static final String PATH_ACREDITACIONES = "/{id}/acreditaciones";
+  public static final String PATH_DELIMITER = "/";
+  public static final String MAPPING = PATH_DELIMITER + "producciones-cientificas";
+  public static final String PATH_PUBLICACIONES = PATH_DELIMITER + "publicaciones";
+  public static final String PATH_COMITES_EDITORIALES = PATH_DELIMITER + "comites-editoriales";
+  public static final String PATH_CONGRESOS = PATH_DELIMITER + "congresos";
+  public static final String PATH_OBRAS_ARTISTICAS = PATH_DELIMITER + "obras-artisticas";
+  public static final String PATH_ACTIVIDADES = PATH_DELIMITER + "actividades";
+  public static final String PATH_DIRECCIONES_TESIS = PATH_DELIMITER + "direcciones-tesis";
+  public static final String PATH_INDICES_IMPACTO = PATH_DELIMITER + "{id}/indices-impacto";
+  public static final String PATH_AUTORES = PATH_DELIMITER + "{id}/autores";
+  public static final String PATH_PROYECTOS = PATH_DELIMITER + "{id}/proyectos";
+  public static final String PATH_ACREDITACIONES = PATH_DELIMITER + "{id}/acreditaciones";
+  public static final String PATH_CAMPOS = PATH_DELIMITER + "{id}/campos";
+  public static final String PATH_VALORES = PATH_CAMPOS + PATH_DELIMITER + "{campoId}/valores";
+  public static final String PATH_MODIFICABLE = PATH_DELIMITER + "{id}/modificable";
 
   private final ProduccionCientificaService service;
   private final IndiceImpactoService indiceImpactoService;
   private final AutorService autorService;
   private final ProyectoService proyectoService;
   private final AcreditacionService acreditacionService;
+  private final CampoProduccionCientificaService campoProduccionCientificaService;
+  private final ValorCampoService valorCampoService;
 
   private final ModelMapper modelMapper;
 
@@ -91,7 +105,7 @@ public class ProduccionCientificaController {
    *         filtradas.
    */
   @GetMapping(PATH_PUBLICACIONES)
-  @PreAuthorize("hasAnyAuthority('PRC-VAL-V', 'PRC-VAL-E')")
+  @PreAuthorize("hasAnyAuthority('PRC-VAL-V', 'PRC-VAL-E', 'PRC-VAL-INV-ER')")
   public ResponseEntity<Page<PublicacionOutput>> findAllPublicaciones(
       @RequestParam(name = "q", required = false) String query, @RequestPageable(sort = "s") Pageable paging) {
     log.debug("findAllPublicaciones(String query, Pageable paging) - start");
@@ -154,7 +168,7 @@ public class ProduccionCientificaController {
    *         filtradas.
    */
   @GetMapping(PATH_CONGRESOS)
-  @PreAuthorize("hasAnyAuthority('PRC-VAL-V', 'PRC-VAL-E')")
+  @PreAuthorize("hasAnyAuthority('PRC-VAL-V', 'PRC-VAL-E', 'PRC-VAL-INV-ER')")
   public ResponseEntity<Page<CongresoOutput>> findAllCongresos(
       @RequestParam(name = "q", required = false) String query, @RequestPageable(sort = "s") Pageable paging) {
     log.debug("findAllCongresos(String query, Pageable paging) - start");
@@ -309,9 +323,11 @@ public class ProduccionCientificaController {
    * @return {@link ProduccionCientificaOutput} correspondiente al id.
    */
   @GetMapping("/{id}")
-  @PreAuthorize("hasAnyAuthority('PRC-VAL-V', 'PRC-VAL-E')")
+  @PreAuthorize("hasAnyAuthority('PRC-VAL-V', 'PRC-VAL-E', 'PRC-VAL-INV-ER')")
   public ProduccionCientificaOutput findById(@PathVariable Long id) {
     log.debug("findById(Long id) - start");
+    service.checkAccesibleByInvestigador(id);
+
     ProduccionCientifica returnValue = service.findById(id);
     log.debug("findById(Long id) - end");
     return convert(returnValue);
@@ -324,9 +340,11 @@ public class ProduccionCientificaController {
    * @return {@link ProduccionCientifica} actualizada.
    */
   @PatchMapping("/{id}/validar")
-  @PreAuthorize("hasAuthority('PRC-VAL-E')")
+  @PreAuthorize("hasAnyAuthority('PRC-VAL-E', 'PRC-VAL-INV-ER')")
   public ProduccionCientificaOutput validar(@PathVariable Long id) {
     log.debug("validar(Long id) - start");
+    service.checkAccesibleByInvestigador(id);
+
     ProduccionCientifica returnValue = service.cambiarEstado(id, TipoEstadoProduccion.VALIDADO, null);
     log.debug("validar(Long id) - end");
     return convert(returnValue);
@@ -342,14 +360,50 @@ public class ProduccionCientificaController {
    * @return {@link ProduccionCientifica} actualizada.
    */
   @PatchMapping("/{id}/rechazar")
-  @PreAuthorize("hasAuthority('PRC-VAL-E')")
+  @PreAuthorize("hasAnyAuthority('PRC-VAL-E', 'PRC-VAL-INV-ER')")
   public ProduccionCientificaOutput rechazar(@PathVariable Long id,
       @Valid @RequestBody EstadoProduccionCientificaInput estadoProduccionCientifica) {
     log.debug("rechazar(Long id, EstadoProduccionCientificaInput estadoProduccionCientifica) - start");
+    service.checkAccesibleByInvestigador(id);
+
     ProduccionCientifica returnValue = service.cambiarEstado(id, TipoEstadoProduccion.RECHAZADO,
         estadoProduccionCientifica.getComentario());
     log.debug("rechazar(Long id, EstadoProduccionCientificaInput estadoProduccionCientifica) - end");
     return convert(returnValue);
+  }
+
+  /**
+   * Hace las comprobaciones necesarias para determinar si la
+   * {@link ProduccionCientifica} puede ser consultada por un investigador.
+   *
+   * @param id Id de la {@link ProduccionCientifica}.
+   * @return HTTP-200 si puede ser modificada / HTTP-204 si no puede ser
+   *         consultada
+   */
+  @RequestMapping(path = "/{id}", method = RequestMethod.HEAD)
+  @PreAuthorize("hasAuthority('PRC-VAL-INV-ER')")
+  public ResponseEntity<Void> accesibleByInvestigador(@PathVariable Long id) {
+    log.debug("registrable(Long id) - start");
+    boolean returnValue = service.accesibleByInvestigador(id);
+    log.debug("registrable(Long id) - end");
+    return returnValue ? new ResponseEntity<>(HttpStatus.OK) : new ResponseEntity<>(HttpStatus.NO_CONTENT);
+  }
+
+  /**
+   * Hace las comprobaciones necesarias para determinar si la
+   * {@link ProduccionCientifica} puede ser editada por un investigador.
+   *
+   * @param id Id de la {@link ProduccionCientifica}.
+   * @return HTTP-200 si puede ser modificada / HTTP-204 si no puede ser
+   *         modificada
+   */
+  @RequestMapping(path = PATH_MODIFICABLE, method = RequestMethod.HEAD)
+  @PreAuthorize("hasAuthority('PRC-VAL-INV-ER')")
+  public ResponseEntity<Void> editableByInvestigador(@PathVariable Long id) {
+    log.debug("registrable(Long id) - start");
+    boolean returnValue = service.editableByInvestigador(id);
+    log.debug("registrable(Long id) - end");
+    return returnValue ? new ResponseEntity<>(HttpStatus.OK) : new ResponseEntity<>(HttpStatus.NO_CONTENT);
   }
 
   private ProduccionCientificaOutput convert(ProduccionCientifica produccionCientifica) {
@@ -380,10 +434,12 @@ public class ProduccionCientificaController {
    * @return listado de {@link IndiceImpacto} paginadas y/o filtradas.
    */
   @GetMapping(PATH_INDICES_IMPACTO)
-  @PreAuthorize("hasAnyAuthority('PRC-VAL-V', 'PRC-VAL-E')")
+  @PreAuthorize("hasAnyAuthority('PRC-VAL-V', 'PRC-VAL-E', 'PRC-VAL-INV-ER')")
   public ResponseEntity<Page<IndiceImpactoOutput>> findIndicesImpacto(@PathVariable Long id,
       @RequestParam(name = "q", required = false) String query, @RequestPageable(sort = "s") Pageable paging) {
     log.debug("findIndicesImpacto(Long id, String query, Pageable paging) - start");
+    service.checkAccesibleByInvestigador(id);
+
     Page<IndiceImpacto> page = indiceImpactoService.findAllByProduccionCientificaId(id, query, paging);
     if (page.isEmpty()) {
       log.debug("findIndicesImpacto(Long id, String query, Pageable paging) - end");
@@ -415,10 +471,12 @@ public class ProduccionCientificaController {
    * @return listado de {@link Autor} paginadas y/o filtradas.
    */
   @GetMapping(PATH_AUTORES)
-  @PreAuthorize("hasAnyAuthority('PRC-VAL-V', 'PRC-VAL-E')")
+  @PreAuthorize("hasAnyAuthority('PRC-VAL-V', 'PRC-VAL-E', 'PRC-VAL-INV-ER')")
   public ResponseEntity<Page<AutorOutput>> findAutores(@PathVariable Long id,
       @RequestParam(name = "q", required = false) String query, @RequestPageable(sort = "s") Pageable paging) {
     log.debug("findAutores(Long id, String query, Pageable paging) - start");
+    service.checkAccesibleByInvestigador(id);
+
     Page<Autor> page = autorService.findAllByProduccionCientificaId(id, query, paging);
     if (page.isEmpty()) {
       log.debug("findAutores(Long id, String query, Pageable paging) - end");
@@ -450,10 +508,12 @@ public class ProduccionCientificaController {
    * @return listado de {@link Proyecto} paginadas y/o filtradas.
    */
   @GetMapping(PATH_PROYECTOS)
-  @PreAuthorize("hasAnyAuthority('PRC-VAL-V', 'PRC-VAL-E')")
+  @PreAuthorize("hasAnyAuthority('PRC-VAL-V', 'PRC-VAL-E', 'PRC-VAL-INV-ER')")
   public ResponseEntity<Page<ProyectoOutput>> findProyectos(@PathVariable Long id,
       @RequestParam(name = "q", required = false) String query, @RequestPageable(sort = "s") Pageable paging) {
     log.debug("findProyectos(Long id, String query, Pageable paging) - start");
+    service.checkAccesibleByInvestigador(id);
+
     Page<Proyecto> page = proyectoService.findAllByProduccionCientificaId(id, query, paging);
     if (page.isEmpty()) {
       log.debug("findProyectos(Long id, String query, Pageable paging) - end");
@@ -485,10 +545,12 @@ public class ProduccionCientificaController {
    * @return listado de {@link Acreditacion} paginadas y/o filtradas.
    */
   @GetMapping(PATH_ACREDITACIONES)
-  @PreAuthorize("hasAnyAuthority('PRC-VAL-V', 'PRC-VAL-E')")
+  @PreAuthorize("hasAnyAuthority('PRC-VAL-V', 'PRC-VAL-E', 'PRC-VAL-INV-ER')")
   public ResponseEntity<Page<AcreditacionOutput>> findAcreditaciones(@PathVariable Long id,
       @RequestParam(name = "q", required = false) String query, @RequestPageable(sort = "s") Pageable paging) {
     log.debug("findAcreditaciones(Long id, String query, Pageable paging) - start");
+    service.checkAccesibleByInvestigador(id);
+
     Page<Acreditacion> page = acreditacionService.findAllByProduccionCientificaId(id, query, paging);
     if (page.isEmpty()) {
       log.debug("findAcreditaciones(Long id, String query, Pageable paging) - end");
@@ -508,5 +570,86 @@ public class ProduccionCientificaController {
 
   private AcreditacionOutput convert(Acreditacion acreditacion) {
     return modelMapper.map(acreditacion, AcreditacionOutput.class);
+  }
+
+  /**
+   * Devuelve una lista paginada y filtrada {@link CampoProduccionCientifica}.
+   * 
+   * @param id     el id de {@link ProduccionCientifica}.
+   * @param query  filtro de búsqueda.
+   * @param paging pageable.
+   * @return el listado de entidades {@link CampoProduccionCientifica}
+   *         paginadas y filtradas.
+   */
+  @GetMapping(PATH_CAMPOS)
+  @PreAuthorize("hasAnyAuthority('PRC-VAL-V', 'PRC-VAL-E', 'PRC-VAL-INV-ER')")
+  public ResponseEntity<Page<CampoProduccionCientificaOutput>> findCampos(@PathVariable Long id,
+      @RequestParam(name = "q", required = false) String query, @RequestPageable(sort = "s") Pageable paging) {
+    log.debug("findAll(String query, Pageable paging) - start");
+    service.checkAccesibleByInvestigador(id);
+
+    Page<CampoProduccionCientifica> page = campoProduccionCientificaService.findAllByProduccionCientificaId(id, query,
+        paging);
+    if (page.isEmpty()) {
+      log.debug("findAll(String query, Pageable paging) - end");
+      return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    log.debug("findAll(String query, Pageable paging) - end");
+    return new ResponseEntity<>(convert(page), HttpStatus.OK);
+  }
+
+  private Page<CampoProduccionCientificaOutput> convert(Page<CampoProduccionCientifica> page) {
+    List<CampoProduccionCientificaOutput> content = page.getContent().stream()
+        .map(this::convert).collect(Collectors.toList());
+
+    return new PageImpl<>(content, page.getPageable(), page.getTotalElements());
+  }
+
+  private CampoProduccionCientificaOutput convert(CampoProduccionCientifica campoProduccionCientifica) {
+    return modelMapper.map(campoProduccionCientifica, CampoProduccionCientificaOutput.class);
+  }
+
+  /**
+   * Obtiene todos los {@link ValorCampo} del {@link CampoProduccionCientifica}
+   * con el id indicado paginadas y/o filtradas.
+   *
+   * @param id      el id de {@link ProduccionCientifica}.
+   * @param campoId el id de {@link CampoProduccionCientifica}.
+   * @param query   la información del filtro.
+   * @param paging  la información de la paginación.
+   * @return listado de {@link ValorCampo} paginadas y/o filtradas.
+   */
+  @GetMapping(PATH_VALORES)
+  @PreAuthorize("hasAnyAuthority('PRC-VAL-V', 'PRC-VAL-E', 'PRC-VAL-INV-ER')")
+  public ResponseEntity<Page<ValorCampoOutput>> findValores(@PathVariable Long id, @PathVariable Long campoId,
+      @RequestParam(name = "q", required = false) String query, @RequestPageable(sort = "s") Pageable paging) {
+    log.debug("findValores(Long id, Long campoId, String query, Pageable paging) - start");
+    service.checkAccesibleByInvestigador(id);
+
+    final CampoProduccionCientifica relatedCampoProduccionCientifica = campoProduccionCientificaService
+        .findById(campoId);
+    if (!id.equals(relatedCampoProduccionCientifica.getProduccionCientificaId())) {
+      throw new NoRelatedEntitiesException(CampoProduccionCientifica.class, ProduccionCientifica.class);
+    }
+
+    Page<ValorCampo> page = valorCampoService.findAllByCampoProduccionCientificaId(campoId, query, paging);
+    if (page.isEmpty()) {
+      log.debug("findValores(Long id, Long campoId, String query, Pageable paging) - end");
+      return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+    log.debug("findValores(Long id, Long campoId, String query, Pageable paging) - end");
+    return new ResponseEntity<>(convertValorCampo(page), HttpStatus.OK);
+  }
+
+  private Page<ValorCampoOutput> convertValorCampo(Page<ValorCampo> page) {
+    List<ValorCampoOutput> content = page.getContent().stream()
+        .map(this::convert).collect(Collectors.toList());
+
+    return new PageImpl<>(content, page.getPageable(), page.getTotalElements());
+  }
+
+  private ValorCampoOutput convert(ValorCampo valorCampo) {
+    return modelMapper.map(valorCampo, ValorCampoOutput.class);
   }
 }

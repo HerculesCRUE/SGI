@@ -4,12 +4,11 @@
   <parent>
     <groupId>org.crue.hercules.sgi.esb.sgi</groupId>
     <artifactId>sgi-esb-sgi</artifactId>
-    <version>0.0.8</version>
+    <version>${revision}</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
   <groupId>org.crue.hercules.sgi.esb.sgi</groupId>
   <artifactId>sgi-registry-resources</artifactId>
-  <version>0.0.8</version>
   <packaging>pom</packaging>
   <name>sgi-registry-resources</name>
   <description>sgi-registry-resources</description>
@@ -42,6 +41,39 @@
   <build>
     <directory>target/capp</directory>
     <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-resources-plugin</artifactId>
+        <version>3.1.0</version>
+        <executions>
+            <execution>
+                <id>copy-resources</id>
+                <phase>validate</phase>
+                <goals>
+                    <goal>copy-resources</goal>
+                </goals>
+                <configuration>
+                    <outputDirectory>build</outputDirectory>
+                    <resources>
+                        <resource>
+                            <directory>./</directory>
+                            <includes>
+                                <include>artifact.xml</include>
+                            </includes>
+                            <filtering>true</filtering>
+                        </resource>
+                        <resource>
+                          <directory>./</directory>
+                          <includes>
+                              <include>*.js</include>
+                          </includes>
+                          <filtering>false</filtering>
+                      </resource>
+                    </resources>
+                </configuration>
+            </execution>
+        </executions>
+      </plugin>
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>exec-maven-plugin</artifactId>
@@ -93,7 +125,7 @@
               <goal>pom-gen</goal>
             </goals>
             <configuration>
-              <artifactLocation>.</artifactLocation>
+              <artifactLocation>build</artifactLocation>
               <typeList>${artifact.types}</typeList>
             </configuration>
           </execution>

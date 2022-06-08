@@ -1,15 +1,13 @@
-import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
-import { BaseModalComponent } from '@core/component/base-modal.component';
+import { DialogFormComponent } from '@core/component/dialog-form.component';
 import { MSG_PARAMS } from '@core/i18n';
 import { IEvaluacionWithIsEliminable } from '@core/models/eti/evaluacion-with-is-eliminable';
 import { IEvaluador } from '@core/models/eti/evaluador';
 import { IMemoria } from '@core/models/eti/memoria';
-import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-properties';
 import { MemoriaService } from '@core/services/eti/memoria.service';
-import { SnackBarService } from '@core/services/snack-bar.service';
 import { LuxonUtils } from '@core/utils/luxon-utils';
 import { TranslateService } from '@ngx-translate/core';
 import { RSQLSgiRestFilter, SgiRestFilter, SgiRestFilterOperator } from '@sgi/framework/http';
@@ -17,7 +15,6 @@ import { BehaviorSubject, Observable } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 import { DatosAsignacionEvaluacion } from '../../../convocatoria-reunion.action.service';
 
-const MSG_ERROR_EVALUADOR_REPETIDO = marker('error.eti.convocatoria-reunion.memoria.evaluador.duplicate');
 const MEMORIA_EVALUADOR1_KEY = marker('eti.convocatoria-reunion.memoria.evaludador-1');
 const MEMORIA_EVALUADOR2_KEY = marker('eti.convocatoria-reunion.memoria.evaludador-2');
 const MEMORIA_KEY = marker('eti.memoria');
@@ -37,8 +34,7 @@ export interface ConvocatoriaReunionAsignacionMemoriasModalComponentData {
   styleUrls: ['./convocatoria-reunion-asignacion-memorias-modal.component.scss']
 })
 export class ConvocatoriaReunionAsignacionMemoriasModalComponent extends
-  BaseModalComponent<ConvocatoriaReunionAsignacionMemoriasModalComponentData, ConvocatoriaReunionAsignacionMemoriasModalComponent> implements OnInit, OnDestroy {
-  fxLayoutProperties: FxLayoutProperties;
+  DialogFormComponent<ConvocatoriaReunionAsignacionMemoriasModalComponentData> implements OnInit {
 
   memorias$: Observable<IMemoria[]>;
 
@@ -47,8 +43,6 @@ export class ConvocatoriaReunionAsignacionMemoriasModalComponent extends
 
   isTipoConvocatoriaSeguimiento: boolean;
   filterMemoriasAsignables: SgiRestFilter;
-
-  isEdit = false;
 
   msgParamEvaludador1Entity = {};
   msgParamEvaludador2Entity = {};
@@ -62,18 +56,13 @@ export class ConvocatoriaReunionAsignacionMemoriasModalComponent extends
   readonly displayerMemoria = (memoria: IMemoria): string => (memoria.numReferencia ?? '') + (memoria.titulo ? ' - ' + memoria.titulo : '');
 
   constructor(
-    public matDialogRef: MatDialogRef<ConvocatoriaReunionAsignacionMemoriasModalComponent>,
+    matDialogRef: MatDialogRef<ConvocatoriaReunionAsignacionMemoriasModalComponent>,
     private memoriaService: MemoriaService,
-    protected snackBarService: SnackBarService,
     @Inject(MAT_DIALOG_DATA) public data: ConvocatoriaReunionAsignacionMemoriasModalComponentData,
     private translate: TranslateService
   ) {
-    super(snackBarService, matDialogRef, data);
+    super(matDialogRef, !!data.evaluacion?.memoria);
 
-    this.fxLayoutProperties = new FxLayoutProperties();
-    this.fxLayoutProperties.gap = '20px';
-    this.fxLayoutProperties.layout = 'row wrap';
-    this.fxLayoutProperties.xs = 'column';
     this.buildFilter();
   }
 
@@ -101,8 +90,6 @@ export class ConvocatoriaReunionAsignacionMemoriasModalComponent extends
         this.loadMemoriasAsignablesConvocatoriaOrdExt();
       }
     }
-
-    this.isEdit = this.data.evaluacion?.memoria ? true : false;
   }
 
   private setupI18N(): void {
@@ -189,32 +176,19 @@ export class ConvocatoriaReunionAsignacionMemoriasModalComponent extends
       );
   }
 
-  /**
-   * Confirmar asignación
-   */
-  saveOrUpdate(): void {
-    const modalData: ConvocatoriaReunionAsignacionMemoriasModalComponentData = this.getDatosForm();
-    if (modalData.evaluacion.evaluador1?.persona?.id === modalData.evaluacion.evaluador2?.persona?.id) {
-      this.snackBarService.showError(MSG_ERROR_EVALUADOR_REPETIDO);
-      return;
-    }
-    super.saveOrUpdate();
-  }
-
-  protected getDatosForm(): ConvocatoriaReunionAsignacionMemoriasModalComponentData {
+  protected getValue(): ConvocatoriaReunionAsignacionMemoriasModalComponentData {
     this.data.evaluacion.memoria = this.formGroup.controls.memoria.value;
     this.data.evaluacion.evaluador1 = this.formGroup.controls.evaluador1.value;
     this.data.evaluacion.evaluador2 = this.formGroup.controls.evaluador2.value;
     return this.data;
   }
 
-  protected getFormGroup(): FormGroup {
+  protected buildFormGroup(): FormGroup {
     const formGroup = new FormGroup({
       memoria: new FormControl(this.data.evaluacion.memoria, [Validators.required]),
       evaluador1: new FormControl(this.data.evaluacion.evaluador1),
       evaluador2: new FormControl(this.data.evaluacion.evaluador2),
     });
-
     if (this.data.readonly) {
       formGroup.disable();
     }
@@ -222,14 +196,10 @@ export class ConvocatoriaReunionAsignacionMemoriasModalComponent extends
     return formGroup;
   }
 
-  ngOnDestroy(): void {
-    super.ngOnDestroy();
-  }
-
   private filterMemoriasAsignadas(memorias: IMemoria[]): IMemoria[] {
     return memorias.filter(memoria => {
       return (!this.data.memoriasAsignadas.some(memoriaAsignada => memoriaAsignada.id === memoria.id));
-    })
+    });
   }
 
 }

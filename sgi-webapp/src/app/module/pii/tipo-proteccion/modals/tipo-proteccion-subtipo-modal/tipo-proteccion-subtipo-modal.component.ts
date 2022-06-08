@@ -1,11 +1,10 @@
-import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
-import { BaseModalComponent } from '@core/component/base-modal.component';
+import { DialogFormComponent } from '@core/component/dialog-form.component';
 import { MSG_PARAMS } from '@core/i18n';
 import { ITipoProteccion } from '@core/models/pii/tipo-proteccion';
-import { SnackBarService } from '@core/services/snack-bar.service';
 import { StatusWrapper } from '@core/utils/status-wrapper';
 import { TranslateService } from '@ngx-translate/core';
 
@@ -19,8 +18,7 @@ const MSG_ACEPTAR = marker('btn.ok');
   templateUrl: './tipo-proteccion-subtipo-modal.component.html',
   styleUrls: ['./tipo-proteccion-subtipo-modal.component.scss']
 })
-export class TipoProteccionSubtipoModalComponent
-  extends BaseModalComponent<StatusWrapper<ITipoProteccion>, TipoProteccionSubtipoModalComponent> implements OnInit, OnDestroy {
+export class TipoProteccionSubtipoModalComponent extends DialogFormComponent<StatusWrapper<ITipoProteccion>> implements OnInit {
 
   msgParamNombreEntity = {};
   msgParamDescripcionEntity = {};
@@ -29,12 +27,11 @@ export class TipoProteccionSubtipoModalComponent
   textSaveOrUpdate: string;
 
   constructor(
-    protected readonly snackBarService: SnackBarService,
-    public readonly matDialogRef: MatDialogRef<TipoProteccionSubtipoModalComponent>,
-    @Inject(MAT_DIALOG_DATA) subtipoProteccion: StatusWrapper<ITipoProteccion>,
+    matDialogRef: MatDialogRef<TipoProteccionSubtipoModalComponent>,
+    @Inject(MAT_DIALOG_DATA) private data: StatusWrapper<ITipoProteccion>,
     private readonly translate: TranslateService
   ) {
-    super(snackBarService, matDialogRef, subtipoProteccion);
+    super(matDialogRef, false);
   }
 
   ngOnInit(): void {
@@ -62,29 +59,25 @@ export class TipoProteccionSubtipoModalComponent
     this.textSaveOrUpdate = MSG_ACEPTAR;
   }
 
-  protected getDatosForm(): StatusWrapper<ITipoProteccion> {
+  protected getValue(): StatusWrapper<ITipoProteccion> {
     if (this.formGroup.touched) {
-      this.entity.value.nombre = this.formGroup.controls.nombre.value;
-      this.entity.value.descripcion = this.formGroup.controls.descripcion.value;
-      if (!this.entity.created) {
-        this.entity.setEdited();
+      this.data.value.nombre = this.formGroup.controls.nombre.value;
+      this.data.value.descripcion = this.formGroup.controls.descripcion.value;
+      if (!this.data.created) {
+        this.data.setEdited();
       }
     }
 
-    return this.entity;
+    return this.data;
   }
 
-  protected getFormGroup(): FormGroup {
+  protected buildFormGroup(): FormGroup {
     const formGroup = new FormGroup({
-      nombre: new FormControl(this.entity?.value.nombre, [Validators.maxLength(50)]),
-      descripcion: new FormControl(this.entity?.value.descripcion, [Validators.maxLength(250)]),
+      nombre: new FormControl(this.data?.value.nombre, [Validators.maxLength(50)]),
+      descripcion: new FormControl(this.data?.value.descripcion, [Validators.maxLength(250)]),
     });
 
     return formGroup;
-  }
-
-  ngOnDestroy(): void {
-    super.ngOnDestroy();
   }
 
 }

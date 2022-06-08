@@ -159,7 +159,6 @@ export class ProyectoCalendarioJustificacionComponent extends FragmentComponent 
     };
 
     const config = {
-      panelClass: 'sgi-dialog-container',
       data
     };
 

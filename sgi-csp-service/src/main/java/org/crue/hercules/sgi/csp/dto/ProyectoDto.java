@@ -4,8 +4,6 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.Instant;
 
-import org.crue.hercules.sgi.csp.enums.ClasificacionCVN;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -24,9 +22,9 @@ public class ProyectoDto implements Serializable {
   private Instant fechaInicio;
   private Instant fechaFin;
   private Instant fechaFinDefinitiva;
-  private ClasificacionCVN clasificacionCVN;
+  private Boolean contrato;
   private BigDecimal totalImporteConcedido;
-  private BigDecimal importeConcedido;
+  private BigDecimal importeConcedidoCostesIndirectos;
   private Long ambitoGeograficoId;
   private Boolean convocatoriaExcelencia;
 }

@@ -1,12 +1,12 @@
-import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
-import { BaseModalComponent } from '@core/component/base-modal.component';
+import { DialogFormComponent } from '@core/component/dialog-form.component';
+import { SgiError } from '@core/errors/sgi-error';
 import { MSG_PARAMS } from '@core/i18n';
 import { IPeriodoTitularidadTitular } from '@core/models/pii/periodo-titularidad-titular';
 import { IEmpresa } from '@core/models/sgemp/empresa';
-import { SnackBarService } from '@core/services/snack-bar.service';
 import { StatusWrapper } from '@core/utils/status-wrapper';
 import { TranslateService } from '@ngx-translate/core';
 import { delay, filter, switchMap, tap } from 'rxjs/operators';
@@ -29,9 +29,7 @@ export interface PeriodoTitularidadTitularModalData {
   styleUrls: ['./periodo-titularidad-titular-modal.component.scss']
 })
 export class PeriodoTitularidadTitularModalComponent
-  extends BaseModalComponent<StatusWrapper<IPeriodoTitularidadTitular>,
-  PeriodoTitularidadTitularModalComponent> implements OnInit, OnDestroy {
-
+  extends DialogFormComponent<StatusWrapper<IPeriodoTitularidadTitular>> implements OnInit {
 
   msgParamTitle = {};
   msgParamNombreEntity = {};
@@ -44,20 +42,19 @@ export class PeriodoTitularidadTitularModalComponent
   }
 
   get isEditionMode() {
-    return this.periodoTitularidadTitularData.isEdit;
+    return this.data.isEdit;
   }
 
   get titularesNotAllowed() {
-    return this.periodoTitularidadTitularData.titularesNotAllowed;
+    return this.data.titularesNotAllowed;
   }
 
   constructor(
-    protected readonly snackBarService: SnackBarService,
-    public readonly matDialogRef: MatDialogRef<PeriodoTitularidadTitularModalComponent>,
-    @Inject(MAT_DIALOG_DATA) private readonly periodoTitularidadTitularData: PeriodoTitularidadTitularModalData,
+    matDialogRef: MatDialogRef<PeriodoTitularidadTitularModalComponent>,
+    @Inject(MAT_DIALOG_DATA) private readonly data: PeriodoTitularidadTitularModalData,
     private readonly translate: TranslateService
   ) {
-    super(snackBarService, matDialogRef, periodoTitularidadTitularData.periodoTitularidadTitular);
+    super(matDialogRef, data.isEdit);
   }
 
   ngOnInit(): void {
@@ -96,13 +93,13 @@ export class PeriodoTitularidadTitularModalComponent
     this.textSaveOrUpdate = this.isEditionMode ? MSG_ACEPTAR : MSG_ADD;
   }
 
-  protected getFormGroup(): FormGroup {
+  protected buildFormGroup(): FormGroup {
     const formGroup = new FormGroup(
       {
-        titular: new FormControl(this.entity?.value.titular, [
+        titular: new FormControl(this.data.periodoTitularidadTitular?.value.titular, [
           Validators.required,
         ]),
-        participacion: new FormControl(this.entity?.value.participacion, [
+        participacion: new FormControl(this.data.periodoTitularidadTitular?.value.participacion, [
           Validators.required, Validators.min(0.00), Validators.max(100)
         ]),
 
@@ -114,9 +111,10 @@ export class PeriodoTitularidadTitularModalComponent
         filter(elem => elem != null),
         delay(0),
         tap(titularSelected => {
-          if (this.periodoTitularidadTitularData.titularesNotAllowed.some(elem => elem.id === titularSelected.id)) {
+          this.clearProblems();
+          if (this.data.titularesNotAllowed.some(elem => elem.id === titularSelected.id)) {
             this.formGroup.controls.titular.setValue(null);
-            this.snackBarService.showError(this.msgTitularInUseError);
+            this.pushProblems(new SgiError(this.msgTitularInUseError));
           }
         })
       )
@@ -124,21 +122,17 @@ export class PeriodoTitularidadTitularModalComponent
     return formGroup;
   }
 
-  protected getDatosForm(): StatusWrapper<IPeriodoTitularidadTitular> {
+  protected getValue(): StatusWrapper<IPeriodoTitularidadTitular> {
 
     if (this.formGroup.touched) {
-      this.entity.value.titular = this.formGroup.controls.titular.value;
-      this.entity.value.participacion = this.formGroup.controls.participacion.value;
-      if (!this.entity.created) {
-        this.entity.setEdited();
+      this.data.periodoTitularidadTitular.value.titular = this.formGroup.controls.titular.value;
+      this.data.periodoTitularidadTitular.value.participacion = this.formGroup.controls.participacion.value;
+      if (!this.data.periodoTitularidadTitular.created) {
+        this.data.periodoTitularidadTitular.setEdited();
       }
     }
 
-    return this.entity;
-  }
-
-  ngOnDestroy(): void {
-    super.ngOnDestroy();
+    return this.data.periodoTitularidadTitular;
   }
 
 }

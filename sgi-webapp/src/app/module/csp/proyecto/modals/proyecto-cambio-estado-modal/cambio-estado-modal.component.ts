@@ -1,20 +1,19 @@
-import { Component, Inject } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { DialogActionComponent } from '@core/component/dialog-action.component';
-import { SgiHttpProblem, ValidationHttpError } from '@core/errors/http-problem';
-import { SgiProblem } from '@core/errors/sgi-error';
+import { SgiError, ValidationError } from '@core/errors/sgi-error';
 import { MSG_PARAMS } from '@core/i18n';
 import { Estado, ESTADO_MAP, IEstadoProyecto } from '@core/models/csp/estado-proyecto';
 import { IProyecto } from '@core/models/csp/proyecto';
-import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-properties';
 import { ProyectoService } from '@core/services/csp/proyecto.service';
 import { DialogService } from '@core/services/dialog.service';
 import { SnackBarService } from '@core/services/snack-bar.service';
+import { ErrorUtils } from '@core/utils/error-utils';
 import { TranslateService } from '@ngx-translate/core';
 import { Observable, of, throwError } from 'rxjs';
-import { filter, map, switchMap } from 'rxjs/operators';
+import { catchError, filter, map, switchMap } from 'rxjs/operators';
 
 const PROYECTO_CAMBIO_ESTADO_COMENTARIO = marker('csp.proyecto.estado-proyecto.comentario');
 const PROYECTO_CAMBIO_ESTADO_NUEVO_ESTADO = marker('csp.proyecto.cambio-estado.nuevo');
@@ -28,6 +27,7 @@ const PROYECTO_COORDINADO = marker('csp.proyecto.proyecto-coordinado');
 const PROYECTO_COORDINADOR_EXTERNO = marker('csp.proyecto.coordinador-externo');
 const PROYECTO_PAQUETES_TRABAJO = marker('csp.proyecto.permite-paquetes-trabajo');
 const MSG_PROYECTO_EQUIPO_MIEMBROS = marker('msg.csp.proyecto.equipo-miembros-obligatorio');
+const MSG_CAMBIO_ESTADO_ERROR = marker('msg.csp.proyecto.cambio-estado.error');
 
 export interface ProyectoCambioEstadoModalComponentData {
   estadoActual: Estado;
@@ -42,10 +42,7 @@ export interface ProyectoCambioEstadoModalComponentData {
   templateUrl: './cambio-estado-modal.component.html',
   styleUrls: ['./cambio-estado-modal.component.scss']
 })
-export class CambioEstadoModalComponent
-  extends DialogActionComponent<IEstadoProyecto> {
-
-  fxLayoutProperties: FxLayoutProperties;
+export class CambioEstadoModalComponent extends DialogActionComponent<IEstadoProyecto> implements OnInit {
 
   msgParamComentarioEntity = {};
   msgParamNuevoEstadoEntity = {};
@@ -56,6 +53,7 @@ export class CambioEstadoModalComponent
   msgProyectoCoordinadorExternoRequired: string;
   msgProyectoPaquetesTrabajoRequired: string;
   msgProyectoMiembrosEquipoRequired: string;
+  msgCambioEstadoError: string;
 
   readonly estadosNuevos: Map<string, string>;
 
@@ -69,13 +67,9 @@ export class CambioEstadoModalComponent
     protected snackBarService: SnackBarService,
     private readonly translate: TranslateService,
     private confirmDialogService: DialogService,
-    private proyectoService: ProyectoService) {
+    private proyectoService: ProyectoService
+  ) {
     super(matDialogRef, true);
-
-    this.fxLayoutProperties = new FxLayoutProperties();
-    this.fxLayoutProperties.gap = '20px';
-    this.fxLayoutProperties.layout = 'row wrap';
-    this.fxLayoutProperties.xs = 'column';
 
     const estados = new Map<string, string>();
     ESTADO_MAP.forEach((value, key) => {
@@ -88,6 +82,7 @@ export class CambioEstadoModalComponent
 
   ngOnInit(): void {
     super.ngOnInit();
+    this.matDialogRef.updateSize('20vw');
     this.setupI18N();
   }
 
@@ -115,6 +110,7 @@ export class CambioEstadoModalComponent
     this.msgProyectoCoordinadorExternoRequired = this.translate.instant(MSG_FIELD_REQUIRED, { field: this.translate.instant(PROYECTO_COORDINADOR_EXTERNO) });
     this.msgProyectoPaquetesTrabajoRequired = this.translate.instant(MSG_FIELD_REQUIRED, { field: this.translate.instant(PROYECTO_PAQUETES_TRABAJO) });
     this.msgProyectoMiembrosEquipoRequired = this.translate.instant(MSG_PROYECTO_EQUIPO_MIEMBROS);
+    this.msgCambioEstadoError = this.translate.instant(MSG_CAMBIO_ESTADO_ERROR);
   }
 
   protected getValue(): IEstadoProyecto {
@@ -142,66 +138,76 @@ export class CambioEstadoModalComponent
       filter(aceptado => !!aceptado),
       switchMap(() => this.validateCambioEstado(estadoNew.estado)),
       switchMap(() => this.proyectoService.cambiarEstado(this.data.proyecto.id, estadoNew)),
+      catchError((error) => {
+        if (error instanceof SgiError) {
+          error.managed = true;
+          this.snackBarService.showError(error);
+        }
+        return throwError(error);
+      }),
       map(() => estadoNew)
     );
   }
 
   private validateCambioEstado(estado: Estado): Observable<never | void> {
-    const problems: SgiProblem[] = [];
+    const validationErrors: ValidationError[] = [];
 
     if (estado === Estado.CONCEDIDO) {
-      problems.push(...this.validateRequiredFields(), ...this.validateProyectoHasMiembrosEquipo());
+      validationErrors.push(...this.validateRequiredFields(), ...this.validateProyectoHasMiembrosEquipo());
     }
 
-    if (problems.length > 0) {
-      return throwError(problems);
+    if (validationErrors.length > 0) {
+      return throwError(ErrorUtils.toValidationProblem(this.msgCambioEstadoError, validationErrors));
     }
 
     return of(void 0);
   }
 
-  private validateRequiredFields(): SgiProblem[] {
-    const problems: SgiProblem[] = [];
+  private validateRequiredFields(): ValidationError[] {
+    const problems: ValidationError[] = [];
 
     if (!this.data.proyecto.finalidad) {
-      problems.push(this.buildValidationProblem(this.msgProyectoFinalidadRequired));
+      problems.push(this.buildValidationError(this.msgProyectoFinalidadRequired));
     }
 
     if (!this.data.proyecto.ambitoGeografico) {
-      problems.push(this.buildValidationProblem(this.msgProyectoAmbitoGeograficoRequired));
+      problems.push(this.buildValidationError(this.msgProyectoAmbitoGeograficoRequired));
     }
 
     if (this.data.proyecto.confidencial === undefined || this.data.proyecto.confidencial === null) {
-      problems.push(this.buildValidationProblem(this.msgProyectoConfidencialRequired));
+      problems.push(this.buildValidationError(this.msgProyectoConfidencialRequired));
     }
 
     if (this.data.proyecto.coordinado === undefined || this.data.proyecto.coordinado === null) {
-      problems.push(this.buildValidationProblem(this.msgProyectoCoordinadoRequired));
+      problems.push(this.buildValidationError(this.msgProyectoCoordinadoRequired));
     }
 
     if (!!this.data.proyecto.coordinado && (this.data.proyecto.coordinadorExterno === undefined || this.data.proyecto.coordinadorExterno === null)) {
-      problems.push(this.buildValidationProblem(this.msgProyectoCoordinadorExternoRequired));
+      problems.push(this.buildValidationError(this.msgProyectoCoordinadorExternoRequired));
     }
 
     if (this.data.proyecto.permitePaquetesTrabajo === undefined || this.data.proyecto.permitePaquetesTrabajo === null) {
-      problems.push(this.buildValidationProblem(this.msgProyectoPaquetesTrabajoRequired));
+      problems.push(this.buildValidationError(this.msgProyectoPaquetesTrabajoRequired));
     }
 
     return problems;
   }
 
-  private validateProyectoHasMiembrosEquipo(): SgiProblem[] {
-    const problems: SgiProblem[] = [];
+  private validateProyectoHasMiembrosEquipo(): ValidationError[] {
+    const problems: ValidationError[] = [];
 
     if (!this.data.proyectoHasMiembrosEquipo) {
-      problems.push(this.buildValidationProblem(this.msgProyectoMiembrosEquipoRequired));
+      problems.push(this.buildValidationError(this.msgProyectoMiembrosEquipoRequired));
     }
 
     return problems;
   }
 
-  private buildValidationProblem(msgError: string): ValidationHttpError {
-    return new ValidationHttpError({ title: msgError } as SgiHttpProblem);
+  private buildValidationError(msgError: string): ValidationError {
+    return {
+      error: msgError,
+      field: undefined
+    };
   }
 
 }

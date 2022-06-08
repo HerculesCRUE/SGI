@@ -126,7 +126,6 @@ export class ModeloEjecucionTipoEnlaceComponent extends FragmentComponent implem
     });
 
     const config = {
-      panelClass: 'sgi-dialog-container',
       data: { modeloTipoEnlace, tipoEnlaces } as ModeloEjecucionTipoEnlaceModalData
     };
     const dialogRef = this.matDialog.open(ModeloEjecucionTipoEnlaceModalComponent, config);

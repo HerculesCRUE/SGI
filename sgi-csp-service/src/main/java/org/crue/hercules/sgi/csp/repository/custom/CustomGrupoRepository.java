@@ -50,4 +50,12 @@ public interface CustomGrupoRepository {
   Page<RelacionEjecucionEconomica> findRelacionesEjecucionEconomica(Specification<Grupo> specification,
       Pageable pageable);
 
+  /**
+   * Obtiene los ids de {@link Grupo} que cumplen con la specification recibida.
+   * 
+   * @param specification condiciones que deben cumplir.
+   * @return lista de ids de {@link Grupo}.
+   */
+  List<Long> findIds(Specification<Grupo> specification);
+
 }

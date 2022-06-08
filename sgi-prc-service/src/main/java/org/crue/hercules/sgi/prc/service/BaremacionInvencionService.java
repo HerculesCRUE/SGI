@@ -79,6 +79,7 @@ public class BaremacionInvencionService extends BaremacionCommonService {
   public static final String TIPO_PROTECCION_MARCA = "122";
   public static final String TIPO_PROTECCION_PROPIEDAD_INTELECTUAL = "OTHERS";
 
+  private static final EpigrafeCVN EPIGRAFE_CVN_INVENCION = EpigrafeCVN.E050_030_010_000;
   private static final CodigoCVN CODIGO_CVN_TIPO_PROTECCCION = CodigoCVN.E050_030_010_030;
   private static final CodigoCVN CODIGO_CVN_AMBITO_EUROPA = CodigoCVN.E050_030_010_170;
   private static final CodigoCVN CODIGO_CVN_AMBITO_ESPANIA = CodigoCVN.E050_030_010_160;
@@ -211,23 +212,26 @@ public class BaremacionInvencionService extends BaremacionCommonService {
     log.debug("evaluateBaremoExtra(baremacionInput) - start");
     BigDecimal puntos = BigDecimal.ZERO;
 
-    BigDecimal cuantia = new BigDecimal(
-        findValoresByCampoProduccionCientificaId(CodigoCVN.CUANTIA_LICENCIAS,
-            baremacionInput.getProduccionCientificaId()).get(0).getValor());
+    List<ValorCampo> valores = findValoresByCampoProduccionCientificaId(CodigoCVN.CUANTIA_LICENCIAS,
+        baremacionInput.getProduccionCientificaId());
 
-    Specification<Rango> specs = RangoSpecifications
-        .byTipoRango(TipoRango.LICENCIA).and(RangoSpecifications.inRange(cuantia));
+    if (!valores.isEmpty()) {
+      BigDecimal cuantia = new BigDecimal(valores.get(0).getValor());
 
-    List<Rango> rangos = rangoRepository.findAll(specs);
-    if (!CollectionUtils.isEmpty(rangos)) {
-      puntos = rangos.get(0).getPuntos();
+      Specification<Rango> specs = RangoSpecifications
+          .byTipoRango(TipoRango.LICENCIA).and(RangoSpecifications.inRange(cuantia));
+
+      List<Rango> rangos = rangoRepository.findAll(specs);
+      if (!CollectionUtils.isEmpty(rangos)) {
+        puntos = rangos.get(0).getPuntos();
+      }
+
+      // Multiplicamos por su participacion
+      puntos = calculatePuntosByParticipacion(baremacionInput.getProduccionCientificaId(), puntos);
+
+      String optionalMessage = String.format("BAREMACION EXTRA INVENCION %s", puntos.toString());
+      traceLog(baremacionInput, optionalMessage);
     }
-
-    // Multiplicamos por su participacion
-    puntos = calculatePuntosByParticipacion(baremacionInput.getProduccionCientificaId(), puntos);
-
-    String optionalMessage = String.format("BAREMACION EXTRA INVENCION %s", puntos.toString());
-    traceLog(baremacionInput, optionalMessage);
 
     log.debug("evaluateBaremoExtra(baremacionInput) - end");
     return puntos;
@@ -295,29 +299,37 @@ public class BaremacionInvencionService extends BaremacionCommonService {
   public void copyInvenciones(Integer anioInicio, Integer anioFin) {
     log.debug("copyInvenciones(anioInicio, anioFin) - start");
 
-    String universidadId = sgiApiCnfService.findByName("entidad-implantacion");
+    // Delete all invenciones
+    getProduccionCientificaRepository().findByEpigrafeCVNAndConvocatoriaBaremacionIdIsNull(EPIGRAFE_CVN_INVENCION)
+        .forEach(getProduccionCientificaBuilderService()::deleteProduccionCientifica);
 
-    sgiApiPiiService.findInvencionesProduccionCientifica(anioInicio, anioFin, universidadId).stream()
+    String universidadId = sgiApiCnfService.findByName("id-entidad-sgemp");
+
+    sgiApiPiiService.findInvencionesProduccionCientifica(anioInicio, anioFin,
+        universidadId).stream()
         .forEach(invencion -> {
 
           Long invencionId = invencion.getId();
           String produccionCientificaRef = PREFIX_INVENCIONES + invencionId;
 
           ProduccionCientifica produccionCientifica = ProduccionCientifica.builder()
-              .epigrafeCVN(EpigrafeCVN.E050_030_010_000)
+              .epigrafeCVN(EPIGRAFE_CVN_INVENCION)
               .produccionCientificaRef(produccionCientificaRef)
               .build();
 
-          Long produccionCientificaId = getProduccionCientificaBuilderService().addProduccionCientifaAndEstado(
+          Long produccionCientificaId = getProduccionCientificaBuilderService().addProduccionCientificaAndEstado(
               produccionCientifica,
               TipoEstadoProduccion.VALIDADO);
 
           addCampoInvencionTitulo(invencion, produccionCientificaId);
-          addCampoInvencionPorcentajeTitularidad(invencion, produccionCientificaId, anioInicio);
+          addCampoInvencionPorcentajeTitularidad(invencion, produccionCientificaId,
+              anioInicio);
           addCampoInvencionTipoProteccion(invencion, produccionCientificaId);
           addCampoInvencionFechaConcesion(invencion, produccionCientificaId);
-          addCampoInvencionAmbitoGeografico(invencion, produccionCientificaId, CODIGO_CVN_AMBITO_ESPANIA);
-          addCampoInvencionAmbitoGeografico(invencion, produccionCientificaId, CODIGO_CVN_AMBITO_EUROPA);
+          addCampoInvencionAmbitoGeografico(invencion, produccionCientificaId,
+              CODIGO_CVN_AMBITO_ESPANIA);
+          addCampoInvencionAmbitoGeografico(invencion, produccionCientificaId,
+              CODIGO_CVN_AMBITO_EUROPA);
           addCampoInvencionCuantiaLicencias(invencion, produccionCientificaId);
 
           invencion.getInventores().stream().forEach(
@@ -371,7 +383,7 @@ public class BaremacionInvencionService extends BaremacionCommonService {
       cuantiaLicencias = invencion.getCuantia();
     }
 
-    if (null != cuantiaLicencias) {
+    if (null != cuantiaLicencias && cuantiaLicencias.compareTo(BigDecimal.ZERO) != 0) {
       getProduccionCientificaBuilderService()
           .addCampoProduccionCientificaAndValor(produccionCientificaId, CodigoCVN.CUANTIA_LICENCIAS,
               ProduccionCientificaFieldFormatUtil.formatNumber(cuantiaLicencias.toString()));

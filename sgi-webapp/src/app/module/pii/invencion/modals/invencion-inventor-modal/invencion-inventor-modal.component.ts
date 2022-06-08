@@ -2,15 +2,16 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
-import { BaseModalComponent } from '@core/component/base-modal.component';
+import { DialogFormComponent } from '@core/component/dialog-form.component';
+import { SgiError } from '@core/errors/sgi-error';
 import { MSG_PARAMS } from '@core/i18n';
 import { IInvencionInventor } from '@core/models/pii/invencion-inventor';
 import { IPersona } from '@core/models/sgp/persona';
-import { SnackBarService } from '@core/services/snack-bar.service';
+import { EmpresaService } from '@core/services/sgemp/empresa.service';
 import { StatusWrapper } from '@core/utils/status-wrapper';
 import { TranslateService } from '@ngx-translate/core';
-import { NGXLogger } from 'ngx-logger';
-import { delay, filter, switchMap, tap } from 'rxjs/operators';
+import { of } from 'rxjs';
+import { catchError, delay, filter, map, switchMap, tap } from 'rxjs/operators';
 import { TipoColectivo } from 'src/app/esb/sgp/shared/select-persona/select-persona.component';
 
 const INVENCION_INVENTOR_KEY = marker('pii.invencion.inventor');
@@ -29,8 +30,7 @@ export interface InvencionInventorModalData {
   templateUrl: './invencion-inventor-modal.component.html',
   styleUrls: ['./invencion-inventor-modal.component.scss']
 })
-export class InvencionInventorModalComponent
-  extends BaseModalComponent<StatusWrapper<IInvencionInventor>, InvencionInventorModalComponent> implements OnInit {
+export class InvencionInventorModalComponent extends DialogFormComponent<StatusWrapper<IInvencionInventor>> implements OnInit {
 
   invencionInventor: StatusWrapper<IInvencionInventor>;
   msgParamNombreEntity = {};
@@ -46,7 +46,7 @@ export class InvencionInventorModalComponent
     return TipoColectivo;
   }
 
-  protected getDatosForm(): StatusWrapper<IInvencionInventor> {
+  protected getValue(): StatusWrapper<IInvencionInventor> {
 
     if (this.formGroup.touched) {
       this.invencionInventor.value.inventor = this.formGroup.controls.inventor.value;
@@ -58,7 +58,7 @@ export class InvencionInventorModalComponent
     return this.invencionInventor;
   }
 
-  protected getFormGroup(): FormGroup {
+  protected buildFormGroup(): FormGroup {
 
     const formGroup = new FormGroup({
       inventor: new FormControl(this.invencionInventor.value.inventor, Validators.required),
@@ -75,9 +75,22 @@ export class InvencionInventorModalComponent
         filter(elem => elem != null),
         delay(0),
         tap(inventorSelected => {
+          this.clearProblems();
           if (this.data.inventoresNotAllowed.some(elem => elem.id === inventorSelected.id)) {
             this.formGroup.controls.inventor.setValue(null);
-            this.snackBarService.showError(this.msgInventorInUseError);
+            this.pushProblems(new SgiError(this.msgInventorInUseError));
+          } else {
+            if (inventorSelected.entidadPropia?.id && !inventorSelected.entidadPropia.nombre) {
+              this.subscriptions.push(
+                this.empresaService.findById(inventorSelected.entidadPropia.id).pipe(
+                  map(empresa => inventorSelected.entidadPropia = empresa),
+                  catchError(err => {
+                    this.processError(err);
+                    return of(err);
+                  })
+                ).subscribe()
+              );
+            }
           }
         })
       )
@@ -87,16 +100,13 @@ export class InvencionInventorModalComponent
   }
 
   constructor(
-    private readonly logger: NGXLogger,
-    public matDialogRef: MatDialogRef<InvencionInventorModalComponent>,
-    protected readonly snackBarService: SnackBarService,
+    matDialogRef: MatDialogRef<InvencionInventorModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data: InvencionInventorModalData,
-    private readonly translate: TranslateService
+    private readonly translate: TranslateService,
+    private readonly empresaService: EmpresaService
   ) {
-    super(snackBarService, matDialogRef, data.invencionInventor);
-
+    super(matDialogRef, data.isEdit);
     this.invencionInventor = data.invencionInventor;
-
   }
 
   ngOnInit(): void {

@@ -21,12 +21,14 @@ export class InvRootComponent implements OnDestroy {
 
   showEvaluaciones = false;
   showSeguimientos = false;
+  showActas = false;
 
   private subscriptions: Subscription[] = [];
 
   constructor(private evaluadorService: EvaluadorService) {
     this.subscriptions.push(this.evaluadorService.hasAssignedEvaluaciones().subscribe((res) => this.showEvaluaciones = res));
     this.subscriptions.push(this.evaluadorService.hasAssignedEvaluacionesSeguimiento().subscribe((res) => this.showSeguimientos = res));
+    this.subscriptions.push(this.evaluadorService.hasAssignedActas().subscribe((res) => this.showActas = res));
   }
 
   ngOnDestroy(): void {

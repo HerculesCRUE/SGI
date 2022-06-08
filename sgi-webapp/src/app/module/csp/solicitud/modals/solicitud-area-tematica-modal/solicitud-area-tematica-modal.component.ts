@@ -5,12 +5,10 @@ import { MatCheckboxChange } from '@angular/material/checkbox';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatTreeNestedDataSource } from '@angular/material/tree';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
-import { BaseModalComponent } from '@core/component/base-modal.component';
+import { DialogFormComponent } from '@core/component/dialog-form.component';
 import { MSG_PARAMS } from '@core/i18n';
 import { IAreaTematica } from '@core/models/csp/area-tematica';
-import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-properties';
 import { AreaTematicaService } from '@core/services/csp/area-tematica.service';
-import { SnackBarService } from '@core/services/snack-bar.service';
 import { StatusWrapper } from '@core/utils/status-wrapper';
 import { TranslateService } from '@ngx-translate/core';
 import { NGXLogger } from 'ngx-logger';
@@ -66,9 +64,7 @@ const MSG_ACEPTAR = marker('btn.ok');
   templateUrl: './solicitud-area-tematica-modal.component.html',
   styleUrls: ['./solicitud-area-tematica-modal.component.scss']
 })
-export class SolicitudAreaTematicaModalComponent extends
-  BaseModalComponent<AreaTematicaModalData, SolicitudAreaTematicaModalComponent> implements OnInit {
-  fxLayoutProperties: FxLayoutProperties;
+export class SolicitudAreaTematicaModalComponent extends DialogFormComponent<AreaTematicaModalData> implements OnInit {
 
   areaTematicaTree$ = new BehaviorSubject<NodeAreaTematica[]>([]);
   treeControl = new NestedTreeControl<NodeAreaTematica>(node => node.childs);
@@ -84,17 +80,12 @@ export class SolicitudAreaTematicaModalComponent extends
 
   constructor(
     private readonly logger: NGXLogger,
-    protected snackBarService: SnackBarService,
-    public matDialogRef: MatDialogRef<SolicitudAreaTematicaModalComponent>,
+    matDialogRef: MatDialogRef<SolicitudAreaTematicaModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data: AreaTematicaModalData,
     private areaTematicaService: AreaTematicaService,
     private readonly translate: TranslateService
   ) {
-    super(snackBarService, matDialogRef, data);
-    this.fxLayoutProperties = new FxLayoutProperties();
-    this.fxLayoutProperties.gap = '20px';
-    this.fxLayoutProperties.layout = 'row';
-    this.fxLayoutProperties.xs = 'row';
+    super(matDialogRef, !!data.areaTematicaSolicitud);
   }
 
   ngOnInit(): void {
@@ -142,14 +133,15 @@ export class SolicitudAreaTematicaModalComponent extends
     }
   }
 
-  protected getFormGroup(): FormGroup {
+  protected buildFormGroup(): FormGroup {
     const formGroup = new FormGroup({
       padre: new FormControl(null, Validators.required),
+      area: new FormControl(this.data.areaTematicaSolicitud, Validators.required)
     });
     return formGroup;
   }
 
-  protected getDatosForm(): AreaTematicaModalData {
+  protected getValue(): AreaTematicaModalData {
     const padre = this.formGroup.controls.padre.value;
     const areasTematicasConvocatoria = this.data.areasTematicasConvocatoria;
 
@@ -283,5 +275,6 @@ export class SolicitudAreaTematicaModalComponent extends
 
   onCheckNode(node: NodeAreaTematica, $event: MatCheckboxChange): void {
     this.checkedNode = $event.checked ? node : undefined;
+    this.formGroup.get('area').setValue(this.checkedNode?.areaTematica?.value);
   }
 }

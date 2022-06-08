@@ -1,4 +1,5 @@
 import { AfterViewInit, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { FormControl, FormGroup } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
@@ -12,13 +13,13 @@ import { FxFlexProperties } from '@core/models/shared/flexLayout/fx-flex-propert
 import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-properties';
 import { ROUTE_NAMES } from '@core/route.names';
 import { DialogService } from '@core/services/dialog.service';
-import { SolicitudProteccionService } from '@core/services/pii/solicitud-proteccion/solicitud-proteccion.service';
-import { SnackBarService } from '@core/services/snack-bar.service';
+import { LuxonUtils } from '@core/utils/luxon-utils';
 import { TranslateService } from '@ngx-translate/core';
-import { NGXLogger } from 'ngx-logger';
-import { Subscription } from 'rxjs';
+import { RSQLSgiRestFilter, RSQLSgiRestSort, SgiRestFilter, SgiRestFilterOperator, SgiRestFindOptions, SgiRestSortDirection } from '@sgi/framework/http';
+import { BehaviorSubject, Subscription } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { InvencionActionService } from '../../invencion.action.service';
+import { ISolicitudProteccionListadoModalData, SolicitudProteccionListadoExportModalComponent } from '../../modals/solicitud-proteccion-listado-export-modal/solicitud-proteccion-listado-export-modal.component';
 import { SolicitudProteccionFragment } from './solicitud-proteccion.fragment';
 
 const MSG_CREATE = marker('btn.add.entity');
@@ -49,6 +50,8 @@ export class SolicitudProteccionComponent extends FragmentComponent implements O
 
   public fxFlexProperties: FxFlexProperties;
   public fxLayoutProperties: FxLayoutProperties;
+
+  formGroup: FormGroup;
 
   private readonly displayedColumns = {
     intelectual: [
@@ -96,18 +99,19 @@ export class SolicitudProteccionComponent extends FragmentComponent implements O
     return ESTADO_MAP;
   }
 
+  public showPaisSelector = new BehaviorSubject<boolean>(false);
+  findOptions: SgiRestFindOptions;
+
   constructor(
     public actionService: InvencionActionService,
-    private snackBarService: SnackBarService,
     private translate: TranslateService,
     private matDialog: MatDialog,
-    private solicitudProteccionService: SolicitudProteccionService,
-    private logger: NGXLogger,
     private dialogService: DialogService
   ) {
     super(actionService.FRAGMENT.SOLICITUDES_PROTECCION, actionService);
     this.formPart = this.fragment as SolicitudProteccionFragment;
     this.elementosPagina = [5, 10, 25, 100];
+    this.setupLayout();
   }
 
   ngOnDestroy(): void {
@@ -125,6 +129,8 @@ export class SolicitudProteccionComponent extends FragmentComponent implements O
     );
     this.subscriptions.push(subscription);
     this.dataSource.paginator = this.paginator;
+    this.formGroup = this.setupSearchFormGroup();
+    this.formGroup.controls.viaProteccion.valueChanges.subscribe(via => this.showPaisSelector.next(via?.paisEspecifico));
   }
 
   ngAfterViewInit() {
@@ -330,4 +336,87 @@ export class SolicitudProteccionComponent extends FragmentComponent implements O
     this.subscriptions.push(subscription);
   }
 
+  private setupLayout(): void {
+    this.fxFlexProperties = new FxFlexProperties();
+    this.fxFlexProperties.sm = '0 1 calc(50%-10px)';
+    this.fxFlexProperties.md = '0 1 calc(33%-10px)';
+    this.fxFlexProperties.gtMd = '0 1 calc(22%-10px)';
+    this.fxFlexProperties.order = '2';
+
+    this.fxLayoutProperties = new FxLayoutProperties();
+    this.fxLayoutProperties.gap = '20px';
+    this.fxLayoutProperties.layout = 'row wrap';
+    this.fxLayoutProperties.xs = 'column';
+  }
+
+  public onSearch(): void {
+    this.formPart.loadTable(this.createFilterOptions());
+  }
+
+  public onClearFilters(): void {
+    this.formGroup.reset();
+  }
+
+  private setupSearchFormGroup(): FormGroup {
+    return new FormGroup({
+      numeroSolicitud: new FormControl(null),
+      fechaSolicitudDesde: new FormControl(null),
+      fechaSolicitudHasta: new FormControl(null),
+      viaProteccion: new FormControl(null),
+      pais: new FormControl(null),
+      fechaFinPrioridadDesde: new FormControl(null),
+      fechaFinPrioridadHasta: new FormControl(null),
+      estado: new FormControl(null),
+      titulo: new FormControl(null)
+    });
+  }
+
+  private createFilterOptions(): SgiRestFindOptions {
+    const controls = this.formGroup.controls;
+    const filter = new RSQLSgiRestFilter('numeroSolicitud', SgiRestFilterOperator.EQUALS, controls.numeroSolicitud?.value?.toString())
+      .and('fechaPrioridadSolicitud', SgiRestFilterOperator.GREATHER_OR_EQUAL, LuxonUtils.toBackend(controls.fechaSolicitudDesde?.value))
+      .and('fechaPrioridadSolicitud', SgiRestFilterOperator.LOWER_OR_EQUAL,
+        LuxonUtils.toBackend(controls.fechaSolicitudHasta?.value))
+      .and('fechaFinPriorPresFasNacRec', SgiRestFilterOperator.GREATHER_OR_EQUAL,
+        LuxonUtils.toBackend(controls.fechaFinPrioridadDesde?.value))
+      .and('fechaFinPriorPresFasNacRec', SgiRestFilterOperator.LOWER_OR_EQUAL,
+        LuxonUtils.toBackend(controls.fechaFinPrioridadHasta?.value))
+      .and('titulo', SgiRestFilterOperator.LIKE_ICASE, controls.titulo?.value?.toString())
+      .and('viaProteccion.id', SgiRestFilterOperator.EQUALS, controls.viaProteccion.value?.id?.toString())
+      .and('paisProteccionRef', SgiRestFilterOperator.EQUALS, controls.pais.value?.id?.toString())
+      .and('estado', SgiRestFilterOperator.EQUALS, controls.estado?.value?.toString());
+
+    return this.getFindOptions(filter, true);
+  }
+
+  public openExportModal(): void {
+    const data: ISolicitudProteccionListadoModalData = {
+      findOptions: this.createFilterOptions(),
+      invencionId: this.formPart.getKey() as number
+    };
+
+    const config = {
+      data
+    };
+    this.matDialog.open(SolicitudProteccionListadoExportModalComponent, config);
+  }
+
+  /**
+   * Crea las opciones para el listado que devuelve el servidor.
+   * Hay que añadirlo al método del servicio que llamamos
+   *
+   * @param reset Indica la pagina actual es la primera o no
+   */
+  private getFindOptions(filter: SgiRestFilter, reset?: boolean): SgiRestFindOptions {
+    const options: SgiRestFindOptions = {
+      page: {
+        index: reset ? 0 : this.paginator?.pageIndex,
+        size: this.paginator?.pageSize,
+      },
+      sort: new RSQLSgiRestSort(this.sort?.active, SgiRestSortDirection.fromSortDirection(this.sort?.direction)),
+      filter,
+    };
+    this.findOptions = options;
+    return options;
+  }
 }

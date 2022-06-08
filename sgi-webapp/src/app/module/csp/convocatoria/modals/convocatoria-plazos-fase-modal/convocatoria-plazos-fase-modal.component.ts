@@ -1,13 +1,11 @@
-import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
-import { BaseModalComponent } from '@core/component/base-modal.component';
+import { DialogFormComponent } from '@core/component/dialog-form.component';
 import { MSG_PARAMS } from '@core/i18n';
 import { IConvocatoriaFase } from '@core/models/csp/convocatoria-fase';
 import { ITipoFase } from '@core/models/csp/tipos-configuracion';
-import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-properties';
-import { SnackBarService } from '@core/services/snack-bar.service';
 import { DateValidator } from '@core/validators/date-validator';
 import { IRange, RangeValidator } from '@core/validators/range-validator';
 import { TranslateService } from '@ngx-translate/core';
@@ -34,10 +32,8 @@ export interface ConvocatoriaPlazosFaseModalComponentData {
   templateUrl: './convocatoria-plazos-fase-modal.component.html',
   styleUrls: ['./convocatoria-plazos-fase-modal.component.scss']
 })
-export class ConvocatoriaPlazosFaseModalComponent extends
-  BaseModalComponent<ConvocatoriaPlazosFaseModalComponentData, ConvocatoriaPlazosFaseModalComponent> implements OnInit, OnDestroy {
-  fxLayoutProperties: FxLayoutProperties;
-  fxLayoutProperties2: FxLayoutProperties;
+export class ConvocatoriaPlazosFaseModalComponent
+  extends DialogFormComponent<ConvocatoriaPlazosFaseModalComponentData> implements OnInit {
 
   textSaveOrUpdate: string;
   title: string;
@@ -48,23 +44,11 @@ export class ConvocatoriaPlazosFaseModalComponent extends
   msgParamObservacionesEntity = {};
 
   constructor(
-    protected snackBarService: SnackBarService,
     @Inject(MAT_DIALOG_DATA) public data: ConvocatoriaPlazosFaseModalComponentData,
-    public matDialogRef: MatDialogRef<ConvocatoriaPlazosFaseModalComponent>,
+    matDialogRef: MatDialogRef<ConvocatoriaPlazosFaseModalComponent>,
     private readonly translate: TranslateService
   ) {
-    super(snackBarService, matDialogRef, data);
-
-    this.fxLayoutProperties = new FxLayoutProperties();
-    this.fxLayoutProperties.layout = 'row';
-    this.fxLayoutProperties.layoutAlign = 'row';
-    this.fxLayoutProperties.gap = '20px';
-    this.fxLayoutProperties.xs = 'column';
-
-    this.fxLayoutProperties2 = new FxLayoutProperties();
-    this.fxLayoutProperties2.gap = '20px';
-    this.fxLayoutProperties2.layout = 'row';
-    this.fxLayoutProperties2.xs = 'column';
+    super(matDialogRef, !data.plazo.fechaInicio);
   }
 
   ngOnInit(): void {
@@ -141,13 +125,12 @@ export class ConvocatoriaPlazosFaseModalComponent extends
     );
 
     this.formGroup.setValidators([
-      DateValidator.isAfter('fechaInicio', 'fechaFin'),
-      DateValidator.isBefore('fechaFin', 'fechaInicio'),
+      DateValidator.isAfter('fechaInicio', 'fechaFin', false),
       RangeValidator.notOverlaps('fechaInicio', 'fechaFin', rangoFechas)
     ]);
   }
 
-  protected getDatosForm(): ConvocatoriaPlazosFaseModalComponentData {
+  protected getValue(): ConvocatoriaPlazosFaseModalComponentData {
     this.data.plazo.fechaInicio = this.formGroup.controls.fechaInicio.value;
     this.data.plazo.fechaFin = this.formGroup.controls.fechaFin.value;
     this.data.plazo.tipoFase = this.formGroup.controls.tipoFase.value;
@@ -155,7 +138,7 @@ export class ConvocatoriaPlazosFaseModalComponent extends
     return this.data;
   }
 
-  protected getFormGroup(): FormGroup {
+  protected buildFormGroup(): FormGroup {
     const formGroup = new FormGroup({
       fechaInicio: new FormControl(this.data?.plazo?.fechaInicio, Validators.required),
       fechaFin: new FormControl(this.data?.plazo?.fechaFin, Validators.required),
@@ -168,10 +151,6 @@ export class ConvocatoriaPlazosFaseModalComponent extends
     }
 
     return formGroup;
-  }
-
-  ngOnDestroy(): void {
-    super.ngOnDestroy();
   }
 
 }

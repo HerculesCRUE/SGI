@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
+import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { ActionComponent } from '@core/component/action.component';
@@ -31,11 +31,15 @@ const PRODUCCION_CIENTIFICA_KEY = marker('prc.produccion-cientifica');
 export class PublicacionEditarComponent extends ActionComponent implements OnInit {
   PUBLICACION_ROUTE_NAMES = PUBLICACION_ROUTE_NAMES;
 
-  isProduccionCientificaEditable: boolean;
+  isProduccionCientificaDisabled: boolean;
   private textoValidateSuccess: string;
   private textoValidateError: string;
   private textoRejectSuccess: string;
   private textoRejectError: string;
+
+  get canEdit(): boolean {
+    return this.actionService.canEdit;
+  }
 
   constructor(
     private readonly logger: NGXLogger,
@@ -49,8 +53,8 @@ export class PublicacionEditarComponent extends ActionComponent implements OnIni
   ) {
     super(router, route, actionService, dialogService);
     this.subscriptions.push(
-      this.actionService.isProduccionCientificaEditable$()
-        .subscribe(isEditable => this.isProduccionCientificaEditable = isEditable)
+      this.actionService.isProduccionCientificaDisabled$()
+        .subscribe(isEditable => this.isProduccionCientificaDisabled = isEditable)
     );
   }
 
@@ -110,19 +114,26 @@ export class PublicacionEditarComponent extends ActionComponent implements OnIni
 
   }
 
-  saveOrUpdate(action?: 'validar' | 'rechazar'): void {
+  saveOrUpdate(action?: 'validar' | 'rechazar' | 'validarInvestigador' | 'rechazarInvestigador'): void {
     if (action === 'validar') {
       this.validar();
     } else if (action === 'rechazar') {
-      const config: MatDialogConfig = {
-        panelClass: 'sgi-dialog-container',
-        minWidth: '500px',
-      };
-      const dialogRef = this.matDialog.open(RechazarProduccionCientificaModalComponent, config);
+      const dialogRef = this.matDialog.open(RechazarProduccionCientificaModalComponent);
       dialogRef.afterClosed().subscribe(
         (estadoProduccionCientifica: IEstadoProduccionCientificaRequest) => {
           if (estadoProduccionCientifica) {
             this.rechazar(estadoProduccionCientifica);
+          }
+        }
+      );
+    } else if (action === 'validarInvestigador') {
+      this.validarInvestigador();
+    } else if (action === 'rechazarInvestigador') {
+      const dialogRef = this.matDialog.open(RechazarProduccionCientificaModalComponent);
+      dialogRef.afterClosed().subscribe(
+        (estadoProduccionCientifica: IEstadoProduccionCientificaRequest) => {
+          if (estadoProduccionCientifica) {
+            this.rechazarInvestigador(estadoProduccionCientifica);
           }
         }
       );
@@ -139,6 +150,22 @@ export class PublicacionEditarComponent extends ActionComponent implements OnIni
 
   rechazar(estadoProduccionCientifica: IEstadoProduccionCientificaRequest): void {
     this.actionService.rechazar(estadoProduccionCientifica)
+      .subscribe(
+        () => this.snackBarService.showSuccess(this.textoRejectSuccess),
+        (error) => this.snackBarService.showError(this.textoRejectError)
+      );
+  }
+
+  validarInvestigador(): void {
+    this.actionService.validarInvestigador()
+      .subscribe(
+        () => this.snackBarService.showSuccess(this.textoValidateSuccess),
+        (error) => this.snackBarService.showError(this.textoValidateError)
+      );
+  }
+
+  rechazarInvestigador(estadoProduccionCientifica: IEstadoProduccionCientificaRequest): void {
+    this.actionService.rechazarInvestigador(estadoProduccionCientifica)
       .subscribe(
         () => this.snackBarService.showSuccess(this.textoRejectSuccess),
         (error) => this.snackBarService.showError(this.textoRejectError)

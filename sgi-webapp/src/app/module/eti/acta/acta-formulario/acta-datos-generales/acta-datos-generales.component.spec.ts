@@ -8,10 +8,12 @@ import { SnackBarService } from '@core/services/snack-bar.service';
 import TestUtils from '@core/utils/test-utils';
 import { MaterialDesignModule } from '@material/material-design.module';
 import { SgiAuthModule, SgiAuthService } from '@sgi/framework/auth';
+import { SharedModule } from '@shared/shared.module';
 import { LoggerTestingModule } from 'ngx-logger/testing';
-
+import { EtiSharedModule } from '../../../shared/eti-shared.module';
 import { ActaActionService } from '../../acta.action.service';
 import { ActaDatosGeneralesComponent } from './acta-datos-generales.component';
+
 
 
 describe('ActaDatosGenerealesComponent', () => {
@@ -32,7 +34,9 @@ describe('ActaDatosGenerealesComponent', () => {
         FormsModule,
         ReactiveFormsModule,
         RouterTestingModule,
-        SgiAuthModule
+        SgiAuthModule,
+        SharedModule,
+        EtiSharedModule
       ],
       providers: [
         { provide: SnackBarService, useValue: TestUtils.getSnackBarServiceSpy() },

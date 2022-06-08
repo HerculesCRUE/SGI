@@ -1,0 +1,115 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:pro="http://www.liquibase.org/xml/ns/pro" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-3.8.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+  <property name="schemaPrefix" value="" />
+
+  <changeSet context="!test" author="master" id="0000000000004-bean_method_tasks">
+    <insert tableName="bean_method_tasks">
+      <column name="id" valueSequenceNext="bean_method_tasks_seq" />
+      <column name="schedule_type" value="CRON" />
+      <column name="description" value="Comunicado de aviso de informe de retrospectiva de memoria tipo CEEA pendiente" />
+      <column name="bean" value="sgiApiCallerTask" />
+      <column name="method" value="call" />
+    </insert>
+    <insert tableName="bean_method_tasks">
+      <column name="id" valueSequenceNext="bean_method_tasks_seq" />
+      <column name="schedule_type" value="CRON" />
+      <column name="description" value="Comunicado de aviso de informe de seguimiento anual pendiente" />
+      <column name="bean" value="sgiApiCallerTask" />
+      <column name="method" value="call" />
+    </insert>
+    <!-- PII COM FIN FECHA PRIORIDAD SOLICITUD PROTECCION -->
+    <insert tableName="bean_method_tasks">
+      <column name="id" valueSequenceNext="bean_method_tasks_seq" />
+      <column name="schedule_type" value="CRON" />
+      <column name="description" value="Tarea de comprobación de fin de fecha prioridad de una solicitud de protección" />
+      <column name="bean" value="sgiApiCallerTask" />
+      <column name="method" value="call" />
+    </insert>
+    <!-- PII COM AVISO FIN PLAZO FECHA PRESENTACION FASES NACIONALES / REGIONALES SOLICITUD PROTECCION -->
+    <insert tableName="bean_method_tasks">
+      <column name="id" valueSequenceNext="bean_method_tasks_seq" />
+      <column name="schedule_type" value="CRON" />
+      <column name="description" value="Tarea de comprobación de fin de plazo de presentación de fases de ámbito nacional y/o regional de una solicitud de protección" />
+      <column name="bean" value="sgiApiCallerTask" />
+      <column name="method" value="call" />
+    </insert>
+  </changeSet>
+
+  <changeSet context="!test" author="master" id="0000000000004-bean_method_task_params">
+    <insert tableName="bean_method_task_params">
+      <column name="bean_method_tasks_id" valueComputed="(select id from ${schemaPrefix}bean_method_tasks where description='Comunicado de aviso de informe de retrospectiva de memoria tipo CEEA pendiente')" />
+      <column name="param" value="ETI" />
+    </insert>
+    <insert tableName="bean_method_task_params">
+      <column name="bean_method_tasks_id" valueComputed="(select id from ${schemaPrefix}bean_method_tasks where description='Comunicado de aviso de informe de retrospectiva de memoria tipo CEEA pendiente')" />
+      <column name="param" value="/comunicados/informes-retrospectiva-ceea-pendientes" />
+    </insert>
+    <insert tableName="bean_method_task_params">
+      <column name="bean_method_tasks_id" valueComputed="(select id from ${schemaPrefix}bean_method_tasks where description='Comunicado de aviso de informe de retrospectiva de memoria tipo CEEA pendiente')" />
+      <column name="param" value="GET" />
+    </insert>
+    <insert tableName="bean_method_task_params">
+      <column name="bean_method_tasks_id" valueComputed="(select id from ${schemaPrefix}bean_method_tasks where description='Comunicado de aviso de informe de seguimiento anual pendiente')" />
+      <column name="param" value="ETI" />
+    </insert>
+    <insert tableName="bean_method_task_params">
+      <column name="bean_method_tasks_id" valueComputed="(select id from ${schemaPrefix}bean_method_tasks where description='Comunicado de aviso de informe de seguimiento anual pendiente')" />
+      <column name="param" value="/comunicados/informes-seguimiento-anual-pendientes" />
+    </insert>
+    <insert tableName="bean_method_task_params">
+      <column name="bean_method_tasks_id" valueComputed="(select id from ${schemaPrefix}bean_method_tasks where description='Comunicado de aviso de informe de seguimiento anual pendiente')" />
+      <column name="param" value="GET" />
+    </insert>
+    <!-- PII COM FIN FECHA PRIORIDAD SOLICITUD PROTECCION 6 MESES ANTES -->
+    <insert tableName="bean_method_task_params">
+      <column name="bean_method_tasks_id" valueComputed="(select id from ${schemaPrefix}bean_method_tasks where description='Tarea de comprobación de fin de fecha prioridad de una solicitud de protección')" />
+      <column name="param" value="PII" />
+    </insert>
+    <insert tableName="bean_method_task_params">
+      <column name="bean_method_tasks_id" valueComputed="(select id from ${schemaPrefix}bean_method_tasks where description='Tarea de comprobación de fin de fecha prioridad de una solicitud de protección')" />
+      <column name="param" value="/comunicados/meses-hasta-fecha-fin-prioridad-solicitud-proteccion" />
+    </insert>
+    <insert tableName="bean_method_task_params">
+      <column name="bean_method_tasks_id" valueComputed="(select id from ${schemaPrefix}bean_method_tasks where description='Tarea de comprobación de fin de fecha prioridad de una solicitud de protección')" />
+      <column name="param" value="GET" />
+    </insert>
+    <!-- PII COM AVISO FIN PLAZO FECHA PRESENTACION FASES NACIONALES / REGIONALES SOLICITUD PROTECCION -->
+    <insert tableName="bean_method_task_params">
+      <column name="bean_method_tasks_id" valueComputed="(select id from ${schemaPrefix}bean_method_tasks where description='Tarea de comprobación de fin de plazo de presentación de fases de ámbito nacional y/o regional de una solicitud de protección')" />
+      <column name="param" value="PII" />
+    </insert>
+    <insert tableName="bean_method_task_params">
+      <column name="bean_method_tasks_id" valueComputed="(select id from ${schemaPrefix}bean_method_tasks where description='Tarea de comprobación de fin de plazo de presentación de fases de ámbito nacional y/o regional de una solicitud de protección')" />
+      <column name="param" value="/comunicados/aviso-fin-plazo-presentacion-fases-nacionales-regionales-solicitud-proteccion" />
+    </insert>
+    <insert tableName="bean_method_task_params">
+      <column name="bean_method_tasks_id" valueComputed="(select id from ${schemaPrefix}bean_method_tasks where description='Tarea de comprobación de fin de plazo de presentación de fases de ámbito nacional y/o regional de una solicitud de protección')" />
+      <column name="param" value="GET" />
+    </insert>
+  </changeSet>
+
+  <changeSet context="!test" author="master" id="0000000000004-bean_method_cron_tasks">
+    <insert tableName="bean_method_cron_tasks">
+      <column name="id" valueComputed="(select id from ${schemaPrefix}bean_method_tasks where description='Comunicado de aviso de informe de retrospectiva de memoria tipo CEEA pendiente')" />
+      <!-- Every day at 00:00:00 (second, minute, hour, day, month, weekday) -->
+      <column name="cron_expression" value="0 0 0 * * ?" />
+    </insert>
+    <insert tableName="bean_method_cron_tasks">
+      <column name="id" valueComputed="(select id from ${schemaPrefix}bean_method_tasks where description='Comunicado de aviso de informe de seguimiento anual pendiente')" />
+      <!-- Every day at 00:00:00 (second, minute, hour, day, month, weekday) -->
+      <column name="cron_expression" value="0 0 0 * * ?" />
+    </insert>
+    <!-- PII COM FIN FECHA PRIORIDAD SOLICITUD PROTECCION -->
+    <insert tableName="bean_method_cron_tasks">
+      <column name="id" valueComputed="(select id from ${schemaPrefix}bean_method_tasks where description='Tarea de comprobación de fin de fecha prioridad de una solicitud de protección')" />
+      <!-- Every day at 00:00:00 (second, minute, hour, day, month, weekday) -->
+      <column name="cron_expression" value="0 0 0 * * ?" />
+    </insert>
+    <!-- PII COM AVISO FIN PLAZO FECHA PRESENTACION FASES NACIONALES / REGIONALES SOLICITUD PROTECCION -->
+    <insert tableName="bean_method_cron_tasks">
+      <column name="id" valueComputed="(select id from ${schemaPrefix}bean_method_tasks where description='Tarea de comprobación de fin de plazo de presentación de fases de ámbito nacional y/o regional de una solicitud de protección')" />
+      <!-- Every day at 00:00:00 (second, minute, hour, day, month, weekday) -->
+      <column name="cron_expression" value="0 0 0 * * ?" />
+    </insert>
+  </changeSet>
+</databaseChangeLog>

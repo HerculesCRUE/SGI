@@ -49,7 +49,6 @@ import { ConvocatoriaEnlaceModalComponent } from './modals/convocatoria-enlace-m
 import { ConvocatoriaEntidadConvocanteModalComponent } from './modals/convocatoria-entidad-convocante-modal/convocatoria-entidad-convocante-modal.component';
 import { ConvocatoriaHitosModalComponent } from './modals/convocatoria-hitos-modal/convocatoria-hitos-modal.component';
 import { ConvocatoriaListadoExportModalComponent } from './modals/convocatoria-listado-export-modal/convocatoria-listado-export-modal.component';
-import { ConvocatoriaPartidaPresupuestariaModalComponent } from './modals/convocatoria-partidas-presupuestarias-modal/convocatoria-partidas-presupuestarias-modal.component';
 import { ConvocatoriaPeriodosJustificacionModalComponent } from './modals/convocatoria-periodos-justificacion-modal/convocatoria-periodos-justificacion-modal.component';
 import { ConvocatoriaPlazosFaseModalComponent } from './modals/convocatoria-plazos-fase-modal/convocatoria-plazos-fase-modal.component';
 import { ConvocatoriaSeguimientoCientificoModalComponent } from './modals/convocatoria-seguimiento-cientifico-modal/convocatoria-seguimiento-cientifico-modal.component';
@@ -71,7 +70,6 @@ import { NivelAcademicoModalComponent } from './modals/nivel-academico-modal/niv
     ConvocatoriaEntidadesFinanciadorasComponent,
     ConvocatoriaEnlaceComponent,
     ConvocatoriaHitosModalComponent,
-    ConvocatoriaPartidaPresupuestariaModalComponent,
     ConvocatoriaPeriodosJustificacionModalComponent,
     ConvocatoriaEnlaceModalComponent,
     ConvocatoriaEntidadConvocanteModalComponent,

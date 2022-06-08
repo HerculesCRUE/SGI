@@ -2,12 +2,9 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
-import { BaseModalComponent } from '@core/component/base-modal.component';
+import { DialogFormComponent } from '@core/component/dialog-form.component';
 import { MSG_PARAMS } from '@core/i18n';
 import { IAsistente } from '@core/models/eti/asistente';
-import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-properties';
-import { SnackBarService } from '@core/services/snack-bar.service';
-import { FormGroupUtil } from '@core/utils/form-group-util';
 import { TranslateService } from '@ngx-translate/core';
 import { switchMap } from 'rxjs/operators';
 
@@ -19,12 +16,9 @@ const TITLE_NEW_ENTITY = marker('title.new.entity');
   templateUrl: './acta-asistentes-editar-modal.component.html',
   styleUrls: ['./acta-asistentes-editar-modal.component.scss']
 })
-export class ActaAsistentesEditarModalComponent extends
-  BaseModalComponent<IAsistente, ActaAsistentesEditarModalComponent> implements OnInit {
-  FormGroupUtil = FormGroupUtil;
-  fxLayoutProperties: FxLayoutProperties;
+export class ActaAsistentesEditarModalComponent extends DialogFormComponent<IAsistente> implements OnInit {
 
-  ocultarMotivo: boolean;
+  ocultarMotivo = true;
 
   estados =
     [
@@ -40,21 +34,16 @@ export class ActaAsistentesEditarModalComponent extends
   }
 
   constructor(
-    public readonly matDialogRef: MatDialogRef<ActaAsistentesEditarModalComponent>,
+    matDialogRef: MatDialogRef<ActaAsistentesEditarModalComponent>,
     @Inject(MAT_DIALOG_DATA) public asistente: IAsistente,
-    protected readonly snackBarService: SnackBarService,
     private readonly translate: TranslateService
   ) {
-    super(snackBarService, matDialogRef, asistente);
-
-    this.fxLayoutProperties = new FxLayoutProperties();
-    this.fxLayoutProperties.layout = 'column';
+    super(matDialogRef, !!asistente.asistencia);
   }
 
   ngOnInit(): void {
     super.ngOnInit();
     this.setupI18N();
-    this.activarMotivo(this.asistente.asistencia);
   }
 
   private setupI18N(): void {
@@ -84,16 +73,32 @@ export class ActaAsistentesEditarModalComponent extends
     }
   }
 
-  protected getFormGroup(): FormGroup {
+  protected buildFormGroup(): FormGroup {
     const formGroup = new FormGroup({
       asistente: new FormControl(
         this.asistente?.evaluador?.persona?.nombre + ' ' + this.asistente?.evaluador?.persona?.apellidos,
         [Validators.required]
       ),
-      asistencia: new FormControl(this.asistente.asistencia, [Validators.required]),
-      motivo: new FormControl(this.asistente.motivo),
+      asistencia: new FormControl(!!this.asistente.asistencia, [Validators.required]),
+      motivo: new FormControl(this.asistente.motivo, !!!this.asistente.asistencia ? Validators.required : undefined),
     });
     formGroup.controls.asistente.disable();
+
+    this.ocultarMotivo = !!this.asistente.asistencia;
+
+    this.subscriptions.push(formGroup.controls.asistencia.valueChanges.subscribe(
+      (value) => {
+        if (value) {
+          this.ocultarMotivo = true;
+          formGroup.controls.motivo.clearValidators();
+        }
+        else {
+          this.ocultarMotivo = false;
+          formGroup.controls.motivo.setValidators(Validators.required);
+        }
+        formGroup.controls.motivo.updateValueAndValidity({ onlySelf: true, emitEvent: false });
+      }
+    ));
 
     return formGroup;
   }
@@ -101,7 +106,7 @@ export class ActaAsistentesEditarModalComponent extends
   /**
    * Método para actualizar la entidad con los datos de un formGroup
    */
-  protected getDatosForm(): IAsistente {
+  protected getValue(): IAsistente {
     const asistente = this.asistente;
     if (this.ocultarMotivo) {
       this.formGroup.controls.motivo.setValue('');
@@ -113,15 +118,4 @@ export class ActaAsistentesEditarModalComponent extends
     return asistente;
   }
 
-  /**
-   * Recupera el valor de la asistencia
-   * @param value valor del radio button seleccionado.
-   */
-  activarMotivo(value: boolean): void {
-    if (value) {
-      this.ocultarMotivo = true;
-    } else {
-      this.ocultarMotivo = false;
-    }
-  }
 }

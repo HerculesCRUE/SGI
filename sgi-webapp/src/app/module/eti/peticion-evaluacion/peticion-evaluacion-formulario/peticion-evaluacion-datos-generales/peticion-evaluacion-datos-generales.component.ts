@@ -111,7 +111,7 @@ export class PeticionEvaluacionDatosGeneralesComponent extends FormFragmentCompo
   ngOnInit(): void {
     super.ngOnInit();
     this.setupI18N();
-    this.actionService.initializeEquiposInvestigador();
+    this.actionService.initializeMemoriasAndEquiposInvestigador();
 
     this.formGroup.controls.tipoActividad.valueChanges.subscribe(value => {
       this.selectTipoActividad(value);

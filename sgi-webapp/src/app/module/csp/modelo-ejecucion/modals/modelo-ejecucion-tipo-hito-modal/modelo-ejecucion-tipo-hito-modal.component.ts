@@ -2,12 +2,11 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
-import { BaseModalComponent } from '@core/component/base-modal.component';
+import { DialogFormComponent } from '@core/component/dialog-form.component';
 import { MSG_PARAMS } from '@core/i18n';
 import { IModeloTipoHito } from '@core/models/csp/modelo-tipo-hito';
 import { ITipoHito } from '@core/models/csp/tipos-configuracion';
 import { DialogService } from '@core/services/dialog.service';
-import { SnackBarService } from '@core/services/snack-bar.service';
 import { requiredChecked } from '@core/validators/checkbox-validator';
 import { TranslateService } from '@ngx-translate/core';
 import { switchMap } from 'rxjs/operators';
@@ -29,8 +28,7 @@ const TITLE_NEW_ENTITY = marker('title.new.entity');
   templateUrl: './modelo-ejecucion-tipo-hito-modal.component.html',
   styleUrls: ['./modelo-ejecucion-tipo-hito-modal.component.scss']
 })
-export class ModeloEjecucionTipoHitoModalComponent extends
-  BaseModalComponent<IModeloTipoHito, ModeloEjecucionTipoHitoModalComponent> implements OnInit {
+export class ModeloEjecucionTipoHitoModalComponent extends DialogFormComponent<IModeloTipoHito> implements OnInit {
 
   textSaveOrUpdate: string;
   title: string;
@@ -38,13 +36,12 @@ export class ModeloEjecucionTipoHitoModalComponent extends
   msgParamProyectosEntity = {};
 
   constructor(
-    protected snackBarService: SnackBarService,
-    public matDialogRef: MatDialogRef<ModeloEjecucionTipoHitoModalComponent>,
+    matDialogRef: MatDialogRef<ModeloEjecucionTipoHitoModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data: ModeloEjecucionTipoHitoModalData,
     protected dialogService: DialogService,
     private readonly translate: TranslateService
   ) {
-    super(snackBarService, matDialogRef, data.modeloTipoHito);
+    super(matDialogRef, !!data.modeloTipoHito.tipoHito);
   }
 
   ngOnInit(): void {
@@ -81,7 +78,7 @@ export class ModeloEjecucionTipoHitoModalComponent extends
     ).subscribe((value) => this.msgParamTipoEntity = { entity: value, ...MSG_PARAMS.GENDER.MALE, ...MSG_PARAMS.CARDINALIRY.SINGULAR });
   }
 
-  protected getDatosForm(): IModeloTipoHito {
+  protected getValue(): IModeloTipoHito {
     const modeloTipoHito = this.data.modeloTipoHito;
     const disponible = this.formGroup.controls.disponible as FormGroup;
     modeloTipoHito.tipoHito = this.formGroup.get('tipoHito').value;
@@ -91,7 +88,7 @@ export class ModeloEjecucionTipoHitoModalComponent extends
     return modeloTipoHito;
   }
 
-  protected getFormGroup(): FormGroup {
+  protected buildFormGroup(): FormGroup {
     const formGroup = new FormGroup({
       tipoHito: new FormControl({
         value: this.data.modeloTipoHito?.tipoHito,

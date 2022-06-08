@@ -4,13 +4,19 @@ import java.time.Instant;
 
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.JoinType;
+import javax.persistence.criteria.ListJoin;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
 import org.crue.hercules.sgi.csp.config.SgiConfigProperties;
 import org.crue.hercules.sgi.csp.model.Grupo;
+import org.crue.hercules.sgi.csp.model.GrupoEquipo;
+import org.crue.hercules.sgi.csp.model.GrupoPalabraClave;
+import org.crue.hercules.sgi.csp.model.Grupo_;
 import org.crue.hercules.sgi.csp.repository.specification.GrupoSpecifications;
 import org.crue.hercules.sgi.csp.util.PredicateResolverUtil;
+import org.crue.hercules.sgi.framework.data.jpa.domain.Auditable_;
 import org.crue.hercules.sgi.framework.rsql.SgiRSQLPredicateResolver;
 
 import cz.jirutka.rsql.parser.ast.ComparisonNode;
@@ -22,7 +28,9 @@ public class GrupoPredicateResolver implements SgiRSQLPredicateResolver<Grupo> {
     /* Persona autorizada */
     PERSONA_AUTORIZADA("personaAutorizada"),
     /* Responsable */
-    RESPONSABLE("responsable");
+    RESPONSABLE("responsable"),
+    /* Fecha modificación */
+    FECHA_MODIFICACION("fechaModificacion");
 
     private String code;
 
@@ -73,6 +81,8 @@ public class GrupoPredicateResolver implements SgiRSQLPredicateResolver<Grupo> {
         return buildByPersonaAutorizada(node, root, query, criteriaBuilder);
       case RESPONSABLE:
         return buildByResponsable(node, root, query, criteriaBuilder);
+      case FECHA_MODIFICACION:
+        return buildByFechaModificacion(node, root, criteriaBuilder);
       default:
         return null;
     }
@@ -98,6 +108,20 @@ public class GrupoPredicateResolver implements SgiRSQLPredicateResolver<Grupo> {
     Instant fechaActual = Instant.now().atZone(sgiConfigProperties.getTimeZone().toZoneId()).toInstant();
 
     return GrupoSpecifications.byResponsable(personaRef, fechaActual).toPredicate(root, query, cb);
+  }
+
+  private Predicate buildByFechaModificacion(ComparisonNode node, Root<Grupo> root, CriteriaBuilder cb) {
+    PredicateResolverUtil.validateOperatorIsSupported(node, RSQLOperators.GREATER_THAN_OR_EQUAL);
+    PredicateResolverUtil.validateOperatorArgumentNumber(node, 1);
+
+    String fechaModificacionArgument = node.getArguments().get(0);
+    Instant fechaModificacion = Instant.parse(fechaModificacionArgument);
+    ListJoin<Grupo, GrupoEquipo> joinEquipos = root.join(Grupo_.miembrosEquipo, JoinType.LEFT);
+    ListJoin<Grupo, GrupoPalabraClave> joinPalabrasClave = root.join(Grupo_.palabrasClave, JoinType.LEFT);
+
+    return cb.or(cb.greaterThanOrEqualTo(root.get(Auditable_.lastModifiedDate), fechaModificacion),
+        cb.greaterThanOrEqualTo(joinEquipos.get(Auditable_.lastModifiedDate), fechaModificacion),
+        cb.greaterThanOrEqualTo(joinPalabrasClave.get(Auditable_.lastModifiedDate), fechaModificacion));
   }
 
 }

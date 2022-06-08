@@ -181,7 +181,6 @@ export class ProyectoCalendarioFacturacionComponent extends FragmentComponent im
     };
 
     const config = {
-      panelClass: 'sgi-dialog-container',
       data: modalData
     };
 
@@ -209,11 +208,9 @@ export class ProyectoCalendarioFacturacionComponent extends FragmentComponent im
     }
 
     const config: MatDialogConfig = {
-      panelClass: 'sgi-dialog-container',
       data: {
         proyectoFacturacionId
-      },
-      width: '45vw'
+      }
     };
 
     this.matDialog.open(HistoricoIpModalComponent, config);

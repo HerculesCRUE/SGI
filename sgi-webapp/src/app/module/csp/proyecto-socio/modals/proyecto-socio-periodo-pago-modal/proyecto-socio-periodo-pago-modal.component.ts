@@ -2,11 +2,9 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
-import { BaseModalComponent } from '@core/component/base-modal.component';
+import { DialogFormComponent } from '@core/component/dialog-form.component';
 import { MSG_PARAMS } from '@core/i18n';
 import { IProyectoSocioPeriodoPago } from '@core/models/csp/proyecto-socio-periodo-pago';
-import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-properties';
-import { SnackBarService } from '@core/services/snack-bar.service';
 import { DateValidator } from '@core/validators/date-validator';
 import { TranslateService } from '@ngx-translate/core';
 import { DateTime } from 'luxon';
@@ -32,9 +30,8 @@ export interface ProyectoSocioPeriodoPagoModalData {
   templateUrl: './proyecto-socio-periodo-pago-modal.component.html',
   styleUrls: ['./proyecto-socio-periodo-pago-modal.component.scss']
 })
-export class ProyectoSocioPeriodoPagoModalComponent extends
-  BaseModalComponent<ProyectoSocioPeriodoPagoModalData, ProyectoSocioPeriodoPagoModalComponent>
-  implements OnInit {
+export class ProyectoSocioPeriodoPagoModalComponent extends DialogFormComponent<ProyectoSocioPeriodoPagoModalData> implements OnInit {
+
   textSaveOrUpdate: string;
 
   msgParamImporteEntity = {};
@@ -42,16 +39,12 @@ export class ProyectoSocioPeriodoPagoModalComponent extends
   title: string;
 
   constructor(
-    protected snackBarService: SnackBarService,
-    public matDialogRef: MatDialogRef<ProyectoSocioPeriodoPagoModalComponent>,
+    matDialogRef: MatDialogRef<ProyectoSocioPeriodoPagoModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data: ProyectoSocioPeriodoPagoModalData,
     private readonly translate: TranslateService
   ) {
-    super(snackBarService, matDialogRef, data);
-    this.fxLayoutProperties = new FxLayoutProperties();
-    this.fxLayoutProperties.gap = '20px';
-    this.fxLayoutProperties.layout = 'row';
-    this.fxLayoutProperties.xs = 'row';
+    super(matDialogRef, data.isEdit);
+
     this.textSaveOrUpdate = this.data.isEdit ? MSG_ACEPTAR : MSG_ANADIR;
   }
 
@@ -91,7 +84,7 @@ export class ProyectoSocioPeriodoPagoModalComponent extends
     }
   }
 
-  protected getDatosForm(): ProyectoSocioPeriodoPagoModalData {
+  protected getValue(): ProyectoSocioPeriodoPagoModalData {
     this.data.proyectoSocioPeriodoPago.numPeriodo = this.formGroup.get('numPeriodo').value;
     this.data.proyectoSocioPeriodoPago.fechaPrevistaPago = this.formGroup.get('fechaPrevistaPago').value;
     this.data.proyectoSocioPeriodoPago.importe = this.formGroup.get('importe').value;
@@ -99,7 +92,7 @@ export class ProyectoSocioPeriodoPagoModalComponent extends
     return this.data;
   }
 
-  protected getFormGroup(): FormGroup {
+  protected buildFormGroup(): FormGroup {
     const formGroup = new FormGroup(
       {
         numPeriodo: new FormControl({
@@ -109,11 +102,10 @@ export class ProyectoSocioPeriodoPagoModalComponent extends
           [Validators.required]
         ),
         fechaPrevistaPago: new FormControl(
-          this.data.proyectoSocioPeriodoPago.fechaPrevistaPago, [
-          Validators.required,
-          DateValidator.minDate(this.data.fechaInicioProyectoSocio),
-          DateValidator.maxDate(this.data.fechaFinProyectoSocio)
-        ]
+          this.data.proyectoSocioPeriodoPago.fechaPrevistaPago,
+          [
+            Validators.required
+          ]
         ),
         importe: new FormControl(
           this.data.proyectoSocioPeriodoPago.importe,

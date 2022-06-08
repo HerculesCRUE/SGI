@@ -1,0 +1,60 @@
+[
+  {
+    "key": "ap4_1_4",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "expressionLock": "formState.memoria.tipoMemoria.id === 3",
+      "label": "4.1.4 Aseguramiento del daño"
+    },
+    "hideExpression": "!formState.bloques[3].ap3_4.intervencionesSeresHumanosRadio || formState.bloques[3].ap3_4.intervencionesSeresHumanosRadio === 'no'",
+    "fieldGroup": [
+      {
+        "template": "<p>Participar en una actividad de investigación puede suponer riesgos, y por ello la Universidad dispone de un Seguro de Responsabilidad civil que cubre los daños derivados de dichas actividades profesionales.</p>"
+      },
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "<p>En seres humanos, el seguro de responsabilidad civil no cubre los daños que puedan producirse en la investigación si es un ensayo clínico (LIB 14/2007), si el personal investigador no forma parte de la Universidad o si la actividad investigadora no dispone del informe favorable del CEI.</p>"
+      },
+      {
+        "key": "aseguramientoDanoRadio",
+        "type": "radio",
+        "templateOptions": {
+          "required": true,
+          "label": "¿Cuenta con el seguro correspondiente para realizar dicha actividad?",
+          "options": [
+            {
+              "value": "no",
+              "label": "No"
+            },
+            {
+              "value": "si",
+              "label": "Sí (si responde sí, debe adjuntar el certificado de la compañía de seguros)"
+            }
+          ]
+        }
+      },
+      {
+        "key": "numPoliza",
+        "type": "textarea",
+        "hideExpression": "!model.aseguramientoDanoRadio || model.aseguramientoDanoRadio === 'no'",
+        "templateOptions": {
+          "label": "Nº de póliza",
+          "required": true,
+          "autosize": true,
+          "autosizeMinRows": "1",
+          "autosizeMaxRows": "10"
+        }
+      },
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "<p>Nota: añadir en el apartado '5.7 Documentación adicional' la póliza de seguro, en el caso de que la actividad de investigación necesite un seguro específico.</p>"
+      }
+    ]
+  }
+]

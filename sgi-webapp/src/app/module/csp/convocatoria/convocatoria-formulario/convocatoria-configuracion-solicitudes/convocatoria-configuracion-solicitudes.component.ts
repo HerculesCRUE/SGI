@@ -175,7 +175,6 @@ export class ConvocatoriaConfiguracionSolicitudesComponent
       isConvocatoriaVinculada: this.formPart.isConvocatoriaVinculada
     };
     const config = {
-      panelClass: 'sgi-dialog-container',
       data
     };
     const dialogRef = this.matDialog.open(ConvocatoriaConfiguracionSolicitudesModalComponent, config);

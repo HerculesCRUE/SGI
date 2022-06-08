@@ -5,14 +5,11 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RouterTestingModule } from '@angular/router/testing';
 import { IEstadoProduccionCientificaRequest } from '@core/services/prc/estado-produccion-cientifica/estado-produccion-cientifica-input';
-import { SnackBarService } from '@core/services/snack-bar.service';
 import TestUtils from '@core/utils/test-utils';
 import { MaterialDesignModule } from '@material/material-design.module';
 import { TranslateModule } from '@ngx-translate/core';
 import { SgiAuthModule } from '@sgi/framework/auth';
 import { SharedModule } from '@shared/shared.module';
-import { LoggerTestingModule } from 'ngx-logger/testing';
-
 import { RechazarProduccionCientificaModalComponent } from './rechazar-produccion-cientifica-modal.component';
 
 describe('RechazarProduccionCientificaModalComponent', () => {
@@ -26,7 +23,6 @@ describe('RechazarProduccionCientificaModalComponent', () => {
         BrowserAnimationsModule,
         MaterialDesignModule,
         HttpClientTestingModule,
-        LoggerTestingModule,
         TestUtils.getIdiomas(),
         RouterTestingModule,
         FormsModule,
@@ -36,8 +32,7 @@ describe('RechazarProduccionCientificaModalComponent', () => {
         SgiAuthModule,
       ],
       providers: [
-        { provide: SnackBarService, useValue: TestUtils.getSnackBarServiceSpy() },
-        { provide: MatDialogRef, useValue: {} as IEstadoProduccionCientificaRequest },
+        { provide: MatDialogRef, useValue: TestUtils.buildDialogCommonMatDialogRef() },
         { provide: MAT_DIALOG_DATA, useValue: {} as IEstadoProduccionCientificaRequest },
       ]
     })

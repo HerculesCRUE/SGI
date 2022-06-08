@@ -1,13 +1,8 @@
-<div class="sgi-dialog-header" fxLayout="row" fxLayoutGap="20px">
-  <span fxFlexAlign="center" mat-mat-dialog-title role="heading" aria-level="3" fxFlex>{{title}}</span>
-  <button fxFlex="nogrow" mat-icon-button mat-dialog-close>
-    <mat-icon class="close-icon">close</mat-icon>
-  </button>
-</div>
-<mat-dialog-content class="modal-tareas">
+<sgi-dialog-header [title]="title"></sgi-dialog-header>
+<sgi-dialog-content>
   <form [formGroup]="formGroup">
     <!-- Persona equipo trabajo -->
-    <div [fxLayout]="fxLayoutProperties.layout" [fxLayoutAlign]="fxLayoutProperties.layoutAlign">
+    <div fxLayout="row">
       <mat-form-field>
         <mat-label>{{'eti.peticion-evaluacion.tarea.persona' | translate}}</mat-label>
         <sgi-select-entity placeholder="{{'eti.peticion-evaluacion.tarea.persona' | translate}}"
@@ -20,7 +15,7 @@
       </mat-form-field>
     </div>
     <!-- Memoria -->
-    <div [fxLayout]="fxLayoutProperties.layout" [fxLayoutAlign]="fxLayoutProperties.layoutAlign">
+    <div fxLayout="row">
       <mat-form-field>
         <mat-label>{{'eti.memoria' | translate:MSG_PARAMS.CARDINALIRY.SINGULAR}}</mat-label>
         <sgi-select-entity formControlName="memoria" [options]="this.data.memorias" [displayWith]="displayerMemoria"
@@ -32,7 +27,7 @@
       </mat-form-field>
     </div>
     <!-- Tarea -->
-    <div [fxLayout]="fxLayoutProperties.layout" [fxLayoutAlign]="fxLayoutProperties.layoutAlign">
+    <div fxLayout="row" fxLayoutGap="10px">
       <mat-form-field [ngClass]="!tareaYformacionTexto ? '' : 'ocultarCampo'">
         <mat-label>{{'eti.peticion-evaluacion.tarea'| translate:MSG_PARAMS.CARDINALIRY.SINGULAR}}</mat-label>
         <sgi-select-entity formControlName="tipoTarea" [options]="this.tipoTareas$ | async"
@@ -53,7 +48,7 @@
       </mat-form-field>
     </div>
     <!-- Formación específica -->
-    <div [fxLayout]="fxLayoutProperties.layout" [fxLayoutAlign]="fxLayoutProperties.layoutAlign">
+    <div fxLayout="row" fxLayoutGap="10px">
       <mat-form-field [ngClass]="!tareaYformacionTexto ? '' : 'ocultarCampo'">
         <mat-label>{{textoFormacionExperiencia$ | async}}</mat-label>
         <sgi-select-entity formControlName="formacionEspecifica" [options]="this.formaciones$ | async"
@@ -73,7 +68,7 @@
       </mat-form-field>
     </div>
     <!-- Año -->
-    <div [fxLayout]="fxLayoutProperties.layout" [fxLayoutAlign]="fxLayoutProperties.layoutAlign">
+    <div fxLayout="row">
       <mat-form-field [ngClass]="mostrarOrganismoYanio ? '' : 'ocultarCampo'">
         <mat-label>{{'eti.peticion-evaluacion.tarea.anio' | translate}}</mat-label>
         <input matInput formControlName="anio" type="number"
@@ -84,7 +79,7 @@
       </mat-form-field>
     </div>
     <!-- Organismo -->
-    <div [fxLayout]="fxLayoutProperties.layout" [fxLayoutAlign]="fxLayoutProperties.layoutAlign">
+    <div fxLayout="row">
       <mat-form-field [ngClass]="mostrarOrganismoYanio ? '' : 'ocultarCampo'">
         <mat-label>{{'eti.peticion-evaluacion.tarea.organismo' | translate}}</mat-label>
         <input matInput formControlName="organismo" type="text"
@@ -95,9 +90,9 @@
       </mat-form-field>
     </div>
   </form>
-</mat-dialog-content>
+</sgi-dialog-content>
 <mat-dialog-actions>
-  <button color="accent" (click)="saveOrUpdate()" mat-raised-button type="submit">
+  <button color="accent" (click)="doAction()" [disabled]="this.actionDisabled" mat-raised-button type="submit">
     <mat-icon class="save-icon">save</mat-icon>{{textoAceptar}}
   </button>
   <button class="link-cancelar" mat-button type="button" mat-dialog-close>{{'btn.cancel' |

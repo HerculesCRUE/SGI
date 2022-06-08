@@ -97,6 +97,7 @@ export class GrupoEquipoInvestigacionFragment extends Fragment {
   }
 
   addGrupoEquipoInvestigacion(element: IGrupoEquipoListado) {
+    this.getVinculacionPersona(element).subscribe();
     const wrapper = new StatusWrapper<IGrupoEquipoListado>(element);
     wrapper.setCreated();
     const current = this.equipos$.value;
@@ -111,6 +112,7 @@ export class GrupoEquipoInvestigacionFragment extends Fragment {
     const index = current.findIndex(value => value.value.id === wrapper.value.id);
     if (index >= 0) {
       wrapper.setEdited();
+      this.getVinculacionPersona(this.equipos$.value[index].value).subscribe();
       this.equipos$.value[index] = wrapper;
       this.setChanges(true);
     }
@@ -142,6 +144,7 @@ export class GrupoEquipoInvestigacionFragment extends Fragment {
               );
               value.persona = grupoEquipo.persona;
               value.categoriaProfesional = grupoEquipo.categoriaProfesional;
+              value.rol = grupoEquipo.rol;
               return value;
             });
         }),
@@ -166,6 +169,22 @@ export class GrupoEquipoInvestigacionFragment extends Fragment {
   private isSaveOrUpdateComplete(): boolean {
     const hasTouched = this.equipos$.value.some((wrapper) => wrapper.touched);
     return !hasTouched;
+  }
+
+  private getVinculacionPersona(element: IGrupoEquipoListado): Observable<IGrupoEquipoListado> {
+    const filter = new RSQLSgiRestFilter(
+      'fechaObtencion', SgiRestFilterOperator.LOWER_OR_EQUAL,
+      LuxonUtils.toBackend(element.fechaFin) ?? LuxonUtils.toBackend(element.fechaInicio)
+    ).and('fechaFin', SgiRestFilterOperator.GREATHER_OR_EQUAL,
+      LuxonUtils.toBackend(element.fechaFin) ?? LuxonUtils.toBackend(element.fechaInicio));
+    const options: SgiRestFindOptions = {
+      filter
+    };
+    return this.vinculacionService.findVinculacionesCategoriasProfesionalesByPersonaId(element.persona.id, options)
+      .pipe(map(vinculacionCategoria => {
+        element.categoriaProfesional = vinculacionCategoria?.categoriaProfesional;
+        return element;
+      }));
   }
 
 }

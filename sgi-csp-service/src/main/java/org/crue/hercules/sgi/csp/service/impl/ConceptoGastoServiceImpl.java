@@ -17,6 +17,7 @@ import org.crue.hercules.sgi.framework.problem.message.ProblemMessage;
 
 import org.crue.hercules.sgi.framework.spring.context.support.ApplicationContextSupport;
 
+import java.util.Objects;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -95,7 +96,8 @@ public class ConceptoGastoServiceImpl implements ConceptoGastoService {
             .build());
 
     repository.findByNombreAndActivoIsTrue(conceptoGastoActualizar.getNombre()).ifPresent(
-        conceptoGastoExistente -> Assert.isTrue(conceptoGastoActualizar.getId() == conceptoGastoExistente.getId(),
+        conceptoGastoExistente -> Assert.isTrue(
+            Objects.equals(conceptoGastoActualizar.getId(), conceptoGastoExistente.getId()),
             MESSAGE_CONCEPTO_GASTO_EXISTE + conceptoGastoExistente.getNombre()));
 
     return repository.findById(conceptoGastoActualizar.getId()).map(conceptoGasto -> {
@@ -123,13 +125,14 @@ public class ConceptoGastoServiceImpl implements ConceptoGastoService {
     Assert.notNull(id, "ConceptoGasto id no puede ser null para reactivar un ConceptoGasto");
 
     return repository.findById(id).map(conceptoGasto -> {
-      if (conceptoGasto.getActivo()) {
+      if (Boolean.TRUE.equals(conceptoGasto.getActivo())) {
         // Si esta activo no se hace nada
         return conceptoGasto;
       }
 
       repository.findByNombreAndActivoIsTrue(conceptoGasto.getNombre())
-          .ifPresent(conceptoGastoExistente -> Assert.isTrue(conceptoGasto.getId() == conceptoGastoExistente.getId(),
+          .ifPresent(conceptoGastoExistente -> Assert.isTrue(
+              Objects.equals(conceptoGasto.getId(), conceptoGastoExistente.getId()),
               MESSAGE_CONCEPTO_GASTO_EXISTE + conceptoGastoExistente.getNombre()));
 
       conceptoGasto.setActivo(true);
@@ -154,7 +157,7 @@ public class ConceptoGastoServiceImpl implements ConceptoGastoService {
     Assert.notNull(id, "ConceptoGasto id no puede ser null para desactivar un ConceptoGasto");
 
     return repository.findById(id).map(conceptoGasto -> {
-      if (!conceptoGasto.getActivo()) {
+      if (Boolean.FALSE.equals(conceptoGasto.getActivo())) {
         // Si no esta activo no se hace nada
         return conceptoGasto;
       }

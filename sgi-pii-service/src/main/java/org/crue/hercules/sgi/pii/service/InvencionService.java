@@ -272,4 +272,26 @@ public class InvencionService {
 
     return repository.findInvencionesProduccionCientifica(fechaInicioBaremacion, fechaFinBaremacion, universidadId);
   }
+
+  /**
+   * Obtiene los ids de {@link Invencion} modificados que esten activos y que
+   * cumplan
+   * las condiciones indicadas en el filtro de búsqueda
+   *
+   * @param query información del filtro.
+   * @return el listado de ids de {@link Invencion}.
+   */
+  public List<Long> findIdsInvencionesModificadas(String query) {
+    log.debug("findIdsInvencionesModificadas(String query) - start");
+
+    Specification<Invencion> specs = InvencionSpecifications.activos()
+        .and(SgiRSQLJPASupport.toSpecification(query, InvencionPredicateResolver.getInstance()));
+
+    List<Long> returnValue = repository.findIds(specs);
+
+    log.debug("findIdsInvencionesModificadas(String query) - end");
+
+    return returnValue;
+  }
+
 }

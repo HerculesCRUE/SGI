@@ -2,7 +2,7 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
-import { BaseModalComponent } from '@core/component/base-modal.component';
+import { DialogFormComponent } from '@core/component/dialog-form.component';
 import { SelectValue } from '@core/component/select-common/select-common.component';
 import { TipoPartida } from '@core/enums/tipo-partida';
 import { MSG_PARAMS } from '@core/i18n';
@@ -11,10 +11,8 @@ import { IProyectoPartida } from '@core/models/csp/proyecto-partida';
 import { IProyectoProyectoSge } from '@core/models/csp/proyecto-proyecto-sge';
 import { ICodigoEconomicoGasto } from '@core/models/sge/codigo-economico-gasto';
 import { IProyectoSge } from '@core/models/sge/proyecto-sge';
-import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-properties';
 import { ProyectoService } from '@core/services/csp/proyecto.service';
 import { CodigoEconomicoGastoService } from '@core/services/sge/codigo-economico-gasto.service';
-import { SnackBarService } from '@core/services/snack-bar.service';
 import { SelectValidator } from '@core/validators/select-validator';
 import { TranslateService } from '@ngx-translate/core';
 import { RSQLSgiRestFilter, SgiRestFilterOperator, SgiRestFindOptions } from '@sgi/framework/http';
@@ -39,9 +37,7 @@ export interface ProyectoAnualidadIngresoModalData {
   templateUrl: './proyecto-anualidad-ingreso-modal.component.html',
   styleUrls: ['./proyecto-anualidad-ingreso-modal.component.scss']
 })
-export class ProyectoAnualidadIngresoModalComponent extends
-  BaseModalComponent<ProyectoAnualidadIngresoModalData, ProyectoAnualidadIngresoModalComponent>
-  implements OnInit {
+export class ProyectoAnualidadIngresoModalComponent extends DialogFormComponent<ProyectoAnualidadIngresoModalData> implements OnInit {
 
   textSaveOrUpdate: string;
 
@@ -59,18 +55,13 @@ export class ProyectoAnualidadIngresoModalComponent extends
   }
 
   constructor(
-    protected snackBarService: SnackBarService,
-    public matDialogRef: MatDialogRef<ProyectoAnualidadIngresoModalComponent>,
+    matDialogRef: MatDialogRef<ProyectoAnualidadIngresoModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data: ProyectoAnualidadIngresoModalData,
     private readonly translate: TranslateService,
     private readonly proyectoService: ProyectoService,
     codigoEconomicoGastoService: CodigoEconomicoGastoService,
   ) {
-    super(snackBarService, matDialogRef, data);
-    this.fxLayoutProperties = new FxLayoutProperties();
-    this.fxLayoutProperties.gap = '20px';
-    this.fxLayoutProperties.layout = 'row';
-    this.fxLayoutProperties.xs = 'row';
+    super(matDialogRef, data.isEdit);
 
     this.textSaveOrUpdate = this.data.isEdit ? MSG_ACEPTAR : MSG_ANADIR;
 
@@ -141,7 +132,7 @@ export class ProyectoAnualidadIngresoModalComponent extends
     });
   }
 
-  protected getDatosForm(): ProyectoAnualidadIngresoModalData {
+  protected getValue(): ProyectoAnualidadIngresoModalData {
     this.data.anualidadIngreso.proyectoSgeRef = this.formGroup.controls.identificadorSge.value.proyectoSge.id;
     this.data.anualidadIngreso.codigoEconomico = this.formGroup.controls.codigoEconomico.value;
     this.data.anualidadIngreso.importeConcedido = this.formGroup.controls.importeConcedido.value;
@@ -149,7 +140,7 @@ export class ProyectoAnualidadIngresoModalComponent extends
     return this.data;
   }
 
-  protected getFormGroup(): FormGroup {
+  protected buildFormGroup(): FormGroup {
 
     const identificadorSge = this.data.anualidadIngreso?.proyectoSgeRef
       ? {

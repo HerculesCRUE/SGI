@@ -42,6 +42,7 @@ export class TipoHitoModalComponent extends DialogActionComponent<ITipoHito> imp
 
   ngOnInit(): void {
     super.ngOnInit();
+    this.matDialogRef.updateSize('30vw');
     this.setupI18N();
   }
 

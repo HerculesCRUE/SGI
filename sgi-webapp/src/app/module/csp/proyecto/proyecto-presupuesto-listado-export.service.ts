@@ -39,6 +39,8 @@ const IMPORTE_CONCEDIDO_SOCIOS_FIELD = 'importeConcedidoSocios';
 const TOTAL_IMPORTE_PRESUPUESTO_FIELD = 'importePresupuesto';
 const TOTAL_IMPORTE_CONCEDIDO_FIELD = 'importeConcedido';
 
+const COLUMN_VALUE_PREFIX = ': ';
+
 @Injectable()
 export class ProyectoPresupuestoListadoExportService extends AbstractTableExportFillService<IProyectoReportData, IProyectoReportOptions>{
 
@@ -109,70 +111,70 @@ export class ProyectoPresupuestoListadoExportService extends AbstractTableExport
 
     const columnImportePresupuestoUniversidad: ISgiColumnReport = {
       name: IMPORTE_PRESUPUESTO_UNIVERSIDAD_FIELD,
-      title: prefix + this.translate.instant(IMPORTE_PRESUPUESTO_UNIVERSIDAD_KEY),
+      title: prefix + this.translate.instant(IMPORTE_PRESUPUESTO_UNIVERSIDAD_KEY) + this.getValuePrefix(prefix),
       type: ColumnType.STRING,
     };
     columns.push(columnImportePresupuestoUniversidad);
 
     const columnImportePresupuestoUniversidadCostesIndirectos: ISgiColumnReport = {
       name: IMPORTE_PRESUPUESTO_UNIVERSIDAD_COSTES_INDIRECTOS_FIELD,
-      title: prefix + this.translate.instant(IMPORTE_PRESUPUESTO_UNIVERSIDAD_COSTES_INDIRECTOS_KEY),
+      title: prefix + this.translate.instant(IMPORTE_PRESUPUESTO_UNIVERSIDAD_COSTES_INDIRECTOS_KEY) + this.getValuePrefix(prefix),
       type: ColumnType.STRING,
     };
     columns.push(columnImportePresupuestoUniversidadCostesIndirectos);
 
     const columnTotalImportePresupuestoUniversidad: ISgiColumnReport = {
       name: TOTAL_IMPORTE_PRESUPUESTO_UNIVERSIDAD_FIELD,
-      title: prefix + this.translate.instant(TOTAL_IMPORTE_PRESUPUESTO_UNIVERSIDAD_KEY),
+      title: prefix + this.translate.instant(TOTAL_IMPORTE_PRESUPUESTO_UNIVERSIDAD_KEY) + this.getValuePrefix(prefix),
       type: ColumnType.STRING,
     };
     columns.push(columnTotalImportePresupuestoUniversidad);
 
     const columnImporteConcedidoUniversidad: ISgiColumnReport = {
       name: IMPORTE_CONCEDIDO_UNIVERSIDAD_FIELD,
-      title: prefix + this.translate.instant(IMPORTE_CONCEDIDO_UNIVERSIDAD_KEY),
+      title: prefix + this.translate.instant(IMPORTE_CONCEDIDO_UNIVERSIDAD_KEY) + this.getValuePrefix(prefix),
       type: ColumnType.STRING,
     };
     columns.push(columnImporteConcedidoUniversidad);
 
     const columnImporteConcedidoUniversidadCostesIndirectos: ISgiColumnReport = {
       name: IMPORTE_CONCEDIDO_UNIVERSIDAD_COSTES_INDIRECTOS_FIELD,
-      title: prefix + this.translate.instant(IMPORTE_CONCEDIDO_UNIVERSIDAD_COSTES_INDIRECTOS_KEY),
+      title: prefix + this.translate.instant(IMPORTE_CONCEDIDO_UNIVERSIDAD_COSTES_INDIRECTOS_KEY) + this.getValuePrefix(prefix),
       type: ColumnType.STRING,
     };
     columns.push(columnImporteConcedidoUniversidadCostesIndirectos);
 
     const columnTotalImporteConcedidoUniversidad: ISgiColumnReport = {
       name: TOTAL_IMPORTE_CONCEDIDO_UNIVERSIDAD_FIELD,
-      title: prefix + this.translate.instant(TOTAL_IMPORTE_CONCEDIDO_UNIVERSIDAD_KEY),
+      title: prefix + this.translate.instant(TOTAL_IMPORTE_CONCEDIDO_UNIVERSIDAD_KEY) + this.getValuePrefix(prefix),
       type: ColumnType.STRING,
     };
     columns.push(columnTotalImporteConcedidoUniversidad);
 
     const columnImportePresupuestoSocios: ISgiColumnReport = {
       name: IMPORTE_PRESUPUESTO_SOCIOS_FIELD,
-      title: prefix + this.translate.instant(IMPORTE_PRESUPUESTO_SOCIOS_KEY),
+      title: prefix + this.translate.instant(IMPORTE_PRESUPUESTO_SOCIOS_KEY) + this.getValuePrefix(prefix),
       type: ColumnType.STRING,
     };
     columns.push(columnImportePresupuestoSocios);
 
     const columnImporteConcedidoSocios: ISgiColumnReport = {
       name: IMPORTE_CONCEDIDO_SOCIOS_FIELD,
-      title: prefix + this.translate.instant(IMPORTE_CONCEDIDO_SOCIOS_KEY),
+      title: prefix + this.translate.instant(IMPORTE_CONCEDIDO_SOCIOS_KEY) + this.getValuePrefix(prefix),
       type: ColumnType.STRING,
     };
     columns.push(columnImporteConcedidoSocios);
 
     const columnTotalImportePresupuesto: ISgiColumnReport = {
       name: TOTAL_IMPORTE_PRESUPUESTO_FIELD,
-      title: prefix + this.translate.instant(TOTAL_IMPORTE_PRESUPUESTO_KEY),
+      title: prefix + this.translate.instant(TOTAL_IMPORTE_PRESUPUESTO_KEY) + this.getValuePrefix(prefix),
       type: ColumnType.STRING,
     };
     columns.push(columnTotalImportePresupuesto);
 
     const columnTotalImporteConcedido: ISgiColumnReport = {
       name: TOTAL_IMPORTE_CONCEDIDO_FIELD,
-      title: prefix + this.translate.instant(TOTAL_IMPORTE_CONCEDIDO_KEY),
+      title: prefix + this.translate.instant(TOTAL_IMPORTE_CONCEDIDO_KEY) + this.getValuePrefix(prefix),
       type: ColumnType.STRING,
     };
     columns.push(columnTotalImporteConcedido);
@@ -265,5 +267,12 @@ export class ProyectoPresupuestoListadoExportService extends AbstractTableExport
       elementsRow.push('');
       elementsRow.push('');
     }
+  }
+
+  private getValuePrefix(prefix: string): string {
+    if (!prefix) {
+      return COLUMN_VALUE_PREFIX;
+    }
+    return '';
   }
 }

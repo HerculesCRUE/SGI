@@ -1,15 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <api context="/sgiusr" name="sgiusr-api" publishSwagger="/_system/governance/swagger_files/sgicsp-swagger.yaml" xmlns="http://ws.apache.org/ns/synapse">
 
-  <!-- All USR -->
-  <resource methods="HEAD DELETE POST GET OPTIONS PUT PATCH">
+  <!-- Unidades -->
+  <resource methods="GET" url-mapping="/unidades">
     <inSequence>
-      <log level="custom">
-        <property name="path" expression="get-property('axis2','REST_URL_POSTFIX')" />
-      </log>
-      <call-template target="sgi-auth-sequence-template">
-        <with-param name="requiredAuthorities" value="" />
-      </call-template>
+      <send>
+        <endpoint key="sgiusr-endpoint" />
+      </send>
+    </inSequence>
+    <outSequence>
+      <respond />
+    </outSequence>
+    <faultSequence>
+      <sequence key="error-handling-sequence" />
+    </faultSequence>
+  </resource>
+
+  <resource methods="GET" uri-template="/unidades/{id}">
+    <inSequence>
       <send>
         <endpoint key="sgiusr-endpoint" />
       </send>

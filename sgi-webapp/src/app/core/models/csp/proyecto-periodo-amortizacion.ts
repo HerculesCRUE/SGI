@@ -9,5 +9,5 @@ export interface IProyectoPeriodoAmortizacion {
   fechaLimiteAmortizacion: DateTime;
   proyectoSGE: IProyectoSge;
   proyectoEntidadFinanciadora: IProyectoEntidadFinanciadora;
-  proyectoAnualidad: IProyectoAnualidad
+  proyectoAnualidad: IProyectoAnualidad;
 }

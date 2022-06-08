@@ -34,7 +34,6 @@ export class GrupoDatosGeneralesFragment extends FormFragment<IGrupo> {
     private readonly palabraClaveService: PalabraClaveService,
     private readonly rolProyectoService: RolProyectoService,
     private readonly vinculacionService: VinculacionService,
-    private readonly solicitudService: SolicitudService,
     private readonly: boolean
   ) {
     super(key);
@@ -52,7 +51,7 @@ export class GrupoDatosGeneralesFragment extends FormFragment<IGrupo> {
       ),
       switchMap(grupo => {
         if (grupo.solicitud) {
-          return this.solicitudService.findById(grupo.solicitud.id).pipe(
+          return this.grupoService.findSolicitud(grupo.id).pipe(
             map(solicitud => {
               grupo.solicitud = solicitud;
             }),
@@ -266,7 +265,7 @@ export class GrupoDatosGeneralesFragment extends FormFragment<IGrupo> {
       rol,
       dedicacion: Dedicacion.COMPLETA,
       participacion: 100
-    }
+    };
   }
 
   private actualizarTablas(id: number) {

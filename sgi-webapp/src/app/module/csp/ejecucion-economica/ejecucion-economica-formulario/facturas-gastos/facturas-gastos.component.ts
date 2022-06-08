@@ -64,7 +64,6 @@ export class FacturasGastosComponent extends FragmentComponent implements OnInit
     this.subscriptions.push(this.ejecucionEconomicaService.getFacturaGasto(element.id).subscribe(
       (detalle) => {
         const config: MatDialogConfig<IDatoEconomicoDetalle> = {
-          panelClass: 'sgi-dialog-container',
           data: detalle
         };
         this.matDialog.open(FacturasGastosModalComponent, config);

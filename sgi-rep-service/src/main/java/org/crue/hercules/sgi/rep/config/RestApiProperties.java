@@ -10,30 +10,11 @@ import lombok.Data;
 @ConfigurationProperties(prefix = "sgi.rest.api")
 @Data
 public class RestApiProperties {
-  /**
-   * URL base de los end-points del módulo de ETICA.
-   */
-  private String etiUrl;
 
   /**
-   * URL base de los end-points del módulo de CSP.
+   * URL base de los end-points del módulo de CNF.
    */
-  private String cspUrl;
-
-  /**
-   * URL base de los end-points del módulo de PII.
-   */
-  private String piiUrl;
-
-  /**
-   * URL base de los end-points del módulo de TP.
-   */
-  private String tpUrl;
-
-  /**
-   * URL base de los end-points del módulo de REL.
-   */
-  private String relUrl;
+  private String cnfUrl;
 
   /**
    * URL base de los end-points del módulo de COM.
@@ -41,17 +22,47 @@ public class RestApiProperties {
   private String comUrl;
 
   /**
-   * URL base de los end-points del módulo de USR.
+   * URL base de los end-points del módulo de CSP.
    */
-  private String usrUrl;
+  private String cspUrl;
 
+  /**
+   * URL base de los end-points del módulo de ETICA.
+   */
+  private String etiUrl;
+
+  /**
+   * URL base de los end-points del módulo de PII.
+   */
+  private String piiUrl;
+
+  /**
+   * URL base de los end-points del módulo de PRC.
+   */
+  private String prcUrl;
+
+  /**
+   * URL base de los end-points del módulo de REL.
+   */
+  private String relUrl;
+
+  /**
+   * URL base de los end-points de SGEMP.
+   */
+  private String sgempUrl;
   /**
    * URL base de los end-points de SGP.
    */
   private String sgpUrl;
 
   /**
-   * URL base de los end-points de SGEMP.
+   * URL base de los end-points del módulo de TP.
    */
-  private String sgempUrl;
+  private String tpUrl;
+
+  /**
+   * URL base de los end-points del módulo de USR.
+   */
+  private String usrUrl;
+
 }

@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+import { CommonModule, DecimalPipe } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MaterialDesignModule } from '@material/material-design.module';
@@ -13,6 +13,7 @@ import { PublicacionEditarComponent } from './publicacion-editar/publicacion-edi
 import { ProduccionCientificaResolver } from '../shared/produccion-cientifica.resolver';
 import { PrcSharedModule } from '../shared/prc-shared.module';
 import { CspSharedModule } from '../../csp/shared/csp-shared.module';
+import { PrcReportService } from '@core/services/prc/report/prc-report.service';
 
 @NgModule({
   declarations: [PublicacionListadoComponent, PublicacionDatosGeneralesComponent, PublicacionEditarComponent],
@@ -30,7 +31,9 @@ import { CspSharedModule } from '../../csp/shared/csp-shared.module';
     CspSharedModule
   ],
   providers: [
-    ProduccionCientificaResolver
+    ProduccionCientificaResolver,
+    PrcReportService,
+    DecimalPipe
   ]
 })
 export class PublicacionModule { }

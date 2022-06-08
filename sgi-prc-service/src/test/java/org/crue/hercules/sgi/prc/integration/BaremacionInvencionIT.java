@@ -93,7 +93,7 @@ class BaremacionInvencionIT extends BaremacionBaseIT {
     checkPuntuacionBaremoItem(puntuacionBaremoItems, 705L, new BigDecimal("1.00"));
     checkPuntuacionBaremoItem(puntuacionBaremoItems, 701L, new BigDecimal("70.10"));
     checkPuntuacionBaremoItem(puntuacionBaremoItems, 6L, new BigDecimal("6"));
-    checkPuntuacionBaremoItem(puntuacionBaremoItems, 29L, new BigDecimal("1.30"));
+    checkPuntuacionBaremoItem(puntuacionBaremoItems, 29L, new BigDecimal("2.30"));
 
     List<PuntuacionItemInvestigador> puntuacionItemsInvestigador = getPuntuacionItemInvestigadorRepository()
         .findAll();
@@ -107,7 +107,7 @@ class BaremacionInvencionIT extends BaremacionBaseIT {
 
     Assertions.assertThat(puntuacionItemsInvestigador.get(1).getPersonaRef()).as("PersonaRef").isEqualTo(personaRef);
     Assertions.assertThat(puntuacionItemsInvestigador.get(1).getPuntos()).as("Puntos")
-        .isEqualTo(new BigDecimal("7.80"));
+        .isEqualTo(new BigDecimal("6.90"));
 
     List<PuntuacionGrupoInvestigador> puntuacionGrupoInvestigador = getPuntuacionGrupoInvestigadorRepository()
         .findAll();
@@ -119,7 +119,7 @@ class BaremacionInvencionIT extends BaremacionBaseIT {
         .isEqualTo(new BigDecimal("42.66")); // 60% puntuacionItemsInvestigador
 
     Assertions.assertThat(puntuacionGrupoInvestigador.get(1).getPuntos()).as("PuntosGrupoInvestigador")
-        .isEqualTo(new BigDecimal("4.68")); // 60% puntuacionItemsInvestigador
+        .isEqualTo(new BigDecimal("4.14")); // 60% puntuacionItemsInvestigador
 
     List<PuntuacionGrupo> puntuacionGrupo = getPuntuacionGrupoRepository().findAll();
 
@@ -133,7 +133,7 @@ class BaremacionInvencionIT extends BaremacionBaseIT {
         .isEqualTo(new BigDecimal("0.00"));
 
     Assertions.assertThat(puntuacionGrupo.get(0).getPuntosProduccion()).as("PuntosGrupoProduccion")
-        .isEqualTo(new BigDecimal("47.34")); // sum puntuacionGrupoInvestigador
+        .isEqualTo(new BigDecimal("46.80")); // sum puntuacionGrupoInvestigador
 
     ConvocatoriaBaremacion convocatoriaBaremacion = getConvocatoriaBaremacionRepository().findById(idBaremacion).get();
 
@@ -145,7 +145,7 @@ class BaremacionInvencionIT extends BaremacionBaseIT {
         .isEqualTo(new BigDecimal("0.00"));
 
     Assertions.assertThat(convocatoriaBaremacion.getPuntoProduccion()).as("PuntosBaremacionProduccion")
-        .isEqualTo(new BigDecimal("2376.43"));
+        .isEqualTo(new BigDecimal("2403.85"));
   }
 
   @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = {
@@ -197,7 +197,7 @@ class BaremacionInvencionIT extends BaremacionBaseIT {
     checkPuntuacionBaremoItem(puntuacionBaremoItems, 705L, new BigDecimal("1.00"));
     checkPuntuacionBaremoItem(puntuacionBaremoItems, 702L, new BigDecimal("70.20"));
     checkPuntuacionBaremoItem(puntuacionBaremoItems, 6L, new BigDecimal("6"));
-    checkPuntuacionBaremoItem(puntuacionBaremoItems, 29L, new BigDecimal("1.30"));
+    checkPuntuacionBaremoItem(puntuacionBaremoItems, 29L, new BigDecimal("2.30"));
 
     List<PuntuacionItemInvestigador> puntuacionItemsInvestigador = getPuntuacionItemInvestigadorRepository()
         .findAll();
@@ -211,7 +211,7 @@ class BaremacionInvencionIT extends BaremacionBaseIT {
 
     Assertions.assertThat(puntuacionItemsInvestigador.get(1).getPersonaRef()).as("PersonaRef").isEqualTo(personaRef);
     Assertions.assertThat(puntuacionItemsInvestigador.get(1).getPuntos()).as("Puntos")
-        .isEqualTo(new BigDecimal("7.80"));
+        .isEqualTo(new BigDecimal("6.90"));
 
     List<PuntuacionGrupoInvestigador> puntuacionGrupoInvestigador = getPuntuacionGrupoInvestigadorRepository()
         .findAll();
@@ -223,7 +223,7 @@ class BaremacionInvencionIT extends BaremacionBaseIT {
         .isEqualTo(new BigDecimal("42.72")); // 60% puntuacionItemsInvestigador
 
     Assertions.assertThat(puntuacionGrupoInvestigador.get(1).getPuntos()).as("PuntosGrupoInvestigador")
-        .isEqualTo(new BigDecimal("4.68")); // 60% puntuacionItemsInvestigador
+        .isEqualTo(new BigDecimal("4.14")); // 60% puntuacionItemsInvestigador
 
     List<PuntuacionGrupo> puntuacionGrupo = getPuntuacionGrupoRepository().findAll();
 
@@ -237,7 +237,7 @@ class BaremacionInvencionIT extends BaremacionBaseIT {
         .isEqualTo(new BigDecimal("0.00"));
 
     Assertions.assertThat(puntuacionGrupo.get(0).getPuntosProduccion()).as("PuntosGrupoProduccion")
-        .isEqualTo(new BigDecimal("47.40")); // sum puntuacionGrupoInvestigador
+        .isEqualTo(new BigDecimal("46.86")); // sum puntuacionGrupoInvestigador
 
     ConvocatoriaBaremacion convocatoriaBaremacion = getConvocatoriaBaremacionRepository().findById(idBaremacion).get();
 
@@ -249,7 +249,7 @@ class BaremacionInvencionIT extends BaremacionBaseIT {
         .isEqualTo(new BigDecimal("0.00"));
 
     Assertions.assertThat(convocatoriaBaremacion.getPuntoProduccion()).as("PuntosBaremacionProduccion")
-        .isEqualTo(new BigDecimal("2373.42"));
+        .isEqualTo(new BigDecimal("2400.77"));
   }
 
   @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = {
@@ -309,7 +309,7 @@ class BaremacionInvencionIT extends BaremacionBaseIT {
     checkPuntuacionBaremoItem(puntuacionBaremoItems, 705L, new BigDecimal("1.00"));
     checkPuntuacionBaremoItem(puntuacionBaremoItems, 703L, new BigDecimal("70.30"));
     checkPuntuacionBaremoItem(puntuacionBaremoItems, 6L, new BigDecimal("6"));
-    checkPuntuacionBaremoItem(puntuacionBaremoItems, 29L, new BigDecimal("1.30"));
+    checkPuntuacionBaremoItem(puntuacionBaremoItems, 29L, new BigDecimal("2.30"));
 
     List<PuntuacionItemInvestigador> puntuacionItemsInvestigador = getPuntuacionItemInvestigadorRepository()
         .findAll();
@@ -323,7 +323,7 @@ class BaremacionInvencionIT extends BaremacionBaseIT {
 
     Assertions.assertThat(puntuacionItemsInvestigador.get(1).getPersonaRef()).as("PersonaRef").isEqualTo(personaRef);
     Assertions.assertThat(puntuacionItemsInvestigador.get(1).getPuntos()).as("Puntos")
-        .isEqualTo(new BigDecimal("7.80"));
+        .isEqualTo(new BigDecimal("6.90"));
 
     List<PuntuacionGrupoInvestigador> puntuacionGrupoInvestigador = getPuntuacionGrupoInvestigadorRepository()
         .findAll();
@@ -335,7 +335,7 @@ class BaremacionInvencionIT extends BaremacionBaseIT {
         .isEqualTo(new BigDecimal("42.78")); // 60% puntuacionItemsInvestigador
 
     Assertions.assertThat(puntuacionGrupoInvestigador.get(1).getPuntos()).as("PuntosGrupoInvestigador")
-        .isEqualTo(new BigDecimal("4.68")); // 60% puntuacionItemsInvestigador
+        .isEqualTo(new BigDecimal("4.14")); // 60% puntuacionItemsInvestigador
 
     List<PuntuacionGrupo> puntuacionGrupo = getPuntuacionGrupoRepository().findAll();
 
@@ -349,7 +349,7 @@ class BaremacionInvencionIT extends BaremacionBaseIT {
         .isEqualTo(new BigDecimal("0.00"));
 
     Assertions.assertThat(puntuacionGrupo.get(0).getPuntosProduccion()).as("PuntosGrupoProduccion")
-        .isEqualTo(new BigDecimal("47.46")); // sum puntuacionGrupoInvestigador
+        .isEqualTo(new BigDecimal("46.92")); // sum puntuacionGrupoInvestigador
 
     ConvocatoriaBaremacion convocatoriaBaremacion = getConvocatoriaBaremacionRepository().findById(idBaremacion).get();
 
@@ -361,7 +361,7 @@ class BaremacionInvencionIT extends BaremacionBaseIT {
         .isEqualTo(new BigDecimal("0.00"));
 
     Assertions.assertThat(convocatoriaBaremacion.getPuntoProduccion()).as("PuntosBaremacionProduccion")
-        .isEqualTo(new BigDecimal("2370.42"));
+        .isEqualTo(new BigDecimal("2397.70"));
   }
 
   @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = {
@@ -419,7 +419,7 @@ class BaremacionInvencionIT extends BaremacionBaseIT {
     checkPuntuacionBaremoItem(puntuacionBaremoItems, 705L, new BigDecimal("1.00"));
     checkPuntuacionBaremoItem(puntuacionBaremoItems, 704L, new BigDecimal("70.40"));
     checkPuntuacionBaremoItem(puntuacionBaremoItems, 6L, new BigDecimal("6"));
-    checkPuntuacionBaremoItem(puntuacionBaremoItems, 29L, new BigDecimal("1.30"));
+    checkPuntuacionBaremoItem(puntuacionBaremoItems, 29L, new BigDecimal("2.30"));
 
     List<PuntuacionItemInvestigador> puntuacionItemsInvestigador = getPuntuacionItemInvestigadorRepository()
         .findAll();
@@ -427,13 +427,8 @@ class BaremacionInvencionIT extends BaremacionBaseIT {
     int numPuntuacionesItemsInvestigador = puntuacionItemsInvestigador.size();
     Assertions.assertThat(numPuntuacionesItemsInvestigador).as("numPuntuacionesItemsInvestigador").isEqualTo(2);
 
-    Assertions.assertThat(puntuacionItemsInvestigador.get(0).getPersonaRef()).as("PersonaRef").isEqualTo(personaRef);
-    Assertions.assertThat(puntuacionItemsInvestigador.get(0).getPuntos()).as("Puntos")
-        .isEqualTo(new BigDecimal("71.40"));
-
-    Assertions.assertThat(puntuacionItemsInvestigador.get(1).getPersonaRef()).as("PersonaRef").isEqualTo(personaRef);
-    Assertions.assertThat(puntuacionItemsInvestigador.get(1).getPuntos()).as("Puntos")
-        .isEqualTo(new BigDecimal("7.80"));
+    checkPuntuacionItemInvestigador(puntuacionItemsInvestigador, personaRef, new BigDecimal("71.40"));
+    checkPuntuacionItemInvestigador(puntuacionItemsInvestigador, personaRef, new BigDecimal("6.90"));
 
     List<PuntuacionGrupoInvestigador> puntuacionGrupoInvestigador = getPuntuacionGrupoInvestigadorRepository()
         .findAll();
@@ -441,11 +436,8 @@ class BaremacionInvencionIT extends BaremacionBaseIT {
     int numPuntuacionesGrupoInvestigador = puntuacionGrupoInvestigador.size();
     Assertions.assertThat(numPuntuacionesGrupoInvestigador).as("numPuntuacionesGrupoInvestigador").isEqualTo(2);
 
-    Assertions.assertThat(puntuacionGrupoInvestigador.get(0).getPuntos()).as("PuntosGrupoInvestigador")
-        .isEqualTo(new BigDecimal("42.84")); // 60% puntuacionItemsInvestigador
-
-    Assertions.assertThat(puntuacionGrupoInvestigador.get(1).getPuntos()).as("PuntosGrupoInvestigador")
-        .isEqualTo(new BigDecimal("4.68")); // 60% puntuacionItemsInvestigador
+    checkPuntuacionGrupoInvestigador(puntuacionGrupoInvestigador, new BigDecimal("42.84"));
+    checkPuntuacionGrupoInvestigador(puntuacionGrupoInvestigador, new BigDecimal("4.14"));
 
     List<PuntuacionGrupo> puntuacionGrupo = getPuntuacionGrupoRepository().findAll();
 
@@ -459,7 +451,7 @@ class BaremacionInvencionIT extends BaremacionBaseIT {
         .isEqualTo(new BigDecimal("0.00"));
 
     Assertions.assertThat(puntuacionGrupo.get(0).getPuntosProduccion()).as("PuntosGrupoProduccion")
-        .isEqualTo(new BigDecimal("47.52")); // sum puntuacionGrupoInvestigador
+        .isEqualTo(new BigDecimal("46.98")); // sum puntuacionGrupoInvestigador
 
     ConvocatoriaBaremacion convocatoriaBaremacion = getConvocatoriaBaremacionRepository().findById(idBaremacion).get();
 
@@ -471,7 +463,7 @@ class BaremacionInvencionIT extends BaremacionBaseIT {
         .isEqualTo(new BigDecimal("0.00"));
 
     Assertions.assertThat(convocatoriaBaremacion.getPuntoProduccion()).as("PuntosBaremacionProduccion")
-        .isEqualTo(new BigDecimal("2367.42"));
+        .isEqualTo(new BigDecimal("2394.64"));
   }
 
   @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = {
@@ -528,7 +520,7 @@ class BaremacionInvencionIT extends BaremacionBaseIT {
     checkPuntuacionBaremoItem(puntuacionBaremoItems, 705L, new BigDecimal("1.00"));
     checkPuntuacionBaremoItem(puntuacionBaremoItems, 701L, new BigDecimal("70.10"));
     checkPuntuacionBaremoItem(puntuacionBaremoItems, 6L, new BigDecimal("6"));
-    checkPuntuacionBaremoItem(puntuacionBaremoItems, 29L, new BigDecimal("1.30"));
+    checkPuntuacionBaremoItem(puntuacionBaremoItems, 29L, new BigDecimal("2.30"));
 
     List<PuntuacionItemInvestigador> puntuacionItemsInvestigador = getPuntuacionItemInvestigadorRepository()
         .findAll();
@@ -546,7 +538,7 @@ class BaremacionInvencionIT extends BaremacionBaseIT {
 
     Assertions.assertThat(puntuacionItemsInvestigador.get(2).getPersonaRef()).as("PersonaRef").isEqualTo(personaRef);
     Assertions.assertThat(puntuacionItemsInvestigador.get(2).getPuntos()).as("Puntos")
-        .isEqualTo(new BigDecimal("7.80"));
+        .isEqualTo(new BigDecimal("6.90"));
 
     List<PuntuacionGrupoInvestigador> puntuacionGrupoInvestigador = getPuntuacionGrupoInvestigadorRepository()
         .findAll();
@@ -561,7 +553,7 @@ class BaremacionInvencionIT extends BaremacionBaseIT {
         .isEqualTo(new BigDecimal("42.66")); // 60% puntuacionItemsInvestigador 2021
 
     Assertions.assertThat(puntuacionGrupoInvestigador.get(2).getPuntos()).as("PuntosGrupoInvestigador")
-        .isEqualTo(new BigDecimal("4.68")); // 60% puntuacionItemsInvestigador
+        .isEqualTo(new BigDecimal("4.14")); // 60% puntuacionItemsInvestigador
 
     List<PuntuacionGrupo> puntuacionGrupo = getPuntuacionGrupoRepository().findAll();
 
@@ -575,7 +567,7 @@ class BaremacionInvencionIT extends BaremacionBaseIT {
         .isEqualTo(new BigDecimal("0.00"));
 
     Assertions.assertThat(puntuacionGrupo.get(0).getPuntosProduccion()).as("PuntosGrupoProduccion")
-        .isEqualTo(new BigDecimal("90.00")); // sum puntuacionGrupoInvestigador
+        .isEqualTo(new BigDecimal("89.46")); // sum puntuacionGrupoInvestigador
 
     ConvocatoriaBaremacion convocatoriaBaremacion = getConvocatoriaBaremacionRepository().findById(idBaremacion).get();
 
@@ -587,7 +579,7 @@ class BaremacionInvencionIT extends BaremacionBaseIT {
         .isEqualTo(new BigDecimal("0.00"));
 
     Assertions.assertThat(convocatoriaBaremacion.getPuntoProduccion()).as("PuntosBaremacionProduccion")
-        .isEqualTo(new BigDecimal("1250.00"));
+        .isEqualTo(new BigDecimal("1257.55"));
   }
 
   @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = {
@@ -647,7 +639,7 @@ class BaremacionInvencionIT extends BaremacionBaseIT {
     checkPuntuacionBaremoItem(puntuacionBaremoItems, 701L, new BigDecimal("70.10"));
     checkPuntuacionBaremoItem(puntuacionBaremoItems, 702L, new BigDecimal("140.40"));
     checkPuntuacionBaremoItem(puntuacionBaremoItems, 6L, new BigDecimal("6"));
-    checkPuntuacionBaremoItem(puntuacionBaremoItems, 29L, new BigDecimal("1.30"));
+    checkPuntuacionBaremoItem(puntuacionBaremoItems, 29L, new BigDecimal("2.30"));
 
     List<PuntuacionItemInvestigador> puntuacionItemsInvestigador = getPuntuacionItemInvestigadorRepository()
         .findAll();
@@ -665,7 +657,7 @@ class BaremacionInvencionIT extends BaremacionBaseIT {
 
     Assertions.assertThat(puntuacionItemsInvestigador.get(2).getPersonaRef()).as("PersonaRef").isEqualTo(personaRef);
     Assertions.assertThat(puntuacionItemsInvestigador.get(2).getPuntos()).as("Puntos")
-        .isEqualTo(new BigDecimal("7.80"));
+        .isEqualTo(new BigDecimal("6.90"));
 
     List<PuntuacionGrupoInvestigador> puntuacionGrupoInvestigador = getPuntuacionGrupoInvestigadorRepository()
         .findAll();
@@ -680,7 +672,7 @@ class BaremacionInvencionIT extends BaremacionBaseIT {
         .isEqualTo(new BigDecimal("85.44")); // 60% puntuacionItemsInvestigador 2021
 
     Assertions.assertThat(puntuacionGrupoInvestigador.get(2).getPuntos()).as("PuntosGrupoInvestigador")
-        .isEqualTo(new BigDecimal("4.68")); // 60% puntuacionItemsInvestigador
+        .isEqualTo(new BigDecimal("4.14")); // 60% puntuacionItemsInvestigador
 
     List<PuntuacionGrupo> puntuacionGrupo = getPuntuacionGrupoRepository().findAll();
 
@@ -694,7 +686,7 @@ class BaremacionInvencionIT extends BaremacionBaseIT {
         .isEqualTo(new BigDecimal("0.00"));
 
     Assertions.assertThat(puntuacionGrupo.get(0).getPuntosProduccion()).as("PuntosGrupoProduccion")
-        .isEqualTo(new BigDecimal("132.78")); // sum puntuacionGrupoInvestigador
+        .isEqualTo(new BigDecimal("132.24")); // sum puntuacionGrupoInvestigador
 
     ConvocatoriaBaremacion convocatoriaBaremacion = getConvocatoriaBaremacionRepository().findById(idBaremacion).get();
 
@@ -706,7 +698,7 @@ class BaremacionInvencionIT extends BaremacionBaseIT {
         .isEqualTo(new BigDecimal("0.00"));
 
     Assertions.assertThat(convocatoriaBaremacion.getPuntoProduccion()).as("PuntosBaremacionProduccion")
-        .isEqualTo(new BigDecimal("847.27"));
+        .isEqualTo(new BigDecimal("850.73"));
   }
 
   @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = {

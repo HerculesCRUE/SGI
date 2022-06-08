@@ -149,7 +149,7 @@ public class EvaluacionIT extends BaseIT {
     headers.set("Authorization", String.format("bearer %s", tokenBuilder.buildToken("user", "ETI-CNV-C", "ETI-CNV-E")));
 
     // when: Delete
-    long id = 9L;
+    long id = 2L;
     final ResponseEntity<Evaluacion> response = restTemplate.exchange(
         EVALUACION_CONTROLLER_BASE_PATH + PATH_PARAMETER_ID, HttpMethod.DELETE, buildRequest(headers, null),
         Evaluacion.class, id);

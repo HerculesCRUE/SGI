@@ -166,7 +166,8 @@ export class PeticionEvaluacionTareasFragment extends Fragment {
           // TODO: Eliminar casteo ya que realmente el atributo de eliminable el backend no lo está retornando
           map((updatedTarea: ITareaWithIsEliminable) => {
             const index = this.tareas$.value.findIndex((currentTarea) => currentTarea === wrappedTarea);
-            this.tareas$[index] = new StatusWrapper<ITareaWithIsEliminable>(updatedTarea);
+            this.tareas$.value[index] = new StatusWrapper<ITareaWithIsEliminable>(wrappedTarea.value);
+            this.tareas$.next(this.tareas$.value);
           })
         );
       }));

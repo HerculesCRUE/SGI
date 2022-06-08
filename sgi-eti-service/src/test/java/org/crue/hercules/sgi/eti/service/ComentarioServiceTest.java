@@ -24,6 +24,7 @@ import org.crue.hercules.sgi.eti.model.TipoEvaluacion;
 import org.crue.hercules.sgi.eti.model.Comite.Genero;
 import org.crue.hercules.sgi.eti.repository.ComentarioRepository;
 import org.crue.hercules.sgi.eti.repository.EvaluacionRepository;
+import org.crue.hercules.sgi.eti.repository.EvaluadorRepository;
 import org.crue.hercules.sgi.eti.service.impl.ComentarioServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -48,11 +49,14 @@ public class ComentarioServiceTest extends BaseServiceTest {
   @Mock
   private EvaluacionRepository evaluacionRepository;
 
+  @Mock
+  private EvaluadorRepository evaluadorRepository;
+
   private ComentarioService comentarioService;
 
   @BeforeEach
   public void setUp() throws Exception {
-    comentarioService = new ComentarioServiceImpl(comentarioRepository, evaluacionRepository);
+    comentarioService = new ComentarioServiceImpl(comentarioRepository, evaluacionRepository, evaluadorRepository);
   }
 
   @Test

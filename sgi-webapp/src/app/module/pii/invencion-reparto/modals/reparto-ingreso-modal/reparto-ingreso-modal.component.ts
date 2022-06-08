@@ -2,10 +2,9 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
-import { BaseModalComponent } from '@core/component/base-modal.component';
+import { DialogFormComponent } from '@core/component/dialog-form.component';
 import { MSG_PARAMS } from '@core/i18n';
 import { IRepartoIngreso } from '@core/models/pii/reparto-ingreso';
-import { SnackBarService } from '@core/services/snack-bar.service';
 import { NumberValidator } from '@core/validators/number-validator';
 import { TranslateService } from '@ngx-translate/core';
 
@@ -17,18 +16,17 @@ const REPARTO_IMPORTE_REPARTIR_KEY = marker('pii.reparto.ingreso.importe-reparti
   templateUrl: './reparto-ingreso-modal.component.html',
   styleUrls: ['./reparto-ingreso-modal.component.scss']
 })
-export class RepartoIngresoModalComponent extends BaseModalComponent<IRepartoIngreso, RepartoIngresoModalComponent> implements OnInit {
+export class RepartoIngresoModalComponent extends DialogFormComponent<IRepartoIngreso> implements OnInit {
   title: string;
   msgParamImportePendienteRepartirEntity = {};
   msgParamImporteARepartirEntity = {};
 
   constructor(
     private readonly translate: TranslateService,
-    public matDialogRef: MatDialogRef<RepartoIngresoModalComponent>,
-    protected readonly snackBarService: SnackBarService,
+    matDialogRef: MatDialogRef<RepartoIngresoModalComponent>,
     @Inject(MAT_DIALOG_DATA) readonly data: IRepartoIngreso,
   ) {
-    super(snackBarService, matDialogRef, data);
+    super(matDialogRef, true);
   }
 
   ngOnInit(): void {
@@ -36,19 +34,19 @@ export class RepartoIngresoModalComponent extends BaseModalComponent<IRepartoIng
     this.setupI18N();
   }
 
-  protected getDatosForm(): IRepartoIngreso {
-    this.entity.importeARepartir = this.formGroup.controls.importeARepartir.value;
-    return this.entity;
+  protected getValue(): IRepartoIngreso {
+    this.data.importeARepartir = this.formGroup.controls.importeARepartir.value;
+    return this.data;
   }
 
-  protected getFormGroup(): FormGroup {
+  protected buildFormGroup(): FormGroup {
     return new FormGroup({
       importePendienteRepartir: new FormControl({
-        value: this.entity.invencionIngreso?.importePendienteRepartir,
+        value: this.data.invencionIngreso?.importePendienteRepartir,
         disabled: true
       }),
       importeARepartir: new FormControl(
-        this.entity.importeARepartir, [Validators.required, Validators.min(0.01), NumberValidator.maxDecimalDigits(2)]
+        this.data.importeARepartir, [Validators.required, Validators.min(0.01), NumberValidator.maxDecimalDigits(2)]
       )
     }, NumberValidator.isBeforeOrEqual('importePendienteRepartir', 'importeARepartir'));
   }

@@ -1,5 +1,7 @@
 package org.crue.hercules.sgi.csp.service;
 
+import java.util.Optional;
+
 import javax.validation.Valid;
 
 import org.crue.hercules.sgi.csp.exceptions.GrupoTipoNotFoundException;
@@ -9,6 +11,7 @@ import org.crue.hercules.sgi.csp.model.GrupoTipo;
 import org.crue.hercules.sgi.csp.repository.GrupoTipoRepository;
 import org.crue.hercules.sgi.csp.repository.specification.GrupoTipoSpecifications;
 import org.crue.hercules.sgi.csp.util.AssertHelper;
+import org.crue.hercules.sgi.csp.util.GrupoAuthorityHelper;
 import org.crue.hercules.sgi.framework.rsql.SgiRSQLJPASupport;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -31,6 +34,7 @@ import lombok.extern.slf4j.Slf4j;
 public class GrupoTipoService {
 
   private final GrupoTipoRepository repository;
+  private final GrupoAuthorityHelper authorityHelper;
 
   /**
    * Guarda la entidad {@link GrupoTipo}.
@@ -44,6 +48,7 @@ public class GrupoTipoService {
     log.debug("create(GrupoTipo grupoTipo) - start");
 
     AssertHelper.idIsNull(grupoTipo.getId(), GrupoTipo.class);
+
     GrupoTipo returnValue = repository.save(grupoTipo);
 
     log.debug("create(GrupoTipo grupoTipo) - end");
@@ -62,6 +67,7 @@ public class GrupoTipoService {
     log.debug("update(GrupoTipo grupoTipoActualizar) - start");
 
     AssertHelper.idNotNull(grupoTipoActualizar.getId(), GrupoTipo.class);
+    authorityHelper.checkUserHasAuthorityViewGrupo(grupoTipoActualizar.getGrupoId());
 
     return repository.findById(grupoTipoActualizar.getId()).map(data -> {
       data.setFechaInicio(grupoTipoActualizar.getFechaInicio());
@@ -87,6 +93,8 @@ public class GrupoTipoService {
     AssertHelper.idNotNull(id, GrupoTipo.class);
     final GrupoTipo returnValue = repository.findById(id).orElseThrow(() -> new GrupoTipoNotFoundException(id));
 
+    authorityHelper.checkUserHasAuthorityViewGrupo(returnValue.getGrupoId());
+
     log.debug("findById(Long id) - end");
     return returnValue;
   }
@@ -102,9 +110,15 @@ public class GrupoTipoService {
 
     AssertHelper.idNotNull(id, GrupoTipo.class);
 
-    if (!repository.existsById(id)) {
+    Optional<GrupoTipo> grupoTipo = repository.findById(id);
+
+    if (grupoTipo.isPresent()) {
+      authorityHelper.checkUserHasAuthorityViewGrupo(grupoTipo.get().getGrupoId());
+    } else {
       throw new GrupoTipoNotFoundException(id);
     }
+
+    authorityHelper.checkUserHasAuthorityViewGrupo(id);
 
     repository.deleteById(id);
     log.debug("delete(Long id) - end");
@@ -123,6 +137,8 @@ public class GrupoTipoService {
   public Page<GrupoTipo> findAllByGrupo(Long grupoId, String query, Pageable paging) {
     log.debug("findAll(Long grupoId, String query, Pageable paging) - start");
     AssertHelper.idNotNull(grupoId, Grupo.class);
+    authorityHelper.checkUserHasAuthorityViewGrupo(grupoId);
+
     Specification<GrupoTipo> specs = GrupoTipoSpecifications.byGrupoId(grupoId)
         .and(SgiRSQLJPASupport.toSpecification(query));
 

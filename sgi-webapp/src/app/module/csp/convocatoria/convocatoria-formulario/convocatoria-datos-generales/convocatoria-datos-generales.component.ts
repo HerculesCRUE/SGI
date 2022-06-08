@@ -244,7 +244,6 @@ export class ConvocatoriaDatosGeneralesComponent extends FormFragmentComponent<I
       areasTematicas: selected,
     };
     const config = {
-      panelClass: 'sgi-dialog-container',
       data: newData
     };
     const dialogRef = this.matDialog.open(ConvocatoriaAreaTematicaModalComponent, config);

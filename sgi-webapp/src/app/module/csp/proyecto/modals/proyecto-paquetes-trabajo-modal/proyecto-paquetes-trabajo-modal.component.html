@@ -1,14 +1,8 @@
-<div class="sgi-dialog-header" fxLayout="row" fxLayoutGap="20px">
-  <span fxFlexAlign="center" mat-mat-dialog-title role="heading" aria-level="3" fxFlex>{{title}}</span>
-  <button fxFlex="nogrow" mat-icon-button mat-dialog-close>
-    <mat-icon class="close-icon">close</mat-icon>
-  </button>
-</div>
-<mat-dialog-content>
+<sgi-dialog-header [title]="title"></sgi-dialog-header>
+<sgi-dialog-content>
   <form [formGroup]="formGroup">
     <!-- Nombre -->
-    <div [fxLayout.xs]="fxLayoutProperties.xs" [fxLayout]="fxLayoutProperties.layout"
-      [fxLayoutGap]="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
+    <div fxLayout="row">
       <mat-form-field>
         <mat-label>{{'csp.proyecto-paquete-trabajo.nombre' | translate}}
         </mat-label>
@@ -25,13 +19,12 @@
         </mat-error>
       </mat-form-field>
     </div>
-    <div class="fieldset-form">
+    <div fxLayout="row">
       {{'title.csp.proyecto-paquete-trabajo.duracion' | translate}}
     </div>
     <!-- fecha inicio -->
-    <div [fxLayout.xs]="fxLayoutProperties2.xs" [fxLayout]="fxLayoutProperties2.layout"
-      [fxLayoutGap]="fxLayoutProperties2.gap" ngClass.gt-xs="ml-10">
-      <div>
+    <div fxLayout="row" fxLayoutGap="10px">
+      <div fxFlex>
         <mat-form-field>
           <mat-label>{{'csp.proyecto-paquete-trabajo.fecha-inicio'| translate}}</mat-label>
           <input matInput [matDatepicker]="pickerFechaInicio" formControlName="fechaInicio" required>
@@ -47,7 +40,7 @@
         </mat-form-field>
       </div>
       <!-- fecha fin -->
-      <div>
+      <div fxFlex>
         <mat-form-field sgiEndDate>
           <mat-label>{{'csp.proyecto-paquete-trabajo.fecha-fin'| translate}}</mat-label>
           <input matInput [matDatepicker]="pickerFechaFin" formControlName="fechaFin" required>
@@ -67,8 +60,7 @@
       </div>
     </div>
     <!-- Persona/mes -->
-    <div [fxLayout.xs]="fxLayoutProperties.xs" [fxLayout]="fxLayoutProperties.layout"
-      [fxLayoutGap]="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
+    <div fxLayout="row">
       <mat-form-field>
         <mat-label>{{'csp.proyecto-paquete-trabajo.persona-mes' | translate}}
         </mat-label>
@@ -83,8 +75,7 @@
       </mat-form-field>
     </div>
     <!--Descripcion-->
-    <div [fxLayout.xs]="fxLayoutProperties.xs" [fxLayout]="fxLayoutProperties.layout"
-      [fxLayoutGap]="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
+    <div fxLayout="row">
       <mat-form-field>
         <mat-label>{{'csp.proyecto-paquete-trabajo.descripcion' | translate}}</mat-label>
         <textarea matInput formControlName="descripcion" type="text"
@@ -96,9 +87,10 @@
       </mat-form-field>
     </div>
   </form>
-</mat-dialog-content>
+</sgi-dialog-content>
 <mat-dialog-actions>
-  <button *ngIf="!this.data.readonly" color="accent" (click)="saveOrUpdate()" mat-raised-button type="submit">
+  <button *ngIf="!this.data.readonly" color="accent" (click)="doAction()" [disabled]="this.actionDisabled"
+    mat-raised-button type="submit">
     <mat-icon class="save-icon">save</mat-icon>{{textSaveOrUpdate |
     translate}}
   </button>

@@ -22,6 +22,16 @@ public interface NotificacionProyectoExternoCVNRepository extends JpaRepository<
   boolean existsByAutorizacionId(Long autorizacionId);
 
   /**
+   * Comprueba si existe algun {@link NotificacionProyectoExternoCVN} asociado a
+   * algún {@link Proyecto}.
+   * 
+   * @param proyectoId id del {@link Proyecto}.
+   * @return <code>true</code> Si existe, <code>false</code> en cualquier otro
+   *         caso.
+   */
+  boolean existsByProyectoId(Long proyectoId);
+
+  /**
    * Devuelve la {@link NotificacionProyectoExternoCVN} asociada a la
    * {@link Autorizacion}.
    * 

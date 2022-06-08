@@ -18,8 +18,8 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.crue.hercules.sgi.rep.config.SgiConfigProperties;
 import org.crue.hercules.sgi.rep.dto.SgiDynamicReportDto;
-import org.crue.hercules.sgi.rep.dto.SgiDynamicReportDto.SgiColumReportDto;
 import org.crue.hercules.sgi.rep.dto.SgiDynamicReportDto.ColumnType;
+import org.crue.hercules.sgi.rep.dto.SgiDynamicReportDto.SgiColumReportDto;
 import org.crue.hercules.sgi.rep.dto.eti.ApartadoDto;
 import org.crue.hercules.sgi.rep.dto.eti.ApartadoOutput;
 import org.crue.hercules.sgi.rep.dto.eti.BloqueDto;
@@ -387,7 +387,7 @@ public abstract class BaseApartadosRespuestasReportService extends SgiDynamicRep
       sgiReportDto.getColumns().add(SgiColumReportDto.builder().type(ColumnType.STRING).name(name).title(name).build());
     }
 
-    SubReport subReportTableCrud = getSubreportTableCrud(sgiReportDto);
+    SubReport subReportTableCrud = getSubreportTableCrud(sgiReportDto, 0);
 
     FormulaExpression formulaExpression = new FormulaExpression();
     formulaExpression.setName("expression_" + elementKey);

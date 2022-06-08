@@ -1,17 +1,9 @@
-<div class="sgi-dialog-header" fxLayout="row" fxLayoutGap="20px">
-  <span fxFlexAlign="center" mat-mat-dialog-title role="heading" aria-level="3" fxFlex>{{'title.csp.proyecto.new' |
-    translate}}</span>
-  <button fxFlex="nogrow" mat-icon-button mat-dialog-close>
-    <mat-icon class="close-icon">close</mat-icon>
-  </button>
-</div>
-<mat-dialog-content>
+<sgi-action-dialog title="{{'title.csp.proyecto.new' | translate}}">
   <div fxLayout="row" fxLayout.xs="column" fxFlexFill fxLayoutAlign="center center">
     <p fxFlex="100">{{'info.csp.solicitud-proyecto.new'| translate}}</p>
   </div>
   <form [formGroup]="formGroup">
-    <div [fxLayout.xs]="fxLayoutProperties.xs" [fxLayout]="fxLayoutProperties.layout"
-    [fxLayoutGap]="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
+    <div fxLayout="row">
       <!-- Título -->
       <mat-form-field>
         <mat-label>{{'csp.solicitud-proyecto.titulo' | translate}}</mat-label>
@@ -25,10 +17,9 @@
       </mat-form-field>
     </div>
 
-    <div [fxLayout.xs]="fxLayoutProperties.xs" [fxLayout]="fxLayoutProperties.layout"
-      [fxLayoutGap]="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
+    <div fxLayout="row" fxLayoutGap="10px">
       <!-- Fecha inicio proyecto -->
-      <div>
+      <div fxFlex>
         <mat-form-field>
           <mat-label>{{'csp.solicitud-proyecto.fecha-inicio'| translate}}</mat-label>
           <input matInput [matDatepicker]="pickerFechaInicio" formControlName="fechaInicio" required>
@@ -44,7 +35,7 @@
         </mat-form-field>
       </div>
       <!-- Fecha fin proyecto -->
-      <div>
+      <div fxFlex>
         <mat-form-field sgiEndDate>
           <mat-label>{{'csp.solicitud-proyecto.fecha-fin'| translate}}</mat-label>
           <input matInput [matDatepicker]="pickerFechaFin" formControlName="fechaFin" required>
@@ -61,8 +52,7 @@
       </div>
     </div>
     <!-- Modelo de ejecución -->
-    <div [fxLayout.xs]="fxLayoutProperties.xs" [fxLayout]="fxLayoutProperties.layout"
-      [fxLayoutGap]="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
+    <div fxLayout="row">
       <mat-form-field class="input-form">
         <mat-label>{{'csp.solicitud-proyecto.modelo-ejecucion' | translate}}</mat-label>
         <sgi-select-modelo-ejecucion #modeloEjecucion formControlName="modeloEjecucion"
@@ -78,7 +68,7 @@
     </div>
   </form>
 
-  <ng-container *ngIf="(proyectos$ | async)?.length >0">
+  <div *ngIf="(proyectos$ | async)?.length >0" fxLayout="column">
     <h3>{{'title.csp.proyecto.proyectos-solicitud' | translate}}</h3>
     <table mat-table [dataSource]="proyectos$ | async" matSort matSortActive="id" matSortDirection="desc"
       matSortDisableClear>
@@ -134,14 +124,5 @@
     </table>
     <mat-paginator [pageSizeOptions]="elementosPagina" [length]="totalElements" showFirstLastButtons>
     </mat-paginator>
-  </ng-container>
-</mat-dialog-content>
-
-<mat-dialog-actions>
-  <button color="accent" [disabled]="formGroup.invalid" (click)="saveOrUpdate()" mat-raised-button type="submit">
-    <mat-icon class="save-icon">save</mat-icon>{{textSaveOrUpdate |
-    translate}}
-  </button>
-  <button class="link-cancelar" mat-button type="button" mat-dialog-close>{{'btn.cancel' |
-    translate}}</button>
-</mat-dialog-actions>
+  </div>
+</sgi-action-dialog>

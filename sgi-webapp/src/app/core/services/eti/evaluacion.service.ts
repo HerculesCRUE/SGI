@@ -288,4 +288,16 @@ export class EvaluacionService extends SgiMutableRestService<number, IEvaluacion
     );
   }
 
+  /**
+   * Permite enviar el comunicado de la evaluación modificada
+   * 
+   * * @param idEvaluacion id convocatoria
+   */
+  enviarComunicado(idEvaluacion: number): Observable<boolean> {
+    const url = `${this.endpointUrl}/${idEvaluacion}/comunicado`;
+    return this.http.head(url, { observe: 'response' }).pipe(
+      map(response => response.status === 200)
+    );
+  }
+
 }

@@ -1,6 +1,10 @@
 @import "typography.scss";
 
-.miembro-equipo-solicitud-modal {
+:host {
+  sgi-dialog-content {
+    min-width: 40vw;
+  }
+
   .wrapper {
     display: flex;
     align-items: baseline;

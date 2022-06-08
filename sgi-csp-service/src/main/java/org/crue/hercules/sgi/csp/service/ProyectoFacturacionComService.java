@@ -9,7 +9,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.crue.hercules.sgi.csp.dto.com.CspComCalendarioFacturacionNotificarData;
-import org.crue.hercules.sgi.csp.dto.com.CspComCalendarioFacturacionNotificarData.CspComCalendarioFacturacionNotificarDataBuilder;
 import org.crue.hercules.sgi.csp.dto.com.CspComCalendarioFacturacionValidarIPData;
 import org.crue.hercules.sgi.csp.dto.com.EmailOutput;
 import org.crue.hercules.sgi.csp.dto.com.Recipient;
@@ -108,14 +107,11 @@ public class ProyectoFacturacionComService {
 
     List<PersonaOutput> personas = getMiembrosEquiposAndResponsablesEconomicos(proyectoFacturacion.getProyectoId());
 
-    CspComCalendarioFacturacionNotificarDataBuilder dataBuilder = fillBasicCspComCalendarioFacturacionNotificarData(
-        proyectoFacturacion, proyecto);
-
     personas.forEach(persona -> {
       try {
-        dataBuilder.apellidosDestinatario(persona.getApellidos());
-        this.buildAndSendMailNotificar(proyectoFacturacion, dataBuilder.build(),
-            getRecipientFromPersona(persona));
+        CspComCalendarioFacturacionNotificarData data = fillBasicCspComCalendarioFacturacionNotificarData(
+            proyectoFacturacion, proyecto, persona);
+        this.buildAndSendMailNotificar(proyectoFacturacion, data, getRecipientFromPersona(persona));
       } catch (Exception ex) {
         log.error(ex.getMessage(), ex);
       }
@@ -225,9 +221,9 @@ public class ProyectoFacturacionComService {
             proyectoFacturacion.getFechaEmision());
   }
 
-  private CspComCalendarioFacturacionNotificarDataBuilder fillBasicCspComCalendarioFacturacionNotificarData(
+  private CspComCalendarioFacturacionNotificarData fillBasicCspComCalendarioFacturacionNotificarData(
       ProyectoFacturacion proyectoFacturacion,
-      Proyecto proyecto) {
+      Proyecto proyecto, PersonaOutput persona) {
 
     return CspComCalendarioFacturacionNotificarData
         .builder()
@@ -238,7 +234,9 @@ public class ProyectoFacturacionComService {
             || StringUtils.isEmpty(proyectoFacturacion.getTipoFacturacion().getNombre()) ? "Sin especificar"
                 : proyectoFacturacion.getTipoFacturacion().getNombre())
         .entidadesFinanciadoras(getNombresEntidadesFinanciadorasByProyectoId(
-            proyectoFacturacion.getProyectoId()));
+            proyectoFacturacion.getProyectoId()))
+        .apellidosDestinatario(persona.getApellidos())
+        .build();
   }
 
   private List<String> getNombresEntidadesFinanciadorasByProyectoId(Long proyectoId) {

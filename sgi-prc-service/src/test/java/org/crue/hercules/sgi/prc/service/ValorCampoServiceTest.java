@@ -33,7 +33,7 @@ import org.springframework.data.jpa.domain.Specification;
  * ValorCampoServiceTest
  */
 @Import({ ValorCampoService.class, ApplicationContextSupport.class })
-public class ValorCampoServiceTest extends BaseServiceTest {
+class ValorCampoServiceTest extends BaseServiceTest {
 
   private static final String VALOR_PREFIX = "Valor-";
   private static final String DEFAULT_DATA_VALOR = VALOR_PREFIX + "default";
@@ -63,7 +63,7 @@ public class ValorCampoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void findAll_ReturnsPage() {
+  void findAll_ReturnsPage() {
     // given: Una lista con 37 ValorCampo
     List<ValorCampo> valores = new ArrayList<>();
     for (long i = 1; i <= 37; i++) {
@@ -106,7 +106,7 @@ public class ValorCampoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void findById_ReturnsValorCampo() {
+  void findById_ReturnsValorCampo() {
     // given: ValorCampo con el id buscado
     Long idBuscado = 1L;
     BDDMockito.given(repository.findById(idBuscado)).willReturn(Optional.of(generarMockValorCampo(idBuscado)));
@@ -126,7 +126,7 @@ public class ValorCampoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void findById_WithIdNotExist_ThrowsValorCampoNotFoundException() {
+  void findById_WithIdNotExist_ThrowsValorCampoNotFoundException() {
     // given: Ningun ValorCampo con el id buscado
     Long idBuscado = 33L;
     BDDMockito.given(repository.findById(ArgumentMatchers.<Long>any())).willReturn(Optional.empty());
@@ -138,7 +138,7 @@ public class ValorCampoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void findAllByCampoProduccionCientificaId_ReturnsList() {
+  void findAllByCampoProduccionCientificaId_ReturnsList() {
     // given: Una lista con 7 ValorCampo y un produccionCientificaId
     Long campoProduccionCientificaId = 1L;
     List<ValorCampo> valores = new ArrayList<>();

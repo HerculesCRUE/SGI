@@ -6,6 +6,7 @@ import java.util.Objects;
 import java.util.Optional;
 
 import org.apache.commons.lang3.StringUtils;
+import org.crue.hercules.sgi.csp.config.SgiConfigProperties;
 import org.crue.hercules.sgi.csp.enums.FormularioSolicitud;
 import org.crue.hercules.sgi.csp.exceptions.ConfiguracionSolicitudNotFoundException;
 import org.crue.hercules.sgi.csp.exceptions.ConvocatoriaNotFoundException;
@@ -77,6 +78,7 @@ public class ConvocatoriaServiceImpl implements ConvocatoriaService {
   private final ConvocatoriaClonerService convocatoriaClonerService;
   private final AutorizacionRepository autorizacionRepository;
   private final ProyectoHelper proyectoHelper;
+  private final SgiConfigProperties sgiConfigProperties;
 
   public ConvocatoriaServiceImpl(ConvocatoriaRepository repository,
       ConvocatoriaPeriodoJustificacionRepository convocatoriaPeriodoJustificacionRepository,
@@ -87,7 +89,8 @@ public class ConvocatoriaServiceImpl implements ConvocatoriaService {
       ConfiguracionSolicitudRepository configuracionSolicitudRepository, final SolicitudRepository solicitudRepository,
       final ProyectoRepository proyectoRepository, final ConvocatoriaClonerService convocatoriaClonerService,
       AutorizacionRepository autorizacionRepository,
-      ProyectoHelper proyectoHelper) {
+      ProyectoHelper proyectoHelper,
+      SgiConfigProperties sgiConfigProperties) {
     this.repository = repository;
     this.convocatoriaPeriodoJustificacionRepository = convocatoriaPeriodoJustificacionRepository;
     this.modeloUnidadRepository = modeloUnidadRepository;
@@ -101,6 +104,7 @@ public class ConvocatoriaServiceImpl implements ConvocatoriaService {
     this.convocatoriaClonerService = convocatoriaClonerService;
     this.autorizacionRepository = autorizacionRepository;
     this.proyectoHelper = proyectoHelper;
+    this.sgiConfigProperties = sgiConfigProperties;
   }
 
   /**
@@ -297,7 +301,7 @@ public class ConvocatoriaServiceImpl implements ConvocatoriaService {
     log.debug("isRegistradaConSolicitudesOProyectos(Long id, String unidadConvocatoria) - start");
 
     if (StringUtils.isEmpty(unidadConvocatoria)) {
-      unidadConvocatoria = repository.findById(id).map(convocatoria -> convocatoria.getUnidadGestionRef())
+      unidadConvocatoria = repository.findById(id).map(Convocatoria::getUnidadGestionRef)
           .orElseThrow(() -> new ConvocatoriaNotFoundException(id));
     }
 
@@ -423,7 +427,7 @@ public class ConvocatoriaServiceImpl implements ConvocatoriaService {
     Specification<Convocatoria> specs = ConvocatoriaSpecifications.distinct().and(ConvocatoriaSpecifications.activos()
         .and(ConvocatoriaSpecifications.registradas())
         .and(ConvocatoriaSpecifications.configuracionSolicitudTramitacionSGI())
-        .and(SgiRSQLJPASupport.toSpecification(query, ConvocatoriaPredicateResolver.getInstance())));
+        .and(SgiRSQLJPASupport.toSpecification(query, ConvocatoriaPredicateResolver.getInstance(sgiConfigProperties))));
 
     Page<Convocatoria> returnValue = repository.findAll(specs, paging);
     log.debug("findAll(String query, Pageable paging) - end");
@@ -444,7 +448,7 @@ public class ConvocatoriaServiceImpl implements ConvocatoriaService {
 
     Specification<Convocatoria> specs = ConvocatoriaSpecifications.distinct().and(ConvocatoriaSpecifications.activos()
         .and(ConvocatoriaSpecifications.registradas())
-        .and(SgiRSQLJPASupport.toSpecification(query, ConvocatoriaPredicateResolver.getInstance())));
+        .and(SgiRSQLJPASupport.toSpecification(query, ConvocatoriaPredicateResolver.getInstance(sgiConfigProperties))));
 
     Page<Convocatoria> returnValue = repository.findAll(specs, paging);
 
@@ -467,7 +471,7 @@ public class ConvocatoriaServiceImpl implements ConvocatoriaService {
 
     Specification<Convocatoria> specs = ConvocatoriaSpecifications.distinct()
         .and(SgiRSQLJPASupport.toSpecification(query,
-            ConvocatoriaPredicateResolver.getInstance()));
+            ConvocatoriaPredicateResolver.getInstance(sgiConfigProperties)));
 
     List<String> unidadesGestion = SgiSecurityContextHolder.getUOsForAnyAuthority(
         new String[] { "CSP-CON-C", "CSP-CON-V", "CSP-CON-E", "CSP-CON-INV-V", "CSP-CON-B", "CSP-CON-R" });
@@ -497,7 +501,7 @@ public class ConvocatoriaServiceImpl implements ConvocatoriaService {
     ConfiguracionSolicitud datosConfiguracionSolicitud = configuracionSolicitudRepository.findByConvocatoriaId(id)
         .orElseThrow(() -> new ConfiguracionSolicitudNotFoundException(id));
 
-    Instant fechaActual = Instant.now();
+    Instant fechaActual = Instant.now().atZone(sgiConfigProperties.getTimeZone().toZoneId()).toInstant();
 
     return convocatoria.getActivo() && datosConfiguracionSolicitud.getTramitacionSGI()
         && datosConfiguracionSolicitud.getFasePresentacionSolicitudes().getFechaInicio().isBefore(fechaActual)
@@ -728,25 +732,22 @@ public class ConvocatoriaServiceImpl implements ConvocatoriaService {
 
       // Permitir no activos solo si estamos modificando y es el mismo
       if (datosOriginales == null || (datosOriginales.getAmbitoGeografico() != null
-          && (tipoAmbitoGeografico.get().getId() != datosOriginales.getAmbitoGeografico().getId()))) {
+          && (!Objects.equals(tipoAmbitoGeografico.get().getId(), datosOriginales.getAmbitoGeografico().getId())))) {
         Assert.isTrue(tipoAmbitoGeografico.get().getActivo(),
             "AmbitoGeografico '" + tipoAmbitoGeografico.get().getNombre() + "' no está activo");
       }
       datosConvocatoria.setAmbitoGeografico(tipoAmbitoGeografico.get());
     }
 
-    if (datosConvocatoria.getId() != null) {
-      // Comprueba que la duracion no sea menor que el ultimo mes del ultimo
-      // ConvocatoriaPeriodoJustificacion de la convocatoria
-      if (datosConvocatoria.getDuracion() != null
-          && !Objects.equals(datosConvocatoria.getDuracion(), datosOriginales.getDuracion())) {
-        convocatoriaPeriodoJustificacionRepository
-            .findFirstByConvocatoriaIdOrderByNumPeriodoDesc(datosConvocatoria.getId())
-            .ifPresent(convocatoriaPeriodoJustificacion -> {
-              Assert.isTrue(convocatoriaPeriodoJustificacion.getMesFinal() <= datosConvocatoria.getDuracion(),
-                  "Hay ConvocatoriaPeriodoJustificacion con mesFinal inferior a la nueva duracion");
-            });
-      }
+    // Comprueba que la duracion no sea menor que el ultimo mes del ultimo
+    // ConvocatoriaPeriodoJustificacion de la convocatoria
+    if (datosConvocatoria.getId() != null && datosConvocatoria.getDuracion() != null
+        && !Objects.equals(datosConvocatoria.getDuracion(), datosOriginales.getDuracion())) {
+      convocatoriaPeriodoJustificacionRepository
+          .findFirstByConvocatoriaIdOrderByNumPeriodoDesc(datosConvocatoria.getId())
+          .ifPresent(convocatoriaPeriodoJustificacion -> Assert.isTrue(
+              convocatoriaPeriodoJustificacion.getMesFinal() <= datosConvocatoria.getDuracion(),
+              "Hay ConvocatoriaPeriodoJustificacion con mesFinal inferior a la nueva duracion"));
     }
 
     // Duración mayor que el mayor mes del Periodo Seguimiento Cientifico

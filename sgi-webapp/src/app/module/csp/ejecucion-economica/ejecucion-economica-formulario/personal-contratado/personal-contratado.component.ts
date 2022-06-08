@@ -64,7 +64,6 @@ export class PersonalContratadoComponent extends FragmentComponent implements On
     this.subscriptions.push(this.ejecucionEconomicaService.getPersonaContratada(element.id).subscribe(
       (detalle) => {
         const config: MatDialogConfig<IDatoEconomicoDetalle> = {
-          panelClass: 'sgi-dialog-container',
           data: detalle
         };
         this.matDialog.open(PersonalContratadoModalComponent, config);

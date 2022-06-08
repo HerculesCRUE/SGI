@@ -1,0 +1,45 @@
+<sgi-dialog-header [title]="title"></sgi-dialog-header>
+<sgi-dialog-content>
+  <form [formGroup]="formGroup">
+    <!-- Nombre -->
+    <div fxLayout="row">
+      <mat-form-field>
+        <mat-label>{{'csp.grupo-equipo-instrumental.nombre' | translate}}</mat-label>
+        <input matInput formControlName="nombre" type="text" required>
+        <mat-error *ngIf="formGroup.controls.nombre.errors?.required">
+          {{'error.required.entity' | translate:msgParamNombreEntity}}
+        </mat-error>
+        <mat-error *ngIf="formGroup.controls.nombre.errors?.maxlength">
+          {{'error.maxlength.entity' | translate:msgParamNombreEntity}}
+        </mat-error>
+      </mat-form-field>
+    </div>
+    <!-- Descripción -->
+    <div fxLayout="row">
+      <mat-form-field>
+        <mat-label>{{'csp.grupo-equipo-instrumental.descripcion' | translate}}</mat-label>
+        <input matInput formControlName="descripcion" type="text">
+        <mat-error *ngIf="formGroup.controls.descripcion.errors?.maxlength">
+          {{'error.maxlength.entity' | translate:msgParamDescripcionEntity}}
+        </mat-error>
+      </mat-form-field>
+    </div>
+    <!-- Número registro -->
+    <div fxLayout="row">
+      <mat-form-field>
+        <mat-label>{{'csp.grupo-equipo-instrumental.numero-registro' | translate}}</mat-label>
+        <input matInput formControlName="numRegistro" type="text">
+        <mat-error *ngIf="formGroup.controls.numRegistro.errors?.maxlength">
+          {{'error.maxlength.entity' | translate:msgParamNumRegistroEntity}}
+        </mat-error>
+      </mat-form-field>
+    </div>
+  </form>
+</sgi-dialog-content>
+<mat-dialog-actions>
+  <button color="accent" (click)="doAction()" [disabled]="actionDisabled" mat-raised-button type="submit">
+    <mat-icon class="save-icon">save</mat-icon>{{textSaveOrUpdate | translate}}
+  </button>
+  <button class="link-cancelar" mat-button type="button" mat-dialog-close>{{'btn.cancel' |
+    translate}}</button>
+</mat-dialog-actions>

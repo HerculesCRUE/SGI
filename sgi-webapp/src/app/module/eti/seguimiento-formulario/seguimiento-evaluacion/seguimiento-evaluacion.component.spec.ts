@@ -14,6 +14,8 @@ import { SeguimientoListadoAnteriorMemoriaComponent } from '../seguimiento-lista
 import { SeguimientoFormularioActionService } from '../seguimiento-formulario.action.service';
 import { GestionSeguimientoActionService } from '../../gestion-seguimiento/gestion-seguimiento.action.service';
 import { SgiAuthService } from '@sgi/framework/auth';
+import { SharedModule } from '@shared/shared.module';
+import { EtiSharedModule } from '../../shared/eti-shared.module';
 
 describe('SeguimientoEvaluacionComponent', () => {
   let component: SeguimientoEvaluacionComponent;
@@ -33,7 +35,9 @@ describe('SeguimientoEvaluacionComponent', () => {
         TestUtils.getIdiomas(),
         RouterTestingModule,
         FormsModule,
-        ReactiveFormsModule
+        ReactiveFormsModule,
+        SharedModule,
+        EtiSharedModule
       ],
       providers: [
         { provide: SnackBarService, useValue: TestUtils.getSnackBarServiceSpy() },

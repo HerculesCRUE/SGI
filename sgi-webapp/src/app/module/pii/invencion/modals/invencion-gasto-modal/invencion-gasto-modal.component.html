@@ -1,12 +1,5 @@
-<div class="sgi-dialog-header" fxLayout="row" fxLayoutGap="20px">
-  <span fxFlexAlign="center" mat-mat-dialog-title role="heading" aria-level="3" fxFlex>
-    {{'pii.invencion-gasto' | translate:MSG_PARAMS.CARDINALIRY.SINGULAR}}
-  </span>
-  <button fxFlex="nogrow" mat-icon-button mat-dialog-close>
-    <mat-icon class="close-icon">close</mat-icon>
-  </button>
-</div>
-<mat-dialog-content>
+<sgi-dialog-header title="{{'pii.invencion-gasto' | translate:MSG_PARAMS.CARDINALIRY.SINGULAR}}"></sgi-dialog-header>
+<sgi-dialog-content>
   <section>
     <p *ngFor="let column of data.columns">
       {{column?.name}}:
@@ -72,9 +65,9 @@
     </table>
   </section>
 
-</mat-dialog-content>
+</sgi-dialog-content>
 <mat-dialog-actions>
-  <button color="accent" (click)="saveOrUpdate()" mat-raised-button type="submit">
+  <button color="accent" (click)="doAction()" [disabled]="this.actionDisabled" mat-raised-button type="submit">
     <mat-icon class="save-icon">save</mat-icon>
     {{'btn.ok' | translate}}
   </button>

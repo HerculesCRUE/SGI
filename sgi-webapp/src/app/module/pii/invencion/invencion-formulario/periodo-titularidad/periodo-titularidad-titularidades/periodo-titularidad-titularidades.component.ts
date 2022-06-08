@@ -184,9 +184,7 @@ export class PeriodoTitularidadTitularidadesComponent extends FragmentComponent 
     };
 
     const config: MatDialogConfig = {
-      panelClass: 'sgi-dialog-container',
       data: periodoTitularidadModalData,
-      minWidth: '500px',
     };
     const dialogRef = this.matDialog.open(PeriodoTitularidadModalComponent, config);
     dialogRef.afterClosed().subscribe(

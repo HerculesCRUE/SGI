@@ -2,6 +2,8 @@ import { Component, Inject, OnInit, ViewChild } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
+import { DialogFormComponent } from '@core/component/dialog-form.component';
+import { SgiError } from '@core/errors/sgi-error';
 import { MSG_PARAMS } from '@core/i18n';
 import { IComite } from '@core/models/eti/comite';
 import { IDocumentacionMemoria } from '@core/models/eti/documentacion-memoria';
@@ -9,21 +11,18 @@ import { resolveFormularioByTipoEvaluacionAndComite } from '@core/models/eti/for
 import { IMemoria } from '@core/models/eti/memoria';
 import { ITipoDocumento } from '@core/models/eti/tipo-documento';
 import { TIPO_EVALUACION } from '@core/models/eti/tipo-evaluacion';
-import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-properties';
 import { MemoriaService } from '@core/services/eti/memoria.service';
 import { TipoDocumentoService } from '@core/services/eti/tipo-documento.service';
-import { SnackBarService } from '@core/services/snack-bar.service';
 import { TranslateService } from '@ngx-translate/core';
 import { SgiFileUploadComponent, UploadEvent } from '@shared/file-upload/file-upload.component';
-import { Observable, of, Subscription } from 'rxjs';
-import { map, switchMap } from 'rxjs/operators';
+import { Observable, of } from 'rxjs';
+import { switchMap } from 'rxjs/operators';
 
 const TITLE_NEW_ENTITY = marker('title.new.entity');
 const DOCUMENTO_KEY = marker('eti.memoria.documento');
 const DOCUMENTO_TIPO_KEY = marker('eti.memoria.documento.tipo');
 const PROYECTO_DOCUMENTO_FICHERO_KEY = marker('csp.proyecto-documento.fichero');
 const PROYECTO_DOCUMENTO_NOMBRE_KEY = marker('csp.documento.nombre');
-const MSG_UPLOAD_SUCCESS = marker('msg.file.upload.success');
 const MSG_UPLOAD_ERROR = marker('error.file.upload');
 
 export interface MemoriaDocumentacionMemoriaModalData {
@@ -37,13 +36,10 @@ export interface MemoriaDocumentacionMemoriaModalData {
   templateUrl: './memoria-documentacion-memoria-modal.component.html',
   styleUrls: ['./memoria-documentacion-memoria-modal.component.scss']
 })
-export class MemoriaDocumentacionMemoriaModalComponent implements OnInit {
-
-  formGroup: FormGroup;
-  fxLayoutProperties: FxLayoutProperties;
+export class MemoriaDocumentacionMemoriaModalComponent extends DialogFormComponent<IDocumentacionMemoria> implements OnInit {
 
   readonly tiposDocumento$: Observable<ITipoDocumento[]>;
-  private subscriptions: Subscription[] = [];
+
   uploading = false;
   @ViewChild('uploader') private uploader: SgiFileUploadComponent;
 
@@ -57,17 +53,13 @@ export class MemoriaDocumentacionMemoriaModalComponent implements OnInit {
   }
 
   constructor(
-    public readonly matDialogRef: MatDialogRef<MemoriaDocumentacionMemoriaModalComponent>,
-    private readonly snackBarService: SnackBarService,
+    matDialogRef: MatDialogRef<MemoriaDocumentacionMemoriaModalComponent>,
     memoriaService: MemoriaService,
     @Inject(MAT_DIALOG_DATA) public readonly data: MemoriaDocumentacionMemoriaModalData,
     private readonly translate: TranslateService,
     private readonly tipoDocumentoService: TipoDocumentoService
   ) {
-    this.fxLayoutProperties = new FxLayoutProperties();
-    this.fxLayoutProperties.gap = '20px';
-    this.fxLayoutProperties.layout = 'row wrap';
-    this.fxLayoutProperties.xs = 'column';
+    super(matDialogRef, false);
 
     if (data.tipoEvaluacion === TIPO_EVALUACION.MEMORIA) {
       this.tiposDocumento$ = memoriaService.getTiposDocumentoRespuestasFormulario(this.data.memoriaId);
@@ -87,7 +79,7 @@ export class MemoriaDocumentacionMemoriaModalComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.initFormGroup();
+    super.ngOnInit();
     if (this.data.tipoEvaluacion !== TIPO_EVALUACION.MEMORIA) {
       this.subscriptions.push(this.tipoDocumentoService.findByFormulario(
         resolveFormularioByTipoEvaluacionAndComite(this.data.tipoEvaluacion, null)
@@ -132,25 +124,32 @@ export class MemoriaDocumentacionMemoriaModalComponent implements OnInit {
   /**
    * Inicializa formulario de añadir documentació.
    */
-  private initFormGroup() {
-    this.formGroup = new FormGroup({
+  protected buildFormGroup(): FormGroup {
+    const formGroup = new FormGroup({
       tipoDocumento: new FormControl(null, Validators.required),
       nombre: new FormControl(null, Validators.required),
       fichero: new FormControl(null, Validators.required),
     });
+    return formGroup;
   }
 
-  saveOrUpdate(): void {
+  protected getValue(): IDocumentacionMemoria {
+    const documentacionMemoria: IDocumentacionMemoria = {} as IDocumentacionMemoria;
+    documentacionMemoria.tipoDocumento = this.formGroup.controls.tipoDocumento.value;
+    documentacionMemoria.nombre = this.formGroup.controls.nombre.value;
+    documentacionMemoria.documento = this.formGroup.controls.fichero.value;
+    documentacionMemoria.memoria = { id: this.data.memoriaId } as IMemoria;
+
+    return documentacionMemoria;
+  }
+
+  doAction(): void {
     this.formGroup.markAllAsTouched();
     if (this.formGroup.valid) {
+      this.clearProblems();
       this.uploader.uploadSelection().subscribe(
         () => {
-          const documentacionMemoria: IDocumentacionMemoria = {} as IDocumentacionMemoria;
-          documentacionMemoria.tipoDocumento = this.formGroup.controls.tipoDocumento.value;
-          documentacionMemoria.nombre = this.formGroup.controls.nombre.value;
-          documentacionMemoria.documento = this.formGroup.controls.fichero.value;
-          documentacionMemoria.memoria = { id: this.data.memoriaId } as IMemoria;
-          this.matDialogRef.close(documentacionMemoria);
+          this.close(this.getValue());
         }
       );
     }
@@ -162,11 +161,10 @@ export class MemoriaDocumentacionMemoriaModalComponent implements OnInit {
         this.uploading = true;
         break;
       case 'end':
-        this.snackBarService.showSuccess(MSG_UPLOAD_SUCCESS);
         this.uploading = false;
         break;
       case 'error':
-        this.snackBarService.showError(MSG_UPLOAD_ERROR);
+        this.pushProblems(new SgiError(MSG_UPLOAD_ERROR));
         this.uploading = false;
         break;
     }

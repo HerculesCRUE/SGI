@@ -131,8 +131,8 @@ export class ConvocatoriaRequisitosIPFragment extends FormFragment<IConvocatoria
       otrosRequisitos: ['']
     }, {
       validators: [
-        DateValidator.isAfter('fechaMaximaNivelAcademico', 'fechaMinimaNivelAcademico', false),
-        DateValidator.isAfter('fechaMaximaCategoriaProfesional', 'fechaMinimaCategoriaProfesional', false)]
+        DateValidator.isAfter('fechaMinimaNivelAcademico', 'fechaMaximaNivelAcademico', false),
+        DateValidator.isAfter('fechaMinimaCategoriaProfesional', 'fechaMaximaCategoriaProfesional', false)]
     });
     if (!this.hasEditPerm) {
       form.disable();

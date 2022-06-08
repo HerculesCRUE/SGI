@@ -11,6 +11,10 @@ import org.crue.hercules.sgi.csp.model.Proyecto;
 import org.crue.hercules.sgi.csp.model.ProyectoAgrupacionGasto_;
 import org.springframework.data.jpa.domain.Specification;
 
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
+
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class ConceptoGastoSpecifications {
 
   /**
@@ -19,9 +23,7 @@ public class ConceptoGastoSpecifications {
    * @return specification para obtener los {@link ConceptoGasto} activos.
    */
   public static Specification<ConceptoGasto> activos() {
-    return (root, query, cb) -> {
-      return cb.equal(root.get(ConceptoGasto_.activo), Boolean.TRUE);
-    };
+    return (root, query, cb) -> cb.equal(root.get(ConceptoGasto_.activo), Boolean.TRUE);
   }
 
   /**

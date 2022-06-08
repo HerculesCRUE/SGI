@@ -32,7 +32,7 @@ export class ProyectoSocioPeriodoJustificacionDatosGeneralesComponent extends
   msgParamFechaFin = {};
   msgParamFechaFinPresentacion = {};
   msgParamFechaInicio = {};
-  msgParamFechaInicioPresentacion = {}
+  msgParamFechaInicioPresentacion = {};
   msgParamObservacionesEntity = {};
   msgParamImporteJustificadoEntity = {};
 
@@ -75,22 +75,30 @@ export class ProyectoSocioPeriodoJustificacionDatosGeneralesComponent extends
     this.translate.get(
       PROYECTO_SOCIO_PERIODO_JUSTIFICACION_FECHA_FIN_PRESENTACION_KEY,
       MSG_PARAMS.CARDINALIRY.SINGULAR
-    ).subscribe((value) => this.msgParamFechaFinPresentacion = { entity: value, ...MSG_PARAMS.GENDER.FEMALE, ...MSG_PARAMS.CARDINALIRY.SINGULAR });
+    ).subscribe((value) =>
+      this.msgParamFechaFinPresentacion = { entity: value, ...MSG_PARAMS.GENDER.FEMALE, ...MSG_PARAMS.CARDINALIRY.SINGULAR }
+    );
 
     this.translate.get(
       PROYECTO_SOCIO_PERIODO_JUSTIFICACION_FECHA_INICIO_PRESENTACION_KEY,
       MSG_PARAMS.CARDINALIRY.SINGULAR
-    ).subscribe((value) => this.msgParamFechaInicioPresentacion = { entity: value, ...MSG_PARAMS.GENDER.FEMALE, ...MSG_PARAMS.CARDINALIRY.SINGULAR });
+    ).subscribe((value) =>
+      this.msgParamFechaInicioPresentacion = { entity: value, ...MSG_PARAMS.GENDER.FEMALE, ...MSG_PARAMS.CARDINALIRY.SINGULAR }
+    );
 
     this.translate.get(
       PROYECTO_SOCIO_PERIODO_JUSTIFICACION_OBSERVACIONES_KEY,
       MSG_PARAMS.CARDINALIRY.SINGULAR
-    ).subscribe((value) => this.msgParamObservacionesEntity = { entity: value, ...MSG_PARAMS.GENDER.FEMALE, ...MSG_PARAMS.CARDINALIRY.PLURAL });
+    ).subscribe((value) =>
+      this.msgParamObservacionesEntity = { entity: value, ...MSG_PARAMS.GENDER.FEMALE, ...MSG_PARAMS.CARDINALIRY.PLURAL }
+    );
 
     this.translate.get(
       PROYECTO_SOCIO_PERIODO_JUSTIFICACION_IMPORTE_JUSTIFICADO_KEY,
       MSG_PARAMS.CARDINALIRY.SINGULAR
-    ).subscribe((value) => this.msgParamImporteJustificadoEntity = { entity: value, ...MSG_PARAMS.GENDER.MALE, ...MSG_PARAMS.CARDINALIRY.PLURAL });
+    ).subscribe((value) =>
+      this.msgParamImporteJustificadoEntity = { entity: value, ...MSG_PARAMS.GENDER.MALE, ...MSG_PARAMS.CARDINALIRY.PLURAL }
+    );
   }
 
   ngOnDestroy(): void {

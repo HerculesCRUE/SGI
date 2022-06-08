@@ -13,9 +13,11 @@
       *sgiHasAnyAuthorityForAnyUO="['ETI-MEM-INV-VR', 'ETI-MEM-INV-ER', 'ETI-MEM-INV-BR', 'ETI-MEM-INV-ESCR', 'ETI-MEM-INV-ERTR']"
       [route]="[INV_ROUTE_NAMES.MEMORIAS]" title="{{'menu.principal.inv.memorias' | translate}}">
     </sgi-menu-subitem>
-    <sgi-menu-subitem *sgiHasAnyAuthorityForAnyUO="['ETI-ACT-INV-ER', 'ETI-ACT-ER']" [route]="[INV_ROUTE_NAMES.ACTAS]"
-      title="{{'menu.principal.inv.actas' | translate}}">
-    </sgi-menu-subitem>
+    <ng-container *ngIf="showActas">
+      <sgi-menu-subitem *sgiHasAnyAuthorityForAnyUO="['ETI-ACT-INV-ER', 'ETI-ACT-ER']" [route]="[INV_ROUTE_NAMES.ACTAS]"
+        title="{{'menu.principal.inv.actas' | translate}}">
+      </sgi-menu-subitem>
+    </ng-container>
     <ng-container *ngIf="showEvaluaciones">
       <sgi-menu-subitem *sgiHasAnyAuthorityForAnyUO="['ETI-EVC-INV-VR', 'ETI-EVC-INV-EVALR']"
         [route]="[INV_ROUTE_NAMES.EVALUACIONES]" title="{{'menu.principal.inv.evaluaciones' | translate}}">
@@ -42,6 +44,36 @@
     <sgi-menu-subitem *sgiHasAnyAuthorityForAnyUO="['CSP-AUT-INV-C', 'CSP-AUT-INV-ER','CSP-AUT-INV-BR'] "
       title="{{'menu.csp.autorizaciones-proyectos-externos' | translate:MSG_PARAMS.CARDINALIRY.PLURAL}}"
       [route]="[INV_ROUTE_NAMES.AUTORIZACIONES]">
+    </sgi-menu-subitem>
+    <sgi-menu-subitem *sgiHasAnyAuthorityForAnyUO="['CSP-GIN-INV-VR'] "
+      title="{{'csp.grupo' | translate:MSG_PARAMS.CARDINALIRY.PLURAL}}" [route]="[INV_ROUTE_NAMES.GRUPOS]">
+    </sgi-menu-subitem>
+  </sgi-menu-group>
+
+  <!-- PRC -->
+  <sgi-menu-group title="{{'menu.principal.inv.prc' | translate}}" icon="category">
+    <sgi-menu-subitem *sgiHasAuthorityForAnyUO="'PRC-VAL-INV-ER'" [route]="[INV_ROUTE_NAMES.VALIDACION_PUBLICACIONES]"
+      title="{{'menu.principal.inv.validacion-publicaciones' | translate}}">
+    </sgi-menu-subitem>
+    <sgi-menu-subitem *sgiHasAuthorityForAnyUO="'PRC-VAL-INV-ER'" [route]="[INV_ROUTE_NAMES.VALIDACION_CONGRESOS]"
+      title="{{'menu.principal.inv.validacion-congresos' | translate}}">
+    </sgi-menu-subitem>
+    <sgi-menu-subitem *sgiHasAuthorityForAnyUO="'PRC-VAL-INV-ER'"
+      [route]="[INV_ROUTE_NAMES.VALIDACION_OBRAS_ARTISTICAS]"
+      title="{{'menu.principal.inv.validacion-obras-artisticas' | translate}}">
+    </sgi-menu-subitem>
+    <sgi-menu-subitem *sgiHasAuthorityForAnyUO="'PRC-VAL-INV-ER'"
+      [route]="[INV_ROUTE_NAMES.VALIDACION_COMITES_EDITORIALES]"
+      title="{{'menu.principal.inv.validacion-comites-editoriales' | translate}}">
+    </sgi-menu-subitem>
+    <sgi-menu-subitem *sgiHasAuthorityForAnyUO="'PRC-VAL-INV-ER'" [route]="[INV_ROUTE_NAMES.VALIDACION_TESIS_TFM_TFG]"
+      title="{{'menu.principal.inv.validacion-tesis-tfm-tfg' | translate}}">
+    </sgi-menu-subitem>
+    <sgi-menu-subitem *sgiHasAuthorityForAnyUO="'PRC-VAL-INV-ER'" [route]="[INV_ROUTE_NAMES.VALIDACION_ACTIVIDADES_IDI]"
+      title="{{'menu.principal.inv.validacion-actividades-idi' | translate}}">
+    </sgi-menu-subitem>
+    <sgi-menu-subitem *sgiHasAuthorityForAnyUO="'PRC-INF-INV-GR'" [route]="[INV_ROUTE_NAMES.INFORMES]"
+      title="{{'menu.principal.inv.informes' | translate}}">
     </sgi-menu-subitem>
   </sgi-menu-group>
 </sgi-root>

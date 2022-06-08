@@ -1,5 +1,6 @@
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { Estado, IEstadoProyecto } from '@core/models/csp/estado-proyecto';
+import { Estado } from '@core/models/csp/estado-proyecto';
+import { IProyecto } from '@core/models/csp/proyecto';
 import { IProyectoSocio } from '@core/models/csp/proyecto-socio';
 import { IProyectoSocioPeriodoJustificacion } from '@core/models/csp/proyecto-socio-periodo-justificacion';
 import { FormFragment } from '@core/services/action-service';
@@ -17,7 +18,7 @@ export class ProyectoSocioPeriodoJustificacionDatosGeneralesFragment extends For
     key: number,
     private service: ProyectoSocioPeriodoJustificacionService,
     private proyectoSocio: IProyectoSocio,
-    private proyectoEstado: IEstadoProyecto,
+    private proyecto: IProyecto,
     private selectedPeriodosJustificacion: IProyectoSocioPeriodoJustificacion[],
     private readonly: boolean
   ) {
@@ -43,10 +44,14 @@ export class ProyectoSocioPeriodoJustificacionDatosGeneralesFragment extends For
           disabled: true
         }),
         fechaInicio: new FormControl(null, [
-          Validators.required
+          Validators.required,
+          DateValidator.minDate(this.proyecto.fechaInicio),
+          DateValidator.maxDate(this.proyecto.fechaFinDefinitiva ?? this.proyecto.fechaFin)
         ]),
         fechaFin: new FormControl(null, [
-          Validators.required
+          Validators.required,
+          DateValidator.minDate(this.proyecto.fechaInicio),
+          DateValidator.maxDate(this.proyecto.fechaFinDefinitiva ?? this.proyecto.fechaFin)
         ]),
         fechaInicioPresentacion: new FormControl(null),
         fechaFinPresentacion: new FormControl(null),
@@ -62,19 +67,10 @@ export class ProyectoSocioPeriodoJustificacionDatosGeneralesFragment extends For
         validators: [
           DateValidator.isAfter('fechaInicio', 'fechaFin'),
           DateValidator.isAfter('fechaInicioPresentacion', 'fechaFinPresentacion'),
-          DateValidator.rangeWithTime('fechaInicioPresentacion', 'fechaInicio', 'fechaFin'),
-          DateValidator.rangeWithTime('fechaFinPresentacion', 'fechaInicio', 'fechaFin'),
           RangeValidator.notOverlaps('fechaInicio', 'fechaFin', rangosExistentes),
         ]
       }
     );
-
-    if (this.proyectoSocio?.fechaInicio) {
-      form.controls.fechaInicio.setValidators([Validators.required, DateValidator.minDate(this.proyectoSocio?.fechaInicio),
-      DateValidator.maxDate(this.proyectoSocio?.fechaFin)]);
-      form.controls.fechaFin.setValidators([Validators.required, DateValidator.minDate(this.proyectoSocio?.fechaInicio),
-      DateValidator.maxDate(this.proyectoSocio?.fechaFin)]);
-    }
 
     if (this.readonly) {
       form.disable();
@@ -85,7 +81,7 @@ export class ProyectoSocioPeriodoJustificacionDatosGeneralesFragment extends For
 
   protected buildPatch(value: IProyectoSocioPeriodoJustificacion): { [key: string]: any; } {
     this.periodoJustificacion = value;
-    const result = {
+    return {
       documentacionRecibida: value.documentacionRecibida,
       fechaFin: value.fechaFin,
       fechaFinPresentacion: value.fechaFinPresentacion,
@@ -96,7 +92,6 @@ export class ProyectoSocioPeriodoJustificacionDatosGeneralesFragment extends For
       numPeriodo: value.numPeriodo,
       importeJustificado: value.importeJustificado
     };
-    return result;
   }
 
   protected initializer(key: number): Observable<IProyectoSocioPeriodoJustificacion> {
@@ -140,6 +135,6 @@ export class ProyectoSocioPeriodoJustificacionDatosGeneralesFragment extends For
   }
 
   get isAbierto(): boolean {
-    return this.proyectoEstado?.estado === Estado.CONCEDIDO;
+    return this.proyecto.estado?.estado === Estado.CONCEDIDO;
   }
 }

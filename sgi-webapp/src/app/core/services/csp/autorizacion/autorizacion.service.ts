@@ -10,7 +10,9 @@ import { INotificacionProyectoExternoCVN } from '@core/models/csp/notificacion-p
 import { IDocumentoBackend } from '@core/models/sgdoc/backend/documento-backend';
 import { IDocumento } from '@core/models/sgdoc/documento';
 import { environment } from '@env';
-import { CreateCtor, FindAllCtor, FindByIdCtor, mixinCreate, mixinFindAll, mixinFindById, mixinUpdate, SgiRestBaseService, SgiRestFindOptions, SgiRestListResult, UpdateCtor } from '@sgi/framework/http';
+import {
+  CreateCtor, FindByIdCtor, mixinCreate, mixinFindById, mixinUpdate, SgiRestBaseService, SgiRestFindOptions, SgiRestListResult, UpdateCtor
+} from '@sgi/framework/http';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { ICertificadoAutorizacionResponse } from '../certificado-autorizacion/certificado-autorizacion-response';
@@ -136,7 +138,7 @@ export class AutorizacionService extends _AutorizacionMixinBase {
   }
 
   /**
-   * Comprueba si la autorizacion tiene asociado algun CertificadoAutorizacion con el campo 
+   * Comprueba si la autorizacion tiene asociado algun CertificadoAutorizacion con el campo
    * visible a 'true'.
    * @param id identificador del {@link Autorizacion}
    * @return  estado de la respuesta, 200 si contiene, 204 si no contiene.
@@ -225,7 +227,9 @@ export class AutorizacionService extends _AutorizacionMixinBase {
    * @param solicitanteRef referencia del solicitante
    * @param options opciones de búsqueda.
    */
-  findAllAutorizadasWithoutNotificacionBySolicitanteRef(solicitanteRef: string, options?: SgiRestFindOptions): Observable<SgiRestListResult<IAutorizacion>> {
+  findAllAutorizadasWithoutNotificacionBySolicitanteRef(
+    solicitanteRef: string, options?: SgiRestFindOptions
+  ): Observable<SgiRestListResult<IAutorizacion>> {
     return this.find<IAutorizacionResponse, IAutorizacion>(
       `${this.endpointUrl}/solicitante/${solicitanteRef}`,
       options,

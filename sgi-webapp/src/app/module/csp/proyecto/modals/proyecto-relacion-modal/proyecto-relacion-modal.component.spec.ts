@@ -6,14 +6,12 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RouterTestingModule } from '@angular/router/testing';
 import { DialogComponent } from '@block/dialog/dialog.component';
 import { HeaderComponent } from '@block/header/header.component';
-import { SnackBarService } from '@core/services/snack-bar.service';
 import TestUtils from '@core/utils/test-utils';
 import { MaterialDesignModule } from '@material/material-design.module';
 import { SgiAuthModule, SgiAuthService } from '@sgi/framework/auth';
 import { SharedModule } from '@shared/shared.module';
 import { LoggerTestingModule } from 'ngx-logger/testing';
 import { PiiSharedModule } from 'src/app/module/pii/shared/pii-shared.module';
-
 import { IProyectoRelacionModalData, ProyectoRelacionModalComponent } from './proyecto-relacion-modal.component';
 
 describe('ProyectoRelacionModalComponent', () => {
@@ -21,11 +19,6 @@ describe('ProyectoRelacionModalComponent', () => {
   let fixture: ComponentFixture<ProyectoRelacionModalComponent>;
 
   beforeEach(waitForAsync(() => {
-
-    const mockDialogRef = {
-      close: jasmine.createSpy('close'),
-    };
-
     // Mock MAT_DIALOG
     const matDialogData = {} as IProyectoRelacionModalData;
 
@@ -47,8 +40,7 @@ describe('ProyectoRelacionModalComponent', () => {
         PiiSharedModule,
       ],
       providers: [
-        { provide: SnackBarService, useValue: TestUtils.getSnackBarServiceSpy() },
-        { provide: MatDialogRef, useValue: mockDialogRef },
+        { provide: MatDialogRef, useValue: TestUtils.buildDialogCommonMatDialogRef() },
         { provide: MAT_DIALOG_DATA, useValue: matDialogData },
         SgiAuthService
       ]

@@ -80,7 +80,6 @@ export class SolicitudProteccionPaisesValidadosComponent extends FragmentCompone
       paisValidado = this.formPart.createEmptyPaisValidado();
     }
     const config = {
-      panelClass: 'sgi-dialog-container',
       data: {
         paisValidado,
         paises: this.formPart.paises$.getValue()

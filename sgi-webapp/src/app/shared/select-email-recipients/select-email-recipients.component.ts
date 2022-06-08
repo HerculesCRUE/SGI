@@ -323,7 +323,6 @@ export class SelectEmailRecipientsComponent implements
     if (!this.disabled) {
       this.dialogOpen = true;
       const dialogRef = this.dialog.open<SearchPersonaModalComponent, SearchPersonaModalData>(SearchPersonaModalComponent, {
-        panelClass: 'sgi-dialog-container',
         data: {
           searchTerm: this.emailInputCtrl.value ?? '',
           extended: false,

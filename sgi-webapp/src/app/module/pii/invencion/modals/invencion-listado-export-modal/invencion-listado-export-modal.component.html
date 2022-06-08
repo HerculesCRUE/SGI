@@ -1,0 +1,24 @@
+<sgi-export-dialog>
+  <form [formGroup]="formGroup">
+    <!-- OutputReportType -->
+    <mat-form-field>
+      <mat-label>{{'export.type' | translate}}</mat-label>
+      <sgi-select-enum formControlName="outputType" required [enumMap]="OUTPUT_REPORT_TYPE_EXCEL_CSV_MAP">
+      </sgi-select-enum>
+    </mat-form-field>
+
+    <!-- Columns visibility -->
+    <mat-label>{{'export.columns' | translate}}</mat-label>
+
+    <div class="row-visibility">
+      <div class="columns-visibility">
+        <mat-checkbox color="primary" class="checkbox" formControlName="showSolicitudesDeProteccion">
+          {{'pii.invencion-solicitudes-proteccion' | translate}}
+        </mat-checkbox>
+        <mat-checkbox color="primary" class="checkbox" formControlName="showEquipoInventor">
+          {{'pii.invencion-equipo-inventor' | translate}}
+        </mat-checkbox>
+      </div>
+    </div>
+  </form>
+</sgi-export-dialog>

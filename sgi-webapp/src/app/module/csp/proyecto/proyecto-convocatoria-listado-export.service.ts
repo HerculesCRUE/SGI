@@ -31,6 +31,7 @@ const CONVOCATORIA_FECHA_CONCESION_FIELD = 'fechaConcesionConvocatoria';
 const CONVOCATORIA_REGIMEN_KEY = marker('csp.convocatoria.regimen-concurrencia');
 const CONVOCATORIA_REGIMEN_FIELD = 'regimenConvocatoria';
 
+const COLUMN_VALUE_PREFIX = ': ';
 @Injectable()
 export class ProyectoConvocatoriaListadoExportService extends AbstractTableExportFillService<IProyectoReportData, IProyectoReportOptions>{
 
@@ -91,42 +92,42 @@ export class ProyectoConvocatoriaListadoExportService extends AbstractTableExpor
 
     const columnNombreConvocatoria: ISgiColumnReport = {
       name: CONVOCATORIA_FIELD,
-      title: prefix + this.translate.instant(CONVOCATORIA_TITULO_KEY),
+      title: prefix + this.translate.instant(CONVOCATORIA_TITULO_KEY) + this.getValuePrefix(prefix),
       type: ColumnType.STRING,
     };
     columns.push(columnNombreConvocatoria);
 
     const columnIdentificacionConvocatoria: ISgiColumnReport = {
       name: CONVOCATORIA_IDENTIFICACION_FIELD,
-      title: prefix + this.translate.instant(CONVOCATORIA_IDENTIFICACION_KEY),
+      title: prefix + this.translate.instant(CONVOCATORIA_IDENTIFICACION_KEY) + this.getValuePrefix(prefix),
       type: ColumnType.STRING,
     };
     columns.push(columnIdentificacionConvocatoria);
 
     const columnFechaPublicacionConvocatoria: ISgiColumnReport = {
       name: CONVOCATORIA_FECHA_PUBLICACION_FIELD,
-      title: prefix + this.translate.instant(CONVOCATORIA_FECHA_PUBLICACION_KEY),
+      title: prefix + this.translate.instant(CONVOCATORIA_FECHA_PUBLICACION_KEY) + this.getValuePrefix(prefix),
       type: allString ? ColumnType.STRING : ColumnType.DATE,
     };
     columns.push(columnFechaPublicacionConvocatoria);
 
     const columnFechaProvisionalConvocatoria: ISgiColumnReport = {
       name: CONVOCATORIA_FECHA_PROVISIONAL_FIELD,
-      title: prefix + this.translate.instant(CONVOCATORIA_FECHA_PROVISIONAL_KEY),
+      title: prefix + this.translate.instant(CONVOCATORIA_FECHA_PROVISIONAL_KEY) + this.getValuePrefix(prefix),
       type: allString ? ColumnType.STRING : ColumnType.DATE,
     };
     columns.push(columnFechaProvisionalConvocatoria);
 
     const columnFechaConcesionConvocatoria: ISgiColumnReport = {
       name: CONVOCATORIA_FECHA_CONCESION_FIELD,
-      title: prefix + this.translate.instant(CONVOCATORIA_FECHA_CONCESION_KEY),
+      title: prefix + this.translate.instant(CONVOCATORIA_FECHA_CONCESION_KEY) + this.getValuePrefix(prefix),
       type: allString ? ColumnType.STRING : ColumnType.DATE,
     };
     columns.push(columnFechaConcesionConvocatoria);
 
     const columnRegimenConvocatoria: ISgiColumnReport = {
       name: CONVOCATORIA_REGIMEN_FIELD,
-      title: prefix + this.translate.instant(CONVOCATORIA_REGIMEN_KEY),
+      title: prefix + this.translate.instant(CONVOCATORIA_REGIMEN_KEY) + this.getValuePrefix(prefix),
       type: ColumnType.STRING,
     };
     columns.push(columnRegimenConvocatoria);
@@ -186,5 +187,12 @@ export class ProyectoConvocatoriaListadoExportService extends AbstractTableExpor
       elementsRow.push('');
       elementsRow.push('');
     }
+  }
+
+  private getValuePrefix(prefix: string): string {
+    if (!prefix) {
+      return COLUMN_VALUE_PREFIX;
+    }
+    return '';
   }
 }

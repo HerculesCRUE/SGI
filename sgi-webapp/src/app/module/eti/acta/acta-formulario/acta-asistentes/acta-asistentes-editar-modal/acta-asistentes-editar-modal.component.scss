@@ -1,5 +1,5 @@
-@import "colors.scss";
-
-.ocultarCampo {
-  display: none;
+:host {
+  sgi-dialog-content {
+    min-width: 30vw;
+  }
 }

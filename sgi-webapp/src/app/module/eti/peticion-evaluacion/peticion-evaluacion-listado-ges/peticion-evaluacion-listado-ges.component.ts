@@ -1,28 +1,28 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { AbstractTablePaginationComponent } from '@core/component/abstract-table-pagination.component';
 import { MSG_PARAMS } from '@core/i18n';
-import { IComite } from '@core/models/eti/comite';
 import { IMemoria } from '@core/models/eti/memoria';
 import { IPeticionEvaluacion } from '@core/models/eti/peticion-evaluacion';
-import { TipoEstadoMemoria } from '@core/models/eti/tipo-estado-memoria';
+import { ESTADO_MEMORIA_MAP, TipoEstadoMemoria } from '@core/models/eti/tipo-estado-memoria';
 import { FxFlexProperties } from '@core/models/shared/flexLayout/fx-flex-properties';
 import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-properties';
 import { ROUTE_NAMES } from '@core/route.names';
-import { ComiteService } from '@core/services/eti/comite.service';
 import { PeticionEvaluacionService } from '@core/services/eti/peticion-evaluacion.service';
 import { TipoEstadoMemoriaService } from '@core/services/eti/tipo-estado-memoria.service';
 import { PersonaService } from '@core/services/sgp/persona.service';
 import { SnackBarService } from '@core/services/snack-bar.service';
 import { TranslateService } from '@ngx-translate/core';
 import { RSQLSgiRestFilter, SgiRestFilter, SgiRestFilterOperator, SgiRestListResult } from '@sgi/framework/http';
-import { TipoColectivo } from 'src/app/esb/sgp/shared/select-persona/select-persona.component';
 import { NGXLogger } from 'ngx-logger';
 import { Observable, of } from 'rxjs';
 import { catchError, map, startWith, switchMap } from 'rxjs/operators';
+import { TipoColectivo } from 'src/app/esb/sgp/shared/select-persona/select-persona.component';
+import { IPeticionEvaluacionListadoModalData, PeticionEvaluacionListadoExportModalComponent } from '../modals/peticion-evaluacion-listado-export-modal/peticion-evaluacion-listado-export-modal.component';
 
 const MSG_BUTTON_SAVE = marker('btn.add.entity');
 const MSG_ERROR = marker('error.load');
@@ -51,24 +51,22 @@ export class PeticionEvaluacionListadoGesComponent extends AbstractTablePaginati
   peticionesEvaluacion$: Observable<IPeticionEvaluacion[]> = of();
   memorias$: Observable<IMemoria[]> = of();
 
-  comiteListado: IComite[];
-  filteredComites: Observable<IComite[]>;
-
-  estadoMemoriaListado: TipoEstadoMemoria[];
-  filteredEstadosMemoria: Observable<TipoEstadoMemoria[]>;
-
   get tipoColectivoSolicitante() {
     return TipoColectivo.SOLICITANTE_ETICA;
+  }
+
+  get ESTADO_MEMORIA_MAP() {
+    return ESTADO_MEMORIA_MAP;
   }
 
   constructor(
     private readonly logger: NGXLogger,
     private readonly peticionesEvaluacionService: PeticionEvaluacionService,
     protected readonly snackBarService: SnackBarService,
-    private readonly comiteService: ComiteService,
     private readonly tipoEstadoMemoriaService: TipoEstadoMemoriaService,
     private readonly personaService: PersonaService,
-    private readonly translate: TranslateService
+    private readonly translate: TranslateService,
+    private matDialog: MatDialog
   ) {
     super(snackBarService, MSG_ERROR);
 
@@ -92,15 +90,12 @@ export class PeticionEvaluacionListadoGesComponent extends AbstractTablePaginati
     this.setupI18N();
 
     this.formGroup = new FormGroup({
-      comite: new FormControl('', []),
+      comite: new FormControl(null, []),
       titulo: new FormControl('', []),
       codigo: new FormControl('', []),
-      tipoEstadoMemoria: new FormControl('', []),
+      tipoEstadoMemoria: new FormControl(null, []),
       solicitante: new FormControl('', [])
     });
-
-    this.getComites();
-    this.getEstadosMemoria();
   }
 
   private setupI18N(): void {
@@ -166,7 +161,7 @@ export class PeticionEvaluacionListadoGesComponent extends AbstractTablePaginati
     return new RSQLSgiRestFilter('peticionEvaluacion.codigo', SgiRestFilterOperator.LIKE_ICASE, controls.codigo.value)
       .and('peticionEvaluacion.titulo', SgiRestFilterOperator.LIKE_ICASE, controls.titulo.value)
       .and('comite.id', SgiRestFilterOperator.EQUALS, controls.comite.value?.id?.toString())
-      .and('estadoActual.id', SgiRestFilterOperator.EQUALS, controls.tipoEstadoMemoria.value?.id?.toString())
+      .and('estadoActual.id', SgiRestFilterOperator.EQUALS, controls.tipoEstadoMemoria.value?.toString())
       .and('peticionEvaluacion.personaRef', SgiRestFilterOperator.EQUALS, controls.solicitante.value.id);
   }
 
@@ -174,95 +169,14 @@ export class PeticionEvaluacionListadoGesComponent extends AbstractTablePaginati
     this.peticionesEvaluacion$ = this.getObservableLoadTable(reset);
   }
 
-  /**
-   * Devuelve el nombre de un comité.
-   * @param comite comités
-   * returns nombre comité
-   */
-  getComite(comite: IComite): string {
-    return comite?.comite;
-  }
+  public openExportModal() {
+    const data: IPeticionEvaluacionListadoModalData = {
+      findOptions: this.findOptions
+    };
 
-  /**
-   * Devuelve el nombre de un estado memoria.
-   * @param tipoEstadoMemoria tipo estado memoria
-   * returns nombre estadoMemoria
-   */
-  getEstadoMemoria(tipoEstadoMemoria: TipoEstadoMemoria): string {
-    return tipoEstadoMemoria?.nombre;
-  }
-
-  /**
-   * Recupera un listado de los comités que hay en el sistema.
-   */
-  getComites(): void {
-    const comitesSubscription = this.comiteService.findAll().subscribe(
-      (response) => {
-        this.comiteListado = response.items;
-        this.filteredComites = this.formGroup.controls.comite.valueChanges
-          .pipe(
-            startWith(''),
-            map(value => this.filterComite(value))
-          );
-      });
-
-    this.suscripciones.push(comitesSubscription);
-  }
-
-  /**
-   * Recupera un listado de los estados memoria que hay en el sistema.
-   */
-  getEstadosMemoria(): void {
-    const estadosMemoriaSubscription = this.tipoEstadoMemoriaService.findAll().subscribe(
-      (response) => {
-        this.estadoMemoriaListado = response.items;
-        this.filteredEstadosMemoria = this.formGroup.controls.tipoEstadoMemoria.valueChanges
-          .pipe(
-            startWith(''),
-            map(value => this.filterEstadoMemoria(value))
-          );
-      });
-
-    this.suscripciones.push(estadosMemoriaSubscription);
-  }
-
-  /**
-   * Filtro de campo autocompletable comité.
-   * @param value value a filtrar (string o nombre comité).
-   * @returns lista de comités filtrados.
-   */
-  private filterComite(value: string | IComite): IComite[] {
-    let filterValue: string;
-    if (value === null) {
-      value = '';
-    }
-    if (typeof value === 'string') {
-      filterValue = value.toLowerCase();
-    } else {
-      filterValue = value.comite.toLowerCase();
-    }
-
-    return this.comiteListado.filter
-      (comite => comite.comite.toLowerCase().includes(filterValue));
-  }
-
-  /**
-   * Filtro de campo autocompletable estado memoria.
-   * @param value value a filtrar (string o nombre estado memoria).
-   * @returns lista de estados memoria filtrados.
-   */
-  private filterEstadoMemoria(value: string | TipoEstadoMemoria): TipoEstadoMemoria[] {
-    let filterValue: string;
-    if (value === null) {
-      value = '';
-    }
-    if (typeof value === 'string') {
-      filterValue = value.toLowerCase();
-    } else {
-      filterValue = value.nombre.toLowerCase();
-    }
-
-    return this.estadoMemoriaListado.filter
-      (estadoMemoria => estadoMemoria.nombre.toLowerCase().includes(filterValue));
+    const config = {
+      data
+    };
+    this.matDialog.open(PeticionEvaluacionListadoExportModalComponent, config);
   }
 }

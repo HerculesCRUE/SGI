@@ -54,6 +54,7 @@ export class FuenteFinanciacionModalComponent
 
   ngOnInit(): void {
     super.ngOnInit();
+    this.matDialogRef.updateSize('30vw');
     this.setupI18N();
   }
 

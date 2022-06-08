@@ -9,8 +9,6 @@ import TestUtils from '@core/utils/test-utils';
 import { MaterialDesignModule } from '@material/material-design.module';
 import { SgiAuthModule } from '@sgi/framework/auth';
 import { SharedModule } from '@shared/shared.module';
-import { LoggerTestingModule } from 'ngx-logger/testing';
-
 import { SearchInvencionModalComponent } from './search-invencion.component';
 
 describe('SearchInvencionModalComponent', () => {
@@ -18,11 +16,6 @@ describe('SearchInvencionModalComponent', () => {
   let fixture: ComponentFixture<SearchInvencionModalComponent>;
 
   beforeEach(waitForAsync(() => {
-    const mockDialogRef = {
-      componentInstance: jasmine.createSpy('componentInstance'),
-      close: jasmine.createSpy('close'),
-    };
-
     // Mock MAT_DIALOG
     const matDialogData = {};
 
@@ -32,7 +25,6 @@ describe('SearchInvencionModalComponent', () => {
         RouterTestingModule,
         MaterialDesignModule,
         HttpClientTestingModule,
-        LoggerTestingModule,
         MatDialogModule,
         TestUtils.getIdiomas(),
         ReactiveFormsModule,
@@ -42,7 +34,7 @@ describe('SearchInvencionModalComponent', () => {
       providers: [
         {
           provide: MatDialogRef,
-          useValue: mockDialogRef,
+          useValue: TestUtils.buildDialogCommonMatDialogRef(),
         },
         { provide: MAT_DIALOG_DATA, useValue: matDialogData },
       ],

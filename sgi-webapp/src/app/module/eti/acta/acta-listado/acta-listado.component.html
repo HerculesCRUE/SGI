@@ -9,15 +9,9 @@
       [fxLayout]="fxLayoutProperties.layout" fxLayoutGap="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
       <!-- Comité -->
       <div class="col">
-        <mat-form-field class="input-form">
+        <mat-form-field>
           <mat-label>{{'label.eti.comite' | translate}}</mat-label>
-          <input type="text" [placeholder]="'label.eti.comite' | translate" arial-label="Number" matInput
-            formControlName="comite" [matAutocomplete]="autocompleteComite">
-          <mat-autocomplete #autocompleteComite="matAutocomplete" [displayWith]="getComite">
-            <mat-option *ngFor="let comite of filteredComites | async" [value]="comite">
-              {{comite.comite}}
-            </mat-option>
-          </mat-autocomplete>
+          <sgi-select-comite #selectComite formControlName="comite"></sgi-select-comite>
         </mat-form-field>
       </div>
 
@@ -55,15 +49,10 @@
 
       <!-- Tipo estado -->
       <div class="col">
-        <mat-form-field class="input-form">
+        <mat-form-field>
           <mat-label>{{'eti.acta.estado' | translate}}</mat-label>
-          <input type="text" placeholder="{{'eti.acta.estado' | translate}}" arial-label="Number" matInput
-            formControlName="tipoEstadoActa" [matAutocomplete]="autoCompleteTipoEstado">
-          <mat-autocomplete #autoCompleteTipoEstado="matAutocomplete" [displayWith]="getTipoEstadoActa">
-            <mat-option *ngFor="let tipoEstado of filteredTipoEstadoActa | async" [value]="tipoEstado">
-              {{tipoEstado.nombre}}
-            </mat-option>
-          </mat-autocomplete>
+          <sgi-select-enum formControlName="tipoEstadoActa" [enumMap]="ESTADO_ACTA_MAP">
+          </sgi-select-enum>
         </mat-form-field>
       </div>
     </div>

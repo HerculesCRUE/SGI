@@ -10,10 +10,13 @@ import org.crue.hercules.sgi.csp.dto.GrupoEquipoInput;
 import org.crue.hercules.sgi.csp.dto.GrupoEquipoOutput;
 import org.crue.hercules.sgi.csp.model.Grupo;
 import org.crue.hercules.sgi.csp.model.GrupoEquipo;
+import org.crue.hercules.sgi.csp.model.GrupoLineaInvestigador;
 import org.crue.hercules.sgi.csp.service.GrupoEquipoService;
+import org.crue.hercules.sgi.csp.service.GrupoLineaInvestigadorService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -34,15 +37,22 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping(GrupoEquipoController.REQUEST_MAPPING)
 @Slf4j
 @RequiredArgsConstructor
+@Validated
 public class GrupoEquipoController {
+  public static final String PATH_DELIMITER = "/";
+  public static final String REQUEST_MAPPING = PATH_DELIMITER + "gruposequipos";
 
-  public static final String REQUEST_MAPPING = "/gruposequipos";
-  public static final String PATH_PERSONA_BAREMABLE_PERSONA_REF_ANIO = "/persona-baremable/{personaRef}/{anio}";
-  public static final String PATH_BAREMABLES_GRUPO_REF_ANIO = "/baremables/{grupoRef}/{anio}";
-  public static final String PATH_ID = "/{id}";
+  public static final String PATH_PERSONA_BAREMABLE_PERSONA_REF_ANIO = PATH_DELIMITER
+      + "persona-baremable/{personaRef}/{anio}";
+  public static final String PATH_GRUPOS_PERSONA_REF_ANIO = PATH_DELIMITER + "/{personaRef}/{anio}";
+  public static final String PATH_BAREMABLES_GRUPO_REF_ANIO = PATH_DELIMITER + "baremables/{grupoRef}/{anio}";
+  public static final String PATH_MIEMBROS_EQUIPO_INVESTIGADOR = PATH_DELIMITER + "investigador";
+  public static final String PATH_ID = PATH_DELIMITER + "{id}";
+  public static final String PATH_GRUPO_LINEA_INVESTIGADOR = PATH_ID + PATH_DELIMITER + "gruposlineasinvestigadores";
 
   private final GrupoEquipoService service;
   private final GrupoEquipoConverter converter;
+  private final GrupoLineaInvestigadorService grupoLineaInevestigadorService;
 
   /**
    * Crea nuevo {@link GrupoEquipo}
@@ -140,6 +150,32 @@ public class GrupoEquipoController {
   }
 
   /**
+   * Devuelve una lista de ids {@link GrupoEquipo} pertenecientes a un
+   * determinado personaRef y que estén a 31 de diciembre del año de baremación
+   *
+   * @param personaRef personaRef
+   * @param anio       año de baremación
+   * @return lista de ids {@link GrupoEquipo}
+   */
+  @GetMapping(PATH_GRUPOS_PERSONA_REF_ANIO)
+  @PreAuthorize("(isClient() and hasAuthority('SCOPE_sgi-csp')) or hasAuthority('CSP-PRO-PRC-V')")
+  public ResponseEntity<List<Long>> findGrupoEquipoByPersonaRefAndFechaBaremacion(@PathVariable String personaRef,
+      @PathVariable Integer anio) {
+    log.debug("findGrupoEquipoByPersonaRefAndFechaBaremacion({},{}) - start", personaRef, anio);
+    List<Long> gruposEquipos = service.findGrupoEquipoByPersonaRefAndFechaBaremacion(personaRef, anio);
+
+    if (gruposEquipos.isEmpty()) {
+      log.debug("findGrupoEquipoByPersonaRefAndFechaBaremacion({},{}) - end", personaRef, anio);
+
+      return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    log.debug("findGrupoEquipoByPersonaRefAndFechaBaremacion({},{}) - end", personaRef, anio);
+
+    return new ResponseEntity<>(gruposEquipos, HttpStatus.OK);
+  }
+
+  /**
    * Actualiza el listado de {@link GrupoEquipo} del {@link Grupo} con el
    * listado grupoEquipos añadiendo, editando o eliminando los elementos segun
    * proceda.
@@ -151,13 +187,46 @@ public class GrupoEquipoController {
   @PatchMapping(PATH_ID)
   @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-GIN-E', 'CSP-GIN-V')")
   public ResponseEntity<List<GrupoEquipoOutput>> update(@PathVariable Long id,
-      @Valid @RequestBody List<GrupoEquipoInput> grupoEquipos) {
+      @RequestBody List<@Valid GrupoEquipoInput> grupoEquipos) {
     log.debug("update(List<GrupoEquipoInput> grupoEquipos, grupoId) - start");
     List<GrupoEquipoOutput> returnValue = converter
         .convertGrupoEquipos(service.update(id, converter.convertGrupoEquipoInput(
             grupoEquipos)));
     log.debug("update(List<GrupoEquipoInput> grupoEquipos, grupoId) - end");
     return new ResponseEntity<>(returnValue, HttpStatus.CREATED);
+  }
+
+  /**
+   * Devuelve una lista paginada y filtrada de {@link GrupoEquipo} cuya persona
+   * Ref sea el usuario actual o formen parte de un grupo en el que la persona sea
+   * un investigador principal.
+   * 
+   * @return el listado de personaRef de los {@link GrupoEquipo}.
+   */
+  @GetMapping(PATH_MIEMBROS_EQUIPO_INVESTIGADOR)
+  @PreAuthorize("hasAuthority('PRC-INF-INV-GR')")
+  public ResponseEntity<List<String>> findMiembrosEquipoUsuario() {
+    log.debug("findMiembrosEquipoUsuario() - start");
+    List<String> result = service.findMiembrosEquipoUsuario();
+    log.debug("findMiembrosEquipoUsuario() - end");
+    return result.isEmpty() ? new ResponseEntity<>(HttpStatus.NO_CONTENT) : new ResponseEntity<>(result, HttpStatus.OK);
+  }
+
+  /**
+   * Comprueba la existencia de un Grupo Equipo adscrito al
+   * {@link GrupoLineaInvestigador} con el id en las fechas del grupo equipo
+   *
+   * @param id Identificador de Grupo Equipo
+   * @return {@link HttpStatus#OK} si existe y {@link HttpStatus#NO_CONTENT} si
+   *         no.
+   */
+  @RequestMapping(path = PATH_GRUPO_LINEA_INVESTIGADOR, method = RequestMethod.HEAD)
+  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-GIN-E', 'CSP-GIN-V')")
+  public ResponseEntity<Void> existsLineaInvestigadorInFechasGrupoEquipo(@PathVariable Long id) {
+    log.debug("GrupoEquipo existsLineaInvestigadorInFechasGrupoEquipo(Long id) - start");
+    boolean exists = grupoLineaInevestigadorService.existsLineaInvestigadorInFechasGrupoEquipo(id);
+    log.debug("GrupoEquipo existsLineaInvestigadorInFechasGrupoEquipo(Long id) - end");
+    return exists ? new ResponseEntity<>(HttpStatus.OK) : new ResponseEntity<>(HttpStatus.NO_CONTENT);
   }
 
 }

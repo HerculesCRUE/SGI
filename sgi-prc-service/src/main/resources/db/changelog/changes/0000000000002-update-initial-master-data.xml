@@ -1,0 +1,88 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:pro="http://www.liquibase.org/xml/ns/pro" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-3.8.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+  <property name="schemaPrefix" value="" />
+  <changeSet context="!test" author="master" id="0000000000002-configuracion_baremo">
+    <update tableName="configuracion_baremo">
+      <column name="mostrar_puntos" valueBoolean="false" />
+      <where>tipo_baremo in ('COSTE_INDIRECTO', 'PRODUCCION_CIENTIFICA', 'LIBROS','COMITES', 'LIBRO_NUMERO_AUTORES', 'LIBRO_EDITORIAL_PRESTIGIO',
+            'ARTICULOS', 'ARTICULO_NUMERO_AUTORES', 'ARTICULO_AREAS', 'ARTICULO_EXCELENCIA', 'COMITES_EDITORIALES', 'CONGRESOS', 'DIRECCION_TESIS', 'PROYECTOS_INVESTIGACION',
+            'CONTRATOS', 'OBRAS_ARTISTICAS', 'ORGANIZACION_ACTIVIDADES', 'INVENCIONES', 'INVENCION_LICENCIA_EXPLOTACION')
+      </where>
+    </update>
+  </changeSet>
+
+  <!-- Inicializar la columna tipo_nodo de la tabla configuracion_baremo -->
+  <changeSet context="!test" author="master" id="0000000000002-configuracion_baremo-tipo_nodo">
+    <update tableName="configuracion_baremo">
+      <column name="tipo_nodo" value="PESO_PUNTOS" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="tipo_baremo" value="SEXENIO" />
+      </whereParams>
+    </update>
+    <update tableName="configuracion_baremo">
+      <column name="tipo_nodo" value="PESO_CUANTIA" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="tipo_baremo" value="COSTE_INDIRECTO" />
+      </whereParams>
+    </update>
+    <update tableName="configuracion_baremo">
+      <column name="tipo_nodo" value="PESO" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="tipo_baremo" value="PRODUCCION_CIENTIFICA" />
+      </whereParams>
+    </update>
+    <update tableName="configuracion_baremo">
+      <column name="tipo_nodo" value="NO_BAREMABLE" />
+      <where>tipo_baremo in ('LIBROS', 'ARTICULOS', 'COMITES_EDITORIALES', 'CONGRESOS', 'DIRECCION_TESIS', 'PROYECTOS_INVESTIGACION',
+            'CONTRATOS', 'OBRAS_ARTISTICAS', 'ORGANIZACION_ACTIVIDADES', 'INVENCIONES')
+      </where>
+    </update>
+    <update tableName="configuracion_baremo">
+      <column name="tipo_nodo" value="SIN_PUNTOS" />
+      <where>tipo_baremo in ('LIBRO_NUMERO_AUTORES', 'ARTICULO_NUMERO_AUTORES', 
+        'ARTICULO_AREAS', 'CONTRATO_CUANTIA', 'INVENCION_LICENCIA_EXPLOTACION')
+      </where>
+    </update>
+    <update tableName="configuracion_baremo">
+      <column name="tipo_nodo" value="PUNTOS" />
+      <where>tipo_nodo is null
+      </where>
+    </update>
+  </changeSet>
+
+  <changeSet context="!test" author="master" id="0000000000002-configuracion_baremo-configuracion_baremo_padre_id">
+    <update tableName="configuracion_baremo">
+      <column name="configuracion_baremo_padre_id" valueComputed="(select id from ${schemaPrefix}configuracion_baremo where tipo_baremo='DIRECCION_TESIS' FETCH FIRST 1 ROW only)" />
+      <where>tipo_baremo in ('DIRECCION_TESIS_TESIS', 'DIRECCION_TESIS_TESINA_O_DEA_O_TFM', 
+        'DIRECCION_TESIS_MENCION_INDUSTRIAL', 'DIRECCION_TESIS_MENCION_INTERNACIONAL')
+      </where>
+    </update>
+  </changeSet>
+
+  <changeSet context="!test" author="master" id="0000000000002-mapeo_tipos">
+    <update tableName="mapeo_tipos">
+      <column name="valor" value="true" />
+      <where>codigo_cvn = '050.030.010.170' and id_tipo_ref = 2
+      </where>
+    </update>
+  </changeSet>
+
+  <changeSet context="!test" author="master" id="0000000000002-baremo">
+    <update tableName="baremo">
+      <column name="puntos" valueNumeric="2.00" />
+      <where>configuracion_baremo_id = (select id from ${schemaPrefix}configuracion_baremo where tipo_baremo='LIBRO_EDITORIAL_PRESTIGIO')
+      </where>
+    </update>
+  </changeSet>
+
+  <changeSet context="!test" author="master" id="0000000000002-mapeo_tipos_ambito_geografico">
+    <update tableName="mapeo_tipos">
+      <column name="valor" value="000" />
+      <where>codigo_cvn = '050.020.010.040' and id_tipo_ref = 2
+      </where>
+    </update>
+  </changeSet>
+</databaseChangeLog>

@@ -1,7 +1,12 @@
 @import "typography.scss";
 
-.fieldset-form {
-  padding-bottom: 10px;
-  padding-top: 10px;
-  font-size: map-get($sgi-typography-size, form-fieldset);
+:host {
+  sgi-dialog-content {
+    min-width: 40vw;
+  }
+  .fieldset-form {
+    padding-bottom: 10px;
+    padding-top: 10px;
+    font-size: map-get($sgi-typography-size, form-fieldset);
+  }
 }

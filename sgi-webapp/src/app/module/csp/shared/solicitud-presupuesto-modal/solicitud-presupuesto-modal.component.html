@@ -1,10 +1,5 @@
-<div class="sgi-dialog-header" fxLayout="row" fxLayoutGap="20px">
-  <span fxFlexAlign="center" mat-mat-dialog-title role="heading" aria-level="3" fxFlex>{{title | translate}}</span>
-  <button fxFlex="nogrow" mat-icon-button mat-dialog-close>
-    <mat-icon class="close-icon">close</mat-icon>
-  </button>
-</div>
-<mat-dialog-content>
+<sgi-dialog-header [title]="title | translate"></sgi-dialog-header>
+<sgi-dialog-content>
   <mat-table [dataSource]="dataSource" multiTemplateDataRows>
 
     <ng-container matColumnDef="anualidad">
@@ -15,7 +10,8 @@
           (click)="element.expanded ? element.collapse() : element.expand()">
           {{element.expanded ? 'expand_more' : 'chevron_right'}}
         </mat-icon>
-        {{element.level === 0 ? element.item.anualidad : '' }}
+        {{element.level === 0 ? (!element.item.anualidad ? ('csp.solicitud-proyecto-presupuesto.sin-anualidad' |
+        translate) : element.item.anualidad) : '' }}
       </mat-cell>
     </ng-container>
     <ng-container matColumnDef="nombre">
@@ -81,7 +77,7 @@
     <mat-row *matRowDef="let row; columns: columnas;" [class.expanded-row]="!!row.parent && !!!row.parent?.expanded">
     </mat-row>
   </mat-table>
-</mat-dialog-content>
+</sgi-dialog-content>
 <mat-dialog-actions>
   <button class="link-exportar" color="accent" mat-button type="button" (click)="openExportModal()" mat-raised-button
     [disabled]="dataSource.data.length<1">

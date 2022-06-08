@@ -153,7 +153,6 @@ export class SolicitudProteccionProcedimientosDocumentosComponent extends Fragme
     }
 
     const config = {
-      panelClass: 'sgi-dialog-container',
       data: procedimientoDocumento,
     };
     const dialogRef = this.matDialog.open(SolicitudProteccionProcedimientoDocumentoModalComponent, config);

@@ -5,17 +5,14 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RouterTestingModule } from '@angular/router/testing';
 import { IProcedimiento } from '@core/models/pii/procedimiento';
-import { SnackBarService } from '@core/services/snack-bar.service';
 import { StatusWrapper } from '@core/utils/status-wrapper';
 import TestUtils from '@core/utils/test-utils';
 import { MaterialDesignModule } from '@material/material-design.module';
 import { TranslateModule } from '@ngx-translate/core';
 import { SgiAuthModule, SgiAuthService } from '@sgi/framework/auth';
 import { SharedModule } from '@shared/shared.module';
-import { LoggerTestingModule } from 'ngx-logger/testing';
 import { PiiSharedModule } from '../../../shared/pii-shared.module';
 import { ISolicitudProteccionProcedimientoModalData, SolicitudProteccionProcedimientoModalComponent } from './solicitud-proteccion-procedimiento-modal.component';
-
 
 describe('SolicitudProteccionProcedimientoModalComponent', () => {
   let component: SolicitudProteccionProcedimientoModalComponent;
@@ -33,7 +30,6 @@ describe('SolicitudProteccionProcedimientoModalComponent', () => {
         BrowserAnimationsModule,
         MaterialDesignModule,
         HttpClientTestingModule,
-        LoggerTestingModule,
         TestUtils.getIdiomas(),
         RouterTestingModule,
         FormsModule,
@@ -44,8 +40,7 @@ describe('SolicitudProteccionProcedimientoModalComponent', () => {
         PiiSharedModule
       ],
       providers: [
-        { provide: SnackBarService, useValue: TestUtils.getSnackBarServiceSpy() },
-        { provide: MatDialogRef, useValue: data },
+        { provide: MatDialogRef, useValue: TestUtils.buildDialogCommonMatDialogRef() },
         { provide: MAT_DIALOG_DATA, useValue: data },
         SgiAuthService
       ]

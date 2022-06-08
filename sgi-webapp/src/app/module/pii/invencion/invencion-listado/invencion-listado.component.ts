@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { AbstractTablePaginationComponent } from '@core/component/abstract-table-pagination.component';
 import { SgiError } from '@core/errors/sgi-error';
@@ -27,6 +28,7 @@ import { NGXLogger } from 'ngx-logger';
 import { BehaviorSubject, Observable, of } from 'rxjs';
 import { catchError, map, switchMap } from 'rxjs/operators';
 import { TipoColectivo } from 'src/app/esb/sgp/shared/select-persona/select-persona.component';
+import { IInvencionListadoModalData, InvencionListadoExportModalComponent } from '../modals/invencion-listado-export-modal/invencion-listado-export-modal.component';
 
 const MSG_ERROR = marker('error.load');
 const MSG_BUTTON_NEW = marker('btn.add.entity');
@@ -88,7 +90,8 @@ export class InvencionListadoComponent extends AbstractTablePaginationComponent<
     sectorAplicacionService: SectorAplicacionService,
     tipoProteccionService: TipoProteccionService,
     private viaProteccionService: ViaProteccionService,
-    private paisService: PaisService
+    private paisService: PaisService,
+    private matDialog: MatDialog
 
   ) {
     super(snackBarService, MSG_ERROR);
@@ -395,6 +398,17 @@ export class InvencionListadoComponent extends AbstractTablePaginationComponent<
         return of(void 0);
       })
     ).subscribe(paises => this.paises$.next(paises));
+  }
+
+  openExportModal(): void {
+    const data: IInvencionListadoModalData = {
+      findOptions: this.findOptions
+    };
+
+    const config = {
+      data
+    };
+    this.matDialog.open(InvencionListadoExportModalComponent, config);
   }
 
 }

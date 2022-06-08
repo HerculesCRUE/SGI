@@ -2,11 +2,9 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
-import { BaseModalComponent } from '@core/component/base-modal.component';
+import { DialogFormComponent } from '@core/component/dialog-form.component';
 import { MSG_PARAMS } from '@core/i18n';
 import { IProyectoResponsableEconomico } from '@core/models/csp/proyecto-responsable-economico';
-import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-properties';
-import { SnackBarService } from '@core/services/snack-bar.service';
 import { DateValidator } from '@core/validators/date-validator';
 import { TranslateService } from '@ngx-translate/core';
 import { DateTime, Interval } from 'luxon';
@@ -34,14 +32,10 @@ export interface ProyectoResponsableEconomicoModalData {
   styleUrls: ['./proyecto-responsable-economico-modal.component.scss']
 })
 export class ProyectoResponsableEconomicoModalComponent
-  extends BaseModalComponent<ProyectoResponsableEconomicoModalData, ProyectoResponsableEconomicoModalComponent>
-  implements OnInit {
-  fxLayoutProperties: FxLayoutProperties;
+  extends DialogFormComponent<ProyectoResponsableEconomicoModalData> implements OnInit {
 
   textSaveOrUpdate: string;
   title: string;
-
-  saveDisabled = false;
 
   msgParamEntity = {};
   msgParamFechaInicio = {};
@@ -55,16 +49,12 @@ export class ProyectoResponsableEconomicoModalComponent
   }
 
   constructor(
-    protected snackBarService: SnackBarService,
-    public matDialogRef: MatDialogRef<ProyectoResponsableEconomicoModalComponent>,
+    matDialogRef: MatDialogRef<ProyectoResponsableEconomicoModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data: ProyectoResponsableEconomicoModalData,
     private readonly translate: TranslateService
   ) {
-    super(snackBarService, matDialogRef, data);
-    this.fxLayoutProperties = new FxLayoutProperties();
-    this.fxLayoutProperties.gap = '20px';
-    this.fxLayoutProperties.layout = 'row';
-    this.fxLayoutProperties.xs = 'row';
+    super(matDialogRef, data.isEdit);
+
     this.textSaveOrUpdate = this.data.isEdit ? MSG_ACEPTAR : MSG_ANADIR;
 
     this.data.selectedEntidades?.sort((a, b) => {
@@ -122,7 +112,7 @@ export class ProyectoResponsableEconomicoModalComponent
     }
   }
 
-  protected getFormGroup(): FormGroup {
+  protected buildFormGroup(): FormGroup {
     const formGroup = new FormGroup(
       {
         responsable: new FormControl(this.data?.entidad?.persona, [Validators.required]),
@@ -207,7 +197,7 @@ export class ProyectoResponsableEconomicoModalComponent
     }
   }
 
-  protected getDatosForm(): ProyectoResponsableEconomicoModalData {
+  protected getValue(): ProyectoResponsableEconomicoModalData {
     this.data.entidad.persona = this.formGroup.get('responsable').value;
     this.data.entidad.fechaInicio = this.formGroup.get('fechaInicio').value;
     this.data.entidad.fechaFin = this.formGroup.get('fechaFin').value;

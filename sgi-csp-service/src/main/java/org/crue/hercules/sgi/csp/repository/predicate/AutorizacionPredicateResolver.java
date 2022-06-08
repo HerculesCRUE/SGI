@@ -14,10 +14,10 @@ import org.crue.hercules.sgi.csp.model.Autorizacion_;
 import org.crue.hercules.sgi.csp.model.EstadoAutorizacion;
 import org.crue.hercules.sgi.csp.model.EstadoAutorizacion.Estado;
 import org.crue.hercules.sgi.csp.model.EstadoAutorizacion_;
+import org.crue.hercules.sgi.csp.util.PredicateResolverUtil;
 import org.crue.hercules.sgi.framework.rsql.SgiRSQLPredicateResolver;
 
 import cz.jirutka.rsql.parser.ast.ComparisonNode;
-import cz.jirutka.rsql.parser.ast.ComparisonOperator;
 import io.github.perplexhub.rsql.RSQLOperators;
 
 public class AutorizacionPredicateResolver implements SgiRSQLPredicateResolver<Autorizacion> {
@@ -48,17 +48,9 @@ public class AutorizacionPredicateResolver implements SgiRSQLPredicateResolver<A
     return new AutorizacionPredicateResolver();
   }
 
-  private Predicate buildByFechaModificacion(ComparisonNode node, Root<Autorizacion> root, CriteriaQuery<?> query,
-      CriteriaBuilder cb) {
-    ComparisonOperator operator = node.getOperator();
-    if (!operator.equals(RSQLOperators.GREATER_THAN_OR_EQUAL)) {
-      // Unsupported Operator
-      throw new IllegalArgumentException("Unsupported operator: " + operator + " for " + node.getSelector());
-    }
-    if (node.getArguments().size() != 1) {
-      // Bad number of arguments
-      throw new IllegalArgumentException("Bad number of arguments for " + node.getSelector());
-    }
+  private Predicate buildByFechaModificacion(ComparisonNode node, Root<Autorizacion> root, CriteriaBuilder cb) {
+    PredicateResolverUtil.validateOperatorIsSupported(node, RSQLOperators.GREATER_THAN_OR_EQUAL);
+    PredicateResolverUtil.validateOperatorArgumentNumber(node, 1);
 
     String fechaModificacionArgument = node.getArguments().get(0);
     Instant fechaModificacion = Instant.parse(fechaModificacionArgument);
@@ -79,9 +71,14 @@ public class AutorizacionPredicateResolver implements SgiRSQLPredicateResolver<A
   @Override
   public Predicate toPredicate(ComparisonNode node, Root<Autorizacion> root, CriteriaQuery<?> query,
       CriteriaBuilder criteriaBuilder) {
-    switch (Property.fromCode(node.getSelector())) {
+    Property property = Property.fromCode(node.getSelector());
+    if (property == null) {
+      return null;
+    }
+
+    switch (property) {
       case FECHA_MODIFICACION:
-        return buildByFechaModificacion(node, root, query, criteriaBuilder);
+        return buildByFechaModificacion(node, root, criteriaBuilder);
       default:
         return null;
     }

@@ -1,94 +1,83 @@
-<div class="sgi-dialog-header" fxLayout="row" fxLayoutGap="20px">
-  <span fxFlexAlign="center" mat-mat-dialog-title role="heading" aria-level="3" fxFlex>
-    {{'title.csp.viaje-dieta' | translate}}
-  </span>
-  <button fxFlex="nogrow" mat-icon-button mat-dialog-close>
-    <mat-icon class="close-icon">close</mat-icon>
-  </button>
-</div>
-<mat-dialog-content>
-  <mat-card>
-    <mat-card-title>
-      {{ 'title.csp.ejecucion-economica.facturas-justificantes.datos-sge' | translate}}
-    </mat-card-title>
-    <mat-card-content>
-      <sgi-ejecucion-economica-detalle-economico [detalle]="data"></sgi-ejecucion-economica-detalle-economico>
-    </mat-card-content>
-  </mat-card>
-  <mat-card>
-    <mat-card-title>
-      {{ 'title.csp.ejecucion-economica.facturas-justificantes.datos-sgi' | translate}}
-    </mat-card-title>
-    <mat-card-content>
-      <form [formGroup]="formGroup">
-        <div [fxLayout.xs]="fxLayoutProperties.xs" [fxLayout]="fxLayoutProperties.layout"
-          [fxLayoutGap]="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
-          <!-- Proyecto -->
-          <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md"
-            [fxFlex.gt-md]="fxFlexProperties.gtMd" [fxFlexOrder]="fxFlexProperties.order">
-            <mat-form-field fxFill>
-              <mat-label>{{'csp.ejecucion-economica.facturas-justificantes.proyecto-sgi' | translate}}</mat-label>
-              <sgi-select-entity formControlName="proyecto" [options]="proyectos$ | async"
-                [displayWith]="displayerProyecto" required>
-              </sgi-select-entity>
-              <mat-error *ngIf="formGroup.controls.proyecto.errors?.required">
-                {{ 'error.required.entity' | translate:msgParamProyecto }}
-              </mat-error>
-            </mat-form-field>
+<sgi-dialog-header title="{{'title.csp.viaje-dieta' | translate}}"></sgi-dialog-header>
+<sgi-dialog-content>
+  <div fxLayout="column" fxLayoutGap="10px">
+    <mat-card>
+      <mat-card-title>
+        {{ 'title.csp.ejecucion-economica.facturas-justificantes.datos-sge' | translate}}
+      </mat-card-title>
+      <mat-card-content>
+        <sgi-ejecucion-economica-detalle-economico [detalle]="data"></sgi-ejecucion-economica-detalle-economico>
+      </mat-card-content>
+    </mat-card>
+    <mat-card>
+      <mat-card-title>
+        {{ 'title.csp.ejecucion-economica.facturas-justificantes.datos-sgi' | translate}}
+      </mat-card-title>
+      <mat-card-content>
+        <form [formGroup]="formGroup">
+          <div fxLayout="row" fxLayoutGap="10px">
+            <!-- Proyecto -->
+            <div fxFlex>
+              <mat-form-field>
+                <mat-label>{{'csp.ejecucion-economica.facturas-justificantes.proyecto-sgi' | translate}}</mat-label>
+                <sgi-select-entity formControlName="proyecto" [options]="proyectos$ | async"
+                  [displayWith]="displayerProyecto" required>
+                </sgi-select-entity>
+                <mat-error *ngIf="formGroup.controls.proyecto.errors?.required">
+                  {{ 'error.required.entity' | translate:msgParamProyecto }}
+                </mat-error>
+              </mat-form-field>
+            </div>
+
+            <!-- Fecha congreso -->
+            <div fxFlex>
+              <mat-form-field>
+                <mat-label>
+                  {{'csp.ejecucion-economica.facturas-justificantes.fecha-congreso' | translate}}
+                </mat-label>
+                <input matInput formControlName="fechaCongreso" [ngxMatDatetimePicker]="picker1">
+                <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
+                <ngx-mat-datetime-picker #picker1 showSeconds="true" [defaultTime]="[0,0,0]"></ngx-mat-datetime-picker>
+              </mat-form-field>
+            </div>
+
+            <!-- Importe inscripcion -->
+            <div fxFlex>
+              <mat-form-field>
+                <mat-label>
+                  {{'csp.ejecucion-economica.facturas-justificantes.importe-inscripcion' | translate}}
+                </mat-label>
+                <input matInput formControlName="importeInscripcion" type="number" min="0" step="1"
+                  placeholder="{{'csp.ejecucion-economica.facturas-justificantes.importe-inscripcion' | translate}}">
+                <mat-error *ngIf="formGroup.controls.importeInscripcion.errors?.min">
+                  {{'error.min.entity' | translate:msgParamImporteInscripcion}}
+                </mat-error>
+                <mat-error *ngIf="formGroup.controls.importeInscripcion.errors?.max">
+                  {{'error.max.entity' | translate:msgParamImporteInscripcion}}
+                </mat-error>
+              </mat-form-field>
+            </div>
           </div>
 
-          <!-- Fecha congreso -->
-          <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md"
-            [fxFlex.gt-md]="fxFlexProperties.gtMd" [fxFlexOrder]="fxFlexProperties.order">
-            <mat-form-field>
-              <mat-label>
-                {{'csp.ejecucion-economica.facturas-justificantes.fecha-congreso' | translate}}
-              </mat-label>
-              <input matInput formControlName="fechaCongreso" [ngxMatDatetimePicker]="picker1">
-              <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
-              <ngx-mat-datetime-picker #picker1 showSeconds="true" [defaultTime]="[0,0,0]"></ngx-mat-datetime-picker>
-            </mat-form-field>
+          <div fxLayout="row">
+            <!-- Observaciones -->
+            <div fxFlex>
+              <mat-form-field>
+                <mat-label>
+                  {{'csp.ejecucion-economica.facturas-justificantes.observaciones' | translate}}
+                </mat-label>
+                <textarea matInput formControlName="observaciones"
+                  placeholder="{{'csp.ejecucion-economica.facturas-justificantes.observaciones' | translate}}"></textarea>
+              </mat-form-field>
+            </div>
           </div>
-
-          <!-- Importe inscripcion -->
-          <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md"
-            [fxFlex.gt-md]="fxFlexProperties.gtMd" [fxFlexOrder]="fxFlexProperties.order">
-            <mat-form-field>
-              <mat-label>
-                {{'csp.ejecucion-economica.facturas-justificantes.importe-inscripcion' | translate}}
-              </mat-label>
-              <input matInput formControlName="importeInscripcion" type="number" min="0" step="1"
-                placeholder="{{'csp.ejecucion-economica.facturas-justificantes.importe-inscripcion' | translate}}">
-              <mat-error *ngIf="formGroup.controls.importeInscripcion.errors?.min">
-                {{'error.min.entity' | translate:msgParamImporteInscripcion}}
-              </mat-error>
-              <mat-error *ngIf="formGroup.controls.importeInscripcion.errors?.max">
-                {{'error.max.entity' | translate:msgParamImporteInscripcion}}
-              </mat-error>
-            </mat-form-field>
-          </div>
-        </div>
-
-        <div [fxLayout.xs]="fxLayoutProperties.xs" [fxLayout]="fxLayoutProperties.layout"
-          [fxLayoutGap]="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
-          <!-- Observaciones -->
-          <div [fxFlex.sm]="fxFlexPropertiesInline.sm" [fxFlex.md]="fxFlexPropertiesInline.md"
-            [fxFlex.gt-md]="fxFlexPropertiesInline.gtMd" [fxFlexOrder]="fxFlexPropertiesInline.order">
-            <mat-form-field fxFill>
-              <mat-label>
-                {{'csp.ejecucion-economica.facturas-justificantes.observaciones' | translate}}
-              </mat-label>
-              <textarea matInput formControlName="observaciones"
-                placeholder="{{'csp.ejecucion-economica.facturas-justificantes.observaciones' | translate}}"></textarea>
-            </mat-form-field>
-          </div>
-        </div>
-      </form>
-    </mat-card-content>
-  </mat-card>
-</mat-dialog-content>
+        </form>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</sgi-dialog-content>
 <mat-dialog-actions>
-  <button color="accent" (click)="saveOrUpdate()" mat-raised-button type="submit"
+  <button color="accent" (click)="doAction()" [disabled]="this.actionDisabled" mat-raised-button type="submit"
     *sgiHasAuthorityForAnyUO="'CSP-EJEC-E'">
     <mat-icon class="save-icon">save</mat-icon>
     {{'btn.ok' | translate}}

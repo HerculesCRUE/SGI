@@ -3,19 +3,14 @@ import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { FormFragmentComponent } from '@core/component/fragment.component';
 import { MSG_PARAMS } from '@core/i18n';
 import { CargoComite } from '@core/models/eti/cargo-comite';
-import { IComite } from '@core/models/eti/comite';
 import { IEvaluador } from '@core/models/eti/evaluador';
 import { FxFlexProperties } from '@core/models/shared/flexLayout/fx-flex-properties';
 import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-properties';
 import { CargoComiteService } from '@core/services/eti/cargo-comite.service';
-import { ComiteService } from '@core/services/eti/comite.service';
-import { SnackBarService } from '@core/services/snack-bar.service';
 import { TranslateService } from '@ngx-translate/core';
-import { SgiRestListResult } from '@sgi/framework/http';
-import { TipoColectivo } from 'src/app/esb/sgp/shared/select-persona/select-persona.component';
-import { NGXLogger } from 'ngx-logger';
 import { Observable } from 'rxjs';
-import { map, startWith } from 'rxjs/operators';
+import { map } from 'rxjs/operators';
+import { TipoColectivo } from 'src/app/esb/sgp/shared/select-persona/select-persona.component';
 import { EvaluadorActionService } from '../../evaluador.action.service';
 import { EvaluadorDatosGeneralesFragment } from './evaluador-datos-generales.fragment';
 
@@ -37,11 +32,8 @@ export class EvaluadorDatosGeneralesComponent extends FormFragmentComponent<IEva
   fxLayoutProperties: FxLayoutProperties;
   fxFlexPropertiesInline: FxFlexProperties;
 
-  comites: IComite[] = [];
-  cargosComite: CargoComite[] = [];
+  cargosComite$: Observable<CargoComite[]>;
   evaluador: IEvaluador;
-  filteredComites: Observable<IComite[]>;
-  filteredCargosComite: Observable<CargoComite[]>;
 
   msgParamComiteEntity = {};
   msgParamFechaAltaEntity = {};
@@ -59,10 +51,7 @@ export class EvaluadorDatosGeneralesComponent extends FormFragmentComponent<IEva
   }
 
   constructor(
-    private logger: NGXLogger,
-    private comiteService: ComiteService,
     private cargoComiteService: CargoComiteService,
-    private snackBarService: SnackBarService,
     actionService: EvaluadorActionService,
     private translate: TranslateService
   ) {
@@ -92,8 +81,9 @@ export class EvaluadorDatosGeneralesComponent extends FormFragmentComponent<IEva
     super.ngOnInit();
     this.setupI18N();
 
-    this.cargarSelectorComites();
-    this.cargarSelectorCargosComite();
+    this.cargosComite$ = this.cargoComiteService.findAll().pipe(
+      map(response => response.items)
+    );
   }
 
   private setupI18N(): void {
@@ -126,92 +116,6 @@ export class EvaluadorDatosGeneralesComponent extends FormFragmentComponent<IEva
       EVALUADOR_PERSONA_KEY,
       MSG_PARAMS.CARDINALIRY.PLURAL
     ).subscribe((value) => this.msgParamPersonaEntity = { entity: value, ...MSG_PARAMS.GENDER.MALE, ...MSG_PARAMS.CARDINALIRY.PLURAL });
-  }
-
-  cargarSelectorComites() {
-    this.comiteService.findAll().subscribe(
-      (res) => {
-        this.comites = res.items;
-        this.filteredComites = this.formGroup.controls.comite.valueChanges
-          .pipe(
-            startWith(''),
-            map(value => this.filterComite(value))
-          );
-      },
-      (error) => {
-        this.logger.error(error);
-        this.snackBarService.showError(MSG_ERROR_INIT_);
-      }
-    );
-  }
-
-  cargarSelectorCargosComite() {
-    this.cargoComiteService.findAll().subscribe(
-      (res: SgiRestListResult<CargoComite>) => {
-        this.cargosComite = res.items;
-        this.filteredCargosComite = this.formGroup.controls.cargoComite.valueChanges
-          .pipe(
-            startWith(''),
-            map(value => this.filterCargoComite(value))
-          );
-      },
-      (error) => {
-        this.logger.error(error);
-        this.snackBarService.showError(MSG_ERROR_INIT_);
-      }
-    );
-  }
-
-  /**
-   * Devuelve el nombre de un comité.
-   * @param comite comités
-   * returns nombre comité
-   */
-  getComite(comite: IComite): string {
-    return comite?.comite;
-  }
-
-  /**
-   * Devuelve el nombre de un comité.
-   * @param comite comités
-   * returns nombre comité
-   */
-  getCargoComite(cargoComite: CargoComite): string {
-    return cargoComite?.nombre;
-  }
-
-  /**
-   * Filtro de campo autocompletable comité.
-   * @param value value a filtrar (string o nombre comité).
-   * @returns lista de comités filtrados.
-   */
-  private filterComite(value: string | IComite): IComite[] {
-    let filterValue: string;
-    if (typeof value === 'string') {
-      filterValue = value.toLowerCase();
-    } else {
-      filterValue = value.comite.toLowerCase();
-    }
-
-    return this.comites.filter
-      (comite => comite.comite.toLowerCase().includes(filterValue));
-  }
-
-  /**
-   * Filtro de campo autocompletable cargo comité.
-   * @param value value a filtrar (string o nombre cargo comité).
-   * @returns lista de cargos comité filtrados.
-   */
-  private filterCargoComite(value: string | CargoComite): CargoComite[] {
-    let filterValue: string;
-    if (typeof value === 'string') {
-      filterValue = value.toLowerCase();
-    } else {
-      filterValue = value.nombre.toLowerCase();
-    }
-
-    return this.cargosComite.filter
-      (cargoComite => cargoComite.nombre.toLowerCase().includes(filterValue));
   }
 
 }

@@ -1,0 +1,64 @@
+<sgi-dialog-header [title]="title"></sgi-dialog-header>
+<sgi-dialog-content>
+  <form [formGroup]="formGroup">
+    <!-- Miembro -->
+    <div fxLayout="row">
+      <mat-form-field>
+        <mat-label>
+          {{'csp.grupo-linea-investigador' | translate:MSG_PARAMS.CARDINALIRY.SINGULAR}}
+        </mat-label>
+        <sgi-select-entity formControlName="miembro" [options]="miembrosEquipo$ | async"
+          [displayWith]="displayerMiembroEquipo" required>
+        </sgi-select-entity>
+      </mat-form-field>
+    </div>
+    <div fxLayout="row" fxLayoutGap="10px">
+      <!-- Fecha inicio -->
+      <div fxFlex>
+        <mat-form-field color="primary">
+          <mat-label>{{'csp.grupo-linea-investigador.fecha-inicio' | translate}}</mat-label>
+          <input matInput formControlName="fechaInicio" [matDatepicker]="picker1" required>
+          <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
+          <mat-datepicker #picker1></mat-datepicker>
+          <mat-error *ngIf="formGroup.controls.fechaInicio.errors?.required">
+            {{'error.required.entity' | translate:msgParamFechaInicioEntity}}
+          </mat-error>
+          <mat-error *ngIf="formGroup.controls.fechaInicio.errors?.overlaps">
+            {{'error.overlapping.record.entity' | translate:msgParamMiembroEntity}}
+          </mat-error>
+          <mat-error *ngIf="formGroup.controls.fechaInicio.errors?.invalid">
+            {{'error.csp.grupo-linea-investigador.fecha.invalid' | translate}}
+          </mat-error>
+        </mat-form-field>
+      </div>
+      <!-- Fecha fin -->
+      <div fxFlex>
+        <mat-form-field color="primary" sgiEndDate>
+          <mat-label>{{'csp.grupo-linea-investigador.fecha-fin' | translate}}</mat-label>
+          <input matInput formControlName="fechaFin" [matDatepicker]="picker2" [required]="requiredFechaFin">
+          <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
+          <mat-datepicker #picker2></mat-datepicker>
+          <mat-error *ngIf="formGroup.controls.fechaFin.errors?.required">
+            {{'error.required.entity' | translate:msgParamFechaFinEntity}}
+          </mat-error>
+          <mat-error *ngIf="formGroup.controls.fechaFin.errors?.after">
+            {{'error.after.fecha-fin' | translate}}
+          </mat-error>
+          <mat-error *ngIf="formGroup.controls.fechaFin.errors?.overlaps">
+            {{'error.overlapping.record.entity' | translate:msgParamMiembroEntity}}
+          </mat-error>
+          <mat-error *ngIf="formGroup.controls.fechaFin.errors?.invalid">
+            {{'error.csp.grupo-linea-investigador.fecha.invalid' | translate}}
+          </mat-error>
+        </mat-form-field>
+      </div>
+    </div>
+  </form>
+</sgi-dialog-content>
+<mat-dialog-actions>
+  <button color="accent" (click)="doAction()" [disabled]="this.actionDisabled" mat-raised-button type="submit">
+    <mat-icon class="save-icon">save</mat-icon>{{textSaveOrUpdate | translate}}
+  </button>
+  <button class="link-cancelar" mat-button type="button" mat-dialog-close>{{'btn.cancel' |
+    translate}}</button>
+</mat-dialog-actions>

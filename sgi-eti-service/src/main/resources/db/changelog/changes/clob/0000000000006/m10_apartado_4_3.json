@@ -1,0 +1,99 @@
+[
+  {
+    "key": "ap4_3",
+    "wrappers": [
+      "expansion-panel"
+    ],
+    "templateOptions": {
+      "expressionLock": "formState.memoria.tipoMemoria.id === 3",
+      "label": "4.3 Protección de grupos especialmente vulnerables"
+    },
+    "fieldGroup": [
+      {
+        "template": "<p>¿Se trata de personas especialmente vulnerables? (menores, personas legalmente incapacitadas, etc.)</p>"
+      },
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "<p>Son personas especialmente vulnerables aquellas que de forma absoluta o relativa no pueden proteger sus propios intereses. Se considera que esta capacidad se ve alterada cuando se da alguna de estas circunstancias:</p><ul><li>Está limitada su autonomía o autogestión por agentes internos (ej.menores, algunas enfermedades psíquicas graves, etc), o externos (personas institucionalizadas, relaciones de subordinación, recepción de subsidios, etc)</li><li>Son precisas medidas específicas para garantizar su acceso a participar en proyectos de investigación en condiciones de igualdad y no discriminación (ej. personas en riesgo de exclusión, con alguna discapacidad, etc)</li><ul><p>Para más información sobre grupos especialmente vulnerables y sus implicaciones éticas consultar el documento de la CIOMS <a href='https://www.um.es/web/comision-etica-investigacion/comision-etica' target='_blank'>Pautas éticas internacionales para la investigación biomédica en seres humanos</a> (pautas 13 y sig)</p>"
+      },
+      {
+        "key": "gruposVulnerablesRadio",
+        "type": "radio",
+        "templateOptions": {
+          "required": true,
+          "label": "Elige opción:",
+          "options": [
+            {
+              "value": "no",
+              "label": "No"
+            },
+            {
+              "value": "si",
+              "label": "Sí"
+            }
+          ]
+        }
+      },
+      {
+        "template": "Especificar colectivos de personas especialmente vulnerables",
+        "hideExpression": "!model.gruposVulnerablesRadio || model.gruposVulnerablesRadio === 'no'"
+      },
+      {
+        "key": "especificarColectivoVulnerables",
+        "hideExpression": "!model.gruposVulnerablesRadio || model.gruposVulnerablesRadio === 'no'",
+        "type": "textarea",
+        "templateOptions": {
+          "label": "Especificar",
+          "placeholder": "Especificar",
+          "required": true,
+          "autosize": true,
+          "autosizeMinRows": "1",
+          "autosizeMaxRows": "10"
+        }
+      },
+      {
+        "template": "Justificar por qué no se plantea la utilización de personas menos vulnerables",
+        "hideExpression": "!model.gruposVulnerablesRadio || model.gruposVulnerablesRadio === 'no'"
+      },
+      {
+        "key": "justificarPersonasMenosVulnerables",
+        "hideExpression": "!model.gruposVulnerablesRadio || model.gruposVulnerablesRadio === 'no'",
+        "type": "textarea",
+        "templateOptions": {
+          "label": "Justificar",
+          "placeholder": "Justificar",
+          "required": true,
+          "autosize": true,
+          "autosizeMinRows": "1",
+          "autosizeMaxRows": "10"
+        }
+      },
+      {
+        "template": "<p>Especificar en qué pueden beneficiar los resultados de estas investigaciones a estas personas o colectivos</p><p>especialmente vulnerables.</p>",
+        "hideExpression": "!model.gruposVulnerablesRadio || model.gruposVulnerablesRadio === 'no'"
+      },
+      {
+        "key": "especificarBeneficiosInvestigacionVulnerables",
+        "hideExpression": "!model.gruposVulnerablesRadio || model.gruposVulnerablesRadio === 'no'",
+        "type": "textarea",
+        "templateOptions": {
+          "label": "Especificar",
+          "placeholder": "Especificar",
+          "required": true,
+          "autosize": true,
+          "autosizeMinRows": "1",
+          "autosizeMaxRows": "10"
+        }
+      },
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "<p>Nota: recuerde que la condición especial de estas personas debe tenerse en cuenta y obliga a:</p><ul><li>Cuidar al máximo cuestiones como la voluntariedad, información, consentimiento, proceso de reclutamiento, etc. (ver apartados 3.4.1, 4.1 y 4.2).</li><li>En caso de menores de 12 años debe incluirse la firma de ambos progenitores en el documento de consentimiento, entre 12 y 18 años ha de incorporarse también el asentimiento del menor, y en personas legalmente incapacitadas, debe incluirse la firma de su representante legal (ver punto 4.4.2 Información obligatoria mínima)</li></ul><p>Para más información sobre protección de grupos vulnerables consultar los <a href='http://www.boe.es/buscar/act.php?id=BOE-A-2007-12945&p=20110602&tn=1#a20' target='_blank'>artículos 20, 21</a> de la LIB 14/2007.</p>",
+        "hideExpression": "!model.gruposVulnerablesRadio || model.gruposVulnerablesRadio === 'no'"
+      }
+    ]
+  }
+]

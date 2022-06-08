@@ -1,13 +1,7 @@
 <!-- Validacion Gasto Modal Historico estados -->
-<div class="sgi-dialog-header" fxLayout="row" fxLayoutGap="20px">
-  <span fxFlexAlign="center" mat-mat-dialog-title role="heading" aria-level="3"
-    fxFlex>{{'title.ejecucion-economica.validacion-gastos.historico-estados' | translate}}</span>
-  <button fxFlex="nogrow" mat-icon-button mat-dialog-close>
-    <mat-icon class="close-icon">close</mat-icon>
-  </button>
-</div>
-
-<mat-dialog-content>
+<sgi-dialog-header title="{{'title.ejecucion-economica.validacion-gastos.historico-estados' | translate}}">
+</sgi-dialog-header>
+<sgi-dialog-content>
   <div class="mat-elevation-z4">
     <table [dataSource]="dataSource" mat-table matSort matSortActive="id" matSortDirection="asc" matSortDisableClear>
 
@@ -41,7 +35,7 @@
     <mat-paginator [pageSizeOptions]="elementosPagina" showFirstLastButtons>
     </mat-paginator>
   </div>
-</mat-dialog-content>
+</sgi-dialog-content>
 <mat-dialog-actions>
   <button class="link-cancelar" mat-button type="button" mat-dialog-close>
     {{'btn.cancel' | translate}}

@@ -104,7 +104,6 @@ export class ValidacionGastosComponent extends FragmentComponent implements OnIn
         const gastoDetalle = detalle as GastoDetalleModalData;
         gastoDetalle.estado = ESTADO_TIPO_MAP.get(this.formGroup.controls.estado.value);
         const config: MatDialogConfig<GastoDetalleModalData> = {
-          panelClass: 'sgi-dialog-container',
           data: gastoDetalle
         };
         this.matDialog.open(ValidacionGastosModalComponent, config);
@@ -130,7 +129,6 @@ export class ValidacionGastosComponent extends FragmentComponent implements OnIn
           (detalle) => {
             detalle.estado = ESTADO_TIPO_MAP.get(this.formGroup.controls.estado.value);
             const config: MatDialogConfig<GastoDetalleModalData> = {
-              panelClass: 'sgi-dialog-container',
               data: detalle
             };
             const dialogRef = this.matDialog.open(ValidacionGastosEditarModalComponent, config);
@@ -149,7 +147,6 @@ export class ValidacionGastosComponent extends FragmentComponent implements OnIn
       (detalle) => {
         const gastoProyecto = detalle as IGastoProyecto;
         const config: MatDialogConfig<number> = {
-          panelClass: 'sgi-dialog-container',
           data: gastoProyecto?.id
         };
         this.matDialog.open(ValidacionGastosHistoricoModalComponent, config);

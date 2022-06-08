@@ -14,6 +14,9 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
+import org.crue.hercules.sgi.csp.validation.FechasGrupoLineaInvestigacionWithinGrupo;
+import org.hibernate.validator.constraints.ScriptAssert;
+
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -30,6 +33,9 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+// Validacion de fechas
+@ScriptAssert(lang = "spel", alias = "_this", script = "#_this.getFechaInicio() == null || #_this.getFechaFin() == null || #_this.getFechaFin().compareTo(#_this.getFechaInicio()) >= 0", reportOn = "fechaFin", message = "{org.crue.hercules.sgi.csp.validation.FechaInicialMayorFechaFinal.message}")
+@FechasGrupoLineaInvestigacionWithinGrupo(groups = { BaseEntity.Create.class, BaseEntity.Update.class })
 public class GrupoLineaInvestigacion extends BaseEntity {
 
   protected static final String TABLE_NAME = "grupo_linea_investigacion";

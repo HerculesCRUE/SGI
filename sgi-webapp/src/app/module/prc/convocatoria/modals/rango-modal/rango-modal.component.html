@@ -1,0 +1,87 @@
+<sgi-dialog-header [title]="title"></sgi-dialog-header>
+<sgi-dialog-content>
+  <form [formGroup]="formGroup">
+
+    <!-- Tipo -->
+    <div fxLayout="row">
+      <mat-form-field>
+        <mat-label>
+          {{'prc.moduladores-rango.tipo' | translate}}
+        </mat-label>
+        <sgi-select-enum formControlName="tipo" required [enumMap]="TIPO_MAP">
+        </sgi-select-enum>
+        <mat-error *ngIf="formGroup.controls.tipo.errors?.required">
+          {{'error.required.entity' | translate:msgParamTipoEntity}}
+        </mat-error>
+        <mat-error *ngIf="formGroup.controls.tipo.errors?.duplicated">
+          {{'error.prc.moduladores-rango.tipo.duplicated' | translate}}
+        </mat-error>
+      </mat-form-field>
+    </div>
+
+    <!-- Rango -->
+    <div class="fieldset-form" fxLayout="row">
+      {{'prc.moduladores-rango.rango' | translate}}
+    </div>
+    <div fxLayout="row" fxLayoutGap="10px">
+      <!-- Desde -->
+      <mat-form-field>
+        <mat-label>{{'prc.moduladores-rango.desde' | translate}}</mat-label>
+        <input matInput formControlName="desde" type="number"
+          placeholder="{{'prc.moduladores-rango.desde' | translate}}">
+        <mat-error *ngIf="formGroup.controls.desde.errors?.required">
+          {{'error.required.entity' | translate:msgParamDesdeEntity}}
+        </mat-error>
+        <mat-error *ngIf="formGroup.controls.desde.errors?.min">
+          {{'error.min.entity' | translate:msgParamDesdeEntity}}
+        </mat-error>
+        <mat-error *ngIf="formGroup.controls.desde.errors?.pattern">
+          {{'error.integer.entity' | translate}}
+        </mat-error>
+      </mat-form-field>
+
+      <!-- Hasta -->
+      <mat-form-field>
+        <mat-label>{{'prc.moduladores-rango.hasta' | translate}}</mat-label>
+        <input matInput formControlName="hasta" type="number" id="mesFin"
+          placeholder="{{'prc.moduladores-rango.hasta' | translate}}">
+        <mat-error *ngIf="formGroup.controls.hasta.errors?.required">
+          {{'error.required.entity' | translate:msgParamHastaEntity}}
+        </mat-error>
+        <mat-error *ngIf="formGroup.controls.hasta.errors?.pattern">
+          {{'error.integer.entity' | translate}}
+        </mat-error>
+        <mat-error *ngIf="formGroup.controls.hasta.errors?.after">
+          {{'error.after.param' | translate:msgParamDesdeEntity}}
+        </mat-error>
+      </mat-form-field>
+    </div>
+
+    <!-- Puntos -->
+    <div fxLayout="row">
+      <mat-form-field fxFlex="100%">
+        <mat-label>{{'prc.moduladores-rango.puntos' | translate}}</mat-label>
+        <input matInput formControlName="puntos" type="number" required
+          placeholder="{{'prc.moduladores-rango.puntos' | translate}}">
+        <mat-error *ngIf="formGroup.controls.puntos.errors?.required">
+          {{ 'error.required.entity' | translate:msgParamPuntosEntity }}
+        </mat-error>
+        <mat-error *ngIf="formGroup.controls.puntos.errors?.min">
+          {{'error.min.entity' | translate:msgParamPuntosEntity}}
+        </mat-error>
+      </mat-form-field>
+    </div>
+
+  </form>
+</sgi-dialog-content>
+
+<mat-dialog-actions>
+  <button color="accent" (click)="doAction()" [disabled]="this.actionDisabled" mat-raised-button type="submit"
+    *ngIf="!data.readonly">
+    <mat-icon class="save-icon">save</mat-icon>
+    {{textSaveOrUpdate | translate}}
+  </button>
+  <button class="link-cancelar" mat-button type="button" mat-dialog-close>
+    {{'btn.cancel' | translate}}
+  </button>
+</mat-dialog-actions>

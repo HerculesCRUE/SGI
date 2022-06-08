@@ -7,6 +7,7 @@ import org.crue.hercules.sgi.csp.model.GrupoEspecialInvestigacion;
 import org.crue.hercules.sgi.csp.repository.GrupoEspecialInvestigacionRepository;
 import org.crue.hercules.sgi.csp.repository.specification.GrupoEspecialInvestigacionSpecifications;
 import org.crue.hercules.sgi.csp.util.AssertHelper;
+import org.crue.hercules.sgi.csp.util.GrupoAuthorityHelper;
 import org.crue.hercules.sgi.framework.rsql.SgiRSQLJPASupport;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -29,6 +30,7 @@ import lombok.extern.slf4j.Slf4j;
 public class GrupoEspecialInvestigacionService {
 
   private final GrupoEspecialInvestigacionRepository repository;
+  private final GrupoAuthorityHelper authorityHelper;
 
   /**
    * Guarda la entidad {@link GrupoEspecialInvestigacion}.
@@ -44,6 +46,7 @@ public class GrupoEspecialInvestigacionService {
     log.debug("create(GrupoEspecialInvestigacion grupoEspecialInvestigacion) - start");
 
     AssertHelper.idIsNull(grupoEspecialInvestigacion.getId(), GrupoEspecialInvestigacion.class);
+
     GrupoEspecialInvestigacion returnValue = repository.save(grupoEspecialInvestigacion);
 
     log.debug("create(GrupoEspecialInvestigacion grupoEspecialInvestigacion) - end");
@@ -64,6 +67,8 @@ public class GrupoEspecialInvestigacionService {
     log.debug("update(GrupoEspecialInvestigacion grupoEspecialInvestigacion) - start");
 
     AssertHelper.idNotNull(grupoEspecialInvestigacion.getId(), GrupoEspecialInvestigacion.class);
+    authorityHelper.checkUserHasAuthorityViewGrupo(grupoEspecialInvestigacion.getGrupoId());
+
     GrupoEspecialInvestigacion returnValue = repository.save(grupoEspecialInvestigacion);
 
     log.debug("update(GrupoEspecialInvestigacion grupoEspecialInvestigacion) - end");
@@ -83,6 +88,8 @@ public class GrupoEspecialInvestigacionService {
     final GrupoEspecialInvestigacion returnValue = repository.findById(id)
         .orElseThrow(() -> new GrupoEspecialInvestigacionNotFoundException(id));
 
+    authorityHelper.checkUserHasAuthorityViewGrupo(returnValue.getGrupoId());
+
     log.debug("findById(Long id) - end");
     return returnValue;
   }
@@ -100,6 +107,8 @@ public class GrupoEspecialInvestigacionService {
   public Page<GrupoEspecialInvestigacion> findAllByGrupo(Long grupoId, String query, Pageable paging) {
     log.debug("findAll(Long grupoId, String query, Pageable paging) - start");
     AssertHelper.idNotNull(grupoId, Grupo.class);
+    authorityHelper.checkUserHasAuthorityViewGrupo(grupoId);
+
     Specification<GrupoEspecialInvestigacion> specs = GrupoEspecialInvestigacionSpecifications.byGrupoId(grupoId)
         .and(SgiRSQLJPASupport.toSpecification(query));
 

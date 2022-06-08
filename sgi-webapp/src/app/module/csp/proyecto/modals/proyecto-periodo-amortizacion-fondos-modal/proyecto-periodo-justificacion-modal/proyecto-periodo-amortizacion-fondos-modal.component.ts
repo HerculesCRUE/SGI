@@ -2,17 +2,14 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
-import { BaseModalComponent } from '@core/component/base-modal.component';
+import { DialogFormComponent } from '@core/component/dialog-form.component';
 import { SelectValue } from '@core/component/select-common/select-common.component';
 import { MSG_PARAMS } from '@core/i18n';
 import { IProyectoAnualidad } from '@core/models/csp/proyecto-anualidad';
 import { IProyectoPeriodoAmortizacion } from '@core/models/csp/proyecto-periodo-amortizacion';
 import { IProyectoProyectoSge } from '@core/models/csp/proyecto-proyecto-sge';
 import { IProyectoSge } from '@core/models/sge/proyecto-sge';
-import { FxFlexProperties } from '@core/models/shared/flexLayout/fx-flex-properties';
-import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-properties';
 import { ProyectoService } from '@core/services/csp/proyecto.service';
-import { SnackBarService } from '@core/services/snack-bar.service';
 import { StatusWrapper } from '@core/utils/status-wrapper';
 import { TranslateService } from '@ngx-translate/core';
 import { SgiRestListResult } from '@sgi/framework/http';
@@ -31,13 +28,13 @@ const IMPORTE_KEY = marker('csp.proyecto-amortizacion-fondos.periodo-amortizacio
 const FECHA_LIMITE_AMORTIZACION_KEY = marker('csp.proyecto-amortizacion-fondos.periodo-amortizacion.fecha-limite-amortizacion');
 const TIPO_FINANCIACION_NO_INFORMADO = marker('csp.proyecto-amortizacion-fondos.periodo-amortizacion.tipo-financiacion-no-informado');
 const FUENTE_FINANCIACION_NO_INFORMADA = marker('csp.proyecto-amortizacion-fondos.periodo-amortizacion.fuente-financiacion-no-informada');
-
 export interface IProyectoPeriodoAmortizacionModalData {
   proyectoId: number;
   title: string;
   periodoAmortizacion: IProyectoPeriodoAmortizacion;
   entidadesFinanciadoras: IEntidadFinanciadora[];
   proyectosSGE: IProyectoProyectoSge[];
+  anualidadGenerica: boolean;
 }
 
 @Component({
@@ -46,12 +43,10 @@ export interface IProyectoPeriodoAmortizacionModalData {
   styleUrls: ['./proyecto-periodo-amortizacion-fondos-modal.component.scss']
 })
 export class ProyectoPeriodoAmortizacionModalComponent
-  extends BaseModalComponent<IProyectoPeriodoAmortizacionModalData, ProyectoPeriodoAmortizacionModalComponent> implements OnInit {
-
-  fxFlexProperties: FxFlexProperties;
-  fxFlexPropertiesInline: FxFlexProperties;
+  extends DialogFormComponent<IProyectoPeriodoAmortizacionModalData> implements OnInit {
 
   anualidades$ = new BehaviorSubject<IProyectoAnualidad[]>([]);
+  anualidadGenerica: IProyectoAnualidad;
 
   msgParamPeriodoAmortizacionEntity = {};
   msgParamImporte = {};
@@ -83,35 +78,18 @@ export class ProyectoPeriodoAmortizacionModalComponent
   }
   readonly displayerIdentificadorSge = (proyectoProyectoSGE: IProyectoProyectoSge): string => proyectoProyectoSGE.proyectoSge?.id ?? '';
 
-  readonly sorterIdentificadorSge = (o1: SelectValue<IProyectoProyectoSge>, o2: SelectValue<IProyectoProyectoSge>): number => o1?.displayText.localeCompare(o2?.displayText);
+  readonly sorterIdentificadorSge = (o1: SelectValue<IProyectoProyectoSge>, o2: SelectValue<IProyectoProyectoSge>): number =>
+    o1?.displayText.localeCompare(o2?.displayText);
 
   readonly displayerAnualidad = (proyectoAnualidad: IProyectoAnualidad): string => proyectoAnualidad?.anio?.toString() ?? '';
 
   constructor(
-    protected snackBarService: SnackBarService,
-    public matDialogRef: MatDialogRef<ProyectoPeriodoAmortizacionModalComponent>,
+    matDialogRef: MatDialogRef<ProyectoPeriodoAmortizacionModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data: IProyectoPeriodoAmortizacionModalData,
     private proyectoService: ProyectoService,
     private readonly translate: TranslateService
   ) {
-    super(snackBarService, matDialogRef, data);
-
-    this.fxFlexProperties = new FxFlexProperties();
-    this.fxFlexProperties.sm = '0 1 calc(100%-10px)';
-    this.fxFlexProperties.md = '0 1 calc(100%-10px)';
-    this.fxFlexProperties.gtMd = '0 1 calc(100%-10px)';
-    this.fxFlexProperties.order = '3';
-
-    this.fxFlexPropertiesInline = new FxFlexProperties();
-    this.fxFlexPropertiesInline.sm = '0 1 calc(100%-10px)';
-    this.fxFlexPropertiesInline.md = '0 1 calc(100%-10px)';
-    this.fxFlexPropertiesInline.gtMd = '0 1 calc(100%-10px)';
-    this.fxFlexPropertiesInline.order = '2';
-
-    this.fxLayoutProperties = new FxLayoutProperties();
-    this.fxLayoutProperties.gap = '20px';
-    this.fxLayoutProperties.layout = 'row wrap';
-    this.fxLayoutProperties.xs = 'column';
+    super(matDialogRef, !!data.periodoAmortizacion?.proyectoEntidadFinanciadora);
   }
 
   ngOnInit(): void {
@@ -126,7 +104,7 @@ export class ProyectoPeriodoAmortizacionModalComponent
       }
     ));
 
-    if (this.data.proyectosSGE.length == 1) {
+    if (this.data.proyectosSGE.length === 1) {
       this.formGroup.controls.identificadorSge.setValue(this.data.proyectosSGE[0]);
     }
 
@@ -138,6 +116,9 @@ export class ProyectoPeriodoAmortizacionModalComponent
           }),
           tap((value) => {
             this.anualidades$.next(value);
+            if (!!this.data.anualidadGenerica) {
+              this.anualidadGenerica = value[0];
+            }
           }),
         ),
       ).subscribe();
@@ -145,7 +126,7 @@ export class ProyectoPeriodoAmortizacionModalComponent
   }
 
 
-  protected getFormGroup(): FormGroup {
+  protected buildFormGroup(): FormGroup {
     const identificadorSge = this.data.periodoAmortizacion?.proyectoSGE
       ? {
         proyectoSge:
@@ -155,7 +136,7 @@ export class ProyectoPeriodoAmortizacionModalComponent
       } as IProyectoProyectoSge
       : null;
     const entidadFinanciadora = this.data.periodoAmortizacion?.proyectoEntidadFinanciadora ?? null;
-    const anualidad = this.data.periodoAmortizacion?.proyectoAnualidad ?? null;
+    const anualidad = this.data.anualidadGenerica ? this.anualidadGenerica : (this.data.periodoAmortizacion?.proyectoAnualidad ?? null);
     const fechaInicioAnualidad = this.data.periodoAmortizacion?.proyectoAnualidad?.fechaInicio ?? null;
     const fechaFinAnualidad = this.data.periodoAmortizacion?.proyectoAnualidad?.fechaFin ?? null;
     const fechaLimiteAmortizacion = this.data.periodoAmortizacion?.fechaLimiteAmortizacion ?? null;
@@ -165,7 +146,7 @@ export class ProyectoPeriodoAmortizacionModalComponent
       {
         identificadorSge: new FormControl(identificadorSge, Validators.required),
         entidadFinanciadora: new FormControl(entidadFinanciadora, Validators.required),
-        anualidad: new FormControl(anualidad, Validators.required),
+        anualidad: new FormControl({ value: anualidad, disabled: this.data.anualidadGenerica }, Validators.required),
         fechaInicioAnualidad: new FormControl({ value: fechaInicioAnualidad, disabled: true }),
         fechaFinAnualidad: new FormControl({ value: fechaFinAnualidad, disabled: true }),
         fechaLimiteAmortizacion: new FormControl(fechaLimiteAmortizacion, Validators.required
@@ -180,10 +161,10 @@ export class ProyectoPeriodoAmortizacionModalComponent
     );
   }
 
-  protected getDatosForm(): IProyectoPeriodoAmortizacionModalData {
+  protected getValue(): IProyectoPeriodoAmortizacionModalData {
     this.data.periodoAmortizacion.proyectoSGE = this.formGroup.controls.identificadorSge.value?.proyectoSge;
     this.data.periodoAmortizacion.proyectoEntidadFinanciadora = this.formGroup.controls.entidadFinanciadora.value;
-    this.data.periodoAmortizacion.proyectoAnualidad = this.formGroup.controls.anualidad.value;
+    this.data.periodoAmortizacion.proyectoAnualidad = this.anualidadGenerica ?? this.formGroup.controls.anualidad.value;
     this.data.periodoAmortizacion.importe = this.formGroup.controls.importe.value;
     this.data.periodoAmortizacion.fechaLimiteAmortizacion = this.formGroup.controls.fechaLimiteAmortizacion.value;
 
@@ -195,7 +176,8 @@ export class ProyectoPeriodoAmortizacionModalComponent
     this.translate.get(
       FECHA_LIMITE_AMORTIZACION_KEY,
       MSG_PARAMS.CARDINALIRY.SINGULAR
-    ).subscribe((value) => this.msgParamFechaLimiteAmortizacion = { entity: value, ...MSG_PARAMS.GENDER.FEMALE, ...MSG_PARAMS.CARDINALIRY.SINGULAR });
+    ).subscribe((value) =>
+      this.msgParamFechaLimiteAmortizacion = { entity: value, ...MSG_PARAMS.GENDER.FEMALE, ...MSG_PARAMS.CARDINALIRY.SINGULAR });
 
     this.translate.get(
       PROYECTO_PERIODO_AMORTIZACION_FONDOS_KEY,
@@ -211,17 +193,20 @@ export class ProyectoPeriodoAmortizacionModalComponent
     this.translate.get(
       PROYECTO_SGE_KEY,
       MSG_PARAMS.CARDINALIRY.SINGULAR
-    ).subscribe((value) => this.msgParamProyectoSgeEntity = { entity: value, ...MSG_PARAMS.GENDER.MALE, ...MSG_PARAMS.CARDINALIRY.SINGULAR });
+    ).subscribe((value) =>
+      this.msgParamProyectoSgeEntity = { entity: value, ...MSG_PARAMS.GENDER.MALE, ...MSG_PARAMS.CARDINALIRY.SINGULAR });
 
     this.translate.get(
       ENTIDAD_FINANCIADORA_KEY,
       MSG_PARAMS.CARDINALIRY.SINGULAR
-    ).subscribe((value) => this.msgParamEntidadFinanciadoraEntity = { entity: value, ...MSG_PARAMS.GENDER.FEMALE, ...MSG_PARAMS.CARDINALIRY.SINGULAR });
+    ).subscribe((value) =>
+      this.msgParamEntidadFinanciadoraEntity = { entity: value, ...MSG_PARAMS.GENDER.FEMALE, ...MSG_PARAMS.CARDINALIRY.SINGULAR });
 
     this.translate.get(
       ANUALIDAD_KEY,
       MSG_PARAMS.CARDINALIRY.SINGULAR
-    ).subscribe((value) => this.msgParamAnualidadEntity = { entity: value, ...MSG_PARAMS.GENDER.FEMALE, ...MSG_PARAMS.CARDINALIRY.SINGULAR });
+    ).subscribe((value) =>
+      this.msgParamAnualidadEntity = { entity: value, ...MSG_PARAMS.GENDER.FEMALE, ...MSG_PARAMS.CARDINALIRY.SINGULAR });
 
     if (this.data.periodoAmortizacion?.proyectoEntidadFinanciadora) {
       this.translate.get(

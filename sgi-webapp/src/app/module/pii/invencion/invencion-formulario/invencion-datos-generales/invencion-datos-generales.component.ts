@@ -217,7 +217,6 @@ export class InvencionDatosGeneralesComponent extends FormFragmentComponent<IInv
     };
 
     const config = {
-      panelClass: 'sgi-dialog-container',
       data
     };
     const dialogRef = this.matDialog.open(SectorAplicacionModalComponent, config);
@@ -256,7 +255,6 @@ export class InvencionDatosGeneralesComponent extends FormFragmentComponent<IInv
       multiSelect: true
     };
     const config = {
-      panelClass: 'sgi-dialog-container',
       data
     };
     const dialogRef = this.matDialog.open(AreaConocimientoModalComponent, config);
@@ -292,10 +290,7 @@ export class InvencionDatosGeneralesComponent extends FormFragmentComponent<IInv
    * Apertura de modal de Documentos
    */
   openModalDocumento(): void {
-    const config = {
-      panelClass: 'sgi-dialog-container',
-    };
-    const dialogRef = this.matDialog.open(InvencionDocumentoModalComponent, config);
+    const dialogRef = this.matDialog.open(InvencionDocumentoModalComponent);
     dialogRef.afterClosed().subscribe(
       (result: IInvencionDocumento) => {
         if (result) {

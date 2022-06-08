@@ -20,9 +20,9 @@
       title="{{'prc.actividad-idi' | translate:MSG_PARAMS.CARDINALIRY.PLURAL}}">
     </sgi-menu-subitem>
   </sgi-menu-group>
-  <!-- <sgi-menu-item *sgiHasAnyAuthority="['PRC-VAL-V']" [route]="[PRC_ROUTE_NAMES.INFORME]" icon="receipt"
+  <sgi-menu-item *sgiHasAuthority="'PRC-INF-G'" [route]="[PRC_ROUTE_NAMES.INFORME]" icon="receipt"
     title="{{'prc.informe' | translate:MSG_PARAMS.CARDINALIRY.PLURAL}}">
-  </sgi-menu-item> -->
+  </sgi-menu-item>
   <sgi-menu-item *sgiHasAnyAuthority="['PRC-VAL-V', 'PRC-CON-C', 'PRC-CON-E']" [route]="[PRC_ROUTE_NAMES.CONVOCATORIA]"
     icon="account_balance" title="{{'prc.convocatoria' | translate:MSG_PARAMS.CARDINALIRY.PLURAL}}">
   </sgi-menu-item>

@@ -102,7 +102,6 @@ export class SolicitudProyectoAreaConocimientoComponent extends FragmentComponen
       multiSelect: true
     };
     const config = {
-      panelClass: 'sgi-dialog-container',
       data
     };
     const dialogRef = this.matDialog.open(AreaConocimientoModalComponent, config);

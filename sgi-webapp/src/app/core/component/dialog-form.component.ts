@@ -1,10 +1,8 @@
 import { Directive, OnDestroy, OnInit } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { MatDialogRef } from '@angular/material/dialog';
-import { SgiProblem, toSgiProblem } from '@core/errors/sgi-error';
 import { Group, GroupStatus, IGroup } from '@core/services/action-service';
-import { BehaviorSubject, Observable, throwError } from 'rxjs';
-import { catchError, tap } from 'rxjs/operators';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { DialogCommonComponent } from './dialog-common.component';
 
 export interface DialogStatus {
@@ -22,6 +20,10 @@ export abstract class DialogFormComponent<R> extends DialogCommonComponent imple
   private formStatus: GroupStatus;
   private group: IGroup;
   private edit: boolean;
+
+  get actionDisabled(): boolean {
+    return (this.status$.value.errors) || (this.edit && !this.status$.value.changes) || (!this.edit && !this.status$.value.complete);
+  }
 
   constructor(
     matDialogRef: MatDialogRef<any>,
@@ -90,8 +92,6 @@ export abstract class DialogFormComponent<R> extends DialogCommonComponent imple
 
   protected abstract getValue(): R;
 
-  protected abstract saveOrUpdate(): Observable<R>;
-
   private mergeStatus(): void {
     const current: DialogStatus = this.status$.value;
     const errors = this.formStatus.errors;
@@ -128,28 +128,7 @@ export abstract class DialogFormComponent<R> extends DialogCommonComponent imple
   doAction(): void {
     this.formGroup.markAllAsTouched();
     if (this.formGroup.valid) {
-      this.subscriptions.push(this.saveOrUpdate().pipe(
-        tap(() =>
-          () => this.clearProblems(),
-          () => this.clearProblems()
-        ),
-        catchError(error => {
-          const errors: SgiProblem[] = [];
-          if (Array.isArray(error)) {
-            errors.push(...error);
-          } else {
-            errors.push(toSgiProblem(error));
-          }
-
-          errors.forEach(e => {
-            e.managed = true;
-            this.pushProblems(e);
-          });
-
-          return throwError(errors);
-        }),
-        tap((result) => this.close(result))
-      ).subscribe());
+      this.close(this.getValue());
     }
   }
 

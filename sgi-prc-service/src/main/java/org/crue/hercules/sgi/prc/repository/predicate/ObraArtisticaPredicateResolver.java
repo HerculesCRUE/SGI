@@ -72,7 +72,7 @@ public class ObraArtisticaPredicateResolver extends ProduccionCientificaPredicat
       throw new IllegalArgumentException(BAD_NUMBER_OF_ARGUMENTS_FOR + node.getSelector());
     }
 
-    String descripcion = "%" + node.getArguments().get(0) + "%";
+    String descripcion = "%" + node.getArguments().get(0).toLowerCase() + "%";
 
     Subquery<String> queryDescripcion = buildSubqueryValorCampoProduccionCientifica(cb,
         query, root.get(ProduccionCientifica_.id), CodigoCVN.E050_020_030_010, operator, descripcion);
@@ -151,7 +151,7 @@ public class ObraArtisticaPredicateResolver extends ProduccionCientificaPredicat
       throw new IllegalArgumentException(BAD_NUMBER_OF_ARGUMENTS_FOR + node.getSelector());
     }
 
-    String investigador = "%" + node.getArguments().get(0) + "%";
+    String investigador = "%" + node.getArguments().get(0).toLowerCase() + "%";
 
     Subquery<Long> queryInvestigador = getSubqueryAutor(cb, query, root.get(ProduccionCientifica_.id), investigador);
     return cb.and(cb.exists(queryInvestigador));
@@ -170,7 +170,7 @@ public class ObraArtisticaPredicateResolver extends ProduccionCientificaPredicat
       throw new IllegalArgumentException(BAD_NUMBER_OF_ARGUMENTS_FOR + node.getSelector());
     }
 
-    String nombreExposicion = "%" + node.getArguments().get(0) + "%";
+    String nombreExposicion = "%" + node.getArguments().get(0).toLowerCase() + "%";
 
     Subquery<String> queryNombreExposicion = buildSubqueryValorCampoProduccionCientifica(cb, query,
         root.get(ProduccionCientifica_.id), CodigoCVN.E050_020_030_020, operator, nombreExposicion);

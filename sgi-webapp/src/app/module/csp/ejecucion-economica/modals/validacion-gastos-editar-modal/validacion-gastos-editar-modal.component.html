@@ -1,10 +1,5 @@
-<div class="sgi-dialog-header" fxLayout="row" fxLayoutGap="20px">
-  <span fxFlexAlign="center" mat-mat-dialog-title role="heading" aria-level="3" fxFlex>Detalle de gasto</span>
-  <button fxFlex="nogrow" mat-icon-button mat-dialog-close>
-    <mat-icon class="close-icon">close</mat-icon>
-  </button>
-</div>
-<mat-dialog-content>
+<sgi-dialog-header title="Detalle de gasto"></sgi-dialog-header>
+<sgi-dialog-content>
   <div>
     <p>{{'sge.gasto.estado.actual' | translate}}: {{data?.estado | translate}}</p>
     <p>{{'sge.dato-economico.clasificacion-sge' | translate}}: {{data?.clasificacionSGE?.nombre}}</p>
@@ -34,43 +29,34 @@
       </div>
 
       <!-- Concepto de gasto tipo-->
-      <div [fxLayout.xs]=" fxLayoutProperties.xs" [fxLayout]="fxLayoutProperties.layout"
-        [fxLayoutGap]="fxLayoutProperties.gap" ngClass.gt-xs="ml-10 separation-button">
-        <div [fxLayout]="fxLayoutProperties.layout" [fxLayoutAlign]="fxLayoutProperties.layoutAlign">
-          <mat-radio-group class="radio-inline" name="conceptoGastoFiltro" formControlName="conceptoGastoFiltro">
-            <mat-radio-button color="primary" class="radio" *ngFor="let optionConceptoGasto of optionsConceptoGasto"
-              name="conceptoGastoFiltro" [value]="optionConceptoGasto" (change)="loadConceptoGasto($event.value)">
-              {{optionConceptoGasto | translate}}
-            </mat-radio-button>
-          </mat-radio-group>
-        </div>
+      <div fxLayout="row">
+        <mat-radio-group class="radio-inline" name="conceptoGastoFiltro" formControlName="conceptoGastoFiltro">
+          <mat-radio-button color="primary" class="radio" *ngFor="let optionConceptoGasto of optionsConceptoGasto"
+            name="conceptoGastoFiltro" [value]="optionConceptoGasto" (change)="loadConceptoGasto($event.value)">
+            {{optionConceptoGasto | translate}}
+          </mat-radio-button>
+        </mat-radio-group>
       </div>
 
       <!-- Concepto Gasto -->
-      <div [fxLayout]="fxLayoutProperties.layout" [fxLayoutAlign]="fxLayoutProperties.layoutAlign">
-        <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
-          [fxFlexOrder]="fxFlexProperties.order">
-          <mat-form-field fxFill>
-            <mat-label>{{'csp.ejecucion-economica.validacion-gastos.concepto-gasto' | translate}}</mat-label>
-            <sgi-select-entity formControlName="conceptoGasto" [options]="conceptosGasto$ | async"
-              [displayWith]="displayerConceptoGasto">
-            </sgi-select-entity>
-            <mat-error *ngIf="formGroup.controls.conceptoGasto.errors?.required">
-              {{'error.required.entity' | translate:msgParamConceptoGastoEntity}}
-            </mat-error>
-          </mat-form-field>
-        </div>
+      <div fxLayout="row">
+        <mat-form-field>
+          <mat-label>{{'csp.ejecucion-economica.validacion-gastos.concepto-gasto' | translate}}</mat-label>
+          <sgi-select-entity formControlName="conceptoGasto" [options]="conceptosGasto$ | async"
+            [displayWith]="displayerConceptoGasto">
+          </sgi-select-entity>
+          <mat-error *ngIf="formGroup.controls.conceptoGasto.errors?.required">
+            {{'error.required.entity' | translate:msgParamConceptoGastoEntity}}
+          </mat-error>
+        </mat-form-field>
       </div>
 
       <!-- Estado -->
-      <div [fxLayout]="fxLayoutProperties.layout" [fxLayoutAlign]="fxLayoutProperties.layoutAlign">
-        <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
-          [fxFlexOrder]="fxFlexProperties.order">
-          <mat-form-field fxFill>
-            <mat-label>{{'csp.ejecucion-economica.validacion-gastos.estado' | translate}}</mat-label>
-            <sgi-select-enum formControlName="estadoGasto" required [enumMap]="ESTADO_MAP"></sgi-select-enum>
-          </mat-form-field>
-        </div>
+      <div fxLayout="row">
+        <mat-form-field>
+          <mat-label>{{'csp.ejecucion-economica.validacion-gastos.estado' | translate}}</mat-label>
+          <sgi-select-enum formControlName="estadoGasto" required [enumMap]="ESTADO_MAP"></sgi-select-enum>
+        </mat-form-field>
       </div>
 
       <mat-card *ngIf="formGroup.controls.estadoGasto.value=='VALIDADO'">
@@ -79,11 +65,9 @@
         </mat-card-title>
         <mat-card-content>
           <form [formGroup]="formGroup">
-            <div [fxLayout.xs]="fxLayoutProperties.xs" [fxLayout]="fxLayoutProperties.layout"
-              [fxLayoutGap]="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
+            <div fxLayout="row" fxLayoutGap="10px">
               <!-- Fecha congreso -->
-              <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md"
-                [fxFlex.gt-md]="fxFlexProperties.gtMd" [fxFlexOrder]="fxFlexProperties.order">
+              <div fxLayout="row">
                 <mat-form-field>
                   <mat-label>
                     {{'csp.ejecucion-economica.validacion-gastos.fecha-congreso' | translate}}
@@ -96,8 +80,7 @@
               </div>
 
               <!-- Importe inscripcion -->
-              <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md"
-                [fxFlex.gt-md]="fxFlexProperties.gtMd" [fxFlexOrder]="fxFlexProperties.order">
+              <div fxLayout="row">
                 <mat-form-field>
                   <mat-label>
                     {{'csp.ejecucion-economica.validacion-gastos.importe-inscripcion' | translate}}
@@ -114,28 +97,24 @@
               </div>
             </div>
 
-            <div [fxLayout.xs]="fxLayoutProperties.xs" [fxLayout]="fxLayoutProperties.layout"
-              [fxLayoutGap]="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
+            <div fxLayout="row">
               <!-- Observaciones -->
-              <div [fxFlex.sm]="fxFlexPropertiesInline.sm" [fxFlex.md]="fxFlexPropertiesInline.md"
-                [fxFlex.gt-md]="fxFlexPropertiesInline.gtMd" [fxFlexOrder]="fxFlexPropertiesInline.order">
-                <mat-form-field fxFill>
-                  <mat-label>
-                    {{'csp.ejecucion-economica.validacion-gastos.observaciones' | translate}}
-                  </mat-label>
-                  <textarea #obs matInput formControlName="observaciones"
-                    placeholder="{{'csp.ejecucion-economica.validacion-gastos.observaciones' | translate}}"
-                    maxlength="2000"></textarea>
-                  <mat-hint>{{obs.value.length}} / 2000</mat-hint>
-                </mat-form-field>
-              </div>
+              <mat-form-field>
+                <mat-label>
+                  {{'csp.ejecucion-economica.validacion-gastos.observaciones' | translate}}
+                </mat-label>
+                <textarea #obs matInput formControlName="observaciones"
+                  placeholder="{{'csp.ejecucion-economica.validacion-gastos.observaciones' | translate}}"
+                  maxlength="2000"></textarea>
+                <mat-hint>{{obs.value.length}} / 2000</mat-hint>
+              </mat-form-field>
             </div>
           </form>
         </mat-card-content>
       </mat-card>
 
       <!-- Comentarios asociados al estado -->
-      <mat-form-field fxFill *ngIf="this.showComment">
+      <mat-form-field fxFlex *ngIf="this.showComment">
         <mat-label>
           {{'csp.ejecucion-economica.validacion-gastos.comentario-estado' | translate}}
         </mat-label>
@@ -146,7 +125,7 @@
       </mat-form-field>
     </form>
   </div>
-</mat-dialog-content>
+</sgi-dialog-content>
 <mat-dialog-actions>
   <button color="accent" mat-raised-button type="submit">
     <mat-icon class="save-icon">save</mat-icon>

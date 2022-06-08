@@ -41,6 +41,7 @@ export class TipoEnlaceModalComponent extends DialogActionComponent<ITipoEnlace>
 
   ngOnInit(): void {
     super.ngOnInit();
+    this.matDialogRef.updateSize('30vw');
     this.setupI18N();
   }
 

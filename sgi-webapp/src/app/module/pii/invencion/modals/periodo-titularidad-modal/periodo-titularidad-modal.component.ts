@@ -1,11 +1,10 @@
-import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { FormControl, FormGroup, ValidatorFn, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
-import { BaseModalComponent } from '@core/component/base-modal.component';
+import { DialogFormComponent } from '@core/component/dialog-form.component';
 import { MSG_PARAMS } from '@core/i18n';
 import { IPeriodoTitularidad } from '@core/models/pii/periodo-titularidad';
-import { SnackBarService } from '@core/services/snack-bar.service';
 import { StatusWrapper } from '@core/utils/status-wrapper';
 import { DateValidator } from '@core/validators/date-validator';
 import { TranslateService } from '@ngx-translate/core';
@@ -33,8 +32,7 @@ export interface IResultPeriodoTitularidadModalData {
   templateUrl: './periodo-titularidad-modal.component.html',
   styleUrls: ['./periodo-titularidad-modal.component.scss']
 })
-export class PeriodoTitularidadModalComponent
-  extends BaseModalComponent<IPeriodoTitularidadModalData, PeriodoTitularidadModalComponent> implements OnInit, OnDestroy {
+export class PeriodoTitularidadModalComponent extends DialogFormComponent<IPeriodoTitularidadModalData> implements OnInit {
 
   msgParamFechaInicioEntity = {};
   msgParamFechaFinEntity = {};
@@ -43,12 +41,11 @@ export class PeriodoTitularidadModalComponent
   textSaveOrUpdate: string;
 
   constructor(
-    protected readonly snackBarService: SnackBarService,
-    public readonly matDialogRef: MatDialogRef<PeriodoTitularidadModalComponent>,
-    @Inject(MAT_DIALOG_DATA) private periodoTitularidadData: IPeriodoTitularidadModalData,
+    matDialogRef: MatDialogRef<PeriodoTitularidadModalComponent>,
+    @Inject(MAT_DIALOG_DATA) private data: IPeriodoTitularidadModalData,
     private readonly translate: TranslateService
   ) {
-    super(snackBarService, matDialogRef, periodoTitularidadData);
+    super(matDialogRef, !!!data.periodoTitularidad.created);
   }
 
   ngOnInit(): void {
@@ -78,31 +75,31 @@ export class PeriodoTitularidadModalComponent
     this.textSaveOrUpdate = this.isEditionMode() ? MSG_ACEPTAR : MSG_ADD;
   }
 
-  protected getDatosForm(): IResultPeriodoTitularidadModalData {
+  protected getValue(): IResultPeriodoTitularidadModalData {
     if (this.formGroup.touched) {
-      this.entity.periodoTitularidad.value.fechaInicio = this.formGroup.controls.fechaInicio.value;
-      this.entity.periodoTitularidad.value.fechaFinPrevious = this.formGroup.controls.fechaFin.value;
-      if (!this.entity.periodoTitularidad.created) {
-        this.entity.periodoTitularidad.setEdited();
+      this.data.periodoTitularidad.value.fechaInicio = this.formGroup.controls.fechaInicio.value;
+      this.data.periodoTitularidad.value.fechaFinPrevious = this.formGroup.controls.fechaFin.value;
+      if (!this.data.periodoTitularidad.created) {
+        this.data.periodoTitularidad.setEdited();
       }
     }
     const result: IResultPeriodoTitularidadModalData = {
-      periodoTitularidad: this.entity.periodoTitularidad
+      periodoTitularidad: this.data.periodoTitularidad
     };
 
     return result;
   }
 
-  protected getFormGroup(): FormGroup {
-    const fechaFinValidators: Array<ValidatorFn> = [DateValidator.minDate(this.entity.fechaInicioMinima)];
+  protected buildFormGroup(): FormGroup {
+    const fechaFinValidators: Array<ValidatorFn> = [DateValidator.minDate(this.data.fechaInicioMinima)];
     const fechaInicioValidators: Array<ValidatorFn> = [Validators.required];
 
     if (this.showFechaFin()) {
       fechaFinValidators.push(Validators.required);
     }
     const form: FormGroup = new FormGroup({
-      fechaInicio: new FormControl(this.entity?.periodoTitularidad.value.fechaInicio, []),
-      fechaFin: new FormControl(this.entity?.periodoTitularidad.value.fechaFin, [])
+      fechaInicio: new FormControl(this.data?.periodoTitularidad.value.fechaInicio, []),
+      fechaFin: new FormControl(this.data?.periodoTitularidad.value.fechaFin, [])
     });
 
     fechaInicioValidators.push(DateValidator.isAfterOther(form.controls.fechaFin));
@@ -115,14 +112,10 @@ export class PeriodoTitularidadModalComponent
   }
 
   public showFechaFin(): boolean {
-    return this.periodoTitularidadData.showFechaFin ?? this.entity.periodoTitularidad.created;
+    return this.data.showFechaFin ?? this.data.periodoTitularidad.created;
   }
 
   public isEditionMode() {
-    return !this.entity.periodoTitularidad.created;
-  }
-
-  ngOnDestroy(): void {
-    super.ngOnDestroy();
+    return !this.data.periodoTitularidad.created;
   }
 }

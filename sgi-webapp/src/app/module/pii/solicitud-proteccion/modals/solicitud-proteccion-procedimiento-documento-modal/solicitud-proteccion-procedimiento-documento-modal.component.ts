@@ -1,17 +1,16 @@
-import { Component, Inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Component, Inject, OnInit, ViewChild } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
-import { BaseModalComponent } from '@core/component/base-modal.component';
+import { DialogFormComponent } from '@core/component/dialog-form.component';
+import { SgiError } from '@core/errors/sgi-error';
 import { MSG_PARAMS } from '@core/i18n';
 import { IProcedimientoDocumento } from '@core/models/pii/procedimiento-documento';
-import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-properties';
 import { DocumentoService } from '@core/services/sgdoc/documento.service';
-import { SnackBarService } from '@core/services/snack-bar.service';
 import { StatusWrapper } from '@core/utils/status-wrapper';
 import { TranslateService } from '@ngx-translate/core';
 import { SgiFileUploadComponent, UploadEvent } from '@shared/file-upload/file-upload.component';
-import { map, switchMap } from 'rxjs/operators';
+import { switchMap } from 'rxjs/operators';
 
 const PROCEDIMIENTO_DOCUMENTO_KEY = marker('pii.solicitud-proteccion.procedimiento-documento');
 const PROCEDIMIENTO_DOCUMENTO_NOMBRE_KEY = marker('pii.solicitud-proteccion.procedimiento-documento.nombre');
@@ -19,26 +18,19 @@ const PROCEDIMIENTO_DOCUMENTO_FICHERO_KEY = marker('pii.solicitud-proteccion.pro
 const TITLE_NEW_ENTITY = marker('title.new.entity');
 const MSG_ANADIR = marker('btn.add');
 const MSG_ACEPTAR = marker('btn.ok');
-const MSG_UPLOAD_SUCCESS = marker('msg.file.upload.success');
 const MSG_UPLOAD_ERROR = marker('error.file.upload');
-const MSG_ERROR_FORM_GROUP = marker('error.form-group');
 
 @Component({
   selector: 'sgi-solicitud-proteccion-procedimiento-documento-modal',
   templateUrl: './solicitud-proteccion-procedimiento-documento-modal.component.html',
   styleUrls: ['./solicitud-proteccion-procedimiento-documento-modal.component.scss']
 })
-export class SolicitudProteccionProcedimientoDocumentoModalComponent extends
-  BaseModalComponent<
-  StatusWrapper<IProcedimientoDocumento>,
-  SolicitudProteccionProcedimientoDocumentoModalComponent
-  > implements OnInit, OnDestroy {
+export class SolicitudProteccionProcedimientoDocumentoModalComponent
+  extends DialogFormComponent<StatusWrapper<IProcedimientoDocumento>> implements OnInit {
 
   uploading = false;
   @ViewChild('uploader') private uploader: SgiFileUploadComponent;
 
-
-  public fxLayoutProperties: FxLayoutProperties;
   public procedimientoDocumento: IProcedimientoDocumento;
   public msgParamNombreEntity = {};
   public msgParamFicheroEntity = {};
@@ -50,17 +42,14 @@ export class SolicitudProteccionProcedimientoDocumentoModalComponent extends
   }
 
   constructor(
-    protected snackBarService: SnackBarService,
-    public readonly matDialogRef: MatDialogRef<SolicitudProteccionProcedimientoDocumentoModalComponent>,
-    @Inject(MAT_DIALOG_DATA) procedimientoDocumento: StatusWrapper<IProcedimientoDocumento>,
+    matDialogRef: MatDialogRef<SolicitudProteccionProcedimientoDocumentoModalComponent>,
+    @Inject(MAT_DIALOG_DATA) private data: StatusWrapper<IProcedimientoDocumento>,
     private translate: TranslateService,
     private documentoService: DocumentoService) {
 
-    super(snackBarService, matDialogRef, procedimientoDocumento);
+    super(matDialogRef, !!data.value.nombre);
 
-    this.initLayoutProperties();
-
-    this.initProcedimientoDocumento(procedimientoDocumento);
+    this.initProcedimientoDocumento(data);
   }
 
   private initProcedimientoDocumento(procedimientoDocumento: StatusWrapper<IProcedimientoDocumento>): void {
@@ -88,17 +77,13 @@ export class SolicitudProteccionProcedimientoDocumentoModalComponent extends
     }
   }
 
-  ngOnDestroy(): void {
-    super.ngOnDestroy();
+  protected getValue(): StatusWrapper<IProcedimientoDocumento> {
+    this.data.value.nombre = this.formGroup.controls.nombre.value;
+    this.data.value.documento = this.formGroup.controls.fichero.value;
+    return this.data;
   }
 
-  protected getDatosForm(): StatusWrapper<IProcedimientoDocumento> {
-    this.entity.value.nombre = this.formGroup.controls.nombre.value;
-    this.entity.value.documento = this.formGroup.controls.fichero.value;
-    return this.entity;
-  }
-
-  protected getFormGroup(): FormGroup {
+  protected buildFormGroup(): FormGroup {
 
     return new FormGroup({
       nombre: new FormControl(this.procedimientoDocumento?.nombre, [Validators.maxLength(250), Validators.required]),
@@ -106,15 +91,13 @@ export class SolicitudProteccionProcedimientoDocumentoModalComponent extends
     });
   }
 
-  saveOrUpdate(): void {
+  doAction(): void {
     this.formGroup.markAllAsTouched();
     if (this.formGroup.valid) {
       this.uploader.uploadSelection().subscribe(
         () => {
-          this.matDialogRef.close(this.getDatosForm());
+          this.close(this.getValue());
         });
-    } else {
-      this.snackBarService.showError(MSG_ERROR_FORM_GROUP);
     }
   }
 
@@ -155,23 +138,16 @@ export class SolicitudProteccionProcedimientoDocumentoModalComponent extends
     }
   }
 
-  private initLayoutProperties() {
-    this.fxLayoutProperties = new FxLayoutProperties();
-    this.fxLayoutProperties.layout = 'row';
-    this.fxLayoutProperties.layoutAlign = 'row';
-  }
-
   onUploadProgress(event: UploadEvent) {
     switch (event.status) {
       case 'start':
         this.uploading = true;
         break;
       case 'end':
-        this.snackBarService.showSuccess(MSG_UPLOAD_SUCCESS);
         this.uploading = false;
         break;
       case 'error':
-        this.snackBarService.showError(MSG_UPLOAD_ERROR);
+        this.pushProblems(new SgiError(MSG_UPLOAD_ERROR));
         this.uploading = false;
         break;
     }

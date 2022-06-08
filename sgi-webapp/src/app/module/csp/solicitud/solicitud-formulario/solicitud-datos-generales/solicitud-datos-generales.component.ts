@@ -217,7 +217,6 @@ export class SolicitudDatosGeneralesComponent extends FormFragmentComponent<ISol
     };
 
     const config = {
-      panelClass: 'sgi-dialog-container',
       data
     };
 

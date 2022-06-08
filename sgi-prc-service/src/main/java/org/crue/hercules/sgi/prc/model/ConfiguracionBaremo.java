@@ -1,6 +1,9 @@
 package org.crue.hercules.sgi.prc.model;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import javax.persistence.Column;
@@ -41,6 +44,11 @@ public class ConfiguracionBaremo extends BaseActivableEntity implements Serializ
 
   protected static final String TABLE_NAME = "configuracion_baremo";
   private static final String SEQUENCE_NAME = TABLE_NAME + "_seq";
+
+  public static final List<TipoNodo> TIPO_NODOS_PESO = Collections
+      .unmodifiableList(new ArrayList<>(Arrays.asList(TipoNodo.PESO, TipoNodo.PESO_CUANTIA, TipoNodo.PESO_PUNTOS)));
+  public static final List<TipoNodo> TIPO_NODOS_PUNTOS = Collections
+      .unmodifiableList(new ArrayList<>(Arrays.asList(TipoNodo.PUNTOS, TipoNodo.PESO_PUNTOS)));
 
   public enum TipoBaremo {
     PRODUCCION_CIENTIFICA,
@@ -272,6 +280,15 @@ public class ConfiguracionBaremo extends BaseActivableEntity implements Serializ
     MODULADOR;
   }
 
+  public enum TipoNodo {
+    PESO_PUNTOS,
+    PESO_CUANTIA,
+    PESO,
+    NO_BAREMABLE,
+    PUNTOS,
+    SIN_PUNTOS;
+  }
+
   private static final long serialVersionUID = 1L;
 
   /** Id */
@@ -299,9 +316,9 @@ public class ConfiguracionBaremo extends BaseActivableEntity implements Serializ
   @Enumerated(EnumType.STRING)
   private TipoPuntos tipoPuntos;
 
-  /** mostrarPuntos */
-  @Column(name = "mostrar_puntos", columnDefinition = "boolean default false", nullable = true)
-  private Boolean mostrarPuntos;
+  @Column(name = "tipo_nodo", length = BaseEntity.TIPO_NODO_LENGTH, nullable = true)
+  @Enumerated(EnumType.STRING)
+  private TipoNodo tipoNodo;
 
   /** EpigrafeCVN */
   @Column(name = "epigrafe_cvn", length = BaseEntity.EPIGRAFE_LENGTH, nullable = true)
@@ -309,9 +326,15 @@ public class ConfiguracionBaremo extends BaseActivableEntity implements Serializ
   private EpigrafeCVN epigrafeCVN;
 
   /** ConfiguracionBaremo padre. */
+  @Column(name = "configuracion_baremo_padre_id", nullable = true)
+  private Long padreId;
+
+  // Relation mappings for JPA metamodel generation only
   @ManyToOne
-  @JoinColumn(name = "configuracion_baremo_padre_id", nullable = true, foreignKey = @ForeignKey(name = "FK_CONFIGURACIONBAREMO_PADRE"))
-  private ConfiguracionBaremo padre;
+  @JoinColumn(name = "configuracion_baremo_padre_id", insertable = false, updatable = false, foreignKey = @ForeignKey(name = "FK_CONFIGURACIONBAREMO_PADRE"))
+  @Getter(AccessLevel.NONE)
+  @Setter(AccessLevel.NONE)
+  private final ConfiguracionBaremo padre = null;
 
   @OneToMany(mappedBy = "configuracionBaremo")
   @Getter(AccessLevel.NONE)

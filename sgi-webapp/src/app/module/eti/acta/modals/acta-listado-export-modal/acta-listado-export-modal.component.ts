@@ -4,6 +4,7 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { BaseExportModalComponent } from '@core/component/base-export/base-export-modal.component';
 import { MSG_PARAMS } from '@core/i18n';
+import { OutputReport } from '@core/models/rep/output-report.enum';
 import { IReportConfig, IReportOptions } from '@core/services/rep/abstract-table-export.service';
 import { TranslateService } from '@ngx-translate/core';
 import { SgiRestFindOptions } from '@sgi/framework/http';
@@ -44,7 +45,7 @@ export class ActaListadoExportModalComponent extends BaseExportModalComponent<IR
 
   protected buildFormGroup(): FormGroup {
     return new FormGroup({
-      outputType: new FormControl(this.outputType, Validators.required),
+      outputType: new FormControl(OutputReport.XLSX, Validators.required),
       reportTitle: new FormControl(this.reportTitle, Validators.required),
 
       showMemorias: new FormControl(true),

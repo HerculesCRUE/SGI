@@ -2,12 +2,10 @@ import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
-import { BaseModalComponent } from '@core/component/base-modal.component';
+import { DialogFormComponent } from '@core/component/dialog-form.component';
 import { MSG_PARAMS } from '@core/i18n';
 import { IProyectoPlazos } from '@core/models/csp/proyecto-plazo';
 import { ITipoFase } from '@core/models/csp/tipos-configuracion';
-import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-properties';
-import { SnackBarService } from '@core/services/snack-bar.service';
 import { DateValidator } from '@core/validators/date-validator';
 import { NullIdValidador } from '@core/validators/null-id-validador';
 import { IRange, RangeValidator } from '@core/validators/range-validator';
@@ -36,11 +34,7 @@ export interface ProyectoPlazosModalComponentData {
   templateUrl: './proyecto-plazos-modal.component.html',
   styleUrls: ['./proyecto-plazos-modal.component.scss']
 })
-export class ProyectoPlazosModalComponent extends
-  BaseModalComponent<ProyectoPlazosModalComponentData, ProyectoPlazosModalComponent> implements OnInit, OnDestroy {
-
-  fxLayoutProperties: FxLayoutProperties;
-  fxLayoutProperties2: FxLayoutProperties;
+export class ProyectoPlazosModalComponent extends DialogFormComponent<ProyectoPlazosModalComponentData> implements OnInit, OnDestroy {
 
   textSaveOrUpdate: string;
 
@@ -51,23 +45,11 @@ export class ProyectoPlazosModalComponent extends
   title: string;
 
   constructor(
-    protected snackBarService: SnackBarService,
     @Inject(MAT_DIALOG_DATA) public data: ProyectoPlazosModalComponentData,
-    public matDialogRef: MatDialogRef<ProyectoPlazosModalComponent>,
+    matDialogRef: MatDialogRef<ProyectoPlazosModalComponent>,
     private readonly translate: TranslateService
   ) {
-    super(snackBarService, matDialogRef, data);
-
-    this.fxLayoutProperties = new FxLayoutProperties();
-    this.fxLayoutProperties.layout = 'row';
-    this.fxLayoutProperties.layoutAlign = 'row';
-    this.fxLayoutProperties.gap = '20px';
-    this.fxLayoutProperties.xs = 'column';
-
-    this.fxLayoutProperties2 = new FxLayoutProperties();
-    this.fxLayoutProperties2.gap = '20px';
-    this.fxLayoutProperties2.layout = 'row';
-    this.fxLayoutProperties2.xs = 'column';
+    super(matDialogRef, !!data.plazo?.tipoFase);
   }
 
   ngOnInit(): void {
@@ -165,7 +147,7 @@ export class ProyectoPlazosModalComponent extends
     ]);
   }
 
-  protected getDatosForm(): ProyectoPlazosModalComponentData {
+  protected getValue(): ProyectoPlazosModalComponentData {
     this.data.plazo.fechaInicio = this.formGroup.controls.fechaInicio.value;
     this.data.plazo.fechaFin = this.formGroup.controls.fechaFin.value;
     this.data.plazo.tipoFase = this.formGroup.controls.tipoFase.value;
@@ -174,7 +156,7 @@ export class ProyectoPlazosModalComponent extends
     return this.data;
   }
 
-  protected getFormGroup(): FormGroup {
+  protected buildFormGroup(): FormGroup {
     const formGroup = new FormGroup({
       fechaInicio: new FormControl(this.data?.plazo?.fechaInicio, [Validators.required]),
       fechaFin: new FormControl(this.data?.plazo?.fechaFin, Validators.required),
@@ -188,10 +170,6 @@ export class ProyectoPlazosModalComponent extends
     }
 
     return formGroup;
-  }
-
-  ngOnDestroy(): void {
-    super.ngOnDestroy();
   }
 
 }

@@ -8,7 +8,6 @@ import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import org.crue.hercules.sgi.framework.problem.message.ProblemMessage;
-import org.crue.hercules.sgi.framework.spring.context.support.ApplicationContextSupport;
 import org.crue.hercules.sgi.prc.config.SgiConfigProperties;
 import org.crue.hercules.sgi.prc.dto.BaremacionInput;
 import org.crue.hercules.sgi.prc.enums.EpigrafeCVN;
@@ -46,10 +45,6 @@ import lombok.extern.slf4j.Slf4j;
 @Validated
 @RequiredArgsConstructor
 public class BaremacionService {
-  private static final String PROBLEM_MESSAGE_PARAMETER_FIELD = "field";
-  private static final String PROBLEM_MESSAGE_PARAMETER_ENTITY = "entity";
-  private static final String PROBLEM_MESSAGE_ISNULL = "isNull";
-
   private final BaremoRepository baremoRepository;
   private final PuntuacionItemInvestigadorRepository puntuacionItemInvestigadorRepository;
   private final PuntuacionGrupoRepository puntuacionGrupoRepository;
@@ -78,39 +73,12 @@ public class BaremacionService {
 
   @Transactional
   public synchronized void baremacion(Long convocatoriaBaremacionId) {
-    log.debug("baremacion(convocatoriaBaremacionId) - start");
+    log.debug("baremacion({}) - start", convocatoriaBaremacionId);
 
-    checkInitBaremacion(convocatoriaBaremacionId);
-
-    // Open a new transaction to evict a new call before finishing
-    ConvocatoriaBaremacion convocatoriaBaremacionUpdate = convocatoriaBaremacionService.updateFechaInicioEjecucion(
-        convocatoriaBaremacionId,
-        Instant.now());
-
-    this.baremacionIntern(convocatoriaBaremacionUpdate);
-
-  }
-
-  private void checkInitBaremacion(Long convocatoriaBaremacionId) {
-    log.debug("checkInitBaremacion(convocatoriaBaremacionId) - start");
-
-    ConvocatoriaBaremacion convocatoriaBaremacion = convocatoriaBaremacionRepository.findById(convocatoriaBaremacionId)
-        .orElseThrow(() -> new ConvocatoriaBaremacionNotFoundException(convocatoriaBaremacionId));
-
-    Assert.isNull(convocatoriaBaremacion.getFechaInicioEjecucion(),
-        // Defer message resolution untill is needed
-        () -> ProblemMessage.builder().key(Assert.class, PROBLEM_MESSAGE_ISNULL)
-            .parameter(PROBLEM_MESSAGE_PARAMETER_FIELD, ApplicationContextSupport.getMessage("fechaInicioEjecucion"))
-            .parameter(PROBLEM_MESSAGE_PARAMETER_ENTITY,
-                ApplicationContextSupport.getMessage(ConvocatoriaBaremacion.class))
-            .build());
-    log.debug("checkInitBaremacion(convocatoriaBaremacionId) - end");
-  }
-
-  private void baremacionIntern(ConvocatoriaBaremacion convocatoriaBaremacion) {
-    log.debug("baremacion(convocatoriaBaremacion) - start");
-    Long convocatoriaBaremacionId = convocatoriaBaremacion.getId();
     try {
+      ConvocatoriaBaremacion convocatoriaBaremacion = convocatoriaBaremacionRepository
+          .findById(convocatoriaBaremacionId)
+          .orElseThrow(() -> new ConvocatoriaBaremacionNotFoundException(convocatoriaBaremacionId));
 
       convocatoriaBaremacionService.deleteItemsConvocatoriaBaremacion(convocatoriaBaremacion);
 
@@ -122,6 +90,7 @@ public class BaremacionService {
       baremacionInvencionService.copyInvenciones(anioInicio, anioFin);
       baremacionProyectoService.copyProyectos(anioInicio, anioFin);
       baremacionSexenioService.copySexenios(anioInicio, anioFin);
+      // baremacionDireccionTesisService.copyTesis(anioInicio, anioFin);
 
       IntStream.range(anioInicio, anioFin).forEach(anio -> {
         BaremacionInput baremacionInput = ProduccionCientificaFieldFormatUtil.createBaremacionInput(anio,
@@ -183,12 +152,35 @@ public class BaremacionService {
       evaluatePuntosConvocatoriaBaremacion(convocatoriaBaremacionId);
     } catch (Exception e) {
       log.error(e.getMessage(), e);
+
+      // TODO Lanzar comunicado error algoritmo
       throw e;
     } finally {
       convocatoriaBaremacionLogService.save(convocatoriaBaremacionId, "Fin");
-      convocatoriaBaremacionService.updateFechaInicioEjecucion(convocatoriaBaremacionId, null);
+      convocatoriaBaremacionService.closeFechaBaremacion(convocatoriaBaremacionId);
+
+      // TODO Lanzar comunicado algoritmo completado
     }
-    log.debug("baremacion(convocatoriaBaremacion) - end");
+    log.debug("baremacion({}) - end", convocatoriaBaremacionId);
+  }
+
+  public void checkInitBaremacion(Long convocatoriaBaremacionId) {
+    log.debug("checkInitBaremacion(convocatoriaBaremacionId) - start");
+
+    ConvocatoriaBaremacion convocatoriaBaremacion = convocatoriaBaremacionRepository.findById(convocatoriaBaremacionId)
+        .orElseThrow(() -> new ConvocatoriaBaremacionNotFoundException(convocatoriaBaremacionId));
+
+    Integer currentYear = Instant.now().atZone(sgiConfigProperties.getTimeZone().toZoneId()).getYear();
+    Assert.isTrue(null != convocatoriaBaremacion.getActivo() &&
+        convocatoriaBaremacion.getActivo().equals(Boolean.TRUE) &&
+        convocatoriaBaremacion.getAnio().compareTo(currentYear) == 0 &&
+        (convocatoriaBaremacion.getFechaInicioEjecucion() == null ||
+            (convocatoriaBaremacion.getFechaInicioEjecucion() != null
+                && convocatoriaBaremacion.getFechaFinEjecucion() != null)),
+        // Defer message resolution untill is needed
+        () -> ProblemMessage.builder().key("org.crue.hercules.sgi.prc.exceptions.BaremationCallException.message")
+            .build());
+    log.debug("checkInitBaremacion(convocatoriaBaremacionId) - end");
   }
 
   private void evaluatePuntosConvocatoriaBaremacion(Long convocatoriaBaremacionId) {
@@ -271,7 +263,7 @@ public class BaremacionService {
 
           Specification<PuntuacionItemInvestigador> specs = PuntuacionItemInvestigadorSpecifications
               .byPersonaRef(grupoEquipo.getPersonaRef())
-              .and(PuntuacionItemInvestigadorSpecifications.byConvocatoriaBaremacionAnio(anio))
+              .and(PuntuacionItemInvestigadorSpecifications.byAnio(anio))
               .and(PuntuacionItemInvestigadorSpecifications.byConvocatoriaBaremacionId(convocatoriaBaremacionId));
 
           puntuacionItemInvestigadorRepository.findAll(specs).stream().forEach(puntuacionItemInvestigador -> {

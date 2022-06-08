@@ -1,7 +1,12 @@
-.checkbox-inline{
-  padding-bottom:15px;
-  display: inline-block;
-  .checkbox{
-    margin: 10px;
+:host {
+  sgi-dialog-content {
+    min-width: 30vw;
+  }
+  .checkbox-inline{
+    padding-bottom:15px;
+    display: inline-block;
+    .checkbox{
+      margin: 10px;
+    }
   }
 }

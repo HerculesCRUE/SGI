@@ -2,13 +2,10 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { FormControl, FormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
-import { BaseModalComponent } from '@core/component/base-modal.component';
+import { DialogFormComponent } from '@core/component/dialog-form.component';
 import { TipoSeguimiento, TIPO_SEGUIMIENTO_MAP } from '@core/enums/tipo-seguimiento';
 import { MSG_PARAMS } from '@core/i18n';
 import { IConvocatoriaPeriodoSeguimientoCientifico } from '@core/models/csp/convocatoria-periodo-seguimiento-cientifico';
-import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-properties';
-import { SnackBarService } from '@core/services/snack-bar.service';
-import { FormGroupUtil } from '@core/utils/form-group-util';
 import { StatusWrapper } from '@core/utils/status-wrapper';
 import { DateValidator } from '@core/validators/date-validator';
 import { NumberValidator } from '@core/validators/number-validator';
@@ -36,12 +33,8 @@ const TITLE_NEW_ENTITY = marker('title.new.entity');
   templateUrl: './convocatoria-seguimiento-cientifico-modal.component.html',
   styleUrls: ['./convocatoria-seguimiento-cientifico-modal.component.scss']
 })
-export class ConvocatoriaSeguimientoCientificoModalComponent
-  extends BaseModalComponent<IConvocatoriaPeriodoSeguimientoCientifico, ConvocatoriaSeguimientoCientificoModalComponent> implements OnInit {
+export class ConvocatoriaSeguimientoCientificoModalComponent extends DialogFormComponent<IConvocatoriaPeriodoSeguimientoCientifico> implements OnInit {
 
-  fxLayoutProperties: FxLayoutProperties;
-
-  FormGroupUtil = FormGroupUtil;
   textSaveOrUpdate: string;
   title: string;
 
@@ -56,18 +49,11 @@ export class ConvocatoriaSeguimientoCientificoModalComponent
   }
 
   constructor(
-    protected snackBarService: SnackBarService,
     @Inject(MAT_DIALOG_DATA) public data: IConvocatoriaSeguimientoCientificoModalData,
-    public matDialogRef: MatDialogRef<ConvocatoriaSeguimientoCientificoModalComponent>,
+    matDialogRef: MatDialogRef<ConvocatoriaSeguimientoCientificoModalComponent>,
     private readonly translate: TranslateService
   ) {
-    super(snackBarService, matDialogRef, data.convocatoriaSeguimientoCientifico);
-
-    this.fxLayoutProperties = new FxLayoutProperties();
-    this.fxLayoutProperties.gap = '20px';
-    this.fxLayoutProperties.layout = 'row wrap';
-    this.fxLayoutProperties.xs = 'column';
-
+    super(matDialogRef, !!data?.convocatoriaSeguimientoCientifico?.mesInicial);
   }
 
   ngOnInit(): void {
@@ -122,7 +108,7 @@ export class ConvocatoriaSeguimientoCientificoModalComponent
     }
   }
 
-  protected getFormGroup(): FormGroup {
+  protected buildFormGroup(): FormGroup {
     const rangosPeriodosExistentes = this.data.convocatoriaSeguimientoCientificoList
       .filter(seguimientoCientifico => seguimientoCientifico.value?.mesInicial !== this.data.convocatoriaSeguimientoCientifico?.mesInicial)
       .map(seguimientoCientifico => {
@@ -222,7 +208,7 @@ export class ConvocatoriaSeguimientoCientificoModalComponent
     return formGroup;
   }
 
-  protected getDatosForm(): IConvocatoriaPeriodoSeguimientoCientifico {
+  protected getValue(): IConvocatoriaPeriodoSeguimientoCientifico {
     const convocatoriaSeguimientoCientifico = this.data.convocatoriaSeguimientoCientifico;
     convocatoriaSeguimientoCientifico.numPeriodo = this.formGroup.get('numPeriodo').value;
     convocatoriaSeguimientoCientifico.mesInicial = this.formGroup.get('desdeMes').value;

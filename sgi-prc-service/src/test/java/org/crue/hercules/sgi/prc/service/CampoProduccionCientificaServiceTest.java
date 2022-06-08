@@ -34,7 +34,7 @@ import org.springframework.data.jpa.domain.Specification;
  * CampoProduccionCientificaServiceTest
  */
 @Import({ CampoProduccionCientificaService.class, ApplicationContextSupport.class })
-public class CampoProduccionCientificaServiceTest extends BaseServiceTest {
+class CampoProduccionCientificaServiceTest extends BaseServiceTest {
 
   private static final CodigoCVN DEFAULT_DATA_CODIGO_CVN = CodigoCVN.COLECTIVA;
   private static final Long DEFAULT_DATA_PRODUCCION_CIENTIFICA_ID = 1L;
@@ -62,7 +62,7 @@ public class CampoProduccionCientificaServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void findAll_ReturnsPage() {
+  void findAll_ReturnsPage() {
     // given: Una lista con 37 CampoProduccionCientifica
     List<CampoProduccionCientifica> camposProduccionesCientificas = new ArrayList<>();
     for (long i = 1; i <= 37; i++) {
@@ -106,7 +106,7 @@ public class CampoProduccionCientificaServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void findById_ReturnsCampoProduccionCientifica() {
+  void findById_ReturnsCampoProduccionCientifica() {
     // given: CampoProduccionCientifica con el id buscado
     Long idBuscado = 1L;
     BDDMockito.given(repository.findById(idBuscado))
@@ -125,7 +125,7 @@ public class CampoProduccionCientificaServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void findById_WithIdNotExist_ThrowsCampoProduccionCientificaNotFoundException() {
+  void findById_WithIdNotExist_ThrowsCampoProduccionCientificaNotFoundException() {
     // given: Ningun CampoProduccionCientifica con el id buscado
     Long idBuscado = 33L;
     BDDMockito.given(repository.findById(ArgumentMatchers.<Long>any())).willReturn(Optional.empty());
@@ -137,7 +137,7 @@ public class CampoProduccionCientificaServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void findAllByProduccionCientificaId_ReturnsList() {
+  void findAllByProduccionCientificaId_ReturnsList() {
     // given: Una lista con 7 CampoProduccionCientifica y un produccionCientificaId
     Long produccionCientificaId = 1L;
     List<CampoProduccionCientifica> camposProduccionesCientificas = new ArrayList<>();
@@ -153,9 +153,10 @@ public class CampoProduccionCientificaServiceTest extends BaseServiceTest {
     BDDMockito.given(
         repository.findAllByProduccionCientificaId(ArgumentMatchers.<Long>any()))
         .willAnswer((InvocationOnMock invocation) -> {
-          Long autorIdToFind = invocation.getArgument(0);
+          Long produccionCientificaIdToFind = invocation.getArgument(0);
           return camposProduccionesCientificas.stream().filter(
-              campoProduccionCientifica -> autorIdToFind.equals(campoProduccionCientifica.getProduccionCientificaId()))
+              campoProduccionCientifica -> produccionCientificaIdToFind
+                  .equals(campoProduccionCientifica.getProduccionCientificaId()))
               .collect(Collectors.toList());
         });
     List<CampoProduccionCientifica> campoProduccionCientificasBuscados = service
@@ -166,6 +167,58 @@ public class CampoProduccionCientificaServiceTest extends BaseServiceTest {
       Assertions.assertThat(autoGrupoBuscado.getProduccionCientificaId()).as("getProduccionCientificaId")
           .isEqualTo(produccionCientificaId);
     });
+  }
+
+  @Test
+  void findAllByProduccionCientificaId_ReturnsPage() {
+    // given: Una lista con 37 CampoProduccionCientifica que pertenecen a una
+    // ProduccionCientifica
+    Long produccionCientificaId = 1L;
+    List<CampoProduccionCientifica> camposProduccionesCientificas = new ArrayList<>();
+    for (long i = 1; i <= 37; i++) {
+      camposProduccionesCientificas.add(generarMockCampoProduccionCientifica(i, 1L));
+    }
+
+    BDDMockito.given(
+        repository.findAll(ArgumentMatchers.<Specification<CampoProduccionCientifica>>any(),
+            ArgumentMatchers.<Pageable>any()))
+        .willAnswer(new Answer<Page<CampoProduccionCientifica>>() {
+          @Override
+          public Page<CampoProduccionCientifica> answer(InvocationOnMock invocation) throws Throwable {
+            Specification<CampoProduccionCientifica> spec = invocation.getArgument(0);
+            Pageable pageable = invocation.getArgument(1, Pageable.class);
+            int size = pageable.getPageSize();
+            int index = pageable.getPageNumber();
+            int fromIndex = size * index;
+            int toIndex = fromIndex + size;
+            List<CampoProduccionCientifica> camposFiltered = camposProduccionesCientificas.stream().filter(
+                campoProduccionCientifica -> produccionCientificaId
+                    .equals(campoProduccionCientifica.getProduccionCientificaId()))
+                .collect(Collectors.toList());
+            toIndex = toIndex > camposFiltered.size() ? camposFiltered.size() : toIndex;
+            List<CampoProduccionCientifica> content = camposFiltered.subList(fromIndex, toIndex);
+            Page<CampoProduccionCientifica> page = new PageImpl<>(content, pageable,
+                camposFiltered.size());
+            return page;
+          }
+        });
+
+    // when: Get page=3 with pagesize=10
+    Pageable paging = PageRequest.of(3, 10);
+    Page<CampoProduccionCientifica> page = service.findAllByProduccionCientificaId(produccionCientificaId, null,
+        paging);
+
+    // then: Devuelve la pagina 3 con los CampoProduccionCientifica del 31 al 37
+    Assertions.assertThat(page.getContent().size()).as("getContent().size()").isEqualTo(7);
+    Assertions.assertThat(page.getNumber()).as("getNumber()").isEqualTo(3);
+    Assertions.assertThat(page.getSize()).as("getSize()").isEqualTo(10);
+    Assertions.assertThat(page.getTotalElements()).as("getTotalElements()").isEqualTo(37);
+    for (int i = 31; i <= 37; i++) {
+      CampoProduccionCientifica campoProduccionCientifica = page.getContent()
+          .get(i - (page.getSize() * page.getNumber()) - 1);
+      Assertions.assertThat(campoProduccionCientifica.getProduccionCientificaId()).as("getProduccionCientificaId")
+          .isEqualTo(produccionCientificaId);
+    }
   }
 
   private CampoProduccionCientifica generarMockCampoProduccionCientifica(Long id, Long produccionCientificaId) {

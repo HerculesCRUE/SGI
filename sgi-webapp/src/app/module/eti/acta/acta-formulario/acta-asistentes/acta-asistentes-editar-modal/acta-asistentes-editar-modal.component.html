@@ -1,43 +1,37 @@
-<div class="sgi-dialog-header" fxLayout="row" fxLayoutGap="20px">
-  <span fxFlexAlign="center" mat-mat-dialog-title role="heading" aria-level="3" fxFlex>{{title | translate}}</span>
-  <button fxFlex="nogrow" mat-icon-button mat-dialog-close>
-    <mat-icon class="close-icon">close</mat-icon>
-  </button>
-</div>
-<mat-dialog-content>
+<sgi-dialog-header [title]="title"></sgi-dialog-header>
+<sgi-dialog-content>
   <form [formGroup]="formGroup">
     <!-- Asistente -->
-    <div [fxLayout]="fxLayoutProperties.layout">
+    <div fxLayout="row">
       <mat-form-field>
         <mat-label>{{'eti.acta.asistente' | translate:MSG_PARAMS.CARDINALIRY.SINGULAR}}</mat-label>
         <input matInput formControlName="asistente" type="text" />
       </mat-form-field>
     </div>
     <!-- Asistencia -->
-    <div [fxLayout]="fxLayoutProperties.layout">
+    <div fxLayout="column">
       <mat-label>{{'eti.acta.asistente.asistencia' | translate}}</mat-label>
       <mat-radio-group class="radio-inline" name="opciones" formControlName="asistencia">
-        <mat-radio-button (change)="activarMotivo($event.value)" color="primary" *ngFor="let estado of estados"
-          name="opciones" [value]="estado.value">
+        <mat-radio-button color="primary" *ngFor="let estado of estados" name="opciones" [value]="estado.value">
           {{estado.label}}
         </mat-radio-button>
       </mat-radio-group>
     </div>
     <!-- Motivo -->
-    <div [fxLayout]="fxLayoutProperties.layout">
-      <mat-form-field fxFill [ngClass]="ocultarMotivo ? 'ocultarCampo' : ''">
+    <div fxLayout="row" *ngIf="!ocultarMotivo">
+      <mat-form-field>
         <mat-label>{{'eti.acta.asistente.motivo' | translate}}</mat-label>
         <textarea matInput formControlName="motivo" type="text"
-          placeholder="{{'eti.acta.asistente.motivo' | translate}}" required></textarea>
-        <mat-error *ngIf="FormGroupUtil.checkError(formGroup, 'motivo') && formGroup.get('motivo').errors.required">
+          placeholder="{{'eti.acta.asistente.motivo' | translate}}" [required]="!ocultarMotivo"></textarea>
+        <mat-error *ngIf="formGroup.get('motivo').errors?.required">
           {{'error.required.entity' | translate:msgParamMotivoEntity}}
         </mat-error>
       </mat-form-field>
     </div>
   </form>
-</mat-dialog-content>
+</sgi-dialog-content>
 <mat-dialog-actions>
-  <button color="accent" (click)="saveOrUpdate()" mat-raised-button type="submit">
+  <button color="accent" (click)="doAction()" [disabled]="this.actionDisabled" mat-raised-button type="submit">
     <mat-icon class="save-icon">save</mat-icon>{{'btn.ok' | translate}}
   </button>
   <button class="link-cancelar" mat-button type="button" mat-dialog-close>{{'btn.cancel' |

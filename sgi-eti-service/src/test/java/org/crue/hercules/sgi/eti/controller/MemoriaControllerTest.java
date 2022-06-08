@@ -1054,7 +1054,7 @@ public class MemoriaControllerTest extends BaseControllerTest {
     // given: One hundred Memoria
     List<MemoriaPeticionEvaluacion> memoriasPeticionEvaluacion = new ArrayList<>();
     for (int i = 1; i <= 100; i++) {
-      memoriasPeticionEvaluacion.add(generarMockMemoriaPeticionEvaluacion(Long.valueOf(i),
+      memoriasPeticionEvaluacion.add(generarMockMemoriaPeticionEvaluacion(Long.valueOf(i), "54333933",
           "numRef-55" + String.valueOf(i), "Memoria" + String.format("%03d", i)));
     }
 
@@ -1081,7 +1081,7 @@ public class MemoriaControllerTest extends BaseControllerTest {
     List<MemoriaPeticionEvaluacion> memoriasPeticionEvaluacion = new ArrayList<>();
     for (int i = 1; i <= 100; i++) {
       memoriasPeticionEvaluacion.add(generarMockMemoriaPeticionEvaluacion(Long.valueOf(i),
-          "numRef-55" + String.valueOf(i), "Memoria" + String.format("%03d", i)));
+          "45532234", "numRef-55" + String.valueOf(i), "Memoria" + String.format("%03d", i)));
     }
     BDDMockito
         .given(memoriaService.findAllMemoriasWithPersonaRefCreadorPeticionesEvaluacionOrResponsableMemoria(
@@ -1245,9 +1245,11 @@ public class MemoriaControllerTest extends BaseControllerTest {
    * @return el objeto tipo Memoria
    */
 
-  private MemoriaPeticionEvaluacion generarMockMemoriaPeticionEvaluacion(Long id, String numReferencia, String titulo) {
+  private MemoriaPeticionEvaluacion generarMockMemoriaPeticionEvaluacion(Long id, String responsableRef,
+      String numReferencia, String titulo) {
 
-    return new MemoriaPeticionEvaluacion(id, numReferencia, titulo, generarMockComite(id, "comite" + id, true),
+    return new MemoriaPeticionEvaluacion(id, responsableRef, numReferencia, titulo,
+        generarMockComite(id, "comite" + id, true),
         generarMockTipoEstadoMemoria(1L, "En elaboración", Boolean.TRUE), false, null,
         Instant.parse("2020-05-15T00:00:00Z"), Instant.now(), false, true, "1111");
   }

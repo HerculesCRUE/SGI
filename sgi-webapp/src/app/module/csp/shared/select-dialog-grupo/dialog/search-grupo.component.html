@@ -1,12 +1,5 @@
-<div class="sgi-dialog-header" fxLayout="row" fxLayoutGap="20px">
-  <span fxFlexAlign="center" mat-mat-dialog-title role="heading" aria-level="3" fxFlex>
-    {{'csp.grupo' | translate:MSG_PARAMS.CARDINALIRY.PLURAL}}
-  </span>
-  <button fxFlex="nogrow" mat-icon-button mat-dialog-close>
-    <mat-icon class="close-icon">close</mat-icon>
-  </button>
-</div>
-<mat-dialog-content fxLayout="column" fxLayoutGap="20px">
+<sgi-dialog-header title="{{'csp.grupo' | translate:MSG_PARAMS.CARDINALIRY.PLURAL}}"></sgi-dialog-header>
+<sgi-dialog-content>
   <form [formGroup]="formGroup" fxLayout="column">
     <div fxFlex fxLayout="row" fxLayoutGap="10px">
       <!-- Nombre -->
@@ -14,13 +7,11 @@
         <mat-label>{{'csp.grupo.nombre' | translate}}</mat-label>
         <input matInput type="text" placeholder="{{'csp.grupo.nombre' | translate}}" formControlName="nombre">
       </mat-form-field>
-
       <!-- Codigo -->
       <mat-form-field fxFlex="1 1.5 auto">
         <mat-label>{{'csp.grupo.codigo' | translate}}</mat-label>
         <input matInput type="text" placeholder="{{'csp.grupo.codigo' | translate}}" formControlName="codigo">
       </mat-form-field>
-
       <!-- Codigo identificacion SGE -->
       <mat-form-field fxFlex="1 1.5 auto">
         <mat-label>{{'csp.grupo.codigo-sge' | translate}}</mat-label>
@@ -28,7 +19,6 @@
           formControlName="proyectoSgeRef">
       </mat-form-field>
     </div>
-
     <div fxFlex fxLayout="row" fxLayoutGap="10px">
       <!-- Fecha inicio desde -->
       <mat-form-field fxFlex="1 1.5 auto">
@@ -37,7 +27,6 @@
         <mat-datepicker-toggle matSuffix [for]="pickerInicioDesde"></mat-datepicker-toggle>
         <mat-datepicker #pickerInicioDesde></mat-datepicker>
       </mat-form-field>
-
       <!-- Fecha inicio hasta -->
       <mat-form-field fxFlex="1 1.5 auto">
         <mat-label>{{'label.fecha-inicio' | translate}} {{'label.hasta' | translate}}</mat-label>
@@ -45,7 +34,6 @@
         <mat-datepicker-toggle matSuffix [for]="pickerInicioHasta"></mat-datepicker-toggle>
         <mat-datepicker #pickerInicioHasta></mat-datepicker>
       </mat-form-field>
-
       <!-- Miembro equipo -->
       <mat-form-field>
         <mat-label>{{'csp.grupo.miembro-equipo' | translate}}</mat-label>
@@ -53,10 +41,8 @@
           [colectivos]="colectivosBusqueda"></sgi-select-persona>
       </mat-form-field>
     </div>
-
   </form>
-
-  <div fxFlex fxLayoutAlign="start">
+  <div fxLayout="row" class="separacion" fxLayoutAlign="start">
     <button color="primary" mat-raised-button (click)="search(true)">
       {{'btn.search' | translate}}
     </button>
@@ -64,8 +50,7 @@
       {{'btn.clean'| translate}}
     </button>
   </div>
-
-  <div fxFlex class="mat-elevation-z3">
+  <div fxLayout="column" class="mat-elevation-z3">
     <table mat-table [dataSource]="grupos$ | async" matSort matSortActive="id" matSortDirection="desc"
       matSortDisableClear>
       <!-- Nombre Column -->
@@ -77,7 +62,6 @@
           {{element.nombre}}
         </td>
       </ng-container>
-
       <!-- Investigador principal Column -->
       <ng-container matColumnDef="investigadorPrincipal">
         <th mat-header-cell *matHeaderCellDef>
@@ -88,7 +72,6 @@
           {{element.investigadoresPrincipales | personaNombreCompleto }}
         </td>
       </ng-container>
-
       <!-- Codigo Column -->
       <ng-container matColumnDef="codigo">
         <th mat-header-cell *matHeaderCellDef>
@@ -98,7 +81,6 @@
           {{element.codigo}}
         </td>
       </ng-container>
-
       <!-- Fecha Inicio Column -->
       <ng-container matColumnDef="fechaInicio">
         <th mat-header-cell *matHeaderCellDef>
@@ -108,7 +90,6 @@
           {{element.fechaInicio | luxon:'shortDate'}}
         </td>
       </ng-container>
-
       <!-- Fecha Fin Column -->
       <ng-container matColumnDef="fechaFin">
         <th mat-header-cell *matHeaderCellDef>
@@ -118,7 +99,6 @@
           {{element.fechaFin | luxon:'shortDate'}}
         </td>
       </ng-container>
-
       <!-- Tipo Column -->
       <ng-container matColumnDef="tipo">
         <th mat-header-cell *matHeaderCellDef>
@@ -128,7 +108,6 @@
           {{TIPO_MAP.get(element.tipo) | translate}}
         </td>
       </ng-container>
-
       <!-- Acciones Column -->
       <ng-container matColumnDef="acciones">
         <th mat-header-cell *matHeaderCellDef>
@@ -141,14 +120,13 @@
           </button>
         </td>
       </ng-container>
-
       <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
       <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
     </table>
     <mat-paginator [pageSizeOptions]="elementosPagina" [length]="totalElementos" showFirstLastButtons>
     </mat-paginator>
   </div>
-</mat-dialog-content>
+</sgi-dialog-content>
 <mat-dialog-actions>
   <button class="link-cancelar" mat-button type="button" mat-dialog-close>
     {{'btn.cancel' | translate}}

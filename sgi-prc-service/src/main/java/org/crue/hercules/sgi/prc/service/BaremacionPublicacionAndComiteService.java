@@ -58,6 +58,7 @@ import lombok.extern.slf4j.Slf4j;
 @Transactional(readOnly = true)
 @Validated
 public abstract class BaremacionPublicacionAndComiteService extends BaremacionCommonService {
+  private static final String NUMBER_100_00 = "100.00";
   private static final String POSICION_REVISTA_10_00 = "10.00";
   private static final String POSICION_REVISTA_25_00 = "25.00";
   private static final String POSICION_REVISTA_50_00 = "50.00";
@@ -120,7 +121,7 @@ public abstract class BaremacionPublicacionAndComiteService extends BaremacionCo
     List<Autor> autoresBaremables = findAutoresBaremables(produccionCientificaId);
 
     if (!autoresBaremables.isEmpty()) {
-      Integer numAutores = autoresBaremables.size();
+      Integer numAutores = TipoModulador.AREAS.equals(tipoModulador) ? 1 : autoresBaremables.size();
 
       List<String> areas = getAreaByAutorBaremable(baremacionInput, autoresBaremables);
       if (!CollectionUtils.isEmpty(areas)) {
@@ -456,6 +457,7 @@ public abstract class BaremacionPublicacionAndComiteService extends BaremacionCo
     if (!Objects.isNull(indiceImpacto.getPosicionPublicacion())
         && !Objects.isNull(indiceImpacto.getNumeroRevistas())) {
       return indiceImpacto.getPosicionPublicacion().divide(indiceImpacto.getNumeroRevistas(), 2, RoundingMode.HALF_UP)
+          .multiply(new BigDecimal(NUMBER_100_00))
           .compareTo(new BigDecimal(POSICION_REVISTA_25_00)) <= 0;
     }
     return false;
@@ -465,6 +467,7 @@ public abstract class BaremacionPublicacionAndComiteService extends BaremacionCo
     if (!Objects.isNull(indiceImpacto.getPosicionPublicacion())
         && !Objects.isNull(indiceImpacto.getNumeroRevistas())) {
       return indiceImpacto.getPosicionPublicacion().divide(indiceImpacto.getNumeroRevistas(), 2, RoundingMode.HALF_UP)
+          .multiply(new BigDecimal(NUMBER_100_00))
           .compareTo(new BigDecimal(POSICION_REVISTA_25_00)) > 0;
     }
     return false;
@@ -474,7 +477,8 @@ public abstract class BaremacionPublicacionAndComiteService extends BaremacionCo
     if (!Objects.isNull(indiceImpacto.getPosicionPublicacion())
         && !Objects.isNull(indiceImpacto.getNumeroRevistas())) {
       BigDecimal posicionRevista = indiceImpacto.getPosicionPublicacion().divide(indiceImpacto.getNumeroRevistas(), 2,
-          RoundingMode.HALF_UP);
+          RoundingMode.HALF_UP)
+          .multiply(new BigDecimal(NUMBER_100_00));
       return posicionRevista.compareTo(new BigDecimal(POSICION_REVISTA_25_00)) > 0 && posicionRevista
           .compareTo(new BigDecimal(POSICION_REVISTA_50_00)) <= 0;
     }
@@ -485,7 +489,8 @@ public abstract class BaremacionPublicacionAndComiteService extends BaremacionCo
     if (!Objects.isNull(indiceImpacto.getPosicionPublicacion())
         && !Objects.isNull(indiceImpacto.getNumeroRevistas())) {
       BigDecimal posicionRevista = indiceImpacto.getPosicionPublicacion().divide(indiceImpacto.getNumeroRevistas(), 2,
-          RoundingMode.HALF_UP);
+          RoundingMode.HALF_UP)
+          .multiply(new BigDecimal(NUMBER_100_00));
       return posicionRevista.compareTo(new BigDecimal(POSICION_REVISTA_50_00)) > 0 && posicionRevista
           .compareTo(new BigDecimal(POSICION_REVISTA_75_00)) <= 0;
     }
@@ -496,6 +501,7 @@ public abstract class BaremacionPublicacionAndComiteService extends BaremacionCo
     if (!Objects.isNull(indiceImpacto.getPosicionPublicacion())
         && !Objects.isNull(indiceImpacto.getNumeroRevistas())) {
       return indiceImpacto.getPosicionPublicacion().divide(indiceImpacto.getNumeroRevistas(), 2, RoundingMode.HALF_UP)
+          .multiply(new BigDecimal(NUMBER_100_00))
           .compareTo(new BigDecimal(POSICION_REVISTA_75_00)) > 0;
     }
     return false;

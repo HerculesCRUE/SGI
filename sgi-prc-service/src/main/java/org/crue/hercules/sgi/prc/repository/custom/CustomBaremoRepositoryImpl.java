@@ -7,11 +7,13 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaDelete;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Join;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
+import org.crue.hercules.sgi.framework.data.jpa.domain.Activable_;
 import org.crue.hercules.sgi.prc.enums.EpigrafeCVN;
 import org.crue.hercules.sgi.prc.model.Baremo;
 import org.crue.hercules.sgi.prc.model.Baremo_;
@@ -55,6 +57,8 @@ public class CustomBaremoRepositoryImpl implements CustomBaremoRepository {
 
     listPredicates.add(cb.equal(root.get(Baremo_.convocatoriaBaremacionId), (convocatoriaBaremacionId)));
 
+    listPredicates.add(cb.isTrue(joinConfiguracionBaremo.get(Activable_.activo)));
+
     listPredicates.add(cb.and(joinConfiguracionBaremo.get(ConfiguracionBaremo_.tipoFuente)
         .in(Arrays.asList(ConfiguracionBaremo.TipoFuente.CVN, ConfiguracionBaremo.TipoFuente.CVN_OTRO_SISTEMA))));
 
@@ -70,4 +74,24 @@ public class CustomBaremoRepositoryImpl implements CustomBaremoRepository {
     return result;
   }
 
+  @Override
+  public int deleteInBulkByConvocatoriaBaremacionId(long convocatoriaBaremacionId) {
+    log.debug("deleteInBulkByConvocatoriaBaremacionId(long convocatoriaBaremacionId) - start");
+
+    // Crete query
+    CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+    CriteriaDelete<Baremo> query = cb.createCriteriaDelete(Baremo.class);
+
+    // Define FROM Baremo clause
+    Root<Baremo> root = query.from(Baremo.class);
+
+    // Set WHERE restrictions
+    query.where(cb.equal(root.get(Baremo_.convocatoriaBaremacionId), convocatoriaBaremacionId));
+
+    // Execute query
+    int returnValue = entityManager.createQuery(query).executeUpdate();
+
+    log.debug("deleteInBulkByConvocatoriaBaremacionId(long convocatoriaBaremacionId) - end");
+    return returnValue;
+  }
 }

@@ -103,7 +103,6 @@ export class ProyectoEntidadesConvocantesComponent extends FragmentComponent imp
       readonly: this.actionService.readonly
     };
     const config = {
-      panelClass: 'sgi-dialog-container',
       data
     };
     const dialogRef = this.matDialog.open(ProyectoEntidadConvocanteModalComponent, config);

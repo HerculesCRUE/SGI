@@ -10,4 +10,6 @@ export interface IProyectoAnualidadResumen {
   totalIngresos: number;
   presupuestar: boolean;
   enviadoSge: boolean;
+  hasGastosIngresos: boolean;
+  hasPeriodosAmortizacion: boolean;
 }

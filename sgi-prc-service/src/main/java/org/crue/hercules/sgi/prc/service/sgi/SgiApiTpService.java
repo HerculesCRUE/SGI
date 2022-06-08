@@ -39,7 +39,7 @@ public class SgiApiTpService extends SgiApiBaseService {
    */
   public SgiApiInstantTaskOutput createInstantTask(ServiceType type, HttpMethod method, String url, String description,
       Instant instant) {
-    log.debug("createInstantTask({}, {}, {}, {}, {}) - start", type, method, url, description);
+    log.debug("createInstantTask({}, {}, {}, {}, {}) - start", type, method, url, description, instant);
 
     Assert.notNull(type, "ServiceType is required");
     Assert.notNull(method, "HttpMethod is required");
@@ -55,12 +55,11 @@ public class SgiApiTpService extends SgiApiBaseService {
     SgiApiInstantTaskInput taskRequest = SgiApiInstantTaskInput.builder().serviceType(type).httpMethod(method)
         .relativeUrl(url).description(description).instant(instant).build();
 
-    final SgiApiInstantTaskOutput response = super.<SgiApiInstantTaskInput, SgiApiInstantTaskOutput>callEndpointWithCurrentUserAuthorization(
-        mergedURL,
-        httpMethod, taskRequest, new ParameterizedTypeReference<SgiApiInstantTaskOutput>() {
+    final SgiApiInstantTaskOutput response = super.<SgiApiInstantTaskInput, SgiApiInstantTaskOutput>callEndpoint(
+        mergedURL, httpMethod, taskRequest, new ParameterizedTypeReference<SgiApiInstantTaskOutput>() {
         }).getBody();
 
-    log.debug("createInstantTask({}, {}, {}, {}, {}) - end", type, method, url, description);
+    log.debug("createInstantTask({}, {}, {}, {}, {}) - end", type, method, url, description, instant);
     return response;
   }
 

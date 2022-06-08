@@ -38,7 +38,6 @@ public class CustomProyectoPaqueteTrabajoRepositoryImpl implements CustomProyect
    */
   public Optional<Boolean> getPermitePaquetesTrabajo(Long id) {
     log.debug("getPermitePaquetesTrabajo(Long id) - start");
-    Optional<Boolean> returnValue = Optional.empty();
 
     CriteriaBuilder cb = entityManager.getCriteriaBuilder();
     CriteriaQuery<Boolean> cq = cb.createQuery(Boolean.class);
@@ -47,10 +46,7 @@ public class CustomProyectoPaqueteTrabajoRepositoryImpl implements CustomProyect
     Predicate finalPredicate = cb.equal(root.get(ProyectoPaqueteTrabajo_.id), id);
     cq.select(root.get(ProyectoPaqueteTrabajo_.proyecto).get(Proyecto_.permitePaquetesTrabajo)).where(finalPredicate);
 
-    try {
-      returnValue = entityManager.createQuery(cq).getResultList().stream().findFirst();
-    } catch (NullPointerException e) {
-    }
+    Optional<Boolean> returnValue = entityManager.createQuery(cq).getResultList().stream().findFirst();
 
     log.debug("getPermitePaquetesTrabajo(Long id) - stop");
     return returnValue;

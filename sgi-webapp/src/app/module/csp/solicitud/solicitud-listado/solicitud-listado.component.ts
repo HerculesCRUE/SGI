@@ -17,7 +17,6 @@ import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-pro
 import { ROUTE_NAMES } from '@core/route.names';
 import { ConvocatoriaService } from '@core/services/csp/convocatoria.service';
 import { ProgramaService } from '@core/services/csp/programa.service';
-import { ProyectoService } from '@core/services/csp/proyecto.service';
 import { SolicitudService } from '@core/services/csp/solicitud.service';
 import { DialogService } from '@core/services/dialog.service';
 import { PersonaService } from '@core/services/sgp/persona.service';
@@ -44,9 +43,7 @@ const MSG_REACTIVE = marker('msg.csp.reactivate');
 const MSG_SUCCESS_REACTIVE = marker('msg.reactivate.entity.success');
 const MSG_ERROR_REACTIVE = marker('error.reactivate.entity');
 const MSG_SUCCESS_CREAR_PROYECTO = marker('msg.csp.solicitud.crear.proyecto');
-const MSG_ERROR_CREAR_PROYECTO = marker('error.csp.solicitud.crear.proyecto');
 const MSG_SUCCESS_CREAR_GRUPO = marker('msg.csp.solicitud.crear.grupo');
-const MSG_ERROR_CREAR_GRUPO = marker('error.csp.solicitud.crear.grupo');
 const SOLICITUD_KEY = marker('csp.solicitud');
 const GRUPO_KEY = marker('csp.grupo');
 
@@ -115,7 +112,6 @@ export class SolicitudListadoComponent extends AbstractTablePaginationComponent<
     private solicitudService: SolicitudService,
     private personaService: PersonaService,
     private programaService: ProgramaService,
-    private proyectoService: ProyectoService,
     private matDialog: MatDialog,
     private readonly translate: TranslateService,
     private convocatoriaService: ConvocatoriaService,
@@ -379,13 +375,15 @@ export class SolicitudListadoComponent extends AbstractTablePaginationComponent<
 
   protected createFilter(): SgiRestFilter {
     const controls = this.formGroup.controls;
-    const filter = new RSQLSgiRestFilter('convocatoria.id', SgiRestFilterOperator.EQUALS, controls.convocatoria.value?.id?.toString())
+    const rsqlFilter = new RSQLSgiRestFilter('convocatoria.id', SgiRestFilterOperator.EQUALS, controls.convocatoria.value?.id?.toString())
       .and('estado.estado', SgiRestFilterOperator.EQUALS, controls.estadoSolicitud.value)
       .and('titulo', SgiRestFilterOperator.LIKE_ICASE, controls.tituloSolicitud.value);
     if (this.busquedaAvanzada) {
       if (controls.plazoAbierto.value) {
-        filter.and('convocatoria.configuracionSolicitud.fasePresentacionSolicitudes.fechaInicio',
-          SgiRestFilterOperator.GREATHER_OR_EQUAL, LuxonUtils.toBackend(controls.fechaInicioDesde.value))
+        rsqlFilter
+          .and('abiertoPlazoPresentacionSolicitud', SgiRestFilterOperator.EQUALS, controls.plazoAbierto.value.toString())
+          .and('convocatoria.configuracionSolicitud.fasePresentacionSolicitudes.fechaInicio',
+            SgiRestFilterOperator.GREATHER_OR_EQUAL, LuxonUtils.toBackend(controls.fechaInicioDesde.value))
           .and('convocatoria.configuracionSolicitud.fasePresentacionSolicitudes.fechaInicio',
             SgiRestFilterOperator.LOWER_OR_EQUAL, LuxonUtils.toBackend(controls.fechaInicioHasta.value))
           .and('convocatoria.configuracionSolicitud.fasePresentacionSolicitudes.fechaFin',
@@ -393,7 +391,7 @@ export class SolicitudListadoComponent extends AbstractTablePaginationComponent<
           .and('convocatoria.configuracionSolicitud.fasePresentacionSolicitudes.fechaFin',
             SgiRestFilterOperator.LOWER_OR_EQUAL, LuxonUtils.toBackend(controls.fechaFinHasta.value));
       }
-      filter
+      rsqlFilter
         .and('solicitanteRef', SgiRestFilterOperator.EQUALS, controls.solicitante.value?.id)
         .and('activo', SgiRestFilterOperator.EQUALS, controls.activo.value)
         .and('convocatoria.fechaPublicacion', SgiRestFilterOperator.GREATHER_OR_EQUAL,
@@ -401,19 +399,18 @@ export class SolicitudListadoComponent extends AbstractTablePaginationComponent<
         .and('convocatoria.fechaPublicacion', SgiRestFilterOperator.LOWER_OR_EQUAL,
           LuxonUtils.toBackend(controls.fechaPublicacionConvocatoriaHasta.value))
         .and('convocatoria.entidadesConvocantes.entidadRef', SgiRestFilterOperator.EQUALS, controls.entidadConvocante.value?.id)
-        .and('convocatoria.entidadesConvocantes.programa.id',
-          SgiRestFilterOperator.EQUALS, controls.planInvestigacion.value?.id?.toString())
+        .and('planInvestigacion', SgiRestFilterOperator.EQUALS, controls.planInvestigacion.value?.id?.toString())
         .and('convocatoria.entidadesFinanciadoras.entidadRef', SgiRestFilterOperator.EQUALS, controls.entidadFinanciadora.value?.id)
         .and('convocatoria.entidadesFinanciadoras.fuenteFinanciacion.id',
           SgiRestFilterOperator.EQUALS, controls.fuenteFinanciacion.value?.id?.toString());
 
       const palabrasClave = controls.palabrasClave.value as string[];
       if (Array.isArray(palabrasClave) && palabrasClave.length > 0) {
-        filter.and(this.createPalabrasClaveFilter(palabrasClave));
+        rsqlFilter.and(this.createPalabrasClaveFilter(palabrasClave));
       }
     }
 
-    return filter;
+    return rsqlFilter;
   }
 
   private createPalabrasClaveFilter(palabrasClave: string[]): SgiRestFilter {
@@ -536,31 +533,14 @@ export class SolicitudListadoComponent extends AbstractTablePaginationComponent<
     this.suscripciones.push(this.solicitudService.findSolicitudProyecto(solicitud.id).pipe(
       map(solicitudProyectoDatos => {
         const config = {
-          panelClass: 'sgi-dialog-container',
           data: { solicitud, solicitudProyecto: solicitudProyectoDatos } as ISolicitudCrearProyectoModalData
         };
         const dialogRef = this.matDialog.open(SolicitudCrearProyectoModalComponent, config);
         dialogRef.afterClosed().subscribe(
           (result: IProyecto) => {
             if (result) {
-              const subscription = this.proyectoService.crearProyectoBySolicitud(solicitud.id, result);
-
-              subscription.subscribe(
-                () => {
-                  this.snackBarService.showSuccess(MSG_SUCCESS_CREAR_PROYECTO);
-                  this.loadTable();
-                },
-                (error) => {
-                  this.logger.error(error);
-                  if (error instanceof SgiError) {
-                    this.snackBarService.showError(error);
-                  }
-                  else {
-                    this.snackBarService.showError(MSG_ERROR_CREAR_PROYECTO);
-                  }
-                }
-              );
-
+              this.snackBarService.showSuccess(MSG_SUCCESS_CREAR_PROYECTO);
+              this.loadTable();
             }
           }
         );
@@ -588,7 +568,6 @@ export class SolicitudListadoComponent extends AbstractTablePaginationComponent<
     } as ISolicitudGrupo;
 
     const config = {
-      panelClass: 'sgi-dialog-container',
       data
     };
 
@@ -596,16 +575,10 @@ export class SolicitudListadoComponent extends AbstractTablePaginationComponent<
       .pipe(
         filter(solicitudGrupo => solicitudGrupo)
       ).subscribe(
-        () => {
-          this.snackBarService.showSuccess(MSG_SUCCESS_CREAR_GRUPO);
-          this.loadTable();
-        },
-        (error) => {
-          this.logger.error(error);
-          if (error instanceof SgiError) {
-            this.snackBarService.showError(error);
-          } else {
-            this.snackBarService.showError(MSG_ERROR_CREAR_GRUPO);
+        (result) => {
+          if (result) {
+            this.snackBarService.showSuccess(MSG_SUCCESS_CREAR_GRUPO);
+            this.loadTable();
           }
         }
       );

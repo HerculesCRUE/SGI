@@ -2,17 +2,13 @@ import { Component, Inject, OnInit, ViewChild } from '@angular/core';
 import { AbstractControl, FormControl, FormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
-import { BaseModalComponent } from '@core/component/base-modal.component';
+import { DialogFormComponent } from '@core/component/dialog-form.component';
+import { SgiError } from '@core/errors/sgi-error';
 import { MSG_PARAMS } from '@core/i18n';
-import { IAutorizacion } from '@core/models/csp/autorizacion';
 import { ICertificadoAutorizacion } from '@core/models/csp/certificado-autorizacion';
 import { IDocumento } from '@core/models/sgdoc/documento';
-import { FxFlexProperties } from '@core/models/shared/flexLayout/fx-flex-properties';
-import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-properties';
 import { AutorizacionService } from '@core/services/csp/autorizacion/autorizacion.service';
 import { DocumentoService, triggerDownloadToUser } from '@core/services/sgdoc/documento.service';
-import { SnackBarService } from '@core/services/snack-bar.service';
-import { FormGroupUtil } from '@core/utils/form-group-util';
 import { TranslateService } from '@ngx-translate/core';
 import { SgiAuthService } from '@sgi/framework/auth';
 import { SgiFileUploadComponent, UploadEvent } from '@shared/file-upload/file-upload.component';
@@ -20,8 +16,6 @@ import { switchMap } from 'rxjs/operators';
 
 const MSG_ACEPTAR = marker('btn.ok');
 const MGS_ANADIR = marker('btn.add');
-const MSG_UPLOAD_SUCCESS = marker('msg.file.upload.success');
-const MSG_UPLOAD_ERROR = marker('error.file.upload');
 const CERTIFICADO_AUTORIZACION_KEY = marker('csp.certificado-autorizacion');
 const MSG_ERROR_FORM_GROUP = marker('error.form-group');
 const CERTIFICADO_AUTORIZACION_DOCUMENTO_KEY = marker('csp.certificado-autorizacion.documento');
@@ -38,12 +32,8 @@ export interface ICertificadoAutorizacionModalData {
   templateUrl: './autorizacion-certificado-modal.component.html',
   styleUrls: ['./autorizacion-certificado-modal.component.scss']
 })
-export class AutorizacionCertificadoModalComponent extends
-  BaseModalComponent<ICertificadoAutorizacionModalData, AutorizacionCertificadoModalComponent>
-  implements OnInit {
+export class AutorizacionCertificadoModalComponent extends DialogFormComponent<ICertificadoAutorizacionModalData> implements OnInit {
 
-  fxLayoutProperties: FxLayoutProperties;
-  fxFlexProperties: FxFlexProperties;
   showTipoRelacion: boolean;
 
   textSaveOrUpdate: string;
@@ -67,20 +57,18 @@ export class AutorizacionCertificadoModalComponent extends
   }
 
   constructor(
-    public matDialogRef: MatDialogRef<AutorizacionCertificadoModalComponent>,
-    protected readonly snackBarService: SnackBarService,
+    matDialogRef: MatDialogRef<AutorizacionCertificadoModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data: ICertificadoAutorizacionModalData,
     private readonly translate: TranslateService,
     private autorizacionService: AutorizacionService,
     readonly sgiAuthService: SgiAuthService,
     private readonly documentoService: DocumentoService
   ) {
-    super(snackBarService, matDialogRef, null);
+    super(matDialogRef, !!data?.certificado?.id);
   }
 
   ngOnInit(): void {
     super.ngOnInit();
-    this.initFlexProperties();
     this.setupI18N();
 
     if (!this.data.certificado) {
@@ -93,25 +81,25 @@ export class AutorizacionCertificadoModalComponent extends
     }
   }
 
-  saveOrUpdate(): void {
-    if (FormGroupUtil.valid(this.formGroup)) {
+  doAtion(): void {
+    this.formGroup.markAllAsTouched();
+    if (this.formGroup.valid) {
       if (this.formGroup.controls.generadoAutomatico.value) {
         if (this.formGroup.controls.documentoAuto.value) {
-          this.matDialogRef.close(this.getDatosForm());
+          this.close(this.getValue());
         } else {
-          this.snackBarService.showError(MSG_ERROR_FORM_GROUP);
+          this.pushProblems(new SgiError(MSG_ERROR_FORM_GROUP));
         }
       } else {
         this.uploader.uploadSelection().subscribe(
-          () => this.matDialogRef.close(this.getDatosForm())
+          () => this.close(this.getValue()),
+          this.processError
         );
       }
-    } else {
-      this.snackBarService.showError(MSG_ERROR_FORM_GROUP);
     }
   }
 
-  protected getDatosForm(): ICertificadoAutorizacionModalData {
+  protected getValue(): ICertificadoAutorizacionModalData {
     this.data.certificado.nombre = this.formGroup.controls.nombre.value;
     this.data.certificado.visible = this.formGroup.controls.publico.value;
     this.data.certificado.documento = this.formGroup.controls.generadoAutomatico.value
@@ -124,7 +112,7 @@ export class AutorizacionCertificadoModalComponent extends
     return this.documentoAutorizacion ?? this.data.certificado.documento;
   }
 
-  protected getFormGroup(): FormGroup {
+  protected buildFormGroup(): FormGroup {
     const form = new FormGroup({
       nombre: new FormControl(this.data?.certificado?.nombre),
       publico: new FormControl(this.data?.certificado?.visible, [Validators.required,
@@ -182,19 +170,6 @@ export class AutorizacionCertificadoModalComponent extends
     }
   }
 
-  private initFlexProperties(): void {
-    this.fxLayoutProperties = new FxLayoutProperties();
-    this.fxLayoutProperties.gap = '20px';
-    this.fxLayoutProperties.layout = 'row';
-    this.fxLayoutProperties.xs = 'column';
-
-    this.fxFlexProperties = new FxFlexProperties();
-    this.fxFlexProperties.sm = '0 1 calc(100%-10px)';
-    this.fxFlexProperties.md = '0 1 calc(100%-10px)';
-    this.fxFlexProperties.gtMd = '0 1 calc(100%-10px)';
-    this.fxFlexProperties.order = '2';
-  }
-
   private buildValidadorHasSomeOtherCertificadoAutorizacionVisible(hasSomeOtherCertificadoAutorizacionVisible: boolean): ValidatorFn {
     return (control: AbstractControl): ValidationErrors | null => {
       if (hasSomeOtherCertificadoAutorizacionVisible && control.value) {
@@ -211,11 +186,9 @@ export class AutorizacionCertificadoModalComponent extends
         this.uploading = true;
         break;
       case 'end':
-        this.snackBarService.showSuccess(MSG_UPLOAD_SUCCESS);
         this.uploading = false;
         break;
       case 'error':
-        this.snackBarService.showError(MSG_UPLOAD_ERROR);
         this.uploading = false;
         break;
     }

@@ -1,14 +1,5 @@
-.entidad-financiadora-modal{
-  .wrapper {
-    display: flex;
-    align-items: baseline;
-    justify-content: space-between;
-    flex-wrap: wrap;
-  }
-
-  .fields-wrapper {
-    display: inline-flex;
-    flex-wrap: wrap;
-    padding-right: 15px;
+:host {
+  sgi-dialog-content {
+    min-width: 40vw;
   }
 }

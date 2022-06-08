@@ -121,7 +121,6 @@ export class SolicitudProyectoSocioPeriodoJustificacionComponent extends Fragmen
     }
 
     const config = {
-      panelClass: 'sgi-dialog-container',
       data
     };
     const dialogRef = this.matDialog.open(SolicitudProyectoSocioPeriodoJustificacionModalComponent, config);

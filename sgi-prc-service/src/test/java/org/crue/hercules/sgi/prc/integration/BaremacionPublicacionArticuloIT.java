@@ -67,7 +67,7 @@ class BaremacionPublicacionArticuloIT extends BaremacionBaseIT {
     getIndiceImpactoRepository().findAllByProduccionCientificaId(produccionCientificaId).stream().forEach(entity -> {
       entity.setFuenteImpacto(TipoFuenteImpacto.valueOf(value));
       entity.setPosicionPublicacion(new BigDecimal(50));
-      entity.setNumeroRevistas(new BigDecimal("2"));
+      entity.setNumeroRevistas(new BigDecimal("200"));
       getIndiceImpactoRepository().save(entity);
     });
 
@@ -111,7 +111,7 @@ class BaremacionPublicacionArticuloIT extends BaremacionBaseIT {
     getIndiceImpactoRepository().findAllByProduccionCientificaId(produccionCientificaId).stream().forEach(entity -> {
       entity.setFuenteImpacto(TipoFuenteImpacto.valueOf(value));
       entity.setPosicionPublicacion(new BigDecimal(100));
-      entity.setNumeroRevistas(new BigDecimal("2"));
+      entity.setNumeroRevistas(new BigDecimal("200"));
       getIndiceImpactoRepository().save(entity);
     });
 
@@ -154,7 +154,7 @@ class BaremacionPublicacionArticuloIT extends BaremacionBaseIT {
     getIndiceImpactoRepository().findAllByProduccionCientificaId(produccionCientificaId).stream().forEach(entity -> {
       entity.setFuenteImpacto(TipoFuenteImpacto.valueOf(value));
       entity.setPosicionPublicacion(new BigDecimal(150));
-      entity.setNumeroRevistas(new BigDecimal("2"));
+      entity.setNumeroRevistas(new BigDecimal("200"));
       getIndiceImpactoRepository().save(entity);
     });
 
@@ -197,7 +197,7 @@ class BaremacionPublicacionArticuloIT extends BaremacionBaseIT {
     getIndiceImpactoRepository().findAllByProduccionCientificaId(produccionCientificaId).stream().forEach(entity -> {
       entity.setFuenteImpacto(TipoFuenteImpacto.valueOf(value));
       entity.setPosicionPublicacion(new BigDecimal(200));
-      entity.setNumeroRevistas(new BigDecimal("2"));
+      entity.setNumeroRevistas(new BigDecimal("200"));
       getIndiceImpactoRepository().save(entity);
     });
 
@@ -576,7 +576,7 @@ class BaremacionPublicacionArticuloIT extends BaremacionBaseIT {
     Assertions.assertThat(puntuacionBaremoItems.get(1).getPuntos()).as("Puntos").isEqualTo(new BigDecimal("2.40"));
 
     Assertions.assertThat(puntuacionBaremoItems.get(2).getBaremoId()).as("BaremoId").isEqualTo(135L);
-    Assertions.assertThat(puntuacionBaremoItems.get(2).getPuntos()).as("Puntos").isEqualTo(new BigDecimal("2.40"));
+    Assertions.assertThat(puntuacionBaremoItems.get(2).getPuntos()).as("Puntos").isEqualTo(new BigDecimal("1.40"));
 
     // Extra Liderazgo
     Assertions.assertThat(puntuacionBaremoItems.get(3).getBaremoId()).as("BaremoId").isEqualTo(138L);
@@ -678,7 +678,7 @@ class BaremacionPublicacionArticuloIT extends BaremacionBaseIT {
     getIndiceImpactoRepository().findAllByProduccionCientificaId(produccionCientificaId).stream().forEach(entity -> {
       entity.setFuenteImpacto(TipoFuenteImpacto.valueOf(value));
       entity.setPosicionPublicacion(new BigDecimal(20));
-      entity.setNumeroRevistas(new BigDecimal("2"));
+      entity.setNumeroRevistas(new BigDecimal("200"));
       entity.setRevista25(Boolean.TRUE);
       getIndiceImpactoRepository().save(entity);
     });
@@ -737,7 +737,7 @@ class BaremacionPublicacionArticuloIT extends BaremacionBaseIT {
     getIndiceImpactoRepository().findAllByProduccionCientificaId(produccionCientificaId).stream().forEach(entity -> {
       entity.setFuenteImpacto(TipoFuenteImpacto.valueOf(value));
       entity.setPosicionPublicacion(new BigDecimal(50));
-      entity.setNumeroRevistas(new BigDecimal("2"));
+      entity.setNumeroRevistas(new BigDecimal("200"));
       entity.setRevista25(Boolean.FALSE);
       getIndiceImpactoRepository().save(entity);
     });
@@ -803,7 +803,7 @@ class BaremacionPublicacionArticuloIT extends BaremacionBaseIT {
     getIndiceImpactoRepository().findAllByProduccionCientificaId(produccionCientificaId).stream().forEach(entity -> {
       entity.setFuenteImpacto(TipoFuenteImpacto.valueOf(value));
       entity.setPosicionPublicacion(new BigDecimal(50));
-      entity.setNumeroRevistas(new BigDecimal("2"));
+      entity.setNumeroRevistas(new BigDecimal("200"));
       entity.setRevista25(Boolean.FALSE);
       getIndiceImpactoRepository().save(entity);
     });
@@ -872,7 +872,7 @@ class BaremacionPublicacionArticuloIT extends BaremacionBaseIT {
     getIndiceImpactoRepository().findAllByProduccionCientificaId(produccionCientificaId).stream().forEach(entity -> {
       entity.setFuenteImpacto(TipoFuenteImpacto.valueOf(value));
       entity.setPosicionPublicacion(new BigDecimal(50));
-      entity.setNumeroRevistas(new BigDecimal("2"));
+      entity.setNumeroRevistas(new BigDecimal("200"));
       entity.setRevista25(Boolean.FALSE);
       getIndiceImpactoRepository().save(entity);
     });
@@ -931,7 +931,7 @@ class BaremacionPublicacionArticuloIT extends BaremacionBaseIT {
     getIndiceImpactoRepository().findAllByProduccionCientificaId(produccionCientificaId).stream().forEach(entity -> {
       entity.setFuenteImpacto(TipoFuenteImpacto.valueOf(value));
       entity.setPosicionPublicacion(new BigDecimal(50));
-      entity.setNumeroRevistas(new BigDecimal("2"));
+      entity.setNumeroRevistas(new BigDecimal("200"));
       entity.setRevista25(Boolean.FALSE);
       getIndiceImpactoRepository().save(entity);
     });
@@ -998,7 +998,7 @@ class BaremacionPublicacionArticuloIT extends BaremacionBaseIT {
     getIndiceImpactoRepository().findAllByProduccionCientificaId(produccionCientificaId).stream().forEach(entity -> {
       entity.setFuenteImpacto(TipoFuenteImpacto.valueOf(value));
       entity.setPosicionPublicacion(new BigDecimal(50));
-      entity.setNumeroRevistas(new BigDecimal("2"));
+      entity.setNumeroRevistas(new BigDecimal("200"));
       entity.setRevista25(Boolean.FALSE);
       getIndiceImpactoRepository().save(entity);
     });
@@ -1060,7 +1060,7 @@ class BaremacionPublicacionArticuloIT extends BaremacionBaseIT {
     getIndiceImpactoRepository().findAllByProduccionCientificaId(produccionCientificaId).stream().forEach(entity -> {
       entity.setFuenteImpacto(TipoFuenteImpacto.valueOf(value));
       entity.setPosicionPublicacion(new BigDecimal(50));
-      entity.setNumeroRevistas(new BigDecimal("2"));
+      entity.setNumeroRevistas(new BigDecimal("200"));
       entity.setRevista25(Boolean.FALSE);
       getIndiceImpactoRepository().save(entity);
     });

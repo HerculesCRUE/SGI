@@ -1,7 +1,5 @@
-@import "colors.scss";
-
-.modal-tareas {
-  .ocultarCampo {
-    display: none;
+:host {
+  sgi-dialog-content {
+    min-width: 40vw;
   }
 }

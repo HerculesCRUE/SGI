@@ -282,7 +282,8 @@ export class ConvocatoriaListadoInvComponent extends AbstractTablePaginationComp
         .and('requisitoFechasCategoriaProfesionalIp', SgiRestFilterOperator.EQUALS,
           this.datosPersona?.vinculacion?.fechaObtencionCategoria ?
             LuxonUtils.toBackend(this.datosPersona?.vinculacion?.fechaObtencionCategoria) : '0001-01-01T00:00:00Z')
-        .and('requisitoCategoriaProfesionalIp', SgiRestFilterOperator.EQUALS, this.datosPersona?.vinculacion?.categoriaProfesional?.id ?? ' ');
+        .and('requisitoCategoriaProfesionalIp', SgiRestFilterOperator.EQUALS, this.datosPersona?.vinculacion?.categoriaProfesional?.id ?? ' ')
+        .and('requisitoProyectosCompetitivos', SgiRestFilterOperator.EQUALS, this.datosPersona?.persona?.id);
     }
 
     const palabrasClave = controls.palabrasClave.value as string[];

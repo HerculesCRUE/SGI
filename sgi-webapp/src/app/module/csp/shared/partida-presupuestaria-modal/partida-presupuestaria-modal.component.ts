@@ -2,13 +2,12 @@ import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
 import { FormControl, FormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
-import { BaseModalComponent } from '@core/component/base-modal.component';
+import { DialogFormComponent } from '@core/component/dialog-form.component';
 import { TIPO_PARTIDA_MAP } from '@core/enums/tipo-partida';
 import { MSG_PARAMS } from '@core/i18n';
 import { IConvocatoriaPartidaPresupuestaria } from '@core/models/csp/convocatoria-partida-presupuestaria';
 import { IPartidaPresupuestaria } from '@core/models/csp/partida-presupuestaria';
 import { ConfiguracionService } from '@core/services/csp/configuracion.service';
-import { SnackBarService } from '@core/services/snack-bar.service';
 import { TranslateService } from '@ngx-translate/core';
 import { switchMap } from 'rxjs/operators';
 import { comparePartidaPresupuestaria } from '../../proyecto/proyecto-formulario/proyecto-partidas-presupuestarias/proyecto-partida-presupuestaria.utils';
@@ -34,9 +33,7 @@ export interface PartidaPresupuestariaModalComponentData {
   templateUrl: './partida-presupuestaria-modal.component.html',
   styleUrls: ['./partida-presupuestaria-modal.component.scss']
 })
-export class PartidaPresupuestariaModalComponent
-  extends BaseModalComponent<IPartidaPresupuestaria, PartidaPresupuestariaModalComponent>
-  implements OnInit, OnDestroy {
+export class PartidaPresupuestariaModalComponent extends DialogFormComponent<IPartidaPresupuestaria> implements OnInit, OnDestroy {
 
   textSaveOrUpdate: string;
 
@@ -55,12 +52,11 @@ export class PartidaPresupuestariaModalComponent
   disabledSave = false;
 
   constructor(
-    public matDialogRef: MatDialogRef<PartidaPresupuestariaModalComponent>,
+    matDialogRef: MatDialogRef<PartidaPresupuestariaModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data: PartidaPresupuestariaModalComponentData,
-    protected snackBarService: SnackBarService,
     private configuracionService: ConfiguracionService,
     private readonly translate: TranslateService) {
-    super(snackBarService, matDialogRef, data.partidaPresupuestaria);
+    super(matDialogRef, !!data?.partidaPresupuestaria);
   }
 
   ngOnInit(): void {
@@ -74,7 +70,7 @@ export class PartidaPresupuestariaModalComponent
     if (this.data.convocatoriaPartidaPresupuestaria) {
       this.subscriptions.push(this.formGroup.valueChanges.subscribe(
         () => {
-          this.disabledCopy = !comparePartidaPresupuestaria(this.data.convocatoriaPartidaPresupuestaria, this.getDatosForm());
+          this.disabledCopy = !comparePartidaPresupuestaria(this.data.convocatoriaPartidaPresupuestaria, this.getValue());
         }
       ));
     }
@@ -130,7 +126,7 @@ export class PartidaPresupuestariaModalComponent
     this.showDatosPartidaPresupuestaria = !!convocatoriaPartidaPresupuestaria;
   }
 
-  protected getDatosForm(): IPartidaPresupuestaria {
+  protected getValue(): IPartidaPresupuestaria {
     if (!this.data.partidaPresupuestaria) {
       this.data.partidaPresupuestaria = {} as IPartidaPresupuestaria;
     }
@@ -142,7 +138,7 @@ export class PartidaPresupuestariaModalComponent
     return this.data.partidaPresupuestaria;
   }
 
-  protected getFormGroup(): FormGroup {
+  protected buildFormGroup(): FormGroup {
     const formGroup = new FormGroup({
       codigo: new FormControl(this.data?.partidaPresupuestaria?.codigo, [
         Validators.required,
@@ -191,10 +187,6 @@ export class PartidaPresupuestariaModalComponent
     return formGroup;
   }
 
-  ngOnDestroy(): void {
-    super.ngOnDestroy();
-  }
-
   /**
    * Comprueba si es unica la combinacion de codigo y tipo.
    */
@@ -222,6 +214,7 @@ export class PartidaPresupuestariaModalComponent
       }
     };
   }
+
   private loadConfiguracion() {
     const configuracionFindSubscription = this.configuracionService.getConfiguracion().subscribe(
       configuracion => {

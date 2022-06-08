@@ -116,8 +116,6 @@ export class ConvocatoriaHitosComponent extends FragmentComponent implements OnI
       tituloConvocatoria: this.actionService.titulo
     };
     const config: MatDialogConfig = {
-      panelClass: 'sgi-dialog-container',
-      minWidth: '60vw',
       data,
     };
     const dialogRef = this.matDialog.open(ConvocatoriaHitosModalComponent, config);

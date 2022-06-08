@@ -5,6 +5,7 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { Router } from '@angular/router';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
+import { DialogCommonComponent } from '@core/component/dialog-common.component';
 import { SearchModalData } from '@core/component/select-dialog/select-dialog.component';
 import { MSG_PARAMS } from '@core/i18n';
 import { IInvencion } from '@core/models/pii/invencion';
@@ -16,7 +17,7 @@ import { TipoProteccionService } from '@core/services/pii/tipo-proteccion/tipo-p
 import { LuxonUtils } from '@core/utils/luxon-utils';
 import { TranslateService } from '@ngx-translate/core';
 import { RSQLSgiRestFilter, RSQLSgiRestSort, SgiRestFilter, SgiRestFilterOperator, SgiRestFindOptions, SgiRestSortDirection } from '@sgi/framework/http';
-import { merge, Observable, Subject, Subscription } from 'rxjs';
+import { merge, Observable, Subject } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
 import { PII_ROUTE_NAMES } from '../../../pii-route-names';
 
@@ -31,15 +32,13 @@ export interface SearchInvencionModalData extends SearchModalData {
   templateUrl: './search-invencion.component.html',
   styleUrls: ['./search-invencion.component.scss']
 })
-export class SearchInvencionModalComponent implements OnInit, AfterViewInit, OnDestroy {
+export class SearchInvencionModalComponent extends DialogCommonComponent implements OnInit, AfterViewInit {
   formGroup: FormGroup;
   displayedColumns = ['id', 'fechaComunicacion', 'titulo', 'acciones'];
   elementosPagina = [5, 10, 25, 100];
   totalElementos = 0;
   @ViewChild(MatSort, { static: true }) private sort: MatSort;
   @ViewChild(MatPaginator, { static: false }) private paginator: MatPaginator;
-
-  private subscriptions: Subscription[] = [];
 
   readonly invenciones$ = new Subject<IInvencion[]>();
   readonly tiposProteccion$: Observable<ITipoProteccion[]>;
@@ -51,17 +50,19 @@ export class SearchInvencionModalComponent implements OnInit, AfterViewInit, OnD
   }
 
   constructor(
-    public dialogRef: MatDialogRef<SearchInvencionModalComponent, IInvencion>,
+    dialogRef: MatDialogRef<SearchInvencionModalComponent, IInvencion>,
     @Inject(MAT_DIALOG_DATA) public data: SearchInvencionModalData,
     private readonly invencionService: InvencionService,
     readonly tipoProteccionService: TipoProteccionService,
     private readonly translate: TranslateService,
     private readonly router: Router
   ) {
+    super(dialogRef);
     this.tiposProteccion$ = tipoProteccionService.findAll().pipe(map(({ items }) => items));
   }
 
   ngOnInit(): void {
+    super.ngOnInit();
     this.formGroup = new FormGroup({
       id: new FormControl(),
       fechaComunicacionDesde: new FormControl(),
@@ -81,6 +82,7 @@ export class SearchInvencionModalComponent implements OnInit, AfterViewInit, OnD
   }
 
   ngAfterViewInit(): void {
+    super.ngAfterViewInit();
     this.search();
 
     this.subscriptions.push(
@@ -93,14 +95,6 @@ export class SearchInvencionModalComponent implements OnInit, AfterViewInit, OnD
         })
       ).subscribe()
     );
-  }
-
-  ngOnDestroy(): void {
-    this.subscriptions.forEach(subscription => subscription.unsubscribe());
-  }
-
-  closeModal(invencion?: IInvencion): void {
-    this.dialogRef.close(invencion);
   }
 
   /**

@@ -121,7 +121,6 @@ export class AgrupacionGastoConceptoComponent extends FragmentComponent implemen
     };
 
     const config = {
-      panelClass: 'sgi-dialog-container',
       data
     };
     const dialogRef = this.matDialog.open(AgrupacionGastoConceptoModalComponent, config);

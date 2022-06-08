@@ -1,10 +1,10 @@
 package org.crue.hercules.sgi.csp.service;
 
 import java.time.Instant;
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -21,14 +21,13 @@ import org.crue.hercules.sgi.csp.exceptions.GrupoNotFoundException;
 import org.crue.hercules.sgi.csp.exceptions.RolProyectoNotFoundException;
 import org.crue.hercules.sgi.csp.model.BaseEntity;
 import org.crue.hercules.sgi.csp.model.Grupo;
-import org.crue.hercules.sgi.framework.problem.message.ProblemMessage;
 import org.crue.hercules.sgi.csp.model.GrupoEquipo;
-import org.crue.hercules.sgi.framework.spring.context.support.ApplicationContextSupport;
 import org.crue.hercules.sgi.csp.repository.GrupoEquipoRepository;
 import org.crue.hercules.sgi.csp.repository.GrupoRepository;
 import org.crue.hercules.sgi.csp.repository.RolProyectoRepository;
 import org.crue.hercules.sgi.csp.repository.specification.GrupoEquipoSpecifications;
 import org.crue.hercules.sgi.csp.util.AssertHelper;
+import org.crue.hercules.sgi.csp.util.GrupoAuthorityHelper;
 import org.crue.hercules.sgi.csp.util.PeriodDateUtil;
 import org.crue.hercules.sgi.framework.rsql.SgiRSQLJPASupport;
 import org.springframework.data.domain.Page;
@@ -36,7 +35,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.Assert;
 import org.springframework.validation.annotation.Validated;
 
 import lombok.RequiredArgsConstructor;
@@ -57,6 +55,7 @@ public class GrupoEquipoService {
   private final GrupoRepository grupoRepository;
   private final Validator validator;
   private final RolProyectoRepository rolProyectoRepository;
+  private final GrupoAuthorityHelper authorityHelper;
 
   /**
    * Guarda la entidad {@link GrupoEquipo}.
@@ -70,6 +69,8 @@ public class GrupoEquipoService {
     log.debug("create(GrupoEquipo grupoEquipo) - start");
 
     AssertHelper.idIsNull(grupoEquipo.getId(), GrupoEquipo.class);
+    authorityHelper.checkUserHasAuthorityViewGrupo(grupoEquipo.getGrupoId());
+
     GrupoEquipo returnValue = repository.save(grupoEquipo);
 
     log.debug("create(GrupoEquipo grupoEquipo) - end");
@@ -88,6 +89,7 @@ public class GrupoEquipoService {
     log.debug("update(GrupoEquipo grupoEquipoActualizar) - start");
 
     AssertHelper.idNotNull(grupoEquipoActualizar.getId(), GrupoEquipo.class);
+    authorityHelper.checkUserHasAuthorityViewGrupo(grupoEquipoActualizar.getGrupoId());
 
     return repository.findById(grupoEquipoActualizar.getId()).map(data -> {
       data.setFechaInicio(grupoEquipoActualizar.getFechaInicio());
@@ -115,6 +117,8 @@ public class GrupoEquipoService {
     AssertHelper.idNotNull(id, GrupoEquipo.class);
     final GrupoEquipo returnValue = repository.findById(id).orElseThrow(() -> new GrupoEquipoNotFoundException(id));
 
+    authorityHelper.checkUserHasAuthorityViewGrupo(returnValue.getGrupoId());
+
     log.debug("findById(Long id) - end");
     return returnValue;
   }
@@ -130,7 +134,11 @@ public class GrupoEquipoService {
 
     AssertHelper.idNotNull(id, GrupoEquipo.class);
 
-    if (!repository.existsById(id)) {
+    Optional<GrupoEquipo> grupoEquipo = repository.findById(id);
+
+    if (grupoEquipo.isPresent()) {
+      authorityHelper.checkUserHasAuthorityViewGrupo(grupoEquipo.get().getGrupoId());
+    } else {
       throw new GrupoEquipoNotFoundException(id);
     }
 
@@ -151,11 +159,30 @@ public class GrupoEquipoService {
   public Page<GrupoEquipo> findAllByGrupo(Long grupoId, String query, Pageable paging) {
     log.debug("findAll(Long grupoId, String query, Pageable paging) - start");
     AssertHelper.idNotNull(grupoId, Grupo.class);
+    authorityHelper.checkUserHasAuthorityViewGrupo(grupoId);
+
     Specification<GrupoEquipo> specs = GrupoEquipoSpecifications.byGrupoId(grupoId)
         .and(SgiRSQLJPASupport.toSpecification(query));
 
     Page<GrupoEquipo> returnValue = repository.findAll(specs, paging);
     log.debug("findAll(Long grupoId, String query, Pageable paging) - end");
+    return returnValue;
+  }
+
+  /**
+   * Devuelve una lista paginada y filtrada de {@link GrupoEquipo} cuya persona
+   * Ref sea el usuario actual o formen parte de un grupo en el que la persona sea
+   * un investigador principal.
+   *
+   * @return la lista de personaRefs
+   */
+  public List<String> findMiembrosEquipoUsuario() {
+    log.debug("findMiembrosEquipoUsuario() - start");
+    Instant fechaActual = Instant.now().atZone(sgiConfigProperties.getTimeZone().toZoneId()).toInstant();
+
+    List<String> returnValue = repository.findMiembrosEquipoUsuario(authorityHelper.getAuthenticationPersonaRef(),
+        fechaActual);
+    log.debug("findMiembrosEquipoUsuario() - end");
     return returnValue;
   }
 
@@ -178,6 +205,8 @@ public class GrupoEquipoService {
     log.debug("findPersonaRefInvestigadoresPrincipalesWithMaxParticipacion(Long grupoId) - start");
 
     AssertHelper.idNotNull(grupoId, Grupo.class);
+    authorityHelper.checkUserHasAuthorityViewGrupo(grupoId);
+
     Instant fechaActual = Instant.now().atZone(sgiConfigProperties.getTimeZone().toZoneId()).toInstant();
     List<String> returnValue = repository.findPersonaRefInvestigadoresPrincipalesWithMaxParticipacion(grupoId,
         fechaActual);
@@ -202,6 +231,8 @@ public class GrupoEquipoService {
     log.debug("findPersonaRefInvestigadoresPrincipales(Long grupoId) - start");
 
     AssertHelper.idNotNull(grupoId, Grupo.class);
+    authorityHelper.checkUserHasAuthorityViewGrupo(grupoId);
+
     Instant fechaActual = Instant.now().atZone(sgiConfigProperties.getTimeZone().toZoneId()).toInstant();
     List<String> returnValue = repository.findPersonaRefInvestigadoresPrincipales(grupoId, fechaActual);
 
@@ -241,6 +272,24 @@ public class GrupoEquipoService {
   }
 
   /**
+   * Lista de ids {@link GrupoEquipo} cuyo personaRef está dentro de la fecha de
+   * baremación
+   *
+   * @param personaRef personaRef
+   * @param anio       anio
+   * @return lista de ids {@link GrupoEquipo}
+   */
+  public List<Long> findGrupoEquipoByPersonaRefAndFechaBaremacion(String personaRef, Integer anio) {
+
+    Instant fechaInicioBaremacion = PeriodDateUtil.calculateFechaInicioBaremacionByAnio(anio,
+        sgiConfigProperties.getTimeZone());
+    Instant fechaFinBaremacion = PeriodDateUtil.calculateFechaFinBaremacionByAnio(anio,
+        sgiConfigProperties.getTimeZone());
+    return repository.findGrupoEquipoByPersonaRefAndFechaBaremacion(personaRef, fechaInicioBaremacion,
+        fechaFinBaremacion);
+  }
+
+  /**
    * Actualiza el listado de {@link GrupoEquipo} de la {@link Grupo} con el
    * listado grupoEquipos añadiendo, editando o eliminando los elementos segun
    * proceda.
@@ -254,8 +303,12 @@ public class GrupoEquipoService {
   public List<GrupoEquipo> update(Long grupoId, @Valid List<GrupoEquipo> grupoEquipos) {
     log.debug("update(Long grupoId, List<GrupoEquipo> grupoEquipos) - start");
 
-    grupoRepository.findById(grupoId)
-        .orElseThrow(() -> new GrupoNotFoundException(grupoId));
+    AssertHelper.idNotNull(grupoId, Grupo.class);
+    authorityHelper.checkUserHasAuthorityViewGrupo(grupoId);
+
+    if (!grupoRepository.existsById(grupoId)) {
+      throw new GrupoNotFoundException(grupoId);
+    }
 
     List<GrupoEquipo> grupoEquiposBD = repository.findAllByGrupoId(grupoId);
 
@@ -301,11 +354,6 @@ public class GrupoEquipoService {
           .filter(solProyecEquip -> solProyecEquip.getPersonaRef().equals(personaRef)).collect(Collectors.toList());
 
       for (GrupoEquipo grupoEquipo : miembrosPersonaRef) {
-        Assert.notNull(grupoEquipo.getPersonaRef(),
-            () -> ProblemMessage.builder().key(Assert.class, "notNull")
-                .parameter("field", ApplicationContextSupport.getMessage("grupoEquipo.personaRef"))
-                .parameter("entity", ApplicationContextSupport.getMessage(GrupoEquipo.class)).build());
-
         if (grupoEquipoAnterior != null
             && grupoEquipoAnterior.getPersonaRef().equals(grupoEquipo.getPersonaRef())
             && !(grupoEquipoAnterior.getFechaFin() != null

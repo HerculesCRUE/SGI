@@ -55,13 +55,8 @@
       [fxFlexOrder]="fxFlexProperties.order">
       <mat-form-field class="input-form">
         <mat-label>{{'eti.dictamen' | translate}}</mat-label>
-        <input type="text" [placeholder]="'eti.dictamen' | translate" arial-label="Number" matInput
-          formControlName="dictamen" [matAutocomplete]="autocompleteDictamen" required>
-        <mat-autocomplete #autocompleteDictamen="matAutocomplete" [displayWith]="getDictamen">
-          <mat-option *ngFor="let dictamen of dictamenListado" [value]="dictamen">
-            {{dictamen.nombre}}
-          </mat-option>
-        </mat-autocomplete>
+        <sgi-select-entity formControlName="dictamen" [options]="dictamenes$ | async" required>
+        </sgi-select-entity>
       </mat-form-field>
     </div>
 

@@ -143,7 +143,6 @@ export class ModeloEjecucionTipoDocumentoComponent extends FragmentComponent imp
       id: this.formPart.getKey() as number
     };
     const config = {
-      panelClass: 'sgi-dialog-container',
       data
     };
     const dialogRef = this.matDialog.open(ModeloEjecucionTipoDocumentoModalComponent, config);

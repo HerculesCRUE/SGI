@@ -101,7 +101,6 @@ export class ProyectoPlazosComponent extends FragmentComponent implements OnInit
     };
 
     const config = {
-      panelClass: 'sgi-dialog-container',
       data: datosPlazosFases,
     };
 

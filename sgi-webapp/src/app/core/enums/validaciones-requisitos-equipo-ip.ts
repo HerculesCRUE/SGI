@@ -14,7 +14,15 @@ export enum ValidacionRequisitosEquipoIp {
   EDAD_MAX = 'EDAD_MAX',
   SEXO = 'SEXO',
   RATIO_SEXO = 'RATIO_SEXO',
-  NUM_MAX_IP = 'NUM_MAX_IP'
+  NUM_MAX_IP = 'NUM_MAX_IP',
+  NUM_MAX_PROYECTOS_COMPETITIVOS_ACTUALES_EQUIPO = 'NUM_MAX_PROYECTOS_COMPETITIVOS_ACTUALES_EQUIPO',
+  NUM_MAX_PROYECTOS_NO_COMPETITIVOS_ACTUALES_EQUIPO = 'NUM_MAX_PROYECTOS_NO_COMPETITIVOS_ACTUALES_EQUIPO',
+  NUM_MIN_PROYECTOS_COMPETITIVOS_EQUIPO = 'NUM_MIN_PROYECTOS_COMPETITIVOS_EQUIPO',
+  NUM_MIN_PROYECTOS_NO_COMPETITIVOS_EQUIPO = 'NUM_MIN_PROYECTOS_NO_COMPETITIVOS_EQUIPO',
+  NUM_MAX_PROYECTOS_COMPETITIVOS_ACTUALES_IP = 'NUM_MAX_PROYECTOS_COMPETITIVOS_ACTUALES_IP',
+  NUM_MAX_PROYECTOS_NO_COMPETITIVOS_ACTUALES_IP = 'NUM_MAX_PROYECTOS_NO_COMPETITIVOS_ACTUALES_IP',
+  NUM_MIN_PROYECTOS_COMPETITIVOS_IP = 'NUM_MIN_PROYECTOS_COMPETITIVOS_IP',
+  NUM_MIN_PROYECTOS_NO_COMPETITIVOS_IP = 'NUM_MIN_PROYECTOS_NO_COMPETITIVOS_IP',
 }
 
 export const VALIDACION_REQUISITOS_EQUIPO_IP_MAP: Map<ValidacionRequisitosEquipoIp, string> = new Map([
@@ -31,5 +39,13 @@ export const VALIDACION_REQUISITOS_EQUIPO_IP_MAP: Map<ValidacionRequisitosEquipo
   [ValidacionRequisitosEquipoIp.EDAD_MAX, marker('csp.validacion-requisitos-equipo-ip.EDAD_MAX')],
   [ValidacionRequisitosEquipoIp.SEXO, marker('csp.validacion-requisitos-equipo-ip.SEXO')],
   [ValidacionRequisitosEquipoIp.RATIO_SEXO, marker('csp.validacion-requisitos-equipo-ip.RATIO_SEXO')],
-  [ValidacionRequisitosEquipoIp.NUM_MAX_IP, marker('csp.validacion-requisitos-equipo-ip.NUM_MAX_IP')]
+  [ValidacionRequisitosEquipoIp.NUM_MAX_IP, marker('csp.validacion-requisitos-equipo-ip.NUM_MAX_IP')],
+  [ValidacionRequisitosEquipoIp.NUM_MAX_PROYECTOS_COMPETITIVOS_ACTUALES_EQUIPO, marker('csp.validacion-requisitos-equipo-ip.NUM_MAX_PROYECTOS_COMPETITIVOS_ACTUALES_EQUIPO')],
+  [ValidacionRequisitosEquipoIp.NUM_MAX_PROYECTOS_NO_COMPETITIVOS_ACTUALES_EQUIPO, marker('csp.validacion-requisitos-equipo-ip.NUM_MAX_PROYECTOS_NO_COMPETITIVOS_ACTUALES_EQUIPO')],
+  [ValidacionRequisitosEquipoIp.NUM_MIN_PROYECTOS_COMPETITIVOS_EQUIPO, marker('csp.validacion-requisitos-equipo-ip.NUM_MIN_PROYECTOS_COMPETITIVOS_EQUIPO')],
+  [ValidacionRequisitosEquipoIp.NUM_MIN_PROYECTOS_NO_COMPETITIVOS_EQUIPO, marker('csp.validacion-requisitos-equipo-ip.NUM_MIN_PROYECTOS_NO_COMPETITIVOS_EQUIPO')],
+  [ValidacionRequisitosEquipoIp.NUM_MAX_PROYECTOS_COMPETITIVOS_ACTUALES_IP, marker('csp.validacion-requisitos-equipo-ip.NUM_MAX_PROYECTOS_COMPETITIVOS_ACTUALES_IP')],
+  [ValidacionRequisitosEquipoIp.NUM_MAX_PROYECTOS_NO_COMPETITIVOS_ACTUALES_IP, marker('csp.validacion-requisitos-equipo-ip.NUM_MAX_PROYECTOS_NO_COMPETITIVOS_ACTUALES_IP')],
+  [ValidacionRequisitosEquipoIp.NUM_MIN_PROYECTOS_COMPETITIVOS_IP, marker('csp.validacion-requisitos-equipo-ip.NUM_MIN_PROYECTOS_COMPETITIVOS_IP')],
+  [ValidacionRequisitosEquipoIp.NUM_MIN_PROYECTOS_NO_COMPETITIVOS_IP, marker('csp.validacion-requisitos-equipo-ip.NUM_MIN_PROYECTOS_NO_COMPETITIVOS_IP')]
 ]);

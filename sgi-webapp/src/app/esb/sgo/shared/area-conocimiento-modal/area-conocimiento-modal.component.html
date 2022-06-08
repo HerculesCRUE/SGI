@@ -1,12 +1,5 @@
-<div class="sgi-dialog-header" fxLayout="row" fxLayoutGap="20px">
-  <span fxFlexAlign="center" mat-mat-dialog-title role="heading" aria-level="3" fxFlex>
-    {{'sgo.area-conocimiento' | translate:MSG_PARAMS.CARDINALIRY.PLURAL}}
-  </span>
-  <button fxFlex="nogrow" mat-icon-button mat-dialog-close>
-    <mat-icon class="close-icon">close</mat-icon>
-  </button>
-</div>
-<mat-dialog-content>
+<sgi-dialog-header title="{{'sgo.area-conocimiento' | translate:MSG_PARAMS.CARDINALIRY.PLURAL}}"></sgi-dialog-header>
+<sgi-dialog-content>
   <div class="programa">
     <div class="arbol">
       <mat-tree [dataSource]="dataSource" [treeControl]="treeControl" class="arbol-tree">
@@ -49,7 +42,7 @@
       </mat-tree>
     </div>
   </div>
-</mat-dialog-content>
+</sgi-dialog-content>
 <mat-dialog-actions>
   <button color="accent" (click)="saveOrUpdate()" [disabled]="selectedAreasConocimiento.length === 0" mat-raised-button
     type="submit">

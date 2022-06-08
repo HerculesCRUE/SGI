@@ -16,6 +16,7 @@ import org.crue.hercules.sgi.csp.repository.ConvocatoriaConceptoGastoCodigoEcRep
 import org.crue.hercules.sgi.csp.repository.ProyectoConceptoGastoCodigoEcRepository;
 import org.crue.hercules.sgi.csp.repository.ProyectoConceptoGastoRepository;
 import org.crue.hercules.sgi.csp.repository.ProyectoRepository;
+import org.crue.hercules.sgi.csp.repository.predicate.ProyectoConceptoGastoPredicateResolver;
 import org.crue.hercules.sgi.csp.repository.specification.ProyectoConceptoGastoSpecifications;
 import org.crue.hercules.sgi.csp.service.ProyectoConceptoGastoService;
 import org.crue.hercules.sgi.framework.rsql.SgiRSQLJPASupport;
@@ -252,7 +253,8 @@ public class ProyectoConceptoGastoServiceImpl implements ProyectoConceptoGastoSe
   @Override
   public Page<ProyectoConceptoGasto> findAll(String query, Pageable paging) {
     log.debug("findAll(String query, Pageable paging) - start");
-    Specification<ProyectoConceptoGasto> specs = SgiRSQLJPASupport.toSpecification(query);
+    Specification<ProyectoConceptoGasto> specs = SgiRSQLJPASupport.toSpecification(query,
+        ProyectoConceptoGastoPredicateResolver.getInstance());
 
     Page<ProyectoConceptoGasto> returnValue = repository.findAll(specs, paging);
     log.debug("findAll(String query, Pageable paging) - end");
@@ -372,7 +374,7 @@ public class ProyectoConceptoGastoServiceImpl implements ProyectoConceptoGastoSe
     Specification<ProyectoConceptoGasto> specByConceptoGasto = ProyectoConceptoGastoSpecifications
         .byConceptoGasto(proyectoConceptoGasto.getConceptoGasto());
     Specification<ProyectoConceptoGasto> specByRangoMesesSolapados = ProyectoConceptoGastoSpecifications
-        .byRangoMesesSolapados(proyectoConceptoGasto.getFechaInicio(), proyectoConceptoGasto.getFechaFin());
+        .byRangoFechasSolapados(proyectoConceptoGasto.getFechaInicio(), proyectoConceptoGasto.getFechaFin());
     Specification<ProyectoConceptoGasto> specByIdNotEqual = ProyectoConceptoGastoSpecifications
         .byIdNotEqual(proyectoConceptoGasto.getId());
     Specification<ProyectoConceptoGasto> specByPermitido = ProyectoConceptoGastoSpecifications

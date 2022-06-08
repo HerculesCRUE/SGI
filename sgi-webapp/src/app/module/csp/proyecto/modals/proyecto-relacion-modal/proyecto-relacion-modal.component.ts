@@ -2,13 +2,10 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
-import { BaseModalComponent } from '@core/component/base-modal.component';
+import { DialogFormComponent } from '@core/component/dialog-form.component';
 import { MSG_PARAMS } from '@core/i18n';
 import { TipoEntidad, TIPO_ENTIDAD_MAP } from '@core/models/rel/relacion';
 import { IPersona } from '@core/models/sgp/persona';
-import { FxFlexProperties } from '@core/models/shared/flexLayout/fx-flex-properties';
-import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-properties';
-import { SnackBarService } from '@core/services/snack-bar.service';
 import { ProyectoRelacionValidator } from '@core/validators/proyecto-relacion-validator';
 import { TranslateService } from '@ngx-translate/core';
 import { SgiAuthService } from '@sgi/framework/auth';
@@ -36,10 +33,8 @@ export interface IProyectoRelacionModalData {
   templateUrl: './proyecto-relacion-modal.component.html',
   styleUrls: ['./proyecto-relacion-modal.component.scss']
 })
-export class ProyectoRelacionModalComponent extends BaseModalComponent<IProyectoRelacionTableData, ProyectoRelacionModalComponent> implements OnInit {
+export class ProyectoRelacionModalComponent extends DialogFormComponent<IProyectoRelacionTableData> implements OnInit {
 
-  fxLayoutProperties: FxLayoutProperties;
-  fxFlexProperties: FxFlexProperties;
   showTipoRelacion: boolean;
 
   textSaveOrUpdate: string;
@@ -65,13 +60,13 @@ export class ProyectoRelacionModalComponent extends BaseModalComponent<IProyecto
   }
 
   constructor(
-    public matDialogRef: MatDialogRef<ProyectoRelacionModalComponent>,
-    protected readonly snackBarService: SnackBarService,
+    matDialogRef: MatDialogRef<ProyectoRelacionModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data: IProyectoRelacionModalData,
     private readonly translate: TranslateService,
     readonly sgiAuthService: SgiAuthService,
   ) {
-    super(snackBarService, matDialogRef, null);
+    super(matDialogRef, !!data.relacion?.entidadRelacionada?.id);
+
     this.showTipoRelacion = false;
     if (this.sgiAuthService.hasAuthority('PII-INV-MOD-V')) {
       this.TIPO_ENTIDAD_MAP_FILTERED = TIPO_ENTIDAD_MAP;
@@ -84,11 +79,10 @@ export class ProyectoRelacionModalComponent extends BaseModalComponent<IProyecto
 
   ngOnInit(): void {
     super.ngOnInit();
-    this.initFlexProperties();
     this.setupI18N();
   }
 
-  protected getDatosForm(): IProyectoRelacionTableData {
+  protected getValue(): IProyectoRelacionTableData {
     this.relacion.tipoEntidadRelacionada = this.formGroup.controls.tipoEntidadRelacionada.value;
     this.relacion.entidadRelacionada = this.formGroup.controls.entidadRelacionada.value;
     this.relacion.observaciones = this.formGroup.controls.observaciones.value;
@@ -96,7 +90,7 @@ export class ProyectoRelacionModalComponent extends BaseModalComponent<IProyecto
     return this.relacion;
   }
 
-  protected getFormGroup(): FormGroup {
+  protected buildFormGroup(): FormGroup {
     const formGroup = new FormGroup({
       tipoEntidadRelacionada: new FormControl(this.relacion?.tipoEntidadRelacionada, Validators.required),
       entidadRelacionada: new FormControl(this.relacion?.entidadRelacionada, Validators.required),
@@ -173,16 +167,4 @@ export class ProyectoRelacionModalComponent extends BaseModalComponent<IProyecto
     }
   }
 
-  private initFlexProperties(): void {
-    this.fxLayoutProperties = new FxLayoutProperties();
-    this.fxLayoutProperties.gap = '20px';
-    this.fxLayoutProperties.layout = 'row';
-    this.fxLayoutProperties.xs = 'column';
-
-    this.fxFlexProperties = new FxFlexProperties();
-    this.fxFlexProperties.sm = '0 1 calc(100%-10px)';
-    this.fxFlexProperties.md = '0 1 calc(100%-10px)';
-    this.fxFlexProperties.gtMd = '0 1 calc(100%-10px)';
-    this.fxFlexProperties.order = '2';
-  }
 }

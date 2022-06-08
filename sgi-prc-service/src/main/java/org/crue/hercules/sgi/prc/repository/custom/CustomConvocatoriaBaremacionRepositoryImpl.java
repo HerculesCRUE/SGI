@@ -12,6 +12,7 @@ import javax.persistence.criteria.Order;
 import javax.persistence.criteria.Root;
 import javax.persistence.criteria.Subquery;
 
+import org.crue.hercules.sgi.framework.data.jpa.domain.Activable_;
 import org.crue.hercules.sgi.prc.model.ConfiguracionBaremo.TipoBaremo;
 import org.crue.hercules.sgi.prc.model.ConvocatoriaBaremacion;
 import org.crue.hercules.sgi.prc.model.ConvocatoriaBaremacion_;
@@ -106,7 +107,6 @@ public class CustomConvocatoriaBaremacionRepositoryImpl implements CustomConvoca
    */
   @Override
   public Long findIdByMaxAnio() {
-    // TODO incluir filtro activo
     log.debug("findIdByMaxAnio - start");
     Long convocatoriaBaremacionId = null;
 
@@ -121,6 +121,7 @@ public class CustomConvocatoriaBaremacionRepositoryImpl implements CustomConvoca
     cq.select(root.get(ConvocatoriaBaremacion_.id));
 
     // Where
+    cq.where(cb.isTrue(root.get(Activable_.activo)));
 
     // Order
     List<Order> orders = QueryUtils.toOrders(Sort.by(Sort.Direction.DESC, ConvocatoriaBaremacion_.ANIO), root, cb);
@@ -134,6 +135,43 @@ public class CustomConvocatoriaBaremacionRepositoryImpl implements CustomConvoca
     log.debug("findIdByMaxAnio - end");
 
     return convocatoriaBaremacionId;
+  }
+
+  /**
+   * Obtiene los años en los que hay alguna {@link ConvocatoriaBaremacion}
+   * 
+   * @return lista de años en los hay alguna {@link ConvocatoriaBaremacion}
+   */
+  @Override
+  public List<Integer> findAniosWithConvocatoriasBaremacion() {
+    log.debug("findAniosWithConvocatoriasBaremacion - start");
+
+    // Create query
+    CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+
+    CriteriaQuery<Integer> cq = cb.createQuery(Integer.class);
+
+    // Define FROM clause
+    Root<ConvocatoriaBaremacion> root = cq.from(ConvocatoriaBaremacion.class);
+
+    cq.select(root.get(ConvocatoriaBaremacion_.anio));
+
+    // Where
+    cq.where(cb.isTrue(root.get(Activable_.activo)));
+
+    cq.distinct(true);
+
+    // Order
+    List<Order> orders = QueryUtils.toOrders(Sort.by(Sort.Direction.DESC, ConvocatoriaBaremacion_.ANIO), root, cb);
+    cq.orderBy(orders);
+
+    TypedQuery<Integer> typedQuery = entityManager.createQuery(cq);
+
+    List<Integer> anios = typedQuery.getResultList();
+
+    log.debug("findAniosWithConvocatoriasBaremacion - end");
+
+    return anios;
   }
 
 }

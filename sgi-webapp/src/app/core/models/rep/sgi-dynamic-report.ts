@@ -25,6 +25,13 @@ export interface ISgiDynamicReport {
   fieldOrientation?: FieldOrientation;
 
   /**
+   * Indica si se mostrarán las cabeceras de los subreport si no contiene elementos
+   * Tiene relación con el campo ISgiColumnReport.visibleIfSubReportEmpty
+   * Solo aplicable en pdf con disposición vertical;
+   */
+  hideBlocksIfNoData?: boolean;
+
+  /**
    * Tipo de exportación: PDF, EXCEL, HTML, etc
    */
   outputType: OutputReport;

@@ -1,11 +1,10 @@
-import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
-import { BaseModalComponent } from '@core/component/base-modal.component';
+import { DialogFormComponent } from '@core/component/dialog-form.component';
 import { MSG_PARAMS } from '@core/i18n';
 import { IProcedimiento } from '@core/models/pii/procedimiento';
-import { SnackBarService } from '@core/services/snack-bar.service';
 import { StatusWrapper } from '@core/utils/status-wrapper';
 import { TranslateService } from '@ngx-translate/core';
 
@@ -28,8 +27,7 @@ export interface ISolicitudProteccionProcedimientoModalData {
   styleUrls: ['./solicitud-proteccion-procedimiento-modal.component.scss']
 })
 export class SolicitudProteccionProcedimientoModalComponent
-  extends BaseModalComponent<ISolicitudProteccionProcedimientoModalData, SolicitudProteccionProcedimientoModalComponent>
-  implements OnInit, OnDestroy {
+  extends DialogFormComponent<ISolicitudProteccionProcedimientoModalData> implements OnInit {
 
   private readonly ACCIONES_A_TOMAR_MAX_LENGTH = 500;
   private readonly COMENTARIOS_MAX_LENGTH = 2000;
@@ -46,48 +44,47 @@ export class SolicitudProteccionProcedimientoModalComponent
   }
 
   constructor(
-    protected readonly snackBarService: SnackBarService,
-    public readonly matDialogRef: MatDialogRef<SolicitudProteccionProcedimientoModalComponent>,
-    @Inject(MAT_DIALOG_DATA) procedimientoData: ISolicitudProteccionProcedimientoModalData,
+    matDialogRef: MatDialogRef<SolicitudProteccionProcedimientoModalComponent>,
+    @Inject(MAT_DIALOG_DATA) private data: ISolicitudProteccionProcedimientoModalData,
     private readonly translate: TranslateService) {
-    super(snackBarService, matDialogRef, procedimientoData);
+    super(matDialogRef, !data.procedimiento.created);
   }
 
-  protected getDatosForm(): ISolicitudProteccionProcedimientoModalData {
+  protected getValue(): ISolicitudProteccionProcedimientoModalData {
 
     if (this.formGroup.touched) {
-      this.entity.procedimiento.value.accionATomar = this.formGroup.controls.accionATomar.value;
-      this.entity.procedimiento.value.comentarios = this.formGroup.controls.comentarios.value;
-      this.entity.procedimiento.value.fecha = this.formGroup.controls.fecha.value;
-      this.entity.procedimiento.value.fechaLimiteAccion = this.formGroup.controls.fechaLimiteAccion.value;
-      this.entity.procedimiento.value.generarAviso = this.formGroup.controls.generarAviso.value;
-      this.entity.procedimiento.value.tipoProcedimiento = this.formGroup.controls.tipoProcedimiento.value;
-      if (!this.entity.procedimiento.created) {
-        this.entity.procedimiento.setEdited();
+      this.data.procedimiento.value.accionATomar = this.formGroup.controls.accionATomar.value;
+      this.data.procedimiento.value.comentarios = this.formGroup.controls.comentarios.value;
+      this.data.procedimiento.value.fecha = this.formGroup.controls.fecha.value;
+      this.data.procedimiento.value.fechaLimiteAccion = this.formGroup.controls.fechaLimiteAccion.value;
+      this.data.procedimiento.value.generarAviso = this.formGroup.controls.generarAviso.value;
+      this.data.procedimiento.value.tipoProcedimiento = this.formGroup.controls.tipoProcedimiento.value;
+      if (!this.data.procedimiento.created) {
+        this.data.procedimiento.setEdited();
       }
     }
     const result: ISolicitudProteccionProcedimientoModalData = {
-      procedimiento: this.entity.procedimiento
+      procedimiento: this.data.procedimiento
     };
 
     return result;
   }
 
-  protected getFormGroup(): FormGroup {
+  protected buildFormGroup(): FormGroup {
     const formGroup = new FormGroup(
       {
-        accionATomar: new FormControl(this.entity?.procedimiento.value.accionATomar, [
+        accionATomar: new FormControl(this.data?.procedimiento.value.accionATomar, [
           Validators.maxLength(this.ACCIONES_A_TOMAR_MAX_LENGTH)
         ]),
-        comentarios: new FormControl(this.entity?.procedimiento.value.comentarios, [
+        comentarios: new FormControl(this.data?.procedimiento.value.comentarios, [
           Validators.maxLength(this.COMENTARIOS_MAX_LENGTH)
         ]),
-        fecha: new FormControl(this.entity?.procedimiento.value.fecha, [
+        fecha: new FormControl(this.data?.procedimiento.value.fecha, [
           Validators.required,
         ]),
-        fechaLimiteAccion: new FormControl(this.entity?.procedimiento.value.fechaLimiteAccion, []),
-        generarAviso: new FormControl(this.entity?.procedimiento.value.generarAviso, []),
-        tipoProcedimiento: new FormControl(this.entity?.procedimiento.value.tipoProcedimiento, [
+        fechaLimiteAccion: new FormControl(this.data?.procedimiento.value.fechaLimiteAccion, []),
+        generarAviso: new FormControl(this.data?.procedimiento.value.generarAviso, []),
+        tipoProcedimiento: new FormControl(this.data?.procedimiento.value.tipoProcedimiento, [
           Validators.required,
         ]),
       },
@@ -99,10 +96,6 @@ export class SolicitudProteccionProcedimientoModalComponent
   ngOnInit(): void {
     super.ngOnInit();
     this.setupI18N();
-  }
-
-  ngOnDestroy(): void {
-    super.ngOnDestroy();
   }
 
   private setupI18N(): void {
@@ -132,7 +125,7 @@ export class SolicitudProteccionProcedimientoModalComponent
   }
 
   public isEditionMode() {
-    return !this.entity.procedimiento.created;
+    return !this.data.procedimiento.created;
   }
 
 }

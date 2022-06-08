@@ -15,8 +15,18 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+
+import org.crue.hercules.sgi.csp.model.BaseEntity.Create;
+import org.crue.hercules.sgi.csp.model.NotificacionProyectoExternoCVN.AsociarProyecto;
+import org.crue.hercules.sgi.csp.validation.NotificacionProyectoExternoCvnAutorizacionState;
+import org.crue.hercules.sgi.csp.validation.SameSolicitanteNotificacionCvnAutorizacion;
+import org.crue.hercules.sgi.csp.validation.UniqueRelationNotificacionCvnAutorizacion;
+import org.crue.hercules.sgi.csp.validation.UniqueRelationNotificacionCvnProyecto;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -34,11 +44,16 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@SameSolicitanteNotificacionCvnAutorizacion(groups = { Create.class, AsociarProyecto.class })
+@NotificacionProyectoExternoCvnAutorizacionState(groups = { Create.class, AsociarProyecto.class })
 public class NotificacionProyectoExternoCVN extends BaseEntity {
 
   protected static final String TABLE_NAME = "notificacion_proyecto_externo_cvn";
   private static final String SEQUENCE_NAME = TABLE_NAME + "_seq";
   public static final int MAX_LENGTH = 250;
+  public static final int MAX_PERCENTAGE = 100;
+  public static final int MIN_PERCENTAGE = 0;
+  public static final int MIN_IMPORTE = 0;
 
   /**
    * Serial version
@@ -55,15 +70,17 @@ public class NotificacionProyectoExternoCVN extends BaseEntity {
   /** Titulo */
   @Column(name = "titulo", length = NotificacionProyectoExternoCVN.MAX_LENGTH, nullable = false)
   @Size(max = NotificacionProyectoExternoCVN.MAX_LENGTH)
-  @NotNull
+  @NotBlank
   private String titulo;
 
   /** Autorizacion */
   @Column(name = "autorizacion_id", nullable = true)
+  @UniqueRelationNotificacionCvnAutorizacion(groups = { Create.class, AsociarAutorizacion.class })
   private Long autorizacionId;
 
   /** Proyecto */
   @Column(name = "proyecto_id", nullable = true)
+  @UniqueRelationNotificacionCvnProyecto(groups = { Create.class, AsociarProyecto.class })
   private Long proyectoId;
 
   /** Ambito Geogrñafico */
@@ -73,6 +90,7 @@ public class NotificacionProyectoExternoCVN extends BaseEntity {
 
   /** Código Externo */
   @Column(name = "cod_externo", nullable = true)
+  @Size(max = NotificacionProyectoExternoCVN.MAX_LENGTH)
   private String codExterno;
 
   /** Datos Entidad Participacion */
@@ -92,6 +110,7 @@ public class NotificacionProyectoExternoCVN extends BaseEntity {
 
   /** Entidad Participacion Ref */
   @Column(name = "entidad_participacion_ref", nullable = true)
+  @Size(max = NotificacionProyectoExternoCVN.MAX_LENGTH)
   private String entidadParticipacionRef;
 
   /** Fecha Inicio */
@@ -111,6 +130,7 @@ public class NotificacionProyectoExternoCVN extends BaseEntity {
 
   /** Importe Total */
   @Column(name = "importe_total", nullable = true)
+  @Min(NotificacionProyectoExternoCVN.MIN_IMPORTE)
   private Integer importeTotal;
 
   /** Nombre Programa */
@@ -120,11 +140,13 @@ public class NotificacionProyectoExternoCVN extends BaseEntity {
 
   /** Importe Total */
   @Column(name = "porcentaje_subvencion", nullable = true)
+  @Max(NotificacionProyectoExternoCVN.MAX_PERCENTAGE)
+  @Min(NotificacionProyectoExternoCVN.MIN_PERCENTAGE)
   private Integer porcentajeSubvencion;
 
   /** Proyecto CVN id */
   @Column(name = "proyecto_cvn_id", nullable = false)
-  @NotNull
+  @NotBlank
   private String proyectoCVNId;
 
   /** Responsable Ref */
@@ -132,8 +154,8 @@ public class NotificacionProyectoExternoCVN extends BaseEntity {
   private String responsableRef;
 
   /** Solicitante Ref */
-  @NotNull
   @Column(name = "solicitante_ref", nullable = false)
+  @NotBlank
   private String solicitanteRef;
 
   /** Url Documento acreditacion */
@@ -158,5 +180,11 @@ public class NotificacionProyectoExternoCVN extends BaseEntity {
   @Getter(AccessLevel.NONE)
   @Setter(AccessLevel.NONE)
   private final List<NotificacionCVNEntidadFinanciadora> notificaciones = null;
+
+  public interface AsociarAutorizacion {
+  }
+
+  public interface AsociarProyecto {
+  }
 
 }

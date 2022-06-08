@@ -18,15 +18,9 @@
       [fxFlex.gt-md]="fxFlexPropertiesInline.gtMd" [fxLayout.xs]="fxLayoutProperties.xs"
       [fxLayout]="fxLayoutProperties.layout" [fxLayoutGap]="fxLayoutProperties.gap">
       <div>
-        <mat-form-field class="input-form">
+        <mat-form-field>
           <mat-label>{{'label.eti.comite' | translate}}</mat-label>
-          <input type="text" [placeholder]="'label.eti.comite' | translate" arial-label="Number" matInput
-            formControlName="comite" [matAutocomplete]="autocompleteComite" required>
-          <mat-autocomplete #autocompleteComite="matAutocomplete" [displayWith]="getComite">
-            <mat-option *ngFor="let comite of filteredComites | async" [value]="comite">
-              {{comite.comite}}
-            </mat-option>
-          </mat-autocomplete>
+          <sgi-select-comite #selectComite formControlName="comite" required></sgi-select-comite>
           <mat-error *ngIf="formGroup.controls.comite.errors?.required">
             {{'error.required.entity' | translate:msgParamComiteEntity}}
           </mat-error>
@@ -74,17 +68,9 @@
       [fxLayout]="fxLayoutProperties.layout" [fxLayoutGap]="fxLayoutProperties.gap">
       <div>
         <mat-form-field>
-          <mat-label>{{'eti.convocatoria-reunion.tipo' | translate}}
-          </mat-label>
-          <input type="text" [placeholder]="'eti.convocatoria-reunion.tipo' | translate" arial-label="Number" matInput
-            formControlName="tipoConvocatoriaReunion" [matAutocomplete]="autocompleteTipoConvocatoriaReunion" required>
-          <mat-autocomplete #autocompleteTipoConvocatoriaReunion="matAutocomplete"
-            [displayWith]="getTipoConvocatoriaReunion">
-            <mat-option *ngFor="let tipoConvocatoriaReunion of filteredTiposConvocatoriaReunion | async"
-              [value]="tipoConvocatoriaReunion">
-              {{tipoConvocatoriaReunion.nombre}}
-            </mat-option>
-          </mat-autocomplete>
+          <mat-label>{{'eti.convocatoria-reunion.tipo' | translate}}</mat-label>
+          <sgi-select-tipo-convocatoria-reunion formControlName="tipoConvocatoriaReunion" required>
+          </sgi-select-tipo-convocatoria-reunion>
           <mat-error *ngIf="formGroup.controls.tipoConvocatoriaReunion.errors?.required">
             {{'error.required.entity' | translate:msgParamTipoEntity}}
           </mat-error>

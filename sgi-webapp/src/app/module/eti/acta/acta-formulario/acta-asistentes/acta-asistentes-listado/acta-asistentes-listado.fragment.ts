@@ -76,7 +76,9 @@ export class ActaAsistentesFragment extends Fragment {
         return this.asistenteService.update(wrappedAsistente.value.id, wrappedAsistente.value).pipe(
           map((updatedAsistente) => {
             const index = this.asistentes$.value.findIndex((currentAsistente) => currentAsistente === wrappedAsistente);
-            this.asistentes$[index] = new StatusWrapper<IAsistente>(updatedAsistente);
+            wrappedAsistente.value.id = updatedAsistente.id;
+            this.asistentes$.value[index] = new StatusWrapper<IAsistente>(wrappedAsistente.value);
+            this.asistentes$.next(this.asistentes$.value);
           })
         );
       }),

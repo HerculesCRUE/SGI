@@ -8,6 +8,8 @@ import org.crue.hercules.sgi.csp.model.Grupo;
 import org.crue.hercules.sgi.csp.model.GrupoPalabraClave;
 import org.crue.hercules.sgi.csp.repository.GrupoPalabraClaveRepository;
 import org.crue.hercules.sgi.csp.repository.specification.GrupoPalabraClaveSpecifications;
+import org.crue.hercules.sgi.csp.util.AssertHelper;
+import org.crue.hercules.sgi.csp.util.GrupoAuthorityHelper;
 import org.crue.hercules.sgi.framework.rsql.SgiRSQLJPASupport;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -28,6 +30,7 @@ import lombok.extern.slf4j.Slf4j;
 public class GrupoPalabraClaveService {
 
   private final GrupoPalabraClaveRepository repository;
+  private final GrupoAuthorityHelper authorityHelper;
 
   /**
    * Obtiene los {@link GrupoPalabraClave} para una entidad
@@ -41,6 +44,9 @@ public class GrupoPalabraClaveService {
    */
   public Page<GrupoPalabraClave> findByGrupoId(Long grupoId, String query, Pageable pageable) {
     log.debug("findByGrupoId(Long grupoId, String query, Pageable pageable) - start");
+
+    AssertHelper.idNotNull(grupoId, Grupo.class);
+    authorityHelper.checkUserHasAuthorityViewGrupo(grupoId);
 
     Specification<GrupoPalabraClave> specs = GrupoPalabraClaveSpecifications.byGrupoId(grupoId)
         .and(SgiRSQLJPASupport.toSpecification(query));
@@ -61,6 +67,9 @@ public class GrupoPalabraClaveService {
   @Transactional
   public List<GrupoPalabraClave> updatePalabrasClave(Long grupoId, List<GrupoPalabraClave> palabrasClave) {
     log.debug("updatePalabrasClave(Long grupoId, List<GrupoPalabraClave> palabrasClave) - start");
+
+    AssertHelper.idNotNull(grupoId, Grupo.class);
+    authorityHelper.checkUserHasAuthorityViewGrupo(grupoId);
 
     // Eliminamos las GrupoPalabraClave existentes para el grupoId dado
     repository.deleteInBulkByGrupoId(grupoId);

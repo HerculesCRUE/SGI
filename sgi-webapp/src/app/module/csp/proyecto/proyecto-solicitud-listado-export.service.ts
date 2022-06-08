@@ -30,6 +30,8 @@ const SOLICITUD_FECHA_ESTADO_FIELD = 'fechaEstadoSolicitud';
 const SOLICITUD_ESTADO_KEY = marker('csp.proyecto.estado');
 const SOLICITUD_ESTADO_FIELD = 'estadoSolicitud';
 
+const COLUMN_VALUE_PREFIX = ': ';
+
 @Injectable()
 export class ProyectoSolicitudListadoExportService extends AbstractTableExportFillService<IProyectoReportData, IProyectoReportOptions>{
 
@@ -64,7 +66,7 @@ export class ProyectoSolicitudListadoExportService extends AbstractTableExportFi
     if (!this.isExcelOrCsv(reportConfig.outputType)) {
       return this.getColumnsSolicitudNotExcel();
     } else {
-      const prefixTitleSolicitud = this.translate.instant(SOLICITUD_KEY) + ': ';
+      const prefixTitleSolicitud = this.translate.instant(SOLICITUD_KEY, MSG_PARAMS.CARDINALIRY.SINGULAR) + ': ';
       return this.getColumnsSolicitud(prefixTitleSolicitud, false);
     }
   }
@@ -72,7 +74,7 @@ export class ProyectoSolicitudListadoExportService extends AbstractTableExportFi
   private getColumnsSolicitudNotExcel(): ISgiColumnReport[] {
     const columns: ISgiColumnReport[] = this.getColumnsSolicitud('', true);
 
-    const titleI18n = this.translate.instant(SOLICITUD_KEY, MSG_PARAMS.CARDINALIRY.PLURAL);
+    const titleI18n = this.translate.instant(SOLICITUD_KEY, MSG_PARAMS.CARDINALIRY.SINGULAR);
 
     const columnSolicitud: ISgiColumnReport = {
       name: SOLICITUD_FIELD,
@@ -89,35 +91,35 @@ export class ProyectoSolicitudListadoExportService extends AbstractTableExportFi
 
     const columnCodigoSolicitud: ISgiColumnReport = {
       name: SOLICITUD_CODIGO_FIELD,
-      title: prefix + this.translate.instant(SOLICITUD_CODIGO_KEY),
+      title: prefix + this.translate.instant(SOLICITUD_CODIGO_KEY) + this.getValuePrefix(prefix),
       type: ColumnType.STRING,
     };
     columns.push(columnCodigoSolicitud);
 
     const columnNombreSolicitud: ISgiColumnReport = {
       name: SOLICITUD_FIELD,
-      title: prefix + this.translate.instant(SOLICITUD_TITULO_KEY),
+      title: prefix + this.translate.instant(SOLICITUD_TITULO_KEY) + this.getValuePrefix(prefix),
       type: ColumnType.STRING,
     };
     columns.push(columnNombreSolicitud);
 
     const columnCodigoExternoSolicitud: ISgiColumnReport = {
       name: SOLICITUD_CODIGO_EXTERNO_FIELD,
-      title: prefix + this.translate.instant(SOLICITUD_CODIGO_EXTERNO_KEY),
+      title: prefix + this.translate.instant(SOLICITUD_CODIGO_EXTERNO_KEY) + this.getValuePrefix(prefix),
       type: ColumnType.STRING,
     };
     columns.push(columnCodigoExternoSolicitud);
 
     const columnEstadoSolicitud: ISgiColumnReport = {
       name: SOLICITUD_ESTADO_FIELD,
-      title: prefix + this.translate.instant(SOLICITUD_ESTADO_KEY),
+      title: prefix + this.translate.instant(SOLICITUD_ESTADO_KEY) + this.getValuePrefix(prefix),
       type: ColumnType.STRING,
     };
     columns.push(columnEstadoSolicitud);
 
     const columnFechaPublicacionSolicitud: ISgiColumnReport = {
       name: SOLICITUD_FECHA_ESTADO_FIELD,
-      title: prefix + this.translate.instant(SOLICITUD_FECHA_ESTADO_KEY),
+      title: prefix + this.translate.instant(SOLICITUD_FECHA_ESTADO_KEY) + this.getValuePrefix(prefix),
       type: allString ? ColumnType.STRING : ColumnType.DATE,
     };
     columns.push(columnFechaPublicacionSolicitud);
@@ -175,5 +177,12 @@ export class ProyectoSolicitudListadoExportService extends AbstractTableExportFi
       elementsRow.push('');
       elementsRow.push('');
     }
+  }
+
+  private getValuePrefix(prefix: string): string {
+    if (!prefix) {
+      return COLUMN_VALUE_PREFIX;
+    }
+    return '';
   }
 }

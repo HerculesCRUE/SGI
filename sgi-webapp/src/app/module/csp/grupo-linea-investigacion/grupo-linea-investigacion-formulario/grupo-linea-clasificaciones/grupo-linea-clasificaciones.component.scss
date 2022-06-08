@@ -1,0 +1,9 @@
+:host {
+  .mat-cell.mat-column-niveles {
+    max-width: 30vw;
+    overflow: hidden;
+    padding-right: 10px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}

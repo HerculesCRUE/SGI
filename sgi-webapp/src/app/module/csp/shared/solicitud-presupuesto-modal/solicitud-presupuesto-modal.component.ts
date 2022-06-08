@@ -2,6 +2,7 @@ import { Component, Inject } from '@angular/core';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatTableDataSource } from '@angular/material/table';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
+import { DialogCommonComponent } from '@core/component/dialog-common.component';
 import { ISolicitudProyectoPresupuesto } from '@core/models/csp/solicitud-proyecto-presupuesto';
 import { SolicitudProyectoEntidadService } from '@core/services/csp/solicitud-proyecto-entidad/solicitud-proyecto-entidad.service';
 import { SolicitudService } from '@core/services/csp/solicitud.service';
@@ -78,7 +79,7 @@ class RowTreePresupuesto extends RowTree<ISolicitudProyectoPresupuesto> {
   templateUrl: './solicitud-presupuesto-modal.component.html',
   styleUrls: ['./solicitud-presupuesto-modal.component.scss']
 })
-export class SolicitiudPresupuestoModalComponent {
+export class SolicitiudPresupuestoModalComponent extends DialogCommonComponent {
 
   readonly columnas: string[];
   private readonly columnasGlobal = ['anualidad', 'conceptoGasto', 'observaciones', 'importePresupuestado', 'importeSolicitado'];
@@ -90,13 +91,14 @@ export class SolicitiudPresupuestoModalComponent {
   private mapTree = new Map<string, RowTreePresupuesto>();
 
   constructor(
-    public matDialogRef: MatDialogRef<SolicitiudPresupuestoModalComponent>,
+    matDialogRef: MatDialogRef<SolicitiudPresupuestoModalComponent>,
     @Inject(MAT_DIALOG_DATA) public readonly data: SolicitudPresupuestoModalData,
     solicitudService: SolicitudService,
     private readonly solicitudProyectoEntidadService: SolicitudProyectoEntidadService,
     private readonly empresaService: EmpresaService,
     private matDialog: MatDialog,
   ) {
+    super(matDialogRef);
     this.title = this.data.entidadId ? TITLE_PRESUPUESTO_ENTIDAD : TITLE_PRESUPUESTO_COMPLETO;
     this.columnas = this.data.global ? this.columnasGlobal : this.columnasEntidad;
     let findOptions: SgiRestFindOptions;
@@ -112,7 +114,7 @@ export class SolicitiudPresupuestoModalComponent {
     presupuestos$.pipe(
       map(presupuestos => {
 
-        this.sortRows(presupuestos)
+        this.sortRows(presupuestos);
 
         const root = this.data.global ? this.toGlobal(presupuestos) : this.toEntidad(presupuestos);
         const regs: RowTreePresupuesto[] = [];
@@ -240,7 +242,10 @@ export class SolicitiudPresupuestoModalComponent {
 
   private sortRows(rows: ISolicitudProyectoPresupuesto[]): void {
     rows.sort((a, b) => {
-      return b.anualidad.toLocaleString().localeCompare(a.anualidad.toLocaleString())
+      const anualidadA = a.anualidad ?? '';
+      const anualidadB = b.anualidad ?? '';
+
+      return anualidadB.toLocaleString().localeCompare(anualidadA.toLocaleString())
         || a.conceptoGasto?.nombre.localeCompare(b.conceptoGasto?.nombre);
     });
   }

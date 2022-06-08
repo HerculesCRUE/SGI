@@ -131,7 +131,6 @@ export class ModeloEjecucionTipoHitoComponent extends FragmentComponent implemen
     });
 
     const config = {
-      panelClass: 'sgi-dialog-container',
       data: {
         modeloTipoHito: statusWrapper ? statusWrapper.value : modeloTipoHito,
         tipoHitos

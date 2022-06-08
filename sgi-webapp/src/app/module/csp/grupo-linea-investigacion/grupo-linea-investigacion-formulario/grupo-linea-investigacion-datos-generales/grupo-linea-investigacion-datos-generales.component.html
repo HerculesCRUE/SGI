@@ -1,0 +1,50 @@
+<!-- Memoria datos generales -->
+<sgi-fragment title="{{'label.datos-generales' | translate}}">
+  <form [formGroup]="formGroup" fxLayout="column">
+    <!-- Línea investigación -->
+    <div fxFlex fxLayout="row" fxLayoutGap="10px">
+      <mat-form-field fxFlex="50%">
+        <mat-label>{{'csp.grupo-linea-investigacion' | translate:MSG_PARAMS.CARDINALIRY.SINGULAR}}</mat-label>
+        <sgi-select-linea-investigacion formControlName="lineaInvestigacion" required>
+        </sgi-select-linea-investigacion>
+        <mat-error *ngIf="formGroup.controls.lineaInvestigacion.errors?.required">
+          {{'error.required.entity' | translate:msgParamLineaInvestigacionEntity}}
+        </mat-error>
+      </mat-form-field>
+    </div>
+
+    <!-- Fecha de inicio -->
+    <div fxFlex fxLayout="row" fxLayoutGap="10px">
+      <mat-form-field fxFlex="25%">
+        <mat-label>{{'csp.grupo-linea-investigacion.fecha-inicio'|
+          translate}}</mat-label>
+        <input matInput [matDatepicker]="pickerFechaInicio" formControlName="fechaInicio" required>
+        <mat-datepicker-toggle class="fechaIcon" matSuffix [for]="pickerFechaInicio"></mat-datepicker-toggle>
+        <mat-datepicker #pickerFechaInicio>
+        </mat-datepicker>
+        <mat-error *ngIf="formGroup.controls.fechaInicio.errors?.required">
+          {{'error.required.entity' | translate:msgParamFechaInicioEntity}}
+        </mat-error>
+        <mat-error
+          *ngIf="formGroup.controls.fechaInicio.errors?.invalid || formGroup.controls.fechaInicio.errors?.minDate">
+          {{'error.csp.grupo-linea-investigacion.fecha.invalid' | translate}}
+        </mat-error>
+      </mat-form-field>
+      <!-- Fecha de fin -->
+      <mat-form-field fxFlex="25%" #sgiEndDate>
+        <mat-label>{{'csp.grupo-linea-investigacion.fecha-fin' |
+          translate}}</mat-label>
+        <input matInput [matDatepicker]="pickerFechaFin" formControlName="fechaFin">
+        <mat-datepicker-toggle class="fechaIcon" matSuffix [for]="pickerFechaFin"></mat-datepicker-toggle>
+        <mat-datepicker #pickerFechaFin>
+        </mat-datepicker>
+        <mat-error *ngIf="formGroup.controls.fechaFin.errors?.after">
+          {{'error.after.fecha-fin' | translate}}
+        </mat-error>
+        <mat-error *ngIf="formGroup.controls.fechaFin.errors?.invalid">
+          {{'error.csp.grupo-linea-investigacion.fecha.invalid' | translate}}
+        </mat-error>
+      </mat-form-field>
+    </div>
+  </form>
+</sgi-fragment>

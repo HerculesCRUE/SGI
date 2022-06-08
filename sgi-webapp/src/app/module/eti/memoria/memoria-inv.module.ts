@@ -12,6 +12,7 @@ import { MemoriaDatosGeneralesComponent } from '../memoria/memoria-formulario/me
 import { EtiSharedModule } from '../shared/eti-shared.module';
 import { MemoriaCrearComponent } from './memoria-crear/memoria-crear.component';
 import { MemoriaCrearGuard } from './memoria-crear/memoria-crear.guard';
+import { MemoriaEvaluacionesListadoExportService } from './memoria-evaluaciones-listado-export.service';
 import { MemoriaDocumentacionComponent } from './memoria-formulario/memoria-documentacion/memoria-documentacion.component';
 import { MemoriaEvaluacionesComponent } from './memoria-formulario/memoria-evaluaciones/memoria-evaluaciones.component';
 import { MemoriaFormularioComponent } from './memoria-formulario/memoria-formulario/memoria-formulario.component';
@@ -19,6 +20,8 @@ import { MemoriaInformesComponent } from './memoria-formulario/memoria-informes/
 import { MemoriaRetrospectivaComponent } from './memoria-formulario/memoria-retrospectiva/memoria-retrospectiva.component';
 import { MemoriaSeguimientoAnualComponent } from './memoria-formulario/memoria-seguimiento-anual/memoria-seguimiento-anual.component';
 import { MemoriaSeguimientoFinalComponent } from './memoria-formulario/memoria-seguimiento-final/memoria-seguimiento-final.component';
+import { MemoriaGeneralListadoExportService } from './memoria-general-listado-export.service';
+import { MemoriaListadoExportService } from './memoria-listado-export.service';
 import { MemoriaListadoInvComponent } from './memoria-listado-inv/memoria-listado-inv.component';
 import { MemoriaRoutingInvModule } from './memoria-routing-inv.module';
 import { MemoriaResolver } from './memoria.resolver';
@@ -54,7 +57,10 @@ import { MemoriaDocumentacionMemoriaModalComponent } from './modals/memoria-docu
   ],
   providers: [
     MemoriaResolver,
-    MemoriaCrearGuard
+    MemoriaCrearGuard,
+    MemoriaListadoExportService,
+    MemoriaGeneralListadoExportService,
+    MemoriaEvaluacionesListadoExportService
   ]
 })
 export class MemoriaInvModule { }

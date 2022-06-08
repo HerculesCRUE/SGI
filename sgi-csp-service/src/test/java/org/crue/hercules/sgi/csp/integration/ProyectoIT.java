@@ -107,6 +107,9 @@ class ProyectoIT extends BaseIT {
   private static final String PATH_PRC_TOTAL_IMPORTE_CONCEDIDO = "/produccioncientifica/totalimporteconcedido/{proyectoId}";
   private static final String PATH_PRC_TOTAL_IMPORTE_CONCEDIDO_COSTES_INDIRECTOS = "/produccioncientifica/totalimporteconcedidocostesindirectos/{proyectoId}";
   private static final String PATH_PRC_PROYECTO_EQUIPO = "/produccioncientifica/equipo/{proyectoId}";
+  private static final String PATH_ANUALIDAD_GASTOS = PATH_PARAMETER_ID + "/anualidad-gastos";
+  private static final String PATH_ANUALIDAD_INGRESOS = PATH_PARAMETER_ID + "/anualidad-ingresos";
+  private static final String PATH_GASTOS_PROYECTO = PATH_PARAMETER_ID + "/gastos-proyecto";
 
   private HttpEntity<Object> buildRequest(HttpHeaders headers, Object entity, String... roles) throws Exception {
     headers = (headers != null ? headers : new HttpHeaders());
@@ -3000,6 +3003,90 @@ class ProyectoIT extends BaseIT {
     Assertions.assertThat(responseData.get(0).getId()).isEqualTo(1);
     Assertions.assertThat(responseData.get(1).getId()).isEqualTo(2);
     Assertions.assertThat(responseData.get(2).getId()).isEqualTo(3);
+  }
+
+  @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = {
+    // @formatter:off
+    "classpath:scripts/tipo_fase.sql",
+    "classpath:scripts/modelo_ejecucion.sql",
+    "classpath:scripts/modelo_unidad.sql",
+    "classpath:scripts/tipo_finalidad.sql",
+    "classpath:scripts/tipo_ambito_geografico.sql",
+    "classpath:scripts/tipo_regimen_concurrencia.sql",
+    "classpath:scripts/convocatoria.sql", 
+    "classpath:scripts/proyecto.sql"
+    // @formatter:on
+  })
+  @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
+  @Test
+  void hasAnualidadGastos_Returns204() throws Exception {
+    String[] roles = { "CSP-PRO-E" };
+
+    Long proyectoId = 1L;
+
+    URI uri = UriComponentsBuilder.fromUriString(CONTROLLER_BASE_PATH + PATH_ANUALIDAD_GASTOS)
+        .buildAndExpand(proyectoId).toUri();
+
+    final ResponseEntity<Void> response = restTemplate.exchange(uri, HttpMethod.HEAD,
+        buildRequest(null, null, roles), Void.class);
+
+    Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
+  }
+
+  @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = {
+    // @formatter:off
+    "classpath:scripts/tipo_fase.sql",
+    "classpath:scripts/modelo_ejecucion.sql",
+    "classpath:scripts/modelo_unidad.sql",
+    "classpath:scripts/tipo_finalidad.sql",
+    "classpath:scripts/tipo_ambito_geografico.sql",
+    "classpath:scripts/tipo_regimen_concurrencia.sql",
+    "classpath:scripts/convocatoria.sql", 
+    "classpath:scripts/proyecto.sql"
+    // @formatter:on
+  })
+  @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
+  @Test
+  void hasAnualidadIngresos_Returns204() throws Exception {
+    String[] roles = { "CSP-PRO-E" };
+
+    Long proyectoId = 1L;
+
+    URI uri = UriComponentsBuilder.fromUriString(CONTROLLER_BASE_PATH + PATH_ANUALIDAD_INGRESOS)
+        .buildAndExpand(proyectoId).toUri();
+
+    final ResponseEntity<Void> response = restTemplate.exchange(uri, HttpMethod.HEAD,
+        buildRequest(null, null, roles), Void.class);
+
+    Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
+  }
+
+  @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = {
+    // @formatter:off
+    "classpath:scripts/tipo_fase.sql",
+    "classpath:scripts/modelo_ejecucion.sql",
+    "classpath:scripts/modelo_unidad.sql",
+    "classpath:scripts/tipo_finalidad.sql",
+    "classpath:scripts/tipo_ambito_geografico.sql",
+    "classpath:scripts/tipo_regimen_concurrencia.sql",
+    "classpath:scripts/convocatoria.sql", 
+    "classpath:scripts/proyecto.sql"
+    // @formatter:on
+  })
+  @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
+  @Test
+  void hasGastosProyecto_Returns204() throws Exception {
+    String[] roles = { "CSP-PRO-E" };
+
+    Long proyectoId = 1L;
+
+    URI uri = UriComponentsBuilder.fromUriString(CONTROLLER_BASE_PATH + PATH_GASTOS_PROYECTO)
+        .buildAndExpand(proyectoId).toUri();
+
+    final ResponseEntity<Void> response = restTemplate.exchange(uri, HttpMethod.HEAD,
+        buildRequest(null, null, roles), Void.class);
+
+    Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
   }
 
   /**

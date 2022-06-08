@@ -2,10 +2,9 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
-import { BaseModalComponent } from '@core/component/base-modal.component';
+import { DialogFormComponent } from '@core/component/dialog-form.component';
 import { MSG_PARAMS } from '@core/i18n';
 import { IRepartoGasto } from '@core/models/pii/reparto-gasto';
-import { SnackBarService } from '@core/services/snack-bar.service';
 import { NumberValidator } from '@core/validators/number-validator';
 import { TranslateService } from '@ngx-translate/core';
 
@@ -17,18 +16,17 @@ const REPARTO_IMPORTE_COMPENSAR_KEY = marker('pii.reparto.gasto.importe-compensa
   templateUrl: './reparto-gasto-modal.component.html',
   styleUrls: ['./reparto-gasto-modal.component.scss']
 })
-export class RepartoGastoModalComponent extends BaseModalComponent<IRepartoGasto, RepartoGastoModalComponent> implements OnInit {
+export class RepartoGastoModalComponent extends DialogFormComponent<IRepartoGasto> implements OnInit {
   title: string;
   msgParamImportePendienteCompensarEntity = {};
   msgParamImporteACompensarEntity = {};
 
   constructor(
     private readonly translate: TranslateService,
-    public matDialogRef: MatDialogRef<RepartoGastoModalComponent>,
-    protected readonly snackBarService: SnackBarService,
+    matDialogRef: MatDialogRef<RepartoGastoModalComponent>,
     @Inject(MAT_DIALOG_DATA) readonly data: IRepartoGasto,
   ) {
-    super(snackBarService, matDialogRef, data);
+    super(matDialogRef, true);
   }
 
   ngOnInit(): void {
@@ -36,19 +34,19 @@ export class RepartoGastoModalComponent extends BaseModalComponent<IRepartoGasto
     this.setupI18N();
   }
 
-  protected getDatosForm(): IRepartoGasto {
-    this.entity.importeADeducir = this.formGroup.controls.importeACompensar.value;
-    return this.entity;
+  protected getValue(): IRepartoGasto {
+    this.data.importeADeducir = this.formGroup.controls.importeACompensar.value;
+    return this.data;
   }
 
-  protected getFormGroup(): FormGroup {
+  protected buildFormGroup(): FormGroup {
     return new FormGroup({
       importePendienteCompensar: new FormControl({
-        value: this.entity.invencionGasto?.importePendienteDeducir,
+        value: this.data.invencionGasto?.importePendienteDeducir,
         disabled: true
       }),
       importeACompensar: new FormControl(
-        this.entity.importeADeducir, [Validators.required, Validators.min(0.01), NumberValidator.maxDecimalDigits(2)]
+        this.data.importeADeducir, [Validators.required, Validators.min(0.01), NumberValidator.maxDecimalDigits(2)]
       )
     }, NumberValidator.isBeforeOrEqual('importePendienteCompensar', 'importeACompensar'));
   }

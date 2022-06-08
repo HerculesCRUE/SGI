@@ -19,11 +19,17 @@ export const OUTPUT_REPORT_TYPE_MAP: Map<OutputReport, string> = new Map([
   [OutputReport.CSV, marker('export.type.csv')],
 ]);
 
+export const OUTPUT_REPORT_XLS_TYPE_MAP: Map<OutputReport, string> = new Map([
+  [OutputReport.XLSX, marker('export.type.xlsx')],
+  [OutputReport.CSV, marker('export.type.csv')],
+]);
+
 @Directive()
 // tslint:disable-next-line: directive-class-suffix
 export abstract class BaseExportModalComponent<T> extends DialogCommonComponent implements OnInit {
 
   readonly OUTPUT_REPORT_TYPE_MAP = OUTPUT_REPORT_TYPE_MAP;
+  readonly OUTPUT_REPORT_XLS_TYPE_MAP = OUTPUT_REPORT_XLS_TYPE_MAP;
   readonly outputType: OutputReport = OutputReport.PDF;
 
   public readonly problems$ = new BehaviorSubject<SgiProblem[]>([]);

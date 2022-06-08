@@ -84,14 +84,11 @@
       [route]="[PROYECTO_ROUTE_NAMES.PRORROGAS]" [title]="'menu.csp.proyectos.prorrogas' | translate"
       [fragment]="actionService.getFragment(actionService.FRAGMENT.PRORROGAS)">
     </sgi-action-fragment-menu-item>
-    <ng-container *sgiHasAnyAuthorityForAnyUO="['CSP-PRO-V', 'CSP-PRO-E']">
-      <sgi-action-fragment-menu-group [title]="'menu.csp.proyectos.configuracion-paquetes-trabajo' | translate"
-        *ngIf="actionService.showPaquetesTrabajo$ | async">
-        <sgi-action-fragment-menu-item *sgiHasAnyAuthorityForAnyUO="['CSP-PRO-V', 'CSP-PRO-E']"
-          [route]="[PROYECTO_ROUTE_NAMES.PAQUETE_TRABAJO]" [title]="'menu.csp.proyectos.paquetes-trabajo' | translate"
-          [fragment]="actionService.getFragment(actionService.FRAGMENT.PAQUETE_TRABAJO)">
-        </sgi-action-fragment-menu-item>
-      </sgi-action-fragment-menu-group>
+    <ng-container *ngIf="actionService.showPaquetesTrabajo$ | async">
+      <sgi-action-fragment-menu-item *sgiHasAnyAuthorityForAnyUO="['CSP-PRO-V', 'CSP-PRO-E']"
+        [route]="[PROYECTO_ROUTE_NAMES.PAQUETE_TRABAJO]" [title]="'menu.csp.proyectos.paquetes-trabajo' | translate"
+        [fragment]="actionService.getFragment(actionService.FRAGMENT.PAQUETE_TRABAJO)">
+      </sgi-action-fragment-menu-item>
     </ng-container>
     <sgi-action-fragment-menu-item *sgiHasAnyAuthorityForAnyUO="['CSP-PRO-V', 'CSP-PRO-E']"
       [route]="[PROYECTO_ROUTE_NAMES.DOCUMENTOS]" [title]="'csp.documentos' | translate"

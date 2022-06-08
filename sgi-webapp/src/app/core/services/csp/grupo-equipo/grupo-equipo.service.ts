@@ -60,4 +60,23 @@ export class GrupoEquipoService extends _GrupoEquipoMixinBase {
     );
   }
 
+  /**
+   * Devuelve el personaRef del usuario actual y de todos los miembros de los equipos en los que sea investigador principal
+   */
+  findMiembrosEquipoInvestigador(): Observable<string[]> {
+    return this.get<string[]>(`${this.endpointUrl}/investigador`);
+  }
+
+  /**
+   * Comprueba si existe un miembro adscrito en el rango de fechas del equipo de investigación
+   *
+   * @param idGrupoEquipo Identificador del grupo equipo investigación
+   */
+  existsLineaInvestigadorInFechasGrupoEquipo(idGrupoEquipo: number): Observable<boolean> {
+    const url = `${this.endpointUrl}/${idGrupoEquipo}/gruposlineasinvestigadores`;
+    return this.http.head(url, { observe: 'response' }).pipe(
+      map(response => response.status === 200)
+    );
+  }
+
 }

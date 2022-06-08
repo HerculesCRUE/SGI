@@ -58,7 +58,7 @@ public class ProyectoSocioPeriodoJustificacionComService {
         periodosFechaInicioPresentacion,
         TipoComunicado.INICIO);
 
-    this.getDatesThreeWorkableDaysAfter().forEach(date -> {
+    this.getDateThreeWorkableDaysAfter().forEach(date -> {
       Instant fechaFinPresentacionFrom = date.atZone(this.sgiConfigProperties.getTimeZone().toZoneId())
           .with(LocalTime.MIN).toInstant();
       Instant fechaFinPresentacionTo = date;
@@ -143,30 +143,33 @@ public class ProyectoSocioPeriodoJustificacionComService {
         .collect(Collectors.toList());
   }
 
-  private List<Instant> getDatesThreeWorkableDaysAfter() {
+  /**
+   * Obtiene fecha tres dias después de la fecha actual, siendo hoy un día hábil
+   * 
+   * @return returns List of @link{Instant}
+   */
+  private List<Instant> getDateThreeWorkableDaysAfter() {
     ZonedDateTime now = getLastInstantOfDay();
     DayOfWeek day = now.getDayOfWeek();
     List<Instant> dates = new LinkedList<>();
-    final int daysAfter = 3;
 
     switch (day) {
+      case MONDAY:
+        dates.add(now.plusDays(3).toInstant());
+        break;
       case TUESDAY:
-        // next Friday
-        ZonedDateTime nextFriday = now.plusDays(daysAfter);
-        // next Saturday
-        ZonedDateTime saturday = getLastInstantOfDay().plusDays(daysAfter + 1);
-        // next Sunday
-        ZonedDateTime sunday = getLastInstantOfDay().plusDays(daysAfter + 2);
+        ZonedDateTime friday = now.plusDays(3);
+        ZonedDateTime saturday = getLastInstantOfDay().plusDays(4);
+        ZonedDateTime sunday = getLastInstantOfDay().plusDays(5);
 
-        dates.add(nextFriday.toInstant());
+        dates.add(friday.toInstant());
         dates.add(saturday.toInstant());
         dates.add(sunday.toInstant());
         break;
-      case MONDAY:
       case WEDNESDAY:
       case THURSDAY:
       case FRIDAY:
-        dates.add(now.plusDays(daysAfter).toInstant());
+        dates.add(now.plusDays(5).toInstant());
         break;
       default:
         break;

@@ -9,11 +9,15 @@ import javax.persistence.criteria.Expression;
 import javax.persistence.criteria.From;
 import javax.persistence.criteria.Join;
 import javax.persistence.criteria.JoinType;
+import javax.persistence.criteria.Root;
+import javax.persistence.criteria.Subquery;
 import javax.persistence.metamodel.SingularAttribute;
 
 import org.crue.hercules.sgi.csp.model.Convocatoria;
 import org.crue.hercules.sgi.csp.model.EstadoSolicitud;
 import org.crue.hercules.sgi.csp.model.EstadoSolicitud_;
+import org.crue.hercules.sgi.csp.model.Grupo;
+import org.crue.hercules.sgi.csp.model.Grupo_;
 import org.crue.hercules.sgi.csp.model.Solicitud;
 import org.crue.hercules.sgi.csp.model.Solicitud_;
 import org.springframework.data.jpa.domain.Specification;
@@ -80,6 +84,23 @@ public class SolicitudSpecifications {
 
       query.groupBy(expressions);
       return cb.isTrue(cb.literal(true));
+    };
+  }
+
+  /**
+   * {@link Solicitud} del {@link Grupo} con el id indicado.
+   * 
+   * @param grupoId identificador de la {@link Grupo}.
+   * @return specification para obtener las {@link Convocatoria} de
+   *         la {@link Grupo} con el id indicado.
+   */
+  public static Specification<Solicitud> byGrupoId(Long grupoId) {
+    return (root, query, cb) -> {
+      Subquery<Long> queryGrupo = query.subquery(Long.class);
+      Root<Grupo> queryGrupoRoot = queryGrupo.from(Grupo.class);
+      queryGrupo.select(queryGrupoRoot.get(Grupo_.solicitud).get(Solicitud_.id))
+          .where(cb.equal(queryGrupoRoot.get(Grupo_.id), grupoId));
+      return root.get(Solicitud_.id).in(queryGrupo);
     };
   }
 

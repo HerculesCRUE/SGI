@@ -33,6 +33,7 @@ import org.crue.hercules.sgi.rep.dto.SgiReportDto.FieldOrientation;
 import org.crue.hercules.sgi.rep.exceptions.GetDataReportException;
 import org.pentaho.reporting.engine.classic.core.ClassicEngineBoot;
 import org.pentaho.reporting.engine.classic.core.DataFactory;
+import org.pentaho.reporting.engine.classic.core.DefaultReportEnvironment;
 import org.pentaho.reporting.engine.classic.core.MasterReport;
 import org.pentaho.reporting.engine.classic.core.ReportProcessingException;
 import org.pentaho.reporting.engine.classic.core.TableDataFactory;
@@ -111,7 +112,8 @@ public class SgiReportService {
   @Validated({ SgiReportDto.Create.class, Default.class })
   protected void generateReport(@Valid SgiReportDto sgiReport) {
     try {
-      final MasterReport report = getReportDefinition(sgiReport.getPath());
+      MasterReport report = getReportDefinition(sgiReport.getPath());
+
       if (report == null) {
         throw new IllegalArgumentException();
       }
@@ -146,25 +148,25 @@ public class SgiReportService {
       try {
 
         switch (outputType) {
-        case CSV:
-          reportProcessor = getCsvReportProcessor(report, outputStream);
-          break;
-        case XLSX:
-          reportProcessor = getExcelOutputProcessor(report, outputStream, true);
-          break;
-        case XLS:
-          reportProcessor = getExcelOutputProcessor(report, outputStream, false);
-          break;
-        case HTML:
-          reportProcessor = getHtmlOutputProcessor(report, outputStream);
-          break;
-        case RTF:
-          reportProcessor = getRtfOutputProcessor(report, outputStream);
-          break;
-        case PDF:
-        default:
-          reportProcessor = getPdfOutputProcessor(report, outputStream);
-          break;
+          case CSV:
+            reportProcessor = getCsvReportProcessor(report, outputStream);
+            break;
+          case XLSX:
+            reportProcessor = getExcelOutputProcessor(report, outputStream, true);
+            break;
+          case XLS:
+            reportProcessor = getExcelOutputProcessor(report, outputStream, false);
+            break;
+          case HTML:
+            reportProcessor = getHtmlOutputProcessor(report, outputStream);
+            break;
+          case RTF:
+            reportProcessor = getRtfOutputProcessor(report, outputStream);
+            break;
+          case PDF:
+          default:
+            reportProcessor = getPdfOutputProcessor(report, outputStream);
+            break;
         }
 
         reportProcessor.processReport();
@@ -266,7 +268,15 @@ public class SgiReportService {
       final ResourceManager resourceManager = new ResourceManager();
       resourceManager.registerDefaults();
       Resource directly = resourceManager.createDirectly(reportDefinitionURL, MasterReport.class);
-      return (MasterReport) directly.getResource();
+      MasterReport report = (MasterReport) directly.getResource();
+
+      DefaultReportEnvironment reportEnvironment = new DefaultReportEnvironment(
+          ClassicEngineBoot.getInstance().getGlobalConfig());
+      reportEnvironment.setLocale(LocaleContextHolder.getLocale());
+
+      report.setReportEnvironment(reportEnvironment);
+
+      return report;
     } catch (Exception e) {
       log.error(e.getMessage(), e);
       throw new GetDataReportException();

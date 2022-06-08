@@ -1,5 +1,6 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { MatCheckboxChange } from '@angular/material/checkbox';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { BaseExportModalComponent } from '@core/component/base-export/base-export-modal.component';
@@ -42,10 +43,20 @@ export class ConvocatoriaListadoExportModalComponent extends BaseExportModalComp
     this.formGroup = this.buildFormGroup();
   }
 
+  selectUnselectAll($event: MatCheckboxChange): void {
+    Object.keys(this.formGroup.controls).forEach(key => {
+      if (key.startsWith('show')) {
+        this.formGroup.get(key).patchValue($event.checked);
+      }
+    });
+  }
+
   protected buildFormGroup(): FormGroup {
     return new FormGroup({
       outputType: new FormControl(this.outputType, Validators.required),
       reportTitle: new FormControl(this.reportTitle, Validators.required),
+
+      hideBlocksIfNoData: new FormControl(true),
 
       showAreasTematicas: new FormControl(true),
       showEntidadesConvocantes: new FormControl(true),
@@ -63,11 +74,11 @@ export class ConvocatoriaListadoExportModalComponent extends BaseExportModalComp
     });
   }
 
-
   protected getReportOptions(): IReportConfig<IConvocatoriaReportOptions> {
     const reportModalData: IReportConfig<IConvocatoriaReportOptions> = {
       title: this.formGroup.controls.reportTitle.value,
       outputType: this.formGroup.controls.outputType.value,
+      hideBlocksIfNoData: this.formGroup.controls.hideBlocksIfNoData.value,
       reportOptions: {
         findOptions: this.modalData.findOptions,
         showAreasTematicas: this.formGroup.controls.showAreasTematicas.value,
@@ -83,7 +94,7 @@ export class ConvocatoriaListadoExportModalComponent extends BaseExportModalComp
         showElegibilidad: this.formGroup.controls.showElegibilidad.value,
         showPartidasPresupuestarias: this.formGroup.controls.showPartidasPresupuestarias.value,
         showConfiguracionSolicitudes: this.formGroup.controls.showConfiguracionSolicitudes.value,
-        columnMinWidth: 120
+        columnMinWidth: 200
       }
     };
     return reportModalData;

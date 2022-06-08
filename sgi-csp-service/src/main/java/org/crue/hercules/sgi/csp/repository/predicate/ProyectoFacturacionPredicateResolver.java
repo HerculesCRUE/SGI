@@ -7,10 +7,10 @@ import javax.persistence.criteria.Root;
 
 import org.crue.hercules.sgi.csp.model.ProyectoFacturacion;
 import org.crue.hercules.sgi.csp.model.ProyectoFacturacion_;
+import org.crue.hercules.sgi.csp.util.PredicateResolverUtil;
 import org.crue.hercules.sgi.framework.rsql.SgiRSQLPredicateResolver;
 
 import cz.jirutka.rsql.parser.ast.ComparisonNode;
-import cz.jirutka.rsql.parser.ast.ComparisonOperator;
 import io.github.perplexhub.rsql.RSQLOperators;
 
 public class ProyectoFacturacionPredicateResolver implements SgiRSQLPredicateResolver<ProyectoFacturacion> {
@@ -42,17 +42,9 @@ public class ProyectoFacturacionPredicateResolver implements SgiRSQLPredicateRes
     return new ProyectoFacturacionPredicateResolver();
   }
 
-  private Predicate buildByProyectoIdSGI(ComparisonNode node, Root<ProyectoFacturacion> root, CriteriaQuery<?> query,
-      CriteriaBuilder cb) {
-    ComparisonOperator operator = node.getOperator();
-    if (!operator.equals(RSQLOperators.EQUAL)) {
-      // Unsupported Operator
-      throw new IllegalArgumentException("Unsupported operator: " + operator + " for " + node.getSelector());
-    }
-    if (node.getArguments().size() != 1) {
-      // Bad number of arguments
-      throw new IllegalArgumentException("Bad number of arguments for " + node.getSelector());
-    }
+  private Predicate buildByProyectoIdSGI(ComparisonNode node, Root<ProyectoFacturacion> root, CriteriaBuilder cb) {
+    PredicateResolverUtil.validateOperatorIsSupported(node, RSQLOperators.EQUAL);
+    PredicateResolverUtil.validateOperatorArgumentNumber(node, 1);
 
     Long proyectoId = Long.valueOf(node.getArguments().get(0));
 
@@ -68,11 +60,16 @@ public class ProyectoFacturacionPredicateResolver implements SgiRSQLPredicateRes
   @Override
   public Predicate toPredicate(ComparisonNode node, Root<ProyectoFacturacion> root, CriteriaQuery<?> query,
       CriteriaBuilder criteriaBuilder) {
-    switch (Property.fromCode(node.getSelector())) {
-    case PROYECTO_ID_SGI:
-      return buildByProyectoIdSGI(node, root, query, criteriaBuilder);
-    default:
+    Property property = Property.fromCode(node.getSelector());
+    if (property == null) {
       return null;
+    }
+
+    switch (property) {
+      case PROYECTO_ID_SGI:
+        return buildByProyectoIdSGI(node, root, criteriaBuilder);
+      default:
+        return null;
     }
   }
 }

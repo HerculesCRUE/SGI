@@ -1,0 +1,16 @@
+@import "colors.scss";
+
+:host {
+  .form {
+    .form-buttons {
+      margin-top: 30px;
+    }
+
+    .form-title {
+      font-weight: bold;
+    }
+
+    background: map-get($sgi-custom-colors, bg);
+    padding: 30px;
+  }
+}

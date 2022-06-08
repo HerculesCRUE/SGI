@@ -1,0 +1,126 @@
+<!-- Grupo Listado-->
+<sgi-menu-content>
+  <div class="mat-elevation-z4">
+    <form class="formulario" [formGroup]="formGroup" fxLayout="column" fxLayoutGap="10px">
+      <div fxFlex fxLayout="row" fxLayoutGap="10px">
+        <!-- Nombre -->
+        <mat-form-field fxFlex="25%">
+          <mat-label>{{'csp.grupo.nombre' | translate}}</mat-label>
+          <input matInput type="text" placeholder="{{'csp.grupo.nombre' | translate}}" formControlName="nombre">
+        </mat-form-field>
+
+        <!-- Codigo -->
+        <mat-form-field fxFlex="25%">
+          <mat-label>{{'csp.grupo.codigo' | translate}}</mat-label>
+          <input matInput type="text" placeholder="{{'csp.grupo.codigo' | translate}}" formControlName="codigo">
+        </mat-form-field>
+
+        <!-- Codigo identificacion SGE -->
+        <mat-form-field fxFlex="25%">
+          <mat-label>{{'csp.grupo.codigo-sge' | translate}}</mat-label>
+          <input matInput type="text" placeholder="{{'csp.grupo.codigo-sge' | translate}}"
+            formControlName="proyectoSgeRef">
+        </mat-form-field>
+
+        <div class="buttons-final" fxLayout="row" fxFlex="25%" fxLayoutAlign="end">
+          <button color="primary" mat-raised-button (click)="onSearch()">
+            <mat-icon>search</mat-icon> {{'btn.search'| translate}}
+          </button>
+          <button color="warn" (click)="onClearFilters()" mat-button>{{'btn.clean'|
+            translate}}
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <div class="mat-elevation-z4">
+    <table mat-table [dataSource]="grupos$ | async" matSort matSortActive="id" matSortDirection="desc"
+      matSortDisableClear>
+
+      <!-- Nombre Column -->
+      <ng-container matColumnDef="nombre">
+        <th mat-header-cell *matHeaderCellDef>
+          {{'csp.grupo.nombre' | translate}}
+        </th>
+        <td mat-cell *matCellDef="let element">
+          {{element.nombre}}
+        </td>
+      </ng-container>
+
+      <!-- Investigador principal Column -->
+      <ng-container matColumnDef="investigadorPrincipal">
+        <th mat-header-cell *matHeaderCellDef>
+          {{'csp.grupo.investigador-principal' | translate}}
+        </th>
+        <td mat-cell *matCellDef="let element"
+          matTooltip="{{element.investigadoresPrincipales | personaNombreCompleto}}">
+          {{element.investigadoresPrincipales | personaNombreCompleto }}
+        </td>
+      </ng-container>
+
+      <!-- Codigo Column -->
+      <ng-container matColumnDef="codigo">
+        <th mat-header-cell *matHeaderCellDef>
+          {{'csp.grupo.codigo' | translate}}
+        </th>
+        <td mat-cell *matCellDef="let element">
+          {{element.codigo}}
+        </td>
+      </ng-container>
+
+      <!-- Fecha Inicio Column -->
+      <ng-container matColumnDef="fechaInicio">
+        <th mat-header-cell *matHeaderCellDef>
+          {{'label.fecha-inicio' | translate}}
+        </th>
+        <td mat-cell *matCellDef="let element">
+          {{element.fechaInicio | luxon:'shortDate'}}
+        </td>
+      </ng-container>
+
+      <!-- Fecha Fin Column -->
+      <ng-container matColumnDef="fechaFin">
+        <th mat-header-cell *matHeaderCellDef>
+          {{'label.fecha-fin' | translate}}
+        </th>
+        <td mat-cell *matCellDef="let element">
+          {{element.fechaFin | luxon:'shortDate'}}
+        </td>
+      </ng-container>
+
+      <!-- Tipo Column -->
+      <ng-container matColumnDef="tipo">
+        <th mat-header-cell *matHeaderCellDef>
+          {{'csp.grupo.tipo-grupo' | translate}}
+        </th>
+        <td mat-cell *matCellDef="let element">
+          {{TIPO_MAP.get(element.tipo) | translate}}
+        </td>
+      </ng-container>
+
+      <!-- Acciones Column -->
+      <ng-container matColumnDef="acciones">
+        <th mat-header-cell *matHeaderCellDef>
+          {{'label.actions' | translate}}
+        </th>
+        <td mat-cell *matCellDef="let element">
+          <ng-container>
+            <a mat-icon-button matTooltip="{{'btn.view' | translate}}" [routerLink]="[element.id]" color="primary">
+              <mat-icon>visibility</mat-icon>
+            </a>
+          </ng-container>
+        </td>
+      </ng-container>
+
+      <ng-container>
+        <tr mat-header-row *matHeaderRowDef="columnas"></tr>
+        <tr mat-row *matRowDef="let row; columns: columnas;"></tr>
+      </ng-container>
+    </table>
+    <div>
+      <mat-paginator [pageSizeOptions]="elementosPagina" [length]="totalElementos" showFirstLastButtons>
+      </mat-paginator>
+    </div>
+  </div>
+</sgi-menu-content>

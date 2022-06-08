@@ -1,40 +1,5 @@
-@import "colors.scss";
-
-.modal-comentario {
-  .form-inline {
-    display: block;
-  }
-  .programa {
-    width: 100%;
-    .arbol {
-      padding: 10px;
-      border: 1px solid map-get($palette-grey, 300);
-      min-height: 275px;
-      margin: 10px 0px 10px 0px;
-      .mat-tree-node {
-        button {
-          font-weight: 400;
-        }
-      }
-      .arbol-invisible {
-        display: none;
-      }
-      .arbol-tree ul,
-      .arbol-tree li {
-        margin-top: 0;
-        margin-bottom: 0;
-        list-style-type: none;
-      }
-      &.error {
-        border: 1px solid map-get($sgi-custom-colors, danger);
-      }
-    }
-    .visualizacion {
-      h3 {
-        font-weight: bold;
-      }
-      background: map-get($sgi-custom-colors, bg);
-      padding: 30px;
-    }
+:host {
+  sgi-dialog-content {
+    min-width: 40vw;
   }
 }

@@ -4,17 +4,15 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
-import { BaseModalComponent } from '@core/component/base-modal.component';
+import { DialogActionComponent } from '@core/component/dialog-action.component';
 import { MSG_PARAMS } from '@core/i18n';
 import { IConvocatoria } from '@core/models/csp/convocatoria';
 import { ESTADO_MAP } from '@core/models/csp/estado-proyecto';
 import { IProyecto } from '@core/models/csp/proyecto';
 import { ISolicitud } from '@core/models/csp/solicitud';
 import { ISolicitudProyecto } from '@core/models/csp/solicitud-proyecto';
-import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-properties';
 import { ConvocatoriaService } from '@core/services/csp/convocatoria.service';
 import { ProyectoService } from '@core/services/csp/proyecto.service';
-import { SnackBarService } from '@core/services/snack-bar.service';
 import { DateValidator } from '@core/validators/date-validator';
 import { TranslateService } from '@ngx-translate/core';
 import { RSQLSgiRestFilter, SgiRestFilterOperator, SgiRestFindOptions } from '@sgi/framework/http';
@@ -43,9 +41,8 @@ interface IProyectoData extends IProyecto {
   styleUrls: ['./solicitud-crear-proyecto-modal.component.scss']
 })
 
-export class SolicitudCrearProyectoModalComponent
-  extends BaseModalComponent<IProyecto, SolicitudCrearProyectoModalComponent> implements OnInit {
-  fxLayoutProperties: FxLayoutProperties;
+export class SolicitudCrearProyectoModalComponent extends DialogActionComponent<IProyecto> implements OnInit {
+
   textSaveOrUpdate: string;
 
   displayedColumns = ['id', 'codigoSGE', 'titulo', 'fechaInicio', 'fechaFin', 'estado'];
@@ -68,19 +65,15 @@ export class SolicitudCrearProyectoModalComponent
   proyectos$: Observable<IProyectoData[]>;
 
   constructor(
-    protected snackBarService: SnackBarService,
-    public matDialogRef: MatDialogRef<SolicitudCrearProyectoModalComponent>,
+    matDialogRef: MatDialogRef<SolicitudCrearProyectoModalComponent>,
     @Inject(MAT_DIALOG_DATA)
     public data: ISolicitudCrearProyectoModalData,
     private readonly proyectoService: ProyectoService,
     private readonly translate: TranslateService,
     private convocatoriaService: ConvocatoriaService
   ) {
-    super(snackBarService, matDialogRef, { solicitudId: data.solicitud?.id } as IProyecto);
-    this.fxLayoutProperties = new FxLayoutProperties();
-    this.fxLayoutProperties.gap = '20px';
-    this.fxLayoutProperties.layout = 'row wrap';
-    this.fxLayoutProperties.xs = 'column';
+    super(matDialogRef, false);
+
     this.textSaveOrUpdate = MSG_ACEPTAR;
   }
 
@@ -122,7 +115,7 @@ export class SolicitudCrearProyectoModalComponent
     ).subscribe((value) => this.msgParamTituloEntity = { entity: value, ...MSG_PARAMS.GENDER.MALE, ...MSG_PARAMS.CARDINALIRY.SINGULAR });
   }
 
-  protected getFormGroup(): FormGroup {
+  protected buildFormGroup(): FormGroup {
     const formGroup = new FormGroup(
       {
         titulo: new FormControl(this.data.solicitud.titulo || null, [Validators.required, Validators.maxLength(250)]),
@@ -152,7 +145,7 @@ export class SolicitudCrearProyectoModalComponent
     return formGroup;
   }
 
-  protected getDatosForm(): IProyecto {
+  protected getValue(): IProyecto {
     return {
       fechaInicio: this.formGroup.controls.fechaInicio.value,
       fechaFin: this.formGroup.controls.fechaFin.value,
@@ -208,6 +201,10 @@ export class SolicitudCrearProyectoModalComponent
       // fechaFin.day = fecha.day - 1;
       this.formGroup.controls.fechaFin.setValue(fechaFin);
     }
+  }
+
+  protected saveOrUpdate(): Observable<IProyecto> {
+    return this.proyectoService.crearProyectoBySolicitud(this.data.solicitud.id, this.getValue());
   }
 
 }

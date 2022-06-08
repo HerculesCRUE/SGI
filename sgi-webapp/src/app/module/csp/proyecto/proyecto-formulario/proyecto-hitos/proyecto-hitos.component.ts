@@ -112,7 +112,6 @@ export class ProyectoHitosComponent extends FragmentComponent implements OnInit,
     };
 
     const config = {
-      panelClass: 'sgi-dialog-container',
       data
     };
     const dialogRef = this.matDialog.open(ProyectoHitosModalComponent, config);

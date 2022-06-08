@@ -1,14 +1,9 @@
-<div class="sgi-dialog-header" fxLayout="row" fxLayoutGap="20px">
-  <span fxFlexAlign="center" mat-mat-dialog-title role="heading" aria-level="3" fxFlex>{{title}}</span>
-  <button fxFlex="nogrow" mat-icon-button mat-dialog-close>
-    <mat-icon class="close-icon">close</mat-icon>
-  </button>
-</div>
-<mat-dialog-content>
+<sgi-dialog-header [title]="title"></sgi-dialog-header>
+<sgi-dialog-content>
 
-  <form [formGroup]="formGroup" fxFill fxLayout="row wrap" fxLayoutGap="10px">
+  <form [formGroup]="formGroup" fxLayout="column">
     <!-- Nombre -->
-    <div fxFlex="calc(50 - 10px)">
+    <div fxFlex>
       <mat-form-field>
         <mat-label>{{'pii.tipo-proteccion.nombre' | translate}}</mat-label>
         <input matInput formControlName="nombre" type="text" id="nombre"
@@ -22,7 +17,7 @@
       </mat-form-field>
     </div>
     <!-- Descripción -->
-    <div fxFlex="100">
+    <div fxFlex>
       <mat-form-field>
         <mat-label>{{'pii.tipo-proteccion.descripcion' | translate}}</mat-label>
         <textarea matInput formControlName="descripcion" id="descripcion"
@@ -36,9 +31,9 @@
       </mat-form-field>
     </div>
   </form>
-</mat-dialog-content>
+</sgi-dialog-content>
 <mat-dialog-actions>
-  <button color="accent" (click)="saveOrUpdate()" mat-raised-button type="submit" [disabled]="!formGroup.valid">
+  <button color="accent" (click)="doAction()" [disabled]="this.actionDisabled" mat-raised-button type="submit">
     <mat-icon class="save-icon">save</mat-icon>{{textSaveOrUpdate | translate}}
   </button>
   <button class="link-cancelar" mat-button type="button" mat-dialog-close>{{'btn.cancel' |

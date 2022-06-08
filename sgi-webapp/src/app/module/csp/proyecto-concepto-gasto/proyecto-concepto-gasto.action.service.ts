@@ -78,8 +78,9 @@ export class ProyectoConceptoGastoActionService extends ActionService {
     this.datosGenerales = new ProyectoConceptoGastoDatosGeneralesFragment(id, this.data.proyecto,
       proyectoConceptoGastoService, this.proyectoConceptoGastos, this.data.permitido, this.data.readonly);
 
-    this.codigosEconomicos = new ProyectoConceptoGastoCodigoEcFragment(id, convocatoriaConceptoGastoId, proyectoConceptoGastoService,
-      proyectoConceptoGastoCodigoEcService, convocatoriaConceptoGastoService, codigoEconomicoGastoService, this.data.readonly);
+    this.codigosEconomicos = new ProyectoConceptoGastoCodigoEcFragment(id, this.data.proyecto, convocatoriaConceptoGastoId,
+      proyectoConceptoGastoService, proyectoConceptoGastoCodigoEcService, convocatoriaConceptoGastoService,
+      codigoEconomicoGastoService, this.data.readonly);
 
     this.addFragment(this.FRAGMENT.DATOS_GENERALES, this.datosGenerales);
     this.addFragment(this.FRAGMENT.CODIGOS_ECONOMICOS, this.codigosEconomicos);

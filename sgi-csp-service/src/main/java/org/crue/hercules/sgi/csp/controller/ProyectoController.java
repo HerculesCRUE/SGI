@@ -20,10 +20,13 @@ import org.crue.hercules.sgi.csp.dto.ProyectoPalabraClaveInput;
 import org.crue.hercules.sgi.csp.dto.ProyectoPalabraClaveOutput;
 import org.crue.hercules.sgi.csp.dto.ProyectoPresupuestoTotales;
 import org.crue.hercules.sgi.csp.dto.ProyectoResponsableEconomicoOutput;
+import org.crue.hercules.sgi.csp.dto.ProyectosCompetitivosPersonas;
 import org.crue.hercules.sgi.csp.exceptions.NoRelatedEntitiesException;
 import org.crue.hercules.sgi.csp.model.AnualidadGasto;
+import org.crue.hercules.sgi.csp.model.AnualidadIngreso;
 import org.crue.hercules.sgi.csp.model.Convocatoria;
 import org.crue.hercules.sgi.csp.model.EstadoProyecto;
+import org.crue.hercules.sgi.csp.model.GastoProyecto;
 import org.crue.hercules.sgi.csp.model.NotificacionProyectoExternoCVN;
 import org.crue.hercules.sgi.csp.model.Proyecto;
 import org.crue.hercules.sgi.csp.model.ProyectoAgrupacionGasto;
@@ -50,8 +53,10 @@ import org.crue.hercules.sgi.csp.model.ProyectoSocio;
 import org.crue.hercules.sgi.csp.model.RolProyecto;
 import org.crue.hercules.sgi.csp.model.Solicitud;
 import org.crue.hercules.sgi.csp.service.AnualidadGastoService;
+import org.crue.hercules.sgi.csp.service.AnualidadIngresoService;
 import org.crue.hercules.sgi.csp.service.ConvocatoriaService;
 import org.crue.hercules.sgi.csp.service.EstadoProyectoService;
+import org.crue.hercules.sgi.csp.service.GastoProyectoService;
 import org.crue.hercules.sgi.csp.service.NotificacionProyectoExternoCVNService;
 import org.crue.hercules.sgi.csp.service.ProrrogaDocumentoService;
 import org.crue.hercules.sgi.csp.service.ProyectoAgrupacionGastoService;
@@ -96,22 +101,29 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 /**
  * ProyectoController
  */
+@RequiredArgsConstructor
 @RestController
 @RequestMapping(ProyectoController.REQUEST_MAPPING)
 @Slf4j
 public class ProyectoController {
 
   /** El path que gestiona este controlador */
-  public static final String REQUEST_MAPPING = "/proyectos";
-  public static final String PATH_ID = "/{id}";
-  public static final String PATH_INVESTIGADORES_PRINCIPALES = PATH_ID + "/investigadoresprincipales";
+  public static final String PATH_SEPARATOR = "/";
+  public static final String REQUEST_MAPPING = PATH_SEPARATOR + "proyectos";
+  public static final String PATH_ID = PATH_SEPARATOR + "{id}";
+  public static final String PATH_INVESTIGADORES_PRINCIPALES = PATH_ID + PATH_SEPARATOR + "investigadoresprincipales";
+  public static final String PATH_PROYECTOS_COMPETITIVOS_PERSONAS = PATH_SEPARATOR + "competitivos-personas";
+  private static final String PATH_ANUALIDAD_GASTOS = PATH_ID + PATH_SEPARATOR + "anualidad-gastos";
+  private static final String PATH_ANUALIDAD_INGRESOS = PATH_ID + PATH_SEPARATOR + "anualidad-ingresos";
+  private static final String PATH_GASTOS_PROYECTO = PATH_ID + PATH_SEPARATOR + "gastos-proyecto";
 
-  private ModelMapper modelMapper;
+  private final ModelMapper modelMapper;
 
   /** Proyecto service */
   private final ProyectoService service;
@@ -187,6 +199,10 @@ public class ProyectoController {
 
   private final AnualidadGastoService anualidadGastoService;
 
+  private final AnualidadIngresoService anualidadIngresoService;
+
+  private final GastoProyectoService gastoProyectoService;
+
   /** ProyectoPalabraClaveService */
   private final ProyectoPalabraClaveService proyectoPalabraClaveService;
 
@@ -195,90 +211,6 @@ public class ProyectoController {
 
   /** Convocatoria service */
   private final ConvocatoriaService convocatoriaService;
-
-  /**
-   * Instancia un nuevo ProyectoController.
-   * 
-   * @param modelMapper                                       {@link ModelMapper}.
-   * @param proyectoService                                   {@link ProyectoService}.
-   * @param proyectoHitoService                               {@link ProyectoHitoService}.
-   * @param proyectoFaseService                               {@link ProyectoFaseService}.
-   * @param proyectoPaqueteTrabajoService                     {@link ProyectoPaqueteTrabajoService}.
-   * @param proyectoSocioService                              {@link ProyectoSocioService}.
-   * @param proyectoEntidadFinanciadoraService                {@link ProyectoEntidadFinanciadoraService}.
-   * @param proyectoPeriodoSeguimientoService                 {@link ProyectoPeriodoSeguimientoService}
-   * @param proyectoEntidadGestoraService                     {@link ProyectoEntidadGestoraService}
-   * @param proyectoEquipoService                             {@link ProyectoEquipoService}.
-   * @param estadoProyectoService                             {@link EstadoProyectoService}.
-   * @param proyectoProrrogaService                           {@link ProyectoProrrogaService}.
-   * @param proyectoDocumentoService                          {@link ProyectoDocumentoService}.
-   * @param prorrogaDocumentoService                          {@link ProrrogaDocumentoService}.
-   * @param proyectoPeriodoSeguimientoDocumentoService        {@link ProyectoPeriodoSeguimientoDocumentoService}.
-   * @param proyectoSocioPeriodoJustificacionDocumentoService {@link ProyectoSocioPeriodoJustificacionDocumentoService}.
-   * @param proyectoClasificacionService                      {@link ProyectoClasificacionService}.
-   * @param proyectoAreaConocimientoService                   {@link ProyectoAreaConocimientoService}.
-   * @param proyectoProyectoSgeService                        {@link ProyectoProyectoSgeService}.
-   * @param proyectoAnualidadService                          {@link ProyectoAnualidadService}.
-   * @param proyectoPartidaService                            {@link ProyectoPartidaService}.
-   * @param proyectoConceptoGastoService                      {@link ProyectoConceptoGastoService}.
-   * @param proyectoResponsableEconomicoService               {@link ProyectoResponsableEconomicoService}.
-   * @param proyectoAgrupacionGastoService                    {@link ProyectoAgrupacionGastoService}.
-   * @param proyectoPeriodoJustificacionService               {@link ProyectoPeriodoJustificacionService}.
-   * @param anualidadGastoService                             {@link AnualidadGastoService}
-   * @param proyectoPalabraClaveService                       {@link ProyectoPalabraClaveService}
-   * @param notificacionProyectoExternoCVNService             {@link NotificacionProyectoExternoCVNService}
-   * @param convocatoriaService                               {@link ConvocatoriaService}
-   */
-  public ProyectoController(ModelMapper modelMapper, ProyectoService proyectoService,
-      ProyectoHitoService proyectoHitoService, ProyectoFaseService proyectoFaseService,
-      ProyectoPaqueteTrabajoService proyectoPaqueteTrabajoService, ProyectoEquipoService proyectoEquipoService,
-      ProyectoSocioService proyectoSocioService, ProyectoEntidadFinanciadoraService proyectoEntidadFinanciadoraService,
-      ProyectoPeriodoSeguimientoService proyectoPeriodoSeguimientoService,
-      ProyectoProrrogaService proyectoProrrogaService, ProyectoEntidadGestoraService proyectoEntidadGestoraService,
-      ProyectoDocumentoService proyectoDocumentoService, EstadoProyectoService estadoProyectoService,
-      ProrrogaDocumentoService prorrogaDocumentoService,
-      ProyectoPeriodoSeguimientoDocumentoService proyectoPeriodoSeguimientoDocumentoService,
-      ProyectoSocioPeriodoJustificacionDocumentoService proyectoSocioPeriodoJustificacionDocumentoService,
-      ProyectoClasificacionService proyectoClasificacionService,
-      ProyectoAreaConocimientoService proyectoAreaConocimientoService,
-      ProyectoProyectoSgeService proyectoProyectoSgeService, ProyectoPartidaService proyectoPartidaService,
-      ProyectoConceptoGastoService proyectoConceptoGastoService, ProyectoAnualidadService proyectoAnualidadService,
-      ProyectoResponsableEconomicoService proyectoResponsableEconomicoService,
-      ProyectoAgrupacionGastoService proyectoAgrupacionGastoService,
-      ProyectoPeriodoJustificacionService proyectoPeriodoJustificacionService,
-      AnualidadGastoService anualidadGastoService, ProyectoPalabraClaveService proyectoPalabraClaveService,
-      NotificacionProyectoExternoCVNService notificacionProyectoExternoCVNService,
-      ConvocatoriaService convocatoriaService) {
-    this.modelMapper = modelMapper;
-    this.service = proyectoService;
-    this.proyectoHitoService = proyectoHitoService;
-    this.proyectoFaseService = proyectoFaseService;
-    this.proyectoPaqueteTrabajoService = proyectoPaqueteTrabajoService;
-    this.proyectoSocioService = proyectoSocioService;
-    this.proyectoEntidadFinanciadoraService = proyectoEntidadFinanciadoraService;
-    this.proyectoDocumentoService = proyectoDocumentoService;
-    this.proyectoPeriodoSeguimientoService = proyectoPeriodoSeguimientoService;
-    this.proyectoEntidadGestoraService = proyectoEntidadGestoraService;
-    this.proyectoEquipoService = proyectoEquipoService;
-    this.proyectoProrrogaService = proyectoProrrogaService;
-    this.estadoProyectoService = estadoProyectoService;
-    this.prorrogaDocumentoService = prorrogaDocumentoService;
-    this.proyectoPeriodoSeguimientoDocumentoService = proyectoPeriodoSeguimientoDocumentoService;
-    this.proyectoSocioPeriodoJustificacionDocumentoService = proyectoSocioPeriodoJustificacionDocumentoService;
-    this.proyectoClasificacionService = proyectoClasificacionService;
-    this.proyectoAreaConocimientoService = proyectoAreaConocimientoService;
-    this.proyectoProyectoSgeService = proyectoProyectoSgeService;
-    this.proyectoAnualidadService = proyectoAnualidadService;
-    this.proyectoPartidaService = proyectoPartidaService;
-    this.proyectoConceptoGastoService = proyectoConceptoGastoService;
-    this.proyectoResponsableEconomicoService = proyectoResponsableEconomicoService;
-    this.proyectoAgrupacionGastoService = proyectoAgrupacionGastoService;
-    this.proyectoPeriodoJustificacionService = proyectoPeriodoJustificacionService;
-    this.anualidadGastoService = anualidadGastoService;
-    this.proyectoPalabraClaveService = proyectoPalabraClaveService;
-    this.notificacionProyectoExternoCVNService = notificacionProyectoExternoCVNService;
-    this.convocatoriaService = convocatoriaService;
-  }
 
   /**
    * Crea nuevo {@link Proyecto}
@@ -1280,7 +1212,7 @@ public class ProyectoController {
    * @return lista de ids de {@link Proyecto}.
    */
   @GetMapping("/modificados-ids")
-  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-PRO-V')")
+  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-PRO-V', 'CSP-PRO-E')")
   public ResponseEntity<List<Long>> findIdsProyectosModificados(
       @RequestParam(name = "q", required = false) String query) {
     log.debug("findIdsProyectosModificados(String query) - start");
@@ -1415,7 +1347,7 @@ public class ProyectoController {
    *         {@link Proyecto}.
    */
   @GetMapping("/{id}/notificacionesproyectos")
-  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-PRO-V')")
+  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-PRO-V', 'CSP-PRO-E')")
   public ResponseEntity<List<NotificacionProyectoExternoCVNOutput>> findAllNotificacionProyectoExternoCVN(
       @PathVariable Long id) {
 
@@ -1533,7 +1465,7 @@ public class ProyectoController {
    * @return suma de puntos del campo importeConcedido
    */
   @GetMapping("/produccioncientifica/totalimporteconcedido/{proyectoId}")
-  @PreAuthorize("hasAuthority('CSP-PRO-PRC-V')")
+  @PreAuthorize("(isClient() and hasAuthority('SCOPE_sgi-csp')) or hasAuthority('CSP-PRO-PRC-V')")
   public BigDecimal getTotalImporteConcedidoAnualidadGasto(@PathVariable Long proyectoId) {
     log.debug("findProyectosProduccionCientifica(proyectoId) - start");
     return proyectoAnualidadService.getTotalImporteConcedidoAnualidadGasto(proyectoId);
@@ -1573,6 +1505,78 @@ public class ProyectoController {
     log.debug("findPersonaRefInvestigadoresPrincipales(Long id) - end");
     return returnValue.isEmpty() ? new ResponseEntity<>(HttpStatus.NO_CONTENT)
         : new ResponseEntity<>(returnValue, HttpStatus.OK);
+  }
+
+  /**
+   * Obtiene los datos de proyectos competitivos de la persona.
+   *
+   * @param personasRef        Id de la persona.
+   * @param onlyAsRolPrincipal Indica si solo se comprueba la participacion con un
+   *                           rol principal
+   * @param exludedProyectoId  Excluye el {@link Proyecto} de la consulta
+   * @return el {@link ProyectosCompetitivosPersonas}.
+   */
+  @GetMapping(PATH_PROYECTOS_COMPETITIVOS_PERSONAS)
+  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-PRO-C', 'CSP-PRO-E', 'CSP-SOL-C', 'CSP-SOL-E', 'CSP-SOL-INV-C', 'CSP-SOL-INV-ER')")
+  public ResponseEntity<ProyectosCompetitivosPersonas> getProyectosCompetitivosPersona(
+      @RequestParam List<String> personasRef,
+      @RequestParam Boolean onlyAsRolPrincipal,
+      @RequestParam(required = false) Long exludedProyectoId) {
+    log.debug(
+        "getProyectosCompetitivosPersona(List<String> personasRef, Boolean onlyAsRolPrincipal, Long exludedProyectoId) - start");
+    ProyectosCompetitivosPersonas returnValue = service.getProyectosCompetitivosPersonas(personasRef,
+        onlyAsRolPrincipal, exludedProyectoId);
+    log.debug(
+        "getProyectosCompetitivosPersona(List<String> personasRef, Boolean onlyAsRolPrincipal, Long exludedProyectoId) - end");
+    return new ResponseEntity<>(returnValue, HttpStatus.OK);
+  }
+
+  /**
+   * Comprueba si existen datos vinculados a {@link Proyecto} de
+   * {@link AnualidadGasto}
+   *
+   * @param id Id del {@link Proyecto}.
+   * @return HTTP 200 si existe y HTTP 204 si no.
+   */
+  @RequestMapping(path = PATH_ANUALIDAD_GASTOS, method = RequestMethod.HEAD)
+  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-PRO-V', 'CSP-PRO-E', 'CSP-PRO-INV-VR' )")
+  public ResponseEntity<Void> hasAnualidadGastos(@PathVariable Long id) {
+    log.debug("hasAnualidadGastos(Long id) - start");
+    boolean returnValue = anualidadGastoService.existsByProyecto(id);
+    log.debug("hasAnualidadGastos(Long id) - end");
+    return returnValue ? new ResponseEntity<>(HttpStatus.OK) : new ResponseEntity<>(HttpStatus.NO_CONTENT);
+  }
+
+  /**
+   * Comprueba si existen datos vinculados a {@link Proyecto} de
+   * {@link AnualidadIngreso}
+   *
+   * @param id Id del {@link Proyecto}.
+   * @return HTTP 200 si existe y HTTP 204 si no.
+   */
+  @RequestMapping(path = PATH_ANUALIDAD_INGRESOS, method = RequestMethod.HEAD)
+  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-PRO-V', 'CSP-PRO-E', 'CSP-PRO-INV-VR' )")
+  public ResponseEntity<Void> hasAnualidadIngresos(@PathVariable Long id) {
+    log.debug("hasAnualidadIngresos(Long id) - start");
+    boolean returnValue = anualidadIngresoService.existsByProyecto(id);
+    log.debug("hasAnualidadIngresos(Long id) - end");
+    return returnValue ? new ResponseEntity<>(HttpStatus.OK) : new ResponseEntity<>(HttpStatus.NO_CONTENT);
+  }
+
+  /**
+   * Comprueba si existen datos vinculados a {@link Proyecto} de
+   * {@link GastoProyecto}
+   *
+   * @param id Id del {@link Proyecto}.
+   * @return HTTP 200 si existe y HTTP 204 si no.
+   */
+  @RequestMapping(path = PATH_GASTOS_PROYECTO, method = RequestMethod.HEAD)
+  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-PRO-V', 'CSP-PRO-E', 'CSP-PRO-INV-VR' )")
+  public ResponseEntity<Void> hasGastosProyecto(@PathVariable Long id) {
+    log.debug("hasGastosProyecto(Long id) - start");
+    boolean returnValue = gastoProyectoService.existsByProyecto(id);
+    log.debug("hasGastosProyecto(Long id) - end");
+    return returnValue ? new ResponseEntity<>(HttpStatus.OK) : new ResponseEntity<>(HttpStatus.NO_CONTENT);
   }
 
   private Page<ProyectoPalabraClaveOutput> convertProyectoPalabraClave(Page<ProyectoPalabraClave> page) {

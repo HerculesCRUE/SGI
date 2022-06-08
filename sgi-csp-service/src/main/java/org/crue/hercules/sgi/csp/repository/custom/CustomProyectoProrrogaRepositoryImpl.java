@@ -38,8 +38,6 @@ public class CustomProyectoProrrogaRepositoryImpl implements CustomProyectoProrr
   public Optional<Proyecto> getProyecto(Long id) {
     log.debug("Proyecto(Long id) - start");
 
-    Optional<Proyecto> returnValue = Optional.empty();
-
     CriteriaBuilder cb = entityManager.getCriteriaBuilder();
     CriteriaQuery<Proyecto> cq = cb.createQuery(Proyecto.class);
     Root<ProyectoProrroga> root = cq.from(ProyectoProrroga.class);
@@ -47,7 +45,7 @@ public class CustomProyectoProrrogaRepositoryImpl implements CustomProyectoProrr
     Predicate finalPredicate = cb.equal(root.get(ProyectoProrroga_.id), id);
     cq.select(root.get(ProyectoProrroga_.proyecto)).where(finalPredicate);
 
-    returnValue = entityManager.createQuery(cq).getResultList().stream().findFirst();
+    Optional<Proyecto> returnValue = entityManager.createQuery(cq).getResultList().stream().findFirst();
 
     log.debug("Proyecto(Long id) - end");
     return returnValue;
@@ -64,8 +62,6 @@ public class CustomProyectoProrrogaRepositoryImpl implements CustomProyectoProrr
   public Optional<ModeloEjecucion> getModeloEjecucion(Long id) {
     log.debug("getModeloEjecucion(Long id) - start");
 
-    Optional<ModeloEjecucion> returnValue = Optional.empty();
-
     CriteriaBuilder cb = entityManager.getCriteriaBuilder();
     CriteriaQuery<ModeloEjecucion> cq = cb.createQuery(ModeloEjecucion.class);
     Root<ProyectoProrroga> root = cq.from(ProyectoProrroga.class);
@@ -73,7 +69,7 @@ public class CustomProyectoProrrogaRepositoryImpl implements CustomProyectoProrr
     Predicate finalPredicate = cb.equal(root.get(ProyectoProrroga_.id), id);
     cq.select(root.get(ProyectoProrroga_.proyecto).get(Proyecto_.modeloEjecucion)).where(finalPredicate);
 
-    returnValue = entityManager.createQuery(cq).getResultList().stream().findFirst();
+    Optional<ModeloEjecucion> returnValue = entityManager.createQuery(cq).getResultList().stream().findFirst();
 
     log.debug("getModeloEjecucion(Long id) - end");
     return returnValue;

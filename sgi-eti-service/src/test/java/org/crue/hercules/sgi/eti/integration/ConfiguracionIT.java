@@ -86,6 +86,7 @@ public class ConfiguracionIT extends BaseIT {
     configuracion.setMesesArchivadaPendienteCorrecciones(20);
     configuracion.setDiasLimiteEvaluador(1);
     configuracion.setDiasArchivadaInactivo(2);
+    configuracion.setDiasAvisoRetrospectiva(3);
 
     return configuracion;
   }

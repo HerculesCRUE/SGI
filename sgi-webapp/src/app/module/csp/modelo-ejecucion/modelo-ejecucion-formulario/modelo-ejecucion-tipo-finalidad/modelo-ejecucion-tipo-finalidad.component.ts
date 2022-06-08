@@ -125,7 +125,6 @@ export class ModeloEjecucionTipoFinalidadComponent extends FragmentComponent imp
       }
     );
     const config = {
-      panelClass: 'sgi-dialog-container',
       data: { modeloTipoFinalidad, tipoFinalidades } as ModeloEjecucionTipoFinalidadModalData
     };
     const dialogRef = this.matDialog.open(ModeloEjecucionTipoFinalidadModalComponent, config);

@@ -1,0 +1,408 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:pro="http://www.liquibase.org/xml/ns/pro" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-3.8.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+  <changeSet context="!test" author="master" id="0000000000002-autor_grupo">
+    <delete tableName="autor_grupo"></delete>
+
+    <dropSequence sequenceName="autor_grupo_seq" />
+    <createSequence incrementBy="1" sequenceName="autor_grupo_seq" startValue="1" />
+  </changeSet>
+
+  <changeSet context="!test" author="master" id="0000000000002-autor">
+    <delete tableName="autor"></delete>
+
+    <dropSequence sequenceName="autor_seq" />
+    <createSequence incrementBy="1" sequenceName="autor_seq" startValue="1" />
+  </changeSet>
+
+  <changeSet context="!test" author="master" id="0000000000002-estado_produccion_cientifica">
+    <update tableName="produccion_cientifica">
+      <column name="estado_produccion_cientifica_id" valueNumeric="null" />
+    </update>
+    <delete tableName="estado_produccion_cientifica"></delete>
+
+    <dropSequence sequenceName="estado_produccion_cientifica_seq" />
+    <createSequence incrementBy="1" sequenceName="estado_produccion_cientifica_seq" startValue="1" />
+  </changeSet>
+
+  <changeSet context="!test" author="master" id="0000000000002-proyecto">
+    <delete tableName="proyecto"></delete>
+
+    <dropSequence sequenceName="proyecto_seq" />
+    <createSequence incrementBy="1" sequenceName="proyecto_seq" startValue="1" />
+  </changeSet>
+
+  <changeSet context="!test" author="master" id="0000000000002-acreditacion">
+    <delete tableName="acreditacion"></delete>
+
+    <dropSequence sequenceName="acreditacion_seq" />
+    <createSequence incrementBy="1" sequenceName="acreditacion_seq" startValue="1" />
+  </changeSet>
+
+  <changeSet context="!test" author="master" id="0000000000002-indice_impacto">
+    <delete tableName="indice_impacto"></delete>
+
+    <dropSequence sequenceName="indice_impacto_seq" />
+    <createSequence incrementBy="1" sequenceName="indice_impacto_seq" startValue="1" />
+  </changeSet>
+
+  <changeSet context="!test" author="master" id="0000000000002-valor_campo">
+    <delete tableName="valor_campo"></delete>
+
+    <dropSequence sequenceName="valor_campo_seq" />
+    <createSequence incrementBy="1" sequenceName="valor_campo_seq" startValue="1" />
+  </changeSet>
+
+  <changeSet context="!test" author="master" id="0000000000002-campo_produccion_cientifica">
+    <delete tableName="campo_produccion_cientifica"></delete>
+
+    <dropSequence sequenceName="campo_produccion_cientifica_seq" />
+    <createSequence incrementBy="1" sequenceName="campo_produccion_cientifica_seq" startValue="1" />
+  </changeSet>
+
+  <changeSet context="!test" author="master" id="0000000000002-puntuacion_item_investigador">
+    <update tableName="puntuacion_grupo_investigador">
+      <column name="puntuacion_item_investigador_id" valueNumeric="null" />
+    </update>
+    <delete tableName="puntuacion_item_investigador"></delete>
+
+    <dropSequence sequenceName="puntuacion_item_investigador_seq" />
+    <createSequence incrementBy="1" sequenceName="puntuacion_item_investigador_seq" startValue="1" />
+  </changeSet>
+
+  <changeSet context="!test" author="master" id="0000000000002-puntuacion_baremo_item">
+    <delete tableName="puntuacion_baremo_item"></delete>
+
+    <dropSequence sequenceName="puntuacion_baremo_item_seq" />
+    <createSequence incrementBy="1" sequenceName="puntuacion_baremo_item_seq" startValue="1" />
+  </changeSet>
+
+  <changeSet context="!test" author="master" id="0000000000002-produccion_cientifica">
+    <delete tableName="produccion_cientifica"></delete>
+
+    <dropSequence sequenceName="produccion_cientifica_seq" />
+    <createSequence incrementBy="1" sequenceName="produccion_cientifica_seq" startValue="1" />
+  </changeSet>
+
+  <changeSet context="!test" author="master" id="0000000000002-puntuacion_grupo_investigador">
+    <delete tableName="puntuacion_grupo_investigador"></delete>
+
+    <dropSequence sequenceName="puntuacion_grupo_investigador_seq" />
+    <createSequence incrementBy="1" sequenceName="puntuacion_grupo_investigador_seq" startValue="1" />
+  </changeSet>
+
+  <changeSet context="!test" author="master" id="0000000000002-puntuacion_grupo">
+    <delete tableName="puntuacion_grupo"></delete>
+
+    <dropSequence sequenceName="puntuacion_grupo_seq" />
+    <createSequence incrementBy="1" sequenceName="puntuacion_grupo_seq" startValue="1" />
+  </changeSet>
+
+  <changeSet context="!test" author="master" id="0000000000002-convocatoria_baremacion_log">
+    <delete tableName="convocatoria_baremacion_log"></delete>
+
+    <dropSequence sequenceName="convocatoria_baremacion_log_seq" />
+    <createSequence incrementBy="1" sequenceName="convocatoria_baremacion_log_seq" startValue="1" />
+  </changeSet>
+
+  <changeSet context="!test" author="master" id="0000000000002-convocatoria_baremacion_log">
+    <delete tableName="convocatoria_baremacion_log"></delete>
+
+    <dropSequence sequenceName="convocatoria_baremacion_log_seq" />
+    <createSequence incrementBy="1" sequenceName="convocatoria_baremacion_log_seq" startValue="1" />
+  </changeSet>
+
+  <changeSet context="!test" author="master" id="0000000000002-baremo">
+    <delete tableName="baremo">
+      <where>:name!=:value</where>
+      <whereParams>
+        <param name="convocatoria_baremacion_id" value="1" />
+      </whereParams>
+    </delete>
+
+    <dropSequence sequenceName="baremo_seq" />
+    <createSequence incrementBy="1" sequenceName="baremo_seq" startValue="200" />
+  </changeSet>
+
+  <changeSet context="!test" author="master" id="0000000000002-modulador">
+    <delete tableName="modulador"></delete>
+
+    <dropSequence sequenceName="modulador_seq" />
+    <createSequence incrementBy="1" sequenceName="modulador_seq" startValue="1" />
+
+    <insert tableName="modulador">
+      <column name="id" valueSequenceNext="modulador_seq" />
+      <column name="area_ref" value="H" />
+      <column name="convocatoria_baremacion_id" valueNumeric="1" />
+      <column name="tipo" value="NUMERO_AUTORES" />
+      <column name="valor1" valueNumeric="1.30" />
+      <column name="valor2" valueNumeric="1.10" />
+      <column name="valor3" valueNumeric="1.00" />
+      <column name="valor4" valueNumeric="0.90" />
+      <column name="valor5" valueNumeric="0.80" />
+    </insert>
+    <insert tableName="modulador">
+      <column name="id" valueSequenceNext="modulador_seq" />
+      <column name="area_ref" value="C" />
+      <column name="convocatoria_baremacion_id" valueNumeric="1" />
+      <column name="tipo" value="NUMERO_AUTORES" />
+      <column name="valor1" valueNumeric="1.30" />
+      <column name="valor2" valueNumeric="1.10" />
+      <column name="valor3" valueNumeric="1.00" />
+      <column name="valor4" valueNumeric="0.90" />
+      <column name="valor5" valueNumeric="0.80" />
+    </insert>
+    <insert tableName="modulador">
+      <column name="id" valueSequenceNext="modulador_seq" />
+      <column name="area_ref" value="J" />
+      <column name="convocatoria_baremacion_id" valueNumeric="1" />
+      <column name="tipo" value="NUMERO_AUTORES" />
+      <column name="valor1" valueNumeric="1.30" />
+      <column name="valor2" valueNumeric="1.10" />
+      <column name="valor3" valueNumeric="1.00" />
+      <column name="valor4" valueNumeric="0.90" />
+      <column name="valor5" valueNumeric="0.80" />
+    </insert>
+    <insert tableName="modulador">
+      <column name="id" valueSequenceNext="modulador_seq" />
+      <column name="area_ref" value="S" />
+      <column name="convocatoria_baremacion_id" valueNumeric="1" />
+      <column name="tipo" value="NUMERO_AUTORES" />
+      <column name="valor1" valueNumeric="1.30" />
+      <column name="valor2" valueNumeric="1.10" />
+      <column name="valor3" valueNumeric="1.00" />
+      <column name="valor4" valueNumeric="0.90" />
+      <column name="valor5" valueNumeric="0.80" />
+    </insert>
+    <insert tableName="modulador">
+      <column name="id" valueSequenceNext="modulador_seq" />
+      <column name="area_ref" value="I" />
+      <column name="convocatoria_baremacion_id" valueNumeric="1" />
+      <column name="tipo" value="NUMERO_AUTORES" />
+      <column name="valor1" valueNumeric="1.30" />
+      <column name="valor2" valueNumeric="1.10" />
+      <column name="valor3" valueNumeric="1.00" />
+      <column name="valor4" valueNumeric="0.90" />
+      <column name="valor5" valueNumeric="0.80" />
+    </insert>
+    <insert tableName="modulador">
+      <column name="id" valueSequenceNext="modulador_seq" />
+      <column name="area_ref" value="H" />
+      <column name="convocatoria_baremacion_id" valueNumeric="1" />
+      <column name="tipo" value="AREAS" />
+      <column name="valor1" valueNumeric="1.00" />
+      <column name="valor2" valueNumeric="NULL" />
+      <column name="valor3" valueNumeric="NULL" />
+      <column name="valor4" valueNumeric="NULL" />
+      <column name="valor5" valueNumeric="NULL" />
+    </insert>
+    <insert tableName="modulador">
+      <column name="id" valueSequenceNext="modulador_seq" />
+      <column name="area_ref" value="C" />
+      <column name="convocatoria_baremacion_id" valueNumeric="1" />
+      <column name="tipo" value="AREAS" />
+      <column name="valor1" valueNumeric="1.00" />
+      <column name="valor2" valueNumeric="NULL" />
+      <column name="valor3" valueNumeric="NULL" />
+      <column name="valor4" valueNumeric="NULL" />
+      <column name="valor5" valueNumeric="NULL" />
+    </insert>
+    <insert tableName="modulador">
+      <column name="id" valueSequenceNext="modulador_seq" />
+      <column name="area_ref" value="J" />
+      <column name="convocatoria_baremacion_id" valueNumeric="1" />
+      <column name="tipo" value="AREAS" />
+      <column name="valor1" valueNumeric="1.00" />
+      <column name="valor2" valueNumeric="NULL" />
+      <column name="valor3" valueNumeric="NULL" />
+      <column name="valor4" valueNumeric="NULL" />
+      <column name="valor5" valueNumeric="NULL" />
+    </insert>
+    <insert tableName="modulador">
+      <column name="id" valueSequenceNext="modulador_seq" />
+      <column name="area_ref" value="S" />
+      <column name="convocatoria_baremacion_id" valueNumeric="1" />
+      <column name="tipo" value="AREAS" />
+      <column name="valor1" valueNumeric="1.00" />
+      <column name="valor2" valueNumeric="NULL" />
+      <column name="valor3" valueNumeric="NULL" />
+      <column name="valor4" valueNumeric="NULL" />
+      <column name="valor5" valueNumeric="NULL" />
+    </insert>
+    <insert tableName="modulador">
+      <column name="id" valueSequenceNext="modulador_seq" />
+      <column name="area_ref" value="I" />
+      <column name="convocatoria_baremacion_id" valueNumeric="1" />
+      <column name="tipo" value="AREAS" />
+      <column name="valor1" valueNumeric="1.00" />
+      <column name="valor2" valueNumeric="NULL" />
+      <column name="valor3" valueNumeric="NULL" />
+      <column name="valor4" valueNumeric="NULL" />
+      <column name="valor5" valueNumeric="NULL" />
+    </insert>
+  </changeSet>
+
+  <changeSet context="!test" author="master" id="0000000000002-rango">
+    <delete tableName="rango"></delete>
+
+    <dropSequence sequenceName="rango_seq" />
+    <createSequence incrementBy="1" sequenceName="rango_seq" startValue="1" />
+
+    <insert tableName="rango">
+      <column name="id" valueSequenceNext="rango_seq" />
+      <column name="convocatoria_baremacion_id" valueNumeric="1" />
+      <column name="desde" valueNumeric="0.00" />
+      <column name="hasta" valueNumeric="29999.00" />
+      <column name="puntos" valueNumeric="2.00" />
+      <column name="tipo_rango" value="CUANTIA_CONTRATOS" />
+      <column name="tipo_temporalidad" value="INICIAL" />
+    </insert>
+    <insert tableName="rango">
+      <column name="id" valueSequenceNext="rango_seq" />
+      <column name="convocatoria_baremacion_id" valueNumeric="1" />
+      <column name="desde" valueNumeric="30000.00" />
+      <column name="hasta" valueNumeric="59999.00" />
+      <column name="puntos" valueNumeric="4.00" />
+      <column name="tipo_rango" value="CUANTIA_CONTRATOS" />
+      <column name="tipo_temporalidad" value="INTERMEDIO" />
+    </insert>
+    <insert tableName="rango">
+      <column name="id" valueSequenceNext="rango_seq" />
+      <column name="convocatoria_baremacion_id" valueNumeric="1" />
+      <column name="desde" valueNumeric="60000.00" />
+      <column name="hasta" valueNumeric="null" />
+      <column name="puntos" valueNumeric="6.00" />
+      <column name="tipo_rango" value="CUANTIA_CONTRATOS" />
+      <column name="tipo_temporalidad" value="FINAL" />
+    </insert>
+    <insert tableName="rango">
+      <column name="id" valueSequenceNext="rango_seq" />
+      <column name="convocatoria_baremacion_id" valueNumeric="1" />
+      <column name="desde" valueNumeric="0.00" />
+      <column name="hasta" valueNumeric="29999.00" />
+      <column name="puntos" valueNumeric="5.00" />
+      <column name="tipo_rango" value="LICENCIA" />
+      <column name="tipo_temporalidad" value="INICIAL" />
+    </insert>
+    <insert tableName="rango">
+      <column name="id" valueSequenceNext="rango_seq" />
+      <column name="convocatoria_baremacion_id" valueNumeric="1" />
+      <column name="desde" valueNumeric="30000.00" />
+      <column name="hasta" valueNumeric="null" />
+      <column name="puntos" valueNumeric="15.00" />
+      <column name="tipo_rango" value="LICENCIA" />
+      <column name="tipo_temporalidad" value="FINAL" />
+    </insert>
+    <insert tableName="rango">
+      <column name="id" valueSequenceNext="rango_seq" />
+      <column name="convocatoria_baremacion_id" valueNumeric="1" />
+      <column name="desde" valueNumeric="0.00" />
+      <column name="hasta" valueNumeric="29999.00" />
+      <column name="puntos" valueNumeric="10.00" />
+      <column name="tipo_rango" value="CUANTIA_COSTES_INDIRECTOS" />
+      <column name="tipo_temporalidad" value="INICIAL" />
+    </insert>
+    <insert tableName="rango">
+      <column name="id" valueSequenceNext="rango_seq" />
+      <column name="convocatoria_baremacion_id" valueNumeric="1" />
+      <column name="desde" valueNumeric="30000.00" />
+      <column name="hasta" valueNumeric="59999.00" />
+      <column name="puntos" valueNumeric="15.00" />
+      <column name="tipo_rango" value="CUANTIA_COSTES_INDIRECTOS" />
+      <column name="tipo_temporalidad" value="INTERMEDIO" />
+    </insert>
+    <insert tableName="rango">
+      <column name="id" valueSequenceNext="rango_seq" />
+      <column name="convocatoria_baremacion_id" valueNumeric="1" />
+      <column name="desde" valueNumeric="60000.00" />
+      <column name="hasta" valueNumeric="null" />
+      <column name="puntos" valueNumeric="20.00" />
+      <column name="tipo_rango" value="CUANTIA_COSTES_INDIRECTOS" />
+      <column name="tipo_temporalidad" value="FINAL" />
+    </insert>
+  </changeSet>
+
+  <changeSet context="!test" author="master" id="0000000000002-convocatoria_baremacion">
+    <delete tableName="convocatoria_baremacion">
+      <where>:name!=:value</where>
+      <whereParams>
+        <param name="id" value="1" />
+      </whereParams>
+    </delete>
+
+    <dropSequence sequenceName="convocatoria_baremacion_seq" />
+    <createSequence incrementBy="1" sequenceName="convocatoria_baremacion_seq" startValue="2" />
+  </changeSet>
+
+  <changeSet context="!test" author="master" id="0000000000002-tabla_indice">
+    <update tableName="tabla_indice">
+      <column name="fecha_inicio" valueDate="2018-12-31T23:00:00" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueNumeric="1" />
+      </whereParams>
+    </update>
+  </changeSet>
+
+  <changeSet context="!test" author="master" id="0000000000002-tipo_fuente_impacto_cuartil">
+    <insert tableName="tipo_fuente_impacto_cuartil">
+      <column name="id" valueSequenceNext="tipo_fuente_impacto_cuartil_seq" />
+      <column name="anio" valueNumeric="2019" />
+      <column name="tipo_fuente_impacto" value="CITEC" />
+      <column name="cuartil" value="Q1" />
+    </insert>
+    <insert tableName="tipo_fuente_impacto_cuartil">
+      <column name="id" valueSequenceNext="tipo_fuente_impacto_cuartil_seq" />
+      <column name="anio" valueNumeric="2020" />
+      <column name="tipo_fuente_impacto" value="CITEC" />
+      <column name="cuartil" value="Q1" />
+    </insert>
+    <insert tableName="tipo_fuente_impacto_cuartil">
+      <column name="id" valueSequenceNext="tipo_fuente_impacto_cuartil_seq" />
+      <column name="anio" valueNumeric="2021" />
+      <column name="tipo_fuente_impacto" value="CITEC" />
+      <column name="cuartil" value="Q1" />
+    </insert>
+    <insert tableName="tipo_fuente_impacto_cuartil">
+      <column name="id" valueSequenceNext="tipo_fuente_impacto_cuartil_seq" />
+      <column name="anio" valueNumeric="2022" />
+      <column name="tipo_fuente_impacto" value="CITEC" />
+      <column name="cuartil" value="Q1" />
+    </insert>
+    <insert tableName="tipo_fuente_impacto_cuartil">
+      <column name="id" valueSequenceNext="tipo_fuente_impacto_cuartil_seq" />
+      <column name="anio" valueNumeric="2023" />
+      <column name="tipo_fuente_impacto" value="CITEC" />
+      <column name="cuartil" value="Q1" />
+    </insert>
+    <insert tableName="tipo_fuente_impacto_cuartil">
+      <column name="id" valueSequenceNext="tipo_fuente_impacto_cuartil_seq" />
+      <column name="anio" valueNumeric="2019" />
+      <column name="tipo_fuente_impacto" value="ERIH" />
+      <column name="cuartil" value="Q1" />
+    </insert>
+    <insert tableName="tipo_fuente_impacto_cuartil">
+      <column name="id" valueSequenceNext="tipo_fuente_impacto_cuartil_seq" />
+      <column name="anio" valueNumeric="2020" />
+      <column name="tipo_fuente_impacto" value="ERIH" />
+      <column name="cuartil" value="Q1" />
+    </insert>
+    <insert tableName="tipo_fuente_impacto_cuartil">
+      <column name="id" valueSequenceNext="tipo_fuente_impacto_cuartil_seq" />
+      <column name="anio" valueNumeric="2021" />
+      <column name="tipo_fuente_impacto" value="ERIH" />
+      <column name="cuartil" value="Q1" />
+    </insert>
+    <insert tableName="tipo_fuente_impacto_cuartil">
+      <column name="id" valueSequenceNext="tipo_fuente_impacto_cuartil_seq" />
+      <column name="anio" valueNumeric="2022" />
+      <column name="tipo_fuente_impacto" value="ERIH" />
+      <column name="cuartil" value="Q1" />
+    </insert>
+    <insert tableName="tipo_fuente_impacto_cuartil">
+      <column name="id" valueSequenceNext="tipo_fuente_impacto_cuartil_seq" />
+      <column name="anio" valueNumeric="2023" />
+      <column name="tipo_fuente_impacto" value="ERIH" />
+      <column name="cuartil" value="Q1" />
+    </insert>
+  </changeSet>
+</databaseChangeLog>

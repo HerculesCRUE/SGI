@@ -14,6 +14,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.assertj.core.api.Assertions;
+import org.crue.hercules.sgi.prc.config.SgiConfigProperties;
 import org.crue.hercules.sgi.prc.controller.ProduccionCientificaApiController;
 import org.crue.hercules.sgi.prc.converter.ProduccionCientificaConverter;
 import org.crue.hercules.sgi.prc.dto.ProduccionCientificaApiCreateInput;
@@ -73,6 +74,10 @@ class ProduccionCientificaBaseIT extends BaseIT {
   protected static final String CONTROLLER_BASE_PATH_API = ProduccionCientificaApiController.MAPPING;
 
   protected static final String PRODUCCION_CIENTIFICA_REF_VALUE = "publicacion-ref-";
+
+  @Autowired
+  @Getter
+  private SgiConfigProperties sgiConfigProperties;
 
   @Autowired
   @Getter
@@ -303,8 +308,10 @@ class ProduccionCientificaBaseIT extends BaseIT {
     produccionCientifica.getCampos().add(addValores(codigoCVN1));
     String codigoCVN2 = CodigoCVN.E060_010_010_030.getCode();
     produccionCientifica.getCampos().add(addValores(codigoCVN2));
-    String codigoCVN3 = CodigoCVN.E060_010_010_090.getCode();
-    produccionCientifica.getCampos().add(addValores(codigoCVN3));
+    CampoProduccionCientificaInput campoFecha = new CampoProduccionCientificaInput();
+    campoFecha.setCodigoCVN(CodigoCVN.E060_010_010_140.getCode());
+    campoFecha.setValores(Stream.of("2021-02-15", "2022-02-15").collect(Collectors.toList()));
+    produccionCientifica.getCampos().add(campoFecha);
 
     produccionCientifica.setAutores(new ArrayList<>());
     AutorInput autor = new AutorInput();

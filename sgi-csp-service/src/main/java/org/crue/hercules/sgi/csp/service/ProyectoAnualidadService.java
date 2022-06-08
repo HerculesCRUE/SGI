@@ -20,9 +20,9 @@ import org.crue.hercules.sgi.csp.model.Proyecto;
 import org.crue.hercules.sgi.csp.model.ProyectoAnualidad;
 import org.crue.hercules.sgi.csp.model.ProyectoAnualidad.OnCrear;
 import org.crue.hercules.sgi.csp.repository.AnualidadGastoRepository;
-import org.crue.hercules.sgi.csp.repository.AnualidadIngresoRepository;
 import org.crue.hercules.sgi.csp.repository.ProyectoAnualidadRepository;
 import org.crue.hercules.sgi.csp.repository.ProyectoRepository;
+import org.crue.hercules.sgi.csp.util.AssertHelper;
 import org.crue.hercules.sgi.framework.problem.message.ProblemMessage;
 import org.crue.hercules.sgi.framework.rsql.SgiRSQLJPASupport;
 import org.crue.hercules.sgi.framework.security.core.context.SgiSecurityContextHolder;
@@ -50,17 +50,14 @@ public class ProyectoAnualidadService {
   private final ProyectoAnualidadRepository repository;
   private final ProyectoRepository proyectoRepository;
   private final AnualidadGastoRepository anualidadGastoRepository;
-  private final AnualidadIngresoRepository anualidadIngresoRepository;
 
   public ProyectoAnualidadService(Validator validator, ProyectoAnualidadRepository proyectoAnualidadepository,
-      ProyectoRepository proyectoRepository, AnualidadGastoRepository anualidadGastoRepository,
-      AnualidadIngresoRepository anualidadIngresoRepository) {
+      ProyectoRepository proyectoRepository, AnualidadGastoRepository anualidadGastoRepository) {
 
     this.validator = validator;
     this.repository = proyectoAnualidadepository;
     this.proyectoRepository = proyectoRepository;
     this.anualidadGastoRepository = anualidadGastoRepository;
-    this.anualidadIngresoRepository = anualidadIngresoRepository;
   }
 
   /**
@@ -74,14 +71,8 @@ public class ProyectoAnualidadService {
   public ProyectoAnualidad create(ProyectoAnualidad proyectoAnualidad) {
     log.debug("create(ProyectoAnualidad proyectoAnualidad) - start");
 
-    Assert.isNull(proyectoAnualidad.getId(),
-        ProblemMessage.builder().key(Assert.class, "isNull")
-            .parameter("field", ApplicationContextSupport.getMessage("id"))
-            .parameter("entity", ApplicationContextSupport.getMessage(ProyectoAnualidad.class)).build());
-    Assert.notNull(proyectoAnualidad.getProyectoId(),
-        ProblemMessage.builder().key(Assert.class, "notNull")
-            .parameter("field", ApplicationContextSupport.getMessage("id"))
-            .parameter("entity", ApplicationContextSupport.getMessage(ProyectoAnualidad.class)).build());
+    AssertHelper.idIsNull(proyectoAnualidad.getId(), ProyectoAnualidad.class);
+    AssertHelper.idNotNull(proyectoAnualidad.getProyectoId(), Proyecto.class);
 
     // Invocar validaciones asociadas a OnCrear
     Set<ConstraintViolation<ProyectoAnualidad>> result = validator.validate(proyectoAnualidad, OnCrear.class);
@@ -91,22 +82,24 @@ public class ProyectoAnualidadService {
 
     // En caso de que el proyecto tenga anualidad genérica no se guardarán la fecha
     // de inicio y fecha fin ya que se tendrán en cuenta las del proyecto.
-    proyectoRepository.findById(proyectoAnualidad.getProyectoId()).map(proyecto -> {
-      if (proyecto.getAnualidades() == null || !proyecto.getAnualidades()) {
-        proyectoAnualidad.setFechaInicio(null);
-        proyectoAnualidad.setFechaFin(null);
-      } else {
-        Assert.notNull(proyectoAnualidad.getAnio(),
-            ProblemMessage.builder().key(Assert.class, "notNull")
-                .parameter("field", ApplicationContextSupport.getMessage("anio"))
-                .parameter("entity", ApplicationContextSupport.getMessage(ProyectoAnualidad.class)).build());
+    Proyecto proyecto = proyectoRepository.findById(proyectoAnualidad.getProyectoId())
+        .orElseThrow(() -> new ProyectoNotFoundException(proyectoAnualidad.getId()));
 
-        if (repository.findByAnioAndProyectoId(proyectoAnualidad.getAnio(), proyecto.getId()).isPresent()) {
-          throw new ProyectoAnualidadAnioUniqueException();
-        }
+    if (proyecto.getAnualidades() == null || !proyecto.getAnualidades()) {
+      proyectoAnualidad.setFechaInicio(null);
+      proyectoAnualidad.setFechaFin(null);
+    } else {
+      Assert.notNull(proyectoAnualidad.getAnio(),
+          ProblemMessage.builder().key(Assert.class, "notNull")
+              .parameter("field", ApplicationContextSupport.getMessage("anio"))
+              .parameter("entity", ApplicationContextSupport.getMessage(ProyectoAnualidad.class)).build());
+
+      if (repository.findByAnioAndProyectoId(proyectoAnualidad.getAnio(), proyecto.getId()).isPresent()) {
+        throw new ProyectoAnualidadAnioUniqueException();
       }
-      return proyecto;
-    }).orElseThrow(() -> new ProyectoNotFoundException(proyectoAnualidad.getId()));
+    }
+
+    proyectoAnualidad.setEnviadoSge(false);
 
     ProyectoAnualidad returnValue = repository.save(proyectoAnualidad);
 
@@ -129,10 +122,7 @@ public class ProyectoAnualidadService {
       throw new ProyectoAnualidadNotFoundException(id);
     }
 
-    anualidadGastoRepository.deleteByProyectoAnualidadId(id);
-    anualidadIngresoRepository.deleteByProyectoAnualidadId(id);
-
-    repository.deleteById(id);
+    repository.deleteByIdCascade(id);
     log.debug("delete(Long id) - end");
   }
 

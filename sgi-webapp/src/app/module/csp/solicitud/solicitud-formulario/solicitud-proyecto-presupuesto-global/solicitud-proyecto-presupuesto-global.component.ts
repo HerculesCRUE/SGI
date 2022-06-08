@@ -171,7 +171,6 @@ export class SolicitudProyectoPresupuestoGlobalComponent extends FormFragmentCom
     };
 
     const config = {
-      panelClass: 'sgi-dialog-container',
       data
     };
 
@@ -244,7 +243,6 @@ export class SolicitudProyectoPresupuestoGlobalComponent extends FormFragmentCom
       global: true
     };
     const config = {
-      panelClass: 'sgi-dialog-container',
       data
     };
     this.matDialog.open(SolicitiudPresupuestoModalComponent, config);

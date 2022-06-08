@@ -1,15 +1,9 @@
-<div class="sgi-dialog-header" fxLayout="row" fxLayoutGap="20px">
-  <span fxFlexAlign="center" mat-mat-dialog-title role="heading" aria-level="3" fxFlex>{{title}}</span>
-  <button fxFlex="nogrow" mat-icon-button mat-dialog-close>
-    <mat-icon class="close-icon">close</mat-icon>
-  </button>
-</div>
-<mat-dialog-content>
+<sgi-dialog-header [title]="title"></sgi-dialog-header>
+<sgi-dialog-content>
   <form [formGroup]="formGroup">
-    <div [fxLayout.xs]="fxLayoutProperties.xs" [fxLayout]="fxLayoutProperties.layout"
-      [fxLayoutGap]="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
+    <div fxLayout="row">
       <!-- Entidad convocante -->
-      <div>
+      <div fxFlex>
         <mat-form-field>
           <mat-label>{{'csp.solicitud-modalidad.entidad-convocante' | translate}}</mat-label>
           <input matInput formControlName="entidadConvocante" type="text"
@@ -17,7 +11,7 @@
         </mat-form-field>
       </div>
       <!-- Plan-->
-      <div>
+      <div fxFlex>
         <mat-form-field>
           <mat-label>{{'csp.solicitud-modalidad.plan' | translate}}</mat-label>
           <input matInput formControlName="plan" type="text"
@@ -65,9 +59,10 @@
       </div>
     </div>
   </form>
-</mat-dialog-content>
+</sgi-dialog-content>
 <mat-dialog-actions>
-  <button color="accent" (click)="saveOrUpdate()" mat-raised-button type="submit" *ngIf="!data.readonly">
+  <button color="accent" (click)="doAction()" [disabled]="this.actionDisabled" mat-raised-button type="submit"
+    *ngIf="!data.readonly">
     <mat-icon class="save-icon">save</mat-icon>{{'btn.ok' | translate}}
   </button>
   <button class="link-cancelar" mat-button type="button" mat-dialog-close>{{'btn.cancel' |

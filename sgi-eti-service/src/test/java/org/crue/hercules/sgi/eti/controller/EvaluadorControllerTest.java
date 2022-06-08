@@ -27,6 +27,7 @@ import org.crue.hercules.sgi.eti.model.TipoEstadoMemoria;
 import org.crue.hercules.sgi.eti.model.TipoEvaluacion;
 import org.crue.hercules.sgi.eti.model.TipoMemoria;
 import org.crue.hercules.sgi.eti.model.Comite.Genero;
+import org.crue.hercules.sgi.eti.service.ActaService;
 import org.crue.hercules.sgi.eti.service.ConflictoInteresService;
 import org.crue.hercules.sgi.eti.service.EvaluacionService;
 import org.crue.hercules.sgi.eti.service.EvaluadorService;
@@ -63,6 +64,9 @@ public class EvaluadorControllerTest extends BaseControllerTest {
 
   @MockBean
   private ConflictoInteresService conflictoInteresService;
+
+  @MockBean
+  private ActaService actaService;
 
   private static final String PATH_PARAMETER_ID = "/{id}";
   private static final String EVALUADOR_CONTROLLER_BASE_PATH = "/evaluadores";

@@ -138,7 +138,7 @@ export class PublicacionDatosGeneralesFragment extends Fragment {
     return this.produccionCientifica$.asObservable();
   }
 
-  isProduccionCientificaEditable$(): Observable<boolean> {
+  isProduccionCientificaDisabled$(): Observable<boolean> {
     return this.getProduccionCientifica$().pipe(
       map(({ estado }) => estado?.estado === TipoEstadoProduccion.VALIDADO || estado?.estado === TipoEstadoProduccion.RECHAZADO)
     );

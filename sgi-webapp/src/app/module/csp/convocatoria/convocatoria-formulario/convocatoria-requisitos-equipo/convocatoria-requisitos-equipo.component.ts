@@ -219,7 +219,6 @@ export class ConvocatoriaRequisitosEquipoComponent extends FormFragmentComponent
     };
 
     const config = {
-      panelClass: 'sgi-dialog-container',
       data
     };
     const dialogRef = this.matDialog.open(NivelAcademicoModalComponent, config);
@@ -240,7 +239,6 @@ export class ConvocatoriaRequisitosEquipoComponent extends FormFragmentComponent
       selectedEntidades: this.categoriaProfesionalDataSource.data.map(element => element.value.categoriaProfesional),
     };
     const config = {
-      panelClass: 'sgi-dialog-container',
       data
     };
     const dialogRef = this.matDialog.open(CategoriaProfesionalModalComponent, config);

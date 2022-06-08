@@ -13,6 +13,10 @@ import { EvaluacionFormularioModule } from '../evaluacion-formulario/evaluacion-
 import { EvaluacionEvaluadorEvaluarComponent } from './evaluacion-evaluador-evaluar/evaluacion-evaluador-evaluar.component';
 import { EvaluacionEvaluadorListadoComponent } from './evaluacion-evaluador-listado/evaluacion-evaluador-listado.component';
 import { EvaluacionEvaluadorResolver } from './evaluacion-evaluador.resolver';
+import { EtiSharedModule } from '../shared/eti-shared.module';
+import { EvaluacionListadoExportService } from '../evaluacion/evaluacion-listado-export.service';
+import { EvaluacionGeneralListadoExportService } from '../evaluacion/evaluacion-general-listado-export.service';
+import { EvaluacionEvaluacionesAnterioresListadoExportService } from '../evaluacion/evaluacion-evaluaciones-anteriores-listado-export.service';
 
 @NgModule({
   declarations: [
@@ -31,10 +35,14 @@ import { EvaluacionEvaluadorResolver } from './evaluacion-evaluador.resolver';
     FormsModule,
     ReactiveFormsModule,
     ComentarioModule,
-    DocumentacionMemoriaModule
+    DocumentacionMemoriaModule,
+    EtiSharedModule
   ],
   providers: [
-    EvaluacionEvaluadorResolver
+    EvaluacionEvaluadorResolver,
+    EvaluacionListadoExportService,
+    EvaluacionGeneralListadoExportService,
+    EvaluacionEvaluacionesAnterioresListadoExportService
   ]
 
 })

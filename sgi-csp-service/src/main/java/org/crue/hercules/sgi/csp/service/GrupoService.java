@@ -37,6 +37,7 @@ import org.crue.hercules.sgi.csp.repository.SolicitudRepository;
 import org.crue.hercules.sgi.csp.repository.predicate.GrupoPredicateResolver;
 import org.crue.hercules.sgi.csp.repository.specification.GrupoSpecifications;
 import org.crue.hercules.sgi.csp.util.AssertHelper;
+import org.crue.hercules.sgi.csp.util.GrupoAuthorityHelper;
 import org.crue.hercules.sgi.csp.util.PeriodDateUtil;
 import org.crue.hercules.sgi.framework.rsql.SgiRSQLJPASupport;
 import org.crue.hercules.sgi.framework.security.core.context.SgiSecurityContextHolder;
@@ -68,6 +69,7 @@ public class GrupoService {
   private final SolicitudRepository solicitudRepository;
   private final RolProyectoService rolProyectoService;
   private final GrupoEquipoRepository grupoEquipoRepository;
+  private final GrupoAuthorityHelper authorityHelper;
 
   /**
    * Guarda la entidad {@link Grupo}.
@@ -133,6 +135,7 @@ public class GrupoService {
     log.debug("update(Grupo grupoActualizar) - start");
 
     AssertHelper.idNotNull(grupoActualizar.getId(), Grupo.class);
+    authorityHelper.checkUserHasAuthorityViewGrupo(grupoActualizar.getId());
 
     return repository.findById(grupoActualizar.getId()).map(data -> {
       data.setNombre(grupoActualizar.getNombre());
@@ -253,6 +256,8 @@ public class GrupoService {
     log.debug("findById(Long id) - start");
 
     AssertHelper.idNotNull(id, Grupo.class);
+    authorityHelper.checkUserHasAuthorityViewGrupo(id);
+
     final Grupo returnValue = repository.findById(id).orElseThrow(() -> new GrupoNotFoundException(id));
 
     log.debug("findById(Long id) - end");
@@ -269,6 +274,8 @@ public class GrupoService {
     log.debug("existsById(Long id)  - start");
 
     AssertHelper.idNotNull(id, Grupo.class);
+    authorityHelper.checkUserHasAuthorityViewGrupo(id);
+
     final boolean exists = repository.existsById(id);
 
     log.debug("existsById(Long id)  - end");
@@ -308,9 +315,33 @@ public class GrupoService {
     Specification<Grupo> specs = GrupoSpecifications.distinct()
         .and(GrupoSpecifications.activos())
         .and(SgiRSQLJPASupport.toSpecification(query, GrupoPredicateResolver.getInstance(sgiConfigProperties)));
+
+    if (authorityHelper.isUserInvestigador()) {
+      specs = specs.and(authorityHelper.getSpecificationsUserInvestigadorGruposCanView());
+    }
+
     Page<Grupo> returnValue = repository.findAll(specs, paging);
 
     log.debug("findActivos(String query, Pageable paging) - end");
+    return returnValue;
+  }
+
+  /**
+   * Obtener todas las entidades {@link Grupo} activas paginadas y/o filtradas.
+   *
+   * @param paging la información de la paginación.
+   * @return la lista de entidades {@link Grupo} activas paginadas y/o
+   *         filtradas.
+   */
+  public Page<Grupo> findGruposUsuario(Pageable paging) {
+    log.debug("findGruposUsuario(Pageable paging) - start");
+
+    Specification<Grupo> specs = GrupoSpecifications.distinct()
+        .and(GrupoSpecifications.activos())
+        .and(GrupoSpecifications.byPersonaInGrupoEquipo(authorityHelper.getAuthenticationPersonaRef()));
+    Page<Grupo> returnValue = repository.findAll(specs, paging);
+
+    log.debug("findGruposUsuario(Pageable paging) - end");
     return returnValue;
   }
 
@@ -325,6 +356,7 @@ public class GrupoService {
     log.debug("desactivar(Long id) - start");
 
     AssertHelper.idNotNull(id, Grupo.class);
+    authorityHelper.checkUserHasAuthorityViewGrupo(id);
 
     return repository.findById(id).map(grupo -> {
       if (Boolean.FALSE.equals(grupo.getActivo())) {
@@ -351,6 +383,7 @@ public class GrupoService {
     log.debug("activar(Long id) - start");
 
     AssertHelper.idNotNull(id, Grupo.class);
+    authorityHelper.checkUserHasAuthorityViewGrupo(id);
 
     return repository.findById(id).map(grupo -> {
       if (Boolean.TRUE.equals(grupo.getActivo())) {
@@ -433,6 +466,26 @@ public class GrupoService {
 
     Page<RelacionEjecucionEconomica> returnValue = repository.findRelacionesEjecucionEconomica(specs, pageable);
     log.debug("findRelacionesEjecucionEconomicaGrupos(String query, Pageable pageable) - end");
+    return returnValue;
+  }
+
+  /**
+   * Obtiene los ids de {@link Grupo} modificados que esten activos y que cumplan
+   * las condiciones indicadas en el filtro de búsqueda
+   *
+   * @param query información del filtro.
+   * @return el listado de ids de {@link Grupo}.
+   */
+  public List<Long> findIdsGruposModificados(String query) {
+    log.debug("findIdsGruposModificados(String query) - start");
+
+    Specification<Grupo> specs = GrupoSpecifications.activos()
+        .and(SgiRSQLJPASupport.toSpecification(query, GrupoPredicateResolver.getInstance(sgiConfigProperties)));
+
+    List<Long> returnValue = repository.findIds(specs);
+
+    log.debug("findIdsGruposModificados(String query) - end");
+
     return returnValue;
   }
 

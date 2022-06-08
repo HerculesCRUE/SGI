@@ -188,6 +188,14 @@ public interface MemoriaService {
   Page<Memoria> findByComiteAndPeticionEvaluacion(Long idComite, Long idPeticionEvaluacion, Pageable pageable);
 
   /**
+   * 
+   * Enviar comunicados de aviso para memorias con evaluación retrospectiva
+   * pendiente
+   * 
+   */
+  void sendComunicadoInformeRetrospectivaCeeaPendiente();
+
+  /**
    * Crea una memoria del tipo modificada a partir de la recibida por parámetro.
    * 
    * @param nuevaMemoria Nueva {@link Memoria} a crear.

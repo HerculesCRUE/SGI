@@ -6,7 +6,7 @@ import { DocumentoService } from '@core/services/sgdoc/documento.service';
 import { StatusWrapper } from '@core/utils/status-wrapper';
 import { SgiRestListResult } from '@sgi/framework/http';
 import { BehaviorSubject, from, merge, Observable, of } from 'rxjs';
-import { map, mergeMap, switchMap, takeLast, tap } from 'rxjs/operators';
+import { finalize, map, mergeMap, switchMap, takeLast, tap } from 'rxjs/operators';
 
 export class InvencionDocumentoFragment extends Fragment {
 
@@ -25,6 +25,10 @@ export class InvencionDocumentoFragment extends Fragment {
   }
 
   protected onInitialize(): void {
+    this.loadTable();
+  }
+
+  private loadTable(): void {
     const id = this.getKey() as number;
 
     if (id) {
@@ -121,15 +125,24 @@ export class InvencionDocumentoFragment extends Fragment {
   }
 
   private createOrUpdateDocumento(): Observable<void> {
-    return from(this.invencionDocumentos$.value).pipe(
+    let thereWasAnyNewDoc = false;
+    const result: Observable<void> = from(this.invencionDocumentos$.value).pipe(
       mergeMap(wrappedDoc => {
         return this.executeCreateOrUpdateService(wrappedDoc).pipe(
-          map(savedDocumento => {
-            wrappedDoc = new StatusWrapper<IInvencionDocumento>(savedDocumento);
+          map(() => {
+            if (wrappedDoc.created) {
+              thereWasAnyNewDoc = true;
+            }
           })
         );
+      }), finalize(() => {
+        if (thereWasAnyNewDoc) {
+          this.loadTable();
+        }
       }));
 
+
+    return result;
   }
 
   private executeCreateOrUpdateService(wrappedDoc: StatusWrapper<IInvencionDocumento>): Observable<IInvencionDocumento> {

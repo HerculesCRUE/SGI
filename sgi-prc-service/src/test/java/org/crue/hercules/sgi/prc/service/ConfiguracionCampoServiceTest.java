@@ -35,7 +35,7 @@ import org.springframework.data.jpa.domain.Specification;
  * ConfiguracionCampoServiceTest
  */
 @Import({ ConfiguracionCampoService.class, ApplicationContextSupport.class })
-public class ConfiguracionCampoServiceTest extends BaseServiceTest {
+class ConfiguracionCampoServiceTest extends BaseServiceTest {
 
   private static final CodigoCVN DEFAULT_DATA_CODIGO_CVN = CodigoCVN.COLECTIVA;
   private static final TipoFormato DEFAULT_DATA_TIPO_FORMATO = TipoFormato.TEXTO;
@@ -67,7 +67,7 @@ public class ConfiguracionCampoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void findAll_ReturnsPage() {
+  void findAll_ReturnsPage() {
     // given: Una lista con 37 ConfiguracionCampo
     List<ConfiguracionCampo> configuracionesCampo = new ArrayList<>();
     for (long i = 1; i <= 37; i++) {
@@ -111,7 +111,7 @@ public class ConfiguracionCampoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void findById_ReturnsConfiguracionCampo() {
+  void findById_ReturnsConfiguracionCampo() {
     // given: ConfiguracionCampo con el id buscado
     Long idBuscado = 1L;
     BDDMockito.given(repository.findById(idBuscado))
@@ -130,7 +130,7 @@ public class ConfiguracionCampoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void findById_WithIdNotExist_ThrowsConfiguracionCampoNotFoundException() {
+  void findById_WithIdNotExist_ThrowsConfiguracionCampoNotFoundException() {
     // given: Ningun ConfiguracionCampo con el id buscado
     Long idBuscado = 33L;
     BDDMockito.given(repository.findById(ArgumentMatchers.<Long>any())).willReturn(Optional.empty());

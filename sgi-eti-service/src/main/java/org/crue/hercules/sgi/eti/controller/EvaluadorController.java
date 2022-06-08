@@ -7,6 +7,7 @@ import javax.validation.Valid;
 import org.crue.hercules.sgi.eti.model.ConflictoInteres;
 import org.crue.hercules.sgi.eti.model.Evaluacion;
 import org.crue.hercules.sgi.eti.model.Evaluador;
+import org.crue.hercules.sgi.eti.service.ActaService;
 import org.crue.hercules.sgi.eti.service.ConflictoInteresService;
 import org.crue.hercules.sgi.eti.service.EvaluacionService;
 import org.crue.hercules.sgi.eti.service.EvaluadorService;
@@ -44,23 +45,18 @@ public class EvaluadorController {
   /** Evaluación service. */
   private final EvaluacionService evaluacionService;
 
+  /** Acta service. */
+  private final ActaService actaService;
+
   /** ConflictoInteres service */
   private final ConflictoInteresService conflictoInteresService;
 
-  /**
-   * Instancia un nuevo EvaluadorController. x
-   * 
-   * @param evaluadorService        {@link EvaluadorService}
-   * @param evaluacionService       {@link EvaluacionService}
-   * @param conflictoInteresService {@link ConflictoInteresService}
-   */
   public EvaluadorController(EvaluadorService evaluadorService, EvaluacionService evaluacionService,
-      ConflictoInteresService conflictoInteresService) {
-    log.debug("EvaluadorController(EvaluadorService service) - start");
+      ConflictoInteresService conflictoInteresService, ActaService actaService) {
     this.evaluadorService = evaluadorService;
     this.evaluacionService = evaluacionService;
     this.conflictoInteresService = conflictoInteresService;
-    log.debug("EvaluadorController(EvaluadorService service) - end");
+    this.actaService = actaService;
   }
 
   /**
@@ -271,6 +267,25 @@ public class EvaluadorController {
       return new ResponseEntity<>(HttpStatus.OK);
     }
     log.debug("hasAssignedEvaluacionesSeguimiento(Authentication authorization) - end");
+    return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+  }
+
+  /**
+   * Comprueba si el usuario es Evaluador en algun Acta
+   * 
+   * @param authorization authorization
+   * @return HTTP 200 si existe y HTTP 204 si no.
+   */
+  @RequestMapping(path = "/actas", method = RequestMethod.HEAD)
+  @PreAuthorize("hasAnyAuthorityForAnyUO('ETI-EVC-V','ETI-EVC-VR', 'ETI-EVC-INV-VR', 'ETI-EVC-EVAL', 'ETI-EVC-EVALR', 'ETI-EVC-INV-EVALR')")
+  public ResponseEntity<?> hasAssignedActas(Authentication authorization) {
+    log.debug("hasAssignedActas(Authentication authorization) - start");
+    String personaRef = authorization.getName();
+    if (actaService.hasAssignedActasByEvaluador(personaRef)) {
+      log.debug("hasAssignedActas(Authentication authorization) - end");
+      return new ResponseEntity<>(HttpStatus.OK);
+    }
+    log.debug("hasAssignedActas(Authentication authorization) - end");
     return new ResponseEntity<>(HttpStatus.NO_CONTENT);
   }
 

@@ -11,16 +11,11 @@ import { SgiAuthModule } from '@sgi/framework/auth';
 import { LoggerTestingModule } from 'ngx-logger/testing';
 import { AreaConocimientoModalComponent, AreaConocimientoDataModal } from './area-conocimiento-modal.component';
 
-
 describe('AreaConocimientoModalComponent', () => {
   let component: AreaConocimientoModalComponent;
   let fixture: ComponentFixture<AreaConocimientoModalComponent>;
 
   beforeEach(waitForAsync(() => {
-    const mockDialogRef = {
-      close: jasmine.createSpy('close'),
-    };
-
     // Mock MAT_DIALOG
     const matDialogData: AreaConocimientoDataModal = {
       selectedAreasConocimiento: [],
@@ -43,7 +38,7 @@ describe('AreaConocimientoModalComponent', () => {
       providers: [
         {
           provide: MatDialogRef,
-          useValue: mockDialogRef,
+          useValue: TestUtils.buildDialogCommonMatDialogRef(),
         },
         { provide: MAT_DIALOG_DATA, useValue: matDialogData },
       ],

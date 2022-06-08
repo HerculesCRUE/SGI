@@ -6,6 +6,7 @@ import java.util.Optional;
 
 import org.crue.hercules.sgi.csp.dto.ProyectoDto;
 import org.crue.hercules.sgi.csp.dto.ProyectoPresupuestoTotales;
+import org.crue.hercules.sgi.csp.enums.ClasificacionCVN;
 import org.crue.hercules.sgi.csp.model.ModeloEjecucion;
 import org.crue.hercules.sgi.csp.model.Proyecto;
 import org.crue.hercules.sgi.csp.model.ProyectoPaqueteTrabajo;
@@ -44,7 +45,7 @@ public interface CustomProyectoRepository {
   ProyectoPresupuestoTotales getTotales(Long proyectoId);
 
   /**
-   * * Obtiene los ids de proyectos que cumplen con la specification recibida.
+   * Obtiene los ids de proyectos que cumplen con la specification recibida.
    * 
    * @param specification condiciones que deben cumplir.
    * @return lista de ids de {@link Proyecto}.
@@ -62,4 +63,36 @@ public interface CustomProyectoRepository {
    */
   List<ProyectoDto> findProyectosProduccionCientifica(Instant fechaInicioBaremacion,
       Instant fechaFinBaremacion);
+
+  /**
+   * Obtiene el numero de {@link Proyecto} de una lista de personas del tipo de
+   * {@link ClasificacionCVN} en los que forma parte del equipo de proyecto con un
+   * rol principal en la fecha indicada
+   *
+   * @param personasRef       Lista de id de las personas.
+   * @param clasificacionCvn  la clasificacion.
+   * @param rolPrincipal      Flag para tener en cuenta solo las participaciones
+   *                          como miembto con un rol principal
+   * @param exludedProyectoId Excluye el {@link Proyecto} de la consulta
+   * @return el numero de {@link Proyecto}.
+   */
+  Long countProyectosClasificacionCvnPersonas(List<String> personasRef, ClasificacionCVN clasificacionCvn,
+      boolean rolPrincipal, Long exludedProyectoId);
+
+  /**
+   * Obtiene el numero de {@link Proyecto} de una lista de personas del tipo de
+   * {@link ClasificacionCVN} en los que forma parte del equipo de proyecto con un
+   * rol principal en la fecha indicada
+   *
+   * @param personasRef       Lista de id de las personas.
+   * @param clasificacionCvn  la clasificacion.
+   * @param rolPrincipal      Flag para tener en cuenta solo las participaciones
+   *                          como miembto con un rol principal
+   * @param exludedProyectoId Excluye el {@link Proyecto} de la consulta
+   * @param fecha             fecha.
+   * @return el numero de {@link Proyecto}.
+   */
+  Long countProyectosClasificacionCvnPersonas(List<String> personasRef, ClasificacionCVN clasificacionCvn,
+      boolean rolPrincipal, Long exludedProyectoId, Instant fecha);
+
 }

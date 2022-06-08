@@ -426,7 +426,7 @@ class BaremacionPublicacionLibroIT extends BaremacionBaseIT {
     getIndiceImpactoRepository().findAllByProduccionCientificaId(produccionCientificaId).stream().forEach(entity -> {
       entity.setFuenteImpacto(TipoFuenteImpacto.ICEE);
       entity.setPosicionPublicacion(new BigDecimal(50));
-      entity.setNumeroRevistas(new BigDecimal("2"));
+      entity.setNumeroRevistas(new BigDecimal("200"));
       entity = getIndiceImpactoRepository().save(entity);
       Assertions.assertThat(entity).as("indiceImpacto").isNotNull();
     });
@@ -471,7 +471,7 @@ class BaremacionPublicacionLibroIT extends BaremacionBaseIT {
     getIndiceImpactoRepository().findAllByProduccionCientificaId(produccionCientificaId).stream().forEach(entity -> {
       entity.setFuenteImpacto(TipoFuenteImpacto.ICEE);
       entity.setPosicionPublicacion(new BigDecimal("55.0"));
-      entity.setNumeroRevistas(new BigDecimal("2"));
+      entity.setNumeroRevistas(new BigDecimal("200"));
       entity = getIndiceImpactoRepository().save(entity);
       Assertions.assertThat(entity).as("indiceImpacto").isNotNull();
     });

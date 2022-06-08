@@ -1,10 +1,5 @@
-<div class="sgi-dialog-header" fxLayout="row" fxLayoutGap="20px">
-  <span fxFlexAlign="center" mat-mat-dialog-title role="heading" aria-level="3" fxFlex>{{title | translate}}</span>
-  <button fxFlex="nogrow" mat-icon-button mat-dialog-close>
-    <mat-icon class="close-icon">close</mat-icon>
-  </button>
-</div>
-<mat-dialog-content>
+<sgi-dialog-header [title]="title"></sgi-dialog-header>
+<sgi-dialog-content>
   <form [formGroup]="formGroup">
     <div>
       <!-- Proyectos SGE ligados al proyecto SGI -->
@@ -38,10 +33,9 @@
         </mat-form-field>
       </div>
       <!-- Tercer bloque -->
-      <div [fxLayout.xs]="fxLayoutProperties.xs" [fxLayout]="fxLayoutProperties.layout"
-        [fxLayoutGap]="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
+      <div fxLayout="row" fxLayoutGap="10px" *ngIf="!data.anualidadGenerica">
         <!-- Anualidad -->
-        <div>
+        <div fxFlex>
           <mat-form-field>
             <mat-label>
               {{'csp.proyecto-amortizacion-fondos.periodo-amortizacion.anualidad'|
@@ -56,7 +50,7 @@
           </mat-form-field>
         </div>
         <!-- Fecha Inicio Anualidad -->
-        <div>
+        <div fxFlex>
           <mat-form-field>
             <mat-label>
               {{'csp.proyecto-amortizacion-fondos.periodo-amortizacion.fecha-inicio-anualidad' | translate}}
@@ -69,7 +63,7 @@
         </div>
 
         <!-- Fecha Fin Anualidad  -->
-        <div>
+        <div fxFlex>
           <mat-form-field>
             <mat-label>
               {{'csp.proyecto-amortizacion-fondos.periodo-amortizacion.fecha-fin-anualidad' | translate}}
@@ -83,10 +77,9 @@
       </div>
 
       <!-- Cuarto bloque -->
-      <div [fxLayout.xs]="fxLayoutProperties.xs" [fxLayout]="fxLayoutProperties.layout"
-        [fxLayoutGap]="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
+      <div fxLayout="row" fxLayoutGap="10px">
         <!-- Fecha Límite amortizacion -->
-        <div>
+        <div fxFlex>
           <mat-form-field>
             <mat-label>
               {{'csp.proyecto-amortizacion-fondos.periodo-amortizacion.fecha-limite-amortizacion' | translate}}
@@ -101,7 +94,7 @@
         </div>
 
         <!-- Importe  -->
-        <div>
+        <div fxFlex>
           <mat-form-field>
             <mat-label>
               {{'csp.proyecto-amortizacion-fondos.periodo-amortizacion.importe' | translate}}
@@ -122,9 +115,9 @@
       </div>
     </div>
   </form>
-</mat-dialog-content>
+</sgi-dialog-content>
 <mat-dialog-actions>
-  <button color="accent" (click)="saveOrUpdate()" mat-raised-button type="submit"
+  <button color="accent" (click)="doAction()" [disabled]="this.actionDisabled" mat-raised-button type="submit"
     *sgiHasAnyAuthorityForAnyUO="['CSP-CON-C', 'CSP-CON-E']">
     <mat-icon class="save-icon">save</mat-icon>{{textSaveOrUpdate | translate}}
   </button>

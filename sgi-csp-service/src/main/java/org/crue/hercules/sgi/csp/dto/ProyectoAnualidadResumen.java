@@ -25,4 +25,5 @@ public class ProyectoAnualidadResumen implements Serializable {
   private BigDecimal totalIngresos;
   private Boolean presupuestar;
   private Boolean enviadoSge;
+  private Boolean hasGastosIngresos;
 }

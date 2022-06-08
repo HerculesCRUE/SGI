@@ -9,7 +9,9 @@ import { ROUTE_NAMES } from '@core/route.names';
 import { SgiAuthGuard } from '@sgi/framework/auth';
 import { ConvocatoriaBaremacionCrearComponent } from './convocatoria-baremacion-crear/convocatoria-baremacion-crear.component';
 import { ConvocatoriaBaremacionEditarComponent } from './convocatoria-baremacion-editar/convocatoria-baremacion-editar.component';
+import { ConvocatoriaBaremacionBaremosPuntuacionesComponent } from './convocatoria-baremacion-formulario/convocatoria-baremacion-baremos-puntuaciones/convocatoria-baremacion-baremos-puntuaciones.component';
 import { ConvocatoriaBaremacionDatosGeneralesComponent } from './convocatoria-baremacion-formulario/convocatoria-baremacion-datos-generales/convocatoria-baremacion-datos-generales.component';
+import { ModuladoresRangosComponent } from './convocatoria-baremacion-formulario/moduladores-rangos/moduladores-rangos.component';
 import { ConvocatoriaBaremacionListadoComponent } from './convocatoria-baremacion-listado/convocatoria-baremacion-listado.component';
 import { CONVOCATORIA_BAREMACION_ROUTE_PARAMS } from './convocatoria-baremacion-params';
 import { ConvocatoriaBaremacionResolver, CONVOCATORIA_BAREMACION_DATA_KEY } from './convocatoria-baremacion.resolver';
@@ -50,6 +52,11 @@ const routes: SgiRoutes = [
         path: CONVOCATORIA_ROUTE_NAMES.DATOS_GENERALES,
         component: ConvocatoriaBaremacionDatosGeneralesComponent,
         canDeactivate: [FragmentGuard]
+      },
+      {
+        path: CONVOCATORIA_ROUTE_NAMES.MODULADORES_RANGOS,
+        component: ModuladoresRangosComponent,
+        canDeactivate: [FragmentGuard]
       }
     ]
   },
@@ -76,7 +83,17 @@ const routes: SgiRoutes = [
         path: CONVOCATORIA_ROUTE_NAMES.DATOS_GENERALES,
         component: ConvocatoriaBaremacionDatosGeneralesComponent,
         canDeactivate: [FragmentGuard]
-      }
+      },
+      {
+        path: CONVOCATORIA_ROUTE_NAMES.BAREMOS_PUNTUACIONES,
+        component: ConvocatoriaBaremacionBaremosPuntuacionesComponent,
+        canDeactivate: [FragmentGuard]
+      },
+      {
+        path: CONVOCATORIA_ROUTE_NAMES.MODULADORES_RANGOS,
+        component: ModuladoresRangosComponent,
+        canDeactivate: [FragmentGuard]
+      },
     ]
   }
 ];

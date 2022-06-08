@@ -3,14 +3,18 @@
 :host {
   .formulario {
     padding: 10px 20px 10px 20px;
+
     .col {
       padding-right: 15px;
     }
+
     .buscador {
       padding-bottom: 15px;
     }
+
     .buttons-final {
       padding: 10px 0px 10px 0px;
+
       .filter-button {
         button {
           margin-right: 15px;
@@ -28,5 +32,11 @@
     margin-bottom: 10px;
     margin-top: 15px;
     float: right;
+  }
+
+  .paginator-export {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
   }
 }

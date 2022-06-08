@@ -1,5 +1,6 @@
 package org.crue.hercules.sgi.eti.service.impl;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.crue.hercules.sgi.eti.exceptions.ComentarioNotFoundException;
@@ -7,14 +8,18 @@ import org.crue.hercules.sgi.eti.exceptions.EvaluacionNotFoundException;
 import org.crue.hercules.sgi.eti.model.Comentario;
 import org.crue.hercules.sgi.eti.model.Comite;
 import org.crue.hercules.sgi.eti.model.Evaluacion;
+import org.crue.hercules.sgi.eti.model.Evaluador;
 import org.crue.hercules.sgi.eti.model.Formulario;
 import org.crue.hercules.sgi.eti.model.TipoComentario;
 import org.crue.hercules.sgi.eti.model.TipoEvaluacion;
 import org.crue.hercules.sgi.eti.repository.ComentarioRepository;
 import org.crue.hercules.sgi.eti.repository.EvaluacionRepository;
+import org.crue.hercules.sgi.eti.repository.EvaluadorRepository;
+import org.crue.hercules.sgi.eti.repository.specification.EvaluadorSpecifications;
 import org.crue.hercules.sgi.eti.service.ComentarioService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
@@ -30,10 +35,13 @@ import lombok.extern.slf4j.Slf4j;
 public class ComentarioServiceImpl implements ComentarioService {
   private final ComentarioRepository comentarioRepository;
   private final EvaluacionRepository evaluacionRepository;
+  private final EvaluadorRepository evaluadorRepository;
 
-  public ComentarioServiceImpl(ComentarioRepository comentarioRepository, EvaluacionRepository evaluacionRepository) {
+  public ComentarioServiceImpl(ComentarioRepository comentarioRepository, EvaluacionRepository evaluacionRepository,
+      EvaluadorRepository evaluadorRepository) {
     this.comentarioRepository = comentarioRepository;
     this.evaluacionRepository = evaluacionRepository;
+    this.evaluadorRepository = evaluadorRepository;
   }
 
   /**
@@ -97,13 +105,34 @@ public class ComentarioServiceImpl implements ComentarioService {
 
       Assert.isTrue(
           (evaluacion.getEvaluador1().getPersonaRef()).equals(personaRef)
-              || evaluacion.getEvaluador2().getPersonaRef().equals(personaRef),
+              || evaluacion.getEvaluador2().getPersonaRef().equals(personaRef) || isMiembroComite(personaRef,
+                  evaluacion.getMemoria().getComite()
+                      .getComite()),
           "El usuario no coincide con ninguno de los Evaluadores de la Evaluación.");
 
       log.debug("createComentarioEvaluador(Long evaluacionId, Comentario comentario) - end");
       return createComentarioEvaluacion(evaluacionId, comentario, 2L);
 
     }).orElseThrow(() -> new EvaluacionNotFoundException(evaluacionId));
+
+  }
+
+  /**
+   * Comprueba si la persona es miembro activo del comité
+   * 
+   * @param personaRef identificador de la persona
+   * @param comite     nombre del comité
+   * @return true si es miembro activo del comité / false si no lo es
+   */
+  private Boolean isMiembroComite(String personaRef, String comite) {
+    Specification<Evaluador> specActivos = EvaluadorSpecifications.activos();
+    Specification<Evaluador> specPersonaRef = EvaluadorSpecifications.byPersonaRef(personaRef);
+    Specification<Evaluador> specComite = EvaluadorSpecifications.byComite(comite);
+
+    Specification<Evaluador> specs = Specification.where(specActivos).and(specPersonaRef).and(specComite);
+
+    List<Evaluador> returnValue = evaluadorRepository.findAll(specs);
+    return !returnValue.isEmpty();
 
   }
 
@@ -215,7 +244,9 @@ public class ComentarioServiceImpl implements ComentarioService {
 
       Assert.isTrue(
           (evaluacion.getEvaluador1().getPersonaRef()).equals(personaRef)
-              || evaluacion.getEvaluador2().getPersonaRef().equals(personaRef),
+              || evaluacion.getEvaluador2().getPersonaRef().equals(personaRef) || isMiembroComite(personaRef,
+                  evaluacion.getMemoria().getComite()
+                      .getComite()),
           "El usuario no coincide con ninguno de los Evaluadores de la Evaluación.");
 
       deleteComentarioEvaluacion(evaluacionId, comentarioId, 2L);
@@ -315,7 +346,9 @@ public class ComentarioServiceImpl implements ComentarioService {
 
       Assert.isTrue(
           (evaluacion.getEvaluador1().getPersonaRef()).equals(personaRef)
-              || evaluacion.getEvaluador2().getPersonaRef().equals(personaRef),
+              || evaluacion.getEvaluador2().getPersonaRef().equals(personaRef) || isMiembroComite(personaRef,
+                  evaluacion.getMemoria().getComite()
+                      .getComite()),
           "El usuario no coincide con ninguno de los Evaluadores de la Evaluación.");
 
       return updateComentarioEvaluacion(evaluacionId, comentarioActualizar);
@@ -348,8 +381,8 @@ public class ComentarioServiceImpl implements ComentarioService {
    * Obtiene todos los {@link Comentario} del tipo "EVALUADOR" por el id de su
    * evaluación.
    *
-   * @param id       el id de la entidad {@link Evaluacion}.
-   * @param pageable la información de la paginación.
+   * @param id         el id de la entidad {@link Evaluacion}.
+   * @param pageable   la información de la paginación.
    * @param personaRef referencia de la persona
    * @return la lista de entidades {@link Comentario} paginadas.
    */
@@ -490,36 +523,36 @@ public class ComentarioServiceImpl implements ComentarioService {
   private void validarTipoEvaluacionAndFormulario(Long idTipoEvaluacion, String comite, Long idFormulario) {
 
     switch (idTipoEvaluacion.intValue()) {
-    case 1: {
-      // Tipo Evaluación Retrospectiva
+      case 1: {
+        // Tipo Evaluación Retrospectiva
 
-      // El id formulario debe ser del tipo 6 - > Retrospectiva
-      Assert.isTrue(idFormulario.equals(6L), "El bloque seleccionado no es correcto para el tipo de evaluación.");
-      break;
-    }
-    case 2: {
-      // Tipo Evaluación Memoria
+        // El id formulario debe ser del tipo 6 - > Retrospectiva
+        Assert.isTrue(idFormulario.equals(6L), "El bloque seleccionado no es correcto para el tipo de evaluación.");
+        break;
+      }
+      case 2: {
+        // Tipo Evaluación Memoria
 
-      // El id formulario debe ser del tipo 1 - > M10 si el comité es CEI
-      Assert.isTrue(
-          (idFormulario.equals(1L) && comite.equals("CEI")) || (idFormulario.equals(2L) && comite.equals("CEEA"))
-              || (idFormulario.equals(3L) && comite.equals("CBE")),
-          "El bloque seleccionado no es correcto para el tipo de evaluación.");
+        // El id formulario debe ser del tipo 1 - > M10 si el comité es CEI
+        Assert.isTrue(
+            (idFormulario.equals(1L) && comite.equals("CEI")) || (idFormulario.equals(2L) && comite.equals("CEEA"))
+                || (idFormulario.equals(3L) && comite.equals("CBE")),
+            "El bloque seleccionado no es correcto para el tipo de evaluación.");
 
-      break;
-    }
-    case 3: {
-      // Tipo Evaluación Seguimiento Anual
+        break;
+      }
+      case 3: {
+        // Tipo Evaluación Seguimiento Anual
 
-      // El id formulario debe ser del tipo 4 - > Seguimiento Anual
-      Assert.isTrue(idFormulario.equals(4L), "El bloque seleccionado no es correcto para el tipo de evaluación.");
-      break;
-    }
-    case 4: {
-      // Tipo Evaluación Seguimiento Final
-      // El id formulario debe ser del tipo 5 - > Seguimiento Final
-      Assert.isTrue(idFormulario.equals(5L), "El bloque seleccionado no es correcto para el tipo de evaluación.");
-    }
+        // El id formulario debe ser del tipo 4 - > Seguimiento Anual
+        Assert.isTrue(idFormulario.equals(4L), "El bloque seleccionado no es correcto para el tipo de evaluación.");
+        break;
+      }
+      case 4: {
+        // Tipo Evaluación Seguimiento Final
+        // El id formulario debe ser del tipo 5 - > Seguimiento Final
+        Assert.isTrue(idFormulario.equals(5L), "El bloque seleccionado no es correcto para el tipo de evaluación.");
+      }
     }
   }
 

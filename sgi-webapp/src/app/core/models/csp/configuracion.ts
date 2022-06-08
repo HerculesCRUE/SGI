@@ -6,6 +6,4 @@ export interface IConfiguracion {
   plantillaFormatoPartidaPresupuestaria: string;
   /** Determina cuándo la validación de gastos está activa en la app */
   validacionGastos: boolean;
-  /** Código Universidad */
-  codigoUniversidad: string;
 }

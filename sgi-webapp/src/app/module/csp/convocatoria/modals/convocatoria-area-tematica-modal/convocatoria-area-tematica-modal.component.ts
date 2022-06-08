@@ -5,13 +5,10 @@ import { MatCheckboxChange } from '@angular/material/checkbox';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatTreeNestedDataSource } from '@angular/material/tree';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
-import { BaseModalComponent } from '@core/component/base-modal.component';
+import { DialogFormComponent } from '@core/component/dialog-form.component';
 import { MSG_PARAMS } from '@core/i18n';
 import { IAreaTematica } from '@core/models/csp/area-tematica';
-import { FxFlexProperties } from '@core/models/shared/flexLayout/fx-flex-properties';
-import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-properties';
 import { AreaTematicaService } from '@core/services/csp/area-tematica.service';
-import { SnackBarService } from '@core/services/snack-bar.service';
 import { StatusWrapper } from '@core/utils/status-wrapper';
 import { TranslateService } from '@ngx-translate/core';
 import { NGXLogger } from 'ngx-logger';
@@ -77,10 +74,7 @@ function sortByName(nodes: NodeAreaTematica[]): NodeAreaTematica[] {
   templateUrl: './convocatoria-area-tematica-modal.component.html',
   styleUrls: ['./convocatoria-area-tematica-modal.component.scss']
 })
-export class ConvocatoriaAreaTematicaModalComponent extends
-  BaseModalComponent<AreaTematicaModalData, ConvocatoriaAreaTematicaModalComponent> implements OnInit {
-  fxFlexProperties: FxFlexProperties;
-  fxLayoutProperties: FxLayoutProperties;
+export class ConvocatoriaAreaTematicaModalComponent extends DialogFormComponent<AreaTematicaModalData> implements OnInit {
 
   areaTematicaTree$ = new BehaviorSubject<NodeAreaTematica[]>([]);
   treeControl = new NestedTreeControl<NodeAreaTematica>(node => node.childs);
@@ -100,22 +94,12 @@ export class ConvocatoriaAreaTematicaModalComponent extends
 
   constructor(
     private readonly logger: NGXLogger,
-    protected snackBarService: SnackBarService,
-    public matDialogRef: MatDialogRef<ConvocatoriaAreaTematicaModalComponent>,
+    matDialogRef: MatDialogRef<ConvocatoriaAreaTematicaModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data: AreaTematicaModalData,
     private areaTematicaService: AreaTematicaService,
     private readonly translate: TranslateService
   ) {
-    super(snackBarService, matDialogRef, null);
-    this.fxFlexProperties = new FxFlexProperties();
-    this.fxFlexProperties.sm = '0 1 calc(100%-10px)';
-    this.fxFlexProperties.md = '0 1 calc(100%-10px)';
-    this.fxFlexProperties.gtMd = '0 1 calc(100%-10px)';
-    this.fxFlexProperties.order = '2';
-    this.fxLayoutProperties = new FxLayoutProperties();
-    this.fxLayoutProperties.gap = '20px';
-    this.fxLayoutProperties.layout = 'row';
-    this.fxLayoutProperties.xs = 'row';
+    super(matDialogRef, !data.padre);
   }
 
   ngOnInit(): void {
@@ -168,14 +152,14 @@ export class ConvocatoriaAreaTematicaModalComponent extends
 
   }
 
-  protected getFormGroup(): FormGroup {
+  protected buildFormGroup(): FormGroup {
     const formGroup = new FormGroup({
       padre: new FormControl(this.data.padre, Validators.required),
     });
     return formGroup;
   }
 
-  protected getDatosForm(): AreaTematicaModalData {
+  protected getValue(): AreaTematicaModalData {
     const padre = this.formGroup.get('padre').value;
     const areasTematicas = this.selectedAreasTematicas;
     const data = { padre, areasTematicas } as AreaTematicaModalData;

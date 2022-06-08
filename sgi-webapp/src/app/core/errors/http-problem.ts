@@ -1,4 +1,4 @@
-import { Level, SgiError, SgiProblem } from './sgi-error';
+import { Level, SgiError, SgiProblem, ValidationError } from './sgi-error';
 
 export interface SgiHttpProblem extends SgiProblem {
   readonly type: string;
@@ -177,10 +177,7 @@ export class UnknownHttpError extends SgiHttpError {
 }
 
 export class ValidationHttpError extends SgiHttpError {
-  readonly errors: {
-    field: string;
-    error: string;
-  }[];
+  readonly errors: ValidationError[];
 
   constructor(responseBody: SgiHttpProblem) {
     super(responseBody);

@@ -109,6 +109,7 @@ class NotificacionProyectoExternoCVNIT extends BaseIT {
       "classpath:scripts/convocatoria.sql",
       "classpath:scripts/proyecto.sql",
       "classpath:scripts/autorizacion.sql",
+      "classpath:scripts/estado_autorizacion.sql"
     // @formatter:on
   })
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
@@ -279,12 +280,12 @@ class NotificacionProyectoExternoCVNIT extends BaseIT {
 
   private NotificacionProyectoExternoCVNInput buildMockNotificacionProyectoExternoCVN() {
     return NotificacionProyectoExternoCVNInput.builder()
-        .autorizacionId(1L)
+        .autorizacionId(2L)
         .entidadParticipacionRef("00132245")
         .fechaFin(Instant.parse("2023-01-01T14:00:00.000Z"))
         .fechaInicio(Instant.parse("2022-01-31T14:00:00.000Z"))
         .responsableRef("23302408")
-        .solicitanteRef("33870580")
+        .solicitanteRef("00112233")
         .proyectoCVNId("001")
         .titulo("Notificación 1 con Entidad y Solicitante")
         .build();
@@ -292,13 +293,13 @@ class NotificacionProyectoExternoCVNIT extends BaseIT {
 
   private NotificacionProyectoExternoCVNAsociarProyectoInput buildNotificacionProyectoExternoCVNAsociarProyectoInput() {
     return NotificacionProyectoExternoCVNAsociarProyectoInput.builder()
-        .proyectoId(1L)
+        .proyectoId(3L)
         .build();
   }
 
   private NotificacionProyectoExternoCVNAsociarAutorizacionInput buildNotificacionProyectoExternoCVNAsociarAutorizacionInput() {
     return NotificacionProyectoExternoCVNAsociarAutorizacionInput.builder()
-        .autorizacionId(1L)
+        .autorizacionId(3L)
         .build();
   }
 

@@ -184,7 +184,6 @@ export class SolicitudEditarComponent extends ActionComponent implements OnInit 
       isSolicitanteInSolicitudEquipo: this.actionService.isSolicitanteInSolicitudEquipo
     };
     const config = {
-      panelClass: 'sgi-dialog-container',
       data
     };
     const dialogRef = this.matDialog.open(CambioEstadoModalComponent, config);

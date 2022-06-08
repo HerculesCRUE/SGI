@@ -1,4 +1,4 @@
-import { Component, Inject } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
@@ -28,7 +28,7 @@ const NOTIFICACION_CVN_PROYECTO_UNIDAD_GESTION_KEY = marker('csp.convocatoria.un
   templateUrl: './notificacion-cvn-asociar-proyecto-modal.component.html',
   styleUrls: ['./notificacion-cvn-asociar-proyecto-modal.component.scss']
 })
-export class NotificacionCvnAsociarProyectoModalComponent extends DialogActionComponent<INotificacionProyectoExternoCVN> {
+export class NotificacionCvnAsociarProyectoModalComponent extends DialogActionComponent<INotificacionProyectoExternoCVN> implements OnInit {
 
   proyectos$: Observable<IProyecto[]>;
 
@@ -56,6 +56,7 @@ export class NotificacionCvnAsociarProyectoModalComponent extends DialogActionCo
 
   ngOnInit(): void {
     super.ngOnInit();
+    this.matDialogRef.updateSize('40vw');
     this.setupI18N();
   }
 
@@ -105,7 +106,7 @@ export class NotificacionCvnAsociarProyectoModalComponent extends DialogActionCo
       switchMap(result => {
         return this.notificacionProyectoExternoCvnService.asociarProyecto(result.id, result);
       })
-    )
+    );
   }
 
   public selectFirstUnidadGEstionIfOnlyOneOption(options: SelectValue<IUnidadGestion>[]): void {

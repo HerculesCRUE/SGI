@@ -20,29 +20,17 @@
 
         <!-- Comité -->
         <div class="col">
-          <mat-form-field class="input-form">
+          <mat-form-field>
             <mat-label>{{'label.eti.comite' | translate}}</mat-label>
-            <input type="text" [placeholder]="'label.eti.comite' | translate" arial-label="Number" matInput
-              formControlName="comite" [matAutocomplete]="autocompleteComite">
-            <mat-autocomplete #autocompleteComite="matAutocomplete" [displayWith]="getComite">
-              <mat-option *ngFor="let comite of filteredComites | async" [value]="comite">
-                {{comite.comite}}
-              </mat-option>
-            </mat-autocomplete>
+            <sgi-select-comite #selectComite formControlName="comite"></sgi-select-comite>
           </mat-form-field>
         </div>
 
         <!-- Tipo Evaluación -->
         <div class="col">
-          <mat-form-field class="input-form">
+          <mat-form-field>
             <mat-label>{{'eti.evaluacion.tipo-evaluacion' | translate}}</mat-label>
-            <input type="text" [placeholder]="'eti.evaluacion.tipo-evaluacion' | translate" arial-label="Number"
-              matInput formControlName="tipoEvaluacion" [matAutocomplete]="autocompleteTipoEvaluacion">
-            <mat-autocomplete #autocompleteTipoEvaluacion="matAutocomplete" [displayWith]="getTipoEvaluacion">
-              <mat-option *ngFor="let tipoEvaluacion of filteredTipoEvaluacion | async" [value]="tipoEvaluacion">
-                {{tipoEvaluacion.nombre}}
-              </mat-option>
-            </mat-autocomplete>
+            <sgi-select-tipo-evaluacion formControlName="tipoEvaluacion"></sgi-select-tipo-evaluacion>
           </mat-form-field>
         </div>
 
@@ -81,17 +69,10 @@
 
         <!-- Tipo convocatoria -->
         <div class="col">
-          <mat-form-field class="input-form">
+          <mat-form-field>
             <mat-label>{{'eti.evaluacion.tipo-convocatoria' | translate}}</mat-label>
-            <input type="text" placeholder="{{'eti.evaluacion.tipo-convocatoria' | translate}}" arial-label="text"
-              matInput formControlName="tipoConvocatoriaReunion" [matAutocomplete]="autoCompleteTipoConvocatoria">
-            <mat-autocomplete #autoCompleteTipoConvocatoria="matAutocomplete"
-              [displayWith]="getTipoConvocatoriaReunion">
-              <mat-option *ngFor="let tipoConvocatoria of filteredTipoConvocatoriaReunion | async"
-                [value]="tipoConvocatoria">
-                {{tipoConvocatoria.nombre}}
-              </mat-option>
-            </mat-autocomplete>
+            <sgi-select-tipo-convocatoria-reunion>
+            </sgi-select-tipo-convocatoria-reunion>
           </mat-form-field>
         </div>
       </div>
@@ -181,6 +162,12 @@
               <mat-icon>border_color</mat-icon>
             </a>
           </ng-container>
+          <ng-container *ngIf="evaluacion.esRevMinima">
+            <button *sgiHasAuthorityForAnyUO="'ETI-EVC-EVAL'" color="primary" mat-button
+              matTooltip="{{'btn.notify' | translate}}" (click)="notificarCambiosMemoria(evaluacion.id, $event)">
+              <mat-icon>add_alert</mat-icon>
+            </button>
+          </ng-container>
         </td>
       </ng-container>
 
@@ -188,8 +175,14 @@
       <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
     </table>
 
-    <mat-paginator [pageSizeOptions]="elementosPagina" [length]="totalElementos" showFirstLastButtons>
-    </mat-paginator>
+    <div class="paginator-export">
+      <button mat-button matTooltip="{{'btn.export' | translate}}" (click)="openExportModal()"
+        [disabled]="totalElementos<=0">
+        <mat-icon color="primary">insert_chart_outlined</mat-icon>
+      </button>
+      <mat-paginator [pageSizeOptions]="elementosPagina" [length]="totalElementos" showFirstLastButtons>
+      </mat-paginator>
+    </div>
   </div>
 </sgi-menu-content>
 <!-- FIN Gestión de Evaluaciones listado-->

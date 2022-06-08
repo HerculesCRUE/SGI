@@ -6,21 +6,18 @@ import { IAsistente } from '@core/models/eti/asistente';
 import { IComite } from '@core/models/eti/comite';
 import { IConvocatoriaReunion } from '@core/models/eti/convocatoria-reunion';
 import { IEvaluador } from '@core/models/eti/evaluador';
-import { TipoConvocatoriaReunion } from '@core/models/eti/tipo-convocatoria-reunion';
 import { IPersona } from '@core/models/sgp/persona';
 import { FxFlexProperties } from '@core/models/shared/flexLayout/fx-flex-properties';
 import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-properties';
-import { ComiteService } from '@core/services/eti/comite.service';
 import { ConvocatoriaReunionService } from '@core/services/eti/convocatoria-reunion.service';
 import { EvaluadorService } from '@core/services/eti/evaluador.service';
-import { TipoConvocatoriaReunionService } from '@core/services/eti/tipo-convocatoria-reunion.service';
 import { PersonaService } from '@core/services/sgp/persona.service';
 import { SnackBarService } from '@core/services/snack-bar.service';
 import { TranslateService } from '@ngx-translate/core';
 import { RSQLSgiRestFilter, SgiRestFilterOperator, SgiRestFindOptions, SgiRestListResult } from '@sgi/framework/http';
 import { NGXLogger } from 'ngx-logger';
 import { Observable, of, Subscription } from 'rxjs';
-import { map, startWith, switchMap } from 'rxjs/operators';
+import { map, switchMap } from 'rxjs/operators';
 import { ConvocatoriaReunionActionService } from '../../convocatoria-reunion.action.service';
 import { ConvocatoriaReunionDatosGeneralesFragment } from './convocatoria-reunion-datos-generales.fragment';
 
@@ -46,12 +43,6 @@ export class ConvocatoriaReunionDatosGeneralesComponent extends FormFragmentComp
   fxFlexPropertiesInline: FxFlexProperties;
   fxLayoutProperties: FxLayoutProperties;
 
-  comites: IComite[];
-  tiposConvocatoriaReunion: TipoConvocatoriaReunion[];
-
-  filteredComites: Observable<IComite[]>;
-  filteredTiposConvocatoriaReunion: Observable<TipoConvocatoriaReunion[]>;
-
   formFragment: ConvocatoriaReunionDatosGeneralesFragment;
   disableComite: boolean;
   private subscriptions: Subscription[] = [];
@@ -68,9 +59,7 @@ export class ConvocatoriaReunionDatosGeneralesComponent extends FormFragmentComp
 
   constructor(
     private logger: NGXLogger,
-    private comiteService: ComiteService,
     private evaluadorService: EvaluadorService,
-    private tipoConvocatoriaReunionService: TipoConvocatoriaReunionService,
     private snackBarService: SnackBarService,
     private personaService: PersonaService,
     private actionService: ConvocatoriaReunionActionService,
@@ -101,16 +90,12 @@ export class ConvocatoriaReunionDatosGeneralesComponent extends FormFragmentComp
   ngOnInit() {
     super.ngOnInit();
     this.setupI18N();
-    this.comites = [];
-    this.tiposConvocatoriaReunion = [];
 
     if (this.actionService.hasMemoriasAssigned()) {
       this.formGroup.controls.comite.disable({ onlySelf: true });
     }
 
     // Inicializa los combos
-    this.getComites();
-    this.getTiposConvocatoriaReunion();
     if (!this.formFragment.isEdit()) {
       this.getConvocantesComite();
     }
@@ -166,50 +151,6 @@ export class ConvocatoriaReunionDatosGeneralesComponent extends FormFragmentComp
   ngOnDestroy() {
     this.subscriptions.forEach(subscription => subscription.unsubscribe());
   }
-
-  /**
-   * Recupera un listado de los comites que hay en el sistema.
-   */
-  private getComites(): void {
-    const comitesSelectSubscription = this.comiteService.findAll()
-      .subscribe(
-        (response: SgiRestListResult<IComite>) => {
-          this.comites = response.items;
-          this.filteredComites = this.formGroup.controls.comite.valueChanges
-            .pipe(
-              startWith(''),
-              map(value => this.filterComite(value))
-            );
-        },
-        (error) => {
-          this.logger.error(error);
-          this.snackBarService.showError(MSG_ERROR_LOAD);
-        }
-      );
-    this.subscriptions.push(comitesSelectSubscription);
-  }
-
-  /**
-   * Recupera un listado de los tipos de convocatoria reunion que hay en el sistema.
-   */
-  private getTiposConvocatoriaReunion(): void {
-    const tipoConvocatoriaSelectReunionSubscription = this.tipoConvocatoriaReunionService.findAll()
-      .subscribe(
-        (response) => {
-          this.tiposConvocatoriaReunion = response.items;
-          this.filteredTiposConvocatoriaReunion = this.formGroup.controls.tipoConvocatoriaReunion.valueChanges
-            .pipe(
-              startWith(''),
-              map(value => this.filterTipoConvocatoriaReunion(value))
-            );
-        },
-        (error) => {
-          this.logger.error(error);
-          this.snackBarService.showError(MSG_ERROR_LOAD);
-        });
-    this.subscriptions.push(tipoConvocatoriaSelectReunionSubscription);
-  }
-
 
   /**
    * Recupera el listado de convocantes correspondiente al comite seleccionado.
@@ -297,70 +238,6 @@ export class ConvocatoriaReunionDatosGeneralesComponent extends FormFragmentComp
       this.formGroup.get('convocantes').setValue(convocantes);
     }
     return of();
-  }
-
-  /**
-   * Filtro de campo autocompletable comite.
-   *
-   * @param value value a filtrar (string o Comite.
-   * @returns lista de comites filtrada.
-   */
-  private filterComite(value: string | IComite): IComite[] {
-    if (!value) {
-      return this.comites;
-    }
-
-    let filterValue: string;
-    if (typeof value === 'string') {
-      filterValue = value.toLowerCase();
-    } else {
-      filterValue = value.comite.toLowerCase();
-    }
-
-    return this.comites.filter
-      (comite => comite.comite.toLowerCase().includes(filterValue));
-  }
-
-  /**
-   * Filtro de campo autocompletable tipo convocatoria reunion.
-   *
-   * @param value value a filtrar (string o TipoConvocatoriaReunion).
-   * @returns lista de tipos de convocatoria reunion filtrada.
-   */
-  private filterTipoConvocatoriaReunion(value: string | TipoConvocatoriaReunion): TipoConvocatoriaReunion[] {
-    if (!value) {
-      return this.tiposConvocatoriaReunion;
-    }
-
-    let filterValue: string;
-    if (typeof value === 'string') {
-      filterValue = value.toLowerCase();
-    } else {
-      filterValue = value.nombre.toLowerCase();
-    }
-
-    return this.tiposConvocatoriaReunion.filter
-      (tipoConvocatoriaReunion => tipoConvocatoriaReunion.nombre.toLowerCase().includes(filterValue));
-  }
-
-  /**
-   * Devuelve el nombre del comite
-   * @param comite comite
-   *
-   * @returns nombre del comite
-   */
-  getComite(comite: IComite): string {
-    return comite?.comite;
-  }
-
-  /**
-   * Devuelve el nombre del tipo de convocatoria reunion
-   * @param tipoConvocatoriaReunion tipo convocatoria reunion
-   *
-   * @returns nombre del tipo de convocatoria reunion
-   */
-  getTipoConvocatoriaReunion(tipoConvocatoriaReunion: TipoConvocatoriaReunion): string {
-    return tipoConvocatoriaReunion?.nombre;
   }
 
   /**

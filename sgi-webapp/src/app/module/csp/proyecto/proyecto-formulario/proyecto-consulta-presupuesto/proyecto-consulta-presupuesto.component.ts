@@ -7,12 +7,10 @@ import { FragmentComponent } from '@core/component/fragment.component';
 import { IAnualidadGasto } from '@core/models/csp/anualidad-gasto';
 import { IProyectoAnualidad } from '@core/models/csp/proyecto-anualidad';
 import { IProyectoPartida } from '@core/models/csp/proyecto-partida';
-import { FxFlexProperties } from '@core/models/shared/flexLayout/fx-flex-properties';
-import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-properties';
 import { CodigoEconomicoGastoService } from '@core/services/sge/codigo-economico-gasto.service';
 import { TranslateService } from '@ngx-translate/core';
-import { from, Subscription } from 'rxjs';
-import { map, mergeMap, switchMap, takeLast } from 'rxjs/operators';
+import { from, of, Subscription } from 'rxjs';
+import { first, map, mergeMap, switchMap, takeLast } from 'rxjs/operators';
 import { ProyectoActionService } from '../../proyecto.action.service';
 import { ProyectoConsultaPresupuestoExportModalComponent } from './export/proyecto-consulta-presupuesto-export-modal.component';
 import { IConsultaPresupuestoExportData } from './export/proyecto-consulta-presupuesto-export.service';
@@ -85,12 +83,6 @@ export class ProyectoConsultaPresupuestoComponent extends FragmentComponent impl
   formPart: ProyectoConsultaPresupuestoFragment;
   msgParamAnualidadGenerica: string;
 
-  fxFlexProperties: FxFlexProperties;
-  fxFlexPropertiesOne: FxFlexProperties;
-  fxLayoutProperties: FxLayoutProperties;
-  fxFlexPropertiesInline: FxFlexProperties;
-  fxFlexPropertiesEntidad: FxFlexProperties;
-
   displayedColumns = [
     'anualidad',
     'conceptoGasto',
@@ -114,7 +106,6 @@ export class ProyectoConsultaPresupuestoComponent extends FragmentComponent impl
   ngOnInit(): void {
     super.ngOnInit();
     this.setupI18N();
-    this.initLayout();
     this.initFilterForm();
 
     this.subscriptions.push(this.formPart.anualidades$.subscribe(anualidades => {
@@ -164,19 +155,6 @@ export class ProyectoConsultaPresupuestoComponent extends FragmentComponent impl
       aplicacion: new FormControl(null),
       concepto: new FormControl(null)
     });
-  }
-
-  private initLayout(): void {
-    this.fxFlexProperties = new FxFlexProperties();
-    this.fxFlexProperties.sm = '0 1 calc(50%-10px)';
-    this.fxFlexProperties.md = '0 1 calc(33%-10px)';
-    this.fxFlexProperties.gtMd = '0 1 calc(32%-10px)';
-    this.fxFlexProperties.order = '2';
-
-    this.fxLayoutProperties = new FxLayoutProperties();
-    this.fxLayoutProperties.gap = '20px';
-    this.fxLayoutProperties.layout = 'row wrap';
-    this.fxLayoutProperties.xs = 'column';
   }
 
   displayerAnualidad(anualidad: IProyectoAnualidad): string {
@@ -308,6 +286,7 @@ export class ProyectoConsultaPresupuestoComponent extends FragmentComponent impl
 
     this.subscriptions.push(
       this.formPart.anualidadesGastos$.pipe(
+        first(),
         map((gastosAnualidad: IAnualidadGasto[]) => {
 
           this.sortCollectionByProperty<IAnualidadGasto>(gastosAnualidad, DIR_ASC, 'codigoEconomico', 'id');
@@ -320,6 +299,9 @@ export class ProyectoConsultaPresupuestoComponent extends FragmentComponent impl
         switchMap((anualidadesGastos) => {
           return from(anualidadesGastos).pipe(
             mergeMap(anualidadGasto => {
+              if (!anualidadGasto.codigoEconomico) {
+                return of(anualidadesGastos);
+              }
               return this.codigoEconomicoGastoService.findById(anualidadGasto.codigoEconomico.id).pipe(
                 map((value) => {
                   anualidadGasto.codigoEconomico = value;

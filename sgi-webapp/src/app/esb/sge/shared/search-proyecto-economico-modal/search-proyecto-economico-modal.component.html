@@ -1,9 +1,9 @@
 <sgi-dialog-header title="{{'sge.proyecto' | translate:MSG_PARAMS.CARDINALIRY.PLURAL}}"></sgi-dialog-header>
 <sgi-dialog-content>
   <!-- Buscador -->
-  <form [formGroup]="formGroup">
+  <form [formGroup]="formGroup" fxLayout="column">
     <!-- Datos proyecto -->
-    <mat-form-field>
+    <mat-form-field fxFlex>
       <mat-label>
         {{'sge.proyecto.datos' | translate}}
       </mat-label>
@@ -11,51 +11,53 @@
     </mat-form-field>
 
     <!-- Fecha inicio proyecto -->
-    <div class="fieldset-form">
+    <div>
       {{'sge.proyecto.fecha-inicio' | translate}}
     </div>
-    <!-- desde -->
-    <mat-form-field>
-      <mat-label>{{'label.desde' | translate}}</mat-label>
-      <input matInput formControlName="fechaInicioDesde" [matDatepicker]="pickerFechaInicioDesde"
-        [placeholder]="'label.desde' | translate">
-      <mat-datepicker-toggle matSuffix [for]="pickerFechaInicioDesde"></mat-datepicker-toggle>
-      <mat-datepicker #pickerFechaInicioDesde>
-      </mat-datepicker>
-    </mat-form-field>
-    <!-- hasta -->
-    <mat-form-field sgiEndDate>
-      <mat-label>{{'label.hasta' | translate}}</mat-label>
-      <input matInput formControlName="fechaInicioHasta" [matDatepicker]="pickerFechaInicioHasta"
-        [placeholder]="'label.hasta' | translate">
-      <mat-datepicker-toggle matSuffix [for]="pickerFechaInicioHasta"></mat-datepicker-toggle>
-      <mat-datepicker #pickerFechaInicioHasta>
-      </mat-datepicker>
-    </mat-form-field>
-
+    <div fxLayout="row" fxLayoutGap="10px">
+      <!-- desde -->
+      <mat-form-field fxFlex>
+        <mat-label>{{'label.desde' | translate}}</mat-label>
+        <input matInput formControlName="fechaInicioDesde" [matDatepicker]="pickerFechaInicioDesde"
+          [placeholder]="'label.desde' | translate">
+        <mat-datepicker-toggle matSuffix [for]="pickerFechaInicioDesde"></mat-datepicker-toggle>
+        <mat-datepicker #pickerFechaInicioDesde>
+        </mat-datepicker>
+      </mat-form-field>
+      <!-- hasta -->
+      <mat-form-field sgiEndDate fxFlex>
+        <mat-label>{{'label.hasta' | translate}}</mat-label>
+        <input matInput formControlName="fechaInicioHasta" [matDatepicker]="pickerFechaInicioHasta"
+          [placeholder]="'label.hasta' | translate">
+        <mat-datepicker-toggle matSuffix [for]="pickerFechaInicioHasta"></mat-datepicker-toggle>
+        <mat-datepicker #pickerFechaInicioHasta>
+        </mat-datepicker>
+      </mat-form-field>
+    </div>
     <!-- Fecha fin proyecto -->
-    <div class="fieldset-form">
+    <div>
       {{'sge.proyecto.fecha-fin' | translate}}
     </div>
-    <!-- desde -->
-    <mat-form-field>
-      <mat-label>{{'label.desde' | translate}}</mat-label>
-      <input matInput formControlName="fechaFinDesde" [matDatepicker]="pickerFechaFinDesde"
-        [placeholder]="'label.desde' | translate">
-      <mat-datepicker-toggle matSuffix [for]="pickerFechaFinDesde"></mat-datepicker-toggle>
-      <mat-datepicker #pickerFechaFinDesde>
-      </mat-datepicker>
-    </mat-form-field>
-    <!-- hasta -->
-    <mat-form-field sgiEndDate>
-      <mat-label>{{'label.hasta' | translate}}</mat-label>
-      <input matInput formControlName="fechaFinHasta" [matDatepicker]="pickerFechaFinHasta"
-        [placeholder]="'label.hasta' | translate">
-      <mat-datepicker-toggle matSuffix [for]="pickerFechaFinHasta"></mat-datepicker-toggle>
-      <mat-datepicker #pickerFechaFinHasta>
-      </mat-datepicker>
-    </mat-form-field>
-
+    <div fxLayout="row" fxLayoutGap="10px">
+      <!-- desde -->
+      <mat-form-field fxFlex>
+        <mat-label>{{'label.desde' | translate}}</mat-label>
+        <input matInput formControlName="fechaFinDesde" [matDatepicker]="pickerFechaFinDesde"
+          [placeholder]="'label.desde' | translate">
+        <mat-datepicker-toggle matSuffix [for]="pickerFechaFinDesde"></mat-datepicker-toggle>
+        <mat-datepicker #pickerFechaFinDesde>
+        </mat-datepicker>
+      </mat-form-field>
+      <!-- hasta -->
+      <mat-form-field sgiEndDate fxFlex>
+        <mat-label>{{'label.hasta' | translate}}</mat-label>
+        <input matInput formControlName="fechaFinHasta" [matDatepicker]="pickerFechaFinHasta"
+          [placeholder]="'label.hasta' | translate">
+        <mat-datepicker-toggle matSuffix [for]="pickerFechaFinHasta"></mat-datepicker-toggle>
+        <mat-datepicker #pickerFechaFinHasta>
+        </mat-datepicker>
+      </mat-form-field>
+    </div>
   </form>
   <div class="separacion">
     <button color="primary" mat-raised-button (click)="search(true)">

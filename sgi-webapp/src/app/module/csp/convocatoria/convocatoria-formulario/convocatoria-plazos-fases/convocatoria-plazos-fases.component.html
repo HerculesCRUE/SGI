@@ -34,25 +34,23 @@
       <ng-container matColumnDef="acciones">
         <th mat-header-cell *matHeaderCellDef> {{'label.actions' | translate}} </th>
         <td mat-cell *matCellDef="let plazo">
-          <ng-container>
-            <button mat-button matTooltip="{{'btn.edit' | translate}}"
-              *ngIf="formPart.canEdit && formPart.fasePresentacionSolicitudes != plazo.value.tipoFase.nombre"
-              (click)="openModalPlazos(plazo)">
-              <mat-icon color="primary">border_color</mat-icon>
-            </button>
-          </ng-container>
-          <ng-container>
-            <button mat-button matTooltip="{{'btn.delete' | translate}}"
-              *ngIf="formPart.canEdit && formPart.fasePresentacionSolicitudes != plazo.value.tipoFase.nombre"
-              (click)="deleteFase(plazo)">
-              <mat-icon color="warn">highlight_off</mat-icon>
-            </button>
-          </ng-container>
-          <ng-container>
-            <sgi-field-info matSuffix
-              [visible]="formPart.canEdit && formPart.fasePresentacionSolicitudes == plazo.value.tipoFase.nombre"
-              message="{{'csp.convocatoria-fase.vinculada' | translate}}">
-            </sgi-field-info>
+          <ng-container *ngIf="formPart.canEdit">
+            <ng-container
+              *ngIf="!formPart.fasePresentacionSolicitudes || formPart.fasePresentacionSolicitudes !== plazo.value.id; else fasePresentacionSolicitudes">
+              <button mat-icon-button color="primary" matTooltip="{{'btn.edit' | translate}}"
+                (click)="openModalPlazos(plazo)">
+                <mat-icon>border_color</mat-icon>
+              </button>
+              <button mat-icon-button color="warn" matTooltip="{{'btn.delete' | translate}}"
+                (click)="deleteFase(plazo)">
+                <mat-icon>highlight_off</mat-icon>
+              </button>
+            </ng-container>
+            <ng-template #fasePresentacionSolicitudes>
+              <sgi-field-info matSuffix class="mat-icon-button" visible="true"
+                message="{{'csp.convocatoria-fase.vinculada' | translate}}">
+              </sgi-field-info>
+            </ng-template>
           </ng-container>
         </td>
       </ng-container>

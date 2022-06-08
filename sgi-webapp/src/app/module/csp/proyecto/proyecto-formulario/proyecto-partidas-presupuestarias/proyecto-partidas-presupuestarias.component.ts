@@ -116,13 +116,15 @@ export class ProyectoPartidasPresupuestariasComponent extends FragmentComponent 
 
     // Necesario para sincronizar los cambios de orden de registros dependiendo de la ordenación y paginación
     this.dataSource.sortData(this.dataSource.filteredData, this.dataSource.sort);
-    const row = (this.paginator.pageSize * this.paginator.pageIndex) + rowIndex;
 
-    let proyectoPartidaPresupuestariaTabla = this.dataSource.data
+    const proyectoPartidaPresupuestariaTabla = this.dataSource.data
       .map(partidaPresupuestaria => partidaPresupuestaria.partidaPresupuestaria?.value);
 
-    proyectoPartidaPresupuestariaTabla.splice(row, 1);
-    proyectoPartidaPresupuestariaTabla = proyectoPartidaPresupuestariaTabla.filter(partidaPresupuestaria => !!partidaPresupuestaria)
+    let row: number;
+    if (!!rowIndex || rowIndex === 0) {
+      row = (this.paginator.pageSize * this.paginator.pageIndex) + rowIndex;
+      proyectoPartidaPresupuestariaTabla.splice(row, 1);
+    }
 
     const data: PartidaPresupuestariaModalComponentData = {
       partidaPresupuestaria: proyectoPartida?.value,
@@ -133,7 +135,6 @@ export class ProyectoPartidasPresupuestariasComponent extends FragmentComponent 
     };
 
     const config = {
-      panelClass: 'sgi-dialog-container',
       data
     };
     const dialogRef = this.matDialog.open(PartidaPresupuestariaModalComponent, config);

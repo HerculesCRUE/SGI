@@ -2,14 +2,10 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { FormControl, FormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
-import { BaseModalComponent } from '@core/component/base-modal.component';
+import { DialogFormComponent } from '@core/component/dialog-form.component';
 import { TipoJustificacion, TIPO_JUSTIFICACION_MAP } from '@core/enums/tipo-justificacion';
 import { MSG_PARAMS } from '@core/i18n';
 import { IConvocatoriaPeriodoJustificacion } from '@core/models/csp/convocatoria-periodo-justificacion';
-import { FxFlexProperties } from '@core/models/shared/flexLayout/fx-flex-properties';
-import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-properties';
-import { SnackBarService } from '@core/services/snack-bar.service';
-import { FormGroupUtil } from '@core/utils/form-group-util';
 import { StatusWrapper } from '@core/utils/status-wrapper';
 import { DateValidator } from '@core/validators/date-validator';
 import { NumberValidator } from '@core/validators/number-validator';
@@ -40,12 +36,7 @@ const TITLE_NEW_ENTITY = marker('title.new.entity');
   styleUrls: ['./convocatoria-periodos-justificacion-modal.component.scss']
 })
 export class ConvocatoriaPeriodosJustificacionModalComponent
-  extends BaseModalComponent<IConvocatoriaPeriodoJustificacion, ConvocatoriaPeriodosJustificacionModalComponent> implements OnInit {
-
-  fxFlexProperties2: FxFlexProperties;
-  fxLayoutProperties: FxLayoutProperties;
-
-  FormGroupUtil = FormGroupUtil;
+  extends DialogFormComponent<IConvocatoriaPeriodoJustificacion> implements OnInit {
 
   textSaveOrUpdate: string;
   title: string;
@@ -62,23 +53,11 @@ export class ConvocatoriaPeriodosJustificacionModalComponent
   }
 
   constructor(
-    protected snackBarService: SnackBarService,
     @Inject(MAT_DIALOG_DATA) public data: IConvocatoriaPeriodoJustificacionModalData,
-    public matDialogRef: MatDialogRef<ConvocatoriaPeriodosJustificacionModalComponent>,
+    matDialogRef: MatDialogRef<ConvocatoriaPeriodosJustificacionModalComponent>,
     private readonly translate: TranslateService
   ) {
-    super(snackBarService, matDialogRef, data.convocatoriaPeriodoJustificacion);
-
-    this.fxFlexProperties2 = new FxFlexProperties();
-    this.fxFlexProperties2.sm = '0 1 calc(100%-10px)';
-    this.fxFlexProperties2.md = '0 1 calc(100%-10px)';
-    this.fxFlexProperties2.gtMd = '0 1 calc(100%-10px)';
-    this.fxFlexProperties2.order = '3';
-
-    this.fxLayoutProperties = new FxLayoutProperties();
-    this.fxLayoutProperties.gap = '20px';
-    this.fxLayoutProperties.layout = 'row wrap';
-    this.fxLayoutProperties.xs = 'column';
+    super(matDialogRef, !data.convocatoriaPeriodoJustificacion?.numPeriodo);
   }
 
   ngOnInit(): void {
@@ -140,7 +119,7 @@ export class ConvocatoriaPeriodosJustificacionModalComponent
     }
   }
 
-  protected getFormGroup(): FormGroup {
+  protected buildFormGroup(): FormGroup {
     const rangosPeriodosExistentes = this.data.convocatoriaPeriodoJustificacionList
       .filter(periodoJustificacion =>
         periodoJustificacion.value.mesInicial !== this.data.convocatoriaPeriodoJustificacion.mesInicial)
@@ -238,7 +217,7 @@ export class ConvocatoriaPeriodosJustificacionModalComponent
     return formGroup;
   }
 
-  protected getDatosForm(): IConvocatoriaPeriodoJustificacion {
+  protected getValue(): IConvocatoriaPeriodoJustificacion {
     const convocatoriaPeriodoJustificacion = this.data.convocatoriaPeriodoJustificacion;
     convocatoriaPeriodoJustificacion.numPeriodo = this.formGroup.get('numPeriodo').value;
     convocatoriaPeriodoJustificacion.tipo = this.formGroup.get('tipo').value;

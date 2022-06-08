@@ -147,7 +147,6 @@ export class SolicitudProyectoPresupuestoPartidasGastoComponent extends Fragment
     };
 
     const config = {
-      panelClass: 'sgi-dialog-container',
       data
     };
 

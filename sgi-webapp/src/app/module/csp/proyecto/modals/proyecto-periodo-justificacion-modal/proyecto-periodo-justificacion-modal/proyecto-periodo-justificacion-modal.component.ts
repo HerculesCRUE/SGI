@@ -2,14 +2,12 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { FormControl, FormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
-import { BaseModalComponent } from '@core/component/base-modal.component';
+import { DialogFormComponent } from '@core/component/dialog-form.component';
 import { TipoJustificacion, TIPO_JUSTIFICACION_MAP } from '@core/enums/tipo-justificacion';
 import { MSG_PARAMS } from '@core/i18n';
 import { IConvocatoriaPeriodoJustificacion } from '@core/models/csp/convocatoria-periodo-justificacion';
 import { IProyecto } from '@core/models/csp/proyecto';
 import { IProyectoPeriodoJustificacion } from '@core/models/csp/proyecto-periodo-justificacion';
-import { SnackBarService } from '@core/services/snack-bar.service';
-import { FormGroupUtil } from '@core/utils/form-group-util';
 import { DateValidator } from '@core/validators/date-validator';
 import { StringValidator } from '@core/validators/string-validator';
 import { TranslateService } from '@ngx-translate/core';
@@ -40,10 +38,7 @@ const TITLE_NEW_ENTITY = marker('title.new.entity');
   templateUrl: './proyecto-periodo-justificacion-modal.component.html',
   styleUrls: ['./proyecto-periodo-justificacion-modal.component.scss']
 })
-export class ProyectoPeriodoJustificacionModalComponent
-  extends BaseModalComponent<IProyectoPeriodoJustificacionModalData, ProyectoPeriodoJustificacionModalComponent> implements OnInit {
-
-  FormGroupUtil = FormGroupUtil;
+export class ProyectoPeriodoJustificacionModalComponent extends DialogFormComponent<IProyectoPeriodoJustificacionModalData> implements OnInit {
 
   textSaveOrUpdate: string;
   title: string;
@@ -65,12 +60,11 @@ export class ProyectoPeriodoJustificacionModalComponent
   }
 
   constructor(
-    protected snackBarService: SnackBarService,
     @Inject(MAT_DIALOG_DATA) public data: IProyectoPeriodoJustificacionModalData,
-    public matDialogRef: MatDialogRef<ProyectoPeriodoJustificacionModalComponent>,
+    matDialogRef: MatDialogRef<ProyectoPeriodoJustificacionModalComponent>,
     private readonly translate: TranslateService
   ) {
-    super(snackBarService, matDialogRef, data);
+    super(matDialogRef, !!data.proyectoPeriodoJustificacion?.numPeriodo);
 
   }
 
@@ -84,7 +78,7 @@ export class ProyectoPeriodoJustificacionModalComponent
       this.subscriptions.push(this.formGroup.valueChanges.subscribe(
         () => {
           this.disabledCopy = !comparePeriodoJustificacion(this.data.convocatoriaPeriodoJustificacion,
-            this.getDatosForm().proyectoPeriodoJustificacion, this.data.proyecto.fechaInicio, this.data.proyecto.fechaFin);
+            this.getValue().proyectoPeriodoJustificacion, this.data.proyecto.fechaInicio, this.data.proyecto.fechaFin);
         }
       ));
     }
@@ -148,7 +142,7 @@ export class ProyectoPeriodoJustificacionModalComponent
     }
   }
 
-  protected getFormGroup(): FormGroup {
+  protected buildFormGroup(): FormGroup {
     const periodoJustificacionFinal = this.data.proyectoPeriodoJustificacionList?.find(
       periodoJustificacion => periodoJustificacion?.tipoJustificacion === TipoJustificacion.FINAL
         && periodoJustificacion?.fechaInicio !== this.data.proyectoPeriodoJustificacion?.fechaInicio);
@@ -225,7 +219,7 @@ export class ProyectoPeriodoJustificacionModalComponent
     return formGroup;
   }
 
-  protected getDatosForm(): IProyectoPeriodoJustificacionModalData {
+  protected getValue(): IProyectoPeriodoJustificacionModalData {
 
     if (!this.data.proyectoPeriodoJustificacion) {
       this.data.proyectoPeriodoJustificacion = {} as IProyectoPeriodoJustificacion;

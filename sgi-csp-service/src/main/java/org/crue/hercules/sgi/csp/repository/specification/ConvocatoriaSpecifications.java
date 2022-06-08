@@ -17,6 +17,10 @@ import org.crue.hercules.sgi.csp.model.Solicitud;
 import org.crue.hercules.sgi.csp.model.Solicitud_;
 import org.springframework.data.jpa.domain.Specification;
 
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
+
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class ConvocatoriaSpecifications {
 
   /**
@@ -25,9 +29,7 @@ public class ConvocatoriaSpecifications {
    * @return specification para obtener las {@link Convocatoria} activas
    */
   public static Specification<Convocatoria> activos() {
-    return (root, query, cb) -> {
-      return cb.equal(root.get(Convocatoria_.activo), Boolean.TRUE);
-    };
+    return (root, query, cb) -> cb.equal(root.get(Convocatoria_.activo), Boolean.TRUE);
   }
 
   /**
@@ -36,9 +38,7 @@ public class ConvocatoriaSpecifications {
    * @return specification para obtener las {@link Convocatoria} registradas
    */
   public static Specification<Convocatoria> registradas() {
-    return (root, query, cb) -> {
-      return cb.equal(root.get(Convocatoria_.estado), Convocatoria.Estado.REGISTRADA);
-    };
+    return (root, query, cb) -> cb.equal(root.get(Convocatoria_.estado), Convocatoria.Estado.REGISTRADA);
   }
 
   /**
@@ -66,10 +66,7 @@ public class ConvocatoriaSpecifications {
    *         unidadGestionRef se encuentre entre los recibidos.
    */
   public static Specification<Convocatoria> acronimosIn(List<String> acronimos) {
-    return (root, query, cb) -> {
-      return root.get(Convocatoria_.unidadGestionRef).in(acronimos);
-
-    };
+    return (root, query, cb) -> root.get(Convocatoria_.unidadGestionRef).in(acronimos);
   }
 
   /**

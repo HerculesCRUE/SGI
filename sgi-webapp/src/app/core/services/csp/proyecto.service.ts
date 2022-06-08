@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { ESTADO_PROYECTO_CONVERTER } from '@core/converters/csp/estado-proyecto.converter';
 import { PROYECTO_AREA_CONOCIMIENTO_CONVERTER } from '@core/converters/csp/proyecto-area-conocimiento.converter';
@@ -69,6 +69,7 @@ import { IProyectoProrroga } from '@core/models/csp/proyecto-prorroga';
 import { IProyectoProyectoSge } from '@core/models/csp/proyecto-proyecto-sge';
 import { IProyectoResponsableEconomico } from '@core/models/csp/proyecto-responsable-economico';
 import { IProyectoSocio } from '@core/models/csp/proyecto-socio';
+import { IProyectosCompetitivosPersonas } from '@core/models/csp/proyectos-competitivos-personas';
 import { environment } from '@env';
 import { FormlyFieldConfig } from '@ngx-formly/core';
 import {
@@ -100,6 +101,8 @@ import { IProyectoPeriodoJustificacionResponse } from './proyecto-periodo-justif
 import { PROYECTO_PERIODO_JUSTIFICACION_RESPONSE_CONVERTER } from './proyecto-periodo-justificacion/proyecto-periodo-justificacion-response.converter';
 import { IProyectoResponsableEconomicoResponse } from './proyecto-responsable-economico/proyecto-responsable-economico-response';
 import { PROYECTO_RESPONSABLE_ECONOMICO_RESPONSE_CONVERTER } from './proyecto-responsable-economico/proyecto-responsable-economico-response.converter';
+import { IProyectosCompetitivosPersonasResponse } from './proyectos-competitivos-personas/proyectos-competitivos-personas-response';
+import { PROYECTOS_COMPETITIVOS_PERSONAS_RESPONSE_CONVERTER } from './proyectos-competitivos-personas/proyectos-competitivos-personas-response.converter';
 
 @Injectable({
   providedIn: 'root'
@@ -128,8 +131,8 @@ export class ProyectoService extends SgiMutableRestService<number, IProyectoBack
   }
 
   /**
-   * Devuelve una lista paginada y filtrada de todos los proyectos activos, que no estén en estado borrador 
-   * y en los que participe dentro del equipo el usuario logueado que se encuentren dentro de la unidad de gestión 
+   * Devuelve una lista paginada y filtrada de todos los proyectos activos, que no estén en estado borrador
+   * y en los que participe dentro del equipo el usuario logueado que se encuentren dentro de la unidad de gestión
    * @param options opciones de búsqueda.
    */
   findAllInvestigador(options?: SgiRestFindOptions): Observable<SgiRestListResult<IProyecto>> {
@@ -768,10 +771,10 @@ export class ProyectoService extends SgiMutableRestService<number, IProyectoBack
   }
 
   /**
-  * Devuelve los datos de la convocatoria asociada a un proyecto
-  * para usuarios con perfil investigador
-  * @param id Id del proyecto 
-  */
+   * Devuelve los datos de la convocatoria asociada a un proyecto
+   * para usuarios con perfil investigador
+   * @param id Id del proyecto
+   */
   findConvocatoria(id: number): Observable<IConvocatoria> {
     return this.http.get<IConvocatoriaTituloResponse>(
       `${this.endpointUrl}/${id}/convocatoria`
@@ -793,6 +796,74 @@ export class ProyectoService extends SgiMutableRestService<number, IProyectoBack
    */
   findPersonaRefInvestigadoresPrincipales(id: number): Observable<string[]> {
     return this.http.get<string[]>(`${this.endpointUrl}/${id}/investigadoresprincipales`);
+  }
+
+  /**
+   * Devuelve los datos de la convocatoria asociada a un proyecto
+   * para usuarios con perfil investigador
+   * @param id Id del proyecto
+   */
+  getProyectoCompetitivosPersona(
+    personasRef: string | string[],
+    onlyAsRolPrincipal = false,
+    exludedProyectoId?: number
+  ): Observable<IProyectosCompetitivosPersonas> {
+    const url = `${this.endpointUrl}/competitivos-personas`;
+
+    let params = new HttpParams();
+    if (Array.isArray(personasRef)) {
+      personasRef.forEach(personaRef =>
+        params = params.append('personasRef', personaRef)
+      );
+    } else {
+      params = params.append('personasRef', personasRef);
+    }
+
+    if (exludedProyectoId) {
+      params = params.append('exludedProyectoId', exludedProyectoId.toString());
+    }
+
+    params = params.append('onlyAsRolPrincipal', onlyAsRolPrincipal.toString());
+
+    return this.http.get<IProyectosCompetitivosPersonasResponse>(url, { params }).pipe(
+      map(response => PROYECTOS_COMPETITIVOS_PERSONAS_RESPONSE_CONVERTER.toTarget(response))
+    );
+  }
+
+  /**
+   * Comprueba si Proyecto tiene AnualidadGastos relacionado
+   *
+   * @param id Proyecto
+   */
+  hasAnualidadGastos(id: number): Observable<boolean> {
+    const url = `${this.endpointUrl}/${id}/anualidad-gastos`;
+    return this.http.head(url, { observe: 'response' }).pipe(
+      map(response => response.status === 200)
+    );
+  }
+
+  /**
+   * Comprueba si Proyecto tiene AnualidadIngresos relacionado
+   *
+   * @param id Proyecto
+   */
+  hasAnualidadIngresos(id: number): Observable<boolean> {
+    const url = `${this.endpointUrl}/${id}/anualidad-ingresos`;
+    return this.http.head(url, { observe: 'response' }).pipe(
+      map(response => response.status === 200)
+    );
+  }
+
+  /**
+   * Comprueba si Proyecto tiene GastosProyecto relacionado
+   *
+   * @param id Proyecto
+   */
+  hasGastosProyecto(id: number): Observable<boolean> {
+    const url = `${this.endpointUrl}/${id}/gastos-proyecto`;
+    return this.http.head(url, { observe: 'response' }).pipe(
+      map(response => response.status === 200)
+    );
   }
 
 }

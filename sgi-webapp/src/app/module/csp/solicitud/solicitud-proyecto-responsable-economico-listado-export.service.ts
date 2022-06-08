@@ -175,12 +175,12 @@ export class SolicitudProyectoResponsableEconomicoListadoExportService
       const responsableEconomicoElementsRow: any[] = [];
 
       let responsableEconomicoTable = responsableEconomico?.persona?.nombre + ' ' + responsableEconomico?.persona?.apellidos;
-      responsableEconomicoTable += ' - ';
+      responsableEconomicoTable += '\n';
       responsableEconomicoTable += this.getEmailPrincipal(responsableEconomico?.persona) ?? '';
-      responsableEconomicoTable += ' - ';
+      responsableEconomicoTable += '\n';
       responsableEconomicoTable +=
         responsableEconomico?.mesInicio ?? '';
-      responsableEconomicoTable += ' - ';
+      responsableEconomicoTable += '\n';
       responsableEconomicoTable += responsableEconomico?.mesFin ?? '';
 
       responsableEconomicoElementsRow.push(responsableEconomicoTable);

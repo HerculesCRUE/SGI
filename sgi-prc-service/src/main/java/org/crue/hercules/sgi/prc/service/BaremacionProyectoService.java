@@ -14,7 +14,6 @@ import org.apache.commons.lang3.ObjectUtils;
 import org.crue.hercules.sgi.prc.config.SgiConfigProperties;
 import org.crue.hercules.sgi.prc.dto.BaremacionInput;
 import org.crue.hercules.sgi.prc.dto.csp.ProyectoDto;
-import org.crue.hercules.sgi.prc.dto.csp.ProyectoDto.ClasificacionCVN;
 import org.crue.hercules.sgi.prc.dto.csp.ProyectoEquipoDto;
 import org.crue.hercules.sgi.prc.enums.CodigoCVN;
 import org.crue.hercules.sgi.prc.enums.EpigrafeCVN;
@@ -202,7 +201,7 @@ public class BaremacionProyectoService extends BaremacionCommonService {
 
                 Baremo baremoEvaluated = evaluateAutorTipoBaremoPrincipalAdditional(baremacionInputNew, autor.getIp());
 
-                BigDecimal puntosInvestigadorAdicional = puntos;
+                BigDecimal puntosInvestigadorAdicional = puntosInvestigador;
                 if (null != baremoEvaluated) {
                   saveOrUpdateMapPuntuacionBaremo(mapPuntuacionBaremo, baremoEvaluated);
                   puntosInvestigadorAdicional = puntosInvestigadorAdicional.add(baremoEvaluated.getPuntos());
@@ -319,19 +318,16 @@ public class BaremacionProyectoService extends BaremacionCommonService {
         .forEach(getProduccionCientificaBuilderService()::deleteProduccionCientifica);
 
     getSgiApiCspService().findProyectosProduccionCientifica(anioInicio, anioFin - 1).stream().forEach(proyecto -> {
-
       Long proyectoId = proyecto.getId();
       String produccionCientificaRef = PREFIX_PROYECTOS + proyectoId;
 
-      EpigrafeCVN epigrafeCVN = proyecto.getClasificacionCVN().equals(ClasificacionCVN.COMPETITIVOS)
-          ? EPIGRAFE_CVN_PROYECTO
-          : EPIGRAFE_CVN_CONTRATO;
+      EpigrafeCVN epigrafeCVN = isContrato(proyecto) ? EPIGRAFE_CVN_CONTRATO : EPIGRAFE_CVN_PROYECTO;
       ProduccionCientifica produccionCientifica = ProduccionCientifica.builder()
           .epigrafeCVN(epigrafeCVN)
           .produccionCientificaRef(produccionCientificaRef)
           .build();
 
-      Long produccionCientificaId = getProduccionCientificaBuilderService().addProduccionCientifaAndEstado(
+      Long produccionCientificaId = getProduccionCientificaBuilderService().addProduccionCientificaAndEstado(
           produccionCientifica, TipoEstadoProduccion.VALIDADO);
 
       addCampoProyectoTitulo(proyecto, produccionCientificaId);
@@ -350,6 +346,10 @@ public class BaremacionProyectoService extends BaremacionCommonService {
 
   }
 
+  private boolean isContrato(ProyectoDto proyecto) {
+    return null != proyecto.getContrato() && proyecto.getContrato().equals(Boolean.TRUE);
+  }
+
   private Autor convertProyectoEquipoToAutor(Long produccionCientificaId, ProyectoEquipoDto proyectoEquipo) {
     return Autor.builder()
         .produccionCientificaId(produccionCientificaId)
@@ -363,16 +363,14 @@ public class BaremacionProyectoService extends BaremacionCommonService {
   private void addCampoProyectoFechaFin(ProyectoDto proyecto, Long produccionCientificaId) {
     Instant fechaFin = ObjectUtils.defaultIfNull(proyecto.getFechaFinDefinitiva(), proyecto.getFechaFin());
     if (null != fechaFin) {
-      CodigoCVN codigoCVN = proyecto.getClasificacionCVN().equals(ClasificacionCVN.COMPETITIVOS)
-          ? CodigoCVN.E050_020_010_410
-          : CodigoCVN.FECHA_FIN_CONTRATO;
+      CodigoCVN codigoCVN = !isContrato(proyecto) ? CodigoCVN.E050_020_010_410 : CodigoCVN.FECHA_FIN_CONTRATO;
       getProduccionCientificaBuilderService().addCampoProduccionCientificaAndValor(produccionCientificaId, codigoCVN,
           fechaFin.toString());
     }
   }
 
   private void addCampoProyectoAmbitoGeografico(ProyectoDto proyecto, Long produccionCientificaId) {
-    if (proyecto.getClasificacionCVN().equals(ClasificacionCVN.COMPETITIVOS)) {
+    if (!isContrato(proyecto)) {
       CodigoCVN codigoCVN = CodigoCVN.E050_020_010_040;
       Optional<MapeoTipos> optMapeoTipos = mapeoTiposRepository.findByCodigoCVNAndIdTipoRef(codigoCVN,
           proyecto.getAmbitoGeograficoId());
@@ -384,27 +382,25 @@ public class BaremacionProyectoService extends BaremacionCommonService {
   }
 
   private void addCampoProyectoImporteConcedido(ProyectoDto proyecto, Long produccionCientificaId) {
-    CodigoCVN codigoCVN = proyecto.getClasificacionCVN().equals(ClasificacionCVN.COMPETITIVOS)
+    CodigoCVN codigoCVN = !isContrato(proyecto)
         ? CodigoCVN.CUANTIA_COSTES_INDIRECTOS_PROYECTO
         : CodigoCVN.CUANTIA_COSTES_INDIRECTOS_CONTRATO;
 
-    if (null == proyecto.getImporteConcedido()) {
-      proyecto.setImporteConcedido(
+    if (null == proyecto.getImporteConcedidoCostesIndirectos()) {
+      proyecto.setImporteConcedidoCostesIndirectos(
           getSgiApiCspService().getTotalImporteConcedidoAnualidadGastoCostesIndirectos(proyecto.getId()));
     }
 
-    if (null != proyecto.getImporteConcedido()) {
+    if (null != proyecto.getImporteConcedidoCostesIndirectos()) {
       String importeConcedido = ProduccionCientificaFieldFormatUtil
-          .formatNumber(proyecto.getImporteConcedido().toString());
+          .formatNumber(proyecto.getImporteConcedidoCostesIndirectos().toString());
       getProduccionCientificaBuilderService().addCampoProduccionCientificaAndValor(produccionCientificaId, codigoCVN,
           importeConcedido);
     }
   }
 
   private void addCampoProyectoTotalImporteConcedido(ProyectoDto proyecto, Long produccionCientificaId) {
-    CodigoCVN codigoCVN = proyecto.getClasificacionCVN().equals(ClasificacionCVN.COMPETITIVOS)
-        ? CodigoCVN.E050_020_010_290
-        : CodigoCVN.E050_020_020_200;
+    CodigoCVN codigoCVN = !isContrato(proyecto) ? CodigoCVN.E050_020_010_290 : CodigoCVN.E050_020_020_200;
 
     if (null == proyecto.getTotalImporteConcedido()) {
       proyecto.setTotalImporteConcedido(getSgiApiCspService().getTotalImporteConcedidoAnualidadGasto(proyecto.getId()));
@@ -420,25 +416,21 @@ public class BaremacionProyectoService extends BaremacionCommonService {
 
   private void addCampoProyectoFechaInicio(ProyectoDto proyecto, Long produccionCientificaId) {
     if (null != proyecto.getFechaInicio()) {
-      CodigoCVN codigoCVN = proyecto.getClasificacionCVN().equals(ClasificacionCVN.COMPETITIVOS)
-          ? CodigoCVN.E050_020_010_270
-          : CodigoCVN.E050_020_020_180;
+      CodigoCVN codigoCVN = !isContrato(proyecto) ? CodigoCVN.E050_020_010_270 : CodigoCVN.E050_020_020_180;
       getProduccionCientificaBuilderService().addCampoProduccionCientificaAndValor(produccionCientificaId, codigoCVN,
           proyecto.getFechaInicio().toString());
     }
   }
 
   private void addCampoProyectoTitulo(ProyectoDto proyecto, Long produccionCientificaId) {
-    CodigoCVN codigoCVN = proyecto.getClasificacionCVN().equals(ClasificacionCVN.COMPETITIVOS)
-        ? CodigoCVN.E050_020_010_010
-        : CodigoCVN.E050_020_020_010;
+    CodigoCVN codigoCVN = !isContrato(proyecto) ? CodigoCVN.E050_020_010_010 : CodigoCVN.E050_020_020_010;
 
     getProduccionCientificaBuilderService()
         .addCampoProduccionCientificaAndValor(produccionCientificaId, codigoCVN, proyecto.getTitulo());
   }
 
   private void addCampoProyectoConvocatoriaExcelencia(ProyectoDto proyecto, Long produccionCientificaId) {
-    if (proyecto.getClasificacionCVN().equals(ClasificacionCVN.COMPETITIVOS)) {
+    if (!isContrato(proyecto)) {
       CodigoCVN codigoCVN = CodigoCVN.CONVOCATORIA_EXCELENCIA;
       String excelencia = Boolean.TRUE
           .equals(ObjectUtils.defaultIfNull(proyecto.getConvocatoriaExcelencia(), Boolean.FALSE)) ? "true" : "false";

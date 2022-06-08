@@ -101,7 +101,6 @@ export class ProyectoSocioPeriodoPagoComponent extends FragmentComponent impleme
       readonly: this.actionService.readonly
     };
     const config = {
-      panelClass: 'sgi-dialog-container',
       data
     };
     const dialogRef = this.matDialog.open(ProyectoSocioPeriodoPagoModalComponent, config);

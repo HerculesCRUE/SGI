@@ -1,6 +1,5 @@
 import { IConvocatoriaFase } from '@core/models/csp/convocatoria-fase';
 import { Fragment } from '@core/services/action-service';
-import { ConfiguracionSolicitudService } from '@core/services/csp/configuracion-solicitud.service';
 import { ConvocatoriaFaseService } from '@core/services/csp/convocatoria-fase.service';
 import { ConvocatoriaService } from '@core/services/csp/convocatoria.service';
 import { StatusWrapper } from '@core/utils/status-wrapper';
@@ -10,13 +9,12 @@ import { map, mergeMap, takeLast, tap } from 'rxjs/operators';
 export class ConvocatoriaPlazosFasesFragment extends Fragment {
   plazosFase$ = new BehaviorSubject<StatusWrapper<IConvocatoriaFase>[]>([]);
   private fasesEliminadas: StatusWrapper<IConvocatoriaFase>[] = [];
-  fasePresentacionSolicitudes: string;
+  fasePresentacionSolicitudes: number;
 
   constructor(
     key: number,
     private convocatoriaService: ConvocatoriaService,
     private convocatoriaFaseService: ConvocatoriaFaseService,
-    private configuracionSolicitudService: ConfiguracionSolicitudService,
     public readonly: boolean,
     public canEdit: boolean
   ) {
@@ -33,15 +31,11 @@ export class ConvocatoriaPlazosFasesFragment extends Fragment {
           plazosFase => new StatusWrapper<IConvocatoriaFase>(plazosFase))
         );
       });
-      this.configuracionSolicitudService.findByConvocatoriaId(this.getKey() as number).subscribe(
-        (configuracionSolicitud) => {
-          if (configuracionSolicitud != null && configuracionSolicitud.fasePresentacionSolicitudes != null) {
-            this.fasePresentacionSolicitudes = configuracionSolicitud.fasePresentacionSolicitudes.tipoFase.nombre;
-          } else {
-            this.fasePresentacionSolicitudes = undefined;
-          }
-        })
     }
+  }
+
+  public setFasePresentacionSolicitudes(convocatoriaFases: IConvocatoriaFase) {
+    this.fasePresentacionSolicitudes = convocatoriaFases?.id;
   }
 
   /**

@@ -2,11 +2,9 @@ import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
 import { FormControl, FormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
-import { BaseModalComponent } from '@core/component/base-modal.component';
+import { DialogFormComponent } from '@core/component/dialog-form.component';
 import { MSG_PARAMS } from '@core/i18n';
 import { IProyectoPaqueteTrabajo } from '@core/models/csp/proyecto-paquete-trabajo';
-import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-properties';
-import { SnackBarService } from '@core/services/snack-bar.service';
 import { DateValidator } from '@core/validators/date-validator';
 import { StringValidator } from '@core/validators/string-validator';
 import { TranslateService } from '@ngx-translate/core';
@@ -36,13 +34,9 @@ export interface PaquetesTrabajoModalData {
   templateUrl: './proyecto-paquetes-trabajo-modal.component.html',
   styleUrls: ['./proyecto-paquetes-trabajo-modal.component.scss']
 })
-export class ProyectoPaquetesTrabajoModalComponent extends
-  BaseModalComponent<PaquetesTrabajoModalData, ProyectoPaquetesTrabajoModalComponent> implements OnInit, OnDestroy {
+export class ProyectoPaquetesTrabajoModalComponent extends DialogFormComponent<PaquetesTrabajoModalData> implements OnInit, OnDestroy {
 
   textSaveOrUpdate: string;
-
-  fxLayoutProperties: FxLayoutProperties;
-  fxLayoutProperties2: FxLayoutProperties;
 
   msgParamDescripcionEntity = {};
   msgParamNombreEntity = {};
@@ -52,22 +46,10 @@ export class ProyectoPaquetesTrabajoModalComponent extends
   title: string;
 
   constructor(
-    public matDialogRef: MatDialogRef<ProyectoPaquetesTrabajoModalComponent>,
+    matDialogRef: MatDialogRef<ProyectoPaquetesTrabajoModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data: PaquetesTrabajoModalData,
-    protected snackBarService: SnackBarService,
     private readonly translate: TranslateService) {
-    super(snackBarService, matDialogRef, data);
-
-    this.fxLayoutProperties = new FxLayoutProperties();
-    this.fxLayoutProperties.layout = 'row';
-    this.fxLayoutProperties.layoutAlign = 'row';
-    this.fxLayoutProperties.gap = '20px';
-    this.fxLayoutProperties.xs = 'column';
-
-    this.fxLayoutProperties2 = new FxLayoutProperties();
-    this.fxLayoutProperties2.gap = '20px';
-    this.fxLayoutProperties2.layout = 'row';
-    this.fxLayoutProperties2.xs = 'column';
+    super(matDialogRef, !!data?.paqueteTrabajo?.nombre);
   }
 
   ngOnInit(): void {
@@ -122,7 +104,7 @@ export class ProyectoPaquetesTrabajoModalComponent extends
     }
   }
 
-  protected getDatosForm(): PaquetesTrabajoModalData {
+  protected getValue(): PaquetesTrabajoModalData {
     this.data.paqueteTrabajo.nombre = this.formGroup.controls.nombre.value;
     this.data.paqueteTrabajo.fechaFin = this.formGroup.controls.fechaFin.value;
     this.data.paqueteTrabajo.fechaInicio = this.formGroup.controls.fechaInicio.value;
@@ -131,7 +113,7 @@ export class ProyectoPaquetesTrabajoModalComponent extends
     return this.data;
   }
 
-  protected getFormGroup(): FormGroup {
+  protected buildFormGroup(): FormGroup {
     const formGroup = new FormGroup({
       nombre: new FormControl(this.data?.paqueteTrabajo?.nombre,
         [Validators.maxLength(250), Validators.required,
@@ -153,10 +135,6 @@ export class ProyectoPaquetesTrabajoModalComponent extends
     }
 
     return formGroup;
-  }
-
-  ngOnDestroy(): void {
-    super.ngOnDestroy();
   }
 
 }

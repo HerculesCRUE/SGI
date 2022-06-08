@@ -1,23 +1,21 @@
-import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { SnackBarService } from '@core/services/snack-bar.service';
-import { MaterialDesignModule } from '@material/material-design.module';
-import { SgiAuthModule, SgiAuthService } from '@sgi/framework/auth';
-import { MemoriaEvaluacionesComponent } from './memoria-evaluaciones.component';
-import { LoggerTestingModule } from 'ngx-logger/testing';
-import TestUtils from '@core/utils/test-utils';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
-import { MemoriaActionService } from '../../memoria.action.service';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ActivatedRoute } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
+import { IComite } from '@core/models/eti/comite';
 import { IMemoria } from '@core/models/eti/memoria';
 import { IPeticionEvaluacion } from '@core/models/eti/peticion-evaluacion';
-import { IComite } from '@core/models/eti/comite';
-import { TipoEstadoMemoria } from '@core/models/eti/tipo-estado-memoria';
 import { IRetrospectiva } from '@core/models/eti/retrospectiva';
-
+import { TipoEstadoMemoria } from '@core/models/eti/tipo-estado-memoria';
+import TestUtils from '@core/utils/test-utils';
+import { MaterialDesignModule } from '@material/material-design.module';
+import { SgiAuthModule, SgiAuthService } from '@sgi/framework/auth';
+import { LoggerTestingModule } from 'ngx-logger/testing';
+import { MemoriaActionService } from '../../memoria.action.service';
+import { MemoriaEvaluacionesComponent } from './memoria-evaluaciones.component';
 
 describe('MemoriaEvaluacionesComponent', () => {
   let component: MemoriaEvaluacionesComponent;
@@ -60,8 +58,7 @@ describe('MemoriaEvaluacionesComponent', () => {
         SgiAuthModule
       ],
       providers: [
-        { provide: SnackBarService, useValue: TestUtils.getSnackBarServiceSpy() },
-        { provide: MatDialogRef, useValue: {} },
+        { provide: MatDialogRef, useValue: TestUtils.buildDialogCommonMatDialogRef() },
         { provide: MAT_DIALOG_DATA, useValue: {} },
         { provide: ActivatedRoute, useValue: { snapshot: { data: snapshotData } } },
         MemoriaActionService,

@@ -67,8 +67,7 @@ public class RolProyectoController {
    * @return RolProyecto {@link RolProyecto} correspondiente al orden "PRINCIPAL"
    */
   @GetMapping("/principal")
-  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-SOL-E', 'CSP-SOL-INV-ER')")
-
+  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-SOL-E', 'CSP-SOL-V', 'CSP-SOL-INV-ER')")
   public RolProyecto findPrincipal() {
     log.debug("RolProyecto findById() - start");
     RolProyecto returnValue = service.findPrincipal();

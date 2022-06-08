@@ -1,13 +1,8 @@
-<div class="sgi-dialog-header" fxLayout="row" fxLayoutGap="20px">
-  <span fxFlexAlign="center" mat-mat-dialog-title role="heading" aria-level="3" fxFlex>{{title | translate}}</span>
-  <button fxFlex="nogrow" mat-icon-button mat-dialog-close>
-    <mat-icon class="close-icon">close</mat-icon>
-  </button>
-</div>
-<mat-dialog-content>
+<sgi-dialog-header [title]="title"></sgi-dialog-header>
+<sgi-dialog-content>
   <form [formGroup]="formGroup">
     <!-- nombre -->
-    <div [fxLayout]="fxLayoutProperties.layout" [fxLayoutAlign]="fxLayoutProperties.layoutAlign">
+    <div fxLayout="row">
       <mat-form-field>
         <mat-label>{{'title.csp.proyecto-socio-periodo-justificacion.nombre' | translate}}</mat-label>
         <input matInput formControlName="nombre"
@@ -15,20 +10,19 @@
       </mat-form-field>
     </div>
     <!-- numPeriodo -->
-    <div [fxLayout]="fxLayoutProperties.layout" [fxLayoutAlign]="fxLayoutProperties.layoutAlign">
+    <div fxLayout="row">
       <mat-form-field>
         <mat-label>{{'csp.proyecto-socio-periodo-justificacion.numero-periodo' | translate}}</mat-label>
         <input matInput formControlName="numPeriodo" type="number"
           placeholder="{{'csp.proyecto-socio-periodo-justificacion.numero-periodo' | translate}}">
       </mat-form-field>
     </div>
-    <div class="fieldset-form">
+    <div class="fieldset-form" fxLayout="row">
       {{'title.csp.proyecto-socio-periodo-justificacion.periodo-justificar' | translate}}
     </div>
-    <div [fxLayout.xs]="fxLayoutProperties.xs" [fxLayout]="fxLayoutProperties.layout"
-      [fxLayoutGap]="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
+    <div fxLayout="row" fxLayoutGap="10px">
       <!-- mesInicial -->
-      <div>
+      <div fxFlex>
         <mat-form-field>
           <mat-label>{{'csp.proyecto-socio-periodo-justificacion.mes-inicio' | translate}}</mat-label>
           <input matInput formControlName="mesInicial" type="number" required
@@ -54,7 +48,7 @@
         </mat-form-field>
       </div>
       <!-- mesFinal -->
-      <div>
+      <div fxFlex>
         <mat-form-field>
           <mat-label>{{'csp.proyecto-socio-periodo-justificacion.mes-fin' | translate}}</mat-label>
           <input matInput formControlName="mesFinal" type="number" required
@@ -77,13 +71,12 @@
         </mat-form-field>
       </div>
     </div>
-    <div class="fieldset-form">
+    <div class="fieldset-form" fxLayout="row">
       {{'title.csp.proyecto-socio-periodo-justificacion.periodo-presentacion-justificacion' | translate}}
     </div>
-    <div [fxLayout.xs]="fxLayoutProperties.xs" [fxLayout]="fxLayoutProperties.layout"
-      [fxLayoutGap]="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
+    <div fxLayout="row" fxLayoutGap="10px">
       <!-- fechaInicio -->
-      <div>
+      <div fxFlex>
         <mat-form-field>
           <mat-label>{{'title.csp.proyecto-socio-periodo-justificacion.fecha-inicio-presentacion' | translate}}
           </mat-label>
@@ -95,7 +88,7 @@
         </mat-form-field>
       </div>
       <!-- fechaFin -->
-      <div>
+      <div fxFlex>
         <mat-form-field>
           <mat-label>{{'title.csp.proyecto-socio-periodo-justificacion.fecha-fin-presentacion' | translate}}
           </mat-label>
@@ -111,8 +104,8 @@
       </div>
     </div>
     <!-- observaciones -->
-    <div [fxLayout]="fxLayoutProperties.layout" [fxLayoutAlign]="fxLayoutProperties.layoutAlign">
-      <mat-form-field fxFill>
+    <div fxLayout="row">
+      <mat-form-field>
         <mat-label>{{'title.csp.proyecto-socio-periodo-justificacion.observaciones' | translate}}
         </mat-label>
         <textarea matInput formControlName="observaciones" type="text"
@@ -124,9 +117,10 @@
       </mat-form-field>
     </div>
   </form>
-</mat-dialog-content>
+</sgi-dialog-content>
 <mat-dialog-actions>
-  <button color="accent" (click)="saveOrUpdate()" mat-raised-button type="submit" *ngIf="!this.data.readonly">
+  <button color="accent" (click)="doAction()" [disabled]="this.actionDisabled" mat-raised-button type="submit"
+    *ngIf="!this.data.readonly">
     <mat-icon class="save-icon">save</mat-icon>{{textSaveOrUpdate |
     translate}}
   </button>

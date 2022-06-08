@@ -56,7 +56,6 @@ export class ActaAsistentesListadoComponent extends FragmentComponent implements
    */
   openUpdateModal(asistente: StatusWrapper<IAsistente>): void {
     const config = {
-      panelClass: 'sgi-dialog-container',
       data: asistente.value
     };
     const dialogRef = this.matDialog.open(ActaAsistentesEditarModalComponent, config);

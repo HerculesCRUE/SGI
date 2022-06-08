@@ -6,12 +6,10 @@ import { MatDialogModule, MatDialogRef, MAT_DIALOG_DATA } from '@angular/materia
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { IInvencionInventor } from '@core/models/pii/invencion-inventor';
 import { IPersona } from '@core/models/sgp/persona';
-import { SnackBarService } from '@core/services/snack-bar.service';
 import { StatusWrapper } from '@core/utils/status-wrapper';
 import TestUtils from '@core/utils/test-utils';
 import { MaterialDesignModule } from '@material/material-design.module';
 import { SharedModule } from '@shared/shared.module';
-import { LoggerTestingModule } from 'ngx-logger/testing';
 import { SgpSharedModule } from 'src/app/esb/sgp/shared/sgp-shared.module';
 import { InvencionInventorModalComponent, InvencionInventorModalData } from './invencion-inventor-modal.component';
 
@@ -45,14 +43,12 @@ describe('InvencionInventorModalComponent', () => {
         BrowserAnimationsModule,
         MatDialogModule,
         FlexModule,
-        LoggerTestingModule,
         FormsModule,
         ReactiveFormsModule,
         HttpClientTestingModule
       ],
       providers: [
-        { provide: SnackBarService, useValue: TestUtils.getSnackBarServiceSpy() },
-        { provide: MatDialogRef, useValue: data },
+        { provide: MatDialogRef, useValue: TestUtils.buildDialogCommonMatDialogRef() },
         { provide: MAT_DIALOG_DATA, useValue: data },
       ]
     })

@@ -20,6 +20,9 @@ const MSG_CONVOCATORIAS_TITLE = marker('menu.principal.inv.convocatorias');
 const MSG_PROYECTOS_TITLE = marker('menu.principal.inv.proyectos');
 const MSG_SOLICITUDES_TITLE = marker('menu.principal.inv.solicitudes');
 const MSG_AUTORIZACIONES_TITLE = marker('menu.principal.inv.autorizaciones');
+const MSG_GRUPO_TITLE = marker('csp.grupo');
+const MSG_PUBLICACION_TITLE = marker('prc.publicacion');
+const MSG_CONGRESO_TITLE = marker('prc.congreso.title');
 
 const routes: SgiRoutes = [
   {
@@ -157,6 +160,58 @@ const routes: SgiRoutes = [
           title: MSG_AUTORIZACIONES_TITLE,
           titleParams: MSG_PARAMS.CARDINALIRY.PLURAL,
           hasAnyAuthorityForAnyUO: ['CSP-AUT-INV-C', 'CSP-AUT-INV-ER', 'CSP-AUT-INV-BR'],
+        }
+      },
+      {
+        path: INV_ROUTE_NAMES.GRUPOS,
+        loadChildren: () =>
+          import('../csp/grupo/grupo-inv.module').then(
+            (m) => m.GrupoInvModule
+          ),
+        canActivate: [SgiAuthGuard],
+        data: {
+          title: MSG_GRUPO_TITLE,
+          titleParams: MSG_PARAMS.CARDINALIRY.PLURAL,
+          hasAuthorityForAnyUO: 'CSP-GIN-INV-VR',
+        }
+      },
+      {
+        path: INV_ROUTE_NAMES.VALIDACION_PUBLICACIONES,
+        loadChildren: () =>
+          import('../prc/publicacion/publicacion-inv.module').then(
+            (m) => m.PublicacionInvModule
+          ),
+        canActivate: [SgiAuthGuard],
+        data: {
+          title: MSG_PUBLICACION_TITLE,
+          titleParams: MSG_PARAMS.CARDINALIRY.PLURAL,
+          hasAuthorityForAnyUO: 'PRC-VAL-INV-ER'
+        }
+      },
+      {
+        path: INV_ROUTE_NAMES.INFORMES,
+        loadChildren: () =>
+          import('../prc/informe/informe-inv.module').then(
+            (m) => m.InformeInvModule
+          ),
+        canActivate: [SgiAuthGuard],
+        data: {
+          title: MSG_PUBLICACION_TITLE,
+          titleParams: MSG_PARAMS.CARDINALIRY.PLURAL,
+          hasAuthorityForAnyUO: 'PRC-INF-INV-GR'
+        }
+      },
+      {
+        path: INV_ROUTE_NAMES.VALIDACION_CONGRESOS,
+        loadChildren: () =>
+          import('../prc/congreso/congreso-inv-routing.module').then(
+            (m) => m.CongresoInvRoutingModule
+          ),
+        canActivate: [SgiAuthGuard],
+        data: {
+          title: MSG_CONGRESO_TITLE,
+          titleParams: MSG_PARAMS.CARDINALIRY.PLURAL,
+          hasAuthorityForAnyUO: 'PRC-VAL-INV-ER'
         }
       },
       { path: '**', component: null }

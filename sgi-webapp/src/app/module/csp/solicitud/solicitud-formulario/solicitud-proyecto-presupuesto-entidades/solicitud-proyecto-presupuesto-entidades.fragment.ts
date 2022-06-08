@@ -188,14 +188,9 @@ export class SolicitudProyectoPresupuestoEntidadesFragment extends FormFragment<
 
   protected buildPatch(value: ISolicitudProyecto): { [key: string]: any; } {
     this.solicitudProyecto = value ?? {} as ISolicitudProyecto;
-    const result = {
-      importePresupuestado: value.importePresupuestado,
-      importePresupuestadoSocios: value.importePresupuestadoSocios,
-      importeSolicitado: value.importeSolicitado,
-      importeSolicitadoSocios: value.importeSolicitadoSocios,
-      totalImportePresupuestado: value.totalImportePresupuestado,
-      totalImporteSolicitado: value.totalImporteSolicitado
-    } as ISolicitudProyecto;
+    if (!value) {
+      return this.solicitudProyecto;
+    }
 
     const form = this.getFormGroup();
     /*Presupuestado*/
@@ -220,7 +215,7 @@ export class SolicitudProyectoPresupuestoEntidadesFragment extends FormFragment<
     form.controls.totalImporteSolicitado
       .setValue(value.totalImporteSolicitado);
 
-    return result;
+    return value;
   }
 
   getValue(): ISolicitudProyecto {

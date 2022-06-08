@@ -96,7 +96,7 @@
               <th mat-header-cell *matHeaderCellDef>
                 {{'csp.grupo.tipo' | translate}}
               </th>
-              <td mat-cell *matCellDef="let data">{{data.tipo}}</td>
+              <td mat-cell *matCellDef="let data">{{TIPO_MAP.get(data.tipo) | translate}}</td>
             </ng-container>
             <ng-container matColumnDef="fechaInicioTipo">
               <th mat-header-cell *matHeaderCellDef>{{'csp.grupo-tipo.fecha-inicio' | translate}}

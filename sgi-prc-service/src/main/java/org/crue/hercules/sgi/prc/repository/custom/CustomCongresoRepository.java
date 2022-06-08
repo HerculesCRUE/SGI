@@ -1,8 +1,10 @@
 package org.crue.hercules.sgi.prc.repository.custom;
 
 import org.crue.hercules.sgi.prc.dto.CongresoResumen;
+import org.crue.hercules.sgi.prc.model.ProduccionCientifica;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 
 public interface CustomCongresoRepository {
   /**
@@ -12,5 +14,6 @@ public interface CustomCongresoRepository {
    * @param pageable la información de la paginación.
    * @return Listado paginado y/o filtrado de {@link CongresoResumen}
    */
-  public Page<CongresoResumen> findAllCongresos(String query, Pageable pageable);
+  public Page<CongresoResumen> findAllCongresos(Specification<ProduccionCientifica> specIsInvestigador, String query,
+      Pageable pageable);
 }

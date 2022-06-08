@@ -125,7 +125,7 @@ export class InvencionActionService extends ActionService {
       this.addFragment(this.FRAGMENT.INFORME_PATENTABILIDAD, this.informesPatentabilidad);
 
       this.solicitudesProteccion = new SolicitudProteccionFragment(this.id, invencionService, solicitudProteccionService,
-        this.data.tipoPropiedad);
+        this.data.tipoPropiedad, paisService, logger);
       this.addFragment(this.FRAGMENT.SOLICITUDES_PROTECCION, this.solicitudesProteccion);
 
       this.invencionGastos =

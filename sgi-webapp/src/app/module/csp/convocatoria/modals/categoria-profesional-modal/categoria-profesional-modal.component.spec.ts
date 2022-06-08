@@ -37,7 +37,7 @@ describe('CategoriaProfesionalModalComponent', () => {
         SgiAuthModule
       ],
       providers: [
-        { provide: MatDialogRef, useValue: data },
+        { provide: MatDialogRef, useValue: TestUtils.buildDialogCommonMatDialogRef() },
         { provide: MAT_DIALOG_DATA, useValue: data },
       ],
       declarations: [CategoriaProfesionalModalComponent, HeaderComponent],

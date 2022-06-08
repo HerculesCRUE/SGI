@@ -48,7 +48,7 @@
       <ng-container matColumnDef="acciones">
         <th mat-header-cell *matHeaderCellDef> {{'label.actions' | translate}} </th>
         <td mat-cell *matCellDef="let element">
-          <ng-container *ngIf="element.solicitudProyectoEntidadId">
+          <ng-container *ngIf="!formPart.readonly && element.solicitudProyectoEntidadId">
             <button mat-button matTooltip="{{'btn.view' | translate}}"
               [routerLink]="['../', element.ajena ? SOLICITUD_ROUTE_NAMES.DESGLOSE_PRESUPUESTO_ENTIDADES_FINANCIADORAS_SOLICITUD 
             : formPart.tipoPresupuestoMixto? SOLICITUD_ROUTE_NAMES.DESGLOSE_PRESUPUESTO_ENTIDADES_GESTORAS_CONVOCATORIA : SOLICITUD_ROUTE_NAMES.DESGLOSE_PRESUPUESTO_ENTIDADES_FINANCIADORAS_CONVOCATORIA , element.solicitudProyectoEntidadId]">

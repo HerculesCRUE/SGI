@@ -61,10 +61,9 @@ export class ProyectoPeriodoSeguimientosFragment extends Fragment {
     if (this.getKey()) {
       this.proyectoService.findAllProyectoPeriodoSeguimientoProyecto(this.getKey() as number).pipe(
         map((response) => response.items.map(item => {
-          const periodoSeguimientoListado = {
-            proyectoPeriodoSeguimiento: new StatusWrapper<IProyectoPeriodoSeguimiento>(item),
+          return {
+            proyectoPeriodoSeguimiento: new StatusWrapper<IProyectoPeriodoSeguimiento>(item)
           } as IPeriodoSeguimientoListado;
-          return periodoSeguimientoListado;
         })),
         switchMap(periodosSeguimientoListado => {
           let requestConvocatoriaPeriodoSeguimiento: Observable<IPeriodoSeguimientoListado[]>;
@@ -90,10 +89,9 @@ export class ProyectoPeriodoSeguimientosFragment extends Fragment {
 
                   if (periodoSeguimientoCientificoConvocatoria.length > 0) {
                     periodosSeguimientoListado.push(...periodoSeguimientoCientificoConvocatoria.map(convocatoriaPeriodoSeguimiento => {
-                      const periodoSeguimientoListado = {
+                      return {
                         convocatoriaPeriodoSeguimiento
                       } as IPeriodoSeguimientoListado;
-                      return periodoSeguimientoListado;
                     }));
                   }
 
@@ -192,11 +190,7 @@ export class ProyectoPeriodoSeguimientosFragment extends Fragment {
             a.convocatoriaPeriodoSeguimiento.mesInicial))) ? -1 : 0));
 
     this.periodoSeguimientos$.value.forEach(c => {
-      if (c.proyectoPeriodoSeguimiento) {
-        c.numPeriodo = numPeriodo++;
-      } else {
-        c.numPeriodo = numPeriodo++;
-      }
+      c.numPeriodo = numPeriodo++;
     });
 
     this.periodoSeguimientos$.next(this.periodoSeguimientos$.value);
@@ -224,7 +218,7 @@ export class ProyectoPeriodoSeguimientosFragment extends Fragment {
           };
         }
 
-      } else {
+      } else if (this.proyecto.convocatoriaId) {
         periodoSeguimientoListado.help = {
           class: HelpIconClass.WARNING,
           tooltip: PROYECTO_PERIODO_SEGUIMIENTO_NO_CONVOCATORIA_KEY

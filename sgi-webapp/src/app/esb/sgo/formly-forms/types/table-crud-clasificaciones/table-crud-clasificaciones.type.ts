@@ -81,7 +81,6 @@ export class TableCRUDClasificacionesTypeComponent extends BaseTableCRUDTypeComp
     };
 
     const config = {
-      panelClass: 'sgi-dialog-container',
       data
     };
     const dialogRef = this.tableCRUDMatDialog.open(ClasificacionModalComponent, config);

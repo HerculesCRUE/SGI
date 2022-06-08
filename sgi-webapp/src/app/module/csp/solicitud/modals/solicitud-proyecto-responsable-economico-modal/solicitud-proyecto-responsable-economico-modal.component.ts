@@ -2,11 +2,9 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { AbstractControl, FormControl, FormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
-import { BaseModalComponent } from '@core/component/base-modal.component';
+import { DialogFormComponent } from '@core/component/dialog-form.component';
 import { MSG_PARAMS } from '@core/i18n';
 import { ISolicitudProyectoResponsableEconomico } from '@core/models/csp/solicitud-proyecto-responsable-economico';
-import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-properties';
-import { SnackBarService } from '@core/services/snack-bar.service';
 import { GLOBAL_CONSTANTS } from '@core/utils/global-constants';
 import { NumberValidator } from '@core/validators/number-validator';
 import { IRange } from '@core/validators/range-validator';
@@ -32,14 +30,10 @@ export interface SolicitudProyectoResponsableEconomicoModalData {
   styleUrls: ['./solicitud-proyecto-responsable-economico-modal.component.scss']
 })
 export class SolicitudProyectoResponsableEconomicoModalComponent
-  extends BaseModalComponent<SolicitudProyectoResponsableEconomicoModalData, SolicitudProyectoResponsableEconomicoModalComponent>
-  implements OnInit {
-  fxLayoutProperties: FxLayoutProperties;
+  extends DialogFormComponent<SolicitudProyectoResponsableEconomicoModalData> implements OnInit {
 
   textSaveOrUpdate: string;
   title: string;
-
-  saveDisabled = false;
 
   msgParamMiembroEntity = {};
   msgParamEntity = {};
@@ -49,16 +43,12 @@ export class SolicitudProyectoResponsableEconomicoModalComponent
   }
 
   constructor(
-    protected snackBarService: SnackBarService,
-    public matDialogRef: MatDialogRef<SolicitudProyectoResponsableEconomicoModalComponent>,
+    matDialogRef: MatDialogRef<SolicitudProyectoResponsableEconomicoModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data: SolicitudProyectoResponsableEconomicoModalData,
     private readonly translate: TranslateService
   ) {
-    super(snackBarService, matDialogRef, data);
-    this.fxLayoutProperties = new FxLayoutProperties();
-    this.fxLayoutProperties.gap = '20px';
-    this.fxLayoutProperties.layout = 'row';
-    this.fxLayoutProperties.xs = 'row';
+    super(matDialogRef, data.isEdit);
+
     this.textSaveOrUpdate = this.data.isEdit ? MSG_ACEPTAR : MSG_ANADIR;
   }
 
@@ -94,7 +84,7 @@ export class SolicitudProyectoResponsableEconomicoModalComponent
     }
   }
 
-  protected getFormGroup(): FormGroup {
+  protected buildFormGroup(): FormGroup {
     const formGroup = new FormGroup(
       {
         responsable: new FormControl(this.data.entidad.persona, [
@@ -124,7 +114,7 @@ export class SolicitudProyectoResponsableEconomicoModalComponent
     return formGroup;
   }
 
-  protected getDatosForm(): SolicitudProyectoResponsableEconomicoModalData {
+  protected getValue(): SolicitudProyectoResponsableEconomicoModalData {
     this.data.entidad.persona = this.formGroup.get('responsable').value;
     this.data.entidad.mesInicio = this.formGroup.get('mesInicio').value;
     this.data.entidad.mesFin = this.formGroup.get('mesFin').value;

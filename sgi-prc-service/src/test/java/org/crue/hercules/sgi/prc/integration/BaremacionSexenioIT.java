@@ -1,6 +1,7 @@
 package org.crue.hercules.sgi.prc.integration;
 
 import java.math.BigDecimal;
+import java.time.Instant;
 import java.util.Arrays;
 import java.util.List;
 
@@ -12,6 +13,7 @@ import org.crue.hercules.sgi.prc.model.PuntuacionBaremoItem;
 import org.crue.hercules.sgi.prc.model.PuntuacionGrupo;
 import org.crue.hercules.sgi.prc.model.PuntuacionGrupoInvestigador;
 import org.crue.hercules.sgi.prc.model.PuntuacionItemInvestigador;
+import org.crue.hercules.sgi.prc.util.ProduccionCientificaFieldFormatUtil;
 import org.junit.jupiter.api.Test;
 import org.mockito.BDDMockito;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -81,7 +83,7 @@ class BaremacionSexenioIT extends BaremacionBaseIT {
     checkPuntuacionBaremoItem(puntuacionBaremoItems, 1L, new BigDecimal("75.00"));
     checkPuntuacionBaremoItem(puntuacionBaremoItems, 1L, new BigDecimal("90.00"));
     checkPuntuacionBaremoItem(puntuacionBaremoItems, 6L, new BigDecimal("6"));
-    checkPuntuacionBaremoItem(puntuacionBaremoItems, 29L, new BigDecimal("1.30"));
+    checkPuntuacionBaremoItem(puntuacionBaremoItems, 29L, new BigDecimal("2.30"));
 
     List<PuntuacionItemInvestigador> puntuacionItemsInvestigador = getPuntuacionItemInvestigadorRepository()
         .findAll();
@@ -91,7 +93,7 @@ class BaremacionSexenioIT extends BaremacionBaseIT {
 
     checkPuntuacionItemInvestigador(puntuacionItemsInvestigador, personaRef, new BigDecimal("75.00"));
     checkPuntuacionItemInvestigador(puntuacionItemsInvestigador, personaRef, new BigDecimal("90.00"));
-    checkPuntuacionItemInvestigador(puntuacionItemsInvestigador, personaRef, new BigDecimal("7.80"));
+    checkPuntuacionItemInvestigador(puntuacionItemsInvestigador, personaRef, new BigDecimal("6.90"));
 
     List<PuntuacionGrupoInvestigador> puntuacionGrupoInvestigador = getPuntuacionGrupoInvestigadorRepository()
         .findAll();
@@ -101,7 +103,7 @@ class BaremacionSexenioIT extends BaremacionBaseIT {
 
     checkPuntuacionGrupoInvestigador(puntuacionGrupoInvestigador, new BigDecimal("45.00"));
     checkPuntuacionGrupoInvestigador(puntuacionGrupoInvestigador, new BigDecimal("54.00"));
-    checkPuntuacionGrupoInvestigador(puntuacionGrupoInvestigador, new BigDecimal("4.68"));
+    checkPuntuacionGrupoInvestigador(puntuacionGrupoInvestigador, new BigDecimal("4.14"));
 
     List<PuntuacionGrupo> puntuacionGrupo = getPuntuacionGrupoRepository().findAll();
 
@@ -115,7 +117,7 @@ class BaremacionSexenioIT extends BaremacionBaseIT {
         .isEqualTo(new BigDecimal("99.00"));
 
     Assertions.assertThat(puntuacionGrupo.get(0).getPuntosProduccion()).as("PuntosGrupoProduccion")
-        .isEqualTo(new BigDecimal("4.68"));
+        .isEqualTo(new BigDecimal("4.14"));
 
     ConvocatoriaBaremacion convocatoriaBaremacion = getConvocatoriaBaremacionRepository().findById(idBaremacion).get();
 
@@ -127,11 +129,15 @@ class BaremacionSexenioIT extends BaremacionBaseIT {
         .isEqualTo(new BigDecimal("151.52"));
 
     Assertions.assertThat(convocatoriaBaremacion.getPuntoProduccion()).as("PuntosBaremacionProduccion")
-        .isEqualTo(new BigDecimal("24038.46"));
+        .isEqualTo(new BigDecimal("27173.91"));
   }
 
   protected void mockSexenio(Integer anio, String personaRef, String numeroSexenios) {
-    BDDMockito.given(getSgiApiSgpService().findSexeniosByAnio(anio))
+    Instant fechaFinBaremacion = ProduccionCientificaFieldFormatUtil.calculateFechaFinBaremacionByAnio(anio,
+        getSgiConfigProperties().getTimeZone());
+    String strFechaFinBaremacion = ProduccionCientificaFieldFormatUtil.formatInstantToStringWithTimeZoneAndPattern(
+        fechaFinBaremacion, getSgiConfigProperties().getTimeZone(), "yyyy-MM-dd'T'HH:mm:ss'Z'");
+    BDDMockito.given(getSgiApiSgpService().findSexeniosByFecha(strFechaFinBaremacion))
         .willReturn((Arrays.asList(generarMockSexenio(personaRef, numeroSexenios))));
   }
 

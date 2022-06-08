@@ -5,7 +5,7 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
-import { BaseModalComponent } from '@core/component/base-modal.component';
+import { DialogFormComponent } from '@core/component/dialog-form.component';
 import { SelectValue } from '@core/component/select-common/select-common.component';
 import { TipoPartida } from '@core/enums/tipo-partida';
 import { MSG_PARAMS } from '@core/i18n';
@@ -21,7 +21,6 @@ import { ProyectoConceptoGastoCodigoEcService } from '@core/services/csp/proyect
 import { ProyectoConceptoGastoService } from '@core/services/csp/proyecto-concepto-gasto.service';
 import { ProyectoService } from '@core/services/csp/proyecto.service';
 import { CodigoEconomicoGastoService } from '@core/services/sge/codigo-economico-gasto.service';
-import { SnackBarService } from '@core/services/snack-bar.service';
 import { LuxonUtils } from '@core/utils/luxon-utils';
 import { TranslateService } from '@ngx-translate/core';
 import { RSQLSgiRestFilter, SgiRestFilter, SgiRestFilterOperator, SgiRestFindOptions } from '@sgi/framework/http';
@@ -73,9 +72,7 @@ const CODIGO_ECONOMICO_TIPO_MAP: Map<CodigoEconomicoTipo, string> = new Map([
   templateUrl: './proyecto-anualidad-gasto-modal.component.html',
   styleUrls: ['./proyecto-anualidad-gasto-modal.component.scss']
 })
-export class ProyectoAnualidadGastoModalComponent extends
-  BaseModalComponent<ProyectoAnualidadGastoModalData, ProyectoAnualidadGastoModalComponent>
-  implements OnInit {
+export class ProyectoAnualidadGastoModalComponent extends DialogFormComponent<ProyectoAnualidadGastoModalData> implements OnInit {
 
   textSaveOrUpdate: string;
   msgParamCodigosEconomicosPermitidos = {};
@@ -122,8 +119,7 @@ export class ProyectoAnualidadGastoModalComponent extends
   }
 
   constructor(
-    protected snackBarService: SnackBarService,
-    public matDialogRef: MatDialogRef<ProyectoAnualidadGastoModalComponent>,
+    matDialogRef: MatDialogRef<ProyectoAnualidadGastoModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data: ProyectoAnualidadGastoModalData,
     private readonly translate: TranslateService,
     private readonly proyectoService: ProyectoService,
@@ -132,7 +128,7 @@ export class ProyectoAnualidadGastoModalComponent extends
     private readonly proyectoConceptoGastoCodigoEcService: ProyectoConceptoGastoCodigoEcService,
     private readonly codigoEconomicoGastoService: CodigoEconomicoGastoService
   ) {
-    super(snackBarService, matDialogRef, data);
+    super(matDialogRef, data.isEdit);
 
     this.textSaveOrUpdate = this.data.isEdit ? MSG_ACEPTAR : MSG_ANADIR;
 
@@ -173,7 +169,13 @@ export class ProyectoAnualidadGastoModalComponent extends
     this.translate.get(
       CONCEPTO_GASTO_KEY,
       MSG_PARAMS.CARDINALIRY.SINGULAR
-    ).subscribe((value) => this.msgParamConceptoGastoEntity = { entity: value, ...MSG_PARAMS.GENDER.MALE });
+    ).subscribe((value) =>
+      this.msgParamConceptoGastoEntity = {
+        entity: value,
+        ...MSG_PARAMS.GENDER.MALE,
+        ...MSG_PARAMS.CARDINALIRY.SINGULAR
+      }
+    );
 
     this.translate.get(
       CODIGO_ECONOMICO_PERMITIDO_KEY,
@@ -207,7 +209,7 @@ export class ProyectoAnualidadGastoModalComponent extends
     });
   }
 
-  protected getDatosForm(): ProyectoAnualidadGastoModalData {
+  protected getValue(): ProyectoAnualidadGastoModalData {
     this.data.anualidadGasto.proyectoSgeRef = this.formGroup.controls.identificadorSge.value.proyectoSge.id;
     this.data.anualidadGasto.codigoEconomico = this.formGroup.controls.codigoEconomico.value;
     this.data.anualidadGasto.importeConcedido = this.formGroup.controls.importeConcedido.value;
@@ -219,7 +221,7 @@ export class ProyectoAnualidadGastoModalComponent extends
     return this.data;
   }
 
-  protected getFormGroup(): FormGroup {
+  protected buildFormGroup(): FormGroup {
     const identificadorSge = this.data.anualidadGasto?.proyectoSgeRef
       ? {
         proyectoSge:
@@ -338,15 +340,31 @@ export class ProyectoAnualidadGastoModalComponent extends
     let conceptosGasto$: Observable<IConceptoGasto[]>;
 
     if (conceptoGastoTipo === ConceptoGastoTipo.PERMITIDO) {
+      const filter = new RSQLSgiRestFilter('permitido', SgiRestFilterOperator.EQUALS, 'true')
+        .and('proyectoId', SgiRestFilterOperator.EQUALS, this.data.proyectoId.toString());
+
+      if (this.data.fechaInicioAnualidad && this.data.fechaFinAnualidad) {
+        filter.and(
+          'inRangoProyectoAnualidad',
+          SgiRestFilterOperator.BETWEEN,
+          [LuxonUtils.toBackend(this.data.fechaInicioAnualidad), LuxonUtils.toBackend(this.data.fechaFinAnualidad)]
+        );
+      } else {
+        filter
+          .and('fechaInicioAnualidadMin', SgiRestFilterOperator.GREATHER_OR_EQUAL, LuxonUtils.toBackend(this.data.fechaInicioAnualidad))
+          .and('fechaFinAnualidadMax', SgiRestFilterOperator.LOWER_OR_EQUAL, LuxonUtils.toBackend(this.data.fechaFinAnualidad));
+      }
+
       const queryOptionsConceptoGasto: SgiRestFindOptions = {
-        filter: new RSQLSgiRestFilter('permitido', SgiRestFilterOperator.EQUALS, 'true')
-          .and('fechaInicio', SgiRestFilterOperator.GREATHER_OR_EQUAL, LuxonUtils.toBackend(this.data.fechaInicioAnualidad))
-          .and('fechaFin', SgiRestFilterOperator.LOWER_OR_EQUAL, LuxonUtils.toBackend(this.data.fechaFinAnualidad))
-          .and('proyectoId', SgiRestFilterOperator.EQUALS, this.data.proyectoId.toString())
+        filter
       };
 
       conceptosGasto$ = this.proyectoConceptoGastoService.findAll(queryOptionsConceptoGasto).pipe(
-        map(response => response.items.map(proyectoConceptoGasto => proyectoConceptoGasto.conceptoGasto))
+        map(response =>
+          response.items
+            .map(proyectoConceptoGasto => proyectoConceptoGasto.conceptoGasto)
+            .filter((c, i, conceptosGasto) => conceptosGasto.findIndex(c2 => (c2.id === c.id)) === i)
+        )
       );
     } else {
       if (!this.conceptosGastoTodos) {
@@ -490,11 +508,23 @@ export class ProyectoAnualidadGastoModalComponent extends
   }
 
   private buildFilterCodigosEconomicos(conceptoGastoId: number, permitido: boolean): SgiRestFilter {
-    return new RSQLSgiRestFilter('proyectoConceptoGasto.permitido', SgiRestFilterOperator.EQUALS, permitido.toString())
-      .and('inRangoProyectoAnualidadInicio', SgiRestFilterOperator.GREATHER_OR_EQUAL, LuxonUtils.toBackend(this.data.fechaInicioAnualidad))
-      .and('inRangoProyectoAnualidadFin', SgiRestFilterOperator.LOWER_OR_EQUAL, LuxonUtils.toBackend(this.data.fechaFinAnualidad))
+    const filter = new RSQLSgiRestFilter('proyectoConceptoGasto.permitido', SgiRestFilterOperator.EQUALS, permitido.toString())
       .and('proyectoConceptoGasto.conceptoGasto.id', SgiRestFilterOperator.EQUALS, conceptoGastoId.toString())
       .and('proyectoConceptoGasto.proyectoId', SgiRestFilterOperator.EQUALS, this.data.proyectoId.toString());
+
+    if (this.data.fechaInicioAnualidad && this.data.fechaFinAnualidad) {
+      filter.and(
+        'inRangoProyectoAnualidad',
+        SgiRestFilterOperator.BETWEEN,
+        [LuxonUtils.toBackend(this.data.fechaInicioAnualidad), LuxonUtils.toBackend(this.data.fechaFinAnualidad)]
+      );
+    } else {
+      filter
+        .and('fechaInicioAnualidadMin', SgiRestFilterOperator.GREATHER_OR_EQUAL, LuxonUtils.toBackend(this.data.fechaInicioAnualidad))
+        .and('fechaFinAnualidadMax', SgiRestFilterOperator.LOWER_OR_EQUAL, LuxonUtils.toBackend(this.data.fechaFinAnualidad));
+    }
+
+    return filter;
   }
 
   loadCodigosEconomicosCombo(codigoEconomicoTipo?: CodigoEconomicoTipo, codigoEconomicoSeleccionado?: ICodigoEconomicoGasto) {

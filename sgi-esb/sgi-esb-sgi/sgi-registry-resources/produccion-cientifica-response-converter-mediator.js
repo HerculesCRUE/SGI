@@ -34,12 +34,7 @@ function transformIdRef(produccionCientifica) {
     return produccionCientifica;
   }
   if (produccionCientifica.idRef) {
-    const idRefChunks = produccionCientifica.idRef.split('_');
-    if (idRefChunks.length === 2) {
-      produccionCientifica.idRef = idRefChunks[1];
-    } else {
-      produccionCientifica.idRef = idRefChunks[0];
-    }
+    produccionCientifica.idRef = produccionCientifica.idRef.slice(produccionCientifica.idRef.indexOf("_") + 1);
   }
   return produccionCientifica;
 }

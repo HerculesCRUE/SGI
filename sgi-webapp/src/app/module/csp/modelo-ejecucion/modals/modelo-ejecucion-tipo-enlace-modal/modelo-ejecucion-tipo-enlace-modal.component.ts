@@ -2,11 +2,10 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
-import { BaseModalComponent } from '@core/component/base-modal.component';
+import { DialogFormComponent } from '@core/component/dialog-form.component';
 import { MSG_PARAMS } from '@core/i18n';
 import { IModeloTipoEnlace } from '@core/models/csp/modelo-tipo-enlace';
 import { ITipoEnlace } from '@core/models/csp/tipos-configuracion';
-import { SnackBarService } from '@core/services/snack-bar.service';
 import { TranslateService } from '@ngx-translate/core';
 import { switchMap } from 'rxjs/operators';
 
@@ -25,8 +24,7 @@ export interface ModeloEjecucionTipoEnlaceModalData {
   templateUrl: './modelo-ejecucion-tipo-enlace-modal.component.html',
   styleUrls: ['./modelo-ejecucion-tipo-enlace-modal.component.scss']
 })
-export class ModeloEjecucionTipoEnlaceModalComponent extends
-  BaseModalComponent<IModeloTipoEnlace, ModeloEjecucionTipoEnlaceModalComponent> implements OnInit {
+export class ModeloEjecucionTipoEnlaceModalComponent extends DialogFormComponent<IModeloTipoEnlace> implements OnInit {
 
   msgParamTipoEntiy = {};
   title: string;
@@ -34,12 +32,11 @@ export class ModeloEjecucionTipoEnlaceModalComponent extends
   textSaveOrUpdate: string;
 
   constructor(
-    protected readonly snackBarService: SnackBarService,
-    public readonly matDialogRef: MatDialogRef<ModeloEjecucionTipoEnlaceModalComponent>,
+    matDialogRef: MatDialogRef<ModeloEjecucionTipoEnlaceModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data: ModeloEjecucionTipoEnlaceModalData,
     private readonly translate: TranslateService
   ) {
-    super(snackBarService, matDialogRef, data.modeloTipoEnlace);
+    super(matDialogRef, !!data.modeloTipoEnlace?.tipoEnlace);
     this.textSaveOrUpdate = this.data.modeloTipoEnlace?.tipoEnlace ? MSG_ACEPTAR : MSG_ANADIR;
   }
 
@@ -67,14 +64,14 @@ export class ModeloEjecucionTipoEnlaceModalComponent extends
     ).subscribe((value) => this.title = value);
   }
 
-  protected getFormGroup(): FormGroup {
+  protected buildFormGroup(): FormGroup {
     const formGroup = new FormGroup({
       tipoEnlace: new FormControl(this.data.modeloTipoEnlace?.tipoEnlace, Validators.required)
     });
     return formGroup;
   }
 
-  protected getDatosForm(): IModeloTipoEnlace {
+  protected getValue(): IModeloTipoEnlace {
     const modeloTipoEnlace = this.data.modeloTipoEnlace;
     modeloTipoEnlace.tipoEnlace = this.formGroup.get('tipoEnlace').value;
     return modeloTipoEnlace;

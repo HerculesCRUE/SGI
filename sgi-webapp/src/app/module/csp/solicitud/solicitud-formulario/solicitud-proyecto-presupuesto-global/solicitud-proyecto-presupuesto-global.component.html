@@ -81,7 +81,7 @@
     </mat-paginator>
   </div>
   <div class="separation-button">
-    <button color="three" mat-button mat-raised-button (click)="openModal()">
+    <button *ngIf="!formPart.readonly" color="three" mat-button mat-raised-button (click)="openModal()">
       <mat-icon color="accent">add_circle</mat-icon>
       {{ 'btn.add.entity' | translate:msgParamEntity }}
     </button>

@@ -2,11 +2,10 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
-import { BaseModalComponent } from '@core/component/base-modal.component';
+import { DialogFormComponent } from '@core/component/dialog-form.component';
 import { MSG_PARAMS } from '@core/i18n';
 import { IModeloTipoFinalidad } from '@core/models/csp/modelo-tipo-finalidad';
 import { ITipoFinalidad } from '@core/models/csp/tipos-configuracion';
-import { SnackBarService } from '@core/services/snack-bar.service';
 import { TranslateService } from '@ngx-translate/core';
 import { switchMap } from 'rxjs/operators';
 
@@ -25,8 +24,7 @@ export interface ModeloEjecucionTipoFinalidadModalData {
   templateUrl: './modelo-ejecucion-tipo-finalidad-modal.component.html',
   styleUrls: ['./modelo-ejecucion-tipo-finalidad-modal.component.scss']
 })
-export class ModeloEjecucionTipoFinalidadModalComponent extends
-  BaseModalComponent<IModeloTipoFinalidad, ModeloEjecucionTipoFinalidadModalComponent> implements OnInit {
+export class ModeloEjecucionTipoFinalidadModalComponent extends DialogFormComponent<IModeloTipoFinalidad> implements OnInit {
 
   title: string;
   msgParamTipoEntiy = {};
@@ -34,12 +32,11 @@ export class ModeloEjecucionTipoFinalidadModalComponent extends
   textSaveOrUpdate: string;
 
   constructor(
-    protected readonly snackBarService: SnackBarService,
     public readonly matDialogRef: MatDialogRef<ModeloEjecucionTipoFinalidadModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data: ModeloEjecucionTipoFinalidadModalData,
     private readonly translate: TranslateService
   ) {
-    super(snackBarService, matDialogRef, data.modeloTipoFinalidad);
+    super(matDialogRef, !!data.modeloTipoFinalidad?.tipoFinalidad);
     this.textSaveOrUpdate = this.data.modeloTipoFinalidad?.tipoFinalidad ? MSG_ACEPTAR : MSG_ANADIR;
   }
 
@@ -67,14 +64,14 @@ export class ModeloEjecucionTipoFinalidadModalComponent extends
     ).subscribe((value) => this.title = value);
   }
 
-  protected getFormGroup(): FormGroup {
+  protected buildFormGroup(): FormGroup {
     const formGroup = new FormGroup({
       tipoFinalidad: new FormControl(this.data.modeloTipoFinalidad?.tipoFinalidad, Validators.required)
     });
     return formGroup;
   }
 
-  protected getDatosForm(): IModeloTipoFinalidad {
+  protected getValue(): IModeloTipoFinalidad {
     const modeloTipoFinalidad = this.data.modeloTipoFinalidad;
     modeloTipoFinalidad.tipoFinalidad = this.formGroup.get('tipoFinalidad').value;
     return modeloTipoFinalidad;

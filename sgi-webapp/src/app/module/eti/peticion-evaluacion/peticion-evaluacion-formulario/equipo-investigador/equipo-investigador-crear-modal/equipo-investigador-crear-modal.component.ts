@@ -1,16 +1,13 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef } from '@angular/material/dialog';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
-import { BaseModalComponent } from '@core/component/base-modal.component';
+import { DialogFormComponent } from '@core/component/dialog-form.component';
 import { MSG_PARAMS } from '@core/i18n';
 import { IEquipoTrabajo } from '@core/models/eti/equipo-trabajo';
 import { IPersona } from '@core/models/sgp/persona';
-import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-properties';
 import { DatosAcademicosService } from '@core/services/sgp/datos-academicos.service';
 import { VinculacionService } from '@core/services/sgp/vinculacion.service';
-import { SnackBarService } from '@core/services/snack-bar.service';
-import { FormGroupUtil } from '@core/utils/form-group-util';
 import { TranslateService } from '@ngx-translate/core';
 import { TipoColectivo } from 'src/app/esb/sgp/shared/select-persona/select-persona.component';
 
@@ -21,12 +18,7 @@ const PERSONA_KEY = marker('eti.peticion-evaluacion.equipo-investigador.persona'
   templateUrl: './equipo-investigador-crear-modal.component.html',
   styleUrls: ['./equipo-investigador-crear-modal.component.scss']
 })
-export class EquipoInvestigadorCrearModalComponent extends
-  BaseModalComponent<IEquipoTrabajo, EquipoInvestigadorCrearModalComponent> implements OnInit, OnDestroy {
-
-  FormGroupUtil = FormGroupUtil;
-
-  fxLayoutProperties: FxLayoutProperties;
+export class EquipoInvestigadorCrearModalComponent extends DialogFormComponent<IEquipoTrabajo> implements OnInit {
 
   msgParamEntity = {};
 
@@ -35,17 +27,12 @@ export class EquipoInvestigadorCrearModalComponent extends
   }
 
   constructor(
-    public readonly matDialogRef: MatDialogRef<EquipoInvestigadorCrearModalComponent>,
+    matDialogRef: MatDialogRef<EquipoInvestigadorCrearModalComponent>,
     private readonly translate: TranslateService,
-    protected readonly snackBarService: SnackBarService,
     private vinculacionService: VinculacionService,
     private datosAcademicosService: DatosAcademicosService
   ) {
-    super(snackBarService, matDialogRef, null);
-
-    this.fxLayoutProperties = new FxLayoutProperties();
-    this.fxLayoutProperties.gap = '20px';
-    this.fxLayoutProperties.layout = 'column';
+    super(matDialogRef, false);
   }
 
   ngOnInit(): void {
@@ -88,7 +75,7 @@ export class EquipoInvestigadorCrearModalComponent extends
     );
   }
 
-  protected getDatosForm(): IEquipoTrabajo {
+  protected getValue(): IEquipoTrabajo {
     const equipoTrabajo: IEquipoTrabajo = {
       id: null,
       peticionEvaluacion: null,
@@ -97,7 +84,7 @@ export class EquipoInvestigadorCrearModalComponent extends
     return equipoTrabajo;
   }
 
-  protected getFormGroup(): FormGroup {
+  protected buildFormGroup(): FormGroup {
     const formGroup = new FormGroup({
       nombreCompleto: new FormControl({ value: '', disabled: true }),
       vinculacion: new FormControl({ value: '', disabled: true }),
@@ -108,7 +95,4 @@ export class EquipoInvestigadorCrearModalComponent extends
     return formGroup;
   }
 
-  ngOnDestroy(): void {
-    super.ngOnDestroy();
-  }
 }

@@ -1,11 +1,10 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef } from '@angular/material/dialog';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
-import { BaseModalComponent } from '@core/component/base-modal.component';
+import { DialogFormComponent } from '@core/component/dialog-form.component';
 import { MSG_PARAMS } from '@core/i18n';
 import { IEstadoProduccionCientificaRequest } from '@core/services/prc/estado-produccion-cientifica/estado-produccion-cientifica-input';
-import { SnackBarService } from '@core/services/snack-bar.service';
 import { TranslateService } from '@ngx-translate/core';
 
 const PRODUCCION_CIENTIFICA_COMENTARIO_KEY = marker('prc.produccion-cientifica.motivo-rechazo');
@@ -15,20 +14,15 @@ const PRODUCCION_CIENTIFICA_COMENTARIO_KEY = marker('prc.produccion-cientifica.m
   templateUrl: './rechazar-produccion-cientifica-modal.component.html',
   styleUrls: ['./rechazar-produccion-cientifica-modal.component.scss']
 })
-export class RechazarProduccionCientificaModalComponent
-  extends BaseModalComponent<IEstadoProduccionCientificaRequest, IEstadoProduccionCientificaRequest> {
+export class RechazarProduccionCientificaModalComponent extends DialogFormComponent<IEstadoProduccionCientificaRequest> implements OnInit {
 
   msgParamComentarioEntity = {};
 
   constructor(
     matDialogRef: MatDialogRef<IEstadoProduccionCientificaRequest>,
-    snackBarService: SnackBarService,
     private readonly translate: TranslateService
   ) {
-    super(
-      snackBarService,
-      matDialogRef,
-      null);
+    super(matDialogRef, false);
   }
 
   ngOnInit(): void {
@@ -44,10 +38,10 @@ export class RechazarProduccionCientificaModalComponent
     );
   }
 
-  protected getDatosForm(): IEstadoProduccionCientificaRequest {
+  protected getValue(): IEstadoProduccionCientificaRequest {
     return { comentario: this.formGroup.controls.comentario.value } as IEstadoProduccionCientificaRequest;
   }
-  protected getFormGroup(): FormGroup {
+  protected buildFormGroup(): FormGroup {
     return new FormGroup({
       comentario: new FormControl('', Validators.required)
     });

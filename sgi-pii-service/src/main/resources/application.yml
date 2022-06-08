@@ -6,6 +6,11 @@ server:
       enabled: false
 sgi:
   time-zone: "Europe/Madrid"
+  rest:
+    api:
+      cnf-url: "http://sgi-cnf-service:4288"
+      com-url: "http://sgi-com-service:4286" 
+      tp-url: "http://sgi-tp-service:4285"
 spring:
   profiles:
     # Set spring-profile using maven
@@ -69,6 +74,13 @@ spring:
             provider: keycloak
             redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
             scope: "openid,profile"
+          pii-service:
+            authorization-grant-type: client_credentials
+            client-id: pii-service
+            client-name: SGI (service login)
+            client-secret: 40283f2d-5e20-4786-aacd-0cc04bef9596
+            provider: keycloak
+            scope: sgi-cnf,sgi-com,sgi-tp
         provider:
           keycloak:
             issuer-uri: http://sgi-auth:8080/auth/realms/sgi
@@ -159,6 +171,12 @@ logging:
             JdbcTemplate: DEBUG
             StatementCreatorUtils: TRACE
 ---
+sgi:
+  rest:
+    api:
+      cnf-url: "http://sgi-cnf-service:8080"
+      com-url: "http://sgi-com-service:8080"
+      tp-url: "http://sgi-tp-service:8080"
 spring:
   profiles: prod
   datasource:

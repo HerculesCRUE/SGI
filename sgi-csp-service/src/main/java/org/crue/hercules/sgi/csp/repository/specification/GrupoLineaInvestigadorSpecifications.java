@@ -3,6 +3,7 @@ package org.crue.hercules.sgi.csp.repository.specification;
 import java.time.Instant;
 
 import org.crue.hercules.sgi.csp.model.Grupo;
+import org.crue.hercules.sgi.csp.model.GrupoLineaInvestigacion;
 import org.crue.hercules.sgi.csp.model.GrupoLineaInvestigacion_;
 import org.crue.hercules.sgi.csp.model.GrupoLineaInvestigador;
 import org.crue.hercules.sgi.csp.model.GrupoLineaInvestigador_;
@@ -60,6 +61,21 @@ public class GrupoLineaInvestigadorSpecifications {
     return (root, query, cb) -> {
       return cb.equal(root.get(GrupoLineaInvestigador_.personaRef), personaRef);
     };
+  }
+
+  /**
+   * {@link GrupoLineaInvestigador} del {@link GrupoLineaInvestigacion} con el id
+   * indicado.
+   * 
+   * @param grupoLineaInvestigacionId identificador del
+   *                                  {@link GrupoLineaInvestigacion}.
+   * @return specification para obtener los {@link GrupoLineaInvestigador} del
+   *         {@link GrupoLineaInvestigacion} con el id indicado.
+   */
+  public static Specification<GrupoLineaInvestigador> byGrupoLineaInvestigacionId(Long grupoLineaInvestigacionId) {
+    return (root, query, cb) -> cb
+        .equal(root.get(GrupoLineaInvestigador_.grupoLineaInvestigacion).get(GrupoLineaInvestigacion_.id),
+            grupoLineaInvestigacionId);
   }
 
 }

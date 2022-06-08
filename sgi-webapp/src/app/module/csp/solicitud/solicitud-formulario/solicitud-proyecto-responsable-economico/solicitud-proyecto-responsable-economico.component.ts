@@ -123,8 +123,6 @@ export class SolicitudProyectoResponsableEconomicoComponent extends FragmentComp
     }
 
     const config: MatDialogConfig = {
-      panelClass: 'sgi-dialog-container',
-      minWidth: '700px',
       data
     };
     const dialogRef = this.matDialog.open(SolicitudProyectoResponsableEconomicoModalComponent, config);

@@ -1,14 +1,8 @@
-<div class="sgi-dialog-header" fxLayout="row" fxLayoutGap="20px">
-  <span fxFlexAlign="center" mat-mat-dialog-title role="heading" aria-level="3" fxFlex>{{title | translate}}</span>
-  <button fxFlex="nogrow" mat-icon-button mat-dialog-close>
-    <mat-icon class="close-icon">close</mat-icon>
-  </button>
-</div>
-<mat-dialog-content>
+<sgi-dialog-header [title]="title"></sgi-dialog-header>
+<sgi-dialog-content>
   <form [formGroup]="formGroup">
     <!-- Número del periodo -->
-    <div *ngIf="data?.convocatoriaSeguimientoCientifico?.mesInicial" [fxLayout.xs]="fxLayoutProperties.xs"
-      [fxLayout]="fxLayoutProperties.layout" [fxLayoutGap]="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
+    <div *ngIf="data?.convocatoriaSeguimientoCientifico?.mesInicial" fxLayout="row">
       <mat-form-field>
         <mat-label>{{'csp.convocatoria-seguimiento-cientifico.numero-periodo' | translate}}</mat-label>
         <input matInput formControlName="numPeriodo" type="text"
@@ -21,8 +15,7 @@
     </div>
 
     <!-- Tipo de Seguimiento-->
-    <div [fxLayout.xs]="fxLayoutProperties.xs" [fxLayout]="fxLayoutProperties.layout"
-      [fxLayoutGap]="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
+    <div fxLayout="row">
       <mat-form-field>
         <mat-label>{{'csp.convocatoria-seguimiento-cientifico.tipo-seguimiento' | translate}}</mat-label>
         <sgi-select-enum formControlName="tipoSeguimiento" required [enumMap]="TIPO_SEGUIMIENTO_MAP"></sgi-select-enum>
@@ -35,14 +28,13 @@
       </mat-form-field>
     </div>
 
-    <div class="fieldset-form">
+    <div class="fieldset-form" fxLayout="row">
       {{'label.csp.convocatoria-seguimiento-cientifico.periodo-justificar' | translate}}
     </div>
 
     <!-- Mes desde -->
-    <div [fxLayout.xs]="fxLayoutProperties.xs" [fxLayout]="fxLayoutProperties.layout"
-      [fxLayoutGap]="fxLayoutProperties.gap">
-      <div>
+    <div fxLayout="row" fxLayoutGap="10px">
+      <div fxFlex>
         <mat-form-field>
           <mat-label>{{'csp.convocatoria-seguimiento-cientifico.desde-mes' | translate}}</mat-label>
           <input matInput formControlName="desdeMes" type="number"
@@ -69,7 +61,7 @@
         </mat-form-field>
       </div>
       <!-- Mes hasta -->
-      <div>
+      <div fxFlex>
         <mat-form-field>
           <mat-label>{{'csp.convocatoria-seguimiento-cientifico.hasta-mes' | translate}}</mat-label>
           <input matInput formControlName="hastaMes" type="number"
@@ -93,13 +85,12 @@
       </div>
     </div>
 
-    <div class="fieldset-form">
+    <div class="fieldset-form" fxLayout="row">
       {{'csp.convocatoria-seguimiento-cientifico.periodo-entrega-seguimiento' | translate}}
     </div>
     <!-- Fecha inicio -->
-    <div [fxLayout.xs]="fxLayoutProperties.xs" [fxLayout]="fxLayoutProperties.layout"
-      [fxLayoutGap]="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
-      <div>
+    <div fxLayout="row" fxLayoutGap="10px">
+      <div fxFlex>
         <mat-form-field color="primary">
           <mat-label>{{'csp.convocatoria-seguimiento-cientifico.fecha-inicio-presentacion' | translate}}</mat-label>
           <input matInput formControlName="fechaInicio" [ngxMatDatetimePicker]="picker1">
@@ -108,7 +99,7 @@
         </mat-form-field>
       </div>
       <!-- Fecha fin -->
-      <div>
+      <div fxFlex>
         <mat-form-field color="primary">
           <mat-label>{{'csp.convocatoria-seguimiento-cientifico.fecha-fin-presentacion' | translate}}</mat-label>
           <input matInput formControlName="fechaFin" [ngxMatDatetimePicker]="picker2">
@@ -121,8 +112,7 @@
       </div>
     </div>
     <!-- Observaciones -->
-    <div [fxLayout.xs]="fxLayoutProperties.xs" [fxLayout]="fxLayoutProperties.layout"
-      [fxLayoutGap]="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
+    <div fxLayout="row">
       <mat-form-field>
         <mat-label>{{'csp.convocatoria-seguimiento-cientifico.observaciones' | translate}}</mat-label>
         <textarea matInput formControlName="observaciones" type="text" id="observaciones"
@@ -134,9 +124,9 @@
       </mat-form-field>
     </div>
   </form>
-</mat-dialog-content>
+</sgi-dialog-content>
 <mat-dialog-actions>
-  <button color="accent" (click)="saveOrUpdate()" mat-raised-button type="submit">
+  <button color="accent" (click)="doAction()" [disabled]="this.actionDisabled" mat-raised-button type="submit">
     <mat-icon class="save-icon">save</mat-icon>{{textSaveOrUpdate | translate}}
   </button>
   <button class="link-cancelar" mat-button type="button" mat-dialog-close>{{'btn.cancel' |

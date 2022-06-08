@@ -15,6 +15,7 @@ export class ConvocatoriaConfiguracionSolicitudesFragment extends FormFragment<I
   documentosRequeridos$ = new BehaviorSubject<StatusWrapper<IDocumentoRequeridoSolicitud>[]>([]);
   private documentosRequeridosEliminados: StatusWrapper<IDocumentoRequeridoSolicitud>[] = [];
   public convocatoriaFases$: BehaviorSubject<IConvocatoriaFase[]> = new BehaviorSubject<IConvocatoriaFase[]>([]);
+  public fasePresentacionSolicitudes$ = new BehaviorSubject<IConvocatoriaFase>(null);
 
   constructor(
     private readonly logger: NGXLogger,
@@ -63,6 +64,8 @@ export class ConvocatoriaConfiguracionSolicitudesFragment extends FormFragment<I
           form.controls.fechaInicioFase.setValue(null);
           form.controls.fechaFinFase.setValue(null);
         }
+
+        this.fasePresentacionSolicitudes$.next(value);
       }
     ));
 
@@ -253,7 +256,9 @@ export class ConvocatoriaConfiguracionSolicitudesFragment extends FormFragment<I
         return this.documentoRequeridoSolicitudService.create(wrapped.value).pipe(
           map((createdEntidad) => {
             const index = this.documentosRequeridos$.value.findIndex((currentEntidad) => currentEntidad === wrapped);
-            this.documentosRequeridos$[index] = new StatusWrapper<IDocumentoRequeridoSolicitud>(createdEntidad);
+            wrapped.value.id = createdEntidad.id;
+            this.documentosRequeridos$.value[index] = new StatusWrapper<IDocumentoRequeridoSolicitud>(wrapped.value);
+            this.documentosRequeridos$.next(this.documentosRequeridos$.value);
           })
         );
       })

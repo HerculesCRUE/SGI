@@ -5,20 +5,18 @@ import { MatCheckboxChange } from '@angular/material/checkbox';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatTreeNestedDataSource } from '@angular/material/tree';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
-import { BaseModalComponent } from '@core/component/base-modal.component';
+import { DialogFormComponent } from '@core/component/dialog-form.component';
 import { MSG_PARAMS } from '@core/i18n';
 import { IPrograma } from '@core/models/csp/programa';
 import { ISolicitudModalidad } from '@core/models/csp/solicitud-modalidad';
 import { IEmpresa } from '@core/models/sgemp/empresa';
-import { FxFlexProperties } from '@core/models/shared/flexLayout/fx-flex-properties';
-import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-properties';
 import { ProgramaService } from '@core/services/csp/programa.service';
-import { SnackBarService } from '@core/services/snack-bar.service';
 import { TranslateService } from '@ngx-translate/core';
 import { from, Observable, of } from 'rxjs';
 import { map, mergeMap, switchMap, takeLast, tap } from 'rxjs/operators';
 
 const SOLICITUD_MODALIDAD_KEY = marker('csp.solicitud-modalidad');
+
 export interface SolicitudModalidadEntidadConvocanteModalData {
   entidad: IEmpresa;
   plan: IPrograma;
@@ -74,12 +72,8 @@ function sortByName(nodes: NodePrograma[]): NodePrograma[] {
   styleUrls: ['./solicitud-modalidad-entidad-convocante-modal.component.scss']
 })
 export class SolicitudModalidadEntidadConvocanteModalComponent
-  extends BaseModalComponent<SolicitudModalidadEntidadConvocanteModalData, SolicitudModalidadEntidadConvocanteModalComponent>
-  implements OnInit {
+  extends DialogFormComponent<SolicitudModalidadEntidadConvocanteModalData> implements OnInit {
 
-  fxFlexPropertiesTree: FxFlexProperties;
-
-  isEdit = false;
   title: string;
 
   checkedNode: NodePrograma;
@@ -92,26 +86,12 @@ export class SolicitudModalidadEntidadConvocanteModalComponent
   hasChild = (_: number, node: NodePrograma) => node.childs.length > 0;
 
   constructor(
-    protected readonly snackBarService: SnackBarService,
     @Inject(MAT_DIALOG_DATA) public data: SolicitudModalidadEntidadConvocanteModalData,
-    public readonly matDialogRef: MatDialogRef<SolicitudModalidadEntidadConvocanteModalComponent>,
+    matDialogRef: MatDialogRef<SolicitudModalidadEntidadConvocanteModalComponent>,
     private programaService: ProgramaService,
     private readonly translate: TranslateService
   ) {
-    super(snackBarService, matDialogRef, data);
-
-    this.isEdit = data.modalidad ? true : false;
-
-    this.fxFlexPropertiesTree = new FxFlexProperties();
-    this.fxFlexPropertiesTree.sm = '0 1 calc(100%-10px)';
-    this.fxFlexPropertiesTree.md = '0 1 calc(100%-10px)';
-    this.fxFlexPropertiesTree.gtMd = '0 1 calc(100%-10px)';
-    this.fxFlexPropertiesTree.order = '2';
-
-    this.fxLayoutProperties = new FxLayoutProperties();
-    this.fxLayoutProperties.gap = '20px';
-    this.fxLayoutProperties.layout = 'row wrap';
-    this.fxLayoutProperties.xs = 'column';
+    super(matDialogRef, !!data.modalidad);
   }
 
   ngOnInit(): void {
@@ -134,10 +114,11 @@ export class SolicitudModalidadEntidadConvocanteModalComponent
   }
 
 
-  protected getFormGroup(): FormGroup {
+  protected buildFormGroup(): FormGroup {
     const formGroup = new FormGroup({
       entidadConvocante: new FormControl({ value: this.data.entidad?.nombre, disabled: true }),
-      plan: new FormControl({ value: this.data.plan?.nombre, disabled: true })
+      plan: new FormControl({ value: this.data.plan?.nombre, disabled: true }),
+      modalidad: new FormControl(this.data.modalidad?.programa)
     });
 
     if (this.data.readonly) {
@@ -147,7 +128,7 @@ export class SolicitudModalidadEntidadConvocanteModalComponent
     return formGroup;
   }
 
-  protected getDatosForm(): SolicitudModalidadEntidadConvocanteModalData {
+  protected getValue(): SolicitudModalidadEntidadConvocanteModalData {
     const entidadConvocanteModalidad = this.data;
 
     if (!this.checkedNode) {
@@ -191,6 +172,7 @@ export class SolicitudModalidadEntidadConvocanteModalComponent
    */
   onCheckNode(node: NodePrograma, $event: MatCheckboxChange): void {
     this.checkedNode = $event.checked ? node : undefined;
+    this.formGroup.get('modalidad').setValue(this.checkedNode?.programa);
   }
 
   /**

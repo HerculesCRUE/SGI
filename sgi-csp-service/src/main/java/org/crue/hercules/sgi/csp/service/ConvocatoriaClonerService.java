@@ -142,11 +142,9 @@ public class ConvocatoriaClonerService {
   public void cloneConvocatoriasEntidadesConvocantes(Long convocatoriaToCloneId, Long convocatoriaClonedId) {
 
     this.convocatoriaEntidadConvocanteRepository.findByProgramaIsNotNullAndConvocatoriaId(convocatoriaToCloneId)
-        .stream().forEach(entidad -> {
-          this.convocatoriaEntidadConvocanteRepository
-              .save(ConvocatoriaEntidadConvocante.builder().convocatoriaId(convocatoriaClonedId)
-                  .entidadRef(entidad.getEntidadRef()).programa(entidad.getPrograma()).build());
-        });
+        .stream().forEach(entidad -> this.convocatoriaEntidadConvocanteRepository
+            .save(ConvocatoriaEntidadConvocante.builder().convocatoriaId(convocatoriaClonedId)
+                .entidadRef(entidad.getEntidadRef()).programa(entidad.getPrograma()).build()));
   }
 
   /**
@@ -167,13 +165,12 @@ public class ConvocatoriaClonerService {
   public void cloneConvocatoriasEntidadesFinanciadoras(Long convocatoriaToCloneId, Long convocatoriaClonedId) {
 
     this.convocatoriaEntidadFinanciadoraRepository.findByConvocatoriaId(convocatoriaToCloneId).stream()
-        .forEach(entidad -> {
-          this.convocatoriaEntidadFinanciadoraRepository.save(ConvocatoriaEntidadFinanciadora.builder()
-              .convocatoriaId(convocatoriaClonedId).entidadRef(entidad.getEntidadRef())
-              .fuenteFinanciacion(entidad.getFuenteFinanciacion()).tipoFinanciacion(entidad.getTipoFinanciacion())
-              .porcentajeFinanciacion(entidad.getPorcentajeFinanciacion())
-              .importeFinanciacion(entidad.getImporteFinanciacion()).build());
-        });
+        .forEach(
+            entidad -> this.convocatoriaEntidadFinanciadoraRepository.save(ConvocatoriaEntidadFinanciadora.builder()
+                .convocatoriaId(convocatoriaClonedId).entidadRef(entidad.getEntidadRef())
+                .fuenteFinanciacion(entidad.getFuenteFinanciacion()).tipoFinanciacion(entidad.getTipoFinanciacion())
+                .porcentajeFinanciacion(entidad.getPorcentajeFinanciacion())
+                .importeFinanciacion(entidad.getImporteFinanciacion()).build()));
   }
 
   /**
@@ -191,13 +188,12 @@ public class ConvocatoriaClonerService {
    */
   public void clonePeriodosJustificacion(Long convocatoriaToCloneId, Long convocatoriaClonedId) {
     this.convocatoriaPeriodoJustificacionRepository.findAllByConvocatoriaId(convocatoriaToCloneId).stream()
-        .forEach(periodo -> {
-          this.convocatoriaPeriodoJustificacionRepository.save(ConvocatoriaPeriodoJustificacion.builder()
-              .convocatoriaId(convocatoriaClonedId).fechaFinPresentacion(periodo.getFechaFinPresentacion())
-              .numPeriodo(periodo.getNumPeriodo()).fechaInicioPresentacion(periodo.getFechaInicioPresentacion())
-              .mesFinal(periodo.getMesFinal()).mesInicial(periodo.getMesInicial())
-              .observaciones(periodo.getObservaciones()).tipo(periodo.getTipo()).build());
-        });
+        .forEach(
+            periodo -> this.convocatoriaPeriodoJustificacionRepository.save(ConvocatoriaPeriodoJustificacion.builder()
+                .convocatoriaId(convocatoriaClonedId).fechaFinPresentacion(periodo.getFechaFinPresentacion())
+                .numPeriodo(periodo.getNumPeriodo()).fechaInicioPresentacion(periodo.getFechaInicioPresentacion())
+                .mesFinal(periodo.getMesFinal()).mesInicial(periodo.getMesInicial())
+                .observaciones(periodo.getObservaciones()).tipo(periodo.getTipo()).build()));
   }
 
   /**
@@ -214,14 +210,13 @@ public class ConvocatoriaClonerService {
    */
   public void cloneConvocatoriaPeriodosSeguimientoCientifico(Long convocatoriaToCloneId, Long convocatoriaClonedId) {
     this.convocatoriaPeriodoSeguimientoCientificoRepository
-        .findAllByConvocatoriaIdOrderByMesInicial(convocatoriaToCloneId).stream().forEach(periodo -> {
-          this.convocatoriaPeriodoSeguimientoCientificoRepository
-              .save(ConvocatoriaPeriodoSeguimientoCientifico.builder().convocatoriaId(convocatoriaClonedId)
-                  .fechaInicioPresentacion(periodo.getFechaInicioPresentacion())
-                  .fechaFinPresentacion(periodo.getFechaFinPresentacion()).mesInicial(periodo.getMesInicial())
-                  .mesFinal(periodo.getMesFinal()).numPeriodo(periodo.getNumPeriodo())
-                  .tipoSeguimiento(periodo.getTipoSeguimiento()).observaciones(periodo.getObservaciones()).build());
-        });
+        .findAllByConvocatoriaIdOrderByMesInicial(convocatoriaToCloneId).stream()
+        .forEach(periodo -> this.convocatoriaPeriodoSeguimientoCientificoRepository
+            .save(ConvocatoriaPeriodoSeguimientoCientifico.builder().convocatoriaId(convocatoriaClonedId)
+                .fechaInicioPresentacion(periodo.getFechaInicioPresentacion())
+                .fechaFinPresentacion(periodo.getFechaFinPresentacion()).mesInicial(periodo.getMesInicial())
+                .mesFinal(periodo.getMesFinal()).numPeriodo(periodo.getNumPeriodo())
+                .tipoSeguimiento(periodo.getTipoSeguimiento()).observaciones(periodo.getObservaciones()).build()));
   }
 
   /**
@@ -262,22 +257,22 @@ public class ConvocatoriaClonerService {
     if (!requisito.isPresent()) {
       return;
     }
-    this.requisitoIPRepository.save(createRequisitoIP(requisito, convocatoriaClonedId));
+    this.requisitoIPRepository.save(createRequisitoIP(requisito.get(), convocatoriaClonedId));
 
     this.cloneRequisitoIPNivelesAcademicos(convocatoriaToCloneId, convocatoriaClonedId);
     this.cloneRequisitoIPCategoriasProfesionales(convocatoriaToCloneId, convocatoriaClonedId);
   }
 
-  private RequisitoIP createRequisitoIP(Optional<RequisitoIP> requisito, Long convocatoriaClonedId) {
+  private RequisitoIP createRequisitoIP(RequisitoIP requisito, Long convocatoriaClonedId) {
 
-    return RequisitoIP.builder().id(convocatoriaClonedId).numMaximoIP(requisito.get().getNumMaximoIP())
-        .edadMaxima(requisito.get().getEdadMaxima()).sexoRef(requisito.get().getSexoRef())
-        .vinculacionUniversidad(requisito.get().getVinculacionUniversidad())
-        .numMinimoCompetitivos(requisito.get().getNumMinimoCompetitivos())
-        .numMinimoNoCompetitivos(requisito.get().getNumMinimoNoCompetitivos())
-        .numMaximoCompetitivosActivos(requisito.get().getNumMaximoCompetitivosActivos())
-        .numMaximoNoCompetitivosActivos(requisito.get().getNumMaximoNoCompetitivosActivos())
-        .otrosRequisitos(requisito.get().getOtrosRequisitos()).build();
+    return RequisitoIP.builder().id(convocatoriaClonedId).numMaximoIP(requisito.getNumMaximoIP())
+        .edadMaxima(requisito.getEdadMaxima()).sexoRef(requisito.getSexoRef())
+        .vinculacionUniversidad(requisito.getVinculacionUniversidad())
+        .numMinimoCompetitivos(requisito.getNumMinimoCompetitivos())
+        .numMinimoNoCompetitivos(requisito.getNumMinimoNoCompetitivos())
+        .numMaximoCompetitivosActivos(requisito.getNumMaximoCompetitivosActivos())
+        .numMaximoNoCompetitivosActivos(requisito.getNumMaximoNoCompetitivosActivos())
+        .otrosRequisitos(requisito.getOtrosRequisitos()).build();
   }
 
   /**
@@ -291,10 +286,9 @@ public class ConvocatoriaClonerService {
    * @param requisitoIPClonedId id del {@link RequisitoIP} clonado
    */
   private void cloneRequisitoIPNivelesAcademicos(Long requisitoIPToClneId, Long requisitoIPClonedId) {
-    this.requisitoIPNivelAcademicoRepository.findByRequisitoIPId(requisitoIPToClneId).stream().forEach(nivel -> {
-      this.requisitoIPNivelAcademicoRepository.save(RequisitoIPNivelAcademico.builder()
-          .requisitoIPId(requisitoIPClonedId).nivelAcademicoRef(nivel.getNivelAcademicoRef()).build());
-    });
+    this.requisitoIPNivelAcademicoRepository.findByRequisitoIPId(requisitoIPToClneId).stream()
+        .forEach(nivel -> this.requisitoIPNivelAcademicoRepository.save(RequisitoIPNivelAcademico.builder()
+            .requisitoIPId(requisitoIPClonedId).nivelAcademicoRef(nivel.getNivelAcademicoRef()).build()));
   }
 
   /**
@@ -309,11 +303,9 @@ public class ConvocatoriaClonerService {
    */
   private void cloneRequisitoIPCategoriasProfesionales(Long requisitoIPToClneId, Long requisitoIPClonedId) {
     this.requisitoIPCategoriaProfesionalRepository.findByRequisitoIPId(requisitoIPToClneId).stream()
-        .forEach(categoria -> {
-          this.requisitoIPCategoriaProfesionalRepository
-              .save(RequisitoIPCategoriaProfesional.builder().requisitoIPId(requisitoIPClonedId)
-                  .categoriaProfesionalRef(categoria.getCategoriaProfesionalRef()).build());
-        });
+        .forEach(categoria -> this.requisitoIPCategoriaProfesionalRepository
+            .save(RequisitoIPCategoriaProfesional.builder().requisitoIPId(requisitoIPClonedId)
+                .categoriaProfesionalRef(categoria.getCategoriaProfesionalRef()).build()));
   }
 
   /**
@@ -349,21 +341,21 @@ public class ConvocatoriaClonerService {
       return;
     }
 
-    this.requisitoEquipoRepository.save(createRequisitoEquipo(convocatoriaClonedId, requisito));
+    this.requisitoEquipoRepository.save(createRequisitoEquipo(convocatoriaClonedId, requisito.get()));
 
     this.cloneRequisitoEquipoNivelesAcademicos(convocatoriaToCloneId, convocatoriaClonedId);
     this.cloneRequisitoEquipoCategoriasProfesionales(convocatoriaToCloneId, convocatoriaClonedId);
   }
 
-  private RequisitoEquipo createRequisitoEquipo(Long convocatoriaClonedId, Optional<RequisitoEquipo> requisito) {
+  private RequisitoEquipo createRequisitoEquipo(Long convocatoriaClonedId, RequisitoEquipo requisito) {
 
-    return RequisitoEquipo.builder().edadMaxima(requisito.get().getEdadMaxima()).sexoRef(requisito.get().getSexoRef())
-        .ratioSexo(requisito.get().getRatioSexo()).vinculacionUniversidad(requisito.get().getVinculacionUniversidad())
-        .numMinimoCompetitivos(requisito.get().getNumMinimoCompetitivos())
-        .numMinimoNoCompetitivos(requisito.get().getNumMinimoNoCompetitivos())
-        .numMaximoCompetitivosActivos(requisito.get().getNumMaximoNoCompetitivosActivos())
-        .numMaximoNoCompetitivosActivos(requisito.get().getNumMaximoNoCompetitivosActivos())
-        .otrosRequisitos(requisito.get().getOtrosRequisitos()).id(convocatoriaClonedId).build();
+    return RequisitoEquipo.builder().edadMaxima(requisito.getEdadMaxima()).sexoRef(requisito.getSexoRef())
+        .ratioSexo(requisito.getRatioSexo()).vinculacionUniversidad(requisito.getVinculacionUniversidad())
+        .numMinimoCompetitivos(requisito.getNumMinimoCompetitivos())
+        .numMinimoNoCompetitivos(requisito.getNumMinimoNoCompetitivos())
+        .numMaximoCompetitivosActivos(requisito.getNumMaximoNoCompetitivosActivos())
+        .numMaximoNoCompetitivosActivos(requisito.getNumMaximoNoCompetitivosActivos())
+        .otrosRequisitos(requisito.getOtrosRequisitos()).id(convocatoriaClonedId).build();
   }
 
   /**
@@ -379,10 +371,8 @@ public class ConvocatoriaClonerService {
    */
   private void cloneRequisitoEquipoNivelesAcademicos(Long requisitoEquipoToClneId, Long requisitoEquipoClonedId) {
     this.requisitoEquipoNivelAcademicoRepository.findByRequisitoEquipoId(requisitoEquipoToClneId).stream()
-        .forEach(nivel -> {
-          this.requisitoEquipoNivelAcademicoRepository.save(RequisitoEquipoNivelAcademico.builder()
-              .requisitoEquipoId(requisitoEquipoClonedId).nivelAcademicoRef(nivel.getNivelAcademicoRef()).build());
-        });
+        .forEach(nivel -> this.requisitoEquipoNivelAcademicoRepository.save(RequisitoEquipoNivelAcademico.builder()
+            .requisitoEquipoId(requisitoEquipoClonedId).nivelAcademicoRef(nivel.getNivelAcademicoRef()).build()));
   }
 
   /**
@@ -398,11 +388,9 @@ public class ConvocatoriaClonerService {
    */
   private void cloneRequisitoEquipoCategoriasProfesionales(Long requisitoEquipoToClneId, Long requisitoEquipoClonedId) {
     this.requisitoEquipoCategoriaProfesionalRepository.findByRequisitoEquipoId(requisitoEquipoToClneId).stream()
-        .forEach(categoria -> {
-          this.requisitoEquipoCategoriaProfesionalRepository
-              .save(RequisitoEquipoCategoriaProfesional.builder().requisitoEquipoId(requisitoEquipoClonedId)
-                  .categoriaProfesionalRef(categoria.getCategoriaProfesionalRef()).build());
-        });
+        .forEach(categoria -> this.requisitoEquipoCategoriaProfesionalRepository
+            .save(RequisitoEquipoCategoriaProfesional.builder().requisitoEquipoId(requisitoEquipoClonedId)
+                .categoriaProfesionalRef(categoria.getCategoriaProfesionalRef()).build()));
   }
 
   /**
@@ -433,10 +421,8 @@ public class ConvocatoriaClonerService {
               .save(createConvocatoriaConceptoGasto(convocatoriaClonedId, convConceptoGasto));
           this.convocatoriaConceptoGastoCodigoEcRepository
               .findAllByConvocatoriaConceptoGastoId(convConceptoGasto.getId()).stream()
-              .forEach(convConceptoGastoCodEc -> {
-                this.convocatoriaConceptoGastoCodigoEcRepository.save(
-                    createConvocatoriaConceptoGastoCodigoEc(clonedConvocatoriaConceptoGasto, convConceptoGastoCodEc));
-              });
+              .forEach(convConceptoGastoCodEc -> this.convocatoriaConceptoGastoCodigoEcRepository.save(
+                  createConvocatoriaConceptoGastoCodigoEc(clonedConvocatoriaConceptoGasto, convConceptoGastoCodEc)));
         });
   }
 
@@ -471,10 +457,9 @@ public class ConvocatoriaClonerService {
    */
   public void clonePartidasPresupuestarias(Long convocatoriaToCloneId, Long convocatoriaClonedId) {
 
-    this.convocatoriaPartidaRepository.findByConvocatoriaId(convocatoriaToCloneId).stream().forEach(partida -> {
-      this.convocatoriaPartidaRepository
-          .save(ConvocatoriaPartida.builder().convocatoriaId(convocatoriaClonedId).codigo(partida.getCodigo())
-              .descripcion(partida.getDescripcion()).tipoPartida(partida.getTipoPartida()).build());
-    });
+    this.convocatoriaPartidaRepository.findByConvocatoriaId(convocatoriaToCloneId).stream()
+        .forEach(partida -> this.convocatoriaPartidaRepository
+            .save(ConvocatoriaPartida.builder().convocatoriaId(convocatoriaClonedId).codigo(partida.getCodigo())
+                .descripcion(partida.getDescripcion()).tipoPartida(partida.getTipoPartida()).build()));
   }
 }

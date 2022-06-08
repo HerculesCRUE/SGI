@@ -71,14 +71,12 @@ export class InvencionGastosComponent extends FragmentComponent implements OnIni
       this.formPart.getGastoDetalle(wrapper.value.gasto).pipe(
       ).subscribe(gastoDetalle => {
         const config: MatDialogConfig<InvencionGastoModalData> = {
-          panelClass: 'sgi-dialog-container',
           data: {
             selectedInvencionId: this.formPart.invencionId,
             selectedInvencionGasto: wrapper.value,
             columns: this.formPart.columns,
             gastoDetalle: gastoDetalle
-          },
-          minWidth: '700px',
+          }
         };
         const dialogRef = this.matDialog.open(InvencionGastoModalComponent, config);
         dialogRef.afterClosed().subscribe(

@@ -9,6 +9,7 @@ import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
+import org.crue.hercules.sgi.framework.data.jpa.domain.Activable_;
 import org.crue.hercules.sgi.framework.data.jpa.domain.Auditable_;
 import org.crue.hercules.sgi.prc.model.ConfiguracionBaremo;
 import org.crue.hercules.sgi.prc.model.ConfiguracionBaremo.TipoFuente;
@@ -79,6 +80,8 @@ public class ProduccionCientificaPredicateResolverApi extends ProduccionCientifi
         cb.greaterThanOrEqualTo(joinEstado.get(Auditable_.lastModifiedDate), fechaModificacion),
         cb.equal(rootConfiguracionBaremo.get(ConfiguracionBaremo_.epigrafeCVN),
             root.get(ProduccionCientifica_.epigrafeCVN)),
+        cb.isTrue(rootConfiguracionBaremo.get(Activable_.activo)),
+        cb.equal(cb.substring(root.get(ProduccionCientifica_.produccionCientificaRef), 0, 4), "CVN_"),
         cb.or(cb.equal(rootConfiguracionBaremo.get(ConfiguracionBaremo_.tipoFuente), TipoFuente.CVN),
             cb.equal(rootConfiguracionBaremo.get(ConfiguracionBaremo_.tipoFuente), TipoFuente.CVN_OTRO_SISTEMA)),
         cb.or(

@@ -1,34 +1,28 @@
 <sgi-action-dialog title="{{'title.csp.proyecto.cambio-estado' | translate}}">
   <form [formGroup]="formGroup">
-    <div [fxLayout]="fxLayoutProperties.layout" [fxLayoutAlign]="fxLayoutProperties.layoutAlign"
-      [fxLayoutGap]="fxLayoutProperties.gap">
+    <div fxLayout="row">
       <!-- Estado actual -->
-      <div>
-        <mat-form-field>
-          <mat-label>{{'csp.proyecto.cambio-estado.actual' | translate}}</mat-label>
-          <sgi-select-enum formControlName="estadoActual" [enumMap]="ESTADO_MAP">
-          </sgi-select-enum>
-        </mat-form-field>
-      </div>
+      <mat-form-field>
+        <mat-label>{{'csp.proyecto.cambio-estado.actual' | translate}}</mat-label>
+        <sgi-select-enum formControlName="estadoActual" [enumMap]="ESTADO_MAP">
+        </sgi-select-enum>
+      </mat-form-field>
     </div>
-    <div [fxLayout]="fxLayoutProperties.layout" [fxLayoutAlign]="fxLayoutProperties.layoutAlign"
-      [fxLayoutGap]="fxLayoutProperties.gap">
+    <div fxLayout="row">
       <!-- Estado nuevo -->
-      <div>
-        <mat-form-field>
-          <mat-label>{{'csp.proyecto.cambio-estado.nuevo' | translate}}</mat-label>
-          <sgi-select-enum formControlName="estadoNuevo" [enumMap]="estadosNuevos" required>
-          </sgi-select-enum>
-          <mat-error *ngIf="formGroup.get('estadoNuevo').errors?.required">
-            {{'error.required.entity' | translate:msgParamNuevoEstadoEntity}}
-          </mat-error>
-        </mat-form-field>
-      </div>
+      <mat-form-field>
+        <mat-label>{{'csp.proyecto.cambio-estado.nuevo' | translate}}</mat-label>
+        <sgi-select-enum formControlName="estadoNuevo" [enumMap]="estadosNuevos" required>
+        </sgi-select-enum>
+        <mat-error *ngIf="formGroup.get('estadoNuevo').errors?.required">
+          {{'error.required.entity' | translate:msgParamNuevoEstadoEntity}}
+        </mat-error>
+      </mat-form-field>
     </div>
     <!-- Comentario -->
-    <div [fxLayout]="fxLayoutProperties.layout" [fxLayoutAlign]="fxLayoutProperties.layoutAlign">
-      <span class="mat-small">{{'csp.proyecto.cambio-estado.comentario' | translate}}</span>
+    <div fxLayout="row">
       <mat-form-field fxFill>
+        <mat-label>{{'csp.proyecto.cambio-estado.comentario' | translate}}</mat-label>
         <textarea matInput formControlName="comentario" type="text">
             </textarea>
         <mat-error *ngIf="formGroup.get('comentario').errors?.maxlength">

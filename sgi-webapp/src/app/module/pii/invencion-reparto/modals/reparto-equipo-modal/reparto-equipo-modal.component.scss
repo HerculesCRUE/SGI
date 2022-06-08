@@ -1,9 +1,9 @@
 :host {
-  .row {
-    margin-bottom: 1em;
-  }
-  
-  .error-message {
-    text-align: center;
+  sgi-dialog-content {
+    min-width: 40vw;
+
+    .error-message {
+      text-align: center;
+    }
   }
 }

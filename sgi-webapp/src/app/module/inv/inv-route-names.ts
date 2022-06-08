@@ -13,5 +13,13 @@ export const INV_ROUTE_NAMES = {
   CONVOCATORIAS: 'convocatorias',
   SOLICITUDES: 'solicitudes',
   PROYECTOS: 'proyectos',
-  AUTORIZACIONES: 'autorizaciones'
+  AUTORIZACIONES: 'autorizaciones',
+  GRUPOS: 'grupos',
+  VALIDACION_PUBLICACIONES: 'validacion-publicaciones',
+  VALIDACION_CONGRESOS: 'validacion-congresos',
+  VALIDACION_OBRAS_ARTISTICAS: 'validacion-obras-artisticas',
+  VALIDACION_COMITES_EDITORIALES: 'validacion-comites-editoriales',
+  VALIDACION_TESIS_TFM_TFG: 'validacion-tesis-tfm-tfg',
+  VALIDACION_ACTIVIDADES_IDI: 'validacion-actividades-idi',
+  INFORMES: 'informes',
 };

@@ -12,9 +12,6 @@ describe('SolicitudPresupuestoModalComponent', () => {
   let fixture: ComponentFixture<SolicitiudPresupuestoModalComponent>;
 
   beforeEach(waitForAsync(() => {
-    const mockDialogRef = {
-      close: jasmine.createSpy('close'),
-    };
     // Mock MAT_DIALOG
     const matDialogData = {} as SolicitudPresupuestoModalData;
 
@@ -30,7 +27,7 @@ describe('SolicitudPresupuestoModalComponent', () => {
         TestUtils.getIdiomas()
       ],
       providers: [
-        { provide: MatDialogRef, useValue: mockDialogRef },
+        { provide: MatDialogRef, useValue: TestUtils.buildDialogCommonMatDialogRef() },
         { provide: MAT_DIALOG_DATA, useValue: matDialogData },
       ]
     })

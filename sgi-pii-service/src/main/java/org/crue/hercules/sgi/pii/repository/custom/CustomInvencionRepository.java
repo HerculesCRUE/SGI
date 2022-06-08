@@ -4,6 +4,8 @@ import java.time.Instant;
 import java.util.List;
 
 import org.crue.hercules.sgi.pii.dto.InvencionDto;
+import org.crue.hercules.sgi.pii.model.Invencion;
+import org.springframework.data.jpa.domain.Specification;
 
 public interface CustomInvencionRepository {
 
@@ -20,5 +22,14 @@ public interface CustomInvencionRepository {
    */
   List<InvencionDto> findInvencionesProduccionCientifica(Instant fechaInicioBaremacion,
       Instant fechaFinBaremacion, String universidadId);
+
+  /**
+   * Obtiene los ids de {@link Invencion} que cumplen con la specification
+   * recibida.
+   * 
+   * @param specification condiciones que deben cumplir.
+   * @return lista de ids de {@link Invencion}.
+   */
+  List<Long> findIds(Specification<Invencion> specification);
 
 }

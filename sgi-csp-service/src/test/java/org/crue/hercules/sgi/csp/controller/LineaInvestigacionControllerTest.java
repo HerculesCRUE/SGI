@@ -264,7 +264,7 @@ public class LineaInvestigacionControllerTest extends BaseControllerTest {
   }
 
   @Test
-  @WithMockUser(username = "user", authorities = { "AUTH" })
+  @WithMockUser(username = "user", authorities = { "CSP-LIN-E" })
   public void findById_WithExistingId_ReturnsLineaInvestigacion() throws Exception {
     // given: existing id
     BDDMockito.given(service.findById(ArgumentMatchers.anyLong())).willAnswer(new Answer<LineaInvestigacion>() {
@@ -287,7 +287,7 @@ public class LineaInvestigacionControllerTest extends BaseControllerTest {
   }
 
   @Test
-  @WithMockUser(username = "user", authorities = { "AUTH" })
+  @WithMockUser(username = "user", authorities = { "CSP-LIN-E" })
   public void findById_WithNoExistingId_Returns404() throws Exception {
     // given: no existing id
     BDDMockito.given(service.findById(ArgumentMatchers.anyLong())).will((InvocationOnMock invocation) -> {
@@ -304,7 +304,7 @@ public class LineaInvestigacionControllerTest extends BaseControllerTest {
   }
 
   @Test
-  @WithMockUser(username = "user", authorities = { "CSP-LIN-C", "CSP-LIN-E" })
+  @WithMockUser(username = "user", authorities = { "CSP-LIN-E" })
   public void findAll_WithPaging_ReturnsLineaInvestigacionSubList() throws Exception {
     // given: One hundred LineaInvestigacion
     List<LineaInvestigacion> data = new ArrayList<>();
@@ -355,7 +355,7 @@ public class LineaInvestigacionControllerTest extends BaseControllerTest {
   }
 
   @Test
-  @WithMockUser(username = "user", authorities = { "CSP-LIN-C", "CSP-LIN-E" })
+  @WithMockUser(username = "user", authorities = { "CSP-LIN-E" })
   public void findAll_EmptyList_Returns204() throws Exception {
     // given: no data LineaInvestigacion
     BDDMockito.given(service.findAll(ArgumentMatchers.<String>any(), ArgumentMatchers.<Pageable>any()))
@@ -377,7 +377,7 @@ public class LineaInvestigacionControllerTest extends BaseControllerTest {
   }
 
   @Test
-  @WithMockUser(username = "user", authorities = { "CSP-LIN-V", "CSP-LIN-C", "CSP-LIN-E", "CSP-LIN-B",
+  @WithMockUser(username = "user", authorities = { "CSP-LIN-V", "CSP-LIN-E", "CSP-LIN-B",
       "CSP-LIN-R" })
   public void findAllTodos_WithPaging_ReturnsLineaInvestigacionSubList() throws Exception {
     // given: One hundred LineaInvestigacion

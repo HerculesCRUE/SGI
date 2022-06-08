@@ -1,94 +1,70 @@
-<div class="sgi-dialog-header" fxLayout="row" fxLayoutGap="20px">
-  <span fxFlexAlign="center" mat-mat-dialog-title role="heading" aria-level="3" fxFlex>{{title | translate}}</span>
-  <button fxFlex="nogrow" mat-icon-button mat-dialog-close>
-    <mat-icon class="close-icon">close</mat-icon>
-  </button>
-</div>
-<mat-dialog-content>
+<sgi-dialog-header [title]="title"></sgi-dialog-header>
+<sgi-dialog-content>
   <form [formGroup]="formGroup">
-    <div [fxLayout]="fxLayoutProperties.layout" [fxLayoutAlign]="fxLayoutProperties.layoutAlign"
-      [fxLayoutGap]="fxLayoutProperties.gap">
+    <div fxLayout="row" fxLayoutGap="10px">
       <!-- Pais -->
-      <div [fxFlex.sm]="fxFlexProperties50.sm" [fxFlex.md]="fxFlexProperties50.md"
-        [fxFlex.gt-md]="fxFlexProperties50.gtMd" [fxFlexOrder]="fxFlexProperties50.order">
-        <mat-form-field fxFill>
-          <mat-label>{{'pii.sector-licenciado.pais' | translate}}</mat-label>
-          <sgi-select-entity formControlName="pais" [options]=" paises$ | async" required>
-          </sgi-select-entity>
-          <mat-error *ngIf="formGroup.controls.pais.errors?.required">
-            {{'error.required.entity' | translate:msgParamPaisEntity}}
-          </mat-error>
-        </mat-form-field>
-      </div>
+      <mat-form-field fxFlex>
+        <mat-label>{{'pii.sector-licenciado.pais' | translate}}</mat-label>
+        <sgi-select-entity formControlName="pais" [options]=" paises$ | async" required>
+        </sgi-select-entity>
+        <mat-error *ngIf="formGroup.controls.pais.errors?.required">
+          {{'error.required.entity' | translate:msgParamPaisEntity}}
+        </mat-error>
+      </mat-form-field>
       <!-- Exclusividad -->
-      <div [fxFlex.sm]="fxFlexProperties50.sm" [fxFlex.md]="fxFlexProperties50.md"
-        [fxFlex.gt-md]="fxFlexProperties50.gtMd" [fxFlexOrder]="fxFlexProperties50.order">
-        <mat-form-field fxFill>
-          <mat-label>{{'pii.sector-licenciado.exclusividad' | translate}}</mat-label>
-          <sgi-select-boolean formControlName="exclusividad" required>
-          </sgi-select-boolean>
-          <mat-error *ngIf="formGroup.controls.exclusividad.errors?.required">
-            {{'error.required.entity' | translate:msgParamExclusividadEntity}}
-          </mat-error>
-        </mat-form-field>
-      </div>
-
+      <mat-form-field fxFlex>
+        <mat-label>{{'pii.sector-licenciado.exclusividad' | translate}}</mat-label>
+        <sgi-select-boolean formControlName="exclusividad" required>
+        </sgi-select-boolean>
+        <mat-error *ngIf="formGroup.controls.exclusividad.errors?.required">
+          {{'error.required.entity' | translate:msgParamExclusividadEntity}}
+        </mat-error>
+      </mat-form-field>
     </div>
 
-    <div [fxLayout]="fxLayoutProperties.layout" [fxLayoutAlign]="fxLayoutProperties.layoutAlign"
-      [fxLayoutGap]="fxLayoutProperties.gap">
+    <div fxLayout="row" fxLayoutGap="10px">
       <!-- Fecha Inicio -->
-      <div [fxFlex.sm]="fxFlexProperties50.sm" [fxFlex.md]="fxFlexProperties50.md"
-        [fxFlex.gt-md]="fxFlexProperties50.gtMd" [fxFlexOrder]="fxFlexProperties50.order">
-        <mat-form-field fxFill>
-          <mat-label>{{'pii.sector-licenciado.fecha-inicio' | translate}}</mat-label>
-          <input matInput formControlName="fechaInicio" [matDatepicker]="fechaInicio" required>
-          <mat-datepicker-toggle matSuffix [for]="fechaInicio"></mat-datepicker-toggle>
-          <mat-datepicker #fechaInicio></mat-datepicker>
-          <mat-error *ngIf="formGroup.controls.fechaInicio.errors?.required">
-            {{'error.required.entity' | translate:msgParamFechaInicioEntity}}
-          </mat-error>
-        </mat-form-field>
-      </div>
+      <mat-form-field fxFlex>
+        <mat-label>{{'pii.sector-licenciado.fecha-inicio' | translate}}</mat-label>
+        <input matInput formControlName="fechaInicio" [matDatepicker]="fechaInicio" required>
+        <mat-datepicker-toggle matSuffix [for]="fechaInicio"></mat-datepicker-toggle>
+        <mat-datepicker #fechaInicio></mat-datepicker>
+        <mat-error *ngIf="formGroup.controls.fechaInicio.errors?.required">
+          {{'error.required.entity' | translate:msgParamFechaInicioEntity}}
+        </mat-error>
+      </mat-form-field>
       <!-- Fecha Fin -->
-      <div [fxFlex.sm]="fxFlexProperties50.sm" [fxFlex.md]="fxFlexProperties50.md"
-        [fxFlex.gt-md]="fxFlexProperties50.gtMd" [fxFlexOrder]="fxFlexProperties50.order">
-        <mat-form-field fxFill>
-          <mat-label>{{'pii.sector-licenciado.fecha-fin' | translate}}</mat-label>
-          <input matInput formControlName="fechaFin" [matDatepicker]="fechaFin" required>
-          <mat-datepicker-toggle matSuffix [for]="fechaFin"></mat-datepicker-toggle>
-          <mat-datepicker #fechaFin></mat-datepicker>
-          <mat-error *ngIf="formGroup.controls.fechaFin.errors?.required">
-            {{'error.required.entity' | translate:msgParamFechaFinEntity}}
-          </mat-error>
-          <mat-error *ngIf="formGroup.controls.fechaFin.errors?.after">
-            {{'error.after.param' | translate:msgParamFechaInicioEntity}}
-          </mat-error>
-        </mat-form-field>
-      </div>
+      <mat-form-field fxFlex>
+        <mat-label>{{'pii.sector-licenciado.fecha-fin' | translate}}</mat-label>
+        <input matInput formControlName="fechaFin" [matDatepicker]="fechaFin" required>
+        <mat-datepicker-toggle matSuffix [for]="fechaFin"></mat-datepicker-toggle>
+        <mat-datepicker #fechaFin></mat-datepicker>
+        <mat-error *ngIf="formGroup.controls.fechaFin.errors?.required">
+          {{'error.required.entity' | translate:msgParamFechaFinEntity}}
+        </mat-error>
+        <mat-error *ngIf="formGroup.controls.fechaFin.errors?.after">
+          {{'error.after.param' | translate:msgParamFechaInicioEntity}}
+        </mat-error>
+      </mat-form-field>
     </div>
 
     <!-- Sector -->
-    <div [fxLayout]="fxLayoutProperties.layout" [fxLayoutAlign]="fxLayoutProperties.layoutAlign"
-      [fxLayoutGap]="fxLayoutProperties.gap">
-
-      <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
-        [fxFlexOrder]="fxFlexProperties.order">
-        <mat-form-field fxFill>
-          <mat-label>{{'pii.sector-licenciado.sector' | translate}}</mat-label>
-          <sgi-select-sector-aplicacion formControlName="sector" required>
-          </sgi-select-sector-aplicacion>
-          <mat-error *ngIf="formGroup.controls.sector.errors?.required">
-            {{'error.required.entity' | translate:msgParamSectorEntity}}
-          </mat-error>
-        </mat-form-field>
-      </div>
+    <div fxLayout="row">
+      <mat-form-field fxFlex>
+        <mat-label>{{'pii.sector-licenciado.sector' | translate}}</mat-label>
+        <sgi-select-sector-aplicacion formControlName="sector" required>
+        </sgi-select-sector-aplicacion>
+        <mat-error *ngIf="formGroup.controls.sector.errors?.required">
+          {{'error.required.entity' | translate:msgParamSectorEntity}}
+        </mat-error>
+      </mat-form-field>
     </div>
   </form>
 
-</mat-dialog-content>
+</sgi-dialog-content>
 <mat-dialog-actions>
-  <button color="accent" (click)="saveOrUpdate()" mat-raised-button type="submit" *ngIf="!data.readonly">
+  <button color="accent" (click)="doAction()" [disabled]="this.actionDisabled" mat-raised-button type="submit"
+    *ngIf="!data.readonly">
     <mat-icon class="save-icon">save</mat-icon>{{textSaveOrUpdate | translate}}
   </button>
   <button class="link-cancelar" mat-button type="button" mat-dialog-close>{{'btn.cancel' |

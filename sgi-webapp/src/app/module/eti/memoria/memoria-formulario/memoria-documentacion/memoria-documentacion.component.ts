@@ -6,6 +6,7 @@ import { MatTableDataSource } from '@angular/material/table';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { FragmentComponent } from '@core/component/fragment.component';
 import { MSG_PARAMS } from '@core/i18n';
+import { COMITE } from '@core/models/eti/comite';
 import { IDocumentacionMemoria } from '@core/models/eti/documentacion-memoria';
 import { ESTADO_RETROSPECTIVA, IEstadoRetrospectiva } from '@core/models/eti/estado-retrospectiva';
 import { FORMULARIO } from '@core/models/eti/formulario';
@@ -101,6 +102,10 @@ export class MemoriaDocumentacionComponent extends FragmentComponent implements 
     return TIPO_DOCUMENTACION;
   }
 
+  get showRetrospectiva(): boolean {
+    return this.actionService.getComite().id === COMITE.CEEA;
+  }
+
   constructor(
     private readonly dialogService: DialogService,
     private matDialog: MatDialog,
@@ -193,7 +198,6 @@ export class MemoriaDocumentacionComponent extends FragmentComponent implements 
       comite: this.actionService.getComite()
     };
     const config = {
-      panelClass: 'sgi-dialog-container',
       data
     };
 

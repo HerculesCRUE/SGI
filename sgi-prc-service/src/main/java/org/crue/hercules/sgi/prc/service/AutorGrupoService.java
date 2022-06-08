@@ -161,13 +161,13 @@ public class AutorGrupoService {
   /**
    * Obtiene todos los {@link AutorGrupo} por su autorId.
    *
-   * @param autorId el id de {@link ProduccionCientifica}.
+   * @param autorId el id de {@link Autor}.
    * @return listado de {@link AutorGrupo}.
    */
-  public List<AutorGrupo> findAllByProduccionCientificaId(Long autorId) {
-    log.debug("findAllByProduccionCientificaId(Long prodduccionCientificaId)  - start");
+  public List<AutorGrupo> findAllByAutorId(Long autorId) {
+    log.debug("findAllByAutorId(Long autorId)  - start");
     final List<AutorGrupo> returnValue = repository.findAllByAutorId(autorId);
-    log.debug("findAllByProduccionCientificaId(Long prodduccionCientificaId)  - end");
+    log.debug("findAllByAutorId(Long autorId)  - end");
     return returnValue;
   }
 
@@ -203,6 +203,41 @@ public class AutorGrupoService {
     log.debug("deleteInBulkByAutorId(Long autorId)  - start");
     final int returnValue = repository.deleteInBulkByAutorId(autorId);
     log.debug("deleteInBulkByAutorId(Long autorId)  - end");
+    return returnValue;
+  }
+
+  /**
+   * Obtiene todos los {@link AutorGrupo} de una {@link ProduccionCientifica}.
+   *
+   * @param produccionCientificaId el id de {@link ProduccionCientifica}.
+   * @return listado de {@link AutorGrupo}.
+   */
+  public List<AutorGrupo> findAllByProduccionCientificaId(Long produccionCientificaId) {
+    log.debug("findAllByProduccionCientificaId(Long produccionCientificaId)  - start");
+    Specification<AutorGrupo> specs = AutorGrupoSpecifications.byProduccionCientificaId(produccionCientificaId);
+    final List<AutorGrupo> returnValue = repository.findAll(specs);
+    log.debug("findAllByProduccionCientificaId(Long produccionCientificaId)  - end");
+    return returnValue;
+  }
+
+  /**
+   * Obtiene todos los {@link AutorGrupo} de una {@link ProduccionCientifica} y
+   * que pertenezcan a uno de los grupos indicados.
+   * 
+   * @param produccionCientificaId el id de {@link ProduccionCientifica}.
+   * @param gruposRef              lista de los ids de los grupos.
+   * @return listado de {@link AutorGrupo}.
+   */
+  public List<AutorGrupo> findAllByProduccionCientificaIdAndInGruposRef(Long produccionCientificaId,
+      List<Long> gruposRef) {
+    log.debug(
+        "findAllByProduccionCientificaIdAndInGruposRef(Long produccionCientificaId, List<Long> gruposRef) - start");
+    Specification<AutorGrupo> specs = AutorGrupoSpecifications.byProduccionCientificaIdAndInGruposRef(
+        produccionCientificaId,
+        gruposRef);
+    List<AutorGrupo> returnValue = repository.findAll(specs);
+    log.debug(
+        "findAllByProduccionCientificaIdAndInGruposRef(Long produccionCientificaId, List<Long> gruposRef) - end");
     return returnValue;
   }
 }

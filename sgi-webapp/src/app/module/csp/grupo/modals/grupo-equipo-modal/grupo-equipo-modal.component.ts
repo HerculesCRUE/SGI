@@ -3,14 +3,12 @@ import { AbstractControl, FormControl, FormGroup, Validators } from '@angular/fo
 import { MatAutocompleteTrigger } from '@angular/material/autocomplete';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
-import { BaseModalComponent } from '@core/component/base-modal.component';
+import { DialogFormComponent } from '@core/component/dialog-form.component';
 import { MSG_PARAMS } from '@core/i18n';
-import { DEDICACION_MAP, IGrupoEquipo } from '@core/models/csp/grupo-equipo';
+import { Dedicacion, DEDICACION_MAP, IGrupoEquipo } from '@core/models/csp/grupo-equipo';
 import { IRolProyecto } from '@core/models/csp/rol-proyecto';
-import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-properties';
 import { RolProyectoService } from '@core/services/csp/rol-proyecto.service';
 import { PersonaService } from '@core/services/sgp/persona.service';
-import { SnackBarService } from '@core/services/snack-bar.service';
 import { DateValidator } from '@core/validators/date-validator';
 import { IRange } from '@core/validators/range-validator';
 import { TranslateService } from '@ngx-translate/core';
@@ -26,7 +24,7 @@ const MIEMBRO_EQUIPO_PROYECTO_EQUIPO_MIEMBRO_KEY = marker('csp.miembro-equipo-pr
 const MIEMBRO_EQUIPO_PROYECTO_EQUIPO_ROL_PARTICIPACION_KEY = marker('csp.miembro-equipo-proyecto.rol-participacion');
 const MIEMBRO_EQUIPO_PROYECTO_HORA_KEY = marker('csp.miembro-equipo-proyecto.hora');
 const GRUPO_EQUIPO_DEDICACION_KEY = marker('csp.grupo-equipo.dedicacion');
-const GRUPO_EQUIPO_PARTICIPACION_KEY = marker('csp.grupo-equipo.dedicacion');
+const GRUPO_EQUIPO_PARTICIPACION_KEY = marker('csp.grupo-equipo.participacion');
 const TITLE_NEW_ENTITY = marker('title.new.entity');
 
 export interface GrupoEquipoModalData {
@@ -41,15 +39,12 @@ export interface GrupoEquipoModalData {
   templateUrl: './grupo-equipo-modal.component.html',
   styleUrls: ['./grupo-equipo-modal.component.scss']
 })
-export class GrupoEquipoModalComponent extends
-  BaseModalComponent<GrupoEquipoModalData, GrupoEquipoModalComponent> implements OnInit {
+export class GrupoEquipoModalComponent extends DialogFormComponent<GrupoEquipoModalData> implements OnInit {
 
   @ViewChild(MatAutocompleteTrigger) autocomplete: MatAutocompleteTrigger;
-  fxLayoutProperties: FxLayoutProperties;
 
   textSaveOrUpdate: string;
 
-  saveDisabled = false;
   rolesGrupo$: Observable<IRolProyecto[]>;
   colectivosIdRolParticipacion: string[];
 
@@ -67,17 +62,13 @@ export class GrupoEquipoModalComponent extends
   }
 
   constructor(
-    protected snackBarService: SnackBarService,
-    public matDialogRef: MatDialogRef<GrupoEquipoModalComponent>,
+    matDialogRef: MatDialogRef<GrupoEquipoModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data: GrupoEquipoModalData,
     private personaService: PersonaService,
     private rolProyectoService: RolProyectoService,
-    private readonly translate: TranslateService) {
-    super(snackBarService, matDialogRef, data);
-    this.fxLayoutProperties = new FxLayoutProperties();
-    this.fxLayoutProperties.gap = '20px';
-    this.fxLayoutProperties.layout = 'row';
-    this.fxLayoutProperties.xs = 'row';
+    private readonly translate: TranslateService
+  ) {
+    super(matDialogRef, !!data?.entidad?.rol);
 
     this.rolesGrupo$ = this.rolProyectoService.findAll().pipe(
       map(result => result.items)
@@ -106,6 +97,13 @@ export class GrupoEquipoModalComponent extends
         this.formGroup.get('fechaInicio').valueChanges,
         this.formGroup.get('fechaFin').valueChanges
       ).subscribe(() => this.checkRangesDates())
+    );
+
+    this.subscriptions.push(
+      this.formGroup.get('dedicacion').valueChanges
+        .subscribe((dedicacion) => {
+          this.checkSelectedDedicacion(dedicacion);
+        })
     );
   }
 
@@ -156,12 +154,12 @@ export class GrupoEquipoModalComponent extends
     this.translate.get(
       GRUPO_EQUIPO_DEDICACION_KEY,
       MSG_PARAMS.CARDINALIRY.SINGULAR
-    ).subscribe((value) => this.msgParamDedicacionEntity = { entity: value, ...MSG_PARAMS.CARDINALIRY.SINGULAR });
+    ).subscribe((value) => this.msgParamDedicacionEntity = { entity: value, ...MSG_PARAMS.GENDER.FEMALE, ...MSG_PARAMS.CARDINALIRY.SINGULAR });
 
     this.translate.get(
       GRUPO_EQUIPO_PARTICIPACION_KEY,
       MSG_PARAMS.CARDINALIRY.SINGULAR
-    ).subscribe((value) => this.msgParamParticipacionEntity = { entity: value, ...MSG_PARAMS.CARDINALIRY.SINGULAR });
+    ).subscribe((value) => this.msgParamParticipacionEntity = { entity: value, ...MSG_PARAMS.GENDER.MALE, ...MSG_PARAMS.CARDINALIRY.SINGULAR });
 
 
     if (this.data?.entidad?.rol) {
@@ -184,7 +182,7 @@ export class GrupoEquipoModalComponent extends
     }
   }
 
-  protected getFormGroup(): FormGroup {
+  protected buildFormGroup(): FormGroup {
     const formGroup = new FormGroup(
       {
         rolParticipacion: new FormControl(this.data?.entidad?.rol, Validators.required),
@@ -195,14 +193,21 @@ export class GrupoEquipoModalComponent extends
           Validators.required
         ]),
         fechaInicio: new FormControl(this.data?.entidad?.fechaInicio, [
-          DateValidator.isBetween(this.data.fechaInicioMin, this.data.fechaFinMax),
+          this.data.fechaFinMax ? DateValidator.isBetween(this.data.fechaInicioMin, this.data.fechaFinMax) :
+            DateValidator.minDate(this.data.fechaInicioMin),
           Validators.required
         ]),
         fechaFin: new FormControl(this.data?.entidad?.fechaFin, [
-          DateValidator.isBetween(this.data.fechaInicioMin, this.data.fechaFinMax)
+          this.data.fechaFinMax ? DateValidator.isBetween(this.data.fechaInicioMin, this.data.fechaFinMax) :
+            DateValidator.minDate(this.data.fechaInicioMin)
         ]),
         dedicacion: new FormControl(this.data?.entidad?.dedicacion, Validators.required),
-        participacion: new FormControl(this.data?.entidad?.participacion, Validators.required)
+        participacion: new FormControl(this.data?.entidad?.participacion,
+          [
+            Validators.required,
+            Validators.pattern('^[0-9]*$'),
+            Validators.min(0),
+            Validators.max(100)])
       },
       {
         validators: [
@@ -211,10 +216,12 @@ export class GrupoEquipoModalComponent extends
       }
     );
 
+    this.checkSelectedDedicacion(this.data?.entidad?.dedicacion, formGroup);
+
     return formGroup;
   }
 
-  protected getDatosForm(): GrupoEquipoModalData {
+  protected getValue(): GrupoEquipoModalData {
     this.data.entidad.rol = this.formGroup.get('rolParticipacion').value;
     this.data.entidad.persona = this.formGroup.get('miembro').value;
     this.data.entidad.fechaInicio = this.formGroup.get('fechaInicio').value;
@@ -302,6 +309,18 @@ export class GrupoEquipoModalComponent extends
     }
     formControl.errors[errorName] = true;
     formControl.markAsTouched({ onlySelf: true });
+  }
+
+  private checkSelectedDedicacion(dedicacion: Dedicacion, formGroup?: FormGroup): void {
+    if (!formGroup) {
+      formGroup = this.formGroup;
+    }
+    if (dedicacion === Dedicacion.COMPLETA) {
+      formGroup.controls.participacion.setValue(100);
+      formGroup.controls.participacion.disable();
+    } else {
+      formGroup.controls.participacion.enable();
+    }
   }
 
 }

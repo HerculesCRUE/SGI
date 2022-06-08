@@ -1,6 +1,7 @@
 package org.crue.hercules.sgi.prc.service;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -245,7 +246,7 @@ class AutorGrupoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  void findAllByProduccionCientificaId_ReturnsList() {
+  void findAllByAutorId_ReturnsList() {
     // given: Una lista con 7 AutorGrupo y un autorId
     Long autorId = 1L;
     List<AutorGrupo> autorGrupos = new ArrayList<>();
@@ -264,7 +265,7 @@ class AutorGrupoServiceTest extends BaseServiceTest {
           return autorGrupos.stream().filter(autorGrupo -> autorIdToFind.equals(autorGrupo.getAutorId()))
               .collect(Collectors.toList());
         });
-    List<AutorGrupo> autorGruposBuscados = service.findAllByProduccionCientificaId(autorId);
+    List<AutorGrupo> autorGruposBuscados = service.findAllByAutorId(autorId);
     // then: Cada AutorGrupo tiene autorId buscado
     int numResultados = autorGruposBuscados.size();
     Assertions.assertThat(numResultados).as("size()").isEqualTo(3);
@@ -286,6 +287,51 @@ class AutorGrupoServiceTest extends BaseServiceTest {
     // then: Número registros eliminados igual al esperado
     Integer numeroRegistrosDeleted = service.deleteInBulkByAutorId(autorId);
     Assertions.assertThat(numeroRegistrosDeleted).as("numeroRegistrosDeleted").isEqualTo(numeroRegistrosToDelete);
+  }
+
+  @Test
+  void findAllByProduccionCientificaId_ReturnsList() {
+    // given: Una lista con 7 AutorGrupo y un produccionCientificaId
+    Long produccionCientificaId = 1L;
+    List<AutorGrupo> autorGrupos = new ArrayList<>();
+    for (long i = 1; i <= 7; i++) {
+      autorGrupos.add(generarMockAutorGrupo(i));
+    }
+
+    // when: Buscamos AutorGrupo con produccionCientificaId
+    BDDMockito.given(
+        repository.findAll(ArgumentMatchers.<Specification<AutorGrupo>>any()))
+        .willAnswer((InvocationOnMock invocation) -> {
+          return autorGrupos;
+        });
+    List<AutorGrupo> autorGruposBuscados = service.findAllByProduccionCientificaId(produccionCientificaId);
+    // then: Returns lista de AutorGrupo
+    int numResultados = autorGruposBuscados.size();
+    Assertions.assertThat(numResultados).as("size()").isEqualTo(7);
+  }
+
+  @Test
+  void findAllByProduccionCientificaIdAndInGruposRef_ReturnsList() {
+    // given: Una lista con 7 AutorGrupo, un produccionCientificaId y una lista de
+    // ids de grupos
+    Long produccionCientificaId = 1L;
+    List<Long> gruposRef = Arrays.asList(new Long[] { 1L, 2L });
+    List<AutorGrupo> autorGrupos = new ArrayList<>();
+    for (long i = 1; i <= 7; i++) {
+      autorGrupos.add(generarMockAutorGrupo(i));
+    }
+
+    // when: Buscamos AutorGrupo con produccionCientificaId
+    BDDMockito.given(
+        repository.findAll(ArgumentMatchers.<Specification<AutorGrupo>>any()))
+        .willAnswer((InvocationOnMock invocation) -> {
+          return autorGrupos;
+        });
+    List<AutorGrupo> autorGruposBuscados = service
+        .findAllByProduccionCientificaIdAndInGruposRef(produccionCientificaId, gruposRef);
+    // then: Returns lista de AutorGrupo
+    int numResultados = autorGruposBuscados.size();
+    Assertions.assertThat(numResultados).as("size()").isEqualTo(7);
   }
 
   private AutorGrupo generarMockAutorGrupo(Long id, Long autorId, Long grupoRefId) {

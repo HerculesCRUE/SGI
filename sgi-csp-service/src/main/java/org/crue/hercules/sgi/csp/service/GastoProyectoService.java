@@ -7,6 +7,7 @@ import javax.validation.Valid;
 import org.crue.hercules.sgi.csp.exceptions.GastoProyectoNotFoundException;
 import org.crue.hercules.sgi.csp.model.EstadoGastoProyecto;
 import org.crue.hercules.sgi.csp.model.GastoProyecto;
+import org.crue.hercules.sgi.csp.model.Proyecto;
 import org.crue.hercules.sgi.csp.repository.EstadoGastoProyectoRepository;
 import org.crue.hercules.sgi.csp.repository.GastoProyectoRepository;
 import org.crue.hercules.sgi.framework.rsql.SgiRSQLJPASupport;
@@ -80,7 +81,8 @@ public class GastoProyectoService {
 
       // Si hay modificaciones en el estado o en su comentario asociado, creamos un
       // nuevo estado para reflejar el cambio en el histórico de estados
-      if ((gastoProyectoExistente.getEstado() != null && gastoProyecto.getEstado() != null) && (gastoProyectoExistente.getEstado().getEstado() != gastoProyecto.getEstado().getEstado()
+      if ((gastoProyectoExistente.getEstado() != null && gastoProyecto.getEstado() != null) && (gastoProyectoExistente
+          .getEstado().getEstado() != gastoProyecto.getEstado().getEstado()
           || !gastoProyectoExistente.getEstado().getComentario().equals(gastoProyecto.getEstado().getComentario()))) {
 
         EstadoGastoProyecto estadoGastoProyectoNuevo = new EstadoGastoProyecto();
@@ -121,6 +123,19 @@ public class GastoProyectoService {
 
     Page<GastoProyecto> returnValue = repository.findAll(specs, pageable);
     log.debug("findAll(String query, Pageable pageable) - end");
+    return returnValue;
+  }
+
+  /**
+   * Indica si existen {@link GastoProyecto} de un {@link Proyecto}
+   * 
+   * @param proyectoId identificador de la {@link Proyecto}
+   * @return si existen {@link GastoProyecto} asociados al {@link Proyecto}
+   */
+  public boolean existsByProyecto(Long proyectoId) {
+    log.debug("existsByProyecto(Long proyectoId) - start");
+    boolean returnValue = repository.existsByProyectoId(proyectoId);
+    log.debug("existsByProyecto(Long proyectoId) - end");
     return returnValue;
   }
 

@@ -20,6 +20,8 @@ public interface ModuladorRepository
 
   List<Modulador> findByConvocatoriaBaremacionId(Long convocatoriaBaremacionId);
 
+  List<Modulador> findByConvocatoriaBaremacionIdAndTipo(Long convocatoriaBaremacionId, TipoModulador tipo);
+
   Optional<Modulador> findByConvocatoriaBaremacionIdAndAreaRefAndTipo(Long convocatoriaBaremacionId,
       String areaRef, TipoModulador tipo);
 }

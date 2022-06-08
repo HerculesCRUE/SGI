@@ -1,12 +1,7 @@
-<div class="sgi-dialog-header" fxLayout="row" fxLayoutGap="20px">
-  <span fxFlexAlign="center" mat-mat-dialog-title role="heading" aria-level="3" fxFlex>{{textoTitle}}</span>
-  <button fxFlex="nogrow" mat-icon-button mat-dialog-close>
-    <mat-icon class="close-icon">close</mat-icon>
-  </button>
-</div>
-<mat-dialog-content>
+<sgi-dialog-header [title]="textoTitle"></sgi-dialog-header>
+<sgi-dialog-content>
   <form class="form-inline" [formGroup]="formGroup">
-    <div [fxLayout]="fxLayoutProperties.layout" [fxLayoutAlign]="fxLayoutProperties.layoutAlign">
+    <div fxLayout="row">
       <mat-form-field class="input-form">
         <mat-label>{{'csp.convocatoria-entidad-convocante' | translate:MSG_PARAMS.CARDINALIRY.SINGULAR}}</mat-label>
         <sgi-select-empresa formControlName="empresa"
@@ -18,14 +13,13 @@
         </mat-error>
       </mat-form-field>
     </div>
-    <div>
+    <div fxLayout="row">
       <mat-form-field class="input-form">
         <mat-label>{{'csp.convocatoria-entidad-convocante.plan' | translate}}</mat-label>
-          <sgi-select-programa formControlName="plan"></sgi-select-programa>
+        <sgi-select-programa formControlName="plan"></sgi-select-programa>
       </mat-form-field>
     </div>
-    <div class="programa" [fxLayout.xs]="fxLayoutProperties.xs" [fxLayout]="fxLayoutProperties.layout"
-      [fxLayoutGap]="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
+    <div class="programa" fxLayout="row">
       <div class="arbol">
         <mat-tree [dataSource]="dataSource" [treeControl]="treeControl" class="arbol-tree">
           <mat-tree-node *matTreeNodeDef="let node" matTreeNodeToggle>
@@ -59,9 +53,10 @@
       </div>
     </div>
   </form>
-</mat-dialog-content>
+</sgi-dialog-content>
 <mat-dialog-actions>
-  <button color="accent" (click)="saveOrUpdate()" mat-raised-button type="submit" *ngIf="!data.readonly">
+  <button color="accent" (click)="doAction()" [disabled]="this.actionDisabled" mat-raised-button type="submit"
+    *ngIf="!data.readonly">
     <mat-icon class="save-icon">save</mat-icon>{{textSaveOrUpdate | translate}}
   </button>
   <button class="link-cancelar" mat-button type="button" mat-dialog-close>{{'btn.cancel' |

@@ -10,6 +10,7 @@ import { SgiAuthModule, SgiAuthService } from '@sgi/framework/auth';
 import { SharedModule } from '@shared/shared.module';
 import { LoggerTestingModule } from 'ngx-logger/testing';
 import { SgpSharedModule } from 'src/app/esb/sgp/shared/sgp-shared.module';
+import { EtiSharedModule } from '../../shared/eti-shared.module';
 import { MemoriaListadoGesComponent } from './memoria-listado-ges.component';
 
 describe('MemoriaListadoGesComponent', () => {
@@ -32,7 +33,8 @@ describe('MemoriaListadoGesComponent', () => {
         ReactiveFormsModule,
         SharedModule,
         SgiAuthModule,
-        SgpSharedModule
+        SgpSharedModule,
+        EtiSharedModule
       ],
       providers: [
         { provide: SnackBarService, useValue: TestUtils.getSnackBarServiceSpy() },

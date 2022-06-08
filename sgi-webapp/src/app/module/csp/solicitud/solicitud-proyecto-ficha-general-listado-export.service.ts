@@ -87,7 +87,7 @@ export class SolicitudProyectoFichaGeneralListadoExportService extends
     const columns: ISgiColumnReport[] = [
       {
         title: this.translate.instant(REFERENCIA_KEY),
-        name: 'codigoExterno',
+        name: 'codigoExternoSolicitudProyecto',
         type: ColumnType.STRING,
         format: '#'
       },

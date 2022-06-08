@@ -50,7 +50,7 @@ export class SearchProyectoEconomicoModalComponent extends DialogCommonComponent
 
   constructor(
     private readonly logger: NGXLogger,
-    public dialogRef: MatDialogRef<SearchProyectoEconomicoModalComponent>,
+    dialogRef: MatDialogRef<SearchProyectoEconomicoModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data: SearchProyectoEconomicoModalData,
     private proyectoService: ProyectoSgeService,
     private readonly translate: TranslateService,
@@ -96,7 +96,7 @@ export class SearchProyectoEconomicoModalComponent extends DialogCommonComponent
   }
 
   closeModal(proyecto?: IProyectoSge): void {
-    this.dialogRef.close(proyecto);
+    this.close(proyecto);
   }
 
   search(reset?: boolean) {

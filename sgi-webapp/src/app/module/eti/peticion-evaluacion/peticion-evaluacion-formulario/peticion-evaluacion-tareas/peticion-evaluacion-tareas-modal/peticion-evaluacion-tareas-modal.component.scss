@@ -1,13 +1,9 @@
-@import "colors.scss";
-
 :host {
-  mat-dialog-content {
-    min-width: 60vw;
-  }
-}
+  sgi-dialog-content {
+    min-width: 40vw;
 
-.modal-tareas {
-  .ocultarCampo {
-    display: none;
+    .ocultarCampo {
+      display: none;
+    }
   }
 }

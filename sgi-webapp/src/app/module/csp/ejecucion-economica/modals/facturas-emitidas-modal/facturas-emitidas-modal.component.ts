@@ -1,12 +1,11 @@
-import { Component, Inject, OnInit } from '@angular/core';
-import { FormGroup } from '@angular/forms';
+import { Component, Inject } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
-import { BaseModalComponent } from '@core/component/base-modal.component';
+import { DialogCommonComponent } from '@core/component/dialog-common.component';
+import { SgiError } from '@core/errors/sgi-error';
 import { IDatoEconomicoDetalle } from '@core/models/sge/dato-economico-detalle';
 import { IDocumento } from '@core/models/sge/documento';
 import { DocumentoService, triggerDownloadToUser } from '@core/services/sgdoc/documento.service';
-import { SnackBarService } from '@core/services/snack-bar.service';
 
 const MSG_DOWNLOAD_ERROR = marker('error.file.download');
 
@@ -14,29 +13,14 @@ const MSG_DOWNLOAD_ERROR = marker('error.file.download');
   templateUrl: './facturas-emitidas-modal.component.html',
   styleUrls: ['./facturas-emitidas-modal.component.scss']
 })
-export class FacturasEmitidasModalComponent
-  extends BaseModalComponent<IDatoEconomicoDetalle, FacturasEmitidasModalComponent>
-  implements OnInit {
+export class FacturasEmitidasModalComponent extends DialogCommonComponent {
 
   constructor(
-    protected snackBarService: SnackBarService,
-    public matDialogRef: MatDialogRef<FacturasEmitidasModalComponent>,
+    matDialogRef: MatDialogRef<FacturasEmitidasModalComponent>,
     private documentoService: DocumentoService,
     @Inject(MAT_DIALOG_DATA) public data: IDatoEconomicoDetalle
   ) {
-    super(snackBarService, matDialogRef, data);
-  }
-
-  ngOnInit(): void {
-    super.ngOnInit();
-  }
-
-  protected getFormGroup(): FormGroup {
-    return new FormGroup({});
-  }
-
-  protected getDatosForm(): IDatoEconomicoDetalle {
-    return this.data;
+    super(matDialogRef);
   }
 
   download(documento: IDocumento): void {
@@ -44,8 +28,12 @@ export class FacturasEmitidasModalComponent
       (data) => {
         triggerDownloadToUser(data, documento.nombreFichero);
       },
-      () => {
-        this.snackBarService.showError(MSG_DOWNLOAD_ERROR);
+      (error) => {
+        if (error instanceof SgiError) {
+          this.problems$.next([error]);
+        } else {
+          this.problems$.next([new SgiError(MSG_DOWNLOAD_ERROR)]);
+        }
       }
     ));
   }

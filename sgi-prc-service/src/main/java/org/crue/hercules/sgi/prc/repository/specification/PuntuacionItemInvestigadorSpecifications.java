@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.crue.hercules.sgi.prc.model.ConvocatoriaBaremacion;
 import org.crue.hercules.sgi.prc.model.ConvocatoriaBaremacion_;
+import org.crue.hercules.sgi.prc.model.ProduccionCientifica;
 import org.crue.hercules.sgi.prc.model.ProduccionCientifica_;
 import org.crue.hercules.sgi.prc.model.PuntuacionItemInvestigador;
 import org.crue.hercules.sgi.prc.model.PuntuacionItemInvestigador.TipoPuntuacion;
@@ -37,6 +38,30 @@ public class PuntuacionItemInvestigadorSpecifications {
   public static Specification<PuntuacionItemInvestigador> byConvocatoriaBaremacionId(Long id) {
     return (root, query, cb) -> cb.equal(root.get(PuntuacionItemInvestigador_.produccionCientifica)
         .get(ProduccionCientifica_.convocatoriaBaremacion).get(ConvocatoriaBaremacion_.id), id);
+  }
+
+  /**
+   * {@link PuntuacionItemInvestigador} de la {@link ProduccionCientifica} con
+   * el id indicado.
+   * 
+   * @param produccionCientificaId identificador del {@link ProduccionCientifica}.
+   * @return specification para obtener los {@link PuntuacionItemInvestigador} de
+   *         la {@link ProduccionCientifica} con el id indicado.
+   */
+  public static Specification<PuntuacionItemInvestigador> byProduccionCientificaId(Long produccionCientificaId) {
+    return (root, query, cb) -> cb.equal(root.get(PuntuacionItemInvestigador_.produccionCientificaId),
+        produccionCientificaId);
+  }
+
+  /**
+   * {@link PuntuacionItemInvestigador} con el anio indicado.
+   * 
+   * @param anio anio del {@link PuntuacionItemInvestigador}.
+   * @return specification para obtener los {@link PuntuacionItemInvestigador} de
+   *         la {@link ConvocatoriaBaremacion} con el anio indicado.
+   */
+  public static Specification<PuntuacionItemInvestigador> byAnio(Integer anio) {
+    return (root, query, cb) -> cb.equal(root.get(PuntuacionItemInvestigador_.anio), anio);
   }
 
   /**

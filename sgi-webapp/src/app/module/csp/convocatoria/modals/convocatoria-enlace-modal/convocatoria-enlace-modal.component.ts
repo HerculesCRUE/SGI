@@ -2,11 +2,9 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
-import { BaseModalComponent } from '@core/component/base-modal.component';
+import { DialogFormComponent } from '@core/component/dialog-form.component';
 import { MSG_PARAMS } from '@core/i18n';
 import { IConvocatoriaEnlace } from '@core/models/csp/convocatoria-enlace';
-import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-properties';
-import { SnackBarService } from '@core/services/snack-bar.service';
 import { StringValidator } from '@core/validators/string-validator';
 import { TranslateService } from '@ngx-translate/core';
 import { switchMap } from 'rxjs/operators';
@@ -30,9 +28,7 @@ export interface ConvocatoriaEnlaceModalComponentData {
   templateUrl: './convocatoria-enlace-modal.component.html',
   styleUrls: ['./convocatoria-enlace-modal.component.scss']
 })
-export class ConvocatoriaEnlaceModalComponent extends
-  BaseModalComponent<ConvocatoriaEnlaceModalComponentData, ConvocatoriaEnlaceModalComponent> implements OnInit {
-  fxLayoutProperties: FxLayoutProperties;
+export class ConvocatoriaEnlaceModalComponent extends DialogFormComponent<ConvocatoriaEnlaceModalComponentData> implements OnInit {
 
   textSaveOrUpdate: string;
 
@@ -42,15 +38,11 @@ export class ConvocatoriaEnlaceModalComponent extends
   title: string;
 
   constructor(
-    protected snackBarService: SnackBarService,
-    public matDialogRef: MatDialogRef<ConvocatoriaEnlaceModalComponent>,
+    matDialogRef: MatDialogRef<ConvocatoriaEnlaceModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data: ConvocatoriaEnlaceModalComponentData,
     private readonly translate: TranslateService
   ) {
-    super(snackBarService, matDialogRef, data);
-    this.fxLayoutProperties = new FxLayoutProperties();
-    this.fxLayoutProperties.layout = 'row';
-    this.fxLayoutProperties.layoutAlign = 'row';
+    super(matDialogRef, !data.enlace.url);
   }
 
   ngOnInit() {
@@ -95,14 +87,14 @@ export class ConvocatoriaEnlaceModalComponent extends
     }
   }
 
-  protected getDatosForm(): ConvocatoriaEnlaceModalComponentData {
+  protected getValue(): ConvocatoriaEnlaceModalComponentData {
     this.data.enlace.url = this.formGroup.controls.url.value;
     this.data.enlace.descripcion = this.formGroup.controls.descripcion.value;
     this.data.enlace.tipoEnlace = this.formGroup.controls.tipoEnlace.value;
     return this.data;
   }
 
-  protected getFormGroup(): FormGroup {
+  protected buildFormGroup(): FormGroup {
     const formGroup = new FormGroup({
       url: new FormControl(this.data.enlace.url, [
         Validators.maxLength(250),

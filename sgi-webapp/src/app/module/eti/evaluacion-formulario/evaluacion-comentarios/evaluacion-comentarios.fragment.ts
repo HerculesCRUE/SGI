@@ -154,7 +154,8 @@ export class EvaluacionComentarioFragment extends Fragment {
         return this.service.updateComentarioGestor(this.getKey() as number, wrappedComentario.value, wrappedComentario.value.id).pipe(
           map((updatedComentario) => {
             const index = this.comentarios$.value.findIndex((currentComentario) => currentComentario === wrappedComentario);
-            this.comentarios$[index] = new StatusWrapper<IComentario>(updatedComentario);
+            this.comentarios$.value[index] = new StatusWrapper<IComentario>(wrappedComentario.value);
+            this.comentarios$.next(this.comentarios$.value);
           })
         );
       }),
@@ -173,7 +174,8 @@ export class EvaluacionComentarioFragment extends Fragment {
         return this.service.updateComentarioEvaluador(this.getKey() as number, wrappedComentario.value, wrappedComentario.value.id).pipe(
           map((updatedComentario) => {
             const index = this.comentarios$.value.findIndex((currentComentario) => currentComentario === wrappedComentario);
-            this.comentarios$[index] = new StatusWrapper<IComentario>(updatedComentario);
+            this.comentarios$.value[index] = new StatusWrapper<IComentario>(wrappedComentario.value);
+            this.comentarios$.next(this.comentarios$.value);
           })
         );
       }),

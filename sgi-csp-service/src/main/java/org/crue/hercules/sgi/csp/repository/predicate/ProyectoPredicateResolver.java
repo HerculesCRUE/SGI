@@ -35,6 +35,7 @@ import org.crue.hercules.sgi.csp.model.Proyecto_;
 import org.crue.hercules.sgi.csp.model.RolProyecto_;
 import org.crue.hercules.sgi.csp.repository.ProgramaRepository;
 import org.crue.hercules.sgi.csp.repository.ProyectoProrrogaRepository;
+import org.crue.hercules.sgi.csp.util.PredicateResolverUtil;
 import org.crue.hercules.sgi.framework.data.jpa.domain.Auditable_;
 import org.crue.hercules.sgi.framework.rsql.SgiRSQLPredicateResolver;
 import org.springframework.security.core.Authentication;
@@ -42,7 +43,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.util.CollectionUtils;
 
 import cz.jirutka.rsql.parser.ast.ComparisonNode;
-import cz.jirutka.rsql.parser.ast.ComparisonOperator;
 import io.github.perplexhub.rsql.RSQLOperators;
 
 public class ProyectoPredicateResolver implements SgiRSQLPredicateResolver<Proyecto> {
@@ -94,15 +94,8 @@ public class ProyectoPredicateResolver implements SgiRSQLPredicateResolver<Proye
   }
 
   private Predicate buildByPlanInvestigacion(ComparisonNode node, Root<Proyecto> root, CriteriaBuilder cb) {
-    ComparisonOperator operator = node.getOperator();
-    if (!operator.equals(RSQLOperators.EQUAL)) {
-      // Unsupported Operator
-      throw new IllegalArgumentException("Unsupported operator: " + operator + " for " + node.getSelector());
-    }
-    if (node.getArguments().size() != 1) {
-      // Bad number of arguments
-      throw new IllegalArgumentException("Bad number of arguments for " + node.getSelector());
-    }
+    PredicateResolverUtil.validateOperatorIsSupported(node, RSQLOperators.EQUAL);
+    PredicateResolverUtil.validateOperatorArgumentNumber(node, 1);
 
     List<Programa> programasQuery = new ArrayList<>();
     List<Programa> programasHijos = new ArrayList<>();
@@ -126,15 +119,8 @@ public class ProyectoPredicateResolver implements SgiRSQLPredicateResolver<Proye
   }
 
   private Predicate buildByResponsableEquipo(ComparisonNode node, Root<Proyecto> root, CriteriaBuilder cb) {
-    ComparisonOperator operator = node.getOperator();
-    if (!operator.equals(RSQLOperators.EQUAL)) {
-      // Unsupported Operator
-      throw new IllegalArgumentException("Unsupported operator: " + operator + " for " + node.getSelector());
-    }
-    if (node.getArguments().size() != 1) {
-      // Bad number of arguments
-      throw new IllegalArgumentException("Bad number of arguments for " + node.getSelector());
-    }
+    PredicateResolverUtil.validateOperatorIsSupported(node, RSQLOperators.EQUAL);
+    PredicateResolverUtil.validateOperatorArgumentNumber(node, 1);
 
     String personaRef = node.getArguments().get(0);
     ListJoin<Proyecto, ProyectoEquipo> joinEquipos = root.join(Proyecto_.equipo, JoinType.LEFT);
@@ -144,15 +130,8 @@ public class ProyectoPredicateResolver implements SgiRSQLPredicateResolver<Proye
   }
 
   private Predicate buildByFinalizado(ComparisonNode node, Root<Proyecto> root, CriteriaBuilder cb) {
-    ComparisonOperator operator = node.getOperator();
-    if (!operator.equals(RSQLOperators.EQUAL)) {
-      // Unsupported Operator
-      throw new IllegalArgumentException("Unsupported operator: " + operator + " for " + node.getSelector());
-    }
-    if (node.getArguments().size() != 1) {
-      // Bad number of arguments
-      throw new IllegalArgumentException("Bad number of arguments for " + node.getSelector());
-    }
+    PredicateResolverUtil.validateOperatorIsSupported(node, RSQLOperators.EQUAL);
+    PredicateResolverUtil.validateOperatorArgumentNumber(node, 1);
 
     boolean finalizado = Boolean.parseBoolean(node.getArguments().get(0));
     Instant now = Instant.now();
@@ -164,15 +143,8 @@ public class ProyectoPredicateResolver implements SgiRSQLPredicateResolver<Proye
   }
 
   private Predicate buildByProrrogado(ComparisonNode node, Root<Proyecto> root, CriteriaBuilder cb) {
-    ComparisonOperator operator = node.getOperator();
-    if (!operator.equals(RSQLOperators.EQUAL)) {
-      // Unsupported Operator
-      throw new IllegalArgumentException("Unsupported operator: " + operator + " for " + node.getSelector());
-    }
-    if (node.getArguments().size() != 1) {
-      // Bad number of arguments
-      throw new IllegalArgumentException("Bad number of arguments for " + node.getSelector());
-    }
+    PredicateResolverUtil.validateOperatorIsSupported(node, RSQLOperators.EQUAL);
+    PredicateResolverUtil.validateOperatorArgumentNumber(node, 1);
 
     boolean prorrogado = Boolean.parseBoolean(node.getArguments().get(0));
 
@@ -181,21 +153,14 @@ public class ProyectoPredicateResolver implements SgiRSQLPredicateResolver<Proye
       return cb.and(cb.equal(joinProrrogas.get(ProyectoProrroga_.proyectoId), root.get(Proyecto_.id)));
     } else {
       List<Long> idsProyectoWithProrrogas = this.proyectoProrrogaRepository.findAll().stream()
-          .map(prorroga -> prorroga.getProyectoId()).collect(Collectors.toList());
+          .map(ProyectoProrroga::getProyectoId).collect(Collectors.toList());
       return cb.and(cb.not(root.get(Proyecto_.id).in(idsProyectoWithProrrogas)));
     }
   }
 
   private Predicate buildByFechaModificacion(ComparisonNode node, Root<Proyecto> root, CriteriaBuilder cb) {
-    ComparisonOperator operator = node.getOperator();
-    if (!operator.equals(RSQLOperators.GREATER_THAN_OR_EQUAL)) {
-      // Unsupported Operator
-      throw new IllegalArgumentException("Unsupported operator: " + operator + " for " + node.getSelector());
-    }
-    if (node.getArguments().size() != 1) {
-      // Bad number of arguments
-      throw new IllegalArgumentException("Bad number of arguments for " + node.getSelector());
-    }
+    PredicateResolverUtil.validateOperatorIsSupported(node, RSQLOperators.GREATER_THAN_OR_EQUAL);
+    PredicateResolverUtil.validateOperatorArgumentNumber(node, 1);
 
     String fechaModificacionArgument = node.getArguments().get(0);
     Instant fechaModificacion = Instant.parse(fechaModificacionArgument);
@@ -222,15 +187,8 @@ public class ProyectoPredicateResolver implements SgiRSQLPredicateResolver<Proye
   }
 
   private Predicate buildByParticipacionActual(ComparisonNode node, Root<Proyecto> root, CriteriaBuilder cb) {
-    ComparisonOperator operator = node.getOperator();
-    if (!operator.equals(RSQLOperators.EQUAL)) {
-      // Unsupported Operator
-      throw new IllegalArgumentException("Unsupported operator: " + operator + " for " + node.getSelector());
-    }
-    if (node.getArguments().size() != 1) {
-      // Bad number of arguments
-      throw new IllegalArgumentException("Bad number of arguments for " + node.getSelector());
-    }
+    PredicateResolverUtil.validateOperatorIsSupported(node, RSQLOperators.EQUAL);
+    PredicateResolverUtil.validateOperatorArgumentNumber(node, 1);
 
     boolean participacionActual = Boolean.parseBoolean(node.getArguments().get(0));
 

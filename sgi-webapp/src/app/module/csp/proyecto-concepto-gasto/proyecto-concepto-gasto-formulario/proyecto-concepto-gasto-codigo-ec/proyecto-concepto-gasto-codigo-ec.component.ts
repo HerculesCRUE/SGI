@@ -156,7 +156,6 @@ export class ProyectoConceptoGastoCodigoEcComponent extends FragmentComponent im
     };
 
     const config = {
-      panelClass: 'sgi-dialog-container',
       data
     };
     const dialogRef = this.matDialog.open(ProyectoConceptoGastoCodigoEcModalComponent, config);
@@ -201,7 +200,6 @@ export class ProyectoConceptoGastoCodigoEcComponent extends FragmentComponent im
     };
 
     const config = {
-      panelClass: 'sgi-dialog-container',
       data
     };
     const dialogRef = this.matDialog.open(ProyectoConceptoGastoCodigoEcModalComponent, config);

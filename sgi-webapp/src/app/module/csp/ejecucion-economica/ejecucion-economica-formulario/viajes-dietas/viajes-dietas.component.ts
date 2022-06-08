@@ -87,7 +87,6 @@ export class ViajesDietasComponent extends FragmentComponent implements OnInit, 
     ).subscribe(
       (detalle) => {
         const config: MatDialogConfig<DatoEconomicoDetalleModalData> = {
-          panelClass: 'sgi-dialog-container',
           data: detalle
         };
         const dialogRef = this.matDialog.open(ViajesDietasModalComponent, config);

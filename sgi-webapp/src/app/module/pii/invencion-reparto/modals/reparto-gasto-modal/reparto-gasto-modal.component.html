@@ -1,23 +1,16 @@
-<div class="sgi-dialog-header" fxLayout="row" fxLayoutGap="20px">
-  <span fxFlexAlign="center" mat-mat-dialog-title role="heading" aria-level="3" fxFlex>
-    {{'pii.reparto.gasto.desglose-gasto-deducir' | translate}}
-  </span>
-  <button fxFlex="nogrow" mat-icon-button mat-dialog-close>
-    <mat-icon class="close-icon">close</mat-icon>
-  </button>
-</div>
-<mat-dialog-content>
+<sgi-dialog-header title="{{'pii.reparto.gasto.desglose-gasto-deducir' | translate}}"></sgi-dialog-header>
+<sgi-dialog-content>
   <form [formGroup]="formGroup">
-    <div fxLayout="row">
+    <div fxLayout="row" fxLayoutGap="10px">
       <!-- Importe pendiente de compensar -->
-      <mat-form-field class="first-row-input">
+      <mat-form-field class="first-row-input" fxFlex="0 1 calc(50% - 5px)">
         <mat-label>{{'pii.reparto.gasto.importe-pendiente-compensar' | translate}}</mat-label>
         <input matInput formControlName="importePendienteCompensar" id="importePendienteCompensar" type="number"
           placeholder="{{'pii.reparto.gasto.importe-pendiente-compensar' | translate}}">
       </mat-form-field>
 
       <!-- Importe a compensar -->
-      <mat-form-field>
+      <mat-form-field fxFlex="0 1 calc(50% - 5px)">
         <mat-label>{{'pii.reparto.gasto.importe-compensar' | translate}}</mat-label>
         <input matInput formControlName="importeACompensar" id="importeACompensar" type="number"
           placeholder="{{'pii.reparto.gasto.importe-compensar' | translate}}" required cdkFocusInitial>
@@ -36,9 +29,9 @@
       </mat-form-field>
     </div>
   </form>
-</mat-dialog-content>
+</sgi-dialog-content>
 <mat-dialog-actions>
-  <button color="accent" (click)="saveOrUpdate()" mat-raised-button type="submit">
+  <button color="accent" (click)="doAction()" [disabled]="this.actionDisabled" mat-raised-button type="submit">
     <mat-icon class="save-icon">save</mat-icon>
     {{'btn.ok' | translate}}
   </button>
